@@ -876,8 +876,8 @@ impl ToString for ASN1Type {
             ASN1Type::Boolean => "bool".to_owned(),
             ASN1Type::Integer(i) => i.type_token(),
             ASN1Type::Real(_) => "f64".to_owned(),
-            ASN1Type::BitString(_) => "Vec<bool>".to_owned(),
-            ASN1Type::OctetString(_) => "Vec<u8>".to_owned(),
+            ASN1Type::BitString(_) => "BitVec".to_owned(),
+            ASN1Type::OctetString(_) => "Bytes".to_owned(),
             ASN1Type::CharacterString(_) => "String".to_owned(),
             ASN1Type::Enumerated(_) => todo!(),
             ASN1Type::Choice(_) => todo!(),
@@ -917,18 +917,6 @@ pub enum CharacterStringType {
 }
 
 impl CharacterStringType {
-    pub fn is_known_multiplier_string(&self) -> bool {
-        match self {
-            Self::NumericString
-            | Self::VisibleString
-            | Self::PrintableString
-            | Self::IA5String
-            | Self::UniversalString
-            | Self::BMPString => true,
-            _ => false,
-        }
-    }
-
     pub fn character_set(&self) -> BTreeMap<usize, char> {
         match self {
             CharacterStringType::NumericString => {
@@ -1078,17 +1066,6 @@ impl ASN1Value {
         }
     }
 
-    pub fn unwrap_as_char_vec(&self) -> Result<Vec<char>, GrammarError> {
-        if let ASN1Value::String(s) = self {
-            Ok(s.chars().collect())
-        } else {
-            Err(GrammarError {
-                details: format!("Cannot unwrap {:?} as vector of chars!", self),
-                kind: error::GrammarErrorType::UnpackingError,
-            })
-        }
-    }
-
     pub fn is_elsewhere_declared(&self) -> bool {
         match self {
             Self::ElsewhereDeclaredValue(_)
@@ -1171,7 +1148,7 @@ impl ASN1Value {
                 });
                 // remove the last comma
                 bits.pop();
-                Ok(format!("vec![{bits}]"))
+                Ok(format!("[{bits}].into_iter().collect()"))
             }
             ASN1Value::EnumeratedValue {
                 enumerated,

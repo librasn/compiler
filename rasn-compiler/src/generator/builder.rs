@@ -8,28 +8,26 @@ use super::{
     error::{GeneratorError, GeneratorErrorType},
     generate,
     template::{
-        bit_string_template, boolean_template, char_string_template, choice_template,
+        any_template, bit_string_template, boolean_template, char_string_template, choice_template,
         enumerated_template, integer_template, integer_value_template, null_template,
-        null_value_template, object_identifier_value_template, octet_string_template,
+        null_value_template, object_identifier_value_template, octet_string_template, oid_template,
         sequence_of_template, sequence_or_set_template, typealias_template,
     },
     utils::{
         format_alphabet_annotations, format_choice_options, format_comments,
         format_default_methods, format_enum_members, format_nested_choice_options,
         format_nested_sequence_members, format_range_annotations, format_sequence_or_set_members,
-        format_tag, int_type_token, string_type,
+        format_tag, int_type_token, string_type, format_new_impl,
     },
 };
 
-pub fn generate_typealias<'a>(
-    tld: ToplevelTypeDeclaration,
-) -> Result<String, GeneratorError> {
+pub fn generate_typealias(tld: ToplevelTypeDeclaration) -> Result<String, GeneratorError> {
     if let ASN1Type::ElsewhereDeclaredType(dec) = &tld.r#type {
         Ok(typealias_template(
             format_comments(&tld.comments),
             to_rust_title_case(&tld.name),
             to_rust_title_case(&dec.identifier),
-            format_tag(tld.tag.as_ref()),
+            format_tag(tld.tag.as_ref(), String::new()),
             format_range_annotations(true, &dec.constraints)?,
         ))
     } else {
@@ -67,21 +65,14 @@ pub fn generate_integer_value(tld: ToplevelValueDeclaration) -> Result<String, G
     }
 }
 
-pub fn generate_integer<'a>(
-    tld: ToplevelTypeDeclaration,
-) -> Result<String, GeneratorError> {
+pub fn generate_integer(tld: ToplevelTypeDeclaration) -> Result<String, GeneratorError> {
     if let ASN1Type::Integer(ref int) = tld.r#type {
-        let mut int_type = int.type_token();
-        if int_type == "i128" {
-            // rasn only supports integers of up to 64 bits length
-            int_type = "i64".to_owned();
-        }
         Ok(integer_template(
             format_comments(&tld.comments),
             to_rust_title_case(&tld.name),
             format_range_annotations(true, &int.constraints)?,
-            format_tag(tld.tag.as_ref()),
-            int_type,
+            format_tag(tld.tag.as_ref(), String::new()),
+            int.type_token(),
         ))
     } else {
         Err(GeneratorError::new(
@@ -92,15 +83,13 @@ pub fn generate_integer<'a>(
     }
 }
 
-pub fn generate_bit_string<'a>(
-    tld: ToplevelTypeDeclaration,
-) -> Result<String, GeneratorError> {
+pub fn generate_bit_string(tld: ToplevelTypeDeclaration) -> Result<String, GeneratorError> {
     if let ASN1Type::BitString(ref bitstr) = tld.r#type {
         Ok(bit_string_template(
             format_comments(&tld.comments),
             to_rust_title_case(&tld.name),
             format_range_annotations(true, &bitstr.constraints)?,
-            format_tag(tld.tag.as_ref()),
+            format_tag(tld.tag.as_ref(), String::new()),
         ))
     } else {
         Err(GeneratorError::new(
@@ -111,15 +100,13 @@ pub fn generate_bit_string<'a>(
     }
 }
 
-pub fn generate_octet_string<'a>(
-    tld: ToplevelTypeDeclaration,
-) -> Result<String, GeneratorError> {
+pub fn generate_octet_string(tld: ToplevelTypeDeclaration) -> Result<String, GeneratorError> {
     if let ASN1Type::OctetString(ref oct_str) = tld.r#type {
         Ok(octet_string_template(
             format_comments(&tld.comments),
             to_rust_title_case(&tld.name),
             format_range_annotations(true, &oct_str.constraints)?,
-            format_tag(tld.tag.as_ref()),
+            format_tag(tld.tag.as_ref(), String::new()),
         ))
     } else {
         Err(GeneratorError::new(
@@ -130,9 +117,7 @@ pub fn generate_octet_string<'a>(
     }
 }
 
-pub fn generate_character_string<'a>(
-    tld: ToplevelTypeDeclaration,
-) -> Result<String, GeneratorError> {
+pub fn generate_character_string(tld: ToplevelTypeDeclaration) -> Result<String, GeneratorError> {
     if let ASN1Type::CharacterString(ref char_str) = tld.r#type {
         Ok(char_string_template(
             format_comments(&tld.comments),
@@ -140,7 +125,7 @@ pub fn generate_character_string<'a>(
             string_type(&char_str.r#type),
             format_range_annotations(false, &char_str.constraints)?,
             format_alphabet_annotations(char_str.r#type, &char_str.constraints)?,
-            format_tag(tld.tag.as_ref()),
+            format_tag(tld.tag.as_ref(), String::new()),
         ))
     } else {
         Err(GeneratorError::new(
@@ -151,14 +136,12 @@ pub fn generate_character_string<'a>(
     }
 }
 
-pub fn generate_boolean<'a>(
-    tld: ToplevelTypeDeclaration,
-) -> Result<String, GeneratorError> {
+pub fn generate_boolean(tld: ToplevelTypeDeclaration) -> Result<String, GeneratorError> {
     if let ASN1Type::Boolean = tld.r#type {
         Ok(boolean_template(
             format_comments(&tld.comments),
             to_rust_title_case(&tld.name),
-            format_tag(tld.tag.as_ref()),
+            format_tag(tld.tag.as_ref(), String::new()),
         ))
     } else {
         Err(GeneratorError::new(
@@ -169,7 +152,7 @@ pub fn generate_boolean<'a>(
     }
 }
 
-//     fn generate_typealias<'a>(
+//     fn generate_typealias(
 //         tld: ToplevelTypeDeclaration,
 //         custom_derive: Option<&'a str>,
 //     ) -> Result<String, GeneratorError> {
@@ -205,14 +188,37 @@ pub fn generate_null_value(tld: ToplevelValueDeclaration) -> Result<String, Gene
     }
 }
 
-pub fn generate_null<'a>(
-    tld: ToplevelTypeDeclaration,
-) -> Result<String, GeneratorError> {
+pub fn generate_any(tld: ToplevelTypeDeclaration) -> Result<String, GeneratorError> {
+    Ok(any_template(
+        format_comments(&tld.comments),
+        to_rust_title_case(&tld.name),
+        format_tag(tld.tag.as_ref(), String::new()),
+    ))
+}
+
+pub fn generate_oid(tld: ToplevelTypeDeclaration) -> Result<String, GeneratorError> {
+    if let ASN1Type::ObjectIdentifier(oid) = &tld.r#type {
+        Ok(oid_template(
+            format_comments(&tld.comments),
+            to_rust_title_case(&tld.name),
+            format_tag(tld.tag.as_ref(), String::new()),
+            format_range_annotations(false, &oid.constraints)?,
+        ))
+    } else {
+        Err(GeneratorError::new(
+            Some(ToplevelDeclaration::Type(tld)),
+            "Expected OBJECT IDENTIFIER top-level declaration",
+            GeneratorErrorType::Asn1TypeMismatch,
+        ))
+    }
+}
+
+pub fn generate_null(tld: ToplevelTypeDeclaration) -> Result<String, GeneratorError> {
     if let ASN1Type::Null = tld.r#type {
         Ok(null_template(
             format_comments(&tld.comments),
             to_rust_title_case(&tld.name),
-            format_tag(tld.tag.as_ref()),
+            format_tag(tld.tag.as_ref(), String::new()),
         ))
     } else {
         Err(GeneratorError::new(
@@ -223,9 +229,7 @@ pub fn generate_null<'a>(
     }
 }
 
-pub fn generate_enumerated<'a>(
-    tld: ToplevelTypeDeclaration,
-) -> Result<String, GeneratorError> {
+pub fn generate_enumerated(tld: ToplevelTypeDeclaration) -> Result<String, GeneratorError> {
     if let ASN1Type::Enumerated(ref enumerated) = tld.r#type {
         let extensible = if enumerated.extensible.is_some() {
             r#"
@@ -238,7 +242,7 @@ pub fn generate_enumerated<'a>(
             to_rust_title_case(&tld.name),
             extensible,
             format_enum_members(enumerated),
-            format_tag(tld.tag.as_ref()),
+            format_tag(tld.tag.as_ref(), String::new()),
         ))
     } else {
         Err(GeneratorError::new(
@@ -249,9 +253,7 @@ pub fn generate_enumerated<'a>(
     }
 }
 
-pub fn generate_choice<'a>(
-    tld: ToplevelTypeDeclaration,
-) -> Result<String, GeneratorError> {
+pub fn generate_choice(tld: ToplevelTypeDeclaration) -> Result<String, GeneratorError> {
     if let ASN1Type::Choice(ref choice) = tld.r#type {
         let name = to_rust_title_case(&tld.name);
         let inner_options = format_nested_choice_options(&choice, &name)?;
@@ -268,7 +270,7 @@ pub fn generate_choice<'a>(
             extensible,
             format_choice_options(&choice, &name)?,
             inner_options,
-            format_tag(tld.tag.as_ref()),
+            format_tag(tld.tag.as_ref(), String::from("automatic_tags")),
         ))
     } else {
         Err(GeneratorError::new(
@@ -279,7 +281,7 @@ pub fn generate_choice<'a>(
     }
 }
 
-//     fn generate_information_object_class<'a>(
+//     fn generate_information_object_class(
 //         tld: ToplevelInformationDeclaration,
 //     ) -> Result<String, GeneratorError> {
 //         if let ASN1Information::ObjectClass(ref ioc) = tld.value {
@@ -297,7 +299,7 @@ pub fn generate_choice<'a>(
 //         }
 //     }
 
-pub fn generate_object_identifier_value<'a>(
+pub fn generate_object_identifier_value(
     tld: ToplevelValueDeclaration,
 ) -> Result<String, GeneratorError> {
     if let ASN1Value::ObjectIdentifier(_) = tld.value {
@@ -315,9 +317,7 @@ pub fn generate_object_identifier_value<'a>(
     }
 }
 
-pub fn generate_sequence_or_set<'a>(
-    tld: ToplevelTypeDeclaration,
-) -> Result<String, GeneratorError> {
+pub fn generate_sequence_or_set(tld: ToplevelTypeDeclaration) -> Result<String, GeneratorError> {
     match tld.r#type {
         ASN1Type::Sequence(ref seq) | ASN1Type::Set(ref seq) => {
             let name = to_rust_title_case(&tld.name);
@@ -332,15 +332,17 @@ pub fn generate_sequence_or_set<'a>(
             } else {
                 ""
             };
+            let (declaration, name_types) = format_sequence_or_set_members(seq, &name)?;
             Ok(sequence_or_set_template(
                 format_comments(&tld.comments),
                 name.clone(),
                 extensible,
-                format_sequence_or_set_members(seq, &name)?,
+                declaration,
                 format_nested_sequence_members(seq, &name)?,
-                format_tag(tld.tag.as_ref()),
+                format_tag(tld.tag.as_ref(), String::from("automatic_tags")),
                 set_annotation.into(),
                 format_default_methods(&seq.members, &name)?,
+                format_new_impl(&name, name_types)
             ))
         }
         _ => Err(GeneratorError::new(
@@ -351,22 +353,20 @@ pub fn generate_sequence_or_set<'a>(
     }
 }
 
-pub fn generate_sequence_of<'a>(
-    tld: ToplevelTypeDeclaration,
-) -> Result<String, GeneratorError> {
+pub fn generate_sequence_of(tld: ToplevelTypeDeclaration) -> Result<String, GeneratorError> {
     if let ASN1Type::SequenceOf(ref seq_of) = tld.r#type {
         let name = to_rust_title_case(&tld.name);
         let anonymous_item = match seq_of.r#type.as_ref() {
             ASN1Type::ElsewhereDeclaredType(_) => None,
-            n => Some(generate(
-                ToplevelDeclaration::Type(ToplevelTypeDeclaration {
+            n => Some(generate(ToplevelDeclaration::Type(
+                ToplevelTypeDeclaration {
                     parameterization: None,
                     comments: " Anonymous SEQUENCE OF member ".into(),
                     name: String::from("Anonymous") + &name,
                     r#type: n.clone(),
                     tag: None,
-                }),
-            )?),
+                },
+            ))?),
         }
         .unwrap_or_default();
         let member_type = match seq_of.r#type.as_ref() {
@@ -379,7 +379,7 @@ pub fn generate_sequence_of<'a>(
             anonymous_item,
             member_type,
             format_range_annotations(true, &seq_of.constraints)?,
-            format_tag(tld.tag.as_ref()),
+            format_tag(tld.tag.as_ref(), String::new()),
         ))
     } else {
         Err(GeneratorError::new(
@@ -390,7 +390,7 @@ pub fn generate_sequence_of<'a>(
     }
 }
 
-//     fn generate_information_object_set<'a>(
+//     fn generate_information_object_set(
 //         tld: ToplevelInformationDeclaration,
 //     ) -> Result<String, GeneratorError> {
 //         if let ASN1Information::ObjectSet(o) = &tld.value {

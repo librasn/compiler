@@ -1,12 +1,12 @@
 use crate::intermediate::{constraints::*, *};
 use nom::{
     branch::alt,
-    bytes::complete::{tag, take_until},
+    bytes::complete::tag,
     character::complete::char,
-    combinator::{into, map, opt, value},
+    combinator::{into, map, opt, value, map_res},
     error::Error,
     multi::{many0_count, many1, separated_list0, separated_list1},
-    sequence::{delimited, pair, preceded, terminated, tuple},
+    sequence::{delimited, pair, preceded, terminated, tuple, separated_pair},
     IResult,
 };
 
@@ -83,6 +83,7 @@ fn subtype_element<'a>(input: &'a str) -> IResult<&'a str, SubtypeElement> {
         size_constraint,
         pattern_constraint,
         user_defined_constraint,
+        property_settings_constraint,
         permitted_alphabet_constraint,
         value_range,
         single_value,
@@ -333,6 +334,38 @@ fn relational_constraint<'a>(input: &'a str) -> IResult<&'a str, RelationalConst
         char(AT),
         pair(many0_count(char(DOT)), identifier),
     )))(input)
+}
+
+fn property_settings_constraint<'a>(input: &'a str) -> IResult<&'a str, SubtypeElement> {
+    map_res(
+        skip_ws_and_comments(delimited(
+            char('"'), 
+            separated_list1(char(' '), 
+            separated_pair(settings_identifier, char('='), identifier)), char('"')))
+        , |res| {
+        res.into_iter()
+        .map(|pair| 
+            PropertyAndSettingsPair::try_from(pair)
+        )
+        .collect::<Result<Vec<PropertyAndSettingsPair>, _>>()
+        .map(|settings| 
+            SubtypeElement::PropertySettings(PropertySettings { property_settings_list: settings })
+        )
+    })(input)
+}
+
+fn settings_identifier<'a>(input: &'a str) -> IResult<&'a str, &'a str> {
+    alt((
+        tag(BasicSettings::NAME),
+        tag(DateSettings::NAME),
+        tag(YearSettings::NAME),
+        tag(TimeSettings::NAME),
+        tag(LocalOrUtcSettings::NAME),
+        tag(IntervalTypeSettings::NAME),
+        tag(StartEndPointSettings::NAME),
+        tag(RecurrenceSettings::NAME),
+        tag(MidnightSettings::NAME),
+    ))(input)
 }
 
 #[cfg(test)]

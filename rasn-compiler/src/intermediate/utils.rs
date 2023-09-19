@@ -12,7 +12,7 @@ pub fn int_type_token<'a>(min: i128, max: i128) -> &'a str {
             r if r <= u16::MAX.into() => "u16",
             r if r <= u32::MAX.into() => "u32",
             r if r <= u64::MAX.into() => "u64",
-            _ => "u128",
+            _ => "Integer",
         }
     } else {
         match (min, max) {
@@ -20,7 +20,7 @@ pub fn int_type_token<'a>(min: i128, max: i128) -> &'a str {
             (mi, ma) if mi >= i16::MIN.into() && ma <= i16::MAX.into() => "i16",
             (mi, ma) if mi >= i32::MIN.into() && ma <= i32::MAX.into() => "i32",
             (mi, ma) if mi >= i64::MIN.into() && ma <= i64::MAX.into() => "i64",
-            _ => "i128",
+            _ => "Integer",
         }
     }
 }
@@ -107,7 +107,7 @@ pub fn to_rust_const_case(input: &String) -> String {
 
 pub fn to_rust_title_case(input: &String) -> String {
     let mut input = input.replace("-", "_");
-    input.drain(..).fold(String::new(), |mut acc, c| {
+    let input = input.drain(..).fold(String::new(), |mut acc, c| {
         if acc.is_empty() && c.is_lowercase() {
             acc.push(c.to_ascii_uppercase());
         } else if acc.ends_with(|last: char| last == '_') && c.is_uppercase() {
@@ -120,7 +120,12 @@ pub fn to_rust_title_case(input: &String) -> String {
             acc.push(c);
         }
         acc
-    })
+    });
+    if RUST_KEYWORDS.contains(&input.as_str()) {
+        String::from("Rs") + &input
+    } else {
+        input
+    }
 }
 
 #[cfg(test)]
@@ -132,7 +137,7 @@ mod tests {
         assert_eq!(int_type_token(600, 600), "u16");
         assert_eq!(int_type_token(0, 0), "u8");
         assert_eq!(int_type_token(-1, 1), "i8");
-        assert_eq!(int_type_token(0, 124213412341389457931857915125), "u128");
+        assert_eq!(int_type_token(0, 124213412341389457931857915125), "Integer");
         assert_eq!(int_type_token(-67463, 23123), "i32");
         assert_eq!(int_type_token(255, 257), "u16");
     }

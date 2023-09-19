@@ -28,7 +28,7 @@ impl Integer {
                     Ok((min, max))
                 }).unwrap_or((1,0));
         if min > max {
-            "i128".to_owned()
+            "Integer".to_owned()
         } else {
             int_type_token(min, max).to_owned()
         }

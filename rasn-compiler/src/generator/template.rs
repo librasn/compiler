@@ -171,6 +171,28 @@ pub fn null_template(comments: String, name: String, tag_annotations: String) ->
     )
 }
 
+pub fn any_template(comments: String, name: String, tag_annotations: String) -> String {
+    let rasn_annotations: String = join_annotations(vec!["delegate".into(), tag_annotations]);
+    format!(
+        r#"
+{comments}
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+{rasn_annotations}pub struct {name}(Any);
+"#
+    )
+}
+
+pub fn oid_template(comments: String, name: String, tag_annotations: String, constraint_annotations: String) -> String {
+    let rasn_annotations: String = join_annotations(vec!["delegate".into(), tag_annotations, constraint_annotations]);
+    format!(
+        r#"
+{comments}
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+{rasn_annotations}pub struct {name}(pub ObjectIdentifier);
+"#
+    )
+}
+
 pub fn enumerated_template(
     comments: String,
     name: String,
@@ -200,6 +222,7 @@ pub fn sequence_or_set_template(
     tag_annotations: String,
     set_annotation: String,
     default_methods: String,
+    new_impl: String
 ) -> String {
     let rasn_annotations = join_annotations(vec![set_annotation, tag_annotations]);
     format!(
@@ -210,6 +233,8 @@ pub fn sequence_or_set_template(
         {rasn_annotations}{extensible}pub struct {name} {{
             {members}
         }}
+
+        {new_impl}
 
         {default_methods}"#
     )

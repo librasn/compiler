@@ -27,7 +27,9 @@ pub fn generate<'a>(
             ASN1Type::ElsewhereDeclaredType(_) => generate_typealias(t),
             ASN1Type::Choice(_) => generate_choice(t),
             ASN1Type::OctetString(_) => generate_octet_string(t),
-            _ => Ok("".into()),
+            ASN1Type::Real(_) => todo!(),
+            ASN1Type::ObjectIdentifier(_) => generate_oid(t),
+            ASN1Type::InformationObjectFieldReference(_) => generate_any(t),
         },
         ToplevelDeclaration::Value(v) => match v.value {
             ASN1Value::Null => generate_null_value(v),

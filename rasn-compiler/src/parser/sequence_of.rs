@@ -196,4 +196,12 @@ mod tests {
             })
         );
     }
+
+    #[test]
+    fn handles_object_field_ref() {
+        println!("{:?}", sequence_of(r#"SEQUENCE (SIZE(1..MAX)) OF
+        IEEE1609DOT2-HEADERINFO-CONTRIBUTED-EXTENSION.&Extn({
+        Ieee1609Dot2HeaderInfoContributedExtensions
+      }{@.contributorId})"#).unwrap().1)
+    }
 }

@@ -1,7 +1,7 @@
 extern crate proc_macro;
 
 use proc_macro::TokenStream;
-use syn::{Token, Path, parse::Parse, parse_macro_input, LitStr};
+use syn::{parse::Parse, parse_macro_input, LitStr};
 
 const DUMMY_HEADER: &'static str = r#"DUMMY { dummy(999) header(999) }
 

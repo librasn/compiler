@@ -471,10 +471,55 @@ mod tests {
         println!(
             "{:#?}",
             RasnCompiler::new()
+//             .add_asn_literal(r#"Test-Schema DEFINITIONS AUTOMATIC TAGS ::=
+
+// BEGIN
+
+// ContributedExtensionBlock ::= SEQUENCE {
+//   contributorId IEEE1609DOT2-HEADERINFO-CONTRIBUTED-EXTENSION.&id({
+//     Ieee1609Dot2HeaderInfoContributedExtensions
+//   }),
+//   extns         SEQUENCE (SIZE(1..MAX)) OF
+//     IEEE1609DOT2-HEADERINFO-CONTRIBUTED-EXTENSION.&Extn({
+//     Ieee1609Dot2HeaderInfoContributedExtensions
+//   }{@.contributorId})
+// }
+
+
+// /**
+//  * @brief This Information Object Class defines the class that provides a 
+//  * template for defining extension blocks.
+//  */
+// IEEE1609DOT2-HEADERINFO-CONTRIBUTED-EXTENSION ::= CLASS {
+//   &id   HeaderInfoContributorId UNIQUE,
+//   &Extn
+// } WITH SYNTAX {&Extn IDENTIFIED BY &id}
+
+// /**
+//  * @brief This structure is an ASN.1 Information Object Set listing the 
+//  * defined contributed extension types and the associated 
+//  * HeaderInfoContributorId values. In this version of this standard two 
+//  * extension types are defined: Ieee1609ContributedHeaderInfoExtension and 
+//  * EtsiOriginatingHeaderInfoExtension.
+//  */
+// Ieee1609Dot2HeaderInfoContributedExtensions
+//   IEEE1609DOT2-HEADERINFO-CONTRIBUTED-EXTENSION ::= {
+//   {Ieee1609ContributedHeaderInfoExtension IDENTIFIED BY 
+//         ieee1609HeaderInfoContributorId} |
+//   {EtsiOriginatingHeaderInfoExtension IDENTIFIED BY
+//     etsiHeaderInfoContributorId},
+//   ...
+// }
+
+// Ieee1609ContributedHeaderInfoExtension ::= INTEGER(0)
+// EtsiOriginatingHeaderInfoExtension ::= INTEGER(1)
+
+// END
+// "#)
                 // .add_asn_by_path(PathBuf::from("test_asn1/AddGrpC.asn"))
                 // .add_asn_by_path(PathBuf::from("test_asn1/ETSI-ITS-CDD.asn"))
-                .add_asn_by_path(PathBuf::from("test_asn1/1609.asn"))
-                //.add_asn_by_path(PathBuf::from("test_asn1/v2x.asn"))
+                 .add_asn_by_path(PathBuf::from("test_asn1/REGION.asn"))
+                // .add_asn_by_path(PathBuf::from("test_asn1/1609.asn"))
                 //.add_asn_by_path(PathBuf::from("test_asn1/CAP.asn"))
                 //.add_asn_by_path(PathBuf::from("test_asn1/kerberos.asn"))
                 //.add_asn_by_path(PathBuf::from("test_asn1/denm_2_0.asn"))

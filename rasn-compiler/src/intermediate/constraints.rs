@@ -1,4 +1,4 @@
-use std::collections::BTreeMap;
+use std::{collections::BTreeMap, error::Error};
 
 use super::{
     error::{GrammarError, GrammarErrorType},
@@ -266,6 +266,12 @@ pub struct PropertySettings {
     pub property_settings_list: Vec<PropertyAndSettingsPair>,
 }
 
+impl From<Vec<&str>> for PropertySettings {
+    fn from(value: Vec<&str>) -> Self {
+        todo!()
+    }
+}
+
 #[derive(Debug, Clone, PartialEq)]
 pub enum PropertyAndSettingsPair {
     Basic(BasicSettings),
@@ -279,10 +285,50 @@ pub enum PropertyAndSettingsPair {
     Midnight(MidnightSettings),
 }
 
+impl TryFrom<(&str, &str)> for PropertyAndSettingsPair {
+    fn try_from(value: (&str, &str)) -> Result<PropertyAndSettingsPair, Box<dyn Error>> {
+        match value.0 {
+            BasicSettings::NAME => {
+                BasicSettings::from_str(value.1).map(|settings| Self::Basic(settings))
+            }
+            DateSettings::NAME => {
+                DateSettings::from_str(value.1).map(|settings| Self::Date(settings))
+            }
+            YearSettings::NAME => {
+                YearSettings::from_str(value.1).map(|settings| Self::Year(settings))
+            }
+            TimeSettings::NAME => {
+                TimeSettings::from_str(value.1).map(|settings| Self::Time(settings))
+            }
+            LocalOrUtcSettings::NAME => {
+                LocalOrUtcSettings::from_str(value.1).map(|settings| Self::LocalOrUtc(settings))
+            }
+            IntervalTypeSettings::NAME => {
+                IntervalTypeSettings::from_str(value.1).map(|settings| Self::IntervalType(settings))
+            }
+            StartEndPointSettings::NAME => StartEndPointSettings::from_str(value.1)
+                .map(|settings| Self::StartEndPoint(settings)),
+            RecurrenceSettings::NAME => {
+                RecurrenceSettings::from_str(value.1).map(|settings| Self::Recurrence(settings))
+            }
+            MidnightSettings::NAME => {
+                MidnightSettings::from_str(value.1).map(|settings| Self::Midnight(settings))
+            }
+            _ => Err("Unknown Settings value.".into())
+        }
+    }
+
+    type Error = Box<dyn Error>;
+}
+
 pub trait PropertySetting {
     const NAME: &'static str;
 
     fn setting_name<'a>(&'a self) -> String;
+
+    fn from_str<'a>(value: &'a str) -> Result<Self, Box<dyn Error>>
+    where
+        Self: Sized;
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -306,6 +352,17 @@ impl PropertySetting for BasicSettings {
             BasicSettings::RecInterval => "Rec-Interval".into(),
         }
     }
+
+    fn from_str<'a>(value: &'a str) -> Result<Self, Box<dyn Error>> {
+        match value {
+            "Date" => Ok(BasicSettings::Date),
+            "Time" => Ok(BasicSettings::Time),
+            "Date-Time" => Ok(BasicSettings::DateTime),
+            "Interval" => Ok(BasicSettings::Interval),
+            "Rec-Interval" => Ok(BasicSettings::RecInterval),
+            _ => Err("Unknown Settings value.".into())
+        }
+    }
 }
 
 impl PropertySetting for DateSettings {
@@ -320,6 +377,19 @@ impl PropertySetting for DateSettings {
             DateSettings::YearDay => "YD".into(),
             DateSettings::YearWeek => "YW".into(),
             DateSettings::YearWeekDay => "YWD".into(),
+        }
+    }
+
+    fn from_str<'a>(value: &'a str) -> Result<Self, Box<dyn Error>> {
+        match value {
+            "C" => Ok(DateSettings::Century),
+            "Y" => Ok(DateSettings::Year),
+            "YM" => Ok(DateSettings::YearMonth),
+            "YMD" => Ok(DateSettings::YearMonthDay),
+            "YD" => Ok(DateSettings::YearDay),
+            "YW" => Ok(DateSettings::YearWeek),
+            "YWD" => Ok(DateSettings::YearWeekDay),
+            _ => Err("Unknown Settings value.".into())
         }
     }
 }
@@ -346,6 +416,16 @@ impl PropertySetting for YearSettings {
             YearSettings::Large(i) => format!("L{i}"),
         }
     }
+
+    fn from_str<'a>(value: &'a str) -> Result<Self, Box<dyn Error>> {
+        match value {
+            "Basic" => Ok(YearSettings::Basic),
+            "Proleptic" => Ok(YearSettings::Proleptic),
+            "Negative" => Ok(YearSettings::Negative),
+            s if s.starts_with("L") => Ok(s[1..].parse().map(|i| YearSettings::Large(i))?),
+            _ => Err("Unknown Settings value.".into())
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -367,6 +447,24 @@ impl PropertySetting for TimeSettings {
             TimeSettings::HourDecimalFraction(i) => format!("HF{i}"),
             TimeSettings::HourMinuteFraction(i) => format!("HMF{i}"),
             TimeSettings::HourMinuteSecondFraction(i) => format!("HMSF{i}"),
+        }
+    }
+
+    fn from_str<'a>(value: &'a str) -> Result<Self, Box<dyn Error>> {
+        match value {
+            "H" => Ok(TimeSettings::Hour),
+            "HM" => Ok(TimeSettings::HourMinute),
+            "HMS" => Ok(TimeSettings::HourMinuteSecond),
+            s if s.starts_with("HF") => Ok(s[2..]
+                .parse()
+                .map(|i| TimeSettings::HourDecimalFraction(i))?),
+            s if s.starts_with("HMF") => Ok(s[3..]
+                .parse()
+                .map(|i| TimeSettings::HourMinuteFraction(i))?),
+            s if s.starts_with("HMSF") => Ok(s[4..]
+                .parse()
+                .map(|i| TimeSettings::HourMinuteSecondFraction(i))?),
+                _ => Err("Unknown Settings value.".into())
         }
     }
 }
@@ -391,6 +489,15 @@ impl PropertySetting for LocalOrUtcSettings {
             LocalOrUtcSettings::LocalAndDifference => "LD".into(),
         }
     }
+
+    fn from_str<'a>(value: &'a str) -> Result<Self, Box<dyn Error>> {
+        match value {
+            "L" => Ok(LocalOrUtcSettings::Local),
+            "Z" => Ok(LocalOrUtcSettings::Utc),
+            "LD" => Ok(LocalOrUtcSettings::LocalAndDifference),
+            _ => Err("Unknown Settings value.".into())
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -411,6 +518,16 @@ impl PropertySetting for IntervalTypeSettings {
             IntervalTypeSettings::DurationAndEnd => "DE".into(),
         }
     }
+
+    fn from_str<'a>(value: &'a str) -> Result<Self, Box<dyn Error>> {
+        match value {
+            "SE" => Ok(IntervalTypeSettings::StartAndEnd),
+            "D" => Ok(IntervalTypeSettings::Duration),
+            "SD" => Ok(IntervalTypeSettings::StartAndDuration),
+            "DE" => Ok(IntervalTypeSettings::DurationAndEnd),
+            _ => Err("Unknown Settings value.".into())
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -418,7 +535,7 @@ pub enum IntervalTypeSettings {
     StartAndEnd,
     Duration,
     StartAndDuration,
-    DurationAndEnd
+    DurationAndEnd,
 }
 
 impl PropertySetting for StartEndPointSettings {
@@ -429,6 +546,15 @@ impl PropertySetting for StartEndPointSettings {
             StartEndPointSettings::Date => "Date".into(),
             StartEndPointSettings::Time => "Time".into(),
             StartEndPointSettings::DateTime => "Date-Time".into(),
+        }
+    }
+
+    fn from_str<'a>(value: &'a str) -> Result<Self, Box<dyn Error>> {
+        match value {
+            "Date" => Ok(StartEndPointSettings::Date),
+            "Time" => Ok(StartEndPointSettings::Time),
+            "Date-Time" => Ok(StartEndPointSettings::DateTime),
+            _ => Err("Unknown Settings value.".into())
         }
     }
 }
@@ -449,12 +575,22 @@ impl PropertySetting for RecurrenceSettings {
             RecurrenceSettings::Recurrences(i) => format!("R{i}"),
         }
     }
+
+    fn from_str<'a>(value: &'a str) -> Result<Self, Box<dyn Error>> {
+        match value {
+            "Unlimited" => Ok(RecurrenceSettings::Unlimited),
+            s if s.starts_with("R") => {
+                Ok(s[1..].parse().map(|i| RecurrenceSettings::Recurrences(i))?)
+            },
+            _ => Err("Unknown Settings value.".into())
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum RecurrenceSettings {
     Unlimited,
-    Recurrences(usize)
+    Recurrences(usize),
 }
 
 impl PropertySetting for MidnightSettings {
@@ -466,12 +602,20 @@ impl PropertySetting for MidnightSettings {
             MidnightSettings::EndOfDay => "End".into(),
         }
     }
+
+    fn from_str<'a>(value: &'a str) -> Result<Self, Box<dyn Error>> {
+        match value {
+            "Start" => Ok(MidnightSettings::StartOfDay),
+            "End" => Ok(MidnightSettings::EndOfDay),
+            _ => Err("Unknown Settings value.".into())
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum MidnightSettings {
     StartOfDay,
-    EndOfDay
+    EndOfDay,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -495,11 +639,10 @@ pub enum SubtypeElement {
     SingleTypeConstraint(InnerTypeConstraint),
     MultipleTypeConstraints(InnerTypeConstraint),
     PatternConstraint(PatternConstraint),
-    UserDefinedConstraint(UserDefinedConstraint), 
-    PropertySettings(PropertySettings)
-                                                  // DurationRange
-                                                  // TimePointRange
-                                                  // RecurrenceRange
+    UserDefinedConstraint(UserDefinedConstraint),
+    PropertySettings(PropertySettings), // DurationRange
+                                        // TimePointRange
+                                        // RecurrenceRange
 }
 
 impl SubtypeElement {

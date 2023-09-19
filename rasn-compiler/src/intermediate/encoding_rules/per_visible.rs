@@ -333,7 +333,9 @@ impl TryFrom<Option<&SubtypeElement>> for PerVisibleRangeConstraints {
                 matches!(subtype, ASN1Type::Integer(_)),
                 &subtype.constraints(),
             ),
-            _ => unreachable!(),
+            x => {
+                println!("{x:?}");
+                unreachable!()},
         }
     }
 }
@@ -366,9 +368,9 @@ impl PerVisible for SubtypeElement {
                 extensible: _,
             } => true,
             SubtypeElement::ContainedSubtype {
-                subtype: _,
+                subtype: s,
                 extensible: _,
-            } => true,
+            } => s.constraints().iter().fold(false, |acc, c| acc || c.per_visible()),
             SubtypeElement::ValueRange {
                 min: _,
                 max: _,
@@ -390,7 +392,7 @@ pub fn per_visible_range_constraints(
     } else {
         PerVisibleRangeConstraints::default_unsigned()
     };
-    for c in constraint_list {
+    for c in constraint_list.iter().filter(|c| c.per_visible()) {
         constraints += c.try_into()?
     }
     Ok(constraints)
@@ -424,7 +426,13 @@ fn fold_constraint_set(
                 },
                 char_set,
             )
-        }
+        },
+        (SubtypeElement::ContainedSubtype { subtype: _, extensible: _ }, None) |
+        (SubtypeElement::ContainedSubtype { subtype: _, extensible: _ }, Some(SubtypeElement::ContainedSubtype { subtype: _, extensible: _ })) => return Ok(None),
+        (SubtypeElement::ContainedSubtype { subtype: _, extensible: _ }, Some(c)) |
+        (c, Some(SubtypeElement::ContainedSubtype { subtype: _, extensible: _ })) => {
+            return Ok(Some(c.clone()))
+        },
         (SubtypeElement::PermittedAlphabet(elem_or_set), None)
         | (SubtypeElement::SizeConstraint(elem_or_set), None) => {
             return match &**elem_or_set {

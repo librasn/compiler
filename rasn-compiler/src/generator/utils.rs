@@ -11,18 +11,18 @@ use crate::intermediate::{
 
 use crate::generator::{error::GeneratorError, generate};
 
+pub struct StringifiedNameType {
+    name: String,
+    typ: String
+}
+
 pub fn inner_name(name: &String, parent_name: &String) -> String {
     format!("{}{}", parent_name, to_rust_title_case(&name))
 }
 
 pub fn int_type_token(opt_min: Option<i128>, opt_max: Option<i128>) -> &'static str {
     if let (Some(min), Some(max)) = (opt_min, opt_max) {
-        let token = crate::intermediate::utils::int_type_token(min, max);
-        if token.contains("128") {
-            "Integer"
-        } else {
-            token
-        }
+       crate::intermediate::utils::int_type_token(min, max)
     } else {
         "Integer"
     }
@@ -138,7 +138,7 @@ pub fn format_enum_members(enumerated: &Enumerated) -> String {
     })
 }
 
-pub fn format_tag(tag: Option<&AsnTag>) -> String {
+pub fn format_tag(tag: Option<&AsnTag>, fallback: String) -> String {
     if let Some(tag) = tag {
         let class = match tag.tag_class {
             TagClass::Universal => "universal, ",
@@ -154,20 +154,20 @@ pub fn format_tag(tag: Option<&AsnTag>) -> String {
         let id = tag.id;
         format!("tag({exp_pre}{class}{id}{exp_post})")
     } else {
-        String::from("")
+        fallback
     }
 }
 
 pub fn format_sequence_or_set_members(
     sequence_or_set: &SequenceOrSet,
     parent_name: &String,
-) -> Result<String, GeneratorError> {
+) -> Result<(String, Vec<StringifiedNameType>), GeneratorError> {
     let first_extension_index = sequence_or_set.extensible;
-    Ok(sequence_or_set
+    sequence_or_set
         .members
         .iter()
         .enumerate()
-        .map(|(i, m)| {
+        .try_fold((String::new(), Vec::new()), | mut acc, (i, m) | {
             let extension_annotation = if i >= first_extension_index.unwrap_or(usize::MAX)
                 && m.name.starts_with("ext_group_")
             {
@@ -177,20 +177,21 @@ pub fn format_sequence_or_set_members(
             } else {
                 ""
             };
-            format_sequence_member(m, parent_name, extension_annotation)
+            format_sequence_member(m, parent_name, extension_annotation).map(|(declaration, name_type)| {
+                acc.0.push_str(&declaration);
+                acc.0.push_str(r#",
+                    "#);
+                acc.1.push(name_type);
+                acc
+            })
         })
-        .collect::<Result<Vec<String>, _>>()?
-        .join(
-            r#",
-    "#,
-        ))
 }
 
 fn format_sequence_member(
     member: &SequenceOrSetMember,
     parent_name: &String,
     extension_annotation: &str,
-) -> Result<String, GeneratorError> {
+) -> Result<(String, StringifiedNameType), GeneratorError> {
     let name = to_rust_snake_case(&member.name);
     let (mut all_constraints, mut formatted_type_name) = match &member.r#type {
         ASN1Type::Null => (vec![], "()".into()),
@@ -238,7 +239,7 @@ fn format_sequence_member(
     } else {
         "".into()
     };
-    let tag = format_tag(member.tag.as_ref());
+    let tag = format_tag(member.tag.as_ref(), String::new());
     let annotations = join_annotations(vec![
         extension_annotation.to_string(),
         range_annotations,
@@ -246,7 +247,7 @@ fn format_sequence_member(
         tag,
         default_annotation,
     ]);
-    Ok(format!(r#"{annotations}{name}: {formatted_type_name}"#))
+    Ok((format!(r#"{annotations}pub {name}: {formatted_type_name}"#), StringifiedNameType { name, typ: formatted_type_name }))
 }
 
 pub fn format_choice_options(
@@ -319,7 +320,7 @@ fn format_choice_option(
     } else {
         "".into()
     };
-    let tag = format_tag(member.tag.as_ref());
+    let tag = format_tag(member.tag.as_ref(), String::new());
     let annotations = join_annotations(vec![
         extension_annotation.to_string(),
         range_annotations,
@@ -405,10 +406,11 @@ pub fn format_default_methods(
             let method_name = default_method_name(parent_name, &member.name);
             output.push_str(&format!(
                 r#"fn {method_name}() -> {type_as_string} {{
-                {value_as_string}
+                {value_as_string}{}
             }}
             
-            "#
+            "#,
+            if type_as_string == value_as_string { "" } else {".into()"}
             ))
         }
     }
@@ -485,4 +487,19 @@ pub fn format_nested_choice_options(
     
     "#,
         ))
+}
+
+pub fn format_new_impl(name: &String, name_types: Vec<StringifiedNameType>) -> String {
+    format!(r#"impl {name} {{
+        pub fn new(
+            {}
+        ) -> Self {{
+            Self {{
+                {}
+            }}
+        }}
+    }}"#,
+        name_types.iter().map(|nt| format!("{}: {},", nt.name, nt.typ)).collect::<Vec<String>>().join("\n\t"),
+        name_types.iter().map(|nt| format!("{},", nt.name)).collect::<Vec<String>>().join("\n\t")
+    )
 }
