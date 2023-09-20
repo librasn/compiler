@@ -30,6 +30,8 @@ pub fn generate<'a>(
             ASN1Type::Real(_) => todo!(),
             ASN1Type::ObjectIdentifier(_) => generate_oid(t),
             ASN1Type::InformationObjectFieldReference(_) => generate_any(t),
+            ASN1Type::GeneralizedTime(_) => generate_generalized_time(t),
+            ASN1Type::UTCTime(_) => generate_utc_time(t),
         },
         ToplevelDeclaration::Value(v) => match v.value {
             ASN1Value::Null => generate_null_value(v),
@@ -47,6 +49,7 @@ pub fn generate<'a>(
             // ASN1Value::Sequence(_) => generate_sequence_value(v),
             ASN1Value::Real(_) => todo!(),
             ASN1Value::ObjectIdentifier(_) => generate_object_identifier_value(v),
+            ASN1Value::Time(_) => generate_time_value(v),
             _ => Ok("".into()),
         },
         ToplevelDeclaration::Information(i) => match i.value {

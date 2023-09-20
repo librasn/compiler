@@ -38,7 +38,7 @@ use self::{
     real::*,
     sequence::{sequence, sequence_value},
     sequence_of::*,
-    set::*,
+    set::*, time::*,
 };
 
 mod bit_string;
@@ -60,6 +60,7 @@ mod real;
 mod sequence;
 mod sequence_of;
 mod set;
+mod time;
 mod util;
 
 pub fn asn_spec<'a>(
@@ -110,6 +111,8 @@ pub fn asn1_type<'a>(input: &'a str) -> IResult<&'a str, ASN1Type> {
         sequence_of,
         sequence,
         set,
+        utc_time,
+        generalized_time,
         real,
         choice,
         integer,
@@ -132,6 +135,7 @@ pub fn asn1_value<'a>(input: &'a str) -> IResult<&'a str, ASN1Value> {
         choice_value,
         real_value,
         sequence_value,
+        time_value,
         bit_string_value,
         boolean_value,
         integer_value,

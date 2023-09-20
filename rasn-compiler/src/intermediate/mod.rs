@@ -60,6 +60,8 @@ pub const GENERAL_STRING: &'static str = "GeneralString";
 pub const UNIVERSAL_STRING: &'static str = "UniversalString";
 pub const BMP_STRING: &'static str = "BMPString";
 pub const PRINTABLE_STRING: &'static str = "PrintableString";
+pub const GENERALIZED_TIME: &'static str = "GeneralizedTime";
+pub const UTC_TIME: &'static str = "UTCTime";
 pub const ENUMERATED: &'static str = "ENUMERATED";
 pub const CHOICE: &'static str = "CHOICE";
 pub const SEQUENCE: &'static str = "SEQUENCE";
@@ -470,9 +472,11 @@ impl ToplevelDeclaration {
                             } else {
                                 None
                             };
-                            if let Some(ToplevelDeclaration::Value(id)) = tlds.get(&maybe_id.clone().unwrap_or_default()) {
+                            if let Some(ToplevelDeclaration::Value(id)) =
+                                tlds.get(&maybe_id.clone().unwrap_or_default())
+                            {
                                 *default = id.value.clone();
-                                return true
+                                return true;
                             }
                             let enumerated_id = match &m.r#type {
                                 ASN1Type::Enumerated(_) => format!(
@@ -627,6 +631,8 @@ pub enum ASN1Type {
     SequenceOf(SequenceOf),
     Set(SequenceOrSet),
     // SetOf,
+    GeneralizedTime(GeneralizedTime),
+    UTCTime(UTCTime),
     ElsewhereDeclaredType(DeclarationElsewhere),
     ObjectIdentifier(ObjectIdentifier),
     InformationObjectFieldReference(InformationObjectFieldReference),
@@ -657,10 +663,10 @@ impl ASN1Type {
             ASN1Type::Null => false,
             ASN1Type::Boolean => false,
             ASN1Type::ObjectIdentifier(o) => o
-            .constraints
-            .iter_mut()
-            .map(|c| c.link_cross_reference(name, tlds))
-            .fold(false, |acc, b| acc || b),
+                .constraints
+                .iter_mut()
+                .map(|c| c.link_cross_reference(name, tlds))
+                .fold(false, |acc, b| acc || b),
             ASN1Type::Integer(i) => i
                 .constraints
                 .iter_mut()
@@ -887,6 +893,8 @@ impl ToString for ASN1Type {
             ASN1Type::Set(_) => todo!(),
             ASN1Type::ElsewhereDeclaredType(e) => e.identifier.clone(),
             ASN1Type::InformationObjectFieldReference(_) => todo!(),
+            ASN1Type::GeneralizedTime(_) => "GeneralizedTime".to_owned(),
+            ASN1Type::UTCTime(_) => "UtcTime".to_owned(),
         }
     }
 }
@@ -973,6 +981,7 @@ pub enum ASN1Value {
         enumerated: String,
         enumerable: String,
     },
+    Time(String),
     ElsewhereDeclaredValue(String),
     ObjectIdentifier(ObjectIdentifierValue),
 }
@@ -1126,7 +1135,7 @@ impl ASN1Value {
                 } else {
                     Err(GrammarError {
                         details: format!(
-                            "A type name is needed to stringify choice value {:?}",
+                            "A type name is needed to stringify sequence value {:?}",
                             self
                         ),
                         kind: GrammarErrorType::UnpackingError,
@@ -1167,6 +1176,15 @@ impl ASN1Value {
                     .collect::<Vec<String>>()
                     .join(",")
             )),
+            ASN1Value::Time(t) => type_name
+                .map(|time_type| format!("\"{t}\".parse::<{time_type}>().unwrap()"))
+                .ok_or(GrammarError {
+                    details: format!(
+                        "A type name is needed to stringify time value {:?}",
+                        self
+                    ),
+                    kind: GrammarErrorType::UnpackingError,
+                }),
         }
     }
 }

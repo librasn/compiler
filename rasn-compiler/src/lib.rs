@@ -1,21 +1,19 @@
-//! The `asnr-compiler` library is a parser combinator that parses ASN1 specifications and outputs
-//! encoding-rule-agnotic rust representations of the ASN1 data elements. ASNR heavily relies on the great
-//! library [nom](https://docs.rs/nom/latest/nom/) for its basic parsers. It is designed to be
-//! encoding-rule-agnostic, so that its output can be used regardless whether the actual encoding follows
-//! BER, DER, CER, PER, XER, or whatever exotic *ERs still out there.
+//! The `rasn-compiler` library is a parser combinator that parses ASN1 specifications and outputs
+//! encoding-rule-agnotic rust representations of the ASN1 data elements to be used with the `rasn` crate. 
+//! The compiler heavily relies on the great library [nom](https://docs.rs/nom/latest/nom/) for its basic parsers. 
 //!
 //! ## Example
 //!
-//! In order to compile ASN1 in your build process, invoke the ASNR compiler in your [`build.rs` build script](https://doc.rust-lang.org/cargo/reference/build-scripts.html).
+//! In order to compile ASN1 in your build process, invoke the rasn compiler in your [`build.rs` build script](https://doc.rust-lang.org/cargo/reference/build-scripts.html).
 //!
 //! ```rust
 //! // build.rs build script
 //! use std::path::PathBuf;
-//! use asnr_compiler::Asnr;
+//! use rasn_compiler::RasnCompiler;
 //!
 //! fn main() {
 //!   // Initialize the compiler
-//!   match Asnr::new()
+//!   match RasnCompiler::new()
 //!     // add a single ASN1 source file
 //!     .add_asn_by_path(PathBuf::from("spec_1.asn"))
 //!     // add several ASN1 source files
@@ -54,7 +52,7 @@ use generator::{generate, template::rasn_imports_and_generic_types};
 use parser::asn_spec;
 use validator::Validator;
 
-/// The ASNR compiler
+/// The rasn compiler
 #[derive(Debug, PartialEq)]
 pub struct RasnCompiler<S: RasnCompilerState> {
     state: S,
@@ -85,7 +83,7 @@ pub struct CompilerSourcesSet {
     sources: Vec<AsnSource>,
 }
 
-/// State of the Asnr compiler
+/// State of the rasn compiler
 pub trait RasnCompilerState {}
 impl RasnCompilerState for CompilerReady {}
 impl RasnCompilerState for CompilerOutputSet {}
@@ -99,7 +97,7 @@ enum AsnSource {
 }
 
 impl RasnCompiler<CompilerMissingParams> {
-    /// Provides a Builder for building ASNR compiler commands
+    /// Provides a Builder for building rasn compiler commands
     pub fn new() -> RasnCompiler<CompilerMissingParams> {
         RasnCompiler {
             state: CompilerMissingParams::default(),
@@ -134,8 +132,8 @@ impl RasnCompiler<CompilerMissingParams> {
     /// Add a literal ASN1 source to the compile command
     /// * `literal` - literal ASN1 statement to include
     /// ```rust
-    /// # use asnr_compiler::Asnr;
-    /// Asnr::new().add_asn_literal("My-test-integer ::= INTEGER (1..128)").compile_to_string();
+    /// # use rasn_compiler::RasnCompiler;
+    /// RasnCompiler::new().add_asn_literal("My-test-integer ::= INTEGER (1..128)").compile_to_string();
     /// ```
     pub fn add_asn_literal(self, literal: impl Into<String>) -> RasnCompiler<CompilerSourcesSet> {
         RasnCompiler {
@@ -147,11 +145,11 @@ impl RasnCompiler<CompilerMissingParams> {
 
     /// Set the output path for the generated rust representation.
     /// * `output_path` - path to an output file or directory, if path indicates
-    ///                   a directory, the output file is named `asnr_generated.rs`
+    ///                   a directory, the output file is named `rasn_generated.rs`
     pub fn set_output_path(self, output_path: impl Into<PathBuf>) -> RasnCompiler<CompilerOutputSet> {
         let mut path: PathBuf = output_path.into();
         if path.is_dir() {
-            path.set_file_name("asnr_generated.rs");
+            path.set_file_name("rasn_generated.rs");
         }
         RasnCompiler {
             state: CompilerOutputSet {
@@ -192,8 +190,8 @@ impl RasnCompiler<CompilerOutputSet> {
     /// Add a literal ASN1 source to the compile command
     /// * `literal` - literal ASN1 statement to include
     /// ```rust
-    /// # use asnr_compiler::Asnr;
-    /// Asnr::new().add_asn_literal("My-test-integer ::= INTEGER (1..128)").compile_to_string();
+    /// # use rasn_compiler::RasnCompiler;
+    /// RasnCompiler::new().add_asn_literal("My-test-integer ::= INTEGER (1..128)").compile_to_string();
     /// ```
     pub fn add_asn_literal(self, literal: impl Into<String>) -> RasnCompiler<CompilerReady> {
         RasnCompiler {
@@ -237,8 +235,8 @@ impl RasnCompiler<CompilerSourcesSet> {
     /// Add a literal ASN1 source to the compile command
     /// * `literal` - literal ASN1 statement to include
     /// ```rust
-    /// # use asnr_compiler::Asnr;
-    /// Asnr::new().add_asn_literal("My-test-integer ::= INTEGER (1..128)").compile_to_string();
+    /// # use rasn_compiler::RasnCompiler;
+    /// RasnCompiler::new().add_asn_literal("My-test-integer ::= INTEGER (1..128)").compile_to_string();
     /// ```
     pub fn add_asn_literal(self, literal: impl Into<String>) -> RasnCompiler<CompilerSourcesSet> {
         let mut sources: Vec<AsnSource> = self.state.sources;
@@ -252,11 +250,11 @@ impl RasnCompiler<CompilerSourcesSet> {
 
     /// Set the output path for the generated rust representation.
     /// * `output_path` - path to an output file or directory, if path indicates
-    ///                   a directory, the output file is named `asnr_generated.rs`
+    ///                   a directory, the output file is named `rasn_generated.rs`
     pub fn set_output_path(self, output_path: impl Into<PathBuf>) -> RasnCompiler<CompilerReady> {
         let mut path: PathBuf = output_path.into();
         if path.is_dir() {
-            path.set_file_name("asnr_generated.rs");
+            path.set_file_name("rasn_generated.rs");
         }
         RasnCompiler {
             state: CompilerReady {
@@ -266,7 +264,7 @@ impl RasnCompiler<CompilerSourcesSet> {
         }
     }
 
-    /// Runs the ASNR compiler command and returns stringified Rust.
+    /// Runs the rasn compiler command and returns stringified Rust.
     /// Returns a Result wrapping a compilation result:
     /// * _Ok_  - tuple containing the stringified Rust representation of the ASN1 spec as well as a vector of warnings raised during the compilation
     /// * _Err_ - Unrecoverable error, no rust representations were generated
@@ -319,8 +317,8 @@ impl RasnCompiler<CompilerReady> {
     /// Add a literal ASN1 source to the compile command
     /// * `literal` - literal ASN1 statement to include
     /// ```rust
-    /// # use asnr_compiler::Asnr;
-    /// Asnr::new().add_asn_literal("My-test-integer ::= INTEGER (1..128)").compile_to_string();
+    /// # use rasn_compiler::RasnCompiler;
+    /// RasnCompiler::new().add_asn_literal("My-test-integer ::= INTEGER (1..128)").compile_to_string();
     /// ```
     pub fn add_asn_literal(self, literal: impl Into<String>) -> RasnCompiler<CompilerReady> {
         let mut sources: Vec<AsnSource> = self.state.sources;
@@ -333,7 +331,7 @@ impl RasnCompiler<CompilerReady> {
         }
     }
 
-    /// Runs the ASNR compiler command and returns stringified Rust.
+    /// Runs the rasn compiler command and returns stringified Rust.
     /// Returns a Result wrapping a compilation result:
     /// * _Ok_  - tuple containing the stringified Rust representation of the ASN1 spec as well as a vector of warnings raised during the compilation
     /// * _Err_ - Unrecoverable error, no rust representations were generated
@@ -348,7 +346,7 @@ impl RasnCompiler<CompilerReady> {
         )
     }
 
-    /// Runs the ASNR compiler command.
+    /// Runs the rasn compiler command.
     /// Returns a Result wrapping a compilation result:
     /// * _Ok_  - Vector of warnings raised during the compilation
     /// * _Err_ - Unrecoverable error, no rust representations were generated
@@ -369,13 +367,13 @@ impl RasnCompiler<CompilerReady> {
 }
 
 fn internal_compile(
-    asnr: &RasnCompiler<CompilerSourcesSet>,
+    rasn: &RasnCompiler<CompilerSourcesSet>,
     include_file_headers: bool,
 ) -> Result<(String, Vec<Box<dyn Error>>), Box<dyn Error>> {
     let mut result = rasn_imports_and_generic_types(include_file_headers);
     let mut warnings = Vec::<Box<dyn Error>>::new();
     let mut modules: Vec<ToplevelDeclaration> = vec![];
-    for src in &asnr.state.sources {
+    for src in &rasn.state.sources {
         let stringified_src = match src {
             AsnSource::Path(p) => read_to_string(p)?,
             AsnSource::Literal(l) => l.clone(),
@@ -457,76 +455,5 @@ fn format_bindings(bindings: &String) -> Result<String, Box<dyn Error>> {
             ))),
         },
         _ => Ok(bindings.into()),
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use std::path::PathBuf;
-
-    use crate::RasnCompiler;
-
-    #[test]
-    fn compiles_a_simple_spec() {
-        println!(
-            "{:#?}",
-            RasnCompiler::new()
-//             .add_asn_literal(r#"Test-Schema DEFINITIONS AUTOMATIC TAGS ::=
-
-// BEGIN
-
-// ContributedExtensionBlock ::= SEQUENCE {
-//   contributorId IEEE1609DOT2-HEADERINFO-CONTRIBUTED-EXTENSION.&id({
-//     Ieee1609Dot2HeaderInfoContributedExtensions
-//   }),
-//   extns         SEQUENCE (SIZE(1..MAX)) OF
-//     IEEE1609DOT2-HEADERINFO-CONTRIBUTED-EXTENSION.&Extn({
-//     Ieee1609Dot2HeaderInfoContributedExtensions
-//   }{@.contributorId})
-// }
-
-
-// /**
-//  * @brief This Information Object Class defines the class that provides a 
-//  * template for defining extension blocks.
-//  */
-// IEEE1609DOT2-HEADERINFO-CONTRIBUTED-EXTENSION ::= CLASS {
-//   &id   HeaderInfoContributorId UNIQUE,
-//   &Extn
-// } WITH SYNTAX {&Extn IDENTIFIED BY &id}
-
-// /**
-//  * @brief This structure is an ASN.1 Information Object Set listing the 
-//  * defined contributed extension types and the associated 
-//  * HeaderInfoContributorId values. In this version of this standard two 
-//  * extension types are defined: Ieee1609ContributedHeaderInfoExtension and 
-//  * EtsiOriginatingHeaderInfoExtension.
-//  */
-// Ieee1609Dot2HeaderInfoContributedExtensions
-//   IEEE1609DOT2-HEADERINFO-CONTRIBUTED-EXTENSION ::= {
-//   {Ieee1609ContributedHeaderInfoExtension IDENTIFIED BY 
-//         ieee1609HeaderInfoContributorId} |
-//   {EtsiOriginatingHeaderInfoExtension IDENTIFIED BY
-//     etsiHeaderInfoContributorId},
-//   ...
-// }
-
-// Ieee1609ContributedHeaderInfoExtension ::= INTEGER(0)
-// EtsiOriginatingHeaderInfoExtension ::= INTEGER(1)
-
-// END
-// "#)
-                // .add_asn_by_path(PathBuf::from("test_asn1/AddGrpC.asn"))
-                // .add_asn_by_path(PathBuf::from("test_asn1/ETSI-ITS-CDD.asn"))
-                 .add_asn_by_path(PathBuf::from("test_asn1/REGION.asn"))
-                // .add_asn_by_path(PathBuf::from("test_asn1/1609.asn"))
-                //.add_asn_by_path(PathBuf::from("test_asn1/CAP.asn"))
-                //.add_asn_by_path(PathBuf::from("test_asn1/kerberos.asn"))
-                //.add_asn_by_path(PathBuf::from("test_asn1/denm_2_0.asn"))
-                .set_output_path(PathBuf::from("test_asn1/generated.rs"))
-                .compile()
-                // .compile_to_string()
-                .unwrap()
-        )
     }
 }

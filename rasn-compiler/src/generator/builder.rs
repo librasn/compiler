@@ -7,19 +7,26 @@ use crate::intermediate::{
 use super::{
     error::{GeneratorError, GeneratorErrorType},
     generate,
-    template::{
-        any_template, bit_string_template, boolean_template, char_string_template, choice_template,
-        enumerated_template, integer_template, integer_value_template, null_template,
-        null_value_template, object_identifier_value_template, octet_string_template, oid_template,
-        sequence_of_template, sequence_or_set_template, typealias_template,
-    },
-    utils::{
-        format_alphabet_annotations, format_choice_options, format_comments,
-        format_default_methods, format_enum_members, format_nested_choice_options,
-        format_nested_sequence_members, format_range_annotations, format_sequence_or_set_members,
-        format_tag, int_type_token, string_type, format_new_impl,
-    },
+    template::*,
+    utils::*,
 };
+
+pub fn generate_time_value(tld: ToplevelValueDeclaration) -> Result<String, GeneratorError> {
+    if let ASN1Value::Time(_) = &tld.value {
+        Ok(time_value_template(
+            format_comments(&tld.comments),
+            to_rust_const_case(&tld.name),
+            tld.type_name.clone(),
+            tld.value.value_as_string(Some(&tld.type_name))?,
+        ))
+    } else {
+        Err(GeneratorError::new(
+            Some(ToplevelDeclaration::Value(tld)),
+            "Expected GeneralizedTime or UTCTime value top-level declaration",
+            GeneratorErrorType::Asn1TypeMismatch,
+        ))
+    }
+}
 
 pub fn generate_typealias(tld: ToplevelTypeDeclaration) -> Result<String, GeneratorError> {
     if let ASN1Type::ElsewhereDeclaredType(dec) = &tld.r#type {
@@ -196,6 +203,38 @@ pub fn generate_any(tld: ToplevelTypeDeclaration) -> Result<String, GeneratorErr
     ))
 }
 
+pub fn generate_generalized_time(tld: ToplevelTypeDeclaration) -> Result<String, GeneratorError> {
+    if let ASN1Type::GeneralizedTime(_) = &tld.r#type {
+        Ok(generalized_time_template(
+            format_comments(&tld.comments),
+            to_rust_title_case(&tld.name),
+            format_tag(tld.tag.as_ref(), String::new()),
+        ))
+    } else {
+        Err(GeneratorError::new(
+            Some(ToplevelDeclaration::Type(tld)),
+            "Expected GeneralizedTime top-level declaration",
+            GeneratorErrorType::Asn1TypeMismatch,
+        ))
+    }
+}
+
+pub fn generate_utc_time(tld: ToplevelTypeDeclaration) -> Result<String, GeneratorError> {
+    if let ASN1Type::UTCTime(_) = &tld.r#type {
+        Ok(utc_time_template(
+            format_comments(&tld.comments),
+            to_rust_title_case(&tld.name),
+            format_tag(tld.tag.as_ref(), String::new()),
+        ))
+    } else {
+        Err(GeneratorError::new(
+            Some(ToplevelDeclaration::Type(tld)),
+            "Expected UTCTime top-level declaration",
+            GeneratorErrorType::Asn1TypeMismatch,
+        ))
+    }
+}
+
 pub fn generate_oid(tld: ToplevelTypeDeclaration) -> Result<String, GeneratorError> {
     if let ASN1Type::ObjectIdentifier(oid) = &tld.r#type {
         Ok(oid_template(
@@ -281,24 +320,6 @@ pub fn generate_choice(tld: ToplevelTypeDeclaration) -> Result<String, Generator
     }
 }
 
-//     fn generate_information_object_class(
-//         tld: ToplevelInformationDeclaration,
-//     ) -> Result<String, GeneratorError> {
-//         if let ASN1Information::ObjectClass(ref ioc) = tld.value {
-//             Ok(information_object_class_template(
-//                 format_comments(&tld.comments),
-//                 rustify_name(&tld.name),
-//                 ioc.declare(),
-//             ))
-//         } else {
-//             Err(GeneratorError::new(
-//                 Some(ToplevelDeclaration::Information(tld)),
-//                 "Expected CLASS top-level declaration",
-//                 GeneratorErrorType::Asn1TypeMismatch,
-//             ))
-//         }
-//     }
-
 pub fn generate_object_identifier_value(
     tld: ToplevelValueDeclaration,
 ) -> Result<String, GeneratorError> {
@@ -342,7 +363,7 @@ pub fn generate_sequence_or_set(tld: ToplevelTypeDeclaration) -> Result<String, 
                 format_tag(tld.tag.as_ref(), String::from("automatic_tags")),
                 set_annotation.into(),
                 format_default_methods(&seq.members, &name)?,
-                format_new_impl(&name, name_types)
+                format_new_impl(&name, name_types),
             ))
         }
         _ => Err(GeneratorError::new(

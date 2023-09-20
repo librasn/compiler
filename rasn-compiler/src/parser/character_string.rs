@@ -39,7 +39,7 @@ pub fn character_string_value<'a>(input: &'a str) -> IResult<&'a str, ASN1Value>
 /// _for the cell specified by the "Group", "Plane", "Row", and "Cell" values._
 /// _In all cases, the set of permitted characters may be restricted by subtyping._
 ///
-/// __Currently, the ASNR compiler only supports group `0`__
+/// __Currently, the rasn compiler only supports group `0`__
 fn quadruple<'a>(input: &'a str) -> IResult<&'a str, char> {
     map_res(
         in_braces(tuple((

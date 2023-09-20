@@ -206,6 +206,8 @@ fn format_sequence_member(
         ASN1Type::Real(_) => (vec![], "f64".into()),
         ASN1Type::ObjectIdentifier(o) => (o.constraints.clone(), "Oid".into()),
         ASN1Type::BitString(b) => (b.constraints.clone(), "BitString".into()),
+        ASN1Type::GeneralizedTime(o) => (o.constraints.clone(), "GeneralizedTime".into()),
+        ASN1Type::UTCTime(o) => (o.constraints.clone(), "UtcTime".into()),
         ASN1Type::OctetString(o) => (o.constraints.clone(), "OctetString".into()),
         ASN1Type::CharacterString(c) => (c.constraints.clone(), string_type(&c.r#type)),
         ASN1Type::Enumerated(_)
@@ -299,6 +301,8 @@ fn format_choice_option(
         ASN1Type::ObjectIdentifier(o) => (o.constraints.clone(), "Oid".into()),
         ASN1Type::BitString(b) => (b.constraints.clone(), "BitString".into()),
         ASN1Type::OctetString(o) => (o.constraints.clone(), "OctetString".into()),
+        ASN1Type::GeneralizedTime(o) => (o.constraints.clone(), "GeneralizedTime".into()),
+        ASN1Type::UTCTime(o) => (o.constraints.clone(), "UtcTime".into()),
         ASN1Type::CharacterString(c) => (c.constraints.clone(), string_type(&c.r#type)),
         ASN1Type::Enumerated(_)
         | ASN1Type::Choice(_)

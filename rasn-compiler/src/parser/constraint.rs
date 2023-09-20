@@ -22,7 +22,7 @@ use super::{
 };
 
 pub fn constraint<'a>(input: &'a str) -> IResult<&'a str, Vec<Constraint>> {
-    many1(alt((
+    skip_ws_and_comments(many1(alt((
         single_constraint,
         // Handle SIZE constraint without external parentheses
         map(size_constraint, |c| {
@@ -32,7 +32,7 @@ pub fn constraint<'a>(input: &'a str) -> IResult<&'a str, Vec<Constraint>> {
             })
         }),
         map(parameters, |p| Constraint::Parameter(p)),
-    )))(input)
+    ))))(input)
 }
 
 pub fn single_constraint<'a>(input: &'a str) -> IResult<&'a str, Constraint> {

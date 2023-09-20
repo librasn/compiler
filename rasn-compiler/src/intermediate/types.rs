@@ -113,6 +113,20 @@ impl From<Option<Vec<Constraint>>> for Real {
     }
 }
 
+/// Representation of an ASN1 GeneralizedTime data element
+/// with corresponding constraints
+#[derive(Debug, Clone, PartialEq)]
+pub struct GeneralizedTime {
+    pub constraints: Vec<Constraint>,
+}
+
+/// Representation of an ASN1 UTCTime data element
+/// with corresponding constraints
+#[derive(Debug, Clone, PartialEq)]
+pub struct UTCTime {
+    pub constraints: Vec<Constraint>,
+}
+
 /// Representation of an ASN1 OCTET STRING data element
 /// with corresponding constraints
 #[derive(Debug, Clone, PartialEq)]

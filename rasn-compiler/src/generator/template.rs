@@ -78,6 +78,56 @@ pub fn integer_template(
     )
 }
 
+pub fn time_value_template(
+    comments: String,
+    name: String,
+    type_name: String,
+    stringified_value: String,
+) -> String {
+    format!(
+        r#"
+{comments}
+pub const {name}: {type_name} = {stringified_value};
+"#
+    )
+}
+
+pub fn generalized_time_template(
+    comments: String,
+    name: String,
+    tag_annotations: String,
+) -> String {
+    let rasn_annotations: String = join_annotations(vec![
+        "delegate".into(),
+        tag_annotations,
+    ]);
+    format!(
+        r#"
+{comments}
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+{rasn_annotations}pub struct {name}(pub GeneralizedTime);
+"#
+    )
+}
+
+pub fn utc_time_template(
+    comments: String,
+    name: String,
+    tag_annotations: String,
+) -> String {
+    let rasn_annotations: String = join_annotations(vec![
+        "delegate".into(),
+        tag_annotations,
+    ]);
+    format!(
+        r#"
+{comments}
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+{rasn_annotations}pub struct {name}(pub UtcTime);
+"#
+    )
+}
+
 pub fn bit_string_template(
     comments: String,
     name: String,
