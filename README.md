@@ -1,7 +1,8 @@
 # Rasn compiler
 The `rasn-compiler` library is a parser combinator that parses ASN1 specifications and outputs
 encoding-rule-agnotic rust representations of the ASN1 data elements to be used with the [`rasn`](https://github.com/XAMPPRocky/rasn) crate. 
-The compiler heavily relies on the great library [nom](https://docs.rs/nom/latest/nom/) for its basic parsers. 
+The compiler heavily relies on the great library [nom](https://docs.rs/nom/latest/nom/) for its basic parsers.
+The parser has been designed to generate rasn ASN1 representations. I should not be used as a validating tool for ASN1 modules (yet), since some of the parsers are more lenient than the ASN1 syntax specification. The compiler aims to become fully compliant with X680 in this regard.
 
 ## Example
 In order to compile ASN1 in your build process, invoke the `rasn-compiler` in your [`build.rs` build script](https://doc.rust-lang.org/cargo/reference/build-scripts.html).
