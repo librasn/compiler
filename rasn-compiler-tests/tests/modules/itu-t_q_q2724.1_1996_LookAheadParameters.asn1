@@ -1,0 +1,168 @@
+
+
+
+
+
+
+
+-- Module LookAheadParameters (Q.2724.1:07/1996)
+-- See also ITU-T Q.2724.1 (07/1996)
+-- See also the index of all ASN.1 assignments needed in this document
+
+LookAheadParameters {itu-t(0) recommendation(0) q(17) q2724(2724) q2724-1(1)
+  modules(0) parameters(2) version1(0)} DEFINITIONS IMPLICIT TAGS ::=
+BEGIN
+
+AALParameters ::= SEQUENCE {
+  codingStandard      CodingStandard,
+  aALParametersField  AALParametersField
+}
+
+AdditionalATMCellRateparameterfield ::= SET OF ATMCellRateField
+
+ATMCellRate ::= SET OF ATMCellRateField
+
+BroadbandBearerCapability ::= SEQUENCE {
+  codingStandard                  CodingStandard,
+  broadbandBearerCapabilityField  BroadbandBearerCapabilityField
+}
+
+BroadbandHighLayerInfo ::= SEQUENCE {
+  codingStandard                      CodingStandard,
+  broadbandHighLayerInformationField  BroadbandHighLayerInformationField
+}
+
+BroadbandLowLayerInfo ::= SEQUENCE {
+  priority                           Priority,
+  repeatIndicator                    RepeatIndicator,
+  broadbandLowLayerInformationField
+    SEQUENCE OF BroadbandLowLayerInformationField
+}
+
+AESAForCalledParty ::= SEQUENCE {
+  codingStandard           CodingStandard,
+  aESAForCalledPartyField  AESAForCalledPartyField
+}
+
+CalledPartyNumber ::= SEQUENCE {
+  natureOfAddressIndicator        NatureOfAddressIndicator,
+  numberingPlanIndicator          NumberingPlanIndicator,
+  internalNetworkNumberIndicator  InternalNetworkNumberIndicator,
+  calledPartyAddress              CalledPartyAddress
+}
+
+CalledPartySubaddress ::= SEQUENCE {
+  codingStandard              CodingStandard,
+  calledPartySubaddressField  CalledPartySubaddressField
+}
+
+CauseIndicators ::= OCTET STRING -- (SIZE (7..N)) 
+
+-- coding as Recommendation Q.2610 
+NarrowbandBearerCapability ::= SEQUENCE {
+  priority                         Priority,
+  repeatIndicator                  RepeatIndicator,
+  narrowbandBearerCapabilityField  SEQUENCE OF NarrowbandBearerCapabilityField
+}
+
+NarrowbandHighLayerCompa ::= SEQUENCE {
+  priority                       Priority,
+  repeatIndicator                RepeatIndicator,
+  narrowbandHighLayerCompaField  SEQUENCE OF NarrowbandHighLayerCompaField
+}
+
+NarrowbandLowLayerCompa ::= SEQUENCE {
+  priority                      Priority,
+  repeatIndicator               RepeatIndicator,
+  narrowbandLowLayerCompaField  SEQUENCE OF NarrowbandLowLayerCompaField
+}
+
+OAMTrafficDescriptor ::= SEQUENCE {
+  codingStandard             CodingStandard,
+  oAMTrafficDescriptorField  OAMTrafficDescriptorField
+}
+
+-- Parameters content
+AALParametersField ::= OCTET STRING(SIZE (1..17))
+
+--	coding as AAL parameters info element Recommendation Q.2931 starting with octet 5
+ATMCellRateField ::= SEQUENCE {
+  cellRateIdentifier  CellRateIdentifier,
+  cellRateID          CellRateID
+}
+
+CalledATMEndSystemAddressField ::= OCTET STRING(SIZE (2..21))
+
+--	coding as called party number info element in Recommendation Q.2931 starting with octet 5
+CellRateIdentifier ::= ENUMERATED {
+  forwardPeakCellRateForCellLossPriority0(2),
+  backwardPeakCellRateForCellLossPriority0(3),
+  forwardPeakCellRateForCellLossPriority0and1(4),
+  backwardPeakCellRateForCellLossPriority0and1(5)}
+
+CellRateID ::= INTEGER(0..16777215) --	maximum value 224 - 1
+                      
+
+BroadbandBearerCapabilityField ::= OCTET STRING(SIZE (2..3))
+
+--	coding as Broadband BC info element in Recommendation Q.2931 starting with octet 5
+BroadbandHighLayerInformationField ::= OCTET STRING(SIZE (1..9))
+
+--	coding as Broadband HLC info element in Recommendation Q.2931 starting with octet 5
+BroadbandLowLayerInformationField ::= OCTET STRING(SIZE (4..17))
+
+--	coding as Broadband LLC info element in Recommendation Q.2931 including the header
+CalledPartyAddress ::= SEQUENCE SIZE (0..16) OF CalledAddressSignal
+
+CalledAddressSignal ::= ENUMERATED {
+  digit0(0), digit1(1), digit2(2), digit3(3), digit4(4), digit5(5), digit6(6),
+  digit7(7), digit8(8), digit9(9), code11(11), code12(12), sTsignal(15)
+}
+
+CalledPartySubaddressField ::= OCTET STRING(SIZE (2..21))
+
+--	coding as SUB info element in Recommendation Q.2931 starting with octet 5
+NatureOfAddressIndicator ::= ENUMERATED {
+  subscriberNumber(1), --	for national use
+  unknown(2), --	for national use
+  nationalSignificantNumber(3), internationalNumber(4)
+ --	values 112..126 are reserved--}
+
+NumberingPlanIndicator ::= ENUMERATED {
+  iSDNTelephonyNumberingPlanE164(1) --	values 3, 4, 5 and 6 are reserved --
+  --	for national use
+  }
+
+InternalNetworkNumberIndicator ::= ENUMERATED {
+  routingToInternalNetworkNumberAllowed(0),
+  routingToInternalNetworkNumberNotAllowed(1)}
+
+Priority ::= ENUMERATED {
+  noPrioritisedOrder(0), prioritisedListInAscendingOrder(1),
+  prioritisedListInDecendingOrder(2)
+  --	values 3..15 are reserved
+  }
+
+RepeatIndicator ::= ENUMERATED {
+  informationElementNotRepeated(0), informationElementRepeated(1)}
+
+NarrowbandBearerCapabilityField ::= OCTET STRING(SIZE (4..13))
+
+--	coding as Narrow-band BC info element in Recommendation Q.2931 including the header
+NarrowbandHighLayerCompaField ::= OCTET STRING(SIZE (4..7))
+
+--	coding as Narrow-band HLC info element in Recommendation Q.2931 including the header
+NarrowbandLowLayerCompaField ::= OCTET STRING(SIZE (4..20))
+
+--	coding as Narrow-band LLC info element in Recommendation Q.2931 including the header
+OAMTrafficDescriptorField ::= OCTET STRING(SIZE (2))
+
+--	coding as OAM traffic descriptor IE in Recommendation Q.2931 starting with octet 5
+CodingStandard ::= NULL -- No valid definition has been found
+
+AESAForCalledPartyField ::= NULL -- No valid definition has been found
+
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

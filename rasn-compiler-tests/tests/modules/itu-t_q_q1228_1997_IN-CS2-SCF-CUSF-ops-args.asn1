@@ -1,0 +1,225 @@
+
+
+
+
+
+
+
+-- Module IN-CS2-SCF-CUSF-ops-args (Q.1228:09/1997)
+-- See also ITU-T Q.1228 (09/1997)
+-- See also the index of all ASN.1 assignments needed in this document
+
+IN-CS2-SCF-CUSF-ops-args {itu-t recommendation q 1228 modules(0)
+  in-cs2-scf-cusf-ops-args(15) version1(0)} DEFINITIONS IMPLICIT TAGS ::=
+BEGIN
+
+IMPORTS
+  OPERATION
+    FROM Remote-Operations-Information-Objects {joint-iso-itu-t
+      remote-operations(4) informationObjects(5) version1(0)}
+  EXTENSION, PARAMETERS-BOUND, SupportedExtensions{}
+    FROM IN-CS2-classes {itu-t recommendation q 1228 modules(0)
+      in-cs2-classes(4) version1(0)}
+  opcode-activationReceivedAndAuthorized, opcode-associationReleaseRequested,
+    opcode-componentReceived, opcode-initiateAssociation,
+    opcode-releaseAssociation, opcode-requestReportBCUSMEvent,
+    opcode-sendComponent
+    FROM IN-CS2-operationcodes {itu-t recommendation q 1228 modules(0)
+      in-cs2-operationcodes(2) version1(0)}
+  BCUSMEvent, CalledPartyNumber{}, CallUnrelatedDpSpecificCommonParameters{},
+    Cause{}, Component, ComponentType, ComponentCorrelationID, Duration,
+    ExtensionField{}, Message, OperationCode
+    FROM IN-CS2-datatypes {itu-t recommendation q 1228 modules(0)
+      in-cs2-datatypes(0) version1(0)}
+  missingCustomerRecord, missingParameter, parameterOutOfRange, systemFailure,
+    taskRefused, unexpectedComponentSequence, unexpectedDataValue,
+    unexpectedParameter
+    FROM IN-CS2-errortypes {itu-t recommendation q 1228 modules(0)
+      in-cs2-errortypes(1) version1(0)}
+  activityTest
+    FROM IN-CS2-SSF-SCF-ops-args {itu-t recommendation q 1228 modules(0)
+      in-cs2-ssf-scf-ops-args(5) version1(0)}
+  classes, operationcodes, ros-InformationObjects, datatypes, errortypes
+    FROM IN-CS2-object-identifiers {itu-t recommendation q 1228 modules(0)
+      in-cs2-object-identifiers(17) version1(0)};
+
+-- Direction: SCF ® CUSF, Timer: Tat 
+-- This operation is used to check for the continued existence of a relationship between the SCF 
+-- and CUSF. If the relationship is still in existence, then the CUSF will respond. If no reply is 
+-- received, then the SCF will assume that the CUSF has failed in some way and will take the 
+-- appropriate action.
+activationReceivedAndAuthorized{PARAMETERS-BOUND:bound} OPERATION ::= 
+{
+  ARGUMENT       ActivationReceivedAndAuthorizedArg {bound}
+  RETURN RESULT  FALSE
+  ERRORS
+    {missingCustomerRecord | missingParameter | parameterOutOfRange |
+      systemFailure | taskRefused | unexpectedComponentSequence |
+      unexpectedDataValue | unexpectedParameter}
+  CODE           opcode-activationReceivedAndAuthorized
+}
+
+-- Direction: CUSF ® SCF, Timer: Tara
+-- This operation is used to indicate the desire from an end user to establish an association between the end user 
+-- and a network (e.g. Q.932 REGISTER message), and the authority/ability to establish the association is 
+-- verified (BCUSM DP - Activation Received And Authorized). As the association request can have a request to 
+-- invoke an operation between the user and the network, this operation optionally indicates the component of 
+-- the operation to the SCF.
+ActivationReceivedAndAuthorizedArg{PARAMETERS-BOUND:bound} ::= SEQUENCE {
+  callUnrelatedDpSpecificCommonParameters
+    [0]  CallUnrelatedDpSpecificCommonParameters{bound},
+  componentType                            [1]  ComponentType OPTIONAL,
+  componentCorrelationID                   [3]  ComponentCorrelationID OPTIONAL,
+  extensions
+    [4]  SEQUENCE SIZE (1..bound.&numOfExtensions) OF
+           ExtensionField{{SupportedExtensions  {bound}}} OPTIONAL,
+  component                                [5]  Component OPTIONAL,
+  ...
+}
+
+associationReleaseRequested{PARAMETERS-BOUND:bound} OPERATION ::= {
+  ARGUMENT       AssociationReleaseRequestedArg {bound}
+  RETURN RESULT  FALSE
+  ERRORS
+    {missingCustomerRecord | missingParameter | parameterOutOfRange |
+      systemFailure | taskRefused | unexpectedComponentSequence |
+      unexpectedDataValue | unexpectedParameter}
+  CODE           opcode-associationReleaseRequested
+}
+
+-- Direction: CUSF ® SCF, Timer: Tarr
+-- This operation is issued by the CUSF for reporting the TDP/EDP event to the SCF that a
+-- request of association release 
+-- with optionally an operation invocation request or an response/error has been received, and criteria for the 
+-- AssociationReleasedRequested DP were met.
+AssociationReleaseRequestedArg{PARAMETERS-BOUND:bound} ::= SEQUENCE {
+  callUnrelatedDpSpecificCommonParameters
+    [0]  CallUnrelatedDpSpecificCommonParameters{bound},
+  componentType                            [1]  ComponentType OPTIONAL,
+  componentCorrelationID                   [3]  ComponentCorrelationID OPTIONAL,
+  extensions
+    [4]  SEQUENCE SIZE (1..bound.&numOfExtensions) OF
+           ExtensionField{{SupportedExtensions  {bound}}} OPTIONAL,
+  component                                [5]  Component OPTIONAL,
+  ...
+}
+
+componentReceived{PARAMETERS-BOUND:bound} OPERATION ::= {
+  ARGUMENT       ComponentReceivedArg {bound}
+  RETURN RESULT  FALSE
+  ERRORS
+    {missingCustomerRecord | missingParameter | parameterOutOfRange |
+      systemFailure | taskRefused | unexpectedComponentSequence |
+      unexpectedDataValue | unexpectedParameter}
+  CODE           opcode-componentReceived
+}
+
+-- Direction: CUSF ® SCF, Timer: Tcre
+-- This operation is used to indicate the reception of invocation of an operation or return result/return error/reject
+-- from an end user to the network.  This event is the previously requested EDP with RequestReportBCUSMEvent
+-- operation for all cases or the TDP if the new invocation meets the criteria for the ComponentReceived DP.
+-- The received result may be correlated with previously delivered invocation/result to the user with
+-- the RequestReportBCUSMEvent and SendComponent operation.
+-- Note that the multiple points of control is not allowed for the bearer unrelated interaction, and TDP is allowed
+-- if there is no control relationship between the SCF and the CUSF.  This is the same as the SCF-SSF case.
+ComponentReceivedArg{PARAMETERS-BOUND:bound} ::= SEQUENCE {
+  callUnrelatedDpSpecificCommonParameters
+    [0]  CallUnrelatedDpSpecificCommonParameters{bound},
+  componentType                            [1]  ComponentType OPTIONAL,
+  componentCorrelationID                   [3]  ComponentCorrelationID OPTIONAL,
+  extensions
+    [4]  SEQUENCE SIZE (1..bound.&numOfExtensions) OF
+           ExtensionField{{SupportedExtensions  {bound}}} OPTIONAL,
+  component                                [5]  Component OPTIONAL,
+  ...
+}
+
+initiateAssociation{PARAMETERS-BOUND:bound} OPERATION ::= {
+  ARGUMENT       InitiateAssociationArg {bound}
+  RETURN RESULT  FALSE
+  ERRORS
+    {missingParameter | parameterOutOfRange | systemFailure | taskRefused |
+      unexpectedComponentSequence | unexpectedDataValue | unexpectedParameter}
+  CODE           opcode-initiateAssociation
+}
+
+-- Direction: SCF ® CUSF, Timer: Tia
+-- This operation is used for allowing the SCF to initiate a call unrelated association with the user.
+-- The subsequent operations can be sent in the same TCAP message in the following order:
+-- 	- the RequestReportBCUSMEvent operation if an answer from the CUSF is expected
+-- 	- the SendComponent operation 
+InitiateAssociationArg{PARAMETERS-BOUND:bound} ::= SEQUENCE {
+  calledPartyNumber  [0]  CalledPartyNumber{bound},
+  extensions
+    [1]  SEQUENCE SIZE (1..bound.&numOfExtensions) OF
+           ExtensionField{{SupportedExtensions  {bound}}} OPTIONAL,
+  ...
+}
+
+releaseAssociation{PARAMETERS-BOUND:bound} OPERATION ::= {
+  ARGUMENT         ReleaseAssociationArg {bound}
+  RETURN RESULT    FALSE
+  ALWAYS RESPONDS  FALSE
+  CODE             opcode-releaseAssociation
+}
+
+--  Direction: SCF ® CUSF, Timer: Trel
+--  This operation is used to indicate the CUSF to release the existing association between the user and the 
+--  network, during the BCUSM suspended at a DP.
+ReleaseAssociationArg{PARAMETERS-BOUND:bound} ::=
+  Cause{bound}
+
+requestReportBCUSMEvent{PARAMETERS-BOUND:bound} OPERATION ::= {
+  ARGUMENT       RequestReportBCUSMEventArg {bound}
+  RETURN RESULT  FALSE
+  ERRORS
+    {missingParameter | parameterOutOfRange | systemFailure | taskRefused |
+      unexpectedComponentSequence | unexpectedDataValue | unexpectedParameter}
+  CODE           opcode-requestReportBCUSMEvent
+}
+
+-- Direction: SCF ® CUSF, Timer: Trrbce
+-- This operation is used to request the CUSF to report the reception of invocation of an operation or return result/reject 
+-- from the end user to the SCF. The requesting event can be either the result, return error/reject from the end user as the 
+-- response for the SCF specified invocation/result with the SendComponent operation
+-- or the independent invocation/result error from the end user.
+RequestReportBCUSMEventArg{PARAMETERS-BOUND:bound} ::= SEQUENCE {
+  bcusmEvents
+    [0]  SEQUENCE SIZE (1..bound.&numOfBCUSMEvents) OF BCUSMEvent,
+  componentTypes
+    [1]  SEQUENCE SIZE (1..3) OF ComponentType DEFAULT {any},
+  componentCorrelationID  [2]  ComponentCorrelationID OPTIONAL,
+  monitorDuration         [3]  Duration OPTIONAL,
+  extensions
+    [4]  SEQUENCE SIZE (1..bound.&numOfExtensions) OF
+           ExtensionField{{SupportedExtensions  {bound}}} OPTIONAL,
+  ...
+}
+
+sendComponent{PARAMETERS-BOUND:bound} OPERATION ::= {
+  ARGUMENT       SendComponentArg {bound}
+  RETURN RESULT  FALSE
+  ERRORS
+    {missingParameter | parameterOutOfRange | systemFailure | taskRefused |
+      unexpectedComponentSequence | unexpectedDataValue | unexpectedParameter}
+  CODE           opcode-sendComponent
+}
+
+-- Direction: SCF ® CUSF, Timer: Tsdc
+-- This operation is used to send a component to the user during the BCUSM suspended at a DP.
+SendComponentArg{PARAMETERS-BOUND:bound} ::= SEQUENCE {
+  componentType           [0]  ComponentType,
+  componentCorrelationID  [2]  ComponentCorrelationID OPTIONAL,
+  message                 [3]  Message DEFAULT rELeaseCOMPlete,
+  monitorDuration         [4]  Duration OPTIONAL,
+  extensions
+    [5]  SEQUENCE SIZE (1..bound.&numOfExtensions) OF
+           ExtensionField{{SupportedExtensions  {bound}}} OPTIONAL,
+  component               [6]  Component OPTIONAL,
+  ...
+}
+
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

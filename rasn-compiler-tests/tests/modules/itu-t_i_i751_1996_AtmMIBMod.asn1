@@ -1,0 +1,282 @@
+
+
+
+
+
+
+
+-- Module AtmMIBMod (I.751:03/1996)
+-- See also ITU-T I.751 (03/1996)
+-- See also the index of all ASN.1 assignments needed in this document
+
+AtmMIBMod {itu-t(0) recommendation(0) i(9) atmm(751) informationModel(0)
+  asn1Module(2) atm(0)} DEFINITIONS IMPLICIT TAGS ::=
+BEGIN
+
+-- exports everything
+IMPORTS
+  Boolean, DisconnectInformation, DisconnectResult, Failed, NameType,
+    PointerOrNull, ProblemCause, CharacteristicInformation
+    FROM ASN1DefinedTypesModule {itu-t recommendation m(13) gnm(3100)
+      informationModel(0) asn1Modules(2) asn1DefinedTypesModule(0)}
+  -- Note: DistinguishedName, RelativeDistinguishedName, formerly imported
+  -- from X.501 InformationFramework, are imported from X.711 CMIP.
+  DistinguishedName, RelativeDistinguishedName, EventTypeId, ObjectInstance
+    FROM CMIP-1 {joint-iso-itu-t ms(9) cmip(1) modules(0) protocol(3)}
+  AdministrativeState, AttributeList, ProbableCause
+    FROM Attribute-ASN1Module {joint-iso-itu-t ms(9) smi(3) part2(2)
+      asn1Module(2) 1};
+
+i751InformationModel OBJECT IDENTIFIER ::=
+  {itu-t(0) recommendation i atmm(751) informationModel(0)}
+
+i751standardSpecificExtension OBJECT IDENTIFIER ::=
+  {i751InformationModel standardSpecificExtension(0)}
+
+i751ObjectClass OBJECT IDENTIFIER ::=
+  {i751InformationModel managedObjectClass(3)}
+
+i751Package OBJECT IDENTIFIER ::= {i751InformationModel package(4)}
+
+i751Parameter OBJECT IDENTIFIER ::= {i751InformationModel parameter(5)}
+
+i751NameBinding OBJECT IDENTIFIER ::= {i751InformationModel nameBinding(6)}
+
+i751Attribute OBJECT IDENTIFIER ::= {i751InformationModel attribute(7)}
+
+i751Action OBJECT IDENTIFIER ::= {i751InformationModel action(9)}
+
+i751Notification OBJECT IDENTIFIER ::= {i751InformationModel notification(10)}
+
+i751RelationshipClass OBJECT IDENTIFIER ::=
+  {i751InformationModel relationshipClass(11)}
+
+i751RelationshipMapping OBJECT IDENTIFIER ::=
+  {i751InformationModel relationshipMapping(12)}
+
+-- default value definitions
+booleanFalseDefault Boolean ::= FALSE
+
+booleanTrueDefault Boolean ::= TRUE
+
+defaultMonitoringBlockSize AverageMonitoringBlockSize ::= blockSize:decimal128
+
+integerZero INTEGER ::= 0
+
+-- initial value definitions
+booleanFalse Boolean ::= FALSE
+
+-- additional eventTypes
+atmEventType OBJECT IDENTIFIER ::=
+  {i751standardSpecificExtension 0}
+
+cellHeaderAbnormalityEvent EventTypeId ::= globalForm:{atmEventType 0}
+
+-- additional characteristicInfo
+atmCharacteristicInfo OBJECT IDENTIFIER ::=
+  {i751standardSpecificExtension 1}
+
+vcCI CharacteristicInformation ::= {atmCharacteristicInfo  0}
+
+vpCI CharacteristicInformation ::= {atmCharacteristicInfo  1}
+
+-- additional probableCause
+atmProbableCause OBJECT IDENTIFIER ::=
+  {i751standardSpecificExtension 2}
+
+lossOfCellDelineation ProbableCause ::= globalValue:{atmProbableCause 0}
+
+-- supporting productions
+AverageMonitoringBlockSize ::= CHOICE {unknown    NULL,
+                                       blockSize  BlockSize
+}
+
+BlockSize ::= ENUMERATED {
+  decimal128(0), decimal256(1), decimal512(2), decimal1024(3)}
+
+CCProblem ::= ENUMERATED {
+  noSourceUserFlow(0), noSinkUserFlow(1), sourceAlreadyActive(2),
+  sinkAlreadyActive(3)}
+
+Cardinality1 ::= INTEGER(1)
+
+Cardinality01 ::= INTEGER(0..1)
+
+Cardinality0N ::= INTEGER(0..MAX)
+
+CDVTolerance ::= SEQUENCE {
+  cellDelayVariationToleranceCLP0plus1  [0]  CDVToleranceCoding OPTIONAL,
+  cellDelayVariationToleranceCLP0       [1]  CDVToleranceCoding OPTIONAL
+}
+
+CDVToleranceCoding ::= CHOICE {
+  integerCoding        INTEGER,
+  floatingPointCoding  FloatingPointCoding
+}
+
+CellHeaderAbnormalityType ::= ENUMERATED {
+  unassignedVpiVciValue(0), outOfRangeVpiVciValue(1)}
+
+ConnectCtpStatus ::= CHOICE {
+  ctpConnected  [0]  ObjectInstance,
+  ctpFailed     [1]  ProblemCause
+}
+
+Connected ::= SEQUENCE {
+  fromTp  ObjectInstance,
+  toTp    ObjectInstance,
+  xCon    ObjectInstance
+}
+
+ConnectInformation ::=
+  SEQUENCE OF
+    SEQUENCE {fromTermination      [0]  CtpOrDescriptor,
+              toTermination        [1]  CtpOrDescriptor,
+              administrativeState  [2]  AdministrativeState OPTIONAL}
+
+ConnectReply ::=
+  SEQUENCE OF CHOICE {connected  [0]  Connected,
+                      failed     [1]  Failed} -- import from M.3100
+
+ControlCCInformation ::= SEQUENCE {
+  activateSourceCCMechanism  [0]  BOOLEAN OPTIONAL,
+  activateSinkCCMechanism    [1]  BOOLEAN OPTIONAL
+}
+
+ControlCCResult ::= SEQUENCE {
+  sourceCCMechanismActive  [0]  BOOLEAN OPTIONAL,
+  sinkCCMechanismActive    [1]  BOOLEAN OPTIONAL,
+  additionalInformation    SET OF CCProblem OPTIONAL
+}
+
+ControlPMInformation ::= SEQUENCE {
+  controlSourcePMMechanism  [0]  SourcePMMechanism OPTIONAL,
+  controlSinkPMMechanism    [1]  SinkPMMechanism OPTIONAL
+}
+
+ControlPMResult ::= SEQUENCE {
+  sourcePMMechanismResult  [0]  SourcePMMechanism OPTIONAL,
+  sinkPMMechanismResult    [1]  SinkPMMechanism OPTIONAL,
+  additionalInformation    SET OF PMProblem OPTIONAL
+}
+
+CtpOrDescriptor ::= CHOICE {
+  ctp            [0]  ObjectInstance,
+  ctpDescriptor  [1]  Descriptor
+}
+
+CtpStatus ::= CHOICE {disconnected  [0]  NULL,
+                      failed        [1]  ProblemCause
+}
+
+Descriptor ::= SEQUENCE {
+  interfaceId                 [0]  ObjectInstance, -- a uni, intraNNI, or interNNI
+  vpi                         [1]  VpiValue OPTIONAL, -- assigned by managed system if absent
+  vci                         [2]  VciValue OPTIONAL, -- set to 0 for VP cross connect
+  egressCDVTolerancePCR       [3]  CDVTolerance OPTIONAL,
+  ingressCDVTolerancePCR      [4]  CDVTolerance OPTIONAL,
+  egressCDVToleranceSCR       [5]  CDVTolerance OPTIONAL,
+  ingressCDVToleranceSCR      [6]  CDVTolerance OPTIONAL,
+  egressMaxBurstSize          [7]  MaxBurstSize OPTIONAL,
+  ingressMaxBurstSize         [8]  MaxBurstSize OPTIONAL,
+  egressPeakCellRate          [9]  PeakCellRate OPTIONAL,
+  ingressPeakCellRate         [10]  PeakCellRate OPTIONAL,
+  egressSustainableCellRate   [11]  SustainableCellRate OPTIONAL,
+  ingressSustainableCellRate  [12]  SustainableCellRate OPTIONAL,
+  egressQosClass              [13]  QosClass OPTIONAL,
+  ingressQosClass             [14]  QosClass OPTIONAL,
+  oamIngressPeakCellRate      [15]  PeakCellRate OPTIONAL,
+  oamEgressPeakCellRate       [16]  PeakCellRate OPTIONAL,
+  oamIngressCDVTolerance      [17]  CDVTolerance OPTIONAL,
+  oamEgressCDVTolerance       [18]  CDVTolerance OPTIONAL,
+  segmentEndPoint             [19]  Boolean
+}
+
+DisconnectCtpStatus ::=
+  SEQUENCE OF SEQUENCE {ctpInstance  ObjectInstance,
+                        ctpStatus    CtpStatus}
+
+ExistingCTPs ::= SEQUENCE OF ObjectInstance
+
+FlowDirection ::= ENUMERATED {outOfSwitch(0), inToSwitch(1)}
+
+FloatingPointCoding ::= SEQUENCE {e  INTEGER(0..31),
+                                  w  INTEGER(0..31)
+}
+
+Integer ::= INTEGER
+
+InterfacePointer ::= ObjectInstance -- uni, interNNI, or intraNNI
+
+LoopbackLocation ::= SEQUENCE {
+  endPoint              BOOLEAN, -- default is TRUE
+  loopbackLocationCode  OctetStringOrNull -- default is NULL
+}
+
+LoopbackOAMCellInfo ::= SEQUENCE {
+  loopbackLocation  LoopbackLocation,
+  oamCellType       OamCellType
+}
+
+LoopbackOAMCellReply ::= SEQUENCE {
+  loopbackSuccessful  BOOLEAN,
+  problemCause        ProblemCause OPTIONAL
+}
+
+MaxBurstSize ::= SEQUENCE {
+  maxBurstSizeCLP0plus1  [0]  INTEGER OPTIONAL,
+  maxBurstSizeCLP0       [1]  INTEGER OPTIONAL
+}
+
+Null ::= NULL
+
+OamCellType ::= ENUMERATED {segment(0), endToEnd(1)}
+
+OctetString ::= OCTET STRING
+
+OctetStringOrNull ::= CHOICE {octetString  OctetString,
+                              null         NULL
+}
+
+PeakCellRate ::= SEQUENCE {
+  peakCellRateCLP0plus1  [0]  INTEGER OPTIONAL,
+  peakCellRateCLP0       [1]  INTEGER OPTIONAL
+}
+
+PMProblem ::= ENUMERATED {
+  noSourceUserFlow(0), noSinkUserFlow(1), sourceAlreadyActive(2),
+  sinkAlreadyActive(3), fePMdataNotAvailable(4),
+  fePMDataProcessingNotSupported(5), backwardReportingAlreadyActive(6),
+  fePMDataProcessingAlreadyActive(7)}
+
+QosClass ::= ENUMERATED {class0(0), class1(1), class2(2), class3(3), class4(4)}
+
+SourcePMMechanism ::= SEQUENCE {
+  sourcePMMechanismStatus           SourcePMMechanismStatus,
+  sourceAverageMonitoringBlockSize  AverageMonitoringBlockSize OPTIONAL
+}
+
+SourcePMMechanismStatus ::= ENUMERATED {
+  deactivate(0), generate(1), generateAndProcessFePMData(2)}
+
+SinkPMMechanism ::= SEQUENCE {
+  sinkPMMechanismStatus           SinkPMMechanismStatus,
+  sinkAverageMonitoringBlockSize  AverageMonitoringBlockSize OPTIONAL
+}
+
+SinkPMMechanismStatus ::= ENUMERATED {
+  deactivate(0), process(1), processAndReportBackward(2)}
+
+SustainableCellRate ::= SEQUENCE {
+  sustainableCellRateCLP0plus1  [0]  INTEGER OPTIONAL,
+  sustainableCellRateCLP0       [1]  INTEGER OPTIONAL
+}
+
+VciValue ::= INTEGER(0..65535)
+
+VpiValue ::= INTEGER(0..4095)
+
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

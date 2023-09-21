@@ -1,0 +1,157 @@
+
+
+
+
+
+
+
+-- Module IN-CS2-SCF-CUSF-pkgs-contracts-acs (Q.1228:09/1997)
+-- See also ITU-T Q.1228 (09/1997)
+-- See also the index of all ASN.1 assignments needed in this document
+
+IN-CS2-SCF-CUSF-pkgs-contracts-acs {itu-t recommendation q 1228 modules(0)
+  in-cs2-scf-cusf-pkgs-contracts-acs(16) version1(0)} DEFINITIONS ::=
+BEGIN
+
+-- This module describes the operation-packages, contracts and application-contexts used
+--  over the SCF-CUSF interface.
+IMPORTS
+  emptyConnectionPackage, PARAMETERS-BOUND, networkSpecificBoundSet
+    FROM IN-CS2-classes {itu-t recommendation q 1228 modules(0)
+      in-cs2-classes(4) version1(0)}
+  CONTRACT, OPERATION-PACKAGE, OPERATION
+    FROM Remote-Operations-Information-Objects {joint-iso-itu-t
+      remote-operations(4) informationObjects(5) version1(0)}
+  TCMessage{}
+    FROM TCAPMessages {itu-t recommendation q 773 modules(2) messages(1)
+      version3(3)}
+  APPLICATION-CONTEXT, dialogue-abstract-syntax
+    FROM TC-Notation-Extensions {itu-t recommendation q 775 modules(2)
+      notation-extension(4) version1(1)}
+  activationReceivedAndAuthorized{}, associationReleaseRequested{},
+    componentReceived{}, releaseAssociation{}, requestReportBCUSMEvent{},
+    sendComponent{}, initiateAssociation{}
+    FROM IN-CS2-SCF-CUSF-ops-args {itu-t recommendation q 1228 modules(0)
+      in-cs2-scf-cusf-ops-args(15) version1(0)}
+  id-ac-cusf-scf, id-ac-scf-cusf, id-contract-scf-cusf, id-contract-cusf-scf,
+    id-package-basic-cusf-scf, id-package-basic-scf-cusf, id-as-basic-cusf-scf,
+    id-as-basic-scf-cusf, classes, ros-InformationObjects, tc-Messages,
+    scf-cusf-Operations, tc-NotationExtensions, ssf-scf-Protocol,
+    ssf-scf-Operations
+    FROM IN-CS2-object-identifiers {itu-t recommendation q 1228 modules(0)
+      in-cs2-object-identifiers(17) version1(0)}
+  activityTestPackage
+    FROM IN-CS2-SSF-SCF-pkgs-contracts-acs {itu-t recommendation q 1228
+      modules(0) in-cs2-ssf-scf-pkgs-contracts-acs(6) version1(0)}
+  activityTest
+    FROM IN-CS2-SSF-SCF-ops-args {itu-t recommendation q 1228 modules(0)
+      in-cs2-ssf-scf-ops-args(5) version1(0)};
+
+-- application contexts 
+cusf-scf-ac APPLICATION-CONTEXT ::= {
+  CONTRACT                  cusf-scf-contract
+  DIALOGUE MODE             structured
+  TERMINATION               basic
+  ABSTRACT SYNTAXES
+    {dialogue-abstract-syntax | cusf-scf-abstract-syntax}
+  APPLICATION CONTEXT NAME  id-ac-cusf-scf
+}
+
+scf-cusf-ac APPLICATION-CONTEXT ::= {
+  CONTRACT                  scf-cusf-contract
+  DIALOGUE MODE             structured
+  TERMINATION               basic
+  ABSTRACT SYNTAXES
+    {dialogue-abstract-syntax | scf-cusf-abstract-syntax}
+  APPLICATION CONTEXT NAME  id-ac-scf-cusf
+}
+
+-- contracts 
+cusf-scf-contract CONTRACT ::= {
+  CONNECTION             emptyConnectionPackage
+  INITIATOR CONSUMER OF  {basic-cusf-scf-package{networkSpecificBoundSet}}
+  RESPONDER CONSUMER OF  {activityTestPackage}
+  ID                     id-contract-scf-cusf
+}
+
+scf-cusf-contract CONTRACT ::= {
+  CONNECTION             emptyConnectionPackage
+  INITIATOR CONSUMER OF
+    {basic-scf-cusf-package{networkSpecificBoundSet} | activityTestPackage}
+  ID                     id-contract-cusf-scf
+}
+
+-- basic cusf-scf package 
+basic-cusf-scf-package{PARAMETERS-BOUND:bound} OPERATION-PACKAGE ::= 
+{
+  CONSUMER INVOKES
+    {activationReceivedAndAuthorized{bound} | componentReceived{bound} |
+      associationReleaseRequested{bound}}
+  SUPPLIER INVOKES
+    {sendComponent{bound} | releaseAssociation{bound} |
+      requestReportBCUSMEvent{bound}}
+  ID                id-package-basic-cusf-scf
+}
+
+--  basic scf-cusf package 
+basic-scf-cusf-package{PARAMETERS-BOUND:bound} OPERATION-PACKAGE ::= 
+{
+  CONSUMER INVOKES
+    {initiateAssociation{bound} | sendComponent{bound} |
+      releaseAssociation{bound} | requestReportBCUSMEvent{bound}}
+  SUPPLIER INVOKES
+    {componentReceived{bound} | associationReleaseRequested{bound}}
+  ID                id-package-basic-scf-cusf
+}
+
+-- abstract syntaxes 
+cusf-scf-abstract-syntax ABSTRACT-SYNTAX ::= {
+  BASIC-CUSF-SCF-PDUs
+  IDENTIFIED BY  id-as-basic-cusf-scf
+}
+
+BASIC-CUSF-SCF-PDUs ::= TCMessage{{CUSF-SCF-Invokable}, {CUSF-SCF-Returnable}}
+
+CUSF-SCF-Invokable OPERATION ::=
+  {activationReceivedAndAuthorized{networkSpecificBoundSet} | activityTest |
+   componentReceived{networkSpecificBoundSet} |
+   releaseAssociation{networkSpecificBoundSet} |
+   requestReportBCUSMEvent{networkSpecificBoundSet} |
+   sendComponent{networkSpecificBoundSet} |
+   associationReleaseRequested{networkSpecificBoundSet}}
+
+CUSF-SCF-Returnable OPERATION ::=
+  {activationReceivedAndAuthorized{networkSpecificBoundSet} | activityTest |
+   componentReceived{networkSpecificBoundSet} |
+   requestReportBCUSMEvent{networkSpecificBoundSet} |
+   sendComponent{networkSpecificBoundSet} |
+   associationReleaseRequested{networkSpecificBoundSet}}
+
+scf-cusf-abstract-syntax ABSTRACT-SYNTAX ::= {
+  BASIC-SCF-CUSF-PDUs
+  IDENTIFIED BY  id-as-basic-scf-cusf
+}
+
+BASIC-SCF-CUSF-PDUs ::= TCMessage{{SCF-CUSF-Invokable}, {SCF-CUSF-Returnable}}
+
+SCF-CUSF-Invokable OPERATION ::=
+  {activationReceivedAndAuthorized{networkSpecificBoundSet} | activityTest |
+   componentReceived{networkSpecificBoundSet} |
+   releaseAssociation{networkSpecificBoundSet} |
+   requestReportBCUSMEvent{networkSpecificBoundSet} |
+   sendComponent{networkSpecificBoundSet} |
+   initiateAssociation{networkSpecificBoundSet} |
+   associationReleaseRequested{networkSpecificBoundSet}}
+
+SCF-CUSF-Returnable OPERATION ::=
+  {activationReceivedAndAuthorized{networkSpecificBoundSet} | activityTest |
+   componentReceived{networkSpecificBoundSet} |
+   requestReportBCUSMEvent{networkSpecificBoundSet} |
+   sendComponent{networkSpecificBoundSet} |
+   initiateAssociation{networkSpecificBoundSet} |
+   associationReleaseRequested{networkSpecificBoundSet}}
+
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

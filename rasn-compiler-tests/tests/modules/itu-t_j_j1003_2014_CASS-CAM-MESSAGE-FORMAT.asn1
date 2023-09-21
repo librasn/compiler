@@ -1,0 +1,253 @@
+
+
+
+
+
+
+
+
+-- Module CASS-CAM-MESSAGE-FORMAT (J.1003:10/2014)
+-- See also ITU-T J.1003 (10/2014)
+-- See also the index of all ASN.1 assignments needed in this document
+
+-- ============================================================
+-- [1] CASS-CAM Security Protocol Message Format (Normal Mode)
+-- ============================================================
+-- [1-1] Protocol Message Header format : MSB first for all header data transfer
+-- [1-1-1] The values of Message Type (2 byte) 
+-- RCASAnnounce Message ~~~~~~~~~~~0x0001
+-- RCASDownload Message~~~~~~~~~~~0x0002
+-- KeyRequest Message~~~~~~~~~~~~~0x0003
+-- KeyResponse Message~~~~~~~~~~~~0x0004
+-- CAMReg Message~~~~~~~~~~~~~~~~~0x0005
+-- CAMRegConfirm Message~~~~~~~~~~0x0006
+-- RenewInfo Message~~~~~~~~~~~~~~0x0007
+-- RenewConfirm Message~~~~~~~~~~~0x0008
+-- PurchaseReport Message~~~~~~~~~0x0009
+-- Status Message~~~~~~~~~~~~~~~~~0x000A
+-- LogRequest Message~~~~~~~~~~~~~0x000B
+-- LogResponse Message~~~~~~~~~~~~0x000C
+-- [1-2] Protocol Message Content format
+-- BER encoding should be used for all messages.
+-- But Certificate should be DER encoded.
+-- ============================================================
+-- ============================================================
+CASS-CAM-MESSAGE-FORMAT DEFINITIONS AUTOMATIC TAGS ::=
+BEGIN
+
+-- ============================================================
+-- RCASAnnounceMessage
+-- ============================================================
+RcasAncMsgContent ::= SEQUENCE {
+  -- If the value of protocolTypeFlag is 0x01, 
+  -- the RCAS network protocol works as Normal mode
+  -- If the value of protocolTypeFlag is 0x02, 
+  -- the RCAS network protocol works as Fast mode
+  -- The other values are reserved
+  protocolTypeFlag  OCTET STRING(SIZE (1)),
+  cAMClientVersion  SEQUENCE OF CAMClientVersion,
+  cASSInfo          CASSInfo
+}
+
+CAMClientVersion ::= SEQUENCE {
+  -- CAM chip version
+  hWVersion      OCTET STRING(SIZE (4)),
+  -- SW version of Bootloader
+  sWversion      OCTET STRING(SIZE (4)),
+  cAMClientInfo  SEQUENCE OF CAMClientInfo
+}
+
+CAMClientInfo ::= SEQUENCE {
+  -- cAMclientType (CAS, ASD, DRM)
+  -- 0x01 : CAS (Conditional Access System)
+  -- 0x02 : ASD (Authorized Service Domain)
+  -- 0x03 : DRM (Digital Rights Management)
+  -- 0x04 ~ 0xff : reserved
+  clientType      OCTET STRING(SIZE (1)),
+  clientPriority  OCTET STRING(SIZE (1)),
+  clientVendor    OCTET STRING(SIZE (2)),
+  clientVersion   OCTET STRING(SIZE (2))
+}
+
+CASSInfo ::= SEQUENCE {
+  cASSUniqueID        OCTET STRING(SIZE (4)),
+  -- Address Type Information
+  -- => 0x01: IPv4 Format
+  -- => 0x02: IPv6 Format
+  cASSIPAddrType      OCTET STRING(SIZE (1)),
+  -- IP address of CASS
+  cASSIPAddr          OCTET STRING(SIZE (50)),
+  -- Connection Type Information
+  -- ==> 0x01: UDP
+  -- ==> 0x02: TCP
+  cASSConnectionType  OCTET STRING(SIZE (1)),
+  -- The Listening Port of CASS
+  cASSListeningPort   OCTET STRING(SIZE (4))
+}
+
+-- ============================================================
+-- RCASRenewalMessage
+-- ============================================================
+RCASRnMsgContent ::= SEQUENCE {
+  -- "YYMMDDhhmmss" - e.g., 2013-May-13, PM 5h50m30s => "130513175030"
+  downloadSchedule    OCTET STRING(SIZE (12)),
+  -- request = TRUE
+  keyRequest-Req      BOOLEAN(TRUE) OPTIONAL,
+  purchaseReport-Req  BOOLEAN(TRUE) OPTIONAL
+}
+
+-- ============================================================
+-- KeyRequestMessage
+-- ============================================================
+KeyReqMsgContent ::= SEQUENCE {
+  sessionID       OCTET STRING(SIZE (10)),
+  keyParingID     OCTET STRING(SIZE (48)),
+  -- cAMCertificate MUST be DER encoded
+  cAMCertificate  BIT STRING
+}
+
+-- ============================================================
+-- KeyResponseMessage
+-- ============================================================
+KeyRspMsgContent ::= SEQUENCE {
+  sessionID            OCTET STRING(SIZE (10)),
+  -- cASSCertificate MUST be DER encoded
+  cASSCertificate      BIT STRING,
+  rSAEncryptedContent  RSAEncryptedContent,
+  sIGN-kpk             OCTET STRING(SIZE (128))
+}
+
+RSAEncryptedContent ::=
+  RSAENCRYPTED
+    {SEQUENCE {cHK        OCTET STRING(SIZE (20)),
+               iHK        OCTET STRING(SIZE (20)),
+               rAND-AC-1  OCTET STRING(SIZE (16)),
+               rAND-AC-2  OCTET STRING(SIZE (16)),
+               rAND-AC-3  OCTET STRING(SIZE (16)),
+               kPK        OCTET STRING(SIZE (20))}}
+
+RSAENCRYPTED{ToBeEnciphered} ::=
+  BIT STRING
+    (CONSTRAINED BY {
+       -- shall be the result of applying the encipherment procedure 
+       -- to the BER-encoded octets of a value of --ToBeEnciphered})
+
+-- ============================================================
+-- CAMRegMessage
+-- ============================================================
+CamRegMsgContent ::= SEQUENCE {
+  sessionID          OCTET STRING(SIZE (10)),
+  nONCE-CAM          OCTET STRING(SIZE (16)),
+  cAMID              OCTET STRING(SIZE (40)),
+  -- CAM chip version
+  hWVersion          OCTET STRING(SIZE (4)),
+  -- SW version of Bootloader
+  sWversion          OCTET STRING(SIZE (4)),
+  hashed-MEK-ICCIEK  OCTET STRING(SIZE (20))
+}
+
+-- ============================================================
+-- CAMRegConfirmMessage
+-- ============================================================
+CamRegCnfMsgContent ::= SEQUENCE {
+  sessionID  OCTET STRING(SIZE (10)),
+  -- IVs for 128 AES-CBC
+  mEK-IV     OCTET STRING(SIZE (16)),
+  iCCIEK-IV  OCTET STRING(SIZE (16)),
+  cCCIEK-IV  OCTET STRING(SIZE (16)),
+  cCCIEK     OCTET STRING(SIZE (16))
+}
+
+-- ============================================================
+-- RenewInfoMessage
+-- ============================================================
+RenewInfoMsgContent ::= SEQUENCE {
+  sessionID           OCTET STRING(SIZE (10)),
+  -- This field is used for identify CAM Client Image
+  -- => 0x01 : CAS Client Image
+  -- => 0x02 : DRM Client Image
+  -- => 0x03 : ASD Client Image
+  clientType          OCTET STRING(SIZE (1)),
+  -- This field is used for identify Common IM or Individual IM 
+  -- => 0x01 : Common IM
+  -- => 0x02 : Individual IM
+  -- => 0x03 : Deliver Common IM & Individual IM Simultaneously
+  imageFlag           OCTET STRING(SIZE (1)),
+  -- If the value of imageFlag is 0x01 or 0x02, only one ImageInfo will be generated
+  -- Otherwise, if the value of imageFlag is 0x03, two ImageInfo will be generated
+  imageInfo           SEQUENCE OF ImageInfo,
+  -- request = TRUE
+  purchaseReport-Req  BOOLEAN(TRUE) OPTIONAL,
+  hashed-CCCI         OCTET STRING(SIZE (20)),
+  hashed-ICCI         OCTET STRING(SIZE (20)),
+  -- Control the installation and launching of CAM client image
+  directives          OCTET STRING OPTIONAL
+}
+
+ImageInfo ::= SEQUENCE {
+  -- Download Server IP address
+  -- Only when the image is not Common Image
+  dSIP  OCTET STRING(SIZE (16)) OPTIONAL,
+  -- Transport Mechanism (Carousel, TFTP, HTTP, etc.)
+  -- 0x01 : Carousel
+  -- 0x02 : TFTP
+  -- 0x03 : HTTP
+  -- 0x04 ~ 0xff : reserved
+  tm    OCTET STRING(SIZE (1)),
+  -- File Name
+  -- Only when the image is not Common Image
+  fn    PrintableString OPTIONAL
+}
+
+-- ============================================================
+-- RenewConfirmMessage
+-- ============================================================
+RenewCnfMsgContent ::= SEQUENCE {
+  sessionID       OCTET STRING(SIZE (10)),
+  -- success = TRUE, fail = FALSE
+  downloadStatus  BOOLEAN
+}
+
+-- ============================================================
+-- PurchaseReportMessage
+-- ============================================================
+PrchsRptMsgContent ::= SEQUENCE {
+  sessionID     OCTET STRING(SIZE (10)),
+  purchaseInfo  OCTET STRING
+}
+
+-- ============================================================
+-- StatucAMessage
+-- ============================================================
+StcAMsgContent ::= SEQUENCE {
+  sessionID   OCTET STRING(SIZE (10)),
+  -- Status Info: 0x01 (CAM-DSC ID validation fail)
+  -- 0x02 (MEK or ICCIEK hash verification fail)
+  -- 0x03 (CCI hash verificcation fail)
+  -- 0x04 (HMAC verification fail)
+  -- 0x05 (RSA signature verification fail)
+  -- 0x06 ~ 0xff (reserved)
+  statusInfo  OCTET STRING(SIZE (1))
+}
+
+-- ============================================================
+-- LogRequestMessage
+-- ============================================================
+LogRqtMsgContent ::= SEQUENCE {
+  sessionID       OCTET STRING(SIZE (10)),
+  -- request = TRUE
+  logRequest-Req  BOOLEAN(TRUE)
+}
+
+-- ============================================================
+-- LogResponseMessage
+-- ============================================================
+LogRcAMessageContent ::= SEQUENCE {
+  sessionID        OCTET STRING(SIZE (10)),
+  logResponseInfo  OCTET STRING OPTIONAL
+}
+
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

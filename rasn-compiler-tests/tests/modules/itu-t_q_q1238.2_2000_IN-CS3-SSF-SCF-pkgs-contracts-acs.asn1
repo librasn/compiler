@@ -1,0 +1,1444 @@
+
+
+
+
+
+
+
+-- Module IN-CS3-SSF-SCF-pkgs-contracts-acs (Q.1238.2:06/2000)
+-- See also ITU-T Q.1238.2 (06/2000)
+-- See also the index of all ASN.1 assignments needed in this document
+
+IN-CS3-SSF-SCF-pkgs-contracts-acs {itu-t recommendation q 1238 modules(1)
+  in-cs3-ssf-scf-pkgs-contracts-acs(9) version1(0)} DEFINITIONS ::=
+BEGIN
+
+-- This module describes the operation-packages, contracts and application-contexts used
+--  over the SSF-SCF interface.
+IMPORTS
+  id-ac-cs3-ssf-scfGenericAC, id-ac-cs3-ssf-scfDPSpecificAC,
+    id-ac-cs3-ssf-scfAssistHandoffAC, id-ac-cs3-ssf-scfServiceManagementAC,
+    id-ac-cs3-scf-ssfGenericAC, id-ac-cs3-scf-ssfDPSpecificAC,
+    id-ac-cs3-scf-ssfTrafficManagementAC, id-ac-cs3-scf-ssfServiceManagementAC,
+    id-ac-cs3-scf-ssfStatusReportingAC, id-ac-cs3-scf-ssfTriggerManagementAC,
+    id-inCs3SsfToScfGeneric, id-inCs3SsfToScfDpSpecific,
+    id-inCs3AssistHandoffSsfToScf, id-inCs3ScfToSsfGeneric,
+    id-inCs3ScfToSsfDpSpecific, id-inCs3ScfToSsfTrafficManagement,
+    id-inCs3ScfToSsfServiceManagement, id-inCs3SsfToScfServiceManagement,
+    id-inCs3ScfToSsfStatusReporting, id-inCs3ScfToSsfTriggerManagement,
+    id-as-ssf-scfGenericAS, id-as-ssf-scfDpSpecificAS,
+    id-as-assistHandoff-ssf-scfAS, id-as-scf-ssfGenericAS,
+    id-as-scf-ssfDpSpecificAS, id-as-scf-ssfTrafficManagementAS,
+    id-as-scf-ssfServiceManagementAS, id-as-ssf-scfServiceManagementAS,
+    id-as-scf-ssfStatusReportingAS, id-as-scf-ssfTriggerManagementAS,
+    id-package-scfActivation, id-package-basicBCPDP, id-package-advancedBCPDP,
+    id-package-srf-scfActivationOfAssist,
+    id-package-assistConnectionEstablishment,
+    id-package-genericDisconnectResource,
+    id-package-nonAssistedConnectionEstablishment, id-package-connect,
+    id-package-callHandling, id-package-bcsmEventHandling,
+    id-package-chargingEventHandling, id-package-ssfCallProcessing,
+    id-package-scfCallInitiation, id-package-timer, id-package-billing,
+    id-package-charging, id-package-trafficManagement,
+    id-package-serviceManagementActivate, id-package-serviceManagementResponse,
+    id-package-callReport, id-package-signallingControl,
+    id-package-activityTest, id-package-statusReporting, id-package-cancel,
+    id-package-cphResponse, id-package-entityReleased,
+    id-package-triggerManagement, id-package-uSIHandling,
+    id-package-facilityIEHandling, id-package-dpSpecificEventHandling,
+    id-package-triggerCallManagement, ros-InformationObjects, common-classes,
+    scf-srf-classes, scf-srf-Operations, scf-srf-Protocol, ssf-scf-classes,
+    ssf-scf-Operations, tc-Messages, tc-NotationExtensions
+    FROM IN-CS3-object-identifiers {itu-t recommendation q 1238 modules(1)
+      in-cs3-object-identifiers(0) version1(0)}
+  COMMON-BOUNDS, EmptyReturnable
+    FROM IN-CS3-common-classes {itu-t recommendation q 1238 modules(1)
+      in-cs3-common-classes(5) version1(0)}
+  SCF-SSF-BOUNDS
+    FROM IN-CS3-SSF-SCF-Classes {itu-t recommendation q 1238 modules(1)
+      in-cs3-ssf-scf-classes(7) version1(0)}
+  SCF-SRF-BOUNDS
+    FROM IN-CS3-SCF-SRF-classes {itu-t recommendation q 1238 modules(1)
+      in-cs3-scf-srf-classes(11) version1(0)}
+  CONTRACT, OPERATION-PACKAGE, OPERATION, ROS-OBJECT-CLASS
+    FROM Remote-Operations-Information-Objects {joint-iso-itu-t
+      remote-operations(4) informationObjects(5) version1(0)}
+  TCMessage{}
+    FROM TCAPMessages {itu-t recommendation q 773 modules(2) messages(1)
+      version3(3)}
+  APPLICATION-CONTEXT, dialogue-abstract-syntax
+    FROM TC-Notation-Extensions {itu-t recommendation q 775 modules(2)
+      notation-extension(4) version1(1)}
+  activateServiceFiltering{}, activityTest, analysedInformation{},
+    analyseInformation{}, applyCharging{}, applyChargingReport{},
+    assistRequestInstructions{}, authorizeTermination{}, callGap{},
+    callInformationReport{}, callInformationRequest{}, cancel{},
+    cancelStatusReportRequest{}, collectedInformation{}, collectInformation{},
+    connect{}, connectToResource{}, continue, continueWithArgument{},
+    createCallSegmentAssociation{}, createOrRemoveTriggerData{},
+    disconnectForwardConnection, disconnectForwardConnectionWithArgument{},
+    disconnectLeg{}, entityReleased{}, establishTemporaryConnection{},
+    eventNotificationCharging{}, eventReportBCSM{}, eventReportFacility{},
+    facilitySelectedAndAvailable{}, furnishChargingInformation{},
+    holdCallInNetwork, initialDP{}, initiateCallAttempt{}, manageTriggerData{},
+    mergeCallSegments{}, moveCallSegments{}, moveLeg{}, oAbandon{}, oAnswer{},
+    oCalledPartyBusy{}, oDisconnect{}, oMidCall{}, oNoAnswer{},
+    originationAttempt{}, originationAttemptAuthorized{}, oSuspended{},
+    reconnect{}, releaseCall{}, reportUTSI{}, requestCurrentStatusReport{},
+    requestEveryStatusChangeReport{}, requestFirstStatusMatchReport{},
+    requestNotificationChargingEvent{}, requestReportBCSMEvent{},
+    requestReportUTSI{}, requestReportFacilityEvent{}, resetTimer{},
+    routeSelectFailure{}, selectFacility{}, selectRoute{},
+    sendChargingInformation{}, sendFacilityInformation{}, sendSTUI{},
+    serviceFilteringResponse{}, setServiceProfile{}, splitLeg{},
+    statusReport{}, tAnswer{}, tBusy{}, tDisconnect{}, terminationAttempt{},
+    termAttemptAuthorized{}, tMidCall{}, tNoAnswer{}, tSuspended{}
+    FROM IN-CS3-SSF-SCF-ops-args {itu-t recommendation q 1238 modules(1)
+      in-cs3-ssf-scf-ops-args(8) version1(0)}
+  playAnnouncement{}, promptAndCollectUserInformation{},
+    promptAndReceiveMessage{}, scriptClose{}, scriptEvent{},
+    scriptInformation{}, scriptRun{}, specializedResourceReport
+    FROM IN-CS3-SCF-SRF-ops-args {itu-t recommendation q 1238 modules(1)
+      in-cs3-scf-srf-ops-args(12) version1(0)}
+  specializedResourceControlPackage{}, scriptControlPackage{},
+    messageControlPackage{}
+    FROM IN-CS3-SCF-SRF-pkgs-contracts-acs {itu-t recommendation q 1238
+      modules(1) in-cs3-scf-srf-pkgs-contracts-acs(13) version1(0)};
+
+-- The following three definitions are local short-hand notation for convenience.
+B1 ::=
+  COMMON-BOUNDS -- defined in Recommendation Q.1238.1
+
+B2 ::= SCF-SSF-BOUNDS -- defined in Recommendation Q.1238.2
+
+B3 ::= SCF-SRF-BOUNDS -- defined in Recommendation Q.1238.3
+
+networkSpecificB1 COMMON-BOUNDS ::= {NUM-OF-EXTENSIONS  1
+}
+
+-- The following instance of the parameter bound is just an example
+networkSpecificB2 SCF-SSF-BOUNDS ::= {
+  MINIMUM-FOR-ACH-BILLING-CHARGING        1 -- example value
+  MAXIMUM-FOR-ACH-BILLING-CHARGING        5 -- example value
+  MINIMUM-FOR-BACKWARD-GVNS               1 -- example value
+  MAXIMUM-FOR-BACKWARD-GVNS               5 -- example value
+  MAXIMUM-FOR-BEARER-CAPABILITY           5 -- example value
+  MINIMUM-FOR-CALLED-DIRECTORY-NUMBER     1 -- example value
+  MAXIMUM-FOR-CALLED-DIRECTORY-NUMBER     5 -- example value
+  MINIMUM-FOR-CALLED-PARTY-NUMBER         1 -- example value
+  MAXIMUM-FOR-CALLED-PARTY-NUMBER         5 -- example value
+  MINIMUM-FOR-CALLED-PARTY-SUBADDRESS     1 -- example value
+  MAXIMUM-FOR-CALLED-PARTY-SUBADDRESS     5 -- example value
+  MINIMUM-FOR-CALLING-GEODETIC-LOCATION   1 -- example value
+  MAXIMUM-FOR-CALLING-GEODETIC-LOCATION   10 -- example value
+  MINIMUM-FOR-CALLING-PARTY-NUMBER        1 -- example value
+  MAXIMUM-FOR-CALLING-PARTY-NUMBER        5 -- example value
+  MINIMUM-FOR-CALLING-PARTY-SUBADDRESS    1 -- example value
+  MAXIMUM-FOR-CALLING-PARTY-SUBADDRESS    5 -- example value
+  MINIMUM-FOR-CALL-RESULT                 1 -- example value
+  MAXIMUM-FOR-CALL-RESULT                 5 -- example value
+  MINIMUM-FOR-CARRIER                     3 -- example value
+  MAXIMUM-FOR-CARRIER                     10 -- example value
+  MINIMUM-FOR-CAUSE                       1 -- example value
+  MAXIMUM-FOR-CAUSE                       4 -- example value
+  MINIMUM-FOR-DIGITS                      1 -- example value
+  MAXIMUM-FOR-DIGITS                      5 -- example value
+  MINIMUM-FOR-DISPLAY                     1 -- example value
+  MAXIMUM-FOR-DISPLAY                     5 -- example value
+  MINIMUM-FOR-EVENT-SPECIFIC-CHARGING     1 -- example value
+  MAXIMUM-FOR-EVENT-SPECIFIC-CHARGING     5 -- example value
+  MINIMUM-FOR-EVENT-TYPE-CHARGING         1 -- example value
+  MAXIMUM-FOR-EVENT-TYPE-CHARGING         5 -- example value
+  MINIMUM-FOR-FCI-BILLING-CHARGING        1 -- example value
+  MAXIMUM-FOR-FCI-BILLING-CHARGING        5 -- example value
+  MINIMUM-FOR-FORWARD-GVNS                1 -- example value
+  MAXIMUM-FOR-FORWARD-GVNS                5 -- example value
+  MINIMUM-FOR-GENERIC-NAME                1 -- example value
+  MAXIMUM-FOR-GENERIC-NAME                5 -- example value
+  MINIMUM-FOR-GENERIC-NUMBER              1 -- example value
+  MAXIMUM-FOR-GENERIC-NUMBER              5 -- example value
+  MAXIMUM-FOR-INITIAL-TIME-INTERVAL       5 -- example value
+  MAXIMUM-FOR-IN-SERVICE-COMPATIBILITY    5 -- example value
+  MINIMUM-FOR-IP-AVAILABLE                1 -- example value
+  MAXIMUM-FOR-IP-AVAILABLE                5 -- example value
+  MINIMUM-FOR-IP-SSP-CAPABILITIES         1 -- example value
+  MAXIMUM-FOR-IP-SSP-CAPABILITIES         5 -- example value
+  MINIMUM-FOR-ISDN-ACCESS-RELATED-INFO    1 -- example value
+  MAXIMUM-FOR-ISDN-ACCESS-RELATED-INFO    10 -- example value
+  MINIMUM-FOR-LOCATION-NUMBER             1 -- example value
+  MAXIMUM-FOR-LOCATION-NUMBER             5 -- example value
+  MINIMUM-FOR-MID-CALL-CONTROL-INFO       1 -- example value
+  MAXIMUM-FOR-MID-CALL-CONTROL-INFO       5 -- example value
+  MINIMUM-FOR-ORIGINAL-CALLED-PARTY-ID    1 -- example value
+  MAXIMUM-FOR-ORIGINAL-CALLED-PARTY-ID    5 -- example value
+  MINIMUM-FOR-REASON                      1 -- example value
+  MAXIMUM-FOR-REASON                      5 -- example value
+  MINIMUM-FOR-REDIRECTING-ID              1 -- example value
+  MAXIMUM-FOR-REDIRECTING-ID              5 -- example value
+  MINIMUM-FOR-REQUESTED-UTSI-NUM          1 -- example value
+  MAXIMUM-FOR-REQUESTED-UTSI-NUM          5 -- example value
+  MINIMUM-FOR-ROUTE-LIST                  1 -- example value
+  MAXIMUM-FOR-ROUTE-LIST                  5 -- example value
+  MINIMUM-FOR-ROUTING-NUMBER              1 -- example value
+  MAXIMUM-FOR-ROUTING-NUMBER              5 -- example value
+  MINIMUM-FOR-SCF-ID                      1 -- example value
+  MAXIMUM-FOR-SCF-ID                      5 -- example value
+  MINIMUM-FOR-SCI-BILLING-CHARGING        1 -- example value
+  MAXIMUM-FOR-SCI-BILLING-CHARGING        5 -- example value
+  MINIMUM-FOR-SDSS-INFORMATION            1 -- example value
+  MAXIMUM-FOR-SDSS-INFORMATION            5 -- example value
+  MINIMUM-FOR-SII                         1 -- example value
+  MAXIMUM-FOR-SII                         5 -- example value
+  MINIMUM-FOR-SF-BILLING-CHARGING         1 -- example value
+  MAXIMUM-FOR-SF-BILLING-CHARGING         5 -- example value
+  MINIMUM-FOR-USI-INFORMATION             1 -- example value
+  MAXIMUM-FOR-USI-INFORMATION             5 -- example value
+  MINIMUM-FOR-USI-SERVICE-INDICATOR       1 -- example value
+  MAXIMUM-FOR-USI-SERVICE-INDICATOR       5 -- example value
+  NUM-OF-BCSM-EVENT                       4 -- example value
+  NUM-OF-BCUSM-EVENT                      4 -- example value
+  NUM-OF-CHARGING-EVENT                   4 -- example value
+  NUM-OF-CSAS                             2 -- example value
+  NUM-OF-CSS                              2 -- example value
+  NUM-OF-GENERIC-NUMBERS                  2 -- example value
+  NUM-OF-INPROFILE                        1 -- example value
+  NUM-OF-SEVERAL-TRIGGER                  5 -- example value
+  NUM-OF-IN-SERVICE-COMPATIBILITY-ID      2 -- example value
+  NUM-OF-LEGS                             2 -- example value
+  NUM-OF-MESSAGE-IDS                      2 -- example value
+  MAXIMUM-FOR-AMOUNT                      2 -- example value
+  MAXIMUM-FOR-CALL-REFERENCE              5 -- example value
+  MAXIMUM-FOR-CNINFO                      13 -- example value
+  MAXIMUM-FOR-INITIAL-UNIT-INCREMENT      2 -- example value
+  MAXIMUM-FOR-SCALING-FACTOR              2 -- example value
+  MAXIMUM-FOR-SEGMENTS-PER-DATA-INTERVAL  5 -- example value
+  MAXIMUM-FOR-UB-NB-CALL                  5 -- example value
+  NUM-OF-ADDRESSES                        5
+ -- example value--}
+
+networkSpecificB3 SCF-SRF-BOUNDS ::= {
+  MINIMUM-FOR-ATTRIBUTES              1 -- example value
+  MAXIMUM-FOR-ATTRIBUTES              5 -- example value
+  MINIMUM-FOR-MAIL-BOX-ID             1 -- example value
+  MAXIMUM-FOR-MAIL-BOX-ID             5 -- example value
+  MINIMUM-FOR-MESSAGE-CONTENT         1 -- example value
+  MAXIMUM-FOR-MESSAGE-CONTENT         5 -- example value
+  MINIMUM-FOR-RECEIVED-INFORMATION    1 -- example value
+  MAXIMUM-FOR-RECEIVED-INFORMATION    5 -- example value
+  MAXIMUM-FOR-RECORDING-TIME          5 -- example value
+  NUM-OF-MESSAGE-IDS                  2 -- example value
+  MAXIMUM-FOR-RECORDED-MESSAGE-UNITS  5 -- example value
+  NUM-OF-VARIABLE-PARTS               5
+ -- example value--}
+
+-- Application Contexts 
+cs3ssf-scfGenericAC APPLICATION-CONTEXT ::= {
+  CONTRACT                  inCs3SsfToScfGeneric
+  DIALOGUE MODE             structured
+  ABSTRACT SYNTAXES
+    {dialogue-abstract-syntax | ssf-scfGenericAbstractSyntax}
+  APPLICATION CONTEXT NAME  id-ac-cs3-ssf-scfGenericAC
+}
+
+cs3ssf-scfDPSpecificAC APPLICATION-CONTEXT ::= {
+  CONTRACT                  inCs3SsfToScfDpSpecific
+  DIALOGUE MODE             structured
+  ABSTRACT SYNTAXES
+    {dialogue-abstract-syntax | ssf-scfDpSpecificAbstractSyntax}
+  APPLICATION CONTEXT NAME  id-ac-cs3-ssf-scfDPSpecificAC
+}
+
+cs3ssf-scfAssistHandoffAC APPLICATION-CONTEXT ::= {
+  CONTRACT                  inCs3AssistHandoffSsfToScf
+  DIALOGUE MODE             structured
+  ABSTRACT SYNTAXES
+    {dialogue-abstract-syntax | assistHandoff-ssf-scfAbstractSyntax}
+  APPLICATION CONTEXT NAME  id-ac-cs3-ssf-scfAssistHandoffAC
+}
+
+cs3ssf-scfServiceManagementAC APPLICATION-CONTEXT ::= {
+  CONTRACT                  inCs3SsfToScfServiceManagement
+  DIALOGUE MODE             structured
+  ABSTRACT SYNTAXES
+    {dialogue-abstract-syntax | ssf-scfServiceManagementAbstractSyntax}
+  APPLICATION CONTEXT NAME  id-ac-cs3-ssf-scfServiceManagementAC
+}
+
+cs3scf-ssfGenericAC APPLICATION-CONTEXT ::= {
+  CONTRACT                  inCs3ScfToSsfGeneric
+  DIALOGUE MODE             structured
+  ABSTRACT SYNTAXES
+    {dialogue-abstract-syntax | ssf-scfGenericAbstractSyntax}
+  APPLICATION CONTEXT NAME  id-ac-cs3-scf-ssfGenericAC
+}
+
+cs3scf-ssfDPSpecificAC APPLICATION-CONTEXT ::= {
+  CONTRACT                  inCs3ScfToSsfDpSpecific
+  DIALOGUE MODE             structured
+  ABSTRACT SYNTAXES
+    {dialogue-abstract-syntax | scf-ssfDpSpecificAbstractSyntax}
+  APPLICATION CONTEXT NAME  id-ac-cs3-scf-ssfDPSpecificAC
+}
+
+cs3scf-ssfTrafficManagementAC APPLICATION-CONTEXT ::= {
+  CONTRACT                  inCs3ScfToSsfTrafficManagement
+  DIALOGUE MODE             structured
+  ABSTRACT SYNTAXES
+    {dialogue-abstract-syntax | scf-ssfTrafficManagementAbstractSyntax}
+  APPLICATION CONTEXT NAME  id-ac-cs3-scf-ssfTrafficManagementAC
+}
+
+cs3scf-ssfServiceManagementAC APPLICATION-CONTEXT ::= {
+  CONTRACT                  inCs3ScfToSsfServiceManagement
+  DIALOGUE MODE             structured
+  ABSTRACT SYNTAXES
+    {dialogue-abstract-syntax | scf-ssfServiceManagementAbstractSyntax}
+  APPLICATION CONTEXT NAME  id-ac-cs3-scf-ssfServiceManagementAC
+}
+
+cs3scf-ssfStatusReportingAC APPLICATION-CONTEXT ::= {
+  CONTRACT                  inCs3ScfToSsfStatusReporting
+  DIALOGUE MODE             structured
+  ABSTRACT SYNTAXES
+    {dialogue-abstract-syntax | scf-ssfStatusReportingAbstractSyntax}
+  APPLICATION CONTEXT NAME  id-ac-cs3-scf-ssfStatusReportingAC
+}
+
+cs3scf-ssfTriggerManagementAC APPLICATION-CONTEXT ::= {
+  CONTRACT                  inCs3ScfToSsfTriggerManagement
+  DIALOGUE MODE             structured
+  ABSTRACT SYNTAXES
+    {dialogue-abstract-syntax | scf-ssfTriggerManagementAbstractSyntax}
+  APPLICATION CONTEXT NAME  id-ac-cs3-scf-ssfTriggerManagementAC
+}
+
+-- Contracts 
+inCs3SsfToScfGeneric CONTRACT ::= {
+  -- dialogue initiated by SSF with InitialDP Operation
+  --The inCs3SsfToScfGeneric contract expresses the form of the service in which the SSF, 
+  --a ROS object of class ssf, initiates the generic triggering approach contract. 
+  --A ROS-object of class scf, responds to this contract.
+  INITIATOR CONSUMER OF
+    {activityTestPackage | exceptionInformPackage{networkSpecificB2} |
+      scfActivationPackage{networkSpecificB1, networkSpecificB2}}
+  RESPONDER CONSUMER OF
+    {activityTestPackage |
+      assistConnectionEstablishmentPackage{networkSpecificB1,
+                                          networkSpecificB2} |
+      bcsmEventHandlingPackage{networkSpecificB1, networkSpecificB2} |
+      billingPackage{networkSpecificB2} |
+      callHandlingPackage{networkSpecificB2} |
+      callReportPackage{networkSpecificB1, networkSpecificB2} |
+      cancelPackage{networkSpecificB2} |
+      chargingEventHandlingPackage{networkSpecificB1, networkSpecificB2} |
+      chargingPackage{networkSpecificB1, networkSpecificB2} |
+      connectPackage{networkSpecificB1, networkSpecificB2} |
+      cphResponsePackage{networkSpecificB1, networkSpecificB2} |
+      facilityIEHandlingPackage{networkSpecificB1} |
+      genericDisconnectResourcePackage{networkSpecificB1, networkSpecificB2} |
+      nonAssistedConnectionEstablishmentPackage{networkSpecificB1,
+                                               networkSpecificB2} |
+      signallingControlPackage{networkSpecificB1, networkSpecificB2} |
+      specializedResourceControlPackage{networkSpecificB1, networkSpecificB2,
+                                       networkSpecificB3} |
+      scriptControlPackage{networkSpecificB1, networkSpecificB2} |
+      messageControlPackage{networkSpecificB1, networkSpecificB2,
+                           networkSpecificB3} |
+      ssfCallProcessingPackage{networkSpecificB1, networkSpecificB2} |
+      statusReportingPackage{networkSpecificB1, networkSpecificB2} |
+      timerPackage{networkSpecificB1, networkSpecificB2} |
+      trafficManagementPackage{networkSpecificB1, networkSpecificB2,
+                              networkSpecificB3} |
+      uSIHandlingPackage{networkSpecificB1, networkSpecificB2} |
+      scfCallInitiationPackage{networkSpecificB1, networkSpecificB2} |
+      triggerCallManagementPackage{networkSpecificB1, networkSpecificB2}}
+  ID                     id-inCs3SsfToScfGeneric
+}
+
+inCs3SsfToScfDpSpecific CONTRACT ::= {
+  -- dialogue initiated by SSF with DP Specific Iniltial Operations
+  --The inCs3SsfToScfDpSpecific contract expresses the form of the service in which the SSF,
+  -- a ROS-object of class ssf, initiates the DP specific triggering approach contract. 
+  --A ROS-object of class scf, responds to this contract.
+  INITIATOR CONSUMER OF
+    {activityTestPackage |
+      advancedBCPDPPackage{networkSpecificB1, networkSpecificB2} |
+      basicBCPDPPackage{networkSpecificB1, networkSpecificB2} |
+      exceptionInformPackage{networkSpecificB2}}
+  RESPONDER CONSUMER OF
+    {activityTestPackage |
+      assistConnectionEstablishmentPackage{networkSpecificB1,
+                                          networkSpecificB2} |
+      billingPackage{networkSpecificB2} |
+      callHandlingPackage{networkSpecificB2} |
+      callReportPackage{networkSpecificB1, networkSpecificB2} |
+      cancelPackage{networkSpecificB2} |
+      chargingEventHandlingPackage{networkSpecificB1, networkSpecificB2} |
+      chargingPackage{networkSpecificB1, networkSpecificB2} |
+      connectPackage{networkSpecificB1, networkSpecificB2} |
+      cphResponsePackage{networkSpecificB1, networkSpecificB2} |
+      dpSpecificEventHandlingPackage{networkSpecificB1, networkSpecificB2} |
+      facilityIEHandlingPackage{networkSpecificB1} |
+      genericDisconnectResourcePackage{networkSpecificB1, networkSpecificB2} |
+      nonAssistedConnectionEstablishmentPackage{networkSpecificB1,
+                                               networkSpecificB2} |
+      signallingControlPackage{networkSpecificB1, networkSpecificB2} |
+      specializedResourceControlPackage{networkSpecificB1, networkSpecificB2,
+                                       networkSpecificB3} |
+      scriptControlPackage{networkSpecificB1, networkSpecificB2} |
+      messageControlPackage{networkSpecificB1, networkSpecificB2,
+                           networkSpecificB3} |
+      ssfCallProcessingPackage{networkSpecificB1, networkSpecificB2} |
+      statusReportingPackage{networkSpecificB1, networkSpecificB2} |
+      timerPackage{networkSpecificB1, networkSpecificB2} |
+      trafficManagementPackage{networkSpecificB1, networkSpecificB2,
+                              networkSpecificB3} |
+      uSIHandlingPackage{networkSpecificB1, networkSpecificB2} |
+      scfCallInitiationPackage{networkSpecificB1, networkSpecificB2}}
+  ID                     id-inCs3SsfToScfDpSpecific
+}
+
+inCs3AssistHandoffSsfToScf CONTRACT ::= {
+  -- dialogue initiated by SSF with AssistRequestInstructions
+  --The inCs3AssistHandoffSsfToScf contract expresses the form of the service in which the SSF,
+  -- a ROS-object of class ssf, initiates the Assist or Hand-off contract. 
+  --A ROS-object of class scf, responds to this contract.
+  INITIATOR CONSUMER OF
+    {activityTestPackage |
+      srf-scfActivationOfAssistPackage{networkSpecificB1, networkSpecificB2}}
+  RESPONDER CONSUMER OF
+    {activityTestPackage | billingPackage{networkSpecificB2} |
+      callHandlingPackage{networkSpecificB2} | cancelPackage{networkSpecificB2}
+      | chargingPackage{networkSpecificB1, networkSpecificB2} |
+      signallingControlPackage{networkSpecificB1, networkSpecificB2} |
+      genericDisconnectResourcePackage{networkSpecificB1, networkSpecificB2} |
+      nonAssistedConnectionEstablishmentPackage{networkSpecificB1,
+                                               networkSpecificB2} |
+      specializedResourceControlPackage{networkSpecificB1, networkSpecificB2,
+                                       networkSpecificB3} |
+      scriptControlPackage{networkSpecificB1, networkSpecificB2} |
+      messageControlPackage{networkSpecificB1, networkSpecificB2,
+                           networkSpecificB3} |
+      statusReportingPackage{networkSpecificB1, networkSpecificB2} |
+      timerPackage{networkSpecificB1, networkSpecificB2}}
+  ID                     id-inCs3AssistHandoffSsfToScf
+}
+
+inCs3ScfToSsfGeneric CONTRACT ::= {
+  --dialogue initiated by SCF with InitiateCallAttempt or CreateCallSegmentAssociation , Generic Case
+  --The inCs3ScfToSsfGeneric contract expresses the form of the service in which the SCF, 
+  --a ROS-object of class scf, initiates the generic messaging approach for the SCF 
+  --Initiate Call Attempt contract. A ROS-object of class ssf, responds to this contract.
+  INITIATOR CONSUMER OF
+    {activityTestPackage |
+      assistConnectionEstablishmentPackage{networkSpecificB1,
+                                          networkSpecificB2} |
+      bcsmEventHandlingPackage{networkSpecificB1, networkSpecificB2} |
+      billingPackage{networkSpecificB2} |
+      callHandlingPackage{networkSpecificB2} |
+      callReportPackage{networkSpecificB1, networkSpecificB2} |
+      cancelPackage{networkSpecificB2} |
+      chargingEventHandlingPackage{networkSpecificB1, networkSpecificB2} |
+      chargingPackage{networkSpecificB1, networkSpecificB2} |
+      connectPackage{networkSpecificB1, networkSpecificB2} |
+      cphResponsePackage{networkSpecificB1, networkSpecificB2} |
+      facilityIEHandlingPackage{networkSpecificB1} |
+      genericDisconnectResourcePackage{networkSpecificB1, networkSpecificB2} |
+      nonAssistedConnectionEstablishmentPackage{networkSpecificB1,
+                                               networkSpecificB2} |
+      scfCallInitiationPackage{networkSpecificB1, networkSpecificB2} |
+      signallingControlPackage{networkSpecificB1, networkSpecificB2} |
+      specializedResourceControlPackage{networkSpecificB1, networkSpecificB2,
+                                       networkSpecificB3} |
+      scriptControlPackage{networkSpecificB1, networkSpecificB2} |
+      messageControlPackage{networkSpecificB1, networkSpecificB2,
+                           networkSpecificB3} |
+      ssfCallProcessingPackage{networkSpecificB1, networkSpecificB2} |
+      statusReportingPackage{networkSpecificB1, networkSpecificB2} |
+      timerPackage{networkSpecificB1, networkSpecificB2} |
+      uSIHandlingPackage{networkSpecificB1, networkSpecificB2} |
+      scfCallInitiationPackage{networkSpecificB1, networkSpecificB2} |
+      triggerCallManagementPackage{networkSpecificB1, networkSpecificB2}}
+  RESPONDER CONSUMER OF
+    {activityTestPackage | exceptionInformPackage{networkSpecificB2}}
+  ID                     id-inCs3ScfToSsfGeneric
+}
+
+inCs3ScfToSsfDpSpecific CONTRACT ::= {
+  -- dialogue initiated by SCF with InitiateCallAttempt, DP Specific Case
+  --The inCs3ScfToSsfDpSpecific contract expresses the form of the service in which the SCF,
+  -- a ROS-object of class scf, initiates the DP specific messaging approach for the SCF
+  -- Initiate Call Attempt contract. A ROS-object of class ssf, responds to this contract.
+  INITIATOR CONSUMER OF
+    {activityTestPackage |
+      assistConnectionEstablishmentPackage{networkSpecificB1,
+                                          networkSpecificB2} |
+      billingPackage{networkSpecificB2} |
+      callHandlingPackage{networkSpecificB2} |
+      callReportPackage{networkSpecificB1, networkSpecificB2} |
+      cancelPackage{networkSpecificB2} |
+      chargingEventHandlingPackage{networkSpecificB1, networkSpecificB2} |
+      chargingPackage{networkSpecificB1, networkSpecificB2} |
+      connectPackage{networkSpecificB1, networkSpecificB2} |
+      cphResponsePackage{networkSpecificB1, networkSpecificB2} |
+      dpSpecificEventHandlingPackage{networkSpecificB1, networkSpecificB2} |
+      facilityIEHandlingPackage{networkSpecificB1} |
+      genericDisconnectResourcePackage{networkSpecificB1, networkSpecificB2} |
+      nonAssistedConnectionEstablishmentPackage{networkSpecificB1,
+                                               networkSpecificB2} |
+      scfCallInitiationPackage{networkSpecificB1, networkSpecificB2} |
+      signallingControlPackage{networkSpecificB1, networkSpecificB2} |
+      specializedResourceControlPackage{networkSpecificB1, networkSpecificB2,
+                                       networkSpecificB3} |
+      scriptControlPackage{networkSpecificB1, networkSpecificB2} |
+      messageControlPackage{networkSpecificB1, networkSpecificB2,
+                           networkSpecificB3} |
+      ssfCallProcessingPackage{networkSpecificB1, networkSpecificB2} |
+      statusReportingPackage{networkSpecificB1, networkSpecificB2} |
+      timerPackage{networkSpecificB1, networkSpecificB2} |
+      uSIHandlingPackage{networkSpecificB1, networkSpecificB2} |
+      scfCallInitiationPackage{networkSpecificB1, networkSpecificB2}}
+  RESPONDER CONSUMER OF
+    {activityTestPackage | exceptionInformPackage{networkSpecificB2}}
+  ID                     id-inCs3ScfToSsfDpSpecific
+}
+
+inCs3ScfToSsfTrafficManagement CONTRACT ::= {
+  -- dialogue initiated by SCF with CallGap
+  --The inCs3ScfToSsfTrafficManagement contract expresses the form of the service in 
+  --which the SCF, a ROS-object of class scf, initiates the Traffic Management related contract.
+  -- A ROS-object of class ssf, responds to this contract.
+  INITIATOR CONSUMER OF
+    {trafficManagementPackage
+       {networkSpecificB1,
+        networkSpecificB2,
+        networkSpecificB3}}
+  ID                     id-inCs3ScfToSsfTrafficManagement
+}
+
+inCs3ScfToSsfServiceManagement CONTRACT ::= {
+  -- dialogue initiated by SCF with ActivateServiceFiltering
+  --The inCs3ScfToSsfServiceManagement contract expresses the form of the service
+  -- in which the SCF, a ROS-object of class scf, initiates the Service Management related contract.
+  -- A ROS-object of class ssf, in the context of a separate contract, responds to this initiation.
+  INITIATOR CONSUMER OF
+    {serviceManagementActivatePackage
+       {networkSpecificB1,
+        networkSpecificB2,
+        networkSpecificB3}}
+  ID                     id-inCs3ScfToSsfServiceManagement
+}
+
+inCs3SsfToScfServiceManagement CONTRACT ::= {
+  -- dialogue initiated/ended by SSF with ServiceFilteringResponse
+  --The inCs3SsfToScfServiceManagement contract expresses the form of the service in 
+  --which the SSF, a ROS-object of class ssf, initiates the Service Management related contract
+  -- for reporting Service Management results. 
+  INITIATOR CONSUMER OF
+    {serviceManagementResponsePackage  {networkSpecificB1,
+                                        networkSpecificB2}}
+  ID                     id-inCs3SsfToScfServiceManagement
+}
+
+inCs3ScfToSsfStatusReporting CONTRACT ::= {
+  -- dialogue initiated by SCF with StatusReporting Operations
+  --The inCs3ScfToSsfStatusReporting contract expresses the form of the service 
+  --in which the SCF, a ROS-object of class scf, initiates the Status Reporting related contract. 
+  --A ROS-object of class ssf, responds to this contract.
+  INITIATOR CONSUMER OF
+    {statusReportingPackage  {networkSpecificB1,
+                              networkSpecificB2}}
+  ID                     id-inCs3ScfToSsfStatusReporting
+}
+
+inCs3ScfToSsfTriggerManagement CONTRACT ::= {
+  -- dialogue initiated by SCF with the trigger management operations CreateOrRemoveTriggerData or ManageTriggerData
+  --The inCs3ScfToSsfTriggerManagement contract expresses the form of the service in which the SCF,
+  -- a ROS-object of class scf, initiates the Trigger Management related contract
+  -- A ROS-object of class ssf, in the context of a separate contract, responds to this initiation.
+  INITIATOR CONSUMER OF
+    {triggerManagementPackage
+       {networkSpecificB1,
+        networkSpecificB2,
+        networkSpecificB3}}
+  ID                     id-inCs3ScfToSsfTriggerManagement
+}
+
+-- Packages 
+scfActivationPackage{B1:b1, B2:b2} OPERATION-PACKAGE ::= {
+  CONSUMER INVOKES  {initialDP  { --!--b1,
+                                       b2}}
+  ID                id-package-scfActivation
+}
+
+basicBCPDPPackage{B1:b1, B2:b2} OPERATION-PACKAGE ::= {
+  CONSUMER INVOKES
+    {originationAttemptAuthorized{b1, b2} | collectedInformation{b1, b2} |
+      analysedInformation{b1, b2} | routeSelectFailure{b1, b2} |
+      facilitySelectedAndAvailable{b1, b2} | oAbandon{b1, b2} |
+      originationAttempt{b1, b2} | terminationAttempt{b1, b2} |
+      oCalledPartyBusy{b1, b2} | oNoAnswer{b1, b2} | oAnswer{b1, b2} |
+      oDisconnect{b1, b2} | termAttemptAuthorized{b1, b2} | tBusy{b1, b2} |
+      tNoAnswer{b1, b2} | tAnswer{b1, b2} | tDisconnect{b1, b2}}
+  ID                id-package-basicBCPDP
+}
+
+advancedBCPDPPackage{B1:b1, B2:b2} OPERATION-PACKAGE ::= {
+  CONSUMER INVOKES
+    {oMidCall{b1, b2} | oSuspended{b1, b2} | tMidCall{b1, b2} |
+      tSuspended{b1, b2}}
+  ID                id-package-advancedBCPDP
+}
+
+srf-scfActivationOfAssistPackage{B1:b1, B2:b2} OPERATION-PACKAGE ::= 
+{
+  CONSUMER INVOKES  {assistRequestInstructions{b1, b2}}
+  ID                id-package-srf-scfActivationOfAssist
+}
+
+assistConnectionEstablishmentPackage{B1:b1, B2:b2} OPERATION-PACKAGE ::= 
+{
+  CONSUMER INVOKES  {establishTemporaryConnection{b1, b2}}
+  ID                id-package-assistConnectionEstablishment
+}
+
+genericDisconnectResourcePackage{B1:b1, B2:b2} OPERATION-PACKAGE ::= 
+{
+  CONSUMER INVOKES
+    {disconnectForwardConnection |
+      disconnectForwardConnectionWithArgument{b1, b2}}
+  ID                id-package-genericDisconnectResource
+}
+
+nonAssistedConnectionEstablishmentPackage{B1:b1, B2:b2} OPERATION-PACKAGE ::= 
+{
+  CONSUMER INVOKES  {connectToResource{b1, b2}}
+  ID                id-package-nonAssistedConnectionEstablishment
+}
+
+connectPackage{B1:b1, B2:b2} OPERATION-PACKAGE ::= {
+  CONSUMER INVOKES  {connect  {b1,
+                               b2}}
+  ID                id-package-connect
+}
+
+callHandlingPackage{B2:b2} OPERATION-PACKAGE ::= {
+  CONSUMER INVOKES  {holdCallInNetwork | releaseCall{b2}}
+  ID                id-package-callHandling
+}
+
+bcsmEventHandlingPackage{B1:b1, B2:b2} OPERATION-PACKAGE ::= {
+  CONSUMER INVOKES  {requestReportBCSMEvent{b1, b2}}
+  SUPPLIER INVOKES  {eventReportBCSM{b1, b2}}
+  ID                id-package-bcsmEventHandling
+}
+
+dpSpecificEventHandlingPackage{B1:b1, B2:b2} OPERATION-PACKAGE ::= {
+  CONSUMER INVOKES  {requestReportBCSMEvent{b1, b2}}
+  SUPPLIER INVOKES
+    {originationAttemptAuthorized{b1, b2} | collectedInformation{b1, b2} |
+      analysedInformation{b1, b2} | routeSelectFailure{b1, b2} |
+      facilitySelectedAndAvailable{b1, b2} | oAbandon{b1, b2} |
+      originationAttempt{b1, b2} | terminationAttempt{b1, b2} |
+      oCalledPartyBusy{b1, b2} | oNoAnswer{b1, b2} | oAnswer{b1, b2} |
+      oDisconnect{b1, b2} | termAttemptAuthorized{b1, b2} | tBusy{b1, b2} |
+      tNoAnswer{b1, b2} | tAnswer{b1, b2} | tDisconnect{b1, b2} |
+      oMidCall{b1, b2} | oSuspended{b1, b2} | tMidCall{b1, b2} |
+      tSuspended{b1, b2}}
+  ID                id-package-dpSpecificEventHandling
+}
+
+chargingEventHandlingPackage{B1:b1, B2:b2} OPERATION-PACKAGE ::= {
+  CONSUMER INVOKES  {requestNotificationChargingEvent{b2}}
+  SUPPLIER INVOKES  {eventNotificationCharging{b1, b2}}
+  ID                id-package-chargingEventHandling
+}
+
+ssfCallProcessingPackage{B1:b1, B2:b2} OPERATION-PACKAGE ::= {
+  CONSUMER INVOKES
+    {collectInformation{b1, b2} | analyseInformation{b1, b2} |
+      authorizeTermination{b1, b2} | selectRoute{b1, b2} |
+      selectFacility{b1, b2} | continue}
+  ID                id-package-ssfCallProcessing
+}
+
+scfCallInitiationPackage{B1:b1, B2:b2} OPERATION-PACKAGE ::= {
+  CONSUMER INVOKES  {initiateCallAttempt{b1, b2}}
+  ID                id-package-scfCallInitiation
+}
+
+timerPackage{B1:b1, B2:b2} OPERATION-PACKAGE ::= {
+  CONSUMER INVOKES  {resetTimer{b1, b2}}
+  ID                id-package-timer
+}
+
+billingPackage{B2:b2} OPERATION-PACKAGE ::= {
+  CONSUMER INVOKES  {furnishChargingInformation{b2}}
+  ID                id-package-billing
+}
+
+chargingPackage{B1:b1, B2:b2} OPERATION-PACKAGE ::= {
+  CONSUMER INVOKES  {applyCharging{b1, b2}}
+  SUPPLIER INVOKES  {applyChargingReport{b2}}
+  ID                id-package-charging
+}
+
+trafficManagementPackage{B1:b1, B2:b2, B3:b3} OPERATION-PACKAGE ::= {
+  CONSUMER INVOKES  {callGap{b1, b2, b3}}
+  ID                id-package-trafficManagement
+}
+
+serviceManagementActivatePackage{B1:b1, B2:b2, B3:b3} OPERATION-PACKAGE ::= 
+{
+  CONSUMER INVOKES  {activateServiceFiltering{b1, b2, b3}}
+  ID                id-package-serviceManagementActivate
+}
+
+serviceManagementResponsePackage{B1:b1, B2:b2} OPERATION-PACKAGE ::= 
+{
+  CONSUMER INVOKES  {serviceFilteringResponse{b1, b2}}
+  ID                id-package-serviceManagementResponse
+}
+
+callReportPackage{B1:b1, B2:b2} OPERATION-PACKAGE ::= {
+  CONSUMER INVOKES  {callInformationRequest{b1, b2}}
+  SUPPLIER INVOKES  {callInformationReport{b1, b2}}
+  ID                id-package-callReport
+}
+
+signallingControlPackage{B1:b1, B2:b2} OPERATION-PACKAGE ::= {
+  CONSUMER INVOKES  {sendChargingInformation{b1, b2}}
+  ID                id-package-signallingControl
+}
+
+activityTestPackage OPERATION-PACKAGE ::= {
+  CONSUMER INVOKES  {activityTest}
+  ID                id-package-activityTest
+}
+
+statusReportingPackage{B1:b1, B2:b2} OPERATION-PACKAGE ::= {
+  CONSUMER INVOKES
+    {cancelStatusReportRequest{b1, b2} | requestCurrentStatusReport{b1, b2} |
+      requestEveryStatusChangeReport{b1, b2} |
+      requestFirstStatusMatchReport{b1, b2}}
+  SUPPLIER INVOKES  {statusReport{b1, b2}}
+  ID                id-package-statusReporting
+}
+
+cancelPackage{B2:b2} OPERATION-PACKAGE ::= {
+  CONSUMER INVOKES  {cancel{b2}}
+  ID                id-package-cancel
+}
+
+cphResponsePackage{B1:b1, B2:b2} OPERATION-PACKAGE ::= {
+  CONSUMER INVOKES
+    {continueWithArgument{b1, b2} | disconnectLeg{b1, b2} |
+      mergeCallSegments{b1, b2} | moveCallSegments{b1, b2} | moveLeg{b1, b2} |
+      createCallSegmentAssociation{b1, b2} | reconnect{b1, b2} |
+      splitLeg{b1, b2}}
+  ID                id-package-cphResponse
+}
+
+exceptionInformPackage{B2:b2} OPERATION-PACKAGE ::= {
+  CONSUMER INVOKES  {entityReleased  { --!--b2}}
+  ID                id-package-entityReleased
+}
+
+triggerCallManagementPackage{B1:b1, B2:b2} OPERATION-PACKAGE ::= {
+  CONSUMER INVOKES  {triggerCallManagement{b1, b2}}
+  ID                id-package-triggerCallManagement
+}
+
+triggerCallManagement{B1:b1, B2:b2} OPERATION ::= {
+                                                  -- EDITOR: to be defined --}
+
+triggerManagementPackage{B1:b1, B2:b2, B3:b3} OPERATION-PACKAGE ::= {
+  CONSUMER INVOKES
+    {createOrRemoveTriggerData{b1, b2, b3} | manageTriggerData{b1, b2}}
+  ID                id-package-triggerManagement
+}
+
+uSIHandlingPackage{B1:b1, B2:b2} OPERATION-PACKAGE ::= {
+  CONSUMER INVOKES  {requestReportUTSI{b1, b2} | sendSTUI{b1, b2}}
+  SUPPLIER INVOKES  {reportUTSI{b1, b2}}
+  ID                id-package-uSIHandling
+}
+
+facilityIEHandlingPackage{B1:b1} OPERATION-PACKAGE ::= {
+  CONSUMER INVOKES
+    {requestReportFacilityEvent{b1} | sendFacilityInformation{b1}}
+  SUPPLIER INVOKES  {eventReportFacility{b1}}
+  ID                id-package-facilityIEHandling
+}
+
+-- Abstract Syntaxes 
+ssf-scfGenericAbstractSyntax ABSTRACT-SYNTAX ::= {
+  GenericSSF-SCF-PDUs
+  IDENTIFIED BY  id-as-ssf-scfGenericAS
+}
+
+GenericSSF-SCF-PDUs ::=
+  TCMessage{{SsfToScfGenericInvokable}, {SsfToScfGenericReturnable}}
+
+SsfToScfGenericInvokable OPERATION ::=
+  {activateServiceFiltering{networkSpecificB1, networkSpecificB2,
+                           networkSpecificB3} | activityTest |
+   applyCharging{networkSpecificB1, networkSpecificB2} |
+   applyChargingReport{networkSpecificB2} |
+   callInformationReport{networkSpecificB1, networkSpecificB2} |
+   callInformationRequest{networkSpecificB1, networkSpecificB2} |
+   cancel{networkSpecificB2} |
+   cancelStatusReportRequest{networkSpecificB1, networkSpecificB2} |
+   collectInformation{networkSpecificB1, networkSpecificB2} |
+   connect{networkSpecificB1, networkSpecificB2} |
+   connectToResource{networkSpecificB1, networkSpecificB2} |
+   createCallSegmentAssociation{networkSpecificB1, networkSpecificB2} |
+   disconnectForwardConnection |
+   disconnectForwardConnectionWithArgument{networkSpecificB1,
+                                          networkSpecificB2} |
+   disconnectLeg{networkSpecificB1, networkSpecificB2} |
+   entityReleased{networkSpecificB2} |
+   establishTemporaryConnection{networkSpecificB1, networkSpecificB2} |
+   eventNotificationCharging{networkSpecificB1, networkSpecificB2} |
+   eventReportBCSM{networkSpecificB1, networkSpecificB2} |
+   eventReportFacility{networkSpecificB1} |
+   furnishChargingInformation{networkSpecificB2} | holdCallInNetwork |
+   initialDP{networkSpecificB1, networkSpecificB2} |
+   mergeCallSegments{networkSpecificB1, networkSpecificB2} |
+   moveCallSegments{networkSpecificB1, networkSpecificB2} |
+   moveLeg{networkSpecificB1, networkSpecificB2} |
+   reconnect{networkSpecificB1, networkSpecificB2} |
+   releaseCall{networkSpecificB2} |
+   reportUTSI{networkSpecificB1, networkSpecificB2} |
+   requestCurrentStatusReport{networkSpecificB1, networkSpecificB2} |
+   requestEveryStatusChangeReport{networkSpecificB1, networkSpecificB2} |
+   requestFirstStatusMatchReport{networkSpecificB1, networkSpecificB2} |
+   requestNotificationChargingEvent{networkSpecificB2} |
+   requestReportBCSMEvent{networkSpecificB1, networkSpecificB2} |
+   requestReportFacilityEvent{networkSpecificB1} |
+   requestReportUTSI{networkSpecificB1, networkSpecificB2} |
+   resetTimer{networkSpecificB1, networkSpecificB2} |
+   sendChargingInformation{networkSpecificB1, networkSpecificB2} |
+   sendFacilityInformation{networkSpecificB1} |
+   sendSTUI{networkSpecificB1, networkSpecificB2} |
+   serviceFilteringResponse{networkSpecificB1, networkSpecificB2} |
+   setServiceProfile{networkSpecificB1, networkSpecificB2} |
+   splitLeg{networkSpecificB1, networkSpecificB2} |
+   statusReport{networkSpecificB1, networkSpecificB2} |
+   playAnnouncement{networkSpecificB1, networkSpecificB2, networkSpecificB3} |
+   promptAndCollectUserInformation{networkSpecificB1, networkSpecificB2,
+                                  networkSpecificB3} |
+   scriptClose{networkSpecificB1, networkSpecificB2} |
+   scriptEvent{networkSpecificB1, networkSpecificB2} |
+   scriptInformation{networkSpecificB1, networkSpecificB2} |
+   scriptRun{networkSpecificB1, networkSpecificB2} | specializedResourceReport
+   |
+   promptAndReceiveMessage{networkSpecificB1, networkSpecificB2,
+                          networkSpecificB3}}
+
+SsfToScfGenericReturnable OPERATION ::=
+  {activateServiceFiltering{networkSpecificB1, networkSpecificB2,
+                           networkSpecificB3} | activityTest |
+   applyCharging{networkSpecificB1, networkSpecificB2} |
+   applyChargingReport{networkSpecificB2} |
+   callGap{networkSpecificB1, networkSpecificB2, networkSpecificB3} |
+   callInformationRequest{networkSpecificB1, networkSpecificB2} |
+   cancel{networkSpecificB2} |
+   cancelStatusReportRequest{networkSpecificB1, networkSpecificB2} |
+   collectInformation{networkSpecificB1, networkSpecificB2} |
+   connect{networkSpecificB1, networkSpecificB2} |
+   connectToResource{networkSpecificB1, networkSpecificB2} | continue |
+   continueWithArgument{networkSpecificB1, networkSpecificB2} |
+   createCallSegmentAssociation{networkSpecificB1, networkSpecificB2} |
+   disconnectForwardConnection |
+   disconnectForwardConnectionWithArgument{networkSpecificB1,
+                                          networkSpecificB2} |
+   disconnectLeg{networkSpecificB1, networkSpecificB2} |
+   establishTemporaryConnection{networkSpecificB1, networkSpecificB2} |
+   furnishChargingInformation{networkSpecificB2} | holdCallInNetwork |
+   initialDP{networkSpecificB1, networkSpecificB2} |
+   mergeCallSegments{networkSpecificB1, networkSpecificB2} |
+   moveCallSegments{networkSpecificB1, networkSpecificB2} |
+   moveLeg{networkSpecificB1, networkSpecificB2} |
+   reconnect{networkSpecificB1, networkSpecificB2} |
+   releaseCall{networkSpecificB2} |
+   requestCurrentStatusReport{networkSpecificB1, networkSpecificB2} |
+   requestEveryStatusChangeReport{networkSpecificB1, networkSpecificB2} |
+   requestFirstStatusMatchReport{networkSpecificB1, networkSpecificB2} |
+   requestNotificationChargingEvent{networkSpecificB2} |
+   requestReportBCSMEvent{networkSpecificB1, networkSpecificB2} |
+   requestReportFacilityEvent{networkSpecificB1} |
+   requestReportUTSI{networkSpecificB1, networkSpecificB2} |
+   resetTimer{networkSpecificB1, networkSpecificB2} |
+   sendChargingInformation{networkSpecificB1, networkSpecificB2} |
+   sendFacilityInformation{networkSpecificB1} |
+   sendSTUI{networkSpecificB1, networkSpecificB2} |
+   setServiceProfile{networkSpecificB1, networkSpecificB2} |
+   splitLeg{networkSpecificB1, networkSpecificB2} |
+   playAnnouncement{networkSpecificB1, networkSpecificB2, networkSpecificB3} |
+   promptAndCollectUserInformation{networkSpecificB1, networkSpecificB2,
+                                  networkSpecificB3} |
+   scriptClose{networkSpecificB1, networkSpecificB2} |
+   scriptInformation{networkSpecificB1, networkSpecificB2} |
+   scriptRun{networkSpecificB1, networkSpecificB2} |
+   promptAndReceiveMessage{networkSpecificB1, networkSpecificB2,
+                          networkSpecificB3}}
+
+ssf-scfDpSpecificAbstractSyntax ABSTRACT-SYNTAX ::= {
+  DpSpecificSSF-SCF-PDUs
+  IDENTIFIED BY  id-as-ssf-scfDpSpecificAS
+}
+
+DpSpecificSSF-SCF-PDUs ::=
+  TCMessage{{SsfToScfDpSpecificInvokable}, {SsfToScfDpSpecificReturnable}}
+
+SsfToScfDpSpecificInvokable OPERATION ::=
+  {activateServiceFiltering{networkSpecificB1, networkSpecificB2,
+                           networkSpecificB3} | activityTest |
+   analyseInformation{networkSpecificB1, networkSpecificB2} |
+   analysedInformation{networkSpecificB1, networkSpecificB2} |
+   applyCharging{networkSpecificB1, networkSpecificB2} |
+   applyChargingReport{networkSpecificB2} |
+   assistRequestInstructions{networkSpecificB1, networkSpecificB2} |
+   callInformationReport{networkSpecificB1, networkSpecificB2} |
+   callInformationRequest{networkSpecificB1, networkSpecificB2} |
+   cancel{networkSpecificB2} |
+   cancelStatusReportRequest{networkSpecificB1, networkSpecificB2} |
+   collectedInformation{networkSpecificB1, networkSpecificB2} |
+   collectInformation{networkSpecificB1, networkSpecificB2} |
+   connect{networkSpecificB1, networkSpecificB2} |
+   connectToResource{networkSpecificB1, networkSpecificB2} |
+   createCallSegmentAssociation{networkSpecificB1, networkSpecificB2} |
+   disconnectForwardConnection |
+   disconnectForwardConnectionWithArgument{networkSpecificB1,
+                                          networkSpecificB2} |
+   disconnectLeg{networkSpecificB1, networkSpecificB2} |
+   entityReleased{networkSpecificB2} |
+   establishTemporaryConnection{networkSpecificB1, networkSpecificB2} |
+   eventNotificationCharging{networkSpecificB1, networkSpecificB2} |
+   eventReportFacility{networkSpecificB1} |
+   furnishChargingInformation{networkSpecificB2} | holdCallInNetwork |
+   initiateCallAttempt{networkSpecificB1, networkSpecificB2} |
+   mergeCallSegments{networkSpecificB1, networkSpecificB2} |
+   moveCallSegments{networkSpecificB1, networkSpecificB2} |
+   moveLeg{networkSpecificB1, networkSpecificB2} |
+   oAbandon{networkSpecificB1, networkSpecificB2} |
+   oAnswer{networkSpecificB1, networkSpecificB2} |
+   oCalledPartyBusy{networkSpecificB1, networkSpecificB2} |
+   oDisconnect{networkSpecificB1, networkSpecificB2} |
+   oMidCall{networkSpecificB1, networkSpecificB2} |
+   oNoAnswer{networkSpecificB1, networkSpecificB2} |
+   originationAttemptAuthorized{networkSpecificB1, networkSpecificB2} |
+   reconnect{networkSpecificB1, networkSpecificB2} |
+   releaseCall{networkSpecificB2} |
+   reportUTSI{networkSpecificB1, networkSpecificB2} |
+   requestCurrentStatusReport{networkSpecificB1, networkSpecificB2} |
+   requestEveryStatusChangeReport{networkSpecificB1, networkSpecificB2} |
+   requestFirstStatusMatchReport{networkSpecificB1, networkSpecificB2} |
+   requestNotificationChargingEvent{networkSpecificB2} |
+   requestReportBCSMEvent{networkSpecificB1, networkSpecificB2} |
+   requestReportFacilityEvent{networkSpecificB1} |
+   requestReportUTSI{networkSpecificB1, networkSpecificB2} |
+   resetTimer{networkSpecificB1, networkSpecificB2} |
+   routeSelectFailure{networkSpecificB1, networkSpecificB2} |
+   selectFacility{networkSpecificB1, networkSpecificB2} |
+   selectRoute{networkSpecificB1, networkSpecificB2} |
+   sendChargingInformation{networkSpecificB1, networkSpecificB2} |
+   sendFacilityInformation{networkSpecificB1} |
+   sendSTUI{networkSpecificB1, networkSpecificB2} |
+   serviceFilteringResponse{networkSpecificB1, networkSpecificB2} |
+   setServiceProfile{networkSpecificB1, networkSpecificB2} |
+   splitLeg{networkSpecificB1, networkSpecificB2} |
+   statusReport{networkSpecificB1, networkSpecificB2} |
+   tAnswer{networkSpecificB1, networkSpecificB2} |
+   tBusy{networkSpecificB1, networkSpecificB2} |
+   tDisconnect{networkSpecificB1, networkSpecificB2} |
+   termAttemptAuthorized{networkSpecificB1, networkSpecificB2} |
+   tMidCall{networkSpecificB1, networkSpecificB2} |
+   tNoAnswer{networkSpecificB1, networkSpecificB2} |
+   playAnnouncement{networkSpecificB1, networkSpecificB2, networkSpecificB3} |
+   promptAndCollectUserInformation{networkSpecificB1, networkSpecificB2,
+                                  networkSpecificB3} |
+   scriptClose{networkSpecificB1, networkSpecificB2} |
+   scriptEvent{networkSpecificB1, networkSpecificB2} |
+   scriptInformation{networkSpecificB1, networkSpecificB2} |
+   scriptRun{networkSpecificB1, networkSpecificB2} | specializedResourceReport
+   |
+   promptAndReceiveMessage{networkSpecificB1, networkSpecificB2,
+                          networkSpecificB3}}
+
+SsfToScfDpSpecificReturnable OPERATION ::=
+  {activateServiceFiltering{networkSpecificB1, networkSpecificB2,
+                           networkSpecificB3} | activityTest |
+   analyseInformation{networkSpecificB1, networkSpecificB2} |
+   analysedInformation{networkSpecificB1, networkSpecificB2} |
+   applyCharging{networkSpecificB1, networkSpecificB2} |
+   applyChargingReport{networkSpecificB2} |
+   assistRequestInstructions{networkSpecificB1, networkSpecificB2} |
+   callGap{networkSpecificB1, networkSpecificB2, networkSpecificB3} |
+   callInformationRequest{networkSpecificB1, networkSpecificB2} |
+   cancel{networkSpecificB2} |
+   cancelStatusReportRequest{networkSpecificB1, networkSpecificB2} |
+   collectedInformation{networkSpecificB1, networkSpecificB2} |
+   collectInformation{networkSpecificB1, networkSpecificB2} |
+   connect{networkSpecificB1, networkSpecificB2} |
+   connectToResource{networkSpecificB1, networkSpecificB2} | continue |
+   continueWithArgument{networkSpecificB1, networkSpecificB2} |
+   createCallSegmentAssociation{networkSpecificB1, networkSpecificB2} |
+   disconnectForwardConnection |
+   disconnectForwardConnectionWithArgument{networkSpecificB1,
+                                          networkSpecificB2} |
+   disconnectLeg{networkSpecificB1, networkSpecificB2} |
+   establishTemporaryConnection{networkSpecificB1, networkSpecificB2} |
+   furnishChargingInformation{networkSpecificB2} | holdCallInNetwork |
+   initiateCallAttempt{networkSpecificB1, networkSpecificB2} |
+   mergeCallSegments{networkSpecificB1, networkSpecificB2} |
+   moveCallSegments{networkSpecificB1, networkSpecificB2} |
+   moveLeg{networkSpecificB1, networkSpecificB2} |
+   oAbandon{networkSpecificB1, networkSpecificB2} |
+   oAnswer{networkSpecificB1, networkSpecificB2} |
+   oCalledPartyBusy{networkSpecificB1, networkSpecificB2} |
+   oDisconnect{networkSpecificB1, networkSpecificB2} |
+   oMidCall{networkSpecificB1, networkSpecificB2} |
+   oNoAnswer{networkSpecificB1, networkSpecificB2} |
+   originationAttemptAuthorized{networkSpecificB1, networkSpecificB2} |
+   reconnect{networkSpecificB1, networkSpecificB2} |
+   releaseCall{networkSpecificB2} |
+   requestCurrentStatusReport{networkSpecificB1, networkSpecificB2} |
+   requestEveryStatusChangeReport{networkSpecificB1, networkSpecificB2} |
+   requestFirstStatusMatchReport{networkSpecificB1, networkSpecificB2} |
+   requestNotificationChargingEvent{networkSpecificB2} |
+   requestReportBCSMEvent{networkSpecificB1, networkSpecificB2} |
+   requestReportFacilityEvent{networkSpecificB1} |
+   requestReportUTSI{networkSpecificB1, networkSpecificB2} |
+   resetTimer{networkSpecificB1, networkSpecificB2} |
+   routeSelectFailure{networkSpecificB1, networkSpecificB2} |
+   selectFacility{networkSpecificB1, networkSpecificB2} |
+   selectRoute{networkSpecificB1, networkSpecificB2} |
+   sendChargingInformation{networkSpecificB1, networkSpecificB2} |
+   sendFacilityInformation{networkSpecificB1} |
+   sendSTUI{networkSpecificB1, networkSpecificB2} |
+   setServiceProfile{networkSpecificB1, networkSpecificB2} |
+   splitLeg{networkSpecificB1, networkSpecificB2} |
+   tAnswer{networkSpecificB1, networkSpecificB2} |
+   tBusy{networkSpecificB1, networkSpecificB2} |
+   tDisconnect{networkSpecificB1, networkSpecificB2} |
+   termAttemptAuthorized{networkSpecificB1, networkSpecificB2} |
+   tMidCall{networkSpecificB1, networkSpecificB2} |
+   tNoAnswer{networkSpecificB1, networkSpecificB2} |
+   playAnnouncement{networkSpecificB1, networkSpecificB2, networkSpecificB3} |
+   promptAndCollectUserInformation{networkSpecificB1, networkSpecificB2,
+                                  networkSpecificB3} |
+   scriptClose{networkSpecificB1, networkSpecificB2} |
+   scriptInformation{networkSpecificB1, networkSpecificB2} |
+   scriptRun{networkSpecificB1, networkSpecificB2} |
+   promptAndReceiveMessage{networkSpecificB1, networkSpecificB2,
+                          networkSpecificB3}}
+
+assistHandoff-ssf-scfAbstractSyntax ABSTRACT-SYNTAX ::= {
+  AssistHandoffSSF-SCF-PDUs
+  IDENTIFIED BY  id-as-assistHandoff-ssf-scfAS
+}
+
+AssistHandoffSSF-SCF-PDUs ::=
+  TCMessage
+    {{AssistHandoffSsfToScfInvokable}, {AssistHandoffSsfToScfReturnable}}
+
+AssistHandoffSsfToScfInvokable OPERATION ::=
+  {activityTest | applyCharging{networkSpecificB1, networkSpecificB2} |
+   applyChargingReport{networkSpecificB2} |
+   assistRequestInstructions{networkSpecificB1, networkSpecificB2} |
+   cancel{networkSpecificB2} |
+   cancelStatusReportRequest{networkSpecificB1, networkSpecificB2} |
+   connectToResource{networkSpecificB1, networkSpecificB2} |
+   disconnectForwardConnection |
+   disconnectForwardConnectionWithArgument{networkSpecificB1,
+                                          networkSpecificB2} |
+   furnishChargingInformation{networkSpecificB2} | holdCallInNetwork |
+   playAnnouncement{networkSpecificB1, networkSpecificB2, networkSpecificB3} |
+   promptAndCollectUserInformation{networkSpecificB1, networkSpecificB2,
+                                  networkSpecificB3} |
+   requestCurrentStatusReport{networkSpecificB1, networkSpecificB2} |
+   requestEveryStatusChangeReport{networkSpecificB1, networkSpecificB2} |
+   requestFirstStatusMatchReport{networkSpecificB1, networkSpecificB2} |
+   resetTimer{networkSpecificB1, networkSpecificB2} |
+   statusReport{networkSpecificB1, networkSpecificB2} |
+   scriptClose{networkSpecificB1, networkSpecificB2} |
+   scriptEvent{networkSpecificB1, networkSpecificB2} |
+   scriptInformation{networkSpecificB1, networkSpecificB2} |
+   scriptRun{networkSpecificB1, networkSpecificB2} |
+   sendChargingInformation{networkSpecificB1, networkSpecificB2} |
+   specializedResourceReport |
+   promptAndReceiveMessage{networkSpecificB1, networkSpecificB2,
+                          networkSpecificB3}}
+
+AssistHandoffSsfToScfReturnable OPERATION ::=
+  {activityTest | applyCharging{networkSpecificB1, networkSpecificB2} |
+   applyChargingReport{networkSpecificB2} |
+   assistRequestInstructions{networkSpecificB1, networkSpecificB2} |
+   cancel{networkSpecificB2} |
+   cancelStatusReportRequest{networkSpecificB1, networkSpecificB2} |
+   connectToResource{networkSpecificB1, networkSpecificB2} |
+   disconnectForwardConnection |
+   disconnectForwardConnectionWithArgument{networkSpecificB1,
+                                          networkSpecificB2} |
+   furnishChargingInformation{networkSpecificB2} | holdCallInNetwork |
+   playAnnouncement{networkSpecificB1, networkSpecificB2, networkSpecificB3} |
+   promptAndCollectUserInformation{networkSpecificB1, networkSpecificB2,
+                                  networkSpecificB3} |
+   requestCurrentStatusReport{networkSpecificB1, networkSpecificB2} |
+   requestEveryStatusChangeReport{networkSpecificB1, networkSpecificB2} |
+   requestFirstStatusMatchReport{networkSpecificB1, networkSpecificB2} |
+   resetTimer{networkSpecificB1, networkSpecificB2} |
+   scriptClose{networkSpecificB1, networkSpecificB2} |
+   scriptInformation{networkSpecificB1, networkSpecificB2} |
+   scriptRun{networkSpecificB1, networkSpecificB2} |
+   promptAndReceiveMessage{networkSpecificB1, networkSpecificB2,
+                          networkSpecificB3}}
+
+scf-ssfGenericAbstractSyntax ABSTRACT-SYNTAX ::= {
+  GenericSCF-SSF-PDUs
+  IDENTIFIED BY  id-as-scf-ssfGenericAS
+}
+
+GenericSCF-SSF-PDUs ::=
+  TCMessage{{ScfToSsfGenericInvokable}, {ScfToSsfGenericReturnable}}
+
+ScfToSsfGenericInvokable OPERATION ::=
+  {activateServiceFiltering{networkSpecificB1, networkSpecificB2,
+                           networkSpecificB3} | activityTest |
+   applyCharging{networkSpecificB1, networkSpecificB2} |
+   applyChargingReport{networkSpecificB2} |
+   callInformationRequest{networkSpecificB1, networkSpecificB2} |
+   cancel{networkSpecificB2} |
+   cancelStatusReportRequest{networkSpecificB1, networkSpecificB2} |
+   collectInformation{networkSpecificB1, networkSpecificB2} |
+   connect{networkSpecificB1, networkSpecificB2} |
+   connectToResource{networkSpecificB1, networkSpecificB2} | continue |
+   continueWithArgument{networkSpecificB1, networkSpecificB2} |
+   createCallSegmentAssociation{networkSpecificB1, networkSpecificB2} |
+   disconnectForwardConnection |
+   disconnectForwardConnectionWithArgument{networkSpecificB1,
+                                          networkSpecificB2} |
+   disconnectLeg{networkSpecificB1, networkSpecificB2} |
+   establishTemporaryConnection{networkSpecificB1, networkSpecificB2} |
+   furnishChargingInformation{networkSpecificB2} | holdCallInNetwork |
+   initiateCallAttempt{networkSpecificB1, networkSpecificB2} |
+   mergeCallSegments{networkSpecificB1, networkSpecificB2} |
+   moveCallSegments{networkSpecificB1, networkSpecificB2} |
+   moveLeg{networkSpecificB1, networkSpecificB2} |
+   releaseCall{networkSpecificB2} |
+   reconnect{networkSpecificB1, networkSpecificB2} |
+   requestCurrentStatusReport{networkSpecificB1, networkSpecificB2} |
+   requestEveryStatusChangeReport{networkSpecificB1, networkSpecificB2} |
+   requestFirstStatusMatchReport{networkSpecificB1, networkSpecificB2} |
+   requestNotificationChargingEvent{networkSpecificB2} |
+   requestReportBCSMEvent{networkSpecificB1, networkSpecificB2} |
+   requestReportFacilityEvent{networkSpecificB1} |
+   requestReportUTSI{networkSpecificB1, networkSpecificB2} |
+   resetTimer{networkSpecificB1, networkSpecificB2} |
+   sendChargingInformation{networkSpecificB1, networkSpecificB2} |
+   sendFacilityInformation{networkSpecificB1} |
+   sendSTUI{networkSpecificB1, networkSpecificB2} |
+   setServiceProfile{networkSpecificB1, networkSpecificB2} |
+   splitLeg{networkSpecificB1, networkSpecificB2} |
+   playAnnouncement{networkSpecificB1, networkSpecificB2, networkSpecificB3} |
+   promptAndCollectUserInformation{networkSpecificB1, networkSpecificB2,
+                                  networkSpecificB3} |
+   scriptClose{networkSpecificB1, networkSpecificB2} |
+   scriptInformation{networkSpecificB1, networkSpecificB2} |
+   scriptRun{networkSpecificB1, networkSpecificB2} |
+   promptAndReceiveMessage{networkSpecificB1, networkSpecificB2,
+                          networkSpecificB3}}
+
+ScfToSsfGenericReturnable OPERATION ::=
+  {activateServiceFiltering{networkSpecificB1, networkSpecificB2,
+                           networkSpecificB3} | activityTest |
+   applyCharging{networkSpecificB1, networkSpecificB2} |
+   applyChargingReport{networkSpecificB2} |
+   callInformationReport{networkSpecificB1, networkSpecificB2} |
+   callInformationRequest{networkSpecificB1, networkSpecificB2} |
+   cancel{networkSpecificB2} |
+   cancelStatusReportRequest{networkSpecificB1, networkSpecificB2} |
+   collectInformation{networkSpecificB1, networkSpecificB2} |
+   connect{networkSpecificB1, networkSpecificB2} |
+   connectToResource{networkSpecificB1, networkSpecificB2} |
+   createCallSegmentAssociation{networkSpecificB1, networkSpecificB2} |
+   disconnectForwardConnection |
+   disconnectForwardConnectionWithArgument{networkSpecificB1,
+                                          networkSpecificB2} |
+   disconnectLeg{networkSpecificB1, networkSpecificB2} |
+   entityReleased{networkSpecificB2} |
+   establishTemporaryConnection{networkSpecificB1, networkSpecificB2} |
+   eventNotificationCharging{networkSpecificB1, networkSpecificB2} |
+   resetTimer{networkSpecificB1, networkSpecificB2} |
+   eventReportBCSM{networkSpecificB1, networkSpecificB2} |
+   eventReportFacility{networkSpecificB1} |
+   furnishChargingInformation{networkSpecificB2} | holdCallInNetwork |
+   initiateCallAttempt{networkSpecificB1, networkSpecificB2} |
+   mergeCallSegments{networkSpecificB1, networkSpecificB2} |
+   moveCallSegments{networkSpecificB1, networkSpecificB2} |
+   moveLeg{networkSpecificB1, networkSpecificB2} |
+   reconnect{networkSpecificB1, networkSpecificB2} |
+   reportUTSI{networkSpecificB1, networkSpecificB2} |
+   requestCurrentStatusReport{networkSpecificB1, networkSpecificB2} |
+   requestEveryStatusChangeReport{networkSpecificB1, networkSpecificB2} |
+   requestFirstStatusMatchReport{networkSpecificB1, networkSpecificB2} |
+   requestNotificationChargingEvent{networkSpecificB2} |
+   requestReportBCSMEvent{networkSpecificB1, networkSpecificB2} |
+   requestReportFacilityEvent{networkSpecificB1} |
+   requestReportUTSI{networkSpecificB1, networkSpecificB2} |
+   sendChargingInformation{networkSpecificB1, networkSpecificB2} |
+   sendFacilityInformation{networkSpecificB1} |
+   sendSTUI{networkSpecificB1, networkSpecificB2} |
+   serviceFilteringResponse{networkSpecificB1, networkSpecificB2} |
+   setServiceProfile{networkSpecificB1, networkSpecificB2} |
+   splitLeg{networkSpecificB1, networkSpecificB2} |
+   statusReport{networkSpecificB1, networkSpecificB2} |
+   playAnnouncement{networkSpecificB1, networkSpecificB2, networkSpecificB3} |
+   promptAndCollectUserInformation{networkSpecificB1, networkSpecificB2,
+                                  networkSpecificB3} |
+   scriptClose{networkSpecificB1, networkSpecificB2} |
+   scriptEvent{networkSpecificB1, networkSpecificB2} |
+   scriptInformation{networkSpecificB1, networkSpecificB2} |
+   scriptRun{networkSpecificB1, networkSpecificB2} | specializedResourceReport
+   |
+   promptAndReceiveMessage{networkSpecificB1, networkSpecificB2,
+                          networkSpecificB3}}
+
+scf-ssfDpSpecificAbstractSyntax ABSTRACT-SYNTAX ::= {
+  DpSpecificSCF-SSF-PDUs
+  IDENTIFIED BY  id-as-scf-ssfDpSpecificAS
+}
+
+DpSpecificSCF-SSF-PDUs ::=
+  TCMessage{{ScfToSsfDpSpecificInvokable}, {ScfToSsfDpSpecificReturnable}}
+
+ScfToSsfDpSpecificInvokable OPERATION ::=
+  {activateServiceFiltering{networkSpecificB1, networkSpecificB2,
+                           networkSpecificB3} | activityTest |
+   analyseInformation{networkSpecificB1, networkSpecificB2} |
+   analysedInformation{networkSpecificB1, networkSpecificB2} |
+   applyCharging{networkSpecificB1, networkSpecificB2} |
+   applyChargingReport{networkSpecificB2} |
+   callInformationRequest{networkSpecificB1, networkSpecificB2} |
+   cancel{networkSpecificB2} |
+   cancelStatusReportRequest{networkSpecificB1, networkSpecificB2} |
+   collectedInformation{networkSpecificB1, networkSpecificB2} |
+   collectInformation{networkSpecificB1, networkSpecificB2} |
+   connect{networkSpecificB1, networkSpecificB2} |
+   connectToResource{networkSpecificB1, networkSpecificB2} | continue |
+   continueWithArgument{networkSpecificB1, networkSpecificB2} |
+   createCallSegmentAssociation{networkSpecificB1, networkSpecificB2} |
+   createOrRemoveTriggerData{networkSpecificB1, networkSpecificB2,
+                            networkSpecificB3} | disconnectForwardConnection |
+   disconnectForwardConnectionWithArgument{networkSpecificB1,
+                                          networkSpecificB2} |
+   disconnectLeg{networkSpecificB1, networkSpecificB2} |
+   establishTemporaryConnection{networkSpecificB1, networkSpecificB2} |
+   furnishChargingInformation{networkSpecificB2} | holdCallInNetwork |
+   initiateCallAttempt{networkSpecificB1, networkSpecificB2} |
+   manageTriggerData{networkSpecificB1, networkSpecificB2} |
+   mergeCallSegments{networkSpecificB1, networkSpecificB2} |
+   moveCallSegments{networkSpecificB1, networkSpecificB2} |
+   moveLeg{networkSpecificB1, networkSpecificB2} |
+   oAbandon{networkSpecificB1, networkSpecificB2} |
+   oAnswer{networkSpecificB1, networkSpecificB2} |
+   oCalledPartyBusy{networkSpecificB1, networkSpecificB2} |
+   oDisconnect{networkSpecificB1, networkSpecificB2} |
+   oMidCall{networkSpecificB1, networkSpecificB2} |
+   oNoAnswer{networkSpecificB1, networkSpecificB2} |
+   originationAttemptAuthorized{networkSpecificB1, networkSpecificB2} |
+   reconnect{networkSpecificB1, networkSpecificB2} |
+   releaseCall{networkSpecificB2} |
+   requestCurrentStatusReport{networkSpecificB1, networkSpecificB2} |
+   requestEveryStatusChangeReport{networkSpecificB1, networkSpecificB2} |
+   requestFirstStatusMatchReport{networkSpecificB1, networkSpecificB2} |
+   requestNotificationChargingEvent{networkSpecificB2} |
+   requestReportBCSMEvent{networkSpecificB1, networkSpecificB2} |
+   requestReportFacilityEvent{networkSpecificB1} |
+   requestReportUTSI{networkSpecificB1, networkSpecificB2} |
+   resetTimer{networkSpecificB1, networkSpecificB2} |
+   routeSelectFailure{networkSpecificB1, networkSpecificB2} |
+   selectFacility{networkSpecificB1, networkSpecificB2} |
+   selectRoute{networkSpecificB1, networkSpecificB2} |
+   sendChargingInformation{networkSpecificB1, networkSpecificB2} |
+   sendFacilityInformation{networkSpecificB1} |
+   sendSTUI{networkSpecificB1, networkSpecificB2} |
+   setServiceProfile{networkSpecificB1, networkSpecificB2} |
+   splitLeg{networkSpecificB1, networkSpecificB2} |
+   tAnswer{networkSpecificB1, networkSpecificB2} |
+   tBusy{networkSpecificB1, networkSpecificB2} |
+   tDisconnect{networkSpecificB1, networkSpecificB2} |
+   termAttemptAuthorized{networkSpecificB1, networkSpecificB2} |
+   tMidCall{networkSpecificB1, networkSpecificB2} |
+   tNoAnswer{networkSpecificB1, networkSpecificB2} |
+   playAnnouncement{networkSpecificB1, networkSpecificB2, networkSpecificB3} |
+   promptAndCollectUserInformation{networkSpecificB1, networkSpecificB2,
+                                  networkSpecificB3} |
+   scriptClose{networkSpecificB1, networkSpecificB2} |
+   scriptInformation{networkSpecificB1, networkSpecificB2} |
+   scriptRun{networkSpecificB1, networkSpecificB2} |
+   promptAndReceiveMessage{networkSpecificB1, networkSpecificB2,
+                          networkSpecificB3}}
+
+ScfToSsfDpSpecificReturnable OPERATION ::=
+  {activateServiceFiltering{networkSpecificB1, networkSpecificB2,
+                           networkSpecificB3} | activityTest |
+   analyseInformation{networkSpecificB1, networkSpecificB2} |
+   analysedInformation{networkSpecificB1, networkSpecificB2} |
+   applyCharging{networkSpecificB1, networkSpecificB2} |
+   applyChargingReport{networkSpecificB2} |
+   callInformationReport{networkSpecificB1, networkSpecificB2} |
+   callInformationRequest{networkSpecificB1, networkSpecificB2} |
+   cancel{networkSpecificB2} |
+   cancelStatusReportRequest{networkSpecificB1, networkSpecificB2} |
+   collectedInformation{networkSpecificB1, networkSpecificB2} |
+   collectInformation{networkSpecificB1, networkSpecificB2} |
+   connect{networkSpecificB1, networkSpecificB2} |
+   connectToResource{networkSpecificB1, networkSpecificB2} |
+   createCallSegmentAssociation{networkSpecificB1, networkSpecificB2} |
+   disconnectForwardConnection |
+   disconnectForwardConnectionWithArgument{networkSpecificB1,
+                                          networkSpecificB2} |
+   disconnectLeg{networkSpecificB1, networkSpecificB2} |
+   entityReleased{networkSpecificB2} |
+   establishTemporaryConnection{networkSpecificB1, networkSpecificB2} |
+   eventNotificationCharging{networkSpecificB1, networkSpecificB2} |
+   eventReportFacility{networkSpecificB1} |
+   furnishChargingInformation{networkSpecificB2} | holdCallInNetwork |
+   initiateCallAttempt{networkSpecificB1, networkSpecificB2} |
+   initiateCallAttempt{networkSpecificB1, networkSpecificB2} |
+   mergeCallSegments{networkSpecificB1, networkSpecificB2} |
+   moveCallSegments{networkSpecificB1, networkSpecificB2} |
+   moveLeg{networkSpecificB1, networkSpecificB2} |
+   oAnswer{networkSpecificB1, networkSpecificB2} |
+   oCalledPartyBusy{networkSpecificB1, networkSpecificB2} |
+   oDisconnect{networkSpecificB1, networkSpecificB2} |
+   oMidCall{networkSpecificB1, networkSpecificB2} |
+   oAbandon{networkSpecificB1, networkSpecificB2} |
+   oNoAnswer{networkSpecificB1, networkSpecificB2} |
+   originationAttemptAuthorized{networkSpecificB1, networkSpecificB2} |
+   reconnect{networkSpecificB1, networkSpecificB2} |
+   reportUTSI{networkSpecificB1, networkSpecificB2} |
+   requestCurrentStatusReport{networkSpecificB1, networkSpecificB2} |
+   requestEveryStatusChangeReport{networkSpecificB1, networkSpecificB2} |
+   requestFirstStatusMatchReport{networkSpecificB1, networkSpecificB2} |
+   requestNotificationChargingEvent{networkSpecificB2} |
+   requestReportBCSMEvent{networkSpecificB1, networkSpecificB2} |
+   requestReportFacilityEvent{networkSpecificB1} |
+   requestReportUTSI{networkSpecificB1, networkSpecificB2} |
+   resetTimer{networkSpecificB1, networkSpecificB2} |
+   routeSelectFailure{networkSpecificB1, networkSpecificB2} |
+   selectFacility{networkSpecificB1, networkSpecificB2} |
+   selectRoute{networkSpecificB1, networkSpecificB2} |
+   sendChargingInformation{networkSpecificB1, networkSpecificB2} |
+   sendFacilityInformation{networkSpecificB1} |
+   sendSTUI{networkSpecificB1, networkSpecificB2} |
+   serviceFilteringResponse{networkSpecificB1, networkSpecificB2} |
+   setServiceProfile{networkSpecificB1, networkSpecificB2} |
+   splitLeg{networkSpecificB1, networkSpecificB2} |
+   statusReport{networkSpecificB1, networkSpecificB2} |
+   tAnswer{networkSpecificB1, networkSpecificB2} |
+   tBusy{networkSpecificB1, networkSpecificB2} |
+   tDisconnect{networkSpecificB1, networkSpecificB2} |
+   termAttemptAuthorized{networkSpecificB1, networkSpecificB2} |
+   tMidCall{networkSpecificB1, networkSpecificB2} |
+   tNoAnswer{networkSpecificB1, networkSpecificB2} |
+   playAnnouncement{networkSpecificB1, networkSpecificB2, networkSpecificB3} |
+   promptAndCollectUserInformation{networkSpecificB1, networkSpecificB2,
+                                  networkSpecificB3} |
+   scriptClose{networkSpecificB1, networkSpecificB2} |
+   scriptEvent{networkSpecificB1, networkSpecificB2} |
+   scriptInformation{networkSpecificB1, networkSpecificB2} |
+   scriptRun{networkSpecificB1, networkSpecificB2} | specializedResourceReport
+   |
+   promptAndReceiveMessage{networkSpecificB1, networkSpecificB2,
+                          networkSpecificB3}}
+
+scf-ssfTrafficManagementAbstractSyntax ABSTRACT-SYNTAX ::= {
+  TrafficManagementSCF-SSF-PDUs
+  IDENTIFIED BY  id-as-scf-ssfTrafficManagementAS
+}
+
+TrafficManagementSCF-SSF-PDUs ::=
+  TCMessage{{ScfToSsfTrafficManagementInvokable}, {EmptyReturnable}}
+
+ScfToSsfTrafficManagementInvokable OPERATION ::=
+  {callGap{networkSpecificB1, networkSpecificB2, networkSpecificB3}}
+
+scf-ssfServiceManagementAbstractSyntax ABSTRACT-SYNTAX ::= {
+  ServiceManagementSCF-SSF-PDUs
+  IDENTIFIED BY  id-as-scf-ssfServiceManagementAS
+}
+
+ServiceManagementSCF-SSF-PDUs ::=
+  TCMessage
+    {{ScfToSsfServiceManagementInvokable},
+    {ScfToSsfServiceManagementReturnable}}
+
+ScfToSsfServiceManagementInvokable OPERATION ::=
+  {activateServiceFiltering{networkSpecificB1, networkSpecificB2,
+                           networkSpecificB3}}
+
+ScfToSsfServiceManagementReturnable OPERATION ::=
+  {activateServiceFiltering{networkSpecificB1, networkSpecificB2,
+                           networkSpecificB3}}
+
+ssf-scfServiceManagementAbstractSyntax ABSTRACT-SYNTAX ::= {
+  ServiceManagementSSF-SCF-PDUs
+  IDENTIFIED BY  id-as-ssf-scfServiceManagementAS
+}
+
+ServiceManagementSSF-SCF-PDUs ::=
+  TCMessage{{SsfToScfServiceManagementInvokable}, {EmptyReturnable}}
+
+SsfToScfServiceManagementInvokable OPERATION ::=
+  {serviceFilteringResponse{networkSpecificB1, networkSpecificB2}}
+
+scf-ssfStatusReportingAbstractSyntax ABSTRACT-SYNTAX ::= {
+  StatusReportingSCF-SSF-PDUs
+  IDENTIFIED BY  id-as-scf-ssfStatusReportingAS
+}
+
+StatusReportingSCF-SSF-PDUs ::=
+  TCMessage
+    {{ScfToSsfStatusReportingInvokable}, {ScfToSsfStatusReportingReturnable}}
+
+ScfToSsfStatusReportingInvokable OPERATION ::=
+  {cancelStatusReportRequest{networkSpecificB1, networkSpecificB2} |
+   requestCurrentStatusReport{networkSpecificB1, networkSpecificB2} |
+   requestEveryStatusChangeReport{networkSpecificB1, networkSpecificB2} |
+   requestFirstStatusMatchReport{networkSpecificB1, networkSpecificB2}}
+
+ScfToSsfStatusReportingReturnable OPERATION ::=
+  {cancelStatusReportRequest{networkSpecificB1, networkSpecificB2} |
+   requestCurrentStatusReport{networkSpecificB1, networkSpecificB2} |
+   requestEveryStatusChangeReport{networkSpecificB1, networkSpecificB2} |
+   requestFirstStatusMatchReport{networkSpecificB1, networkSpecificB2} |
+   statusReport{networkSpecificB1, networkSpecificB2}}
+
+scf-ssfTriggerManagementAbstractSyntax ABSTRACT-SYNTAX ::= {
+  TriggerManagementSCF-SSF-PDUs
+  IDENTIFIED BY  id-as-scf-ssfTriggerManagementAS
+}
+
+TriggerManagementSCF-SSF-PDUs ::=
+  TCMessage
+    {{ScfToSsfTriggerManagementInvokable},
+    {ScfToSsfTriggerManagementReturnable}}
+
+ScfToSsfTriggerManagementInvokable OPERATION ::=
+  {createOrRemoveTriggerData{networkSpecificB1, networkSpecificB2,
+                            networkSpecificB3} |
+   manageTriggerData{networkSpecificB1, networkSpecificB2}}
+
+ScfToSsfTriggerManagementReturnable OPERATION ::=
+  {createOrRemoveTriggerData{networkSpecificB1, networkSpecificB2,
+                            networkSpecificB3} |
+   manageTriggerData{networkSpecificB1, networkSpecificB2}}
+
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

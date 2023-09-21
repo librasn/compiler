@@ -1,0 +1,226 @@
+
+
+
+
+
+
+
+-- Module IN-CS3-SCF-SCF-Classes (Q.1238.6:06/2000)
+-- See also ITU-T Q.1238.6 (06/2000)
+-- See also the index of all ASN.1 assignments needed in this document
+
+-- 10.2	INFORMATION OBJECT CLASSES
+--
+-- The following ASN.1 module specifies the Information Object Classes used
+-- in the definition of the operations invoked on the SCF-SCF interface.
+IN-CS3-SCF-SCF-Classes {itu-t recommendation q 1238 modules(1)
+  in-cs3-scf-scf-classes(21) version1(0)} DEFINITIONS IMPLICIT TAGS ::=
+BEGIN
+
+IMPORTS
+  guls-Notation, common-classes, ssf-scf-classes, scf-srf-classes
+    FROM IN-CS3-object-identifiers {itu-t recommendation q 1238 modules(1)
+      in-cs3-object-identifiers(0) version1(0)}
+  COMMON-BOUNDS
+    FROM IN-CS3-common-classes {itu-t recommendation q 1238 modules(1)
+      in-cs3-common-classes(5) version1(0)}
+  SCF-SSF-BOUNDS
+    FROM IN-CS3-SSF-SCF-Classes {itu-t recommendation q 1238 modules(1)
+      in-cs3-ssf-scf-classes(7) version1(0)}
+  SCF-SRF-BOUNDS
+    FROM IN-CS3-SCF-SRF-classes {itu-t recommendation q 1238 modules(1)
+      in-cs3-scf-srf-classes(11) version1(0)}
+  PROTECTION-MAPPING
+    FROM Notation {joint-iso-itu-t genericULS(20) modules(1) notation(1)};
+
+-- The SCF-SCF-BOUNDS object class provides a tool for the specification of the upper and lower bounds 
+-- for parameters used on the SCF-SCF interface.
+SCF-SCF-BOUNDS ::= CLASS {
+  &maxAmount                   INTEGER OPTIONAL,
+  &maxUnitsPerInterval         INTEGER OPTIONAL,
+  &maxTimePerInterval          INTEGER OPTIONAL,
+  &maxScalingFactor            INTEGER OPTIONAL,
+  &maxInitialUnitIncrement     INTEGER OPTIONAL,
+  &maxUnitsPerDataInterval     INTEGER OPTIONAL,
+  &maxSegmentsPerDataInterval  INTEGER OPTIONAL,
+  &maxInitialTimeInterval      INTEGER OPTIONAL,
+  &ub-nbCall                   INTEGER OPTIONAL,
+  &minReceivedInfo             INTEGER OPTIONAL,
+  &maxReceivedInfo             INTEGER OPTIONAL,
+  &minScfAddress               INTEGER OPTIONAL,
+  &maxScfAddress               INTEGER OPTIONAL,
+  &minSSIInfoLength            INTEGER OPTIONAL,
+  &maxSSIInfoLength            INTEGER OPTIONAL,
+  &maxFreeContainer            INTEGER OPTIONAL
+}
+WITH SYNTAX {
+  [MAX-AMOUNT &maxAmount]
+  [MAX-UNITS-PER-INTERVAL &maxUnitsPerInterval]
+  [MAX-TIME-PER-INTERVAL &maxTimePerInterval]
+  [MAX-SCALING-FACTOR &maxScalingFactor]
+  [MAX-INITIAL-UNIT-INCREMENT &maxInitialUnitIncrement]
+  [MAX-UNITS-PER-DATA-INTERVAL &maxUnitsPerDataInterval]
+  [MAX-SEGMENTS-PER-INTERVAL &maxSegmentsPerDataInterval]
+  [MAX-INITIAL-TIME-INTERVAL &maxInitialTimeInterval]
+  [UB-NB-CALL &ub-nbCall]
+  [MIN-RECEIVED-INFO &minReceivedInfo]
+  [MAX-RECEIVED-INFO &maxReceivedInfo]
+  [MIN-SCF-ADDRESS &minScfAddress]
+  [MAX-SCF-ADDRESS &maxScfAddress]
+  [MIN-FOR-SSI-INFORMATION &minSSIInfoLength]
+  [MAX-FOR-SSI-INFORMATION &maxSSIInfoLength]
+  [MAX-FREE-CONTAINER &maxFreeContainer]
+}
+
+nsb6 SCF-SCF-BOUNDS ::=
+  
+  -- All values have been assigned for the purpose of ASN.1 checking only
+  -- They should be replaced by appropriate values depending on
+  -- network operators requirements and agreements
+  {
+  MAX-AMOUNT                   1
+  MAX-UNITS-PER-INTERVAL       1
+  MAX-TIME-PER-INTERVAL        1
+  MAX-SCALING-FACTOR           1
+  MAX-INITIAL-UNIT-INCREMENT   1
+  MAX-UNITS-PER-DATA-INTERVAL  1
+  MAX-SEGMENTS-PER-INTERVAL    1
+  MAX-INITIAL-TIME-INTERVAL    1
+  UB-NB-CALL                   1
+  MIN-RECEIVED-INFO            1
+  MAX-RECEIVED-INFO            1
+  MIN-SCF-ADDRESS              1
+  MAX-SCF-ADDRESS              1
+  MIN-FOR-SSI-INFORMATION      1 -- example value
+  MAX-FOR-SSI-INFORMATION      5 -- example value
+  MAX-FREE-CONTAINER           5
+ -- example value--}
+
+nsb1 COMMON-BOUNDS ::= {NUM-OF-EXTENSIONS  1
+}
+
+nsb2 SCF-SSF-BOUNDS ::= {
+  MAXIMUM-FOR-BEARER-CAPABILITY         5 --example value
+  MINIMUM-FOR-CALLED-PARTY-NUMBER       1 --example value
+  MAXIMUM-FOR-CALLED-PARTY-NUMBER       5 --example value
+  MINIMUM-FOR-CALLING-PARTY-NUMBER      1 --example value
+  MAXIMUM-FOR-CALLING-PARTY-NUMBER      5 --example value
+  MINIMUM-FOR-CALLING-PARTY-SUBADDRESS  1 --example value
+  MAXIMUM-FOR-CALLING-PARTY-SUBADDRESS  5 --example value
+  MINIMUM-FOR-CARRIER                   3 --example value
+  MAXIMUM-FOR-CARRIER                   10 --example value
+  MINIMUM-FOR-CAUSE                     1 --example value
+  MAXIMUM-FOR-CAUSE                     4 --example value
+  MINIMUM-FOR-DIGITS                    1 --example value
+  MAXIMUM-FOR-DIGITS                    5 --example value
+  MINIMUM-FOR-DISPLAY                   1 --example value
+  MAXIMUM-FOR-DISPLAY                   5 --example value
+  MINIMUM-FOR-FORWARD-GVNS              1 --example value
+  MAXIMUM-FOR-FORWARD-GVNS              5 --example value
+  MINIMUM-FOR-GENERIC-NAME              1 --example value
+  MAXIMUM-FOR-GENERIC-NAME              5 --example value
+  MINIMUM-FOR-GENERIC-NUMBER            1 --example value
+  MAXIMUM-FOR-GENERIC-NUMBER            5 --example value
+  MINIMUM-FOR-IP-AVAILABLE              1 --example value
+  MAXIMUM-FOR-IP-AVAILABLE              5 --example value
+  MINIMUM-FOR-IP-SSP-CAPABILITIES       1 --example value
+  MAXIMUM-FOR-IP-SSP-CAPABILITIES       5 --example value
+  MINIMUM-FOR-ISDN-ACCESS-RELATED-INFO  1 --example value
+  MAXIMUM-FOR-ISDN-ACCESS-RELATED-INFO  5 --example value
+  MINIMUM-FOR-LOCATION-NUMBER           1 --example value
+  MAXIMUM-FOR-LOCATION-NUMBER           5 --example value
+  MINIMUM-FOR-MID-CALL-CONTROL-INFO     1 --example value
+  MAXIMUM-FOR-MID-CALL-CONTROL-INFO     5 --example value
+  MINIMUM-FOR-ORIGINAL-CALLED-PARTY-ID  1 --example value
+  MAXIMUM-FOR-ORIGINAL-CALLED-PARTY-ID  5 --example value
+  MINIMUM-FOR-REASON                    1 --example value
+  MAXIMUM-FOR-REASON                    5 --example value
+  MINIMUM-FOR-REDIRECTING-ID            1 --example value
+  MAXIMUM-FOR-REDIRECTING-ID            5 --example value
+  MINIMUM-FOR-REQUESTED-UTSI-NUM        1 --example value
+  MAXIMUM-FOR-REQUESTED-UTSI-NUM        5 --example value
+  MINIMUM-FOR-ROUTE-LIST                1 --example value
+  MAXIMUM-FOR-ROUTE-LIST                5 --example value
+  MINIMUM-FOR-ROUTING-NUMBER            1 --example value
+  MAXIMUM-FOR-ROUTING-NUMBER            5 --example value
+  MINIMUM-FOR-SCF-ID                    1 --example value
+  MAXIMUM-FOR-SCF-ID                    5 --example value
+  MINIMUM-FOR-SCI-BILLING-CHARGING      1 --example value
+  MAXIMUM-FOR-SCI-BILLING-CHARGING      1 --example value
+  MINIMUM-FOR-SDSS-INFORMATION          1 --example value
+  MAXIMUM-FOR-SDSS-INFORMATION          1 --example value
+  MINIMUM-FOR-SII                       1 --example value
+  MAXIMUM-FOR-SII                       5 --example value
+  MINIMUM-FOR-SF-BILLING-CHARGING       1 --example value
+  MAXIMUM-FOR-SF-BILLING-CHARGING       5 --example value
+  MINIMUM-FOR-USI-INFORMATION           1 --example value
+  MAXIMUM-FOR-USI-INFORMATION           5 --example value
+  MINIMUM-FOR-USI-SERVICE-INDICATOR     1 --example value
+  MAXIMUM-FOR-USI-SERVICE-INDICATOR     5 --example value
+  NUM-OF-BCSM-EVENT                     13 --example value
+  NUM-OF-BCUSM-EVENT                    13 --example value
+  NUM-OF-CSAS                           13 --example value
+  NUM-OF-CSS                            13 --example value
+  NUM-OF-GENERIC-NUMBERS                2 --example value
+  NUM-OF-INPROFILE                      2 --example value
+  NUM-OF-SEVERAL-TRIGGER                13 --example value
+  NUM-OF-IN-SERVICE-COMPATIBILITY-ID    13 --example value
+  NUM-OF-LEGS                           13 --example value
+  MAXIMUM-FOR-CALL-REFERENCE            5 --example value
+  NUM-OF-ADDRESSES                      13
+ --example value--}
+
+nsb3 SCF-SRF-BOUNDS ::= {
+  MINIMUM-FOR-ATTRIBUTES              1
+  MAXIMUM-FOR-ATTRIBUTES              5
+  MINIMUM-FOR-MAIL-BOX-ID             1
+  MAXIMUM-FOR-MAIL-BOX-ID             5
+  MINIMUM-FOR-MESSAGE-CONTENT         1
+  MAXIMUM-FOR-MESSAGE-CONTENT         5
+  MINIMUM-FOR-RECEIVED-INFORMATION    1
+  MAXIMUM-FOR-RECEIVED-INFORMATION    5
+  MAXIMUM-FOR-RECORDING-TIME          5
+  NUM-OF-MESSAGE-IDS                  2
+  MAXIMUM-FOR-RECORDED-MESSAGE-UNITS  5
+  NUM-OF-VARIABLE-PARTS               5
+}
+
+-- The SCFQOP object class provides a tool for the specification of  a protection policy 
+-- on the SCF-SCF interface.
+SCFQOP ::= CLASS {
+  &scfqop-id        OBJECT IDENTIFIER UNIQUE,
+  &scfBindErrorQOP  PROTECTION-MAPPING,
+  &scfErrorsQOP     PROTECTION-MAPPING,
+  &scfArgumentQOP   PROTECTION-MAPPING,
+  &scfResultQOP     PROTECTION-MAPPING
+}
+WITH SYNTAX {
+  SCFQOP-ID &scfqop-id,
+  SCFBINDERROR-QOP &scfBindErrorQOP,
+  SCFERRORS-QOP &scfErrorsQOP,
+  SCFOPARG-QOP &scfArgumentQOP,
+  SCFOPRES-QOP &scfResultQOP
+}
+
+-- The following must be updated by implementaters before being used :
+scfqop SCFQOP ::= {
+  SCFQOP-ID         {1 2 3 -- an appropriate OID goes here --},
+  SCFBINDERROR-QOP
+    example-protection-mapping -- an appropriate information object goes here --,
+  SCFERRORS-QOP
+    example-protection-mapping -- an appropriate information object goes here --,
+  SCFOPARG-QOP
+    example-protection-mapping -- an appropriate information object goes here --,
+  SCFOPRES-QOP      example-protection-mapping
+ -- an appropriate information object goes here --}
+
+example-protection-mapping PROTECTION-MAPPING ::= {
+  SECURITY-TRANSFORMATION
+    {{IDENTIFIER         {1 2 4 -- an appropriate OID goes here --}
+      XFORMED-DATA-TYPE  NULL -- an appropriate type goes here --}}
+}
+
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

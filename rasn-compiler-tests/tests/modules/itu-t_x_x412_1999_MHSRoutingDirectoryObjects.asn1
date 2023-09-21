@@ -1,0 +1,243 @@
+
+
+
+
+
+
+
+
+-- Module MHSRoutingDirectoryObjects (X.412:06/1999)
+-- See also ITU-T X.412 (06/1999)
+-- See also the index of all ASN.1 assignments needed in this document
+
+MHSRoutingDirectoryObjects {joint-iso-itu-t mhs(6) routing(10) modules(0)
+  directory-objects(1)} DEFINITIONS IMPLICIT TAGS ::=
+BEGIN
+
+-- Prologue
+-- Exports everything
+IMPORTS
+  -- Information framework
+  ATTRIBUTE, DistinguishedName, NAME-FORM, OBJECT-CLASS, top
+    --==
+    FROM InformationFramework {joint-iso-itu-t ds(5) module(1)
+      informationFramework(1) 3}
+  -- Selected attribute types
+  commonName, description, distinguishedName, PresentationAddress
+    --==
+    FROM SelectedAttributeTypes {joint-iso-itu-t ds(5) module(1)
+      selectedAttributeTypes(5) 3}
+  -- MTS abstract service
+  GlobalDomainIdentifier, InitiatorCredentials, MTAName, ORName, Password,
+    ResponderCredentials, SecurityContext
+    --==
+    FROM MTSAbstractService {joint-iso-itu-t mhs(6) mts(3) modules(0)
+      mts-abstract-service(1) version-1999(1)}
+  -- MHS Directory objects and attributes
+  mhs-message-transfer-agent
+    --==
+    FROM MHSDirectoryObjectsAndAttributes {joint-iso-itu-t mhs(6) arch(5)
+      modules(0) directory(1) version-1999(1)}
+  -- MHS protocol object identifier
+  id-ac-mts-transfer
+    --==
+    FROM MHSProtocolObjectIdentifiers {joint-iso-itu-t mhs(6) protocols(0)
+      modules(0) object-identifiers(0) version-1994(0)}
+  -- MHS-routing object identifiers
+  id-at-calling-psaps, id-at-connection-group-name, id-at-connection-type,
+    id-at-entry-connection-group-name, id-at-enumerated-flag,
+    id-at-global-domain-identifier, id-at-group-mta-password,
+    id-at-local-exit-connection-group-name, id-at-member-mta,
+    id-at-mhs-message-transfer-agent, id-at-mta-name, id-at-mta-password,
+    id-at-oraddress-subtrees, id-at-recipient-md-assigned-alternate-recipient,
+    id-at-routing-collective-name, id-at-security-context,
+    id-at-specific-passwords, id-at-transit-exit-connection-group-name,
+    id-nf-connection-group, id-nf-routing-collective, id-oc-connection-group,
+    id-oc-mta-information, id-oc-routing-collective, id-oc-routing-mta,
+    id-wf-integer
+    --==
+    FROM MHSRoutingObjectIdentifiers {joint-iso-itu-t mhs(6) routing(10)
+      modules(0) object-identifiers(0)};
+
+-- OBJECT-CLASSES
+routingCollective OBJECT-CLASS ::= {
+  SUBCLASS OF   {top}
+  MUST CONTAIN  {routingCollectiveName}
+  MAY CONTAIN
+    {description | entryConnectionGroupName | localExitConnectionGroupName |
+      transitExitConnectionGroupName}
+  --at least one entry-CG and exit-CG should be present
+  ID            id-oc-routing-collective
+}
+
+routingMTA OBJECT-CLASS ::= {
+  SUBCLASS OF   {routingCollective}
+  MUST CONTAIN  {oRAddressSubtrees | mHSMessageTransferAgentName}
+  ID            id-oc-routing-mta
+}
+
+connectionGroup OBJECT-CLASS ::= {
+  SUBCLASS OF   {top}
+  MUST CONTAIN  {commonName | enumeratedFlag}
+  MAY CONTAIN
+    {description | connectionType | groupMTAPassword | memberMTA |
+      securityContext}
+  ID            id-oc-connection-group
+}
+
+mTAInformation OBJECT-CLASS ::= {
+  KIND          auxiliary
+  MUST CONTAIN  {mTAName | globalDomainIdentifier}
+  MAY CONTAIN   {mTAPassword | specificPasswords | callingPSAPs}
+  ID            id-oc-mta-information
+}
+
+-- ATTRIBUTE-TYPES
+-- Routing-collective attribute types
+routingCollectiveName ATTRIBUTE ::= {
+  SUBTYPE OF    commonName -- see ITU-T X.520 | ISO/IEC 9594-6 
+  SINGLE VALUE  TRUE
+  ID            id-at-routing-collective-name
+}
+
+connectionGroupName ATTRIBUTE ::= {
+  WITH SYNTAX   DistinguishedName
+  SINGLE VALUE  FALSE
+  ID            id-at-connection-group-name
+}
+
+entryConnectionGroupName ATTRIBUTE ::= {
+  SUBTYPE OF  connectionGroupName
+  ID          id-at-entry-connection-group-name
+}
+
+transitExitConnectionGroupName ATTRIBUTE ::= {
+  SUBTYPE OF  connectionGroupName
+  ID          id-at-transit-exit-connection-group-name
+}
+
+localExitConnectionGroupName ATTRIBUTE ::= {
+  SUBTYPE OF  connectionGroupName
+  ID          id-at-local-exit-connection-group-name
+}
+
+-- Routing-MTA attribute types
+oRAddressSubtrees ATTRIBUTE ::= {
+  WITH SYNTAX   ORAddressSubtreeNames
+  SINGLE VALUE  TRUE
+  ID            id-at-oraddress-subtrees
+}
+
+ORAddressSubtreeNames ::= SEQUENCE OF DistinguishedName
+
+mHSMessageTransferAgentName ATTRIBUTE ::= {
+  SUBTYPE OF    distinguishedName
+  SINGLE VALUE  TRUE
+  ID            id-at-mhs-message-transfer-agent
+}
+
+-- Connection-group attribute types
+enumeratedFlag ATTRIBUTE ::= {
+  WITH SYNTAX   BOOLEAN -- True=enumerated, False=unenumerated 
+  SINGLE VALUE  TRUE
+  ID            id-at-enumerated-flag
+}
+
+connectionType ATTRIBUTE ::= {
+  WITH SYNTAX   ConnectionInformation
+  SINGLE VALUE  TRUE
+  ID            id-at-connection-type
+}
+
+ConnectionInformation ::= SET {
+  application-context       [0]  OBJECT IDENTIFIER DEFAULT id-ac-mts-transfer,
+  profiles                  [1]  SET OF OBJECT IDENTIFIER OPTIONAL,
+  dn-used-in-a-associate    [2]  BOOLEAN DEFAULT TRUE,
+  network-address-reliable  [3]  BOOLEAN DEFAULT TRUE,
+  authentication-method     [4]  AuthenticationMethod DEFAULT simple-password,
+  weighting-factors         [5]  INSTANCE OF TYPE-IDENTIFIER OPTIONAL
+}
+
+AuthenticationMethod ::= INTEGER {
+  no-authentication(0), simple-password(1), strong-authentication(2)}
+
+simpleWeight TYPE-IDENTIFIER ::= {INTEGER
+                                  IDENTIFIED BY  id-wf-integer
+}
+
+groupMTAPassword ATTRIBUTE ::= {
+  WITH SYNTAX   Password
+  SINGLE VALUE  TRUE
+  ID            id-at-group-mta-password
+}
+
+memberMTA ATTRIBUTE ::= {
+  WITH SYNTAX   RoutingMTAName
+  SINGLE VALUE  FALSE
+  ID            id-at-member-mta
+}
+
+RoutingMTAName ::= RoutingCollectiveName
+
+RoutingCollectiveName ::= DistinguishedName
+
+securityContext ATTRIBUTE ::= {
+  WITH SYNTAX   SecurityContext
+  SINGLE VALUE  TRUE
+  ID            id-at-security-context
+}
+
+-- MTA-information attribute types
+mTAName ATTRIBUTE ::= {
+  WITH SYNTAX   MTAName
+  SINGLE VALUE  TRUE
+  ID            id-at-mta-name
+}
+
+globalDomainIdentifier ATTRIBUTE ::= {
+  WITH SYNTAX   GlobalDomainIdentifier
+  SINGLE VALUE  TRUE
+  ID            id-at-global-domain-identifier
+}
+
+mTAPassword ATTRIBUTE ::= {
+  WITH SYNTAX   Password
+  SINGLE VALUE  TRUE
+  ID            id-at-mta-password
+}
+
+specificPasswords ATTRIBUTE ::= {
+  WITH SYNTAX   SpecificPassword
+  SINGLE VALUE  FALSE
+  ID            id-at-specific-passwords
+}
+
+SpecificPassword ::= SET {
+  routing-collective-name  RoutingCollectiveName,
+  this-mta-password        [0]  Password,
+  calling-mta-password     [1]  Password
+}
+
+callingPSAPs ATTRIBUTE ::= {
+  WITH SYNTAX   PresentationAddress
+  SINGLE VALUE  FALSE
+  ID            id-at-calling-psaps
+}
+
+-- NAME-FORMS
+routingCollectiveNameForm NAME-FORM ::= {
+  NAMES            routingCollective
+  WITH ATTRIBUTES  {routingCollectiveName}
+  ID               id-nf-routing-collective
+}
+
+connectionGroupNameForm NAME-FORM ::= {
+  NAMES            connectionGroup
+  WITH ATTRIBUTES  {commonName}
+  ID               id-nf-connection-group
+}
+
+END -- of MHS-routing Directory Objects
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

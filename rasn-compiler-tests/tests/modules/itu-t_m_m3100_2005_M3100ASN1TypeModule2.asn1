@@ -1,0 +1,244 @@
+
+
+
+
+
+
+
+-- Module M3100ASN1TypeModule2 (M.3100:04/2005)
+-- See also ITU-T M.3100 (04/2005)
+-- See also the index of all ASN.1 assignments needed in this document
+
+M3100ASN1TypeModule2 {itu-t recommendation m gnm(3100) informationModel(0)
+  asn1Modules(2) asn1Module2(1)} DEFINITIONS IMPLICIT TAGS ::=
+BEGIN
+
+-- EXPORTS everything
+IMPORTS
+  AdditionalInformation, AdministrativeState, AvailabilityStatus,
+    OperationalState, PerceivedSeverity, ProbableCause
+    FROM Attribute-ASN1Module {joint-iso-itu-t ms(9) smi(3) part2(2)
+      asn1Module(2) 1}
+  Bundle, CharacteristicInformation, Directionality, NameType, PointerOrNull,
+    UserLabel, LogicalProblem, ResourceProblem, ProblemCause, ObjectList,
+    RelatedObjectInstance
+    FROM ASN1DefinedTypesModule {itu-t recommendation m(13) gnm(3100)
+      informationModel(0) asn1Modules(2) asn1DefinedTypesModule(0)}
+  -- Note: DistinguishedName, formerly imported
+  -- from X.501 InformationFramework, is imported from X.711 CMIP.
+  ObjectInstance, DistinguishedName
+    FROM CMIP-1 {joint-iso-itu-t ms(9) cmip(1) modules(0) protocol(3)};
+
+AddCapacityToTopologicalLinkEndInformation ::= RequestedPointCapacity
+
+AddCapacityToTopologicalLinkEndResult ::= SEQUENCE {
+  resultingCapacity                    PointCapacity,
+  resultingnetworkCTPs                 NWTPList,
+  resultingProvisionedLinkEndCapacity  PointCapacity
+}
+
+AddCapacityToTopologicalLinkInformation ::= RequestedCapacity
+
+AddCapacityToTopologicalLinkResult ::= SEQUENCE {
+  resultingCapacity         Capacity,
+  resultingLinkConnections  LinkConnectionList
+}
+
+AddNWTTPsToAccessGroupInformation ::= SEQUENCE {
+  nwTTPs       SET OF ObjectInstance,
+  accessGroup  ObjectInstance OPTIONAL
+}
+
+AddNWTTPsToAccessGroupResult ::= SEQUENCE {
+  accessGroup  ObjectInstance,
+  addedNWTTPs  SET OF ObjectInstance
+}
+
+AssignLinkConnectionOnLogicalLinkInformation ::= SEQUENCE {
+  layerNetworkDomain        ObjectInstance,
+  requestedLinkConnections  LinkConnectionList
+}
+
+AssignLinkConnectionOnLogicalLinkResult ::= LinkConnectionList
+
+AssignNetworkCTPOnLogicalLinkEndInformation ::= CTPList
+
+AssignNetworkCTPOnLogicalLinkEndResult ::= CTPList
+
+AvailableSignalRateList ::= SET OF SignalRate
+
+Bandwidth ::= SEQUENCE OF SEQUENCE {ingress  INTEGER,
+                                    egress   INTEGER}
+
+Boolean ::= BOOLEAN
+
+Capacities ::= SEQUENCE {
+  availableLinkCapacity     Capacity,
+  maxProvisionableCapacity  Capacity,
+  potentialLinkCapacity     Capacity,
+  provisionedLinkCapacity   Capacity
+}
+
+Capacity ::= CHOICE {
+  numberOfLinkConnections  [0]  INTEGER,
+  bandwidth                [1]  Bandwidth
+}
+
+Channels ::= SET OF Channel
+
+Channel ::= INTEGER
+
+ComponentPointers ::= SET OF ObjectInstance
+
+CompositePointer ::= RelatedObjectInstance
+
+ConfiguredConnectivity ::= ENUMERATED {
+  sourceConnect(0), sinkConnect(1), bidirectionalConnect(2), noConnect(3)
+}
+
+ConnectionList ::= SET OF ObjectInstance
+
+ConnectivityEndPoint ::= CHOICE {
+  sncTp        [1]  ObjectInstance,
+  linkEnd      [2]  ObjectInstance,
+  accessGroup  [3]  ObjectInstance
+}
+
+ConnectivityPointer ::= RelatedObjectInstance
+
+ControlActionType ::= ENUMERATED {
+  closeContinuously(0), openContinuously(1), closeMomentarily(2),
+  openMomentarily(3)}
+
+ControlResult ::= ENUMERATED {
+  complete(0), alreadyInCondition(1), fail-InvalidControlActionType(2),
+  fail-ReasonUnknown(3)}
+
+ControlState ::= ENUMERATED {closed(0), open(1)}
+
+Count ::= INTEGER
+
+CTPList ::= NWTPList
+
+DeassignLinkConnectionFromLogicalLinkInformation ::= LinkConnectionList
+
+DeassignNetworkCTPFromLogicalLinkEndInformation ::= CTPList
+
+ExternalPointMessage ::= GraphicString
+
+Implicit ::= BOOLEAN(TRUE)
+
+Integer ::= INTEGER
+
+LinkConnectionList ::= ConnectionList
+
+LinkDirectionality ::= ENUMERATED {
+  unidirectional(0), bidirectional(1), undefined(2)}
+
+LinkEnd ::= CHOICE {
+  subnetwork   [0]  ObjectInstance,
+  accessGroup  [1]  ObjectInstance,
+  linkEnd      [2]  ObjectInstance
+}
+
+MappingList ::= SEQUENCE OF PayloadLevel
+
+NeAssignmentPointer ::= CHOICE {
+  notAvailable   NULL,
+  relatedObject  ObjectInstance,
+  string         GraphicString
+}
+
+None ::= NULL
+
+NWTPList ::= SET OF ObjectInstance
+
+PayloadLevel ::= CharacteristicInformation
+
+PointCapacity ::= CHOICE {
+  numberOfTPs  [0]  INTEGER,
+  bandwidth    [1]  Bandwidth
+}
+
+PointDirectionality ::= ENUMERATED {sink(1), source(2), bidirectional(3)}
+
+PortAssociations ::= SET OF PortAssociation
+
+PortAssociation ::= SEQUENCE {
+  portId     NameType,
+  portTrail  PointerOrNull -- the choice of NULL means unassigned
+}
+
+PortSignalRateAndMappingList ::=
+  SET OF
+    SEQUENCE {portId       NameType,
+              signalRate   SignalRate,
+              mappingList  MappingList OPTIONAL}
+
+PtoPoint ::= SEQUENCE {aEnd  ConnectivityEndPoint,
+                       zEnd  ConnectivityEndPoint
+}
+
+QofConnectivityService ::= ObjectInstance
+
+RemoveCapacityFromTopLinkEndInformation ::= RequestedPointCapacity
+
+RemoveCapacityFromTopLinkEndResult ::= SEQUENCE {
+  resultingCapacity         PointCapacity,
+  resultingLinkConnections  LinkConnectionList
+}
+
+RemoveCapacityFromTopologicalLinkInformation ::= RequestedCapacity
+
+RemoveCapacityFromTopologicalLinkResult ::= Capacity
+
+RequestedPointCapacity ::= CHOICE {
+  specificTPs  [1]  NWTPList,
+  capacity     [2]  PointCapacity
+}
+
+RequestedCapacity ::= CHOICE {
+  specificChannels  [1]  SEQUENCE OF Channel,
+  capacity          [2]  Capacity
+}
+
+ResetError ::= ENUMERATED {resetFail(0), entityInService(1), ...
+                           }
+
+ResetLevel ::= CHOICE {completeReset  NULL,
+                       partialReset   INTEGER
+}
+
+ServiceAffectingErrorParameter ::= ENUMERATED {affectingExistingService(0), ...
+                                               }
+
+SignalId ::= CHOICE {
+  simple   [0]  CharacteristicInformation,
+  bundle   [1]  Bundle,
+  complex  [3]  SEQUENCE OF Bundle
+}
+
+SignalRate ::= CHOICE {
+  objectClass                [0]  OBJECT IDENTIFIER,
+  characteristicInformation  [1]  CharacteristicInformation
+}
+
+SubNetworkConnectionPointerList ::= SEQUENCE OF RelatedObjectInstance
+
+TopologicalEndDirectionality ::= ENUMERATED {
+  undefined(0), sink(1), source(2), bidirectional(3)}
+
+TPList ::= SET OF ObjectInstance
+
+TrafficDescriptor ::= ObjectInstance
+
+UsageCost ::= INTEGER(0..255)
+
+UserIdentifier ::= NameType
+
+ValidControlType ::= ENUMERATED {momentaryOnly(0), continuousOnly(1), both(2)}
+
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

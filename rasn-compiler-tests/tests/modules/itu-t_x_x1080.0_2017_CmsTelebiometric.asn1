@@ -1,0 +1,282 @@
+CmsTelebiometric.asn (ITU-T X.1080.0 (03/2017))-- ASN module extracted from ITU-T X.1080.0 (03/2017)CmsTelebiometric { joint-iso-itu-t(2) telebiometrics(42) th(3) part0(0)
+   modules(0) cmsProfile(1) version1(1) }
+DEFINITIONS ::=
+BEGIN
+
+-- EXPORTS All 
+
+IMPORTS
+
+  -- from Rec. ITU-T X.501 | ISO/IEC 9594-2
+
+      ATTRIBUTE, Attribute{}, DistinguishedName, objectIdentifierMatch
+    FROM InformationFramework {joint-iso-itu-t ds(5) module(1) informationFramework(1) 8}
+
+  -- from Rec. ITU-T X.509 | ISO/IEC 9594-8
+  
+  ALGORITHM, AlgorithmIdentifier, Certificate, CertificateSerialNumber
+    FROM AuthenticationFramework {joint-iso-itu-t ds(5) module(1) authenticationFramework(7) 8}
+
+  -- from Rec. ITU-T X.520 | ISO/IEC 9594-6
+
+  integerMatch, octetStringMatch 
+    FROM SelectedAttributeTypes {joint-iso-itu-t ds(5) module(1) selectedAttributeTypes(5) 8}  ;
+
+CONTENT-TYPE ::= TYPE-IDENTIFIER
+
+ContentType ::= CONTENT-TYPE.&id
+
+ContentInfo ::= SEQUENCE {
+  contentType  CONTENT-TYPE.&id ({TelebSupportedcontentTypes}),
+  content      CONTENT-TYPE.&Type
+          ({TelebSupportedcontentTypes}{@contentType})OPTIONAL,
+  ... }
+
+TelebSupportedcontentTypes CONTENT-TYPE ::= 
+  { signedData | envelopedData | ct-authEnvelopedData, ...}
+
+CMSVersion ::= INTEGER{ v0(0), v1(1), v2(2), v3(3), v4(4), v5(5) }
+
+Attributes { ATTRIBUTE:AttrList } ::=
+             SET SIZE (1..MAX) OF Attribute {{ AttrList }}
+
+signedData CONTENT-TYPE ::= {
+                SignedData
+  IDENTIFIED BY id-signedData }
+
+SignedData ::= SEQUENCE  {
+  version               CMSVersion (v3),
+  digestAlgorithms      SET (SIZE (1)) OF AlgorithmIdentifier
+                          {{Teleb-Hash-Algorithms}},
+  encapContentInfo      EncapsulatedContentInfo,
+  certificates     [0]  IMPLICIT SET (SIZE (1..MAX)) OF Certificate OPTIONAL,
+--crls             [1]  IMPLICIT RevocationInfoChoices OPTIONAL,
+  signerInfos           SignerInfos,
+  ... }
+
+Teleb-Hash-Algorithms ALGORITHM ::= {...}
+
+EncapsulatedContentInfo ::= SEQUENCE {
+  eContentType     CONTENT-TYPE.&id({IncludedContent}),
+  eContent     [0] EXPLICIT OCTET STRING
+    (CONTAINING CONTENT-TYPE.&Type({IncludedContent}
+     {@eContentType})) OPTIONAL }
+
+IncludedContent CONTENT-TYPE ::= {envelopedData, ...}
+
+SignerInfos ::= SET (SIZE (1)) OF SignerInfo
+
+SignerInfo ::= SEQUENCE {
+  version                 CMSVersion (v1),
+  sid                     SignerIdentifier,
+  digestAlgorithm         AlgorithmIdentifier {{Teleb-Hash-Algorithms}},
+  signedAttrs        [0]  IMPLICIT Attributes{{SignedAttributes}} OPTIONAL,
+  signatureAlgorithm      AlgorithmIdentifier {{Teleb-Signature-Algorithms}},
+  signature               SignatureValue,
+  unsignedAttrs      [1]  IMPLICIT Attributes {{UnsignedAttributes}} OPTIONAL,
+  ... }
+
+SignerIdentifier ::= CHOICE {
+  issuerAndSerialNumber    IssuerAndSerialNumber,
+--subjectKeyIdentifier [0] SubjectKeyIdentifier,
+  ...}
+
+IssuerAndSerialNumber ::= SEQUENCE {
+  issuer       DistinguishedName,
+  serialNumber CertificateSerialNumber }
+
+SignedAttributes ATTRIBUTE ::= { contentType | messageDigest, ... }
+
+Teleb-Signature-Algorithms ALGORITHM ::= {...}
+
+SignatureValue ::= OCTET STRING
+
+UnsignedAttributes ATTRIBUTE ::= {...}
+
+envelopedData CONTENT-TYPE ::= {
+                EnvelopedData
+  IDENTIFIED BY id-envelopedData } 
+
+EnvelopedData ::= SEQUENCE {
+  version                    CMSVersion(v0 | v2),
+--originatorInfo         [0] IMPLICIT OriginatorInfo OPTIONAL,
+  recipientInfos             RecipientInfos,
+  encryptedContentInfo       EncryptedContentInfo,
+  ...,
+  [[2: unprotectedAttrs  [1] IMPLICIT Attributes
+       {{UnprotectedAttributes}} OPTIONAL ]] }
+
+RecipientInfos ::= SET SIZE (1) OF RecipientInfo
+
+UnprotectedAttributes ATTRIBUTE ::=
+  { aa-CEKReference | aa-CEKMaxDecrypts | aa-KEKDerivationAlg }
+
+RecipientInfo ::= CHOICE { 
+--ktri      KeyTransRecipientInfo,
+  kari  [1] KeyAgreeRecipientInfo,
+  kekri [2] KEKRecipientInfo,
+--pwri  [3] PasswordRecipientinfo,
+--ori   [4] OtherRecipientInfo,
+  ... }
+
+KeyAgreeRecipientInfo ::= SEQUENCE {
+  version                CMSVersion (v3),
+  originator         [0] EXPLICIT OriginatorIdentifierOrKey,
+  ukm                [1] EXPLICIT UserKeyingMaterial OPTIONAL,
+  keyEncryptionAlgorithm KeyEncryptionAlgorithmIdentifier,
+  recipientEncryptedKeys RecipientEncryptedKeys,
+  ... }
+
+OriginatorIdentifierOrKey ::= CHOICE {
+  issuerAndSerialNumber    IssuerAndSerialNumber,
+--subjectKeyIdentifier [0] SubjectKeyIdentifier,
+  originatorKey        [1] OriginatorPublicKey,
+  ... }
+
+OriginatorPublicKey ::= SEQUENCE {
+  algorithm AlgorithmIdentifier {{SupportedDHPublicKeyAlgorithms}},
+  publicKey BIT STRING,
+  ... }
+
+SupportedDHPublicKeyAlgorithms ALGORITHM ::= {...}
+
+UserKeyingMaterial ::= OCTET STRING (SIZE (64))
+
+KeyEncryptionAlgorithmIdentifier ::=
+   AlgorithmIdentifier{{SupportedKeyIncryptAlgorithms}}
+
+SupportedKeyIncryptAlgorithms ALGORITHM ::= {...}
+
+RecipientEncryptedKeys ::= SEQUENCE (SIZE (1)) OF RecipientEncryptedKey
+
+RecipientEncryptedKey ::= SEQUENCE {
+  rid          KeyAgreeRecipientIdentifier,
+  encryptedKey EncryptedKey }
+
+KeyAgreeRecipientIdentifier ::= CHOICE {
+  issuerAndSerialNumber IssuerAndSerialNumber,
+--rKeyId            [0] IMPLICIT RecipientKeyIdentifier,
+  ... }
+
+EncryptedKey ::= OCTET STRING
+
+EncryptedContentInfo ::= SEQUENCE {
+  contentType                CONTENT-TYPE.&id ({EncryptedContentSet}),
+  contentEncryptionAlgorithm SEQUENCE {
+    algorithm                  ALGORITHM.&id ({SymmetricEncryptionAlgorithms}),
+    parameter                  ALGORITHM.&Type
+             ({SymmetricEncryptionAlgorithms}{@.algorithm})} OPTIONAL,
+  encryptedContent       [0] IMPLICIT EncryptedContent OPTIONAL,
+  ... }
+
+EncryptedContentSet CONTENT-TYPE ::= {...}
+
+SymmetricEncryptionAlgorithms ALGORITHM ::= {...}
+
+EncryptedContent ::= OCTET STRING
+
+ct-authEnvelopedData CONTENT-TYPE ::= {
+                AuthEnvelopedData
+  IDENTIFIED BY id-ct-authEnvelopedData }
+
+AuthEnvelopedData ::= SEQUENCE {
+  version                  CMSVersion (v0),
+--originatorInfo       [0] IMPLICIT OriginatorInfo OPTIONAL,
+  recipientInfos           RecipientInfos,
+  authEncryptedContentInfo EncryptedContentInfo,
+  authAttrs            [1] IMPLICIT Attributes {{AuthAttributes}} OPTIONAL,
+  mac                      MessageAuthenticationCode,
+  unauthAttrs          [2] IMPLICIT Attributes {{UnauthAttributes}} OPTIONAL }
+
+AuthAttributes ATTRIBUTE ::= {...}
+
+MessageAuthenticationCode ::= OCTET STRING
+
+UnauthAttributes ATTRIBUTE ::=
+  { aa-CEKReference | aa-CEKMaxDecrypts | aa-KEKDerivationAlg }
+
+KEKRecipientInfo ::= SEQUENCE {
+  version                CMSVersion (v4),
+  kekid                  KEKIdentifier,
+  keyEncryptionAlgorithm KeyEncryptionAlgorithmIdentifier,
+  encryptedKey           EncryptedKey }
+
+KEKIdentifier ::= SEQUENCE {
+  keyIdentifier OCTET STRING,
+--date          GeneralizedTime OPTIONAL,
+--other         OtherKeyAttribute OPTIONAL,
+  ... }
+
+contentType ATTRIBUTE ::= {
+  WITH SYNTAX            CONTENT-TYPE.&id({envelopedData, ...})
+  EQUALITY MATCHING RULE objectIdentifierMatch
+  SINGLE VALUE           TRUE
+  ID                     id-contentType }
+
+messageDigest ATTRIBUTE ::= {
+  WITH SYNTAX            OCTET STRING
+  EQUALITY MATCHING RULE octetStringMatch
+  SINGLE VALUE           TRUE
+  ID                     id-messageDigest }
+
+aa-CEKReference ATTRIBUTE ::= {
+  WITH SYNTAX            CEKReference
+  EQUALITY MATCHING RULE octetStringMatch
+  SINGLE VALUE           TRUE
+  ID                     id-aa-CEKReference }
+
+CEKReference ::= OCTET STRING
+
+aa-CEKMaxDecrypts ATTRIBUTE ::= {
+  WITH SYNTAX            CEKMaxDecrypts
+  EQUALITY MATCHING RULE integerMatch
+  SINGLE VALUE           TRUE
+  ID                     id-aa-CEKReference }
+
+CEKMaxDecrypts ::= INTEGER
+
+aa-KEKDerivationAlg ATTRIBUTE ::= {
+  WITH SYNTAX            KEKDerivationAlgorithm
+  EQUALITY MATCHING RULE integerMatch
+  SINGLE VALUE           TRUE
+  ID                     id-aa-KEKDerivationAlg }
+
+KEKDerivationAlgorithm ::= SEQUENCE {
+  kekAlg       AlgorithmIdentifier {{SupportedKeyIncryptAlgorithms}},
+  pbkdf2Param  PBKDF2-params }
+
+PBKDF2-params ::= SEQUENCE {
+  salt CHOICE {
+    specified   OCTET STRING,
+--  otherSource AlgorithmIdentifier {{PBKDF2-SaltSources}}
+    ... },
+  iterationCount INTEGER (1..MAX),
+  keyLength      INTEGER (1..MAX) OPTIONAL,
+  prf            AlgorithmIdentifier {{PBKDF2-PRFs}},
+  ... }
+
+PBKDF2-PRFs ALGORITHM ::= {...}
+
+id-pkcs OBJECT IDENTIFIER ::= 
+   { iso(1) member-body(2) usa(840) rsadsi(113549) pkcs(1) }
+
+id-pkcs-9 OBJECT IDENTIFIER ::= { id-pkcs pkcs-9(9) }
+
+id-ct OBJECT IDENTIFIER ::= { id-pkcs-9 smime(16) ct(1) }
+id-aa OBJECT IDENTIFIER ::= { id-pkcs-9 smime(16) attributes(2) }
+
+id-contentType         OBJECT IDENTIFIER ::= { id-pkcs-9 3 }
+id-messageDigest       OBJECT IDENTIFIER ::= { id-pkcs-9 4 }
+id-aa-CEKReference     OBJECT IDENTIFIER ::= { id-aa 30 }
+id-aa-CEKMaxDecrypts   OBJECT IDENTIFIER ::= { id-aa 31 }
+id-aa-KEKDerivationAlg OBJECT IDENTIFIER ::= { id-aa 32 }
+
+id-signedData OBJECT IDENTIFIER ::= {iso(1) member-body(2)
+us(840)rsadsi(113549) pkcs(1) pkcs7(7) 2}
+
+id-envelopedData OBJECT IDENTIFIER ::= {iso(1) member-body(2) us(840)
+rsadsi(113549) pkcs(1) pkcs7(7) 3}
+
+id-ct-authEnvelopedData OBJECT IDENTIFIER ::= { id-ct 23 }
+
+END -- CmsTelebiometric

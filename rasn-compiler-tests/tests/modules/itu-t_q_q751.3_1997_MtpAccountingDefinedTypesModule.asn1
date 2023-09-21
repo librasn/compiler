@@ -1,0 +1,198 @@
+
+
+
+
+
+
+
+-- Module MtpAccountingDefinedTypesModule (Q.751.3:09/1997)
+-- See also ITU-T Q.751.3 (09/1997)
+-- See also the index of all ASN.1 assignments needed in this document
+
+MtpAccountingDefinedTypesModule {itu-t(0) recommendation(0) q(17) omap(751)
+  accounting(3) informationModel(0) asn1Modules(2)
+  mtpAccountingDefinedTypesModule(1)} DEFINITIONS IMPLICIT TAGS ::=
+BEGIN
+
+IMPORTS
+  ObjectInstance, SimpleNameType
+    FROM Attribute-ASN1Module {joint-iso-itu-t ms(9) smi(3) part2(2)
+      asn1Module(2) 1}
+  --	Counter, 
+  DataProblem, ss7AccountingInformationModel, accountingAction,
+    accountingAttribute, accountingAttributeGroup, accountingNameBinding,
+    accountingNotification, accountingObjectClass, accountingPackage,
+    accountingParameter
+    FROM AccountingDefinedTypesModule {itu-t(0) recommendation(0) q(17)
+      omap(751) accounting(3) informationModel(0) asn1Modules(2)
+      accountingDefinedTypesModule(0)}
+  PointCode, SIOType, NetworkIndicator
+    FROM MTPDefinedTypesModule {itu-t(0) recommendation(0) q(17) omap(751)
+      mtp(1) informationModel(0) asn1Modules(2) mtpDefinedTypesModule(0)}
+  Ss7SpecificErrorInformation
+    FROM Q2751DefinedTypesModule {itu-t(0) recommendation(0) q(17) omap2(2751)
+      part1(1) informationModel(0) asn1Modules(2) q2751DefinedTypesModule(0)};
+
+-- ASN.1 type definitions
+maxNumberPointCodesInPointCodeSet INTEGER ::=
+  1 --n  this number is only for compilability
+
+maxNumberReferencesInMtpSelectionGroupSet INTEGER ::=
+  2 -- p  this number is only for compilability
+
+maxNumberReferencesInSignLinkSetTpSet INTEGER ::=
+  3 -- m  this number is only for compilability
+
+MtpAccCounterData ::= SEQUENCE {
+  msus           [0]  INTEGER,
+  octetts        [1]  INTEGER,
+  dataProblem    [2]  DataProblem,
+  pointCodeSet   [3]  PointCodeSet OPTIONAL,
+  optionalSiSet  [5]  SiSet OPTIONAL
+}
+
+MtpAccCounterDataSequence ::=
+  SEQUENCE SIZE (1..maxNumberReferencesInMtpSelectionGroupSet) OF
+    MtpAccCounterData
+
+-- maximum size = p
+MtpAccountingNotificationData ::= SEQUENCE {
+  endOfMeasurementTime       GeneralizedTime,
+  networkIndicator           NetworkIndicator OPTIONAL,
+  signLinkSetTpIdSet         SignLinkSetTpIdSet OPTIONAL,
+  mtpAccCounterDataSequence  MtpAccCounterDataSequence
+}
+
+PointCodeSet ::= SET SIZE (1..maxNumberPointCodesInPointCodeSet) OF PointCode
+
+SignLinkSetTpIdSet ::=
+  SET SIZE (1..maxNumberReferencesInSignLinkSetTpSet) OF SimpleNameType
+
+-- maximum size = m
+-- Only the integer type of the CHOICE within NameType shall be used.
+SignLinkSetTpSet ::=
+  SET SIZE (1..maxNumberReferencesInSignLinkSetTpSet) OF ObjectInstance
+
+SiSet ::= SET SIZE (1..16) OF SIOType
+
+-- the following values of Ss7SpecificErrorInformation defined in Rec. Q.2751.1 are used additionally: 
+dpcGroupNotExistingInSameMtpSignPointError Ss7SpecificErrorInformation ::=
+  3000
+
+-- At least one of the dpcGroup instances to be referenced is not 
+-- existing in the same mtpSignPoint as the mtpAccount.
+linksetAlreadyInOtherMtpAccountError Ss7SpecificErrorInformation ::=
+  3001
+
+-- At least one of the signLinkSetTp instances to be referenced is 
+-- already referenced by another mtpAccount instance.
+linksetNotExistingInSameMtpSignPointError Ss7SpecificErrorInformation ::=
+  3002
+
+-- At least one of the signLinkSetTp instances to be referenced is 
+-- not existing in the same mtpSignPoint as the mtpAccount.
+pointCodeNotExistingInSameMtpSignPointError Ss7SpecificErrorInformation ::=
+  3003
+
+-- At least one of the point codes is not used by any signRouteSetNePart 
+-- instance contained in the same mtpSignPoint as the mtpAccount.
+pointCodeUsedByMtpSignPointError Ss7SpecificErrorInformation ::=
+  3004
+
+-- At least one of the point codes is used as point code by the mtpSignPoint
+-- containing the mtpAccount.
+referencedDpcGroupNotExistingError Ss7SpecificErrorInformation ::=
+  3005
+
+-- At least one of the dpcGroup instances to be referenced is not existing.
+referencedSiGroupNotExistingError Ss7SpecificErrorInformation ::=
+  3006
+
+-- At least one of the siGroup instances to be referenced is not existing.
+selectionGroupOverlapError Ss7SpecificErrorInformation ::=
+  3007
+
+-- The selectionGroups within the selectionGroupSequence would 
+-- not allow an unambiguous identification of the counter to be incremented.
+ReactionType ::= BIT STRING {passOn(0), count(1)}(SIZE (2))
+
+ReactionTypeList ::=
+  SET SIZE (0..maxNumberReferencesInMtpSelectionGroupSet) OF ReactionType
+
+-- ASN.1 OBJECT IDENTIFIER definitions
+reactionTypeList-AOi OBJECT IDENTIFIER ::=
+  {accountingAttribute reactionTypeList(27)}
+
+reactionTypeListMappingError-OID OBJECT IDENTIFIER ::=
+  {accountingParameter reactionTypeListMappingError(1)}
+
+screeningPackage-POi OBJECT IDENTIFIER ::=
+  {accountingPackage screeningPackage(14)}
+
+dpcGroupId-AOi OBJECT IDENTIFIER ::= {accountingAttribute dpcGroupId(13)}
+
+dpcGroup-mtpSignPoint-NBOI OBJECT IDENTIFIER ::=
+  {accountingNameBinding dpcGroup-mtpSignPoint(2)}
+
+dpcGroupPackage-POi OBJECT IDENTIFIER ::=
+  {accountingPackage dpcGroupPackage(3)}
+
+dpcGroup-OOi OBJECT IDENTIFIER ::= {accountingObjectClass dpcGroup(2)}
+
+mtpAccCounterDataSequence-AOi OBJECT IDENTIFIER ::=
+  {accountingAttribute mtpAccCounterDataSequence(13)}
+
+mtpAccount-mtpSignPoint-NBOI OBJECT IDENTIFIER ::=
+  {accountingNameBinding mtpAccount-mtpSignPoint(3)}
+
+mtpAccountId-AOi OBJECT IDENTIFIER ::= {accountingAttribute mtpAccountId(14)}
+
+mtpAccounting-NOI OBJECT IDENTIFIER ::=
+  {accountingNotification mtpAccounting(1)}
+
+mtpAccountingLogRecord-OOi OBJECT IDENTIFIER ::=
+  {accountingObjectClass mtpAccountingLogRecord(5)}
+
+mtpAccountingLogRecordPackage-POi OBJECT IDENTIFIER ::=
+  {accountingPackage mtpAccountingLogRecordPackage(6)}
+
+mtpAccountingVerification-NOI OBJECT IDENTIFIER ::=
+  {accountingNotification mtpAccountingVerification(2)}
+
+mtpAccountPackage-POi OBJECT IDENTIFIER ::=
+  {accountingPackage mtpAccountPackage(4)}
+
+mtpAccount-OOi OBJECT IDENTIFIER ::= {accountingObjectClass mtpAccount(3)}
+
+pointCodeSet-AOi OBJECT IDENTIFIER ::= {accountingAttribute pointCodeSet(8)}
+
+signLinkSetTpIdSet-AOi OBJECT IDENTIFIER ::=
+  {accountingAttribute signLinkSetTpIdSet(12)}
+
+signLinkSetTpSet-AOi OBJECT IDENTIFIER ::=
+  {accountingAttribute signLinkSetTpSet(9)}
+
+siGroupId-AOi OBJECT IDENTIFIER ::= {accountingAttribute siGroupId(10)}
+
+siGroupPackage-POi OBJECT IDENTIFIER ::= {accountingPackage siGroupPackage(5)}
+
+siGroup-OOi OBJECT IDENTIFIER ::= {accountingObjectClass siGroup(4)}
+
+siGroup-managedElement-NBOI OBJECT IDENTIFIER ::=
+  {accountingNameBinding siGroup-managedElement(4)}
+
+siGroup-managedSwitchingElement-NBOI OBJECT IDENTIFIER ::=
+  {accountingNameBinding siGroup-managedSwitchingElement(5)}
+
+siSet-AOi OBJECT IDENTIFIER ::= {accountingAttribute siSet(11)}
+
+networkIndicatorPackage-POi OBJECT IDENTIFIER ::=
+  {accountingPackage networkIndicatorPackage(7)}
+
+signLinkSetTpIdSetPackage-POi OBJECT IDENTIFIER ::=
+  {accountingPackage signLinkSetTpIdSetPackage(8)}
+
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

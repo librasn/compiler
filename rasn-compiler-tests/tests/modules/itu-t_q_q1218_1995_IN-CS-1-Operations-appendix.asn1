@@ -1,0 +1,142 @@
+
+
+
+
+
+
+
+-- Module IN-CS-1-Operations-appendix (Q.1218:10/1995)
+-- See also ITU-T Q.1218 (10/1995)
+-- See also the index of all ASN.1 assignments needed in this document
+
+IN-CS-1-Operations-appendix {itu-t recommendation q 1218 modules(0)
+  cs-1-operations-app(4) version1(0)}
+--  This module contains the type definitions for the IN CS-1 operations.
+--  There may be functional redundancies in the operation set related to call processing.
+--  This may make product interworking more difficult. Administrations wishing to deploy 
+--  IN and equipment manufacturers implementing IN should take this into account.
+DEFINITIONS ::=
+BEGIN
+
+IMPORTS
+  OPERATION
+    FROM Remote-Operations-Information-Objects {joint-iso-itu-t
+      remote-operations(4) informationObjects(5) version1(0)}
+  --  error types
+  missingParameter, systemFailure, taskRefused, unexpectedComponentSequence,
+    unexpectedDataValue, unexpectedParameter, unknownLegID, unknownResource
+    FROM IN-CS-1-Errors {itu-t recommendation q 1218 modules(0) cs-1-errors(1)
+      version1(0)}
+  tooLate, legIDAlreadyAssigned, dataUnavailable, dataAlreadyExists
+    FROM IN-CS-1-Errors-appendix {itu-t recommendation q 1218 modules(0)
+      cs-1-errors-app(5) version1(0)}
+  --  argument types
+  AddPartyArg, CallPartyHandlingResultsArg, AttachArg, ChangePartiesArg,
+    DetachArg, HoldCallPartyConnectionArg, ReconnectArg,
+    ReleaseCallPartyConnectionArg
+    FROM IN-CS-1-DataTypes-appendix {itu-t recommendation q 1218 modules(0)
+      cs-1-datatypes-app(6) version1(0)}
+  -- operation codes
+  op-addParty, op-attach, op-changeParties, op-detach,
+    op-holdCallPartyConnection, op-reconnect, op-releaseCallPartyConnection
+    FROM IN-CS-1-Codes-appendix {itu-t recommendation q 1218 modules(0)
+      cs-1-codes-app(7) version1(0)};
+
+--  TYPE DEFINITIONS FOR    IN CS-1    OPERATIONS FOLLOWS
+--  SCF-SSF operations
+--  Operation codes
+--  TYPE DEFINITION FOR ADDITIONAL	IN CS-1	OPERATIONS
+--  SCF-SSF operations
+addParty OPERATION ::= {
+  ARGUMENT       AddPartyArg
+  RESULT         CallPartyHandlingResultsArg
+  RETURN RESULT  TRUE
+  ERRORS
+    {dataAlreadyExists | missingParameter | systemFailure | taskRefused |
+      unexpectedComponentSequence | unexpectedDataValue | unexpectedParameter}
+  CODE           op-addParty
+}
+
+--  SCF ? SSF
+--  This operation is used to perform the call processing actions to add all call party connections 
+--  from one Call to another Call, then clear the first Call (e.g. to create a conference call). 
+--  From the perspective of the controlling party, this operation effectively bridges two Calls.
+attach OPERATION ::= {
+  ARGUMENT       AttachArg
+  RETURN RESULT  FALSE
+  ERRORS
+    {dataAlreadyExists | legIDAlreadyAssigned | missingParameter |
+      systemFailure | taskRefused | tooLate | unexpectedComponentSequence |
+      unexpectedDataValue | unexpectedParameter}
+  CODE           op-attach
+}
+
+--  SCF ? SSF
+--  This operation is used to attach two Calls.
+changeParties OPERATION ::= {
+  ARGUMENT       ChangePartiesArg
+  RESULT         CallPartyHandlingResultsArg
+  RETURN RESULT  TRUE
+  ERRORS
+    {dataAlreadyExists | missingParameter | systemFailure | taskRefused |
+      unexpectedComponentSequence | unexpectedDataValue | unexpectedParameter}
+  CODE           op-changeParties
+}
+
+--  SCF ? SSF
+--  This operation is used to perform the call processing actions to change a particular party 
+--  connection from one Call to another Call. From the perspective of the particular call party, this
+--  operation effectively places the first Call on hold and retrieves the associated Call from hold.
+detach OPERATION ::= {
+  ARGUMENT       DetachArg
+  RETURN RESULT  FALSE
+  ERRORS
+    {dataAlreadyExists | missingParameter | systemFailure | taskRefused |
+      tooLate | unexpectedComponentSequence | unexpectedDataValue |
+      unexpectedParameter | unknownLegID}
+  CODE           op-detach
+}
+
+--  SCF ? SSF
+--  This operation is used to detach two Calls.
+holdCallPartyConnection OPERATION ::= {
+  ARGUMENT       HoldCallPartyConnectionArg
+  RESULT         CallPartyHandlingResultsArg
+  RETURN RESULT  TRUE
+  ERRORS
+    {dataUnavailable | missingParameter | systemFailure | taskRefused |
+      unexpectedComponentSequence | unexpectedDataValue | unexpectedParameter}
+  CODE           op-holdCallPartyConnection
+}
+
+--  SCF ? SSF
+--  This operation is used during the active phase of a call between two or more parties to put one 
+--  party connection on hold.
+reconnect OPERATION ::= {
+  ARGUMENT       ReconnectArg
+  RESULT         CallPartyHandlingResultsArg
+  RETURN RESULT  TRUE
+  ERRORS
+    {dataAlreadyExists | missingParameter | systemFailure | taskRefused |
+      unexpectedComponentSequence | unexpectedDataValue | unexpectedParameter}
+  CODE           op-reconnect
+}
+
+--  SCF ? SSF
+--  This operation is used to resume a held party to a call (inverse of HoldCallPartyConnection).
+releaseCallPartyConnection OPERATION ::= {
+  ARGUMENT       ReleaseCallPartyConnectionArg
+  RESULT         CallPartyHandlingResultsArg
+  RETURN RESULT  TRUE
+  ERRORS
+    {dataAlreadyExists | missingParameter | systemFailure | taskRefused |
+      unexpectedComponentSequence | unexpectedDataValue | unexpectedParameter}
+  CODE           op-releaseCallPartyConnection
+}
+
+--  SCF ? SSF
+--  This operation is used to release a call party connection during a call between two or more parties.
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

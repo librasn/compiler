@@ -1,0 +1,317 @@
+X9-84-Biometrics.asn: OASIS X9.84-CMS (2003)-- ASN module extracted from OASIS X9.84-CMS (2003)--
+-- OASIS XML Common Biometric Format (XCBF) Technical Committee
+--
+-- From: http://oasis-open.org/committees/xcbf/docs/XCBFSchema20030107.zip
+--
+-- OASIS takes no position regarding the validity or scope of any 
+-- intellectual property or other rights that might be claimed to
+-- pertain to the implementation or use of the technology described in
+-- this document or the extent to which any license under such rights
+-- might or might not be available; neither does it represent that it
+-- has made any effort to identify any such rights. Information on 
+-- OASIS's procedures with respect to rights in OASIS specifications
+-- can be found at the OASIS website. Copies of claims of rights made
+-- available for publication and any assurances of licenses to be made
+-- available, or the result of an attempt made to obtain a general 
+-- license or permission for the use of such proprietary rights by 
+-- implementors or users of this specification, can be obtained from
+-- the OASIS Executive Director. 
+-- 
+-- OASIS invites any interested party to bring to its attention any 
+-- copyrights, patents or patent applications, or other proprietary
+-- rights which may cover technology that may be required to implement
+-- this specification. Please address the information to the OASIS 
+-- Executive Director.
+--
+-- Copyright © OASIS Open 2002, 2003. All Rights Reserved.
+--
+-- This document and translations of it may be copied and furnished to
+-- others, and derivative works that comment on or otherwise explain
+-- it or assist in its implementation may be prepared, copied, 
+-- published and distributed, in whole or in part, without restriction
+-- of any kind, provided that the above copyright notice and this 
+-- paragraph are included on all such copies and derivative works.
+-- However, this document itself does not be modified in any way, such
+-- as by removing the copyright notice or references to OASIS, except
+-- as needed for the purpose of developing OASIS specifications, in 
+-- which case the procedures for copyrights defined in the OASIS 
+-- Intellectual Property Rights document must be followed, or as
+-- required to translate it into languages other than English.
+--
+-- The limited permissions granted above are perpetual and will not be
+-- revoked by OASIS or its successors or assigns.
+-- 
+-- This document and the information contained herein is provided on
+-- an "AS IS" basis and OASIS DISCLAIMS ALL WARRANTIES, EXPRESS OR
+-- IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTY THAT THE USE OF
+-- THE INFORMATION HEREIN WILL NOT INFRINGE ANY RIGHTS OR ANY IMPLIED
+-- WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
+--
+
+X9-84-Biometrics {iso(1) identified-organization(3) tc68(133) country(16) x9(840) x9Standards(9) x9-84(84) module(0) biometrics(1) rev(1)} 
+   DEFINITIONS AUTOMATIC TAGS ::= BEGIN
+
+-- EXPORTS All;
+
+IMPORTS 
+
+   -- X9.84 Biometrics Information Management and Security IDs -- 
+
+   BiometricTypes, CBEFF-Formats, IBIA-Formats, MatchingAIDs,
+   ProcessingAIDs, X9-Formats, x509-biometricTemplates,
+   x968-biometricTemplates
+      FROM X9-84-Identifiers {
+         iso(1) identified-organization(3) tc68(133) country(16)
+            x9(840) x9Standards(9) x9-84(84) module(0)
+               ids(3) rev(1) }
+
+   -- X9.84 Biometrics Information Management and Security CMS --
+
+   AuthenticatedData, EncryptedData, EnvelopedData, 
+   MACAlgorithmIdentifier, SignatureAlgorithmIdentifier,
+   SignedData
+      FROM X9-84-CMS {
+         iso(1) identified-organization(3) tc68(133) country(16)
+            x9(840) x9Standards(9) x9-84(84) module(0)
+               cms(2) rev(1) } ;
+   
+
+
+BiometricSyntaxSets ::= SEQUENCE SIZE(1..MAX) OF BiometricSyntax
+
+BiometricSyntax ::= CHOICE {  
+   biometricObjects            BiometricObjects, 
+   integrityObjects            IntegrityObjects, 
+   privacyObjects              PrivacyObjects,
+   privacyAndIntegrityObjects  PrivacyAndIntegrityObjects
+}
+
+BiometricObjects ::= SEQUENCE SIZE(1..MAX) OF BiometricObject
+
+BiometricObject ::= SEQUENCE {
+   biometricHeader  BiometricHeader,
+   biometricData    BiometricData
+}
+
+--
+-- All of the cryptographic processing in this standard is performed
+-- on a value of type EncodedBiometricObjects. This is a sequence of
+-- one or more values of type BiometricObject in its encoded form.
+-- 
+
+EncodedBiometricObjects ::= BIOMETRIC.&Type( BiometricObjects )
+
+BiometricHeader ::= SEQUENCE {
+   version         BiometricVersion  DEFAULT hv1,
+   recordType      RecordType  OPTIONAL,
+   dataType        DataType  OPTIONAL,
+   purpose         Purpose  OPTIONAL,
+   quality         Quality  OPTIONAL,
+   validityPeriod  ValidityPeriod  OPTIONAL,
+   format          Format  OPTIONAL
+}
+
+BiometricVersion ::= INTEGER { hv1(0) } (0..MAX)
+
+RecordType ::= BIOMETRIC.&name({BiometricTypes})
+
+DataType ::= ENUMERATED {
+   raw          (0),
+   intermediate (1),
+   processed    (2)
+}
+
+Purpose ::= ENUMERATED {
+   verify          (1),
+   identify        (2),
+   enroll          (3),
+   enrollVerify    (4),
+   enrollIdentity  (5),
+   audit           (6),
+
+   ...  -- Expect other values --
+}
+
+Quality ::= INTEGER {
+   lowest       (  0),
+   highest      (100),
+   notSet       ( -1),
+   notSupported ( -2)
+} (-2..100,...)
+
+ValidityPeriod ::= SEQUENCE {
+   notBefore  DateTime OPTIONAL,
+   notAfter   DateTime  OPTIONAL
+} 
+ (ALL EXCEPT({ -- none; at least one component is present --  }))
+
+DateTime ::= RELATIVE-OID  -- { yyyy mm dd hh mm ss z } -- 
+
+Format ::= SEQUENCE {
+   formatOwner  BIOMETRIC.&name({Owner}),
+   formatType   BIOMETRIC.&Type({Owner}{@formatOwner})  OPTIONAL
+}
+
+Owner BIOMETRIC ::= {
+   CBEFF-Formats  |  -- http://www.nist.gov -- 
+   IBIA-Formats   |  -- http://www.ibia.org -- 
+   X9-Formats,       -- http://www.x9.org   -- 
+
+   ...  -- expect additional vendor specific formats -- 
+} 
+
+-- Integrity -- 
+
+IntegrityObjects ::= SEQUENCE {
+   biometricObjects  EncodedBiometricObjects,
+   integrityBlock    IntegrityBlock
+}
+
+IntegrityBlock ::= CHOICE {
+   digitalSignature           DigitalSignature,
+   messageAuthenticationCode  MessageAuthenticationCode,
+   signedData                 SignedData,
+   authenticatedData          AuthenticatedData
+}
+
+DigitalSignature ::= SEQUENCE { 
+   algorithmID  SignatureAlgorithmIdentifier,
+   signature    OCTET STRING( CONSTRAINED BY { 
+                   -- signature on --  EncodedBiometricObjects  })
+}
+
+MessageAuthenticationCode ::= SEQUENCE {
+   keyName      OCTET STRING  OPTIONAL,
+   algorithmID  MACAlgorithmIdentifier,
+   mac          OCTET STRING (CONSTRAINED BY {
+                   -- MAC or HMAC on --  EncodedBiometricObjects }) 
+}
+
+-- Privacy -- 
+
+PrivacyObjects ::= SEQUENCE {
+   biometricHeaders  BiometricHeaders  OPTIONAL,
+   privacyBlock      PrivacyBlock
+}
+
+BiometricHeaders ::= SEQUENCE SIZE(1..MAX) OF BiometricHeader
+
+PrivacyBlock ::= CHOICE {
+   fixedKey        EncryptedData,
+   namedKey        NamedKeyEncryptedData,
+   establishedKey  EnvelopedData
+}
+
+NamedKeyEncryptedData ::= SEQUENCE {
+   keyName        OCTET STRING (SIZE(1..MAX)),
+   encryptedData  EncryptedData
+}
+
+-- Privacy and integrity -- 
+
+PrivacyAndIntegrityObjects ::= SEQUENCE {
+   biometricHeaders  BiometricHeaders  OPTIONAL,
+   privacyBlock      PrivacyBlock,
+   integrityBlock    IntegrityBlock
+}
+
+-- Authentication Information (AI) -- 
+
+BiometricInformationSets ::= 
+      SEQUENCE SIZE(1..MAX) OF BiometricInformation
+
+BiometricInformation ::= SEQUENCE {
+   processingAlgorithms  ProcessingAlgorithms  OPTIONAL,
+   matchingMethods       MatchingMethods  OPTIONAL
+}
+ (ALL EXCEPT({ -- none; at least one component is present -- }))
+
+-- Biometric processing algorithms -- 
+
+ProcessingAlgorithms ::= SEQUENCE SIZE(1..MAX) OF ProcessingInformation
+
+ProcessingInformation ::= SEQUENCE {
+   id     BIOMETRIC.&name({ProcessingAIDs}),
+   parms  BIOMETRIC.&Type({ProcessingAIDs}{@id})  OPTIONAL
+}
+
+-- Biometric matching methods -- 
+
+MatchingMethods ::= SEQUENCE SIZE(1..MAX) OF MatchingInformation 
+
+MatchingInformation ::= SEQUENCE {
+   id     BIOMETRIC.&name({MatchingAIDs}),
+   parms  BIOMETRIC.&Type({MatchingAIDs}{@id})  OPTIONAL
+}
+
+BiometricData ::= OCTET STRING(SIZE(1..MAX))
+
+-- Biometrics information object class -- 
+
+BIOMETRIC ::= CLASS {
+   &name  BIOMETRIC-IDENTIFIER  UNIQUE,
+   &Type  OPTIONAL
+}
+   WITH SYNTAX { BIOMETRIC &name [ DATA &Type ] }
+
+BIOMETRIC-IDENTIFIER ::= CHOICE {
+   oid  OBJECT IDENTIFIER,  -- complete object identifier 
+   id   RELATIVE-OID        -- object identifier fragment 
+}
+
+-- Biometric certificate extension --
+
+--
+-- A biometricTemplates information object can be used to extend the
+-- information bound to a public key in an value of types Certificate
+-- or AttributeCertificate as defined in The Directory series of
+-- standards, to include biometric identity information.
+--
+
+biometricTemplates EXTENSION ::= {
+   SYNTAX         EncodedBiometricObjects  -- DER or cXER --
+   IDENTIFIED BY  x509-biometricTemplates
+}
+
+EXTENSION ::= CLASS {
+   &id        OBJECT IDENTIFIER  UNIQUE,
+   &ExtnType  
+}
+ WITH SYNTAX { SYNTAX &ExtnType IDENTIFIED BY &id }
+
+--
+-- A domainBiometricTemplates information object can be used to
+-- extend the information bound to a public key in an value of 
+-- ASN.1 type DomainCertificate as defined in the X9.68 Domain
+-- Certificate Syntax standard, to include biometric identity 
+-- information. 
+-- 
+
+domainBiometricTemplates PRIVATE-X ::= {
+   NAME  oid : x968-biometricTemplates 
+   TYPE  EncodedBiometricObjects  -- DER or cXER --
+}
+
+PRIVATE-X ::= CLASS {
+   &name  Identifier  UNIQUE,
+   &Type  OPTIONAL
+}
+ WITH SYNTAX { NAME &name [TYPE &Type] }
+
+Identifier ::= CHOICE {
+   oid  OBJECT IDENTIFIER,  -- complete object identifier 
+   id   RELATIVE-OID        -- object identifier fragment 
+}
+
+END  -- X9-84-Biometrics --
+
+--
+-- Last update: Tuesday, January 7, 2003
+--
+-- Phillip H. Griffin
+-- OASIS XCBF TC Chair
+-- mail:  phil.griffin@asn-1.com
+-- list:  xcbf-comment@lists.oasis-open.org
+-- site:  http://www.oasis-open.org/committees/xcbf/
+--
+

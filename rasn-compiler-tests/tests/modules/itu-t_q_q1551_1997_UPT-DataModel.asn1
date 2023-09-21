@@ -1,0 +1,561 @@
+
+
+
+
+
+
+
+-- Module UPT-DataModel (Q.1551:06/1997)
+-- See also ITU-T Q.1551 (06/1997)
+-- See also the index of all ASN.1 assignments needed in this document
+
+UPT-DataModel
+-- this modules contains the ASN.1 Information Object Notation
+-- for defining the contents of an SDF for the UPT service.
+DEFINITIONS ::=
+BEGIN
+
+IMPORTS
+  informationFramework, upperBounds
+    FROM UsefulDefinitions {joint-iso-itu-t ds(5) module(1)
+      usefulDefinitions(0) 3
+      } -- {joint-iso-itu-t ds (5) module (1) usefulDefinitions (0)}
+  OBJECT-CLASS, ATTRIBUTE, NAME-FORM, STRUCTURE-RULE, alias
+    FROM InformationFramework {joint-iso-itu-t ds(5) module(1)
+      informationFramework(1) 3}
+  organization, organizationalUnit, countryNameForm
+    FROM SelectedObjectClasses {joint-iso-itu-t ds(5) module(1)
+      selectedObjectClasses(6) 3}
+  description, integerMatch, numericStringMatch, commonName, surname,
+    octetStringMatch, integerOrderingMatch, name, seeAlso,
+    organizationalUnitName, storedPrefixMatch
+    FROM SelectedAttributeTypes {joint-iso-itu-t ds(5) module(1)
+      selectedAttributeTypes(5) 3
+      } -- {joint-iso-itu-t ds (5) module (1)selectedAttributeTypes (5) 2}
+  userPassword
+    FROM AuthenticationFramework {joint-iso-itu-t ds(5) module(1)
+      authenticationFramework(7) 3
+      } -- {joint-iso-itu-t ds (5) module (1) authenticationFramework (7) 2}
+  ub-international-isdn-number
+    FROM UpperBounds {joint-iso-itu-t ds(5) module(1) upperBounds(10) 3};
+
+uptProvider OBJECT-CLASS ::= {
+  SUBCLASS OF   {organization}
+  MUST CONTAIN  {providerId}
+  MAY CONTAIN   {description}
+  ID            id-oc-uptProvider
+}
+
+providerId ATTRIBUTE ::= {
+  WITH SYNTAX               AddressString {ub-providerId}
+  EQUALITY MATCHING RULE    numericStringMatch
+  SUBSTRINGS MATCHING RULE  storedPrefixMatch
+  SINGLE VALUE              TRUE
+  ID                        id-at-providerId
+}
+
+ub-providerId INTEGER ::= 3
+
+AddressString{INTEGER:ub-max-value} ::= NumericString(SIZE (1..ub-max-value))
+
+partner OBJECT-CLASS ::= {
+  MUST CONTAIN  {providerId}
+  MAY CONTAIN   {description}
+  ID            id-oc-partner
+}
+
+agreedService OBJECT-CLASS ::= {
+  MUST CONTAIN  {providedServiceId}
+  MAY CONTAIN   {providedLocations | description}
+  ID            id-oc-agreement
+}
+
+providedServiceId ATTRIBUTE ::= {
+  WITH SYNTAX             Service
+  EQUALITY MATCHING RULE  integerMatch
+  SINGLE VALUE            TRUE
+  ID                      id-at-providedServiceId
+}
+
+Service ::= INTEGER {
+  --basic services 0-9
+  isdnTelephony(0),
+  -- registration service 10-19
+  icRegistration(10),
+  --profile service 20-29
+  serviceProfileModification(20),
+  -- charging service 30-39
+  standard(30),
+  -- routing service 40-49
+  callForwardingUnconditional(40), callForwardingOnNoReply(41),
+  callForwardingOnBusy(42), variableRoutingOnTime(43),
+  variableRoutingOnCallingLine(44)}
+
+providedLocations ATTRIBUTE ::= {
+  WITH SYNTAX               AddressString {ub-international-isdn-number}
+  EQUALITY MATCHING RULE    numericStringMatch
+  SUBSTRINGS MATCHING RULE  storedPrefixMatch
+  ID                        id-at-providedLocations
+}
+
+administrativeUnit OBJECT-CLASS ::= {
+  SUBCLASS OF  {organizationalUnit}
+  ID           id-oc-administrativeUnit
+}
+
+userProfile OBJECT-CLASS ::= {
+  MUST CONTAIN  {pui}
+  MAY CONTAIN
+    {description | commonName | surname | seeAlso | userCredit | userPassword
+      | --as defined in Recommendation X.509
+       specialPassword | variablePassword | allowedServiceFeatures |
+      callInfoRecords | activeChargingService | nbOfFailedAuthentications}
+  ID            id-oc-userProfile
+}
+
+pui ATTRIBUTE ::= {
+  WITH SYNTAX             AddressString {ub-pui}
+  EQUALITY MATCHING RULE  numericStringMatch
+  SINGLE VALUE            TRUE
+  ID                      id-at-pui
+}
+
+ub-pui INTEGER ::= 15
+
+specialPassword ATTRIBUTE ::= {
+  WITH SYNTAX             OCTET STRING(SIZE (0..ub-special-password))
+  EQUALITY MATCHING RULE  octetStringMatch
+  ID                      id-at-specialPassword
+}
+
+ub-special-password INTEGER ::= 8
+
+variablePassword ATTRIBUTE ::= {
+  WITH SYNTAX             OCTET STRING(SIZE (0..ub-variable-password))
+  EQUALITY MATCHING RULE  octetStringMatch
+  ID                      id-at-variablePassword
+}
+
+ub-variable-password INTEGER ::= 15
+
+nbOfFailedAuthentications ATTRIBUTE ::= {
+  WITH SYNTAX             INTEGER(1..ub-max-nbOfFailedAuthentications)
+  ORDERING MATCHING RULE  integerOrderingMatch
+  SINGLE VALUE            TRUE
+  ID                      id-at-nbOfFailedAuthentications
+}
+
+ub-max-nbOfFailedAuthentications INTEGER ::= 6
+
+userCredit ATTRIBUTE ::= {
+  WITH SYNTAX             INTEGER(1..ub-maxUserCredit)
+  ORDERING MATCHING RULE  integerOrderingMatch
+  SINGLE VALUE            TRUE
+  ID                      id-at-userCredit
+}
+
+ub-maxUserCredit INTEGER ::= 10000
+
+callInfoRecords ATTRIBUTE ::= {
+  WITH SYNTAX  CallInfoRecord
+  ID           id-at-callInfoRecords
+}
+
+CallInfoRecord ::= SEQUENCE {
+  authenticationTime            [0]  UTCTime,
+  callStopTimeValue             [1]  UTCTime,
+  callStartTimeValue            [2]  UTCTime,
+  callingAddressValue           [3]  IsdnAddress,
+  calledNumber                  [4]  IsdnAddress,
+  duration                      [5]  INTEGER(0..2147483647) OPTIONAL,
+  routingAddress                [6]  IsdnAddress OPTIONAL,
+  forwardedToAddress            [7]  IsdnAddress OPTIONAL,
+  invokedSupplementaryServices  [8]  CFServices OPTIONAL,
+  visitedNetwork                [9]  NetworkCode OPTIONAL,
+  callCost                      [10]  Cost OPTIONAL,
+  surcharges                    [11]  Cost OPTIONAL,
+  releaseCause                  [12]  Cause OPTIONAL
+}
+
+Cost ::= CHOICE {pulse  [0]  INTEGER(1..ub-pulse),
+                 cost   [1]  CurrencyValue
+}
+
+NetworkCode ::= NumericString(SIZE (1..ub-networkCode))
+
+ub-networkCode INTEGER ::= 3
+
+ub-pulse INTEGER ::= 10000
+
+CurrencyValue ::= CHOICE {
+  usDollar        [0]  Currency,
+  frenchFranc     [1]  Currency,
+  germanMark      [2]  Currency,
+  dutchGuilder    [3]  Currency,
+  italianLira     [4]  Currency,
+  englishPound    [5]  Currency,
+  spanishPeseta   [6]  Currency,
+  swedishKrone    [7]  Currency,
+  norwegianKrone  [8]  Currency,
+  japaneseYen     [9]  Currency
+}
+
+Currency ::= REAL
+
+CFServices ::= SET OF Service(40..49)
+
+Cause ::= OCTET STRING(SIZE (minCauseLength..maxCauseLength))
+
+minCauseLength INTEGER ::= 2
+
+maxCauseLength INTEGER ::= 20
+
+activeChargingService ATTRIBUTE ::= {
+  WITH SYNTAX             Service(30..39)
+  EQUALITY MATCHING RULE  integerMatch
+  SINGLE VALUE            TRUE
+  ID                      id-at-activeChargingService
+}
+
+allowedServiceFeatures ATTRIBUTE ::= {
+  WITH SYNTAX             Service
+  EQUALITY MATCHING RULE  integerMatch
+  ID                      id-at-allowedServiceFeatures
+}
+
+userProfileAlias OBJECT-CLASS ::= {
+  SUBCLASS OF   {alias}
+  MUST CONTAIN  {uptNumber}
+  MAY CONTAIN   {description}
+  ID            id-oc-userProfileAlias
+}
+
+uptNumber ATTRIBUTE ::= {
+  WITH SYNTAX               IsdnAddress
+  EQUALITY MATCHING RULE    numericStringMatch
+  SUBSTRINGS MATCHING RULE  storedPrefixMatch
+  SINGLE VALUE              TRUE
+  ID                        id-at-uptNumber
+}
+
+calledUptUser OBJECT-CLASS ::= {
+  MUST CONTAIN  {name}
+  MAY CONTAIN
+    {description | icRegistrationAddress | allowedRegistrationAddress |
+      defaultChargingReference}
+  ID            id-oc-calledUptUser
+}
+
+defaultChargingReference ATTRIBUTE ::= {
+  WITH SYNTAX               IsdnAddress
+  EQUALITY MATCHING RULE    numericStringMatch
+  SUBSTRINGS MATCHING RULE  storedPrefixMatch
+  SINGLE VALUE              TRUE
+  ID                        id-at-defaultChargingReference
+}
+
+IsdnAddress ::= AddressString{ub-international-isdn-number}
+
+icRegistrationAddress ATTRIBUTE ::= {
+  WITH SYNTAX               IsdnAddress
+  EQUALITY MATCHING RULE    numericStringMatch
+  SUBSTRINGS MATCHING RULE  storedPrefixMatch
+  ID                        id-at-icRegistrationAddress
+}
+
+allowedRegistrationAddress ATTRIBUTE ::= {
+  WITH SYNTAX               AddressString {ub-international-isdn-number}
+  EQUALITY MATCHING RULE    numericStringMatch
+  SUBSTRINGS MATCHING RULE  storedPrefixMatch
+  ID                        id-at-allowedRegistrationAddress
+}
+
+callingUptUser OBJECT-CLASS ::= {
+  MUST CONTAIN  {name | allowedDestinations
+                  -- callRecords??--}
+  MAY CONTAIN   {description}
+  ID            id-oc-callingUptUser
+}
+
+allowedDestinations ATTRIBUTE ::= {
+  WITH SYNTAX               AddressString {ub-international-isdn-number}
+  EQUALITY MATCHING RULE    numericStringMatch
+  SUBSTRINGS MATCHING RULE  storedPrefixMatch
+  ID                        id-at-allowedDestinations
+}
+
+supplementaryService OBJECT-CLASS ::= {
+  KIND          abstract
+  MUST CONTAIN  {supplServId | supplServiceStatus}
+  MAY CONTAIN   {name | description}
+  ID            id-ao-supplementaryService
+}
+
+supplServId ATTRIBUTE ::= {
+  WITH SYNTAX             SS-Code
+  EQUALITY MATCHING RULE  integerMatch
+  SINGLE VALUE            TRUE
+  ID                      id-at-supplServId
+}
+
+supplServiceStatus ATTRIBUTE ::= {
+  WITH SYNTAX   SupplServiceStatus
+  SINGLE VALUE  TRUE
+  ID            id-at-supplServiceStatus
+}
+
+SupplServiceStatus ::= BIT STRING {provisioned(0), registered(1), activated(2)}
+
+SS-Code ::= INTEGER {
+  clip(11), clir(12), colp(13), colr(14), mci(15), cfu(16), cfb(17), 
+  cfna(18), cfnr(25), civr(26), tvr(27)}
+
+callForwarding OBJECT-CLASS ::= {
+  SUBCLASS OF   {supplementaryService}
+  MUST CONTAIN  {forwardedToNumber | typesOfNotification}
+  MAY CONTAIN   {noReplyConditionTimer}
+  ID            id-oc-callForwarding
+}
+
+forwardedToNumber ATTRIBUTE ::= {
+  WITH SYNTAX               IsdnAddress
+  EQUALITY MATCHING RULE    numericStringMatch
+  SUBSTRINGS MATCHING RULE  storedPrefixMatch
+  ID                        id-at-forwardedToNumber
+}
+
+typesOfNotification ATTRIBUTE ::= {
+  WITH SYNTAX   TypesOfNotification
+  SINGLE VALUE  TRUE
+  ID            id-at-typesOfNotification
+}
+
+TypesOfNotification ::= BIT STRING {
+  servedUserForwardedCall(0), callingUserWithForwardedToNumber(1),
+  callingUserWithoutForwardedToNumber(2), servedUserForwardingActivation(3)
+}
+
+noReplyConditionTimer ATTRIBUTE ::= {
+  WITH SYNTAX             INTEGER(1..ub-noReplyConditionTimer)
+  EQUALITY MATCHING RULE  integerMatch
+  SINGLE VALUE            TRUE
+  ID                      id-at-noReplyConditionTimer
+}
+
+ub-noReplyConditionTimer INTEGER ::= 10000
+
+-- name forms
+uptProviderNameForm NAME-FORM ::= {
+  NAMES            uptProvider
+  WITH ATTRIBUTES  {providerId}
+  ID               id-nf-uptProviderNameForm
+}
+
+partnerNameForm NAME-FORM ::= {
+  NAMES            partner
+  WITH ATTRIBUTES  {providerId}
+  ID               id-nf-partnerNameForm
+}
+
+adminUnitNameForm NAME-FORM ::= {
+  NAMES            administrativeUnit
+  WITH ATTRIBUTES  {organizationalUnitName}
+  ID               id-nf-adminUnitNameForm
+}
+
+agreedServiceNameForm NAME-FORM ::= {
+  NAMES            agreedService
+  WITH ATTRIBUTES  {providedServiceId}
+  ID               id-nf-agreedServiceNameForm
+}
+
+userProfileNameForm NAME-FORM ::= {
+  NAMES            userProfile
+  WITH ATTRIBUTES  {pui}
+  ID               id-nf-userProfileNameForm
+}
+
+userProfileAliasNameForm NAME-FORM ::= {
+  NAMES            userProfileAlias
+  WITH ATTRIBUTES  {uptNumber}
+  ID               id-nf-userProfileAliasNameForm
+}
+
+calledUptUserNameForm NAME-FORM ::= {
+  NAMES            calledUptUser
+  WITH ATTRIBUTES  {name}
+  ID               id-nf-calledUptUserNameForm
+}
+
+callingUptUserNameForm NAME-FORM ::= {
+  NAMES            callingUptUser
+  WITH ATTRIBUTES  {name}
+  ID               id-nf-callingUptUserNameForm
+}
+
+callForwardingNameForm NAME-FORM ::= {
+  NAMES            callForwarding
+  WITH ATTRIBUTES  {supplServId}
+  ID               id-nf-callForwardingNameForm
+}
+
+-- structure rules
+sr0 STRUCTURE-RULE ::= {NAME FORM  countryNameForm
+                        ID         0
+}
+
+sr1 STRUCTURE-RULE ::= {
+  NAME FORM       uptProviderNameForm
+  SUPERIOR RULES  {sr0}
+  ID              1
+}
+
+sr2 STRUCTURE-RULE ::= {
+  NAME FORM       adminUnitNameForm
+  SUPERIOR RULES  {sr1}
+  ID              2
+}
+
+sr3 STRUCTURE-RULE ::= {
+  NAME FORM       partnerNameForm
+  SUPERIOR RULES  {sr1}
+  ID              3
+}
+
+sr4 STRUCTURE-RULE ::= {
+  NAME FORM       userProfileNameForm
+  SUPERIOR RULES  {sr2}
+  ID              4
+}
+
+sr5 STRUCTURE-RULE ::= {
+  NAME FORM       userProfileAliasNameForm
+  SUPERIOR RULES  {sr2}
+  ID              5
+}
+
+sr6 STRUCTURE-RULE ::= {
+  NAME FORM       agreedServiceNameForm
+  SUPERIOR RULES  {sr3}
+  ID              6
+}
+
+sr7 STRUCTURE-RULE ::= {
+  NAME FORM       calledUptUserNameForm
+  SUPERIOR RULES  {sr4}
+  ID              7
+}
+
+sr8 STRUCTURE-RULE ::= {
+  NAME FORM       callingUptUserNameForm
+  SUPERIOR RULES  {sr4}
+  ID              8
+}
+
+sr9 STRUCTURE-RULE ::= {
+  NAME FORM       callForwardingNameForm
+  SUPERIOR RULES  {sr7}
+  ID              9
+}
+
+-- object-identifiers assignment
+id-oc OBJECT IDENTIFIER ::=
+  {itu-t recommendation q 1551 --upt-- module(0) uptUsefulDefinitions(0)
+   objectClasses(0) version1(0)}
+
+id-ao OBJECT IDENTIFIER ::=
+  {itu-t recommendation q 1551 --upt-- module(0) uptUsefulDefinitions(0)
+   abstractObjectClasses(1) version1(0)}
+
+id-at OBJECT IDENTIFIER ::=
+  {itu-t recommendation q 1551 --upt-- module(0) uptUsefulDefinitions(0)
+   attributeTypes(2) version1(0)}
+
+id-nf OBJECT IDENTIFIER ::=
+  {itu-t recommendation q 1551 --upt-- module(0) uptUsefulDefinitions(0)
+   nameForms(3) version1(0)}
+
+id-oc-uptProvider OBJECT IDENTIFIER ::= {id-oc 1}
+
+id-oc-partner OBJECT IDENTIFIER ::= {id-oc 2}
+
+id-oc-agreement OBJECT IDENTIFIER ::= {id-oc 3}
+
+id-oc-administrativeUnit OBJECT IDENTIFIER ::= {id-oc 4}
+
+id-oc-userProfile OBJECT IDENTIFIER ::= {id-oc 5}
+
+id-oc-userProfileAlias OBJECT IDENTIFIER ::= {id-oc 6}
+
+id-oc-calledUptUser OBJECT IDENTIFIER ::= {id-oc 7}
+
+id-oc-callingUptUser OBJECT IDENTIFIER ::= {id-oc 8}
+
+id-oc-callForwarding OBJECT IDENTIFIER ::= {id-oc 9}
+
+id-ao-supplementaryService OBJECT IDENTIFIER ::= {id-ao 1}
+
+id-at-providerId OBJECT IDENTIFIER ::= {id-at 1}
+
+id-at-providedServiceId OBJECT IDENTIFIER ::= {id-at 2}
+
+id-at-providedLocations OBJECT IDENTIFIER ::= {id-at 3}
+
+id-at-pui OBJECT IDENTIFIER ::= {id-at 4}
+
+id-at-specialPassword OBJECT IDENTIFIER ::= {id-at 5}
+
+id-at-variablePassword OBJECT IDENTIFIER ::= {id-at 6}
+
+id-at-nbOfFailedAuthentications OBJECT IDENTIFIER ::= {id-at 7}
+
+id-at-userCredit OBJECT IDENTIFIER ::= {id-at 8}
+
+id-at-callInfoRecords OBJECT IDENTIFIER ::= {id-at 9}
+
+id-at-activeChargingService OBJECT IDENTIFIER ::= {id-at 10}
+
+id-at-allowedServiceFeatures OBJECT IDENTIFIER ::= {id-at 11}
+
+id-at-uptNumber OBJECT IDENTIFIER ::= {id-at 12}
+
+id-at-defaultChargingReference OBJECT IDENTIFIER ::= {id-at 13}
+
+id-at-icRegistrationAddress OBJECT IDENTIFIER ::= {id-at 14}
+
+id-at-allowedRegistrationAddress OBJECT IDENTIFIER ::= {id-at 15}
+
+id-at-supplServId OBJECT IDENTIFIER ::= {id-at 16}
+
+id-at-supplServiceStatus OBJECT IDENTIFIER ::= {id-at 17}
+
+id-at-forwardedToNumber OBJECT IDENTIFIER ::= {id-at 18}
+
+id-at-typesOfNotification OBJECT IDENTIFIER ::= {id-at 19}
+
+id-at-noReplyConditionTimer OBJECT IDENTIFIER ::= {id-at 20}
+
+id-at-allowedDestinations OBJECT IDENTIFIER ::= {id-at 21}
+
+id-nf-uptProviderNameForm OBJECT IDENTIFIER ::= {id-nf 1}
+
+id-nf-partnerNameForm OBJECT IDENTIFIER ::= {id-nf 2}
+
+id-nf-adminUnitNameForm OBJECT IDENTIFIER ::= {id-nf 3}
+
+id-nf-agreedServiceNameForm OBJECT IDENTIFIER ::= {id-nf 4}
+
+id-nf-userProfileNameForm OBJECT IDENTIFIER ::= {id-nf 5}
+
+id-nf-userProfileAliasNameForm OBJECT IDENTIFIER ::= {id-nf 6}
+
+id-nf-calledUptUserNameForm OBJECT IDENTIFIER ::= {id-nf 7}
+
+id-nf-callingUptUserNameForm OBJECT IDENTIFIER ::= {id-nf 8}
+
+id-nf-callForwardingNameForm OBJECT IDENTIFIER ::= {id-nf 9}
+
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

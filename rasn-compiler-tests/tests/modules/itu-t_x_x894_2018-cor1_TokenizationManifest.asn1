@@ -1,0 +1,44 @@
+-- ASN module extracted from ITU-T X.894 (10/2018)-- 18 Module TokenizationManifest
+TokenizationManifest {iso(1) identified-organization(3) tc68(133) country(16) x9(840) x9Standards(9) x9-73(73) module(0) tokeMan(7) }
+DEFINITIONS AUTOMATIC TAGS ::= BEGIN
+-- EXPORTS All --
+IMPORTS 
+-- X9.73 Cryptographic Message Syntax (CMS) --
+ATTRIBUTE
+FROM CryptographicMessageSyntax-2010 {
+iso(1) member-body(2) us(840) rsadsi(113549) pkcs(1) pkcs-9(9)
+smime(16) modules(0) id-mod-cms-2009(58)}
+-- X9.73 CMS Object Identifiers --
+id-tokenizedParts, id-XPathTokensSet
+FROM CMSObjectIdentifiers {
+iso(1) identified-organization(3) tc68(133) country(16) x9(840)
+x9Standards(9) x9-73(73) module(0) oids(1) v2009(1)};
+TokenizedParts ::= Tokenized {{ Manifest }}
+Manifest TOKENIZED ::= {
+xPathTokensManifest,
+...  -- Expect additional manifest objects --
+}
+xPathTokensManifest TOKENIZED ::= {
+OID id-XPathTokensSet PARMS XPathTokensSet
+}
+XPathTokensSet ::= SEQUENCE {
+tSP       TokenServiceProvider OPTIONAL, 
+xPathSet  XPathSet
+}
+TokenServiceProvider ::= URI 
+URI ::= UTF8String (SIZE(1..MAX))
+XPathSet ::= SEQUENCE SIZE(1..MAX) OF xpath XPath
+XPath ::= UTF8String (CONSTRAINED BY { -- XML Path Language 2.0 -- })
+tokenizedParts ATTRIBUTE ::= {
+TYPE TokenizedParts IDENTIFIED BY id-tokenizedParts
+}
+TOKENIZED ::= CLASS {
+&id OBJECT IDENTIFIER UNIQUE,
+&Type OPTIONAL
+}
+WITH SYNTAX { OID &id [ PARMS &Type ] }
+Tokenized { TOKENIZED:IOSet } ::= SEQUENCE {
+name  TOKENIZED.&id({IOSet}),
+parts TOKENIZED.&Type({IOSet}{@name}) OPTIONAL
+}
+END  -- TokenizationManifest --

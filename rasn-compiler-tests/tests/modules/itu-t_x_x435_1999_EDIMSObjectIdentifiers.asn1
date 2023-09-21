@@ -1,0 +1,341 @@
+
+
+
+
+
+
+
+
+-- Module EDIMSObjectIdentifiers (X.435:06/1999)
+-- See also ITU-T X.435 (06/1999)
+-- See also the index of all ASN.1 assignments needed in this document
+
+EDIMSObjectIdentifiers {joint-iso-itu-t mhs(6) edims(7) modules(0)
+  object-identifiers(0) version(2)} DEFINITIONS IMPLICIT TAGS ::=
+BEGIN
+
+-- Prologue
+-- Exports everything
+IMPORTS -- nothing -- ;
+
+ID ::= OBJECT IDENTIFIER
+
+-- EDI Messaging 
+id-edims ID ::=
+  {joint-iso-itu-t mhs(6) edims(7)} -- not definitive
+
+-- Categories
+id-mod ID ::= {id-edims  0} -- modules
+
+id-edi ID ::= {id-edims  1} -- reserved
+
+id-ot ID ::= {id-edims  2} -- object types
+
+id-pt ID ::= {id-edims  3} -- port types
+
+id-ref ID ::= {id-edims  4} -- refinements
+
+id-sat ID ::= {id-edims  5} -- summary attributes
+
+id-hat ID ::= {id-edims  6} -- heading attributes
+
+id-rat ID ::= {id-edims  7} -- recipient attributes
+
+id-bat ID ::= {id-edims  8} -- body attributes
+
+id-nat ID ::= {id-edims  9} -- notification attributes
+
+id-mct ID ::= {id-edims  10} -- message content types
+
+id-bp ID ::= {id-edims  11} -- edi body part types
+
+id-nt ID ::= {id-edims  12} -- not used
+
+id-for ID ::= {id-edims  13} -- edi action indicator types
+
+id-act ID ::= {id-edims  14} -- edi auto-action
+
+-- identifier types
+id-dir ID ::= {id-edims  15} -- edi use of directory
+
+id-syn ID ::= {id-edims  16} -- edi synopsis type
+
+id-cat ID ::= {id-edims  17} -- correlation attributes
+
+id-aae ID ::= {id-edims  18} -- auto-action-errors
+
+id-ext ID ::= {id-edims  19} -- edi extensions
+
+-- Modules
+id-mod-object-identifiers ID ::= {id-mod  0}
+
+id-mod-functional-objects ID ::= {id-mod  1}
+
+id-mod-information-objects ID ::= {id-mod  2}
+
+id-mod-abstract-service ID ::= {id-mod  3}
+
+id-mod-message-store-attributes ID ::= {id-mod  4}
+
+id-mod-upper-bounds ID ::= {id-mod  5}
+
+id-mod-edi-directory-cl-att ID ::= {id-mod  6}
+
+id-mod-message-store-auto-actions ID ::= {id-mod  7}
+
+-- Object types
+id-ot-edime ID ::= {id-ot  0}
+
+id-ot-edimg-user ID ::= {id-ot  1}
+
+id-ot-edims ID ::= {id-ot  2}
+
+id-ot-edi-ua ID ::= {id-ot  3}
+
+id-ot-edi-ms ID ::= {id-ot  4}
+
+id-ot-pdau ID ::= {id-ot  5}
+
+-- Port types
+id-pt-origination ID ::= {id-pt  0}
+
+id-pt-reception ID ::= {id-pt  1}
+
+-- Message content type (for use by MS and Directory)
+id-mct-pedi ID ::=
+  {id-mct  0} -- Pedi
+
+-- EDI Body Part type (and P1 EIT)
+id-bp-edifact-ISO646 ID ::=
+  {id-bp  0} -- ISO646 is equivalent to
+
+-- Rec. T.50
+id-bp-edifact-TeletexString ID ::= {id-bp  1}
+
+id-bp-edifact-octet ID ::= {id-bp  2}
+
+id-bp-ansiX12-ISO646 ID ::= {id-bp  3}
+
+id-bp-ansiX12-TeletexString ID ::= {id-bp  4}
+
+id-bp-ansiX12-octet ID ::= {id-bp  5}
+
+id-bp-ansiX12-ebcdic ID ::= {id-bp  6}
+
+id-bp-untdi-ISO646 ID ::= {id-bp  7}
+
+id-bp-untdi-TeletexString ID ::= {id-bp  8}
+
+id-bp-untdi-octet ID ::= {id-bp  9}
+
+id-bp-private-octet ID ::= {id-bp  10}
+
+id-bp-undefined-octet ID ::= {id-bp  11}
+
+id-bp-edifact-8859 ID ::= {id-bp  12} -- Root OID for ISO/IEC 8859
+
+-- character repertoires
+-- EDI Action Request
+id-for-action ID ::=
+  {id-for  0} -- For action
+
+id-for-copy ID ::= {id-for  1} -- Copy, not original
+
+-- EDIMG Specific Auto Actions
+id-act-edi-auto-forward ID ::= {id-act  0}
+
+id-act-edi-auto-correlate ID ::= {id-act  1}
+
+id-act-edi-auto-acknowledgement ID ::= {id-act  2}
+
+id-act-edi-auto-forward-v2 ID ::= {id-act  3}
+
+-- EDI Auto Action Errors
+id-aae-edi-auto-forwarding-loop ID ::= {id-aae  0}
+
+id-aae-duplicate-edin ID ::= {id-aae  1}
+
+-- EDIM Synopsis (MS)
+id-syn-removed ID ::= {id-syn  0}
+
+id-syn-place-holder ID ::= {id-syn  1}
+
+-- MESSAGE STORE ATTRIBUTES
+-- Summary attributes
+id-sat-edims-entry-type ID ::=
+  {id-sat  0}
+
+id-sat-edim-synopsis ID ::= {id-sat  1}
+
+id-sat-edi-notification-indicator ID ::= {id-sat  2}
+
+-- Heading attributes
+id-hat-heading ID ::= {id-hat  0}
+
+id-hat-this-edim ID ::= {id-hat  1}
+
+id-hat-originator ID ::= {id-hat  2}
+
+id-hat-recipients ID ::= {id-hat  3}
+
+id-hat-edin-receiver ID ::= {id-hat  4}
+
+id-hat-responsibility-forwarded ID ::= {id-hat  5}
+
+id-hat-edi-bodypart-type ID ::= {id-hat  6}
+
+id-hat-incomplete-copy ID ::= {id-hat  7}
+
+id-hat-expiry-time ID ::= {id-hat  8}
+
+id-hat-related-messages ID ::= {id-hat  9}
+
+id-hat-obsoleted-edims ID ::= {id-hat  10}
+
+id-hat-edi-application-security-element ID ::= {id-hat  11}
+
+id-hat-edi-application-security-extensions ID ::= {id-hat  12}
+
+id-hat-cross-referencing-information ID ::= {id-hat  13}
+
+id-hat-edi-message-type ID ::= {id-hat  14}
+
+id-hat-service-string-advice ID ::= {id-hat  15}
+
+id-hat-syntax-identifier ID ::= {id-hat  16}
+
+id-hat-interchange-sender ID ::= {id-hat  17}
+
+id-hat-date-and-time-of-preparation ID ::= {id-hat  18}
+
+id-hat-application-reference ID ::= {id-hat  19}
+
+id-hat-heading-extensions ID ::= {id-hat  20}
+
+-- Per Recipient attributes
+id-rat-this-recipient ID ::= {id-rat  0}
+
+id-rat-action-request-for-this-recipient ID ::= {id-rat  1}
+
+id-rat-edi-notification-requests-for-this-recipient ID ::= {id-rat  2}
+
+id-rat-responsibility-passing-allowed-for-this-recipient ID ::= {id-rat  3}
+
+-- UNB EDIFACT Field Object Ids 
+id-rat-interchange-recipient-for-this-recipient ID ::=
+  {id-rat  4}
+
+id-rat-recipient-reference-for-this-recipient ID ::= {id-rat  5}
+
+id-rat-interchange-control-reference-for-this-recipient ID ::= {id-rat  6}
+
+id-rat-processing-priority-code-for-this-recipient ID ::= {id-rat  7}
+
+id-rat-acknowledgement-request-for-this-recipient ID ::= {id-rat  8}
+
+id-rat-communications-agreement-id-for-this-recipient ID ::= {id-rat  9}
+
+id-rat-test-indicator-for-this-recipient ID ::= {id-rat  10}
+
+id-rat-edi-notification-security-for-this-recipient ID ::= {id-rat  11}
+
+id-rat-edi-reception-security-for-this-recipient ID ::= {id-rat  12}
+
+id-rat-recipient-extensions-for-this-recipient ID ::= {id-rat  13}
+
+-- ANSIX12 ISA Field Object Ids 
+id-rat-authorization-information-for-this-recipient ID ::=
+  {id-rat  14}
+
+-- Body attributes
+id-bat-body ID ::= {id-bat  0}
+
+id-bat-interchange-length ID ::= {id-bat  1}
+
+id-bat-edi-body-part ID ::= {id-bat  2}
+
+id-bat-edim-body-part ID ::= {id-bat  3}
+
+id-bat-message-parameters ID ::= {id-bat  4}
+
+id-bat-message-data ID ::= {id-bat  5}
+
+id-bat-extended-body-part-types ID ::= {id-bat  6}
+
+-- Notification attributes
+id-nat-subject-edim ID ::= {id-nat  0}
+
+id-nat-edin-originator ID ::= {id-nat  1}
+
+id-nat-first-recipient ID ::= {id-nat  2}
+
+id-nat-notification-time ID ::= {id-nat  3}
+
+id-nat-notification-security-elements ID ::= {id-nat  4}
+
+id-nat-notification-extensions ID ::= {id-nat  5}
+
+id-nat-edin-initiator ID ::= {id-nat  6}
+
+-- PN attributes
+id-nat-pn-supplementary-info ID ::= {id-nat  7}
+
+id-nat-pn-extensions ID ::= {id-nat  8}
+
+-- NN attributes
+id-nat-nn-reason-code ID ::= {id-nat  9}
+
+id-nat-nn-supplementary-info ID ::= {id-nat  10}
+
+id-nat-nn-extensions ID ::= {id-nat  11}
+
+-- FN attributes
+id-nat-forwarded-to ID ::= {id-nat  12}
+
+id-nat-fn-reason-code ID ::= {id-nat  13}
+
+id-nat-fn-supplementary-info ID ::= {id-nat  14}
+
+id-nat-fn-extensions ID ::= {id-nat  15}
+
+-- Correlation attributes
+id-cat-correlated-delivered-edins ID ::= {id-cat  0}
+
+id-cat-delivered-edin-summary ID ::= {id-cat  1}
+
+id-cat-edim-recipients ID ::= {id-cat  2}
+
+id-cat-forwarded-edims ID ::= {id-cat  3}
+
+id-cat-forwarding-edims ID ::= {id-cat  4}
+
+id-cat-obsoleted-edims ID ::= {id-cat  5}
+
+id-cat-obsoleting-edims ID ::= {id-cat  6}
+
+id-cat-related-edims ID ::= {id-cat  7}
+
+id-cat-relating-edims ID ::= {id-cat  8}
+
+id-cat-subject-edim ID ::= {id-cat  9}
+
+id-cat-submitted-edin-status ID ::= {id-cat  10}
+
+id-cat-submitted-edins ID ::= {id-cat  11}
+
+-- MESSAGE STORE ATTRIBUTES - END
+-- Compression identifiers
+id-edi-compression ID ::=
+  {id-edi  0}
+
+id-edi-compression-v42bis ID ::= {id-edi  1}
+
+-- EDI extension identifiers
+id-ext-submission-options ID ::= {id-ext  0}
+
+id-ext-invalid-assembly-instructions ID ::= {id-ext  1}
+
+END -- of EDIMSObjectIdentifiers
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

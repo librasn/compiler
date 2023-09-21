@@ -1,0 +1,466 @@
+
+
+
+
+
+
+
+-- Module Q832-3ASN1DefinedTypesModule (Q.832.3:01/2001)
+-- See also ITU-T Q.832.3 (01/2001)
+-- See also the index of all ASN.1 assignments needed in this document
+
+Q832-3ASN1DefinedTypesModule {itu-t(0) recommendation(0) q(17) q832(832)
+  dot(127) coord(3) informationModel(0) asn1Modules(2)
+  asn1DefinedTypesModule(0)} DEFINITIONS IMPLICIT TAGS ::=
+BEGIN
+
+-- EXPORTS everything
+IMPORTS
+  ObjectInstance
+    FROM CMIP-1 {joint-iso-itu-t ms(9) cmip(1) modules(0) protocol(3)}
+  NameType
+    FROM ASN1DefinedTypesModule {itu-t recommendation m 3100
+      informationModel(0) asn1Modules(2) asn1DefinedTypesModule(0)}
+  VciValue, VpiValue
+    FROM AtmMIBMod {itu-t(0) recommendation(0) i(9) atmm(751)
+      informationModel(0) asn1Module(2) atm(0)}
+  VpciValue
+    FROM Q824-6ASN1DefinedTypesModule {itu-t(0) recommendation(0) q(17) 
+      ca(824) dot(127) bsm(6) informationModel(0) asn1Modules(2)
+      asn1DefinedTypesModule(0)}; -- end of imports
+
+-- start of object identifier definitions
+q832-3InformationModel OBJECT IDENTIFIER ::=
+  {itu-t(0) recommendation(0) q(17) q832(832) dot(127) coord(3)
+   informationModel(0)}
+
+q832-3StandardSpecificExtension OBJECT IDENTIFIER ::=
+  {itu-t(0) recommendation(0) q(17) q832(832) dot(127) coord(3)
+   informationModel(0) q832-3StandardSpecificExtension(0)}
+
+q832-3ManagedObjectClass OBJECT IDENTIFIER ::=
+  {itu-t(0) recommendation(0) q(17) q832(832) dot(127) coord(3)
+   informationModel(0) q832-3ManagedObjectClass(3)}
+
+q832-3Package OBJECT IDENTIFIER ::=
+  {itu-t(0) recommendation(0) q(17) q832(832) dot(127) coord(3)
+   informationModel(0) q832-3Package(4)}
+
+q832-3NameBinding OBJECT IDENTIFIER ::=
+  {itu-t(0) recommendation(0) q(17) q832(832) dot(127) coord(3)
+   informationModel(0) q832-3NameBinding(6)}
+
+q832-3Attribute OBJECT IDENTIFIER ::=
+  {itu-t(0) recommendation(0) q(17) q832(832) dot(127) coord(3)
+   informationModel(0) q832-3Attribute(7)}
+
+q832-3Action OBJECT IDENTIFIER ::=
+  {itu-t(0) recommendation(0) q(17) q832(832) dot(127) coord(3)
+   informationModel(0) q832-3Action(9)}
+
+q832-3Notification OBJECT IDENTIFIER ::=
+  {itu-t(0) recommendation(0) q(17) q832(832) dot(127) coord(3)
+   informationModel(0) q832-3Notification(10)}
+
+-- end of object identifier definitions
+-- other ASN.1 definitions in alphabetical order - all these are new
+AddAnLoopRequestInfo ::= SEQUENCE {
+  logicalServicePortNumber  [0]  INTEGER,
+  logicalUserPortNumber     [1]  INTEGER OPTIONAL,
+  vpciValue                 [2]  VpciValue,
+  vciValue                  [3]  VciValue OPTIONAL
+}
+
+AddAnLoopRequestResult ::= CHOICE {
+  loopAdded     [0]  NULL,
+  loopNotAdded  [1]  LoopNotAddedInfo
+}
+
+AddLupsIndicationInfo ::= AddLupsRequestInfo
+
+AddLupsRequestInfo ::= SEQUENCE {
+  logicalServicePortNumber  [0]  INTEGER,
+  logicalUserPortNumber     [1]  SEQUENCE OF INTEGER
+}
+
+AddLupsRequestResult ::= INTEGER {lupAdded(0), lupNotAdded(1)}
+
+AddVb5ConnectionIndicationInfo ::= AddVb5ConnectionRequestInfo
+
+AddVb5ConnectionRequestInfo ::= SEQUENCE {
+  egressPeakCellRateCLP0Plus1          [0]  INTEGER,
+  egressPeakCellRateCLP0               [1]  INTEGER,
+  ingressPeakCellRateCLP0Plus1         [2]  INTEGER,
+  ingressPeakCellRateCLP0              [3]  INTEGER,
+  egressSustainableCellRateCLP0Plus1   [4]  INTEGER,
+  egressSustainableCellRateCLP0        [5]  INTEGER,
+  ingressSustainableCellRateCLP0Plus1  [6]  INTEGER,
+  ingressSustainableCellRateCLP0       [7]  INTEGER,
+  egressCDVToleranceCLP0Plus1          [8]  INTEGER,
+  egressCDVToleranceCLP0               [9]  INTEGER,
+  ingressCDVToleranceCLP0Plus1         [10]  INTEGER,
+  ingressCDVToleranceCLP0              [11]  INTEGER,
+  egressMaxBurstSizeCLP0Plus1          [12]  INTEGER,
+  egressMaxBurstSizeCLP0               [13]  INTEGER,
+  ingressMaxBurstSizeCLP0Plus1         [14]  INTEGER,
+  ingressMaxBurstSizeCLP0              [15]  INTEGER,
+  egressQosClass                       [16]  INTEGER,
+  ingressQosClass                      [17]  INTEGER,
+  vciValueA                            [18]  INTEGER OPTIONAL,
+  vciValueB                            [19]  INTEGER OPTIONAL,
+  physicalPortA                        [20]  INTEGER,
+  vpiValueA                            [21]  INTEGER,
+  logicalServicePortA                  [22]  INTEGER OPTIONAL,
+  vpciValueA                           [23]  INTEGER OPTIONAL,
+  physicalPortB                        [24]  INTEGER,
+  vpiValueB                            [25]  INTEGER,
+  logicalServicePortB                  [26]  INTEGER OPTIONAL,
+  vpciValueB                           [27]  INTEGER OPTIONAL
+}
+
+AddVb5ConnectionRequestResult ::= INTEGER {
+  vb5ConnectionAdded(0), vb5ConnectionNotAdded(1)}
+
+AddVb5InterfaceIndicationInfo ::= AddVb5InterfaceRequestInfo
+
+AddVb5InterfaceRequestInfo ::= INTEGER -- Logical service port number
+
+AddVb5InterfaceRequestResult ::= INTEGER {
+  vb5InterfaceAdded(0), vb5InterfaceNotAdded(1)}
+
+AddVb5ProtocolIndicationInfo ::= AddVb5ProtocolRequestInfo
+
+AddVb5ProtocolRequestInfo ::= SEQUENCE {
+  logicalServicePortNumber  [0]  INTEGER,
+  vpciValue                 [1]  VpciValue,
+  maxNumVciBitsNearEnd      [2]  INTEGER OPTIONAL,
+  maxNumVciBitsSupported    [3]  INTEGER OPTIONAL,
+  maxNumActiveVccsAllowed   [4]  INTEGER OPTIONAL,
+  maxNumActiveVccsNearEnd   [5]  INTEGER OPTIONAL
+}
+
+AddVb5ProtocolRequestResult ::= INTEGER {
+  vb5ProtocolAdded(0), vb5ProtocolNotAdded(1)}
+
+AddVb5ProtocolVpIndicationInfo ::= AddVb5ProtocolVpRequestInfo
+
+AddVb5ProtocolVpRequestInfo ::= SEQUENCE {
+  logicalServicePortNumber  [0]  INTEGER,
+  vpciValue                 [1]  VpciValue,
+  vpProfile                 [2]  VpProfile OPTIONAL
+}
+
+AddVb5ProtocolVpRequestResult ::= INTEGER {
+  vb5ProtocolVpAdded(0), vb5ProtocolVpNotAdded(1)}
+
+AddVb5VcsIndicationInfo ::= AddVb5VcsRequestInfo
+
+AddVb5VcsRequestInfo ::= SEQUENCE {
+  logicalServicePortNumber  [0]  INTEGER,
+  logicalServiceSubport     [1]  INTEGER OPTIONAL,
+  vpciValue                 [2]  VpciValue,
+  vciValue                  [3]  VciValue
+}
+
+AddVb5VcsRequestResult ::= INTEGER {vb5VcsAdded(0), vb5VcsNotAdded(1)}
+
+AddVb5VpsIndicationInfo ::= AddVb5VpsRequestInfo
+
+AddVb5VpsRequestInfo ::= SEQUENCE {
+  logicalServicePortNumber  [0]  INTEGER,
+  logicalServiceSubport     [1]  INTEGER OPTIONAL,
+  addVpInfo                 [2]  AddVpInfo
+}
+
+AddVb5VpsRequestResult ::= INTEGER {vb5VpsAdded(0), vb5VpsNotAdded(1)}
+
+AddVpInfo ::=
+  SEQUENCE OF
+    SEQUENCE {physicalPort  [0]  INTEGER,
+              vpiValue      [1]  VpiValue,
+              vpciValue     [2]  VpciValue,
+              vpProfile     [3]  VpProfile OPTIONAL}
+
+AnServiceLabelInquiryResult ::= INTEGER -- OPTIONAL
+
+AuditVb5ConnectionRequestInfo ::= SEQUENCE {
+  logicalServicePortNumber  [0]  INTEGER,
+  specifiedVpOrVc           [1]  SpecifiedVpOrVc
+}
+
+AuditVb5ConnectionRequestResult ::= CHOICE {
+  connectionAudited     [0]  SpecifiedVpOrVc,
+  connectionNotAudited  [1]  ConnectionNotAuditedInfo
+}
+
+AuditVb5VpciRequestInfo ::= SEQUENCE {
+  logicalServicePortNumber    [0]  INTEGER,
+  specifiedNniVpciOrRemoteVp  [1]  SpecifiedNniVpciOrRemoteVp
+}
+
+AuditVb5VpciRequestResult ::= CHOICE {
+  vpciAudited     [0]  SpecifiedNniVpciOrRemoteVp,
+  vpciNotAudited  [1]  VpciNotAuditedInfo
+}
+
+ConnectionNotAuditedInfo ::= INTEGER {
+  unspecified(0), unknownPhysicalPort(1), unknownVpiValue(2),
+  unknownVciValue(3)}
+
+ListLupsRequestInfo ::= INTEGER -- Logical service port number
+
+ListLupsFailureInfo ::= INTEGER {unspecified(0), unknownLspNumber(1)}
+
+ListLupsRequestResult ::= CHOICE {
+  success  [0]  INTEGER, -- Logical user port number
+  failure  [1]  ListLupsFailureInfo
+}
+
+ListVb5ProtocolDetailsRequestInfo ::= INTEGER -- Logical service port number
+
+ListVb5ProtocolDetailsRequestResult ::= CHOICE {
+  success  [0]  ListVb5ProtocolDetailsSuccessInfo,
+  failure  [1]  ListVb5ProtocolDetailsFailureInfo
+}
+
+ListVb5ProtocolDetailsFailureInfo ::= INTEGER {
+  unspecified(0), unknownLspNumber(1)}
+
+ListVb5ProtocolDetailsSuccessInfo ::= SEQUENCE OF Vb5ProtocolDetails
+
+Vb5ProtocolDetails ::= SEQUENCE {
+  protocolType                         [0]  ProtocolType,
+  vpciValue                            [1]  VpciValue,
+  vciValue                             [2]  VciValue,
+  egressPeakCellRateCLP0Plus1          [3]  INTEGER,
+  egressPeakCellRateCLP0               [4]  INTEGER,
+  ingressPeakCellRateCLP0Plus1         [5]  INTEGER,
+  ingressPeakCellRateCLP0              [6]  INTEGER,
+  egressSustainableCellRateCLP0Plus1   [7]  INTEGER,
+  egressSustainableCellRateCLP0        [8]  INTEGER,
+  ingressSustainableCellRateCLP0Plus1  [9]  INTEGER,
+  ingressSustainableCellRateCLP0       [10]  INTEGER,
+  egressCDVToleranceCLP0Plus1          [11]  INTEGER,
+  egressCDVToleranceCLP0               [12]  INTEGER,
+  ingressCDVToleranceCLP0Plus1         [13]  INTEGER,
+  ingressCDVToleranceCLP0              [14]  INTEGER,
+  egressMaxBurstSizeCLP0Plus1          [15]  INTEGER,
+  egressMaxBurstSizeCLP0               [16]  INTEGER,
+  ingressMaxBurstSizeCLP0Plus1         [17]  INTEGER,
+  ingressMaxBurstSizeCLP0              [18]  INTEGER,
+  bufferRelease                        [19]  BOOLEAN,
+  maxCc                                [20]  INTEGER,
+  maxInformationFieldLength            [21]  INTEGER,
+  maxLengthSscopUuField                [22]  INTEGER,
+  maxPd                                [23]  INTEGER,
+  maxSscopCreditToPeer                 [24]  INTEGER,
+  maxStat                              [25]  INTEGER,
+  sscopTimerCc                         [26]  INTEGER,
+  sscopTimerIdle                       [27]  INTEGER,
+  sscopTimerKeepAlive                  [28]  INTEGER,
+  sscopTimerNoResponse                 [29]  INTEGER,
+  sscopTimerPoll                       [30]  INTEGER
+}
+
+ProtocolType ::= INTEGER {rtmc(1), bbcc(2)
+} -- Tout remplacer par des minuscules
+
+ListVb5InterfacesRequestInfo ::= SEQUENCE OF ObjectInstance
+
+ListVb5InterfacesRequestResult ::=
+  SEQUENCE OF INTEGER -- Logical service port number
+
+ListVcsFailureInfo ::= INTEGER {
+  unspecified(0), unknownLspNumber(1), unknownLupNumber(2),
+  unknownVpciValue(3), unknownLupVpciCombination(4)}
+
+ListVb5VcsRequestInfo ::= SEQUENCE {
+  logicalServicePortNumber  [0]  INTEGER,
+  logicalUserPortNumber     [1]  INTEGER OPTIONAL,
+  vpciValue                 [2]  VpciValue OPTIONAL
+}
+
+ListVb5VcsRequestResult ::= CHOICE {
+  success  [0]  ListVcsSuccessInfo,
+  failure  [1]  ListVcsFailureInfo
+}
+
+ListVcsSuccessInfo ::= SEQUENCE {
+  logicalUserPortNumber  [0]  INTEGER OPTIONAL,
+  vpciValue              [1]  VpciValue,
+  vciValue               [2]  VciValue
+}
+
+ListVb5VpsRequestInfo ::= SEQUENCE {
+  logicalServicePortNumber  [0]  INTEGER,
+  logicalUserPortNumber     [1]  INTEGER OPTIONAL
+}
+
+ListVb5VpsRequestResult ::= CHOICE {
+  success  [0]  ListVb5VpsSuccessInfo,
+  failure  [1]  ListVb5VpFailureInfo
+}
+
+ListVb5VpFailureInfo ::= INTEGER {
+  unspecified(0), unknownLspNumber(1), unknownLupNumber(2)}
+
+ListVb5VpsSuccessInfo ::= SEQUENCE OF Vb5VpDetails
+
+Vb5VpDetails ::= SEQUENCE {
+  logicalUserPortNumber    [0]  INTEGER OPTIONAL,
+  physicalPort             [1]  INTEGER,
+  vpiValue                 [2]  INTEGER,
+  vpciValue                [3]  INTEGER OPTIONAL,
+  maxNumVciBitsNearEnd     [4]  INTEGER OPTIONAL,
+  maxNumVciBitsSupported   [5]  INTEGER OPTIONAL,
+  maxNumActiveVccsAllowed  [6]  INTEGER OPTIONAL,
+  maxNumActiveVccsNearEnd  [7]  INTEGER OPTIONAL
+}
+
+LoopNotAddedInfo ::= INTEGER {
+  unspecified(0), unknownLogicalServicePort(1), unknownLogicalUserPort(2),
+  unknownVpciValue(3), unknownVciValue(4), loopAlreadyPresent(5)}
+
+LoopNotRemovedInfo ::= INTEGER {
+  unspecified(0), unknownLogicalServicePort(1), unknownLogicalUserPort(2),
+  unknownVpciValue(3), unknownVciValue(4), noLoopPresent(5)}
+
+RemoveAnLoopRequestInfo ::= AddAnLoopRequestInfo
+
+RemoveAnLoopRequestResult ::= CHOICE {
+  loopRemoved     [0]  NULL,
+  loopNotRemoved  [1]  LoopNotRemovedInfo
+}
+
+RemoveLupsIndicationInfo ::= RemoveLupsRequestInfo
+
+RemoveLupsRequestInfo ::= AddLupsRequestInfo
+
+RemoveLupsRequestResult ::= INTEGER {lupRemoved(0), lupNotRemoved(1)}
+
+RemoveVb5ConnectionIndicationInfo ::= RemoveVb5ConnectionRequestInfo
+
+RemoveVb5ConnectionRequestInfo ::= SEQUENCE {
+  vciValueA            [0]  INTEGER OPTIONAL,
+  vciValueB            [1]  INTEGER OPTIONAL,
+  physicalPortA        [2]  INTEGER,
+  vpiValueA            [3]  INTEGER,
+  logicalServicePortA  [4]  INTEGER OPTIONAL,
+  vpciValueA           [5]  INTEGER OPTIONAL,
+  physicalPortB        [6]  INTEGER,
+  vpiValueB            [7]  INTEGER,
+  logicalServicePortB  [8]  INTEGER OPTIONAL,
+  vpciValueB           [9]  INTEGER OPTIONAL
+}
+
+RemoveVb5ConnectionRequestResult ::= INTEGER {
+  vb5ConnectionRemoved(0), vb5ConnectionNotRemoved(1)}
+
+RemoveVb5InterfaceIndicationInfo ::= RemoveVb5InterfaceRequestInfo
+
+RemoveVb5InterfaceRequestInfo ::= AddVb5InterfaceRequestInfo
+
+RemoveVb5InterfaceRequestResult ::= INTEGER {
+  vb5InterfaceRemoved(0), vb5InterfaceNotRemoved(1)}
+
+RemoveVb5ProtocolIndicationInfo ::= RemoveVb5ProtocolRequestInfo
+
+RemoveVb5ProtocolRequestInfo ::= SEQUENCE {
+  logicalServicePortNumber  [0]  INTEGER,
+  vb5ProtocolType           [1]  Vb5ProtocolType
+}
+
+RemoveVb5ProtocolRequestResult ::= INTEGER {
+  vb5ProtocolRemoved(0), vb5ProtocolNotRemoved(1)}
+
+RemoveVb5ProtocolVpIndicationInfo ::= RemoveVb5ProtocolVpRequestInfo
+
+RemoveVb5ProtocolVpRequestInfo ::= SEQUENCE {
+  logicalServicePortNumber  [0]  INTEGER,
+  vpciValue                 [1]  VpciValue
+}
+
+RemoveVb5ProtocolVpRequestResult ::= INTEGER {
+  vb5ProtocolVpRemoved(0), vb5ProtocolVpNotRemoved(1)}
+
+RemoveVb5VcsIndicationInfo ::= RemoveVb5VcsRequestInfo
+
+RemoveVb5VcsRequestInfo ::= AddVb5VcsRequestInfo
+
+RemoveVb5VcsRequestResult ::= INTEGER {vb5VcsRemoved(0), vb5VcsNotRemoved(1)}
+
+RemoveVb5VpsIndicationInfo ::= RemoveVb5VpsRequestInfo
+
+RemoveVb5VpsRequestInfo ::= SEQUENCE {
+  logicalServicePortNumber  [0]  INTEGER,
+  logicalServiceSubport     [1]  INTEGER OPTIONAL,
+  removeVpInfo              [2]  RemoveVpInfo
+}
+
+RemoveVb5VpsRequestResult ::= INTEGER {vb5VpsRemoved(0), vb5VpsNotRemoved(1)}
+
+RemoveVpInfo ::=
+  SEQUENCE OF
+    SEQUENCE {physicalPort  [0]  INTEGER,
+              vpiValue      [1]  VpiValue,
+              vpciValue     [2]  VpciValue}
+
+ResourceStatusIndicationInfo ::= SEQUENCE {
+  logicalServicePortNumber  [0]  INTEGER,
+  logicalUserPortNumber     [1]  INTEGER OPTIONAL,
+  vpciValue                 [2]  VpciValue,
+  resourceStatus            [3]  ResourceStatus
+}
+
+ResourceStatus ::= INTEGER {
+  fullyOperational(0), administratelyBlockedTestCallsAllowed(1),
+  administratelyBlockedNoCellFlow(2), fault(3)}
+
+SnAccessLabelsInquiryResult ::= SEQUENCE {
+  snLabel         [0]  INTEGER OPTIONAL,
+  interfaceLabel  [1]  INTEGER OPTIONAL
+}
+
+SpecifiedNniVpci ::= SEQUENCE {
+  logicalUserPortNumber  [0]  INTEGER OPTIONAL,
+  vpciValue              [1]  VpciValue
+}
+
+SpecifiedNniVpciOrRemoteVp ::= CHOICE {
+  specifiedNniVpci   [0]  SpecifiedNniVpci,
+  specifiedRemoteVp  [1]  SpecifiedVp
+}
+
+SpecifiedVc ::= SEQUENCE {
+  physicalPort  [0]  INTEGER,
+  vpiValue      [1]  VpiValue,
+  vciValue      [2]  VciValue
+}
+
+SpecifiedVp ::= SEQUENCE {
+  physicalPort  [0]  INTEGER,
+  vpiValue      [1]  VpiValue
+}
+
+SpecifiedVpOrVc ::= CHOICE {
+  specifiedVp  [0]  SpecifiedVp,
+  specifiedVc  [1]  SpecifiedVc
+}
+
+Vb5ProtocolType ::= INTEGER {rtmc(0), bbcc(1)}
+
+VpciNotAuditedInfo ::= INTEGER {
+  unspecified(0), unknownLupNumber(1), unknownVpci(2), unknownPhysicalPort(3),
+  unknownVpiValue(4)}
+
+VpProfile ::= SEQUENCE {
+  maxNumVciBitsNearEnd     [0]  INTEGER,
+  maxNumVciBitsSupported   [1]  INTEGER,
+  maxNumActiveVccsAllowed  [2]  INTEGER,
+  maxNumActiveVccsNearEnd  [3]  INTEGER
+}
+
+END -- of Q832-3ASN1DefinedTypesModule
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

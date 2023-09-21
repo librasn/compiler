@@ -1,0 +1,573 @@
+
+
+
+
+
+
+
+-- Module V59 (V.59:11/2000)
+-- See also ITU-T V.59 (11/2000)
+-- See also the index of all ASN.1 assignments needed in this document
+
+V59 DEFINITIONS AUTOMATIC TAGS ::=
+BEGIN
+
+V59String ::= IA5String(SIZE (1..40))
+
+V59Objects ::= CHOICE {
+  modemIdentity   ModemIdentity,
+  modeCapability  ModeCapability,
+  modeSelected    ModeSelected,
+  v8Diag          V8Diag,
+  v8bisDiag       V8bisDiag,
+  v90Diag         V90Diag,
+  v91Diag         V91Diag,
+  v92ModDiag      V92ModDiag,
+  v34Diag         V34Diag,
+  v32Diag         V32Diag,
+  v22Diag         V22Diag,
+  v23Diag         V23Diag,
+  v21Diag         V21Diag,
+  v34HdxDiag      V34HdxDiag,
+  v17Diag         V17Diag,
+  v29faxDiag      V29faxDiag,
+  v27tfaxDiag     V27tfaxDiag,
+  v18Diag         V18Diag,
+  v70Diag         V70Diag,
+  v61Diag         V61Diag,
+  nSMDiag         NSMDiag,
+  cnxDiag         CnxDiag,
+  lineConDiag     LineConDiag,
+  callProgress    CallProgress,
+  protocol        Protocol,
+  errorControl    ErrorControl,
+  compression     Compression,
+  dteDce          DTEDCE,
+  ...
+}
+
+ModemIdentity ::=
+  SEQUENCE OF
+    SEQUENCE {manufacturer       V59String,
+              model              V59String,
+              firmwareVersion    V59String,
+              diagnosticVersion  V59String,
+              multimediaMode
+                BIT STRING {dataMode(0), faxT30(1), faxT30C(2), fAXT30F(3),
+                            voiceV253(4), sVDV70(5), sVDV61(6), vidTelH324(7),
+                            v80other(8), v18Text(9)} OPTIONAL,
+              ...}
+
+ModeCapability ::=
+  SEQUENCE OF
+    SEQUENCE {modulationMode
+                SEQUENCE {modeV90       Capabilities,
+                          modeV91       Capabilities,
+                          modeV92       Capabilities,
+                          modeV34       Capabilities,
+                          modeV32B      Capabilities,
+                          modeV22B      Capabilities,
+                          modeV23       Capabilities,
+                          modeV21       Capabilities,
+                          modeV34H      Capabilities,
+                          modeV17       Capabilities,
+                          modeV29       Capabilities,
+                          modeV27T      Capabilities,
+                          modeV18       Capabilities,
+                          otherModMode  V59String OPTIONAL,
+                          ...},
+              protocolmode
+                SEQUENCE {modeV42        Capabilities,
+                          modeV42B       Capabilities,
+                          modeV44        Capabilities,
+                          otherProtMode  V59String OPTIONAL,
+                          ...},
+              ...}
+
+ModeSelected ::= SEQUENCE {modulationHistory  V59String
+}
+
+V8Diag ::=
+  SEQUENCE OF
+    SEQUENCE {ci        V59String,
+              cm        V59String,
+              jm        V59String,
+              v8Result  ENUMERATED {v8ComNeg(0), v8NoComNeg(1), v8NoNegAuto(2)}
+    }
+
+V8bisDiag ::=
+  SEQUENCE OF
+    SEQUENCE {v8bisTransaction  INTEGER(1..13),
+              mR
+                SEQUENCE {mRtype      V8bisSignalType,
+                          mRSequence  V59String},
+              cR
+                SEQUENCE {cRtype      V8bisSignalType,
+                          cRSequence  V59String},
+              cL                SEQUENCE {cLSequence  V59String},
+              cLR               SEQUENCE {cLRSequence  V59String},
+              eS
+                SEQUENCE {eSType
+                            CHOICE {nONE  INTEGER(0),
+                                    i     INTEGER(1),
+                                    r     INTEGER(2)},
+                          eSSequence  V59String},
+              ackNak
+                SEQUENCE {aCK
+                            CHOICE {nONE  INTEGER(0),
+                                    aCK1  INTEGER(1),
+                                    aCK2  INTEGER(2)},
+                          nAK
+                            CHOICE {none  INTEGER(0),
+                                    nAK1  INTEGER(1),
+                                    nAK2  INTEGER(2),
+                                    nAK3  INTEGER(3),
+                                    nAK4  INTEGER(4)}}}
+
+V90Diag ::=
+  SEQUENCE OF
+    SEQUENCE {modeV90           Capabilities,
+              iNFO0Tx           V59String,
+              iNFO0Rx           V59String,
+              iNFO1A            V59String,
+              iNFO1d            V59String,
+              mP                V59String,
+              cP                V59String,
+              cPt               V59String,
+              jAsequence        V59String,
+              jDsequence        V59String,
+              v90TxLevel        TxPowerLevel,
+              txSymbolRate      SymbolRate OPTIONAL,
+              rxSymbolRate      SymbolRate OPTIONAL,
+              txCarrierFreq     CarrierFreq OPTIONAL,
+              rxCarrierFreq     CarrierFreq OPTIONAL,
+              txDataHistory     V59String,
+              rxDataHistory     V59String,
+              rxLevelEstimate   V59String OPTIONAL,
+              noiseEstimate     V59String OPTIONAL,
+              rxSignalQuality   V59String OPTIONAL,
+              nearEchoEstimate  V59String OPTIONAL,
+              farEchoEstimate   V59String OPTIONAL,
+              roundTripDelay    V59String OPTIONAL,
+              rBSpattern        RobBitPatt OPTIONAL,
+              digitalPadLoss    V59String OPTIONAL,
+              codecLaw          BOOLEAN OPTIONAL,
+              ...}
+
+V91Diag ::=
+  SEQUENCE OF
+    SEQUENCE {modeV91             Capabilities,
+              iNFO0TX             V59String,
+              iNFO0RX             V59String,
+              cP                  V59String,
+              controlChannel      BOOLEAN,
+              v91TxPowerLevel     TxPowerLevel,
+              transparentMode     BOOLEAN,
+              txDataHistory       V59String,
+              rxDataHistory       V59String,
+              noiseEstimate       V59String OPTIONAL,
+              rxSignalQuality     V59String OPTIONAL,
+              rBSpattern          RobBitPatt OPTIONAL,
+              digitalPadLoss      V59String OPTIONAL,
+              localCodecLaw       BOOLEAN OPTIONAL,
+              remoteCodecLaw      BOOLEAN OPTIONAL,
+              frameSlipsDetected  INTEGER(0..256) OPTIONAL,
+              ...}
+
+V92ModDiag ::=
+  SEQUENCE OF
+    SEQUENCE {modeV92           Capabilities,
+              iNFO0d            V59String,
+              iNFO0a            V59String,
+              iNFO1d            V59String,
+              iNFO1a-US         V59String,
+              iNFO1a-SP2        V59String,
+              jA                V59String,
+              jD                V59String,
+              jDP               V59String,
+              cP                V59String,
+              v92TxLevel        TxPowerLevel,
+              v92SymbolRate     SymbolRate OPTIONAL,
+              txDataHistory     V59String,
+              rxDataHistory     V59String,
+              rxLevelEstimate   V59String OPTIONAL,
+              noiseEstimate     V59String OPTIONAL,
+              rxSignalQuality   V59String OPTIONAL,
+              nearEchoEstimate  V59String OPTIONAL,
+              farEchoEstimate   V59String OPTIONAL,
+              roundTripDelay    V59String OPTIONAL,
+              rBSpattern        RobBitPatt OPTIONAL,
+              digitalPadLoss    V59String OPTIONAL,
+              localCodecLaw     BOOLEAN OPTIONAL,
+              remoteCodecLaw    BOOLEAN OPTIONAL,
+              sP1Enable         BOOLEAN,
+              lastCallSP1       BOOLEAN,
+              qC1a              IA5String(SIZE (1..10)),
+              qC1d              IA5String(SIZE (1..10)),
+              qC2a              IA5String(SIZE (1..2)),
+              qC2d              IA5String(SIZE (1..2)),
+              qCA1a             IA5String(SIZE (1..10)),
+              qCA1d             IA5String(SIZE (1..10)),
+              qCA2a             IA5String(SIZE (1..2)),
+              qCA2d             IA5String(SIZE (1..2)),
+              cWDEnable         BOOLEAN,
+              mOHEnable         BOOLEAN,
+              lastMOHaction
+                ENUMERATED {mohaccepted(0), mohdeclined(1), mohdenied(2),
+                            mohclrdn(3), ...
+                            },
+              mohTimeout        V59String,
+              lastMOHduration   V59String,
+              mHreq             IA5String(SIZE (1..5)),
+              mHack             IA5String(SIZE (1..5)),
+              mHnak             IA5String(SIZE (1..5)),
+              mHcld             IA5String(SIZE (1..5)),
+              mHcda             IA5String(SIZE (1..5)),
+              mHfrr             IA5String(SIZE (1..5)),
+              ...}
+
+V34Diag ::=
+  SEQUENCE OF
+    SEQUENCE {modeV34           Capabilities,
+              iNFO0Tx           V59String,
+              iNFO0Rx           V59String,
+              iNFO1c            V59String,
+              iNFO1a            V59String,
+              mPTx              V59String,
+              mPRx              V59String,
+              precodeCoeffTx    V59String OPTIONAL,
+              precodeCoeffRx    V59String OPTIONAL,
+              v34TxLevel        TxPowerLevel,
+              txSymbolRate      SymbolRate OPTIONAL,
+              rxSymbolRate      SymbolRate OPTIONAL,
+              txCarrierFreq     CarrierFreq OPTIONAL,
+              rxCarrierFreq     CarrierFreq OPTIONAL,
+              txDataHistory     V59String,
+              rxDataHistory     V59String,
+              rxLevelEstimate   V59String OPTIONAL,
+              noiseEstimate     V59String OPTIONAL,
+              rxSignalQuality   V59String OPTIONAL,
+              nearEchoEstimate  V59String OPTIONAL,
+              farEchoEstimate   V59String OPTIONAL,
+              roundTripDelay    V59String OPTIONAL,
+              ...}
+
+V32Diag ::=
+  SEQUENCE OF
+    SEQUENCE {modeV32B          Capabilities,
+              v32TxLevel        TxPowerLevel,
+              v32txRateSeq      V59String,
+              v32rxRateSeq      V59String,
+              txDataHistory     V59String,
+              rxDataHistory     V59String,
+              rxLevelEstimate   V59String OPTIONAL,
+              noiseEstimate     V59String OPTIONAL,
+              rxSignalQuality   V59String OPTIONAL,
+              nearEchoEstimate  V59String OPTIONAL,
+              farEchoEstimate   V59String OPTIONAL,
+              roundTripDelay    V59String OPTIONAL,
+              ...}
+
+V22Diag ::=
+  SEQUENCE OF
+    SEQUENCE {modeV22B         Capabilities,
+              dataRateHistory  V59String,
+              v22TxLevel       TxPowerLevel,
+              v22RateSeq       V59String,
+              rxLevelEstimate  V59String OPTIONAL,
+              noiseEstimate    V59String OPTIONAL,
+              rxSignalQuality  V59String OPTIONAL,
+              ...}
+
+V23Diag ::=
+  SEQUENCE OF
+    SEQUENCE {modeV23           Capabilities,
+              v23TxLevel        TxPowerLevel,
+              duplex            BOOLEAN,
+              transmitDataRate  V23Drate,
+              receiveDataRate   V23Drate,
+              rxLevelEstimate   V59String OPTIONAL,
+              ...}
+
+V21Diag ::=
+  SEQUENCE OF
+    SEQUENCE {modeV21          Capabilities,
+              v21TxLevel       TxPowerLevel,
+              rxLevelEstimate  V59String OPTIONAL}
+
+V34HdxDiag ::=
+  SEQUENCE OF
+    SEQUENCE {modeV34H         Capabilities,
+              iNFO0Tx          V59String,
+              iNFO0Rx          V59String,
+              iNFOh            V59String,
+              mPh              V59String,
+              precodeCoeffTx   V59String OPTIONAL,
+              v34TxLevel       TxPowerLevel,
+              symbolRate       V59String OPTIONAL,
+              carrierFreq      V59String OPTIONAL,
+              dataHistory      V59String OPTIONAL,
+              rxLevelEstimate  V59String OPTIONAL,
+              noiseEstimate    V59String OPTIONAL,
+              rxSignalQuality  V59String OPTIONAL,
+              cCrate
+                ENUMERATED {t12R12(0), t24R24(1), t12R24(2), t24R12(3)},
+              ...}
+
+V17Diag ::=
+  SEQUENCE OF
+    SEQUENCE {modeV17          Capabilities,
+              v17TxLevel       TxPowerLevel,
+              rxLevelEstimate  V59String OPTIONAL,
+              ...}
+
+V29faxDiag ::=
+  SEQUENCE OF
+    SEQUENCE {modeV29          Capabilities,
+              v29TxLevel       TxPowerLevel,
+              rxLevelEstimate  V59String OPTIONAL,
+              ...}
+
+V27tfaxDiag ::=
+  SEQUENCE OF
+    SEQUENCE {modeV27T         Capabilities,
+              v27TxLevel       TxPowerLevel,
+              rxLevelEstimate  V59String OPTIONAL,
+              ...}
+
+V18Diag ::=
+  SEQUENCE OF
+    SEQUENCE {modeV18          Capabilities,
+              v18used
+                ENUMERATED {none(0), v18-V21Hi(1), v18-V21Lo(2), v18-V61C(3),
+                            v18-V61A(4), v21Hi(5), v21Lo(6), dTMF(7), 
+                            eDT(8), baudot45(9), baudot47(10), baudot50(11),
+                            v23Hi(12), v23Lo(13), bellHi(14), bellLo(15)},
+              v18TxLevel       TxPowerLevel,
+              rxLevelEstimate  V59String OPTIONAL,
+              ...}
+
+V70Diag ::= SEQUENCE OF SEQUENCE {...}
+
+V61Diag ::= SEQUENCE OF SEQUENCE {...}
+
+NSMDiag ::=
+  SEQUENCE OF
+    SEQUENCE {proprietaryMode  V59String OPTIONAL,
+              fieldData        IA5String(SIZE (1..256)) OPTIONAL,
+              ...}
+
+CnxDiag ::=
+  SEQUENCE OF
+    SEQUENCE {txCarrier         V59String,
+              rxCarrier         V59String,
+              carrierLosses     INTEGER(0..256),
+              renegRequests     INTEGER(0..256),
+              renegSuccesses    INTEGER(0..256),
+              retrainRequests   INTEGER(0..256),
+              retrainSuccesses  INTEGER(0..256),
+              callWaiting       INTEGER(0..256) OPTIONAL,
+              duration          V59String OPTIONAL,
+              caller            BOOLEAN,
+              reverseRoles      BOOLEAN OPTIONAL,
+              ...}
+
+LineConDiag ::=
+  SEQUENCE OF
+    SEQUENCE {lineProbeValues  V59String OPTIONAL,
+              phaseJitter      V59String OPTIONAL,
+              ampJitter        V59String OPTIONAL,
+              nLD              V59String OPTIONAL,
+              ...}
+
+CallProgress ::=
+  SEQUENCE OF
+    SEQUENCE {callProgressResult  CallProgressRes,
+              callTerminate       CallTerminateCode,
+              ...}
+
+Protocol ::=
+  SEQUENCE OF
+    SEQUENCE {errorControlStat  ErrorControl,
+              compStat          Compression,
+              ...}
+
+ErrorControl ::=
+  SEQUENCE OF
+    SEQUENCE {protocolNegotiation
+                ENUMERATED {disabled(0), lapm(1), v42annexA(2), ...
+                            },
+              v42featureNegotiation
+                BIT STRING {singleSREJ(0), multipleSREJ(1), hDLCBalMode(2),
+                            testFrameSup(3), fcs16(4), fcs32(5),
+                            v42phaseDetused(6), odpAdpbypassed(7),
+                            v42fallbackDisc(8), v42fallbackBuf(9),
+                            v42fallbackUnBuf(10)},
+              txFrameSize            INTEGER(1..65535),
+              rxFrameSize            INTEGER(1..65535),
+              txWindow               INTEGER(1..65535),
+              rxWindow               INTEGER(1..65535),
+              linkTimeout            INTEGER(0..511) OPTIONAL,
+              ecStatistics
+                SEQUENCE {framesSentAck          INTEGER(0..65535) OPTIONAL,
+                          framesRetransmitted    INTEGER(0..65535) OPTIONAL,
+                          framesReceivedAck      INTEGER(0..65535) OPTIONAL,
+                          framesReceivedDiscard  INTEGER(0..65535) OPTIONAL
+              },
+              txErrors               INTEGER(0..65535) OPTIONAL,
+              rxErrors               INTEGER(0..65535) OPTIONAL,
+              txThroughput           INTEGER(0..32767) OPTIONAL,
+              rxThroughput           INTEGER(0..32767) OPTIONAL,
+              ...}
+
+Compression ::=
+  SEQUENCE OF
+    SEQUENCE {compressionNegotiationResult
+                ENUMERATED {none(0), v42bisOnly(1), v42bisBoth(2), v44Both(3),
+                            v44Only(4), other(5)},
+              modeV42B                      Capabilities,
+              v42bisCompressionActive
+                ENUMERATED {none(0), initOnly(1), respOnly(2), both(3)},
+              v42bisDictionarySize          INTEGER(512..65535) OPTIONAL,
+              v42bisStringLength            INTEGER(6..250) OPTIONAL,
+              modeV44                       Capabilities,
+              v44CompressionActive
+                ENUMERATED {none(0), txOnly(1), rxOnly(2), both(3)},
+              v44EncoderDictionarySize      INTEGER(256..65535) OPTIONAL,
+              v44EncoderHistorySize         INTEGER(512..1677215) OPTIONAL,
+              v44EncoderStringLength        INTEGER(32..255) OPTIONAL,
+              v44DecoderDictionarySize      INTEGER(256..65535) OPTIONAL,
+              v44DecoderHistorySize         INTEGER(512..1677215) OPTIONAL,
+              v44DecoderStringLength        INTEGER(32..255) OPTIONAL,
+              ...}
+
+DTEDCE ::=
+  SEQUENCE OF
+    SEQUENCE {txFlowControl  V59String,
+              rxFlowControl  V59String,
+              protocol       V59String,
+              txSpeed        INTEGER(50..1677215),
+              rxSpeed        INTEGER(50..1677215),
+              txThroughput   INTEGER(50..1677215),
+              rxThroughput   INTEGER(50..1677215),
+              txErrors       INTEGER(0..65535),
+              rxErrors       INTEGER(0..65535),
+              ...}
+
+Capabilities ::= CHOICE {
+  notSupported  INTEGER(0),
+  default       INTEGER(1),
+  enabled       INTEGER(2),
+  disabled      INTEGER(3)
+}
+
+V8bisSignalType ::= CHOICE {
+  nONE  INTEGER(0),
+  e     INTEGER(1),
+  d     INTEGER(2)
+}
+
+RobBitPatt ::= BIT STRING {
+  robBit0(0), robBit1(1), robBit2(2), robBit3(3), robBit4(4), robBit5(5)
+}
+
+SymbolRate ::= CHOICE {
+  sR8000  INTEGER(0),
+  sR3429  INTEGER(1),
+  sR3200  INTEGER(2),
+  sR3000  INTEGER(3),
+  sR2800  INTEGER(4),
+  sR2743  INTEGER(5),
+  sR2400  INTEGER(6),
+  sR1600  INTEGER(7),
+  sR1200  INTEGER(8),
+  sR600   INTEGER(9),
+  ...
+}
+
+CarrierFreq ::= CHOICE {
+  cF1200  INTEGER(0),
+  cF1600  INTEGER(1),
+  cF1646  INTEGER(2),
+  cF1680  INTEGER(3),
+  cF1700  INTEGER(4),
+  cF1800  INTEGER(5),
+  cF1829  INTEGER(6),
+  cF1867  INTEGER(7),
+  cF1920  INTEGER(8),
+  cF1959  INTEGER(9),
+  cF2000  INTEGER(10),
+  cF2400  INTEGER(11),
+  ...
+}
+
+TxPowerLevel ::=
+  SEQUENCE OF
+    SEQUENCE {initialTxPower  V59String,
+              txPowerDrop     V59String OPTIONAL,
+              txPower         V59String OPTIONAL,
+              ...}
+
+ONOFF ::= CHOICE {dISABLED  INTEGER(0),
+                  eNABLED   INTEGER(1)
+}
+
+V23Drate ::= CHOICE {dR1200  INTEGER(0),
+                     dR600   INTEGER(1),
+                     dR75    INTEGER(2)
+}
+
+CallProgressRes ::= CHOICE {
+  noPrevCall     INTEGER(0),
+  noDialTone     INTEGER(1),
+  noRingBack     INTEGER(2),
+  reOrderTone    INTEGER(3),
+  busyTone       INTEGER(4),
+  voiceDetected  INTEGER(5),
+  aNSdetected    INTEGER(6),
+  aNSamDetected  INTEGER(7),
+  v8bisDetected  INTEGER(8),
+  txpDetected    INTEGER(9),
+  unKnownSig     INTEGER(20),
+  connected      INTEGER(40),
+  ...
+}
+
+CallTerminateCode ::= CHOICE {
+  causeUnidentified            INTEGER(0),
+  dCEpowerLoss                 INTEGER(20),
+  equipmentFailure             INTEGER(21),
+  inactivityTimerExpired       INTEGER(25),
+  cct108isOffInhibitsDial      INTEGER(31),
+  cct108turnedOff              INTEGER(32),
+  noNumberProvided             INTEGER(40),
+  blacklistedNumber            INTEGER(41),
+  callAttemptsLimitExceeded    INTEGER(42),
+  extensionDeviceOffHook       INTEGER(43),
+  callSetupFailTimerExpired    INTEGER(44),
+  incomingCallDetected         INTEGER(45),
+  loopCurrentInterrupted       INTEGER(46),
+  noDialTone                   INTEGER(47),
+  voiceDetected                INTEGER(48),
+  reorderTone                  INTEGER(49),
+  sitTone                      INTEGER(50),
+  engagedTone                  INTEGER(51),
+  longSpaceDisconnect          INTEGER(52),
+  carrierLost                  INTEGER(60),
+  trainingFailed               INTEGER(61),
+  noModulationinCommon         INTEGER(62),
+  retrainFailed                INTEGER(63),
+  retrainAttemptCountExceeded  INTEGER(64),
+  gstnCleardownReceived        INTEGER(65),
+  faxDetected                  INTEGER(66),
+  protocolError                INTEGER(80),
+  userDisconnect               INTEGER(90),
+  onHoldTimerExpired           INTEGER(100),
+  onHoldRemoteDisc             INTEGER(101),
+  ...
+}
+
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

@@ -1,0 +1,209 @@
+E-health-common.asn (ITU-T X.1080.1 (05/2018))-- ASN module extracted from ITU-T X.1080.1 (05/2018)E-health-common { joint-iso-itu-t(2) telebiometrics(42) thprot(10) part1(1) module(0) hCommen(1) version1(1) }
+DEFINITIONS IMPLICIT TAGS ::=
+BEGIN
+
+IMPORTS
+
+  CONTENT-TYPE
+    FROM CmsTelebiometric { joint-iso-itu-t(2) telebiometrics(42) thprot(10)
+      part0(0) module(0) cmsProfile(1) version1(1) } ;
+
+INTERACTIVE-OPERATION ::= CLASS {
+  &id                INTEGER (0..MAX),
+  &content-req       CONTENT-TYPE.&id          OPTIONAL,
+  &content-rsp       CONTENT-TYPE.&id          OPTIONAL,
+  &content-err       CONTENT-TYPE.&id          OPTIONAL,
+  &sessionType       SessionType,
+  &requirements      Requirements              DEFAULT none,
+  &Voice-options                               OPTIONAL,
+  &Video-options                               OPTIONAL,
+  &Request,
+  &Response                                    OPTIONAL,
+  &Error                                       OPTIONAL,
+  &exchangeMode      ExchangeMode              DEFAULT async }
+WITH SYNTAX {
+  OPERATION-ID       &id
+  [CONTENT-REQ       &content-req] 
+  [CONTENT-RSP       &content-rsp]
+  [CONTENT-ERR       &content-err]
+  SESSION-TYPE       &sessionType
+  [REQUIRING         &requirements]
+  [VOICE OPTIONS     &Voice-options]
+  [VIDEO OPTIONS     &Video-options]
+  REQUEST            &Request
+  [RESPONSE          &Response]
+  [ERROR             &Error]
+  [EXCHANGE MODE     &exchangeMode] }
+
+SessionType ::= OBJECT IDENTIFIER
+
+SessionId ::= INTEGER (1..32767)
+
+ExchangeMode ::= ENUMERATED {
+  sync     (0),
+  async    (1),
+  ... }
+
+InteractiveOperations INTERACTIVE-OPERATION ::= { ... }
+
+RequestContent ::= SEQUENCE {
+  contentType       INTERACTIVE-OPERATION.&content-req,
+  content           SEQUENCE {
+    invokId           INTEGER (0..MAX)                       OPTIONAL,
+    sessionType       INTERACTIVE-OPERATION.&sessionType,
+    sessionId         INTEGER (0..MAX),
+    requirement   [0] INTERACTIVE-OPERATION.&requirements    DEFAULT none,
+    voice-options [1] INTERACTIVE-OPERATION.&Voice-options   OPTIONAL,
+    video-options [2] INTERACTIVE-OPERATION.&Video-options   OPTIONAL,
+    request       [3] INTERACTIVE-OPERATION.&Request,
+    exchangeMode  [4] INTERACTIVE-OPERATION.&exchangeMode    DEFAULT sync,
+    ... },
+  ... }
+
+ResponseContent ::= SEQUENCE {
+  contentType   INTERACTIVE-OPERATION.&content-rsp,
+  content       SEQUENCE {
+    invokId       INTEGER (0..MAX)  OPTIONAL,
+    sessionType   INTERACTIVE-OPERATION.&sessionType,
+    sessionId     INTEGER (0..MAX),
+    response      INTERACTIVE-OPERATION.&Response,
+    ... },
+  ... }
+
+ErrorContent ::= SEQUENCE {
+  contentType   INTERACTIVE-OPERATION.&content-err,
+  content       SEQUENCE {
+    invokId       INTEGER (0..MAX)  OPTIONAL,
+    sessionType   INTERACTIVE-OPERATION.&sessionType,
+    sessionId     INTEGER (0..MAX),
+    error         INTERACTIVE-OPERATION.&Error,
+    ... },
+  ... }
+
+-- Object identifier allocation:
+
+id-x1080-1 OBJECT IDENTIFIER ::= { joint-iso-itu-t(2) telebiometrics(42) telehealth(0) part1(1) }
+
+id-x1080-1-cms-content OBJECT IDENTIFIER ::= { id-x1080-1 cms-content(1) } 
+
+-- CMS content types
+
+id-health-setup-req OBJECT IDENTIFIER ::=
+  { id-x1080-1-cms-content health-setup-req(1) }
+id-health-setup-rsp OBJECT IDENTIFIER ::=
+  { id-x1080-1-cms-content health-setup-rsp(2) }
+id-health-setup-err OBJECT IDENTIFIER ::=
+  { id-x1080-1-cms-content health-setup-err(3) }
+id-health-term-req OBJECT IDENTIFIER ::=
+  { id-x1080-1-cms-content health-term-req(4) }
+id-health-term-rsp OBJECT IDENTIFIER ::=
+  { id-x1080-1-cms-content health-term-rsp(5) }
+id-health-term-err OBJECT IDENTIFIER ::=
+  { id-x1080-1-cms-content health-term-err(6) }
+
+SupportedContentTypes CONTENT-TYPE ::= { ... }
+
+health-setup-req CONTENT-TYPE ::= {
+                 E-setupRequest
+  IDENTIFIED BY  id-health-setup-req }
+
+E-setupRequest ::= SEQUENCE {
+  sessionType      SessionType,
+  sessionId        SessionId,
+  requirement  [0] Requirements  DEFAULT none,
+  voiceOptions [1] VoiceOptions  OPTIONAL,
+  videoOptions [2] VideoOptions  OPTIONAL,
+  returnMode       ReturnMode,
+  sensorId         UTF8String  OPTIONAL,
+  operations       SET SIZE (1..MAX) OF
+    INTERACTIVE-OPERATION.&id ({SupportedOperationTypes}),
+  first            INTERACTIVE-OPERATION.&id ({SupportedOperationTypes})
+                     OPTIONAL,
+  ... }
+
+InvokeId ::= INTEGER (1..MAX) -- used by other modules
+
+Requirements ::= ENUMERATED {
+  none                               (0),
+  with-2-way-voice                   (1),
+  with-reverse-video-and-2-way-voice (2),
+  with-2-way-video-and-voice         (3),
+  ... }
+
+VoiceOptions ::= OBJECT IDENTIFIER
+
+VideoOptions ::= OBJECT IDENTIFIER
+
+ReturnMode ::= ENUMERATED {
+  continuous,
+  batch,
+  ... }
+
+SupportedOperationTypes INTERACTIVE-OPERATION ::= {...}
+
+health-setup-rsp CONTENT-TYPE ::= {
+                 E-setupResponse
+  IDENTIFIED BY  id-health-setup-rsp }
+
+E-setupResponse ::= SEQUENCE {
+  sessionType SessionType,
+  sessionId   SessionId,
+  ... }
+
+health-setup-err CONTENT-TYPE ::= {
+                 E-setupError
+  IDENTIFIED BY  id-health-setup-err }
+
+E-setupError ::= SEQUENCE {
+  sessionType SessionType,
+  sessionId   SessionId,
+  error       SetupError,
+  ... }
+
+SetupError ::= ENUMERATED {
+  setupNotAllowed,
+  facilityTemporarilyUnavailable,
+  facilityPermanentlyUnavailable, 
+  unknownSessionType,
+  sessionTypeNotSupported,
+  batchModeNotSupported,
+  continuousReturnNotSupported,
+  sensorTemporarilyUnavailable,
+  sensorPermanentlyUnavailable, 
+  ... }
+
+health-term-req CONTENT-TYPE ::= {
+                E-terminateRequest
+  IDENTIFIED BY id-health-term-req }
+
+E-terminateRequest ::= SEQUENCE {
+  sessionType SessionType,
+  sessionId   SessionId,
+  ... }
+
+health-term-rsp CONTENT-TYPE ::= {
+                E-terminateResponse
+  IDENTIFIED BY id-health-term-rsp }
+
+E-terminateResponse ::= SEQUENCE {
+  sessionType SessionType,
+  sessionId   SessionId,
+  ... }
+
+health-term-err CONTENT-TYPE ::= {
+                E-terminateError
+  IDENTIFIED BY id-health-term-err }
+
+E-terminateError ::= SEQUENCE {
+  sessionType SessionType,
+  sessionId   SessionId,
+  error       TerminateError,
+  ... }
+
+TerminateError ::= ENUMERATED {
+  terminationNotAllowed,
+  invalidSessionType,
+  invalidSessionId,
+  ... }
+
+END -- E-health-common

@@ -1,0 +1,744 @@
+
+
+
+TSM-extended.asn: ITU-T X.1084 (05/2008)
+
+
+
+-- ASN module extracted from ITU-T X.1084 (05/2008)
+
+-- ASN.1 definitions for the protocol of TSM based on Appendix I
+TSM {itu-t(0) recommendation(0) x(24) tsm-1(1084) modules(0) tls-extended-protocol(1) version1(1)}
+DEFINITIONS AUTOMATIC TAGS ::=
+BEGIN
+IMPORTS 
+
+BioAPI-BFP-SCHEMA,BioAPI-BSP-SCHEMA,BioAPI-FMR,BioAPI-BIR,
+BioAPI-BIR-BIOMETRIC-TYPE
+	FROM BIP {joint-iso-itu-t(2) bip(41) modules(0) bip(0) version1(1)}
+
+BiometricCertificate
+	FROM TAI {itu-t(0) recommendation(0) x(24) tai(1089) modules(0) framework(0) version1(1)}
+
+SignedData
+	FROM X9-84-CMS {iso(1) identified-organization(3) tc68(133) country(16) x9(840) x9Standards(9) x9-84(84) module(0) cms(2) rev(1)}
+
+SignedDataACBio
+	FROM AuthenticationContextForBiometrics {iso(1) standard(0) acbio(24761) module(1) acbio(2) version1(1)}
+
+DistinguishedName,Name
+	FROM InformationFramework {joint-iso-itu-t ds(5) module(1) informationFramework(1) 5}
+
+Certificate, CertificateSerialNumber
+	FROM AuthenticationFramework {joint-iso-itu-t ds(5) module(1) authenticationFramework(7) 5};
+
+UINT8	::=	INTEGER(0..255)
+UINT16	::=	INTEGER(0..65535)
+UINT24	::=	INTEGER(0..16777215)
+UINT32	::=	INTEGER(0..4294967295)
+UINT64	::=	INTEGER(0..18446744073709551615) 
+Opaque	::=	OCTET STRING
+BiometricType ::= BioAPI-BIR-BIOMETRIC-TYPE
+SampleData ::= BioAPI-BIR
+HandshakeType 	::=	INTEGER {
+hello-request 		(0),
+client-hello 		(1),
+server-hello 		(2),
+certificate-list 		(11),
+server-key-exchange	(12),
+certificate-request 	(13),
+server-hello-done 	(14),
+certificate-verify 	(15),
+client-key-exchange 	(16),
+finished 			(20),
+certificate-url 		(21),
+certificate-status 	(22),
+biometric-client-hello (100)
+-- used only if TLS extension type is 2 --,
+biometric-server-hello (101)
+-- used only if TLS extension type is 2 --,
+biometric-verify 		(102),
+biometric-retry-request (103),
+biometric-finished 	(104),
+biometric-ttp-request 	(105),
+biometric-ttp-response	(106)	
+} (0..255)
+HANDSHAKE	::= CLASS {
+&Type,
+&id	HandshakeType	UNIQUE
+}
+WITH SYNTAX {
+&Type IDENTIFIED BY &id
+}
+Handshake	::=	SEQUENCE {
+type	HANDSHAKE.&id({Handshakes}),
+value	HANDSHAKE.&Type({Handshakes}{@type})
+}
+Handshakes	HANDSHAKE ::= {
+helloRequest|
+clientHello |
+serverHello |
+certificateList |
+serverKeyExchange |
+certificateRequest |
+serverHelloDone |
+certificateVerify |
+clientKeyExchange |
+finished |
+certificateURL |
+certificateStatus |
+biometricClientHello |
+biometricServerHello |
+biometricVerify |
+biometricRetryRequest |
+biometricFinished |
+biometricTTPRequest |
+biometricTTPResponse,
+...
+}
+helloRequest	HANDSHAKE ::= {
+HelloRequest 	IDENTIFIED BY hello-request
+}
+HelloRequest	::= NULL
+clientHello	HANDSHAKE ::=	{
+ClientHello 	IDENTIFIED BY client-hello
+}
+ClientHello	::=	SEQUENCE {
+client-version		ProtocolVersion,
+random			ClientRandom,
+session-id		SessionID,
+cipher-suites		CipherSuites,
+compression-methods	CompressionMethods,
+...,
+...,
+client-hello-extension-list	TLS-ExtensionValues
+}
+ProtocolVersion	::=	SEQUENCE {
+major		UINT8,
+minor		UINT8
+}
+ClientRandom	::=	SEQUENCE {
+gmt-unix-time	UINT32,
+random-bytes	Opaque(SIZE(25))
+}
+SessionID	::=	UINT32
+CipherSuites	::=	SEQUENCE(SIZE(1..32767)) OF CipherSuite
+CipherSuite	::=	ENUMERATED {
+tls-null-with-null-null 			(0),
+tls-rsa-with-null-md5 				(1),
+tls-rsa-with-null-sha 				(2),
+tls-rsa-export-with-rc4-40-md5 		(3),
+tls-rsa-with-rc4-128-md5 			(4),
+tls-rsa-with-rc4-128-sha 			(5),
+tls-rsa-export-with-rc2-cbc-40-md5 	(6),
+tls-rsa-with-idea-cbc-sha 			(7),
+tls-rsa-export-with-des40-cbc-sha 		(8),
+tls-rsa-with-des-cbc-sha 			(9),
+tls-rsa-with-3des-ede-cbc-sha 		(10),
+tls-dh-dss-export-with-des40-cbc-sha 	(11),
+tls-dh-dss-with-des-cbc-sha 			(12),
+tls-dh-dss-with-3des-ede-cbc-sha 		(13),
+tls-dh-rsa-export-with-des40-cbc-sha 	(14),
+tls-dh-rsa-with-des-cbc-sha 			(15),
+tls-dh-rsa-with-3des-ede-cbc-sha 		(16),
+tls-dhe-dss-export-with-des40-cbc-sha 	(17),
+tls-dhe-dss-with-des-cbc-sha 			(18),
+tls-dhe-dss-with-3des-ede-cbc-sha 		(19),
+tls-dhe-rsa-export-with-des40-cbc-sha 	(20),
+tls-dhe-rsa-with-des-cbc-sha 			(21),
+tls-dhe-rsa-with-3des-ede-cbc-sha 		(22),
+tls-dh-anon-export-rc4-40-md5 		(23),
+tls-dh-anon-with-rc4-128-md5			(24),
+tls-dh-anon-export-with-des40-cbc-sha 	(25),
+tls-dh-anon-with-des-cbc-sha 		(26),
+tls-dh-anon-with-3des-ede-cbc-sha 		(27),
+-- numbers 28 and 29 are reserved to prevent confusion with SSLv3
+tls-krb5-with-des-cbc-sha 			(30),
+tls-krb5-with-3des-ede-cbc-sha 		(31),
+tls-krb5-with-rc4-128-sha 			(32),
+tls-krb5-with-idea-cbc-sha 			(33),
+tls-krb5-with-des-cbc-md5 			(34),
+tls-krb5-with-3des-ede-cbc-md5 		(35),
+tls-krb5-with-rc4-128-md5 			(36),
+tls-krb5-with-idea-cbc-md5 			(37),
+tls-krb5-export-with-des-cbc-40-sha 	(38),
+tls-krb5-export-with-rc2-cbc-40-sha 	(39),
+tls-krb5-export-with-rc4-40-sha 		(40),
+tls-krb5-export-with-des-cbc-40-md5 	(41),
+tls-krb5-export-with-rc2-cbc-40-md5 	(42),
+tls-krb5-export-with-rc4-40-md5 		(43),
+tls-psk-with-null-sha 				(44),
+tls-dhe-psk-with-null-sha 			(45),
+tls-rsa-psk-with-null-sha 			(46),
+tls-rsa-with-aes-128-cbc-sha 		(47),
+tls-dh-dss-with-aes-128-cbc-sha 		(48),
+tls-dh-rsa-with-aes-128-cbc-sha 		(49),
+tls-dhe-dss-with-aes-128-cbc-sha 		(50),
+tls-dhe-rsa-with-aes-128-cbc-sha 		(51),
+tls-dh-anon-with-aes-128-cnc-sha 		(52),
+tls-rsa-with-aes-256-cbc-sha 		(53),
+tls-dh-dss-with-aes-256-cbc-sha 		(54),
+tls-dh-rsa-with-aes-256-cbc-sha 		(55),
+tls-dhe-dss-with-aes-256-cbc-sha 		(56),
+tls-dhe-rsa-with-aes-256-cbc-sha 		(57),
+tls-dh-anon-with-aes-256-cbc-sha 		(58),
+-- numbers 59 to 64 are not allocated --
+tls-rsa-with-camellia-128-cbc-sha 		(65),
+tls-dh-dss-with-camellia-128-cbc-sha 	(66),
+tls-dh-rsa-with-camellia-128-cbc-sha 	(67),
+tls-dhe-dss-with-camellia-128-cbc-sha 	(68),
+tls-dhe-rsa-with-camellia-128-cbc-sha 	(69),
+tls-dh-anon-with-camellia-128-cbc-sha 	(70),
+-- numbers 71 to 131 are reserved or used by some implementations --
+tls-rsa-with-camellia-256-cbc-sha 		(132),
+tls-dh-dss-with-camellia-256-cbc-sha 	(133),
+tls-dh-rsa-with-camellia-256-cbc-sha 	(134),
+tls-dhe-dss-with-camellia-256-cbc-sha 	(135),
+tls-dhe-rsa-with-camellia-256-cbc-sha 	(136),
+tls-dh-anon-with-camellia-256-cbc-sha 	(137),
+tls-psk-with-rc4-128-sha 			(138),
+tls-psk-with-3des-ede-cbc-sha 		(139),
+tls-psk-with-aes-128-cbc-sha 		(140),
+tls-psk-with-aes-256-cbc-sha 		(141),
+tls-dhe-psk-with-rc4-128-sha 		(142),
+tls-dhe-psk-with-3des-ede-cbc-sha 		(143),
+tls-dhe-psk-with-aes-128-cbc-sha 		(144),
+tls-dhe-psk-with-aes-256-cbc-sha 		(145),
+tls-rsa-psk-with-rc4-128-sha 		(146),
+tls-rsa-psk-with-3des-ede-cbc-sha 		(147),
+tls-rsa-psk-with-aes-128-cbc-sha 		(148),
+tls-rsa-psk-with-aes-256-cbc-sha 		(149),
+tls-rsa-with-seed-cbc-sha 			(150),
+tls-dh-dss-with-seed-cbc-sha 		(151),
+tls-dh-rsa-with-seed-cbc-sha 		(152),
+tls-dhe-dss-with-seed-cbc-sha 		(153),
+tls-dhe-rsa-with-seed-cbc-sha 		(154),
+tls-dh-anon-with-seed-cbc-sha 		(155),
+-- unallocated numbers --
+tls-ecdh-ecdsa-with-null-sha 		(49153),
+tls-ecdh-ecdsa-with-rc4-128-sha 		(49154),
+tls-ecdh-ecdsa-with-3des-ede-cbc-sha 	(49155),
+tls-ecdh-ecdsa-with-aes-128-cbc-sha 	(49156),
+tls-ecdh-ecdsa-with-aes-256-cbc-sha 	(49157),
+tls-ecdhe-ecdsa-with-null-sha 		(49158),
+tls-ecdhe-ecdsa-with-rc4-128-sha 		(49159),
+tls-ecdhe-ecdsa-with-3des-ede-cbc-sha 	(49160),
+tls-ecdhe-ecdsa-with-aes-128-cbc-sha 	(49161),
+tls-ecdhe-ecdsa-with-aes-256-cbc-sha 	(49162),
+tls-ecdh-rsa-with-null-sha 			(49163),
+tls-ecdh-rsa-with-rc4-128-sha 		(49164),
+tls-ecdh-rsa-with-3des-ede-cbc-sha 		(49165),
+tls-ecdh-rsa-with-aes-128-cbc-sha 		(49166),
+tls-ecdh-rsa-with-aes-256-cbc-sha 		(49167),
+tls-ecdhe-rsa-with-null-sha 			(49168),
+tls-ecdhe-rsa-with-rc4-128-sha 		(49169),
+tls-ecdhe-rsa-with-3des-ede-cbc-sha 	(49170),
+tls-ecdhe-rsa-with-aes-128-cbc-sha 	(49171),
+tls-ecdhe-rsa-with-aes-256-cbc-sha 	(49172),
+tls-ecdh-anon-with-null-sha 			(49173),
+tls-ecdh-anon-with-rc4-128-sha 			(49174),
+tls-ecdh-anon-with-3des-ede-cbc-sha 	(49175),
+tls-ecdh-anon-with-aes-128-cbc-sha 	(49176),
+tls-ecdh-anon-with-aes-256-cbc-sha 	(49177),
+...
+}
+CompressionMethods	::=	SEQUENCE(SIZE(1..255)) OF CompressionMethod
+CompressionMethod	::=	ENUMERATED {
+null,
+...
+}
+ContentType	::=	ENUMERATED {
+change-cipher-spec 	(20),
+alert 			(21),
+handshake 			(22),
+application-data 		(23),
+...
+}
+TLSPlainText	::=	SEQUENCE {
+type		ContentType,
+version	ProtocolVersion,
+fragment	Opaque(SIZE(0..65535))
+}
+TLSCompressed	::=	SEQUENCE {
+type		ContentType,
+version	ProtocolVersion,
+fragment	Opaque(SIZE(0..65535))
+}
+TLSCipherText	::=	SEQUENCE {
+type		ContentType,
+version	ProtocolVersion,
+fragment	CHOICE {
+	stream	GenericStreamCipher,
+	block	GenericBlockCipher
+	}
+}
+TLSStreamCipherText ::=	SEQUENCE {
+type		ContentType,
+version	ProtocolVersion,
+fragment	GenericStreamCipher
+}
+TLSBlockCipherText  ::= SEQUENCE {
+type		ContentType,
+version	ProtocolVersion,
+fragment	GenericBlockCipher
+}
+GenericStreamCipher	::=	SEQUENCE {
+content	Opaque(SIZE(0..65535)),
+mAC		HASH{Opaque}
+}
+HASH{ToBeHashed}	::=	Opaque(SIZE(0..255))
+			(CONSTRAINED BY {ToBeHashed})
+GenericBlockCipher	::=	SEQUENCE {
+content	Opaque(SIZE(0..65535)),
+mAC		HASH{Opaque},
+padding	Opaque(SIZE(0..255))
+		(CONSTRAINED BY {-- each octet contains the number of
+					-- padding octets minus 1 to obtain
+					-- a length multiple of block length
+					GenericBlockCipher})
+}
+ChangeCipherSpec	::=	ENUMERATED {
+change-cipher-spec(1),
+...
+}
+serverHello	HANDSHAKE	::= {
+ServerHello	IDENTIFIED BY server-hello
+}
+ServerHello	::=	SEQUENCE {
+server-version		ProtocolVersion,
+random			ServerRandom,
+session-id			SessionID,
+cipher-suite		CipherSuite,
+compression-method	CompressionMethod,
+...,
+...,
+server-hello-extension-list	TLS-ExtensionValues
+}
+ServerRandom 	::= 	SEQUENCE {
+gmt-unix-time	UINT32,
+random-bytes	Opaque(SIZE(57))
+}
+certificateList		HANDSHAKE ::= {
+CertificateList	IDENTIFIED BY certificate-list
+}
+CertificateList 	::=	SEQUENCE {
+certificates	Certificates
+}
+Certificates		::=	SEQUENCE OF X509Certificate
+X509Certificate 	::=	OCTET STRING(CONTAINING Certificate ENCODED BY der)
+der	OBJECT IDENTIFIER ::= 
+{joint-iso-itu-t asn1(1) ber-derived(2) distinguished-encoding(1)}
+serverKeyExchange	HANDSHAKE	::= {
+ServerKeyExchange	IDENTIFIED BY server-key-exchange
+}
+ServerKeyExchange	::=	CHOICE {
+rsa		[0]	SEQUENCE {
+	params		ServerRSAParams,
+	signed-params	Signature
+	},
+diffie-hellman	[1]	SEQUENCE {
+	params		ServerDHParams,
+	signed-params   Signature
+	},
+...
+}
+ServerDHParams		::=	SEQUENCE {
+dh-p		INTEGER(1..65535),
+dh-g		INTEGER(1..65535),
+dh-Ys		INTEGER(1..65535)
+}
+ServerRSAParams		::=	SEQUENCE {
+rsa-modulus	INTEGER(1..65535),
+rsa-exponent	INTEGER(1..65535)
+}
+Signature	::=	CHOICE {
+anonymous	[0]	NULL,
+rsa		[1]	SEQUENCE {
+	md5-hash	Opaque(SIZE(16)),
+	sha-hash	Opaque(SIZE(20))
+	},
+dsa      	[2]	SEQUENCE {
+	sha-hash	Opaque(SIZE(20))
+	},
+...
+}
+certificateRequest	HANDSHAKE ::= {
+CertificateRequest 	IDENTIFIED BY certificate-request
+}
+CertificateRequest	::=	SEQUENCE {
+certificate-types	ClientCertificateTypes,
+certificate-authorities	DistinguishedNames
+}
+ClientCertificateTypes	::=	SEQUENCE OF ClientCertificateType
+ClientCertificateType	::=	ENUMERATED {
+rsa-sign (1),
+dss-sign (2),
+rsa-fixed-dh (3),
+dss-fixed-dn (4),
+...
+}
+DistinguishedNames	::=	SEQUENCE OF DistinguishedName
+serverHelloDone		HANDSHAKE ::= {
+ServerHelloDone	IDENTIFIED BY server-hello-done
+}
+ServerHelloDone	::=	NULL
+clientKeyExchange	HANDSHAKE ::= {
+ClientKeyExchange	IDENTIFIED BY client-key-exchange
+}
+ClientKeyExchange	::=	Opaque(SIZE(0..65535))
+PreMasterSecret		::=	SEQUENCE {
+client-version	ProtocolVersion,
+random		Opaque(SIZE(46))
+}
+EncryptedPreMasterSecret	::=	ENCRYPTED{PreMasterSecret}
+ClientDiffieHellmanPublic	::=	CHOICE {
+implicit	NULL,
+explicit	Opaque(SIZE(1..65535))
+}
+ENCRYPTED{ToBeEnciphered}	::= OCTET STRING(SIZE(0..255))
+(CONSTRAINED BY {ToBeEnciphered})
+certificateVerify	HANDSHAKE ::= {
+CertificateVerify	IDENTIFIED BY certificate-verify
+}
+CertificateVerify	::=	SEQUENCE {
+signature	Signature
+}
+finished	HANDSHAKE ::= {
+Finished	IDENTIFIED BY finished
+}
+Finished		::=	SEQUENCE {
+verify-data	Opaque(SIZE(12))
+}
+certificateURL	HANDSHAKE 	::= {
+CertificateURL	IDENTIFIED BY certificate-url
+}
+CertificateURL	::=	SEQUENCE {
+type	CertChainType,
+url-and-hash-list	URLAndOptionalHashList
+}
+CertChainType	::=	ENUMERATED {
+individual-certs (0),
+pkipath (1),
+...
+}
+URLAndOptionalHashList	::=	SEQUENCE OF URLAndOptionalHash
+URLAndOptionalHash	::=	SEQUENCE {
+url	Opaque(SIZE(1..65535)),
+hash	SHA1Hash	OPTIONAL
+}
+SHA1Hash	::=	Opaque(SIZE(20))
+certificateStatus	HANDSHAKE	::= {
+CertificateStatus	IDENTIFIED BY certificate-status
+}
+CertificateStatus	::=	CHOICE {
+ocsp		OCSPResponse,
+...
+}
+OCSPResponse	::=	Opaque(SIZE(1..16777215))
+EXTENSION	::=	CLASS {
+&id	ExtensionType	UNIQUE,
+&Type
+}
+WITH SYNTAX {
+&Type	IDENTIFIED BY &id
+}
+ExtensionType	::=	INTEGER(0..66535)
+server-name		EXTENSION ::={
+ServerNameList IDENTIFIED BY 0
+}
+ServerNameList	::=	SEQUENCE {
+server-name-list	ListOfServerName
+}
+ListOfServerName	::= SEQUENCE OF ServerName
+ServerName	::=	CHOICE {
+host-name	[0]	HostName,
+...
+}
+HostName	::=	Opaque(SIZE(1..65535))
+max-fragment-length	EXTENSION ::= {
+MaxFragmentLength IDENTIFIED BY 1
+}
+MaxFragmentLength	::=	INTEGER(512 | 1024 | 2048 | 4096,...)
+client-certificate-url	EXTENSION ::= {
+ClientCertificateURL IDENTIFIED BY 2
+}
+ClientCertificateURL	::= CertificateURL
+trusted-ca-keys		EXTENSION ::= {
+TrustedAuthorities IDENTIFIED BY 3
+}
+TrustedAuthorities	::=	SEQUENCE {
+trusted-authorities-list	ListOfTrustedAuthority
+}
+ListOfTrustedAuthority	::=	SEQUENCE OF TrustedAuthority
+TrustedAuthority ::= CHOICE {
+pre-agreed		[0]	NULL,
+key-sha1-hash	[1]	SHA1Hash,
+x509-name		[2]	DistinguishedName,
+cert-sha1-hash	[3]	SHA1Hash,
+...
+}
+truncated-hmac		EXTENSION ::= {
+TruncatedHMAC	IDENTIFIED BY 4
+}
+TruncatedHMAC	::= Opaque(SIZE(10))
+status-request		EXTENSION ::= {
+CertificateStatusRequest IDENTIFIED BY 5
+}
+CertificateStatusRequest	::=	CHOICE {
+ocsp		[0]	OCSPStatusRequest,
+...
+}
+OCSPStatusRequest	::=	SEQUENCE {
+responder-id-list	ResponderIDList,
+request-extensions	Extensions
+}
+ResponderIDList ::= SEQUENCE OF ResponderID
+ResponderID	::=	Opaque(SIZE(1..65535))
+Extensions	::=	Opaque(SIZE(0..65535))
+TLS-Extensions	EXTENSION ::= {
+server-name |
+max-fragment-length |
+client-certificate-url |
+trusted-ca-keys |
+truncated-hmac |
+status-request,
+...
+}
+TLS-ExtensionValues	::=	SEQUENCE OF TLS-ExtensionValue
+TLS-ExtensionValue	::=	SEQUENCE {
+extension-type	EXTENSION.&id({TLS-Extensions}),
+extension-data	EXTENSION.&Type({TLS-Extensions}{@extension-type})
+}
+biometricClientHello	HANDSHAKE ::= {
+BiometricClientHello	IDENTIFIED BY biometric-client-hello
+}
+BiometricClientHello ::= SEQUENCE(SIZE(1..MAX)) OF BiometricMethod
+BiometricMethod ::= SEQUENCE {
+biometricType			BiometricType,
+biometricFunctionProvider	BSP-BFP-Schema,
+networkAuthenticationModel	NetworkAuthenticationModel,
+thirdPartyInfo			UTF8String
+}
+BSP-BFP-Schema ::= CHOICE {
+bSPSchema		[0]	BioAPI-BSP-SCHEMA,
+bFPSchema		[1]	BioAPI-BFP-SCHEMA
+}
+BSP-BFP-Schemas	::= SEQUENCE(SIZE(1..MAX)) OF BSP-BFP-Schema
+NetworkAuthenticationModel ::= ENUMERATED {
+no-value                                        (0), -- no selection --
+local-model                                     (1),
+download-model                                  (2),
+attached-model                                  (3),
+center-model                                    (4),
+ref-onttp-for-local-model                       (5),
+ref-onttp-for-center-model                      (6),
+comparison-outsourcing-by-client-model          (7),
+comparison-outsourcing-by-server-model          (8),
+storage-comparison-outsourcing-by-client-model  (9),
+storage-comparison-outsourcing-by-server-model  (10),
+...
+}
+biometricServerHello	HANDSHAKE ::= {
+BiometricServerHello	IDENTIFIED BY biometric-server-hello
+}
+BiometricServerHello ::=       BiometricAuthenticationRequest
+Quality ::= INTEGER(0..100)
+BiometricAuthenticationRequest ::=      SEQUENCE {
+biometricMethod 		BiometricMethod,
+requestFMR       		BioAPI-FMR,     
+				-- (32-bit integer value:requestFMR/231-1)
+requestTrialNumber	INTEGER(1..15),
+requestQuality		Quality,
+requestTemplateData	XtsmTemplate OPTIONAL
+				-- for download model (no value available)
+}
+XtsmTemplate    ::=     BiometricCertificate	-- Import from TAI
+biometricVerify		HANDSHAKE	::= {
+BiometricVerify	IDENTIFIED BY biometric-verify
+}
+BiometricVerify ::= SEQUENCE   {
+biometricData   CHOICE  {
+	no-value				[0] NULL,
+	local-model             	[1] BDforLocalModel,
+	download-model          	[2] BDforDownloadModel,
+	attached-model         	[3] BDforAttachedModel,
+	center-model            	[4] BDforCenterModel,
+	ref-onttp-for-local-model	[5] BDforRefOnTTPforLocalModel,
+	ref-onttp-for-center-model  	[6] BDforRefOnTTPforCenterModel,
+		comparison-outsourcing-by-client-model  [7] BDforCObyClientModel,
+	comparison-outsourcing-by-server-model  [8] BDforCObyServerModel,
+	storage-comparison-outsourcing-by-client-model	[9]
+	BDforSCObyClientModel,
+ 	storage-comparison-outsourcing-by-server-model [10] 
+		BDforSCObyServerModel,
+	...
+	},
+digitalSignature        SignedDatabyClient
+}
+SignedDatabyClient ::= CHOICE {
+digital-signature       [0] SignedData,             
+			--import from X9.84-CMS
+aCBioOnClient           [1] SignedDataACBio
+			--import from ISO/IEC 24761
+}
+BDforLocalModel ::= SEQUENCE {
+biometricClientProcess	BiometricClientProcess
+}
+BiometricClientProcess ::= SEQUENCE {
+bFPSchema		BSP-BFP-Schemas,
+templateID		TemplateID,
+sampleQuality	Quality,
+score			BioAPI-FMR
+}
+TemplateID      ::= SEQUENCE {
+certificateIssuer       Name,                    -- see Rec. ITU-T X.509
+serialNumber            CertificateSerialNumber, -- see Rec. ITU-T X.509
+templateInfo            TemplateInfo
+}
+TemplateInfo ::= SEQUENCE {
+biometricType    BiometricType,
+creator          UTF8String,
+createdBFPSchema BSP-BFP-Schema,
+templateID       CertificateIDInformation
+        		-- such as CertificateSerialNumber (no value available)
+}
+CertificateIDInformation        ::=     CertificateSerialNumber
+BDforDownloadModel ::= SEQUENCE {
+biometricClientProcess	BiometricClientProcess
+}
+BDforAttachedModel ::= SEQUENCE {
+templateData		XtsmTemplate,
+sampleData			SampleData     -- BIR: BioAPI defined format --
+}
+BDforCenterModel ::= SEQUENCE {
+sampleData	SampleData     -- BIR: BioAPI defined format --
+}
+BDforRefOnTTPforLocalModel ::= SEQUENCE {
+thirdPartyInfo		UTF8String,
+biometric-ttp-process	BiometricTTPResponse OPTIONAL,
+biometricClientProcess	BiometricClientProcess
+}
+BDforRefOnTTPforCenterModel ::= SEQUENCE {
+thirdPartyInfo		UTF8String,
+sampleData			SampleData     -- BIR: BioAPI defined format --
+}
+BDforCObyClientModel ::= SEQUENCE {
+bFPSchemaForClientProcess	BSP-BFP-Schemas,
+thirdPartyInfo			UTF8String,
+biometric-ttp-Process		BiometricTTPResponse
+}
+BDforCObyServerModel ::= SEQUENCE {
+sampleData	SampleData          -- BIR: BioAPI defined format --
+}
+BDforSCObyClientModel ::= SEQUENCE {
+bFPSchemaForClientProcess	BSP-BFP-Schemas,
+thirdPartyInfo			UTF8String,
+biometric-ttp-Process		BiometricTTPResponse
+}
+BDforSCObyServerModel ::= SEQUENCE {
+sampleData	SampleData          -- BIR: BioAPI defined format --
+}
+biometricRetryRequest	HANDSHAKE	::= {
+BiometricRetryRequest	IDENTIFIED BY biometric-retry-request
+}
+BiometricRetryRequest ::= SEQUENCE {
+retryRequest	BiometricAuthenticationRequest
+}
+Alert	::=	SEQUENCE {
+level			AlertLevel,
+description		AlertDescription
+}
+AlertLevel	::=	ENUMERATED {
+warning 	(1),
+fatal 	(2)
+}
+AlertDescription ::= ENUMERATED {
+close-notify 			(0),
+unexpected-message 		(10),
+bad-record-mac 			(20),
+decryption-failed 		(21),
+record-overflow			(22),
+decompression-failure 		(30),
+handshake-failure 		(40),
+bad-certificate 			(42),
+unsupported-certificate 	(43),
+certificate-revoked 		(44),
+certificate-expired 		(45),
+certificate-unknown 		(46),
+illegal-parameter 		(47),
+unknown-ca 				(48),
+access-denied 			(49),
+decode-error 			(50),
+decrypt-error 			(51),
+export-restriction 		(60),
+protocol-version 			(70),
+insufficient-security 		(71),
+internal-error 			(80),
+user-canceled 			(90),
+no-renegotiation 			(100),
+...,
+unacceptable-model      	(115),-- Extension item for BiometricHandshake
+unacceptable-biometrics 	(116),-- Extension item for BiometricHandshake
+unsupported-biometrics  	(117),-- Extension item for BiometricHandshake
+bad-template            	(118),-- Extension item for BiometricVerify
+template-revoked        	(119),-- Extension item for BiometricVerify
+template-expired        	(120),-- Extension item for BiometricVerify
+unknown-bca             	(121),-- Extension item for BiometricVerify
+unacceptable-fmr        	(122),-- Extension item for BiometricVerify
+no-response-ttp			(123),-- Extension item for TTP
+no-template-in-ttp		(124)	-- Extension item for TTP
+}
+biometricFinished	HANDSHAKE	::= {
+BiometricFinished	IDENTIFIED BY biometric-finished
+}
+BiometricFinished ::= SEQUENCE {
+result	BiometricAuthenticationResult
+}
+BiometricAuthenticationResult ::= BOOLEAN
+biometricTTPRequest	HANDSHAKE	::= {
+BiometricTTPRequest	IDENTIFIED BY biometric-ttp-request
+}
+BiometricTTPRequest ::= CHOICE {
+storage-type            [1] BDforStorageOutsourcing,
+comparison-type         [2] BDforComparisonOutsourcing,
+storage-comparison-type [3] BDforComparisonOutsourcing
+}
+BDforStorageOutsourcing ::= SEQUENCE {
+templateID	TemplateID
+}
+BDforComparisonOutsourcing ::= SEQUENCE {
+templateData	XtsmTemplate,
+sampleData		SampleData      --BIR: BioAPI defined format
+}
+BDforSCOutsourcing ::= SEQUENCE {
+templateID		TemplateID,
+sampleData		SampleData      --BIR: BioAPI defined format
+}
+biometricTTPResponse	HANDSHAKE	::= {
+BiometricTTPResponse	IDENTIFIED BY biometric-ttp-response
+}
+BiometricTTPResponse ::= SEQUENCE {
+request-body CHOICE {
+	storage-type            [1] RBDforStorageOutsourcing,
+	comparison-type         [2] RBDforComparisonOutsourcing,
+ 	storage-comparison-type [3] RBDforComparisonOutsourcing
+  	},
+digital-signature	SignedDatabyTTP
+}
+RBDforStorageOutsourcing ::= SEQUENCE {
+templateData	XtsmTemplate
+}
+RBDforComparisonOutsourcing ::= SEQUENCE {
+bFPSchema		BSP-BFP-Schemas,
+templateID		TemplateID,
+sampleQuality	Quality,
+score			BioAPI-FMR
+}
+SignedDatabyTTP ::= CHOICE {
+digital-signature		[0] SignedData,             
+				--import from X9.84-CMS
+aCBioOnTTP			[1] SignedDataACBio
+				--import from ISO/IEC 24761
+}
+ApplicationData ::=	Opaque
+END

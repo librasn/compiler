@@ -1,0 +1,226 @@
+
+
+
+
+
+
+
+
+-- Module SIOsAccessControl-MODULE (X.841:10/2000)
+-- See also ITU-T X.841 (10/2000)
+-- See also the index of all ASN.1 assignments needed in this document
+
+SIOsAccessControl-MODULE {joint-iso-itu-t sios(24) specification(0) modules(0)
+  accessControl(0)} DEFINITIONS IMPLICIT TAGS ::=
+BEGIN
+
+-- EXPORTS All; 
+IMPORTS
+  id-at-clearance
+    FROM EnhancedSecurity {joint-iso-itu-t ds(5) module(1) enhancedSecurity(28)
+      1} -- ITU-T Rec. X.501 | ISO/IEC 9594-2 
+  ATTRIBUTE, Name
+    FROM InformationFramework {joint-iso-itu-t ds(5) module(1)
+      informationFramework(1) 3} -- ITU-T Rec. X.501 | ISO/IEC 9594-2 
+  Extensions
+    FROM AuthenticationFramework {joint-iso-itu-t ds(5) module(1)
+      authenticationFramework(7) 3} -- ITU-T Rec. X.509 | ISO/IEC 9594-8 
+  DirectoryString{}
+    FROM SelectedAttributeTypes {joint-iso-itu-t ds(5) module(1)
+      selectedAttributeTypes(5) 3}; -- ITU-T Rec. X.520 | ISO/IEC 9594-6 
+
+id-ConfidentialityLabel OBJECT IDENTIFIER ::=
+  {joint-iso-itu-t sios(24) specification(0) securityLabels(1)
+   confidentiality(0)}
+
+ConfidentialityLabel ::= SET {
+  security-policy-identifier  SecurityPolicyIdentifier OPTIONAL,
+  security-classification     INTEGER(0..MAX) OPTIONAL,
+  privacy-mark                PrivacyMark OPTIONAL,
+  security-categories         SecurityCategories OPTIONAL
+}(ALL EXCEPT ({ -- none; at least one component shall be present --}))
+
+SecurityPolicyIdentifier ::= OBJECT IDENTIFIER
+
+PrivacyMark ::= CHOICE {
+  pString     PrintableString(SIZE (1..ub-privacy-mark-length)),
+  utf8String  UTF8String(SIZE (1..ub-privacy-mark-length))
+}
+
+ub-privacy-mark-length INTEGER ::= 128 -- as defined in X.411
+
+SecurityCategories ::= SET SIZE (1..MAX) OF SecurityCategory
+
+SecurityCategory ::= SEQUENCE {
+  type   [0]  SECURITY-CATEGORY.&id({SecurityCategoriesTable}),
+  value
+    [1] EXPLICIT SECURITY-CATEGORY.&Type({SecurityCategoriesTable}{@type})
+}
+
+SECURITY-CATEGORY ::= TYPE-IDENTIFIER
+
+SecurityCategoriesTable SECURITY-CATEGORY ::=
+  {... -- objects defined as needed --}
+
+SecurityPolicyInformationFile ::= SIGNED{EncodedSPIF}
+
+-- Type EncodedSPIF is an open type constrained to be a value
+-- of type SPIF. This open type representation is an opaque
+-- string of hexadecimal characters suitable for signature 
+-- and signature verification operations. 
+EncodedSPIF ::= TYPE-IDENTIFIER.&Type(SPIF)
+
+SPIF ::= SEQUENCE {
+  versionInformation           VersionInformationData DEFAULT v1,
+  updateInformation            UpdateInformationData,
+  securityPolicyIdData         ObjectIdData,
+  privilegeId                  OBJECT IDENTIFIER,
+  rbacId                       OBJECT IDENTIFIER,
+  securityClassifications      [0]  SecurityClassifications OPTIONAL,
+  securityCategories           [1]  SPIF-SecurityCategories OPTIONAL,
+  equivalentPolicies           [2]  EquivalentPolicies OPTIONAL,
+  defaultSecurityPolicyIdData  [3]  ObjectIdData OPTIONAL,
+  extensions                   [4]  Extensions OPTIONAL
+}
+
+VersionInformationData ::= INTEGER {v1(0)}(0..MAX)
+
+UpdateInformationData ::= SEQUENCE {
+  sPIFVersionNumber            SPIFVersionNumber,
+  creationDate                 GeneralizedTime,
+  originatorDistinguishedName  Name,
+  keyIdentifier                OCTET STRING OPTIONAL
+}
+
+SPIFVersionNumber ::= INTEGER(0..MAX)
+
+ObjectIdData ::= SEQUENCE {
+  objectId      OBJECT IDENTIFIER,
+  objectIdName  ObjectIdName
+}
+
+ObjectIdName ::= DirectoryString{ubObjectIdNameLength}
+
+SecurityClassifications ::= SEQUENCE SIZE (0..MAX) OF SecurityClassification
+
+SPIF-SecurityCategories ::= SEQUENCE SIZE (0..MAX) OF SecurityCategory
+
+EquivalentPolicies ::= SEQUENCE SIZE (0..MAX) OF EquivalentPolicy
+
+SecurityClassification ::= SEQUENCE {
+  labelAndCertValue          LabelAndCertValue,
+  classificationName         ClassificationName,
+  equivalentClassifications  [0]  EquivalentClassifications OPTIONAL,
+  hierarchyValue             INTEGER,
+  markingData                [1]  MarkingDataInfo OPTIONAL,
+  requiredCategory           [2]  OptionalCategoryGroups OPTIONAL,
+  obsolete                   BOOLEAN DEFAULT FALSE
+}
+
+LabelAndCertValue ::= INTEGER(0..MAX)
+
+ClassificationName ::= DirectoryString{ubClassificationNameLength}
+
+EquivalentClassifications ::=
+  SEQUENCE SIZE (0..MAX) OF EquivalentClassification
+
+EquivalentClassification ::= SEQUENCE {
+  securityPolicyId   OBJECT IDENTIFIER,
+  labelAndCertValue  LabelAndCertValue,
+  applied            Applied
+}
+
+Applied ::= INTEGER {encrypt(0), decrypt(1), both(2)}(encrypt | decrypt | both)
+
+MarkingDataInfo ::= SEQUENCE SIZE (1..MAX) OF MarkingData
+
+MarkingData ::= SEQUENCE {
+  markingPhrase  MarkingPhrase OPTIONAL,
+  markingCodes   MarkingCodes OPTIONAL
+}(ALL EXCEPT ({ -- none; at least one component shall be present --}))
+
+MarkingPhrase ::= DirectoryString{ubMarkingPhraseLength}
+
+MarkingCodes ::= SEQUENCE SIZE (1..MAX) OF MarkingCode
+
+MarkingCode ::= INTEGER {
+  pageTop(1), pageBottom(2), pageTopBottom(3), documentEnd(4),
+  noNameDisplay(5), noMarkingDisplay(6), unused(7), documentStart(8),
+  suppressClassName(9)}
+
+OptionalCategoryGroups ::= SEQUENCE SIZE (1..MAX) OF OptionalCategoryGroup
+
+OptionalCategoryGroup ::= SEQUENCE {
+  operation      Operation,
+  categoryGroup  CategoryGroup
+}
+
+Operation ::= INTEGER {onlyOne(1), oneOrMore(2), all(3)
+}(onlyOne | oneOrMore | all)
+
+CategoryGroup ::= SEQUENCE SIZE (1..MAX) OF OptionalCategoryData
+
+OptionalCategoryData ::= SEQUENCE {
+  optCatDataId  OC-DATA.&id({CatData}),
+  categorydata  OC-DATA.&Type({CatData}{@optCatDataId})
+}
+
+OC-DATA ::= TYPE-IDENTIFIER
+
+CatData OC-DATA ::=
+  {... -- defined as needed --}
+
+EquivalentPolicy ::= SEQUENCE {
+  securityPolicyId    OBJECT IDENTIFIER,
+  securityPolicyName  SecurityPolicyName OPTIONAL
+}
+
+SecurityPolicyName ::= DirectoryString{ubObjectIdNameLength}
+
+clearance ATTRIBUTE ::= {WITH SYNTAX  Clearance
+                         ID           id-at-clearance
+}
+
+Clearance ::= SEQUENCE { -- Automatic tags applied
+  policyId            [0]  OBJECT IDENTIFIER,
+  classList           [1]  ClassList DEFAULT {unclassified},
+  securityCategories  [2]  SecurityCategories OPTIONAL
+}
+
+ClassList ::= BIT STRING {
+  unmarked(0), unclassified(1), restricted(2), confidential(3), secret(4),
+  topSecret(5)}
+
+-- upper bound values
+ubObjectIdNameLength INTEGER ::= 256
+
+ubClassificationNameLength INTEGER ::= 256
+
+ubMarkingPhraseLength INTEGER ::= 256
+
+-- information object classes 
+ALGORITHM ::= CLASS {&id    OBJECT IDENTIFIER UNIQUE,
+                     &Type  OPTIONAL
+}WITH SYNTAX {OID &id
+              [PARMS &Type]
+}
+
+-- parameterized types 
+SIGNED{ToBeSigned} ::= SEQUENCE {
+  toBeSigned  ToBeSigned,
+  algorithm   AlgorithmIdentifier{{SignatureAlgorithms}},
+  signature   BIT STRING
+}
+
+AlgorithmIdentifier{ALGORITHM:IOSet} ::= SEQUENCE {
+  algorithm   ALGORITHM.&id({IOSet}),
+  parameters  ALGORITHM.&Type({IOSet}{@algorithm}) OPTIONAL
+}
+
+SignatureAlgorithms ALGORITHM ::=
+  {... -- defined as needed --}
+
+END -- SecurityInformationObjects 
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

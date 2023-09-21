@@ -1,0 +1,82 @@
+E115v1.asn (ITU-T E.115 (05/2010))-- ASN module extracted from ITU-T E.115 (05/2010)E115v1 {itu-t recommendation(0) e(5) 115 1}
+
+
+
+DEFINITIONS ::=
+BEGIN
+
+E115String ::= IA5String
+
+E115StringUb256 ::= E115String (SIZE(1..256))
+
+DirectoryMessage	::= CHOICE {
+  telephone [0] Telephone }
+
+Telephone ::= CHOICE {
+  inquiry [0] Inquiry,
+  reply   [1] Reply }
+
+Inquiry	::= SEQUENCE {
+  inquiryPart1  InquiryPart1,
+  inquiryPart2  InquiryPart2 }
+
+InquiryPart1 ::= [ APPLICATION 0 ] IMPLICIT SET {
+  messageIndicators         [0]  IMPLICIT E115String (SIZE(4)),
+  internationalIndicator    [1]  IMPLICIT NumericString (SIZE(8)) ,
+  originatingTerminalCode   [2]  IMPLICIT E115String (SIZE(8)),
+  dateAndTime               [3]  IMPLICIT NumericString (SIZE(12)) OPTIONAL,
+  messageNumber             [4]  IMPLICIT E115String (SIZE(4)) OPTIONAL }
+
+InquiryPart2 ::= [ APPLICATION 1 ] IMPLICIT SET {
+  locality                  [0]  IMPLICIT E115StringUb256 OPTIONAL,
+  subscriberName            [1]  IMPLICIT E115StringUb256 OPTIONAL,
+  streetName                [2]  IMPLICIT E115StringUb256 OPTIONAL,
+  houseNumber               [3]  IMPLICIT E115StringUb256 OPTIONAL,
+  forename                  [4]  IMPLICIT E115StringUb256 OPTIONAL,
+  headingInTheGuide         [5]  IMPLICIT E115StringUb256 OPTIONAL,
+  professionCode            [6]  IMPLICIT E115StringUb256 OPTIONAL,
+  additionalInformationForASelectiveSearch
+                            [7]  IMPLICIT E115StringUb256 OPTIONAL,
+  countyStateOrProvince     [8]  IMPLICIT E115StringUb256 OPTIONAL,
+  category                  [9]  IMPLICIT E115StringUb256 OPTIONAL,
+  sequenceNumber            [10] IMPLICIT NumericString (SIZE(1)) OPTIONAL }
+
+Reply ::= SEQUENCE {
+  replyPart1  ReplyPart1,
+  replyPart2  ReplyPart2,
+  replyPart3  ReplyPart3 OPTIONAL }
+
+ReplyPart1 ::= [ APPLICATION 3 ] IMPLICIT SET {
+  messageIndicators        [0]  IMPLICIT E115String (SIZE(4)),
+  internationalIndicators  [1]  IMPLICIT NumericString (SIZE(8)),
+  originatingTerminalCode  [2]  IMPLICIT E115String (SIZE(8)),
+  dateAndTime              [3]  IMPLICIT NumericString (SIZE(12)) OPTIONAL,
+  messageNumber            [4]  IMPLICIT E115String (SIZE(4)) OPTIONAL }
+
+ReplyPart2 ::= [ APPLICATION 4 ] IMPLICIT SET {
+  messageCode              [0]  IMPLICIT E115String (SIZE(2)),
+  countryCode              [1]  IMPLICIT E115String (SIZE(4)),
+  message                  [2]  IMPLICIT E115StringUb256 OPTIONAL,
+  dbSelectionCount         [3]  IMPLICIT E115String (SIZE(1..10)) OPTIONAL }
+
+ReplyPart3 ::= [ APPLICATION 5 ] IMPLICIT SET OF Selection
+
+Selection ::= SET {
+  nationalDestinationCode  [0]  IMPLICIT E115StringUb256 OPTIONAL,
+  subscriberNumber         [1]  IMPLICIT E115StringUb256 OPTIONAL,
+  locality                 [2]  IMPLICIT E115StringUb256 OPTIONAL,
+  subscriberName           [3]  IMPLICIT E115StringUb256 OPTIONAL,
+  forename                 [4]  IMPLICIT E115StringUb256 OPTIONAL,
+  streetName               [5]  IMPLICIT E115StringUb256 OPTIONAL,
+  houseNumber              [6]  IMPLICIT E115StringUb256 OPTIONAL,
+  supplementaryData        [7]  IMPLICIT E115StringUb256 OPTIONAL,
+  subscriberMessage        [8]  IMPLICIT E115StringUb256 OPTIONAL,
+  headingInTheGuide        [9]  IMPLICIT E115StringUb256 OPTIONAL,
+  professionCode           [10] IMPLICIT E115StringUb256 OPTIONAL,
+  additionalInformationForASelectiveSearch
+                           [11] IMPLICIT E115StringUb256 OPTIONAL,
+  countyStateOrProvince    [12] IMPLICIT E115StringUb256 OPTIONAL,
+  category                 [13] IMPLICIT E115StringUb256 OPTIONAL,
+  subscriberDescription    [14] IMPLICIT E115StringUb256 OPTIONAL }
+
+END

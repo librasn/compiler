@@ -1,0 +1,294 @@
+
+
+
+
+
+OperationalBindingManagement (X.501 TC1:08/1997)
+
+
+-- Module OperationalBindingManagement (X.501 TC1:08/1997)
+-- See also ITU-T X.501 (1997) Technical Cor. 1 (03/2000)
+-- See also the index of all ASN.1 assignments needed in this document
+
+OperationalBindingManagement {joint-iso-itu-t ds(5) module(1)
+  opBindingManagement(18) 3} DEFINITIONS ::=
+BEGIN
+
+-- EXPORTS All 
+-- The types and values defined in this module are exported for use in the other ASN.1 modules contained 
+-- within the Directory Specifications, and for the use of other applications which will use them to access 
+-- Directory services. Other applications may use them for their own purposes, but this will not constrain
+-- extensions and modifications needed to maintain or improve the Directory service.
+IMPORTS
+  directoryShadowAbstractService, hierarchicalOperationalBindings, dop,
+    directoryAbstractService, distributedOperations, enhancedSecurity
+    FROM UsefulDefinitions {joint-iso-itu-t ds(5) module(1)
+      usefulDefinitions(0) 3}
+  shadowOperationalBinding
+    FROM DirectoryShadowAbstractService {joint-iso-itu-t ds(5) module(1)
+      directoryShadowAbstractService(15) 3}
+  hierarchicalOperationalBinding, nonSpecificHierarchicalOperationalBinding
+    FROM HierarchicalOperationalBindings {joint-iso-itu-t ds(5) module(1)
+      hierarchicalOperationalBindings(20) 3}
+  OPERATION, ERROR
+    FROM Remote-Operations-Information-Objects {joint-iso-itu-t
+      remote-operations(4) informationObjects(5) version1(0)}
+  APPLICATION-CONTEXT
+    FROM Remote-Operations-Information-Objects-extensions {joint-iso-itu-t
+      remote-operations(4) informationObjects-extensions(8) version1(0)}
+  id-op-establishOperationalBinding, id-op-modifyOperationalBinding,
+    id-op-terminateOperationalBinding, id-err-operationalBindingError
+    FROM DirectoryOperationalBindingManagementProtocol {joint-iso-itu-t(2)
+      ds(5) module(1) dop(17) 2}
+  directoryBind, directoryUnbind, securityError, CommonResults,
+    SecurityParameters
+    FROM DirectoryAbstractService {joint-iso-itu-t ds(5) module(1)
+      directoryAbstractService(2) 3}
+  OPTIONALLY-PROTECTED{}, dirqop
+    FROM EnhancedSecurity {joint-iso-itu-t ds(5) module(1) enhancedSecurity(28)
+      1}
+  AccessPoint
+    FROM DistributedOperations {joint-iso-itu-t ds(5) module(1)
+      distributedOperations(3) 3}
+  Time
+    FROM AuthenticationFramework {joint-iso-itu-t ds(5) module(1)
+      authenticationFramework(7) 3}
+  PROTECTED{}
+    FROM Notation {joint-iso-itu-t genericULS(20) modules(1) notation(1)};
+
+-- bind and unbind 
+dSAOperationalBindingManagementBind OPERATION ::=
+  directoryBind
+
+dSAOperationalBindingManagementUnbind OPERATION ::= directoryUnbind
+
+-- operations, arguments and results 
+establishOperationalBinding OPERATION ::= {
+  ARGUMENT  EstablishOperationalBindingArgument
+  RESULT    EstablishOperationalBindingResult
+  ERRORS    {operationalBindingError | securityError}
+  CODE      id-op-establishOperationalBinding
+}
+
+EstablishOperationalBindingArgument ::=
+  OPTIONALLY-PROTECTED
+    {SEQUENCE {bindingType
+                 [0]  OPERATIONAL-BINDING.&id({OpBindingSet}),
+               bindingID           [1]  OperationalBindingID OPTIONAL,
+               accessPoint         [2]  AccessPoint,
+               -- symmetric, Role A initiates, or Role B initiates 
+               initiator
+                 CHOICE {symmetric
+                           [3]  OPERATIONAL-BINDING.
+                                  &both.&EstablishParam
+                                  ({OpBindingSet}{@bindingType}),
+                         roleA-initiates
+                           [4]  OPERATIONAL-BINDING.
+                                  &roleA.&EstablishParam
+                                  ({OpBindingSet}{@bindingType}),
+                         roleB-initiates
+                           [5]  OPERATIONAL-BINDING.
+                                  &roleB.&EstablishParam
+                                  ({OpBindingSet}{@bindingType})} OPTIONAL,
+               agreement
+                 [6]  OPERATIONAL-BINDING.&Agreement
+                        ({OpBindingSet}{@bindingType}),
+               valid               [7]  Validity DEFAULT {},
+               securityParameters  [8]  SecurityParameters OPTIONAL
+    }, dirqop.&dopEstablishOpBindArg-QOP}
+
+OperationalBindingID ::= SEQUENCE {identifier  INTEGER,
+                                   version     INTEGER
+}
+
+Validity ::= SEQUENCE {
+  validFrom   [0]  CHOICE {now   [0]  NULL,
+                           time  [1]  Time} DEFAULT now:NULL,
+  validUntil
+    [1]  CHOICE {explicitTermination  [0]  NULL,
+                 time                 [1]  Time
+  } DEFAULT explicitTermination:NULL
+}
+
+EstablishOperationalBindingResult ::=
+  OPTIONALLY-PROTECTED
+    {SET {bindingType  [0]  OPERATIONAL-BINDING.&id({OpBindingSet}),
+          bindingID    [1]  OperationalBindingID OPTIONAL,
+          accessPoint  [2]  AccessPoint,
+          -- symmetric, Role A replies , or Role B replies 
+          initiator
+            CHOICE {symmetric
+                      [3]  OPERATIONAL-BINDING.&both.&EstablishParam
+                             ({OpBindingSet}{@bindingType}),
+                    roleA-replies
+                      [4]  OPERATIONAL-BINDING.&roleA.&EstablishParam
+                             ({OpBindingSet}{@bindingType}),
+                    roleB-replies
+                      [5]  OPERATIONAL-BINDING.&roleB.&EstablishParam
+                             ({OpBindingSet}{@bindingType})} OPTIONAL,
+          COMPONENTS OF CommonResults}, dirqop.&dopEstablishOpBindRes-QOP}
+
+modifyOperationalBinding OPERATION ::= {
+  ARGUMENT  ModifyOperationalBindingArgument
+  RESULT    ModifyOperationalBindingResult
+  ERRORS    {operationalBindingError | securityError}
+  CODE      id-op-modifyOperationalBinding
+}
+
+ModifyOperationalBindingArgument ::=
+  OPTIONALLY-PROTECTED
+    {SEQUENCE {bindingType
+                 [0]  OPERATIONAL-BINDING.&id({OpBindingSet}),
+               bindingID           [1]  OperationalBindingID,
+               accessPoint         [2]  AccessPoint OPTIONAL,
+               -- symmetric, Role A initiates, or Role B initiates 
+               initiator
+                 CHOICE {symmetric
+                           [3]  OPERATIONAL-BINDING.&both.&ModifyParam
+                                  ({OpBindingSet}{@bindingType}),
+                         roleA-initiates
+                           [4]  OPERATIONAL-BINDING.&roleA.&ModifyParam
+                                  ({OpBindingSet}{@bindingType}),
+                         roleB-initiates
+                           [5]  OPERATIONAL-BINDING.&roleB.&ModifyParam
+                                  ({OpBindingSet}{@bindingType})} OPTIONAL,
+               newBindingID        [6]  OperationalBindingID,
+               newAgreement
+                 [7]  OPERATIONAL-BINDING.&Agreement
+                        ({OpBindingSet}{@bindingType}) OPTIONAL,
+               valid               [8]  Validity OPTIONAL,
+               securityParameters  [9]  SecurityParameters OPTIONAL
+    }, dirqop.&dopModifyOpBindArg-QOP}
+
+ModifyOperationalBindingResult ::= CHOICE {
+  null       [0]  NULL,
+  protected
+    [1]  PROTECTED{SET {newBindingID  OperationalBindingID,
+                        bindingType
+                          OPERATIONAL-BINDING.&id({OpBindingSet}),
+                        newAgreement
+                          [0]  OPERATIONAL-BINDING.&Agreement
+                                 ({OpBindingSet}{@bindingType}) OPTIONAL,
+                        valid         [1]  Validity OPTIONAL,
+                        COMPONENTS OF CommonResults
+           }, dirqop.&dopModifyOpBindRes-QOP}
+}
+
+terminateOperationalBinding OPERATION ::= {
+  ARGUMENT  TerminateOperationalBindingArgument
+  RESULT    TerminateOperationalBindingResult
+  ERRORS    {operationalBindingError | securityError}
+  CODE      id-op-terminateOperationalBinding
+}
+
+TerminateOperationalBindingArgument ::=
+  OPTIONALLY-PROTECTED
+    {SEQUENCE {bindingType
+                 [0]  OPERATIONAL-BINDING.&id({OpBindingSet}),
+               bindingID           [1]  OperationalBindingID,
+               -- symmetric, Role A initiates, or Role B initiates 
+               initiator
+                 CHOICE {symmetric
+                           [2]  OPERATIONAL-BINDING.
+                                  &both.&TerminateParam
+                                  ({OpBindingSet}{@bindingType}),
+                         roleA-initiates
+                           [3]  OPERATIONAL-BINDING.
+                                  &roleA.&TerminateParam
+                                  ({OpBindingSet}{@bindingType}),
+                         roleB-initiates
+                           [4]  OPERATIONAL-BINDING.
+                                  &roleB.&TerminateParam
+                                  ({OpBindingSet}{@bindingType})} OPTIONAL,
+               terminateAt         [5]  Time OPTIONAL,
+               securityParameters  [6]  SecurityParameters OPTIONAL
+    }, dirqop.&dopTermOpBindArg-QOP}
+
+TerminateOperationalBindingResult ::= CHOICE {
+  null       [0]  NULL,
+  protected
+    [1]  PROTECTED{SET {bindingID    OperationalBindingID,
+                        bindingType
+                          OPERATIONAL-BINDING.&id({OpBindingSet}),
+                        terminateAt  GeneralizedTime OPTIONAL,
+                        COMPONENTS OF CommonResults
+           }, dirqop.&dopTermOpBindRes-QOP}
+}
+
+-- errors and parameters 
+operationalBindingError ERROR ::= {
+  PARAMETER OPTIONALLY-PROTECTED
+    {OpBindingErrorParam,
+     dirqop.&dirErrors-QOP}
+  CODE                            id-err-operationalBindingError
+}
+
+OpBindingErrorParam ::= SET {
+  problem
+    [0]  ENUMERATED {invalidID(0), duplicateID(1), unsupportedBindingType(2),
+                     notAllowedForRole(3), parametersMissing(4),
+                     roleAssignment(5), invalidStartTime(6), invalidEndTime(7),
+                     invalidAgreement(8), currentlyNotDecidable(9),
+                     modificationNotAllowed(10)},
+  bindingType        [1]  OPERATIONAL-BINDING.&id({OpBindingSet}) OPTIONAL,
+  agreementProposal
+    [2]  OPERATIONAL-BINDING.&Agreement({OpBindingSet}{@bindingType})
+      OPTIONAL,
+  retryAt            [3]  Time OPTIONAL,
+  COMPONENTS OF CommonResults
+}
+
+-- information object classes 
+OPERATIONAL-BINDING ::= CLASS {
+  &Agreement    ,
+  &Cooperation  OP-BINDING-COOP,
+  &both         OP-BIND-ROLE OPTIONAL,
+  &roleA        OP-BIND-ROLE OPTIONAL,
+  &roleB        OP-BIND-ROLE OPTIONAL,
+  &id           OBJECT IDENTIFIER UNIQUE
+}
+WITH SYNTAX {
+  AGREEMENT &Agreement
+  APPLICATION CONTEXTS &Cooperation
+  [SYMMETRIC &both]
+  [ASYMMETRIC
+   [ROLE-A &roleA]
+   [ROLE-B &roleB]]
+  ID &id
+}
+
+OP-BINDING-COOP ::= CLASS {
+  &applContext  APPLICATION-CONTEXT,
+  &Operations   OPERATION OPTIONAL
+}WITH SYNTAX {&applContext
+              [APPLIES TO &Operations]
+}
+
+OP-BIND-ROLE ::= CLASS {
+  &establish       BOOLEAN DEFAULT FALSE,
+  &EstablishParam  OPTIONAL,
+  &modify          BOOLEAN DEFAULT FALSE,
+  &ModifyParam     OPTIONAL,
+  &terminate       BOOLEAN DEFAULT FALSE,
+  &TerminateParam  OPTIONAL
+}
+WITH SYNTAX {
+  [ESTABLISHMENT-INITIATOR &establish]
+  [ESTABLISHMENT-PARAMETER &EstablishParam]
+  [MODIFICATION-INITIATOR &modify]
+  [MODIFICATION-PARAMETER &ModifyParam]
+  [TERMINATION-INITIATOR &terminate]
+  [TERMINATION-PARAMETER &TerminateParam]
+}
+
+OpBindingSet OPERATIONAL-BINDING ::=
+  {shadowOperationalBinding | hierarchicalOperationalBinding |
+   nonSpecificHierarchicalOperationalBinding}
+
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+
+<!-- content of stack:
+
+-->

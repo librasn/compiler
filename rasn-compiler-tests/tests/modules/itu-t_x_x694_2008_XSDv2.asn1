@@ -1,0 +1,231 @@
+XSDv2.asn: ITU-T X.694 (11/2008) -- ASN module extracted from ITU-T X.694 (11/2008)XSD {joint-iso-itu-t asn1(1) specification(0) modules(0) xsd-module(2) version2(2)}
+DEFINITIONS
+AUTOMATIC TAGS ::=
+BEGIN
+/* xsd:anySimpleType */
+AnySimpleType ::= XMLCompatibleString
+/* xsd:anyType */
+AnyType ::= SEQUENCE {
+embed-values SEQUENCE OF String,
+attr SEQUENCE
+  (CONSTRAINED BY {
+    /* Each item shall conform to the "AnyAttributeFormat" specified
+	in ITU-T Rec. X.693 | ISO/IEC 8825-4, clause 18 */ } ) OF String,
+elem-list SEQUENCE OF elem String
+  (CONSTRAINED BY {
+     /* Shall conform to the "AnyElementFormat" specified
+        in ITU-T Rec. X.693 | ISO/IEC 8825-4, clause 19 */ } ) }
+                 (CONSTRAINED BY {
+               /* Shall conform to ITU-T Rec. X.693 | ISO/IEC 8825-4, clause 25 */ } )
+AnyType-nillable ::= SEQUENCE {
+embed-values SEQUENCE OF String,
+attr SEQUENCE
+  (CONSTRAINED BY {
+    /* Each item shall conform to the "AnyAttributeFormat" specified
+	in ITU-T Rec. X.693 | ISO/IEC 8825-4, clause 18 */ } ) OF String,
+content SEQUENCE {
+	elem-list SEQUENCE OF elem String
+	  (CONSTRAINED BY {
+	     	/* Shall conform to the "AnyElementFormat" specified
+     		   in ITU-T Rec. X.693 | ISO/IEC 8825-4, clause 19 */ } ) 
+} OPTIONAL }
+                 (CONSTRAINED BY {
+               /* Shall conform to ITU-T Rec. X.693 | ISO/IEC 8825-4, clause 25 */ } )
+/* xsd:anyUri */
+AnyURI ::= XMLStringWithNoCRLFHT
+(CONSTRAINED BY {
+    /* The XMLStringWithNoCRLFHT shall be a valid URI as defined in IETF RFC
+	 2396.  Note that 2396 allows any valid IRI format without escaping
+ 	 non-ASCII characters.  Use of the IANA oid: URI/IRI scheme should be
+ 	 considered. */ } )
+/* xsd:date */
+Date ::= GenericTimeTypeChoice {
+			TIME (SETTINGS "Basic=Date Date=YMD"),
+			VisibleString
+	                  (FROM ("0".."9" | "DHMPSTY:.+-"))
+   			 (CONSTRAINED BY {/* W3C XML Schema 1.0 Part 2, 3.2.9
+                                   and used if a time-zone is present */})}
+
+/* xsd:dateTime */
+DateTime ::= TIME ((SETTINGS "Basic=Date-Time Date=YMD Midnight=Start"))
+(CONSTRAINED BY {/*The time-zone shall be in the range -14 to +14*/})
+(CONSTRAINED BY {/*The seconds and fractions of a second shall be less
+                   than 60 (no leap seconds supported, in accordance with
+                   W3C XML Schema 1.0 Part 2, 3.2.7)*/}) 
+(CONSTRAINED BY {/*The type is constrained to "Time=HMSFn" for any n*/})/* xsd:decimal */
+Decimal ::= REAL	(WITH COMPONENTS {..., base(10)})
+		(ALL EXCEPT(-0 | MINUS-INFINITY | PLUS-INFINITY | NOT-A-NUMBER))
+/* xsd:double */
+Double ::=	REAL (WITH COMPONENTS {
+			mantissa(-9007199254740991..9007199254740991),
+			base(2),
+			exponent(-1075..970)})
+/* xsd:duration */
+Duration ::= GenericTimeTypeChoice {
+			DURATION
+                  ((WITH COMPONENTS {...,
+                                     seconds ABSENT,
+                                     fractional-part ABSENT})|
+                   (WITH COMPONENTS {...,
+                                     seconds PRESENT})),
+			VisibleString
+	                  (FROM ("0".."9" | "DHMPSTY:.+-"))
+   			 (CONSTRAINED BY {/* W3C XML Schema 1.0 Part 2, 3.2.6
+                                   and used for negative durations */})} 
+
+/* xsd:ENTITIES */
+ENTITIES ::= SEQUENCE (SIZE(1..MAX)) OF ENTITY
+/* xsd:ENIITY */
+ENTITY ::= NCName
+/* xsd:float */
+Float ::=	REAL (WITH COMPONENTS {
+			mantissa(-16777215..16777215),
+			base(2),
+			exponent(-149..104)})
+/* xsd:gDay */
+GDay ::= DateTimeType (Day)
+/* This is an integer followed optionally by a time-zone.
+   It is not supported in either ISO 8601 or in ASN.1, so the Version 1
+   mapping has been retained (similarly for other "G" types). */
+/* xsd:gMonth */
+GMonth ::= DateTimeType (Month)
+/* xsd:gMonthDay */
+GMonthDay ::= DateTimeType (MonthDay)
+/* xsd:gYear */
+GYear ::= GenericTimeTypeChoice {
+			TIME (SETTINGS "Basic=Date Date=Y"),
+			VisibleString
+	                  (FROM ("0".."9" | "Z:+-"))
+   			 (CONSTRAINED BY {/* W3C XML Schema 1.0 Part 2, 3.2.11
+                                   and used if a time-zone is present */})}
+
+/* xsd:gYearMonth */
+GYearMonth ::= GenericTimeTypeChoice {
+			TIME (SETTINGS "Basic=Date Date=YM"),
+			VisibleString
+	                  (FROM ("0".."9" | "Z:+-"))
+   			 (CONSTRAINED BY {/* W3C XML Schema 1.0 Part 2, 3.2.14
+                                   and used if a time-zone is present */})}
+/* xsd:ID */
+ID ::= NCName
+/* xsd:IDREF */
+IDREF ::= NCName
+/* xsd:IDREFS */
+IDREFS ::= SEQUENCE (SIZE(1..MAX)) OF IDREF
+/* xsd:int */
+Int ::= INTEGER (-2147483648..2147483647) 
+/* xsd:language */
+Language ::= VisibleString (FROM ("a".."z" | "A".."Z" | "-" | "0".."9"))
+(PATTERN
+ "[a-zA-Z]#(1,8)(-[a-zA-Z0-9]#(1,8))*")
+ 	 /* The semantics of Language is specified in IETF RFC 3066 */
+/* xsd:long */
+Long ::= INTEGER (-9223372036854775808..9223372036854775807)
+/* xsd:name */
+Name ::= Token (XMLStringWithNoWhitespace)
+(CONSTRAINED BY {
+          	    /* The Token shall be a Name as defined in W3C XML 1.0, 2.3 */ } )
+/* xsd:NCName */
+NCName ::= Name
+	(CONSTRAINED BY {
+                 /* The Name shall be an NCName as defined in W3C XML Namespaces, 2 */ } )
+/* xsd:NMTOKEN */
+NMTOKEN ::= Token (XMLStringWithNoWhitespace)
+	(CONSTRAINED BY { 
+                   /* The Token shall be an NMTOKEN as defined in W3C XML 1.0, 2.3 */ } )
+/* xsd:NMTOKENS */
+NMTOKENS ::= SEQUENCE (SIZE(1..MAX)) OF NMTOKEN
+/* xsd:normalizedString */
+NormalizedString ::= String (XMLStringWithNoCRLFHT)
+(CONSTRAINED BY {
+    /* The String shall be a normalizedString as defined in W3C XML Schema
+       Part 2, 3.3.1 */})
+/* xsd:NOTATION */
+NOTATION ::= QName
+/* xsd:QName */
+QName ::= SEQUENCE {
+uri 	AnyURI OPTIONAL,
+name 	NCName }
+/* xsd:short */
+Short ::= INTEGER (-32768..32767)
+/* xsd:string */
+String ::=	XMLCompatibleString
+/* xsd:time */
+Time ::= TIME ((SETTINGS "Basic=Time")
+                         EXCEPT (SETTINGS "Midnight=End"))
+(CONSTRAINED BY {/*The time-zone shall be in the range -14 to +14*/})
+(CONSTRAINED BY {/*The seconds and fractions of a second shall be less
+                   than 60 (no leap seconds supported, in accordance with
+                   W3C XML Schema 1.0 Part 2, D.2)*/}) 
+(CONSTRAINED BY {/*Constrained to "Time=HMSFn" for any n*/})
+/* xsd:token */
+Token ::= NormalizedString (CONSTRAINED BY {
+/* The NormalizedString shall be a token as defined in W3C XML Schema Part 2,
+   3.3.2 */})
+/* xsd:unsignedInt */
+UnsignedInt ::=	INTEGER (0..4294967295)
+/* xsd:unsignedLong */
+UnsignedLong ::=	 INTEGER (0..18446744073709551615)
+/* xsd:unsignedShort */
+UnsignedShort ::= INTEGER (0..65535)
+
+/* ASN.1 type definitions supporting the mapping of W3C XML Schema built-in types */
+XMLCompatibleString ::= UTF8String (FROM( 
+{0, 0, 0, 9} |
+{0, 0, 0, 10} |
+{0, 0, 0, 13} |
+{0, 0, 0, 32} .. {0, 0, 215, 255} | 
+{0, 0, 224, 0} .. {0, 0, 255, 253} | 
+{0, 1, 0, 0} .. {0, 16, 255, 253}))
+XMLStringWithNoWhitespace ::= UTF8String (FROM( 
+{0, 0, 0, 33} .. {0, 0, 215, 255} | 
+{0, 0, 224, 0} .. {0, 0, 255, 253} | 
+{0, 1, 0, 0} .. {0, 16, 255, 253}))
+XMLStringWithNoCRLFHT ::= UTF8String (FROM( 
+{0, 0, 0, 32} .. {0, 0, 215, 255} | 
+{0, 0, 224, 0} .. {0, 0, 255, 253} | 
+{0, 1, 0, 0} .. {0, 16, 255, 253}))
+/* ASN.1 type definitions supporting the mapping of W3C XML Schema built-in date and time types */
+GenericTimeTypeChoice {BasicType, Alternative} ::= CHOICE {
+           asn1supportedvalue	BasicType,
+		othervalues			Alternative}
+		(CONSTRAINED BY
+             {/* The "othervalues" alternative shall not be used for abstract
+                 values in the "asn1supportedvalue" alternative */}) 
+
+DateTimeType ::= VisibleString	(FROM ("0".."9" | "TZ:.+-"))
+		(CONSTRAINED BY {/* W3C XML Schema Part 2, 3.2.7 */})
+Day ::= DateTimeType 	(FROM ("0".."9" | "Z:+-"))
+			(CONSTRAINED BY {/* W3C XML Schema Part 2, 3.2.13 */})
+Month ::= DateTimeType 	(FROM ("0".."9" | "Z:+-"))
+			(CONSTRAINED BY {/* W3C XML Schema Part 2, 3.2.14 */})
+MonthDay ::= DateTimeType(FROM ("0".."9" | "Z:+-"))
+			(CONSTRAINED BY {/* W3C XML Schema Part 2, 3.2.12 */})
+ENCODING-CONTROL XER
+	GLOBAL-DEFAULTS MODIFIED-ENCODINGS
+	GLOBAL-DEFAULTS CONTROL-NAMESPACE
+		"http://www.w3.org/2001/XMLSchema-instance"
+		PREFIX "xsi"
+	NAMESPACE ALL, ALL IN ALL AS 
+		"http://www.w3.org/2001/XMLSchema" 
+		PREFIX "xsd"
+	USE-QNAME QName
+	DECIMAL Decimal
+	LIST ENTITIES, IDREFS, NMTOKENS
+	EMBED-VALUES AnyType, AnyType-nillable
+	ANY-ATTRIBUTES AnyType.attr, AnyType-nillable.attr
+	ANY-ELEMENT AnyType.elem-list.*, AnyType-nillable.content.elem-list.*
+	UNTAGGED AnyType.elem-list, AnyType-nillable.content.elem-list
+		NAME AnySimpleType, AnyURI, Date, DateTime, Decimal, Double, Duration,
+		Float, GDay, GMonth, GMonthDay, GYear, GYearMonth,
+		Int, Language, Long,
+				NormalizedString, Short, 
+		String, Time, Token,
+		UnsignedInt, UnsignedLong, UnsignedShort
+		AS UNCAPITALIZED
+	NAME GenericTimeTypeChoice.ALL AS ""
+	USE-NIL AnyType-nillable
+	USE-UNION GenericTimeTypeChoice 
+	WHITESPACE AnyURI, Language, Token, DateTimeType COLLAPSE
+	WHITESPACE NormalizedString REPLACE
+END

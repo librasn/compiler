@@ -1,0 +1,97 @@
+Telebiometrics.asn (ITU-T X.1081 (10/2011))-- ASN module extracted from ITU-T X.1081 (10/2011)Telebiometrics
+{joint-iso-itu-t(2) telebiometrics(42) modules(0) main(0) version1(1)} "/Telebiometrics/Modules/Main_Module/Version1"
+DEFINITIONS::=
+BEGIN
+-- *1* OBJECT IDENTIFIER names for top-level biometric nodes
+id-telebio OBJECT IDENTIFIER ::= {joint-iso-itu-t(2) telebiometrics(42)}
+id-tmm OBJECT IDENTIFIER ::= {id-telebio tmm(1)}
+id-hum-phys OBJECT IDENTIFIER ::= {id-telebio human-physiology(2)}
+id-th OBJECT IDENTIFIER ::= {id-telebio telehealth(3)}
+
+-- *2* OID-IRI or RELATIVE-OID-IRI names for top-level telebiometric nodes
+-- Note that all RELATIVE-OID-IRI names are relative to the last OID-IRI
+-- value specified in this module
+iri-telebio OID-IRI ::= "/Telebiometrics"
+iri-tmm RELATIVE-OID-IRI ::= "TMM"
+iri-hum-phys RELATIVE-OID-IRI ::= "Human_Physiology"
+iri-th RELATIVE-OID-IRI ::= "Telehealth"
+
+-- *3* OBJECT IDENTIFIER allocations specific to ITU-T X.1081
+id-measures OBJECT IDENTIFIER ::= {id-tmm metric(1)}
+id-fields-of-study OBJECT IDENTIFIER ::= {id-tmm scientific(2)}
+id-modalities OBJECT IDENTIFIER ::= {id-tmm sensory(3)}
+-- *3.1* OIDs for measures
+id-quantities OBJECT IDENTIFIER ::= {id-measures quantities(1)}
+id-units OBJECT IDENTIFIER ::= {id-measures units(2)}
+id-symbols OBJECT IDENTIFIER ::= {id-measures symbols(3)}
+id-conditions OBJECT IDENTIFIER ::= {id-measures conditions(4)}
+id-methods OBJECT IDENTIFIER ::= {id-measures methods(5)}
+-- *3.1.1* OIDs for quantities
+id-quantities-physics OBJECT IDENTIFIER ::= {id-quantities physics(1)}
+id-quantities-chemistry OBJECT IDENTIFIER ::= {id-quantities chemistry(2)}
+id-quantities-biology OBJECT IDENTIFIER ::= {id-quantities biology(3)}
+id-quantities-culturology OBJECT IDENTIFIER ::= {id-quantities culturology(4)}
+id-quantities-psychology OBJECT IDENTIFIER ::= {id-quantities psychology(5)}
+-- *3.1.2* OIDs for methods
+id-methods-physics OBJECT IDENTIFIER ::= {id-methods physics(1)}
+id-methods-chemistry OBJECT IDENTIFIER ::= {id-methods chemistry(2)}
+id-methods-biology OBJECT IDENTIFIER ::= {id-methods biology(3)}
+id-methods-culturology OBJECT IDENTIFIER ::= {id-methods culturology(4)}
+id-methods-psychology OBJECT IDENTIFIER ::= {id-methods psychology(5)}
+-- *3.2* OIDs for fields of study
+id-physics OBJECT IDENTIFIER ::= {id-fields-of-study physics(1)}
+id-chemistry OBJECT IDENTIFIER ::= {id-fields-of-study chemistry(2)}
+id-biology OBJECT IDENTIFIER ::= {id-fields-of-study biology(3)}
+id-culturology OBJECT IDENTIFIER ::= {id-fields-of-study culturology(4)}
+id-psychology OBJECT IDENTIFIER ::= {id-fields-of-study psychology(5)}
+-- *3.3* OIDs for modalities
+id-tango OBJECT IDENTIFIER ::= {id-modalities tango(1)}
+id-video OBJECT IDENTIFIER ::= {id-modalities video(2)}
+id-audio OBJECT IDENTIFIER ::= {id-modalities audio(3)}
+id-chemo OBJECT IDENTIFIER ::= {id-modalities chemo(4)}
+id-radio OBJECT IDENTIFIER ::= {id-modalities radio(5)}
+id-calor OBJECT IDENTIFIER ::= {id-modalities calor(6)}
+id-electro OBJECT IDENTIFIER ::= {id-modalities electro(7)}
+
+-- *4* RELATIVE-OID-IRI allocations specific to ITU-T X.1081
+--    These are all relative to iri-tmm
+iri-measures RELATIVE-OID-IRI ::= "Measures"
+iri-fields-of-study RELATIVE-OID-IRI ::= "Fields_of_study"
+iri-modalities RELATIVE-OID-IRI ::= "Modalities"
+-- *4.1* OID-IRIs for Fields of Study
+iri-quantities RELATIVE-OID-IRI ::= "Measures/Quantities"
+iri-units RELATIVE-OID-IRI ::= "Measures/Units"
+iri-symbols RELATIVE-OID-IRI ::= "Measures/Symbols"
+iri-conditions RELATIVE-OID-IRI ::= "Measures/Conditions"
+iri-methods RELATIVE-OID-IRI ::= "Measures/Methods"
+
+-- *4.1.1* OID-IRIs for Quantities
+iri-quantities-physics RELATIVE-OID-IRI ::= "Measures/Quantities/Physics"
+iri-quantities-chemistry RELATIVE-OID-IRI ::= "Measures/Quantities/Chemistry"
+iri-quantities-biology RELATIVE-OID-IRI ::= "Measures/Quantities/Biology"
+iri-quantities-culturology RELATIVE-OID-IRI ::= "Measures/Quantities/Culturology"
+iri-quantities-psychology RELATIVE-OID-IRI ::= "Measures/Quantities/Psychology"
+-- *4.1.2* OID-IRIs for Methods
+iri-methods-physics RELATIVE-OID-IRI ::= "Measures/Methods/Physics"
+iri-methods-chemistry RELATIVE-OID-IRI ::= "Measures/Methods/Chemistry"
+iri-methods-biology RELATIVE-OID-IRI ::= "Measures/Methods/Biology"
+iri-methods-culturology RELATIVE-OID-IRI ::= "Measures/Methods/Culturology"
+iri-methods-psychology RELATIVE-OID-IRI ::= "Measures/Methods/Psychology"
+
+-- *4.2* OID-IRIs for Fields of Study
+iri-physics RELATIVE-OID-IRI ::= "Fields_of_Study/Physics"
+iri-chemistry RELATIVE-OID-IRI ::= "Fields_of_Study/Chemistry"
+iri-biology RELATIVE-OID-IRI ::= "Fields_of_Study/Biology"
+iri-culturology RELATIVE-OID-IRI ::= "Fields_of_Study/Culturology"
+iri-psychology RELATIVE-OID-IRI ::= "Fields_of_Study/Psychology"
+
+-- *4.3* OID-IRIs for ModalitiesFields of Study
+iri-tango RELATIVE-OID-IRI ::= "Modalities/Tango"
+iri-video RELATIVE-OID-IRI ::= "Modalities/Video"
+iri-audio RELATIVE-OID-IRI ::= "Modalities/Audio"
+iri-chemo RELATIVE-OID-IRI ::= "Modalities/Chemo"
+iri-radio RELATIVE-OID-IRI ::= "Modalities/Radio"
+iri-calor RELATIVE-OID-IRI ::= "Modalities/Calor"
+iri-electro RELATIVE-OID-IRI ::= "Modalities/Electro"
+
+END

@@ -1,0 +1,415 @@
+
+
+
+
+
+
+
+
+-- Module DefinitionDirectoryASN1Module (X.750:10/1996)
+-- See also ITU-T X.750 (1996) Technical Cor. 1 (02/2000)
+-- See also the index of all ASN.1 assignments needed in this document
+
+DefinitionDirectoryASN1Module {joint-iso-itu-t(2) ms(9) function(2) part16(16)
+  asn1Modules(2) 4} DEFINITIONS IMPLICIT TAGS ::=
+BEGIN
+
+-- EXPORTS everything;
+IMPORTS
+  ATTRIBUTE, OBJECT-CLASS, CONTENT-RULE, NAME-FORM, objectIdentifierMatch, top
+    FROM InformationFramework {joint-iso-itu-t(2) ds(5) modules(1)
+      informationFramework(1) 3}
+  -- ITU-T Rec. X.501 | ISO/IEC 9594-2
+  bitStringMatch, booleanMatch, caseExactMatch, commonName,
+    directoryStringFirstComponentMatch, integerMatch
+    FROM SelectedAttributeTypes {joint-iso-itu-t(2) ds(5) modules(1)
+      selectedAttributeTypes(5) 3}
+  -- ITU-T Rec. X.520 | ISO/IEC 9594-6
+  -- Because directoryStringFirstComponentMatch is a case-ignore matching rule, some matches
+  -- found by its use could fail an exact-case matching test.
+  Actions, AndAttributeIds, Attributes, AttributeGroups, ConditionalPackages,
+    Context, Create, Delete, DerivedOrWithSyntaxChoice, Identifier, MatchesFor,
+    NamingObjectClass, Notifications, OptionallyRegisteredAs, RegisteredAs,
+    SyntaxOrAttribute, TemplateLabel, TextualRepresentation, WithSyntax
+    FROM DefinitionASN1Module {joint-iso-itu-t(2) ms(9) function(2) part16(16)
+      asn1Modules(2) 1}
+  -- this Recommendation | International Standard
+  mkmDirectoryObjectClass, mkmDirectoryAttributeType, mkmDirectoryNameForm
+    FROM MKMD {joint-iso-itu-t(2) ms(9) function(2) part16(16) asn1Modules(2) 
+      5}; -- this Recommendation | International Standard
+
+-- Definition of the required Directory object classes
+asn1Module OBJECT-CLASS ::= {
+  KIND          auxiliary
+  MUST CONTAIN
+    {moduleReference | asn1ModuleContents | asn1Version |
+      optionallyRegisteredAs}
+  ID            {mkmDirectoryObjectClass  15}
+}
+
+managementAction OBJECT-CLASS ::= {
+  SUBCLASS OF   {managementTemplate}
+  KIND          auxiliary
+  MUST CONTAIN
+    {behaviour | modeConfirmed | parameters | withInformationSyntax |
+      withReplySyntax | registeredAs}
+  ID            {mkmDirectoryObjectClass  13}
+}
+
+managementAttributeGroup OBJECT-CLASS ::= {
+  SUBCLASS OF   {managementTemplate}
+  KIND          auxiliary
+  MUST CONTAIN  {groupElements | fixed | description | registeredAs}
+  ID            {mkmDirectoryObjectClass  11}
+}
+
+managementAttribute OBJECT-CLASS ::= {
+  SUBCLASS OF   {managementTemplate}
+  KIND          auxiliary
+  MUST CONTAIN
+    {derivedOrWithSyntaxChoice | matchesFor | behaviour | parameters |
+      optionallyRegisteredAs}
+  ID            {mkmDirectoryObjectClass  10}
+}
+
+managementBehaviour OBJECT-CLASS ::= {
+  SUBCLASS OF   {managementTemplate}
+  KIND          auxiliary
+  MUST CONTAIN  {definedAs}
+  ID            {mkmDirectoryObjectClass  12}
+}
+
+managementDocument OBJECT-CLASS ::= {
+  KIND          auxiliary
+  MUST CONTAIN  {documentName | documentObjectIdentifier}
+  MAY CONTAIN   {specification}
+  ID            {mkmDirectoryObjectClass  4}
+}
+
+managementNameBinding OBJECT-CLASS ::= {
+  SUBCLASS OF   {managementTemplate}
+  KIND          auxiliary
+  MUST CONTAIN
+    {subordinateObjectClass | namedBySuperiorObjectClass | withAttribute |
+      behaviour | create | delete | registeredAs}
+  ID            {mkmDirectoryObjectClass  9}
+}
+
+managementNotification OBJECT-CLASS ::= {
+  SUBCLASS OF   {managementTemplate}
+  KIND          auxiliary
+  MUST CONTAIN
+    {behaviour | modeConfirmed | parameters | withInformationSyntax |
+      andAttributeIds | withReplySyntax | registeredAs}
+  ID            {mkmDirectoryObjectClass  14}
+}
+
+managementObjectClass OBJECT-CLASS ::= {
+  SUBCLASS OF   {managementTemplate}
+  KIND          auxiliary
+  MUST CONTAIN
+    {derivedFrom | characterizedBy | conditionalPackages | registeredAs}
+  ID            {mkmDirectoryObjectClass  6}
+}
+
+managementPackage OBJECT-CLASS ::= {
+  SUBCLASS OF   {managementTemplate}
+  KIND          auxiliary
+  MUST CONTAIN
+    {behaviour | attributes | attributeGroups | actions | notifications |
+      optionallyRegisteredAs}
+  ID            {mkmDirectoryObjectClass  7}
+}
+
+managementParameter OBJECT-CLASS ::= {
+  SUBCLASS OF   {managementTemplate}
+  KIND          auxiliary
+  MUST CONTAIN
+    {context | syntaxOrAttribute | behaviour | optionallyRegisteredAs}
+  ID            {mkmDirectoryObjectClass  8}
+}
+
+managementTemplate OBJECT-CLASS ::= {
+  KIND          auxiliary
+  MUST CONTAIN  {templateName}
+  MAY CONTAIN   {templateDefinition}
+  ID            {mkmDirectoryObjectClass  5}
+}
+
+registeredInformation OBJECT-CLASS ::= {
+  SUBCLASS OF   {top}
+  MUST CONTAIN  {commonName}
+  MAY CONTAIN   {nameForm | informationStatus | additionalInformation}
+  ID            {mkmDirectoryObjectClass  3}
+}
+
+-- Example structure rules for the registeredInformation Directory object class
+-- using this name form are provided in Annex H
+registeredInformationNameForm NAME-FORM ::= {
+  NAMES            registeredInformation
+  WITH ATTRIBUTES  {commonName}
+  ID               {mkmDirectoryNameForm  1}
+}
+
+-- Definition of DIT content rules
+-- Only one of the specified auxiliary object classes can be
+-- included in a given entry of class registeredInformation
+registeredManagementInformationCR CONTENT-RULE ::= {
+  STRUCTURAL OBJECT-CLASS   registeredInformation.&id
+  AUXILIARY OBJECT-CLASSES
+    {managementDocument | managementTemplate | managementObjectClass |
+      managementPackage | managementParameter | managementNameBinding |
+      managementAttribute | managementAttributeGroup | managementBehaviour |
+      managementAction | managementNotification | asn1Module}
+}
+
+-- Definition of used attributes
+actions ATTRIBUTE ::= {
+  WITH SYNTAX   Actions
+  SINGLE VALUE  TRUE
+  ID            {mkmDirectoryAttributeType  6}
+}
+
+additionalInformation ATTRIBUTE ::= {
+  WITH SYNTAX   AdditionalInformation
+  SINGLE VALUE  TRUE
+  ID            {mkmDirectoryAttributeType  7}
+}
+
+AdditionalInformation ::= SEQUENCE {
+  creationDate  GeneralizedTime OPTIONAL,
+  comment       GraphicString OPTIONAL
+}
+
+andAttributeIds ATTRIBUTE ::= {
+  WITH SYNTAX   AndAttributeIds
+  SINGLE VALUE  TRUE
+  ID            {mkmDirectoryAttributeType  8}
+}
+
+asn1ModuleContents ATTRIBUTE ::= {
+  WITH SYNTAX  TextualRepresentation
+  ID           {mkmDirectoryAttributeType  14}
+}
+
+asn1Version ATTRIBUTE ::= {
+  WITH SYNTAX             BIT STRING
+  EQUALITY MATCHING RULE  bitStringMatch
+  SINGLE VALUE            TRUE
+  ID                      {mkmDirectoryAttributeType  45}
+}
+
+attributeGroups ATTRIBUTE ::= {
+  WITH SYNTAX  AttributeGroups
+  ID           {mkmDirectoryAttributeType  9}
+}
+
+attributes ATTRIBUTE ::= {
+  WITH SYNTAX   Attributes
+  SINGLE VALUE  TRUE
+  ID            {mkmDirectoryAttributeType  10}
+}
+
+behaviour ATTRIBUTE ::= {
+  WITH SYNTAX             TemplateLabel
+  EQUALITY MATCHING RULE  directoryStringFirstComponentMatch
+  ID                      {mkmDirectoryAttributeType  11}
+}
+
+characterizedBy ATTRIBUTE ::= {
+  WITH SYNTAX             TemplateLabel
+  EQUALITY MATCHING RULE  directoryStringFirstComponentMatch
+  ID                      {mkmDirectoryAttributeType  12}
+}
+
+conditionalPackages ATTRIBUTE ::= {
+  WITH SYNTAX  ConditionalPackages
+  ID           {mkmDirectoryAttributeType  13}
+}
+
+context ATTRIBUTE ::= {
+  WITH SYNTAX   Context
+  SINGLE VALUE  TRUE
+  ID            {mkmDirectoryAttributeType  15}
+}
+
+create ATTRIBUTE ::= {
+  WITH SYNTAX   Create
+  SINGLE VALUE  TRUE
+  ID            {mkmDirectoryAttributeType  16}
+}
+
+definedAs ATTRIBUTE ::= {
+  WITH SYNTAX  TextualRepresentation
+  ID           {mkmDirectoryAttributeType  17}
+}
+
+delete ATTRIBUTE ::= {
+  WITH SYNTAX   Delete
+  SINGLE VALUE  TRUE
+  ID            {mkmDirectoryAttributeType  18}
+}
+
+derivedFrom ATTRIBUTE ::= {
+  WITH SYNTAX             TemplateLabel
+  EQUALITY MATCHING RULE  directoryStringFirstComponentMatch
+  ID                      {mkmDirectoryAttributeType  19}
+}
+
+derivedOrWithSyntaxChoice ATTRIBUTE ::= {
+  WITH SYNTAX   DerivedOrWithSyntaxChoice
+  SINGLE VALUE  TRUE
+  ID            {mkmDirectoryAttributeType  20}
+}
+
+description ATTRIBUTE ::= {
+  WITH SYNTAX  TextualRepresentation
+  ID           {mkmDirectoryAttributeType  21}
+}
+
+documentName ATTRIBUTE ::= {
+  WITH SYNTAX             GraphicString
+  EQUALITY MATCHING RULE  directoryStringFirstComponentMatch
+  SINGLE VALUE            TRUE
+  ID                      {mkmDirectoryAttributeType  22}
+}
+
+documentObjectIdentifier ATTRIBUTE ::= {
+  WITH SYNTAX             OBJECT IDENTIFIER
+  EQUALITY MATCHING RULE  objectIdentifierMatch
+  SINGLE VALUE            TRUE
+  ID                      {mkmDirectoryAttributeType  23}
+}
+
+fixed ATTRIBUTE ::= {
+  WITH SYNTAX             BOOLEAN
+  EQUALITY MATCHING RULE  booleanMatch
+  SINGLE VALUE            TRUE
+  ID                      {mkmDirectoryAttributeType  24}
+}
+
+groupElements ATTRIBUTE ::= {
+  WITH SYNTAX             TemplateLabel
+  EQUALITY MATCHING RULE  directoryStringFirstComponentMatch
+  ID                      {mkmDirectoryAttributeType  25}
+}
+
+informationStatus ATTRIBUTE ::= {
+  WITH SYNTAX             InformationStatus
+  EQUALITY MATCHING RULE  integerMatch
+  SINGLE VALUE            TRUE
+  ID                      {mkmDirectoryAttributeType  34}
+}
+
+InformationStatus ::= ENUMERATED {active(0), deleted(1), preliminary(2)}
+
+matchesFor ATTRIBUTE ::= {
+  WITH SYNTAX             MatchesFor
+  EQUALITY MATCHING RULE  bitStringMatch
+  SINGLE VALUE            TRUE
+  ID                      {mkmDirectoryAttributeType  26}
+}
+
+modeConfirmed ATTRIBUTE ::= {
+  WITH SYNTAX             BOOLEAN
+  EQUALITY MATCHING RULE  booleanMatch
+  SINGLE VALUE            TRUE
+  ID                      {mkmDirectoryAttributeType  27}
+}
+
+moduleReference ATTRIBUTE ::= {
+  WITH SYNTAX   Identifier
+  SINGLE VALUE  TRUE
+  ID            {mkmDirectoryAttributeType  28}
+}
+
+namedBySuperiorObjectClass ATTRIBUTE ::= {
+  WITH SYNTAX   NamingObjectClass
+  SINGLE VALUE  TRUE
+  ID            {mkmDirectoryAttributeType  29}
+}
+
+nameForm ATTRIBUTE ::= {
+  WITH SYNTAX             PrintableString
+  EQUALITY MATCHING RULE  caseExactMatch
+  SINGLE VALUE            TRUE
+  ID                      {mkmDirectoryAttributeType  30}
+}
+
+notifications ATTRIBUTE ::= {
+  WITH SYNTAX   Notifications
+  SINGLE VALUE  TRUE
+  ID            {mkmDirectoryAttributeType  31}
+}
+
+optionallyRegisteredAs ATTRIBUTE ::= {
+  WITH SYNTAX   OptionallyRegisteredAs
+  SINGLE VALUE  TRUE
+  ID            {mkmDirectoryAttributeType  46}
+}
+
+parameters ATTRIBUTE ::= {
+  WITH SYNTAX             TemplateLabel
+  EQUALITY MATCHING RULE  directoryStringFirstComponentMatch
+  ID                      {mkmDirectoryAttributeType  32}
+}
+
+registeredAs ATTRIBUTE ::= {
+  WITH SYNTAX             RegisteredAs
+  EQUALITY MATCHING RULE  objectIdentifierMatch
+  SINGLE VALUE            TRUE
+  ID                      {mkmDirectoryAttributeType  33}
+}
+
+specification ATTRIBUTE ::= {
+  WITH SYNTAX  TextualRepresentation
+  ID           {mkmDirectoryAttributeType  35}
+}
+
+subordinateObjectClass ATTRIBUTE ::= {
+  WITH SYNTAX   NamingObjectClass
+  SINGLE VALUE  TRUE
+  ID            {mkmDirectoryAttributeType  36}
+}
+
+syntaxOrAttribute ATTRIBUTE ::= {
+  WITH SYNTAX   SyntaxOrAttribute
+  SINGLE VALUE  TRUE
+  ID            {mkmDirectoryAttributeType  37}
+}
+
+templateDefinition ATTRIBUTE ::= {
+  WITH SYNTAX  TextualRepresentation
+  ID           {mkmDirectoryAttributeType  38}
+}
+
+templateName ATTRIBUTE ::= {
+  WITH SYNTAX             TemplateLabel
+  EQUALITY MATCHING RULE  directoryStringFirstComponentMatch
+  SINGLE VALUE            TRUE
+  ID                      {mkmDirectoryAttributeType  39}
+}
+
+withAttribute ATTRIBUTE ::= {
+  WITH SYNTAX             TemplateLabel
+  EQUALITY MATCHING RULE  directoryStringFirstComponentMatch
+  SINGLE VALUE            TRUE
+  ID                      {mkmDirectoryAttributeType  40}
+}
+
+withInformationSyntax ATTRIBUTE ::= {
+  WITH SYNTAX   WithSyntax
+  SINGLE VALUE  TRUE
+  ID            {mkmDirectoryAttributeType  41}
+}
+
+withReplySyntax ATTRIBUTE ::= {
+  WITH SYNTAX   WithSyntax
+  SINGLE VALUE  TRUE
+  ID            {mkmDirectoryAttributeType  42}
+}
+
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

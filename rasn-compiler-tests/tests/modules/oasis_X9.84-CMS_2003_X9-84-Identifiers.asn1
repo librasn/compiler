@@ -1,0 +1,494 @@
+
+
+X9-84-Identifiers.asn: OASIS X9.84-CMS (2003)
+
+
+-- ASN module extracted from OASIS X9.84-CMS (2003)--
+-- OASIS XML Common Biometric Format (XCBF) Technical Committee
+--
+-- From http://oasis-open.org/committees/xcbf/docs/XCBFSchema20030107.zip
+--
+-- OASIS takes no position regarding the validity or scope of any 
+-- intellectual property or other rights that might be claimed to
+-- pertain to the implementation or use of the technology described in
+-- this document or the extent to which any license under such rights
+-- might or might not be available; neither does it represent that it
+-- has made any effort to identify any such rights. Information on 
+-- OASIS's procedures with respect to rights in OASIS specifications
+-- can be found at the OASIS website. Copies of claims of rights made
+-- available for publication and any assurances of licenses to be made
+-- available, or the result of an attempt made to obtain a general 
+-- license or permission for the use of such proprietary rights by 
+-- implementors or users of this specification, can be obtained from
+-- the OASIS Executive Director. 
+-- 
+-- OASIS invites any interested party to bring to its attention any 
+-- copyrights, patents or patent applications, or other proprietary
+-- rights which may cover technology that may be required to implement
+-- this specification. Please address the information to the OASIS 
+-- Executive Director.
+--
+-- Copyright © OASIS Open 2002, 2003. All Rights Reserved.
+--
+-- This document and translations of it may be copied and furnished to
+-- others, and derivative works that comment on or otherwise explain
+-- it or assist in its implementation may be prepared, copied, 
+-- published and distributed, in whole or in part, without restriction
+-- of any kind, provided that the above copyright notice and this 
+-- paragraph are included on all such copies and derivative works.
+-- However, this document itself does not be modified in any way, such
+-- as by removing the copyright notice or references to OASIS, except
+-- as needed for the purpose of developing OASIS specifications, in 
+-- which case the procedures for copyrights defined in the OASIS 
+-- Intellectual Property Rights document must be followed, or as
+-- required to translate it into languages other than English.
+--
+-- The limited permissions granted above are perpetual and will not be
+-- revoked by OASIS or its successors or assigns.
+-- 
+-- This document and the information contained herein is provided on
+-- an "AS IS" basis and OASIS DISCLAIMS ALL WARRANTIES, EXPRESS OR
+-- IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTY THAT THE USE OF
+-- THE INFORMATION HEREIN WILL NOT INFRINGE ANY RIGHTS OR ANY IMPLIED
+-- WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
+--
+
+X9-84-Identifiers {iso(1) identified-organization(3) tc68(133) country(16) x9(840) x9Standards(9) x9-84(84) module(0) ids(3) rev(1)} 
+   DEFINITIONS AUTOMATIC TAGS ::= BEGIN
+
+-- EXPORTS All;
+
+IMPORTS
+
+   -- X9.84 Biometrics Information Management and Security --
+
+   BIOMETRIC, BiometricInformationSets
+      FROM X9-84-Biometrics {
+         iso(1) identified-organization(3) tc68(133) country(16)
+            x9(840) x9Standards(9) x9-84(84) module(0)
+               biometrics(1) rev(1) }
+
+   -- X9.84 Biometrics Information Management and Security CMS --
+
+   ALGORITHM
+      FROM X9-84-CMS {
+         iso(1) identified-organization(3) tc68(133) country(16)
+            x9(840) x9Standards(9) x9-84(84) module(0)
+               cms(2) rev(1) };
+
+
+OID ::= OBJECT IDENTIFIER  -- Alias
+
+RelOID ::= RELATIVE-OID  -- Alias
+
+-- x9-84                          { 1 3 133 16 840 9 84         }
+-- x9-84-Module                   { 1 3 133 16 840 9 84 0       }
+-- x9-84-Biometrics               { 1 3 133 16 840 9 84 0  1    }
+-- x9-84-CMS                      { 1 3 133 16 840 9 84 0  2    }
+-- x9-84-Identifiers              { 1 3 133 16 840 9 84 0  3    }
+-- biometric                      { 1 3 133 16 840 9 84 1       }
+-- id-unknown-Type                { 1 3 133 16 840 9 84 1  0    }
+-- id-body-Odor                   { 1 3 133 16 840 9 84 1  1    }
+-- id-dna                         { 1 3 133 16 840 9 84 1  2    }
+-- id-ear-Shape                   { 1 3 133 16 840 9 84 1  3    }
+-- id-facial-Features             { 1 3 133 16 840 9 84 1  4    }
+-- id-finger-Image                { 1 3 133 16 840 9 84 1  5    }
+-- id-finger-Geometry             { 1 3 133 16 840 9 84 1  6    }
+-- id-hand-Geometry               { 1 3 133 16 840 9 84 1  7    }
+-- id-iris-Features               { 1 3 133 16 840 9 84 1  8    }
+-- id-keystroke-Dynamics          { 1 3 133 16 840 9 84 1  9    }
+-- id-palm                        { 1 3 133 16 840 9 84 1 10    }
+-- id-retina                      { 1 3 133 16 840 9 84 1 11    }
+-- id-signature                   { 1 3 133 16 840 9 84 1 12    }
+-- id-speech-Pattern              { 1 3 133 16 840 9 84 1 13    }
+-- id-thermal-Image               { 1 3 133 16 840 9 84 1 14    }
+-- id-vein-Pattern                { 1 3 133 16 840 9 84 1 15    }
+-- id-thermal-Face-Image          { 1 3 133 16 840 9 84 1 16    }
+-- id-thermal-Hand-Image          { 1 3 133 16 840 9 84 1 17    }
+-- id-lip-Movement                { 1 3 133 16 840 9 84 1 18    }
+-- id-gait                        { 1 3 133 16 840 9 84 1 19    } 
+-- processing-algorithm           { 1 3 133 16 840 9 84 2       }
+-- matching-method                { 1 3 133 16 840 9 84 3       }
+-- format-Owner                   { 1 3 133 16 840 9 84 4       }
+-- cbeff-Owner                    { 1 3 133 16 840 9 84 4  0    }
+-- ibia-Owner                     { 1 3 133 16 840 9 84 4  1    }
+-- id-ibia-SAFLINK                { 1 3 133 16 840 9 84 4  1  1 }
+-- id-ibia-Bioscrypt              { 1 3 133 16 840 9 84 4  1  2 }
+-- id-ibia-Visionics              { 1 3 133 16 840 9 84 4  1  3 }
+-- id-ibia-InfineonTechnologiesAG { 1 3 133 16 840 9 84 4  1  4 }
+-- id-ibia-IridianTechnologies    { 1 3 133 16 840 9 84 4  1  5 }
+-- id-ibia-Veridicom              { 1 3 133 16 840 9 84 4  1  6 }
+-- id-ibia-CyberSIGN              { 1 3 133 16 840 9 84 4  1  7 }
+-- id-ibia-eCryp                  { 1 3 133 16 840 9 84 4  1  8 }
+-- id-ibia-FingerprintCardsAB     { 1 3 133 16 840 9 84 4  1  9 }
+-- id-ibia-SecuGen                { 1 3 133 16 840 9 84 4  1 10 }
+-- id-ibia-PreciseBiometric       { 1 3 133 16 840 9 84 4  1 11 }
+-- id-ibia-Identix                { 1 3 133 16 840 9 84 4  1 12 }
+-- id-ibia-DERMALOG               { 1 3 133 16 840 9 84 4  1 13 }
+-- id-ibia-LOGICO                 { 1 3 133 16 840 9 84 4  1 14 }
+-- id-ibia-NIST                   { 1 3 133 16 840 9 84 4  1 15 }
+-- id-ibia-A3Vision               { 1 3 133 16 840 9 84 4  1 16 }
+-- id-ibia-NEC                    { 1 3 133 16 840 9 84 4  1 17 }
+-- id-ibia-STMicroelectronics     { 1 3 133 16 840 9 84 4  1 18 }
+-- x9-Owner                       { 1 3 133 16 840 9 84 4  2    }
+-- certificate-Extensions         { 1 3 133 16 840 9 84 5       }
+-- x968-biometricTemplates        { 1 3 133 16 840 9 84 5  0    }
+-- x509-biometricTemplates        { 1 3 133 16 840 9 84 5  1    }
+
+
+-- X9.84 arc; base object identifier --
+
+x9-84 OID ::= {
+   iso(1) identified-organization(3) tc68(133) country(16)
+      x9(840) x9Standards(9) x9-84(84)
+}
+
+-- X9.84 ASN.1 modules --
+
+x9-84-Module OID ::= { x9-84 modules(0) } 
+
+x9-84-Biometrics  OID ::= { x9-84-Module biometrics(1) rev(1) }
+
+x9-84-CMS         OID ::= { x9-84-Module cms(2) rev(1) }
+
+x9-84-Identifiers OID ::= { x9-84-Module ids(3) rev(1) }
+
+-- X9.84 biometric technologies --
+
+biometric OID ::= { x9-84 biometrics(1) }
+
+id-unknown-Type       OID ::= { biometric unknownType(0) }
+id-body-Odor          OID ::= { biometric bodyOdor(1) } 
+id-dna                OID ::= { biometric dna(2) }
+id-ear-Shape          OID ::= { biometric ear-Shape(3) }
+id-facial-Features    OID ::= { biometric facialFeatures(4) }
+id-finger-Image       OID ::= { biometric fingerImage(5) }
+id-finger-Geometry    OID ::= { biometric fingerGeometry(6) }
+id-hand-Geometry      OID ::= { biometric handGeometry(7) }
+id-iris-Features      OID ::= { biometric irisFeatures(8) }
+id-keystroke-Dynamics OID ::= { biometric keystrokeDynamics(9) }
+id-palm               OID ::= { biometric palm(10) }
+id-retina             OID ::= { biometric retina(11) }
+id-signature          OID ::= { biometric signature(12) }
+id-speech-Pattern     OID ::= { biometric speech-Pattern(13) }
+id-thermal-Image      OID ::= { biometric thermalImage(14) }
+id-vein-Pattern       OID ::= { biometric veinPattern(15) }
+id-thermal-Face-Image OID ::= { biometric thermalFaceImage(16) }
+id-thermal-Hand-Image OID ::= { biometric thermalHandImage(17) }
+id-lip-Movement       OID ::= { biometric lipMovement(18) }
+id-gait               OID ::= { biometric gait(19) }
+
+-- X9.84 biometric technology object identifier fragments -- 
+
+unknown-Type        RelOID ::= { unknownType(0) }
+body-Odor           RelOID ::= { bodyOdor(1) }
+dna                 RelOID ::= { dna(2) }
+ear-Shape           RelOID ::= { earShape(3) }
+facial-Features     RelOID ::= { facialFeatures(4) }
+finger-Image        RelOID ::= { fingerImage(5) }
+finger-Geometry     RelOID ::= { fingerGeometry(6) }
+hand-Geometry       RelOID ::= { handGeometry(7) }
+iris-Features       RelOID ::= { irisFeatures(8) }
+keystroke-Dynamics  RelOID ::= { keystrokeDynamics(9) }
+palm                RelOID ::= { palm(10) }
+retina              RelOID ::= { retina(11) }
+signature           RelOID ::= { signature(12) }
+speech-Pattern      RelOID ::= { speechPattern(13) }
+thermal-Image       RelOID ::= { thermalImage(14) }
+vein-Pattern        RelOID ::= { veinPattern(15) }
+thermal-Face-Image  RelOID ::= { thermalFaceImage(16) }
+thermal-Hand-Image  RelOID ::= { thermalHandImage(17) }
+lip-Movement        RelOID ::= { lipMovement(18) }
+gait                RelOID ::= { gait(19) }
+
+BiometricTypes BIOMETRIC ::= { 
+   { BIOMETRIC id : unknown-Type       } |
+   { BIOMETRIC id : body-Odor          } |
+   { BIOMETRIC id : dna                } |
+   { BIOMETRIC id : ear-Shape          } |
+   { BIOMETRIC id : facial-Features    } |
+   { BIOMETRIC id : finger-Image       } |
+   { BIOMETRIC id : finger-Geometry    } |
+   { BIOMETRIC id : hand-Geometry      } |
+   { BIOMETRIC id : iris-Features      } |
+   { BIOMETRIC id : keystroke-Dynamics } |
+   { BIOMETRIC id : palm               } |
+   { BIOMETRIC id : retina             } |
+   { BIOMETRIC id : signature          } |
+   { BIOMETRIC id : speech-Pattern     } |
+   { BIOMETRIC id : thermal-Image      } |
+   { BIOMETRIC id : vein-Pattern       } |
+   { BIOMETRIC id : thermal-Face-Image } |
+   { BIOMETRIC id : thermal-Hand-Image } |
+   { BIOMETRIC id : lip-Movement       } |
+   { BIOMETRIC id : gait               },
+
+   ...  -- expect additional biometric types --
+}
+
+
+-- X9.84 biometric processing algorithms --
+
+processing-algorithm OID ::= { x9-84 processingAlgorithms(2) }
+
+-- X9.84 biometric matching methods --
+
+matching-method OID ::= { x9-84 matchingMethods(3) }
+
+-- X9.84 vendor specific formats --
+
+format-Owner OID ::= { x9-84 format-owners(4) }
+
+cbeff-Owner OID ::= { format-Owner cbeff(0) }
+
+ibia-Owner  OID ::= { format-Owner ibia(1) }
+
+x9-Owner    OID ::= { format-Owner x9(2) }
+
+-- IBIA vendor specific formats registered at http://www.ibia.org 
+
+id-ibia-SAFLINK                OID ::= { ibia-Owner  1 }
+id-ibia-Bioscrypt              OID ::= { ibia-Owner  2 }
+id-ibia-Visionics              OID ::= { ibia-Owner  3 }
+id-ibia-InfineonTechnologiesAG OID ::= { ibia-Owner  4 }
+id-ibia-IridianTechnologies    OID ::= { ibia-Owner  5 }
+id-ibia-Veridicom              OID ::= { ibia-Owner  6 }
+id-ibia-CyberSIGN              OID ::= { ibia-Owner  7 }
+id-ibia-eCryp                  OID ::= { ibia-Owner  8 }
+id-ibia-FingerprintCardsAB     OID ::= { ibia-Owner  9 }
+id-ibia-SecuGen                OID ::= { ibia-Owner 10 }
+id-ibia-PreciseBiometric       OID ::= { ibia-Owner 11 }
+id-ibia-Identix                OID ::= { ibia-Owner 12 }
+id-ibia-DERMALOG               OID ::= { ibia-Owner 13 }
+id-ibia-LOGICO                 OID ::= { ibia-Owner 14 }
+id-ibia-NIST                   OID ::= { ibia-Owner 15 }
+id-ibia-A3Vision               OID ::= { ibia-Owner 16 }
+id-ibia-NEC                    OID ::= { ibia-Owner 17 }
+id-ibia-STMicroelectronics     OID ::= { ibia-Owner 18 }
+
+
+-- When represented as values of type OBJECT IDENTIFIER, these
+-- IBIA vendor specific formats may be associated with any ASN.1
+-- type.   
+
+IBIAoidFormats BIOMETRIC ::= {
+   { BIOMETRIC oid : id-ibia-SAFLINK                DATA Any } |
+   { BIOMETRIC oid : id-ibia-Bioscrypt              DATA Any } |
+   { BIOMETRIC oid : id-ibia-Visionics              DATA Any } |
+   { BIOMETRIC oid : id-ibia-InfineonTechnologiesAG DATA Any } |
+   { BIOMETRIC oid : id-ibia-IridianTechnologies    DATA Any } |
+   { BIOMETRIC oid : id-ibia-Veridicom              DATA Any } |
+   { BIOMETRIC oid : id-ibia-CyberSIGN              DATA Any } |
+   { BIOMETRIC oid : id-ibia-eCryp                  DATA Any } |
+   { BIOMETRIC oid : id-ibia-FingerprintCardsAB     DATA Any } |
+   { BIOMETRIC oid : id-ibia-SecuGen                DATA Any } |
+   { BIOMETRIC oid : id-ibia-PreciseBiometric       DATA Any } |
+   { BIOMETRIC oid : id-ibia-Identix                DATA Any } |
+   { BIOMETRIC oid : id-ibia-DERMALOG               DATA Any } |
+   { BIOMETRIC oid : id-ibia-LOGICO                 DATA Any } |
+   { BIOMETRIC oid : id-ibia-NIST                   DATA Any } |
+   { BIOMETRIC oid : id-ibia-A3Vision               DATA Any } |
+   { BIOMETRIC oid : id-ibia-NEC                    DATA Any } |
+   { BIOMETRIC oid : id-ibia-STMicroelectronics     DATA Any },
+
+   ...  -- Expect additional vendor specific formats --
+}
+
+Any ::= TYPE-IDENTIFIER.&Type  -- Application constrained
+
+-- Relative object identifier representations of the identical
+-- IBIA vendor specific formats defined as OBJECT IDENTIFIER
+-- values above are used to identify these formats when they must
+-- comply with the fixed format requirements of the BioAPI 1.1
+-- specification and are associated with a two byte integer value.  
+
+ibia-SAFLINK                RelOID ::= {  1 }
+ibia-Bioscrypt              RelOID ::= {  2 }
+ibia-Visionics              RelOID ::= {  3 }
+ibia-InfineonTechnologiesAG RelOID ::= {  4 }
+ibia-IridianTechnologies    RelOID ::= {  5 }
+ibia-Veridicom              RelOID ::= {  6 }
+ibia-CyberSIGN              RelOID ::= {  7 }
+ibia-eCryp                  RelOID ::= {  8 }
+ibia-FingerprintCardsAB     RelOID ::= {  9 }
+ibia-SecuGen                RelOID ::= { 10 }
+ibia-PreciseBiometric       RelOID ::= { 11 }
+ibia-Identix                RelOID ::= { 12 }
+ibia-DERMALOG               RelOID ::= { 13 }
+ibia-LOGICO                 RelOID ::= { 14 }
+ibia-NIST                   RelOID ::= { 15 }
+ibia-A3Vision               RelOID ::= { 16 }
+ibia-NEC                    RelOID ::= { 17 }
+ibia-STMicroelectronics     RelOID ::= { 18 }
+
+
+IBIAidFormats BIOMETRIC ::= {
+   { BIOMETRIC id : ibia-SAFLINK                DATA BirInt16 } |
+   { BIOMETRIC id : ibia-Bioscrypt              DATA BirInt16 } |
+   { BIOMETRIC id : ibia-Visionics              DATA BirInt16 } |
+   { BIOMETRIC id : ibia-InfineonTechnologiesAG DATA BirInt16 } |
+   { BIOMETRIC id : ibia-IridianTechnologies    DATA BirInt16 } |
+   { BIOMETRIC id : ibia-Veridicom              DATA BirInt16 } |
+   { BIOMETRIC id : ibia-CyberSIGN              DATA BirInt16 } |
+   { BIOMETRIC id : ibia-eCryp                  DATA BirInt16 } |
+   { BIOMETRIC id : ibia-FingerprintCardsAB     DATA BirInt16 } |
+   { BIOMETRIC id : ibia-SecuGen                DATA BirInt16 } |
+   { BIOMETRIC id : ibia-PreciseBiometric       DATA BirInt16 } |
+   { BIOMETRIC id : ibia-Identix                DATA BirInt16 } |
+   { BIOMETRIC id : ibia-DERMALOG               DATA BirInt16 } |
+   { BIOMETRIC id : ibia-LOGICO                 DATA BirInt16 } |
+   { BIOMETRIC id : ibia-NIST                   DATA BirInt16 } |
+   { BIOMETRIC id : ibia-A3Vision               DATA BirInt16 } |
+   { BIOMETRIC id : ibia-NEC                    DATA BirInt16 } |
+   { BIOMETRIC id : ibia-STMicroelectronics     DATA BirInt16 },
+
+   ...  -- Expect others --
+}
+
+BirInt16 ::= INTEGER (0..65535)
+
+
+IBIA-Formats BIOMETRIC ::= {
+   IBIAoidFormats  |  -- Complete object identifiers
+   IBIAidFormats,     -- Object identifier fragments
+
+   ...  -- Expect additional IBIA vendor specific formats --
+}
+
+id-x984BioInfo  OID ::= { cbeff-Owner x984BioInfo(0) }
+
+
+CBEFFoidFormats BIOMETRIC ::= {
+   { BIOMETRIC oid : id-x984BioInfo DATA BiometricInformationSets },
+
+   ...  -- Expect other objects --
+}
+
+x984BioInfo  RelOID ::= { x984BioInfo(0) }  -- CBEFF owner
+
+CBEFFidFormats BIOMETRIC ::= {
+   { BIOMETRIC id : x984BioInfo DATA BiometricInformationSets },
+
+   ...  -- Expect other objects --
+}
+
+CBEFF-Formats BIOMETRIC ::= {
+   CBEFFoidFormats  |  -- Complete object identifiers
+   CBEFFidFormats,     -- Object identifier fragments
+
+   ...  -- Expect additional CBEFF vendor specific formats --
+}
+
+MatchingAIDs BIOMETRIC ::= {
+
+   ...  -- Expect CBEFF assignments in BiometricInformationSets --
+}
+
+ProcessingAIDs BIOMETRIC ::= {
+
+   ...  -- Expect CBEFF assignments in BiometricInformationSets --
+}
+
+X9-Formats BIOMETRIC ::= {
+   X9oidFormats |
+   X9idFormats,
+
+   ...  -- Expect additional X9 vendor specific formats --
+}
+
+X9oidFormats BIOMETRIC ::= {
+   ...  -- Expect X9 assigned objects --
+}
+
+X9idFormats BIOMETRIC ::= {
+   ...  -- Expect X9 assigned objects of the form { 2 x } --
+}
+
+certificate-Extensions OID ::= { x9-84 certificate-Extensions(5) }
+
+x968-biometricTemplates OID ::= { certificate-Extensions 0 }
+x509-biometricTemplates OID ::= { certificate-Extensions 1 }
+
+
+-- RSA PKCS #7 Content type
+
+id-data OID ::= { 
+   iso(1) member-body(2) us(840) rsadsi(113549) pkcs(1)
+      pkcs7(7) data(1)
+}
+
+-- Security object identifiers 
+
+
+-- FIPS 180-1 and FIPS 180-2 Secure Hash Algorithm --
+
+id-sha1 OID ::= { 
+   iso(1) identified-organization(3) oiw(14) secsig(3)
+      algorithm(2) 26
+}
+
+sha2Algorithm OID ::= {
+   joint-iso-itu-t(2) country(16) us(840) organization(1) gov(101)
+      csor(3) nistAlgorithm(4) hashAlgs(2)
+}
+
+id-sha256 OID ::= { sha2Algorithm sha256(1) }
+
+id-sha384 OID ::= { sha2Algorithm sha384(2) }
+
+id-sha512 OID ::= { sha2Algorithm sha512(3) }
+
+SHA-Algorithms ALGORITHM ::= {
+   { OID id-sha1    PARMS NoIV }  |
+   { OID id-sha256             }  |
+   { OID id-sha384             }  |
+   { OID id-sha512             },
+
+   ...  -- Expect others --
+}
+
+NoIV ::= NULL  -- No initialization vector
+
+-- X9.57 DSA signature generated with SHA-1 hash (DSA X9.30)
+
+dsa-with-sha1 OID ::=  {
+   iso(1) member-body(2) us(840) x9-57(10040) x9algorithm(4) 3 }
+
+--  X9.71 HMAC with SHA-1 algorithm 
+
+hmac-with-SHA1 OID ::= {
+   iso(1)  identified-organization(3) dod(6)
+       internet(1) security(5) mechanisms(5) 8 1 2 }
+
+-- RSA PKCS #1 signature generated with SHA-1 hash & encryption scheme
+
+sha1WithRSAEncryption OID  ::=  {
+   iso(1) member-body(2) us(840) rsadsi(113549) pkcs(1) 1 5 }
+
+rsaEncryption OBJECT IDENTIFIER ::=  { 
+   iso(1) member-body(2) us(840) rsadsi(113549) pkcs(1) 1 1 }
+
+-- ANS X9.52 Triple DES Modes of Operation --
+
+des-ede3-cbc OBJECT IDENTIFIER ::= {
+   iso(1) member-body(2) us(840) rsadsi(113549)
+      encryptionAlgorithm(3) 7
+}
+
+-- X9.62 ECDSA signature with SHA-1
+
+ecdsa-with-SHA1 OID ::= {
+   iso(1) member-body(2) us(840) ansi-x962(10045) signatures(4) 1 }
+
+
+END  -- X9-84-Identifiers --
+
+--
+-- Last update: Tuesday, January 7, 2003
+--
+-- Phillip H. Griffin
+-- OASIS XCBF TC Chair
+-- mail:  phil.griffin@asn-1.com
+-- list:  xcbf-comment@lists.oasis-open.org
+-- site:  http://www.oasis-open.org/committees/xcbf/
+--

@@ -1,0 +1,311 @@
+
+
+
+AuthenticationContextForBiometrics.asn: ISO/IEC 24761: 2009
+
+
+
+
+-- ASN module extracted from ISO/IEC 24761: 2009
+
+-- Module AuthenticationContextForBiometrics (ISO/IEC 24761:2009)
+--
+-- Copyright © ISO/IEC 2009. This version of
+-- this ASN.1 module is part of ISO/IEC 24761;
+-- see the ISO|IEC text itself for full legal notices.
+-- 
+AuthenticationContextForBiometrics {iso(1) standard(0) acbio(24761) module(1) acbio(2) version1(1)}
+DEFINITIONS AUTOMATIC TAGS ::= BEGIN
+IMPORTS
+-- ISO/IEC 9594-8 Open Systems Interconnection --
+-- The Directory: Authentication framework
+AlgorithmIdentifier, CertificateSerialNumber, Certificate
+	FROM AuthenticationFramework {joint-iso-itu-t ds(5) module(1) authenticationFramework(7) 5}
+
+-- AttributeCertificate
+AttributeCertificate
+	FROM AttributeCertificate {joint-iso-itu-t ds(5) module(1) attributeCertificateDefinitions(32) 5}
+
+-- CertificateExtensions
+CertificateList
+	FROM CertificateExtensions {joint-iso-itu-t ds(5) module(1) certificateExtensions(26) 5}
+
+-- ITU-T X.501 Open Systems Interconnection The Directory: Models
+Name
+	FROM InformationFramework {joint-iso-itu-t ds(5) module(1) informationFramework(1) 5}
+
+UniqueIdentifier
+	FROM SelectedAttributeTypes {joint-iso-itu-t ds(5) module(1) selectedAttributeTypes(5) 5}
+
+-- ISO/IEC 19785 Common Biometric Exchange Formats Framework
+BiometricType, BiometricSubtype, CBEFFVersion, BIRIndex,
+BDBValidityPeriod,Quality,EncryptionOptions, IntegrityOptions,
+BDBFormat, PatronFormat
+	FROM CBEFF-DATA-ELEMENTS {iso standard 19785 modules(0) types-for-cbeff-data-elements(1) }
+
+-- RFC 3852 Cryptographic Message Syntax
+CMSVersion, DigestAlgorithmIdentifier,
+SignerInfos, OriginatorInfo, RecipientInfos,
+MessageAuthenticationCodeAlgorithm,
+AuthAttributes, MessageAuthenticationCode, UnauthAttributes,
+CONTENT-TYPE
+	FROM CryptographicMessageSyntax2004 {iso(1) member-body(2) us(840) rsadsi(113549) pkcs(1) pkcs-9(9) smime(16) modules(0) cms-2004(24) };
+
+ACBioInstance ::= SEQUENCE {
+contentType CONTENT-TYPE.&id({ContentTypeACBio}),
+content [0] EXPLICIT CONTENT-TYPE.&Type
+({ContentTypeACBio}{@contentType})}
+ContentTypeACBio CONTENT-TYPE ::= {signedDataACBio |
+authenticatedDataACBio}
+SignedDataACBio ::= SIGNEDDATA { EncapsulatedContentInfoACBio }
+AuthenticatedDataACBio ::= AUTHENTICATEDDATA { EncapsulatedContentInfoACBio }
+
+EncapsulatedContentInfoACBio ::= SEQUENCE {
+eContentType CONTENT-TYPE.&id({ContentTypeACBioContentInfo}),
+eContent [0] EXPLICIT CONTENT-TYPE.&Type
+({ContentTypeACBioContentInfo}{@eContentType})}
+ContentTypeACBioContentInfo CONTENT-TYPE ::= {acbioContentInformation}
+ACBioContentInformation ::= [14] IMPLICIT SEQUENCE {
+version Version DEFAULT v0,
+bpuInformation BPUInformation,
+controlValue OCTET STRING (SIZE(16)),
+biometricProcess BiometricProcess,
+brtCertificateInformation BRTCertificateInformation OPTIONAL}
+Version ::= INTEGER { v0(0) } ( v0, ... )
+BPUInformation ::= SEQUENCE {
+bpuCertificateReferrerInformation BPUCertificateReferrerInformation OPTIONAL,
+bpuReportInformation BPUReportInformation}
+BPUCertificateReferrerInformation ::= SEQUENCE {
+bpuCertificateReferrer URI,
+crlsReferrer URI OPTIONAL}
+URI ::= VisibleString (SIZE(1..MAX))
+BPUReportInformation ::= CHOICE {
+bpuReport BPUReport,
+bpuReportReferrer URI}
+BPUReport ::= SEQUENCE {
+contentType CONTENT-TYPE.&id({ContentTypeBPUReport}),
+content [0] EXPLICIT CONTENT-TYPE.&Type
+({ContentTypeBPUReport}{@contentType})}
+ContentTypeBPUReport CONTENT-TYPE ::= {bpuReport}
+ContentBPUReport ::= SIGNEDDATA { EncapsulatedContentInfoBPUReport }
+EncapsulatedContentInfoBPUReport ::= SEQUENCE {
+eContentType CONTENT-TYPE.&id({ContentTypeBPUReportContentInfo}),
+eContent [0] CONTENT-TYPE.&Type
+({ContentTypeBPUReportContentInfo}{@eContentType})}
+ContentTypeBPUReportContentInfo CONTENT-TYPE ::= { bpuReportContentInformation }
+BPUReportContentInformation ::= SEQUENCE {
+bpuFunctionReport BPUFunctionReport,
+bpuSecurityReport BPUSecurityReport}
+BPUFunctionReport ::= SEQUENCE {
+bpuSubprocessInformationList BPUSubprocessInformationList,
+bpuInputStaticInformationList BPUIOStaticInformationList OPTIONAL,
+bpuOutputStaticInformationList BPUIOStaticInformationList OPTIONAL}
+BPUSubprocessInformationList ::= SEQUENCE OF BPUSubprocessInformation
+BPUSubprocessInformation ::= SEQUENCE {
+functionDefinition FunctionDefinition,
+qualityEvaluation QualityEvaluation OPTIONAL}
+FunctionDefinition ::= SEQUENCE {
+subprocessName SubprocessName,
+subprocessIndex SubprocessIndex,
+inputIndex1 IOIndex OPTIONAL,
+inputIndex2 IOIndex OPTIONAL,
+outputIndex IOIndex,
+functionDescription OCTET STRING (SIZE(1..MAX)) OPTIONAL}
+SubprocessName ::= ENUMERATED {
+data-capture(1),
+intermediate-signal-processing(2),
+final-signal-processing(3),
+storage(4),
+comparison(5),
+decision(6),
+sample-fusion(7),
+feature-fusion(8),
+score-fusion(9),
+decision-fusion(10),
+...}
+SubprocessIndex ::= INTEGER (0..65535)
+IOIndex ::= INTEGER (0..65535)
+QualityEvaluation ::= SEQUENCE {
+biometricProcessQualityInformation BiometricProcessQualityInformation OPTIONAL,
+qualityEvaluationExtensionInformation QualityEvaluationExtensionInformation OPTIONAL}
+BiometricProcessQualityInformation ::= CHOICE {
+biometricProcessQuality BiometricProcessQuality,
+biometricProcessQualityReferrer URI}
+QualityEvaluationExtensionInformation ::= CHOICE {
+qualityEvaluationExtension QualityEvaluationExtension,
+qualityEvaluationExtensionReferrer URI}
+BiometricProcessQuality ::= OCTET STRING (SIZE(1..MAX))
+QualityEvaluationExtension ::= OCTET STRING (SIZE(1..MAX)) -- For extension
+BPUIOStaticInformationList ::= SEQUENCE OF BPUIOStaticInformation
+BPUIOStaticInformation ::= SEQUENCE {
+biometricType BiometricType OPTIONAL,
+biometricSubtype BiometricSubtype OPTIONAL,
+dataType DataType,
+subprocessIOIndex IOIndex}
+DataType ::= SEQUENCE {
+processedLevel ProcessedLevel,
+purpose Purpose OPTIONAL}
+ProcessedLevel ::= ENUMERATED {
+raw-data(1),
+intermediate-data(2),
+processed-data(3),
+comparison-score(4),
+comparison-decision(5),
+...}
+Purpose ::= ENUMERATED {
+reference(1),
+sample(2)}
+BPUSecurityReport ::= SEQUENCE {
+cryptoModuleSecurityInformation CryptoModuleSecurityInformation OPTIONAL,
+biometricProcessSecurityInformation BiometricProcessSecurityInformation OPTIONAL,
+securityEvaluationExtensionInformation SecurityEvaluationExtensionInformation OPTIONAL}
+CryptoModuleSecurityInformation ::= CHOICE {
+cryptoModuleSecurity CryptoModuleSecurity,
+cryptoModuleSecurityReferrer URI}
+BiometricProcessSecurityInformation ::= CHOICE {
+biometricProcessSecurity BiometricProcessSecurity,
+biometricProcessSecurityReferrer URI}
+SecurityEvaluationExtensionInformation ::= CHOICE {
+securityEvaluationExtension SecurityEvaluationExtension,
+securityEvaluationExtensionReferrer URI}
+CryptoModuleSecurity ::= OCTET STRING (SIZE(1..MAX))
+BiometricProcessSecurity ::= OCTET STRING (SIZE(1..MAX))
+
+SecurityEvaluationExtension ::= OCTET STRING (SIZE(1..MAX)) -- For extension
+BiometricProcess ::= SEQUENCE {
+subprocessIndexList SubprocessIndexList,
+bpuInputExecutionInformationList BPUIOExecutionInformationList OPTIONAL,
+bpuOuputExecutionInformationList BPUIOExecutionInformationList OPTIONAL}
+SubprocessIndexList ::= SEQUENCE OF SubprocessIndex
+BPUIOExecutionInformationList ::= SEQUENCE OF BPUIOExecutionInformation
+BPUIOExecutionInformation ::= SEQUENCE {
+dataType DataType,
+bpuIOIndex IOIndex,
+subprocessIOIndex IOIndex,
+hash Hash}
+Hash ::= SEQUENCE {
+algorithmIdentifier AlgorithmIdentifier,
+hashValue OCTET STRING}
+BRTCertificateInformation ::= CHOICE {
+brtCertificateList BRTCertificateList,
+brtCertificateReferrerList BRTCertificateReferrerList}
+BRTCertificateList ::= SEQUENCE OF BRTCertificate
+BRTCertificateReferrerList ::= SEQUENCE OF URI
+BRTCertificate ::= SEQUENCE {
+contentType CONTENT-TYPE.&id({ContentTypeBRTCertificate}),
+content [0] CONTENT-TYPE.&Type({ContentTypeBRTCertificate}{@contentType})}
+ContentTypeBRTCertificate CONTENT-TYPE ::= { brtCertificate }
+ContentBRTCertificate ::= SIGNEDDATA { EncapsulatedContentInfoBRTCertificate }
+EncapsulatedContentInfoBRTCertificate ::= SEQUENCE {
+eContentType CONTENT-TYPE.&id({ContentTypeBRTCertificateContentInfo}),
+eContent [0] CONTENT-TYPE.&Type
+({ContentTypeBRTCertificateContentInfo}{@eContentType})}
+ContentTypeBRTCertificateContentInfo CONTENT-TYPE ::= { brtcContentInformation }
+BRTCContentInformation ::= SEQUENCE {
+sbhForBRTC SBHForBRTC,
+bdbForBRTC BDBForBRTC}
+SBHForBRTC ::= SEQUENCE {
+version CBEFFVersion,
+brtcIndex BIRIndex,
+brtcValidityPeriod BDBValidityPeriod,
+brtQuality Quality,
+bdbEncryptionOptions EncryptionOptions(FALSE),
+bdbIntegrityOptions IntegrityOptions(FALSE),
+bdbFormatForBRTC BDBFormat}
+BDBForBRTC ::= SEQUENCE {
+version Version DEFAULT v0,
+originalBDBHashList HashList,
+originalBIRReferrer URI OPTIONAL,
+originalBIRPatronFormat PatronFormat,
+originalBDBPosition INTEGER,
+userInformation UserInformation OPTIONAL,
+pkiCertificateInformation PKICertificateInformation OPTIONAL,
+enrolmentACBioInstances SequenceOfACBioInstances OPTIONAL}
+HashList ::= SEQUENCE OF Hash
+
+UserInformation ::= SEQUENCE {
+userIdentifier OCTET STRING,
+userName Name,
+userUniqueIdentifier UniqueIdentifier OPTIONAL}
+PKICertificateInformation ::= SEQUENCE {
+pkiCertificateSerialNumber CertificateSerialNumber,
+pkiCertificateIssuerName Name,
+pkiCertificateIssuerUniqueIdentifier UniqueIdentifier OPTIONAL}
+SequenceOfACBioInstances ::= SEQUENCE OF ACBioInstance
+-- Useful definitions
+SIGNEDDATA { EncapsulatedContentInfo } ::= SEQUENCE {
+version CMSVersion,
+digestAlgorithms SET OF DigestAlgorithmIdentifier,
+encapContentInfo EncapsulatedContentInfo,
+certificates [0] IMPLICIT CertificateSet OPTIONAL,
+crls [1] IMPLICIT RevocationInfoChoices OPTIONAL,
+signerInfos SignerInfos}
+AUTHENTICATEDDATA { EncapsulatedContentInfo } ::= SEQUENCE {
+version CMSVersion,
+originatorInfo [0] IMPLICIT OriginatorInfo OPTIONAL,
+recipientInfos RecipientInfos,
+macAlgorithm MessageAuthenticationCodeAlgorithm,
+digestAlgorithm [1] DigestAlgorithmIdentifier OPTIONAL,
+encapContentInfo EncapsulatedContentInfo,
+authAttrs [2] IMPLICIT AuthAttributes OPTIONAL,
+mac MessageAuthenticationCode,
+unauthAttrs [3] IMPLICIT UnauthAttributes OPTIONAL}
+CertificateSet ::= SET OF CertificateChoices
+CertificateChoices ::= CHOICE {
+certificate Certificate,
+v2AttrCert [2] IMPLICIT AttributeCertificateV2,
+other [3] IMPLICIT OtherCertificateFormat}
+AttributeCertificateV2 ::= AttributeCertificate
+OtherCertificateFormat ::= SEQUENCE {
+otherFormat OTHERCERTIFICATE.&id({OtherCertificate}),
+otherCert OTHERCERTIFICATE.&Type({OtherCertificate}{@otherFormat})}
+OTHERCERTIFICATE ::= TYPE-IDENTIFIER
+OtherCertificate OTHERCERTIFICATE ::= {...}
+RevocationInfoChoices ::= SET OF RevocationInfoChoice
+RevocationInfoChoice ::= CHOICE {
+crl CertificateList,
+other [1] IMPLICIT OtherRevocationInfoFormat }
+OtherRevocationInfoFormat ::= SEQUENCE {
+otherRevInfoFormat OTHERREVOCATION.&id({OtherRevocation}),
+otherRevInfo OTHERREVOCATION.&Type({OtherRevocation}{@otherRevInfoFormat}) }
+OTHERREVOCATION ::= TYPE-IDENTIFIER
+OtherRevocation OTHERREVOCATION ::= {...}
+-- contentType object identifiers
+id-signedDataACBio OBJECT IDENTIFIER ::=
+{iso(1) standard(0) acbio(24761) contentType(2) signedDataACBio(1)}
+id-authenticatedDataACBio OBJECT IDENTIFIER ::=
+{iso(1) standard(0) acbio(24761) contentType(2) authenticatedDataACBio(2)}
+id-acbioContentInformation OBJECT IDENTIFIER ::=
+{iso(1) standard(0) acbio(24761) contentType(2) acbioContent(3)}
+
+id-bpuReport OBJECT IDENTIFIER ::=
+{iso(1) standard(0) acbio(24761) contentType(2) bpuReport(4)}
+id-bpuReportContentInformation OBJECT IDENTIFIER ::=
+{iso(1) standard(0) acbio(24761) contentType(2) bpuReportContent(5)}
+id-brtCertificate OBJECT IDENTIFIER ::=
+{iso(1) standard(0) acbio(24761) contentType(2) brtCertificate(6)}
+id-brtcContentInformation OBJECT IDENTIFIER ::=
+{iso(1) standard(0) acbio(24761) contentType(2) brtcContent(7)}
+-- ContentType objects
+signedDataACBio CONTENT-TYPE ::= {
+SignedDataACBio
+IDENTIFIED BY id-signedDataACBio }
+authenticatedDataACBio CONTENT-TYPE ::= {
+AuthenticatedDataACBio
+IDENTIFIED BY id-authenticatedDataACBio }
+acbioContentInformation CONTENT-TYPE ::= {
+ACBioContentInformation
+IDENTIFIED BY id-acbioContentInformation }
+bpuReport CONTENT-TYPE ::= {
+BPUReport
+IDENTIFIED BY id-bpuReport }
+bpuReportContentInformation CONTENT-TYPE ::= {
+BPUReportContentInformation
+IDENTIFIED BY id-bpuReportContentInformation }
+brtCertificate CONTENT-TYPE ::= {
+BRTCertificate
+IDENTIFIED BY id-brtCertificate }
+brtcContentInformation CONTENT-TYPE ::= {
+BRTCContentInformation
+IDENTIFIED BY id-brtcContentInformation }
+END -- AuthenticationContextForBiometrics

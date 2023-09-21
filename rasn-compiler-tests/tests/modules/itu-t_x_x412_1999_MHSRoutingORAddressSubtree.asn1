@@ -1,0 +1,579 @@
+
+
+
+
+
+
+
+
+-- Module MHSRoutingORAddressSubtree (X.412:06/1999)
+-- See also ITU-T X.412 (06/1999)
+-- See also the index of all ASN.1 assignments needed in this document
+
+MHSRoutingORAddressSubtree {joint-iso-itu-t mhs(6) routing(10) modules(0)
+  oraddress-subtree(2)} DEFINITIONS IMPLICIT TAGS ::=
+BEGIN
+
+-- Prologue
+-- Exports everything
+IMPORTS
+  -- MHS-routing Directory objects
+  RoutingCollectiveName
+    --==
+    FROM MHSRoutingDirectoryObjects {joint-iso-itu-t mhs(6) routing(10)
+      modules(0) directory-objects(1)}
+  -- MTS abstract service
+  NonDeliveryDiagnosticCode, NonDeliveryReasonCode, ORAddress, ORName,
+    RecipientName, SupplementaryInformation, UniversalOrBMPString{}
+    --==
+    FROM MTSAbstractService {joint-iso-itu-t mhs(6) mts(3) modules(0)
+      mts-abstract-service(1) version-1999(1)}
+  -- MTS upper bounds
+  ub-common-name-length, ub-country-name-numeric-length,
+    ub-domain-defined-attribute-type-length,
+    ub-domain-defined-attribute-value-length, ub-domain-name-length,
+    ub-generation-qualifier-length, ub-given-name-length, ub-initials-length,
+    ub-numeric-user-id-length, ub-organization-name-length,
+    ub-organizational-unit-name-length, ub-pds-name-length,
+    ub-postal-code-length, ub-surname-length, ub-terminal-id-length,
+    ub-x121-address-length
+    --==
+    FROM MTSUpperBounds {joint-iso-itu-t mhs(6) mts(3) modules(0)
+      upper-bounds(3) version-1999(1)}
+  -- MHS-routing object identifiers
+  id-at-mhs-admd-name, id-at-mhs-common-name, id-at-mhs-country-name,
+    id-at-mhs-expression-matches, id-at-mhs-extended-network-address,
+    id-at-mhs-generation-qualifier, id-at-mhs-given-name, id-at-mhs-initials,
+    id-at-mhs-network-address, id-at-mhs-numeric-user-identifier,
+    id-at-mhs-organization-name, id-at-mhs-organizational-unit-name,
+    id-at-mhs-pds-name-attribute, id-at-mhs-postal-code, id-at-mhs-prmd-name,
+    id-at-mhs-routing-advice, id-at-mhs-next-level-complete, id-at-mhs-surname,
+    id-at-mhs-terminal-identifier, id-at-mhs-terminal-type,
+    id-at-oraddress-element-name,
+    id-at-recipient-md-assigned-alternate-recipient, id-nf-mhs-admd,
+    id-nf-mhs-common-name, id-nf-mhs-country,
+    id-nf-mhs-extended-network-address, id-nf-mhs-generation-qualifier,
+    id-nf-mhs-given-name, id-nf-mhs-initials, id-nf-mhs-network-address,
+    id-nf-mhs-numeric-user-identifier, id-nf-mhs-organization,
+    id-nf-mhs-organizational-unit, id-nf-mhs-pds-name,
+    id-nf-mhs-physical-delivery-country, id-nf-mhs-postal-code, id-nf-mhs-prmd,
+    id-nf-mhs-surname, id-nf-mhs-terminal-identifier, id-nf-mhs-terminal-type,
+    id-oc-mhs-admd, id-oc-mhs-common-name, id-oc-mhs-country,
+    id-oc-mhs-extended-network-address, id-oc-mhs-generation-qualifier,
+    id-oc-mhs-given-name, id-oc-mhs-initials, id-oc-mhs-network-address,
+    id-oc-mhs-numeric-user-identifier, id-oc-mhs-or-address-element,
+    id-oc-mhs-organization, id-oc-mhs-organizational-unit, id-oc-mhs-pds-name,
+    id-oc-mhs-physical-delivery-country-name, id-oc-mhs-postal-code,
+    id-oc-mhs-prmd, id-oc-mhs-surname, id-oc-mhs-terminal-identifier,
+    id-oc-mhs-terminal-type, id-oc-oraddress-subtree-base
+    --==
+    FROM MHSRoutingObjectIdentifiers {joint-iso-itu-t mhs(6) routing(10)
+      modules(0) object-identifiers(0)}
+  -- Information framework
+  ATTRIBUTE, DistinguishedName, MATCHING-RULE, NAME-FORM, OBJECT-CLASS, 
+    top
+    --==
+    FROM InformationFramework {joint-iso-itu-t ds(5) module(1)
+      informationFramework(1) 3}
+  -- Directory authentication framework
+  AlgorithmIdentifier
+    --==
+    FROM AuthenticationFramework {joint-iso-itu-t ds(5) module(1)
+      authenticationFramework(7) 3}
+  -- Directory certificate extensions
+  CertificateAssertion
+    --==
+    FROM CertificateExtensions {joint-iso-itu-t ds(5) module(1)
+      certificateExtensions(26) 0}
+  -- Selected attribute types
+  commonName, DirectoryString{}, name
+    FROM SelectedAttributeTypes {joint-iso-itu-t ds(5) module(1)
+      selectedAttributeTypes(5) 3};
+
+-- OR-ADDRESS-SUBTREE
+-- OR-address element
+oRAddressElement OBJECT-CLASS ::= {
+  SUBCLASS OF  {top}
+  KIND         abstract
+  MAY CONTAIN
+    {routingAdvice | expressionMatches | nextLevelComplete |
+      recipientMDAssignedAlternateRecipient}
+  ID           id-oc-mhs-or-address-element
+}
+
+--
+routingAdvice ATTRIBUTE ::= {
+  WITH SYNTAX   RoutingAdvice
+  SINGLE VALUE  TRUE
+  ID            id-at-mhs-routing-advice
+}
+
+RoutingAdvice ::= CHOICE {
+  target-routing-collective    [0]  TargetRoutingCollective,
+  non-delivery-information     [1]  NonDeliveryInformation,
+  alias-redirection            [2]  AliasRedirection,
+  dl-expansion-information     [3]  DLExpansionInformation,
+  double-envelope-information  [4]  DoubleEnvelopeInformation,
+  ...
+}
+
+TargetRoutingCollective ::= SEQUENCE {
+  target-routing-collective  [0]  RoutingCollectiveName,
+  local-user-identifier
+    [1]  UniversalOrBMPString{ub-local-user-identifier} OPTIONAL
+}
+
+ub-local-user-identifier INTEGER ::= 128
+
+NonDeliveryInformation ::= SEQUENCE {
+  reason                     [0]  NonDeliveryReasonCode,
+  diagnostic                 [1]  NonDeliveryDiagnosticCode OPTIONAL,
+  supplementary-information  [2]  SupplementaryInformation OPTIONAL
+}
+
+AliasRedirection ::= SEQUENCE {
+  redirection-address  [0]  ORAddress,
+  edit                 [1]  BOOLEAN DEFAULT TRUE
+}
+
+DLExpansionInformation ::= SEQUENCE {
+  dl-expansion-routing-collectives  [0]  SET OF TargetRoutingCollective,
+  dl-name                           [1]  MHSDistributionListName OPTIONAL,
+  any-mta-may-expand                [2]  BOOLEAN DEFAULT FALSE
+}
+
+MHSDistributionListName ::= DistinguishedName
+
+DoubleEnvelopeInformation ::= SEQUENCE {
+  envelope-opener                               [0]  ORAddressAndDirectoryName,
+  content-confidentiality-algorithm-preference
+    [1]  SEQUENCE OF AlgorithmInformation,
+  key-encryption-algorithm-preference
+    [2]  SEQUENCE OF AlgorithmInformation OPTIONAL,
+  message-origin-algorithm-preference
+    [3]  SEQUENCE OF AlgorithmInformation OPTIONAL,
+  token-signature-algorithm-preference
+    [4]  SEQUENCE OF AlgorithmInformation OPTIONAL,
+  ...
+}
+
+ORAddressAndDirectoryName ::=
+  ORName -- with both Directory name and OR-address present 
+
+AlgorithmInformation ::= SEQUENCE {
+  algorithm-identifier             [0]  AlgorithmIdentifier,
+  originator-certificate-selector  [1]  CertificateAssertion OPTIONAL,
+  recipient-certificate-selector   [2]  CertificateAssertion OPTIONAL
+}
+
+--
+expressionMatches ATTRIBUTE ::= {
+  WITH SYNTAX   ExpressionMatches
+  SINGLE VALUE  TRUE
+  ID            id-at-mhs-expression-matches
+}
+
+ExpressionMatches ::= SEQUENCE OF ExpressionMatch
+
+ExpressionMatch ::= SEQUENCE {
+  filter-set      SET OF ORAddressFilter,
+  routing-advice  RoutingAdvice
+}
+
+ORAddressFilter ::= SEQUENCE {
+  attribute-type
+    CHOICE {standard-attribute        INTEGER,
+            domain-defined-attribute
+              UniversalOrBMPString{ub-domain-defined-attribute-type-length}
+  },
+  pattern         ExtendedRegularExpression
+}
+
+ExtendedRegularExpression ::=
+  UniversalOrBMPString{ub-extended-regular-expression}
+
+ub-extended-regular-expression INTEGER ::= 1024
+
+--
+nextLevelComplete ATTRIBUTE ::= {
+  WITH SYNTAX   NULL
+  SINGLE VALUE  TRUE
+  ID            id-at-mhs-next-level-complete
+}
+
+recipientMDAssignedAlternateRecipient ATTRIBUTE ::= {
+  WITH SYNTAX   ORName
+  SINGLE VALUE  FALSE
+  COLLECTIVE    TRUE
+  ID            id-at-recipient-md-assigned-alternate-recipient
+}
+
+-- OR-address element subclasses
+oRAddressSubtreeBase OBJECT-CLASS ::= {
+  SUBCLASS OF   {oRAddressElement}
+  KIND          structural
+  MUST CONTAIN  {commonName}
+  ID            id-oc-oraddress-subtree-base
+}
+
+-- Common OR-address object classes
+mHSCountry OBJECT-CLASS ::= {
+  SUBCLASS OF   {oRAddressElement}
+  KIND          structural
+  MUST CONTAIN  {mHSCountryName}
+  ID            id-oc-mhs-country
+}
+
+mHSADMD OBJECT-CLASS ::= {
+  SUBCLASS OF   {oRAddressElement}
+  KIND          structural
+  MUST CONTAIN  {mHSADMDName}
+  ID            id-oc-mhs-admd
+}
+
+mHSPRMD OBJECT-CLASS ::= {
+  SUBCLASS OF   {oRAddressElement}
+  KIND          structural
+  MUST CONTAIN  {mHSPRMDName}
+  ID            id-oc-mhs-prmd
+}
+
+-- Mnemonic OR-address object classes
+mHSOrganization OBJECT-CLASS ::= {
+  SUBCLASS OF   {oRAddressElement}
+  KIND          structural
+  MUST CONTAIN  {mHSOrganizationName}
+  ID            id-oc-mhs-organization
+}
+
+mHSOrganizationalUnit OBJECT-CLASS ::= {
+  SUBCLASS OF   {oRAddressElement}
+  KIND          structural
+  MUST CONTAIN  {mHSOrganizationalUnitName}
+  ID            id-oc-mhs-organizational-unit
+}
+
+mHSCommonName OBJECT-CLASS ::= {
+  SUBCLASS OF   {oRAddressElement}
+  KIND          structural
+  MUST CONTAIN  {mHSCommonNameAttribute}
+  ID            id-oc-mhs-common-name
+}
+
+mHSSurname OBJECT-CLASS ::= {
+  SUBCLASS OF   {oRAddressElement}
+  KIND          structural
+  MUST CONTAIN  {mHSSurnameAttribute}
+  ID            id-oc-mhs-surname
+}
+
+mHSGivenName OBJECT-CLASS ::= {
+  SUBCLASS OF   {oRAddressElement}
+  KIND          structural
+  MUST CONTAIN  {mHSGivenNameAttribute}
+  ID            id-oc-mhs-given-name
+}
+
+mHSInitials OBJECT-CLASS ::= {
+  SUBCLASS OF   {oRAddressElement}
+  KIND          structural
+  MUST CONTAIN  {mHSInitialsAttribute}
+  ID            id-oc-mhs-initials
+}
+
+mHSGenerationQualifier OBJECT-CLASS ::= {
+  SUBCLASS OF   {oRAddressElement}
+  KIND          structural
+  MUST CONTAIN  {mHSGenerationQualifierAttribute}
+  ID            id-oc-mhs-generation-qualifier
+}
+
+-- Terminal OR-address object classes
+mHSNetworkAddress OBJECT-CLASS ::= {
+  SUBCLASS OF   {oRAddressElement}
+  KIND          structural
+  MUST CONTAIN  {mHSNetworkAddressAttribute}
+  ID            id-oc-mhs-network-address
+}
+
+mHSExtendedNetworkAddress OBJECT-CLASS ::= {
+  SUBCLASS OF   {oRAddressElement}
+  KIND          structural
+  MUST CONTAIN  {mHSExtendedNetworkAddressAttribute}
+  ID            id-oc-mhs-extended-network-address
+}
+
+mHSTerminalIdentifier OBJECT-CLASS ::= {
+  SUBCLASS OF   {oRAddressElement}
+  KIND          structural
+  MUST CONTAIN  {mHSTerminalIdentifierAttribute}
+  ID            id-oc-mhs-terminal-identifier
+}
+
+mHSTerminalType OBJECT-CLASS ::= {
+  SUBCLASS OF   {oRAddressElement}
+  KIND          structural
+  MUST CONTAIN  {mHSTerminalTypeAttribute}
+  ID            id-oc-mhs-terminal-type
+}
+
+-- Numeric OR-address object classes
+mHSNumericUserIdentifier OBJECT-CLASS ::= {
+  SUBCLASS OF   {oRAddressElement}
+  KIND          structural
+  MUST CONTAIN  {mHSNumericUserIdentifierAttribute}
+  ID            id-oc-mhs-numeric-user-identifier
+}
+
+-- Postal OR-address object classes
+mHSPDSName OBJECT-CLASS ::= {
+  SUBCLASS OF   {oRAddressElement}
+  KIND          structural
+  MUST CONTAIN  {mHSPDSNameAttribute}
+  ID            id-oc-mhs-pds-name
+}
+
+mHSPhysicalDeliveryCountry OBJECT-CLASS ::= {
+  SUBCLASS OF  {mHSCountry}
+  KIND         structural
+  ID           id-oc-mhs-physical-delivery-country-name
+}
+
+mHSPostalCode OBJECT-CLASS ::= {
+  SUBCLASS OF   {oRAddressElement}
+  KIND          structural
+  MUST CONTAIN  {mHSPostalCodeAttribute}
+  ID            id-oc-mhs-postal-code
+}
+
+-- OR-address element name
+oRAddressElementName ATTRIBUTE ::= {
+  SUBTYPE OF    name
+  SINGLE VALUE  TRUE
+  ID            id-at-oraddress-element-name
+}
+
+-- Common OR-address element names
+mHSCountryName ATTRIBUTE ::= {
+  SUBTYPE OF   oRAddressElementName -- contains ISO 3166 and X.121 codes only 
+  WITH SYNTAX  DirectoryString {ub-country-name-numeric-length}
+  ID           id-at-mhs-country-name
+}
+
+mHSADMDName ATTRIBUTE ::= {
+  SUBTYPE OF   oRAddressElementName
+  WITH SYNTAX  DirectoryString {ub-domain-name-length}
+  ID           id-at-mhs-admd-name
+}
+
+mHSPRMDName ATTRIBUTE ::= {
+  SUBTYPE OF   oRAddressElementName
+  WITH SYNTAX  DirectoryString {ub-domain-name-length}
+  ID           id-at-mhs-prmd-name
+}
+
+-- Mnemonic OR-address element names
+mHSOrganizationName ATTRIBUTE ::= {
+  SUBTYPE OF   oRAddressElementName
+  WITH SYNTAX  DirectoryString {ub-organization-name-length}
+  ID           id-at-mhs-organization-name
+}
+
+mHSOrganizationalUnitName ATTRIBUTE ::= {
+  SUBTYPE OF   oRAddressElementName
+  WITH SYNTAX  DirectoryString {ub-organizational-unit-name-length}
+  ID           id-at-mhs-organizational-unit-name
+}
+
+mHSCommonNameAttribute ATTRIBUTE ::= {
+  SUBTYPE OF   oRAddressElementName
+  WITH SYNTAX  DirectoryString {ub-common-name-length}
+  ID           id-at-mhs-common-name
+}
+
+mHSSurnameAttribute ATTRIBUTE ::= {
+  SUBTYPE OF   oRAddressElementName
+  WITH SYNTAX  DirectoryString {ub-surname-length}
+  ID           id-at-mhs-surname
+}
+
+mHSGivenNameAttribute ATTRIBUTE ::= {
+  SUBTYPE OF   oRAddressElementName
+  WITH SYNTAX  DirectoryString {ub-given-name-length}
+  ID           id-at-mhs-given-name
+}
+
+mHSInitialsAttribute ATTRIBUTE ::= {
+  SUBTYPE OF   oRAddressElementName
+  WITH SYNTAX  DirectoryString {ub-initials-length}
+  ID           id-at-mhs-initials
+}
+
+mHSGenerationQualifierAttribute ATTRIBUTE ::= {
+  SUBTYPE OF   oRAddressElementName
+  WITH SYNTAX  DirectoryString {ub-generation-qualifier-length}
+  ID           id-at-mhs-generation-qualifier
+}
+
+-- Terminal OR-address element names
+mHSNetworkAddressAttribute ATTRIBUTE ::= {
+  SUBTYPE OF   oRAddressElementName
+  WITH SYNTAX  DirectoryString {ub-x121-address-length}
+  ID           id-at-mhs-network-address
+}
+
+mHSExtendedNetworkAddressAttribute ATTRIBUTE ::= {
+  SUBTYPE OF   oRAddressElementName
+  WITH SYNTAX  DirectoryString {ub-extended-network-address-length}
+  ID           id-at-mhs-extended-network-address
+}
+
+ub-extended-network-address-length INTEGER ::= 256
+
+mHSTerminalIdentifierAttribute ATTRIBUTE ::= {
+  SUBTYPE OF   oRAddressElementName
+  WITH SYNTAX  DirectoryString {ub-terminal-id-length}
+  ID           id-at-mhs-terminal-identifier
+}
+
+mHSTerminalTypeAttribute ATTRIBUTE ::= {
+  SUBTYPE OF   oRAddressElementName
+  WITH SYNTAX  DirectoryString {ub-terminal-type-length}
+  ID           id-at-mhs-terminal-type
+}
+
+ub-terminal-type-length INTEGER ::= 5
+
+-- Numeric OR-address element names
+mHSNumericUserIdentifierAttribute ATTRIBUTE ::= {
+  SUBTYPE OF   oRAddressElementName
+  WITH SYNTAX  DirectoryString {ub-numeric-user-id-length}
+  ID           id-at-mhs-numeric-user-identifier
+}
+
+-- Postal OR-address element names
+mHSPDSNameAttribute ATTRIBUTE ::= {
+  SUBTYPE OF   oRAddressElementName
+  WITH SYNTAX  DirectoryString {ub-pds-name-length}
+  ID           id-at-mhs-pds-name-attribute
+}
+
+mHSPostalCodeAttribute ATTRIBUTE ::= {
+  SUBTYPE OF   oRAddressElementName
+  WITH SYNTAX  DirectoryString {ub-postal-code-length}
+  ID           id-at-mhs-postal-code
+}
+
+-- OR-address-subtree name forms
+mHSCountryNameForm NAME-FORM ::= {
+  NAMES            mHSCountry
+  WITH ATTRIBUTES  {mHSCountryName}
+  ID               id-nf-mhs-country
+}
+
+mHSADMDNameForm NAME-FORM ::= {
+  NAMES            mHSADMD
+  WITH ATTRIBUTES  {mHSADMDName}
+  ID               id-nf-mhs-admd
+}
+
+mHSPRMDNameForm NAME-FORM ::= {
+  NAMES            mHSPRMD
+  WITH ATTRIBUTES  {mHSPRMDName}
+  ID               id-nf-mhs-prmd
+}
+
+mHSOrganizationNameForm NAME-FORM ::= {
+  NAMES            mHSOrganization
+  WITH ATTRIBUTES  {mHSOrganizationName}
+  ID               id-nf-mhs-organization
+}
+
+mHSOrganizationalUnitNameForm NAME-FORM ::= {
+  NAMES            mHSOrganizationalUnit
+  WITH ATTRIBUTES  {mHSOrganizationalUnitName}
+  ID               id-nf-mhs-organizational-unit
+}
+
+mHSCommonNameForm NAME-FORM ::= {
+  NAMES            mHSCommonName
+  WITH ATTRIBUTES  {mHSCommonNameAttribute}
+  ID               id-nf-mhs-common-name
+}
+
+mHSSurnameNameForm NAME-FORM ::= {
+  NAMES            mHSSurname
+  WITH ATTRIBUTES  {mHSSurnameAttribute}
+  ID               id-nf-mhs-surname
+}
+
+mHSGivenNameNameForm NAME-FORM ::= {
+  NAMES            mHSGivenName
+  WITH ATTRIBUTES  {mHSGivenNameAttribute}
+  ID               id-nf-mhs-given-name
+}
+
+mHSInitialsNameForm NAME-FORM ::= {
+  NAMES            mHSInitials
+  WITH ATTRIBUTES  {mHSInitialsAttribute}
+  ID               id-nf-mhs-initials
+}
+
+mHSGenerationQualifierNameForm NAME-FORM ::= {
+  NAMES            mHSGenerationQualifier
+  WITH ATTRIBUTES  {mHSGenerationQualifierAttribute}
+  ID               id-nf-mhs-generation-qualifier
+}
+
+mHSNetworkAddressNameForm NAME-FORM ::= {
+  NAMES            mHSNetworkAddress
+  WITH ATTRIBUTES  {mHSNetworkAddressAttribute}
+  ID               id-nf-mhs-network-address
+}
+
+mHSExtendedNetworkAddressNameForm NAME-FORM ::= {
+  NAMES            mHSExtendedNetworkAddress
+  WITH ATTRIBUTES  {mHSExtendedNetworkAddressAttribute}
+  ID               id-nf-mhs-extended-network-address
+}
+
+mHSTerminalIdentifierNameForm NAME-FORM ::= {
+  NAMES            mHSTerminalIdentifier
+  WITH ATTRIBUTES  {mHSTerminalIdentifierAttribute}
+  ID               id-nf-mhs-terminal-identifier
+}
+
+mHSTerminalTypeNameForm NAME-FORM ::= {
+  NAMES            mHSTerminalType
+  WITH ATTRIBUTES  {mHSTerminalTypeAttribute}
+  ID               id-nf-mhs-terminal-type
+}
+
+mHSNumericUserIdentifierNameForm NAME-FORM ::= {
+  NAMES            mHSNumericUserIdentifier
+  WITH ATTRIBUTES  {mHSNumericUserIdentifierAttribute}
+  ID               id-nf-mhs-numeric-user-identifier
+}
+
+mHSPDSNameNameForm NAME-FORM ::= {
+  NAMES            mHSPDSName
+  WITH ATTRIBUTES  {mHSPDSNameAttribute}
+  ID               id-nf-mhs-pds-name
+}
+
+mHSPhysicalDeliveryCountryNameForm NAME-FORM ::= {
+  NAMES            mHSPhysicalDeliveryCountry
+  WITH ATTRIBUTES  {mHSCountryName}
+  ID               id-nf-mhs-physical-delivery-country
+}
+
+mHSPostalCodeNameForm NAME-FORM ::= {
+  NAMES            mHSPostalCode
+  WITH ATTRIBUTES  {mHSPostalCodeAttribute}
+  ID               id-nf-mhs-postal-code
+}
+
+END -- of MHS-routing OR-address-subtree
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

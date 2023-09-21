@@ -1,0 +1,209 @@
+
+
+
+
+
+
+
+-- Module Abstract-Operations (T.413:11/1994)
+-- See also ITU-T T.413 (11/1994)
+-- See also the index of all ASN.1 assignments needed in this document
+
+Abstract-Operations {2 8 1 3 0} DEFINITIONS IMPLICIT TAGS ::=
+BEGIN
+
+--EXPORTS EVERYTHING
+IMPORTS
+  Location-Expression, Basic-Location-Expression, Constituent-Locator
+    FROM Location-Expressions {2 8 1 12 0}
+  -- see ITU-T Rec. T.422 | ISO/IEC 8613-12
+  Document-Reference, Document-Profile-Descriptor
+    FROM Document-Profile-Descriptor {2 8 1 5 6}
+  -- see ITU-T Rec. T.415 | ISO/IEC 8613-5
+  Object-or-Class-Identifier, Content-Portion-Identifier, Style-Identifier
+    FROM Identifiers-and-Expressions {2 8 1 5 7}
+  -- see ITU-T Rec. T.415 | ISO/IEC 8613-5
+  Interchange-Data-Element
+    FROM Interchange-Data-Elements {2 8 1 5 5};
+
+-- see ITU-T Rec. T.415 | ISO/IEC 8613-5
+-- COMMON DATA TYPES
+LocationInDocumentType ::= SEQUENCE {
+  document  [0]  Document-Id OPTIONAL,
+  location  [1]  Location-Expression
+}
+
+BasicLocationInDocumentType ::= SEQUENCE {
+  document        [0]  Document-Id OPTIONAL,
+  basic-location  [1]  Basic-Location-Expression
+}
+
+ConstituentLocationInDocumentType ::= SEQUENCE {
+  document              [0]  Document-Id OPTIONAL,
+  constituent-location  [1]  Constituent-Locator OPTIONAL
+} -- It is optional for styles and 
+
+-- root
+Document-Id ::= CHOICE {
+  permanent      [0]  Document-Reference,
+  non-permanent  [1]  INTEGER
+}
+
+ConstituentType ::= ManipulationDataElement
+
+ManipulationDataElement ::= Interchange-Data-Element
+
+SuccessType ::= BOOLEAN
+
+PositionType ::= ENUMERATED {before(0), afterLastChild(1)}
+
+ConstituentIdentifier ::= CHOICE {
+  object-or-class  [0]  Object-or-Class-Identifier,
+  content-portion  [1]  Content-Portion-Identifier,
+  style            [2]  Style-Identifier
+}
+
+-- ABSTRACT OPERATIONS ARGUMENTS AND RESULTS
+-- DOCUMENT LEVEL OPERATIONS
+-- List
+ListArgument ::=
+  QueryType
+
+QueryType ::= CHOICE {
+  basic  [0]  Document-Profile-Descriptor, -- Some values of document profile attributes 
+  not    [1]  QueryType,
+  and    [2]  SET OF QueryType,
+  or     [3]  SET OF QueryType
+}
+
+ListResult ::= SEQUENCE OF Document-Id -- Permanent identifiers
+
+-- Open
+OpenArgument ::= SEQUENCE {
+  identifier  [0]  Document-Id, -- Permanent identifier
+  mode        [1]  ModeType OPTIONAL
+}
+
+ModeType ::= ENUMERATED {read(0), modify(1), create(2)}
+
+OpenResult ::= Document-Id -- Non-permanent identifier
+
+-- Close
+CloseArgument ::= Document-Id
+
+CloseResult ::= Document-Id -- Permanent identifier
+
+-- READ ONLY OPERATIONS
+-- Get
+GetArgument ::= SEQUENCE {
+  location-in-document  [0]  LocationInDocumentType,
+  no-defaults           [1]  BOOLEAN DEFAULT FALSE
+}
+
+GetResult ::= SEQUENCE OF SEQUENCE OF ConstituentType
+
+-- Search
+SearchArgument ::= SEQUENCE {
+  location-in-document  [0]  LocationInDocumentType,
+  maxOccurrences        [1]  INTEGER OPTIONAL
+}
+
+SearchResult ::= SEQUENCE {
+  constituentList      [0]  SEQUENCE OF ConstituentIdentifier,
+  numberOfOccurrences  [1]  INTEGER
+}
+
+-- ALTERING OPERATIONS
+-- Create
+CreateArgument ::= SEQUENCE {
+  constituent-or-subtree  [0]  SEQUENCE OF ConstituentType, -- If the elements of this
+  
+  -- sequence are objects, they
+  -- form a subtree
+  location-in-document    [1]  ConstituentLocationInDocumentType OPTIONAL,
+  position                [2]  PositionType OPTIONAL
+}
+
+CreateResult ::= ConstituentIdentifier
+
+-- Delete
+DeleteArgument ::= LocationInDocumentType
+
+DeleteResult ::= SuccessType
+
+-- Modify
+ModifyArgument ::= SEQUENCE {
+  location-in-document  [0]  LocationInDocumentType,
+  attributeValue        [1]  AttributeValuesType,
+  deleting              [2]  BOOLEAN DEFAULT FALSE
+}
+
+AttributeValuesType ::= Interchange-Data-Element
+
+ModifyResult ::= SuccessType
+
+-- Replace
+ReplaceArgument ::= SEQUENCE {
+  constituent-or-subtree  [0]  SEQUENCE OF ConstituentType, -- If the elements of this
+  
+  -- sequence are objects, they
+  -- form a subtree
+  location-in-document    [1]  ConstituentLocationInDocumentType
+}
+
+ReplaceResult ::= SuccessType
+
+-- Copy
+CopyArgument ::= SEQUENCE {
+  source    [0]  BasicLocationInDocumentType,
+  target    [1]  ConstituentLocationInDocumentType,
+  position  [2]  PositionType OPTIONAL
+}
+
+CopyResult ::= ConstituentIdentifier
+
+-- Move
+MoveArgument ::= SEQUENCE {
+  source    [0]  BasicLocationInDocumentType,
+  target    [1]  ConstituentLocationInDocumentType,
+  position  [2]  PositionType OPTIONAL
+}
+
+MoveResult ::= ConstituentIdentifier
+
+-- OTHER OPERATIONS
+-- Reserve
+ReserveArgument ::= LocationInDocumentType
+
+ReserveResult ::= Reservation-Id
+
+Reservation-Id ::= INTEGER
+
+-- Unreserve
+UnreserveArgument ::= CHOICE {
+  location-in-document  [0]  LocationInDocumentType,
+  reservation           [1]  Reservation-Id
+}
+
+UnreserveResult ::= SuccessType
+
+-- BeginGroup
+BeginGroupArgument ::= SEQUENCE {
+  group-identifier       [0]  INTEGER,
+  invocation-identifier  [1]  INTEGER
+}
+
+BeginGroupResult ::= SuccessType
+
+-- EndGroup
+EndGroupArgument ::= SEQUENCE {
+  group-identifier       [0]  INTEGER,
+  invocation-identifier  [1]  INTEGER
+}
+
+EndGroupResult ::= SuccessType
+
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

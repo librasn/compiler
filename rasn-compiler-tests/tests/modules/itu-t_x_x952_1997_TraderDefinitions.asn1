@@ -1,0 +1,556 @@
+
+
+
+
+
+
+
+
+-- Module TraderDefinitions (X.952:12/1997)
+-- See also ITU-T X.952 (12/1997)
+-- See also the index of all ASN.1 assignments needed in this document
+
+TraderDefinitions -- Cf. Non official changes for the OID definition 
+DEFINITIONS ::=
+BEGIN
+
+IMPORTS
+  informationFramework, selectedAttributeTypes, authenticationFramework
+    FROM UsefulDefinitions {joint-iso-itu-t ds(5) module(1)
+      usefulDefinitions(0) 3}
+  CONTENT-RULE, NAME-FORM, STRUCTURE-RULE, OBJECT-CLASS, MATCHING-RULE,
+    ATTRIBUTE, top, ObjectClassKind, objectIdentifierMatch, DistinguishedName
+    FROM InformationFramework {joint-iso-itu-t ds(5) module(1)
+      informationFramework(1) 3}
+  DirectoryString{}, commonName, description, presentationAddress,
+    distinguishedName, caseIgnoreMatch, caseIgnoreSubstringsMatch,
+    caseExactMatch, booleanMatch, integerMatch, octetStringMatch
+    FROM SelectedAttributeTypes {joint-iso-itu-t ds(5) module(1)
+      selectedAttributeTypes(5) 3}
+  userPassword
+    FROM AuthenticationFramework {joint-iso-itu-t ds(5) module(1)
+      authenticationFramework(7) 3};
+
+-- Trader Entry
+traderEntry OBJECT-CLASS ::= {
+  SUBCLASS OF   {top}
+  MUST CONTAIN
+    {commonName | traderInterface | dsaName | typeRepos | defSearchCard |
+      maxSearchCard | defMatchCard | maxMatchCard | defReturnCard |
+      maxReturnCard | defHopCount | maxHopCount | defFollowPolicy |
+      maxFollowPolicy | maxLinkFollowPolicy | supportsModifiableProperties |
+      supportsDynamicProperties | supportsProxyOffers | maxList |
+      requestIdStem}
+  MAY CONTAIN   {description | userPassword}
+  ID            id-trader-oc-traderEntry
+}
+
+traderInterface ATTRIBUTE ::= {
+  SUBTYPE OF    presentationAddress
+  SINGLE VALUE  TRUE
+  ID            id-trader-at-traderInterface
+}
+
+dsaName ATTRIBUTE ::= {
+  SUBTYPE OF    distinguishedName
+  SINGLE VALUE  TRUE
+  ID            id-trader-at-dsaName
+}
+
+typeRepos ATTRIBUTE ::= {
+  SUBTYPE OF    distinguishedName
+  SINGLE VALUE  TRUE
+  ID            id-trader-at-typeRepos
+}
+
+defSearchCard ATTRIBUTE ::= {
+  WITH SYNTAX             INTEGER
+  EQUALITY MATCHING RULE  integerMatch
+  SINGLE VALUE            TRUE
+  ID                      id-trader-at-defSearchCard
+}
+
+maxSearchCard ATTRIBUTE ::= {
+  WITH SYNTAX             INTEGER
+  EQUALITY MATCHING RULE  integerMatch
+  SINGLE VALUE            TRUE
+  ID                      id-trader-at-maxSearchCard
+}
+
+defMatchCard ATTRIBUTE ::= {
+  WITH SYNTAX             INTEGER
+  EQUALITY MATCHING RULE  integerMatch
+  SINGLE VALUE            TRUE
+  ID                      id-trader-at-defMatchCard
+}
+
+maxMatchCard ATTRIBUTE ::= {
+  WITH SYNTAX             INTEGER
+  EQUALITY MATCHING RULE  integerMatch
+  SINGLE VALUE            TRUE
+  ID                      id-trader-at-maxMatchCard
+}
+
+defReturnCard ATTRIBUTE ::= {
+  WITH SYNTAX             INTEGER
+  EQUALITY MATCHING RULE  integerMatch
+  SINGLE VALUE            TRUE
+  ID                      id-trader-at-defReturnCard
+}
+
+maxReturnCard ATTRIBUTE ::= {
+  WITH SYNTAX             INTEGER
+  EQUALITY MATCHING RULE  integerMatch
+  SINGLE VALUE            TRUE
+  ID                      id-trader-at-maxReturnCard
+}
+
+defHopCount ATTRIBUTE ::= {
+  WITH SYNTAX             INTEGER
+  EQUALITY MATCHING RULE  integerMatch
+  SINGLE VALUE            TRUE
+  ID                      id-trader-at-defHopCount
+}
+
+maxHopCount ATTRIBUTE ::= {
+  WITH SYNTAX             INTEGER
+  EQUALITY MATCHING RULE  integerMatch
+  SINGLE VALUE            TRUE
+  ID                      id-trader-at-maxHopCount
+}
+
+defFollowPolicy ATTRIBUTE ::= {
+  WITH SYNTAX             FollowOption
+  EQUALITY MATCHING RULE  integerMatch
+  SINGLE VALUE            TRUE
+  ID                      id-trader-at-defFollowPolicy
+}
+
+FollowOption ::= ENUMERATED {localOnly(0), ifNoLocal(1), always(2)}
+
+maxFollowPolicy ATTRIBUTE ::= {
+  WITH SYNTAX             FollowOption
+  EQUALITY MATCHING RULE  integerMatch
+  SINGLE VALUE            TRUE
+  ID                      id-trader-at-maxFollowPolicy
+}
+
+maxLinkFollowPolicy ATTRIBUTE ::= {
+  WITH SYNTAX             FollowOption
+  EQUALITY MATCHING RULE  integerMatch
+  SINGLE VALUE            TRUE
+  ID                      id-trader-at-maxLinkFollowPolicy
+}
+
+supportsModifiableProperties ATTRIBUTE ::= {
+  WITH SYNTAX             BOOLEAN
+  EQUALITY MATCHING RULE  booleanMatch
+  SINGLE VALUE            TRUE
+  ID                      id-trader-at-supportsModifiableProperties
+}
+
+supportsDynamicProperties ATTRIBUTE ::= {
+  WITH SYNTAX             BOOLEAN
+  EQUALITY MATCHING RULE  booleanMatch
+  SINGLE VALUE            TRUE
+  ID                      id-trader-at-supportsDynamicProperties
+}
+
+supportsProxyOffers ATTRIBUTE ::= {
+  WITH SYNTAX             BOOLEAN
+  EQUALITY MATCHING RULE  booleanMatch
+  SINGLE VALUE            TRUE
+  ID                      id-trader-at-supportsProxyOffers
+}
+
+maxList ATTRIBUTE ::= {
+  WITH SYNTAX             INTEGER
+  EQUALITY MATCHING RULE  integerMatch
+  SINGLE VALUE            TRUE
+  ID                      id-trader-at-maxList
+}
+
+requestIdStem ATTRIBUTE ::= {
+  WITH SYNTAX             OCTET STRING(SIZE (0..ub-request-id-stem))
+  EQUALITY MATCHING RULE  octetStringMatch
+  SINGLE VALUE            TRUE
+  ID                      id-trader-at-requestIdStem
+}
+
+--Trader Policy Entry
+traderPolicyEntryNF NAME-FORM ::= {
+  NAMES            traderPolicyEntry
+  WITH ATTRIBUTES  {commonName}
+  ID               id-trader-nf-traderPolicy
+}
+
+traderPolicyEntry OBJECT-CLASS ::= {
+  SUBCLASS OF   {top}
+  MUST CONTAIN  {commonName}
+  MAY CONTAIN
+    {typeManagementConstraint | searchConstraint | offerAcceptanceConstraint}
+  ID            id-trader-oc-traderPolicy
+}
+
+PolicySpecification ::= CHOICE {
+  stringRule      [0]  DirectoryString{ub-policy-string-rule},
+  policyObjectId  [1]  DistinguishedName
+}
+
+policySpecificationMatch MATCHING-RULE ::= {
+  SYNTAX  PolicySpecification
+  ID      id-trader-mr-policySpecificationMatch
+}
+
+-- The rule returns TRUE if two specifications contain exactly
+-- the same characters.
+typeManagementConstraint ATTRIBUTE ::= {
+  WITH SYNTAX             PolicySpecification
+  EQUALITY MATCHING RULE  policySpecificationMatch
+  SINGLE VALUE            TRUE
+  ID                      id-trader-at-typeManagementConstraint
+}
+
+searchConstraint ATTRIBUTE ::= {
+  WITH SYNTAX             PolicySpecification
+  EQUALITY MATCHING RULE  policySpecificationMatch
+  SINGLE VALUE            TRUE
+  ID                      id-trader-at-searchConstraint
+}
+
+offerAcceptanceConstraint ATTRIBUTE ::= {
+  WITH SYNTAX             PolicySpecification
+  EQUALITY MATCHING RULE  policySpecificationMatch
+  SINGLE VALUE            TRUE
+  ID                      id-trader-at-offerAcceptanceConstraint
+}
+
+-- Service Offer Entry
+serviceOfferEntryNF NAME-FORM ::= {
+  NAMES            serviceOfferEntry
+  WITH ATTRIBUTES  {sOfferId}
+  ID               id-trader-nf-serviceOffer
+}
+
+serviceOfferEntry OBJECT-CLASS ::= {
+  SUBCLASS OF   {top}
+  MUST CONTAIN
+    {sOfferId | serviceInterfaceId | serviceTypeId | hasDynamicProperties |
+      hasModifiableProperties}
+  MAY CONTAIN   {dynamicProps}
+  ID            id-trader-oc-serviceOffer
+}
+
+sOfferId ATTRIBUTE ::= {
+  WITH SYNTAX               DirectoryString {ub-s-offer-id}
+  EQUALITY MATCHING RULE    caseIgnoreMatch
+  SUBSTRINGS MATCHING RULE  caseIgnoreSubstringsMatch
+  SINGLE VALUE              TRUE
+  ID                        id-trader-at-sOfferId
+}
+
+serviceInterfaceId ATTRIBUTE ::= {
+  SUBTYPE OF    distinguishedName
+  SINGLE VALUE  TRUE
+  ID            id-trader-at-serviceInterfaceId
+}
+
+serviceTypeId ATTRIBUTE ::= {
+  WITH SYNTAX             OBJECT IDENTIFIER
+  EQUALITY MATCHING RULE  objectIdentifierMatch
+  ID                      id-trader-at-serviceTypeId
+}
+
+hasDynamicProperties ATTRIBUTE ::= {
+  WITH SYNTAX             BOOLEAN
+  EQUALITY MATCHING RULE  booleanMatch
+  SINGLE VALUE            TRUE
+  ID                      id-trader-at-hasDynamicProperties
+}
+
+hasModifiableProperties ATTRIBUTE ::= {
+  WITH SYNTAX             BOOLEAN
+  EQUALITY MATCHING RULE  booleanMatch
+  SINGLE VALUE            TRUE
+  ID                      id-trader-at-hasModifiableProperties
+}
+
+dynamicProps ATTRIBUTE ::= {
+  WITH SYNTAX  SEQUENCE OF DynamicPropValue
+  ID           id-trader-at-dynamicProps
+}
+
+DynamicPropValue ::= SEQUENCE {
+  propertyType       OBJECT IDENTIFIER,
+  dynamicPropEvalIf  DistinguishedName,
+  extraInfo          DirectoryString{ub-dynamic-value-extra-info}
+}
+
+dynamicPropValueMatch MATCHING-RULE ::= {
+  SYNTAX  DynamicPropValue
+  ID      id-trader-mr-dynamicPropValueMatch
+}
+
+-- The rule returns TRUE if two values contain exactly the same characters.
+-- Trader Link Entry
+traderLinkEntryNF NAME-FORM ::= {
+  NAMES            traderLinkEntry
+  WITH ATTRIBUTES  {linkId}
+  ID               id-trader-nf-traderLink
+}
+
+traderLinkEntry OBJECT-CLASS ::= {
+  SUBCLASS OF   {top}
+  MUST CONTAIN
+    {linkName | linkId | targetTraderInterfaceId | defPassOnFollowRule |
+      limitingFollowRule}
+  ID            id-trader-oc-traderLink
+}
+
+linkName ATTRIBUTE ::= {
+  WITH SYNTAX               DirectoryString {ub-link-name}
+  EQUALITY MATCHING RULE    caseIgnoreMatch
+  SUBSTRINGS MATCHING RULE  caseIgnoreSubstringsMatch
+  SINGLE VALUE              TRUE
+  ID                        id-trader-at-linkName
+}
+
+linkId ATTRIBUTE ::= {
+  WITH SYNTAX               DirectoryString {ub-link-id}
+  EQUALITY MATCHING RULE    caseIgnoreMatch
+  SUBSTRINGS MATCHING RULE  caseIgnoreSubstringsMatch
+  SINGLE VALUE              TRUE
+  ID                        id-trader-at-linkId
+}
+
+targetTraderInterfaceId ATTRIBUTE ::= {
+  SUBTYPE OF    distinguishedName
+  SINGLE VALUE  TRUE
+  ID            id-trader-at-targetTraderInterfaceId
+}
+
+defPassOnFollowRule ATTRIBUTE ::= {
+  WITH SYNTAX             FollowOption
+  EQUALITY MATCHING RULE  integerMatch
+  SINGLE VALUE            TRUE
+  ID                      id-trader-at-defPassOnFollowRule
+}
+
+limitingFollowRule ATTRIBUTE ::= {
+  WITH SYNTAX             FollowOption
+  EQUALITY MATCHING RULE  integerMatch
+  SINGLE VALUE            TRUE
+  ID                      id-trader-at-limitingFollowRule
+}
+
+-- Proxy Offer Entry
+proxyOfferEntryNF NAME-FORM ::= {
+  NAMES            proxyOfferEntry
+  WITH ATTRIBUTES  {proxyOfferId}
+  ID               id-trader-nf-proxyOffer
+}
+
+proxyOfferEntry OBJECT-CLASS ::= {
+  SUBCLASS OF   {top}
+  MUST CONTAIN
+    {proxyOfferId | proxyLookUpInterfaceId | hasDynamicProperties |
+      hasModifiableProperties | ifMatchAll | constraintRecipe}
+  MAY CONTAIN   {dynamicProps}
+  ID            id-trader-oc-proxyOffer
+}
+
+proxyOfferId ATTRIBUTE ::= {
+  WITH SYNTAX               DirectoryString {ub-proxy-offer-id}
+  EQUALITY MATCHING RULE    caseIgnoreMatch
+  SUBSTRINGS MATCHING RULE  caseIgnoreSubstringsMatch
+  SINGLE VALUE              TRUE
+  ID                        id-trader-at-proxyOfferId
+}
+
+proxyLookUpInterfaceId ATTRIBUTE ::= {
+  SUBTYPE OF    distinguishedName
+  SINGLE VALUE  TRUE
+  ID            id-trader-at-proxyLookUpInterfaceId
+}
+
+constraintRecipe ATTRIBUTE ::= {
+  WITH SYNTAX               DirectoryString {ub-constraint-recipe}
+  EQUALITY MATCHING RULE    caseIgnoreMatch
+  SUBSTRINGS MATCHING RULE  caseIgnoreSubstringsMatch
+  SINGLE VALUE              TRUE
+  ID                        id-trader-at-constraintRecipe
+}
+
+ifMatchAll ATTRIBUTE ::= {
+  WITH SYNTAX             BOOLEAN
+  EQUALITY MATCHING RULE  booleanMatch
+  SINGLE VALUE            TRUE
+  ID                      id-trader-at-ifMatchAll
+}
+
+-- Interface Entry
+interfaceEntry OBJECT-CLASS ::= {
+  SUBCLASS OF   {top}
+  KIND          auxiliary
+  MUST CONTAIN  {interfaceReference | interfaceType}
+  ID            id-trader-oc-interfaceEntry
+}
+
+interfaceReference ATTRIBUTE ::= {
+  WITH SYNTAX             InterfaceId
+  EQUALITY MATCHING RULE  caseExactMatch
+  ID                      id-trader-at-interfaceReference
+}
+
+InterfaceId ::= DirectoryString{ub-interface-id}
+
+interfaceType ATTRIBUTE ::= {
+  WITH SYNTAX             InterfaceTypeName
+  EQUALITY MATCHING RULE  objectIdentifierMatch
+  ID                      id-trader-at-interfaceType
+}
+
+InterfaceTypeName ::= OBJECT IDENTIFIER
+
+-- Object Identifier Assignments
+id-trader OBJECT IDENTIFIER ::=
+  {joint-iso-itu-t trader(100)}
+
+id-trader-at OBJECT IDENTIFIER ::= {id-trader 4}
+
+id-trader-oc OBJECT IDENTIFIER ::= {id-trader 6}
+
+id-trader-mr OBJECT IDENTIFIER ::= {id-trader 13}
+
+id-trader-nf OBJECT IDENTIFIER ::= {id-trader 15}
+
+id-trader-oc-traderEntry OBJECT IDENTIFIER ::= {id-trader-oc 0}
+
+id-trader-oc-serviceOffer OBJECT IDENTIFIER ::= {id-trader-oc 1}
+
+id-trader-oc-proxyOffer OBJECT IDENTIFIER ::= {id-trader-oc 2}
+
+id-trader-oc-traderLink OBJECT IDENTIFIER ::= {id-trader-oc 3}
+
+id-trader-oc-traderPolicy OBJECT IDENTIFIER ::= {id-trader-oc 4}
+
+id-trader-oc-interfaceEntry OBJECT IDENTIFIER ::= {id-trader-oc 5}
+
+id-trader-nf-serviceOffer OBJECT IDENTIFIER ::= {id-trader-nf 1}
+
+id-trader-nf-traderLink OBJECT IDENTIFIER ::= {id-trader-nf 2}
+
+id-trader-nf-traderPolicy OBJECT IDENTIFIER ::= {id-trader-nf 3}
+
+id-trader-nf-proxyOffer OBJECT IDENTIFIER ::= {id-trader-nf 4}
+
+id-trader-at-traderInterface OBJECT IDENTIFIER ::= {id-trader-at 0}
+
+id-trader-at-typeRepos OBJECT IDENTIFIER ::= {id-trader-at 1}
+
+id-trader-at-defSearchCard OBJECT IDENTIFIER ::= {id-trader-at 2}
+
+id-trader-at-maxSearchCard OBJECT IDENTIFIER ::= {id-trader-at 3}
+
+id-trader-at-defMatchCard OBJECT IDENTIFIER ::= {id-trader-at 4}
+
+id-trader-at-maxMatchCard OBJECT IDENTIFIER ::= {id-trader-at 5}
+
+id-trader-at-commonName OBJECT IDENTIFIER ::= {id-trader-at 6}
+
+id-trader-at-dsaName OBJECT IDENTIFIER ::= {id-trader-at 7}
+
+id-trader-at-defReturnCard OBJECT IDENTIFIER ::= {id-trader-at 10}
+
+id-trader-at-maxReturnCard OBJECT IDENTIFIER ::= {id-trader-at 11}
+
+id-trader-at-defHopCount OBJECT IDENTIFIER ::= {id-trader-at 12}
+
+id-trader-at-maxHopCount OBJECT IDENTIFIER ::= {id-trader-at 13}
+
+id-trader-at-defFollowPolicy OBJECT IDENTIFIER ::= {id-trader-at 14}
+
+id-trader-at-maxLinkFollowPolicy OBJECT IDENTIFIER ::= {id-trader-at 15}
+
+id-trader-at-maxFollowPolicy OBJECT IDENTIFIER ::= {id-trader-at 16}
+
+id-trader-at-supportsModifiableProperties OBJECT IDENTIFIER ::=
+  {id-trader-at 20}
+
+id-trader-at-supportsDynamicProperties OBJECT IDENTIFIER ::= {id-trader-at 21}
+
+id-trader-at-supportsProxyOffers OBJECT IDENTIFIER ::= {id-trader-at 22}
+
+id-trader-at-maxList OBJECT IDENTIFIER ::= {id-trader-at 23}
+
+id-trader-at-requestIdStem OBJECT IDENTIFIER ::= {id-trader-at 24}
+
+id-trader-at-typeManagementConstraint OBJECT IDENTIFIER ::= {id-trader-at 25}
+
+id-trader-at-searchConstraint OBJECT IDENTIFIER ::= {id-trader-at 30}
+
+id-trader-at-offerAcceptanceConstraint OBJECT IDENTIFIER ::= {id-trader-at 31}
+
+id-trader-at-sOfferId OBJECT IDENTIFIER ::= {id-trader-at 32}
+
+id-trader-at-serviceTypeId OBJECT IDENTIFIER ::= {id-trader-at 33}
+
+id-trader-at-serviceInterfaceId OBJECT IDENTIFIER ::= {id-trader-at 34}
+
+id-trader-at-hasDynamicProperties OBJECT IDENTIFIER ::= {id-trader-at 35}
+
+id-trader-at-hasModifiableProperties OBJECT IDENTIFIER ::= {id-trader-at 40}
+
+id-trader-at-dynamicProps OBJECT IDENTIFIER ::= {id-trader-at 41}
+
+id-trader-at-linkId OBJECT IDENTIFIER ::= {id-trader-at 42}
+
+id-trader-at-linkName OBJECT IDENTIFIER ::= {id-trader-at 43}
+
+id-trader-at-targetTraderInterfaceId OBJECT IDENTIFIER ::= {id-trader-at 44}
+
+id-trader-at-defPassOnFollowRule OBJECT IDENTIFIER ::= {id-trader-at 45}
+
+id-trader-at-limitingFollowRule OBJECT IDENTIFIER ::= {id-trader-at 50}
+
+id-trader-at-proxyOfferId OBJECT IDENTIFIER ::= {id-trader-at 51}
+
+id-trader-at-proxyLookUpInterfaceId OBJECT IDENTIFIER ::= {id-trader-at 52}
+
+id-trader-at-constraintRecipe OBJECT IDENTIFIER ::= {id-trader-at 53}
+
+id-trader-at-ifMatchAll OBJECT IDENTIFIER ::= {id-trader-at 55}
+
+id-trader-at-interfaceReference OBJECT IDENTIFIER ::= {id-trader-at 60}
+
+id-trader-at-interfaceType OBJECT IDENTIFIER ::= {id-trader-at 61}
+
+id-trader-mr-policySpecificationMatch OBJECT IDENTIFIER ::= {id-trader-mr 1}
+
+id-trader-mr-dynamicPropValueMatch OBJECT IDENTIFIER ::= {id-trader-mr 2}
+
+-- Upperbounds
+ub-common-name INTEGER ::= 64
+
+ub-request-id-stem INTEGER ::= 1024
+
+ub-policy-string-rule INTEGER ::= 1024
+
+ub-s-offer-id INTEGER ::= 64
+
+ub-dynamic-value-extra-info INTEGER ::= 1024
+
+ub-link-name INTEGER ::= 64
+
+ub-link-id INTEGER ::= 64
+
+ub-proxy-offer-id INTEGER ::= 64
+
+ub-constraint-recipe INTEGER ::= 1024
+
+ub-interface-id INTEGER ::= 1024
+
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

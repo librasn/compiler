@@ -1,0 +1,209 @@
+
+
+
+
+
+
+
+-- Module SccpAccountingDefinedTypesModule (Q.751.4:05/1998)
+-- See also ITU-T Q.751.4 (05/1998)
+-- See also the index of all ASN.1 assignments needed in this document
+
+SccpAccountingDefinedTypesModule {itu-t(0) recommendation(0) q(17) omap(751)
+  sccpAccounting(4) informationModel(0) asn1Modules(2)
+  sccpAccountingDefinedTypesModule(0)} DEFINITIONS IMPLICIT TAGS ::=
+BEGIN
+
+IMPORTS
+  ObjectInstance, SimpleNameType
+    FROM Attribute-ASN1Module {joint-iso-itu-t ms(9) smi(3) part2(2)
+      asn1Module(2) 1}
+  --Counter, 
+  DataProblem,
+    --accountingInformationModel, 
+    accountingAction, accountingAttribute, accountingAttributeGroup,
+    accountingNameBinding, accountingNotification, accountingObjectClass,
+    accountingPackage, accountingParameter, EndOfMeasurementTime,
+    SelectionGroupSet, SelectionGroup
+    FROM AccountingDefinedTypesModule {itu-t(0) recommendation(0) q(17)
+      omap(751) accounting(3) informationModel(0) asn1Modules(2)
+      accountingDefinedTypesModule(0)}
+  GtNatureOfAddress, GtNumberingPlan, GtTranslationType
+    FROM SCCPDefinedTypesModule {itu-t(0) recommendation q(17) omap(751)
+      sccp(2) informationModel(0) asn1Modules(2) sccpDefinedTypesModule(0)}
+  Ss7SpecificErrorInformation
+    FROM Q2751DefinedTypesModule {itu-t(0) recommendation(0) q(17) omap2(2751)
+      part1(1) informationModel(0) asn1Modules(2) q2751DefinedTypesModule(0)};
+
+-- ASN.1 TYPE DEFINITIONS
+RuleSet ::= SET SIZE (1..maxNumberReferencesInRuleSet) OF ObjectInstance
+
+maxNumberReferencesInRuleSet INTEGER ::=
+  10 -- this number is only for compilability
+
+maxNumberReferencesInSccpLinkageSet INTEGER ::=
+  10 -- this number is only for compilability
+
+maxNumberReferencesInSccpSelectionGroupSet INTEGER ::=
+  10 -- this number is only for compilability
+
+SccpLinkageSet ::=
+  SET SIZE (1..maxNumberReferencesInSccpLinkageSet) OF ObjectInstance
+
+SccpAccCounterData ::= SEQUENCE {
+  gts          [0]  INTEGER,
+  octets       [1]  INTEGER,
+  dataProblem  [2]  DataProblem,
+  ruleSet      [3]  RuleSet OPTIONAL
+}
+
+SccpAccCounterDataSequence ::=
+  SEQUENCE SIZE (1..maxNumberReferencesInSccpSelectionGroupSet) OF
+    SccpAccCounterData
+
+-- maximum size = q
+SccpAccountingNotificationData ::= SEQUENCE {
+  endOfMeasurementTime        EndOfMeasurementTime,
+  sccpLinkageSet              SccpLinkageSet,
+  sccpAccCounterDataSequence  SccpAccCounterDataSequence
+}
+
+selectionGroupSetInitial SelectionGroupSet ::= {}
+
+GtNatureOfAddressSet ::= SET OF GtNatureOfAddress
+
+GtNumberingPlanSet ::= SET OF GtNumberingPlan
+
+GtTranslationTypeSet ::= SET OF GtTranslationType
+
+-- the following values of Ss7SpecificErrorInformation defined in Q.2751.1 are used: 
+gtRuleAlreadyUsedByAnotherTAC Ss7SpecificErrorInformation ::=
+  4000
+
+-- One of the gtRules specified in attribute ruleSet is already 
+-- used by another terminatingAccountClassForAccounting.
+invalidTACForAccountingReference Ss7SpecificErrorInformation ::=
+  4001
+
+-- at least one of the references in selectionGroupSetForAccounting is not 
+-- referring to a terminatingAccountClassForAccounting
+invalidTACForVerificationReference Ss7SpecificErrorInformation ::=
+  4002
+
+-- at least one of the references in selectionGroupSetForVerification is not
+-- referring to a terminatingAccountClassForVerification contained in the
+-- same sccpAccount.
+ruleOverlapError Ss7SpecificErrorInformation ::=
+  4003
+
+-- the ruleSet of the-terminatingAccountClassForAccounting/Verification 
+-- is not disjunct ! No unambiguous identification of a 
+-- terminatingAccountClass would be possible.
+sccpLinkageAlreadyInOtherAccount Ss7SpecificErrorInformation ::=
+  4004
+
+-- at least one of the sccpLinkages refered to by the sccpLinkageSet is 
+-- already -referred to by another sccpLinkageSet in another sccpAccount 
+-- instance
+selectionGroupOverlapError Ss7SpecificErrorInformation ::=
+  4005
+
+-- the manipulated selectionGroupSetForAccounting/Verification would 
+-- not allow an unambigous identification of a the counter to be 
+-- incremented
+-- ASN.1 OBJECT IDENTIFIER definitions
+ruleSet-AOi OBJECT IDENTIFIER ::=
+  {accountingAttribute gtRuleSet(22)}
+
+sccpAccCounterDataSequence-AOi OBJECT IDENTIFIER ::=
+  {accountingAttribute sccpAccCounterDataSequence(26)}
+
+sccpAccountId-AOi OBJECT IDENTIFIER ::= {accountingAttribute sccpAccountId(23)}
+
+sccpAccounting-NOI OBJECT IDENTIFIER ::=
+  {accountingNotification sccpAccounting(3)}
+
+sccpAccountingVerification-NOI OBJECT IDENTIFIER ::=
+  {accountingNotification sccpAccountingVerification(4)}
+
+sccpAccountPackage-POi OBJECT IDENTIFIER ::=
+  {accountingPackage sccpAccountPackage(12)}
+
+sccpAccount-OOi OBJECT IDENTIFIER ::= {accountingObjectClass sccpAccount(11)}
+
+sccpAccountingLogRecord-OOi OBJECT IDENTIFIER ::=
+  {accountingObjectClass sccpAccountingLogRecord(7)}
+
+sccpAccountingLogRecordPackage-POi OBJECT IDENTIFIER ::=
+  {accountingPackage sccpAccountingLogRecordPackage(13)}
+
+sccpAccountingNotificationsPackage-POi OBJECT IDENTIFIER ::=
+  {accountingPackage sccpAccountingNotificationsPackage(11)}
+
+sccpLinkageSet-AOi OBJECT IDENTIFIER ::=
+  {accountingAttribute sccpLinkageSet(24)}
+
+sccpAccount-scrc-NBOI OBJECT IDENTIFIER ::=
+  {accountingNameBinding sccpAccount-scrc(6)}
+
+terminatingAccountClassForVerification-sccpAccount-NBOI OBJECT IDENTIFIER ::=
+  {accountingNameBinding terminatingAccountClassForVerification-sccpAccount(7)}
+
+terminatingAccountClassForAccounting-scrc-NBOI OBJECT IDENTIFIER ::=
+  {accountingNameBinding terminatingAccountClassForAccounting-scrc(8)}
+
+terminatingAccountClassForAccountingId-AOi OBJECT IDENTIFIER ::=
+  {accountingAttribute terminatingAccountClassForAccountingId(25)}
+
+terminatingAccountClassForVerificationId-AOi OBJECT IDENTIFIER ::=
+  {accountingAttribute terminatingAccountClassForVerificationId(21)}
+
+terminatingAccountClassForAccountingPackage-POi OBJECT IDENTIFIER ::=
+  {accountingPackage terminatingAccountClassForAccountingPackage(7)}
+
+terminatingAccountClassForVerificationPackage-POi OBJECT IDENTIFIER ::=
+  {accountingPackage terminatingAccountClassForVerificationPackage(10)}
+
+terminatingAccountClassForAccounting-OOi OBJECT IDENTIFIER ::=
+  {accountingObjectClass terminatingAccountClassForAccounting(6)}
+
+terminatingAccountClassForVerification-OOi OBJECT IDENTIFIER ::=
+  {accountingObjectClass terminatingAccountClassForVerification(9)}
+
+verificationRule-OOi OBJECT IDENTIFIER ::=
+  {accountingObjectClass verificationRule(10)}
+
+verificationTranslator-OOi OBJECT IDENTIFIER ::=
+  {accountingObjectClass verificationTranslator(8)}
+
+verificationRulePackage-POi OBJECT IDENTIFIER ::=
+  {accountingPackage verificationRulePackage(8)}
+
+verificationTranslatorPackage-POi OBJECT IDENTIFIER ::=
+  {accountingPackage verificationTranslatorPackage(9)}
+
+verificationTranslatorId-AOi OBJECT IDENTIFIER ::=
+  {accountingAttribute verificationTranslatorId(16)}
+
+verificationRuleId-AOi OBJECT IDENTIFIER ::=
+  {accountingAttribute verificationRuleId(17)}
+
+gtNatureOfAddressSet-AOi OBJECT IDENTIFIER ::=
+  {accountingAttribute gtNatureOfAddressSet(18)}
+
+gtNumberingPlanSet-AOi OBJECT IDENTIFIER ::=
+  {accountingAttribute gtNumberingPlanSet(19)}
+
+gtTranslationTypeSet-AOi OBJECT IDENTIFIER ::=
+  {accountingAttribute gtTranslationTypeSet(20)}
+
+verificationTranslator-sccpAccount-NBOi OBJECT IDENTIFIER ::=
+  {accountingNameBinding verificationTranslator-sccpAccount(9)}
+
+verificationRule-verificationTranslator-NBOi OBJECT IDENTIFIER ::=
+  {accountingNameBinding verificationRule-verificationTranslator(10)}
+
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

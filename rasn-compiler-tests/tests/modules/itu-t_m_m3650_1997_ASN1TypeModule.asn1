@@ -1,0 +1,174 @@
+
+
+
+
+
+
+
+-- Module ASN1TypeModule (M.3650:04/1997)
+-- See also ITU-T M.3650 (04/1997)
+-- See also the index of all ASN.1 assignments needed in this document
+
+ASN1TypeModule {itu-t(0) recommendation(0) m(13) m3650(3650)
+  informationModel(0) asn1Module(2) asn1TypeModule(0)} DEFINITIONS IMPLICIT
+TAGS ::=
+BEGIN
+
+-- EXPORTS everything
+IMPORTS
+  DirectoryNumber
+    FROM CAISDNModule {itu-t(0) recommendation(0) q(17) q824(824) dot(127)
+      isdn(1) informationModel(0) asn1Modules(2) cAISDNModule(0)}
+  NameType
+    FROM ASN1DefinedTypesModule {itu-t(0) recommendation(0) m(13) gnm(3100)
+      informationModel(0) asn1Modules(2) asn1DefinedTypesModule(0)}
+  TimePeriod
+    FROM MetricModule {joint-iso-itu-t ms(9) function(2) part11(11)
+      asn1Module(2) 0};
+
+m3650InformationModel OBJECT IDENTIFIER ::=
+  {itu-t(0) recommendation(0) m(13) m3650(3650) informationModel(0)}
+
+m3650StandardSpecificExtension OBJECT IDENTIFIER ::=
+  {m3650InformationModel standardSpecificExtension(0)}
+
+m3650ManagedObjectClass OBJECT IDENTIFIER ::=
+  {m3650InformationModel managedObjectClass(3)}
+
+m3650Package OBJECT IDENTIFIER ::= {m3650InformationModel package(4)}
+
+m3650NameBinding OBJECT IDENTIFIER ::= {m3650InformationModel nameBinding(6)}
+
+m3650Attribute OBJECT IDENTIFIER ::= {m3650InformationModel attribute(7)}
+
+m3650Action OBJECT IDENTIFIER ::= {m3650InformationModel action(9)}
+
+m3650Notification OBJECT IDENTIFIER ::=
+  {m3650InformationModel notification(10)}
+
+initialTypesMonitoring TypesMonitoring ::= {TRUE, TRUE, TRUE, TRUE, TRUE, TRUE}
+
+InformationTransferCapability ::= ENUMERATED {
+  speech(0), unrestrictedDigitalInformation(1),
+  restrictedDigitalInformation(2), threeDotOneKHzAudio(3), sevenKHzAudio(4),
+  video(5)}
+
+InformationTransferMode ::= ENUMERATED {circuitMode(0), packetMode(1)}
+
+InformationTransferRate ::= ENUMERATED {
+  packetMode(0), kBits64(1), kBits2x64(2), kBits384(3), kBits1536(4),
+  kBits1920(5)}
+
+Layer1AccessDelay ::= SEQUENCE {
+  layer1FE1  TimeStamp,
+  layer1FE2  TimeStamp,
+  layer1FE3  TimeStamp,
+  layer1FE4  TimeStamp
+}
+
+Layer1AccessDependability ::= ENUMERATED {
+  successfulLayer1AccessDependability(0), layer1Failure(1)}
+
+Layer1InformationTransferDependability ::= ENUMERATED {
+  successfulInformationTransfer(0), layer1Failure(1)}
+
+Layer1PerformanceRecorded ::= SEQUENCE {
+  typeOfCall                              TypeOfCall,
+  layer1AccessDelay                       Layer1AccessDelay,
+  layer1AccessDependability               Layer1AccessDependability,
+  layer1InformationTransferDependability
+    Layer1InformationTransferDependability
+}
+
+Layer2AccessDelay ::= SEQUENCE {layer2SABME  TimeStamp,
+                                layer2UA     TimeStamp
+}
+
+Layer2AccessDependability ::= ENUMERATED {
+  successfulLayer2AccessDependability(0), layer2Failure(1)}
+
+Layer2PerformanceRecorded ::= SEQUENCE {
+  typeOfCall                 TypeOfCall,
+  layer2AccessDelay          Layer2AccessDelay,
+  layer2AccessDependability  Layer2AccessDependability
+}
+
+Layer3AccessDelay ::= SEQUENCE {
+  layer3SETUP    [0]  TimeStamp,
+  layer3SETACK   [1]  TimeStamp OPTIONAL,
+  layer3INF      [2]  TimeStamp OPTIONAL,
+  layer3ALERT    [3]  TimeStamp OPTIONAL,
+  layer3CONNECT  [4]  TimeStamp OPTIONAL
+}
+
+Layer3AccessDependability ::= ENUMERATED {
+  successfulLayer3AccessDependability(0), bearerCapabilityNotAvailable(1),
+  noResponseSETUPorINF(2), networkOutOfOrder(3), temporaryFailure(4),
+  iSUPT7Expired(5), iSUPT8Expired(6), switchingEquipmentCongestion(7),
+  iSUPMessageError(8), iSUPParameterError(9), otherUnsuccessful(10)}
+
+Layer3DisengagementDelay ::= SEQUENCE {
+  layer3DISCONNECT  TimeStamp,
+  layer3RELEASE     TimeStamp,
+  layer3RELCOMP     TimeStamp,
+  bChannelFree      TimeStamp
+}
+
+Layer3DisengagementDependability ::= ENUMERATED {
+  successfulDisengagement(0), noRELEASE(1), noRELCOMP(2), otherUnsuccessful(3),
+  notApplicable(4)}
+
+Layer3InformationTransferDependability ::= ENUMERATED {
+  successfulInformationTransfer(0), destinationOutOfOrder(1), t318Expired(2),
+  temporaryFailure(3), networkOutOfOrder(4), otherUnsuccessful(5),
+  notApplicable(6)}
+
+Layer3InformationTransferTime ::= SEQUENCE {
+  numberOfSatelliteHops  INTEGER OPTIONAL,
+  propagationDelay       TimePeriod OPTIONAL
+}
+
+Layer3PerformanceRecorded ::= SEQUENCE {
+  typeOfCall                              TypeOfCall,
+  callingNumber                           DirectoryNumber,
+  calledNumber                            DirectoryNumber,
+  callingSubaddress                       Subaddress,
+  calledSubaddress                        Subaddress,
+  informationTransferCapability           InformationTransferCapability,
+  informationTransferMode                 InformationTransferMode,
+  informationTransferRate                 InformationTransferRate,
+  layer3AccessDelay                       Layer3AccessDelay,
+  layer3AccessDependability               Layer3AccessDependability,
+  layer3InformationTransferTime           Layer3InformationTransferTime,
+  layer3InformationTransferDependability
+    Layer3InformationTransferDependability,
+  layer3DisengagementDelay                Layer3DisengagementDelay,
+  layer3DisengagementDependability        Layer3DisengagementDependability
+}
+
+MonitoringTimeStamp ::= GeneralizedTime
+
+Subaddress ::= OCTET STRING
+
+TimeStamp ::= SEQUENCE {
+  hours         INTEGER, -- -1 to 23
+  minutes       INTEGER, -- -1 to 59
+  seconds       INTEGER, -- -1 to 59
+  milliseconds  INTEGER
+} -- -1 to 999
+
+TypesMonitoring ::= SEQUENCE {
+  outgoingLayer1  BOOLEAN,
+  incomingLayer1  BOOLEAN,
+  outgoingLayer2  BOOLEAN,
+  incomingLayer2  BOOLEAN,
+  outgoingLayer3  BOOLEAN,
+  incomingLayer3  BOOLEAN
+}
+
+TypeOfCall ::= ENUMERATED {outgoing(0), incoming(1)}
+
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

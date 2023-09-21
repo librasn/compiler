@@ -1,0 +1,229 @@
+
+
+
+
+
+
+
+
+-- Module B-ISUPParameterIndicators (Q.2763:12/1999)
+-- See also ITU-T Q.2763 (1999) Amend. 1 (12/2002)
+-- See also the index of all ASN.1 assignments needed in this document
+
+B-ISUPParameterIndicators DEFINITIONS IMPLICIT TAGS ::=
+BEGIN
+
+AccessDeliveryIndicator ::= ENUMERATED {
+  setUpMessageGenerated(0), noSetUpMessageGenerated(1)}
+
+AddressPresentationIndicator ::= ENUMERATED {
+  presentationAllowed(0), presentationRestricted(1), addressNotAvailable(2)
+ --	for national use--}
+
+AutomaticCongestionLevelInd ::= ENUMERATED {
+  congestionLevel1exceeded(1), congestionLevel2exceeded(2)}
+
+CallDiversionMayOccurIndicator ::= ENUMERATED {
+  noIndication(0), callDiversionMayOccur(1)}
+
+CalledPartysCategoryInd ::= ENUMERATED {
+  noIndication(0), ordinarySubscriber(1), payphone(2)}
+
+CalledPartysStatusInd ::= ENUMERATED {noIndication(0), alerting(1)}
+
+CallingPartysCategoryIndicators ::= ENUMERATED {
+  callingPartysCategoryUnknownAtThisMoment(0), --	for national use
+  operatorLanguageFrench(1), operatorLanguageEnglish(2),
+  operatorLanguageGerman(3), operatorLanguageRussian(4),
+  operatorLanguageSpanish(5),
+  nationalOperator(9), --	for national use
+  ordinaryCallingSubscriber(10), callingSubscriberWithPriority(11),
+  dataCall(12), testCall(13),
+  iEPScallmarkingforpreferentialcallsetup(14), -- FROM Amd1 
+  payphone(15)
+  --	values 6..8, 14, 224..254 are reserved
+  }
+
+CCITTNetworkIdenPlanIndicator ::= ENUMERATED {
+  unknown(0), publicDataNetworkIdentificationCodeX121(1),
+  publicLandMobileNetworkIdentificationCodeE212(2)}
+
+CellRateIdentifier ::= ENUMERATED {
+  forwardPeakCellRateForCellLossPriority0(2),
+  backwardPeakCellRateForCellLossPriority0(3),
+  forwardPeakCellRateForCellLossPriority0and1(4),
+  backwardPeakCellRateForCellLossPriority0and1(5)}
+
+ChargeIndicator ::= ENUMERATED {noCharge(0), charge(1)}
+
+ClosedUserGroupCallIndicator ::= ENUMERATED {
+  cUGcallOutgoingAccessAllowed(0), cUGcallOutgoingAccessNotAllowed(1)
+}
+
+ConnectedLineIDRequestIndicator ::= ENUMERATED {notRequested(0), requested(1)}
+
+InBandInformationIndicator ::= ENUMERATED {
+  noIndication(0), inBandInfoOrPatternAvailable(1)}
+
+IncomingHECDIndicator ::= ENUMERATED {
+  noInformation(0), incomingHECDNotIncluded(1), incomingHECDIncluded(2)
+}
+
+IncomingHECDRequestIndicator ::= ENUMERATED {
+  noInformation(0), incomingHECDActivationRequest(1),
+  incomingHECDDeactivationRequest(2)}
+
+InternalNetworkNumberIndicator ::= ENUMERATED {
+  routingToInternalNetworkNumberAllowed(0),
+  routingToInternalNetworkNumberNotAllowed(1)}
+
+InterworkingIndicator ::= ENUMERATED {
+  noInterworkingEncountered(0), interworkingEncountered(1)}
+
+ISDNAccessIndicator ::= ENUMERATED {
+  originatingOrTerminatingAccessNonISDN(0),
+  originatingOrTerminatingAccessISDN(1)}
+
+ISDNUserPartIndicator ::= ENUMERATED {
+  iSDNUserPartNotUsedAllTheWay(0), iSDNUserPartUsedAllTheWay(1)}
+
+ISDNUserPartPreferenceInd ::= ENUMERATED {
+  iSDNUserPartPreferredAllTheWay(0), iSDNUserPartNotRequiredAllTheWay(1),
+  iSDNUserPartRequiredAllTheWay(2)}
+
+LookAheadForBusyIndicator ::= ENUMERATED {
+  lookAheadForBusyAllowed(0),
+  pathReserved(1), --	for national use
+  lookAheadForBusyNotAllowed(2)}
+
+MLPPUserIndicator ::= ENUMERATED {noIndication(0), mLPPUser(1)}
+
+MoreDataIndicator ::= ENUMERATED {noMoreData(0), moreData(1)}
+
+NationalNetworkIdenPlanIndicator ::= ENUMERATED {item --	for national use--}
+
+NationalInternationalCallIndicator ::= ENUMERATED {
+  callToBeTreatedAsNationalCall(0), callToBeTreatedAsInternationalCall(1)
+}
+
+NatureOfAddressIndicator ::= ENUMERATED {
+  subscriberNumber(1), --	for national use
+  unknown(2), --	for national use
+  nationalSignificantNumber(3), internationalNumber(4)
+                                --	values 112..126 are reserved
+                                }
+
+NetworkDiscardIndicator ::= ENUMERATED {
+  noInformation(0), userToUserInformationDiscardedByTheNetwork(1)}
+
+NotificationIndicators ::= ENUMERATED {
+  userSuspended(0), --	used in DSS 1
+  userResumed(1), --	used in DSS 1
+  bearerServiceChanged(2), --	used in DSS 1
+  discriminatorForExtensionToASN1(3), --	used in DSS 1
+  callCompletionDelay(4), conferenceEstablished(66),
+  conferenceDisconnected(67), otherPartyAdded(68), isolated(69),
+  reattached(70), otherPartyIsolated(71), otherPartyReattached(72),
+  otherPartySplit(73), otherPartyDisconnected(74), conferenceFloating(75),
+  callIsAWaitingCall(96),
+  diversionActivated(104), --	used in DSS 1
+  callTransferAlerting(105), callTransferActive(106), remoteHold(121),
+  remoteRetrieval(122), callIsDiverting(123)
+                        --	all other values are reserved
+                        }
+
+NotificationSubscriptionOption ::= ENUMERATED {
+  unknown(0), presentationNotAllowed(1),
+  presentationAllowedWithRedirectionNumber(2),
+  presentationAllowedWithoutRedirectionNumber(3)}
+
+NumberIncompleteIndicator ::= ENUMERATED {complete(0), incomplete(1)
+ --	for national use--}
+
+NumberingPlanIndicator ::= ENUMERATED {
+  iSDNTelephonyNumberingPlanE164(1),
+  dataNumberingPlanX121(3), -- for national use 
+  privateNumberingPlan(5) --	depending on the type of number--
+  --  values 3, 4 and 6 are reserved for national use
+  }
+
+OriginalRedirectionReasonIndicator ::= ENUMERATED {
+  unknownNotAvailable(0),
+  userBusy(1), --	for national use
+  noReply(2), --	for national use
+  unconditional(3) --	for national use--}
+
+OutgoingHECDIndicator ::= ENUMERATED {
+  noInformation(0), outgoingHECDNotIncluded(1), outgoingHECDIncluded(2)
+}
+
+OutgoingHECDRequestIndicator ::= ENUMERATED {
+  noInformation(0), outgoingHECDActivationRequest(1),
+  outgoingHECDDeactivationRequest(2)}
+
+PrecedenceLevelIndicator ::= ENUMERATED {
+  flashOverride(0), flash(1), immediate(2), priority(3), routine(4)}
+
+Priority ::= ENUMERATED {
+  noPrioritizedOrder(0), prioritizedListInAscendingOrder(1),
+  prioritizedListInDecendingOrder(2)
+  --	values 3..15 are reserved
+  }
+
+RedirectingIndicator ::= ENUMERATED {
+  noRedirection(0), --	for national use
+  callRerouted(1), --	for national use
+  callReroutedAllRedirectionInfoPresentationRestricted(2), --	for national use
+  callDiversion(3), callDiversionAllRedirectionInfoPresentationRestricted(4),
+  callReroutedRedirectionNumberPresentationRestricted(5), --	for national use
+  callDiversionRedirectionNumberPresentationRestricted(6)}
+
+RedirectingReasonIndicator ::= ENUMERATED {
+  unknownnotAvailable(0), userBusy(1), noReply(2), unconditional(3),
+  deflectionDuringAlerting(4), deflectionImmediateResponse(5),
+  mobileSubscriberNotReachable(6)}
+
+RedirectionNumberRestrictionInd ::= ENUMERATED {
+  presentationAllowed(0), presentationRestricted(1)}
+
+RepeatIndicator ::= ENUMERATED {
+  informationElementNotRepeated(0), informationElementRepeated(1)}
+
+ResourceIndicator ::= ENUMERATED {
+  localSignallingID(0), remoteSignallingID(1), connectionElementIDVPCIVCI(2),
+  connectionElementIDVPCI(3)}
+
+ScreeningIndicator ::= ENUMERATED {
+  userProvidedNotVerified(0), --	for national use
+  userProvidedVerifiedAndPassed(1),
+  userProvidedVerifiedAndFailed(2), --	for national use
+  networkProvided(3)}
+
+SimpleSegmentationIndicator ::= ENUMERATED {
+  noAdditionalInformationWillBeSent(0),
+  additionalInformationWillBeSentInSegmentationMessage(1)} --	for national use
+
+SuspendResumeIndicator ::= ENUMERATED {
+  iSDNSubscriberInitiated(0), networkInitiated(1)}
+
+Type ::= ENUMERATED {request(0), response(1)}
+
+TypeOfNetworkIdentification ::= ENUMERATED {
+  cCITTstandardizedIdentification(0), nationalNetworkIdentification(1)
+}
+
+UserToUserServiceRequest ::= ENUMERATED {
+  noInformation(0), requestNotEssential(2)} --	value 3 is reserved
+
+UserToUserServiceResponse ::= ENUMERATED {
+  noInformation(0), notProvided(1), provided(2)}
+
+VPCICheckResultIndicator ::= ENUMERATED {
+  virtualPathConnectionIdentifierCheckNotSuccessful(0),
+  virtualPathConnectionIdentifierCheckSuccessful(1),
+  virtualPathConnectionIdentifierCheckNotPerformed(2)}
+
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

@@ -1,0 +1,441 @@
+
+
+
+
+
+EnhancedSecurity (X.501 TC1:08/1997)
+
+
+-- Module EnhancedSecurity (X.501 TC1:08/1997)
+-- See also ITU-T X.501 (1997) Technical Cor. 1 (03/2000)
+-- See also the index of all ASN.1 assignments needed in this document
+
+EnhancedSecurity {joint-iso-itu-t ds(5) module(1) enhancedSecurity(28) 1}
+DEFINITIONS AUTOMATIC TAGS ::=
+BEGIN
+
+-- EXPORTS All 
+IMPORTS
+  -- from ITU-T Rec. X.411 | ISO/IEC 10021-4
+  SecurityLabel, SecurityCategory
+    FROM MTSAbstractService {joint-iso-itu-t mhs(6) mts(3) modules(0)
+      mts-abstract-service(1) version-1999(1)}
+  -- from ITU-T Rec. X.501 | ISO/IEC 9594-2
+  informationFramework, authenticationFramework, certificateExtensions,
+    enhancedSecurity, id-mr, id-avc, id-at
+    FROM UsefulDefinitions {joint-iso-itu-t ds(5) module(1)
+      usefulDefinitions(0) 3}
+  Attribute, AttributeType, AttributeValue, Name, objectIdentifierMatch,
+    ATTRIBUTE, MATCHING-RULE, CONTEXT, SupportedAttributes, Context
+    FROM InformationFramework {joint-iso-itu-t ds(5) module(1)
+      informationFramework(1) 3}
+  -- from ITU-T Rec. X.509 | ISO/IEC 9594-8
+  AlgorithmIdentifier, CertificateSerialNumber, Extensions, Validity, 
+    SIGNED{}, HASH{}, ENCRYPTED{}
+    FROM AuthenticationFramework {joint-iso-itu-t ds(5) module(1)
+      authenticationFramework(7) 3}
+  KeyIdentifier, GeneralNames
+    FROM CertificateExtensions {joint-iso-itu-t ds(5) module(1)
+      certificateExtensions(26) 0}
+  AttributeTypeAndValue
+    FROM BasicAccessControl {joint-iso-itu-t ds(5) module(1)
+      basicAccessControl(24) 3}
+  -- from GULS
+  SECURITY-TRANSFORMATION, PROTECTION-MAPPING, PROTECTED{}
+    FROM Notation {joint-iso-itu-t genericULS(20) modules(1) notation(1)}
+  dirSignedTransformation, KEY-INFORMATION
+    FROM GulsSecurityTransformations {joint-iso-itu-t genericULS(20) 
+      modules(1) gulsSecurityTransformations(3)}
+  signed
+    FROM DirectoryProtectionMappings {joint-iso-itu-t genericULS(20) 
+      modules(1) dirProtectionMappings(4)};
+
+-- The "signed" Protection Mapping and associated "dirSignedTransformations" imported
+-- from the Generic Upper Layers Security specification (ITU-T Rec. X.830 | ISO/IEC 11586-1)
+-- results in identical encoding as the same data type used with the SIGNED as defined in
+-- ITU-T REC. X.509 | ISO/IEC 9594-8
+genEncryptedTransform{KEY-INFORMATION:SupportedKIClasses}
+  SECURITY-TRANSFORMATION ::= {
+  IDENTIFIER              {enhancedSecurity gen-encrypted(2)}
+  INITIAL-ENCODING-RULES  {joint-iso-itu-t asn1(1) ber(1)}
+  -- This default for initial encoding rules may be overridden
+  -- using a static protected parameter (initEncRules).
+  XFORMED-DATA-TYPE
+    SEQUENCE {initEncRules
+                OBJECT IDENTIFIER DEFAULT {joint-iso-itu-t asn1(1) ber(1)},
+              encAlgorithm    AlgorithmIdentifier OPTIONAL, -- Identifies the encryption algorithm,
+              keyInformation
+                SEQUENCE {kiClass
+                            KEY-INFORMATION.&kiClass({SupportedKIClasses}),
+                          keyInfo
+                            KEY-INFORMATION.&KiType
+                              ({SupportedKIClasses}{@.kiClass})} OPTIONAL,
+              -- Key information may assume various formats, governed by supported members
+              -- of the KEY-INFORMATION information object class (defined in ITU-T
+              -- Rec. X.830 | ISO/IEC 11586-1)
+              encData
+                BIT STRING
+                  (CONSTRAINED BY {
+                     -- the encData value must be generated following 
+                     -- the procedure specified in 15.3.1-- })}
+}
+
+encrypted PROTECTION-MAPPING ::= {
+  SECURITY-TRANSFORMATION  {genEncryptedTransform  {{...} --to be defined--}}
+}
+
+signedAndEncrypt PROTECTION-MAPPING ::= {
+  SECURITY-TRANSFORMATION  {signedAndEncryptedTransform}
+}
+
+signedAndEncryptedTransform SECURITY-TRANSFORMATION ::= {
+  IDENTIFIER                   {enhancedSecurity dir-encrypt-sign(1)}
+  INITIAL-ENCODING-RULES
+    {joint-iso-itu-t asn1(1) ber-derived(2) distinguished-encoding(1)}
+  XFORMED-DATA-TYPE PROTECTED
+    {PROTECTED  {ABSTRACT-SYNTAX.&Type,
+                 signed},
+     encrypted}
+}
+
+OPTIONALLY-PROTECTED{ToBeProtected, PROTECTION-MAPPING:generalProtection} ::=
+  CHOICE {
+  toBeProtected  [0]  ToBeProtected,
+  --no DIRQOP specified for operation
+  signed         [1]  PROTECTED{ToBeProtected, signed},
+  --DIRQOP is Signed
+  protected      [APPLICATION 0]  PROTECTED{ToBeProtected, generalProtection}
+}
+
+--DIRQOP is other than Signed
+defaultDirQop ATTRIBUTE ::= {
+  WITH SYNTAX             OBJECT IDENTIFIER
+  EQUALITY MATCHING RULE  objectIdentifierMatch
+  USAGE                   directoryOperation
+  ID                      id-at-defaultDirQop
+}
+
+DIRQOP ::=
+  CLASS
+   -- This information object class is used to define the quality of protection 
+  -- required throughout directory operation. 
+  -- The Quality Of Protection can be signed, encrypted, signedAndEncrypt
+  {
+  &dirqop-Id                       OBJECT IDENTIFIER UNIQUE,
+  &dirBindError-QOP                PROTECTION-MAPPING,
+  &dirErrors-QOP                   PROTECTION-MAPPING,
+  &dapReadArg-QOP                  PROTECTION-MAPPING,
+  &dapReadRes-QOP                  PROTECTION-MAPPING,
+  &dapCompareArg-QOP               PROTECTION-MAPPING,
+  &dapCompareRes-QOP               PROTECTION-MAPPING,
+  &dapListArg-QOP                  PROTECTION-MAPPING,
+  &dapListRes-QOP                  PROTECTION-MAPPING,
+  &dapSearchArg-QOP                PROTECTION-MAPPING,
+  &dapSearchRes-QOP                PROTECTION-MAPPING,
+  &dapAbandonArg-QOP               PROTECTION-MAPPING,
+  &dapAbandonRes-QOP               PROTECTION-MAPPING,
+  &dapAddEntryArg-QOP              PROTECTION-MAPPING,
+  &dapAddEntryRes-QOP              PROTECTION-MAPPING,
+  &dapRemoveEntryArg-QOP           PROTECTION-MAPPING,
+  &dapRemoveEntryRes-QOP           PROTECTION-MAPPING,
+  &dapModifyEntryArg-QOP           PROTECTION-MAPPING,
+  &dapModifyEntryRes-QOP           PROTECTION-MAPPING,
+  &dapModifyDNArg-QOP              PROTECTION-MAPPING,
+  &dapModifyDNRes-QOP              PROTECTION-MAPPING,
+  &dspChainedOp-QOP                PROTECTION-MAPPING,
+  &dispShadowAgreeInfo-QOP         PROTECTION-MAPPING,
+  &dispCoorShadowArg-QOP           PROTECTION-MAPPING,
+  &dispCoorShadowRes-QOP           PROTECTION-MAPPING,
+  &dispUpdateShadowArg-QOP         PROTECTION-MAPPING,
+  &dispUpdateShadowRes-QOP         PROTECTION-MAPPING,
+  &dispRequestShadowUpdateArg-QOP  PROTECTION-MAPPING,
+  &dispRequestShadowUpdateRes-QOP  PROTECTION-MAPPING,
+  &dopEstablishOpBindArg-QOP       PROTECTION-MAPPING,
+  &dopEstablishOpBindRes-QOP       PROTECTION-MAPPING,
+  &dopModifyOpBindArg-QOP          PROTECTION-MAPPING,
+  &dopModifyOpBindRes-QOP          PROTECTION-MAPPING,
+  &dopTermOpBindArg-QOP            PROTECTION-MAPPING,
+  &dopTermOpBindRes-QOP            PROTECTION-MAPPING,
+  &dsaReferral-QOP                 PROTECTION-MAPPING
+}
+WITH SYNTAX {
+  DIRQOP-ID &dirqop-Id
+  DIRECTORYBINDERROR-QOP &dirBindError-QOP
+  DIRERRORS-QOP &dirErrors-QOP
+  DAPREADARG-QOP &dapReadArg-QOP
+  DAPREADRES-QOP &dapReadRes-QOP
+  DAPCOMPAREARG-QOP &dapCompareArg-QOP
+  DAPCOMPARERES-QOP &dapCompareRes-QOP
+  DAPLISTARG-QOP &dapListArg-QOP
+  DAPLISTRES-QOP &dapListRes-QOP
+  DAPSEARCHARG-QOP &dapSearchArg-QOP
+  DAPSEARCHRES-QOP &dapSearchRes-QOP
+  DAPABANDONARG-QOP &dapAbandonArg-QOP
+  DAPABANDONRES-QOP &dapAbandonRes-QOP
+  DAPADDENTRYARG-QOP &dapAddEntryArg-QOP
+  DAPADDENTRYRES-QOP &dapAddEntryRes-QOP
+  DAPREMOVEENTRYARG-QOP &dapRemoveEntryArg-QOP
+  DAPREMOVEENTRYRES-QOP &dapRemoveEntryRes-QOP
+  DAPMODIFYENTRYARG-QOP &dapModifyEntryArg-QOP
+  DAPMODIFYENTRYRES-QOP &dapModifyEntryRes-QOP
+  DAPMODIFYDNARG-QOP &dapModifyDNArg-QOP
+  DAPMODIFYDNRES-QOP &dapModifyDNRes-QOP
+  DSPCHAINEDOP-QOP &dspChainedOp-QOP
+  DISPSHADOWAGREEINFO-QOP &dispShadowAgreeInfo-QOP
+  DISPCOORSHADOWARG-QOP &dispCoorShadowArg-QOP
+  DISPCOORSHADOWRES-QOP &dispCoorShadowRes-QOP
+  DISPUPDATESHADOWARG-QOP &dispUpdateShadowArg-QOP
+  DISPUPDATESHADOWRES-QOP &dispUpdateShadowRes-QOP
+  DISPREQUESTSHADOWUPDATEARG-QOP &dispRequestShadowUpdateArg-QOP
+  DISPREQUESTSHADOWUPDATERES-QOP &dispRequestShadowUpdateRes-QOP
+  DOPESTABLISHOPBINDARG-QOP &dopEstablishOpBindArg-QOP
+  DOPESTABLISHOPBINDRES-QOP &dopEstablishOpBindRes-QOP
+  DOPMODIFYOPBINDARG-QOP &dopModifyOpBindArg-QOP
+  DOPMODIFYOPBINDRES-QOP &dopModifyOpBindRes-QOP
+  DOPTERMINATEOPBINDARG-QOP &dopTermOpBindArg-QOP
+  DOPTERMINATEOPBINDRES-QOP &dopTermOpBindRes-QOP
+  DSAREFERRAL-QOP &dsaReferral-QOP
+}
+
+dirqop DIRQOP ::= {
+  DIRQOP-ID                       {1 2 3}
+  DIRECTORYBINDERROR-QOP          example-protection-mapping
+  DIRERRORS-QOP                   example-protection-mapping
+  DAPREADARG-QOP                  example-protection-mapping
+  DAPREADRES-QOP                  example-protection-mapping
+  DAPCOMPAREARG-QOP               example-protection-mapping
+  DAPCOMPARERES-QOP               example-protection-mapping
+  DAPLISTARG-QOP                  example-protection-mapping
+  DAPLISTRES-QOP                  example-protection-mapping
+  DAPSEARCHARG-QOP                example-protection-mapping
+  DAPSEARCHRES-QOP                example-protection-mapping
+  DAPABANDONARG-QOP               example-protection-mapping
+  DAPABANDONRES-QOP               example-protection-mapping
+  DAPADDENTRYARG-QOP              example-protection-mapping
+  DAPADDENTRYRES-QOP              example-protection-mapping
+  DAPREMOVEENTRYARG-QOP           example-protection-mapping
+  DAPREMOVEENTRYRES-QOP           example-protection-mapping
+  DAPMODIFYENTRYARG-QOP           example-protection-mapping
+  DAPMODIFYENTRYRES-QOP           example-protection-mapping
+  DAPMODIFYDNARG-QOP              example-protection-mapping
+  DAPMODIFYDNRES-QOP              example-protection-mapping
+  DSPCHAINEDOP-QOP                example-protection-mapping
+  DISPSHADOWAGREEINFO-QOP         example-protection-mapping
+  DISPCOORSHADOWARG-QOP           example-protection-mapping
+  DISPCOORSHADOWRES-QOP           example-protection-mapping
+  DISPUPDATESHADOWARG-QOP         example-protection-mapping
+  DISPUPDATESHADOWRES-QOP         example-protection-mapping
+  DISPREQUESTSHADOWUPDATEARG-QOP  example-protection-mapping
+  DISPREQUESTSHADOWUPDATERES-QOP  example-protection-mapping
+  DOPESTABLISHOPBINDARG-QOP       example-protection-mapping
+  DOPESTABLISHOPBINDRES-QOP       example-protection-mapping
+  DOPMODIFYOPBINDARG-QOP          example-protection-mapping
+  DOPMODIFYOPBINDRES-QOP          example-protection-mapping
+  DOPTERMINATEOPBINDARG-QOP       example-protection-mapping
+  DOPTERMINATEOPBINDRES-QOP       example-protection-mapping
+  DSAREFERRAL-QOP                 example-protection-mapping
+}
+
+example-protection-mapping PROTECTION-MAPPING ::= {
+  SECURITY-TRANSFORMATION
+    {{IDENTIFIER         {1 2 4}
+      XFORMED-DATA-TYPE  NULL}}
+}
+
+attributeValueSecurityLabelContext CONTEXT ::= {
+  WITH SYNTAX
+    SignedSecurityLabel --  At most one security label context can be assigned to an
+  --  attribute value
+  ID           id-avc-attributeValueSecurityLabelContext
+}
+
+SignedSecurityLabel ::=
+  SIGNED
+    {SEQUENCE {attHash        HASH{AttributeTypeAndValue},
+               issuer         Name OPTIONAL, -- name of labelling authority
+               keyIdentifier  KeyIdentifier OPTIONAL,
+               securityLabel  SecurityLabel}}
+
+clearance ATTRIBUTE ::= {WITH SYNTAX  Clearance
+                         ID           id-at-clearance
+}
+
+Clearance ::= SEQUENCE {
+  policyId            OBJECT IDENTIFIER,
+  classList           ClassList DEFAULT {unclassified},
+  securityCategories  SET OF SecurityCategory OPTIONAL
+}
+
+ClassList ::= BIT STRING {
+  unmarked(0), unclassified(1), restricted(2), confidential(3), secret(4),
+  topSecret(5)}
+
+attributeIntegrityInfo ATTRIBUTE ::= {
+  WITH SYNTAX             AttributeIntegrityInfo
+  EQUALITY MATCHING RULE  attributeIntegrityMatch
+  ID                      id-at-attributeIntegrityInfo
+}
+
+AttributeIntegrityInfo ::=
+  SIGNED
+    {SEQUENCE {issuer         Name, -- Authority or data originators name
+               scope          Scope, -- Identifies the attributes protected
+               subject        Name OPTIONAL, -- If not present can be implied from Name of entry
+               keyIdentifier  KeyIdentifier OPTIONAL,
+               attribsHash    AttribsHash
+    }} -- Hash value of protected attributes
+
+Scope ::= CHOICE {
+  wholeEntry     [0]  NULL, -- Signature protects all attribute values in this entry
+  selectedTypes  [1]  SelectedTypes
+  -- Signature protects all attribute values of the selected attribute types 
+}
+
+SelectedTypes ::= SEQUENCE OF AttributeType
+
+AttribsHash ::= HASH{SEQUENCE SIZE (1..MAX) OF Attribute}
+
+-- Attribute type and values with associated context values for the selected Scope
+attributeIntegrityMatch MATCHING-RULE ::= {
+  SYNTAX  AttributeIntegrityAssertion
+  ID      id-mr-attributeIntegrityMatch
+}
+
+AttributeIntegrityAssertion ::= SEQUENCE {
+  issuer         Name OPTIONAL,
+  scope          Scope OPTIONAL,
+  keyIdentifier  KeyIdentifier OPTIONAL
+}
+
+attributeValueIntegrityInfoContext CONTEXT ::= {
+  WITH SYNTAX  AttributeValueIntegrityInfo
+  ASSERTED AS  AVIAssertion
+  ID           id-avc-attributeValueIntegrityInfoContext
+}
+
+AttributeValueIntegrityInfo ::=
+  SIGNED
+    {SEQUENCE {issuer         Name, -- Authority or data originators name
+               subject        Name OPTIONAL, -- May be implied by Name for entry
+               keyIdentifier  KeyIdentifier OPTIONAL,
+               aVIHash        AVIHash}} -- Hash value of protected attribute
+
+AVIHash ::=
+  HASH
+    {SEQUENCE {subject                  Name OPTIONAL,
+               -- Not present if name already in  AttributeValueIntegrityInfo
+               protectedAttributeValue  AttributeTypeValueContexts}}
+
+-- Attribute type and value with associated context values
+AttributeTypeValueContexts ::= SEQUENCE {
+  type         ATTRIBUTE.&id({SupportedAttributes}),
+  value        ATTRIBUTE.&Type({SupportedAttributes}{@type}),
+  contextList  SET SIZE (1..MAX) OF Context OPTIONAL
+}
+
+AVIAssertion ::= SEQUENCE {
+  issuer         Name OPTIONAL,
+  keyIdentifier  KeyIdentifier OPTIONAL
+}
+
+EncryptedAttributeSyntax{AttributeSyntax} ::= SEQUENCE {
+  keyInfo   SEQUENCE OF KeyIdOrProtectedKey,
+  encAlg    AlgorithmIdentifier,
+  encValue  ENCRYPTED{AttributeSyntax}
+}
+
+KeyIdOrProtectedKey ::= SEQUENCE {
+  keyIdentifier  [0]  KeyIdentifier OPTIONAL,
+  protectedKeys  [1]  ProtectedKey OPTIONAL
+}
+
+-- At least one key identifier or protected key must be present
+ProtectedKey ::= SEQUENCE {
+  authReaders  AuthReaders, -- if absent, use attribute in authorized reader entry
+  keyEncAlg    AlgorithmIdentifier OPTIONAL, -- algorithm to encrypt encAttrKey
+  encAttKey    EncAttKey
+}
+
+-- confidentiality key protected with authorized user's
+-- protection mechanism
+AuthReaders ::= SEQUENCE OF Name
+
+EncAttKey ::= PROTECTED{SymmetricKey, keyProtection}
+
+SymmetricKey ::= BIT STRING
+
+--This definition is missing in the base document; to be changed
+genEncryption{KEY-INFORMATION:SupportedKIClasses} SECURITY-TRANSFORMATION ::= 
+{
+  IDENTIFIER         {1 2 3}
+  XFORMED-DATA-TYPE
+    SEQUENCE {initEncRules
+                OBJECT IDENTIFIER DEFAULT {joint-iso-itu-t asn1(1) ber(1)},
+              encAlgorithm    AlgorithmIdentifier OPTIONAL,
+              keyInformation
+                SEQUENCE {kiClass
+                            KEY-INFORMATION.&kiClass({SupportedKIClasses}),
+                          keyInfo
+                            KEY-INFORMATION.&KiType
+                              ({SupportedKIClasses}{@.kiClass})} OPTIONAL,
+              encData
+                BIT STRING
+                  (CONSTRAINED BY {
+                     -- the encData value must be generated following 
+                     -- the procedure specified in 15.3.1-- })}
+}
+
+keyProtection PROTECTION-MAPPING ::= {
+  SECURITY-TRANSFORMATION  {genEncryption  {{...}}}
+} --genEncryption may be parameterized
+
+confKeyInfo ATTRIBUTE ::= {
+  WITH SYNTAX             ConfKeyInfo
+  EQUALITY MATCHING RULE  readerAndKeyIDMatch
+  ID                      id-at-confKeyInfo
+}
+
+ConfKeyInfo ::= SEQUENCE {
+  keyIdentifier  KeyIdentifier,
+  protectedKey   ProtectedKey
+}
+
+readerAndKeyIDMatch MATCHING-RULE ::= {
+  SYNTAX  ReaderAndKeyIDAssertion
+  ID      id-mr-readerAndKeyIDMatch
+}
+
+ReaderAndKeyIDAssertion ::= SEQUENCE {
+  keyIdentifier  KeyIdentifier,
+  authReaders    AuthReaders OPTIONAL
+}
+
+-- Object identifier assignments 
+-- attributes 
+id-at-clearance OBJECT IDENTIFIER ::=
+  {id-at 55}
+
+id-at-defaultDirQop OBJECT IDENTIFIER ::= {id-at 56}
+
+id-at-attributeIntegrityInfo OBJECT IDENTIFIER ::= {id-at 57}
+
+id-at-confKeyInfo OBJECT IDENTIFIER ::= {id-at 60}
+
+-- matching rules 
+id-mr-readerAndKeyIDMatch OBJECT IDENTIFIER ::= {id-mr 43}
+
+id-mr-attributeIntegrityMatch OBJECT IDENTIFIER ::= {id-mr 44}
+
+-- contexts 
+id-avc-attributeValueSecurityLabelContext OBJECT IDENTIFIER ::=
+  {id-avc 3}
+
+id-avc-attributeValueIntegrityInfoContext OBJECT IDENTIFIER ::= {id-avc 4}
+
+END -- EnhancedSecurity
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+
+<!-- content of stack:
+
+-->

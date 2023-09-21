@@ -1,0 +1,204 @@
+
+
+
+
+
+
+
+-- Module IN-CS2-SCF-SDF-Protocol (Q.1228:09/1997)
+-- See also ITU-T Q.1228 (09/1997)
+-- See also the index of all ASN.1 assignments needed in this document
+
+IN-CS2-SCF-SDF-Protocol {itu-t recommendation q 1228 modules(0)
+  in-scf-sdf-protocol(12) version1(0)} DEFINITIONS ::=
+BEGIN
+
+-- EXPORTS All 
+-- The types and values defined in this module are exported for use in the other ASN.1 modules contained 
+-- within the Directory Specifications, and for the use of other applications which will use them to access 
+-- Directory services. Other applications may use them for their own purposes, but this will not constrain 
+-- extensions and modifications needed to maintain or improve the Directory service. 
+IMPORTS
+  directoryAbstractService, directorySecurityExchanges,
+    protocolObjectIdentifiers
+    FROM UsefulDefinitions {joint-iso-itu-t ds(5) module(1)
+      usefulDefinitions(0) 3}
+  ROS-OBJECT-CLASS, CONTRACT, OPERATION-PACKAGE, CONNECTION-PACKAGE, OPERATION
+    FROM Remote-Operations-Information-Objects {joint-iso-itu-t
+      remote-operations(4) informationObjects(5) version1(0)}
+  Bind{}, Unbind{}
+    FROM Remote-Operations-Generic-ROS-PDUs {joint-iso-itu-t
+      remote-operations(4) generic-ROS-PDUs(6) version1(0)}
+  TCMessage{}
+    FROM TCAPMessages {itu-t recommendation q 773 modules(2) messages(1)
+      version3(3)}
+  APPLICATION-CONTEXT, dialogue-abstract-syntax
+    FROM TC-Notation-Extensions {itu-t recommendation q 775 modules(2)
+      notation-extension(4) version1(1)}
+  id-ac-indirectoryAccessAC, id-ac-inExtendedDirectoryAccessAC,
+    id-rosObject-dua, id-rosObject-directory, id-rosObject-dapDSA,
+    id-contract-dap, id-contract-dapExecute, id-package-dapConnection,
+    id-package-search, id-package-modify, id-package-execute,
+    id-as-indirectoryOperationsAS, id-as-inExtendedDirectoryOperationsAS,
+    id-as-indirectoryBindingAS, id-as-inSESEAS,
+    id-ac-inExtendedDirectoryAccessWith3seAC, id-ac-indirectoryAccessWith3seAC,
+    ros-InformationObjects, ros-genericPDUs, tc-Messages,
+    tc-NotationExtensions, sese-APDUs, ds-UsefulDefinitions, scf-sdf-Operations
+    FROM IN-CS2-object-identifiers {itu-t recommendation q 1228 modules(0)
+      in-cs2-object-identifiers(17) version1(0)}
+  directoryBind, search, addEntry, removeEntry, modifyEntry
+    FROM DirectoryAbstractService {joint-iso-itu-t ds(5) module(1)
+      directoryAbstractService(2) 3}
+  SESEapdus{}, NoInvocationId
+    FROM SeseAPDUs {joint-iso-itu-t genericULS(20) modules(1) seseAPDUs(6)}
+  spkmThreeWay
+    FROM DirectorySecurityExchanges {joint-iso-itu-t ds(5) module(1)
+      directorySecurityExchanges(29) 1}
+  id-se-threewayse
+    FROM ProtocolObjectIdentifiers {joint-iso-itu-t ds(5) module(1)
+      protocolObjectIdentifiers(4) 3}
+  execute, in-directoryUnbind
+    FROM IN-CS2-SCF-SDF-Operations {itu-t recommendation q 1228 modules(0)
+      scf-sdf-operations(11) version1(0)};
+
+-- application contexts 
+iNdirectoryAccessAC APPLICATION-CONTEXT ::= {
+  CONTRACT                  dapContract
+  DIALOGUE MODE             structured
+  TERMINATION               basic
+  ABSTRACT SYNTAXES
+    {dialogue-abstract-syntax | inDirectoryOperationsAbstractSyntax |
+      inDirectoryBindingAbstractSyntax}
+  APPLICATION CONTEXT NAME  id-ac-indirectoryAccessAC
+}
+
+iNdirectoryAccessWith3seAC APPLICATION-CONTEXT ::= {
+  CONTRACT                  dapContract
+  DIALOGUE MODE             structured
+  TERMINATION               basic
+  ADDITIONAL ASES           {id-se-threewayse}
+  ABSTRACT SYNTAXES
+    {dialogue-abstract-syntax | inDirectoryOperationsAbstractSyntax |
+      inDirectoryBindingAbstractSyntax | inSESEAbstractSyntax}
+  APPLICATION CONTEXT NAME  id-ac-indirectoryAccessWith3seAC
+}
+
+inExtendedDirectoryAccessAC APPLICATION-CONTEXT ::= {
+  CONTRACT                  dapExecuteContract
+  DIALOGUE MODE             structured
+  TERMINATION               basic
+  ABSTRACT SYNTAXES
+    {dialogue-abstract-syntax | inExtendedDirectoryOperationsAbstractSyntax |
+      inDirectoryBindingAbstractSyntax}
+  APPLICATION CONTEXT NAME  id-ac-inExtendedDirectoryAccessAC
+}
+
+inExtendedDirectoryAccessWith3seAC APPLICATION-CONTEXT ::= {
+  CONTRACT                  dapExecuteContract
+  DIALOGUE MODE             structured
+  TERMINATION               basic
+  ADDITIONAL ASES           {id-se-threewayse}
+  ABSTRACT SYNTAXES
+    {dialogue-abstract-syntax | inExtendedDirectoryOperationsAbstractSyntax |
+      inDirectoryBindingAbstractSyntax | inSESEAbstractSyntax}
+  APPLICATION CONTEXT NAME  id-ac-inExtendedDirectoryAccessWith3seAC
+}
+
+-- ROS-objects 
+dua ROS-OBJECT-CLASS ::= {
+  INITIATES  {dapContract | dapExecuteContract}
+  ID         id-rosObject-dua
+}
+
+directory ROS-OBJECT-CLASS ::= {
+  RESPONDS  {dapContract | dapExecuteContract}
+  ID        id-rosObject-directory
+}
+
+dap-dsa ROS-OBJECT-CLASS ::= {
+  RESPONDS  {dapContract | dapExecuteContract}
+  ID        id-rosObject-dapDSA
+}
+
+-- contracts 
+dapContract CONTRACT ::= {
+  CONNECTION             dapConnectionPackage
+  INITIATOR CONSUMER OF  {searchPackage | modifyPackage}
+  ID                     id-contract-dap
+}
+
+dapExecuteContract CONTRACT ::= {
+  CONNECTION             dapConnectionPackage
+  INITIATOR CONSUMER OF  {searchPackage | modifyPackage | executePackage}
+  ID                     id-contract-dapExecute
+}
+
+-- connection package 
+dapConnectionPackage CONNECTION-PACKAGE ::= {
+  BIND    directoryBind
+  UNBIND  in-directoryUnbind
+  ID      id-package-dapConnection
+}
+
+--  search and modify packages
+searchPackage OPERATION-PACKAGE ::= {
+  CONSUMER INVOKES  {search}
+  ID                id-package-search
+}
+
+modifyPackage OPERATION-PACKAGE ::= {
+  CONSUMER INVOKES  {addEntry | removeEntry | modifyEntry}
+  ID                id-package-modify
+}
+
+executePackage OPERATION-PACKAGE ::= {
+  CONSUMER INVOKES  {execute}
+  ID                id-package-execute
+}
+
+-- abstract-syntaxes 
+inDirectoryOperationsAbstractSyntax ABSTRACT-SYNTAX ::= {
+  BasicDAP-PDUs
+  IDENTIFIED BY  id-as-indirectoryOperationsAS
+}
+
+BasicDAP-PDUs ::= TCMessage{{DAP-Invokable}, {DAP-Returnable}}
+
+DAP-Invokable OPERATION ::= {search | addEntry | removeEntry | modifyEntry}
+
+DAP-Returnable OPERATION ::= {search | addEntry | removeEntry | modifyEntry}
+
+inExtendedDirectoryOperationsAbstractSyntax ABSTRACT-SYNTAX ::= {
+  Extended-BasicDAP-PDUs
+  IDENTIFIED BY  id-as-inExtendedDirectoryOperationsAS
+}
+
+Extended-BasicDAP-PDUs ::=
+  TCMessage{{Extended-DAP-Invokable}, {Extended-DAP-Returnable}}
+
+Extended-DAP-Invokable OPERATION ::=
+  {search | addEntry | removeEntry | modifyEntry | execute}
+
+Extended-DAP-Returnable OPERATION ::=
+  {search | addEntry | removeEntry | modifyEntry | execute}
+
+inDirectoryBindingAbstractSyntax ABSTRACT-SYNTAX ::= {
+  DAPBinding-PDUs
+  IDENTIFIED BY  id-as-indirectoryBindingAS
+}
+
+DAPBinding-PDUs ::= CHOICE {
+  bind    Bind{directoryBind},
+  unbind  Unbind{in-directoryUnbind}
+}
+
+inSESEAbstractSyntax ABSTRACT-SYNTAX ::= {
+  SESEapdus {{spkmThreeWay},
+             {NoInvocationId}}
+  IDENTIFIED BY  {id-as-inSESEAS}
+}
+
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

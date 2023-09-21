@@ -1,0 +1,175 @@
+
+
+
+
+
+
+
+
+-- Module PrinterServiceOfferDefinitions (X.952:12/1997)
+-- See also ITU-T X.952 (12/1997)
+-- See also the index of all ASN.1 assignments needed in this document
+
+PrinterServiceOfferDefinitions -- Cf. non official changes for the OID definition 
+DEFINITIONS ::=
+BEGIN
+
+IMPORTS
+  informationFramework, selectedAttributeTypes
+    FROM UsefulDefinitions {joint-iso-itu-t ds(5) module(1)
+      usefulDefinitions(0) 3}
+  OBJECT-CLASS, MATCHING-RULE, ATTRIBUTE, top, ObjectClassKind,
+    DistinguishedName
+    FROM InformationFramework {joint-iso-itu-t ds(5) module(1)
+      informationFramework(1) 3}
+  DirectoryString{}, caseIgnoreMatch, caseIgnoreSubstringsMatch,
+    caseExactMatch, booleanMatch, integerMatch, integerOrderingMatch
+    FROM SelectedAttributeTypes {joint-iso-itu-t ds(5) module(1)
+      selectedAttributeTypes(5) 3}
+  id-trader-at, id-trader-oc-serviceOffer
+    FROM TraderDefinitions -- Cf. Non official changes for the OID definition 
+      ;
+
+printerServiceOffer OBJECT-CLASS ::= {
+  SUBCLASS OF   {top}
+  KIND          auxiliary
+  MUST CONTAIN  {printerType}
+  MAY CONTAIN
+    {locationRoom | locationBuilding | costPerPage | languagesSupported |
+      pagesPerMinute | pageSize | dotsPerInch | colourCapable | driverName |
+      queueLength}
+  ID            id-trader-oc-serviceOffer-printer
+}
+
+printerType ATTRIBUTE ::= {
+  WITH SYNTAX               DirectoryString {ub-trader-so-printerType}
+  EQUALITY MATCHING RULE    caseIgnoreMatch
+  SUBSTRINGS MATCHING RULE  caseIgnoreSubstringsMatch
+  SINGLE VALUE              TRUE
+  ID                        id-trader-at-so-printerType
+}
+
+locationRoom ATTRIBUTE ::= {
+  WITH SYNTAX               DirectoryString {ub-trader-so-locationRoom}
+  EQUALITY MATCHING RULE    caseIgnoreMatch
+  SUBSTRINGS MATCHING RULE  caseIgnoreSubstringsMatch
+  SINGLE VALUE              TRUE
+  ID                        id-trader-at-so-locationRoom
+}
+
+locationBuilding ATTRIBUTE ::= {
+  WITH SYNTAX               DirectoryString {ub-trader-so-locationBlg}
+  EQUALITY MATCHING RULE    caseIgnoreMatch
+  SUBSTRINGS MATCHING RULE  caseIgnoreSubstringsMatch
+  SINGLE VALUE              TRUE
+  ID                        id-trader-at-so-locationBlg
+}
+
+costPerPage ATTRIBUTE ::= {
+  WITH SYNTAX             INTEGER
+  EQUALITY MATCHING RULE  integerMatch
+  ORDERING MATCHING RULE  integerOrderingMatch
+  SINGLE VALUE            TRUE
+  ID                      id-trader-at-so-costPerPage
+}
+
+languagesSupported ATTRIBUTE ::= {
+  WITH SYNTAX               DirectoryString {ub-trader-so-langSupp}
+  EQUALITY MATCHING RULE    caseIgnoreMatch
+  SUBSTRINGS MATCHING RULE  caseIgnoreSubstringsMatch
+  SINGLE VALUE              TRUE
+  ID                        id-trader-at-so-langSupp
+}
+
+pagesPerMinute ATTRIBUTE ::= {
+  WITH SYNTAX             INTEGER
+  EQUALITY MATCHING RULE  integerMatch
+  ORDERING MATCHING RULE  integerOrderingMatch
+  SINGLE VALUE            TRUE
+  ID                      id-trader-at-so-pagesPerMinute
+}
+
+pageSize ATTRIBUTE ::= {
+  WITH SYNTAX             INTEGER
+  EQUALITY MATCHING RULE  integerMatch
+  ORDERING MATCHING RULE  integerOrderingMatch
+  SINGLE VALUE            TRUE
+  ID                      id-trader-at-so-pageSize
+}
+
+dotsPerInch ATTRIBUTE ::= {
+  WITH SYNTAX             INTEGER
+  EQUALITY MATCHING RULE  integerMatch
+  ORDERING MATCHING RULE  integerOrderingMatch
+  SINGLE VALUE            TRUE
+  ID                      id-trader-at-so-dotsPerInch
+}
+
+colourCapable ATTRIBUTE ::= {
+  WITH SYNTAX             BOOLEAN
+  EQUALITY MATCHING RULE  booleanMatch
+  SINGLE VALUE            TRUE
+  ID                      id-trader-at-so-colourCapable
+}
+
+driverName ATTRIBUTE ::= {
+  WITH SYNTAX               DirectoryString {ub-trader-so-driverName}
+  EQUALITY MATCHING RULE    caseIgnoreMatch
+  SUBSTRINGS MATCHING RULE  caseIgnoreSubstringsMatch
+  SINGLE VALUE              TRUE
+  ID                        id-trader-at-so-driverName
+}
+
+queueLength ATTRIBUTE ::= {
+  WITH SYNTAX             INTEGER
+  EQUALITY MATCHING RULE  integerMatch
+  ORDERING MATCHING RULE  integerOrderingMatch
+  SINGLE VALUE            TRUE
+  ID                      id-trader-at-so-queueLength
+}
+
+-- Object Identifiers
+id-trader-oc-serviceOffer-printer OBJECT IDENTIFIER ::=
+  {id-trader-oc-serviceOffer 0}
+
+id-trader-at-so OBJECT IDENTIFIER ::= {id-trader-at 100}
+
+id-trader-at-so-printerType OBJECT IDENTIFIER ::= {id-trader-at-so 0}
+
+id-trader-at-so-locationRoom OBJECT IDENTIFIER ::= {id-trader-at-so 1}
+
+id-trader-at-so-locationBlg OBJECT IDENTIFIER ::= {id-trader-at-so 2}
+
+id-trader-at-so-costPerPage OBJECT IDENTIFIER ::= {id-trader-at-so 3}
+
+id-trader-at-so-langSupp OBJECT IDENTIFIER ::= {id-trader-at-so 4}
+
+id-trader-at-so-pagesPerMinute OBJECT IDENTIFIER ::= {id-trader-at-so 5}
+
+id-trader-at-so-pageSize OBJECT IDENTIFIER ::= {id-trader-at-so 6}
+
+id-trader-at-so-dotsPerInch OBJECT IDENTIFIER ::= {id-trader-at-so 7}
+
+id-trader-at-so-colourCapable OBJECT IDENTIFIER ::= {id-trader-at-so 8}
+
+id-trader-at-so-driverName OBJECT IDENTIFIER ::= {id-trader-at-so 9}
+
+id-trader-at-so-queueLength OBJECT IDENTIFIER ::= {id-trader-at-so 10}
+
+-- Upperbounds
+ub-trader-so-printerType INTEGER ::= 64
+
+ub-trader-so-locationRoom INTEGER ::= 64
+
+ub-trader-so-locationBlg INTEGER ::= 64
+
+ub-trader-so-langSupp INTEGER ::= 64
+
+ub-trader-so-pageSize INTEGER ::= 64
+
+ub-trader-so-driverName INTEGER ::= 64
+
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

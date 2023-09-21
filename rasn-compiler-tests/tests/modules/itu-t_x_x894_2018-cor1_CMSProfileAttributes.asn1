@@ -1,0 +1,87 @@
+-- ASN module extracted from ITU-T X.894 (10/2018)-- 17 Module CMSProfileAttributes
+CMSProfileAttributes {itu-t recommendation(0) x(24) cms-profile(894) module(0) cMSProfileAttributes(3) version1(1)}
+"/ITU-T/Recommendation/X/CMS-Profile/Module/CMSProfileAttributes/Version1"
+DEFINITIONS AUTOMATIC TAGS ::=
+BEGIN
+IMPORTS
+ATTRIBUTE
+FROM PKIC-CommonTypes-2009
+{iso(1) identified-organization(3) dod(6) internet(1) security(5)
+mechanisms(5) pkix(7) id-mod(0) id-mod-pkixCommon-02(57)}
+SignerInfo,SignerInfos,DigestedData
+FROM CryptographicMessageSyntax-2010
+{ iso(1) member-body(2) us(840) rsadsi(113549)
+pkcs(1) pkcs-9(9) smime(16) modules(0) id-mod-cms-2009(58) }
+TimeStampToken
+FROM TrustedTimeStamp
+{ iso(1) identified-organization(3) tc68(133) country(16) x9(840) x9standards(9)
+	x9-95(95) module(0) tts(1) v2010-2016(1)};
+aa-signerInfo ATTRIBUTE ::= 
+{TYPE SignerInfo IDENTIFIED BY id-signerInfo}
+id-signerInfo OBJECT IDENTIFIER ::= {itu-t recommendation(0) x(24)
+cms-profile(894) attribute(2) signerInfo(0)}
+aa-signerInfos	ATTRIBUTE ::=
+{TYPE SignerInfos IDENTIFIED BY id-signerInfos}
+id-signerInfos 	OBJECT IDENTIFIER ::= {itu-t recommendation(0) x(24)
+cms-profile(894) attribute(2) signerInfos(1)}
+aa-contentLocation ATTRIBUTE ::= 
+{TYPE URI IDENTIFIED BY id-contentLocation}
+URI ::= UTF8String(SIZE(1..MAX))
+id-contentLocation OBJECT IDENTIFIER ::= {itu-t recommendation(0) x(24)
+cms-profile(894) attribute(2) contentLocation(2)}
+aa-contentLocations	ATTRIBUTE ::= 
+{TYPE URIs IDENTIFIED BY id-contentLocations}
+URIs ::= SEQUENCE SIZE(1..MAX) OF uri URI
+id-contentLocations OBJECT IDENTIFIER ::= {itu-t recommendation(0) x(24)
+cms-profile(894) attribute(2) contentLocations(3)}
+aa-precedingBlock	ATTRIBUTE ::= 
+{TYPE HashPointer IDENTIFIED BY id-precedingBlock}
+HashPointer 	::= SEQUENCE {
+hash		DigestedData 	OPTIONAL,
+pointers	Pointers	OPTIONAL
+} ((WITH COMPONENTS {...,hash PRESENT}) |
+   (WITH COMPONENTS {...,pointers PRESENT}))
+Pointers ::= SEQUENCE SIZE(1..MAX) OF pointer Pointer
+Pointer ::= CHOICE {
+uri			URI,		-- Uniform Resource Identifier
+rfid		RFID,		-- Radio Frequency Identification
+gps			GPS,		-- Global Positioning System
+address	Address,	-- Free format object location
+dbRecord	DBRecord,	-- Number of fully qualified name
+...			-- Expect other pointer types
+}
+RFID ::= OCTET STRING
+GPS  ::= OCTET STRING
+Address	::= UTF8String
+DBRecord	::= UTF8String
+id-precedingBlock OBJECT IDENTIFIER ::= {itu-t recommendation(0) x(24)
+cms-profile(894) attribute(2) precedingBlock(4)}
+aa-timeStamped ATTRIBUTE ::=
+{TYPE TimeStamped IDENTIFIED BY id-timeStamped}
+TimeStamped 	::= SEQUENCE {
+timeStampValue	TimeStamp,
+timeStampService	URI OPTIONAL
+}
+TimeStamp	::= CHOICE {
+timeStampToken	TimeStampToken,
+localTimeStamp	GeneralizedTime,
+...	-- Expect additional time types --
+}
+id-timeStamped OBJECT IDENTIFIER ::= {itu-t recommendation(0) x(24)
+cms-profile(894) attribute(2) timeStamped(5)}
+aa-sidechains	ATTRIBUTE ::=
+{TYPE Sidechains	IDENTIFIED BY id-sidechains}
+Sidechains	::= SEQUENCE (SIZE(0..MAX)) OF linked Sidechain
+Sidechain	::= HashPointer
+id-sidechains OBJECT IDENTIFIER ::= {itu-t recommendation(0) x(24)
+cms-profile(894) attribute(2) sidechains(6)}
+aa-parentBlock	ATTRIBUTE ::=
+{TYPE ParentBlock IDENTIFIED BY id-parentBlock}
+ParentBlock	::= HashPointer
+id-parentBlock OBJECT IDENTIFIER ::= {itu-t recommendation(0) x(24)
+cms-profile(894) attribute(2) parentBlock(7)}
+CMSProfileAttributes ATTRIBUTE ::= {
+aa-signerInfo | aa-signerInfos | aa-contentLocation |
+aa-contentLocations | aa-precedingBlock | aa-timeStamped |
+aa-sidechains | aa-parentBlock, ...}
+END

@@ -1,0 +1,179 @@
+
+
+
+
+
+
+
+-- Module IN-SCF-SCF-Classes (Q.1248.6:07/2001)
+-- See also ITU-T Q.1248.6 (07/2001)
+-- See also the index of all ASN.1 assignments needed in this document
+
+IN-SCF-SCF-Classes {itu-t recommendation q 1248 modules(1)
+  in-scf-scf-classes(21) version1(0)} DEFINITIONS IMPLICIT TAGS ::=
+BEGIN
+
+IMPORTS
+  guls-Notation, common-classes, ssf-scf-classes, scf-srf-classes
+    FROM IN-object-identifiers {itu-t recommendation q 1248 modules(1)
+      in-object-identifiers(0) version1(0)}
+  COMMON-BOUNDS
+    FROM IN-common-classes common-classes
+  SCF-SSF-BOUNDS
+    FROM IN-SSF-SCF-Classes ssf-scf-classes
+  SCF-SRF-BOUNDS
+    FROM IN-SCF-SRF-Classes scf-srf-classes
+  PROTECTION-MAPPING
+    FROM Notation guls-Notation;
+
+-- The SCF-SCF-BOUNDS object class provides a tool for the specification of the upper and lower bounds 
+-- for parameters used on the SCF-SCF interface.
+SCF-SCF-BOUNDS ::= CLASS {
+  &maxAmount                   INTEGER OPTIONAL,
+  &maxUnitsPerInterval         INTEGER OPTIONAL,
+  &maxTimePerInterval          INTEGER OPTIONAL,
+  &maxScalingFactor            INTEGER OPTIONAL,
+  &maxInitialUnitIncrement     INTEGER OPTIONAL,
+  &maxUnitsPerDataInterval     INTEGER OPTIONAL,
+  &maxSegmentsPerDataInterval  INTEGER OPTIONAL,
+  &maxInitialTimeInterval      INTEGER OPTIONAL,
+  &ub-nbCall                   INTEGER OPTIONAL,
+  &minReceivedInfo             INTEGER,
+  &maxReceivedInfo             INTEGER,
+  &minScfAddress               INTEGER OPTIONAL,
+  &maxScfAddress               INTEGER OPTIONAL,
+  &minSSIInfoLength            INTEGER,
+  &maxSSIInfoLength            INTEGER,
+  &maxFreeContainer            INTEGER
+}
+WITH SYNTAX {
+  [MAX-AMOUNT &maxAmount]
+  [MAX-UNITS-PER-INTERVAL &maxUnitsPerInterval]
+  [MAX-TIME-PER-INTERVAL &maxTimePerInterval]
+  [MAX-SCALING-FACTOR &maxScalingFactor]
+  [MAX-INITIAL-UNIT-INCREMENT &maxInitialUnitIncrement]
+  [MAX-UNITS-PER-DATA-INTERVAL &maxUnitsPerDataInterval]
+  [MAX-SEGMENTS-PER-INTERVAL &maxSegmentsPerDataInterval]
+  [MAX-INITIAL-TIME-INTERVAL &maxInitialTimeInterval]
+  [UB-NB-CALL &ub-nbCall]
+  MIN-RECEIVED-INFO &minReceivedInfo
+  MAX-RECEIVED-INFO &maxReceivedInfo
+  [MIN-SCF-ADDRESS &minScfAddress]
+  [MAX-SCF-ADDRESS &maxScfAddress]
+  MIN-FOR-SSI-INFORMATION &minSSIInfoLength
+  MAX-FOR-SSI-INFORMATION &maxSSIInfoLength
+  MAX-FREE-CONTAINER &maxFreeContainer
+}
+
+nsb6 SCF-SCF-BOUNDS ::=
+  
+  -- All values have been assigned for the purpose of ASN.1 checking only
+  -- They should be replaced by appropriate values depending on
+  -- network operators requirements and agreements
+  {
+  MAX-AMOUNT                   1 -- example value
+  MAX-UNITS-PER-INTERVAL       1 -- example value
+  MAX-TIME-PER-INTERVAL        1 -- example value
+  MAX-SCALING-FACTOR           1 -- example value
+  MAX-INITIAL-UNIT-INCREMENT   1 -- example value
+  MAX-UNITS-PER-DATA-INTERVAL  1 -- example value
+  MAX-SEGMENTS-PER-INTERVAL    1 -- example value
+  MAX-INITIAL-TIME-INTERVAL    1 -- example value
+  UB-NB-CALL                   1 -- example value
+  MIN-RECEIVED-INFO            1 -- example value
+  MAX-RECEIVED-INFO            1 -- example value
+  MIN-SCF-ADDRESS              1 -- example value
+  MAX-SCF-ADDRESS              1 -- example value
+  MIN-FOR-SSI-INFORMATION      1 -- example value
+  MAX-FOR-SSI-INFORMATION      5 -- example value
+  MAX-FREE-CONTAINER           5
+ -- example value--}
+
+nsb1 COMMON-BOUNDS ::= {NUM-OF-EXTENSIONS  1
+ -- example value--}
+
+nsb2 SCF-SSF-BOUNDS ::= {
+  HIGH-LAYER-COMPATIBILITY-LENGTH          1 -- example value
+  MAXIMUM-FOR-BEARER-CAPABILITY            5 -- example value
+  MINIMUM-FOR-CALLED-PARTY-NUMBER          1 -- example value
+  MAXIMUM-FOR-CALLED-PARTY-NUMBER          5 -- example value
+  MINIMUM-FOR-CALLING-PARTY-NUMBER         1 -- example value
+  MAXIMUM-FOR-CALLING-PARTY-NUMBER         5 -- example value
+  MINIMUM-FOR-CALLING-PARTY-SUBADDRESS     1 -- example value
+  MINIMUM-FOR-CARRIER                      3 -- example value
+  MAXIMUM-FOR-CARRIER                      10 -- example value
+  MINIMUM-FOR-CAUSE                        1 -- example value
+  MAXIMUM-FOR-CAUSE                        4 -- example value
+  MINIMUM-FOR-DIGITS                       1 -- example value
+  MAXIMUM-FOR-DIGITS                       5 -- example value
+  MINIMUM-FOR-DISPLAY                      1 -- example value
+  MAXIMUM-FOR-DISPLAY                      5 -- example value
+  MINIMUM-FOR-GENERIC-NUMBER               1 -- example value
+  MAXIMUM-FOR-GENERIC-NUMBER               5 -- example value
+  MINIMUM-FOR-LOCATION-NUMBER              1 -- example value
+  MAXIMUM-FOR-LOCATION-NUMBER              5 -- example value
+  MINIMUM-FOR-ORIGINAL-CALLED-PARTY-ID     1 -- example value
+  MAXIMUM-FOR-ORIGINAL-CALLED-PARTY-ID     5 -- example value
+  MINIMUM-FOR-REDIRECTING-ID               1 -- example value
+  MAXIMUM-FOR-REDIRECTING-ID               5 -- example value
+  MINIMUM-FOR-SCF-ID                       1 -- example value
+  MAXIMUM-FOR-SCF-ID                       5 -- example value
+  NUM-OF-ADDRESSES                         1 -- example value
+  MINIMUM-FOR-BROADBAND-BEARER-CAPABILITY  1 -- example value
+  MAXIMUM-FOR-BROADBAND-BEARER-CAPABILITY  5
+ -- example value--}
+
+nsb3 SCF-SRF-BOUNDS ::= {
+  MINIMUM-FOR-ATTRIBUTES              1 -- example value
+  MAXIMUM-FOR-ATTRIBUTES              5 -- example value
+  MINIMUM-FOR-MAIL-BOX-ID             1 -- example value
+  MAXIMUM-FOR-MAIL-BOX-ID             5 -- example value 
+  MINIMUM-FOR-MESSAGE-CONTENT         1 -- example value
+  MAXIMUM-FOR-MESSAGE-CONTENT         5 -- example value
+  MINIMUM-FOR-RECEIVED-INFORMATION    1 -- example value
+  MAXIMUM-FOR-RECEIVED-INFORMATION    5 -- example value
+  MAXIMUM-FOR-RECORDING-TIME          5 -- example value
+  NUM-OF-MESSAGE-IDS                  2 -- example value
+  MAXIMUM-FOR-RECORDED-MESSAGE-UNITS  5 -- example value
+  NUM-OF-VARIABLE-PARTS               5
+ -- example value--}
+
+-- The SCFQOP object class provides a tool for the specification of  a protection policy 
+-- on the SCF-SCF interface.
+SCFQOP ::= CLASS {
+  &scfqop-id        OBJECT IDENTIFIER UNIQUE,
+  &scfBindErrorQOP  PROTECTION-MAPPING,
+  &scfErrorsQOP     PROTECTION-MAPPING,
+  &scfArgumentQOP   PROTECTION-MAPPING,
+  &scfResultQOP     PROTECTION-MAPPING
+}
+WITH SYNTAX {
+  SCFQOP-ID &scfqop-id,
+  SCFBINDERROR-QOP &scfBindErrorQOP,
+  SCFERRORS-QOP &scfErrorsQOP,
+  SCFOPARG-QOP &scfArgumentQOP,
+  SCFOPRES-QOP &scfResultQOP
+}
+
+-- The following must be replaced by implementations before being used :
+scfqop SCFQOP ::= {
+  SCFQOP-ID         {1 2 3 -- an appropriate OID goes here --},
+  SCFBINDERROR-QOP
+    example-protection-mapping -- an appropriate information object goes here --,
+  SCFERRORS-QOP
+    example-protection-mapping -- an appropriate information object goes here --,
+  SCFOPARG-QOP
+    example-protection-mapping -- an appropriate information object goes here --,
+  SCFOPRES-QOP      example-protection-mapping
+ -- an appropriate information object goes here --}
+
+example-protection-mapping PROTECTION-MAPPING ::= {
+  SECURITY-TRANSFORMATION
+    {{IDENTIFIER         {1 2 4 -- an appropriate OID goes here --}
+      XFORMED-DATA-TYPE  NULL -- an appropriate type goes here --}}
+}
+
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

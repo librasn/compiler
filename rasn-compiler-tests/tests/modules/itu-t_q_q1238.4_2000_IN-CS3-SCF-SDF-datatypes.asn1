@@ -1,0 +1,483 @@
+
+
+
+
+
+
+
+-- Module IN-CS3-SCF-SDF-datatypes (Q.1238.4:06/2000)
+-- See also ITU-T Q.1238.4 (06/2000)
+-- See also the index of all ASN.1 assignments needed in this document
+
+IN-CS3-SCF-SDF-datatypes {itu-t recommendation q 1238 modules(1)
+  in-cs3-scf-sdf-datatypes(14) version1(0)} DEFINITIONS ::=
+BEGIN
+
+IMPORTS
+  ds-UsefulDefinitions, scf-sdf-classes, ssf-scf-datatypes, ssf-scf-classes,
+    scf-scf-datatypes, id-soa-methodRuleUse, id-at-securityFacilityId,
+    id-at-secretKey, id-at-identifierList, id-at-bindLevelIfOK,
+    id-at-lockSession, id-at-failureCounter, id-at-maxAttempts,
+    id-at-currentList, id-at-stockId, id-at-source, id-at-sizeOfRestocking,
+    id-at-challengeResponse, id-aca-prescriptiveACI, id-aca-entryACI,
+    id-aca-subentryACI, id-avc-basicService, id-avc-lineIdentity,
+    id-avc-assignment
+    FROM IN-CS3-object-identifiers {itu-t recommendation q 1238 modules(1)
+      in-cs3-object-identifiers(0) version1(0)}
+  informationFramework, upperBounds, directoryAbstractService,
+    selectedAttributeTypes, basicAccessControl, authenticationFramework
+    FROM UsefulDefinitions {joint-iso-itu-t ds(5) module(1)
+      usefulDefinitions(0) 3}
+  AttributeTypeAndValue
+    FROM BasicAccessControl {joint-iso-itu-t ds(5) module(1)
+      basicAccessControl(24) 3}
+  ATTRIBUTE, OBJECT-CLASS, CONTEXT, AttributeType, objectClass,
+    aliasedEntryName, SubtreeSpecification, ContextAssertion, DistinguishedName
+    FROM InformationFramework {joint-iso-itu-t ds(5) module(1)
+      informationFramework(1) 3}
+  ub-tag, ub-schema
+    FROM UpperBounds {joint-iso-itu-t ds(5) module(1) upperBounds(10) 3}
+  METHOD, SupportedMethods
+    FROM IN-CS3-SCF-SDF-Classes {itu-t recommendation q 1238 modules(1)
+      in-cs3-scf-sdf-classes(15) version1(0)}
+  Filter
+    FROM DirectoryAbstractService {joint-iso-itu-t ds(5) module(1)
+      directoryAbstractService(2) 3}
+  NameAndOptionalUID, directoryStringFirstComponentMatch, DirectoryString{},
+    objectIdentifierMatch, objectIdentifierFirstComponentMatch, bitStringMatch,
+    integerOrderingMatch
+    FROM SelectedAttributeTypes {joint-iso-itu-t ds(5) module(1)
+      selectedAttributeTypes(5) 3}
+  MaxValueCount, RestrictedValue, AuthenticationLevel, Precedence
+    FROM BasicAccessControl {joint-iso-itu-t ds(5) module(1)
+      basicAccessControl(24) 3}
+  AlgorithmIdentifier
+    FROM AuthenticationFramework {joint-iso-itu-t ds(5) module(1)
+      authenticationFramework(7) 3}
+  Digits{}
+    FROM IN-CS3-SSF-SCF-datatypes {itu-t recommendation q 1238 modules(1)
+      in-cs3-ssf-scf-datatypes(6) version1(0)}
+  SCF-SSF-BOUNDS
+    FROM IN-CS3-SSF-SCF-Classes {itu-t recommendation q 1238 modules(1)
+      in-cs3-ssf-scf-classes(7) version1(0)}
+  AgreementID
+    FROM IN-CS3-SCF-SCF-datatypes {itu-t recommendation q 1238 modules(1)
+      in-cs3-scf-scf-datatypes(20) version1(0)};
+
+-- Data types
+NPartsMessage{INTEGER:n} ::= SEQUENCE SIZE (2..n) OF BIT STRING
+
+SCFCriteria ::= SEQUENCE {agreement  [0] IMPLICIT AgreementID,
+                          ...
+}
+
+SDFCriteria ::= SEQUENCE {object  [0] IMPLICIT DistinguishedName,
+                          ...
+}
+
+TFCcriteria ::= CHOICE {
+  sdf  [0] IMPLICIT SDFCriteria, -- used if initiating FE is an SDF 
+  scf  [1] IMPLICIT SCFCriteria, -- used if initiating FE is an SCF 
+  ...
+}
+
+TwoPartMessage ::= NPartsMessage{2}
+
+-- Enhancement data types for Basic Access Control
+-- The following enhancements to the third edition X.500 specification of Access Control Information
+ are required to support IN requirements on the SCF/SDF interface.
+--  The remaining elements apply as described in the third edition X.500-Series of Recommendations.
+ACIItem ::= SEQUENCE {
+  identificationTag    DirectoryString{ub-tag},
+  precedence           Precedence,
+  authenticationLevel  AuthenticationLevel,
+  itemOrUserFirst
+    CHOICE {itemFirst
+              [0]  SEQUENCE {protectedItems   ProtectedItems,
+                             itemPermissions  SET OF ItemPermission},
+            userFirst
+              [1]  SEQUENCE {userClasses      UserClasses,
+                             userPermissions  SET OF UserPermission}}
+}
+
+GrantsAndDenials ::= BIT STRING {
+  -- permissions that may be used in conjunction with any component of ProtectedItems
+  grantAdd(0), denyAdd(1), grantDiscloseOnError(2), denyDiscloseOnError(3),
+  grantRead(4), denyRead(5), grantRemove(6),
+  denyRemove(7),
+  -- permissions that may be used only in conjunction with the entry component
+  grantBrowse(8), denyBrowse(9), grantExport(10), denyExport(11),
+  grantImport(12), denyImport(13), grantModify(14), denyModify(15),
+  grantRename(16), denyRename(17), grantReturnDN(18),
+  denyReturnDN(19),
+  -- permissions that may be used in conjunction with any component, except entry, of
+  -- ProtectedItems
+  grantCompare(20), denyCompare(21), grantFilterMatch(22),
+  denyFilterMatch(23),
+  -- permissions that may be used in conjunction with entryMethod component of ProtectedItems
+  grantExecuteMethod(30), denyExecuteMethod(31)}
+
+-- grantExecuteMethod means that the user can perform the specific Methods for the Entry.
+-- NOTE - It is a matter for network operators as to whether the grantExecuteMethod
+-- permission bypasses the normal access control mechanisms for Entries and Attributes.
+-- denyExecuteMethod means that the user cannot perform the specific Methods for the Entry
+ItemPermission ::= SEQUENCE {
+  precedence        Precedence OPTIONAL,
+  -- defaults to precedence in ACIItem 
+  userClasses       UserClasses,
+  grantsAndDenials  GrantsAndDenials
+}
+
+MethodIDs ::= METHOD.&id
+
+ProtectedItems ::= SEQUENCE {
+  entry                           [0]  NULL OPTIONAL,
+  allUserAttributeTypes           [1]  NULL OPTIONAL,
+  attributeType                   [2]  SET OF AttributeType OPTIONAL,
+  allAttributeValues              [3]  SET OF AttributeType OPTIONAL,
+  allUserAttributeTypesAndValues  [4]  NULL OPTIONAL,
+  attributeValue                  [5]  SET OF AttributeTypeAndValue OPTIONAL,
+  selfValue                       [6]  SET OF AttributeType OPTIONAL,
+  rangeOfValues                   [7]  Filter OPTIONAL,
+  maxValueCount                   [8]  SET OF MaxValueCount OPTIONAL,
+  maxImmSub                       [9]  INTEGER OPTIONAL,
+  restrictedBy                    [10]  SET OF RestrictedValue OPTIONAL,
+  contexts                        [11]  SET OF ContextAssertion OPTIONAL,
+  entryMethods                    [30]  SET OF MethodIDs OPTIONAL
+}
+
+-- entryMethods identifies the specified Methods for which the level of protection is to be applied.
+UserClasses ::= SEQUENCE {
+  allUsers   [0]  NULL OPTIONAL,
+  thisEntry  [1]  NULL OPTIONAL,
+  name       [2]  SET OF NameAndOptionalUID OPTIONAL,
+  userGroup  [3]  SET OF NameAndOptionalUID OPTIONAL,
+  -- dn component must be the name of an
+  -- entry of GroupOfUniqueNames
+  subtree    [4]  SET OF SubtreeSpecification OPTIONAL
+}
+
+UserPermission ::= SEQUENCE {
+  precedence        Precedence OPTIONAL,
+  -- defaults to precedence in ACIItem
+  protectedItems    ProtectedItems,
+  grantsAndDenials  GrantsAndDenials
+}
+
+-- attribute data types 
+--	Definition of the following information object set is deferred, perhaps to standardized
+--	profiles or to protocol implementation conformance statements. The set is required to
+--	specify a table constraint on the values component of Attribute, the value component
+--	of AttributeTypeAndValue, and the assertion component of AttributeValueAssertion.
+SupportedAttributes ATTRIBUTE ::=
+  {objectClass | aliasedEntryName, ...}
+
+-- Attribute definitions
+methodUse ATTRIBUTE ::= {
+  WITH SYNTAX             MethodUseDescription
+  EQUALITY MATCHING RULE  objectIdentifierFirstComponentMatch
+  USAGE                   directoryOperation
+  ID                      id-soa-methodRuleUse
+}
+
+-- The methodUse operational attribute is used to indicate the methods which shall be used with an
+-- object-class and all of its subclasses.
+MethodUseDescription ::= SEQUENCE {
+  identifier   OBJECT-CLASS.&id,
+  name         SET OF DirectoryString{ub-schema} OPTIONAL,
+  description  DirectoryString{ub-schema} OPTIONAL,
+  obsolete     BOOLEAN DEFAULT FALSE,
+  information  [0]  SET OF METHOD.&id
+}
+
+-- The identifier component of a value of the methodUse operational attribute is the object identifier
+--  of the object-class type to which it applies.  The value id-oa-allObject-classTypes indicates that it
+--  applies to all object-class types.
+-- The information component of a value identifies the method types associated with the object-class
+--  identified by identifier.
+-- Every entry in the DIT is governed by at most one methodUse operational attribute. In addition the
+-- entry is also governed by all the methodUse operation attribute defined for the superclasses of its
+-- structural object class.
+-- NOTE - This means that before processing an execute operation the SDF shall check the methodUse
+-- attributes associated with the structural object classes which belong to the inheritance chain of the
+-- entry's structural object class.
+-- As a methodRule attribute is associated with a structural object class, it follows that all of the entries
+-- on the same structural object class will have the same Method Use Rule regardless of the DIT structure
+-- rule governing their location in the DIT and of the DIT content rule governing their contents.
+securityFacilityId ATTRIBUTE ::= {
+  WITH SYNTAX SF-CODE EQUALITY MATCHING RULE  objectIdentifierMatch
+  SINGLE VALUE                                TRUE
+  ID                                          id-at-securityFacilityId
+}
+
+SF-CODE ::= OBJECT IDENTIFIER
+
+-- securityFacilityId is an attribute to name the verification
+secretKey ATTRIBUTE ::= {
+  WITH SYNTAX   BIT STRING(SIZE (lb-secretKey..ub-secretKey))
+  SINGLE VALUE  TRUE
+  ID            id-at-secretKey
+}
+
+-- secretKey is an attribute which contains the secret key (to be used by the cryptographic algorithm)
+-- of the user
+lb-secretKey INTEGER ::=
+  32
+
+ub-secretKey INTEGER ::= 128
+
+identifierList ATTRIBUTE ::= {
+  WITH SYNTAX
+    SEQUENCE {conformMethodIdentifier  [1]  MethodIdentifier, -- e.g. time window check
+              fillMethodIdentifier     [2]  MethodIdentifier, -- e.g. generate a random of required size
+              oneToOneAlgorithm        [3]  AlgorithmIdentifier,
+              -- e.g. A11 and A12, output RES from RS,RAND
+              oneToTwoAlgorithm        [4]  AlgorithmIdentifier}
+  -- e.g DECT algorithm output RES,SDK from RS,RAND
+  SINGLE VALUE  TRUE
+  ID            id-at-identifierList
+}
+
+-- identifierList is an attribute that could contain four identifiers:
+-- conformMethodIdentifier identifies the method used to verify that some parts of the input message
+--  are conformed to some criteria as size, value matching with an attribute, greater than a counter,
+-- included in a time window,
+-- fillMethodIdentifier identifies the method used to fill the input message (first part of a
+-- twoPartMessage or ThreePartMessage or FivePartMessage).
+-- oneToOneAlgorithm (resp. oneToTwoAlgorithm) identifies the cryptographic algorithm with one
+-- output (resp. two output). if KS is the secret key, IN is the input and OUT the output, it would be
+-- OUT=output1of (A12(RS_size_in_bits first bits of IN,A11(RAND_size_in_bits last bits of IN,KS)))
+-- (resp. (OUT1,OUT2)= (A12(RS_size_in_bits first bits of IN,A11(RAND_size_in_bits last bits of
+-- IN,KS)) )
+MethodIdentifier ::= SEQUENCE {
+  methodid         METHOD.&id({SupportedMethods}),
+  inputAttributes
+    SET OF METHOD.&InputAttributes.&id({SupportedMethods}{@methodid})
+      OPTIONAL,
+  --EDITOR: check this, for METHOD.&InputAttributes is a set of information object classes
+  --and cannot be the governor of a component of a SEQUENCE
+  specific-Input
+    [0]  METHOD.&SpecificInput({SupportedMethods}{@methodid}) OPTIONAL
+}
+
+bindLevelIfOK ATTRIBUTE ::= {
+  WITH SYNTAX   AuthenticationLevel
+  SINGLE VALUE  TRUE
+  ID            id-at-bindLevelIfOK
+}
+
+-- bindLevelIfOK is a mono-valued attribute that contains an AuthenticationLevel. It is to be used by the 
+-- bind operation to determine the level of privileges granted to the user. When this attribute is absent
+-- and a bind operation is invoked, the bind operation returns the error provided by the method.
+lockSession ATTRIBUTE ::= {
+  WITH SYNTAX   LockSession
+  SINGLE VALUE  TRUE
+  ID            id-at-lockSession
+}
+
+LockSession ::= SEQUENCE {
+  entryName  [0]  DistinguishedName,
+  atribute   [1]  OBJECT IDENTIFIER
+}
+
+-- lockSession is a mono-valued attribute that contains the name of the entry and the mono-valued 
+-- attribute of type boolean of this entry used to lock a dialogue to a mono-session (the timer set as temporal
+-- context on this lock attribute is the same for all the users). If this attribute is present and a bind 
+-- operation is at the origin of the method invocation, the method checks first that the pointed attribute is 
+-- FALSE before proceeding.
+-- For some security facilities, it is useful to count the number of failures and if necessary to lock the 
+-- facility when a threshold is reached. The two following attributes are used to store this information
+failureCounter ATTRIBUTE ::= {
+  WITH SYNTAX             INTEGER
+  ORDERING MATCHING RULE  integerOrderingMatch
+  SINGLE VALUE            TRUE
+  ID                      id-at-failureCounter
+}
+
+maxAttempts ATTRIBUTE ::= {
+  WITH SYNTAX             INTEGER
+  ORDERING MATCHING RULE  integerOrderingMatch
+  SINGLE VALUE            TRUE
+  ID                      id-at-maxAttempts
+}
+
+-- To check, the no replay of a challenge RAND drawn in another domain, it is necessary to maintain a 
+-- list of the random already used for the valid period indicated by RS. The currentList attribute contains 
+-- a list of RAND already played for the current period of time.
+currentList ATTRIBUTE ::= {
+  WITH SYNTAX             BIT STRING
+  EQUALITY MATCHING RULE  bitStringMatch
+  ID                      id-at-currentList
+}
+
+stockId ATTRIBUTE ::= {
+  WITH SYNTAX             DT-Code
+  EQUALITY MATCHING RULE  objectIdentifierMatch
+  SINGLE VALUE            TRUE
+  ID                      id-at-stockId
+}
+
+DT-Code ::= OBJECT IDENTIFIER
+
+-- stockId is a mono valued attribute of type DT-Code that is used as naming attribute
+source ATTRIBUTE ::= {
+  WITH SYNTAX   SourceType
+  SINGLE VALUE  TRUE
+  ID            id-at-source
+}
+
+SourceType ::= DistinguishedName
+
+-- In the visited network, the source attribute will be used to store the DN of the entry of class derived 
+-- from stockId. In the home network, the attribute will contain the DN of an entry of class 
+-- securityUserInfo, the token is generated using the method defined in the fillMethodIdentifier field of 
+-- this entry of class securityUserInfo.
+sizeOfRestocking ATTRIBUTE ::= {
+  WITH SYNTAX             INTEGER
+  ORDERING MATCHING RULE  integerOrderingMatch
+  SINGLE VALUE            TRUE
+  ID                      id-at-sizeOfRestocking
+}
+
+-- sizeOfRestocking is a mono-valued attribute that indicates how many tokens have to be requested or 
+-- computed when the tokens attribute is empty.
+-- The following attribute could contain the precomputed set of
+--  (CHALLENGE,RES[,DCK][,NCHALLENGE,NRES]) (2, 3,4 or 5 values)
+stock{INTEGER:n} ATTRIBUTE ::= {
+  WITH SYNTAX  NPartsMessage {n}
+  ID           id-at-challengeResponse
+}
+
+prescriptiveACI ATTRIBUTE ::= {
+  WITH SYNTAX             ACIItem
+  EQUALITY MATCHING RULE  directoryStringFirstComponentMatch
+  USAGE                   directoryOperation
+  ID                      id-aca-prescriptiveACI
+}
+
+entryACI ATTRIBUTE ::= {
+  WITH SYNTAX             ACIItem
+  EQUALITY MATCHING RULE  directoryStringFirstComponentMatch
+  USAGE                   directoryOperation
+  ID                      id-aca-entryACI
+}
+
+subentryACI ATTRIBUTE ::= {
+  WITH SYNTAX             ACIItem
+  EQUALITY MATCHING RULE  directoryStringFirstComponentMatch
+  USAGE                   directoryOperation
+  ID                      id-aca-subentryACI
+}
+
+-- Attribute contexts definitions
+basicServiceContext CONTEXT ::= {
+  WITH SYNTAX  BasicService
+  ID           id-avc-basicService
+}
+
+BasicService ::= INTEGER {
+  telephony(1), faxGroup2-3(2), faxGroup4(3), teletexBasicAndMixed(4),
+  teletexBazicAndProcessable(5), teletexBasic(6), syntaxBasedVideotex(7),
+  internationalVideotex(8), telex(9), messageHandlingSystems(10),
+  osiApplication(11), audioVisual(12)}
+
+-- This Basic Service context associates an attribute value with a basic service for which the attribute 
+-- value is semantically valid. For example, the Basic Service context will be associated with an ISDN 
+-- address to indicate the type of basic service that could be used with it.  In the UPT case, this context 
+-- allows the definition of registration addresses for different basic services.
+-- A presented value is considered to match a stored value if the context value (i.e., a basic service value) 
+-- in the presented value is identical to that in the stored value.
+lineIdentityContext{SCF-SSF-BOUNDS:b2} CONTEXT ::= {
+  WITH SYNTAX  IsdnAddress {b2}
+  ID           id-avc-lineIdentity
+}
+
+IsdnAddress{SCF-SSF-BOUNDS:b2} ::= Digits{b2}
+
+-- The line identity context associates an attribute value with the identity of a line for which the attribute 
+-- value is semantically valid.  For example, this Line Identity context will be associated with a routing 
+-- number to provide calling-line dependent routing.
+-- Q763 Generic Digits is applied for encoding.  The bound definition is as follows:
+sCFSSFBoundSetforSCFSDF SCF-SSF-BOUNDS ::=
+  { -- MAXIMUM-FOR-BEARER-CAPABILITY		5 ??? example value
+  -- MINIMUM-FOR-CALLED-PARTY-NUMBER		1 ??? example value
+  -- MAXIMUM-FOR-CALLED-PARTY-NUMBER		5 ??? example value
+  -- MINIMUM-FOR-CALLING-PARTY-NUMBER		1 ??? example value
+  -- MAXIMUM-FOR-CALLING-PARTY-NUMBER		5 ??? example value
+  -- MINIMUM-FOR-CALLING-PARTY-SUBADDRESS		1 ??? example value
+  -- MAXIMUM-FOR-CALLING-PARTY-SUBADDRESS		5 ??? example value
+  -- MAXIMUM-FOR-CAUSE				4 ??? example value
+  MINIMUM-FOR-DIGITS  1
+  MAXIMUM-FOR-DIGITS  10
+
+
+-- MINIMUM-FOR-FORWARD-GVNS			1 ??? example value
+-- MAXIMUM-FOR-FORWARD-GVNS			5 ??? example value
+-- MINIMUM-FOR-GENERIC-NAME			1 ??? example value
+-- MAXIMUM-FOR-GENERIC-NAME			5 ??? example value
+-- MINIMUM-FOR-GENERIC-NUMBER			1 ??? example value
+-- MAXIMUM-FOR-GENERIC-NUMBER			5 ??? example value
+-- MINIMUM-FOR-IP-AVAILABLE			1 ??? example value
+-- MAXIMUM-FOR-IP-AVAILABLE			5 ??? example value
+-- MINIMUM-FOR-IP-SSP-CAPABILITIES		1 ??? example value
+-- MAXIMUM-FOR-IP-SSP-CAPABILITIES		5 ??? example value
+-- MINIMUM-FOR-ISDN-ACCESS-RELATED-INFO		1 ??? example value
+-- MAXIMUM-FOR-ISDN-ACCESS-RELATED-INFO		5 ??? example value
+-- MINIMUM-FOR-LOCATION-NUMBER			1 ??? example value
+-- MAXIMUM-FOR-LOCATION-NUMBER			5 ??? example value
+-- MINIMUM-FOR-MID-CALL-CONTROL-INFO		1 ??? example value
+-- MAXIMUM-FOR-MID-CALL-CONTROL-INFO		5 ??? example value
+-- MINIMUM-FOR-ORIGINAL-CALLED-PARTY-ID		1 ??? example value
+-- MAXIMUM-FOR-ORIGINAL-CALLED-PARTY-ID		5 ??? example value
+-- MINIMUM-FOR-REASON				1 ??? example value
+-- MAXIMUM-FOR-REASON				5 ??? example value
+-- MINIMUM-FOR-REDIRECTING-ID			1 ??? example value
+-- MAXIMUM-FOR-REDIRECTING-ID			5 ??? example value
+-- MINIMUM-FOR-REQUESTED-UTSI-NUM		1 ??? example value
+-- MAXIMUM-FOR-REQUESTED-UTSI-NUM		5 ??? example value
+-- MINIMUM-FOR-ROUTE-LIST			1 ??? example value
+-- MAXIMUM-FOR-ROUTE-LIST			5 ??? example value
+-- MINIMUM-FOR-ROUTING-NUMBER			1 ??? example value
+-- MAXIMUM-FOR-ROUTING-NUMBER			5 ??? example value
+-- MINIMUM-FOR-SCF-ID				1 ??? example value
+-- MAXIMUM-FOR-SCF-ID				5 ??? example value
+-- MINIMUM-FOR-SCI-BILLING-CHARGING		1 ??? example value
+-- MAXIMUM-FOR-SCI-BILLING-CHARGING		1 ??? example value
+-- MINIMUM-FOR-SDSS-INFORMATION			1 ??? example value
+-- MAXIMUM-FOR-SDSS-INFORMATION			1 ??? example value
+-- MINIMUM-FOR-SII				1 ??? example value
+-- MAXIMUM-FOR-SII				5 ??? example value
+-- MINIMUM-FOR-SF-BILLING-CHARGING		1 ??? example value
+-- MAXIMUM-FOR-SF-BILLING-CHARGING		5 ??? example value
+-- MINIMUM-FOR-USI-INFORMATION			1 ??? example value
+-- MAXIMUM-FOR-USI-INFORMATION			5 ??? example value
+-- MINIMUM-FOR-USI-SERVICE-INDICATOR		1 ??? example value
+-- MAXIMUM-FOR-USI-SERVICE-INDICATOR		5 ??? example value
+-- NUM-OF-BCSM-EVENT				13 ??? example value
+-- NUM-OF-BCUSM-EVENT				13 ??? example value
+-- NUM-OF-CSAS					13 ??? example value
+-- NUM-OF-CSS					13 ??? example value
+-- NUM-OF-GENERIC-NUMBERS			2 ??? example value
+-- NUM-OF-INPROFILE				2 ??? example value
+-- NUM-OF-SEVERAL-TRIGGER			13 ??? example value
+-- NUM-OF-IN-SERVICE-COMPATIBILITY-ID		13 ??? example value
+-- NUM-OF-LEGS					13 ??? example value
+-- MAXIMUM-FOR-CALL-REFERENCE			5 ??? example value
+-- NUM-OF-ADDRESSES				13 ??? example value
+}
+
+-- This is an example, and appropriate values will be defined as network specific.
+assignmentContext CONTEXT ::= {
+  WITH SYNTAX  DistinguishedName
+  ID           id-avc-assignment
+}
+
+-- The assignment context associates an attribute value with a Distinguished name (e.g. customer's 
+-- number or customer's name) for which the attribute value is assigned. For example, assuming that a set 
+-- of available resources is modelled as a multivalued attribute and customer has been designated by a 
+-- distinguished name, this Assignment context will be associated with the used resource to provide the 
+-- state of the resource (reserved) and the name of the current customer using it.
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

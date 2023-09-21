@@ -1,0 +1,249 @@
+
+
+
+
+
+
+
+-- Module IN-CS3-SCF-SRF-pkgs-contracts-acs (Q.1238.3:06/2000)
+-- See also ITU-T Q.1238.3 (06/2000)
+-- See also the index of all ASN.1 assignments needed in this document
+
+IN-CS3-SCF-SRF-pkgs-contracts-acs {itu-t recommendation q 1238 modules(1)
+  in-cs3-scf-srf-pkgs-contracts-acs(13) version1(0)} DEFINITIONS ::=
+BEGIN
+
+-- This module describes the operation-packages, contracts and application-contexts used
+-- over the SCF-SRF interface.
+IMPORTS
+  id-package-specializedResourceControl, id-ac-srf-scfAC, id-contract-srf-scf,
+    id-package-srf-scfCancel, id-package-scriptControl,
+    id-package-messageControl, id-package-srfManagement,
+    id-package-activityTest, id-as-basic-srf-scf, common-classes,
+    ros-InformationObjects, tc-Messages, tc-NotationExtensions,
+    scf-srf-Operations, ssf-scf-Operations, ssf-scf-classes, scf-srf-classes,
+    ssf-scf-Protocol
+    FROM IN-CS3-object-identifiers {itu-t recommendation q 1238 modules(1)
+      in-cs3-object-identifiers(0) version1(0)}
+  SCF-SSF-BOUNDS
+    FROM IN-CS3-SSF-SCF-Classes {itu-t recommendation q 1238 modules(1)
+      in-cs3-ssf-scf-classes(7) version1(0)}
+  COMMON-BOUNDS
+    FROM IN-CS3-common-classes {itu-t recommendation q 1238 modules(1)
+      in-cs3-common-classes(5) version1(0)}
+  SCF-SRF-BOUNDS, networkSpecificSCFSRFBoundSet
+    FROM IN-CS3-SCF-SRF-classes {itu-t recommendation q 1238 modules(1)
+      in-cs3-scf-srf-classes(11) version1(0)}
+  ROS-OBJECT-CLASS, CONTRACT, OPERATION-PACKAGE, OPERATION
+    FROM Remote-Operations-Information-Objects {joint-iso-itu-t
+      remote-operations(4) informationObjects(5) version1(0)}
+  TCMessage{}
+    FROM TCAPMessages {itu-t recommendation q 773 modules(2) messages(1)
+      version3(3)}
+  APPLICATION-CONTEXT, dialogue-abstract-syntax
+    FROM TC-Notation-Extensions {itu-t recommendation q 775 modules(2)
+      notation-extension(4) version1(1)}
+  playAnnouncement{}, promptAndReceiveMessage{},
+    promptAndCollectUserInformation{}, scriptClose{}, scriptEvent{},
+    scriptInformation{}, scriptRun{}, specializedResourceReport, sRFCallGap{}
+    FROM IN-CS3-SCF-SRF-ops-args {itu-t recommendation q 1238 modules(1)
+      in-cs3-scf-srf-ops-args(12) version1(0)}
+  cancel{}, assistRequestInstructions{}, activityTest
+    FROM IN-CS3-SSF-SCF-ops-args {itu-t recommendation q 1238 modules(1)
+      in-cs3-ssf-scf-ops-args(8) version1(0)}
+  srf-scfActivationOfAssistPackage{}, activityTestPackage
+    FROM IN-CS3-SSF-SCF-pkgs-contracts-acs {itu-t recommendation q 1238
+      modules(1) in-cs3-ssf-scf-pkgs-contracts-acs(9) version1(0)};
+
+B1 ::= COMMON-BOUNDS
+
+B2 ::= SCF-SSF-BOUNDS
+
+B3 ::= SCF-SRF-BOUNDS
+
+networkSpecificBoundSet COMMON-BOUNDS ::= {NUM-OF-EXTENSIONS  1
+}
+
+networkSpecificSSFSCFBoundSet SCF-SSF-BOUNDS ::= {
+  MAXIMUM-FOR-BEARER-CAPABILITY         5 -- example value
+  MINIMUM-FOR-CALLED-PARTY-NUMBER       1 -- example value
+  MAXIMUM-FOR-CALLED-PARTY-NUMBER       5 -- example value
+  MINIMUM-FOR-CALLING-PARTY-NUMBER      1 -- example value
+  MAXIMUM-FOR-CALLING-PARTY-NUMBER      5 -- example value
+  MINIMUM-FOR-CALLING-PARTY-SUBADDRESS  1 -- example value
+  MAXIMUM-FOR-CALLING-PARTY-SUBADDRESS  5 -- example value
+  MINIMUM-FOR-DIGITS                    1
+  MAXIMUM-FOR-DIGITS                    5
+  MINIMUM-FOR-DISPLAY                   1
+  MAXIMUM-FOR-DISPLAY                   5
+  MINIMUM-FOR-FORWARD-GVNS              1 -- example value
+  MAXIMUM-FOR-FORWARD-GVNS              5 -- example value
+  MINIMUM-FOR-GENERIC-NAME              1 -- example value
+  MAXIMUM-FOR-GENERIC-NAME              5 -- example value
+  MINIMUM-FOR-GENERIC-NUMBER            1
+  MAXIMUM-FOR-GENERIC-NUMBER            5
+  MINIMUM-FOR-IP-AVAILABLE              1 -- example value
+  MAXIMUM-FOR-IP-AVAILABLE              5 -- example value
+  MINIMUM-FOR-IP-SSP-CAPABILITIES       1 -- example value
+  MAXIMUM-FOR-IP-SSP-CAPABILITIES       5 -- example value
+  MINIMUM-FOR-ISDN-ACCESS-RELATED-INFO  1 -- example value
+  MAXIMUM-FOR-ISDN-ACCESS-RELATED-INFO  5 -- example value
+  MINIMUM-FOR-LOCATION-NUMBER           1 -- example value
+  MAXIMUM-FOR-LOCATION-NUMBER           5 -- example value
+  MINIMUM-FOR-MID-CALL-CONTROL-INFO     1 -- example value
+  MAXIMUM-FOR-MID-CALL-CONTROL-INFO     5 -- example value
+  MINIMUM-FOR-ORIGINAL-CALLED-PARTY-ID  1 -- example value
+  MAXIMUM-FOR-ORIGINAL-CALLED-PARTY-ID  5 -- example value
+  MINIMUM-FOR-REASON                    1 -- example value
+  MAXIMUM-FOR-REASON                    5 -- example value
+  MINIMUM-FOR-REDIRECTING-ID            1 -- example value
+  MAXIMUM-FOR-REDIRECTING-ID            5 -- example value
+  MINIMUM-FOR-REQUESTED-UTSI-NUM        1 -- example value
+  MAXIMUM-FOR-REQUESTED-UTSI-NUM        5 -- example value
+  MINIMUM-FOR-ROUTE-LIST                1 -- example value
+  MAXIMUM-FOR-ROUTE-LIST                5 -- example value
+  MINIMUM-FOR-ROUTING-NUMBER            1 -- example value
+  MAXIMUM-FOR-ROUTING-NUMBER            5 -- example value
+  MINIMUM-FOR-SCF-ID                    1
+  MAXIMUM-FOR-SCF-ID                    5
+  MINIMUM-FOR-SCI-BILLING-CHARGING      1 -- example value
+  MAXIMUM-FOR-SCI-BILLING-CHARGING      1 -- example value
+  MINIMUM-FOR-SDSS-INFORMATION          1
+  MAXIMUM-FOR-SDSS-INFORMATION          5
+  MINIMUM-FOR-SII                       1 -- example value
+  MAXIMUM-FOR-SII                       5 -- example value
+  MINIMUM-FOR-SF-BILLING-CHARGING       1 -- example value
+  MAXIMUM-FOR-SF-BILLING-CHARGING       5 -- example value
+  MINIMUM-FOR-USI-INFORMATION           1 -- example value
+  MAXIMUM-FOR-USI-INFORMATION           5 -- example value
+  MINIMUM-FOR-USI-SERVICE-INDICATOR     1 -- example value
+  MAXIMUM-FOR-USI-SERVICE-INDICATOR     5 -- example value
+  NUM-OF-BCSM-EVENT                     13 -- example value
+  NUM-OF-BCUSM-EVENT                    13 -- example value
+  NUM-OF-CSAS                           13 -- example value
+  NUM-OF-CSS                            13 -- example value
+  NUM-OF-GENERIC-NUMBERS                2
+  NUM-OF-INPROFILE                      2 -- example value
+  NUM-OF-SEVERAL-TRIGGER                13 -- example value
+  NUM-OF-IN-SERVICE-COMPATIBILITY-ID    13 -- example value
+  NUM-OF-LEGS                           13 -- example value
+  MAXIMUM-FOR-CALL-REFERENCE            5 -- example value
+  NUM-OF-ADDRESSES                      13
+ -- example value--}
+
+-- Application Contexts 
+-- Application Contexts 
+srf-scf-ac APPLICATION-CONTEXT ::= {
+  CONTRACT                  srf-scf-contract
+  DIALOGUE MODE             structured
+  TERMINATION               basic
+  ABSTRACT SYNTAXES
+    {dialogue-abstract-syntax | srf-scf-abstract-syntax}
+  APPLICATION CONTEXT NAME  id-ac-srf-scfAC
+}
+
+-- Contracts 
+srf-scf-contract CONTRACT ::= {
+  INITIATOR CONSUMER OF
+    {srf-scfActivationOfAssistPackage{networkSpecificBoundSet,
+                                     networkSpecificSSFSCFBoundSet} |
+      srfManagementPackage{networkSpecificBoundSet,
+                          networkSpecificSSFSCFBoundSet}}
+  RESPONDER CONSUMER OF
+    {specializedResourceControlPackage{networkSpecificBoundSet,
+                                      networkSpecificSSFSCFBoundSet,
+                                      networkSpecificSCFSRFBoundSet} |
+      srf-scfCancelPackage{networkSpecificSSFSCFBoundSet} |
+      scriptControlPackage{networkSpecificBoundSet,
+                          networkSpecificSSFSCFBoundSet} | activityTestPackage
+      |
+      messageControlPackage{networkSpecificBoundSet,
+                           networkSpecificSSFSCFBoundSet,
+                           networkSpecificSCFSRFBoundSet}}
+  ID                     id-contract-srf-scf
+}
+
+-- specializedResourceControl package 
+specializedResourceControlPackage{B1:b1, B2:b2, B3:b3} OPERATION-PACKAGE ::= 
+{
+  CONSUMER INVOKES
+    {playAnnouncement{b1, b2, b3} |
+      promptAndCollectUserInformation{b1, b2, b3}}
+  SUPPLIER INVOKES  {specializedResourceReport}
+  ID                id-package-specializedResourceControl
+}
+
+-- srf-scfCancel package 
+srf-scfCancelPackage{B2:b2} OPERATION-PACKAGE ::= {
+  CONSUMER INVOKES  {cancel{b2}}
+  ID                id-package-srf-scfCancel
+}
+
+-- scriptControl package 
+scriptControlPackage{B1:b1, B2:b2} OPERATION-PACKAGE ::= {
+  CONSUMER INVOKES
+    {scriptClose{b1, b2} | scriptRun{b1, b2} | scriptInformation{b1, b2}}
+  SUPPLIER INVOKES  {scriptEvent{b1, b2}}
+  ID                id-package-scriptControl
+}
+
+-- messageControl package
+messageControlPackage{B1:b1, B2:b2, B3:b3} OPERATION-PACKAGE ::= {
+  CONSUMER INVOKES  {promptAndReceiveMessage{b1, b2, b3}}
+  ID                id-package-messageControl
+}
+
+-- SRF management package
+srfManagementPackage{B1:b1, B2:b2} OPERATION-PACKAGE ::= {
+  CONSUMER INVOKES  {sRFCallGap{b1, b2}}
+  ID                id-package-srfManagement
+}
+
+-- Abstract Syntaxes 
+srf-scf-abstract-syntax ABSTRACT-SYNTAX ::= {
+  BASIC-SRF-SCF-PDUs
+  IDENTIFIED BY  id-as-basic-srf-scf
+}
+
+BASIC-SRF-SCF-PDUs ::= TCMessage{{SRF-SCF-Invokable}, {SRF-SCF-Returnable}}
+
+SRF-SCF-Invokable OPERATION ::=
+  {assistRequestInstructions{networkSpecificBoundSet,
+                            networkSpecificSSFSCFBoundSet} |
+   cancel{networkSpecificSSFSCFBoundSet} |
+   playAnnouncement{networkSpecificBoundSet, networkSpecificSSFSCFBoundSet,
+                   networkSpecificSCFSRFBoundSet} |
+   promptAndCollectUserInformation{networkSpecificBoundSet,
+                                  networkSpecificSSFSCFBoundSet,
+                                  networkSpecificSCFSRFBoundSet} |
+   scriptClose{networkSpecificBoundSet, networkSpecificSSFSCFBoundSet} |
+   scriptEvent{networkSpecificBoundSet, networkSpecificSSFSCFBoundSet} |
+   scriptInformation{networkSpecificBoundSet, networkSpecificSSFSCFBoundSet} |
+   scriptRun{networkSpecificBoundSet, networkSpecificSSFSCFBoundSet} |
+   specializedResourceReport |
+   promptAndReceiveMessage{networkSpecificBoundSet,
+                          networkSpecificSSFSCFBoundSet,
+                          networkSpecificSCFSRFBoundSet} |
+   sRFCallGap{networkSpecificBoundSet, networkSpecificSSFSCFBoundSet} |
+   activityTest}
+
+SRF-SCF-Returnable OPERATION ::=
+  {assistRequestInstructions{networkSpecificBoundSet,
+                            networkSpecificSSFSCFBoundSet} |
+   cancel{networkSpecificSSFSCFBoundSet} |
+   playAnnouncement{networkSpecificBoundSet, networkSpecificSSFSCFBoundSet,
+                   networkSpecificSCFSRFBoundSet} |
+   promptAndCollectUserInformation{networkSpecificBoundSet,
+                                  networkSpecificSSFSCFBoundSet,
+                                  networkSpecificSCFSRFBoundSet} |
+   scriptClose{networkSpecificBoundSet, networkSpecificSSFSCFBoundSet} |
+   scriptInformation{networkSpecificBoundSet, networkSpecificSSFSCFBoundSet} |
+   scriptRun{networkSpecificBoundSet, networkSpecificSSFSCFBoundSet} |
+   promptAndReceiveMessage{networkSpecificBoundSet,
+                          networkSpecificSSFSCFBoundSet,
+                          networkSpecificSCFSRFBoundSet} | activityTest}
+
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

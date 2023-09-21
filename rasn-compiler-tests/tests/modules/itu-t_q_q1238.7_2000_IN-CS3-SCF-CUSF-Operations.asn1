@@ -1,0 +1,337 @@
+
+
+
+
+
+
+
+-- Module IN-CS3-SCF-CUSF-Operations (Q.1238.7:06/2000)
+-- See also ITU-T Q.1238.7 (06/2000)
+-- See also the index of all ASN.1 assignments needed in this document
+
+-- 13.3	OPERATIONS AND ARGUMENTS
+-- This clause specifies the operation definitions and the argument definitions used
+-- in CUSF-SCF relationship. Refer to the other parts of this Recommendation for
+-- the other operation definitions and the argument type definitions not specified
+-- in this clause.
+IN-CS3-SCF-CUSF-Operations {itu-t recommendation q 1238 modules(1)
+  in-cs3-scf-cusf-ops-args(26) version1(0)} DEFINITIONS IMPLICIT TAGS ::=
+BEGIN
+
+IMPORTS
+  ros-InformationObjects, common-classes, common-datatypes, scf-cusf-classes,
+    scf-cusf-datatypes, ssf-scf-datatypes, ssf-scf-classes, errortypes,
+    operationcodes
+    FROM IN-CS3-object-identifiers {itu-t recommendation q 1238 modules(1)
+      in-cs3-object-identifiers(0) version1(0)}
+  OPERATION
+    FROM Remote-Operations-Information-Objects {joint-iso-itu-t
+      remote-operations(4) informationObjects(5) version1(0)}
+  COMMON-BOUNDS
+    FROM IN-CS3-common-classes {itu-t recommendation q 1238 modules(1)
+      in-cs3-common-classes(5) version1(0)}
+  Extensions{}
+    FROM IN-CS3-common-datatypes {itu-t recommendation q 1238 modules(1)
+      in-cs3-common-datatypes(1) version1(0)}
+  SCF-SSF-BOUNDS
+    FROM IN-CS3-SSF-SCF-Classes {itu-t recommendation q 1238 modules(1)
+      in-cs3-ssf-scf-classes(7) version1(0)}
+  SCF-CUSF-BOUNDS
+    FROM IN-CS3-SCF-CUSF-Classes {itu-t recommendation q 1238 modules(1)
+      in-cs3-scf-cusf-classes(25) version1(0)}
+  BCUSMEvent, CallUnrelatedDpSpecificCommonParameters{}, CUApplicationInd,
+    EventSpecificInformationBCUSM{}, EventTypeBCUSM, Message
+    FROM IN-CS3-SCF-CUSF-Datatypes {itu-t recommendation q 1238 modules(1)
+      in-cs3-scf-cusf-datatypes(24) version1(0)}
+  BearerCapability{}, CalledPartyNumber{}, CallingPartyNumber{},
+    CallingPartySubaddress{}, Cause{}, Component, ComponentType,
+    ComponentCorrelationID, Duration, GenericNumbers{}, HighLayerCompatibility,
+    LegID, LocationNumber{}, MiscCallInfo, MonitorMode,
+    ServiceAddressInformation, ServiceKey, TerminalType, USIInformation{},
+    USIServiceIndicator{}
+    FROM IN-CS3-SSF-SCF-datatypes {itu-t recommendation q 1238 modules(1)
+      in-cs3-ssf-scf-datatypes(6) version1(0)}
+  missingCustomerRecord, missingParameter, parameterOutOfRange, systemFailure,
+    taskRefused, unexpectedComponentSequence, unexpectedDataValue,
+    unexpectedParameter, unknownLegID
+    FROM IN-CS3-errortypes {itu-t recommendation q 1238 modules(1)
+      in-cs3-errortypes(2) version1(0)}
+  opcode-activationReceivedAndAuthorized, opcode-initiateAssociation,
+    opcode-associationReleaseRequested, opcode-componentReceived,
+    opcode-releaseAssociation, opcode-requestReportBCUSMEvent,
+    opcode-sendComponent, opcode-initialAssociationDP,
+    opcode-connectAssociation, opcode-continueAssociation,
+    opcode-eventReportBCUSM
+    FROM IN-CS3-operationcodes {itu-t recommendation q 1238 modules(1)
+      in-cs3-operationcodes(3) version1(0)};
+
+-- The following three definitions are local short-hand notation for convenience.
+B1 ::=
+  COMMON-BOUNDS -- defined in Recommendation Q.1238.1
+
+B2 ::= SCF-SSF-BOUNDS -- defined in Recommendation Q.1238.2
+
+B7 ::= SCF-CUSF-BOUNDS -- defined in Recommendation Q.1238.7
+
+-- activityTest OPERATION
+-- Direction: SCF -> CUSF, Timer: Tat
+-- This operation is described in Q.1238.2.
+activationReceivedAndAuthorized{B1:b1, B2:b2} OPERATION ::= {
+  ARGUMENT         ActivationReceivedAndAuthorizedArg {b1,
+                                                       b2}
+  RETURN RESULT    FALSE
+  ERRORS
+    {missingCustomerRecord | missingParameter | parameterOutOfRange |
+      systemFailure | taskRefused | unexpectedComponentSequence |
+      unexpectedDataValue | unexpectedParameter}
+  ALWAYS RESPONDS  FALSE
+  CODE             opcode-activationReceivedAndAuthorized
+}
+
+-- Direction: CUSF->SCF, Timer: Tara
+ActivationReceivedAndAuthorizedArg{B1:b1, B2:b2} ::= SEQUENCE {
+  callUnrelatedDpSpecificCommonParameters
+    [0]  CallUnrelatedDpSpecificCommonParameters{b1, b2},
+  componentType                            [1]  ComponentType OPTIONAL,
+  componentCorrelationID                   [3]  ComponentCorrelationID OPTIONAL,
+  extensions                               [4]  Extensions{b1} OPTIONAL,
+  component                                [5]  Component OPTIONAL,
+  ...
+}
+
+associationReleaseRequested{B1:b1, B2:b2} OPERATION ::= {
+  ARGUMENT         AssociationReleaseRequestedArg {b1,
+                                                   b2}
+  RETURN RESULT    FALSE
+  ERRORS
+    {missingCustomerRecord | missingParameter | parameterOutOfRange |
+      systemFailure | taskRefused | unexpectedComponentSequence |
+      unexpectedDataValue | unexpectedParameter | unknownLegID}
+  ALWAYS RESPONDS  FALSE
+  CODE             opcode-associationReleaseRequested
+}
+
+-- Direction: CUSF -> SCF, Timer: Tarr
+AssociationReleaseRequestedArg{B1:b1, B2:b2} ::= SEQUENCE {
+  callUnrelatedDpSpecificCommonParameters
+    [0]  CallUnrelatedDpSpecificCommonParameters{b1, b2},
+  componentType                            [1]  ComponentType OPTIONAL,
+  componentCorrelationID                   [3]  ComponentCorrelationID OPTIONAL,
+  extensions                               [4]  Extensions{b1} OPTIONAL,
+  component                                [5]  Component OPTIONAL,
+  legID                                    [6]  LegID OPTIONAL,
+  ...
+}
+
+componentReceived{B1:b1, B2:b2} OPERATION ::= {
+  ARGUMENT         ComponentReceivedArg {b1,
+                                         b2}
+  RETURN RESULT    FALSE
+  ERRORS
+    {missingCustomerRecord | missingParameter | parameterOutOfRange |
+      systemFailure | taskRefused | unexpectedComponentSequence |
+      unexpectedDataValue | unexpectedParameter | unknownLegID}
+  ALWAYS RESPONDS  FALSE
+  CODE             opcode-componentReceived
+}
+
+-- Direction: CUSF -> SCF, Timer: Tcre
+ComponentReceivedArg{B1:b1, B2:b2} ::= SEQUENCE {
+  callUnrelatedDpSpecificCommonParameters
+    [0]  CallUnrelatedDpSpecificCommonParameters{b1, b2},
+  componentType                            [1]  ComponentType OPTIONAL,
+  componentCorrelationID                   [3]  ComponentCorrelationID OPTIONAL,
+  extensions                               [4]  Extensions{b1} OPTIONAL,
+  component                                [5]  Component OPTIONAL,
+  legID                                    [6]  LegID OPTIONAL,
+  ...
+}
+
+connectAssociation{B1:b1, B2:b2} OPERATION ::= {
+  ARGUMENT         ConnectAssociationArg {b1,
+                                          b2}
+  RETURN RESULT    FALSE
+  ERRORS
+    {missingParameter | parameterOutOfRange | systemFailure | taskRefused |
+      unexpectedComponentSequence | unexpectedDataValue | unexpectedParameter}
+  ALWAYS RESPONDS  FALSE
+  CODE             opcode-connectAssociation
+}
+
+-- Direction: SCF->CUSF, Timer: Tcoa
+ConnectAssociationArg{B1:b1, B2:b2} ::= SEQUENCE {
+  address         [0]  CalledPartyNumber{b2},
+  extensions      [1]  Extensions{b1} OPTIONAL,
+  genericNumbers  [2]  GenericNumbers{b2} OPTIONAL,
+  ...
+}
+
+continueAssociation{B1:b1} OPERATION ::= {
+  ARGUMENT         ContinueAssociationArg {b1}
+  OPTIONAL         TRUE
+  RETURN RESULT    FALSE
+  ERRORS
+    {missingParameter | parameterOutOfRange | systemFailure | taskRefused |
+      unexpectedComponentSequence | unexpectedDataValue | unexpectedParameter}
+  ALWAYS RESPONDS  FALSE
+  CODE             opcode-continueAssociation
+}
+
+-- Direction: SCF->CUSF, Timer: Tcona
+ContinueAssociationArg{B1:b1} ::= SEQUENCE {
+  extensions  [0]  Extensions{b1} OPTIONAL,
+  ...
+}
+
+eventReportBCUSM{B1:b1, B2:b2, B7:b7} OPERATION ::= {
+  ARGUMENT         EventReportBCUSMArg {b1,
+                                        b2,
+                                        b7}
+  RETURN RESULT    FALSE
+  ALWAYS RESPONDS  FALSE
+  CODE             opcode-eventReportBCUSM
+}
+
+-- Direction: CUSF -> SCF, Timer: Terbce
+EventReportBCUSMArg{B1:b1, B2:b2, B7:b7} ::= SEQUENCE {
+  eventTypeBCUSM                 [0]  EventTypeBCUSM OPTIONAL,
+  eventSpecificInformationBCUSM
+    [1]  EventSpecificInformationBCUSM{b2, b7} OPTIONAL,
+  miscCallInfo
+    [2]  MiscCallInfo DEFAULT {messageType request},
+  cUApplicationInd               [3]  CUApplicationInd OPTIONAL,
+  legID                          [4]  LegID OPTIONAL,
+  extensions                     [5]  Extensions{b1} OPTIONAL,
+  componentType                  [6]  ComponentType OPTIONAL,
+  componentCorrelationID         [7]  ComponentCorrelationID OPTIONAL,
+  component                      [8]  Component OPTIONAL,
+  ...
+}
+
+initialAssociationDP{B1:b1, B2:b2} OPERATION ::= {
+  ARGUMENT         InitialAssociationDPArg {b1,
+                                            b2}
+  RETURN RESULT    FALSE
+  ERRORS
+    {missingCustomerRecord | missingParameter | parameterOutOfRange |
+      systemFailure | taskRefused | unexpectedComponentSequence |
+      unexpectedDataValue | unexpectedParameter}
+  ALWAYS RESPONDS  FALSE
+  CODE             opcode-initialAssociationDP
+}
+
+-- Direction: CUSF->SCF, Timer: Tiadp
+InitialAssociationDPArg{B1:b1, B2:b2} ::= SEQUENCE {
+  serviceKey              [0]  ServiceKey,
+  cUApplicationInd        [1]  CUApplicationInd OPTIONAL,
+  miscCallInfo            [2]  MiscCallInfo OPTIONAL,
+  eventTypeBCUSM          [3]  EventTypeBCUSM OPTIONAL,
+  calledPartyNumber       [4]  CalledPartyNumber{b2} OPTIONAL,
+  callingPartyNumber      [5]  CallingPartyNumber{b2} OPTIONAL,
+  callingPartySubaddress  [6]  CallingPartySubaddress{b2} OPTIONAL,
+  highLayerCompatibility  [7]  HighLayerCompatibility OPTIONAL,
+  bearerCapability        [8]  BearerCapability{b2} OPTIONAL,
+  uSIServiceIndicator     [9]  USIServiceIndicator{b2} OPTIONAL,
+  uSIInformation          [10]  USIInformation{b2} OPTIONAL,
+  extensions              [11]  Extensions{b1} OPTIONAL,
+  genericNumbers          [12]  GenericNumbers{b2} OPTIONAL,
+  componentType           [13]  ComponentType OPTIONAL,
+  componentCorrelationID  [14]  ComponentCorrelationID OPTIONAL,
+  component               [15]  Component OPTIONAL,
+  ...
+}
+
+initiateAssociation{B1:b1, B2:b2} OPERATION ::= {
+  ARGUMENT         InitiateAssociationArg {b1,
+                                           b2}
+  RESULT           InitiateAssociationResultArg
+  ERRORS
+    {missingParameter | parameterOutOfRange | systemFailure | taskRefused |
+      unexpectedComponentSequence | unexpectedDataValue | unexpectedParameter}
+  ALWAYS RESPONDS  TRUE
+  CODE             opcode-initiateAssociation
+}
+
+-- Direction: SCF->CUSF, Timer: Tia
+InitiateAssociationArg{B1:b1, B2:b2} ::= SEQUENCE {
+  calledPartyNumber    [0]  CalledPartyNumber{b2},
+  extensions           [1]  Extensions{b1} OPTIONAL,
+  uSIServiceIndicator  [2]  USIServiceIndicator{b2} OPTIONAL,
+  uSIInformation       [3]  USIInformation{b2} OPTIONAL,
+  genericNumbers       [4]  GenericNumbers{b2} OPTIONAL,
+  ...
+}
+
+InitiateAssociationResultArg ::= NULL
+
+releaseAssociation{B2:b2} OPERATION ::= {
+  ARGUMENT         ReleaseAssociationArg {b2}
+  RETURN RESULT    FALSE
+  ALWAYS RESPONDS  FALSE
+  CODE             opcode-releaseAssociation
+}
+
+--  Direction: SCF->CUSF, Timer: Trel
+ReleaseAssociationArg{B2:b2} ::=
+  Cause{b2}
+
+-- reportUTSI  OPERATION
+-- Direction: CUSF -> SCF, Timer: Tru
+-- This operation is described in Q.1238.2.
+requestReportBCUSMEvent{B1:b1, B7:b7} OPERATION ::= {
+  ARGUMENT         RequestReportBCUSMEventArg {b1,
+                                               b7}
+  RETURN RESULT    FALSE
+  ERRORS
+    {missingParameter | parameterOutOfRange | systemFailure | taskRefused |
+      unexpectedComponentSequence | unexpectedDataValue | unexpectedParameter |
+      unknownLegID}
+  ALWAYS RESPONDS  FALSE
+  CODE             opcode-requestReportBCUSMEvent
+}
+
+-- Direction: SCF -> CUSF, Timer: Trrbce
+RequestReportBCUSMEventArg{B1:b1, B7:b7} ::= SEQUENCE {
+  bCUSMEvents
+    [0]  SEQUENCE SIZE (1..b7.&numOfBCUSMEvents) OF BCUSMEvent,
+  componentTypes
+    [1]  SEQUENCE SIZE (1..3) OF ComponentType DEFAULT {any},
+  componentCorrelationID  [2]  ComponentCorrelationID OPTIONAL,
+  monitorDuration         [3]  Duration OPTIONAL,
+  extensions              [4]  Extensions{b1} OPTIONAL,
+  cUDPCriteria            [5]  CUApplicationInd OPTIONAL,
+  legID                   [6]  LegID OPTIONAL,
+  ...
+}
+
+-- requestReportUTSI  OPERAITON
+-- Direction: SCF -> CUSF, Timer: Trru
+-- This operation is described in Q.1238.2.
+sendComponent{B1:b1} OPERATION ::= {
+  ARGUMENT         SendComponentArg {b1}
+  RETURN RESULT    FALSE
+  ERRORS
+    {missingParameter | parameterOutOfRange | systemFailure | taskRefused |
+      unexpectedComponentSequence | unexpectedDataValue | unexpectedParameter}
+  ALWAYS RESPONDS  FALSE
+  CODE             opcode-sendComponent
+}
+
+--	Direction: SCF -> CUSF, Timer: Tsdc
+SendComponentArg{B1:b1} ::= SEQUENCE {
+  componentType           [0]  ComponentType,
+  componentCorrelationID  [2]  ComponentCorrelationID OPTIONAL,
+  message                 [3]  Message DEFAULT rELeaseCOMPlete,
+  monitorDuration         [4]  Duration OPTIONAL,
+  extensions              [5]  Extensions{b1} OPTIONAL,
+  component               [6]  Component OPTIONAL,
+  ...
+}
+
+-- sendSTUI  OPERATION
+-- Direction: SCF -> CUSF, Timer: Tss
+-- This operation is described in Q.1238.2.
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

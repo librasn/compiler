@@ -1,0 +1,186 @@
+
+
+
+
+
+
+
+-- Module ASN1FPLETypeModule (Q.831:10/1997)
+-- See also ITU-T Q.831 (1997) Cor. 1 (03/2001)
+-- See also the index of all ASN.1 assignments needed in this document
+
+ASN1FPLETypeModule {itu-t(0) recommendation(0) q(17) fpv5(831)
+  informationModel(0) asn1Module(2) fpV5LEModule(0)} DEFINITIONS IMPLICIT TAGS
+::=
+BEGIN -- EXPORTS everything
+
+IMPORTS
+  -- Recommendation Q.824.5 [18]
+  EnvelopeFunctionAddress, Layer3PortAddress
+    FROM ASN1CMLETypeModule {itu-t(0) recommendation(0) q(17) ca(824) 
+      dot(127) v5interface(5) informationModel(0) asn1Module(2)
+      asn1TypeModule(0)}
+  -- Recommendation X.721 [21]
+  Count, ObservedValue, ProbableCause, SpecificProblems
+    FROM Attribute-ASN1Module {joint-iso-itu-t ms(9) smi(3) part2(2)
+      asn1Module(2) 1};
+
+informationModel OBJECT IDENTIFIER ::=
+  {itu-t(0) recommendation(0) q(17) fpv5(831) informationModel(0)}
+
+standardSpecificExtension OBJECT IDENTIFIER ::=
+  {informationModel standardSpecificExtension(0)}
+
+managedObjectClass OBJECT IDENTIFIER ::=
+  {informationModel managedObjectClass(3)}
+
+package OBJECT IDENTIFIER ::= {informationModel package(4)}
+
+nameBinding OBJECT IDENTIFIER ::= {informationModel nameBinding(6)}
+
+attribute OBJECT IDENTIFIER ::= {informationModel attribute(7)}
+
+notification OBJECT IDENTIFIER ::= {informationModel notification(10)}
+
+parameter OBJECT IDENTIFIER ::= {informationModel parameter(11)}
+
+v5SpecificProblems OBJECT IDENTIFIER ::= {standardSpecificExtension 0}
+
+v5ProbableCause OBJECT IDENTIFIER ::= {standardSpecificExtension 1}
+
+v5CauseValue OBJECT IDENTIFIER ::= {standardSpecificExtension 2}
+
+-- The value assignments for the SpecificProblems parameter of the V5 specific communications
+-- alarm notification are specified below
+bccProtocolDataLinkError SpecificProblems ::=
+  {oi:{v5SpecificProblems 1}}
+
+bccProtocolSyntaxError SpecificProblems ::= {oi:{v5SpecificProblems 2}}
+
+bccProtocolTimeOutError SpecificProblems ::= {oi:{v5SpecificProblems 3}}
+
+cessationOfFlagsError SpecificProblems ::= {oi:{v5SpecificProblems 4}}
+
+commonControlProtocolDataLinkError SpecificProblems ::=
+  {oi:{v5SpecificProblems 5}}
+
+commonControlProtocolSyntaxError SpecificProblems ::=
+  {oi:{v5SpecificProblems 6}}
+
+commonControlProtocolTimeOutError SpecificProblems ::=
+  {oi:{v5SpecificProblems 7}}
+
+crcError SpecificProblems ::= {oi:{v5SpecificProblems 8}}
+
+internalFailure SpecificProblems ::= {oi:{v5SpecificProblems 9}}
+
+isdnLayer1ActivationFault SpecificProblems ::= {oi:{v5SpecificProblems 10}}
+
+isdnLayer2Fault SpecificProblems ::= {oi:{v5SpecificProblems 11}}
+
+isdnLayer3Fault SpecificProblems ::= {oi:{v5SpecificProblems 12}}
+
+linkControlProtocolDataLinkError SpecificProblems ::=
+  {oi:{v5SpecificProblems 13}}
+
+linkControlProtocolLayer3AddressError SpecificProblems ::=
+  {oi:{v5SpecificProblems 14}}
+
+linkControlProtocolOutOfService SpecificProblems ::=
+  {oi:{v5SpecificProblems 15}}
+
+linkControlProtocolSyntaxError SpecificProblems ::=
+  {oi:{v5SpecificProblems 16}}
+
+linkControlProtocolTimeOutError SpecificProblems ::=
+  {oi:{v5SpecificProblems 17}}
+
+linkIdFailure SpecificProblems ::= {oi:{v5SpecificProblems 18}}
+
+portControlProtocolError SpecificProblems ::= {oi:{v5SpecificProblems 19}}
+
+portControlProtocolLayer3AddressError SpecificProblems ::=
+  {oi:{v5SpecificProblems 20}}
+
+portControlProtocolSyntaxError SpecificProblems ::=
+  {oi:{v5SpecificProblems 21}}
+
+portControlProtocolTimeOutError SpecificProblems ::=
+  {oi:{v5SpecificProblems 22}}
+
+protectionProtocolDataLinkError SpecificProblems ::=
+  {oi:{v5SpecificProblems 23}}
+
+protectionProtocolSyntaxError SpecificProblems ::= {oi:{v5SpecificProblems 24}}
+
+protectionProtocolTimeOutError SpecificProblems ::=
+  {oi:{v5SpecificProblems 25}}
+
+pstnProtocolDataLinkError SpecificProblems ::= {oi:{v5SpecificProblems 26}}
+
+pstnProtocolLayer3AddressError SpecificProblems ::=
+  {oi:{v5SpecificProblems 27}}
+
+pstnProtocolSyntaxError SpecificProblems ::= {oi:{v5SpecificProblems 28}}
+
+pstnProtocolTimeOutError SpecificProblems ::= {oi:{v5SpecificProblems 29}}
+
+v5InterfaceIdFailure SpecificProblems ::= {oi:{v5SpecificProblems 30}}
+
+v5InterfaceProvisioningMismatchFailure SpecificProblems ::=
+  {oi:{v5SpecificProblems 31}}
+
+losLofAtDSLopAtNT1 SpecificProblems ::= {oi:{v5SpecificProblems 32}}
+
+losLofAtT SpecificProblems ::= {oi:{v5SpecificProblems 33}}
+
+loopBackUnintentional SpecificProblems ::= {oi:{v5SpecificProblems 34}}
+
+powerFeedingFailure SpecificProblems ::= {oi:{v5SpecificProblems 35}}
+
+-- Additional value assignments for the ProbableCause parameter of the V5 specific communications
+-- alarm notification are specified below
+lossOfFrameLossOfSignal ProbableCause ::=
+  globalValue:{v5ProbableCause 1}
+
+unintentionalLoopBack ProbableCause ::= globalValue:{v5ProbableCause 2}
+
+-- The value assignments for the causeValue are specified below
+protocolDiscriminatorError CauseValue ::=
+  {v5CauseValue  0}
+
+messageTypeUnrecognized CauseValue ::= {v5CauseValue  1}
+
+outOfSequenceElement CauseValue ::= {v5CauseValue  2}
+
+repeatedOptionalElement CauseValue ::= {v5CauseValue  3}
+
+mandatoryElementMissing CauseValue ::= {v5CauseValue  4}
+
+unrecognizedElement CauseValue ::= {v5CauseValue  5}
+
+mandatoryElementContentError CauseValue ::= {v5CauseValue  6}
+
+optionalElementContentError CauseValue ::= {v5CauseValue  7}
+
+messageNotCompatible CauseValue ::= {v5CauseValue  8}
+
+repeatedMandatoryElement CauseValue ::= {v5CauseValue  9}
+
+tooManyElements CauseValue ::= {v5CauseValue  10}
+
+-- The initial value definitions are specified below
+initialCount Count ::= 0
+
+ActiveStandby ::= ENUMERATED {active(0), standby(1), changed(2)}
+
+CauseValue ::= OBJECT IDENTIFIER
+
+NumberOfChannels ::= INTEGER
+
+NumberOfV5Links ::= INTEGER
+
+END -- of ASN1FPLETypeModule
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

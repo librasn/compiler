@@ -1,0 +1,201 @@
+
+
+
+
+
+
+
+-- Module IN-CS3-SCF-SDF-Operations (Q.1238.4:06/2000)
+-- See also ITU-T Q.1238.4 (06/2000)
+-- See also the index of all ASN.1 assignments needed in this document
+
+IN-CS3-SCF-SDF-Operations {itu-t recommendation q 1238 modules(1)
+  in-cs3-scf-sdf-ops-args(16) version1(0)} DEFINITIONS ::=
+BEGIN
+
+IMPORTS
+  ds-UsefulDefinitions, ros-InformationObjects, errortypes, operationcodes,
+    ssf-scf-datatypes, scf-scf-classes, scf-sdf-datatypes, scf-sdf-classes
+    FROM IN-CS3-object-identifiers {itu-t recommendation q 1238 modules(1)
+      in-cs3-object-identifiers(0) version1(0)}
+  informationFramework, enhancedSecurity, directoryAbstractService
+    FROM UsefulDefinitions {joint-iso-itu-t ds(5) module(1)
+      usefulDefinitions(0) 3}
+  Context, Name
+    FROM InformationFramework {joint-iso-itu-t ds(5) module(1)
+      informationFramework(1) 3}
+  OPERATION
+    FROM Remote-Operations-Information-Objects {joint-iso-itu-t
+      remote-operations(4) informationObjects(5) version1(0)}
+  OPTIONALLY-PROTECTED{}, DIRQOP, dirqop
+    FROM EnhancedSecurity {joint-iso-itu-t ds(5) module(1) enhancedSecurity(28)
+      1}
+  CommonArguments, CommonResults, attributeError, nameError, referral,
+    securityError, serviceError, updateError, Credentials, Versions,
+    SecurityParameters
+    FROM DirectoryAbstractService {joint-iso-itu-t ds(5) module(1)
+      directoryAbstractService(2) 3}
+  executionError, tfcBindError
+    FROM IN-CS3-errortypes {itu-t recommendation q 1238 modules(1)
+      in-cs3-errortypes(2) version1(0)}
+  opcode-execute, opcode-trafficFlowControl
+    FROM IN-CS3-operationcodes {itu-t recommendation q 1238 modules(1)
+      in-cs3-operationcodes(3) version1(0)}
+  Duration, ControlType
+    FROM IN-CS3-SSF-SCF-datatypes {itu-t recommendation q 1238 modules(1)
+      in-cs3-ssf-scf-datatypes(6) version1(0)}
+  SCFQOP, scfqop
+    FROM IN-CS3-SCF-SCF-Classes {itu-t recommendation q 1238 modules(1)
+      in-cs3-scf-scf-classes(21) version1(0)}
+  TFCcriteria
+    FROM IN-CS3-SCF-SDF-datatypes {itu-t recommendation q 1238 modules(1)
+      in-cs3-scf-sdf-datatypes(14) version1(0)}
+  METHOD, SupportedMethods
+    FROM IN-CS3-SCF-SDF-Classes {itu-t recommendation q 1238 modules(1)
+      in-cs3-scf-sdf-classes(15) version1(0)};
+
+execute OPERATION ::= {
+  ARGUMENT  ExecuteArgument
+  RESULT    ExecuteResult
+  ERRORS
+    {attributeError | nameError | serviceError | referral | securityError |
+      updateError | executionError}
+  CODE      opcode-execute
+}
+
+-- Direction: SCF->SDF
+-- Note that the serviceError error is subtyped as described in subclause 12.5 for the IN specification. 
+-- Refer to the in-ServiceError definition for it.
+ExecuteArgument ::=
+  OPTIONALLY-PROTECTED
+    {SET {object            [0]  Name,
+          method-id         [1]  METHOD.&id({SupportedMethods}),
+          input-assertions
+            [2]  SEQUENCE OF
+                   SEQUENCE {type
+                               METHOD.&InputAttributes.&id
+                                 ({SupportedMethods}{@method-id}),
+                             values
+                               SET OF
+                                 METHOD.&InputAttributes.&Type
+                                   ({SupportedMethods}{@method-id, @.type})
+                                 OPTIONAL,
+                             valuesWithContext
+                               [0]  SET OF
+                                      METHOD.&InputAttributes.&Type
+                                        ({SupportedMethods}{@method-id, @.type})
+                                 OPTIONAL,
+                             contextList        [1]  SET OF Context} OPTIONAL,
+          --EDITOR: there is no way (at the moment) in ASN.1 
+          --to reference a component through a SET OF or SEQUENCE OF type. 
+          --The inner SEQUENCE has been removed for compilation purpose. 
+          --Align the descriptive text/comments accordingly.
+          specific-input
+            [3]  METHOD.&SpecificInput({SupportedMethods}{@method-id})
+              OPTIONAL,
+          COMPONENTS OF CommonArguments}, dirqop.&dapModifyEntryArg-QOP}
+
+-- Note that CommonArguments in the ExecuteArgument is replaced with IN-CommonArguments 
+-- described as the subtyped definition in subclause 12.5.
+ExecuteResult ::=
+  OPTIONALLY-PROTECTED
+    {SET {method-id          [1]  METHOD.&id({SupportedMethods}),
+          output-assertions
+            [2]  SEQUENCE OF
+                   SEQUENCE {type
+                               METHOD.&OutputAttributes.&id
+                                 ({SupportedMethods}{@method-id}),
+                             values
+                               SET OF
+                                 METHOD.&OutputAttributes.&Type
+                                   ({SupportedMethods}{@method-id, @.type})
+                                 OPTIONAL,
+                             valuesWithContext
+                               [0]  SET OF
+                                      METHOD.&OutputAttributes.&Type
+                                        ({SupportedMethods}{@method-id, @.type})
+                                 OPTIONAL,
+                             contextList        [1]  SET OF Context} OPTIONAL,
+          --EDITOR: there is no way (at the moment) in ASN.1 to reference a component 
+          --through a SET OF or SEQUENCE OF type. The inner SEQUENCE has been removed 
+          --for compilation purpose. Align the descriptive text/comments accordingly.
+          specific-output
+            [3]  METHOD.&SpecificOutput({SupportedMethods}{@method-id})
+              OPTIONAL,
+          COMPONENTS OF CommonResults}, dirqop.&dapModifyEntryRes-QOP}
+
+-- The specific-output field contains information returned as a result of the method execution.
+-- The output-assertions contains attributes values returned as a result of the method execution.
+-- addEntry OPERATION
+-- Direction: SCF->SDF
+-- Note that the serviceError error is subtyped as described in subclause 12.5 for the IN specification. 
+-- Refer to the in-ServiceError definition for it.
+-- Note that CommonArguments in X.511 AddEntryArgument is replaced with  IN-CommonArguments described as 
+-- the subtyped definition in subclause 12.5.
+-- directoryBind OPERATION
+-- Direction: SCF->SDF
+-- Note that the directoryBindError error is subtyped as described in subclause 12.5 for the IN specification.  Refer to 
+-- the in-DirectoryBindError definition for it.
+-- modifyEntry OPERATION
+-- Direction: SCF->SDF
+-- Note that the ModifyEntryArgument, ModifyEntryResult, and serviceError error are subtyped as described in 
+-- subclause 12.5 for the IN specification.  Refer to the IN-ModifyEntryArgument, IN-ModifyEntryResult, and in- 
+-- ServiceError definitions for them, respectively.
+-- removeEntry OPERATION
+-- Direction: SCF->SDF
+-- Note that the serviceError error is subtyped as described in subclause 12.5 for the IN specification. 
+-- Refer to the in-ServiceError definition for it.
+-- Note that CommonArguments in X.511 RemoveEntryArgument is replaced with 
+-- IN-CommonArguments described as the subtyped definition in subclause 12.5.
+-- search OPERATION
+-- Direction: SCF->SDF
+-- The search operation is used to search a portion of the DIT for entries of interest.
+-- The abandoned error is not supported.
+-- Note that the SearchArgument, SearchResult, and serviceError error are subtyped as described in 
+-- subclause 12.5 for the IN specification.  Refer to the IN-SearchArgument, IN-SearchResult, and in-
+-- ServiceError definitions for them, respectively.
+-- inUnbind  OPERATION 
+-- Direction: SCF->SDF, SDF->SCF (TFC case)
+-- This operation is described in Q.1238.1.
+trafficFlowControl OPERATION ::= {
+  ARGUMENT         TFCArgument
+  RETURN RESULT    FALSE
+  ALWAYS RESPONDS  FALSE
+  CODE             opcode-trafficFlowControl
+}
+
+-- Direction: SDF->SCF
+TFCArgument ::=
+  OPTIONALLY-PROTECTED
+    {SEQUENCE {tfcCriteria  [0]  TFCcriteria,
+               duration     [1] IMPLICIT Duration,
+               controlType  [2] IMPLICIT ControlType,
+               security     [3] IMPLICIT SecurityParameters,
+               wasChained   [4] IMPLICIT BOOLEAN DEFAULT FALSE,
+               ...,
+               ...}, scfqop.&scfArgumentQOP}
+
+tfcBind OPERATION ::= {
+  ARGUMENT  TFCBindArgument
+  RESULT    TFCBindResult
+  ERRORS    {tfcBindError}
+}
+
+-- Direction: SDF->SCF
+TFCBindArgument ::= SET {
+  credentials  [0]  Credentials OPTIONAL,
+  versions     [1] IMPLICIT Versions DEFAULT {v1},
+  ...,
+  ...
+}
+
+-- Note: the tfcBind.credentials.strong.bind-token.dirqop field should be set to a value which corresponds
+-- 	to a SCFQOP object.
+--  	The absence of this field in the tfcBind argument implies the non-use of protection facilities.
+TFCBindResult ::=
+  TFCBindArgument
+
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

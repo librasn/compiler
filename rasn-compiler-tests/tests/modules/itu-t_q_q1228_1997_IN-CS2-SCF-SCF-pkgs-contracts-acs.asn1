@@ -1,0 +1,278 @@
+
+
+
+
+
+
+
+-- Module IN-CS2-SCF-SCF-pkgs-contracts-acs (Q.1228:09/1997)
+-- See also ITU-T Q.1228 (09/1997)
+-- See also the index of all ASN.1 assignments needed in this document
+
+-- This subclause includes all of the ASN.1 type and value definitions contained in this SCF/SCF Specification, in the 
+-- form of the ASN.1 module, " IN-CS2-SCF-SCF-pkgs-contracts-acs ".
+IN-CS2-SCF-SCF-pkgs-contracts-acs {itu-t recommendation q 1228 modules(0)
+  in-cs2-scf-scf-pkgs-contracts-acs(14) version1(0)} DEFINITIONS ::=
+BEGIN
+
+-- This module describes the operation-packages, contracts and application-contexts used
+-- over the SCF-SCF interface.
+IMPORTS
+  PARAMETERS-BOUND, networkSpecificBoundSet
+    FROM IN-CS2-classes {itu-t recommendation q 1228 modules(0)
+      in-cs2-classes(4) version1(0)}
+  ROS-OBJECT-CLASS, CONTRACT, OPERATION-PACKAGE, CONNECTION-PACKAGE, OPERATION
+    FROM Remote-Operations-Information-Objects {joint-iso-itu-t
+      remote-operations(4) informationObjects(5) version1(0)}
+  Bind{}, Unbind{}
+    FROM Remote-Operations-Generic-ROS-PDUs {joint-iso-itu-t
+      remote-operations(4) generic-ROS-PDUs(6) version1(0)}
+  TCMessage{}
+    FROM TCAPMessages {itu-t recommendation q 773 modules(2) messages(1)
+      version3(3)}
+  APPLICATION-CONTEXT, dialogue-abstract-syntax
+    FROM TC-Notation-Extensions {itu-t recommendation q 775 modules(2)
+      notation-extension(4) version1(1)}
+  establishChargingRecord{}, confirmedReportChargingInformation{},
+    confirmedNotificationProvided{}, handlingInformationRequest{},
+    handlingInformationResult{}, networkCapability{}, notificationProvided{},
+    provideUserInformation{}, reportChargingInformation{},
+    requestNotification{}, chainedHandlingInformationRequest{},
+    chainedNotificationProvided{}, chainedConfirmedNotificationProvided{},
+    chainedReportChargingInformation{},
+    chainedConfirmedReportChargingInformation{},
+    chainedEstablishChargingRecord{}, chainedHandlingInformationResult{},
+    chainedNetworkCapability{}, chainedProvideUserInformation{},
+    chainedRequestNotification{}, scfBind{}, scfUnbind
+    FROM IN-CS2-SCF-SCF-ops-args {itu-t recommendation q 1228 modules(0)
+      in-cs2-scf-scf-ops-args(13) version1(0)}
+  id-ac, id-rosObject, id-contract, id-package, id-as,
+    id-ac-scf-scfOperationsAC, id-ac-distributedSCFSystemAC,
+    id-ac-scf-scfOperationsWith3seAC, id-ac-distributedSCFSystemWith3seAC,
+    id-contract-scf-scf, id-contract-dssp, id-package-dsspConnection,
+    id-package-scf-scfConnection, id-package-handlingInformation,
+    id-package-notification, id-package-chargingInformation,
+    id-package-userInformation, id-package-networkCapability,
+    id-package-chainedSCFOperations, id-as-scf-scfOperationsAS,
+    id-as-distributedSCFSystemAS, id-as-scf-scfBindingAS, ds-UsefulDefinitions,
+    classes, tc-Messages, tc-NotationExtensions, ros-InformationObjects,
+    ros-genericPDUs, scf-scf-Operations, scf-sdf-Protocol, ssf-scf-Operations,
+    ssf-scf-Protocol
+    FROM IN-CS2-object-identifiers {itu-t recommendation q 1228 modules(0)
+      in-cs2-object-identifiers(17) version1(0)}
+  activityTest
+    FROM IN-CS2-SSF-SCF-ops-args {itu-t recommendation q 1228 modules(0)
+      in-cs2-ssf-scf-ops-args(5) version1(0)}
+  activityTestPackage
+    FROM IN-CS2-SSF-SCF-pkgs-contracts-acs {itu-t recommendation q 1228
+      modules(0) in-cs2-ssf-scf-pkgs-contracts-acs(6) version1(0)}
+  inSESEAbstractSyntax
+    FROM IN-CS2-SCF-SDF-Protocol {itu-t recommendation q 1228 modules(0)
+      in-scf-sdf-protocol(12) version1(0)}
+  id-se-threewayse
+    FROM ProtocolObjectIdentifiers {joint-iso-itu-t ds(5) module(1)
+      protocolObjectIdentifiers(4) 3}
+  protocolObjectIdentifiers
+    FROM UsefulDefinitions {joint-iso-itu-t ds(5) module(1)
+      usefulDefinitions(0) 3};
+
+-- Application Contexts 
+scf-scfOperationsAC APPLICATION-CONTEXT ::= {
+  CONTRACT                  scf-scfContract
+  DIALOGUE MODE             structured
+  TERMINATION               basic
+  ABSTRACT SYNTAXES
+    {dialogue-abstract-syntax | distributedSCFBindingAbstractSyntax |
+      scf-scfOperationsAbstractSyntax}
+  APPLICATION CONTEXT NAME  id-ac-scf-scfOperationsAC
+}
+
+distributedSCFSystemAC APPLICATION-CONTEXT ::= {
+  CONTRACT                  dsspContract
+  DIALOGUE MODE             structured
+  TERMINATION               basic
+  ABSTRACT SYNTAXES
+    {dialogue-abstract-syntax | distributedSCFSystemAbstractSyntax |
+      distributedSCFBindingAbstractSyntax}
+  APPLICATION CONTEXT NAME  id-ac-distributedSCFSystemAC
+}
+
+scf-scfOperationsWith3seAC APPLICATION-CONTEXT ::= {
+  CONTRACT                  scf-scfContract
+  DIALOGUE MODE             structured
+  TERMINATION               basic
+  ADDITIONAL ASES           {id-se-threewayse}
+  ABSTRACT SYNTAXES
+    {dialogue-abstract-syntax | distributedSCFBindingAbstractSyntax |
+      scf-scfOperationsAbstractSyntax | inSESEAbstractSyntax}
+  APPLICATION CONTEXT NAME  id-ac-scf-scfOperationsWith3seAC
+}
+
+distributedSCFSystemWith3seAC APPLICATION-CONTEXT ::= {
+  CONTRACT                  dsspContract
+  DIALOGUE MODE             structured
+  TERMINATION               basic
+  ADDITIONAL ASES           {id-se-threewayse}
+  ABSTRACT SYNTAXES
+    {dialogue-abstract-syntax | distributedSCFSystemAbstractSyntax |
+      distributedSCFBindingAbstractSyntax | inSESEAbstractSyntax}
+  APPLICATION CONTEXT NAME  id-ac-distributedSCFSystemWith3seAC
+}
+
+-- Contracts 
+scf-scfContract CONTRACT ::= {
+  CONNECTION             scf-scfConnectionPackage {networkSpecificBoundSet}
+  INITIATOR CONSUMER OF
+    {activityTestPackage | handlingInformationPackage{networkSpecificBoundSet}}
+  RESPONDER CONSUMER OF
+    {activityTestPackage | chargingInformationPackage{networkSpecificBoundSet}
+      | networkCapabilityPackage{networkSpecificBoundSet} |
+      notificationPackage{networkSpecificBoundSet} |
+      userInformationPackage{networkSpecificBoundSet}}
+  ID                     id-contract-scf-scf
+}
+
+dsspContract CONTRACT ::= {
+  CONNECTION             dsspConnectionPackage {networkSpecificBoundSet}
+  INITIATOR CONSUMER OF
+    {chainedSCFOperationPackage  {networkSpecificBoundSet}}
+  ID                     id-contract-dssp
+}
+
+--  Connection Package 
+scf-scfConnectionPackage{PARAMETERS-BOUND:bound} CONNECTION-PACKAGE ::= 
+{
+  BIND              scfBind {bound}
+  UNBIND            scfUnbind
+  RESPONDER UNBIND  FALSE
+  ID                id-package-scf-scfConnection
+}
+
+dsspConnectionPackage{PARAMETERS-BOUND:bound} CONNECTION-PACKAGE ::= 
+{
+  BIND              scfBind {bound}
+  UNBIND            scfUnbind
+  RESPONDER UNBIND  FALSE
+  ID                id-package-dsspConnection
+}
+
+--  handlingInformation package 
+handlingInformationPackage{PARAMETERS-BOUND:bound} OPERATION-PACKAGE ::= 
+{
+  CONSUMER INVOKES  {handlingInformationRequest  {bound}}
+  SUPPLIER INVOKES  {handlingInformationResult  {bound}}
+  ID                id-package-handlingInformation
+}
+
+--  notification package 
+notificationPackage{PARAMETERS-BOUND:bound} OPERATION-PACKAGE ::= {
+  CONSUMER INVOKES  {requestNotification{bound}}
+  SUPPLIER INVOKES
+    {notificationProvided{bound} | confirmedNotificationProvided{bound}}
+  ID                id-package-notification
+}
+
+--  chargingInformation package 
+chargingInformationPackage{PARAMETERS-BOUND:bound} OPERATION-PACKAGE ::= 
+{
+  CONSUMER INVOKES  {establishChargingRecord{bound}}
+  SUPPLIER INVOKES
+    {confirmedReportChargingInformation{bound} |
+      reportChargingInformation{bound}}
+  ID                id-package-chargingInformation
+}
+
+--  userInformation package 
+userInformationPackage{PARAMETERS-BOUND:bound} OPERATION-PACKAGE ::= 
+{
+  CONSUMER INVOKES  {provideUserInformation  {bound}}
+  ID                id-package-userInformation
+}
+
+--  networkCapability package 
+networkCapabilityPackage{PARAMETERS-BOUND:bound} OPERATION-PACKAGE ::= 
+{
+  CONSUMER INVOKES  {networkCapability{bound}}
+  ID                id-package-networkCapability
+}
+
+--  chainedSCFOperation package 
+chainedSCFOperationPackage{PARAMETERS-BOUND:bound} OPERATION-PACKAGE ::= 
+{
+  CONSUMER INVOKES
+    {chainedHandlingInformationRequest{bound} |
+      chainedNotificationProvided{bound} |
+      chainedConfirmedNotificationProvided{bound} |
+      chainedReportChargingInformation{bound} |
+      chainedConfirmedReportChargingInformation{bound}}
+  SUPPLIER INVOKES
+    {chainedEstablishChargingRecord{bound} |
+      chainedHandlingInformationResult{bound} | chainedNetworkCapability{bound}
+      | chainedProvideUserInformation{bound} |
+      chainedRequestNotification{bound}}
+  ID                id-package-chainedSCFOperations
+}
+
+-- abstract syntaxes 
+scf-scfOperationsAbstractSyntax ABSTRACT-SYNTAX ::= {
+  BasicSCF-SCF-PDUs
+  IDENTIFIED BY  id-as-scf-scfOperationsAS
+}
+
+BasicSCF-SCF-PDUs ::= TCMessage{{SCF-SCF-Invokable}, {SCF-SCF-Returnable}}
+
+SCF-SCF-Invokable OPERATION ::=
+  {activityTest | establishChargingRecord{networkSpecificBoundSet} |
+   confirmedNotificationProvided{networkSpecificBoundSet} |
+   confirmedReportChargingInformation{networkSpecificBoundSet} |
+   handlingInformationRequest{networkSpecificBoundSet} |
+   handlingInformationResult{networkSpecificBoundSet} |
+   networkCapability{networkSpecificBoundSet} |
+   notificationProvided{networkSpecificBoundSet} |
+   provideUserInformation{networkSpecificBoundSet} |
+   reportChargingInformation{networkSpecificBoundSet} |
+   requestNotification{networkSpecificBoundSet}}
+
+SCF-SCF-Returnable OPERATION ::=
+  {activityTest | establishChargingRecord{networkSpecificBoundSet} |
+   confirmedNotificationProvided{networkSpecificBoundSet} |
+   confirmedReportChargingInformation{networkSpecificBoundSet} |
+   handlingInformationRequest{networkSpecificBoundSet} |
+   handlingInformationResult{networkSpecificBoundSet} |
+   networkCapability{networkSpecificBoundSet} |
+   provideUserInformation{networkSpecificBoundSet} |
+   requestNotification{networkSpecificBoundSet}}
+
+distributedSCFSystemAbstractSyntax ABSTRACT-SYNTAX ::= {
+  BasicDSSP-PDUs
+  IDENTIFIED BY  id-as-distributedSCFSystemAS
+}
+
+BasicDSSP-PDUs ::= TCMessage{{DSSP-Invokable}, {DSSP-Returnable}}
+
+DSSP-Invokable OPERATION ::=
+  {chainedHandlingInformationRequest{networkSpecificBoundSet} |
+   chainedNotificationProvided{networkSpecificBoundSet} |
+   chainedConfirmedNotificationProvided{networkSpecificBoundSet} |
+   chainedReportChargingInformation{networkSpecificBoundSet} |
+   chainedConfirmedReportChargingInformation{networkSpecificBoundSet}}
+
+DSSP-Returnable OPERATION ::=
+  {chainedHandlingInformationRequest{networkSpecificBoundSet} |
+   chainedConfirmedNotificationProvided{networkSpecificBoundSet} |
+   chainedConfirmedReportChargingInformation{networkSpecificBoundSet}}
+
+distributedSCFBindingAbstractSyntax ABSTRACT-SYNTAX ::= {
+  SCF-SCFBinding-PDUs {networkSpecificBoundSet}
+  IDENTIFIED BY  id-as-scf-scfBindingAS
+}
+
+SCF-SCFBinding-PDUs{PARAMETERS-BOUND:bound} ::= CHOICE {
+  bind    Bind{scfBind{bound}},
+  unbind  Unbind{scfUnbind}
+}
+
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

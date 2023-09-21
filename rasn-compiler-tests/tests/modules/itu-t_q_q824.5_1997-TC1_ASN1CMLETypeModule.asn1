@@ -1,0 +1,207 @@
+
+
+
+
+
+
+
+-- Module ASN1CMLETypeModule (Q.824.5:10/1997)
+-- See also ITU-T Q.824.5 (1997) Cor. 1 (02/2000)
+-- See also the index of all ASN.1 assignments needed in this document
+
+ASN1CMLETypeModule {itu-t(0) recommendation(0) q(17) ca(824) dot(127)
+  v5interface(5) informationModel(0) asn1Module(2) cAV5LEModule(0)} DEFINITIONS
+IMPLICIT TAGS ::=
+BEGIN
+
+-- EXPORTS everything
+IMPORTS
+  -- Recommendation M.3100 
+  Failed, NameType, PointerOrNull, UserLabel
+    FROM ASN1DefinedTypesModule {ccitt recommendation m gnm(3100)
+      informationModel(0) asn1Modules(2) asn1DefinedTypesModule(0)}
+  -- Recommendation X.711 
+  AttributeId, ObjectClass, ObjectInstance
+    FROM CMIP-1 {joint-iso-ccitt ms(9) cmip(1) modules(0) protocol(3)};
+
+informationModel OBJECT IDENTIFIER ::=
+  {itu-t(0) recommendation(0) q(17) ca(824) dot(127) v5interface(5)
+   informationModel(0)}
+
+standardSpecificExtension OBJECT IDENTIFIER ::=
+  {informationModel standardSpecificExtension(0)}
+
+managedObjectClass OBJECT IDENTIFIER ::=
+  {informationModel managedObjectClass(3)}
+
+package OBJECT IDENTIFIER ::= {informationModel package(4)}
+
+nameBinding OBJECT IDENTIFIER ::= {informationModel nameBinding(6)}
+
+attribute OBJECT IDENTIFIER ::= {informationModel attribute(7)}
+
+action OBJECT IDENTIFIER ::= {informationModel action(9)}
+
+notification OBJECT IDENTIFIER ::= {informationModel notification(10)}
+
+initialPointer Pointer ::= null:NULL
+
+initialPointerS SET OF Pointer ::= {}
+
+ActingRole ::= ENUMERATED {balanced(0), master(1), slave(2), ...
+                           }
+
+AssocInstances ::= SET OF ObjectInstance
+
+BcReserved ::= SET OF OCTET STRING(SIZE (2))
+
+BlockStatus ::= ENUMERATED {none(0), local(1), remote(2), both(3), ...
+                            }
+
+DataType ::= ENUMERATED {dsType(0), pType(1), fType(2), ...
+                         }
+
+D-ChannelActivation ::= ENUMERATED {
+  deact(0), -- link deactivated
+  act1(1), -- layer 1 maintained
+  act2(2), -- layer 1 and 2 maintained
+  ...
+  }
+
+EnvelopeFunctionAddress ::= INTEGER(0..8191)
+
+Layer3PortAddress ::= INTEGER(0..65535)
+
+LinkId ::= OCTET STRING(SIZE (1))
+
+LineSignalling ::= INTEGER {dtmf(0), -- push button
+                            pulse(1), -- rotary
+                            both(2)}
+
+LinkIdCheckResult ::= ENUMERATED {
+  linkIdOk(0), linkIdNotOk(1), linkIdRejected(2), ...
+  }
+
+NoOf ::= INTEGER
+
+ObjectPointer ::= SEQUENCE {
+  objectClass     [0]  ObjectClass,
+  objectInstance  [1]  ObjectInstance
+}
+
+Origin ::= ENUMERATED {localResource(0), remoteResource(1), manual(2), ...
+                       }
+
+OriginalPointer ::= Pointer
+
+OriginalPointerInfo ::= SEQUENCE {
+  originalPointer1  OriginalPointer,
+  originalPointer2  OriginalPointer
+}
+
+Pointer ::= PointerOrNull
+
+V5SupportedProtocolVersion ::= ENUMERATED {v5dot1(1), v5dot2(2), ...
+                                           }
+
+ProvVariant ::= BIT STRING(SIZE (7))
+
+ReciprocalPointersInfo ::= SEQUENCE {
+  objectClass1     ObjectClass,
+  objectInstance1  ObjectInstance,
+  attribute1       AttributeId,
+  objectClass2     ObjectClass,
+  objectInstance2  ObjectInstance,
+  attribute2       AttributeId
+}
+
+RejectedProvVariant ::= SEQUENCE {
+  provVariant     [0]  ProvVariant,
+  rejectionCause  [1]  RejectionCause
+}
+
+RejectionCause ::= ENUMERATED {
+  variantUnknown(0), variantKnownNotReady(1), reprovisioningInProgress(2), ...
+  }
+
+ReleaseReciprocalPointersResult ::= SEQUENCE {
+  originalPointerInfo  OriginalPointerInfo,
+  result               CHOICE {failed    [0]  Failed,
+                               released  [1]  NULL}
+}
+
+RequestRemoteProvVariantResult ::= SEQUENCE {
+  remoteProvVariant  [1]  ProvVariant,
+  remoteInterfaceId  [2]  OCTET STRING(SIZE (3))
+}
+
+SetReciprocalPointersResult ::= SEQUENCE {
+  originalPointerInfo  OriginalPointerInfo,
+  result               CHOICE {failed  [0]  Failed,
+                               set     [1]  NULL}
+}
+
+SwitchOverToNewVariantResult ::= CHOICE {
+  reprovisioningStarted  [0]  ProvVariant,
+  cannotReprovision      [1]  RejectedProvVariant
+}
+
+Success ::= ENUMERATED {successful(0), unsuccessful(1), ...
+                        }
+
+SwitchType ::= ENUMERATED {manual(0), forced(1), automatic(2), ...
+                           }
+
+VerifyRemoteProvVariantInfo ::= ProvVariant
+
+VerifyRemoteProvVariantResult ::= CHOICE {
+  readyForReprovisioning     [0]  ProvVariant,
+  notReadyForReprovisioning  [1]  RejectedProvVariant
+}
+
+V5ChannelType ::= ENUMERATED {bearerChannel(0), commChannel(1), ...
+                              }
+
+V5Identification ::= OCTET STRING(SIZE (3))
+
+V5ProtectionFailedSwitchInfo ::= ENUMERATED {
+  noStandByCChannelsAvailable(0), targetCChannelNotOperational(1),
+  targetCChannelNotProvisioned(2), protectionSwitchImpossible(3),
+  protectionGroupMismatch(4), requestedAllocationExisting(5),
+  targetCChannelActive(6), ...
+  }
+
+V5ProtectionGroupNumber ::= ENUMERATED {group1(0), group2(1), ...
+                                        }
+
+V5ProtectionGroupType ::= ENUMERATED {plus(0), colon(1), ...
+                                      }
+
+V5ProtectionNoSwitchInfo ::= SEQUENCE {
+  failedSwitchInfo        [0]  V5ProtectionFailedSwitchInfo,
+  v5ProtectionSwitchInfo  [1]  V5ProtectionSwitchInfo
+}
+
+V5ProtectionSwitchInfo ::= SEQUENCE {
+  origin      Origin,
+  switchType  SwitchType,
+  switchFrom  ObjectInstance,
+  switchTo    ObjectInstance
+}
+
+V5ProtectionSwitchReportingInfo ::= CHOICE {
+  switched  [0]  V5ProtectionSwitchInfo,
+  failed    [1]  V5ProtectionNoSwitchInfo
+}
+
+V5UserPortAddress ::= CHOICE {
+  single    [0]  Layer3PortAddress,
+  multiple  [1]  EnvelopeFunctionAddress
+}
+
+YesNo ::= BOOLEAN
+
+END -- of ASN1CMLETypeModule
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

@@ -1,0 +1,103 @@
+CMSCKMKeyManagement {itu-t recommendation(0) x(24) cms-profile(894) module(0) cKMKeyManagement(1) version1(1)}
+"/ITU-T/Recommendation/X/CMS-Profile/Module/CKMKeyManagement/Version1"
+DEFINITIONS ::=
+BEGIN
+IMPORTS
+ALGORITHM,AlgorithmIdentifier{}
+FROM AlgorithmInformation-2009
+{iso(1) identified-organization(3) dod(6) internet(1) security(5)
+mechanisms(5) pkix(7) id-mod(0) id-mod-algorithmInformation-02(58)}
+ATTRIBUTE
+FROM PKIX-CommonTypes-2009
+{iso(1) identified-organization(3) dod(6) internet(1) security(5)
+mechanisms(5) pkix(7) id-mod(0) id-mod-pkixCommon-02(57)}
+ContentEncryptionAlgorithmIdentifier,DigestAlgorithmIdentifier,
+EncryptedKey,UserKeyingMaterial
+FROM CryptographicMessageSyntax-2010
+{iso(1) member-body(2) us(840) rsadsi(113549) pkcs(1) pkcs-9(9) smime(16) modules(0) id-mod-cms-2009(58)}
+id-ckm-key-agree-hash,id-ckm-key-agree-multiple-encrypt,
+id-ckm-symmetric,id-ckm-key-transport,id-ckm-recip-info
+FROM CMSObjectIdentifiers
+{iso(1) identified-organization(3) tc68(133) country(16) x9(840)
+x9Standards(9) x9-73(73) module(0) oids(1) v2009(1)}
+DomainParameters
+FROM ANSI-X9-42
+{iso(1) member-body(2) us(840) ansi-x942(10046) module(5) 1}
+ECDomainParameters
+FROM ANSI-X9-62
+{iso(1) member-body(2) us(840) 10045 modules(0) 2};
+EXTENDED-KEY-MGMT-INFO ::= TYPE-IDENTIFIER
+ckmRecipientInfo EXTENDED-KEY-MGMT-INFO ::= {
+KeyConstructRecipientInfo IDENTIFIED BY id-ckm-recip-info
+}
+KeyConstructRecipientInfo ::= SEQUENCE {
+version 			Version,
+did					KeyConstructionDomain OPTIONAL,
+ckmid				[0] KeyConstructionRecipient,
+ukm					UserKeyingMaterial OPTIONAL,
+keyConstructionAlgorithm KeyConstructionAlgorithmIdentifier,
+encryptedRandom 		EncryptedKey
+}
+Version ::= INTEGER(1..MAX)
+KeyConstructionDomain ::= SEQUENCE {
+domainName 			DomainName,
+domainMaintenanceLevel 	DomainMaintenanceLevel,
+domainParams 		DomainParams OPTIONAL
+ -- From ANS X9.42 and ANS X.9.62 --
+}
+DomainParams ::= CHOICE {
+dhParams	[0] DomainParameters,
+ecParams	[1] ECDomainParameters
+}
+DomainName ::= PrintableString (SIZE(1..MAX))
+DomainMaintenanceLevel ::= INTEGER (1..MAX)
+KeyConstructionLabels ::= SEQUENCE SIZE(1..MAX) OF KeyConstructionLabel
+KeyConstructionLabel ::= INTEGER
+KeyConstructionRecipient ::= CHOICE {
+unencrypted [0] KeyConstructionLabels,
+encrypted 	[1] EncryptedRecipientID
+}
+EncryptedRecipientID ::= SEQUENCE {
+algorithm	ContentEncryptionAlgorithmIdentifier OPTIONAL,
+keyID		[0] OCTET STRING OPTIONAL,
+ciphertext	OCTET STRING
+}
+KeyConstructionAlgorithmIdentifier ::=
+AlgorithmIdentifier {ALGORITHM,{KeyConstructionAlgorithms}}
+KeyConstructionAlgorithms ALGORITHM ::= {
+symmetricConstruction 			|
+keyTransportConstruction 			|
+keyAgreeMultipleEncryptionConstruction |
+keyAgreeHashConstruction,
+... -- Expect additional objects --
+}
+symmetricConstruction	ALGORITHM ::= {
+IDENTIFIER id-ckm-symmetric 
+PARAMS TYPE ConstructionAlgorithms ARE required}
+ConstructionAlgorithms	::= SEQUENCE {
+combiner			CombinerAlgorithmIdentifier,
+keyEncryptionAlgorithm	KeyEncryptionAlgorithmIdentifier
+}
+CombinerAlgorithmIdentifier ::= 
+AlgorithmIdentifier{ALGORITHM,{CombinerAlgorithms}}
+CombinerAlgorithms	ALGORITHM ::= {
+...	-- Expect additional objects --
+}
+keyTransportConstruction ALGORITHM ::= {
+IDENTIFIER id-ckm-key-transport 
+PARAMS TYPE KeyEncryptionAlgorithmIdentifier ARE required
+}
+KeyEncryptionAlgorithmIdentifier ::=
+AlgorithmIdentifier {ALGORITHM,{KeyEncryptionAlgorithms}}
+KeyEncryptionAlgorithms ALGORITHM ::= {
+... -- Expect additional objects --
+}
+keyAgreeMultipleEncryptionConstruction ALGORITHM ::= {
+IDENTIFIER id-ckm-key-agree-multiple-encrypt
+PARAMS TYPE KeyEncryptionAlgorithmIdentifier ARE required
+}
+keyAgreeHashConstruction ALGORITHM ::= {
+IDENTIFIER id-ckm-key-agree-hash 
+PARAMS TYPE DigestAlgorithmIdentifier ARE required
+}
+END

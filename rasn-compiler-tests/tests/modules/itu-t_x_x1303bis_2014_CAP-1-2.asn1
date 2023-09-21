@@ -1,0 +1,141 @@
+
+
+
+
+CAP-1-2 (X.1303 bis:09/2014)
+
+
+-- Module CAP-1-2 (X.1303 bis:03/2014)
+-- See also ITU-T X.1303 bis (03/2014)
+-- See also the index of all ASN.1 assignments needed in this document
+
+/* xml version = "1.0" encoding = "UTF-8" */
+/* Copyright OASIS Open 2010 All Rights Reserved */
+CAP-1-2 {itu-t recommendation x(24) cap(1303) version1-2(2)} DEFINITIONS
+AUTOMATIC TAGS ::=
+BEGIN
+
+IMPORTS
+  -- from Rec. ITU-T X.694 | ISO/IEC  8825-5
+  String, DateTime, Language, AnyURI, Decimal
+    FROM XSD {joint-iso-itu-t asn1(1) specification(0) modules(0) xsd-module(2)
+      version2(2)};
+
+/* CAP Alert Message (version 1.2) */
+Alert ::= SEQUENCE {
+  identifier   XSD.String,
+  sender       XSD.String,
+  sent
+    XSD.DateTime
+      (CONSTRAINED BY {/* XML representation of the XSD pattern "\d\d\d\d-\d\d-\d\dT
+                \d\d:\d\d:\d\d[-,+]\d\d:\d\d" */ 
+         }),
+  status       ENUMERATED {actual, draft, exercise, system, test},
+  msgType      ENUMERATED {ack, alert, cancel, error, update},
+  source       XSD.String OPTIONAL,
+  scope        ENUMERATED {private, public, restricted},
+  restriction  XSD.String OPTIONAL,
+  addresses    XSD.String OPTIONAL,
+  code-list    SEQUENCE OF code XSD.String,
+  note         XSD.String OPTIONAL,
+  references   XSD.String OPTIONAL,
+  incidents    XSD.String OPTIONAL,
+  info-list
+    SEQUENCE OF info
+      SEQUENCE {language           XSD.Language OPTIONAL,
+                category-list
+                  SEQUENCE (SIZE (1..MAX)) OF category
+                    ENUMERATED {cBRNE, env, fire, geo, health, infra, 
+                                met, other, rescue, safety, security, 
+                                transport},
+                event              XSD.String,
+                responseType-list
+                  SEQUENCE OF responseType
+                    ENUMERATED {allClear, assess, avoid, evacuate, execute,
+                                monitor, none, prepare, shelter},
+                urgency
+                  ENUMERATED {expected, future, immediate, past, unknown},
+                severity
+                  ENUMERATED {extreme, minor, moderate, severe, unknown},
+                certainty
+                  ENUMERATED {likely, observed, possible, unknown, unlikely},
+                audience           XSD.String OPTIONAL,
+                eventCode-list
+                  SEQUENCE OF eventCode
+                    SEQUENCE {valueName  ValueName,
+                              value      Value},
+                effective
+                  XSD.DateTime
+                    (CONSTRAINED BY {/* XML representation of the XSD pattern "\d\d\d\d-
+                          \d\d-\d\dT\d\d:\d\d:\d\d[-,+]\d\d:\d\d" */ 
+                       }) OPTIONAL,
+                onset
+                  XSD.DateTime
+                    (CONSTRAINED BY {/* XML representation of the XSD pattern "\d\d\d\d-
+                          \d\d-\d\dT\d\d:\d\d:\d\d[-,+]\d\d:\d\d" */ 
+                       }) OPTIONAL,
+                expires
+                  XSD.DateTime
+                    (CONSTRAINED BY {/* XML representation of the XSD pattern "\d\d\d\d-
+                          \d\d-\d\dT\d\d:\d\d:\d\d[-,+]\d\d:\d\d" */ 
+                       }) OPTIONAL,
+                senderName         XSD.String OPTIONAL,
+                headline           XSD.String OPTIONAL,
+                description        XSD.String OPTIONAL,
+                instruction        XSD.String OPTIONAL,
+                web                XSD.AnyURI OPTIONAL,
+                contact            XSD.String OPTIONAL,
+                parameter-list
+                  SEQUENCE OF parameter
+                    SEQUENCE {valueName  ValueName,
+                              value      Value},
+                resource-list
+                  SEQUENCE OF resource
+                    SEQUENCE {resourceDesc  XSD.String,
+                              mimeType      XSD.String,
+                              size          INTEGER OPTIONAL,
+                              uri           XSD.AnyURI OPTIONAL,
+                              derefUri      XSD.String OPTIONAL,
+                              digest        XSD.String OPTIONAL},
+                area-list
+                  SEQUENCE OF area
+                    SEQUENCE {areaDesc      XSD.String,
+                              polygon-list  SEQUENCE OF polygon XSD.String,
+                              circle-list   SEQUENCE OF circle XSD.String,
+                              geocode-list
+                                SEQUENCE OF geocode
+                                  SEQUENCE {valueName  ValueName,
+                                            value      Value},
+                              altitude      XSD.Decimal OPTIONAL,
+                              ceiling       XSD.Decimal OPTIONAL}},
+  elem-list
+    SEQUENCE OF elem
+      XSD.String
+        (CONSTRAINED BY {/* Shall conform to the "AnyElementFormat" specified
+                in ITU-T Rec. X.693 | ISO/IEC 8825-4, clause 19 */ 
+           })
+}
+
+ValueName ::= XSD.String
+
+Value ::= XSD.String
+
+ENCODING-CONTROL XER
+    GLOBAL-DEFAULTS MODIFIED-ENCODINGS
+    GLOBAL-DEFAULTS CONTROL-NAMESPACE
+        "http://www.w3.org/2001/XMLSchema-instance" PREFIX "xsi"
+    NAMESPACE ALL, ALL IN ALL AS "urn:oasis:names:tc:emergency:cap:1.2"
+        PREFIX "cap"
+    NAME Alert, ValueName, Value AS UNCAPITALIZED
+    UNTAGGED SEQUENCE OF
+    ANY-ELEMENT Alert.elem-list.elem FROM "http://www.w3.org/2000/09/xmldsig#"
+    DEFAULT-FOR-EMPTY Alert.info-list.info.language AS "en-US"
+    TEXT Alert.status:ALL, Alert.msgType:ALL, Alert.scope:ALL, 
+        Alert.info-list.info.category-list.category:ALL, 
+        Alert.info-list.info.responseType-list.responseType:ALL, 
+        Alert.info-list.info.urgency:ALL, Alert.info-list.info.severity:ALL, 
+        Alert.info-list.info.certainty:ALL AS CAPITALIZED
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

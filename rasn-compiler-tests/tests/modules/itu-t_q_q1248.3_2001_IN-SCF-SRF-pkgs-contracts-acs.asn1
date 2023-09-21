@@ -1,0 +1,179 @@
+
+
+
+
+
+
+
+-- Module IN-SCF-SRF-pkgs-contracts-acs (Q.1248.3:07/2001)
+-- See also ITU-T Q.1248.3 (07/2001)
+-- See also the index of all ASN.1 assignments needed in this document
+
+IN-SCF-SRF-pkgs-contracts-acs {itu-t recommendation q 1248 modules(1)
+  in-scf-srf-pkgs-contracts-acs(13) version1(0)} DEFINITIONS ::=
+BEGIN
+
+-- This module describes the operation-packages, contracts and application-contexts used
+-- over the SCF-SRF interface.
+IMPORTS
+  id-package-specializedResourceControl, id-ac-srf-scfAC, id-contract-srf-scf,
+    id-package-srf-scfCancel, id-package-scriptControl,
+    id-package-messageControl, id-package-srfManagement,
+    id-package-activityTest, id-as-basic-srf-scf, common-classes,
+    ros-InformationObjects, tc-Messages, tc-NotationExtensions,
+    scf-srf-Operations, ssf-scf-Operations, ssf-scf-classes, scf-srf-classes,
+    ssf-scf-Protocol
+    FROM IN-object-identifiers {itu-t recommendation q 1248 modules(1)
+      in-object-identifiers(0) version1(0)}
+  SCF-SSF-BOUNDS
+    FROM IN-SSF-SCF-Classes ssf-scf-classes
+  COMMON-BOUNDS
+    FROM IN-common-classes common-classes
+  SCF-SRF-BOUNDS, networkSpecificB3
+    FROM IN-SCF-SRF-Classes scf-srf-classes
+  ROS-OBJECT-CLASS, CONTRACT, OPERATION-PACKAGE, OPERATION
+    FROM Remote-Operations-Information-Objects ros-InformationObjects
+  TCMessage{}
+    FROM TCAPMessages tc-Messages
+  APPLICATION-CONTEXT, dialogue-abstract-syntax
+    FROM TC-Notation-Extensions tc-NotationExtensions
+  playAnnouncement{}, promptAndReceiveMessage{},
+    promptAndCollectUserInformation{}, scriptClose{}, scriptEvent{},
+    scriptInformation{}, scriptRun{}, specializedResourceReport, sRFCallGap{}
+    FROM IN-SCF-SRF-ops-args scf-srf-Operations
+  cancel{}, assistRequestInstructions{}, activityTest
+    FROM IN-SSF-SCF-ops-args ssf-scf-Operations
+  srf-scfActivationOfAssistPackage{}, activityTestPackage
+    FROM IN-SSF-SCF-pkgs-contracts-acs ssf-scf-Protocol;
+
+-- The following three definitions are local short-hand notation for convenience.
+B1 ::=
+  COMMON-BOUNDS -- defined in Q.1248.1 (Part 1 of Recommendation Q.1248)
+
+B2 ::= SCF-SSF-BOUNDS -- defined in Q.1248.2 (Part 2 of Recommendation Q.1248)
+
+B3 ::= SCF-SRF-BOUNDS -- defined in this Recommendation (Q.1248.3)
+
+networkSpecificB1 COMMON-BOUNDS ::= {NUM-OF-EXTENSIONS  1
+ --example value--}
+
+networkSpecificB2 SCF-SSF-BOUNDS ::= {
+  MINIMUM-FOR-DIGITS               1 --example value 
+  MAXIMUM-FOR-DIGITS               5 --example value 
+  MINIMUM-FOR-DISPLAY              1 --example value 
+  MAXIMUM-FOR-DISPLAY              5 --example value 
+  MINIMUM-FOR-GENERIC-NUMBER       1 --example value 
+  MAXIMUM-FOR-GENERIC-NUMBER       5 --example value 
+  MINIMUM-FOR-IP-AVAILABLE         1 --example value 
+  MAXIMUM-FOR-IP-AVAILABLE         5 --example value 
+  MINIMUM-FOR-IP-SSP-CAPABILITIES  1 --example value 
+  MAXIMUM-FOR-IP-SSP-CAPABILITIES  5 --example value 
+  MINIMUM-FOR-SCF-ID               1 --example value 
+  MAXIMUM-FOR-SCF-ID               5 --example value 
+  MINIMUM-FOR-SDSS-INFORMATION     1 --example value 
+  MAXIMUM-FOR-SDSS-INFORMATION     5 --example value
+  NUM-OF-CSS                       2 --example value
+  NUM-OF-GENERIC-NUMBERS           2
+ --example value --}
+
+-- Application Contexts 
+srf-scf-ac APPLICATION-CONTEXT ::= {
+  CONTRACT                  srf-scf-contract
+  DIALOGUE MODE             structured
+  TERMINATION               basic
+  ABSTRACT SYNTAXES
+    {dialogue-abstract-syntax | srf-scf-abstract-syntax}
+  APPLICATION CONTEXT NAME  id-ac-srf-scfAC
+}
+
+-- Contracts 
+srf-scf-contract CONTRACT ::= {
+  INITIATOR CONSUMER OF
+    {srf-scfActivationOfAssistPackage{networkSpecificB1, networkSpecificB2} |
+      srfManagementPackage{networkSpecificB1, networkSpecificB2}}
+  RESPONDER CONSUMER OF
+    {specializedResourceControlPackage{networkSpecificB1, networkSpecificB2,
+                                      networkSpecificB3} |
+      srf-scfCancelPackage{networkSpecificB2} |
+      scriptControlPackage{networkSpecificB1, networkSpecificB2} |
+      activityTestPackage |
+      messageControlPackage{networkSpecificB1, networkSpecificB2,
+                           networkSpecificB3}}
+  ID                     id-contract-srf-scf
+}
+
+-- specializedResourceControl package 
+specializedResourceControlPackage{B1:b1, B2:b2, B3:b3} OPERATION-PACKAGE ::= 
+{
+  CONSUMER INVOKES
+    {playAnnouncement{b1, b2, b3} |
+      promptAndCollectUserInformation{b1, b2, b3}}
+  SUPPLIER INVOKES  {specializedResourceReport}
+  ID                id-package-specializedResourceControl
+}
+
+-- srf-scfCancel package 
+srf-scfCancelPackage{B2:b2} OPERATION-PACKAGE ::= {
+  CONSUMER INVOKES  {cancel{b2}}
+  ID                id-package-srf-scfCancel
+}
+
+-- scriptControl package 
+scriptControlPackage{B1:b1, B2:b2} OPERATION-PACKAGE ::= {
+  CONSUMER INVOKES
+    {scriptClose{b1, b2} | scriptRun{b1, b2} | scriptInformation{b1, b2}}
+  SUPPLIER INVOKES  {scriptEvent{b1, b2}}
+  ID                id-package-scriptControl
+}
+
+-- messageControl package
+messageControlPackage{B1:b1, B2:b2, B3:b3} OPERATION-PACKAGE ::= {
+  CONSUMER INVOKES  {promptAndReceiveMessage{b1, b2, b3}}
+  ID                id-package-messageControl
+}
+
+-- SRF management package
+srfManagementPackage{B1:b1, B2:b2} OPERATION-PACKAGE ::= {
+  CONSUMER INVOKES  {sRFCallGap{b1, b2}}
+  ID                id-package-srfManagement
+}
+
+-- Abstract Syntaxes 
+srf-scf-abstract-syntax ABSTRACT-SYNTAX ::= {
+  BASIC-SRF-SCF-PDUs
+  IDENTIFIED BY  id-as-basic-srf-scf
+}
+
+BASIC-SRF-SCF-PDUs ::= TCMessage{{SRF-SCF-Invokable}, {SRF-SCF-Returnable}}
+
+SRF-SCF-Invokable OPERATION ::=
+  {assistRequestInstructions{networkSpecificB1, networkSpecificB2} |
+   cancel{networkSpecificB2} |
+   playAnnouncement{networkSpecificB1, networkSpecificB2, networkSpecificB3} |
+   promptAndCollectUserInformation{networkSpecificB1, networkSpecificB2,
+                                  networkSpecificB3} |
+   scriptClose{networkSpecificB1, networkSpecificB2} |
+   scriptEvent{networkSpecificB1, networkSpecificB2} |
+   scriptInformation{networkSpecificB1, networkSpecificB2} |
+   scriptRun{networkSpecificB1, networkSpecificB2} | specializedResourceReport
+   |
+   promptAndReceiveMessage{networkSpecificB1, networkSpecificB2,
+                          networkSpecificB3} |
+   sRFCallGap{networkSpecificB1, networkSpecificB2} | activityTest}
+
+SRF-SCF-Returnable OPERATION ::=
+  {assistRequestInstructions{networkSpecificB1, networkSpecificB2} |
+   cancel{networkSpecificB2} |
+   playAnnouncement{networkSpecificB1, networkSpecificB2, networkSpecificB3} |
+   promptAndCollectUserInformation{networkSpecificB1, networkSpecificB2,
+                                  networkSpecificB3} |
+   scriptClose{networkSpecificB1, networkSpecificB2} |
+   scriptInformation{networkSpecificB1, networkSpecificB2} |
+   scriptRun{networkSpecificB1, networkSpecificB2} |
+   promptAndReceiveMessage{networkSpecificB1, networkSpecificB2,
+                          networkSpecificB3} | activityTest}
+
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

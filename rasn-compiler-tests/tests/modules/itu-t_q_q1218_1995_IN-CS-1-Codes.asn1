@@ -1,0 +1,421 @@
+
+
+
+
+
+
+
+-- Module IN-CS-1-Codes (Q.1218:10/1995)
+-- See also ITU-T Q.1218 (10/1995)
+-- See also the index of all ASN.1 assignments needed in this document
+
+IN-CS-1-Codes {itu-t recommendation q 1218 modules(0) cs-1-codes(3) version1(0)
+  } DEFINITIONS ::=
+BEGIN
+
+-- OPERATION AND ERROR CODE ASSIGNMENTS FOR THE IN CS-1 PROTOCOL FOLLOW
+IMPORTS
+  OPERATION, Code, OPERATION-PACKAGE
+    FROM Remote-Operations-Information-Objects {joint-iso-itu-t
+      remote-operations(4) informationObjects(5) version1(0)}
+  -- operation types
+  activateServiceFiltering, activityTest, analysedInformation,
+    analyseInformation, applyCharging, applyChargingReport,
+    assistRequestInstructions, callGap, callInformationReport,
+    callInformationRequest, cancel, cancelStatusReportRequest,
+    collectedInformation, collectInformation, connect, connectToResource,
+    continue, disconnectForwardConnection, establishTemporaryConnection,
+    eventNotificationCharging, eventReportBCSM, furnishChargingInformation,
+    holdCallInNetwork, initialDP, initiateCallAttempt, oAnswer,
+    oCalledPartyBusy, oDisconnect, oMidCall, oNoAnswer,
+    originationAttemptAuthorized, playAnnouncement,
+    promptAndCollectUserInformation, releaseCall, requestCurrentStatusReport,
+    requestEveryStatusChangeReport, requestFirstStatusMatchReport,
+    requestNotificationChargingEvent, requestReportBCSMEvent, resetTimer,
+    routeSelectFailure, selectFacility, selectRoute, sendChargingInformation,
+    serviceFilteringResponse, specializedResourceReport, statusReport, 
+    tAnswer, tBusy, tDisconnect, termAttemptAuthorized, tMidCall, tNoAnswer
+    FROM IN-CS-1-Operations {itu-t recommendation q 1218 modules(0)
+      cs-1-operations(0) version2(1)}
+  -- error types
+  cancelled, cancelFailed, eTCFailed, improperCallerResponse,
+    missingCustomerRecord, missingParameter, parameterOutOfRange,
+    requestedInfoError, systemFailure, taskRefused, unavailableResource,
+    unexpectedComponentSequence, unexpectedDataValue, unexpectedParameter,
+    unknownLegID, unknownResource
+    FROM IN-CS-1-Errors {itu-t recommendation q 1218 modules(0) cs-1-errors(1)
+      version1(0)};
+
+-- the operations are grouped by the identified operation package
+-- SCF activation package
+op-initialDP Code ::=
+  local:0
+
+-- Basic BCP DP package
+op-originationAttemptAuthorized Code ::= local:1
+
+op-collectedInformation Code ::= local:2
+
+op-analysedInformation Code ::= local:3
+
+op-routeSelectFailure Code ::= local:4
+
+op-oCalledPartyBusy Code ::= local:5
+
+op-oNoAnswer Code ::= local:6
+
+op-oAnswer Code ::= local:7
+
+op-oDisconnect Code ::= local:8
+
+op-termAttemptAuthorized Code ::= local:9
+
+op-tBusy Code ::= local:10
+
+op-tNoAnswer Code ::= local:11
+
+op-tAnswer Code ::= local:12
+
+op-tDisconnect Code ::= local:13
+
+-- Advanced BCP DP package
+op-oMidCall Code ::= local:14
+
+op-tMidCall Code ::= local:15
+
+-- SCF/SRF activation of assist package
+op-assistRequestInstructions Code ::=
+  local:16
+
+-- Assist connection establishment package
+op-establishTemporaryConnection Code ::=
+  local:17
+
+-- Generic disconnect resource package
+op-disconnectForwardConnection Code ::=
+  local:18
+
+-- Non-assisted connection establishment package
+op-connectToResource Code ::=
+  local:19
+
+-- Connect package (elementary SSF function)
+op-connect Code ::= local:20
+
+-- Call handling package (elementary SSF function)
+op-holdCallInNetwork Code ::=
+  local:21
+
+op-releaseCall Code ::= local:22
+
+-- BCSM Event handling package
+op-requestReportBCSMEvent Code ::= local:23
+
+op-eventReportBCSM Code ::= local:24
+
+-- Charging Event handling package
+op-requestNotificationChargingEvent Code ::=
+  local:25
+
+op-eventNotificationCharging Code ::= local:26
+
+-- SSF call processing package
+op-collectInformation Code ::= local:27
+
+op-analyseInformation Code ::= local:28
+
+op-selectRoute Code ::= local:29
+
+op-selectFacility Code ::= local:30
+
+op-continue Code ::= local:31
+
+-- SCF call initiation package
+op-initiateCallAttempt Code ::= local:32
+
+-- Timer package
+op-resetTimer Code ::= local:33
+
+-- Billing package
+op-furnishChargingInformation Code ::= local:34
+
+-- Charging package
+op-applyCharging Code ::= local:35
+
+op-applyChargingReport Code ::= local:36
+
+-- Status reporting package
+op-requestCurrentStatusReport Code ::= local:37
+
+op-requestEveryStatusChangeReport Code ::= local:38
+
+op-requestFirstStatusMatchReport Code ::= local:39
+
+op-statusReport Code ::= local:40
+
+-- Traffic management package
+op-callGap Code ::= local:41
+
+-- Service management package
+op-activateServiceFiltering Code ::= local:42
+
+op-serviceFilteringResponse Code ::= local:43
+
+-- Call report package
+op-callInformationReport Code ::= local:44
+
+op-callInformationRequest Code ::= local:45
+
+-- Signalling control package
+op-sendChargingInformation Code ::= local:46
+
+-- Specialized resource control package
+op-playAnnouncement Code ::= local:47
+
+op-promptAndCollectUserInformation Code ::= local:48
+
+op-specializedResourceReport Code ::= local:49
+
+-- Cancel package
+op-cancel Code ::= local:53
+
+op-cancelStatusReportRequest Code ::= local:54
+
+-- Activity Test package
+op-activityTest Code ::= local:55
+
+-- ERROR codes
+err-cancelled Code ::= local:0
+
+err-cancelFailed Code ::= local:1
+
+err-eTCFailed Code ::= local:3
+
+err-improperCallerResponse Code ::= local:4
+
+err-missingCustomerRecord Code ::= local:6
+
+err-missingParameter Code ::= local:7
+
+err-parameterOutOfRange Code ::= local:8
+
+err-requestedInfoError Code ::= local:10
+
+err-systemFailure Code ::= local:11
+
+err-taskRefused Code ::= local:12
+
+err-unavailableResource Code ::= local:13
+
+err-unexpectedComponentSequence Code ::= local:14
+
+err-unexpectedDataValue Code ::= local:15
+
+err-unexpectedParameter Code ::= local:16
+
+err-unknownLegID Code ::= local:17
+
+err-unknownResource Code ::= local:18
+
+-- OPERATION PACKAGES
+sCF-activation-package OPERATION-PACKAGE ::= {
+  -- consumer is SSF
+  CONSUMER INVOKES  {initialDP}
+
+-- supplier is SCF
+}
+
+f-SRF-activation-of-assist-package OPERATION-PACKAGE ::= {
+  -- consumer is SSF/SRF
+  CONSUMER INVOKES  {assistRequestInstructions}
+
+-- supplier is SCF
+}
+
+assist-connection-establishment-package OPERATION-PACKAGE ::= {
+  -- consumer is SSF
+  -- supplier is SCF
+  SUPPLIER INVOKES  {establishTemporaryConnection}
+}
+
+generic-disconnect-resource-package OPERATION-PACKAGE ::= {
+  -- consumer is SSF
+  -- supplier is SCF
+  SUPPLIER INVOKES  {disconnectForwardConnection}
+}
+
+non-assisted-connection-establishment-package OPERATION-PACKAGE ::= {
+  -- consumer is SSF
+  -- supplier is SCF
+  SUPPLIER INVOKES  {connectToResource}
+}
+
+connect-package OPERATION-PACKAGE ::= {
+  -- consumer is SSF
+  -- supplier is SCF
+  SUPPLIER INVOKES  {connect}
+}
+
+bCSM-event-handling-package OPERATION-PACKAGE ::= {
+  -- consumer is SSF
+  CONSUMER INVOKES  {eventReportBCSM}
+  -- supplier is SCF
+  SUPPLIER INVOKES  {requestReportBCSMEvent}
+}
+
+dP-specific-event-handling-package OPERATION-PACKAGE ::= {
+  -- consumer is SSF
+  CONSUMER INVOKES
+    {originationAttemptAuthorized | collectedInformation | analysedInformation
+      | routeSelectFailure | oCalledPartyBusy | oNoAnswer | oAnswer |
+      oDisconnect | termAttemptAuthorized | tBusy | tNoAnswer | tAnswer |
+      tDisconnect | oMidCall | tMidCall}
+  -- supplier is SCF
+  SUPPLIER INVOKES  {requestReportBCSMEvent}
+}
+
+charging-event-handling-package OPERATION-PACKAGE ::= {
+  -- consumer is SSF
+  CONSUMER INVOKES  {eventNotificationCharging}
+  -- supplier is SCF
+  SUPPLIER INVOKES  {requestNotificationChargingEvent}
+}
+
+sCF-call-initiation-package OPERATION-PACKAGE ::= {
+  -- consumer is SSF
+  -- supplier is SCF
+  SUPPLIER INVOKES  {initiateCallAttempt}
+}
+
+timer-package OPERATION-PACKAGE ::= {
+  -- consumer is SSF/SRF
+  -- supplier is SCF
+  SUPPLIER INVOKES  {resetTimer}
+}
+
+billing-package OPERATION-PACKAGE ::= {
+  -- consumer is SSF
+  -- supplier is SCF
+  SUPPLIER INVOKES  {furnishChargingInformation}
+}
+
+charging-package OPERATION-PACKAGE ::= {
+  -- consumer is SSF
+  CONSUMER INVOKES  {applyChargingReport}
+  -- supplier is SCF
+  SUPPLIER INVOKES  {applyCharging}
+}
+
+traffic-management-package OPERATION-PACKAGE ::= {
+  --consumer is SSF
+  -- supplier is SCF
+  SUPPLIER INVOKES  {callGap}
+}
+
+service-management-package OPERATION-PACKAGE ::= {
+  -- consumer is SSF
+  CONSUMER INVOKES  {serviceFilteringResponse}
+  -- supplier is SCF
+  SUPPLIER INVOKES  {activateServiceFiltering}
+}
+
+call-report-package OPERATION-PACKAGE ::= {
+  -- consumer is SSF
+  CONSUMER INVOKES  {callInformationReport}
+  -- supplier is SCF
+  SUPPLIER INVOKES  {callInformationRequest}
+}
+
+signalling-control-package OPERATION-PACKAGE ::= {
+  -- consumer is SSF
+  -- supplier is SCF
+  SUPPLIER INVOKES  {sendChargingInformation}
+}
+
+specialized-resource-control-package OPERATION-PACKAGE ::= {
+  -- consumer is SSF/SRF
+  CONSUMER INVOKES  {specializedResourceReport}
+  -- supplier is SCF
+  SUPPLIER INVOKES  {playAnnouncement | promptAndCollectUserInformation}
+}
+
+activity-test-package OPERATION-PACKAGE ::= {
+  -- consumer is SSF/SRF
+  -- supplier is SCF
+  SUPPLIER INVOKES  {activityTest}
+}
+
+basic-BCP-DP-package OPERATION-PACKAGE ::= {
+  -- consumer is SSF
+  CONSUMER INVOKES
+    {originationAttemptAuthorized | collectedInformation | analysedInformation
+      | routeSelectFailure | oCalledPartyBusy | oNoAnswer | oAnswer |
+      oDisconnect | termAttemptAuthorized | tBusy | tNoAnswer | tAnswer |
+      tDisconnect}
+
+-- supplier is SCF
+}
+
+advanced-BCP-DP-package OPERATION-PACKAGE ::= {
+  -- consumer is SSF
+  CONSUMER INVOKES  {oMidCall | tMidCall}
+
+-- supplier is SCF
+}
+
+sSF-Call-Processing-package OPERATION-PACKAGE ::= {
+  -- consumer is SSF
+  -- supplier is SCF
+  SUPPLIER INVOKES
+    {collectInformation | analyseInformation | selectRoute | selectFacility |
+      continue}
+}
+
+status-reporting-package OPERATION-PACKAGE ::= {
+  -- consumer is SSF
+  CONSUMER INVOKES  {statusReport}
+  -- supplier is SCF
+  SUPPLIER INVOKES
+    {requestCurrentStatusReport | requestEveryStatusChangeReport |
+      requestFirstStatusMatchReport}
+}
+
+cancel-package OPERATION-PACKAGE ::= {
+  -- consumer is SSF/SRF
+  -- supplier is SCF
+  SUPPLIER INVOKES  {cancel | cancelStatusReportRequest}
+}
+
+call-handling-package OPERATION-PACKAGE ::= {
+  -- consumer is SSF
+  -- supplier is SCF
+  SUPPLIER INVOKES  {holdCallInNetwork | releaseCall}
+}
+
+TC-Invokable OPERATION ::=
+  {activateServiceFiltering | activityTest | analysedInformation |
+   analyseInformation | applyCharging | applyChargingReport |
+   assistRequestInstructions | callGap | callInformationReport |
+   callInformationRequest | cancel | cancelStatusReportRequest |
+   collectedInformation | collectInformation | connect | connectToResource |
+   continue | disconnectForwardConnection | establishTemporaryConnection |
+   eventNotificationCharging | eventReportBCSM | furnishChargingInformation |
+   holdCallInNetwork | initialDP | initiateCallAttempt | oAnswer |
+   oCalledPartyBusy | oDisconnect | oMidCall | oNoAnswer |
+   originationAttemptAuthorized | releaseCall | requestCurrentStatusReport |
+   requestEveryStatusChangeReport | requestFirstStatusMatchReport |
+   requestNotificationChargingEvent | requestReportBCSMEvent | resetTimer |
+   routeSelectFailure | selectFacility | selectRoute | sendChargingInformation
+   | serviceFilteringResponse | statusReport | tAnswer | tBusy | tDisconnect |
+   termAttemptAuthorized | tMidCall | tNoAnswer | playAnnouncement |
+   promptAndCollectUserInformation}
+
+TC-Returnable OPERATION ::=
+  {activateServiceFiltering | activityTest | requestCurrentStatusReport |
+   requestEveryStatusChangeReport | requestFirstStatusMatchReport |
+   promptAndCollectUserInformation}
+
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

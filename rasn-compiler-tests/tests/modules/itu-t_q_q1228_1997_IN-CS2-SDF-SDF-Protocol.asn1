@@ -1,0 +1,278 @@
+
+
+
+
+
+
+
+-- Module IN-CS2-SDF-SDF-Protocol (Q.1228:09/1997)
+-- See also ITU-T Q.1228 (09/1997)
+-- See also the index of all ASN.1 assignments needed in this document
+
+IN-CS2-SDF-SDF-Protocol {itu-t recommendation q 1228 modules(0)
+  in-cs2-sdf-sdf-Protocol(18) version1(0)} DEFINITIONS ::=
+BEGIN
+
+-- EXPORTS All 
+-- The types and values defined in this module are exported for use in the other ASN.1 modules contained 
+-- within the Directory Specifications, and for the use of other applications which will use them to access 
+-- Directory services. Other applications may use them for their own purposes, but this will not constrain 
+-- extensions and modifications needed to maintain or improve the Directory service. 
+IMPORTS
+  distributedOperations, directoryShadowAbstractService, dsp,
+    protocolObjectIdentifiers
+    FROM UsefulDefinitions {joint-iso-itu-t ds(5) module(1)
+      usefulDefinitions(0) 3}
+  ROS-OBJECT-CLASS, CONTRACT, OPERATION-PACKAGE, CONNECTION-PACKAGE, 
+    Code, OPERATION
+    FROM Remote-Operations-Information-Objects {joint-iso-itu-t
+      remote-operations(4) informationObjects(5) version1(0)}
+  Bind{}, Unbind{}
+    FROM Remote-Operations-Generic-ROS-PDUs {joint-iso-itu-t
+      remote-operations(4) generic-ROS-PDUs(6) version1(0)}
+  TCMessage{}
+    FROM TCAPMessages {itu-t recommendation q 773 modules(2) messages(1)
+      version3(3)}
+  APPLICATION-CONTEXT, dialogue-abstract-syntax
+    FROM TC-Notation-Extensions {itu-t recommendation q 775 modules(2)
+      notation-extension(4) version1(1)}
+  dSABind, chainedSearch, chainedAddEntry, chainedRemoveEntry,
+    chainedModifyEntry, chained{}
+    FROM DistributedOperations {joint-iso-itu-t ds(5) module(1)
+      distributedOperations(3) 3}
+  dSAShadowBind, coordinateShadowUpdate, updateShadow, requestShadowUpdate
+    FROM DirectoryShadowAbstractService {joint-iso-itu-t ds(5) module(1)
+      directoryShadowAbstractService(15) 3}
+  execute
+    FROM IN-CS2-SCF-SDF-Operations {itu-t recommendation q 1228 modules(0)
+      scf-sdf-operations(11) version1(0)}
+  inEmptyUnbind
+    FROM IN-CS2-classes {itu-t recommendation q 1228 modules(0)
+      in-cs2-classes(4) version1(0)}
+  id-rosObject-dspDSA, id-rosObject-initiatingConsumerDSA,
+    id-rosObject-respondingSupplierDSA, id-rosObject-respondingConsumerDSA,
+    id-rosObject-initiatingSupplierDSA, id-contract-indsp,
+    id-contract-shadowConsumer, id-contract-shadowSupplier,
+    id-package-dspConnection, id-package-inchainedModify,
+    id-package-inchainedSearch, id-package-chainedExecute,
+    id-package-dispConnection, id-package-shadowConsumer,
+    id-package-shadowSupplier, id-as-indirectorySystemAS,
+    id-as-indirectoryDSABindingAS, id-as-indirectoryShadowAS,
+    id-as-indsaShadowBindingAS, id-ac-indirectorySystemAC,
+    id-ac-inShadowSupplierInitiatedAC, id-ac-inShadowConsumerInitiatedAC,
+    id-ac-inShadowSupplierInitiatedWith3seAC,
+    id-ac-inShadowConsumerInitiatedWith3seAC, id-ac-indirectorySystemWith3seAC,
+    ds-UsefulDefinitions, ros-InformationObjects, ros-genericPDUs, tc-Messages,
+    tc-NotationExtensions, scf-sdf-Operations, scf-sdf-Protocol
+    FROM IN-CS2-object-identifiers {itu-t recommendation q 1228 modules(0)
+      in-cs2-object-identifiers(17) version1(0)}
+  inSESEAbstractSyntax
+    FROM IN-CS2-SCF-SDF-Protocol {itu-t recommendation q 1228 modules(0)
+      in-scf-sdf-protocol(12) version1(0)}
+  id-se-threewayse
+    FROM ProtocolObjectIdentifiers {joint-iso-itu-t ds(5) module(1)
+      protocolObjectIdentifiers(4) 3}
+  dspContract
+    FROM DirectorySystemProtocol {joint-iso-itu-t ds(5) module(1) dsp(12) 3};
+
+dsp-dsa ROS-OBJECT-CLASS ::= {BOTH  {indspContract}
+                              ID    id-rosObject-dspDSA
+}
+
+initiating-consumer-dsa ROS-OBJECT-CLASS ::= {
+  INITIATES  {shadowConsumerContract}
+  ID         id-rosObject-initiatingConsumerDSA
+}
+
+responding-supplier-dsa ROS-OBJECT-CLASS ::= {
+  RESPONDS  {shadowConsumerContract}
+  ID        id-rosObject-respondingSupplierDSA
+}
+
+initiating-supplier-dsa ROS-OBJECT-CLASS ::= {
+  INITIATES  {shadowSupplierContract}
+  ID         id-rosObject-initiatingSupplierDSA
+}
+
+responding-consumer-dsa ROS-OBJECT-CLASS ::= {
+  RESPONDS  {shadowSupplierContract}
+  ID        id-rosObject-respondingConsumerDSA
+}
+
+indspContract CONTRACT ::= {
+  CONNECTION             dspConnectionPackage
+  INITIATOR CONSUMER OF
+    {inchainedModifyPackage | inchainedSearchPackage | chainedExecutePackage}
+  ID                     id-contract-indsp
+}
+
+dspConnectionPackage CONNECTION-PACKAGE ::= {
+  BIND    dSABind
+  UNBIND  in-DSAUnbind
+  ID      id-package-dspConnection
+}
+
+in-DSAUnbind OPERATION ::= inEmptyUnbind
+
+inchainedModifyPackage OPERATION-PACKAGE ::= {
+  CONSUMER INVOKES  {chainedAddEntry | chainedRemoveEntry | chainedModifyEntry}
+  ID                id-package-inchainedModify
+}
+
+inchainedSearchPackage OPERATION-PACKAGE ::= {
+  CONSUMER INVOKES  {chainedSearch}
+  ID                id-package-inchainedSearch
+}
+
+chainedExecutePackage OPERATION-PACKAGE ::= {
+  CONSUMER INVOKES  {chainedExecute}
+  ID                id-package-chainedExecute
+}
+
+chainedExecute OPERATION ::= chained{execute}
+
+shadowConsumerContract CONTRACT ::= {
+  CONNECTION             dispConnectionPackage
+  INITIATOR CONSUMER OF  {shadowConsumerPackage}
+  ID                     id-contract-shadowConsumer
+}
+
+shadowSupplierContract CONTRACT ::= {
+  CONNECTION             dispConnectionPackage
+  RESPONDER CONSUMER OF  {shadowSupplierPackage}
+  ID                     id-contract-shadowSupplier
+}
+
+dispConnectionPackage CONNECTION-PACKAGE ::= {
+  BIND    dSAShadowBind
+  UNBIND  in-DSAShadowUnbind
+  ID      id-package-dispConnection
+}
+
+in-DSAShadowUnbind OPERATION ::= inEmptyUnbind
+
+shadowConsumerPackage OPERATION-PACKAGE ::= {
+  CONSUMER INVOKES  {requestShadowUpdate}
+  SUPPLIER INVOKES  {updateShadow}
+  ID                id-package-shadowConsumer
+}
+
+shadowSupplierPackage OPERATION-PACKAGE ::= {
+  SUPPLIER INVOKES  {coordinateShadowUpdate | updateShadow}
+  ID                id-package-shadowSupplier
+}
+
+inDirectorySystemAbstractSyntax ABSTRACT-SYNTAX ::= {
+  BasicDSP-PDUs
+  IDENTIFIED BY  id-as-indirectorySystemAS
+}
+
+BasicDSP-PDUs ::= TCMessage{{DSP-Invokable}, {DSP-Returnable}}
+
+DSP-Invokable OPERATION ::=
+  {chainedAddEntry | chainedRemoveEntry | chainedModifyEntry | chainedSearch |
+   chainedExecute}
+
+DSP-Returnable OPERATION ::=
+  {chainedAddEntry | chainedRemoveEntry | chainedModifyEntry | chainedSearch |
+   chainedExecute}
+
+inDirectoryDSABindingAbstractSyntax ABSTRACT-SYNTAX ::= {
+  DSABinding-PDUs
+  IDENTIFIED BY  id-as-indirectoryDSABindingAS
+}
+
+DSABinding-PDUs ::= CHOICE {bind    Bind{dSABind},
+                            unbind  Unbind{in-DSAUnbind}
+}
+
+inDirectoryShadowAbstractSyntax ABSTRACT-SYNTAX ::= {
+  BasicDISP-PDUs
+  IDENTIFIED BY  id-as-indirectoryShadowAS
+}
+
+BasicDISP-PDUs ::= TCMessage{{DISP-Invokable}, {DISP-Returnable}}
+
+DISP-Invokable OPERATION ::=
+  {requestShadowUpdate | updateShadow | coordinateShadowUpdate}
+
+DISP-Returnable OPERATION ::=
+  {requestShadowUpdate | updateShadow | coordinateShadowUpdate}
+
+inDirectoryDSAShadowBindingAbstractSyntax ABSTRACT-SYNTAX ::= {
+  DISPBinding-PDUs
+  IDENTIFIED BY  id-as-indsaShadowBindingAS
+}
+
+DISPBinding-PDUs ::= CHOICE {
+  bind    Bind{dSAShadowBind},
+  unbind  Unbind{in-DSAShadowUnbind}
+}
+
+inDirectorySystemAC APPLICATION-CONTEXT ::= {
+  CONTRACT                  indspContract
+  DIALOGUE MODE             structured
+  TERMINATION               basic
+  ABSTRACT SYNTAXES
+    {dialogue-abstract-syntax | inDirectorySystemAbstractSyntax |
+      inDirectoryDSABindingAbstractSyntax}
+  APPLICATION CONTEXT NAME  id-ac-indirectorySystemAC
+}
+
+inDirectorySystemWith3seAC APPLICATION-CONTEXT ::= {
+  CONTRACT                  dspContract
+  DIALOGUE MODE             structured
+  TERMINATION               basic
+  ADDITIONAL ASES           {id-se-threewayse}
+  ABSTRACT SYNTAXES
+    {dialogue-abstract-syntax | inDirectorySystemAbstractSyntax |
+      inDirectoryDSABindingAbstractSyntax | inSESEAbstractSyntax}
+  APPLICATION CONTEXT NAME  id-ac-indirectorySystemWith3seAC
+}
+
+inshadowSupplierInitiatedAC APPLICATION-CONTEXT ::= {
+  CONTRACT                  shadowSupplierContract
+  DIALOGUE MODE             structured
+  TERMINATION               basic
+  ABSTRACT SYNTAXES
+    {dialogue-abstract-syntax | inDirectoryShadowAbstractSyntax |
+      inDirectoryDSAShadowBindingAbstractSyntax}
+  APPLICATION CONTEXT NAME  id-ac-inShadowSupplierInitiatedAC
+}
+
+inshadowSupplierInitiatedWith3seAC APPLICATION-CONTEXT ::= {
+  CONTRACT                  shadowSupplierContract
+  DIALOGUE MODE             structured
+  TERMINATION               basic
+  ADDITIONAL ASES           {id-se-threewayse}
+  ABSTRACT SYNTAXES
+    {dialogue-abstract-syntax | inDirectoryShadowAbstractSyntax |
+      inDirectoryDSAShadowBindingAbstractSyntax | inSESEAbstractSyntax}
+  APPLICATION CONTEXT NAME  id-ac-inShadowSupplierInitiatedWith3seAC
+}
+
+inshadowConsumerInitiatedAC APPLICATION-CONTEXT ::= {
+  CONTRACT                  shadowConsumerContract
+  DIALOGUE MODE             structured
+  TERMINATION               basic
+  ABSTRACT SYNTAXES
+    {dialogue-abstract-syntax | inDirectoryShadowAbstractSyntax |
+      inDirectoryDSAShadowBindingAbstractSyntax}
+  APPLICATION CONTEXT NAME  id-ac-inShadowConsumerInitiatedAC
+}
+
+inshadowConsumerInitiatedWith3seAC APPLICATION-CONTEXT ::= {
+  CONTRACT                  shadowConsumerContract
+  DIALOGUE MODE             structured
+  TERMINATION               basic
+  ADDITIONAL ASES           {id-se-threewayse}
+  ABSTRACT SYNTAXES
+    {dialogue-abstract-syntax | inDirectoryShadowAbstractSyntax |
+      inDirectoryDSAShadowBindingAbstractSyntax | inSESEAbstractSyntax}
+  APPLICATION CONTEXT NAME  id-ac-inShadowConsumerInitiatedWith3seAC
+}
+
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

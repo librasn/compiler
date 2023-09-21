@@ -1,0 +1,131 @@
+
+
+
+
+
+
+
+-- Module IN-CS2-SCF-SRF-pkgs-contracts-acs (Q.1228:09/1997)
+-- See also ITU-T Q.1228 (09/1997)
+-- See also the index of all ASN.1 assignments needed in this document
+
+IN-CS2-SCF-SRF-pkgs-contracts-acs {itu-t recommendation q 1228 modules(0)
+  in-cs2-scf-srf-pkgs-contracts-acs(8) version1(0)} DEFINITIONS ::=
+BEGIN
+
+-- This module describes the operation-packages, contracts and application-contexts used
+--  over the SCF-SRF interface.
+IMPORTS
+  PARAMETERS-BOUND, networkSpecificBoundSet, emptyConnectionPackage
+    FROM IN-CS2-classes {itu-t recommendation q 1228 modules(0)
+      in-cs2-classes(4) version1(0)}
+  ROS-OBJECT-CLASS, CONTRACT, OPERATION-PACKAGE, OPERATION
+    FROM Remote-Operations-Information-Objects {joint-iso-itu-t
+      remote-operations(4) informationObjects(5) version1(0)}
+  TCMessage{}
+    FROM TCAPMessages {itu-t recommendation q 773 modules(2) messages(1)
+      version3(3)}
+  APPLICATION-CONTEXT, dialogue-abstract-syntax
+    FROM TC-Notation-Extensions {itu-t recommendation q 775 modules(2)
+      notation-extension(4) version1(1)}
+  playAnnouncement{}, promptAndReceiveMessage{},
+    promptAndCollectUserInformation{}, scriptClose{}, scriptEvent{},
+    scriptInformation{}, scriptRun{}, specializedResourceReport
+    FROM IN-CS2-SCF-SRF-ops-args {itu-t recommendation q 1228 modules(0)
+      in-cs2-scf-srf-ops-args(7) version1(0)}
+  cancel{}, assistRequestInstructions{}
+    FROM IN-CS2-SSF-SCF-ops-args {itu-t recommendation q 1228 modules(0)
+      in-cs2-ssf-scf-ops-args(5) version1(0)}
+  srf-scfActivationOfAssistPackage{}
+    FROM IN-CS2-SSF-SCF-pkgs-contracts-acs {itu-t recommendation q 1228
+      modules(0) in-cs2-ssf-scf-pkgs-contracts-acs(6) version1(0)}
+  id-package-specializedResourceControl, id-ac-srf-scf, id-contract-srf-scf,
+    id-package-srf-scfCancel, id-package-scriptControl,
+    id-package-messageControl, id-as-basic-srf-scf, classes,
+    ros-InformationObjects, tc-Messages, tc-NotationExtensions,
+    scf-srf-Operations, ssf-scf-Operations, ssf-scf-Protocol
+    FROM IN-CS2-object-identifiers {itu-t recommendation q 1228 modules(0)
+      in-cs2-object-identifiers(17) version1(0)};
+
+-- Application Contexts 
+srf-scf-ac APPLICATION-CONTEXT ::= {
+  CONTRACT                  srf-scf-contract
+  DIALOGUE MODE             structured
+  TERMINATION               basic
+  ABSTRACT SYNTAXES
+    {dialogue-abstract-syntax | srf-scf-abstract-syntax}
+  APPLICATION CONTEXT NAME  id-ac-srf-scf
+}
+
+-- Contracts 
+srf-scf-contract CONTRACT ::= {
+  CONNECTION             emptyConnectionPackage
+  INITIATOR CONSUMER OF
+    {srf-scfActivationOfAssistPackage{networkSpecificBoundSet}}
+  RESPONDER CONSUMER OF
+    {specializedResourceControlPackage{networkSpecificBoundSet} |
+      srf-scfCancelPackage{networkSpecificBoundSet} |
+      scriptControlPackage{networkSpecificBoundSet} |
+      messageControlPackage{networkSpecificBoundSet}}
+  ID                     id-contract-srf-scf
+}
+
+-- specializedResourceControl package 
+specializedResourceControlPackage{PARAMETERS-BOUND:bound} OPERATION-PACKAGE ::=
+  {
+  CONSUMER INVOKES
+    {playAnnouncement{bound} | promptAndCollectUserInformation{bound}}
+  SUPPLIER INVOKES  {specializedResourceReport}
+  ID                id-package-specializedResourceControl
+}
+
+-- srf-scfCancel package 
+srf-scfCancelPackage{PARAMETERS-BOUND:bound} OPERATION-PACKAGE ::= {
+  CONSUMER INVOKES  {cancel  {bound}}
+  ID                id-package-srf-scfCancel
+}
+
+-- scriptControl package 
+scriptControlPackage{PARAMETERS-BOUND:bound} OPERATION-PACKAGE ::= {
+  CONSUMER INVOKES
+    {scriptClose{bound} | scriptRun{bound} | scriptInformation{bound}}
+  SUPPLIER INVOKES  {scriptEvent{bound}}
+  ID                id-package-scriptControl
+}
+
+-- messageControl package
+messageControlPackage{PARAMETERS-BOUND:bound} OPERATION-PACKAGE ::= {
+  CONSUMER INVOKES  {promptAndReceiveMessage{bound}}
+  ID                id-package-messageControl
+}
+
+-- Abstract Syntaxes 
+srf-scf-abstract-syntax ABSTRACT-SYNTAX ::= {
+  BASIC-SRF-SCF-PDUs
+  IDENTIFIED BY  id-as-basic-srf-scf
+}
+
+BASIC-SRF-SCF-PDUs ::= TCMessage{{SRF-SCF-Invokable}, {SRF-SCF-Returnable}}
+
+SRF-SCF-Invokable OPERATION ::=
+  {assistRequestInstructions{networkSpecificBoundSet} |
+   cancel{networkSpecificBoundSet} | playAnnouncement{networkSpecificBoundSet}
+   | promptAndCollectUserInformation{networkSpecificBoundSet} |
+   scriptClose{networkSpecificBoundSet} | scriptEvent{networkSpecificBoundSet}
+   | scriptInformation{networkSpecificBoundSet} |
+   scriptRun{networkSpecificBoundSet} | specializedResourceReport |
+   promptAndReceiveMessage{networkSpecificBoundSet}}
+
+SRF-SCF-Returnable OPERATION ::=
+  {assistRequestInstructions{networkSpecificBoundSet} |
+   cancel{networkSpecificBoundSet} | playAnnouncement{networkSpecificBoundSet}
+   | promptAndCollectUserInformation{networkSpecificBoundSet} |
+   scriptClose{networkSpecificBoundSet} |
+   scriptInformation{networkSpecificBoundSet} |
+   scriptRun{networkSpecificBoundSet} |
+   promptAndReceiveMessage{networkSpecificBoundSet}}
+
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

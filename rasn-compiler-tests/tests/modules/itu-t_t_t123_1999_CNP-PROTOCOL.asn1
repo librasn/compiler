@@ -1,0 +1,183 @@
+
+
+
+
+
+
+
+-- Module CNP-PROTOCOL (T.123:05/1999)
+-- See also ITU-T T.123  (05/1999)
+-- See also the index of all ASN.1 assignments needed in this document
+
+CNP-PROTOCOL {itu-t(0) recommendation(0) t(20) 123 annexb(2) 1} DEFINITIONS
+AUTOMATIC TAGS ::=
+BEGIN
+
+--
+--  Imported Definitions
+--
+IMPORTS
+  NonStandardParameter, TransportAddress, AliasAddress
+    FROM H323-MESSAGES
+      
+  -- H.225.0 Version 2
+  -- {itu-t (0) recommendation (0) h (8) 2250 version (0) 2}
+  Priority
+    FROM MAP-PROTOCOL;
+
+-- T.125 Annex A Version 1
+ProtocolIdentifier ::= OBJECT IDENTIFIER
+
+-- shall be set to
+-- {itu-t (0) recommendation (0) t (20) 123 annexb (2) 1}
+--
+--  Service Negotiation Types
+--
+TPDUSize ::= INTEGER(128..65535)
+
+ReliableTransportProtocolType ::= CHOICE {
+  cnp                           NULL,
+  x224                          NULL,
+  map                           NULL,
+  nonStandardTransportProtocol  NonStandardParameter,
+  ...
+}
+
+ReliableTransportProtocol ::= SEQUENCE {
+  type                   ReliableTransportProtocolType,
+  maxTPDUSize            TPDUSize,
+  nonStandardParameters  SEQUENCE OF NonStandardParameter OPTIONAL,
+  ...
+}
+
+ReliableSecurityProtocol ::= CHOICE {
+  none                         NULL,
+  tls                          NULL,
+  ssl                          NULL,
+  ipsecIKEKeyManagement        NULL,
+  ipsecManualKeyManagement     NULL,
+  x274WithoutSAID              NULL,
+  x274WithSAID                 X274WithSAIDInfo,
+  gssApi                       NULL,
+  physical                     NULL,
+  nonStandardSecurityProtocol  NonStandardParameter,
+  ...
+}
+
+UnreliableTransportProtocolType ::= CHOICE {
+  x234                          NULL,
+  nonStandardTransportProtocol  NonStandardParameter,
+  ...
+}
+
+UnreliableTransportProtocol ::= SEQUENCE {
+  type                   UnreliableTransportProtocolType,
+  maxTPDUSize            TPDUSize,
+  sourceAddress          TransportAddress,
+  sourceTSAP             OCTET STRING OPTIONAL,
+  nonStandardParameters  SEQUENCE OF NonStandardParameter OPTIONAL,
+  ...
+}
+
+UnreliableSecurityProtocol ::= CHOICE {
+  none                         NULL,
+  ipsecIKEKeyManagement        NULL,
+  ipsecManualKeyManagement     NULL,
+  x274WithoutSAID              NULL,
+  x274WithSAID                 X274WithSAIDInfo,
+  physical                     NULL,
+  nonStandardSecurityProtocol  NonStandardParameter,
+  ...
+}
+
+X274WithSAIDInfo ::= SEQUENCE {
+  localSAID  OCTET STRING,
+  peerSAID   OCTET STRING,
+  ...
+}
+
+--
+--  CNP Control PDU Types
+--
+ConnectRequestPDU ::= SEQUENCE {
+  protocolIdentifier            ProtocolIdentifier,
+  reconnectRequested            BOOLEAN,
+  priority                      Priority OPTIONAL,
+  reliableTransportProtocols    SEQUENCE OF ReliableTransportProtocol OPTIONAL,
+  reliableSecurityProtocols     SEQUENCE OF ReliableSecurityProtocol OPTIONAL,
+  unreliableTransportProtocols
+    SEQUENCE OF UnreliableTransportProtocol OPTIONAL,
+  unreliableSecurityProtocols   SEQUENCE OF UnreliableSecurityProtocol OPTIONAL,
+  destinationAddress            SEQUENCE OF AliasAddress OPTIONAL,
+  nonStandardParameters         SEQUENCE OF NonStandardParameter OPTIONAL,
+  ...
+}
+
+ConnectConfirmPDU ::= SEQUENCE {
+  protocolIdentifier           ProtocolIdentifier,
+  reliableTransportProtocol    ReliableTransportProtocol OPTIONAL,
+  reliableSecurityProtocol     ReliableSecurityProtocol OPTIONAL,
+  unreliableTransportProtocol  UnreliableTransportProtocol OPTIONAL,
+  unreliableSecurityProtocol   UnreliableSecurityProtocol OPTIONAL,
+  nonStandardParameters        SEQUENCE OF NonStandardParameter OPTIONAL,
+  ...
+}
+
+DisconnectReason ::= CHOICE {
+  unacceptableVersion          NULL,
+  incompatibleParameters       NULL,
+  securityDenied               NULL,
+  destinationUnreachable       NULL,
+  userRejected                 NULL,
+  userInitiated                NULL,
+  protocolError                NULL,
+  unspecifiedFailure           NULL,
+  routeToAlternate             NULL,
+  nonStandardDisconnectReason  NonStandardParameter,
+  ...
+}
+
+DisconnectRequestPDU ::= SEQUENCE {
+  disconnectReason             DisconnectReason,
+  reliableTransportProtocol    ReliableTransportProtocol OPTIONAL,
+  reliableSecurityProtocol     ReliableSecurityProtocol OPTIONAL,
+  unreliableTransportProtocol  UnreliableTransportProtocol OPTIONAL,
+  unreliableSecurityProtocol   UnreliableSecurityProtocol OPTIONAL,
+  destinationAddress           SEQUENCE OF AliasAddress OPTIONAL,
+  nonStandardParameters        SEQUENCE OF NonStandardParameter OPTIONAL,
+  ...
+}
+
+RejectCause ::= CHOICE {
+  unrecognizedPDU         NULL,
+  invalidParameter        NULL,
+  causeUnspecified        NULL,
+  nonStandardRejectCause  NonStandardParameter,
+  ...
+}
+
+ErrorPDU ::= SEQUENCE {
+  rejectCause            RejectCause,
+  rejectedPDU            OCTET STRING,
+  nonStandardParameters  SEQUENCE OF NonStandardParameter OPTIONAL,
+  ...
+}
+
+NonStandardPDU ::= SEQUENCE {
+  nonStandardParameters  SEQUENCE OF NonStandardParameter OPTIONAL,
+  ...
+}
+
+CNPControlPDU ::= CHOICE {
+  connectRequest     ConnectRequestPDU,
+  connectConfirm     ConnectConfirmPDU,
+  disconnectRequest  DisconnectRequestPDU,
+  error              ErrorPDU,
+  nonStandardCNPPDU  NonStandardPDU,
+  ...
+}
+
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

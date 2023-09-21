@@ -1,0 +1,846 @@
+
+
+
+
+
+
+
+
+-- Module EDIMSInformationObjects (X.435:06/1999)
+-- See also ITU-T X.435 (06/1999)
+-- See also the index of all ASN.1 assignments needed in this document
+
+EDIMSInformationObjects {joint-iso-itu-t mhs(6) edims(7) modules(0)
+  information-objects(2) version(2)} DEFINITIONS IMPLICIT TAGS ::=
+BEGIN
+
+--	Prologue
+--	Exports everything
+IMPORTS
+  --	EDIMS Upper bounds
+  ub-application-reference, ub-authorization-information,
+    ub-authorization-information-qualifier, ub-communications-agreement-id,
+    ub-edi-application-security-elements, ub-edi-message-type,
+    ub-identification-code, ub-identification-code-qualifier,
+    ub-interchange-control-reference, ub-local-reference,
+    ub-processing-priority-code, ub-reason-code, ub-recipient-reference,
+    ub-recipient-reference-qualifier, ub-routing-address, ub-syntax-identifier,
+    ub-syntax-version
+    --==
+    FROM EDIMSUpperBounds {joint-iso-itu-t mhs(6) edims(7) modules(0)
+      upper-bounds(5)}
+  --	EDIMS Object Identifiers
+  id-bp-edifact-ISO646, id-edi-compression, id-edi-compression-v42bis,
+    id-ext-invalid-assembly-instructions, id-ext-submission-options,
+    id-for-action
+    --==
+    FROM EDIMSObjectIdentifiers {joint-iso-itu-t mhs(6) edims(7) modules(0)
+      object-identifiers(0) version(2)}
+  -- 	MTS Upper Bounds
+  ub-bit-options, ub-integer-options, ub-supplementary-info-length
+    --==
+    FROM MTSUpperBounds {joint-iso-itu-t mhs(6) mts(3) modules(0)
+      upper-bounds(3) version-1999(1)}
+  --	MTS Abstract Service
+  MessageDeliveryTime, ORName, OtherMessageDeliveryFields,
+    ContentIntegrityCheck, Content
+    --==
+    FROM MTSAbstractService {joint-iso-itu-t mhs(6) mts(3) modules(0)
+      mts-abstract-service(1) version-1999(1)}
+  --	IPM Information Objects
+  ExtendedBodyPart, IPMBodyPartTable
+    --==
+    FROM IPMSInformationObjects {joint-iso-itu-t mhs(6) ipms(1) modules(0)
+      information-objects(2) version-1999(1)}
+  --	IPM Compression Parameter
+  CompressionParameter
+    --==
+    FROM IPMSFileTransferBodyPartType {joint-iso-itu-t mhs(6) ipms(1)
+      modules(0) file-transfer-body-part-type(9)}
+  --	MS Abstract Service
+  SequenceNumber
+    --==
+    FROM MSAbstractService {joint-iso-itu-t mhs(6) ms(4) modules(0)
+      abstract-service(1) version-1999(1)};
+
+-- 	END Imports
+--	ABSTRACT INFORMATION OBJECTS
+--	Overview
+InformationObject ::= CHOICE {edim  [0]  EDIM,
+                              edin  [1]  EDIN
+}
+
+--	Common data types
+--	EDIM Identifier
+EDIMIdentifier ::= SET {
+  user                      [0]  ORName,
+  user-relative-identifier  [1]  LocalReference
+}
+
+LocalReference ::= PrintableString(SIZE (0..ub-local-reference))
+
+--	Extensions
+ExtensionField ::= SEQUENCE {
+  type         [0]  EDIM-EXTENSION.&id,
+  criticality  [1]  Criticality DEFAULT FALSE,
+  value        [2]  EDIM-EXTENSION.&Type DEFAULT NULL:NULL
+}
+
+Criticality ::= BOOLEAN
+
+--	EDIM Extension information object class
+EDIM-EXTENSION ::= CLASS {
+  &id           OBJECT IDENTIFIER UNIQUE,
+  &criticality  BOOLEAN DEFAULT FALSE,
+  &Type         DEFAULT NULL
+}
+WITH SYNTAX {
+  [VALUE &Type,]
+  [CRITICALITY &criticality]
+  IDENTIFIED BY &id
+}
+
+--	EDI Messages
+EDIM ::= SEQUENCE {heading  Heading,
+                   body     Body
+}
+
+--	Heading Field Component Types
+--	Interchange Recipient/Sender
+--	Identification Code
+IdentificationCode ::= TeletexString(SIZE (1..ub-identification-code))
+
+--	Identification Code Qualifier
+IdentificationCodeQualifier ::=
+  TeletexString(SIZE (1..ub-identification-code-qualifier))
+
+--	Routing Address
+RoutingAddress ::= TeletexString(SIZE (1..ub-routing-address))
+
+--	Heading Fields
+Heading ::= SEQUENCE {
+  this-EDIM                          [1]  ThisEDIMField,
+  originator                         [2]  OriginatorField OPTIONAL,
+  recipients                         [3]  RecipientsField OPTIONAL,
+  edin-receiver                      [4]  EDINReceiverField OPTIONAL,
+  responsibility-forwarded           [5]  ResponsibilityForwarded DEFAULT FALSE,
+  edi-bodypart-type
+    [6]  EDIBodyPartType DEFAULT {id-bp-edifact-ISO646},
+  incomplete-copy                    [7]  IncompleteCopyField DEFAULT FALSE,
+  expiry-time                        [8]  ExpiryTimeField OPTIONAL,
+  related-messages                   [9]  RelatedMessagesField OPTIONAL,
+  obsoleted-EDIMs                    [10]  ObsoletedEDIMsField OPTIONAL,
+  edi-application-security-elements
+    [11]  EDIApplicationSecurityElementsField OPTIONAL,
+  cross-referencing-information
+    [12]  CrossReferencingInformationField OPTIONAL,
+  -- Begin Fields from EDIFACT Interchange
+  edi-message-type                   [13]  EDIMessageTypeField OPTIONAL,
+  service-string-advice              [14]  ServiceStringAdviceField OPTIONAL,
+  syntax-identifier                  [15]  SyntaxIdentifierField OPTIONAL,
+  interchange-sender                 [16]  InterchangeSenderField OPTIONAL,
+  date-and-time-of-preparation
+    [17]  DateAndTimeOfPreparationField OPTIONAL,
+  application-reference              [18]  ApplicationReferenceField OPTIONAL,
+  -- End Fields from EDIFACT
+  heading-extensions                 [19]  HeadingExtensionsField OPTIONAL
+}
+
+--	This EDIM
+ThisEDIMField ::= EDIMIdentifier
+
+--	Originator
+OriginatorField ::= ORName
+
+--	Recipients
+RecipientsField ::= SET OF RecipientsSubField
+
+RecipientsSubField ::= SEQUENCE {
+  recipient                        [1]  RecipientField,
+  action-request
+    [2]  ActionRequestField DEFAULT {id-for-action},
+  edi-notification-requests-field  [3]  EDINotificationRequestsField OPTIONAL,
+  responsibility-passing-allowed
+    [4]  ResponsibilityPassingAllowedField DEFAULT FALSE,
+  -- Begin Fields from EDIFACT UNB
+  interchange-recipient            [5]  InterchangeRecipientField OPTIONAL,
+  recipient-reference              [6]  RecipientReferenceField OPTIONAL,
+  interchange-control-reference
+    [7]  InterchangeControlReferenceField OPTIONAL,
+  processing-priority-code         [8]  ProcessingPriorityCodeField OPTIONAL,
+  acknowledgement-request
+    [9]  AcknowledgementRequestField DEFAULT FALSE,
+  communications-agreement-id
+    [10]  CommunicationsAgreementIdField OPTIONAL,
+  test-indicator                   [11]  TestIndicatorField DEFAULT FALSE,
+  -- End Fields from EDIFACT UNB
+  -- Begin Fields from ANSIX12 ISA
+  authorization-information        [12]  AuthorizationInformationField OPTIONAL,
+  -- End Fields from ANSIX12 ISA
+  recipient-extensions             [13]  RecipientExtensionsField OPTIONAL
+}
+
+--	Recipient
+RecipientField ::= ORName
+
+--	Action Request
+ActionRequestField ::= OBJECT IDENTIFIER
+
+--	EDI Notification Requests
+EDINotificationRequestsField ::= SEQUENCE {
+  edi-notification-requests  [0]  EDINotificationRequests DEFAULT {},
+  edi-notification-security  [1]  EDINotificationSecurity DEFAULT {},
+  edi-reception-security     [2]  EDIReceptionSecurity DEFAULT {}
+}
+
+EDINotificationRequests ::= BIT STRING {pn(0), nn(1), fn(2)
+}(SIZE (0..ub-bit-options))
+
+EDINotificationSecurity ::= BIT STRING {proof(0), non-repudiation(1)
+}(SIZE (0..ub-bit-options))
+
+EDIReceptionSecurity ::= BIT STRING {proof(0), non-repudiation(1)
+}(SIZE (0..ub-bit-options))
+
+--	Interchange recipient
+InterchangeRecipientField ::= SEQUENCE {
+  recipient-identification       [0]  IdentificationCode,
+  identification-code-qualifier  [1]  IdentificationCodeQualifier OPTIONAL,
+  routing-address                [2]  RoutingAddress OPTIONAL
+}
+
+--	Recipient reference
+RecipientReferenceField ::= SEQUENCE {
+  recipient-reference            [0]  RecipientReference,
+  recipient-reference-qualifier  [1]  RecipientReferenceQualifier OPTIONAL
+}
+
+RecipientReference ::= TeletexString(SIZE (1..ub-recipient-reference))
+
+RecipientReferenceQualifier ::=
+  TeletexString(SIZE (1..ub-recipient-reference-qualifier))
+
+--	Recipient Extensions
+RecipientExtensionsField ::= SET OF RecipientExtensionsSubField
+
+RecipientExtensionsSubField ::= ExtensionField
+
+--	EDIN receiver
+EDINReceiverField ::= SEQUENCE {
+  edin-receiver-name        [0]  ORName,
+  original-edim-identifier  [1]  EDIMIdentifier OPTIONAL,
+  first-recipient           [2]  FirstRecipientField OPTIONAL
+}
+
+--	Responsibility Forwarded indication
+ResponsibilityForwarded ::= BOOLEAN -- default FALSE
+
+--	EDI Body Part Types - identifies EDI Standard, Character set and encoding
+EDIBodyPartType ::= OBJECT IDENTIFIER -- default EDIFACT-ISO646
+
+--	EDI message type
+EDIMessageTypeField ::= SET OF EDIMessageTypeFieldSubField
+
+EDIMessageTypeFieldSubField ::= TeletexString(SIZE (1..ub-edi-message-type))
+
+--	Responsibility Passing Allowed
+ResponsibilityPassingAllowedField ::= BOOLEAN -- Default FALSE
+
+--	Incomplete Copy
+IncompleteCopyField ::= BOOLEAN -- default FALSE
+
+--	Expiry time
+ExpiryTimeField ::= UTCTime
+
+--	Related Messages
+RelatedMessagesField ::= SEQUENCE OF RelatedMessageReference
+
+RelatedMessageReference ::= CHOICE {
+  edi-message-reference       [0]  EDIMIdentifier,
+  external-message-reference  [1]  EXTERNAL-MESSAGE-REFERENCE.&id
+}
+
+EXTERNAL-MESSAGE-REFERENCE ::= TYPE-IDENTIFIER
+
+--	Obsoleted EDIMs
+ObsoletedEDIMsField ::= SEQUENCE OF ObsoletedEDIMsSubfield
+
+ObsoletedEDIMsSubfield ::= EDIMIdentifier
+
+--	EDI Application Security Elements
+EDIApplicationSecurityElementsField ::= SEQUENCE {
+  edi-application-security-element
+    [0]  EDIApplicationSecurityElement OPTIONAL,
+  edi-encrypted-primary-bodypart       [1]  BOOLEAN OPTIONAL,
+  edi-application-security-extensions
+    [2]  EDIApplicationSecurityExtensions OPTIONAL
+}
+
+EDIApplicationSecurityElement ::=
+  BIT STRING(SIZE (0..ub-edi-application-security-elements))
+
+EDIApplicationSecurityExtensions ::= SET OF EDIApplicationSecurityExtension
+
+EDIApplicationSecurityExtension ::= ExtensionField
+
+--	Cross Referencing Information
+CrossReferencingInformationField ::= SET OF CrossReferencingInformationSubField
+
+CrossReferencingInformationSubField ::= SEQUENCE {
+  application-cross-reference  [0]  ApplicationCrossReference,
+  message-reference            [1]  MessageReference OPTIONAL,
+  body-part-reference          [2]  BodyPartReference
+}
+
+ApplicationCrossReference ::= OCTET STRING
+
+MessageReference ::= EDIMIdentifier
+
+--	Service String Advice
+ServiceStringAdviceField ::= SEQUENCE {
+  component-data-element-separator  [0]  ComponentDataElementSeparator,
+  data-element-separator            [1]  DataElementSeparator,
+  decimal-notation                  [2]  DecimalNotation,
+  release-indicator                 [3]  ReleaseIndicator OPTIONAL,
+  reserved                          [4]  Reserved OPTIONAL,
+  segment-terminator                [5]  SegmentTerminator
+}
+
+ComponentDataElementSeparator ::= OCTET STRING(SIZE (1))
+
+DataElementSeparator ::= OCTET STRING(SIZE (1))
+
+DecimalNotation ::= OCTET STRING(SIZE (1))
+
+ReleaseIndicator ::= OCTET STRING(SIZE (1))
+
+Reserved ::= OCTET STRING(SIZE (1))
+
+SegmentTerminator ::= OCTET STRING(SIZE (1))
+
+--	Syntax Identifier
+SyntaxIdentifierField ::= SEQUENCE {
+  syntax-identifier  SyntaxIdentifier,
+  syntax-version     SyntaxVersion
+}
+
+SyntaxIdentifier ::= TeletexString(SIZE (1..ub-syntax-identifier))
+
+SyntaxVersion ::= PrintableString(SIZE (1..ub-syntax-version))
+
+--	Interchange sender
+InterchangeSenderField ::= SEQUENCE {
+  sender-identification          [0]  IdentificationCode,
+  identification-code-qualifier  [1]  IdentificationCodeQualifier OPTIONAL,
+  address-for-reverse-routing    [2]  RoutingAddress OPTIONAL
+} -- EDIFACT Routing
+
+-- Information
+--	Date and Time of preparation
+DateAndTimeOfPreparationField ::= UTCTime
+
+--	Interchange control reference
+InterchangeControlReferenceField ::=
+  TeletexString(SIZE (1..ub-interchange-control-reference))
+
+--	Application reference
+ApplicationReferenceField ::= TeletexString(SIZE (1..ub-application-reference))
+
+--	Processing Priority Code
+ProcessingPriorityCodeField ::=
+  TeletexString(SIZE (1..ub-processing-priority-code))
+
+--	Acknowledgement Request
+AcknowledgementRequestField ::= BOOLEAN -- default FALSE
+
+--	Communications Agreement Id
+CommunicationsAgreementIdField ::=
+  TeletexString(SIZE (1..ub-communications-agreement-id))
+
+--	Test indicator
+TestIndicatorField ::= BOOLEAN -- default FALSE
+
+--	Authorization Information
+AuthorizationInformationField ::= SEQUENCE {
+  authorization-information            [0]  AuthorizationInformation,
+  authorization-information-qualifier
+    [1]  AuthorizationInformationQualifier OPTIONAL
+}
+
+AuthorizationInformation ::=
+  TeletexString(SIZE (1..ub-authorization-information))
+
+AuthorizationInformationQualifier ::=
+  TeletexString(SIZE (1..ub-authorization-information-qualifier))
+
+--	Heading Extensions
+HeadingExtensionsField ::= SET OF HeadingExtensionsSubField
+
+HeadingExtensionsSubField ::= ExtensionField -- {{HeadingExtensions}}
+
+HeadingExtensions EDIM-EXTENSION ::=
+  {primary-body-part-compression-indication, ...}
+
+primary-body-part-compression-indication EDIM-EXTENSION ::= {
+  VALUE          CompressionParameter, -- as defined for IPM File Transfer Body
+                   
+                   
+  -- Part
+  CRITICALITY    TRUE
+  IDENTIFIED BY  id-edi-compression
+}
+
+COMPRESSION-ALGORITHM ::= CLASS {
+  &id    OBJECT IDENTIFIER UNIQUE,
+  &Type  OPTIONAL
+}WITH SYNTAX {[VALUE &Type]
+              IDENTIFIED BY &id
+}
+
+v42BisCompression COMPRESSION-ALGORITHM ::= {
+  VALUE          V42BisCompressionParameter
+  IDENTIFIED BY  id-edi-compression-v42bis
+}
+
+V42BisCompressionParameter ::= SEQUENCE {
+  dictionary-size           [0]  INTEGER DEFAULT 12,
+  largest-compressed-chain  [1]  INTEGER DEFAULT 512,
+  last-entries-to-delete    [2]  INTEGER DEFAULT 256
+}
+
+--	EDIM body
+Body ::= SEQUENCE {
+  primary-body-part      PrimaryBodyPart,
+  additional-body-parts  OtherBodyParts OPTIONAL
+}
+
+PrimaryBodyPart ::= CHOICE {
+  edi-body-part   [0]  EDIBodyPart,
+  forwarded-EDIM  [1]  EDIMBodyPart
+}
+
+OtherBodyParts ::= SEQUENCE OF EDIM-ExtendedBodyPart
+
+--	EDI body part
+EDIBodyPart ::= OCTET STRING
+
+--	Forwarded EDIM body part
+EDIMBodyPart ::= SEQUENCE {
+  parameters  [0]  MessageParameters OPTIONAL,
+  data        [1]  MessageData
+}
+
+MessageParameters ::= SET {
+  delivery-time      [0]  MessageDeliveryTime OPTIONAL,
+  delivery-envelope  [1]  OtherMessageDeliveryFields OPTIONAL,
+  other-parameters   [2]  EDISupplementaryInformation OPTIONAL
+}
+
+-- MessageDeliveryTime and OtherMessageDeliveryFields shall both be present or both be
+-- absent.
+-- EDISupplementaryInformation is used for the EDI auto-forward auto-action; see 18.7.1
+MessageData ::= SEQUENCE {heading  Heading,
+                          body     BodyOrRemoved
+}
+
+BodyOrRemoved ::= SEQUENCE {
+  primary-or-removed     PrimaryOrRemoved,
+  additional-body-parts  AdditionalBodyParts OPTIONAL
+}
+
+PrimaryOrRemoved ::= CHOICE {
+  removed-edi-body   [0]  NULL,
+  primary-body-part  [1] EXPLICIT PrimaryBodyPart
+}
+
+AdditionalBodyParts ::=
+  SEQUENCE OF
+    CHOICE {external-body-part  [0]  EDIM-ExtendedBodyPart,
+            place-holder        [1]  BodyPartPlaceHolder
+    } -- For Body Part Removal
+
+BodyPartPlaceHolder ::=
+  EDIM-ExtendedBodyPart -- Only the data  portion of the Extended Body
+
+-- shall be removed. See text in 8.3.2.
+--	EDIM Externally Defined Body Parts
+EDIM-ExtendedBodyPart ::= SEQUENCE {
+  body-part-reference  [0]  BodyPartReference OPTIONAL,
+  extended-body-part
+    [1]  ExtendedBodyPart{{IPMBodyPartTable}}-- from IPMS -- 
+}
+
+BodyPartReference ::= INTEGER -- shall be unique within a EDIM
+
+--	Supplementary Info
+EDISupplementaryInformation ::=
+  TeletexString(SIZE (1..ub-supplementary-info-length))
+
+--	EDI Notifications (EDINs)
+EDIN ::= CHOICE {
+  positive-notification   [0]  PositiveNotificationFields,
+  negative-notification   [1]  NegativeNotificationFields,
+  forwarded-notification  [2]  ForwardedNotificationFields
+}
+
+--	Common fields
+CommonFields ::= SEQUENCE {
+  subject-edim                    [1]  SubjectEDIMField,
+  edin-originator                 [2]  EDINOriginatorField,
+  first-recipient                 [3]  FirstRecipientField OPTIONAL,
+  notification-time               [4]  NotificationTimeField,
+  notification-security-elements  [5]  SecurityElementsField OPTIONAL,
+  edin-initiator                  [6]  EDINInitiatorField,
+  notifications-extensions        [7]  NotificationExtensionsField OPTIONAL
+}
+
+--	Subject EDIM Identifier
+SubjectEDIMField ::= EDIMIdentifier
+
+--	EDI Notification Originator
+EDINOriginatorField ::= ORName
+
+--	First Recipient
+FirstRecipientField ::= ORName
+
+--	Notification Time
+NotificationTimeField ::= UTCTime
+
+--	Security Elements
+SecurityElementsField ::= SEQUENCE {
+  original-content                   [0]  Content OPTIONAL,
+  original-content-integrity-check   [1]  ContentIntegrityCheck OPTIONAL,
+  edi-application-security-elements
+    [2]  EDIApplicationSecurityElementsField OPTIONAL,
+  security-extensions                [3]  SecurityExtensionsField OPTIONAL
+}
+
+SecurityExtensionsField ::= SET OF SecurityExtensionsSubField
+
+SecurityExtensionsSubField ::= ExtensionField
+
+--	EDIN Initiator
+EDINInitiatorField ::= ENUMERATED {
+  internal-ua(0), external-ua(1), internal-ms(2)}
+
+--	Notification Extensions
+NotificationExtensionsField ::= SET OF NotificationExtensionsSubField
+
+NotificationExtensionsSubField ::= ExtensionField
+
+--	Positive Notification fields
+PositiveNotificationFields ::= SEQUENCE {
+  pn-common-fields              [0]  CommonFields,
+  pn-supplementary-information  [1]  EDISupplementaryInformation OPTIONAL,
+  pn-extensions                 [2]  PNExtensionsField OPTIONAL
+}
+
+--	Positive Notification Extensions
+PNExtensionsField ::= SET OF PNExtensionsSubField
+
+PNExtensionsSubField ::= ExtensionField
+
+--	Negative notification fields
+NegativeNotificationFields ::= SEQUENCE {
+  nn-common-fields              [0]  CommonFields,
+  nn-reason-code                [1]  NNReasonCodeField,
+  nn-supplementary-information  [2]  EDISupplementaryInformation OPTIONAL,
+  nn-extensions                 [3]  NNExtensionsField OPTIONAL
+}
+
+--	Negative Notification Reason Codes
+NNReasonCodeField ::= CHOICE {
+  nn-ua-ms-reason-code  [0]  NNUAMSReasonCodeField,
+  nn-user-reason-code   [1]  NNUserReasonCodeField,
+  nn-pdau-reason-code   [2]  NNPDAUReasonCodeField
+}
+
+--	Negative Notification Reason Codes from an EDI-UA or EDI-MS
+NNUAMSReasonCodeField ::= SEQUENCE {
+  nn-ua-ms-basic-code  [0]  NNUAMSBasicCodeField,
+  nn-ua-ms-diagnostic  [1]  NNUAMSDiagnosticField OPTIONAL
+}
+
+--	Negative Notification Basic Reason Codes from an EDI-UA or EDI-MS. These codes are 
+--	those specified in Annex B of ITU-T Rec. F.435 | ISO/IEC 10021-8 
+--	for the element of service "EDI Notification Request".
+NNUAMSBasicCodeField ::= INTEGER {
+  unspecified(0),
+  cannot-deliver-to-user(1), -- the EDI Interchange can not be passed on to the 
+  
+  -- user
+  delivery-timeout(2), -- the EDI Interchange could not be passed on to the 
+  
+  -- user within a specified time limit
+  message-discarded(3), -- the UA/MS discarded the message before handoff to
+  
+  -- user
+  subscription-terminated(4), -- recipient's subscription terminated after delivery 
+  
+  -- but before handoff to user
+  forwarding-error(5), -- EDI Forwarding was attempted, but failed
+  security-error(6) -- security error
+  
+  
+-- physical delivery errors indicated by "cannot-deliver-to-user"
+}(0..ub-reason-code)
+
+--	Negative Notification Diagnostic Codes from an EDI-UA or EDI-MS
+NNUAMSDiagnosticField ::= INTEGER {
+  -- This field may be used to further specify the error signalled in nn-ua-ms 
+  -- basic-code. 
+  -- Additional information may be indicated in nn-supplementary-information general
+  -- diagnostic codes
+  protocol-violation(1), -- used if the UA detects a protocol error
+  edim-originator-unknown(2), edim-recipient-unknown(3),
+  edim-recipient-ambiguous(4), -- used if the EDIM recipients or originator are 
+  
+  -- not valid
+  action-request-not-supported(5), -- used when the action requested by the 
+  
+  -- recipient is not performed
+  edim-expired(6), -- used when the expiry date of the received 
+  
+  -- EDIM occurred before the subject EDIM was 
+  -- successfully passed to the user or forwarded
+  -- by the EDI-UA
+  edim-obsoleted(7), -- used when the EDIM Identifier of the received 
+  
+  -- EDIM was contained in the Obsoleted EDIM 
+  -- field of a previously received EDIM
+  duplicate-edim(8), -- used when the same EDIM is received more than 
+  
+  -- once from the same originator
+  unsupported-extension(9), -- used if the EDIM contains an extension which 
+  
+  -- is not supported by the UA
+  incomplete-copy-rejected(10), -- used if the EDI-UA does not accept EDIMs with 
+  
+  -- the Incomplete Copy Indication true
+  edim-too-large-for-application(11), -- used if the EDIM cannot be delivered to the 
+  
+  -- user due to length constraints
+  -- FORWARDING ERROR DIAGNOSTIC CODES
+  forwarded-edim-not-delivered(12), -- used when an Non-Delivery Report is received 
+  
+  -- for forwarded EDIM
+  forwarded-edim-delivery-time-out(13), -- used when no Delivery Report is received 
+  
+  -- within a given period
+  forwarding-loop-detected(14), -- used if the UA receives an EDIM which 
+  
+  -- contains a previously forwarded EDIM
+  unable-to-accept-responsibility(15), -- used if the EDI-UA cannot accept or forward 
+  
+  -- responsibility
+  -- INTERCHANGE HEADER DIAGNOSTIC CODES
+  interchange-sender-unknown(16), -- used when the UA does not recognize the 
+  
+  -- interchange-sender of the EDI interchange
+  interchange-recipient-unknown(17), -- used when the UA cannot find a valid 
+  
+  -- interchange recipient in the Recipient 
+  -- Specifier
+  invalid-heading-field(18), invalid-bodypart-type(19),
+  invalid-message-type(20),
+  invalid-syntax-id(21),
+  -- SECURITY ERROR DIAGNOSTIC CODES
+  message-integrity-failure(22), forwarded-message-integrity-failure(23),
+  unsupported-algorithm(24), decryption-failed(25), token-error(26),
+  unable-to-sign-notification(27), unable-to-sign-message-receipt(28),
+  authentication-failure(29), security-context-failure(30),
+  message-sequence-failure(31), message-security-labelling-failure(32),
+  repudiation-failure(33), proof-service-failure(34),
+  compression-unsupported(35)
+ -- the received compression is not supported--}(1..ub-reason-code)
+
+--	Negative Notification Reason Codes from a user
+NNUserReasonCodeField ::= SEQUENCE {
+  nn-user-basic-code  [0]  NNUserBasicCodeField,
+  nn-user-diagnostic  [1]  NNUserDiagnosticField OPTIONAL
+}
+
+--	Negative Notification Basic Reason Codes from a user
+NNUserBasicCodeField ::= INTEGER {
+  unspecified(0),
+  syntax-error(1), -- used when the user discovers a syntax error 
+  
+  -- within the EDI interchange
+  interchange-sender-unknown(2),
+  interchange-recipient-unknown(3), -- used when the UA cannot find a valid 
+  
+  -- interchange recipient in the Recipient 
+  -- Specifier
+  invalid-heading-field(4), invalid-bodypart-type(5), invalid-message-type(6),
+  functional-group-not-supported(7),
+  subscription-terminated(8), -- unknown to EDIMS-User service
+  no-bilateral-agreement(9), user-defined-reason(10)}(0..ub-reason-code)
+
+--	Negative Notification Diagnostic Codes from a user
+NNUserDiagnosticField ::= INTEGER {
+  compression-unsupported(1) -- the received compression is not supported --
+}(1..ub-reason-code)
+
+-- Contains reason passed by user when the value of nn-user-basic-code is 
+-- user-defined-reason.
+-- Additional information may be indicated in nn-supplementary-information
+--	Negative Notification Reason Codes from a PDAU
+NNPDAUReasonCodeField ::= SEQUENCE {
+  nn-pdau-basic-code  [0]  NNPDAUBasicCodeField,
+  nn-pdau-diagnostic  [1]  NNPDAUDiagnosticField OPTIONAL
+}
+
+--	Negative Notification Basic Reason Codes from a PDAU
+NNPDAUBasicCodeField ::= INTEGER {
+  unspecified(0),
+  undeliverable-mail(1),
+  -- used if the PDAU determines that it cannot perform physical delivery of the 
+  -- EDIM 
+  physical-rendition-not-performed(2)
+  
+-- used if the PDAU cannot perform the physical rendition of the EDIM --}
+(0..ub-reason-code)
+
+--	Negative Notification Diagnostic Codes from a PDAU
+NNPDAUDiagnosticField ::= INTEGER {
+  -- This field may be used to further specify the error signalled in
+  -- nn-pdau-basic-code
+  -- Additional information may be indicated in the nn-supplementary-information
+  undeliverable-mail-physical-delivery-address-incorrect(32),
+  undeliverable-mail-physical-delivery-office-incorrect-or-invalid(33),
+  undeliverable-mail-physical-delivery-address-incomplete(34),
+  undeliverable-mail-recipient-unknown(35),
+  undeliverable-mail-recipient-deceased(36),
+  undeliverable-mail-organization-expired(37),
+  undeliverable-mail-recipient-refused-to-accept(38),
+  undeliverable-mail-recipient-did-not-claim(39),
+  undeliverable-mail-recipient-changed-address-permanently(40),
+  undeliverable-mail-recipient-changed-address-temporarily(41),
+  undeliverable-mail-recipient-changed-temporary-address(42),
+  undeliverable-mail-new-address-unknown(43),
+  undeliverable-mail-recipient-did-not-want-forwarding(44),
+  undeliverable-mail-originator-prohibited-forwarding(45),
+  physical-rendition-attributes-not-supported(31)}(1..ub-reason-code)
+
+--	Negative Notification Extension Field(s)
+NNExtensionsField ::= SET OF NNExtensionsSubField
+
+NNExtensionsSubField ::= ExtensionField
+
+--	Forwarded Notification Fields
+ForwardedNotificationFields ::= SEQUENCE {
+  fn-common-fields              [0]  CommonFields,
+  forwarded-to                  [1]  ForwardedTo,
+  fn-reason-code                [2]  FNReasonCodeField,
+  fn-supplementary-information  [3]  EDISupplementaryInformation OPTIONAL,
+  fn-extensions                 [4]  FNExtensionsField OPTIONAL
+}
+
+--	Forwarded To
+ForwardedTo ::= ORName
+
+--	Forwarded Reason Code
+FNReasonCodeField ::= CHOICE {
+  fn-ua-ms-reason-code  [0]  FNUAMSReasonCodeField,
+  fn-user-reason-code   [1]  FNUserReasonCodeField,
+  fn-pdau-reason-code   [2]  FNPDAUReasonCodeField
+}
+
+--	Forwarding Notification Reason Codes from an EDI-UA or EDI-MS
+FNUAMSReasonCodeField ::= SEQUENCE {
+  fn-ua-ms-basic-code  [0]  FNUAMSBasicCodeField,
+  fn-ua-ms-diagnostic  [1]  FNUAMSDiagnosticField OPTIONAL,
+  fn-security-check    [2]  FNUAMSSecurityCheckField DEFAULT FALSE
+}
+
+--	Forwarding Notification Basic Reason Codes from an EDI-UA or EDI-MS
+FNUAMSBasicCodeField ::= INTEGER {
+  unspecified(0),
+  onward-routing(1),
+  -- used whenever the UA decides to re-route the subject EDIM for local reasons 
+  edim-recipient-unknown(2), edim-originator-unknown(3), forwarded-by-edi-ms(4)
+}(0..ub-reason-code)
+
+--	Forwarding Notification Diagnostic Reason Codes from an EDI-UA or EDI-MS
+FNUAMSDiagnosticField ::= INTEGER {
+  -- This field may be used to further specify the error signalled in
+  -- fn-ua-ms-basic-code.
+  -- Additional information may be indicated in fn-supplementary-information.
+  recipient-name-changed(1), recipient-name-deleted(2)}(1..ub-reason-code)
+
+--	Forwarding Notification Security Check Codes from an EDI-UA or EDI-MS.
+--	This field may be used, with a value of TRUE, to indicate that all security
+--	features present have been validated, with a value of FALSE, to indicate that
+--	the security features have not been validated.
+FNUAMSSecurityCheckField ::= BOOLEAN
+
+--	Forwarding Notification Reason Codes from a user
+FNUserReasonCodeField ::= SEQUENCE {
+  fn-user-basic-code  [0]  FNUserBasicCodeField,
+  fn-user-diagnostic  [1]  FNUserDiagnosticField OPTIONAL
+}
+
+--	Forwarding Notification Basic Reason Codes from a user
+FNUserBasicCodeField ::= INTEGER {
+  unspecified(0), forwarded-for-archiving(1), forwarded-for-information(2),
+  forwarded-for-additional-action(3), subscription-changed(4),
+  heading-field-not-supported(5), bodypart-type-not-supported(6),
+  message-type-not-supported(7), syntax-identifier-not-supported(8),
+  interchange-sender-unknown(9), user-defined-reason(10)}(0..ub-reason-code)
+
+--	Forwarding Notification Diagnostic Reason Codes from a user
+FNUserDiagnosticField ::= INTEGER(1..ub-reason-code)
+
+-- Contains reason passed by user when value of fn-user-basic-code is
+-- user-defined-reason.
+-- Additional information may be indicated in fn-supplementary-information.
+--	Forwarding Notification Reason Codes from a PDAU
+FNPDAUReasonCodeField ::= SEQUENCE {
+  fn-pdau-basic-code  [0]  FNPDAUBasicCodeField,
+  fn-pdau-diagnostic  [1]  FNPDAUDiagnosticField OPTIONAL
+}
+
+--	Forwarding Notification Basic Reason Codes from a PDAU
+FNPDAUBasicCodeField ::= INTEGER {
+  unspecified(0), forwarded-for-physical-rendition-and-delivery(1)
+}(0..ub-reason-code)
+
+--	Forwarding Notification Diagnostic Codes from a PDAU
+FNPDAUDiagnosticField ::= INTEGER(1..ub-reason-code)
+
+--	Forwarded Notification Extensions
+FNExtensionsField ::= SET OF FNExtensionsSubField
+
+FNExtensionsSubField ::= ExtensionField
+
+--	Message Store realization
+edi-submission-options EDIM-EXTENSION ::= {
+  VALUE          EDISubmissionOptions,
+  IDENTIFIED BY  id-ext-submission-options
+}
+
+EDISubmissionOptions ::= SET {assembly-instructions  [0]  BodyPartSpecifiers
+}
+
+BodyPartSpecifiers ::= SEQUENCE OF BodyPartSpecifier
+
+BodyPartSpecifier ::= CHOICE {
+  stored-entry         [0]  SequenceNumber,
+  submitted-body-part  [2]  INTEGER(1..MAX),
+  stored-body-part
+    [3]  SEQUENCE {message-entry     SequenceNumber,
+                   body-part-number  INTEGER(1..MAX)}
+}
+
+EDISubmissionErrors EDIM-EXTENSION ::=
+  {invalid-assembly-instructions, ... -- For future extension additions --}
+
+invalid-assembly-instructions EDIM-EXTENSION ::= {
+  VALUE          BodyPartSpecifiers,
+  IDENTIFIED BY  id-ext-invalid-assembly-instructions
+}
+
+END -- of EDIMSInformationObjects
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

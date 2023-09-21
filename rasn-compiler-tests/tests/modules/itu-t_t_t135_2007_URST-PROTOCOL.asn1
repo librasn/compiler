@@ -1,0 +1,1130 @@
+
+
+
+
+
+
+
+-- Module URST-PROTOCOL (T.135:08/2007)
+-- See also ITU-T T.135 (08/2007)
+-- See also the index of all ASN.1 assignments needed in this document
+
+URST-PROTOCOL {itu-t(0) recommendation(0) t(20) t135(135) version(0) 2 
+  asn1Modules(2) urst-protocol(1)} DEFINITIONS AUTOMATIC TAGS ::=
+BEGIN
+
+-- Export all symbols
+-- Imports definitions from T.124
+IMPORTS
+  TextString, SimpleTextString, DiallingString, ExtraDiallingString,
+    SubAddressString, H221NonStandardIdentifier, Key, NonStandardParameter,
+    ChallengeResponse, ChallengeRequest, Privilege
+    FROM GCC-PROTOCOL;
+
+--========================
+-- Types definition
+--========================
+UnsignedInteger ::= INTEGER(0..MAX)
+
+LatinCapitalLettersString ::= BMPString(FROM (latinCapitalA..latinCapitalZ))
+
+LatinSmallLettersString ::= BMPString(FROM (latinSmallA..latinSmallZ))
+
+LatinLettersString ::=
+  BMPString(FROM (LatinCapitalLettersString | LatinSmallLettersString))
+
+DigitalString ::= BMPString(FROM (digit0..digit9))
+
+LatinAlphanumericString ::=
+  BMPString(FROM (LatinLettersString | DigitalString))
+
+GenericID ::= CHOICE {
+  numberID  UnsignedInteger,
+  stringID  LatinAlphanumericString
+}
+
+ConnectionID ::= SEQUENCE {
+  owningFlag        BOOLEAN,
+  connectionNumber  INTEGER(0..65535)
+}
+
+TransactionID ::= SEQUENCE {
+  owningFlag         BOOLEAN,
+  transactionNumber  INTEGER(0..65535)
+}
+
+SimpleTextStringInterval ::= CHOICE {
+  thisString         SimpleTextString,
+  anyFromThisString  SimpleTextString,
+  anyToThisString    SimpleTextString,
+  inBetween
+    SEQUENCE {inferiorString  SimpleTextString,
+              superiorString  SimpleTextString}
+}
+
+Time ::= SEQUENCE {hour    INTEGER(0..23),
+                   minute  INTEGER(0..59)
+}
+
+TimeInterval ::= CHOICE {
+  whenEver                   NULL,
+  never                      NULL,
+  fromThisTimeUntilWhenever  Time,
+  fromNowUntilThisTime       Time,
+  inBetween                  SEQUENCE {startTime  Time,
+                                       endTime    Time}
+}
+
+Day ::= SEQUENCE {
+  day    INTEGER(0..31),
+  month  INTEGER(1..12),
+  year   UnsignedInteger OPTIONAL -- defaults implicitly to the current year
+}
+
+DaysInterval ::= CHOICE {
+  whenEver                  NULL,
+  never                     NULL,
+  todayOnly                 NULL,
+  thisDayOnly               Day,
+  fromThisDayUntilWhenever  Day,
+  fromNowUntilThisDay       Day,
+  inBetween                 SEQUENCE {firstDay  Day,
+                                      lastDay   Day}
+}
+
+Duration ::= SEQUENCE {hours    UnsignedInteger,
+                       minutes  INTEGER(0..59)
+}
+
+ConferenceDuration ::= CHOICE {
+  permanent         NULL,
+  untilTermination  NULL,
+  duration          Duration
+}
+
+SiteParticipationDuration ::= CHOICE {
+  allConference  NULL,
+  untilExit      NULL,
+  duration       Duration
+}
+
+AuthenticationData ::= SEQUENCE {
+  suppliedElement
+    CHOICE {passwordInTheClear  LatinAlphanumericString, -- password directly supplied--
+            challengeResponse   ChallengeResponse} OPTIONAL,
+  requiredElement  ChallengeRequest OPTIONAL,
+  ...
+}
+
+AcknowledgmentType ::= CHOICE {
+  noAcknowledgment  NULL,
+  simple            NULL,
+  explicit          NULL,
+  ...
+}
+
+MCUCascadingMode ::= CHOICE {
+  simple          NULL,
+  masterExternal  NULL,
+  masterInternal  NULL,
+  unspecified     NULL,
+  ...
+}
+
+VideoSwitchingMethod ::= CHOICE {
+  voiceActivityDetection  NULL,
+  periodicRotation        UnsignedInteger, -- period in seconds
+  fixedBroadcaster        GenericID, -- ID obtained at site registration
+  lastSpeakersMosaic      UnsignedInteger, -- number of sources
+  fixedListMosaic         SET (SIZE (1..MAX)) OF GenericID, -- sites registration IDs
+  ...
+}
+
+VideoFormat ::= CHOICE {
+  cif            NULL,
+  qcif           NULL,
+  sif            NULL,
+  sqcif          NULL,
+  runtimeChoice  NULL,
+  ...
+}
+
+VideoCoding ::= CHOICE {
+  h261           NULL,
+  h262           NULL,
+  h263           NULL,
+  runtimeChoice  NULL,
+  ...
+}
+
+AudioCoding ::= CHOICE {
+  g711-A         NULL,
+  g711-mu        NULL,
+  g722           NULL,
+  g723           NULL,
+  g728           NULL,
+  g729           NULL,
+  mpegAudio      NULL,
+  runtimeChoice  NULL,
+  ...
+}
+
+WaitingListPolicy ::= CHOICE {
+  allWaitingList  NULL,
+  bestEffort      NULL,
+  noWaitingList   NULL,
+  ...
+}
+
+BillingMode ::= CHOICE {
+  organizer            NULL,
+  participants         NULL,
+  mixed                NULL,
+  implicitBillingMode  NULL,
+  ...
+}
+
+X400Address ::= SEQUENCE {
+  administrationDomain  SimpleTextString, -- A field
+  country               SimpleTextString, -- C field
+  privateDomain         SimpleTextString OPTIONAL, -- P field
+  organization          SimpleTextString OPTIONAL, -- O field
+  organizationalUnits   SET (SIZE (1..4)) OF SimpleTextString OPTIONAL, -- OUx fields
+  givenName             SimpleTextString OPTIONAL, -- G field
+  initials              SimpleTextString OPTIONAL, -- I field
+  surname               SimpleTextString OPTIONAL, -- S field
+  generationQualifier   SimpleTextString OPTIONAL, -- Q field
+  commonName            SimpleTextString OPTIONAL -- C field
+}
+
+ElectronicAddress ::= CHOICE {
+  x400    X400Address,
+  e-mail  SimpleTextString,
+  ...
+}
+
+PersonDescription ::= SEQUENCE {
+  name                 SimpleTextString,
+  nameComplement       SimpleTextString OPTIONAL,
+  postalAddress        SimpleTextString OPTIONAL,
+  telephoneNumbers     SET (SIZE (1..MAX)) OF DiallingString OPTIONAL,
+  facsimileNumbers     SET (SIZE (1..MAX)) OF DiallingString OPTIONAL,
+  electronicAddresses  SET (SIZE (1..MAX)) OF ElectronicAddress OPTIONAL,
+  optionalStrings      SET (SIZE (1..MAX)) OF SimpleTextString OPTIONAL,
+  ...
+}
+
+JoiningMethod ::= CHOICE {called   NULL,
+                          calling  NULL,
+                          ...
+}
+
+ExtendedE164NetworkAddress ::= SEQUENCE {
+  internationalNumber  DiallingString,
+  subAddress           SubAddressString OPTIONAL,
+  extraDialling        ExtraDiallingString OPTIONAL
+}
+
+TransportAddress ::= SEQUENCE {
+  nsapAddress        OCTET STRING(SIZE (1..20)),
+  transportSelector  OCTET STRING OPTIONAL
+}
+
+NetworkAddress ::= CHOICE {
+  extendedE164      ExtendedE164NetworkAddress,
+  transportAddress  TransportAddress,
+  nonStandard       NonStandardParameter,
+  ...
+}
+
+ChannelAggregationMethod ::= CHOICE {
+  h221           NULL,
+  h244           NULL,
+  iso-iec-13871  NULL, -- The actual mode of bonding is dynamically selected according
+  
+  -- to the procedures described in ISO/IEC 13871.
+  nonStandard    NonStandardParameter,
+  ...
+}
+
+Profile ::= CHOICE {
+  simpleProfile
+    CHOICE {-- Basic transfer modes :
+            speech             NULL, -- Simple telephony--
+            telephony-3kHz     NULL, -- G.711 on ISDN or CSDN--
+            telephony-7kHz     NULL, -- G.722 on ISDN or CSDN--
+            voice-band         NULL, -- Modems--
+            frameRelay         NULL,
+            -- T.120-only data profiles (T.123):
+            t123-pstn-basic    NULL,
+            t123-psdn-basic    NULL,
+            t123-b-isdn-basic  NULL},
+  multimediaProfile
+    SEQUENCE {profile
+                CHOICE {h310   NULL,
+                        h320   NULL,
+                        h321   NULL,
+                        h322   NULL,
+                        h323   NULL,
+                        h324   NULL,
+                        h324m  NULL,
+                        v61    NULL, -- ASVD--
+                        v70    NULL -- DSVD},
+              t120Indicator  BOOLEAN -- indicates if T.120 protocols are operated for data
+  },
+  dsmccDownloadProfile  NULL,
+  nonStandard           NonStandardParameter,
+  ...
+}
+
+AllocatedNetworkAddress ::= SEQUENCE {
+  connectionDescriptor
+    CHOICE {combinedCircuits
+              SEQUENCE {circuitsList
+                          SET (SIZE (1..MAX)) OF
+                            SEQUENCE {circuitMode
+                                        CHOICE {-- nominal circuits for ISDN and CSDN networks
+                                                digital-56k         NULL,
+                                                digital-64k         NULL,
+                                                digital-2x64k       NULL,
+                                                digital-384k        NULL,
+                                                digital-1472k       NULL,
+                                                digital-1536k       NULL,
+                                                digital-1920k       NULL,
+                                                multirate-base-64k
+                                                  INTEGER(1..30) -- number of B channels
+                                      },
+                                      networkAddress
+                                        SEQUENCE {extendedE164
+                                                    ExtendedE164NetworkAddress,
+                                                  highLayerCompatibility
+                                                    HLCSupportedCodePoints
+                                                      OPTIONAL},
+                                      channelAggregations
+                                        SET OF ChannelAggregationMethod
+                                          OPTIONAL -- indicates the--
+                                      -- aggregation methods that may be used to combine the circuits. Absence of
+                                      -- this parameter indicates that no channel aggregation shall be used.
+                            },
+                        singleAddress
+                          SEQUENCE {address                 NetworkAddress,
+                                    highLayerCompatibility
+                                      HLCSupportedCodePoints OPTIONAL
+                        }}},
+  networkInterfaceToUse  GenericID OPTIONAL,
+  profileToOperate       Profile OPTIONAL,
+  ...
+}
+
+HLCSupportedCodePoints ::= SEQUENCE {
+  -- Those are supported code points for IE HLC of the D
+  -- protocol (Rec. Q.931).
+  telephony3kHz    BOOLEAN,
+  telephony7kHz    BOOLEAN,
+  videotelephony   BOOLEAN,
+  videoconference  BOOLEAN,
+  audiographic     BOOLEAN,
+  audiovisual      BOOLEAN,
+  multimedia       BOOLEAN,
+  ...
+}
+
+BookingSite ::= SEQUENCE {
+  siteID                   GenericID,
+  entryDelay               Duration DEFAULT {hours 0, minutes 0},
+  duration                 SiteParticipationDuration DEFAULT allConference:NULL,
+  transferRate             INTEGER(1..30) OPTIONAL, -- N? atomic channel
+  joiningMethod            JoiningMethod OPTIONAL,
+  waitingListIndicator     BOOLEAN DEFAULT FALSE,
+  allocatedNetworkAddress  AllocatedNetworkAddress OPTIONAL,
+  participantBillingRatio  INTEGER(0..100) OPTIONAL,
+  conferees                SET (SIZE (1..MAX)) OF PersonDescription OPTIONAL,
+  ...
+}
+
+ApplyingSite ::= SEQUENCE {
+  siteID                     GenericID,
+  entryDelay                 Duration DEFAULT {hours 0, minutes 0},
+  duration
+    SiteParticipationDuration DEFAULT allConference:NULL,
+  transferRate               INTEGER(1..30) OPTIONAL, -- N ? atomic channel
+  possibleNetworkInterfaces  SET (SIZE (1..MAX)) OF GenericID OPTIONAL,
+  ...
+}
+
+ConferenceModificationPolicy ::= CHOICE {
+  keepPrevious    NULL,
+  cancelPrevious  NULL,
+  allWaitingList  NULL,
+  bestEffort      NULL,
+  ...
+}
+
+ConferenceStatus ::= CHOICE {
+  reserved           NULL,
+  partiallyReserved  NULL,
+  inWaitingList      NULL,
+  ongoing            NULL,
+  ...
+}
+
+ConferenceSummary ::= SEQUENCE {
+  conferenceReference    GenericID,
+  conferenceName         SimpleTextString,
+  conferenceDescription  SimpleTextString DEFAULT "",
+  conferenceOwnerID      GenericID OPTIONAL,
+  conferenceOwnerName    SimpleTextString OPTIONAL,
+  date                   Day,
+  time                   Time,
+  duration               ConferenceDuration,
+  status                 ConferenceStatus,
+  modifyRight            BOOLEAN DEFAULT TRUE,
+  ...
+}
+
+ISDNInterface ::= SEQUENCE {
+  combinedInterfaces
+    SET (SIZE (1..MAX)) OF
+      SEQUENCR=#5F9EA0>NULL,
+                            digital-2x64k       NULL,
+                            digital-384k        NULL,
+                            digital-1536k       NULL,
+                            digital-1920k       NULL,
+                            multirate-base-64k
+                              CHOICE {specifiedMultiples  SET OF INTEGER(1..30),
+                                      allMultiples        NULL}},
+                networkAddress
+                  SEQUENCE {extendedE164            ExtendedE164NetworkAddress,
+                            highLayerCompatibility
+                              HLCSupportedCodePoints OPTIONAL},
+                ...},
+  channelAggregations  SET (SIZE (1..MAX)) OF ChannelAggregationMethod OPTIONAL,
+  ...
+}
+
+CSDNInterface ::= SEQUENCE {
+  combinedInterfaces
+    SET (SIZE (1..MAX)) OF
+      SEQUENCE {baseRate
+                  CHOICE {digital-56k  NULL,
+                          digital-64k  NULL,
+                          ...},
+                networkAddress  ExtendedE164NetworkAddress,
+                ...},
+  channelAggregations  SET (SIZE (1..MAX)) OF ChannelAggregationMethod OPTIONAL,
+  ...
+}
+
+ATMInterface ::= SEQUENCE {
+  networkAddress   NetworkAddress,
+  -- The use of several addresses for multicast calls establishment is for further study.
+  maxTransferRate  INTEGER(0..MAX) OPTIONAL, -- expressed in cells per seconds
+  ...
+}
+
+GSTNInterface ::= SEQUENCE {networkAddress  ExtendedE164NetworkAddress,
+                            ...
+}
+
+MobileInterface ::= SEQUENCE {networkAddress  ExtendedE164NetworkAddress,
+                              ...
+}
+
+PSDNInterface ::= SEQUENCE {networkAddress  NetworkAddress,
+                            ...
+}
+
+LANInterface ::= SEQUENCE {
+  networkAddress   NetworkAddress,
+  maxTransferRate  INTEGER(0..MAX) OPTIONAL, -- expressed in kbit/s
+  ...
+}
+
+NetworkInterface ::= SEQUENCE {
+  interfaceID           GenericID,
+  interfaceDescription
+    CHOICE {isdnInterface    ISDNInterface,
+            csdnInterface    CSDNInterface,
+            atmInterface     ATMInterface,
+            gstnInterface    GSTNInterface,
+            mobileInterface  MobileInterface,
+            psdnInterface    PSDNInterface,
+            lanInterface     LANInterface,
+            nonStandard      NonStandardParameter,
+            ...},
+  profilesSupported     Profile,
+  ...
+}
+
+SiteType ::= CHOICE {
+  mcu                  NULL,
+  combinedTerminalMCU  NULL,
+  terminal             NULL,
+  telephone            NULL,
+  specialDevice        NULL,
+  nonStandard          NonStandardParameter,
+  ...
+}
+
+SiteClass ::= CHOICE {
+  multimedia    NULL,
+  audiovisual   NULL,
+  audiographic  NULL,
+  visiographic  NULL,
+  dataOnly      NULL,
+  nonStandard   NonStandardParameter,
+  ...
+}
+
+VendorModelVersion ::= CHOICE {
+  h221NonStandard  H221NonStandardIdentifier,
+  textForm
+    SEQUENCE {vendor   SimpleTextString,
+              model    SimpleTextString,
+              version  SimpleTextString}
+}
+
+EquipmentDescription ::= SEQUENCE {
+  generalInformation    VendorModelVersion OPTIONAL,
+  imuxInformation       VendorModelVersion OPTIONAL,
+  audioCodec            VendorModelVersion OPTIONAL,
+  audioAlgorithms       SET (SIZE (1..MAX)) OF AudioCoding OPTIONAL,
+  videoCodec            VendorModelVersion OPTIONAL,
+  videoAlgorithms       SET (SIZE (1..MAX)) OF VideoCoding OPTIONAL,
+  t120StackInformation  VendorModelVersion OPTIONAL,
+  ...
+}
+
+UserData ::= CHOICE {
+  rawData         OCTET STRING,
+  identifiedData  SET (SIZE (1..MAX)) OF NonStandardParameter
+}
+
+ResultCode ::= CHOICE {
+  success                   NULL,
+  badParameters             NULL,
+  badValues                 NULL,
+  transactionRefused        NULL,
+  defaultFailureCode        NULL,
+  authenticationInProgress  NULL,
+  authenticationFailed      NULL,
+  waitingList               NULL,
+  noResourcesAvailable      NULL,
+  noSuchConference          NULL,
+  temporaryModeForced       NULL,
+  usersSpaceFull            NULL,
+  noSuchSite                NULL,
+  noneMatchingCriteria      NULL,
+  nonStandard               NonStandardParameter,
+  ...
+}
+
+--==============================
+-- Constants definition
+--==============================
+latinCapitalA BMPString ::=
+  {0, 0, 0, 65}
+
+latinCapitalZ BMPString ::= {0, 0, 0, 90}
+
+latinSmallA BMPString ::= {0, 0, 0, 97}
+
+latinSmallZ BMPString ::= {0, 0, 0, 122}
+
+digit0 BMPString ::= {0, 0, 0, 48}
+
+digit9 BMPString ::= {0, 0, 0, 57}
+
+implicitAccount GenericID ::= stringID:""
+
+connectedSubscriber GenericID ::= stringID:""
+
+noPassword LatinAlphanumericString ::= ""
+
+--=================
+-- PDUs definition
+--=================
+RSConnectRequest ::= SEQUENCE {
+  connectionID              ConnectionID,
+  subscriberID              GenericID OPTIONAL, -- enables anonymous access
+  authenticationData        AuthenticationData OPTIONAL,
+  higherProtocolsSupported  SET (SIZE (1..MAX)) OF Key OPTIONAL,
+  userData                  UserData OPTIONAL,
+  ...
+}
+
+RSConnectResponse ::= SEQUENCE {
+  connectionID              ConnectionID,
+  subscriberID              GenericID OPTIONAL,
+  authenticationData        AuthenticationData OPTIONAL,
+  higherProtocolsSupported  SET (SIZE (1..MAX)) OF Key OPTIONAL,
+  userData                  UserData OPTIONAL,
+  resultCode                ResultCode,
+  resultMessage             SimpleTextString OPTIONAL,
+  ...
+}
+
+RSDisconnectIndication ::= SEQUENCE {
+  connectionID   ConnectionID,
+  reasonCode
+    CHOICE {normalTermination            NULL,
+            disconnectingFromConference  NULL,
+            defaultDisconnectionReason   NULL,
+            nonStandard                  NonStandardParameter,
+            ...} OPTIONAL,
+  reasonMessage  SimpleTextString OPTIONAL,
+  userData       UserData OPTIONAL,
+  ...
+}
+
+RSConferenceReserveRequest ::= SEQUENCE {
+  connectionID                 ConnectionID,
+  transactionID                TransactionID,
+  conferenceName               SimpleTextString,
+  conferenceDescription        TextString DEFAULT "", -- no description
+  mcuCascadingMode             MCUCascadingMode DEFAULT unspecified:NULL,
+  audiovisualChairControl      BOOLEAN DEFAULT FALSE,
+  audiovisualChairmanPassword  LatinAlphanumericString DEFAULT noPassword,
+  t120ExternalConvener         BOOLEAN DEFAULT FALSE,
+  t120ConductedMode            BOOLEAN DEFAULT FALSE,
+  t120ConductorPrivileges      SET (SIZE (1..MAX)) OF Privilege OPTIONAL,
+  t120CommonPrivileges         SET (SIZE (1..MAX)) OF Privilege OPTIONAL,
+  t120ConductorPassword        LatinAlphanumericString DEFAULT noPassword,
+  commonPassword               LatinAlphanumericString DEFAULT noPassword,
+  globalTransferRate           INTEGER(1..30), -- N ? atomic channel
+  videoSwitchingMethod
+    VideoSwitchingMethod DEFAULT voiceActivityDetection:NULL,
+  initialVideoFormat           VideoFormat DEFAULT runtimeChoice:NULL,
+  initialVideoAlgorithm        VideoCoding DEFAULT runtimeChoice:NULL,
+  initialAudioAlgorithm        AudioCoding DEFAULT runtimeChoice:NULL,
+  waitingListPolicy            WaitingListPolicy DEFAULT noWaitingList:NULL,
+  billingMode                  BillingMode DEFAULT implicitBillingMode:NULL,
+  organizerBillingAccount      GenericID DEFAULT implicitAccount,
+  conferenceOwnerID            GenericID DEFAULT connectedSubscriber,
+  date                         Day,
+  time                         Time,
+  duration                     ConferenceDuration DEFAULT untilTermination:NULL,
+  bookingSites                 SET (SIZE (2..MAX)) OF BookingSite,
+  sitesDefaultJoiningMethod    JoiningMethod,
+  conferenceModifierPassword   LatinAlphanumericString DEFAULT noPassword,
+  userData                     UserData OPTIONAL,
+  ...
+}
+
+RSConferenceReserveResponse ::= SEQUENCE {
+  connectionID                 ConnectionID,
+  transactionID                TransactionID,
+  conferenceName               SimpleTextString OPTIONAL,
+  conferenceDescription        TextString OPTIONAL,
+  mcuCascadingMode             MCUCascadingMode OPTIONAL,
+  audiovisualChairControl      BOOLEAN OPTIONAL,
+  audiovisualChairmanPassword  LatinAlphanumericString OPTIONAL,
+  t120ExternalConvener         BOOLEAN OPTIONAL,
+  t120ConductedMode            BOOLEAN OPTIONAL,
+  t120ConductorPrivileges      SET (SIZE (1..MAX)) OF Privilege OPTIONAL,
+  t120CommonPrivileges         SET (SIZE (1..MAX)) OF Privilege OPTIONAL,
+  t120ConductorPassword        LatinAlphanumericString OPTIONAL,
+  commonPassword               LatinAlphanumericString OPTIONAL,
+  globalTransferRate           INTEGER(1..30) OPTIONAL, -- N ? atomic channel
+  videoSwitchingMethod         VideoSwitchingMethod OPTIONAL,
+  initialVideoFormat           VideoFormat OPTIONAL,
+  initialVideoAlgorithm        VideoCoding OPTIONAL,
+  initialAudioAlgorithm        AudioCoding OPTIONAL,
+  billingMode                  BillingMode OPTIONAL,
+  organizerBillingAccount      GenericID OPTIONAL,
+  conferenceOwnerID            GenericID OPTIONAL,
+  date                         Day OPTIONAL,
+  time                         Time OPTIONAL,
+  duration                     ConferenceDuration OPTIONAL,
+  bookingSites                 SET (SIZE (2..MAX)) OF BookingSite OPTIONAL,
+  siteDefaultJoiningMethod     JoiningMethod OPTIONAL,
+  conferenceModifierPassword   LatinAlphanumericString OPTIONAL,
+  conferenceReference          GenericID OPTIONAL,
+  acknowledgmentType
+    AcknowledgmentType(WITH COMPONENTS {
+                         simple    ,
+                         explicit  
+                       }) DEFAULT explicit:NULL,
+  resultCode                   ResultCode,
+  resultMessage                SimpleTextString OPTIONAL,
+  userData                     UserData OPTIONAL,
+  ...
+}
+
+RSConferenceModifyRequest ::= SEQUENCE {
+  connectionID                 ConnectionID,
+  transactionID                TransactionID,
+  conferenceReference          GenericID,
+  conferenceModifierPassword   LatinAlphanumericString OPTIONAL,
+  defaultPolicy
+    ConferenceModificationPolicy DEFAULT keepPrevious:NULL,
+  conferenceName               SimpleTextString OPTIONAL,
+  conferenceDescription        TextString OPTIONAL,
+  mcuCascadingMode             MCUCascadingMode OPTIONAL,
+  audiovisualChairControl      BOOLEAN OPTIONAL,
+  audiovisualChairmanPassword  LatinAlphanumericString OPTIONAL,
+  t120ExternalConvener         BOOLEAN OPTIONAL,
+  t120ConductedMode            BOOLEAN OPTIONAL,
+  t120ConductorPrivileges      SET (SIZE (1..MAX)) OF Privilege OPTIONAL,
+  t120CommonPrivileges         SET (SIZE (1..MAX)) OF Privilege OPTIONAL,
+  t120ConductorPassword        LatinAlphanumericString OPTIONAL,
+  commonPassword               LatinAlphanumericString OPTIONAL,
+  globalTransferRate           INTEGER(1..30) OPTIONAL, -- N ? atomic channel
+  videoSwitchingMethod         VideoSwitchingMethod OPTIONAL,
+  initialVideoFormat           VideoFormat OPTIONAL,
+  initialVideoAlgorithm        VideoCoding OPTIONAL,
+  initialAudioAlgorithm        AudioCoding OPTIONAL,
+  billingMode                  BillingMode OPTIONAL,
+  organizerBillingAccount      GenericID OPTIONAL,
+  conferenceOwnerID            GenericID OPTIONAL,
+  date                         Day OPTIONAL,
+  time                         Time OPTIONAL,
+  duration                     ConferenceDuration OPTIONAL,
+  bookingSites
+    CHOICE {fullRefresh     SET (SIZE (2.LOR=#228B22>SIZE (1..MAX)) OF
+                CHOICE {deleteSite  GenericID,
+                        modifySite  BookingSite,
+                        addSite     BookingSite}} OPTIONAL,
+  siteDefaultJoiningMethod     JoiningMethod OPTIONAL,
+  newModifierPassword          LatinAlphanumericString OPTIONAL,
+  userData                     UserData OPTIONAL,
+  ...
+}
+
+RSConferenceModifyResponse ::= SEQUENCE {
+  connectionID                 ConnectionID,
+  transactionID                TransactionID,
+  conferenceReference          GenericID,
+  conferenceName               SimpleTextString OPTIONAL,
+  conferenceDescription        TextString OPTIONAL,
+  mcuCascadingMode             MCUCascadingMode OPTIONAL,
+  audiovisualChairControl      BOOLEAN OPTIONAL,
+  audiovisualChairmanPassword  LatinAlphanumericString OPTIONAL,
+  t120ExternalConvener         BOOLEAN OPTIONAL,
+  t120ConductedMode            BOOLEAN OPTIONAL,
+  t120ConductorPrivileges      SET (SIZE (1..MAX)) OF Privilege OPTIONAL,
+  t120CommonPrivileges         SET (SIZE (1..MAX)) OF Privilege OPTIONAL,
+  t120ConductorPassword        LatinAlphanumericString OPTIONAL,
+  commonPassword               LatinAlphanumericString OPTIONAL,
+  globalTransferRate           INTEGER(1..30) OPTIONAL, -- N ? atomic channel
+  videoSwitchingMethod         VideoSwitchingMethod OPTIONAL,
+  initialVideoFormat           VideoFormat OPTIONAL,
+  initialVideoAlgorithm        VideoCoding OPTIONAL,
+  initialAudioAlgorithm        AudioCoding OPTIONAL,
+  billingMode                  BillingMode OPTIONAL,
+  organizerBillingAccount      GenericID OPTIONAL,
+  conferenceOwnerID            GenericID OPTIONAL,
+  date                         Day OPTIONAL,
+  time                         Time OPTIONAL,
+  duration                     ConferenceDuration OPTIONAL,
+  bookingSites                 SET (SIZE (2..MAX)) OF BookingSite OPTIONAL,
+  siteDefaultJoiningMethod     JoiningMethod OPTIONAL,
+  newModifierPassword          LatinAlphanumericString OPTIONAL,
+  acknowledgmentType
+    AcknowledgmentType(WITH COMPONENTS {
+                         simple    ,
+                         explicit  
+                       }) DEFAULT explicit:NULL,
+  resultCode                   ResultCode,
+  resultMessage                SimpleTextString OPTIONAL,
+  userData                     UserData OPTIONAL,
+  ...
+}
+
+RSConferenceCancelRequest ::= SEQUENCE {
+  connectionID                ConnectionID,
+  transactionID               TransactionID,
+  conferenceReference         GenericID,
+  conferenceModifierPassword  LatinAlphanumericString OPTIONAL,
+  userData                    UserData OPTIONAL,
+  ...
+}
+
+RSConferenceCancelResponse ::= SEQUENCE {
+  connectionID         ConnectionID,
+  transactionID        TransactionID,
+  conferenceReference  GenericID,
+  acknowledgmentType   AcknowledgmentType(WITH COMPONENTS {
+                                            simple  
+                                          }) OPTIONAL,
+  resultCode           ResultCode,
+  resultMessage        SimpleTextString OPTIONAL,
+  userData             UserData OPTIONAL,
+  ...
+}
+
+RSConferenceListInquireRequest ::= SEQUENCE {
+  connectionID               ConnectionID,
+  transactionID              TransactionID,
+  conferenceOwnerIDFilter    SET (SIZE (1..MAX)) OF GenericID OPTIONAL,
+  conferenceOwnerNameFilter
+    SET (SIZE (1..MAX)) OF SimpleTextStringInterval OPTIONAL,
+  conferenceNameFilter
+    SET (SIZE (1..MAX)) OF SimpleTextStringInterval OPTIONAL,
+  conferenceStatusFilter     SET (SIZE (1..4)) OF ConferenceStatus,
+  dateFilter                 SET (SIZE (1..MAX)) OF DaysInterval OPTIONAL,
+  userData                   UserData OPTIONAL,
+  ...
+}
+
+RSConferenceListInquireResponse ::= SEQUENCE {
+  connectionID         ConnectionID,
+  transactionID        TransactionID,
+  conferenceSummaries  SET (SIZE (1..MAX)) OF ConferenceSummary OPTIONAL,
+  acknowledgmentType
+    AcknowledgmentType(WITH COMPONENTS {
+                         noAcknowledgment  
+                       }) OPTIONAL,
+  resultCode           ResultCode,
+  resultMessage        SimpleTextString OPTIONAL,
+  userData             UserData OPTIONAL,
+  ...
+}
+
+RSConferenceDetailInquireRequest ::= SEQUENCE {
+  connectionID         ConnectionID,
+  transactionID        TransactionID,
+  conferenceReference  GenericID,
+  userData             UserData OPTIONAL,
+  ...
+}
+
+RSConferenceDetailInquireResponse ::= SEQUENCE {
+  connectionID                 ConnectionID,
+  transactionID                TransactionID,
+  conferenceReference          GenericID,
+  conferenceName               SimpleTextString,
+  conferenceDescription        TextString DEFAULT "",
+  conferenceOwnerID            GenericID DEFAULT connectedSubscriber,
+  conferenceOwnerName          SimpleTextString OPTIONAL,
+  mcuCascadingMode             MCUCascadingMode DEFAULT unspecified:NULL,
+  audiovisualChairControl      BOOLEAN DEFAULT FALSE,
+  audiovisualChairmanPassword  LatinAlphanumericString DEFAULT noPassword,
+  t120ExternalConvener         BOOLEAN DEFAULT FALSE,
+  t120ConductedMode            BOOLEAN DEFAULT FALSE,
+  t120ConductorPrivileges      SET (SIZE (1..MAX)) OF Privilege OPTIONAL,
+  t120CommonPrivileges         SET (SIZE (1..MAX)) OF Privilege OPTIONAL,
+  t120ConductorPassword        LatinAlphanumericString DEFAULT noPassword,
+  commonPassword               LatinAlphanumericString DEFAULT noPassword,
+  globalTransferRate           INTEGER(1..30), -- N ? atomic channel
+  videoSwitchingMethod
+    VideoSwitchingMethod DEFAULT voiceActivityDetection:NULL,
+  initialVideoFormat           VideoFormat DEFAULT runtimeChoice:NULL,
+  initialVideoAlgorithm        VideoCoding DEFAULT runtimeChoice:NULL,
+  initialAudioAlgorithm        AudioCoding DEFAULT runtimeChoice:NULL,
+  billingMode                  BillingMode DEFAULT implicitBillingMode:NULL,
+  organizerBillingAccount      GenericID DEFAULT implicitAccount,
+  date                         Day,
+  time                         Time,
+  duration                     ConferenceDuration,
+  bookingSites                 SET (SIZE (2..MAX)) OF BookingSite,
+  siteDefaultJoiningMethod     JoiningMethod,
+  conferenceModifierPassword   LatinAlphanumericString DEFAULT noPassword,
+  modifyRight                  BOOLEAN DEFAULT TRUE,
+  acknowledgmentType
+    AcknowledgmentType(WITH COMPONENTS {
+                         noAcknowledgment  
+                       }) OPTIONAL,
+  resultCode                   ResultCode,
+  resultMessage                SimpleTextString OPTIONAL,
+  userData                     UserData OPTIONAL,
+  ...
+}
+
+RSConferenceCheckAvailabilityRequest ::= SEQUENCE {
+  connectionID         ConnectionID,
+  transactionID        TransactionID,
+  dateIntervals        SET (SIZE (1..MAX)) OF DaysInterval,
+  applyingSites        SET (SIZE (2..MAX)) OF ApplyingSite,
+  minimumTransferRate  INTEGER(1..30), -- N ? atomic channel
+  userData             UserData OPTIONAL,
+  ...
+}
+
+RSConferenceCheckAvailabilityResponse ::= SEQUENCE {
+  connectionID   ConnectionID,
+  transactionID  TransactionID,
+  querryResult
+    SET (SIZE (1..MAX)) OF
+      SEQUENCE {daysInterval   DaysInterval,
+                possibilities
+                  SET (SIZE (1..MAX)) OF
+                    SEQUENCE {timeInterval
+                                SET (SIZE (1..MAX)) OF TimeInterval,
+                              maximumTransferRate    INTEGER(1..30), -- N ? atomic channel--
+                              interfaceRestrictions
+                                SET (SIZE (1..MAX)) OF
+                                  SEQUENCE {siteID      GenericID,
+                                            interfaces
+                                              CHOICE {allowedInterfaces
+                                                        SET (SIZE (1..MAX)) OF
+                                                          GenericID,
+                                                      forbiddenInterfaces
+                                                        SET (SIZE (1..MAX)) OF
+                                                          GenericID}} OPTIONAL -- all interfaces are allowed by default
+                    }} OPTIONAL,
+  resultCode     ResultCode,
+  resultMessage  SimpleTextString OPTIONAL,
+  userData       UserData OPTIONAL,
+  ...
+}
+
+RSSiteRecordRequest ::= SEQUENCE {
+  connectionID           ConnectionID,
+  transactionID          TransactionID,
+  permanentRecord        BOOLEAN DEFAULT FALSE,
+  siteType               SiteType,
+  siteClass              SiteClass OPTIONAL,
+  siteOwnerID            GenericID DEFAULT connectedSubscriber,
+  siteName               SimpleTextString OPTIONAL,
+  geographicInformation
+    SEQUENCE {country        SimpleTextString OPTIONAL,
+              region         SimpleTextString OPTIONAL,
+              city           SimpleTextString OPTIONAL,
+              postalAddress  SimpleTextString OPTIONAL} OPTIONAL,
+  networkInterfaces      SET (SIZE (1..MAX)) OF NetworkInterface,
+  equipmentDescription   EquipmentDescription OPTIONAL,
+  contactPerson          PersonDescription OPTIONAL,
+  userData               UserData OPTIONAL,
+  ...
+}
+
+RSSiteRecordResponse ::= SEQUENCE {
+  connectionID           ConnectionID,
+  transactionID          TransactionID,
+  permanentRecord        BOOLEAN OPTIONAL,
+  siteType               SiteType OPTIONAL,
+  siteClass              SiteClass OPTIONAL,
+  siteOwnerID            GenericID OPTIONAL,
+  siteName               SimpleTextString OPTIONAL,
+  geographicInformation
+    SEQUENCE {country        SimpleTextString OPTIONAL,
+              region         SimpleTextString OPTIONAL,
+              city           SimpleTextString OPTIONAL,
+              postalAddress  SimpleTextString OPTIONAL} OPTIONAL,
+  networkInterfaces      SET (SIZE (1..MAX)) OF NetworkInterface,
+  equipmentDescription   EquipmentDescription OPTIONAL,
+  contactPerson          PersonDescription OPTIONAL,
+  siteID                 GenericID OPTIONAL,
+  deletionDate           Day OPTIONAL,
+  acknowledgmentType
+    AcknowledgmentType(WITH COMPONENTS {
+                         simple  
+                       }) OPTIONAL,
+  resultCode             ResultCode,
+  resultMessage          SimpleTextString OPTIONAL,
+  userData               UserData OPTIONAL,
+  ...
+}
+
+RSSiteModifyRequest ::= SEQUENCE {
+  connectionID           ConnectionID,
+  transactionID          TransactionID,
+  siteID                 GenericID,
+  permanentRecord        BOOLEAN OPTIONAL,
+  siteType               SiteType OPTIONAL,
+  siteClass              SiteClass OPTIONAL,
+  siteOwnerID            GenericID OPTIONAL,
+  siteName               SimpleTextString OPTIONAL,
+  geographicInformation
+    SEQUENCE {country        SimpleTextString OPTIONAL,
+              region         SimpleTextString OPTIONAL,
+              city           SimpleTextString OPTIONAL,
+              postalAddress  SET (SIZE (1..MAX)) OF NetworkInterface,
+            partialRefresh
+              SET (SIZE (1..MAX)) OF
+                CHOICE {deleteInterface  GenericID,
+                        modifyInterface
+                          SEQUENCE {interfaceID  GenericID,
+                                    interface    NetworkInterface},
+                        addInterface     NetworkInterface}} OPTIONAL,
+  equipmentDescription   EquipmentDescription OPTIONAL,
+  contactPerson          PersonDescription OPTIONAL,
+  userData               UserData OPTIONAL,
+  ...
+}
+
+RSSiteModifyResponse ::= SEQUENCE {
+  connectionID           ConnectionID,
+  transactionID          TransactionID,
+  siteID                 GenericID OPTIONAL,
+  permanentRecord        BOOLEAN OPTIONAL,
+  siteType               SiteType OPTIONAL,
+  siteClass              SiteClass OPTIONAL,
+  siteOwnerID            GenericID OPTIONAL,
+  siteName               SimpleTextString,
+  geographicInformation
+    SEQUENCE {country        SimpleTextString OPTIONAL,
+              region         SimpleTextString OPTIONAL,
+              city           SimpleTextString OPTIONAL,
+              postalAddress  SimpleTextString OPTIONAL} OPTIONAL,
+  networkInterfaces      SET (SIZE (1..MAX)) OF NetworkInterface OPTIONAL,
+  equipmentDescription   EquipmentDescription OPTIONAL,
+  contactPerson          PersonDescription OPTIONAL,
+  deletionDate           Day OPTIONAL,
+  acknowledgmentType
+    AcknowledgmentType(WITH COMPONENTS {
+                         simple  
+                       }) OPTIONAL,
+  resultCode             ResultCode,
+  resultMessage          SimpleTextString OPTIONAL,
+  userData               UserData OPTIONAL,
+  ...
+}
+
+RSSiteDeleteRequest ::= SEQUENCE {
+  connectionID   ConnectionID,
+  transactionID  TransactionID,
+  siteID         GenericID,
+  userData       UserData OPTIONAL,
+  ...
+}
+
+RSSiteDeleteResponse ::= SEQUENCE {
+  connectionID        ConnectionID,
+  transactionID       TransactionID,
+  siteID              GenericID OPTIONAL,
+  acknowledgmentType  AcknowledgmentType(WITH COMPONENTS {
+                                           simple  
+                                         }) OPTIONAL,
+  resultCode          ResultCode,
+  resultMessage       SimpleTextString OPTIONAL,
+  userData            UserData OPTIONAL,
+  ...
+}
+
+RSSiteDirectoryInquireRequest ::= SEQUENCE {
+  connectionID              ConnectionID,
+  transactionID             TransactionID,
+  siteOwnerIDFilter         SET (SIZE (1..MAX)) OF GenericID OPTIONAL,
+  siteOwnerNameFilter
+    SET (SIZE (1..MAX)) OF SimpleTextStringInterval OPTIONAL,
+  siteNameFilter
+    SET (SIZE (1..MAX)) OF SimpleTextStringInterval OPTIONAL,
+  geographicLocationFilter
+    SET (SIZE (1..MAX)) OF
+      SEQUENCE {country        SimpleTextString OPTIONAL,
+                region         SimpleTextString OPTIONAL,
+                city           SimpleTextString OPTIONAL,
+                postalAddress  SimpleTextString OPTIONAL} OPTIONAL,
+  userData                  UserData OPTIONAL,
+  ...
+}
+
+RSSiteDirectoryInquireResponse ::= SEQUENCE {
+  connectionID   ConnectionID,
+  transactionID  TransactionID,
+  querryResult
+    SET (SIZE (1..MAX)) OF
+      SEQUENCE {siteType               SiteType,
+                siteClass              SiteClass OPTIONAL,
+                siteOwnerID            GenericID OPTIONAL,
+                siteOwnerName          SimpleTextString OPTIONAL,
+                siteName               SimpleTextString,
+                geographicInformation
+                  SEQUENCE {country        SimpleTextString OPTIONAL,
+                            region         SimpleTextString OPTIONAL,
+                            city           SimpleTextString OPTIONAL,
+                            postalAddress  SimpleTextString OPTIONAL} OPTIONAL,
+                networkInterfaces      SET (SIZE (1..MAX)) OF NetworkInterface,
+                equipmentDescription   EquipmentDescription OPTIONAL,
+                contactPerson          PersonDescription OPTIONAL,
+                siteExtraInformation   TextString OPTIONAL,
+                deletionDate           Day OPTIONAL,
+                modifyRight            BOOLEAN DEFAULT TRUE,
+                ...} OPTIONAL,
+  resultCode     ResultCode,
+  resultMessage  SimpleTextString OPTIONAL,
+  userData       UserData OPTIONAL,
+  ...
+}
+
+RSNonStandardRequest ::= SEQUENCE {
+  connectionID         ConnectionID,
+  transactionID        TransactionID,
+  parentTransactionID  TransactionID OPTIONAL,
+  protocolKey          Key OPTIONAL,
+  data                 OCTET STRING,
+  ...
+}
+
+RSNonStandardResponse ::= SEQUENCE {
+  connectionID        ConnectionID,
+  transactionID       TransactionID,
+  acknowledgmentType  AcknowledgmentType,
+  protocolKey         Key OPTIONAL,
+  data                OCTET STRING,
+  ...
+}
+
+RSNonStandardIndication ::= SEQUENCE {
+  connectionID          ConnectionID,
+  relatedTransactionID  TransactionID OPTIONAL,
+  protocolKey           Key OPTIONAL,
+  data                  OCTET STRING,
+  ...
+}
+
+RSTransactionAcknowledgeIndication ::= SEQUENCE {
+  connectionID   ConnectionID,
+  transactionID  TransactionID,
+  ...
+}
+
+RSTransactionCancelIndication ::= SEQUENCE {
+  connectionID   ConnectionID,
+  transactionID  TransactionID,
+  ...
+}
+
+RSTransactionErrorIndication ::= SEQUENCE {
+  connectionID   ConnectionID,
+  transactionID  TransactionID,
+  errorCode
+    CHOICE {unrecognizedNonStandardProtocol  NULL,
+            defaultErrorCode                 NULL,
+            nonStandard                      NonStandardParameter,
+            ...},
+  ...
+}
+
+--===============
+-- All URST PDUs
+--===============
+URSTPDU ::= CHOICE {
+  rsConnectRequest                       RSConnectRequest,
+  rsConnectResponse                      RSConnectResponse,
+  rsDisconnectIndication                 RSDisconnectIndication,
+  rsConferenceReserveRequest             RSConferenceReserveRequest,
+  rsConferenceReserveResponse            RSConferenceReserveResponse,
+  rsConferenceModifyRequest              RSConferenceModifyRequest,
+  rsConferenceModifyResponse             RSConferenceModifyResponse,
+  rsConferenceCancelRequest              RSConferenceCancelRequest,
+  rsConferenceCancelResponse             RSConferenceCancelResponse,
+  rsConferenceListInquireRequest         RSConferenceListInquireRequest,
+  rsConferenceListInquireResponse        RSConferenceListInquireResponse,
+  rsConferenceDetailInquireRequest       RSConferenceDetailInquireRequest,
+  rsConferenceDetailInquireResponse      RSConferenceDetailInquireResponse,
+  rsConferenceCheckAvailabilityRequest   RSConferenceCheckAvailabilityRequest,
+  rsConferenceCheckAvailabilityResponse  RSConferenceCheckAvailabilityResponse,
+  rsSiteRecordRequest                    RSSiteRecordRequest,
+  rsSiteRecordResponse                   RSSiteRecordResponse,
+  rsSiteModifyRequest                    RSSiteModifyRequest,
+  rsSiteModifyResponse                   RSSiteModifyResponse,
+  rsSiteDeleteRequest                    RSSiteDeleteRequest,
+  rsSiteDeleteResponse                   RSSiteDeleteResponse,
+  rsSiteDisrectoryInquireRequest         RSSiteDirectoryInquireRequest,
+  rsSiteDisrectoryInquireResponse        RSSiteDirectoryInquireResponse,
+  rsNonStandardRequest                   RSNonStandardRequest,
+  rsNonStandardResponse                  RSNonStandardResponse,
+  rsNonStandardIndication                RSNonStandardIndication,
+  rsTransactionAcknowledgeIndication     RSTransactionAcknowledgeIndication,
+  rsTransactionCancelIndication          RSTransactionCancelIndication,
+  rsTransactionErrorIndication           RSTransactionErrorIndication,
+  ...
+}
+
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

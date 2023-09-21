@@ -1,0 +1,181 @@
+
+
+
+
+
+
+
+
+-- Module FastInfoset (X.891:05/2005)
+-- See also ITU-T X.891 (05/2005)
+-- See also the index of all ASN.1 assignments needed in this document
+
+FastInfoset {joint-iso-itu-t(2) asn1(1) generic-applications(10)
+  fast-infoset(0) modules(0) fast-infoset(0)} DEFINITIONS AUTOMATIC TAGS ::=
+BEGIN
+
+finf-doc-opt-decl OBJECT IDENTIFIER ::=
+  {joint-iso-itu-t(2) asn1(1) generic-applications(10) fast-infoset(0)
+   encodings(1) optional-xml-declaration(0)}
+
+finf-doc-no-decl OBJECT IDENTIFIER ::=
+  {joint-iso-itu-t(2) asn1(1) generic-applications(10) fast-infoset(0)
+   encodings(1) no-xml-declaration(1)}
+
+Document ::= SEQUENCE {
+  additional-data
+    SEQUENCE (SIZE (1..one-meg)) OF additional-datum
+      SEQUENCE {id    URI,
+                data  NonEmptyOctetString} OPTIONAL,
+  initial-vocabulary
+    SEQUENCE {external-vocabulary        URI OPTIONAL,
+              restricted-alphabets
+                SEQUENCE (SIZE (1..256)) OF NonEmptyOctetString OPTIONAL,
+              encoding-algorithms
+                SEQUENCE (SIZE (1..256)) OF NonEmptyOctetString OPTIONAL,
+              prefixes
+                SEQUENCE (SIZE (1..one-meg)) OF NonEmptyOctetString OPTIONAL,
+              namespace-names
+                SEQUENCE (SIZE (1..one-meg)) OF NonEmptyOctetString OPTIONAL,
+              local-names
+                SEQUENCE (SIZE (1..one-meg)) OF NonEmptyOctetString OPTIONAL,
+              other-ncnames
+                SEQUENCE (SIZE (1..one-meg)) OF NonEmptyOctetString OPTIONAL,
+              other-uris
+                SEQUENCE (SIZE (1..one-meg)) OF NonEmptyOctetString OPTIONAL,
+              attribute-values
+                SEQUENCE (SIZE (1..one-meg)) OF EncodedCharacterString OPTIONAL,
+              content-character-chunks
+                SEQUENCE (SIZE (1..one-meg)) OF EncodedCharacterString OPTIONAL,
+              other-strings
+                SEQUENCE (SIZE (1..one-meg)) OF EncodedCharacterString OPTIONAL,
+              element-name-surrogates
+                SEQUENCE (SIZE (1..one-meg)) OF NameSurrogate OPTIONAL,
+              attribute-name-surrogates
+                SEQUENCE (SIZE (1..one-meg)) OF NameSurrogate OPTIONAL
+  }
+  (CONSTRAINED BY {
+     -- If the initial-vocabulary component is present, at least
+     -- one of its components shall be present --}) OPTIONAL,
+  notations                  SEQUENCE (SIZE (1..MAX)) OF Notation OPTIONAL,
+  unparsed-entities
+    SEQUENCE (SIZE (1..MAX)) OF UnparsedEntity OPTIONAL,
+  character-encoding-scheme  NonEmptyOctetString OPTIONAL,
+  standalone                 BOOLEAN OPTIONAL,
+  version                    NonIdentifyingStringOrIndex OPTIONAL-- OTHER STRING category --,
+  children
+    SEQUENCE (SIZE (0..MAX)) OF
+      CHOICE {element                    Element,
+              processing-instruction     ProcessingInstruction,
+              comment                    Comment,
+              document-type-declaration  DocumentTypeDeclaration}
+}
+
+one-meg INTEGER ::= 1048576 -- Two to the power 20
+
+four-gig INTEGER ::= 4294967296 -- Two to the power 32
+
+NonEmptyOctetString ::= OCTET STRING(SIZE (1..four-gig))
+
+URI ::= NonEmptyOctetString
+
+Element ::= SEQUENCE {
+  namespace-attributes  SEQUENCE (SIZE (1..MAX)) OF NamespaceAttribute OPTIONAL,
+  qualified-name        QualifiedNameOrIndex-- ELEMENT NAME category --,
+  attributes            SEQUENCE (SIZE (1..MAX)) OF Attribute OPTIONAL,
+  children
+    SEQUENCE (SIZE (0..MAX)) OF
+      CHOICE {element                      Element,
+              processing-instruction       ProcessingInstruction,
+              unexpanded-entity-reference  UnexpandedEntityReference,
+              character-chunk              CharacterChunk,
+              comment                      Comment}
+}
+
+Attribute ::= SEQUENCE {
+  qualified-name    QualifiedNameOrIndex-- ATTRIBUTE NAME category --,
+  normalized-value  NonIdentifyingStringOrIndex
+} -- ATTRIBUTE VALUE category 
+
+ProcessingInstruction ::= SEQUENCE {
+  target   IdentifyingStringOrIndex-- OTHER NCNAME category --,
+  content  NonIdentifyingStringOrIndex
+} -- OTHER STRING category 
+
+UnexpandedEntityReference ::= SEQUENCE {
+  name               IdentifyingStringOrIndex-- OTHER NCNAME category --,
+  system-identifier  IdentifyingStringOrIndex OPTIONAL-- OTHER URI category --,
+  public-identifier  IdentifyingStringOrIndex OPTIONAL
+} -- OTHER URI category 
+
+CharacterChunk ::= SEQUENCE {character-codes  NonIdentifyingStringOrIndex
+} -- CONTENT CHARACTER CHUNK category 
+
+Comment ::= SEQUENCE {content  NonIdentifyingStringOrIndex
+} -- OTHER STRING category 
+
+DocumentTypeDeclaration ::= SEQUENCE {
+  system-identifier  IdentifyingStringOrIndex OPTIONAL-- OTHER URI category --,
+  public-identifier  IdentifyingStringOrIndex OPTIONAL-- OTHER URI category --,
+  children           SEQUENCE (SIZE (0..MAX)) OF ProcessingInstruction
+}
+
+UnparsedEntity ::= SEQUENCE {
+  name               IdentifyingStringOrIndex-- OTHER NCNAME category --,
+  system-identifier  IdentifyingStringOrIndex-- OTHER URI category --,
+  public-identifier  IdentifyingStringOrIndex OPTIONAL-- OTHER URI category --,
+  notation-name      IdentifyingStringOrIndex
+} -- OTHER NCNAME category 
+
+Notation ::= SEQUENCE {
+  name               IdentifyingStringOrIndex-- OTHER NCNAME category --,
+  system-identifier  IdentifyingStringOrIndex OPTIONAL-- OTHER URI category --,
+  public-identifier  IdentifyingStringOrIndex OPTIONAL
+} -- OTHER URI category 
+
+NamespaceAttribute ::= SEQUENCE {
+  prefix          IdentifyingStringOrIndex OPTIONAL-- PREFIX category --,
+  namespace-name  IdentifyingStringOrIndex OPTIONAL
+} -- NAMESPACE NAME category 
+
+IdentifyingStringOrIndex ::= CHOICE {
+  literal-character-string  NonEmptyOctetString,
+  string-index              INTEGER(1..one-meg)
+}
+
+NonIdentifyingStringOrIndex ::= CHOICE {
+  literal-character-string
+    SEQUENCE {add-to-table      BOOLEAN,
+              character-string  EncodedCharacterString},
+  string-index              INTEGER(0..one-meg)
+}
+
+NameSurrogate ::= SEQUENCE {
+  prefix-string-index          INTEGER(1..one-meg) OPTIONAL,
+  namespace-name-string-index  INTEGER(1..one-meg) OPTIONAL,
+  local-name-string-index      INTEGER(1..one-meg)
+}(CONSTRAINED BY {}) -- prefix-string-index shall only be present if
+ 
+
+-- namespace-name-string-index is present 
+QualifiedNameOrIndex ::= CHOICE {
+  literal-qualified-name
+    SEQUENCE {prefix          IdentifyingStringOrIndex OPTIONAL-- PREFIX category --,
+              namespace-name  IdentifyingStringOrIndex OPTIONAL-- NAMESPACE NAME category --,
+              local-name      IdentifyingStringOrIndex}, -- LOCAL NAME category 
+  name-surrogate-index    INTEGER(1..one-meg)
+}
+
+EncodedCharacterString ::= SEQUENCE {
+  encoding-format
+    CHOICE {utf-8                NULL,
+            utf-16               NULL,
+            restricted-alphabet  INTEGER(1..256),
+            encoding-algorithm   INTEGER(1..256)},
+  octets           NonEmptyOctetString
+}
+
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

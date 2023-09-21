@@ -1,0 +1,523 @@
+
+
+
+
+
+
+
+-- Module ASN1LLCTTypeModule (Q.835:03/1999)
+-- See also ITU-T Q.835 (1999) Cor. 1 (03/2001)
+-- See also the index of all ASN.1 assignments needed in this document
+
+ASN1LLCTTypeModule {itu-t(0) recommendation(0) q(17) q835(835)
+  informationModel(0) asn1Module(2) asn1TypeModule(0)} DEFINITIONS IMPLICIT
+TAGS ::=
+BEGIN -- EXPORTS everything
+
+IMPORTS
+  -- ITU-T Recommendation M.3100
+  NameType
+    FROM ASN1DefinedTypesModule {itu-t recommendation m gnm(3100)
+      informationModel(0) asn1Module(2) asn1DefinedTypesModule(0)}
+  -- ITU-T Recommendation Q.824.5
+  EnvelopeFunctionAddress, Layer3PortAddress
+    FROM ASN1CMLETypeModule {itu-t(0) recommendation(0) q(17) ca(824) 
+      dot(127) v5interface(5) informationModel(0) asn1Modules(2)
+      cAV5LEModule(0)}
+  -- ITU-T Recommendation X.711
+  ObjectInstance
+    FROM CMIP-1 {joint-iso-itu-t ms(9) cmip(1) modules(0) protocol(3)}
+  -- ITU-T Recommendation Q.824.0
+  E164DN
+    FROM CACommonModule {itu-t(0) recommendation(0) q(17) ca(824) dot(127)
+      common(0) informationModel(0) asn1Modules(2) cACommonModule(0)}
+  -- ITU-T Recommendation X.745
+  ActualStartTime, ActualStopTime, EndTime, TestOutcome,
+    TestRequestControlledInfo, TestRequestUncontrolledInfo,
+    TestRequestUncontrolledResult, TestResultInfo, Timespec
+    FROM Test-ASN1Module {joint-iso-itu-t ms(9) function(2) part12(12)
+      asn1Module(2) 0}
+  -- ITU-T Recommendation X.737
+  ErrorRatioReportType, LoopbackTestResult, TestPattern, TestConditions
+    FROM TestCategories-ASN1Module {joint-iso-ccitt ms(9) function(2)
+      part14(14) asn1Module(2) 1};
+
+q835InformationModel OBJECT IDENTIFIER ::=
+  {itu-t(0) recommendation(0) q(17) q835(835) informationModel(0)}
+
+q835ManagedObjectClass OBJECT IDENTIFIER ::=
+  {q835InformationModel managedObjectClass(3)}
+
+q835Package OBJECT IDENTIFIER ::= {q835InformationModel package(4)}
+
+q835Parameter OBJECT IDENTIFIER ::= {q835InformationModel parameter(5)}
+
+q835NameBinding OBJECT IDENTIFIER ::= {q835InformationModel nameBinding(6)}
+
+q835Attribute OBJECT IDENTIFIER ::= {q835InformationModel attribute(7)}
+
+q835Action OBJECT IDENTIFIER ::= {q835InformationModel action(9)}
+
+q835Notification OBJECT IDENTIFIER ::= {q835InformationModel notification(10)}
+
+AccessResult ::=
+  SET OF
+    SEQUENCE {mORT              [0]  MORT,
+              realStartTime     [1]  ActualStartTime OPTIONAL,
+              realStopTime      [2]  ActualStopTime OPTIONAL,
+              accessTestResult  [3]  AccessTestResult}
+
+AccessTestResult ::= ENUMERATED {
+  connectionEstablished(0), accessFailed(1), busyAccessAborted(2),
+  dangerousVoltage(3), testMechanismBusy(4), customerOverrideAborted(5)
+}
+
+AcVoltage ::= INTEGER(0..250000) -- milli Volt
+                     
+
+AcVoltageThreshold ::= SEQUENCE {
+  acaEarth  [1]  AcVoltage OPTIONAL,
+  acbEarth  [2]  AcVoltage OPTIONAL,
+  acab      [3]  AcVoltage OPTIONAL
+}
+
+AnRingTest ::= SET OF UserPort
+
+Between ::=
+  SET OF SEQUENCE {between    BetweenType,
+                   threshold  Threshold OPTIONAL}
+
+BetweenType ::= ENUMERATED {
+  aTob(0), aToEarth(1), bToEarth(2), aToBattery(3), bToBattery(4),
+  aTobReverse(5), aToEarthReverse(6), bToEarthReverse(7), aToBatteryReverse(8),
+  bToBatteryReverse(9)}
+
+Capacitance ::= INTEGER(0..10000) -- nano Farad
+                       
+
+CapacitanceThreshold ::= SEQUENCE {
+  caEarth        [1]  Capacitance OPTIONAL,
+  cbEarth        [2]  Capacitance OPTIONAL,
+  cabUpperLimit  [3]  Capacitance OPTIONAL,
+  cabLowerLimit  [4]  Capacitance OPTIONAL
+}
+
+DcVoltage ::= INTEGER(0..150000) -- milli Volt
+                     
+
+DcVoltageThreshold ::= SEQUENCE {
+  dcaEarth  [1]  DcVoltage OPTIONAL,
+  dcbEarth  [2]  DcVoltage OPTIONAL,
+  dcab      [3]  DcVoltage OPTIONAL
+}
+
+defaultAcVoltageThreshold AcVoltageThreshold ::=
+  {acaEarth 250000, acbEarth 250000, acab 250000}
+
+defaultCapacitanceThreshold CapacitanceThreshold ::=
+  {caEarth 0, cbEarth 0, cabUpperLimit 10000, cabLowerLimit 0}
+
+defaultDcVoltageThreshold DcVoltageThreshold ::=
+  {dcaEarth 150000, dcbEarth 150000, dcab 150000}
+
+defaultDialSpeedThreshold DialSpeedThreshold ::=
+  {dialSpeedUpperLimit 255, dialSpeedLowerLimit 0}
+
+defaultIsdnQuickTestToBePerformed IsdnQuickTestToBePerformed ::= functionTest
+
+defaultMtaTimeoutPeriod MtaTimeoutPeriod ::= minutes:5
+
+defaultPulseNoPulseRatio PulseNoPulseRatio ::=
+  {pulseNoPulseRatioUpperLimit 100, pulseNoPulseRatioLowerLimit 0}
+
+defaultResistanceThreshold ResistanceThreshold ::=
+  {raEarth milliOhm:0, rbEarth milliOhm:0, rabUpperLimit kiloOhm:100000,
+    rabLowerLimit milliOhm:0, rLoop milliOhm:0, rEarth milliOhm:0}
+
+DialledDigits ::=
+  IA5String
+    (FROM ("0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "*" |
+           "#"))
+
+DialledDigitTestResult ::= SEQUENCE OF ReceivedDigit
+
+DialledDigitTestUncontrolledRequestType ::= SEQUENCE {
+  numberOfDigits  [1]  NumberOfDigits,
+  testConditions  [2]  TestConditions OPTIONAL,
+  waitTime        [3]  INTEGER OPTIONAL
+}
+
+-- waitTime has importance only if TestConditions are set to waitIfBusy.
+DialSpeed ::= INTEGER(0..255) -- x 0.1 Hz
+                     
+
+DialSpeedThreshold ::= SEQUENCE {
+  dialSpeedUpperLimit  [1]  DialSpeed OPTIONAL,
+  dialSpeedLowerLimit  [2]  DialSpeed OPTIONAL
+}
+
+DialToneTestResult ::=
+  SET OF
+    SEQUENCE {mORT           [0]  MORT,
+              realStartTime  [1]  ActualStartTime OPTIONAL,
+              realStopTime   [2]  ActualStopTime OPTIONAL,
+              result         [3]  Result}
+
+DialToneTestUncontrolledRequestType ::= SEQUENCE {
+  offHookSimulation    [0]  OffHookSimulation,
+  requestedResultType  [1]  RequestedResultType,
+  iterations           [2]  Iterations,
+  testConditions       [3]  TestConditions OPTIONAL,
+  waitTime             [4]  INTEGER OPTIONAL
+}
+
+-- waitTime has importance only if TestConditions are set to waitIfBusy.
+DigitComb ::=
+  IA5String
+    (FROM ("0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "A" |
+           "B" | "C" | "D" | "E" | "F"))
+
+ElectricalMeasurementTestResult ::=
+  SET OF
+    SEQUENCE {mORT                  [0]  MORT,
+              realStartTime         [1]  ActualStartTime OPTIONAL,
+              realStopTime          [2]  ActualStopTime OPTIONAL,
+              foreignAcVoltage      [3]  Reading OPTIONAL,
+              foreignDcVoltage      [4]  Reading OPTIONAL,
+              foreignACCurrent      [5]  Reading OPTIONAL,
+              foreignDCCurrent      [6]  Reading OPTIONAL,
+              resistanceInsulation  [7]  Reading OPTIONAL,
+              resistanceLoop        [8]  Reading OPTIONAL,
+              capacitance           [9]  Reading OPTIONAL,
+              termination           [10]  Termination OPTIONAL,
+              feedingVoltage        [11]  Reading OPTIONAL,
+              feedingCurrent        [12]  Reading OPTIONAL,
+              testOutcome           [13]  TestOutcome OPTIONAL}
+
+ElectricalMeasurementTests ::= SEQUENCE {
+  foreignAcVoltage  [0]  Between OPTIONAL,
+  foreignDcVoltage  [1]  Between OPTIONAL,
+  foreignACCurrent  [2]  Between OPTIONAL,
+  foreignDCCurrent  [3]  Between OPTIONAL,
+  capacitance       [4]  Between OPTIONAL,
+  resistance        [5]  ResistanceBetween OPTIONAL,
+  termination       [6]  NULL OPTIONAL,
+  feedingVoltage    [7]  Between OPTIONAL,
+  feedingCurrent    [8]  Between OPTIONAL,
+  ring              [9]  Between OPTIONAL
+}
+
+ElectricalMeasurementTestToBePerformed ::= CHOICE {
+  full                        NULL,
+  electricalMeasurementTests  ElectricalMeasurementTests
+}
+
+ElectricalMeasurementTestUncontrolledRequestType ::= SEQUENCE {
+  electrMeasToBePerformed  [0]  ElectricalMeasurementTestToBePerformed,
+  requestedResultType      [1]  RequestedResultType,
+  testConditions           [2]  TestConditions OPTIONAL,
+  waitTime                 [3]  INTEGER OPTIONAL
+}
+
+-- waitTime has importance only if TestConditions are set to waitIfBusy.
+FunctionTestResult ::= ENUMERATED {
+  noFailure(0), activationLayer1Failure(1), ntLoopFailure(2), leLoopFailure(3),
+  dtrLoopFailure(4), shortCircuit(5), neError(6), alarmCheckFailure(7),
+  leLoopAndPowerFeedingFailure(8)}
+
+GenericTestResult ::=
+  SET OF
+    SEQUENCE {mORT           [0]  MORT,
+              realStartTime  [1]  ActualStartTime OPTIONAL,
+              realStopTime   [2]  ActualStopTime OPTIONAL,
+              testOutcome    [3]  TestOutcome}
+
+GenericUncontrolledRequestType ::= SEQUENCE {
+  testConditions  [1]  TestConditions OPTIONAL,
+  waitTime        [2]  INTEGER OPTIONAL
+}
+
+-- waitTime has importance only if TestConditions are set to waitIfBusy.
+InvalidLoopbackRequest ::= ENUMERATED {
+  loopExists(0), loopNotSupported(1), loopTimeTooLarge(2)}
+
+IsdnQuickTestResult ::=
+  SET OF
+    SEQUENCE {mORT              [0]  MORT,
+              realStartTime     [1]  ActualStartTime OPTIONAL,
+              realStopTime      [2]  ActualStopTime OPTIONAL,
+              layer1Activation  [3]  Layer1ActivationResult OPTIONAL,
+              loopbackTest      [4]  LoopbackQuickTestResult OPTIONAL,
+              powerFeedingTest  [5]  PowerFeedingTestResult OPTIONAL,
+              functionTest      [6]  FunctionTestResult OPTIONAL,
+              testOutcome       [7]  TestOutcome OPTIONAL}
+
+IsdnQuickTestToBePerformed ::= ENUMERATED {
+  layer1Activation(0), loopbackTest(1), powerFeedingTest(2), functionTest(3)
+}
+
+IsdnQuickTestUncontrolledRequestType ::= SEQUENCE {
+  isdnQuickTestToBePerformed  [1]  IsdnQuickTestToBePerformed,
+  requestedResultType         [2]  RequestedResultType,
+  testConditions              [3]  TestConditions OPTIONAL,
+  waitTime                    [4]  INTEGER OPTIONAL
+}
+
+-- waitTime has importance only if TestConditions are set to waitIfBusy.
+Iterations ::= INTEGER
+
+Layer1ActivationResult ::= ENUMERATED {noFailure(0), activationLayer1Failure(1)
+}
+
+LoopbackChannel ::= ENUMERATED {b1(0), b2(1), b1b2d(2), pra(3)}
+
+LoopbackDuration ::= Timespec
+
+LoopbackPosition ::= ENUMERATED {
+  noLoopback(0), ltNetwork(1), nt1Network(2), repNetwork(3)}
+
+LoopbackQuickTestResult ::= ENUMERATED {
+  noFailure(0), ntLoopFailure(1), leLoopFailure(2)}
+
+LoopbackResult ::= ENUMERATED {override(0)}
+
+-- Further values for this syntax are for further study.
+LoopbackSelectRequestInfo ::= SEQUENCE {
+  loopbackPosition  LoopbackPosition,
+  loopbackTime      LoopbackDuration,
+  loopbackChannel   LoopbackChannel OPTIONAL
+}
+
+LoopbackSelectRequestResult ::= ENUMERATED {
+  loopbackSet(1), loopNotSupported(2), loopbackTimeTooLarge(3)}
+
+LoopTestResult ::=
+  SET OF
+    SEQUENCE {mORT            [0]  MORT,
+              realStartTime   [1]  ActualStartTime OPTIONAL,
+              realStopTime    [2]  ActualStopTime OPTIONAL,
+              testOutcome     [3]  TestOutcome,
+              loopbackResult  [4]  LoopbackResult OPTIONAL}
+
+LoopbackTestUncontrolledRequestType ::= SEQUENCE {
+  loopbackDuration  [1]  LoopbackDuration,
+  loopbackPosition  [2]  LoopbackPosition,
+  loopbackChannel   [3]  LoopbackChannel,
+  testPattern       [4]  TestPattern OPTIONAL,
+  errorRatioReport  [5]  ErrorRatioReportType OPTIONAL,
+  testConditions    [6]  TestConditions OPTIONAL,
+  waitTime          [7]  INTEGER OPTIONAL
+}
+
+-- waitTime has importance only if TestConditions are set to waitIfBusy.
+LoopbackTestUncontrolledResult ::=
+  LoopbackTestResult
+
+MonitorSpeak ::= ENUMERATED {
+  monitorWithMark(0), speakAndMonitor(1), monitorWithOutMark(2),
+  existingConnection(3)}
+
+MORT ::= ObjectInstance
+
+MtaMsg ::= ENUMERATED {
+  error(0), analogueFree(1), analogueOccupied(2), analogueOccupiedNotUsed(3),
+  analogueBlocked(4), testing(5), mTAoccupied(6), noAccess-noSub(7),
+  noAccess-hdh(8), noAccess-aconc(9), notAccessible(10), noAccess-nuc(11),
+  isdnAccess(12), noAccess-any(13)}
+
+MtaTimeoutPeriod ::= Timespec
+
+NotDigit ::= ENUMERATED {recallButton(0), onhook(1), wrongSignal(2), offhook(3)
+}
+
+Null ::= NULL
+
+NumberOfDigits ::= INTEGER
+
+NumberOfMTA ::= INTEGER
+
+OffHook ::= SEQUENCE {
+  port           [0]  UserPort,
+  serviceNumber  [1]  DigitComb
+}
+
+OffHookSimulation ::= ENUMERATED {loopCalling(0), earthCalling(1)}
+
+OnHook ::= SEQUENCE {
+  port        [0]  UserPort,
+  dtmfResult  [1]  TestOutcome OPTIONAL
+}
+
+PatternTestResult ::=
+  SET OF
+    SEQUENCE {mORT                [0]  MORT,
+              realStartTime       [1]  ActualStartTime OPTIONAL,
+              realStopTime        [2]  ActualStopTime OPTIONAL,
+              testOutcome         [3]  TestOutcome,
+              loopbackTestResult  [4]  LoopbackTestResult OPTIONAL}
+
+PowerFeedingTestResult ::= ENUMERATED {
+  noFailure(0), shortCircuit(1), neError(2)}
+
+PulseNoPulseRatio ::= SEQUENCE {
+  pulseNoPulseRatioUpperLimit  [1]  Ratio OPTIONAL,
+  pulseNoPulseRatioLowerLimit  [2]  Ratio OPTIONAL
+}
+
+Range ::= INTEGER
+
+Ratio ::= INTEGER(0..100) -- percentage
+                 
+
+Reading ::= SEQUENCE {
+  aTob               [0]  Result OPTIONAL,
+  aToEarth           [1]  Result OPTIONAL,
+  bToEarth           [2]  Result OPTIONAL,
+  aToBattery         [3]  Result OPTIONAL,
+  bToBattery         [4]  Result OPTIONAL,
+  bToEarthReverse    [5]  Result OPTIONAL,
+  aToEarthReverse    [6]  Result OPTIONAL,
+  bToa               [7]  Result OPTIONAL,
+  aToBatteryReverse  [8]  Result OPTIONAL,
+  bToBatteryReverse  [9]  Result OPTIONAL
+}
+
+ReceivedDigit ::= SEQUENCE {
+  digit
+    [0]  CHOICE {normalDigits  [0]  DialledDigits,
+                 notDigit      [8]  NotDigit},
+  lowLevel       [1]  REAL OPTIONAL,
+  highLevel      [2]  REAL OPTIONAL,
+  lowFrequency   [3]  REAL OPTIONAL,
+  highFrequency  [4]  REAL OPTIONAL,
+  pulseLength    [5]  REAL OPTIONAL,
+  makeDuration   [6]  REAL OPTIONAL,
+  breakDuration  [7]  REAL OPTIONAL
+}
+
+RequestedResultType ::= SEQUENCE {
+  passed     BOOLEAN,
+  notPassed  BOOLEAN,
+  value      BOOLEAN
+}
+
+ResistanceBetween ::= CHOICE {
+  insulation  [0]  Between,
+  loop        [1]  Between
+}
+
+Resistance ::= CHOICE {
+  milliOhm  [0]  INTEGER(0..100000),
+  ohm       [1]  INTEGER(0..100000),
+  kiloOhm   [2]  INTEGER(0..100000)
+}
+
+ResistanceThreshold ::= SEQUENCE {
+  raEarth        [1]  Resistance OPTIONAL,
+  rbEarth        [2]  Resistance OPTIONAL,
+  rabUpperLimit  [3]  Resistance OPTIONAL,
+  rabLowerLimit  [4]  Resistance OPTIONAL,
+  rLoop          [5]  Resistance OPTIONAL,
+  rEarth         [6]  Resistance OPTIONAL
+}
+
+Result ::= SEQUENCE {
+  testOutcome  TestOutcome OPTIONAL,
+  value        REAL OPTIONAL
+}
+
+ResultOfTestToLineCircuit ::= SEQUENCE {
+  feedingVoltage         [0]  Result OPTIONAL,
+  feedingCurrent         [1]  Result OPTIONAL,
+  loopRingTripDetection  [2]  Result OPTIONAL,
+  ringingCurrent         [3]  Result OPTIONAL,
+  privateMeterPulses     [4]  Result OPTIONAL,
+  codecTesting           [5]  Result OPTIONAL,
+  digitReception         [6]  Result OPTIONAL
+}
+
+Results ::= SET OF SEQUENCE {port    [0]  UserPort,
+                             result  [1]  TestOutcome}
+
+Ring ::= CHOICE {
+  timedRing       [0]  INTEGER, -- number of seconds
+  continuousRing  [1]  NULL
+}
+
+RingBackNo ::= E164DN
+
+SpmPulses ::= INTEGER(0..99)
+
+SpmPulsesTestUncontrolledRequestType ::= SEQUENCE {
+  numberOfPulses  [1]  SpmPulses,
+  testConditions  [2]  TestConditions OPTIONAL,
+  waitTime        [3]  INTEGER OPTIONAL
+}
+
+-- waitTime has importance only if TestConditions are set to waitIfBusy.
+Termination ::= ENUMERATED {
+  nTEAndCPE(0), nTE(1), leakageCurrent(2), noTermination(3), offHook(4),
+  nonStandardTermination(5)}
+
+TestsPassed ::= ENUMERATED {timesTaken(0)}
+
+TestToLineCircuitResult ::=
+  SET OF
+    SEQUENCE {mORT                       [0]  MORT,
+              realStartTime              [1]  ActualStartTime OPTIONAL,
+              realStopTime               [2]  ActualStopTime OPTIONAL,
+              testOutcome                [3]  TestOutcome,
+              resultOfTestToLineCircuit
+                [4]  ResultOfTestToLineCircuit OPTIONAL}
+
+Threshold ::= SEQUENCE {min  [0]  REAL OPTIONAL,
+                        max  [1]  REAL OPTIONAL
+}
+
+TypeOfLine ::= ENUMERATED {inbound(0), outbound(1), bridged(2)}
+
+UserPort ::= CHOICE {
+  pstn  [0]  Layer3PortAddress,
+  isdn  [1]  EnvelopeFunctionAddress
+}
+
+VoiceAccessTestResult ::= ENUMERATED {
+  connectionEstablished(0), ringbackFailed(3), noExistingConnection(6)
+}
+
+WaitTime ::= EndTime
+
+-- default value definitions
+defaultBusyLCWaitTime EndTime ::=
+  relative:minutes:5
+
+defaultElectricalMeasurementTestToBePerformed
+  ElectricalMeasurementTestToBePerformed ::=
+  full:NULL
+
+defaultIterations Iterations ::= 1
+
+defaultLoopbackChannel LoopbackChannel ::= b1b2d
+
+defaultLoopbackDuration LoopbackDuration ::= seconds:500
+
+defaultLoopbackPosition LoopbackPosition ::= noLoopback
+
+defaultMonitorSpeak MonitorSpeak ::= monitorWithMark
+
+defaultNumberOfDigits NumberOfDigits ::= 1
+
+defaultRequestedResultType RequestedResultType ::=
+  {passed FALSE, notPassed TRUE, value FALSE}
+
+defaultRing Ring ::= timedRing:3
+
+defaultSpmPulses SpmPulses ::= 1
+
+defaultTestConditions TestConditions ::=
+  {first rejectIfBusy, second noCustomerOverrideTest}
+
+END -- of ASN1LCTTypeModule
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

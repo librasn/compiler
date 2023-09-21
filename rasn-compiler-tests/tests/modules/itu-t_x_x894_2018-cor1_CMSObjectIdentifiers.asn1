@@ -1,0 +1,99 @@
+-- ASN module extracted from ITU-T X.894 (10/2018)-- 2 Module CMSObjectIdentifiers
+CMSObjectIdentifiers {iso(1) identified-organization(3) tc68(133) country(16) x9(840)
+x9Standards(9) x9-73(73) module(0) oids(1) v2009(1) }
+DEFINITIONS EXPLICIT TAGS ::= BEGIN
+-- EXPORTS All --
+-- IMPORTS All --
+OID ::= OBJECT IDENTIFIER -- Alias
+-- Content types, from RSA PKCS #7 and IETF S/MIME
+pkcs7 OID ::= { iso(1) member-body(2) us(840) rsadsi(113549) pkcs(1) pkcs7(7) }
+id-data OID ::= { pkcs7 data(1) }
+id-signedData OID ::= { pkcs7 signedData(2) }
+id-envelopedData OID ::= { pkcs7 envelopedData (3) }
+id-digestedData OID ::= { pkcs7 digestedData(5) }
+id-encryptedData OID ::= { pkcs7 encryptedData (6) }
+id-namedkeyencryptedData OID ::= { iso(1) member-body(2) us(840)
+x973(10060) types(1) namedKeyEncryptedData(2) }
+-- Signcryption object identifiers --
+id-signcryptedData OID ::= { iso(1) member-body(2) us(840)
+x973(10060) types(1) signcryptedData(3)}
+-- The signcryption-manifest arc is the root identifier for all --
+-- SigncryptedData manifest types definied in this standard. --
+signcryption-manifest OID ::= { id-signcryptedData manifest(1) }
+-- A value of xPath identifies the XPathSet manifest type. --
+xPath OID ::= { signcryption-manifest xPath(0) }
+pkcs9 OID ::= { iso(1) member-body(2) us(840) rsadsi(113549) pkcs(1) pkcs9(9) }
+smime OID ::= { pkcs9 smime(16) }
+id-ct-authData OID ::= { smime ct(1) 2 }
+-- Signed attributes, from RSA PKCS #9, IETF S/MIME, and X9.73 --
+id-contentType OID ::= { pkcs9 contentType(3) }
+id-messageDigest OID ::= { pkcs9 messageDigest(4) }
+-- Authenticated attribute, from IETF S/MIME --
+-- CKM key management object identifiers --
+id-ckm-recip-info OID ::= { iso member-body(2) us(840) x973(10060) km(2) 1 }
+id-ckm-recip-info2 OID ::= { iso member-body(2) us(840) x973(10060) km(2) 2}
+id-ckm-algorithms OID ::= { iso member-body(2) us(840) x973(10060) algorithms(3) }
+id-ckm-symmetric OID ::= { id-ckm-algorithms symmetric(1) }
+id-ckm-key-transport OID ::= { id-ckm-algorithms key-transport(2) }
+id-ckm-key-agree-multiple-encrypt OID ::= {
+id-ckm-algorithms key-agree-multiple-encrypt(3) }
+id-ckm-key-agree-hash OID ::= { id-ckm-algorithms key-agree-hash(4) }
+id-ckm-header OID ::= { iso member-body(2) us(840) x973(10060) header(4) }
+ckm-CMS OID ::= {
+joint-iso-itu-t(2) international-organizations(23) set(42) vendors(9) griffin(10) business(3) tecsec(0) cms(2) header(2) }
+id-Ivec OID ::= { ckm-CMS 1 }
+id-Secryptm OID ::= { ckm-CMS 2 }
+id-Filelength OID ::= { ckm-CMS 3 }
+id-Filehash OID ::= { ckm-CMS 4 }
+id-Filename OID ::= { ckm-CMS 5 }
+id-Domainlist OID ::= { ckm-CMS 6 }
+id-Accessgrouplist OID ::= { ckm-CMS 7 }
+id-Issuer OID ::= { ckm-CMS 8 }
+id-Credentiallist OID ::= { ckm-CMS 9 }
+id-SignKey OID ::= { ckm-CMS 10 }
+id-KeyUsage OID ::= { ckm-CMS 11 }
+id-BitSpray OID ::= { ckm-CMS 12 }
+id-BitSprayMeta OID ::= { ckm-CMS 12 1 }
+id-BitSprayShares OID ::= { ckm-CMS 12 2 }
+id-FavoriteName OID ::= { ckm-CMS 13 }
+id-DataSignature OID ::= { ckm-CMS 14 }
+id-BlockSize OID ::= { ckm-CMS 15 }
+id-DataFormat OID ::= { ckm-CMS 16 }
+-- Tokenization object identifiers --
+id-tokenization-manifest OID ::= { iso(1) identified-organization(3) tc68(133)
+country(16) x9(840) x9Standards(9) x9-73(73) tokenization(3) }
+id-tokenizedParts OID ::= { id-tokenization-manifest tokenizedParts(0) }
+id-XPathTokensSet OID ::= { id-tokenization-manifest xPathTokensSet(1) }
+-- Signcryption processing mode object identifiers --
+signcryption OID ::= { iso(1) identified-organization(3) tc68(133)
+country(16) x9(840) x9Standards(9) x9-73(73) signcryption(4) }
+signcryption-mode OID ::= { signcryption modes(1) }
+signcrypted-content OID ::= { signcryption-mode content(1) }
+signcrypted-attributes OID ::= { signcryption-mode attributes(2) }
+signcrypted-components OID ::= { signcryption-mode components(3) }
+signcrypted-envelope OID ::= { signcryption-mode enveloped(4) }
+-- Signcryption object identifiers --
+id-signcryptedParts OID ::= { signcryption-manifest signcryptedParts(1) }
+id-XPathSigncryptionSet OID ::= { signcryption-manifest xPathSigncryptionSet(2) }
+-- X9.73 attribute object identifiers --
+id-cms-attributes OID ::= { iso(1) identified-organization(3) tc68(133)
+country(16) x9(840) x9Standards(9) x9-73(73) attributes(1) }
+xmlMarkup OID ::= { id-cms-attributes xml(0) }
+id-cms-SAML OID ::= { xmlMarkup saml(1) }
+id-cms-XKMS OID ::= { xmlMarkup xkms(2) }
+id-messageComponents OID ::= { xmlMarkup mc(3) }
+-- X9.73 XML namespace prefix values --
+id-cms-namespaces OID ::= { iso(1) identified-organization(3) tc68(133)
+country(16) x9(840) x9Standards(9) x9-73(73) namespaces(2) }
+cms OID ::= { iso(1) identified-organization(3) tc68(133) country(16) x9(840)
+x9Standards(9) x9-73(73) namespaces(2) cms(0) }
+-- RFC 3211 password-based encryption --
+id-alg-PWRI-KEK OBJECT IDENTIFIER ::= { iso(1) member-body(2)
+us(840) rsadsi(113549) pkcs(1) pkcs-9(9) smime(16) alg(3) 9 }
+-- Database Bncryption Key Management --
+dbEKM OID ::= {joint-iso-itu-t(2) country(16) us(840) organization(1) wfbna(114171)
+lobs(4) eisArchitecture(1) techniques(2) dbEKM(0)}
+id-SimpleString OID ::= { dbEKM ss(1) }
+id-UniqueIdentifier OID ::= { dbEKM uid(2) }
+id-dbekm-recip-info OID ::= { iso member-body(2) us(840) x973(10060) km(2) 3 }
+END -- CMSObjectIdentifiers --

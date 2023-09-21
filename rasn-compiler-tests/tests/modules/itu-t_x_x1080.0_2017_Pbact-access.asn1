@@ -1,0 +1,344 @@
+Pbact-access.asn (ITU-T X.1080.0 (03/2017))-- ASN module extracted from ITU-T X.1080.0 (03/2017)Pbact-access { joint-iso-itu-t(2) telebiometrics(42) e-health-protocol(3) modules(0) pbact-access(6) version1(1) }
+DEFINITIONS IMPLICIT TAGS ::=
+BEGIN
+
+-- EXPORTS All 
+
+IMPORTS
+
+  -- from Rec. ITU-T X.501 | ISO/IEC 9594-2
+
+  ATTRIBUTE, Attribute{}, AttributeType, AttributeTypeAndValue,
+  AttributeValueAssertion, DistinguishedName, OBJECT-CLASS, SupportedAttributes
+    FROM InformationFramework {joint-iso-itu-t ds(5) module(1)
+         informationFramework(1) 8}
+
+  -- from Rec. ITU-T X.509 | ISO/IEC 9594-8
+
+  AttributeCertificate
+    FROM AttributeCertificateDefinitions {joint-iso-itu-t ds(5) module(1)
+         attributeCertificateDefinitions(32) 8}
+
+  CmsErrorCode, CONTENT-TYPE
+    FROM CmsTelebiometric { joint-iso-itu-t(2) telebiometrics(42) th(3) part0(0)
+         modules(0) cmsProfile(1) version1(1) } ;
+
+accessService ATTRIBUTE ::= {
+  WITH SYNTAX  AccessService
+  ID           id-at-accessService }
+
+AccessService ::= SEQUENCE {
+  serviceId          OBJECT IDENTIFIER,
+  objectDef          SEQUENCE SIZE (1..MAX) OF ObjectSel,
+  ... }
+
+ObjectSel ::= SEQUENCE {
+  objecClass         OBJECT-CLASS.&id,
+  objSelect          CHOICE { 
+    allObj        [0]  TargetSelect,
+    objectNames   [1]  SEQUENCE SIZE (1..MAX) OF SEQUENCE {
+      object             CHOICE {
+        names         [1]  SEQUENCE SIZE (1..MAX) OF DistinguishedName,
+        subtree       [2]  DistinguishedName,
+        ... },
+      select           TargetSelect,
+      ... },
+    ... },
+  ... }
+
+TargetSelect ::= SEQUENCE {
+  objOper   ObjectOperations OPTIONAL,
+  attrSel   AttributeSel     OPTIONAL,
+  ... }      
+  (WITH COMPONENTS {..., objOper  PRESENT } |
+   WITH COMPONENTS {..., attrSel  PRESENT } )
+
+
+AttributeSel ::= SEQUENCE {
+  attSelect           CHOICE {
+    allAttr        [0]  SEQUENCE {
+      attrOper1      [0]  AttributeOperations OPTIONAL,
+      ... },
+    attributes     [1]  SEQUENCE SIZE (1..MAX) OF SEQUENCE {
+      select              SEQUENCE SIZE (1..MAX) OF ATTRIBUTE.&id,
+      attrOper2      [0]  AttributeOperations OPTIONAL,
+      ... },
+    ... },
+  ... }
+
+ObjectOperations ::= BIT STRING {
+  read            (0),
+  add             (1),
+  modify          (2),
+  delete          (3),
+  rename          (4),
+  discloseOnError (5) }
+
+AttributeOperations ::= BIT STRING {
+  read             (0),
+  compare          (1),
+  add              (2),
+  modify           (3),
+  delete           (4),
+  deleteValue      (5),
+  replaceAttribute (6),
+  discloseOnError  (7) }
+
+PbactContentTypes CONTENT-TYPE ::= {
+    privAssignRequest |
+    privAssignResult |
+    readRequest |
+    readResult |
+    compareRequest |
+    compareResult |
+    addRequest |
+    addResult |
+    deleteRequest |
+    deleteResult |
+    modifyRequest |
+    modifyResult |
+    renameRequest |
+    renameResult,
+    ... }
+
+CommonReqComp ::= SEQUENCE {
+  attrCerts [31]  AttributeCertificates OPTIONAL,
+  serviceId [30]  OBJECT IDENTIFIER,
+  invokId   [29]  INTEGER,
+  ... }
+
+AttributeCertificates ::= SEQUENCE SIZE (1..MAX) OF AttributeCertificate
+
+readRequest CONTENT-TYPE ::= {
+              ReadRequest
+IDENTIFIED BY id-readRequest }
+
+ReadRequest ::= SEQUENCE {
+  COMPONENTS OF CommonReqComp,
+  object    [1] DistinguishedName,
+  selection [2] InformationSelection,
+  ... }
+
+readResult CONTENT-TYPE ::= {
+              ReadResult
+IDENTIFIED BY id-readResult }
+
+
+ReadResult ::= SEQUENCE {
+  object    DistinguishedName,
+  result    CHOICE {
+    success   [0] ObjectInformation,
+    failure   [1] AccessdErr,
+    ... },
+  ... }
+
+compareRequest CONTENT-TYPE ::= {
+              CompareRequest
+IDENTIFIED BY id-compareRequest }
+
+CompareRequest ::= SEQUENCE {
+  COMPONENTS OF CommonReqComp,
+  object    [1] DistinguishedName,
+  purported [2] AttributeValueAssertion,
+  ... }
+
+compareResult CONTENT-TYPE ::= {
+              CompareResult
+IDENTIFIED BY id-compareResult }
+
+CompareResult ::= SEQUENCE {
+  object    DistinguishedName,
+  result    CHOICE {
+    success   [0] CompareOK,
+    failure   [1] AccessdErr,
+    ... },
+  ... }
+
+CompareOK ::= SEQUENCE {
+  matched        [0] BOOLEAN,
+  matchedSubtype [1] BOOLEAN DEFAULT FALSE,
+  ... }
+
+addRequest CONTENT-TYPE ::= {
+              AddRequest
+IDENTIFIED BY id-addRequest }
+
+AddRequest ::= SEQUENCE {
+  COMPONENTS OF CommonReqComp,
+  object    [1] DistinguishedName,
+  attr      [2] SEQUENCE SIZE (1..MAX) OF Attribute {{SupportedAttributes}}
+                   OPTIONAL,
+  ... }
+
+addResult CONTENT-TYPE ::= {
+              AddResult
+IDENTIFIED BY id-addResult }
+
+AddResult ::= CHOICE {
+  success   [0] NULL,
+  failure   [1] AccessdErr,
+  ... }
+
+deleteRequest CONTENT-TYPE ::= {
+              DeleteRequest
+IDENTIFIED BY id-deleteRequest }
+
+DeleteRequest ::= SEQUENCE {
+  COMPONENTS OF CommonReqComp,
+  object        DistinguishedName,
+  ... }
+
+deleteResult CONTENT-TYPE ::= {
+              DeleteResult
+IDENTIFIED BY id-deleteResult }
+
+DeleteResult ::= CHOICE {
+  success   [0] NULL,
+  failure   [1] AccessdErr,
+  ... }
+
+modifyRequest CONTENT-TYPE ::= {
+              ModifyRequest
+IDENTIFIED BY id-modifyRequest }
+
+ModifyRequest ::= SEQUENCE {
+  COMPONENTS OF CommonReqComp,
+  object        DistinguishedName,
+  changes       SEQUENCE SIZE (1..MAX) OF ObjectModification,
+  select        InformationSelection,
+  ... }
+  
+ObjectModification ::= CHOICE {
+  addAttribute     [0]  Attribute{{SupportedAttributes}},
+  deleteAttribute  [1]  AttributeType,
+  addValues        [2]  Attribute{{SupportedAttributes}},
+  deleteValues     [3]  Attribute{{SupportedAttributes}},
+  replaceAttribute [4]  Attribute{{SupportedAttributes}},
+  ... }
+
+modifyResult CONTENT-TYPE ::= {
+              ModifyResult
+IDENTIFIED BY id-modifyResult }
+
+ModifyResult ::= SEQUENCE {
+  result    CHOICE {
+    success   [0] ObjectInformation,
+    failure   [1] AccessdErr,
+    ... },
+  ... }
+
+renameRequest CONTENT-TYPE ::= {
+              RenameRequest
+IDENTIFIED BY id-renameRequest }
+
+RenameRequest ::= SEQUENCE {
+  COMPONENTS OF CommonReqComp,
+  object        DistinguishedName,
+  new           DistinguishedName,
+  ... }
+
+renameResult CONTENT-TYPE ::= {
+              RenameResult
+IDENTIFIED BY id-renameResult }
+
+RenameResult ::= SEQUENCE {
+  result    CHOICE {
+    success   [0] NULL,
+    failure   [1] AccessdErr,
+    ... },
+  ... }
+
+AccessdErr ::= CHOICE {
+  cmsErr     [0] CmsErrorCode,
+  pbactErr   [1] PbactErr,
+  ... }
+
+InformationSelection ::= SEQUENCE {
+  attributes      CHOICE {
+    allAttributes   [0]  NULL,
+    select          [1]  SEQUENCE SIZE (1..MAX) OF ATTRIBUTE.&id,
+    ... },
+  infoTypes        ENUMERATED {
+    attributeTypesOnly     (0),
+    attributeTypeAndValue  (1),
+    ... },
+  ... }
+
+ObjectInformation ::= SEQUENCE {
+  name   DistinguishedName,
+  info   SET SIZE (1..MAX) OF Attribute {{SupportedAttributes}},
+  ... }
+
+PbactErr ::= ENUMERATED {
+  noSuchService,
+  invalidOperationForService,
+  insufficientAccessRigth,
+  noSuchObject,
+  noSuchAttribute,
+  noSuchAttributeValue,
+  objectAlreadyExists,
+  attributeAlreadyExists,
+  attributeValueAlreadyExists,
+  noInformation,
+  ... }
+
+privAssignRequest CONTENT-TYPE ::= {
+              PrivAssignRequest
+IDENTIFIED BY id-privAssignRequest }
+
+PrivAssignRequest ::= SEQUENCE {
+  attrCerts [1]  AttributeCertificates OPTIONAL,
+  ... }
+
+privAssignResult CONTENT-TYPE ::= {
+              PrivAssignResult
+IDENTIFIED BY id-privAssignResult }
+
+PrivAssignResult ::= SEQUENCE {
+  result  CHOICE {
+    success  NULL,
+    failure  PrivAssignErr },
+  ... }
+
+PrivAssignErr ::= CHOICE {
+  cmsErr     [0] CmsErrorCode,
+  assignErr  [1] AssignErr,
+  ... }
+
+AssignErr ::= ENUMERATED {
+  invalidAttributeCertificate (0),
+  ... }
+
+-- object identifier allocations
+
+-- top tree
+
+id-pbact             OBJECT IDENTIFIER ::= 
+  { joint-iso-itu-t(2) telebiometrics(42) e-health-protocol(3) pbact(20) }
+id-pbactmodule       OBJECT IDENTIFIER ::= { id-pbact module(0) }
+id-pbactCont         OBJECT IDENTIFIER ::= { id-pbact cmsCont(1) }
+id-pbactPrivAttr     OBJECT IDENTIFIER ::= { id-pbact prAttr(2) }
+
+-- Content types
+
+id-privAssignRequest OBJECT IDENTIFIER ::= { id-pbactCont privAssignRequest(1) }
+id-privAssignResult  OBJECT IDENTIFIER ::= { id-pbactCont privAssignResult(2) }
+id-readRequest       OBJECT IDENTIFIER ::= { id-pbactCont readRequest(3) }
+id-readResult        OBJECT IDENTIFIER ::= { id-pbactCont readResult(4) }
+id-compareRequest    OBJECT IDENTIFIER ::= { id-pbactCont compareRequest(5) }
+id-compareResult     OBJECT IDENTIFIER ::= { id-pbactCont compareResult(6) }
+id-addRequest        OBJECT IDENTIFIER ::= { id-pbactCont addRequest(7) }
+id-addResult         OBJECT IDENTIFIER ::= { id-pbactCont addResult(8) }
+id-deleteRequest     OBJECT IDENTIFIER ::= { id-pbactCont deleteRequest(9) }
+id-deleteResult      OBJECT IDENTIFIER ::= { id-pbactCont deleteResult(10) }
+id-modifyRequest     OBJECT IDENTIFIER ::= { id-pbactCont modifyRequest(11) }
+id-modifyResult      OBJECT IDENTIFIER ::= { id-pbactCont modifyResult(12) }
+id-renameRequest     OBJECT IDENTIFIER ::= { id-pbactCont renameRequest(13) }
+id-renameResult      OBJECT IDENTIFIER ::= { id-pbactCont renameResult(14) }
+
+
+-- Artribute types for carring privilege definitions
+
+id-at-accessService OBJECT IDENTIFIER ::= { id-pbactPrivAttr 1 }
+
+END

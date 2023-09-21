@@ -1,0 +1,493 @@
+
+
+
+
+
+
+
+
+-- Module B-ISUPParameters (Q.2763:12/1999)
+-- See also ITU-T Q.2763 (1999) Amend. 1 (12/2002)
+-- See also the index of all ASN.1 assignments needed in this document
+
+B-ISUPParameters DEFINITIONS IMPLICIT TAGS ::=
+BEGIN
+
+IMPORTS
+  MessageInstructionIndicators, ParameterInstructionIndicators
+    FROM B-ISUPInformationElementHeaders
+  ATMCellRateField, CalledPartyAddress, CallingPartyAddress,
+    ClosedUserGroupInterlockCode, ConnectedAddress, ConnectionElementID,
+    LocationAddress, NetworkIdentification, NetworkIdentificationPlan,
+    NetworkIdentity, ResourceValue, SubsequentAddress,
+    UserToUserIndicatorsParameter
+    FROM B-ISUPParameterConstructions
+  AALParametersField, AddressSignal, BinaryCode,
+    BroadbandBearerCapabilityField, BroadbandHighLayerInformationField,
+    BroadbandLowLayerInformationField, CalledAddressSignal,
+    CalledPartySubaddressField, CallingAddressSignal,
+    CallingPartySubaddressField, CellRateID, ConnectedSubaddressField,
+    ControlID, DelayValue, MLPPServiceDomain, NarrowbandBearerCapabilityField,
+    NarrowbandHighLayerCompaField, NarrowbandLowLayerCompaField, NIdigit,
+    OAMTrafficDescriptorField, ProgressIndicatorField, RedirectionCounter,
+    SignallingPointCode, UserToUserInformationField, VirtualChannelID,
+    VirtualPathConnectionID
+    FROM B-ISUPParameterElements
+  AccessDeliveryIndicator, AddressPresentationIndicator,
+    AutomaticCongestionLevelInd, CallDiversionMayOccurIndicator,
+    CalledPartysCategoryInd, CalledPartysStatusInd,
+    CallingPartysCategoryIndicators, CCITTNetworkIdenPlanIndicator,
+    CellRateIdentifier, ChargeIndicator, ClosedUserGroupCallIndicator,
+    ConnectedLineIDRequestIndicator, InBandInformationIndicator,
+    IncomingHECDIndicator, IncomingHECDRequestIndicator,
+    InternalNetworkNumberIndicator, InterworkingIndicator, ISDNAccessIndicator,
+    ISDNUserPartIndicator, ISDNUserPartPreferenceInd,
+    LookAheadForBusyIndicator, MLPPUserIndicator, MoreDataIndicator,
+    NationalNetworkIdenPlanIndicator, NationalInternationalCallIndicator,
+    NatureOfAddressIndicator, NetworkDiscardIndicator, NotificationIndicators,
+    NotificationSubscriptionOption, NumberIncompleteIndicator,
+    NumberingPlanIndicator, OriginalRedirectionReasonIndicator,
+    OutgoingHECDIndicator, OutgoingHECDRequestIndicator,
+    PrecedenceLevelIndicator, Priority, RedirectingIndicator,
+    RedirectingReasonIndicator, RedirectionNumberRestrictionInd,
+    RepeatIndicator, ResourceIndicator, ScreeningIndicator,
+    SimpleSegmentationIndicator, SuspendResumeIndicator, Type,
+    TypeOfNetworkIdentification, UserToUserServiceRequest,
+    UserToUserServiceResponse, VPCICheckResultIndicator
+    FROM B-ISUPParameterIndicators
+  Location, CodingStandard, CauseValue, Diagnostics
+    FROM
+      Bouchon -- Recommendation Q2610 , these types are not defined in Q.2610 
+      ;
+
+ParameterType ::= CHOICE --	B-ISUP parameter type definitions
+                   {
+  aALParameters                 [71]  AALParameters,
+  accessDeliveryInformation     [46]  AccessDeliveryInformation,
+  additionalCallingPartyNumber  [16]  AdditionalCallingPartyNumber,
+  additionalConnectedNumber     [17]  AdditionalConnectedNumber,
+  aTMCellRate                   [8]  ATMCellRate,
+  automaticCongestionLevel      [39]  AutomaticCongestionLevel,
+  backwardNarrowbandIWInd       [20]  BackwardNarrowbandIWInd,
+  broadbandBearerCapability     [80]  BroadbandBearerCapability,
+  broadbandHighLayerInfo        [72]  BroadbandHighLayerInfo,
+  broadbandLowLayerInfo         [79]  BroadbandLowLayerInfo,
+  callDiversionInformation      [54]  CallDiversionInformation,
+  callDiversionMayOccur         [38]  CallDiversionMayOccur,
+  calledPartyNumber             [4]  CalledPartyNumber,
+  calledPartysIndicators        [23]  CalledPartysIndicators,
+  calledPartySubaddress         [21]  CalledPartySubaddress,
+  callHistoryInformation        [45]  CallHistoryInformation,
+  callingPartyNumber            [10]  CallingPartyNumber,
+  callingPartysCategory         [9]  CallingPartysCategory,
+  callingPartySubaddress        [22]  CallingPartySubaddress,
+  causeIndicators               [18]  CauseIndicators,
+  chargeInd                     [25]  ChargeInd,
+  closedUserGroupInformation    [26]  ClosedUserGroupInformation,
+  connectedLineIDRequest        [27]  ConnectedLineIDRequest,
+  connectedNumber               [33]  ConnectedNumber,
+  connectedSubaddress           [36]  ConnectedSubaddress,
+  connectionElementIdentifier   [6]  ConnectionElementIdentifier,
+  consistencyCheckResultInfo    [74]  ConsistencyCheckResultInfo,
+  destinationSignallingID       [3]  DestinationSignallingID,
+  echoControlInformation        [55]  EchoControlInformation,
+  forwardNarrowbandIWInd        [28]  ForwardNarrowbandIWInd,
+  inBandInformationInd          [31]  InBandInformationInd,
+  locationNumber                [63]  LocationNumber,
+  maxEndToEndTransitDelay       [7]  MaxEndToEndTransitDelay,
+  mLPPPrecedence                [48]  MLPPPrecedence,
+  mLPPUserInformation           [73]  MLPPUserInformation,
+  narrowbandBearerCapability    [29]  NarrowbandBearerCapability,
+  narrowbandHighLayerCompa      [52]  NarrowbandHighLayerCompa,
+  narrowbandLowLayerCompa       [37]  NarrowbandLowLayerCompa,
+  nationalInternationalCallInd  [41]  NationalInternationalCallInd,
+  notification                  [44]  Notification,
+  oAMTrafficDescriptor          [72]  OAMTrafficDescriptor,
+  originalCalledNumber          [40]  OriginalCalledNumber,
+  originationISCPointCode       [43]  OriginationISCPointCode,
+  originationSignallingID       [2]  OriginationSignallingID,
+  progressIndicator             [53]  ProgressIndicator,
+  propagationDelayCounter       [46]  PropagationDelayCounter,
+  redirectingNumber             [11]  RedirectingNumber,
+  redirectionInformation        [19]  RedirectionInformation,
+  redirectionNumber             [12]  RedirectionNumber,
+  redirectionNumberRestriction  [64]  RedirectionNumberRestriction,
+  resourceID                    [49]  ResourceID,
+  segmentationIndicator         [58]  SegmentationIndicator,
+  --	for national use
+  subsequentNumber              [5]  SubsequentNumber,
+  suspendResumeIndicators       [34]  SuspendResumeIndicators,
+  transitNetworkSelection       [35]  TransitNetworkSelection,
+  --	for national use
+  userToUserIndicators          [42]  UserToUserIndicators,
+  userToUserInformation         [32]  UserToUserInformation
+}
+
+AALParameters ::= SEQUENCE {
+  parameterInstructionIndicators  ParameterInstructionIndicators,
+  codingStandard                  CodingStandard,
+  aALParametersField              AALParametersField
+}
+
+AccessDeliveryInformation ::= SEQUENCE {
+  parameterInstructionIndicators  ParameterInstructionIndicators,
+  accessDeliveryIndicator         AccessDeliveryIndicator
+}
+
+AdditionalCallingPartyNumber ::= SEQUENCE {
+  parameterInstructionIndicators  ParameterInstructionIndicators,
+  natureOfAddressIndicator        NatureOfAddressIndicator,
+  screeningIndicator              ScreeningIndicator,
+  addressPresentationIndicator    AddressPresentationIndicator,
+  numberingPlanIndicator          NumberingPlanIndicator,
+  callingPartyAddress             [1]  CallingPartyAddress OPTIONAL
+}
+
+AdditionalConnectedNumber ::= SEQUENCE {
+  parameterInstructionIndicators  ParameterInstructionIndicators,
+  natureOfAddressIndicator        NatureOfAddressIndicator,
+  screeningIndicator              ScreeningIndicator,
+  addressPresentationIndicator    AddressPresentationIndicator,
+  numberingPlanIndicator          NumberingPlanIndicator,
+  connectedAddress                [1]  ConnectedAddress OPTIONAL
+}
+
+ATMCellRate ::= SEQUENCE {
+  parameterInstructionIndicators  ParameterInstructionIndicators,
+  --	aTMCellRateField	ATMCellRateField,
+  aTMCellRateField                [1]  ATMCellRateField OPTIONAL
+}
+
+AutomaticCongestionLevel ::= SEQUENCE {
+  parameterInstructionIndicators  ParameterInstructionIndicators,
+  automaticCongestionLevelInd     AutomaticCongestionLevelInd
+}
+
+BackwardNarrowbandIWInd ::= SEQUENCE {
+  parameterInstructionIndicators  ParameterInstructionIndicators,
+  interworkingIndicator           InterworkingIndicator,
+  iSDNUserPartIndicator           ISDNUserPartIndicator,
+  iSDNAccessIndicator             ISDNAccessIndicator
+}
+
+BroadbandBearerCapability ::= SEQUENCE {
+  parameterInstructionIndicators  ParameterInstructionIndicators,
+  codingStandard                  CodingStandard,
+  broadbandBearerCapabilityField  BroadbandBearerCapabilityField
+}
+
+BroadbandHighLayerInfo ::= SEQUENCE {
+  parameterInstructionIndicators      ParameterInstructionIndicators,
+  codingStandard                      CodingStandard,
+  broadbandHighLayerInformationField  BroadbandHighLayerInformationField
+}
+
+BroadbandLowLayerInfo ::= SEQUENCE {
+  parameterInstructionIndicators     ParameterInstructionIndicators,
+  priority                           Priority,
+  repeatIndicator                    RepeatIndicator,
+  broadbandLowLayerInformationField
+    SEQUENCE OF BroadbandLowLayerInformationField
+}
+
+CallDiversionInformation ::= SEQUENCE {
+  parameterInstructionIndicators  ParameterInstructionIndicators,
+  notificationSubscriptionOption  NotificationSubscriptionOption,
+  redirectionReasonIndicator      RedirectingReasonIndicator
+}
+
+CallDiversionMayOccur ::= SEQUENCE {
+  parameterInstructionIndicators  ParameterInstructionIndicators,
+  callDiversionMayOccurIndicator  CallDiversionMayOccurIndicator
+}
+
+CalledPartyNumber ::= SEQUENCE {
+  parameterInstructionIndicators  ParameterInstructionIndicators,
+  natureOfAddressIndicator        NatureOfAddressIndicator,
+  numberingPlanIndicator          NumberingPlanIndicator,
+  internalNetworkNumberIndicator  InternalNetworkNumberIndicator,
+  calledPartyAddress              CalledPartyAddress
+}
+
+CalledPartysIndicators ::= SEQUENCE {
+  parameterInstructionIndicators  ParameterInstructionIndicators,
+  calledPartysStatusInd           CalledPartysStatusInd,
+  calledPartysCategoryInd         CalledPartysCategoryInd
+}
+
+CalledPartySubaddress ::= SEQUENCE {
+  parameterInstructionIndicators  ParameterInstructionIndicators,
+  codingStandard                  CodingStandard,
+  calledPartySubaddressField      CalledPartySubaddressField
+}
+
+CallHistoryInformation ::= SEQUENCE {
+  parameterInstructionIndicators  ParameterInstructionIndicators,
+  delayValue                      DelayValue
+}
+
+CallingPartyNumber ::= SEQUENCE {
+  parameterInstructionIndicators  ParameterInstructionIndicators,
+  natureOfAddressIndicator        NatureOfAddressIndicator,
+  screeningIndicator              ScreeningIndicator,
+  addressPresentationIndicator    AddressPresentationIndicator,
+  numberingPlanIndicator          NumberingPlanIndicator,
+  numberIncompleteIndicator       NumberIncompleteIndicator,
+  callingPartyAddress             [1]  CallingPartyAddress OPTIONAL
+}
+
+CallingPartysCategory ::= SEQUENCE {
+  parameterInstructionIndicators   ParameterInstructionIndicators,
+  callingPartysCategoryIndicators  CallingPartysCategoryIndicators
+}
+
+CallingPartySubaddress ::= SEQUENCE {
+  parameterInstructionIndicators  ParameterInstructionIndicators,
+  codingStandard                  CodingStandard,
+  callingPartySubaddressField     CallingPartySubaddressField
+}
+
+CauseIndicators ::= SEQUENCE {
+  parameterInstructionIndicators  ParameterInstructionIndicators,
+  location                        Location,
+  codingStandard                  CodingStandard,
+  causeValue                      CauseValue,
+  diagnostics                     [1]  Diagnostics OPTIONAL
+}
+
+ChargeInd ::= SEQUENCE {
+  parameterInstructionIndicators  ParameterInstructionIndicators,
+  chargeIndicator                 ChargeIndicator
+}
+
+ClosedUserGroupInformation ::= SEQUENCE {
+  parameterInstructionIndicators  ParameterInstructionIndicators,
+  closedUserGroupCallIndicator    ClosedUserGroupCallIndicator,
+  closedUserGroupInterlockCode    ClosedUserGroupInterlockCode
+}
+
+ConnectedLineIDRequest ::= SEQUENCE {
+  parameterInstructionIndicators   ParameterInstructionIndicators,
+  connectedLineIDRequestIndicator  ConnectedLineIDRequestIndicator
+}
+
+ConnectedNumber ::= SEQUENCE {
+  parameterInstructionIndicators  ParameterInstructionIndicators,
+  natureOfAddressIndicator        NatureOfAddressIndicator,
+  screeningIndicator              ScreeningIndicator,
+  addressPresentationIndicator    AddressPresentationIndicator,
+  numberingPlanIndicator          NumberingPlanIndicator,
+  connectedAddress                [1]  ConnectedAddress OPTIONAL
+}
+
+ConnectedSubaddress ::= SEQUENCE {
+  parameterInstructionIndicators  ParameterInstructionIndicators,
+  codingStandard                  CodingStandard,
+  connectedSubaddressField        ConnectedSubaddressField
+}
+
+ConnectionElementIdentifier ::= SEQUENCE {
+  parameterInstructionIndicators  ParameterInstructionIndicators,
+  connectionElementID             ConnectionElementID
+}
+
+ConsistencyCheckResultInfo ::= SEQUENCE {
+  parameterInstructionIndicators  ParameterInstructionIndicators,
+  vPCICheckResultIndicator        VPCICheckResultIndicator
+}
+
+DestinationSignallingID ::= SEQUENCE {
+  parameterInstructionIndicators  ParameterInstructionIndicators,
+  controlID                       ControlID
+}
+
+EchoControlInformation ::= SEQUENCE {
+  parameterInstructionIndicators  ParameterInstructionIndicators,
+  outgoingHECDIndicator           OutgoingHECDIndicator,
+  incomingHECDIndicator           IncomingHECDIndicator,
+  outgoingHECDRequestIndicator    OutgoingHECDRequestIndicator,
+  incomingHECDRequestIndicator    IncomingHECDRequestIndicator
+}
+
+ForwardNarrowbandIWInd ::= SEQUENCE {
+  parameterInstructionIndicators  ParameterInstructionIndicators,
+  interworkingIndicator           InterworkingIndicator,
+  iSDNUserPartIndicator           ISDNUserPartIndicator,
+  iSDNUserPartPreferenceInd       ISDNUserPartPreferenceInd,
+  iSDNAccessIndicator             ISDNAccessIndicator
+}
+
+InBandInformationInd ::= SEQUENCE {
+  parameterInstructionIndicators  ParameterInstructionIndicators,
+  inBandInformationIndicator      InBandInformationIndicator
+}
+
+LocationNumber ::= SEQUENCE {
+  parameterInstructionIndicators  ParameterInstructionIndicators,
+  natureOfAddressIndicator        NatureOfAddressIndicator,
+  screeningIndicator              ScreeningIndicator,
+  addressPresentationIndicator    AddressPresentationIndicator,
+  numberingPlanIndicator          NumberingPlanIndicator,
+  internalNetworkNumberIndicator  InternalNetworkNumberIndicator,
+  locationAddress                 [1]  LocationAddress OPTIONAL
+}
+
+MaxEndToEndTransitDelay ::= SEQUENCE {
+  parameterInstructionIndicators  ParameterInstructionIndicators,
+  delayValue                      DelayValue
+}
+
+MLPPPrecedence ::= SEQUENCE {
+  parameterInstructionIndicators  ParameterInstructionIndicators,
+  precedenceLevelIndicator        PrecedenceLevelIndicator,
+  lookAheadForBusyIndicator       LookAheadForBusyIndicator,
+  networkIdentity                 NetworkIdentity,
+  mLPPServiceDomain               MLPPServiceDomain
+}
+
+MLPPUserInformation ::= SEQUENCE {
+  parameterInstructionIndicators  ParameterInstructionIndicators,
+  mLPPUserIndicator               MLPPUserIndicator
+}
+
+NarrowbandBearerCapability ::= SEQUENCE {
+  parameterInstructionIndicators   ParameterInstructionIndicators,
+  priority                         Priority,
+  repeatIndicator                  RepeatIndicator,
+  narrowbandBearerCapabilityField  SEQUENCE OF NarrowbandBearerCapabilityField
+}
+
+NarrowbandHighLayerCompa ::= SEQUENCE {
+  parameterInstructionIndicators  ParameterInstructionIndicators,
+  priority                        Priority,
+  repeatIndicator                 RepeatIndicator,
+  narrowbandHighLayerCompaField   SEQUENCE OF NarrowbandHighLayerCompaField
+}
+
+NarrowbandLowLayerCompa ::= SEQUENCE {
+  parameterInstructionIndicators  ParameterInstructionIndicators,
+  priority                        Priority,
+  repeatIndicator                 RepeatIndicator,
+  narrowbandLowLayerCompaField    SEQUENCE OF NarrowbandLowLayerCompaField
+}
+
+NationalInternationalCallInd ::= SEQUENCE {
+  parameterInstructionIndicators      ParameterInstructionIndicators,
+  nationalInternationalCallIndicator  NationalInternationalCallIndicator
+}
+
+Notification ::= SEQUENCE {
+  parameterInstructionIndicators  ParameterInstructionIndicators,
+  notificationIndicators          NotificationIndicators
+}
+
+OAMTrafficDescriptor ::= SEQUENCE {
+  parameterInstructionIndicators  ParameterInstructionIndicators,
+  codingStandard                  CodingStandard,
+  oAMTrafficDescriptorField       OAMTrafficDescriptorField
+}
+
+OriginalCalledNumber ::= SEQUENCE {
+  parameterInstructionIndicators  ParameterInstructionIndicators,
+  natureOfAddressIndicator        NatureOfAddressIndicator,
+  addressPresentationIndicator    AddressPresentationIndicator,
+  numberingPlanIndicator          NumberingPlanIndicator,
+  callingPartyAddress             [1]  CallingPartyAddress OPTIONAL
+}
+
+OriginationISCPointCode ::= SEQUENCE {
+  parameterInstructionIndicators  ParameterInstructionIndicators,
+  signallingPointCode             SignallingPointCode
+}
+
+OriginationSignallingID ::= SEQUENCE {
+  parameterInstructionIndicators  ParameterInstructionIndicators,
+  controlID                       ControlID
+}
+
+ProgressIndicator ::= SEQUENCE {
+  parameterInstructionIndicators  ParameterInstructionIndicators,
+  priority                        Priority,
+  repeatIndicator                 RepeatIndicator,
+  progressIndicatorField          SEQUENCE OF ProgressIndicatorField
+}
+
+PropagationDelayCounter ::= SEQUENCE {
+  parameterInstructionIndicators  ParameterInstructionIndicators,
+  delayValue                      DelayValue
+}
+
+RedirectingNumber ::= SEQUENCE {
+  parameterInstructionIndicators  ParameterInstructionIndicators,
+  natureOfAddressIndicator        NatureOfAddressIndicator,
+  addressPresentationIndicator    AddressPresentationIndicator,
+  numberingPlanIndicator          NumberingPlanIndicator,
+  callingPartyAddress             [1]  CallingPartyAddress OPTIONAL
+}
+
+RedirectionInformation ::= SEQUENCE {
+  parameterInstructionIndicators      ParameterInstructionIndicators,
+  redirectingIndicator                RedirectingIndicator,
+  originalRedirectionReasonIndicator  OriginalRedirectionReasonIndicator,
+  redirectionCounter                  RedirectionCounter,
+  redirectingReasonIndicator          RedirectingReasonIndicator
+}
+
+RedirectionNumber ::= SEQUENCE {
+  parameterInstructionIndicators  ParameterInstructionIndicators,
+  natureOfAddressIndicator        NatureOfAddressIndicator,
+  numberingPlanIndicator          NumberingPlanIndicator,
+  internalNetworkNumberIndicator  InternalNetworkNumberIndicator,
+  callingPartyAddress             [1]  CallingPartyAddress OPTIONAL
+}
+
+RedirectionNumberRestriction ::= SEQUENCE {
+  parameterInstructionIndicators   ParameterInstructionIndicators,
+  redirectionNumberRestrictionInd  RedirectionNumberRestrictionInd
+}
+
+ResourceID ::= SEQUENCE {
+  parameterInstructionIndicators  ParameterInstructionIndicators,
+  resourceIndicator               ResourceIndicator,
+  resourceValue                   ResourceValue
+}
+
+SegmentationIndicator ::= SEQUENCE --	for national use
+                           {
+  parameterInstructionIndicators  ParameterInstructionIndicators,
+  simpleSegmentationIndicator     SimpleSegmentationIndicator
+}
+
+SubsequentNumber ::= SEQUENCE {
+  parameterInstructionIndicators  ParameterInstructionIndicators,
+  subsequentAddress               SubsequentAddress
+}
+
+SuspendResumeIndicators ::= SEQUENCE {
+  parameterInstructionIndicators  ParameterInstructionIndicators,
+  suspendResumeIndicator          SuspendResumeIndicator
+}
+
+TransitNetworkSelection ::= SEQUENCE --	for national use
+                             {
+  parameterInstructionIndicators  ParameterInstructionIndicators,
+  networkIdentificationPlan       NetworkIdentificationPlan,
+  typeOfNetworkIdentification     TypeOfNetworkIdentification,
+  networkIdentification           NetworkIdentification
+}
+
+UserToUserIndicators ::= SEQUENCE {
+  parameterInstructionIndicators  ParameterInstructionIndicators,
+  userToUserIndicatorsParameter   UserToUserIndicatorsParameter
+}
+
+UserToUserInformation ::= SEQUENCE {
+  parameterInstructionIndicators  ParameterInstructionIndicators,
+  moreDataIndicator               MoreDataIndicator,
+  userToUserInformationField      UserToUserInformationField
+}
+
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

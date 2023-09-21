@@ -1,0 +1,246 @@
+
+
+
+
+
+
+
+-- Module CAP-1-1 (X.1303:09/2007)
+-- See also ITU-T X.1303 (09/2007)
+-- See also the index of all ASN.1 assignments needed in this document
+
+CAP-1-1 {itu-t recommendation x cap(1303) version1-1(1)}
+DEFINITIONS XER INSTRUCTIONS AUTOMATIC TAGS ::=
+
+-- CAP Alert Message (version 1.1)
+BEGIN
+-- References in comments to clauses outside this module refer to
+-- ITU-T Recommendation X.1303 (09/2007).
+-- This ASN.1 module is also included in OASIS CAP v1.1 Errata
+-- (approved on 2 October 2007), and the references there are to
+-- clauses 3.2.x as in OASIS CAP v1.1 and not clauses 7.2.x as
+-- in ITU-T X.1303
+Alert ::= SEQUENCE {
+  identifier   IdentifierString,
+  -- Unambiguous identification of the message 
+  -- from all messages from
+  -- this sender, in a format defined by the sender and 
+  -- identified in the "sender" field below.
+  sender       String,
+  -- The globally unambiguous identification of the sender.
+  -- This specification does not define the root of 
+  -- a global identification tree (there is no international 
+  -- agreement on such a root), so it relies
+  -- on human-readable text to define globally and 
+  -- unambiguously the sender.
+  -- An internet domain name or use of "iri:/ITU-T/..." 
+  -- are possible, but
+  -- the choice needs to be clearly stated in human-readable form.
+  sent         DateTime,
+  status       AlertStatus,
+  msgType      AlertMessageType,
+  source       String OPTIONAL,
+  -- Not standardised human-readable identification 
+  -- of the source of the alert.
+  scope        AlertScope,
+  restriction  String OPTIONAL,
+  -- Not standardised human-readable restrictions 
+  -- on the distribution of the alert message
+  addresses    String OPTIONAL,
+  -- A space separated list of addressees for private messages
+  -- (see 7.2.1)
+  code-list    SEQUENCE SIZE ((0..MAX)) OF code String,
+  -- A sequence codes for special handling
+  -- (see 7.2.1)
+  -- The format and semantics of the codes are not defined in this
+  -- specification.
+  note         String OPTIONAL,
+  -- Not standardised human-readable clarifying text for the alert
+  -- (see 7.2.1)
+  references   String OPTIONAL,
+  -- Space-separated references to earlier messages
+  -- (see 7.2.1)
+  incidents    String OPTIONAL,
+  -- Space-separated references to related incidents
+  -- (see 7.2.1)
+  info-list    SEQUENCE SIZE ((0..MAX)) OF info AlertInformation
+}
+
+AlertStatus ::= ENUMERATED {actual, draft, exercise, system, test}
+
+AlertMessageType ::= ENUMERATED {ack, alert, cancel, error, update}
+
+AlertScope ::= ENUMERATED {private, public, restricted}
+
+AlertInformation ::= SEQUENCE {
+  language           Language-- DEFAULT "en-US" -- ,
+  -- The language used in this value of the Info type
+  -- (see 7.2.2)
+  category-list      SEQUENCE (SIZE (1..MAX)) OF category InformationCategory,
+  event              String,
+  -- Not standardised human-readable text describing the 
+  -- type of the event (see 7.2.2)
+  responseType-list
+    SEQUENCE SIZE ((0..MAX)) OF responseType InformationResponseType,
+  urgency            HowUrgent,
+  severity           HowSevere,
+  certainty          HowCertain,
+  audience           String OPTIONAL,
+  -- Not standardised human-readable text describing the 
+  -- intended audience for the message (see 7.2.2)
+  eventCode-list
+    SEQUENCE SIZE ((0..MAX)) OF eventCode
+      SEQUENCE {valueName  ValueName,
+                value      Value},
+  effective          DateTime OPTIONAL,
+  onset              DateTime OPTIONAL,
+  expires            DateTime OPTIONAL,
+  senderName         String OPTIONAL,
+  -- Not standardised human-readable name of the authority 
+  -- issuing the message (see 7.2.2)
+  headline           String(SIZE (1..160, ...)) OPTIONAL,
+  -- Not standardised human-readable short statement (headline) 
+  -- of the alert (see 7.2.2)
+  description        String OPTIONAL,
+  -- Not standardised human-readable extended description of 
+  -- the event (see 7.2.2)
+  instruction        String OPTIONAL,
+  -- Not standardised human-readable recommended action
+  -- (see 7.2.2)
+  web                AnyURI OPTIONAL,
+  contact            String OPTIONAL,
+  -- Not standardised human-readable contact details for 
+  -- follow-up (see 7.2.2)
+  parameter-list
+    SEQUENCE SIZE ((0..MAX)) OF parameter
+      SEQUENCE {-- System-specific parameters (see 7.2.2)
+                valueName  ValueName,
+                value      Value},
+  resource-list      SEQUENCE SIZE ((0..MAX)) OF resource ResourceFile,
+  area-list          SEQUENCE SIZE ((0..MAX)) OF Area
+}
+
+InformationCategory ::= ENUMERATED {
+  cBRNE, env, fire, geo, health, infra, met, other, rescue, safety, security,
+  transport}
+
+InformationResponseType ::= ENUMERATED {
+  assess, evacuate, execute, monitor, none, prepare, shelter}
+
+HowUrgent ::= ENUMERATED {expected, future, immediate, past, unknown}
+
+HowSevere ::= ENUMERATED {extreme, minor, moderate, severe, unknown}
+
+HowCertain ::= ENUMERATED {likely, observed, possible, unknown, unlikely}
+
+ResourceFile ::= SEQUENCE {
+  -- Information about an associated resource file
+  -- (see 7.2.3)
+  resourceDesc  String,
+  -- Not standardised human-readable description of the type 
+  -- and content of
+  -- an associated resource file (for example a map or 
+  -- photograph)(see 7.2.3)
+  mimeType      String OPTIONAL,
+  size          INTEGER OPTIONAL, -- In bytes
+  uri           AnyURI OPTIONAL,
+  derefUri      String OPTIONAL,
+  -- An alternative to the URI giving the Base64-encoded 
+  -- content of the resource file (see 7.2.3)
+  digest        String OPTIONAL-- SHA-1 hash of the resource file for error detection
+-- (see 7.2.3) 
+}
+
+Area ::= SEQUENCE {
+  -- Identification of an affected area
+  areaDesc      String,
+  -- Not standardised human-readable description of the area
+  polygon-list  SEQUENCE OF polygon String,
+  -- Each element is a space-separated list of coordinate pairs
+  -- The complete list starts and ends with the same point and
+  -- defines the polygon that defines the area 
+  -- (see 7.2.4).
+  circle-list   SEQUENCE OF circle String,
+  -- A space-separated list of coordinates for a point and a radius
+  geocode-list
+    SEQUENCE SIZE ((0..MAX)) OF geocode
+      SEQUENCE {-- A geographic code designating the alert target area
+                -- (see 7.2.4)
+                valueName  ValueName,
+                value      Value},
+  altitude      String OPTIONAL,
+  -- Specific or minimum altitude of the affected area
+  ceiling       String OPTIONAL
+  -- Maximum altitude of the affected area 
+}
+
+ValueName ::= String -- A not standardised name for 
+
+-- an information event code, a parameter or a geocode
+Value ::=
+  String -- The value of the information event code,
+
+-- parameter or geocode
+String ::=
+  UTF8String
+    (FROM ({0,
+            0,
+            0,
+            9} -- TAB  | {0, 0, 0, 10} -- CR | {0, 0, 0, 13} -- LF  |
+           {0, 0, 0, 32}..{0, 0, 215, 255} -- Space to the start of the S-zone
+           | {0, 0, 224, 0}..{0, 0, 255, 253} -- Rest of BMP after S-zone |
+           {0, 1, 0, 0}..{0, 16, 255, 253} -- Other planes --))
+
+StringChar ::= String(SIZE (1))
+
+SpaceAndComma ::=
+  UTF8String(FROM ({0,
+                    0,
+                    0,
+                    32} -- SPACE | {0, 0, 0, 44} -- COMMA --))
+
+IdentifierString ::= String(FROM (StringChar EXCEPT SpaceAndComma))
+
+Language ::=
+  VisibleString(FROM ("a".."z" | "A".."Z" | "-" | "0".."9"))
+    (PATTERN "[a-zA-Z]#(1,8)(-[a-zA-Z0-9]#(1,8))*")
+-- The semantics of Language is specified in IETF RFC 3066
+
+DateTime ::= TIME (SETTINGS "Basic=Date-Time Date=YMD Year=Basic Time=HMS Local-or-UTC=LD")
+-- This is the ISO 8601 format using local time and a 
+-- time difference
+StringWithNoCRLFHT ::=
+  UTF8String
+    (FROM ({0,
+            0,
+            0,
+            32}..{0, 0, 215, 255} | {0, 0, 224, 0}..{0, 0, 255, 253} |
+           {0, 1, 0, 0}..{0, 16, 255, 255}))
+
+AnyURI ::=
+  StringWithNoCRLFHT
+    (CONSTRAINED BY {
+       /* Shall be a valid URI as defined in IETF RFC 2396 */})
+
+ENCODING-CONTROL XER
+    GLOBAL-DEFAULTS MODIFIED-ENCODINGS
+    GLOBAL-DEFAULTS CONTROL-NAMESPACE
+        "http://www.w3.org/2001/XMLSchema-instance" PREFIX "xsi"
+    NAMESPACE ALL, ALL IN ALL AS "urn:oasis:names:tc:emergency:cap:1.1"
+              PREFIX "cap"
+    NAME Alert, Area AS UNCAPITALIZED
+    UNTAGGED SEQUENCE OF
+    DEFAULT-FOR-EMPTY AlertInformation.language AS "en-US"
+    TEXT AlertStatus:ALL, 
+         AlertMessageType:ALL, 
+         AlertScope:ALL, 
+         InformationCategory:ALL, 
+         InformationResponseType:ALL, 
+         HowUrgent:ALL,
+         HowSevere:ALL, 
+         HowCertain:ALL AS CAPITALIZED
+    WHITESPACE Language, AnyURI COLLAPSE
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

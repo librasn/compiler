@@ -1,0 +1,299 @@
+
+
+
+
+
+
+
+
+-- Module TAI (X.1089:11/2008)
+-- See also the README file
+-- See also the index of all ASN.1 assignments needed in this document
+
+TAI {itu-t recommendation x tai(1089) modules(0) framework(0) version1(1)}
+DEFINITIONS AUTOMATIC TAGS ::=
+BEGIN
+
+IMPORTS
+  -- Directories imports from [ITU-T X.509]
+  ATTRIBUTE, Name, Attribute{}, SupportedAttributes
+    FROM InformationFramework {joint-iso-itu-t ds(5) module(1)
+      informationFramework(1) 6}
+  SIGNED{}, EXTENSION, CertificateSerialNumber, Certificate, ALGORITHM,
+    AlgorithmIdentifier{}, SupportedAlgorithms
+    FROM AuthenticationFramework {joint-iso-itu-t ds(5) module(1)
+      authenticationFramework(7) 6}
+  AttributeCertificateInfo
+    FROM AttributeCertificateDefinitions {joint-iso-itu-t ds(5) module(1)
+      attributeCertificateDefinitions(32) 6}
+  GeneralNames, KeyUsage
+    FROM CertificateExtensions {joint-iso-itu-t ds(5) module(1)
+      certificateExtensions(26) 6}
+  IssuerSerial, ObjectDigestInfo
+    FROM AttributeCertificateDefinitions {joint-iso-itu-t ds(5) module(1)
+      attributeCertificateDefinitions(32) 6}
+  UniqueIdentifier
+    FROM SelectedAttributeTypes {joint-iso-itu-t ds(5) module(1)
+      selectedAttributeTypes(5) 6}
+  ID
+    FROM UsefulDefinitions {joint-iso-itu-t ds(5) module(1)
+      usefulDefinitions(0) 6}
+  -- The BioAPI False Match Rate is imported from the
+  -- Biometric Interworking Protocol (BIP) [ITU-T X.1083 | ISO/IEC 24708]
+  BioAPI-FMR
+    FROM BIP {joint-iso-itu-t bip(41) modules(0) bip(0) version1(1)}
+  -- BiometricType and Biometric InformationTemplate are imported from
+  -- CBEFF [ISO/IEC 19785-3]
+  BiometricType
+    FROM CBEFF-DATA-ELEMENTS {iso standard 19785 modules(0)
+      types-for-cbeff-data-elements(1)}
+  BiometricInformationTemplate
+    FROM CBEFF-SMARTCARD-BIDO {iso standard 19785 modules(0)
+      types-for-smartcard(8)};
+
+-- START OF X.tai definitions.
+-- URI definition - used in a BDC and in a BPC
+URI ::=
+  UTF8String
+    (CONSTRAINED BY {
+       -- shall be a valid URI as defined in IETF RFC 3986 --})
+
+-- BC definition  (see 8.2 for additional comments)
+BiometricCertificate ::=
+  SIGNED{BiometricCertificateInfo}
+
+BiometricCertificateInfo ::=
+  AttributeCertificateInfo(WITH COMPONENTS {
+                             ...,
+                             attributes  (SIZE (1..MAX))
+                           })
+
+-- Definition of the biometricInformationTemplate attribute
+-- contained in a BC (see 8.6 and 8.7 for additional comments)
+biometricInformationTemplate ATTRIBUTE ::= {
+  WITH SYNTAX  BiometricInformationTemplateorPointer
+  ID           id-tai-at-BiometricInformationTemplate
+}
+
+BiometricInformationTemplateorPointer ::= CHOICE {
+  bcBiometricInformationTemplate             BCBiometricInformationTemplate,
+  referenceToBCBiometricInformationTemplate  URI,
+  ...
+}
+
+BCBiometricInformationTemplate ::=
+  SIGNED{BCBiometricInformationTemplateContent}
+
+BCBiometricInformationTemplateContent ::= SEQUENCE {
+  biometricTemplateVersion         BiometricTemplateVersion,
+  biometricTemplateInfo            BiometricTemplateInfo,
+  issuerDigitalSignatureAlgorithm
+    AlgorithmIdentifier{{SupportedAlgorithms}} OPTIONAL,
+  bioTempIssuer                    BioTempIssuer OPTIONAL
+}
+
+BiometricTemplateVersion ::= INTEGER {v0(0)}(v0, ...)
+
+BioTempIssuer ::= [0]  SEQUENCE {
+  issuerName         GeneralNames OPTIONAL,
+  baseCertificateID  [0]  IssuerSerial OPTIONAL,
+  objectDigestInfo   [1]  ObjectDigestInfo OPTIONAL -- [b-ISO-IEC-TR-24741] --
+}
+
+BiometricTemplateInfo ::= CHOICE {
+  biometricTemplateInfo19785  BiometricInformationTemplate,
+  ...
+}
+
+-- BPC definition  (see clause 9 for additional comments)
+BiometricPolicyCertificate ::=
+  SIGNED{BiometricPolicyCertificateInfo}
+
+BiometricPolicyCertificateInfo ::=
+  AttributeCertificateInfo(WITH COMPONENTS {
+                             ...,
+                             attributes  (SIZE (1..MAX))
+                           })
+
+bioSecLevelReference ATTRIBUTE ::= {
+  WITH SYNTAX  SecurityLevelBioReference
+  ID           id-tai-at-bioSecLevelReference
+}
+
+SecurityLevelBioReference ::= SEQUENCE {
+  securityLevelNum     INTEGER,
+  securityLevelBioRef  SecurityLevelBioRef
+}
+
+SecurityLevelBioRef ::= SEQUENCE {
+  biometricSecurityLevelId  BiometricSecurityLevelId,
+  modalityPolicy            ModalityPolicy,
+  biometricPara             BiometricPara
+}
+
+BiometricSecurityLevelId ::= BIT STRING
+
+ModalityPolicy ::= UniversalString
+
+BiometricPara ::=
+  SEQUENCE OF
+    SEQUENCE {biometricType   BiometricType,
+              --CBEFF defined type
+              fMR-Value       BioAPI-FMR,
+              trialNumber     INTEGER OPTIONAL,
+              requestQuality  INTEGER OPTIONAL,
+              ...}
+
+-- BDC definition  (see clause 10 for additional comments)
+BiometricDeviceCertificate ::=
+  SIGNED{BiometricDeviceCertificateInfo}
+
+BiometricDeviceCertificateInfo ::=
+  AttributeCertificateInfo(WITH COMPONENTS {
+                             ...,
+                             attributes  (SIZE (1..MAX))
+                           })
+
+bDCReportContentInformation ATTRIBUTE ::= {
+  WITH SYNTAX  BDCReportContentInformation
+  ID           id-tai-at-bDCReportContentInformation
+}
+
+BDCReportContentInformation ::= SEQUENCE {
+  bdcPKCInformation     BdcPKCInformation,
+  bdcReportInformation  BPUReportInformation
+}
+
+BdcPKCInformation ::= CHOICE {
+  bdcPublicKeyCertificate  Certificate,
+  -- Certificate is imported from [ITU-T X.509]
+  bpuCertificateReference  URI
+}
+
+-- BPUReportInformation as defined in ACBio[ISO/IEC 24761]
+BPUReportInformation ::= CHOICE {
+  bpuReport          BPUReport,
+  bpuReportReferrer  URI
+}
+
+CONTENT-TYPE ::= TYPE-IDENTIFIER
+
+BPUReport ::= SEQUENCE {
+  contentType  CONTENT-TYPE.&id({ContentTypeBPUReport}),
+  content
+    [0] EXPLICIT CONTENT-TYPE.&Type({ContentTypeBPUReport}{@contentType})
+}
+
+ContentTypeBPUReport CONTENT-TYPE ::= {bpuReport}
+
+bpuReport CONTENT-TYPE ::= {BPUReport
+                            IDENTIFIED BY  id-bpuReport
+}
+
+id-bpuReport OBJECT IDENTIFIER ::=
+  {iso(1) standard(0) acbio(24761) contentType(2) bpuReport(4)}
+
+-- TAI EXTENSION in a PKC (see 11.1)
+publicKeyCert EXTENSION ::= {
+  SYNTAX         PublicKeyCert
+  IDENTIFIED BY  id-tai-ce-publicKeyCert
+}
+
+PublicKeyCert ::= SEQUENCE {
+  pkcIssuer        Name,
+  pkcSerialNumber  CertificateSerialNumber,
+  pkcUsage         KeyUsage
+}
+
+-- TAI EXTENSION used with PMI (see 11.2)
+holderDirectoryAttributes EXTENSION ::= {
+  SYNTAX         AttributesSyntax
+  IDENTIFIED BY  id-tai-ce-holderDirectoryAttributes
+}
+
+AttributesSyntax ::= SEQUENCE SIZE (1..MAX) OF Attribute{{SupportedAttributes}}
+
+-- TAI EXTENSION used for digital keys (see 11.3)
+dkgExtensionData EXTENSION ::= {
+  SYNTAX         DkgExtensionDataSyntax
+  IDENTIFIED BY  id-tai-ce-dgkExtensionData
+}
+
+DkgExtensionDataSyntax ::= SEQUENCE {
+  alignmentHelpData        OCTET STRING(SIZE (1..MAX)),
+  biometricKeyBindingData  OCTET STRING(SIZE (1..MAX))
+}
+
+-- TAI EXTENSION in an AC for BC Index (see 11.4)
+bioCert EXTENSION ::= {SYNTAX         BioCert
+                       IDENTIFIED BY  id-tai-ce-bioCert
+}
+
+BioCert ::= SEQUENCE {
+  baseCertificateID  [0]  IssuerSerial OPTIONAL,
+  entityName         [1]  GeneralNames OPTIONAL -- [b-ISO-IEC-TR-24741] --,
+  objectDigestInfo   [2]  ObjectDigestInfo OPTIONAL -- [b-ISO-IEC-TR-24722] --
+}
+(CONSTRAINED BY { -- at least one of baseCertificateID,
+   
+   -- entityName or 
+   -- objectDigestInfo shall be present 
+   })
+
+-- TAI EXTENSION for security level in PMI (see 11.5)
+securityLevelofPrivilege EXTENSION ::= {
+  SYNTAX         SecurityLevelofPrivilege
+  IDENTIFIED BY  id-tai-ce-biometricSecurityLevelOfPrivilege
+}
+
+SecurityLevelofPrivilege ::= SEQUENCE {
+  bioSecLevel
+    CHOICE {x520identifier    UniqueIdentifierOfBioParaInfo,
+            simpleidentifier  INTEGER}
+}
+
+UniqueIdentifierOfBioParaInfo ::= UniqueIdentifier
+
+-- TAI EXTENSION used in a BDC (see 11.6)
+bDCCertificate EXTENSION ::= {
+  SYNTAX         BDCCertificateReferer
+  IDENTIFIED BY  id-tai-ce-bDCCertificate
+}
+
+BDCCertificateReferer ::= SEQUENCE {
+  bdcIssuer        Name,
+  bdcSerialNumber  CertificateSerialNumber,
+  bdcUsage         KeyUsage
+}
+
+-- ID values used in this module
+id-tai-at-BiometricInformationTemplate ID ::=
+  {iso registration-authority cbeff(19785) biometric-organization(0)
+   jtc1-sc37(257) patronformat(1) tlv-encoded(5)}
+
+id-tai ID ::= {itu-t(0) recommendation(0) x(24) tai(1089)}
+
+id-tai-at ID ::= {id-tai attributes(1)}
+
+id-tai-ce ID ::= {id-tai certificate-extensions(2)}
+
+id-tai-at-bioSecLevelReference ID ::= {id-tai-at  1}
+
+id-tai-at-bDCReportContentInformation ID ::= {id-tai-at  2}
+
+id-tai-ce-bDCCertificate ID ::= {id-tai-ce  1}
+
+id-tai-ce-bioCert ID ::= {id-tai-ce  2}
+
+id-tai-ce-biometricSecurityLevelOfPrivilege ID ::= {id-tai-ce  3}
+
+id-tai-ce-publicKeyCert ID ::= {id-tai-ce  4}
+
+id-tai-ce-holderDirectoryAttributes ID ::= {id-tai-ce  5}
+
+id-tai-ce-dgkExtensionData ID ::= {id-tai-ce  6}
+
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

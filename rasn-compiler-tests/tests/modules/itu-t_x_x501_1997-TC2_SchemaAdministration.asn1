@@ -1,0 +1,267 @@
+
+
+
+
+SchemaAdministration (X.501 TC2:08/1997)
+
+
+-- Module SchemaAdministration (X.501 TC2:08/1997)
+-- See also ITU-T X.501 (1997) Technical Cor. 2 (02/2001)
+-- See also the index of all ASN.1 assignments needed in this document
+
+SchemaAdministration {joint-iso-itu-t ds(5) module(1) schemaAdministration(23)
+  3} DEFINITIONS ::=
+BEGIN
+
+-- EXPORTS All 
+-- The types and values defined in this module are exported for use in the other ASN.1 modules contained 
+-- within the Directory Specifications, and for the use of other applications which will use them to access 
+-- Directory services. Other applications may use them for their own purposes, but this will not constrain
+-- extensions and modifications needed to maintain or improve the Directory service.
+IMPORTS
+  informationFramework, selectedAttributeTypes, upperBounds, id-soc, id-soa
+    FROM UsefulDefinitions {joint-iso-itu-t ds(5) module(1)
+      usefulDefinitions(0) 3}
+  OBJECT-CLASS, ATTRIBUTE, MATCHING-RULE, DITStructureRule, DITContentRule,
+    ObjectClassKind, AttributeUsage, NAME-FORM, CONTEXT, objectIdentifierMatch
+    FROM InformationFramework {joint-iso-itu-t ds(5) module(1)
+      informationFramework(1) 3}
+  DirectoryString{}, integerFirstComponentMatch, integerMatch,
+    objectIdentifierFirstComponentMatch
+    FROM SelectedAttributeTypes {joint-iso-itu-t ds(5) module(1)
+      selectedAttributeTypes(5) 3}
+  ub-schema
+    FROM UpperBounds {joint-iso-itu-t ds(5) module(1) upperBounds(10) 3};
+
+-- types 
+DITStructureRuleDescription ::= SEQUENCE {
+  COMPONENTS OF DITStructureRule,
+  name         [1]  SET SIZE (1..MAX) OF DirectoryString{ub-schema} OPTIONAL,
+  description  DirectoryString{ub-schema} OPTIONAL,
+  obsolete     BOOLEAN DEFAULT FALSE
+}
+
+DITContentRuleDescription ::= SEQUENCE {
+  COMPONENTS OF DITContentRule,
+  name         [4]  SET SIZE (1..MAX) OF DirectoryString{ub-schema} OPTIONAL,
+  description  DirectoryString{ub-schema} OPTIONAL,
+  obsolete     BOOLEAN DEFAULT FALSE
+}
+
+MatchingRuleDescription ::= SEQUENCE {
+  identifier   MATCHING-RULE.&id,
+  name         SET SIZE (1..MAX) OF DirectoryString{ub-schema} OPTIONAL,
+  description  DirectoryString{ub-schema} OPTIONAL,
+  obsolete     BOOLEAN DEFAULT FALSE,
+  information  [0]  DirectoryString{ub-schema} OPTIONAL
+}
+
+-- describes the ASN.1 syntax
+AttributeTypeDescription ::= SEQUENCE {
+  identifier   ATTRIBUTE.&id,
+  name         SET SIZE (1..MAX) OF DirectoryString{ub-schema} OPTIONAL,
+  description  DirectoryString{ub-schema} OPTIONAL,
+  obsolete     BOOLEAN DEFAULT FALSE,
+  information  [0]  AttributeTypeInformation
+}
+
+AttributeTypeInformation ::= SEQUENCE {
+  derivation       [0]  ATTRIBUTE.&id OPTIONAL,
+  equalityMatch    [1]  MATCHING-RULE.&id OPTIONAL,
+  orderingMatch    [2]  MATCHING-RULE.&id OPTIONAL,
+  substringsMatch  [3]  MATCHING-RULE.&id OPTIONAL,
+  attributeSyntax  [4]  DirectoryString{ub-schema} OPTIONAL,
+  multi-valued     [5]  BOOLEAN DEFAULT TRUE,
+  collective       [6]  BOOLEAN DEFAULT FALSE,
+  userModifiable   [7]  BOOLEAN DEFAULT TRUE,
+  application      AttributeUsage DEFAULT userApplications
+}
+
+ObjectClassDescription ::= SEQUENCE {
+  identifier   OBJECT-CLASS.&id,
+  name         SET SIZE (1..MAX) OF DirectoryString{ub-schema} OPTIONAL,
+  description  DirectoryString{ub-schema} OPTIONAL,
+  obsolete     BOOLEAN DEFAULT FALSE,
+  information  [0]  ObjectClassInformation
+}
+
+ObjectClassInformation ::= SEQUENCE {
+  subclassOf   SET SIZE (1..MAX) OF OBJECT-CLASS.&id OPTIONAL,
+  kind         ObjectClassKind DEFAULT structural,
+  mandatories  [3]  SET SIZE (1..MAX) OF ATTRIBUTE.&id OPTIONAL,
+  optionals    [4]  SET SIZE (1..MAX) OF ATTRIBUTE.&id OPTIONAL
+}
+
+NameFormDescription ::= SEQUENCE {
+  identifier   NAME-FORM.&id,
+  name         SET SIZE (1..MAX) OF DirectoryString{ub-schema} OPTIONAL,
+  description  DirectoryString{ub-schema} OPTIONAL,
+  obsolete     BOOLEAN DEFAULT FALSE,
+  information  [0]  NameFormInformation
+}
+
+NameFormInformation ::= SEQUENCE {
+  subordinate        OBJECT-CLASS.&id,
+  namingMandatories  SET OF ATTRIBUTE.&id,
+  namingOptionals    SET SIZE (1..MAX) OF ATTRIBUTE.&id OPTIONAL
+}
+
+MatchingRuleUseDescription ::= SEQUENCE {
+  identifier   MATCHING-RULE.&id,
+  name         SET SIZE (1..MAX) OF DirectoryString{ub-schema} OPTIONAL,
+  description  DirectoryString{ub-schema} OPTIONAL,
+  obsolete     BOOLEAN DEFAULT FALSE,
+  information  [0]  SET OF ATTRIBUTE.&id
+}
+
+ContextDescription ::= SEQUENCE {
+  identifier   CONTEXT.&id,
+  name         SET SIZE (1..MAX) OF DirectoryString{ub-schema} OPTIONAL,
+  description  DirectoryString{ub-schema} OPTIONAL,
+  obsolete     BOOLEAN DEFAULT FALSE,
+  information  [0]  ContextInformation
+}
+
+ContextInformation ::= SEQUENCE {
+  syntax           DirectoryString{ub-schema},
+  assertionSyntax  DirectoryString{ub-schema} OPTIONAL
+}
+
+DITContextUseDescription ::= SEQUENCE {
+  identifier   ATTRIBUTE.&id,
+  name         SET SIZE (1..MAX) OF DirectoryString{ub-schema} OPTIONAL,
+  description  DirectoryString{ub-schema} OPTIONAL,
+  obsolete     BOOLEAN DEFAULT FALSE,
+  information  [0]  DITContextUseInformation
+}
+
+DITContextUseInformation ::= SEQUENCE {
+  mandatoryContexts  [1]  SET SIZE (1..MAX) OF CONTEXT.&id OPTIONAL,
+  optionalContexts   [2]  SET SIZE (1..MAX) OF CONTEXT.&id OPTIONAL
+}
+
+-- object classes 
+subschema OBJECT-CLASS ::= {
+  KIND         auxiliary
+  MAY CONTAIN
+    {dITStructureRules | nameForms | dITContentRules | objectClasses |
+      attributeTypes | contextTypes | dITContextUse | matchingRules |
+      matchingRuleUse}
+  ID           id-soc-subschema
+}
+
+-- attributes 
+dITStructureRules ATTRIBUTE ::= {
+  WITH SYNTAX             DITStructureRuleDescription
+  EQUALITY MATCHING RULE  integerFirstComponentMatch
+  USAGE                   directoryOperation
+  ID                      id-soa-dITStructureRule
+}
+
+dITContentRules ATTRIBUTE ::= {
+  WITH SYNTAX             DITContentRuleDescription
+  EQUALITY MATCHING RULE  objectIdentifierFirstComponentMatch
+  USAGE                   directoryOperation
+  ID                      id-soa-dITContentRules
+}
+
+matchingRules ATTRIBUTE ::= {
+  WITH SYNTAX             MatchingRuleDescription
+  EQUALITY MATCHING RULE  objectIdentifierFirstComponentMatch
+  USAGE                   directoryOperation
+  ID                      id-soa-matchingRules
+}
+
+attributeTypes ATTRIBUTE ::= {
+  WITH SYNTAX             AttributeTypeDescription
+  EQUALITY MATCHING RULE  objectIdentifierFirstComponentMatch
+  USAGE                   directoryOperation
+  ID                      id-soa-attributeTypes
+}
+
+objectClasses ATTRIBUTE ::= {
+  WITH SYNTAX             ObjectClassDescription
+  EQUALITY MATCHING RULE  objectIdentifierFirstComponentMatch
+  USAGE                   directoryOperation
+  ID                      id-soa-objectClasses
+}
+
+nameForms ATTRIBUTE ::= {
+  WITH SYNTAX             NameFormDescription
+  EQUALITY MATCHING RULE  objectIdentifierFirstComponentMatch
+  USAGE                   directoryOperation
+  ID                      id-soa-nameForms
+}
+
+matchingRuleUse ATTRIBUTE ::= {
+  WITH SYNTAX             MatchingRuleUseDescription
+  EQUALITY MATCHING RULE  objectIdentifierFirstComponentMatch
+  USAGE                   directoryOperation
+  ID                      id-soa-matchingRuleUse
+}
+
+structuralObjectClass ATTRIBUTE ::= {
+  WITH SYNTAX             OBJECT IDENTIFIER
+  EQUALITY MATCHING RULE  objectIdentifierMatch
+  SINGLE VALUE            TRUE
+  NO USER MODIFICATION    TRUE
+  USAGE                   directoryOperation
+  ID                      id-soa-structuralObjectClass
+}
+
+governingStructureRule ATTRIBUTE ::= {
+  WITH SYNTAX             INTEGER
+  EQUALITY MATCHING RULE  integerMatch
+  SINGLE VALUE            TRUE
+  NO USER MODIFICATION    TRUE
+  USAGE                   directoryOperation
+  ID                      id-soa-governingStructureRule
+}
+
+contextTypes ATTRIBUTE ::= {
+  WITH SYNTAX             ContextDescription
+  EQUALITY MATCHING RULE  objectIdentifierFirstComponentMatch
+  USAGE                   directoryOperation
+  ID                      id-soa-contextTypes
+}
+
+dITContextUse ATTRIBUTE ::= {
+  WITH SYNTAX             DITContextUseDescription
+  EQUALITY MATCHING RULE  objectIdentifierFirstComponentMatch
+  USAGE                   directoryOperation
+  ID                      id-soa-dITContextUse
+}
+
+-- object identifier assignments 
+-- schema object classes 
+id-soc-subschema OBJECT IDENTIFIER ::=
+  {id-soc 1}
+
+-- schema operational attributes 
+id-soa-dITStructureRule OBJECT IDENTIFIER ::=
+  {id-soa 1}
+
+id-soa-dITContentRules OBJECT IDENTIFIER ::= {id-soa 2}
+
+id-soa-matchingRules OBJECT IDENTIFIER ::= {id-soa 4}
+
+id-soa-attributeTypes OBJECT IDENTIFIER ::= {id-soa 5}
+
+id-soa-objectClasses OBJECT IDENTIFIER ::= {id-soa 6}
+
+id-soa-nameForms OBJECT IDENTIFIER ::= {id-soa 7}
+
+id-soa-matchingRuleUse OBJECT IDENTIFIER ::= {id-soa 8}
+
+id-soa-structuralObjectClass OBJECT IDENTIFIER ::= {id-soa 9}
+
+id-soa-governingStructureRule OBJECT IDENTIFIER ::= {id-soa 10}
+
+id-soa-contextTypes OBJECT IDENTIFIER ::= {id-soa 11}
+
+id-soa-dITContextUse OBJECT IDENTIFIER ::= {id-soa 12}
+
+END -- SchemaAdministration
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

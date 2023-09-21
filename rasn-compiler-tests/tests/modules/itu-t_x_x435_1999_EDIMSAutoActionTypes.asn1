@@ -1,0 +1,137 @@
+
+
+
+
+
+
+
+
+-- Module EDIMSAutoActionTypes (X.435:06/1999)
+-- See also ITU-T X.435 (06/1999)
+-- See also the index of all ASN.1 assignments needed in this document
+
+EDIMSAutoActionTypes {joint-iso-itu-t mhs(6) edims(7) modules(0)
+  message-store-auto-actions(7) version(2)} DEFINITIONS ::=
+BEGIN
+
+--	Prologue
+--	Exports everything
+IMPORTS
+  --	EDIMS Object Identifiers
+  id-aae-duplicate-edin, id-act-edi-auto-acknowledgement,
+    id-act-edi-auto-correlate, id-act-edi-auto-forward-v2, id-for-action,
+    id-aae-edi-auto-forwarding-loop
+    --==
+    FROM EDIMSObjectIdentifiers {joint-iso-itu-t mhs(6) edims(7) modules(0)
+      object-identifiers(0) version(2)}
+  --	EDIMS Information Objects
+  EDISupplementaryInformation, RecipientField, ActionRequestField,
+    EDINotificationRequestsField, ResponsibilityPassingAllowedField
+    --==
+    FROM EDIMSInformationObjects {joint-iso-itu-t mhs(6) edims(7) modules(0)
+      information-objects(2) version(2)}
+  --	MS Abstract Service
+  AUTO-ACTION, AUTO-ACTION-ERROR, Filter, MSSubmissionOptions
+    --==
+    FROM MSAbstractService {joint-iso-itu-t mhs(6) ms(4) modules(0)
+      abstract-service(1) version-1999(1)}
+  --	MTS Upper Bounds
+  ub-recipients
+    --==
+    FROM MTSUpperBounds {joint-iso-itu-t mhs(6) mts(3) modules(0)
+      upper-bounds(3) version-1999(1)}
+  --	MTS Abstract Service Definition
+  element-of-service-not-subscribed, ExtensionField, inconsistent-request,
+    originator-invalid, MessageSubmissionEnvelope,
+    recipient-improperly-specified, remote-bind-error, security-error,
+    submission-control-violated, unsupported-critical-function
+    --==
+    FROM MTSAbstractService {joint-iso-itu-t mhs(6) mts(3) modules(0)
+      mts-abstract-service(1) version-1999(1)};
+
+--	END Imports
+--	EDI auto-actions information object set
+EDIAutoActions AUTO-ACTION ::=
+  {edi-auto-correlate | edi-auto-forward | edi-auto-acknowledgement}
+
+--	Auto-Action Types
+--	EDI Auto-Forward
+edi-auto-forward AUTO-ACTION ::= {
+  REGISTRATION PARAMETER IS  EDIAutoForwardRegistrationParameter
+  ERRORS
+    {auto-forwarding-loop | element-of-service-not-subscribed |
+      inconsistent-request | originator-invalid |
+      recipient-improperly-specified | remote-bind-error | security-error |
+      submission-control-violated | unsupported-critical-function}
+  IDENTIFIED BY              id-act-edi-auto-forward-v2
+}
+
+EDIAutoForwardRegistrationParameter ::= SEQUENCE {
+  filter                   [0]  Filter OPTIONAL,
+  edi-supplementary-info   [1]  EDISupplementaryInformation OPTIONAL,
+  delete-after-forwarding  [2]  BOOLEAN DEFAULT FALSE,
+  edi-forwarding-mode
+    CHOICE {forwarding-with-responsibility-not-accepted  [3]  NewRecipient,
+            forwarding-with-responsibility-accepted
+              [4]  ForwardWithRespAccepted},
+  forwarding-envelope      [5]  MessageSubmissionEnvelope,
+  submission-options       [6]  MSSubmissionOptions OPTIONAL
+}
+
+NewRecipient ::= RecipientField
+
+ForwardWithRespAccepted ::= SET {
+  new-edin-receiver-name       [0]  RecipientField OPTIONAL,
+  per-recipient-heading-field
+    [1]  SEQUENCE SIZE (1..ub-recipients) OF NextRecipientFields
+}
+
+NextRecipientFields ::= SEQUENCE {
+  next-recipient                                  [1]  RecipientField,
+  next-recipient-action-request
+    [2]  ActionRequestField DEFAULT {id-for-action},
+  next-recipient-edi-notification-requests-field
+    [3]  EDINotificationRequestsField OPTIONAL,
+  next-responsibility-passing-allowed
+    [4]  ResponsibilityPassingAllowedField DEFAULT FALSE
+}
+
+--	EDI auto-correlate auto-action
+edi-auto-correlate AUTO-ACTION ::= {IDENTIFIED BY  id-act-edi-auto-correlate
+}
+
+--	EDI auto-acknowledgement auto-action
+edi-auto-acknowledgement AUTO-ACTION ::= {
+  REGISTRATION PARAMETER IS  EDIAutoAcknowledgementRegistrationParameter
+  ERRORS
+    {submission-control-violated | recipient-improperly-specified |
+      element-of-service-not-subscribed | originator-invalid |
+      inconsistent-request | security-error | remote-bind-error |
+      unsupported-critical-function | duplicate-edin}
+  IDENTIFIED BY              id-act-edi-auto-acknowledgement
+}
+
+EDIAutoAcknowledgementRegistrationParameter ::= SET {
+  auto-acknowledge-suppl-receipt-info
+    [0]  EDISupplementaryInformation OPTIONAL,
+  submission-options                   [1]  MSSubmissionOptions OPTIONAL
+}
+
+duplicate-edin AUTO-ACTION-ERROR ::= {CODE  global:id-aae-duplicate-edin
+}
+
+--	EDI auto-action-error-table information object set
+EDIAutoActionErrorTable AUTO-ACTION-ERROR ::=
+  {auto-forwarding-loop | duplicate-edin | element-of-service-not-subscribed |
+   inconsistent-request | originator-invalid | recipient-improperly-specified |
+   remote-bind-error | security-error | submission-control-violated |
+   unsupported-critical-function}
+
+auto-forwarding-loop AUTO-ACTION-ERROR ::= {
+  CODE  global:id-aae-edi-auto-forwarding-loop
+}
+
+END -- of EDIMSAutoActionTypes
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

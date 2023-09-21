@@ -1,0 +1,337 @@
+
+
+
+
+
+
+
+-- Module M3108Part1ASN1Module (M.3108.1:03/1999)
+-- See also ITU-T M.3108.1 (1999) Cor. 1 (01/2001)
+-- See also the index of all ASN.1 assignments needed in this document
+
+M3108Part1ASN1Module {itu-t recommendation m lcs(3108) serviceManagement(1)
+  informationModel(0) asn1Modules(2) asn1DefinedTypesModule(0)} DEFINITIONS
+IMPLICIT TAGS ::=
+BEGIN
+
+-- EXPORTS everything
+IMPORTS
+  NameType
+    FROM ASN1DefinedTypesModule {itu-t recommendation m gnm(3100)
+      informationModel(0) asn1Modules(2) asn1DefinedTypesModule(0)}
+  AdditionalInformation, AdditionalText, AdministrativeState, AttributeList,
+    AvailabilityStatus, NotificationIdentifier, SourceIndicator
+    FROM Attribute-ASN1Module {joint-iso-itu-t ms(9) smi(3) part2(2)
+      asn1Module(2) 1}
+  ObjectInstance
+    FROM CMIP-1 {joint-iso-itu-t ms(9) cmip(1) modules(0) protocol(3)}
+  LocationAddress, PersonReach, ServiceDescription -- from TC1 
+    FROM X790ASN1Module {itu-t(0) recommendation(0) x(24) x790(790)
+      informationModel(0) asn1module(2)};
+
+m3108Part1InformationModel OBJECT IDENTIFIER ::=
+  {itu-t recommendation m lcs(3108) serviceManagement(1) informationModel(0)}
+
+m3108Part1ObjectClass OBJECT IDENTIFIER ::=
+  {m3108Part1InformationModel managedObjectClass(1)}
+
+m3108Part1Package OBJECT IDENTIFIER ::= {m3108Part1InformationModel package(2)}
+
+m3108Part1Attribute OBJECT IDENTIFIER ::=
+  {m3108Part1InformationModel attribute(3)}
+
+m3108Part1NameBinding OBJECT IDENTIFIER ::=
+  {m3108Part1InformationModel nameBinding(4)}
+
+m3108Part1Notification OBJECT IDENTIFIER ::=
+  {m3108Part1InformationModel notification(5)}
+
+m3108Part1Parameter OBJECT IDENTIFIER ::=
+  {m3108Part1InformationModel parameter(6)}
+
+m3108Part1Action OBJECT IDENTIFIER ::= {m3108Part1InformationModel action(7)}
+
+AddSapsToSagInformation ::= SEQUENCE {
+  listOfSaps                   ListOfSaps OPTIONAL,
+  numberOfServiceAccessPoints  INTEGER OPTIONAL
+}
+
+AddSapsToSagResult ::= CHOICE {
+  listOfSaps     ListOfSaps,
+  addToSagError  AddToSagError
+}
+
+AddToSagError ::= ENUMERATED {
+  invalidSapId(0), invalidSagId(1), sapNotInAppropriateUsageState(2),
+  resourcesNotAvailable(3), ...
+  }
+
+AliasName ::= Name -- from TC1 
+
+Bandwidth ::= CHOICE {
+  bitsPerSecond      [0]  Number,
+  kiloBitsPerSecond  [1]  Number,
+  megaBitsPerSecond  [2]  Number,
+  gigaBitsPerSecond  [3]  Number,
+  teraBitsPerSecond  [4]  Number
+  -- , ...
+}
+
+CircuitId ::= NameType
+
+CircuitNumber ::= Number
+
+Contact ::= CHOICE {
+  person         PersonReach,
+  contactObject  ObjectInstance
+  -- the ObjectInstance points to an instance of a X.790 Contact object.
+}
+
+Cp ::= TopologicalEntity
+
+Cpe ::= CHOICE {name    Name,
+                object  ObjectInstance
+}
+
+CreateSadError ::= ENUMERATED {
+  invalidServiceType(0), invalidServiceDescription(1),
+  duplicateSADIdentifier(2), contractViolation(4), ...
+  } -- from TC1 
+
+CreateSagError ::= ENUMERATED {
+  invalidLocation(0), invalidSagId(1), invalidSadId(2), ...
+  }
+
+CreateLCSError ::= ENUMERATED {
+  unknownServiceDescription(0), unknownServiceType(1), resourcesUnavailable(2),
+  requestedBandwidthNotAvailable(3), quantitySpecifiedOutOfRange(4),
+  contractViolation(5), invalidValue(6), requiredParameterNotAvailable(7),
+  serviceCannotBeCompleted(8), invalidServiceTerminationDate(9),
+  invalidSchedule(10), invalidServiceAvailabilityDate(11),
+  requestAlreadyClosed(12), invalidAddress(13), nonExistentSAP(14), ...
+  }
+
+CreateLinkConnectionError ::= ENUMERATED {
+  unknownServiceDescription(0), unknownServiceType(1), resourcesUnavailable(2),
+  requestedLinkConnectionBandwidthNotAvailable(3), contractViolation(4),
+  invalidValue(5), requiredParameterNotAvailable(6),
+  linkConnectionRequestCannotBeCompleted(7),
+  invalidLinkConnectionTerminationDate(8),
+  invalidLinkConnectionAvailabilityDate(9), nonExistentLinkConnectionPoint(10),
+  ...
+  }
+
+DeleteLCSError ::= ENUMERATED {
+  alreadyDeleted(0), invalidCircuitNumber(1), invalidServiceTerminationDate(2),
+  notBeingInAppropriateServiceAdministrativeState(3), contractViolation(4), 
+  ...
+  }
+
+DeleteLinkConnectionError ::= ENUMERATED {
+  alreadyDeleted(0), invalidLinkConnectionIdentifier(1),
+  invalidLinkConnectionTerminationDate(2),
+  notBeingInAppropriateLinkConnectionAdministrativeState(3),
+  contractViolation(4), ...
+  }
+
+DeleteSadError ::= ENUMERATED {
+  invalidSADId(0), sADContainsSAGs(1), resourceInUse(2), ...
+  } -- from TC1 
+
+DeleteSagError ::= ENUMERATED {invalidSagId(0), invalidSadId(1), ...
+                               }
+
+Diversity ::= CHOICE {
+  topologicalElements  [1]  SET OF TopologicalEntity,
+  -- the topological entities from which the circuit should be diverse 
+  otherCircuits        [2]  SET OF CircuitId,
+  -- other circuits from which the circuit should be diverse 
+  severalGroups
+    [3]  SET OF
+           SEQUENCE {numberOfCircuits     INTEGER,
+                     -- the number of circuits in the diverse group 
+                     topologicalElements  SET OF TopologicalEntity
+                     -- the topological entities from which the circuits in the group should be diverse 
+           }
+}
+
+EquipmentManufacturer ::= Name -- from TC1 
+
+EquipmentType ::= Name -- from TC1 
+
+LcsModifyProgressProblemReport ::= SEQUENCE {
+  sourceIndicator                     [1]  SourceIndicator OPTIONAL,
+  lcsModifyProgressProblemReportInfo  [2]  LcsModifyProgressProblemReportInfo,
+  notificationIdentifier              [3]  NotificationIdentifier OPTIONAL,
+  additionalText                      [4]  AdditionalText OPTIONAL,
+  additionalInformation               [5]  AdditionalInformation OPTIONAL
+}
+
+LcsModifyProgressProblemReportInfo ::= ENUMERATED {
+  resourcesUnavailable(0), requestedBandwidthNotAvailable(1), ...
+  }
+
+LcsRequestProgressProblemReport ::= SEQUENCE {
+  sourceIndicator                      [1]  SourceIndicator OPTIONAL,
+  lcsRequestProgressProblemReportInfo  [2]  LcsRequestProgressProblemReportInfo,
+  notificationIdentifier               [3]  NotificationIdentifier OPTIONAL,
+  additionalText                       [4]  AdditionalText OPTIONAL,
+  additionalInformation                [5]  AdditionalInformation OPTIONAL
+}
+
+LcsRequestProgressProblemReportInfo ::= ENUMERATED {
+  resourcesUnavailable(0), requestedBandwidthNotAvailable(1),
+  serviceCannotBeCompleted(2), invalidServiceAvailabilityDate(3),
+  invalidAddress(4), nonExistentSap(5), ...
+  }
+
+LinkConnectionModifyProgressProblemReport ::= SEQUENCE {
+  sourceIndicator                                [1]  SourceIndicator OPTIONAL,
+  linkConnectionModifyProgressProblemReportInfo
+    [2]  LinkConnectionModifyProgressProblemReportInfo,
+  notificationIdentifier
+    [3]  NotificationIdentifier OPTIONAL,
+  additionalText                                 [4]  AdditionalText OPTIONAL,
+  additionalInformation
+    [5]  AdditionalInformation OPTIONAL
+}
+
+LinkConnectionModifyProgressProblemReportInfo ::= ENUMERATED {
+  resourcesUnavailable(0), requestedBandwidthNotAvailable(1), ...
+  }
+
+LinkConnectionRequestProgressProblemReport ::= SEQUENCE {
+  sourceIndicator                                 [1]  SourceIndicator OPTIONAL,
+  linkConnectionRequestProgressProblemReportInfo
+    [2]  LinkConnectionRequestProgressProblemReportInfo,
+  notificationIdentifier
+    [3]  NotificationIdentifier OPTIONAL,
+  additionalText                                  [4]  AdditionalText OPTIONAL,
+  additionalInformation
+    [5]  AdditionalInformation OPTIONAL
+}
+
+LinkConnectionRequestProgressProblemReportInfo ::= ENUMERATED {
+  resourcesUnavailable(0), requestedLinkConnectionBandwidthNotAvailable(1),
+  linkConnectionRequestCannotBeCompleted(2), nonExistentLinkConnectionPoint(3),
+  ...
+  }
+
+ListOfSags ::= SET OF SagId
+
+ListOfSaps ::= SET OF Sap
+
+M3108FunctionalUnits ::= BIT STRING {
+  basicTransportService(0), transportServiceOrder(1),
+  transportServiceOrderHistory(2), transportServiceModify(3),
+  transportResourceVisibility(4)}
+
+ModelType ::= Name -- from TC1 
+
+ModifyLCSError ::= UpdateLCSError
+
+ModifyLinkConnectionError ::= ENUMERATED {
+  requiredBandwidthNotAvailable(0), resourcesUnavailable(1), unknownRoute(2),
+  serviceAdministrativeStateUnlocked(3), ...
+  }
+
+NumberOfUnspecifiedSaps ::= INTEGER(1..MAX)
+
+Name ::= GraphicString -- from TC1 
+
+Number ::= INTEGER(0..MAX)
+
+Null ::= NULL
+
+OriginatingLocation ::= LocationAddress
+
+Procedure ::= CHOICE {name    Name, -- from TC1 
+                      number  INTEGER
+}
+
+RemoveFromSagError ::= SEQUENCE {
+  sourceIndicator         [1]  SourceIndicator OPTIONAL,
+  removeFromSagErrorInfo  [2]  RemoveFromSagErrorInfo,
+  notificationIdentifier  [3]  NotificationIdentifier OPTIONAL,
+  additionalText          [4]  AdditionalText OPTIONAL,
+  additionalInformation   [5]  AdditionalInformation OPTIONAL
+}
+
+RemoveFromSagErrorInfo ::= ENUMERATED {
+  invalidSapId(0), invalidSagId(1), sapNotInAppropriateUsageState(2), ...
+  }
+
+RequestedInitialServiceAdministrativeState ::= AdministrativeState
+
+RequestNumber ::= INTEGER(0..MAX)
+
+Route ::= SEQUENCE OF TopologicalEntity
+
+SadId ::= NameType
+
+SagId ::= NameType
+
+SagLocation ::= LocationAddress
+
+Sap ::= Name -- from TC1 
+
+ServiceRequestState ::= ENUMERATED {
+  pre-processing(0), open-active(1), pending(2), closed(3)}
+
+ServiceTerminationDate ::= CHOICE {time       Time,
+                                   continous  NULL
+}
+
+-- continous means that no termination date has been specified, this is the default value 
+-- for ServiceTerminationDate
+Time ::= GeneralizedTime
+
+-- without fractions of seconds, with time zone indication. 
+TerminatingLocation ::=
+  LocationAddress
+
+TopologicalEntity ::= CHOICE {name    Name,
+                              object  ObjectInstance
+}
+
+UpdateLCSError ::= ENUMERATED {
+  invalidCpeType(0), invalidSAP(1), resourcesUnavailable(2),
+  requiredBandwidthNotAvailable(3), unknownRoute(4), contractViolation(5),
+  serviceAdminstrativeStateUnlocked(6), invalidCircuitNumber(7),
+  invalidServiceTerminationDate(8), invalidSchedule(9),
+  invalidServiceAvailableState(10), invalidProviderRequestNumber(11),
+  invalidAliasName(12), ...
+  }
+
+UpdateLinkConnectionError ::= ENUMERATED {
+  invalidLinkConnectionPoint(0), resourcesUnavailable(1),
+  requiredBandwidthNotAvailable(2), contractViolation(3),
+  linkConnectionAdminstrativeStateUnlocked(4),
+  invalidLinkConnectionIdentifier(5), invalidLinkConnectionTerminationState(6),
+  invalidLinkConnectionAvailableState(7), invalidProviderRequestNumber(8),
+  invalidLinkConnectionAliasName(9), invalidSchedule(10), ...
+  }
+
+UpdateServiceRequest ::= AttributeList
+
+UpdateServiceReply ::= SEQUENCE {
+  requestIdentifier
+    SEQUENCE {initialRequest  [0]  RequestNumber OPTIONAL,
+              newRequest      [1]  RequestNumber} OPTIONAL,
+  alternateValues    AttributeList OPTIONAL
+}
+
+OriginatingLocationCP ::= TopologicalEntity
+
+OriginatingLocationSap ::= TopologicalEntity
+
+TerminatingLocationCP ::= TopologicalEntity
+
+TerminatingLocationSap ::= TopologicalEntity
+
+ServiceDescriptionList ::= SET OF ServiceDescription
+
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

@@ -1,0 +1,24 @@
+ABC.asn: ITU-T X.694 (11/2008) -- ASN module extracted from ITU-T X.694 (11/2008)ABC	-- The module reference is not standardized
+DEFINITIONS XER INSTRUCTIONS AUTOMATIC TAGS ::=
+BEGIN
+IMPORTS 
+Xyz-type FROM XYZ
+String FROM XSD {joint-iso-itu-t asn1(1) specification(0) modules(0)
+			    xsd-module(2) version1(1)}
+		   /* For a Version 2 mapping, the last component of the module
+		      identifier would be version2(2) */
+;
+
+Abc-elem ::= [NAME AS UNCAPITALIZED] Xyz-type
+Sub1-elem ::= [NAME AS UNCAPITALIZED] XSD.String
+Sub2-elem ::= [NAME AS UNCAPITALIZED] XSD.String
+Sub2-attr ::= [NAME AS UNCAPITALIZED] [ATTRIBUTE] XSD.String
+
+ENCODING-CONTROL XER
+	GLOBAL-DEFAULTS MODIFIED-ENCODINGS
+	GLOBAL-DEFAULTS CONTROL-NAMESPACE
+		"http://www.w3.org/2001/XMLSchema-instance"
+		PREFIX "xsi"
+	NAMESPACE ALL AS "http://example.com/abc"
+		PREFIX "abc"
+END

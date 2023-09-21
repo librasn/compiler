@@ -1,0 +1,273 @@
+
+
+
+
+
+
+
+-- Module IN-SDF-SDF-Protocol (Q.1248.5:07/2001)
+-- See also ITU-T Q.1248.5 (07/2001)
+-- See also the index of all ASN.1 assignments needed in this document
+
+IN-SDF-SDF-Protocol {itu-t recommendation q 1248 modules(1)
+  in-sdf-sdf-pkgs-contracts-acs(19) version1(0)} DEFINITIONS ::=
+BEGIN
+
+IMPORTS
+  ds-UsefulDefinitions, ros-InformationObjects, ros-genericPDUs, tc-Messages,
+    tc-NotationExtensions, common-classes, scf-sdf-Operations,
+    scf-sdf-Protocol, id-contract-indsp, id-contract-shadowConsumer,
+    id-contract-shadowSupplier, id-package-dspConnection,
+    id-package-inchainedModify, id-package-inchainedSearch,
+    id-package-chainedExecute, id-package-dispConnection,
+    id-package-shadowConsumer, id-package-shadowSupplier,
+    id-as-indirectorySystemAS, id-as-indirectoryDSABindingAS,
+    id-as-indirectoryShadowAS, id-as-indsaShadowBindingAS,
+    id-ac-indirectorySystemAC, id-ac-inShadowSupplierInitiatedAC,
+    id-ac-inShadowConsumerInitiatedAC,
+    id-ac-inShadowSupplierInitiatedWith3seAC,
+    id-ac-inShadowConsumerInitiatedWith3seAC, id-ac-indirectorySystemWith3seAC
+    FROM IN-object-identifiers {itu-t recommendation q 1248 modules(1)
+      in-object-identifiers(0) version1(0)}
+  distributedOperations, directoryShadowAbstractService,
+    protocolObjectIdentifiers
+    FROM UsefulDefinitions ds-UsefulDefinitions
+  id-se-threewayse
+    FROM ProtocolObjectIdentifiers protocolObjectIdentifiers
+  CONTRACT, OPERATION-PACKAGE, CONNECTION-PACKAGE, OPERATION
+    FROM Remote-Operations-Information-Objects ros-InformationObjects
+  Bind{}, Unbind{}
+    FROM Remote-Operations-Generic-ROS-PDUs ros-genericPDUs
+  TCMessage{}
+    FROM TCAPMessages tc-Messages
+  APPLICATION-CONTEXT, dialogue-abstract-syntax
+    FROM TC-Notation-Extensions tc-NotationExtensions
+  dSABind, chainedSearch, chainedAddEntry, chainedRemoveEntry,
+    chainedModifyEntry, chained{}
+    FROM DistributedOperations distributedOperations
+  dSAShadowBind, coordinateShadowUpdate, updateShadow, requestShadowUpdate
+    FROM DirectoryShadowAbstractService directoryShadowAbstractService
+  execute
+    FROM IN-SCF-SDF-operations scf-sdf-Operations
+  inUnbind
+    FROM IN-common-classes common-classes
+  inSESEAbstractSyntax
+    FROM IN-SCF-SDF-Protocol scf-sdf-Protocol;
+
+-- DSP Contract and Packages
+indspContract CONTRACT ::= {
+  CONNECTION             dspConnectionPackage
+  INITIATOR CONSUMER OF
+    {inChainedModifyPackage | inChainedSearchPackage | chainedExecutePackage}
+  ID                     id-contract-indsp
+}
+
+-- In the indspContract either DSA may assume the role of initiator and invoke the operations of the 
+-- contract.
+-- When a pair of DSAs from different open systems interact, this association contract is realised as an 
+-- SS7 application layer protocol, referred to as the IN Directory System Protocol (DSP). The definition 
+-- of this protocol in terms of an SS7 application context is provided in this module.
+dspConnectionPackage CONNECTION-PACKAGE ::= {
+  BIND    dSABind
+  UNBIND  inUnbind
+  ID      id-package-dspConnection
+}
+
+-- This connection package is identical to the dapConnectionPackage in Q.1248.4.
+inChainedModifyPackage OPERATION-PACKAGE ::= {
+  CONSUMER INVOKES  {chainedAddEntry | chainedRemoveEntry | chainedModifyEntry}
+  ID                id-package-inchainedModify
+}
+
+inChainedSearchPackage OPERATION-PACKAGE ::= {
+  CONSUMER INVOKES  {chainedSearch}
+  ID                id-package-inchainedSearch
+}
+
+chainedExecutePackage OPERATION-PACKAGE ::= {
+  CONSUMER INVOKES  {chainedExecute}
+  ID                id-package-chainedExecute
+}
+
+chainedExecute OPERATION ::= chained{execute}
+
+-- DISP Contracts and Packages
+shadowConsumerContract CONTRACT ::= {
+  CONNECTION             dispConnectionPackage
+  INITIATOR CONSUMER OF  {shadowConsumerPackage}
+  ID                     id-contract-shadowConsumer
+}
+
+shadowSupplierContract CONTRACT ::= {
+  CONNECTION             dispConnectionPackage
+  RESPONDER CONSUMER OF  {shadowSupplierPackage}
+  ID                     id-contract-shadowSupplier
+}
+
+-- Since the shadow consumer is the initiator of the ShadowConsumerContract, it assumes the role of 
+-- consumer of the shadowConsumerPackage. This means that the shadow consumer invokes the 
+-- IN-RequestShadowUpdate operation and that the shadow supplier invokes the IN-UpdateShadow 
+-- operation.
+-- Since the shadow supplier is the initiator of the shadowSupplierContract, it assumes the role of
+-- supplier of the shadowSupplierPackage. This means that the shadow supplier invokes the 
+-- operations of the contract.
+-- The SS7 realisation of the two forms of Shadow Abstract Service, referred to as the IN 
+-- Directory Information Shadowing Protocol (DISP) are defined in terms of several SS7 
+-- application contexts provided in this module.
+dispConnectionPackage CONNECTION-PACKAGE ::= {
+  BIND    dSAShadowBind
+  UNBIND  inUnbind
+  ID      id-package-dispConnection
+}
+
+-- This connection package is identical to the dapConnectionPackage in Q.1248.4.
+shadowConsumerPackage OPERATION-PACKAGE ::= {
+  CONSUMER INVOKES  {requestShadowUpdate}
+  SUPPLIER INVOKES  {updateShadow}
+  ID                id-package-shadowConsumer
+}
+
+shadowSupplierPackage OPERATION-PACKAGE ::= {
+  SUPPLIER INVOKES  {coordinateShadowUpdate | updateShadow}
+  ID                id-package-shadowSupplier
+}
+
+-- DSP Abstract-Syntaxes
+-- The Directory ASEs that realise the DSP operation packages specified in the above share the 
+-- following single abstract syntax.
+inDirectorySystemAbstractSyntax ABSTRACT-SYNTAX ::= {
+  BasicDSP-PDUs
+  IDENTIFIED BY  id-as-indirectorySystemAS
+}
+
+BasicDSP-PDUs ::= TCMessage{{DSP-Invokable}, {DSP-Returnable}}
+
+DSP-Invokable OPERATION ::=
+  {chainedAddEntry | chainedRemoveEntry | chainedModifyEntry | chainedSearch |
+   chainedExecute}
+
+DSP-Returnable OPERATION ::=
+  {chainedAddEntry | chainedRemoveEntry | chainedModifyEntry | chainedSearch |
+   chainedExecute}
+
+-- The realisation of the DSP connection package specified in the above uses a separate abstract syntax
+-- as follows.
+inDirectoryDSABindingAbstractSyntax ABSTRACT-SYNTAX ::= {
+  DSABinding-PDUs
+  IDENTIFIED BY  id-as-indirectoryDSABindingAS
+}
+
+DSABinding-PDUs ::= CHOICE {bind    Bind{dSABind},
+                            unbind  Unbind{inUnbind}
+}
+
+-- DISP Abstaract-Syntaxes
+-- The Directory ASEs that realise the DISP operation packages specified in the above share the 
+-- following abstract syntax.
+inDirectoryShadowAbstractSyntax ABSTRACT-SYNTAX ::= {
+  BasicDISP-PDUs
+  IDENTIFIED BY  id-as-indirectoryShadowAS
+}
+
+BasicDISP-PDUs ::= TCMessage{{DISP-Invokable}, {DISP-Returnable}}
+
+DISP-Invokable OPERATION ::=
+  {requestShadowUpdate | updateShadow | coordinateShadowUpdate}
+
+DISP-Returnable OPERATION ::=
+  {requestShadowUpdate | updateShadow | coordinateShadowUpdate}
+
+-- The realisation of the DISP connection package specified in the above uses a separate abstract 
+-- syntax as follows. 
+inDirectoryDSAShadowBindingAbstractSyntax ABSTRACT-SYNTAX ::= {
+  DISPBinding-PDUs
+  IDENTIFIED BY  id-as-indsaShadowBindingAS
+}
+
+DISPBinding-PDUs ::= CHOICE {
+  bind    Bind{dSAShadowBind},
+  unbind  Unbind{inUnbind}
+}
+
+-- DSP Application Contexts
+inDirectorySystemAC APPLICATION-CONTEXT ::= {
+  CONTRACT                  indspContract
+  DIALOGUE MODE             structured
+  TERMINATION               basic
+  ABSTRACT SYNTAXES
+    {dialogue-abstract-syntax | inDirectorySystemAbstractSyntax |
+      inDirectoryDSABindingAbstractSyntax}
+  APPLICATION CONTEXT NAME  id-ac-indirectorySystemAC
+}
+
+-- The inDirectorySystemAC is used for the realisation of indspContract.
+inDirectorySystemWith3seAC APPLICATION-CONTEXT ::= {
+  CONTRACT                  indspContract
+  DIALOGUE MODE             structured
+  TERMINATION               basic
+  ADDITIONAL ASES           {id-se-threewayse}
+  ABSTRACT SYNTAXES
+    {dialogue-abstract-syntax | inDirectorySystemAbstractSyntax |
+      inDirectoryDSABindingAbstractSyntax | inSESEAbstractSyntax}
+  APPLICATION CONTEXT NAME  id-ac-indirectorySystemWith3seAC
+}
+
+-- The inDirectorySystemWith3seAC is used for the realisation of indspContract when 3-way 
+-- authentication is required.
+-- DISP Application Contexts
+inShadowSupplierInitiatedAC APPLICATION-CONTEXT ::= {
+  CONTRACT                  shadowSupplierContract
+  DIALOGUE MODE             structured
+  TERMINATION               basic
+  ABSTRACT SYNTAXES
+    {dialogue-abstract-syntax | inDirectoryShadowAbstractSyntax |
+      inDirectoryDSAShadowBindingAbstractSyntax}
+  APPLICATION CONTEXT NAME  id-ac-inShadowSupplierInitiatedAC
+}
+
+-- The inShadowSupplierInitiatedAC is used for the realisation of shadowSupplierContract.
+inShadowSupplierInitiatedWith3seAC APPLICATION-CONTEXT ::= {
+  CONTRACT                  shadowSupplierContract
+  DIALOGUE MODE             structured
+  TERMINATION               basic
+  ADDITIONAL ASES           {id-se-threewayse}
+  ABSTRACT SYNTAXES
+    {dialogue-abstract-syntax | inDirectoryShadowAbstractSyntax |
+      inDirectoryDSAShadowBindingAbstractSyntax | inSESEAbstractSyntax}
+  APPLICATION CONTEXT NAME  id-ac-inShadowSupplierInitiatedWith3seAC
+}
+
+-- The inShadowSupplierInitiatedWith3seAC is used for the realisation of shadowSupplierContract 
+-- when 3-way authentication is required.
+inShadowConsumerInitiatedAC APPLICATION-CONTEXT ::= {
+  CONTRACT                  shadowConsumerContract
+  DIALOGUE MODE             structured
+  TERMINATION               basic
+  ABSTRACT SYNTAXES
+    {dialogue-abstract-syntax | inDirectoryShadowAbstractSyntax |
+      inDirectoryDSAShadowBindingAbstractSyntax}
+  APPLICATION CONTEXT NAME  id-ac-inShadowConsumerInitiatedAC
+}
+
+-- The inShadowConsumerInitiatedAC is used for the realisation of shadowConsumerContract.
+inShadowConsumerInitiatedWith3seAC APPLICATION-CONTEXT ::= {
+  CONTRACT                  shadowConsumerContract
+  DIALOGUE MODE             structured
+  TERMINATION               basic
+  ADDITIONAL ASES           {id-se-threewayse}
+  ABSTRACT SYNTAXES
+    {dialogue-abstract-syntax | inDirectoryShadowAbstractSyntax |
+      inDirectoryDSAShadowBindingAbstractSyntax | inSESEAbstractSyntax}
+  APPLICATION CONTEXT NAME  id-ac-inShadowConsumerInitiatedWith3seAC
+}
+
+-- The inShadowConsumerInitiatedWith3seAC is used for the realisation of 
+--shadowConsumerContract when 3-way authentication is required.
+-- DSP/DISP Common Application Context
+-- trafficFlowControlAC APPLICATION-CONTEXT
+-- This is defined in Q.1248.4. 
+-- Contracts, packages, and abstract syntaxes used in the trafficFlowControlAC is also shown in Q.1248.4.
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

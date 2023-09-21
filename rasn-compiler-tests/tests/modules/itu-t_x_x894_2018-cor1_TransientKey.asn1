@@ -1,0 +1,80 @@
+-- ASN module extracted from ITU-T X.894 (10/2018)-- 19 Module TransientKey
+TransientKey {iso(1) identified-organization(3) tc68(133) country(16) x9(840) x9Standards(9) x9-95(95) module(0) tk(2) version(0) v2010-2016(1)}
+DEFINITIONS IMPLICIT TAGS ::= BEGIN
+-- EXPORTS All; --
+IMPORTS
+-- X9.73 Cryptographic Message Syntax (CMS) ASN.1 and XML --
+Digest, DigestAlgorithmIdentifier, SignatureAlgorithmIdentifier
+FROM CryptographicMessageSyntax-2010 {
+iso(1) member-body(2) us(840) rsadsi(113549)
+pkcs(1) pkcs-9(9) smime(16) modules(0) id-mod-cms-2009(58)}
+
+-- X9.95 Trusted Time Stamp --
+ALGORITHM, OID, TSTInfo
+FROM TrustedTimeStamp { 
+iso(1) identified-organization(3) tc68(133) country(16) x9(840)
+x9Standards(9) x9-95(95) module(0) tts(1) v2010-2016(1) }
+Certificate
+FROM AuthenticationFramework {
+joint-iso-itu-t ds(5) module(1) authenticationFramework(7) 8};
+transientKeySignedTST OID ::= { 
+iso(1) identified-organization(3) tc68(133) country(16) x9(840)
+x9Standards(9) x9-95(95) module(0) tk(2) contentType(1)}
+tsp-req-tk OID ::= { 
+iso(1) identified-organization(3) tc68(133) country(16) x9(840)
+x9Standards(9) x9-95(95) module(0) tk(2) method(2)}
+TransientKeySignedTST ::= SEQUENCE {
+version         TKSVersion,
+tstAndInterval  TSTAndInterval,
+digest          Digest,
+previousDigest  [0] Digest  OPTIONAL,
+signature       Signature
+}
+TKSVersion ::= INTEGER { version1(1) } (version1, ...)
+TSTAndInterval ::= SEQUENCE {
+tstInfo       TSTInfo,
+intervalInfo  IntervalInfo
+}
+IntervalInfo ::= SEQUENCE {
+version             IIVersion,
+signedIntervalSpec  SignedIntervalSpec,
+archiveTree         ArchiveTree,
+certifierList       UriList  OPTIONAL
+}
+IIVersion ::= INTEGER { version1(1) } (version1, ...)
+SignedIntervalSpec ::= SEQUENCE {
+intervalSpec       IntervalSpec,
+signature          Signature,
+identitySignature  IdentitySignature
+}
+IntervalSpec ::= SEQUENCE {
+chainSpec           ChainSpec,
+intervalStart       GeneralizedTime,
+intervalStop        GeneralizedTime,
+publicKey           PublicKey,
+previousPublicKey   [0] PublicKey  OPTIONAL,
+previousMetaDigest  [1] OCTET STRING  OPTIONAL
+}
+ChainSpec ::= SEQUENCE {
+serverId                  Uri,
+chainStart                GeneralizedTime,
+digestAlgorithm           DigestAlgorithmIdentifier,
+signatureAlgorithm        SignatureAlgorithmIdentifier,
+publicVerificationServer  Uri  OPTIONAL
+}
+Uri ::= IA5String
+PublicKey ::= OCTET STRING
+Signature ::= BIT STRING
+IdentitySignature ::= SEQUENCE {
+signatureAlgorithm  SignatureAlgorithmIdentifier,
+signature           Signature,
+certificate         EncodedCertificate  OPTIONAL
+}
+EncodedCertificate ::= TYPE-IDENTIFIER.&Type( Certificate )
+ArchiveTree ::= SEQUENCE {
+archive   Uri,
+children  ArchiveTreeList  OPTIONAL
+}
+ArchiveTreeList ::= SEQUENCE SIZE(1..MAX) OF ArchiveTree
+UriList ::= SEQUENCE SIZE(1..MAX) OF Uri
+END  -- TransientKey

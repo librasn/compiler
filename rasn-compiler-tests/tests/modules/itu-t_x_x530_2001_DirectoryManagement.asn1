@@ -1,0 +1,660 @@
+
+
+
+
+
+
+
+
+-- Module DirectoryManagement (X.530:02/2001)
+-- See also ITU-T X.530 (02/2001)
+-- See also the index of all ASN.1 assignments needed in this document
+
+DirectoryManagement {joint-iso-itu-t ds(5) module(1) directoryManagement(27) 4}
+DEFINITIONS ::=
+BEGIN
+
+--  EXPORTS All 
+--  The types and values defined in this module are exported for use in the other ASN.1 modules contained
+--  within the Directory Specifications, and for the use of other applications which will use them to access
+--  Directory Services. Other applications may use them for their own purposes, but this will not constrain
+--  extensions and modifications needed to maintain or improve the Directory Service.
+IMPORTS
+  -- from ITU-T Rec. X.501 | ISO/IEC 9594-2
+  basicAccessControl, directoryAbstractService, directoryShadowAbstractService,
+    distributedOperations, dsaOperationalAttributeTypes, enhancedSecurity,
+    id-mgt, informationFramework, opBindingManagement, schemaAdministration,
+    selectedAttributeTypes, upperBounds
+    FROM UsefulDefinitions {joint-iso-itu-t ds(5) module(1)
+      usefulDefinitions(0) 4}
+  ATTRIBUTE, AttributeType, AttributeValue, DistinguishedName, Name,
+    OBJECT-CLASS, RDNSequence, SubtreeSpecification
+    FROM InformationFramework {joint-iso-itu-t ds(5) module(1)
+      informationFramework(1) 4}
+  ACIItem
+    FROM BasicAccessControl {joint-iso-itu-t ds(5) module(1)
+      basicAccessControl(24) 4}
+  AttributeTypeDescription, DITStructureRuleDescription,
+    DITContentRuleDescription, MatchingRuleDescription,
+    MatchingRuleUseDescription, NameFormDescription, ObjectClassDescription
+    FROM SchemaAdministration {joint-iso-itu-t ds(5) module(1)
+      schemaAdministration(23) 4}
+  ConsumerInformation, DSEType, SupplierAndConsumers, SupplierInformation
+    FROM DSAOperationalAttributeTypes {joint-iso-itu-t ds(5) module(1)
+      dsaOperationalAttributeTypes(22) 4}
+  OpBindingErrorParam, OperationalBindingID
+    FROM OperationalBindingManagement {joint-iso-itu-t ds(5) module(1)
+      opBindingManagement(18) 4}
+  -- from ITU-T Rec. X.511 | ISO/IEC 9594-3
+  AttributeProblem, Credentials, NameProblem, SecurityProblem, ServiceProblem,
+    UpdateProblem
+    FROM DirectoryAbstractService {joint-iso-itu-t ds(5) module(1)
+      directoryAbstractService(2) 4}
+  -- from ITU-T Rec. X.518 | ISO/IEC 9594-4
+  AccessPoint, MasterAndShadowAccessPoints, OperationProgress, ReferenceType,
+    TraceInformation
+    FROM DistributedOperations {joint-iso-itu-t ds(5) module(1)
+      distributedOperations(3) 4}
+  -- from ITU-T Rec. X.520 | ISO/IEC 9594-6
+  DirectoryString{}
+    FROM SelectedAttributeTypes {joint-iso-itu-t ds(5) module(1)
+      selectedAttributeTypes(5) 4}
+  ub-common-name
+    FROM UpperBounds {joint-iso-itu-t ds(5) module(1) upperBounds(10) 4}
+  -- from ITU-T Rec. X.525 | ISO/IEC 9594-9
+  UnitOfReplication, UpdateMode, SchedulingParameters, Time, ShadowProblem,
+    AgreementID
+    FROM DirectoryShadowAbstractService {joint-iso-itu-t ds(5) module(1)
+      directoryShadowAbstractService(15) 4};
+
+Accessors ::= SET OF Name
+
+AdministrativeRole ::= OBJECT-CLASS.&id
+
+ApplicationContexts ::= OBJECT IDENTIFIER
+
+AssociationEstablishment ::= BIT STRING {inward(0), outward(1)}
+
+AssociationId ::= INTEGER
+
+AuthenReasonSyntax ::= INTEGER {
+  unknownUser(0), incorrectPassword(1), inaccessiblePassword(2),
+  passwordVerificationLoop(3), unrecognizedUser(4)}
+
+DirectoryInformationServiceElement ::= SEQUENCE {
+  operationType
+    BIT STRING {read(0), compare(1), abandon(2), list(3), search(4),
+                addEntry(5), removeEntry(6), modifyEntry(7), modifyDN(8)}
+      OPTIONAL,
+  attributeType   AttributeType OPTIONAL,
+  attributeValue  [0]  AttributeValue OPTIONAL
+}
+
+DSAScopeOfChainingValue ::= INTEGER {dmd(0), country(1), global(2)}
+
+DSAScopeOfReferralValue ::= INTEGER {dmd(0), country(1), global(2)}
+
+HOBRole ::= INTEGER {superior(0), subordinate(1)}
+
+MgtBitString ::= BIT STRING
+
+MgtBoolean ::= BOOLEAN
+
+MgtCommonName ::= DirectoryString{ub-common-name}
+
+MgtGeneralizedTime ::= GeneralizedTime
+
+MgtInteger ::= INTEGER
+
+MgtName ::= Name
+
+MgtOctetString ::= OCTET STRING
+
+MgtOID ::= OBJECT IDENTIFIER
+
+MgtPrintableString ::= PrintableString
+
+PeerEntityAuthenticationPolicy ::= BIT STRING {
+  none(0), nameOnly(1), simpleUnprotected(2), simpleProtected(3), strong(4),
+  external(5)}
+
+RemoteDSAList ::= SET OF AccessPoint
+
+RequestAuthenticationPolicy ::= BIT STRING {none(0), simpleName(1), strong(2)}
+
+ResourceSyntax ::= INTEGER {
+  insufficientMemory(0), insufficientAssociations(1), insufficientDiskSpace(2),
+  miscellaneousResourceExhausted(4)}
+
+ResultAuthenticationPolicy ::= RequestAuthenticationPolicy
+
+SecondaryShadows ::= SET OF SupplierAndConsumers
+
+ShadowingRole ::= INTEGER {supplier(0), consumer(1)}
+
+SubSchemaSyntax ::=
+  SEQUENCE OF
+    SEQUENCE {name       [1]  Name, --  Name of the subschema subentry for the subschema
+              subSchema
+                [2]  SEQUENCE {structureRules
+                                 [1]  SEQUENCE OF DITStructureRuleDescription
+                                   OPTIONAL,
+                               contentRules
+                                 [2]  SEQUENCE OF DITContentRuleDescription
+                                   OPTIONAL,
+                               matchingRules
+                                 [3]  SEQUENCE OF MatchingRuleDescription
+                                   OPTIONAL,
+                               attributeTypes
+                                 [4]  SEQUENCE OF AttributeTypeDescription
+                                   OPTIONAL,
+                               objectClasses
+                                 [5]  SEQUENCE OF ObjectClassDescription
+                                   OPTIONAL,
+                               nameForms
+                                 [6]  SEQUENCE OF NameFormDescription OPTIONAL,
+                               matchRuleUses
+                                 [7]  SEQUENCE OF MatchingRuleUseDescription
+                                   OPTIONAL}}
+
+SupportedApplicationContexts ::= SET OF OBJECT IDENTIFIER
+
+zero INTEGER ::= 0
+
+--  Object Identifier assignments
+id-mac OBJECT IDENTIFIER ::= {id-mgt 0}
+
+id-mat OBJECT IDENTIFIER ::= {id-mgt 1}
+
+id-moc OBJECT IDENTIFIER ::= {id-mgt 2}
+
+id-mnb OBJECT IDENTIFIER ::= {id-mgt 3}
+
+id-mp OBJECT IDENTIFIER ::= {id-mgt 4}
+
+id-mpa OBJECT IDENTIFIER ::= {id-mgt 5}
+
+--  Actions
+id-mac-useRemoteDSA OBJECT IDENTIFIER ::= {id-mac 0}
+
+id-mac-useHomeDSA OBJECT IDENTIFIER ::= {id-mac 1}
+
+id-mac-update OBJECT IDENTIFIER ::= {id-mac 2}
+
+--  Attributes
+id-mat-accessPoint OBJECT IDENTIFIER ::= {id-mat 0}
+
+id-mat-masterEntries OBJECT IDENTIFIER ::= {id-mat 1}
+
+id-mat-copyEntries OBJECT IDENTIFIER ::= {id-mat 2}
+
+id-mat-loopsDetected OBJECT IDENTIFIER ::= {id-mat 3}
+
+id-mat-securityErrors OBJECT IDENTIFIER ::= {id-mat 4}
+
+id-mat-nameErrors OBJECT IDENTIFIER ::= {id-mat 5}
+
+id-mat-foundLocalEntries OBJECT IDENTIFIER ::= {id-mat 6}
+
+id-mat-referrals OBJECT IDENTIFIER ::= {id-mat 7}
+
+id-mat-serviceErrors OBJECT IDENTIFIER ::= {id-mat 8}
+
+id-mat-aliasDereferences OBJECT IDENTIFIER ::= {id-mat 9}
+
+id-mat-chainings OBJECT IDENTIFIER ::= {id-mat 10}
+
+id-mat-invalidReferences OBJECT IDENTIFIER ::= {id-mat 11}
+
+id-mat-unableToProceed OBJECT IDENTIFIER ::= {id-mat 12}
+
+id-mat-outOfScope OBJECT IDENTIFIER ::= {id-mat 13}
+
+id-mat-noSuchObject OBJECT IDENTIFIER ::= {id-mat 14}
+
+id-mat-aliasProblem OBJECT IDENTIFIER ::= {id-mat 15}
+
+id-mat-aliasDereferencingProblem OBJECT IDENTIFIER ::= {id-mat 16}
+
+id-mat-affectsMultipleDSAs OBJECT IDENTIFIER ::= {id-mat 17}
+
+id-mat-unavailableCriticalExtension OBJECT IDENTIFIER ::= {id-mat 18}
+
+id-mat-timeLimitExceeded OBJECT IDENTIFIER ::= {id-mat 19}
+
+id-mat-sizeLimitExceeded OBJECT IDENTIFIER ::= {id-mat 20}
+
+id-mat-adminLimitExceeded OBJECT IDENTIFIER ::= {id-mat 21}
+
+id-mat-prohibitChaining OBJECT IDENTIFIER ::= {id-mat 24}
+
+id-mat-readOpsProc OBJECT IDENTIFIER ::= {id-mat 25}
+
+id-mat-compareOpsProc OBJECT IDENTIFIER ::= {id-mat 26}
+
+id-mat-abandonOpsProc OBJECT IDENTIFIER ::= {id-mat 27}
+
+id-mat-listOpsProc OBJECT IDENTIFIER ::= {id-mat 28}
+
+id-mat-searchBaseOpsProc OBJECT IDENTIFIER ::= {id-mat 29}
+
+id-mat-search1LevelOpsProc OBJECT IDENTIFIER ::= {id-mat 30}
+
+id-mat-searchSubtreeOpsProc OBJECT IDENTIFIER ::= {id-mat 31}
+
+id-mat-addEntryOpsProc OBJECT IDENTIFIER ::= {id-mat 32}
+
+id-mat-removeEntryOpsProc OBJECT IDENTIFIER ::= {id-mat 33}
+
+id-mat-modifyEntryOpsProc OBJECT IDENTIFIER ::= {id-mat 34}
+
+id-mat-modifyDNOpsProc OBJECT IDENTIFIER ::= {id-mat 35}
+
+id-mat-chReadOpsProc OBJECT IDENTIFIER ::= {id-mat 36}
+
+id-mat-chCompareOpsProc OBJECT IDENTIFIER ::= {id-mat 37}
+
+id-mat-chAbandonOpsProc OBJECT IDENTIFIER ::= {id-mat 38}
+
+id-mat-chListOpsProc OBJECT IDENTIFIER ::= {id-mat 39}
+
+id-mat-chSearchBaseOpsProc OBJECT IDENTIFIER ::= {id-mat 40}
+
+id-mat-chSearch1LevelOpsProc OBJECT IDENTIFIER ::= {id-mat 41}
+
+id-mat-chSearchSubtreeOpsProc OBJECT IDENTIFIER ::= {id-mat 42}
+
+id-mat-chAddEntryOpsProc OBJECT IDENTIFIER ::= {id-mat 43}
+
+id-mat-chRemoveEntryOpsProc OBJECT IDENTIFIER ::= {id-mat 44}
+
+id-mat-chModifyEntryOpsProc OBJECT IDENTIFIER ::= {id-mat 45}
+
+id-mat-chModifyDNOpsProc OBJECT IDENTIFIER ::= {id-mat 46}
+
+id-mat-dSAScopeOfReferral OBJECT IDENTIFIER ::= {id-mat 47}
+
+id-mat-dSAScopeOfChaining OBJECT IDENTIFIER ::= {id-mat 48}
+
+id-mat-peerEntityAuthenticationPolicy OBJECT IDENTIFIER ::= {id-mat 49}
+
+id-mat-requestAuthenticationPolicy OBJECT IDENTIFIER ::= {id-mat 50}
+
+id-mat-resultAuthenticationPolicy OBJECT IDENTIFIER ::= {id-mat 51}
+
+id-mat-dSPAssociationEstablishment OBJECT IDENTIFIER ::= {id-mat 52}
+
+id-mat-dOPAssociationEstablishment OBJECT IDENTIFIER ::= {id-mat 53}
+
+id-mat-dISPAssociationEstablishment OBJECT IDENTIFIER ::= {id-mat 54}
+
+id-mat-maxDAPAssociations OBJECT IDENTIFIER ::= {id-mat 55}
+
+id-mat-maxDSPAssociations OBJECT IDENTIFIER ::= {id-mat 56}
+
+id-mat-maxDOPAssociations OBJECT IDENTIFIER ::= {id-mat 57}
+
+id-mat-maxDISPAssociations OBJECT IDENTIFIER ::= {id-mat 58}
+
+id-mat-dAPAssociationTimeout OBJECT IDENTIFIER ::= {id-mat 59}
+
+id-mat-dSPAssociationTimeout OBJECT IDENTIFIER ::= {id-mat 60}
+
+id-mat-dOPAssociationTimeout OBJECT IDENTIFIER ::= {id-mat 61}
+
+id-mat-dISPAssociationTimeout OBJECT IDENTIFIER ::= {id-mat 62}
+
+id-mat-dSAActiveAssociations OBJECT IDENTIFIER ::= {id-mat 63}
+
+id-mat-pagedResultsMaxIDs OBJECT IDENTIFIER ::= {id-mat 64}
+
+id-mat-pagedResultsTimer OBJECT IDENTIFIER ::= {id-mat 65}
+
+id-mat-homeDSA OBJECT IDENTIFIER ::= {id-mat 66}
+
+id-mat-dUATimeout OBJECT IDENTIFIER ::= {id-mat 68}
+
+id-mat-supportedApplicationContexts OBJECT IDENTIFIER ::= {id-mat 69}
+
+id-mat-reverseCredentials OBJECT IDENTIFIER ::= {id-mat 70}
+
+id-mat-remoteAccessPoint OBJECT IDENTIFIER ::= {id-mat 71}
+
+id-mat-maxInboundAssociations OBJECT IDENTIFIER ::= {id-mat 72}
+
+id-mat-maxOutboundAssociations OBJECT IDENTIFIER ::= {id-mat 73}
+
+id-mat-currentActiveAssocs OBJECT IDENTIFIER ::= {id-mat 74}
+
+id-mat-currentActiveInboundAssocs OBJECT IDENTIFIER ::= {id-mat 75}
+
+id-mat-currentActiveOutboundAssocs OBJECT IDENTIFIER ::= {id-mat 76}
+
+id-mat-accumAssocs OBJECT IDENTIFIER ::= {id-mat 77}
+
+id-mat-accumInboundAssocs OBJECT IDENTIFIER ::= {id-mat 78}
+
+id-mat-accumOutboundAssocs OBJECT IDENTIFIER ::= {id-mat 79}
+
+id-mat-accumFailedInboundAssocs OBJECT IDENTIFIER ::= {id-mat 80}
+
+id-mat-accumFailedOutboundAssocs OBJECT IDENTIFIER ::= {id-mat 81}
+
+id-mat-timeOfLastAttempt OBJECT IDENTIFIER ::= {id-mat 82}
+
+id-mat-timeOfLastSuccess OBJECT IDENTIFIER ::= {id-mat 83}
+
+id-mat-requestCounter OBJECT IDENTIFIER ::= {id-mat 84}
+
+id-mat-replyCounter OBJECT IDENTIFIER ::= {id-mat 85}
+
+id-mat-requestsFailedCounter OBJECT IDENTIFIER ::= {id-mat 86}
+
+id-mat-timeOfLastAccess OBJECT IDENTIFIER ::= {id-mat 87}
+
+id-mat-agreementID OBJECT IDENTIFIER ::= {id-mat 88}
+
+id-mat-agreementVersion OBJECT IDENTIFIER ::= {id-mat 89}
+
+id-mat-hOBRole OBJECT IDENTIFIER ::= {id-mat 90}
+
+id-mat-shadowingSubject OBJECT IDENTIFIER ::= {id-mat 91}
+
+id-mat-updateMode OBJECT IDENTIFIER ::= {id-mat 92}
+
+id-mat-masterAccessPoint OBJECT IDENTIFIER ::= {id-mat 93}
+
+id-mat-secondaryShadows OBJECT IDENTIFIER ::= {id-mat 94}
+
+id-mat-shadowingRole OBJECT IDENTIFIER ::= {id-mat 95}
+
+id-mat-lastUpdateTime OBJECT IDENTIFIER ::= {id-mat 96}
+
+id-mat-shadowingSchedule OBJECT IDENTIFIER ::= {id-mat 97}
+
+id-mat-nextUpdateTime OBJECT IDENTIFIER ::= {id-mat 98}
+
+id-mat-useDOP OBJECT IDENTIFIER ::= {id-mat 99}
+
+id-mat-accessor OBJECT IDENTIFIER ::= {id-mat 100}
+
+id-mat-allowedInfoService OBJECT IDENTIFIER ::= {id-mat 101}
+
+id-mat-applicationContextInUse OBJECT IDENTIFIER ::= {id-mat 102}
+
+id-mat-associationId OBJECT IDENTIFIER ::= {id-mat 103}
+
+id-mat-callingAETitle OBJECT IDENTIFIER ::= {id-mat 104}
+
+id-mat-disAllowedInfoService OBJECT IDENTIFIER ::= {id-mat 105}
+
+id-mat-maxEntriesReturned OBJECT IDENTIFIER ::= {id-mat 106}
+
+id-mat-maxTimeForResult OBJECT IDENTIFIER ::= {id-mat 107}
+
+id-mat-modifyDNRenameOnlyOpsProc OBJECT IDENTIFIER ::= {id-mat 108}
+
+id-mat-serviceDesc OBJECT IDENTIFIER ::= {id-mat 109}
+
+id-mat-serviceId OBJECT IDENTIFIER ::= {id-mat 110}
+
+id-mat-subSchema OBJECT IDENTIFIER ::= {id-mat 111}
+
+id-mat-sizeLimit OBJECT IDENTIFIER ::= {id-mat 112}
+
+id-mat-timeLimit OBJECT IDENTIFIER ::= {id-mat 113}
+
+id-mat-dirCustName OBJECT IDENTIFIER ::= {id-mat 114}
+
+id-mat-dirUserName OBJECT IDENTIFIER ::= {id-mat 115}
+
+id-mat-dirCustAddr OBJECT IDENTIFIER ::= {id-mat 116}
+
+id-mat-dMDName OBJECT IDENTIFIER ::= {id-mat 117}
+
+--id-mat-dIRQOP OBJECT IDENTIFIER ::= {id-mat 118}
+
+id-mat-accessControlScheme OBJECT IDENTIFIER ::= {id-mat 119}
+
+id-mat-administrativeRole OBJECT IDENTIFIER ::= {id-mat 120}
+
+id-mat-aliasedEntryName OBJECT IDENTIFIER ::= {id-mat 121}
+
+id-mat-attributeTypes OBJECT IDENTIFIER ::= {id-mat 122}
+
+id-mat-collectiveExclusions OBJECT IDENTIFIER ::= {id-mat 123}
+
+id-mat-consumerKnowledge OBJECT IDENTIFIER ::= {id-mat 124}
+
+id-mat-createTimestamp OBJECT IDENTIFIER ::= {id-mat 125}
+
+id-mat-creatorsName OBJECT IDENTIFIER ::= {id-mat 126}
+
+id-mat-credentials OBJECT IDENTIFIER ::= {id-mat 127}
+
+id-mat-distName OBJECT IDENTIFIER ::= {id-mat 128}
+
+id-mat-dITContentRules OBJECT IDENTIFIER ::= {id-mat 129}
+
+id-mat-dITStructureRule OBJECT IDENTIFIER ::= {id-mat 130}
+
+id-mat-dseType OBJECT IDENTIFIER ::= {id-mat 131}
+
+id-mat-entryACI OBJECT IDENTIFIER ::= {id-mat 132}
+
+id-mat-governingSR OBJECT IDENTIFIER ::= {id-mat 133}
+
+id-mat-matchingRules OBJECT IDENTIFIER ::= {id-mat 134}
+
+id-mat-matchingRuleUse OBJECT IDENTIFIER ::= {id-mat 135}
+
+id-mat-modifiersName OBJECT IDENTIFIER ::= {id-mat 136}
+
+id-mat-modifyTimestamp OBJECT IDENTIFIER ::= {id-mat 137}
+
+id-mat-myAccessPoint OBJECT IDENTIFIER ::= {id-mat 138}
+
+id-mat-nonSpecificKnowledge OBJECT IDENTIFIER ::= {id-mat 139}
+
+id-mat-objectClass OBJECT IDENTIFIER ::= {id-mat 140}
+
+id-mat-objectClasses OBJECT IDENTIFIER ::= {id-mat 141}
+
+id-mat-prescriptiveACI OBJECT IDENTIFIER ::= {id-mat 142}
+
+id-mat-nameForms OBJECT IDENTIFIER ::= {id-mat 143}
+
+id-mat-specificKnowledge OBJECT IDENTIFIER ::= {id-mat 144}
+
+id-mat-structuralObjectClass OBJECT IDENTIFIER ::= {id-mat 145}
+
+id-mat-subentryACI OBJECT IDENTIFIER ::= {id-mat 146}
+
+id-mat-subtreeSpecification OBJECT IDENTIFIER ::= {id-mat 147}
+
+id-mat-superiorKnowledge OBJECT IDENTIFIER ::= {id-mat 148}
+
+id-mat-supplierKnowledge OBJECT IDENTIFIER ::= {id-mat 149}
+
+id-mat-dirCommonName OBJECT IDENTIFIER ::= {id-mat 150}
+
+--  Managed Object Classes
+id-moc-dsa OBJECT IDENTIFIER ::= {id-moc 0}
+
+id-moc-dse OBJECT IDENTIFIER ::= {id-moc 1}
+
+id-moc-knownDSA OBJECT IDENTIFIER ::= {id-moc 2}
+
+id-moc-knownDUA OBJECT IDENTIFIER ::= {id-moc 3}
+
+id-moc-dUA OBJECT IDENTIFIER ::= {id-moc 4}
+
+id-moc-nHOBMO OBJECT IDENTIFIER ::= {id-moc 5}
+
+id-moc-hOBMO OBJECT IDENTIFIER ::= {id-moc 6}
+
+id-moc-shadowingAgreement OBJECT IDENTIFIER ::= {id-moc 7}
+
+id-moc-ULconnEnd OBJECT IDENTIFIER ::= {id-moc 8}
+
+id-moc-disManagedObject OBJECT IDENTIFIER ::= {id-moc 9}
+
+id-moc-dirCust OBJECT IDENTIFIER ::= {id-moc 10}
+
+id-moc-dirUser OBJECT IDENTIFIER ::= {id-moc 11}
+
+id-moc-dMD OBJECT IDENTIFIER ::= {id-moc 12}
+
+--  Name Bindings
+id-mnb-dsa-name-binding OBJECT IDENTIFIER ::= {id-mnb 0}
+
+id-mnb-dse-name-binding OBJECT IDENTIFIER ::= {id-mnb 1}
+
+id-mnb-knownDSA-dSA-name-binding OBJECT IDENTIFIER ::= {id-mnb 2}
+
+id-mnb-knownDUA-dSA-name-binding OBJECT IDENTIFIER ::= {id-mnb 3}
+
+id-mnb-acseInvoc-knownDSA OBJECT IDENTIFIER ::= {id-mnb 4}
+
+id-mnb-acseInvoc-knownDUA OBJECT IDENTIFIER ::= {id-mnb 5}
+
+id-mnb-nHOB-name-binding OBJECT IDENTIFIER ::= {id-mnb 6}
+
+id-mnb-hOB-name-binding OBJECT IDENTIFIER ::= {id-mnb 7}
+
+id-mnb-shadowingAgreement-nb OBJECT IDENTIFIER ::= {id-mnb 8}
+
+id-mnb-ULconnEnd-knownDSA OBJECT IDENTIFIER ::= {id-mnb 9}
+
+id-mnb-ULconnEnd-knownDUA OBJECT IDENTIFIER ::= {id-mnb 10}
+
+id-mnb-dis-Customer-name-binding OBJECT IDENTIFIER ::= {id-mnb 11}
+
+id-mnb-knownDSA-dUA-name-binding OBJECT IDENTIFIER ::= {id-mnb 12}
+
+id-mnb-DirCust-DMD OBJECT IDENTIFIER ::= {id-mnb 13}
+
+id-mnb-DirUser-DirCust OBJECT IDENTIFIER ::= {id-mnb 14}
+
+--  Packages
+id-mp-dsaPackage OBJECT IDENTIFIER ::= {id-mp 0}
+
+id-mp-readPackage OBJECT IDENTIFIER ::= {id-mp 1}
+
+id-mp-comparePackage OBJECT IDENTIFIER ::= {id-mp 2}
+
+id-mp-abandonPackage OBJECT IDENTIFIER ::= {id-mp 3}
+
+id-mp-listPackage OBJECT IDENTIFIER ::= {id-mp 4}
+
+id-mp-searchPackage OBJECT IDENTIFIER ::= {id-mp 5}
+
+id-mp-addPackage OBJECT IDENTIFIER ::= {id-mp 6}
+
+id-mp-removePackage OBJECT IDENTIFIER ::= {id-mp 7}
+
+id-mp-modifyPackage OBJECT IDENTIFIER ::= {id-mp 8}
+
+id-mp-modifyDNPackage OBJECT IDENTIFIER ::= {id-mp 9}
+
+id-mp-chainedReadPackage OBJECT IDENTIFIER ::= {id-mp 10}
+
+id-mp-chainedComparePackage OBJECT IDENTIFIER ::= {id-mp 11}
+
+id-mp-chainedAbandonPackage OBJECT IDENTIFIER ::= {id-mp 12}
+
+id-mp-chainedListPackage OBJECT IDENTIFIER ::= {id-mp 13}
+
+id-mp-chainedSearchPackage OBJECT IDENTIFIER ::= {id-mp 14}
+
+id-mp-chainedAddPackage OBJECT IDENTIFIER ::= {id-mp 15}
+
+id-mp-chainedRemovePackage OBJECT IDENTIFIER ::= {id-mp 16}
+
+id-mp-chainedModifyPackage OBJECT IDENTIFIER ::= {id-mp 17}
+
+id-mp-chainedModifyDNPackage OBJECT IDENTIFIER ::= {id-mp 18}
+
+id-mp-dsePackage OBJECT IDENTIFIER ::= {id-mp 19}
+
+id-mp-knownDSAPackage OBJECT IDENTIFIER ::= {id-mp 20}
+
+id-mp-knownDUAPackage OBJECT IDENTIFIER ::= {id-mp 21}
+
+id-mp-dUAPackage OBJECT IDENTIFIER ::= {id-mp 22}
+
+id-mp-nHOBPackage OBJECT IDENTIFIER ::= {id-mp 23}
+
+id-mp-hOBPackage OBJECT IDENTIFIER ::= {id-mp 24}
+
+id-mp-shadowingAgreementPackage OBJECT IDENTIFIER ::= {id-mp 25}
+
+id-mp-ULconnEndPackage OBJECT IDENTIFIER ::= {id-mp 26}
+
+id-mp-disPackage OBJECT IDENTIFIER ::= {id-mp 27}
+
+id-mp-dcsPackage OBJECT IDENTIFIER ::= {id-mp 28}
+
+id-mp-dirCust OBJECT IDENTIFIER ::= {id-mp 29}
+
+id-mp-dirUser OBJECT IDENTIFIER ::= {id-mp 30}
+
+id-mp-dMD OBJECT IDENTIFIER ::= {id-mp 31}
+
+id-mp-dsPackage OBJECT IDENTIFIER ::= {id-mp 32}
+
+--  Parameters
+id-mpa-nameProblem OBJECT IDENTIFIER ::= {id-mpa 1}
+
+id-mpa-traceInformation OBJECT IDENTIFIER ::= {id-mpa 2}
+
+id-mpa-serviceProblem OBJECT IDENTIFIER ::= {id-mpa 3}
+
+id-mpa-entryName OBJECT IDENTIFIER ::= {id-mpa 4}
+
+id-mpa-operation OBJECT IDENTIFIER ::= {id-mpa 5}
+
+id-mpa-attributeProblem OBJECT IDENTIFIER ::= {id-mpa 6}
+
+id-mpa-attributeType OBJECT IDENTIFIER ::= {id-mpa 7}
+
+id-mpa-shadowProblem OBJECT IDENTIFIER ::= {id-mpa 8}
+
+id-mpa-attributeValue OBJECT IDENTIFIER ::= {id-mpa 9}
+
+id-mpa-resource OBJECT IDENTIFIER ::= {id-mpa 10}
+
+id-mpa-authenReason OBJECT IDENTIFIER ::= {id-mpa 11}
+
+id-mpa-updateProblem OBJECT IDENTIFIER ::= {id-mpa 12}
+
+id-mpa-extensions OBJECT IDENTIFIER ::= {id-mpa 15}
+
+id-mpa-aliasedRDNs OBJECT IDENTIFIER ::= {id-mpa 16}
+
+id-mpa-aliasDereferenced OBJECT IDENTIFIER ::= {id-mpa 17}
+
+id-mpa-referenceType OBJECT IDENTIFIER ::= {id-mpa 18}
+
+id-mpa-operationProgress OBJECT IDENTIFIER ::= {id-mpa 19}
+
+id-mpa-pDU OBJECT IDENTIFIER ::= {id-mpa 20}
+
+id-mpa-opId OBJECT IDENTIFIER ::= {id-mpa 21}
+
+id-mpa-nhob-bind-id OBJECT IDENTIFIER ::= {id-mpa 22}
+
+id-mpa-mhob-dop-prob OBJECT IDENTIFIER ::= {id-mpa 23}
+
+id-mpa-hob-bind-id OBJECT IDENTIFIER ::= {id-mpa 24}
+
+id-mpa-hob-dop-prob OBJECT IDENTIFIER ::= {id-mpa 25}
+
+id-mpa-shadowing-dop-prob OBJECT IDENTIFIER ::= {id-mpa 26}
+
+id-mpa-opIdDN OBJECT IDENTIFIER ::= {id-mpa 27}
+
+END -- DirectoryManagement
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

@@ -1,0 +1,216 @@
+
+
+
+
+
+
+
+
+-- Module CCR (X.852:12/1997)
+-- See also ITU-T X.852 (12/1997)
+-- See also the index of all ASN.1 assignments needed in this document
+
+CCR {joint-iso-itu-t ccr(7) module(1) ccr-apdus1(1) version3(3)} DEFINITIONS
+IMPLICIT TAGS ::=
+BEGIN
+
+EXPORTS
+  C-INITIALIZE-RI, C-INITIALIZE-RC, C-BEGIN-RI, C-BEGIN-RC, C-PREPARE-RI,
+    C-READY-RI, C-COMMIT-RI, C-COMMIT-RC, C-ROLLBACK-RI, C-ROLLBACK-RC,
+    C-NOCHANGE-RI, C-NOCHANGE-RC, C-CANCEL-RI, C-RECOVER-RI, C-RECOVER-RC,
+    joint-CCR, ccr-syntax-apdus-2, ccr-basic-encoding;
+
+IMPORTS
+  --  ASN.1 module defined in ITU-T Rec. X.227 | ISO/IEC 8650-1
+  AE-title
+    FROM ACSE-1 {joint-iso-itu-t association-control(2) modules(0) apdus(0)
+      version1(1)};
+
+--  Names of CCR information objects:
+joint-CCR OBJECT IDENTIFIER ::=
+  {joint-iso-itu-t ccr(7)}
+
+ccr-syntax-apdus-2 OBJECT IDENTIFIER ::=
+  {joint-CCR abstract-syntax(2) apdus(1) version2(2)}
+
+ccr-basic-encoding OBJECT IDENTIFIER ::=
+  {joint-iso-itu-t asn1(1) basic-encoding(1)}
+
+--  This object identifier value is assigned in ITU-T Rec. X.690 | ISO/IEC 8825-1.
+--  CCR datatype definitions
+CCR-APDUS ::= CHOICE {
+  c-INITIALIZE-RI  C-INITIALIZE-RI,
+  c-INITIALIZE-RC  C-INITIALIZE-RC,
+  c-BEGIN-RI       C-BEGIN-RI,
+  c-BEGIN-RC       C-BEGIN-RC,
+  c-PREPARE-RI     C-PREPARE-RI,
+  c-READY-RI       C-READY-RI,
+  c-COMMIT-RI      C-COMMIT-RI,
+  c-COMMIT-RC      C-COMMIT-RC,
+  c-ROLLBACK-RI    C-ROLLBACK-RI,
+  c-ROLLBACK-RC    C-ROLLBACK-RC,
+  c-RECOVER-RI     C-RECOVER-RI,
+  c-RECOVER-RC     C-RECOVER-RC,
+  ...,
+  c-NOCHANGE-RI    C-NOCHANGE-RI,
+  c-NOCHANGE-RC    C-NOCHANGE-RC,
+  c-CANCEL-RI      C-CANCEL-RI
+}
+
+C-INITIALIZE-RI ::= [11]  SEQUENCE {
+  version-number
+    [0]  BIT STRING {version1(0), version2(1)} DEFAULT {version2},
+  ...,
+  ccr-requirements
+    [1]  Ccr-requirements DEFAULT {static-commitment},
+  ready-collision-reservation     [2]  BOOLEAN DEFAULT TRUE,
+  ...,
+  user-data                       User-data OPTIONAL
+}
+
+C-INITIALIZE-RC ::= [12]  SEQUENCE {
+  version-number
+    [0]  BIT STRING {version1(0), version2(1)} DEFAULT {version2},
+  ...,
+  ccr-requirements
+    [1]  Ccr-requirements DEFAULT {static-commitment},
+  ready-collision-reservation     [2]  BOOLEAN DEFAULT TRUE,
+  ...,
+  user-data                       User-data OPTIONAL
+}
+
+C-BEGIN-RI ::= [1]  SEQUENCE {
+  atomic-action-identifier  [0]  ATOMIC-ACTION-IDENTIFIER,
+  branch-suffix
+    CHOICE {form1  [2]  OCTET STRING,
+            form2  [3]  INTEGER,
+            ...},
+  ...,
+  ...,
+  user-data                 User-data OPTIONAL
+}
+
+C-BEGIN-RC ::= [2]  SEQUENCE {...,
+                              ...,
+                              user-data  User-data OPTIONAL
+}
+
+C-PREPARE-RI ::= [3]  SEQUENCE {...,
+                                ...,
+                                user-data  User-data OPTIONAL
+}
+
+C-READY-RI ::= [4]  SEQUENCE {...,
+                              ...,
+                              user-data  User-data OPTIONAL
+}
+
+C-COMMIT-RI ::= [5]  SEQUENCE {...,
+                               ...,
+                               user-data  User-data OPTIONAL
+}
+
+C-COMMIT-RC ::= [6]  SEQUENCE {...,
+                               ...,
+                               user-data  User-data OPTIONAL
+}
+
+C-ROLLBACK-RI ::= [7]  SEQUENCE {...,
+                                 ...,
+                                 user-data  User-data OPTIONAL
+}
+
+C-ROLLBACK-RC ::= [8]  SEQUENCE {...,
+                                 ...,
+                                 user-data  User-data OPTIONAL
+}
+
+C-NOCHANGE-RI ::= [13]  SEQUENCE {
+  confirmation
+    [0]  ENUMERATED {not-required(0), result-requested(1), ...
+                     } DEFAULT result-requested,
+  ...,
+  ...,
+  user-data     User-data OPTIONAL
+}
+
+C-NOCHANGE-RC ::= [14]  SEQUENCE {
+  outcome
+    [0]  ENUMERATED {not-determined(0), committed(1), rolled-back(2),
+                     no-change(3), ...
+                     } DEFAULT not-determined,
+  ...,
+  ...,
+  user-data  User-data OPTIONAL
+}
+
+C-CANCEL-RI ::= [15]  SEQUENCE {...,
+                                ...,
+                                user-data  User-data OPTIONAL
+}
+
+C-RECOVER-RI ::= [9]  SEQUENCE {
+  atomic-action-identifier  [0]  ATOMIC-ACTION-IDENTIFIER,
+  branch-identifier         [1]  BRANCH-IDENTIFIER,
+  recovery-state
+    [2]  ENUMERATED {commit(0), ready(1), done(2), unknown(3), retry-later(5),
+                     ...
+                     },
+  ...,
+  reversed-branch           [3]  BOOLEAN DEFAULT FALSE, --  shall be absent if FALSE
+  ...,
+  user-data                 User-data OPTIONAL
+}
+
+C-RECOVER-RC ::= [10]  SEQUENCE {
+  atomic-action-identifier  [0]  ATOMIC-ACTION-IDENTIFIER,
+  branch-identifier         [1]  BRANCH-IDENTIFIER,
+  recovery-state
+    [2]  ENUMERATED {commit(0), ready(1), done(2), unknown(3), retry-later(5),
+                     ...
+                     },
+  ...,
+  reversed-branch           [3]  BOOLEAN DEFAULT FALSE, --  shall be absent if FALSE
+  ...,
+  user-data                 User-data OPTIONAL
+}
+
+--  supporting datatypes
+ATOMIC-ACTION-IDENTIFIER ::= SEQUENCE {
+  owners-name
+    CHOICE {name  [0] EXPLICIT AE-title,
+            side  [1]  ENUMERATED {sender(0), receiver(1), ...
+                                   },
+            ...},
+  atomic-action-suffix
+    CHOICE {form1  [2]  OCTET STRING,
+            form2  [3]  INTEGER,
+            ...}
+}
+
+BRANCH-IDENTIFIER ::= SEQUENCE {
+  initiators-name
+    CHOICE {name  [0] EXPLICIT AE-title,
+            side  [1]  ENUMERATED {sender(0), receiver(1), ...
+                                   },
+            ...},
+  branch-suffix    CHOICE {form1  [2]  OCTET STRING,
+                           form2  [3]  INTEGER,
+                           ...}
+}
+
+--  In the ATOMIC-ACTION-IDENTIFIER and BRANCH-IDENTIFIER types,
+--  a value of "sender" for the "side" form is synonymous with a name value
+--  that is the AE-title of the sender of the APDU containing the datatype.
+--  Similarly, a value of "receiver" for the "side" form is synonymous with a
+--  name value that is the AE-title of the recipient of the APDU.
+Ccr-requirements ::= BIT STRING {
+  static-commitment(0), dynamic-commitment(1), nochange-completion(2),
+  cancel(3), overlapped-recovery(4)}
+
+User-data ::= [30]  SEQUENCE OF EXTERNAL
+
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

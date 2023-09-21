@@ -1,0 +1,155 @@
+-- ASN module extracted from ITU-T X.894 (10/2018)-- 21 Module ANSI-X9-42
+ANSI-X9-42 {iso(1) member-body(2) us(840) ansi-x942(10046) module(5) 1}
+DEFINITIONS EXPLICIT TAGS ::= BEGIN
+-- X9.42 Diffie-Hellman and MQV Symmetric Key Agreement
+-- EXPORTS All;
+-- IMPORTS None;
+FIELD-ID ::= TYPE-IDENTIFIER
+FieldID { FIELD-ID:IOSet } ::= SEQUENCE {
+fieldType FIELD-ID.&id({IOSet}),
+parameters FIELD-ID.&Type({IOSet}{@fieldType})
+}
+FiniteFields ::= FieldID {{ FieldTypes }} 
+FieldTypes FIELD-ID ::= {
+{ DomainParameters IDENTIFIED BY gfPrime }, -- GF(p)
+...
+}
+DomainParameters ::= SEQUENCE {  -- Galois field group parameters
+p	INTEGER,	-- odd prime, p = jq + 1
+g	INTEGER,	-- generator, g ^ q = 1 mod p
+q	INTEGER,	-- prime factor of p-1
+j	INTEGER OPTIONAL,	-- cofactor, j ? 2
+validationParms ValidationParms OPTIONAL
+}
+-- Note: The domain parameter cofactor is required when using the cofactor method.
+ValidationParms ::= SEQUENCE {
+seed	BIT STRING, -- seed for prime number generation
+pGenCounter	INTEGER	-- parameter verification
+}
+-- Diffie-Hellman Public Number
+SubjectPublicKeyInfo ::= SEQUENCE {
+algorithm	AlgorithmIdentifier {{ DHPublicNumbers }}, 
+subjectPublicKey BIT STRING
+}
+DHPublicNumbers ALGORITHM-ID ::= {
+{ OID dhPublicNumber PARMS DomainParameters },
+...
+}
+DiffieHellmanPublicNumber ::= INTEGER
+-- Key Agreement Schemes
+SchemeSyntax { KeyDerivationMethod: kdm } ::= CHOICE { 
+schemeId 	SchemeIdentifier,
+oid			SchemeOID, 
+number	SchemeNumber
+} (CONSTRAINED BY { KeyDerivationMethod: kdm } ) 
+KeyDerivationMethod ::= OBJECT IDENTIFIER 
+SchemeIdentifier ::= SEQUENCE {
+scheme	KEY-AGREEMENT.&id({Schemes}),
+parameters 	KEY-AGREEMENT.&Type({Schemes}{@scheme}) OPTIONAL
+}
+Schemes KEY-AGREEMENT ::= {
+{ OID dhStatic 	PARMS SchemeParameters } |
+{ OID dhEphem	PARMS SchemeParameters } |
+{ OID dhOneFlow	PARMS SchemeParameters } |
+{ OID dhHybrid1	PARMS SchemeParameters } |
+{ OID dhHybrid2	PARMS SchemeParameters } |
+{ OID dhHybridOneFlow PARMS SchemeParameters } |
+{ OID mqv2		PARMS  SchemeParameters } |
+{ OID mqv1		PARMS  SchemeParameters } |
+--
+NamedSchemes,
+...
+}
+KEY-AGREEMENT ::= ALGORITHM-ID 
+SchemeParameters ::= AlgorithmIdentifier {{ KeyDerivationAlgorithm }} 
+KeyDerivationAlgorithm ALGORITHM-ID ::= {
+{ OID  id-sha1  PARMS NULL },	-- From ANS X9.30
+...
+}
+HMAC ::= OCTET STRING
+SchemeOID ::= KEY-AGREEMENT.&id({NamedSchemes}) 
+NamedSchemes KEY-AGREEMENT ::= {
+{ OID  dhStatic-sha1 } |		-- { dhStatic, {id-sha1,NULL} }
+{ OID  dhEphem-sha1  } |		-- { dhEphem, {id-sha1,NULL} }
+{ OID dhOneFlow-sha1 } | 	-- { dhOneFlow, {id-sha1,NULL} }
+{ OID  dhHybrid1-sha1 } |	-- { dhHybrid1, {id-sha1,NULL} }
+{ OID  dhHybrid2-sha1 } |	-- { dhHybrid2, {id-sha1,NULL} }
+{ OID dhHybridOneFlow-sha1 } | -- { dhHybridOneFlow, {id-sha1,NULL} }
+{ OID mqv2-sha1	} |		-- { mqv2,	{id-sha1,NULL} }
+{ OID mqv1-sha1	},		-- { mqv1,	{id-sha1,NULL} }
+...
+}
+SchemeNumber ::= ENUMERATED {
+dhStatic-sha1	(0),		-- { dhStatic, {id-sha1,NULL} } 
+dhEphem-sha1 	(1),		-- { dhEphem, {id-sha1,NULL} } 
+dhOneFlow-sha1	(2),		-- { dhOneFlow, {id-sha1,NULL} } 
+dhHybrid1-sha1	(3),		-- { dhHybrid1, {id-sha1,NULL} } 
+dhHybrid2-sha1	(4),		-- { dhHybrid2, {id-sha1,NULL} }
+, 	-- { dhHybridOneFlow, {id-sha1,NULL} }
+mqv2-sha1		(6),		-- { mqv2,	{id-sha1,NULL} }
+mqv1-sha1		(7),		-- { mqv1,	{id-sha1,NULL} }
+...
+}
+-- Per-Party Public Information
+OtherInfo ::= SEQUENCE {
+keyInfo	AlgorithmIdentifier {{ KeySpecificAlgorithms }}, 
+partyUInfo		[0] OCTET STRING OPTIONAL,
+partyVInfo		[1] OCTET STRING OPTIONAL, 
+suppPubInfo 	[2] OCTET STRING OPTIONAL, 
+suppPrivInfo 	[3] OCTET STRING OPTIONAL
+}
+KeySpecificAlgorithms ALGORITHM-ID ::= {
+{ OID tripleDES PARMS Counter },
+...
+}
+Counter ::= OCTET STRING (SIZE (4))
+TripleDES ::= SEQUENCE SIZE(oneKey..threeKeys) OF INTEGER 
+oneKey		INTEGER ::= 1 -- 1-key: for backwards compatability 
+threeKeys 	INTEGER ::= 3 -- 3-key: the best, though 2-key gains
+-- most of the Triple DES strength.
+-- Object identifiers
+ansi-X9-42 OBJECT IDENTIFIER ::= {
+iso(1) member-body(2) us(840) ansi-x942(10046) } 
+fieldType 	OBJECT IDENTIFIER ::= { ansi-X9-42 fieldType(0) } 
+gfPrime 	OBJECT IDENTIFIER ::= { fieldType 1 } -- GF(p)
+algorithm 	OBJECT IDENTIFIER ::= { ansi-X9-42 algorithms(1) } 
+tripleDES 	OBJECT IDENTIFIER ::= { algorithm triple-des(2) } 
+numberType OBJECT IDENTIFIER ::= { ansi-X9-42 numberTypes(2) } 
+dhPublicNumber OBJECT IDENTIFIER ::= {numberType 1 }	-- Diffie-Hellman public number 
+scheme 		OBJECT IDENTIFIER ::= { ansi-X9-42 schemes(3) } 
+dhStatic 	OBJECT IDENTIFIER ::= {scheme 1 }	-- Diffie-Hellman, Static Only
+dhEphem 	OBJECT IDENTIFIER ::= {scheme 2 }	-- Diffie-Hellman, Ephemeral Only
+dhOneFlow 	OBJECT IDENTIFIER ::= {scheme 3 }	-- Diffie-Hellman, One Flow
+dhHybrid1 	OBJECT IDENTIFIER ::= {scheme 4 } 	-- Diffie-Hellman, Hybrid, One Group
+dhHybrid2 	OBJECT IDENTIFIER ::= {scheme 5 } 	-- Diffie-Hellman, Hybrid, Two Groups
+dhHybridOneFlow OBJECT IDENTIFIER ::= {scheme 6 } -- Diffie-Hellman, Hybrid, OneFlow
+mqv2 		OBJECT IDENTIFIER ::= {scheme 7 } 
+-- Menezes-Qu-Vanstone Method, Two pairs/Two pairs
+mqv1 		OBJECT IDENTIFIER ::= {scheme 8 } 
+-- Menezes-Qu-Vanstone Method, Two pairs/one pair
+namedScheme 	OBJECT IDENTIFIER ::= { ansi-X9-42 names(4) } 
+dhStatic-sha1 	OBJECT IDENTIFIER ::= { namedScheme 1 } 
+dhEphem-sha1 	OBJECT IDENTIFIER ::= { namedScheme 2 } 
+dhOneFlow-sha1 OBJECT IDENTIFIER ::= { namedScheme 3 } 
+dhHybrid1-sha1 OBJECT IDENTIFIER ::= { namedScheme 4 } 
+dhHybrid2-sha1 OBJECT IDENTIFIER ::= { namedScheme 5 } 
+dhHybridOneFlow-sha1 OBJECT IDENTIFIER ::= { namedScheme 6 } 
+mqv2-sha1		OBJECT IDENTIFIER ::= { namedScheme 7 }
+mqv1-sha1		OBJECT IDENTIFIER ::= { namedScheme 8 }
+keyDerivationMethod		OBJECT  IDENTIFIER  ::=	{ ansi-X9-42 kdMethods(5) } 
+kdasn1der		OBJECT	IDENTIFIER	::=	
+{ keyDerivationMethod asn1der(0) }
+kdConcatenation	OBJECT IDENTIFIER ::= {keyDerivationMethod concatenation(1)}
+id-sha1 	OBJECT IDENTIFIER ::= { iso(1)
+identified-organization(3) oiw(14) secsig(3) algorithm(2) sha1(26) }
+-- Supporting definitions
+AlgorithmIdentifier { ALGORITHM-ID:IOSet } ::= SEQUENCE { 
+algorithm ALGORITHM-ID.&id({IOSet}),
+parameters ALGORITHM-ID.&Type({IOSet}{@algorithm}) OPTIONAL
+}
+ALGORITHM-ID ::= CLASS {
+&id	OBJECT IDENTIFIER UNIQUE,
+&Type OPTIONAL
+}
+WITH SYNTAX { OID &id [PARMS &Type] } 
+END -- ANSI-X9-42 --

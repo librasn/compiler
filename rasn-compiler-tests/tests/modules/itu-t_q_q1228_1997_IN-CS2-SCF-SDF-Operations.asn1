@@ -1,0 +1,155 @@
+
+
+
+
+
+
+
+-- Module IN-CS2-SCF-SDF-Operations (Q.1228:09/1997)
+-- See also ITU-T Q.1228 (09/1997)
+-- See also the index of all ASN.1 assignments needed in this document
+
+IN-CS2-SCF-SDF-Operations {itu-t recommendation q 1228 modules(0)
+  scf-sdf-operations(11) version1(0)} DEFINITIONS ::=
+BEGIN
+
+-- EXPORTS All 
+-- The types and values defined in this module are exported for use in the other ASN.1 modules contained 
+-- within the IN Directory Specifications, and for the use of other applications which will use them to access 
+-- IN Directory services. Other applications may use them for their own purposes, but this will not constrain
+-- extensions and modifications needed to maintain or improve the Directory service.
+IMPORTS
+  informationFramework, distributedOperations, authenticationFramework,
+    upperBounds, directoryAbstractService, enhancedSecurity
+    FROM UsefulDefinitions {joint-iso-itu-t ds(5) module(1)
+      usefulDefinitions(0) 3}
+  CONTEXT, Context, DistinguishedName, Name
+    FROM InformationFramework {joint-iso-itu-t ds(5) module(1)
+      informationFramework(1) 3}
+  OperationProgress, ReferenceType, Exclusions, AccessPoint,
+    ContinuationReference
+    FROM DistributedOperations {joint-iso-itu-t ds(5) module(1)
+      distributedOperations(3) 3}
+  CertificationPath, SIGNED{}, SIGNATURE{}, AlgorithmIdentifier
+    FROM AuthenticationFramework {joint-iso-itu-t ds(5) module(1)
+      authenticationFramework(7) 3}
+  id-avc-assignment, contexts, ros-InformationObjects, sdf-InformationFramework
+    FROM IN-CS2-object-identifiers {itu-t recommendation q 1228 modules(0)
+      in-cs2-object-identifiers(17) version1(0)}
+  basicServiceContext, lineIdentityContext
+    FROM IN-Contexts {itu-t recommendation q 1218 modules(0) contexts(8)
+      selectedContexts(1) version(1)}
+  Code, OPERATION, ERROR
+    FROM Remote-Operations-Information-Objects {joint-iso-itu-t
+      remote-operations(4) informationObjects(5) version1(0)}
+  inEmptyUnbind
+    FROM IN-CS2-classes {itu-t recommendation q 1228 modules(0)
+      in-cs2-classes(4) version1(0)}
+  METHOD
+    FROM IN-CS2-SDF-InformationFramework {itu-t recommendation q 1228
+      modules(0) sdfInformationFramework(9) version1(0)}
+  OPTIONALLY-PROTECTED{}, dirqop
+    FROM EnhancedSecurity {joint-iso-itu-t ds(5) module(1) enhancedSecurity(28)
+      1}
+  CommonArguments, CommonResults, attributeError, nameError, serviceError,
+    securityError, referral, updateError
+    FROM DirectoryAbstractService {joint-iso-itu-t ds(5) module(1)
+      directoryAbstractService(2) 3};
+
+execute OPERATION ::= {
+  ARGUMENT  ExecuteArgument
+  RESULT    ExecuteResult
+  ERRORS
+    {attributeError | nameError | serviceError | referral | securityError |
+      updateError | executionError}
+  CODE      id-opcode-execute
+}
+
+ExecuteArgument ::=
+  OPTIONALLY-PROTECTED
+    {SET {object            [0]  Name,
+          method-id         [1]  METHOD.&id({SupportedMethods}),
+          input-assertions
+            [2]  SEQUENCE OF
+                   SEQUENCE {type
+                               METHOD.&InputAttributes.&id
+                                 ({SupportedMethods}{@method-id}),
+                             values
+                               SET OF
+                                 METHOD.&InputAttributes.&Type
+                                   ({SupportedMethods}{@method-id}) OPTIONAL,
+                             valuesWithContext
+                               [0]  SET OF
+                                      SEQUENCE {value
+                                                  [0]  METHOD.
+                                                         &InputAttributes.
+                                                           &Type
+                                                         ({SupportedMethods}
+                                                            {@method-id})
+                                                    OPTIONAL,
+                                                contextList
+                                                  [1]  SET OF Context
+                                      } OPTIONAL} OPTIONAL,
+          specific-input
+            [3]  METHOD.&SpecificInput({SupportedMethods}{@method-id})
+              OPTIONAL,
+          COMPONENTS OF CommonArguments}, dirqop.&dapModifyEntryArg-QOP}
+
+ExecuteResult ::=
+  OPTIONALLY-PROTECTED
+    {SET {method-id          [1]  METHOD.&id({SupportedMethods}),
+          output-assertions
+            [2]  SEQUENCE OF
+                   SEQUENCE {type
+                               METHOD.&OutputAttributes.&id
+                                 ({SupportedMethods}{@method-id}),
+                             values
+                               SET OF
+                                 METHOD.&OutputAttributes.&Type
+                                   ({SupportedMethods}{@method-id}) OPTIONAL,
+                             valuesWithContext
+                               [0]  SET OF
+                                      SEQUENCE {value
+                                                  [0]  METHOD.
+                                                         &OutputAttributes.
+                                                           &Type
+                                                         ({SupportedMethods}
+                                                            {@method-id})
+                                                    OPTIONAL,
+                                                contextList
+                                                  [1]  SET OF Context
+                                      } OPTIONAL} OPTIONAL,
+          COMPONENTS OF CommonResults}, dirqop.&dapModifyEntryRes-QOP}
+
+SupportedMethods METHOD ::=
+  {...}
+
+in-directoryUnbind OPERATION ::= inEmptyUnbind
+
+assignmentContext CONTEXT ::= {
+  WITH SYNTAX  DistinguishedName
+  ID           id-avc-assignment
+}
+
+executionError ERROR ::= {
+  PARAMETER OPTIONALLY-PROTECTED
+    {SET {problem  [0]  ExecutionProblem,
+          COMPONENTS OF CommonResults},
+     dirqop.&dirErrors-QOP}
+  CODE                            id-errcode-executionError
+}
+
+ExecutionProblem ::= INTEGER {missingInputValues(1), executionFailure(2)}
+
+-- object identifier assignment
+-- error codes
+id-errcode-executionError Code ::=
+  local:10
+
+-- operation codes
+id-opcode-execute Code ::= local:10
+
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

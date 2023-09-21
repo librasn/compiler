@@ -1,0 +1,258 @@
+
+
+
+
+
+
+
+-- Module IN-SCF-SDF-Additional-Definitions (Q.1248.4:07/2001)
+-- See also ITU-T Q.1248.4 (07/2001)
+-- See also the index of all ASN.1 assignments needed in this document
+
+IN-SCF-SDF-Additional-Definitions {itu-t recommendation q 1248 modules(1)
+  in-scf-sdf-additional-definitions(28) version1(0)} DEFINITIONS ::=
+BEGIN
+
+IMPORTS
+  ds-UsefulDefinitions, ros-InformationObjects, operationcodes, errortypes,
+    scf-sdf-Operations
+    FROM IN-object-identifiers {itu-t recommendation q 1248 modules(1)
+      in-object-identifiers(0) version1(0)}
+  directoryAbstractService, dap
+    FROM UsefulDefinitions ds-UsefulDefinitions
+  ERROR, OPERATION
+    FROM Remote-Operations-Information-Objects ros-InformationObjects
+  CommonArguments, ServiceControls, EntryInformationSelection,
+    EntryInformation, AddEntryArgument, AddEntryResult, DirectoryBindArgument,
+    DirectoryBindResult, RemoveEntryArgument, RemoveEntryResult,
+    SearchArgument, SearchResult, ModifyEntryArgument, ModifyEntryResult,
+    PartialOutcomeQualifier, attributeError, directoryBindError, nameError,
+    referral, securityError, serviceError, ServiceProblem, SecurityProblem,
+    updateError
+    FROM DirectoryAbstractService directoryAbstractService
+  id-opcode-search, id-opcode-addEntry, id-opcode-removeEntry,
+    id-opcode-modifyEntry
+    FROM DirectoryAccessProtocol dap
+  opcode-execute
+    FROM IN-operationcodes operationcodes
+  executionError
+    FROM IN-errortypes errortypes
+  ExecuteArgument, ExecuteResult
+    FROM IN-SCF-SDF-operations scf-sdf-Operations;
+
+-- Information types and common procedures
+IN-CommonArguments ::=
+  CommonArguments
+    (WITH COMPONENTS {
+       ...,
+       serviceControls  (IN-ServiceControls),
+       aliasedRDNs      ABSENT
+     })
+
+IN-ServiceControls ::=
+  ServiceControls
+    (WITH COMPONENTS {
+       ...,
+       timeLimit           ABSENT,
+       sizeLimit           ABSENT,
+       scopeOfReferral     ABSENT,
+       attributeSizeLimit  ABSENT
+     })
+
+IN-EntryInformationSelection ::=
+  EntryInformationSelection
+    (WITH COMPONENTS {
+       ...,
+       infoTypes  (attributeTypesAndValues)
+     })
+
+IN-EntryInformation ::=
+  EntryInformation
+    (WITH COMPONENTS {
+       ...,
+       fromEntry    (TRUE),
+       information  (WITH COMPONENT 
+                       (WITH COMPONENTS {
+                          ...,
+                          attributeType  ABSENT
+                        }))OPTIONAL
+     })
+
+-- Operations, Arguments and Results definition
+in-Execute OPERATION ::= {
+  ARGUMENT  IN-ExecuteArgument
+  RESULT    ExecuteResult
+  ERRORS
+    {attributeError | nameError | in-ServiceError | referral | securityError |
+      updateError | executionError}
+  CODE      opcode-execute
+}
+
+-- Direction: SCF->SDF
+IN-ExecuteArgument ::=
+  ExecuteArgument
+    (WITH COMPONENTS {
+       ...,
+       toBeProtected  (WITH COMPONENTS {
+                         ...,
+                         serviceControls  (IN-ServiceControls),
+                         aliasedRDNs      ABSENT
+                       })
+     })
+
+-- The last two elements belong to IN-CommonArgument type.
+in-AddEntry OPERATION ::= {
+  ARGUMENT  IN-AddEntryArgument
+  RESULT    AddEntryResult
+  ERRORS
+    {nameError | in-ServiceError | securityError | attributeError | updateError
+      | referral}
+  CODE      id-opcode-addEntry
+}
+
+-- Direction: SCF->SDF
+IN-AddEntryArgument ::=
+  AddEntryArgument
+    (WITH COMPONENTS {
+       ...,
+       toBeProtected  (WITH COMPONENTS {
+                         ...,
+                         serviceControls  (IN-ServiceControls),
+                         aliasedRDNs      ABSENT
+                       })
+     })
+
+-- The last two elements belong to IN-CommonArgument type.
+in-DirectoryBind OPERATION ::= {
+  ARGUMENT  DirectoryBindArgument
+  OPTIONAL  TRUE
+  RESULT    DirectoryBindResult
+  OPTIONAL  TRUE
+  ERRORS    {in-DirectoryBindError}
+}
+
+-- Direction: SCF->SDF
+in-ModifyEntry OPERATION ::= {
+  ARGUMENT  IN-ModifyEntryArgument
+  RESULT    IN-ModifyEntryResult
+  ERRORS
+    {nameError | in-ServiceError | securityError | attributeError | updateError
+      | referral}
+  CODE      id-opcode-modifyEntry
+}
+
+-- Direction: SCF->SDF
+IN-ModifyEntryArgument ::=
+  ModifyEntryArgument
+    (WITH COMPONENTS {
+       ...,
+       toBeProtected  (WITH COMPONENTS {
+                         ...,
+                         selection        (IN-EntryInformationSelection),
+                         serviceControls  (IN-ServiceControls),
+                         aliasedRDNs      ABSENT
+                       })
+     })
+
+-- The last two elements belong to IN-CommonArgument type.
+IN-ModifyEntryResult ::=
+  ModifyEntryResult
+
+--	(WITH COMPONENTS {
+--		..., 
+--		information	 (WITH COMPONENTS {
+--				..., 
+--		  entry	(IN-EntryInformation)}
+--				 )
+--	})
+-- The information is to be returned in the entry component of the information result.
+in-RemoveEntry OPERATION ::= {
+  ARGUMENT  IN-RemoveEntryArgument
+  RESULT    RemoveEntryResult
+  ERRORS
+    {nameError | in-ServiceError | securityError | updateError | referral}
+  CODE      id-opcode-removeEntry
+}
+
+-- Direction: SCF->SDF
+IN-RemoveEntryArgument ::=
+  RemoveEntryArgument
+    (WITH COMPONENTS {
+       ...,
+       toBeProtected  (WITH COMPONENTS {
+                         ...,
+                         serviceControls  (IN-ServiceControls),
+                         aliasedRDNs      ABSENT
+                       })
+     })
+
+-- The last two elements belong to IN-CommonArgument type.
+in-Search OPERATION ::= {
+  ARGUMENT  IN-SearchArgument
+  RESULT    IN-SearchResult
+  ERRORS
+    {nameError | in-ServiceError | securityError | attributeError | referral}
+  CODE      id-opcode-search
+}
+
+-- Direction: SCF->SDF
+IN-SearchArgument ::=
+  SearchArgument
+    ((WITH COMPONENTS {
+        ...,
+        toBeProtected  (WITH COMPONENTS {
+                          ...,
+                          searchAliases    (TRUE),
+                          selection        (IN-EntryInformationSelection),
+                          pagedResults     ABSENT,
+                          extendedFilter   ABSENT,
+                          serviceControls  (IN-ServiceControls),
+                          aliasedRDNs      ABSENT
+                        })
+      }))
+
+-- The last two elements belong to IN-CommonArgument type.
+IN-SearchResult ::=
+  SearchResult
+    (WITH COMPONENTS {
+       ...,
+       toBeProtected  (WITH COMPONENTS {
+                         ...,
+                         searchInfo  (WITH COMPONENTS {
+                                        ...,
+                                        entries                  (WITH
+                                                                    COMPONENT 
+                                                                    (IN-EntryInformation)),
+                                        partialOutcomeQualifier  (PartialOutcomeQualifier
+                                                                    (WITH COMPONENTS {
+                                                                    ...,
+                                                                    queryReference  ABSENT
+                                                                    }))OPTIONAL
+                                      })
+                       })
+     })
+
+-- Errors definition
+in-DirectoryBindError ERROR ::= directoryBindError
+
+-- the following constraint shall be applied to the parameter error
+-- (WITH COMPONENTS{
+-- 	...,
+-- 	error (WITH COMPONENTS{
+-- 		serviceError(ServiceProblem(2)), 
+-- 		securityError(SecurityProblem(1|2|7|10)) })})
+-- SecurityProblem 10 indicates that the supplied SPKM token was found to be valid.
+-- In reception, all the possible errors should be supported to understand a Bind error
+in-ServiceError ERROR ::=
+  serviceError
+
+--  the following constraint shall be applied to the error parameter
+--  (WITH COMPONENTS{
+-- 	...,
+-- 	problem (ServiceProblem(1|2|3|4|5|6|8|9|10|11|12))})
+-- invalidQueryReference should not be sent because it is linked to the use of paged results.
+-- The error code is the same as defined in X.511.
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

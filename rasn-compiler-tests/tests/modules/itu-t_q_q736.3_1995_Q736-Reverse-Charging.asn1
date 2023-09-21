@@ -1,0 +1,156 @@
+
+
+
+
+
+
+
+-- Module Q736-Reverse-Charging (Q.736.3:10/1995)
+-- See also ITU-T Q.736.3 (10/1995)
+-- See also the index of all ASN.1 assignments needed in this document
+
+Q736-Reverse-Charging {itu-t recommendation q 736 reverse-charging(3)
+  modules(2) operations-and-errors(1) version1(1)} DEFINITIONS EXPLICIT TAGS
+::=
+BEGIN
+
+IMPORTS
+  OPERATION, ERROR
+    FROM Remote-Operations-Information-Objects {joint-iso-itu-t
+      remote-operations(4) informationObjects(5) version1(0)};
+
+--  operation types
+rEVCallingReqSetup OPERATION ::= {
+  ARGUMENT
+    SEQUENCE {transferRequested  [0] IMPLICIT BOOLEAN OPTIONAL,
+              --  This parameter is mandatory in case of
+              --  requesting Transfer mode  and sets true
+              callingUserNumber  [1] IMPLICIT UserNumber OPTIONAL,
+              --  This parameter is mandatory in case of
+              --  requesting Transfer mode.
+              ...}
+  RESULT
+    SEQUENCE {transferAccepted  [0] IMPLICIT BOOLEAN OPTIONAL,
+              --  This parameter is mandatory in case of 
+              --  accepting Transfer mode  and sets true.
+              calledUserNumber  [1] IMPLICIT UserNumber OPTIONAL,
+              --  This parameter is mandatory in case of 
+              --  requesting No Transfer mode.
+              ...}
+  ERRORS
+    {userNotSubscribed | rejectedByNetwork | rejectedByUser | notAvailable |
+      supplementaryServiceInteractionNotAllowed | basicServiceNotProvided |
+      resourceUnavailable | userIgnored | rEVIsAlreadyRunning}
+  CODE      global:{revOID operations-and-errors(1) revcallingsetup(1)}
+}
+
+rEVCallingReqActive OPERATION ::= {
+  ARGUMENT
+    SEQUENCE {transferRequested  [0] IMPLICIT BOOLEAN OPTIONAL,
+              --  This parameter is mandatory in case of 
+              --  requesting Transfer mode and sets true
+              callingUserNumber  [1] IMPLICIT UserNumber OPTIONAL,
+              --  This parameter is mandatory in case of 
+              --  requesting Transfer mode.
+              ...}
+  RESULT
+    SEQUENCE {transferAccepted  [0] IMPLICIT BOOLEAN OPTIONAL,
+              --  This parameter is mandatory in case of 
+              --  accepting Transfer mode  and sets true.
+              calledUserNumber  [1] IMPLICIT UserNumber OPTIONAL,
+              --  This parameter is mandatory in case of 
+              --  requesting No Transfer mode.
+              ...}
+  ERRORS
+    {userNotSubscribed | rejectedByNetwork | rejectedByUser | notAvailable |
+      supplementaryServiceInteractionNotAllowed | basicServiceNotProvided |
+      resourceUnavailable | userIgnored | rEVIsAlreadyRunning}
+  CODE      global:{revOID operations-and-errors(1) revcallingreqactive(2)}
+}
+
+rEVCalledRequest OPERATION ::= {
+  ARGUMENT
+    SEQUENCE {transferRequested  [0] IMPLICIT BOOLEAN OPTIONAL,
+              --  This parameter is mandatory in case of 
+              --  requesting Transfer mode and sets true
+              calledUserNumber   [1] IMPLICIT UserNumber OPTIONAL,
+              --  This parameter is mandatory in case of 
+              --  requesting No Transfer mode.
+              partialCallOnly    [2] IMPLICIT BOOLEAN OPTIONAL,
+              --  This parameter is mandatory in case of 
+              --  requesting CASE B and sets true
+              ...}
+  RESULT
+    SEQUENCE {transferAccepted   [0] IMPLICIT BOOLEAN OPTIONAL,
+              --  This parameter is mandatory in case of
+              --  accepting Transfer mode and sets true.
+              callingUserNumber  [1] IMPLICIT UserNumber OPTIONAL,
+              --  This parameter is mandatory in case of 
+              --  accepting Transfer mode,
+              duration           [2] IMPLICIT OCTET STRING(SIZE (3)) OPTIONAL,
+              --  This parameter is mandatory in case of
+              --  requesting CASE C Transfer mode,
+              --  The octets represent a number of hours,
+              --  minutes, and seconds in that order and
+              --  maximum duration is approximately 10
+              --  days.
+              ...}
+  ERRORS
+    {rejectedByNetwork | notAvailable |
+      supplementaryServiceInteractionNotAllowed | basicServiceNotProvided |
+      resourceUnavailable | rEVIsAlreadyRunning}
+  CODE      global:{revOID operations-and-errors(1) revcalledrequest(3)}
+}
+
+--  error type definitions
+userNotSubscribed ERROR ::= {
+  CODE  global:{revOID operations-and-errors(1) usernotsubscribed(4)}
+}
+
+rejectedByNetwork ERROR ::= {
+  CODE  global:{revOID operations-and-errors(1) rejectedbynetwork(5)}
+}
+
+rejectedByUser ERROR ::= {
+  CODE  global:{revOID operations-and-errors(1) rejectedbyuser(6)}
+}
+
+notAvailable ERROR ::= {
+  CODE  global:{revOID operations-and-errors(1) notavailable(7)}
+}
+
+supplementaryServiceInteractionNotAllowed ERROR ::= {
+  CODE
+    global:
+      {revOID operations-and-errors(1)
+       supplementaryserviceinteractionnotallowed(8)}
+}
+
+basicServiceNotProvided ERROR ::= {
+  CODE  global:{revOID operations-and-errors(1) basicservicenotprovided(9)}
+}
+
+resourceUnavailable ERROR ::= {
+  CODE  global:{revOID operations-and-errors(1) resourceunavailable(10)}
+}
+
+userIgnored ERROR ::= {
+  CODE  global:{revOID operations-and-errors(1) userignored(11)}
+}
+
+rEVIsAlreadyRunning ERROR ::= {
+  CODE  global:{revOID operations-and-errors(1) revisalreadyrunning(12)}
+}
+
+--  constants and data type definitions
+UserNumber ::= OCTET STRING(SIZE (2..10))
+
+--  Formats as for Q.763 calling party number
+--  object identifier path
+revOID OBJECT IDENTIFIER ::=
+  {itu-t recommendation q 736 3}
+
+END --  of module Q.736 Reverse Charging.
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

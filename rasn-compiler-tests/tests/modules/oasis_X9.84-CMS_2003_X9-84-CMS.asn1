@@ -1,0 +1,256 @@
+X9-84-CMS.asn: OASIS X9.84-CMS (2003)-- ASN module extracted from OASIS X9.84-CMS (2003)--
+-- OASIS XML Common Biometric Format (XCBF) Technical Committee
+--
+-- From http://oasis-open.org/committees/xcbf/docs/XCBFSchema20030107.zip
+--
+-- OASIS takes no position regarding the validity or scope of any 
+-- intellectual property or other rights that might be claimed to
+-- pertain to the implementation or use of the technology described in
+-- this document or the extent to which any license under such rights
+-- might or might not be available; neither does it represent that it
+-- has made any effort to identify any such rights. Information on 
+-- OASIS's procedures with respect to rights in OASIS specifications
+-- can be found at the OASIS website. Copies of claims of rights made
+-- available for publication and any assurances of licenses to be made
+-- available, or the result of an attempt made to obtain a general 
+-- license or permission for the use of such proprietary rights by 
+-- implementors or users of this specification, can be obtained from
+-- the OASIS Executive Director. 
+-- 
+-- OASIS invites any interested party to bring to its attention any 
+-- copyrights, patents or patent applications, or other proprietary
+-- rights which may cover technology that may be required to implement
+-- this specification. Please address the information to the OASIS 
+-- Executive Director.
+--
+-- Copyright © OASIS Open 2002, 2003. All Rights Reserved.
+--
+-- This document and translations of it may be copied and furnished to
+-- others, and derivative works that comment on or otherwise explain
+-- it or assist in its implementation may be prepared, copied, 
+-- published and distributed, in whole or in part, without restriction
+-- of any kind, provided that the above copyright notice and this 
+-- paragraph are included on all such copies and derivative works.
+-- However, this document itself does not be modified in any way, such
+-- as by removing the copyright notice or references to OASIS, except
+-- as needed for the purpose of developing OASIS specifications, in 
+-- which case the procedures for copyrights defined in the OASIS 
+-- Intellectual Property Rights document must be followed, or as
+-- required to translate it into languages other than English.
+--
+-- The limited permissions granted above are perpetual and will not be
+-- revoked by OASIS or its successors or assigns.
+-- 
+-- This document and the information contained herein is provided on
+-- an "AS IS" basis and OASIS DISCLAIMS ALL WARRANTIES, EXPRESS OR
+-- IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTY THAT THE USE OF
+-- THE INFORMATION HEREIN WILL NOT INFRINGE ANY RIGHTS OR ANY IMPLIED
+-- WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
+--
+
+X9-84-CMS {iso(1) identified-organization(3) tc68(133) country(16) x9(840) x9Standards(9) x9-84(84) module(0) cms(2) rev(1)} 
+   DEFINITIONS IMPLICIT TAGS ::= BEGIN
+
+-- EXPORTS All;
+
+IMPORTS 
+
+   -- ANS X9.84 Biometric Information Management & Security IDs --
+
+   des-ede3-cbc, dsa-with-sha1, ecdsa-with-SHA1, hmac-with-SHA1, 
+   id-data, NoIV, rsaEncryption, SHA-Algorithms, sha1WithRSAEncryption
+      FROM X9-84-Identifiers {
+         iso(1) identified-organization(3) tc68(133) country(16)
+            x9(840) x9Standards(9) x9-84(84) module(0)
+               ids(3) rev(1) };
+
+SignedData ::= SEQUENCE {
+   version           CMSVersion,
+   digestAlgorithms  DigestAlgorithmIdentifiers,
+   encapContentInfo  EncapsulatedContentInfo,
+   certificates      [0] CertificateSet  OPTIONAL,
+   crls              [1] CertificateRevocationLists  OPTIONAL,
+   signerInfos       SignerInfos
+}
+
+CMSVersion ::= INTEGER { v84(84) } (v84,...)
+
+DigestAlgorithmIdentifiers ::= 
+      SET SIZE(1) OF DigestAlgorithmIdentifier
+
+DigestAlgorithmIdentifier ::= AlgorithmIdentifier {{DigestAlgorithms}}
+
+DigestAlgorithms ALGORITHM ::= {
+   SHA-Algorithms,
+
+   ... -- Expect other digest algorithms  --
+}
+
+EncapsulatedContentInfo ::= SEQUENCE {
+   eContentType  ContentType,
+   eContent      [0] EXPLICIT OCTET STRING  OPTIONAL
+}
+
+ContentType ::= CONTENTS.&id({Contents})
+
+CONTENTS ::= TYPE-IDENTIFIER  -- ISO/IEC 8824-2:1998, Annex A
+
+Contents CONTENTS ::= {
+   { Data IDENTIFIED BY id-data }
+}
+
+Data ::= OCTET STRING
+
+CertificateSet ::= OCTET STRING
+
+CertificateRevocationLists ::= OCTET STRING
+
+SignerInfos ::= SET SIZE(1) OF SignerInfo
+
+SignerInfo ::= SEQUENCE {
+   version             CMSVersion,
+   sid                 SignerIdentifier,
+   digestAlgorithm     DigestAlgorithmIdentifier,
+   signatureAlgorithm  SignatureAlgorithmIdentifier,
+   signature           SignatureValue
+}
+
+SignerIdentifier ::= CHOICE {
+   certHash  [1] EXPLICIT Hash
+}
+
+Hash ::= CHOICE { 
+   ietf       CertHash,  -- SHA-1 hash of entire certificate 
+   withAlgID  DigestInfo 
+} 
+
+CertHash ::= OCTET STRING (ENCODED BY sha-1) 
+
+DigestInfo ::= SEQUENCE { 
+   hashAlgorithm  DigestAlgorithmIdentifier, 
+   digest         OCTET STRING 
+}
+
+SignatureAlgorithmIdentifier ::= 
+      AlgorithmIdentifier {{SignatureAlgorithms}}
+
+SignatureAlgorithms ALGORITHM ::= { 
+   { OID dsa-with-sha1         PARMS NoIV } |
+   { OID ecdsa-with-SHA1       PARMS NoIV } |
+   { OID sha1WithRSAEncryption PARMS NoIV },
+
+   ...  -- Expect other signature algorithms -- 
+}
+
+SignatureValue ::= OCTET STRING
+
+EncryptedData ::= SEQUENCE {
+   version               CMSVersion,
+   encryptedContentInfo  EncryptedContentInfo
+}
+
+EncryptedContentInfo ::= SEQUENCE {
+   contentType                 ContentType,
+   contentEncryptionAlgorithm  ContentEncryptAlgorithmIdentifier,
+   encryptedContent            [0] EncryptedContent
+}
+
+ContentEncryptAlgorithmIdentifier ::= 
+      AlgorithmIdentifier {{ContentEncryptionAlgorithms}}
+
+ContentEncryptionAlgorithms ALGORITHM ::= {
+   { OID des-ede3-cbc PARMS IV },
+
+   ...  -- Expect other content encryption algorithms --
+}
+
+IV ::= OCTET STRING (SIZE(8))
+
+EncryptedContent ::= OCTET STRING
+
+EnvelopedData ::= SEQUENCE {
+   version               CMSVersion,
+   originatorInfo        [0] OriginatorInfo  OPTIONAL,
+   recipientInfos        RecipientInfos,
+   encryptedContentInfo  EncryptedContentInfo
+}
+
+OriginatorInfo ::= SEQUENCE {
+   certs  [0] CertificateSet  OPTIONAL,
+   crls   [1] CertificateRevocationLists  OPTIONAL
+}
+(ALL EXCEPT({ -- none; at least one component is present -- }))
+
+RecipientInfos ::= SET SIZE(1) OF RecipientInfo
+
+RecipientInfo ::= CHOICE {
+   ktri  KeyTransRecipientInfo
+}
+
+KeyTransRecipientInfo ::= SEQUENCE {
+   version                 CMSVersion,
+   rid                     RecipientIdentifier,
+   keyEncryptionAlgorithm  KeyEncryptionAlgorithmIdentifier,
+   encryptedKey            EncryptedKey
+}
+
+RecipientIdentifier ::= CHOICE {
+   certHash  [73] EXPLICIT Hash
+}
+
+KeyEncryptionAlgorithmIdentifier ::= 
+      AlgorithmIdentifier {{KeyEncryptionAlgorithms}}
+
+KeyEncryptionAlgorithms ALGORITHM ::= { 
+   { OID rsaEncryption PARMS NoIV },
+
+   ...  -- expect other key encryption algorithms -- 
+}
+
+EncryptedKey ::= OCTET STRING
+
+AuthenticatedData ::= SEQUENCE {
+   version           CMSVersion,
+   recipientInfos    RecipientInfos,
+   macAlgorithm      MACAlgorithmIdentifier,
+   encapContentInfo  EncapsulatedContentInfo,
+   mac               MessageAuthenticationCode
+}
+
+MACAlgorithmIdentifier ::= AlgorithmIdentifier {{MACAlgorithms}}
+
+MACAlgorithms ALGORITHM ::= { 
+   { OID hmac-with-SHA1 },
+
+   ...  -- expect other MAC or HMAC algorithms -- 
+}
+
+MessageAuthenticationCode ::= OCTET STRING
+
+
+-- Cryptographic algorithm identification --
+
+ALGORITHM ::= CLASS {
+   &id    OBJECT IDENTIFIER  UNIQUE,
+   &Type  OPTIONAL
+}
+   WITH SYNTAX { OID &id [PARMS &Type] } 
+
+AlgorithmIdentifier { ALGORITHM:IOSet } ::= SEQUENCE {
+   algorithm   ALGORITHM.&id( {IOSet} ),
+   parameters  ALGORITHM.&Type( {IOSet}{@algorithm} )  OPTIONAL
+}
+
+
+END  -- X9-84-CMS --
+
+--
+-- Last update: Tuesday, January 7, 2003
+--
+-- Phillip H. Griffin
+-- OASIS XCBF TC Chair
+-- mail:  phil.griffin@asn-1.com
+-- list:  xcbf-comment@lists.oasis-open.org
+-- site:  http://www.oasis-open.org/committees/xcbf/
+--
+

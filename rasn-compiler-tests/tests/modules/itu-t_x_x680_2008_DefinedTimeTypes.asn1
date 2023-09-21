@@ -1,0 +1,213 @@
+DefinedTimeTypes.asn: ITU-T X.680 (11/2008) -- ASN module extracted from ITU-T X.680 (11/2008)DefinedTimeTypes {joint-iso-itu-t asn1(1) specification(0) modules(0) defined-types-module(3)}
+DEFINITIONS AUTOMATIC TAGS ::= BEGIN
+EXPORTS ALL; 
+-- Date types
+CENTURY ::= TIME((SETTINGS "Basic=Date Date=C Year=Basic")|
+		      (SETTINGS "Basic=Date Date=C Year=Proleptic"))
+ANY-CENTURY ::= TIME((SETTINGS "Basic=Date Date=C Year=Negative")|
+			    (SETTINGS "Basic=Date Date=C Year=L5"))
+			-- This allows only a 3-digit century if positive.
+			-- A type with a greater number of digits can be
+			-- defined as an additional time type.
+			-- Note that L5 is used for century if the specification 
+			-- of the year would require 5 digits.  See Table 6.
+YEAR ::= TIME((SETTINGS "Basic=Date Date=Y Year=Basic")|
+		   (SETTINGS "Basic=Date Date=Y Year=Proleptic"))
+ANY-YEAR ::= TIME((SETTINGS "Basic=Date Date=Y Year=Negative")|
+		       (SETTINGS "Basic=Date Date=Y Year=L5"))
+			-- This allows only a 5-digit year if positive.
+			-- A type with a greater number of digits can be
+			-- defined as an additional time type.
+YEAR-MONTH ::= TIME((SETTINGS "Basic=Date Date=YM Year=Basic")|
+		   	   (SETTINGS "Basic=Date Date=YM Year=Proleptic"))
+ANY-YEAR-MONTH ::= TIME((SETTINGS "Basic=Date Date=YM Year=Negative")|
+			       (SETTINGS "Basic=Date Date=YM Year=L5"))
+			-- This allows only a 5-digit year if positive.
+			-- A type with a greater number of digits can be
+			-- defined as an additional time type.
+YEAR-MONTH-DAY ::= TIME((SETTINGS "Basic=Date Date=YMD Year=Basic")|
+			       (SETTINGS "Basic=Date Date=YMD Year=Proleptic"))
+ANY-YEAR-MONTH-DAY ::= TIME((SETTINGS "Basic=Date Date=YMD Year=Negative")|
+			           (SETTINGS "Basic=Date Date=YMD Year=L5"))
+			-- This allows only a 5-digit year if positive.
+			-- A type with a greater number of digits can be
+			-- defined as an additional time type.
+YEAR-WEEK ::= TIME((SETTINGS "Basic=Date Date=YW Year=Basic")|
+		   	  (SETTINGS "Basic=Date Date=YW Year=Proleptic"))
+ANY-YEAR-WEEK ::= TIME((SETTINGS "Basic=Date Date=YW Year=Negative")|
+			      (SETTINGS "Basic=Date Date=YW Year=L5"))
+			-- This allows only a 5-digit year if positive.
+			-- A type with a greater number of digits can be
+			-- defined as an additional time type.
+YEAR-WEEK-DAY ::= TIME((SETTINGS "Basic=Date Date=YWD Year=Basic")|
+			      (SETTINGS "Basic=Date Date=YWD Year=Proleptic"))
+ANY-YEAR-WEEK-DAY ::= TIME((SETTINGS "Basic=Date Date=YWD Year=Negative")|
+			          (SETTINGS "Basic=Date Date=YWD Year=L5"))
+			-- This allows only a 5-digit year if positive.
+			-- A type with a greater number of digits can be
+			-- defined as an additional time type.
+-- Types related to time-of-day
+HOURS ::= TIME(SETTINGS "Basic=Time Time=H Local-or-UTC=L")
+HOURS-UTC ::= TIME(SETTINGS "Basic=Time Time=H Local-or-UTC=Z")
+HOURS-AND-DIFF ::= TIME(SETTINGS "Basic=Time Time=H Local-or-UTC=LD")
+MINUTES ::= TIME(SETTINGS "Basic=Time Time=HM Local-or-UTC=L")
+MINUTES-UTC ::= TIME(SETTINGS "Basic=Time Time=HM Local-or-UTC=Z")
+MINUTES-AND-DIFF ::= TIME(SETTINGS "Basic=Time Time=HM Local-or-UTC=LD")
+SECONDS ::= TIME(SETTINGS "Basic=Time Time=HMS Local-or-UTC=L")
+SECONDS-UTC ::= TIME(SETTINGS "Basic=Time Time=HMS Local-or-UTC=Z")
+SECONDS-AND-DIFF ::= TIME(SETTINGS "Basic=Time Time=HMS Local-or-UTC=LD")
+HOURS-AND-FRACTION ::= TIME(SETTINGS "Basic=Time Time=HF3 Local-or-UTC=L")
+             -- 3 digit fraction
+HOURS-UTC-AND-FRACTION ::= TIME(SETTINGS "Basic=Time Time=HF3 Local-or-UTC=Z")
+                 -- 3-digit fraction
+HOURS-AND-DIFF-AND-FRACTION ::= TIME(SETTINGS "Basic=Time Time=HF3
+                   Local-or-UTC=LD")
+                   -- 3-digit fraction
+MINUTES-AND-FRACTION ::= TIME(SETTINGS "Basic=Time Time=HMF3 Local-or-UTC=L")
+                -- 3-digit fraction
+MINUTES-UTC-AND-FRACTION ::= TIME(SETTINGS "Basic=Time Time=HMF3 Local-or-UTC=Z")
+                 -- 3-digit fraction
+MINUTES-AND-DIFF-AND-FRACTION ::= TIME(SETTINGS "Basic=Time Time=HMF3
+                    Local-or-UTC=LD")
+                   -- 3-digit fraction
+SECONDS-AND-FRACTION ::= TIME(SETTINGS "Basic=Time Time=HMSF3 Local-or-UTC=L")
+                                       -- 3-digit fraction
+SECONDS-UTC-AND-FRACTION ::= TIME(SETTINGS "Basic=Time Time=HMSF3 Local-or-UTC=Z")
+                                           -- 3-digit fraction
+SECONDS-AND-DIFF-AND-FRACTION ::= TIME(SETTINGS "Basic=Time Time=HMSF3
+                    Local-or-UTC=LD")
+                    -- 3-digit fraction
+-- Interval types (DURATION is not included as this is a useful type).
+START-END-DATE-INTERVAL ::= TIME(SETTINGS "Basic=Interval Interval-type=SE
+                 SE-point=Date")
+           -- This is only useful if subtyped with a DATE subset (see below).
+START-END-TIME-INTERVAL ::= TIME(SETTINGS "Basic=Interval Interval-type=SE
+                 SE-point=Time")
+           -- This is only useful if subtyped with a TIME-OF-DAY subset
+           -- (see below).
+START-END-DATE-TIME-INTERVAL ::= TIME(SETTINGS "Basic=Interval Interval-type=SE
+                 SE-point=Date-Time")
+           -- This is only useful if subtyped with a DATE subset and a
+           -- TIME-OF-DAY subset (see below).
+START-DATE-DURATION-INTERVAL ::= TIME(SETTINGS "Basic=Interval Interval-type=SD
+                 SE-point=Date")
+           -- This is only useful if subtyped with a DATE subset (see below).
+START-TIME-DURATION-INTERVAL ::= TIME(SETTINGS "Basic=Interval Interval-type=SD
+                 SE-point=Time")
+           -- This is only useful if subtyped with a TIME-OF-DAY subset
+           -- (see below).
+START-DATE-TIME-DURATION-INTERVAL ::= TIME(SETTINGS "Basic=Interval
+                      Interval-type=SD
+                      SE-point=Date-Time")
+           -- This is only useful if subtyped with a DATE subset and a
+           -- TIME-OF-DAY subset (see below).
+
+DURATION-END-DATE-INTERVAL ::= TIME(SETTINGS "Basic=Interval Interval-type=DE
+                 SE-point=Date")
+           -- This is only useful if subtyped with a DATE subset (see below).
+DURATION-END-TIME-INTERVAL ::= TIME(SETTINGS "Basic=Interval Interval-type=DE
+                 SE-point=Time")
+           -- This is only useful if subtyped with a TIME-OF-DAY subset
+           -- (see below).
+DURATION-END-DATE-TIME-INTERVAL ::= TIME(SETTINGS "Basic=Interval Interval-type=DE
+                 SE-point=Date-Time")
+           -- This is only useful if subtyped with a DATE subset and a
+           -- TIME-OF-DAY subset (see below).
+-- Recurring interval types.
+REC-START-END-DATE-INTERVAL ::= TIME(SETTINGS "Basic=Rec-Interval Interval-type=SE
+                 SE-point=Date")
+           -- This is only useful if subtyped with a DATE subset (see below).
+REC-START-END-TIME-INTERVAL ::= TIME(SETTINGS "Basic=Rec-Interval Interval-type=SE
+                 SE-point=Time")
+           -- This is only useful if subtyped with a TIME-OF-DAY subset
+           -- (see below).
+REC-START-END-DATE-TIME-INTERVAL ::= TIME(SETTINGS "Basic=Rec-Interval
+                     Interval-type=SE
+                     SE-point=Date-Time")
+           -- This is only useful if subtyped with a DATE subset and a
+           -- TIME-OF-DAY subset (see below).
+REC-DURATION-INTERVAL ::= TIME(SETTINGS "Basic=Rec-Interval Interval-type=D")
+REC-START-DATE-DURATION-INTERVAL ::= TIME(SETTINGS "Basic=Rec-Interval
+                     Interval-type=SD
+                     SE-point=Date")
+           -- This is only useful if subtyped with a DATE subset (see below).
+REC-START-TIME-DURATION-INTERVAL ::= TIME(SETTINGS "Basic=Rec-Interval
+                     Interval-type=SD
+                     SE-point=Time")
+           -- This is only useful if subtyped with a TIME-OF-DAY subset
+           -- (see below).
+REC-START-DATE-TIME-DURATION-INTERVAL ::= TIME(SETTINGS "Basic=Rec-Interval
+                     Interval-type=SD
+                     SE-point=Date-Time")
+           -- This is only useful if subtyped with a DATE subset and a
+           -- TIME-OF-DAY subset (see below).
+
+REC-DURATION-END-DATE-INTERVAL ::= TIME(SETTINGS "Basic=Rec-Interval
+                     Interval-type=DE
+                     SE-point=Date")
+           -- This is only useful if subtyped with a DATE subset (see below).
+REC-DURATION-END-TIME-INTERVAL ::= TIME(SETTINGS "Basic=Rec-Interval
+                     Interval-type=DE
+                     SE-point=Time")
+           -- This is only useful if subtyped with a TIME-OF-DAY subset
+           -- (see below).
+REC-DURATION-END-DATE-TIME-INTERVAL ::= TIME(SETTINGS "Basic=Rec-Interval
+                     Interval-type=DE
+                     SE-point=Date-Time")
+           -- This is only useful if subtyped with a DATE subset and a
+           -- TIME-OF-DAY subset (see below).
+
+-- Date subsets
+CENTURY-SUBSET ::= TIME((SETTINGS "Date=C Year=Basic")|
+		           (SETTINGS "Date=C Year=Proleptic"))
+ANY-CENTURY-SUBSET ::= TIME((SETTINGS "Date=C Year=Negative")|
+			         (SETTINGS "Date=C Year=L5"))
+YEAR-SUBSET ::= TIME((SETTINGS "Date=Y Year=Basic")|
+		        (SETTINGS "Date=Y Year=Proleptic"))
+ANY-YEAR-SUBSET ::= TIME((SETTINGS "Date=Y Year=Negative")|
+		            (SETTINGS "Date=Y Year=L5"))
+YEAR-MONTH-SUBSET ::= TIME((SETTINGS "Date=YM Year=Basic")|
+		   	 (SETTINGS "Date=YM Year=Proleptic"))
+ANY-YEAR-MONTH-SUBSET ::= TIME((SETTINGS "Date=YM Year=Negative")|
+			            (SETTINGS "Date=YM Year=L5"))
+YEAR-MONTH-DAY-SUBSET ::= TIME((SETTINGS "Date=YMD Year=Basic")|
+			            (SETTINGS "Date=YMD Year=Proleptic"))
+ANY-YEAR-MONTH-DAY-SUBSET ::= TIME((SETTINGS "Date=YMD Year=Negative")|
+			                (SETTINGS "Date=YMD Year=L5"))
+YEAR-WEEK-SUBSET ::= TIME((SETTINGS "Date=YW Year=Basic")|
+		   	       (SETTINGS "Date=YW Year=Proleptic"))
+ANY-YEAR-WEEK-SUBSET ::= TIME((SETTINGS "Date=YW Year=Negative")|
+			           (SETTINGS "Date=YW Year=L5"))
+YEAR-WEEK-DAY-SUBSET ::= TIME((SETTINGS "Date=YWD Year=Basic")|
+			           (SETTINGS "Date=YWD Year=Proleptic"))
+ANY-YEAR-WEEK-DAY-SUBSET ::= TIME((SETTINGS "Date=YWD Year=Negative")|
+			               (SETTINGS "Date=YWD Year=L5"))
+
+-- Time subsets
+HOURS-SUBSET ::= TIME(SETTINGS "Time=H Local-or-UTC=L")
+HOURS-UTC-SUBSET ::= TIME(SETTINGS "Time=H Local-or-UTC=Z")
+HOURS-AND-DIFF-SUBSET ::= TIME(SETTINGS "Time=H Local-or-UTC=LD")
+MINUTES-SUBSET ::= TIME(SETTINGS "Time=HM Local-or-UTC=L")
+MINUTES-UTC-SUBSET ::= TIME(SETTINGS "Time=HM Local-or-UTC=Z")
+MINUTES-AND-DIFF-SUBSET ::= TIME(SETTINGS "Time=HM Local-or-UTC=LD")
+SECONDS-SUBSET ::= TIME(SETTINGS "Time=HMS Local-or-UTC=L")
+SECONDS-UTC-SUBSET ::= TIME(SETTINGS "Time=HMS Local-or-UTC=Z")
+SECONDS-AND-DIFF-SUBSET ::= TIME(SETTINGS "Time=HMS Local-or-UTC=LD")
+HOURS-AND-FRACTION-SUBSET ::= TIME(SETTINGS "Time=HF3 Local-or-UTC=L")
+HOURS-UTC-AND-FRACTION-SUBSET ::= TIME(SETTINGS "Time=HF3
+                                               Local-or-UTC=Z")
+HOURS-AND-DIFF-AND-FRACTION-SUBSET ::= TIME(SETTINGS "Time=HF3
+                       Local-or-UTC=LD")
+MINUTES-AND-FRACTION-SUBSET ::= TIME(SETTINGS "Time=HMF3
+                       Local-or-UTC=L")
+MINUTES-UTC-AND-FRACTION-SUBSET ::= TIME(SETTINGS "Time=HMF3
+                       Local-or-UTC=Z")
+MINUTES-AND-DIFF-AND-FRACTION-SUBSET ::= TIME(SETTINGS "Time=HMF3
+                       Local-or-UTC=LD")
+SECONDS-AND-FRACTION-SUBSET ::= TIME(SETTINGS "Time=HMSF3
+                       Local-or-UTC=L")
+SECONDS-UTC-AND-FRACTION-SUBSET ::= TIME(SETTINGS "Time=HMSF3
+                       Local-or-UTC=Z")
+SECONDS-AND-DIFF-AND-FRACTION-SUBSET ::= TIME(SETTINGS "Time=HMSF3
+                       Local-or-UTC=LD")
+END

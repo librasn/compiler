@@ -1,0 +1,588 @@
+
+
+
+
+
+
+
+-- Module Uds (F.515:04/2003)
+-- See also ITU-T F.515 (04/2003)
+-- See also the index of all ASN.1 assignments needed in this document
+
+Uds DEFINITIONS AUTOMATIC TAGS ::=
+BEGIN
+
+IMPORTS
+  Lang
+    FROM Xml
+  Decimal, DateTime, Language, NMTOKEN, NCName
+    FROM XSD; -- The XSD module is defined in the ASN.1 standards.
+
+PagedResults ::= SEQUENCE {
+  pageSize        INTEGER(1..MAX) OPTIONAL,
+  pageNumber      INTEGER(1..MAX) OPTIONAL,
+  queryReference  OCTET STRING OPTIONAL
+}
+
+-- Unified Directory Search Request 
+SearchRequest ::= SEQUENCE {
+  entryLimit     INTEGER(1..MAX) OPTIONAL,
+  extendedArea   INTEGER(0..MAX) DEFAULT 0,
+  searchOptions  SearchOptions OPTIONAL,
+  hierSelect     HierarchySelections DEFAULT {self},
+  base           SEQUENCE {entryIdentifier  OCTET STRING OPTIONAL} OPTIONAL,
+  filter         Filter OPTIONAL,
+  infoSelect
+    SEQUENCE {attrTypes  AttributeTypes OPTIONAL,
+              family     SEQUENCE OF Family} OPTIONAL,
+  pagedResults   PagedResults OPTIONAL
+}
+
+ReqHead ::= SEQUENCE {
+  requestRef  INTEGER,
+  searchType  SearchType,
+  userClass   ENUMERATED {operator, publicUser} DEFAULT operator
+}
+
+ProviderId ::= SEQUENCE {country  Country,
+                         dmdName  DmdName OPTIONAL
+}
+
+NumericString-1 ::= IA5String(FROM ("0".."9"))(PATTERN "[0-9]")
+
+Ub16NumericString ::= IA5String(FROM ("0".."9"))(SIZE (0..16))(PATTERN "[0-9]")
+
+Ub32 ::= UTF8String(SIZE (0..32))
+
+Ub40 ::= UTF8String(SIZE (0..40))
+
+Ub64 ::= UTF8String(SIZE (0..64))
+
+Ub128 ::= UTF8String(SIZE (0..128))
+
+Ub256 ::= UTF8String(SIZE (0..256))
+
+Ub512 ::= UTF8String(SIZE (0..512))
+
+Ub1024 ::= UTF8String(SIZE (0..1024))
+
+AttributeType ::= ENUMERATED {
+  country, locality, stateOrProvince, streetAddress, houseId, givenName, 
+  title, description, businessCategory, postalCode, postOfficeBox, dmdName,
+  localityCode, localityNDC, subscriberName, subscriberType, secondFamilyName,
+  profession, language, telephone, orAddress, mail, url, commService,
+  commNetwork, addrValidFrom, addrValidUntil, addrValidity, addrCoverage,
+  addrTariff, addrRestriction}
+
+AttributeTypes ::= SEQUENCE OF AttributeType
+
+SearchType ::= ENUMERATED {
+  searchForStateOrProvince, searchForLocality, subscriberWithinLocality,
+  subscriberByEntryIdentifier, subscriberWithinStateOrProvince,
+  subscriberWithinCountry, searchForStreetAddress, subscriberByStreetAddress,
+  subscriberByCommunicationsAddress, subscriberByBusinessCategory}
+
+HierarchySelection ::= ENUMERATED {
+  self, children, parent, hierarchy, top, subtree, all}
+
+HierarchySelections ::= SEQUENCE OF HierarchySelection
+
+SearchOption ::= ENUMERATED {performExactly, includeAllAreas}
+
+SearchOptions ::= SEQUENCE OF SearchOption
+
+Filter ::=
+  SEQUENCE (SIZE (1..MAX)) OF
+    CHOICE {assertion   Assertion,
+            substrings  Substrings}
+
+Attribute ::= CHOICE {
+  country           Country,
+  locality          Locality,
+  stateOrProvince   StateOrProvince,
+  streetAddress     StreetAddress,
+  houseId           HouseId,
+  givenName         GivenName,
+  title             Title,
+  description       Description,
+  businessCategory  BusinessCategory,
+  postalCode        PostalCode,
+  postOfficeBox     PostOfficeBox,
+  dmdName           DmdName,
+  localityCode      LocalityCode,
+  localityNDC       LocalityNDC,
+  subscriberName    SubscriberName,
+  subscriberType    SubscriberType,
+  secondFamilyName  SecondFamilyName,
+  profession        Profession,
+  language          Language,
+  telephone         Telephone,
+  orAddress         OrAddress,
+  mail              Mail,
+  url               Url,
+  commService       CommService,
+  commNetwork       CommNetwork,
+  addrValidFrom     AddrValidFrom,
+  addrValidUntil    AddrValidUntil,
+  addrValidity      AddrValidity,
+  addrCoverage      AddrCoverage,
+  addrTariff        AddrTariff,
+  addrRestriction   AddrRestriction
+}
+
+Family ::= CHOICE {commsAddress  CommsAddress
+}
+
+Assertion ::= CHOICE {
+  countryAs          CountryAs,
+  localityCodeAs     LocalityCodeAs,
+  localityNDCAs      LocalityNDCAs,
+  subscriberTypeAs   SubscriberTypeAs,
+  languageAs         LanguageAs,
+  commServiceAs      CommServiceAs,
+  addrValidityAs     AddrValidityAs,
+  addrCoverageAs     AddrCoverageAs,
+  addrTariffAs       AddrTariffAs,
+  addrRestrictionAs  AddrRestrictionAs
+}
+
+AssertionAttr ::= SEQUENCE {weight  ENUMERATED {low, high} DEFAULT high
+}
+
+Substrings ::= CHOICE {
+  localitySub          LocalitySub,
+  stateOrProvinceSub   StateOrProvinceSub,
+  streetAddressSub     StreetAddressSub,
+  houseIdSub           HouseIdSub,
+  givenNameSub         GivenNameSub,
+  titleSub             TitleSub,
+  businessCategorySub  BusinessCategorySub,
+  postalCodeSub        PostalCodeSub,
+  postOfficeBoxSub     PostOfficeBoxSub,
+  dmdNameSub           DmdNameSub,
+  subscriberNameSub    SubscriberNameSub,
+  secondFamilyNameSub  SecondFamilyNameSub,
+  professionSub        ProfessionSub,
+  telephoneSub         TelephoneSub,
+  orAddressSub         OrAddressSub,
+  mailSub              MailSub,
+  urlSub               UrlSub
+}
+
+SubstringAttr ::= SEQUENCE {
+  string
+    ENUMERATED {exact, deletion, restrDeletion, permutation,
+                permutationAndDeletion, providerDefined} DEFAULT exact,
+  weight  ENUMERATED {low, high} DEFAULT high
+}
+
+SubstringValueAttr ::= SEQUENCE {
+  wordMatch       ENUMERATED {exact, truncated, phonetic} DEFAULT exact,
+  characterMatch  ENUMERATED {exact, caseIgnore, mapped} DEFAULT caseIgnore
+}
+
+CommsAddress ::= SEQUENCE {attribute  SEQUENCE (SIZE (1..MAX)) OF Attribute
+}
+
+Country ::= NMTOKEN
+
+CountryAs ::= SEQUENCE {COMPONENTS OF AssertionAttr,
+                        base  NMTOKEN
+}
+
+Locality ::= Ub128
+
+LocalitySub ::= SEQUENCE {
+  COMPONENTS OF SubstringAttr,
+  value  SEQUENCE (SIZE (1..MAX)) OF Ub128
+}
+
+StateOrProvince ::= Ub128
+
+StateOrProvinceSub ::= SEQUENCE {
+  COMPONENTS OF SubstringAttr,
+  value
+    SEQUENCE (SIZE (1..MAX)) OF
+      SEQUENCE {COMPONENTS OF SubstringValueAttr,
+                base  Ub128}
+}
+
+StreetAddress ::= Ub128
+
+StreetAddressSub ::= SEQUENCE {
+  COMPONENTS OF SubstringAttr,
+  value
+    SEQUENCE (SIZE (1..MAX)) OF
+      SEQUENCE {COMPONENTS OF SubstringValueAttr,
+                base  Ub128}
+}
+
+HouseId ::= Ub64
+
+HouseIdSub ::= SEQUENCE {
+  COMPONENTS OF SubstringAttr,
+  value
+    SEQUENCE (SIZE (1..MAX)) OF
+      SEQUENCE {COMPONENTS OF SubstringValueAttr,
+                base  Ub64}
+}
+
+GivenName ::= Ub64
+
+GivenNameSub ::= SEQUENCE {
+  COMPONENTS OF SubstringAttr,
+  value
+    SEQUENCE (SIZE (1..MAX)) OF
+      SEQUENCE {COMPONENTS OF SubstringValueAttr,
+                base  Ub64}
+}
+
+Title ::= SEQUENCE {lang  Lang OPTIONAL,
+                    base  Ub64
+}
+
+TitleSub ::= SEQUENCE {
+  COMPONENTS OF SubstringAttr,
+  value
+    SEQUENCE (SIZE (1..MAX)) OF
+      SEQUENCE {COMPONENTS OF SubstringValueAttr,
+                base  Ub64}
+}
+
+Description ::= SEQUENCE {lang  Lang OPTIONAL,
+                          base  Ub1024
+}
+
+BusinessCategory ::= SEQUENCE {lang  Lang OPTIONAL,
+                               base  Ub128
+}
+
+BusinessCategorySub ::= SEQUENCE {
+  COMPONENTS OF SubstringAttr,
+  value
+    SEQUENCE (SIZE (1..MAX)) OF
+      SEQUENCE {COMPONENTS OF SubstringValueAttr,
+                base  Ub128}
+}
+
+PostalCode ::= Ub40
+
+PostalCodeSub ::= SEQUENCE {
+  COMPONENTS OF SubstringAttr,
+  value
+    SEQUENCE (SIZE (1..MAX)) OF
+      SEQUENCE {COMPONENTS OF SubstringValueAttr,
+                base  Ub40}
+}
+
+PostOfficeBox ::= Ub40
+
+PostOfficeBoxSub ::= SEQUENCE {
+  COMPONENTS OF SubstringAttr,
+  value
+    SEQUENCE (SIZE (1..MAX)) OF SEQUENCE {COMPONENTS OF SubstringValueAttr}
+}
+
+DmdName ::= Ub64
+
+DmdNameSub ::= SEQUENCE {
+  COMPONENTS OF SubstringAttr,
+  value
+    SEQUENCE (SIZE (1..MAX)) OF
+      SEQUENCE {COMPONENTS OF SubstringValueAttr,
+                base  Ub64}
+}
+
+LocalityCode ::= Ub64
+
+LocalityCodeAs ::= SEQUENCE {COMPONENTS OF AssertionAttr,
+                             base  Ub64
+}
+
+LocalityNDC ::= Ub16NumericString
+
+LocalityNDCAs ::= SEQUENCE {
+  COMPONENTS OF AssertionAttr,
+  base  Ub16NumericString
+}
+
+SubscriberName ::= SEQUENCE {lang  Lang OPTIONAL,
+                             base  Ub64
+}
+
+SubscriberNameSub ::= SEQUENCE {
+  COMPONENTS OF SubstringAttr,
+  value
+    SEQUENCE (SIZE (1..MAX)) OF
+      SEQUENCE {COMPONENTS OF SubstringValueAttr,
+                base  Ub64}
+}
+
+SubscrType ::= ENUMERATED {residential, organization, government}
+
+SubscrTypes ::= SEQUENCE OF SubscrType
+
+SubscriberType ::= SubscrTypes
+
+SubscriberTypeAs ::= SEQUENCE {COMPONENTS OF AssertionAttr,
+                               base  SubscrType
+}
+
+SecondFamilyName ::= Ub128
+
+SecondFamilyNameSub ::= SEQUENCE {
+  COMPONENTS OF SubstringAttr,
+  value
+    SEQUENCE (SIZE (1..MAX)) OF
+      SEQUENCE {COMPONENTS OF SubstringValueAttr,
+                base  Ub128}
+}
+
+Profession ::= SEQUENCE {lang  Lang OPTIONAL,
+                         base  Ub128
+}
+
+ProfessionSub ::= SEQUENCE {
+  COMPONENTS OF SubstringAttr,
+  value
+    SEQUENCE (SIZE (1..MAX)) OF
+      SEQUENCE {COMPONENTS OF SubstringValueAttr,
+                base  Ub128}
+}
+
+Language ::= XSD.Language
+
+LanguageAs ::= SEQUENCE {COMPONENTS OF AssertionAttr,
+                         base  Language
+}
+
+Telephone ::= Ub32
+
+TelephoneSub ::= SEQUENCE {
+  COMPONENTS OF SubstringAttr,
+  value
+    SEQUENCE (SIZE (1..MAX)) OF
+      SEQUENCE {COMPONENTS OF SubstringValueAttr,
+                base  Ub32}
+}
+
+OrAddress ::= Ub1024
+
+OrAddressSub ::= SEQUENCE {
+  COMPONENTS OF SubstringAttr,
+  value
+    SEQUENCE (SIZE (1..MAX)) OF
+      SEQUENCE {COMPONENTS OF SubstringValueAttr,
+                base  Ub1024}
+}
+
+Mail ::= Ub256
+
+MailSub ::= SEQUENCE {
+  COMPONENTS OF SubstringAttr,
+  value
+    SEQUENCE (SIZE (1..MAX)) OF
+      SEQUENCE {COMPONENTS OF SubstringValueAttr,
+                base  Ub256}
+}
+
+Url ::= Ub1024
+
+UrlSub ::= SEQUENCE {
+  COMPONENTS OF SubstringAttr,
+  value
+    SEQUENCE (SIZE (1..MAX)) OF
+      SEQUENCE {COMPONENTS OF SubstringValueAttr,
+                base  Ub1024}
+}
+
+ComServiceType ::= ENUMERATED {
+  voice, fax, textPhone, videoPhone, publicPhoneBox, switchBoard, pager, 
+  data, e-mail, web}
+
+ComServiceTypes ::= SEQUENCE OF ComServiceType
+
+CommService ::= ComServiceTypes
+
+CommServiceAs ::= SEQUENCE {COMPONENTS OF AssertionAttr,
+                            base  ComServiceType
+}
+
+NetworkType ::= ENUMERATED {pstn, isdn, gsm, umts, internet}
+
+CommNetwork ::= NetworkType
+
+CommNetworkAs ::= SEQUENCE {COMPONENTS OF AssertionAttr,
+                            base  NetworkType
+}
+
+AddrValidFrom ::= DateTime
+
+AddrValidUntil ::= DateTime
+
+AddrValidityType ::= ENUMERATED {current, old, future, temporary}
+
+AddrValidity ::= AddrValidityType
+
+AddrValidityAs ::= SEQUENCE {
+  COMPONENTS OF AssertionAttr,
+  base  AddrValidityType
+}
+
+AddrCoverageType ::= ENUMERATED {
+  international, national, stateOrProvince, locality}
+
+AddrCoverage ::= AddrCoverageType
+
+AddrCoverageAs ::= SEQUENCE {
+  COMPONENTS OF AssertionAttr,
+  base  AddrCoverageType
+}
+
+AddrTariffType ::= ENUMERATED {normal, premium, toll-free}
+
+AddrTariff ::= AddrTariffType
+
+AddrTariffAs ::= SEQUENCE {COMPONENTS OF AssertionAttr,
+                           base  AddrTariffType
+}
+
+AddrRestrictionType ::= ENUMERATED {
+  public, secret, call-screen, no-marketing, complete-only}
+
+AddrRestriction ::= AddrRestrictionType
+
+AddrRestrictionAs ::= SEQUENCE {
+  COMPONENTS OF AssertionAttr,
+  base  AddrRestrictionType
+}
+
+Notification ::= CHOICE {
+  limitProblem              LimitProblem,
+  serviceProblem            ServiceProblem,
+  searchType                SearchType,
+  attributeTypeList         AttributeTypeList,
+  filterNot                 FilterNot,
+  filterItem                FilterItem,
+  providerName              ProviderName,
+  hierarchySelectList       HierarchySelectList,
+  searchControlOptionsList  SearchControlOptionsList,
+  attributeCombinations     AttributeCombinations,
+  wordRestriction           WordRestriction,
+  notSupported              NotSupported
+}
+
+LimitProblem ::= ENUMERATED {adminLimit, permanentRestriction}
+
+ServiceProblem ::= ENUMERATED {
+  hierSelectForbidden, hierSelectNotAvailableForService, hierSelectNotSupported
+}
+
+AttributeTypeList ::= AttributeTypes
+
+FilterNot ::= Filter
+
+FilterItem ::=
+  SEQUENCE (SIZE (1..MAX)) OF
+    CHOICE {assertion   Assertion,
+            substrings  Substrings}
+
+ProviderName ::= ProviderId
+
+HierarchySelectList ::= HierarchySelections
+
+SearchControlOptionsList ::= SearchOptions
+
+AttributeCombinations ::=
+  SEQUENCE (SIZE (1..MAX)) OF
+    CHOICE {attributeType  AttributeType,
+            or             Cor,
+            not            AttributeCombinations}
+
+Cor ::=
+  SEQUENCE (SIZE (1..MAX)) OF
+    CHOICE {attributeType  AttributeType,
+            and            Cand,
+            not            AttributeCombinations}
+
+Cand ::=
+  SEQUENCE (SIZE (1..MAX)) OF
+    CHOICE {attributeType  AttributeType,
+            or             Cor,
+            not            AttributeCombinations}
+
+StringMatchType ::= ENUMERATED {
+  exact, deletion, restrictedDeletion, permutation, permutationAndDeletion,
+  providerDefined}
+
+StringMatchTypes ::= SEQUENCE OF StringMatchType
+
+WordMatchType ::= ENUMERATED {exact, truncated, phonetic}
+
+WordMatchTypes ::= SEQUENCE OF WordMatchType
+
+CharacterMatchType ::= ENUMERATED {exact, caseIgnore, mapped}
+
+CharacterMatchTypes ::= SEQUENCE OF CharacterMatchType
+
+WordRestriction ::= SEQUENCE {
+  attributeType        AttributeType OPTIONAL,
+  initialMinimum       INTEGER(1..MAX) OPTIONAL,
+  otherMinimum         INTEGER(1..MAX) OPTIONAL,
+  stringMatchTypes     StringMatchTypes OPTIONAL,
+  wordMatchTypes       WordMatchTypes OPTIONAL,
+  characterMatchTypes  CharacterMatchTypes OPTIONAL
+}
+
+Option ::= ENUMERATED {paging, weighting}
+
+Options ::= SEQUENCE OF Option
+
+NotSupported ::= Options
+
+/*
+
+ENCODING-CONTROL XER
+    ELEMENT-LIST ALL.value, SearchRequest.infoSelect.family, 
+         CommsAddress.attribute
+    TEXT ENUMERATED
+    NAME SearchRequest, ReqHead, CommsAddress, Country, CountryAs,
+         Locality, LocalitySub, StateOrProvince, StateOrProvinceSub,
+         StreetAddress, StreetAddressSub, HouseId, HouseIdSub, GivenName,
+         GivenNameSub, Title, TitleSub, Description, BusinessCategory, 
+         BusinessCategorySub, PostalCode, PostalCodeSub, PostOfficeBox,
+         PostOfficeBoxSub, DmdName, DmdNameSub, LocalityCode,
+         LocalityCodeAs, LocalityNDC, LocalityNDCAs, SubscriberName, 
+         SubscriberNameSub, SubscriberType, SubscriberTypeAs, 
+         SecondFamilyName, SecondFamilyNameSub, Profession, ProfessionSub, 
+         Language, LanguageAs, Telephone, TelephoneSub, OrAddress, 
+         OrAddressSub, Mail, MailSub, Url, UrlSub, CommService, 
+         CommServiceAs, CommNetwork, CommNetworkAs, AddrValidFrom, 
+         AddrValidUntil, AddrValidity, AddrValidityAs, AddrCoverage,   
+         AddrCoverageAs, AddrTariff, AddrTariffAs, AddrRestriction, 
+         AddrRestrictionAs, LimitProblem, ServiceProblem, 
+         AttributeTypeList, FilterNot, FilterItem, ProviderName, 
+         HierarchySelectList, SearchControlOptionsList, WordRestriction,  
+         NotSupported AS UNCAPITALIZED
+    LIST AttributeTypes, HierarchySelections, SearchOptions, SubscrTypes,
+         ComServiceTypes, StringMatchTypes, WordMatchTypes, 
+         CharacterMatchTypes, Options
+    UNTAGGED ALL.base IN ALL
+    NAME SearchRequest.infoSelect.family, AttributeType.localityCode,
+         CommsAddress.attribute, FilterItem.assertion, 
+         FilterItem.substrings, ALL IN Filter AS CAPITALIZED
+    NAME NumericString-1 AS "NumericString"
+    ATTRIBUTE ALL IN PagedResults, SearchRequest.entryLimit, 
+         SearchRequest.hierSelect, SearchRequest.searchOptions, 
+         SearchRequest.extendedArea, SearchRequest.base.entryIdentifier, 
+         ALL IN AssertionAttr, ALL IN SubstringAttr, ALL IN      
+         SubstringValueAttr, Title.lang, Description.lang, 
+         BusinessCategory.lang, SubscriberName.lang, Profession.lang, 
+         WordRestriction.otherMinimum, WordRestriction.initialMinimum, 
+         WordRestriction.attributeType
+
+*/
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

@@ -1,0 +1,264 @@
+
+
+
+
+
+
+
+-- Module Q823-TM-ASN1Module (Q.823:06/1997)
+-- See also ITU-T Q.823 (07/1996)
+-- See also the index of all ASN.1 assignments needed in this document
+
+Q823-TM-ASN1Module {itu-t(0) recommendation(0) q(17) q823(823) asn1Module(2)
+  q823ASN1Module(0)} DEFINITIONS IMPLICIT TAGS ::=
+BEGIN
+
+-- EXPORTS everything
+IMPORTS
+  Attribute, ObjectInstance
+    FROM CMIP-1 {joint-iso-itu-t ms(9) cmip(1) modules(0) protocol(3)}
+  AdministrativeState, Count, ObservedValue
+    FROM Attribute-ASN1Module {joint-iso-itu-t ms(9) smi(3) part2(2)
+      asn1Module(2) 1}
+  HistoryRetention
+    FROM Q822-PM-ASN1Module {itu-t(0) recommendation(0) q(17) q822(822)
+      asn1Module(2) q822ASN1Module(0)}
+  NameType
+    FROM ASN1DefinedTypesModule {itu-t recommendation m(13) gnm(3100)
+      informationModel(0) asn1Modules(2) asn1DefinedTypesModule(0)};
+
+q823-InformationModel OBJECT IDENTIFIER ::=
+  {itu-t(0) recommendation(0) q(17) q823(823) informationModel(0)}
+
+q823ObjectClass OBJECT IDENTIFIER ::=
+  {q823-InformationModel managedObjectClass(3)}
+
+q823Package OBJECT IDENTIFIER ::= {q823-InformationModel package(4)}
+
+q823NameBinding OBJECT IDENTIFIER ::= {q823-InformationModel nameBinding(5)}
+
+q823Attribute OBJECT IDENTIFIER ::= {q823-InformationModel attribute(6)}
+
+q823Action OBJECT IDENTIFIER ::= {q823-InformationModel action(7)}
+
+q823Notification OBJECT IDENTIFIER ::= {q823-InformationModel notification(8)}
+
+--value assignments for origin aspect extension
+extendOrigin OBJECT IDENTIFIER ::=
+  {q823-InformationModel standardSpecificExtension(0) extendOrigin(0)}
+
+originated Origin ::= originExtension:{extendOrigin 1}
+
+transit Origin ::= originExtension:{extendOrigin 2}
+
+inboundTerminating Origin ::= originExtension:{extendOrigin 3}
+
+--value assignment for destination aspect extension
+extendDestination OBJECT IDENTIFIER ::=
+  {q823-InformationModel standardSpecificExtension(0) extendDestination(1)}
+
+hardToReach DestinationAspect ::= destinationExtension:{extendDestination 1}
+
+nonHardToReach DestinationAspect ::= destinationExtension:{extendDestination 2}
+
+-- default value definition
+defaultAdministrativeState AdministrativeState ::=
+  unlocked
+
+defaultAllTmCircuitEndPointSubgroups TmCircuitEndPointSubgroupList ::= {}
+
+defaultAllDestinationCodes DestinationCode ::= ""
+
+defaultDestinationAspect DestinationAspect ::= definedDestinationAspect:null
+
+defaultOriginAspect OriginationAspect ::= {}
+
+defaultRoutingAspects RoutingAspect ::= null
+
+--initial value definitions
+initialCount Count ::= 0
+
+initialGauge ObservedValue ::= integer:0
+
+initialInteger INTEGER ::= 0
+
+-- permitted value definitions
+PermittedState ::= AdministrativeState(locked | unlocked)
+
+PermittedHistoryRetention ::= HistoryRetention(1)
+
+PermittedTarFromReturnAction ::=
+  ReturnAction(WITH COMPONENTS {
+                 return           ,
+                 cancelTreatment  
+               })
+
+--supporting productions
+ActivationThresholds ::= SEQUENCE {
+  level1  [0]  ThresholdLevel,
+  level2  [1]  ThresholdLevel OPTIONAL
+}
+
+AdcTriggerType ::= ENUMERATED {centralized(0), decentralized(1), both(2)
+ -- both centralized and decentralized --}
+
+AdcType ::= ENUMERATED {centralized(0), decentralized(1)}
+
+AssocAccAffectedTraffic ::= ObjectInstance -- points to a accAffectedTraffic
+
+AssocOwnerDccGroup ::= ObjectInstance -- points to dccGroup object instance
+
+AssocScrAffectedTraffic ::= ObjectInstance -- points to scrAffectedTraffic
+
+Category ::= BIT STRING(SIZE (8)) -- value according to Recommendation Q.763
+                       
+
+CongestionLevel ::= ENUMERATED {mcl0(0), mcl1(1), mcl2(2), mcl3(3)}
+
+ContinuousTimer ::= SEQUENCE {
+  calls        [0]  INTEGER,
+  perTimeUnit  [1]  Timer
+}
+
+CreatorIdentity ::= CHOICE {sourceCls   SourceClass,
+                            sourceName  GraphicString
+}
+
+DefinedOrigin ::= ENUMERATED {originated(0), transit(1), inboundTerminating(2)}
+
+DestinationAspect ::= CHOICE {
+  definedDestinationAspect  DefinedDestinationAspect,
+  destinationExtension      OBJECT IDENTIFIER
+}
+
+DefinedDestinationAspect ::= ENUMERATED {
+  null(0), --all destination aspects
+  htr(1), nhtr(2)}
+
+DestinationCode ::=
+  GraphicString
+    (FROM ("0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "A" |
+           "B" | "C" | "D" | "E" | "F" | "#" | "*"))
+
+DestinationType ::= CHOICE {
+  natureOfAddress  [0]  NatureOfAddress,
+  desttype         [1]  DestType
+  -- "..."these ellipses defined in ASN.1 amendment are used here to indicate that this is 
+  -- an extensible type and additional choices may be added in the future
+}
+
+DestType ::= ENUMERATED {international(0), national(1), local(2), other(3)}
+
+DispositionOfCall ::= CHOICE {skip       NULL,
+                              treatment  Treatment
+}
+
+InstancePointerOrName ::= CHOICE {
+  objectInstance  [0]  ObjectInstance,
+  symbolic        [1]  NameType
+}
+
+Integer ::= INTEGER(0..MAX)
+
+IntegerValue ::= INTEGER(0..100)
+
+LeakyBucket ::= SEQUENCE {
+  bucketSize   [0]  INTEGER OPTIONAL, -- the NE will define the bucketSize if not provided
+  calls        [1]  INTEGER,
+  perTimeUnit  [2]  Timer(WITH COMPONENTS {
+                            scale1  ,
+                            scale2  
+                          })
+}
+
+NatureOfAddress ::=
+  BIT STRING(SIZE (7)) -- value according to Recommendation Q.763
+            
+
+NewTmCircuitEndPointSubgroups ::= SEQUENCE OF InstancePointerOrName
+
+Origin ::= CHOICE {
+  definedOrigin    [0]  DefinedOrigin,
+  namedOrigin      [1]  InstancePointerOrName, --it points to or names an origin.
+  originExtension  [2]  OBJECT IDENTIFIER
+}
+
+OriginationAspect ::= SEQUENCE {
+  callingPartyCategory  [0]  Category OPTIONAL,
+  origin                [1]  Origin OPTIONAL
+}
+
+Percentage ::= CHOICE {
+  granularity12p5
+    [0]  ENUMERATED {perc0(0),--0%-- perc12p5(2),--12.5%-- perc25(4),--25%--
+                     perc37p5(6),--37.5%-- perc50(8),--50%--
+                     perc62p5(10),--67.5%-- perc75(12),--75%--
+                     perc87p5(13),--87.5%-- perc100(15)--100%--},
+  granularity10
+    [1]  ENUMERATED {perc0(0)-- 0%-- , perc10(1)-- 10%-- , perc20(2)-- 20%-- ,
+                     perc30(3)-- 30% -- , perc40(4)-- 40%-- ,
+                     perc50(5)-- 50%-- , perc60(6)-- 60%-- ,
+                     perc70(7)-- 70%-- , perc80(8)-- 80%-- ,
+                     perc90(9)-- 90%-- , perc100(10)-- 100%--}
+}
+
+ResponseCategories ::=
+  SET OF
+    SEQUENCE {originationAspect   [0]  OriginationAspect,
+              destinationAspect   [1]  DestinationAspect,
+              routingAspect       [2]  RoutingAspect,
+              additionalCriteria  [3]  OBJECT IDENTIFIER OPTIONAL,
+              percentage          [4]  Percentage}
+
+ReturnAction ::= CHOICE {
+  return           [0]  NULL,
+  skip             [1]  NULL,
+  cancelTreatment  [2]  Treatment
+}
+
+RoutingAspect ::= ENUMERATED {
+  directRoutedTraffic(0), alternateRoutedTraffic(1), null(2)
+ -- direct and alternate routed traffic--}
+
+SourceClass ::= ENUMERATED {tnmos(0), otherNE(1), thisNE(2), other(3)}
+
+StateIndicatorBitMap ::= BIT STRING {
+  exchangeCongestionLevel1(0), exchangeCongestionLevel2(1),
+  congestionLevel1Received(2), congestionLevel2Received(3), scrTriggered(4),
+  accTriggered(5), protectiveControlActive(6), expansiveControlActive(7),
+  destinationControlActive(8), htrDestinationActive(9),
+  circuitEndPointSubgroupAddedOrDeleted(10), accTransmissionInhibited(11),
+  adcTriggered(12)}
+
+ThresholdLevel ::= CHOICE {
+  percentageOfCircuits  [0]  INTEGER(0..100),
+  noOfCircuits          [1]  INTEGER
+}
+
+TmCircuitEndPointSubgroupList ::= SET OF InstancePointerOrName
+
+Treatment ::= CHOICE {
+  other               [0]  OBJECT IDENTIFIER,
+  announcementNumber  [1]  INTEGER,
+  congestionTone      [2]  NULL
+}
+
+Timer ::= CHOICE {
+  blockAllCalls  [0]  NULL,
+  scale1
+    [1]  ENUMERATED {sec0(0)-- 0 sec -- , sec0p1(1)-- 0.1 sec -- ,
+                     sec0p25(2)-- 0.25 sec -- , sec0p5(3)-- 0.5 sec -- ,
+                     sec1(4)-- 1 sec -- , sec2(5)-- 2 sec -- ,
+                     sec5(6)-- 5 sec -- , sec10(7)-- 10 sec -- ,
+                     sec15(8)-- 15 sec -- , sec30(9)-- 30 sec -- ,
+                     sec60(10)-- 60 sec -- , sec120(11)-- 120 sec -- ,
+                     sec300(12)-- 300 sec -- , sec600(13)-- 600 sec--},
+  scale2         [2]  INTEGER(0..600000) --millisec. scale
+}
+
+TrueFalse ::= BOOLEAN
+
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

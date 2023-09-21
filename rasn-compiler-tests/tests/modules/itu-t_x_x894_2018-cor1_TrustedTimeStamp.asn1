@@ -1,0 +1,354 @@
+-- ASN module extracted from ITU-T X.894 (10/2018)-- 20 Module TrustedTimeStamp
+TrustedTimeStamp {iso(1) identified-organization(3) tc68(133) country(16) x9(840)
+      x9Standards(9) x9-95(95) module(0) tts(1) v2010-2016(1) }
+DEFINITIONS IMPLICIT TAGS ::= BEGIN
+-- EXPORTS All; --
+IMPORTS
+   -- ISO/IEC 9594-8 | ITU-T Rec. X.509 AuthenticationFramework --
+EXTENSION 
+FROM AuthenticationFramework {
+joint-iso-itu-t ds(5) module(1) authenticationFramework(7) 8 }
+-- ISO/IEC 9594-8 | ITU-T Rec. X.509 CertificateExtensions --
+GeneralName
+FROM CertificateExtensions {
+joint-iso-itu-t ds(5) module(1) certificateExtensions(26) 8 }
+-- X9.73 Cryptographic Message Syntax (CMS) - ASN.1 and XML --
+AuthenticatedData, DigestAlgorithmIdentifier, SignedData
+FROM CryptographicMessageSyntax-2010 {
+iso(1) member-body(2) us(840) rsadsi(113549)
+pkcs(1) pkcs-9(9) smime(16) modules(0) id-mod-cms-2009(58) }
+-- X9.95 TransientKey 
+TransientKeySignedTST, transientKeySignedTST, tsp-req-tk
+FROM TransientKey {
+iso(1) identified-organization(3) tc68(133) country(16) x9(840)
+x9Standards(9) x9-95(95) module(0) tk(2) version(0) v2010-2016(1) };
+-- Time stamp Request --
+TimeStampReq ::= SEQUENCE {
+version         Version,
+messageImprint  MessageImprint,
+reqPolicy       TSAPolicyId  OPTIONAL,
+nonce           Nonce  OPTIONAL,
+certReq         BOOLEAN  DEFAULT FALSE,
+extensions      [0] Extensions  OPTIONAL
+}
+MessageImprint ::= SEQUENCE {
+hashAlgorithm  DigestAlgorithmIdentifier,
+hashedMessage  OCTET STRING
+}
+MessageImprints ::= SEQUENCE SIZE(1..MAX) OF MessageImprint
+TSAPolicyId ::= POLICY.&id({TSAPolicies})
+TSAPolicies POLICY ::= {
+--
+... -- Any supported TSA policy --
+}
+TSAPolicyId ::= POLICY.&id({TSAPolicies})
+TSAPolicies POLICY ::= {
+--
+... -- Any supported TSA policy --
+}
+POLICY ::= OIDS -- Supported TSA policies --
+Nonce ::= INTEGER
+-- Time Stamp Response 
+TimeStampResp ::= SEQUENCE {
+status          PKIStatusInfo,
+timeStampToken  TimeStampToken  OPTIONAL
+}
+Nonce ::= INTEGER
+-- Time Stamp Response 
+TimeStampResp ::= SEQUENCE {
+status          PKIStatusInfo,
+timeStampToken  TimeStampToken  OPTIONAL
+}
+PKIStatusInfo ::= SEQUENCE {
+status        PKIStatus,
+statusString  PKIFreeText  OPTIONAL,
+failInfo      PKIFailureInfo  OPTIONAL
+}
+PKIStatus ::= INTEGER {
+granted                (0), -- request is completely granted
+grantedWithMods        (1), -- modifications were needed, requester is
+                            -- responsible for asserting the differences
+rejection              (2), -- request not fulfilled, the failure code
+                            -- provides additional information
+waiting                (3), -- request not yet processed, requester
+                            -- receives a receipt that the 
+                            -- request has been received
+revocationWarning      (4), -- a revocation is imminent
+  -- a revocation has occurred
+}
+PKIFreeText ::= SEQUENCE SIZE(1..MAX) OF UTF8String
+PKIFailureInfo ::= BIT STRING {
+badAlg                 (0), -- unrecognized or unsupported algorithm
+badRequest             (2), -- transaction not permitted or supported
+badDataFormat          (5), -- data submitted has the wrong format
+timeNotAvailable      (14), -- TSAs service is not available
+unacceptedPolicy      (15), -- requested TSA policy is not supported
+unacceptedExtension   (16), -- requested TSA extension is not supported 
+addInfoNotAvailable   (17), -- requested additional info not available
+systemNotAvailable    (24), -- system is not available
+systemFailure         (25), -- system failure
+verificationFailure   (27)  -- verification of time stamp has failed
+}
+-- Time stamp token --
+TimeStampToken ::= SEQUENCE {
+contentType  CONTENTS.&id({Contents}),
+content      [0] EXPLICIT CONTENTS.&Type({Contents}{@contentType})
+}
+Contents CONTENTS ::= {
+{ SignedData            IDENTIFIED BY id-signedData } |
+{ AuthenticatedData     IDENTIFIED BY id-ct-authData } |
+{ DigestedData          IDENTIFIED BY id-digestedData } |
+{ TransientKeySignedTST IDENTIFIED BY transientKeySignedTST },
+--
+...  -- Expect additional time-stamp encapsulations --
+}
+
+TSTInfo ::= SEQUENCE {
+version         Version,
+policy          TSAPolicyId,
+messageImprint  MessageImprint,
+serialNumber    SerialNumber,
+genTime         GeneralizedTime,
+accuracy        Accuracy  OPTIONAL,
+ordering        BOOLEAN DEFAULT FALSE,
+nonce           Nonce  OPTIONAL,
+tsa             [0] EXPLICIT GeneralName  OPTIONAL,
+extensions      [1] Extensions  OPTIONAL
+}
+Version ::= INTEGER { v1(1) }
+SerialNumber ::= INTEGER  -- Expect large values --
+Accuracy ::= SEQUENCE {
+seconds  INTEGER OPTIONAL,
+millis   [0] INTEGER(1..999)  OPTIONAL,
+micros   [1] INTEGER(1..999)  OPTIONAL
+} (ALL EXCEPT({ -- No components present -- }))
+-- TSTInfo encapsulation --
+ETSTInfo ::= OCTET STRING (CONTAINING TSTInfo)
+id-ct-TSTInfo OID ::= { iso(1) member-body(2) us(840) rsadsi(113549) pkcs(1) 
+pkcs-9(9) smime(16) ct(1) tstInfo(4) }
+EContents CONTENTS ::= {
+{ ETSTInfo IDENTIFIED BY id-ct-TSTInfo },
+--
+... -- Expect additional content types --
+}
+EncapsulatedContentInfo::= SEQUENCE {
+eContentType  CONTENTS.&id({EContents}),
+eContent      [0] EXPLICIT CONTENTS.&Type({EContents}{@eContentType})
+}
+-- Verification of a time stamp token --
+VerifyReq ::= SEQUENCE {
+version    Version,
+tst        TimeStampToken,
+requestID  RequestID  OPTIONAL
+}
+VerifyResp ::= SEQUENCE {
+version    Version,
+status     PKIStatusInfo,
+tst        TimeStampToken,
+requestID  RequestID  OPTIONAL
+}
+-- Extend operation on a time stamp token 
+ExtendReq ::= SEQUENCE {
+version    Version,
+tst        TimeStampToken,
+requestID  [0] OCTET STRING  OPTIONAL 
+}
+ExtendResp ::= SEQUENCE {
+   version    Version,
+   status     PKIStatusInfo,
+   tst        TimeStampToken,
+   requestID  [0] OCTET STRING  OPTIONAL
+}
+RequestID ::= OCTET STRING (SIZE(1..MAX))
+-- Time stamping extensions --
+Extension{EXTENSION:ExtensionSet} ::= SEQUENCE {
+extnId     EXTENSION.&id({ExtensionSet}),
+critical   BOOLEAN DEFAULT FALSE,
+extnValue  OCTET STRING
+}
+Extensions ::= SEQUENCE OF Extension{{TSExtensions}}  
+TSExtensions EXTENSION ::= {
+extHash    |
+extMethod  |
+extRenewal,
+--
+... -- Expect additional extensions --
+}
+
+extHash EXTENSION ::= {
+SYNTAX ExtHash IDENTIFIED BY tsp-ext-hash
+}
+ExtHash ::= SEQUENCE SIZE(1..MAX) OF MessageImprint
+extMethod EXTENSION ::= {
+SYNTAX ExtMethod IDENTIFIED BY tsp-ext-meth
+}
+ExtMethod ::= SEQUENCE SIZE(1..MAX) OF Method
+Method ::= METHOD.&id({Methods})
+Methods METHOD ::= {
+{ OID tsp-itm-ds      } |
+{ OID tsp-itm-mac     } |
+{ OID tsp-req-link    } |
+{ OID tsp-req-link-ds } |
+{ OID tsp-req-tk      },
+--
+... -- Any time stamping method --
+}
+extRenewal EXTENSION ::= { 
+SYNTAX ExtRenewal IDENTIFIED BY tsp-ext-renewal 
+}
+ExtRenewal ::= TimeStampToken
+tsp-ext-renewal OID ::= { 
+iso(1) standard(0) time-stamp(18014) extensions(1) renewal(3) }
+-- Information object identifiers
+tsp-ext-hash OID ::= {
+iso(1) standard(0) time-stamp(18014) extensions(1) hash(1)}
+tsp-ext-meth OID ::= {
+iso(1) standard(0) time-stamp(18014) extensions(1) meth(2) }
+tsp-itm-ds OID ::= {
+iso(1) standard(0) time-stamp(18014) itm(2) ds(1)}
+tsp-itm-mac OID ::= {
+iso(1) standard(0) time-stamp(18014) itm(2) mac(2)}
+tsp-req-link OID ::= {
+iso(1) standard(0) time-stamp(18014) lt(3) link(1)}
+tsp-req-link-ds OID ::= {
+iso(1) standard(0) time-stamp(18014) lt(3) link-ds(2)}
+id-signedData OID ::= {
+iso(1) member-body(2) us(840) rsadsi(113549) pkcs(1) pkcs7(7) 2 }
+id-ct-authData OID ::= { 
+iso(1) member-body(2) us(840) rsadsi(113549) pkcs(1) 
+pkcs-9(9) smime(16) ct(1) authData(2) }
+id-digestedData OID ::= {
+iso(1) member-body(2) us(840) rsadsi(113549) pkcs(1) pkcs7(7) 5 }
+-- Linked token encapsulation object identifiers --
+tsp-digestedData OID ::= {
+iso(1) standard(0) time-stamp(18014) lt(3) digestedData(8) } 
+tsp-signedData OID ::= {
+iso(1) standard(0) time-stamp(18014) lt(3) signedData(9) }
+-- Link token types 
+DigestedData ::= SEQUENCE {
+version           DDVersion95,
+digestAlgorithm   DigestAlgorithmIdentifier,
+encapContentInfo  EncapsulatedContentInfo,
+digest            Digest
+}
+DDVersion95 ::= INTEGER { version2(2) } (version2, ...)
+Digest ::= OCTET STRING
+BindingInfo ::= SEQUENCE {
+version      Version,
+msgImprints  MessageImprints,
+aggregate    [0] Chains  OPTIONAL,
+links        Links,
+publish      [1] Chains  OPTIONAL,
+extensions   [2] BindingInfoExtensions  OPTIONAL
+}
+Chains ::= SEQUENCE SIZE(1..MAX) OF Chain
+Chain ::= SEQUENCE {
+algorithm  ChainAlgorithmIdentifier,
+links      Links
+}
+ChainAlgorithmIdentifier ::= AlgorithmIdentifier {{ ChainAlgorithms }}
+ChainAlgorithms ALGORITHM ::= {
+--
+... -- Expect additional chain algorithms --
+}
+Links ::= SEQUENCE SIZE(1..MAX) OF Link
+Link ::= SEQUENCE {
+algorithm   [0] LinkAlgorithmIdentifier  OPTIONAL,
+identifier  [1] INTEGER  OPTIONAL,
+members      Nodes
+}
+LinkAlgorithmIdentifier ::= AlgorithmIdentifier {{ LinkAlgorithms }}
+LinkAlgorithms ALGORITHM ::= {
+--
+... -- Expect additional link algorithms --
+}
+Nodes ::= SEQUENCE SIZE(1..MAX) OF Node
+Node ::= CHOICE {
+imprints   [0] Imprints,
+reference  [1] INTEGER
+}
+Imprints ::=  SEQUENCE SIZE(1..MAX) OF Imprint
+Imprint ::= OCTET STRING
+-- BindingInfo extensions --
+BindingInfoExtensions ::= SEQUENCE OF Extension{{BIExtensions}}  
+BIExtensions EXTENSION ::= {
+extName        |
+extTime        |
+extPublication,
+--
+... -- Expect additional extensions --
+}
+extName EXTENSION ::= { SYNTAX ExtName IDENTIFIED BY tsp-ext-name }
+ExtName ::= GeneralName
+tsp-ext-name OID ::= { 
+iso(1) standard(0) time-stamp(18014) lt(3) name(5) }
+extTime EXTENSION ::= { SYNTAX ExtTime IDENTIFIED BY tsp-ext-time }
+ExtTime ::= GeneralizedTime
+tsp-ext-time OID ::= {
+iso(1) standard(0) time-stamp(18014) lt(3) time (6) }
+extPublication EXTENSION ::= { 
+SYNTAX ExtPublication IDENTIFIED BY tsp-ext-publication 
+}
+ExtPublication ::= SEQUENCE SIZE (1..MAX) OF PublicationInfo
+tsp-ext-publication OID ::= {
+iso(1) standard(0) time-stamp(18014) lt(3) publication (7) }
+PublicationInfo ::= SEQUENCE {
+pubTime   GeneralizedTime OPTIONAL,
+pubId     [0] GeneralName OPTIONAL,
+pubChains [1] Chains      OPTIONAL,
+sourceId  [2] GeneralName OPTIONAL
+}
+-- Merkle chain algorithm object identifier  from Annex E --
+id-merkle-chain OID ::= {
+iso(1) identified-organization(3) tc68(133) country(16) x9(840)
+x9Standards(9) x9-95(95) ids(1) merkle-chain(1) }
+merkle-chain ALGORITHM ::= {
+OID id-merkle-chain PARMS MerkleChainParms
+}
+MerkleChainParms ::= SEQUENCE SIZE(1..MAX) OF HashFunction
+HashFunction ::= DigestAlgorithmIdentifier 
+-- Time calibration --
+TimeCalibrationReport ::= SEQUENCE {
+version        Version,
+tseInfo        EntityInfo,
+tsaInfo        EntityInfo,
+dutInfo        [0] EntityInfo  OPTIONAL,
+timingMetrics  TimingMetrics
+}
+EntityInfo ::= SEQUENCE {
+entityName    UTF8String  OPTIONAL, 
+entityID      OBJECT IDENTIFIER  OPTIONAL, 
+entityOption  OCTET STRING  OPTIONAL
+} (ALL EXCEPT ({ -- None; at least one component shall be present -- }))
+TimingMetrics ::= SEQUENCE {
+ntpTime      GeneralizedTime, -- Time at which certification took place
+offset       Accuracy,        -- Current lower clock offset
+delay        Accuracy,        -- Path propagation delay
+leapSecond   LeapSecond  OPTIONAL
+}
+LeapSecond ::= SEQUENCE {
+leapDay  GeneralizedTime,
+action   INTEGER(0..1)  -- 1: last minute has 61 seconds --
+                        -- 0: last minute has 59 seconds --
+}
+-- Supporting definitions --
+OID ::= OBJECT IDENTIFIER -- Alias 
+OIDS ::= CLASS {
+&id OBJECT IDENTIFIER  UNIQUE
+}
+WITH SYNTAX { OID &id }
+CONTENTS ::= TYPE-IDENTIFIER -- ISO/IEC 8824-2, Annex A --
+AlgorithmIdentifier { ALGORITHM:IOSet } ::= SEQUENCE {
+algorithm   ALGORITHM.&id({IOSet}),
+parameters  ALGORITHM.&Type({IOSet}{@algorithm})  OPTIONAL
+}
+ALGORITHM ::= CLASS {
+&id    OBJECT IDENTIFIER  UNIQUE,
+&Type  OPTIONAL
+}
+WITH SYNTAX { OID &id [PARMS &Type] }
+METHOD ::= CLASS {
+&id OBJECT IDENTIFIER  UNIQUE
+}
+WITH SYNTAX { OID &id }
+END  -- TrustedTimeStamp --

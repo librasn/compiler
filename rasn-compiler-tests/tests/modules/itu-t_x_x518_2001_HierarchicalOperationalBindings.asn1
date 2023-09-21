@@ -1,0 +1,138 @@
+
+
+
+
+
+
+
+
+-- Module HierarchicalOperationalBindings (X.518:02/2001)
+-- See also ITU-T X.518 (02/2001)
+-- See also the index of all ASN.1 assignments needed in this document
+
+HierarchicalOperationalBindings {joint-iso-itu-t ds(5) module(1)
+  hierarchicalOperationalBindings(20) 4} DEFINITIONS ::=
+BEGIN
+
+-- EXPORTS All 
+-- The types and values defined in this module are exported for use in the other ASN.1 modules contained 
+-- within the Directory Specifications, and for the use of other applications which will use them to access 
+-- Directory services. Other applications may use them for their own purposes, but this will not constrain
+-- extensions and modifications needed to maintain or improve the Directory service.
+IMPORTS
+  -- from ITU-T Rec. X.501 | ISO/IEC 9594-2
+  directoryOperationalBindingTypes, distributedOperations, dsp,
+    informationFramework, opBindingManagement
+    FROM UsefulDefinitions {joint-iso-itu-t ds(5) module(1)
+      usefulDefinitions(0) 4}
+  Attribute, DistinguishedName, RelativeDistinguishedName
+    FROM InformationFramework {joint-iso-itu-t ds(5) module(1)
+      informationFramework(1) 4}
+  OPERATIONAL-BINDING
+    FROM OperationalBindingManagement {joint-iso-itu-t ds(5) module(1)
+      opBindingManagement(18) 4}
+  -- from ITU-T Rec. X.518 | ISO/IEC 9594-4
+  MasterAndShadowAccessPoints
+    FROM DistributedOperations {joint-iso-itu-t ds(5) module(1)
+      distributedOperations(3) 4}
+  -- from ITU-T Rec. X.519 | ISO/IEC 9594-5
+  directorySystemAC
+    FROM DirectorySystemProtocol {joint-iso-itu-t ds(5) module(1) dsp(12) 4}
+  id-op-binding-hierarchical, id-op-binding-non-specific-hierarchical
+    FROM DirectoryOperationalBindingTypes {joint-iso-itu-t ds(5) module(1)
+      directoryOperationalBindingTypes(25) 4};
+
+-- types 
+HierarchicalAgreement ::= SEQUENCE {
+  rdn                [0]  RelativeDistinguishedName,
+  immediateSuperior  [1]  DistinguishedName
+}
+
+SuperiorToSubordinate ::= SEQUENCE {
+  contextPrefixInfo      [0]  DITcontext,
+  entryInfo              [1]  SET SIZE (1..MAX) OF Attribute OPTIONAL,
+  immediateSuperiorInfo  [2]  SET SIZE (1..MAX) OF Attribute OPTIONAL
+}
+
+DITcontext ::= SEQUENCE OF Vertex
+
+Vertex ::= SEQUENCE {
+  rdn           [0]  RelativeDistinguishedName,
+  admPointInfo  [1]  SET SIZE (1..MAX) OF Attribute OPTIONAL,
+  subentries    [2]  SET SIZE (1..MAX) OF SubentryInfo OPTIONAL,
+  accessPoints  [3]  MasterAndShadowAccessPoints OPTIONAL
+}
+
+SubentryInfo ::= SEQUENCE {
+  rdn   [0]  RelativeDistinguishedName,
+  info  [1]  SET OF Attribute
+}
+
+SubordinateToSuperior ::= SEQUENCE {
+  accessPoints  [0]  MasterAndShadowAccessPoints OPTIONAL,
+  alias         [1]  BOOLEAN DEFAULT FALSE,
+  entryInfo     [2]  SET SIZE (1..MAX) OF Attribute OPTIONAL,
+  subentries    [3]  SET SIZE (1..MAX) OF SubentryInfo OPTIONAL
+}
+
+SuperiorToSubordinateModification ::=
+  SuperiorToSubordinate(WITH COMPONENTS {
+                          ...,
+                          entryInfo  ABSENT
+                        })
+
+NonSpecificHierarchicalAgreement ::= SEQUENCE {
+  immediateSuperior  [1]  DistinguishedName
+}
+
+NHOBSuperiorToSubordinate ::=
+  SuperiorToSubordinate(WITH COMPONENTS {
+                          ...,
+                          entryInfo  ABSENT
+                        })
+
+NHOBSubordinateToSuperior ::= SEQUENCE {
+  accessPoints  [0]  MasterAndShadowAccessPoints OPTIONAL,
+  subentries    [3]  SET SIZE (1..MAX) OF SubentryInfo OPTIONAL
+}
+
+-- operational binding information objects 
+hierarchicalOperationalBinding OPERATIONAL-BINDING ::= {
+  AGREEMENT             HierarchicalAgreement
+  APPLICATION CONTEXTS  {{directorySystemAC}}
+  ASYMMETRIC ROLE-A
+    { -- superior DSAESTABLISHMENT-INITIATOR  TRUE
+                     ESTABLISHMENT-PARAMETER  SuperiorToSubordinate
+                     MODIFICATION-INITIATOR   TRUE
+                     MODIFICATION-PARAMETER   SuperiorToSubordinateModification
+                     TERMINATION-INITIATOR    TRUE}
+  ROLE-B
+    { -- subordinate DSAESTABLISHMENT-INITIATOR  TRUE
+                        ESTABLISHMENT-PARAMETER  SubordinateToSuperior
+                        MODIFICATION-INITIATOR   TRUE
+                        MODIFICATION-PARAMETER   SubordinateToSuperior
+                        TERMINATION-INITIATOR    TRUE}
+  ID                    id-op-binding-hierarchical
+}
+
+nonSpecificHierarchicalOperationalBinding OPERATIONAL-BINDING ::= {
+  AGREEMENT             NonSpecificHierarchicalAgreement
+  APPLICATION CONTEXTS  {{directorySystemAC}}
+  ASYMMETRIC ROLE-A
+    { -- superior DSAESTABLISHMENT-PARAMETER  NHOBSuperiorToSubordinate
+                     MODIFICATION-INITIATOR   TRUE
+                     MODIFICATION-PARAMETER   NHOBSuperiorToSubordinate
+                     TERMINATION-INITIATOR    TRUE}
+  ROLE-B
+    { -- subordinate DSAESTABLISHMENT-INITIATOR  TRUE
+                        ESTABLISHMENT-PARAMETER  NHOBSubordinateToSuperior
+                        MODIFICATION-INITIATOR   TRUE
+                        MODIFICATION-PARAMETER   NHOBSubordinateToSuperior
+                        TERMINATION-INITIATOR    TRUE}
+  ID                    id-op-binding-non-specific-hierarchical
+}
+
+END -- HierarchicalOperationalBindings
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

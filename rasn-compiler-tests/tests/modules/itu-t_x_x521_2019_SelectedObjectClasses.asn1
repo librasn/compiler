@@ -1,0 +1,547 @@
+SelectedObjectClasses.asn (ITU-T X.521 (10/2019))-- ASN module extracted from ITU-T X.521 (10/2019)SelectedObjectClasses {joint-iso-itu-t ds(5) module(1) selectedObjectClasses(6) 9}
+
+DEFINITIONS ::=
+BEGIN
+
+--  EXPORTS All 
+/*
+The types and values defined in this module are exported for use in the other ASN.1
+modules contained within the Directory Specifications, and for the use of other
+applications which will use them to access Directory services. Other applications may
+use them for their own purposes, but this will not constrain extensions and
+modifications needed to maintain or improve the Directory service.
+*/
+IMPORTS
+
+  -- from Rec. ITU-T X.501 | ISO/IEC 9594-2
+
+  id, id-nf, id-oc
+    FROM UsefulDefinitions
+      {joint-iso-itu-t ds(5) module(1) usefulDefinitions(0) 9} WITH SUCCESSORS
+
+  alias, ATTRIBUTE, NAME-FORM, OBJECT-CLASS, top
+    FROM InformationFramework
+      {joint-iso-itu-t ds(5) module(1) informationFramework(1) 9} WITH SUCCESSORS
+
+  -- from Rec. ITU-T X.520 | ISO/IEC 9594-6
+
+  businessCategory, commonName, contentUrl, countryName, description,
+  destinationIndicator, dmdName, epc, epcInUrn, facsimileTelephoneNumber,
+  internationalISDNNumber, knowledgeInformation, localityName, member, oidC, oidC1,
+  oidC2, organizationalUnitName, organizationName, owner, physicalDeliveryOfficeName,
+  postalAddress, postalCode, postOfficeBox, preferredDeliveryMethod,
+  presentationAddress, registeredAddress, roleOccupant, searchGuide, seeAlso,
+  serialNumber, stateOrProvinceName, streetAddress, supportedApplicationContext,
+  surname, tagAfi, tagLocation, tagOid, telephoneNumber, telexNumber, title, uii,
+  uiiFormat, uiiInUrn, uniqueMember, urnC, x121Address
+    FROM SelectedAttributeTypes
+      {joint-iso-itu-t ds(5) module(1) selectedAttributeTypes(5) 9} WITH SUCCESSORS
+  
+-- from Rec. ITU-T X.509 | ISO/IEC 9594-8
+
+  authorityRevocationList, cACertificate, certificateRevocationList,
+  crossCertificatePair, deltaRevocationList, supportedAlgorithms,
+  userCertificate, userPassword
+    FROM AuthenticationFramework
+      {joint-iso-itu-t ds(5) module(1) authenticationFramework(7) 9} WITH SUCCESSORS
+
+  userPwd
+    FROM PasswordPolicy
+      {joint-iso-itu-t ds(5) module(1) passwordPolicy(39) 9} WITH SUCCESSORS ;
+
+--  Attribute sets 
+
+TelecommunicationAttributeSet ATTRIBUTE ::=
+  {facsimileTelephoneNumber |
+   internationalISDNNumber |
+   telephoneNumber |
+   telexNumber | 
+   preferredDeliveryMethod |
+   destinationIndicator |
+   registeredAddress |
+   x121Address}
+
+PostalAttributeSet ATTRIBUTE ::=
+  {physicalDeliveryOfficeName |
+   postalAddress |
+   postalCode |
+   postOfficeBox |
+   streetAddress}
+
+LocaleAttributeSet ATTRIBUTE ::=
+  {localityName |
+   stateOrProvinceName |
+   streetAddress}
+
+OrganizationalAttributeSet ATTRIBUTE ::=
+  {description |
+   LocaleAttributeSet |
+   PostalAttributeSet |
+   TelecommunicationAttributeSet |
+   businessCategory |
+   seeAlso |
+   searchGuide |
+   userPassword}
+
+--  Object classes 
+
+country OBJECT-CLASS ::= {
+  SUBCLASS OF   {top}
+  MUST CONTAIN  {countryName}
+  MAY CONTAIN   {description |
+                 searchGuide}
+  LDAP-NAME     {"country"}  -- RFC 4519
+  ID            id-oc-country }
+
+locality OBJECT-CLASS ::= {
+  SUBCLASS OF  {top}
+  MAY CONTAIN  {description |
+                searchGuide |
+                LocaleAttributeSet |
+                seeAlso}
+  LDAP-NAME    {"locality"}  -- RFC 4519
+  ID           id-oc-locality }
+
+organization OBJECT-CLASS ::= {
+  SUBCLASS OF   {top}
+  MUST CONTAIN  {organizationName}
+  MAY CONTAIN   {OrganizationalAttributeSet}
+  LDAP-NAME     {"organization"}  -- RFC 4519
+  ID            id-oc-organization }
+
+organizationalUnit OBJECT-CLASS ::= {
+  SUBCLASS OF   {top}
+  MUST CONTAIN  {organizationalUnitName}
+  MAY CONTAIN   {OrganizationalAttributeSet}
+  LDAP-NAME     {"organizationalUnit"}  -- RFC 4519
+  ID            id-oc-organizationalUnit }
+
+person OBJECT-CLASS ::= {
+  SUBCLASS OF   {top}
+  MUST CONTAIN  {commonName |
+                 surname}
+  MAY CONTAIN   {description |
+                 telephoneNumber |
+                 userPassword |
+                 seeAlso}
+  LDAP-NAME     {"person"}  -- RFC 4519
+  ID            id-oc-person }
+
+organizationalPerson OBJECT-CLASS ::= {
+  SUBCLASS OF  {person}
+  MAY CONTAIN  {LocaleAttributeSet |
+                PostalAttributeSet |
+                TelecommunicationAttributeSet |
+                organizationalUnitName |
+                title}
+  LDAP-NAME    {"organizationalPerson"}  -- RFC 4519
+  ID           id-oc-organizationalPerson }
+
+organizationalRole OBJECT-CLASS ::= {
+  SUBCLASS OF   {top}
+  MUST CONTAIN  {commonName}
+  MAY CONTAIN   {description |
+                 LocaleAttributeSet |
+                 organizationalUnitName |
+                 PostalAttributeSet |
+                 preferredDeliveryMethod |
+                 roleOccupant |
+                 seeAlso |
+                 TelecommunicationAttributeSet}
+  LDAP-NAME      {"organizationalRole"}  -- RFC 4519
+  ID            id-oc-organizationalRole }
+
+groupOfNames OBJECT-CLASS ::= {
+  SUBCLASS OF   {top}
+  MUST CONTAIN  {commonName | member}
+  MAY CONTAIN   {description |
+                 organizationName |
+                 organizationalUnitName |
+                 owner |
+                 seeAlso |
+                 businessCategory}
+  LDAP-NAME     {"groupOfNames"}  -- RFC 4519
+  ID            id-oc-groupOfNames }
+
+groupOfUniqueNames OBJECT-CLASS ::= {
+  SUBCLASS OF   {top}
+  MUST CONTAIN  {commonName |
+                 uniqueMember}
+  MAY CONTAIN   {description |
+                 organizationName |
+                 organizationalUnitName |
+                 owner |
+                 seeAlso |
+                 businessCategory}
+  LDAP-NAME     {"groupOfUniqueNames"}  -- RFC 4519
+  ID            id-oc-groupOfUniqueNames }
+
+residentialPerson OBJECT-CLASS ::= {
+  SUBCLASS OF   {person}
+  MUST CONTAIN  {localityName}
+  MAY CONTAIN   {LocaleAttributeSet |
+                 PostalAttributeSet |
+                 preferredDeliveryMethod |
+                 TelecommunicationAttributeSet |
+                 businessCategory}
+  LDAP-NAME     {"residentialPerson"}  -- RFC 4519
+  ID            id-oc-residentialPerson }
+
+applicationProcess OBJECT-CLASS ::= {
+  SUBCLASS OF   {top}
+  MUST CONTAIN  {commonName}
+  MAY CONTAIN   {description |
+                 localityName |
+                 organizationalUnitName |
+                 seeAlso}
+  LDAP-NAME     {"applicationProcess"}   -- RFC 4519
+  ID            id-oc-applicationProcess }
+
+applicationEntity OBJECT-CLASS ::= {
+  SUBCLASS OF   {top}
+  MUST CONTAIN  {commonName |
+                 presentationAddress}
+  MAY CONTAIN   {description |
+                 localityName |
+                 organizationName |
+                 organizationalUnitName |
+                 seeAlso |
+                 supportedApplicationContext}
+  LDAP-NAME     {"applicationEntity"} -- RFC 2256
+  ID            id-oc-applicationEntity }
+
+dSA OBJECT-CLASS ::= {
+  SUBCLASS OF   {applicationEntity}
+  MAY CONTAIN   {knowledgeInformation}
+  LDAP-NAME     {"dSA"} -- RFC 2256
+  ID            id-oc-dSA }
+
+device OBJECT-CLASS ::= {
+  SUBCLASS OF   {top}
+  MUST CONTAIN  {commonName}
+  MAY CONTAIN   {description |
+                 localityName |
+                 organizationName |
+                 organizationalUnitName |
+                 owner |
+                 seeAlso |
+                 serialNumber}
+  LDAP-NAME      {"device"}  -- RFC 4519
+  ID            id-oc-device }
+
+strongAuthenticationUser OBJECT-CLASS ::= {
+  SUBCLASS OF   {top}
+  KIND          auxiliary
+  MUST CONTAIN  {userCertificate}
+  LDAP-NAME     {"strongAuthenticationUser"} -- RFC 4523
+  LDAP-DESC     {"X.521 strong authentication user"}
+  ID            id-oc-strongAuthenticationUser }
+
+userSecurityInformation OBJECT-CLASS ::= {
+  SUBCLASS OF   {top}
+  KIND          auxiliary
+  MAY CONTAIN   {supportedAlgorithms}
+  LDAP-NAME     {"userSecurityInformation"} -- RFC 4523
+  LDAP-DESC     {"X.521 user security information"}
+  ID            id-oc-userSecurityInformation }
+
+userPwdClass  OBJECT-CLASS  ::=  {
+  KIND          auxiliary
+  MAY CONTAIN   { userPwd }
+  ID            id-oc-userPwdClass }
+
+certificationAuthority OBJECT-CLASS ::= {
+  SUBCLASS OF   {top}
+  KIND          auxiliary
+  MUST CONTAIN  {cACertificate |
+                 certificateRevocationList |
+                 authorityRevocationList}
+  MAY CONTAIN   {crossCertificatePair}
+  LDAP-NAME     {"certificationAuthority"} -- RFC 4523
+  LDAP-DESC     {"X.509 certificate authority"}
+  ID            id-oc-certificationAuthority }
+
+certificationAuthority-V2 OBJECT-CLASS ::= {
+  SUBCLASS OF   {certificationAuthority}
+  KIND          auxiliary
+  MAY CONTAIN   {deltaRevocationList}
+  LDAP-NAME     {"certificationAuthority-V2"}
+  LDAP-DESC     {"X.509 certificate authority, version 2"} -- RFC 4523
+  ID            id-oc-certificationAuthority-V2 }
+
+dMD OBJECT-CLASS ::= {
+  SUBCLASS OF   {top}
+  MUST CONTAIN  {dmdName}
+  MAY CONTAIN   {OrganizationalAttributeSet}
+  LDAP-NAME     {"dmd"} -- RFC 2256
+  ID            id-oc-dmd }
+
+oidC1obj OBJECT-CLASS ::= {
+  SUBCLASS OF   {top}
+  MUST CONTAIN  {oidC}
+  LDAP-NAME     {"oidC1obj"}
+  ID            id-oc-oidC1obj }
+
+oidC2obj OBJECT-CLASS ::= {
+  SUBCLASS OF   {top}
+  MUST CONTAIN  {oidC}
+  LDAP-NAME     {"oidC2obj"}
+  ID            id-oc-oidC2obj }
+
+oidCobj OBJECT-CLASS ::= {
+  SUBCLASS OF   {top}
+  MUST CONTAIN  {oidC}
+  LDAP-NAME     {"oidCobj"}
+  ID            id-oc-oidCobj }
+
+oidRoot OBJECT-CLASS ::= {
+  SUBCLASS OF   {alias}
+  MUST CONTAIN  { oidC1 | oidC2 | oidC}
+  LDAP-NAME     {"oidRoot"}
+  ID            id-oidRoot }
+
+oidArc OBJECT-CLASS ::= {
+  SUBCLASS OF   {alias}
+  MUST CONTAIN  {oidC}
+  LDAP-NAME     {"oidArc"}
+  ID            id-oidArc }
+
+urnCobj OBJECT-CLASS ::= {
+  SUBCLASS OF   {top}
+  MUST CONTAIN  { urnC }
+  LDAP-NAME     {"urnCobj"}
+  ID            id-oc-urnCobj }
+
+isoTagInfo OBJECT-CLASS ::= {
+  SUBCLASS OF  { top }
+  KIND         auxiliary
+  MAY CONTAIN  { tagOid |
+                 tagAfi |
+                 uii |
+                 uiiInUrn |
+                 contentUrl |
+                 tagLocation }
+  LDAP-NAME    {"isoTagInfo"}
+  ID           id-oc-isoTagInfo }
+
+isoTagType  OBJECT-CLASS ::= {
+  SUBCLASS OF  { top }
+  KIND         auxiliary
+  MAY CONTAIN  { tagOid |
+                 tagAfi |
+                 uiiFormat }
+  LDAP-NAME    {"isoTagType"}
+  ID           id-oc-isoTagType }
+
+epcTagInfoObj OBJECT-CLASS ::= {
+  SUBCLASS OF  { top }
+  KIND         auxiliary
+  MAY CONTAIN  { epc |
+                 epcInUrn |
+                 contentUrl |
+                 tagLocation }
+  LDAP-NAME    {"epcTagInfoObj"}
+  ID           id-oc-epcTagInfoObj }
+
+epcTagTypeObj OBJECT-CLASS ::= {
+  SUBCLASS OF  { top }
+  KIND         auxiliary
+  MAY CONTAIN  { uiiFormat }
+  LDAP-NAME    {"epcTagTypeObj"}
+  ID           id-oc-epcTagTypeObj }
+
+--  Name forms 
+
+countryNameForm NAME-FORM ::= {
+  NAMES            country
+  WITH ATTRIBUTES  {countryName}
+  ID               id-nf-countryNameForm }
+
+locNameForm NAME-FORM ::= {
+  NAMES            locality
+  WITH ATTRIBUTES  {localityName}
+  ID               id-nf-locNameForm }
+
+sOPNameForm NAME-FORM ::= {
+  NAMES            locality
+  WITH ATTRIBUTES  {stateOrProvinceName}
+  ID               id-nf-sOPNameForm }
+
+orgNameForm NAME-FORM ::= {
+  NAMES            organization
+  WITH ATTRIBUTES  {organizationName}
+  ID               id-nf-orgNameForm }
+
+orgUnitNameForm NAME-FORM ::= {
+  NAMES            organizationalUnit
+  WITH ATTRIBUTES  {organizationalUnitName}
+  ID               id-nf-orgUnitNameForm }
+
+personNameForm NAME-FORM ::= {
+  NAMES            person
+  WITH ATTRIBUTES  {commonName}
+  ID               id-nf-personNameForm }
+
+orgPersonNameForm NAME-FORM ::= {
+  NAMES            organizationalPerson
+  WITH ATTRIBUTES  {commonName}
+  AND OPTIONALLY   {organizationalUnitName}
+  ID               id-nf-orgPersonNameForm }
+
+orgRoleNameForm NAME-FORM ::= {
+  NAMES            organizationalRole
+  WITH ATTRIBUTES  {commonName}
+  ID               id-nf-orgRoleNameForm }
+
+gONNameForm NAME-FORM ::= {
+  NAMES            groupOfNames
+  WITH ATTRIBUTES  {commonName}
+  ID               id-nf-gONNameForm }
+
+resPersonNameForm NAME-FORM ::= {
+  NAMES            residentialPerson
+  WITH ATTRIBUTES  {commonName}
+  AND OPTIONALLY   {streetAddress}
+  ID               id-nf-resPersonNameForm }
+
+applProcessNameForm NAME-FORM ::= {
+  NAMES            applicationProcess
+  WITH ATTRIBUTES  {commonName}
+  ID               id-nf-applProcessNameForm }
+
+applEntityNameForm NAME-FORM ::= {
+  NAMES            applicationEntity
+  WITH ATTRIBUTES  {commonName}
+  ID               id-nf-applEntityNameForm }
+
+dSANameForm NAME-FORM ::= {
+  NAMES            dSA
+  WITH ATTRIBUTES  {commonName}
+  ID               id-nf-dSANameForm }
+
+deviceNameForm NAME-FORM ::= {
+  NAMES            device
+  WITH ATTRIBUTES  {commonName}
+  ID               id-nf-deviceNameForm }
+
+dMDNameForm NAME-FORM ::= {
+  NAMES            dMD
+  WITH ATTRIBUTES  {dmdName}
+  ID               id-nf-dMDNameForm }
+
+oidC1NameForm NAME-FORM ::= {
+  NAMES            oidCobj
+  WITH ATTRIBUTES  {oidC}
+  ID               id-nf-oidC1NameForm }
+
+oidC2NameForm NAME-FORM ::= {
+  NAMES            oidCobj
+  WITH ATTRIBUTES  {oidC}
+  ID               id-nf-oidC2NameForm }
+
+oidCNameForm NAME-FORM ::= {
+  NAMES            oidCobj
+  WITH ATTRIBUTES  {oidC}
+  ID               id-nf-oidCNameForm }
+
+urnCNameForm NAME-FORM ::= {
+  NAMES            urnCobj
+  WITH ATTRIBUTES  {urnC}
+  ID               id-nf-urnCNameForm }
+
+oidRootNf NAME-FORM ::= {
+  NAMES            oidRoot
+  WITH ATTRIBUTES  {oidC1 | oidC2 | oidC}
+  ID               id-oidRootNf }
+
+oidArcNf NAME-FORM ::= {
+  NAMES            oidArc
+  WITH ATTRIBUTES  {oidC}
+  ID               id-oidArcNf }
+
+--  Object identifier assignments 
+--  object identifiers assigned in other modules are shown in comments
+
+--  Object classes 
+
+--  id-oc-top                  OBJECT IDENTIFIER ::= {id-oc 0} Defined in X.501 | Part 2
+--  id-oc-alias                OBJECT IDENTIFIER ::= {id-oc 1} Defined in X.501 | Part 2
+id-oc-country                  OBJECT IDENTIFIER ::= {id-oc 2}
+id-oc-locality                 OBJECT IDENTIFIER ::= {id-oc 3}
+id-oc-organization             OBJECT IDENTIFIER ::= {id-oc 4}
+id-oc-organizationalUnit       OBJECT IDENTIFIER ::= {id-oc 5}
+id-oc-person                   OBJECT IDENTIFIER ::= {id-oc 6}
+id-oc-organizationalPerson     OBJECT IDENTIFIER ::= {id-oc 7}
+id-oc-organizationalRole       OBJECT IDENTIFIER ::= {id-oc 8}
+id-oc-groupOfNames             OBJECT IDENTIFIER ::= {id-oc 9}
+id-oc-residentialPerson        OBJECT IDENTIFIER ::= {id-oc 10}
+id-oc-applicationProcess       OBJECT IDENTIFIER ::= {id-oc 11}
+id-oc-applicationEntity        OBJECT IDENTIFIER ::= {id-oc 12}
+id-oc-dSA                      OBJECT IDENTIFIER ::= {id-oc 13}
+id-oc-device                   OBJECT IDENTIFIER ::= {id-oc 14}
+id-oc-strongAuthenticationUser OBJECT IDENTIFIER ::= {id-oc 15} -- Deprecated, see 6.15
+id-oc-certificationAuthority   OBJECT IDENTIFIER ::= {id-oc 16} -- Deprecated, see 6.17
+id-oc-certificationAuthority-V2
+                               OBJECT IDENTIFIER ::= {id-oc 16 2} -- Deprecated, see 6.18
+id-oc-groupOfUniqueNames       OBJECT IDENTIFIER ::= {id-oc 17}
+id-oc-userSecurityInformation  OBJECT IDENTIFIER ::= {id-oc 18}
+-- id-oc-cRLDistributionPoint  OBJECT IDENTIFIER ::= {id-oc 19} Defined in X.509 | Part 8
+id-oc-dmd                      OBJECT IDENTIFIER ::= {id-oc 20}
+-- id-oc-pkiUser               OBJECT IDENTIFIER ::= {id-oc 21} Defined in X.509 | Part 8
+-- id-oc-pkiCA                 OBJECT IDENTIFIER ::= {id-oc 22} Defined in X.509 | Part 8
+-- id-oc-deltaCRL              OBJECT IDENTIFIER ::= {id-oc 23} Defined in X.509 | Part 8
+-- id-oc-pmiUser               OBJECT IDENTIFIER ::= {id-oc 24} Defined in X.509 | Part 8
+-- id-oc-pmiAA                 OBJECT IDENTIFIER ::= {id-oc 25} Defined in X.509 | Part 8
+-- id-oc-pmiSOA                OBJECT IDENTIFIER ::= {id-oc 26} Defined in X.509 | Part 8
+-- id-oc-attCertCRLDistributionPts
+--                             OBJECT IDENTIFIER ::= {id-oc 27} Defined in X.509 | Part 8
+-- id-oc-parent                OBJECT IDENTIFIER ::= {id-oc 28} Defined in X.501 | Part 2
+-- id-oc-child                 OBJECT IDENTIFIER ::= {id-oc 29} Defined in X.501 | Part 2
+-- id-oc-cpCps                 OBJECT IDENTIFIER ::= {id-oc 30} Defined in X.509 | Part 8
+-- id-oc-pkiCertPath           OBJECT IDENTIFIER ::= {id-oc 31} Defined in X.509 | Part 8
+-- id-oc-privilegePolicy       OBJECT IDENTIFIER ::= {id-oc 32} Defined in X.509 | Part 8
+-- id-oc-pmiDelegationPath     OBJECT IDENTIFIER ::= {id-oc 33} Defined in X.509 | Part 8
+-- id-oc-protectedPrivilegePolicy
+--                             OBJECT IDENTIFIER ::= {id-oc 34} Defined in X.509 | Part 8
+id-oc-oidC1obj                 OBJECT IDENTIFIER ::= {id-oc 35}
+id-oc-oidC2obj                 OBJECT IDENTIFIER ::= {id-oc 36}
+id-oc-oidCobj                  OBJECT IDENTIFIER ::= {id-oc 37}
+id-oc-isoTagInfo               OBJECT IDENTIFIER ::= {id-oc 38}
+id-oc-isoTagType               OBJECT IDENTIFIER ::= {id-oc 39}
+-- id-oc-integrityInfo         OBJECT IDENTIFIER ::= {id-oc 40} Defined in X.501 | Part 2
+id-oc-userPwdClass             OBJECT IDENTIFIER ::= {id-oc 41}
+id-oc-urnCobj                  OBJECT IDENTIFIER ::= {id-oc 42}
+id-oc-epcTagInfoObj            OBJECT IDENTIFIER ::= {id-oc 43}
+id-oc-epcTagTypeObj            OBJECT IDENTIFIER ::= {id-oc 44}
+
+id-oidRoot                     OBJECT IDENTIFIER ::= {id 3}
+id-oidArc                      OBJECT IDENTIFIER ::= {id 5}
+
+--  Name forms 
+
+id-nf-countryNameForm          OBJECT IDENTIFIER ::= {id-nf 0}
+id-nf-locNameForm              OBJECT IDENTIFIER ::= {id-nf 1}
+id-nf-sOPNameForm              OBJECT IDENTIFIER ::= {id-nf 2}
+id-nf-orgNameForm              OBJECT IDENTIFIER ::= {id-nf 3}
+id-nf-orgUnitNameForm          OBJECT IDENTIFIER ::= {id-nf 4}
+id-nf-personNameForm           OBJECT IDENTIFIER ::= {id-nf 5}
+id-nf-orgPersonNameForm        OBJECT IDENTIFIER ::= {id-nf 6}
+id-nf-orgRoleNameForm          OBJECT IDENTIFIER ::= {id-nf 7}
+id-nf-gONNameForm              OBJECT IDENTIFIER ::= {id-nf 8}
+id-nf-resPersonNameForm        OBJECT IDENTIFIER ::= {id-nf 9}
+id-nf-applProcessNameForm      OBJECT IDENTIFIER ::= {id-nf 10}
+id-nf-applEntityNameForm       OBJECT IDENTIFIER ::= {id-nf 11}
+id-nf-dSANameForm              OBJECT IDENTIFIER ::= {id-nf 12}
+id-nf-deviceNameForm           OBJECT IDENTIFIER ::= {id-nf 13}
+-- id-nf-cRLDistPtNameForm     OBJECT IDENTIFIER ::= {id-nf 14}
+id-nf-dMDNameForm              OBJECT IDENTIFIER ::= {id-nf 15}
+-- id-nf-subentryNameForm      OBJECT IDENTIFIER ::= {id-nf 16}
+id-nf-oidC1NameForm            OBJECT IDENTIFIER ::= {id-nf 17}
+id-nf-oidC2NameForm            OBJECT IDENTIFIER ::= {id-nf 18}
+id-nf-oidCNameForm             OBJECT IDENTIFIER ::= {id-nf 19}
+id-nf-urnCNameForm             OBJECT IDENTIFIER ::= {id-nf 20}
+
+id-oidRootNf                   OBJECT IDENTIFIER ::= {id 4}
+id-oidArcNf                    OBJECT IDENTIFIER ::= {id 6}
+
+END -- SelectedObjectClasses

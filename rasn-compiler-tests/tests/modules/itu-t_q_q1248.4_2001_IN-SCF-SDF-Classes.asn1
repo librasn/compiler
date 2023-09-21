@@ -1,0 +1,201 @@
+
+
+
+
+
+
+
+-- Module IN-SCF-SDF-Classes (Q.1248.4:07/2001)
+-- See also ITU-T Q.1248.4 (07/2001)
+-- See also the index of all ASN.1 assignments needed in this document
+
+IN-SCF-SDF-Classes {itu-t recommendation q 1248 modules(1)
+  in-scf-sdf-classes(15) version1(0)} DEFINITIONS ::=
+BEGIN
+
+IMPORTS
+  ds-UsefulDefinitions, scf-sdf-datatypes, id-mt-verifyCredentials,
+    id-mt-conformCredentials, id-mt-provideTokens, id-mt-fillSecurityTokens,
+    id-oc-securityUserInfo, id-oc-tokensStock
+    FROM IN-object-identifiers {itu-t recommendation q 1248 modules(1)
+      in-object-identifiers(0) version1(0)}
+  informationFramework
+    FROM UsefulDefinitions ds-UsefulDefinitions
+  ATTRIBUTE, OBJECT-CLASS
+    FROM InformationFramework informationFramework
+  NPartsMessage{}, TwoPartMessage, securityFacilityId, secretKey,
+    identifierList, bindLevelIfOK, currentList, failureCounter, lockSession,
+    maxAttempts, stockId, stock{}, source, sizeOfRestocking
+    FROM IN-SCF-SDF-datatypes scf-sdf-datatypes;
+
+-- METHOD information object class specification 
+METHOD ::= CLASS {
+  &InputAttributes   ATTRIBUTE OPTIONAL,
+  &SpecificInput     OPTIONAL,
+  &OutputAttributes  ATTRIBUTE OPTIONAL,
+  &SpecificOutput    OPTIONAL,
+  &description       IA5String OPTIONAL,
+  &id                OBJECT IDENTIFIER UNIQUE
+}
+WITH SYNTAX {
+  [INPUT ATTRIBUTES &InputAttributes]
+  [SPECIFIC-INPUT &SpecificInput]
+  [OUTPUT ATTRIBUTES &OutputAttributes]
+  [SPECIFIC-OUTPUT &SpecificOutput]
+  [BEHAVIOUR &description]
+  ID &id
+}
+
+-- The &InputAttributes field identifies the attributes which may be submitted as input
+-- to the method execution.
+-- The &OutputAttributes field identifies the attributes which may be returned as output
+-- of the method execution.
+-- The &SpecificInput field provides that syntax of additional information
+-- which may be used as input to the method execution.
+-- The &SpecificOutput field provides that syntax of additional information
+-- which may be used as output to the method execution.
+-- The &id field uniquely identifies the method.
+-- method 
+verifyCredentials METHOD ::= {
+  SPECIFIC-INPUT   TwoPartMessage
+  -- see the definition of this type below
+  SPECIFIC-OUTPUT  BOOLEAN -- to indicate the success of the verification
+  BEHAVIOUR
+    "This method performs the following actions on the entry identified by the
+execute argument, this entry would be of class genericSecurityUserInfo:
+1) if maxattempts is present, verify that failureCounter is inferior to its value
+2) read the value of identifierList attribute
+(return bad format entry if failure)
+3) if conformMethodIdentifier is NULL go to step 5)
+4) run conformMethodIdentifier method on TwopartMessage provided as specific input
+(return a badconformance error if the execution fails or if the result is false)
+5) run the oneToOneAlgorithm on the messageData bit string to get an expected certificationCode bit string
+6) return TRUE if the expected and provided certificationCode values matched,
+7) otherwise if failureCounter is present, increment it
+8) return FALSE
+"
+  ID               id-mt-verifyCredentials
+}
+
+conformCredentials METHOD ::= {
+  SPECIFIC-INPUT   TwoPartMessage
+  -- see the definition of this type below
+  SPECIFIC-OUTPUT  BOOLEAN -- to indicate the success of the verification
+  BEHAVIOUR
+    "This method performs the following actions on the entry identified by the execute argument, this entry would be of class genericSecurityUserInfo:
+-	verify with an embedded conformance algorithm that messageData value of TwoPartMessage is no replay (RAND is in the current time window and the associated RS is not in the list of the current time windows currentList).
+-	add RAND to time windows list currentList.
+-	return TRUE if no replay,
+-	otherwise return FALSE
+"
+  ID               id-mt-conformCredentials
+}
+
+provideTokens METHOD ::= {
+  SPECIFIC-INPUT
+    SEQUENCE {numOfRequestedTokens  INTEGER, -- how many tokens are requested (NOfRT)
+              oidOfAttribute        OBJECT IDENTIFIER
+  } -- oid of the attribute (tokens)
+  /*SPECIFIC-OUTPUT 	ATTRIBUTE --attribute selected as input (tokens)*/
+  BEHAVIOUR
+    "This method performs the following actions on the entry (thisEntry would be a variable with the DN value of this entry) identified by the execute argument:
+1) if the attribute sizeOfRestocking does not exist in the entry, define a variable MAXNT with a default value (e.g. 10) else MAXNT takes the value of the attribute sizeOfRestocking
+2) verify that NofRT is inferior or egal to MAXNT
+(return an execute error if NofRT value is superior to MAXNT)
+3) read the attribute of the entry which has the selected oid and count the number of values (0 if empty) and put the result in a variable N
+(return execute error if the attribute does not exist)
+4) read the source attribute in the entry
+(return execute error error if source does not exist)
+5) if N is inferior to NOfRT and the DN of source indicates an entry of class or subclass tokenStock:
+5a) bind anonymous with the DSA which contains the entry defined by the address field of source
+5b) execute the method provideTokens on the entry with MAXNT as value of the specific-input
+5c) if none error is returned, modify the tokens attribute by adding the resulted values
+6) if N is inferior to NOfRT and the DN of source indicates an entry of class or subclass securityUserInformation
+6a) execute the method defined by fillMethodIdentifier field value on the entry defined by the DN with MAXNT as specific input
+6b) if none error is returned, modify the tokens attribute by adding the resulted values
+7) read the tokens attribute
+8) define a variable toBeReturned with NofRT values of tokens attribute and a variable toBeKept with remainder values
+9) remove tokens attribute
+10) modify tokens attribute by adding the toBeKept values
+11) return the toBeReturned values
+"
+  ID              id-mt-provideTokens
+}
+
+fillSecurityTokens{INTEGER:n} METHOD ::= {
+  SPECIFIC-INPUT   INTEGER -- X number of value to be computed
+  SPECIFIC-OUTPUT  SEQUENCE OF NPartsMessage{n}
+  BEHAVIOUR
+    "This method performs the following actions on the entry identified by the execute argument, this entry shall be of object class (or subclass) genericSecurityUserInfo:
+- read the secretKey attribute and Algorithms attribute
+- repeat X times
+		- fill the first BIT STRING field with a random value
+		- apply cryptographic algorithms to compute
+	 	the other  BIT STRING fields of the NPARTMESSAGE.
+- return X NPartMessage values
+"
+  ID               id-mt-fillSecurityTokens
+}
+
+SupportedMethods METHOD ::=
+  {...}
+
+-- The SupportedMethods set contains all of the defined methods for the interface. Its exact contents are
+-- a matter for local determination as it will depend on the service and network provider agreements
+-- being supported.
+-- A DIT METHOD Use is a specification provided by the subschema administrative authority to specify
+-- the METHOD types that may be used on entries of a particular object-class.
+DITMethodUse ::= SEQUENCE {
+  objectClass  OBJECT-CLASS.&id,
+  methods      [1]  SET OF METHOD.&id
+}
+
+-- a) the objectClass component identifies the object-class to which the DIT METHOD Use applies;
+-- b) the methods component specifies types that shall be associated with the object-class whenever
+-- entries of that object-class are stored;
+-- The DITMethodUse definition for a particular object-class also applies to any subclass which may be
+-- subsequently defined.
+-- The METHOD-USE-RULE information object class is provided to facilitate the documentation of the
+--  DIT METHOD Use rules:
+METHOD-USE-RULE ::= CLASS {
+  &objectClassType  OBJECT-CLASS.&id UNIQUE,
+  &Mandatory        METHOD
+}WITH SYNTAX {OBJECT-CLASS TYPE &objectClassType
+              METHODS &Mandatory
+}
+
+-- The METHOD-USE-RULE definition for a particular object-class also applies to any subclass
+-- which may be subsequently defined.
+-- method-use-rule 
+securityUserInfoRule{INTEGER:n} METHOD-USE-RULE ::= {
+  OBJECT-CLASS TYPE  id-oc-securityUserInfo
+  METHODS
+    {verifyCredentials | fillSecurityTokens{n} | conformCredentials}
+}
+
+-- object class 
+-- The following object class could be used to store the necessary information about the user security.
+-- For each UPT user, an entry of the securityUserInfo object class may be created, subordinated to each
+-- entry of class uptUser.
+securityUserInfo OBJECT-CLASS ::= {
+  MUST CONTAIN  {securityFacilityId | secretKey | identifierList}
+  MAY CONTAIN
+    {bindLevelIfOK | currentList | failureCounter | lockSession | maxAttempts}
+  ID            id-oc-securityUserInfo
+}
+
+-- The object class SecurityUserInfo supports the method verifyCredentials
+tokensStock{INTEGER:n} OBJECT-CLASS ::= {
+  KIND          abstract
+  MUST CONTAIN  {stockId | stock{n}}
+  MAY CONTAIN   {source | sizeOfRestocking}
+  ID            id-oc-tokensStock
+}
+
+-- This object class is used to represent a set of information that is common to all disposable tokens
+-- (stock identifier, source, and size of the set). Disposable tokens could be, for example authentication
+-- tokens pairs, triplets.
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

@@ -1,0 +1,333 @@
+
+
+
+
+
+
+
+
+-- Module GeneralModule (X.843:10/2000)
+-- See also ITU-T X.843 (10/2000)
+-- See also the index of all ASN.1 assignments needed in this document
+
+GeneralModule DEFINITIONS EXPLICIT TAGS ::=
+BEGIN
+
+-- EXPORTS ALL 
+IMPORTS
+  --  InformationFramework (X.501) 
+  Attribute, Name
+    FROM InformationFramework {joint-iso-itu-t ds(5) module(1)
+      informationFramework(1) 3}
+  -- Directory Authentication Framework (X.509) 
+  AlgorithmIdentifier, Certificate, CertificateList, Extensions,
+    SubjectPublicKeyInfo
+    FROM AuthenticationFramework {joint-iso-itu-t ds(5) module(1)
+      authenticationFramework(7) 3}
+  -- Certificate Extensions (X.509)
+  GeneralName, KeyIdentifier, ReasonFlags
+    FROM CertificateExtensions {joint-iso-itu-t(2) ds(5) module(1)
+      certificateExtensions(26) 0}
+  -- X.843 ISO 15945 (CRMF) 
+  CertTemplate, PKIPublicationInfo, EncryptedValue, CertId, CertReqMessages
+    FROM CRMF;
+
+-- CertificationRequest compatible to PKCS#10
+CertificationRequest ::= SEQUENCE {
+  certificationRequestInfo  CertificationRequestInfo,
+  signatureAlgorithm        AlgorithmIdentifier,
+  signature                 BIT STRING
+}
+
+CertificationRequestInfo ::= SEQUENCE {
+  version        INTEGER,
+  subject        Name,
+  subjectPKInfo  SubjectPublicKeyInfo,
+  attributes     [0] IMPLICIT Attributes
+}
+
+Attributes ::= SET SIZE (0..MAX) OF Attribute
+
+--  Locally defined OIDs -- -- Note that tagging is EXPLICIT in this module.
+PKIMessage ::= SEQUENCE {
+  header      PKIHeader,
+  body        PKIBody,
+  protection  [0]  PKIProtection OPTIONAL,
+  extraCerts  [1]  SEQUENCE SIZE (1..MAX) OF Certificate OPTIONAL
+}
+
+PKIHeader ::= SEQUENCE {
+  pvno           INTEGER {version1(0)},
+  sender         GeneralName,
+  -- identifies the sender
+  recipient      GeneralName,
+  -- identifies the intended recipient
+  messageTime    [0]  GeneralizedTime OPTIONAL,
+  -- time of production of this message (used when sender
+  -- believes that the transport will be "suitable"; i.e. 
+  -- that the time will still be meaningful upon receipt)
+  protectionAlg  [1]  AlgorithmIdentifier OPTIONAL,
+  -- algorithm used for calculation of protection bits
+  senderKID      [2]  KeyIdentifier OPTIONAL,
+  recipKID       [3]  KeyIdentifier OPTIONAL,
+  -- to identify specific keys used for protection
+  transactionID  [4]  OCTET STRING OPTIONAL,
+  -- identifies the transaction; i.e. this will be the same in 
+  -- corresponding request, response and confirmation messages
+  senderNonce    [5]  OCTET STRING OPTIONAL,
+  recipNonce     [6]  OCTET STRING OPTIONAL,
+  -- nonces used to provide replay protection, senderNonce 
+  -- is inserted by the creator of this message; recipNonce 
+  -- is a nonce previously inserted in a related message by 
+  -- the intended recipient of this message 
+  freeText       [7]  PKIFreeText OPTIONAL,
+  -- this may be used to indicate context-specific instructions 
+  -- (this field is intended for human consumption) 
+  generalInfo    [8]  SEQUENCE SIZE (1..MAX) OF InfoTypeAndValue OPTIONAL
+  -- this may be used to convey context-specific information
+  -- (this field not primarily intended for human consumption)
+}
+
+PKIFreeText ::= SEQUENCE SIZE (1..MAX) OF UTF8String
+
+-- text encoded as UTF-8 String (NOTE - each UTF8String should
+-- include an RFC 1766 language tag to indicate the language 
+-- of the contained text)
+PKIBody ::= CHOICE { -- message-specific body elements 
+  ir      [0]  CertReqMessages, --Initialization Request
+  ip      [1]  CertRepMessage, --Initialization Response
+  cr      [2]  CertReqMessages, --Certification Request
+  cp      [3]  CertRepMessage, --Certification Response
+  p10cr   [4]  CertificationRequest, --for compatibility with [PKCS#10] 
+  kur     [7]  CertReqMessages, --Key Update Request
+  kup     [8]  CertRepMessage, --Key Update Response
+  rr      [11]  RevReqContent, --Revocation Requestrp
+  rp      [12]  RevRepContent, --Revocation Response
+  ccr     [13]  CertReqMessages, --Cross-Cert. Request
+  ccp     [14]  CertRepMessage, --Cross-Cert. Response
+  ckuann  [15]  CAKeyUpdAnnContent, --CA Key Update Ann.
+  cann    [16]  CertAnnContent, --Certificate Ann. 
+  rann    [17]  RevAnnContent, --Revocation Ann. 
+  crlann  [18]  CRLAnnContent, --CRL Announcement
+  conf    [19]  PKIConfirmContent, --Confirmation nested
+  nested  [20]  NestedMessageContent, --Nested Message
+  genm    [21]  GenMsgContent, --General Message
+  genp    [22]  GenRepContent, --General Response
+  error   [23]  ErrorMsgContent --Error Message
+}
+
+PKIProtection ::= BIT STRING
+
+ProtectedPart ::= SEQUENCE {header  PKIHeader,
+                            body    PKIBody
+}
+
+PasswordBasedMac ::= OBJECT IDENTIFIER --{1 2 840 113533 7 66 13}
+
+PBMParameter ::= SEQUENCE {
+  salt            OCTET STRING,
+  owf             AlgorithmIdentifier,
+  -- AlgorithmIdentifier for a One-Way Function (SHA-1 recommended) 
+  iterationCount  INTEGER,
+  -- number of times the OWF is applied
+  mac             AlgorithmIdentifier
+  -- the MAC AlgorithmIdentifier (e.g. DES-MAC, Triple-DES-MAC as in PKCS #11,
+} -- or HMAC as in RFC2104, RFC2202)
+
+DHBasedMac ::= OBJECT IDENTIFIER --{1 2 840 113533 7 66 30}
+
+DHBMParameter ::= SEQUENCE {
+  owf  AlgorithmIdentifier,
+  -- AlgorithmIdentifier for a One-Way Function (SHA-1 recommended)
+  mac  AlgorithmIdentifier
+  -- the MAC AlgorithmIdentifier (e.g, DES-MAC, Triple-DES-MAC as in PKCS #11,
+} -- or HMAC RFC2104, RFC2202) 
+
+NestedMessageContent ::= PKIMessage
+
+PKIStatus ::= INTEGER {
+  granted(0),
+  -- you got exactly what you asked for 
+  grantedWithMods(1),
+  -- you got something like what you asked for; the 
+  -- requester is responsible for ascertaining the differences 
+  rejection(2),
+  -- you don't get it, more information elsewhere in the message
+  waiting(3),
+  -- the request body part has not yet been processed, 
+  -- expect to hear more later 
+  revocationWarning(4),
+  -- this message contains a warning that a revocation is 
+  -- imminent 
+  revocationNotification(5),
+  -- notification that a revocation has occurred 
+  keyUpdateWarning(6)
+  -- update already done for the oldCertId specified in 
+  -- CertReqMsg
+  }
+
+PKIFailureInfo ::= BIT STRING {
+  -- since a request can fail in more than one way! 
+  -- More codes may be added in the future if/when required. 
+  badAlg(0),
+  -- unrecognized or unsupported Algorithm Identifier
+  badMessageCheck(1),
+  -- integrity check failed (e.g. signature did not verify)
+  badRequest(2),
+  -- transaction not permitted or supported
+  badTime(3),
+  -- messageTime was not sufficiently close to the system time,
+  -- as defined by local policy
+  badCertId(4),
+  -- no certificate could be found matching the provided criteria
+  badDataFormat(5),
+  -- the data submitted has the wrong format
+  wrongAuthority(6),
+  -- the authority indicated in the request is different from the 
+  -- one creating the response token
+  incorrectData(7),
+  -- the requester's data is incorrect (for notary services)
+  missingTimeStamp(8)
+  -- when the timestamp is missing but should be there (by policy)
+  }
+
+PKIStatusInfo ::= SEQUENCE {
+  status        PKIStatus,
+  statusString  PKIFreeText OPTIONAL,
+  failInfo      PKIFailureInfo OPTIONAL
+}
+
+OOBCert ::= Certificate
+
+OOBCertHash ::= SEQUENCE {
+  hashAlg  [0]  AlgorithmIdentifier OPTIONAL,
+  certId   [1]  CertId OPTIONAL,
+  hashVal  BIT STRING
+  -- hashVal is calculated over DER encoding of the 
+  -- subjectPublicKey field of the corresponding cert. 
+}
+
+CertRepMessage ::= SEQUENCE {
+  caPubs    [1]  SEQUENCE SIZE (1..MAX) OF Certificate OPTIONAL,
+  response  SEQUENCE OF CertResponse
+}
+
+CertResponse ::= SEQUENCE {
+  certReqId         INTEGER,
+  -- to match this response with corresponding request (a value
+  -- of -1 is to be used if certReqId is not specified in the
+  -- corresponding request)
+  status            PKIStatusInfo,
+  certifiedKeyPair  CertifiedKeyPair OPTIONAL,
+  rspInfo           OCTET STRING OPTIONAL
+  -- analogous to the id-regInfo-asciiPairs OCTET STRING defined
+  -- for regInfo in CertReqMsg
+}
+
+CertifiedKeyPair ::= SEQUENCE {
+  certOrEncCert    CertOrEncCert,
+  privateKey       [0]  EncryptedValue OPTIONAL,
+  publicationInfo  [1]  PKIPublicationInfo OPTIONAL
+}
+
+CertOrEncCert ::= CHOICE {
+  certificate    [0]  Certificate,
+  encryptedCert  [1]  EncryptedValue
+}
+
+KeyRecRepContent ::= SEQUENCE {
+  status       PKIStatusInfo,
+  newSigCert   [0]  Certificate OPTIONAL,
+  caCerts      [1]  SEQUENCE SIZE (1..MAX) OF Certificate OPTIONAL,
+  keyPairHist  [2]  SEQUENCE SIZE (1..MAX) OF CertifiedKeyPair OPTIONAL
+}
+
+RevReqContent ::= SEQUENCE OF RevDetails
+
+RevDetails ::= SEQUENCE {
+  certDetails       CertTemplate,
+  -- allows requester to specify as much as they can about 
+  -- the cert. for which revocation is requested 
+  -- (e.g. for cases in which serialNumber is not available)
+  revocationReason  ReasonFlags OPTIONAL,
+  -- the reason that revocation is requested
+  badSinceDate      GeneralizedTime OPTIONAL,
+  -- indicates best knowledge of sender 
+  crlEntryDetails   Extensions OPTIONAL
+  -- requested crlEntryExtensions 
+}
+
+RevRepContent ::= SEQUENCE {
+  status    SEQUENCE SIZE (1..MAX) OF PKIStatusInfo,
+  -- in same order as was sent in RevReqContent
+  revCerts  [0]  SEQUENCE SIZE (1..MAX) OF CertId OPTIONAL,
+  -- IDs for which revocation was requested (same order as status) 
+  crls      [1]  SEQUENCE SIZE (1..MAX) OF CertificateList OPTIONAL
+  -- the resulting CRLs (there may be more than one) 
+}
+
+CAKeyUpdAnnContent ::= SEQUENCE {
+  oldWithNew  Certificate, -- old pub signed with new priv 
+  newWithOld  Certificate, -- new pub signed with old priv 
+  newWithNew  Certificate -- new pub signed with new priv 
+}
+
+CertAnnContent ::= Certificate
+
+RevAnnContent ::= SEQUENCE {
+  status           PKIStatus,
+  certId           CertId,
+  willBeRevokedAt  GeneralizedTime,
+  badSinceDate     GeneralizedTime,
+  crlDetails       Extensions OPTIONAL
+  -- extra CRL details(e.g. CRL number, reason, location, etc.) 
+}
+
+CRLAnnContent ::= SEQUENCE OF CertificateList
+
+PKIConfirmContent ::= NULL
+
+InfoTypeAndValue ::= SEQUENCE {
+  infoType   TYPE-IDENTIFIER.&id({InfoTable}),
+  infoValue  TYPE-IDENTIFIER.&Type({InfoTable}{@infoType}) OPTIONAL
+}
+
+InfoTable TYPE-IDENTIFIER ::=
+  {...}
+
+-- Example InfoTypeAndValue contents include, but are not limited to:
+--  { CAProtEncCert    = {id-it 1}, Certificate                     }
+--  { SignKeyPairTypes = {id-it 2}, SEQUENCE OF AlgorithmIdentifier }
+--  { EncKeyPairTypes  = {id-it 3}, SEQUENCE OF AlgorithmIdentifier }
+--  { PreferredSymmAlg = {id-it 4}, AlgorithmIdentifier             }
+--  { CAKeyUpdateInfo  = {id-it 5}, CAKeyUpdAnnContent              }
+--  { CurrentCRL       = {id-it 6}, CertificateList                 }
+-- where {id-it} = {id-pkix 4} = {1 3 6 1 5 5 7 4} 
+-- This construct may also be used to define new PKIX Certificate
+-- Management Protocol request and response messages, or general-
+-- purpose (e.g. announcement) messages for future needs or for 
+-- specific environments.
+GenMsgContent ::= SEQUENCE OF InfoTypeAndValue
+
+-- May be sent by EE, RA, or CA (depending on message content).
+-- The OPTIONAL infoValue parameter of InfoTypeAndValue will typically
+-- be omitted for some of the examples given above.  The receiver is 
+-- free to ignore any contained OBJECT IDs that it does not recognize.
+-- If sent from EE to CA, the empty set indicates that the CA may send 
+-- any/all information that it wishes.
+GenRepContent ::= SEQUENCE OF InfoTypeAndValue
+
+-- The receiver is free to ignore any contained OBJECT IDs that it does 
+-- not recognize.
+ErrorMsgContent ::= SEQUENCE {
+  pKIStatusInfo  PKIStatusInfo,
+  errorCode      INTEGER OPTIONAL,
+  -- implementation-specific error codes
+  errorDetails   PKIFreeText OPTIONAL
+  -- implementation-specific error details
+}
+
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

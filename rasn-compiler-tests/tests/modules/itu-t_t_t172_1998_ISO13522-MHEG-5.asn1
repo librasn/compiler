@@ -1,0 +1,1356 @@
+
+
+
+
+
+
+
+-- Module ISO13522-MHEG-5 (T.172:02/1998)
+-- See also ITU-T T.172 (02/1998)
+-- See also the index of all ASN.1 assignments needed in this document
+
+-- $PREFIX=ISOMHEG-mheg-5:mheg-5
+-- Module: mheg-5
+ISO13522-MHEG-5 {joint-iso-itu-t(2) mheg(19) version(1) mheg-5(17)} DEFINITIONS
+IMPLICIT TAGS ::=
+BEGIN
+
+-- This module defines the MHEG-5 abstract syntax which consists of data values of type:
+-- ISO13522-MHEG-5.InterchangedObject.
+-- This abstract syntax is identified by the name: {joint-iso-itu-t(2) mheg(19) version(1) mheg-5(17)}.
+InterchangedObject ::= CHOICE {
+  application  [0]  ApplicationClass,
+  scene        [1]  SceneClass
+}
+
+-- A.1 Root Class 
+RootClass ::= ObjectReference
+
+-- A.2 Group Class 
+GroupClass ::= SET {
+  rootClass
+    RootClass
+      (WITH COMPONENTS {
+         external-reference  (WITH COMPONENTS {
+                                ...,
+                                object-number  (0)
+                              })PRESENT,
+         internal-reference  ABSENT
+       }),
+  standard-identifier            [2]  StandardIdentifier OPTIONAL,
+  standard-version               [3]  INTEGER(1) OPTIONAL,
+  object-information             [4]  OCTET STRING OPTIONAL,
+  on-start-up                    [5]  ActionClass OPTIONAL,
+  on-close-down                  [6]  ActionClass OPTIONAL,
+  original-group-cache-priority  [7]  INTEGER(0..255) DEFAULT 127,
+  items
+    [8]  SEQUENCE SIZE (1..MAX) OF GroupItem OPTIONAL
+}
+
+StandardIdentifier ::= SEQUENCE {
+  joint-iso-itu-t  INTEGER(2),
+  mheg             INTEGER(19)
+}
+
+GroupItem ::= CHOICE {
+  resident-program       [9]  ResidentProgramClass,
+  remote-program         [10]  RemoteProgramClass,
+  interchanged-program   [11]  InterchangedProgramClass,
+  palette                [12]  PaletteClass,
+  font                   [13]  FontClass,
+  cursor-shape           [14]  CursorShapeClass,
+  boolean-variable       [15]  BooleanVariableClass,
+  integer-variable       [16]  IntegerVariableClass,
+  octet-string-variable  [17]  OctetStringVariableClass,
+  object-ref-variable    [18]  ObjectRefVariableClass,
+  content-ref-variable   [19]  ContentRefVariableClass,
+  link                   [20]  LinkClass,
+  stream                 [21]  StreamClass,
+  bitmap                 [22]  BitmapClass,
+  line-art               [23]  LineArtClass,
+  dynamic-line-art       [24]  DynamicLineArtClass,
+  rectangle              [25]  RectangleClass,
+  hotspot                [26]  HotspotClass,
+  switch-button          [27]  SwitchButtonClass,
+  push-button            [28]  PushButtonClass,
+  text                   [29]  TextClass,
+  entry-field            [30]  EntryFieldClass,
+  hyper-text             [31]  HyperTextClass,
+  slider                 [32]  SliderClass,
+  token-group            [33]  TokenGroupClass,
+  list-group             [34]  ListGroupClass
+}
+
+-- A.3 Application Class 
+ApplicationClass ::= SET {
+  COMPONENTS OF GroupClass,
+  on-spawn-close-down  [35]  ActionClass OPTIONAL,
+  on-restart           [36]  ActionClass OPTIONAL,
+  default-attributes
+    [37]  SEQUENCE SIZE (1..MAX) OF DefaultAttribute OPTIONAL
+}
+
+DefaultAttribute ::= CHOICE {
+  character-set                      [38]  INTEGER,
+  background-colour                  [39]  Colour,
+  text-content-hook                  [40]  INTEGER,
+  text-colour                        [41]  Colour,
+  font                               [42]  FontBody,
+  font-attributes                    [43]  OCTET STRING,
+  interchanged-program-content-hook  [44]  INTEGER,
+  stream-content-hook                [45]  INTEGER,
+  bitmap-content-hook                [46]  INTEGER,
+  line-art-content-hook              [47]  INTEGER,
+  button-ref-colour                  [48]  Colour,
+  highlight-ref-colour               [49]  Colour,
+  slider-ref-colour                  [50]  Colour
+}
+
+FontBody ::= CHOICE {
+  direct-font    OCTET STRING,
+  indirect-font  ObjectReference
+}
+
+-- A.4 Scene Class 
+SceneClass ::= SET {
+  COMPONENTS OF GroupClass,
+  input-event-register     [51]  INTEGER,
+  scene-coordinate-system  [52]  SceneCoordinateSystem,
+  aspect-ratio             [53]  AspectRatio DEFAULT {width 4, height 3},
+  moving-cursor            [54]  BOOLEAN DEFAULT FALSE,
+  next-scenes              [55]  SEQUENCE SIZE (1..MAX) OF NextScene OPTIONAL
+}
+
+SceneCoordinateSystem ::= SEQUENCE {x-scene  INTEGER,
+                                    y-scene  INTEGER
+}
+
+AspectRatio ::= SEQUENCE {width   INTEGER,
+                          height  INTEGER
+}
+
+NextScene ::= SEQUENCE {
+  scene-ref     OCTET STRING,
+  scene-weight  INTEGER(0..255)
+}
+
+-- A.5 Ingredient Class 
+IngredientClass ::= SET {
+  rootClass
+    RootClass
+      (WITH COMPONENTS {
+         ...,
+         external-reference  (WITH COMPONENTS {
+                                ...,
+                                object-number  (1..MAX)
+                              })
+       }),
+  initially-active  [56]  BOOLEAN DEFAULT TRUE,
+  content-hook      [57]  INTEGER OPTIONAL,
+  original-content  [58]  ContentBody OPTIONAL,
+  shared            [59]  BOOLEAN OPTIONAL -- DEFAULT FALSE
+}
+
+ContentBody ::= CHOICE {
+  included-content    OCTET STRING,
+  referenced-content  ReferencedContent
+}
+
+ReferencedContent ::= SEQUENCE {
+  content-reference       ContentReference,
+  content-size            [60]  INTEGER OPTIONAL,
+  content-cache-priority  [61]  INTEGER(0..255) DEFAULT 127
+}
+
+-- A.6 Link Class 
+LinkClass ::= SET {
+  COMPONENTS OF
+    IngredientClass
+      (WITH COMPONENTS {
+         ...,
+         content-hook      ABSENT,
+         original-content  ABSENT
+       }),
+  link-condition  [62]  LinkCondition,
+  link-effect     [63]  ActionClass
+}
+
+LinkCondition ::= SEQUENCE {
+  event-source  ObjectReference,
+  event-type    EventType,
+  event-data    EventData OPTIONAL
+}
+
+EventType ::= ENUMERATED {
+  is-available(1), content-available(2), is-deleted(3), is-running(4),
+  is-stopped(5), user-input(6), anchor-fired(7), timer-fired(8),
+  asynch-stopped(9), interaction-completed(10), token-moved-from(11),
+  token-moved-to(12), stream-event(13), stream-playing(14), stream-stopped(15),
+  counter-trigger(16), highlight-on(17), highlight-off(18), cursor-enter(19),
+  cursor-leave(20), is-selected(21), is-deselected(22), test-event(23),
+  first-item-presented(24), last-item-presented(25), head-items(26),
+  tail-items(27), item-selected(28), item-deselected(29), entry-field-full(30),
+  engine-event(31)}
+
+EventData ::= CHOICE {
+  octetstring  OCTET STRING,
+  boolean      BOOLEAN,
+  integer      INTEGER
+}
+
+-- A.7 Program Class 
+ProgramClass ::= SET {
+  COMPONENTS OF
+    IngredientClass(WITH COMPONENTS {
+                      ...,
+                      initially-active  (FALSE)PRESENT
+                    }),
+  name                 [64]  OCTET STRING,
+  initially-available  [65]  BOOLEAN DEFAULT TRUE
+}
+
+-- A.8 Resident Program Class 
+ResidentProgramClass ::=
+  ProgramClass
+    (WITH COMPONENTS {
+       ...,
+       content-hook      ABSENT,
+       original-content  ABSENT
+     })
+
+-- A.9 Remote Program Class 
+RemoteProgramClass ::= SET {
+  COMPONENTS OF
+    ProgramClass
+      (WITH COMPONENTS {
+         ...,
+         content-hook      ABSENT,
+         original-content  ABSENT
+       }),
+  program-connection-tag  [66]  INTEGER OPTIONAL
+}
+
+-- A.10 Interchanged Program Class 
+InterchangedProgramClass ::=
+  ProgramClass(WITH COMPONENTS {
+                 ...,
+                 original-content  PRESENT
+               })
+
+-- A.11 Palette Class 
+PaletteClass ::=
+  IngredientClass
+    (WITH COMPONENTS {
+       ...,
+       content-hook      PRESENT,
+       original-content  PRESENT,
+       initially-active  (TRUE)
+     })
+
+-- A.12 Font Class 
+FontClass ::=
+  IngredientClass
+    (WITH COMPONENTS {
+       ...,
+       content-hook      PRESENT,
+       original-content  PRESENT,
+       initially-active  (TRUE)
+     })
+
+-- A.13 Cursor Shape 
+CursorShapeClass ::=
+  IngredientClass
+    (WITH COMPONENTS {
+       ...,
+       content-hook      PRESENT,
+       original-content  PRESENT,
+       initially-active  (TRUE)
+     })
+
+-- A.14 Variable Class 
+VariableClass ::= SET {
+  COMPONENTS OF
+    IngredientClass
+      (WITH COMPONENTS {
+         ...,
+         content-hook      ABSENT,
+         original-content  ABSENT,
+         initially-active  (TRUE)
+       }),
+  original-value  [67]  OriginalValue
+}
+
+OriginalValue ::= CHOICE {
+  boolean            BOOLEAN,
+  integer            INTEGER,
+  octetstring        OCTET STRING,
+  object-reference   [68]  ObjectReference,
+  content-reference  [69]  ContentReference
+}
+
+-- A.15 Boolean Variable Class 
+BooleanVariableClass ::=
+  VariableClass
+    (WITH COMPONENTS {
+       ...,
+       original-value  (WITH COMPONENTS {
+                          ...,
+                          boolean  PRESENT
+                        })
+     })
+
+-- A.16 Integer Variable Class 
+IntegerVariableClass ::=
+  VariableClass
+    (WITH COMPONENTS {
+       ...,
+       original-value  (WITH COMPONENTS {
+                          ...,
+                          integer  PRESENT
+                        })
+     })
+
+-- A.17 Octet String Variable Class 
+OctetStringVariableClass ::=
+  VariableClass
+    (WITH COMPONENTS {
+       ...,
+       original-value  (WITH COMPONENTS {
+                          ...,
+                          octetstring  PRESENT
+                        })
+     })
+
+-- A.18 Object Reference Variable Class 
+ObjectRefVariableClass ::=
+  VariableClass
+    (WITH COMPONENTS {
+       ...,
+       original-value  (WITH COMPONENTS {
+                          ...,
+                          object-reference  PRESENT
+                        })
+     })
+
+-- A.19 Content Reference Variable Class 
+ContentRefVariableClass ::=
+  VariableClass
+    (WITH COMPONENTS {
+       ...,
+       original-value  (WITH COMPONENTS {
+                          ...,
+                          content-reference  PRESENT
+                        })
+     })
+
+-- A.20 Presentable Class 
+PresentableClass ::= IngredientClass
+
+-- A.21 Token Manager Class 
+TokenManagerClass ::= SET {
+  movement-table  [70]  SEQUENCE SIZE (1..MAX) OF Movement OPTIONAL
+}
+
+Movement ::= SEQUENCE SIZE (1..MAX) OF INTEGER
+
+-- A.22 Token Group Class 
+TokenGroupClass ::= SET {
+  COMPONENTS OF
+    PresentableClass
+      (WITH COMPONENTS {
+         ...,
+         content-hook      ABSENT,
+         original-content  ABSENT
+       }),
+  COMPONENTS OF TokenManagerClass,
+  token-group-items      [71]  SEQUENCE SIZE (1..MAX) OF TokenGroupItem,
+  no-token-action-slots  [72]  SEQUENCE SIZE (1..MAX) OF ActionSlot OPTIONAL
+}
+
+TokenGroupItem ::= SEQUENCE {
+  a-visible     ObjectReference,
+  action-slots  SEQUENCE SIZE (1..MAX) OF ActionSlot OPTIONAL
+}
+
+ActionSlot ::= CHOICE {action-class  ActionClass,
+                       null          NULL
+}
+
+-- A.23 List Group Class 
+ListGroupClass ::= SET {
+  COMPONENTS OF TokenGroupClass,
+  positions           [73]  SEQUENCE SIZE (1..MAX) OF XYPosition,
+  wrap-around         [74]  BOOLEAN DEFAULT FALSE,
+  multiple-selection  [75]  BOOLEAN DEFAULT FALSE
+}
+
+-- A.24 Visible Class 
+VisibleClass ::= SET {
+  COMPONENTS OF PresentableClass,
+  original-box-size     [76]  OriginalBoxSize,
+  original-position     [77]  XYPosition DEFAULT {x-position 0, y-position 0},
+  original-palette-ref  [78]  ObjectReference OPTIONAL
+}
+
+OriginalBoxSize ::= SEQUENCE {
+  x-length  INTEGER(0..MAX),
+  y-length  INTEGER(0..MAX)
+}
+
+-- A.25 Bitmap Class 
+BitmapClass ::= SET {
+  COMPONENTS OF VisibleClass(WITH COMPONENTS {
+                               ...,
+                               original-content  PRESENT
+                             }),
+  tiling                 [79]  BOOLEAN DEFAULT FALSE,
+  original-transparency  [80]  INTEGER(0..100) DEFAULT 0
+}
+
+-- A.26 Line Art Class 
+LineArtClass ::= SET {
+  COMPONENTS OF VisibleClass(WITH COMPONENTS {
+                               ...,
+                               original-content  PRESENT
+                             }),
+  bordered-bounding-box     [81]  BOOLEAN OPTIONAL, --DEFAULT TRUE
+  original-line-width       [82]  INTEGER DEFAULT 1,
+  original-line-style
+    [83]  INTEGER {solid(1), dashed(2), dotted(3)} DEFAULT solid,
+  original-ref-line-colour  [84]  Colour OPTIONAL,
+  original-ref-fill-colour  [85]  Colour OPTIONAL
+}
+
+-- A.27 Rectangle Class 
+RectangleClass ::=
+  LineArtClass
+    (WITH COMPONENTS {
+       ...,
+       content-hook           ABSENT,
+       original-content       ABSENT,
+       bordered-bounding-box  ABSENT
+     })
+
+-- A.28 Dynamic Line Art Class 
+DynamicLineArtClass ::=
+  LineArtClass
+    (WITH COMPONENTS {
+       ...,
+       content-hook      ABSENT,
+       original-content  ABSENT
+     })
+
+-- A.29 Text Class 
+TextClass ::= SET {
+  COMPONENTS OF VisibleClass(WITH COMPONENTS {
+                               ...,
+                               original-content  PRESENT
+                             }),
+  original-font             [86]  FontBody OPTIONAL,
+  font-attributes           [43]  OCTET STRING OPTIONAL,
+  text-colour               [41]  Colour OPTIONAL,
+  background-colour         [39]  Colour OPTIONAL,
+  character-set             [38]  INTEGER OPTIONAL,
+  horizontal-justification  [87]  Justification DEFAULT start,
+  vertical-justification    [88]  Justification DEFAULT start,
+  line-orientation          [89]  LineOrientation DEFAULT horizontal,
+  start-corner              [90]  StartCorner DEFAULT upper-left,
+  text-wrapping             [91]  BOOLEAN DEFAULT FALSE
+}
+
+Justification ::= ENUMERATED {start(1), end(2), centre(3), justified(4)}
+
+LineOrientation ::= ENUMERATED {vertical(1), horizontal(2)}
+
+StartCorner ::= ENUMERATED {
+  upper-left(1), upper-right(2), lower-left(3), lower-right(4)}
+
+-- A.30 Stream Class 
+StreamClass ::= SET {
+  COMPONENTS OF
+    PresentableClass(WITH COMPONENTS {
+                       ...,
+                       original-content  PRESENT
+                     }),
+  multiplex  [92]  SEQUENCE SIZE (1..MAX) OF StreamComponent,
+  storage    [93]  Storage DEFAULT stream,
+  looping    [94]  INTEGER {infinity(0)} DEFAULT 1
+}
+
+StreamComponent ::= CHOICE {
+  audio       [95]  AudioClass,
+  video       [96]  VideoClass,
+  rtgraphics  [97]  RTGraphicsClass
+}
+
+Storage ::= ENUMERATED {memory(1), stream(2)}
+
+-- A.31 Audio Class 
+AudioClass ::= SET {
+  COMPONENTS OF
+    PresentableClass
+      (WITH COMPONENTS {
+         ...,
+         content-hook      ABSENT,
+         original-content --, --  ABSENT
+        --shared 			ABSENT--}),
+  component-tag    [98]  INTEGER,
+  original-volume  [99]  INTEGER DEFAULT 0
+}
+
+-- A.32 Video Class 
+VideoClass ::= SET {
+  COMPONENTS OF
+    VisibleClass
+      (WITH COMPONENTS {
+         ...,
+         content-hook          ABSENT,
+         original-content      ABSENT,
+         shared                ABSENT,
+         original-palette-ref  ABSENT
+       }),
+  component-tag  [98]  INTEGER,
+  termination    [100]  Termination DEFAULT disappear
+}
+
+Termination ::= ENUMERATED {freeze(1), disappear(2)}
+
+-- A.33 RTGraphics Class 
+RTGraphicsClass ::= SET {
+  COMPONENTS OF
+    VisibleClass
+      (WITH COMPONENTS {
+         ...,
+         content-hook      ABSENT,
+         original-content  ABSENT,
+         shared            ABSENT
+       }),
+  component-tag  [98]  INTEGER,
+  termination    [100]  Termination DEFAULT disappear
+}
+
+-- A.34 Interactible Class 
+InteractibleClass ::= SET {
+  engine-resp           [101]  BOOLEAN DEFAULT TRUE,
+  highlight-ref-colour  [49]  Colour OPTIONAL
+}
+
+-- A.35 Slider Class 
+SliderClass ::= SET {
+  COMPONENTS OF
+    VisibleClass
+      (WITH COMPONENTS {
+         ...,
+         content-hook      ABSENT,
+         original-content  ABSENT
+       }),
+  COMPONENTS OF InteractibleClass,
+  orientation        [102]  Orientation,
+  max-value          [103]  INTEGER,
+  min-value          [104]  INTEGER DEFAULT 1,
+  initial-value      [105]  INTEGER OPTIONAL,
+  initial-portion    [106]  INTEGER OPTIONAL,
+  step-size          [107]  INTEGER DEFAULT 1,
+  slider-style       [108]  SliderStyle DEFAULT normal,
+  slider-ref-colour  [50]  Colour OPTIONAL
+}
+
+Orientation ::= ENUMERATED {left(1), right(2), up(3), down(4)}
+
+SliderStyle ::= ENUMERATED {normal(1), thermometer(2), proportional(3)}
+
+-- A.36 Entry Field Class 
+EntryFieldClass ::= SET {
+  COMPONENTS OF TextClass,
+  COMPONENTS OF InteractibleClass,
+  input-type      [109]  InputType DEFAULT any,
+  char-list       [110]  OCTET STRING OPTIONAL,
+  obscured-input  [111]  BOOLEAN DEFAULT FALSE,
+  max-length      [112]  INTEGER DEFAULT 0
+}
+
+InputType ::= ENUMERATED {alpha(1), numeric(2), any(3), listed(4)}
+
+-- A.37 Hyper Text Class 
+HyperTextClass ::= SET {
+  COMPONENTS OF TextClass,
+  COMPONENTS OF InteractibleClass
+}
+
+-- A.38 Button Class 
+ButtonClass ::= SET {
+  COMPONENTS OF
+    VisibleClass
+      (WITH COMPONENTS {
+         ...,
+         content-hook      ABSENT,
+         original-content  ABSENT
+       }),
+  COMPONENTS OF InteractibleClass,
+  button-ref-colour  [48]  Colour OPTIONAL
+}
+
+-- A.39 Hotspot Class 
+HotspotClass ::= ButtonClass
+
+-- A.40 Push Button Class 
+PushButtonClass ::= SET {
+  COMPONENTS OF ButtonClass,
+  original-label  [113]  OCTET STRING OPTIONAL,
+  character-set   [38]  INTEGER OPTIONAL
+}
+
+-- A.41 Switch Button Class 
+SwitchButtonClass ::= SET {
+  COMPONENTS OF PushButtonClass,
+  button-style  [114]  ButtonStyle
+}
+
+ButtonStyle ::= ENUMERATED {pushbutton(1), radiobutton(2), checkbox(3)}
+
+-- A.42 Action Class 
+ActionClass ::= SEQUENCE SIZE (1..MAX) OF ElementaryAction
+
+ElementaryAction ::= CHOICE {
+  activate                  [115]  GenericObjectReference,
+  add                       [116]  Add,
+  add-item                  [117]  AddItem,
+  append                    [118]  Append,
+  bring-to-front            [119]  GenericObjectReference,
+  call                      [120]  Call,
+  call-action-slot          [121]  CallActionSlot,
+  clear                     [122]  GenericObjectReference,
+  clone                     [123]  Clone,
+  close-connection          [124]  CloseConnection,
+  deactivate                [125]  GenericObjectReference,
+  del-item                  [126]  DelItem,
+  deselect                  [127]  GenericObjectReference,
+  deselect-item             [128]  DeselectItem,
+  divide                    [129]  Divide,
+  draw-arc                  [130]  DrawArc,
+  draw-line                 [131]  DrawLine,
+  draw-oval                 [132]  DrawOval,
+  draw-polygon              [133]  DrawPolygon,
+  draw-polyline             [134]  DrawPolyline,
+  draw-rectangle            [135]  DrawRectangle,
+  draw-sector               [136]  DrawSector,
+  fork                      [137]  Fork,
+  get-availability-status   [138]  GetAvailabilityStatus,
+  get-box-size              [139]  GetBoxSize,
+  get-cell-item             [140]  GetCellItem,
+  get-cursor-position       [141]  GetCursorPosition,
+  get-engine-support        [142]  GetEngineSupport,
+  get-entry-point           [143]  GetEntryPoint,
+  get-fill-colour           [144]  GetFillColour,
+  get-first-item            [145]  GetFirstItem,
+  get-highlight-status      [146]  GetHighlightStatus,
+  get-interaction-status    [147]  GetInteractionStatus,
+  get-item-status           [148]  GetItemStatus,
+  get-label                 [149]  GetLabel,
+  get-last-anchor-fired     [150]  GetLastAnchorFired,
+  get-line-colour           [151]  GetLineColour,
+  get-line-style            [152]  GetLineStyle,
+  get-line-width            [153]  GetLineWidth,
+  get-list-item             [154]  GetListItem,
+  get-list-size             [155]  GetListSize,
+  get-overwrite-mode        [156]  GetOverwriteMode,
+  get-portion               [157]  GetPortion,
+  get-position              [158]  GetPosition,
+  get-running-status        [159]  GetRunningStatus,
+  get-selection-status      [160]  GetSelectionStatus,
+  get-slider-value          [161]  GetSliderValue,
+  get-text-content          [162]  GetTextContent,
+  get-text-data             [163]  GetTextData,
+  get-token-position        [164]  GetTokenPosition,
+  get-volume                [165]  GetVolume,
+  launch                    [166]  GenericObjectReference,
+  lock-screen               [167]  GenericObjectReference,
+  modulo                    [168]  Modulo,
+  move                      [169]  Move,
+  move-to                   [170]  MoveTo,
+  multiply                  [171]  Multiply,
+  open-connection           [172]  OpenConnection,
+  preload                   [173]  GenericObjectReference,
+  put-before                [174]  PutBefore,
+  put-behind                [175]  PutBehind,
+  quit                      [176]  GenericObjectReference,
+  read-persistent           [177]  ReadPersistent,
+  run                       [178]  GenericObjectReference,
+  scale-bitmap              [179]  ScaleBitmap,
+  scale-video               [180]  ScaleVideo,
+  scroll-items              [181]  ScrollItems,
+  select                    [182]  GenericObjectReference,
+  select-item               [183]  SelectItem,
+  send-event                [184]  SendEvent,
+  send-to-back              [185]  GenericObjectReference,
+  set-box-size              [186]  SetBoxSize,
+  set-cache-priority        [187]  SetCachePriority,
+  set-counter-end-position  [188]  SetCounterEndPosition,
+  set-counter-position      [189]  SetCounterPosition,
+  set-counter-trigger       [190]  SetCounterTrigger,
+  set-cursor-position       [191]  SetCursorPosition,
+  set-cursor-shape          [192]  SetCursorShape,
+  set-data                  [193]  SetData,
+  set-entry-point           [194]  SetEntryPoint,
+  set-fill-colour           [195]  SetFillColour,
+  set-first-item            [196]  SetFirstItem,
+  set-font-ref              [197]  SetFontRef,
+  set-highlight-status      [198]  SetHighlightStatus,
+  set-interaction-status    [199]  SetInteractionStatus,
+  set-label                 [200]  SetLabel,
+  set-line-colour           [201]  SetLineColour,
+  set-line-style            [202]  SetLineStyle,
+  set-line-width            [203]  SetLineWidth,
+  set-overwrite-mode        [204]  SetOverwriteMode,
+  set-palette-ref           [205]  SetPaletteRef,
+  set-portion               [206]  SetPortion,
+  set-position              [207]  SetPosition,
+  set-slider-value          [208]  SetSliderValue,
+  set-speed                 [209]  SetSpeed,
+  set-timer                 [210]  SetTimer,
+  set-transparency          [211]  SetTransparency,
+  set-variable              [212]  SetVariable,
+  set-volume                [213]  SetVolume,
+  spawn                     [214]  GenericObjectReference,
+  step                      [215]  Step,
+  stop                      [216]  GenericObjectReference,
+  store-persistent          [217]  StorePersistent,
+  subtract                  [218]  Subtract,
+  test-variable             [219]  TestVariable,
+  toggle                    [220]  GenericObjectReference,
+  toggle-item               [221]  ToggleItem,
+  transition-to             [222]  TransitionTo,
+  unload                    [223]  GenericObjectReference,
+  unlock-screen             [224]  GenericObjectReference
+}
+
+Add ::= SEQUENCE {target  GenericObjectReference,
+                  value   GenericInteger
+}
+
+AddItem ::= SEQUENCE {
+  target             GenericObjectReference,
+  item-index         GenericInteger,
+  visible-reference  GenericObjectReference
+}
+
+Append ::= SEQUENCE {
+  target        GenericObjectReference,
+  append-value  GenericOctetString
+}
+
+Call ::= SEQUENCE {
+  target          GenericObjectReference,
+  call-succeeded  ObjectReference,
+  parameters      SEQUENCE SIZE (1..MAX) OF Parameter OPTIONAL
+}
+
+CallActionSlot ::= SEQUENCE {
+  target  GenericObjectReference,
+  index   GenericInteger
+}
+
+Clone ::= SEQUENCE {
+  target         GenericObjectReference,
+  clone-ref-var  ObjectReference
+}
+
+CloseConnection ::= SEQUENCE {
+  target          GenericObjectReference,
+  connection-tag  GenericInteger
+}
+
+DelItem ::= SEQUENCE {
+  target             GenericObjectReference,
+  visible-reference  GenericObjectReference
+}
+
+DeselectItem ::= SEQUENCE {
+  target      GenericObjectReference,
+  item-index  GenericInteger
+}
+
+Divide ::= SEQUENCE {target  GenericObjectReference,
+                     value   GenericInteger
+}
+
+DrawArc ::= SEQUENCE {
+  target          GenericObjectReference,
+  x               GenericInteger,
+  y               GenericInteger,
+  ellipse-width   GenericInteger,
+  ellipse-height  GenericInteger,
+  start-angle     GenericInteger,
+  arc-angle       GenericInteger
+}
+
+DrawLine ::= SEQUENCE {
+  target  GenericObjectReference,
+  x1      GenericInteger,
+  y1      GenericInteger,
+  x2      GenericInteger,
+  y2      GenericInteger
+}
+
+DrawOval ::= SEQUENCE {
+  target          GenericObjectReference,
+  x               GenericInteger,
+  y               GenericInteger,
+  ellipse-width   GenericInteger,
+  ellipse-height  GenericInteger
+}
+
+DrawPolygon ::= SEQUENCE {
+  target     GenericObjectReference,
+  pointlist  SEQUENCE SIZE (1..MAX) OF Point
+}
+
+DrawPolyline ::= SEQUENCE {
+  target     GenericObjectReference,
+  pointlist  SEQUENCE SIZE (1..MAX) OF Point
+}
+
+DrawRectangle ::= SEQUENCE {
+  target  GenericObjectReference,
+  x1      GenericInteger,
+  y1      GenericInteger,
+  x2      GenericInteger,
+  y2      GenericInteger
+}
+
+DrawSector ::= SEQUENCE {
+  target          GenericObjectReference,
+  x               GenericInteger,
+  y               GenericInteger,
+  ellipse-width   GenericInteger,
+  ellipse-height  GenericInteger,
+  start-angle     GenericInteger,
+  arc-angle       GenericInteger
+}
+
+Fork ::= SEQUENCE {
+  target          GenericObjectReference,
+  fork-succeeded  ObjectReference,
+  parameters      SEQUENCE SIZE (1..MAX) OF Parameter OPTIONAL
+}
+
+GetAvailabilityStatus ::= SEQUENCE {
+  target                   GenericObjectReference,
+  availability-status-var  ObjectReference
+}
+
+GetBoxSize ::= SEQUENCE {
+  target          GenericObjectReference,
+  x-box-size-var  ObjectReference,
+  y-box-size-var  ObjectReference
+}
+
+GetCellItem ::= SEQUENCE {
+  target        GenericObjectReference,
+  cell-index    GenericInteger,
+  item-ref-var  ObjectReference
+}
+
+GetCursorPosition ::= SEQUENCE {
+  target  GenericObjectReference,
+  x-out   ObjectReference,
+  y-out   ObjectReference
+}
+
+GetEngineSupport ::= SEQUENCE {
+  target   GenericObjectReference,
+  feature  GenericOctetString,
+  answer   ObjectReference
+}
+
+GetEntryPoint ::= SEQUENCE {
+  target           GenericObjectReference,
+  entry-point-var  ObjectReference
+}
+
+GetFillColour ::= SEQUENCE {
+  target           GenericObjectReference,
+  fill-colour-var  ObjectReference
+}
+
+GetFirstItem ::= SEQUENCE {
+  target          GenericObjectReference,
+  first-item-var  ObjectReference
+}
+
+GetHighlightStatus ::= SEQUENCE {
+  target                GenericObjectReference,
+  highlight-status-var  ObjectReference
+}
+
+GetInteractionStatus ::= SEQUENCE {
+  target                  GenericObjectReference,
+  interaction-status-var  ObjectReference
+}
+
+GetItemStatus ::= SEQUENCE {
+  target           GenericObjectReference,
+  item-index       GenericInteger,
+  item-status-var  ObjectReference
+}
+
+GetLabel ::= SEQUENCE {
+  target     GenericObjectReference,
+  label-var  ObjectReference
+}
+
+GetLastAnchorFired ::= SEQUENCE {
+  target                 GenericObjectReference,
+  last-anchor-fired-var  ObjectReference
+}
+
+GetLineColour ::= SEQUENCE {
+  target           GenericObjectReference,
+  line-colour-var  ObjectReference
+}
+
+GetLineStyle ::= SEQUENCE {
+  target          GenericObjectReference,
+  line-style-var  ObjectReference
+}
+
+GetLineWidth ::= SEQUENCE {
+  target          GenericObjectReference,
+  line-width-var  ObjectReference
+}
+
+GetListItem ::= SEQUENCE {
+  target        GenericObjectReference,
+  item-index    GenericInteger,
+  item-ref-var  ObjectReference
+}
+
+GetListSize ::= SEQUENCE {
+  target    GenericObjectReference,
+  size-var  ObjectReference
+}
+
+GetOverwriteMode ::= SEQUENCE {
+  target              GenericObjectReference,
+  overwrite-mode-var  ObjectReference
+}
+
+GetPortion ::= SEQUENCE {
+  target       GenericObjectReference,
+  portion-var  ObjectReference
+}
+
+GetPosition ::= SEQUENCE {
+  target          GenericObjectReference,
+  x-position-var  ObjectReference,
+  y-position-var  ObjectReference
+}
+
+GetRunningStatus ::= SEQUENCE {
+  target              GenericObjectReference,
+  running-status-var  ObjectReference
+}
+
+GetSelectionStatus ::= SEQUENCE {
+  target                GenericObjectReference,
+  selection-status-var  ObjectReference
+}
+
+GetSliderValue ::= SEQUENCE {
+  target            GenericObjectReference,
+  slider-value-var  ObjectReference
+}
+
+GetTextContent ::= SEQUENCE {
+  target            GenericObjectReference,
+  text-content-var  ObjectReference
+}
+
+GetTextData ::= SEQUENCE {
+  target         GenericObjectReference,
+  text-data-var  ObjectReference
+}
+
+GetTokenPosition ::= SEQUENCE {
+  target              GenericObjectReference,
+  token-position-var  ObjectReference
+}
+
+GetVolume ::= SEQUENCE {
+  target      GenericObjectReference,
+  volume-var  ObjectReference
+}
+
+Modulo ::= SEQUENCE {target  GenericObjectReference,
+                     value   GenericInteger
+}
+
+Move ::= SEQUENCE {
+  target               GenericObjectReference,
+  movement-identifier  GenericInteger
+}
+
+MoveTo ::= SEQUENCE {target  GenericObjectReference,
+                     index   GenericInteger
+}
+
+Multiply ::= SEQUENCE {target  GenericObjectReference,
+                       value   GenericInteger
+}
+
+OpenConnection ::= SEQUENCE {
+  target          GenericObjectReference,
+  open-succeeded  ObjectReference,
+  protocol        GenericOctetString,
+  address         GenericOctetString,
+  connection-tag  GenericInteger
+}
+
+PutBefore ::= SEQUENCE {
+  target             GenericObjectReference,
+  reference-visible  GenericObjectReference
+}
+
+PutBehind ::= SEQUENCE {
+  target             GenericObjectReference,
+  reference-visible  GenericObjectReference
+}
+
+ReadPersistent ::= SEQUENCE {
+  target          GenericObjectReference,
+  read-succeeded  ObjectReference,
+  out-variables   SEQUENCE SIZE (1..MAX) OF ObjectReference,
+  in-file-name    GenericOctetString
+}
+
+ScaleBitmap ::= SEQUENCE {
+  target   GenericObjectReference,
+  x-scale  GenericInteger,
+  y-scale  GenericInteger
+}
+
+ScaleVideo ::= SEQUENCE {
+  target   GenericObjectReference,
+  x-scale  GenericInteger,
+  y-scale  GenericInteger
+}
+
+ScrollItems ::= SEQUENCE {
+  target           GenericObjectReference,
+  items-to-scroll  GenericInteger
+}
+
+SelectItem ::= SEQUENCE {
+  target      GenericObjectReference,
+  item-index  GenericInteger
+}
+
+SendEvent ::= SEQUENCE {
+  target                 GenericObjectReference,
+  emulated-event-source  GenericObjectReference,
+  emulated-event-type    EventType,
+  emulated-event-data    EmulatedEventData OPTIONAL
+}
+
+SetBoxSize ::= SEQUENCE {
+  target          GenericObjectReference,
+  x-new-box-size  GenericInteger,
+  y-new-box-size  GenericInteger
+}
+
+SetCachePriority ::= SEQUENCE {
+  target              GenericObjectReference,
+  new-cache-priority  GenericInteger
+}
+
+SetCounterEndPosition ::= SEQUENCE {
+  target                    GenericObjectReference,
+  new-counter-end-position  GenericInteger
+}
+
+SetCounterPosition ::= SEQUENCE {
+  target                GenericObjectReference,
+  new-counter-position  GenericInteger
+}
+
+SetCounterTrigger ::= SEQUENCE {
+  target              GenericObjectReference,
+  trigger-identifier  GenericInteger,
+  new-counter-value   GenericInteger OPTIONAL
+}
+
+SetCursorPosition ::= SEQUENCE {
+  target    GenericObjectReference,
+  x-cursor  GenericInteger,
+  y-cursor  GenericInteger
+}
+
+SetCursorShape ::= SEQUENCE {
+  target            GenericObjectReference,
+  new-cursor-shape  GenericObjectReference OPTIONAL
+}
+
+SetData ::= SEQUENCE {
+  target       GenericObjectReference,
+  new-content  NewContent
+}
+
+SetEntryPoint ::= SEQUENCE {
+  target           GenericObjectReference,
+  new-entry-point  GenericInteger
+}
+
+SetFillColour ::= SEQUENCE {
+  target           GenericObjectReference,
+  new-fill-colour  NewColour OPTIONAL
+}
+
+SetFirstItem ::= SEQUENCE {
+  target          GenericObjectReference,
+  new-first-item  GenericInteger
+}
+
+SetFontRef ::= SEQUENCE {target    GenericObjectReference,
+                         new-font  NewFont
+}
+
+SetHighlightStatus ::= SEQUENCE {
+  target                GenericObjectReference,
+  new-highlight-status  GenericBoolean
+}
+
+SetInteractionStatus ::= SEQUENCE {
+  target                  GenericObjectReference,
+  new-interaction-status  GenericBoolean
+}
+
+SetLabel ::= SEQUENCE {
+  target     GenericObjectReference,
+  new-label  GenericOctetString
+}
+
+SetLineColour ::= SEQUENCE {
+  target           GenericObjectReference,
+  new-line-colour  NewColour
+}
+
+SetLineStyle ::= SEQUENCE {
+  target          GenericObjectReference,
+  new-line-style  GenericInteger
+}
+
+SetLineWidth ::= SEQUENCE {
+  target          GenericObjectReference,
+  new-line-width  GenericInteger
+}
+
+SetOverwriteMode ::= SEQUENCE {
+  target              GenericObjectReference,
+  new-overwrite-mode  GenericBoolean
+}
+
+SetPaletteRef ::= SEQUENCE {
+  target           GenericObjectReference,
+  new-palette-ref  GenericObjectReference
+}
+
+SetPortion ::= SEQUENCE {
+  target       GenericObjectReference,
+  new-portion  GenericInteger
+}
+
+SetPosition ::= SEQUENCE {
+  target          GenericObjectReference,
+  new-x-position  GenericInteger,
+  new-y-position  GenericInteger
+}
+
+SetSliderValue ::= SEQUENCE {
+  target            GenericObjectReference,
+  new-slider-value  GenericInteger
+}
+
+SetSpeed ::= SEQUENCE {target     GenericObjectReference,
+                       new-speed  Rational
+}
+
+SetTimer ::= SEQUENCE {
+  target     GenericObjectReference,
+  timer-id   GenericInteger,
+  new-timer  NewTimer OPTIONAL
+}
+
+NewTimer ::= SEQUENCE {
+  timer-value    GenericInteger,
+  absolute-time  GenericBoolean OPTIONAL
+}
+
+SetTransparency ::= SEQUENCE {
+  target            GenericObjectReference,
+  new-transparency  GenericInteger
+}
+
+SetVariable ::= SEQUENCE {
+  target              GenericObjectReference,
+  new-variable-value  NewVariableValue
+}
+
+SetVolume ::= SEQUENCE {
+  target      GenericObjectReference,
+  new-volume  GenericInteger
+}
+
+Step ::= SEQUENCE {
+  target       GenericObjectReference,
+  nb-of-steps  GenericInteger
+}
+
+StorePersistent ::= SEQUENCE {
+  target           GenericObjectReference,
+  store-succeeded  ObjectReference,
+  in-variables     SEQUENCE SIZE (1..MAX) OF ObjectReference,
+  out-file-name    GenericOctetString
+}
+
+Subtract ::= SEQUENCE {target  GenericObjectReference,
+                       value   GenericInteger
+}
+
+TestVariable ::= SEQUENCE {
+  target            GenericObjectReference,
+  operator          GenericInteger,
+  comparison-value  ComparisonValue
+}
+
+ToggleItem ::= SEQUENCE {
+  target      GenericObjectReference,
+  item-index  GenericInteger
+}
+
+TransitionTo ::= SEQUENCE {
+  target                  GenericObjectReference,
+  connection-tag-or-null  ConnectionTagOrNull,
+  transition-effect       GenericInteger OPTIONAL
+}
+
+ConnectionTagOrNull ::= CHOICE {
+  connection-tag  GenericInteger,
+  null            NULL
+}
+
+ComparisonValue ::= CHOICE {
+  new-generic-boolean            [225]  GenericBoolean,
+  new-generic-integer            [226]  GenericInteger,
+  new-generic-octetstring        [227]  GenericOctetString,
+  new-generic-object-reference   [228]  GenericObjectReference,
+  new-generic-content-reference  [229]  GenericContentReference
+}
+
+EmulatedEventData ::= CHOICE {
+  new-generic-boolean       [225]  GenericBoolean,
+  new-generic-integer       [226]  GenericInteger,
+  new-generic-octet-string  [227]  GenericOctetString
+}
+
+NewColour ::= CHOICE {
+  new-colour-index     [230]  GenericInteger,
+  new-absolute-colour  [231]  GenericOctetString
+}
+
+NewContent ::= CHOICE {
+  new-included-content    GenericOctetString,
+  new-referenced-content  NewReferencedContent
+}
+
+NewFont ::= CHOICE {
+  new-font-name       [232]  GenericOctetString,
+  new-font-reference  [233]  GenericObjectReference
+}
+
+NewReferencedContent ::= SEQUENCE {
+  generic-content-reference   GenericContentReference,
+  new-content-size            [234]  NewContentSize,
+  new-content-cache-priority  [235]  GenericInteger OPTIONAL
+}
+
+NewContentSize ::= CHOICE {content-size  GenericInteger,
+                           null          NULL
+}
+
+NewVariableValue ::= CHOICE {
+  new-generic-integer            [226]  GenericInteger,
+  new-generic-boolean            [225]  GenericBoolean,
+  new-generic-octet-string       [227]  GenericOctetString,
+  new-generic-object-reference   [228]  GenericObjectReference,
+  new-generic-content-reference  [229]  GenericContentReference
+}
+
+Parameter ::= CHOICE {
+  new-generic-boolean            [225]  GenericBoolean,
+  new-generic-integer            [226]  GenericInteger,
+  new-generic-octetstring        [227]  GenericOctetString,
+  new-generic-object-reference   [228]  GenericObjectReference,
+  new-generic-content-reference  [229]  GenericContentReference
+}
+
+Point ::= SEQUENCE {x  GenericInteger,
+                    y  GenericInteger
+}
+
+Rational ::= SEQUENCE {
+  numerator    GenericInteger,
+  denominator  GenericInteger OPTIONAL
+}
+
+-- A.43 Referencing Objects, Contents, Values, Colour and Position 
+ObjectReference ::= CHOICE {
+  external-reference  ExternalReference,
+  internal-reference  INTEGER(1..MAX)
+}
+
+ExternalReference ::= SEQUENCE {
+  group-identifier  OCTET STRING,
+  object-number     INTEGER(0..MAX)
+}
+
+IndirectReference ::= [236]  ObjectReference
+
+ContentReference ::= OCTET STRING
+
+GenericObjectReference ::= CHOICE {
+  direct-reference    ObjectReference,
+  indirect-reference  IndirectReference
+}
+
+GenericContentReference ::= CHOICE {
+  content-reference   [69]  ContentReference,
+  indirect-reference  IndirectReference
+}
+
+GenericInteger ::= CHOICE {
+  integer             INTEGER,
+  indirect-reference  IndirectReference
+}
+
+GenericBoolean ::= CHOICE {
+  boolean             BOOLEAN,
+  indirect-reference  IndirectReference
+}
+
+GenericOctetString ::= CHOICE {
+  octetstring         OCTET STRING,
+  indirect-reference  IndirectReference
+}
+
+Colour ::= CHOICE {colour-index     INTEGER,
+                   absolute-colour  OCTET STRING
+}
+
+XYPosition ::= SEQUENCE {x-position  INTEGER,
+                         y-position  INTEGER
+}
+
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

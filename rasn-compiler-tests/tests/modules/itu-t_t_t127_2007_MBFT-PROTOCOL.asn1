@@ -1,0 +1,400 @@
+
+
+
+
+
+
+
+-- Module MBFT-PROTOCOL (T.127:08/2007)
+-- See also ITU-T T.127 (08/2007)
+-- See also the index of all ASN.1 assignments needed in this document
+
+MBFT-PROTOCOL {itu-t(0) recommendation(0) t(20) t127(127) version(0) 2 
+  asn1Modules(2) mBFT-PROTOCOL(1)} DEFINITIONS AUTOMATIC TAGS ::=
+BEGIN
+
+IMPORTS
+  ChannelID, StaticChannelID, DynamicChannelID, UserID, TokenID, StaticTokenID,
+    DynamicTokenID, Key, H221NonStandardIdentifier, NonStandardParameter,
+    TextString
+    FROM GCC-PROTOCOL;
+
+-- Export all symbols
+-- Part 1: Message Components
+Handle ::= INTEGER(0..65535) -- 16-bit value
+                  
+
+Contents-Type-Attribute ::= CHOICE {
+  -- See Annex B/ISO 8571-2 for more information
+  document-type
+    [0]  SEQUENCE {document-type-name  [1]  Document-Type-Name,
+                   parameter           [0]  ISO-8571-2-Parameters OPTIONAL
+                   -- The actual types to be used for values of the parameter
+                   -- field are defined in the document-type-name.
+                   -- Currently, only UNSTRUCTURED TEXT and UNSTRUCTURED BINARY
+                   -- are supported.}
+}
+
+Document-Type-Name ::= OBJECT IDENTIFIER
+
+ISO-8571-2-Parameters ::= SEQUENCE {
+  universal-class-number  [0]  INTEGER OPTIONAL,
+  maximum-string-length   [1]  INTEGER OPTIONAL,
+  string-significance
+    [2]  INTEGER {variable(0), fixed(1), not-significant(2)} OPTIONAL
+}
+
+Entity-Reference ::= INTEGER {
+  no-categorisation-possible(0), initiating-file-service-user(1),
+  initiating-file-protocol-machine(2),
+  service-supporting-the-file-protocol-machine(3),
+  responding-file-protocol-machine(4), responding-file-service-user(5)
+}
+
+Filename-Attribute ::= SEQUENCE OF GraphicString
+
+Access-Control-Attribute ::= CHOICE {
+  simple-password  [0]  OCTET STRING,
+  -- A simplified form of the access control syntax. Specifies 
+  -- one password for all types of access to the files and its attributes
+  actual-values    [1]  SET OF Access-Control-Element
+  -- The semantics of this attribute are described in ISO 8571-2
+}
+
+Access-Control-Element ::= SEQUENCE {
+  action-list         [0]  Access-Request,
+  concurrency-access  [1]  Concurrency-Access OPTIONAL,
+  identity            [2]  User-Identity OPTIONAL,
+  passwords           [3]  Access-Passwords OPTIONAL,
+  ...
+}
+
+Access-Request ::= BIT STRING {
+  read(0), insert(1), replace(2), extend(3), erase(4), read-attribute(5),
+  change-attribute(6), delete-file(7)}
+
+Concurrency-Access ::= SEQUENCE {
+  read              [0]  Concurrency-Key,
+  insert            [1]  Concurrency-Key,
+  replace           [2]  Concurrency-Key,
+  extend            [3]  Concurrency-Key,
+  erase             [4]  Concurrency-Key,
+  read-attribute    [5]  Concurrency-Key,
+  change-attribute  [6]  Concurrency-Key,
+  delete-file       [7]  Concurrency-Key
+}
+
+Access-Passwords ::= SEQUENCE {
+  read-password              [0]  Password,
+  insert-password            [1]  Password,
+  replace-password           [2]  Password,
+  extend-password            [3]  Password,
+  erase-password             [4]  Password,
+  read-attribute-password    [5]  Password,
+  change-attribute-password  [6]  Password,
+  delete-password            [7]  Password
+}
+
+Password ::= CHOICE {
+  graphic-string  GraphicString,
+  octet-string    OCTET STRING
+}
+
+Concurrency-Key ::= BIT STRING {
+  not-required(0), shared(1), exclusive(2), no-access(3)}
+
+Permitted-Actions-Attribute ::= BIT STRING {
+  -- Actions available
+  read(0), insert(1), replace(2), extend(3), erase(4)}
+
+Private-Use-Attribute ::= SEQUENCE {manufacturer-values  [0]  EXTERNAL OPTIONAL
+}
+
+Protocol-Version ::= BIT STRING {version-1(0)}
+
+User-Identity ::= GraphicString
+
+FileHeader ::= SEQUENCE {
+  protocol-version
+    [28]  Protocol-Version DEFAULT {version-1}, -- T.434 Version
+  filename                            [0]  Filename-Attribute OPTIONAL,
+  permitted-actions                   [1]  Permitted-Actions-Attribute OPTIONAL,
+  contents-type                       [2]  Contents-Type-Attribute OPTIONAL,
+  -- DEFAULT {UNSTRUCTURED BINARY}
+  -- not specifying this attribute implies that the data content of the file is unstructured binary
+  storage-account                     [3]  GraphicString OPTIONAL,
+  date-and-time-of-creation           [4]  GeneralizedTime OPTIONAL,
+  date-and-time-of-last-modification  [5]  GeneralizedTime OPTIONAL,
+  date-and-time-of-last-read-access   [6]  GeneralizedTime OPTIONAL,
+  -- 7 is reserved for date-and-time-of-last-attribute-modification
+  identity-of-creator                 [8]  GraphicString OPTIONAL,
+  identity-of-last-modifier           [9]  GraphicString OPTIONAL,
+  identity-of-last-reader             [10]  GraphicString OPTIONAL,
+  -- 11 is reserved for identity-of-last-attribute-modifier
+  -- 12 is reserved for file-availability
+  filesize                            [13]  INTEGER OPTIONAL,
+  future-filesize                     [14]  INTEGER OPTIONAL,
+  access-control                      [15]  Access-Control-Attribute OPTIONAL,
+  -- the use of this attribute is for further study
+  legal-qualifications                [16]  GraphicString OPTIONAL,
+  private-use                         [17]  Private-Use-Attribute OPTIONAL,
+  structure                           [18]  OBJECT IDENTIFIER OPTIONAL,
+  application-reference               [19]  SEQUENCE OF GraphicString OPTIONAL,
+  machine                             [20]  SEQUENCE OF GraphicString OPTIONAL,
+  operating-system                    [21]  OBJECT IDENTIFIER OPTIONAL,
+  recipient                           [22]  SEQUENCE OF GraphicString OPTIONAL,
+  character-set                       [23]  OBJECT IDENTIFIER OPTIONAL,
+  compression                         [24]  SEQUENCE OF GraphicString OPTIONAL,
+  -- indicates an optional compression applied to the content
+  -- octets of the file
+  environment                         [25]  SEQUENCE OF GraphicString OPTIONAL,
+  pathname                            [26]  SEQUENCE OF GraphicString OPTIONAL,
+  user-visible-string                 [29]  SEQUENCE OF GraphicString OPTIONAL,
+  ...
+}
+
+CompressionSpecifier ::= CHOICE {
+  v42bis-parameters                   V42bis-Parameter-List,
+  nonstandard-compression-parameters  SET OF NonStandardParameter,
+  ...
+}
+
+V42bis-Parameter-List ::= SEQUENCE {
+  p1  INTEGER(512..65535),
+  p2  INTEGER(6..250),
+  ...
+}
+
+MBFTPrivilege ::= ENUMERATED {
+  file-transmit-privilege(0), -- Privilege to transmit files
+  file-request-privilege(1), -- Privilege to request files
+  create-private-privilege(2), -- Privilege to create private channels
+  medium-priority-privilege(3), -- Privilege to use medium priority for
+  
+  -- file transfers
+  abort-privilege(4), -- Privilege to issue File-AbortPDUs
+  nonstandard-privilege(5), -- Privilege to use non-standard options
+  
+  -- subject to negotiation
+  ...
+  }
+
+DirectoryEntry ::= SEQUENCE {
+  subdirectory-flag  BOOLEAN, -- TRUE for sub-directory entries
+  
+  -- FALSE for file entries
+  attributes         FileHeader,
+  ...
+}
+
+ErrorType ::= ENUMERATED {
+  informative(0), -- No recovery required
+  transient-error(1), -- Current transfer failed, future transfers may be OK
+  permanent-error(2), -- Error occurs each time file transfer is performed
+  ...
+  }
+
+ErrorID ::= INTEGER {
+  no-reason(0), responder-error(1), system-shutdown(2),
+  bft-management-problem(3), bft-management-bad-account(4),
+  bft-management-security-not-passed(5), delay-may-be-encountered(6),
+  initiator-error(7), subsequent-error(8),
+  temporal-insufficiency-of-resources(9),
+  access-request-violates-VFS-security(10),
+  access-request-violates-local-security(11),
+  conflicting-parameter-values(1000), unsupported-parameter-values(1001),
+  mandatory-parameter-not-set(1002), unsupported-parameter(1003),
+  duplicated-parameter(1004), illegal-parameter-type(1005),
+  unsupported-parameter-types(1006), bft-protocol-error(1007),
+  bft-protocol-error-procedure-error(1008),
+  bft-protocol-error-functional-unit-error(1009),
+  bft-protocol-error-corruption-error(1010), lower-layer-failure(1011),
+  timeout(1013), invalid-filestore-password(2020), filename-not-found(3000),
+  initial-attributes-not-possible(3002), non-existent-file(3004),
+  file-already-exists(3005), file-cannot-be-created(3006), file-busy(3012),
+  file-not-available(3013), filename-truncated(3017),
+  initial-attributes-altered(3018), bad-account(3019),
+  ambiguous-file-specification(3024), attribute-non-existent(4000),
+  attribute-not-supported(4003), bad-attribute-name(4004),
+  bad-attribute-value(4005), attribute-partially-supported(4006),
+  bad-data-element-type(5014), operation-not-available(5015),
+  operation-not-supported(5016), operation-inconsistent(5017), bad-write(5026),
+  bad-read(5027), local-failure(5028), local-failure-filespace-exhausted(5029),
+  local-failure-data-corrupted(5030), local-failure-device-failure(5031),
+  future-filesize-exceeded(5032), future-filesize-increased(5034)}
+
+-- Part 2: PDU Messages
+File-OfferPDU ::= SEQUENCE {
+  file-header            FileHeader,
+  data-channel-id        ChannelID,
+  file-handle            Handle,
+  roster-instance        INTEGER(0..65535) OPTIONAL,
+  file-transmit-token    TokenID OPTIONAL,
+  file-request-token     TokenID OPTIONAL,
+  file-request-handle    Handle OPTIONAL,
+  mbftID                 UserID OPTIONAL,
+  compression-specifier  CompressionSpecifier OPTIONAL,
+  compressed-filesize    INTEGER OPTIONAL,
+  ack-flag               BOOLEAN, -- True if acknowledgements required
+  ...
+}
+
+File-AcceptPDU ::= SEQUENCE {file-handle  Handle,
+                             ...
+}
+
+File-RejectPDU ::= SEQUENCE {
+  file-handle  Handle,
+  reason
+    ENUMERATED {unspecified(0), file-exists(1), file-not-required(2),
+                insufficient-resources(3),
+                transfer-limit(4),-- maximum no. of concurrent file transfers exceeded--
+                compression-unsupported(5),-- algorithm identified in FileOffer not supported--
+                unable-to-join-channel(6),
+                parameter-not-supported(7),-- at least one File Header parameter is not supported--
+                ...
+                },
+  ...
+}
+
+File-RequestPDU ::= SEQUENCE {
+  file-header          FileHeader,
+  data-channel-id      ChannelID,
+  request-handle       Handle,
+  roster-instance      INTEGER(0..65535),
+  file-transmit-token  TokenID,
+  file-request-token   TokenID OPTIONAL,
+  data-offset          INTEGER,
+  ...
+}
+
+File-DenyPDU ::= SEQUENCE {
+  request-handle  Handle,
+  reason
+    ENUMERATED {unspecified(0), file-not-present(1), insufficient-privilege(2),
+                file-already-offered(3),-- File already being offered by another site--
+                ambiguous(4),-- Insufficient attributes to uniquely identify file--
+                no-channel(5),-- No data channel available to fulfil the request--
+                ...
+                },
+  ...
+}
+
+File-AbortPDU ::= SEQUENCE {
+  reason
+    ENUMERATED {unspecified(0), bandwidth-required(1), tokens-required(2),
+                channels-required(3), priority-required(4), ...
+                },
+  data-channel-id      ChannelID OPTIONAL,
+  transmitter-user-id  UserID OPTIONAL,
+  file-handle          Handle OPTIONAL,
+  ...
+}
+
+File-StartPDU ::= SEQUENCE {
+  file-header            FileHeader,
+  file-handle            Handle,
+  eof-flag               BOOLEAN, -- True if last packet of data
+  crc-flag               BOOLEAN, -- True if CRC present 
+  compression-specifier  CompressionSpecifier OPTIONAL,
+  comp-filesize          INTEGER OPTIONAL,
+  data-offset            INTEGER,
+  data                   OCTET STRING(SIZE (0..65535)),
+  crc-check              INTEGER(0..4294967295) OPTIONAL,
+  ...
+}
+
+File-DataPDU ::= SEQUENCE {
+  file-handle  Handle,
+  eof-flag     BOOLEAN, -- True if last packet of data
+  abort-flag   BOOLEAN, -- True if file transfer is being aborted
+  data         OCTET STRING(SIZE (0..65535)),
+  crc-check    INTEGER(0..4294967295) OPTIONAL,
+  ...
+}
+
+Directory-RequestPDU ::= SEQUENCE {
+  pathname  SEQUENCE OF GraphicString OPTIONAL,
+  ...
+}
+
+Directory-ResponsePDU ::= SEQUENCE {
+  result
+    ENUMERATED {unspecified(0), permission-denied(1),
+                function-not-supported(2), successful(3), ...
+                },
+  pathname        SEQUENCE OF GraphicString OPTIONAL,
+  directory-list  SEQUENCE OF DirectoryEntry,
+  ...
+}
+
+MBFT-Privilege-RequestPDU ::= SEQUENCE {
+  mbft-privilege  SET OF MBFTPrivilege,
+  ...
+}
+
+MBFT-Privilege-AssignPDU ::= SEQUENCE {
+  privilege-list
+    SET OF
+      SEQUENCE-- One for each File APE with privileges-- {mbftID
+                                                            UserID,
+                                                          mbft-privilege
+                                                            SET OF
+                                                              MBFTPrivilege,
+                                                          ...},
+  ...
+}
+
+Private-Channel-Join-InvitePDU ::= SEQUENCE {
+  control-channel-id  DynamicChannelID,
+  data-channel-id     DynamicChannelID,
+  mode                BOOLEAN, -- True if broadcast
+  ...
+}
+
+Private-Channel-Join-ResponsePDU ::= SEQUENCE {
+  control-channel-id  DynamicChannelID,
+  result
+    ENUMERATED {unspecified(0), unable-to-join-channel(1),
+                invitation-rejected(2), successful(3), ...
+                },
+  ...
+}
+
+File-ErrorPDU ::= SEQUENCE {
+  file-handle  Handle OPTIONAL,
+  error-type   ErrorType,
+  error-id     ErrorID,
+  error-text   TextString OPTIONAL,
+  ...
+}
+
+MBFT-NonStandardPDU ::= SEQUENCE {data  NonStandardParameter,
+                                  ...
+}
+
+-- Part 3: Messages sent using MCS-Send-Data or MCS-Uniform-Send-Data
+MBFTPDU ::= CHOICE {
+  file-OfferPDU                     File-OfferPDU,
+  file-AcceptPDU                    File-AcceptPDU,
+  file-RejectPDU                    File-RejectPDU,
+  file-RequestPDU                   File-RequestPDU,
+  file-DenyPDU                      File-DenyPDU,
+  file-ErrorPDU                     File-ErrorPDU,
+  file-AbortPDU                     File-AbortPDU,
+  file-StartPDU                     File-StartPDU,
+  file-DataPDU                      File-DataPDU,
+  directory-RequestPDU              Directory-RequestPDU,
+  directory-ResponsePDU             Directory-ResponsePDU,
+  mbft-Privilege-RequestPDU         MBFT-Privilege-RequestPDU,
+  mbft-Privilege-AssignPDU          MBFT-Privilege-AssignPDU,
+  mbft-NonStandardPDU               MBFT-NonStandardPDU,
+  private-Channel-Join-InvitePDU    Private-Channel-Join-InvitePDU,
+  private-Channel-Join-ResponsePDU  Private-Channel-Join-ResponsePDU,
+  ...
+}
+
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

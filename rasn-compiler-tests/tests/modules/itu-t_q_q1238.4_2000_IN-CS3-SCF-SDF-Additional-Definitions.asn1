@@ -1,0 +1,253 @@
+
+
+
+
+
+
+
+-- Module IN-CS3-SCF-SDF-Additional-Definitions (Q.1238.4:06/2000)
+-- See also ITU-T Q.1238.4 (06/2000)
+-- See also the index of all ASN.1 assignments needed in this document
+
+IN-CS3-SCF-SDF-Additional-Definitions {itu-t recommendation q 1238 modules(1)
+  in-cs3-scf-sdf-additional-definitions(28) version1(0)} DEFINITIONS ::=
+BEGIN
+
+IMPORTS
+  ds-UsefulDefinitions, operationcodes, errortypes, scf-sdf-Operations,
+    ros-InformationObjects
+    FROM IN-CS3-object-identifiers {itu-t recommendation q 1238 modules(1)
+      in-cs3-object-identifiers(0) version1(0)}
+  ERROR, OPERATION
+    FROM Remote-Operations-Information-Objects {joint-iso-itu-t
+      remote-operations(4) informationObjects(5) version1(0)}
+  directoryAbstractService, dap
+    FROM UsefulDefinitions {joint-iso-itu-t ds(5) module(1)
+      usefulDefinitions(0) 3}
+  CommonArguments, ServiceControls, EntryInformationSelection,
+    EntryInformation, AddEntryArgument, AddEntryResult, DirectoryBindArgument,
+    DirectoryBindResult, RemoveEntryArgument, RemoveEntryResult,
+    SearchArgument, SearchResult, ModifyEntryArgument, ModifyEntryResult,
+    PartialOutcomeQualifier, attributeError, directoryBindError, nameError,
+    referral, securityError, serviceError, ServiceProblem, SecurityProblem,
+    updateError
+    FROM DirectoryAbstractService {joint-iso-itu-t ds(5) module(1)
+      directoryAbstractService(2) 3}
+  id-opcode-search, id-opcode-addEntry, id-opcode-removeEntry,
+    id-opcode-modifyEntry
+    FROM DirectoryAccessProtocol {joint-iso-itu-t ds(5) module(1) dap(11) 3}
+  opcode-execute
+    FROM IN-CS3-operationcodes {itu-t recommendation q 1238 modules(1)
+      in-cs3-operationcodes(3) version1(0)}
+  executionError
+    FROM IN-CS3-errortypes {itu-t recommendation q 1238 modules(1)
+      in-cs3-errortypes(2) version1(0)}
+  execute, ExecuteArgument, ExecuteResult
+    FROM IN-CS3-SCF-SDF-Operations {itu-t recommendation q 1238 modules(1)
+      in-cs3-scf-sdf-ops-args(16) version1(0)};
+
+-- Information types and common procedures
+IN-CommonArguments ::=
+  CommonArguments
+    (WITH COMPONENTS {
+       ...,
+       serviceControls  (IN-ServiceControls),
+       aliasedRDNs      ABSENT
+     })
+
+IN-ServiceControls ::=
+  ServiceControls
+    (WITH COMPONENTS {
+       ...,
+       timeLimit           ABSENT,
+       sizeLimit           ABSENT,
+       scopeOfReferral     ABSENT,
+       attributeSizeLimit  ABSENT
+     })
+
+IN-EntryInformationSelection ::=
+  EntryInformationSelection
+    (WITH COMPONENTS {
+       ...,
+       infoTypes  (attributeTypesAndValues)
+     })
+
+IN-EntryInformation ::=
+  EntryInformation
+    (WITH COMPONENTS {
+       ...,
+       fromEntry    (TRUE),
+       information  (WITH COMPONENT 
+                       (WITH COMPONENTS {
+                          ...,
+                          attributeType  ABSENT
+                        }))OPTIONAL
+     })
+
+-- Operations, Arguments and Results definition
+-- EDITOR: execute has been imported and cannot be redefined
+--execute OPERATION ::= {
+--	ARGUMENT	IN-ExecuteArgument
+--	RESULT		ExecuteResult
+--	ERRORS 		{ attributeError | nameError |  in-ServiceError | referral | 
+--				securityError | updateError | executionError } 
+--	CODE		opcode-execute }
+-- Direction: SCF->SDF
+IN-ExecuteArgument ::=
+  ExecuteArgument
+    (WITH COMPONENTS {
+       ...,
+       toBeProtected  (WITH COMPONENTS {
+                         ...,
+                         serviceControls  (IN-ServiceControls),
+                         aliasedRDNs      ABSENT
+                       })
+     })
+
+-- Note that CommonArguments in ExecuteArgument in subclause 12.2 is replaced with IN-CommonArguments.
+in-AddEntry OPERATION ::= {
+  ARGUMENT  IN-AddEntryArgument
+  RESULT    AddEntryResult
+  ERRORS
+    {nameError | in-ServiceError | securityError | attributeError | updateError
+      | referral}
+  CODE      id-opcode-addEntry
+}
+
+-- Direction: SCF->SDF
+IN-AddEntryArgument ::=
+  AddEntryArgument
+    (WITH COMPONENTS {
+       ...,
+       toBeProtected  (WITH COMPONENTS {
+                         ...,
+                         serviceControls  (IN-ServiceControls),
+                         aliasedRDNs      ABSENT
+                       })
+     })
+
+-- Note that CommonArguments in X.511 AddEntryArgument is replaced with IN-CommonArguments.
+in-DirectoryBind OPERATION ::= {
+  ARGUMENT  DirectoryBindArgument
+  RESULT    DirectoryBindResult
+  ERRORS    {in-DirectoryBindError}
+}
+
+-- Direction: SCF->SDF
+in-ModifyEntry OPERATION ::= {
+  ARGUMENT  ModifyEntryArgument
+  RESULT    ModifyEntryResult
+  ERRORS
+    {nameError | in-ServiceError | securityError | attributeError | updateError
+      | referral}
+  CODE      id-opcode-modifyEntry
+}
+
+-- Direction: SCF->SDF
+IN-ModifyEntryArgument ::=
+  ModifyEntryArgument
+    (WITH COMPONENTS {
+       ...,
+       toBeProtected  (WITH COMPONENTS {
+                         ...,
+                         selection        (IN-EntryInformationSelection),
+                         serviceControls  (IN-ServiceControls),
+                         aliasedRDNs      ABSENT
+                       })
+     })
+
+-- Note that CommonArguments in X.511 ModifyEntryArgument is replaced with IN-CommonArguments.
+IN-ModifyEntryResult ::=
+  ModifyEntryResult
+
+-- EDITOR: ModifyEntryResult is a NULL type and cannot be followed by a WITH COMPONENTS constraint.
+--(WITH COMPONENTS {
+--	..., 
+--	information	 (WITH COMPONENTS {
+--			..., 
+--			entry	(IN-EntryInformation)})}
+-- The information is to be returned in the entry component of the information result.
+in-RemoveEntry OPERATION ::= {
+  ARGUMENT  IN-RemoveEntryArgument
+  RESULT    RemoveEntryResult
+  ERRORS
+    {nameError | in-ServiceError | securityError | updateError | referral}
+  CODE      id-opcode-removeEntry
+}
+
+-- Direction: SCF->SDF
+IN-RemoveEntryArgument ::=
+  RemoveEntryArgument
+    (WITH COMPONENTS {
+       ...,
+       toBeProtected  (WITH COMPONENTS {
+                         ...,
+                         serviceControls  (IN-ServiceControls),
+                         aliasedRDNs      ABSENT
+                       })
+     })
+
+-- Note that CommonArguments in X.511 RemoveEntryArgument is replaced with IN-CommonArguments.
+in-Search OPERATION ::= {
+  ARGUMENT  IN-SearchArgument
+  RESULT    IN-SearchResult
+  ERRORS
+    {nameError | in-ServiceError | securityError | attributeError | referral}
+  CODE      id-opcode-search
+}
+
+-- Direction: SCF->SDF
+IN-SearchArgument ::=
+  SearchArgument
+    (WITH COMPONENTS {
+       ...,
+       toBeProtected  (WITH COMPONENTS {
+                         ...,
+                         searchAliases    (TRUE),
+                         selection        (IN-EntryInformationSelection),
+                         pagedResults     ABSENT,
+                         extendedFilter   ABSENT,
+                         serviceControls  (IN-ServiceControls),
+                         aliasedRDNs      ABSENT
+                       })
+     })
+
+-- Note that CommonArguments in X.511 SearchArgument is replaced with IN-CommonArguments.
+IN-SearchResult ::=
+  SearchResult
+    (WITH COMPONENTS {
+       ...,
+       toBeProtected  (WITH COMPONENTS {
+                         ...,
+                         searchInfo  (WITH COMPONENTS {
+                                        ...,
+                                        entries                  (WITH
+                                                                    COMPONENT 
+                                                                    (IN-EntryInformation)),
+                                        partialOutcomeQualifier  (PartialOutcomeQualifier
+                                                                    (WITH COMPONENTS {
+                                                                    ...,
+                                                                    queryReference  ABSENT
+                                                                    }))OPTIONAL
+                                      })
+                       })
+     })
+
+-- Errors definition
+in-DirectoryBindError ERROR ::= directoryBindError
+
+--EDITOR: The following constraint ought to be applied to the field "&ParameterType" 
+--of the **information object** "directoryBindError":
+-- SecurityProblem 10 indicates that the supplied SPKM token was found to be valid.
+-- In reception, all the possible errors should be supported to understand a Bind error
+in-ServiceError ERROR ::=
+  serviceError
+
+--EDITOR: The following constraint ought to be applied to the field "&ParameterType" 
+--of the **information object** "serviceError":
+--invalidQueryReference should not be sent because it is linked to the use of paged results.
+-- The error code is the same as defined in X.511.
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

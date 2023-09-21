@@ -1,0 +1,471 @@
+
+
+
+
+
+
+
+
+-- Module B-ISUPMessages (Q.2763:12/1999)
+-- See also ITU-T Q.2763 (1999) Amend. 1 (12/2002)
+-- See also the index of all ASN.1 assignments needed in this document
+
+B-ISUPMessages DEFINITIONS IMPLICIT TAGS ::=
+BEGIN
+
+IMPORTS
+  MessageInstructionIndicators, ParameterInstructionIndicators
+    FROM B-ISUPInformationElementHeaders
+  AALParameters, AccessDeliveryInformation, AdditionalCallingPartyNumber,
+    AdditionalConnectedNumber, ATMCellRate, AutomaticCongestionLevel,
+    BackwardNarrowbandIWInd, BroadbandBearerCapability, BroadbandHighLayerInfo,
+    BroadbandLowLayerInfo, CallDiversionInformation, CallDiversionMayOccur,
+    CalledPartyNumber, CalledPartysIndicators, CalledPartySubaddress,
+    CallHistoryInformation, CallingPartyNumber, CallingPartysCategory,
+    CallingPartySubaddress, CauseIndicators, ChargeInd,
+    ClosedUserGroupInformation, ConnectedLineIDRequest, ConnectedNumber,
+    ConnectedSubaddress, ConnectionElementIdentifier,
+    ConsistencyCheckResultInfo, DestinationSignallingID,
+    EchoControlInformation, ForwardNarrowbandIWInd, InBandInformationInd,
+    LocationNumber, MaxEndToEndTransitDelay, MLPPPrecedence,
+    MLPPUserInformation, NarrowbandBearerCapability, NarrowbandHighLayerCompa,
+    NarrowbandLowLayerCompa, NationalInternationalCallInd, Notification,
+    OAMTrafficDescriptor, OriginalCalledNumber, OriginationISCPointCode,
+    OriginationSignallingID, ProgressIndicator, PropagationDelayCounter,
+    RedirectingNumber, RedirectionInformation, RedirectionNumber,
+    RedirectionNumberRestriction, ResourceID, SegmentationIndicator,
+    SubsequentNumber, SuspendResumeIndicators, TransitNetworkSelection,
+    UserToUserIndicators, UserToUserInformation
+    FROM B-ISUPParameters;
+
+B-ISUPMessage ::= CHOICE --	B-ISUP message type definitions
+                   {
+  acm   [6]  ACM, --	address complete
+  anm   [9]  ANM, --	answer
+  bla   [21]  BLA, --	blocking acknowledgement
+  blo   [19]  BLO, --	blocking
+  cce   [23]  CCE, --	consistency check end
+  ccea  [24]  CCEA, --	consistency check end acknowledgement
+  ccr   [5]  CCR, --	consistency check request
+  ccra  [17]  CCRA, --	consistency check request acknowledgement
+  cfn   [47]  CFN, --	confusion
+  cpg   [44]  CPG, --	call progress
+  fot   [8]  FOT, --	forward transfer
+  iaa   [10]  IAA, --	initial address acknowledgement
+  iam   [1]  IAM, --	initial address
+  iar   [11]  IAR, --	initial address reject
+  nrm   [50]  NRM, --	network resource management
+  ram   [15]  RAM, --	reset acknowledgement
+  rel   [12]  REL, --	release
+  res   [14]  RES, --	resume
+  rlc   [16]  RLC, --	release complete
+  rsm   [18]  RSM, --	reset
+  sam   [2]  SAM, --	subsequent address
+  sgm   [56]  SGM, --	segmentation (for national use)
+  sus   [13]  SUS, --	suspend
+  uba   [22]  UBA, --	unblocking acknowledgement
+  ubl   [20]  UBL, --	unblocking
+  upa   [53]  UPA, --	user part available
+  upt   [52]  UPT, --	user part test
+  usr   [45]  USR --	user-to-user information
+}
+
+ACM ::= SEQUENCE {
+  messageInstructionIndicators  MessageInstructionIndicators,
+  aCM-MessageContent            ACM-MessageContent
+}
+
+ACM-MessageContent ::= SET {
+  accessDeliveryInformation     [46]  AccessDeliveryInformation OPTIONAL,
+  backwardNarrowbandIWInd       [20]  BackwardNarrowbandIWInd OPTIONAL,
+  callDiversionInformation      [54]  CallDiversionInformation OPTIONAL,
+  callDiversionMayOccur         [38]  CallDiversionMayOccur OPTIONAL,
+  calledPartysIndicators        [23]  CalledPartysIndicators OPTIONAL,
+  causeIndicators               [18]  CauseIndicators OPTIONAL,
+  chargeInd                     [25]  ChargeInd OPTIONAL,
+  destinationSignallingID       [3]  DestinationSignallingID OPTIONAL,
+  echoControlInformation        [55]  EchoControlInformation OPTIONAL,
+  inBandInformationInd          [31]  InBandInformationInd OPTIONAL,
+  mLPPUserInformation           [73]  MLPPUserInformation OPTIONAL,
+  narrowbandBearerCapability    [29]  NarrowbandBearerCapability OPTIONAL,
+  narrowbandHighLayerCompa      [52]  NarrowbandHighLayerCompa OPTIONAL,
+  notification                  [44]  SEQUENCE OF Notification OPTIONAL,
+  progressIndicator             [53]  ProgressIndicator OPTIONAL,
+  redirectionNumber             [12]  RedirectionNumber OPTIONAL,
+  redirectionNumberRestriction  [64]  RedirectionNumberRestriction OPTIONAL,
+  segmentationIndicator         [58]  SegmentationIndicator OPTIONAL,
+  --	for national use
+  userToUserIndicators          [42]  UserToUserIndicators OPTIONAL,
+  userToUserInformation         [32]  UserToUserInformation OPTIONAL
+}
+
+ANM ::= SEQUENCE {
+  messageInstructionIndicators  MessageInstructionIndicators,
+  aNM-MessageContent            ANM-MessageContent
+}
+
+ANM-MessageContent ::= SET {
+  aALParameters                 [71]  AALParameters OPTIONAL,
+  accessDeliveryInformation     [46]  AccessDeliveryInformation OPTIONAL,
+  additionalConnectedNumber     [17]  AdditionalConnectedNumber OPTIONAL,
+  backwardNarrowbandIWInd       [20]  BackwardNarrowbandIWInd OPTIONAL,
+  broadbandLowLayerInfo         [68]  BroadbandLowLayerInfo OPTIONAL,
+  callHistoryInformation        [45]  CallHistoryInformation OPTIONAL,
+  chargeInd                     [25]  ChargeInd OPTIONAL,
+  connectedNumber               [33]  ConnectedNumber OPTIONAL,
+  connectedSubaddress           [36]  ConnectedSubaddress OPTIONAL,
+  destinationSignallingID       [3]  DestinationSignallingID OPTIONAL,
+  echoControlInformation        [55]  EchoControlInformation OPTIONAL,
+  inBandInformationInd          [31]  InBandInformationInd OPTIONAL,
+  narrowbandBearerCapability    [29]  NarrowbandBearerCapability OPTIONAL,
+  narrowbandHighLayerCompa      [52]  NarrowbandHighLayerCompa OPTIONAL,
+  narrowbandLowLayerCompa       [37]  NarrowbandLowLayerCompa OPTIONAL,
+  notification                  [44]  SEQUENCE OF Notification OPTIONAL,
+  oAMTrafficDescriptor          [72]  OAMTrafficDescriptor OPTIONAL,
+  progressIndicator             [53]  ProgressIndicator OPTIONAL,
+  redirectionNumberRestriction  [64]  RedirectionNumberRestriction OPTIONAL,
+  segmentationIndicator         [58]  SegmentationIndicator OPTIONAL,
+  --	for national use
+  userToUserIndicators          [42]  UserToUserIndicators OPTIONAL,
+  userToUserInformation         [32]  UserToUserInformation OPTIONAL
+}
+
+BLA ::= SEQUENCE {
+  messageInstructionIndicators  MessageInstructionIndicators,
+  bLA-MessageContent            BLA-MessageContent
+}
+
+BLA-MessageContent ::= SET {
+  destinationSignallingID  [3]  DestinationSignallingID OPTIONAL
+}
+
+BLO ::= SEQUENCE {
+  messageInstructionIndicators  MessageInstructionIndicators,
+  bLO-MessageContent            BLO-MessageContent
+}
+
+BLO-MessageContent ::= SET {
+  originationSignallingID  [2]  OriginationSignallingID OPTIONAL,
+  resourceID               [49]  ResourceID OPTIONAL
+}
+
+CCE ::= SEQUENCE {
+  messageInstructionIndicators  MessageInstructionIndicators,
+  cCE-MessageContent            CCE-MessageContent
+}
+
+CCE-MessageContent ::= SET {
+  destinationSignallingID  [3]  DestinationSignallingID OPTIONAL
+}
+
+CCEA ::= SEQUENCE {
+  messageInstructionIndicators  MessageInstructionIndicators,
+  cCEA-MessageContent           CCEA-MessageContent
+}
+
+CCEA-MessageContent ::= SET {
+  destinationSignallingID     [3]  DestinationSignallingID OPTIONAL,
+  consistencyCheckResultInfo  [74]  ConsistencyCheckResultInfo OPTIONAL
+}
+
+CCR ::= SEQUENCE {
+  messageInstructionIndicators  MessageInstructionIndicators,
+  cCR-MessageContent            CCR-MessageContent
+}
+
+CCR-MessageContent ::= SET {
+  originationSignallingID  [2]  OriginationSignallingID OPTIONAL,
+  resourceID               [49]  ResourceID OPTIONAL
+}
+
+CCRA ::= SEQUENCE {
+  messageInstructionIndicators  MessageInstructionIndicators,
+  cCRA-MessageContent           CCRA-MessageContent
+}
+
+CCRA-MessageContent ::= SET {
+  destinationSignallingID  [3]  DestinationSignallingID OPTIONAL,
+  originationSignallingID  [2]  OriginationSignallingID OPTIONAL
+}
+
+CFN ::= SEQUENCE {
+  messageInstructionIndicators  MessageInstructionIndicators,
+  cFN-MessageContent            CFN-MessageContent
+}
+
+CFN-MessageContent ::= SET {
+  causeIndicators          [18]  CauseIndicators OPTIONAL,
+  destinationSignallingID  [3]  DestinationSignallingID OPTIONAL
+}
+
+CPG ::= SEQUENCE {
+  messageInstructionIndicators  MessageInstructionIndicators,
+  cPG-MessageContent            CPG-MessageContent
+}
+
+CPG-MessageContent ::= SET {
+  accessDeliveryInformation     [46]  AccessDeliveryInformation OPTIONAL,
+  backwardNarrowbandIWInd       [20]  BackwardNarrowbandIWInd OPTIONAL,
+  callDiversionInformation      [54]  CallDiversionInformation OPTIONAL,
+  callDiversionMayOccur         [38]  CallDiversionMayOccur OPTIONAL,
+  calledPartysIndicators        [23]  CalledPartysIndicators OPTIONAL,
+  causeIndicators               [18]  CauseIndicators OPTIONAL,
+  chargeInd                     [25]  ChargeInd OPTIONAL,
+  destinationSignallingID       [3]  DestinationSignallingID OPTIONAL,
+  inBandInformationInd          [31]  InBandInformationInd OPTIONAL,
+  narrowbandBearerCapability    [29]  NarrowbandBearerCapability OPTIONAL,
+  narrowbandHighLayerCompa      [52]  NarrowbandHighLayerCompa OPTIONAL,
+  notification                  [44]  SEQUENCE OF Notification OPTIONAL,
+  progressIndicator             [53]  ProgressIndicator OPTIONAL,
+  redirectionNumber             [12]  RedirectionNumber OPTIONAL,
+  redirectionNumberRestriction  [64]  RedirectionNumberRestriction OPTIONAL,
+  segmentationIndicator         [58]  SegmentationIndicator OPTIONAL,
+  --	for national use
+  userToUserIndicators          [42]  UserToUserIndicators OPTIONAL,
+  userToUserInformation         [32]  UserToUserInformation OPTIONAL
+}
+
+FOT ::= SEQUENCE {
+  messageInstructionIndicators  MessageInstructionIndicators,
+  fOT-MessageContent            FOT-MessageContent
+}
+
+FOT-MessageContent ::= SET {
+  destinationSignallingID  [3]  DestinationSignallingID OPTIONAL
+}
+
+IAA ::= SEQUENCE {
+  messageInstructionIndicators  MessageInstructionIndicators,
+  iAA-MessageContent            IAA-MessageContent
+}
+
+IAA-MessageContent ::= SET {
+  connectionElementIdentifier  [6]  ConnectionElementIdentifier OPTIONAL,
+  destinationSignallingID      [3]  DestinationSignallingID OPTIONAL,
+  originationSignallingID      [2]  OriginationSignallingID OPTIONAL
+}
+
+IAM ::= SEQUENCE {
+  messageInstructionIndicators  MessageInstructionIndicators,
+  iAM-MessageContent            IAM-MessageContent
+}
+
+IAM-MessageContent ::= SET {
+  aALParameters                 [71]  AALParameters OPTIONAL,
+  additionalCallingPartyNumber  [16]  AdditionalCallingPartyNumber OPTIONAL,
+  aTMCellRate                   [8]  ATMCellRate OPTIONAL,
+  broadbandBearerCapability     [67]  BroadbandBearerCapability OPTIONAL,
+  broadbandHighLayerInfo        [72]  BroadbandHighLayerInfo OPTIONAL,
+  broadbandLowLayerInfo         [68]  BroadbandLowLayerInfo OPTIONAL,
+  calledPartyNumber             [4]  CalledPartyNumber OPTIONAL,
+  calledPartySubaddress         [21]  CalledPartySubaddress OPTIONAL,
+  callingPartyNumber            [10]  CallingPartyNumber OPTIONAL,
+  callingPartySubaddress        [22]  CallingPartySubaddress OPTIONAL,
+  callingPartysCategory         [9]  CallingPartysCategory OPTIONAL,
+  closedUserGroupInformation    [26]  ClosedUserGroupInformation OPTIONAL,
+  connectedLineIDRequest        [27]  ConnectedLineIDRequest OPTIONAL,
+  connectionElementIdentifier   [6]  ConnectionElementIdentifier OPTIONAL,
+  echoControlInformation        [55]  EchoControlInformation OPTIONAL,
+  forwardNarrowbandIWInd        [28]  ForwardNarrowbandIWInd OPTIONAL,
+  locationNumber                [63]  LocationNumber OPTIONAL,
+  maxEndToEndTransitDelay       [7]  MaxEndToEndTransitDelay OPTIONAL,
+  mLPPPrecedence                [48]  MLPPPrecedence OPTIONAL,
+  narrowbandBearerCapability    [29]  NarrowbandBearerCapability OPTIONAL,
+  narrowbandHighLayerCompa      [52]  NarrowbandHighLayerCompa OPTIONAL,
+  narrowbandLowLayerCompa       [22]  NarrowbandLowLayerCompa OPTIONAL,
+  nationalInternationalCallInd  [41]  NationalInternationalCallInd OPTIONAL,
+  notification                  [44]  SEQUENCE OF Notification OPTIONAL,
+  oAMTrafficDescriptor          [72]  OAMTrafficDescriptor OPTIONAL,
+  originalCalledNumber          [40]  OriginalCalledNumber OPTIONAL,
+  originationISCPointCode       [43]  OriginationISCPointCode OPTIONAL,
+  originationSignallingID       [2]  OriginationSignallingID OPTIONAL,
+  progressIndicator             [53]  ProgressIndicator OPTIONAL,
+  propagationDelayCounter       [46]  PropagationDelayCounter OPTIONAL,
+  redirectingNumber             [31]  RedirectingNumber OPTIONAL,
+  redirectionInformation        [19]  RedirectionInformation OPTIONAL,
+  segmentationIndicator         [58]  SegmentationIndicator OPTIONAL,
+  --	for national use
+  transitNetworkSelection       [35]  TransitNetworkSelection OPTIONAL,
+  --	for national use
+  userToUserIndicators          [42]  UserToUserIndicators OPTIONAL,
+  userToUserInformation         [32]  UserToUserInformation OPTIONAL
+}
+
+IAR ::= SEQUENCE {
+  messageInstructionIndicators  MessageInstructionIndicators,
+  iAR-MessageContent            IAR-MessageContent
+}
+
+IAR-MessageContent ::= SET {
+  automaticCongestionLevel  [39]  AutomaticCongestionLevel OPTIONAL,
+  causeIndicators           [18]  CauseIndicators OPTIONAL,
+  destinationSignallingID   [3]  DestinationSignallingID OPTIONAL
+}
+
+NRM ::= SEQUENCE {
+  messageInstructionIndicators  MessageInstructionIndicators,
+  nRM-MessageContent            NRM-MessageContent
+}
+
+NRM-MessageContent ::= SET {
+  destinationSignallingID  [3]  DestinationSignallingID OPTIONAL,
+  echoControlInformation   [55]  EchoControlInformation OPTIONAL
+}
+
+RAM ::= SEQUENCE {
+  messageInstructionIndicators  MessageInstructionIndicators,
+  rAM-MessageContent            RAM-MessageContent
+}
+
+RAM-MessageContent ::= SET {
+  destinationSignallingID  [3]  DestinationSignallingID OPTIONAL
+}
+
+REL ::= SEQUENCE {
+  messageInstructionIndicators  MessageInstructionIndicators,
+  rEL-MessageContent            REL-MessageContent
+}
+
+REL-MessageContent ::= SET {
+  accessDeliveryInformation     [46]  AccessDeliveryInformation OPTIONAL,
+  automaticCongestionLevel      [39]  AutomaticCongestionLevel OPTIONAL,
+  causeIndicators               [18]  CauseIndicators OPTIONAL,
+  destinationSignallingID       [3]  DestinationSignallingID OPTIONAL,
+  notification                  [44]  SEQUENCE OF Notification OPTIONAL,
+  progressIndicator             [53]  ProgressIndicator OPTIONAL,
+  redirectionInformation        [19]  RedirectionInformation OPTIONAL,
+  --	for national use
+  redirectionNumber             [12]  RedirectionNumber OPTIONAL,
+  --	for national use
+  redirectionNumberRestriction  [64]  RedirectionNumberRestriction OPTIONAL,
+  --	for national use
+  segmentationIndicator         [58]  SegmentationIndicator OPTIONAL,
+  --	for national use
+  userToUserIndicators          [42]  UserToUserIndicators OPTIONAL,
+  userToUserInformation         [32]  UserToUserInformation OPTIONAL
+}
+
+RES ::= SEQUENCE {
+  messageInstructionIndicators  MessageInstructionIndicators,
+  rES-MessageContent            RES-MessageContent
+}
+
+RES-MessageContent ::= SET {
+  destinationSignallingID  [3]  DestinationSignallingID OPTIONAL,
+  suspendResumeIndicators  [34]  SuspendResumeIndicators OPTIONAL
+}
+
+RLC ::= SEQUENCE {
+  messageInstructionIndicators  MessageInstructionIndicators,
+  rLC-MessageContent            RLC-MessageContent
+}
+
+RLC-MessageContent ::= SET {
+  causeIndicators          [18]  CauseIndicators OPTIONAL,
+  destinationSignallingID  [3]  DestinationSignallingID OPTIONAL
+}
+
+RSM ::= SEQUENCE {
+  messageInstructionIndicators  MessageInstructionIndicators,
+  rSM-MessageContent            RSM-MessageContent
+}
+
+RSM-MessageContent ::= SET {
+  originationSignallingID  [2]  OriginationSignallingID OPTIONAL,
+  resourceID               [49]  ResourceID OPTIONAL
+}
+
+SAM ::= SEQUENCE {
+  messageInstructionIndicators  MessageInstructionIndicators,
+  sAM-MessageContent            SAM-MessageContent
+}
+
+SAM-MessageContent ::= SET {
+  destinationSignallingID  [3]  DestinationSignallingID OPTIONAL,
+  subsequentNumber         [5]  SubsequentNumber OPTIONAL
+}
+
+SGM ::= SEQUENCE --	for national use
+         {
+  messageInstructionIndicators  MessageInstructionIndicators,
+  sGM-MessageContent            SGM-MessageContent
+}
+
+SGM-MessageContent ::= SET {
+  additionalCallingPartyNumber  [16]  AdditionalCallingPartyNumber OPTIONAL,
+  additionalConnectedNumber     [17]  AdditionalConnectedNumber OPTIONAL,
+  broadbandHighLayerInfo        [72]  BroadbandHighLayerInfo OPTIONAL,
+  broadbandLowLayerInfo         [68]  BroadbandLowLayerInfo OPTIONAL,
+  calledPartySubaddress         [21]  CalledPartySubaddress OPTIONAL,
+  callingPartySubaddress        [22]  CallingPartySubaddress OPTIONAL,
+  connectedSubaddress           [36]  ConnectedSubaddress OPTIONAL,
+  destinationSignallingID       [3]  DestinationSignallingID OPTIONAL,
+  narrowbandHighLayerCompa      [52]  NarrowbandHighLayerCompa OPTIONAL,
+  narrowbandLowLayerCompa       [10]  NarrowbandLowLayerCompa OPTIONAL,
+  notification                  [44]  SEQUENCE OF Notification OPTIONAL,
+  progressIndicator             [53]  ProgressIndicator OPTIONAL,
+  userToUserInformation         [32]  UserToUserInformation OPTIONAL
+}
+
+SUS ::= SEQUENCE {
+  messageInstructionIndicators  MessageInstructionIndicators,
+  sUS-MessageContent            SUS-MessageContent
+}
+
+SUS-MessageContent ::= SET {
+  destinationSignallingID  [3]  DestinationSignallingID OPTIONAL,
+  suspendResumeIndicators  [34]  SuspendResumeIndicators OPTIONAL
+}
+
+UBA ::= SEQUENCE {
+  messageInstructionIndicators  MessageInstructionIndicators,
+  uBA-MessageContent            UBA-MessageContent
+}
+
+UBA-MessageContent ::= SET {
+  destinationSignallingID  [3]  DestinationSignallingID OPTIONAL
+}
+
+UBL ::= SEQUENCE {
+  messageInstructionIndicators  MessageInstructionIndicators,
+  uBL-MessageContent            UBL-MessageContent
+}
+
+UBL-MessageContent ::= SET {
+  originationSignallingID  [2]  OriginationSignallingID OPTIONAL,
+  resourceID               [49]  ResourceID OPTIONAL
+}
+
+UPA ::= SEQUENCE {
+  messageInstructionIndicators  MessageInstructionIndicators,
+  uPA-MessageContent            UPA-MessageContent
+}
+
+UPA-MessageContent ::= SET {
+  destinationSignallingID  [3]  DestinationSignallingID OPTIONAL
+}
+
+UPT ::= SEQUENCE {
+  messageInstructionIndicators  MessageInstructionIndicators,
+  uPT-MessageContent            UPT-MessageContent
+}
+
+UPT-MessageContent ::= SET {
+  originationSignallingID  [2]  OriginationSignallingID OPTIONAL
+}
+
+USR ::= SEQUENCE {
+  messageInstructionIndicators  MessageInstructionIndicators,
+  uSR-MessageContent            USR-MessageContent
+}
+
+USR-MessageContent ::= SET {
+  destinationSignallingID  [3]  DestinationSignallingID OPTIONAL,
+  userToUserIndicators     [42]  UserToUserIndicators OPTIONAL,
+  userToUserInformation    [32]  UserToUserInformation OPTIONAL
+}
+
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

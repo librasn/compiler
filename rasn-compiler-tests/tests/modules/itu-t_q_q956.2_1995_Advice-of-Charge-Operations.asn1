@@ -1,0 +1,243 @@
+
+
+
+
+
+
+
+-- Module Advice-of-Charge-Operations (Q.956.2:10/1995)
+-- See also ITU-T Q.956.2 (10/1995)
+-- See also the index of all ASN.1 assignments needed in this document
+
+Advice-of-Charge-Operations {itu-t recommendation q 956 advice-of-charge(2)
+  operations-and-errors(1)} DEFINITIONS IMPLICIT TAGS ::=
+BEGIN
+
+EXPORTS
+  chargingRequest, aOCSCurrency, aOCSSpecialArr, aOCDCurrency,
+    aOCDChargingUnit, aOCECurrency, aOCEChargingUnit, noChargingInfoAvailable,
+    identificationOfCharge;
+
+IMPORTS
+  OPERATION, ERROR
+    FROM Remote-Operations-Information-Objects {joint-iso-itu-t
+      remote-operations(4) informationObjects(5) version1(0)}
+  userNotSubscribed, notAvailable, invalidCallState,
+    supplementaryServiceInteractionNotAllowed
+    FROM General-Error-List {itu-t recommendation q 950 general-error-list(1)}
+  PartyNumber
+    FROM Addressing-Data-Elements {itu-t recommendation q 932
+      addressing-data-elements(7)};
+
+chargingRequest OPERATION ::= {
+  ARGUMENT  ChargingCase
+  RESULT
+    CHOICE {aOCSCurrencyInfoList  AOCSCurrencyInfoList,
+            aOCSSpecialArrInfo    AOCSSpecialArrInfo,
+            chargingInfoFollows   NULL}
+  ERRORS
+    {userNotSubscribed | notAvailable | invalidCallState |
+      noChargingInfoAvailable}
+  CODE      local:30
+}
+
+aOCSCurrency OPERATION ::= { --  AOC-S given in currency units
+  ARGUMENT
+    CHOICE {chargeNotAvailable    NULL,
+            aOCSCurrencyInfoList  AOCSCurrencyInfoList}
+  CODE      local:31
+}
+
+aOCSSpecialArr OPERATION ::= { --  AOC-S for special charging arrangement
+  ARGUMENT
+    CHOICE {chargeNotAvailable  NULL,
+            aOCSSpecialArrInfo  AOCSSpecialArrInfo}
+  CODE      local:32
+}
+
+aOCDCurrency OPERATION ::= { --  AOC-D given in currency units
+  ARGUMENT
+    CHOICE {chargeNotAvailable  NULL,
+            aOCDCurrencyInfo    AOCDCurrencyInfo}
+  CODE      local:33
+}
+
+aOCDChargingUnit OPERATION ::= { --  AOC-D given in charging units
+  ARGUMENT
+    CHOICE {chargeNotAvailable    NULL,
+            aOCDChargingUnitInfo  AOCDChargingUnitInfo}
+  CODE      local:34
+}
+
+aOCECurrency OPERATION ::= { --  AOC-E given in currency units
+  ARGUMENT
+    CHOICE {chargeNotAvailable  NULL,
+            aOCECurrencyInfo    AOCECurrencyInfo}
+  CODE      local:35
+}
+
+aOCEChargingUnit OPERATION ::= { --  AOC-E given in charging units
+  ARGUMENT
+    CHOICE {chargeNotAvailable    NULL,
+            aOCEChargingUnitInfo  AOCEChargingUnitInfo}
+  CODE      local:36
+}
+
+identificationOfCharge OPERATION ::= {
+  ARGUMENT  ChargingAssociation
+  ERRORS
+    {userNotSubscribed | notAvailable |
+      supplementaryServiceInteractionNotAllowed}
+  CODE      local:37
+}
+
+ChargingCase ::= ENUMERATED {
+  chargingInformationAtCallSetup(0), chargingDuringACall(1),
+  chargingAtTheEndOfACall(2)}
+
+AOCSCurrencyInfoList ::= SEQUENCE SIZE (1..10) OF AOCSCurrencyInfo
+
+AOCSCurrencyInfo ::= SEQUENCE {
+  chargedItem       ChargedItem,
+  aOCSCurrencyInfo
+    CHOICE {specificCurrency
+              CHOICE {durationCurrency    [1]  DurationCurrency,
+                      flatRateCurrency    [2]  FlatRateCurrency,
+                      volumeRateCurrency  [3]  VolumeRateCurrency},
+            specialChargingCode       SpecialChargingCode,
+            freeOfCharge              [4]  NULL,
+            currencyInfoNotAvailable  [5]  NULL}
+}
+
+AOCSSpecialArrInfo ::= INTEGER(1..10)
+
+ChargedItem ::= ENUMERATED {
+  basicCommunication(0), callAttempt(1), callSetup(2), userToUserInfo(3),
+  operationOfSupplementaryServ(4)}
+
+DurationCurrency ::= SEQUENCE {
+  dCurrency      [1]  Currency,
+  dAmount        [2]  Amount,
+  dChargingType  [3]  ChargingType,
+  dTime          [4]  Time,
+  dGranularity   [5]  Time OPTIONAL
+}
+
+FlatRateCurrency ::= SEQUENCE {
+  fRCurrency  [1]  Currency,
+  fRAmount    [2]  Amount
+}
+
+VolumeRateCurrency ::= SEQUENCE {
+  vRCurrency    [1]  Currency,
+  vRAmount      [2]  Amount,
+  vRVolumeUnit  [3]  VolumeUnit
+}
+
+SpecialChargingCode ::= INTEGER(1..10)
+
+AOCDCurrencyInfo ::= CHOICE {
+  specificCurrency
+    SEQUENCE {recordedCurrency    [1]  RecordedCurrency,
+              typeOfChargingInfo  [2]  TypeOfChargingInfo,
+              aOCDBillingId       [3]  AOCDBillingId OPTIONAL},
+  freeOfCharge      [1]  NULL
+}
+
+AOCDChargingUnitInfo ::= CHOICE {
+  specificChargingUnits
+    SEQUENCE {recordedUnitsList   [1]  RecordedUnitsList,
+              typeOfChargingInfo  [2]  TypeOfChargingInfo,
+              aOCDBillingId       [3]  AOCDBillingId OPTIONAL},
+  freeOfCharge           [1]  NULL
+}
+
+RecordedCurrency ::= SEQUENCE {rCurrency  [1]  Currency,
+                               rAmount    [2]  Amount
+}
+
+RecordedUnitsList ::= SEQUENCE SIZE (1..32) OF RecordedUnits
+
+TypeOfChargingInfo ::= ENUMERATED {subTotal(0), total(1)}
+
+RecordedUnits ::= SEQUENCE {
+  recordedUnits
+    CHOICE {recordedNumberOfUnits  NumberOfUnits,
+            notAvailable           NULL},
+  recordedTypeOfUnits  TypeOfUnit OPTIONAL
+}
+
+AOCDBillingId ::= ENUMERATED {
+  normalCharging(0), reverseCharging(1), creditCardCharging(2)}
+
+AOCECurrencyInfo ::= SEQUENCE {
+  currencyInfo
+    CHOICE {specificCurrency
+              SEQUENCE {recordedCurrency  [1]  RecordedCurrency,
+                        aOCEBillingId     [2]  AOCEBillingId OPTIONAL
+            },
+            freeOfCharge      [1]  NULL},
+  chargingAssociation  ChargingAssociation OPTIONAL
+}
+
+AOCEChargingUnitInfo ::= SEQUENCE {
+  unitInfo
+    CHOICE {specificChargingUnits
+              SEQUENCE {recordedUnitsList  [1]  RecordedUnitsList,
+                        aOCEBillingId      [2]  AOCEBillingId OPTIONAL
+            },
+            freeOfCharge           [1]  NULL},
+  chargingAssociation  ChargingAssociation OPTIONAL
+}
+
+AOCEBillingId ::= ENUMERATED {
+  normalCharging(0), reverseCharging(1), creditCardCharging(2),
+  callForwardingUnconditional(3), callForwardingBusy(4),
+  callForwardingNoReply(5), callDeflection(6), callTransfer(7)}
+
+ChargingAssociation ::= CHOICE {
+  chargedNumber     [0] EXPLICIT PartyNumber,
+  chargeIdentifier  ChargeIdentifier
+}
+
+ChargeIdentifier ::= INTEGER(0..16777215)
+
+Currency ::= IA5String(SIZE (1..10))
+
+Amount ::= SEQUENCE {
+  currencyAmount  [1]  CurrencyAmount,
+  multiplier      [2]  Multiplier
+}
+
+CurrencyAmount ::= INTEGER(0..16777215)
+
+Multiplier ::= ENUMERATED {
+  oneThousandth(0), oneHundredth(1), oneTenth(2), one(3), ten(4), hundred(5),
+  thousand(6)}
+
+Time ::= SEQUENCE {
+  lengthOfTimeUnit  [1]  LengthOfTimeUnit,
+  scale             [2]  Scale
+}
+
+LengthOfTimeUnit ::= INTEGER(0..16777215)
+
+Scale ::= ENUMERATED {
+  oneHundrethSecond(0), oneTenthSecond(1), oneSecond(2), tenSeconds(3),
+  oneMinute(4), oneHour(5), twentyFourHours(6)}
+
+VolumeUnit ::= ENUMERATED {octet(0), segment(1), message(2)}
+
+TypeOfUnit ::= INTEGER(1..16)
+
+NumberOfUnits ::= INTEGER(0..16777215)
+
+ChargingType ::= ENUMERATED {continuousCharging(0), stepFunction(1)}
+
+noChargingInfoAvailable ERROR ::= {CODE  local:26
+}
+
+END --  of Advice of Charge operations
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

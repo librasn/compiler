@@ -1,0 +1,229 @@
+
+
+
+
+
+
+
+-- Module IN-SCF-SDF-Protocol (Q.1248.4:07/2001)
+-- See also ITU-T Q.1248.4 (07/2001)
+-- See also the index of all ASN.1 assignments needed in this document
+
+IN-SCF-SDF-Protocol {itu-t recommendation q 1248 modules(1)
+  in-scf-sdf-pkgs-contracts-acs(17) version1(0)} DEFINITIONS ::=
+BEGIN
+
+IMPORTS
+  ds-UsefulDefinitions, ros-InformationObjects, ros-genericPDUs, tc-Messages,
+    tc-NotationExtensions, sese-APDUs, common-classes, scf-sdf-Operations,
+    id-ac-indirectoryAccessAC, id-ac-inExtendedDirectoryAccessAC,
+    id-contract-dap, id-contract-dapExecute, id-package-dapConnection,
+    id-package-search, id-package-modify, id-package-execute,
+    id-as-indirectoryOperationsAS, id-as-inExtendedDirectoryOperationsAS,
+    id-as-indirectoryBindingAS, id-as-inSESEAS,
+    id-ac-inExtendedDirectoryAccessWith3seAC, id-ac-indirectoryAccessWith3seAC,
+    id-ac-trafficFlowControlAC, id-contract-tfc, id-package-tfcConnection,
+    id-package-tfcOperations, id-as-tfcOperationsAS, id-as-tfcBindingAS
+    FROM IN-object-identifiers {itu-t recommendation q 1248 modules(1)
+      in-object-identifiers(0) version1(0)}
+  directoryAbstractService, protocolObjectIdentifiers
+    FROM UsefulDefinitions ds-UsefulDefinitions
+  directoryBind, search, addEntry, removeEntry, modifyEntry
+    FROM DirectoryAbstractService directoryAbstractService
+  spkmThreeWay
+    FROM DirectorySecurityExchanges {joint-iso-itu-t ds(5) module(1)
+      directorySecurityExchanges(29) 1}
+  id-se-threewayse
+    FROM ProtocolObjectIdentifiers protocolObjectIdentifiers
+  CONTRACT, OPERATION-PACKAGE, CONNECTION-PACKAGE, OPERATION
+    FROM Remote-Operations-Information-Objects ros-InformationObjects
+  Bind{}, Unbind{}
+    FROM Remote-Operations-Generic-ROS-PDUs ros-genericPDUs
+  TCMessage{}
+    FROM TCAPMessages tc-Messages
+  APPLICATION-CONTEXT, dialogue-abstract-syntax
+    FROM TC-Notation-Extensions tc-NotationExtensions
+  SESEapdus{}, NoInvocationId
+    FROM SeseAPDUs sese-APDUs
+  inUnbind, EmptyReturnable
+    FROM IN-common-classes common-classes
+  execute, tfcBind, trafficFlowControl
+    FROM IN-SCF-SDF-operations scf-sdf-Operations;
+
+-- application contexts 
+-- Though new application context IDs are assigned in all the following APPLICATION-CONTEXT 
+-- definition, note that the functionality are identical to IN CS-2.
+iNdirectoryAccessAC APPLICATION-CONTEXT ::= {
+  CONTRACT                  dapContract
+  DIALOGUE MODE             structured
+  TERMINATION               basic
+  ABSTRACT SYNTAXES
+    {dialogue-abstract-syntax | inDirectoryOperationsAbstractSyntax |
+      inDirectoryBindingAbstractSyntax}
+  APPLICATION CONTEXT NAME  id-ac-indirectoryAccessAC
+}
+
+-- The iNdirectoryAccessAC is used for the realization of dapContract.
+iNdirectoryAccessWith3seAC APPLICATION-CONTEXT ::= {
+  CONTRACT                  dapContract
+  DIALOGUE MODE             structured
+  TERMINATION               basic
+  ADDITIONAL ASES           {id-se-threewayse}
+  ABSTRACT SYNTAXES
+    {dialogue-abstract-syntax | inDirectoryOperationsAbstractSyntax |
+      inDirectoryBindingAbstractSyntax | inSESEAbstractSyntax}
+  APPLICATION CONTEXT NAME  id-ac-indirectoryAccessWith3seAC
+}
+
+-- The iNdirectoryAccessWith3seAC is used for the realization of dapContract when 3-way 
+-- authentication is required.
+inExtendedDirectoryAccessAC APPLICATION-CONTEXT ::= {
+  CONTRACT                  dapExecuteContract
+  DIALOGUE MODE             structured
+  TERMINATION               basic
+  ABSTRACT SYNTAXES
+    {dialogue-abstract-syntax | inExtendedDirectoryOperationsAbstractSyntax |
+      inDirectoryBindingAbstractSyntax}
+  APPLICATION CONTEXT NAME  id-ac-inExtendedDirectoryAccessAC
+}
+
+-- The inExtendedDirectoryAccessAC is used for the realization of dapExecuteContract.
+inExtendedDirectoryAccessWith3seAC APPLICATION-CONTEXT ::= {
+  CONTRACT                  dapExecuteContract
+  DIALOGUE MODE             structured
+  TERMINATION               basic
+  ADDITIONAL ASES           {id-se-threewayse}
+  ABSTRACT SYNTAXES
+    {dialogue-abstract-syntax | inExtendedDirectoryOperationsAbstractSyntax |
+      inDirectoryBindingAbstractSyntax | inSESEAbstractSyntax}
+  APPLICATION CONTEXT NAME  id-ac-inExtendedDirectoryAccessWith3seAC
+}
+
+-- The inExtendedDirectoryAccessWith3seAC is used for the realization of dapExecuteContract when 
+-- 3-way authentication is required.
+trafficFlowControlAC APPLICATION-CONTEXT ::= {
+  CONTRACT                  tfcContract
+  DIALOGUE MODE             structured
+  TERMINATION               basic
+  ABSTRACT SYNTAXES
+    {dialogue-abstract-syntax | tfcAbstractSyntax | tfcBindingAbstractSyntax}
+  APPLICATION CONTEXT NAME  id-ac-trafficFlowControlAC
+}
+
+-- The trafficFlowControlAC is used for the realization of tfcContract.
+-- contracts 
+dapContract CONTRACT ::= {
+  CONNECTION             dapConnectionPackage
+  INITIATOR CONSUMER OF  {searchPackage | modifyPackage}
+  ID                     id-contract-dap
+}
+
+dapExecuteContract CONTRACT ::= {
+  CONNECTION             dapConnectionPackage
+  INITIATOR CONSUMER OF  {searchPackage | modifyPackage | executePackage}
+  ID                     id-contract-dapExecute
+}
+
+tfcContract CONTRACT ::= {
+  CONNECTION             tfcConnectionPackage
+  INITIATOR CONSUMER OF  {tfcPackage}
+  ID                     id-contract-tfc
+}
+
+-- packages 
+dapConnectionPackage CONNECTION-PACKAGE ::= {
+  BIND    directoryBind
+  UNBIND  inUnbind
+  ID      id-package-dapConnection
+}
+
+tfcConnectionPackage CONNECTION-PACKAGE ::= {
+  BIND    tfcBind
+  UNBIND  inUnbind
+  ID      id-package-tfcConnection
+}
+
+searchPackage OPERATION-PACKAGE ::= {
+  CONSUMER INVOKES  {search}
+  ID                id-package-search
+}
+
+modifyPackage OPERATION-PACKAGE ::= {
+  CONSUMER INVOKES  {addEntry | removeEntry | modifyEntry}
+  ID                id-package-modify
+}
+
+executePackage OPERATION-PACKAGE ::= {
+  CONSUMER INVOKES  {execute}
+  ID                id-package-execute
+}
+
+tfcPackage OPERATION-PACKAGE ::= {
+  CONSUMER INVOKES  {trafficFlowControl}
+  ID                id-package-tfcOperations
+}
+
+-- abstract-syntaxes 
+inDirectoryOperationsAbstractSyntax ABSTRACT-SYNTAX ::= {
+  BasicDAP-PDUs
+  IDENTIFIED BY  id-as-indirectoryOperationsAS
+}
+
+BasicDAP-PDUs ::= TCMessage{{DAP-Invokable}, {DAP-Returnable}}
+
+DAP-Invokable OPERATION ::= {search | addEntry | removeEntry | modifyEntry}
+
+DAP-Returnable OPERATION ::= {search | addEntry | removeEntry | modifyEntry}
+
+inExtendedDirectoryOperationsAbstractSyntax ABSTRACT-SYNTAX ::= {
+  Extended-BasicDAP-PDUs
+  IDENTIFIED BY  id-as-inExtendedDirectoryOperationsAS
+}
+
+Extended-BasicDAP-PDUs ::=
+  TCMessage{{Extended-DAP-Invokable}, {Extended-DAP-Returnable}}
+
+Extended-DAP-Invokable OPERATION ::=
+  {search | addEntry | removeEntry | modifyEntry | execute}
+
+Extended-DAP-Returnable OPERATION ::=
+  {search | addEntry | removeEntry | modifyEntry | execute}
+
+inDirectoryBindingAbstractSyntax ABSTRACT-SYNTAX ::= {
+  DAPBinding-PDUs
+  IDENTIFIED BY  id-as-indirectoryBindingAS
+}
+
+DAPBinding-PDUs ::= CHOICE {
+  bind    Bind{directoryBind},
+  unbind  Unbind{inUnbind}
+}
+
+inSESEAbstractSyntax ABSTRACT-SYNTAX ::= {
+  SESEapdus {{spkmThreeWay},
+             {NoInvocationId}}
+  IDENTIFIED BY  id-as-inSESEAS
+}
+
+tfcAbstractSyntax ABSTRACT-SYNTAX ::= {
+  BasicTFC-PDUs
+  IDENTIFIED BY  id-as-tfcOperationsAS
+}
+
+BasicTFC-PDUs ::= TCMessage{{TFC-Invokable}, {EmptyReturnable}}
+
+TFC-Invokable OPERATION ::= {trafficFlowControl}
+
+tfcBindingAbstractSyntax ABSTRACT-SYNTAX ::= {
+  TFCBinding-PDUs
+  IDENTIFIED BY  id-as-tfcBindingAS
+}
+
+TFCBinding-PDUs ::= CHOICE {bind    Bind{tfcBind},
+                            unbind  Unbind{inUnbind}
+}
+
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

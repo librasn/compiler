@@ -1,0 +1,255 @@
+
+
+
+
+
+
+
+-- Module Secure-Remote-Operations-APDUs (Q.813:06/1998)
+-- See also ITU-T Q.813 (06/1998)
+-- See also the index of all ASN.1 assignments needed in this document
+
+Secure-Remote-Operations-APDUs {itu-t recommendation q(17) q813(813) 
+  stase(1) stase-pci(0) stase-data(2)} DEFINITIONS IMPLICIT TAGS ::=
+BEGIN
+
+-- EXPORTS everything
+IMPORTS
+  OPERATION
+    FROM Remote-Operations-Information-Objects {joint-iso-itu-t
+      remote-operations(4) informationObjects(5) version1(0)}
+  ROS{}, InvokeId
+    FROM Remote-Operations-Generic-ROS-PDUs {joint-iso-itu-t
+      remote-operations(4) generic-ROS-PDUs(6) version1(0)}
+  AE-title
+    FROM ACSE-1 {joint-iso-itu-t association-control(2) modules(0) apdus(0)
+      version1(1)}
+  -- Note: DistinguishedName, formerly imported from X.501
+  -- InformationFramework, is imported from X.711 CMIP.
+  DistinguishedName
+    FROM CMIP-1 {joint-iso-itu-t ms(9) cmip(1) modules(0) protocol(3)}
+  -- the referenced module and corresponding syntax are found in Annex D/Rec. X.711 - 1998.
+  Certificate, CertificationPath
+    FROM AuthenticationFramework {joint-iso-itu-t ds(5) modules(1)
+      authenticationFramework(7) 3};
+
+SR-APDU{InvokeId:InvokeIdSet, OPERATION:Invokable, OPERATION:Returnable} ::=
+  CHOICE {
+  clear                   [0]  ROS{{InvokeIdSet}, {Invokable}, {Returnable}},
+  simpleConfidential      [1]  OCTET STRING,
+  confidential            [2]  Enciphered,
+  simplePublicEnciphered  [3]  SimplePublicEnciphered,
+  publicEnciphered        [4]  PublicEnciphered,
+  hashed                  [5]  HashedROSEpdu,
+  sealed                  [6]  SealedROSEpdu,
+  signed                  [7]  SignedROSEpdu,
+  confidentialSigned      [8]  ConfidentialSigned,
+  confidentialMAC         [9]  ConfidentialMAC,
+  confidentialSealed      [10]  ConfidentialSealed,
+  gssToken                [11]  GssToken,
+  ...
+}
+
+Enciphered ::= SEQUENCE {
+  encrypted             OCTET STRING,
+  encryptionParameters  EncryptionParameters OPTIONAL
+}
+
+-- encrypted represents the DER encoded and encrypted ROSE PDU.
+-- encryptionParameters represents the parameters used for encryption.
+SimplePublicEnciphered ::= CHOICE {
+  integers  SEQUENCE OF INTEGER,
+  string    OCTET STRING
+}
+
+-- SimplePublicEnciphered represents the DER encoded and public key encrypted ROSE PDU.
+-- A large PDU may be broken into smaller blocks, each of which may be encrypted
+-- as an INTEGER. The size of such blocks depends on the public key encryption algorithm
+-- used and on the size of the public key; specification of such block sizes is outside the
+-- scope of this Recommendation.
+-- In some cases the result of public key encryption may be represented as an OCTET STRING.
+PublicEnciphered ::= SEQUENCE {
+  publicEncrypted       SimplePublicEnciphered,
+  encryptionParameters  EncryptionParameters OPTIONAL
+}
+
+-- publicEncrypted represents the DER encoded and public key encrypted ROSE PDU.
+-- encryptionParameters represents the parameters used for encryption.
+Hash ::= SEQUENCE {
+  hashValue             OCTET STRING(SIZE (8..64)),
+  encryptionParameters  EncryptionParameters OPTIONAL
+}
+
+-- hashValue represents the message digest resulting from hashing the DER encoded 
+-- ROSE PDU.
+-- encryptionParameters represents the parameters used for the hashing algorithm.
+HashedROSEpdu ::= SEQUENCE {
+  data  OCTET STRING,
+  hash  CHOICE {hash        Hash,
+                simpleHash  OCTET STRING(SIZE (8..64))}
+}
+
+-- data represents the DER encoded ROSE PDU
+-- hash represents the hash value either as a simple OCTET STRING or the Hash 
+-- structure defined above.
+Seal ::= SEQUENCE {
+  sealValue             OCTET STRING(SIZE (8..128)),
+  encryptionParameters  EncryptionParameters OPTIONAL
+}
+
+-- sealValue represents the seal value for the DER encoded ROSE PDU.
+-- encryptionParameters represents the parameters used by the seal generation algorithm.
+SealedROSEpdu ::= SEQUENCE {
+  data  OCTET STRING,
+  seal  CHOICE {seal        Seal,
+                simpleSeal  OCTET STRING(SIZE (8..64))}
+}
+
+-- data represents the DER encoded ROSE PDU
+-- seal represents the seal value either as a simple OCTET STRING or the Seal structure 
+-- defined above.
+Signature ::= SEQUENCE {
+  signatureValue        SEQUENCE (SIZE (1..4)) OF INTEGER,
+  encryptionParameters  EncryptionParameters OPTIONAL
+}
+
+-- signatureValue represents the signature for the DER encoded ROSE PDU.
+-- encryptionParameters represents the parameters for the signature algorithm.
+SignedROSEpdu ::= SEQUENCE {
+  data       OCTET STRING,
+  signature
+    CHOICE {signature        [1]  Signature,
+            simpleSignature  [2]  SEQUENCE (SIZE (1..4)) OF INTEGER}
+}
+
+-- data contains the DER encoding of the ROSE PDU.
+-- signature represents the signature of the DER encoded ROSE PDU, either as a simple 
+-- INTEGER or the Signature structure defined above.
+ConfidentialSigned ::= SEQUENCE {
+  encrypted  OCTET STRING,
+  signature
+    CHOICE {signature        [1]  Signature,
+            simpleSignature  [2]  SEQUENCE (SIZE (1..4)) OF INTEGER}
+}
+
+-- encrypted represents the encryption of the DER encoded ROSE PDU.
+-- signature represents the signature of the DER encoded ROSE PDU in either a simple form
+-- or as Signature type defined above.
+ConfidentialMAC ::= SEQUENCE {
+  encrypted  OCTET STRING,
+  mac
+    CHOICE {mac        [1]  Hash,
+            simpleMAC  [2]  OCTET STRING(SIZE (8..64))}
+}
+
+-- encrypted represents the encryption of the DER encoded ROSE PDU.
+-- mac represents the MAC of the DER encoded ROSE PDU in either a simple form
+-- or as Hash type defined above.
+ConfidentialSealed ::= SEQUENCE {
+  encrypted  OCTET STRING,
+  seal
+    CHOICE {sealed        [1]  Seal,
+            simpleSealed  [2]  OCTET STRING(SIZE (8..64))}
+}
+
+-- encrypted represents the encryption of the DER encoded ROSE PDU.
+-- seal represents the seal of the DER encoded ROSE PDU in either a simple form
+-- or as Seal type defined above.
+EncryptionParameters ::= SET {
+  symmetricKeyId                      [0]  KeyId OPTIONAL,
+  publicKeyId                         [1]  KeyId OPTIONAL,
+  sealKeyId                           [2]  KeyId OPTIONAL,
+  signatureKeyId                      [3]  KeyId OPTIONAL,
+  passwordId                          [4]  KeyId OPTIONAL,
+  initializationVector                [5]  OCTET STRING(SIZE (8)) OPTIONAL,
+  feedBackBits                        [6]  INTEGER(1..63) OPTIONAL,
+  -- for k-bit output feedback mode or k-bit cipher feedback mode of DES
+  symmetricAlgorithm                  [7]  OBJECT IDENTIFIER OPTIONAL,
+  publicKeyAlgorithm                  [8]  OBJECT IDENTIFIER OPTIONAL,
+  signatureAlgorithm                  [9]  OBJECT IDENTIFIER OPTIONAL,
+  sealAlgorithm                       [10]  OBJECT IDENTIFIER OPTIONAL,
+  hashAlgorithm                       [11]  OBJECT IDENTIFIER OPTIONAL,
+  keyDigest                           [12]  OCTET STRING(SIZE (8..64)) OPTIONAL,
+  -- for verification of public keys
+  blockSize                           [13]  INTEGER OPTIONAL,
+  -- for square mod-n hashing
+  keySize                             [14]  INTEGER OPTIONAL,
+  -- for RSA
+  publicKey
+    [15]  SEQUENCE {modulus   INTEGER,
+                    exponent  INTEGER} OPTIONAL,
+  sequenceNumber                      [16]  INTEGER OPTIONAL,
+  timeStamp                           [17]  GeneralizedTime OPTIONAL,
+  encryptedKey
+    [18]  OCTET STRING(SIZE (64..128)) OPTIONAL,
+  -- symmetric session key, encrypted with Key-Encryption-Key
+  encryptedSymmetricKey               [19]  INTEGER OPTIONAL,
+  -- symmetric session key, encrypted with the receiver's public key
+  keyEncryptionKey
+    [20]  SEQUENCE (SIZE (1..3)) OF KeyId OPTIONAL,
+  -- one to three symmetric keys used for encrypting a session key
+  publicKeyCertificate                [21]  PublicKeyCertificate OPTIONAL,
+  -- X.509 certificate or certification path of the sender's public key with no usage restrictions
+  encryptionCertificate               [22]  EncryptionCertificate OPTIONAL,
+  -- X.509 certificate or certification path of the sender's public key used for encryption only
+  signatureCertificate                [23]  SignatureCertificate OPTIONAL,
+  -- X.509 certificate or certification path of the sender's public key used for digital signatures only 
+  encryptedAuthenticatedSymmetricKey
+    [24]  EncryptedAuthenticatedSymmetricKey OPTIONAL,
+  -- symmetric session key, encrypted with the receiver's public key and signed with sender's key
+  macAlgorithm                        [25]  OBJECT IDENTIFIER OPTIONAL,
+  ...
+}
+
+-- EncryptionParameters is an extensible type that is used as a catch-all for any
+-- parameters that may be used by any of the STs. In most applications only a small 
+-- number, if any, of the components of EncryptionParameters will be used. 
+KeyId ::= CHOICE {name    GraphicString,
+                  number  INTEGER
+}
+
+PublicKeyCertificate ::= CHOICE {
+  certificate        [0]  Certificate,
+  certificationPath  [1]  CertificationPath
+}
+
+EncryptionCertificate ::= CHOICE {
+  certificate        [0]  Certificate,
+  certificationPath  [1]  CertificationPath
+}
+
+SignatureCertificate ::= CHOICE {
+  certificate        [0]  Certificate,
+  certificationPath  [1]  CertificationPath
+}
+
+EncryptedAuthenticatedSymmetricKey ::= SEQUENCE {
+  encryptedSymmetricKey  INTEGER,
+  -- symmetric session key, encrypted with the receiver's public key
+  time                   GeneralizedTime,
+  sender                 SenderId,
+  receiver               ReceiverId,
+  signature              Signature
+  -- the signature is computed over ASCII representation of the preceding four fields with the sender's private key
+}
+
+SenderId ::= CHOICE {
+  identifier   [1]  DistinguishedName,
+  name         [2]  GraphicString,
+  application  [3]  AE-title
+}
+
+ReceiverId ::= SenderId
+
+GssToken ::= CHOICE {micToken   [1]  MicToken,
+                     wrapToken  [2]  OCTET STRING
+}
+
+MicToken ::= SEQUENCE {rosePDU  [1]  OCTET STRING,
+                       token    [2]  OCTET STRING
+}
+
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

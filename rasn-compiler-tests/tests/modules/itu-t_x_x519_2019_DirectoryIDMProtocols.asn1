@@ -1,0 +1,119 @@
+DirectoryIDMProtocols.asn (ITU-T X.519 (10/2019))-- ASN module extracted from ITU-T X.519 (10/2019)DirectoryIDMProtocols {joint-iso-itu-t ds(5) module(1) directoryIDMProtocols(31) 9}
+DEFINITIONS ::=
+BEGIN
+
+-- EXPORTS All
+/*
+The types and values defined in this module are exported for use in the other ASN.1
+modules contained within these Directory Specifications, and for the use of other
+applications which will use them to access Directory services. Other applications may
+use them for their own purposes, but this will not constrain extensions and
+modifications needed to maintain or improve the Directory service.
+*/
+IMPORTS
+
+  -- from Rec. ITU-T X.501 | ISO/IEC 9594-2
+
+  id-idm
+    FROM UsefulDefinitions
+      {joint-iso-itu-t ds(5) module(1) usefulDefinitions(0) 9} WITH SUCCESSORS
+
+  -- from Rec. ITU-T X.501 | ISO/IEC 9594-2
+
+  dSAOperationalBindingManagementBind, establishOperationalBinding,
+  modifyOperationalBinding, terminateOperationalBinding
+    FROM OperationalBindingManagement
+      {joint-iso-itu-t ds(5) module(1) opBindingManagement(18) 9} WITH SUCCESSORS
+
+  -- from Rec. ITU-T X.511 | ISO/IEC 9594-3
+
+  abandon, addEntry, administerPassword, changePassword, compare, directoryBind, list,
+  modifyDN, modifyEntry, read, removeEntry, search
+    FROM DirectoryAbstractService
+      {joint-iso-itu-t ds(5) module(1) directoryAbstractService(2) 9} WITH SUCCESSORS
+
+  -- from Rec. ITU-T X.518 | ISO/IEC 9594-4
+
+  chainedAbandon, chainedAddEntry, chainedAdministerPassword, chainedChangePassword,
+  chainedCompare, chainedLdapTransport, chainedLinkedLDAP, chainedList, chainedModifyDN,
+  chainedModifyEntry, chainedRead, chainedRemoveEntry, chainedSearch, dSABind
+    FROM DistributedOperations
+      {joint-iso-itu-t ds(5) module(1) distributedOperations(3) 9} WITH SUCCESSORS
+
+  -- from Rec. ITU-T X.519 | ISO/IEC 9594-5
+
+  IDM-PDU, IDM-PROTOCOL
+    FROM IDMProtocolSpecification
+      {joint-iso-itu-t ds(5) module(1) iDMProtocolSpecification(30) 9} WITH SUCCESSORS
+
+  -- from Rec. ITU-T X.525 | ISO/IEC 9594-9
+
+  coordinateShadowUpdate, dSAShadowBind, requestShadowUpdate, updateShadow
+    FROM DirectoryShadowAbstractService
+      {joint-iso-itu-t ds(5) module(1) directoryShadowAbstractService(15) 9}
+       WITH SUCCESSORS ;
+
+-- IDM protocols 
+
+DAP-IDM-PDUs ::= IDM-PDU{dap-ip}
+
+dap-ip IDM-PROTOCOL ::= {
+  BIND-OPERATION  directoryBind
+  OPERATIONS      {read |
+                   compare |
+                   abandon |
+                   list |
+                   search |
+                   addEntry |
+                   removeEntry |
+                   modifyEntry |
+                   modifyDN |
+                   administerPassword |
+                   changePassword }
+  ID              id-idm-dap }
+
+DSP-IDM-PDUs ::= IDM-PDU{dsp-ip}
+
+dsp-ip IDM-PROTOCOL ::= {
+  BIND-OPERATION  dSABind
+  OPERATIONS      {chainedRead |
+                   chainedCompare |
+                   chainedAbandon |
+                   chainedList |
+                   chainedSearch |
+                   chainedAddEntry |
+                   chainedRemoveEntry |
+                   chainedModifyEntry | 
+                   chainedModifyDN |
+                   chainedAdministerPassword |
+                   chainedChangePassword |
+                   chainedLdapTransport |
+                   chainedLinkedLDAP }
+  ID              id-idm-dsp }
+
+DISP-IDM-PDUs ::= IDM-PDU{disp-ip}
+
+disp-ip IDM-PROTOCOL ::= {
+  BIND-OPERATION  dSAShadowBind
+  OPERATIONS      {requestShadowUpdate |
+                   updateShadow |
+                   coordinateShadowUpdate}
+  ID              id-idm-disp }
+
+DOP-IDM-PDUs ::= IDM-PDU{dop-ip}
+
+dop-ip IDM-PROTOCOL ::= {
+  BIND-OPERATION  dSAOperationalBindingManagementBind
+  OPERATIONS      {establishOperationalBinding |
+                   modifyOperationalBinding |
+                   terminateOperationalBinding}
+  ID              id-idm-dop }
+
+-- protocol object identifiers 
+
+id-idm-dap  OBJECT IDENTIFIER ::= {id-idm 0}
+id-idm-dsp  OBJECT IDENTIFIER ::= {id-idm 1}
+id-idm-disp OBJECT IDENTIFIER ::= {id-idm 2}
+id-idm-dop  OBJECT IDENTIFIER ::= {id-idm 3}
+
+END -- DirectoryIDMProtocols

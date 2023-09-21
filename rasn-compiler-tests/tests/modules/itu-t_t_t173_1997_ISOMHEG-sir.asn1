@@ -1,0 +1,250 @@
+
+
+
+
+
+
+
+-- Module ISOMHEG-sir (T.173:07/1997)
+-- See also ITU-T T.173 (07/1997)
+-- See also the index of all ASN.1 assignments needed in this document
+
+-- Module: MHEG-SIR (sir)
+--
+-- Copyright statement:
+-- 
+--	(c) ITU, 1996. 
+--  	Permission to copy in any form is granted for use with conforming to 
+--  	MHEG-3 engines and applications as defined by this Recommendation
+--	provided this notice is included in all copies.
+ISOMHEG-sir {joint-iso-itu-t(2) mheg(19) version(1)
+  script-interchange-representation(11)} DEFINITIONS IMPLICIT TAGS ::=
+BEGIN
+
+EXPORTS InterchangedScript;
+
+InterchangedScript ::= SEQUENCE {
+  type-declarations
+    SEQUENCE (SIZE (1..max-nb-declared-types)) OF TypeDeclaration OPTIONAL,
+  constant-declarations
+    [0]  SEQUENCE (SIZE (1..max-nb-constants)) OF ConstantDeclaration OPTIONAL,
+  global-variable-declarations
+    [1]  SEQUENCE (SIZE (1..max-nb-global-variables)) OF VariableDeclaration
+      OPTIONAL,
+  external-package-declarations
+    [2]  SEQUENCE (SIZE (1..max-nb-packages)) OF PackageDeclaration OPTIONAL,
+  handler-declarations
+    [3]  SEQUENCE (SIZE (1..max-nb-messages)) OF HandlerDeclaration OPTIONAL,
+  routine-declarations
+    [4]  SEQUENCE (SIZE (1..max-nb-routines)) OF RoutineDeclaration OPTIONAL
+}
+
+TypeDeclaration ::= SEQUENCE {
+  identifier   [0]  TypeIdentifier OPTIONAL,
+  description  TypeDescription
+}
+
+TypeDescription ::= CHOICE {
+  string-description     [1]  INTEGER(0..max-size-string),
+  sequence-description   [2]  SequenceDescription,
+  array-description      [3]  ArrayDescription,
+  structure-description  [4]  StructureDescription,
+  union-description      [5]  UnionDescription
+}
+
+SequenceDescription ::= SEQUENCE {
+  bound         INTEGER(0..max-size-sequence),
+  element-type  TypeIdentifier
+}
+
+ArrayDescription ::= SEQUENCE {
+  size          INTEGER(1..max-size-array),
+  element-type  TypeIdentifier
+}
+
+UnionDescription ::= SEQUENCE (SIZE (1..max-size-union)) OF TypeIdentifier
+
+StructureDescription ::=
+  SEQUENCE (SIZE (1..max-size-structure)) OF TypeIdentifier
+
+ConstantDeclaration ::= SEQUENCE {
+  identifier  [0]  DataIdentifier OPTIONAL,
+  type        TypeIdentifier(ALL EXCEPT 0),
+  value       ConstantValue
+}
+
+ConstantValue ::= CHOICE {
+  octet            [1]  OctetValue,
+  short            [2]  ShortValue,
+  long             [3]  LongValue,
+  unsigned-short   [4]  UnsignedShortValue,
+  unsigned-long    [5]  UnsignedLongValue,
+  float            [6]  FloatValue,
+  double           [7]  DoubleValue,
+  boolean          [8]  BooleanValue,
+  character        [9]  CharacterValue,
+  data-identifier  [10]  DataIdentifier(0..<max-nb-constants),
+  string           [11]  StringValue,
+  sequence         [12]  SequenceValue,
+  array            [13]  ArrayValue,
+  structure        [14]  StructureValue,
+  union            [15]  UnionValue
+}
+
+SequenceValue ::= SEQUENCE (SIZE (0..max-size-sequence)) OF ConstantValue
+
+ArrayValue ::= SEQUENCE (SIZE (1..max-size-array)) OF ConstantValue
+
+UnionValue ::= SEQUENCE {
+  tag    INTEGER(0..<max-size-union),
+  value  ConstantValue
+}
+
+StructureValue ::= SEQUENCE (SIZE (1..max-size-structure)) OF ConstantValue
+
+VariableDeclaration ::= SEQUENCE {
+  identifier     [0]  DataIdentifier OPTIONAL,
+  type           TypeIdentifier,
+  initial-value  ConstantReference OPTIONAL
+}
+
+PackageDeclaration ::= SEQUENCE {
+  identifier  [0]  PackageIdentifier OPTIONAL,
+  name        VisibleString OPTIONAL,
+  services    SEQUENCE (SIZE (0..max-nb-services)) OF ServiceDescription,
+  exceptions  SEQUENCE (SIZE (0..max-nb-exceptions)) OF ExceptionDescription
+}
+
+ServiceDescription ::= SEQUENCE {
+  identifier              [0]  FunctionIdentifier OPTIONAL,
+  name                    VisibleString OPTIONAL,
+  calling-mode
+    ENUMERATED {synchronous(0), asynchronous(1)} DEFAULT synchronous,
+  return-value-type       TypeIdentifier DEFAULT 0,
+  parameters-description  SEQUENCE OF ServiceParameterDescription OPTIONAL
+}
+
+ServiceParameterDescription ::= SEQUENCE {
+  passing-mode  ENUMERATED {in(1), out(2), inout(3)} DEFAULT in,
+  type          TypeIdentifier(ALL EXCEPT 0)
+}
+
+ExceptionDescription ::= SEQUENCE {
+  identifier              [0]  MessageIdentifier OPTIONAL,
+  name                    VisibleString OPTIONAL,
+  parameters-description  SEQUENCE OF TypeIdentifier OPTIONAL
+}
+
+HandlerDeclaration ::= SEQUENCE {
+  message-identifier   MessageIdentifier,
+  function-identifier  FunctionIdentifier
+}
+
+RoutineDeclaration ::= SEQUENCE {
+  routine-description  RoutineDescription,
+  program-code         OCTET STRING
+}
+
+RoutineDescription ::= SEQUENCE {
+  identifier              [0]  FunctionIdentifier OPTIONAL,
+  return-value-type       TypeIdentifier DEFAULT 0,
+  parameters-description  [1]  SEQUENCE OF RoutineParameterDescription OPTIONAL,
+  local-variable-table
+    [2]  SEQUENCE (SIZE (0..max-nb-local-variables)) OF VariableDeclaration
+      OPTIONAL
+}
+
+RoutineParameterDescription ::= SEQUENCE {
+  passing-mode  ENUMERATED {value(1), reference(3)} DEFAULT value,
+  type          TypeIdentifier(ALL EXCEPT 0)
+}
+
+ConstantReference ::= CHOICE {
+  identifier  [16]  DataIdentifier,
+  value       ConstantValue
+}
+
+max-size-sequence INTEGER ::= 65535
+
+max-size-string INTEGER ::= 65535
+
+max-size-array INTEGER ::= 65536
+
+max-size-union INTEGER ::= 256
+
+max-size-structure INTEGER ::= 256
+
+max-nb-global-variables INTEGER ::= 28672
+
+max-nb-constants INTEGER ::= 4096
+
+max-nb-local-variables INTEGER ::= 256
+
+max-nb-dynamic-variables INTEGER ::= 32512
+
+max-nb-data INTEGER ::= 65536
+
+-- max-nb-constants+max-nb-global-variables+max-nb-local-variables+max-nb-dynamic-
+-- variables
+max-nb-packages INTEGER ::=
+  192
+
+max-nb-services INTEGER ::= 256
+
+max-nb-routines INTEGER ::= 4096
+
+max-nb-predef-functions INTEGER ::= 12288
+
+max-nb-functions INTEGER ::= 65536
+
+-- max-nb-packagesxmax-nb-services+max-nb-predef-functions+max-nb-routines
+max-nb-exceptions INTEGER ::=
+  256
+
+max-nb-predef-messages INTEGER ::= 16384
+
+max-nb-messages INTEGER ::= 65536
+
+-- max-nb-packagesxmax-nb-exceptions+max-nb-predef-messages
+max-nb-declared-types INTEGER ::=
+  16384
+
+max-nb-predef-types INTEGER ::= 16384
+
+max-nb-types INTEGER ::= 32768
+
+-- max-nb-predef-types + max-nb-declared-types
+OctetValue ::= OCTET STRING(SIZE (1))
+
+ShortValue ::= INTEGER(-32768..32767)
+
+LongValue ::= INTEGER(-2147483648..2147483647)
+
+UnsignedShortValue ::= INTEGER(0..65535)
+
+UnsignedLongValue ::= INTEGER(0..4294967295)
+
+FloatValue ::= REAL
+
+DoubleValue ::= REAL
+
+BooleanValue ::= BOOLEAN
+
+CharacterValue ::= BMPString(SIZE (1))
+
+StringValue ::= BMPString(SIZE (0..max-size-string))
+
+TypeIdentifier ::= INTEGER(0..<max-nb-types)
+
+DataIdentifier ::= INTEGER(0..<max-nb-data)
+
+FunctionIdentifier ::= INTEGER(0..<max-nb-functions)
+
+MessageIdentifier ::= INTEGER(0..<max-nb-messages)
+
+PackageIdentifier ::= INTEGER(0..<max-nb-packages)
+
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

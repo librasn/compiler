@@ -1,0 +1,572 @@
+
+
+
+
+
+
+
+-- Module IN-CS3-SCF-SCF-ops-args (Q.1238.6:06/2000)
+-- See also ITU-T Q.1238.6 (06/2000)
+-- See also the index of all ASN.1 assignments needed in this document
+
+-- 11	OPERATIONS AND ARGUMENTS
+--
+-- The following ASN.1 module defines the operations used on the SCF-SCF interface
+-- and the type of their arguments.
+IN-CS3-SCF-SCF-ops-args {itu-t recommendation q 1238 modules(1)
+  in-cs3-scf-scf-ops-args(22) version1(0)} DEFINITIONS IMPLICIT TAGS ::=
+BEGIN
+
+IMPORTS
+  OPERATION, Code, ERROR
+    FROM Remote-Operations-Information-Objects {joint-iso-itu-t
+      remote-operations(4) informationObjects(5) version1(0)}
+  SecurityParameters, Credentials, SecurityProblem, securityError
+    FROM DirectoryAbstractService {joint-iso-itu-t ds(5) module(1)
+      directoryAbstractService(2) 3}
+  OPTIONALLY-PROTECTED{}
+    FROM EnhancedSecurity {joint-iso-itu-t ds(5) module(1) enhancedSecurity(28)
+      1}
+  AccessPointInformation
+    FROM DistributedOperations {joint-iso-itu-t ds(5) module(1)
+      distributedOperations(3) 3}
+  opcode-establishChargingRecord, opcode-handlingInformationRequest,
+    opcode-handlingInformationResult, opcode-networkCapability,
+    opcode-notificationProvided, opcode-confirmedNotificationProvided,
+    opcode-provideUserInformation, opcode-confirmedReportChargingInformation,
+    opcode-reportChargingInformation, opcode-requestNotification,
+    opcode-runUserScript, opcode-transferSTSI
+    FROM IN-CS3-operationcodes {itu-t recommendation q 1238 modules(1)
+      in-cs3-operationcodes(3) version1(0)}
+  EXTENSION, COMMON-BOUNDS, SupportedExtensions
+    FROM IN-CS3-common-classes {itu-t recommendation q 1238 modules(1)
+      in-cs3-common-classes(5) version1(0)}
+  ActivableServices, BearerCapability{}, CalledPartyNumber{},
+    CallingPartyNumber{}, CallingPartyBusinessGroupID, CallingPartysCategory,
+    Carrier{}, Cause{}, CorrelationID{}, Digits{}, DisplayInformation{},
+    HighLayerCompatibility, LocationNumber{}, OriginalCalledPartyID{},
+    RedirectingPartyID{}, RedirectionInformation, ScfID{}, TraceInformation{},
+    TraceItem{}
+    FROM IN-CS3-SSF-SCF-datatypes {itu-t recommendation q 1238 modules(1)
+      in-cs3-ssf-scf-datatypes(6) version1(0)}
+  AccountNumber, Actions, AgreementID, BearerCapabilities, CallConditions{},
+    CallIdentifier, CallRecord{}, ChargingParameters{},
+    ChargingSignallingInformation, CollectedInfo, ConsumedCreditAction,
+    ErrorTreatment, FreeContainer{}, HighLayerCompatibilities, InfoType,
+    InformationToSend{},
+    -- EDITOR: please check that the intended "InformationToSend"
+    --is the one from IN-CS3-SCF-SCF-datatypes, with one parameter b2,
+    --and not the one from IN-CS3-SCF-SRF-datatypes, with two parameters b2 and b3
+    InvokableService, Meters, Notification, NotificationInformation{},
+    ReceivedInformation{}, ReportConditionEvent{},
+    ReportDestinationInformation{}, RequestedNotifications{}, RequestedType,
+    RoutingAddress{}, ScfAddress{}, SSIInfo{}, SupplementaryServices,
+    UserCredit{}, UserInteractionModes, UserToConnect
+    FROM IN-CS3-SCF-SCF-datatypes {itu-t recommendation q 1238 modules(1)
+      in-cs3-scf-scf-datatypes(20) version1(0)}
+  Extensions{}, Integer4
+    FROM IN-CS3-common-datatypes {itu-t recommendation q 1238 modules(1)
+      in-cs3-common-datatypes(1) version1(0)}
+  Language
+    FROM IN-CS3-SCF-SRF-datatypes {itu-t recommendation q 1238 modules(1)
+      in-cs3-scf-srf-datatypes(10) version1(0)}
+  improperCallerResponse, missingCustomerRecord, missingParameter,
+    parameterOutOfRange, scfTaskRefused, systemFailure,
+    unexpectedComponentSequence, unexpectedDataValue, unexpectedParameter,
+    chainingRefused, scfBindFailure, scfReferral
+    FROM IN-CS3-errortypes {itu-t recommendation q 1238 modules(1)
+      in-cs3-errortypes(2) version1(0)}
+  errcode-scfReferral, errcode-scfTaskRefused
+    FROM IN-CS3-errorcodes {itu-t recommendation q 1238 modules(1)
+      in-cs3-errorcodes(4) version1(0)}
+  AuthenticationLevel
+    FROM BasicAccessControl {joint-iso-itu-t ds(5) module(1)
+      basicAccessControl(24) 3}
+  SPKM-ERROR
+    FROM SpkmGssTokens {iso(1) identified-organization(3) dod(6) internet(1)
+      security(5) mechanisms(5) spkm(1) spkmGssTokens(10)}
+  activityTest
+    FROM IN-CS3-SSF-SCF-ops-args {itu-t recommendation q 1238 modules(1)
+      in-cs3-ssf-scf-ops-args(8) version1(0)}
+  ros-InformationObjects, ds-UsefulDefinitions, operationcodes, common-classes,
+    guls-Notation, guls-SecurityTransformations, errortypes, errorcodes,
+    scf-scf-Protocol, ssf-scf-Operations, spkmGssTokens, ssf-scf-classes,
+    scf-srf-datatypes, scf-scf-classes, common-datatypes, ssf-scf-datatypes,
+    scf-scf-datatypes, scf-srf-classes
+    FROM IN-CS3-object-identifiers {itu-t recommendation q 1238 modules(1)
+      in-cs3-object-identifiers(0) version1(0)}
+  directoryAbstractService, enhancedSecurity, distributedOperations,
+    basicAccessControl
+    FROM UsefulDefinitions {joint-iso-itu-t ds(5) module(1)
+      usefulDefinitions(0) 3}
+  SCF-SCF-BOUNDS, scfqop
+    FROM IN-CS3-SCF-SCF-Classes {itu-t recommendation q 1238 modules(1)
+      in-cs3-scf-scf-classes(21) version1(0)}
+  SCF-SSF-BOUNDS
+    FROM IN-CS3-SSF-SCF-Classes {itu-t recommendation q 1238 modules(1)
+      in-cs3-ssf-scf-classes(7) version1(0)}
+  SCF-SRF-BOUNDS
+    FROM IN-CS3-SCF-SRF-classes {itu-t recommendation q 1238 modules(1)
+      in-cs3-scf-srf-classes(11) version1(0)};
+
+-- The following short-hand notation is used to refer to ASN.1 Information Object Classes
+-- representing parameters bounds.
+B1 ::=
+  COMMON-BOUNDS -- defined in Recommendation Q.1238.1
+
+B2 ::= SCF-SSF-BOUNDS -- defined in Recommendation Q.1238.2
+
+B3 ::= SCF-SRF-BOUNDS -- defined in Recommendation Q.1238.3
+
+B6 ::= SCF-SCF-BOUNDS -- defined in this Recommendation Q.1238.6
+
+establishChargingRecord{B1:b1, B2:b2, B6:b6} OPERATION ::= {
+  ARGUMENT         EstablishChargingRecordArg {b1,
+                                               b2,
+                                               b6}
+  RESULT
+    NULL --EDITOR: &ResultType has to be defined because it is used in scfChained
+  RETURN RESULT    FALSE
+  ERRORS
+    {missingCustomerRecord | missingParameter | systemFailure | scfTaskRefused
+      | unexpectedComponentSequence | unexpectedDataValue | unexpectedParameter
+      | parameterOutOfRange | securityError}
+  ALWAYS RESPONDS  FALSE
+  CODE             opcode-establishChargingRecord
+}
+
+-- Direction: supporting SCF -> controlling SCF, Timer Tecr
+-- This operation is used by the supporting SCF to give charging information to the controlling
+-- SCF so that it can charge the user (on-line charging included).
+EstablishChargingRecordArg{B1:b1, B2:b2, B6:b6} ::=
+  OPTIONALLY-PROTECTED
+    {SEQUENCE {userCredit             [0]  UserCredit{b6} OPTIONAL,
+               chargingParameters     ChargingParameters{b6} OPTIONAL,
+               reportExpected         [2]  BOOLEAN DEFAULT TRUE,
+               securityParameters     [3]  SecurityParameters OPTIONAL,
+               extensions             [4]  Extensions{b1} OPTIONAL,
+               consumedCreditAction   [10]  ConsumedCreditAction OPTIONAL,
+               newChargingParameters  [11]  ChargingParameters{b6} OPTIONAL,
+               reportAddress
+                 [12]  ReportDestinationInformation{b2} OPTIONAL,
+               container              [13]  FreeContainer{b6} OPTIONAL,
+               correlationId          [14]  CorrelationID{b2} OPTIONAL,
+               acksequence            [15]  INTEGER(1..127) OPTIONAL,
+               splitcharge
+                 [16]  ChargingSignallingInformation OPTIONAL,
+               reportCondition        [22]  ReportConditionEvent{b6} OPTIONAL,
+               ...}, scfqop.&scfArgumentQOP}
+
+handlingInformationRequest{B1:b1, B2:b2, B6:b6} OPERATION ::= {
+  ARGUMENT         HandlingInformationRequestArg {b1,
+                                                  b2,
+                                                  b6}
+  RESULT
+    NULL --EDITOR: &ResultType has to be defined because it is used in scfChained
+  RETURN RESULT    FALSE
+  ERRORS
+    {missingCustomerRecord | missingParameter | parameterOutOfRange |
+      systemFailure | scfTaskRefused | unexpectedComponentSequence |
+      unexpectedDataValue | unexpectedParameter | securityError | scfReferral}
+  LINKED           {handlingInformationResult  {b1,
+                                                b2}}
+  ALWAYS RESPONDS  FALSE
+  CODE             opcode-handlingInformationRequest
+}
+
+-- Direction: controlling SCF -> supporting SCF , Timer Thi
+-- This operation  may be used to request the  execution of an SLP
+-- in the assisting SCF and to provide to the  assisting
+-- SCF the context of the call so that it can help the  controlling SCF in the processing of the call.
+HandlingInformationRequestArg{B1:b1, B2:b2, B6:b6} ::=
+  OPTIONALLY-PROTECTED
+    {SEQUENCE {requestedType                [0]  RequestedType OPTIONAL,
+               callingPartyNumber
+                 [1]  CallingPartyNumber{b2} OPTIONAL,
+               locationNumber               [2]  LocationNumber{b2} OPTIONAL,
+               calledPartyNumber            [3]  CalledPartyNumber{b2} OPTIONAL,
+               dialledDigits                [4]  Digits{b2} OPTIONAL,
+               redirectingPartyID
+                 [5]  RedirectingPartyID{b2} OPTIONAL,
+               redirectionInformation
+                 [6]  RedirectionInformation OPTIONAL,
+               originalCalledPartyID
+                 [7]  OriginalCalledPartyID{b2} OPTIONAL,
+               numberOfCallAttempts
+                 [8]  INTEGER(1..b6.&ub-nbCall) OPTIONAL,
+               highLayerCompatibility
+                 [9]  HighLayerCompatibility OPTIONAL,
+               bearerCapability             [10]  BearerCapability{b2} OPTIONAL,
+               invokedSupplementaryService  [11]  InvokableService OPTIONAL,
+               activeSupplementaryServices  [12]  ActivableServices OPTIONAL,
+               causeOfLastCallFailure       [13]  Cause{b2} OPTIONAL,
+               userInteractionModes         [14]  UserInteractionModes OPTIONAL,
+               callingPartysCategory
+                 [15]  CallingPartysCategory OPTIONAL,
+               callingPartyBusinessGroupID
+                 [16]  CallingPartyBusinessGroupID OPTIONAL,
+               securityParameters           [17]  SecurityParameters OPTIONAL,
+               extensions                   [18]  Extensions{b1} OPTIONAL,
+               ...}, scfqop.&scfArgumentQOP}
+
+handlingInformationResult{B1:b1, B2:b2} OPERATION ::= {
+  ARGUMENT         HandlingInformationResultArg {b1,
+                                                 b2}
+  RESULT
+    NULL --EDITOR: &ResultType has to be defined because it is used in scfChained
+  RETURN RESULT    FALSE
+  ERRORS
+    {missingParameter | systemFailure | parameterOutOfRange |
+      unexpectedComponentSequence | unexpectedDataValue | unexpectedParameter |
+      securityError}
+  ALWAYS RESPONDS  FALSE
+  CODE             opcode-handlingInformationResult
+}
+
+-- Direction: supporting SCF ->controlling SCF, Timer Thir
+-- This operation is used by the assisting SCF to send information to the controlling SCF on how
+-- to process the call and to give conditions under which it should be involved in the call
+-- processing.
+HandlingInformationResultArg{B1:b1, B2:b2} ::=
+  OPTIONALLY-PROTECTED
+    {SEQUENCE {routingAddress          [0]  RoutingAddress{b2} OPTIONAL,
+               highLayerCompatibility  [1]  HighLayerCompatibility OPTIONAL,
+               supplementaryServices   [2]  SupplementaryServices OPTIONAL,
+               preferredLanguage       [3]  Language OPTIONAL,
+               carrier                 [4]  Carrier{b2} OPTIONAL,
+               callingPartyNumber      [5]  CallingPartyNumber{b2} OPTIONAL,
+               originalCalledPartyID   [6]  OriginalCalledPartyID{b2} OPTIONAL,
+               redirectingPartyID      [7]  RedirectingPartyID{b2} OPTIONAL,
+               redirectionInformation  [8]  RedirectionInformation OPTIONAL,
+               callingPartysCategory   [9]  CallingPartysCategory OPTIONAL,
+               securityParameters      [10]  SecurityParameters OPTIONAL,
+               extensions              [11]  Extensions{b1} OPTIONAL,
+               ...}, scfqop.&scfArgumentQOP}
+
+networkCapability{B1:b1} OPERATION ::= {
+  ARGUMENT  NetworkCapabilityArg {b1}
+  RESULT    NetworkCapabilityResultArg {b1}
+  ERRORS
+    {missingCustomerRecord | missingParameter | systemFailure | scfTaskRefused
+      | unexpectedComponentSequence | unexpectedDataValue | unexpectedParameter
+      | securityError}
+  CODE      opcode-networkCapability
+}
+
+-- Direction: supporting SCF ->controlling  SCF, Timer Tnc
+-- This operation is used by the supporting SCF to request from the controlling SCF which type of
+-- service it supports.
+NetworkCapabilityArg{B1:b1} ::=
+  OPTIONALLY-PROTECTED
+    {SEQUENCE {bearerCapabilities        [0]  BearerCapabilities OPTIONAL,
+               highLayerCompatibilities  [1]  HighLayerCompatibilities OPTIONAL,
+               supplementaryServices     [2]  SupplementaryServices OPTIONAL,
+               securityParameters        [3]  SecurityParameters OPTIONAL,
+               extensions                [4]  Extensions{b1} OPTIONAL,
+               ...}, scfqop.&scfArgumentQOP}
+
+NetworkCapabilityResultArg{B1:b1} ::=
+  OPTIONALLY-PROTECTED
+    {SEQUENCE {bearerCapabilities        [0]  BearerCapabilities OPTIONAL,
+               highLayerCompatibilities  [1]  HighLayerCompatibilities OPTIONAL,
+               supplementaryServices     [2]  SupplementaryServices OPTIONAL,
+               securityParameters        [3]  SecurityParameters OPTIONAL,
+               extensions                [4]  Extensions{b1} OPTIONAL,
+               ...}, scfqop.&scfArgumentQOP}
+
+notificationProvided{B1:b1, B2:b2} OPERATION ::= {
+  ARGUMENT         NotificationProvidedArg {b1,
+                                            b2}
+  RESULT
+    NULL --EDITOR: &ResultType has to be defined because it is used in scfChained
+  RETURN RESULT    FALSE
+  ERRORS
+    {missingParameter | systemFailure | scfTaskRefused |
+      unexpectedComponentSequence | unexpectedDataValue | unexpectedParameter |
+      missingCustomerRecord | parameterOutOfRange | securityError}
+  ALWAYS RESPONDS  FALSE
+  CODE             opcode-notificationProvided
+}
+
+-- Direction: controlling SCF -> supporting SCF, Timer Tnp
+-- This operation is used by the controlling SCF to request assistance from the assisting SCF
+-- under specific call conditions specified prior to the sending of the operation or to notify the
+-- outcome of a previous intervention of the assisting SCF.
+NotificationProvidedArg{B1:b1, B2:b2} ::=
+  OPTIONALLY-PROTECTED
+    {SEQUENCE {notification             [0]  Notification,
+               notificationInformation
+                 [1]  NotificationInformation{b2} OPTIONAL,
+               securityParameters       [2]  SecurityParameters OPTIONAL,
+               extensions               [3]  Extensions{b1} OPTIONAL,
+               ...}, scfqop.&scfArgumentQOP}
+
+confirmedNotificationProvided{B1:b1, B2:b2} OPERATION ::=
+  makeConfirm{notificationProvided{b1, b2},
+             opcode-confirmedNotificationProvided}
+
+--Direction: controlling SCF ->supporting SCF , Timer Thinc
+provideUserInformation{B1:b1, B2:b2, B6:b6} OPERATION ::= {
+  ARGUMENT  ProvideUserInformationArg {b1,
+                                       b2}
+  RESULT    ProvideUserInformationResultArg {b1,
+                                             b6}
+  ERRORS
+    {missingCustomerRecord | missingParameter | systemFailure | scfTaskRefused
+      | unexpectedComponentSequence | unexpectedDataValue | unexpectedParameter
+      | improperCallerResponse | parameterOutOfRange | securityError}
+  CODE      opcode-provideUserInformation
+}
+
+-- Direction: supporting SCF -> controlling SCF, Timer Tpui
+-- This operation is used by the supporting SCF to request information from the user that can be
+-- interrogated by the controlling SCF.
+ProvideUserInformationArg{B1:b1, B2:b2} ::=
+  OPTIONALLY-PROTECTED
+    {SEQUENCE {constraints             [0]  CollectedInfo,
+               infoToSend              [1]  InformationToSend{b2},
+               errorInfo               [2]  InformationToSend{b2} OPTIONAL,
+               typeOfRequestedInfo     [3]  InfoType DEFAULT numericString,
+               numberOfAllowedRetries  [4]  INTEGER(0..127) DEFAULT 0,
+               actions                 [5]  Actions OPTIONAL,
+               preferredLanguage       [6]  Language OPTIONAL,
+               securityParameters      [7]  SecurityParameters OPTIONAL,
+               extensions              [8]  Extensions{b1} OPTIONAL,
+               srfAddress              [10]  CalledPartyNumber{b2} OPTIONAL,
+               userToConnect           [11]  UserToConnect OPTIONAL,
+               ...}, scfqop.&scfArgumentQOP}
+
+ProvideUserInformationResultArg{B1:b1, B6:b6} ::=
+  OPTIONALLY-PROTECTED
+    {SEQUENCE {userInformation     [0]  ReceivedInformation{b6},
+               securityParameters  [1]  SecurityParameters OPTIONAL,
+               extensions          [2]  Extensions{b1} OPTIONAL
+    }, scfqop.&scfArgumentQOP}
+
+reportChargingInformation{B1:b1, B2:b2, B6:b6} OPERATION ::= {
+  ARGUMENT         ReportChargingInformationArg {b1,
+                                                 b2,
+                                                 b6}
+  RESULT
+    NULL --EDITOR: &ResultType has to be defined because it is used in scfChained
+  RETURN RESULT    FALSE
+  ERRORS
+    {missingCustomerRecord | missingParameter | systemFailure | scfTaskRefused
+      | unexpectedComponentSequence | unexpectedDataValue | unexpectedParameter
+      | parameterOutOfRange | securityError}
+  ALWAYS RESPONDS  FALSE
+  CODE             opcode-reportChargingInformation
+}
+
+-- Direction: controlling SCF -> supporting SCF, Timer Trci
+-- This operation is used to give to the assisting network charging information collected by the
+-- controlling network.
+ReportChargingInformationArg{B1:b1, B2:b2, B6:b6} ::=
+  OPTIONALLY-PROTECTED
+    {SEQUENCE {callRecord                  [0]  CallRecord{b2} OPTIONAL,
+               remainingUserCredit         [1]  UserCredit{b6} OPTIONAL,
+               uniqueCallID                [2]  CallIdentifier OPTIONAL,
+               accountNumber               [3]  AccountNumber OPTIONAL,
+               securityParameters          [4]  SecurityParameters OPTIONAL,
+               countersValues              [5]  Meters OPTIONAL,
+               resetOfTransmittedCounters  [6]  BOOLEAN DEFAULT FALSE,
+               container                   [13]  FreeContainer{b6} OPTIONAL,
+               correlationId               [14]  CorrelationID{b2} OPTIONAL,
+               acksequence                 [15]  INTEGER OPTIONAL,
+               ...,
+               ...,
+               extensions                  [31]  Extensions{b1} OPTIONAL
+    }, scfqop.&scfArgumentQOP}
+
+confirmedReportChargingInformation{B1:b1, B2:b2, B6:b6} OPERATION ::=
+  makeConfirm{reportChargingInformation{b1, b2, b6},
+             opcode-confirmedReportChargingInformation}
+
+--Direction: controlling SCF -> supporting SCF , Timer Trcic
+requestNotification{B1:b1, B2:b2} OPERATION ::= {
+  ARGUMENT         RequestNotificationArg {b1,
+                                           b2}
+  RESULT
+    NULL --EDITOR: &ResultType has to be defined because it is used in scfChained
+  RETURN RESULT    FALSE
+  ERRORS
+    {missingParameter | systemFailure | scfTaskRefused |
+      unexpectedComponentSequence | unexpectedDataValue | unexpectedParameter |
+      parameterOutOfRange | missingCustomerRecord | securityError}
+  ALWAYS RESPONDS  FALSE
+  CODE             opcode-requestNotification
+}
+
+-- Direction: supporting SCF  -> controlling SCF, Timer Trn
+-- This operation is used by the supporting SCF to request notification from the controlling SCF
+-- under specific call conditions specified by this operation.
+RequestNotificationArg{B1:b1, B2:b2} ::=
+  OPTIONALLY-PROTECTED
+    {SEQUENCE {requestedNotifications  [0]  RequestedNotifications{b2},
+               securityParameters      [1]  SecurityParameters OPTIONAL,
+               ...,
+               ...,
+               extensions              [30]  Extensions{b1} OPTIONAL
+    }, scfqop.&scfArgumentQOP}
+
+runUserScript{B1:b1, B2:b2, B6:b6} OPERATION ::= {
+  ARGUMENT  RunUserScriptArg {b1,
+                              b2}
+  RESULT    RunUserScriptResultArg {b1,
+                                    b6}
+  ERRORS
+    {missingCustomerRecord | missingParameter | systemFailure | scfTaskRefused
+      | unexpectedComponentSequence | unexpectedDataValue | unexpectedParameter
+      | improperCallerResponse | parameterOutOfRange | securityError}
+  CODE      opcode-runUserScript
+}
+
+-- Direction: supporting SCF  -> controlling SCF, Timer Trus
+-- This operation is used by the supporting SCF to request the controlling SCF
+-- to run a user interaction script.
+RunUserScriptArg{B1:b1, B2:b2} ::=
+  OPTIONALLY-PROTECTED
+    {SEQUENCE {srfAddress          [0]  CalledPartyNumber{b2},
+               correlationID       [1]  CorrelationID{b2},
+               scfID               [2]  ScfID{b2},
+               userToConnect       [3]  UserToConnect OPTIONAL,
+               securityParameters  [7]  SecurityParameters OPTIONAL,
+               ...,
+               ...,
+               extensions          [30]  Extensions{b1} OPTIONAL
+    }, scfqop.&scfArgumentQOP}
+
+RunUserScriptResultArg{B1:b1, B6:b6} ::=
+  ProvideUserInformationResultArg{b1, b6}
+
+scfBind{B6:b6} OPERATION ::= {
+  ARGUMENT  SCFBindArgument {b6}
+  OPTIONAL  TRUE
+  RESULT    SCFBindResult {b6}
+  ERRORS    {scfBindFailure}
+}
+
+-- Direction: controlling SCF -> supporting SCF , Timer Tbi
+-- This operation is used to establish a relationship between two SCFs. It is sent by the controlling SCF each time it
+-- needs to initiate communications with another (supporting) SCF.
+SCFBindArgument{B6:b6} ::= SEQUENCE {
+  agreementID            [0]  AgreementID,
+  originatingScfAddress  [1]  ScfAddress{b6} OPTIONAL,
+  -- absent in a chained operation request which crosses
+  -- an international internetworking boundary
+  credentials            [2]  Credentials OPTIONAL
+}
+
+SCFBindResult{B6:b6} ::= SEQUENCE {
+  respondingScfAddress  [0]  ScfAddress{b6} OPTIONAL,
+  -- absent in a chained operation request which crosses
+  -- an international internetworking boundary
+  returnedCredentials   [1]  Credentials OPTIONAL
+}
+
+transferSTSI{B1:b1, B6:b6} OPERATION ::= {
+  ARGUMENT         TransferSTSIArg {b1,
+                                    b6}
+  RETURN RESULT    FALSE
+  ERRORS
+    {missingParameter | systemFailure | scfTaskRefused | unexpectedDataValue |
+      unexpectedParameter | parameterOutOfRange | securityError}
+  ALWAYS RESPONDS  FALSE
+  CODE             opcode-transferSTSI
+}
+
+-- Direction: controlling SCF -> supporting SCF, or supporting SCF -> controlling SCF, Timer Ttstsi
+-- This operation is used by the invoking SCF to request or report service information from/to the responding SCF
+TransferSTSIArg{B1:b1, B6:b6} ::=
+  OPTIONALLY-PROTECTED
+    {SEQUENCE {sSIInfo             SSIInfo{b6},
+               securityParameters  [2]  SecurityParameters OPTIONAL,
+               ...,
+               ...,
+               extensions          [3]  Extensions{b1} OPTIONAL
+    }, scfqop.&scfArgumentQOP}
+
+scfChained{OPERATION:operation, B1:b1, B2:b2, B6:b6} OPERATION ::= {
+  ARGUMENT OPTIONALLY-PROTECTED
+    {SEQUENCE {chainedArgument  ChainingArgument{b1, b2},
+               argument         [0]  operation.&ArgumentType OPTIONAL
+     },
+     scfqop.&scfArgumentQOP}
+  RESULT OPTIONALLY-PROTECTED
+    {SEQUENCE {chainedResult  ChainingResult{b1, b2, b6},
+               result         [0]  operation.&ResultType OPTIONAL
+     },
+     scfqop.&scfArgumentQOP}
+  ERRORS
+    {operation.&Errors | chainingRefused | securityError | scfReferral}
+}
+
+ChainingArgument{B1:b1, B2:b2} ::= SEQUENCE {
+  originatingSCF          [0]  ScfID{b2},
+  target                  [1]  SubscriberId{b2} OPTIONAL,
+  traceInformation        [2]  TraceInformation{b2},
+  scfAuthenticationLevel
+    [3]  AuthenticationLevel DEFAULT basicLevels:{level none},
+  timeLimit               [4]  UTCTime OPTIONAL,
+  securityParameters      [5]  SecurityParameters OPTIONAL,
+  extensions              [6]  Extensions{b1} OPTIONAL,
+  ...
+}
+
+SubscriberId{B2:b2} ::= SEQUENCE {...
+} -- to be defined 
+
+ChainingResult{B1:b1, B2:b2, B6:b6} ::= SEQUENCE {
+  ultimateResponder   [0]  ScfAddress{b6} OPTIONAL,
+  traceInformation    [1]  TraceInformation{b2},
+  securityParameters  [2]  SecurityParameters OPTIONAL,
+  extensions          [3]  Extensions{b1} OPTIONAL,
+  ...
+}
+
+makeConfirm{OPERATION:operation, Code:code} OPERATION ::= {
+  ARGUMENT         operation.&ArgumentType
+  --EDITOR: The field &argumentTypeOptional cannot be extracted because it is OPTIONAL.
+  RESULT           NULL
+  ERRORS           {operation.&Errors}
+  ALWAYS RESPONDS  TRUE
+  CODE             code
+}
+
+chainedEstablishChargingRecord{B1:b1, B2:b2, B6:b6} OPERATION ::=
+  scfChained{establishChargingRecord{b1, b2, b6}, b1, b2, b6}
+
+chainedHandlingInformationRequest{B1:b1, B2:b2, B6:b6} OPERATION ::=
+  scfChained{handlingInformationRequest{b1, b2, b6}, b1, b2, b6}
+
+chainedHandlingInformationResult{B1:b1, B2:b2, B6:b6} OPERATION ::=
+  scfChained{handlingInformationResult{b1, b2}, b1, b2, b6}
+
+chainedNetworkCapability{B1:b1, B2:b2, B6:b6} OPERATION ::=
+  scfChained{networkCapability{b1}, b1, b2, b6}
+
+chainedNotificationProvided{B1:b1, B2:b2, B6:b6} OPERATION ::=
+  scfChained{notificationProvided{b1, b2}, b1, b2, b6}
+
+chainedConfirmedNotificationProvided{B1:b1, B2:b2, B6:b6} OPERATION ::=
+  scfChained{confirmedNotificationProvided{b1, b2}, b1, b2, b6}
+
+chainedProvideUserInformation{B1:b1, B2:b2, B6:b6} OPERATION ::=
+  scfChained{provideUserInformation{b1, b2, b6}, b1, b2, b6}
+
+chainedReportChargingInformation{B1:b1, B2:b2, B6:b6} OPERATION ::=
+  scfChained{reportChargingInformation{b1, b2, b6}, b1, b2, b6}
+
+chainedConfirmedReportChargingInformation{B1:b1, B2:b2, B6:b6} OPERATION ::=
+  scfChained{confirmedReportChargingInformation{b1, b2, b6}, b1, b2, b6}
+
+chainedRequestNotification{B1:b1, B2:b2, B6:b6} OPERATION ::=
+  scfChained{requestNotification{b1, b2}, b1, b2, b6}
+
+chainedRunUserScript{B1:b1, B2:b2, B6:b6} OPERATION ::=
+  scfChained{runUserScript{b1, b2, b6}, b1, b2, b6}
+
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

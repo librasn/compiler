@@ -1,0 +1,187 @@
+
+
+
+
+
+
+
+-- Module X0-0-22-crs (X.1125:01/2008)
+-- See also ITU-T X.1125 (01/2008)
+-- See also the index of all ASN.1 assignments needed in this document
+
+X0-0-22-crs {itu-t(0) recommendation(0) x(24) x1125(1125) version1(1)
+  asn1Modules(2) x0-0-22-crs(1)} DEFINITIONS --XER INSTRUCTIONS -- AUTOMATIC
+TAGS ::=
+BEGIN
+
+IMPORTS
+  String
+    FROM XSD {joint-iso-itu-t asn1(1) specification(0) modules(0) xsd-module(2)
+      version2(2)};
+
+/* ====================================================================== */
+/* ==========================  CRSAP-Message  =========================== */
+/* ====================================================================== */
+CRSAP-Message ::= SEQUENCE {
+  header-Unit  Header-Unit,
+  body-Unit    Body-Unit,
+  tail-Unit    Tail-Unit
+}
+
+/* ====================================================================== */
+/* =============================  Header-Unit =========================== */
+/* ====================================================================== */
+Header-Unit ::= SEQUENCE {
+  flag        FlagEnumeration,
+  length      INTEGER(0..MAX),
+  precedence  INTEGER(0..MAX),
+  sCA-ID      ID,
+  sCS-ID      ID,
+  type        TypeEnumeration,
+  version     XSD.String
+}
+
+/* Multicast message without message tail. */
+/* Multicast message with message tail. */
+/* Unicast message without message tail. */
+/* Unicast message with message tail. */
+FlagEnumeration ::= ENUMERATED {m, mT, u, uT}
+
+/* Multicast message without message tail. */
+/* Multicast message with message tail. */
+/* Unicast message without message tail. */
+/* Unicast message with message tail. */
+/* Multicast message without message tail. */
+/* Multicast message with message tail. */
+/* Unicast message without message tail. */
+/* Unicast message with message tail. */
+/* Unicast message with message tail. */
+TypeEnumeration ::= ENUMERATED {
+  d-Ack, d-Err-Ntf, d-Prb-Req, d-Rep-Req, d-SCI-Rsp, u-Ack, u-Err-Ntf,
+  u-SCA-Prb-Rsp, u-SCI-Rpt}
+
+/* ====================================================================== */
+/* ===========================  Body-Unit  ============================== */
+/* ====================================================================== */
+Body-Unit ::= SEQUENCE {
+  choice
+    CHOICE {sCIReport         SCIReportType,
+            sCIResponse       SCIResponseType,
+            sCAProbeRequest   SCAProbeRequestType,
+            sCAProbeResponse  SCAProbeResponseType,
+            sCIReportRequest  SCIReportRequestType,
+            acknowledgement   AcknowledgementType}
+}
+
+SCIReportType ::= SEQUENCE {
+  rpt-ID           XSD.String,
+  mS-Usr-ID        XSD.String,
+  mS-ISDN          XSD.String OPTIONAL,
+  mT-ID            XSD.String,
+  mS-OSPlt-TypVer  XSD.String OPTIONAL,
+  mS-OSPlt-PatLst  XSD.String OPTIONAL,
+  mS-SAS-Inf       XSD.String OPTIONAL,
+  mS-Sec-Evt       XSD.String OPTIONAL,
+  mS-Hrd-Inf       XSD.String OPTIONAL,
+  sCI-Cur-RptPol   XSD.String OPTIONAL,
+  sCS-LstCom-Inf   XSD.String OPTIONAL
+}
+
+SCIResponseType ::= SEQUENCE {
+  mS-Sec-Lev      XSD.String OPTIONAL,
+  sCI-New-RptPol  XSD.String OPTIONAL,
+  sCS-Lmt-Ntf     XSD.String OPTIONAL,
+  ack-SCI-Rpt     XSD.String OPTIONAL
+}
+
+SCAProbeRequestType ::= SEQUENCE {
+  sCS-Domain   XSD.String OPTIONAL,
+  sCS-Address  XSD.String OPTIONAL,
+  sCS-Port     XSD.String OPTIONAL
+}
+
+SCAProbeResponseType ::= SEQUENCE {
+  lst-SCS-Domain   XSD.String OPTIONAL,
+  lst-SCS-Address  XSD.String OPTIONAL,
+  lst-SCS-ID       XSD.String OPTIONAL,
+  lst-SCA-ID       XSD.String OPTIONAL
+}
+
+SCIReportRequestType ::= SEQUENCE {
+  lst-SCS-Domain  XSD.String,
+  tim-Rpt         XSD.String OPTIONAL
+}
+
+AcknowledgementType ::= SEQUENCE {msgID-Ack  XSD.String
+}
+
+/* ====================================================================== */
+/* ===========================  Tail-Unit =============================== */
+/* ====================================================================== */
+Tail-Unit ::= SEQUENCE {
+  algorithmID  ID,
+  msgID        ID,
+  msgDigest    MsgDigest
+}
+
+ID ::= XSD.String(SIZE (1..32))
+
+MsgDigest ::= XSD.String(SIZE (8..32))
+
+/*ENCODING-CONTROL XER
+    GLOBAL-DEFAULTS MODIFIED-ENCODINGS
+    GLOBAL-DEFAULTS CONTROL-NAMESPACE
+	"http://www.w3.org/2001/XMLSchema-instance" PREFIX "xsi"
+    NAMESPACE ALL, ALL IN ALL AS "urn:oid:0.0.22.crs" PREFIX "crsap"
+    NOT NAMESPACE Header-Unit.flag, Header-Unit.length, 
+	Header-Unit.precedence, Header-Unit.sCA-ID, Header-Unit.sCS-ID, 
+	Header-Unit.type, Header-Unit.version
+    NAME CRSAP-Message.header-Unit, CRSAP-Message.body-Unit, 
+	CRSAP-Message.tail-Unit, Header-Unit.flag, Header-Unit.length, 
+	Header-Unit.precedence, Header-Unit.sCA-ID, Header-Unit.sCS-ID, 
+	Header-Unit.type, Header-Unit.version, Body-Unit.choice.sCIReport, 
+	Body-Unit.choice.sCIResponse, Body-Unit.choice.sCAProbeRequest, 
+	Body-Unit.choice.sCAProbeResponse, Body-Unit.choice.sCIReportRequest, 
+	Body-Unit.choice.acknowledgement, Tail-Unit.algorithmID, 
+	Tail-Unit.msgID, Tail-Unit.msgDigest AS CAPITALIZED
+    NAME SCIReportType.rpt-ID AS "Rpt_ID"
+    NAME SCIReportType.mS-Usr-ID AS "MS_Usr_ID"
+    NAME SCIReportType.mS-ISDN AS "MS_ISDN"
+    NAME SCIReportType.mT-ID AS "MT_ID"
+    NAME SCIReportType.mS-OSPlt-TypVer AS "MS_OSPlt_TypVer"
+    NAME SCIReportType.mS-OSPlt-PatLst AS "MS_OSPlt_PatLst"
+    NAME SCIReportType.mS-SAS-Inf AS "MS_SAS_Inf"
+    NAME SCIReportType.mS-Sec-Evt AS "MS_Sec_Evt"
+    NAME SCIReportType.mS-Hrd-Inf AS "MS_Hrd_Inf"
+    NAME SCIReportType.sCI-Cur-RptPol AS "SCI_Cur_RptPol"
+    NAME SCIReportType.sCS-LstCom-Inf AS "SCS_LstCom_Inf"
+    NAME SCIResponseType.mS-Sec-Lev AS "MS_Sec_Lev"
+    NAME SCIResponseType.sCI-New-RptPol AS "SCI_New_RptPol"
+    NAME SCIResponseType.sCS-Lmt-Ntf AS "SCS_Lmt_Ntf"
+    NAME SCIResponseType.ack-SCI-Rpt AS "Ack_SCI_Rpt"
+    NAME SCAProbeRequestType.sCS-Domain AS "SCS_Domain"
+    NAME SCAProbeRequestType.sCS-Address AS "SCS_Address"
+    NAME SCAProbeRequestType.sCS-Port AS "SCS_Port"
+    NAME SCAProbeResponseType.lst-SCS-Domain AS "Lst_SCS_Domain"
+    NAME SCAProbeResponseType.lst-SCS-Address AS "Lst_SCS_Address"
+    NAME SCAProbeResponseType.lst-SCS-ID AS "Lst_SCS_ID"
+    NAME SCAProbeResponseType.lst-SCA-ID AS "Lst_SCA_ID"
+    NAME SCIReportRequestType.lst-SCS-Domain AS "Lst_SCS_Domain"
+    NAME SCIReportRequestType.tim-Rpt AS "Tim_Rpt"
+    NAME AcknowledgementType.msgID-Ack AS "MsgID_Ack"
+    ATTRIBUTE ALL IN Header-Unit
+    UNTAGGED Body-Unit.choice
+    TEXT FlagEnumeration:ALL AS CAPITALIZED
+    TEXT TypeEnumeration:d-Ack AS "D_Ack"
+    TEXT TypeEnumeration:d-Err-Ntf AS "D_Err_Ntf"
+    TEXT TypeEnumeration:d-Prb-Req AS "D_Prb_Req"
+    TEXT TypeEnumeration:d-Rep-Req AS "D_Rep_Req"
+    TEXT TypeEnumeration:d-SCI-Rsp AS "D_SCI_Rsp"
+    TEXT TypeEnumeration:u-Ack AS "U_Ack"
+    TEXT TypeEnumeration:u-Err-Ntf AS "U_Err_Ntf"
+    TEXT TypeEnumeration:u-SCA-Prb-Rsp AS "U_SCA_Prb_Rsp"
+    TEXT TypeEnumeration:u-SCI-Rpt AS "U_SCI_Rpt"*/
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

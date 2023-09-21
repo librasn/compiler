@@ -1,0 +1,246 @@
+
+
+
+
+
+
+
+-- Module BFT-FORMAT (T.434:04/1999)
+-- See also ITU-T T.434 (04/1999)
+-- See also the index of all ASN.1 assignments needed in this document
+
+BFT-FORMAT {itu-t(0) recommendation(0) t(20) bft(434) version(3)} DEFINITIONS
+::=
+BEGIN
+
+--  EXPORTS Everything
+IMPORTS ;
+
+BINARY-DATA-Message ::=
+  [APPLICATION 23] IMPLICIT
+    SEQUENCE OF
+      SEQUENCE {protocol-version                    [28]  Protocol-Version,
+                --  If the protocol-version is not specified, version 1 should be assumed
+                filename
+                  [0] IMPLICIT Filename-Attribute OPTIONAL,
+                permitted-actions
+                  [1] IMPLICIT Permitted-Actions-Attribute OPTIONAL,
+                contents-type
+                  [2]  Contents-Type-Attribute OPTIONAL,
+                --  DEFAULT { UNSTRUCTURED BINARY }
+                --  not specifying this attribute implies that data-file-content
+                --  is unstructured binary
+                storage-account
+                  [3] IMPLICIT UTF8String OPTIONAL,
+                date-and-time-of-creation
+                  [4] IMPLICIT GeneralizedTime OPTIONAL,
+                date-and-time-of-last-modification
+                  [5] IMPLICIT GeneralizedTime OPTIONAL,
+                date-and-time-of-last-read-access
+                  [6] IMPLICIT GeneralizedTime OPTIONAL,
+                --  7 is reserved for date-and-time-of-last-attribute-modification
+                identity-of-creator
+                  [8] IMPLICIT UTF8String OPTIONAL,
+                identity-of-last-modifier
+                  [9] IMPLICIT UTF8String OPTIONAL,
+                identity-of-last-reader
+                  [10] IMPLICIT UTF8String OPTIONAL,
+                --  11 is reserved for identity-of-last-attribute-modifier
+                --  12 is reserved for file-availability
+                filesize
+                  [13] IMPLICIT INTEGER OPTIONAL,
+                future-filesize
+                  [14] IMPLICIT INTEGER OPTIONAL,
+                -- access-control		[15] Access-Control-Attribute OPTIONAL,
+                --  the use of this attribute is for further study
+                legal-qualifications
+                  [16] IMPLICIT UTF8String OPTIONAL,
+                private-use
+                  [17]  Private-Use-Attribute OPTIONAL,
+                structure
+                  [18] IMPLICIT OBJECT IDENTIFIER OPTIONAL,
+                application-reference
+                  [19]  General-Identifier OPTIONAL,
+                machine
+                  [20] IMPLICIT SEQUENCE OF UTF8String OPTIONAL,
+                operating-system
+                  [21] IMPLICIT OBJECT IDENTIFIER OPTIONAL,
+                recipient
+                  [22] IMPLICIT SEQUENCE OF UTF8String OPTIONAL,
+                character-set
+                  [23] IMPLICIT OBJECT IDENTIFIER OPTIONAL,
+                compression
+                  [24]  General-Identifier OPTIONAL,
+                --  Indicates an optional compression applied to the content
+                --  octets of the attribute data-file-content
+                environment
+                  [25] IMPLICIT SEQUENCE OF UTF8String OPTIONAL,
+                pathname
+                  [26] IMPLICIT SEQUENCE OF UTF8String OPTIONAL,
+                user-visible-string
+                  [29] IMPLICIT SEQUENCE OF UTF8String OPTIONAL,
+                data-file-content
+                  [30]  CHOICE {external  EXTERNAL,
+                                any       OCTET STRING} OPTIONAL
+                -- For most cases, a type of Octetstring is a reasonable choice in place of the ANY syntax 
+    }
+
+Contents-Type-Attribute ::=
+   --  See Annex B of ISO 8571-2 for more information
+   SEQUENCE {
+  document-type-name  [1]  OBJECT IDENTIFIER,
+  parameter           [0]  TYPE-IDENTIFIER.&Type OPTIONAL
+}
+
+--  The actual types to be used for values of the parameter
+--  field are defined in the document-type-name.
+--  They may consist of an object identifier assigned to the document type, or be
+--  UNSTRUCTURED TEXT.
+Entity-Reference ::= INTEGER {
+  no-categorization-possible(0), initiating-file-service-user(1),
+  initiating-file-protocol-machine(2),
+  service-supporting-the-file-protocol-machine(3),
+  responding-file-protocol-machine(4), responding-file-service-user(5)
+}
+
+Filename-Attribute ::= SEQUENCE OF UTF8String
+
+General-Identifier ::= CHOICE {
+  entityID      OBJECT IDENTIFIER,
+  entityTextID  SEQUENCE OF UTF8String
+}
+
+Mime-Media-Type-Attribute ::= [32] EXPLICIT SEQUENCE {
+  media-type  IA5String,
+  parameter   SEQUENCE OF IA5String OPTIONAL
+}
+
+Password ::= CHOICE {textualPwd  UTF8String,
+                     binaryPwd   OCTET STRING
+}
+
+Permitted-Actions-Attribute ::= BIT STRING {
+  --  Actions available
+  read(0), insert(1), replace(2), extend(3), erase(4)}(SIZE (5..5))
+
+Private-Use-Attribute ::= SEQUENCE {
+  manufacturer-values  [0]  TYPE-IDENTIFIER.&Type OPTIONAL
+}
+
+-- For most cases, a type of Octetstring is a reasonable choice in place of the ANY syntax
+Protocol-Version ::= BIT STRING {version-3(2)}
+
+User-Identity ::= UTF8String
+
+Store-And-Forward-Attribute ::= SEQUENCE {
+  store-and-forward-request  [0] IMPLICIT Store-And-Forward-Request OPTIONAL,
+  delivery-information       [1] IMPLICIT Delivery-Information OPTIONAL
+}
+
+Store-And-Forward-Request ::= SEQUENCE {
+  document-characteristics  [0] IMPLICIT Doc-Characteristics OPTIONAL,
+  communication             [1] IMPLICIT Communication OPTIONAL
+}
+
+Doc-Characteristics ::= SEQUENCE {
+  document-name  [0] IMPLICIT UTF8String OPTIONAL,
+  version        [1] IMPLICIT UTF8String OPTIONAL,
+  document-type  [2] IMPLICIT UTF8String OPTIONAL,
+  edition        [3] IMPLICIT UTF8String OPTIONAL,
+  reference      [4] IMPLICIT UTF8String OPTIONAL,
+  subject        [5] IMPLICIT UTF8String OPTIONAL,
+  format         [6] IMPLICIT UTF8String OPTIONAL,
+  copyrights     [7] IMPLICIT UTF8String OPTIONAL,
+  keywords       [8] IMPLICIT UTF8String OPTIONAL,
+  abstract       [9] IMPLICIT UTF8String OPTIONAL,
+  language       [10] IMPLICIT UTF8String OPTIONAL,
+  private        [11] IMPLICIT Private-Use-Attribute OPTIONAL
+}
+
+Communication ::= SEQUENCE {
+  general-priority        [0] IMPLICIT Priority DEFAULT normal,
+  originator-name         [1] IMPLICIT UTF8String OPTIONAL,
+  originator-T30-ID       [2] IMPLICIT T30-Identity OPTIONAL,
+  originator-fax-number   [3] IMPLICIT Number-of-Fax OPTIONAL,
+  originator-sub-address  [4] IMPLICIT Sub-Address OPTIONAL,
+  submission-date         [5] IMPLICIT GeneralizedTime OPTIONAL,
+  pages-number            [6] IMPLICIT INTEGER OPTIONAL,
+  document-recovery       [7] IMPLICIT UTF8String OPTIONAL,
+  password                [8] IMPLICIT UTF8String OPTIONAL,
+  receiving-fax           [9] IMPLICIT SEQUENCE OF Receiving-Fax OPTIONAL,
+  communication-private   [10]  Private-Use-Attribute OPTIONAL
+}
+
+Priority ::= ENUMERATED {
+  --  Priority takes following status:
+  normal(0), nonurgent(1), urgent(2)}
+
+T30-Identity ::= UTF8String
+
+Number-of-Fax ::= UTF8String
+
+Sub-Address ::= UTF8String
+
+Receiving-Fax ::= SEQUENCE {
+  fax-number  [0] IMPLICIT Number-of-Fax,
+  recipient   [1] IMPLICIT SEQUENCE OF Recipient-Information OPTIONAL
+}
+
+Recipient-Information ::= SEQUENCE {
+  name                    [0] IMPLICIT UTF8String,
+  type                    [1] IMPLICIT Copy DEFAULT principal,
+  priority-of-copy        [2] IMPLICIT Priority DEFAULT normal,
+  latest-delivery-time    [3] IMPLICIT GeneralizedTime OPTIONAL,
+  deferred-delivery-time  [4] IMPLICIT GeneralizedTime OPTIONAL,
+  sub-addressing-copy     [5]  Sub-Address-Copy OPTIONAL,
+  report-request          [6] IMPLICIT Report DEFAULT no-report,
+  compliment              [7]  Private-Use-Attribute OPTIONAL
+}
+
+Copy ::= ENUMERATED {
+  --  Copy takes following status:
+  principal(0), copy(1), blind-copy(2), forward(3)}
+
+Sub-Address-Copy ::= CHOICE {
+  name              [0] IMPLICIT UTF8String,
+  number            [1] IMPLICIT Number-of-Fax,
+  t30-ID            [2] IMPLICIT T30-Identity,
+  sub-address       [3] IMPLICIT Sub-Address,
+  list              [4] IMPLICIT UTF8String,
+  --  name or broadcast list number
+  short-number      [5] IMPLICIT UTF8String,
+  reference-number  [6] IMPLICIT UTF8String
+}
+
+Report ::= ENUMERATED {no-report(0), no-delivery-report(1), report-requested(2)
+}
+
+Delivery-Information ::=
+  SEQUENCE OF
+    SEQUENCE {date-and-time-of-sending
+                [0] IMPLICIT GeneralizedTime OPTIONAL,
+              originator-fax-number
+                [1] IMPLICIT UTF8String OPTIONAL,
+              file-number                         [2] IMPLICIT INTEGER OPTIONAL,
+              whole-number                        [3] IMPLICIT INTEGER OPTIONAL,
+              last-file-indication
+                [4] IMPLICIT UTF8String OPTIONAL,
+              delivery-re-try-indication
+                [5] IMPLICIT UTF8String OPTIONAL,
+              charge-address
+                [6] IMPLICIT UTF8String OPTIONAL,
+              information-fee
+                [7] IMPLICIT UTF8String OPTIONAL,
+              original-file-format
+                [8]  General-Identifier OPTIONAL,
+              terminal-file-format
+                [9]  General-Identifier OPTIONAL,
+              delivery-time-designate-indication
+                [10] IMPLICIT UTF8String OPTIONAL,
+              addressee
+                [11] IMPLICIT UTF8String OPTIONAL}
+
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

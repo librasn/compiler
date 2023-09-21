@@ -1,0 +1,187 @@
+
+
+
+
+
+
+
+-- Module CCBS-Operation-and-Errors (Q.953.3:06/1997)
+-- See also ITU-T Q.953.3 (06/1997)
+-- See also the index of all ASN.1 assignments needed in this document
+
+CCBS-Operation-and-Errors {itu-t recommendation q 953 ccbs(3)
+  operations-and-errors(1)} DEFINITIONS EXPLICIT TAGS ::=
+BEGIN
+
+EXPORTS
+  callInfoRetain, eraseCallLinkageID, cCBSRequest, cCBSDeactivate,
+    cCBSInterrogate, cCBSErase, cCBSRemoteUserFree, cCBSCall,
+    cCBSStatusRequest, cCBSBFree, cCBSStopAlerting, invalidCallLinkageID,
+    invalidCCBSReference, longTermDenial, shortTermDenial,
+    cCBSIsAlreadyActivated, alreadyAccepted, outgoingCCBSQueueFull,
+    callFailureReasonNotBusy, notReadyForCall;
+
+IMPORTS
+  OPERATION, ERROR
+    FROM Remote-Operations-Information-Objects {joint-iso-itu-t
+      remote-operations(4) informationObjects(5) version1(0)}
+  userNotSubscribed, basicServiceNotProvided,
+    supplementaryServiceInteractionNotAllowed
+    FROM General-Error-List {itu-t recommendation q 950 general-error-list(1)}
+  Address, PartyNumber, PartySubaddress
+    FROM Addressing-Data-Elements {itu-t recommendation q 932
+      addressing-data-elements(7)}
+  Q931InformationElement
+    FROM Embedded-Q931-Types {itu-t recommendation q 932 embedded-q931-types(5)
+      };
+
+callInfoRetain OPERATION ::= {ARGUMENT  CallLinkageID
+                              CODE      local:70
+}
+
+eraseCallLinkageID OPERATION ::= {ARGUMENT  CallLinkageID
+                                  CODE      local:79
+}
+
+cCBSRequest OPERATION ::= {
+  ARGUMENT  CallLinkageID
+  RESULT    SEQUENCE {recallMode     RecallMode,
+                      cCBSReference  CCBSReference}
+  ERRORS
+    {userNotSubscribed | invalidCallLinkageID | shortTermDenial |
+      longTermDenial | cCBSIsAlreadyActivated |
+      supplementaryServiceInteractionNotAllowed | outgoingCCBSQueueFull |
+      callFailureReasonNotBusy}
+  CODE      local:71
+}
+
+cCBSInterrogate OPERATION ::= {
+  ARGUMENT
+    SEQUENCE {cCBSReference   CCBSReference OPTIONAL,
+              partyNumberOfA  PartyNumber OPTIONAL}
+  RESULT
+    SEQUENCE {recallMode   RecallMode,
+              callDetails  CallDetails OPTIONAL}
+  ERRORS    {invalidCCBSReference | userNotSubscribed}
+  CODE      local:73
+}
+
+cCBSDeactivate OPERATION ::= {
+  ARGUMENT  CCBSReference
+  ERRORS    {invalidCCBSReference}
+  CODE      local:72
+}
+
+CallDetails ::= SEQUENCE (SIZE (1..5)) OF CallInformation
+
+CallInformation ::= SEQUENCE {
+  addressOfB       Address,
+  q931InfoElement  Q931InformationElement,
+  cCBSReference    CCBSReference OPTIONAL,
+  subAddressOfA    PartySubaddress OPTIONAL
+}
+
+-- The Bearer capability, High layer compatibility (optional) and Low layer compatibility (optional)
+-- information elements shall be embedded in q931InfoElement.
+cCBSErase OPERATION ::= {
+  ARGUMENT
+    SEQUENCE {recallMode       RecallMode,
+              cCBSReference    CCBSReference,
+              addressOfB       Address,
+              q931InfoElement  Q931InformationElement,
+              eraseReason      CCBSEraseReason,
+              subAddressOfA    PartySubaddress OPTIONAL}
+  CODE      local:74
+}
+
+-- The Bearer capability, High layer compatibility (optional) and Low layer compatibility (optional)
+-- information elements shall be embedded in q931InfoElement.
+cCBSRemoteUserFree OPERATION ::= {
+  ARGUMENT
+    SEQUENCE {recallMode       RecallMode,
+              cCBSReference    CCBSReference,
+              addressOfB       Address,
+              q931InfoElement  Q931InformationElement,
+              subAddressOfA    PartySubaddress OPTIONAL}
+  CODE      local:75
+}
+
+cCBSBFree OPERATION ::= {
+  ARGUMENT
+    SEQUENCE {recallMode       RecallMode,
+              cCBSReference    CCBSReference,
+              addressOfB       Address,
+              q931InfoElement  Q931InformationElement,
+              subAddressOfA    PartySubaddress OPTIONAL}
+  CODE      local:78
+}
+
+cCBSCall OPERATION ::= {
+  ARGUMENT  CCBSReference
+  ERRORS    {invalidCCBSReference | alreadyAccepted | notReadyForCall}
+  CODE      local:76
+}
+
+cCBSStatusRequest OPERATION ::= {
+  ARGUMENT
+    SEQUENCE {recallMode       RecallMode,
+              cCBSReference    CCBSReference,
+              q931InfoElement  Q931InformationElement,
+              subAddressOfA    PartySubaddress OPTIONAL}
+  RESULT    ResultcCBStatusRequest -- BOOLEAN {free(TRUE), busy(FALSE)}
+  CODE      local:77
+}
+
+ResultcCBStatusRequest ::= BOOLEAN
+
+free ResultcCBStatusRequest ::= TRUE
+
+busy ResultcCBStatusRequest ::= FALSE
+
+-- The Bearer capability, High layer compatibility (optional) and Low layer compatibility (optional)
+-- information elements shall be embedded in q931InfoElement.
+cCBSStopAlerting OPERATION ::= {ARGUMENT  CCBSReference
+                                CODE      local:80
+}
+
+CallLinkageID ::= INTEGER(0..127)
+
+CCBSReference ::= INTEGER(0..127)
+
+CCBSEraseReason ::= ENUMERATED {
+  normal-unspecified(0), t-CCBS2-timeout(1), t-CCBS3-timeout(2),
+  basic-call-failure(3)}
+
+RecallMode ::= ENUMERATED {globalRecall(0), specificRecall(1)}
+
+invalidCallLinkageID ERROR ::= {CODE  local:50
+}
+
+invalidCCBSReference ERROR ::= {CODE  local:51
+}
+
+longTermDenial ERROR ::= {CODE  local:52
+} --	used at the user A coincident S and T reference point
+
+shortTermDenial ERROR ::= {CODE  local:53
+} --	used at the user A coincident S and T reference point
+
+cCBSIsAlreadyActivated ERROR ::= {CODE  local:54
+}
+
+alreadyAccepted ERROR ::= {CODE  local:55
+}
+
+outgoingCCBSQueueFull ERROR ::= {CODE  local:56
+}
+
+callFailureReasonNotBusy ERROR ::= {CODE  local:57
+}
+
+notReadyForCall ERROR ::= {CODE  local:58
+}
+
+END -- of CCBS-Operation-and-Errors
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

@@ -1,0 +1,202 @@
+CMAIL.asn (ITU-T X.1341 (09/2015))-- ASN module extracted from ITU-T X.1341 (09/2015)CMAIL {itu-t(0) recommendation(0) x(24) cmail(1341) asn1Module(1) cmail(1)}
+DEFINITIONS AUTOMATIC TAGS ::=
+BEGIN
+
+IMPORTS String
+	FROM XSDv2 {joint-iso-itu-t asn1(1) specification(0) modules(0) xsd-module(2) version2(2)};
+
+DepositNotice 		::= DepositNoticeType
+
+SignedDepositNotice 	::= SignedDepositNoticeType
+
+TransitNotice		::= TransitNoticeType
+
+SignedTransitNotice	::= SignedTransitNoticeType
+
+ReceiptNotice		::= ReceiptNoticeType
+
+SignedReceiptNotice	::= SignedReceiptNoticeType
+
+DigitalPostmarkType	::= SEQUENCE {
+	mimeMessageHash	SEQUENCE (SIZE(1..MAX)) OF 
+		mimeMessageHash HashValueType,
+	signature	SEQUENCE (SIZE(0..MAX)) OF
+		signature	SignatureType,
+	envelopeId	String,
+	deliveryType	ENUMERATED {
+		certifiedMail,
+		...
+		}
+	}
+
+EnvelopeInformationType	::= SEQUENCE {
+	contentEnvelopeInformation	ContentEnvelopeInformationType,
+	entities			EntitiesType,
+	signature		SEQUENCE (SIZE(0..MAX)) OF 
+		signature SignatureType
+	}
+
+ContentEnvelopeInformationType	::= SEQUENCE {
+	uncipheredEnvelopeHash	HashValueType,
+	cipheredEnvelopeHash	HashValueType,
+	messageId		String
+	}
+
+SecretQuestionType	::= SEQUENCE {
+	request		RequestType,
+	response	ResponseType
+	}
+
+EntityType	::= SEQUENCE {
+	secretQuestion		SecretQuestionType,
+	cipheredEnvelopeKey	CipheredEnvelopeKeyType,
+	certificate		CertificateType,
+	emailAddress		String
+		(CONSTRAINED BY 
+		{-- "Email address has to be in IETF RFC 822 format --}),
+	type	ENUMERATED {
+		from,
+		to,
+		cc,
+		transit
+		}
+	}
+
+CipheredEnvelopeKeyType	::= SEQUENCE {
+	algorithm	String,
+	cipherededKey	String,
+	encoding	String,
+	keySize		String
+	}
+
+CertificateType	::= SEQUENCE {
+	encoding	String
+	}
+
+EntitiesType	::= SEQUENCE {
+	entity		SEQUENCE(SIZE(1..MAX)) OF entity EntityType
+	}
+	
+SignedDepositNoticeType	::= SEQUENCE {
+	digitalPostmark		DigitalPostmarkType,
+	envelopeInformation	EnvelopeInformationType
+	}
+
+DepositNoticeType	::= SEQUENCE {
+	digitalPostmark		DigitalPostmarkType
+	}
+
+TransitNoticeType	::= SEQUENCE {
+	digitalPostmark		DigitalPostmarkType
+	}
+
+SignedTransitNoticeType	::= SEQUENCE {
+	digitalPostmark		DigitalPostmarkType,
+	envelopeInformation	EnvelopeInformationType
+	}
+
+ReceiptNoticeType	::= SEQUENCE {
+	operatorPostmark	DigitalPostmarkType
+	}
+
+SignedReceiptNoticeType	::= SEQUENCE {
+	operatorPostmark	DigitalPostmarkType,
+	envelopeInformation	EntityEnvelopeInformationType
+	}
+
+HashValueType	::= SEQUENCE {
+	algorithmOID	ENUMERATED {
+		sha-1,
+		sha-256
+		}
+	}
+
+EntityEnvelopeInformationType	::= SEQUENCE {
+	bodyEnvelopeInformation	ContentEnvelopeInformationType,
+	entity			EntityType,
+	entityChallenge		EntityChallengeType
+	}
+
+EntityChallengeType	::= SEQUENCE {
+	secretQuestion SecretQuestionType,
+	signature	SignatureType
+	}
+
+RequestType	::= SEQUENCE {
+	randomNumer	String
+	}
+
+ResponseType	::= SEQUENCE {
+	algorithmIdentifier	String
+	}
+
+SignatureType	::= String
+
+ENCODING-CONTROL XER
+	GLOBAL-DEFAULTS MODIFIED-ENCODINGS
+	[NAME AS CAPITALIZED] DigitalPostmarkType.mimeMessageHash
+	[UNTAGGED] DigitalPostmarkType.mimeMessageHash
+	[NAME AS CAPITALIZED] DigitalPostmarkType.signature.*
+	[UNTAGGED] DigitalPostmarkType.signature
+	[NAME AS CAPITALIZED] DigitalPostmarkType.envelopeId
+	[ATTRIBUTE] DigitalPostmarkType.envelopeId
+	[NAME AS CAPITALIZED] DigitalPostmarkType.deliveryType
+	[ATTRIBUTE] DigitalPostmarkType.deliveryType
+	[TEXT AS CAPITALIZED] DigitalPostmarkType.delivetyType:certifiedMail
+	[NAME AS CAPITALIZED] EnvelopeInformationType.contentEnvelopeInformation
+	[NAME AS CAPITALIZED] EnvelopeInformationType.entities
+	[NAME AS CAPITALIZED] EnvelopeInformationType.signature
+	[UNTAGGED] EnvelopeInformationType.signature
+	[NAME AS CAPITALIZED] 
+		ContentEnvelopeInformationType.uncipheredEnvelopeHash
+	[NAME AS CAPITALIZED]
+		ContentEnvelopeInformationType.cipheredEnvelopeHash
+	[NAME AS CAPITALIZED] ContentEnvelopeInformationType.messageId
+	[ATTRIBUTE] ContentEnvelopeInformationType.messageId
+	[NAME AS CAPITALIZED] SecretQuestionType.request
+	[NAME AS CAPITALIZED] SecretQuestionType.response
+	[NAME AS CAPITALIZED] EntityType.secretQuestion
+	[NAME AS CAPITALIZED] EntityType.cipheredEnvelopeKey
+	[NAME AS CAPITALIZED] EntityType.certificate
+	[NAME AS CAPITALIZED] EntityType.emailAddress
+	[ATTRIBUTE] EntityType.emailAddress
+	[NAME AS CAPITALIZED] EntityType.type
+	[ATTRIBUTE] EntityType.type
+	[NAME AS CAPITALIZED] CipheredEnvelopeKeyType.algorithm
+	[ATTRIBUTE] CipheredEnvelopeKeyType.algorithm
+	[NAME AS CAPITALIZED] CipheredEnvelopeKeyType.cipheredKey
+	[ATTRIBUTE] CipheredEnvelopeKeyType.cipheredKey
+	[NAME AS CAPITALIZED] CipheredEnvelopeKeyType.encoding
+	[ATTRIBUTE] CipheredEnvelopeKeyType.encoding
+	[NAME AS CAPITALIZED] CipheredEnvelopeKeyType.keysize
+	[ATTRIBUTE] CipheredEnvelopeKeyType.keysize
+	[NAME AS CAPITALIZED] CertificateType.encoding
+	[ATTRIBUTE] CertificateType.encoding
+	[UNTAGGED] EntitiesType.entity
+	[NAME AS CAPITALIZED] EntitiesType.entity.*
+	[NAME AS CAPITALIZED] SignedDepositNoticeType.digitalPostmark
+	[NAME AS CAPITALIZED] SignedDepositNoticeType.envelopeInformation
+	[NAME AS CAPITALIZED] DepositNoticeType.digitalPostmark
+	[NAME AS CAPITALIZED] TransitNoticeType.digitalPostmark
+	[NAME AS CAPITALIZED] SignedTransitNoticeType.digitalPostmark
+	[NAME AS CAPITALIZED] SignedTransitNoticeType.envelopeInformation
+	[NAME AS CAPITALIZED] ReceiptNoticeType.digitalPostmark
+	[NAME AS CAPITALIZED] SignedReceiptNoticeType.digitalPostmark
+	[NAME AS CAPITALIZED] SignedReceiptNoticeType.envelopeInformation
+	[NAME AS CAPITALIZED] HashValueType.algorithmOID
+	[ATTRIBUTE] HashValueType.algorithmOID
+	[TEXT AS "1.3.14.3.2.26"] HashValueType.algorithmOID:sha-1
+	[TEXT AS "2.16.840.1.101.3.4.2.1"] HashValueType.algorithmOID:sha-256
+	[NAME AS CAPITALIZED] 
+		EntityEnvelopeInformationType.BodyEnvelopeInformation
+	[NAME AS CAPITALIZED]
+		EntityEnvelopeInformationType.entityChallenge
+	[NAME AS CAPITALIZED] EntityChallengeType.secretQuestion
+	[NAME AS CAPITALIZED] EntityChallengeType.signature
+	[NAME AS CAPITALIZED] RequestType.randomNumber
+	[ATTRIBUTE] RequestType.randomNumber
+	[NAME AS CAPITALIZED] ResponseType.algorithmIdentifier
+	[ATTRIBUTE] ResponseType.algorithmIdentifier
+
+
+END

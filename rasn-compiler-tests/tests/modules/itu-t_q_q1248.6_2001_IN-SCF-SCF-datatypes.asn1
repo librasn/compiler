@@ -1,0 +1,377 @@
+
+
+
+
+
+
+
+-- Module IN-SCF-SCF-datatypes (Q.1248.6:07/2001)
+-- See also ITU-T Q.1248.6 (07/2001)
+-- See also the index of all ASN.1 assignments needed in this document
+
+IN-SCF-SCF-datatypes {itu-t recommendation q 1248 modules(1)
+  in-scf-scf-datatypes(20) version1(0)} DEFINITIONS IMPLICIT TAGS ::=
+BEGIN
+
+IMPORTS
+  Code
+    FROM Remote-Operations-Information-Objects ros-InformationObjects
+  Integer4
+    FROM IN-common-datatypes common-datatypes
+  COMMON-BOUNDS
+    FROM IN-common-classes common-classes
+  SCF-SSF-BOUNDS
+    FROM IN-SSF-SCF-Classes ssf-scf-classes
+  SCF-SCF-BOUNDS
+    FROM IN-SCF-SCF-Classes scf-scf-classes
+  CalledPartyNumber{}, CallingPartyNumber{}, Cause{}, DateAndTime,
+    DestinationRoutingAddress{}, DisplayInformation{}, Duration,
+    GenericNumber{}, HighLayerCompatibility{}, CallingPartysCategory,
+    Carrier{}, ScfID{}
+    FROM IN-SSF-SCF-datatypes ssf-scf-datatypes
+  Tone
+    FROM IN-SCF-SRF-datatypes scf-srf-datatypes
+  DistinguishedName
+    FROM InformationFramework informationFramework
+  ros-InformationObjects, ds-UsefulDefinitions, operationcodes, guls-Notation,
+    guls-SecurityTransformations, errortypes, errorcodes, scf-scf-Protocol,
+    ssf-scf-Operations, ssf-scf-datatypes, spkmGssTokens, common-datatypes,
+    ssf-scf-classes, scf-scf-classes, common-classes, scf-srf-datatypes
+    FROM IN-object-identifiers {itu-t recommendation q 1248 modules(1)
+      in-object-identifiers(0) version1(0)}
+  directoryAbstractService, enhancedSecurity, informationFramework,
+    selectedAttributeTypes, distributedOperations, basicAccessControl
+    FROM UsefulDefinitions ds-UsefulDefinitions
+  PresentationAddress
+    FROM SelectedAttributeTypes selectedAttributeTypes
+  Language
+    FROM IN-SCF-SRF-datatypes scf-srf-datatypes;
+
+-- The following short-hand notation is used to refer to ASN.1 Information Object Classes 
+-- representing parameters bounds.
+B1 ::=
+  COMMON-BOUNDS -- defined in Recommendation Q.1248.1
+
+B2 ::= SCF-SSF-BOUNDS -- defined in Recommendation Q.1248.2
+
+B6 ::= SCF-SCF-BOUNDS -- defined in this Recommendation Q.1248.6
+
+AccountNumber ::= NumericString(SIZE (1..151))
+
+Actions ::= ENUMERATED {play(0), playandcollect(1)}
+
+ActivableServices ::= BIT STRING {
+  callingLineIdentificationPresentation(1),
+  callingLineIdentificationRestriction(2),
+  connectedLineIdentificationPresentation(3),
+  connectedLineIdentificationRestriction(4), callForwardingOnNoReply(5),
+  callForwardingUnconditional(6), callForwardingOnBusy(7),
+  callForwardingOnNotReachable(8), reverseCharging(9),
+  adviceOfChargeOnStart(10), adviceOfChargeAtEnd(11),
+  adviceOfChargeDuringCall(12), timeDependentRouting(13),
+  callingPartingDependentRouting(14), outgoingCallBarring(15),
+  incomingCallBarring(16)}
+
+AgreementFeatureIndicator ::= Code
+
+--This AgreementFeatureIndicator indicates the service application for which the service data is to be provided.
+AgreementID ::= OBJECT IDENTIFIER
+
+BasicChargingParameters{B6:b6} ::= SEQUENCE {
+  unitsPerInterval         [0]  INTEGER(0..b6.&maxUnitsPerInterval),
+  timePerInterval          [1]  INTEGER(0..b6.&maxTimePerInterval),
+  scalingFactor            [2]  INTEGER(0..b6.&maxScalingFactor),
+  initialUnitIncrement
+    [3]  INTEGER(0..b6.&maxInitialUnitIncrement) OPTIONAL,
+  unitsPerDataInterval
+    [4]  INTEGER(0..b6.&maxUnitsPerDataInterval) OPTIONAL,
+  segmentsPerDataInterval
+    [5]  INTEGER(0..b6.&maxSegmentsPerDataInterval) OPTIONAL,
+  initialTimeInterval
+    [6]  INTEGER(0..b6.&maxInitialTimeInterval) OPTIONAL
+}
+
+BearerCapabilities ::= BIT STRING {
+  speech(0), bc64kbits(1), bc2x64kbits(2), bc384kbits(3), bc1536kbits(4),
+  bc1920kbits(5), multirate(6), restrictedDigitalInfo(7), bc3-1khzAudio(8),
+  bc7khzAudio(9), video(10)}
+
+CallConditions{B2:b2} ::= CHOICE {
+  userAbandon         [0]  NULL,
+  callFailure         [1]  Cause{b2},
+  noReply             [2]  INTEGER, -- time expressed in seconds
+  callRelease         [3]  NULL,
+  ss-invocation       [4]  InvokableService,
+  creditLimitReached  [5]  INTEGER,
+  callDuration        [6]  INTEGER,
+  calledNumber        [7]  NumberMatch{b2},
+  answeredCall        [8]  NULL
+}
+
+CallIdentifier ::= Integer4
+
+CallRecord{B2:b2} ::= SEQUENCE {
+  callDuration        [0]  Duration,
+  callingPartyNumber  [1]  CallingPartyNumber{b2},
+  calledPartyNumber   [2]  CalledPartyNumber{b2}
+}
+
+ChargingParameters{B6:b6} ::= CHOICE {
+  basic    [1]  BasicChargingParameters{b6},
+  tariffs  [20]  Tariffs{b6},
+  mutual   [21]  Code-- indicated an indexed charging rule --
+  -- agreed between operator
+}
+
+ChargingSignallingInformation ::= SEQUENCE {
+  partyToBeCharged  PartyToBeCharged,
+  percentage        INTEGER(0..100)
+}
+
+CollectedInfo ::= CHOICE {
+  collectedDigits  [0]  CollectedDigits,
+  iA5Information   [1]  BOOLEAN
+}
+
+CollectedDigits ::= SEQUENCE {
+  minimumNbOfDigits    [0]  INTEGER(1..127) DEFAULT 1,
+  maximumNbOfDigits    [1]  INTEGER(1..127),
+  endOfReplyDigit      [2]  IA5String(SIZE (1)) OPTIONAL,
+  cancelDigit          [3]  IA5String(SIZE (1)) OPTIONAL,
+  startDigit           [4]  IA5String(SIZE (1)) OPTIONAL,
+  firstDigitTimeOut    [5]  INTEGER(1..127) OPTIONAL,
+  interDigitTimeOut    [6]  INTEGER(1..127) OPTIONAL,
+  errorTreatment       [7]  ErrorTreatment DEFAULT reportErrorToScf,
+  interruptableAnnInd  [8]  BOOLEAN DEFAULT TRUE,
+  voiceInformation     [9]  BOOLEAN DEFAULT FALSE,
+  voiceBack            [10]  BOOLEAN DEFAULT FALSE
+}
+
+ConsumedCreditAction ::= ENUMERATED {disconnect(0), message(1), tone(2)}
+
+Credit{B6:b6} ::= CHOICE {currency  CurrencyValue{b6},
+                          units     CreditUnit
+}
+
+CreditUnit ::= INTEGER(0..maxCreditUnit)
+
+maxCreditUnit INTEGER ::= 65536
+
+CurrencyID ::= PrintableString(SIZE (3)) -- ISO 639 code
+                              
+
+CurrencyValue{B6:b6} ::= SEQUENCE {
+  currency  CurrencyID,
+  amount    INTEGER(0..b6.&maxAmount)
+}
+
+Destination{B2:b2} ::= SEQUENCE {
+  type     [1]  ENUMERATED {e164(0), x121(1)},
+  genadd   [2]  GenericNumber{b2} OPTIONAL,
+  presadd  [3]  PresentationAddress OPTIONAL
+}
+
+DestinationRelatedInfo{B2:b2} ::= SEQUENCE {
+  calledPartyNumber       [0]  DestinationRoutingAddress{b2} OPTIONAL,
+  highLayerCompatibility  [1]  HighLayerCompatibility{b2} OPTIONAL,
+  supplementaryServices   [2]  SupplementaryServices OPTIONAL,
+  preferredLanguage       [3]  Language OPTIONAL,
+  carrier                 [4]  Carrier{b2} OPTIONAL,
+  callingPartyNumber      [5]  CallingPartyNumber{b2} OPTIONAL,
+  callingPartysCategory   [6]  CallingPartysCategory OPTIONAL
+}
+
+ErrorTreatment ::= ENUMERATED {reportErrorToScf(0), help(1), repeatPrompt(2)}
+
+Event ::= CHOICE {
+  duration  [1]  INTEGER(0..maxTimeInterval),
+  event
+    [2]  ENUMERATED {now(0), answer(1), user-interaction(2), failure(3)}
+}
+
+maxTimeInterval INTEGER ::= 65536
+
+FreeContainer{B6:b6} ::= OCTET STRING(SIZE (1..b6.&maxFreeContainer))
+
+HighLayerCompatibilities ::= BIT STRING {
+  telephony(0), facsimileGroup2-3(1), facsimileGroup4classeI(2),
+  teletexMixedMode(3), teletexProcessableMode(4), teletexBasicMode(5),
+  syntaxBasedVideotex(6), internationalVideotex(7), telexService(8),
+  messageHandlingSystem(9), osiApplication(10), audioVisual(11)}
+
+InbandInfo ::= SEQUENCE {
+  messageId            [0]  MessageID,
+  numberOfRepetitions  [1]  INTEGER(1..127) OPTIONAL,
+  duration             [2]  INTEGER(1..32767) OPTIONAL,
+  interval             [3]  INTEGER(1..32767) OPTIONAL
+}
+
+InformationToSend{B2:b2} ::= CHOICE {
+  inbandInfo          [0]  InbandInfo,
+  tone                [1]  Tone,
+  displayInformation  [2]  DisplayInformation{b2}
+}
+
+InfoType ::= ENUMERATED {numericString(0), characterString(1), iA5String(2)}
+
+InvokableService ::= ENUMERATED {
+  callingLineIdentificationRestriction(1),
+  connectedLineIdentificationRestriction(2), callWaiting(3), callHold(4),
+  reverseCharging(5), explicitCallTransfer(6),
+  callCompletionOnBusySubscriber(7)}
+
+MessageID ::= OBJECT IDENTIFIER
+
+Meters ::= SEQUENCE OF Meter
+
+Meter ::= SEQUENCE {
+  meternum    [1]  INTEGER(0..nbrOfMeters) OPTIONAL,
+  metervalue  [2]  INTEGER
+}
+
+nbrOfMeters INTEGER ::= 128
+
+Notification ::= ENUMERATED {
+  userAbandon(0), callFailure(1), noReply(2), callRelease(3), ssInvocation(4),
+  creditLimitReached(5), callDuration(6), calledNumber(7), answeredCall(8)
+}
+
+NotificationInformation{B2:b2} ::= CHOICE {
+  userAbandonSpecificInfo         [0]  SEQUENCE {...},
+  callFailureSpecificInfo
+    [1]  SEQUENCE {failureCause  [0]  Cause{b2} OPTIONAL,
+                   ...},
+  noReplySpecificInfo             [2]  SEQUENCE {...},
+  callReleaseSpecificInfo
+    [3]  SEQUENCE {releaseCause  [0]  Cause{b2} OPTIONAL,
+                   timeStamp     [1]  DateAndTime OPTIONAL,
+                   ...},
+  ssInvocationSpecificInfo
+    [4]  SEQUENCE {invokedService  [0]  InvokableService,
+                   ...},
+  creditLimitReachedSpecificInfo
+    [5]  SEQUENCE {timeStamp  [0]  DateAndTime OPTIONAL,
+                   ...},
+  callDurationSpecificInfo
+    [6]  SEQUENCE {timeStamp  [0]  DateAndTime OPTIONAL,
+                   ...},
+  calledNumberSpecificInfo
+    [7]  SEQUENCE {calledNumber  [0]  CalledPartyNumber{b2} OPTIONAL,
+                   ...},
+  answeredCallSpecificInfo
+    [8]  SEQUENCE {timeStamp  [0]  DateAndTime OPTIONAL,
+                   ...}
+}
+
+NumberMatch{B2:b2} ::= CHOICE {
+  initialMatch  [0]  CalledPartyNumber{b2},
+  totalMatch    [1]  CalledPartyNumber{b2}
+}
+
+PartyID ::= INTEGER
+
+-- This parameter is used to identify which party is relevant to the event.  For example, this parameter may be
+-- used when the supporting SCF creates two parties by an "InitiateCallRequest" operation and needs to identify
+-- the event from each party.
+PartyToBeCharged ::= ENUMERATED {orignating(0), terminating(1)}
+
+ProtocolInfo ::= CHOICE {sdf  [1]  SDFProtocolInfo,
+                         scf  [2]  SCFProtocolInfo
+}
+
+ReceivedInformation{B6:b6} ::=
+  SEQUENCE SIZE (b6.&minReceivedInfo..b6.&maxReceivedInfo) OF IA5String
+
+ReportConditionEvent{B6:b6} ::= SEQUENCE {
+  now                 [1]  NULL OPTIONAL,
+  endOfCall           [2]  NULL OPTIONAL,
+  period              [3]  INTEGER(0..maxPeriodTime),
+  remainingthreshold  [5]  UserCredit{b6} OPTIONAL,
+  eachNumOfUnit       [6]  INTEGER OPTIONAL
+}
+
+maxPeriodTime INTEGER ::= 32767
+
+ReportDestinationInformation{B2:b2} ::= SEQUENCE {
+  destination   [1]  Destination{b2},
+  protocolInfo  [2]  ProtocolInfo
+}
+
+RequestedNotifications{B2:b2} ::=
+  SET OF
+    CHOICE {callCondition             CallConditions{b2},
+            callConditionWithPartyID
+              SEQUENCE {callCondition  CallConditions{b2},
+                        partyID        [9]  PartyID}}
+
+RequestedType ::= INTEGER(0..127)
+
+RoutingAddress{B2:b2} ::= CHOICE {
+  routingProhibited          [0]  NULL,
+  destinationRoutingAddress  [1]  DestinationRoutingAddress{b2}
+}
+
+Rule{B6:b6} ::= BasicChargingParameters{b6}
+
+ScfAddress{B6:b6} ::=
+  OCTET STRING(SIZE (b6.&minScfAddress..b6.&maxScfAddress))
+
+SCFProtocolInfo ::= AgreementID
+
+SDFProtocolInfo ::= SEQUENCE {
+  entryname  DistinguishedName,
+  attribute  OBJECT IDENTIFIER
+}
+
+SSIInfo{B6:b6} ::= SEQUENCE {
+  agreementFeatureIndicator  [0]  AgreementFeatureIndicator OPTIONAL,
+  sTSIInformation            [1]  STSIInformation{b6}
+}
+
+STSIInformation{B6:b6} ::=
+  OCTET STRING(SIZE (b6.&minSSIInfoLength..b6.&maxSSIInfoLength))
+
+-- The STSIInformation contains the service information associated with the agreementFeatureIndicator. 
+-- provided by the Service Logic of the invoking SCF to be transferred to the Service Logic
+-- of the responding  SCF.s 
+SubscriberID{B2:b2} ::=
+  GenericNumber{b2}
+
+SupplementaryServices ::= BIT STRING {
+  callingLineIdentificationPresentation(1),
+  callingLineIdentificationRestriction(2),
+  connectedLineIdentificationPresentation(3),
+  connectedLineIdentificationRestriction(4), callForwardingOnNoReply(5),
+  callForwardingUnconditional(6), callForwardingOnBusy(7),
+  callForwardingOnNotReachable(8), callWaiting(9), callHold(10),
+  reverseCharging(11), explicitCallTransfer(12),
+  callCompletionOnBusySubscriber(13), adviceOfChargeOnStart(14),
+  adviceOfChargeAtEnd(15), adviceOfChargeDuringCall(16),
+  timeDependentRouting(17), callingPartingDependentRouting(18),
+  outgoingCallBarring(19), incomingCallBarring(20)}
+
+Tariff{B6:b6} ::= SEQUENCE {
+  condition      [1]  Event,
+  meternum       [2]  INTEGER(0..nbrOfMeters) OPTIONAL,
+  rule           [3]  Rule{b6} OPTIONAL,
+  resetAfterRCI  [4]  BOOLEAN DEFAULT FALSE
+}
+
+Tariffs{B6:b6} ::= SEQUENCE OF Tariff{b6}
+
+TraceInformation{B2:b2} ::= SEQUENCE OF TraceItem{b2}
+
+TraceItem{B2:b2} ::= SET {scf  [0]  ScfID{b2},
+                          ...
+}
+
+UserInteractionModes ::= BIT STRING {voiceMessage(0), tone(1), display(2)}
+
+UserCredit{B6:b6} ::= Credit{b6}
+
+UserToConnect ::= ENUMERATED {first(0), nofirst(1), newone(2), previous(3)}
+
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

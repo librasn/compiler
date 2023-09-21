@@ -1,0 +1,1412 @@
+
+
+
+
+
+
+
+-- Module BIP (X.1083:11/2007)
+-- See also ITU-T X.1083 (11/2007)
+-- See also the index of all ASN.1 assignments needed in this document
+
+BIP {joint-iso-itu-t bip(41) modules(0) bip(0) version1(1)} DEFINITIONS
+AUTOMATIC TAGS ::=
+BEGIN
+
+BIPMessage ::= SEQUENCE {
+  nature
+    CHOICE {request          BIPRequest,
+            response         BIPResponse,
+            notification     BIPNotification,
+            acknowledgement  BIPAcknowledgement},
+  ...
+}
+
+BIPRequest ::= SEQUENCE {
+  slaveEndpointIRI   EndpointIRI,
+  masterEndpointIRI  EndpointIRI,
+  linkNumber         UnsignedInt,
+  requestId          UnsignedInt,
+  params
+    CHOICE {addMaster                   AddMaster-RequestParams,
+            deleteMaster                DeleteMaster-RequestParams,
+            bspLoad                     BSPLoad-RequestParams,
+            bspUnload                   BSPUnload-RequestParams,
+            queryUnits                  QueryUnits-RequestParams,
+            queryBFPs                   QueryBFPs-RequestParams,
+            bspAttach                   BSPAttach-RequestParams,
+            bspDetach                   BSPDetach-RequestParams,
+            enableUnitEvents            EnableUnitEvents-RequestParams,
+            enableEventNotifications    EnableEventNotifications-RequestParams,
+            controlUnit                 ControlUnit-RequestParams,
+            control                     Control-RequestParams,
+            freeBIRHandle               FreeBIRHandle-RequestParams,
+            getBIRFromHandle            GetBIRFromHandle-RequestParams,
+            getHeaderFromHandle         GetHeaderFromHandle-RequestParams,
+            subscribeToGUIEvents        SubscribeToGUIEvents-RequestParams,
+            unsubscribeFromGUIEvents    UnsubscribeFromGUIEvents-RequestParams,
+            redirectGUIEvents           RedirectGUIEvents-RequestParams,
+            unredirectGUIEvents         UnredirectGUIEvents-RequestParams,
+            queryGUIEventSubscriptions
+              QueryGUIEventSubscriptions-RequestParams,
+            notifyGUISelectEvent        NotifyGUISelectEvent-RequestParams,
+            notifyGUIStateEvent         NotifyGUIStateEvent-RequestParams,
+            notifyGUIProgressEvent      NotifyGUIProgressEvent-RequestParams,
+            capture                     Capture-RequestParams,
+            createTemplate              CreateTemplate-RequestParams,
+            process                     Process-RequestParams,
+            processWithAuxBIR           ProcessWithAuxBIR-RequestParams,
+            verifyMatch                 VerifyMatch-RequestParams,
+            identifyMatch               IdentifyMatch-RequestParams,
+            enroll                      Enroll-RequestParams,
+            verify                      Verify-RequestParams,
+            identify                    Identify-RequestParams,
+            import                      Import-RequestParams,
+            presetIdentifyPopulation    PresetIdentifyPopulation-RequestParams,
+            transform                   Transform-RequestParams,
+            dbOpen                      DbOpen-RequestParams,
+            dbClose                     DbClose-RequestParams,
+            dbCreate                    DbCreate-RequestParams,
+            dbDelete                    DbDelete-RequestParams,
+            dbSetMarker                 DbSetMarker-RequestParams,
+            dbFreeMarker                DbFreeMarker-RequestParams,
+            dbStore                     DbStoreBIR-RequestParams,
+            dbGetBIR                    DbGetBIR-RequestParams,
+            dbGetNextBIR                DbGetNextBIR-RequestParams,
+            dbDeleteBIR                 DbDeleteBIR-RequestParams,
+            calibrateSensor             CalibrateSensor-RequestParams,
+            setPowerMode                SetPowerMode-RequestParams,
+            setIndicatorStatus          SetIndicatorStatus-RequestParams,
+            getIndicatorStatus          GetIndicatorStatus-RequestParams,
+            cancel                      Cancel-RequestParams,
+            registerBSP                 RegisterBSP-RequestParams,
+            unregisterBSP               UnregisterBSP-RequestParams,
+            registerBFP                 RegisterBFP-RequestParams,
+            unregisterBFP               UnregisterBFP-RequestParams,
+            ...}
+}
+
+BIPResponse ::= SEQUENCE {
+  slaveEndpointIRI   EndpointIRI,
+  masterEndpointIRI  EndpointIRI,
+  linkNumber         UnsignedInt,
+  requestId          UnsignedInt,
+  params
+    CHOICE {addMaster                   AddMaster-ResponseParams,
+            deleteMaster                DeleteMaster-ResponseParams,
+            bspLoad                     BSPLoad-ResponseParams,
+            bspUnload                   BSPUnload-ResponseParams,
+            queryUnits                  QueryUnits-ResponseParams,
+            queryBFPs                   QueryBFPs-ResponseParams,
+            bspAttach                   BSPAttach-ResponseParams,
+            bspDetach                   BSPDetach-ResponseParams,
+            enableUnitEvents            EnableUnitEvents-ResponseParams,
+            enableEventNotifications    EnableEventNotifications-ResponseParams,
+            controlUnit                 ControlUnit-ResponseParams,
+            control                     Control-ResponseParams,
+            freeBIRHandle               FreeBIRHandle-ResponseParams,
+            getBIRFromHandle            GetBIRFromHandle-ResponseParams,
+            getHeaderFromHandle         GetHeaderFromHandle-ResponseParams,
+            subscribeToGUIEvents        SubscribeToGUIEvents-ResponseParams,
+            unsubscribeFromGUIEvents    UnsubscribeFromGUIEvents-ResponseParams,
+            redirectGUIEvents           RedirectGUIEvents-ResponseParams,
+            unredirectGUIEvents         UnredirectGUIEvents-ResponseParams,
+            queryGUIEventSubscriptions
+              QueryGUIEventSubscriptions-ResponseParams,
+            notifyGUISelectEvent        NotifyGUISelectEvent-ResponseParams,
+            notifyGUIStateEvent         NotifyGUIStateEvent-ResponseParams,
+            notifyGUIProgressEvent      NotifyGUIProgressEvent-ResponseParams,
+            capture                     Capture-ResponseParams,
+            createTemplate              CreateTemplate-ResponseParams,
+            process                     Process-ResponseParams,
+            processWithAuxBIR           ProcessWithAuxBIR-ResponseParams,
+            verifyMatch                 VerifyMatch-ResponseParams,
+            identifyMatch               IdentifyMatch-ResponseParams,
+            enroll                      Enroll-ResponseParams,
+            verify                      Verify-ResponseParams,
+            identify                    Identify-ResponseParams,
+            import                      Import-ResponseParams,
+            presetIdentifyPopulation    PresetIdentifyPopulation-ResponseParams,
+            transform                   Transform-ResponseParams,
+            dbOpen                      DbOpen-ResponseParams,
+            dbClose                     DbClose-ResponseParams,
+            dbCreate                    DbCreate-ResponseParams,
+            dbDelete                    DbDelete-ResponseParams,
+            dbSetMarker                 DbSetMarker-ResponseParams,
+            dbFreeMarker                DbFreeMarker-ResponseParams,
+            dbStore                     DbStoreBIR-ResponseParams,
+            dbGetBIR                    DbGetBIR-ResponseParams,
+            dbGetNextBIR                DbGetNextBIR-ResponseParams,
+            dbDeleteBIR                 DbDeleteBIR-ResponseParams,
+            calibrateSensor             CalibrateSensor-ResponseParams,
+            setPowerMode                SetPowerMode-ResponseParams,
+            setIndicatorStatus          SetIndicatorStatus-ResponseParams,
+            getIndicatorStatus          GetIndicatorStatus-ResponseParams,
+            cancel                      Cancel-ResponseParams,
+            registedBSP                 RegisterBSP-ResponseParams,
+            unregisterBSP               UnregisterBSP-ResponseParams,
+            registerBFP                 RegisterBFP-ResponseParams,
+            unregisterBFP               UnregisterBFP-ResponseParams,
+            ...},
+  returnValue        BioAPI-RETURN
+}
+
+BIPNotification ::= SEQUENCE {
+  masterEndpointIRI  EndpointIRI,
+  slaveEndpointIRI   EndpointIRI,
+  linkNumber         UnsignedInt,
+  notificationId     UnsignedInt,
+  params
+    CHOICE {masterDeletionEvent     MasterDeletionEvent-NotificationParams,
+            unitEvent               UnitEvent-NotificationParams,
+            guiSelectEvent          GUISelectEvent-NotificationParams,
+            guiStateEvent           GUIStateEvent-NotificationParams,
+            guiProgressEvent        GUIProgressEvent-NotificationParams,
+            bspRegistrationEvent    BSPRegistrationEvent-NotificationParams,
+            bspUnregistrationEvent  BSPUnregistrationEvent-NotificationParams,
+            bfpRegistrationEvent    BFPRegistrationEvent-NotificationParams,
+            bfpUnregistrationEvent  BFPUnregistrationEvent-NotificationParams,
+            ...}
+}
+
+BIPAcknowledgement ::= SEQUENCE {
+  masterEndpointIRI  EndpointIRI,
+  slaveEndpointIRI   EndpointIRI,
+  linkNumber         UnsignedInt,
+  notificationId     UnsignedInt,
+  params
+    CHOICE {guiSelectEvent    GUISelectEvent-AcknowledgementParams,
+            guiStateEvent     GUIStateEvent-AcknowledgementParams,
+            guiProgressEvent  GUIProgressEvent-AcknowledgementParams,
+            ...},
+  returnValue        BioAPI-RETURN
+}
+
+UnsignedByte ::= INTEGER(0..max-unsigned-byte)
+
+UnsignedShort ::= INTEGER(0..max-unsigned-short)
+
+UnsignedInt ::= INTEGER(0..max-unsigned-int)
+
+SignedInt ::= INTEGER(min-signed-int..max-signed-int)
+
+MemoryAddress ::= INTEGER
+
+max-unsigned-byte INTEGER ::= 255
+
+max-unsigned-short INTEGER ::= 65535
+
+max-unsigned-int INTEGER ::= 4294967295
+
+min-signed-int INTEGER ::= -2147483648
+
+max-signed-int INTEGER ::= 2147483647
+
+EndpointIRI ::=
+  VisibleString
+    (CONSTRAINED BY { --The string shall conform to the "absolute-IRI" grammar --defined in IETF RFC 3987--
+       })
+
+BioAPI-BFP-LIST-ELEMENT ::= SEQUENCE {
+  category        BioAPI-CATEGORY,
+  bfpProductUuid  BioAPI-UUID
+}
+
+BioAPI-BFP-SCHEMA ::= SEQUENCE {
+  bfpProductUuid      BioAPI-UUID,
+  category            BioAPI-CATEGORY,
+  description         BioAPI-STRING,
+  path                UTF8String,
+  specVersion         BioAPI-VERSION,
+  productVersion      BioAPI-STRING,
+  vendor              BioAPI-STRING,
+  supportedFormats
+    SEQUENCE (SIZE (0..max-unsigned-int)) OF format
+      BioAPI-BIR-BIOMETRIC-DATA-FORMAT,
+  factorsMask         BioAPI-BIR-BIOMETRIC-TYPE,
+  propertyUuid        BioAPI-UUID,
+  property            BioAPI-DATA,
+  hostingEndpointIRI  EndpointIRI
+}
+
+BioAPI-BIR ::= SEQUENCE {
+  patronFormatOwner  UnsignedShort,
+  patronFormatType   UnsignedShort,
+  formattedBIR       OCTET STRING
+}
+
+BioAPI-BIR-ARRAY-POPULATION ::= SEQUENCE {
+  members  SEQUENCE (SIZE (0..max-unsigned-int)) OF member BioAPI-BIR
+}
+
+BioAPI-BIR-BIOMETRIC-DATA-FORMAT ::= SEQUENCE {
+  formatOwner  UnsignedShort,
+  formatType   UnsignedShort
+}
+
+BioAPI-BIR-BIOMETRIC-PRODUCT-ID ::= SEQUENCE {
+  productOwner  UnsignedShort,
+  productType   UnsignedShort
+}
+
+BioAPI-BIR-BIOMETRIC-TYPE ::= BIT STRING {
+  typeMultipleBiometricTypes(0), typeFace(1), typeVoice(2), typeFinger(3),
+  typeIris(4), typeRetina(5), typeHandGeometry(6), typeSignatureSign(7),
+  typeKeystroke(8), typeLipMovement(9), typeGait(12), typeVein(13),
+  typeDNA(14), typeEar(15), typeFoot(16), typeScent(17), typeOther(30),
+  typePassword(31)}(SIZE (32))
+
+BioAPI-BIR-DATA-TYPE ::= SEQUENCE {
+  processedLevel  ENUMERATED {raw, intermediate, processed, ...
+                              },
+  flags
+    BIT STRING {encrypted(0), signed(1), index-present(3)}(SIZE (4))
+}
+
+BioAPI-BIR-HANDLE ::= SignedInt
+
+BioAPI-BIR-HEADER ::= SEQUENCE {
+  patronFormatOwner  UnsignedShort,
+  patronFormatType   UnsignedShort,
+  formattedBIR       OCTET STRING
+}
+
+BioAPI-BIR-PURPOSE ::= ENUMERATED {
+  verify, identify, enroll, enrollVerify, enrollIdentify, audit, any, ...
+  }
+
+BioAPI-BIR-SECURITY-BLOCK-FORMAT ::= SEQUENCE {
+  formatOwner  UnsignedShort,
+  formatType   UnsignedShort
+}
+
+BioAPI-BIR-SUBTYPE ::= CHOICE {
+  anySubtype
+    BIT STRING {left(0), right(1), thumb(2), pointerFinger(3), middleFinger(4),
+                ringFinger(5), littleFinger(6)}(SIZE (7)),
+  vein-only-subtype
+    BIT STRING {left(0), right(1), veinPalm(2), veinBackofhand(3), veinWrist(4)}
+                                                                    (SIZE (7))
+}
+
+BioAPI-BIR-SUBTYPE-MASK ::= BIT STRING {
+  left(0), right(1), left-thumb(2), left-pointerfinger(3),
+  left-middlefinger(4), left-ringfinger(5), left-littlefinger(6),
+  right-thumb(7), right-pointerfinger(8), right-middlefinger(9),
+  right-ringfinger(10), right-littlefinger(11), left-vein-palm(12),
+  left-vein-backofhand(13), left-vein-wrist(14), right-vein-palm(15),
+  right-vein-backofhand(16), right-vein-wrist(17)}(SIZE (32))
+
+BioAPI-BSP-SCHEMA ::= SEQUENCE {
+  bspProductUuid           BioAPI-UUID,
+  description              BioAPI-STRING,
+  path                     UTF8String,
+  specVersion              BioAPI-VERSION,
+  productVersion           BioAPI-STRING,
+  vendor                   BioAPI-STRING,
+  supportedFormats
+    SEQUENCE (SIZE (0..max-unsigned-int)) OF format
+      BioAPI-BIR-BIOMETRIC-DATA-FORMAT,
+  factorsMask              BioAPI-BIR-BIOMETRIC-TYPE,
+  operations               BioAPI-OPERATIONS-MASK,
+  options                  BioAPI-OPTIONS-MASK,
+  payloadPolicy            BioAPI-FMR,
+  maxPayloadSize           UnsignedInt,
+  defaultVerifyTimeout     SignedInt,
+  defaultIdentifyTimeout   SignedInt,
+  defaultCaptureTimeout    SignedInt,
+  defaultEnrollTimeout     SignedInt,
+  defaultCalibrateTimeout  SignedInt,
+  maxBSPDbSize             UnsignedInt,
+  maxIdentify              UnsignedInt,
+  hostingEndpointIRI       EndpointIRI,
+  bspAccessUuid            BioAPI-UUID
+}
+
+BioAPI-CANDIDATE ::= SEQUENCE {
+  bir
+    CHOICE {birInDatabase     BioAPI-UUID,
+            birInArray        UnsignedInt,
+            birInPresetArray  UnsignedInt},
+  fmrAchieved  BioAPI-FMR
+}
+
+BioAPI-CATEGORY ::= ENUMERATED {
+  archive, comparisonAlgorithm, processingAlgorithm, sensor, ...
+  }
+
+BioAPI-DATA ::= OCTET STRING(SIZE (0..max-unsigned-int))
+
+BioAPI-DATE ::= SEQUENCE {
+  year   INTEGER(0 | 1900..9999),
+  month  INTEGER(0..12),
+  day    INTEGER(0..31)
+}
+
+BioAPI-DB-ACCESS-TYPE ::= BIT STRING {read(0), write(1)}(SIZE (32))
+
+BioAPI-DB-MARKER-HANDLE ::= UnsignedInt
+
+BioAPI-DB-HANDLE ::= SignedInt
+
+BioAPI-DBBIR-ID ::= SEQUENCE {dbHandle  BioAPI-DB-HANDLE,
+                              keyValue  BioAPI-UUID
+}
+
+BioAPI-DTG ::= SEQUENCE {date  BioAPI-DATE,
+                         time  BioAPI-TIME
+}
+
+BioAPI-UNIT-EVENT-TYPE ::= ENUMERATED {
+  insert, remove, fault, sourcePresent, sourceRemoved, ...
+  }
+
+BioAPI-UNIT-EVENT-TYPE-MASK ::= BIT STRING {
+  insert(0), remove(1), fault(2), sourcePresent(3), sourceRemoved(4)
+}(SIZE (32))
+
+BioAPI-FMR ::= SignedInt
+
+BioAPI-FRAMEWORK-SCHEMA ::= SEQUENCE {
+  fwProductUuid       BioAPI-UUID,
+  description         BioAPI-STRING,
+  path                UTF8String,
+  specVersion         BioAPI-VERSION,
+  productVersion      BioAPI-STRING,
+  vendor              BioAPI-STRING,
+  propertyUuid        BioAPI-UUID,
+  property            BioAPI-DATA,
+  hostingEndpointIRI  EndpointIRI
+}
+
+BioAPI-GUI-BITMAP ::= SEQUENCE {
+  subtypeMask  BioAPI-BIR-SUBTYPE-MASK,
+  width        UnsignedInt,
+  height       UnsignedInt,
+  bitmap       BioAPI-DATA OPTIONAL
+}
+
+BioAPI-GUI-BITMAP-ARRAY ::= SEQUENCE {
+  guiBitmaps
+    SEQUENCE (SIZE (0..max-unsigned-int)) OF guiBitmap BioAPI-GUI-BITMAP
+}
+
+BioAPI-GUI-EVENT-SUBSCRIPTION ::= SEQUENCE {
+  subscriberEndpointIRI       EndpointIRI,
+  guiEventSubscriptionUuid    BioAPI-UUID,
+  guiSelectEventSubscribed    BOOLEAN,
+  guiStateEventSubscribed     BOOLEAN,
+  guiProgressEventSubscribed  BOOLEAN
+}
+
+BioAPI-GUI-MOMENT ::= ENUMERATED {beforeStart, during, afterEnd, ...
+                                  }
+
+BioAPI-GUI-ENROLL-TYPE ::= BIT STRING {testVerify(0), multipleCapture(1)
+}(SIZE (32))
+
+BioAPI-GUI-OPERATION ::= ENUMERATED {
+  capture, process, createtemplate, verifymatch, identifymatch, verify,
+  identify, enroll, ...
+  }
+
+BioAPI-GUI-RESPONSE ::= ENUMERATED {
+  default, opComplete, opCancel, cycleStart, cycleRestart, subopStart,
+  subopNext, progressContinue, progressCancel, recapture, ...
+  }
+
+BioAPI-GUI-SUBOPERATION ::= ENUMERATED {
+  capture, process, createtemplate, verifymatch, identifymatch, ...
+  }
+
+BioAPI-HANDLE ::= UnsignedInt
+
+BioAPI-IDENTIFY-POPULATION ::= SEQUENCE {
+  birs
+    CHOICE {birDataBase     BioAPI-DB-HANDLE,
+            birArray        BioAPI-BIR-ARRAY-POPULATION,
+            birPresetArray  NULL}
+}
+
+BioAPI-INDICATOR-STATUS ::= ENUMERATED {
+  accept, reject, ready, busy, failure, ...
+  }
+
+BioAPI-INPUT-BIR ::= SEQUENCE {
+  inputBIR
+    CHOICE {birInDB   BioAPI-DBBIR-ID,
+            birInBSP  BioAPI-BIR-HANDLE,
+            bir       BioAPI-BIR}
+}
+
+BioAPI-OPERATIONS-MASK ::= BIT STRING {
+  enableEvents(0), subscribeToGUIEvents(1), capture(2), createTemplate(3),
+  process(4), processWithAuxBir(5), verifyMatch(6), identifyMatch(7),
+  enroll(8), verify(9), identify(10), import(11), presetIdentifyPopulation(12),
+  databaseOperations(13), setPowerMode(14), setIndicatorStatus(15),
+  getIndicatorStatus(16), calibrateSensor(17), utilities(18), queryUnits(20),
+  queryBFPs(21), controlUnit(22)}(SIZE (32))
+
+BioAPI-OPTIONS-MASK ::= BIT STRING {
+  raw(0), qualityRaw(1), qualityIntermediate(2), qualityProcessed(3),
+  appGui(4), guiProgressEvents(5), sourcePresent(6), payload(7), birSign(8),
+  birEncrypt(9), templateUpdate(10), adaptation(11), binning(12),
+  selfContainedDevice(13), moc(14), subtypeToCapture(15), sensorBFP(16),
+  archiveBFP(17), comparisonBFP(18), processingBFP(19), coarseScores(20)
+}(SIZE (32))
+
+BioAPI-POWER-MODE ::= ENUMERATED {normal, detect, sleep, ...
+                                  }
+
+BioAPI-QUALITY ::= INTEGER(-2..100)
+
+BioAPI-RETURN ::= UnsignedInt
+
+BioAPI-STRING ::=
+  UTF8String
+    (CONSTRAINED BY { --The UTF-8 encoding shall not contain any NUL characters --nd shall be no longer than 268 octets--
+       })
+
+BioAPI-TIME ::= SEQUENCE {
+  hour    INTEGER(0..99),
+  minute  INTEGER(0..99),
+  second  INTEGER(0..99)
+}
+
+BioAPI-UNIT-ID ::= UnsignedInt
+
+BioAPI-UNIT-LIST-ELEMENT ::= SEQUENCE {
+  category  BioAPI-CATEGORY,
+  unitID    BioAPI-UNIT-ID
+}
+
+BioAPI-UNIT-SCHEMA ::= SEQUENCE {
+  bspProductUuid          BioAPI-UUID,
+  unitManagerProductUuid  BioAPI-UUID,
+  unitId                  BioAPI-UNIT-ID,
+  category                BioAPI-CATEGORY,
+  unitProperties          BioAPI-UUID,
+  vendorInformation       BioAPI-STRING,
+  supportedUnitEvents     BioAPI-UNIT-EVENT-TYPE-MASK,
+  propertyUuid            BioAPI-UUID,
+  property                BioAPI-DATA,
+  hardwareVersion         BioAPI-STRING,
+  firmwareVersion         BioAPI-STRING,
+  softwareVersion         BioAPI-STRING,
+  hardwareSerialNumber    BioAPI-STRING,
+  authenticatedHardware   BOOLEAN,
+  maxBSPDbSize            UnsignedInt,
+  maxIdentify             UnsignedInt
+}
+
+BioAPI-UUID ::= OCTET STRING(SIZE (16))
+
+BioAPI-VERSION ::= SEQUENCE {major  INTEGER(0..15),
+                             minor  INTEGER(0..15)
+}
+
+MasterDeletionEvent-NotificationParams ::= NULL
+
+AddMaster-RequestParams ::= SEQUENCE {bipVersion  BioAPI-VERSION
+}
+
+AddMaster-ResponseParams ::= SEQUENCE {
+  fwSchema    BioAPI-FRAMEWORK-SCHEMA OPTIONAL,
+  bspSchemas
+    SEQUENCE (SIZE (0..max-unsigned-int)) OF bspSchema BioAPI-BSP-SCHEMA,
+  bfpSchemas
+    SEQUENCE (SIZE (0..max-unsigned-int)) OF bfpSchema BioAPI-BFP-SCHEMA
+}
+
+LinkCallParams ::= SEQUENCE {slaveEndpointIRI  EndpointIRI
+}
+
+DeleteMaster-RequestParams ::= NULL
+
+DeleteMaster-ResponseParams ::= NULL
+
+UnlinkCallParams ::= SEQUENCE {slaveEndpointIRI  EndpointIRI
+}
+
+EnumFrameworksCallOutputParams ::= SEQUENCE OF BioAPI-FRAMEWORK-SCHEMA
+
+EnumBSPsCallOutputParams ::= SEQUENCE OF BioAPI-BSP-SCHEMA
+
+EnumBFPsCallOutputParams ::= SEQUENCE OF BioAPI-BFP-SCHEMA
+
+BSPLoad-RequestParams ::= SEQUENCE {
+  bspProductUuid         BioAPI-UUID,
+  unitEventSubscription  BOOLEAN
+}
+
+BSPLoad-ResponseParams ::= NULL
+
+BSPLoadCallParams ::= SEQUENCE {
+  bspUuid                  BioAPI-UUID,
+  unitEventHandlerAddress  MemoryAddress,
+  unitEventHandlerContext  MemoryAddress
+}
+
+BSPUnload-RequestParams ::= SEQUENCE {
+  bspProductUuid         BioAPI-UUID,
+  unitEventSubscription  BOOLEAN
+}
+
+BSPUnload-ResponseParams ::= NULL
+
+BSPUnloadCallParams ::= SEQUENCE {
+  bspUuid                  BioAPI-UUID,
+  unitEventHandlerAddress  MemoryAddress,
+  unitEventHandlerContext  MemoryAddress
+}
+
+QueryUnits-RequestParams ::= SEQUENCE {bspProductUuid  BioAPI-UUID
+}
+
+QueryUnits-ResponseParams ::= SEQUENCE {
+  unitSchemas
+    SEQUENCE (SIZE (0..max-unsigned-int)) OF unitSchema BioAPI-UNIT-SCHEMA
+}
+
+QueryBFPs-RequestParams ::= SEQUENCE {bspProductUuid  BioAPI-UUID
+}
+
+QueryBFPs-ResponseParams ::= SEQUENCE {
+  bfps  SEQUENCE (SIZE (0..max-unsigned-int)) OF bfp BioAPI-BFP-LIST-ELEMENT
+}
+
+BSPAttach-RequestParams ::= SEQUENCE {
+  bspProductUuid  BioAPI-UUID,
+  version         BioAPI-VERSION,
+  units
+    SEQUENCE (SIZE (0..max-unsigned-int)) OF unit BioAPI-UNIT-LIST-ELEMENT
+}
+
+BSPAttach-ResponseParams ::= SEQUENCE {newOriginalBSPHandle  BioAPI-HANDLE
+}
+
+BSPAttachCallOutputParams ::= SEQUENCE {newBSPHandle  BioAPI-HANDLE
+}
+
+BSPDetach-RequestParams ::= SEQUENCE {originalBSPHandle  BioAPI-HANDLE
+}
+
+BSPDetach-ResponseParams ::= NULL
+
+EnableUnitEvents-RequestParams ::= SEQUENCE {
+  originalBSPHandle  BioAPI-HANDLE,
+  unitEvents         BioAPI-UNIT-EVENT-TYPE-MASK
+}
+
+EnableUnitEvents-ResponseParams ::= NULL
+
+EnableEventNotifications-RequestParams ::= SEQUENCE {
+  bspProductUuid  BioAPI-UUID,
+  unitEventTypes  BioAPI-UNIT-EVENT-TYPE-MASK
+}
+
+EnableEventNotifications-ResponseParams ::= NULL
+
+EnableCallParams ::= SEQUENCE {
+  bspUuid         BioAPI-UUID,
+  unitEventTypes  BioAPI-UNIT-EVENT-TYPE-MASK
+}
+
+ControlUnit-RequestParams ::= SEQUENCE {
+  originalBSPHandle  BioAPI-HANDLE,
+  unitID             BioAPI-UNIT-ID,
+  controlCode        UnsignedInt,
+  inputData          BioAPI-DATA
+}
+
+ControlUnit-ResponseParams ::= SEQUENCE {outputData  BioAPI-DATA
+}
+
+Control-RequestParams ::= SEQUENCE {
+  originalBSPHandle  BioAPI-HANDLE,
+  unitID             BioAPI-UNIT-ID,
+  controlCode        BioAPI-UUID,
+  inputData          BioAPI-DATA
+}
+
+Control-ResponseParams ::= SEQUENCE {outputData  BioAPI-DATA
+}
+
+FreeBIRHandle-RequestParams ::= SEQUENCE {
+  originalBSPHandle  BioAPI-HANDLE,
+  birHandle          BioAPI-BIR-HANDLE
+}
+
+FreeBIRHandle-ResponseParams ::= NULL
+
+GetBIRFromHandle-RequestParams ::= SEQUENCE {
+  originalBSPHandle  BioAPI-HANDLE,
+  birHandle          BioAPI-BIR-HANDLE
+}
+
+GetBIRFromHandle-ResponseParams ::= SEQUENCE {bir  BioAPI-BIR
+}
+
+GetHeaderFromHandle-RequestParams ::= SEQUENCE {
+  originalBSPHandle  BioAPI-HANDLE,
+  birHandle          BioAPI-BIR-HANDLE
+}
+
+GetHeaderFromHandle-ResponseParams ::= SEQUENCE {header  BioAPI-BIR-HEADER
+}
+
+SubscribeToGUIEvents-RequestParams ::= SEQUENCE {
+  guiEventSubscriptionUuid    BioAPI-UUID OPTIONAL,
+  bspProductUuid              BioAPI-UUID OPTIONAL,
+  originalBSPHandle           BioAPI-HANDLE OPTIONAL,
+  guiSelectEventSubscribed    BOOLEAN,
+  guiStateEventSubscribed     BOOLEAN,
+  guiProgressEventSubscribed  BOOLEAN
+}
+
+SubscribeToGUIEvents-ResponseParams ::= NULL
+
+SubscribeToGUIEventsCallParams ::= SEQUENCE {
+  guiEventSubscriptionUuid        BioAPI-UUID OPTIONAL,
+  bspUuid                         BioAPI-UUID OPTIONAL,
+  bspHandle                       BioAPI-HANDLE OPTIONAL,
+  guiSelectEventHandlerAddress    MemoryAddress,
+  guiSelectEventHandlerContext    MemoryAddress,
+  guiStateEventHandlerAddress     MemoryAddress,
+  guiStateEventHandlerContext     MemoryAddress,
+  guiProgressEventHandlerAddress  MemoryAddress,
+  guiProgressEventHandlerContext  MemoryAddress
+}
+
+UnsubscribeFromGUIEvents-RequestParams ::= SEQUENCE {
+  guiEventSubscriptionUuid    BioAPI-UUID OPTIONAL,
+  bspProductUuid              BioAPI-UUID OPTIONAL,
+  originalBSPHandle           BioAPI-HANDLE OPTIONAL,
+  guiSelectEventSubscribed    BOOLEAN,
+  guiStateEventSubscribed     BOOLEAN,
+  guiProgressEventSubscribed  BOOLEAN
+}
+
+UnsubscribeFromGUIEvents-ResponseParams ::= NULL
+
+UnsubscribeFromGUIEventsCallParams ::= SEQUENCE {
+  guiEventSubscriptionUuid        BioAPI-UUID OPTIONAL,
+  bspUuid                         BioAPI-UUID OPTIONAL,
+  bspHandle                       BioAPI-HANDLE OPTIONAL,
+  guiSelectEventHandlerAddress    MemoryAddress,
+  guiSelectEventHandlerContext    MemoryAddress,
+  guiStateEventHandlerAddress     MemoryAddress,
+  guiStateEventHandlerContext     MemoryAddress,
+  guiProgressEventHandlerAddress  MemoryAddress,
+  guiProgressEventHandlerContext  MemoryAddress
+}
+
+QueryGUIEventSubscriptions-RequestParams ::= SEQUENCE {
+  bspProductUuid  BioAPI-UUID
+}
+
+QueryGUIEventSubscriptions-ResponseParams ::= SEQUENCE {
+  guiEventSubscriptions
+    SEQUENCE (SIZE (0..max-unsigned-int)) OF subscription
+      BioAPI-GUI-EVENT-SUBSCRIPTION
+}
+
+NotifyGUISelectEvent-RequestParams ::= SEQUENCE {
+  subscriberEndpointIRI     EndpointIRI,
+  guiEventSubscriptionUuid  BioAPI-UUID,
+  bspProductUuid            BioAPI-UUID,
+  unitID                    BioAPI-UNIT-ID,
+  enrollType                BioAPI-GUI-ENROLL-TYPE,
+  operation                 BioAPI-GUI-OPERATION,
+  moment                    BioAPI-GUI-MOMENT,
+  resultCode                BioAPI-RETURN,
+  maxNumEnrollSamples       UnsignedInt,
+  selectableInstances       BioAPI-BIR-SUBTYPE-MASK,
+  capturedInstances         BioAPI-BIR-SUBTYPE-MASK,
+  text                      UTF8String OPTIONAL
+}
+
+NotifyGUISelectEvent-ResponseParams ::= SEQUENCE {
+  selectedInstances  BioAPI-BIR-SUBTYPE-MASK,
+  response           BioAPI-GUI-RESPONSE
+}
+
+NotifyGUIStateEvent-RequestParams ::= SEQUENCE {
+  subscriberEndpointIRI     EndpointIRI,
+  guiEventSubscriptionUuid  BioAPI-UUID,
+  bspProductUuid            BioAPI-UUID,
+  unitID                    BioAPI-UNIT-ID,
+  operation                 BioAPI-GUI-OPERATION,
+  suboperation              BioAPI-GUI-SUBOPERATION,
+  purpose                   BioAPI-BIR-PURPOSE,
+  moment                    BioAPI-GUI-MOMENT,
+  resultCode                BioAPI-RETURN,
+  enrollSampleIndex         SignedInt,
+  bitmaps                   BioAPI-GUI-BITMAP-ARRAY OPTIONAL,
+  text                      UTF8String OPTIONAL
+}
+
+NotifyGUIStateEvent-ResponseParams ::= SEQUENCE {
+  response                      BioAPI-GUI-RESPONSE,
+  enrollSampleIndexToRecapture  SignedInt
+}
+
+NotifyGUIProgressEvent-RequestParams ::= SEQUENCE {
+  subscriberEndpointIRI     EndpointIRI,
+  guiEventSubscriptionUuid  BioAPI-UUID,
+  bspProductUuid            BioAPI-UUID,
+  unitID                    BioAPI-UNIT-ID,
+  operation                 BioAPI-GUI-OPERATION,
+  suboperation              BioAPI-GUI-SUBOPERATION,
+  purpose                   BioAPI-BIR-PURPOSE,
+  moment                    BioAPI-GUI-MOMENT,
+  suboperationProgress      UnsignedByte,
+  bitmaps                   BioAPI-GUI-BITMAP-ARRAY OPTIONAL,
+  text                      UTF8String OPTIONAL
+}
+
+NotifyGUIProgressEvent-ResponseParams ::= SEQUENCE {
+  response  BioAPI-GUI-RESPONSE
+}
+
+RedirectGUIEvents-RequestParams ::= SEQUENCE {
+  subscriberEndpointIRI       EndpointIRI,
+  guiEventSubscriptionUuid    BioAPI-UUID,
+  originalBSPHandle           BioAPI-HANDLE,
+  guiSelectEventRedirected    BOOLEAN,
+  guiStateEventRedirected     BOOLEAN,
+  guiProgressEventRedirected  BOOLEAN
+}
+
+RedirectGUIEvents-ResponseParams ::= NULL
+
+UnredirectGUIEvents-RequestParams ::= SEQUENCE {
+  subscriberEndpointIRI       EndpointIRI,
+  guiEventSubscriptionUuid    BioAPI-UUID,
+  originalBSPHandle           BioAPI-HANDLE,
+  guiSelectEventRedirected    BOOLEAN,
+  guiStateEventRedirected     BOOLEAN,
+  guiProgressEventRedirected  BOOLEAN
+}
+
+UnredirectGUIEvents-ResponseParams ::= NULL
+
+Capture-RequestParams ::= SEQUENCE {
+  originalBSPHandle  BioAPI-HANDLE,
+  purpose            BioAPI-BIR-PURPOSE,
+  subtype            BioAPI-BIR-SUBTYPE,
+  outputFormat       BioAPI-BIR-BIOMETRIC-DATA-FORMAT OPTIONAL,
+  timeout            SignedInt,
+  no-auditData       BOOLEAN
+}
+
+Capture-ResponseParams ::= SEQUENCE {
+  capturedBIR  BioAPI-BIR-HANDLE,
+  auditData    BioAPI-BIR-HANDLE OPTIONAL
+}
+
+CreateTemplate-RequestParams ::= SEQUENCE {
+  originalBSPHandle  BioAPI-HANDLE,
+  capturedBIR        BioAPI-INPUT-BIR,
+  referenceTemplate  BioAPI-INPUT-BIR OPTIONAL,
+  outputFormat       BioAPI-BIR-BIOMETRIC-DATA-FORMAT OPTIONAL,
+  payload            BioAPI-DATA OPTIONAL,
+  no-templateUuid    BOOLEAN
+}
+
+CreateTemplate-ResponseParams ::= SEQUENCE {
+  newTemplate   BioAPI-BIR-HANDLE,
+  templateUuid  BioAPI-UUID OPTIONAL
+}
+
+Process-RequestParams ::= SEQUENCE {
+  originalBSPHandle  BioAPI-HANDLE,
+  capturedBIR        BioAPI-INPUT-BIR,
+  outputFormat       BioAPI-BIR-BIOMETRIC-DATA-FORMAT OPTIONAL
+}
+
+Process-ResponseParams ::= SEQUENCE {processedBIR  BioAPI-BIR-HANDLE
+}
+
+ProcessWithAuxBIR-RequestParams ::= SEQUENCE {
+  originalBSPHandle  BioAPI-HANDLE,
+  capturedBIR        BioAPI-INPUT-BIR,
+  auxiliaryData      BioAPI-INPUT-BIR,
+  outputFormat       BioAPI-BIR-BIOMETRIC-DATA-FORMAT OPTIONAL
+}
+
+ProcessWithAuxBIR-ResponseParams ::= SEQUENCE {processedBIR  BioAPI-BIR-HANDLE
+}
+
+VerifyMatch-RequestParams ::= SEQUENCE {
+  originalBSPHandle  BioAPI-HANDLE,
+  maxFMRRequested    BioAPI-FMR,
+  processedBIR       BioAPI-INPUT-BIR,
+  referenceTemplate  BioAPI-INPUT-BIR,
+  no-adaptedBIR      BOOLEAN,
+  no-fmrAchieved     BOOLEAN,
+  no-payload         BOOLEAN
+}
+
+VerifyMatch-ResponseParams ::= SEQUENCE {
+  adaptedBIR   BioAPI-BIR-HANDLE OPTIONAL,
+  result       BOOLEAN,
+  fmrAchieved  BioAPI-FMR OPTIONAL,
+  payload      BioAPI-DATA OPTIONAL
+}
+
+IdentifyMatch-RequestParams ::= SEQUENCE {
+  originalBSPHandle       BioAPI-HANDLE,
+  maxFMRRequested         BioAPI-FMR,
+  processedBIR            BioAPI-INPUT-BIR,
+  population              BioAPI-IDENTIFY-POPULATION,
+  totalNumberOfTemplates  UnsignedInt,
+  binning                 BOOLEAN,
+  maxNumberOfResults      UnsignedInt,
+  timeout                 SignedInt
+}
+
+IdentifyMatch-ResponseParams ::= SEQUENCE {
+  candidates
+    SEQUENCE (SIZE (0..max-unsigned-int)) OF candidate BioAPI-CANDIDATE
+}
+
+Enroll-RequestParams ::= SEQUENCE {
+  originalBSPHandle  BioAPI-HANDLE,
+  purpose            BioAPI-BIR-PURPOSE,
+  subtype            BioAPI-BIR-SUBTYPE,
+  outputFormat       BioAPI-BIR-BIOMETRIC-DATA-FORMAT OPTIONAL,
+  referenceTemplate  BioAPI-INPUT-BIR OPTIONAL,
+  payload            BioAPI-DATA OPTIONAL,
+  timeout            SignedInt,
+  no-auditData       BOOLEAN,
+  no-templateUuid    BOOLEAN
+}
+
+Enroll-ResponseParams ::= SEQUENCE {
+  newTemplate   BioAPI-BIR-HANDLE,
+  auditData     BioAPI-BIR-HANDLE OPTIONAL,
+  templateUuid  BioAPI-UUID OPTIONAL
+}
+
+Verify-RequestParams ::= SEQUENCE {
+  originalBSPHandle  BioAPI-HANDLE,
+  maxFMRRequested    BioAPI-FMR,
+  referenceTemplate  BioAPI-INPUT-BIR,
+  subtype            BioAPI-BIR-SUBTYPE,
+  timeout            SignedInt,
+  no-adaptedBIR      BOOLEAN,
+  no-fmrAchieved     BOOLEAN,
+  no-payload         BOOLEAN,
+  no-auditData       BOOLEAN
+}
+
+Verify-ResponseParams ::= SEQUENCE {
+  adaptedBIR   BioAPI-BIR-HANDLE OPTIONAL,
+  result       BOOLEAN,
+  fmrAchieved  BioAPI-FMR OPTIONAL,
+  payload      BioAPI-DATA OPTIONAL,
+  auditData    BioAPI-BIR-HANDLE OPTIONAL
+}
+
+Identify-RequestParams ::= SEQUENCE {
+  originalBSPHandle       BioAPI-HANDLE,
+  maxFMRRequested         BioAPI-FMR,
+  subtype                 BioAPI-BIR-SUBTYPE,
+  population              BioAPI-IDENTIFY-POPULATION,
+  totalNumberOfTemplates  UnsignedInt,
+  binning                 BOOLEAN,
+  maxNumberOfResults      UnsignedInt,
+  timeout                 SignedInt,
+  no-auditData            BOOLEAN
+}
+
+Identify-ResponseParams ::= SEQUENCE {
+  candidates
+    SEQUENCE (SIZE (0..max-unsigned-int)) OF candidate BioAPI-CANDIDATE,
+  auditData   BioAPI-BIR-HANDLE OPTIONAL
+}
+
+Import-RequestParams ::= SEQUENCE {
+  originalBSPHandle  BioAPI-HANDLE,
+  inputData          BioAPI-DATA,
+  inputFormat        BioAPI-BIR-BIOMETRIC-DATA-FORMAT,
+  outputFormat       BioAPI-BIR-BIOMETRIC-DATA-FORMAT OPTIONAL,
+  purpose            BioAPI-BIR-PURPOSE
+}
+
+Import-ResponseParams ::= SEQUENCE {constructedBIR  BioAPI-BIR-HANDLE
+}
+
+PresetIdentifyPopulation-RequestParams ::= SEQUENCE {
+  originalBSPHandle  BioAPI-HANDLE,
+  population         BioAPI-IDENTIFY-POPULATION
+}
+
+PresetIdentifyPopulation-ResponseParams ::= NULL
+
+Transform-RequestParams ::= SEQUENCE {
+  bspHandle      BioAPI-HANDLE,
+  operationUuid  BioAPI-UUID,
+  inputBIRs      SEQUENCE (SIZE (0..max-unsigned-int)) OF BioAPI-INPUT-BIR
+}
+
+Transform-ResponseParams ::= SEQUENCE {
+  outputBIRs  SEQUENCE (SIZE (0..max-unsigned-int)) OF BioAPI-BIR-HANDLE
+}
+
+DbOpen-RequestParams ::= SEQUENCE {
+  originalBSPHandle  BioAPI-HANDLE,
+  dbUuid             BioAPI-UUID,
+  accessRequest      BioAPI-DB-ACCESS-TYPE
+}
+
+DbOpen-ResponseParams ::= SEQUENCE {
+  dbHandle      BioAPI-DB-HANDLE,
+  markerHandle  BioAPI-DB-MARKER-HANDLE
+}
+
+DbClose-RequestParams ::= SEQUENCE {
+  originalBSPHandle  BioAPI-HANDLE,
+  dbHandle           BioAPI-DB-HANDLE
+}
+
+DbClose-ResponseParams ::= NULL
+
+DbCreate-RequestParams ::= SEQUENCE {
+  originalBSPHandle  BioAPI-HANDLE,
+  dbUuid             BioAPI-UUID,
+  numberOfRecords    UnsignedInt,
+  accessRequest      BioAPI-DB-ACCESS-TYPE
+}
+
+DbCreate-ResponseParams ::= SEQUENCE {dbHandle  BioAPI-DB-HANDLE
+}
+
+DbDelete-RequestParams ::= SEQUENCE {
+  originalBSPHandle  BioAPI-HANDLE,
+  dbUuid             BioAPI-UUID
+}
+
+DbDelete-ResponseParams ::= NULL
+
+DbSetMarker-RequestParams ::= SEQUENCE {
+  originalBSPHandle  BioAPI-HANDLE,
+  dbHandle           BioAPI-DB-HANDLE,
+  keyValue           BioAPI-UUID,
+  markerHandle       BioAPI-DB-MARKER-HANDLE
+}
+
+DbSetMarker-ResponseParams ::= NULL
+
+DbFreeMarker-RequestParams ::= SEQUENCE {
+  originalBSPHandle  BioAPI-HANDLE,
+  markerHandle       BioAPI-DB-MARKER-HANDLE
+}
+
+DbFreeMarker-ResponseParams ::= NULL
+
+DbStoreBIR-RequestParams ::= SEQUENCE {
+  originalBSPHandle  BioAPI-HANDLE,
+  birToStore         BioAPI-INPUT-BIR,
+  dbHandle           BioAPI-DB-HANDLE
+}
+
+DbStoreBIR-ResponseParams ::= SEQUENCE {birUuid  BioAPI-UUID
+}
+
+DbGetBIR-RequestParams ::= SEQUENCE {
+  originalBSPHandle  BioAPI-HANDLE,
+  dbHandle           BioAPI-DB-HANDLE,
+  keyValue           BioAPI-UUID
+}
+
+DbGetBIR-ResponseParams ::= SEQUENCE {
+  retrievedBIR  BioAPI-BIR-HANDLE,
+  markerHandle  BioAPI-DB-MARKER-HANDLE
+}
+
+DbGetNextBIR-RequestParams ::= SEQUENCE {
+  originalBSPHandle  BioAPI-HANDLE,
+  dbHandle           BioAPI-DB-HANDLE,
+  markerHandle       BioAPI-DB-MARKER-HANDLE
+}
+
+DbGetNextBIR-ResponseParams ::= SEQUENCE {
+  retrievedBIR  BioAPI-BIR-HANDLE,
+  birUuid       BioAPI-UUID
+}
+
+DbDeleteBIR-RequestParams ::= SEQUENCE {
+  originalBSPHandle  BioAPI-HANDLE,
+  dbHandle           BioAPI-DB-HANDLE,
+  keyValue           BioAPI-UUID
+}
+
+DbDeleteBIR-ResponseParams ::= NULL
+
+CalibrateSensor-RequestParams ::= SEQUENCE {
+  originalBSPHandle  BioAPI-HANDLE,
+  timeout            SignedInt
+}
+
+CalibrateSensor-ResponseParams ::= NULL
+
+SetPowerMode-RequestParams ::= SEQUENCE {
+  originalBSPHandle  BioAPI-HANDLE,
+  unitID             BioAPI-UNIT-ID,
+  powerMode          BioAPI-POWER-MODE
+}
+
+SetPowerMode-ResponseParams ::= NULL
+
+SetIndicatorStatus-RequestParams ::= SEQUENCE {
+  originalBSPHandle  BioAPI-HANDLE,
+  unitID             BioAPI-UNIT-ID,
+  indicatorStatus    BioAPI-INDICATOR-STATUS
+}
+
+SetIndicatorStatus-ResponseParams ::= NULL
+
+GetIndicatorStatus-RequestParams ::= SEQUENCE {
+  originalBSPHandle  BioAPI-HANDLE,
+  unitID             BioAPI-UNIT-ID
+}
+
+GetIndicatorStatus-ResponseParams ::= SEQUENCE {
+  indicatorStatus  BioAPI-INDICATOR-STATUS
+}
+
+Cancel-RequestParams ::= SEQUENCE {originalBSPHandle  BioAPI-HANDLE
+}
+
+Cancel-ResponseParams ::= NULL
+
+RegisterBSP-RequestParams ::= SEQUENCE {
+  bspSchema  BioAPI-BSP-SCHEMA,
+  update     BOOLEAN
+}
+
+RegisterBSP-ResponseParams ::= NULL
+
+BSPRegistrationEvent-NotificationParams ::= SEQUENCE {
+  bspSchema  BioAPI-BSP-SCHEMA,
+  update     BOOLEAN
+}
+
+UnregisterBSP-RequestParams ::= SEQUENCE {bspProductUuid  BioAPI-UUID
+}
+
+UnregisterBSP-ResponseParams ::= NULL
+
+BSPUnregistrationEvent-NotificationParams ::= SEQUENCE {
+  bspProductUuid  BioAPI-UUID
+}
+
+RegisterBFP-RequestParams ::= SEQUENCE {
+  bfpSchema  BioAPI-BFP-SCHEMA,
+  update     BOOLEAN
+}
+
+RegisterBFP-ResponseParams ::= NULL
+
+BFPRegistrationEvent-NotificationParams ::= SEQUENCE {
+  bfpSchema  BioAPI-BFP-SCHEMA,
+  update     BOOLEAN
+}
+
+UnregisterBFP-RequestParams ::= SEQUENCE {bfpProductUuid  BioAPI-UUID
+}
+
+UnregisterBFP-ResponseParams ::= NULL
+
+BFPUnregistrationEvent-NotificationParams ::= SEQUENCE {
+  bfpProductUuid  BioAPI-UUID
+}
+
+UnitEvent-NotificationParams ::= SEQUENCE {
+  bspProductUuid  BioAPI-UUID,
+  unitID          BioAPI-UNIT-ID,
+  unitSchema      BioAPI-UNIT-SCHEMA OPTIONAL,
+  unitEventType   BioAPI-UNIT-EVENT-TYPE
+}
+
+UnitEventHandlerCallbackParams ::= SEQUENCE {
+  unitEventHandlerAddress  MemoryAddress,
+  unitEventHandlerContext  MemoryAddress,
+  bspUuid                  BioAPI-UUID,
+  unitID                   BioAPI-UNIT-ID,
+  unitSchema               BioAPI-UNIT-SCHEMA OPTIONAL,
+  unitEventType            BioAPI-UNIT-EVENT-TYPE
+}
+
+UnitEventInfo ::= SEQUENCE {
+  hostingEndpointIRI  EndpointIRI,
+  bspProductUuid      BioAPI-UUID,
+  unitID              BioAPI-UNIT-ID,
+  unitSchema          BioAPI-UNIT-SCHEMA OPTIONAL,
+  unitEventType       BioAPI-UNIT-EVENT-TYPE
+}
+
+GUISelectEvent-NotificationParams ::= SEQUENCE {
+  guiEventSubscriptionUuid  BioAPI-UUID OPTIONAL,
+  bspProductUuid            BioAPI-UUID,
+  unitID                    BioAPI-UNIT-ID,
+  originalBSPHandle         BioAPI-HANDLE OPTIONAL,
+  enrollType                BioAPI-GUI-ENROLL-TYPE,
+  operation                 BioAPI-GUI-OPERATION,
+  moment                    BioAPI-GUI-MOMENT,
+  resultCode                BioAPI-RETURN,
+  maxNumEnrollSamples       UnsignedInt,
+  selectableInstances       BioAPI-BIR-SUBTYPE-MASK,
+  capturedInstances         BioAPI-BIR-SUBTYPE-MASK,
+  text                      UTF8String OPTIONAL
+}
+
+GUISelectEvent-AcknowledgementParams ::= SEQUENCE {
+  selectedInstances  BioAPI-BIR-SUBTYPE-MASK,
+  response           BioAPI-GUI-RESPONSE
+}
+
+GUISelectEventHandlerCallbackParams ::= SEQUENCE {
+  guiSelectEventHandlerAddress  MemoryAddress,
+  guiSelectEventHandlerContext  MemoryAddress,
+  bspUuid                       BioAPI-UUID,
+  unitID                        BioAPI-UNIT-ID,
+  bspHandle                     BioAPI-HANDLE OPTIONAL,
+  enrollType                    BioAPI-GUI-ENROLL-TYPE,
+  operation                     BioAPI-GUI-OPERATION,
+  moment                        BioAPI-GUI-MOMENT,
+  resultCode                    BioAPI-RETURN,
+  maxNumEnrollSamples           UnsignedInt,
+  selectableInstances           BioAPI-BIR-SUBTYPE-MASK,
+  capturedInstances             BioAPI-BIR-SUBTYPE-MASK,
+  text                          UTF8String OPTIONAL
+}
+
+GUISelectEventInfo ::= SEQUENCE {
+  subscriberEndpointIRI     EndpointIRI,
+  guiEventSubscriptionUuid  BioAPI-UUID OPTIONAL,
+  hostingEndpointIRI        EndpointIRI,
+  bspProductUuid            BioAPI-UUID,
+  unitID                    BioAPI-UNIT-ID,
+  originalBSPHandle         BioAPI-HANDLE OPTIONAL,
+  enrollType                BioAPI-GUI-ENROLL-TYPE,
+  operation                 BioAPI-GUI-OPERATION,
+  moment                    BioAPI-GUI-MOMENT,
+  resultCode                BioAPI-RETURN,
+  maxNumEnrollSamples       UnsignedInt,
+  selectableInstances       BioAPI-BIR-SUBTYPE-MASK,
+  capturedInstances         BioAPI-BIR-SUBTYPE-MASK,
+  text                      UTF8String OPTIONAL
+}
+
+GUIStateEvent-NotificationParams ::= SEQUENCE {
+  guiEventSubscriptionUuid  BioAPI-UUID OPTIONAL,
+  bspProductUuid            BioAPI-UUID,
+  unitID                    BioAPI-UNIT-ID,
+  originalBSPHandle         BioAPI-HANDLE OPTIONAL,
+  operation                 BioAPI-GUI-OPERATION,
+  suboperation              BioAPI-GUI-SUBOPERATION,
+  purpose                   BioAPI-BIR-PURPOSE,
+  moment                    BioAPI-GUI-MOMENT,
+  resultCode                BioAPI-RETURN,
+  enrollSampleIndex         SignedInt,
+  bitmaps                   BioAPI-GUI-BITMAP-ARRAY OPTIONAL,
+  text                      UTF8String OPTIONAL
+}
+
+GUIStateEvent-AcknowledgementParams ::= SEQUENCE {
+  response                      BioAPI-GUI-RESPONSE,
+  enrollSampleIndexToRecapture  SignedInt
+}
+
+GUIStateEventHandlerCallbackParams ::= SEQUENCE {
+  guiStateEventHandlerAddress  MemoryAddress,
+  guiStateEventHandlerContext  MemoryAddress,
+  bspUuid                      BioAPI-UUID,
+  unitID                       BioAPI-UNIT-ID,
+  bspHandle                    BioAPI-HANDLE OPTIONAL,
+  operation                    BioAPI-GUI-OPERATION,
+  suboperation                 BioAPI-GUI-SUBOPERATION,
+  purpose                      BioAPI-BIR-PURPOSE,
+  moment                       BioAPI-GUI-MOMENT,
+  resultCode                   BioAPI-RETURN,
+  enrollSampleIndex            SignedInt,
+  bitmaps                      BioAPI-GUI-BITMAP-ARRAY OPTIONAL,
+  text                         UTF8String OPTIONAL
+}
+
+GUIStateEventInfo ::= SEQUENCE {
+  subscriberEndpointIRI     EndpointIRI,
+  guiEventSubscriptionUuid  BioAPI-UUID OPTIONAL,
+  hostingEndpointIRI        EndpointIRI,
+  bspProductUuid            BioAPI-UUID,
+  unitID                    BioAPI-UNIT-ID,
+  originalBSPHandle         BioAPI-HANDLE OPTIONAL,
+  operation                 BioAPI-GUI-OPERATION,
+  suboperation              BioAPI-GUI-SUBOPERATION,
+  purpose                   BioAPI-BIR-PURPOSE,
+  moment                    BioAPI-GUI-MOMENT,
+  resultCode                BioAPI-RETURN,
+  enrollSampleIndex         SignedInt,
+  bitmaps                   BioAPI-GUI-BITMAP-ARRAY OPTIONAL,
+  text                      UTF8String OPTIONAL
+}
+
+GUIProgressEvent-NotificationParams ::= SEQUENCE {
+  guiEventSubscriptionUuid  BioAPI-UUID OPTIONAL,
+  bspProductUuid            BioAPI-UUID,
+  unitID                    BioAPI-UNIT-ID,
+  originalBSPHandle         BioAPI-HANDLE OPTIONAL,
+  operation                 BioAPI-GUI-OPERATION,
+  suboperation              BioAPI-GUI-SUBOPERATION,
+  purpose                   BioAPI-BIR-PURPOSE,
+  moment                    BioAPI-GUI-MOMENT,
+  suboperationProgress      UnsignedByte,
+  bitmaps                   BioAPI-GUI-BITMAP-ARRAY OPTIONAL,
+  text                      UTF8String OPTIONAL
+}
+
+GUIProgressEvent-AcknowledgementParams ::= SEQUENCE {
+  response  BioAPI-GUI-RESPONSE
+}
+
+GUIProgressEventHandlerCallbackParams ::= SEQUENCE {
+  guiProgressEventHandlerAddress  MemoryAddress,
+  guiProgressEventHandlerContext  MemoryAddress,
+  bspUuid                         BioAPI-UUID,
+  unitID                          BioAPI-UNIT-ID,
+  bspHandle                       BioAPI-HANDLE OPTIONAL,
+  operation                       BioAPI-GUI-OPERATION,
+  suboperation                    BioAPI-GUI-SUBOPERATION,
+  purpose                         BioAPI-BIR-PURPOSE,
+  moment                          BioAPI-GUI-MOMENT,
+  suboperationProgress            UnsignedByte,
+  bitmaps                         BioAPI-GUI-BITMAP-ARRAY OPTIONAL,
+  text                            UTF8String OPTIONAL
+}
+
+GUIProgressEventInfo ::= SEQUENCE {
+  subscriberEndpointIRI     EndpointIRI,
+  guiEventSubscriptionUuid  BioAPI-UUID OPTIONAL,
+  hostingEndpointIRI        EndpointIRI,
+  bspProductUuid            BioAPI-UUID,
+  unitID                    BioAPI-UNIT-ID,
+  originalBSPHandle         BioAPI-HANDLE OPTIONAL,
+  operation                 BioAPI-GUI-OPERATION,
+  suboperation              BioAPI-GUI-SUBOPERATION,
+  purpose                   BioAPI-BIR-PURPOSE,
+  moment                    BioAPI-GUI-MOMENT,
+  suboperationProgress      UnsignedByte,
+  bitmaps                   BioAPI-GUI-BITMAP-ARRAY OPTIONAL,
+  text                      UTF8String OPTIONAL
+}
+
+VisibleEndpoints ::= SET OF endpoint VisibleEndpoint
+
+VisibleEndpoint ::= BioAPI-FRAMEWORK-SCHEMA
+
+VisibleBSPRegistrations ::= SET OF registration VisibleBSPRegistration
+
+VisibleBSPRegistration ::= BioAPI-BSP-SCHEMA
+
+VisibleBFPRegistrations ::= SET OF registration VisibleBFPRegistration
+
+VisibleBFPRegistration ::= BioAPI-BFP-SCHEMA
+
+RunningBSPLocalReferences ::= SET OF reference RunningBSPLocalReference
+
+RunningBSPLocalReference ::= SEQUENCE {
+  hostingEndpointIRI       EndpointIRI,
+  bspProductUuid           BioAPI-UUID,
+  useBSPAccessUuid         BOOLEAN,
+  unitEventHandlerAddress  MemoryAddress,
+  unitEventHandlerContext  MemoryAddress
+}
+
+RunningBSPRemoteReferences ::= SET OF reference RunningBSPRemoteReference
+
+RunningBSPRemoteReference ::= SEQUENCE {
+  referrerEndpointIRI    EndpointIRI,
+  bspProductUuid         BioAPI-UUID,
+  unitEventSubscription  BOOLEAN
+}
+
+UnitEventNotificationDisablers ::=
+  SET OF disabler UnitEventNotificationDisabler
+
+UnitEventNotificationDisabler ::= SEQUENCE {
+  referrerEndpointIRI  EndpointIRI,
+  bspProductUuid       BioAPI-UUID,
+  unitEventTypes       BioAPI-UNIT-EVENT-TYPE-MASK
+}
+
+AttachSessionLocalReferences ::= SET OF reference AttachSessionLocalReference
+
+AttachSessionLocalReference ::= SEQUENCE {
+  hostingEndpointIRI  EndpointIRI,
+  bspProductUuid      BioAPI-UUID,
+  useBSPAccessUuid    BOOLEAN,
+  originalBSPHandle   BioAPI-HANDLE,
+  localBSPHandle      BioAPI-HANDLE
+}
+
+AttachSessionRemoteReferences ::= SET OF reference AttachSessionRemoteReference
+
+AttachSessionRemoteReference ::= SEQUENCE {
+  referrerEndpointIRI  EndpointIRI,
+  bspProductUuid       BioAPI-UUID,
+  originalBSPHandle    BioAPI-HANDLE
+}
+
+GUIEventLocalSubscriptions ::= SET OF subscription GUIEventLocalSubscription
+
+GUIEventLocalSubscription ::= SEQUENCE {
+  guiEventSubscriptionUuid        BioAPI-UUID OPTIONAL,
+  hostingEndpointIRI              EndpointIRI,
+  bspProductUuid                  BioAPI-UUID,
+  useBSPAccessUuid                BOOLEAN,
+  originalBSPHandle               BioAPI-HANDLE OPTIONAL,
+  guiSelectEventHandlerAddress    MemoryAddress,
+  guiSelectEventHandlerContext    MemoryAddress,
+  guiStateEventHandlerAddress     MemoryAddress,
+  guiStateEventHandlerContext     MemoryAddress,
+  guiProgressEventHandlerAddress  MemoryAddress,
+  guiProgressEventHandlerContext  MemoryAddress
+}
+
+GUIEventRemoteSubscriptions ::= SET OF subscription GUIEventRemoteSubscription
+
+GUIEventRemoteSubscription ::= SEQUENCE {
+  subscriberEndpointIRI       EndpointIRI,
+  guiEventSubscriptionUuid    BioAPI-UUID OPTIONAL,
+  bspProductUuid              BioAPI-UUID,
+  originalBSPHandle           BioAPI-HANDLE OPTIONAL,
+  guiSelectEventSubscribed    BOOLEAN,
+  guiStateEventSubscribed     BOOLEAN,
+  guiProgressEventSubscribed  BOOLEAN
+}
+
+GUIEventRedirectors ::= SET OF redirector GUIEventRedirector
+
+GUIEventRedirector ::= SEQUENCE {
+  referrerEndpointIRI         EndpointIRI,
+  bspProductUuid              BioAPI-UUID,
+  originalBSPHandle           BioAPI-HANDLE,
+  subscriberEndpointIRI       EndpointIRI,
+  guiEventSubscriptionUuid    BioAPI-UUID,
+  guiSelectEventRedirected    BOOLEAN,
+  guiStateEventRedirected     BOOLEAN,
+  guiProgressEventRedirected  BOOLEAN
+}
+
+ApplicationOwnedMemoryBlocks ::= SET OF memoryBlock ApplicationOwnedMemoryBlock
+
+ApplicationOwnedMemoryBlock ::= SEQUENCE {address  MemoryAddress
+}
+
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

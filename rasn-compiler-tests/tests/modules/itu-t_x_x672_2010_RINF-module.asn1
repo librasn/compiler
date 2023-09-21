@@ -1,0 +1,58 @@
+RINF-module.asn (ITU-T X.672 (08/2010))-- ASN module extracted from ITU-T X.672 (08/2010)RINF-module {joint-iso-itu-t ors(50) modules(0) rinf(1) version1(1)}
+DEFINITIONS AUTOMATIC TAGS ::=
+BEGIN
+IMPORTS 	
+	ALGORITHM, 
+	AlgorithmIdentifier{}, 
+	SupportedAlgorithms
+FROM AuthenticationFramework {joint-iso-itu-t ds(5) module(1) authenticationFramework(7) 6};
+
+/* This is an importation of security types from Rec. ITU-T X.509 | ISO/IEC 9594-8 
+	to provide the semantics and types used for encipherment */
+
+RegistrationInformation ::= CHOICE {
+	noDisclosure	NULL /* No information is provided */,
+	disclosure		Information 
+}
+
+Information ::= SEQUENCE {
+	description		HTMLString,
+	additionalInformation	HTMLString OPTIONAL,
+	firstRegistration	RegistrationDetails OPTIONAL,
+	currentRegistration	RegistrationDetails OPTIONAL
+	/* It is recommended that this information be provided if available. */
+}
+
+RegistrationDetails ::= SEQUENCE {
+	registrationDate	TIME(SETTINGS "Basic=Date Date=YMD") ,
+	registrant		CHOICE {
+		non-enciphered 		RegistrantContactDetails,
+		enciphered-registrant	SEQUENCE {
+			algorithmIdentifier	AlgorithmIdentifier{{SupportedAlgorithms}},
+			enciphered		OCTET STRING (CONSTRAINED BY {
+			/* Shall contain the result of applying the encipherment procedure 		   
+			to the EXTENDED-XER encoding */ RegistrantContactDetails})
+		}
+		/* See Rec. ITU-T X.509 | ISO/IEC 9594-8, clause 6.1,"Digital signatures", for how to encipher
+		   data.  To obtain encryption keys, consult the parent node. */
+	}
+}
+
+RegistrantContactDetails ::= SEQUENCE {
+	familyNameOrOrganization 	UTF8String	OPTIONAL,
+	givenName			UTF8String	OPTIONAL,
+	e-mailAddress			UTF8String	OPTIONAL,
+	phone				IA5String 	OPTIONAL /* Starting with "+" */,
+	fax				IA5String 	OPTIONAL /* Starting with "+" */,
+	postalAddress			SEQUENCE OF UTF8String OPTIONAL
+}
+
+HTMLString ::= UTF8String(CONSTRAINED BY {
+     /* Shall be a valid HTML document (see [W3C HTML]) using only the markups
+        <p>, <b>, </b>, <i>, </i>, <br/>, <a href> and </a> */})
+
+ENCODING-CONTROL XER
+GLOBAL-DEFAULTS MODIFIED-ENCODINGS
+BASE64 RegistrationDetails.registrant.enciphered-registrant.enciphered
+
+END

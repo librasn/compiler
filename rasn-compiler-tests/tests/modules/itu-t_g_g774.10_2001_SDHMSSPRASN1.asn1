@@ -1,0 +1,302 @@
+
+
+
+
+
+
+
+-- Module SDHMSSPRASN1 (G.774.10:02/2001)
+-- See also ITU-T G.774.10 (02/2001)
+-- See also the index of all ASN.1 assignments needed in this document
+
+SDHMSSPRASN1 {itu(0) recommendation(0) g(7) g774(774) hyphen(127) msspr(10)
+  informationModel(0) asn1Module(2) sdhmsspr(0)} DEFINITIONS IMPLICIT TAGS ::=
+BEGIN
+
+--  EXPORTS everything 
+IMPORTS
+  -- Note: RelativeDistinguishedName, RDNSequence, formerly imported from 
+  --       X.501 InformationFramework, is imported from X.711 CMIP. 
+  RelativeDistinguishedName, RDNSequence, ObjectInstance
+    FROM CMIP-1 {joint-iso-itu-t ms(9) cmip(1) modules(0) protocol(3)}
+  ManagementExtension, ProbableCause
+    FROM Attribute-ASN1Module {joint-iso-itu-t ms(9) smi(3) part2(2)
+      asn1Module(2) 1}
+  NameType, PointerOrNull
+    FROM ASN1DefinedTypesModule {itu-t(0) recommendation(0) m(13) gnm(3100)
+      informationModel(0) asn1Modules(2) asn1DefinedTypesModule(0)}
+  AutoSwitchReason, booleanTrueDefault, FromAndToProtectionUnit,
+    ProtectionGroupType, RequestSource, SDHMSResourcePointer, SwitchStatus
+    FROM SDHProtASN1 {itu-t(0) recommendation(0) g(7) g774(774) hyphen(127)
+      prot(3) informationModel(0) asn1Module(2) sdhmsp(0)};
+
+sdhMSSPR OBJECT IDENTIFIER ::=
+  {itu(0) recommendation(0) g(7) g774(774) hyphen(127) msspr(10)
+   informationModel(0)}
+
+g774-10MObjectClass OBJECT IDENTIFIER ::= {sdhMSSPR managedObjectClass(3)}
+
+g774-10Attribute OBJECT IDENTIFIER ::= {sdhMSSPR attribute(7)}
+
+g774-10Action OBJECT IDENTIFIER ::= {sdhMSSPR action(9)}
+
+g774-10NameBinding OBJECT IDENTIFIER ::= {sdhMSSPR nameBinding(6)}
+
+g774-10Parameter OBJECT IDENTIFIER ::= {sdhMSSPR parameter(5)}
+
+g774-10Package OBJECT IDENTIFIER ::= {sdhMSSPR package(4)}
+
+g774-10StandardSpecificExtension OBJECT IDENTIFIER ::=
+  {sdhMSSPR standardSpecificExtension(0)}
+
+--	The following value assignments are for the Protection Criteria in the context of SDH.
+--	These values shall always be assigned by this Recommendation in the context of SDH.
+mssprProtectionCriteria OBJECT IDENTIFIER ::=
+  {g774-10StandardSpecificExtension 0}
+
+mssprExcessiveErrorCriteria OBJECT IDENTIFIER ::= {mssprProtectionCriteria 1}
+
+msSPRProbableCause OBJECT IDENTIFIER ::= {g774-10StandardSpecificExtension 1}
+
+msSPRDefaultKBytes ProbableCause ::= globalValue:{msSPRProbableCause 1}
+
+msSPRInconsistentAPSCodes ProbableCause ::= globalValue:{msSPRProbableCause 2}
+
+msSPRNodeIdMismatch ProbableCause ::= globalValue:{msSPRProbableCause 3}
+
+msSPRImproperAPSCodes ProbableCause ::= globalValue:{msSPRProbableCause 4}
+
+msSPRApsChannelProcessingFailure ProbableCause ::=
+  globalValue:{msSPRProbableCause 5}
+
+--default/initial value definitions
+MSSPRProtectionGroupType ::= ProtectionGroupType(colon)
+
+--supporting productions
+BooleanType ::= BOOLEAN
+
+ChangeSPRConfigInfo ::=
+  SET OF
+    CHOICE {twoFiberToFourFiber
+              SEQUENCE {eastTPProtecting  ObjectInstance,
+                        westTPProtecting  ObjectInstance,
+                        spanSwitchOption
+                          CHOICE {traditional  WaitToRestoreSpan,
+                                  enhanced     EnhancedWaitToRestoreSpan
+                        }},
+            fourFiberToTwoFiber  [0]  NULL,
+            nutConfig            [1]  NutConfig,
+            ripConfig            [2]  RipConfig,
+            extraTrafficConfig   [3]  ExtraTrafficConfig}
+
+CurrentSquelchingList ::=
+  SET OF
+    SEQUENCE {squelchedTP   ObjectInstance,
+              associatedXC
+                CHOICE {squelchedXC  RelativeDistinguishedName,
+                        hardwired    [0]  NULL}}
+
+DirectionTable ::=
+  SEQUENCE OF SEQUENCE {westTP  RDNSequence,
+                        eastTP  RDNSequence}
+
+EnhancedWaitToRestoreSpan ::= SEQUENCE {
+  wtrSpanEast  INTEGER,
+  wtrSpanWest  INTEGER
+}
+
+ExtraTrafficConfig ::= ENUMERATED {
+  noExtraTraffic(0), extraTraffic(1), extraTrafficWithRestoration(2)}
+
+LinkInfo ::= SEQUENCE {
+  localNEId     ObjectInstance,
+  localPortId   PointerOrNull,
+  remoteNEId    ObjectInstance,
+  remotePortId  PointerOrNull
+}
+
+-- portId points to the service (preferred) msTTP; Null for Open Ring
+Map ::=
+  SEQUENCE OF
+    SEQUENCE {nodeIdNumber  INTEGER(0..15),
+              linkInfo      LinkInfo OPTIONAL}
+
+-- needed for two-node closed ring
+MSSPRConfigurationError ::= ENUMERATED {
+  extraTrafficNotSupported(0), manualProvisioningNotSupported(1),
+  nutNotSupported(2), ringTypeNotSupported(3), ripNotSupported(4),
+  duplicatedUnreliable(5),
+  ePdTPNotAvailable(6), -- east protected TP
+  ePgTPNotAvailable(7), -- east protecting TP
+  wPdTPNotAvailable(8), -- west protected TP
+  wPgTPNotAvailable(9), -- west protecting TP
+  invalidWTRTime(10)}
+
+MSSPRProtectionGroupConfigInfo ::= SEQUENCE {
+  directionTable      DirectionTable,
+  extraTrafficConfig  ExtraTrafficConfig OPTIONAL,
+  nodeNumber          NodeOrNull,
+  nutConfig           NutConfig OPTIONAL,
+  ringId              RingId,
+  ringMap             [0]  Map OPTIONAL,
+  ringType            [1]  RingType,
+  ripConfig           RipConfig OPTIONAL
+}
+
+MSSPRProtectionStatus ::=
+  SET OF
+    CHOICE {noRequest           [0]  NULL,
+            manualSwitch
+              [1]  SEQUENCE {requestSource   [0]  RequestSource OPTIONAL,
+                             switchStatus    [1]  SwitchStatus,
+                             relatedChannel  FromAndToProtectionUnit OPTIONAL,
+                             switchType      [2]  RingOrSpan},
+            autoSwitch
+              [2]  SEQUENCE {requestSource     [0]  RequestSource OPTIONAL,
+                             switchStatus      [1]  SwitchStatus,
+                             relatedChannel    FromAndToProtectionUnit OPTIONAL,
+                             autoSwitchReason  [2]  AutoSwitchReason,
+                             switchType        [3]  RingOrSpan},
+            forcedSwitch
+              [3]  SEQUENCE {requestSource   [0]  RequestSource OPTIONAL,
+                             switchStatus    [1]  SwitchStatus,
+                             relatedChannel  FromAndToProtectionUnit OPTIONAL,
+                             switchType      [2]  RingOrSpan},
+            lockout
+              [4]  SEQUENCE {requestSource  [0]  RequestSource OPTIONAL,
+                             switchStatus   [1]  SwitchStatus,
+                             switchType     [2]  RingOrSpan},
+            releaseFailed       [6]  NULL,
+            protectionFailCond
+              [7]  ENUMERATED {inconsistentApsCode(0), nodeIdMismatch(1),
+                               improperApsCode(2), defaultKBytes(3),
+                               signalDegradeProtect(4), signalFailProtect(5)},
+            passThrough         [8]  ENUMERATED {full(0), kByte(1)}}
+
+MSSPRProtectionStatusParameter ::=
+  SET OF
+    SEQUENCE {protectionUnit       ObjectInstance,
+              oldProtectionStatus  MSSPRProtectionStatus,
+              newProtectionStatus  MSSPRProtectionStatus}
+
+NodeNumber ::= INTEGER(0..15)
+
+NodeOrNull ::= CHOICE {nodeNumber  NodeNumber,
+                       null        NULL
+}
+
+NutChannelList ::=
+  SET OF
+    SEQUENCE {channel                INTEGER,
+              affectedTraffic
+                ENUMERATED {workingOnly(0), workingAndProtecting(1)},
+              ringSwitchUnavailable  UnavailableSide,
+              spanSwitchUnavailable  UnavailableSide OPTIONAL}
+
+NutConfig ::= CHOICE {nutOff  NULL,
+                      nutOn   NutChannelList
+}
+
+RingId ::= PrintableString
+
+RingOrSpan ::= ENUMERATED {ring(0), span(1)}
+
+RingType ::= SEQUENCE {
+  application  SPRingApplication,
+  fibers
+    CHOICE {twoFiber           NULL,
+            fourFiber          WaitToRestoreSpan,
+            enhancedFourFiber  EnhancedWaitToRestoreSpan}
+}
+
+RipChannelList ::=
+  SET OF SEQUENCE {channel         INTEGER,
+                   ripInformation  RipTableEntry}
+
+RipConfig ::= CHOICE {ripOff  NULL,
+                      ripOn   RipChannelList
+}
+
+RipInformation ::= SEQUENCE {
+  primaryNode      NodeOrNull, -- primary interconnection node
+  terminatingNode  NodeOrNull
+} -- node where the traffic is added/dropped
+
+RipTableEntry ::= SEQUENCE {
+  inEast   RipInformation,
+  outEast  RipInformation,
+  inWest   RipInformation,
+  outWest  RipInformation
+}
+
+SPRingApplication ::= ENUMERATED {classic(1), transoceanic(2)}
+
+SquelchTableChannel ::= SEQUENCE {
+  aNode         NodeOrNull, -- entry node of circuit
+  zNode         NodeOrNull, -- exit node of circuit
+  loAccess      BOOLEAN, -- TRUE implies low order access is present
+  concatenated
+    CHOICE {firstChannel        INTEGER, -- number of concatenated channels--
+            subsequentChannels  NULL} OPTIONAL
+}
+
+SquelchTableEntry ::= SEQUENCE {
+  inEast          SquelchTableChannel,
+  outEast         SquelchTableChannel,
+  inWest          SquelchTableChannel,
+  outWest         SquelchTableChannel,
+  additionalInfo  SET OF ManagementExtension OPTIONAL
+}
+
+True ::= BOOLEAN(TRUE)
+
+UnavailableSide ::= SEQUENCE {
+  switchUnavailableEast  BOOLEAN,
+  switchUnavailableWest  BOOLEAN
+}
+
+UpdateRIPFailed ::= CHOICE {
+  unknown                    [0]  NULL,
+  nodeNotInRing              [1]  INTEGER(0..15),
+  channelNotAvailableForRIP  [2]  NULL
+}
+
+UpdateRIPTableInfo ::=
+  SEQUENCE OF
+    SEQUENCE {auChannelNumber  INTEGER,
+              ripTableEntry    RipTableEntry}
+
+UpdateRIPTableReply ::=
+  SEQUENCE OF
+    CHOICE {failed   UpdateRIPFailed,
+            success
+              SEQUENCE {oldRipTable  RipTableEntry,
+                        newRipTable  RipTableEntry}}
+
+-- the ith entry in the reply corresponds to the ith entry in the information syntax
+UpdateSquelchFailed ::= CHOICE {
+  unknown               [0]  NULL,
+  nodeNotInRing         [1]  INTEGER(0..15),
+  concatenatedChannel   [2]  INTEGER,
+  loAccessNotSupported  [3]  NULL
+}
+
+UpdateSquelchTableInfo ::=
+  SEQUENCE OF
+    SEQUENCE {auChannelNumber    INTEGER,
+              squelchTableEntry  SquelchTableEntry}
+
+UpdateSquelchTableReply ::=
+  SEQUENCE OF
+    CHOICE {failed   UpdateSquelchFailed,
+            success
+              SEQUENCE {oldSquelchTableEntry  SquelchTableEntry,
+                        newSquelchTableEntry  SquelchTableEntry}}
+
+--	the ith entry in the reply corresponds to the ith entry in the information syntax
+WaitToRestoreSpan ::= INTEGER
+
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

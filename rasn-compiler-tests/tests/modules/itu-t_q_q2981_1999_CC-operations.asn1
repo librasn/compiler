@@ -1,0 +1,340 @@
+
+
+
+
+
+
+
+-- Module CC-operations (Q.2981:12/1999)
+-- See also ITU-T Q.2981 (12/1999)
+-- See also the index of all ASN.1 assignments needed in this document
+
+CC-Operations {itu-t recommendation q 2981 cc-operations(1)} DEFINITIONS
+AUTOMATIC TAGS ::=
+BEGIN
+
+EXPORTS CcOperations, CallSegmentId;
+
+IMPORTS
+  OPERATION, ERROR
+    FROM Remote-Operations-Information-Objects {joint-iso-itu-t(2)
+      remote-operations(4) informationObjects(5) version1(0)}
+  PartyNumber
+    FROM Addressing-Data-Elements {itu-t recommendation q 932
+      addressing-data-elements(7)}
+  -- The definition of PartyNumber is reproduced in Appendix II
+  CALLCONTROLOBJECTCLASS
+    FROM Call-Control-Object-Super-Class {itu-t recommendation q 2981
+      call-control-object-super-class(4)}
+  -- The definition of CALLCONTROLOBJECTCLASS is given in subclause 8.2
+  call, localPartyEP, remotePartyEP, directCallAssociation,
+    remoteCallAssociation, serviceComponent
+    FROM Call-Object-Class-Definitions {itu-t recommendation q 2981
+      call-object-class-definitions(5)};
+
+-- The definition of call, localPartyEP, remotePartyEP, directCallAssociation, remoteCallAssociation, 
+-- serviceComponent is given in subclause 8.3
+CcOperations OPERATION ::=
+  {callEstablish | callProceeding | callComplete | callRelease | callStatus}
+
+ccOperationsDefinitions OBJECT IDENTIFIER ::=
+  {itu-t recommendation q 2981 cc-operations-definitions(2)}
+
+-- The callEstablish operation is used to establish a call and its information model. It is a confirmed operation.
+callEstablish OPERATION ::= {
+  ARGUMENT
+    SEQUENCE {callSegmentId             CallSegmentId,
+              callDescription           CallDescription,
+              bearerEstablAddress       BearerEstablishmentAddress,
+              awaitCompleteIndicator    BOOLEAN,
+              parameterActionIndicator  ParameterActionIndicator,
+              ...}
+  RESULT
+    SEQUENCE {callSegmentId             CallSegmentId,
+              callDescription           CallDescription,
+              parameterActionIndicator  ParameterActionIndicator,
+              bearerEstablAddress       BearerEstablishmentAddress OPTIONAL,
+              ...}
+  ERRORS
+    {callDescriptionNotAccepted | unallocatedNumber | noUserResponding |
+      noAnswerFromUser | callRejected | destinationOutOfOrder |
+      addressIncomplete | networkOutOfOrder | temporaryFailure | userBusy |
+      userNotReachable | unspecified}
+  CODE      global:{ccOperationsDefinitions 1}
+}
+
+-- The callProceeding operation is used by the succeeding call control entity to inform the preceding call control entity
+-- that the call is in progress and connection establishment may start for this segment. It is an unconfirmed operation.
+callProceeding OPERATION ::= {
+  ARGUMENT
+    SEQUENCE {callSegmentId             CallSegmentId,
+              bearerEstablAddress       BearerEstablishmentAddress,
+              parameterActionIndicator  ParameterActionIndicator,
+              ...}
+  RETURN RESULT    FALSE
+  ALWAYS RESPONDS  FALSE
+  CODE             global:{ccOperationsDefinitions 2}
+}
+
+-- The callRelease operation is used to release an existing call and its information model. It is a confirmed operation.
+callRelease OPERATION ::= {
+  ARGUMENT
+    SEQUENCE {callSegmentId             CallSegmentId,
+              releaseCause              ReleaseCause,
+              parameterActionIndicator  ParameterActionIndicator,
+              ...}
+  RESULT
+    SEQUENCE {callSegmentId             CallSegmentId,
+              parameterActionIndicator  ParameterActionIndicator,
+              ...}
+  CODE      global:{ccOperationsDefinitions 3}
+}
+
+-- The callComplete operation is used to indicate completion of establishment of a call and its information model.
+-- It is an unconfirmed operation.
+callComplete OPERATION ::= {
+  ARGUMENT
+    SEQUENCE {callSegmentId             CallSegmentId,
+              parameterActionIndicator  ParameterActionIndicator,
+              ...}
+  RETURN RESULT    FALSE
+  ALWAYS RESPONDS  FALSE
+  CODE             global:{ccOperationsDefinitions 4}
+}
+
+-- The callStatus operation is used to report a change to the information model. It is an unconfirmed operation.
+callStatus OPERATION ::= {
+  ARGUMENT
+    SEQUENCE {callSegmentId             CallSegmentId,
+              callChangedParameter      SEQUENCE OF CallChangedParameter,
+              parameterActionIndicator  ParameterActionIndicator,
+              ...}
+  RETURN RESULT    FALSE
+  ALWAYS RESPONDS  FALSE
+  CODE             global:{ccOperationsDefinitions 5}
+}
+
+ParameterActionIndicator ::= ENUMERATED {
+  clearCallAndItsInformationModel(0), discardApduAndReject(1),
+  discardApduNoReject(2), discardParameterAndPassApduToApplication(3),
+  ignoreParameterAndPassApduToApplication(4)}
+
+-- Used to indicate action to be taken if a parameter in an operation is not recognized
+BearerEstablishmentAddress ::=
+  PartyNumber
+
+NetworkRelevantObjectClassSet CALLCONTROLOBJECTCLASS ::=
+  {call | localPartyEP | remotePartyEP | directCallAssociation |
+   remoteCallAssociation, ...}
+
+EndToEndRelevantObjectClassSet CALLCONTROLOBJECTCLASS ::=
+  {serviceComponent, ...}
+
+CallDescription ::= SEQUENCE {
+  networkRelevantPart
+    SEQUENCE OF
+      NetworkRelevantObjectDescription{{NetworkRelevantObjectClassSet}},
+  endToEndRelevantPart
+    SEQUENCE OF
+      EndToEndRelevantObjectDescription{{EndToEndRelevantObjectClassSet}}
+      OPTIONAL
+}
+
+NetworkRelevantObjectDescription{CALLCONTROLOBJECTCLASS:NetworkRelevantObjectClassSet}
+  ::= SEQUENCE {
+  objectReference  INTEGER,
+  objectActionInd  ObjectActionIndicator,
+  objectStatus     ObjectStatus,
+  objectClassId
+    CALLCONTROLOBJECTCLASS.&objectClassIdentifier
+      ({NetworkRelevantObjectClassSet}),
+  objectArgument
+    CALLCONTROLOBJECTCLASS.&ArgumentType
+      ({NetworkRelevantObjectClassSet}{@objectClassId}) OPTIONAL,
+  ...
+}
+
+EndToEndRelevantObjectDescription{CALLCONTROLOBJECTCLASS:EndToEndRelevantObjectClassSet}
+  ::= SEQUENCE {
+  objectReference  INTEGER,
+  objectActionInd  ObjectActionIndicator,
+  objectStatus     ObjectStatus,
+  objectClassId
+    CALLCONTROLOBJECTCLASS.&objectClassIdentifier
+      ({EndToEndRelevantObjectClassSet}),
+  objectArgument
+    CALLCONTROLOBJECTCLASS.&ArgumentType
+      ({EndToEndRelevantObjectClassSet}{@objectClassId}) OPTIONAL,
+  ...
+}
+
+CallChangedParameter ::= SEQUENCE {
+  modifiedNetworkRelevantPart
+    SEQUENCE OF
+      ModifiedNetworkRelevantObjectDescription{{NetworkRelevantObjectClassSet}},
+  modifiedEndToEndRelevantPart
+    SEQUENCE OF
+      ModifiedEndToEndRelevantObjectDescription{{EndToEndRelevantObjectClassSet}}
+      OPTIONAL
+}
+
+ModifiedNetworkRelevantObjectDescription{CALLCONTROLOBJECTCLASS:NetworkRelevantObjectClassSet}
+  ::= SEQUENCE {
+  operation         ENUMERATED {deleteObject(0), modifyAttributes(1), ...
+                                },
+  objectReference   INTEGER,
+  objectActionInd   ObjectActionIndicator,
+  modifiedArgument
+    CALLCONTROLOBJECTCLASS.&ArgumentType({NetworkRelevantObjectClassSet})
+      OPTIONAL
+}
+
+ModifiedEndToEndRelevantObjectDescription{CALLCONTROLOBJECTCLASS:EndToEndRelevantObjectClassSet}
+  ::= SEQUENCE {
+  operation         ENUMERATED {deleteObject(0), modifyAttributes(1), ...
+                                },
+  objectReference   INTEGER,
+  objectActionInd   ObjectActionIndicator,
+  modifiedArgument
+    CALLCONTROLOBJECTCLASS.&ArgumentType({EndToEndRelevantObjectClassSet})
+      OPTIONAL
+}
+
+ObjectActionIndicator ::= ENUMERATED {
+  clearCall(0), discardNotify(1), discardUnknown(2), progressTransit(3), ...
+  }
+
+-- Used to indicate action to be taken if an object or object attribute is not recognized
+ObjectStatus ::= ENUMERATED {mandatory(0), optional(1), conditional(2), ...
+                             }
+
+CallSegmentId ::= SEQUENCE {
+  precedingSideCallSegId   CallSegmentIdComponent,
+  succeedingSideCallSegId  CallSegmentIdComponent
+}
+
+CallSegmentIdComponent ::= INTEGER(-2147483648..2147483647) -- 4 octets
+                                  
+
+-- The value 0 is to be used as a null value for the succeeding side call segment identifier 
+-- in the callEstablish invoke APDU.
+ReleaseCause ::= SEQUENCE {causeValue  CauseValue,
+                           location    Location,
+                           ...
+}
+
+CauseValue ::= ENUMERATED {
+  callDescriptionNotAccepted(0), normalCallClearing(3), temporaryFailure(11),
+  recoveryOnTimerExpiry(12), unspecified(4), ...
+  }
+
+Location ::= ENUMERATED {
+  unspecified(0), user(1), networkLocalCallSegment(2),
+  networkNonLocalCallSegment(3), ...
+  }
+
+ccOperationsErrors OBJECT IDENTIFIER ::=
+  {itu-t recommendation q 2981 cc-operations-errors(3)}
+
+callDescriptionNotAccepted ERROR ::= {
+  PARAMETER
+    SEQUENCE {callSegmentId    CallSegmentId,
+              location         Location,
+              callDescription  CallDescription OPTIONAL,
+              ...}
+  CODE       global:{ccOperationsErrors 1}
+}
+
+userBusy ERROR ::= {
+  PARAMETER
+    SEQUENCE {callSegmentId    CallSegmentId,
+              location         Location,
+              callDescription  CallDescription OPTIONAL,
+              ...}
+  CODE       global:{ccOperationsErrors 2}
+}
+
+unallocatedNumber ERROR ::= {
+  PARAMETER
+    SEQUENCE {callSegmentId  CallSegmentId,
+              location       Location,
+              ...}
+  CODE       global:{ccOperationsErrors 3}
+}
+
+noUserResponding ERROR ::= {
+  PARAMETER
+    SEQUENCE {callSegmentId  CallSegmentId,
+              location       Location,
+              ...}
+  CODE       global:{ccOperationsErrors 4}
+}
+
+noAnswerFromUser ERROR ::= {
+  PARAMETER
+    SEQUENCE {callSegmentId  CallSegmentId,
+              location       Location,
+              ...}
+  CODE       global:{ccOperationsErrors 5}
+}
+
+callRejected ERROR ::= {
+  PARAMETER
+    SEQUENCE {callSegmentId  CallSegmentId,
+              location       Location,
+              ...}
+  CODE       global:{ccOperationsErrors 6}
+}
+
+destinationOutOfOrder ERROR ::= {
+  PARAMETER
+    SEQUENCE {callSegmentId  CallSegmentId,
+              location       Location,
+              ...}
+  CODE       global:{ccOperationsErrors 7}
+}
+
+addressIncomplete ERROR ::= {
+  PARAMETER
+    SEQUENCE {callSegmentId  CallSegmentId,
+              location       Location,
+              ...}
+  CODE       global:{ccOperationsErrors 8}
+}
+
+networkOutOfOrder ERROR ::= {
+  PARAMETER
+    SEQUENCE {callSegmentId  CallSegmentId,
+              location       Location,
+              ...}
+  CODE       global:{ccOperationsErrors 9}
+}
+
+temporaryFailure ERROR ::= {
+  PARAMETER
+    SEQUENCE {callSegmentId  CallSegmentId,
+              location       Location,
+              ...}
+  CODE       global:{ccOperationsErrors 10}
+}
+
+userNotReachable ERROR ::= {
+  PARAMETER
+    SEQUENCE {callSegmentId  CallSegmentId,
+              location       Location,
+              ...}
+  CODE       global:{ccOperationsErrors 11}
+}
+
+unspecified ERROR ::= {
+  PARAMETER
+    SEQUENCE {callSegmentId  CallSegmentId,
+              location       Location,
+              ...}
+  CODE       global:{ccOperationsErrors 12}
+}
+
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

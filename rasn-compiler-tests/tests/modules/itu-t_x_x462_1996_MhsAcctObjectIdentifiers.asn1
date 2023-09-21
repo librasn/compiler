@@ -1,0 +1,566 @@
+
+
+
+
+
+
+
+
+-- Module MhsAcctObjectIdentifiers (X.462:10/1996)
+-- See also ITU-T X.462 (10/1996)
+-- See also the index of all ASN.1 assignments needed in this document
+
+MhsAcctObjectIdentifiers {joint-iso-itu-t mhs(6) management(9) accounting(3)
+  modules(8) object-identifiers(0)} DEFINITIONS IMPLICIT TAGS ::=
+BEGIN
+
+--  Prologue
+--  EXPORTS everything
+IMPORTS --  nothing -- ;
+
+ID ::= OBJECT IDENTIFIER
+
+--  MHS management (definitive)
+mhs-management ID ::=
+  {joint-iso-itu-t mhs(6) management(9)} --  this is definitive
+
+--  Document IDs
+id-model ID ::= {mhs-management  1} --  Model And Architecture
+
+id-information ID ::= {mhs-management  2} --  Information
+
+id-accounting ID ::= {mhs-management  3} --  Accounting Manag. Func.
+
+id-security ID ::= {mhs-management  4} --  Security Manag. Func.
+
+id-configuration ID ::= {mhs-management  5} --  Configuration Manag. Func.
+
+id-fault ID ::= {mhs-management  6} --  Fault Manag. Func.
+
+id-performance ID ::= {mhs-management  7} --  Performance Manag. Func.
+
+id-mta ID ::= {mhs-management  8} --  MTA Entity
+
+id-ua ID ::= {mhs-management  9} --  UA Entity
+
+id-ms ID ::= {mhs-management  10} --  MS Entity
+
+id-au ID ::= {mhs-management  11} --  AU Entity
+
+--  Template types
+id-moc ID ::=
+  {id-accounting  0} --  Managed Object Class templates
+
+id-package ID ::= {id-accounting  1} --  Package templates
+
+id-attribute ID ::= {id-accounting  2} --  Attribute templates
+
+id-attribute-group ID ::= {id-accounting  3} --  Attribute Group templates
+
+id-notification ID ::= {id-accounting  4} --  Notification templates
+
+id-action ID ::= {id-accounting  5} --  Action templates
+
+id-parameter ID ::= {id-accounting  6} --  Parameter templates
+
+id-name-binding ID ::= {id-accounting  7} --  Name Binding templates
+
+id-modules ID ::= {id-accounting  8} --  Modules - Not definitive
+
+--  Managed Object Classes
+id-moc-acctRequest ID ::= {id-moc  0}
+
+id-moc-bindEventRecord ID ::= {id-moc  1}
+
+id-moc-contact ID ::= {id-moc  2}
+
+id-moc-customer ID ::= {id-moc  3}
+
+id-moc-customerAcctLog ID ::= {id-moc  4}
+
+id-moc-customerAcctRecord ID ::= {id-moc  5}
+
+id-moc-customerEFD ID ::= {id-moc  6}
+
+id-moc-discardEventRecord ID ::= {id-moc  7}
+
+id-moc-interworkingMD ID ::= {id-moc  8}
+
+id-moc-interworkingMD-EFD ID ::= {id-moc  9}
+
+id-moc-maseEventRecord ID ::= {id-moc  10}
+
+id-moc-mdseEventRecord ID ::= {id-moc  11}
+
+id-moc-mdServiceMgtPOA ID ::= {id-moc  12}
+
+id-moc-messageEventRecord ID ::= {id-moc  13}
+
+id-moc-mhsEventLog ID ::= {id-moc  14}
+
+id-moc-misManagementDomain ID ::= {id-moc  15}
+
+id-moc-mrseEventRecord ID ::= {id-moc  16}
+
+id-moc-msseEventRecord ID ::= {id-moc  17}
+
+id-moc-mtseEventRecord ID ::= {id-moc  18}
+
+id-moc-securityAcctRecord ID ::= {id-moc  19}
+
+id-moc-serviceRequest ID ::= {id-moc  20}
+
+id-moc-settlementAcctRecord ID ::= {id-moc  21}
+
+id-moc-settlementAcctLog ID ::= {id-moc  22}
+
+--  Packages
+id-package-acctRequest ID ::= {id-package  0}
+
+id-package-alert ID ::= {id-package  1}
+
+id-package-bindEventRecord ID ::= {id-package  2}
+
+id-package-cancelDeferredDelivery ID ::= {id-package  3}
+
+id-package-changeCredential ID ::= {id-package  4}
+
+id-package-commonBindArguments ID ::= {id-package  5}
+
+id-package-commonCreationDeletion ID ::= {id-package  6}
+
+id-package-contact ID ::= {id-package  7}
+
+id-package-customer ID ::= {id-package  8}
+
+id-package-customerAcctRequest ID ::= {id-package  9}
+
+id-package-customerEFD ID ::= {id-package  10}
+
+id-package-d36-commonAttributes ID ::= {id-package  11}
+
+id-package-d36-deliveryViaAccessUnit ID ::= {id-package  12}
+
+id-package-d36-directDelivery ID ::= {id-package  13}
+
+id-package-delete ID ::= {id-package  14}
+
+id-package-deliveryControl ID ::= {id-package  15}
+
+id-package-destinationDomainDelivery ID ::= {id-package  16}
+
+id-package-discardEventRecord ID ::= {id-package  17}
+
+id-package-fetch ID ::= {id-package  18}
+
+id-package-interworkingMD ID ::= {id-package  19}
+
+id-package-interworkingMD-EFD ID ::= {id-package  20}
+
+id-package-list ID ::= {id-package  21}
+
+id-package-maseEventRecord ID ::= {id-package  22}
+
+id-package-mdseEventRecord ID ::= {id-package  23}
+
+id-package-mdServiceMgtPOA ID ::= {id-package  24}
+
+id-package-messageDelivery ID ::= {id-package  25}
+
+id-package-messageDeliveryEnvelope ID ::= {id-package  26}
+
+id-package-messageEventRecord ID ::= {id-package  27}
+
+id-package-messageSubmission ID ::= {id-package  28}
+
+id-package-messageSubmissionEnvelope ID ::= {id-package  29}
+
+id-package-messageTransfer ID ::= {id-package  30}
+
+id-package-mrseEventRecord ID ::= {id-package  31}
+
+id-package-msBindArguments ID ::= {id-package  32}
+
+id-package-msseEventRecord ID ::= {id-package  33}
+
+id-package-mtaBindArguments ID ::= {id-package  34}
+
+id-package-mtsBindArguments ID ::= {id-package  35}
+
+id-package-mtseEventControl ID ::= {id-package  36}
+
+id-package-originatingDomainTransferOut ID ::= {id-package  37}
+
+id-package-probeSubmission ID ::= {id-package  38}
+
+id-package-probeSubmissionEnvelope ID ::= {id-package  39}
+
+id-package-probeTransfer ID ::= {id-package  40}
+
+id-package-processing ID ::= {id-package  41}
+
+id-package-register ID ::= {id-package  42}
+
+id-package-registerMS ID ::= {id-package  43}
+
+id-package-reportDelivery ID ::= {id-package  44}
+
+id-package-reportDeliveryEnvelope ID ::= {id-package  45}
+
+id-package-reportTransfer ID ::= {id-package  46}
+
+id-package-securityAcctRecord ID ::= {id-package  47}
+
+id-package-serviceRequest ID ::= {id-package  48}
+
+id-package-settlementAcctLog ID ::= {id-package  49}
+
+id-package-settlementAcctRecord ID ::= {id-package  50}
+
+id-package-settlementAcctRequest ID ::= {id-package  51}
+
+id-package-submissionControl ID ::= {id-package  52}
+
+id-package-summarize ID ::= {id-package  53}
+
+id-package-trace ID ::= {id-package  54}
+
+id-package-transitDomainTransferOut ID ::= {id-package  55}
+
+--  Attributes
+id-attribute-accessRatePerDeliveryServiceType ID ::=
+  {id-attribute  0}
+
+id-attribute-actualRecipientName ID ::= {id-attribute  1}
+
+id-attribute-administrationError ID ::= {id-attribute  2}
+
+id-attribute-alertArgument ID ::= {id-attribute  3}
+
+id-attribute-alertResult ID ::= {id-attribute  4}
+
+id-attribute-authenticationCheck ID ::= {id-attribute  5}
+
+id-attribute-authenticationGeneration ID ::= {id-attribute  6}
+
+id-attribute-bindAuthenticationCheck ID ::= {id-attribute  7}
+
+id-attribute-bindingError ID ::= {id-attribute  8}
+
+id-attribute-bindToken ID ::= {id-attribute  9}
+
+id-attribute-certificate ID ::= {id-attribute  10}
+
+id-attribute-componentRatesPerOctetsPerDeliveryServiceType ID ::=
+  {id-attribute  11}
+
+id-attribute-consumerOfOperation ID ::= {id-attribute  12}
+
+id-attribute-contactCompany ID ::= {id-attribute  13}
+
+id-attribute-contactDetails ID ::= {id-attribute  14}
+
+id-attribute-contactFunction ID ::= {id-attribute  15}
+
+id-attribute-contactId ID ::= {id-attribute  16}
+
+id-attribute-contactInstance ID ::= {id-attribute  17}
+
+id-attribute-contactName ID ::= {id-attribute  18}
+
+id-attribute-contentConfidentialityAlgorithmIdentifier ID ::=
+  {id-attribute  19}
+
+id-attribute-contentIdentifier ID ::= {id-attribute  20}
+
+id-attribute-contentIntegrityCheck ID ::= {id-attribute  21}
+
+id-attribute-contentType ID ::= {id-attribute  22}
+
+id-attribute-currency ID ::= {id-attribute  23}
+
+id-attribute-customerAcctPolicy ID ::= {id-attribute  24}
+
+id-attribute-customerId ID ::= {id-attribute  25}
+
+id-attribute-customerName ID ::= {id-attribute  26}
+
+id-attribute-decipherment ID ::= {id-attribute  27}
+
+id-attribute-defaultDeliveryControls ID ::= {id-attribute  28}
+
+id-attribute-deleteArgument ID ::= {id-attribute  29}
+
+id-attribute-deleteResult ID ::= {id-attribute  30}
+
+id-attribute-deliverableContentTypes ID ::= {id-attribute  31}
+
+id-attribute-deliverableEncodedInformationTypes ID ::= {id-attribute  32}
+
+id-attribute-deliverableMaximumContentLength ID ::= {id-attribute  33}
+
+id-attribute-deliveryComponentRateToPrmd ID ::= {id-attribute  34}
+
+id-attribute-deliveryComponentRateToUa ID ::= {id-attribute  35}
+
+id-attribute-deliveryControls ID ::= {id-attribute  36}
+
+id-attribute-deliveryError ID ::= {id-attribute  37}
+
+id-attribute-deliveryServiceTypes ID ::= {id-attribute  38}
+
+id-attribute-destinationAdmd ID ::= {id-attribute  39}
+
+id-attribute-destinationDomainDeliveryList ID ::= {id-attribute  40}
+
+id-attribute-electronicMailAddress ID ::= {id-attribute  41}
+
+id-attribute-encipherment ID ::= {id-attribute  42}
+
+id-attribute-encodedInformationTypes ID ::= {id-attribute  43}
+
+id-attribute-entryExitMtaNames ID ::= {id-attribute  44}
+
+id-attribute-envelopeType ID ::= {id-attribute  45}
+
+id-attribute-faxTelephoneNumberList ID ::= {id-attribute  46}
+
+id-attribute-fetchArgument ID ::= {id-attribute  47}
+
+id-attribute-fetchResult ID ::= {id-attribute  48}
+
+id-attribute-globalDomainId ID ::= {id-attribute  49}
+
+id-attribute-initiatorCredentials ID ::= {id-attribute  50}
+
+id-attribute-initiatorName ID ::= {id-attribute  51}
+
+id-attribute-internalTrace ID ::= {id-attribute  52}
+
+id-attribute-interworkingMDId ID ::= {id-attribute  53}
+
+id-attribute-interworkingMDName ID ::= {id-attribute  54}
+
+id-attribute-labelsAndRedirections ID ::= {id-attribute  55}
+
+id-attribute-limitValidityDate ID ::= {id-attribute  56}
+
+id-attribute-listArgument ID ::= {id-attribute  57}
+
+id-attribute-listResult ID ::= {id-attribute  58}
+
+id-attribute-logStartTime ID ::= {id-attribute  59}
+
+id-attribute-logStopTime ID ::= {id-attribute  60}
+
+id-attribute-messageContentSize ID ::= {id-attribute  61}
+
+id-attribute-messageDeliveryEnvelope ID ::= {id-attribute  62}
+
+id-attribute-MTSIdentifier ID ::= {id-attribute  63}
+
+id-attribute-messageOriginAuthenticationCheck ID ::= {id-attribute  64}
+
+id-attribute-messageSecurityLabel ID ::= {id-attribute  65}
+
+id-attribute-messageSize ID ::= {id-attribute  66}
+
+id-attribute-messageSubmissionEnvelope ID ::= {id-attribute  67}
+
+id-attribute-submissionTime ID ::= {id-attribute  68}
+
+id-attribute-messageToken ID ::= {id-attribute  69}
+
+id-attribute-messageTransferEnvelope ID ::= {id-attribute  70}
+
+id-attribute-msBindAuthenticationCheck ID ::= {id-attribute  71}
+
+id-attribute-newCredentials ID ::= {id-attribute  72}
+
+id-attribute-numberOfAddressedPrmds ID ::= {id-attribute  73}
+
+id-attribute-numberOfAddressedUas ID ::= {id-attribute  74}
+
+id-attribute-numberOfMessagesPerDeliveryServiceType ID ::= {id-attribute  75}
+
+id-attribute-oldCredentials ID ::= {id-attribute  76}
+
+id-attribute-operationStatus ID ::= {id-attribute  77}
+
+id-attribute-operationTime ID ::= {id-attribute  78}
+
+id-attribute-originalMtaCertification ID ::= {id-attribute  79}
+
+id-attribute-originatingDomainTransferOutList ID ::= {id-attribute  80}
+
+id-attribute-originatingAdmd ID ::= {id-attribute  81}
+
+id-attribute-originatingMTACertificate ID ::= {id-attribute  82}
+
+id-attribute-originatorCertificate ID ::= {id-attribute  83}
+
+id-attribute-originatorName ID ::= {id-attribute  84}
+
+id-attribute-permissibleSecurityContext ID ::= {id-attribute  85}
+
+id-attribute-priority ID ::= {id-attribute  86}
+
+id-attribute-probeOriginAuthenticationCheck ID ::= {id-attribute  87}
+
+id-attribute-probeSubmissionEnvelope ID ::= {id-attribute  88}
+
+id-attribute-probeTransferEnvelope ID ::= {id-attribute  89}
+
+id-attribute-processingComponentRate ID ::= {id-attribute  90}
+
+id-attribute-processingDetails ID ::= {id-attribute  91}
+
+id-attribute-processingErrorFlag ID ::= {id-attribute  92}
+
+id-attribute-processingSummary ID ::= {id-attribute  93}
+
+id-attribute-proofOfDelivery ID ::= {id-attribute  94}
+
+id-attribute-proofOfDeliveryRequest ID ::= {id-attribute  95}
+
+id-attribute-proofOfSubmission ID ::= {id-attribute  96}
+
+id-attribute-proofOfSubmissionRequest ID ::= {id-attribute  97}
+
+id-attribute-recipientCertificate ID ::= {id-attribute  98}
+
+id-attribute-recipientOnResponsibilityList ID ::= {id-attribute  99}
+
+id-attribute-registerMSArgument ID ::= {id-attribute  100}
+
+id-attribute-registerMSResult ID ::= {id-attribute  101}
+
+id-attribute-reportDeliveryEnvelope ID ::= {id-attribute  102}
+
+id-attribute-reportIdentifier ID ::= {id-attribute  103}
+
+id-attribute-reportingMtaCertificate ID ::= {id-attribute  104}
+
+id-attribute-reportOriginAuthenticationCheck ID ::= {id-attribute  105}
+
+id-attribute-reportTransferEnvelope ID ::= {id-attribute  106}
+
+id-attribute-responderCredentials ID ::= {id-attribute  107}
+
+id-attribute-responderName ID ::= {id-attribute  108}
+
+id-attribute-retrievalError ID ::= {id-attribute  109}
+
+id-attribute-securityContext ID ::= {id-attribute  110}
+
+id-attribute-securityError ID ::= {id-attribute  111}
+
+id-attribute-securityProblem ID ::= {id-attribute  112}
+
+id-attribute-serviceAccessCharge ID ::= {id-attribute  113}
+
+id-attribute-serviceFlag ID ::= {id-attribute  114}
+
+id-attribute-serviceRequestId ID ::= {id-attribute  115}
+
+id-attribute-settlementPolicy ID ::= {id-attribute  116}
+
+id-attribute-signatureCheck ID ::= {id-attribute  117}
+
+id-attribute-signatureGeneration ID ::= {id-attribute  118}
+
+id-attribute-startUpDate ID ::= {id-attribute  119}
+
+id-attribute-status ID ::= {id-attribute  120}
+
+id-attribute-subjectIdentifier ID ::= {id-attribute  121}
+
+id-attribute-subjectSubmissionIdentifier ID ::= {id-attribute  122}
+
+id-attribute-submissionControls ID ::= {id-attribute  123}
+
+id-attribute-submissionError ID ::= {id-attribute  124}
+
+id-attribute-summarizeArgument ID ::= {id-attribute  125}
+
+id-attribute-summarizeResult ID ::= {id-attribute  126}
+
+id-attribute-supplierOfOperation ID ::= {id-attribute  127}
+
+id-attribute-telephoneNumberList ID ::= {id-attribute  128}
+
+id-attribute-thisRecipientName ID ::= {id-attribute  129}
+
+id-attribute-totalNumberOfORAddresses ID ::= {id-attribute  130}
+
+id-attribute-trace ID ::= {id-attribute  131}
+
+id-attribute-transitDomainTransferOutList ID ::= {id-attribute  132}
+
+id-attribute-userAddress ID ::= {id-attribute  133}
+
+id-attribute-userName ID ::= {id-attribute  134}
+
+id-attribute-userSecurityLabel ID ::= {id-attribute  135}
+
+--  Attribute Groups
+--  none are defined
+--  Notifications
+id-notification-objectCreation ID ::=
+  {id-notification  0}
+
+id-notification-objectDeletion ID ::= {id-notification  1}
+
+--  Actions
+--  none are defined
+--  Parameters
+id-parameter-attributeError ID ::=
+  {id-parameter  0}
+
+id-parameter-autoActionRequestError ID ::= {id-parameter  1}
+
+id-parameter-deleteError ID ::= {id-parameter  2}
+
+id-parameter-fetchRestrictionError ID ::= {id-parameter  3}
+
+id-parameter-improperlySpecifiedRecipients ID ::= {id-parameter  4}
+
+id-parameter-rangeError ID ::= {id-parameter  5}
+
+id-parameter-securityError ID ::= {id-parameter  6}
+
+id-parameter-sequenceNumberError ID ::= {id-parameter  7}
+
+id-parameter-serviceError ID ::= {id-parameter  8}
+
+--  Name Bindings
+id-name-binding-acctRequest-customer ID ::=
+  {id-name-binding  0}
+
+id-name-binding-acctRequest-interworkingMD ID ::= {id-name-binding  1}
+
+id-name-binding-contact-customer ID ::= {id-name-binding  2}
+
+id-name-binding-contact-interworkingMD ID ::= {id-name-binding  3}
+
+id-name-binding-customer-mdServiceManagementPointOfAccess ID ::=
+  {id-name-binding  4}
+
+id-name-binding-customerAcctLog-customer ID ::= {id-name-binding  5}
+
+id-name-binding-customerEFD-customer ID ::= {id-name-binding  6}
+
+id-name-binding-interworkingMD-EFD-interworkingMD ID ::= {id-name-binding  7}
+
+id-name-binding-interworkingMD-mdServiceManagementPointOfAccess ID ::=
+  {id-name-binding  8}
+
+id-name-binding-mdServiceManagementPointOfAccess-misManagementDomain ID ::=
+  {id-name-binding  9}
+
+id-name-binding-settlementAcctLog-interworkingMD ID ::= {id-name-binding  10}
+
+END --  of MhsAcctObjectIdentifiers
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

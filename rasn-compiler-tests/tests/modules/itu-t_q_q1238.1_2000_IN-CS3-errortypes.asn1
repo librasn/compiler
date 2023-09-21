@@ -1,0 +1,212 @@
+
+
+
+
+
+
+
+-- Module IN-CS3-errortypes (Q.1238.1:06/2000)
+-- See also ITU-T Q.1238.1 (06/2000)
+-- See also the index of all ASN.1 assignments needed in this document
+
+IN-CS3-errortypes {itu-t recommendation q 1238 modules(1) in-cs3-errortypes(2)
+  version1(0)} DEFINITIONS IMPLICIT TAGS ::=
+BEGIN
+
+IMPORTS
+  ros-InformationObjects, common-datatypes, errorcodes, sdf-sdf-Operations,
+    scf-scf-classes, scf-scf-Operations, ds-UsefulDefinitions, spkmGssTokens,
+    tc-Messages
+    FROM IN-CS3-object-identifiers {itu-t recommendation q 1238 modules(1)
+      in-cs3-object-identifiers(0) version1(0)}
+  directoryAbstractService, distributedOperations, enhancedSecurity
+    FROM UsefulDefinitions {joint-iso-itu-t ds(5) module(1)
+      usefulDefinitions(0) 3}
+  OPTIONALLY-PROTECTED{}, dirqop
+    FROM EnhancedSecurity {joint-iso-itu-t ds(5) module(1) enhancedSecurity(28)
+      1}
+  CommonResults, ServiceProblem, SecurityProblem, SecurityParameters, Versions
+    FROM DirectoryAbstractService {joint-iso-itu-t ds(5) module(1)
+      directoryAbstractService(2) 3}
+  SCFQOP, scfqop
+    FROM IN-CS3-SCF-SCF-Classes {itu-t recommendation q 1238 modules(1)
+      in-cs3-scf-scf-classes(21) version1(0)}
+  AccessPointInformation
+    FROM DistributedOperations {joint-iso-itu-t ds(5) module(1)
+      distributedOperations(3) 3}
+  SPKM-ERROR
+    FROM SpkmGssTokens {iso(1) identified-organization(3) dod(6) internet(1)
+      security(5) mechanisms(5) spkm(1) spkmGssTokens(10)}
+  ERROR
+    FROM Remote-Operations-Information-Objects {joint-iso-itu-t
+      remote-operations(4) informationObjects(5) version1(0)}
+  InvokeID, UnavailableNetworkResource
+    FROM IN-CS3-common-datatypes {itu-t recommendation q 1238 modules(1)
+      in-cs3-common-datatypes(1) version1(0)}
+  errcode-canceled, errcode-cancelFailed, errcode-chainingRefused,
+    errcode-eTCFailed, errcode-executionError, errcode-improperCallerResponse,
+    errcode-missingCustomerRecord, errcode-missingParameter,
+    errcode-parameterOutOfRange, errcode-requestedInfoError,
+    errcode-scfTaskRefused, errcode-scfReferral, errcode-systemFailure,
+    errcode-taskRefused, errcode-unavailableResource,
+    errcode-unexpectedComponentSequence, errcode-unexpectedDataValue,
+    errcode-unexpectedParameter, errcode-unknownLegID, errcode-unknownResource
+    FROM IN-CS3-errorcodes {itu-t recommendation q 1238 modules(1)
+      in-cs3-errorcodes(4) version1(0)};
+
+-- TYPE DEFINITION FOR    IN CS3    ERRORS FOLLOWS
+canceled ERROR ::= {CODE  errcode-canceled
+}
+
+-- The operation has been cancelled.
+cancelFailed ERROR ::= {
+  PARAMETER
+    SEQUENCE {problem
+                [0]  ENUMERATED {unknownOperation(0), tooLate(1),
+                                 operationNotCancellable(2)},
+              operation  [1]  InvokeID}
+  CODE       errcode-cancelFailed
+}
+
+-- The operation failed to be cancelled.
+chainingRefused ERROR ::= {CODE  errcode-chainingRefused
+}
+
+eTCFailed ERROR ::= {CODE  errcode-eTCFailed
+}
+
+-- The establish temporary connection failed.
+executionError ERROR ::= {
+  PARAMETER OPTIONALLY-PROTECTED
+    {SET {problem  [0] EXPLICIT ExecutionProblem,
+          COMPONENTS OF CommonResults},
+     dirqop.&dirErrors-QOP}
+  CODE                            errcode-executionError
+}
+
+-- The executionError is returned by an Execute operation in the case of the operation is not completing.
+ExecutionProblem ::= INTEGER {missingInputValues(1), executionFailure(2)
+}
+
+-- The executeProblem identifies the cause of the execute operation failure:
+-- missingInputValues is returned in the input-values field contains the wrong input 
+-- information for the method being executed.
+-- executionFailure is returned when the method fails to complete correctly. This is caused by
+-- .the failure of one of the DAP operations contained within the method.
+improperCallerResponse ERROR ::= {CODE  errcode-improperCallerResponse
+}
+
+-- The caller response was not as expected.
+missingCustomerRecord ERROR ::= {CODE  errcode-missingCustomerRecord
+}
+
+-- The Service Logic Program could not be found in the SCF.
+missingParameter ERROR ::= {CODE  errcode-missingParameter
+}
+
+-- An expected optional parameter was not received.
+parameterOutOfRange ERROR ::= {CODE  errcode-parameterOutOfRange
+}
+
+-- The parameter was not as expected (e.g. missing or out of range).
+requestedInfoError ERROR ::= {
+  PARAMETER
+    ENUMERATED {unknownRequestedInfo(1), requestedInfoNotAvailable(2)
+                                         -- other values FFS
+                                         }
+  CODE       errcode-requestedInfoError
+}
+
+-- The requested information cannot be found.
+scfBindFailure ERROR ::= {PARAMETER  FailureReason
+}
+
+FailureReason ::= CHOICE {
+  systemFailure   [0]  UnavailableNetworkResource,
+  scfTaskRefused  [1]  ScfTaskRefusedParameter,
+  securityError
+    [2]  SET {problem   [0]  SecurityProblem,
+              spkmInfo  [1]  SPKM-ERROR}
+}
+
+scfTaskRefused ERROR ::= {
+  PARAMETER  ScfTaskRefusedParameter
+  CODE       errcode-scfTaskRefused
+}
+
+ScfTaskRefusedParameter ::=
+  OPTIONALLY-PROTECTED
+    {SEQUENCE {reason
+                 ENUMERATED {generic(0), unobtainable(1), congestion(2)
+                                                          --other values FFS
+                                                          },
+               securityParameters  [1]  SecurityParameters OPTIONAL
+    }, scfqop.&scfErrorsQOP}
+
+scfReferral ERROR ::= {
+  PARAMETER  ReferralParameter
+  CODE       errcode-scfReferral
+}
+
+ReferralParameter ::=
+  OPTIONALLY-PROTECTED
+    {SEQUENCE {tryhere             [0]  AccessPointInformation,
+               securityParameters  [1]  SecurityParameters OPTIONAL
+    }, scfqop.&scfErrorsQOP}
+
+systemFailure ERROR ::= {
+  PARAMETER  UnavailableNetworkResource
+  CODE       errcode-systemFailure
+}
+
+-- The operation could not be completed due to e.g. a system failure at the serving physical entity, the 
+-- unavailability of the required resource or due to screening.
+taskRefused ERROR ::= {
+  PARAMETER
+    ENUMERATED {generic(0), unobtainable(1), congestion(2)
+                                             --other values FFS
+                                             }
+  CODE       errcode-taskRefused
+}
+
+-- An entity normally capable of the task requested cannot or chooses not to perform the task at this 
+-- time. This includes error situations like congestion and unobtainable address as used in e.g. the 
+-- connect operation.
+tfcBindError ERROR ::= {
+  PARAMETER
+    SET {versions  [0]  Versions DEFAULT {v1},
+         error
+           CHOICE {serviceError   [1]  ServiceProblem,
+                   securityError  [2]  SecurityProblem}}
+}
+
+unavailableResource ERROR ::= {CODE  errcode-unavailableResource
+}
+
+-- A requested resource is not available at the serving entity.
+unexpectedComponentSequence ERROR ::= {
+  CODE  errcode-unexpectedComponentSequence
+}
+
+-- An incorrect sequence of Components was received (e.g. "DisconnectForwardConnection" 
+-- followed by "PlayAnnouncement").
+unexpectedDataValue ERROR ::= {CODE  errcode-unexpectedDataValue
+}
+
+-- The data value was not as expected (e.g. routing number expected but billing number received)
+unexpectedParameter ERROR ::= {CODE  errcode-unexpectedParameter
+}
+
+-- A parameter received was not expected.
+unknownLegID ERROR ::= {CODE  errcode-unknownLegID
+}
+
+-- Leg not known to the SSF.
+unknownResource ERROR ::= {CODE  errcode-unknownResource
+}
+
+-- Resource whose status is being requested is not known to the serving entity.
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

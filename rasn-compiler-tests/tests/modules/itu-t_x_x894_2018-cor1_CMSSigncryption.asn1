@@ -1,0 +1,141 @@
+-- ASN module extracted from ITU-T X.894 (10/2018)-- 14 Module CMSSigncryption
+CMSSigncryption {itu-t recommendation(0) x(24) cms-profile(894) module(0) signcryption(0) version1(1)}
+"/ITU-T/Recommendation/X/CMS-Profile/Module/Signcryption/Version1"
+DEFINITIONS AUTOMATIC TAGS ::=
+BEGIN
+IMPORTS 
+ALGORITHM,AlgorithmIdentifier{}
+FROM AlgorithmInformation-2009
+{iso(1) identified-organization(3) dod(6) internet(1) security(5) mechanisms(5) pkix(7) id-mod(0) id-mod-algorithmInformation-02(58)}
+ATTRIBUTE
+FROM PKIX-CommonTypes-2009
+{iso(1) identified-organization(3) dod(6) internet(1) security(5) mechanisms(5) pkix(7) id-mod(0) id-mod-pkixCommon-02(57)}
+Attribute{},Attributes,CONTENT-TYPE,EncryptedContentInfo,SignatureAlgorithmIdentifier,
+SignatureValue,SignedAttributes,SignedAttributesSet,SignerIdentifier,
+UnprotectedEncAttributes
+FROM CryptographicMessageSyntax-2010
+{ iso(1) member-body(2) us(840) rsadsi(113549) pkcs(1) pkcs-9(9) smime(16) modules(0) id-mod-cms-2009(58) }
+SigncryptionMechanism
+FROM Signcryption
+{iso(1) standard(0) signcryption(29150) asn1-module(0) 
+signcryption-mechanisms(0)version(1)}
+signcrypted-attributes,signcrypted-components,signcrypted-content,
+signcrypted-envelope,xPath
+FROM CMSObjectIdentifiers
+{iso(1) identified-organization(3) tc68(133) country(16) x9(840)x9Standards(9) x9-73(73) module(0) oids(1) v2009(1)};
+id-signcryptedData 	OBJECT IDENTIFIER ::= 
+{itu-t recommendation(0) x(24) cms-profile(894) signcryption(0) data(0)}
+ct-SigncryptedData	CONTENT-TYPE ::= {
+TYPE SigncryptedData IDENTIFIED BY id-signcryptedData}	
+SigncryptedData	::= SEQUENCE {
+version		CMSVersion,
+contentInformation	ContentInformation,
+certificates	Certificates OPTIONAL,
+crls			CRLs OPTIONAL,
+signcrypters	Signcrypters
+}
+CMSVersion	::= INTEGER {v0(0)} (0..MAX)
+Certificates	::= [XER:BASE64] OCTET STRING
+CRLs 	::= [XER:BASE64] OCTET STRING
+ContentInformation ::= SEQUENCE {
+mode 		Mode,
+content	Content OPTIONAL
+}
+Mode ::= MODE.&id({ProcessingModes})
+ProcessingModes MODE ::= {
+signcryptedAttributes	|
+signcryptedComponents	|
+signcryptedContent 	|
+signcryptedEnveloped,
+... -- Expect additional processing modes --
+}
+Content ::= OCTET STRING (SIZE(1..MAX))
+NamedKeyEncryptedData ::= SEQUENCE {
+version			CMSVersion,
+keyName			[0] OCTET STRING OPTIONAL,
+encryptedContentInfo	EncryptedContentInfo,
+unprotectedAttrs		[1] IMPLICIT Attributes
+					{{UnprotectedEncAttributes}} OPTIONAL
+}
+Signcrypters ::= SEQUENCE (SIZE(1..MAX)) OF Signcrypter
+Signcrypter ::= SEQUENCE {
+version			CMSVersion,
+side				SigncrypterIDs,
+signcryptedDataAlgorithm	SigncryptedDataAlgorithmIdentifier,
+signcryptionValue		SigncryptionValue,
+signatureInformation	SignatureInformation OPTIONAL,
+unsigncryptedAttributes	UnSigncryptedAttributes OPTIONAL
+}
+SigncrypterIDs ::= SEQUENCE {
+sender 	KeyPairIdentifier,
+recipient 	KeyPairIdentifier
+}
+KeyPairIdentifier ::= SignerIdentifier
+ToBeSigncrypted ::= SEQUENCE {
+content	Content,
+attributes 	SigncryptedAttributes
+}
+SigncryptedAttributes ::=
+SEQUENCE (SIZE(1..MAX)) OF Attribute{{SigncryptionAttributes}}
+SigncryptionAttributes ATTRIBUTE ::= {
+SignedAttributesSet	| -- CMS Signed Attributes --
+signcryptedEnvelope,
+... -- Expect user defined attributes --
+}
+signcryptedEnvelope ATTRIBUTE ::= {
+TYPE SigncryptedKey IDENTIFIED BY signcrypted-envelope
+}
+SigncryptedKey ::= OCTET STRING
+SigncryptedDataAlgorithmIdentifier ::= 
+AlgorithmIdentifier{ALGORITHM,{SigncryptAlgorithms}}
+SigncryptAlgorithms ALGORITHM ::= {
+SigncryptionMechanism, -- ISO/IEC 29150 Signcryption --
+...  -- Expect additional algorithm objects --
+}
+SigncryptionValue ::= OCTET STRING(SIZE(1..MAX))
+SignatureInformation ::= SEQUENCE {
+signerIdentifier		SignerIdentifier OPTIONAL,
+signatureAlgorithm		SignatureAlgorithmIdentifier OPTIONAL,
+toBeSigned			ToBeSigned,
+signatureValue		SignatureValue
+}
+ToBeSigned ::= SEQUENCE {
+signcryptedPartsManifest	SigncryptedPartsManifest,
+signedAttributes		SignedAttributes
+}
+SigncryptedPartsManifest ::= Signcrypted{{Manifest}}
+Manifest SIGNCRYPTED ::= {
+xPathManifest,
+... -- Expect additional manifest types --
+}
+xPathManifest SIGNCRYPTED ::= {
+OID xPath PARMS XPathSet
+}
+XPathSet ::= SEQUENCE (SIZE(1..MAX)) OF XPath
+XPath ::= UTF8String(CONSTRAINED BY { -- XML Path Language 2.0 --})
+UnSigncryptedAttributes ::=
+SEQUENCE (SIZE(1..MAX)) OF Attribute{{UnSigncryptionAttributes}}
+UnSigncryptionAttributes ATTRIBUTE ::= {
+... -- Expect additional attributes --
+}
+-- SigncryptedData processing modes --
+signcryptedAttributes MODE ::= {ID signcrypted-attributes}
+signcryptedComponents MODE ::= {ID signcrypted-components}
+signcryptedContent MODE ::= {ID signcrypted-content}
+signcryptedEnveloped	MODE ::= {ID signcrypted-envelope}
+-- Information object class and parameterized type definitions --
+SIGNCRYPTED ::= CLASS {
+&id	OBJECT IDENTIFIER UNIQUE,
+&Type	OPTIONAL
+}
+WITH SYNTAX {OID &id [PARMS &Type]}
+Signcrypted{SIGNCRYPTED:IOSet} ::= SEQUENCE {
+name	SIGNCRYPTED.&id({IOSet}),
+parts	SIGNCRYPTED.&Type({IOSet}{@name}) OPTIONAL
+}
+MODE ::= CLASS {
+&Type	OPTIONAL,
+&id	OBJECT IDENTIFIER UNIQUE
+}
+WITH SYNTAX { [WITH SYNTAX &Type] ID &id}
+END

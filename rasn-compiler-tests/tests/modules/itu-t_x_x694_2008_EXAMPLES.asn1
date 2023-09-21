@@ -1,0 +1,56 @@
+EXAMPLES.asn: ITU-T X.694 (11/2008) -- ASN module extracted from ITU-T X.694 (11/2008)EXAMPLES {joint-iso-itu-t asn1(1) examples(999) xml-defined-types(3)}
+DEFINITIONS 
+XER INSTRUCTIONS AUTOMATIC TAGS ::=
+BEGIN
+IMPORTS String, Decimal, Int, Date, AnyType
+  
+FROM XSD
+  {joint-iso-itu-t asn1(1) specification(0) modules(0) xsd-module(2) version1(1)};
+/* For a Version 2 mapping, the last component of the module identifier would be version2(2) */
+EXAMPLES ::= 	SEQUENCE {
+personnelRecord      PersonnelRecord,
+number               Decimal,
+daysOfTheWeek        ListOfDays,
+namesOfMemberNations NamesOfMemberNations,
+fileIdentifier-list  [UNTAGGED]
+       SEQUENCE (SIZE(1..MAX)) OF fileidentifier FileIdentifier } 
+PersonnelRecord  ::= 	[NAME AS UNCAPITALIZED] SEQUENCE {
+name 			Name,
+title 		XSD.String,
+number 		INTEGER,
+dateOfHire 		XSD.Date,
+nameOfSpouse 	NameOfSpouse,
+children 		Children } 
+NameOfSpouse ::= 	[NAME AS UNCAPITALIZED] Name
+Name ::= [NAME AS UNCAPITALIZED] SEQUENCE {
+givenName 		XSD.String,
+initial 		XSD.String,
+familyName 		XSD.String } 
+Children ::= [NAME AS UNCAPITALIZED] SEQUENCE {
+childInformation-list [UNTAGGED]
+		SEQUENCE OF
+		childInformation [NAME AS CAPITALIZED] ChildInformation }
+ChildInformation ::= 	SEQUENCE {
+name 			Name,
+dateOfBirth 	XSD.Date }
+ListOfDays ::=	[LIST] SEQUENCE OF Day
+Day ::= 	ENUMERATED
+{ friday, monday, saturday, sunday, thursday, tuesday, wednesday }
+-- Note that 12.4.1.3 specifies use of a lexicographical order, as
+-- the members of an enumeration are not ordered in an XML Schema
+
+NamesOfMemberNations ::= [NAME AS UNCAPITALIZED] [LIST] SEQUENCE OF
+	XSD.String (FROM({0, 0, 0, 33}..{0, 16, 255, 253}))
+
+FileIdentifier ::= [NAME AS UNCAPITALIZED] SEQUENCE {
+choice [UNTAGGED] CHOICE {
+	serialNumber 	XSD.Int,
+	relativeName 	XSD.String,
+	unidentified 	Unidentified   } }
+Unidentified ::=  [NAME AS UNCAPITALIZED] XSD.AnyType
+ENCODING-CONTROL XER
+GLOBAL-DEFAULTS MODIFIED-ENCODINGS
+GLOBAL-DEFAULTS CONTROL-NAMESPACE
+	"http://www.w3.org/2001/XMLSchema-instance" PREFIX "xsi"
+TEXT Day:ALL
+END

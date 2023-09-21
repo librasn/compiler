@@ -1,0 +1,31 @@
+CINF-module.asn (ITU-T X.672 (08/2010))-- ASN module extracted from ITU-T X.672 (08/2010)CINF-module {joint-iso-itu-t ors(50) modules(0) cinf(0) version1(1)}
+DEFINITIONS AUTOMATIC TAGS ::=
+BEGIN
+ChildInformation ::= CHOICE {
+	noDisclosure	NULL /* No information is provided */,
+	disclosure	Information 
+}
+
+Information ::= SEQUENCE {
+	disclosedChildren	SEQUENCE OF disclosedChild  ChildDetails,
+	otherChildren		INTEGER (-1..MAX)
+	/* The number of additional non-disclosed children (-1 indicates that the
+   		node is not prepared to disclose the number of other children) */ }
+
+ChildDetails ::= SEQUENCE {
+	orsSupported	BOOLEAN 
+	/* Set to TRUE if the child OID node is ORS-supported */,
+	unicodeLabels	UnicodeLabels 
+}
+
+UnicodeLabels ::= SEQUENCE {
+	numericLabel	INTEGER,
+	non-numeric	SEQUENCE OF labels Non-numericUnicodeLabel 
+}
+
+Non-numericUnicodeLabel ::= UTF8String
+
+/* Restricted according to Rec. ITU-T X.660 | ISO/IEC 9834-1,clause 7.2.5 */
+ENCODING-CONTROL XER
+GLOBAL-DEFAULTS MODIFIED-ENCODINGS
+END

@@ -1,0 +1,150 @@
+
+
+
+
+
+
+
+-- Module Terminal-to-Host-interworking-commands (T.101:11/1994)
+-- See also ITU-T T.101 (11/1994)
+-- See also the index of all ASN.1 assignments needed in this document
+
+Terminal-to-Host-interworking-commands DEFINITIONS ::=
+BEGIN
+
+TerminalToHostCommand ::= CHOICE {
+  chargingModifyRequest         [0]  ChargingModifyRequest,
+  chargingModifyResponse        [1] IMPLICIT ChargingModifyResponse,
+  appliConnectReport            [2] IMPLICIT AppliConnectReport,
+  appliDisconnectReport         [3] IMPLICIT AppliDisconnectReport,
+  costLimitInformationRequest   [4] IMPLICIT CostLimitInformationRequest,
+  costLimitInformationResponse  [5] IMPLICIT CostLimitInformationResponse,
+  itemOverLimit                 [6] IMPLICIT ItemOverLimit,
+  itemOverLimitResponse         [7] IMPLICIT ItemOverLimitResponse,
+  identificationRequest         [8] IMPLICIT IdentificationRequest,
+  identificationResponse        [9] IMPLICIT IdentificationResponse,
+  errorMessage                  [10] IMPLICIT ErrorMessage,
+  languagetoUseRequest          [11] IMPLICIT SEQUENCE OF Language,
+  languagetoUseResponse         [12] IMPLICIT Language,
+  dataSyntaxSwitchingRequest    [13] IMPLICIT DataSyntaxRequest,
+  dataSyntaxSwitchingResponse
+    [14] IMPLICIT INTEGER {requestedProfileNotSupported(0),
+                           requestedProfileSupportedTranscodingDoneByVSU(1),
+                           terminalInTheRequestedProfile(2)}
+}
+
+-- vTX				[30]  reserved for Syntax-Based-Videotex
+ChargingModifyRequest ::= CHOICE {
+  predefinedTariff      [0] IMPLICIT INTEGER, -- to be used for bilateral agreed predefined tariffs
+  nonpredefinedTariff   [1] IMPLICIT NonpredefinedTariff,
+  --	cCITTpredefinedTariff	[2]	IMPLICIT CCITTpredefinedTariff, -- -- CCITTpredefinedTariff is for further study
+  startAtConnectReport  [3] IMPLICIT BOOLEAN
+}
+
+--	default is FALSE
+--	TRUE means wait for receipt of Application-Connection-Report
+--	FALSE means start on receipt of Application-Connection-Report
+--	or any data packet with Q = 0
+NonpredefinedTariff ::= SEQUENCE {
+  tBCPrice          [0] IMPLICIT TBCPrice OPTIONAL,
+  framePrice        [1] IMPLICIT RealNumber OPTIONAL,
+  transactionPrice  [2] IMPLICIT RealNumber OPTIONAL,
+  volumePrice       [3] IMPLICIT VolumePrice OPTIONAL
+}
+
+-- at least one of the types should appear
+TBCPrice ::= SEQUENCE {
+  period  [0] IMPLICIT INTEGER, -- period in seconds
+  price   [1] IMPLICIT RealNumber
+}
+
+VolumePrice ::= SEQUENCE {
+  volume
+    [0] IMPLICIT INTEGER {n1byte(0), n16bytes(1), n32bytes(2), n64bytes(3),
+                          n128bytes(4), n256bytes(5), n512bytes(6),
+                          n1024bytes(7), n2048bytes(8), n4096bytes(9)},
+  price   [1] IMPLICIT RealNumber
+}
+
+ChargingModifyResponse ::= BOOLEAN -- "Accept"=TRUE
+
+-- "Refusé"=FALSE
+AppliConnectReport ::= SEQUENCE {
+  applicationConnectionId  [0] IMPLICIT OCTET STRING
+}
+
+AppliDisconnectReport ::= SEQUENCE {
+  applicationDisconnectionId  [0] IMPLICIT OCTET STRING,
+  applicableTariff            [1] IMPLICIT BOOLEAN DEFAULT TRUE
+  -- TRUE means basic tariff
+  -- FALSE means still running tariff
+}
+
+CostLimitInformationRequest ::= SEQUENCE {
+  itemCostLimit     [0] IMPLICIT RealNumber OPTIONAL,
+  sessionCostLimit  [1] IMPLICIT RealNumber OPTIONAL,
+  tBCPriceLimit     [2] IMPLICIT TBCPrice OPTIONAL
+  -- at least one of the types should appear
+}
+
+CostLimitInformationResponse ::= BOOLEAN -- "supported"=TRUE
+
+-- "not supported"=FALSE
+ItemOverLimit ::= SEQUENCE {
+  framePrice        [0] IMPLICIT RealNumber OPTIONAL,
+  transactionPrice  [1] IMPLICIT RealNumber OPTIONAL,
+  proposedTBCPrice  [2] IMPLICIT TBCPrice OPTIONAL
+  -- at least one of the types should appear
+}
+
+ItemOverLimitResponse ::= BOOLEAN -- "Accept"=TRUE
+
+-- "Refuse"=FALSE
+IdentificationRequest ::= SEQUENCE {
+  identificationCode  [0] IMPLICIT IdentificationCode
+  -- at least one identificationCode should appear
+}
+
+IdentificationResponse ::= SEQUENCE OF Identification
+
+Identification ::= SEQUENCE {
+  identificationCode      [0] IMPLICIT IdentificationCode,
+  identificationContents  [1] IMPLICIT OCTET STRING
+}
+
+IdentificationCode ::= INTEGER {
+  userIdentification(15), lineIdentification(16), terminalIdentification(17)
+                                                  
+-- other identification codes may be used on
+-- a bilateral base; it is suggested that,
+-- when applicable, values corresponding
+-- to field-type of Annex B/T.541 shall be used.
+}
+
+ErrorMessage ::= INTEGER {unrecognisedCommand(0), unrecognisedParameter(1)}
+
+Language ::= OCTET STRING
+
+-- value as defined in ISO 639 Annex B, alphabetical list of
+-- letter symbols for languages. For example, Dutch language is
+-- represented by "NL".
+DataSyntaxRequest ::= CHOICE {
+  dataSyntaxISwitching    [1] IMPLICIT OCTET STRING,
+  -- value as defined in Annex B
+  dataSyntaxIISwitching   [2] IMPLICIT OCTET STRING,
+  -- value as defined in Annex C
+  dataSyntaxIIISwitching  [3] IMPLICIT OCTET STRING
+  -- value as defined in Annex D
+}
+
+RealNumber ::= SEQUENCE {
+  integerPart      [0] IMPLICIT INTEGER DEFAULT 0,
+  decimalExponent  [1] IMPLICIT INTEGER DEFAULT 2
+  -- the encoded real number is obtained by dividing the
+  -- integerPart by 10**decimalExponent
+}
+
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

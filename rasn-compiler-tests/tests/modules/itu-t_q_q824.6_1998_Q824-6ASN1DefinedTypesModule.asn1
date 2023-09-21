@@ -1,0 +1,454 @@
+
+
+
+
+
+
+
+-- Module Q824-6ASN1DefinedTypesModule (Q.824.6:06/1998)
+-- See also ITU-T Q.824.6 (06/1998)
+-- See also the index of all ASN.1 assignments needed in this document
+
+Q824-6ASN1DefinedTypesModule {itu-t recommendation(0) q(17) ca(824) dot(127)
+  bsm(6) informationModel(0) asn1Module(2) asn1TypeModule(0)} DEFINITIONS
+IMPLICIT TAGS ::=
+BEGIN
+
+-- EXPORTS everything
+IMPORTS
+  ObjectInstance
+    FROM CMIP-1 {joint-iso-itu-t ms(9) cmip(1) modules(0) protocol(3)}
+  NameType, ObjectList, PointerOrNull, ProblemCause
+    FROM ASN1DefinedTypesModule {itu-t recommendation m gnm(3100)
+      informationModel(0) asn1Modules(2) asn1DefinedTypesModule(0)}
+  ProbableCause
+    FROM Attribute-ASN1Module {joint-iso-itu-t ms(9) smi(3) part2(2)
+      asn1Module(2) 1}
+  integerZero
+    FROM AtmMIBMod {itu-t(0) recommendation(0) i(9) atmm(751)
+      informationModel(0) ans1Module(2) atm(0)};
+
+-- additional value definitions to probableCause production
+cellStarvation ProbableCause ::=
+  globalValue:{atmSwitchProbableCause 1}
+
+informationModel OBJECT IDENTIFIER ::=
+  {itu-t(0) recommendation(0) q(17) ca(824) dot(127) bsm(6) informationModel(0)
+   asn1Module(2) asn1TypeModule(0)}
+
+standardSpecificExtension OBJECT IDENTIFIER ::=
+  {informationModel standardSpecificExtension(0)}
+
+managedObjectClass OBJECT IDENTIFIER ::=
+  {informationModel managedObjectClass(3)}
+
+package OBJECT IDENTIFIER ::= {informationModel package(4)}
+
+nameBinding OBJECT IDENTIFIER ::= {informationModel nameBinding(6)}
+
+attribute OBJECT IDENTIFIER ::= {informationModel attribute(7)}
+
+action OBJECT IDENTIFIER ::= {informationModel action(9)}
+
+notification OBJECT IDENTIFIER ::= {informationModel notification(10)}
+
+atmSwitchProbableCause OBJECT IDENTIFIER ::= {standardSpecificExtension 0}
+
+AalMode ::= ENUMERATED {
+  messageAssured(0), messageUnassured(1), streamingAssured(2),
+  streamingUnassured(3)}
+
+AalType ::= ENUMERATED {
+  aal1(0), aal2(1), -- encoded for future use 
+  aal34(2), aal5(3)}
+
+AbstractDestinationPtr ::= ObjectInstance
+
+ActiveListOfRouteTpsPtr ::= ObjectInstance
+
+ActiveTargetPtr ::= CHOICE {
+  pointer          ObjectInstance,
+  carrierRequired  NULL
+}
+
+AddTerminationPointInfo ::= SEQUENCE {
+  newTPs                                  NewTPs,
+  interworkingVcTtpBidirectionalInstance  ObjectInstance
+}
+
+AddTerminationPointReply ::=
+  SEQUENCE OF
+    SEQUENCE {tpAdded     ObjectInstance,
+              tpNotAdded  ProblemCause OPTIONAL}
+
+AssignNonAssign ::= INTEGER {assign(0), nonAssign(1)}
+
+BearerCapab ::= INTEGER {
+  dbr(0), sbrRt(1), sbrNrt(2), abr(3), ubr(4), abtDt(5), abtIt(6)}
+
+BlockedForMaintenance ::= INTEGER {blocked(0), unblocked(1)}
+
+Boolean ::= BOOLEAN
+
+BufferRelease ::= BOOLEAN
+
+bufferReleaseDefault BufferRelease ::= TRUE
+
+CallingPartyCategory ::= CHOICE {unused    NULL,
+                                 category  Category
+}
+
+Category ::= BIT STRING(SIZE (8)) -- acc. Rec. Q.2763
+                       
+
+CarrierCode ::= NetworkIdentification
+
+CarrierDataPtr ::= ObjectInstance
+
+Itu-tNetworkPlanIndicator ::= INTEGER -- Replace i with I
+
+ChannelAssociatedSignalling ::= INTEGER {
+  basic(0), e1Cas(1), ds1SfCas(2), ds1EsfCas(3), j2Cas(4)}
+
+Cic ::= INTEGER(0..65335)
+
+CIPRequired ::= Boolean
+
+ClockRecoveryType ::= ENUMERATED {synchronous(0), srts(1), adaptive(2)}
+
+Code ::= SET OF DigitString4
+
+CSPRequired ::= Boolean
+
+ConnLineIdRestrictionOptions ::= SEQUENCE {
+  mode     INTEGER {permanent(1), temporary(2)},
+  default  INTEGER {restricted(1), notRestr(2)} OPTIONAL -- for temporary mode only 
+}
+
+ConnectionIdOffering ::= INTEGER {
+  exclusiveVpciExclusiveVci(0), exclusiveVpciAnyVci(1), noIndication(8)
+}
+
+connectionIdOfferingDefault ConnectionIdOffering ::= exclusiveVpciExclusiveVci
+
+CdpnRepresentationType ::= INTEGER {
+  subscriber(0), national(1), international(2), unknown(3)}
+
+CugBarring ::= INTEGER {none(1), incomingCallsBarred(2), outgoingCallsBarred(3)
+}
+
+CugDataNetworkIdentification ::= NumericString(SIZE (4)) -- Rec. Q.2763 
+                                              
+
+CugIndex ::= INTEGER(0..65535) -- Rec. Q.2955 
+                    
+
+CugInterlockCode ::= INTEGER(0..65535) -- Rec. Q.2763 
+                            
+
+DestinationCode ::= DigitString15
+
+DestinationType ::= INTEGER {international(1), national(2), local(3)}
+
+defaultBlockedForMaintenance BlockedForMaintenance ::= blocked
+
+DefaultDirectoryNumber ::= CHOICE {
+  noDefault        NULL,
+  directoryNumber  DirectoryNumber
+}
+
+defaultNULL PointerOrNull ::= null:NULL
+
+defaultScreenNumber Boolean ::= TRUE
+
+defaultSignallingType SignallingType ::= nonassociated
+
+defaultTwoCallingPartyNumberDelivery Boolean ::= TRUE
+
+DigitComb ::= SEQUENCE OF DigitElement
+
+DigitCombInsert ::=
+  SET OF SEQUENCE {startPosition  [0]  INTEGER,
+                   combination    [1]  DigitComb}
+
+DigitCombReplace ::=
+  SET OF
+    SEQUENCE {startPosition  [0]  INTEGER,
+              endPosition    [1]  INTEGER,
+              combination    [2]  DigitComb}
+
+DigitElement ::=
+  PrintableString
+    (FROM ("1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "0" | "A" |
+           "B" | "C" | "D" | "E" | "F"))(SIZE (1))
+
+DigitManipPtr ::= ObjectInstance
+
+DigitString4 ::=
+  PrintableString
+    (FROM ("1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "0" | "A" |
+           "B" | "C" | "D" | "E" | "F"))(SIZE (1..4))
+
+DigitString8 ::=
+  PrintableString
+    (FROM ("1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "0" | "A" |
+           "B" | "C" | "D" | "E" | "F"))(SIZE (1..8))
+
+DigitString15 ::=
+  PrintableString
+    (FROM ("1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "0" | "A" |
+           "B" | "C" | "D" | "E" | "F"))(SIZE (1..15))
+
+DigitSuppress ::=
+  SET OF SEQUENCE {startPosition  [0]  INTEGER,
+                   endPosition    [1]  INTEGER}
+
+DirectoryNumber ::= E164DN
+
+E164DN ::= SEQUENCE {
+  countryCode                [0]  NumericString(SIZE (1..4)) OPTIONAL,
+  nationalSignificantNumber
+    [1]  SEQUENCE {nationalDestinationNumber
+                     [0]  NumericString(SIZE (1..6)) OPTIONAL,
+                   subscriberNumber           [1]  NumericString(SIZE (1..8))
+  }
+}
+
+emptySet SetOfInstances ::= {}
+
+ExcludedSubscriberCodes ::=
+  SET OF
+    PrintableString
+      (FROM ("1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "0" | "A" |
+             "B" | "C" | "D" | "E" | "F"))
+
+ExistingTPs ::= SEQUENCE OF ObjectInstance
+
+FecMethod ::= ENUMERATED {
+  noFEC(0), lossSensitiveSignalFEC(1), delaySensitiveSignalFEC(2)}
+
+InitialSubscriberCodes ::=
+  SET OF
+    PrintableString
+      (FROM ("1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "0" | "A" |
+             "B" | "C" | "D" | "E" | "F"))
+
+Integer ::= INTEGER
+
+InterCugAccess ::= INTEGER {
+  none(1), outgoingPermanentAccess(2), outgoingPerCallAccess(3),
+  incomingAccess(4), outgoingPermanentAndIncomingAccess(5),
+  outgoingPerCallAndIncomingAccess(6)}
+
+LinkType ::= INTEGER {national(0), international(1)}
+
+ListOfRoutesPtrList ::= SEQUENCE OF ObjectInstance
+
+ListOfLinkGroupsPtrList ::= SEQUENCE OF ObjectInstance
+
+LocalAreaCode ::=
+  NumericString
+    (FROM ("0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"))
+
+MaintenanceSignallingRunning ::= BOOLEAN
+
+MaxCc ::= INTEGER
+
+maxCcDefault MaxCc ::= 4
+
+MaxCpcsPduSize ::= SEQUENCE {
+  forward   [0]  INTEGER(1..65535) OPTIONAL,
+  backward  [1]  INTEGER(1..65535) OPTIONAL
+}
+
+MaxDigits ::= INTEGER
+
+MaxInformationFieldLength ::= INTEGER
+
+maxInformationFieldLengthDefault MaxInformationFieldLength ::= 4096
+
+MaxLengthSscopUuField ::= INTEGER
+
+maxLengthSscopUuFieldDefault MaxLengthSscopUuField ::= 4096
+
+MaxPd ::= INTEGER
+
+maxPdDefault MaxPd ::= 25
+
+MaxSscopCreditToPeer ::= INTEGER
+
+maxSscopCreditToPeerDefault MaxSscopCreditToPeer ::= 16
+
+MaxStat ::= INTEGER
+
+maxStatDefault MaxStat ::= 67
+
+MidRange ::= SEQUENCE {
+  lowvalue   [0]  INTEGER(1..66536),
+  highvalue  [1]  INTEGER(1..66536)
+}
+
+MinDigits ::= INTEGER
+
+NationalNetworkIdenPlanIndicator ::= INTEGER
+
+NatureOfAddress ::= DestinationType
+
+NbTransferCapability ::= INTEGER {
+  speech(0), r64kbitUnrestricted(1), r56kbitDigitalRestricted(2),
+  r3point1khzAudio(3), r7khzAudio(4), video(5)}
+
+NbTransferCapabilitySet ::= SET OF NbTransferCapability
+
+NetworkBorder ::= INTEGER {intraNetwork(0), interNetwork(1)}
+
+NetworkIdentification ::= DigitString8
+
+NetworkIdentificationPlan ::= CHOICE {
+  itu-tNetworkPlanIndicator         [0]  Itu-tNetworkPlanIndicator,
+  nationalNetworkIdenPlanIndicator  [1]  NationalNetworkIdenPlanIndicator
+}
+
+NetworkType ::= INTEGER {transit(0), nonTransit(1)}
+
+NewTPs ::= SEQUENCE OF ObjectInstance
+
+Null ::= NULL
+
+Origin ::= CHOICE {unused  NULL,
+                   origin  INTEGER
+}
+
+OwnInternationalCode ::=
+  NumericString
+    (FROM ("0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"))
+
+PollAfterRetransmission ::= BOOLEAN
+
+PreferredCarrier ::= SEQUENCE { -- acc. Rec. Q.2763 
+  networkIdentificationPlan     NetworkIdentificationPlan,
+  typesOfNetworkIdentification  TypesOfNetworkIdentification,
+  networkIdentification         NetworkIdentification
+}
+
+PreferredCugIndex ::= CHOICE {notDefined  [0]  NULL,
+                              defined     [1]  CugIndex
+}
+
+PropagationDelay ::= INTEGER
+
+RemoteBlocking ::= INTEGER {remoteBlocked(0), remoteUnblocked(1)}
+
+RemoteBlockingReason ::= INTEGER {none(0), mob(1), hob(2), mobAndHob(3)}
+
+RemoveTerminationPointInfo ::= SEQUENCE {
+  existingTPs                             ExistingTPs,
+  interworkingVcTtpBidirectionalInstance  ObjectInstance
+}
+
+RemoveTerminationPointReply ::=
+  SEQUENCE OF
+    SEQUENCE {tpInstance        ObjectInstance,
+              tpRemovalProblem  ProblemCause OPTIONAL
+    } -- absent if tpInstance is removed 
+
+ReqBandwidthEgress ::= SEQUENCE {lowerLimit  INTEGER,
+                                 upperLimit  INTEGER
+}
+
+ReqBandwidthIngress ::= SEQUENCE {lowerLimit  INTEGER,
+                                  upperLimit  INTEGER
+}
+
+ReqBearerCapab ::= SET OF BearerCapab
+
+ReqNbTransferCapability ::= CHOICE {
+  withoutNbCapab  NULL,
+  withNbCapab     NbTransferCapabilitySet
+}
+
+RingTimeLimit ::= INTEGER
+
+SearchMethod ::= INTEGER {
+  forwardSequential(0), backwardSequential(1), forwardCyclic(2),
+  backwardCyclic(3)}
+
+SendTns ::= BOOLEAN
+
+SetOfInstances ::= SET OF ObjectInstance
+
+SignallingStandard ::= INTEGER {itu(0), atmf31(1), atm40(2)}
+
+SignallingProtocol ::= INTEGER {nisup(0), bisup(1)}
+
+SignallingType ::= INTEGER {nonassociated(0), associated(1)}
+
+SscopTimerCc ::= INTEGER
+
+sscopTimerCcDefault SscopTimerCc ::= 1000
+
+SscopTimerIdle ::= INTEGER
+
+sscopTimerIdleDefault SscopTimerIdle ::= 15000
+
+SscopTimerKeepAlive ::= INTEGER
+
+sscopTimerKeepAliveDefault SscopTimerKeepAlive ::= 2000
+
+SscopTimerNoResponse ::= INTEGER
+
+sscopTimerNoResponseDefault SscopTimerNoResponse ::= 7000
+
+SscopTimerPoll ::= INTEGER
+
+sscopTimerPollDefault SscopTimerPoll ::= 750
+
+SscsType ::= INTEGER {null(0), dataAssured(1), dataNonAssured(2), frameRelay(3)
+}
+
+SubscriberCategory ::= INTEGER { -- acc. Rec. Q.2763 
+  unknownAtThisMoment(0), -- for national use 
+  operatorLanguageFrench(1), operatorLanguageEnglish(2),
+  operatorLanguageGerman(3), operatorLanguageRussian(4),
+  operatorLanguageSpanish(5),
+  nationalOperator(9), -- for national use 
+  ordinaryCallingSubscriber(10), callingSubscriberWithPriority(11),
+  dataCall(12), testCall(13), payPhone(15)}(0..255)
+
+subscriberCategoryDefault SubscriberCategory ::= ordinaryCallingSubscriber
+
+SubType ::= INTEGER {
+  null(0), voiceBand(1), circuitEmulationSynchronous(2),
+  circuitEmulationAsynchronous(3), highQualityAudio(4), video(5)}
+
+TimingRelation ::= INTEGER {timingNotRequired(0), timingRequired(1)}
+
+TpAndVpciSigPtrList ::=
+  SET OF
+    SEQUENCE {tp          ObjectInstance,
+              vpci        VpciValue,
+              sigChannel  ObjectInstance OPTIONAL}
+
+TransitDelayLimit ::= SEQUENCE {lowerLimit  INTEGER,
+                                upperLimit  UpLimit
+}
+
+TypesOfNetworkIdentification ::= INTEGER
+
+UpLimit ::= CHOICE {noLimit  NULL,
+                    limit    INTEGER
+}
+
+UsedAlgorithm ::= INTEGER {sequential(0), cyclic(1)}
+
+VpciValue ::= INTEGER(0..65535)
+
+TpAndVpciPtrList ::= SET OF SEQUENCE {tp    ObjectInstance,
+                                      vpci  VpciValue}
+
+VpType ::= INTEGER {on-demand(0), permanent(1), mixed(2)}
+
+END -- of ASN1DefinedTypesModule
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

@@ -1,0 +1,239 @@
+E115v2.01.asn (ITU-T E.115 (05/2010))-- ASN module extracted from ITU-T E.115 (05/2010)E115v2 {itu-t recommendation(0) e(5) da(115) version2(2) release(1)} DEFINITIONS XER INSTRUCTIONS ::=
+BEGIN
+
+E115String ::= UTF8String (FROM ({0, 0, 0, 32}..{0, 0, 255, 253})) 
+
+E115StringUb256 ::= E115String (SIZE(1..256))
+
+E115NumericString ::= [NAME AS "NumericString"]
+           UTF8String (FROM ( {0, 0, 0, 48}..{0, 0, 0, 57} ))
+
+SimpleAttribute ::= BOOLEAN (TRUE) 
+
+CharacterSubSet ::= ENUMERATED {
+  basic             (0),
+  latin1            (1),
+  latin-extended-A  (2),
+  cyrillic          (3),
+  greek             (4),
+  arabic            (5) }
+
+GeographicalType ::= ENUMERATED {
+  dms    (0),
+  dd     (1),
+  dec    (2) }
+
+CoordinateTypeDescription ::= SEQUENCE {
+  geodeticDatum             [ATTRIBUTE][TAG: 0]  IMPLICIT E115StringUb256,
+  geographical              [ATTRIBUTE][TAG: 1]  IMPLICIT GeographicalType }
+
+Coordinate ::= SEQUENCE {
+  latitude                  [TAG: 0] IMPLICIT E115StringUb256,
+  longitude                 [TAG: 1] IMPLICIT E115StringUb256 }
+
+CommAddressService ::= SEQUENCE {
+  fax                       [ATTRIBUTE][TAG: 0]  IMPLICIT SimpleAttribute OPTIONAL,
+  pbx                       [ATTRIBUTE][TAG: 1]  IMPLICIT SimpleAttribute OPTIONAL,
+  txt                       [ATTRIBUTE][TAG: 2]  IMPLICIT SimpleAttribute OPTIONAL,
+  pub                       [ATTRIBUTE][TAG: 3]  IMPLICIT SimpleAttribute OPTIONAL,
+  vid                       [ATTRIBUTE][TAG: 4]  IMPLICIT SimpleAttribute OPTIONAL,
+  pag                       [ATTRIBUTE][TAG: 5]  IMPLICIT SimpleAttribute OPTIONAL,
+  voice                     [ATTRIBUTE][TAG: 6]  IMPLICIT SimpleAttribute OPTIONAL,
+  data                      [ATTRIBUTE][TAG: 7]  IMPLICIT SimpleAttribute OPTIONAL,
+  http                      [ATTRIBUTE][TAG: 8]  IMPLICIT SimpleAttribute OPTIONAL,
+  ftp                       [ATTRIBUTE][TAG: 9]  IMPLICIT SimpleAttribute OPTIONAL,
+  eml                       [ATTRIBUTE][TAG: 10] IMPLICIT SimpleAttribute OPTIONAL,
+  sms                       [ATTRIBUTE][TAG: 11] IMPLICIT SimpleAttribute OPTIONAL,
+  mms                       [ATTRIBUTE][TAG: 12] IMPLICIT SimpleAttribute OPTIONAL,
+  emg                       [ATTRIBUTE][TAG: 13] IMPLICIT SimpleAttribute OPTIONAL } 
+
+InquiryCommAddressChar ::= SEQUENCE {
+  ftn                       [ATTRIBUTE][TAG: 0]  IMPLICIT SimpleAttribute OPTIONAL,
+  mob                       [ATTRIBUTE][TAG: 1]  IMPLICIT SimpleAttribute OPTIONAL,
+  fixed                     [ATTRIBUTE][TAG: 2]  IMPLICIT SimpleAttribute OPTIONAL }
+
+PhoneService ::= SEQUENCE {
+  fax                       [ATTRIBUTE][TAG: 0]  IMPLICIT SimpleAttribute OPTIONAL,
+  pbx                       [ATTRIBUTE][TAG: 1]  IMPLICIT SimpleAttribute OPTIONAL,
+  txt                       [ATTRIBUTE][TAG: 2]  IMPLICIT SimpleAttribute OPTIONAL,
+  pub                       [ATTRIBUTE][TAG: 3]  IMPLICIT SimpleAttribute OPTIONAL,
+  vid                       [ATTRIBUTE][TAG: 4]  IMPLICIT SimpleAttribute OPTIONAL,
+  pag                       [ATTRIBUTE][TAG: 5]  IMPLICIT SimpleAttribute OPTIONAL,
+  voice                     [ATTRIBUTE][TAG: 6]  IMPLICIT SimpleAttribute OPTIONAL,
+  data                      [ATTRIBUTE][TAG: 7]  IMPLICIT SimpleAttribute OPTIONAL,
+  sms                       [ATTRIBUTE][TAG: 8] IMPLICIT SimpleAttribute OPTIONAL,
+  mms                       [ATTRIBUTE][TAG: 9] IMPLICIT SimpleAttribute OPTIONAL,
+  emg                       [ATTRIBUTE][TAG: 10] IMPLICIT SimpleAttribute OPTIONAL } 
+
+InquiryPhoneChar ::= SEQUENCE {
+  ftn                       [ATTRIBUTE][TAG: 0]  IMPLICIT SimpleAttribute OPTIONAL,
+  mob                       [ATTRIBUTE][TAG: 1]  IMPLICIT SimpleAttribute OPTIONAL,
+  fixed                     [ATTRIBUTE][TAG: 2]  IMPLICIT SimpleAttribute OPTIONAL }
+
+ReplyPhoneChar ::= SEQUENCE {
+  ftn                       [ATTRIBUTE][TAG: 0]  IMPLICIT SimpleAttribute OPTIONAL,
+  mob                       [ATTRIBUTE][TAG: 1]  IMPLICIT SimpleAttribute OPTIONAL,
+  fixed                     [ATTRIBUTE][TAG: 2]  IMPLICIT SimpleAttribute OPTIONAL,
+  prn                       [ATTRIBUTE][TAG: 3]  IMPLICIT SimpleAttribute OPTIONAL,
+  npn                       [ATTRIBUTE][TAG: 4]  IMPLICIT SimpleAttribute OPTIONAL,
+  upn                       [ATTRIBUTE][TAG: 5]  IMPLICIT SimpleAttribute OPTIONAL,
+  old                       [ATTRIBUTE][TAG: 6]  IMPLICIT SimpleAttribute OPTIONAL,
+  adv                       [ATTRIBUTE][TAG: 7]  IMPLICIT SimpleAttribute OPTIONAL,
+  nmk                       [ATTRIBUTE][TAG: 8]  IMPLICIT SimpleAttribute OPTIONAL }
+
+Categories ::= SEQUENCE {
+  business                  [ATTRIBUTE][TAG: 0]  IMPLICIT SimpleAttribute OPTIONAL,
+  residential               [ATTRIBUTE][TAG: 1]  IMPLICIT SimpleAttribute OPTIONAL,
+  government                [ATTRIBUTE][TAG: 2]  IMPLICIT SimpleAttribute OPTIONAL }
+
+E115Message  ::= CHOICE {
+  directoryMessage [TAG: 0] DirectoryMessage }
+
+DirectoryMessage ::= CHOICE {
+  inquiry [TAG: 0] Inquiry,
+  reply   [TAG: 1] Reply }
+
+Inquiry ::= SEQUENCE {
+  inquiryHeader  InquiryHeader,
+  inquiryData    InquiryData }
+
+InquiryHeader ::= [ TAG: APPLICATION 0 ] IMPLICIT SET {
+  originatingTerminalCode   [ATTRIBUTE][TAG: 0]  IMPLICIT E115String (SIZE(8)),
+  dateAndTime               [ATTRIBUTE][TAG: 1]  IMPLICIT E115NumericString (SIZE(12))
+                              OPTIONAL,
+  messageNumber             [ATTRIBUTE][TAG: 2]  IMPLICIT E115String (SIZE(4)) OPTIONAL,
+  countryName               [ATTRIBUTE][TAG: 3]  IMPLICIT E115String (SIZE(2)),
+  providerCode              [ATTRIBUTE][TAG: 4]  IMPLICIT E115StringUb256 OPTIONAL,
+  inquiryCharacterSubset    [ATTRIBUTE][TAG: 5]  IMPLICIT CharacterSubSet DEFAULT basic,
+  replyCharacterSubset      [ATTRIBUTE][TAG: 6]  IMPLICIT CharacterSubSet DEFAULT latin1,
+  requestedReplyType        [ATTRIBUTE][TAG: 7]  IMPLICIT ENUMERATED {
+    subscriberList       (0),
+    provinceList         (1),
+    localityList         (2),
+    streetList           (3),
+    businessCategoryList (4)} DEFAULT subscriberList,
+  acceptedReplyTypes        [TAG: 8] IMPLICIT SEQUENCE {
+    provinceList              [ATTRIBUTE][TAG: 0]  IMPLICIT SimpleAttribute OPTIONAL,
+    localityList              [ATTRIBUTE][TAG: 1]  IMPLICIT SimpleAttribute OPTIONAL,
+    streetList                [ATTRIBUTE][TAG: 2]  IMPLICIT SimpleAttribute OPTIONAL,
+    businessCategoryList      [ATTRIBUTE][TAG: 3]  IMPLICIT SimpleAttribute OPTIONAL },
+  inquiryCoordinateType     [TAG: 9] IMPLICIT SEQUENCE {
+                              COMPONENTS OF CoordinateTypeDescription } OPTIONAL,
+  replyCoordinateType       [TAG: 10] IMPLICIT SEQUENCE {
+                              COMPONENTS OF CoordinateTypeDescription } OPTIONAL }
+
+InquiryData ::= [ TAG: APPLICATION 1 ] IMPLICIT SET {
+  locality                  [TAG: 0]  IMPLICIT E115StringUb256 OPTIONAL,
+  subscriberName            [TAG: 1]  IMPLICIT E115StringUb256 OPTIONAL,
+  streetName                [TAG: 2]  IMPLICIT E115StringUb256 OPTIONAL,
+  houseNumber               [TAG: 3]  IMPLICIT E115StringUb256 OPTIONAL,
+  forename                  [TAG: 4]  IMPLICIT E115StringUb256 OPTIONAL,
+  headingInTheGuide         [TAG: 5]  IMPLICIT E115StringUb256 OPTIONAL,
+  professionCode            [TAG: 6]  IMPLICIT E115StringUb256 OPTIONAL,
+  countyStateOrProvince     [TAG: 7]  IMPLICIT E115StringUb256 OPTIONAL,
+  category                  [TAG: 8] IMPLICIT SEQUENCE {
+                              COMPONENTS OF Categories } OPTIONAL,
+  sequenceNumber            [ATTRIBUTE][TAG: 9] IMPLICIT
+                              E115NumericString (SIZE(1..2)) DEFAULT "0",
+  postalCode                [TAG: 10] IMPLICIT E115StringUb256 OPTIONAL,
+  nationalDestinationCode   [TAG: 11] IMPLICIT E115NumericString(SIZE(1..14)) OPTIONAL,
+  commAddress               [TAG: 12] IMPLICIT E115StringUb256 OPTIONAL,
+  commAddressTypes          [TAG: 13] IMPLICIT SEQUENCE {
+    phone                     [ATTRIBUTE][TAG: 0]  IMPLICIT SimpleAttribute OPTIONAL,
+    email                     [ATTRIBUTE][TAG: 1]  IMPLICIT SimpleAttribute OPTIONAL,
+    uri                       [ATTRIBUTE][TAG: 2]  IMPLICIT SimpleAttribute OPTIONAL }
+                                OPTIONAL,
+  additionalName            [TAG: 14] IMPLICIT E115StringUb256 OPTIONAL,
+  commAddressService        [TAG: 15]  IMPLICIT SEQUENCE {
+                              COMPONENTS OF CommAddressService } OPTIONAL,
+  commAddressChar           [TAG: 16] IMPLICIT SEQUENCE {
+                              COMPONENTS OF InquiryCommAddressChar } OPTIONAL,
+  geoExpansion              [ATTRIBUTE][TAG: 17]  IMPLICIT
+                              E115NumericString (SIZE(1..3)) OPTIONAL,
+  searchCoordinate          [TAG: 18]  IMPLICIT SEQUENCE {
+                              COMPONENTS OF Coordinate } OPTIONAL,
+  searchRadius              [TAG: 19] IMPLICIT NumericString (SIZE(1..9)) OPTIONAL,
+  matchingRule              [TAG: 20] IMPLICIT SEQUENCE {
+    wordRotation              [ATTRIBUTE][TAG: 0] IMPLICIT BOOLEAN OPTIONAL,
+    phonetic                  [ATTRIBUTE][TAG: 1] IMPLICIT BOOLEAN OPTIONAL,
+    alias                     [ATTRIBUTE][TAG: 2] IMPLICIT BOOLEAN OPTIONAL } OPTIONAL,
+  maxSelectionLevel         [ATTRIBUTE][TAG: 21] IMPLICIT
+                              E115NumericString (SIZE(1..3)) DEFAULT "99" } 
+
+Reply ::= SEQUENCE {
+  replyHeader  ReplyHeader,
+  selections   SEQUENCE (SIZE(1..MAX)) OF Selection OPTIONAL }
+
+ReplyHeader ::= [TAG: APPLICATION 3] IMPLICIT SET {
+  originatingTerminalCode   [ATTRIBUTE][TAG: 0]  IMPLICIT E115String (SIZE(8)),
+  dateAndTime               [ATTRIBUTE][TAG: 1]  IMPLICIT E115NumericString (SIZE(12))
+                                  OPTIONAL,
+  messageNumber             [ATTRIBUTE][TAG: 2]  IMPLICIT E115String (SIZE(4)) OPTIONAL,
+  messageCode               [ATTRIBUTE][TAG: 3]  IMPLICIT E115String (SIZE(2)),
+  message                   [TAG: 4]  IMPLICIT E115StringUb256 OPTIONAL,
+  dbSelectionCount          [ATTRIBUTE][TAG: 5]  IMPLICIT E115String (SIZE(1..10))
+                              OPTIONAL,
+  replyCoordinateType       [TAG: 6]  IMPLICIT SEQUENCE {
+                              COMPONENTS OF CoordinateTypeDescription } OPTIONAL,  
+  searchCenter              [TAG: 7] IMPLICIT SEQUENCE {
+                              COMPONENTS OF Coordinate }OPTIONAL }
+
+Selection ::= SET {
+--  nationalDestinationCode   [TAG: 0]  IMPLICIT E115NumericString (SIZE(1..14)) OPTIONAL,
+  commAddresses             [TAG: 1]  IMPLICIT CommAddresses OPTIONAL,
+  locality                  [TAG: 2]  IMPLICIT E115StringUb256 OPTIONAL,
+  subscriberName            [TAG: 3]  IMPLICIT E115StringUb256 OPTIONAL,
+  forename                  [TAG: 4]  IMPLICIT E115StringUb256 OPTIONAL,
+  streetName                [TAG: 5]  IMPLICIT E115StringUb256 OPTIONAL,
+  houseNumber               [TAG: 6]  IMPLICIT E115StringUb256 OPTIONAL,
+  supplementaryData         [TAG: 7]  IMPLICIT E115StringUb256 OPTIONAL,
+  subscriberMessage         [TAG: 8]  IMPLICIT E115StringUb256 OPTIONAL,
+  headingInTheGuide         [TAG: 9]  IMPLICIT E115StringUb256 OPTIONAL,
+  professionCode            [TAG: 10] IMPLICIT E115StringUb256 OPTIONAL,
+  countyStateOrProvince     [TAG: 11] IMPLICIT E115StringUb256 OPTIONAL,
+  subscriberDescription     [TAG: 12] IMPLICIT E115StringUb256 OPTIONAL,
+  category                  [TAG: 13] IMPLICIT SEQUENCE {
+                              COMPONENTS OF Categories } OPTIONAL,
+  postalCode                [TAG: 14] IMPLICIT E115StringUb256 OPTIONAL,
+  distance                  [TAG: 15] IMPLICIT E115StringUb256 OPTIONAL,
+  additionalName            [TAG: 16] IMPLICIT E115StringUb256 OPTIONAL,
+  selectionCoordinate       [TAG: 17] IMPLICIT SEQUENCE {
+                              COMPONENTS OF Coordinate },
+  selectionLevel            [ATTRIBUTE][TAG: 18] IMPLICIT
+                              E115NumericString (SIZE(1..3)) DEFAULT "0" }
+
+CommAddresses ::= SEQUENCE (SIZE(1..MAX)) OF CHOICE {
+  phone                     [TAG: 0] IMPLICIT SET {
+    countryCalingCode         [TAG: 0] IMPLICIT E115NumericString (SIZE(1..3)),
+    nationalDestinationCode   [TAG: 1] IMPLICIT E115NumericString (SIZE(1..14)) OPTIONAL,
+    number                    [TAG: 2] IMPLICIT E115StringUb256,
+    phoneService              [TAG: 3] IMPLICIT SEQUENCE { COMPONENTS OF PhoneService }
+                                        OPTIONAL,
+    phoneChar                 [TAG: 4] IMPLICIT SEQUENCE { COMPONENTS OF ReplyPhoneChar }
+                                        OPTIONAL, 
+    restriction               [ATTRIBUTE] ENUMERATED {
+                                 disclose    (1),
+                                 nonDisclose (2) } DEFAULT disclose },
+  email                     [TAG: 1] IMPLICIT SEQUENCE {
+    nmk                       [ATTRIBUTE] SimpleAttribute OPTIONAL,
+    restriction               [ATTRIBUTE] ENUMERATED {
+                                 disclose    (1),
+                                 nonDisclose (2) } DEFAULT disclose,
+    base                      [UNTAGGED] E115StringUb256 },
+  uri                       [TAG: 2] IMPLICIT SEQUENCE {
+    restriction               [ATTRIBUTE] ENUMERATED {
+                                 disclose    (1),
+                                 nonDisclose (2) } DEFAULT disclose,
+    base                      [UNTAGGED] E115StringUb256 } }
+
+
+
+ENCODING-CONTROL XER
+  GLOBAL-DEFAULTS MODIFIED-ENCODINGS
+  TEXT CharacterSubSet:ALL, GeographicalType:ALL, 
+    InquiryHeader.requestedReplyType:ALL,
+    CommAddresses.*.phone.restriction:ALL, 
+    CommAddresses.*.email.restriction:ALL, 
+    CommAddresses.*.uri.restriction:ALL
+
+END

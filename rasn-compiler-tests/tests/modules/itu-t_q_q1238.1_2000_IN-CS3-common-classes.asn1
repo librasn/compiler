@@ -1,0 +1,351 @@
+
+
+
+
+
+
+
+-- Module IN-CS3-common-classes (Q.1238.1:06/2000)
+-- See also ITU-T Q.1238.1 (06/2000)
+-- See also the index of all ASN.1 assignments needed in this document
+
+IN-CS3-common-classes {itu-t recommendation q 1238 modules(1)
+  in-cs3-common-classes(5) version1(0)} DEFINITIONS ::=
+BEGIN
+
+IMPORTS
+  id-package-emptyConnection, id-rosObject-scf, id-rosObject-cusf,
+    id-rosObject-sdf, id-rosObject-srf, id-rosObject-ssf,
+    ros-InformationObjects, ros-UsefulDefinitions, ssf-scf-Protocol,
+    scf-cusf-Protocol, scf-scf-Protocol, scf-srf-Protocol, scf-sdf-Protocol,
+    sdf-sdf-Protocol, common-datatypes
+    FROM IN-CS3-object-identifiers {itu-t recommendation q 1238 modules(1)
+      in-cs3-object-identifiers(0) version1(0)}
+  ROS-OBJECT-CLASS, CONTRACT, OPERATION-PACKAGE, Code, OPERATION,
+    CONNECTION-PACKAGE
+    FROM Remote-Operations-Information-Objects {joint-iso-itu-t
+      remote-operations(4) informationObjects(5) version1(0)}
+  emptyBind
+    FROM Remote-Operations-Useful-Definitions {joint-iso-itu-t
+      remote-operations(4) useful-definitions(7) version1(0)}
+  inCs3AssistHandoffSsfToScf, inCs3ScfToSsfDpSpecific, inCs3ScfToSsfGeneric,
+    inCs3ScfToSsfStatusReporting, inCs3ScfToSsfServiceManagement,
+    inCs3ScfToSsfTrafficManagement, inCs3ScfToSsfTriggerManagement,
+    inCs3SsfToScfDpSpecific, inCs3SsfToScfGeneric,
+    inCs3SsfToScfServiceManagement
+    FROM IN-CS3-SSF-SCF-pkgs-contracts-acs {itu-t recommendation q 1238
+      modules(1) in-cs3-ssf-scf-pkgs-contracts-acs(9) version1(0)}
+  cs3cusfscfDPSpecificContract, cs3scfcusfDPSpecificContract,
+    cs3cusfscfGenericContract, cs3scfcusfGenericContract
+    FROM IN-CS3-SCF-CUSF-Protocol {itu-t recommendation q 1238 modules(1)
+      in-cs3-scf-cusf-pkgs-contracts-acs(27) version1(0)}
+  dsspContract, scf-scfContract
+    FROM IN-CS3-SCF-SCF-pkgs-contracts-acs {itu-t recommendation q 1238
+      modules(1) in-cs3-scf-scf-pkgs-contracts-acs(23) version1(0)}
+  srf-scf-contract
+    FROM IN-CS3-SCF-SRF-pkgs-contracts-acs {itu-t recommendation q 1238
+      modules(1) in-cs3-scf-srf-pkgs-contracts-acs(13) version1(0)}
+  dapContract, dapExecuteContract, tfcContract
+    FROM IN-CS3-SCF-SDF-Protocol {itu-t recommendation q 1238 modules(1)
+      in-cs3-scf-sdf-pkgs-contracts-acs(17) version1(0)}
+  indspContract, shadowConsumerContract, shadowSupplierContract
+    FROM IN-CS3-SDF-SDF-Protocol {itu-t recommendation q 1238 modules(1)
+      in-cs3-sdf-sdf-pkgs-contracts-acs(19) version1(0)}
+  CriticalityType
+    FROM IN-CS3-common-datatypes {itu-t recommendation q 1238 modules(1)
+      in-cs3-common-datatypes(1) version1(0)};
+
+ssf ROS-OBJECT-CLASS ::= {
+  INITIATES
+    {inCs3SsfToScfGeneric | inCs3SsfToScfDpSpecific |
+      inCs3AssistHandoffSsfToScf | inCs3SsfToScfServiceManagement}
+  RESPONDS
+    {inCs3ScfToSsfGeneric | inCs3ScfToSsfDpSpecific |
+      inCs3ScfToSsfTrafficManagement | inCs3ScfToSsfServiceManagement |
+      inCs3ScfToSsfTriggerManagement | inCs3ScfToSsfStatusReporting}
+  ID         id-rosObject-ssf
+}
+
+-- The ssf class of ROS-object describes the communication capabilities of an SSF
+-- This object can act as the initiator of the following contracts
+--
+-- inCs3SsfToScfGeneric contract expresses the form of the service in which the SSF,
+-- a ROS-object of class ssf, initiates the generic triggering approach contract. 
+-- This dialogue is initiated by the SSF with the InitialDP Operation.
+-- inCs3SsfToScfDpSpecific contract expresses the form of the service in which the SSF, 
+-- a ROS-object of class ssf, initiates the DP specific approach contract. 
+-- This dialogue is initiated by the SSF with the DP specific Initial Operations.
+-- inCs3AssistHandoffSsfToScf contract expresses the form of the service in which the SSF,
+-- a ROS-object of class ssf, initiates the Assist or Hand-off contract. 
+-- This dialogue is initiated by the SSF with the AssistRequestInstructions Operation.
+-- inCs3SsfToScfServiceManagement contract expresses the form of the service in which the SSF, 
+-- a ROS-object of class ssf, initiates ServiceManagement related contract for reporting 
+-- service Management results. This dialogue is initiated/ended by the SSF with
+-- the ServicefilteringResponse Operation.
+-- 
+-- This object can act as the responder of the following contracts
+-- 
+-- inCs3ScfToSsfGeneric contract expresses the form of the service in which the SSF, 
+-- a ROS-object of class ssf, responds to the generic messaging approach for 
+-- the SCF Initiate Call Attempt contract. This dialogue is initiated by the SCF with 
+-- the InitiateCallAttempt or CreateCallSegmentAssociation, Generic case.
+-- inCs3ScfToSsfDpSpecific contract expresses the form of the service in which the SSF, 
+-- a ROS-object of class ssf, responds  to theDP specific messaging approach for the 
+-- SCF Initiate Call Attempt contract. This dialogue is initiated by the SCF with 
+-- the InitiateCallAttempt, DP Specific case.
+-- inCs3ScfToSsfTrafficManagement contract expresses the form of service in which the SSF,
+-- a ROS object of class ssf, responds to the Traffic Management related contract.
+-- This dialogue is initiated by the SCF with the CallGap Operation
+-- inCs3ScfToSsfServiceManagement contract expresses the form of service in which the SSF,
+-- a ROS object of class ssf, responds to the Service Management related contract.
+--  This dialogue is initiated  by the SCF with the ActivateServiceFiltering Operation
+-- inCs3ScfToSsfTriggerManagement contract expresses the form of service in which the SSF,
+-- a ROS object of class ssf, responds to the Trigger Management related contract.
+-- This dialogue is initiated by the SCF with the ManageTriggerData Operation
+-- inCs3ScfToSsfStatusReporting contract expresses the form of service in which the SSF,
+-- a ROS object of class ssf, responds to the Status Reporting related contract.
+-- This dialogue is initiated by the SCF with the StatusReporting Operations.
+srf ROS-OBJECT-CLASS ::= {
+  INITIATES  {srf-scf-contract}
+  ID         id-rosObject-srf
+}
+
+-- The srf class of ROS-object describes the communication capabilities of an SRF
+-- This object can act as the initiator of the following contract
+-- 
+-- srf-scf-contract contract expresses the form of service in which the SRF, a ROS-object of class srf,
+-- initiates the srf related contract. This dialogue is initiated by the SRF with 
+-- the AssistRequestInstruction Operation
+cusf ROS-OBJECT-CLASS ::= {
+  INITIATES  {cs3cusfscfDPSpecificContract | cs3cusfscfGenericContract}
+  RESPONDS   {cs3scfcusfDPSpecificContract | cs3scfcusfGenericContract}
+  ID         id-rosObject-cusf
+}
+
+-- The cusf class of ROS-object describes the communication capabilities of an CUSF
+-- This object can act as the initiator of the following contracts
+-- 
+-- cs3cusfscfDPSpecificContract expresses the form of the service in which the CUSF,
+-- a ROS-object of class cusf, initiates the DP specific approach contract by using a DP specific operation.
+-- cs3cusfscfGenericContract expresses the form of the service in which the CUSF, 
+-- a ROS-object of class cusf, initiates the  generic approach contract by using 
+-- an InitialAssociationDP operation.
+-- 
+-- This object can act as the responder of the following contracts
+-- 
+-- cs3scfcusfDPSpecificContract expresses the form of the service in which the CUSF, 
+-- a ROS-object of class cusf, responds the DP specific approach contract initiates by the SCF 
+-- using an InitiateAssociation operation.
+-- cs3scfcusfGenericContract expresses the form of the contract in which the CUSF,
+--  a ROS-object of class cusf, responds the generic  approach contract initiates by the SCF
+-- using an InitiateAssociation operation.
+scf ROS-OBJECT-CLASS ::= {
+  INITIATES
+    {inCs3ScfToSsfGeneric | inCs3ScfToSsfDpSpecific |
+      inCs3ScfToSsfTrafficManagement | inCs3ScfToSsfServiceManagement |
+      inCs3ScfToSsfTriggerManagement | inCs3ScfToSsfStatusReporting |
+       -- scf to sdf contracts
+      dapContract | dapExecuteContract |
+       -- scf to scf contracts
+      scf-scfContract | dsspContract |
+       -- tfc contract (scf to scf)
+      tfcContract |
+       -- scf to cusf contracts
+      cs3scfcusfDPSpecificContract | cs3scfcusfGenericContract}
+  RESPONDS
+    {inCs3SsfToScfGeneric | inCs3SsfToScfDpSpecific |
+      inCs3AssistHandoffSsfToScf | inCs3SsfToScfServiceManagement |
+       -- srf to scf contracts
+      srf-scf-contract |
+       -- tfc contract (scf to scf, sdf to scf)
+      tfcContract |
+       -- scf to scf contracts
+      scf-scfContract | dsspContract |
+       -- cusf to scf contracts
+      cs3cusfscfDPSpecificContract | cs3cusfscfGenericContract}
+  ID         id-rosObject-scf
+}
+
+-- The scf class of ROS-object describes the communication capabilities of an SCF
+-- This object can act as the initiator of the following contracts
+-- 
+-- scf to ssf contracts
+-- inCs3ScfToSsfGeneric contract expresses the form of the service in which the SCF,
+-- a ROS-object of class scf, initiates the generic messaging approach for the SCF 
+-- Initiate Call Attempt contract. This dialogue is initiated  by the SCF with the InitiateCallAttempt 
+-- or CreateCallSegmentAssociation, Generic case.
+-- inCs3ScfToSsfDpSpecific contract expresses the form of the service in which the SCF, 
+-- a ROS-object of class scf, initiates theDP specific messaging approach for the SCF Initiate Call Attempt 
+-- contract. This dialogue is initiated  by the SCF with the InitiateCallAttempt, DP Specific case.
+-- inCs3ScfToSsfTrafficManagement contract expresses the form of service in which the SCF, 
+-- a ROS object of class scf, initiates the Traffic Management related contract. This dialogue is initiated 
+-- by the SCF with the CallGap Operation
+-- inCs3ScfToSsfServiceManagement contract expresses the form of service in which the SCF, 
+-- a ROS object of class scf, initiates the Service Management related contract. 
+-- This dialogue is initiated by the SCF with the ActivateServiceFiltering Operation
+-- inCs3ScfToSsfTriggerManagement contract expresses the form of service in which the SCF,
+--  a ROS object of class scf, initiates the Trigger Management related contract. 
+-- This dialogue is initiated by the SCF with the ManageTriggerData Operation
+-- inCs3ScfToSsfStatusReporting contract expresses the form of service in which the SCF, 
+-- a ROS object of class scf, initiates the Status Reporting related contract. This dialogue is initiated 
+-- by the SCF with the StatusReporting Operations.
+-- 
+-- scf to sdf 
+-- dapContract contract expresses the form of service in which the SCF, a ROS object of class scf,
+-- initiates the SCF/SDF message exchange based on a DAP protocol (Search operation and Directory 
+-- Modify operations). 
+-- dapExecuteContract contract expresses the form of service in which the SCF, a ROS object of class scf, 
+-- initiates the SCF/SDF message exchange based on a DAP protocol (Search operation and Directory 
+-- Modify operations) plus the Execute operation.
+-- tfc contract (scf to scf)
+-- tfcContract contract expresses the form of service in which the SCF, a ROS object of class scf,
+-- initiates the traffic flow control mechanism.
+--
+-- scf to scf contracts
+-- scf-scfContract contract expresses the form of service in which the SCF, a ROS object of class scf, 
+-- initiates the SCF/SCF message exchange. 
+-- dsspContract contract expresses the form of service in which the SCF, a ROS object of class scf, 
+-- initiates the chained SCF/SCF message exchange. 
+--
+-- scf to cusf contracts 
+-- cs3scfcusfDPSpecificContract expresses the form of the service in which the SCF, a ROS-object of class scf,
+-- initiates the DP specific approach contract by using an InitiateAssociation operation.
+-- cs3scfcusfGenericContract expresses the form of the contract in which the SCF, a ROS-object of class scf,
+-- initiates the generic approach contract by using an InitiateAssociation operation.
+--
+-- This object can act as the responder of the following contracts
+-- 
+-- ssf to scf contracts
+-- inCs3SsfToScfGeneric contract expresses the form of the service in which the SCF, 
+-- a ROS-object of class scf, responds to the generic triggering approach contract. 
+-- This dialogue is initiated by the SSF with the InitialDP Operation.
+-- inCs3SsfToScfDpSpecific contract expresses the form of the service in which the SCF,
+-- a ROS-object of class scf, responds to the DP specific approach contract. 
+-- This dialogue is initiated by the SSF with the DP specific Initial Operations.
+-- inCs3AssistHandoffSsfToScf contract expresses the form of the service in which the SCF, 
+-- a ROS-object of class scf, responds to the Assist or Hand-off contract. 
+-- This dialogue is initiated by the SSF with the AssistRequestInstructions Operation.
+-- inCs3SsfToScfServiceManagement contract expresses the form of the service in which the SCF,
+--  a ROS-object of class  scf, responds to the ServiceManagement related contract for reporting 
+-- Service Management results. 
+-- This dialogue is initiated/ended by the SSF with the ServicefilteringResponse Operation.
+-- 
+-- srf to scf contracts
+-- srf-scf-contract contract expresses the form of service in which the SCF, a ROS-object of class scf,
+--  responds to the srf related contract. This dialogue is initiated by the SRF with the AssistRequestInstruction 
+-- tfc contract (scf to scf, sdf to scf)
+-- tfcContract contract expresses the form of service in which the SCF, a ROS object of class scf,
+-- responds to the traffic flow control contract initiated either by the SCF or the SDF.
+--
+-- scf to scf contracts
+-- scf-scfContract contract expresses the form of service in which the SCF, a ROS object of class scf,
+-- responds to the previously initiated SCF/SCF message exchange. 
+-- dsspContract contract expresses the form of service in which the SCF, a ROS object of class scf, 
+-- responds to the previously initiated chained SCF/SCF message exchange. 
+--
+-- cusf to scf contracts
+-- cs3cusfscfDPSpecificContract expresses the form of the service in which the SCF,
+-- a ROS-object of class scf, responds to the DP specific approach contract. 
+-- cs3cusfscfGenericContract expresses the form of the service in which the SCF, 
+-- a ROS-object of class scf, responds to the generic approach contract.
+sdf ROS-OBJECT-CLASS ::= {
+  INITIATES
+    {indspContract | shadowConsumerContract | shadowSupplierContract |
+      tfcContract}
+  RESPONDS
+    {dapContract | dapExecuteContract | indspContract | shadowConsumerContract
+      | shadowSupplierContract | tfcContract}
+  ID         id-rosObject-sdf
+}
+
+-- The sdf class of ROS-Object describes the communication capabilities of an SDF
+-- This object can act as the initiator of the following contracts
+-- indspContract contract expresses the form of service in which the SDF, a ROS object of class sdf,
+-- initiates the chained SCF/SDF message exchange, based on the DSP protocol.
+-- shadowConsumerContract contract expresses the form of service in which the SDF,
+-- a ROS object of class sdf, initiates the shadowing mechanism as a shadow consumer, 
+-- based on the DISP protocol.
+-- shadowSupplierContract contract expresses the form of service in which the SDF, 
+-- a ROS object of class sdf, initiates the shadowing mechanism as a shadow supplier, 
+-- based on the DISP protocol.
+-- tfcContract contract expresses the form of service in which the SDF, a ROS object of class sdf,
+-- initiates the traffic flow control mechanism.
+-- This object can act as the responder of the following contracts
+-- dapContract contract expresses the form of service in which the SDF, a ROS object of class sdf, 
+-- responds to the previously initiated SCF/SDF message exchange.
+-- dapExecuteContract contract expresses the form of service in which the SDF, a ROS object of class sdf,
+-- responds to the previously initiated SCF/SDF message exchange.
+-- indspContract contract expresses the form of service in which the SDF, a ROS object of class sdf, 
+-- responds to the previously initiated chained SCF/SDF message exchange.
+-- shadowConsumerContract contract expresses the form of service in which the SDF,
+-- a ROS object of class sdf, responds to the previously initiated shadowing mechanism.
+-- shadowSupplierContract contract expresses the form of service in which the SDF, 
+-- a ROS object of class sdf, responds to the previously initiated shadowing mechanism.
+-- tfcContract contract expresses the form of service in which the SDF, a ROS object of class sdf, 
+-- responds to the traffic flow control initiated by the SDF.
+-- Definition of the extension class
+EXTENSION ::= CLASS {
+  &ExtensionType  ,
+  &criticality    CriticalityType DEFAULT ignore,
+  &id             Code
+}
+WITH SYNTAX {
+  EXTENSION-SYNTAX &ExtensionType
+  CRITICALITY &criticality
+  IDENTIFIED BY &id
+}
+
+-- Example of addition of an extension named 'Some Network Specific Indicator' of type
+-- BOOLEAN, with criticality 'abort' and to be identified as extension number 1
+-- Example of definition using the above information object class:
+--
+-- SomeNetworkSpecificIndicator  EXTENSION ::= {
+-- 	EXTENSION-SYNTAX    BOOLEAN
+--	CRITICALITY         abort
+--	IDENTIFIED BY       local : 1
+--	}
+-- Example of transfer syntax, using the ExtensionField datatype as specified in section 4.1.
+-- Assuming the value of the extension is set to TRUE, the extensions parameter
+-- becomes a Sequence of type INTEGER ::= 1, criticality ENUMERATED ::= 1 and value [1]
+-- EXPLICIT BOOLEAN ::= TRUE.
+--
+-- Use of Q.1400 defined Extension is ffs
+-- In addition the extension mechanism marker is used to identify the future minor additions to INAP.
+firstExtension EXTENSION ::= {
+  EXTENSION-SYNTAX  NULL
+  CRITICALITY       ignore
+  IDENTIFIED BY     local:1
+}
+
+-- firstExtension is just an example.
+SupportedExtensions EXTENSION ::=
+  {firstExtension, ...
+  -- full set of network operator extensions --}
+
+-- SupportedExtension is the full set of the network operator extensions.
+inUnbind OPERATION ::= {RETURN RESULT    FALSE
+                        ALWAYS RESPONDS  FALSE
+}
+
+emptyConnectionPackage CONNECTION-PACKAGE ::= {
+  BIND              emptyBind
+  UNBIND            inUnbind
+  RESPONDER UNBIND  TRUE
+  ID                id-package-emptyConnection
+}
+
+EmptyReturnable OPERATION ::=
+  {...}
+
+COMMON-BOUNDS ::= CLASS {&numOfExtensions  INTEGER OPTIONAL
+}WITH SYNTAX {[NUM-OF-EXTENSIONS &numOfExtensions]
+}
+
+-- The following instance of the parameter bound is just an example
+networkSpecificBoundSet COMMON-BOUNDS ::= {NUM-OF-EXTENSIONS  1
+}
+
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

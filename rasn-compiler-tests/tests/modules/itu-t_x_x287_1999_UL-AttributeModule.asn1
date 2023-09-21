@@ -1,0 +1,228 @@
+
+
+
+
+
+
+
+
+-- Module UL-AttributeModule (X.227:03/1999)
+-- See also ITU-T X.287 (03/1999)
+-- See also the index of all ASN.1 assignments needed in this document
+
+UL-AttributeModule {joint-iso-itu-t ms(9) smi(3) part8(8) asn1Module(2) 0}
+DEFINITIONS ::=
+BEGIN
+
+--EXPORTS everything
+IMPORTS
+  RelativeDistinguishedName
+    FROM InformationFramework {joint-iso-itu-t ds(5) modules(1)
+      informationFramework(1) 3}
+  AP-title, Application-context-name, AE-invocation-identifier,
+    AP-invocation-identifier, AE-qualifier, AE-title, ACSE-requirements
+    FROM ACSE-1 {joint-iso-itu-t association-control(2) modules(0) apdus(0)
+      version1(1)}
+  Presentation-requirements, Presentation-selector, Context-list,
+    Abstract-syntax-name, Transfer-syntax-name
+    FROM ISO8823-PRESENTATION
+  ObjectInstance
+    FROM CMIP-1 {joint-iso-itu-t ms(9) cmip(1) modules(0) protocol(3)};
+
+--value references
+ulMObjectClass OBJECT IDENTIFIER ::=
+  {joint-iso-itu-t ms(9) smi(3) part8(8) managedObjectClass(3)}
+
+ulMoPackage OBJECT IDENTIFIER ::=
+  {joint-iso-itu-t ms(9) smi(3) part8(8) package(4)}
+
+ulAttributeID OBJECT IDENTIFIER ::=
+  {joint-iso-itu-t ms(9) smi(3) part8(8) attribute(7)}
+
+ulNameBinding OBJECT IDENTIFIER ::=
+  {joint-iso-itu-t ms(9) smi(3) part8(8) nameBinding(6)}
+
+acseMOCId OBJECT IDENTIFIER ::= {ulMObjectClass 1}
+
+acseAssociationMOCId OBJECT IDENTIFIER ::= {ulMObjectClass 2}
+
+apInvocationMOCId OBJECT IDENTIFIER ::= {ulMObjectClass 3}
+
+applicationEntityMOCId OBJECT IDENTIFIER ::= {ulMObjectClass 4}
+
+applicationEntityInvocationMOCId OBJECT IDENTIFIER ::= {ulMObjectClass 5}
+
+applicationSubsystemMOCId OBJECT IDENTIFIER ::= {ulMObjectClass 6}
+
+asoMOCId OBJECT IDENTIFIER ::= {ulMObjectClass 7}
+
+asoEntityMOCId OBJECT IDENTIFIER ::= {ulMObjectClass 8}
+
+asoInvocationMOCId OBJECT IDENTIFIER ::= {ulMObjectClass 9}
+
+monoULConnectionMOCId OBJECT IDENTIFIER ::= {ulMObjectClass 10}
+
+monoULEntityMOCId OBJECT IDENTIFIER ::= {ulMObjectClass 11}
+
+monolithicUpperLayerSubsystemMOCId OBJECT IDENTIFIER ::= {ulMObjectClass 12}
+
+pSapMOCId OBJECT IDENTIFIER ::= {ulMObjectClass 13}
+
+presentationConnectionMOCId OBJECT IDENTIFIER ::= {ulMObjectClass 14}
+
+presentationCopmMOCId OBJECT IDENTIFIER ::= {ulMObjectClass 15}
+
+presentationEntityMOCId OBJECT IDENTIFIER ::= {ulMObjectClass 16}
+
+presentationSubsystemMOCId OBJECT IDENTIFIER ::= {ulMObjectClass 17}
+
+sSapMOCId OBJECT IDENTIFIER ::= {ulMObjectClass 18}
+
+sessionConnectionMOCId OBJECT IDENTIFIER ::= {ulMObjectClass 19}
+
+sessionCopmMOCId OBJECT IDENTIFIER ::= {ulMObjectClass 20}
+
+sessionEntityMOCId OBJECT IDENTIFIER ::= {ulMObjectClass 21}
+
+sessionSubsystemMOCId OBJECT IDENTIFIER ::= {ulMObjectClass 22}
+
+calledAEtitlePId OBJECT IDENTIFIER ::= {ulMoPackage 1}
+
+maxTSDUsizePId OBJECT IDENTIFIER ::= {ulMoPackage 2}
+
+abstrSyntaxSupportAId OBJECT IDENTIFIER ::= {ulAttributeID 1}
+
+acseEditionsSupportedAId OBJECT IDENTIFIER ::= {ulAttributeID 2}
+
+acseFUinUseAId OBJECT IDENTIFIER ::= {ulAttributeID 3}
+
+acseFUinitiatorAId OBJECT IDENTIFIER ::= {ulAttributeID 4}
+
+acseFUresponderAId OBJECT IDENTIFIER ::= {ulAttributeID 5}
+
+aeInvocationIdAId OBJECT IDENTIFIER ::= {ulAttributeID 6}
+
+ulAttributeIDAId OBJECT IDENTIFIER ::= {ulAttributeID 7}
+
+apInvocationIdAId OBJECT IDENTIFIER ::= {ulAttributeID 8}
+
+applContextInUseAId OBJECT IDENTIFIER ::= {ulAttributeID 9}
+
+applContextNameSupportAId OBJECT IDENTIFIER ::= {ulAttributeID 10}
+
+asoQualifierAId OBJECT IDENTIFIER ::= {ulAttributeID 11}
+
+asoTitleAId OBJECT IDENTIFIER ::= {ulAttributeID 12}
+
+calledAEtitleAId OBJECT IDENTIFIER ::= {ulAttributeID 13}
+
+callingAEtitleAId OBJECT IDENTIFIER ::= {ulAttributeID 14}
+
+invocationOfPointerAId OBJECT IDENTIFIER ::= {ulAttributeID 15}
+
+maxTSDUsizeAId OBJECT IDENTIFIER ::= {ulAttributeID 16}
+
+parentASOinvocAId OBJECT IDENTIFIER ::= {ulAttributeID 17}
+
+presContextInUseAId OBJECT IDENTIFIER ::= {ulAttributeID 18}
+
+presFUinUseAId OBJECT IDENTIFIER ::= {ulAttributeID 19}
+
+presFUsupportAId OBJECT IDENTIFIER ::= {ulAttributeID 20}
+
+presSelectorValueAId OBJECT IDENTIFIER ::= {ulAttributeID 21}
+
+sessFUinUseAId OBJECT IDENTIFIER ::= {ulAttributeID 22}
+
+sessFUsupportAId OBJECT IDENTIFIER ::= {ulAttributeID 23}
+
+sessOptSupportAId OBJECT IDENTIFIER ::= {ulAttributeID 24}
+
+sessProtInUseAId OBJECT IDENTIFIER ::= {ulAttributeID 25}
+
+sessProtVerSupportAId OBJECT IDENTIFIER ::= {ulAttributeID 26}
+
+sessionSelectorValueAId OBJECT IDENTIFIER ::= {ulAttributeID 27}
+
+supportingServicesAId OBJECT IDENTIFIER ::= {ulAttributeID 28}
+
+transfSyntaxSupportAId OBJECT IDENTIFIER ::= {ulAttributeID 29}
+
+ap-applicationSubsystemNBId OBJECT IDENTIFIER ::= {ulNameBinding 1}
+
+apInvocation-applicationSubsystemNBId OBJECT IDENTIFIER ::= {ulNameBinding 2}
+
+aso-asoNBId OBJECT IDENTIFIER ::= {ulNameBinding 3}
+
+aso-asoEntityNBId OBJECT IDENTIFIER ::= {ulNameBinding 4}
+
+asoEntity-applicationProcessNBId OBJECT IDENTIFIER ::= {ulNameBinding 5}
+
+asoInvocation-apInvocationNBId OBJECT IDENTIFIER ::= {ulNameBinding 6}
+
+asoInvocation-asoInvocationNBId OBJECT IDENTIFIER ::= {ulNameBinding 7}
+
+--Type references
+AbstrSyntaxSupport ::= SET OF Abstract-syntax-name
+
+AcseEditionsSupported ::= BIT STRING
+
+AcseFUs ::= ACSE-requirements -- from amendment 1 to acse protocol
+
+AeInvocationId ::= AE-invocation-identifier
+
+ApInvocationId ::= AP-invocation-identifier
+
+ApInvocation ::= AP-invocation-identifier
+
+ApplContextInUse ::= Application-context-name
+
+ApplContextNameSupport ::= SET OF Application-context-name
+
+AsoInvocId ::= INTEGER -- This should be compatible syntax with AeInvocationId
+
+ASOId ::= GraphicString
+
+ASOInvocationId ::= GraphicString
+
+ASOTitle ::= SEQUENCE {ap-title  AP-title,
+                       aso-name  SEQUENCE OF ASOQualifier
+}
+
+ASOQualifier ::= RelativeDistinguishedName --of ASO
+
+CallAEtitle ::= AE-title
+
+LocalAEqualifier ::= AE-qualifier
+
+MaxTSDUsize ::= INTEGER -- four octets maximum length
+
+ParentASOinvoc ::= ObjectInstance
+
+PresContextInUse ::=
+  Context-list -- only one transfer syntax used for each abstract syntax
+
+PresFUs ::= Presentation-requirements
+
+PresSelectorValue ::= Presentation-selector
+
+SessFUs ::= BIT STRING {
+  half-duplex(0), duplex(1), expedited-data(2), minor-synchronize(3),
+  major-synchronize(4), resynchronize(5), activity-management(6),
+  negotiated-release(7), capability-data(8), exceptions(9), typed-data(10)
+}
+
+SessionSelectorValue ::= OCTET STRING -- 16 octets max
+
+SessOptSupport ::= BIT STRING {segmenting(0)}
+
+SessProtVer ::= BIT STRING {version1(0), version2(1)}
+
+SupportingServices ::= SET OF ObjectInstance
+
+TransfSyntaxSupport ::= SET OF Transfer-syntax-name
+
+END -- of UL-AttributeModule
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+

@@ -1,0 +1,214 @@
+
+
+
+
+
+
+
+
+-- Module DefinitionASN1Module (X.750:10/1996)
+-- See also ITU-T X.750 (1996) Technical Cor. 1 (02/2000)
+-- See also the index of all ASN.1 assignments needed in this document
+
+DefinitionASN1Module {joint-iso-itu-t(2) ms(9) function(2) part16(16)
+  asn1Modules(2) 1} DEFINITIONS IMPLICIT TAGS ::=
+BEGIN
+
+-- EXPORTS everything;
+IMPORTS
+  ManagementExtension
+    FROM Attribute-ASN1Module {joint-iso-itu-t(2) ms(9) smi(3) part2(2)
+      asn1Module(2) 1}-- itu-t Rec. X.721 | ISO/IEC 10165-2
+  ;
+
+Actions ::=
+  SET OF
+    SEQUENCE {action     [0]  TemplateLabel,
+              parameter  [1]  TemplateList OPTIONAL}
+
+AdditionalProperties ::= SET OF ManagementExtension
+
+AndAttributeIds ::=
+  SET OF SEQUENCE {fieldName  Identifier,
+                   attribute  TemplateLabel}
+
+ASN1ModuleContents ::= TextualRepresentation
+
+ASN1Version ::= BIT STRING {v1990(0), v1994(1)}
+
+AttributeGroups ::=
+  SET OF SEQUENCE {group       TemplateLabel,
+                   attributes  TemplateList OPTIONAL}
+
+AttributeId ::= OBJECT IDENTIFIER
+
+Attributes ::=
+  SET OF
+    SEQUENCE {attributeLabel  TemplateLabel,
+              property        PropertyList,
+              parameterLabel  TemplateList OPTIONAL}
+
+Behaviour ::= TemplateList
+
+CharacterizedBy ::= TemplateList
+
+ConditionalPackages ::=
+  SET OF SEQUENCE {label      TemplateLabel,
+                   condition  GraphicString}
+
+Context ::= CHOICE {
+  keyword
+    SEQUENCE {type-reference  DefinedType,
+              field           Identifier},
+  representation
+    ENUMERATED {aCTION-INFO(0), aCTION-REPLY(1), eVENT-INFO(2), eVENT-REPLY(3),
+                sPECIFIC-ERROR(4)}
+}
+
+Create ::= CHOICE {present  CreateSpecification,
+                   absent   NULL
+}
+
+CreateSpecification ::= SEQUENCE {
+  createModifier
+    BIT STRING {withReferenceObject(0), withAutomaticInstanceNaming(1)}
+      OPTIONAL,
+  parameter       TemplateList OPTIONAL
+}
+
+DefinedAs ::= TextualRepresentation
+
+DefinedType ::= SEQUENCE {
+  module     [0]  Identifier OPTIONAL,
+  reference  [1]  Identifier
+}
+
+DefinedValue ::= SEQUENCE {
+  module     [0]  Identifier OPTIONAL,
+  reference  [1]  Identifier
+}
+
+Delete ::= CHOICE {present  DeleteSpecification,
+                   absent   NULL
+}
+
+DeleteSpecification ::= SEQUENCE {
+  deleteModifier
+    ENUMERATED {onlyIfNoContainedObjects(0), deletesContainedObjects(1)}
+      OPTIONAL,
+  parameter       TemplateList OPTIONAL
+}
+
+DerivedFrom ::= TemplateList
+
+DerivedOrWithSyntaxChoice ::= CHOICE {
+  derivedFrom       [0]  TemplateLabel,
+  withSyntaxChoice  [1]  DefinedType
+}
+
+Description ::= TextualRepresentation
+
+DocumentName ::= GraphicString
+
+DocumentObjectIdentifier ::= OptionallyRegisteredAs
+
+Fixed ::= BOOLEAN
+
+GroupElements ::= TemplateList
+
+Identifier ::=
+  PrintableString
+    (FROM ("0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "A" |
+           "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" |
+           "M" | "N" | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" | "W" |
+           "X" | "Y" | "Z" | "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" |
+           "i" | "j" | "k" | "l" | "m" | "n" | "o" | "p" | "q" | "r" | "s" |
+           "t" | "u" | "v" | "w" | "x" | "y" | "z" | "-"))
+
+LineImage ::=
+  GraphicString -- each value of this type represents one complete line of text
+
+MatchesFor ::= BIT STRING {
+  equality(0), ordering(1), substrings(2), setComparison(3), setIntersection(4)
+}
+
+ModeConfirmed ::= BOOLEAN
+
+NamingObjectClass ::= SEQUENCE {
+  class          TemplateLabel,
+  andSubclasses  BOOLEAN DEFAULT FALSE
+}
+
+Notifications ::=
+  SET OF
+    SEQUENCE {notification  [0]  TemplateLabel,
+              parameter     [1]  TemplateList OPTIONAL}
+
+Null ::= NULL
+
+OptionallyRegisteredAs ::= CHOICE {present  OBJECT IDENTIFIER,
+                                   absent   NULL
+}
+
+Parameters ::= TemplateList
+
+PropertyList ::= SEQUENCE {
+  replaceWithDefault    [0]  BOOLEAN DEFAULT FALSE,
+  defaultValue          [1] EXPLICIT ValueSpecifier OPTIONAL,
+  initialValue          [2] EXPLICIT ValueSpecifier OPTIONAL,
+  permittedValues       [3]  DefinedType OPTIONAL,
+  requiredValues        [4]  DefinedType OPTIONAL,
+  getReplace
+    [5]  ENUMERATED {gET(0), rEPLACE(1), gET-REPLACE(2)} OPTIONAL,
+  addRemove
+    [6]  ENUMERATED {aDD(0), rEMOVE(1), aDD-REMOVE(2)} OPTIONAL,
+  setByCreate           [7]  BOOLEAN DEFAULT FALSE,
+  additionalProperties  [8]  AdditionalProperties OPTIONAL
+}
+
+RegisteredAs ::= OBJECT IDENTIFIER
+
+Specification ::= TextualRepresentation
+
+SyntaxOrAttribute ::= CHOICE {
+  withSyntax  [0]  DefinedType,
+  attribute   [1]  TemplateLabel
+}
+
+TemplateDefinition ::= TextualRepresentation
+
+TemplateList ::= SET OF TemplateLabel
+
+TemplateLabel ::= SEQUENCE {
+  localName   TemplateName,
+  documentId
+    CHOICE {documentName              DocumentName,
+            documentObjectIdentifier  DocumentObjectIdentifier} OPTIONAL -- align with GDMO document identifier
+}
+
+TemplateName ::=
+  PrintableString
+    (FROM ("0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "A" |
+           "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" |
+           "M" | "N" | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" | "W" |
+           "X" | "Y" | "Z" | "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" |
+           "i" | "j" | "k" | "l" | "m" | "n" | "o" | "p" | "q" | "r" | "s" |
+           "t" | "u" | "v" | "w" | "x" | "y" | "z" | "-" | "/"))
+
+TextualRepresentation ::= SEQUENCE OF LineImage
+
+ValueSpecifier ::= CHOICE {
+  valueReference  [0]  DefinedValue,
+  derivationRule  [1]  TemplateLabel
+}
+
+WithAttribute ::= TemplateLabel
+
+WithSyntax ::= CHOICE {present  DefinedType,
+                       absent   NULL
+}
+
+END
+
+-- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
+
