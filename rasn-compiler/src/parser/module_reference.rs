@@ -6,9 +6,9 @@ use crate::intermediate::{
 use nom::{
     branch::alt,
     bytes::complete::tag,
-    character::complete::char,
-    combinator::{into, map, opt},
-    multi::{many1, separated_list1},
+    character::complete::{char, alpha1, alphanumeric1},
+    combinator::{into, map, opt, recognize},
+    multi::{many1, separated_list1, many0},
     sequence::{delimited, pair, preceded, terminated, tuple},
     IResult,
 };
@@ -24,11 +24,18 @@ pub fn module_reference<'a>(input: &'a str) -> IResult<&'a str, ModuleReference>
         opt(skip_ws(object_identifier_value)),
         skip_ws_and_comments(delimited(
             tag(DEFINITIONS),
-            environments,
+            opt(environments),
             skip_ws_and_comments(pair(tag(ASSIGN), skip_ws_and_comments(tag(BEGIN)))),
         )),
         opt(imports),
     ))))(input)
+}
+
+pub fn import_identifier<'a>(input: &'a str) -> IResult<&'a str, &'a str> {
+    recognize(pair(
+        alpha1,
+        many0(alt((preceded(char('-'), alphanumeric1), alphanumeric1, tag("{"), tag("}")))),
+    ))(input)
 }
 
 fn imports<'a>(input: &'a str) -> IResult<&'a str, Vec<Import>> {
@@ -43,7 +50,7 @@ fn import<'a>(input: &'a str) -> IResult<&'a str, Import> {
     into(skip_ws_and_comments(pair(
         skip_ws_and_comments(separated_list1(
             char(COMMA),
-            skip_ws_and_comments(identifier),
+            skip_ws_and_comments(import_identifier),
         )),
         preceded(
             skip_ws_and_comments(tag(FROM)),

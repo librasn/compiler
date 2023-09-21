@@ -275,11 +275,11 @@ impl
     From<(
         &str,
         Option<ObjectIdentifierValue>,
-        (
+        Option<(
             Option<EncodingReferenceDefault>,
             TaggingEnvironment,
             ExtensibilityEnvironment,
-        ),
+        )>,
         Option<Vec<Import>>,
     )> for ModuleReference
 {
@@ -287,20 +287,26 @@ impl
         value: (
             &str,
             Option<ObjectIdentifierValue>,
-            (
+            Option<(
                 Option<EncodingReferenceDefault>,
                 TaggingEnvironment,
                 ExtensibilityEnvironment,
-            ),
+            )>,
             Option<Vec<Import>>,
         ),
     ) -> Self {
+        let (encoding_reference_default, tagging_environment, extensibility_environment) =
+            value.2.unwrap_or((
+                None,
+                TaggingEnvironment::Explicit,
+                ExtensibilityEnvironment::Explicit,
+            ));
         Self {
             name: value.0.into(),
             module_identifier: value.1,
-            encoding_reference_default: value.2 .0,
-            tagging_environment: value.2 .1,
-            extensibility_environment: value.2 .2,
+            encoding_reference_default,
+            tagging_environment,
+            extensibility_environment,
             imports: value.3.unwrap_or(vec![]),
         }
     }
@@ -1179,10 +1185,7 @@ impl ASN1Value {
             ASN1Value::Time(t) => type_name
                 .map(|time_type| format!("\"{t}\".parse::<{time_type}>().unwrap()"))
                 .ok_or(GrammarError {
-                    details: format!(
-                        "A type name is needed to stringify time value {:?}",
-                        self
-                    ),
+                    details: format!("A type name is needed to stringify time value {:?}", self),
                     kind: GrammarErrorType::UnpackingError,
                 }),
         }
