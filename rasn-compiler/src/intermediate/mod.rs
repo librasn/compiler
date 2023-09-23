@@ -88,11 +88,13 @@ pub const AUTOMATIC: &'static str = "AUTOMATIC";
 pub const EXPLICIT: &'static str = "EXPLICIT";
 pub const IMPLICIT: &'static str = "IMPLICIT";
 pub const IMPORTS: &'static str = "IMPORTS";
+pub const EXPORTS: &'static str = "EXPORTS";
 pub const FROM: &'static str = "FROM";
 pub const INSTRUCTIONS: &'static str = "INSTRUCTIONS";
 pub const TAGS: &'static str = "TAGS";
 pub const EXTENSIBILITY_IMPLIED: &'static str = "EXTENSIBILITY IMPLIED";
 pub const WITH_SUCCESSORS: &'static str = "WITH SUCCESSORS";
+pub const WITH_DESCENDANTS: &'static str = "WITH DESCENDANTS";
 pub const SEMICOLON: char = ';';
 
 // Information Object Class tokens
@@ -243,11 +245,17 @@ pub enum ExtensibilityEnvironment {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+pub enum With {
+    Successors,
+    Descendants,
+}
+
+#[derive(Debug, Clone, PartialEq)]
 pub struct Import {
     pub types: Vec<String>,
     pub origin_name: String,
     pub origin_identifier: ObjectIdentifierValue,
-    pub with_successors: bool,
+    pub with: Option<With>,
 }
 
 impl From<(Vec<&str>, (&str, ObjectIdentifierValue, Option<&str>))> for Import {
@@ -256,7 +264,47 @@ impl From<(Vec<&str>, (&str, ObjectIdentifierValue, Option<&str>))> for Import {
             types: value.0.into_iter().map(|s| String::from(s)).collect(),
             origin_name: value.1 .0.into(),
             origin_identifier: value.1 .1,
-            with_successors: value.1 .2.is_some(),
+            with: value.1 .2.map(|with| {
+                if with == WITH_SUCCESSORS {
+                    With::Successors
+                } else {
+                    With::Descendants
+                }
+            }),
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum Exports {
+    Identifier(Vec<String>),
+    All,
+}
+
+impl From<Vec<&str>> for Exports {
+    fn from(value: Vec<&str>) -> Self {
+        Self::Identifier(value.iter().map(ToString::to_string).collect())
+    }
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum DefinitiveIdentifier {
+    DefinitiveOID(ObjectIdentifierValue),
+    DefinitiveOIDandIRI {
+        oid: ObjectIdentifierValue,
+        iri: String,
+    },
+}
+
+impl From<(ObjectIdentifierValue, Option<&str>)> for DefinitiveIdentifier {
+    fn from(value: (ObjectIdentifierValue, Option<&str>)) -> Self {
+        if let Some(iri_value) = value.1 {
+            Self::DefinitiveOIDandIRI {
+                oid: value.0,
+                iri: iri_value.to_owned(),
+            }
+        } else {
+            Self::DefinitiveOID(value.0)
         }
     }
 }
@@ -264,34 +312,37 @@ impl From<(Vec<&str>, (&str, ObjectIdentifierValue, Option<&str>))> for Import {
 #[derive(Debug, Clone, PartialEq)]
 pub struct ModuleReference {
     pub name: String,
-    pub module_identifier: Option<ObjectIdentifierValue>,
+    pub module_identifier: Option<DefinitiveIdentifier>,
     pub encoding_reference_default: Option<EncodingReferenceDefault>,
     pub tagging_environment: TaggingEnvironment,
     pub extensibility_environment: ExtensibilityEnvironment,
     pub imports: Vec<Import>,
+    pub exports: Option<Exports>,
 }
 
 impl
     From<(
         &str,
-        Option<ObjectIdentifierValue>,
+        Option<DefinitiveIdentifier>,
         Option<(
             Option<EncodingReferenceDefault>,
             TaggingEnvironment,
             ExtensibilityEnvironment,
         )>,
+        Option<Exports>,
         Option<Vec<Import>>,
     )> for ModuleReference
 {
     fn from(
         value: (
             &str,
-            Option<ObjectIdentifierValue>,
+            Option<DefinitiveIdentifier>,
             Option<(
                 Option<EncodingReferenceDefault>,
                 TaggingEnvironment,
                 ExtensibilityEnvironment,
             )>,
+            Option<Exports>,
             Option<Vec<Import>>,
         ),
     ) -> Self {
@@ -307,7 +358,8 @@ impl
             encoding_reference_default,
             tagging_environment,
             extensibility_environment,
-            imports: value.3.unwrap_or(vec![]),
+            exports: value.3,
+            imports: value.4.unwrap_or_default(),
         }
     }
 }

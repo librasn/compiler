@@ -57,3 +57,22 @@ fn object_identifier_arc<'a>(input: &'a str) -> IResult<&'a str, ObjectIdentifie
 fn numeric_id<'a>(input: &'a str) -> IResult<&'a str, ObjectIdentifierArc> {
     map(u128, |i| i.into())(input)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn parses_ansi_x9_62() {
+        assert_eq!(object_identifier_value(r#"{iso(1) member-body(2) us(840) 10045 modules(0) 2}"#).unwrap().1,
+        ObjectIdentifierValue(vec![
+            ObjectIdentifierArc { name: Some("iso".into()), number: Some(1)},
+            ObjectIdentifierArc { name: Some("member-body".into()), number: Some(2)},
+            ObjectIdentifierArc { name: Some("us".into()), number: Some(840)},
+            ObjectIdentifierArc { name: None, number: Some(10045)},
+            ObjectIdentifierArc { name: Some("modules".into()), number: Some(0)},
+            ObjectIdentifierArc { name: None, number: Some(2)},
+        ])
+    )
+    }
+}
