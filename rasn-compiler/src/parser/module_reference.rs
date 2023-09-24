@@ -46,8 +46,8 @@ fn exports<'a>(input: &'a str) -> IResult<&'a str, Exports> {
         skip_ws(alt((
             value(Exports::All, tag(ALL)),
             into(separated_list1(
-                char(COMMA),
-                alt((parameterized_identifier, identifier)),
+                skip_ws(char(COMMA)),
+                skip_ws(alt((parameterized_identifier, identifier))),
             )),
         ))),
         char(SEMICOLON),
@@ -69,8 +69,8 @@ fn parameterized_identifier<'a>(input: &'a str) -> IResult<&'a str, &'a str> {
 fn import<'a>(input: &'a str) -> IResult<&'a str, Import> {
     into(skip_ws_and_comments(pair(
         separated_list1(
-            char(COMMA),
-            alt((parameterized_identifier, identifier)),
+            skip_ws(char(COMMA)),
+            skip_ws(alt((parameterized_identifier, identifier))),
         ),
         preceded(
             skip_ws_and_comments(tag(FROM)),

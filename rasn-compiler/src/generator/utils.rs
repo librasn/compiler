@@ -446,6 +446,7 @@ pub fn format_nested_sequence_members(
                     name: inner_name(&m.name, parent_name),
                     r#type: m.r#type.clone(),
                     tag: None,
+                    index: None
                 }),
             )
         })
@@ -482,6 +483,7 @@ pub fn format_nested_choice_options(
                     name: inner_name(&m.name, parent_name),
                     r#type: m.r#type.clone(),
                     tag: None,
+                    index: None
                 }),
             )
         })

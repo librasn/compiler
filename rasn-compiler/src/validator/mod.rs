@@ -23,7 +23,7 @@ pub struct Validator {
 
 impl Validator {
     pub fn new(tlds: Vec<ToplevelDeclaration>) -> Validator {
-        Self { tlds: tlds.into_iter().map(|tld| (tld.name().to_owned(), tld)).collect() }
+        Self { tlds: tlds.into_iter().map(|tld|(tld.name().to_owned(), tld)).collect() }
     }
 
     fn link(mut self) -> Result<(Self, Vec<Box<dyn Error>>), ValidatorError> {

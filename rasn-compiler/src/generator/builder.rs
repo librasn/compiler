@@ -386,6 +386,7 @@ pub fn generate_sequence_of(tld: ToplevelTypeDeclaration) -> Result<String, Gene
                     name: String::from("Anonymous") + &name,
                     r#type: n.clone(),
                     tag: None,
+                    index: None
                 },
             ))?),
         }

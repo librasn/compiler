@@ -15,7 +15,7 @@ pub mod parameterization;
 pub mod types;
 pub mod utils;
 
-use std::collections::BTreeMap;
+use std::{collections::BTreeMap, rc::Rc};
 
 use constraints::Constraint;
 use error::{GrammarError, GrammarErrorType};
@@ -320,6 +320,32 @@ pub struct ModuleReference {
     pub exports: Option<Exports>,
 }
 
+impl ModuleReference {
+    pub fn print(&self) -> String {
+        format!(
+            r#"
+            // =====================================================
+            // {name}
+            // {oid}
+            // =====================================================
+            "#,
+            name = self.name.clone(),
+            oid = self.module_identifier.as_ref().map(|oid| {
+                match oid {
+                    DefinitiveIdentifier::DefinitiveOID(id) | DefinitiveIdentifier::DefinitiveOIDandIRI { oid: id, iri: _ } => {
+                        format!("{{ {} }}", id.0.iter().map(|arc| match (arc.name.clone(), arc.number) {
+                            (Some(name), Some(no)) => format!("{name}({no})"),
+                            (Some(name), None) => format!("{name}"),
+                            (None, Some(no)) => format!("{no}"),
+                            _ => Default::default()
+                        }).collect::<Vec<String>>().join(" "))
+                    }
+                }
+            }).unwrap_or_default()
+        )
+    }
+}
+
 impl
     From<(
         &str,
@@ -414,6 +440,23 @@ pub enum ToplevelDeclaration {
 }
 
 impl ToplevelDeclaration {
+    pub fn set_index(&mut self, module_reference: Rc<ModuleReference>, item_no: usize) {
+        match self {
+            ToplevelDeclaration::Type(ref mut t) => { t.index = Some((module_reference, item_no)); },
+            ToplevelDeclaration::Value(ref mut v) =>  { v.index = Some((module_reference, item_no)); },
+            ToplevelDeclaration::Information(ref mut i) =>  { i.index = Some((module_reference, item_no)); },
+        }
+    }
+
+    pub fn get_index(&self) -> Option<&(Rc<ModuleReference>, usize)> {
+        match self {
+            ToplevelDeclaration::Type(ref t) => t.index.as_ref(),
+            ToplevelDeclaration::Value(ref v) =>  v.index.as_ref(),
+            ToplevelDeclaration::Information(ref i) =>  i.index.as_ref(),
+        }
+    }
+
+
     pub fn apply_tagging_environment(&mut self, environment: &TaggingEnvironment) {
         match (environment, self) {
             (env, ToplevelDeclaration::Type(ty)) => {
@@ -623,6 +666,7 @@ pub struct ToplevelValueDeclaration {
     pub name: String,
     pub type_name: String,
     pub value: ASN1Value,
+    pub index: Option<(Rc<ModuleReference>, usize)>
 }
 
 impl From<(Vec<&str>, &str, &str, ASN1Value)> for ToplevelValueDeclaration {
@@ -632,6 +676,7 @@ impl From<(Vec<&str>, &str, &str, ASN1Value)> for ToplevelValueDeclaration {
             name: value.1.into(),
             type_name: value.2.into(),
             value: value.3,
+            index: None
         }
     }
 }
@@ -643,6 +688,7 @@ pub struct ToplevelTypeDeclaration {
     pub name: String,
     pub r#type: ASN1Type,
     pub parameterization: Option<Parameterization>,
+    pub index: Option<(Rc<ModuleReference>, usize)>
 }
 
 impl
@@ -667,6 +713,7 @@ impl
             parameterization: value.2,
             r#type: value.3 .1,
             tag: value.3 .0,
+            index: None
         }
     }
 }
@@ -1273,6 +1320,7 @@ impl DeclarationElsewhere {
             name: _,
             r#type: ASN1Type::ElsewhereDeclaredType(e),
             parameterization: _,
+            index: _
         })) = tlds.get(&self.identifier)
         {
             e.find_root_id(tlds)

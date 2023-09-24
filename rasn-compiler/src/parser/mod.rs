@@ -413,7 +413,8 @@ mod tests {
                         extensible: false
                     })]
                 }),
-                tag: None
+                tag: None,
+                index: None
             }
         );
     }
@@ -448,7 +449,8 @@ mod tests {
                         constraints: vec![]
                     }))
                 }),
-                tag: None
+                tag: None,
+                index: None
             }
         );
     }
@@ -469,6 +471,7 @@ mod tests {
             ToplevelInformationDeclaration {
                 comments: "comments".into(),
                 name: "CpmContainers".into(),
+                index: None,
                 class: Some(ClassLink::ByName("CPM-CONTAINER-ID-AND-TYPE".into())),
                 value: ASN1Information::ObjectSet(ObjectSet {
                     values: vec![
@@ -515,6 +518,7 @@ mod tests {
             .1,
             ToplevelInformationDeclaration {
                 comments: "".into(),
+                index: None,
                 name: "Reg-AdvisorySpeed".into(),
                 class: Some(ClassLink::ByName("REG-EXT-ID-AND-TYPE".into())),
                 value: ASN1Information::ObjectSet(ObjectSet {
@@ -540,6 +544,7 @@ mod tests {
                 comments: "".into(),
                 name: "REG-EXT-ID-AND-TYPE".into(),
                 class: None,
+                index: None,
                 value: ASN1Information::ObjectClass(InformationObjectClass {
                     fields: vec![
                         InformationObjectClassField {
@@ -590,6 +595,7 @@ mod tests {
             .1,
             ToplevelTypeDeclaration {
                 comments: "".into(),
+                index: None,
                 name: "RegionalExtension".into(),
                 r#type: ASN1Type::Sequence(SequenceOrSet {
                     extensible: None,
@@ -677,6 +683,7 @@ mod tests {
             .1,
             ToplevelTypeDeclaration {
                 comments: "".into(),
+                index: None,
                 name: "Choice-example".into(),
                 r#type: ASN1Type::Choice(Choice {
                     extensible: Some(2),
