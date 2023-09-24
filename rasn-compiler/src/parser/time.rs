@@ -1,13 +1,17 @@
 use nom::{
     bytes::complete::tag,
     character::complete::{char, one_of},
-    combinator::{map, opt, recognize},
+    combinator::{map, map_res, opt, recognize},
+    error::Error,
     multi::many1,
     sequence::{delimited, preceded},
     IResult,
 };
 
-use crate::intermediate::{types::{GeneralizedTime, UTCTime}, ASN1Type, ASN1Value, GENERALIZED_TIME, UTC_TIME};
+use crate::intermediate::{
+    types::{GeneralizedTime, UTCTime},
+    ASN1Type, ASN1Value, GENERALIZED_TIME, UTC_TIME,
+};
 
 use super::{common::skip_ws_and_comments, constraint::constraint};
 
@@ -39,6 +43,8 @@ pub fn utc_time<'a>(input: &'a str) -> IResult<&'a str, ASN1Type> {
     )(input)
 }
 
+const NON_NUMERIC_TIME_CHARS: [char; 17] = ['+','-',':','.',',','/','C','D','H','M','R','P','S','T','W','Y','Z'];
+
 /// Parses a time value character string
 /// ### X680
 /// _A "tstring" shall consist of one or more of the characters:_
@@ -47,7 +53,20 @@ pub fn utc_time<'a>(input: &'a str) -> IResult<&'a str, ASN1Type> {
 fn t_string<'a>(input: &'a str) -> IResult<&'a str, &'a str> {
     delimited(
         char('"'),
-        recognize(many1(one_of("0123456789+-:.,/CDHMRPSTWYZ"))),
+        map_res(
+            recognize(many1(one_of("0123456789+-:.,/CDHMRPSTWYZ"))),
+            |tstring: &str| {
+                if tstring.contains(char::is_numeric) && tstring.contains(|c| NON_NUMERIC_TIME_CHARS.contains(&c))
+                {
+                    Ok(tstring)
+                } else {
+                    Err(nom::Err::Error(Error {
+                        input: input,
+                        code: nom::error::ErrorKind::Satisfy,
+                    }))
+                }
+            },
+        ),
         char('"'),
     )(input)
 }

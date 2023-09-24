@@ -8,16 +8,81 @@ use nom::{
     IResult,
 };
 
-use crate::intermediate::{information_object::*, *};
+use crate::intermediate::{information_object::*, types::ObjectIdentifier, *};
 
 use super::{
     asn1_type, asn1_value,
     common::{
         default, extension_marker, identifier, in_braces, in_brackets, optional_comma,
-        optional_marker, skip_ws_and_comments, uppercase_identifier,
+        optional_marker, skip_ws, skip_ws_and_comments, uppercase_identifier,
     },
     constraint::constraint,
 };
+
+/// Tries to parse an ASN1 TYPE-IDENTIFIER
+///
+/// *`input` - string slice to be matched against
+///
+/// ## _X681:_
+/// _Annex A: The TYPE-IDENTIFIER information object class is defined as:
+/// ```ignore
+/// TYPE-IDENTIFIER ::= CLASS
+/// {
+/// 	&id OBJECT IDENTIFIER UNIQUE,
+/// 	&Type
+/// }
+/// WITH SYNTAX {&Type IDENTIFIED BY &id}
+/// ```
+pub fn type_identifier<'a>(input: &'a str) -> IResult<&'a str, InformationObjectClass> {
+    skip_ws_and_comments(value(InformationObjectClass {
+            fields: vec![
+                InformationObjectClassField {
+                    identifier: ObjectFieldIdentifier::SingleValue("id".into()),
+                    r#type: Some(ASN1Type::ObjectIdentifier(ObjectIdentifier {
+                        constraints: vec![],
+                    })),
+                    is_optional: false,
+                    default: None,
+                    is_unique: true,
+                },
+                InformationObjectClassField {
+                    identifier: ObjectFieldIdentifier::MultipleValue("Type".into()),
+                    r#type: None,
+                    is_optional: false,
+                    default: None,
+                    is_unique: false,
+                },
+            ],
+            syntax: None,
+        },
+        tag(TYPE_IDENTIFIER),
+    ))(input)
+}
+
+/// Tries to parse an ASN1 INSTANCE OF
+///
+/// *`input` - string slice to be matched against
+///
+/// ## _X680:_
+/// _G.2.18: Use an instance-of to specify a type containing an object identifier field_
+/// _and an open type value whose type is determined by the object identifier._
+pub fn instance_of<'a>(input: &'a str) -> IResult<&'a str, ASN1Type> {
+    map(
+        preceded(
+            tag(INSTANCE_OF),
+            pair(
+                skip_ws_and_comments(uppercase_identifier),
+                skip_ws_and_comments(constraint),
+            ),
+        ),
+        |(id, constraints)| {
+            ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+                identifier: id.into(),
+                constraints: constraints,
+            })
+        },
+    )(input)
+}
 
 pub fn information_object_class<'a>(input: &'a str) -> IResult<&'a str, InformationObjectClass> {
     into(preceded(
@@ -179,7 +244,9 @@ fn syntax_literal<'a>(input: &'a str) -> IResult<&'a str, &'a str> {
 mod tests {
     use crate::intermediate::{information_object::*, types::*, *};
 
-    use crate::parser::information_object_class::{information_object_class, object_set, information_object_field_reference};
+    use crate::parser::information_object_class::{
+        information_object_class, information_object_field_reference, object_set,
+    };
 
     #[test]
     fn parses_information_object_class() {
@@ -315,14 +382,17 @@ mod tests {
                 ],
                 syntax: Some(InformationObjectSyntax {
                     expressions: vec![
-                        SyntaxExpression::Required(SyntaxToken::Field(ObjectFieldIdentifier::MultipleValue("&ContextInfo".into()))),
+                        SyntaxExpression::Required(SyntaxToken::Field(
+                            ObjectFieldIdentifier::MultipleValue("&ContextInfo".into())
+                        )),
                         SyntaxExpression::Required(SyntaxToken::Literal("IDENTIFIED".into())),
                         SyntaxExpression::Required(SyntaxToken::Literal("BY".into())),
-                        SyntaxExpression::Required(SyntaxToken::Field(ObjectFieldIdentifier::SingleValue("&itsaidCtxRef".into())))
+                        SyntaxExpression::Required(SyntaxToken::Field(
+                            ObjectFieldIdentifier::SingleValue("&itsaidCtxRef".into())
+                        ))
                     ]
                 })
             }
         )
     }
-
 }

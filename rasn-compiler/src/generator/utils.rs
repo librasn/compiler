@@ -13,7 +13,7 @@ use crate::generator::{error::GeneratorError, generate};
 
 pub struct StringifiedNameType {
     name: String,
-    typ: String
+    typ: String,
 }
 
 pub fn inner_name(name: &String, parent_name: &String) -> String {
@@ -22,7 +22,7 @@ pub fn inner_name(name: &String, parent_name: &String) -> String {
 
 pub fn int_type_token(opt_min: Option<i128>, opt_max: Option<i128>) -> &'static str {
     if let (Some(min), Some(max)) = (opt_min, opt_max) {
-       crate::intermediate::utils::int_type_token(min, max)
+        crate::intermediate::utils::int_type_token(min, max)
     } else {
         "Integer"
     }
@@ -163,11 +163,9 @@ pub fn format_sequence_or_set_members(
     parent_name: &String,
 ) -> Result<(String, Vec<StringifiedNameType>), GeneratorError> {
     let first_extension_index = sequence_or_set.extensible;
-    sequence_or_set
-        .members
-        .iter()
-        .enumerate()
-        .try_fold((String::new(), Vec::new()), | mut acc, (i, m) | {
+    sequence_or_set.members.iter().enumerate().try_fold(
+        (String::new(), Vec::new()),
+        |mut acc, (i, m)| {
             let extension_annotation = if i >= first_extension_index.unwrap_or(usize::MAX)
                 && m.name.starts_with("ext_group_")
             {
@@ -177,14 +175,19 @@ pub fn format_sequence_or_set_members(
             } else {
                 ""
             };
-            format_sequence_member(m, parent_name, extension_annotation).map(|(declaration, name_type)| {
-                acc.0.push_str(&declaration);
-                acc.0.push_str(r#",
-                    "#);
-                acc.1.push(name_type);
-                acc
-            })
-        })
+            format_sequence_member(m, parent_name, extension_annotation).map(
+                |(declaration, name_type)| {
+                    acc.0.push_str(&declaration);
+                    acc.0.push_str(
+                        r#",
+                    "#,
+                    );
+                    acc.1.push(name_type);
+                    acc
+                },
+            )
+        },
+    )
 }
 
 fn format_sequence_member(
@@ -218,7 +221,9 @@ fn format_sequence_member(
         ASN1Type::ElsewhereDeclaredType(e) => {
             (e.constraints.clone(), to_rust_title_case(&e.identifier))
         }
-        ASN1Type::InformationObjectFieldReference(_) => (vec![], "Any".into()),
+        ASN1Type::InformationObjectFieldReference(_)
+        | ASN1Type::EmbeddedPdv
+        | ASN1Type::External => (vec![], "Any".into()),
     };
     all_constraints.append(&mut member.constraints.clone());
     if member.is_optional && member.default_value.is_none() {
@@ -249,7 +254,13 @@ fn format_sequence_member(
         tag,
         default_annotation,
     ]);
-    Ok((format!(r#"{annotations}pub {name}: {formatted_type_name}"#), StringifiedNameType { name, typ: formatted_type_name }))
+    Ok((
+        format!(r#"{annotations}pub {name}: {formatted_type_name}"#),
+        StringifiedNameType {
+            name,
+            typ: formatted_type_name,
+        },
+    ))
 }
 
 pub fn format_choice_options(
@@ -312,7 +323,9 @@ fn format_choice_option(
         ASN1Type::ElsewhereDeclaredType(e) => {
             (e.constraints.clone(), to_rust_title_case(&e.identifier))
         }
-        ASN1Type::InformationObjectFieldReference(_) => (vec![], "Any".into()),
+        ASN1Type::InformationObjectFieldReference(_)
+        | ASN1Type::EmbeddedPdv
+        | ASN1Type::External => (vec![], "Any".into()),
     };
     all_constraints.append(&mut member.constraints.clone());
     let range_annotations = format_range_annotations(
@@ -391,10 +404,13 @@ pub fn format_default_methods(
                     "BitString".into(),
                 ),
                 ASN1Type::ElsewhereDeclaredType(_)
-                    if !(matches!(value, ASN1Value::EnumeratedValue {
-                        enumerated: _,
-                        enumerable: _
-                    })) =>
+                    if !(matches!(
+                        value,
+                        ASN1Value::EnumeratedValue {
+                            enumerated: _,
+                            enumerable: _
+                        }
+                    )) =>
                 {
                     let stringified_type = member.r#type.to_string();
                     (
@@ -414,7 +430,11 @@ pub fn format_default_methods(
             }}
             
             "#,
-            if type_as_string == value_as_string { "" } else {".into()"}
+                if type_as_string == value_as_string {
+                    ""
+                } else {
+                    ".into()"
+                }
             ))
         }
     }
@@ -439,16 +459,14 @@ pub fn format_nested_sequence_members(
             )
         })
         .map(|m| {
-            generate(
-                ToplevelDeclaration::Type(ToplevelTypeDeclaration {
-                    parameterization: None,
-                    comments: " Inner type ".into(),
-                    name: inner_name(&m.name, parent_name),
-                    r#type: m.r#type.clone(),
-                    tag: None,
-                    index: None
-                }),
-            )
+            generate(ToplevelDeclaration::Type(ToplevelTypeDeclaration {
+                parameterization: None,
+                comments: " Inner type ".into(),
+                name: inner_name(&m.name, parent_name),
+                r#type: m.r#type.clone(),
+                tag: None,
+                index: None,
+            }))
         })
         .collect::<Result<Vec<String>, _>>()?
         .join(
@@ -476,16 +494,14 @@ pub fn format_nested_choice_options(
             )
         })
         .map(|m| {
-            generate(
-                ToplevelDeclaration::Type(ToplevelTypeDeclaration {
-                    parameterization: None,
-                    comments: " Inner type ".into(),
-                    name: inner_name(&m.name, parent_name),
-                    r#type: m.r#type.clone(),
-                    tag: None,
-                    index: None
-                }),
-            )
+            generate(ToplevelDeclaration::Type(ToplevelTypeDeclaration {
+                parameterization: None,
+                comments: " Inner type ".into(),
+                name: inner_name(&m.name, parent_name),
+                r#type: m.r#type.clone(),
+                tag: None,
+                index: None,
+            }))
         })
         .collect::<Result<Vec<String>, _>>()?
         .join(
@@ -496,7 +512,8 @@ pub fn format_nested_choice_options(
 }
 
 pub fn format_new_impl(name: &String, name_types: Vec<StringifiedNameType>) -> String {
-    format!(r#"impl {name} {{
+    format!(
+        r#"impl {name} {{
         pub fn new(
             {}
         ) -> Self {{
@@ -505,7 +522,15 @@ pub fn format_new_impl(name: &String, name_types: Vec<StringifiedNameType>) -> S
             }}
         }}
     }}"#,
-        name_types.iter().map(|nt| format!("{}: {},", nt.name, nt.typ)).collect::<Vec<String>>().join("\n\t"),
-        name_types.iter().map(|nt| format!("{},", nt.name)).collect::<Vec<String>>().join("\n\t")
+        name_types
+            .iter()
+            .map(|nt| format!("{}: {},", nt.name, nt.typ))
+            .collect::<Vec<String>>()
+            .join("\n\t"),
+        name_types
+            .iter()
+            .map(|nt| format!("{},", nt.name))
+            .collect::<Vec<String>>()
+            .join("\n\t")
     )
 }

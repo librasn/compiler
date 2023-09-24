@@ -26,8 +26,10 @@ use self::{
     choice::*,
     common::*,
     constraint::constraint,
+    embedded_pdv::*,
     enumerated::*,
     error::ParserError,
+    external::*,
     information_object_class::*,
     integer::*,
     module_reference::module_reference,
@@ -47,8 +49,10 @@ mod character_string;
 mod choice;
 mod common;
 mod constraint;
+mod embedded_pdv;
 mod enumerated;
 mod error;
+mod external;
 mod information_object_class;
 mod integer;
 mod module_reference;
@@ -88,7 +92,7 @@ pub fn asn_spec<'a>(
 pub fn top_level_type_declaration<'a>(input: &'a str) -> IResult<&'a str, ToplevelTypeDeclaration> {
     into(tuple((
         skip_ws(many0(comment)),
-        skip_ws(type_identifier),
+        skip_ws(title_case_identifier),
         opt(parameterization),
         preceded(assignment, pair(opt(asn_tag), asn1_type)),
     )))(input)
@@ -112,6 +116,9 @@ pub fn asn1_type<'a>(input: &'a str) -> IResult<&'a str, ASN1Type> {
         sequence,
         set,
         utc_time,
+        external,
+        embedded_pdv,
+        instance_of,
         generalized_time,
         real,
         choice,
@@ -153,7 +160,7 @@ pub fn elsewhere_declared_value<'a>(input: &'a str) -> IResult<&'a str, ASN1Valu
 pub fn elsewhere_declared_type<'a>(input: &'a str) -> IResult<&'a str, ASN1Type> {
     map(
         pair(
-            skip_ws_and_comments(type_identifier),
+            skip_ws_and_comments(title_case_identifier),
             opt(skip_ws_and_comments(constraint)),
         ),
         |m| ASN1Type::ElsewhereDeclaredType(m.into()),
@@ -215,7 +222,7 @@ fn top_level_object_class_declaration<'a>(
     into(tuple((
         skip_ws(many0(comment)),
         skip_ws(uppercase_identifier),
-        preceded(assignment, information_object_class),
+        preceded(assignment, alt((type_identifier, information_object_class))),
     )))(input)
 }
 

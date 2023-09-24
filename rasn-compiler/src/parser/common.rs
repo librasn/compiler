@@ -67,7 +67,7 @@ pub fn identifier<'a>(input: &'a str) -> IResult<&'a str, &'a str> {
     ))(input)
 }
 
-pub fn type_identifier<'a>(input: &'a str) -> IResult<&'a str, &'a str> {
+pub fn title_case_identifier<'a>(input: &'a str) -> IResult<&'a str, &'a str> {
     map_res(
         recognize(pair(
             one_of("ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890"),

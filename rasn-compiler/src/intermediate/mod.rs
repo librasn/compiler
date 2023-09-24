@@ -141,9 +141,9 @@ pub const CONTAINING: &'static str = "CONTAINING";
 pub const DATE: &'static str = "DATE";
 pub const DATE_TIME: &'static str = "DATE-TIME";
 pub const DURATION: &'static str = "DURATION";
-pub const EMBEDDED: &'static str = "EMBEDDED";
+pub const EMBEDDED_PDV: &'static str = "EMBEDDED PDV";
 pub const EXTERNAL: &'static str = "EXTERNAL";
-pub const INSTANCE: &'static str = "INSTANCE";
+pub const INSTANCE_OF: &'static str = "INSTANCE OF";
 pub const MINUS_INFINITY: &'static str = "MINUS-INFINITY";
 pub const NOT_A_NUMBER: &'static str = "NOT-A-NUMBER";
 pub const OBJECT: &'static str = "OBJECT";
@@ -164,9 +164,9 @@ pub const ASN1_KEYWORDS: [&str; 63] = [
     DATE,
     DATE_TIME,
     DURATION,
-    EMBEDDED,
+    EMBEDDED_PDV,
     EXTERNAL,
-    INSTANCE,
+    INSTANCE_OF,
     MINUS_INFINITY,
     NOT_A_NUMBER,
     OBJECT,
@@ -741,6 +741,8 @@ pub enum ASN1Type {
     ElsewhereDeclaredType(DeclarationElsewhere),
     ObjectIdentifier(ObjectIdentifier),
     InformationObjectFieldReference(InformationObjectFieldReference),
+    EmbeddedPdv,
+    External,
 }
 
 impl ASN1Type {
@@ -1000,6 +1002,7 @@ impl ToString for ASN1Type {
             ASN1Type::InformationObjectFieldReference(_) => todo!(),
             ASN1Type::GeneralizedTime(_) => "GeneralizedTime".to_owned(),
             ASN1Type::UTCTime(_) => "UtcTime".to_owned(),
+            ASN1Type::EmbeddedPdv | ASN1Type::External => "Any".to_owned()
         }
     }
 }

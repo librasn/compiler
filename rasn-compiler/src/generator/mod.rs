@@ -29,7 +29,7 @@ pub fn generate<'a>(
             ASN1Type::OctetString(_) => generate_octet_string(t),
             ASN1Type::Real(_) => todo!(),
             ASN1Type::ObjectIdentifier(_) => generate_oid(t),
-            ASN1Type::InformationObjectFieldReference(_) => generate_any(t),
+            ASN1Type::InformationObjectFieldReference(_) | ASN1Type::EmbeddedPdv | ASN1Type::External => generate_any(t),
             ASN1Type::GeneralizedTime(_) => generate_generalized_time(t),
             ASN1Type::UTCTime(_) => generate_utc_time(t),
         },
