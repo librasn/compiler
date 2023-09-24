@@ -33,6 +33,10 @@ fn main() {
 }
 ```
 
+## CLI
+The `rasn-compiler` provides a CLI application that can be activated with the `cli` cargo feature.
+Run `./rasn_compiler_cli -h` for usage info.
+
 ## ASN1 Support
 ASN1 is a complex standard, and not all of its features and encoding rules are supported, yet.
 
