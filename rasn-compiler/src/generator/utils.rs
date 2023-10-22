@@ -65,8 +65,14 @@ pub fn format_range_annotations(
             per_constraints.max::<i128>(),
             per_constraints.is_extensible(),
         ) {
+            (Some(min), Some(max), true) if min == max => {
+                format!(r#"{range_prefix}("{min}", extensible)"#)
+            }
             (Some(min), Some(max), true) => {
                 format!(r#"{range_prefix}("{min}..={max}", extensible)"#)
+            }
+            (Some(min), Some(max), false) if min == max => {
+                format!(r#"{range_prefix}("{min}")"#)
             }
             (Some(min), Some(max), false) => {
                 format!(r#"{range_prefix}("{min}..={max}")"#)
@@ -79,8 +85,7 @@ pub fn format_range_annotations(
                 format!(r#"{range_prefix}("..={max}", extensible)"#)
             }
             (None, Some(max), false) => format!(r#"{range_prefix}("..={max}")"#),
-            (None, None, true) => format!(r#"{range_prefix}("..", extensible)"#),
-            (None, None, false) => format!(r#""#),
+            _ => format!(r#""#),
         },
     )
 }

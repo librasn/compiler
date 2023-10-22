@@ -34,3 +34,11 @@ Failed to parse {failed} modules with the following errors:
     
     "#) + &errors).unwrap();
 }
+
+#[test]
+fn compile_etsi() {
+    RasnCompiler::new()
+        .add_asn_by_path("./tests/modules/v2x_cam.asn1")
+        .set_output_path("./cam.rs")
+        .compile();
+}
