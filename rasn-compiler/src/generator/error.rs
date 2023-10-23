@@ -27,7 +27,8 @@ pub enum GeneratorErrorType {
     MissingCustomSyntax,
     SyntaxMismatch,
     MissingClassKey,
-    Unidentified
+    Unidentified,
+    NotYetInplemented,
 }
 
 impl Error for GeneratorError {}

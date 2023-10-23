@@ -1,54 +1,30 @@
 use crate::intermediate::*;
 use nom::{
-    branch::alt,
     bytes::complete::tag,
-    character::complete::char,
     combinator::{map, opt},
-    multi::separated_list0,
     sequence::{pair, preceded},
     IResult,
 };
 
 use super::{
-    asn1_type, asn1_value,
-    common::{in_braces, opt_parentheses, skip_ws_and_comments, value_identifier},
+    asn1_type,
+    common::{opt_parentheses, skip_ws_and_comments, value_identifier},
     constraint::constraint,
 };
 
-/// Tries to parse an ASN1 SEQUENCE OF Value
+/// Tries to parse an ASN1 SET OF
 ///
 /// *`input` - string slice to be matched against
 ///
-/// `sequence_of_value` will try to match an SEQUENCE OF value declaration in the `input` string.
+/// `set_of` will try to match an SET OF declaration in the `input` string.
 /// If the match succeeds, the parser will consume the match and return the remaining string
-/// and a wrapped `SequenceOf` value representing the ASN1 declaration.
+/// and a wrapped `SetOf` value representing the ASN1 declaration.
 /// If the match fails, the parser will not consume the input and will return an error.
-pub fn sequence_or_set_of_value<'a>(input: &'a str) -> IResult<&'a str, ASN1Value> {
-    map(
-        in_braces(separated_list0(
-            skip_ws_and_comments(char(COMMA)),
-            skip_ws_and_comments(alt((
-                preceded(value_identifier, skip_ws_and_comments(asn1_value)),
-                asn1_value,
-            ))),
-        )),
-        |seq| ASN1Value::SequenceOrSetOf(seq),
-    )(input)
-}
-
-/// Tries to parse an ASN1 SEQUENCE OF
-///
-/// *`input` - string slice to be matched against
-///
-/// `sequence_of` will try to match an SEQUENCE OF declaration in the `input` string.
-/// If the match succeeds, the parser will consume the match and return the remaining string
-/// and a wrapped `SequenceOf` type representing the ASN1 declaration.
-/// If the match fails, the parser will not consume the input and will return an error.
-pub fn sequence_of<'a>(input: &'a str) -> IResult<&'a str, ASN1Type> {
+pub fn set_of<'a>(input: &'a str) -> IResult<&'a str, ASN1Type> {
     map(
         pair(
             preceded(
-                skip_ws_and_comments(tag(SEQUENCE)),
+                skip_ws_and_comments(tag(SET)),
                 opt(opt_parentheses(constraint)),
             ),
             preceded(
@@ -56,7 +32,7 @@ pub fn sequence_of<'a>(input: &'a str) -> IResult<&'a str, ASN1Type> {
                 asn1_type,
             ),
         ),
-        |m| ASN1Type::SequenceOf(m.into()),
+        |m| ASN1Type::SetOf(m.into()),
     )(input)
 }
 
@@ -66,16 +42,15 @@ mod tests {
         constraints::*,
         information_object::{ObjectSet, ObjectSetValue},
         types::*,
-        *,
     };
 
-    use crate::parser::sequence_of;
+    use super::*;
 
     #[test]
-    fn parses_simple_sequence_of() {
+    fn parses_simple_set_of() {
         assert_eq!(
-            sequence_of("SEQUENCE OF BOOLEAN").unwrap().1,
-            ASN1Type::SequenceOf(SequenceOrSetOf {
+            set_of("SET OF BOOLEAN").unwrap().1,
+            ASN1Type::SetOf(SequenceOrSetOf {
                 constraints: vec![],
                 r#type: Box::new(ASN1Type::Boolean(Boolean { constraints: vec![] }))
             })
@@ -83,10 +58,10 @@ mod tests {
     }
 
     #[test]
-    fn parses_simple_sequence_of_elsewhere_declared_type() {
+    fn parses_simple_set_of_elsewhere_declared_type() {
         assert_eq!(
-            sequence_of("SEQUENCE OF Things").unwrap().1,
-            ASN1Type::SequenceOf(SequenceOrSetOf {
+            set_of("SET OF Things").unwrap().1,
+            ASN1Type::SetOf(SequenceOrSetOf {
                 constraints: vec![],
                 r#type: Box::new(ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                     identifier: "Things".into(),
@@ -97,12 +72,12 @@ mod tests {
     }
 
     #[test]
-    fn parses_constraint_sequence_of_elsewhere_declared_type() {
+    fn parses_constraint_set_of_elsewhere_declared_type() {
         assert_eq!(
-            sequence_of("SEQUENCE SIZE (1..13,...) OF CorrelationCellValue  ")
+            set_of("SET SIZE (1..13,...) OF CorrelationCellValue  ")
                 .unwrap()
                 .1,
-            ASN1Type::SequenceOf(SequenceOrSetOf {
+            ASN1Type::SetOf(SequenceOrSetOf {
                 constraints: vec![Constraint::SubtypeConstraint(ElementSet {
                     set: ElementOrSetOperation::Element(SubtypeElement::SizeConstraint(Box::new(
                         ElementOrSetOperation::Element(SubtypeElement::ValueRange {
@@ -122,12 +97,12 @@ mod tests {
     }
 
     #[test]
-    fn parses_constraint_sequence_of_with_extra_parentheses() {
+    fn parses_constraint_set_of_with_extra_parentheses() {
         assert_eq!(
-            sequence_of("SEQUENCE (SIZE (1..13, ...)) OF CorrelationCellValue  ")
+            set_of("SET (SIZE (1..13, ...)) OF CorrelationCellValue  ")
                 .unwrap()
                 .1,
-            ASN1Type::SequenceOf(SequenceOrSetOf {
+            ASN1Type::SetOf(SequenceOrSetOf {
                 constraints: vec![Constraint::SubtypeConstraint(ElementSet {
                     set: ElementOrSetOperation::Element(SubtypeElement::SizeConstraint(Box::new(
                         ElementOrSetOperation::Element(SubtypeElement::ValueRange {
@@ -147,16 +122,16 @@ mod tests {
     }
 
     #[test]
-    fn parses_constraint_sequence_of_constraint_integer() {
+    fn parses_constraint_set_of_constraint_integer() {
         assert_eq!(
-            sequence_of(
-                r#"SEQUENCE SIZE (1..13,...) OF INTEGER {
+            set_of(
+                r#"SET SIZE (1..13,...) OF INTEGER {
               one-distinguished-value (12)
             } (1..13,...) "#
             )
             .unwrap()
             .1,
-            ASN1Type::SequenceOf(SequenceOrSetOf {
+            ASN1Type::SetOf(SequenceOrSetOf {
                 constraints: vec![Constraint::SubtypeConstraint(ElementSet {
                     set: ElementOrSetOperation::Element(SubtypeElement::SizeConstraint(Box::new(
                         ElementOrSetOperation::Element(SubtypeElement::ValueRange {
@@ -186,15 +161,15 @@ mod tests {
     }
 
     #[test]
-    fn parses_parameterized_constrained_sequence_of() {
+    fn parses_parameterized_constrained_set_of() {
         assert_eq!(
-            sequence_of(
-                r#"SEQUENCE (SIZE(1..4)) OF 
+            set_of(
+                r#"SET (SIZE(1..4)) OF 
       RegionalExtension {{Reg-MapData}} OPTIONAL,"#
             )
             .unwrap()
             .1,
-            ASN1Type::SequenceOf(SequenceOrSetOf {
+            ASN1Type::SetOf(SequenceOrSetOf {
                 constraints: vec![Constraint::SubtypeConstraint(ElementSet {
                     set: ElementOrSetOperation::Element(SubtypeElement::SizeConstraint(Box::new(
                         ElementOrSetOperation::Element(SubtypeElement::ValueRange {
@@ -222,8 +197,8 @@ mod tests {
     fn handles_object_field_ref() {
         println!(
             "{:?}",
-            sequence_of(
-                r#"SEQUENCE (SIZE(1..MAX)) OF
+            set_of(
+                r#"SET (SIZE(1..MAX)) OF
         IEEE1609DOT2-HEADERINFO-CONTRIBUTED-EXTENSION.&Extn({
         Ieee1609Dot2HeaderInfoContributedExtensions
       }{@.contributorId})"#

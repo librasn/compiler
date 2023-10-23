@@ -20,27 +20,29 @@ use nom::{
 use crate::intermediate::{information_object::*, *};
 
 use self::{
-    bit_string::{bit_string, bit_string_value},
-    boolean::{boolean, boolean_value},
-    character_string::{character_string, character_string_value},
+    bit_string::*,
+    boolean::*,
+    character_string::*,
     choice::*,
     common::*,
-    constraint::constraint,
+    constraint::*,
     embedded_pdv::*,
     enumerated::*,
     error::ParserError,
     external::*,
     information_object_class::*,
     integer::*,
-    module_reference::module_reference,
+    module_reference::*,
     null::*,
     object_identifier::*,
     octet_string::*,
-    parameterization::parameterization,
+    parameterization::*,
     real::*,
-    sequence::{sequence, sequence_value},
+    sequence::*,
     sequence_of::*,
-    set::*, time::*,
+    set::*,
+    set_of::*,
+    time::*,
 };
 
 mod bit_string;
@@ -64,6 +66,7 @@ mod real;
 mod sequence;
 mod sequence_of;
 mod set;
+mod set_of;
 mod time;
 mod util;
 
@@ -110,18 +113,20 @@ pub fn top_level_information_declaration<'a>(
 
 pub fn asn1_type<'a>(input: &'a str) -> IResult<&'a str, ASN1Type> {
     alt((
-        null,
+        alt((null,
+        selection_type_choice,
         object_identifier,
         sequence_of,
         sequence,
+        set_of,
         set,
         utc_time,
         external,
         embedded_pdv,
         instance_of,
         generalized_time,
-        real,
-        choice,
+        real)),
+        alt((choice,
         integer,
         enumerated,
         boolean,
@@ -132,7 +137,7 @@ pub fn asn1_type<'a>(input: &'a str) -> IResult<&'a str, ASN1Type> {
             ASN1Type::InformationObjectFieldReference(i)
         }),
         elsewhere_declared_type,
-    ))(input)
+    ))))(input)
 }
 
 pub fn asn1_value<'a>(input: &'a str) -> IResult<&'a str, ASN1Value> {
@@ -142,6 +147,7 @@ pub fn asn1_value<'a>(input: &'a str) -> IResult<&'a str, ASN1Value> {
         choice_value,
         real_value,
         sequence_value,
+        sequence_or_set_of_value,
         time_value,
         bit_string_value,
         boolean_value,
@@ -188,7 +194,9 @@ fn top_level_value_declaration<'a>(input: &'a str) -> IResult<&'a str, ToplevelV
             skip_ws(tag(OBJECT_IDENTIFIER)),
             preceded(
                 assignment,
-                map(object_identifier_value, |oid| ASN1Value::ObjectIdentifier(oid)),
+                map(object_identifier_value, |oid| {
+                    ASN1Value::ObjectIdentifier(oid)
+                }),
             ),
         )),
     )))(input)
@@ -231,13 +239,13 @@ mod tests {
     use core::panic;
     use std::vec;
 
-    use crate::intermediate::{
+    use crate::{intermediate::{
         constraints::*,
         information_object::*,
         parameterization::{Parameterization, ParameterizationArgument},
         types::*,
         *,
-    };
+    }, parser::top_level_information_object_declaration};
 
     use crate::parser::top_level_information_declaration;
 
@@ -373,7 +381,7 @@ mod tests {
         assert!(tld
             .comments
             .contains("@revision: editorial update in V2.1.1"));
-        assert_eq!(tld.r#type, ASN1Type::Boolean);
+        assert_eq!(tld.r#type, ASN1Type::Boolean(Boolean { constraints: vec![] }));
     }
 
     #[test]
@@ -440,7 +448,7 @@ mod tests {
                 parameterization: None,
                 comments: "Comments".into(),
                 name: "InterferenceManagementZones".into(),
-                r#type: ASN1Type::SequenceOf(SequenceOf {
+                r#type: ASN1Type::SequenceOf(SequenceOrSetOf {
                     constraints: vec![Constraint::SubtypeConstraint(ElementSet {
                         set: ElementOrSetOperation::Element(SubtypeElement::SizeConstraint(
                             Box::new(ElementOrSetOperation::Element(SubtypeElement::ValueRange {
@@ -606,6 +614,7 @@ mod tests {
                 name: "RegionalExtension".into(),
                 r#type: ASN1Type::Sequence(SequenceOrSet {
                     extensible: None,
+                    components_of: vec![],
                     constraints: vec![],
                     members: vec![
                         SequenceOrSetMember {
@@ -720,5 +729,56 @@ mod tests {
                 tag: None
             }
         )
+    }
+
+    
+
+    #[test]
+    fn parses_attr() {
+        // ATTRIBUTE ::= CLASS {
+        //     &derivation               ATTRIBUTE OPTIONAL,
+        //     &Type                     OPTIONAL, -- either &Type or &derivation required 
+        //     &equality-match           MATCHING-RULE OPTIONAL,
+        //     &ordering-match           MATCHING-RULE OPTIONAL,
+        //     &substrings-match         MATCHING-RULE OPTIONAL,
+        //     &single-valued            BOOLEAN DEFAULT FALSE,
+        //     &collective               BOOLEAN DEFAULT FALSE,
+        //     &dummy                    BOOLEAN DEFAULT FALSE,
+        //     -- operational extensions 
+        //     &no-user-modification     BOOLEAN DEFAULT FALSE,
+        //     &usage                    AttributeUsage DEFAULT userApplications,
+        //     &ldapSyntax               SYNTAX-NAME.&id OPTIONAL,
+        //     &ldapName                 SEQUENCE SIZE(1..MAX) OF UTF8String OPTIONAL,
+        //     &ldapDesc                 UTF8String OPTIONAL,
+        //     &obsolete                 BOOLEAN DEFAULT FALSE,
+        //     &id                       OBJECT IDENTIFIER UNIQUE }
+        //   WITH SYNTAX {
+        //     [SUBTYPE OF               &derivation]
+        //     [WITH SYNTAX              &Type]
+        //     [EQUALITY MATCHING RULE   &equality-match]
+        //     [ORDERING MATCHING RULE   &ordering-match]
+        //     [SUBSTRINGS MATCHING RULE &substrings-match]
+        //     [SINGLE VALUE             &single-valued]
+        //     [COLLECTIVE               &collective]
+        //     [DUMMY                    &dummy]
+        //     [NO USER MODIFICATION     &no-user-modification]
+        //     [USAGE                    &usage]
+        //     [LDAP-SYNTAX              &ldapSyntax]
+        //     [LDAP-NAME                &ldapName]
+        //     [LDAP-DESC                &ldapDesc]
+        //     [OBSOLETE                 &obsolete]
+        //     ID                        &id }
+
+        // dn SYNTAX-NAME ::= {
+        //     LDAP-DESC         "DN"
+        //     DIRECTORY SYNTAX  DistinguishedName
+        //     ID                id-lsx-dn }
+
+        println!("{:#?}", top_level_information_object_declaration(r#"namingContexts ATTRIBUTE ::= {
+            WITH SYNTAX              DistinguishedName
+            USAGE                    dSAOperation
+            LDAP-SYNTAX              dn
+            LDAP-NAME                {"namingContexts"}
+            ID                       id-lat-namingContexts }"#))
     }
 }

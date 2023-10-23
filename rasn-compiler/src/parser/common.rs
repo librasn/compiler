@@ -167,14 +167,20 @@ pub fn all_value<'a>(input: &'a str) -> IResult<&'a str, ASN1Value> {
 }
 
 pub fn asn_tag<'a>(input: &'a str) -> IResult<&'a str, AsnTag> {
-    into(in_brackets(pair(
-        opt(skip_ws_and_comments(alt((
-            tag(PRIVATE),
-            tag(APPLICATION),
-            tag(UNIVERSAL),
+    into(pair(
+        in_brackets(pair(
+            opt(skip_ws_and_comments(alt((
+                tag(PRIVATE),
+                tag(APPLICATION),
+                tag(UNIVERSAL),
+            )))),
+            skip_ws_and_comments(u64),
+        )),
+        skip_ws_and_comments(opt(alt((
+            value(TaggingEnvironment::Explicit, tag(EXPLICIT)),
+            value(TaggingEnvironment::Implicit, tag(IMPLICIT)),
         )))),
-        skip_ws_and_comments(u64),
-    )))(input)
+    ))(input)
 }
 
 pub fn range_seperator<'a>(input: &'a str) -> IResult<&'a str, RangeSeperator> {

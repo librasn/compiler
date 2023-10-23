@@ -9,7 +9,7 @@ use nom::{
 
 use crate::intermediate::*;
 
-use super::{common::optional_comma, constraint::constraint, *, sequence::sequence_or_set_member};
+use super::{common::optional_comma, constraint::constraint, sequence::sequence_component, *};
 
 /// Tries to parse an ASN1 SET
 ///
@@ -28,12 +28,12 @@ pub fn set<'a>(input: &'a str) -> IResult<&'a str, ASN1Type> {
             pair(
                 in_braces(tuple((
                     many0(terminated(
-                        skip_ws_and_comments(sequence_or_set_member),
+                        skip_ws_and_comments(sequence_component),
                         optional_comma,
                     )),
                     opt(terminated(extension_marker, opt(char(COMMA)))),
                     opt(many0(terminated(
-                        skip_ws_and_comments(sequence_or_set_member),
+                        skip_ws_and_comments(sequence_component),
                         optional_comma,
                     ))),
                 ))),
@@ -45,5 +45,4 @@ pub fn set<'a>(input: &'a str) -> IResult<&'a str, ASN1Type> {
 }
 
 #[cfg(test)]
-mod tests {
-    }
+mod tests {}

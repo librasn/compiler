@@ -129,7 +129,7 @@ pub fn generate_character_string(tld: ToplevelTypeDeclaration) -> Result<String,
         Ok(char_string_template(
             format_comments(&tld.comments),
             to_rust_title_case(&tld.name),
-            string_type(&char_str.r#type),
+            string_type(&char_str.r#type)?,
             format_range_annotations(false, &char_str.constraints)?,
             format_alphabet_annotations(char_str.r#type, &char_str.constraints)?,
             format_tag(tld.tag.as_ref(), String::new()),
@@ -144,7 +144,8 @@ pub fn generate_character_string(tld: ToplevelTypeDeclaration) -> Result<String,
 }
 
 pub fn generate_boolean(tld: ToplevelTypeDeclaration) -> Result<String, GeneratorError> {
-    if let ASN1Type::Boolean = tld.r#type {
+    /// TODO: process boolean constraints
+    if let ASN1Type::Boolean(_) = tld.r#type {
         Ok(boolean_template(
             format_comments(&tld.comments),
             to_rust_title_case(&tld.name),
@@ -374,42 +375,46 @@ pub fn generate_sequence_or_set(tld: ToplevelTypeDeclaration) -> Result<String, 
     }
 }
 
-pub fn generate_sequence_of(tld: ToplevelTypeDeclaration) -> Result<String, GeneratorError> {
-    if let ASN1Type::SequenceOf(ref seq_of) = tld.r#type {
-        let name = to_rust_title_case(&tld.name);
-        let anonymous_item = match seq_of.r#type.as_ref() {
-            ASN1Type::ElsewhereDeclaredType(_) => None,
-            n => Some(generate(ToplevelDeclaration::Type(
-                ToplevelTypeDeclaration {
-                    parameterization: None,
-                    comments: " Anonymous SEQUENCE OF member ".into(),
-                    name: String::from("Anonymous") + &name,
-                    r#type: n.clone(),
-                    tag: None,
-                    index: None
-                },
-            ))?),
+pub fn generate_sequence_or_set_of(tld: ToplevelTypeDeclaration) -> Result<String, GeneratorError> {
+    let (is_set_of, seq_or_set_of) = match &tld.r#type {
+        ASN1Type::SetOf(se_of) => (true, se_of),
+        ASN1Type::SequenceOf(se_of) => (false, se_of),
+        _ => {
+            return Err(GeneratorError::new(
+                Some(ToplevelDeclaration::Type(tld)),
+                "Expected SEQUENCE OF top-level declaration",
+                GeneratorErrorType::Asn1TypeMismatch,
+            ))
         }
-        .unwrap_or_default();
-        let member_type = match seq_of.r#type.as_ref() {
-            ASN1Type::ElsewhereDeclaredType(d) => to_rust_title_case(&d.identifier),
-            _ => String::from("Anonymous") + &name,
-        };
-        Ok(sequence_of_template(
-            format_comments(&tld.comments),
-            name,
-            anonymous_item,
-            member_type,
-            format_range_annotations(true, &seq_of.constraints)?,
-            format_tag(tld.tag.as_ref(), String::new()),
-        ))
-    } else {
-        Err(GeneratorError::new(
-            Some(ToplevelDeclaration::Type(tld)),
-            "Expected SEQUENCE OF top-level declaration",
-            GeneratorErrorType::Asn1TypeMismatch,
-        ))
+    };
+    let name = to_rust_title_case(&tld.name);
+    let anonymous_item = match seq_or_set_of.r#type.as_ref() {
+        ASN1Type::ElsewhereDeclaredType(_) => None,
+        n => Some(generate(ToplevelDeclaration::Type(
+            ToplevelTypeDeclaration {
+                parameterization: None,
+                comments: format!(" Anonymous {} OF member ", if is_set_of { "SET" } else { "SEQUENCE" }),
+                name: String::from("Anonymous") + &name,
+                r#type: n.clone(),
+                tag: None,
+                index: None,
+            },
+        ))?),
     }
+    .unwrap_or_default();
+    let member_type = match seq_or_set_of.r#type.as_ref() {
+        ASN1Type::ElsewhereDeclaredType(d) => to_rust_title_case(&d.identifier),
+        _ => String::from("Anonymous") + &name,
+    };
+    Ok(sequence_or_set_of_template(
+        is_set_of,
+        format_comments(&tld.comments),
+        name,
+        anonymous_item,
+        member_type,
+        format_range_annotations(true, &seq_or_set_of.constraints)?,
+        format_tag(tld.tag.as_ref(), String::new()),
+    ))
 }
 
 //     fn generate_information_object_set(

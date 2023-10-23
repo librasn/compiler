@@ -14,7 +14,7 @@ use super::{
     asn1_type, asn1_value,
     common::{
         default, extension_marker, identifier, in_braces, in_brackets, optional_comma,
-        optional_marker, skip_ws, skip_ws_and_comments, uppercase_identifier,
+        optional_marker, skip_ws_and_comments, uppercase_identifier,
     },
     constraint::constraint,
 };
@@ -34,7 +34,8 @@ use super::{
 /// WITH SYNTAX {&Type IDENTIFIED BY &id}
 /// ```
 pub fn type_identifier<'a>(input: &'a str) -> IResult<&'a str, InformationObjectClass> {
-    skip_ws_and_comments(value(InformationObjectClass {
+    skip_ws_and_comments(value(
+        InformationObjectClass {
             fields: vec![
                 InformationObjectClassField {
                     identifier: ObjectFieldIdentifier::SingleValue("id".into()),
@@ -106,7 +107,7 @@ pub fn information_object_field_reference<'a>(
             char(DOT),
             skip_ws_and_comments(object_field_identifier),
         ))),
-        constraint,
+        opt(constraint),
     )))(input)
 }
 
@@ -146,10 +147,10 @@ fn custom_syntax_information_object<'a>(
     map(
         skip_ws_and_comments(many1(skip_ws_and_comments(alt((
             value(SyntaxApplication::Comma, char(COMMA)),
-            map(syntax_literal, |m| SyntaxApplication::Literal(m.into())),
-            map(object_set, |m| SyntaxApplication::ObjectSetDeclaration(m)),
             map(asn1_type, |m| SyntaxApplication::TypeReference(m)),
             map(asn1_value, |m| SyntaxApplication::ValueReference(m)),
+            map(object_set, |m| SyntaxApplication::ObjectSetDeclaration(m)),
+            map(syntax_literal, |m| SyntaxApplication::Literal(m.into())),
         ))))),
         |m| InformationObjectFields::CustomSyntax(m),
     )(input)
@@ -242,11 +243,14 @@ fn syntax_literal<'a>(input: &'a str) -> IResult<&'a str, &'a str> {
 
 #[cfg(test)]
 mod tests {
-    use crate::intermediate::{information_object::*, types::*, *};
+    use std::vec;
 
-    use crate::parser::information_object_class::{
-        information_object_class, information_object_field_reference, object_set,
-    };
+    use crate::intermediate::types::*;
+
+    use crate::parser::information_object_class::{information_object_class, object_set};
+    use crate::parser::top_level_type_declaration;
+
+    use super::*;
 
     #[test]
     fn parses_information_object_class() {
@@ -349,7 +353,7 @@ mod tests {
     }
 
     #[test]
-    fn parses_information_object_with_custom_syntax() {
+    fn parses_information_object_class_with_custom_syntax() {
         assert_eq!(
             information_object_class(
                 r#"CLASS{
@@ -392,6 +396,44 @@ mod tests {
                         ))
                     ]
                 })
+            }
+        )
+    }
+
+    #[test]
+    fn parses_information_object_with_custom_syntax() {
+        println!(
+            "{:?}",
+            information_object_class(
+                r#"CLASS {&id    BilateralDomain UNIQUE,
+            &Type  
+}WITH SYNTAX {&Type,
+     IDENTIFIED BY &id
+}"#
+            )
+            .unwrap()
+        )
+    }
+
+    #[test]
+    fn parses_top_level_information_object_field_ref() {
+        assert_eq!(
+            top_level_type_declaration(r#"AttributeValue ::= OPEN.&Type"#)
+                .unwrap()
+                .1,
+            ToplevelTypeDeclaration {
+                comments: "".into(),
+                tag: None,
+                name: "AttributeValue".into(),
+                r#type: ASN1Type::InformationObjectFieldReference(
+                    InformationObjectFieldReference {
+                        class: "OPEN".into(),
+                        field_path: vec![ObjectFieldIdentifier::MultipleValue("&Type".into())],
+                        constraints: vec![]
+                    }
+                ),
+                parameterization: None,
+                index: None
             }
         )
     }

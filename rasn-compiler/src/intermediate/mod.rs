@@ -15,7 +15,11 @@ pub mod parameterization;
 pub mod types;
 pub mod utils;
 
-use std::{collections::BTreeMap, rc::Rc};
+use std::{
+    collections::BTreeMap,
+    ops::{Add, AddAssign},
+    rc::Rc,
+};
 
 use constraints::Constraint;
 use error::{GrammarError, GrammarErrorType};
@@ -68,8 +72,8 @@ pub const SEQUENCE: &'static str = "SEQUENCE";
 pub const OF: &'static str = "OF";
 pub const ALL: &'static str = "ALL";
 pub const SET: &'static str = "SET";
-pub const SET_OF: &'static str = "SET OF";
 pub const OBJECT_IDENTIFIER: &'static str = "OBJECT IDENTIFIER";
+pub const COMPONENTS_OF: &'static str = "COMPONENTS OF";
 
 // Tagging tokens
 pub const UNIVERSAL: &'static str = "UNIVERSAL";
@@ -231,11 +235,22 @@ impl From<&str> for EncodingReferenceDefault {
     }
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum TaggingEnvironment {
     Automatic,
     Implicit,
     Explicit,
+}
+
+impl Add<&TaggingEnvironment> for &TaggingEnvironment {
+    type Output = TaggingEnvironment;
+
+    fn add(self, rhs: &TaggingEnvironment) -> Self::Output {
+        match (self, rhs) {
+            (t, TaggingEnvironment::Automatic) => *t,
+            (_, t) => *t,
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -254,12 +269,22 @@ pub enum With {
 pub struct Import {
     pub types: Vec<String>,
     pub origin_name: String,
-    pub origin_identifier: ObjectIdentifierValue,
+    pub origin_identifier: Option<ObjectIdentifierValue>,
     pub with: Option<With>,
 }
 
-impl From<(Vec<&str>, (&str, ObjectIdentifierValue, Option<&str>))> for Import {
-    fn from(value: (Vec<&str>, (&str, ObjectIdentifierValue, Option<&str>))) -> Self {
+impl
+    From<(
+        Vec<&str>,
+        (&str, Option<ObjectIdentifierValue>, Option<&str>),
+    )> for Import
+{
+    fn from(
+        value: (
+            Vec<&str>,
+            (&str, Option<ObjectIdentifierValue>, Option<&str>),
+        ),
+    ) -> Self {
         Self {
             types: value.0.into_iter().map(|s| String::from(s)).collect(),
             origin_name: value.1 .0.into(),
@@ -330,18 +355,29 @@ impl ModuleReference {
             // =====================================================
             "#,
             name = self.name.clone(),
-            oid = self.module_identifier.as_ref().map(|oid| {
-                match oid {
-                    DefinitiveIdentifier::DefinitiveOID(id) | DefinitiveIdentifier::DefinitiveOIDandIRI { oid: id, iri: _ } => {
-                        format!("{{ {} }}", id.0.iter().map(|arc| match (arc.name.clone(), arc.number) {
-                            (Some(name), Some(no)) => format!("{name}({no})"),
-                            (Some(name), None) => format!("{name}"),
-                            (None, Some(no)) => format!("{no}"),
-                            _ => Default::default()
-                        }).collect::<Vec<String>>().join(" "))
+            oid = self
+                .module_identifier
+                .as_ref()
+                .map(|oid| {
+                    match oid {
+                        DefinitiveIdentifier::DefinitiveOID(id)
+                        | DefinitiveIdentifier::DefinitiveOIDandIRI { oid: id, iri: _ } => {
+                            format!(
+                                "{{ {} }}",
+                                id.0.iter()
+                                    .map(|arc| match (arc.name.clone(), arc.number) {
+                                        (Some(name), Some(no)) => format!("{name}({no})"),
+                                        (Some(name), None) => format!("{name}"),
+                                        (None, Some(no)) => format!("{no}"),
+                                        _ => Default::default(),
+                                    })
+                                    .collect::<Vec<String>>()
+                                    .join(" ")
+                            )
+                        }
                     }
-                }
-            }).unwrap_or_default()
+                })
+                .unwrap_or_default()
         )
     }
 }
@@ -442,26 +478,31 @@ pub enum ToplevelDeclaration {
 impl ToplevelDeclaration {
     pub fn set_index(&mut self, module_reference: Rc<ModuleReference>, item_no: usize) {
         match self {
-            ToplevelDeclaration::Type(ref mut t) => { t.index = Some((module_reference, item_no)); },
-            ToplevelDeclaration::Value(ref mut v) =>  { v.index = Some((module_reference, item_no)); },
-            ToplevelDeclaration::Information(ref mut i) =>  { i.index = Some((module_reference, item_no)); },
+            ToplevelDeclaration::Type(ref mut t) => {
+                t.index = Some((module_reference, item_no));
+            }
+            ToplevelDeclaration::Value(ref mut v) => {
+                v.index = Some((module_reference, item_no));
+            }
+            ToplevelDeclaration::Information(ref mut i) => {
+                i.index = Some((module_reference, item_no));
+            }
         }
     }
 
     pub fn get_index(&self) -> Option<&(Rc<ModuleReference>, usize)> {
         match self {
             ToplevelDeclaration::Type(ref t) => t.index.as_ref(),
-            ToplevelDeclaration::Value(ref v) =>  v.index.as_ref(),
-            ToplevelDeclaration::Information(ref i) =>  i.index.as_ref(),
+            ToplevelDeclaration::Value(ref v) => v.index.as_ref(),
+            ToplevelDeclaration::Information(ref i) => i.index.as_ref(),
         }
     }
-
 
     pub fn apply_tagging_environment(&mut self, environment: &TaggingEnvironment) {
         match (environment, self) {
             (env, ToplevelDeclaration::Type(ty)) => {
                 ty.tag = ty.tag.as_ref().map(|t| AsnTag {
-                    environment: env.clone(),
+                    environment: env + &t.environment,
                     tag_class: t.tag_class,
                     id: t.id,
                 });
@@ -469,7 +510,7 @@ impl ToplevelDeclaration {
                     ASN1Type::Sequence(s) | ASN1Type::Set(s) => {
                         s.members.iter_mut().for_each(|m| {
                             m.tag = m.tag.as_ref().map(|t| AsnTag {
-                                environment: env.clone(),
+                                environment: env + &t.environment,
                                 tag_class: t.tag_class,
                                 id: t.id,
                             });
@@ -477,7 +518,7 @@ impl ToplevelDeclaration {
                     }
                     ASN1Type::Choice(c) => c.options.iter_mut().for_each(|o| {
                         o.tag = o.tag.as_ref().map(|t| AsnTag {
-                            environment: env.clone(),
+                            environment: env + &t.environment,
                             tag_class: t.tag_class,
                             id: t.id,
                         });
@@ -666,7 +707,7 @@ pub struct ToplevelValueDeclaration {
     pub name: String,
     pub type_name: String,
     pub value: ASN1Value,
-    pub index: Option<(Rc<ModuleReference>, usize)>
+    pub index: Option<(Rc<ModuleReference>, usize)>,
 }
 
 impl From<(Vec<&str>, &str, &str, ASN1Value)> for ToplevelValueDeclaration {
@@ -676,7 +717,7 @@ impl From<(Vec<&str>, &str, &str, ASN1Value)> for ToplevelValueDeclaration {
             name: value.1.into(),
             type_name: value.2.into(),
             value: value.3,
-            index: None
+            index: None,
         }
     }
 }
@@ -688,7 +729,7 @@ pub struct ToplevelTypeDeclaration {
     pub name: String,
     pub r#type: ASN1Type,
     pub parameterization: Option<Parameterization>,
-    pub index: Option<(Rc<ModuleReference>, usize)>
+    pub index: Option<(Rc<ModuleReference>, usize)>,
 }
 
 impl
@@ -713,7 +754,7 @@ impl
             parameterization: value.2,
             r#type: value.3 .1,
             tag: value.3 .0,
-            index: None
+            index: None,
         }
     }
 }
@@ -724,7 +765,7 @@ impl
 #[derive(Debug, Clone, PartialEq)]
 pub enum ASN1Type {
     Null,
-    Boolean,
+    Boolean(Boolean),
     Integer(Integer),
     Real(Real),
     BitString(BitString),
@@ -733,12 +774,13 @@ pub enum ASN1Type {
     Enumerated(Enumerated),
     Choice(Choice),
     Sequence(SequenceOrSet),
-    SequenceOf(SequenceOf),
+    SequenceOf(SequenceOrSetOf),
     Set(SequenceOrSet),
-    // SetOf,
+    SetOf(SequenceOrSetOf),
     GeneralizedTime(GeneralizedTime),
     UTCTime(UTCTime),
     ElsewhereDeclaredType(DeclarationElsewhere),
+    ChoiceSelectionType(ChoiceSelectionType),
     ObjectIdentifier(ObjectIdentifier),
     InformationObjectFieldReference(InformationObjectFieldReference),
     EmbeddedPdv,
@@ -761,6 +803,115 @@ impl ASN1Type {
         }
     }
 
+    pub fn has_choice_selection_type(&self) -> bool {
+        match self {
+            ASN1Type::ChoiceSelectionType(_) => true,
+            ASN1Type::Sequence(s) | ASN1Type::Set(s) => s
+                .members
+                .iter()
+                .map(|m| m.r#type.has_choice_selection_type())
+                .fold(false, |acc, b| acc || b),
+            ASN1Type::Choice(c) => c
+                .options
+                .iter()
+                .map(|o| o.r#type.has_choice_selection_type())
+                .fold(false, |acc, b| acc || b),
+            ASN1Type::SequenceOf(s) | ASN1Type::SetOf(s) => s.r#type.has_choice_selection_type(),
+            _ => false,
+        }
+    }
+
+    pub fn link_choice_selection_type(
+        &mut self,
+        tlds: &BTreeMap<String, ToplevelDeclaration>,
+    ) -> Result<(), GrammarError> {
+        match self {
+            ASN1Type::ChoiceSelectionType(c) => {
+                if let Some(ToplevelDeclaration::Type(parent)) = tlds.get(&c.choice_name) {
+                    *self = parent.r#type.clone();
+                    Ok(())
+                } else {
+                    Err(GrammarError {
+                        details: format!(
+                            "Could not find Choice {} of selection type.",
+                            c.choice_name
+                        ),
+                        kind: GrammarErrorType::LinkerError,
+                    })
+                }
+            }
+            ASN1Type::Sequence(s) | ASN1Type::Set(s) => s
+                .members
+                .iter_mut()
+                .map(|m| m.r#type.link_choice_selection_type(tlds))
+                .collect::<Result<(), _>>(),
+            ASN1Type::Choice(c) => c
+                .options
+                .iter_mut()
+                .map(|o: &mut ChoiceOption| o.r#type.link_choice_selection_type(tlds))
+                .collect::<Result<(), _>>(),
+            ASN1Type::SequenceOf(s) | ASN1Type::SetOf(s) => {
+                s.r#type.link_choice_selection_type(tlds)
+            }
+            _ => Ok(()),
+        }
+    }
+
+    pub fn contains_components_of_notation(&self) -> bool {
+        match self {
+            ASN1Type::Choice(c) => c.options.iter().fold(false, |acc, o| {
+                acc || o.r#type.contains_components_of_notation()
+            }),
+            ASN1Type::Set(s) | ASN1Type::Sequence(s) => {
+                !s.components_of.is_empty()
+                    || s.members.iter().fold(false, |acc, m| {
+                        acc || m.r#type.contains_components_of_notation()
+                    })
+            }
+            ASN1Type::SequenceOf(so) => so.r#type.contains_components_of_notation(),
+            _ => false,
+        }
+    }
+
+    pub fn link_components_of_notation(
+        &mut self,
+        tlds: &BTreeMap<String, ToplevelDeclaration>,
+    ) -> bool {
+        match self {
+            ASN1Type::Choice(c) => c.options.iter_mut().fold(false, |acc, o| {
+                acc || o.r#type.link_components_of_notation(tlds)
+            }),
+            ASN1Type::Set(s) | ASN1Type::Sequence(s) => {
+                let mut member_linking = s.members.iter_mut().fold(false, |acc, m| {
+                    acc || m.r#type.link_components_of_notation(tlds)
+                });
+                // TODO: properly link components of in extensions
+                for comp_link in &s.components_of {
+                    if let Some(ToplevelDeclaration::Type(linked)) = tlds.get(comp_link) {
+                        if let ASN1Type::Sequence(linked_seq) = &linked.r#type {
+                            linked_seq
+                                .members
+                                .iter()
+                                .enumerate()
+                                .for_each(|(index, member)| {
+                                    if index < linked_seq.extensible.unwrap_or(usize::MAX) {
+                                        if let Some(index_of_first_ext) = s.extensible {
+                                            s.extensible = Some(index_of_first_ext + 1)
+                                        }
+                                        s.members.push(member.clone());
+                                    }
+                                });
+                            member_linking = true;
+                        }
+                    }
+                }
+                member_linking
+            }
+            ASN1Type::SequenceOf(so) => so.r#type.link_components_of_notation(tlds),
+            _ => false,
+        }
+    }
+
     pub fn link_constraint_reference(
         &mut self,
         name: &String,
@@ -768,7 +919,11 @@ impl ASN1Type {
     ) -> bool {
         match self {
             ASN1Type::Null => false,
-            ASN1Type::Boolean => false,
+            ASN1Type::Boolean(b) => b
+                .constraints
+                .iter_mut()
+                .map(|c| c.link_cross_reference(name, tlds))
+                .fold(false, |acc, b| acc || b),
             ASN1Type::ObjectIdentifier(o) => o
                 .constraints
                 .iter_mut()
@@ -856,7 +1011,7 @@ impl ASN1Type {
     pub fn contains_constraint_reference(&self) -> bool {
         match self {
             ASN1Type::Null => false,
-            ASN1Type::Boolean => false,
+            ASN1Type::Boolean(b) => b.constraints.iter().any(|c| c.has_cross_reference()),
             ASN1Type::ObjectIdentifier(o) => o.constraints.iter().any(|c| c.has_cross_reference()),
             ASN1Type::Integer(i) => i.constraints.iter().any(|c| c.has_cross_reference()),
             ASN1Type::BitString(b) => b.constraints.iter().any(|c| c.has_cross_reference()),
@@ -932,6 +1087,7 @@ impl ASN1Type {
             ASN1Type::Sequence(s) => ASN1Type::Sequence(SequenceOrSet {
                 extensible: s.extensible,
                 constraints: s.constraints,
+                components_of: s.components_of,
                 members: s
                     .members
                     .into_iter()
@@ -980,29 +1136,47 @@ impl ASN1Type {
             _ => false,
         }
     }
-}
 
-impl ToString for ASN1Type {
-    fn to_string(&self) -> String {
+    pub fn as_string(&self) -> Result<String, GrammarError> {
         match self {
-            ASN1Type::Null => "Asn1Null".to_owned(),
-            ASN1Type::Boolean => "bool".to_owned(),
-            ASN1Type::Integer(i) => i.type_token(),
-            ASN1Type::Real(_) => "f64".to_owned(),
-            ASN1Type::BitString(_) => "BitVec".to_owned(),
-            ASN1Type::OctetString(_) => "Bytes".to_owned(),
-            ASN1Type::CharacterString(_) => "String".to_owned(),
-            ASN1Type::Enumerated(_) => todo!(),
-            ASN1Type::Choice(_) => todo!(),
-            ASN1Type::Sequence(_) => todo!(),
-            ASN1Type::SequenceOf(_) => todo!(),
-            ASN1Type::ObjectIdentifier(_) => todo!(),
-            ASN1Type::Set(_) => todo!(),
-            ASN1Type::ElsewhereDeclaredType(e) => e.identifier.clone(),
+            ASN1Type::Null => Ok("Asn1Null".to_owned()),
+            ASN1Type::Boolean(_) => Ok("bool".to_owned()),
+            ASN1Type::Integer(i) => Ok(i.type_token()),
+            ASN1Type::Real(_) => Ok("f64".to_owned()),
+            ASN1Type::BitString(_) => Ok("BitVec".to_owned()),
+            ASN1Type::OctetString(_) => Ok("Bytes".to_owned()),
+            ASN1Type::CharacterString(_) => Ok("String".to_owned()),
+            ASN1Type::Enumerated(_) => Err(GrammarError {
+                kind: GrammarErrorType::NotYetInplemented,
+                details: "Enumerated values are currently unsupported!".into(),
+            }),
+            ASN1Type::Choice(_) => Err(GrammarError {
+                kind: GrammarErrorType::NotYetInplemented,
+                details: "Choice values are currently unsupported!".into(),
+            }),
+            ASN1Type::Sequence(_) => Err(GrammarError {
+                kind: GrammarErrorType::NotYetInplemented,
+                details: "Sequence values are currently unsupported!".into(),
+            }),
+            ASN1Type::SetOf(so) | ASN1Type::SequenceOf(so) => {
+                Ok(format!("SequenceOf<{}>", so.r#type.as_string()?))
+            }
+            ASN1Type::ObjectIdentifier(_) => Err(GrammarError {
+                kind: GrammarErrorType::NotYetInplemented,
+                details: "Object Identifier values are currently unsupported!".into(),
+            }),
+            ASN1Type::Set(_) => Err(GrammarError {
+                kind: GrammarErrorType::NotYetInplemented,
+                details: "Set values are currently unsupported!".into(),
+            }),
+            ASN1Type::ElsewhereDeclaredType(e) => Ok(e.identifier.clone()),
             ASN1Type::InformationObjectFieldReference(_) => todo!(),
-            ASN1Type::GeneralizedTime(_) => "GeneralizedTime".to_owned(),
-            ASN1Type::UTCTime(_) => "UtcTime".to_owned(),
-            ASN1Type::EmbeddedPdv | ASN1Type::External => "Any".to_owned()
+            ASN1Type::GeneralizedTime(_) => Ok("GeneralizedTime".to_owned()),
+            ASN1Type::UTCTime(_) => Ok("UtcTime".to_owned()),
+            ASN1Type::EmbeddedPdv | ASN1Type::External => Ok("Any".to_owned()),
+            ASN1Type::ChoiceSelectionType(c) => {
+                Ok(format!("{}::{}", c.choice_name, c.selected_option))
+            }
         }
     }
 }
@@ -1080,7 +1254,8 @@ pub enum ASN1Value {
     Null,
     Boolean(bool),
     Choice(String, Box<ASN1Value>),
-    Sequence(Vec<(String, Box<ASN1Value>)>),
+    SequenceOrSet(Vec<(String, Box<ASN1Value>)>),
+    SequenceOrSetOf(Vec<ASN1Value>),
     Integer(i128),
     Real(f64),
     String(String),
@@ -1232,7 +1407,7 @@ impl ASN1Value {
                     })
                 }
             }
-            ASN1Value::Sequence(fields) => {
+            ASN1Value::SequenceOrSet(fields) => {
                 if let Some(ty_n) = type_name {
                     let stringified_fields = fields
                         .iter()
@@ -1290,6 +1465,13 @@ impl ASN1Value {
                     details: format!("A type name is needed to stringify time value {:?}", self),
                     kind: GrammarErrorType::UnpackingError,
                 }),
+            ASN1Value::SequenceOrSetOf(seq) => Ok(format!(
+                "&'static [{}].into_iter().collect()",
+                seq.iter()
+                    .map(|v| v.value_as_string(None))
+                    .collect::<Result<Vec<String>, _>>()?
+                    .join(", ")
+            )),
         }
     }
 }
@@ -1323,7 +1505,7 @@ impl DeclarationElsewhere {
             name: _,
             r#type: ASN1Type::ElsewhereDeclaredType(e),
             parameterization: _,
-            index: _
+            index: _,
         })) = tlds.get(&self.identifier)
         {
             e.find_root_id(tlds)
@@ -1350,9 +1532,9 @@ pub struct AsnTag {
     pub id: u64,
 }
 
-impl From<(Option<&str>, u64)> for AsnTag {
-    fn from(value: (Option<&str>, u64)) -> Self {
-        let tag_class = match value.0 {
+impl From<((Option<&str>, u64), Option<TaggingEnvironment>)> for AsnTag {
+    fn from(value: ((Option<&str>, u64), Option<TaggingEnvironment>)) -> Self {
+        let tag_class = match value.0 .0 {
             Some("APPLICATION") => TagClass::Application,
             Some("UNIVERSAL") => TagClass::Universal,
             Some("PRIVATE") => TagClass::Private,
@@ -1360,8 +1542,8 @@ impl From<(Option<&str>, u64)> for AsnTag {
         };
         AsnTag {
             tag_class,
-            id: value.1,
-            environment: TaggingEnvironment::Automatic,
+            id: value.0 .1,
+            environment: value.1.unwrap_or(TaggingEnvironment::Automatic),
         }
     }
 }

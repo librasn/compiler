@@ -10,7 +10,7 @@ use nom::{
     branch::alt,
     bytes::complete::tag,
     character::complete::u128,
-    combinator::{into, map, opt, value},
+    combinator::{into, map, opt},
     multi::many1,
     sequence::{pair, preceded},
     IResult,

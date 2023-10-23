@@ -18,11 +18,42 @@ pub fn choice_value<'a>(input: &'a str) -> IResult<&'a str, ASN1Value> {
     )(input)
 }
 
+/// Tries to parse the named alternative an ASN1 CHOICE
+///
+/// *`input` - string slice to be matched against
+///
+/// `selection_type_choice` will try to match a CHOICE selection type in the `input` string.
+/// ```ignore
+/// // An example of selection type notation for the following CHOICE...
+/// Example-choice ::= CHOICE {
+///         alt1 Type1,
+///         alt2 Type2,
+///         alt3 Type3
+/// }
+/// // ... is the following assignment
+/// Type-3-alias ::= alt3 < Example-choice
+/// ```
+/// If the match succeeds, the parser will consume the match and return the remaining string
+/// and a wrapped `Choice` value representing the ASN1 declaration. If the defined CHOICE
+/// contains anonymous members, these nested members will be represented as
+/// structs within the same global scope.
+/// If the match fails, the parser will not consume the input and will return an error.
+pub fn selection_type_choice<'a>(input: &'a str) -> IResult<&'a str, ASN1Type> {
+    map(
+        into(separated_pair(
+            skip_ws_and_comments(value_identifier),
+            skip_ws_and_comments(char(LEFT_CHEVRON)),
+            skip_ws_and_comments(title_case_identifier),
+        )),
+        |st| ASN1Type::ChoiceSelectionType(st),
+    )(input)
+}
+
 /// Tries to parse an ASN1 CHOICE
 ///
 /// *`input` - string slice to be matched against
 ///
-/// `sequence` will try to match an CHOICE declaration in the `input` string.
+/// `choice` will try to match an CHOICE declaration in the `input` string.
 /// If the match succeeds, the parser will consume the match and return the remaining string
 /// and a wrapped `Choice` value representing the ASN1 declaration. If the defined CHOICE
 /// contains anonymous members, these nested members will be represented as
@@ -62,10 +93,10 @@ fn choice_option<'a>(input: &'a str) -> IResult<&'a str, ChoiceOption> {
 
 #[cfg(test)]
 mod tests {
-    use crate::intermediate::{
-        types::{Choice, ChoiceOption},
+    use crate::{intermediate::{
+        types::{Choice, ChoiceOption, ChoiceSelectionType},
         ASN1Type,
-    };
+    }, parser::choice::selection_type_choice};
 
     use crate::parser::choice;
 
@@ -104,6 +135,19 @@ mod tests {
                     }
                 ],
                 constraints: vec![]
+            })
+        )
+    }
+
+    #[test]
+    fn parses_selection_type_choice() {
+        assert_eq!(
+            selection_type_choice("localDistinguishedName < ObjectInstance")
+                .unwrap()
+                .1,
+            ASN1Type::ChoiceSelectionType(ChoiceSelectionType {
+                choice_name: "ObjectInstance".into(),
+                selected_option: "localDistinguishedName".into()
             })
         )
     }

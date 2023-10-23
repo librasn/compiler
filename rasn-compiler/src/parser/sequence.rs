@@ -18,7 +18,7 @@ pub fn sequence_value<'a>(input: &'a str) -> IResult<&'a str, ASN1Value> {
             skip_ws_and_comments(pair(value_identifier, skip_ws_and_comments(asn1_value))),
         )),
         |fields| {
-            ASN1Value::Sequence(
+            ASN1Value::SequenceOrSet(
                 fields
                     .into_iter()
                     .map(|(id, val)| (id.to_owned(), Box::new(val)))
@@ -45,39 +45,12 @@ pub fn sequence<'a>(input: &'a str) -> IResult<&'a str, ASN1Type> {
             pair(
                 in_braces(tuple((
                     many0(terminated(
-                        skip_ws_and_comments(sequence_or_set_member),
+                        skip_ws_and_comments(sequence_component),
                         optional_comma,
                     )),
                     opt(terminated(extension_marker, opt(char(COMMA)))),
                     opt(many0(terminated(
-                        skip_ws_and_comments(alt((
-                            map(
-                                in_version_brackets(preceded(
-                                    opt(pair(
-                                        skip_ws_and_comments(i128),
-                                        skip_ws_and_comments(char(':')),
-                                    )),
-                                    skip_ws_and_comments(many1(terminated(
-                                        skip_ws_and_comments(sequence_or_set_member),
-                                        optional_comma,
-                                    ))),
-                                )),
-                                |ext_group| SequenceOrSetMember {
-                                    name: String::from("ext_group_")
-                                        + &ext_group.first().unwrap().name,
-                                    tag: None,
-                                    r#type: ASN1Type::Sequence(SequenceOrSet {
-                                        extensible: None,
-                                        constraints: vec![],
-                                        members: ext_group,
-                                    }),
-                                    default_value: None,
-                                    is_optional: false,
-                                    constraints: vec![],
-                                },
-                            ),
-                            sequence_or_set_member,
-                        ))),
+                        skip_ws_and_comments(alt((extension_group, sequence_component))),
                         optional_comma,
                     ))),
                 ))),
@@ -86,6 +59,57 @@ pub fn sequence<'a>(input: &'a str) -> IResult<&'a str, ASN1Type> {
         ),
         |m| ASN1Type::Sequence(m.into()),
     )(input)
+}
+
+fn extension_group<'a>(input: &'a str) -> IResult<&'a str, SequenceComponent> {
+    map(
+        in_version_brackets(preceded(
+            opt(pair(
+                skip_ws_and_comments(i128),
+                skip_ws_and_comments(char(':')),
+            )),
+            skip_ws_and_comments(many1(terminated(
+                skip_ws_and_comments(sequence_component),
+                optional_comma,
+            ))),
+        )),
+        |ext_group| {
+            let mut components_of = vec![];
+            let mut members = vec![];
+            for comp in ext_group {
+                match comp {
+                    SequenceComponent::Member(m) => members.push(m),
+                    SequenceComponent::ComponentsOf(c) => components_of.push(c),
+                }
+            }
+            SequenceComponent::Member(SequenceOrSetMember {
+                name: String::from("ext_group_") + &members.first().unwrap().name,
+                tag: None,
+                r#type: ASN1Type::Sequence(SequenceOrSet {
+                    components_of,
+                    extensible: None,
+                    constraints: vec![],
+                    members,
+                }),
+                default_value: None,
+                is_optional: false,
+                constraints: vec![],
+            })
+        },
+    )(input)
+}
+
+pub fn sequence_component<'a>(input: &'a str) -> IResult<&'a str, SequenceComponent> {
+    skip_ws_and_comments(alt((
+        map(
+            preceded(
+                tag(COMPONENTS_OF),
+                skip_ws_and_comments(title_case_identifier),
+            ),
+            |id| SequenceComponent::ComponentsOf(id.into()),
+        ),
+        map(sequence_or_set_member, |m| SequenceComponent::Member(m)),
+    )))(input)
 }
 
 pub fn sequence_or_set_member<'a>(input: &'a str) -> IResult<&'a str, SequenceOrSetMember> {
@@ -103,7 +127,7 @@ pub fn sequence_or_set_member<'a>(input: &'a str) -> IResult<&'a str, SequenceOr
 mod tests {
     use std::vec;
 
-    use crate::intermediate::{constraints::*, types::*, *};
+    use crate::intermediate::constraints::*;
 
     use super::*;
 
@@ -173,7 +197,7 @@ mod tests {
         .unwrap()
         .1,
         ASN1Type::Sequence(SequenceOrSet {
-            extensible: Some(1),
+            components_of: vec![],extensible: Some(1),
             constraints: vec![],
             members: vec![
                 SequenceOrSetMember {
@@ -202,6 +226,7 @@ mod tests {
             .unwrap()
             .1,
             ASN1Type::Sequence(SequenceOrSet {
+                components_of: vec![],
                 extensible: None,
                 constraints: vec![],
                 members: vec![
@@ -248,6 +273,7 @@ mod tests {
             .unwrap()
             .1,
             ASN1Type::Sequence(SequenceOrSet {
+                components_of: vec![],
                 extensible: None,
                 constraints: vec![],
                 members: vec![
@@ -307,6 +333,7 @@ mod tests {
             .unwrap()
             .1,
             ASN1Type::Sequence(SequenceOrSet {
+                components_of: vec![],
                 extensible: Some(3),
                 constraints: vec![],
                 members: vec![
@@ -366,6 +393,7 @@ mod tests {
             .unwrap()
             .1,
             ASN1Type::Sequence(SequenceOrSet {
+                components_of: vec![],
                 extensible: Some(3),
                 constraints: vec![],
                 members: vec![
@@ -390,7 +418,7 @@ mod tests {
                     SequenceOrSetMember {
                         name: "limitedQuantity".into(),
                         tag: None,
-                        r#type: ASN1Type::Boolean,
+                        r#type: ASN1Type::Boolean(Boolean { constraints: vec![] }),
                         default_value: Some(ASN1Value::Boolean(false)),
                         is_optional: true,
                         constraints: vec![],
@@ -444,6 +472,7 @@ mod tests {
             .unwrap()
             .1,
             ASN1Type::Sequence(SequenceOrSet {
+                components_of: vec![],
                 extensible: Some(1),
                 constraints: vec![],
                 members: vec![SequenceOrSetMember {
@@ -451,6 +480,7 @@ mod tests {
 
                     tag: None,
                     r#type: ASN1Type::Sequence(SequenceOrSet {
+                        components_of: vec![],
                         extensible: Some(3),
                         constraints: vec![],
                         members: vec![
@@ -470,7 +500,7 @@ mod tests {
                                 name: "this-is-annoying".into(),
 
                                 tag: None,
-                                r#type: ASN1Type::Boolean,
+                                r#type: ASN1Type::Boolean(Boolean { constraints: vec![] }),
                                 default_value: Some(ASN1Value::Boolean(true)),
                                 is_optional: true,
                                 constraints: vec![],
@@ -480,6 +510,7 @@ mod tests {
 
                                 tag: None,
                                 r#type: ASN1Type::Sequence(SequenceOrSet {
+                                    components_of: vec![],
                                     extensible: None,
                                     constraints: vec![],
                                     members: vec![SequenceOrSetMember {
@@ -529,7 +560,7 @@ mod tests {
             sequence_value("{itsaid content:0, ctx c-ctxRefNull}")
                 .unwrap()
                 .1,
-            ASN1Value::Sequence(vec![
+            ASN1Value::SequenceOrSet(vec![
                 (
                     "itsaid".into(),
                     Box::new(ASN1Value::Choice(
@@ -558,6 +589,7 @@ mod tests {
             .unwrap()
             .1,
             ASN1Type::Sequence(SequenceOrSet {
+                components_of: vec![],
                 extensible: Some(1),
                 constraints: vec![],
                 members: vec![
@@ -583,6 +615,7 @@ mod tests {
                         name: "ext_group_alternate-item-code".into(),
                         tag: None,
                         r#type: ASN1Type::Sequence(SequenceOrSet {
+                            components_of: vec![],
                             extensible: None,
                             constraints: vec![],
                             members: vec![
@@ -611,7 +644,7 @@ mod tests {
                                 SequenceOrSetMember {
                                     name: "and-another".into(),
                                     tag: None,
-                                    r#type: ASN1Type::Boolean,
+                                    r#type: ASN1Type::Boolean(Boolean { constraints: vec![] }),
                                     default_value: Some(ASN1Value::Boolean(true)),
                                     is_optional: true,
                                     constraints: vec![]
@@ -625,5 +658,52 @@ mod tests {
                 ]
             })
         )
+    }
+
+    #[test]
+    fn parses_sequence_with_components_of_notation() {
+        assert_eq!(
+            sequence(
+                r#"SEQUENCE {
+            COMPONENTS OF TypeA,
+            bilateral-information TypeB
+          }"#
+            )
+            .unwrap()
+            .1,
+            ASN1Type::Sequence(SequenceOrSet {
+                components_of: vec!["TypeA".into()],
+                extensible: None,
+                constraints: vec![],
+                members: vec![SequenceOrSetMember {
+                    name: "bilateral-information".into(),
+                    tag: None,
+                    r#type: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+                        identifier: "TypeB".into(),
+                        constraints: vec![]
+                    }),
+                    default_value: None,
+                    is_optional: false,
+                    constraints: vec![]
+                }]
+            })
+        )
+    }
+
+    #[test]
+    fn parse_x284() {
+        println!("{:?}", sequence(r#"SEQUENCE --(GRJ)
+        {
+requestSeqNum           RequestSeqNum,
+protocolIdentifier      ProtocolIdentifier,
+nonStandardData         NonStandardParameter OPTIONAL,
+gatekeeperIdentifier    GatekeeperIdentifier OPTIONAL,
+rejectReason            GatekeeperRejectReason,
+...,
+altGKInfo               AltGKInfo OPTIONAL,
+tokens                  SEQUENCE OF ClearToken OPTIONAL,
+cryptoTokens            SEQUENCE OF CryptoH323Token OPTIONAL,
+integrityCheckValue     ICV OPTIONAL
+}"#))
     }
 }

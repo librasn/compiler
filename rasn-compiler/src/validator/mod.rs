@@ -35,6 +35,16 @@ impl Validator {
                     tld.r#type = tld.r#type.resolve_class_field_reference(&self.tlds);
                     self.tlds.insert(tld.name.clone(), ToplevelDeclaration::Type(tld));
                 }
+            } else if self.has_components_of_notation(&key) {
+                if let Some(ToplevelDeclaration::Type(mut tld)) = self.tlds.remove(&key) {
+                    tld.r#type.link_components_of_notation(&self.tlds);
+                    self.tlds.insert(tld.name.clone(), ToplevelDeclaration::Type(tld));
+                }
+            } else if self.has_choice_selection_type(&key) {
+                if let Some(ToplevelDeclaration::Type(mut tld)) = self.tlds.remove(&key) {
+                    tld.r#type.link_choice_selection_type(&self.tlds)?;
+                    self.tlds.insert(tld.name.clone(), ToplevelDeclaration::Type(tld));
+                }
             } else if self.has_default_value_reference(&key) {
                 let mut tld = self.tlds.remove(&key).ok_or(ValidatorError { data_element: Some(key), details: "Could not find toplevel declaration to remove!".into(), kind: ValidatorErrorType::MissingDependency } )?;
                 if !tld.link_default_reference(&self.tlds) {
@@ -118,6 +128,28 @@ impl Validator {
             .get(key)
             .map(|t| match t {
                 ToplevelDeclaration::Type(t) => t.r#type.contains_class_field_reference(),
+                _ => false,
+            })
+            .unwrap_or(false)
+    }
+
+    fn has_choice_selection_type(&mut self, key: &String) -> bool {
+        self
+            .tlds
+            .get(key)
+            .map(|t| match t {
+                ToplevelDeclaration::Type(t) => t.r#type.has_choice_selection_type(),
+                _ => false,
+            })
+            .unwrap_or(false)
+    }
+
+    fn has_components_of_notation(&mut self, key: &String) -> bool {
+        self
+            .tlds
+            .get(key)
+            .map(|t| match t {
+                ToplevelDeclaration::Type(t) => t.r#type.contains_components_of_notation(),
                 _ => false,
             })
             .unwrap_or(false)

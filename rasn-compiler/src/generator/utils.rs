@@ -11,6 +11,8 @@ use crate::intermediate::{
 
 use crate::generator::{error::GeneratorError, generate};
 
+use super::error::GeneratorErrorType;
+
 pub struct StringifiedNameType {
     name: String,
     typ: String,
@@ -196,35 +198,8 @@ fn format_sequence_member(
     extension_annotation: &str,
 ) -> Result<(String, StringifiedNameType), GeneratorError> {
     let name = to_rust_snake_case(&member.name);
-    let (mut all_constraints, mut formatted_type_name) = match &member.r#type {
-        ASN1Type::Null => (vec![], "()".into()),
-        ASN1Type::Boolean => (vec![], "bool".into()),
-        ASN1Type::Integer(i) => {
-            let per_constraints = per_visible_range_constraints(true, &i.constraints)?;
-            (
-                i.constraints.clone(),
-                int_type_token(per_constraints.min(), per_constraints.max()).into(),
-            )
-        }
-        ASN1Type::Real(_) => (vec![], "f64".into()),
-        ASN1Type::ObjectIdentifier(o) => (o.constraints.clone(), "Oid".into()),
-        ASN1Type::BitString(b) => (b.constraints.clone(), "BitString".into()),
-        ASN1Type::GeneralizedTime(o) => (o.constraints.clone(), "GeneralizedTime".into()),
-        ASN1Type::UTCTime(o) => (o.constraints.clone(), "UtcTime".into()),
-        ASN1Type::OctetString(o) => (o.constraints.clone(), "OctetString".into()),
-        ASN1Type::CharacterString(c) => (c.constraints.clone(), string_type(&c.r#type)),
-        ASN1Type::Enumerated(_)
-        | ASN1Type::Choice(_)
-        | ASN1Type::Sequence(_)
-        | ASN1Type::SequenceOf(_)
-        | ASN1Type::Set(_) => (vec![], inner_name(&member.name, parent_name)),
-        ASN1Type::ElsewhereDeclaredType(e) => {
-            (e.constraints.clone(), to_rust_title_case(&e.identifier))
-        }
-        ASN1Type::InformationObjectFieldReference(_)
-        | ASN1Type::EmbeddedPdv
-        | ASN1Type::External => (vec![], "Any".into()),
-    };
+    let (mut all_constraints, mut formatted_type_name) =
+        constraints_and_type_name(&member.r#type, &member.name, parent_name)?;
     all_constraints.append(&mut member.constraints.clone());
     if member.is_optional && member.default_value.is_none() {
         formatted_type_name = String::from("Option<") + &formatted_type_name + ">";
@@ -298,35 +273,8 @@ fn format_choice_option(
     parent_name: &String,
     extension_annotation: &str,
 ) -> Result<String, GeneratorError> {
-    let (mut all_constraints, formatted_type_name) = match &member.r#type {
-        ASN1Type::Null => (vec![], "()".into()),
-        ASN1Type::Boolean => (vec![], "bool".into()),
-        ASN1Type::Integer(i) => {
-            let per_constraints = per_visible_range_constraints(true, &i.constraints)?;
-            (
-                i.constraints.clone(),
-                int_type_token(per_constraints.min(), per_constraints.max()).into(),
-            )
-        }
-        ASN1Type::Real(_) => (vec![], "f64".into()),
-        ASN1Type::ObjectIdentifier(o) => (o.constraints.clone(), "Oid".into()),
-        ASN1Type::BitString(b) => (b.constraints.clone(), "BitString".into()),
-        ASN1Type::OctetString(o) => (o.constraints.clone(), "OctetString".into()),
-        ASN1Type::GeneralizedTime(o) => (o.constraints.clone(), "GeneralizedTime".into()),
-        ASN1Type::UTCTime(o) => (o.constraints.clone(), "UtcTime".into()),
-        ASN1Type::CharacterString(c) => (c.constraints.clone(), string_type(&c.r#type)),
-        ASN1Type::Enumerated(_)
-        | ASN1Type::Choice(_)
-        | ASN1Type::Sequence(_)
-        | ASN1Type::SequenceOf(_)
-        | ASN1Type::Set(_) => (vec![], inner_name(&member.name, parent_name)),
-        ASN1Type::ElsewhereDeclaredType(e) => {
-            (e.constraints.clone(), to_rust_title_case(&e.identifier))
-        }
-        ASN1Type::InformationObjectFieldReference(_)
-        | ASN1Type::EmbeddedPdv
-        | ASN1Type::External => (vec![], "Any".into()),
-    };
+    let (mut all_constraints, formatted_type_name) =
+        constraints_and_type_name(&member.r#type, &member.name, parent_name)?;
     all_constraints.append(&mut member.constraints.clone());
     let range_annotations = format_range_annotations(
         matches!(member.r#type, ASN1Type::Integer(_)),
@@ -350,19 +298,69 @@ fn format_choice_option(
     ))
 }
 
-pub fn string_type(c_type: &CharacterStringType) -> String {
+fn constraints_and_type_name(
+    ty: &ASN1Type,
+    name: &String,
+    parent_name: &String,
+) -> Result<(Vec<Constraint>, String), GeneratorError> {
+    Ok(match ty {
+        ASN1Type::Null => (vec![], "()".into()),
+        ASN1Type::Boolean(b) => (b.constraints.clone(), "bool".into()),
+        ASN1Type::Integer(i) => {
+            let per_constraints = per_visible_range_constraints(true, &i.constraints)?;
+            (
+                i.constraints.clone(),
+                int_type_token(per_constraints.min(), per_constraints.max()).into(),
+            )
+        }
+        ASN1Type::Real(_) => (vec![], "f64".into()),
+        ASN1Type::ObjectIdentifier(o) => (o.constraints.clone(), "Oid".into()),
+        ASN1Type::BitString(b) => (b.constraints.clone(), "BitString".into()),
+        ASN1Type::OctetString(o) => (o.constraints.clone(), "OctetString".into()),
+        ASN1Type::GeneralizedTime(o) => (o.constraints.clone(), "GeneralizedTime".into()),
+        ASN1Type::UTCTime(o) => (o.constraints.clone(), "UtcTime".into()),
+        ASN1Type::CharacterString(c) => (c.constraints.clone(), string_type(&c.r#type)?),
+        ASN1Type::Enumerated(_)
+        | ASN1Type::Choice(_)
+        | ASN1Type::Sequence(_)
+        | ASN1Type::SequenceOf(_)
+        | ASN1Type::SetOf(_)
+        | ASN1Type::Set(_) => (vec![], inner_name(name, parent_name)),
+        ASN1Type::ElsewhereDeclaredType(e) => {
+            (e.constraints.clone(), to_rust_title_case(&e.identifier))
+        }
+        ASN1Type::InformationObjectFieldReference(_)
+        | ASN1Type::EmbeddedPdv
+        | ASN1Type::External => (vec![], "Any".into()),
+        ASN1Type::ChoiceSelectionType(_) => unreachable!()
+    })
+}
+
+pub fn string_type(c_type: &CharacterStringType) -> Result<String, GeneratorError> {
     match c_type {
-        CharacterStringType::NumericString => "NumericString".into(),
-        CharacterStringType::VisibleString => "VisibleString".into(),
-        CharacterStringType::IA5String => "Ia5String".into(),
-        CharacterStringType::TeletexString => "TeletexString".into(),
-        CharacterStringType::VideotexString => todo!(),
-        CharacterStringType::GraphicString => todo!(),
-        CharacterStringType::GeneralString => "GeneralString".into(),
-        CharacterStringType::UniversalString => todo!(),
-        CharacterStringType::UTF8String => "Utf8String".into(),
-        CharacterStringType::BMPString => "BmpString".into(),
-        CharacterStringType::PrintableString => "PrintableString".into(),
+        CharacterStringType::NumericString => Ok("NumericString".into()),
+        CharacterStringType::VisibleString => Ok("VisibleString".into()),
+        CharacterStringType::IA5String => Ok("Ia5String".into()),
+        CharacterStringType::TeletexString => Ok("TeletexString".into()),
+        CharacterStringType::VideotexString => Err(GeneratorError {
+            kind: GeneratorErrorType::NotYetInplemented,
+            details: "VideotexString is currently unsupported!".into(),
+            top_level_declaration: None,
+        }),
+        CharacterStringType::GraphicString => Err(GeneratorError {
+            kind: GeneratorErrorType::NotYetInplemented,
+            details: "GraphicString is currently unsupported!".into(),
+            top_level_declaration: None,
+        }),
+        CharacterStringType::GeneralString => Ok("GeneralString".into()),
+        CharacterStringType::UniversalString => Err(GeneratorError {
+            kind: GeneratorErrorType::NotYetInplemented,
+            details: "UniversalString is currently unsupported!".into(),
+            top_level_declaration: None,
+        }),
+        CharacterStringType::UTF8String => Ok("Utf8String".into()),
+        CharacterStringType::BMPString => Ok("BmpString".into()),
+        CharacterStringType::PrintableString => Ok("PrintableString".into()),
     }
 }
 
@@ -412,15 +410,15 @@ pub fn format_default_methods(
                         }
                     )) =>
                 {
-                    let stringified_type = member.r#type.to_string();
+                    let stringified_type = member.r#type.as_string()?;
                     (
                         format!("{stringified_type}({})", value.value_as_string(None)?),
                         stringified_type,
                     )
                 }
                 ty => (
-                    value.value_as_string(Some(&to_rust_title_case(&ty.to_string())))?,
-                    ty.to_string(),
+                    value.value_as_string(Some(&to_rust_title_case(&ty.as_string()?)))?,
+                    ty.as_string()?,
                 ),
             };
             let method_name = default_method_name(parent_name, &member.name);

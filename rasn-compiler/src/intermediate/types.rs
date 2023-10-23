@@ -1,4 +1,30 @@
+use std::vec;
+
 use super::{constraints::*, *};
+
+/// Representation of an ASN1 BOOLEAN data element
+/// with corresponding constraints
+#[derive(Debug, Clone, PartialEq)]
+pub struct Boolean {
+    pub constraints: Vec<Constraint>,
+}
+
+impl Default for Boolean {
+    fn default() -> Self {
+        Self {
+            constraints: vec![],
+        }
+    }
+}
+
+impl From<Option<Vec<Constraint>>> for Boolean {
+    fn from(value: Option<Vec<Constraint>>) -> Self {
+        Self {
+            constraints: value.unwrap_or_default()
+        }
+    }
+}
+
 
 /// Representation of an ASN1 INTEGER data element
 /// with corresponding constraints and distinguished values
@@ -196,12 +222,12 @@ impl From<(&str, Option<Vec<Constraint>>)> for CharacterString {
 /// Representation of an ASN1 SEQUENCE OF data element
 /// with corresponding constraints and element type info
 #[derive(Debug, Clone, PartialEq)]
-pub struct SequenceOf {
+pub struct SequenceOrSetOf {
     pub constraints: Vec<Constraint>,
     pub r#type: Box<ASN1Type>,
 }
 
-impl From<(Option<Vec<Constraint>>, ASN1Type)> for SequenceOf {
+impl From<(Option<Vec<Constraint>>, ASN1Type)> for SequenceOrSetOf {
     fn from(value: (Option<Vec<Constraint>>, ASN1Type)) -> Self {
         Self {
             constraints: value.0.unwrap_or(vec![]),
@@ -214,9 +240,49 @@ impl From<(Option<Vec<Constraint>>, ASN1Type)> for SequenceOf {
 /// with corresponding members and extension information
 #[derive(Debug, Clone, PartialEq)]
 pub struct SequenceOrSet {
+    pub components_of: Vec<String>,
     pub extensible: Option<usize>,
     pub constraints: Vec<Constraint>,
     pub members: Vec<SequenceOrSetMember>,
+}
+
+impl
+    From<(
+        (
+            Vec<SequenceComponent>,
+            Option<ExtensionMarker>,
+            Option<Vec<SequenceComponent>>,
+        ),
+        Option<Vec<Constraint>>,
+    )> for SequenceOrSet
+{
+    fn from(
+        mut value: (
+            (
+                Vec<SequenceComponent>,
+                Option<ExtensionMarker>,
+                Option<Vec<SequenceComponent>>,
+            ),
+            Option<Vec<Constraint>>,
+        ),
+    ) -> Self {
+        let index_of_first_extension = value.0 .0.len();
+        value.0 .0.append(&mut value.0 .2.unwrap_or(vec![]));
+        let mut components_of = vec![];
+        let mut members = vec![];
+        for comp in value.0.0 {
+            match comp {
+                SequenceComponent::Member(m) => members.push(m),
+                SequenceComponent::ComponentsOf(c) => components_of.push(c),
+            }
+        }
+        SequenceOrSet {
+            components_of,
+            constraints: value.1.unwrap_or(vec![]),
+            extensible: value.0 .1.map(|_| index_of_first_extension),
+            members,
+        }
+    }
 }
 
 impl
@@ -242,11 +308,19 @@ impl
         let index_of_first_extension = value.0 .0.len();
         value.0 .0.append(&mut value.0 .2.unwrap_or(vec![]));
         SequenceOrSet {
+            components_of: vec![],
             constraints: value.1.unwrap_or(vec![]),
             extensible: value.0 .1.map(|_| index_of_first_extension),
             members: value.0 .0,
         }
     }
+}
+
+/// Intermediate parsing type to parse COMPONENTS OF notation
+#[derive(Debug, Clone, PartialEq)]
+pub enum SequenceComponent {
+    Member(SequenceOrSetMember),
+    ComponentsOf(String)
 }
 
 /// Representation of an single ASN1 SEQUENCE member
@@ -400,5 +474,18 @@ impl From<(&str, i128)> for DistinguishedValue {
             name: value.0.into(),
             value: value.1,
         }
+    }
+}
+
+/// Representation of a ASN1 selection type as used with ASN1 CHOICEs
+#[derive(Debug, Clone, PartialEq)]
+pub struct ChoiceSelectionType {
+    pub choice_name: String,
+    pub selected_option: String,
+}
+
+impl From<(&str, &str)> for ChoiceSelectionType {
+    fn from(value: (&str, &str)) -> Self {
+        Self { choice_name: value.1.into(), selected_option: value.0.into() }
     }
 }

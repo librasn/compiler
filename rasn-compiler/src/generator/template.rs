@@ -290,7 +290,8 @@ pub fn sequence_or_set_template(
     )
 }
 
-pub fn sequence_of_template(
+pub fn sequence_or_set_of_template(
+    is_set_of: bool,
     comments: String,
     name: String,
     anonymous_item: String,
@@ -308,8 +309,9 @@ pub fn sequence_of_template(
         {anonymous_item}
 {comments}
 #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
-{rasn_annotations}pub struct {name}(pub SequenceOf<{member_type}>);
-"#
+{rasn_annotations}pub struct {name}(pub {}Of<{member_type}>);
+"#,
+if is_set_of { "Set" } else { "Sequence" }
     )
 }
 

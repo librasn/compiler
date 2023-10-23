@@ -1,6 +1,8 @@
 use core::fmt::{Display, Formatter, Result};
 use std::error::Error;
 
+use crate::intermediate::error::GrammarError;
+
 #[derive(Debug, Clone)]
 pub struct ValidatorError {
     pub data_element: Option<String>,
@@ -22,6 +24,7 @@ impl ValidatorError {
 pub enum ValidatorErrorType {
     MissingDependency,
     InvalidConstraintsError,
+    Unknown,
 }
 
 impl Error for ValidatorError {}
@@ -33,5 +36,11 @@ impl Display for ValidatorError {
             "{:?} validating parsed data element {}: {}",
             self.kind, self.data_element.as_ref().unwrap_or(&"".into()), self.details
         )
+    }
+}
+
+impl From<GrammarError> for ValidatorError {
+    fn from(value: GrammarError) -> Self {
+        Self { data_element: None, details: value.details, kind: ValidatorErrorType::Unknown }
     }
 }

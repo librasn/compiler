@@ -321,12 +321,12 @@ pub struct InformationObjectFieldReference {
     pub constraints: Vec<Constraint>,
 }
 
-impl From<(&str, Vec<ObjectFieldIdentifier>, Vec<Constraint>)> for InformationObjectFieldReference {
-    fn from(value: (&str, Vec<ObjectFieldIdentifier>, Vec<Constraint>)) -> Self {
+impl From<(&str, Vec<ObjectFieldIdentifier>, Option<Vec<Constraint>>)> for InformationObjectFieldReference {
+    fn from(value: (&str, Vec<ObjectFieldIdentifier>, Option<Vec<Constraint>>)) -> Self {
         Self {
             class: value.0.into(),
             field_path: value.1,
-            constraints: value.2,
+            constraints: value.2.unwrap_or_default(),
         }
     }
 }
