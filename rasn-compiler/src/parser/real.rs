@@ -2,7 +2,7 @@ use crate::intermediate::*;
 use nom::{
     branch::alt,
     bytes::complete::tag,
-    character::complete::{char, i64, u64, i32},
+    character::complete::{char, i32, i64, u64},
     combinator::{map, opt, value},
     sequence::{delimited, preceded, separated_pair, tuple},
     IResult,
@@ -73,7 +73,7 @@ fn mbe_notation<'a>(input: &'a str) -> IResult<&'a str, f64> {
                 skip_ws_and_comments(i32),
             ),
         ))),
-        |(mantissa, base, exponent)| mantissa as f64 * (base as f64).powf(exponent as f64)
+        |(mantissa, base, exponent)| mantissa as f64 * (base as f64).powf(exponent as f64),
     )(input)
 }
 
@@ -177,12 +177,18 @@ mod tests {
     #[test]
     fn parses_dot_notation_real_value() {
         assert_eq!(real_value("2.23412").unwrap().1, ASN1Value::Real(2.23412));
-        assert_eq!(real_value("-12.23412").unwrap().1, ASN1Value::Real(-12.23412))
+        assert_eq!(
+            real_value("-12.23412").unwrap().1,
+            ASN1Value::Real(-12.23412)
+        )
     }
 
     #[test]
     fn parses_mbe_notation_real_value() {
-        if let ASN1Value::Real(r) = real_value("{mantissa 314159, base 10, exponent -5}").unwrap().1 {
+        if let ASN1Value::Real(r) = real_value("{mantissa 314159, base 10, exponent -5}")
+            .unwrap()
+            .1
+        {
             assert!(r - 3.14159 < 0.0000001);
         } else {
             unreachable!()

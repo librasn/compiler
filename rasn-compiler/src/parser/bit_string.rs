@@ -120,21 +120,15 @@ mod tests {
             bit_string(sample).unwrap().1,
             ASN1Type::BitString(BitString {
                 distinguished_values: None,
-                constraints: vec![Constraint::SubtypeConstraint(
-                  ElementSet {
-                      set: ElementOrSetOperation::Element(
-                          SubtypeElement::SizeConstraint(Box::new(
-                              ElementOrSetOperation::Element(
-                                  SubtypeElement::SingleValue {
-                                      value: ASN1Value::Integer(2),
-                                      extensible: true
-                                  }
-                              )
-                          ))
-                      ),
-                      extensible: false
-                  }
-              )]
+                constraints: vec![Constraint::SubtypeConstraint(ElementSet {
+                    set: ElementOrSetOperation::Element(SubtypeElement::SizeConstraint(Box::new(
+                        ElementOrSetOperation::Element(SubtypeElement::SingleValue {
+                            value: ASN1Value::Integer(2),
+                            extensible: true
+                        })
+                    ))),
+                    extensible: false
+                })]
             })
         )
     }
@@ -147,15 +141,15 @@ mod tests {
             ASN1Type::BitString(BitString {
                 distinguished_values: None,
                 constraints: vec![Constraint::SubtypeConstraint(ElementSet {
-                  set: ElementOrSetOperation::Element(SubtypeElement::SizeConstraint(Box::new(
-                      ElementOrSetOperation::Element(SubtypeElement::ValueRange {
-                          min: Some(ASN1Value::Integer(8)),
-                          max: Some(ASN1Value::Integer(18)),
-                          extensible: true
-                      })
-                  ))),
-                  extensible: false
-              })]
+                    set: ElementOrSetOperation::Element(SubtypeElement::SizeConstraint(Box::new(
+                        ElementOrSetOperation::Element(SubtypeElement::ValueRange {
+                            min: Some(ASN1Value::Integer(8)),
+                            max: Some(ASN1Value::Integer(18)),
+                            extensible: true
+                        })
+                    ))),
+                    extensible: false
+                })]
             })
         )
     }
@@ -189,21 +183,15 @@ mod tests {
                         value: 3
                     },
                 ]),
-                constraints: vec![Constraint::SubtypeConstraint(
-                  ElementSet {
-                      set: ElementOrSetOperation::Element(
-                          SubtypeElement::SizeConstraint(Box::new(
-                              ElementOrSetOperation::Element(
-                                  SubtypeElement::SingleValue {
-                                      value: ASN1Value::Integer(4),
-                                      extensible: false
-                                  }
-                              )
-                          ))
-                      ),
-                      extensible: false
-                  }
-              )]
+                constraints: vec![Constraint::SubtypeConstraint(ElementSet {
+                    set: ElementOrSetOperation::Element(SubtypeElement::SizeConstraint(Box::new(
+                        ElementOrSetOperation::Element(SubtypeElement::SingleValue {
+                            value: ASN1Value::Integer(4),
+                            extensible: false
+                        })
+                    ))),
+                    extensible: false
+                })]
             })
         )
     }

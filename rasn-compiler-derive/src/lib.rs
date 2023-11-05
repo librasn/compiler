@@ -21,20 +21,20 @@ impl Parse for MacroInput {
     }
 }
 
-
 #[proc_macro]
 pub fn asn1(input: TokenStream) -> TokenStream {
     let config = parse_macro_input!(input as MacroInput);
-    
+
     let literal_asn1 = match config.asn.value() {
         v if v.contains("BEGIN") => v,
-        v => String::from(DUMMY_HEADER) + &v + DUMMY_FOOTER
+        v => String::from(DUMMY_HEADER) + &v + DUMMY_FOOTER,
     };
 
     rasn_compiler::RasnCompiler::new()
         .add_asn_literal(literal_asn1)
         .compile_to_string()
-        .unwrap().0
+        .unwrap()
+        .0
         .parse()
         .unwrap()
 }

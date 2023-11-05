@@ -77,7 +77,9 @@ mod tests {
             sequence_of("SEQUENCE OF BOOLEAN").unwrap().1,
             ASN1Type::SequenceOf(SequenceOrSetOf {
                 constraints: vec![],
-                r#type: Box::new(ASN1Type::Boolean(Boolean { constraints: vec![] }))
+                r#type: Box::new(ASN1Type::Boolean(Boolean {
+                    constraints: vec![]
+                }))
             })
         );
     }

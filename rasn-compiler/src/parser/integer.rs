@@ -63,16 +63,16 @@ mod tests {
         assert_eq!(
             integer("\r\nINTEGER(-9..-4)").unwrap().1,
             ASN1Type::Integer(Integer {
-              constraints: vec![Constraint::SubtypeConstraint(ElementSet {
-                  set: ElementOrSetOperation::Element(SubtypeElement::ValueRange {
-                      min: Some(ASN1Value::Integer(-9)),
-                      max: Some(ASN1Value::Integer(-4)),
-                      extensible: false
-                  }),
-                  extensible: false
-              })],
-              distinguished_values: None
-          })
+                constraints: vec![Constraint::SubtypeConstraint(ElementSet {
+                    set: ElementOrSetOperation::Element(SubtypeElement::ValueRange {
+                        min: Some(ASN1Value::Integer(-9)),
+                        max: Some(ASN1Value::Integer(-4)),
+                        extensible: false
+                    }),
+                    extensible: false
+                })],
+                distinguished_values: None
+            })
         );
     }
 }

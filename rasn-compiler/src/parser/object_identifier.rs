@@ -40,10 +40,13 @@ pub fn object_identifier_value<'a>(input: &'a str) -> IResult<&'a str, ObjectIde
 }
 
 pub fn object_identifier<'a>(input: &'a str) -> IResult<&'a str, ASN1Type> {
-    map(into(preceded(
-        skip_ws_and_comments(tag(OBJECT_IDENTIFIER)),
-        opt(skip_ws_and_comments(constraint)),
-    )), |oid| ASN1Type::ObjectIdentifier(oid))(input)
+    map(
+        into(preceded(
+            skip_ws_and_comments(tag(OBJECT_IDENTIFIER)),
+            opt(skip_ws_and_comments(constraint)),
+        )),
+        |oid| ASN1Type::ObjectIdentifier(oid),
+    )(input)
 }
 
 fn object_identifier_arc<'a>(input: &'a str) -> IResult<&'a str, ObjectIdentifierArc> {
@@ -64,15 +67,36 @@ mod tests {
 
     #[test]
     fn parses_ansi_x9_62() {
-        assert_eq!(object_identifier_value(r#"{iso(1) member-body(2) us(840) 10045 modules(0) 2}"#).unwrap().1,
-        ObjectIdentifierValue(vec![
-            ObjectIdentifierArc { name: Some("iso".into()), number: Some(1)},
-            ObjectIdentifierArc { name: Some("member-body".into()), number: Some(2)},
-            ObjectIdentifierArc { name: Some("us".into()), number: Some(840)},
-            ObjectIdentifierArc { name: None, number: Some(10045)},
-            ObjectIdentifierArc { name: Some("modules".into()), number: Some(0)},
-            ObjectIdentifierArc { name: None, number: Some(2)},
-        ])
-    )
+        assert_eq!(
+            object_identifier_value(r#"{iso(1) member-body(2) us(840) 10045 modules(0) 2}"#)
+                .unwrap()
+                .1,
+            ObjectIdentifierValue(vec![
+                ObjectIdentifierArc {
+                    name: Some("iso".into()),
+                    number: Some(1)
+                },
+                ObjectIdentifierArc {
+                    name: Some("member-body".into()),
+                    number: Some(2)
+                },
+                ObjectIdentifierArc {
+                    name: Some("us".into()),
+                    number: Some(840)
+                },
+                ObjectIdentifierArc {
+                    name: None,
+                    number: Some(10045)
+                },
+                ObjectIdentifierArc {
+                    name: Some("modules".into()),
+                    number: Some(0)
+                },
+                ObjectIdentifierArc {
+                    name: None,
+                    number: Some(2)
+                },
+            ])
+        )
     }
 }

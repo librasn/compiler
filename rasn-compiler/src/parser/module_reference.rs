@@ -219,39 +219,79 @@ mod tests {
     #[test]
     fn parses_imports() {
         assert_eq!(
-            imports(r#"IMPORTS 
+            imports(
+                r#"IMPORTS 
             DomainParameters
             FROM ANSI-X9-42
             {iso(1) member-body(2) us(840) ansi-x942(10046) module(5) 1}
             ECDomainParameters
             FROM ANSI-X9-62
-            {iso(1) member-body(2) us(840) 10045 modules(0) 2};"#).unwrap().1,
+            {iso(1) member-body(2) us(840) 10045 modules(0) 2};"#
+            )
+            .unwrap()
+            .1,
             vec![
-                Import { 
-                    types: vec!["DomainParameters".into()], 
-                    origin_name: "ANSI-X9-42".into(), 
+                Import {
+                    types: vec!["DomainParameters".into()],
+                    origin_name: "ANSI-X9-42".into(),
                     origin_identifier: Some(ObjectIdentifierValue(vec![
-                        ObjectIdentifierArc { name: Some("iso".into()), number: Some(1)},
-                        ObjectIdentifierArc { name: Some("member-body".into()), number: Some(2)},
-                        ObjectIdentifierArc { name: Some("us".into()), number: Some(840)},
-                        ObjectIdentifierArc { name: Some("ansi-x942".into()), number: Some(10046)},
-                        ObjectIdentifierArc { name: Some("module".into()), number: Some(5)},
-                        ObjectIdentifierArc { name: None, number: Some(1)},
-                    ])), 
-                    with: None 
+                        ObjectIdentifierArc {
+                            name: Some("iso".into()),
+                            number: Some(1)
+                        },
+                        ObjectIdentifierArc {
+                            name: Some("member-body".into()),
+                            number: Some(2)
+                        },
+                        ObjectIdentifierArc {
+                            name: Some("us".into()),
+                            number: Some(840)
+                        },
+                        ObjectIdentifierArc {
+                            name: Some("ansi-x942".into()),
+                            number: Some(10046)
+                        },
+                        ObjectIdentifierArc {
+                            name: Some("module".into()),
+                            number: Some(5)
+                        },
+                        ObjectIdentifierArc {
+                            name: None,
+                            number: Some(1)
+                        },
+                    ])),
+                    with: None
                 },
-                Import { 
-                    types: vec!["ECDomainParameters".into()], 
-                    origin_name: "ANSI-X9-62".into(), 
+                Import {
+                    types: vec!["ECDomainParameters".into()],
+                    origin_name: "ANSI-X9-62".into(),
                     origin_identifier: Some(ObjectIdentifierValue(vec![
-                        ObjectIdentifierArc { name: Some("iso".into()), number: Some(1)},
-                        ObjectIdentifierArc { name: Some("member-body".into()), number: Some(2)},
-                        ObjectIdentifierArc { name: Some("us".into()), number: Some(840)},
-                        ObjectIdentifierArc { name: None, number: Some(10045)},
-                        ObjectIdentifierArc { name: Some("modules".into()), number: Some(0)},
-                        ObjectIdentifierArc { name: None, number: Some(2)},
-                    ])), 
-                    with: None 
+                        ObjectIdentifierArc {
+                            name: Some("iso".into()),
+                            number: Some(1)
+                        },
+                        ObjectIdentifierArc {
+                            name: Some("member-body".into()),
+                            number: Some(2)
+                        },
+                        ObjectIdentifierArc {
+                            name: Some("us".into()),
+                            number: Some(840)
+                        },
+                        ObjectIdentifierArc {
+                            name: None,
+                            number: Some(10045)
+                        },
+                        ObjectIdentifierArc {
+                            name: Some("modules".into()),
+                            number: Some(0)
+                        },
+                        ObjectIdentifierArc {
+                            name: None,
+                            number: Some(2)
+                        },
+                    ])),
+                    with: None
                 }
             ]
         )

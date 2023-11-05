@@ -418,7 +418,9 @@ mod tests {
                     SequenceOrSetMember {
                         name: "limitedQuantity".into(),
                         tag: None,
-                        r#type: ASN1Type::Boolean(Boolean { constraints: vec![] }),
+                        r#type: ASN1Type::Boolean(Boolean {
+                            constraints: vec![]
+                        }),
                         default_value: Some(ASN1Value::Boolean(false)),
                         is_optional: true,
                         constraints: vec![],
@@ -500,7 +502,9 @@ mod tests {
                                 name: "this-is-annoying".into(),
 
                                 tag: None,
-                                r#type: ASN1Type::Boolean(Boolean { constraints: vec![] }),
+                                r#type: ASN1Type::Boolean(Boolean {
+                                    constraints: vec![]
+                                }),
                                 default_value: Some(ASN1Value::Boolean(true)),
                                 is_optional: true,
                                 constraints: vec![],
@@ -644,7 +648,9 @@ mod tests {
                                 SequenceOrSetMember {
                                     name: "and-another".into(),
                                     tag: None,
-                                    r#type: ASN1Type::Boolean(Boolean { constraints: vec![] }),
+                                    r#type: ASN1Type::Boolean(Boolean {
+                                        constraints: vec![]
+                                    }),
                                     default_value: Some(ASN1Value::Boolean(true)),
                                     is_optional: true,
                                     constraints: vec![]
@@ -692,7 +698,10 @@ mod tests {
 
     #[test]
     fn parse_x284() {
-        println!("{:?}", sequence(r#"SEQUENCE --(GRJ)
+        println!(
+            "{:?}",
+            sequence(
+                r#"SEQUENCE --(GRJ)
         {
 requestSeqNum           RequestSeqNum,
 protocolIdentifier      ProtocolIdentifier,
@@ -704,6 +713,8 @@ altGKInfo               AltGKInfo OPTIONAL,
 tokens                  SEQUENCE OF ClearToken OPTIONAL,
 cryptoTokens            SEQUENCE OF CryptoH323Token OPTIONAL,
 integrityCheckValue     ICV OPTIONAL
-}"#))
+}"#
+            )
+        )
     }
 }

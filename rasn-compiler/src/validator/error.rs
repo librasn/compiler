@@ -12,12 +12,16 @@ pub struct ValidatorError {
 
 impl ValidatorError {
     pub fn new(data_element: Option<String>, details: &str, kind: ValidatorErrorType) -> Self {
-      ValidatorError { data_element, details: details.into(), kind }
+        ValidatorError {
+            data_element,
+            details: details.into(),
+            kind,
+        }
     }
 
     pub fn specify_data_element(&mut self, data_element: String) {
-      self.data_element = Some(data_element)
-    } 
+        self.data_element = Some(data_element)
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -34,13 +38,19 @@ impl Display for ValidatorError {
         write!(
             f,
             "{:?} validating parsed data element {}: {}",
-            self.kind, self.data_element.as_ref().unwrap_or(&"".into()), self.details
+            self.kind,
+            self.data_element.as_ref().unwrap_or(&"".into()),
+            self.details
         )
     }
 }
 
 impl From<GrammarError> for ValidatorError {
     fn from(value: GrammarError) -> Self {
-        Self { data_element: None, details: value.details, kind: ValidatorErrorType::Unknown }
+        Self {
+            data_element: None,
+            details: value.details,
+            kind: ValidatorErrorType::Unknown,
+        }
     }
 }

@@ -6,7 +6,7 @@ pub struct ToplevelInformationDeclaration {
     pub name: String,
     pub class: Option<ClassLink>,
     pub value: ASN1Information,
-    pub index: Option<(Rc<ModuleReference>, usize)>
+    pub index: Option<(Rc<ModuleReference>, usize)>,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -25,7 +25,7 @@ impl From<(Vec<&str>, &str, &str, InformationObjectFields)> for ToplevelInformat
                 supertype: value.2.into(),
                 fields: value.3,
             }),
-            index: None
+            index: None,
         }
     }
 }
@@ -37,7 +37,7 @@ impl From<(Vec<&str>, &str, &str, ObjectSet)> for ToplevelInformationDeclaration
             name: value.1.into(),
             class: Some(ClassLink::ByName(value.2.into())),
             value: ASN1Information::ObjectSet(value.3),
-            index: None
+            index: None,
         }
     }
 }
@@ -49,7 +49,7 @@ impl From<(Vec<&str>, &str, InformationObjectClass)> for ToplevelInformationDecl
             name: value.1.into(),
             class: None,
             value: ASN1Information::ObjectClass(value.2),
-            index: None
+            index: None,
         }
     }
 }
@@ -75,6 +75,7 @@ pub enum SyntaxApplication {
     TypeReference(ASN1Type),
     Comma,
     Literal(String),
+    LiteralOrTypeReference(DeclarationElsewhere)
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -321,7 +322,9 @@ pub struct InformationObjectFieldReference {
     pub constraints: Vec<Constraint>,
 }
 
-impl From<(&str, Vec<ObjectFieldIdentifier>, Option<Vec<Constraint>>)> for InformationObjectFieldReference {
+impl From<(&str, Vec<ObjectFieldIdentifier>, Option<Vec<Constraint>>)>
+    for InformationObjectFieldReference
+{
     fn from(value: (&str, Vec<ObjectFieldIdentifier>, Option<Vec<Constraint>>)) -> Self {
         Self {
             class: value.0.into(),

@@ -144,7 +144,7 @@ pub fn generate_character_string(tld: ToplevelTypeDeclaration) -> Result<String,
 }
 
 pub fn generate_boolean(tld: ToplevelTypeDeclaration) -> Result<String, GeneratorError> {
-    /// TODO: process boolean constraints
+    // TODO: process boolean constraints
     if let ASN1Type::Boolean(_) = tld.r#type {
         Ok(boolean_template(
             format_comments(&tld.comments),
@@ -393,7 +393,10 @@ pub fn generate_sequence_or_set_of(tld: ToplevelTypeDeclaration) -> Result<Strin
         n => Some(generate(ToplevelDeclaration::Type(
             ToplevelTypeDeclaration {
                 parameterization: None,
-                comments: format!(" Anonymous {} OF member ", if is_set_of { "SET" } else { "SEQUENCE" }),
+                comments: format!(
+                    " Anonymous {} OF member ",
+                    if is_set_of { "SET" } else { "SEQUENCE" }
+                ),
                 name: String::from("Anonymous") + &name,
                 r#type: n.clone(),
                 tag: None,

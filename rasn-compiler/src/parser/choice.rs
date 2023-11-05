@@ -93,10 +93,13 @@ fn choice_option<'a>(input: &'a str) -> IResult<&'a str, ChoiceOption> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{intermediate::{
-        types::{Choice, ChoiceOption, ChoiceSelectionType},
-        ASN1Type,
-    }, parser::choice::selection_type_choice};
+    use crate::{
+        intermediate::{
+            types::{Choice, ChoiceOption, ChoiceSelectionType},
+            ASN1Type,
+        },
+        parser::choice::selection_type_choice,
+    };
 
     use crate::parser::choice;
 

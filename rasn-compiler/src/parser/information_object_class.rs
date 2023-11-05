@@ -147,7 +147,12 @@ fn custom_syntax_information_object<'a>(
     map(
         skip_ws_and_comments(many1(skip_ws_and_comments(alt((
             value(SyntaxApplication::Comma, char(COMMA)),
-            map(asn1_type, |m| SyntaxApplication::TypeReference(m)),
+            map(asn1_type, |m| {
+                match m {
+                    ASN1Type::ElsewhereDeclaredType(t) => SyntaxApplication::LiteralOrTypeReference(t),
+                    t => SyntaxApplication::TypeReference(t)
+                }
+            }),
             map(asn1_value, |m| SyntaxApplication::ValueReference(m)),
             map(object_set, |m| SyntaxApplication::ObjectSetDeclaration(m)),
             map(syntax_literal, |m| SyntaxApplication::Literal(m.into())),

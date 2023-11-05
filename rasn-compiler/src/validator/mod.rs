@@ -7,13 +7,9 @@
 //! constraints and value definitions.
 pub(crate) mod error;
 
-use std::{error::Error, collections::BTreeMap};
+use std::{collections::BTreeMap, error::Error};
 
-use crate::intermediate::{
-    constraints::*,
-    types::*,
-    *,
-};
+use crate::intermediate::{constraints::*, types::*, *};
 
 use self::error::{ValidatorError, ValidatorErrorType};
 
@@ -23,7 +19,12 @@ pub struct Validator {
 
 impl Validator {
     pub fn new(tlds: Vec<ToplevelDeclaration>) -> Validator {
-        Self { tlds: tlds.into_iter().map(|tld|(tld.name().to_owned(), tld)).collect() }
+        Self {
+            tlds: tlds
+                .into_iter()
+                .map(|tld| (tld.name().to_owned(), tld))
+                .collect(),
+        }
     }
 
     fn link(mut self) -> Result<(Self, Vec<Box<dyn Error>>), ValidatorError> {
@@ -33,20 +34,27 @@ impl Validator {
             if self.has_class_field_reference(&key) {
                 if let Some(ToplevelDeclaration::Type(mut tld)) = self.tlds.remove(&key) {
                     tld.r#type = tld.r#type.resolve_class_field_reference(&self.tlds);
-                    self.tlds.insert(tld.name.clone(), ToplevelDeclaration::Type(tld));
+                    self.tlds
+                        .insert(tld.name.clone(), ToplevelDeclaration::Type(tld));
                 }
             } else if self.has_components_of_notation(&key) {
                 if let Some(ToplevelDeclaration::Type(mut tld)) = self.tlds.remove(&key) {
                     tld.r#type.link_components_of_notation(&self.tlds);
-                    self.tlds.insert(tld.name.clone(), ToplevelDeclaration::Type(tld));
+                    self.tlds
+                        .insert(tld.name.clone(), ToplevelDeclaration::Type(tld));
                 }
             } else if self.has_choice_selection_type(&key) {
                 if let Some(ToplevelDeclaration::Type(mut tld)) = self.tlds.remove(&key) {
                     tld.r#type.link_choice_selection_type(&self.tlds)?;
-                    self.tlds.insert(tld.name.clone(), ToplevelDeclaration::Type(tld));
+                    self.tlds
+                        .insert(tld.name.clone(), ToplevelDeclaration::Type(tld));
                 }
             } else if self.has_default_value_reference(&key) {
-                let mut tld = self.tlds.remove(&key).ok_or(ValidatorError { data_element: Some(key), details: "Could not find toplevel declaration to remove!".into(), kind: ValidatorErrorType::MissingDependency } )?;
+                let mut tld = self.tlds.remove(&key).ok_or(ValidatorError {
+                    data_element: Some(key),
+                    details: "Could not find toplevel declaration to remove!".into(),
+                    kind: ValidatorErrorType::MissingDependency,
+                })?;
                 if !tld.link_default_reference(&self.tlds) {
                     warnings.push(
                         Box::new(
@@ -62,7 +70,11 @@ impl Validator {
                 }
                 self.tlds.insert(tld.name().clone(), tld);
             } else if self.has_constraint_reference(&key) {
-                let mut tld = self.tlds.remove(&key).ok_or(ValidatorError { data_element: Some(key), details: "Could not find toplevel declaration to remove!".into(), kind: ValidatorErrorType::MissingDependency } )?;
+                let mut tld = self.tlds.remove(&key).ok_or(ValidatorError {
+                    data_element: Some(key),
+                    details: "Could not find toplevel declaration to remove!".into(),
+                    kind: ValidatorErrorType::MissingDependency,
+                })?;
                 if !tld.link_constraint_reference(&self.tlds) {
                     warnings.push(
                         Box::new(
@@ -70,7 +82,7 @@ impl Validator {
                                 data_element: Some(tld.name().to_string()), 
                                 details: format!(
                                     "Failed to link cross-reference to elsewhere defined value in constraint of {}", 
-                                    tld.name()), 
+                                    tld.name()),
                                 kind: ValidatorErrorType::MissingDependency
                             }
                         )
@@ -78,28 +90,37 @@ impl Validator {
                 }
                 self.tlds.insert(tld.name().clone(), tld);
             } else if let Some(ToplevelDeclaration::Value(mut tld)) = self.tlds.get(&key).cloned() {
-              if let ASN1Value::ElsewhereDeclaredValue(id) = &tld.value {
-                  match self.tlds.get(&tld.type_name) {
-                    Some(ToplevelDeclaration::Type(ty)) => {
-                      match ty.r#type {
-                        ASN1Type::Integer(ref int) if int.distinguished_values.is_some() => {
-                          if let Some(val) = int.distinguished_values.as_ref().unwrap().iter().find_map(|dv| (&dv.name == id).then(|| dv.value)) {
-                            tld.value = ASN1Value::Integer(val);
-                            self.tlds.remove(&key);
-                            self.tlds.insert(tld.name.clone(),ToplevelDeclaration::Value(tld));
-                          }
+                if let ASN1Value::ElsewhereDeclaredValue(id) = &tld.value {
+                    match self.tlds.get(&tld.type_name) {
+                        Some(ToplevelDeclaration::Type(ty)) => match ty.r#type {
+                            ASN1Type::Integer(ref int) if int.distinguished_values.is_some() => {
+                                if let Some(val) = int
+                                    .distinguished_values
+                                    .as_ref()
+                                    .unwrap()
+                                    .iter()
+                                    .find_map(|dv| (&dv.name == id).then(|| dv.value))
+                                {
+                                    tld.value = ASN1Value::Integer(val);
+                                    self.tlds.remove(&key);
+                                    self.tlds
+                                        .insert(tld.name.clone(), ToplevelDeclaration::Value(tld));
+                                }
+                            }
+                            ASN1Type::Enumerated(_) => {
+                                tld.value = ASN1Value::EnumeratedValue {
+                                    enumerated: ty.name.clone(),
+                                    enumerable: id.to_owned(),
+                                };
+                                self.tlds.remove(&key);
+                                self.tlds
+                                    .insert(tld.name.clone(), ToplevelDeclaration::Value(tld));
+                            }
+                            _ => (),
                         },
-                        ASN1Type::Enumerated(_) => {
-                            tld.value = ASN1Value::EnumeratedValue { enumerated: ty.name.clone(), enumerable: id.to_owned() };
-                            self.tlds.remove(&key);
-                            self.tlds.insert(tld.name.clone(), ToplevelDeclaration::Value(tld));
-                        }
-                        _ => ()
-                      }
-                    },
-                    _ => ()
-                  }
-              }
+                        _ => (),
+                    }
+                }
             }
         }
 
@@ -107,24 +128,21 @@ impl Validator {
     }
 
     fn has_constraint_reference(&mut self, key: &String) -> bool {
-        self
-            .tlds
+        self.tlds
             .get(key)
             .map(|t| t.has_constraint_reference())
             .unwrap_or(false)
     }
 
     fn has_default_value_reference(&mut self, key: &String) -> bool {
-        self
-            .tlds
+        self.tlds
             .get(key)
             .map(|t| t.has_default_reference())
             .unwrap_or(false)
     }
 
     fn has_class_field_reference(&mut self, key: &String) -> bool {
-        self
-            .tlds
+        self.tlds
             .get(key)
             .map(|t| match t {
                 ToplevelDeclaration::Type(t) => t.r#type.contains_class_field_reference(),
@@ -134,8 +152,7 @@ impl Validator {
     }
 
     fn has_choice_selection_type(&mut self, key: &String) -> bool {
-        self
-            .tlds
+        self.tlds
             .get(key)
             .map(|t| match t {
                 ToplevelDeclaration::Type(t) => t.r#type.has_choice_selection_type(),
@@ -145,8 +162,7 @@ impl Validator {
     }
 
     fn has_components_of_notation(&mut self, key: &String) -> bool {
-        self
-            .tlds
+        self.tlds
             .get(key)
             .map(|t| match t {
                 ToplevelDeclaration::Type(t) => t.r#type.contains_components_of_notation(),

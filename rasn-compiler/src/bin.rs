@@ -46,7 +46,11 @@ pub fn main() {
     }
 
     if modules.is_empty() {
-        panic!("{}", "Please provide either a valid path to a module or to a directory containing modules.".red())
+        panic!(
+            "{}",
+            "Please provide either a valid path to a module or to a directory containing modules."
+                .red()
+        )
     }
 
     match RasnCompiler::new()
@@ -56,11 +60,19 @@ pub fn main() {
     {
         Ok(warnings) => {
             for warning in warnings {
-                println!("{}\n{}", "Rasn compiler warning:".yellow(), warning.to_string().yellow())
+                println!(
+                    "{}\n{}",
+                    "Rasn compiler warning:".yellow(),
+                    warning.to_string().yellow()
+                )
             }
         }
         Err(error) => {
-            println!("{}\n{}", "Rasn compiler error:".red(), error.to_string().red())
-        },
+            println!(
+                "{}\n{}",
+                "Rasn compiler error:".red(),
+                error.to_string().red()
+            )
+        }
     }
 }

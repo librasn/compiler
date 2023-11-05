@@ -20,29 +20,10 @@ use nom::{
 use crate::intermediate::{information_object::*, *};
 
 use self::{
-    bit_string::*,
-    boolean::*,
-    character_string::*,
-    choice::*,
-    common::*,
-    constraint::*,
-    embedded_pdv::*,
-    enumerated::*,
-    error::ParserError,
-    external::*,
-    information_object_class::*,
-    integer::*,
-    module_reference::*,
-    null::*,
-    object_identifier::*,
-    octet_string::*,
-    parameterization::*,
-    real::*,
-    sequence::*,
-    sequence_of::*,
-    set::*,
-    set_of::*,
-    time::*,
+    bit_string::*, boolean::*, character_string::*, choice::*, common::*, constraint::*,
+    embedded_pdv::*, enumerated::*, error::ParserError, external::*, information_object_class::*,
+    integer::*, module_reference::*, null::*, object_identifier::*, octet_string::*,
+    parameterization::*, real::*, sequence::*, sequence_of::*, set::*, set_of::*, time::*,
 };
 
 mod bit_string;
@@ -113,31 +94,35 @@ pub fn top_level_information_declaration<'a>(
 
 pub fn asn1_type<'a>(input: &'a str) -> IResult<&'a str, ASN1Type> {
     alt((
-        alt((null,
-        selection_type_choice,
-        object_identifier,
-        sequence_of,
-        sequence,
-        set_of,
-        set,
-        utc_time,
-        external,
-        embedded_pdv,
-        instance_of,
-        generalized_time,
-        real)),
-        alt((choice,
-        integer,
-        enumerated,
-        boolean,
-        bit_string,
-        octet_string,
-        character_string,
-        map(information_object_field_reference, |i| {
-            ASN1Type::InformationObjectFieldReference(i)
-        }),
-        elsewhere_declared_type,
-    ))))(input)
+        alt((
+            null,
+            selection_type_choice,
+            object_identifier,
+            sequence_of,
+            sequence,
+            set_of,
+            set,
+            utc_time,
+            external,
+            embedded_pdv,
+            instance_of,
+            generalized_time,
+            real,
+        )),
+        alt((
+            choice,
+            integer,
+            enumerated,
+            boolean,
+            bit_string,
+            octet_string,
+            character_string,
+            map(information_object_field_reference, |i| {
+                ASN1Type::InformationObjectFieldReference(i)
+            }),
+            elsewhere_declared_type,
+        )),
+    ))(input)
 }
 
 pub fn asn1_value<'a>(input: &'a str) -> IResult<&'a str, ASN1Value> {
@@ -239,13 +224,16 @@ mod tests {
     use core::panic;
     use std::vec;
 
-    use crate::{intermediate::{
-        constraints::*,
-        information_object::*,
-        parameterization::{Parameterization, ParameterizationArgument},
-        types::*,
-        *,
-    }, parser::top_level_information_object_declaration};
+    use crate::{
+        intermediate::{
+            constraints::*,
+            information_object::*,
+            parameterization::{Parameterization, ParameterizationArgument},
+            types::*,
+            *,
+        },
+        parser::top_level_information_object_declaration,
+    };
 
     use crate::parser::top_level_information_declaration;
 
@@ -381,7 +369,12 @@ mod tests {
         assert!(tld
             .comments
             .contains("@revision: editorial update in V2.1.1"));
-        assert_eq!(tld.r#type, ASN1Type::Boolean(Boolean { constraints: vec![] }));
+        assert_eq!(
+            tld.r#type,
+            ASN1Type::Boolean(Boolean {
+                constraints: vec![]
+            })
+        );
     }
 
     #[test]
@@ -491,27 +484,47 @@ mod tests {
                 value: ASN1Information::ObjectSet(ObjectSet {
                     values: vec![
                         ObjectSetValue::Inline(InformationObjectFields::CustomSyntax(vec![
-                            SyntaxApplication::TypeReference(ASN1Type::ElsewhereDeclaredType(
+                            SyntaxApplication::LiteralOrTypeReference(
                                 DeclarationElsewhere {
                                     identifier: "OriginatingVehicleContainer".into(),
                                     constraints: vec![]
                                 }
-                            )),
-                            SyntaxApplication::Literal("IDENTIFIED".into()),
-                            SyntaxApplication::Literal("BY".into()),
+                            ),
+                             SyntaxApplication::LiteralOrTypeReference(
+                                DeclarationElsewhere {
+                                    identifier: "IDENTIFIED".into(),
+                                    constraints: vec![]
+                                }
+                            ),
+                             SyntaxApplication::LiteralOrTypeReference(
+                                DeclarationElsewhere {
+                                    identifier: "BY".into(),
+                                    constraints: vec![]
+                                }
+                            ),
                             SyntaxApplication::ValueReference(ASN1Value::ElsewhereDeclaredValue(
                                 "originatingVehicleContainer".into()
                             ))
                         ])),
                         ObjectSetValue::Inline(InformationObjectFields::CustomSyntax(vec![
-                            SyntaxApplication::TypeReference(ASN1Type::ElsewhereDeclaredType(
+                            SyntaxApplication::LiteralOrTypeReference(
                                 DeclarationElsewhere {
                                     identifier: "PerceivedObjectContainer".into(),
                                     constraints: vec![]
                                 }
-                            )),
-                            SyntaxApplication::Literal("IDENTIFIED".into()),
-                            SyntaxApplication::Literal("BY".into()),
+                            ),
+                             SyntaxApplication::LiteralOrTypeReference(
+                                DeclarationElsewhere {
+                                    identifier: "IDENTIFIED".into(),
+                                    constraints: vec![]
+                                }
+                            ),
+                             SyntaxApplication::LiteralOrTypeReference(
+                                DeclarationElsewhere {
+                                    identifier: "BY".into(),
+                                    constraints: vec![]
+                                }
+                            ),
                             SyntaxApplication::ValueReference(ASN1Value::ElsewhereDeclaredValue(
                                 "perceivedObjectContainer".into()
                             ))

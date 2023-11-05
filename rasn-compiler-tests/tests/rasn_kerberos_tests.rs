@@ -697,9 +697,6 @@ pub struct UInt32(pub u32);
 
 pub const ID_KRB5: &'static Oid = &Oid::const_new(&[1, 3, 6, 1, 5, 2]);
 
-
-
-
 #[test]
 fn as_rep() {
     let as_rep = ASREP(KDCREP {
@@ -712,7 +709,9 @@ fn as_rep() {
                 0x4f, 0x4d, 0x50, 0x41, 0x4e, 0x59, 0x2e, 0x49, 0x4e, 0x54, 0x75, 0x73, 0x65, 0x72,
             ]),
         }])),
-        crealm: Realm(KerberosString(GeneralString::try_from("COMPANY.INT".to_string()).unwrap())),
+        crealm: Realm(KerberosString(
+            GeneralString::try_from("COMPANY.INT".to_string()).unwrap(),
+        )),
         cname: PrincipalName {
             name_type: Int32(1),
             name_string: PrincipalNameNameString(vec![KerberosString(
@@ -721,7 +720,9 @@ fn as_rep() {
         },
         ticket: Ticket {
             tkt_vno: 5,
-            realm: Realm(KerberosString(GeneralString::try_from("COMPANY.INT".to_string()).unwrap())),
+            realm: Realm(KerberosString(
+                GeneralString::try_from("COMPANY.INT".to_string()).unwrap(),
+            )),
             sname: PrincipalName {
                 name_type: Int32(2),
                 name_string: PrincipalNameNameString(vec![
@@ -773,12 +774,18 @@ fn as_req() {
             padata_value: OctetString::from_static(&[0x30, 0x05, 0xa0, 0x03, 0x01, 0x01, 0xff]),
         }])),
         req_body: KDCREQBODY {
-            kdc_options: KDCOptions(KerberosFlags(BitString::from_slice(&[0x40, 0x81, 0x00, 0x10]))),
+            kdc_options: KDCOptions(KerberosFlags(BitString::from_slice(&[
+                0x40, 0x81, 0x00, 0x10,
+            ]))),
             cname: Some(PrincipalName {
                 name_type: Int32(1),
-                name_string: PrincipalNameNameString(vec![KerberosString(GeneralString::try_from(String::from("user")).unwrap())]),
+                name_string: PrincipalNameNameString(vec![KerberosString(
+                    GeneralString::try_from(String::from("user")).unwrap(),
+                )]),
             }),
-            realm: Realm(KerberosString(GeneralString::try_from("COMPANY.INT".to_string()).unwrap())),
+            realm: Realm(KerberosString(
+                GeneralString::try_from("COMPANY.INT".to_string()).unwrap(),
+            )),
             sname: Some(PrincipalName {
                 name_type: Int32(2),
                 name_string: PrincipalNameNameString(vec![
@@ -794,7 +801,14 @@ fn as_req() {
                 GeneralizedTime::parse_from_rfc3339("2052-03-04T11:11:11Z").unwrap(),
             )),
             nonce: UInt32(12345678),
-            etype: KDCREQBODYEtype(vec![Int32(18), Int32(23), Int32(-133), Int32(-128), Int32(24), Int32(-135)]),
+            etype: KDCREQBODYEtype(vec![
+                Int32(18),
+                Int32(23),
+                Int32(-133),
+                Int32(-128),
+                Int32(24),
+                Int32(-135),
+            ]),
             addresses: Some(HostAddresses(vec![HostAddress {
                 addr_type: Int32(20),
                 address: OctetString::from("CLIENT01        "),

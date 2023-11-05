@@ -63,10 +63,10 @@ fn enumerated_body<'a>(
     ),
 > {
     in_braces(|input| {
-      let (input, root_enumerals) = enumerals(0)(input)?;
-      let (input, ext_marker) = opt(terminated(extension_marker, opt(char(COMMA))))(input)?;
-      let (input, ext_enumerals) = opt(enumerals(root_enumerals.len()))(input)?;
-      Ok((input, (root_enumerals, ext_marker, ext_enumerals)))
+        let (input, root_enumerals) = enumerals(0)(input)?;
+        let (input, ext_marker) = opt(terminated(extension_marker, opt(char(COMMA))))(input)?;
+        let (input, ext_enumerals) = opt(enumerals(root_enumerals.len()))(input)?;
+        Ok((input, (root_enumerals, ext_marker, ext_enumerals)))
     })(input)
 }
 
@@ -175,30 +175,26 @@ mod tests {
 
     #[test]
     fn parses_extended_enumerated_without_indices() {
-      assert_eq!(
-          enumerated(
-              r#"ENUMERATED { One, ..., Three }"#
-          )
-          .unwrap()
-          .1,
-          ASN1Type::Enumerated(Enumerated {
-              constraints: vec![],
-              members: vec![
-                  Enumeral {
-                      name: "One".into(),
-                      description: None,
-                      index: 0
-                  },
-                  Enumeral {
-                      name: "Three".into(),
-                      description: None,
-                      index: 1
-                  }
-              ],
-              extensible: Some(1)
-          })
-      )
-  }
+        assert_eq!(
+            enumerated(r#"ENUMERATED { One, ..., Three }"#).unwrap().1,
+            ASN1Type::Enumerated(Enumerated {
+                constraints: vec![],
+                members: vec![
+                    Enumeral {
+                        name: "One".into(),
+                        description: None,
+                        index: 0
+                    },
+                    Enumeral {
+                        name: "Three".into(),
+                        description: None,
+                        index: 1
+                    }
+                ],
+                extensible: Some(1)
+            })
+        )
+    }
 
     #[test]
     fn parses_enumerated_with_ellipsis() {

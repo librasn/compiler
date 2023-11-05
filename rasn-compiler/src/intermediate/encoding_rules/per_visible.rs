@@ -1,10 +1,10 @@
-use std::{collections::BTreeMap, ops::AddAssign};
 use crate::intermediate::{
     constraints::{Constraint, ElementOrSetOperation, SetOperation, SetOperator, SubtypeElement},
     error::{GrammarError, GrammarErrorType},
     types::{Choice, Enumerated},
     ASN1Type, ASN1Value, CharacterStringType,
 };
+use std::{collections::BTreeMap, ops::AddAssign};
 
 trait PerVisible {
     fn per_visible(&self) -> bool;
@@ -137,7 +137,7 @@ impl PerVisibleAlphabetConstraints {
             _ => Ok(None),
         }
     }
-    
+
     pub fn charset_subsets(&self) -> &Vec<CharsetSubset> {
         &self.charset_subsets
     }
@@ -335,7 +335,8 @@ impl TryFrom<Option<&SubtypeElement>> for PerVisibleRangeConstraints {
             ),
             x => {
                 println!("{x:?}");
-                unreachable!()},
+                unreachable!()
+            }
         }
     }
 }
@@ -370,7 +371,10 @@ impl PerVisible for SubtypeElement {
             SubtypeElement::ContainedSubtype {
                 subtype: s,
                 extensible: _,
-            } => s.constraints().iter().fold(false, |acc, c| acc || c.per_visible()),
+            } => s
+                .constraints()
+                .iter()
+                .fold(false, |acc, c| acc || c.per_visible()),
             SubtypeElement::ValueRange {
                 min: _,
                 max: _,
@@ -426,13 +430,38 @@ fn fold_constraint_set(
                 },
                 char_set,
             )
-        },
-        (SubtypeElement::ContainedSubtype { subtype: _, extensible: _ }, None) |
-        (SubtypeElement::ContainedSubtype { subtype: _, extensible: _ }, Some(SubtypeElement::ContainedSubtype { subtype: _, extensible: _ })) => return Ok(None),
-        (SubtypeElement::ContainedSubtype { subtype: _, extensible: _ }, Some(c)) |
-        (c, Some(SubtypeElement::ContainedSubtype { subtype: _, extensible: _ })) => {
-            return Ok(Some(c.clone()))
-        },
+        }
+        (
+            SubtypeElement::ContainedSubtype {
+                subtype: _,
+                extensible: _,
+            },
+            None,
+        )
+        | (
+            SubtypeElement::ContainedSubtype {
+                subtype: _,
+                extensible: _,
+            },
+            Some(SubtypeElement::ContainedSubtype {
+                subtype: _,
+                extensible: _,
+            }),
+        ) => return Ok(None),
+        (
+            SubtypeElement::ContainedSubtype {
+                subtype: _,
+                extensible: _,
+            },
+            Some(c),
+        )
+        | (
+            c,
+            Some(SubtypeElement::ContainedSubtype {
+                subtype: _,
+                extensible: _,
+            }),
+        ) => return Ok(Some(c.clone())),
         (SubtypeElement::PermittedAlphabet(elem_or_set), None)
         | (SubtypeElement::SizeConstraint(elem_or_set), None) => {
             return match &**elem_or_set {

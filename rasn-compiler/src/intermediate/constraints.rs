@@ -314,7 +314,7 @@ impl TryFrom<(&str, &str)> for PropertyAndSettingsPair {
             MidnightSettings::NAME => {
                 MidnightSettings::from_str(value.1).map(|settings| Self::Midnight(settings))
             }
-            _ => Err("Unknown Settings value.".into())
+            _ => Err("Unknown Settings value.".into()),
         }
     }
 
@@ -360,7 +360,7 @@ impl PropertySetting for BasicSettings {
             "Date-Time" => Ok(BasicSettings::DateTime),
             "Interval" => Ok(BasicSettings::Interval),
             "Rec-Interval" => Ok(BasicSettings::RecInterval),
-            _ => Err("Unknown Settings value.".into())
+            _ => Err("Unknown Settings value.".into()),
         }
     }
 }
@@ -389,7 +389,7 @@ impl PropertySetting for DateSettings {
             "YD" => Ok(DateSettings::YearDay),
             "YW" => Ok(DateSettings::YearWeek),
             "YWD" => Ok(DateSettings::YearWeekDay),
-            _ => Err("Unknown Settings value.".into())
+            _ => Err("Unknown Settings value.".into()),
         }
     }
 }
@@ -423,7 +423,7 @@ impl PropertySetting for YearSettings {
             "Proleptic" => Ok(YearSettings::Proleptic),
             "Negative" => Ok(YearSettings::Negative),
             s if s.starts_with("L") => Ok(s[1..].parse().map(|i| YearSettings::Large(i))?),
-            _ => Err("Unknown Settings value.".into())
+            _ => Err("Unknown Settings value.".into()),
         }
     }
 }
@@ -464,7 +464,7 @@ impl PropertySetting for TimeSettings {
             s if s.starts_with("HMSF") => Ok(s[4..]
                 .parse()
                 .map(|i| TimeSettings::HourMinuteSecondFraction(i))?),
-                _ => Err("Unknown Settings value.".into())
+            _ => Err("Unknown Settings value.".into()),
         }
     }
 }
@@ -495,7 +495,7 @@ impl PropertySetting for LocalOrUtcSettings {
             "L" => Ok(LocalOrUtcSettings::Local),
             "Z" => Ok(LocalOrUtcSettings::Utc),
             "LD" => Ok(LocalOrUtcSettings::LocalAndDifference),
-            _ => Err("Unknown Settings value.".into())
+            _ => Err("Unknown Settings value.".into()),
         }
     }
 }
@@ -525,7 +525,7 @@ impl PropertySetting for IntervalTypeSettings {
             "D" => Ok(IntervalTypeSettings::Duration),
             "SD" => Ok(IntervalTypeSettings::StartAndDuration),
             "DE" => Ok(IntervalTypeSettings::DurationAndEnd),
-            _ => Err("Unknown Settings value.".into())
+            _ => Err("Unknown Settings value.".into()),
         }
     }
 }
@@ -554,7 +554,7 @@ impl PropertySetting for StartEndPointSettings {
             "Date" => Ok(StartEndPointSettings::Date),
             "Time" => Ok(StartEndPointSettings::Time),
             "Date-Time" => Ok(StartEndPointSettings::DateTime),
-            _ => Err("Unknown Settings value.".into())
+            _ => Err("Unknown Settings value.".into()),
         }
     }
 }
@@ -581,8 +581,8 @@ impl PropertySetting for RecurrenceSettings {
             "Unlimited" => Ok(RecurrenceSettings::Unlimited),
             s if s.starts_with("R") => {
                 Ok(s[1..].parse().map(|i| RecurrenceSettings::Recurrences(i))?)
-            },
-            _ => Err("Unknown Settings value.".into())
+            }
+            _ => Err("Unknown Settings value.".into()),
         }
     }
 }
@@ -607,7 +607,7 @@ impl PropertySetting for MidnightSettings {
         match value {
             "Start" => Ok(MidnightSettings::StartOfDay),
             "End" => Ok(MidnightSettings::EndOfDay),
-            _ => Err("Unknown Settings value.".into())
+            _ => Err("Unknown Settings value.".into()),
         }
     }
 }

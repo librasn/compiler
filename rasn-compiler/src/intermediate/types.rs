@@ -20,11 +20,10 @@ impl Default for Boolean {
 impl From<Option<Vec<Constraint>>> for Boolean {
     fn from(value: Option<Vec<Constraint>>) -> Self {
         Self {
-            constraints: value.unwrap_or_default()
+            constraints: value.unwrap_or_default(),
         }
     }
 }
-
 
 /// Representation of an ASN1 INTEGER data element
 /// with corresponding constraints and distinguished values
@@ -36,23 +35,24 @@ pub struct Integer {
 
 impl Integer {
     pub fn type_token(&self) -> String {
-        let (min, max) =
-            self.constraints
-                .iter()
-                .try_fold((i128::MAX, i128::MIN), |(mut min, mut max), c| {
-                    if let Ok((cmin, cmax, extensible)) = c.unpack_as_value_range() {
-                        if extensible {
-                            return Err("_");
-                        }
-                        if let Some(ASN1Value::Integer(i)) = cmin {
-                            min = (*i).min(min);
-                        };
-                        if let Some(ASN1Value::Integer(i)) = cmax {
-                            max = (*i).max(max);
-                        };
+        let (min, max) = self
+            .constraints
+            .iter()
+            .try_fold((i128::MAX, i128::MIN), |(mut min, mut max), c| {
+                if let Ok((cmin, cmax, extensible)) = c.unpack_as_value_range() {
+                    if extensible {
+                        return Err("_");
+                    }
+                    if let Some(ASN1Value::Integer(i)) = cmin {
+                        min = (*i).min(min);
                     };
-                    Ok((min, max))
-                }).unwrap_or((1,0));
+                    if let Some(ASN1Value::Integer(i)) = cmax {
+                        max = (*i).max(max);
+                    };
+                };
+                Ok((min, max))
+            })
+            .unwrap_or((1, 0));
         if min > max {
             "Integer".to_owned()
         } else {
@@ -60,7 +60,6 @@ impl Integer {
         }
     }
 }
-
 
 impl Default for Integer {
     fn default() -> Self {
@@ -78,7 +77,7 @@ impl From<(i128, i128, bool)> for Integer {
                 set: ElementOrSetOperation::Element(SubtypeElement::ValueRange {
                     min: Some(ASN1Value::Integer(value.0)),
                     max: Some(ASN1Value::Integer(value.1)),
-                    extensible: value.2
+                    extensible: value.2,
                 }),
                 extensible: value.2,
             })],
@@ -94,7 +93,7 @@ impl From<(Option<i128>, Option<i128>, bool)> for Integer {
                 set: ElementOrSetOperation::Element(SubtypeElement::ValueRange {
                     min: value.0.map(|v| ASN1Value::Integer(v)),
                     max: value.1.map(|v| ASN1Value::Integer(v)),
-                    extensible: value.2
+                    extensible: value.2,
                 }),
                 extensible: value.2,
             })],
@@ -134,7 +133,7 @@ pub struct Real {
 impl From<Option<Vec<Constraint>>> for Real {
     fn from(value: Option<Vec<Constraint>>) -> Self {
         Self {
-            constraints: value.unwrap_or(vec![])
+            constraints: value.unwrap_or(vec![]),
         }
     }
 }
@@ -270,7 +269,7 @@ impl
         value.0 .0.append(&mut value.0 .2.unwrap_or(vec![]));
         let mut components_of = vec![];
         let mut members = vec![];
-        for comp in value.0.0 {
+        for comp in value.0 .0 {
             match comp {
                 SequenceComponent::Member(m) => members.push(m),
                 SequenceComponent::ComponentsOf(c) => components_of.push(c),
@@ -320,7 +319,7 @@ impl
 #[derive(Debug, Clone, PartialEq)]
 pub enum SequenceComponent {
     Member(SequenceOrSetMember),
-    ComponentsOf(String)
+    ComponentsOf(String),
 }
 
 /// Representation of an single ASN1 SEQUENCE member
@@ -486,6 +485,9 @@ pub struct ChoiceSelectionType {
 
 impl From<(&str, &str)> for ChoiceSelectionType {
     fn from(value: (&str, &str)) -> Self {
-        Self { choice_name: value.1.into(), selected_option: value.0.into() }
+        Self {
+            choice_name: value.1.into(),
+            selected_option: value.0.into(),
+        }
     }
 }

@@ -97,10 +97,7 @@ pub fn generalized_time_template(
     name: String,
     tag_annotations: String,
 ) -> String {
-    let rasn_annotations: String = join_annotations(vec![
-        "delegate".into(),
-        tag_annotations,
-    ]);
+    let rasn_annotations: String = join_annotations(vec!["delegate".into(), tag_annotations]);
     format!(
         r#"
 {comments}
@@ -110,15 +107,8 @@ pub fn generalized_time_template(
     )
 }
 
-pub fn utc_time_template(
-    comments: String,
-    name: String,
-    tag_annotations: String,
-) -> String {
-    let rasn_annotations: String = join_annotations(vec![
-        "delegate".into(),
-        tag_annotations,
-    ]);
+pub fn utc_time_template(comments: String, name: String, tag_annotations: String) -> String {
+    let rasn_annotations: String = join_annotations(vec!["delegate".into(), tag_annotations]);
     format!(
         r#"
 {comments}
@@ -232,8 +222,17 @@ pub fn any_template(comments: String, name: String, tag_annotations: String) -> 
     )
 }
 
-pub fn oid_template(comments: String, name: String, tag_annotations: String, constraint_annotations: String) -> String {
-    let rasn_annotations: String = join_annotations(vec!["delegate".into(), tag_annotations, constraint_annotations]);
+pub fn oid_template(
+    comments: String,
+    name: String,
+    tag_annotations: String,
+    constraint_annotations: String,
+) -> String {
+    let rasn_annotations: String = join_annotations(vec![
+        "delegate".into(),
+        tag_annotations,
+        constraint_annotations,
+    ]);
     format!(
         r#"
 {comments}
@@ -272,7 +271,7 @@ pub fn sequence_or_set_template(
     tag_annotations: String,
     set_annotation: String,
     default_methods: String,
-    new_impl: String
+    new_impl: String,
 ) -> String {
     let rasn_annotations = join_annotations(vec![set_annotation, tag_annotations]);
     format!(

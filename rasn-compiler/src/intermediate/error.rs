@@ -8,7 +8,10 @@ pub struct GrammarError {
 
 impl GrammarError {
     pub fn new(data_details: &str, kind: GrammarErrorType) -> Self {
-      GrammarError { details: data_details.into(), kind }
+        GrammarError {
+            details: data_details.into(),
+            kind,
+        }
     }
 }
 
@@ -17,15 +20,11 @@ pub enum GrammarErrorType {
     UnpackingError,
     LinkerError,
     PerVisibleConstraintError,
-    NotYetInplemented
+    NotYetInplemented,
 }
 
 impl Display for GrammarError {
     fn fmt(&self, f: &mut Formatter) -> Result {
-        write!(
-            f,
-            "{:?} in ASN grammar: {}",
-            self.kind, self.details
-        )
+        write!(f, "{:?} in ASN grammar: {}", self.kind, self.details)
     }
 }

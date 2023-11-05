@@ -1,13 +1,13 @@
-use nom::{IResult, combinator::value, bytes::complete::tag};
+use nom::{bytes::complete::tag, combinator::value, IResult};
 
 use crate::intermediate::*;
 
 use super::common::skip_ws_and_comments;
 
 /// Tries to parse an ASN1 EMBEDDED PDV
-/// 
+///
 /// *`input` - string slice to be matched against
-/// 
+///
 /// `embedded_pdv` will try to match an EMBEDDED PDV declaration in the `input` string.
 /// If the match succeeds, the parser will consume the match and return the remaining string
 /// and an `ASN1Type::EmbeddedPdv` value representing the ASN1 declaration.
@@ -21,5 +21,8 @@ use super::common::skip_ws_and_comments;
 /// _Presentation Layer, but this expansion is not used today,_
 /// _and it should be interpreted as "embedded value"._
 pub fn embedded_pdv<'a>(input: &'a str) -> IResult<&'a str, ASN1Type> {
-    value(ASN1Type::EmbeddedPdv, skip_ws_and_comments(tag(EMBEDDED_PDV)))(input)
+    value(
+        ASN1Type::EmbeddedPdv,
+        skip_ws_and_comments(tag(EMBEDDED_PDV)),
+    )(input)
 }

@@ -43,7 +43,9 @@ pub fn utc_time<'a>(input: &'a str) -> IResult<&'a str, ASN1Type> {
     )(input)
 }
 
-const NON_NUMERIC_TIME_CHARS: [char; 17] = ['+','-',':','.',',','/','C','D','H','M','R','P','S','T','W','Y','Z'];
+const NON_NUMERIC_TIME_CHARS: [char; 17] = [
+    '+', '-', ':', '.', ',', '/', 'C', 'D', 'H', 'M', 'R', 'P', 'S', 'T', 'W', 'Y', 'Z',
+];
 
 /// Parses a time value character string
 /// ### X680
@@ -56,7 +58,8 @@ fn t_string<'a>(input: &'a str) -> IResult<&'a str, &'a str> {
         map_res(
             recognize(many1(one_of("0123456789+-:.,/CDHMRPSTWYZ"))),
             |tstring: &str| {
-                if tstring.contains(char::is_numeric) && tstring.contains(|c| NON_NUMERIC_TIME_CHARS.contains(&c))
+                if tstring.contains(char::is_numeric)
+                    && tstring.contains(|c| NON_NUMERIC_TIME_CHARS.contains(&c))
                 {
                     Ok(tstring)
                 } else {

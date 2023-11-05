@@ -1,13 +1,13 @@
-use nom::{IResult, combinator::value, bytes::complete::tag};
+use nom::{bytes::complete::tag, combinator::value, IResult};
 
 use crate::intermediate::*;
 
 use super::common::skip_ws_and_comments;
 
 /// Tries to parse an ASN1 EXTERNAL
-/// 
+///
 /// *`input` - string slice to be matched against
-/// 
+///
 /// `external` will try to match an EXTERNAL declaration in the `input` string.
 /// If the match succeeds, the parser will consume the match and return the remaining string
 /// and an `ASN1Type::External` value representing the ASN1 declaration.

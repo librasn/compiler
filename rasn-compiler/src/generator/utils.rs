@@ -337,7 +337,7 @@ fn constraints_and_type_name(
         ASN1Type::InformationObjectFieldReference(_)
         | ASN1Type::EmbeddedPdv
         | ASN1Type::External => (vec![], "Any".into()),
-        ASN1Type::ChoiceSelectionType(_) => unreachable!()
+        ASN1Type::ChoiceSelectionType(_) => unreachable!(),
     })
 }
 

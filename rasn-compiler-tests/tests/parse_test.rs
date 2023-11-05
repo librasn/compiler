@@ -12,27 +12,36 @@ fn parses_modules() {
             println!("{:?}", &path);
             if let Err(e) = RasnCompiler::new()
                 .add_asn_by_path(path.clone())
-                .compile_to_string() {
-                    failed += 1;
-                    errors.push_str(&format!(r#"
+                .compile_to_string()
+            {
+                failed += 1;
+                errors.push_str(&format!(
+                    r#"
 ----------------------------------------------------------------------------
 {path:?}
 ----------------------------------------------------------------------------
 {e:#?}
 
-                    "#))
-                } else {
-                    succeeded += 1;
-                }
+                    "#
+                ))
+            } else {
+                succeeded += 1;
+            }
         }
     }
     let success_rate = 100 * succeeded / (succeeded + failed);
-    std::fs::write("./parse_test_results.txt", format!(r#"
+    std::fs::write(
+        "./parse_test_results.txt",
+        format!(
+            r#"
 Success rate of {success_rate}%. 
 Parsed {succeeded} ASN1 modules without running into unrecoverable errors.
 Failed to parse {failed} modules with the following errors:
     
-    "#) + &errors).unwrap();
+    "#
+        ) + &errors,
+    )
+    .unwrap();
 }
 
 #[test]

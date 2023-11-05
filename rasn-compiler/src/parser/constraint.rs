@@ -3,10 +3,10 @@ use nom::{
     branch::alt,
     bytes::complete::tag,
     character::complete::char,
-    combinator::{into, map, opt, value, map_res},
+    combinator::{into, map, map_res, opt, value},
     error::Error,
     multi::{many0_count, many1, separated_list0, separated_list1},
-    sequence::{delimited, pair, preceded, terminated, tuple, separated_pair},
+    sequence::{delimited, pair, preceded, separated_pair, terminated, tuple},
     IResult,
 };
 
@@ -339,19 +339,24 @@ fn relational_constraint<'a>(input: &'a str) -> IResult<&'a str, RelationalConst
 fn property_settings_constraint<'a>(input: &'a str) -> IResult<&'a str, SubtypeElement> {
     map_res(
         skip_ws_and_comments(delimited(
-            char('"'), 
-            separated_list1(char(' '), 
-            separated_pair(settings_identifier, char('='), identifier)), char('"')))
-        , |res| {
-        res.into_iter()
-        .map(|pair| 
-            PropertyAndSettingsPair::try_from(pair)
-        )
-        .collect::<Result<Vec<PropertyAndSettingsPair>, _>>()
-        .map(|settings| 
-            SubtypeElement::PropertySettings(PropertySettings { property_settings_list: settings })
-        )
-    })(input)
+            char('"'),
+            separated_list1(
+                char(' '),
+                separated_pair(settings_identifier, char('='), identifier),
+            ),
+            char('"'),
+        )),
+        |res| {
+            res.into_iter()
+                .map(|pair| PropertyAndSettingsPair::try_from(pair))
+                .collect::<Result<Vec<PropertyAndSettingsPair>, _>>()
+                .map(|settings| {
+                    SubtypeElement::PropertySettings(PropertySettings {
+                        property_settings_list: settings,
+                    })
+                })
+        },
+    )(input)
 }
 
 fn settings_identifier<'a>(input: &'a str) -> IResult<&'a str, &'a str> {
@@ -370,7 +375,7 @@ fn settings_identifier<'a>(input: &'a str) -> IResult<&'a str, &'a str> {
 
 #[cfg(test)]
 mod tests {
-    use crate::intermediate::{constraints::*, information_object::*, types::*, *};
+    use crate::intermediate::{information_object::*, types::*, *};
 
     use crate::parser::constraint::*;
 
@@ -882,14 +887,24 @@ mod tests {
                             })
                         ])),
                         ObjectSetValue::Inline(InformationObjectFields::CustomSyntax(vec![
-                            SyntaxApplication::TypeReference(ASN1Type::ElsewhereDeclaredType(
+                            SyntaxApplication::LiteralOrTypeReference(
                                 DeclarationElsewhere {
                                     identifier: "ConnectionManeuverAssist-addGrpC".into(),
                                     constraints: vec![]
                                 }
-                            )),
-                            SyntaxApplication::Literal("IDENTIFIED".into()),
-                            SyntaxApplication::Literal("BY".into()),
+                            ),
+                            SyntaxApplication::LiteralOrTypeReference(
+                                DeclarationElsewhere {
+                                    identifier: "IDENTIFIED".into(),
+                                    constraints: vec![]
+                                }
+                            ),
+                            SyntaxApplication::LiteralOrTypeReference(
+                                DeclarationElsewhere {
+                                    identifier: "BY".into(),
+                                    constraints: vec![]
+                                }
+                            ),
                             SyntaxApplication::ValueReference(ASN1Value::ElsewhereDeclaredValue(
                                 "addGrpC".into()
                             ))
@@ -1080,23 +1095,18 @@ mod tests {
 
     #[test]
     fn parses_pattern_constraint() {
-        assert_eq!(constraint(
-            r#"(PATTERN "[a-zA-Z]#(1,8)(-[a-zA-Z0-9]#(1,8))*")"#
-        ).unwrap().1, 
-        vec![
-            Constraint::SubtypeConstraint(
-                ElementSet { 
-                    set: ElementOrSetOperation::Element(
-                        SubtypeElement::PatternConstraint(
-                            PatternConstraint {
-                                pattern: "[a-zA-Z]#(1,8)(-[a-zA-Z0-9]#(1,8))*".into()
-                            }
-                            )
-                        ), 
-                        extensible: false 
+        assert_eq!(
+            constraint(r#"(PATTERN "[a-zA-Z]#(1,8)(-[a-zA-Z0-9]#(1,8))*")"#)
+                .unwrap()
+                .1,
+            vec![Constraint::SubtypeConstraint(ElementSet {
+                set: ElementOrSetOperation::Element(SubtypeElement::PatternConstraint(
+                    PatternConstraint {
+                        pattern: "[a-zA-Z]#(1,8)(-[a-zA-Z0-9]#(1,8))*".into()
                     }
-                )
-            ]
+                )),
+                extensible: false
+            })]
         )
     }
 

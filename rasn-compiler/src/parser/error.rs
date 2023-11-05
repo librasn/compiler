@@ -40,8 +40,7 @@ impl Display for ParserError {
         write!(
             f,
             "Encountered error while parsing {:?} - {}",
-            self.kind,
-            self.details
+            self.kind, self.details
         )
     }
 }

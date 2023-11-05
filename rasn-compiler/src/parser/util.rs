@@ -81,7 +81,10 @@ pub fn take_until_and_not<'a, Error: ParseError<&'a str>>(
             t1: &'a str,
             t2: &'a str,
         ) -> IResult<&'a str, &'a str, Error> {
-            match ((&i[index..]).find_substring(t1), (&i[index..]).find_substring(t2)) {
+            match (
+                (&i[index..]).find_substring(t1),
+                (&i[index..]).find_substring(t2),
+            ) {
                 (None, _) => Err(Err::Error(Error::from_error_kind(i, ErrorKind::TakeUntil))),
                 (Some(offset), None) => Ok(i.take_split(index + offset)),
                 (Some(_), Some(offset)) => recursive_until(i, index + offset + 2, t1, t2),
