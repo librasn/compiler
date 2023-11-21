@@ -1,3 +1,5 @@
+use num::ToPrimitive;
+
 use crate::intermediate::{
     constraints::{Constraint, ElementOrSetOperation, SetOperation, SetOperator, SubtypeElement},
     error::{GrammarError, GrammarErrorType},
@@ -273,12 +275,22 @@ impl TryFrom<&Constraint> for PerVisibleRangeConstraints {
 
     fn try_from(value: &Constraint) -> Result<PerVisibleRangeConstraints, Self::Error> {
         match value {
-            Constraint::SubtypeConstraint(c) => match &c.set {
-                ElementOrSetOperation::Element(e) => Some(e).try_into(),
-                ElementOrSetOperation::SetOperation(s) => {
-                    fold_constraint_set(&s, None)?.as_ref().try_into()
+            Constraint::SubtypeConstraint(c) => {
+                let mut per_visible: PerVisibleRangeConstraints = match &c.set {
+                    ElementOrSetOperation::Element(e) => Some(e).try_into(),
+                    ElementOrSetOperation::SetOperation(s) => {
+                        fold_constraint_set(&s, None)?.as_ref().try_into()
+                    }
+                }?;
+                if let (PerVisibleRangeConstraints { min, max, .. }, true) =
+                    (&mut per_visible, c.extensible)
+                {
+                    if min.or(*max).is_some() {
+                        per_visible.extensible = true;
+                    }
                 }
-            },
+                Ok(per_visible)
+            }
             _ => Ok(Self::default()),
         }
     }

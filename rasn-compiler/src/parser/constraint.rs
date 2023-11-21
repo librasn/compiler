@@ -1132,4 +1132,10 @@ mod tests {
                 ]
             )
     }
+
+    #[test]
+    fn parses_two_variants_of_extensible_size() {
+        assert_eq!(constraint("(SIZE(1..4),...)").unwrap().1, vec![Constraint::SubtypeConstraint(ElementSet { set: ElementOrSetOperation::Element(SubtypeElement::SizeConstraint(Box::new(ElementOrSetOperation::Element(SubtypeElement::ValueRange { min: Some(ASN1Value::Integer(1)), max: Some(ASN1Value::Integer(4)), extensible: false })))), extensible: true })]);
+        assert_eq!(constraint("(SIZE(1..4,...))").unwrap().1, vec![Constraint::SubtypeConstraint(ElementSet { set: ElementOrSetOperation::Element(SubtypeElement::SizeConstraint(Box::new(ElementOrSetOperation::Element(SubtypeElement::ValueRange { min: Some(ASN1Value::Integer(1)), max: Some(ASN1Value::Integer(4)), extensible: true })))), extensible: false })])
+    }
 }
