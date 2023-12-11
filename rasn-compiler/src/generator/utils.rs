@@ -1,12 +1,21 @@
+use std::process::id;
+
+use quote::quote;
+
 use crate::intermediate::{
     constraints::Constraint,
     encoding_rules::per_visible::{
         per_visible_range_constraints, CharsetSubset, PerVisibleAlphabetConstraints,
+        PerVisibleRangeConstraints,
+    },
+    information_object::{
+        InformationObjectClass, ObjectFieldIdentifier, SyntaxApplication, SyntaxExpression,
+        SyntaxToken,
     },
     types::{Choice, ChoiceOption, Enumerated, SequenceOrSet, SequenceOrSetMember},
     utils::{to_rust_snake_case, to_rust_title_case},
-    ASN1Type, ASN1Value, AsnTag, CharacterStringType, TagClass, TaggingEnvironment,
-    ToplevelDeclaration, ToplevelTypeDeclaration,
+    ASN1Type, ASN1Value, AsnTag, CharacterStringType, DeclarationElsewhere, TagClass,
+    TaggingEnvironment, ToplevelDeclaration, ToplevelTypeDeclaration,
 };
 
 use crate::generator::{error::GeneratorError, generate};
@@ -22,9 +31,11 @@ pub fn inner_name(name: &String, parent_name: &String) -> String {
     format!("{}{}", parent_name, to_rust_title_case(&name))
 }
 
-pub fn int_type_token(opt_min: Option<i128>, opt_max: Option<i128>) -> &'static str {
+pub fn int_type_token(opt_min: Option<i128>, opt_max: Option<i128>, const_used: bool) -> &'static str {
     if let (Some(min), Some(max)) = (opt_min, opt_max) {
-        crate::intermediate::utils::int_type_token(min, max)
+        crate::intermediate::utils::int_type_token(min, max, const_used)
+    } else if const_used {
+        "i64"
     } else {
         "Integer"
     }
@@ -315,11 +326,11 @@ fn constraints_and_type_name(
             let per_constraints = per_visible_range_constraints(true, &i.constraints)?;
             (
                 i.constraints.clone(),
-                int_type_token(per_constraints.min(), per_constraints.max()).into(),
+                int_type_token(per_constraints.min(), per_constraints.max(), i.used_in_const).into(),
             )
         }
         ASN1Type::Real(_) => (vec![], "f64".into()),
-        ASN1Type::ObjectIdentifier(o) => (o.constraints.clone(), "Oid".into()),
+        ASN1Type::ObjectIdentifier(o) => (o.constraints.clone(), "ObjectIdentifier".into()),
         ASN1Type::BitString(b) => (b.constraints.clone(), "BitString".into()),
         ASN1Type::OctetString(o) => (o.constraints.clone(), "OctetString".into()),
         ASN1Type::GeneralizedTime(o) => (o.constraints.clone(), "GeneralizedTime".into()),
@@ -536,4 +547,150 @@ pub fn format_new_impl(name: &String, name_types: Vec<StringifiedNameType>) -> S
             .collect::<Vec<String>>()
             .join("\n\t")
     )
+}
+
+/// Resolves the custom syntax declared in an information object class' WITH SYNTAX clause
+#[allow(dead_code)]
+pub fn resolve_syntax(
+    class: &InformationObjectClass,
+    application: &Vec<SyntaxApplication>,
+) -> Result<(ASN1Value, Vec<(usize, ASN1Type)>), GeneratorError> {
+    let expressions = match &class.syntax {
+        Some(s) => &s.expressions,
+        None => {
+            return Err(GeneratorError {
+                top_level_declaration: None,
+                details: "No syntax definition for information object class found!".into(),
+                kind: GeneratorErrorType::MissingCustomSyntax,
+            })
+        }
+    };
+
+    let tokens = flatten_tokens(&expressions);
+
+    let mut key = None;
+    let mut field_index_map = Vec::<(usize, ASN1Type)>::new();
+
+    let mut appl_iter = application.iter();
+    'syntax_matching: for (required, token) in tokens {
+        if let Some(expr) = appl_iter.next() {
+            if compare_tokens(&token, expr) {
+                match expr {
+                    SyntaxApplication::ObjectSetDeclaration(_) => todo!(),
+                    SyntaxApplication::LiteralOrTypeReference(t) => {
+                        if let Some(index) = class.fields.iter().enumerate().find_map(|(i, v)| {
+                            (v.identifier
+                                == ObjectFieldIdentifier::MultipleValue(
+                                    token.name_or_empty().to_owned(),
+                                ))
+                            .then(|| i)
+                        }) {
+                            field_index_map
+                                .push((index, ASN1Type::ElsewhereDeclaredType(t.clone())))
+                        }
+                    }
+                    SyntaxApplication::TypeReference(t) => {
+                        if let Some(index) = class.fields.iter().enumerate().find_map(|(i, v)| {
+                            (v.identifier
+                                == ObjectFieldIdentifier::MultipleValue(
+                                    token.name_or_empty().to_owned(),
+                                ))
+                            .then(|| i)
+                        }) {
+                            field_index_map.push((index, t.clone()))
+                        }
+                    }
+                    SyntaxApplication::ValueReference(v) => {
+                        if let Some(_) = class.fields.iter().find(|v| {
+                            v.identifier
+                                == ObjectFieldIdentifier::SingleValue(
+                                    token.name_or_empty().to_owned(),
+                                )
+                                && v.is_unique
+                        }) {
+                            key = Some(v.clone())
+                        }
+                    }
+                    _ => continue 'syntax_matching,
+                }
+            } else if required {
+                return Err(GeneratorError {
+                    top_level_declaration: None,
+                    details: format!("Syntax mismatch while resolving information object."),
+                    kind: GeneratorErrorType::SyntaxMismatch,
+                });
+            } else {
+                continue 'syntax_matching;
+            }
+        } else if required {
+            return Err(GeneratorError {
+                top_level_declaration: None,
+                details: format!("Syntax mismatch while resolving information object."),
+                kind: GeneratorErrorType::SyntaxMismatch,
+            });
+        } else {
+            continue 'syntax_matching;
+        }
+    }
+    field_index_map.sort_by(|&(a, _), &(b, _)| a.cmp(&b));
+    let types = field_index_map.into_iter().collect();
+    match key {
+        Some(k) => Ok((k, types)),
+        None => Err(GeneratorError {
+            top_level_declaration: None,
+            details: "Could not find class key!".into(),
+            kind: GeneratorErrorType::MissingClassKey,
+        }),
+    }
+}
+
+fn flatten_tokens(expressions: &Vec<SyntaxExpression>) -> Vec<(bool, SyntaxToken)> {
+    iter_expressions(expressions, false)
+        .into_iter()
+        .map(|x| match x {
+            (is_required, SyntaxExpression::Required(r)) => (is_required, r.clone()),
+            _ => unreachable!(),
+        })
+        .collect()
+}
+
+fn iter_expressions(
+    expressions: &Vec<SyntaxExpression>,
+    optional_recursion: bool,
+) -> Vec<(bool, &SyntaxExpression)> {
+    expressions
+        .iter()
+        .flat_map(|x| match x {
+            SyntaxExpression::Optional(o) => iter_expressions(o, true),
+            r => vec![(!optional_recursion, r)],
+        })
+        .collect()
+}
+
+fn compare_tokens(token: &SyntaxToken, application: &SyntaxApplication) -> bool {
+    match (token, application) {
+        (SyntaxToken::Comma, SyntaxApplication::Comma) => true,
+        (SyntaxToken::Literal(t), SyntaxApplication::Literal(a)) if t == a => true,
+        (
+            SyntaxToken::Literal(t),
+            SyntaxApplication::LiteralOrTypeReference(DeclarationElsewhere { identifier, .. }),
+        ) if t == identifier => true,
+        (
+            SyntaxToken::Field(ObjectFieldIdentifier::MultipleValue(_)),
+            SyntaxApplication::ObjectSetDeclaration(_),
+        ) => true,
+        (
+            SyntaxToken::Field(ObjectFieldIdentifier::MultipleValue(_)),
+            SyntaxApplication::TypeReference(_),
+        ) => true,
+        (
+            SyntaxToken::Field(ObjectFieldIdentifier::MultipleValue(_)),
+            SyntaxApplication::LiteralOrTypeReference(_),
+        ) => true,
+        (
+            SyntaxToken::Field(ObjectFieldIdentifier::SingleValue(_)),
+            SyntaxApplication::ValueReference(_),
+        ) => true,
+        _ => false,
+    }
 }

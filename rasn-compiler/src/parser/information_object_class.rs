@@ -147,11 +147,9 @@ fn custom_syntax_information_object<'a>(
     map(
         skip_ws_and_comments(many1(skip_ws_and_comments(alt((
             value(SyntaxApplication::Comma, char(COMMA)),
-            map(asn1_type, |m| {
-                match m {
-                    ASN1Type::ElsewhereDeclaredType(t) => SyntaxApplication::LiteralOrTypeReference(t),
-                    t => SyntaxApplication::TypeReference(t)
-                }
+            map(asn1_type, |m| match m {
+                ASN1Type::ElsewhereDeclaredType(t) => SyntaxApplication::LiteralOrTypeReference(t),
+                t => SyntaxApplication::TypeReference(t),
             }),
             map(asn1_value, |m| SyntaxApplication::ValueReference(m)),
             map(object_set, |m| SyntaxApplication::ObjectSetDeclaration(m)),
@@ -284,7 +282,8 @@ mod tests {
                                     tag: None,
                                     r#type: ASN1Type::Integer(Integer {
                                         constraints: vec![],
-                                        distinguished_values: None
+                                        distinguished_values: None,
+                                        used_in_const: false
                                     }),
                                     constraints: vec![]
                                 },
@@ -351,6 +350,48 @@ mod tests {
                 values: vec![
                     ObjectSetValue::Reference("My-ops".into()),
                     ObjectSetValue::Reference("Other-ops".into())
+                ],
+                extensible: Some(2)
+            }
+        )
+    }
+
+    #[test]
+    fn parses_inline_declaration_value_set() {
+        assert_eq!(
+            object_set(
+                r#"{
+                {&errorCode asn-val-security-failure, &ParameterType BOOLEAN} |
+                {&errorCode asn-val-unknown-order},
+                ...
+            }"#
+            )
+            .unwrap()
+            .1,
+            ObjectSet {
+                values: vec![
+                    ObjectSetValue::Inline(InformationObjectFields::DefaultSyntax(vec![
+                        InformationObjectField::FixedValueField(FixedValueField {
+                            identifier: "&errorCode".to_string(),
+                            value: ASN1Value::ElsewhereDeclaredValue(
+                                "asn-val-security-failure".into()
+                            )
+                        }),
+                        InformationObjectField::TypeField(TypeField {
+                            identifier: "&ParameterType".into(),
+                            r#type: ASN1Type::Boolean(Boolean {
+                                constraints: vec![]
+                            })
+                        })
+                    ])),
+                    ObjectSetValue::Inline(InformationObjectFields::DefaultSyntax(vec![
+                        InformationObjectField::FixedValueField(FixedValueField {
+                            identifier: "&errorCode".into(),
+                            value: ASN1Value::ElsewhereDeclaredValue(
+                                "asn-val-unknown-order".into()
+                            )
+                        })
+                    ])),
                 ],
                 extensible: Some(2)
             }

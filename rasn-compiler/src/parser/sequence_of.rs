@@ -178,6 +178,7 @@ mod tests {
                         }),
                         extensible: false
                     })],
+                    used_in_const: false,
                     distinguished_values: Some(vec![DistinguishedValue {
                         name: "one-distinguished-value".into(),
                         value: 12

@@ -31,6 +31,7 @@ impl From<Option<Vec<Constraint>>> for Boolean {
 pub struct Integer {
     pub constraints: Vec<Constraint>,
     pub distinguished_values: Option<Vec<DistinguishedValue>>,
+    pub used_in_const: bool,
 }
 
 impl Integer {
@@ -56,7 +57,7 @@ impl Integer {
         if min > max {
             "Integer".to_owned()
         } else {
-            int_type_token(min, max).to_owned()
+            int_type_token(min, max, self.used_in_const).to_owned()
         }
     }
 }
@@ -66,6 +67,7 @@ impl Default for Integer {
         Self {
             constraints: vec![],
             distinguished_values: None,
+            used_in_const: false,
         }
     }
 }
@@ -82,6 +84,7 @@ impl From<(i128, i128, bool)> for Integer {
                 extensible: value.2,
             })],
             distinguished_values: None,
+            used_in_const: false,
         }
     }
 }
@@ -98,6 +101,7 @@ impl From<(Option<i128>, Option<i128>, bool)> for Integer {
                 extensible: value.2,
             })],
             distinguished_values: None,
+            used_in_const: false,
         }
     }
 }
@@ -119,6 +123,7 @@ impl
         Self {
             constraints: value.2.unwrap_or(vec![]),
             distinguished_values: value.1,
+            used_in_const: false,
         }
     }
 }

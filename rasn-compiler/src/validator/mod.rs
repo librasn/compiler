@@ -9,7 +9,7 @@ pub(crate) mod error;
 
 use std::{collections::BTreeMap, error::Error};
 
-use crate::intermediate::{constraints::*, types::*, *};
+use crate::intermediate::{constraints::*, types::*, *, information_object::ClassLink};
 
 use self::error::{ValidatorError, ValidatorErrorType};
 
@@ -31,11 +31,19 @@ impl Validator {
         let mut warnings: Vec<Box<dyn Error>> = vec![];
         let mut keys = self.tlds.keys().cloned().collect::<Vec<String>>();
         while let Some(key) = keys.pop() {
-            if self.has_class_field_reference(&key) {
-                if let Some(ToplevelDeclaration::Type(mut tld)) = self.tlds.remove(&key) {
-                    tld.r#type = tld.r#type.resolve_class_field_reference(&self.tlds);
-                    self.tlds
+            if self.references_class_by_name(&key) {
+                match self.tlds.remove(&key) {
+                    Some(ToplevelDeclaration::Type(mut tld)) => {
+                        tld.r#type = tld.r#type.resolve_class_reference(&self.tlds);
+                        self.tlds
                         .insert(tld.name.clone(), ToplevelDeclaration::Type(tld));
+                        },
+                    Some(ToplevelDeclaration::Information(mut tld)) => {
+                        tld = tld.resolve_class_reference(&self.tlds);
+                        self.tlds
+                        .insert(tld.name.clone(), ToplevelDeclaration::Information(tld));
+                    },
+                    _ => ()
                 }
             } else if self.has_components_of_notation(&key) {
                 if let Some(ToplevelDeclaration::Type(mut tld)) = self.tlds.remove(&key) {
@@ -121,31 +129,57 @@ impl Validator {
                         _ => (),
                     }
                 }
+            } else if self.contains_unbounded_integer(&key) {
+                if let Some(ToplevelDeclaration::Type(mut tld)) = self.tlds.remove(&key) {
+                    if self.is_used_in_const(&tld.name) {
+                        tld.r#type.make_unbounded_integer_constable();
+                    }
+                    self.tlds
+                        .insert(tld.name.clone(), ToplevelDeclaration::Type(tld));
+                }
             }
         }
 
         Ok((self, warnings))
     }
 
+    fn is_used_in_const(&self, type_id: &String) -> bool {
+        self.tlds.values().any(|tld| match tld {
+            ToplevelDeclaration::Value(v) => &v.type_name == type_id,
+            _ => false
+        })
+    }
+
     fn has_constraint_reference(&mut self, key: &String) -> bool {
         self.tlds
             .get(key)
-            .map(|t| t.has_constraint_reference())
+            .map(ToplevelDeclaration::has_constraint_reference)
+            .unwrap_or(false)
+    }
+
+    fn contains_unbounded_integer(&mut self, key: &String) -> bool {
+        self.tlds
+            .get(key)
+            .map(ToplevelDeclaration::contains_unbounded_integer)
             .unwrap_or(false)
     }
 
     fn has_default_value_reference(&mut self, key: &String) -> bool {
         self.tlds
             .get(key)
-            .map(|t| t.has_default_reference())
+            .map(ToplevelDeclaration::has_default_reference)
             .unwrap_or(false)
     }
 
-    fn has_class_field_reference(&mut self, key: &String) -> bool {
+    fn references_class_by_name(&mut self, key: &String) -> bool {
         self.tlds
             .get(key)
             .map(|t| match t {
-                ToplevelDeclaration::Type(t) => t.r#type.contains_class_field_reference(),
+                ToplevelDeclaration::Type(t) => t.r#type.references_class_by_name(),
+                ToplevelDeclaration::Information(i) => i.class.as_ref().map_or(false, |c| match c {
+                    ClassLink::ByReference(_) => false,
+                    ClassLink::ByName(_) => true
+                }),
                 _ => false,
             })
             .unwrap_or(false)

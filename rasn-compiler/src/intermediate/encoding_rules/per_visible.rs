@@ -1,5 +1,3 @@
-use num::ToPrimitive;
-
 use crate::intermediate::{
     constraints::{Constraint, ElementOrSetOperation, SetOperation, SetOperator, SubtypeElement},
     error::{GrammarError, GrammarErrorType},
@@ -7,6 +5,38 @@ use crate::intermediate::{
     ASN1Type, ASN1Value, CharacterStringType,
 };
 use std::{collections::BTreeMap, ops::AddAssign};
+
+pub fn to_per_visible(
+    constraints: Vec<Constraint>,
+    character_string_type: Option<CharacterStringType>,
+) -> Result<
+    (
+        PerVisibleRangeConstraints,
+        Option<PerVisibleAlphabetConstraints>,
+    ),
+    GrammarError,
+> {
+    Ok((
+        constraints
+            .iter()
+            .try_fold(PerVisibleRangeConstraints::default(), |mut acc, curr| {
+                let constraints = curr.try_into()?;
+                acc += constraints;
+                Ok(acc)
+            })?,
+        character_string_type.map(|c| {
+            constraints.iter().try_fold(
+                PerVisibleAlphabetConstraints::default_for(c),
+                |mut acc, curr| {
+                    if let Some(mut constraints) = PerVisibleAlphabetConstraints::try_new(curr, c)? {
+                        acc += &mut constraints;
+                    }
+                    Ok(acc)
+                },
+            )
+        }).transpose()?,
+    ))
+}
 
 trait PerVisible {
     fn per_visible(&self) -> bool;

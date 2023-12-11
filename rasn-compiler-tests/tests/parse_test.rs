@@ -46,8 +46,9 @@ Failed to parse {failed} modules with the following errors:
 
 #[test]
 fn compile_etsi() {
-    RasnCompiler::new()
-        .add_asn_by_path("./tests/modules/v2x_cam.asn1")
-        .set_output_path("./cam.rs")
-        .compile();
+    println!("{:?}", RasnCompiler::new()
+        .add_asn_by_path("../rasn-compiler/test_asn1/REGION.asn")
+        //.add_asn_by_path("./tests/modules/IVIM.asn1")
+        .set_output_path("./1609.rs")
+        .compile());
 }

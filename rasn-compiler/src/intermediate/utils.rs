@@ -5,13 +5,14 @@ use super::{
     ASN1Value, ToplevelDeclaration,
 };
 
-pub fn int_type_token<'a>(min: i128, max: i128) -> &'a str {
+pub fn int_type_token<'a>(min: i128, max: i128, const_used: bool) -> &'a str {
     if min >= 0 {
         match max {
             r if r <= u8::MAX.into() => "u8",
             r if r <= u16::MAX.into() => "u16",
             r if r <= u32::MAX.into() => "u32",
             r if r <= u64::MAX.into() => "u64",
+            _ if const_used => "i64",
             _ => "Integer",
         }
     } else {
@@ -20,6 +21,7 @@ pub fn int_type_token<'a>(min: i128, max: i128) -> &'a str {
             (mi, ma) if mi >= i16::MIN.into() && ma <= i16::MAX.into() => "i16",
             (mi, ma) if mi >= i32::MIN.into() && ma <= i32::MAX.into() => "i32",
             (mi, ma) if mi >= i64::MIN.into() && ma <= i64::MAX.into() => "i64",
+            _ if const_used => "i64",
             _ => "Integer",
         }
     }
@@ -134,11 +136,11 @@ mod tests {
 
     #[test]
     fn determines_int_type() {
-        assert_eq!(int_type_token(600, 600), "u16");
-        assert_eq!(int_type_token(0, 0), "u8");
-        assert_eq!(int_type_token(-1, 1), "i8");
-        assert_eq!(int_type_token(0, 124213412341389457931857915125), "Integer");
-        assert_eq!(int_type_token(-67463, 23123), "i32");
-        assert_eq!(int_type_token(255, 257), "u16");
+        assert_eq!(int_type_token(600, 600, false), "u16");
+        assert_eq!(int_type_token(0, 0, false), "u8");
+        assert_eq!(int_type_token(-1, 1, false), "i8");
+        assert_eq!(int_type_token(0, 124213412341389457931857915125, false), "Integer");
+        assert_eq!(int_type_token(-67463, 23123, false), "i32");
+        assert_eq!(int_type_token(255, 257, false), "u16");
     }
 }

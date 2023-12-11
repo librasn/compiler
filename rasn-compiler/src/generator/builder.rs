@@ -1,7 +1,16 @@
+use std::{collections::BTreeMap, ops::Not};
+
+use proc_macro2::TokenStream;
+use quote::quote;
+
 use crate::intermediate::{
-    utils::{to_rust_const_case, to_rust_title_case},
+    information_object::{
+        ASN1Information, ClassLink, InformationObjectClass, InformationObjectFields,
+        ObjectSetValue, ToplevelInformationDeclaration,
+    },
+    utils::{to_rust_const_case, to_rust_title_case, to_rust_snake_case},
     ASN1Type, ASN1Value, ToplevelDeclaration, ToplevelTypeDeclaration, ToplevelValueDeclaration,
-    INTEGER,
+    INTEGER, constraints::Constraint,
 };
 
 use super::{
@@ -52,7 +61,7 @@ pub fn generate_integer_value(tld: ToplevelValueDeclaration) -> Result<String, G
             Ok(integer_value_template(
                 format_comments(&tld.comments),
                 to_rust_const_case(&tld.name),
-                int_type_token(Some(i), Some(i)),
+                "i64",
                 i.to_string(),
             ))
         } else {
@@ -293,6 +302,24 @@ pub fn generate_enumerated(tld: ToplevelTypeDeclaration) -> Result<String, Gener
     }
 }
 
+pub fn generate_choice_value(tld: ToplevelValueDeclaration) -> Result<String, GeneratorError> {
+    if let ASN1Value::Choice(ref choice, inner) = tld.value {
+        let name = to_rust_const_case(&tld.name).parse::<TokenStream>().unwrap();
+        let type_id = tld.type_name.parse::<TokenStream>().unwrap();
+        let choice_name = to_rust_title_case(choice).parse::<TokenStream>().unwrap();
+        let inner_decl = inner.value_as_string(None)?.parse::<TokenStream>().unwrap();
+        Ok(quote! {
+            const #name: #type_id = #type_id :: #choice_name (#inner_decl);
+        }.to_string())
+    } else {
+        Err(GeneratorError::new(
+            Some(ToplevelDeclaration::Value(tld)),
+            "Expected CHOICE top-level declaration",
+            GeneratorErrorType::Asn1TypeMismatch,
+        ))
+    }
+}
+
 pub fn generate_choice(tld: ToplevelTypeDeclaration) -> Result<String, GeneratorError> {
     if let ASN1Type::Choice(ref choice) = tld.r#type {
         let name = to_rust_title_case(&tld.name);
@@ -342,7 +369,7 @@ pub fn generate_object_identifier_value(
 pub fn generate_sequence_or_set(tld: ToplevelTypeDeclaration) -> Result<String, GeneratorError> {
     match tld.r#type {
         ASN1Type::Sequence(ref seq) | ASN1Type::Set(ref seq) => {
-            let name = to_rust_title_case(&tld.name);
+            let name = to_rust_title_case(&tld.name).parse::<TokenStream>().unwrap();
             let extensible = if seq.extensible.is_some() {
                 r#"
                 #[non_exhaustive]"#
@@ -354,17 +381,44 @@ pub fn generate_sequence_or_set(tld: ToplevelTypeDeclaration) -> Result<String, 
             } else {
                 ""
             };
-            let (declaration, name_types) = format_sequence_or_set_members(seq, &name)?;
+            let class_fields = seq.members.iter().fold(String::new(), |mut acc, m| { [m.constraints.clone(), m.r#type.constraints()].concat().iter().for_each(|c| {
+                let decode_fn = format!("decode_{}", to_rust_snake_case(&m.name)).parse::<TokenStream>().unwrap();
+                let open_field_name = to_rust_snake_case(&m.name).parse::<TokenStream>().unwrap();
+                match (c, &m.r#type) {
+                    (Constraint::TableConstraint(t), ASN1Type::InformationObjectFieldReference(iofr)) => {
+                        let identifier = t.linked_fields.iter().map(|l| to_rust_snake_case(&l.field_name)).collect::<Vec<String>>().join(".").parse::<TokenStream>().unwrap();
+                        let field_name = iofr.field_path.last().unwrap().identifier().replace("&", "");
+                        let obj_set_name = match t.object_set.values.first() {
+                            Some(ObjectSetValue::Reference(s)) => s,
+                            _ => todo!()
+                        };
+                        let field_enum_name = format!("{obj_set_name}_{field_name}").parse::<TokenStream>().unwrap();
+                        let input = m.is_optional.then(|| quote!(self. #open_field_name .as_ref())).unwrap_or(quote!(Some(&self. #open_field_name)));
+                        acc += &quote! {
+
+                            impl #name {
+                                pub fn #decode_fn<D: Decoder>(&self, decoder: &mut D) -> Result<#field_enum_name, D::Error> {
+                                    #field_enum_name ::decode(decoder, #input, &self. #identifier)
+                                }
+                            }
+                        }.to_string()
+                    },
+                    _ => ()
+                };
+            });
+            acc
+            });
+            let (declaration, name_types) = format_sequence_or_set_members(seq, &name.to_string())?;
             Ok(sequence_or_set_template(
                 format_comments(&tld.comments),
-                name.clone(),
+                name.to_string(),
                 extensible,
                 declaration,
-                format_nested_sequence_members(seq, &name)?,
+                format_nested_sequence_members(seq, &name.to_string())? + &class_fields,
                 format_tag(tld.tag.as_ref(), String::from("automatic_tags")),
                 set_annotation.into(),
-                format_default_methods(&seq.members, &name)?,
-                format_new_impl(&name, name_types),
+                format_default_methods(&seq.members, &name.to_string())?,
+                format_new_impl(&name.to_string(), name_types),
             ))
         }
         _ => Err(GeneratorError::new(
@@ -420,92 +474,165 @@ pub fn generate_sequence_or_set_of(tld: ToplevelTypeDeclaration) -> Result<Strin
     ))
 }
 
-//     fn generate_information_object_set(
-//         tld: ToplevelInformationDeclaration,
-//     ) -> Result<String, GeneratorError> {
-//         if let ASN1Information::ObjectSet(o) = &tld.value {
-//             let class: &InformationObjectClass = match tld.class {
-//                 Some(ClassLink::ByReference(ref c)) => c,
-//                 _ => {
-//                     return Err(GeneratorError::new(
-//                         None,
-//                         "Missing class link in Information Object Set",
-//                         GeneratorErrorType::MissingClassLink,
-//                     ))
-//                 }
-//             };
-//             let keys_to_types = o
-//                 .values
-//                 .iter()
-//                 .map(|v| {
-//                     match v {
-//                         ObjectSetValue::Reference(_) => todo!(),
-//                         // basically, an information object specifies a sequence implementing a class. So we sould treat information objects like sequences
-//                         ObjectSetValue::Inline(InformationObjectFields::CustomSyntax(s)) => {
-//                             resolve_syntax(class, s)
-//                         }
-//                         ObjectSetValue::Inline(InformationObjectFields::DefaultSyntax(_s)) => {
-//                             todo!()
-//                         }
-//                     }
-//                 })
-//                 .collect::<Result<Vec<(ASN1Value, Vec<ASN1Type>)>, GeneratorError>>()?;
-//             let mut options = keys_to_types
-//                 .iter()
-//                 .map(|(k, types)| {
-//                     format!(
-//                         "_{}({})",
-//                         k.to_string(),
-//                         types
-//                             .iter()
-//                             .map(|t| format!("pub {}", t.to_string()))
-//                             .collect::<Vec<String>>()
-//                             .join(", ")
-//                     )
-//                 })
-//                 .collect::<Vec<String>>()
-//                 .join(",\n\t");
-//             if o.extensible.is_some() {
-//                 options.push_str(",\n\tUnknownClassImplementation(pub Vec<u8>)");
-//             }
-//             let key_type = match class
-//                 .fields
-//                 .iter()
-//                 .find_map(|f| {
-//                     f.is_unique
-//                         .then(|| f.r#type.as_ref().map(|t| t.to_string()))
-//                 })
-//                 .flatten()
-//             {
-//                 Some(key_type) => key_type,
-//                 None => {
-//                     return Err(GeneratorError::new(
-//                         None,
-//                         "Could not determine class key type!",
-//                         GeneratorErrorType::MissingClassKey,
-//                     ))
-//                 }
-//             };
-//             let mut branches = keys_to_types
-//                 .iter()
-//                 .map(|(k, _)| format!("{} => todo!()", k.to_string(),))
-//                 .collect::<Vec<String>>()
-//                 .join(",\n\t");
-//             if o.extensible.is_some() {
-//                 branches.push_str(",\n\t_ => todo!()");
-//             }
-//             Ok(information_object_set_template(
-//                 format_comments(&tld.comments),
-//                 rustify_name(&tld.name),
-//                 options,
-//                 key_type,
-//                 branches,
-//             ))
-//         } else {
-//             Err(GeneratorError::new(
-//                 Some(ToplevelDeclaration::Information(tld)),
-//                 "Expected Object Set top-level declaration",
-//                 GeneratorErrorType::Asn1TypeMismatch,
-//             ))
-//         }
-//     }
+pub fn generate_information_object_set(
+    tld: ToplevelInformationDeclaration,
+) -> Result<String, GeneratorError> {
+    if let ASN1Information::ObjectSet(o) = &tld.value {
+        let class: &InformationObjectClass = match tld.class {
+            Some(ClassLink::ByReference(ref c)) => c,
+            _ => {
+                return Err(GeneratorError::new(
+                    None,
+                    "Missing class link in Information Object Set",
+                    GeneratorErrorType::MissingClassKey,
+                ))
+            }
+        };
+        let mut keys_to_types = o
+            .values
+            .iter()
+            .map(|v| {
+                match v {
+                    ObjectSetValue::Reference(_) => todo!(),
+                    // basically, an information object specifies a sequence implementing a class. So we sould treat information objects like sequences
+                    ObjectSetValue::Inline(InformationObjectFields::CustomSyntax(s)) => {
+                        resolve_syntax(class, s)
+                    }
+                    ObjectSetValue::Inline(InformationObjectFields::DefaultSyntax(_s)) => {
+                        todo!()
+                    }
+                }
+            })
+            .collect::<Result<Vec<(ASN1Value, Vec<(usize, ASN1Type)>)>, _>>()?;
+        let mut choices = BTreeMap::<String, Vec<(ASN1Value, ASN1Type)>>::new();
+        for (key, items) in keys_to_types.drain(..) {
+            for (index, item) in items {
+                let id = class
+                    .fields
+                    .get(index)
+                    .map(|f| f.identifier.identifier())
+                    .ok_or_else(|| GeneratorError {
+                        top_level_declaration: Some(ToplevelDeclaration::Information(tld.clone())),
+                        details: "Could not find class field for index.".into(),
+                        kind: GeneratorErrorType::SyntaxMismatch,
+                    })?;
+                match choices.get_mut(&id) {
+                    Some(entry) => entry.push((key.clone(), item)),
+                    None => {
+                        choices.insert(id, vec![(key.clone(), item)]);
+                    }
+                }
+            }
+        }
+
+        let name = tld.name;
+        let class_unique_id_type = class
+            .fields
+            .iter()
+            .find_map(|f| (f.is_unique).then(|| f.r#type.clone()))
+            .flatten()
+            .ok_or_else(|| GeneratorError {
+                top_level_declaration: None,
+                details: "Could not determine unique class identifier type.".into(),
+                kind: GeneratorErrorType::SyntaxMismatch,
+            })?;
+        let class_unique_id_type_name = class_unique_id_type.as_string()?.parse::<TokenStream>().unwrap();
+
+        let field_enums = choices.iter().map(|(field_name, fields)| {
+            let field_enum_name = format!("{name}_{field_name}").replace("&", "").parse::<TokenStream>().unwrap();
+            let (ids, inner_types): (Vec<(TokenStream, TokenStream, TokenStream)>, Vec<TokenStream>) = fields.iter().enumerate().map(|(index, (id, ty))| {
+                let type_id = ty.as_string().unwrap_or(String::from("Option<()>")).parse::<TokenStream>().unwrap();
+                let identifier_value = id.value_as_string(Some(&class_unique_id_type_name.to_string())).unwrap().parse::<TokenStream>().unwrap();
+                let variant_name = if let ASN1Value::ElsewhereDeclaredValue(ref_id) = id {
+                    to_rust_title_case(ref_id)
+                } else {
+                    format!("{field_enum_name}_{index}")
+                }.parse::<TokenStream>().unwrap();
+                if ty.constraints().is_empty() {
+                    ((variant_name, type_id, identifier_value), quote!())
+                } else {
+                    let (signed_range, character_string_type) = match ty {
+                        ASN1Type::CharacterString(c) => (false, Some(c.r#type)),
+                        ASN1Type::Integer(_) => (true, None),
+                        ASN1Type::Real(_) => (true, None),
+                        ASN1Type::BitString(_) => (false, None),
+                        ASN1Type::OctetString(_) => (false, None),
+                        _ => (false, None)
+                        
+                    };
+                    let delegate_id = &format!("Inner_{field_enum_name}_{index}").parse::<TokenStream>().unwrap();
+                    let range_constraints = format_range_annotations(signed_range, &ty.constraints()).unwrap();
+                    let alphabet_constraints = character_string_type.map(|c| format_alphabet_annotations(c, &ty.constraints()).ok()).flatten().unwrap_or_default();
+                    let annotations = [range_constraints, alphabet_constraints, String::from("delegate")].into_iter().filter(|ann| ann.is_empty().not()).collect::<Vec<String>>().join(",").parse::<TokenStream>().unwrap();
+                    ((variant_name, delegate_id.clone(), identifier_value), quote!{
+                        #[derive(Debug, Clone, PartialEq, AsnType, Decode, Encode)]
+                        #[rasn(#annotations)]
+                        pub struct #delegate_id (pub #type_id);
+
+                    })
+                }
+            }).unzip();
+            
+            let variants = ids.iter().map(|(variant_name, type_id, _)| {
+                quote!(#variant_name (#type_id),)
+            });
+
+            let de_match_arms = ids.iter().map(|(variant_name, _, identifier_value)| {
+                quote!(& #identifier_value => Ok(decoder.codec().decode_from_binary(open_type_payload.ok_or_else(|| rasn::error::DecodeError::from_kind(
+                    rasn::error::DecodeErrorKind::Custom {
+                        msg: alloc::format!("Failed to decode open type! No input data given."),
+                    },
+                    decoder.codec()
+                ).into())?.as_bytes()).map(Self:: #variant_name)?),)
+            });
+
+            let en_match_arms = ids.iter().map(|(variant_name, _, identifier_value)| {
+                quote!((Self::#variant_name (inner), & #identifier_value) =>inner.encode(encoder),)
+            });
+
+            quote! {
+                #(#inner_types)*
+
+                #[derive(Debug, Clone, PartialEq)]
+                pub enum #field_enum_name {
+                    #(#variants)*
+                }
+
+                impl #field_enum_name {
+                    pub fn decode<D: Decoder>(decoder: &mut D, open_type_payload: Option<&Any>, identifier: & #class_unique_id_type_name) -> Result<Self, D::Error> {
+                        match identifier {
+                            #(#de_match_arms)*
+                            _ => Err(rasn::error::DecodeError::from_kind(
+                                rasn::error::DecodeErrorKind::Custom {
+                                    msg: alloc::format!("Unknown unique identifier for information object class instance."),
+                                },
+                                decoder.codec()
+                            ).into())
+                        }
+                    }
+
+                    pub fn encode<E: Encoder>(&self, encoder: &mut E, identifier: & #class_unique_id_type_name) -> Result<(), E::Error> {
+                        match (self, identifier) {
+                            #(#en_match_arms)*
+                            _ => Err(rasn::error::EncodeError::from_kind(
+                                rasn::error::EncodeErrorKind::Custom {
+                                    msg: alloc::format!("Unknown unique identifier for information object class instance."),
+                                },
+                                encoder.codec()
+                            ).into())
+                        }
+                    }
+                }
+
+            }
+        });
+
+        Ok(quote!(#(#field_enums)*).to_string())
+    } else {
+        Err(GeneratorError::new(
+            Some(ToplevelDeclaration::Information(tld)),
+            "Expected Object Set top-level declaration",
+            GeneratorErrorType::Asn1TypeMismatch,
+        ))
+    }
+}

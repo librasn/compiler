@@ -15,6 +15,20 @@ pub enum ClassLink {
     ByReference(InformationObjectClass),
 }
 
+impl ToplevelInformationDeclaration {
+    pub fn resolve_class_reference(
+        mut self,
+        tlds: &BTreeMap<String, ToplevelDeclaration>,
+    ) -> Self {
+        if let Some(ClassLink::ByName(name)) = &self.class {
+            if let Some(ToplevelDeclaration::Information(ToplevelInformationDeclaration { value: ASN1Information::ObjectClass(c), .. })) = tlds.get(name) {
+                self.class = Some(ClassLink::ByReference(c.clone()));
+            }
+        }
+        self
+    }
+}
+
 impl From<(Vec<&str>, &str, &str, InformationObjectFields)> for ToplevelInformationDeclaration {
     fn from(value: (Vec<&str>, &str, &str, InformationObjectFields)) -> Self {
         Self {
@@ -86,7 +100,7 @@ pub enum SyntaxToken {
 }
 
 impl SyntaxToken {
-    pub fn _name_or_empty(&self) -> &str {
+    pub fn name_or_empty(&self) -> &str {
         match self {
             SyntaxToken::Field(ObjectFieldIdentifier::SingleValue(v))
             | SyntaxToken::Field(ObjectFieldIdentifier::MultipleValue(v)) => v.as_str(),

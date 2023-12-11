@@ -601,6 +601,14 @@ impl ToplevelDeclaration {
         }
     }
 
+    /// Traverses a top-level declaration to check for unbounded integers in types
+    pub fn contains_unbounded_integer(&self) -> bool {
+        match self {
+            ToplevelDeclaration::Type(t) => t.r#type.contains_unbounded_integer(),
+            _ => false,
+        }
+    }
+
     /// Traverses a top-level declaration to replace references to other top-level declarations
     /// in a SEQUENCE's or SET's DEFAULT values.
     pub fn link_default_reference(&mut self, tlds: &BTreeMap<String, ToplevelDeclaration>) -> bool {
@@ -799,7 +807,47 @@ impl ASN1Type {
             ASN1Type::Sequence(s) => s.constraints.clone(),
             ASN1Type::SequenceOf(s) => s.constraints.clone(),
             ASN1Type::ElsewhereDeclaredType(e) => e.constraints.clone(),
+            ASN1Type::InformationObjectFieldReference(f) => f.constraints.clone(),
             _ => vec![],
+        }
+    }
+
+    pub fn make_unbounded_integer_constable(&mut self) -> bool {
+        match self {
+            ASN1Type::Sequence(s) | ASN1Type::Set(s) => s
+                .members
+                .iter_mut()
+                .map(|m| m.r#type.make_unbounded_integer_constable())
+                .fold(false, |acc, b| acc || b),
+            ASN1Type::Choice(c) => c
+                .options
+                .iter_mut()
+                .map(|o| o.r#type.make_unbounded_integer_constable())
+                .fold(false, |acc, b| acc || b),
+            ASN1Type::SequenceOf(s) | ASN1Type::SetOf(s) => s.r#type.contains_unbounded_integer(),
+            ASN1Type::Integer(i) => {
+                i.used_in_const = true;
+                true
+            },
+            _ => false,
+        }
+    }
+
+    pub fn contains_unbounded_integer(&self) -> bool {
+        match self {
+            ASN1Type::Sequence(s) | ASN1Type::Set(s) => s
+                .members
+                .iter()
+                .map(|m| m.r#type.contains_unbounded_integer())
+                .fold(false, |acc, b| acc || b),
+            ASN1Type::Choice(c) => c
+                .options
+                .iter()
+                .map(|o| o.r#type.contains_unbounded_integer())
+                .fold(false, |acc, b| acc || b),
+            ASN1Type::SequenceOf(s) | ASN1Type::SetOf(s) => s.r#type.contains_unbounded_integer(),
+            ASN1Type::Integer(i) => i.type_token() == "Integer",
+            _ => false,
         }
     }
 
@@ -1043,17 +1091,17 @@ impl ASN1Type {
         }
     }
 
-    pub fn contains_class_field_reference(&self) -> bool {
+    pub fn references_class_by_name(&self) -> bool {
         match self {
             ASN1Type::Choice(c) => c
                 .options
                 .iter()
-                .any(|o| o.r#type.contains_class_field_reference()),
+                .any(|o| o.r#type.references_class_by_name()),
             ASN1Type::Sequence(s) => s
                 .members
                 .iter()
-                .any(|m| m.r#type.contains_class_field_reference()),
-            ASN1Type::SequenceOf(so) => so.r#type.contains_class_field_reference(),
+                .any(|m| m.r#type.references_class_by_name()),
+            ASN1Type::SequenceOf(so) => so.r#type.references_class_by_name(),
             ASN1Type::InformationObjectFieldReference(io_ref) => {
                 if let Some(ObjectFieldIdentifier::SingleValue(_)) = io_ref.field_path.last() {
                     true
@@ -1065,7 +1113,7 @@ impl ASN1Type {
         }
     }
 
-    pub fn resolve_class_field_reference(
+    pub fn resolve_class_reference(
         self,
         tlds: &BTreeMap<String, ToplevelDeclaration>,
     ) -> Self {
@@ -1078,7 +1126,7 @@ impl ASN1Type {
                     .map(|option| ChoiceOption {
                         name: option.name,
                         tag: option.tag,
-                        r#type: option.r#type.resolve_class_field_reference(tlds),
+                        r#type: option.r#type.resolve_class_reference(tlds),
                         constraints: vec![],
                     })
                     .collect(),
@@ -1093,7 +1141,7 @@ impl ASN1Type {
                     .into_iter()
                     .map(|mut member| {
                         member.constraints = vec![];
-                        member.r#type = member.r#type.resolve_class_field_reference(tlds);
+                        member.r#type = member.r#type.resolve_class_reference(tlds);
                         member
                     })
                     .collect(),
@@ -1143,9 +1191,9 @@ impl ASN1Type {
             ASN1Type::Boolean(_) => Ok("bool".to_owned()),
             ASN1Type::Integer(i) => Ok(i.type_token()),
             ASN1Type::Real(_) => Ok("f64".to_owned()),
-            ASN1Type::BitString(_) => Ok("BitVec".to_owned()),
-            ASN1Type::OctetString(_) => Ok("Bytes".to_owned()),
-            ASN1Type::CharacterString(_) => Ok("String".to_owned()),
+            ASN1Type::BitString(_) => Ok("BitString".to_owned()),
+            ASN1Type::OctetString(_) => Ok("OctetString".to_owned()),
+            ASN1Type::CharacterString(_) => Ok("Utf8String".to_owned()),
             ASN1Type::Enumerated(_) => Err(GrammarError {
                 kind: GrammarErrorType::NotYetInplemented,
                 details: "Enumerated values are currently unsupported!".into(),
@@ -1396,7 +1444,7 @@ impl ASN1Value {
             ASN1Value::Null => Ok("Asn1Null".to_owned()),
             ASN1Value::Choice(i, v) => {
                 if let Some(ty_n) = type_name {
-                    Ok(format!("{ty_n}::{i}({})", v.value_as_string(None)?))
+                    Ok(format!("{ty_n}::{}({})", to_rust_title_case(i), v.value_as_string(None)?))
                 } else {
                     Err(GrammarError {
                         details: format!(

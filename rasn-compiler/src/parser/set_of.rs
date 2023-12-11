@@ -156,7 +156,8 @@ mod tests {
                     distinguished_values: Some(vec![DistinguishedValue {
                         name: "one-distinguished-value".into(),
                         value: 12
-                    }])
+                    }]),
+                    used_in_const: false
                 }))
             })
         );

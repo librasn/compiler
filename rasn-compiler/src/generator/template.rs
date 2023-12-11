@@ -326,7 +326,7 @@ pub fn choice_template(
     format!(
         r#"{nested_options}
 {comments}
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq)]
 {rasn_annotations}{extensible}pub enum {name} {{
   {options}
 }}

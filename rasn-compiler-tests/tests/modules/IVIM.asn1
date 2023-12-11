@@ -13,19 +13,6 @@ DEFINITIONS AUTOMATIC TAGS ::=
 
 BEGIN
 
-IMPORTS
-
-IviStructure
-FROM IVI {
-  iso (1) standard (0) ivi (19321) major-version-3 (3) minor-version-1 (1)
-}
-WITH SUCCESSORS
-
-ItsPduHeader
-FROM ETSI-ITS-CDD {
-  itu-t (0) identified-organization (4) etsi (0) itsDomain (5) wg1 (1) 102894 cdd (2) major-version-4 (4) minor-version-1 (1)
-}
-WITH SUCCESSORS;
 
 /**
 * In vehicle information Message Message
@@ -45,32 +32,6 @@ IVIM ::= SEQUENCE {
     ivi     IviStructure
 }
 
-END
-
-IVI {iso (1) standard (0) ivi (19321) version2 (2)}
-
-DEFINITIONS AUTOMATIC TAGS ::=
-BEGIN
-IMPORTS
-
-ActionID, Altitude, DangerousGoodsBasic , DeltaLatitude, DeltaLongitude, DeltaReferencePosition, Heading, HeadingValue, Latitude, LanePosition, Longitude, ReferencePosition, RoadType, SpecialTransportType, Speed, SpeedValue, StationType, TimestampIts, VehicleRole
-FROM ITS-Container {  itu-t (0) identified-organization (4) etsi (0) itsDomain (5) wg1 (1) ts (102894) cdd (2) version (2) }
-
-AxleWeightLimits, DieselEmissionValues, ExhaustEmissionValues, EngineCharacteristics, EnvironmentalCharacteristics, PassengerCapacity , Provider, SoundLevel, VehicleDimensions,  VehicleWeightLimits 
-FROM EfcDsrcApplication {iso(1) standard(0) 14906 application(0) version6(6)}
-
-EuVehicleCategoryCode, Iso3833VehicleType
-FROM ElectronicRegistrationIdentificationVehicleDataModule {iso(1) standard(0) iso24534 (24534) vehicleData (1) version1 (1)}
-
-VarLengthNumber
-FROM CITSdataDictionary1 {iso(1) standard(0) cits-applMgmt (17419) dataDictionary (1) version1 (1)} 
-
-RoadSegmentReferenceID, IntersectionReferenceID, LaneID 
-FROM DSRC {iso (1) standard (0) signalizedIntersection (19091) profilec(2) dsrc (2) version2 (2)}
-
-InternationalSign-applicablePeriod, InternationalSign-exemptedApplicablePeriod, InternationalSign-directionalFlowOfLane, InternationalSign-applicableVehicleDimensions, InternationalSign-speedLimits, InternationalSign-rateOfIncline, InternationalSign-distanceBetweenVehicles, InternationalSign-destinationInformation
-FROM GDD {iso (1) standard (0) gdd(14823) version1 (0)};
-
 -- Definition of IVI structure
 
 IviStructure::= SEQUENCE{
@@ -88,11 +49,7 @@ IviContainer::= CHOICE {
 	rcc		RoadConfigurationContainer,
 	tc		TextContainer,
 	lac		LayoutContainer,
-	...,	-- original extension indicator of V1
-[[ -- Extension in V2
-	avc		AutomatedVehicleContainer,	
-	mlc		MapLocationContainer, 
-	rsc		RoadSurfaceContainer ]]
+	...
 	}
 
 IviManagementContainer::= SEQUENCE {
@@ -861,28 +818,6 @@ CountryCode ::= BIT STRING(SIZE(10))
 -- using the ITA.2 alphabet.
 IssuerIdentifier ::= INTEGER(0 .. 16383)
 
-END
-
--- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
--- ISO TS 24534-3:2015
---
--- This ASN.1 was generateds: 30.08.2016
---
--- This document contains only the data element needed for the encoding of an IVI message
--- as defined in ISO TS 19321(2020)
---
--- Published version location:
--- https://standards.iso.org/iso/24534/-3/ISO%2024534-3%20ASN.1%20repository/
--- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
--- ISO 24534-3:2015
--- Version 29.4.2015
-
-
-ElectronicRegistrationIdentificationVehicleDataModule {iso(1) standard(0) iso24534 (24534) vehicleData (1) version1 (1)}
-
-
-DEFINITIONS AUTOMATIC TAGS ::= BEGIN
 
 -- Electronic Registration Identification (ERI)- Vehicle Data
 
@@ -981,23 +916,6 @@ IntersectionReferenceID ::= SEQUENCE {
 IntersectionID ::= INTEGER (0..65535)
 LaneID ::= INTEGER (0..255)
 
-END
--- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
--- ISO TS 14823
---
--- This ASN.1 was generated: 30.08.2016
---
--- This document contains only the data element needed for the encoding of an IVI message
--- as defined in ISO TS 19321(2020)
---
--- Published version location (yet missing there):
--- https://standards.iso.org/iso/ts/14823/
--- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-GDD {iso (1) standard (0) gdd(14823) version1 (0)}
-
-DEFINITIONS AUTOMATIC TAGS::=
-BEGIN
 
 --Definition of GDD Structure
 
@@ -1212,5 +1130,139 @@ Weight::= SEQUENCE {
 	value 	INTEGER(1..16384),
 	unit 	Code-Units (10..12)
 	}
+ActionID ::= SEQUENCE {
+    originatingStationID StationID,
+    sequenceNumber SequenceNumber
+}
+StationID ::= INTEGER(0..4294967295)
+
+SequenceNumber ::=  INTEGER (0..65535)
+
+Longitude ::= INTEGER {oneMicrodegreeEast (10), oneMicrodegreeWest (-10), unavailable(1800000001)} (-1800000000..1800000001)
+
+Latitude ::= INTEGER {oneMicrodegreeNorth (10), oneMicrodegreeSouth (-10), unavailable(900000001)} (-900000000..900000001)
+
+Altitude ::= SEQUENCE {
+    altitudeValue AltitudeValue,
+    altitudeConfidence AltitudeConfidence
+}
+
+AltitudeValue ::= INTEGER {referenceEllipsoidSurface(0), oneCentimeter(1), unavailable(800001)} (-100000..800001)
+
+AltitudeConfidence ::= ENUMERATED {
+    alt-000-01 (0),
+    alt-000-02 (1),
+    alt-000-05 (2),
+    alt-000-10 (3),
+    alt-000-20 (4),
+    alt-000-50 (5),
+    alt-001-00 (6),
+    alt-002-00 (7),
+    alt-005-00 (8),
+    alt-010-00 (9),
+    alt-020-00 (10),
+    alt-050-00 (11),
+    alt-100-00 (12),
+    alt-200-00 (13),
+    outOfRange (14),
+    unavailable (15)
+}
+
+
+
+DeltaLongitude ::= INTEGER {oneMicrodegreeEast (10), oneMicrodegreeWest (-10), unavailable(131072)} (-131071..131072)
+
+DeltaLatitude ::= INTEGER {oneMicrodegreeNorth (10), oneMicrodegreeSouth (-10) , unavailable(131072)} (-131071..131072)
+
+DeltaAltitude ::= INTEGER {oneCentimeterUp (1), oneCentimeterDown (-1), unavailable(12800)} (-12700..12800)
+ReferencePosition ::= SEQUENCE {
+    latitude Latitude,
+    longitude Longitude,
+    positionConfidenceEllipse PosConfidenceEllipse ,
+    altitude Altitude
+}
+
+DeltaReferencePosition ::= SEQUENCE {
+    deltaLatitude DeltaLatitude,
+    deltaLongitude DeltaLongitude,
+    deltaAltitude DeltaAltitude
+}
+
+PosConfidenceEllipse ::= SEQUENCE {
+    semiMajorConfidence SemiAxisLength,
+    semiMinorConfidence SemiAxisLength,
+    semiMajorOrientation HeadingValue
+}
+
+SemiAxisLength ::= INTEGER{oneCentimeter(1), outOfRange(4094), unavailable(4095)} (0..4095)
+
+Heading ::= SEQUENCE {
+    headingValue HeadingValue,
+    headingConfidence HeadingConfidence
+}
+
+HeadingValue ::= INTEGER {wgs84North(0), wgs84East(900), wgs84South(1800), wgs84West(2700), unavailable(3601)} (0..3601)
+
+HeadingConfidence ::= INTEGER {equalOrWithinZeroPointOneDegree (1), equalOrWithinOneDegree (10), outOfRange(126), unavailable(127)} (1..127)
+
+LanePosition::= INTEGER {offTheRoad(-1), hardShoulder(0),
+outermostDrivingLane(1), secondLaneFromOutside(2)} (-1..14)
+
+SpeedValue ::= INTEGER {standstill(0), oneCentimeterPerSec(1), unavailable(16383)} (0..16383)
+
+SpeedConfidence ::= INTEGER {equalOrWithinOneCentimeterPerSec(1), equalOrWithinOneMeterPerSec(100), outOfRange(126), unavailable(127)} (1..127)
+
+
+Speed ::= SEQUENCE {
+    speedValue SpeedValue,
+    speedConfidence SpeedConfidence
+}
+
+StationType ::= INTEGER {unknown(0), pedestrian(1), cyclist(2), moped(3), motorcycle(4), passengerCar(5), bus(6), 
+lightTruck(7), heavyTruck(8), trailer(9), specialVehicles(10), tram(11), roadSideUnit(15)} (0..255)
+
+DangerousGoodsBasic::= ENUMERATED {
+    explosives1(0),
+    explosives2(1),
+    explosives3(2),
+    explosives4(3),
+    explosives5(4),
+    explosives6(5),
+    flammableGases(6),
+    nonFlammableGases(7),
+    toxicGases(8),
+    flammableLiquids(9),
+    flammableSolids(10),
+    substancesLiableToSpontaneousCombustion(11),
+    substancesEmittingFlammableGasesUponContactWithWater(12),
+    oxidizingSubstances(13),
+    organicPeroxides(14),
+    toxicSubstances(15),
+    infectiousSubstances(16),
+    radioactiveMaterial(17),
+    corrosiveSubstances(18),
+    miscellaneousDangerousSubstances(19)
+}
+
+TimestampIts ::= INTEGER {utcStartOf2004(0), oneMillisecAfterUTCStartOf2004(1)} (0..4398046511103)
+
+VehicleRole ::= ENUMERATED {default(0), publicTransport(1), specialTransport(2), dangerousGoods(3), roadWork(4), rescue(5), emergency(6), safetyCar(7), agriculture(8), commercial(9), military(10), roadOperator(11), taxi(12), reserved1(13), reserved2(14), reserved3(15)}
+
+
+ItsPduHeader ::= SEQUENCE {
+    protocolVersion INTEGER (0..255),
+    messageID INTEGER{ denm(1), cam(2), poi(3), spatem(4), mapem(5), ivim(6), ev-rsr(7), tistpgtransaction(8), srem(9), ssem(10), evcsn(11), saem(12), rtcmem(13) } (0..255),  -- Mantis #7209, #7005
+    stationID StationID
+}
+
+SpecialTransportType ::= BIT STRING {heavyLoad(0), excessWidth(1), excessLength(2), excessHeight(3)} (SIZE(4))
+
+RoadType ::= ENUMERATED {
+    urban-NoStructuralSeparationToOppositeLanes(0),
+    urban-WithStructuralSeparationToOppositeLanes(1),
+    nonUrban-NoStructuralSeparationToOppositeLanes(2),
+    nonUrban-WithStructuralSeparationToOppositeLanes(3)}
+
+
 
 END
