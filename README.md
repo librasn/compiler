@@ -46,6 +46,7 @@ Currently, `rasn` supports the following encoding rules:
 * Distinguished Encoding Rules (DER)
 * Aligned Packed Encoding Rules (APER)
 * Unaligned Packed Encoding Rules (UPER)
+* JSON Encoding Rules (JER)
 
 `rasn` and the `rasn-compiler` support the following ASN1 features:
 
