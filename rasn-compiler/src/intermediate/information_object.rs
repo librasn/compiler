@@ -210,10 +210,10 @@ pub enum ObjectFieldIdentifier {
 }
 
 impl ObjectFieldIdentifier {
-    pub fn identifier(&self) -> String {
+    pub fn identifier(&self) -> &String {
         match self {
-            ObjectFieldIdentifier::SingleValue(s) => s.clone(),
-            ObjectFieldIdentifier::MultipleValue(s) => s.clone(),
+            ObjectFieldIdentifier::SingleValue(s) => &s,
+            ObjectFieldIdentifier::MultipleValue(s) => &s,
         }
     }
 }
@@ -284,6 +284,17 @@ pub enum InformationObjectField {
     ObjectSetField(ObjectSetField),
 }
 
+impl InformationObjectField {
+    /// Returns the identifier of an InformationObjectField
+    pub fn identifier(&self) -> &String {
+        match self {
+            InformationObjectField::TypeField(f) => &f.identifier,
+            InformationObjectField::FixedValueField(f) => &f.identifier,
+            InformationObjectField::ObjectSetField(f) => &f.identifier,
+        }
+    }
+}
+
 #[derive(Debug, Clone, PartialEq)]
 pub struct FixedValueField {
     pub identifier: String,
@@ -293,7 +304,7 @@ pub struct FixedValueField {
 impl From<(ObjectFieldIdentifier, ASN1Value)> for InformationObjectField {
     fn from(value: (ObjectFieldIdentifier, ASN1Value)) -> Self {
         Self::FixedValueField(FixedValueField {
-            identifier: value.0.identifier(),
+            identifier: value.0.identifier().clone(),
             value: value.1,
         })
     }
@@ -308,7 +319,7 @@ pub struct TypeField {
 impl From<(ObjectFieldIdentifier, ASN1Type)> for InformationObjectField {
     fn from(value: (ObjectFieldIdentifier, ASN1Type)) -> Self {
         Self::TypeField(TypeField {
-            identifier: value.0.identifier(),
+            identifier: value.0.identifier().clone(),
             r#type: value.1,
         })
     }
@@ -323,7 +334,7 @@ pub struct ObjectSetField {
 impl From<(ObjectFieldIdentifier, ObjectSet)> for InformationObjectField {
     fn from(value: (ObjectFieldIdentifier, ObjectSet)) -> Self {
         Self::ObjectSetField(ObjectSetField {
-            identifier: value.0.identifier(),
+            identifier: value.0.identifier().clone(),
             value: value.1,
         })
     }

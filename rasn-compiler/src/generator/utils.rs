@@ -10,9 +10,9 @@ use crate::intermediate::{
     },
     information_object::{
         InformationObjectClass, ObjectFieldIdentifier, SyntaxApplication, SyntaxExpression,
-        SyntaxToken,
+        SyntaxToken, InformationObjectField, InformationObjectClassField, TypeField,
     },
-    types::{Choice, ChoiceOption, Enumerated, SequenceOrSet, SequenceOrSetMember},
+    types::{Choice, ChoiceOption, Enumerated, SequenceOrSet, SequenceOrSetMember, ObjectIdentifier},
     utils::{to_rust_snake_case, to_rust_title_case},
     ASN1Type, ASN1Value, AsnTag, CharacterStringType, DeclarationElsewhere, TagClass,
     TaggingEnvironment, ToplevelDeclaration, ToplevelTypeDeclaration,
@@ -550,8 +550,51 @@ pub fn format_new_impl(name: &String, name_types: Vec<StringifiedNameType>) -> S
 }
 
 /// Resolves the custom syntax declared in an information object class' WITH SYNTAX clause
-#[allow(dead_code)]
-pub fn resolve_syntax(
+pub fn resolve_standard_syntax(
+    class: &InformationObjectClass,
+    application: &Vec<InformationObjectField>,
+) -> Result<(ASN1Value, Vec<(usize, ASN1Type)>), GeneratorError> {
+    let mut key = None;
+    let mut field_index_map = Vec::<(usize, ASN1Type)>::new();
+
+    let mut appl_iter = application.iter().enumerate();
+    'syntax_matching: for class_field in &class.fields {
+        if let Some((index, field)) = appl_iter.next() {
+            if class_field.identifier.identifier() == field.identifier() {
+                match field {
+                    InformationObjectField::TypeField(f) => {
+                        field_index_map.push((index, f.r#type.clone()));
+                    },
+                    InformationObjectField::FixedValueField(f) => {
+                        key = Some(f.value.clone());
+                    },
+                    InformationObjectField::ObjectSetField(_) => todo!(),
+                }
+            } else if !class_field.is_optional {
+                return Err(GeneratorError {
+                    top_level_declaration: None,
+                    details: format!("Syntax mismatch while resolving information object."),
+                    kind: GeneratorErrorType::SyntaxMismatch,
+                });
+            } else {
+                continue 'syntax_matching;
+            }
+        }
+    }
+    field_index_map.sort_by(|&(a, _), &(b, _)| a.cmp(&b));
+    let types = field_index_map.into_iter().collect();
+    match key {
+        Some(k) => Ok((k, types)),
+        None => Err(GeneratorError {
+            top_level_declaration: None,
+            details: "Could not find class key!".into(),
+            kind: GeneratorErrorType::MissingClassKey,
+        }),
+    }
+}
+
+/// Resolves the custom syntax declared in an information object class' WITH SYNTAX clause
+pub fn resolve_custom_syntax(
     class: &InformationObjectClass,
     application: &Vec<SyntaxApplication>,
 ) -> Result<(ASN1Value, Vec<(usize, ASN1Type)>), GeneratorError> {

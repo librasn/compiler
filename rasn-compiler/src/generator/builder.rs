@@ -493,13 +493,15 @@ pub fn generate_information_object_set(
             .iter()
             .map(|v| {
                 match v {
-                    ObjectSetValue::Reference(_) => todo!(),
+                    ObjectSetValue::Reference(r) => {
+                        todo!()
+                    },
                     // basically, an information object specifies a sequence implementing a class. So we sould treat information objects like sequences
                     ObjectSetValue::Inline(InformationObjectFields::CustomSyntax(s)) => {
-                        resolve_syntax(class, s)
+                        resolve_custom_syntax(class, s)
                     }
-                    ObjectSetValue::Inline(InformationObjectFields::DefaultSyntax(_s)) => {
-                        todo!()
+                    ObjectSetValue::Inline(InformationObjectFields::DefaultSyntax(s)) => {
+                        resolve_standard_syntax(class, s)
                     }
                 }
             })
@@ -516,10 +518,10 @@ pub fn generate_information_object_set(
                         details: "Could not find class field for index.".into(),
                         kind: GeneratorErrorType::SyntaxMismatch,
                     })?;
-                match choices.get_mut(&id) {
+                match choices.get_mut(id) {
                     Some(entry) => entry.push((key.clone(), item)),
                     None => {
-                        choices.insert(id, vec![(key.clone(), item)]);
+                        choices.insert(id.clone(), vec![(key.clone(), item)]);
                     }
                 }
             }
