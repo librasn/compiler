@@ -33,10 +33,10 @@ impl Constraint {
         &mut self,
         identifier: &String,
         tlds: &BTreeMap<String, ToplevelDeclaration>,
-    ) -> bool {
+    ) -> Result<bool, GrammarError> {
         match self {
             Constraint::SubtypeConstraint(t) => t.set.link_cross_reference(identifier, tlds),
-            _ => false,
+            _ => Ok(false),
         }
     }
 
@@ -650,16 +650,13 @@ impl SubtypeElement {
         &mut self,
         identifier: &String,
         tlds: &BTreeMap<String, ToplevelDeclaration>,
-    ) -> bool {
+    ) -> Result<bool, GrammarError> {
         match self {
             SubtypeElement::SingleValue {
                 value,
                 extensible: _,
             } => value.link_elsewhere_declared(identifier, tlds),
             SubtypeElement::PermittedAlphabet(e) => e.link_cross_reference(identifier, tlds),
-            SubtypeElement::PatternConstraint(_) => false,
-            SubtypeElement::UserDefinedConstraint(_) => false,
-            SubtypeElement::PropertySettings(_) => false,
             SubtypeElement::ContainedSubtype {
                 subtype,
                 extensible: _,
@@ -671,11 +668,11 @@ impl SubtypeElement {
             } => {
                 let a = min
                     .as_mut()
-                    .map_or(false, |m| m.link_elsewhere_declared(identifier, tlds));
+                    .map_or(Ok(false), |m| m.link_elsewhere_declared(identifier, tlds))?;
                 let b = max
                     .as_mut()
-                    .map_or(false, |m| m.link_elsewhere_declared(identifier, tlds));
-                a || b
+                    .map_or(Ok(false), |m| m.link_elsewhere_declared(identifier, tlds))?;
+                Ok(a || b)
             }
             SubtypeElement::SizeConstraint(s) => s.link_cross_reference(identifier, tlds),
             SubtypeElement::TypeConstraint(t) => t.link_constraint_reference(identifier, tlds),
@@ -684,8 +681,8 @@ impl SubtypeElement {
                 .constraints
                 .iter_mut()
                 .flat_map(|cc| &mut cc.constraints)
-                .map(|c| c.link_cross_reference(identifier, tlds))
-                .fold(false, |acc, b| acc || b),
+                .try_fold(false, |acc, b| b.link_cross_reference(identifier, tlds).map(|res| res || acc)),
+            _ => Ok(false)
         }
     }
 
@@ -793,13 +790,13 @@ impl ElementOrSetOperation {
         &mut self,
         identifier: &String,
         tlds: &BTreeMap<String, ToplevelDeclaration>,
-    ) -> bool {
+    ) -> Result<bool, GrammarError> {
         match self {
             ElementOrSetOperation::Element(e) => e.link_cross_reference(identifier, tlds),
             ElementOrSetOperation::SetOperation(s) => {
-                let a = s.base.link_cross_reference(identifier, tlds);
-                let b = s.operant.link_cross_reference(identifier, tlds);
-                a || b
+                let a = s.base.link_cross_reference(identifier, tlds)?;
+                let b = s.operant.link_cross_reference(identifier, tlds)?;
+                Ok(a || b)
             }
         }
     }

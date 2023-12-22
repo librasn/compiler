@@ -2,7 +2,7 @@
 //! decoding and encoding of the parsed and validated ASN1 data elements.
 //! The `generator` uses string templates for generating rust code.
 
-use crate::intermediate::{*, information_object::ASN1Information};
+use crate::intermediate::{information_object::ASN1Information, *};
 
 pub(crate) mod builder;
 pub(crate) mod error;
@@ -44,39 +44,39 @@ pub fn generate<'a>(tld: ToplevelDeclaration) -> Result<std::string::String, Gen
         ToplevelDeclaration::Value(v) => match v.value {
             ASN1Value::Null => generate_null_value(v),
             ASN1Value::Boolean(_) => Err(GeneratorError {
-            kind: GeneratorErrorType::NotYetInplemented,
-            details: "Boolean values are currently unsupported!".into(),
-            top_level_declaration: None,
-        }),
+                kind: GeneratorErrorType::NotYetInplemented,
+                details: "Boolean values are currently unsupported!".into(),
+                top_level_declaration: None,
+            }),
             ASN1Value::Integer(_) => generate_integer_value(v),
             ASN1Value::String(_) => Err(GeneratorError {
-            kind: GeneratorErrorType::NotYetInplemented,
-            details: "String values are currently unsupported!".into(),
-            top_level_declaration: None,
-        }),
+                kind: GeneratorErrorType::NotYetInplemented,
+                details: "String values are currently unsupported!".into(),
+                top_level_declaration: None,
+            }),
             ASN1Value::BitString(_) => Err(GeneratorError {
-            kind: GeneratorErrorType::NotYetInplemented,
-            details: "BitString values are currently unsupported!".into(),
-            top_level_declaration: None,
-        }),
+                kind: GeneratorErrorType::NotYetInplemented,
+                details: "BitString values are currently unsupported!".into(),
+                top_level_declaration: None,
+            }),
             ASN1Value::EnumeratedValue {
                 enumerated: _,
                 enumerable: _,
             } => Err(GeneratorError {
-            kind: GeneratorErrorType::NotYetInplemented,
-            details: "EnumeratedValue values are currently unsupported!".into(),
-            top_level_declaration: None,
-        }),
-            ASN1Value::ElsewhereDeclaredValue(_) => Err(GeneratorError {
-            kind: GeneratorErrorType::NotYetInplemented,
-            details: "Value cross references are currently unsupported!".into(),
-            top_level_declaration: None,
-        }),
+                kind: GeneratorErrorType::NotYetInplemented,
+                details: "EnumeratedValue values are currently unsupported!".into(),
+                top_level_declaration: None,
+            }),
+            ASN1Value::ElsewhereDeclaredValue { .. } => Err(GeneratorError {
+                kind: GeneratorErrorType::NotYetInplemented,
+                details: "Value cross references are currently unsupported!".into(),
+                top_level_declaration: None,
+            }),
             ASN1Value::All => Err(GeneratorError {
-            kind: GeneratorErrorType::NotYetInplemented,
-            details: "ALL values are currently unsupported!".into(),
-            top_level_declaration: None,
-        }),
+                kind: GeneratorErrorType::NotYetInplemented,
+                details: "ALL values are currently unsupported!".into(),
+                top_level_declaration: None,
+            }),
             ASN1Value::Choice(_, _) => generate_choice_value(v),
             //ASN1Value::SequenceOrSet(_) => generate_sequence_value(v),
             ASN1Value::Real(_) => Err(GeneratorError {
@@ -92,9 +92,7 @@ pub fn generate<'a>(tld: ToplevelDeclaration) -> Result<std::string::String, Gen
             // ASN1Information::ObjectClass(_) => {
             //     generate_information_object_class(i)
             // }
-            ASN1Information::ObjectSet(_) => {
-              generate_information_object_set(i)
-            }
+            ASN1Information::ObjectSet(_) => generate_information_object_set(i),
             _ => Ok("".into()),
         },
     }

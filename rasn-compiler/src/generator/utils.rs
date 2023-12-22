@@ -598,8 +598,8 @@ pub fn resolve_custom_syntax(
     class: &InformationObjectClass,
     application: &Vec<SyntaxApplication>,
 ) -> Result<(ASN1Value, Vec<(usize, ASN1Type)>), GeneratorError> {
-    let expressions = match &class.syntax {
-        Some(s) => &s.expressions,
+    let tokens = match &class.syntax {
+        Some(s) => s.flatten(),
         None => {
             return Err(GeneratorError {
                 top_level_declaration: None,
@@ -609,15 +609,13 @@ pub fn resolve_custom_syntax(
         }
     };
 
-    let tokens = flatten_tokens(&expressions);
-
     let mut key = None;
     let mut field_index_map = Vec::<(usize, ASN1Type)>::new();
 
     let mut appl_iter = application.iter();
     'syntax_matching: for (required, token) in tokens {
         if let Some(expr) = appl_iter.next() {
-            if compare_tokens(&token, expr) {
+            if expr.matches(&token) {
                 match expr {
                     SyntaxApplication::ObjectSetDeclaration(_) => todo!(),
                     SyntaxApplication::LiteralOrTypeReference(t) => {
@@ -684,56 +682,5 @@ pub fn resolve_custom_syntax(
             details: "Could not find class key!".into(),
             kind: GeneratorErrorType::MissingClassKey,
         }),
-    }
-}
-
-fn flatten_tokens(expressions: &Vec<SyntaxExpression>) -> Vec<(bool, SyntaxToken)> {
-    iter_expressions(expressions, false)
-        .into_iter()
-        .map(|x| match x {
-            (is_required, SyntaxExpression::Required(r)) => (is_required, r.clone()),
-            _ => unreachable!(),
-        })
-        .collect()
-}
-
-fn iter_expressions(
-    expressions: &Vec<SyntaxExpression>,
-    optional_recursion: bool,
-) -> Vec<(bool, &SyntaxExpression)> {
-    expressions
-        .iter()
-        .flat_map(|x| match x {
-            SyntaxExpression::Optional(o) => iter_expressions(o, true),
-            r => vec![(!optional_recursion, r)],
-        })
-        .collect()
-}
-
-fn compare_tokens(token: &SyntaxToken, application: &SyntaxApplication) -> bool {
-    match (token, application) {
-        (SyntaxToken::Comma, SyntaxApplication::Comma) => true,
-        (SyntaxToken::Literal(t), SyntaxApplication::Literal(a)) if t == a => true,
-        (
-            SyntaxToken::Literal(t),
-            SyntaxApplication::LiteralOrTypeReference(DeclarationElsewhere { identifier, .. }),
-        ) if t == identifier => true,
-        (
-            SyntaxToken::Field(ObjectFieldIdentifier::MultipleValue(_)),
-            SyntaxApplication::ObjectSetDeclaration(_),
-        ) => true,
-        (
-            SyntaxToken::Field(ObjectFieldIdentifier::MultipleValue(_)),
-            SyntaxApplication::TypeReference(_),
-        ) => true,
-        (
-            SyntaxToken::Field(ObjectFieldIdentifier::MultipleValue(_)),
-            SyntaxApplication::LiteralOrTypeReference(_),
-        ) => true,
-        (
-            SyntaxToken::Field(ObjectFieldIdentifier::SingleValue(_)),
-            SyntaxApplication::ValueReference(_),
-        ) => true,
-        _ => false,
     }
 }

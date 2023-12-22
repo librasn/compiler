@@ -9,7 +9,7 @@ pub(crate) mod error;
 
 use std::{collections::BTreeMap, error::Error};
 
-use crate::intermediate::{constraints::*, types::*, *, information_object::ClassLink};
+use crate::intermediate::{constraints::*, types::*, *, information_object::{ClassLink, ToplevelInformationDeclaration}};
 
 use self::error::{ValidatorError, ValidatorErrorType};
 
@@ -45,21 +45,31 @@ impl Validator {
                     },
                     _ => ()
                 }
-            } else if self.has_components_of_notation(&key) {
+            }
+            if self.has_components_of_notation(&key) {
                 if let Some(ToplevelDeclaration::Type(mut tld)) = self.tlds.remove(&key) {
                     tld.r#type.link_components_of_notation(&self.tlds);
                     self.tlds
                         .insert(tld.name.clone(), ToplevelDeclaration::Type(tld));
                 }
-            } else if self.has_choice_selection_type(&key) {
+            } 
+            if self.has_choice_selection_type(&key) {
                 if let Some(ToplevelDeclaration::Type(mut tld)) = self.tlds.remove(&key) {
                     tld.r#type.link_choice_selection_type(&self.tlds)?;
                     self.tlds
                         .insert(tld.name.clone(), ToplevelDeclaration::Type(tld));
                 }
-            } else if self.has_default_value_reference(&key) {
+            }
+            if self.references_object_set_by_name(&key) {
+                if let Some(ToplevelDeclaration::Information(mut tld)) = self.tlds.remove(&key) {
+                    tld.value.link_object_set_reference(&self.tlds);
+                    self.tlds
+                        .insert(tld.name.clone(), ToplevelDeclaration::Information(tld));
+                }
+            }
+            if self.has_default_value_reference(&key) {
                 let mut tld = self.tlds.remove(&key).ok_or(ValidatorError {
-                    data_element: Some(key),
+                    data_element: Some(key.clone()),
                     details: "Could not find toplevel declaration to remove!".into(),
                     kind: ValidatorErrorType::MissingDependency,
                 })?;
@@ -77,13 +87,14 @@ impl Validator {
                     )
                 }
                 self.tlds.insert(tld.name().clone(), tld);
-            } else if self.has_constraint_reference(&key) {
+            }
+            if self.has_constraint_reference(&key) {
                 let mut tld = self.tlds.remove(&key).ok_or(ValidatorError {
-                    data_element: Some(key),
+                    data_element: Some(key.clone()),
                     details: "Could not find toplevel declaration to remove!".into(),
                     kind: ValidatorErrorType::MissingDependency,
                 })?;
-                if !tld.link_constraint_reference(&self.tlds) {
+                if !tld.link_constraint_reference(&self.tlds)? {
                     warnings.push(
                         Box::new(
                             ValidatorError { 
@@ -97,8 +108,9 @@ impl Validator {
                     )
                 }
                 self.tlds.insert(tld.name().clone(), tld);
-            } else if let Some(ToplevelDeclaration::Value(mut tld)) = self.tlds.get(&key).cloned() {
-                if let ASN1Value::ElsewhereDeclaredValue(id) = &tld.value {
+            }
+            if let Some(ToplevelDeclaration::Value(mut tld)) = self.tlds.get(&key).cloned() {
+                if let ASN1Value::ElsewhereDeclaredValue{ identifier: id, ..} = &tld.value {
                     match self.tlds.get(&tld.type_name) {
                         Some(ToplevelDeclaration::Type(ty)) => match ty.r#type {
                             ASN1Type::Integer(ref int) if int.distinguished_values.is_some() => {
@@ -129,7 +141,8 @@ impl Validator {
                         _ => (),
                     }
                 }
-            } else if self.contains_unbounded_integer(&key) {
+            }
+            if self.contains_unbounded_integer(&key) {
                 if let Some(ToplevelDeclaration::Type(mut tld)) = self.tlds.remove(&key) {
                     if self.is_used_in_const(&tld.name) {
                         tld.r#type.make_unbounded_integer_constable();
@@ -180,6 +193,17 @@ impl Validator {
                     ClassLink::ByReference(_) => false,
                     ClassLink::ByName(_) => true
                 }),
+                _ => false,
+            })
+            .unwrap_or(false)
+    }
+
+    fn references_object_set_by_name(&mut self, key: &String) -> bool {
+        self.tlds
+            .get(key)
+            .map(|t|
+                match t {
+                ToplevelDeclaration::Information(ToplevelInformationDeclaration { value, .. }) => value.references_object_set_by_name(),
                 _ => false,
             })
             .unwrap_or(false)

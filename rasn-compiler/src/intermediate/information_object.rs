@@ -16,12 +16,17 @@ pub enum ClassLink {
 }
 
 impl ToplevelInformationDeclaration {
-    pub fn resolve_class_reference(
-        mut self,
-        tlds: &BTreeMap<String, ToplevelDeclaration>,
-    ) -> Self {
+    pub fn pdu(&self) -> &ASN1Information {
+        &self.value
+    }
+
+    pub fn resolve_class_reference(mut self, tlds: &BTreeMap<String, ToplevelDeclaration>) -> Self {
         if let Some(ClassLink::ByName(name)) = &self.class {
-            if let Some(ToplevelDeclaration::Information(ToplevelInformationDeclaration { value: ASN1Information::ObjectClass(c), .. })) = tlds.get(name) {
+            if let Some(ToplevelDeclaration::Information(ToplevelInformationDeclaration {
+                value: ASN1Information::ObjectClass(c),
+                ..
+            })) = tlds.get(name)
+            {
                 self.class = Some(ClassLink::ByReference(c.clone()));
             }
         }
@@ -36,7 +41,7 @@ impl From<(Vec<&str>, &str, &str, InformationObjectFields)> for ToplevelInformat
             name: value.1.into(),
             class: Some(ClassLink::ByName(value.2.into())),
             value: ASN1Information::Object(InformationObject {
-                supertype: value.2.into(),
+                class_name: value.2.into(),
                 fields: value.3,
             }),
             index: None,
@@ -76,6 +81,27 @@ pub enum ASN1Information {
     Object(InformationObject),
 }
 
+impl ASN1Information {
+    pub fn link_object_set_reference(
+        &mut self,
+        tlds: &BTreeMap<String, ToplevelDeclaration>,
+    ) -> bool {
+        match self {
+            ASN1Information::ObjectSet(s) => s.link_object_set_reference(tlds),
+            ASN1Information::Object(o) => o.link_object_set_reference(tlds),
+            ASN1Information::ObjectClass(_) => false,
+        }
+    }
+
+    pub fn references_object_set_by_name(&self) -> bool {
+        match self {
+            ASN1Information::ObjectSet(s) => s.references_object_set_by_name(),
+            ASN1Information::Object(o) => o.references_object_set_by_name(),
+            ASN1Information::ObjectClass(_) => false,
+        }
+    }
+}
+
 #[derive(Debug, Clone, PartialEq)]
 pub enum SyntaxExpression {
     Required(SyntaxToken),
@@ -89,7 +115,55 @@ pub enum SyntaxApplication {
     TypeReference(ASN1Type),
     Comma,
     Literal(String),
-    LiteralOrTypeReference(DeclarationElsewhere)
+    LiteralOrTypeReference(DeclarationElsewhere),
+}
+
+impl SyntaxApplication {
+    pub fn link_object_set_reference(
+        &mut self,
+        tlds: &BTreeMap<String, ToplevelDeclaration>,
+    ) -> bool {
+        match self {
+            SyntaxApplication::ObjectSetDeclaration(o) => o.link_object_set_reference(tlds),
+            _ => false,
+        }
+    }
+
+    pub fn references_object_set_by_name(&self) -> bool {
+        match self {
+            SyntaxApplication::ObjectSetDeclaration(o) => o.references_object_set_by_name(),
+            _ => false,
+        }
+    }
+
+    /// Checks if a token of a syntactic expression matches a given syntax token
+    pub fn matches(&self, token: &SyntaxToken) -> bool {
+        match (token, self) {
+            (SyntaxToken::Comma, SyntaxApplication::Comma) => true,
+            (SyntaxToken::Literal(t), SyntaxApplication::Literal(a)) if t == a => true,
+            (
+                SyntaxToken::Literal(t),
+                SyntaxApplication::LiteralOrTypeReference(DeclarationElsewhere { identifier, .. }),
+            ) if t == identifier => true,
+            (
+                SyntaxToken::Field(ObjectFieldIdentifier::MultipleValue(_)),
+                SyntaxApplication::ObjectSetDeclaration(_),
+            ) => true,
+            (
+                SyntaxToken::Field(ObjectFieldIdentifier::MultipleValue(_)),
+                SyntaxApplication::TypeReference(_),
+            ) => true,
+            (
+                SyntaxToken::Field(ObjectFieldIdentifier::MultipleValue(_)),
+                SyntaxApplication::LiteralOrTypeReference(_),
+            ) => true,
+            (
+                SyntaxToken::Field(ObjectFieldIdentifier::SingleValue(_)),
+                SyntaxApplication::ValueReference(_),
+            ) => true,
+            _ => false,
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -128,6 +202,34 @@ impl From<&str> for SyntaxToken {
 #[derive(Debug, Clone, PartialEq)]
 pub struct InformationObjectSyntax {
     pub expressions: Vec<SyntaxExpression>,
+}
+
+impl InformationObjectSyntax {
+    /// Information object syntax consists of mandatory and optional expressions.
+    /// Optional expressions may be nested without limit.
+    /// Eventually, however, a declaration following a syntax is always a sequence of 
+    pub fn flatten(&self) -> Vec<(bool, SyntaxToken)> {
+        fn iter_expressions(
+            expressions: &Vec<SyntaxExpression>,
+            optional_recursion: bool,
+        ) -> Vec<(bool, &SyntaxExpression)> {
+            expressions
+                .iter()
+                .flat_map(|x| match x {
+                    SyntaxExpression::Optional(o) => iter_expressions(o, true),
+                    r => vec![(!optional_recursion, r)],
+                })
+                .collect()
+        }
+
+        iter_expressions(&self.expressions, false)
+            .into_iter()
+            .map(|x| match x {
+                (is_required, SyntaxExpression::Required(r)) => (is_required, r.clone()),
+                _ => unreachable!(),
+            })
+            .collect()
+    }
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -220,8 +322,35 @@ impl ObjectFieldIdentifier {
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct InformationObject {
-    pub supertype: String,
+    pub class_name: String,
     pub fields: InformationObjectFields,
+}
+
+impl InformationObject {
+    pub fn link_object_set_reference(
+        &mut self,
+        tlds: &BTreeMap<String, ToplevelDeclaration>,
+    ) -> bool {
+        match &mut self.fields {
+            InformationObjectFields::DefaultSyntax(d) => d.iter_mut().fold(false, |acc, field| {
+                acc || field.link_object_set_reference(tlds)
+            }),
+            InformationObjectFields::CustomSyntax(c) => c.iter_mut().fold(false, |acc, field| {
+                acc || field.link_object_set_reference(tlds)
+            }),
+        }
+    }
+
+    pub fn references_object_set_by_name(&self) -> bool {
+        match &self.fields {
+            InformationObjectFields::DefaultSyntax(d) => d.iter().fold(false, |acc, field| {
+                acc || field.references_object_set_by_name()
+            }),
+            InformationObjectFields::CustomSyntax(c) => c.iter().fold(false, |acc, field| {
+                acc || field.references_object_set_by_name()
+            }),
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -234,6 +363,54 @@ pub enum InformationObjectFields {
 pub enum ObjectSetValue {
     Reference(String),
     Inline(InformationObjectFields),
+}
+
+impl ObjectSetValue {
+    pub fn link_object_set_reference(
+        &mut self,
+        tlds: &BTreeMap<String, ToplevelDeclaration>,
+    ) -> bool {
+        match self {
+            ObjectSetValue::Reference(id) => {
+                if let Some(ToplevelDeclaration::Information(ToplevelInformationDeclaration {
+                    value: ASN1Information::Object(obj),
+                    ..
+                })) = tlds.get(id)
+                {
+                    *self = ObjectSetValue::Inline(obj.fields.clone());
+                    true
+                } else {
+                    false
+                }
+            }
+            ObjectSetValue::Inline(InformationObjectFields::CustomSyntax(c)) => {
+                c.iter_mut().fold(false, |acc, field| {
+                    acc || field.link_object_set_reference(tlds)
+                })
+            }
+            ObjectSetValue::Inline(InformationObjectFields::DefaultSyntax(d)) => {
+                d.iter_mut().fold(false, |acc, field| {
+                    acc || field.link_object_set_reference(tlds)
+                })
+            }
+        }
+    }
+
+    pub fn references_object_set_by_name(&self) -> bool {
+        match self {
+            ObjectSetValue::Reference(_) => true,
+            ObjectSetValue::Inline(InformationObjectFields::CustomSyntax(c)) => {
+                c.iter().fold(false, |acc, field| {
+                    acc || field.references_object_set_by_name()
+                })
+            }
+            ObjectSetValue::Inline(InformationObjectFields::DefaultSyntax(d)) => {
+                d.iter().fold(false, |acc, field| {
+                    acc || field.references_object_set_by_name()
+                })
+            }
+        }
+    }
 }
 
 impl From<&str> for ObjectSetValue {
@@ -252,6 +429,23 @@ impl From<InformationObjectFields> for ObjectSetValue {
 pub struct ObjectSet {
     pub values: Vec<ObjectSetValue>,
     pub extensible: Option<usize>,
+}
+
+impl ObjectSet {
+    pub fn link_object_set_reference(
+        &mut self,
+        tlds: &BTreeMap<String, ToplevelDeclaration>,
+    ) -> bool {
+        self.values
+            .iter_mut()
+            .fold(false, |acc, val| acc || val.link_object_set_reference(tlds))
+    }
+
+    pub fn references_object_set_by_name(&self) -> bool {
+        self.values
+            .iter()
+            .fold(false, |acc, val| acc || val.references_object_set_by_name())
+    }
 }
 
 impl
@@ -291,6 +485,27 @@ impl InformationObjectField {
             InformationObjectField::TypeField(f) => &f.identifier,
             InformationObjectField::FixedValueField(f) => &f.identifier,
             InformationObjectField::ObjectSetField(f) => &f.identifier,
+        }
+    }
+
+    pub fn link_object_set_reference(
+        &mut self,
+        tlds: &BTreeMap<String, ToplevelDeclaration>,
+    ) -> bool {
+        match self {
+            InformationObjectField::ObjectSetField(ObjectSetField { value, .. }) => {
+                value.link_object_set_reference(tlds)
+            }
+            _ => false,
+        }
+    }
+
+    pub fn references_object_set_by_name(&self) -> bool {
+        match self {
+            InformationObjectField::ObjectSetField(ObjectSetField { value, .. }) => {
+                value.references_object_set_by_name()
+            }
+            _ => false,
         }
     }
 }

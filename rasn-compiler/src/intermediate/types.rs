@@ -2,6 +2,43 @@ use std::vec;
 
 use super::{constraints::*, *};
 
+/// Trait shared by all ASN1 types that can be constrained a.k.a subtyped
+pub trait Constrainable {
+    /// returns a reference to the type's constraints
+    fn constraints(&self) -> &Vec<Constraint>;
+    /// returns a mutable reference to the type's constraints
+    fn constraints_mut(&mut self) -> &mut Vec<Constraint>;
+}
+
+macro_rules! constrainable {
+    ($typ:ty) => {
+        impl Constrainable for $typ {
+            fn constraints(&self) -> &Vec<Constraint> {
+                &self.constraints
+            }
+
+            fn constraints_mut(&mut self) -> &mut Vec<Constraint> {
+                &mut self.constraints
+            }
+        }
+    };
+}
+
+constrainable!(Boolean);
+constrainable!(Integer);
+constrainable!(BitString);
+constrainable!(OctetString);
+constrainable!(CharacterString);
+constrainable!(Real);
+constrainable!(SequenceOrSet);
+constrainable!(SequenceOrSetOf);
+constrainable!(Choice);
+constrainable!(Enumerated);
+constrainable!(DeclarationElsewhere);
+constrainable!(InformationObjectFieldReference);
+constrainable!(ChoiceOption);
+constrainable!(SequenceOrSetMember);
+
 /// Representation of an ASN1 BOOLEAN data element
 /// with corresponding constraints
 #[derive(Debug, Clone, PartialEq)]

@@ -1,8 +1,8 @@
 use nom::{
     bytes::complete::tag,
     character::complete::{char, i128},
-    combinator::{into, opt},
-    multi::{many0, separated_list0},
+    combinator::{into, opt, recognize},
+    multi::{many0, separated_list0, separated_list1},
     sequence::{terminated, tuple},
     IResult,
 };
@@ -104,7 +104,10 @@ pub fn sequence_component<'a>(input: &'a str) -> IResult<&'a str, SequenceCompon
         map(
             preceded(
                 tag(COMPONENTS_OF),
-                skip_ws_and_comments(title_case_identifier),
+                skip_ws_and_comments(alt((
+                    recognize(separated_list1(tag(".&"), identifier)),
+                    title_case_identifier,
+                ))),
             ),
             |id| SequenceComponent::ComponentsOf(id.into()),
         ),
@@ -177,11 +180,17 @@ mod tests {
     fn parses_default_enumeral() {
         assert_eq!(
             default("  DEFAULT enumeral1").unwrap().1,
-            Some(ASN1Value::ElsewhereDeclaredValue("enumeral1".into()))
+            Some(ASN1Value::ElsewhereDeclaredValue {
+                identifier: "enumeral1".into(),
+                parent: None
+            })
         );
         assert_eq!(
             default("DEFAULT enumeral1").unwrap().1,
-            Some(ASN1Value::ElsewhereDeclaredValue("enumeral1".into()))
+            Some(ASN1Value::ElsewhereDeclaredValue {
+                identifier: "enumeral1".into(),
+                parent: None
+            })
         );
     }
 
@@ -203,7 +212,8 @@ mod tests {
                 SequenceOrSetMember {
                     name: "clusterBoundingBoxShape".into(),
                     tag: None,
-                    r#type: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere { identifier: "Shape".into(), constraints: vec![Constraint::SubtypeConstraint(ElementSet { set: ElementOrSetOperation::Element(SubtypeElement::SingleTypeConstraint(InnerTypeConstraint { is_partial: true, constraints: vec![ConstrainedComponent { identifier: "elliptical".into(), constraints: vec![], presence: ComponentPresence::Absent },ConstrainedComponent { identifier: "radial".into(), constraints: vec![], presence: ComponentPresence::Absent },ConstrainedComponent { identifier: "radialShapes".into(), constraints: vec![], presence: ComponentPresence::Absent }] })), extensible: false })
+                    r#type: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere { parent: None,
+                        identifier: "Shape".into(), constraints: vec![Constraint::SubtypeConstraint(ElementSet { set: ElementOrSetOperation::Element(SubtypeElement::SingleTypeConstraint(InnerTypeConstraint { is_partial: true, constraints: vec![ConstrainedComponent { identifier: "elliptical".into(), constraints: vec![], presence: ComponentPresence::Absent },ConstrainedComponent { identifier: "radial".into(), constraints: vec![], presence: ComponentPresence::Absent },ConstrainedComponent { identifier: "radialShapes".into(), constraints: vec![], presence: ComponentPresence::Absent }] })), extensible: false })
                      ]}),
                     default_value: None,
                     is_optional: true,
@@ -235,6 +245,7 @@ mod tests {
 
                         tag: None,
                         r#type: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+                            parent: None,
                             identifier: "AccelerationValue".into(),
                             constraints: vec![]
                         }),
@@ -247,6 +258,7 @@ mod tests {
 
                         tag: None,
                         r#type: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+                            parent: None,
                             identifier: "AccelerationConfidence".into(),
                             constraints: vec![]
                         }),
@@ -282,6 +294,7 @@ mod tests {
 
                         tag: None,
                         r#type: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+                            parent: None,
                             identifier: "CartesianCoordinateWithConfidence".into(),
                             constraints: vec![]
                         }),
@@ -291,9 +304,9 @@ mod tests {
                     },
                     SequenceOrSetMember {
                         name: "yCoordinate".into(),
-
                         tag: None,
                         r#type: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+                            parent: None,
                             identifier: "CartesianCoordinateWithConfidence".into(),
                             constraints: vec![]
                         }),
@@ -303,9 +316,9 @@ mod tests {
                     },
                     SequenceOrSetMember {
                         name: "zCoordinate".into(),
-
                         tag: None,
                         r#type: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+                            parent: None,
                             identifier: "CartesianCoordinateWithConfidence".into(),
                             constraints: vec![]
                         }),
@@ -341,6 +354,7 @@ mod tests {
                         name: "horizontalPositionConfidence".into(),
                         tag: None,
                         r#type: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+                            parent: None,
                             identifier: "PosConfidenceEllipse".into(),
                             constraints: vec![]
                         }),
@@ -352,12 +366,14 @@ mod tests {
                         name: "deltaAltitude".into(),
                         tag: None,
                         r#type: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+                            parent: None,
                             identifier: "DeltaAltitude".into(),
                             constraints: vec![]
                         }),
-                        default_value: Some(ASN1Value::ElsewhereDeclaredValue(
-                            "unavailable".into()
-                        )),
+                        default_value: Some(ASN1Value::ElsewhereDeclaredValue {
+                            identifier: "unavailable".into(),
+                            parent: None
+                        }),
                         is_optional: true,
                         constraints: vec![],
                     },
@@ -365,12 +381,14 @@ mod tests {
                         name: "altitudeConfidence".into(),
                         tag: None,
                         r#type: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+                            parent: None,
                             identifier: "AltitudeConfidence".into(),
                             constraints: vec![]
                         }),
-                        default_value: Some(ASN1Value::ElsewhereDeclaredValue(
-                            "unavailable".into()
-                        )),
+                        default_value: Some(ASN1Value::ElsewhereDeclaredValue {
+                            identifier: "unavailable".into(),
+                            parent: None
+                        }),
                         is_optional: true,
                         constraints: vec![],
                     }
@@ -492,6 +510,7 @@ mod tests {
 
                                 tag: None,
                                 r#type: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+                                    parent: None,
                                     identifier: "Wow".into(),
                                     constraints: vec![]
                                 }),
@@ -575,7 +594,10 @@ mod tests {
                 ),
                 (
                     "ctx".into(),
-                    Box::new(ASN1Value::ElsewhereDeclaredValue("c-ctxRefNull".into()))
+                    Box::new(ASN1Value::ElsewhereDeclaredValue {
+                        identifier: "c-ctxRefNull".into(),
+                        parent: None
+                    })
                 )
             ])
         )
@@ -688,6 +710,7 @@ mod tests {
                     name: "bilateral-information".into(),
                     tag: None,
                     r#type: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+                        parent: None,
                         identifier: "TypeB".into(),
                         constraints: vec![]
                     }),

@@ -10,7 +10,7 @@ use crate::intermediate::{
     },
     utils::{to_rust_const_case, to_rust_title_case, to_rust_snake_case},
     ASN1Type, ASN1Value, ToplevelDeclaration, ToplevelTypeDeclaration, ToplevelValueDeclaration,
-    INTEGER, constraints::Constraint,
+    INTEGER, constraints::Constraint, types::Constrainable,
 };
 
 use super::{
@@ -381,7 +381,7 @@ pub fn generate_sequence_or_set(tld: ToplevelTypeDeclaration) -> Result<String, 
             } else {
                 ""
             };
-            let class_fields = seq.members.iter().fold(String::new(), |mut acc, m| { [m.constraints.clone(), m.r#type.constraints()].concat().iter().for_each(|c| {
+            let class_fields = seq.members.iter().fold(String::new(), |mut acc, m| { [m.constraints.clone(), m.r#type.constraints().map_or(vec![], |c| c.to_vec())].concat().iter().for_each(|c| {
                 let decode_fn = format!("decode_{}", to_rust_snake_case(&m.name)).parse::<TokenStream>().unwrap();
                 let open_field_name = to_rust_snake_case(&m.name).parse::<TokenStream>().unwrap();
                 match (c, &m.r#type) {
@@ -494,9 +494,12 @@ pub fn generate_information_object_set(
             .map(|v| {
                 match v {
                     ObjectSetValue::Reference(r) => {
-                        todo!()
+                        return Err(GeneratorError::new(
+                            None,
+                            &format!("Could not resolve reference of Information Object Set {r}"),
+                            GeneratorErrorType::MissingClassKey,
+                        ))
                     },
-                    // basically, an information object specifies a sequence implementing a class. So we sould treat information objects like sequences
                     ObjectSetValue::Inline(InformationObjectFields::CustomSyntax(s)) => {
                         resolve_custom_syntax(class, s)
                     }
@@ -545,12 +548,12 @@ pub fn generate_information_object_set(
             let (ids, inner_types): (Vec<(TokenStream, TokenStream, TokenStream)>, Vec<TokenStream>) = fields.iter().enumerate().map(|(index, (id, ty))| {
                 let type_id = ty.as_string().unwrap_or(String::from("Option<()>")).parse::<TokenStream>().unwrap();
                 let identifier_value = id.value_as_string(Some(&class_unique_id_type_name.to_string())).unwrap().parse::<TokenStream>().unwrap();
-                let variant_name = if let ASN1Value::ElsewhereDeclaredValue(ref_id) = id {
+                let variant_name = if let ASN1Value::ElsewhereDeclaredValue{identifier: ref_id, ..} = id {
                     to_rust_title_case(ref_id)
                 } else {
                     format!("{field_enum_name}_{index}")
                 }.parse::<TokenStream>().unwrap();
-                if ty.constraints().is_empty() {
+                if ty.constraints().map_or(true, |c| c.is_empty()) {
                     ((variant_name, type_id, identifier_value), quote!())
                 } else {
                     let (signed_range, character_string_type) = match ty {
@@ -563,8 +566,8 @@ pub fn generate_information_object_set(
                         
                     };
                     let delegate_id = &format!("Inner_{field_enum_name}_{index}").parse::<TokenStream>().unwrap();
-                    let range_constraints = format_range_annotations(signed_range, &ty.constraints()).unwrap();
-                    let alphabet_constraints = character_string_type.map(|c| format_alphabet_annotations(c, &ty.constraints()).ok()).flatten().unwrap_or_default();
+                    let range_constraints = format_range_annotations(signed_range, ty.constraints().unwrap_or(&mut Vec::<_>::new())).unwrap();
+                    let alphabet_constraints = character_string_type.map(|c| format_alphabet_annotations(c, ty.constraints().unwrap_or(&mut Vec::<_>::new())).ok()).flatten().unwrap_or_default();
                     let annotations = [range_constraints, alphabet_constraints, String::from("delegate")].into_iter().filter(|ann| ann.is_empty().not()).collect::<Vec<String>>().join(",").parse::<TokenStream>().unwrap();
                     ((variant_name, delegate_id.clone(), identifier_value), quote!{
                         #[derive(Debug, Clone, PartialEq, AsnType, Decode, Encode)]

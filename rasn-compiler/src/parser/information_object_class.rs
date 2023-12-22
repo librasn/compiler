@@ -78,6 +78,7 @@ pub fn instance_of<'a>(input: &'a str) -> IResult<&'a str, ASN1Type> {
         ),
         |(id, constraints)| {
             ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+                parent: None,
                 identifier: id.into(),
                 constraints: constraints,
             })
@@ -319,6 +320,7 @@ mod tests {
                     InformationObjectClassField {
                         identifier: ObjectFieldIdentifier::MultipleValue("&Errors".into()),
                         r#type: Some(ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+                            parent: None,
                             constraints: vec![],
                             identifier: "ERROR".into()
                         })),
@@ -373,9 +375,10 @@ mod tests {
                     ObjectSetValue::Inline(InformationObjectFields::DefaultSyntax(vec![
                         InformationObjectField::FixedValueField(FixedValueField {
                             identifier: "&errorCode".to_string(),
-                            value: ASN1Value::ElsewhereDeclaredValue(
-                                "asn-val-security-failure".into()
-                            )
+                            value: ASN1Value::ElsewhereDeclaredValue {
+                                identifier: "asn-val-security-failure".into(),
+                                parent: None
+                            }
                         }),
                         InformationObjectField::TypeField(TypeField {
                             identifier: "&ParameterType".into(),
@@ -387,9 +390,10 @@ mod tests {
                     ObjectSetValue::Inline(InformationObjectFields::DefaultSyntax(vec![
                         InformationObjectField::FixedValueField(FixedValueField {
                             identifier: "&errorCode".into(),
-                            value: ASN1Value::ElsewhereDeclaredValue(
-                                "asn-val-unknown-order".into()
-                            )
+                            value: ASN1Value::ElsewhereDeclaredValue {
+                                identifier: "asn-val-unknown-order".into(),
+                                parent: None
+                            }
                         })
                     ])),
                 ],
@@ -415,6 +419,7 @@ mod tests {
                     InformationObjectClassField {
                         identifier: ObjectFieldIdentifier::SingleValue("&itsaidCtxRef".into()),
                         r#type: Some(ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+                            parent: None,
                             identifier: "ItsAidCtxRef".into(),
                             constraints: vec![]
                         })),
@@ -481,6 +486,21 @@ mod tests {
                 parameterization: None,
                 index: None
             }
+        )
+    }
+
+    #[test]
+    fn tld_test() {
+        println!(
+            "{:?}",
+            super::information_object(
+                r#"{
+            WITH SYNTAX              DistinguishedName
+            USAGE                    dSAOperation
+            LDAP-SYNTAX              dn.&id
+            LDAP-NAME                {"namingContexts"}
+            ID                       id-lat-namingContexts }"#
+            )
         )
     }
 }

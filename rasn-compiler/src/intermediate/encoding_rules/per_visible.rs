@@ -1,7 +1,7 @@
 use crate::intermediate::{
     constraints::{Constraint, ElementOrSetOperation, SetOperation, SetOperator, SubtypeElement},
     error::{GrammarError, GrammarErrorType},
-    types::{Choice, Enumerated},
+    types::{Choice, Constrainable, Enumerated},
     ASN1Type, ASN1Value, CharacterStringType,
 };
 use std::{collections::BTreeMap, ops::AddAssign};
@@ -24,17 +24,21 @@ pub fn to_per_visible(
                 acc += constraints;
                 Ok(acc)
             })?,
-        character_string_type.map(|c| {
-            constraints.iter().try_fold(
-                PerVisibleAlphabetConstraints::default_for(c),
-                |mut acc, curr| {
-                    if let Some(mut constraints) = PerVisibleAlphabetConstraints::try_new(curr, c)? {
-                        acc += &mut constraints;
-                    }
-                    Ok(acc)
-                },
-            )
-        }).transpose()?,
+        character_string_type
+            .map(|c| {
+                constraints.iter().try_fold(
+                    PerVisibleAlphabetConstraints::default_for(c),
+                    |mut acc, curr| {
+                        if let Some(mut constraints) =
+                            PerVisibleAlphabetConstraints::try_new(curr, c)?
+                        {
+                            acc += &mut constraints;
+                        }
+                        Ok(acc)
+                    },
+                )
+            })
+            .transpose()?,
     ))
 }
 
@@ -373,7 +377,7 @@ impl TryFrom<Option<&SubtypeElement>> for PerVisibleRangeConstraints {
                 extensible: _,
             }) => per_visible_range_constraints(
                 matches!(subtype, ASN1Type::Integer(_)),
-                &subtype.constraints(),
+                subtype.constraints().unwrap_or(&mut vec![]),
             ),
             x => {
                 println!("{x:?}");
@@ -413,10 +417,9 @@ impl PerVisible for SubtypeElement {
             SubtypeElement::ContainedSubtype {
                 subtype: s,
                 extensible: _,
-            } => s
-                .constraints()
-                .iter()
-                .fold(false, |acc, c| acc || c.per_visible()),
+            } => s.constraints().map_or(false, |c| {
+                c.iter().fold(false, |acc, c| acc || c.per_visible())
+            }),
             SubtypeElement::ValueRange {
                 min: _,
                 max: _,

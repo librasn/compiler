@@ -11,7 +11,7 @@
 use nom::{
     branch::alt,
     bytes::complete::tag,
-    combinator::{into, map, opt},
+    combinator::{into, map, opt, recognize},
     multi::{many0, many1},
     sequence::{pair, preceded, terminated, tuple},
     IResult,
@@ -143,17 +143,31 @@ pub fn asn1_value<'a>(input: &'a str) -> IResult<&'a str, ASN1Value> {
 }
 
 pub fn elsewhere_declared_value<'a>(input: &'a str) -> IResult<&'a str, ASN1Value> {
-    map(skip_ws_and_comments(value_identifier), |m| {
-        ASN1Value::ElsewhereDeclaredValue(m.into())
-    })(input)
+    map(
+        pair(
+            opt(skip_ws_and_comments(recognize(many1(pair(
+                identifier,
+                tag(".&"),
+            ))))),
+            value_identifier,
+        ),
+        |(p, id)| ASN1Value::ElsewhereDeclaredValue {
+            parent: p.map(ToString::to_string),
+            identifier: id.into(),
+        },
+    )(input)
 }
 
 pub fn elsewhere_declared_type<'a>(input: &'a str) -> IResult<&'a str, ASN1Type> {
     map(
-        pair(
+        tuple((
+            opt(skip_ws_and_comments(recognize(many1(pair(
+                identifier,
+                tag(".&"),
+            ))))),
             skip_ws_and_comments(title_case_identifier),
             opt(skip_ws_and_comments(constraint)),
-        ),
+        )),
         |m| ASN1Type::ElsewhereDeclaredType(m.into()),
     )(input)
 }
@@ -224,15 +238,12 @@ mod tests {
     use core::panic;
     use std::vec;
 
-    use crate::{
-        intermediate::{
-            constraints::*,
-            information_object::*,
-            parameterization::{Parameterization, ParameterizationArgument},
-            types::*,
-            *,
-        },
-        parser::top_level_information_object_declaration,
+    use crate::intermediate::{
+        constraints::*,
+        information_object::*,
+        parameterization::{Parameterization, ParameterizationArgument},
+        types::*,
+        *,
     };
 
     use crate::parser::top_level_information_declaration;
@@ -395,6 +406,7 @@ mod tests {
                 comments: " Comments go here".into(),
                 name: "EventZone".into(),
                 r#type: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+                    parent: None,
                     identifier: "EventHistory".into(),
                     constraints: vec![Constraint::SubtypeConstraint(ElementSet {
                         set: ElementOrSetOperation::SetOperation(SetOperation {
@@ -453,6 +465,7 @@ mod tests {
                         extensible: true
                     })],
                     r#type: Box::new(ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+                        parent: None,
                         identifier: "InterferenceManagementZone".into(),
                         constraints: vec![]
                     }))
@@ -484,50 +497,46 @@ mod tests {
                 value: ASN1Information::ObjectSet(ObjectSet {
                     values: vec![
                         ObjectSetValue::Inline(InformationObjectFields::CustomSyntax(vec![
-                            SyntaxApplication::LiteralOrTypeReference(
-                                DeclarationElsewhere {
-                                    identifier: "OriginatingVehicleContainer".into(),
-                                    constraints: vec![]
-                                }
-                            ),
-                             SyntaxApplication::LiteralOrTypeReference(
-                                DeclarationElsewhere {
-                                    identifier: "IDENTIFIED".into(),
-                                    constraints: vec![]
-                                }
-                            ),
-                             SyntaxApplication::LiteralOrTypeReference(
-                                DeclarationElsewhere {
-                                    identifier: "BY".into(),
-                                    constraints: vec![]
-                                }
-                            ),
-                            SyntaxApplication::ValueReference(ASN1Value::ElsewhereDeclaredValue(
-                                "originatingVehicleContainer".into()
-                            ))
+                            SyntaxApplication::LiteralOrTypeReference(DeclarationElsewhere {
+                                parent: None,
+                                identifier: "OriginatingVehicleContainer".into(),
+                                constraints: vec![]
+                            }),
+                            SyntaxApplication::LiteralOrTypeReference(DeclarationElsewhere {
+                                parent: None,
+                                identifier: "IDENTIFIED".into(),
+                                constraints: vec![]
+                            }),
+                            SyntaxApplication::LiteralOrTypeReference(DeclarationElsewhere {
+                                parent: None,
+                                identifier: "BY".into(),
+                                constraints: vec![]
+                            }),
+                            SyntaxApplication::ValueReference(ASN1Value::ElsewhereDeclaredValue {
+                                identifier: "originatingVehicleContainer".into(),
+                                parent: None
+                            })
                         ])),
                         ObjectSetValue::Inline(InformationObjectFields::CustomSyntax(vec![
-                            SyntaxApplication::LiteralOrTypeReference(
-                                DeclarationElsewhere {
-                                    identifier: "PerceivedObjectContainer".into(),
-                                    constraints: vec![]
-                                }
-                            ),
-                             SyntaxApplication::LiteralOrTypeReference(
-                                DeclarationElsewhere {
-                                    identifier: "IDENTIFIED".into(),
-                                    constraints: vec![]
-                                }
-                            ),
-                             SyntaxApplication::LiteralOrTypeReference(
-                                DeclarationElsewhere {
-                                    identifier: "BY".into(),
-                                    constraints: vec![]
-                                }
-                            ),
-                            SyntaxApplication::ValueReference(ASN1Value::ElsewhereDeclaredValue(
-                                "perceivedObjectContainer".into()
-                            ))
+                            SyntaxApplication::LiteralOrTypeReference(DeclarationElsewhere {
+                                parent: None,
+                                identifier: "PerceivedObjectContainer".into(),
+                                constraints: vec![]
+                            }),
+                            SyntaxApplication::LiteralOrTypeReference(DeclarationElsewhere {
+                                parent: None,
+                                identifier: "IDENTIFIED".into(),
+                                constraints: vec![]
+                            }),
+                            SyntaxApplication::LiteralOrTypeReference(DeclarationElsewhere {
+                                parent: None,
+                                identifier: "BY".into(),
+                                constraints: vec![]
+                            }),
+                            SyntaxApplication::ValueReference(ASN1Value::ElsewhereDeclaredValue {
+                                identifier: "perceivedObjectContainer".into(),
+                                parent: None
+                            })
                         ]))
                     ],
                     extensible: Some(2)
@@ -578,6 +587,7 @@ mod tests {
                         InformationObjectClassField {
                             identifier: ObjectFieldIdentifier::SingleValue("&id".into()),
                             r#type: Some(ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+                                parent: None,
                                 identifier: "RegionId".into(),
                                 constraints: vec![]
                             })),
@@ -743,4 +753,7 @@ mod tests {
             }
         )
     }
+
+    #[test]
+    fn parses_elsewhere_declined_class_member() {}
 }

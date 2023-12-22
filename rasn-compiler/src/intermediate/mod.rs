@@ -15,11 +15,7 @@ pub mod parameterization;
 pub mod types;
 pub mod utils;
 
-use std::{
-    collections::BTreeMap,
-    ops::{Add, AddAssign},
-    rc::Rc,
-};
+use std::{collections::BTreeMap, ops::Add, rc::Rc};
 
 use constraints::Constraint;
 use error::{GrammarError, GrammarErrorType};
@@ -30,6 +26,8 @@ use information_object::{
 use parameterization::Parameterization;
 use types::*;
 use utils::*;
+
+use self::information_object::{FixedValueField, InformationObjectField, SyntaxToken};
 
 // Comment tokens
 pub const BLOCK_COMMENT_START: &'static str = "/*";
@@ -225,6 +223,15 @@ pub const ASN1_KEYWORDS: [&str; 63] = [
     INSTRUCTIONS,
     TAGS,
 ];
+
+macro_rules! error {
+    ($kind:ident, $($arg:tt)*) => {
+        GrammarError {
+            details: format!($($arg)*),
+            kind: GrammarErrorType::$kind,
+        }
+    };
+}
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct EncodingReferenceDefault(pub String);
@@ -617,11 +624,14 @@ impl ToplevelDeclaration {
                 ASN1Type::Sequence(s) | ASN1Type::Set(s) => {
                     s.members.iter_mut().fold(false, |acc, m| {
                         if let Some(default) = m.default_value.as_mut() {
-                            let maybe_id = if let ASN1Value::ElsewhereDeclaredValue(id) = default {
-                                Some(id.clone())
-                            } else {
-                                None
-                            };
+                            let maybe_id =
+                                if let ASN1Value::ElsewhereDeclaredValue { identifier, .. } =
+                                    default
+                                {
+                                    Some(identifier.clone())
+                                } else {
+                                    None
+                                };
                             if let Some(ToplevelDeclaration::Value(id)) =
                                 tlds.get(&maybe_id.clone().unwrap_or_default())
                             {
@@ -700,11 +710,11 @@ impl ToplevelDeclaration {
     pub fn link_constraint_reference(
         &mut self,
         tlds: &BTreeMap<String, ToplevelDeclaration>,
-    ) -> bool {
+    ) -> Result<bool, GrammarError> {
         match self {
             ToplevelDeclaration::Type(t) => t.r#type.link_constraint_reference(&t.name, tlds),
             // TODO: Cover constraint references in other types of top-level declarations
-            _ => false,
+            _ => Ok(false),
         }
     }
 }
@@ -716,6 +726,12 @@ pub struct ToplevelValueDeclaration {
     pub type_name: String,
     pub value: ASN1Value,
     pub index: Option<(Rc<ModuleReference>, usize)>,
+}
+
+impl ToplevelValueDeclaration {
+    pub fn pdu(&self) -> &ASN1Value {
+        &self.value
+    }
 }
 
 impl From<(Vec<&str>, &str, &str, ASN1Value)> for ToplevelValueDeclaration {
@@ -738,6 +754,12 @@ pub struct ToplevelTypeDeclaration {
     pub r#type: ASN1Type,
     pub parameterization: Option<Parameterization>,
     pub index: Option<(Rc<ModuleReference>, usize)>,
+}
+
+impl ToplevelTypeDeclaration {
+    pub fn pdu(&self) -> &ASN1Type {
+        &self.r#type
+    }
 }
 
 impl
@@ -796,22 +818,44 @@ pub enum ASN1Type {
 }
 
 impl ASN1Type {
-    pub fn constraints(&self) -> Vec<Constraint> {
+    pub fn constraints(&self) -> Option<&Vec<Constraint>> {
         match self {
-            ASN1Type::Integer(i) => i.constraints.clone(),
-            ASN1Type::BitString(b) => b.constraints.clone(),
-            ASN1Type::OctetString(o) => o.constraints.clone(),
-            ASN1Type::CharacterString(c) => c.constraints.clone(),
-            ASN1Type::Enumerated(e) => e.constraints.clone(),
-            ASN1Type::Choice(c) => c.constraints.clone(),
-            ASN1Type::Sequence(s) => s.constraints.clone(),
-            ASN1Type::SequenceOf(s) => s.constraints.clone(),
-            ASN1Type::ElsewhereDeclaredType(e) => e.constraints.clone(),
-            ASN1Type::InformationObjectFieldReference(f) => f.constraints.clone(),
-            _ => vec![],
+            ASN1Type::Boolean(b) => Some(b.constraints()),
+            ASN1Type::Real(r) => Some(r.constraints()),
+            ASN1Type::Integer(i) => Some(i.constraints()),
+            ASN1Type::BitString(b) => Some(b.constraints()),
+            ASN1Type::OctetString(o) => Some(o.constraints()),
+            ASN1Type::CharacterString(c) => Some(c.constraints()),
+            ASN1Type::Enumerated(e) => Some(e.constraints()),
+            ASN1Type::Choice(c) => Some(c.constraints()),
+            ASN1Type::Set(s) | ASN1Type::Sequence(s) => Some(s.constraints()),
+            ASN1Type::SetOf(s) | ASN1Type::SequenceOf(s) => Some(s.constraints()),
+            ASN1Type::ElsewhereDeclaredType(e) => Some(e.constraints()),
+            ASN1Type::InformationObjectFieldReference(f) => Some(f.constraints()),
+            _ => None,
         }
     }
 
+    pub fn constraints_mut(&mut self) -> Option<&mut Vec<Constraint>> {
+        match self {
+            ASN1Type::Boolean(b) => Some(b.constraints_mut()),
+            ASN1Type::Real(r) => Some(r.constraints_mut()),
+            ASN1Type::Integer(i) => Some(i.constraints_mut()),
+            ASN1Type::BitString(b) => Some(b.constraints_mut()),
+            ASN1Type::OctetString(o) => Some(o.constraints_mut()),
+            ASN1Type::CharacterString(c) => Some(c.constraints_mut()),
+            ASN1Type::Enumerated(e) => Some(e.constraints_mut()),
+            ASN1Type::Choice(c) => Some(c.constraints_mut()),
+            ASN1Type::Set(s) | ASN1Type::Sequence(s) => Some(s.constraints_mut()),
+            ASN1Type::SetOf(s) | ASN1Type::SequenceOf(s) => Some(s.constraints_mut()),
+            ASN1Type::ElsewhereDeclaredType(e) => Some(e.constraints_mut()),
+            ASN1Type::InformationObjectFieldReference(f) => Some(f.constraints_mut()),
+            _ => None,
+        }
+    }
+}
+
+impl ASN1Type {
     pub fn make_unbounded_integer_constable(&mut self) -> bool {
         match self {
             ASN1Type::Sequence(s) | ASN1Type::Set(s) => s
@@ -828,7 +872,7 @@ impl ASN1Type {
             ASN1Type::Integer(i) => {
                 i.used_in_const = true;
                 true
-            },
+            }
             _ => false,
         }
     }
@@ -879,13 +923,10 @@ impl ASN1Type {
                     *self = parent.r#type.clone();
                     Ok(())
                 } else {
-                    Err(GrammarError {
-                        details: format!(
-                            "Could not find Choice {} of selection type.",
-                            c.choice_name
-                        ),
-                        kind: GrammarErrorType::LinkerError,
-                    })
+                    Err(error!(
+                        LinkerError,
+                        "Could not find Choice {} of selection type.", c.choice_name
+                    ))
                 }
             }
             ASN1Type::Sequence(s) | ASN1Type::Set(s) => s
@@ -934,6 +975,7 @@ impl ASN1Type {
                     acc || m.r#type.link_components_of_notation(tlds)
                 });
                 // TODO: properly link components of in extensions
+                // TODO: link components of Class field, such as COMPONENTS OF BILATERAL.&id
                 for comp_link in &s.components_of {
                     if let Some(ToplevelDeclaration::Type(linked)) = tlds.get(comp_link) {
                         if let ASN1Type::Sequence(linked_seq) = &linked.r#type {
@@ -964,95 +1006,58 @@ impl ASN1Type {
         &mut self,
         name: &String,
         tlds: &BTreeMap<String, ToplevelDeclaration>,
-    ) -> bool {
+    ) -> Result<bool, GrammarError> {
         match self {
-            ASN1Type::Null => false,
-            ASN1Type::Boolean(b) => b
-                .constraints
-                .iter_mut()
-                .map(|c| c.link_cross_reference(name, tlds))
-                .fold(false, |acc, b| acc || b),
-            ASN1Type::ObjectIdentifier(o) => o
-                .constraints
-                .iter_mut()
-                .map(|c| c.link_cross_reference(name, tlds))
-                .fold(false, |acc, b| acc || b),
-            ASN1Type::Integer(i) => i
-                .constraints
-                .iter_mut()
-                .map(|c| c.link_cross_reference(name, tlds))
-                .fold(false, |acc, b| acc || b),
-            ASN1Type::BitString(b) => b
-                .constraints
-                .iter_mut()
-                .map(|c| c.link_cross_reference(name, tlds))
-                .fold(false, |acc, b| acc || b),
-            ASN1Type::OctetString(o) => o
-                .constraints
-                .iter_mut()
-                .map(|c| c.link_cross_reference(name, tlds))
-                .fold(false, |acc, b| acc || b),
-            ASN1Type::CharacterString(c) => c
-                .constraints
-                .iter_mut()
-                .map(|c| c.link_cross_reference(name, tlds))
-                .fold(false, |acc, b| acc || b),
-            ASN1Type::Enumerated(e) => e
-                .constraints
-                .iter_mut()
-                .map(|c| c.link_cross_reference(name, tlds))
-                .fold(false, |acc, b| acc || b),
+            ASN1Type::Null => Ok(false),
             ASN1Type::Choice(c) => {
-                c.constraints
+                let constraints = c.constraints.iter_mut().try_fold(false, |acc, b| {
+                    b.link_cross_reference(name, tlds).map(|res| res || acc)
+                })?;
+                let options = c
+                    .options
                     .iter_mut()
-                    .map(|c| c.link_cross_reference(name, tlds))
-                    .fold(false, |acc, b| acc || b)
-                    || c.options
-                        .iter_mut()
-                        .map(|o| {
-                            let b = o.r#type.link_constraint_reference(&o.name, tlds);
-                            let a = o
-                                .constraints
-                                .iter_mut()
-                                .map(|c| c.link_cross_reference(name, tlds))
-                                .fold(false, |acc, b| acc || b);
-                            a || b
-                        })
-                        .fold(false, |acc, b| acc || b)
+                    .flat_map(|o| o.constraints_mut())
+                    .try_fold(false, |acc, b| {
+                        b.link_cross_reference(name, tlds).map(|res| res || acc)
+                    })?;
+                Ok(constraints || options)
             }
             ASN1Type::Sequence(s) => {
-                s.constraints
+                let constraints = s.constraints.iter_mut().try_fold(false, |acc, b| {
+                    b.link_cross_reference(name, tlds).map(|res| res || acc)
+                })?;
+                let members = s
+                    .members
                     .iter_mut()
-                    .map(|c| c.link_cross_reference(name, tlds))
-                    .fold(false, |acc, b| acc || b)
-                    || s.members
-                        .iter_mut()
-                        .map(|o| {
-                            let b = o.r#type.link_constraint_reference(&o.name, tlds);
-                            let a = o
-                                .constraints
-                                .iter_mut()
-                                .map(|c| c.link_cross_reference(name, tlds))
-                                .fold(false, |acc, b| acc || b);
-                            a || b
-                        })
-                        .fold(false, |acc, b| acc || b)
+                    .flat_map(|o| o.constraints_mut())
+                    .try_fold(false, |acc, b| {
+                        b.link_cross_reference(name, tlds).map(|res| res || acc)
+                    })?;
+                Ok(constraints || members)
             }
             ASN1Type::SequenceOf(s) => {
-                let a = s
-                    .constraints
-                    .iter_mut()
-                    .map(|c| c.link_cross_reference(name, tlds))
-                    .fold(false, |acc, b| acc || b);
-                let b = s.r#type.link_constraint_reference(name, tlds);
-                a || b
+                let a = s.constraints.iter_mut().try_fold(false, |acc, b| {
+                    b.link_cross_reference(name, tlds).map(|res| res || acc)
+                })?;
+                let b = s.r#type.link_constraint_reference(name, tlds)?;
+                Ok(a || b)
             }
-            ASN1Type::ElsewhereDeclaredType(e) => e
-                .constraints
-                .iter_mut()
-                .map(|c| c.link_cross_reference(&e.identifier, tlds))
-                .fold(false, |acc, b| acc || b),
-            _ => false,
+            ASN1Type::ElsewhereDeclaredType(e) => {
+                let id_clone = e.identifier.clone();
+                e.constraints_mut().iter_mut().try_fold(false, |acc, b| {
+                    b.link_cross_reference(&id_clone, tlds)
+                        .map(|res| res || acc)
+                })
+            }
+            ty => {
+                if let Some(c) = ty.constraints_mut() {
+                    c.iter_mut().try_fold(false, |acc, b| {
+                        b.link_cross_reference(name, tlds).map(|res| res || acc)
+                    })
+                } else {
+                    Ok(false)
+                }
+            }
         }
     }
 
@@ -1113,10 +1118,7 @@ impl ASN1Type {
         }
     }
 
-    pub fn resolve_class_reference(
-        self,
-        tlds: &BTreeMap<String, ToplevelDeclaration>,
-    ) -> Self {
+    pub fn resolve_class_reference(self, tlds: &BTreeMap<String, ToplevelDeclaration>) -> Self {
         match self {
             ASN1Type::Choice(c) => ASN1Type::Choice(Choice {
                 extensible: c.extensible,
@@ -1172,16 +1174,16 @@ impl ASN1Type {
     pub fn link_subtype_constraint(
         &mut self,
         tlds: &BTreeMap<String, ToplevelDeclaration>,
-    ) -> bool {
+    ) -> Result<bool, GrammarError> {
         match self {
             Self::ElsewhereDeclaredType(e) => {
                 if let Some(ToplevelDeclaration::Type(t)) = tlds.get(&e.identifier) {
                     *self = t.r#type.clone();
-                    return true;
+                    return Ok(true);
                 }
-                false
+                Ok(false)
             }
-            _ => false,
+            _ => Ok(false),
         }
     }
 
@@ -1194,29 +1196,29 @@ impl ASN1Type {
             ASN1Type::BitString(_) => Ok("BitString".to_owned()),
             ASN1Type::OctetString(_) => Ok("OctetString".to_owned()),
             ASN1Type::CharacterString(_) => Ok("Utf8String".to_owned()),
-            ASN1Type::Enumerated(_) => Err(GrammarError {
-                kind: GrammarErrorType::NotYetInplemented,
-                details: "Enumerated values are currently unsupported!".into(),
-            }),
-            ASN1Type::Choice(_) => Err(GrammarError {
-                kind: GrammarErrorType::NotYetInplemented,
-                details: "Choice values are currently unsupported!".into(),
-            }),
-            ASN1Type::Sequence(_) => Err(GrammarError {
-                kind: GrammarErrorType::NotYetInplemented,
-                details: "Sequence values are currently unsupported!".into(),
-            }),
+            ASN1Type::Enumerated(_) => Err(error!(
+                NotYetInplemented,
+                "Enumerated values are currently unsupported!"
+            )),
+            ASN1Type::Choice(_) => Err(error!(
+                NotYetInplemented,
+                "Choice values are currently unsupported!"
+            )),
+            ASN1Type::Sequence(_) => Err(error!(
+                NotYetInplemented,
+                "Sequence values are currently unsupported!"
+            )),
             ASN1Type::SetOf(so) | ASN1Type::SequenceOf(so) => {
                 Ok(format!("SequenceOf<{}>", so.r#type.as_string()?))
             }
-            ASN1Type::ObjectIdentifier(_) => Err(GrammarError {
-                kind: GrammarErrorType::NotYetInplemented,
-                details: "Object Identifier values are currently unsupported!".into(),
-            }),
-            ASN1Type::Set(_) => Err(GrammarError {
-                kind: GrammarErrorType::NotYetInplemented,
-                details: "Set values are currently unsupported!".into(),
-            }),
+            ASN1Type::ObjectIdentifier(_) => Err(error!(
+                NotYetInplemented,
+                "Object Identifier values are currently unsupported!"
+            )),
+            ASN1Type::Set(_) => Err(error!(
+                NotYetInplemented,
+                "Set values are currently unsupported!"
+            )),
             ASN1Type::ElsewhereDeclaredType(e) => Ok(e.identifier.clone()),
             ASN1Type::InformationObjectFieldReference(_) => todo!(),
             ASN1Type::GeneralizedTime(_) => Ok("GeneralizedTime".to_owned()),
@@ -1313,7 +1315,10 @@ pub enum ASN1Value {
         enumerable: String,
     },
     Time(String),
-    ElsewhereDeclaredValue(String),
+    ElsewhereDeclaredValue {
+        parent: Option<String>,
+        identifier: String,
+    },
     ObjectIdentifier(ObjectIdentifierValue),
 }
 
@@ -1350,13 +1355,10 @@ impl ASN1Value {
             }
             (ASN1Value::String(s), ASN1Value::String(o), Some(set)) => {
                 if s.len() != 1 || o.len() != 1 {
-                    return Err(GrammarError {
-                        details: format!(
-                            "Unsupported operation for ASN1Values {:?} and {:?}",
-                            self, other
-                        ),
-                        kind: GrammarErrorType::UnpackingError,
-                    });
+                    return Err(error!(
+                        UnpackingError,
+                        "Unsupported operation for ASN1Values {self:?} and {other:?}"
+                    ));
                 }
                 let s_as_char = s.chars().next().unwrap();
                 let o_as_char = o.chars().next().unwrap();
@@ -1376,22 +1378,16 @@ impl ASN1Value {
                             Ok(other.clone())
                         }
                     }
-                    _ => Err(GrammarError {
-                        details: format!(
-                            "Failed to find ASN1Values {:?} and {:?} in character set {:?}",
-                            self, other, char_set
-                        ),
-                        kind: GrammarErrorType::UnpackingError,
-                    }),
+                    _ => Err(error!(
+                            UnpackingError,
+                            "Failed to find ASN1Values {self:?} and {other:?} in character set {char_set:?}",
+                        )),
                 }
             }
-            _ => Err(GrammarError {
-                details: format!(
-                    "Unsupported operation for ASN1Values {:?} and {:?}",
-                    self, other
-                ),
-                kind: GrammarErrorType::UnpackingError,
-            }),
+            _ => Err(error!(
+                UnpackingError,
+                "Unsupported operation for ASN1Values {self:?} and {other:?}",
+            )),
         }
     }
 
@@ -1399,16 +1395,13 @@ impl ASN1Value {
         if let ASN1Value::Integer(i) = self {
             Ok(*i)
         } else {
-            Err(GrammarError {
-                details: format!("Cannot unwrap {:?} as integer!", self),
-                kind: error::GrammarErrorType::UnpackingError,
-            })
+            Err(error!(UnpackingError, "Cannot unwrap {self:?} as integer!"))
         }
     }
 
     pub fn is_elsewhere_declared(&self) -> bool {
         match self {
-            Self::ElsewhereDeclaredValue(_)
+            Self::ElsewhereDeclaredValue { .. }
             | Self::EnumeratedValue {
                 enumerated: _,
                 enumerable: _,
@@ -1417,25 +1410,140 @@ impl ASN1Value {
         }
     }
 
+    /// Tries to resolve an `ElsewhereDeclaredValue` that references a
+    /// path instead of a simple top-level declaration.
+    /// ### Example
+    /// From X501 LDAP System Schema
+    /// ```ignore
+    /// namingContexts ATTRIBUTE ::= {
+    ///     WITH SYNTAX              DistinguishedName
+    ///     USAGE                    dSAOperation
+    ///     LDAP-SYNTAX              dn.&id
+    ///     LDAP-NAME                {"namingContexts"}
+    ///     ID                       id-lat-namingContexts
+    /// }
+    /// ```
+    /// The `LDAP-SYNTAX` field refers to a field ob an information object `dn`.
+    pub fn resolve_elsewhere_with_parent(
+        &mut self,
+        tlds: &BTreeMap<String, ToplevelDeclaration>,
+    ) -> Result<(), GrammarError> {
+        if let Self::ElsewhereDeclaredValue {
+            parent: Some(object_name),
+            identifier,
+        } = self
+        {
+            if object_name.contains(".") {
+                return Err(error!(NotYetInplemented, "Value references of path length > 2 are not yet supported! Found reference {object_name}.{identifier}"));
+            }
+            let object = get_declaration![
+                tlds,
+                object_name,
+                Information,
+                information_object::ASN1Information::Object
+            ]
+            .ok_or_else(|| error!(LinkerError, "No information object found for identifier {object_name}, parent of {identifier}"))?;
+            match &object.fields {
+                information_object::InformationObjectFields::DefaultSyntax(d) => {
+                    match d.iter().find(|elem| elem.identifier() == identifier) {
+                        Some(InformationObjectField::FixedValueField(FixedValueField { value, .. })) => {
+                            *self = value.clone();
+                            return Ok(())
+                        }
+                        _ => return Err(error!(
+                            LinkerError,
+                                "No matching value field for identifier {identifier} found in object {object_name}"
+                        ))
+                    }
+                }
+                information_object::InformationObjectFields::CustomSyntax(c) => {
+                    let class_name = &object.class_name;
+                    let class = get_declaration![
+                        tlds,
+                        class_name,
+                        Information,
+                        information_object::ASN1Information::ObjectClass
+                    ]
+                    .ok_or_else(|| {
+                        error!(
+                            LinkerError,
+                            "No information object class found for identifier {class_name}"
+                        )
+                    })?;
+                    let syntax = class.syntax.as_ref().ok_or_else(|| {
+                        error!(LinkerError, "No syntax info found for class {class_name}")
+                    })?;
+                    let tokens = syntax.flatten();
+                    let (mut before, mut after) = (None, None);
+                    'iter_syntax: for i in 0..tokens.len() {
+                        let expr = tokens.get(i);
+                        match expr {
+                            Some((
+                                _,
+                                SyntaxToken::Field(ObjectFieldIdentifier::SingleValue(id)),
+                            )) if id == identifier => {
+                                before = tokens.get(i - 1).map(|(_, token)| token);
+                                after = tokens.get(i + 1).map(|(_, token)| token);
+                                break 'iter_syntax;
+                            }
+                            _ => {}
+                        };
+                    }
+                    for i in 0..c.len() {
+                        if let Some(information_object::SyntaxApplication::ValueReference(val)) =
+                            c.get(i)
+                        {
+                            match (c.get(i - 1), before, c.get(i + 1), after) {
+                                (Some(a), Some(b), _, _) if a.matches(b) => {
+                                    *self = val.clone();
+                                    return Ok(());
+                                }
+                                (_, _, Some(c), Some(d)) if c.matches(d) => {
+                                    *self = val.clone();
+                                    return Ok(());
+                                }
+                                _ => {}
+                            };
+                        }
+                    }
+                    return Err(error!(
+                        LinkerError,
+                        "Failed to match expression to syntax of class {class_name}"
+                    ));
+                }
+            }
+        }
+        Ok(())
+    }
+
     pub fn link_elsewhere_declared(
         &mut self,
         identifier: &String,
         tlds: &BTreeMap<String, ToplevelDeclaration>,
-    ) -> bool {
+    ) -> Result<bool, GrammarError> {
         match self {
-            Self::EnumeratedValue {
+            Self::ElsewhereDeclaredValue {
+                identifier: e,
+                parent: Some(p),
+            } => {
+                return self.resolve_elsewhere_with_parent(tlds).map(|_| true);
+            }
+            Self::ElsewhereDeclaredValue {
+                identifier: e,
+                parent: _,
+            }
+            | Self::EnumeratedValue {
                 enumerated: _,
                 enumerable: e,
-            }
-            | Self::ElsewhereDeclaredValue(e) => {
+            } => {
                 if let Some(v) = find_tld_or_enum_value_by_name(identifier, &e, tlds) {
                     *self = v;
-                    return true;
+                    return Ok(true);
                 }
-                false
             }
-            _ => false,
+            _ => {}
         }
+        Ok(false)
     }
 
     pub fn value_as_string(&self, type_name: Option<&str>) -> Result<String, GrammarError> {
@@ -1444,7 +1552,11 @@ impl ASN1Value {
             ASN1Value::Null => Ok("Asn1Null".to_owned()),
             ASN1Value::Choice(i, v) => {
                 if let Some(ty_n) = type_name {
-                    Ok(format!("{ty_n}::{}({})", to_rust_title_case(i), v.value_as_string(None)?))
+                    Ok(format!(
+                        "{ty_n}::{}({})",
+                        to_rust_title_case(i),
+                        v.value_as_string(None)?
+                    ))
                 } else {
                     Err(GrammarError {
                         details: format!(
@@ -1498,7 +1610,7 @@ impl ASN1Value {
                 to_rust_title_case(enumerated),
                 to_rust_title_case(enumerable)
             )),
-            ASN1Value::ElsewhereDeclaredValue(e) => Ok(to_rust_const_case(e)),
+            ASN1Value::ElsewhereDeclaredValue { identifier: e, .. } => Ok(to_rust_const_case(e)),
             ASN1Value::ObjectIdentifier(oid) => Ok(format!(
                 "[{}]",
                 oid.0
@@ -1529,15 +1641,17 @@ impl ASN1Value {
 /// being parsed or in one of its imports.
 #[derive(Debug, Clone, PartialEq)]
 pub struct DeclarationElsewhere {
+    pub parent: Option<String>,
     pub identifier: String,
     pub constraints: Vec<Constraint>,
 }
 
-impl From<(&str, Option<Vec<Constraint>>)> for DeclarationElsewhere {
-    fn from(value: (&str, Option<Vec<Constraint>>)) -> Self {
+impl From<(Option<&str>, &str, Option<Vec<Constraint>>)> for DeclarationElsewhere {
+    fn from(value: (Option<&str>, &str, Option<Vec<Constraint>>)) -> Self {
         DeclarationElsewhere {
-            identifier: value.0.into(),
-            constraints: value.1.unwrap_or(vec![]),
+            parent: value.0.map(ToString::to_string),
+            identifier: value.1.into(),
+            constraints: value.2.unwrap_or(vec![]),
         }
     }
 }

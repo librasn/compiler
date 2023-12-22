@@ -91,6 +91,7 @@ mod tests {
             ASN1Type::SequenceOf(SequenceOrSetOf {
                 constraints: vec![],
                 r#type: Box::new(ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+                    parent: None,
                     identifier: "Things".into(),
                     constraints: vec![]
                 }))
@@ -116,6 +117,7 @@ mod tests {
                     extensible: false
                 })],
                 r#type: Box::new(ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+                    parent: None,
                     identifier: "CorrelationCellValue".into(),
                     constraints: vec![]
                 }))
@@ -141,6 +143,7 @@ mod tests {
                     extensible: false
                 })],
                 r#type: Box::new(ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+                    parent: None,
                     identifier: "CorrelationCellValue".into(),
                     constraints: vec![]
                 }))
@@ -209,6 +212,7 @@ mod tests {
                     extensible: false
                 })],
                 r#type: Box::new(ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+                    parent: None,
                     identifier: "RegionalExtension".into(),
                     constraints: vec![Constraint::Parameter(vec![Parameter::ObjectSetParameter(
                         ObjectSet {

@@ -816,24 +816,32 @@ mod tests {
             vec![Constraint::SubtypeConstraint(ElementSet {
                 set: ElementOrSetOperation::SetOperation(SetOperation {
                     base: SubtypeElement::SingleValue {
-                        value: ASN1Value::ElsewhereDeclaredValue("unknown".to_string()),
+                        value: ASN1Value::ElsewhereDeclaredValue { identifier: "unknown".to_string(),
+                                parent: None
+                            },
                         extensible: false
                     },
                     operator: SetOperator::Union,
                     operant: Box::new(ElementOrSetOperation::SetOperation(SetOperation {
                         base: SubtypeElement::ValueRange {
-                            min: Some(ASN1Value::ElsewhereDeclaredValue(
+                            min: Some(ASN1Value::ElsewhereDeclaredValue { identifier: 
                                 "passengerCar".to_string()
-                            )),
-                            max: Some(ASN1Value::ElsewhereDeclaredValue("tram".to_string())),
+                            ,
+                                parent: None
+                            }),
+                            max: Some(ASN1Value::ElsewhereDeclaredValue { identifier: "tram".to_string(),
+                                parent: None
+                            }),
                             extensible: false
                         },
                         operator: SetOperator::Union,
                         operant: Box::new(ElementOrSetOperation::Element(
                             SubtypeElement::SingleValue {
-                                value: ASN1Value::ElsewhereDeclaredValue(
+                                value: ASN1Value::ElsewhereDeclaredValue { identifier: 
                                     "agricultural".to_string()
-                                ),
+                                ,
+                                parent: None
+                            },
                                 extensible: false
                             }
                         ))
@@ -890,25 +898,29 @@ mod tests {
                         ObjectSetValue::Inline(InformationObjectFields::CustomSyntax(vec![
                             SyntaxApplication::LiteralOrTypeReference(
                                 DeclarationElsewhere {
+                                    parent: None,
                                     identifier: "ConnectionManeuverAssist-addGrpC".into(),
                                     constraints: vec![]
                                 }
                             ),
                             SyntaxApplication::LiteralOrTypeReference(
                                 DeclarationElsewhere {
+                                    parent: None,
                                     identifier: "IDENTIFIED".into(),
                                     constraints: vec![]
                                 }
                             ),
                             SyntaxApplication::LiteralOrTypeReference(
                                 DeclarationElsewhere {
+                                    parent: None,
                                     identifier: "BY".into(),
                                     constraints: vec![]
                                 }
                             ),
-                            SyntaxApplication::ValueReference(ASN1Value::ElsewhereDeclaredValue(
-                                "addGrpC".into()
-                            ))
+                            SyntaxApplication::ValueReference(ASN1Value::ElsewhereDeclaredValue { identifier:
+                                "addGrpC".into(),
+                                parent: None
+                            })
                         ]))
                     ],
                     extensible: Some(3)
