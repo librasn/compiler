@@ -14,7 +14,7 @@ use super::{
     asn1_type, asn1_value,
     common::{
         extension_marker, identifier, in_braces, in_parentheses, range_seperator,
-        skip_ws_and_comments,
+        skip_ws_and_comments, skip_ws,
     },
     information_object_class::object_set,
     parameterization::parameters,
@@ -337,12 +337,14 @@ fn relational_constraint<'a>(input: &'a str) -> IResult<&'a str, RelationalConst
 }
 
 fn property_settings_constraint<'a>(input: &'a str) -> IResult<&'a str, SubtypeElement> {
-    map_res(
+    preceded(
+        skip_ws_and_comments(tag("SETTINGS")),
+        map_res(
         skip_ws_and_comments(delimited(
             char('"'),
-            separated_list1(
-                char(' '),
-                separated_pair(settings_identifier, char('='), identifier),
+            many1(
+                skip_ws_and_comments(
+                separated_pair(settings_identifier, char('='), identifier)),
             ),
             char('"'),
         )),
@@ -356,7 +358,7 @@ fn property_settings_constraint<'a>(input: &'a str) -> IResult<&'a str, SubtypeE
                     })
                 })
         },
-    )(input)
+    ))(input)
 }
 
 fn settings_identifier<'a>(input: &'a str) -> IResult<&'a str, &'a str> {
@@ -1150,5 +1152,28 @@ mod tests {
     fn parses_two_variants_of_extensible_size() {
         assert_eq!(constraint("(SIZE(1..4),...)").unwrap().1, vec![Constraint::SubtypeConstraint(ElementSet { set: ElementOrSetOperation::Element(SubtypeElement::SizeConstraint(Box::new(ElementOrSetOperation::Element(SubtypeElement::ValueRange { min: Some(ASN1Value::Integer(1)), max: Some(ASN1Value::Integer(4)), extensible: false })))), extensible: true })]);
         assert_eq!(constraint("(SIZE(1..4,...))").unwrap().1, vec![Constraint::SubtypeConstraint(ElementSet { set: ElementOrSetOperation::Element(SubtypeElement::SizeConstraint(Box::new(ElementOrSetOperation::Element(SubtypeElement::ValueRange { min: Some(ASN1Value::Integer(1)), max: Some(ASN1Value::Integer(4)), extensible: true })))), extensible: false })])
+    }
+
+    #[test]
+    fn parses_property_settings_constraint() {
+        assert_eq!(
+            constraint(r#"(SETTINGS "Midnight=Start")"#).unwrap().1, 
+            vec![
+                Constraint::SubtypeConstraint(
+                    ElementSet { 
+                        set: ElementOrSetOperation::Element(
+                            SubtypeElement::PropertySettings(
+                                PropertySettings { 
+                                    property_settings_list: vec![
+                                        PropertyAndSettingsPair::Midnight(MidnightSettings::StartOfDay)
+                                    ] 
+                                }
+                            )
+                        ), 
+                        extensible: false 
+                    }
+                )
+            ]
+        );
     }
 }

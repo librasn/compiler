@@ -10,7 +10,7 @@ use nom::{
 
 use crate::intermediate::{
     types::{GeneralizedTime, UTCTime},
-    ASN1Type, ASN1Value, GENERALIZED_TIME, UTC_TIME,
+    ASN1Type, ASN1Value, GENERALIZED_TIME, TIME, UTC_TIME,
 };
 
 use super::{common::skip_ws_and_comments, constraint::constraint};
@@ -19,6 +19,10 @@ pub fn time_value<'a>(input: &'a str) -> IResult<&'a str, ASN1Value> {
     map(skip_ws_and_comments(t_string), |t_string| {
         ASN1Value::Time(t_string.to_owned())
     })(input)
+}
+
+pub fn time<'a>(input: &'a str) -> IResult<&'a str, ASN1Type> {
+    map(skip_ws_and_comments(preceded(tag(TIME), opt(constraint))), |t| ASN1Type::Time(t.into()))(input)
 }
 
 pub fn generalized_time<'a>(input: &'a str) -> IResult<&'a str, ASN1Type> {

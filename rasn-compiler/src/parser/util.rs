@@ -73,8 +73,6 @@ pub fn take_until_and_not<'a, Error: ParseError<&'a str>>(
     however_tag: &'a str,
 ) -> impl Fn(&'a str) -> IResult<&'a str, &'a str, Error> {
     move |i: &str| {
-        let t1 = end_tag.clone();
-        let t2 = however_tag.clone();
         fn recursive_until<'a, Error: ParseError<&'a str>>(
             i: &'a str,
             index: usize,
@@ -90,7 +88,7 @@ pub fn take_until_and_not<'a, Error: ParseError<&'a str>>(
                 (Some(_), Some(offset)) => recursive_until(i, index + offset + 2, t1, t2),
             }
         }
-        let res: IResult<_, _, Error> = recursive_until(i, 0, t1, t2);
+        let res: IResult<_, _, Error> = recursive_until(i, 0, end_tag, however_tag);
         res
     }
 }

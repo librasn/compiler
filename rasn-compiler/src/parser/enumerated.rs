@@ -2,7 +2,7 @@ use nom::{
     bytes::complete::tag,
     character::complete::{char, i128},
     combinator::{map, opt},
-    multi::fold_many0,
+    multi::{fold_many0, many0},
     sequence::{preceded, terminated, tuple},
     IResult,
 };
@@ -10,6 +10,30 @@ use nom::{
 use crate::intermediate::{constraints::*, types::*, *};
 
 use super::common::*;
+
+pub fn enumerated_value<'a>(input: &'a str) -> IResult<&'a str, ToplevelValueDeclaration> {
+    map(
+        tuple((
+            skip_ws(many0(comment)),
+            skip_ws(value_identifier),
+            skip_ws_and_comments(identifier),
+            preceded(assignment, skip_ws_and_comments(value_identifier)),
+        )),
+        |(c, n, p, e)| ToplevelValueDeclaration {
+            comments: c.into_iter().fold(String::new(), |mut acc, s| {
+                acc = acc + "\n" + s;
+                acc
+            }),
+            name: n.to_string(),
+            type_name: p.to_string(),
+            value: ASN1Value::EnumeratedValue {
+                enumerated: p.to_string(),
+                enumerable: e.to_string(),
+            },
+            index: None,
+        },
+    )(input)
+}
 
 /// Tries to parse an ASN1 ENUMERATED
 ///
@@ -32,7 +56,7 @@ fn enumeral<'a>(
     skip_ws_and_comments(tuple((
         skip_ws_and_comments(identifier),
         skip_ws_and_comments(opt(in_parentheses(skip_ws_and_comments(i128)))),
-        skip_ws(opt(char(COMMA))),
+        skip_ws_and_comments(opt(char(COMMA))),
         skip_ws(opt(comment)),
     )))(input)
 }
@@ -72,7 +96,7 @@ fn enumerated_body<'a>(
 
 #[cfg(test)]
 mod tests {
-    use crate::intermediate::types::*;
+    use crate::parser::top_level_value_declaration;
 
     use super::*;
 
@@ -286,6 +310,28 @@ mod tests {
                 },],
                 extensible: Some(1)
             })
+        )
+    }
+
+    #[test]
+    fn parses_enumerated_value() {
+        assert_eq!(
+            enumerated_value(
+                r#"-- Alias of another enumeral
+            enumeral-alias Test-Enum ::= enumeral"#
+            )
+            .unwrap()
+            .1,
+            ToplevelValueDeclaration {
+                comments: String::from("\n Alias of another enumeral"),
+                name: String::from("enumeral-alias"),
+                type_name: String::from("Test-Enum"),
+                value: ASN1Value::EnumeratedValue {
+                    enumerated: String::from("Test-Enum"),
+                    enumerable: String::from("enumeral")
+                },
+                index: None
+            }
         )
     }
 }

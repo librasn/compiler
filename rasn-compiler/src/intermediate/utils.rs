@@ -5,8 +5,12 @@ use super::{
     ASN1Value, ToplevelDeclaration,
 };
 
-pub fn int_type_token<'a>(min: i128, max: i128, const_used: bool) -> &'a str {
-    if min >= 0 {
+pub fn int_type_token<'a>(min: i128, max: i128, is_extensible: bool, const_used: bool) -> &'a str {
+    if is_extensible && const_used {
+        "i64"
+    } else if is_extensible {
+        "Integer"
+    } else if min >= 0 {
         match max {
             r if r <= u8::MAX.into() => "u8",
             r if r <= u16::MAX.into() => "u16",
@@ -82,7 +86,7 @@ const RUST_KEYWORDS: [&'static str; 38] = [
     "unsafe", "use", "where", "while",
 ];
 
-pub fn to_rust_snake_case(input: &String) -> String {
+pub fn to_rust_snake_case(input: &String) -> Ident {
     let mut input = input.replace("-", "_");
     let input = input.drain(..).fold(String::new(), |mut acc, c| {
         if acc.is_empty() && c.is_uppercase() {
@@ -96,18 +100,30 @@ pub fn to_rust_snake_case(input: &String) -> String {
         }
         acc
     });
-    if RUST_KEYWORDS.contains(&input.as_str()) {
+    let name = if RUST_KEYWORDS.contains(&input.as_str()) {
         String::from("r_") + &input
     } else {
         input
+    };
+    Ident::new(&name, Span::call_site())
+}
+
+pub fn to_rust_const_case(input: &String) -> Ident {
+    Ident::new(
+        &to_rust_snake_case(input).to_string().to_uppercase(),
+        Span::call_site(),
+    )
+}
+
+pub fn to_rust_enum_identifier(input: &String) -> Ident {
+    let mut formatted = format_ident!("{}", input.replace("-", "_"));
+    if RUST_KEYWORDS.contains(&input.as_str()) {
+        formatted = format_ident!("R_{formatted}");
     }
+    formatted
 }
 
-pub fn to_rust_const_case(input: &String) -> String {
-    to_rust_snake_case(input).to_uppercase()
-}
-
-pub fn to_rust_title_case(input: &String) -> String {
+pub fn to_rust_title_case(input: &String) -> Ident {
     let mut input = input.replace("-", "_");
     let input = input.drain(..).fold(String::new(), |mut acc, c| {
         if acc.is_empty() && c.is_lowercase() {
@@ -123,24 +139,23 @@ pub fn to_rust_title_case(input: &String) -> String {
         }
         acc
     });
-    if RUST_KEYWORDS.contains(&input.as_str()) {
-        String::from("Rs") + &input
+    let name = if RUST_KEYWORDS.contains(&input.as_str()) {
+        String::from("R_") + &input
     } else {
         input
-    }
+    };
+    Ident::new(&name, Span::call_site())
 }
 
 macro_rules! get_declaration {
     ($tlds:ident, $key:expr, $tld_ty:ident, $asn1_ty:path) => {{
         if let Some(tld) = $tlds.get($key) {
             match tld {
-                ToplevelDeclaration::$tld_ty (inner) => {
-                    match inner.pdu() {
-                        $asn1_ty (asn) => Some(asn),
-                        _ => None
-                    }
+                ToplevelDeclaration::$tld_ty(inner) => match inner.pdu() {
+                    $asn1_ty(asn) => Some(asn),
+                    _ => None,
                 },
-                _ => None
+                _ => None,
             }
         } else {
             None
@@ -149,6 +164,8 @@ macro_rules! get_declaration {
 }
 
 pub(crate) use get_declaration;
+use proc_macro2::{Ident, Span};
+use quote::format_ident;
 
 #[cfg(test)]
 mod tests {
@@ -156,11 +173,14 @@ mod tests {
 
     #[test]
     fn determines_int_type() {
-        assert_eq!(int_type_token(600, 600, false), "u16");
-        assert_eq!(int_type_token(0, 0, false), "u8");
-        assert_eq!(int_type_token(-1, 1, false), "i8");
-        assert_eq!(int_type_token(0, 124213412341389457931857915125, false), "Integer");
-        assert_eq!(int_type_token(-67463, 23123, false), "i32");
-        assert_eq!(int_type_token(255, 257, false), "u16");
+        assert_eq!(int_type_token(600, 600, false, false), "u16");
+        assert_eq!(int_type_token(0, 0, false, false), "u8");
+        assert_eq!(int_type_token(-1, 1, false, false), "i8");
+        assert_eq!(
+            int_type_token(0, 124213412341389457931857915125, false, false),
+            "Integer"
+        );
+        assert_eq!(int_type_token(-67463, 23123, false, false), "i32");
+        assert_eq!(int_type_token(255, 257, false, false), "u16");
     }
 }

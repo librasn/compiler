@@ -3,7 +3,7 @@ extern crate proc_macro;
 use proc_macro::TokenStream;
 use syn::{parse::Parse, parse_macro_input, LitStr};
 
-const DUMMY_HEADER: &str = r#"DUMMY { dummy(999) header(999) }
+const DUMMY_HEADER: &str = r#"asn1 { dummy(999) header(999) }
 
 DEFINITIONS AUTOMATIC TAGS::= BEGIN
 "#;

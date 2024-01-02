@@ -17,7 +17,7 @@ use nom::{
 };
 
 use super::{
-    common::{identifier, in_braces, in_parentheses, skip_ws, skip_ws_and_comments},
+    common::{identifier, in_braces, in_parentheses, skip_ws, skip_ws_and_comments, value_identifier},
     constraint::constraint,
 };
 
@@ -52,8 +52,8 @@ pub fn object_identifier<'a>(input: &'a str) -> IResult<&'a str, ASN1Type> {
 fn object_identifier_arc<'a>(input: &'a str) -> IResult<&'a str, ObjectIdentifierArc> {
     skip_ws(alt((
         numeric_id,
-        into(pair(identifier, skip_ws(in_parentheses(u128)))),
-        into(identifier),
+        into(pair(value_identifier, skip_ws(in_parentheses(u128)))),
+        into(value_identifier),
     )))(input)
 }
 

@@ -38,6 +38,7 @@ constrainable!(DeclarationElsewhere);
 constrainable!(InformationObjectFieldReference);
 constrainable!(ChoiceOption);
 constrainable!(SequenceOrSetMember);
+constrainable!(Time);
 
 /// Representation of an ASN1 BOOLEAN data element
 /// with corresponding constraints
@@ -73,28 +74,33 @@ pub struct Integer {
 
 impl Integer {
     pub fn type_token(&self) -> String {
-        let (min, max) = self
+        let (min, max, extensible) = self
             .constraints
             .iter()
-            .try_fold((i128::MAX, i128::MIN), |(mut min, mut max), c| {
+            .fold((i128::MAX, i128::MIN, false), |(mut min, mut max, mut ext), c| {
                 if let Ok((cmin, cmax, extensible)) = c.unpack_as_value_range() {
-                    if extensible {
-                        return Err("_");
-                    }
+                    ext = ext || extensible;
                     if let Some(ASN1Value::Integer(i)) = cmin {
                         min = (*i).min(min);
                     };
                     if let Some(ASN1Value::Integer(i)) = cmax {
                         max = (*i).max(max);
                     };
+                } else if let Ok((val, extensible)) = c.unpack_as_strict_value() {
+                    ext = ext || extensible;
+                    if let ASN1Value::Integer(i) = val {
+                        min = (*i).min(min);
+                        max = (*i).max(max);
+                    };
                 };
-                Ok((min, max))
-            })
-            .unwrap_or((1, 0));
-        if min > max {
+                (min, max, ext)
+            });
+        if min > max && self.used_in_const {
+            "i64".to_owned()
+        } else if min > max {
             "Integer".to_owned()
         } else {
-            int_type_token(min, max, self.used_in_const).to_owned()
+            int_type_token(min, max, extensible, self.used_in_const).to_owned()
         }
     }
 }
@@ -237,6 +243,21 @@ pub struct ObjectIdentifier {
 impl From<Option<Vec<Constraint>>> for ObjectIdentifier {
     fn from(value: Option<Vec<Constraint>>) -> Self {
         ObjectIdentifier {
+            constraints: value.unwrap_or(vec![]),
+        }
+    }
+}
+
+/// Representation of an ASN1 TIME data element
+/// with corresponding constraints
+#[derive(Debug, Clone, PartialEq)]
+pub struct Time {
+    pub constraints: Vec<Constraint>,
+}
+
+impl From<Option<Vec<Constraint>>> for Time {
+    fn from(value: Option<Vec<Constraint>>) -> Self {
+        Time {
             constraints: value.unwrap_or(vec![]),
         }
     }

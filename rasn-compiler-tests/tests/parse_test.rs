@@ -46,8 +46,12 @@ Failed to parse {failed} modules with the following errors:
 
 #[test]
 fn compile_etsi() {
-    println!("{:?}", RasnCompiler::new()
-        //.add_asn_by_path("../rasn-compiler/test_asn1/REGION.asn")
-        .add_asn_by_path("./tests/modules/itu-t_x_x501_2019_LdapSystemSchema.asn1")
-        .compile_to_string());
+    println!(
+        "{:?}",
+        RasnCompiler::new()
+            .add_asn_by_path("../rasn-compiler/test_asn1/v2x.asn")
+            //.add_asn_by_path("./tests/modules/itu-t_x_x501_2001_EnhancedSecurity.asn1")
+            .set_output_path("./src")
+            .compile()
+    );
 }

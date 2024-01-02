@@ -2,6 +2,8 @@
 //! decoding and encoding of the parsed and validated ASN1 data elements.
 //! The `generator` uses string templates for generating rust code.
 
+use proc_macro2::TokenStream;
+
 use crate::intermediate::{information_object::ASN1Information, *};
 
 pub(crate) mod builder;
@@ -14,7 +16,12 @@ use self::{
     error::{GeneratorError, GeneratorErrorType},
 };
 
-pub fn generate<'a>(tld: ToplevelDeclaration) -> Result<std::string::String, GeneratorError> {
+pub(crate) struct GeneratedModule {
+    pub name: String,
+    pub generated: String,
+}
+
+pub fn generate<'a>(tld: ToplevelDeclaration) -> Result<TokenStream, GeneratorError> {
     match tld {
         ToplevelDeclaration::Type(t) => match t.r#type {
             ASN1Type::Null => generate_null(t),
@@ -28,6 +35,7 @@ pub fn generate<'a>(tld: ToplevelDeclaration) -> Result<std::string::String, Gen
             ASN1Type::ElsewhereDeclaredType(_) => generate_typealias(t),
             ASN1Type::Choice(_) => generate_choice(t),
             ASN1Type::OctetString(_) => generate_octet_string(t),
+            ASN1Type::Time(_) => unimplemented!("rasn does not support TIME types yet!"),
             ASN1Type::Real(_) => Err(GeneratorError {
                 kind: GeneratorErrorType::NotYetInplemented,
                 details: "Real types are currently unsupported!".into(),
@@ -62,11 +70,7 @@ pub fn generate<'a>(tld: ToplevelDeclaration) -> Result<std::string::String, Gen
             ASN1Value::EnumeratedValue {
                 enumerated: _,
                 enumerable: _,
-            } => Err(GeneratorError {
-                kind: GeneratorErrorType::NotYetInplemented,
-                details: "EnumeratedValue values are currently unsupported!".into(),
-                top_level_declaration: None,
-            }),
+            } => generate_enum_value(v),
             ASN1Value::ElsewhereDeclaredValue { .. } => Err(GeneratorError {
                 kind: GeneratorErrorType::NotYetInplemented,
                 details: "Value cross references are currently unsupported!".into(),
@@ -86,14 +90,14 @@ pub fn generate<'a>(tld: ToplevelDeclaration) -> Result<std::string::String, Gen
             }),
             ASN1Value::ObjectIdentifier(_) => generate_object_identifier_value(v),
             ASN1Value::Time(_) => generate_time_value(v),
-            _ => Ok("".into()),
+            _ => Ok(TokenStream::new()),
         },
         ToplevelDeclaration::Information(i) => match i.value {
             // ASN1Information::ObjectClass(_) => {
             //     generate_information_object_class(i)
             // }
             ASN1Information::ObjectSet(_) => generate_information_object_set(i),
-            _ => Ok("".into()),
+            _ => Ok(TokenStream::new()),
         },
     }
 }

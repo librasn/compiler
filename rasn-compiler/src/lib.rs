@@ -25,7 +25,6 @@
 //!     .set_output_path(PathBuf::from("./asn/generated.rs"))
 //!     // you may also compile literal ASN1 snippets
 //!     .add_asn_literal("My-test-integer ::= INTEGER (1..128)")
-//!     // optionally choose to support `no_std`
 //!     .compile() {
 //!     Ok(warnings /* Vec<Box<dyn Error>> */) => { /* handle compilation warnings */ }
 //!     Err(error /* Box<dyn Error> */) => { /* handle unrecoverable compilation error */ }
@@ -49,7 +48,9 @@ use std::{
     vec,
 };
 
-use generator::{generate, template::rasn_imports_and_generic_types};
+use generator::{
+    builder::generate_module, GeneratedModule,
+};
 use intermediate::ToplevelDeclaration;
 use parser::asn_spec;
 use validator::Validator;
@@ -92,6 +93,11 @@ impl RasnCompilerState for CompilerOutputSet {}
 impl RasnCompilerState for CompilerSourcesSet {}
 impl RasnCompilerState for CompilerMissingParams {}
 
+struct CompileResult {
+    pub modules: Vec<GeneratedModule>,
+    pub warnings: Vec<Box<dyn Error>>,
+}
+
 #[derive(Debug, PartialEq)]
 enum AsnSource {
     Path(PathBuf),
@@ -102,7 +108,7 @@ impl RasnCompiler<CompilerMissingParams> {
     /// Provides a Builder for building rasn compiler commands
     pub fn new() -> RasnCompiler<CompilerMissingParams> {
         RasnCompiler {
-            state: CompilerMissingParams::default(),
+            state: CompilerMissingParams,
         }
     }
 
@@ -254,17 +260,14 @@ impl RasnCompiler<CompilerSourcesSet> {
     }
 
     /// Set the output path for the generated rust representation.
-    /// * `output_path` - path to an output file or directory, if path indicates
-    ///                   a directory, the output file is named `rasn_generated.rs`
+    /// * `output_path` - path to an output file or directory, if path points to
+    ///                   a directory, the compiler will generate a file for every ASN.1 module.
+    ///                   If the path points to a file, all modules will be written to that file.
     pub fn set_output_path(self, output_path: impl Into<PathBuf>) -> RasnCompiler<CompilerReady> {
-        let mut path: PathBuf = output_path.into();
-        if path.is_dir() {
-            path.set_file_name("rasn_generated.rs");
-        }
         RasnCompiler {
             state: CompilerReady {
                 sources: self.state.sources,
-                output_path: path,
+                output_path: output_path.into(),
             },
         }
     }
@@ -274,7 +277,17 @@ impl RasnCompiler<CompilerSourcesSet> {
     /// * _Ok_  - tuple containing the stringified Rust representation of the ASN1 spec as well as a vector of warnings raised during the compilation
     /// * _Err_ - Unrecoverable error, no rust representations were generated
     pub fn compile_to_string(self) -> Result<(String, Vec<Box<dyn Error>>), Box<dyn Error>> {
-        internal_compile(&self, false)
+        internal_compile(&self).map(|res| {
+            (
+                res.modules
+                    .iter()
+                    .fold(String::new(), |mut acc, m| {
+                        acc += &m.generated;
+                        acc
+                    }),
+                res.warnings,
+            )
+        })
     }
 }
 
@@ -291,17 +304,6 @@ impl RasnCompiler<CompilerReady> {
             state: CompilerReady {
                 output_path: self.state.output_path,
                 sources,
-            },
-        }
-    }
-
-    /// Generate Rust representations compatible with an environment without the standard library
-    /// * `is_supporting` - whether the generated Rust should comply with no_std
-    pub fn no_std(self, is_supporting: bool) -> RasnCompiler<CompilerReady> {
-        Self {
-            state: CompilerReady {
-                output_path: self.state.output_path,
-                sources: self.state.sources,
             },
         }
     }
@@ -344,14 +346,12 @@ impl RasnCompiler<CompilerReady> {
     /// * _Ok_  - tuple containing the stringified Rust representation of the ASN1 spec as well as a vector of warnings raised during the compilation
     /// * _Err_ - Unrecoverable error, no rust representations were generated
     pub fn compile_to_string(self) -> Result<(String, Vec<Box<dyn Error>>), Box<dyn Error>> {
-        internal_compile(
-            &RasnCompiler {
-                state: CompilerSourcesSet {
-                    sources: self.state.sources,
-                },
+        RasnCompiler {
+            state: CompilerSourcesSet {
+                sources: self.state.sources,
             },
-            false,
-        )
+        }
+        .compile_to_string()
     }
 
     /// Runs the rasn compiler command.
@@ -359,26 +359,33 @@ impl RasnCompiler<CompilerReady> {
     /// * _Ok_  - Vector of warnings raised during the compilation
     /// * _Err_ - Unrecoverable error, no rust representations were generated
     pub fn compile(self) -> Result<Vec<Box<dyn Error>>, Box<dyn Error>> {
-        let (result, warnings) = internal_compile(
-            &RasnCompiler {
-                state: CompilerSourcesSet {
-                    sources: self.state.sources,
-                },
+        let result = internal_compile(&RasnCompiler {
+            state: CompilerSourcesSet {
+                sources: self.state.sources,
             },
-            true,
+        })?;
+
+        let generated = result.modules.iter().fold(String::new(), |mut acc, m| {
+            acc += &m.generated;
+            acc
+        });
+        fs::write(
+            self.state
+                .output_path
+                .is_dir()
+                .then(|| self.state.output_path.join("generated.rs"))
+                .unwrap_or(self.state.output_path),
+            format_bindings(&generated).unwrap_or(generated),
         )?;
 
-        fs::write(self.state.output_path, result)?;
-
-        Ok(warnings)
+        Ok(result.warnings)
     }
 }
 
 fn internal_compile(
     rasn: &RasnCompiler<CompilerSourcesSet>,
-    include_file_headers: bool,
-) -> Result<(String, Vec<Box<dyn Error>>), Box<dyn Error>> {
-    let mut result = rasn_imports_and_generic_types(include_file_headers);
+) -> Result<CompileResult, Box<dyn Error>> {
+    let mut generated_modules = vec![];
     let mut warnings = Vec::<Box<dyn Error>>::new();
     let mut modules: Vec<ToplevelDeclaration> = vec![];
     for src in &rasn.state.sources {
@@ -401,36 +408,34 @@ fn internal_compile(
         );
     }
     let (valid_items, mut validator_errors) = Validator::new(modules).validate()?;
-    let (generated, mut generator_errors) = valid_items.into_iter().fold(
-        (
-            BTreeMap::<String, String>::new(),
-            Vec::<Box<dyn Error>>::new(),
-        ),
-        |(mut rust, mut errors), tld| {
+    let modules = valid_items.into_iter().fold(
+        BTreeMap::<String, Vec<ToplevelDeclaration>>::new(),
+        |mut modules, tld| {
             let key = tld
                 .get_index()
-                .map(|(module, _)| module.print())
-                .unwrap_or_default();
-            match generate(tld) {
-                Ok(r) => {
-                    let mut generated = rust.remove(&key).unwrap_or_default();
-                    generated = generated + &r + "\n";
-                    rust.insert(key, generated);
+                .map_or(<_>::default(), |(module, _)| module.name.clone());
+            match modules.entry(key) {
+                std::collections::btree_map::Entry::Vacant(v) => {
+                    v.insert(vec![tld]);
                 }
-                Err(e) => errors.push(Box::new(e)),
+                std::collections::btree_map::Entry::Occupied(ref mut e) => e.get_mut().push(tld),
             }
-            (rust, errors)
+            modules
         },
     );
-    for (header, module_body) in generated {
-        result = result + &header + &module_body;
+    for (_, module) in modules {
+        let (rust_module, mut generator_errors) = generate_module(module)?;
+        if let Some(m) = rust_module {
+            generated_modules.push(m);
+        }
+        warnings.append(&mut generator_errors);
     }
     warnings.append(&mut validator_errors);
-    warnings.append(&mut generator_errors);
 
-    result = format_bindings(&result).unwrap_or(result);
-
-    Ok((result, warnings))
+    Ok(CompileResult {
+        modules: generated_modules,
+        warnings,
+    })
 }
 
 fn format_bindings(bindings: &String) -> Result<String, Box<dyn Error>> {
@@ -475,6 +480,6 @@ fn format_bindings(bindings: &String) -> Result<String, Box<dyn Error>> {
                 "Internal rustfmt error".to_string(),
             ))),
         },
-        _ => Ok(bindings.into()),
+        _ => Ok(bindings),
     }
 }

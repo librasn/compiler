@@ -1,6 +1,8 @@
 use core::fmt::{Display, Formatter, Result};
 use std::error::Error;
 
+use proc_macro2::LexError;
+
 use crate::intermediate::{error::GrammarError, ToplevelDeclaration};
 
 #[derive(Debug, Clone)]
@@ -28,6 +30,7 @@ pub enum GeneratorErrorType {
     SyntaxMismatch,
     MissingClassKey,
     Unidentified,
+    LexerError,
     NotYetInplemented,
 }
 
@@ -49,6 +52,16 @@ impl From<GrammarError> for GeneratorError {
             details: value.details,
             top_level_declaration: None,
             kind: GeneratorErrorType::Unidentified,
+        }
+    }
+}
+
+impl From<LexError> for GeneratorError {
+    fn from(value: LexError) -> Self {
+        Self {
+            details: value.to_string(),
+            top_level_declaration: None,
+            kind: GeneratorErrorType::LexerError,
         }
     }
 }

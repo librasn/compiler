@@ -1,66 +1,86 @@
-use std::process::id;
+use std::str::FromStr;
 
-use quote::quote;
+use proc_macro2::{Ident, Literal, Punct, Spacing, TokenStream};
+use quote::{format_ident, quote, ToTokens, TokenStreamExt};
 
 use crate::intermediate::{
     constraints::Constraint,
     encoding_rules::per_visible::{
         per_visible_range_constraints, CharsetSubset, PerVisibleAlphabetConstraints,
-        PerVisibleRangeConstraints,
     },
     information_object::{
-        InformationObjectClass, ObjectFieldIdentifier, SyntaxApplication, SyntaxExpression,
-        SyntaxToken, InformationObjectField, InformationObjectClassField, TypeField,
+        InformationObjectClass, InformationObjectField, ObjectFieldIdentifier, SyntaxApplication,
     },
-    types::{Choice, ChoiceOption, Enumerated, SequenceOrSet, SequenceOrSetMember, ObjectIdentifier},
-    utils::{to_rust_snake_case, to_rust_title_case},
-    ASN1Type, ASN1Value, AsnTag, CharacterStringType, DeclarationElsewhere, TagClass,
-    TaggingEnvironment, ToplevelDeclaration, ToplevelTypeDeclaration,
+    types::{Choice, ChoiceOption, Enumerated, SequenceOrSet, SequenceOrSetMember},
+    utils::{to_rust_const_case, to_rust_enum_identifier, to_rust_snake_case, to_rust_title_case},
+    ASN1Type, ASN1Value, AsnTag, CharacterStringType, TagClass, TaggingEnvironment,
+    ToplevelDeclaration, ToplevelTypeDeclaration,
 };
 
 use crate::generator::{error::GeneratorError, generate};
 
 use super::error::GeneratorErrorType;
 
-pub struct StringifiedNameType {
-    name: String,
-    typ: String,
+macro_rules! error {
+    ($kind:ident, $($arg:tt)*) => {
+        GeneratorError {
+            details: format!($($arg)*),
+            top_level_declaration: None,
+            kind: GeneratorErrorType::$kind,
+        }
+    };
 }
 
-pub fn inner_name(name: &String, parent_name: &String) -> String {
-    format!("{}{}", parent_name, to_rust_title_case(&name))
+pub(crate) use error;
+
+pub struct NameType {
+    name: Ident,
+    typ: TokenStream,
 }
 
-pub fn int_type_token(opt_min: Option<i128>, opt_max: Option<i128>, const_used: bool) -> &'static str {
+pub fn inner_name(name: &String, parent_name: &String) -> Ident {
+    format_ident!("{}{}", parent_name, to_rust_title_case(&name))
+}
+
+pub fn int_type_token(
+    opt_min: Option<i128>,
+    opt_max: Option<i128>,
+    is_extensible: bool,
+    const_used: bool,
+) -> Ident {
     if let (Some(min), Some(max)) = (opt_min, opt_max) {
-        crate::intermediate::utils::int_type_token(min, max, const_used)
+        format_ident!(
+            "{}",
+            crate::intermediate::utils::int_type_token(min, max, is_extensible, const_used)
+        )
     } else if const_used {
-        "i64"
+        format_ident!("i64")
     } else {
-        "Integer"
+        format_ident!("Integer")
     }
 }
 
-pub fn format_comments(comments: &String) -> String {
+pub fn format_comments(comments: &String) -> Result<TokenStream, GeneratorError> {
     if comments.is_empty() {
-        String::from("")
+        Ok(TokenStream::new())
     } else {
-        String::from("///") + &comments.replace("\n", "\n ///") + "\n"
+        let joined = String::from("///") + &comments.replace("\n", "\n ///") + "\n";
+        Ok(TokenStream::from_str(&joined)?)
     }
 }
 
 pub fn format_range_annotations(
     signed: bool,
     constraints: &Vec<Constraint>,
-) -> Result<String, GeneratorError> {
+) -> Result<TokenStream, GeneratorError> {
     if constraints.is_empty() {
-        return Ok(String::new());
+        return Ok(TokenStream::new());
     }
     let per_constraints = per_visible_range_constraints(signed, constraints)?;
     let range_prefix = if per_constraints.is_size_constraint() {
-        "size"
+        quote!(size)
     } else {
-        "value"
+        quote!(value)
     };
     // handle default size constraints
     if per_constraints.is_size_constraint()
@@ -68,7 +88,7 @@ pub fn format_range_annotations(
         && per_constraints.min::<i128>() == Some(0)
         && per_constraints.max::<i128>().is_none()
     {
-        return Ok(String::new());
+        return Ok(TokenStream::new());
     }
     Ok(
         match (
@@ -77,26 +97,38 @@ pub fn format_range_annotations(
             per_constraints.is_extensible(),
         ) {
             (Some(min), Some(max), true) if min == max => {
-                format!(r#"{range_prefix}("{min}", extensible)"#)
+                let range = format!("{min}");
+                quote!(#range_prefix(#range, extensible))
             }
             (Some(min), Some(max), true) => {
-                format!(r#"{range_prefix}("{min}..={max}", extensible)"#)
+                let range = format!("{min}..={max}");
+                quote!(#range_prefix(#range, extensible))
             }
             (Some(min), Some(max), false) if min == max => {
-                format!(r#"{range_prefix}("{min}")"#)
+                let range = format!("{min}");
+                quote!(#range_prefix(#range))
             }
             (Some(min), Some(max), false) => {
-                format!(r#"{range_prefix}("{min}..={max}")"#)
+                let range = format!("{min}..={max}");
+                quote!(#range_prefix(#range))
             }
             (Some(min), None, true) => {
-                format!(r#"{range_prefix}("{min}..", extensible)"#)
+                let range = format!("{min}..");
+                quote!(#range_prefix(#range, extensible))
             }
-            (Some(min), None, false) => format!(r#"{range_prefix}("{min}..")"#),
+            (Some(min), None, false) => {
+                let range = format!("{min}..");
+                quote!(#range_prefix(#range))
+            }
             (None, Some(max), true) => {
-                format!(r#"{range_prefix}("..={max}", extensible)"#)
+                let range = format!("..={max}");
+                quote!(#range_prefix(#range, extensible))
             }
-            (None, Some(max), false) => format!(r#"{range_prefix}("..={max}")"#),
-            _ => format!(r#""#),
+            (None, Some(max), false) => {
+                let range = format!("..={max}");
+                quote!(#range_prefix(#range))
+            }
+            _ => TokenStream::new(),
         },
     )
 }
@@ -104,9 +136,9 @@ pub fn format_range_annotations(
 pub fn format_alphabet_annotations(
     string_type: CharacterStringType,
     constraints: &Vec<Constraint>,
-) -> Result<String, GeneratorError> {
+) -> Result<TokenStream, GeneratorError> {
     if constraints.is_empty() {
-        return Ok(String::new());
+        return Ok(TokenStream::new());
     }
     let mut permitted_alphabet = PerVisibleAlphabetConstraints::default_for(string_type);
     for c in constraints {
@@ -114,7 +146,7 @@ pub fn format_alphabet_annotations(
             .map(|mut p| permitted_alphabet += &mut p);
     }
     permitted_alphabet.finalize();
-    let alphabet_unicode: Vec<String> = permitted_alphabet
+    let alphabet_unicode = permitted_alphabet
         .charset_subsets()
         .iter()
         .map(|subset| match subset {
@@ -125,81 +157,74 @@ pub fn format_alphabet_annotations(
                 to.map_or(String::from(""), |c| format!("{}", c.escape_unicode()))
             ),
         })
-        .collect();
+        .collect::<Vec<String>>()
+        .join(", ");
     Ok(if alphabet_unicode.is_empty() {
-        "".into()
+        TokenStream::new()
     } else {
-        String::from(", from(") + &alphabet_unicode.join(", ") + ")"
+        quote!(from(#alphabet_unicode))
     })
 }
 
-pub fn format_enum_members(enumerated: &Enumerated) -> String {
+pub fn format_enum_members(enumerated: &Enumerated) -> TokenStream {
     let first_extension_index = enumerated.extensible;
-    enumerated.members.iter().fold(String::new(), |acc, e| {
-        let rust_name = to_rust_title_case(&e.name);
-        let name = if acc.contains(&format!(r#" {rust_name} = "#)) {
-            e.name.replace("-", "_")
+    let enumerals = enumerated.members.iter().enumerate().map(|(i, e)| {
+        let name = to_rust_enum_identifier(&e.name);
+        let index = Literal::i128_unsuffixed(e.index);
+        let extension = if i >= first_extension_index.unwrap_or(usize::MAX) {
+            quote!(#[rasn(extension_addition)])
         } else {
-            rust_name
+            TokenStream::new()
         };
-        let index = e.index;
-        let extension = if index >= first_extension_index.map_or(i128::MAX, |x| x as i128) {
-            r#"#[rasn(extension_addition)]
-            "#
-        } else {
-            ""
-        };
-        acc + &format!(
-            r#"{extension} {name} = {index},
-                "#
+        quote!(
+            #extension
+            #name = #index,
         )
-    })
+    });
+    quote!(#(#enumerals)*)
 }
 
-pub fn format_tag(tag: Option<&AsnTag>, fallback: String) -> String {
+pub fn format_tag(tag: Option<&AsnTag>, fallback_to_automatic: bool) -> TokenStream {
     if let Some(tag) = tag {
         let class = match tag.tag_class {
-            TagClass::Universal => "universal, ",
-            TagClass::Application => "application, ",
-            TagClass::Private => "private, ",
-            TagClass::ContextSpecific => "context, ",
+            TagClass::Universal => quote!(universal),
+            TagClass::Application => quote!(application),
+            TagClass::Private => quote!(private),
+            TagClass::ContextSpecific => quote!(context),
         };
-        let (exp_pre, exp_post) = if tag.environment == TaggingEnvironment::Explicit {
-            ("explicit(", ")")
+        let id = Literal::u64_unsuffixed(tag.id);
+        if tag.environment == TaggingEnvironment::Explicit {
+            quote!(tag(explicit(#class, #id)))
         } else {
-            ("", "")
-        };
-        let id = tag.id;
-        format!("tag({exp_pre}{class}{id}{exp_post})")
+            quote!(tag(#class, #id))
+        }
+    } else if fallback_to_automatic {
+        quote!(automatic_tags)
     } else {
-        fallback
+        TokenStream::new()
     }
 }
 
 pub fn format_sequence_or_set_members(
     sequence_or_set: &SequenceOrSet,
     parent_name: &String,
-) -> Result<(String, Vec<StringifiedNameType>), GeneratorError> {
+) -> Result<(TokenStream, Vec<NameType>), GeneratorError> {
     let first_extension_index = sequence_or_set.extensible;
     sequence_or_set.members.iter().enumerate().try_fold(
-        (String::new(), Vec::new()),
+        (TokenStream::new(), Vec::new()),
         |mut acc, (i, m)| {
             let extension_annotation = if i >= first_extension_index.unwrap_or(usize::MAX)
                 && m.name.starts_with("ext_group_")
             {
-                "extension_addition_group"
+                quote!(extension_addition_group)
             } else if i >= first_extension_index.unwrap_or(usize::MAX) {
-                "extension_addition"
+                quote!(extension_addition)
             } else {
-                ""
+                TokenStream::new()
             };
             format_sequence_member(m, parent_name, extension_annotation).map(
                 |(declaration, name_type)| {
-                    acc.0.push_str(&declaration);
-                    acc.0.push_str(
-                        r#",
-                    "#,
-                    );
+                    acc.0.append_all([declaration, quote!(, )]);
                     acc.1.push(name_type);
                     acc
                 },
@@ -211,23 +236,23 @@ pub fn format_sequence_or_set_members(
 fn format_sequence_member(
     member: &SequenceOrSetMember,
     parent_name: &String,
-    extension_annotation: &str,
-) -> Result<(String, StringifiedNameType), GeneratorError> {
+    extension_annotation: TokenStream,
+) -> Result<(TokenStream, NameType), GeneratorError> {
     let name = to_rust_snake_case(&member.name);
     let (mut all_constraints, mut formatted_type_name) =
         constraints_and_type_name(&member.r#type, &member.name, parent_name)?;
     all_constraints.append(&mut member.constraints.clone());
     if member.is_optional && member.default_value.is_none() {
-        formatted_type_name = String::from("Option<") + &formatted_type_name + ">";
+        formatted_type_name = quote!(Option<#formatted_type_name>);
     }
-    let default_annotation = if member.default_value.is_some() {
-        format!(
-            r#"default = "{}""#,
-            default_method_name(parent_name, &member.name)
-        )
-    } else {
-        String::new()
-    };
+    let default_annotation = member
+        .default_value
+        .as_ref()
+        .map(|_| {
+            let default_fn = default_method_name(parent_name, &member.name);
+            quote!(default = #default_fn)
+        })
+        .unwrap_or_default();
     let range_annotations = format_range_annotations(
         matches!(member.r#type, ASN1Type::Integer(_)),
         &all_constraints,
@@ -235,19 +260,21 @@ fn format_sequence_member(
     let alphabet_annotations = if let ASN1Type::CharacterString(c_string) = &member.r#type {
         format_alphabet_annotations(c_string.r#type, &all_constraints)?
     } else {
-        "".into()
+        TokenStream::new()
     };
-    let tag = format_tag(member.tag.as_ref(), String::new());
     let annotations = join_annotations(vec![
-        extension_annotation.to_string(),
+        extension_annotation,
         range_annotations,
         alphabet_annotations,
-        tag,
+        format_tag(member.tag.as_ref(), false),
         default_annotation,
     ]);
     Ok((
-        format!(r#"{annotations}pub {name}: {formatted_type_name}"#),
-        StringifiedNameType {
+        quote! {
+            #annotations
+            pub #name: #formatted_type_name
+        },
+        NameType {
             name,
             typ: formatted_type_name,
         },
@@ -257,38 +284,35 @@ fn format_sequence_member(
 pub fn format_choice_options(
     choice: &Choice,
     parent_name: &String,
-) -> Result<String, GeneratorError> {
+) -> Result<TokenStream, GeneratorError> {
     let first_extension_index = choice.extensible;
-    choice
+    let options = choice
         .options
         .iter()
         .enumerate()
-        .try_fold(String::new(), |acc, (i, o)| {
+        .map(|(i, o)| {
             let extension_annotation = if i >= first_extension_index.unwrap_or(usize::MAX)
                 && o.name.starts_with("ext_group_")
             {
-                "extension_addition_group"
+                quote!(extension_addition_group)
             } else if i >= first_extension_index.unwrap_or(usize::MAX) {
-                "extension_addition"
+                quote!(extension_addition)
             } else {
-                ""
+                TokenStream::new()
             };
-            let rust_name = to_rust_title_case(&o.name);
-            let name = if acc.contains(&format!(" {rust_name}(")) {
-                o.name.replace("-", "_")
-            } else {
-                rust_name
-            };
-            format_choice_option(name, o, parent_name, extension_annotation).map(|opt| acc + &opt)
+            let name = to_rust_enum_identifier(&o.name);
+            format_choice_option(name, o, parent_name, extension_annotation)
         })
+        .collect::<Result<Vec<_>, _>>()?;
+    Ok(quote!(#(#options)*))
 }
 
 fn format_choice_option(
-    name: String,
+    name: Ident,
     member: &ChoiceOption,
     parent_name: &String,
-    extension_annotation: &str,
-) -> Result<String, GeneratorError> {
+    extension_annotation: TokenStream,
+) -> Result<TokenStream, GeneratorError> {
     let (mut all_constraints, formatted_type_name) =
         constraints_and_type_name(&member.r#type, &member.name, parent_name)?;
     all_constraints.append(&mut member.constraints.clone());
@@ -299,65 +323,78 @@ fn format_choice_option(
     let alphabet_annotations = if let ASN1Type::CharacterString(c_string) = &member.r#type {
         format_alphabet_annotations(c_string.r#type, &all_constraints)?
     } else {
-        "".into()
+        TokenStream::new()
     };
-    let tag = format_tag(member.tag.as_ref(), String::new());
     let annotations = join_annotations(vec![
-        extension_annotation.to_string(),
+        extension_annotation,
         range_annotations,
         alphabet_annotations,
-        tag,
+        format_tag(member.tag.as_ref(), false),
     ]);
-    Ok(format!(
-        r#"{annotations} {name}({formatted_type_name}),
-    "#
-    ))
+    Ok(quote! {
+            #annotations
+            #name(#formatted_type_name),
+    })
 }
 
 fn constraints_and_type_name(
     ty: &ASN1Type,
     name: &String,
     parent_name: &String,
-) -> Result<(Vec<Constraint>, String), GeneratorError> {
+) -> Result<(Vec<Constraint>, TokenStream), GeneratorError> {
     Ok(match ty {
-        ASN1Type::Null => (vec![], "()".into()),
-        ASN1Type::Boolean(b) => (b.constraints.clone(), "bool".into()),
+        ASN1Type::Null => (vec![], quote!(())),
+        ASN1Type::Boolean(b) => (b.constraints.clone(), quote!(bool)),
         ASN1Type::Integer(i) => {
             let per_constraints = per_visible_range_constraints(true, &i.constraints)?;
             (
                 i.constraints.clone(),
-                int_type_token(per_constraints.min(), per_constraints.max(), i.used_in_const).into(),
+                int_type_token(
+                    per_constraints.min(),
+                    per_constraints.max(),
+                    per_constraints.is_extensible(),
+                    i.used_in_const,
+                )
+                .to_token_stream(),
             )
         }
-        ASN1Type::Real(_) => (vec![], "f64".into()),
-        ASN1Type::ObjectIdentifier(o) => (o.constraints.clone(), "ObjectIdentifier".into()),
-        ASN1Type::BitString(b) => (b.constraints.clone(), "BitString".into()),
-        ASN1Type::OctetString(o) => (o.constraints.clone(), "OctetString".into()),
-        ASN1Type::GeneralizedTime(o) => (o.constraints.clone(), "GeneralizedTime".into()),
-        ASN1Type::UTCTime(o) => (o.constraints.clone(), "UtcTime".into()),
+        ASN1Type::Real(_) => (vec![], quote!(f64)),
+        ASN1Type::ObjectIdentifier(o) => (o.constraints.clone(), quote!(ObjectIdentifier)),
+        ASN1Type::BitString(b) => (b.constraints.clone(), quote!(BitString)),
+        ASN1Type::OctetString(o) => (o.constraints.clone(), quote!(OctetString)),
+        ASN1Type::GeneralizedTime(o) => (o.constraints.clone(), quote!(GeneralizedTime)),
+        ASN1Type::UTCTime(o) => (o.constraints.clone(), quote!(UtcTime)),
+        ASN1Type::Time(_) => {
+            return Err(GeneratorError {
+                details: "rasn does not support TIME types yet!".into(),
+                top_level_declaration: None,
+                kind: GeneratorErrorType::NotYetInplemented,
+            })
+        }
         ASN1Type::CharacterString(c) => (c.constraints.clone(), string_type(&c.r#type)?),
         ASN1Type::Enumerated(_)
         | ASN1Type::Choice(_)
         | ASN1Type::Sequence(_)
         | ASN1Type::SequenceOf(_)
         | ASN1Type::SetOf(_)
-        | ASN1Type::Set(_) => (vec![], inner_name(name, parent_name)),
-        ASN1Type::ElsewhereDeclaredType(e) => {
-            (e.constraints.clone(), to_rust_title_case(&e.identifier))
-        }
+        | ASN1Type::Set(_) => (vec![], inner_name(name, parent_name).to_token_stream()),
+        ASN1Type::ElsewhereDeclaredType(e) => (
+            e.constraints.clone(),
+            to_rust_title_case(&e.identifier).to_token_stream(),
+        ),
         ASN1Type::InformationObjectFieldReference(_)
         | ASN1Type::EmbeddedPdv
-        | ASN1Type::External => (vec![], "Any".into()),
+        | ASN1Type::External => (vec![], quote!(Any)),
         ASN1Type::ChoiceSelectionType(_) => unreachable!(),
     })
 }
 
-pub fn string_type(c_type: &CharacterStringType) -> Result<String, GeneratorError> {
+pub fn string_type(c_type: &CharacterStringType) -> Result<TokenStream, GeneratorError> {
     match c_type {
-        CharacterStringType::NumericString => Ok("NumericString".into()),
-        CharacterStringType::VisibleString => Ok("VisibleString".into()),
-        CharacterStringType::IA5String => Ok("Ia5String".into()),
-        CharacterStringType::TeletexString => Ok("TeletexString".into()),
+        CharacterStringType::NumericString => Ok(quote!(NumericString)),
+        CharacterStringType::VisibleString => Ok(quote!(VisibleString)),
+        CharacterStringType::IA5String => Ok(quote!(Ia5String)),
+        CharacterStringType::TeletexString => Ok(quote!(TeletexString)),
         CharacterStringType::VideotexString => Err(GeneratorError {
             kind: GeneratorErrorType::NotYetInplemented,
             details: "VideotexString is currently unsupported!".into(),
@@ -368,32 +405,28 @@ pub fn string_type(c_type: &CharacterStringType) -> Result<String, GeneratorErro
             details: "GraphicString is currently unsupported!".into(),
             top_level_declaration: None,
         }),
-        CharacterStringType::GeneralString => Ok("GeneralString".into()),
+        CharacterStringType::GeneralString => Ok(quote!(GeneralString)),
         CharacterStringType::UniversalString => Err(GeneratorError {
             kind: GeneratorErrorType::NotYetInplemented,
             details: "UniversalString is currently unsupported!".into(),
             top_level_declaration: None,
         }),
-        CharacterStringType::UTF8String => Ok("Utf8String".into()),
-        CharacterStringType::BMPString => Ok("BmpString".into()),
-        CharacterStringType::PrintableString => Ok("PrintableString".into()),
+        CharacterStringType::UTF8String => Ok(quote!(Utf8String)),
+        CharacterStringType::BMPString => Ok(quote!(BmpString)),
+        CharacterStringType::PrintableString => Ok(quote!(PrintableString)),
     }
 }
 
-pub fn join_annotations(strings: Vec<String>) -> String {
-    match strings
-        .into_iter()
-        .filter(|s| !s.is_empty())
-        .collect::<Vec<String>>()
-        .join(",")
-    {
-        s if s.is_empty() => String::new(),
-        s => {
-            String::from("#[rasn(")
-                + &s
-                + r#")]
-        "#
+pub fn join_annotations(elements: Vec<TokenStream>) -> TokenStream {
+    let mut not_empty_exprs = elements.into_iter().filter(|ts| !ts.is_empty());
+    if let Some(mut annotations) = not_empty_exprs.next() {
+        while let Some(elem) = not_empty_exprs.next() {
+            annotations.append(Punct::new(',', Spacing::Alone));
+            annotations.append_all(elem);
         }
+        quote!(#[rasn(#annotations)])
+    } else {
+        quote!()
     }
 }
 
@@ -408,15 +441,15 @@ pub fn default_method_name(parent_name: &String, field_name: &String) -> String 
 pub fn format_default_methods(
     members: &Vec<SequenceOrSetMember>,
     parent_name: &String,
-) -> Result<String, GeneratorError> {
-    let mut output = String::new();
+) -> Result<TokenStream, GeneratorError> {
+    let mut output = TokenStream::new();
     for member in members {
         if let Some(value) = member.default_value.as_ref() {
             let (value_as_string, type_as_string) = match &member.r#type {
-                ASN1Type::BitString(_) => (
-                    format!("{}.iter().collect()", value.value_as_string(None)?),
-                    "BitString".into(),
-                ),
+                ASN1Type::BitString(_) => {
+                    let val = value_to_tokens(value, None)?;
+                    (quote!(#val.iter().collect()), quote!(BitString))
+                }
                 ASN1Type::ElsewhereDeclaredType(_)
                     if !(matches!(
                         value,
@@ -426,40 +459,171 @@ pub fn format_default_methods(
                         }
                     )) =>
                 {
-                    let stringified_type = member.r#type.as_string()?;
-                    (
-                        format!("{stringified_type}({})", value.value_as_string(None)?),
-                        stringified_type,
-                    )
+                    let tokenized_type = type_to_tokens(&member.r#type)?;
+                    let tokenized_val = value_to_tokens(value, None)?;
+                    (quote!(#tokenized_type(#tokenized_val)), tokenized_type)
                 }
                 ty => (
-                    value.value_as_string(Some(&to_rust_title_case(&ty.as_string()?)))?,
-                    ty.as_string()?,
+                    value_to_tokens(
+                        value,
+                        Some(&to_rust_title_case(&type_to_tokens(&ty)?.to_string())),
+                    )?,
+                    type_to_tokens(&ty)?,
                 ),
             };
-            let method_name = default_method_name(parent_name, &member.name);
-            output.push_str(&format!(
-                r#"fn {method_name}() -> {type_as_string} {{
-                {value_as_string}{}
-            }}
-            
-            "#,
-                if type_as_string == value_as_string {
-                    ""
-                } else {
-                    ".into()"
+            let method_name =
+                TokenStream::from_str(&default_method_name(parent_name, &member.name))?;
+            output.append_all(quote! {
+                fn #method_name() -> #type_as_string {
+                    #value_as_string
                 }
-            ))
+            });
         }
     }
     Ok(output)
 }
 
+pub fn type_to_tokens(ty: &ASN1Type) -> Result<TokenStream, GeneratorError> {
+    match ty {
+        ASN1Type::Null => Ok(quote!(Asn1Null)),
+        ASN1Type::Boolean(_) => Ok(quote!(bool)),
+        ASN1Type::Integer(i) => Ok(TokenStream::from_str(&i.type_token())?),
+        ASN1Type::Real(_) => Ok(quote!(f64)),
+        ASN1Type::BitString(_) => Ok(quote!(BitString)),
+        ASN1Type::OctetString(_) => Ok(quote!(OctetString)),
+        ASN1Type::CharacterString(_) => Ok(quote!(Utf8String)),
+        ASN1Type::Enumerated(_) => Err(error!(
+            NotYetInplemented,
+            "Enumerated values are currently unsupported!"
+        )),
+        ASN1Type::Choice(_) => Err(error!(
+            NotYetInplemented,
+            "Choice values are currently unsupported!"
+        )),
+        ASN1Type::Sequence(_) => Err(error!(
+            NotYetInplemented,
+            "Sequence values are currently unsupported!"
+        )),
+        ASN1Type::SetOf(so) | ASN1Type::SequenceOf(so) => {
+            let inner = type_to_tokens(&so.r#type)?;
+            Ok(quote!(SequenceOf<#inner>))
+        }
+        ASN1Type::ObjectIdentifier(_) => Err(error!(
+            NotYetInplemented,
+            "Object Identifier values are currently unsupported!"
+        )),
+        ASN1Type::Set(_) => Err(error!(
+            NotYetInplemented,
+            "Set values are currently unsupported!"
+        )),
+        ASN1Type::ElsewhereDeclaredType(e) => {
+            Ok(format_ident!("{}", to_rust_title_case(&e.identifier)).to_token_stream())
+        }
+        ASN1Type::InformationObjectFieldReference(_) => todo!(),
+        ASN1Type::Time(_) => todo!(),
+        ASN1Type::GeneralizedTime(_) => Ok(quote!(GeneralizedTime)),
+        ASN1Type::UTCTime(_) => Ok(quote!(UtcTime)),
+        ASN1Type::EmbeddedPdv | ASN1Type::External => Ok(quote!(Any)),
+        ASN1Type::ChoiceSelectionType(c) => {
+            let choice = to_rust_title_case(&c.choice_name);
+            let option = to_rust_enum_identifier(&c.selected_option);
+            Ok(quote!(#choice::#option))
+        }
+    }
+}
+
+pub fn value_to_tokens(
+    value: &ASN1Value,
+    type_name: Option<&Ident>,
+) -> Result<TokenStream, GeneratorError> {
+    match value {
+        ASN1Value::All => Err(error!(
+            NotYetInplemented,
+            "rasn does not support ALL values."
+        )),
+        ASN1Value::Null => Ok(quote!(())),
+        ASN1Value::Choice(i, v) => {
+            if let Some(ty_n) = type_name {
+                let option = to_rust_enum_identifier(i);
+                let inner = value_to_tokens(v, None)?;
+                Ok(quote!(#ty_n::#option(#inner)))
+            } else {
+                Err(error!(
+                    Unidentified,
+                    "A type name is needed to stringify choice value {:?}", value
+                ))
+            }
+        }
+        ASN1Value::SequenceOrSet(fields) => {
+            if let Some(ty_n) = type_name {
+                let tokenized_fields = fields
+                    .iter()
+                    .map(|(id, val)| {
+                        let ident = format_ident!("{id}");
+                        value_to_tokens(val, None).map(|field_val| {
+                            quote! {
+                                #ident: #field_val
+                            }
+                        })
+                    })
+                    .collect::<Result<Vec<TokenStream>, _>>()?;
+                Ok(quote!(#ty_n { #(#tokenized_fields),* }))
+            } else {
+                Err(error!(
+                    Unidentified,
+                    "A type name is needed to stringify sequence value {:?}", value
+                ))
+            }
+        }
+        ASN1Value::Boolean(b) => Ok(b.to_token_stream()),
+        ASN1Value::Integer(i) => Ok(Literal::i128_unsuffixed(*i).to_token_stream()),
+        ASN1Value::String(s) => Ok(s.to_token_stream()),
+        ASN1Value::Real(r) => Ok(r.to_token_stream()),
+        ASN1Value::BitString(b) => {
+            let bits = b.iter().map(|bit| bit.to_token_stream());
+            Ok(quote!([#(#bits),*].into_iter().collect()))
+        }
+        ASN1Value::EnumeratedValue {
+            enumerated,
+            enumerable,
+        } => {
+            let enum_name = to_rust_title_case(enumerated);
+            let enumerable_id = to_rust_enum_identifier(enumerable);
+            Ok(quote!(#enum_name::#enumerable_id))
+        }
+        ASN1Value::ElsewhereDeclaredValue { identifier: e, .. } => {
+            Ok(to_rust_const_case(e).to_token_stream())
+        }
+        ASN1Value::ObjectIdentifier(oid) => {
+            let arcs = oid
+                .0
+                .iter()
+                .filter_map(|arc| arc.number.map(|id| id.to_token_stream()));
+            Ok(quote!([#(#arcs),*]))
+        }
+        ASN1Value::Time(t) => type_name
+            .map(|time_type| quote!(#t.parse::<#time_type>().unwrap()))
+            .ok_or_else(|| {
+                error!(
+                    Unidentified,
+                    "A type name is needed to stringify time value {:?}", value
+                )
+            }),
+        ASN1Value::SequenceOrSetOf(seq) => {
+            let elems = seq
+                .iter()
+                .map(|v| value_to_tokens(v, None))
+                .collect::<Result<Vec<_>, _>>()?;
+            Ok(quote!(&'static [#(#elems),*].into_iter().collect()))
+        }
+    }
+}
+
 pub fn format_nested_sequence_members(
     sequence_or_set: &SequenceOrSet,
     parent_name: &String,
-) -> Result<String, GeneratorError> {
-    Ok(sequence_or_set
+) -> Result<Vec<TokenStream>, GeneratorError> {
+    sequence_or_set
         .members
         .iter()
         .filter(|m| {
@@ -476,24 +640,19 @@ pub fn format_nested_sequence_members(
             generate(ToplevelDeclaration::Type(ToplevelTypeDeclaration {
                 parameterization: None,
                 comments: " Inner type ".into(),
-                name: inner_name(&m.name, parent_name),
+                name: inner_name(&m.name, parent_name).to_string(),
                 r#type: m.r#type.clone(),
                 tag: None,
                 index: None,
             }))
         })
-        .collect::<Result<Vec<String>, _>>()?
-        .join(
-            r#"
-    
-    "#,
-        ))
+        .collect::<Result<Vec<_>, _>>()
 }
 
 pub fn format_nested_choice_options(
     choice: &Choice,
     parent_name: &String,
-) -> Result<String, GeneratorError> {
+) -> Result<Vec<TokenStream>, GeneratorError> {
     Ok(choice
         .options
         .iter()
@@ -511,42 +670,29 @@ pub fn format_nested_choice_options(
             generate(ToplevelDeclaration::Type(ToplevelTypeDeclaration {
                 parameterization: None,
                 comments: " Inner type ".into(),
-                name: inner_name(&m.name, parent_name),
+                name: inner_name(&m.name, parent_name).to_string(),
                 r#type: m.r#type.clone(),
                 tag: None,
                 index: None,
             }))
         })
-        .collect::<Result<Vec<String>, _>>()?
-        .join(
-            r#"
-    
-    "#,
-        ))
+        .collect::<Result<Vec<_>, _>>()?)
 }
 
-pub fn format_new_impl(name: &String, name_types: Vec<StringifiedNameType>) -> String {
-    format!(
-        r#"impl {name} {{
-        pub fn new(
-            {}
-        ) -> Self {{
-            Self {{
-                {}
-            }}
-        }}
-    }}"#,
-        name_types
-            .iter()
-            .map(|nt| format!("{}: {},", nt.name, nt.typ))
-            .collect::<Vec<String>>()
-            .join("\n\t"),
-        name_types
-            .iter()
-            .map(|nt| format!("{},", nt.name))
-            .collect::<Vec<String>>()
-            .join("\n\t")
-    )
+pub fn format_new_impl(name: &Ident, name_types: Vec<NameType>) -> TokenStream {
+    let args = name_types.iter().map(|nt| {
+        let name = &nt.name;
+        let ty = &nt.typ;
+        quote!(#name: #ty)
+    });
+    let instance = name_types.iter().map(|nt| &nt.name);
+    quote! {
+        impl #name {
+            pub fn new(#(#args),*) -> Self {
+                Self { #(#instance),* }
+            }
+        }
+    }
 }
 
 /// Resolves the custom syntax declared in an information object class' WITH SYNTAX clause
@@ -564,10 +710,10 @@ pub fn resolve_standard_syntax(
                 match field {
                     InformationObjectField::TypeField(f) => {
                         field_index_map.push((index, f.r#type.clone()));
-                    },
+                    }
                     InformationObjectField::FixedValueField(f) => {
                         key = Some(f.value.clone());
-                    },
+                    }
                     InformationObjectField::ObjectSetField(_) => todo!(),
                 }
             } else if !class_field.is_optional {
@@ -682,5 +828,186 @@ pub fn resolve_custom_syntax(
             details: "Could not find class key!".into(),
             kind: GeneratorErrorType::MissingClassKey,
         }),
+    }
+}
+
+#[cfg(test)]
+macro_rules! assert_eq_ignore_ws {
+    ($left:expr, $right:expr) => {
+        assert_eq!(
+            $left.replace(|c: char| c.is_whitespace(), ""),
+            String::from($right).replace(|c: char| c.is_whitespace(), "")
+        )
+    };
+}
+
+#[cfg(test)]
+mod tests {
+    use quote::quote;
+
+    use crate::{
+        generator::utils::format_tag,
+        intermediate::{
+            constraints::ElementSet,
+            types::{Boolean, Enumeral, Integer},
+            AsnTag,
+        },
+    };
+
+    use super::*;
+
+    #[test]
+    fn joins_annotations() {
+        assert_eq_ignore_ws!(
+            join_annotations(vec![
+                quote!(delegate),
+                format_tag(
+                    Some(&AsnTag {
+                        tag_class: crate::intermediate::TagClass::Application,
+                        environment: crate::intermediate::TaggingEnvironment::Explicit,
+                        id: 3,
+                    }),
+                    false,
+                ),
+            ])
+            .to_string(),
+            "#[rasn(delegate, tag(explicit(application, 3)))]"
+        )
+    }
+
+    #[test]
+    fn formats_sequence_members() {
+        assert_eq_ignore_ws!(
+            format_sequence_or_set_members(
+                &SequenceOrSet {
+                    components_of: vec![],
+                    extensible: Some(1),
+                    constraints: vec![],
+                    members: vec![
+                        SequenceOrSetMember {
+                            name: "testMember0".into(),
+                            tag: None,
+                            r#type: ASN1Type::Boolean(Boolean {
+                                constraints: vec![]
+                            }),
+                            default_value: None,
+                            is_optional: true,
+                            constraints: vec![]
+                        },
+                        SequenceOrSetMember {
+                            name: "testMember1".into(),
+                            tag: None,
+                            r#type: ASN1Type::Integer(Integer {
+                                used_in_const: true,
+                                distinguished_values: None,
+                                constraints: vec![Constraint::SubtypeConstraint(ElementSet {
+                            extensible: false,
+                            set: crate::intermediate::constraints::ElementOrSetOperation::Element(
+                                crate::intermediate::constraints::SubtypeElement::SingleValue {
+                                    value: ASN1Value::Integer(4),
+                                    extensible: true
+                                }
+                            )
+                        })]
+                            }),
+                            default_value: Some(ASN1Value::Integer(4)),
+                            is_optional: true,
+                            constraints: vec![]
+                        }
+                    ]
+                },
+                &"Parent".into(),
+            )
+            .unwrap()
+            .0
+            .to_string(),
+            r#"
+                pub test_member0: Option<bool>,
+                #[rasn(extension_addition, value("4", extensible), default = "parent_test_member1_default")]
+                pub test_member1: i64,
+            "#
+        );
+    }
+
+    #[test]
+    fn formats_enum_members() {
+        assert_eq_ignore_ws!(
+            format_enum_members(&Enumerated {
+                members: vec![
+                    Enumeral {
+                        name: "test-option-1".into(),
+                        description: Some("optional comment".into()),
+                        index: 0
+                    },
+                    Enumeral {
+                        name: "test-option-2".into(),
+                        description: Some("another optional comment".into()),
+                        index: 2
+                    },
+                    Enumeral {
+                        name: "test-option-3".into(),
+                        description: None,
+                        index: 5
+                    }
+                ],
+                extensible: Some(2),
+                constraints: vec![]
+            })
+            .to_string(),
+            r#"
+            test_option_1=0,
+            test_option_2=2,
+            #[rasn(extension_addition)]
+            test_option_3=5,
+            "#
+        )
+    }
+
+    #[test]
+    fn formats_choice_options() {
+        assert_eq_ignore_ws!(
+            format_choice_options(
+                &Choice {
+                    extensible: Some(1),
+                    constraints: vec![],
+                    options: vec![
+                        ChoiceOption {
+                            name: "testMember0".into(),
+                            tag: None,
+                            r#type: ASN1Type::Boolean(Boolean {
+                                constraints: vec![]
+                            }),
+                            constraints: vec![]
+                        },
+                        ChoiceOption {
+                            name: "testMember1".into(),
+                            tag: None,
+                            r#type: ASN1Type::Integer(Integer {
+                                used_in_const: true,
+                                distinguished_values: None,
+                                constraints: vec![Constraint::SubtypeConstraint(ElementSet {
+                                    extensible: false,
+                                    set: crate::intermediate::constraints::ElementOrSetOperation::Element(
+                                        crate::intermediate::constraints::SubtypeElement::SingleValue {
+                                            value: ASN1Value::Integer(4),
+                                            extensible: true
+                                        }
+                                    )
+                                })]
+                            }),
+                            constraints: vec![]
+                        }
+                    ]
+                },
+                &"Parent".into(),
+            )
+            .unwrap()
+            .to_string(),
+            r#"
+                testMember0(bool),
+                #[rasn(extension_addition, value("4", extensible))]
+                testMember1(i64),
+            "#
+        );
     }
 }

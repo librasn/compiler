@@ -4,7 +4,7 @@ use nom::{
     bytes::complete::tag,
     character::complete::char,
     combinator::{into, map, opt, recognize, value},
-    multi::{many1, separated_list1},
+    multi::{separated_list1, many0},
     sequence::{delimited, pair, preceded, terminated, tuple},
     IResult,
 };
@@ -57,7 +57,7 @@ fn exports<'a>(input: &'a str) -> IResult<&'a str, Exports> {
 fn imports<'a>(input: &'a str) -> IResult<&'a str, Vec<Import>> {
     skip_ws_and_comments(delimited(
         tag(IMPORTS),
-        skip_ws_and_comments(many1(import)),
+        skip_ws_and_comments(many0(import)),
         skip_ws_and_comments(char(SEMICOLON)),
     ))(input)
 }
@@ -102,7 +102,7 @@ fn environments<'a>(
     tuple((
         opt(skip_ws_and_comments(into(terminated(
             identifier,
-            tag(INSTRUCTIONS),
+            skip_ws(tag(INSTRUCTIONS)),
         )))),
         skip_ws_and_comments(terminated(
             map(

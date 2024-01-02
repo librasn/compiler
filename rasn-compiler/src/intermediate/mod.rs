@@ -807,6 +807,7 @@ pub enum ASN1Type {
     SequenceOf(SequenceOrSetOf),
     Set(SequenceOrSet),
     SetOf(SequenceOrSetOf),
+    Time(Time),
     GeneralizedTime(GeneralizedTime),
     UTCTime(UTCTime),
     ElsewhereDeclaredType(DeclarationElsewhere),
@@ -827,6 +828,7 @@ impl ASN1Type {
             ASN1Type::OctetString(o) => Some(o.constraints()),
             ASN1Type::CharacterString(c) => Some(c.constraints()),
             ASN1Type::Enumerated(e) => Some(e.constraints()),
+            ASN1Type::Time(t) => Some(t.constraints()),
             ASN1Type::Choice(c) => Some(c.constraints()),
             ASN1Type::Set(s) | ASN1Type::Sequence(s) => Some(s.constraints()),
             ASN1Type::SetOf(s) | ASN1Type::SequenceOf(s) => Some(s.constraints()),
@@ -845,6 +847,7 @@ impl ASN1Type {
             ASN1Type::OctetString(o) => Some(o.constraints_mut()),
             ASN1Type::CharacterString(c) => Some(c.constraints_mut()),
             ASN1Type::Enumerated(e) => Some(e.constraints_mut()),
+            ASN1Type::Time(t) => Some(t.constraints_mut()),
             ASN1Type::Choice(c) => Some(c.constraints_mut()),
             ASN1Type::Set(s) | ASN1Type::Sequence(s) => Some(s.constraints_mut()),
             ASN1Type::SetOf(s) | ASN1Type::SequenceOf(s) => Some(s.constraints_mut()),
@@ -1186,49 +1189,6 @@ impl ASN1Type {
             _ => Ok(false),
         }
     }
-
-    pub fn as_string(&self) -> Result<String, GrammarError> {
-        match self {
-            ASN1Type::Null => Ok("Asn1Null".to_owned()),
-            ASN1Type::Boolean(_) => Ok("bool".to_owned()),
-            ASN1Type::Integer(i) => Ok(i.type_token()),
-            ASN1Type::Real(_) => Ok("f64".to_owned()),
-            ASN1Type::BitString(_) => Ok("BitString".to_owned()),
-            ASN1Type::OctetString(_) => Ok("OctetString".to_owned()),
-            ASN1Type::CharacterString(_) => Ok("Utf8String".to_owned()),
-            ASN1Type::Enumerated(_) => Err(error!(
-                NotYetInplemented,
-                "Enumerated values are currently unsupported!"
-            )),
-            ASN1Type::Choice(_) => Err(error!(
-                NotYetInplemented,
-                "Choice values are currently unsupported!"
-            )),
-            ASN1Type::Sequence(_) => Err(error!(
-                NotYetInplemented,
-                "Sequence values are currently unsupported!"
-            )),
-            ASN1Type::SetOf(so) | ASN1Type::SequenceOf(so) => {
-                Ok(format!("SequenceOf<{}>", so.r#type.as_string()?))
-            }
-            ASN1Type::ObjectIdentifier(_) => Err(error!(
-                NotYetInplemented,
-                "Object Identifier values are currently unsupported!"
-            )),
-            ASN1Type::Set(_) => Err(error!(
-                NotYetInplemented,
-                "Set values are currently unsupported!"
-            )),
-            ASN1Type::ElsewhereDeclaredType(e) => Ok(e.identifier.clone()),
-            ASN1Type::InformationObjectFieldReference(_) => todo!(),
-            ASN1Type::GeneralizedTime(_) => Ok("GeneralizedTime".to_owned()),
-            ASN1Type::UTCTime(_) => Ok("UtcTime".to_owned()),
-            ASN1Type::EmbeddedPdv | ASN1Type::External => Ok("Any".to_owned()),
-            ASN1Type::ChoiceSelectionType(c) => {
-                Ok(format!("{}::{}", c.choice_name, c.selected_option))
-            }
-        }
-    }
 }
 
 pub const NUMERIC_STRING_CHARSET: [char; 11] =
@@ -1522,10 +1482,7 @@ impl ASN1Value {
         tlds: &BTreeMap<String, ToplevelDeclaration>,
     ) -> Result<bool, GrammarError> {
         match self {
-            Self::ElsewhereDeclaredValue {
-                identifier: e,
-                parent: Some(p),
-            } => {
+            Self::ElsewhereDeclaredValue { parent: Some(_), .. } => {
                 return self.resolve_elsewhere_with_parent(tlds).map(|_| true);
             }
             Self::ElsewhereDeclaredValue {
@@ -1544,95 +1501,6 @@ impl ASN1Value {
             _ => {}
         }
         Ok(false)
-    }
-
-    pub fn value_as_string(&self, type_name: Option<&str>) -> Result<String, GrammarError> {
-        match self {
-            ASN1Value::All => Ok("Asn1All".to_owned()),
-            ASN1Value::Null => Ok("Asn1Null".to_owned()),
-            ASN1Value::Choice(i, v) => {
-                if let Some(ty_n) = type_name {
-                    Ok(format!(
-                        "{ty_n}::{}({})",
-                        to_rust_title_case(i),
-                        v.value_as_string(None)?
-                    ))
-                } else {
-                    Err(GrammarError {
-                        details: format!(
-                            "A type name is needed to stringify choice value {:?}",
-                            self
-                        ),
-                        kind: GrammarErrorType::UnpackingError,
-                    })
-                }
-            }
-            ASN1Value::SequenceOrSet(fields) => {
-                if let Some(ty_n) = type_name {
-                    let stringified_fields = fields
-                        .iter()
-                        .map(|(id, val)| val.value_as_string(None).map(|s| format!("{id}: {s}")))
-                        .collect::<Result<Vec<String>, _>>()?
-                        .join(", ");
-                    Ok(format!("{ty_n} {{ {stringified_fields} }}"))
-                } else {
-                    Err(GrammarError {
-                        details: format!(
-                            "A type name is needed to stringify sequence value {:?}",
-                            self
-                        ),
-                        kind: GrammarErrorType::UnpackingError,
-                    })
-                }
-            }
-            ASN1Value::Boolean(b) => Ok(format!("{}", b)),
-            ASN1Value::Integer(i) => Ok(format!("{}", i)),
-            ASN1Value::String(s) => Ok(s.clone()),
-            ASN1Value::Real(r) => Ok(format!("{}", r)),
-            ASN1Value::BitString(b) => {
-                let mut bits = b.iter().fold(String::new(), |mut acc, bit| {
-                    if *bit {
-                        acc.push_str("true,");
-                    } else {
-                        acc.push_str("false,");
-                    }
-                    acc
-                });
-                // remove the last comma
-                bits.pop();
-                Ok(format!("[{bits}].into_iter().collect()"))
-            }
-            ASN1Value::EnumeratedValue {
-                enumerated,
-                enumerable,
-            } => Ok(format!(
-                "{}::{}",
-                to_rust_title_case(enumerated),
-                to_rust_title_case(enumerable)
-            )),
-            ASN1Value::ElsewhereDeclaredValue { identifier: e, .. } => Ok(to_rust_const_case(e)),
-            ASN1Value::ObjectIdentifier(oid) => Ok(format!(
-                "[{}]",
-                oid.0
-                    .iter()
-                    .filter_map(|arc| arc.number.map(|id| id.to_string()))
-                    .collect::<Vec<String>>()
-                    .join(",")
-            )),
-            ASN1Value::Time(t) => type_name
-                .map(|time_type| format!("\"{t}\".parse::<{time_type}>().unwrap()"))
-                .ok_or(GrammarError {
-                    details: format!("A type name is needed to stringify time value {:?}", self),
-                    kind: GrammarErrorType::UnpackingError,
-                }),
-            ASN1Value::SequenceOrSetOf(seq) => Ok(format!(
-                "&'static [{}].into_iter().collect()",
-                seq.iter()
-                    .map(|v| v.value_as_string(None))
-                    .collect::<Result<Vec<String>, _>>()?
-                    .join(", ")
-            )),
-        }
     }
 }
 

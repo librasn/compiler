@@ -339,7 +339,8 @@ TerminalInfo ::= SEQUENCE {nonStandardData  NonStandardParameter OPTIONAL,
                            ...
 }
 
-GatekeeperInfo ::= H221NonStandard,
+GatekeeperInfo ::= SEQUENCE {
+  vendor     H221NonStandard,
   productId  OCTET STRING(SIZE (1..256)) OPTIONAL, -- per vendor
   versionId  OCTET STRING(SIZE (1..256)) OPTIONAL, -- per product
   ...

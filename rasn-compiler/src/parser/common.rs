@@ -61,10 +61,10 @@ pub fn block_comment<'a>(input: &'a str) -> IResult<&'a str, &'a str> {
 /// and hyphens. The initial character shall be a lower-case letter. A hyphen shall not be the
 /// last character. A hyphen shall not be immediately followed by another hyphen._
 pub fn identifier<'a>(input: &'a str) -> IResult<&'a str, &'a str> {
-    recognize(pair(
+    skip_ws_and_comments(recognize(pair(
         alpha1,
         many0(alt((preceded(char('-'), alphanumeric1), alphanumeric1))),
-    ))(input)
+    )))(input)
 }
 
 pub fn title_case_identifier<'a>(input: &'a str) -> IResult<&'a str, &'a str> {

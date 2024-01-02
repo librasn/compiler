@@ -1,7 +1,7 @@
 use crate::intermediate::{
     constraints::{Constraint, ElementOrSetOperation, SetOperation, SetOperator, SubtypeElement},
     error::{GrammarError, GrammarErrorType},
-    types::{Choice, Constrainable, Enumerated},
+    types::{Choice, Enumerated},
     ASN1Type, ASN1Value, CharacterStringType,
 };
 use std::{collections::BTreeMap, ops::AddAssign};

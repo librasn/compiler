@@ -69,6 +69,27 @@ impl Constraint {
             kind: GrammarErrorType::UnpackingError,
         })
     }
+
+    pub fn unpack_as_strict_value(
+        &self,
+    ) -> Result<(&ASN1Value, bool), GrammarError> {
+        if let Constraint::SubtypeConstraint(set) = self {
+            if let ElementOrSetOperation::Element(SubtypeElement::SingleValue {
+                value,
+                extensible,
+            }) = &set.set
+            {
+                return Ok((value, *extensible));
+            }
+        }
+        Err(GrammarError {
+            details: format!(
+                "Failed to unpack constraint as strict value. Constraint: {:?}",
+                self
+            ),
+            kind: GrammarErrorType::UnpackingError,
+        })
+    }
 }
 
 #[derive(Debug, Clone, PartialEq)]
