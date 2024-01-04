@@ -54,9 +54,9 @@ fn enumeral<'a>(
     input: &'a str,
 ) -> IResult<&'a str, (&str, Option<i128>, Option<char>, Option<&str>)> {
     skip_ws_and_comments(tuple((
-        skip_ws_and_comments(identifier),
-        skip_ws_and_comments(opt(in_parentheses(skip_ws_and_comments(i128)))),
-        skip_ws_and_comments(opt(char(COMMA))),
+        skip_ws(identifier),
+        skip_ws(opt(in_parentheses(skip_ws_and_comments(i128)))),
+        opt(skip_ws_and_comments(char(COMMA))),
         skip_ws(opt(comment)),
     )))(input)
 }

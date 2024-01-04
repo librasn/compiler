@@ -1,6 +1,5 @@
-use std::{collections::BTreeMap, ops::Not, rc::Rc, error::Error, str::FromStr};
-
-use proc_macro2::{TokenStream, Span, Ident, Literal};
+use std::{collections::BTreeMap, error::Error, str::FromStr};
+use proc_macro2::{TokenStream, Literal};
 use quote::{quote, TokenStreamExt, ToTokens, format_ident};
 
 use crate::intermediate::{
@@ -46,6 +45,7 @@ pub(crate) fn generate_module(tlds: Vec<ToplevelDeclaration>) -> Result<(Option<
         Ok((Some(GeneratedModule {
             name: name.to_string(),
             generated: quote! {
+            #[allow(non_camel_case_types, non_snake_case, non_upper_case_globals, unused)]
             pub mod #name {
                 extern crate alloc;
                 
@@ -107,7 +107,7 @@ pub fn generate_integer_value(tld: ToplevelValueDeclaration) -> Result<TokenStre
                 value,
             ))
         } else {
-            let ty = format_ident!("{}", to_rust_title_case(&tld.type_name));
+            let ty = to_rust_title_case(&tld.type_name);
             Ok(integer_value_template(
                 format_comments(&tld.comments)?,
                 to_rust_const_case(&tld.name),
@@ -427,7 +427,7 @@ pub fn generate_sequence_or_set(tld: ToplevelTypeDeclaration) -> Result<TokenStr
                             return ();
                         }
                         let obj_set_name = match t.object_set.values.first() {
-                            Some(ObjectSetValue::Reference(s)) => s,
+                            Some(ObjectSetValue::Reference(s)) => to_rust_title_case(s),
                             _ => todo!()
                         };
                         let field_enum_name = format_ident!("{obj_set_name}_{field_name}");
@@ -499,7 +499,7 @@ pub fn generate_sequence_or_set_of(tld: ToplevelTypeDeclaration) -> Result<Token
     .unwrap_or_default();
     let member_type = match seq_or_set_of.r#type.as_ref() {
         ASN1Type::ElsewhereDeclaredType(d) => to_rust_title_case(&d.identifier),
-        _ => format_ident!("Anonymous{}", &name),
+        _ => format_ident!("Anonymous{}", &name.to_string()).to_token_stream(),
     };
     Ok(sequence_or_set_of_template(
         is_set_of,
@@ -586,12 +586,12 @@ pub fn generate_information_object_set(
             let field_enum_name = format_ident!("{name}_{}", field_name.replace("&", ""));
             let (mut ids, mut inner_types) = (vec![], vec![]); 
             for (index, (id, ty)) in fields.iter().enumerate() {
-                let identifier_value = value_to_tokens(&id, Some(&format_ident!("{class_unique_id_type_name}")))?;
+                let identifier_value = value_to_tokens(&id, Some(&class_unique_id_type_name))?;
                 let type_id = type_to_tokens(&ty).unwrap_or(quote!(Option<()>));
                 let variant_name = if let ASN1Value::ElsewhereDeclaredValue{identifier: ref_id, ..} = id {
                     to_rust_title_case(ref_id)
                 } else {
-                    format_ident!("{field_enum_name}_{index}")
+                    format_ident!("{field_enum_name}_{index}").to_token_stream()
                 };
                 if ty.constraints().map_or(true, |c| c.is_empty()) {
                     ids.push((variant_name, type_id, identifier_value));

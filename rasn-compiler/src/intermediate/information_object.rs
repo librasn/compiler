@@ -1,3 +1,5 @@
+use std::ptr::eq;
+
 use super::{constraints::*, utils::walk_object_field_ref_path, *};
 
 #[derive(Debug, Clone, PartialEq)]
@@ -136,14 +138,17 @@ impl SyntaxApplication {
         }
     }
 
-    /// Checks if a token of a syntactic expression matches a given syntax token
-    pub fn matches(&self, token: &SyntaxToken) -> bool {
-        match (token, self) {
+    /// Checks if a token of a syntactic expression matches a given syntax token,
+    /// considering the entire syntax (in form of a flattened SyntaxExpression Vec), in order to reliably match Literals
+    pub fn matches(&self, next_token: &SyntaxToken, syntax: &Vec<(bool, SyntaxToken)>) -> bool {
+        match (next_token, self) {
             (SyntaxToken::Comma, SyntaxApplication::Comma) => true,
             (SyntaxToken::Literal(t), SyntaxApplication::Literal(a)) if t == a => true,
             (
                 SyntaxToken::Literal(t),
-                SyntaxApplication::LiteralOrTypeReference(DeclarationElsewhere { identifier, .. }),
+                SyntaxApplication::LiteralOrTypeReference(DeclarationElsewhere {
+                    identifier, ..
+                }),
             ) if t == identifier => true,
             (
                 SyntaxToken::Field(ObjectFieldIdentifier::MultipleValue(_)),
@@ -155,8 +160,15 @@ impl SyntaxApplication {
             ) => true,
             (
                 SyntaxToken::Field(ObjectFieldIdentifier::MultipleValue(_)),
-                SyntaxApplication::LiteralOrTypeReference(_),
-            ) => true,
+                SyntaxApplication::LiteralOrTypeReference(DeclarationElsewhere {
+                    identifier, ..
+                }),
+            ) => {
+                syntax.iter().find(|(_, t)| match t {
+                    SyntaxToken::Literal(lit) => lit == identifier,
+                    _ => false,
+                }).is_none()
+            }
             (
                 SyntaxToken::Field(ObjectFieldIdentifier::SingleValue(_)),
                 SyntaxApplication::ValueReference(_),
@@ -207,7 +219,9 @@ pub struct InformationObjectSyntax {
 impl InformationObjectSyntax {
     /// Information object syntax consists of mandatory and optional expressions.
     /// Optional expressions may be nested without limit.
-    /// Eventually, however, a declaration following a syntax is always a sequence of 
+    /// Declarations do not have this nested structure, but are always a sequence of
+    /// tokens, so in order to check whether an expression follows a given syntax we need to
+    /// flatten the nested structure into a sequence of tokens with a `required` marker.
     pub fn flatten(&self) -> Vec<(bool, SyntaxToken)> {
         fn iter_expressions(
             expressions: &Vec<SyntaxExpression>,

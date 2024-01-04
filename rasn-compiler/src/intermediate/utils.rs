@@ -1,9 +1,11 @@
-use std::collections::BTreeMap;
+use std::{collections::BTreeMap, str::FromStr};
 
 use super::{
     information_object::{InformationObjectClassField, ObjectFieldIdentifier},
-    ASN1Value, ToplevelDeclaration,
+    ASN1Value, ToplevelDeclaration, error::GrammarError,
 };
+
+use quote::quote;
 
 pub fn int_type_token<'a>(min: i128, max: i128, is_extensible: bool, const_used: bool) -> &'a str {
     if is_extensible && const_used {
@@ -123,7 +125,7 @@ pub fn to_rust_enum_identifier(input: &String) -> Ident {
     formatted
 }
 
-pub fn to_rust_title_case(input: &String) -> Ident {
+pub fn to_rust_title_case(input: &String) -> TokenStream {
     let mut input = input.replace("-", "_");
     let input = input.drain(..).fold(String::new(), |mut acc, c| {
         if acc.is_empty() && c.is_lowercase() {
@@ -144,7 +146,7 @@ pub fn to_rust_title_case(input: &String) -> Ident {
     } else {
         input
     };
-    Ident::new(&name, Span::call_site())
+    TokenStream::from_str(&name).unwrap()
 }
 
 macro_rules! get_declaration {
@@ -164,7 +166,7 @@ macro_rules! get_declaration {
 }
 
 pub(crate) use get_declaration;
-use proc_macro2::{Ident, Span};
+use proc_macro2::{Ident, Span, TokenStream};
 use quote::format_ident;
 
 #[cfg(test)]

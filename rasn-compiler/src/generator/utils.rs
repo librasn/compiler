@@ -39,7 +39,7 @@ pub struct NameType {
 }
 
 pub fn inner_name(name: &String, parent_name: &String) -> Ident {
-    format_ident!("{}{}", parent_name, to_rust_title_case(&name))
+    format_ident!("{}{}", parent_name, to_rust_title_case(&name).to_string())
 }
 
 pub fn int_type_token(
@@ -517,7 +517,7 @@ pub fn type_to_tokens(ty: &ASN1Type) -> Result<TokenStream, GeneratorError> {
             "Set values are currently unsupported!"
         )),
         ASN1Type::ElsewhereDeclaredType(e) => {
-            Ok(format_ident!("{}", to_rust_title_case(&e.identifier)).to_token_stream())
+            Ok(to_rust_title_case(&e.identifier))
         }
         ASN1Type::InformationObjectFieldReference(_) => todo!(),
         ASN1Type::Time(_) => todo!(),
@@ -534,7 +534,7 @@ pub fn type_to_tokens(ty: &ASN1Type) -> Result<TokenStream, GeneratorError> {
 
 pub fn value_to_tokens(
     value: &ASN1Value,
-    type_name: Option<&Ident>,
+    type_name: Option<&TokenStream>,
 ) -> Result<TokenStream, GeneratorError> {
     match value {
         ASN1Value::All => Err(error!(
@@ -679,7 +679,7 @@ pub fn format_nested_choice_options(
         .collect::<Result<Vec<_>, _>>()?)
 }
 
-pub fn format_new_impl(name: &Ident, name_types: Vec<NameType>) -> TokenStream {
+pub fn format_new_impl(name: &TokenStream, name_types: Vec<NameType>) -> TokenStream {
     let args = name_types.iter().map(|nt| {
         let name = &nt.name;
         let ty = &nt.typ;
@@ -758,10 +758,10 @@ pub fn resolve_custom_syntax(
     let mut key = None;
     let mut field_index_map = Vec::<(usize, ASN1Type)>::new();
 
-    let mut appl_iter = application.iter();
-    'syntax_matching: for (required, token) in tokens {
-        if let Some(expr) = appl_iter.next() {
-            if expr.matches(&token) {
+    let mut application_index = 0;
+    'syntax_matching: for (required, token) in &tokens {
+        if let Some(expr) = application.get(application_index) {
+            if expr.matches(token, &tokens) {
                 match expr {
                     SyntaxApplication::ObjectSetDeclaration(_) => todo!(),
                     SyntaxApplication::LiteralOrTypeReference(t) => {
@@ -788,19 +788,20 @@ pub fn resolve_custom_syntax(
                         }
                     }
                     SyntaxApplication::ValueReference(v) => {
-                        if let Some(_) = class.fields.iter().find(|v| {
-                            v.identifier
+                        if class.fields.iter().find(|field| {
+                            field.identifier
                                 == ObjectFieldIdentifier::SingleValue(
                                     token.name_or_empty().to_owned(),
                                 )
-                                && v.is_unique
-                        }) {
+                                && field.is_unique
+                        }).is_some() {
                             key = Some(v.clone())
                         }
                     }
                     _ => continue 'syntax_matching,
                 }
-            } else if required {
+                application_index += 1;
+            } else if *required {
                 return Err(GeneratorError {
                     top_level_declaration: None,
                     details: format!("Syntax mismatch while resolving information object."),
@@ -809,7 +810,7 @@ pub fn resolve_custom_syntax(
             } else {
                 continue 'syntax_matching;
             }
-        } else if required {
+        } else if *required {
             return Err(GeneratorError {
                 top_level_declaration: None,
                 details: format!("Syntax mismatch while resolving information object."),

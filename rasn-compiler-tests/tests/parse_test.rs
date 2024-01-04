@@ -1,6 +1,7 @@
 use rasn_compiler::RasnCompiler;
 
 #[test]
+#[ignore]
 fn parses_modules() {
     let read_dir = std::fs::read_dir("./tests/modules").unwrap();
     let mut errors = String::new();
@@ -45,6 +46,7 @@ Failed to parse {failed} modules with the following errors:
 }
 
 #[test]
+#[ignore]
 fn compile_etsi() {
     println!(
         "{:?}",

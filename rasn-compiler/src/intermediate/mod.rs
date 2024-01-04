@@ -1454,11 +1454,11 @@ impl ASN1Value {
                             c.get(i)
                         {
                             match (c.get(i - 1), before, c.get(i + 1), after) {
-                                (Some(a), Some(b), _, _) if a.matches(b) => {
+                                (Some(a), Some(b), _, _) if a.matches(b, &tokens) => {
                                     *self = val.clone();
                                     return Ok(());
                                 }
-                                (_, _, Some(c), Some(d)) if c.matches(d) => {
+                                (_, _, Some(c), Some(d)) if c.matches(d, &tokens) => {
                                     *self = val.clone();
                                     return Ok(());
                                 }

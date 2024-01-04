@@ -1,12 +1,10 @@
-use proc_macro2::{Ident, Literal, TokenStream};
-use quote::{quote, ToTokens};
-
-use crate::intermediate::types::Enumerated;
+use proc_macro2::{Ident, TokenStream};
+use quote::quote;
 
 pub fn typealias_template(
     comments: TokenStream,
-    name: Ident,
-    alias: Ident,
+    name: TokenStream,
+    alias: TokenStream,
     annotations: TokenStream,
 ) -> TokenStream {
     quote! {
@@ -43,7 +41,7 @@ pub fn integer_value_template(
 
 pub fn integer_template(
     comments: TokenStream,
-    name: Ident,
+    name: TokenStream,
     annotations: TokenStream,
     integer_type: Ident,
 ) -> TokenStream {
@@ -59,7 +57,7 @@ pub fn integer_template(
 pub fn time_value_template(
     comments: TokenStream,
     name: Ident,
-    type_name: Ident,
+    type_name: TokenStream,
     value: TokenStream,
 ) -> TokenStream {
     quote! {
@@ -70,7 +68,7 @@ pub fn time_value_template(
 
 pub fn generalized_time_template(
     comments: TokenStream,
-    name: Ident,
+    name: TokenStream,
     annotations: TokenStream,
 ) -> TokenStream {
     quote! {
@@ -83,7 +81,7 @@ pub fn generalized_time_template(
 
 pub fn utc_time_template(
     comments: TokenStream,
-    name: Ident,
+    name: TokenStream,
     annotations: TokenStream,
 ) -> TokenStream {
     quote! {
@@ -96,7 +94,7 @@ pub fn utc_time_template(
 
 pub fn bit_string_template(
     comments: TokenStream,
-    name: Ident,
+    name: TokenStream,
     annotations: TokenStream,
 ) -> TokenStream {
     quote! {
@@ -109,7 +107,7 @@ pub fn bit_string_template(
 
 pub fn octet_string_template(
     comments: TokenStream,
-    name: Ident,
+    name: TokenStream,
     annotations: TokenStream,
 ) -> TokenStream {
     quote! {
@@ -122,7 +120,7 @@ pub fn octet_string_template(
 
 pub fn char_string_template(
     comments: TokenStream,
-    name: Ident,
+    name: TokenStream,
     string_type: TokenStream,
     annotations: TokenStream,
 ) -> TokenStream {
@@ -136,7 +134,7 @@ pub fn char_string_template(
 
 pub fn boolean_template(
     comments: TokenStream,
-    name: Ident,
+    name: TokenStream,
     annotations: TokenStream,
 ) -> TokenStream {
     quote! {
@@ -154,7 +152,12 @@ pub fn null_value_template(comments: TokenStream, name: Ident) -> TokenStream {
     }
 }
 
-pub fn enum_value_template(comments: TokenStream, name: Ident, enumerated: Ident, enumeral: Ident) -> TokenStream {
+pub fn enum_value_template(
+    comments: TokenStream,
+    name: Ident,
+    enumerated: TokenStream,
+    enumeral: Ident,
+) -> TokenStream {
     quote! {
         #comments
         pub const #name: #enumerated = #enumerated::#enumeral;
@@ -163,7 +166,7 @@ pub fn enum_value_template(comments: TokenStream, name: Ident, enumerated: Ident
 
 pub fn null_template(
     comments: TokenStream,
-    name: Ident,
+    name: TokenStream,
     annotations: TokenStream,
 ) -> TokenStream {
     quote! {
@@ -176,7 +179,7 @@ pub fn null_template(
 
 pub fn any_template(
     comments: TokenStream,
-    name: Ident,
+    name: TokenStream,
     annotations: TokenStream,
 ) -> TokenStream {
     quote! {
@@ -189,7 +192,7 @@ pub fn any_template(
 
 pub fn oid_template(
     comments: TokenStream,
-    name: Ident,
+    name: TokenStream,
     annotations: TokenStream,
 ) -> TokenStream {
     quote! {
@@ -202,7 +205,7 @@ pub fn oid_template(
 
 pub fn enumerated_template(
     comments: TokenStream,
-    name: Ident,
+    name: TokenStream,
     extensible: TokenStream,
     enum_members: TokenStream,
     annotations: TokenStream,
@@ -220,42 +223,44 @@ pub fn enumerated_template(
 
 pub fn sequence_or_set_template(
     comments: TokenStream,
-    name: Ident,
+    name: TokenStream,
     extensible: TokenStream,
     members: TokenStream,
     nested_members: Vec<TokenStream>,
     annotations: TokenStream,
     default_methods: TokenStream,
     new_impl: TokenStream,
-    class_fields: TokenStream
+    class_fields: TokenStream,
 ) -> TokenStream {
     quote! {
-            #(#nested_members)*
-            #comments
-            #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
-            #annotations
-            #extensible
-            pub struct #name {
-                #members
-            }
-
-            #new_impl
-
-            #class_fields
-
-            #default_methods
+        #(#nested_members)*
+        #comments
+        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+        #annotations
+        #extensible
+        pub struct #name {
+            #members
         }
+
+        #new_impl
+
+        #class_fields
+
+        #default_methods
+    }
 }
 
 pub fn sequence_or_set_of_template(
     is_set_of: bool,
     comments: TokenStream,
-    name: Ident,
+    name: TokenStream,
     anonymous_item: TokenStream,
-    member_type: Ident,
+    member_type: TokenStream,
     annotations: TokenStream,
 ) -> TokenStream {
-    let generic_type = is_set_of.then(|| quote!(SetOf)).unwrap_or(quote!(SequenceOf));
+    let generic_type = is_set_of
+        .then(|| quote!(SetOf))
+        .unwrap_or(quote!(SequenceOf));
     quote! {
             #anonymous_item
             #comments
@@ -267,7 +272,7 @@ pub fn sequence_or_set_of_template(
 
 pub fn choice_template(
     comments: TokenStream,
-    name: Ident,
+    name: TokenStream,
     extensible: TokenStream,
     options: TokenStream,
     nested_options: Vec<TokenStream>,
