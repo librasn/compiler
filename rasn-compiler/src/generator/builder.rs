@@ -103,7 +103,7 @@ pub fn generate_integer_value(tld: ToplevelValueDeclaration) -> Result<TokenStre
             Ok(integer_value_template(
                 format_comments(&tld.comments)?,
                 to_rust_const_case(&tld.name),
-                quote!(ConstInteger),
+                quote!(Integer),
                 value,
             ))
         } else {
