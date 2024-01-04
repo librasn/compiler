@@ -46,15 +46,12 @@ pub fn int_type_token(
     opt_min: Option<i128>,
     opt_max: Option<i128>,
     is_extensible: bool,
-    const_used: bool,
 ) -> Ident {
     if let (Some(min), Some(max)) = (opt_min, opt_max) {
         format_ident!(
             "{}",
-            crate::intermediate::utils::int_type_token(min, max, is_extensible, const_used)
+            crate::intermediate::utils::int_type_token(min, max, is_extensible)
         )
-    } else if const_used {
-        format_ident!("i64")
     } else {
         format_ident!("Integer")
     }
@@ -353,7 +350,6 @@ fn constraints_and_type_name(
                     per_constraints.min(),
                     per_constraints.max(),
                     per_constraints.is_extensible(),
-                    i.used_in_const,
                 )
                 .to_token_stream(),
             )
@@ -899,7 +895,6 @@ mod tests {
                             name: "testMember1".into(),
                             tag: None,
                             r#type: ASN1Type::Integer(Integer {
-                                used_in_const: true,
                                 distinguished_values: None,
                                 constraints: vec![Constraint::SubtypeConstraint(ElementSet {
                             extensible: false,
@@ -925,7 +920,7 @@ mod tests {
             r#"
                 pub test_member0: Option<bool>,
                 #[rasn(extension_addition, value("4", extensible), default = "parent_test_member1_default")]
-                pub test_member1: i64,
+                pub test_member1: Integer,
             "#
         );
     }
@@ -984,7 +979,6 @@ mod tests {
                             name: "testMember1".into(),
                             tag: None,
                             r#type: ASN1Type::Integer(Integer {
-                                used_in_const: true,
                                 distinguished_values: None,
                                 constraints: vec![Constraint::SubtypeConstraint(ElementSet {
                                     extensible: false,
@@ -1007,7 +1001,7 @@ mod tests {
             r#"
                 testMember0(bool),
                 #[rasn(extension_addition, value("4", extensible))]
-                testMember1(i64),
+                testMember1(Integer),
             "#
         );
     }

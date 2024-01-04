@@ -428,7 +428,6 @@ mod tests {
                                 extensible: false
                             })],
                             distinguished_values: None,
-                            used_in_const: false
                         }),
                         default_value: None,
                         is_optional: false,
@@ -633,7 +632,6 @@ mod tests {
                                 extensible: false
                             })],
                             distinguished_values: None,
-                            used_in_const: false
                         }),
                         default_value: None,
                         is_optional: false,
@@ -664,7 +662,6 @@ mod tests {
                                             }
                                         )],
                                         distinguished_values: None,
-                                        used_in_const: false
                                     }),
                                     default_value: None,
                                     is_optional: false,

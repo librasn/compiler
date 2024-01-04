@@ -6,6 +6,7 @@
 //! data elements resolve, and checks for conflicting
 //! constraints and value definitions.
 pub(crate) mod error;
+mod linking;
 
 use std::{collections::BTreeMap, error::Error};
 
@@ -142,38 +143,15 @@ impl Validator {
                     }
                 }
             }
-            if self.contains_unbounded_integer(&key) {
-                if let Some(ToplevelDeclaration::Type(mut tld)) = self.tlds.remove(&key) {
-                    if self.is_used_in_const(&tld.name) {
-                        tld.r#type.make_unbounded_integer_constable();
-                    }
-                    self.tlds
-                        .insert(tld.name.clone(), ToplevelDeclaration::Type(tld));
-                }
-            }
         }
 
         Ok((self, warnings))
-    }
-
-    fn is_used_in_const(&self, type_id: &String) -> bool {
-        self.tlds.values().any(|tld| match tld {
-            ToplevelDeclaration::Value(v) => &v.type_name == type_id,
-            _ => false
-        })
     }
 
     fn has_constraint_reference(&mut self, key: &String) -> bool {
         self.tlds
             .get(key)
             .map(ToplevelDeclaration::has_constraint_reference)
-            .unwrap_or(false)
-    }
-
-    fn contains_unbounded_integer(&mut self, key: &String) -> bool {
-        self.tlds
-            .get(key)
-            .map(ToplevelDeclaration::contains_unbounded_integer)
             .unwrap_or(false)
     }
 

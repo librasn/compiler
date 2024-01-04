@@ -2,15 +2,11 @@ use std::{collections::BTreeMap, str::FromStr};
 
 use super::{
     information_object::{InformationObjectClassField, ObjectFieldIdentifier},
-    ASN1Value, ToplevelDeclaration, error::GrammarError,
+    ASN1Value, ToplevelDeclaration,
 };
 
-use quote::quote;
-
-pub fn int_type_token<'a>(min: i128, max: i128, is_extensible: bool, const_used: bool) -> &'a str {
-    if is_extensible && const_used {
-        "i64"
-    } else if is_extensible {
+pub fn int_type_token<'a>(min: i128, max: i128, is_extensible: bool) -> &'a str {
+    if is_extensible {
         "Integer"
     } else if min >= 0 {
         match max {
@@ -18,7 +14,6 @@ pub fn int_type_token<'a>(min: i128, max: i128, is_extensible: bool, const_used:
             r if r <= u16::MAX.into() => "u16",
             r if r <= u32::MAX.into() => "u32",
             r if r <= u64::MAX.into() => "u64",
-            _ if const_used => "i64",
             _ => "Integer",
         }
     } else {
@@ -27,7 +22,6 @@ pub fn int_type_token<'a>(min: i128, max: i128, is_extensible: bool, const_used:
             (mi, ma) if mi >= i16::MIN.into() && ma <= i16::MAX.into() => "i16",
             (mi, ma) if mi >= i32::MIN.into() && ma <= i32::MAX.into() => "i32",
             (mi, ma) if mi >= i64::MIN.into() && ma <= i64::MAX.into() => "i64",
-            _ if const_used => "i64",
             _ => "Integer",
         }
     }
@@ -175,14 +169,14 @@ mod tests {
 
     #[test]
     fn determines_int_type() {
-        assert_eq!(int_type_token(600, 600, false, false), "u16");
-        assert_eq!(int_type_token(0, 0, false, false), "u8");
-        assert_eq!(int_type_token(-1, 1, false, false), "i8");
+        assert_eq!(int_type_token(600, 600, false), "u16");
+        assert_eq!(int_type_token(0, 0, false), "u8");
+        assert_eq!(int_type_token(-1, 1, false), "i8");
         assert_eq!(
-            int_type_token(0, 124213412341389457931857915125, false, false),
+            int_type_token(0, 124213412341389457931857915125, false),
             "Integer"
         );
-        assert_eq!(int_type_token(-67463, 23123, false, false), "i32");
-        assert_eq!(int_type_token(255, 257, false, false), "u16");
+        assert_eq!(int_type_token(-67463, 23123, false), "i32");
+        assert_eq!(int_type_token(255, 257, false), "u16");
     }
 }

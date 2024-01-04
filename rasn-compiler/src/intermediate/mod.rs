@@ -608,14 +608,6 @@ impl ToplevelDeclaration {
         }
     }
 
-    /// Traverses a top-level declaration to check for unbounded integers in types
-    pub fn contains_unbounded_integer(&self) -> bool {
-        match self {
-            ToplevelDeclaration::Type(t) => t.r#type.contains_unbounded_integer(),
-            _ => false,
-        }
-    }
-
     /// Traverses a top-level declaration to replace references to other top-level declarations
     /// in a SEQUENCE's or SET's DEFAULT values.
     pub fn link_default_reference(&mut self, tlds: &BTreeMap<String, ToplevelDeclaration>) -> bool {
@@ -859,45 +851,6 @@ impl ASN1Type {
 }
 
 impl ASN1Type {
-    pub fn make_unbounded_integer_constable(&mut self) -> bool {
-        match self {
-            ASN1Type::Sequence(s) | ASN1Type::Set(s) => s
-                .members
-                .iter_mut()
-                .map(|m| m.r#type.make_unbounded_integer_constable())
-                .fold(false, |acc, b| acc || b),
-            ASN1Type::Choice(c) => c
-                .options
-                .iter_mut()
-                .map(|o| o.r#type.make_unbounded_integer_constable())
-                .fold(false, |acc, b| acc || b),
-            ASN1Type::SequenceOf(s) | ASN1Type::SetOf(s) => s.r#type.contains_unbounded_integer(),
-            ASN1Type::Integer(i) => {
-                i.used_in_const = true;
-                true
-            }
-            _ => false,
-        }
-    }
-
-    pub fn contains_unbounded_integer(&self) -> bool {
-        match self {
-            ASN1Type::Sequence(s) | ASN1Type::Set(s) => s
-                .members
-                .iter()
-                .map(|m| m.r#type.contains_unbounded_integer())
-                .fold(false, |acc, b| acc || b),
-            ASN1Type::Choice(c) => c
-                .options
-                .iter()
-                .map(|o| o.r#type.contains_unbounded_integer())
-                .fold(false, |acc, b| acc || b),
-            ASN1Type::SequenceOf(s) | ASN1Type::SetOf(s) => s.r#type.contains_unbounded_integer(),
-            ASN1Type::Integer(i) => i.type_token() == "Integer",
-            _ => false,
-        }
-    }
-
     pub fn has_choice_selection_type(&self) -> bool {
         match self {
             ASN1Type::ChoiceSelectionType(_) => true,

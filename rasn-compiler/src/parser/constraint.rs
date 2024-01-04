@@ -893,7 +893,6 @@ mod tests {
                                         extensible: false
                                     })],
                                     distinguished_values: None,
-                                    used_in_const: false
                                 })
                             })
                         ])),

@@ -35,7 +35,7 @@ e2e_pdu!(
         test-int-val Test-Int ::= 4"#,
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]
         #[rasn(delegate)]
-        pub struct TestInt(pub i64);
+        pub struct TestInt(pub Integer);
         pub const TEST_INT_VAL: TestInt = TestInt(4);                                 "#
 );
 
@@ -61,7 +61,7 @@ e2e_pdu!(
         test-int-val Test-Int ::= 4"#,
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]
         #[rasn(delegate, value("4", extensible))]
-        pub struct TestInt(pub i64);
+        pub struct TestInt(pub Integer);
         pub const TEST_INT_VAL: TestInt = TestInt(4);                                 "#
 );
 
@@ -82,7 +82,7 @@ e2e_pdu!(
         test-int-val Test-Int ::= 5"#,
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]
         #[rasn(delegate, value("4..=6", extensible))]
-        pub struct TestInt(pub i64);
+        pub struct TestInt(pub Integer);
         pub const TEST_INT_VAL: TestInt = TestInt(5);                                 "#
 );
 

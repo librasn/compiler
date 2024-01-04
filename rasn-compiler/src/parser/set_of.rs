@@ -160,7 +160,6 @@ mod tests {
                         name: "one-distinguished-value".into(),
                         value: 12
                     }]),
-                    used_in_const: false
                 }))
             })
         );

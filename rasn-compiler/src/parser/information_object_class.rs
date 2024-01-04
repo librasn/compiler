@@ -284,7 +284,6 @@ mod tests {
                                     r#type: ASN1Type::Integer(Integer {
                                         constraints: vec![],
                                         distinguished_values: None,
-                                        used_in_const: false
                                     }),
                                     constraints: vec![]
                                 },
