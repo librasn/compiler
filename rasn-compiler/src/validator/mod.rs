@@ -110,42 +110,15 @@ impl Validator {
                 }
                 self.tlds.insert(tld.name().clone(), tld);
             }
-            if let Some(ToplevelDeclaration::Value(mut tld)) = self.tlds.get(&key).cloned() {
-                if let ASN1Value::ElsewhereDeclaredValue{ identifier: id, ..} = &tld.value {
-                    match self.tlds.get(&tld.type_name) {
-                        Some(ToplevelDeclaration::Type(ty)) => match ty.r#type {
-                            ASN1Type::Integer(ref int) if int.distinguished_values.is_some() => {
-                                if let Some(val) = int
-                                    .distinguished_values
-                                    .as_ref()
-                                    .unwrap()
-                                    .iter()
-                                    .find_map(|dv| (&dv.name == id).then(|| dv.value))
-                                {
-                                    tld.value = ASN1Value::Integer(val);
-                                    self.tlds.remove(&key);
-                                    self.tlds
-                                        .insert(tld.name.clone(), ToplevelDeclaration::Value(tld));
-                                }
-                            }
-                            ASN1Type::Enumerated(_) => {
-                                tld.value = ASN1Value::EnumeratedValue {
-                                    enumerated: ty.name.clone(),
-                                    enumerable: id.to_owned(),
-                                };
-                                self.tlds.remove(&key);
-                                self.tlds
-                                    .insert(tld.name.clone(), ToplevelDeclaration::Value(tld));
-                            }
-                            _ => (),
-                        },
-                        _ => (),
-                    }
-                }
-            }
         }
 
         Ok((self, warnings))
+    }
+
+    fn associate_types_and_values(&mut self, key: &String) {
+        if let Some(tld) = self.tlds.remove(key) {
+            
+        }
     }
 
     fn has_constraint_reference(&mut self, key: &String) -> bool {

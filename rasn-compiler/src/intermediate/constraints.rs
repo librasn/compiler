@@ -1,9 +1,9 @@
-use std::{collections::BTreeMap, error::Error};
+use std::error::Error;
 
 use super::{
     error::{GrammarError, GrammarErrorType},
     information_object::{InformationObjectFields, ObjectSet},
-    ASN1Type, ASN1Value, ToplevelDeclaration,
+    ASN1Type, ASN1Value,
 };
 
 #[derive(Debug, PartialEq)]

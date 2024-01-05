@@ -19,15 +19,10 @@ use std::{collections::BTreeMap, ops::Add, rc::Rc};
 
 use constraints::Constraint;
 use error::{GrammarError, GrammarErrorType};
-use information_object::{
-    InformationObjectClass, InformationObjectFieldReference, ObjectFieldIdentifier,
-    ToplevelInformationDeclaration,
-};
+use information_object::{InformationObjectFieldReference, ToplevelInformationDeclaration};
 use parameterization::Parameterization;
 use types::*;
 use utils::*;
-
-use self::information_object::{FixedValueField, InformationObjectField, SyntaxToken};
 
 // Comment tokens
 pub const BLOCK_COMMENT_START: &'static str = "/*";
@@ -547,18 +542,24 @@ impl ToplevelDeclaration {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+pub enum AssociatedType {
+    Name(String),
+    Reference(ASN1Type),
+}
+
+impl From<&str> for AssociatedType {
+    fn from(value: &str) -> Self {
+        AssociatedType::Name(value.into())
+    }
+}
+
+#[derive(Debug, Clone, PartialEq)]
 pub struct ToplevelValueDeclaration {
     pub comments: String,
     pub name: String,
-    pub type_name: String,
+    pub associated_type: AssociatedType,
     pub value: ASN1Value,
     pub index: Option<(Rc<ModuleReference>, usize)>,
-}
-
-impl ToplevelValueDeclaration {
-    pub fn pdu(&self) -> &ASN1Value {
-        &self.value
-    }
 }
 
 impl From<(Vec<&str>, &str, &str, ASN1Value)> for ToplevelValueDeclaration {
@@ -566,7 +567,7 @@ impl From<(Vec<&str>, &str, &str, ASN1Value)> for ToplevelValueDeclaration {
         Self {
             comments: value.0.join("\n"),
             name: value.1.into(),
-            type_name: value.2.into(),
+            associated_type: value.2.into(),
             value: value.3,
             index: None,
         }

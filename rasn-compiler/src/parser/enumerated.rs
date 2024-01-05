@@ -25,7 +25,7 @@ pub fn enumerated_value<'a>(input: &'a str) -> IResult<&'a str, ToplevelValueDec
                 acc
             }),
             name: n.to_string(),
-            type_name: p.to_string(),
+            associated_type: p.into(),
             value: ASN1Value::EnumeratedValue {
                 enumerated: p.to_string(),
                 enumerable: e.to_string(),
@@ -325,7 +325,7 @@ mod tests {
             ToplevelValueDeclaration {
                 comments: String::from("\n Alias of another enumeral"),
                 name: String::from("enumeral-alias"),
-                type_name: String::from("Test-Enum"),
+                associated_type: "Test-Enum".into(),
                 value: ASN1Value::EnumeratedValue {
                     enumerated: String::from("Test-Enum"),
                     enumerable: String::from("enumeral")

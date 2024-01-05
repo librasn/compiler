@@ -66,8 +66,8 @@ pub fn generate_time_value(tld: ToplevelValueDeclaration) -> Result<TokenStream,
         Ok(time_value_template(
             format_comments(&tld.comments)?,
             to_rust_const_case(&tld.name),
-            to_rust_title_case(&tld.type_name),
-            value_to_tokens(&tld.value, Some(&to_rust_title_case(&tld.type_name)))?,
+            to_rust_title_case(&tld.associated_type),
+            value_to_tokens(&tld.value, Some(&to_rust_title_case(&tld.associated_type)))?,
         ))
     } else {
         Err(GeneratorError::new(
@@ -99,7 +99,7 @@ pub fn generate_typealias(tld: ToplevelTypeDeclaration) -> Result<TokenStream, G
 pub fn generate_integer_value(tld: ToplevelValueDeclaration) -> Result<TokenStream, GeneratorError> {
     if let ASN1Value::Integer(i) = tld.value {
         let value = Literal::i128_unsuffixed(i).to_token_stream();
-        if tld.type_name == INTEGER {
+        if tld.associated_type == INTEGER {
             Ok(integer_value_template(
                 format_comments(&tld.comments)?,
                 to_rust_const_case(&tld.name),
@@ -107,7 +107,7 @@ pub fn generate_integer_value(tld: ToplevelValueDeclaration) -> Result<TokenStre
                 value,
             ))
         } else {
-            let ty = to_rust_title_case(&tld.type_name);
+            let ty = to_rust_title_case(&tld.associated_type);
             Ok(integer_value_template(
                 format_comments(&tld.comments)?,
                 to_rust_const_case(&tld.name),
@@ -342,7 +342,7 @@ pub fn generate_enumerated(tld: ToplevelTypeDeclaration) -> Result<TokenStream, 
 pub fn generate_choice_value(tld: ToplevelValueDeclaration) -> Result<TokenStream, GeneratorError> {
     if let ASN1Value::Choice(ref choice, inner) = tld.value {
         let name = to_rust_const_case(&tld.name);
-        let type_id = to_rust_title_case(&tld.type_name);
+        let type_id = to_rust_title_case(&tld.associated_type);
         let choice_name = to_rust_enum_identifier(choice);
         let inner_decl = value_to_tokens(&inner, None)?;
         Ok(quote! {

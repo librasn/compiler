@@ -187,6 +187,19 @@ impl ToplevelDeclaration {
     }
 }
 
+impl ToplevelValueDeclaration {
+    /// For generating correct rust representations of ASN1 values, 
+    /// the associated type data needs to be accessible for the generator. 
+    /// Otherwise cases like nested Newtypes will not work correctly.
+    pub fn associate_types_and_values(&mut self, tlds: &BTreeMap<String, ToplevelDeclaration>) {
+        if let AssociatedType::Name(name) = &self.associated_type {
+            if let Some(ToplevelDeclaration::Type(tld)) = tlds.get(name) {
+                self.associated_type = AssociatedType::Reference(tld.r#type.clone())
+            }
+        }
+    }
+}
+
 impl ASN1Type {
     pub fn has_choice_selection_type(&self) -> bool {
         match self {

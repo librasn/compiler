@@ -1,9 +1,4 @@
-use std::{collections::BTreeMap, str::FromStr};
-
-use super::{
-    information_object::{InformationObjectClassField, ObjectFieldIdentifier},
-    ASN1Value, ToplevelDeclaration,
-};
+use std::str::FromStr;
 
 pub fn int_type_token<'a>(min: i128, max: i128, is_extensible: bool) -> &'a str {
     if is_extensible {
