@@ -73,10 +73,9 @@ pub struct Integer {
 
 impl Integer {
     pub fn type_token(&self) -> String {
-        let (min, max, extensible) = self
-            .constraints
-            .iter()
-            .fold((i128::MAX, i128::MIN, false), |(mut min, mut max, mut ext), c| {
+        let (min, max, extensible) = self.constraints.iter().fold(
+            (i128::MAX, i128::MIN, false),
+            |(mut min, mut max, mut ext), c| {
                 if let Ok((cmin, cmax, extensible)) = c.unpack_as_value_range() {
                     ext = ext || extensible;
                     if let Some(ASN1Value::Integer(i)) = cmin {
@@ -93,7 +92,8 @@ impl Integer {
                     };
                 };
                 (min, max, ext)
-            });
+            },
+        );
         if min > max {
             "Integer".to_owned()
         } else {
@@ -378,13 +378,49 @@ pub enum SequenceComponent {
     ComponentsOf(String),
 }
 
+/// Helper enum to express `DEFAULT` values
+#[derive(Debug, Clone, PartialEq)]
+pub enum DefaultValue {
+    None,
+    WithTypereference {
+        typereference: String,
+        value: ASN1Value,
+    },
+    WithTypereferenceChain {
+        typereferences: Vec<String>,
+        base_type: ASN1Type,
+        value: ASN1Value,
+    },
+}
+
+impl DefaultValue {
+    fn from_type_and_value(ty: &ASN1Type, value: Option<ASN1Value>) -> Self {
+        match (ty, value) {
+            (ASN1Type::ElsewhereDeclaredType(e), Some(v)) => DefaultValue::WithTypereference {
+                typereference: e.identifier.clone(),
+                value: v,
+            },
+            (t, Some(v)) => DefaultValue::WithTypereferenceChain {
+                typereferences: vec![],
+                base_type: t.clone(),
+                value: v,
+            },
+            (_, None) => DefaultValue::None
+        }
+    }
+
+    pub fn is_none(&self) -> bool {
+        self == &DefaultValue::None
+    }
+}
+
 /// Representation of an single ASN1 SEQUENCE member
 #[derive(Debug, Clone, PartialEq)]
 pub struct SequenceOrSetMember {
     pub name: String,
     pub tag: Option<AsnTag>,
     pub r#type: ASN1Type,
-    pub default_value: Option<ASN1Value>,
+    pub default_value: DefaultValue,
     pub is_optional: bool,
     pub constraints: Vec<Constraint>,
 }
@@ -412,9 +448,9 @@ impl
         SequenceOrSetMember {
             name: value.0.into(),
             tag: value.1,
+            default_value: DefaultValue::from_type_and_value(&value.2, value.5),
             r#type: value.2,
             is_optional: value.4.is_some() || value.5.is_some(),
-            default_value: value.5,
             constraints: value.3.unwrap_or(vec![]),
         }
     }

@@ -91,7 +91,7 @@ fn extension_group<'a>(input: &'a str) -> IResult<&'a str, SequenceComponent> {
                     constraints: vec![],
                     members,
                 }),
-                default_value: None,
+                default_value: DefaultValue::None,
                 is_optional: false,
                 constraints: vec![],
             })
@@ -215,7 +215,7 @@ mod tests {
                     r#type: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere { parent: None,
                         identifier: "Shape".into(), constraints: vec![Constraint::SubtypeConstraint(ElementSet { set: ElementOrSetOperation::Element(SubtypeElement::SingleTypeConstraint(InnerTypeConstraint { is_partial: true, constraints: vec![ConstrainedComponent { identifier: "elliptical".into(), constraints: vec![], presence: ComponentPresence::Absent },ConstrainedComponent { identifier: "radial".into(), constraints: vec![], presence: ComponentPresence::Absent },ConstrainedComponent { identifier: "radialShapes".into(), constraints: vec![], presence: ComponentPresence::Absent }] })), extensible: false })
                      ]}),
-                    default_value: None,
+                    default_value: DefaultValue::None,
                     is_optional: true,
                     constraints: vec![],
                 }
@@ -249,7 +249,7 @@ mod tests {
                             identifier: "AccelerationValue".into(),
                             constraints: vec![]
                         }),
-                        default_value: None,
+                        default_value: DefaultValue::None,
                         is_optional: false,
                         constraints: vec![]
                     },
@@ -262,7 +262,7 @@ mod tests {
                             identifier: "AccelerationConfidence".into(),
                             constraints: vec![]
                         }),
-                        default_value: None,
+                        default_value: DefaultValue::None,
                         is_optional: false,
                         constraints: vec![],
                     }
@@ -298,7 +298,7 @@ mod tests {
                             identifier: "CartesianCoordinateWithConfidence".into(),
                             constraints: vec![]
                         }),
-                        default_value: None,
+                        default_value: DefaultValue::None,
                         is_optional: false,
                         constraints: vec![],
                     },
@@ -310,7 +310,7 @@ mod tests {
                             identifier: "CartesianCoordinateWithConfidence".into(),
                             constraints: vec![]
                         }),
-                        default_value: None,
+                        default_value: DefaultValue::None,
                         is_optional: false,
                         constraints: vec![],
                     },
@@ -322,7 +322,7 @@ mod tests {
                             identifier: "CartesianCoordinateWithConfidence".into(),
                             constraints: vec![]
                         }),
-                        default_value: None,
+                        default_value: DefaultValue::None,
                         is_optional: true,
                         constraints: vec![],
                     }
@@ -358,7 +358,7 @@ mod tests {
                             identifier: "PosConfidenceEllipse".into(),
                             constraints: vec![]
                         }),
-                        default_value: None,
+                        default_value: DefaultValue::None,
                         is_optional: true,
                         constraints: vec![],
                     },
@@ -370,10 +370,13 @@ mod tests {
                             identifier: "DeltaAltitude".into(),
                             constraints: vec![]
                         }),
-                        default_value: Some(ASN1Value::ElsewhereDeclaredValue {
-                            identifier: "unavailable".into(),
-                            parent: None
-                        }),
+                        default_value: DefaultValue::WithTypereference {
+                            typereference: "DeltaAltitude".into(),
+                            value: ASN1Value::ElsewhereDeclaredValue {
+                                identifier: "unavailable".into(),
+                                parent: None
+                            }
+                        },
                         is_optional: true,
                         constraints: vec![],
                     },
@@ -385,10 +388,13 @@ mod tests {
                             identifier: "AltitudeConfidence".into(),
                             constraints: vec![]
                         }),
-                        default_value: Some(ASN1Value::ElsewhereDeclaredValue {
-                            identifier: "unavailable".into(),
-                            parent: None
-                        }),
+                        default_value: DefaultValue::WithTypereference {
+                            typereference: "AltitudeConfidence".into(),
+                            value: ASN1Value::ElsewhereDeclaredValue {
+                                identifier: "unavailable".into(),
+                                parent: None
+                            }
+                        },
                         is_optional: true,
                         constraints: vec![],
                     }
@@ -429,7 +435,7 @@ mod tests {
                             })],
                             distinguished_values: None,
                         }),
-                        default_value: None,
+                        default_value: DefaultValue::None,
                         is_optional: false,
                         constraints: vec![],
                     },
@@ -439,7 +445,13 @@ mod tests {
                         r#type: ASN1Type::Boolean(Boolean {
                             constraints: vec![]
                         }),
-                        default_value: Some(ASN1Value::Boolean(false)),
+                        default_value: DefaultValue::WithTypereferenceChain {
+                            typereferences: vec![],
+                            base_type: ASN1Type::Boolean(Boolean {
+                                constraints: vec![]
+                            }),
+                            value: ASN1Value::Boolean(false)
+                        },
                         is_optional: true,
                         constraints: vec![],
                     },
@@ -462,7 +474,7 @@ mod tests {
                                 extensible: false
                             })],
                         }),
-                        default_value: None,
+                        default_value: DefaultValue::None,
                         is_optional: true,
                         constraints: vec![],
                     }
@@ -513,7 +525,7 @@ mod tests {
                                     identifier: "Wow".into(),
                                     constraints: vec![]
                                 }),
-                                default_value: None,
+                                default_value: DefaultValue::None,
                                 is_optional: false,
                                 constraints: vec![],
                             },
@@ -524,7 +536,13 @@ mod tests {
                                 r#type: ASN1Type::Boolean(Boolean {
                                     constraints: vec![]
                                 }),
-                                default_value: Some(ASN1Value::Boolean(true)),
+                                default_value: DefaultValue::WithTypereferenceChain {
+                                    typereferences: vec![],
+                                    base_type: ASN1Type::Boolean(Boolean {
+                                        constraints: vec![]
+                                    }),
+                                    value: ASN1Value::Boolean(true)
+                                },
                                 is_optional: true,
                                 constraints: vec![],
                             },
@@ -558,18 +576,39 @@ mod tests {
                                             )],
                                             distinguished_values: None
                                         }),
-                                        default_value: Some(ASN1Value::BitString(vec![false])),
+                                        default_value: DefaultValue::WithTypereferenceChain {
+                                            typereferences: vec![],
+                                            base_type: ASN1Type::BitString(BitString {
+                                                constraints: vec![Constraint::SubtypeConstraint(
+                                                ElementSet {
+                                                    set: ElementOrSetOperation::Element(
+                                                        SubtypeElement::SizeConstraint(Box::new(
+                                                            ElementOrSetOperation::Element(
+                                                                SubtypeElement::SingleValue {
+                                                                    value: ASN1Value::Integer(1),
+                                                                    extensible: true
+                                                                }
+                                                            )
+                                                        ))
+                                                    ),
+                                                    extensible: false
+                                                }
+                                            )],
+                                                distinguished_values: None
+                                            }),
+                                            value: ASN1Value::BitString(vec![false])
+                                        },
                                         is_optional: true,
                                         constraints: vec![],
                                     }]
                                 }),
-                                default_value: None,
+                                default_value: DefaultValue::None,
                                 is_optional: true,
                                 constraints: vec![],
                             }
                         ]
                     }),
-                    default_value: None,
+                    default_value: DefaultValue::None,
                     is_optional: false,
                     constraints: vec![],
                 }]
@@ -633,7 +672,7 @@ mod tests {
                             })],
                             distinguished_values: None,
                         }),
-                        default_value: None,
+                        default_value: DefaultValue::None,
                         is_optional: false,
                         constraints: vec![]
                     },
@@ -663,7 +702,7 @@ mod tests {
                                         )],
                                         distinguished_values: None,
                                     }),
-                                    default_value: None,
+                                    default_value: DefaultValue::None,
                                     is_optional: false,
                                     constraints: vec![]
                                 },
@@ -673,13 +712,19 @@ mod tests {
                                     r#type: ASN1Type::Boolean(Boolean {
                                         constraints: vec![]
                                     }),
-                                    default_value: Some(ASN1Value::Boolean(true)),
+                                    default_value: DefaultValue::WithTypereferenceChain {
+                                    typereferences: vec![],
+                                    base_type: ASN1Type::Boolean(Boolean {
+                                        constraints: vec![]
+                                    }),
+                                    value: ASN1Value::Boolean(true)
+                                },
                                     is_optional: true,
                                     constraints: vec![]
                                 }
                             ]
                         }),
-                        default_value: None,
+                        default_value: DefaultValue::None,
                         is_optional: false,
                         constraints: vec![]
                     }
@@ -711,7 +756,7 @@ mod tests {
                         identifier: "TypeB".into(),
                         constraints: vec![]
                     }),
-                    default_value: None,
+                    default_value: DefaultValue::None,
                     is_optional: false,
                     constraints: vec![]
                 }]

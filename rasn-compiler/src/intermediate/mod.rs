@@ -543,8 +543,23 @@ impl ToplevelDeclaration {
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum AssociatedType {
+    /// Plain typereference of the value's type
     Name(String),
-    Reference(ASN1Type),
+    /// Typereference of value's type (at index 0) and typereferences
+    /// of any outer types that are wrapping the value's type.
+    /// ### Example
+    /// The associated type after linking of `exmpleValue` as part of the following ASN1
+    /// ```ignore
+    /// ExampleType ::= OuterExampleType (2..8)
+    /// OuterExampleType ::= RootType
+    /// RootType ::= INTEGER
+    /// exampleValue ExampleType ::= 6
+    /// ```
+    /// would be `AssociatedType::TypereferenceChain { typereferences: vec!["ExampleType", "OuterExampleType", "RootType"], base_type: ASN1Type::Integer(Integer { .. }) }`
+    TypereferenceChain {
+        typereferences: Vec<String>,
+        base_type: ASN1Type,
+    },
 }
 
 impl From<&str> for AssociatedType {
@@ -775,6 +790,23 @@ pub enum ASN1Value {
         identifier: String,
     },
     ObjectIdentifier(ObjectIdentifierValue),
+    /// In ASN1 value declarations, the value type is not straighforward to parse.
+    /// For example, in the following ASN1
+    /// ```ignore
+    /// ExampleInt ::= INTEGER
+    /// ExampleSubset ::= ExampleInt (1..500)
+    /// AnotherSubset ::= ExampleSubset (2..200)
+    /// ExampleSet ::= SET {
+    ///     int AnotherSubset DEFAULT 3
+    /// }
+    /// ```
+    /// the relation of the default value to `ExampleSubset` will not be picked up by the parser.
+    /// However, in some representations, this relation is critical information.  
+    LinkedASN1Value {
+        /// typereferences of supertypes
+        implied_supertypes: Vec<String>,
+        value: Box<ASN1Value>,
+    },
 }
 
 impl ASN1Value {
@@ -860,6 +892,7 @@ impl ASN1Value {
 /// being parsed or in one of its imports.
 #[derive(Debug, Clone, PartialEq)]
 pub struct DeclarationElsewhere {
+    /// Chain of parent declaration leading back to a basic ASN1 type
     pub parent: Option<String>,
     pub identifier: String,
     pub constraints: Vec<Constraint>,

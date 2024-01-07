@@ -3,11 +3,12 @@
 
 mod constraints;
 mod information_object;
+mod types;
 pub(self) mod utils;
 
 use std::collections::BTreeMap;
 
-use crate::intermediate::{*, types::*, utils::*, error::*, information_object::*};
+use crate::intermediate::{error::*, information_object::*, types::*, utils::*, *};
 
 use self::utils::find_tld_or_enum_value_by_name;
 
@@ -56,88 +57,86 @@ impl ToplevelDeclaration {
     pub fn is_class_with_name(&self, name: &String) -> Option<&InformationObjectClass> {
         match self {
             ToplevelDeclaration::Information(info) => match &info.value {
-                ASN1Information::ObjectClass(class) => {
-                    (&info.name == name).then(|| class)
-                }
+                ASN1Information::ObjectClass(class) => (&info.name == name).then(|| class),
                 _ => None,
             },
             _ => None,
         }
     }
 
-    /// Traverses a top-level declaration to check for references to other top-level declarations
-    /// in a SEQUENCE's or SET's DEFAULT values.
-    pub fn has_default_reference(&self) -> bool {
-        match self {
-            ToplevelDeclaration::Type(t) => match &t.r#type {
-                ASN1Type::Sequence(s) | ASN1Type::Set(s) => {
-                    s.members.iter().fold(false, |acc, m| {
-                        acc || m
-                            .default_value
-                            .as_ref()
-                            .map_or(false, |d| d.is_elsewhere_declared())
-                    })
-                }
-                _ => false,
-            },
-            _ => false,
-        }
-    }
+    // /// Traverses a top-level declaration to check for references to other top-level declarations
+    // /// in a SEQUENCE's or SET's DEFAULT values.
+    // pub fn has_default_reference(&self) -> bool {
+    //     match self {
+    //         ToplevelDeclaration::Type(t) => match &t.r#type {
+    //             ASN1Type::Sequence(s) | ASN1Type::Set(s) => {
+    //                 s.members.iter().fold(false, |acc, m| {
+    //                     acc || m
+    //                         .default_value
+    //                         .as_ref()
+    //                         .map_or(false, |d| d.is_elsewhere_declared())
+    //                 })
+    //             }
+    //             _ => false,
+    //         },
+    //         _ => false,
+    //     }
+    // }
 
-    /// Traverses a top-level declaration to replace references to other top-level declarations
-    /// in a SEQUENCE's or SET's DEFAULT values.
-    pub fn link_default_reference(&mut self, tlds: &BTreeMap<String, ToplevelDeclaration>) -> bool {
-        match self {
-            ToplevelDeclaration::Type(t) => match &mut t.r#type {
-                ASN1Type::Sequence(s) | ASN1Type::Set(s) => {
-                    s.members.iter_mut().fold(false, |acc, m| {
-                        if let Some(default) = m.default_value.as_mut() {
-                            let maybe_id =
-                                if let ASN1Value::ElsewhereDeclaredValue { identifier, .. } =
-                                    default
-                                {
-                                    Some(identifier.clone())
-                                } else {
-                                    None
-                                };
-                            if let Some(ToplevelDeclaration::Value(id)) =
-                                tlds.get(&maybe_id.clone().unwrap_or_default())
-                            {
-                                *default = id.value.clone();
-                                return true;
-                            }
-                            let enumerated_id = match &m.r#type {
-                                ASN1Type::Enumerated(_) => format!(
-                                    "{}{}",
-                                    to_rust_title_case(&t.name),
-                                    to_rust_title_case(&m.name)
-                                ),
-                                ASN1Type::ElsewhereDeclaredType(e) => {
-                                    if let Some(tld) = e.find_root_id(tlds) {
-                                        tld.name().clone()
-                                    } else {
-                                        return acc;
-                                    }
-                                }
-                                _ => return acc,
-                            };
-                            maybe_id.map_or(acc, |id| {
-                                *default = ASN1Value::EnumeratedValue {
-                                    enumerated: enumerated_id,
-                                    enumerable: id,
-                                };
-                                true
-                            })
-                        } else {
-                            acc
-                        }
-                    })
-                }
-                _ => false,
-            },
-            _ => false,
-        }
-    }
+    // /// Traverses a top-level declaration to replace references to other top-level declarations
+    // /// in a SEQUENCE's or SET's DEFAULT values.
+    // pub fn link_default_reference(&mut self, tlds: &BTreeMap<String, ToplevelDeclaration>) -> bool {
+    //     match self {
+    //         ToplevelDeclaration::Type(t) => match &mut t.r#type {
+    //             ASN1Type::Sequence(s) | ASN1Type::Set(s) => {
+    //                 s.members.iter_mut().fold(false, |acc, m| {
+    //                     if let Some(default) = m.default_value.as_mut() {
+    //                         let maybe_id =
+    //                             if let ASN1Value::ElsewhereDeclaredValue { identifier, .. } =
+    //                                 default
+    //                             {
+    //                                 Some(identifier.clone())
+    //                             } else {
+    //                                 None
+    //                             };
+    //                         if let Some(ToplevelDeclaration::Value(id)) =
+    //                             tlds.get(&maybe_id.clone().unwrap_or_default())
+    //                         {
+    //                             *default = id.value.clone();
+    //                             return true;
+    //                         }
+    //                         let enumerated_id = match &m.r#type {
+    //                             ASN1Type::Enumerated(_) => format!(
+    //                                 "{}{}",
+    //                                 to_rust_title_case(&t.name),
+    //                                 to_rust_title_case(&m.name)
+    //                             ),
+    //                             ASN1Type::ElsewhereDeclaredType(e) => {
+    //                                 if let Some(tld) = e.find_root_id(tlds) {
+    //                                     tld.name().clone()
+    //                                 } else {
+    //                                     return acc;
+    //                                 }
+    //                             }
+    //                             _ => return acc,
+    //                         };
+    //                         maybe_id.map_or(acc, |id| {
+    //                             *default = ASN1Value::EnumeratedValue {
+    //                                 enumerated: enumerated_id,
+    //                                 enumerable: id,
+    //                             };
+    //                             true
+    //                         })
+    //                     } else {
+    //                         acc
+    //                     }
+    //                 })
+    //             }
+    //             _ => false,
+    //         },
+    //         _ => false,
+    //     }
+    // }
 
     /// Traverses a top-level declaration to check for references to other top-level declarations
     /// in a constraint. An example would be the constraint of the `intercontinental` field in the
@@ -187,16 +186,87 @@ impl ToplevelDeclaration {
     }
 }
 
-impl ToplevelValueDeclaration {
-    /// For generating correct rust representations of ASN1 values, 
-    /// the associated type data needs to be accessible for the generator. 
+impl ToplevelTypeDeclaration {
+    /// For generating correct rust representations of ASN1 values,
+    /// the associated type data needs to be accessible for the generator.
     /// Otherwise cases like nested Newtypes will not work correctly.
-    pub fn associate_types_and_values(&mut self, tlds: &BTreeMap<String, ToplevelDeclaration>) {
+    /// In `ToplevelTypeDeclaration`s, values will appear only as `DEFAULT`
+    /// values in `SET`s or `SEQUENCE`s.
+    pub fn associate_types_and_values(
+        &mut self,
+        tlds: &BTreeMap<String, ToplevelDeclaration>,
+    ) -> Result<(), GrammarError> {
+        match self.r#type {
+            ASN1Type::Set(ref mut s) | ASN1Type::Sequence(ref mut s) => {
+                for m in s.members.iter_mut() {
+                    m.default_value.build_typereference_chain(tlds)?
+                }
+                Ok(())
+            }
+            _ => Ok(()),
+        }
+    }
+
+    /// Builds a chain of typereferences (see [AssociatedValue])
+    pub fn build_typereference_chain(
+        &self,
+        tlds: &BTreeMap<String, ToplevelDeclaration>,
+        mut chain: (Vec<String>, Option<ASN1Type>),
+    ) -> Result<(Vec<String>, Option<ASN1Type>), GrammarError> {
+        match self.r#type {
+            ASN1Type::ElsewhereDeclaredType(e) => {
+                if let Some(ToplevelDeclaration::Type(t)) = tlds.get(&e.identifier) {
+                    chain.0.push(e.identifier.clone());
+                    t.build_typereference_chain(tlds, chain)
+                } else {
+                    Err(GrammarError {
+                        details: format!(
+                            "Failed to build typereference chain for {}",
+                            chain.0.first().unwrap_or(&e.identifier)
+                        ),
+                        kind: GrammarErrorType::LinkerError,
+                    })
+                }
+            }
+            t => Ok((chain.0, Some(t.clone()))),
+        }
+    }
+}
+
+impl ToplevelValueDeclaration {
+    pub fn collect_implicit_supertypes(
+        &mut self,
+        tlds: &BTreeMap<String, ToplevelDeclaration>,
+    ) -> Result<(), GrammarError> {
         if let AssociatedType::Name(name) = &self.associated_type {
             if let Some(ToplevelDeclaration::Type(tld)) = tlds.get(name) {
-                self.associated_type = AssociatedType::Reference(tld.r#type.clone())
+                self.value.link_with_type(tlds, &tld.r#type)?;
             }
         }
+        Ok(())
+    }
+
+    /// For generating correct rust representations of ASN1 values,
+    /// the associated type data needs to be accessible for the generator.
+    /// Otherwise cases like nested Newtypes will not work correctly.
+    pub fn associate_types_and_values(
+        &mut self,
+        tlds: &BTreeMap<String, ToplevelDeclaration>,
+    ) -> Result<(), GrammarError> {
+        if let AssociatedType::Name(name) = &self.associated_type {
+            if let Some(ToplevelDeclaration::Type(tld)) = tlds.get(name) {
+                let (typereferences, base_type) =
+                    tld.build_typereference_chain(tlds, (vec![], None))?;
+                self.associated_type = AssociatedType::TypereferenceChain {
+                    typereferences,
+                    base_type: base_type.ok_or_else(|| GrammarError {
+                        details: format!("Failed to build typereference chain for {name}"),
+                        kind: GrammarErrorType::LinkerError,
+                    })?,
+                };
+            }
+        }
+        Ok(())
     }
 }
 
@@ -495,6 +565,73 @@ impl ASN1Type {
 }
 
 impl ASN1Value {
+    pub fn link_with_type(
+        &mut self,
+        tlds: &BTreeMap<String, ToplevelDeclaration>,
+        ty: &ASN1Type,
+    ) -> Result<(), GrammarError> {
+        match (ty, self) {
+            (
+                ASN1Type::ElsewhereDeclaredType(e),
+                ASN1Value::LinkedASN1Value {
+                    implied_supertypes, ..
+                },
+            ) => {
+                implied_supertypes.push(e.identifier.clone());
+                if let Some(ToplevelDeclaration::Type(t)) = tlds.get(&e.identifier) {
+                    self.link_with_type(tlds, &t.r#type)
+                } else {
+                    Err(GrammarError {
+                        details: format!("Failed to link value with '{}'", e.identifier),
+                        kind: GrammarErrorType::LinkerError,
+                    })
+                }
+            }
+            (ASN1Type::ElsewhereDeclaredType(e), val) => {
+                *self = ASN1Value::LinkedASN1Value {
+                    implied_supertypes: vec![e.identifier.clone()],
+                    value: Box::new(val.clone()),
+                };
+                if let Some(ToplevelDeclaration::Type(t)) = tlds.get(&e.identifier) {
+                    self.link_with_type(tlds, &t.r#type)
+                } else {
+                    Err(GrammarError {
+                        details: format!("Failed to link value with '{}'", e.identifier),
+                        kind: GrammarErrorType::LinkerError,
+                    })
+                }
+            }
+            (ASN1Type::Choice(c), ASN1Value::Choice(opt, val)) => {
+                if let Some(option) = c.options.iter().find(|o| &o.name == opt) {
+                    val.link_with_type(tlds, &option.r#type)
+                } else {
+                    Err(GrammarError {
+                        details: format!("Failed to link value with '{}'", opt),
+                        kind: GrammarErrorType::LinkerError,
+                    })
+                }
+            }
+            (ASN1Type::Set(s), ASN1Value::SequenceOrSet(val))
+            | (ASN1Type::Sequence(s), ASN1Value::SequenceOrSet(val)) => {
+                val.iter_mut().try_for_each(|v| {
+                    if let Some(member) = s.members.iter().find(|m| m.name == v.0) {
+                        v.1.link_with_type(tlds, &member.r#type)
+                    } else {
+                        Err(GrammarError {
+                            details: format!("Failed to link value with '{}'", v.0),
+                            kind: GrammarErrorType::LinkerError,
+                        })
+                    }
+                })
+            }
+            (ASN1Type::SetOf(s), ASN1Value::SequenceOrSetOf(val))
+            | (ASN1Type::SequenceOf(s), ASN1Value::SequenceOrSetOf(val)) => val
+                .iter_mut()
+                .try_for_each(|v| v.link_with_type(tlds, &s.r#type)),
+            _ => Ok(()),
+        }
+    }
+
     pub fn is_elsewhere_declared(&self) -> bool {
         match self {
             Self::ElsewhereDeclaredValue { .. }
@@ -586,9 +723,7 @@ impl ASN1Value {
                         };
                     }
                     for i in 0..c.len() {
-                        if let Some(SyntaxApplication::ValueReference(val)) =
-                            c.get(i)
-                        {
+                        if let Some(SyntaxApplication::ValueReference(val)) = c.get(i) {
                             match (c.get(i - 1), before, c.get(i + 1), after) {
                                 (Some(a), Some(b), _, _) if a.matches(b, &tokens) => {
                                     *self = val.clone();
@@ -618,7 +753,9 @@ impl ASN1Value {
         tlds: &BTreeMap<String, ToplevelDeclaration>,
     ) -> Result<bool, GrammarError> {
         match self {
-            Self::ElsewhereDeclaredValue { parent: Some(_), .. } => {
+            Self::ElsewhereDeclaredValue {
+                parent: Some(_), ..
+            } => {
                 return self.resolve_elsewhere_with_parent(tlds).map(|_| true);
             }
             Self::ElsewhereDeclaredValue {
@@ -657,6 +794,27 @@ impl DeclarationElsewhere {
             e.find_root_id(tlds)
         } else {
             tlds.get(&self.identifier)
+        }
+    }
+
+    pub fn collect_parent_ids(
+        &self,
+        tlds: &BTreeMap<String, ToplevelDeclaration>,
+        mut ids: Vec<String>,
+    ) -> Vec<String> {
+        if let Some(ToplevelDeclaration::Type(ToplevelTypeDeclaration {
+            comments: _,
+            tag: _,
+            name: id,
+            r#type: ASN1Type::ElsewhereDeclaredType(e),
+            parameterization: _,
+            index: _,
+        })) = tlds.get(&self.identifier)
+        {
+            ids.push(id.clone());
+            e.collect_parent_ids(tlds, ids)
+        } else {
+            ids
         }
     }
 }

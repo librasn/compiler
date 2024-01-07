@@ -670,7 +670,7 @@ mod tests {
                                     )]
                                 }
                             ),
-                            default_value: None,
+                            default_value: DefaultValue::None,
                             is_optional: false,
                             constraints: vec![]
                         },
@@ -699,7 +699,7 @@ mod tests {
                                     )]
                                 }
                             ),
-                            default_value: None,
+                            default_value: DefaultValue::None,
                             is_optional: false,
                             constraints: vec![]
                         }
