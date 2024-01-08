@@ -542,37 +542,10 @@ impl ToplevelDeclaration {
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub enum AssociatedType {
-    /// Plain typereference of the value's type
-    Name(String),
-    /// Typereference of value's type (at index 0) and typereferences
-    /// of any outer types that are wrapping the value's type.
-    /// ### Example
-    /// The associated type after linking of `exmpleValue` as part of the following ASN1
-    /// ```ignore
-    /// ExampleType ::= OuterExampleType (2..8)
-    /// OuterExampleType ::= RootType
-    /// RootType ::= INTEGER
-    /// exampleValue ExampleType ::= 6
-    /// ```
-    /// would be `AssociatedType::TypereferenceChain { typereferences: vec!["ExampleType", "OuterExampleType", "RootType"], base_type: ASN1Type::Integer(Integer { .. }) }`
-    TypereferenceChain {
-        typereferences: Vec<String>,
-        base_type: ASN1Type,
-    },
-}
-
-impl From<&str> for AssociatedType {
-    fn from(value: &str) -> Self {
-        AssociatedType::Name(value.into())
-    }
-}
-
-#[derive(Debug, Clone, PartialEq)]
 pub struct ToplevelValueDeclaration {
     pub comments: String,
     pub name: String,
-    pub associated_type: AssociatedType,
+    pub associated_type: String,
     pub value: ASN1Value,
     pub index: Option<(Rc<ModuleReference>, usize)>,
 }
@@ -804,9 +777,15 @@ pub enum ASN1Value {
     /// However, in some representations, this relation is critical information.  
     LinkedASN1Value {
         /// typereferences of supertypes
-        implied_supertypes: Vec<String>,
+        supertypes: Vec<String>,
         value: Box<ASN1Value>,
     },
+}
+
+impl AsMut<ASN1Value> for ASN1Value {
+    fn as_mut(&mut self) -> &mut ASN1Value {
+        self
+    }
 }
 
 impl ASN1Value {

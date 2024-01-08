@@ -3,7 +3,6 @@
 
 mod constraints;
 mod information_object;
-mod types;
 pub(self) mod utils;
 
 use std::collections::BTreeMap;
@@ -184,87 +183,60 @@ impl ToplevelDeclaration {
             _ => Ok(false),
         }
     }
+
+    /// Collects supertypes of ASN1 values.
+    pub fn collect_supertypes(
+        &mut self,
+        tlds: &BTreeMap<String, ToplevelDeclaration>,
+    ) -> Result<(), GrammarError> {
+        match self {
+            ToplevelDeclaration::Type(t) => t.collect_supertypes(tlds),
+            ToplevelDeclaration::Value(v) => v.collect_supertypes(tlds),
+            ToplevelDeclaration::Information(_) => todo!(),
+        }
+    }
 }
 
 impl ToplevelTypeDeclaration {
-    /// For generating correct rust representations of ASN1 values,
-    /// the associated type data needs to be accessible for the generator.
-    /// Otherwise cases like nested Newtypes will not work correctly.
+    /// Collects supertypes of ASN1 values.
     /// In `ToplevelTypeDeclaration`s, values will appear only as `DEFAULT`
     /// values in `SET`s or `SEQUENCE`s.
-    pub fn associate_types_and_values(
+    pub fn collect_supertypes(
         &mut self,
         tlds: &BTreeMap<String, ToplevelDeclaration>,
     ) -> Result<(), GrammarError> {
         match self.r#type {
             ASN1Type::Set(ref mut s) | ASN1Type::Sequence(ref mut s) => {
-                for m in s.members.iter_mut() {
-                    m.default_value.build_typereference_chain(tlds)?
-                }
-                Ok(())
+                s.members.iter_mut().try_for_each(|m| {
+                    m.default_value
+                        .as_mut()
+                        .map(|d| d.link_with_type(tlds, &m.r#type))
+                        .unwrap_or(Ok(()))
+                })
             }
             _ => Ok(()),
-        }
-    }
-
-    /// Builds a chain of typereferences (see [AssociatedValue])
-    pub fn build_typereference_chain(
-        &self,
-        tlds: &BTreeMap<String, ToplevelDeclaration>,
-        mut chain: (Vec<String>, Option<ASN1Type>),
-    ) -> Result<(Vec<String>, Option<ASN1Type>), GrammarError> {
-        match self.r#type {
-            ASN1Type::ElsewhereDeclaredType(e) => {
-                if let Some(ToplevelDeclaration::Type(t)) = tlds.get(&e.identifier) {
-                    chain.0.push(e.identifier.clone());
-                    t.build_typereference_chain(tlds, chain)
-                } else {
-                    Err(GrammarError {
-                        details: format!(
-                            "Failed to build typereference chain for {}",
-                            chain.0.first().unwrap_or(&e.identifier)
-                        ),
-                        kind: GrammarErrorType::LinkerError,
-                    })
-                }
-            }
-            t => Ok((chain.0, Some(t.clone()))),
         }
     }
 }
 
 impl ToplevelValueDeclaration {
-    pub fn collect_implicit_supertypes(
+    /// Collects supertypes and implicit supertypes of an ASN1 value
+    /// that are not straightforward to parse on first pass
+    /// ### Example
+    /// `exmpleValue`'s supertypes would be "ExampleType", "OuterExampleType", and "RootType"
+    /// ```ignore
+    /// ExampleType ::= OuterExampleType (2..8)
+    /// OuterExampleType ::= RootType
+    /// RootType ::= INTEGER
+    /// exampleValue ExampleType ::= 6
+    /// ```
+    /// The supertypes are recorded in a `LinkedASN1Value`
+    pub fn collect_supertypes(
         &mut self,
         tlds: &BTreeMap<String, ToplevelDeclaration>,
     ) -> Result<(), GrammarError> {
-        if let AssociatedType::Name(name) = &self.associated_type {
-            if let Some(ToplevelDeclaration::Type(tld)) = tlds.get(name) {
-                self.value.link_with_type(tlds, &tld.r#type)?;
-            }
-        }
-        Ok(())
-    }
-
-    /// For generating correct rust representations of ASN1 values,
-    /// the associated type data needs to be accessible for the generator.
-    /// Otherwise cases like nested Newtypes will not work correctly.
-    pub fn associate_types_and_values(
-        &mut self,
-        tlds: &BTreeMap<String, ToplevelDeclaration>,
-    ) -> Result<(), GrammarError> {
-        if let AssociatedType::Name(name) = &self.associated_type {
-            if let Some(ToplevelDeclaration::Type(tld)) = tlds.get(name) {
-                let (typereferences, base_type) =
-                    tld.build_typereference_chain(tlds, (vec![], None))?;
-                self.associated_type = AssociatedType::TypereferenceChain {
-                    typereferences,
-                    base_type: base_type.ok_or_else(|| GrammarError {
-                        details: format!("Failed to build typereference chain for {name}"),
-                        kind: GrammarErrorType::LinkerError,
-                    })?,
-                };
-            }
+        if let Some(ToplevelDeclaration::Type(tld)) = tlds.get(&self.associated_type) {
+            self.value.link_with_type(tlds, &tld.r#type)?;
         }
         Ok(())
     }
@@ -570,14 +542,9 @@ impl ASN1Value {
         tlds: &BTreeMap<String, ToplevelDeclaration>,
         ty: &ASN1Type,
     ) -> Result<(), GrammarError> {
-        match (ty, self) {
-            (
-                ASN1Type::ElsewhereDeclaredType(e),
-                ASN1Value::LinkedASN1Value {
-                    implied_supertypes, ..
-                },
-            ) => {
-                implied_supertypes.push(e.identifier.clone());
+        match (ty, self.as_mut()) {
+            (ASN1Type::ElsewhereDeclaredType(e), ASN1Value::LinkedASN1Value { supertypes, .. }) => {
+                supertypes.push(e.identifier.clone());
                 if let Some(ToplevelDeclaration::Type(t)) = tlds.get(&e.identifier) {
                     self.link_with_type(tlds, &t.r#type)
                 } else {
@@ -589,8 +556,8 @@ impl ASN1Value {
             }
             (ASN1Type::ElsewhereDeclaredType(e), val) => {
                 *self = ASN1Value::LinkedASN1Value {
-                    implied_supertypes: vec![e.identifier.clone()],
-                    value: Box::new(val.clone()),
+                    supertypes: vec![e.identifier.clone()],
+                    value: Box::new((*val).clone()),
                 };
                 if let Some(ToplevelDeclaration::Type(t)) = tlds.get(&e.identifier) {
                     self.link_with_type(tlds, &t.r#type)
@@ -816,5 +783,97 @@ impl DeclarationElsewhere {
         } else {
             ids
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use std::collections::BTreeMap;
+
+    use crate::intermediate::{types::*, *};
+
+    macro_rules! tld {
+        ($name:literal, $ty:expr) => {
+            ToplevelTypeDeclaration {
+                comments: String::new(),
+                tag: None,
+                index: None,
+                name: $name.into(),
+                r#type: $ty,
+                parameterization: None,
+            }
+        };
+    }
+
+    #[test]
+    fn links_asn1_value() {
+        let tlds: BTreeMap<String, ToplevelDeclaration> = {
+            let mut map = BTreeMap::new();
+            map.insert(
+                "RootBool".into(),
+                ToplevelDeclaration::Type(tld!(
+                    "RootBool",
+                    ASN1Type::Boolean(Boolean {
+                        constraints: vec![]
+                    })
+                )),
+            );
+            map.insert(
+                "IntermediateBool".into(),
+                ToplevelDeclaration::Type(tld!(
+                    "IntermediateBool",
+                    ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+                        parent: None,
+                        identifier: String::from("RootBool"),
+                        constraints: vec![]
+                    })
+                )),
+            );
+            map.insert(
+                "BaseChoice".into(),
+                ToplevelDeclaration::Type(tld!(
+                    "BaseChoice",
+                    ASN1Type::Choice(Choice {
+                        extensible: None,
+                        constraints: vec![],
+                        options: vec![ChoiceOption {
+                            name: String::from("first"),
+                            constraints: vec![],
+                            tag: None,
+                            r#type: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+                                parent: None,
+                                identifier: String::from("IntermediateBool"),
+                                constraints: vec![]
+                            })
+                        }]
+                    })
+                )),
+            );
+            map
+        };
+        let mut example_value = ToplevelValueDeclaration {
+            comments: String::new(),
+            name: "exampleValue".into(),
+            associated_type: "BaseChoice".into(),
+            index: None,
+            value: ASN1Value::Choice(String::from("first"), Box::new(ASN1Value::Boolean(true))),
+        };
+        example_value.collect_supertypes(&tlds).unwrap();
+        assert_eq!(
+            example_value,
+            ToplevelValueDeclaration {
+                comments: "".into(),
+                name: "exampleValue".into(),
+                associated_type: "BaseChoice".into(),
+                value: ASN1Value::Choice(
+                    "first".into(),
+                    Box::new(ASN1Value::LinkedASN1Value {
+                        supertypes: vec!["IntermediateBool".into(), "RootBool".into()],
+                        value: Box::new(ASN1Value::Boolean(true))
+                    })
+                ),
+                index: None
+            }
+        )
     }
 }

@@ -68,27 +68,6 @@ impl Validator {
                         .insert(tld.name.clone(), ToplevelDeclaration::Information(tld));
                 }
             }
-            // if self.has_default_value_reference(&key) {
-            //     let mut tld = self.tlds.remove(&key).ok_or(ValidatorError {
-            //         data_element: Some(key.clone()),
-            //         details: "Could not find toplevel declaration to remove!".into(),
-            //         kind: ValidatorErrorType::MissingDependency,
-            //     })?;
-            //     if !tld.link_default_reference(&self.tlds) {
-            //         warnings.push(
-            //             Box::new(
-            //                 ValidatorError { 
-            //                     data_element: Some(tld.name().to_string()), 
-            //                     details: format!(
-            //                         "Failed to link cross-reference to elsewhere defined value in default of {}", 
-            //                         tld.name()), 
-            //                     kind: ValidatorErrorType::MissingDependency
-            //                 }
-            //             )
-            //         )
-            //     }
-            //     self.tlds.insert(tld.name().clone(), tld);
-            // }
             if self.has_constraint_reference(&key) {
                 let mut tld = self.tlds.remove(&key).ok_or(ValidatorError {
                     data_element: Some(key.clone()),
@@ -110,15 +89,13 @@ impl Validator {
                 }
                 self.tlds.insert(tld.name().clone(), tld);
             }
+            if let Some(mut tld) = self.tlds.remove(&key) {
+                tld.collect_supertypes(&self.tlds)?;
+                self.tlds.insert(key, tld);
+            }
         }
 
         Ok((self, warnings))
-    }
-
-    fn associate_types_and_values(&mut self, key: &String) {
-        if let Some(tld) = self.tlds.remove(key) {
-            
-        }
     }
 
     fn has_constraint_reference(&mut self, key: &String) -> bool {
@@ -127,13 +104,6 @@ impl Validator {
             .map(ToplevelDeclaration::has_constraint_reference)
             .unwrap_or(false)
     }
-
-    // fn has_default_value_reference(&mut self, key: &String) -> bool {
-    //     self.tlds
-    //         .get(key)
-    //         .map(ToplevelDeclaration::has_default_reference)
-    //         .unwrap_or(false)
-    // }
 
     fn references_class_by_name(&mut self, key: &String) -> bool {
         self.tlds

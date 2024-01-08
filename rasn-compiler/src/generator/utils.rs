@@ -1,4 +1,4 @@
-use std::{mem, ops::RemAssign, str::FromStr};
+use std::str::FromStr;
 
 use proc_macro2::{Ident, Literal, Punct, Spacing, TokenStream};
 use quote::{format_ident, quote, ToTokens, TokenStreamExt};
@@ -11,7 +11,7 @@ use crate::intermediate::{
     information_object::{
         InformationObjectClass, InformationObjectField, ObjectFieldIdentifier, SyntaxApplication,
     },
-    types::{Choice, ChoiceOption, DefaultValue, Enumerated, SequenceOrSet, SequenceOrSetMember},
+    types::{Choice, ChoiceOption, Enumerated, SequenceOrSet, SequenceOrSetMember},
     utils::{to_rust_const_case, to_rust_enum_identifier, to_rust_snake_case, to_rust_title_case},
     ASN1Type, ASN1Value, AsnTag, CharacterStringType, TagClass, TaggingEnvironment,
     ToplevelDeclaration, ToplevelTypeDeclaration,
@@ -436,41 +436,43 @@ pub fn format_default_methods(
 ) -> Result<TokenStream, GeneratorError> {
     let mut output = TokenStream::new();
     for member in members {
-        match member.default_value {
-            DefaultValue::WithTypereference { .. } => {
-                return Err(GeneratorError {
-                    details: format!(
-                        "Unexpected unlinked DefaultValue in {parent_name}'s member {}",
-                        member.name
-                    ),
-                    ..Default::default()
-                })
-            }
-            DefaultValue::WithTypereferenceChain {
-                typereferences,
-                base_type,
-                value,
-            } => {
-                let method_name =
-                    TokenStream::from_str(&default_method_name(parent_name, &member.name))?;
-                let return_type = type_to_tokens(&member.r#type)?;
-                output.append_all(quote! {
-                    fn #method_name() -> #return_type {
-                        #value_as_string
-                    }
-                });
-            }
-            DefaultValue::None => (),
+        if let Some(value) = member.default_value.as_ref() {
+            let (value_as_string, type_as_string) = match &member.r#type {
+                ASN1Type::BitString(_) => {
+                    let val = value_to_tokens(value, None)?;
+                    (quote!(#val.iter().collect()), quote!(BitString))
+                }
+                ASN1Type::ElsewhereDeclaredType(_)
+                    if !(matches!(
+                        value,
+                        ASN1Value::EnumeratedValue {
+                            enumerated: _,
+                            enumerable: _
+                        }
+                    )) =>
+                {
+                    let tokenized_type = type_to_tokens(&member.r#type)?;
+                    let tokenized_val = value_to_tokens(value, None)?;
+                    (quote!(#tokenized_type(#tokenized_val)), tokenized_type)
+                }
+                ty => (
+                    value_to_tokens(
+                        value,
+                        Some(&to_rust_title_case(&type_to_tokens(&ty)?.to_string())),
+                    )?,
+                    type_to_tokens(&ty)?,
+                ),
+            };
+            let method_name =
+                TokenStream::from_str(&default_method_name(parent_name, &member.name))?;
+            output.append_all(quote! {
+                fn #method_name() -> #type_as_string {
+                    #value_as_string
+                }
+            });
         }
     }
     Ok(output)
-}
-
-pub fn format_value_declaration(
-    typereferences: &Vec<String>,
-    base_type: &ASN1Type,
-    value: &ASN1Value,
-) -> Result<TokenStream, GeneratorError> {
 }
 
 pub fn type_to_tokens(ty: &ASN1Type) -> Result<TokenStream, GeneratorError> {
@@ -603,6 +605,21 @@ pub fn value_to_tokens(
                 .map(|v| value_to_tokens(v, None))
                 .collect::<Result<Vec<_>, _>>()?;
             Ok(quote!(&'static [#(#elems),*].into_iter().collect()))
+        }
+        ASN1Value::LinkedASN1Value { supertypes, value } => {
+            fn nester(s: TokenStream, mut types: Vec<String>) -> TokenStream {
+                match types.pop() {
+                    Some(t) => {
+                        let ident = to_rust_title_case(&t);
+                        nester(quote!(#ident(#s)), types)
+                    }
+                    None => s,
+                }
+            }
+            Ok(nester(
+                value_to_tokens(value, type_name)?,
+                supertypes.clone(),
+            ))
         }
     }
 }
@@ -884,7 +901,7 @@ mod tests {
                             r#type: ASN1Type::Boolean(Boolean {
                                 constraints: vec![]
                             }),
-                            default_value: DefaultValue::None,
+                            default_value: None,
                             is_optional: true,
                             constraints: vec![]
                         },
@@ -894,27 +911,16 @@ mod tests {
                             r#type: ASN1Type::Integer(Integer {
                                 distinguished_values: None,
                                 constraints: vec![Constraint::SubtypeConstraint(ElementSet {
-                                    extensible: false,
-                                    set: crate::intermediate::constraints::ElementOrSetOperation::Element(
-                                        crate::intermediate::constraints::SubtypeElement::SingleValue {
-                                            value: ASN1Value::Integer(4),
-                                            extensible: true
-                                        }
-                                    )
-                                })]
+                            extensible: false,
+                            set: crate::intermediate::constraints::ElementOrSetOperation::Element(
+                                crate::intermediate::constraints::SubtypeElement::SingleValue {
+                                    value: ASN1Value::Integer(4),
+                                    extensible: true
+                                }
+                            )
+                        })]
                             }),
-                            default_value: DefaultValue::WithTypereferenceChain { value: ASN1Value::Integer(4), typereferences: vec![], base_type: ASN1Type::Integer(Integer {
-                                distinguished_values: None,
-                                constraints: vec![Constraint::SubtypeConstraint(ElementSet {
-                                    extensible: false,
-                                    set: crate::intermediate::constraints::ElementOrSetOperation::Element(
-                                        crate::intermediate::constraints::SubtypeElement::SingleValue {
-                                            value: ASN1Value::Integer(4),
-                                            extensible: true
-                                        }
-                                    )
-                                })]
-                            }) },
+                            default_value: Some(ASN1Value::Integer(4)),
                             is_optional: true,
                             constraints: vec![]
                         }
@@ -1012,5 +1018,21 @@ mod tests {
                 testMember1(Integer),
             "#
         );
+    }
+
+    #[test]
+    fn formats_linked_value() {
+        assert_eq!(
+            value_to_tokens(
+                &ASN1Value::LinkedASN1Value {
+                    supertypes: vec!["Outer".into(), "Inner".into()],
+                    value: Box::new(ASN1Value::Boolean(true))
+                },
+                None
+            )
+            .unwrap()
+            .to_string(),
+            "Outer (Inner (true))"
+        )
     }
 }
