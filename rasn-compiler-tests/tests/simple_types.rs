@@ -1,6 +1,15 @@
 #![allow(non_camel_case_types)]
 use rasn_compiler_tests::e2e_pdu;
 
+#[test]
+fn t() {
+    println!("{}",rasn_compiler::RasnCompiler::new().add_asn_literal("TestModule DEFINITIONS AUTOMATIC TAGS::= BEGIN Test-Enum ::= ENUMERATED {
+        test-1(3),
+        test-2(-7)
+    }
+    test-enum-val Test-Enum ::= test-2 END").compile_to_string().unwrap().0)
+}
+
 e2e_pdu!(
     boolean,
     "Test-Boolean ::= BOOLEAN",
@@ -36,7 +45,9 @@ e2e_pdu!(
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]
         #[rasn(delegate)]
         pub struct TestInt(pub Integer);
-        pub const TEST_INT_VAL: TestInt = TestInt(4);                                 "#
+        lazy_static!{
+            static ref TEST_INT_VAL: TestInt = TestInt(Integer::from(4));
+        }                                                                            "#
 );
 
 e2e_pdu!(
@@ -62,9 +73,10 @@ e2e_pdu!(
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]
         #[rasn(delegate, value("4", extensible))]
         pub struct TestInt(pub Integer);
-        pub const TEST_INT_VAL: TestInt = TestInt(4);                                 "#
+        lazy_static!{
+            static ref TEST_INT_VAL: TestInt = TestInt(Integer::from(4));
+        }                                                                            "#
 );
-
 
 e2e_pdu!(
     integer_range,
@@ -83,9 +95,10 @@ e2e_pdu!(
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]
         #[rasn(delegate, value("4..=6", extensible))]
         pub struct TestInt(pub Integer);
-        pub const TEST_INT_VAL: TestInt = TestInt(5);                                 "#
+        lazy_static!{
+            static ref TEST_INT_VAL: TestInt = TestInt(Integer::from(5));
+        }                                                                            "#
 );
-
 
 e2e_pdu!(
     null,
@@ -114,7 +127,6 @@ e2e_pdu!(
         #[rasn(delegate, size("2"))]
         pub struct TestBits(pub BitString);                     "#
 );
-
 
 e2e_pdu!(
     bit_string_strict,
@@ -255,4 +267,3 @@ e2e_pdu!(
 );
 
 // REAL Types are currently not supported by rasn
-

@@ -185,11 +185,11 @@ mod tests {
 
     #[test]
     fn parses_mbe_notation_real_value() {
-        if let ASN1Value::Real(r) = real_value("{mantissa 314159, base 10, exponent -5}")
+        if let ASN1Value::Real(r) = real_value("{mantissa 334159, base 10, exponent -5}")
             .unwrap()
             .1
         {
-            assert!(r - 3.14159 < 0.0000001);
+            assert!(r - 3.34159 < 0.0000001);
         } else {
             unreachable!()
         }

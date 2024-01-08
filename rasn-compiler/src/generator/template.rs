@@ -35,7 +35,20 @@ pub fn integer_value_template(
     quote! {
         #comments
         pub const #name: #vtype = #value;
+    }
+}
 
+pub fn unbounded_integer_value_template(
+    comments: TokenStream,
+    name: Ident,
+    vtype: TokenStream,
+    value: TokenStream,
+) -> TokenStream {
+    quote! {
+        lazy_static! {
+            #comments
+            static ref #name: #vtype = #value;
+        }
     }
 }
 

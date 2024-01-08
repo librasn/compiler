@@ -21,7 +21,7 @@ pub(crate) struct GeneratedModule {
     pub generated: String,
 }
 
-pub fn generate<'a>(tld: ToplevelDeclaration) -> Result<TokenStream, GeneratorError> {
+pub fn generate(tld: ToplevelDeclaration) -> Result<TokenStream, GeneratorError> {
     match tld {
         ToplevelDeclaration::Type(t) => match t.r#type {
             ASN1Type::Null => generate_null(t),
@@ -56,7 +56,7 @@ pub fn generate<'a>(tld: ToplevelDeclaration) -> Result<TokenStream, GeneratorEr
                 details: "Boolean values are currently unsupported!".into(),
                 top_level_declaration: None,
             }),
-            ASN1Value::Integer(_) => generate_integer_value(v),
+            ASN1Value::LinkedASN1IntValue { .. } => generate_integer_value(v),
             ASN1Value::String(_) => Err(GeneratorError {
                 kind: GeneratorErrorType::NotYetInplemented,
                 details: "String values are currently unsupported!".into(),

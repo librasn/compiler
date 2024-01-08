@@ -30,9 +30,9 @@ pub(crate) fn generate_module(tlds: Vec<ToplevelDeclaration>) -> Result<(Option<
                     usages = None;
                     break 'imports;
                 } else if usage.starts_with(|c: char| c.is_lowercase()) {
-                    usages.as_mut().map(|us| us.push(to_rust_const_case(&usage).to_token_stream()));
+                    if let Some(us) = usages.as_mut() { us.push(to_rust_const_case(usage).to_token_stream()) }
                 } else if usage.starts_with(|c: char| c.is_uppercase()) {
-                    usages.as_mut().map(|us| us.push(to_rust_title_case(&usage).to_token_stream()));
+                    if let Some(us) = usages.as_mut() { us.push(to_rust_title_case(usage).to_token_stream()) }
                 }
             }
             let used_imports = usages.unwrap_or(vec![TokenStream::from_str("*").unwrap()]);
@@ -50,6 +50,7 @@ pub(crate) fn generate_module(tlds: Vec<ToplevelDeclaration>) -> Result<(Option<
                 extern crate alloc;
                 
                 use rasn::prelude::*;
+                use lazy_static::lazy_static;
 
                 #(#imports)*
 
@@ -97,22 +98,29 @@ pub fn generate_typealias(tld: ToplevelTypeDeclaration) -> Result<TokenStream, G
 }
 
 pub fn generate_integer_value(tld: ToplevelValueDeclaration) -> Result<TokenStream, GeneratorError> {
-    if let ASN1Value::Integer(i) = tld.value {
-        let value = Literal::i128_unsuffixed(i).to_token_stream();
-        if tld.associated_type == INTEGER {
-            Ok(integer_value_template(
+    if let ASN1Value::LinkedASN1IntValue{ integer_type, .. } = tld.value {
+        let formatted_value = value_to_tokens(&tld.value, None)?;
+        let ty = to_rust_title_case(&tld.associated_type);
+        if tld.name == INTEGER {
+            Ok(unbounded_integer_value_template(
                 format_comments(&tld.comments)?,
                 to_rust_const_case(&tld.name),
                 quote!(Integer),
-                value,
+                formatted_value,
+            ))
+        } else if integer_type.is_unbounded() {
+            Ok(unbounded_integer_value_template(
+                format_comments(&tld.comments)?,
+                to_rust_const_case(&tld.name),
+                ty.clone(),
+                quote!(#ty(#formatted_value)),
             ))
         } else {
-            let ty = to_rust_title_case(&tld.associated_type);
             Ok(integer_value_template(
                 format_comments(&tld.comments)?,
                 to_rust_const_case(&tld.name),
-                ty.to_token_stream(),
-                quote!(#ty (#value)),
+                ty.clone(),
+                quote!(#ty(#formatted_value)),
             ))
         }
     } else {

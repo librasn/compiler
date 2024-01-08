@@ -5,7 +5,7 @@ mod constraints;
 mod information_object;
 mod utils;
 
-use std::{collections::BTreeMap, borrow::BorrowMut};
+use std::{borrow::BorrowMut, collections::BTreeMap};
 
 use crate::intermediate::{error::*, information_object::*, types::*, utils::*, *};
 
@@ -32,19 +32,17 @@ impl ToplevelDeclaration {
             }
             match &t.r#type {
                 ASN1Type::Enumerated(e) => {
-                    return e.members.iter().find_map(|m| {
-                        (&m.name == identifier).then(|| ASN1Value::Integer(m.index))
-                    })
+                    return e
+                        .members
+                        .iter()
+                        .find_map(|m| (&m.name == identifier).then(|| ASN1Value::Integer(m.index)))
                 }
                 ASN1Type::Integer(i) => {
-                    return i
-                        .distinguished_values
-                        .as_ref()
-                        .and_then(|dv| {
-                            dv.iter().find_map(|d| {
-                                (&d.name == identifier).then(|| ASN1Value::Integer(d.value))
-                            })
+                    return i.distinguished_values.as_ref().and_then(|dv| {
+                        dv.iter().find_map(|d| {
+                            (&d.name == identifier).then(|| ASN1Value::Integer(d.value))
                         })
+                    })
                 }
                 _ => (),
             }
@@ -204,10 +202,12 @@ impl ASN1Type {
             }
             ASN1Type::Sequence(s) | ASN1Type::Set(s) => s
                 .members
-                .iter_mut().try_for_each(|m| m.r#type.link_choice_selection_type(tlds)),
+                .iter_mut()
+                .try_for_each(|m| m.r#type.link_choice_selection_type(tlds)),
             ASN1Type::Choice(c) => c
                 .options
-                .iter_mut().try_for_each(|o: &mut ChoiceOption| o.r#type.link_choice_selection_type(tlds)),
+                .iter_mut()
+                .try_for_each(|o: &mut ChoiceOption| o.r#type.link_choice_selection_type(tlds)),
             ASN1Type::SequenceOf(s) | ASN1Type::SetOf(s) => {
                 s.r#type.link_choice_selection_type(tlds)
             }
@@ -217,10 +217,15 @@ impl ASN1Type {
 
     pub fn contains_components_of_notation(&self) -> bool {
         match self {
-            ASN1Type::Choice(c) => c.options.iter().any(|o| o.r#type.contains_components_of_notation()),
+            ASN1Type::Choice(c) => c
+                .options
+                .iter()
+                .any(|o| o.r#type.contains_components_of_notation()),
             ASN1Type::Set(s) | ASN1Type::Sequence(s) => {
                 !s.components_of.is_empty()
-                    || s.members.iter().any(|m| m.r#type.contains_components_of_notation())
+                    || s.members
+                        .iter()
+                        .any(|m| m.r#type.contains_components_of_notation())
             }
             ASN1Type::SequenceOf(so) => so.r#type.contains_components_of_notation(),
             _ => false,
@@ -232,9 +237,15 @@ impl ASN1Type {
         tlds: &BTreeMap<String, ToplevelDeclaration>,
     ) -> bool {
         match self {
-            ASN1Type::Choice(c) => c.options.iter_mut().any(|o| o.r#type.link_components_of_notation(tlds)),
+            ASN1Type::Choice(c) => c
+                .options
+                .iter_mut()
+                .any(|o| o.r#type.link_components_of_notation(tlds)),
             ASN1Type::Set(s) | ASN1Type::Sequence(s) => {
-                let mut member_linking = s.members.iter_mut().any(|m| m.r#type.link_components_of_notation(tlds));
+                let mut member_linking = s
+                    .members
+                    .iter_mut()
+                    .any(|m| m.r#type.link_components_of_notation(tlds));
                 // TODO: properly link components of in extensions
                 // TODO: link components of Class field, such as COMPONENTS OF BILATERAL.&id
                 for comp_link in &s.components_of {
@@ -369,7 +380,10 @@ impl ASN1Type {
                 .any(|m| m.r#type.references_class_by_name()),
             ASN1Type::SequenceOf(so) => so.r#type.references_class_by_name(),
             ASN1Type::InformationObjectFieldReference(io_ref) => {
-                matches!(io_ref.field_path.last(), Some(ObjectFieldIdentifier::SingleValue(_)))
+                matches!(
+                    io_ref.field_path.last(),
+                    Some(ObjectFieldIdentifier::SingleValue(_))
+                )
             }
             _ => false,
         }
@@ -451,10 +465,15 @@ impl ASN1Value {
         ty: &ASN1Type,
     ) -> Result<(), GrammarError> {
         match (ty, self.as_mut()) {
-            (ASN1Type::ElsewhereDeclaredType(e), ASN1Value::LinkedASN1Value { supertypes, value }) => {
+            (
+                ASN1Type::ElsewhereDeclaredType(e),
+                ASN1Value::LinkedASN1Value { supertypes, value },
+            ) => {
                 supertypes.push(e.identifier.clone());
                 if let ASN1Value::LinkedASN1IntValue { integer_type, .. } = value.borrow_mut() {
-                    let int_type = e.constraints.iter().fold(IntegerType::Unbounded, |acc, c| c.integer_constraints().max_restrictive(acc));
+                    let int_type = e.constraints.iter().fold(IntegerType::Unbounded, |acc, c| {
+                        c.integer_constraints().max_restrictive(acc)
+                    });
                     *integer_type = int_type;
                 }
                 if let Some(ToplevelDeclaration::Type(t)) = tlds.get(&e.identifier) {
@@ -468,8 +487,13 @@ impl ASN1Value {
             }
             (ASN1Type::ElsewhereDeclaredType(e), val) => {
                 if let ASN1Value::Integer(value) = *val {
-                    let int_type = e.constraints.iter().fold(IntegerType::Unbounded, |acc, c| c.integer_constraints().max_restrictive(acc));
-                    *val = ASN1Value::LinkedASN1IntValue { integer_type: int_type, value };
+                    let int_type = e.constraints.iter().fold(IntegerType::Unbounded, |acc, c| {
+                        c.integer_constraints().max_restrictive(acc)
+                    });
+                    *val = ASN1Value::LinkedASN1IntValue {
+                        integer_type: int_type,
+                        value,
+                    };
                 }
                 *self = ASN1Value::LinkedASN1Value {
                     supertypes: vec![e.identifier.clone()],
@@ -512,24 +536,88 @@ impl ASN1Value {
                 .iter_mut()
                 .try_for_each(|v| v.link_with_type(tlds, &s.r#type)),
             (ASN1Type::Integer(i), ASN1Value::Integer(val)) => {
-                *self = ASN1Value::LinkedASN1IntValue { integer_type: i.int_type(), value: *val };
+                *self = ASN1Value::LinkedASN1IntValue {
+                    integer_type: i.int_type(),
+                    value: *val,
+                };
                 Ok(())
-            },
+            }
             (ASN1Type::Integer(i), ASN1Value::LinkedASN1IntValue { integer_type, .. }) => {
                 let int_type = i.int_type().max_restrictive(*integer_type);
                 *integer_type = int_type;
                 Ok(())
-            },
+            }
+            (ASN1Type::Integer(i), ASN1Value::LinkedASN1Value { value, .. })
+                if matches![**value, ASN1Value::ElsewhereDeclaredValue { .. }] =>
+            {
+                if let ASN1Value::ElsewhereDeclaredValue { identifier, .. } = &**value {
+                    if let Some(distinguished_value) = i.distinguished_values.as_ref().and_then(|dist_vals| {
+                        dist_vals
+                            .iter()
+                            .find_map(|d| (&d.name == identifier).then_some(d.value))
+                    }) {
+                        *value = Box::new(ASN1Value::LinkedASN1IntValue {
+                            integer_type: i.int_type(),
+                            value: distinguished_value,
+                        });
+                    }
+                }
+                Ok(())
+            }
+            (ASN1Type::Integer(i), ASN1Value::ElsewhereDeclaredValue { identifier, .. }) => {
+                if let Some(value) = i.distinguished_values.as_ref().and_then(|dist_vals| {
+                    dist_vals
+                        .iter()
+                        .find_map(|d| (&d.name == identifier).then_some(d.value))
+                }) {
+                    *self = ASN1Value::LinkedASN1IntValue {
+                        integer_type: i.int_type(),
+                        value,
+                    };
+                }
+                Ok(())
+            }
+            (ASN1Type::Enumerated(_), ASN1Value::LinkedASN1Value { value, .. })
+                if matches![**value, ASN1Value::ElsewhereDeclaredValue { .. }] =>
+            {
+                if let ASN1Value::ElsewhereDeclaredValue { identifier, .. } = &**value {
+                    if let Some((_, tld)) = tlds
+                        .iter()
+                        .find(|(_, tld)| tld.has_enum_value(None, identifier))
+                    {
+                        *value = Box::new(ASN1Value::EnumeratedValue {
+                            enumerated: tld.name().clone(),
+                            enumerable: identifier.clone(),
+                        });
+                    }
+                }
+                Ok(())
+            }
+            (ASN1Type::Enumerated(_), ASN1Value::ElsewhereDeclaredValue { identifier, .. }) => {
+                if let Some((_, tld)) = tlds
+                    .iter()
+                    .find(|(_, tld)| tld.has_enum_value(None, identifier))
+                {
+                    *self = ASN1Value::EnumeratedValue {
+                        enumerated: tld.name().clone(),
+                        enumerable: identifier.clone(),
+                    };
+                }
+                Ok(())
+            }
             _ => Ok(()),
         }
     }
 
     pub fn is_elsewhere_declared(&self) -> bool {
-        matches!(self, Self::ElsewhereDeclaredValue { .. }
-            | Self::EnumeratedValue {
-                enumerated: _,
-                enumerable: _,
-            })
+        matches!(
+            self,
+            Self::ElsewhereDeclaredValue { .. }
+                | Self::EnumeratedValue {
+                    enumerated: _,
+                    enumerable: _,
+                }
+        )
     }
 
     /// Tries to resolve an `ElsewhereDeclaredValue` that references a

@@ -34,7 +34,7 @@ macro_rules! error {
 pub(crate) use error;
 
 impl IntegerType {
-    pub fn to_token_stream(&self) -> TokenStream {
+    pub fn to_token_stream(self) -> TokenStream {
         match self {
             IntegerType::Int8 => quote!(i8),
             IntegerType::Uint8 => quote!(u8),
@@ -55,7 +55,7 @@ pub struct NameType {
 }
 
 pub fn inner_name(name: &String, parent_name: &String) -> Ident {
-    format_ident!("{}{}", parent_name, to_rust_title_case(&name).to_string())
+    format_ident!("{}{}", parent_name, to_rust_title_case(name).to_string())
 }
 
 pub fn int_type_token(opt_min: Option<i128>, opt_max: Option<i128>, is_extensible: bool) -> Ident {
@@ -73,7 +73,7 @@ pub fn format_comments(comments: &String) -> Result<TokenStream, GeneratorError>
     if comments.is_empty() {
         Ok(TokenStream::new())
     } else {
-        let joined = String::from("///") + &comments.replace("\n", "\n ///") + "\n";
+        let joined = String::from("///") + &comments.replace('\n', "\n ///") + "\n";
         Ok(TokenStream::from_str(&joined)?)
     }
 }
@@ -428,7 +428,7 @@ pub fn string_type(c_type: &CharacterStringType) -> Result<TokenStream, Generato
 pub fn join_annotations(elements: Vec<TokenStream>) -> TokenStream {
     let mut not_empty_exprs = elements.into_iter().filter(|ts| !ts.is_empty());
     if let Some(mut annotations) = not_empty_exprs.next() {
-        while let Some(elem) = not_empty_exprs.next() {
+        for elem in not_empty_exprs {
             annotations.append(Punct::new(',', Spacing::Alone));
             annotations.append_all(elem);
         }
@@ -624,7 +624,7 @@ pub fn value_to_tokens(
         } => {
             let val = Literal::i128_unsuffixed(*value);
             match integer_type {
-                IntegerType::Unbounded => Ok(quote!(#val)),
+                IntegerType::Unbounded => Ok(quote!(Integer::from(#val))),
                 _ => Ok(val.to_token_stream()),
             }
         }
@@ -665,7 +665,7 @@ pub fn format_nested_choice_options(
     choice: &Choice,
     parent_name: &String,
 ) -> Result<Vec<TokenStream>, GeneratorError> {
-    Ok(choice
+    choice
         .options
         .iter()
         .filter(|m| {
@@ -688,7 +688,7 @@ pub fn format_nested_choice_options(
                 index: None,
             }))
         })
-        .collect::<Result<Vec<_>, _>>()?)
+        .collect::<Result<Vec<_>, _>>()
 }
 
 pub fn format_new_impl(name: &TokenStream, name_types: Vec<NameType>) -> TokenStream {
@@ -710,7 +710,7 @@ pub fn format_new_impl(name: &TokenStream, name_types: Vec<NameType>) -> TokenSt
 /// Resolves the custom syntax declared in an information object class' WITH SYNTAX clause
 pub fn resolve_standard_syntax(
     class: &InformationObjectClass,
-    application: &Vec<InformationObjectField>,
+    application: &[InformationObjectField],
 ) -> Result<(ASN1Value, Vec<(usize, ASN1Type)>), GeneratorError> {
     let mut key = None;
     let mut field_index_map = Vec::<(usize, ASN1Type)>::new();
@@ -731,7 +731,7 @@ pub fn resolve_standard_syntax(
             } else if !class_field.is_optional {
                 return Err(GeneratorError {
                     top_level_declaration: None,
-                    details: format!("Syntax mismatch while resolving information object."),
+                    details: "Syntax mismatch while resolving information object.".to_string(),
                     kind: GeneratorErrorType::SyntaxMismatch,
                 });
             } else {
@@ -754,7 +754,7 @@ pub fn resolve_standard_syntax(
 /// Resolves the custom syntax declared in an information object class' WITH SYNTAX clause
 pub fn resolve_custom_syntax(
     class: &InformationObjectClass,
-    application: &Vec<SyntaxApplication>,
+    application: &[SyntaxApplication],
 ) -> Result<(ASN1Value, Vec<(usize, ASN1Type)>), GeneratorError> {
     let tokens = match &class.syntax {
         Some(s) => s.flatten(),
@@ -782,7 +782,7 @@ pub fn resolve_custom_syntax(
                                 == ObjectFieldIdentifier::MultipleValue(
                                     token.name_or_empty().to_owned(),
                                 ))
-                            .then(|| i)
+                            .then_some(i)
                         }) {
                             field_index_map
                                 .push((index, ASN1Type::ElsewhereDeclaredType(t.clone())))
@@ -794,7 +794,7 @@ pub fn resolve_custom_syntax(
                                 == ObjectFieldIdentifier::MultipleValue(
                                     token.name_or_empty().to_owned(),
                                 ))
-                            .then(|| i)
+                            .then_some(i)
                         }) {
                             field_index_map.push((index, t.clone()))
                         }
@@ -803,14 +803,13 @@ pub fn resolve_custom_syntax(
                         if class
                             .fields
                             .iter()
-                            .find(|field| {
+                            .any(|field| {
                                 field.identifier
                                     == ObjectFieldIdentifier::SingleValue(
                                         token.name_or_empty().to_owned(),
                                     )
                                     && field.is_unique
                             })
-                            .is_some()
                         {
                             key = Some(v.clone())
                         }
@@ -821,7 +820,7 @@ pub fn resolve_custom_syntax(
             } else if *required {
                 return Err(GeneratorError {
                     top_level_declaration: None,
-                    details: format!("Syntax mismatch while resolving information object."),
+                    details: "Syntax mismatch while resolving information object.".to_string(),
                     kind: GeneratorErrorType::SyntaxMismatch,
                 });
             } else {
@@ -830,7 +829,7 @@ pub fn resolve_custom_syntax(
         } else if *required {
             return Err(GeneratorError {
                 top_level_declaration: None,
-                details: format!("Syntax mismatch while resolving information object."),
+                details: "Syntax mismatch while resolving information object.".to_string(),
                 kind: GeneratorErrorType::SyntaxMismatch,
             });
         } else {

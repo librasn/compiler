@@ -482,6 +482,47 @@ pub enum ToplevelDeclaration {
 }
 
 impl ToplevelDeclaration {
+    pub(crate) fn has_enum_value(&self, type_name: Option<&String>, identifier: &String) -> bool {
+        if let ToplevelDeclaration::Type(ToplevelTypeDeclaration {
+            name,
+            r#type: ASN1Type::Enumerated(e),
+            ..
+        }) = self
+        {
+            if type_name.is_some() && Some(name) != type_name {
+                return false;
+            }
+            e.members.iter().any(|m| &m.name == identifier)
+        } else {
+            false
+        }
+    }
+
+    pub(crate) fn get_distinguished_value(
+        &self,
+        type_name: Option<&String>,
+        identifier: &String,
+    ) -> Option<i128> {
+        if let ToplevelDeclaration::Type(ToplevelTypeDeclaration {
+            name,
+            r#type: ASN1Type::Integer(i),
+            ..
+        }) = self
+        {
+            if type_name.is_some() && Some(name) != type_name {
+                return None;
+            }
+            i.distinguished_values
+                .as_ref()
+                .and_then(|dv| {
+                    dv.iter()
+                        .find_map(|d| (&d.name == identifier).then_some(d.value.clone()))
+                })
+        } else {
+            None
+        }
+    }
+
     pub fn set_index(&mut self, module_reference: Rc<ModuleReference>, item_no: usize) {
         match self {
             ToplevelDeclaration::Type(ref mut t) => {
@@ -505,34 +546,29 @@ impl ToplevelDeclaration {
     }
 
     pub fn apply_tagging_environment(&mut self, environment: &TaggingEnvironment) {
-        match (environment, self) {
-            (env, ToplevelDeclaration::Type(ty)) => {
-                ty.tag = ty.tag.as_ref().map(|t| AsnTag {
-                    environment: env + &t.environment,
-                    tag_class: t.tag_class,
-                    id: t.id,
-                });
-                match &mut ty.r#type {
-                    ASN1Type::Sequence(s) | ASN1Type::Set(s) => {
-                        s.members.iter_mut().for_each(|m| {
-                            m.tag = m.tag.as_ref().map(|t| AsnTag {
-                                environment: env + &t.environment,
-                                tag_class: t.tag_class,
-                                id: t.id,
-                            });
-                        })
-                    }
-                    ASN1Type::Choice(c) => c.options.iter_mut().for_each(|o| {
-                        o.tag = o.tag.as_ref().map(|t| AsnTag {
-                            environment: env + &t.environment,
-                            tag_class: t.tag_class,
-                            id: t.id,
-                        });
-                    }),
-                    _ => (),
-                }
+        if let (env, ToplevelDeclaration::Type(ty)) = (environment, self) {
+            ty.tag = ty.tag.as_ref().map(|t| AsnTag {
+                environment: env + &t.environment,
+                tag_class: t.tag_class,
+                id: t.id,
+            });
+            match &mut ty.r#type {
+                ASN1Type::Sequence(s) | ASN1Type::Set(s) => s.members.iter_mut().for_each(|m| {
+                    m.tag = m.tag.as_ref().map(|t| AsnTag {
+                        environment: env + &t.environment,
+                        tag_class: t.tag_class,
+                        id: t.id,
+                    });
+                }),
+                ASN1Type::Choice(c) => c.options.iter_mut().for_each(|o| {
+                    o.tag = o.tag.as_ref().map(|t| AsnTag {
+                        environment: env + &t.environment,
+                        tag_class: t.tag_class,
+                        id: t.id,
+                    });
+                }),
+                _ => (),
             }
-            _ => (),
         }
     }
 
@@ -759,6 +795,9 @@ pub enum IntegerType {
 }
 
 impl IntegerType {
+    pub fn is_unbounded(&self) -> bool {
+        self == &IntegerType::Unbounded
+    }
     /// Returns the Integer type with more restrictions
     /// - an IntegerType with a smaller set of values is considered more restrictive
     /// - an unsigned IntegerType is considered more restrictive if the size of the set of values is equal
@@ -774,7 +813,7 @@ impl IntegerType {
             (IntegerType::Int32, _) | (_, IntegerType::Int32) => IntegerType::Int32,
             (IntegerType::Uint64, _) | (_, IntegerType::Uint64) => IntegerType::Uint64,
             (IntegerType::Int64, _) | (_, IntegerType::Int64) => IntegerType::Int64,
-            _ => IntegerType::Unbounded
+            _ => IntegerType::Unbounded,
         }
     }
 }

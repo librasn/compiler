@@ -19,7 +19,7 @@ macro_rules! e2e_pdu {
                     .unwrap()
                     .0
                     .replace(|c: char| c.is_whitespace(), "")
-                    .replace("#[allow(non_camel_case_types,non_snake_case,non_upper_case_globals,unused)]pubmodtest_module{externcratealloc;userasn::prelude::*;", ""),
+                    .replace("#[allow(non_camel_case_types,non_snake_case,non_upper_case_globals,unused)]pubmodtest_module{externcratealloc;userasn::prelude::*;uselazy_static::lazy_static;", ""),
                 format!("{}}}", $expected)
                     .to_string()
                     .replace(|c: char| c.is_whitespace(), ""),
