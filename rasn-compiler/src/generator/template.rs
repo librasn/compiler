@@ -43,7 +43,7 @@ pub fn integer_template(
     comments: TokenStream,
     name: TokenStream,
     annotations: TokenStream,
-    integer_type: Ident,
+    integer_type: TokenStream,
 ) -> TokenStream {
     quote! {
         #comments

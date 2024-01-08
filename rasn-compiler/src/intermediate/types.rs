@@ -72,33 +72,12 @@ pub struct Integer {
 }
 
 impl Integer {
-    pub fn type_token(&self) -> String {
-        let (min, max, extensible) = self.constraints.iter().fold(
-            (i128::MAX, i128::MIN, false),
-            |(mut min, mut max, mut ext), c| {
-                if let Ok((cmin, cmax, extensible)) = c.unpack_as_value_range() {
-                    ext = ext || extensible;
-                    if let Some(ASN1Value::Integer(i)) = cmin {
-                        min = (*i).min(min);
-                    };
-                    if let Some(ASN1Value::Integer(i)) = cmax {
-                        max = (*i).max(max);
-                    };
-                } else if let Ok((val, extensible)) = c.unpack_as_strict_value() {
-                    ext = ext || extensible;
-                    if let ASN1Value::Integer(i) = val {
-                        min = (*i).min(min);
-                        max = (*i).max(max);
-                    };
-                };
-                (min, max, ext)
-            },
-        );
-        if min > max {
-            "Integer".to_owned()
-        } else {
-            int_type_token(min, max, extensible).to_owned()
-        }
+    pub fn int_type(&self) -> IntegerType {
+        self.constraints
+            .iter()
+            .fold(IntegerType::Unbounded, |acc, c| {
+                c.integer_constraints().max_restrictive(acc)
+            })
     }
 }
 

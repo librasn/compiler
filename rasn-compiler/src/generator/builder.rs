@@ -131,7 +131,7 @@ pub fn generate_integer(tld: ToplevelTypeDeclaration) -> Result<TokenStream, Gen
             to_rust_title_case(&tld.name),
             join_annotations(vec![quote!(delegate), format_range_annotations(true, &int.constraints)?,
             format_tag(tld.tag.as_ref(), false)]),
-            format_ident!("{}",int.type_token()),
+            int.int_type().to_token_stream()
         ))
     } else {
         Err(GeneratorError::new(

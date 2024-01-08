@@ -3,7 +3,7 @@ use std::error::Error;
 use super::{
     error::{GrammarError, GrammarErrorType},
     information_object::{InformationObjectFields, ObjectSet},
-    ASN1Type, ASN1Value,
+    ASN1Type, ASN1Value, IntegerType,
 };
 
 #[derive(Debug, PartialEq)]
@@ -29,6 +29,46 @@ pub enum Constraint {
 }
 
 impl Constraint {
+    /// Returns the type of integer that should be used in a representation when applying the Constraint
+    /// ### Example
+    pub fn integer_constraints(&self) -> IntegerType {
+        let (mut min, mut max, mut is_extensible) = (i128::MAX, i128::MIN, false);
+        if let Ok((cmin, cmax, extensible)) = self.unpack_as_value_range() {
+            is_extensible = is_extensible || extensible;
+            if let Some(ASN1Value::Integer(i)) = cmin {
+                min = (*i).min(min);
+            };
+            if let Some(ASN1Value::Integer(i)) = cmax {
+                max = (*i).max(max);
+            };
+        } else if let Ok((val, extensible)) = self.unpack_as_strict_value() {
+            is_extensible = is_extensible || extensible;
+            if let ASN1Value::Integer(i) = val {
+                min = (*i).min(min);
+                max = (*i).max(max);
+            };
+        };
+        if min > max || is_extensible {
+            IntegerType::Unbounded
+        } else if min >= 0 {
+            match max {
+                r if r <= u8::MAX.into() => IntegerType::Uint8,
+                r if r <= u16::MAX.into() => IntegerType::Uint16,
+                r if r <= u32::MAX.into() => IntegerType::Uint32,
+                r if r <= u64::MAX.into() => IntegerType::Uint64,
+                _ => IntegerType::Unbounded,
+            }
+        } else {
+            match (min, max) {
+                (mi, ma) if mi >= i8::MIN.into() && ma <= i8::MAX.into() => IntegerType::Int8,
+                (mi, ma) if mi >= i16::MIN.into() && ma <= i16::MAX.into() => IntegerType::Int16,
+                (mi, ma) if mi >= i32::MIN.into() && ma <= i32::MAX.into() => IntegerType::Int32,
+                (mi, ma) if mi >= i64::MIN.into() && ma <= i64::MAX.into() => IntegerType::Int64,
+                _ => IntegerType::Unbounded,
+            }
+        }
+    }
+
     pub fn unpack_as_value_range(
         &self,
     ) -> Result<(&Option<ASN1Value>, &Option<ASN1Value>, bool), GrammarError> {
@@ -51,9 +91,7 @@ impl Constraint {
         })
     }
 
-    pub fn unpack_as_strict_value(
-        &self,
-    ) -> Result<(&ASN1Value, bool), GrammarError> {
+    pub fn unpack_as_strict_value(&self) -> Result<(&ASN1Value, bool), GrammarError> {
         if let Constraint::SubtypeConstraint(set) = self {
             if let ElementOrSetOperation::Element(SubtypeElement::SingleValue {
                 value,

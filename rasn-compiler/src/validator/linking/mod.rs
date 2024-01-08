@@ -3,9 +3,9 @@
 
 mod constraints;
 mod information_object;
-pub(self) mod utils;
+mod utils;
 
-use std::collections::BTreeMap;
+use std::{collections::BTreeMap, borrow::BorrowMut};
 
 use crate::intermediate::{error::*, information_object::*, types::*, utils::*, *};
 
@@ -33,19 +33,18 @@ impl ToplevelDeclaration {
             match &t.r#type {
                 ASN1Type::Enumerated(e) => {
                     return e.members.iter().find_map(|m| {
-                        (&m.name == identifier).then(|| ASN1Value::Integer(m.index as i128))
+                        (&m.name == identifier).then(|| ASN1Value::Integer(m.index))
                     })
                 }
                 ASN1Type::Integer(i) => {
                     return i
                         .distinguished_values
                         .as_ref()
-                        .map(|dv| {
+                        .and_then(|dv| {
                             dv.iter().find_map(|d| {
                                 (&d.name == identifier).then(|| ASN1Value::Integer(d.value))
                             })
                         })
-                        .flatten()
                 }
                 _ => (),
             }
@@ -56,86 +55,12 @@ impl ToplevelDeclaration {
     pub fn is_class_with_name(&self, name: &String) -> Option<&InformationObjectClass> {
         match self {
             ToplevelDeclaration::Information(info) => match &info.value {
-                ASN1Information::ObjectClass(class) => (&info.name == name).then(|| class),
+                ASN1Information::ObjectClass(class) => (&info.name == name).then_some(class),
                 _ => None,
             },
             _ => None,
         }
     }
-
-    // /// Traverses a top-level declaration to check for references to other top-level declarations
-    // /// in a SEQUENCE's or SET's DEFAULT values.
-    // pub fn has_default_reference(&self) -> bool {
-    //     match self {
-    //         ToplevelDeclaration::Type(t) => match &t.r#type {
-    //             ASN1Type::Sequence(s) | ASN1Type::Set(s) => {
-    //                 s.members.iter().fold(false, |acc, m| {
-    //                     acc || m
-    //                         .default_value
-    //                         .as_ref()
-    //                         .map_or(false, |d| d.is_elsewhere_declared())
-    //                 })
-    //             }
-    //             _ => false,
-    //         },
-    //         _ => false,
-    //     }
-    // }
-
-    // /// Traverses a top-level declaration to replace references to other top-level declarations
-    // /// in a SEQUENCE's or SET's DEFAULT values.
-    // pub fn link_default_reference(&mut self, tlds: &BTreeMap<String, ToplevelDeclaration>) -> bool {
-    //     match self {
-    //         ToplevelDeclaration::Type(t) => match &mut t.r#type {
-    //             ASN1Type::Sequence(s) | ASN1Type::Set(s) => {
-    //                 s.members.iter_mut().fold(false, |acc, m| {
-    //                     if let Some(default) = m.default_value.as_mut() {
-    //                         let maybe_id =
-    //                             if let ASN1Value::ElsewhereDeclaredValue { identifier, .. } =
-    //                                 default
-    //                             {
-    //                                 Some(identifier.clone())
-    //                             } else {
-    //                                 None
-    //                             };
-    //                         if let Some(ToplevelDeclaration::Value(id)) =
-    //                             tlds.get(&maybe_id.clone().unwrap_or_default())
-    //                         {
-    //                             *default = id.value.clone();
-    //                             return true;
-    //                         }
-    //                         let enumerated_id = match &m.r#type {
-    //                             ASN1Type::Enumerated(_) => format!(
-    //                                 "{}{}",
-    //                                 to_rust_title_case(&t.name),
-    //                                 to_rust_title_case(&m.name)
-    //                             ),
-    //                             ASN1Type::ElsewhereDeclaredType(e) => {
-    //                                 if let Some(tld) = e.find_root_id(tlds) {
-    //                                     tld.name().clone()
-    //                                 } else {
-    //                                     return acc;
-    //                                 }
-    //                             }
-    //                             _ => return acc,
-    //                         };
-    //                         maybe_id.map_or(acc, |id| {
-    //                             *default = ASN1Value::EnumeratedValue {
-    //                                 enumerated: enumerated_id,
-    //                                 enumerable: id,
-    //                             };
-    //                             true
-    //                         })
-    //                     } else {
-    //                         acc
-    //                     }
-    //                 })
-    //             }
-    //             _ => false,
-    //         },
-    //         _ => false,
-    //     }
-    // }
 
     /// Traverses a top-level declaration to check for references to other top-level declarations
     /// in a constraint. An example would be the constraint of the `intercontinental` field in the
@@ -250,12 +175,12 @@ impl ASN1Type {
                 .members
                 .iter()
                 .map(|m| m.r#type.has_choice_selection_type())
-                .fold(false, |acc, b| acc || b),
+                .any(|b| b),
             ASN1Type::Choice(c) => c
                 .options
                 .iter()
                 .map(|o| o.r#type.has_choice_selection_type())
-                .fold(false, |acc, b| acc || b),
+                .any(|b| b),
             ASN1Type::SequenceOf(s) | ASN1Type::SetOf(s) => s.r#type.has_choice_selection_type(),
             _ => false,
         }
@@ -279,14 +204,10 @@ impl ASN1Type {
             }
             ASN1Type::Sequence(s) | ASN1Type::Set(s) => s
                 .members
-                .iter_mut()
-                .map(|m| m.r#type.link_choice_selection_type(tlds))
-                .collect::<Result<(), _>>(),
+                .iter_mut().try_for_each(|m| m.r#type.link_choice_selection_type(tlds)),
             ASN1Type::Choice(c) => c
                 .options
-                .iter_mut()
-                .map(|o: &mut ChoiceOption| o.r#type.link_choice_selection_type(tlds))
-                .collect::<Result<(), _>>(),
+                .iter_mut().try_for_each(|o: &mut ChoiceOption| o.r#type.link_choice_selection_type(tlds)),
             ASN1Type::SequenceOf(s) | ASN1Type::SetOf(s) => {
                 s.r#type.link_choice_selection_type(tlds)
             }
@@ -296,14 +217,10 @@ impl ASN1Type {
 
     pub fn contains_components_of_notation(&self) -> bool {
         match self {
-            ASN1Type::Choice(c) => c.options.iter().fold(false, |acc, o| {
-                acc || o.r#type.contains_components_of_notation()
-            }),
+            ASN1Type::Choice(c) => c.options.iter().any(|o| o.r#type.contains_components_of_notation()),
             ASN1Type::Set(s) | ASN1Type::Sequence(s) => {
                 !s.components_of.is_empty()
-                    || s.members.iter().fold(false, |acc, m| {
-                        acc || m.r#type.contains_components_of_notation()
-                    })
+                    || s.members.iter().any(|m| m.r#type.contains_components_of_notation())
             }
             ASN1Type::SequenceOf(so) => so.r#type.contains_components_of_notation(),
             _ => false,
@@ -315,13 +232,9 @@ impl ASN1Type {
         tlds: &BTreeMap<String, ToplevelDeclaration>,
     ) -> bool {
         match self {
-            ASN1Type::Choice(c) => c.options.iter_mut().fold(false, |acc, o| {
-                acc || o.r#type.link_components_of_notation(tlds)
-            }),
+            ASN1Type::Choice(c) => c.options.iter_mut().any(|o| o.r#type.link_components_of_notation(tlds)),
             ASN1Type::Set(s) | ASN1Type::Sequence(s) => {
-                let mut member_linking = s.members.iter_mut().fold(false, |acc, m| {
-                    acc || m.r#type.link_components_of_notation(tlds)
-                });
+                let mut member_linking = s.members.iter_mut().any(|m| m.r#type.link_components_of_notation(tlds));
                 // TODO: properly link components of in extensions
                 // TODO: link components of Class field, such as COMPONENTS OF BILATERAL.&id
                 for comp_link in &s.components_of {
@@ -456,11 +369,7 @@ impl ASN1Type {
                 .any(|m| m.r#type.references_class_by_name()),
             ASN1Type::SequenceOf(so) => so.r#type.references_class_by_name(),
             ASN1Type::InformationObjectFieldReference(io_ref) => {
-                if let Some(ObjectFieldIdentifier::SingleValue(_)) = io_ref.field_path.last() {
-                    true
-                } else {
-                    false
-                }
+                matches!(io_ref.field_path.last(), Some(ObjectFieldIdentifier::SingleValue(_)))
             }
             _ => false,
         }
@@ -510,8 +419,7 @@ impl ASN1Type {
                         .map(|clazz| clazz.get_field(&ior.field_path))
                 })
                 .flatten()
-                .map(|class_field| class_field.r#type.clone())
-                .flatten()
+                .and_then(|class_field| class_field.r#type.clone())
             {
                 self = t;
             }
@@ -543,8 +451,12 @@ impl ASN1Value {
         ty: &ASN1Type,
     ) -> Result<(), GrammarError> {
         match (ty, self.as_mut()) {
-            (ASN1Type::ElsewhereDeclaredType(e), ASN1Value::LinkedASN1Value { supertypes, .. }) => {
+            (ASN1Type::ElsewhereDeclaredType(e), ASN1Value::LinkedASN1Value { supertypes, value }) => {
                 supertypes.push(e.identifier.clone());
+                if let ASN1Value::LinkedASN1IntValue { integer_type, .. } = value.borrow_mut() {
+                    let int_type = e.constraints.iter().fold(IntegerType::Unbounded, |acc, c| c.integer_constraints().max_restrictive(acc));
+                    *integer_type = int_type;
+                }
                 if let Some(ToplevelDeclaration::Type(t)) = tlds.get(&e.identifier) {
                     self.link_with_type(tlds, &t.r#type)
                 } else {
@@ -555,6 +467,10 @@ impl ASN1Value {
                 }
             }
             (ASN1Type::ElsewhereDeclaredType(e), val) => {
+                if let ASN1Value::Integer(value) = *val {
+                    let int_type = e.constraints.iter().fold(IntegerType::Unbounded, |acc, c| c.integer_constraints().max_restrictive(acc));
+                    *val = ASN1Value::LinkedASN1IntValue { integer_type: int_type, value };
+                }
                 *self = ASN1Value::LinkedASN1Value {
                     supertypes: vec![e.identifier.clone()],
                     value: Box::new((*val).clone()),
@@ -595,19 +511,25 @@ impl ASN1Value {
             | (ASN1Type::SequenceOf(s), ASN1Value::SequenceOrSetOf(val)) => val
                 .iter_mut()
                 .try_for_each(|v| v.link_with_type(tlds, &s.r#type)),
+            (ASN1Type::Integer(i), ASN1Value::Integer(val)) => {
+                *self = ASN1Value::LinkedASN1IntValue { integer_type: i.int_type(), value: *val };
+                Ok(())
+            },
+            (ASN1Type::Integer(i), ASN1Value::LinkedASN1IntValue { integer_type, .. }) => {
+                let int_type = i.int_type().max_restrictive(*integer_type);
+                *integer_type = int_type;
+                Ok(())
+            },
             _ => Ok(()),
         }
     }
 
     pub fn is_elsewhere_declared(&self) -> bool {
-        match self {
-            Self::ElsewhereDeclaredValue { .. }
+        matches!(self, Self::ElsewhereDeclaredValue { .. }
             | Self::EnumeratedValue {
                 enumerated: _,
                 enumerable: _,
-            } => true,
-            _ => false,
-        }
+            })
     }
 
     /// Tries to resolve an `ElsewhereDeclaredValue` that references a
@@ -633,7 +555,7 @@ impl ASN1Value {
             identifier,
         } = self
         {
-            if object_name.contains(".") {
+            if object_name.contains('.') {
                 return Err(error!(NotYetInplemented, "Value references of path length > 2 are not yet supported! Found reference {object_name}.{identifier}"));
             }
             let object = get_declaration![
@@ -733,7 +655,7 @@ impl ASN1Value {
                 enumerated: _,
                 enumerable: e,
             } => {
-                if let Some(v) = find_tld_or_enum_value_by_name(identifier, &e, tlds) {
+                if let Some(v) = find_tld_or_enum_value_by_name(identifier, e, tlds) {
                     *self = v;
                     return Ok(true);
                 }
@@ -741,48 +663,6 @@ impl ASN1Value {
             _ => {}
         }
         Ok(false)
-    }
-}
-
-impl DeclarationElsewhere {
-    pub fn find_root_id<'a>(
-        &self,
-        tlds: &'a BTreeMap<String, ToplevelDeclaration>,
-    ) -> Option<&'a ToplevelDeclaration> {
-        if let Some(ToplevelDeclaration::Type(ToplevelTypeDeclaration {
-            comments: _,
-            tag: _,
-            name: _,
-            r#type: ASN1Type::ElsewhereDeclaredType(e),
-            parameterization: _,
-            index: _,
-        })) = tlds.get(&self.identifier)
-        {
-            e.find_root_id(tlds)
-        } else {
-            tlds.get(&self.identifier)
-        }
-    }
-
-    pub fn collect_parent_ids(
-        &self,
-        tlds: &BTreeMap<String, ToplevelDeclaration>,
-        mut ids: Vec<String>,
-    ) -> Vec<String> {
-        if let Some(ToplevelDeclaration::Type(ToplevelTypeDeclaration {
-            comments: _,
-            tag: _,
-            name: id,
-            r#type: ASN1Type::ElsewhereDeclaredType(e),
-            parameterization: _,
-            index: _,
-        })) = tlds.get(&self.identifier)
-        {
-            ids.push(id.clone());
-            e.collect_parent_ids(tlds, ids)
-        } else {
-            ids
-        }
     }
 }
 

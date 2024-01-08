@@ -15,7 +15,11 @@ pub mod parameterization;
 pub mod types;
 pub mod utils;
 
-use std::{collections::BTreeMap, ops::Add, rc::Rc};
+use std::{
+    collections::BTreeMap,
+    ops::{Add, AddAssign},
+    rc::Rc,
+};
 
 use constraints::Constraint;
 use error::{GrammarError, GrammarErrorType};
@@ -740,6 +744,41 @@ impl From<&str> for CharacterStringType {
     }
 }
 
+/// Representation of common integer types
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum IntegerType {
+    Int8,
+    Uint8,
+    Int16,
+    Uint16,
+    Int32,
+    Uint32,
+    Int64,
+    Uint64,
+    Unbounded,
+}
+
+impl IntegerType {
+    /// Returns the Integer type with more restrictions
+    /// - an IntegerType with a smaller set of values is considered more restrictive
+    /// - an unsigned IntegerType is considered more restrictive if the size of the set of values is equal
+    /// if equal, `self` is returned
+    pub fn max_restrictive(self, rhs: IntegerType) -> IntegerType {
+        match (self, rhs) {
+            (x, y) if x == y => x,
+            (IntegerType::Uint8, _) | (_, IntegerType::Uint8) => IntegerType::Uint8,
+            (IntegerType::Int8, _) | (_, IntegerType::Int8) => IntegerType::Int8,
+            (IntegerType::Uint16, _) | (_, IntegerType::Uint16) => IntegerType::Uint16,
+            (IntegerType::Int16, _) | (_, IntegerType::Int16) => IntegerType::Int16,
+            (IntegerType::Uint32, _) | (_, IntegerType::Uint32) => IntegerType::Uint32,
+            (IntegerType::Int32, _) | (_, IntegerType::Int32) => IntegerType::Int32,
+            (IntegerType::Uint64, _) | (_, IntegerType::Uint64) => IntegerType::Uint64,
+            (IntegerType::Int64, _) | (_, IntegerType::Int64) => IntegerType::Int64,
+            _ => IntegerType::Unbounded
+        }
+    }
+}
+
 /// The possible types of an ASN1 value.
 #[derive(Debug, Clone, PartialEq)]
 pub enum ASN1Value {
@@ -779,6 +818,11 @@ pub enum ASN1Value {
         /// typereferences of supertypes
         supertypes: Vec<String>,
         value: Box<ASN1Value>,
+    },
+    /// Integer values need type information that will not always be picked up by the parser on first pass.
+    LinkedASN1IntValue {
+        integer_type: IntegerType,
+        value: i128,
     },
 }
 

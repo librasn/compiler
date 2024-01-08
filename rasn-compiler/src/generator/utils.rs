@@ -13,7 +13,7 @@ use crate::intermediate::{
     },
     types::{Choice, ChoiceOption, Enumerated, SequenceOrSet, SequenceOrSetMember},
     utils::{to_rust_const_case, to_rust_enum_identifier, to_rust_snake_case, to_rust_title_case},
-    ASN1Type, ASN1Value, AsnTag, CharacterStringType, TagClass, TaggingEnvironment,
+    ASN1Type, ASN1Value, AsnTag, CharacterStringType, IntegerType, TagClass, TaggingEnvironment,
     ToplevelDeclaration, ToplevelTypeDeclaration,
 };
 
@@ -32,6 +32,22 @@ macro_rules! error {
 }
 
 pub(crate) use error;
+
+impl IntegerType {
+    pub fn to_token_stream(&self) -> TokenStream {
+        match self {
+            IntegerType::Int8 => quote!(i8),
+            IntegerType::Uint8 => quote!(u8),
+            IntegerType::Int16 => quote!(i16),
+            IntegerType::Uint16 => quote!(u16),
+            IntegerType::Int32 => quote!(i32),
+            IntegerType::Uint32 => quote!(u32),
+            IntegerType::Int64 => quote!(i64),
+            IntegerType::Uint64 => quote!(u64),
+            IntegerType::Unbounded => quote!(Integer),
+        }
+    }
+}
 
 pub struct NameType {
     name: Ident,
@@ -437,37 +453,18 @@ pub fn format_default_methods(
     let mut output = TokenStream::new();
     for member in members {
         if let Some(value) = member.default_value.as_ref() {
-            let (value_as_string, type_as_string) = match &member.r#type {
-                ASN1Type::BitString(_) => {
-                    let val = value_to_tokens(value, None)?;
-                    (quote!(#val.iter().collect()), quote!(BitString))
-                }
-                ASN1Type::ElsewhereDeclaredType(_)
-                    if !(matches!(
-                        value,
-                        ASN1Value::EnumeratedValue {
-                            enumerated: _,
-                            enumerable: _
-                        }
-                    )) =>
-                {
-                    let tokenized_type = type_to_tokens(&member.r#type)?;
-                    let tokenized_val = value_to_tokens(value, None)?;
-                    (quote!(#tokenized_type(#tokenized_val)), tokenized_type)
-                }
-                ty => (
-                    value_to_tokens(
-                        value,
-                        Some(&to_rust_title_case(&type_to_tokens(&ty)?.to_string())),
-                    )?,
-                    type_to_tokens(&ty)?,
-                ),
-            };
+            let val = value_to_tokens(
+                value,
+                Some(&to_rust_title_case(
+                    &type_to_tokens(&member.r#type)?.to_string(),
+                )),
+            )?;
+            let ty = type_to_tokens(&member.r#type)?;
             let method_name =
                 TokenStream::from_str(&default_method_name(parent_name, &member.name))?;
             output.append_all(quote! {
-                fn #method_name() -> #type_as_string {
-                    #value_as_string
+                fn #method_name() -> #ty {
+                    #val
                 }
             });
         }
@@ -479,7 +476,7 @@ pub fn type_to_tokens(ty: &ASN1Type) -> Result<TokenStream, GeneratorError> {
     match ty {
         ASN1Type::Null => Ok(quote!(Asn1Null)),
         ASN1Type::Boolean(_) => Ok(quote!(bool)),
-        ASN1Type::Integer(i) => Ok(TokenStream::from_str(&i.type_token())?),
+        ASN1Type::Integer(i) => Ok(i.int_type().to_token_stream()),
         ASN1Type::Real(_) => Ok(quote!(f64)),
         ASN1Type::BitString(_) => Ok(quote!(BitString)),
         ASN1Type::OctetString(_) => Ok(quote!(OctetString)),
@@ -620,6 +617,16 @@ pub fn value_to_tokens(
                 value_to_tokens(value, type_name)?,
                 supertypes.clone(),
             ))
+        }
+        ASN1Value::LinkedASN1IntValue {
+            integer_type,
+            value,
+        } => {
+            let val = Literal::i128_unsuffixed(*value);
+            match integer_type {
+                IntegerType::Unbounded => Ok(quote!(#val)),
+                _ => Ok(val.to_token_stream()),
+            }
         }
     }
 }
