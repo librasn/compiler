@@ -7,7 +7,10 @@ mod utils;
 
 use std::{borrow::BorrowMut, collections::BTreeMap};
 
-use crate::intermediate::{error::*, information_object::*, types::*, utils::*, *};
+use crate::{
+    intermediate::{error::*, information_object::*, types::*, utils::*, *},
+    validator::linking::utils::bit_string_to_octet_string,
+};
 
 use self::utils::find_tld_or_enum_value_by_name;
 
@@ -542,6 +545,18 @@ impl ASN1Value {
                 };
                 Ok(())
             }
+            (ASN1Type::OctetString(_), ASN1Value::BitString(b)) => {
+                *self = ASN1Value::OctetString(bit_string_to_octet_string(b)?);
+                Ok(())
+            }
+            (ASN1Type::OctetString(_), ASN1Value::LinkedASN1Value { value, .. })
+                if matches![**value, ASN1Value::BitString(_)] =>
+            {
+                if let ASN1Value::BitString(b) = &**value {
+                    *value = Box::new(ASN1Value::OctetString(bit_string_to_octet_string(b)?));
+                }
+                Ok(())
+            }
             (ASN1Type::Integer(i), ASN1Value::LinkedASN1IntValue { integer_type, .. }) => {
                 let int_type = i.int_type().max_restrictive(*integer_type);
                 *integer_type = int_type;
@@ -551,11 +566,13 @@ impl ASN1Value {
                 if matches![**value, ASN1Value::ElsewhereDeclaredValue { .. }] =>
             {
                 if let ASN1Value::ElsewhereDeclaredValue { identifier, .. } = &**value {
-                    if let Some(distinguished_value) = i.distinguished_values.as_ref().and_then(|dist_vals| {
-                        dist_vals
-                            .iter()
-                            .find_map(|d| (&d.name == identifier).then_some(d.value))
-                    }) {
+                    if let Some(distinguished_value) =
+                        i.distinguished_values.as_ref().and_then(|dist_vals| {
+                            dist_vals
+                                .iter()
+                                .find_map(|d| (&d.name == identifier).then_some(d.value))
+                        })
+                    {
                         *value = Box::new(ASN1Value::LinkedASN1IntValue {
                             integer_type: i.int_type(),
                             value: distinguished_value,

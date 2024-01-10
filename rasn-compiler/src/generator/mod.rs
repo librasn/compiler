@@ -49,49 +49,7 @@ pub fn generate(tld: ToplevelDeclaration) -> Result<TokenStream, GeneratorError>
             ASN1Type::UTCTime(_) => generate_utc_time(t),
             ASN1Type::ChoiceSelectionType(_) => unreachable!(),
         },
-        ToplevelDeclaration::Value(v) => match v.value {
-            ASN1Value::Null => generate_null_value(v),
-            ASN1Value::Boolean(_) => Err(GeneratorError {
-                kind: GeneratorErrorType::NotYetInplemented,
-                details: "Boolean values are currently unsupported!".into(),
-                top_level_declaration: None,
-            }),
-            ASN1Value::LinkedASN1IntValue { .. } => generate_integer_value(v),
-            ASN1Value::String(_) => Err(GeneratorError {
-                kind: GeneratorErrorType::NotYetInplemented,
-                details: "String values are currently unsupported!".into(),
-                top_level_declaration: None,
-            }),
-            ASN1Value::BitString(_) => Err(GeneratorError {
-                kind: GeneratorErrorType::NotYetInplemented,
-                details: "BitString values are currently unsupported!".into(),
-                top_level_declaration: None,
-            }),
-            ASN1Value::EnumeratedValue {
-                enumerated: _,
-                enumerable: _,
-            } => generate_enum_value(v),
-            ASN1Value::ElsewhereDeclaredValue { .. } => Err(GeneratorError {
-                kind: GeneratorErrorType::NotYetInplemented,
-                details: "Value cross references are currently unsupported!".into(),
-                top_level_declaration: None,
-            }),
-            ASN1Value::All => Err(GeneratorError {
-                kind: GeneratorErrorType::NotYetInplemented,
-                details: "ALL values are currently unsupported!".into(),
-                top_level_declaration: None,
-            }),
-            ASN1Value::Choice(_, _) => generate_choice_value(v),
-            //ASN1Value::SequenceOrSet(_) => generate_sequence_value(v),
-            ASN1Value::Real(_) => Err(GeneratorError {
-                kind: GeneratorErrorType::NotYetInplemented,
-                details: "Real values are currently unsupported!".into(),
-                top_level_declaration: None,
-            }),
-            ASN1Value::ObjectIdentifier(_) => generate_object_identifier_value(v),
-            ASN1Value::Time(_) => generate_time_value(v),
-            _ => Ok(TokenStream::new()),
-        },
+        ToplevelDeclaration::Value(v) => generate_primitive_value(v),
         ToplevelDeclaration::Information(i) => match i.value {
             // ASN1Information::ObjectClass(_) => {
             //     generate_information_object_class(i)

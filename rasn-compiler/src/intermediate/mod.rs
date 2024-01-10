@@ -831,6 +831,7 @@ pub enum ASN1Value {
     Real(f64),
     String(String),
     BitString(Vec<bool>),
+    OctetString(Vec<u8>),
     EnumeratedValue {
         enumerated: String,
         enumerable: String,

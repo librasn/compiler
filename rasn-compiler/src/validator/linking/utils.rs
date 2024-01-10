@@ -1,6 +1,10 @@
 use std::collections::BTreeMap;
 
-use crate::intermediate::{information_object::*, *};
+use crate::intermediate::{
+    error::{GrammarError, GrammarErrorType},
+    information_object::*,
+    *,
+};
 
 pub(crate) fn find_tld_or_enum_value_by_name(
     type_name: &String,
@@ -24,6 +28,22 @@ pub(crate) fn find_tld_or_enum_value_by_name(
         }
     }
     None
+}
+
+pub(crate) fn bit_string_to_octet_string(bits: &Vec<bool>) -> Result<Vec<u8>, GrammarError> {
+    let mut octets = vec![];
+    for byte in bits.chunks(8) {
+        if byte.len() != 8 {
+            return Err(GrammarError {
+                details: "Binary octet string value needs to be a multiple of 8 bits!".into(),
+                kind: GrammarErrorType::LinkerError,
+            });
+        }
+        octets.push(byte.iter().enumerate().fold(0u8, |acc, (i, bit)| {
+            acc + if *bit { 2u8.pow(7 - i as u32) } else { 0 }
+        }));
+    }
+    Ok(octets)
 }
 
 pub(crate) fn walk_object_field_ref_path<'a>(

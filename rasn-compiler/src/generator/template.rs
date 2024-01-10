@@ -47,7 +47,21 @@ pub fn unbounded_integer_value_template(
     quote! {
         lazy_static! {
             #comments
-            static ref #name: #vtype = #value;
+            pub static ref #name: #vtype = #value;
+        }
+    }
+}
+
+pub fn bitstring_value_template(
+    comments: TokenStream,
+    name: Ident,
+    vtype: TokenStream,
+    value: TokenStream,
+) -> TokenStream {
+    quote! {
+        lazy_static! {
+            #comments
+            pub static ref #name: #vtype = #value;
         }
     }
 }
@@ -98,7 +112,7 @@ pub fn utc_time_template(
     annotations: TokenStream,
 ) -> TokenStream {
     quote! {
-        comments
+        #comments
         #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
         #annotations
         pub struct #name(pub UtcTime);
@@ -158,10 +172,15 @@ pub fn boolean_template(
     }
 }
 
-pub fn null_value_template(comments: TokenStream, name: Ident) -> TokenStream {
+pub fn primitive_value_template(
+    comments: TokenStream,
+    name: Ident,
+    type_name: TokenStream,
+    assignment: TokenStream,
+) -> TokenStream {
     quote! {
         #comments
-        pub const #name: () = ();
+        pub const #name: #type_name = #assignment;
     }
 }
 
@@ -234,6 +253,7 @@ pub fn enumerated_template(
     }
 }
 
+#[allow(clippy::too_many_arguments)]
 pub fn sequence_or_set_template(
     comments: TokenStream,
     name: TokenStream,
@@ -280,6 +300,21 @@ pub fn sequence_or_set_of_template(
             #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
             #annotations
             pub struct #name(pub #generic_type<#member_type>);
+    }
+}
+
+pub fn choice_value_template(
+    comments: TokenStream,
+    name: Ident,
+    type_id: TokenStream,
+    choice_name: Ident,
+    inner_decl: TokenStream,
+) -> TokenStream {
+    quote! {
+        lazy_static! {
+            #comments
+            pub static ref #name: #type_id = #type_id :: #choice_name (#inner_decl);
+        }
     }
 }
 
