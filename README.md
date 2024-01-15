@@ -1,4 +1,6 @@
 # Rasn compiler
+[Try compiling some ASN.1 online.](https://6d7a.github.io/rasn-compiler-online/)
+
 The `rasn-compiler` library is a parser combinator that parses ASN1 specifications and outputs
 encoding-rule-agnotic rust representations of the ASN1 data elements to be used with the [`rasn`](https://github.com/XAMPPRocky/rasn) crate. 
 The compiler heavily relies on the great library [nom](https://docs.rs/nom/latest/nom/) for its basic parsers.
