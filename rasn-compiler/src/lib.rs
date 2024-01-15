@@ -48,12 +48,37 @@ use std::{
     vec,
 };
 
-use generator::{
-    builder::generate_module, GeneratedModule,
-};
+use generator::{builder::generate_module, GeneratedModule};
 use intermediate::ToplevelDeclaration;
 use parser::asn_spec;
 use validator::Validator;
+
+#[cfg(target_family = "wasm")]
+use wasm_bindgen::prelude::*;
+
+#[cfg(target_family = "wasm")]
+#[wasm_bindgen(inspectable, getter_with_clone)]
+pub struct Generated {
+    pub rust: String,
+    pub warnings: String,
+}
+
+#[cfg(target_family = "wasm")]
+#[wasm_bindgen]
+pub fn compile(asn1: &str) -> Result<Generated, JsValue> {
+    RasnCompiler::new()
+        .add_asn_literal(asn1)
+        .compile_to_string()
+        .map(|(rust, warn)| Generated {
+            rust: format_bindings(&rust).unwrap_or(rust),
+            warnings: warn.into_iter().fold(String::new(), |mut acc, w| {
+                acc += &w.to_string();
+                acc += "\n";
+                acc
+            }),
+        })
+        .map_err(|e| JsValue::from(e.to_string()))
+}
 
 /// The rasn compiler
 #[derive(Debug, PartialEq)]
@@ -102,6 +127,12 @@ struct CompileResult {
 enum AsnSource {
     Path(PathBuf),
     Literal(String),
+}
+
+impl Default for RasnCompiler<CompilerMissingParams> {
+    fn default() -> Self {
+        RasnCompiler::new()
+    }
 }
 
 impl RasnCompiler<CompilerMissingParams> {
@@ -279,12 +310,10 @@ impl RasnCompiler<CompilerSourcesSet> {
     pub fn compile_to_string(self) -> Result<(String, Vec<Box<dyn Error>>), Box<dyn Error>> {
         internal_compile(&self).map(|res| {
             (
-                res.modules
-                    .iter()
-                    .fold(String::new(), |mut acc, m| {
-                        acc += &m.generated;
-                        acc
-                    }),
+                res.modules.iter().fold(String::new(), |mut acc, m| {
+                    acc += &m.generated;
+                    acc
+                }),
                 res.warnings,
             )
         })
