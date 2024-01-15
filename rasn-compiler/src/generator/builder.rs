@@ -1,5 +1,5 @@
 use std::{collections::BTreeMap, error::Error, str::FromStr};
-use proc_macro2::TokenStream;
+use proc_macro2::{TokenStream, Literal};
 use quote::{quote, TokenStreamExt, ToTokens, format_ident};
 
 use crate::intermediate::{
@@ -9,7 +9,7 @@ use crate::intermediate::{
     },
     utils::{to_rust_const_case, to_rust_title_case, to_rust_snake_case, to_rust_enum_identifier},
     ASN1Type, ASN1Value, ToplevelDeclaration, ToplevelTypeDeclaration, ToplevelValueDeclaration,
-    INTEGER, constraints::Constraint, NULL, BOOLEAN, BIT_STRING, CHOICE,
+    INTEGER, constraints::Constraint, NULL, BOOLEAN, BIT_STRING, CHOICE, OCTET_STRING, GENERALIZED_TIME, types::UTCTime, UTC_TIME,
 };
 
 use super::{
@@ -62,23 +62,6 @@ pub(crate) fn generate_module(tlds: Vec<ToplevelDeclaration>) -> Result<(Option<
     }
 }
 
-pub fn generate_time_value(tld: ToplevelValueDeclaration) -> Result<TokenStream, GeneratorError> {
-    if let ASN1Value::Time(_) = &tld.value {
-        Ok(time_value_template(
-            format_comments(&tld.comments)?,
-            to_rust_const_case(&tld.name),
-            to_rust_title_case(&tld.associated_type),
-            value_to_tokens(&tld.value, Some(&to_rust_title_case(&tld.associated_type)))?,
-        ))
-    } else {
-        Err(GeneratorError::new(
-            Some(ToplevelDeclaration::Value(tld)),
-            "Expected GeneralizedTime or UTCTime value top-level declaration",
-            GeneratorErrorType::Asn1TypeMismatch,
-        ))
-    }
-}
-
 pub fn generate_typealias(tld: ToplevelTypeDeclaration) -> Result<TokenStream, GeneratorError> {
     if let ASN1Type::ElsewhereDeclaredType(dec) = &tld.r#type {
         Ok(typealias_template(
@@ -101,15 +84,15 @@ pub fn generate_integer_value(tld: ToplevelValueDeclaration) -> Result<TokenStre
     if let ASN1Value::LinkedASN1IntValue{ integer_type, .. } = tld.value {
         let formatted_value = value_to_tokens(&tld.value, None)?;
         let ty = to_rust_title_case(&tld.associated_type);
-        if tld.name == INTEGER {
-            Ok(unbounded_integer_value_template(
+        if tld.associated_type == INTEGER {
+            Ok(lazy_static_value_template(
                 format_comments(&tld.comments)?,
                 to_rust_const_case(&tld.name),
                 quote!(Integer),
                 formatted_value,
             ))
         } else if integer_type.is_unbounded() {
-            Ok(unbounded_integer_value_template(
+            Ok(lazy_static_value_template(
                 format_comments(&tld.comments)?,
                 to_rust_const_case(&tld.name),
                 ty.clone(),
@@ -239,44 +222,44 @@ macro_rules! assignment {
 }
 
 pub fn generate_primitive_value(tld: ToplevelValueDeclaration) -> Result<TokenStream, GeneratorError> {
-    let ty = tld.name.as_str();
+    let ty = tld.associated_type.as_str();
     match &tld.value {
         ASN1Value::Null if ty == NULL => call_template!(primitive_value_template, tld, quote!(()), quote!(())),
         ASN1Value::Null => call_template!(primitive_value_template, tld, to_rust_title_case(&tld.associated_type), assignment!(&tld.associated_type, quote!(()))),
         ASN1Value::Boolean(b) if ty == BOOLEAN  => call_template!(primitive_value_template, tld, quote!(bool), b.to_token_stream()),
         ASN1Value::Boolean(b)  => call_template!(primitive_value_template, tld, to_rust_title_case(&tld.associated_type), assignment!(&tld.associated_type, b.to_token_stream())),
         ASN1Value::LinkedASN1IntValue { .. } => generate_integer_value(tld),
-        ASN1Value::BitString(_) if ty == BIT_STRING => call_template!(bitstring_value_template, tld, quote!(BitString), value_to_tokens(&tld.value, None)?),
-        ASN1Value::BitString(_) => call_template!(bitstring_value_template, tld, to_rust_title_case(&tld.associated_type), assignment!(&tld.associated_type, value_to_tokens(&tld.value, None)?)),
+        ASN1Value::BitString(_) if ty == BIT_STRING => call_template!(lazy_static_value_template, tld, quote!(BitString), value_to_tokens(&tld.value, None)?),
+        ASN1Value::BitString(_) => call_template!(lazy_static_value_template, tld, to_rust_title_case(&tld.associated_type), assignment!(&tld.associated_type, value_to_tokens(&tld.value, None)?)),
+        ASN1Value::OctetString(_) if ty == OCTET_STRING => call_template!(lazy_static_value_template, tld, quote!(OctetString), value_to_tokens(&tld.value, None)?),
+        ASN1Value::OctetString(_) => call_template!(lazy_static_value_template, tld, to_rust_title_case(&tld.associated_type), assignment!(&tld.associated_type, value_to_tokens(&tld.value, None)?)),
         ASN1Value::Choice(choice, inner) => call_template!(choice_value_template, tld, to_rust_title_case(&tld.associated_type), to_rust_enum_identifier(choice), value_to_tokens(inner, None)?),
-        // ASN1Value::SequenceOrSet(_) => todo!(),
+        ASN1Value::EnumeratedValue { enumerated, enumerable } => call_template!(enum_value_template, tld, to_rust_title_case(enumerated), to_rust_enum_identifier(enumerable)),
+        ASN1Value::Time(_) if ty == GENERALIZED_TIME => call_template!(lazy_static_value_template, tld, quote!(GeneralizedTime), value_to_tokens(&tld.value, Some(&quote!(GeneralizedTime)))?),
+        ASN1Value::Time(_) if ty == UTC_TIME => call_template!(lazy_static_value_template, tld, quote!(UtcTime), value_to_tokens(&tld.value, Some(&quote!(UtcTime)))?),
+        ASN1Value::Time(_) => call_template!(lazy_static_value_template, tld, to_rust_title_case(&tld.associated_type), assignment!(&tld.associated_type, value_to_tokens(&tld.value, None)?)),
+        ASN1Value::SequenceOrSet(s) => {
+            let members = s.iter().map(|(id, val)| {
+                let field_id = to_rust_snake_case(id);
+                value_to_tokens(val, None).map(|value| quote!(#field_id: #value))
+            }).collect::<Result<Vec<TokenStream>, _>>()?;
+            call_template!(sequence_or_set_value_template, tld, to_rust_title_case(&tld.associated_type), quote!(#(#members),*))
+        },
+        ASN1Value::LinkedASN1Value { supertypes, value } => {
+            let parent = supertypes.last().map(to_rust_title_case);
+            if value.is_const_type() {
+                call_template!(primitive_value_template, tld, to_rust_title_case(&tld.associated_type), assignment!(&tld.associated_type, value_to_tokens(&tld.value, parent.as_ref())?))
+            } else {
+                call_template!(lazy_static_value_template, tld, to_rust_title_case(&tld.associated_type), assignment!(&tld.associated_type, value_to_tokens(&tld.value, parent.as_ref())?))
+            }
+        },
+        // ASN1Value::String(_) => todo!(),
         // ASN1Value::SequenceOrSetOf(_) => todo!(),
         // ASN1Value::Real(_) => todo!(),
-        // ASN1Value::String(_) => todo!(),
-        // ASN1Value::EnumeratedValue { enumerated, enumerable } => todo!(),
-        // ASN1Value::Time(_) => todo!(),
         // ASN1Value::ElsewhereDeclaredValue { parent, identifier } => todo!(),
         // ASN1Value::ObjectIdentifier(_) => todo!(),
-        // ASN1Value::LinkedASN1Value { supertypes, value } => todo!(),
         // ASN1Value::LinkedASN1IntValue { integer_type, value } => todo!(),
         _ => Ok(TokenStream::new()),
-    }
-}
-
-pub fn generate_enum_value(tld: ToplevelValueDeclaration) -> Result<TokenStream, GeneratorError> {
-    if let ASN1Value::EnumeratedValue { enumerated, enumerable } = tld.value {
-        Ok(enum_value_template(
-            format_comments(&tld.comments)?,
-            to_rust_const_case(&tld.name),
-            to_rust_title_case(&enumerated),
-            to_rust_enum_identifier(&enumerable)
-        ))
-    } else {
-        Err(GeneratorError::new(
-            Some(ToplevelDeclaration::Value(tld)),
-            "Expected NULL value top-level declaration",
-            GeneratorErrorType::Asn1TypeMismatch,
-        ))
     }
 }
 
@@ -395,24 +378,6 @@ pub fn generate_choice(tld: ToplevelTypeDeclaration) -> Result<TokenStream, Gene
         Err(GeneratorError::new(
             Some(ToplevelDeclaration::Type(tld)),
             "Expected CHOICE top-level declaration",
-            GeneratorErrorType::Asn1TypeMismatch,
-        ))
-    }
-}
-
-pub fn generate_object_identifier_value(
-    tld: ToplevelValueDeclaration,
-) -> Result<TokenStream, GeneratorError> {
-    if let ASN1Value::ObjectIdentifier(_) = tld.value {
-        Ok(object_identifier_value_template(
-            format_comments(&tld.comments)?,
-            to_rust_const_case(&tld.name),
-            value_to_tokens(&tld.value, None)?,
-        ))
-    } else {
-        Err(GeneratorError::new(
-            Some(ToplevelDeclaration::Value(tld)),
-            "Expected OBJECT IDENTIFIER top-level declaration",
             GeneratorErrorType::Asn1TypeMismatch,
         ))
     }

@@ -540,7 +540,11 @@ pub fn value_to_tokens(
                     "A type name is needed to stringify choice value {:?}", value
                 ))
             }
-        }
+        },
+        ASN1Value::OctetString(o) => {
+            let bytes = o.iter().map(|byte| Literal::u8_unsuffixed(*byte));
+            Ok(quote!(<OctetString as From<&'static [u8]>>::from(&[#(#bytes),*])))
+        },
         ASN1Value::SequenceOrSet(fields) => {
             if let Some(ty_n) = type_name {
                 let tokenized_fields = fields
@@ -588,14 +592,10 @@ pub fn value_to_tokens(
                 .filter_map(|arc| arc.number.map(|id| id.to_token_stream()));
             Ok(quote!([#(#arcs),*]))
         }
-        ASN1Value::Time(t) => type_name
-            .map(|time_type| quote!(#t.parse::<#time_type>().unwrap()))
-            .ok_or_else(|| {
-                error!(
-                    Unidentified,
-                    "A type name is needed to stringify time value {:?}", value
-                )
-            }),
+        ASN1Value::Time(t) => match type_name {
+            Some(time_type) => Ok(quote!(#t.parse::<#time_type>().unwrap())),
+            None => Ok(quote!(#t.parse::<_>().unwrap()))
+        },
         ASN1Value::SequenceOrSetOf(seq) => {
             let elems = seq
                 .iter()
@@ -845,6 +845,20 @@ pub fn resolve_custom_syntax(
             details: "Could not find class key!".into(),
             kind: GeneratorErrorType::MissingClassKey,
         }),
+    }
+}
+
+impl ASN1Value {
+    pub fn is_const_type(&self) -> bool {
+        match self {
+            ASN1Value::Null |
+            ASN1Value::Boolean(_) |
+            ASN1Value::EnumeratedValue { .. } => true,
+            ASN1Value::Choice(_, v) => v.is_const_type(),
+            ASN1Value::LinkedASN1IntValue { integer_type, .. } => integer_type != &IntegerType::Unbounded,
+            ASN1Value::LinkedASN1Value { value, .. } => value.is_const_type(),
+            _ => false
+        }
     }
 }
 

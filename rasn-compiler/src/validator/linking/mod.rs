@@ -12,7 +12,7 @@ use crate::{
     validator::linking::utils::bit_string_to_octet_string,
 };
 
-use self::utils::find_tld_or_enum_value_by_name;
+use self::utils::{find_tld_or_enum_value_by_name, octet_string_to_bit_string};
 
 macro_rules! error {
     ($kind:ident, $($arg:tt)*) => {
@@ -162,9 +162,20 @@ impl ToplevelValueDeclaration {
         tlds: &BTreeMap<String, ToplevelDeclaration>,
     ) -> Result<(), GrammarError> {
         if let Some(ToplevelDeclaration::Type(tld)) = tlds.get(&self.associated_type) {
-            self.value.link_with_type(tlds, &tld.r#type)?;
+            self.value.link_with_type(tlds, &tld.r#type)
+        } else {
+            let ty = match self.associated_type.as_str() {
+                INTEGER => ASN1Type::Integer(Integer { constraints: vec![], distinguished_values: None }),
+                BIT_STRING => ASN1Type::BitString(BitString { constraints: vec![], distinguished_values: None }),
+                OCTET_STRING => ASN1Type::OctetString(OctetString { constraints: vec![] }),
+                GENERALIZED_TIME => ASN1Type::GeneralizedTime(GeneralizedTime { constraints: vec![] }),
+                UTC_TIME => ASN1Type::UTCTime(UTCTime { constraints: vec![] }),
+                BOOLEAN => ASN1Type::Boolean(Boolean { constraints: vec![] }),
+                OBJECT_IDENTIFIER => ASN1Type::ObjectIdentifier(ObjectIdentifier { constraints: vec![] }),
+                _ => return Ok(()),
+            };
+            self.value.link_with_type(tlds, &ty)
         }
-        Ok(())
     }
 }
 
@@ -543,6 +554,18 @@ impl ASN1Value {
                     integer_type: i.int_type(),
                     value: *val,
                 };
+                Ok(())
+            }
+            (ASN1Type::BitString(_), ASN1Value::OctetString(o)) => {
+                *self = ASN1Value::BitString(octet_string_to_bit_string(&o));
+                Ok(())
+            }
+            (ASN1Type::BitString(_), ASN1Value::LinkedASN1Value { value, .. })
+                if matches![**value, ASN1Value::OctetString(_)] =>
+            {
+                if let ASN1Value::OctetString(o) = &**value {
+                    *value = Box::new(ASN1Value::BitString(octet_string_to_bit_string(&o)));
+                }
                 Ok(())
             }
             (ASN1Type::OctetString(_), ASN1Value::BitString(b)) => {

@@ -1,15 +1,6 @@
 #![allow(non_camel_case_types)]
 use rasn_compiler_tests::e2e_pdu;
 
-#[test]
-fn t() {
-    println!("{}",rasn_compiler::RasnCompiler::new().add_asn_literal("TestModule DEFINITIONS AUTOMATIC TAGS::= BEGIN Test-Enum ::= ENUMERATED {
-        test-1(3),
-        test-2(-7)
-    }
-    test-enum-val Test-Enum ::= test-2 END").compile_to_string().unwrap().0)
-}
-
 e2e_pdu!(
     boolean,
     "Test-Boolean ::= BOOLEAN",
@@ -19,11 +10,23 @@ e2e_pdu!(
 );
 
 e2e_pdu!(
+    boolean_value,
+    "test-boolean BOOLEAN ::= TRUE",
+    r#" pub const TEST_BOOLEAN: bool = true;                               "#
+);
+
+e2e_pdu!(
     integer,
     "Test-Int ::= INTEGER",
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]
         #[rasn(delegate)]
         pub struct TestInt(pub Integer);                                 "#
+);
+
+e2e_pdu!(
+    integer_value,
+    "test-int INTEGER ::= 4",
+    r#" lazy_static! { pub static ref TEST_INT: Integer = Integer::from(4); }                           "#
 );
 
 e2e_pdu!(
@@ -46,7 +49,7 @@ e2e_pdu!(
         #[rasn(delegate)]
         pub struct TestInt(pub Integer);
         lazy_static!{
-            static ref TEST_INT_VAL: TestInt = TestInt(Integer::from(4));
+            pub static ref TEST_INT_VAL: TestInt = TestInt(Integer::from(4));
         }                                                                            "#
 );
 
@@ -74,7 +77,7 @@ e2e_pdu!(
         #[rasn(delegate, value("4", extensible))]
         pub struct TestInt(pub Integer);
         lazy_static!{
-            static ref TEST_INT_VAL: TestInt = TestInt(Integer::from(4));
+            pub static ref TEST_INT_VAL: TestInt = TestInt(Integer::from(4));
         }                                                                            "#
 );
 
@@ -96,7 +99,7 @@ e2e_pdu!(
         #[rasn(delegate, value("4..=6", extensible))]
         pub struct TestInt(pub Integer);
         lazy_static!{
-            static ref TEST_INT_VAL: TestInt = TestInt(Integer::from(5));
+            pub static ref TEST_INT_VAL: TestInt = TestInt(Integer::from(5));
         }                                                                            "#
 );
 
@@ -109,12 +112,35 @@ e2e_pdu!(
 );
 
 e2e_pdu!(
+    null_value,
+    "test-null NULL ::= NULL",
+    r#" pub const TEST_NULL: () = ();                           "#
+);
+
+e2e_pdu!(
     bit_string,
     r#" Test-Bits ::= BIT STRING
         test-bits-val Test-Bits ::= '10101010'B"#,
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
         #[rasn(delegate)]
-        pub struct TestBits(pub BitString);                     "#
+        pub struct TestBits(pub BitString);                     
+        lazy_static!{
+            pub static ref TEST_BITS_VAL: TestBits = TestBits(
+                [true,false,true,false,true,false,true,false].into_iter().collect()
+            ); 
+        }                                                       "#
+);
+
+e2e_pdu!(
+    bit_string_value,
+    "test-bits BIT STRING ::= '1010'B",
+    r#" lazy_static! { pub static ref TEST_BITS: BitString = [true,false,true,false].into_iter().collect(); }                           "#
+);
+
+e2e_pdu!(
+    bit_string_value_hex,
+    "test-bits BIT STRING ::= 'FF'H",
+    r#" lazy_static! { pub static ref TEST_BITS: BitString = [true,true,true,true,true,true,true,true].into_iter().collect(); }                           "#
 );
 
 e2e_pdu!(
@@ -150,16 +176,26 @@ e2e_pdu!(
         test-bits-val Test-Bits ::= '10101'B"#,
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
         #[rasn(delegate, size("4..=6"))]
-        pub struct TestBits(pub BitString);                                "#
+        pub struct TestBits(pub BitString);
+        lazy_static!{
+            pub static ref TEST_BITS_VAL: TestBits = TestBits(
+                [true,false,true,false,true].into_iter().collect()
+            ); 
+        }                                                                   "#
 );
 
 e2e_pdu!(
     bit_string_range_ext,
     r#" Test-Bits ::= BIT STRING (SIZE(4..6,...))
-        test-bits-val Test-Bits ::= '10101010'B"#,
+        test-bits-val Test-Bits ::= 'D5'H"#,
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
         #[rasn(delegate, size("4..=6", extensible))]
-        pub struct TestBits(pub BitString);                                 "#
+        pub struct TestBits(pub BitString);
+        lazy_static!{
+            pub static ref TEST_BITS_VAL: TestBits = TestBits(
+                [true,true,false,true,false,true,false,true].into_iter().collect()
+            ); 
+        }                                                                          "#
 );
 
 e2e_pdu!(
@@ -168,7 +204,24 @@ e2e_pdu!(
         test-octets-val Test-Octets ::= '10101010'B"#,
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
         #[rasn(delegate)]
-        pub struct TestOctets(pub OctetString);                     "#
+        pub struct TestOctets(pub OctetString); 
+        lazy_static!{
+            pub static ref TEST_OCTETS_VAL: TestOctets = TestOctets(
+                <OctetStringasFrom<&'static[u8]>>::from(&[170])
+            );
+        }                                                           "#
+);
+
+e2e_pdu!(
+    octet_string_value,
+    "test-bytes OCTET STRING ::= 'FF'H",
+    r#" lazy_static! { pub static ref TEST_BYTES: OctetString = <OctetString as From<&'static[u8]>>::from(&[255]); }                           "#
+);
+
+e2e_pdu!(
+    octet_string_value_binary,
+    "test-bytes OCTET STRING ::= '11111111'B",
+    r#" lazy_static! { pub static ref TEST_BYTES: OctetString = <OctetString as From<&'static[u8]>>::from(&[255]); }                           "#
 );
 
 e2e_pdu!(
@@ -193,7 +246,12 @@ e2e_pdu!(
         test-octets-val Test-Octets ::= 'FF010201FF'H"#,
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
         #[rasn(delegate, size("4..=6"))]
-        pub struct TestOctets(pub OctetString);                                "#
+        pub struct TestOctets(pub OctetString);
+        lazy_static!{
+            pub static ref TEST_OCTETS_VAL: TestOctets = TestOctets(
+                <OctetString as From<&'static[u8]>>::from(&[255, 1, 2, 1, 255])
+            );
+        }                                                                       "#
 );
 
 e2e_pdu!(
@@ -202,7 +260,12 @@ e2e_pdu!(
         test-octets-val Test-Octets ::= 'FF010201FF2EDD60'H"#,
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
         #[rasn(delegate, size("4..=6", extensible))]
-        pub struct TestOctets(pub OctetString);                                 "#
+        pub struct TestOctets(pub OctetString);
+        lazy_static!{
+            pub static ref TEST_OCTETS_VAL: TestOctets = TestOctets(
+                <OctetString as From<&'static[u8]>>::from(&[255, 1, 2, 1, 255, 46, 221, 96])
+            );
+        }                                                                       "#
 );
 
 e2e_pdu!(

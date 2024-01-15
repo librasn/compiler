@@ -59,13 +59,9 @@ pub fn asn_spec<'a>(
         module_reference,
         terminated(
             many0(skip_ws(alt((
-                map(top_level_information_declaration, |m| {
-                    ToplevelDeclaration::Information(m)
-                }),
-                map(top_level_type_declaration, |m| ToplevelDeclaration::Type(m)),
-                map(top_level_value_declaration, |m| {
-                    ToplevelDeclaration::Value(m)
-                }),
+                map(top_level_information_declaration,ToplevelDeclaration::Information),
+                map(top_level_type_declaration, ToplevelDeclaration::Type),
+                map(top_level_value_declaration, ToplevelDeclaration::Value),
             )))),
             skip_ws_and_comments(alt((encoding_control, end))),
         ),

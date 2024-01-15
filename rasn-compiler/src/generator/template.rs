@@ -15,17 +15,6 @@ pub fn typealias_template(
     }
 }
 
-pub fn object_identifier_value_template(
-    comments: TokenStream,
-    name: Ident,
-    value: TokenStream,
-) -> TokenStream {
-    quote! {
-        #comments
-        pub const #name: &Oid = &Oid::const_new(&#value);
-    }
-}
-
 pub fn integer_value_template(
     comments: TokenStream,
     name: Ident,
@@ -38,21 +27,7 @@ pub fn integer_value_template(
     }
 }
 
-pub fn unbounded_integer_value_template(
-    comments: TokenStream,
-    name: Ident,
-    vtype: TokenStream,
-    value: TokenStream,
-) -> TokenStream {
-    quote! {
-        lazy_static! {
-            #comments
-            pub static ref #name: #vtype = #value;
-        }
-    }
-}
-
-pub fn bitstring_value_template(
+pub fn lazy_static_value_template(
     comments: TokenStream,
     name: Ident,
     vtype: TokenStream,
@@ -78,18 +53,6 @@ pub fn integer_template(
         #annotations
         pub struct #name (pub #integer_type);
 
-    }
-}
-
-pub fn time_value_template(
-    comments: TokenStream,
-    name: Ident,
-    type_name: TokenStream,
-    value: TokenStream,
-) -> TokenStream {
-    quote! {
-        #comments
-        pub const #name: #type_name = #value;
     }
 }
 
@@ -251,6 +214,22 @@ pub fn enumerated_template(
             #enum_members
         }
     }
+}
+
+pub fn sequence_or_set_value_template(
+    comments: TokenStream,
+    name: Ident,
+    vtype: TokenStream,
+    members: TokenStream,
+) -> TokenStream {
+    quote! {
+    lazy_static! {
+        #comments
+        pub static ref #name: #vtype = #vtype {
+            #members
+        };
+    }
+}
 }
 
 #[allow(clippy::too_many_arguments)]

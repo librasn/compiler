@@ -17,7 +17,7 @@ use super::{common::*, constraint::constraint};
 /// If the match succeeds, the parser will consume the match and return the remaining string
 /// and a wrapped `OctetString` value representing the ASN1 declaration.
 /// If the match fails, the parser will not consume the input and will return an error.
-pub fn octet_string<'a>(input: &'a str) -> IResult<&'a str, ASN1Type> {
+pub fn octet_string(input: &str) -> IResult<&str, ASN1Type> {
     map(
         preceded(skip_ws_and_comments(tag(OCTET_STRING)), opt(constraint)),
         |m| ASN1Type::OctetString(m.into()),
