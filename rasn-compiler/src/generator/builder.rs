@@ -81,7 +81,7 @@ pub fn generate_typealias(tld: ToplevelTypeDeclaration) -> Result<TokenStream, G
 }
 
 pub fn generate_integer_value(tld: ToplevelValueDeclaration) -> Result<TokenStream, GeneratorError> {
-    if let ASN1Value::LinkedASN1IntValue{ integer_type, .. } = tld.value {
+    if let ASN1Value::LinkedIntValue{ integer_type, .. } = tld.value {
         let formatted_value = value_to_tokens(&tld.value, None)?;
         let ty = to_rust_title_case(&tld.associated_type);
         if tld.associated_type == INTEGER {
@@ -228,7 +228,7 @@ pub fn generate_primitive_value(tld: ToplevelValueDeclaration) -> Result<TokenSt
         ASN1Value::Null => call_template!(primitive_value_template, tld, to_rust_title_case(&tld.associated_type), assignment!(&tld.associated_type, quote!(()))),
         ASN1Value::Boolean(b) if ty == BOOLEAN  => call_template!(primitive_value_template, tld, quote!(bool), b.to_token_stream()),
         ASN1Value::Boolean(b)  => call_template!(primitive_value_template, tld, to_rust_title_case(&tld.associated_type), assignment!(&tld.associated_type, b.to_token_stream())),
-        ASN1Value::LinkedASN1IntValue { .. } => generate_integer_value(tld),
+        ASN1Value::LinkedIntValue { .. } => generate_integer_value(tld),
         ASN1Value::BitString(_) if ty == BIT_STRING => call_template!(lazy_static_value_template, tld, quote!(BitString), value_to_tokens(&tld.value, None)?),
         ASN1Value::BitString(_) => call_template!(lazy_static_value_template, tld, to_rust_title_case(&tld.associated_type), assignment!(&tld.associated_type, value_to_tokens(&tld.value, None)?)),
         ASN1Value::OctetString(_) if ty == OCTET_STRING => call_template!(lazy_static_value_template, tld, quote!(OctetString), value_to_tokens(&tld.value, None)?),
@@ -238,14 +238,13 @@ pub fn generate_primitive_value(tld: ToplevelValueDeclaration) -> Result<TokenSt
         ASN1Value::Time(_) if ty == GENERALIZED_TIME => call_template!(lazy_static_value_template, tld, quote!(GeneralizedTime), value_to_tokens(&tld.value, Some(&quote!(GeneralizedTime)))?),
         ASN1Value::Time(_) if ty == UTC_TIME => call_template!(lazy_static_value_template, tld, quote!(UtcTime), value_to_tokens(&tld.value, Some(&quote!(UtcTime)))?),
         ASN1Value::Time(_) => call_template!(lazy_static_value_template, tld, to_rust_title_case(&tld.associated_type), assignment!(&tld.associated_type, value_to_tokens(&tld.value, None)?)),
-        ASN1Value::SequenceOrSet(s) => {
-            let members = s.iter().map(|(id, val)| {
-                let field_id = to_rust_snake_case(id);
-                value_to_tokens(val, None).map(|value| quote!(#field_id: #value))
+        ASN1Value::LinkedStructLikeValue(s) => {
+            let members = s.iter().map(|(_, val)| {
+                value_to_tokens(val.value(), None)
             }).collect::<Result<Vec<TokenStream>, _>>()?;
             call_template!(sequence_or_set_value_template, tld, to_rust_title_case(&tld.associated_type), quote!(#(#members),*))
         },
-        ASN1Value::LinkedASN1Value { supertypes, value } => {
+        ASN1Value::LinkedNestedValue { supertypes, value } => {
             let parent = supertypes.last().map(to_rust_title_case);
             if value.is_const_type() {
                 call_template!(primitive_value_template, tld, to_rust_title_case(&tld.associated_type), assignment!(&tld.associated_type, value_to_tokens(&tld.value, parent.as_ref())?))

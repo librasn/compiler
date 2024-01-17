@@ -225,9 +225,9 @@ pub fn sequence_or_set_value_template(
     quote! {
     lazy_static! {
         #comments
-        pub static ref #name: #vtype = #vtype {
+        pub static ref #name: #vtype = #vtype ::new(
             #members
-        };
+        );
     }
 }
 }

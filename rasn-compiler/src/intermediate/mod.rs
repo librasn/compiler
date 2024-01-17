@@ -18,7 +18,7 @@ pub mod utils;
 use std::{
     collections::BTreeMap,
     ops::{Add, AddAssign},
-    rc::Rc,
+    rc::Rc, f32::consts::E,
 };
 
 use constraints::Constraint;
@@ -854,16 +854,41 @@ pub enum ASN1Value {
     /// ```
     /// the relation of the default value to `ExampleSubset` will not be picked up by the parser.
     /// However, in some representations, this relation is critical information.  
-    LinkedASN1Value {
+    LinkedNestedValue {
         /// typereferences of supertypes
         supertypes: Vec<String>,
         value: Box<ASN1Value>,
     },
     /// Integer values need type information that will not always be picked up by the parser on first pass.
-    LinkedASN1IntValue {
+    LinkedIntValue {
         integer_type: IntegerType,
         value: i128,
     },
+    /// Struct-like values such as SEQUENCE values need type information that will not always be picked up by the parser on first pass.
+    LinkedStructLikeValue(Vec<(String, StructLikeFieldValue)>),
+}
+
+/// Representation of a field value of a struct-like ASN1 value
+#[derive(Debug, Clone, PartialEq)]
+pub enum StructLikeFieldValue {
+    Explicit(Box<ASN1Value>),
+    Implicit(Box<ASN1Value>)
+}
+
+impl StructLikeFieldValue {
+    pub fn into_value(self) -> ASN1Value {
+        match self {
+            StructLikeFieldValue::Explicit(v) |
+            StructLikeFieldValue::Implicit(v) => *v,
+        }
+    }
+
+    pub fn value(&self) -> &ASN1Value {
+        match self {
+            StructLikeFieldValue::Explicit(v) |
+            StructLikeFieldValue::Implicit(v) => &*v,
+        }
+    }
 }
 
 impl AsMut<ASN1Value> for ASN1Value {

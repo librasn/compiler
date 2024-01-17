@@ -165,13 +165,29 @@ impl ToplevelValueDeclaration {
             self.value.link_with_type(tlds, &tld.r#type)
         } else {
             let ty = match self.associated_type.as_str() {
-                INTEGER => ASN1Type::Integer(Integer { constraints: vec![], distinguished_values: None }),
-                BIT_STRING => ASN1Type::BitString(BitString { constraints: vec![], distinguished_values: None }),
-                OCTET_STRING => ASN1Type::OctetString(OctetString { constraints: vec![] }),
-                GENERALIZED_TIME => ASN1Type::GeneralizedTime(GeneralizedTime { constraints: vec![] }),
-                UTC_TIME => ASN1Type::UTCTime(UTCTime { constraints: vec![] }),
-                BOOLEAN => ASN1Type::Boolean(Boolean { constraints: vec![] }),
-                OBJECT_IDENTIFIER => ASN1Type::ObjectIdentifier(ObjectIdentifier { constraints: vec![] }),
+                INTEGER => ASN1Type::Integer(Integer {
+                    constraints: vec![],
+                    distinguished_values: None,
+                }),
+                BIT_STRING => ASN1Type::BitString(BitString {
+                    constraints: vec![],
+                    distinguished_values: None,
+                }),
+                OCTET_STRING => ASN1Type::OctetString(OctetString {
+                    constraints: vec![],
+                }),
+                GENERALIZED_TIME => ASN1Type::GeneralizedTime(GeneralizedTime {
+                    constraints: vec![],
+                }),
+                UTC_TIME => ASN1Type::UTCTime(UTCTime {
+                    constraints: vec![],
+                }),
+                BOOLEAN => ASN1Type::Boolean(Boolean {
+                    constraints: vec![],
+                }),
+                OBJECT_IDENTIFIER => ASN1Type::ObjectIdentifier(ObjectIdentifier {
+                    constraints: vec![],
+                }),
                 _ => return Ok(()),
             };
             self.value.link_with_type(tlds, &ty)
@@ -481,10 +497,10 @@ impl ASN1Value {
         match (ty, self.as_mut()) {
             (
                 ASN1Type::ElsewhereDeclaredType(e),
-                ASN1Value::LinkedASN1Value { supertypes, value },
+                ASN1Value::LinkedNestedValue { supertypes, value },
             ) => {
                 supertypes.push(e.identifier.clone());
-                if let ASN1Value::LinkedASN1IntValue { integer_type, .. } = value.borrow_mut() {
+                if let ASN1Value::LinkedIntValue { integer_type, .. } = value.borrow_mut() {
                     let int_type = e.constraints.iter().fold(IntegerType::Unbounded, |acc, c| {
                         c.integer_constraints().max_restrictive(acc)
                     });
@@ -504,12 +520,12 @@ impl ASN1Value {
                     let int_type = e.constraints.iter().fold(IntegerType::Unbounded, |acc, c| {
                         c.integer_constraints().max_restrictive(acc)
                     });
-                    *val = ASN1Value::LinkedASN1IntValue {
+                    *val = ASN1Value::LinkedIntValue {
                         integer_type: int_type,
                         value,
                     };
                 }
-                *self = ASN1Value::LinkedASN1Value {
+                *self = ASN1Value::LinkedNestedValue {
                     supertypes: vec![e.identifier.clone()],
                     value: Box::new((*val).clone()),
                 };
@@ -534,23 +550,24 @@ impl ASN1Value {
             }
             (ASN1Type::Set(s), ASN1Value::SequenceOrSet(val))
             | (ASN1Type::Sequence(s), ASN1Value::SequenceOrSet(val)) => {
-                val.iter_mut().try_for_each(|v| {
-                    if let Some(member) = s.members.iter().find(|m| m.name == v.0) {
-                        v.1.link_with_type(tlds, &member.r#type)
-                    } else {
-                        Err(GrammarError {
-                            details: format!("Failed to link value with '{}'", v.0),
-                            kind: GrammarErrorType::LinkerError,
-                        })
-                    }
-                })
+                *self = Self::link_struct_like(val, s, tlds)?;
+                Ok(())
+            }
+            (ASN1Type::Set(s), ASN1Value::LinkedNestedValue { value, .. })
+            | (ASN1Type::Sequence(s), ASN1Value::LinkedNestedValue { value, .. })
+                if matches![**value, ASN1Value::SequenceOrSet(_)] =>
+            {
+                if let ASN1Value::SequenceOrSet(val) = &mut **value {
+                    *value = Box::new(Self::link_struct_like(val, s, tlds)?);
+                }
+                Ok(())
             }
             (ASN1Type::SetOf(s), ASN1Value::SequenceOrSetOf(val))
             | (ASN1Type::SequenceOf(s), ASN1Value::SequenceOrSetOf(val)) => val
                 .iter_mut()
                 .try_for_each(|v| v.link_with_type(tlds, &s.r#type)),
             (ASN1Type::Integer(i), ASN1Value::Integer(val)) => {
-                *self = ASN1Value::LinkedASN1IntValue {
+                *self = ASN1Value::LinkedIntValue {
                     integer_type: i.int_type(),
                     value: *val,
                 };
@@ -560,7 +577,7 @@ impl ASN1Value {
                 *self = ASN1Value::BitString(octet_string_to_bit_string(&o));
                 Ok(())
             }
-            (ASN1Type::BitString(_), ASN1Value::LinkedASN1Value { value, .. })
+            (ASN1Type::BitString(_), ASN1Value::LinkedNestedValue { value, .. })
                 if matches![**value, ASN1Value::OctetString(_)] =>
             {
                 if let ASN1Value::OctetString(o) = &**value {
@@ -572,7 +589,7 @@ impl ASN1Value {
                 *self = ASN1Value::OctetString(bit_string_to_octet_string(b)?);
                 Ok(())
             }
-            (ASN1Type::OctetString(_), ASN1Value::LinkedASN1Value { value, .. })
+            (ASN1Type::OctetString(_), ASN1Value::LinkedNestedValue { value, .. })
                 if matches![**value, ASN1Value::BitString(_)] =>
             {
                 if let ASN1Value::BitString(b) = &**value {
@@ -580,12 +597,12 @@ impl ASN1Value {
                 }
                 Ok(())
             }
-            (ASN1Type::Integer(i), ASN1Value::LinkedASN1IntValue { integer_type, .. }) => {
+            (ASN1Type::Integer(i), ASN1Value::LinkedIntValue { integer_type, .. }) => {
                 let int_type = i.int_type().max_restrictive(*integer_type);
                 *integer_type = int_type;
                 Ok(())
             }
-            (ASN1Type::Integer(i), ASN1Value::LinkedASN1Value { value, .. })
+            (ASN1Type::Integer(i), ASN1Value::LinkedNestedValue { value, .. })
                 if matches![**value, ASN1Value::ElsewhereDeclaredValue { .. }] =>
             {
                 if let ASN1Value::ElsewhereDeclaredValue { identifier, .. } = &**value {
@@ -596,7 +613,7 @@ impl ASN1Value {
                                 .find_map(|d| (&d.name == identifier).then_some(d.value))
                         })
                     {
-                        *value = Box::new(ASN1Value::LinkedASN1IntValue {
+                        *value = Box::new(ASN1Value::LinkedIntValue {
                             integer_type: i.int_type(),
                             value: distinguished_value,
                         });
@@ -610,14 +627,14 @@ impl ASN1Value {
                         .iter()
                         .find_map(|d| (&d.name == identifier).then_some(d.value))
                 }) {
-                    *self = ASN1Value::LinkedASN1IntValue {
+                    *self = ASN1Value::LinkedIntValue {
                         integer_type: i.int_type(),
                         value,
                     };
                 }
                 Ok(())
             }
-            (ASN1Type::Enumerated(_), ASN1Value::LinkedASN1Value { value, .. })
+            (ASN1Type::Enumerated(_), ASN1Value::LinkedNestedValue { value, .. })
                 if matches![**value, ASN1Value::ElsewhereDeclaredValue { .. }] =>
             {
                 if let ASN1Value::ElsewhereDeclaredValue { identifier, .. } = &**value {
@@ -647,6 +664,44 @@ impl ASN1Value {
             }
             _ => Ok(()),
         }
+    }
+
+    fn link_struct_like(
+        val: &mut [(String, Box<ASN1Value>)],
+        s: &SequenceOrSet,
+        tlds: &BTreeMap<String, ToplevelDeclaration>,
+    ) -> Result<ASN1Value, GrammarError> {
+        val.iter_mut().try_for_each(|v| {
+            if let Some(member) = s.members.iter().find(|m| m.name == v.0) {
+                v.1.link_with_type(tlds, &member.r#type)
+            } else {
+                Err(GrammarError {
+                    details: format!("Failed to link value with '{}'", v.0),
+                    kind: GrammarErrorType::LinkerError,
+                })
+            }
+        })?;
+
+        s.members
+            .iter()
+            .map(|member| {
+                val.iter()
+                    .find_map(|(name, value)| {
+                        (name == &member.name)
+                            .then_some(StructLikeFieldValue::Explicit(value.clone()))
+                    })
+                    .or(member
+                        .default_value
+                        .as_ref()
+                        .map(|d| StructLikeFieldValue::Implicit(Box::new(d.clone()))))
+                    .ok_or_else(|| GrammarError {
+                        details: format!("No value for field {} found!", member.name),
+                        kind: GrammarErrorType::LinkerError,
+                    })
+                    .map(|field_value| (member.name.clone(), field_value))
+            })
+            .collect::<Result<Vec<_>, _>>()
+            .map(ASN1Value::LinkedStructLikeValue)
     }
 
     pub fn is_elsewhere_declared(&self) -> bool {
@@ -875,7 +930,7 @@ mod tests {
                 associated_type: "BaseChoice".into(),
                 value: ASN1Value::Choice(
                     "first".into(),
-                    Box::new(ASN1Value::LinkedASN1Value {
+                    Box::new(ASN1Value::LinkedNestedValue {
                         supertypes: vec!["IntermediateBool".into(), "RootBool".into()],
                         value: Box::new(ASN1Value::Boolean(true))
                     })

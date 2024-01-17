@@ -151,8 +151,9 @@ pub fn format_alphabet_annotations(
     }
     let mut permitted_alphabet = PerVisibleAlphabetConstraints::default_for(string_type);
     for c in constraints {
-        PerVisibleAlphabetConstraints::try_new(c, string_type)?
-            .map(|mut p| permitted_alphabet += &mut p);
+        if let Some(mut p) = PerVisibleAlphabetConstraints::try_new(c, string_type)? {
+            permitted_alphabet += &mut p
+        }
     }
     permitted_alphabet.finalize();
     let alphabet_unicode = permitted_alphabet
@@ -545,20 +546,16 @@ pub fn value_to_tokens(
             let bytes = o.iter().map(|byte| Literal::u8_unsuffixed(*byte));
             Ok(quote!(<OctetString as From<&'static [u8]>>::from(&[#(#bytes),*])))
         },
-        ASN1Value::SequenceOrSet(fields) => {
+        ASN1Value::SequenceOrSet(_) => Err(error!(Unidentified, "Unexpectedly encountered unlinked struct-like ASN1 value!")),
+        ASN1Value::LinkedStructLikeValue(fields) => {
             if let Some(ty_n) = type_name {
                 let tokenized_fields = fields
                     .iter()
-                    .map(|(id, val)| {
-                        let ident = format_ident!("{id}");
-                        value_to_tokens(val, None).map(|field_val| {
-                            quote! {
-                                #ident: #field_val
-                            }
-                        })
+                    .map(|(_, val)| {
+                        value_to_tokens(val.value(), None)
                     })
                     .collect::<Result<Vec<TokenStream>, _>>()?;
-                Ok(quote!(#ty_n { #(#tokenized_fields),* }))
+                Ok(quote!(#ty_n ::new(#(#tokenized_fields),*)))
             } else {
                 Err(error!(
                     Unidentified,
@@ -603,7 +600,7 @@ pub fn value_to_tokens(
                 .collect::<Result<Vec<_>, _>>()?;
             Ok(quote!(&'static [#(#elems),*].into_iter().collect()))
         }
-        ASN1Value::LinkedASN1Value { supertypes, value } => {
+        ASN1Value::LinkedNestedValue { supertypes, value } => {
             fn nester(s: TokenStream, mut types: Vec<String>) -> TokenStream {
                 match types.pop() {
                     Some(t) => {
@@ -618,7 +615,7 @@ pub fn value_to_tokens(
                 supertypes.clone(),
             ))
         }
-        ASN1Value::LinkedASN1IntValue {
+        ASN1Value::LinkedIntValue {
             integer_type,
             value,
         } => {
@@ -855,8 +852,8 @@ impl ASN1Value {
             ASN1Value::Boolean(_) |
             ASN1Value::EnumeratedValue { .. } => true,
             ASN1Value::Choice(_, v) => v.is_const_type(),
-            ASN1Value::LinkedASN1IntValue { integer_type, .. } => integer_type != &IntegerType::Unbounded,
-            ASN1Value::LinkedASN1Value { value, .. } => value.is_const_type(),
+            ASN1Value::LinkedIntValue { integer_type, .. } => integer_type != &IntegerType::Unbounded,
+            ASN1Value::LinkedNestedValue { value, .. } => value.is_const_type(),
             _ => false
         }
     }
@@ -1044,7 +1041,7 @@ mod tests {
     fn formats_linked_value() {
         assert_eq!(
             value_to_tokens(
-                &ASN1Value::LinkedASN1Value {
+                &ASN1Value::LinkedNestedValue {
                     supertypes: vec!["Outer".into(), "Inner".into()],
                     value: Box::new(ASN1Value::Boolean(true))
                 },

@@ -8,7 +8,7 @@
 pub(crate) mod error;
 mod linking;
 
-use std::{collections::BTreeMap, error::Error};
+use std::{collections::BTreeMap, error::Error, ops::Not};
 
 use crate::intermediate::{constraints::*, types::*, *, information_object::{ClassLink, ToplevelInformationDeclaration}};
 
@@ -30,7 +30,13 @@ impl Validator {
 
     fn link(mut self) -> Result<(Self, Vec<Box<dyn Error>>), ValidatorError> {
         let mut warnings: Vec<Box<dyn Error>> = vec![];
-        let mut keys = self.tlds.keys().cloned().collect::<Vec<String>>();
+        // Linking of ASN1 values depends on linked ASN1 types, so we order the key colelction accordingly (note that we pop keys)
+        let mut keys = self.tlds.iter()
+            .filter_map(|(k, v)| matches![v, ToplevelDeclaration::Value(_)].then_some(k.clone()))
+            .chain(
+                self.tlds.iter()
+                .filter_map(|(k, v)| matches![v, ToplevelDeclaration::Value(_)].not().then_some(k.clone()))
+            ).collect::<Vec<String>>();
         while let Some(key) = keys.pop() {
             if self.references_class_by_name(&key) {
                 match self.tlds.remove(&key) {
