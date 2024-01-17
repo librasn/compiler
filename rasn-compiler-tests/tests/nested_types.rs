@@ -83,3 +83,19 @@ e2e_pdu!(
             );
         }                                                                        "#
 );
+
+e2e_pdu!(
+    constraint_cross_reference,
+    r#" Test-Int ::= INTEGER (0..123723)
+        Wrapping-Int ::= Test-Int (0..value)
+        value Test-Int ::= 5"#,
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]
+        #[rasn(delegate, value("0..=123723"))]
+        pub struct TestInt(pub u32);
+        
+        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+        #[rasn(delegate, value("0..=5"))]
+        pub struct WrappingInt(pub TestInt);                                 
+        
+        pub const VALUE: TestInt = TestInt(5);         "#
+);

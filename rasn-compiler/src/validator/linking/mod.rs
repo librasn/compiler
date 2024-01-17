@@ -705,14 +705,15 @@ impl ASN1Value {
     }
 
     pub fn is_elsewhere_declared(&self) -> bool {
-        matches!(
+        let is = matches!(
             self,
             Self::ElsewhereDeclaredValue { .. }
                 | Self::EnumeratedValue {
                     enumerated: _,
                     enumerable: _,
                 }
-        )
+        );
+        is
     }
 
     /// Tries to resolve an `ElsewhereDeclaredValue` that references a
