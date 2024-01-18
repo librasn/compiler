@@ -118,7 +118,7 @@ impl ToplevelDeclaration {
         match self {
             ToplevelDeclaration::Type(t) => t.collect_supertypes(tlds),
             ToplevelDeclaration::Value(v) => v.collect_supertypes(tlds),
-            ToplevelDeclaration::Information(_) => todo!(),
+            ToplevelDeclaration::Information(i) => i.collect_supertypes(tlds),
         }
     }
 }
@@ -494,6 +494,7 @@ impl ASN1Value {
         tlds: &BTreeMap<String, ToplevelDeclaration>,
         ty: &ASN1Type,
     ) -> Result<(), GrammarError> {
+        #[allow(clippy::useless_asref)] // false positive
         match (ty, self.as_mut()) {
             (
                 ASN1Type::ElsewhereDeclaredType(e),
@@ -514,6 +515,9 @@ impl ASN1Value {
                         kind: GrammarErrorType::LinkerError,
                     })
                 }
+            }
+            (ASN1Type::ElsewhereDeclaredType(_), ASN1Value::ElsewhereDeclaredValue { .. }) => {
+                Ok(())
             }
             (ASN1Type::ElsewhereDeclaredType(e), val) => {
                 if let ASN1Value::Integer(value) = *val {
@@ -548,6 +552,23 @@ impl ASN1Value {
                     })
                 }
             }
+            (ASN1Type::Choice(c), ASN1Value::LinkedNestedValue { supertypes, value })
+                if matches![**value, ASN1Value::Choice(_, _)] =>
+            {
+                supertypes.pop();
+                if let ASN1Value::Choice(opt, val) = &mut **value {
+                    if let Some(option) = c.options.iter().find(|o| &o.name == opt) {
+                        val.link_with_type(tlds, &option.r#type)
+                    } else {
+                        Err(GrammarError {
+                            details: format!("Failed to link value with '{}'", opt),
+                            kind: GrammarErrorType::LinkerError,
+                        })
+                    }
+                } else {
+                    Ok(())
+                }
+            }
             (ASN1Type::Set(s), ASN1Value::SequenceOrSet(val))
             | (ASN1Type::Sequence(s), ASN1Value::SequenceOrSet(val)) => {
                 *self = Self::link_struct_like(val, s, tlds)?;
@@ -573,15 +594,27 @@ impl ASN1Value {
                 };
                 Ok(())
             }
+            (ASN1Type::CharacterString(t), ASN1Value::String(s)) => {
+                *self = ASN1Value::LinkedCharStringValue(t.r#type, s.clone());
+                Ok(())
+            }
+            (ASN1Type::CharacterString(t), ASN1Value::LinkedNestedValue { value, .. })
+                if matches![**value, ASN1Value::String(_)] =>
+            {
+                if let ASN1Value::String(s) = &**value {
+                    *value = Box::new(ASN1Value::LinkedCharStringValue(t.r#type, s.clone()));
+                }
+                Ok(())
+            }
             (ASN1Type::BitString(_), ASN1Value::OctetString(o)) => {
-                *self = ASN1Value::BitString(octet_string_to_bit_string(&o));
+                *self = ASN1Value::BitString(octet_string_to_bit_string(o));
                 Ok(())
             }
             (ASN1Type::BitString(_), ASN1Value::LinkedNestedValue { value, .. })
                 if matches![**value, ASN1Value::OctetString(_)] =>
             {
                 if let ASN1Value::OctetString(o) = &**value {
-                    *value = Box::new(ASN1Value::BitString(octet_string_to_bit_string(&o)));
+                    *value = Box::new(ASN1Value::BitString(octet_string_to_bit_string(o)));
                 }
                 Ok(())
             }

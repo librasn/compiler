@@ -866,6 +866,8 @@ pub enum ASN1Value {
     },
     /// Struct-like values such as SEQUENCE values need type information that will not always be picked up by the parser on first pass.
     LinkedStructLikeValue(Vec<(String, StructLikeFieldValue)>),
+    /// Character string values such as UTF8String values need type information that will not always be picked up by the parser on first pass.
+    LinkedCharStringValue(CharacterStringType, String),
 }
 
 /// Representation of a field value of a struct-like ASN1 value

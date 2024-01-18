@@ -49,7 +49,7 @@ pub fn generate(tld: ToplevelDeclaration) -> Result<TokenStream, GeneratorError>
             ASN1Type::UTCTime(_) => generate_utc_time(t),
             ASN1Type::ChoiceSelectionType(_) => unreachable!(),
         },
-        ToplevelDeclaration::Value(v) => generate_primitive_value(v),
+        ToplevelDeclaration::Value(v) => generate_value(v),
         ToplevelDeclaration::Information(i) => match i.value {
             // ASN1Information::ObjectClass(_) => {
             //     generate_information_object_class(i)

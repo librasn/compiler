@@ -83,6 +83,137 @@ pub(crate) fn walk_object_field_ref_path<'a>(
         .flatten()
 }
 
+/// Resolves the custom syntax declared in an information object class' WITH SYNTAX clause
+pub fn resolve_custom_syntax(
+    fields: &mut InformationObjectFields,
+    class: &InformationObjectClass,
+) -> Result<(), GrammarError> {
+    if let InformationObjectFields::CustomSyntax(application) = fields {
+        let tokens = match &class.syntax {
+            Some(s) => s.flatten(),
+            None => {
+                return Err(GrammarError {
+                    details: "No syntax definition for information object class found!".into(),
+                    kind: GrammarErrorType::LinkerError,
+                })
+            }
+        };
+
+        let mut unsorted_default_syntax = Vec::<(usize, InformationObjectField)>::new();
+
+        let mut application_index = 0;
+        'syntax_matching: for (required, token) in &tokens {
+            if let Some(expr) = application.get(application_index) {
+                if expr.matches(token, &tokens) {
+                    match expr {
+                        SyntaxApplication::ObjectSetDeclaration(o) => {
+                            if let Some(index) =
+                                class.fields.iter().enumerate().find_map(|(i, v)| {
+                                    (v.identifier
+                                        == ObjectFieldIdentifier::MultipleValue(
+                                            token.name_or_empty().to_owned(),
+                                        ))
+                                    .then_some(i)
+                                })
+                            {
+                                unsorted_default_syntax.push((
+                                    index,
+                                    InformationObjectField::ObjectSetField(ObjectSetField {
+                                        identifier: token.name_or_empty().to_owned(),
+                                        value: o.clone(),
+                                    }),
+                                ));
+                            }
+                        }
+                        SyntaxApplication::LiteralOrTypeReference(t) => {
+                            if let Some(index) =
+                                class.fields.iter().enumerate().find_map(|(i, v)| {
+                                    (v.identifier
+                                        == ObjectFieldIdentifier::MultipleValue(
+                                            token.name_or_empty().to_owned(),
+                                        ))
+                                    .then_some(i)
+                                })
+                            {
+                                unsorted_default_syntax.push((
+                                    index,
+                                    InformationObjectField::TypeField(TypeField {
+                                        identifier: token.name_or_empty().to_owned(),
+                                        r#type: ASN1Type::ElsewhereDeclaredType(t.clone()),
+                                    }),
+                                ));
+                            }
+                        }
+                        SyntaxApplication::TypeReference(t) => {
+                            if let Some(index) =
+                                class.fields.iter().enumerate().find_map(|(i, v)| {
+                                    (v.identifier
+                                        == ObjectFieldIdentifier::MultipleValue(
+                                            token.name_or_empty().to_owned(),
+                                        ))
+                                    .then_some(i)
+                                })
+                            {
+                                unsorted_default_syntax.push((
+                                    index,
+                                    InformationObjectField::TypeField(TypeField {
+                                        identifier: token.name_or_empty().to_owned(),
+                                        r#type: t.clone(),
+                                    }),
+                                ));
+                            }
+                        }
+                        SyntaxApplication::ValueReference(v) => {
+                            if let Some(index) =
+                                class.fields.iter().enumerate().find_map(|(i, v)| {
+                                    (v.identifier
+                                        == ObjectFieldIdentifier::SingleValue(
+                                            token.name_or_empty().to_owned(),
+                                        ))
+                                    .then_some(i)
+                                })
+                            {
+                                unsorted_default_syntax.push((
+                                    index,
+                                    InformationObjectField::FixedValueField(FixedValueField {
+                                        identifier: token.name_or_empty().to_owned(),
+                                        value: v.clone(),
+                                    }),
+                                ));
+                            }
+                        }
+                        _ => continue 'syntax_matching,
+                    }
+                    application_index += 1;
+                } else if *required {
+                    return Err(GrammarError {
+                        details: "Syntax mismatch while resolving information object."
+                            .to_string(),
+                        kind: GrammarErrorType::LinkerError,
+                    });
+                } else {
+                    continue 'syntax_matching;
+                }
+            } else if *required {
+                return Err(GrammarError {
+                    details: "Syntax mismatch while resolving information object.".to_string(),
+                    kind: GrammarErrorType::LinkerError,
+                });
+            } else {
+                continue 'syntax_matching;
+            }
+        }
+        unsorted_default_syntax.sort_by(|&(a, _), &(b, _)| a.cmp(&b));
+        *fields = InformationObjectFields::DefaultSyntax(
+            unsorted_default_syntax
+                .into_iter()
+                .map(|(_, field)| field)
+                .collect(),
+        );
+    }
+    Ok(())
+}
+
 #[cfg(test)]
 mod tests {
     use crate::validator::linking::utils::octet_string_to_bit_string;

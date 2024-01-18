@@ -297,6 +297,19 @@ pub fn choice_value_template(
     }
 }
 
+pub fn const_choice_value_template(
+    comments: TokenStream,
+    name: Ident,
+    type_id: TokenStream,
+    choice_name: Ident,
+    inner_decl: TokenStream,
+) -> TokenStream {
+    quote! {
+            #comments
+            pub const #name: #type_id = #type_id :: #choice_name (#inner_decl);
+    }
+}
+
 pub fn choice_template(
     comments: TokenStream,
     name: TokenStream,

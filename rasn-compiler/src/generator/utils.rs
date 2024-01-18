@@ -9,7 +9,7 @@ use crate::intermediate::{
         per_visible_range_constraints, CharsetSubset, PerVisibleAlphabetConstraints,
     },
     information_object::{
-        InformationObjectClass, InformationObjectField, ObjectFieldIdentifier, SyntaxApplication,
+        InformationObjectClass, InformationObjectField,
     },
     types::{Choice, ChoiceOption, Enumerated, SequenceOrSet, SequenceOrSetMember},
     utils::{to_rust_const_case, to_rust_enum_identifier, to_rust_snake_case, to_rust_title_case},
@@ -587,7 +587,7 @@ pub fn value_to_tokens(
                 .0
                 .iter()
                 .filter_map(|arc| arc.number.map(|id| id.to_token_stream()));
-            Ok(quote!([#(#arcs),*]))
+            Ok(quote!(Oid::const_new(&[#(#arcs),*]).to_owned()))
         }
         ASN1Value::Time(t) => match type_name {
             Some(time_type) => Ok(quote!(#t.parse::<#time_type>().unwrap())),
@@ -623,6 +623,22 @@ pub fn value_to_tokens(
             match integer_type {
                 IntegerType::Unbounded => Ok(quote!(Integer::from(#val))),
                 _ => Ok(val.to_token_stream()),
+            }
+        }
+        ASN1Value::LinkedCharStringValue(string_type, value) => {
+            let val = value.to_token_stream();
+            match string_type {
+                CharacterStringType::NumericString => Ok(quote!(NumericString::try_from(#val).unwrap())),
+                CharacterStringType::VisibleString => Ok(quote!(VisibleString::try_from(#val).unwrap())),
+                CharacterStringType::IA5String => Ok(quote!(Ia5String::try_from(#val).unwrap())),
+                CharacterStringType::UTF8String => Ok(quote!(String::from(#val))),
+                CharacterStringType::BMPString => Ok(quote!(BmpString::try_from(#val).unwrap())),
+                CharacterStringType::PrintableString => Ok(quote!(PrintableString::try_from(#val).unwrap())),
+                CharacterStringType::GeneralString => Ok(quote!(GeneralString::try_from(String::from(#val)).unwrap())),
+                CharacterStringType::VideotexString |
+                CharacterStringType::GraphicString |
+                CharacterStringType::UniversalString |
+                CharacterStringType::TeletexString => Err(GeneratorError::new(None, &format!("{:?} values are currently unsupported!", string_type), GeneratorErrorType::NotYetInplemented)),
             }
         }
     }
@@ -748,102 +764,6 @@ pub fn resolve_standard_syntax(
     }
 }
 
-/// Resolves the custom syntax declared in an information object class' WITH SYNTAX clause
-pub fn resolve_custom_syntax(
-    class: &InformationObjectClass,
-    application: &[SyntaxApplication],
-) -> Result<(ASN1Value, Vec<(usize, ASN1Type)>), GeneratorError> {
-    let tokens = match &class.syntax {
-        Some(s) => s.flatten(),
-        None => {
-            return Err(GeneratorError {
-                top_level_declaration: None,
-                details: "No syntax definition for information object class found!".into(),
-                kind: GeneratorErrorType::MissingCustomSyntax,
-            })
-        }
-    };
-
-    let mut key = None;
-    let mut field_index_map = Vec::<(usize, ASN1Type)>::new();
-
-    let mut application_index = 0;
-    'syntax_matching: for (required, token) in &tokens {
-        if let Some(expr) = application.get(application_index) {
-            if expr.matches(token, &tokens) {
-                match expr {
-                    SyntaxApplication::ObjectSetDeclaration(_) => todo!(),
-                    SyntaxApplication::LiteralOrTypeReference(t) => {
-                        if let Some(index) = class.fields.iter().enumerate().find_map(|(i, v)| {
-                            (v.identifier
-                                == ObjectFieldIdentifier::MultipleValue(
-                                    token.name_or_empty().to_owned(),
-                                ))
-                            .then_some(i)
-                        }) {
-                            field_index_map
-                                .push((index, ASN1Type::ElsewhereDeclaredType(t.clone())))
-                        }
-                    }
-                    SyntaxApplication::TypeReference(t) => {
-                        if let Some(index) = class.fields.iter().enumerate().find_map(|(i, v)| {
-                            (v.identifier
-                                == ObjectFieldIdentifier::MultipleValue(
-                                    token.name_or_empty().to_owned(),
-                                ))
-                            .then_some(i)
-                        }) {
-                            field_index_map.push((index, t.clone()))
-                        }
-                    }
-                    SyntaxApplication::ValueReference(v) => {
-                        if class
-                            .fields
-                            .iter()
-                            .any(|field| {
-                                field.identifier
-                                    == ObjectFieldIdentifier::SingleValue(
-                                        token.name_or_empty().to_owned(),
-                                    )
-                                    && field.is_unique
-                            })
-                        {
-                            key = Some(v.clone())
-                        }
-                    }
-                    _ => continue 'syntax_matching,
-                }
-                application_index += 1;
-            } else if *required {
-                return Err(GeneratorError {
-                    top_level_declaration: None,
-                    details: "Syntax mismatch while resolving information object.".to_string(),
-                    kind: GeneratorErrorType::SyntaxMismatch,
-                });
-            } else {
-                continue 'syntax_matching;
-            }
-        } else if *required {
-            return Err(GeneratorError {
-                top_level_declaration: None,
-                details: "Syntax mismatch while resolving information object.".to_string(),
-                kind: GeneratorErrorType::SyntaxMismatch,
-            });
-        } else {
-            continue 'syntax_matching;
-        }
-    }
-    field_index_map.sort_by(|&(a, _), &(b, _)| a.cmp(&b));
-    let types = field_index_map.into_iter().collect();
-    match key {
-        Some(k) => Ok((k, types)),
-        None => Err(GeneratorError {
-            top_level_declaration: None,
-            details: "Could not find class key!".into(),
-            kind: GeneratorErrorType::MissingClassKey,
-        }),
-    }
-}
 
 impl ASN1Value {
     pub fn is_const_type(&self) -> bool {

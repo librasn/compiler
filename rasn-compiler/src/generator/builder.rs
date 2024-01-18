@@ -1,5 +1,5 @@
 use std::{collections::BTreeMap, error::Error, str::FromStr};
-use proc_macro2::{TokenStream, Literal};
+use proc_macro2::TokenStream;
 use quote::{quote, TokenStreamExt, ToTokens, format_ident};
 
 use crate::intermediate::{
@@ -9,14 +9,14 @@ use crate::intermediate::{
     },
     utils::{to_rust_const_case, to_rust_title_case, to_rust_snake_case, to_rust_enum_identifier},
     ASN1Type, ASN1Value, ToplevelDeclaration, ToplevelTypeDeclaration, ToplevelValueDeclaration,
-    INTEGER, constraints::Constraint, NULL, BOOLEAN, BIT_STRING, CHOICE, OCTET_STRING, GENERALIZED_TIME, types::UTCTime, UTC_TIME,
+    INTEGER, constraints::Constraint, NULL, BOOLEAN, BIT_STRING, OCTET_STRING, GENERALIZED_TIME, UTC_TIME,
 };
 
 use super::{
     error::{GeneratorError, GeneratorErrorType},
     generate,
     template::*,
-    utils::*, GeneratedModule,
+    utils::*, GeneratedModule, OBJECT_IDENTIFIER, BMP_STRING, NUMERIC_STRING, VISIBLE_STRING, IA5_STRING, UTF8_STRING, PRINTABLE_STRING, GENERAL_STRING,
 };
 
 pub(crate) fn generate_module(tlds: Vec<ToplevelDeclaration>) -> Result<(Option<GeneratedModule>, Vec<Box<dyn Error>>), GeneratorError> {
@@ -221,7 +221,7 @@ macro_rules! assignment {
     }};
 }
 
-pub fn generate_primitive_value(tld: ToplevelValueDeclaration) -> Result<TokenStream, GeneratorError> {
+pub fn generate_value(tld: ToplevelValueDeclaration) -> Result<TokenStream, GeneratorError> {
     let ty = tld.associated_type.as_str();
     match &tld.value {
         ASN1Value::Null if ty == NULL => call_template!(primitive_value_template, tld, quote!(()), quote!(())),
@@ -230,14 +230,17 @@ pub fn generate_primitive_value(tld: ToplevelValueDeclaration) -> Result<TokenSt
         ASN1Value::Boolean(b)  => call_template!(primitive_value_template, tld, to_rust_title_case(&tld.associated_type), assignment!(&tld.associated_type, b.to_token_stream())),
         ASN1Value::LinkedIntValue { .. } => generate_integer_value(tld),
         ASN1Value::BitString(_) if ty == BIT_STRING => call_template!(lazy_static_value_template, tld, quote!(BitString), value_to_tokens(&tld.value, None)?),
-        ASN1Value::BitString(_) => call_template!(lazy_static_value_template, tld, to_rust_title_case(&tld.associated_type), assignment!(&tld.associated_type, value_to_tokens(&tld.value, None)?)),
         ASN1Value::OctetString(_) if ty == OCTET_STRING => call_template!(lazy_static_value_template, tld, quote!(OctetString), value_to_tokens(&tld.value, None)?),
-        ASN1Value::OctetString(_) => call_template!(lazy_static_value_template, tld, to_rust_title_case(&tld.associated_type), assignment!(&tld.associated_type, value_to_tokens(&tld.value, None)?)),
-        ASN1Value::Choice(choice, inner) => call_template!(choice_value_template, tld, to_rust_title_case(&tld.associated_type), to_rust_enum_identifier(choice), value_to_tokens(inner, None)?),
+        ASN1Value::Choice(choice, inner) => {
+            if inner.is_const_type() {
+                call_template!(const_choice_value_template, tld, to_rust_title_case(&tld.associated_type), to_rust_enum_identifier(choice), value_to_tokens(inner, None)?)
+            } else {
+                call_template!(choice_value_template, tld, to_rust_title_case(&tld.associated_type), to_rust_enum_identifier(choice), value_to_tokens(inner, None)?)
+            }
+        },
         ASN1Value::EnumeratedValue { enumerated, enumerable } => call_template!(enum_value_template, tld, to_rust_title_case(enumerated), to_rust_enum_identifier(enumerable)),
         ASN1Value::Time(_) if ty == GENERALIZED_TIME => call_template!(lazy_static_value_template, tld, quote!(GeneralizedTime), value_to_tokens(&tld.value, Some(&quote!(GeneralizedTime)))?),
         ASN1Value::Time(_) if ty == UTC_TIME => call_template!(lazy_static_value_template, tld, quote!(UtcTime), value_to_tokens(&tld.value, Some(&quote!(UtcTime)))?),
-        ASN1Value::Time(_) => call_template!(lazy_static_value_template, tld, to_rust_title_case(&tld.associated_type), assignment!(&tld.associated_type, value_to_tokens(&tld.value, None)?)),
         ASN1Value::LinkedStructLikeValue(s) => {
             let members = s.iter().map(|(_, val)| {
                 value_to_tokens(val.value(), None)
@@ -252,12 +255,20 @@ pub fn generate_primitive_value(tld: ToplevelValueDeclaration) -> Result<TokenSt
                 call_template!(lazy_static_value_template, tld, to_rust_title_case(&tld.associated_type), assignment!(&tld.associated_type, value_to_tokens(&tld.value, parent.as_ref())?))
             }
         },
-        // ASN1Value::String(_) => todo!(),
-        // ASN1Value::SequenceOrSetOf(_) => todo!(),
-        // ASN1Value::Real(_) => todo!(),
-        // ASN1Value::ElsewhereDeclaredValue { parent, identifier } => todo!(),
-        // ASN1Value::ObjectIdentifier(_) => todo!(),
-        // ASN1Value::LinkedASN1IntValue { integer_type, value } => todo!(),
+        ASN1Value::ObjectIdentifier(_) if ty == OBJECT_IDENTIFIER => call_template!(lazy_static_value_template, tld, quote!(ObjectIdentifier), value_to_tokens(&tld.value, None)?),
+        ASN1Value::LinkedCharStringValue(_, _) if ty == NUMERIC_STRING => call_template!(lazy_static_value_template, tld, quote!(NumericString), value_to_tokens(&tld.value, None)?),
+        ASN1Value::LinkedCharStringValue(_, _) if ty == VISIBLE_STRING => call_template!(lazy_static_value_template, tld, quote!(VisibleString), value_to_tokens(&tld.value, None)?),
+        ASN1Value::LinkedCharStringValue(_, _) if ty == IA5_STRING => call_template!(lazy_static_value_template, tld, quote!(IA5String), value_to_tokens(&tld.value, None)?),
+        ASN1Value::LinkedCharStringValue(_, _) if ty == UTF8_STRING => call_template!(lazy_static_value_template, tld, quote!(UTF8String), value_to_tokens(&tld.value, None)?),
+        ASN1Value::LinkedCharStringValue(_, _) if ty == BMP_STRING => call_template!(lazy_static_value_template, tld, quote!(BMPString), value_to_tokens(&tld.value, None)?),
+        ASN1Value::LinkedCharStringValue(_, _) if ty == PRINTABLE_STRING => call_template!(lazy_static_value_template, tld, quote!(PrintableString), value_to_tokens(&tld.value, None)?),
+        ASN1Value::LinkedCharStringValue(_, _) if ty == GENERAL_STRING => call_template!(lazy_static_value_template, tld, quote!(GeneralString), value_to_tokens(&tld.value, None)?),
+        ASN1Value::BitString(_) |
+        ASN1Value::Time(_) |
+        ASN1Value::LinkedCharStringValue(_, _) |
+        ASN1Value::ObjectIdentifier(_) |
+        ASN1Value::ElsewhereDeclaredValue { .. } | 
+        ASN1Value::OctetString(_) => call_template!(lazy_static_value_template, tld, to_rust_title_case(&tld.associated_type), assignment!(&tld.associated_type, value_to_tokens(&tld.value, None)?)),
         _ => Ok(TokenStream::new()),
     }
 }
@@ -517,8 +528,12 @@ pub fn generate_information_object_set(
                             GeneratorErrorType::MissingClassKey,
                         ))
                     },
-                    ObjectSetValue::Inline(InformationObjectFields::CustomSyntax(s)) => {
-                        resolve_custom_syntax(class, s)
+                    ObjectSetValue::Inline(InformationObjectFields::CustomSyntax(_)) => {
+                        Err(GeneratorError::new(
+                            Some(ToplevelDeclaration::Information(tld.clone())),
+                            "Unexpectedly encountered unresolved custom syntax!",
+                            GeneratorErrorType::MissingClassKey,
+                        ))
                     }
                     ObjectSetValue::Inline(InformationObjectFields::DefaultSyntax(s)) => {
                         resolve_standard_syntax(class, s)
@@ -565,7 +580,12 @@ pub fn generate_information_object_set(
             let field_enum_name = format_ident!("{name}_{}", field_name.replace('&', ""));
             let (mut ids, mut inner_types) = (vec![], vec![]); 
             for (index, (id, ty)) in fields.iter().enumerate() {
-                let identifier_value = value_to_tokens(id, Some(&class_unique_id_type_name))?;
+                let identifier_value = if matches!(id, ASN1Value::ElsewhereDeclaredValue { .. }) {
+                    let tokenized_value = value_to_tokens(id, Some(&class_unique_id_type_name))?;
+                    quote!(*#tokenized_value)
+                } else {
+                    value_to_tokens(id, Some(&class_unique_id_type_name))?
+                };
                 let type_id = type_to_tokens(ty).unwrap_or(quote!(Option<()>));
                 let variant_name = if let ASN1Value::ElsewhereDeclaredValue{identifier: ref_id, ..} = id {
                     to_rust_title_case(ref_id)
@@ -604,7 +624,7 @@ pub fn generate_information_object_set(
             });
 
             let de_match_arms = ids.iter().map(|(variant_name, _, identifier_value)| {
-                quote!(& #identifier_value => Ok(decoder.codec().decode_from_binary(open_type_payload.ok_or_else(|| rasn::error::DecodeError::from_kind(
+                quote!(i if i == & #identifier_value => Ok(decoder.codec().decode_from_binary(open_type_payload.ok_or_else(|| rasn::error::DecodeError::from_kind(
                     rasn::error::DecodeErrorKind::Custom {
                         msg: "Failed to decode open type! No input data given.".into(),
                     },
@@ -613,7 +633,7 @@ pub fn generate_information_object_set(
             });
 
             let en_match_arms = ids.iter().map(|(variant_name, _, identifier_value)| {
-                quote!((Self::#variant_name (inner), & #identifier_value) =>inner.encode(encoder),)
+                quote!((Self::#variant_name (inner), i) if i == & #identifier_value =>inner.encode(encoder),)
             });
 
             field_enums.push(quote! {

@@ -1,8 +1,11 @@
 use std::collections::BTreeMap;
 
-use crate::intermediate::{*, information_object::*};
+use crate::intermediate::{information_object::*, *};
 
-use super::utils::walk_object_field_ref_path;
+use super::{
+    utils::{resolve_custom_syntax, walk_object_field_ref_path},
+    GrammarError, GrammarErrorType,
+};
 
 impl ToplevelInformationDeclaration {
     pub fn resolve_class_reference(mut self, tlds: &BTreeMap<String, ToplevelDeclaration>) -> Self {
@@ -16,6 +19,68 @@ impl ToplevelInformationDeclaration {
             }
         }
         self
+    }
+
+    /// Collects supertypes of ASN1 values.
+    /// In `ToplevelTypeDeclaration`s, values will appear only as `DEFAULT`
+    /// values in `SET`s or `SEQUENCE`s.
+    pub fn collect_supertypes(
+        &mut self,
+        tlds: &BTreeMap<String, ToplevelDeclaration>,
+    ) -> Result<(), GrammarError> {
+        match (&mut self.value, &self.class) {
+            (ASN1Information::Object(ref mut o), Some(ClassLink::ByReference(class))) => {
+                resolve_custom_syntax(&mut o.fields, class)?;
+                link_object_fields(&mut o.fields, class, tlds)
+            }
+            (ASN1Information::ObjectSet(ref mut o), Some(ClassLink::ByReference(class))) => {
+                o.values.iter_mut().try_for_each(|value| match value {
+                    ObjectSetValue::Reference(_) => todo!(),
+                    ObjectSetValue::Inline(ref mut fields) => {
+                        resolve_custom_syntax(fields, class)?;
+                        link_object_fields(fields, class, tlds)
+                    }
+                })
+            }
+            _ => Ok(()),
+        }
+    }
+}
+
+fn link_object_fields(
+    fields: &mut InformationObjectFields,
+    class: &InformationObjectClass,
+    tlds: &BTreeMap<String, ToplevelDeclaration>,
+) -> Result<(), GrammarError> {
+    match fields {
+        InformationObjectFields::DefaultSyntax(ref mut fields) => {
+            fields.iter_mut().try_for_each(|field| match field {
+                InformationObjectField::FixedValueField(fixed) => class
+                    .fields
+                    .iter()
+                    .find_map(|f| {
+                        (f.identifier
+                            == ObjectFieldIdentifier::SingleValue(fixed.identifier.clone()))
+                        .then_some(f.r#type.as_ref())
+                    })
+                    .flatten()
+                    .ok_or_else(|| GrammarError {
+                        details: format!(
+                            "Could not determine type of fixed value field {}",
+                            fixed.identifier,
+                        ),
+                        kind: GrammarErrorType::LinkerError,
+                    })
+                    .and_then(|ty| fixed.value.link_with_type(tlds, ty)),
+                InformationObjectField::ObjectSetField(_) => todo!(),
+                _ => Ok(()),
+            })
+        }
+        InformationObjectFields::CustomSyntax(_) => Err(GrammarError {
+            details: "Unexpectedly encountered unresolved custom syntax linking information object"
+                .to_string(),
+            kind: GrammarErrorType::LinkerError,
+        }),
     }
 }
 
@@ -57,7 +122,6 @@ impl SyntaxApplication {
             _ => false,
         }
     }
-
 }
 
 impl InformationObjectClass {
@@ -75,23 +139,15 @@ impl InformationObject {
         tlds: &BTreeMap<String, ToplevelDeclaration>,
     ) -> bool {
         match &mut self.fields {
-            InformationObjectFields::DefaultSyntax(d) => d.iter_mut().fold(false, |acc, field| {
-                acc || field.link_object_set_reference(tlds)
-            }),
-            InformationObjectFields::CustomSyntax(c) => c.iter_mut().fold(false, |acc, field| {
-                acc || field.link_object_set_reference(tlds)
-            }),
+            InformationObjectFields::DefaultSyntax(d) => d.iter_mut().any(|field| field.link_object_set_reference(tlds)),
+            InformationObjectFields::CustomSyntax(c) => c.iter_mut().any(|field| field.link_object_set_reference(tlds)),
         }
     }
 
     pub fn references_object_set_by_name(&self) -> bool {
         match &self.fields {
-            InformationObjectFields::DefaultSyntax(d) => d.iter().fold(false, |acc, field| {
-                acc || field.references_object_set_by_name()
-            }),
-            InformationObjectFields::CustomSyntax(c) => c.iter().fold(false, |acc, field| {
-                acc || field.references_object_set_by_name()
-            }),
+            InformationObjectFields::DefaultSyntax(d) => d.iter().any(|field| field.references_object_set_by_name()),
+            InformationObjectFields::CustomSyntax(c) => c.iter().any(|field| field.references_object_set_by_name()),
         }
     }
 }
@@ -115,14 +171,10 @@ impl ObjectSetValue {
                 }
             }
             ObjectSetValue::Inline(InformationObjectFields::CustomSyntax(c)) => {
-                c.iter_mut().fold(false, |acc, field| {
-                    acc || field.link_object_set_reference(tlds)
-                })
+                c.iter_mut().any(|field| field.link_object_set_reference(tlds))
             }
             ObjectSetValue::Inline(InformationObjectFields::DefaultSyntax(d)) => {
-                d.iter_mut().fold(false, |acc, field| {
-                    acc || field.link_object_set_reference(tlds)
-                })
+                d.iter_mut().any(|field| field.link_object_set_reference(tlds))
             }
         }
     }
@@ -131,14 +183,10 @@ impl ObjectSetValue {
         match self {
             ObjectSetValue::Reference(_) => true,
             ObjectSetValue::Inline(InformationObjectFields::CustomSyntax(c)) => {
-                c.iter().fold(false, |acc, field| {
-                    acc || field.references_object_set_by_name()
-                })
+                c.iter().any(|field| field.references_object_set_by_name())
             }
             ObjectSetValue::Inline(InformationObjectFields::DefaultSyntax(d)) => {
-                d.iter().fold(false, |acc, field| {
-                    acc || field.references_object_set_by_name()
-                })
+                d.iter().any(|field| field.references_object_set_by_name())
             }
         }
     }
@@ -151,13 +199,13 @@ impl ObjectSet {
     ) -> bool {
         self.values
             .iter_mut()
-            .fold(false, |acc, val| acc || val.link_object_set_reference(tlds))
+            .any(|val| val.link_object_set_reference(tlds))
     }
 
     pub fn references_object_set_by_name(&self) -> bool {
         self.values
             .iter()
-            .fold(false, |acc, val| acc || val.references_object_set_by_name())
+            .any(|val| val.references_object_set_by_name())
     }
 }
 

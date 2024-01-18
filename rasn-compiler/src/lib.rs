@@ -309,11 +309,12 @@ impl RasnCompiler<CompilerSourcesSet> {
     /// * _Err_ - Unrecoverable error, no rust representations were generated
     pub fn compile_to_string(self) -> Result<(String, Vec<Box<dyn Error>>), Box<dyn Error>> {
         internal_compile(&self).map(|res| {
+            let bindings = res.modules.iter().fold(String::new(), |mut acc, m| {
+                acc += &m.generated;
+                acc
+            });
             (
-                res.modules.iter().fold(String::new(), |mut acc, m| {
-                    acc += &m.generated;
-                    acc
-                }),
+                format_bindings(&bindings).unwrap_or(bindings),
                 res.warnings,
             )
         })
