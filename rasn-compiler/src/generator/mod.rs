@@ -51,9 +51,6 @@ pub fn generate(tld: ToplevelDeclaration) -> Result<TokenStream, GeneratorError>
         },
         ToplevelDeclaration::Value(v) => generate_value(v),
         ToplevelDeclaration::Information(i) => match i.value {
-            // ASN1Information::ObjectClass(_) => {
-            //     generate_information_object_class(i)
-            // }
             ASN1Information::ObjectSet(_) => generate_information_object_set(i),
             _ => Ok(TokenStream::new()),
         },

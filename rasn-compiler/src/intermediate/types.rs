@@ -36,8 +36,6 @@ constrainable!(Choice);
 constrainable!(Enumerated);
 constrainable!(DeclarationElsewhere);
 constrainable!(InformationObjectFieldReference);
-constrainable!(ChoiceOption);
-constrainable!(SequenceOrSetMember);
 constrainable!(Time);
 
 /// Representation of an ASN1 BOOLEAN data element

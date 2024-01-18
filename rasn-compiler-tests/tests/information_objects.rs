@@ -56,7 +56,7 @@ e2e_pdu!(
             Errors_ParameterType::decode(decoder, self.parameter.as_ref(), &self.error_code)
         }
     }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq)]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
     #[rasn(choice, automatic_tags)]
     pub enum ErrorCode {
         local(Integer),

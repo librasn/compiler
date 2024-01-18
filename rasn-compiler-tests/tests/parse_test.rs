@@ -49,7 +49,12 @@ fn compile_etsi() {
     println!(
         "{:?}",
         RasnCompiler::new()
-            .add_asn_by_path("../rasn-compiler/test_asn1/v2x.asn")
+            .add_asn_by_path("../rasn-compiler/test_asn1/CPM-OriginatingStationContainers.asn")
+            .add_asn_by_path("../rasn-compiler/test_asn1/CPM-PDU-Descriptions.asn")
+            .add_asn_by_path("../rasn-compiler/test_asn1/CPM-PerceivedObjectContainer.asn")
+            .add_asn_by_path("../rasn-compiler/test_asn1/CPM-PerceptionRegionContainer.asn")
+            .add_asn_by_path("../rasn-compiler/test_asn1/CPM-SensorInformationContainer.asn")
+            .add_asn_by_path("../rasn-compiler/test_asn1/ETSI-ITS-CDD.asn")
             //.add_asn_by_path("./tests/modules/itu-t_x_x501_2001_EnhancedSecurity.asn1")
             .set_output_path("./src")
             .compile()

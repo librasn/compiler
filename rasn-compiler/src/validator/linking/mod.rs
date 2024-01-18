@@ -315,26 +315,39 @@ impl ASN1Type {
                 let constraints = c.constraints.iter_mut().try_fold(false, |acc, b| {
                     b.link_cross_reference(name, tlds).map(|res| res || acc)
                 })?;
-                let options = c
-                    .options
-                    .iter_mut()
-                    .flat_map(|o| o.constraints_mut())
-                    .try_fold(false, |acc, b| {
-                        b.link_cross_reference(name, tlds).map(|res| res || acc)
-                    })?;
+                let options = c.options.iter_mut().try_fold(false, |linked, opt| {
+                    Ok(linked
+                        || opt.constraints.iter_mut().try_fold(false, |acc, c| {
+                            c.link_cross_reference(name, tlds).map(|res| res || acc)
+                        })?
+                        || opt
+                            .r#type
+                            .constraints_mut()
+                            .unwrap_or(&mut vec![])
+                            .iter_mut()
+                            .try_fold(false, |acc, c| {
+                                c.link_cross_reference(name, tlds).map(|res| res || acc)
+                            })?)
+                })?;
                 Ok(constraints || options)
             }
             ASN1Type::Sequence(s) => {
                 let constraints = s.constraints.iter_mut().try_fold(false, |acc, b| {
                     b.link_cross_reference(name, tlds).map(|res| res || acc)
                 })?;
-                let members = s
-                    .members
-                    .iter_mut()
-                    .flat_map(|o| o.constraints_mut())
-                    .try_fold(false, |acc, b| {
-                        b.link_cross_reference(name, tlds).map(|res| res || acc)
-                    })?;
+                let members = s.members.iter_mut().try_fold(false, |linked, m| {
+                    Ok(linked
+                        || m.constraints.iter_mut().try_fold(false, |acc, c| {
+                            c.link_cross_reference(name, tlds).map(|res| res || acc)
+                        })?
+                        || m.r#type
+                            .constraints_mut()
+                            .unwrap_or(&mut vec![])
+                            .iter_mut()
+                            .try_fold(false, |acc, c| {
+                                c.link_cross_reference(name, tlds).map(|res| res || acc)
+                            })?)
+                })?;
                 Ok(constraints || members)
             }
             ASN1Type::SequenceOf(s) => {
