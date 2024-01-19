@@ -87,3 +87,52 @@ e2e_pdu!(
             restricted(Distinguished),
         }                                           "#
 );
+
+e2e_pdu!(
+    enum_and_distinguished_defaults,
+    r#" 
+        Test ::= SEQUENCE {
+            int IntWithDefault DEFAULT first,
+            enum EnumWithDefault DEFAULT first,
+        }
+        
+        IntWithDefault ::= INTEGER {
+            first(1),
+            second(2)
+        } (1..10)
+
+        EnumWithDefault ::= ENUMERATED {
+            first(1),
+            second(2)
+        }
+    "#,
+    r#" 
+        #[derive(AsnType, Debug, Clone, Copy, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]
+        #[rasn(enumerated)]
+        pub enum EnumWithDefault {
+            first = 1,
+            second = 2,
+        }
+        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]
+        #[rasn(delegate, value("1..=10"))]
+        pub struct IntWithDefault(pub u8);
+        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+        #[rasn(automatic_tags)]
+        pub struct Test {
+            #[rasn(default = "test_int_default")]
+            pub int: IntWithDefault,
+            #[rasn(default = "test_r_enum_default")]
+            pub r_enum: EnumWithDefault,
+        }
+        impl Test {
+            pub fn new(int: IntWithDefault, r_enum: EnumWithDefault) -> Self {
+                Self { int, r_enum }
+            }
+        }
+        fn test_int_default() -> IntWithDefault {
+            IntWithDefault(1)
+        }
+        fn test_r_enum_default() -> EnumWithDefault {
+            EnumWithDefault::first
+        }                                           "#
+);

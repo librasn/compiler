@@ -529,7 +529,13 @@ impl ASN1Value {
                     })
                 }
             }
-            (ASN1Type::ElsewhereDeclaredType(_), ASN1Value::ElsewhereDeclaredValue { .. }) => {
+            (
+                ASN1Type::ElsewhereDeclaredType(e),
+                ASN1Value::ElsewhereDeclaredValue { identifier, .. },
+            ) => {
+                if let Some(value) = Self::link_enum_or_distinguished(tlds, e, identifier, vec![e.identifier.clone()])? {
+                    *self = value;
+                }
                 Ok(())
             }
             (ASN1Type::ElsewhereDeclaredType(e), val) => {
@@ -709,6 +715,64 @@ impl ASN1Value {
                 Ok(())
             }
             _ => Ok(()),
+        }
+    }
+
+    fn link_enum_or_distinguished(
+        tlds: &BTreeMap<String, ToplevelDeclaration>,
+        e: &DeclarationElsewhere,
+        identifier: &mut String,
+        mut supertypes: Vec<String>,
+    ) -> Result<Option<ASN1Value>, GrammarError> {
+        if let Some(ToplevelDeclaration::Type(ToplevelTypeDeclaration {
+            r#type: ASN1Type::Enumerated(enumerated),
+            ..
+        })) = tlds.get(&e.identifier)
+        {
+            if enumerated
+                .members
+                .iter()
+                .any(|enumeral| &enumeral.name == identifier)
+            {
+                Ok(Some(ASN1Value::EnumeratedValue {
+                    enumerated: e.identifier.clone(),
+                    enumerable: identifier.clone(),
+                }))
+            } else {
+                Ok(None)
+            }
+        } else if let Some(ToplevelDeclaration::Type(ToplevelTypeDeclaration {
+            r#type:
+                ASN1Type::Integer(Integer {
+                    distinguished_values: Some(distinguished),
+                    constraints,
+                }),
+            ..
+        })) = tlds.get(&e.identifier)
+        {
+            if let Some(distinguished_value) = distinguished.iter().find(|d| &d.name == identifier)
+            {
+                Ok(Some(ASN1Value::LinkedNestedValue {
+                    supertypes,
+                    value: Box::new(ASN1Value::LinkedIntValue {
+                        integer_type: constraints.iter().fold(IntegerType::Unbounded, |acc, c| {
+                            c.integer_constraints().max_restrictive(acc)
+                        }),
+                        value: distinguished_value.value,
+                    }),
+                }))
+            } else {
+                Ok(None)
+            }
+        } else if let Some(ToplevelDeclaration::Type(ToplevelTypeDeclaration {
+            r#type: ASN1Type::ElsewhereDeclaredType(elsewhere),
+            ..
+        })) = tlds.get(&e.identifier)
+        {
+            supertypes.push(elsewhere.identifier.clone());
+            Self::link_enum_or_distinguished(tlds, elsewhere, identifier, supertypes)
+        } else {
+            Ok(None)
         }
     }
 
