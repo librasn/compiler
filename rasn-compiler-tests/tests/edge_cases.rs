@@ -5,7 +5,7 @@ use rasn_compiler_tests::e2e_pdu;
 fn t() {
     println!(
         "{}",
-        rasn_compiler::RasnCompiler::new()
+        rasn_compiler::Compiler::new()
             .add_asn_literal(
                 r#" 
         TestModule DEFINITIONS AUTOMATIC TAGS ::= BEGIN
@@ -29,7 +29,7 @@ fn t() {
         "#
             )
             .compile_to_string()
-            .unwrap().0
+            .unwrap().generated
     )
 }
 

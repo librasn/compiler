@@ -2,7 +2,7 @@ use std::{collections::BTreeMap, error::Error, str::FromStr};
 use proc_macro2::TokenStream;
 use quote::{quote, TokenStreamExt, ToTokens, format_ident};
 
-use crate::intermediate::{
+use crate::{generator::{Backend, GeneratedModule}, intermediate::{
     information_object::{
         ASN1Information, ClassLink, InformationObjectClass, InformationObjectFields,
         ObjectSetValue, ToplevelInformationDeclaration,
@@ -10,55 +10,55 @@ use crate::intermediate::{
     utils::{to_rust_const_case, to_rust_title_case, to_rust_snake_case, to_rust_enum_identifier},
     ASN1Type, ASN1Value, ToplevelDeclaration, ToplevelTypeDeclaration, ToplevelValueDeclaration,
     INTEGER, constraints::Constraint, NULL, BOOLEAN, BIT_STRING, OCTET_STRING, GENERALIZED_TIME, UTC_TIME,
-};
+}};
 
+use crate::generator::error::{GeneratorError, GeneratorErrorType};
 use super::{
-    error::{GeneratorError, GeneratorErrorType},
-    generate,
-    template::*,
-    utils::*, GeneratedModule, OBJECT_IDENTIFIER, BMP_STRING, NUMERIC_STRING, VISIBLE_STRING, IA5_STRING, UTF8_STRING, PRINTABLE_STRING, GENERAL_STRING,
+    generate, template::*, utils::*, Rust, BMP_STRING, GENERAL_STRING, IA5_STRING, NUMERIC_STRING, OBJECT_IDENTIFIER, PRINTABLE_STRING, UTF8_STRING, VISIBLE_STRING
 };
 
-pub(crate) fn generate_module(tlds: Vec<ToplevelDeclaration>) -> Result<(Option<GeneratedModule>, Vec<Box<dyn Error>>), GeneratorError> {
-    if let Some((module_ref, _)) = tlds.first().and_then(|tld| tld.get_index().cloned()) {
-        let name = to_rust_snake_case(&module_ref.name);
-        let imports = module_ref.imports.iter().map(|import| {
-            let module = to_rust_snake_case(&import.origin_name);
-            let mut usages = Some(vec![]);
-            'imports: for usage in &import.types {
-                if usage.contains("{}") || usage.chars().all(|c| c.is_uppercase() || c == '-') {
-                    usages = None;
-                    break 'imports;
-                } else if usage.starts_with(|c: char| c.is_lowercase()) {
-                    if let Some(us) = usages.as_mut() { us.push(to_rust_const_case(usage).to_token_stream()) }
-                } else if usage.starts_with(|c: char| c.is_uppercase()) {
-                    if let Some(us) = usages.as_mut() { us.push(to_rust_title_case(usage).to_token_stream()) }
+impl Backend for Rust {
+    fn generate_module(&self, tlds: Vec<ToplevelDeclaration>) -> Result<GeneratedModule, GeneratorError> {
+        if let Some((module_ref, _)) = tlds.first().and_then(|tld| tld.get_index().cloned()) {
+            let name = to_rust_snake_case(&module_ref.name);
+            let imports = module_ref.imports.iter().map(|import| {
+                let module = to_rust_snake_case(&import.origin_name);
+                let mut usages = Some(vec![]);
+                'imports: for usage in &import.types {
+                    if usage.contains("{}") || usage.chars().all(|c| c.is_uppercase() || c == '-') {
+                        usages = None;
+                        break 'imports;
+                    } else if usage.starts_with(|c: char| c.is_lowercase()) {
+                        if let Some(us) = usages.as_mut() { us.push(to_rust_const_case(usage).to_token_stream()) }
+                    } else if usage.starts_with(|c: char| c.is_uppercase()) {
+                        if let Some(us) = usages.as_mut() { us.push(to_rust_title_case(usage).to_token_stream()) }
+                    }
                 }
-            }
-            let used_imports = usages.unwrap_or(vec![TokenStream::from_str("*").unwrap()]);
-            quote!(use super:: #module::{ #(#used_imports),* };)
-        });
-        let (pdus, warnings): (Vec<TokenStream>, Vec<Box<dyn Error>>) = tlds.into_iter().fold((vec![], vec![]), |mut acc, tld| match generate(tld) {
-            Ok(s) => { acc.0.push(s); acc },
-            Err(e) => { acc.1.push(Box::new(e)); acc }
-        });
-        Ok((Some(GeneratedModule {
-            name: name.to_string(),
-            generated: quote! {
-            #[allow(non_camel_case_types, non_snake_case, non_upper_case_globals, unused)]
-            pub mod #name {
-                extern crate alloc;
-                
-                use rasn::prelude::*;
-                use lazy_static::lazy_static;
+                let used_imports = usages.unwrap_or(vec![TokenStream::from_str("*").unwrap()]);
+                quote!(use super:: #module::{ #(#used_imports),* };)
+            });
+            let (pdus, warnings): (Vec<TokenStream>, Vec<Box<dyn Error>>) = tlds.into_iter().fold((vec![], vec![]), |mut acc, tld| match generate(tld) {
+                Ok(s) => { acc.0.push(s); acc },
+                Err(e) => { acc.1.push(Box::new(e)); acc }
+            });
+            Ok(GeneratedModule {
+                generated: Some(quote! {
+                #[allow(non_camel_case_types, non_snake_case, non_upper_case_globals, unused)]
+                pub mod #name {
+                    extern crate alloc;
+                    
+                    use core::borrow::Borrow;
+                    use rasn::prelude::*;
+                    use lazy_static::lazy_static;
 
-                #(#imports)*
+                    #(#imports)*
 
-                #(#pdus)*
-            }
-        }.to_string()}), warnings))
-    } else {
-        Ok((None, vec![]))
+                    #(#pdus)*
+                }
+            }.to_string()), warnings})
+        } else {
+            Ok(GeneratedModule::empty())
+        }
     }
 }
 
@@ -580,7 +580,7 @@ pub fn generate_information_object_set(
             let field_enum_name = format_ident!("{name}_{}", field_name.replace('&', ""));
             let (mut ids, mut inner_types) = (vec![], vec![]); 
             for (index, (id, ty)) in fields.iter().enumerate() {
-                let identifier_value = if matches!(id, ASN1Value::ElsewhereDeclaredValue { .. }) {
+                let identifier_value = if let ASN1Value::LinkedElsewhereDefinedValue { can_be_const: false, .. } = id {
                     let tokenized_value = value_to_tokens(id, Some(&class_unique_id_type_name))?;
                     quote!(*#tokenized_value)
                 } else {
@@ -624,7 +624,7 @@ pub fn generate_information_object_set(
             });
 
             let de_match_arms = ids.iter().map(|(variant_name, _, identifier_value)| {
-                quote!(i if i == & #identifier_value => Ok(decoder.codec().decode_from_binary(open_type_payload.ok_or_else(|| rasn::error::DecodeError::from_kind(
+                quote!(i if i == &#identifier_value => Ok(decoder.codec().decode_from_binary(open_type_payload.ok_or_else(|| rasn::error::DecodeError::from_kind(
                     rasn::error::DecodeErrorKind::Custom {
                         msg: "Failed to decode open type! No input data given.".into(),
                     },
@@ -633,7 +633,7 @@ pub fn generate_information_object_set(
             });
 
             let en_match_arms = ids.iter().map(|(variant_name, _, identifier_value)| {
-                quote!((Self::#variant_name (inner), i) if i == & #identifier_value =>inner.encode(encoder),)
+                quote!((Self::#variant_name (inner), i) if i == &#identifier_value =>inner.encode(encoder),)
             });
 
             field_enums.push(quote! {

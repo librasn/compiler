@@ -45,7 +45,7 @@ fn is_bit_set(rem: u8, limit: u8, bits: &mut Vec<bool>) {
     }
 }
 
-pub(crate) fn bit_string_to_octet_string(bits: &Vec<bool>) -> Result<Vec<u8>, GrammarError> {
+pub(crate) fn bit_string_to_octet_string(bits: &[bool]) -> Result<Vec<u8>, GrammarError> {
     let mut octets = vec![];
     for byte in bits.chunks(8) {
         if byte.len() != 8 {

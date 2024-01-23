@@ -8,7 +8,7 @@ use walkdir::WalkDir;
 
 #[derive(clap::Parser, Debug)]
 #[command(author, version, about, long_about = None)]
-struct RasnCompilerArgs {
+struct CompilerArgs {
     /// Specify a directory for the compiler to search for ASN1 modules.
     /// The compiler will search recursively for `.asn` and `.asn1` files
     #[arg(short, long)]
@@ -24,7 +24,7 @@ struct RasnCompilerArgs {
 }
 
 pub fn main() {
-    let args = RasnCompilerArgs::parse();
+    let args = CompilerArgs::parse();
 
     // Read module paths
     let mut modules = args.module_files;
@@ -53,7 +53,7 @@ pub fn main() {
         )
     }
 
-    match RasnCompiler::new()
+    match Compiler::new()
         .add_asn_sources_by_path(modules.into_iter())
         .set_output_path(args.output_path)
         .compile()

@@ -1,3 +1,4 @@
+#![allow(clippy::needless_doctest_main)]
 //! The `rasn-compiler` library is a parser combinator that parses ASN1 specifications and outputs
 //! encoding-rule-agnotic rust representations of the ASN1 data elements to be used with the `rasn` crate.
 //! The compiler heavily relies on the great library [nom](https://docs.rs/nom/latest/nom/) for its basic parsers.
@@ -9,11 +10,24 @@
 //! ```rust
 //! // build.rs build script
 //! use std::path::PathBuf;
-//! use rasn_compiler::RasnCompiler;
+//! use rasn_compiler::prelude::*;
 //!
 //! fn main() {
+//!   struct CustomBackend;
+//!
+//!   impl Backend for CustomBackend {
+//!     fn generate_module(
+//!          &self,
+//!          top_level_declarations: Vec<ToplevelDeclaration>,
+//!     ) -> Result<GeneratedModule, GeneratorError> {
+//!         Ok(GeneratedModule::empty())
+//!     }
+//!   }
+//!
 //!   // Initialize the compiler
-//!   match RasnCompiler::new()
+//!   match Compiler::new()
+//!     // optionally provide a custom backend
+//!     .with_backend(CustomBackend)
 //!     // add a single ASN1 source file
 //!     .add_asn_by_path(PathBuf::from("spec_1.asn"))
 //!     // add several ASN1 source files
@@ -32,7 +46,7 @@
 //! }
 //! ```
 mod generator;
-pub(crate) mod intermediate;
+pub mod intermediate;
 mod parser;
 mod validator;
 
@@ -48,10 +62,31 @@ use std::{
     vec,
 };
 
-use generator::{builder::generate_module, GeneratedModule};
+use generator::{rasn::Rust, Backend};
 use intermediate::ToplevelDeclaration;
 use parser::asn_spec;
 use validator::Validator;
+
+pub mod prelude {
+    pub use super::{
+        CompileResult, Compiler, CompilerMissingParams, CompilerOutputSet, CompilerReady,
+        CompilerSourcesSet,
+    };
+    pub use crate::generator::{error::*, Backend, GeneratedModule};
+    pub use crate::intermediate::ToplevelDeclaration;
+    pub mod ir {
+        pub use crate::intermediate::{
+            *,
+            constraints::*,
+            information_object::*,
+            parameterization::*,
+            types::*,
+            utils::*,
+            encoding_rules::{*, per_visible::*},
+            error::*,
+        };
+    }
+}
 
 #[cfg(target_family = "wasm")]
 use wasm_bindgen::prelude::*;
@@ -66,11 +101,11 @@ pub struct Generated {
 #[cfg(target_family = "wasm")]
 #[wasm_bindgen]
 pub fn compile(asn1: &str) -> Result<Generated, JsValue> {
-    RasnCompiler::new()
+    Compiler::new()
         .add_asn_literal(asn1)
         .compile_to_string()
         .map(|(rust, warn)| Generated {
-            rust: format_bindings(&rust).unwrap_or(rust),
+            rust,
             warnings: warn.into_iter().fold(String::new(), |mut acc, w| {
                 acc += &w.to_string();
                 acc += "\n";
@@ -81,9 +116,9 @@ pub fn compile(asn1: &str) -> Result<Generated, JsValue> {
 }
 
 /// The rasn compiler
-#[derive(Debug, PartialEq)]
-pub struct RasnCompiler<S: RasnCompilerState> {
+pub struct Compiler<B: Backend, S: CompilerState> {
     state: S,
+    backend: B,
 }
 
 /// Typestate representing compiler with missing parameters
@@ -112,15 +147,22 @@ pub struct CompilerSourcesSet {
 }
 
 /// State of the rasn compiler
-pub trait RasnCompilerState {}
-impl RasnCompilerState for CompilerReady {}
-impl RasnCompilerState for CompilerOutputSet {}
-impl RasnCompilerState for CompilerSourcesSet {}
-impl RasnCompilerState for CompilerMissingParams {}
+pub trait CompilerState {}
+impl CompilerState for CompilerReady {}
+impl CompilerState for CompilerOutputSet {}
+impl CompilerState for CompilerSourcesSet {}
+impl CompilerState for CompilerMissingParams {}
 
-struct CompileResult {
-    pub modules: Vec<GeneratedModule>,
+pub struct CompileResult {
+    pub generated: String,
     pub warnings: Vec<Box<dyn Error>>,
+}
+
+impl CompileResult {
+    fn rust_fmt(mut self) -> Self {
+        self.generated = format_bindings(&self.generated).unwrap_or(self.generated);
+        self
+    }
 }
 
 #[derive(Debug, PartialEq)]
@@ -129,30 +171,43 @@ enum AsnSource {
     Literal(String),
 }
 
-impl Default for RasnCompiler<CompilerMissingParams> {
+impl Default for Compiler<Rust, CompilerMissingParams> {
     fn default() -> Self {
-        RasnCompiler::new()
+        Compiler::new()
     }
 }
 
-impl RasnCompiler<CompilerMissingParams> {
-    /// Provides a Builder for building rasn compiler commands
-    pub fn new() -> RasnCompiler<CompilerMissingParams> {
-        RasnCompiler {
-            state: CompilerMissingParams,
+impl<B: Backend, S: CompilerState> Compiler<B, S> {
+    pub fn with_backend<B2: Backend>(self, backend: B2) -> Compiler<B2, S> {
+        Compiler {
+            state: self.state,
+            backend,
         }
     }
+}
 
+impl Compiler<Rust, CompilerMissingParams> {
+    /// Provides a Builder for building rasn compiler commands
+    pub fn new() -> Compiler<Rust, CompilerMissingParams> {
+        Compiler {
+            state: CompilerMissingParams,
+            backend: Rust,
+        }
+    }
+}
+
+impl<B: Backend> Compiler<B, CompilerMissingParams> {
     /// Add an ASN1 source to the compile command by path
     /// * `path_to_source` - path to ASN1 file to include
     pub fn add_asn_by_path(
         self,
         path_to_source: impl Into<PathBuf>,
-    ) -> RasnCompiler<CompilerSourcesSet> {
-        RasnCompiler {
+    ) -> Compiler<B, CompilerSourcesSet> {
+        Compiler {
             state: CompilerSourcesSet {
                 sources: vec![AsnSource::Path(path_to_source.into())],
             },
+            backend: self.backend,
         }
     }
 
@@ -161,27 +216,29 @@ impl RasnCompiler<CompilerMissingParams> {
     pub fn add_asn_sources_by_path(
         self,
         paths_to_sources: impl Iterator<Item = impl Into<PathBuf>>,
-    ) -> RasnCompiler<CompilerSourcesSet> {
-        RasnCompiler {
+    ) -> Compiler<B, CompilerSourcesSet> {
+        Compiler {
             state: CompilerSourcesSet {
                 sources: paths_to_sources
                     .map(|p| AsnSource::Path(p.into()))
                     .collect(),
             },
+            backend: self.backend,
         }
     }
 
     /// Add a literal ASN1 source to the compile command
     /// * `literal` - literal ASN1 statement to include
     /// ```rust
-    /// # use rasn_compiler::RasnCompiler;
-    /// RasnCompiler::new().add_asn_literal("My-test-integer ::= INTEGER (1..128)").compile_to_string();
+    /// # use rasn_compiler::Compiler;
+    /// Compiler::new().add_asn_literal("My-test-integer ::= INTEGER (1..128)").compile_to_string();
     /// ```
-    pub fn add_asn_literal(self, literal: impl Into<String>) -> RasnCompiler<CompilerSourcesSet> {
-        RasnCompiler {
+    pub fn add_asn_literal(self, literal: impl Into<String>) -> Compiler<B, CompilerSourcesSet> {
+        Compiler {
             state: CompilerSourcesSet {
                 sources: vec![AsnSource::Literal(literal.into())],
             },
+            backend: self.backend,
         }
     }
 
@@ -191,29 +248,28 @@ impl RasnCompiler<CompilerMissingParams> {
     pub fn set_output_path(
         self,
         output_path: impl Into<PathBuf>,
-    ) -> RasnCompiler<CompilerOutputSet> {
+    ) -> Compiler<B, CompilerOutputSet> {
         let mut path: PathBuf = output_path.into();
         if path.is_dir() {
             path.set_file_name("rasn_generated.rs");
         }
-        RasnCompiler {
+        Compiler {
             state: CompilerOutputSet { output_path: path },
+            backend: self.backend,
         }
     }
 }
 
-impl RasnCompiler<CompilerOutputSet> {
+impl<B: Backend> Compiler<B, CompilerOutputSet> {
     /// Add an ASN1 source to the compile command by path
     /// * `path_to_source` - path to ASN1 file to include
-    pub fn add_asn_by_path(
-        self,
-        path_to_source: impl Into<PathBuf>,
-    ) -> RasnCompiler<CompilerReady> {
-        RasnCompiler {
+    pub fn add_asn_by_path(self, path_to_source: impl Into<PathBuf>) -> Compiler<B, CompilerReady> {
+        Compiler {
             state: CompilerReady {
                 sources: vec![AsnSource::Path(path_to_source.into())],
                 output_path: self.state.output_path,
             },
+            backend: self.backend,
         }
     }
 
@@ -222,44 +278,47 @@ impl RasnCompiler<CompilerOutputSet> {
     pub fn add_asn_sources_by_path(
         self,
         paths_to_sources: impl Iterator<Item = impl Into<PathBuf>>,
-    ) -> RasnCompiler<CompilerReady> {
-        RasnCompiler {
+    ) -> Compiler<B, CompilerReady> {
+        Compiler {
             state: CompilerReady {
                 sources: paths_to_sources
                     .map(|p| AsnSource::Path(p.into()))
                     .collect(),
                 output_path: self.state.output_path,
             },
+            backend: self.backend,
         }
     }
 
     /// Add a literal ASN1 source to the compile command
     /// * `literal` - literal ASN1 statement to include
     /// ```rust
-    /// # use rasn_compiler::RasnCompiler;
-    /// RasnCompiler::new().add_asn_literal("My-test-integer ::= INTEGER (1..128)").compile_to_string();
+    /// # use rasn_compiler::Compiler;
+    /// Compiler::new().add_asn_literal("My-test-integer ::= INTEGER (1..128)").compile_to_string();
     /// ```
-    pub fn add_asn_literal(self, literal: impl Into<String>) -> RasnCompiler<CompilerReady> {
-        RasnCompiler {
+    pub fn add_asn_literal(self, literal: impl Into<String>) -> Compiler<B, CompilerReady> {
+        Compiler {
             state: CompilerReady {
                 sources: vec![AsnSource::Literal(literal.into())],
                 output_path: self.state.output_path,
             },
+            backend: self.backend,
         }
     }
 }
 
-impl RasnCompiler<CompilerSourcesSet> {
+impl<B: Backend> Compiler<B, CompilerSourcesSet> {
     /// Add an ASN1 source to the compile command by path
     /// * `path_to_source` - path to ASN1 file to include
     pub fn add_asn_by_path(
         self,
         path_to_source: impl Into<PathBuf>,
-    ) -> RasnCompiler<CompilerSourcesSet> {
+    ) -> Compiler<B, CompilerSourcesSet> {
         let mut sources: Vec<AsnSource> = self.state.sources;
         sources.push(AsnSource::Path(path_to_source.into()));
-        RasnCompiler {
+        Compiler {
             state: CompilerSourcesSet { sources },
+            backend: self.backend,
         }
     }
 
@@ -268,25 +327,27 @@ impl RasnCompiler<CompilerSourcesSet> {
     pub fn add_asn_sources_by_path(
         self,
         paths_to_sources: impl Iterator<Item = impl Into<PathBuf>>,
-    ) -> RasnCompiler<CompilerSourcesSet> {
+    ) -> Compiler<B, CompilerSourcesSet> {
         let mut sources: Vec<AsnSource> = self.state.sources;
         sources.extend(paths_to_sources.map(|p| AsnSource::Path(p.into())));
-        RasnCompiler {
+        Compiler {
             state: CompilerSourcesSet { sources },
+            backend: self.backend,
         }
     }
 
     /// Add a literal ASN1 source to the compile command
     /// * `literal` - literal ASN1 statement to include
     /// ```rust
-    /// # use rasn_compiler::RasnCompiler;
-    /// RasnCompiler::new().add_asn_literal("My-test-integer ::= INTEGER (1..128)").compile_to_string();
+    /// # use rasn_compiler::Compiler;
+    /// Compiler::new().add_asn_literal("My-test-integer ::= INTEGER (1..128)").compile_to_string();
     /// ```
-    pub fn add_asn_literal(self, literal: impl Into<String>) -> RasnCompiler<CompilerSourcesSet> {
+    pub fn add_asn_literal(self, literal: impl Into<String>) -> Compiler<B, CompilerSourcesSet> {
         let mut sources: Vec<AsnSource> = self.state.sources;
         sources.push(AsnSource::Literal(literal.into()));
-        RasnCompiler {
+        Compiler {
             state: CompilerSourcesSet { sources },
+            backend: self.backend,
         }
     }
 
@@ -294,12 +355,13 @@ impl RasnCompiler<CompilerSourcesSet> {
     /// * `output_path` - path to an output file or directory, if path points to
     ///                   a directory, the compiler will generate a file for every ASN.1 module.
     ///                   If the path points to a file, all modules will be written to that file.
-    pub fn set_output_path(self, output_path: impl Into<PathBuf>) -> RasnCompiler<CompilerReady> {
-        RasnCompiler {
+    pub fn set_output_path(self, output_path: impl Into<PathBuf>) -> Compiler<B, CompilerReady> {
+        Compiler {
             state: CompilerReady {
                 sources: self.state.sources,
                 output_path: output_path.into(),
             },
+            backend: self.backend,
         }
     }
 
@@ -307,34 +369,79 @@ impl RasnCompiler<CompilerSourcesSet> {
     /// Returns a Result wrapping a compilation result:
     /// * _Ok_  - tuple containing the stringified Rust representation of the ASN1 spec as well as a vector of warnings raised during the compilation
     /// * _Err_ - Unrecoverable error, no rust representations were generated
-    pub fn compile_to_string(self) -> Result<(String, Vec<Box<dyn Error>>), Box<dyn Error>> {
-        internal_compile(&self).map(|res| {
-            let bindings = res.modules.iter().fold(String::new(), |mut acc, m| {
-                acc += &m.generated;
-                acc
-            });
-            (
-                format_bindings(&bindings).unwrap_or(bindings),
-                res.warnings,
-            )
+    pub fn compile_to_string(self) -> Result<CompileResult, Box<dyn Error>> {
+        self.internal_compile().map(CompileResult::rust_fmt)
+    }
+
+    fn internal_compile(&self) -> Result<CompileResult, Box<dyn Error>> {
+        let mut generated_modules = vec![];
+        let mut warnings = Vec::<Box<dyn Error>>::new();
+        let mut modules: Vec<ToplevelDeclaration> = vec![];
+        for src in &self.state.sources {
+            let stringified_src = match src {
+                AsnSource::Path(p) => read_to_string(p)?,
+                AsnSource::Literal(l) => l.clone(),
+            };
+            modules.append(
+                &mut asn_spec(&stringified_src)?
+                    .into_iter()
+                    .flat_map(|(header, tlds)| {
+                        let header_ref = Rc::new(header);
+                        tlds.into_iter().enumerate().map(move |(index, mut tld)| {
+                            tld.apply_tagging_environment(&header_ref.tagging_environment);
+                            tld.set_index(header_ref.clone(), index);
+                            tld
+                        })
+                    })
+                    .collect(),
+            );
+        }
+        let (valid_items, mut validator_errors) = Validator::new(modules).validate()?;
+        let modules = valid_items.into_iter().fold(
+            BTreeMap::<String, Vec<ToplevelDeclaration>>::new(),
+            |mut modules, tld| {
+                let key = tld
+                    .get_index()
+                    .map_or(<_>::default(), |(module, _)| module.name.clone());
+                match modules.entry(key) {
+                    std::collections::btree_map::Entry::Vacant(v) => {
+                        v.insert(vec![tld]);
+                    }
+                    std::collections::btree_map::Entry::Occupied(ref mut e) => {
+                        e.get_mut().push(tld)
+                    }
+                }
+                modules
+            },
+        );
+        for (_, module) in modules {
+            let mut generated_module = self.backend.generate_module(module)?;
+            if let Some(m) = generated_module.generated {
+                generated_modules.push(m);
+            }
+            warnings.append(&mut generated_module.warnings);
+        }
+        warnings.append(&mut validator_errors);
+
+        Ok(CompileResult {
+            generated: generated_modules.join("\n"),
+            warnings,
         })
     }
 }
 
-impl RasnCompiler<CompilerReady> {
+impl<B: Backend> Compiler<B, CompilerReady> {
     /// Add an ASN1 source to the compile command by path
     /// * `path_to_source` - path to ASN1 file to include
-    pub fn add_asn_by_path(
-        self,
-        path_to_source: impl Into<PathBuf>,
-    ) -> RasnCompiler<CompilerReady> {
+    pub fn add_asn_by_path(self, path_to_source: impl Into<PathBuf>) -> Compiler<B, CompilerReady> {
         let mut sources: Vec<AsnSource> = self.state.sources;
         sources.push(AsnSource::Path(path_to_source.into()));
-        RasnCompiler {
+        Compiler {
             state: CompilerReady {
                 output_path: self.state.output_path,
                 sources,
             },
+            backend: self.backend,
         }
     }
 
@@ -343,31 +450,33 @@ impl RasnCompiler<CompilerReady> {
     pub fn add_asn_sources_by_path(
         self,
         paths_to_sources: impl Iterator<Item = impl Into<PathBuf>>,
-    ) -> RasnCompiler<CompilerReady> {
+    ) -> Compiler<B, CompilerReady> {
         let mut sources: Vec<AsnSource> = self.state.sources;
         sources.extend(paths_to_sources.map(|p| AsnSource::Path(p.into())));
-        RasnCompiler {
+        Compiler {
             state: CompilerReady {
                 sources,
                 output_path: self.state.output_path,
             },
+            backend: self.backend,
         }
     }
 
     /// Add a literal ASN1 source to the compile command
     /// * `literal` - literal ASN1 statement to include
     /// ```rust
-    /// # use rasn_compiler::RasnCompiler;
-    /// RasnCompiler::new().add_asn_literal("My-test-integer ::= INTEGER (1..128)").compile_to_string();
+    /// # use rasn_compiler::Compiler;
+    /// Compiler::new().add_asn_literal("My-test-integer ::= INTEGER (1..128)").compile_to_string();
     /// ```
-    pub fn add_asn_literal(self, literal: impl Into<String>) -> RasnCompiler<CompilerReady> {
+    pub fn add_asn_literal(self, literal: impl Into<String>) -> Compiler<B, CompilerReady> {
         let mut sources: Vec<AsnSource> = self.state.sources;
         sources.push(AsnSource::Literal(literal.into()));
-        RasnCompiler {
+        Compiler {
             state: CompilerReady {
                 output_path: self.state.output_path,
                 sources,
             },
+            backend: self.backend,
         }
     }
 
@@ -375,11 +484,12 @@ impl RasnCompiler<CompilerReady> {
     /// Returns a Result wrapping a compilation result:
     /// * _Ok_  - tuple containing the stringified Rust representation of the ASN1 spec as well as a vector of warnings raised during the compilation
     /// * _Err_ - Unrecoverable error, no rust representations were generated
-    pub fn compile_to_string(self) -> Result<(String, Vec<Box<dyn Error>>), Box<dyn Error>> {
-        RasnCompiler {
+    pub fn compile_to_string(self) -> Result<CompileResult, Box<dyn Error>> {
+        Compiler {
             state: CompilerSourcesSet {
                 sources: self.state.sources,
             },
+            backend: self.backend,
         }
         .compile_to_string()
     }
@@ -389,83 +499,25 @@ impl RasnCompiler<CompilerReady> {
     /// * _Ok_  - Vector of warnings raised during the compilation
     /// * _Err_ - Unrecoverable error, no rust representations were generated
     pub fn compile(self) -> Result<Vec<Box<dyn Error>>, Box<dyn Error>> {
-        let result = internal_compile(&RasnCompiler {
+        let result = Compiler {
             state: CompilerSourcesSet {
                 sources: self.state.sources,
             },
-        })?;
-
-        let generated = result.modules.iter().fold(String::new(), |mut acc, m| {
-            acc += &m.generated;
-            acc
-        });
+            backend: self.backend,
+        }
+        .internal_compile()?
+        .rust_fmt();
         fs::write(
             self.state
                 .output_path
                 .is_dir()
                 .then(|| self.state.output_path.join("generated.rs"))
                 .unwrap_or(self.state.output_path),
-            format_bindings(&generated).unwrap_or(generated),
+            result.generated,
         )?;
 
         Ok(result.warnings)
     }
-}
-
-fn internal_compile(
-    rasn: &RasnCompiler<CompilerSourcesSet>,
-) -> Result<CompileResult, Box<dyn Error>> {
-    let mut generated_modules = vec![];
-    let mut warnings = Vec::<Box<dyn Error>>::new();
-    let mut modules: Vec<ToplevelDeclaration> = vec![];
-    for src in &rasn.state.sources {
-        let stringified_src = match src {
-            AsnSource::Path(p) => read_to_string(p)?,
-            AsnSource::Literal(l) => l.clone(),
-        };
-        modules.append(
-            &mut asn_spec(&stringified_src)?
-                .into_iter()
-                .flat_map(|(header, tlds)| {
-                    let header_ref = Rc::new(header);
-                    tlds.into_iter().enumerate().map(move |(index, mut tld)| {
-                        tld.apply_tagging_environment(&header_ref.tagging_environment);
-                        tld.set_index(header_ref.clone(), index);
-                        tld
-                    })
-                })
-                .collect(),
-        );
-    }
-    let (valid_items, mut validator_errors) = Validator::new(modules).validate()?;
-    let modules = valid_items.into_iter().fold(
-        BTreeMap::<String, Vec<ToplevelDeclaration>>::new(),
-        |mut modules, tld| {
-            let key = tld
-                .get_index()
-                .map_or(<_>::default(), |(module, _)| module.name.clone());
-            match modules.entry(key) {
-                std::collections::btree_map::Entry::Vacant(v) => {
-                    v.insert(vec![tld]);
-                }
-                std::collections::btree_map::Entry::Occupied(ref mut e) => e.get_mut().push(tld),
-            }
-            modules
-        },
-    );
-    for (_, module) in modules {
-        let (rust_module, mut generator_errors) = generate_module(module)?;
-        if let Some(m) = rust_module {
-            generated_modules.push(m);
-        }
-        warnings.append(&mut generator_errors);
-    }
-    warnings.append(&mut validator_errors);
-
-    Ok(CompileResult {
-        modules: generated_modules,
-        warnings,
-    })
 }
 
 fn format_bindings(bindings: &String) -> Result<String, Box<dyn Error>> {

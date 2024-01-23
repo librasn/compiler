@@ -868,6 +868,11 @@ pub enum ASN1Value {
     LinkedStructLikeValue(Vec<(String, StructLikeFieldValue)>),
     /// Character string values such as UTF8String values need type information that will not always be picked up by the parser on first pass.
     LinkedCharStringValue(CharacterStringType, String),
+    LinkedElsewhereDefinedValue{
+        parent: Option<String>,
+        identifier: String,
+        can_be_const: bool,
+    },
 }
 
 /// Representation of a field value of a struct-like ASN1 value

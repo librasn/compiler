@@ -30,11 +30,11 @@ pub fn asn1(input: TokenStream) -> TokenStream {
         v => String::from(DUMMY_HEADER) + &v + DUMMY_FOOTER,
     };
 
-    rasn_compiler::RasnCompiler::new()
+    rasn_compiler::Compiler::new()
         .add_asn_literal(literal_asn1)
         .compile_to_string()
         .unwrap()
-        .0
+        .generated
         .parse()
         .unwrap()
 }
