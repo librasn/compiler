@@ -13,13 +13,13 @@ macro_rules! e2e_pdu {
         fn $suite() {
             rasn_compiler_derive::asn1!($asn1);
             assert_eq!(
-                rasn_compiler::RasnCompiler::new()
+                rasn_compiler::Compiler::new()
                     .add_asn_literal(&format!("TestModule DEFINITIONS AUTOMATIC TAGS::= BEGIN {} END", $asn1))
                     .compile_to_string()
                     .unwrap()
-                    .0
+                    .generated
                     .replace(|c: char| c.is_whitespace(), "")
-                    .replace("#[allow(non_camel_case_types,non_snake_case,non_upper_case_globals,unused)]pubmodtest_module{externcratealloc;uselazy_static::lazy_static;userasn::prelude::*;", ""),
+                    .replace("#[allow(non_camel_case_types,non_snake_case,non_upper_case_globals,unused)]pubmodtest_module{externcratealloc;use core::borrow::Borrow;uselazy_static::lazy_static;userasn::prelude::*;", ""),
                 format!("{}}}", $expected)
                     .to_string()
                     .replace(|c: char| c.is_whitespace(), ""),
@@ -35,7 +35,7 @@ macro_rules! e2e_module {
         #[test]
         fn $suite() {
             assert_eq!(
-                rasn_compiler::RasnCompiler::new()
+                rasn_compiler::Compiler::new()
                     .add_asn_literal(asn1)
                     .compile_to_string()
                     .unwrap()

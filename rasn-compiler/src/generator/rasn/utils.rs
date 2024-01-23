@@ -8,18 +8,14 @@ use crate::intermediate::{
     encoding_rules::per_visible::{
         per_visible_range_constraints, CharsetSubset, PerVisibleAlphabetConstraints,
     },
-    information_object::{
-        InformationObjectClass, InformationObjectField,
-    },
+    information_object::{InformationObjectClass, InformationObjectField},
     types::{Choice, ChoiceOption, Enumerated, SequenceOrSet, SequenceOrSetMember},
     utils::{to_rust_const_case, to_rust_enum_identifier, to_rust_snake_case, to_rust_title_case},
     ASN1Type, ASN1Value, AsnTag, CharacterStringType, IntegerType, TagClass, TaggingEnvironment,
     ToplevelDeclaration, ToplevelTypeDeclaration,
 };
 
-use crate::generator::{error::GeneratorError, generate};
-
-use super::error::GeneratorErrorType;
+use crate::generator::error::{GeneratorError, GeneratorErrorType};
 
 macro_rules! error {
     ($kind:ident, $($arg:tt)*) => {
@@ -32,6 +28,8 @@ macro_rules! error {
 }
 
 pub(crate) use error;
+
+use super::generate;
 
 impl IntegerType {
     pub fn to_token_stream(self) -> TokenStream {
@@ -541,19 +539,20 @@ pub fn value_to_tokens(
                     "A type name is needed to stringify choice value {:?}", value
                 ))
             }
-        },
+        }
         ASN1Value::OctetString(o) => {
             let bytes = o.iter().map(|byte| Literal::u8_unsuffixed(*byte));
             Ok(quote!(<OctetString as From<&'static [u8]>>::from(&[#(#bytes),*])))
-        },
-        ASN1Value::SequenceOrSet(_) => Err(error!(Unidentified, "Unexpectedly encountered unlinked struct-like ASN1 value!")),
+        }
+        ASN1Value::SequenceOrSet(_) => Err(error!(
+            Unidentified,
+            "Unexpectedly encountered unlinked struct-like ASN1 value!"
+        )),
         ASN1Value::LinkedStructLikeValue(fields) => {
             if let Some(ty_n) = type_name {
                 let tokenized_fields = fields
                     .iter()
-                    .map(|(_, val)| {
-                        value_to_tokens(val.value(), None)
-                    })
+                    .map(|(_, val)| value_to_tokens(val.value(), None))
                     .collect::<Result<Vec<TokenStream>, _>>()?;
                 Ok(quote!(#ty_n ::new(#(#tokenized_fields),*)))
             } else {
@@ -579,6 +578,7 @@ pub fn value_to_tokens(
             let enumerable_id = to_rust_enum_identifier(enumerable);
             Ok(quote!(#enum_name::#enumerable_id))
         }
+        ASN1Value::LinkedElsewhereDefinedValue { identifier: e, .. } |
         ASN1Value::ElsewhereDeclaredValue { identifier: e, .. } => {
             Ok(to_rust_const_case(e).to_token_stream())
         }
@@ -591,7 +591,7 @@ pub fn value_to_tokens(
         }
         ASN1Value::Time(t) => match type_name {
             Some(time_type) => Ok(quote!(#t.parse::<#time_type>().unwrap())),
-            None => Ok(quote!(#t.parse::<_>().unwrap()))
+            None => Ok(quote!(#t.parse::<_>().unwrap())),
         },
         ASN1Value::SequenceOrSetOf(seq) => {
             let elems = seq
@@ -628,17 +628,29 @@ pub fn value_to_tokens(
         ASN1Value::LinkedCharStringValue(string_type, value) => {
             let val = value.to_token_stream();
             match string_type {
-                CharacterStringType::NumericString => Ok(quote!(NumericString::try_from(#val).unwrap())),
-                CharacterStringType::VisibleString => Ok(quote!(VisibleString::try_from(#val).unwrap())),
+                CharacterStringType::NumericString => {
+                    Ok(quote!(NumericString::try_from(#val).unwrap()))
+                }
+                CharacterStringType::VisibleString => {
+                    Ok(quote!(VisibleString::try_from(#val).unwrap()))
+                }
                 CharacterStringType::IA5String => Ok(quote!(Ia5String::try_from(#val).unwrap())),
                 CharacterStringType::UTF8String => Ok(quote!(String::from(#val))),
                 CharacterStringType::BMPString => Ok(quote!(BmpString::try_from(#val).unwrap())),
-                CharacterStringType::PrintableString => Ok(quote!(PrintableString::try_from(#val).unwrap())),
-                CharacterStringType::GeneralString => Ok(quote!(GeneralString::try_from(String::from(#val)).unwrap())),
-                CharacterStringType::VideotexString |
-                CharacterStringType::GraphicString |
-                CharacterStringType::UniversalString |
-                CharacterStringType::TeletexString => Err(GeneratorError::new(None, &format!("{:?} values are currently unsupported!", string_type), GeneratorErrorType::NotYetInplemented)),
+                CharacterStringType::PrintableString => {
+                    Ok(quote!(PrintableString::try_from(#val).unwrap()))
+                }
+                CharacterStringType::GeneralString => {
+                    Ok(quote!(GeneralString::try_from(String::from(#val)).unwrap()))
+                }
+                CharacterStringType::VideotexString
+                | CharacterStringType::GraphicString
+                | CharacterStringType::UniversalString
+                | CharacterStringType::TeletexString => Err(GeneratorError::new(
+                    None,
+                    &format!("{:?} values are currently unsupported!", string_type),
+                    GeneratorErrorType::NotYetInplemented,
+                )),
             }
         }
     }
@@ -764,16 +776,37 @@ pub fn resolve_standard_syntax(
     }
 }
 
-
 impl ASN1Value {
     pub fn is_const_type(&self) -> bool {
         match self {
-            ASN1Value::Null |
-            ASN1Value::Boolean(_) |
-            ASN1Value::EnumeratedValue { .. } => true,
+            ASN1Value::Null | ASN1Value::Boolean(_) | ASN1Value::EnumeratedValue { .. } => true,
             ASN1Value::Choice(_, v) => v.is_const_type(),
-            ASN1Value::LinkedIntValue { integer_type, .. } => integer_type != &IntegerType::Unbounded,
+            ASN1Value::LinkedIntValue { integer_type, .. } => {
+                integer_type != &IntegerType::Unbounded
+            }
             ASN1Value::LinkedNestedValue { value, .. } => value.is_const_type(),
+            ASN1Value::LinkedElsewhereDefinedValue { can_be_const, .. } => *can_be_const,
+            _ => false,
+        }
+    }
+}
+
+impl ASN1Type {
+    pub fn is_const_type(&self) -> bool {
+        match self {
+            ASN1Type::Null |
+            ASN1Type::Enumerated(_) |
+            ASN1Type::Boolean(_) => true,
+            ASN1Type::Integer(i) => {
+                i.constraints.iter().fold(IntegerType::Unbounded, |acc, c| {
+                    acc.max_restrictive(c.integer_constraints())
+                }) != IntegerType::Unbounded
+            }
+            ASN1Type::Choice(c) => c.options.iter().fold(true, |acc, opt| opt.r#type.is_const_type() && acc),
+            ASN1Type::Set(s) |
+            ASN1Type::Sequence(s) => s.members.iter().fold(true, |acc, m| m.r#type.is_const_type() && acc),
+            ASN1Type::SetOf(s) |
+            ASN1Type::SequenceOf(s) => s.r#type.is_const_type(),
             _ => false
         }
     }
@@ -794,7 +827,7 @@ mod tests {
     use quote::quote;
 
     use crate::{
-        generator::utils::format_tag,
+        generator::rasn::utils::format_tag,
         intermediate::{
             constraints::ElementSet,
             types::{Boolean, Enumeral, Integer},

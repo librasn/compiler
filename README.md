@@ -12,10 +12,25 @@ In order to compile ASN1 in your build process, invoke the `rasn-compiler` in yo
 ```rust
 // build.rs build script
 use std::path::PathBuf;
-use rasn_compiler::RasnCompiler;
+use rasn_compiler::prelude::*;
+
+struct CustomBackend;
+
+impl Backend for CustomBackend {
+    fn generate_module(
+        &self,
+        top_level_declarations: Vec<ToplevelDeclaration>,
+    ) -> Result<GeneratedModule, GeneratorError> {
+        // implement a custom backend to generate bindings in a language of your choice
+        Ok(GeneratedModule::empty())
+    }
+}
+
 fn main() {
   // Initialize the compiler
-  match RasnCompiler::new()
+  match Compiler::new()
+    // optionally provide a custom backend
+    .with_backend(CustomBackend)
     // add a single ASN1 source file
     .add_asn_by_path(PathBuf::from("spec_1.asn"))
     // add several ASN1 source files
