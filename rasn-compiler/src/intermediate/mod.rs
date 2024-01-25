@@ -500,31 +500,6 @@ impl ToplevelDeclaration {
         }
     }
 
-    pub(crate) fn get_distinguished_value(
-        &self,
-        type_name: Option<&String>,
-        identifier: &String,
-    ) -> Option<i128> {
-        if let ToplevelDeclaration::Type(ToplevelTypeDeclaration {
-            name,
-            r#type: ASN1Type::Integer(i),
-            ..
-        }) = self
-        {
-            if type_name.is_some() && Some(name) != type_name {
-                return None;
-            }
-            i.distinguished_values
-                .as_ref()
-                .and_then(|dv| {
-                    dv.iter()
-                        .find_map(|d| (&d.name == identifier).then_some(d.value.clone()))
-                })
-        } else {
-            None
-        }
-    }
-
     pub fn set_index(&mut self, module_reference: Rc<ModuleReference>, item_no: usize) {
         match self {
             ToplevelDeclaration::Type(ref mut t) => {

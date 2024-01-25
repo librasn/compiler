@@ -17,7 +17,7 @@ use nom::{
 };
 
 use super::{
-    common::{identifier, in_braces, in_parentheses, skip_ws, skip_ws_and_comments, value_identifier},
+    common::{in_braces, in_parentheses, skip_ws, skip_ws_and_comments, value_identifier},
     constraint::constraint,
 };
 

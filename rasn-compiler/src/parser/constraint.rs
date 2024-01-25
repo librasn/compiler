@@ -14,7 +14,7 @@ use super::{
     asn1_type, asn1_value,
     common::{
         extension_marker, identifier, in_braces, in_parentheses, range_seperator,
-        skip_ws_and_comments, skip_ws,
+        skip_ws_and_comments,
     },
     information_object_class::object_set,
     parameterization::parameters,
@@ -377,7 +377,7 @@ fn settings_identifier<'a>(input: &'a str) -> IResult<&'a str, &'a str> {
 
 #[cfg(test)]
 mod tests {
-    use crate::intermediate::{information_object::*, types::*, *};
+    use crate::intermediate::{information_object::*, types::*};
 
     use crate::parser::constraint::*;
 
