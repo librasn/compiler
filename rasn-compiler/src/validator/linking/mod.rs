@@ -13,7 +13,7 @@ use crate::{
     validator::linking::utils::bit_string_to_octet_string,
 };
 
-use self::utils::{find_tld_or_enum_value_by_name, octet_string_to_bit_string};
+use self::utils::{built_in_type, find_tld_or_enum_value_by_name, octet_string_to_bit_string};
 
 macro_rules! error {
     ($kind:ident, $($arg:tt)*) => {
@@ -165,31 +165,9 @@ impl ToplevelValueDeclaration {
         if let Some(ToplevelDeclaration::Type(tld)) = tlds.get(&self.associated_type) {
             self.value.link_with_type(tlds, &tld.r#type)
         } else {
-            let ty = match self.associated_type.as_str() {
-                INTEGER => ASN1Type::Integer(Integer {
-                    constraints: vec![],
-                    distinguished_values: None,
-                }),
-                BIT_STRING => ASN1Type::BitString(BitString {
-                    constraints: vec![],
-                    distinguished_values: None,
-                }),
-                OCTET_STRING => ASN1Type::OctetString(OctetString {
-                    constraints: vec![],
-                }),
-                GENERALIZED_TIME => ASN1Type::GeneralizedTime(GeneralizedTime {
-                    constraints: vec![],
-                }),
-                UTC_TIME => ASN1Type::UTCTime(UTCTime {
-                    constraints: vec![],
-                }),
-                BOOLEAN => ASN1Type::Boolean(Boolean {
-                    constraints: vec![],
-                }),
-                OBJECT_IDENTIFIER => ASN1Type::ObjectIdentifier(ObjectIdentifier {
-                    constraints: vec![],
-                }),
-                _ => return Ok(()),
+            let ty = match built_in_type(self.associated_type.as_str()) {
+                Some(value) => value,
+                None => return Ok(()),
             };
             self.value.link_with_type(tlds, &ty)
         }
@@ -534,10 +512,19 @@ impl ASN1Value {
                 ASN1Type::ElsewhereDeclaredType(e),
                 ASN1Value::ElsewhereDeclaredValue { identifier, parent },
             ) => {
-                if let Some(value) = Self::link_enum_or_distinguished(tlds, e, identifier, vec![e.identifier.clone()])? {
+                if let Some(value) = Self::link_enum_or_distinguished(
+                    tlds,
+                    e,
+                    identifier,
+                    vec![e.identifier.clone()],
+                )? {
                     *self = value;
                 } else {
-                    *self = ASN1Value::LinkedElsewhereDefinedValue { parent: parent.clone(), identifier: identifier.clone(), can_be_const: e.root(tlds)?.is_const_type() }
+                    *self = ASN1Value::LinkedElsewhereDefinedValue {
+                        parent: parent.clone(),
+                        identifier: identifier.clone(),
+                        can_be_const: e.root(tlds)?.is_const_type(),
+                    }
                 }
                 Ok(())
             }
@@ -744,7 +731,7 @@ impl ASN1Value {
                 } else {
                     Ok(None)
                 }
-            },
+            }
             Some(ToplevelDeclaration::Type(ToplevelTypeDeclaration {
                 r#type:
                     ASN1Type::Integer(Integer {
@@ -753,29 +740,32 @@ impl ASN1Value {
                     }),
                 ..
             })) => {
-                if let Some(distinguished_value) = distinguished.iter().find(|d| &d.name == identifier)
+                if let Some(distinguished_value) =
+                    distinguished.iter().find(|d| &d.name == identifier)
                 {
                     Ok(Some(ASN1Value::LinkedNestedValue {
                         supertypes,
                         value: Box::new(ASN1Value::LinkedIntValue {
-                            integer_type: constraints.iter().fold(IntegerType::Unbounded, |acc, c| {
-                                c.integer_constraints().max_restrictive(acc)
-                            }),
+                            integer_type: constraints
+                                .iter()
+                                .fold(IntegerType::Unbounded, |acc, c| {
+                                    c.integer_constraints().max_restrictive(acc)
+                                }),
                             value: distinguished_value.value,
                         }),
                     }))
                 } else {
                     Ok(None)
                 }
-            },
+            }
             Some(ToplevelDeclaration::Type(ToplevelTypeDeclaration {
                 r#type: ASN1Type::ElsewhereDeclaredType(elsewhere),
                 ..
             })) => {
                 supertypes.push(elsewhere.identifier.clone());
                 Self::link_enum_or_distinguished(tlds, elsewhere, identifier, supertypes)
-            },
-            _ => Ok(None)
+            }
+            _ => Ok(None),
         }
     }
 

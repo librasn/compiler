@@ -29,7 +29,7 @@ macro_rules! error {
 
 pub(crate) use error;
 
-use super::generate;
+use super::*;
 
 impl IntegerType {
     pub fn to_token_stream(self) -> TokenStream {
@@ -598,7 +598,7 @@ pub fn value_to_tokens(
                 .iter()
                 .map(|v| value_to_tokens(v, None))
                 .collect::<Result<Vec<_>, _>>()?;
-            Ok(quote!(&'static [#(#elems),*].into_iter().collect()))
+            Ok(quote!(alloc::vec![#(#elems),*]))
         }
         ASN1Value::LinkedNestedValue { supertypes, value } => {
             fn nester(s: TokenStream, mut types: Vec<String>) -> TokenStream {
@@ -729,6 +729,32 @@ pub fn format_new_impl(name: &TokenStream, name_types: Vec<NameType>) -> TokenSt
                 Self { #(#instance),* }
             }
         }
+    }
+}
+
+pub fn format_sequence_or_set_of_item_type(type_name: String, first_item: Option<&ASN1Value>) -> TokenStream {
+    match type_name {
+        name if name == NULL => quote!(()),
+        name if name == BOOLEAN => quote!(bool),
+        name if name == INTEGER => {
+            match first_item {
+                Some(ASN1Value::LinkedIntValue { integer_type, .. }) => integer_type.to_token_stream(),
+                _ => quote!(Integer) // best effort
+            }
+        },
+        name if name == BIT_STRING => quote!(BitString),
+        name if name == OCTET_STRING => quote!(OctetString),
+        name if name == GENERALIZED_TIME => quote!(GeneralizedTime),
+        name if name == UTC_TIME => quote!(UtcTime),
+        name if name == OBJECT_IDENTIFIER => quote!(ObjectIdentifier),
+        name if name == NUMERIC_STRING => quote!(NumericString),
+        name if name == VISIBLE_STRING => quote!(VisibleString),
+        name if name == IA5_STRING => quote!(IA5String),
+        name if name == UTF8_STRING => quote!(UTF8String),
+        name if name == BMP_STRING => quote!(BMPString),
+        name if name == PRINTABLE_STRING => quote!(PrintableString),
+        name if name == GENERAL_STRING => quote!(GeneralString),
+        name => to_rust_title_case(&name),
     }
 }
 

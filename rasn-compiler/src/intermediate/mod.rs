@@ -17,21 +17,21 @@ pub mod utils;
 
 use std::{
     collections::BTreeMap,
-    ops::{Add, AddAssign},
-    rc::Rc, f32::consts::E,
+    ops::{Add},
+    rc::Rc,
 };
 
 use constraints::Constraint;
 use error::{GrammarError, GrammarErrorType};
 use information_object::{InformationObjectFieldReference, ToplevelInformationDeclaration};
 use parameterization::Parameterization;
+use quote::{ToTokens, TokenStreamExt, quote};
 use types::*;
-use utils::*;
 
 // Comment tokens
-pub const BLOCK_COMMENT_START: &'static str = "/*";
-pub const BLOCK_COMMENT_END: &'static str = "*/";
-pub const LINE_COMMENT: &'static str = "--";
+pub const BLOCK_COMMENT_START: &str= "/*";
+pub const BLOCK_COMMENT_END: &str= "*/";
+pub const LINE_COMMENT: &str= "--";
 
 // Bracket tokens
 pub const LEFT_PARENTHESIS: char = '(';
@@ -44,118 +44,120 @@ pub const LEFT_CHEVRON: char = '<';
 pub const RIGHT_CHEVRON: char = '>';
 
 // Type tokens
-pub const NULL: &'static str = "NULL";
-pub const BOOLEAN: &'static str = "BOOLEAN";
-pub const INTEGER: &'static str = "INTEGER";
-pub const REAL: &'static str = "REAL";
-pub const BIT_STRING: &'static str = "BIT STRING";
-pub const OCTET_STRING: &'static str = "OCTET STRING";
-pub const IA5_STRING: &'static str = "IA5String";
-pub const UTF8_STRING: &'static str = "UTF8String";
-pub const NUMERIC_STRING: &'static str = "NumericString";
-pub const VISIBLE_STRING: &'static str = "VisibleString";
-pub const TELETEX_STRING: &'static str = "TeletexString";
-pub const VIDEOTEX_STRING: &'static str = "VideotexString";
-pub const GRAPHIC_STRING: &'static str = "GraphicString";
-pub const GENERAL_STRING: &'static str = "GeneralString";
-pub const UNIVERSAL_STRING: &'static str = "UniversalString";
-pub const BMP_STRING: &'static str = "BMPString";
-pub const PRINTABLE_STRING: &'static str = "PrintableString";
-pub const GENERALIZED_TIME: &'static str = "GeneralizedTime";
-pub const UTC_TIME: &'static str = "UTCTime";
-pub const ENUMERATED: &'static str = "ENUMERATED";
-pub const CHOICE: &'static str = "CHOICE";
-pub const SEQUENCE: &'static str = "SEQUENCE";
-pub const OF: &'static str = "OF";
-pub const ALL: &'static str = "ALL";
-pub const SET: &'static str = "SET";
-pub const OBJECT_IDENTIFIER: &'static str = "OBJECT IDENTIFIER";
-pub const COMPONENTS_OF: &'static str = "COMPONENTS OF";
+pub const NULL: &str= "NULL";
+pub const BOOLEAN: &str= "BOOLEAN";
+pub const INTEGER: &str= "INTEGER";
+pub const REAL: &str= "REAL";
+pub const BIT_STRING: &str= "BIT STRING";
+pub const OCTET_STRING: &str= "OCTET STRING";
+pub const IA5_STRING: &str= "IA5String";
+pub const UTF8_STRING: &str= "UTF8String";
+pub const NUMERIC_STRING: &str= "NumericString";
+pub const VISIBLE_STRING: &str= "VisibleString";
+pub const TELETEX_STRING: &str= "TeletexString";
+pub const VIDEOTEX_STRING: &str= "VideotexString";
+pub const GRAPHIC_STRING: &str= "GraphicString";
+pub const GENERAL_STRING: &str= "GeneralString";
+pub const UNIVERSAL_STRING: &str= "UniversalString";
+pub const BMP_STRING: &str= "BMPString";
+pub const PRINTABLE_STRING: &str= "PrintableString";
+pub const GENERALIZED_TIME: &str= "GeneralizedTime";
+pub const UTC_TIME: &str= "UTCTime";
+pub const ENUMERATED: &str= "ENUMERATED";
+pub const CHOICE: &str= "CHOICE";
+pub const SEQUENCE: &str= "SEQUENCE";
+pub const SEQUENCE_OF: &str= "SEQUENCE OF";
+pub const SET_OF: &str= "SET OF";
+pub const OF: &str= "OF";
+pub const ALL: &str= "ALL";
+pub const SET: &str= "SET";
+pub const OBJECT_IDENTIFIER: &str= "OBJECT IDENTIFIER";
+pub const COMPONENTS_OF: &str= "COMPONENTS OF";
 
 // Tagging tokens
-pub const UNIVERSAL: &'static str = "UNIVERSAL";
-pub const PRIVATE: &'static str = "PRIVATE";
-pub const APPLICATION: &'static str = "APPLICATION";
+pub const UNIVERSAL: &str= "UNIVERSAL";
+pub const PRIVATE: &str= "PRIVATE";
+pub const APPLICATION: &str= "APPLICATION";
 
 // Value tokens
-pub const TRUE: &'static str = "TRUE";
-pub const FALSE: &'static str = "FALSE";
+pub const TRUE: &str= "TRUE";
+pub const FALSE: &str= "FALSE";
 
 // Header tokens
-pub const BEGIN: &'static str = "BEGIN";
-pub const END: &'static str = "END";
-pub const DEFINITIONS: &'static str = "DEFINITIONS";
-pub const AUTOMATIC: &'static str = "AUTOMATIC";
-pub const EXPLICIT: &'static str = "EXPLICIT";
-pub const IMPLICIT: &'static str = "IMPLICIT";
-pub const IMPORTS: &'static str = "IMPORTS";
-pub const EXPORTS: &'static str = "EXPORTS";
-pub const FROM: &'static str = "FROM";
-pub const INSTRUCTIONS: &'static str = "INSTRUCTIONS";
-pub const TAGS: &'static str = "TAGS";
-pub const EXTENSIBILITY_IMPLIED: &'static str = "EXTENSIBILITY IMPLIED";
-pub const WITH_SUCCESSORS: &'static str = "WITH SUCCESSORS";
-pub const WITH_DESCENDANTS: &'static str = "WITH DESCENDANTS";
+pub const BEGIN: &str= "BEGIN";
+pub const END: &str= "END";
+pub const DEFINITIONS: &str= "DEFINITIONS";
+pub const AUTOMATIC: &str= "AUTOMATIC";
+pub const EXPLICIT: &str= "EXPLICIT";
+pub const IMPLICIT: &str= "IMPLICIT";
+pub const IMPORTS: &str= "IMPORTS";
+pub const EXPORTS: &str= "EXPORTS";
+pub const FROM: &str= "FROM";
+pub const INSTRUCTIONS: &str= "INSTRUCTIONS";
+pub const TAGS: &str= "TAGS";
+pub const EXTENSIBILITY_IMPLIED: &str= "EXTENSIBILITY IMPLIED";
+pub const WITH_SUCCESSORS: &str= "WITH SUCCESSORS";
+pub const WITH_DESCENDANTS: &str= "WITH DESCENDANTS";
 pub const SEMICOLON: char = ';';
 
 // Information Object Class tokens
 pub const AMPERSAND: char = '&';
-pub const CLASS: &'static str = "CLASS";
-pub const UNIQUE: &'static str = "UNIQUE";
-pub const WITH_SYNTAX: &'static str = "WITH SYNTAX";
+pub const CLASS: &str= "CLASS";
+pub const UNIQUE: &str= "UNIQUE";
+pub const WITH_SYNTAX: &str= "WITH SYNTAX";
 pub const AT: char = '@';
 pub const DOT: char = '.';
 
 // Subtyping tokens
-pub const SIZE: &'static str = "SIZE";
-pub const CONSTRAINED_BY: &'static str = "CONSTRAINED BY";
-pub const PATTERN: &'static str = "PATTERN";
-pub const DEFAULT: &'static str = "DEFAULT";
-pub const OPTIONAL: &'static str = "OPTIONAL";
-pub const WITH_COMPONENTS: &'static str = "WITH COMPONENTS";
-pub const WITH_COMPONENT: &'static str = "WITH COMPONENT";
-pub const UNION: &'static str = "UNION";
-pub const EXCEPT: &'static str = "EXCEPT";
-pub const INTERSECTION: &'static str = "INTERSECTION";
-pub const ABSENT: &'static str = "ABSENT";
-pub const PRESENT: &'static str = "PRESENT";
-pub const INCLUDES: &'static str = "INCLUDES";
-pub const MIN: &'static str = "MIN";
-pub const MAX: &'static str = "MAX";
+pub const SIZE: &str= "SIZE";
+pub const CONSTRAINED_BY: &str= "CONSTRAINED BY";
+pub const PATTERN: &str= "PATTERN";
+pub const DEFAULT: &str= "DEFAULT";
+pub const OPTIONAL: &str= "OPTIONAL";
+pub const WITH_COMPONENTS: &str= "WITH COMPONENTS";
+pub const WITH_COMPONENT: &str= "WITH COMPONENT";
+pub const UNION: &str= "UNION";
+pub const EXCEPT: &str= "EXCEPT";
+pub const INTERSECTION: &str= "INTERSECTION";
+pub const ABSENT: &str= "ABSENT";
+pub const PRESENT: &str= "PRESENT";
+pub const INCLUDES: &str= "INCLUDES";
+pub const MIN: &str= "MIN";
+pub const MAX: &str= "MAX";
 pub const LESS_THAN: char = '<';
 pub const GREATER_THAN: char = '>';
-pub const PIPE: &'static str = "|";
-pub const CARET: &'static str = "^";
+pub const PIPE: &str= "|";
+pub const CARET: &str= "^";
 
-pub const ASSIGN: &'static str = "::=";
-pub const RANGE: &'static str = "..";
-pub const ELLIPSIS: &'static str = "...";
+pub const ASSIGN: &str= "::=";
+pub const RANGE: &str= "..";
+pub const ELLIPSIS: &str= "...";
 pub const COMMA: char = ',';
 pub const COLON: char = ':';
 pub const SINGLE_QUOTE: char = '\'';
 
 // invalid syntax word tokens
-pub const ABSTRACT_SYNTAX: &'static str = "ABSTRACT-SYNTAX";
-pub const BIT: &'static str = "BIT";
-pub const CHARACTER: &'static str = "CHARACTER";
-pub const CONTAINING: &'static str = "CONTAINING";
-pub const DATE: &'static str = "DATE";
-pub const DATE_TIME: &'static str = "DATE-TIME";
-pub const DURATION: &'static str = "DURATION";
-pub const EMBEDDED_PDV: &'static str = "EMBEDDED PDV";
-pub const EXTERNAL: &'static str = "EXTERNAL";
-pub const INSTANCE_OF: &'static str = "INSTANCE OF";
-pub const MINUS_INFINITY: &'static str = "MINUS-INFINITY";
-pub const NOT_A_NUMBER: &'static str = "NOT-A-NUMBER";
-pub const OBJECT: &'static str = "OBJECT";
-pub const OCTET: &'static str = "OCTET";
-pub const OID_IRI: &'static str = "OID-IRI";
-pub const PLUS_INFINITY: &'static str = "PLUS-INFINITY";
-pub const RELATIVE_OID: &'static str = "RELATIVE-OID";
-pub const RELATIVE_OID_IRI: &'static str = "RELATIVE-OID-IRI";
-pub const TIME: &'static str = "TIME";
-pub const TIME_OF_DAY: &'static str = "TIME-OF-DAY";
-pub const TYPE_IDENTIFIER: &'static str = "TYPE-IDENTIFIER";
+pub const ABSTRACT_SYNTAX: &str= "ABSTRACT-SYNTAX";
+pub const BIT: &str= "BIT";
+pub const CHARACTER: &str= "CHARACTER";
+pub const CONTAINING: &str= "CONTAINING";
+pub const DATE: &str= "DATE";
+pub const DATE_TIME: &str= "DATE-TIME";
+pub const DURATION: &str= "DURATION";
+pub const EMBEDDED_PDV: &str= "EMBEDDED PDV";
+pub const EXTERNAL: &str= "EXTERNAL";
+pub const INSTANCE_OF: &str= "INSTANCE OF";
+pub const MINUS_INFINITY: &str= "MINUS-INFINITY";
+pub const NOT_A_NUMBER: &str= "NOT-A-NUMBER";
+pub const OBJECT: &str= "OBJECT";
+pub const OCTET: &str= "OCTET";
+pub const OID_IRI: &str= "OID-IRI";
+pub const PLUS_INFINITY: &str= "PLUS-INFINITY";
+pub const RELATIVE_OID: &str= "RELATIVE-OID";
+pub const RELATIVE_OID_IRI: &str= "RELATIVE-OID-IRI";
+pub const TIME: &str= "TIME";
+pub const TIME_OF_DAY: &str= "TIME-OF-DAY";
+pub const TYPE_IDENTIFIER: &str= "TYPE-IDENTIFIER";
 
 pub const ASN1_KEYWORDS: [&str; 63] = [
     ABSTRACT_SYNTAX,
@@ -749,13 +751,11 @@ impl CharacterStringType {
                 PRINTABLE_STRING_CHARSET.into_iter().enumerate().collect()
             }
             CharacterStringType::IA5String => (0..128u32)
-                .into_iter()
                 .map(|i| char::from_u32(i).unwrap())
                 .enumerate()
                 .collect(),
             _ => (0..u16::MAX as u32)
-                .into_iter()
-                .filter_map(|i| char::from_u32(i))
+                .filter_map(char::from_u32)
                 .enumerate()
                 .collect(),
         }
@@ -792,6 +792,22 @@ pub enum IntegerType {
     Int64,
     Uint64,
     Unbounded,
+}
+
+impl ToTokens for IntegerType {
+    fn to_tokens(&self, tokens: &mut proc_macro2::TokenStream) {
+        match self {
+            IntegerType::Int8 => tokens.append_all(quote!(i8)),
+            IntegerType::Uint8 => tokens.append_all(quote!(u8)),
+            IntegerType::Int16 => tokens.append_all(quote!(i16)),
+            IntegerType::Uint16 => tokens.append_all(quote!(u16)),
+            IntegerType::Int32 => tokens.append_all(quote!(i32)),
+            IntegerType::Uint32 => tokens.append_all(quote!(u32)),
+            IntegerType::Int64 => tokens.append_all(quote!(i64)),
+            IntegerType::Uint64 => tokens.append_all(quote!(u64)),
+            IntegerType::Unbounded => tokens.append_all(quote!(Integer)),
+        }
+    }
 }
 
 impl IntegerType {

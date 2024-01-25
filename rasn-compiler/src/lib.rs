@@ -104,9 +104,9 @@ pub fn compile(asn1: &str) -> Result<Generated, JsValue> {
     Compiler::new()
         .add_asn_literal(asn1)
         .compile_to_string()
-        .map(|(rust, warn)| Generated {
-            rust,
-            warnings: warn.into_iter().fold(String::new(), |mut acc, w| {
+        .map(|result| Generated {
+            rust: result.generated,
+            warnings: result.warnings.into_iter().fold(String::new(), |mut acc, w| {
                 acc += &w.to_string();
                 acc += "\n";
                 acc

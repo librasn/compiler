@@ -6,6 +6,8 @@ use crate::intermediate::{
     *,
 };
 
+use self::types::*;
+
 pub(crate) fn find_tld_or_enum_value_by_name(
     type_name: &String,
     name: &String,
@@ -187,8 +189,7 @@ pub fn resolve_custom_syntax(
                     application_index += 1;
                 } else if *required {
                     return Err(GrammarError {
-                        details: "Syntax mismatch while resolving information object."
-                            .to_string(),
+                        details: "Syntax mismatch while resolving information object.".to_string(),
                         kind: GrammarErrorType::LinkerError,
                     });
                 } else {
@@ -212,6 +213,61 @@ pub fn resolve_custom_syntax(
         );
     }
     Ok(())
+}
+
+pub(crate) fn built_in_type(associated_type: &str) -> Option<ASN1Type> {
+    match associated_type {
+        INTEGER => Some(ASN1Type::Integer(Integer {
+            constraints: vec![],
+            distinguished_values: None,
+        })),
+        BIT_STRING => Some(ASN1Type::BitString(BitString {
+            constraints: vec![],
+            distinguished_values: None,
+        })),
+        OCTET_STRING => Some(ASN1Type::OctetString(OctetString {
+            constraints: vec![],
+        })),
+        GENERALIZED_TIME => Some(ASN1Type::GeneralizedTime(GeneralizedTime {
+            constraints: vec![],
+        })),
+        UTC_TIME => Some(ASN1Type::UTCTime(UTCTime {
+            constraints: vec![],
+        })),
+        BOOLEAN => Some(ASN1Type::Boolean(Boolean {
+            constraints: vec![],
+        })),
+        OBJECT_IDENTIFIER => Some(ASN1Type::ObjectIdentifier(ObjectIdentifier {
+            constraints: vec![],
+        })),
+        ty if ty.contains(SEQUENCE_OF) => {
+            let identifier = ty.replace(SEQUENCE_OF, "").trim().to_string();
+            Some(ASN1Type::SequenceOf(SequenceOrSetOf {
+                constraints: vec![],
+                r#type: Box::new(built_in_type(&identifier).unwrap_or(
+                    ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+                        parent: None,
+                        identifier,
+                        constraints: vec![],
+                    }),
+                )),
+            }))
+        }
+        ty if ty.contains(SET_OF) => {
+            let identifier = ty.replace(SET_OF, "").trim().to_string();
+            Some(ASN1Type::SetOf(SequenceOrSetOf {
+                constraints: vec![],
+                r#type: Box::new(built_in_type(&identifier).unwrap_or(
+                    ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+                        parent: None,
+                        identifier,
+                        constraints: vec![],
+                    }),
+                )),
+            }))
+        }
+        _ => None,
+    }
 }
 
 #[cfg(test)]

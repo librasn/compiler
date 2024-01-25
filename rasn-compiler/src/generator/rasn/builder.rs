@@ -14,7 +14,7 @@ use crate::{generator::{Backend, GeneratedModule}, intermediate::{
 
 use crate::generator::error::{GeneratorError, GeneratorErrorType};
 use super::{
-    generate, template::*, utils::*, Rust, BMP_STRING, GENERAL_STRING, IA5_STRING, NUMERIC_STRING, OBJECT_IDENTIFIER, PRINTABLE_STRING, UTF8_STRING, VISIBLE_STRING
+    generate, template::*, utils::*, Rust, BMP_STRING, GENERAL_STRING, IA5_STRING, NUMERIC_STRING, OBJECT_IDENTIFIER, PRINTABLE_STRING, SEQUENCE_OF, SET_OF, UTF8_STRING, VISIBLE_STRING
 };
 
 impl Backend for Rust {
@@ -263,11 +263,20 @@ pub fn generate_value(tld: ToplevelValueDeclaration) -> Result<TokenStream, Gene
         ASN1Value::LinkedCharStringValue(_, _) if ty == BMP_STRING => call_template!(lazy_static_value_template, tld, quote!(BMPString), value_to_tokens(&tld.value, None)?),
         ASN1Value::LinkedCharStringValue(_, _) if ty == PRINTABLE_STRING => call_template!(lazy_static_value_template, tld, quote!(PrintableString), value_to_tokens(&tld.value, None)?),
         ASN1Value::LinkedCharStringValue(_, _) if ty == GENERAL_STRING => call_template!(lazy_static_value_template, tld, quote!(GeneralString), value_to_tokens(&tld.value, None)?),
+        ASN1Value::SequenceOrSetOf(s) if ty.contains(SEQUENCE_OF) => {
+            let item_type = format_sequence_or_set_of_item_type(ty.replace(SEQUENCE_OF, "").trim().to_string(), s.first());
+            call_template!(lazy_static_value_template, tld, quote!(Vec<#item_type>), value_to_tokens(&tld.value, None)?)
+        },
+        ASN1Value::SequenceOrSetOf(s) if ty.contains(SET_OF) => {
+            let item_type = format_sequence_or_set_of_item_type(ty.replace(SET_OF, "").trim().to_string(), s.first());
+            call_template!(lazy_static_value_template, tld, quote!(Vec<#item_type>), value_to_tokens(&tld.value, None)?)
+        },
         ASN1Value::BitString(_) |
         ASN1Value::Time(_) |
         ASN1Value::LinkedCharStringValue(_, _) |
         ASN1Value::ObjectIdentifier(_) |
-        ASN1Value::ElsewhereDeclaredValue { .. } | 
+        ASN1Value::SequenceOrSetOf(_) |
+        ASN1Value::ElsewhereDeclaredValue { .. } |
         ASN1Value::OctetString(_) => call_template!(lazy_static_value_template, tld, to_rust_title_case(&tld.associated_type), assignment!(&tld.associated_type, value_to_tokens(&tld.value, None)?)),
         _ => Ok(TokenStream::new()),
     }
@@ -587,10 +596,10 @@ pub fn generate_information_object_set(
                     value_to_tokens(id, Some(&class_unique_id_type_name))?
                 };
                 let type_id = type_to_tokens(ty).unwrap_or(quote!(Option<()>));
-                let variant_name = if let ASN1Value::ElsewhereDeclaredValue{identifier: ref_id, ..} = id {
-                    to_rust_title_case(ref_id)
-                } else {
-                    format_ident!("{field_enum_name}_{index}").to_token_stream()
+                let variant_name = match id {
+                    ASN1Value::LinkedElsewhereDefinedValue { identifier: ref_id, .. } |
+                    ASN1Value::ElsewhereDeclaredValue{identifier: ref_id, ..} => to_rust_title_case(ref_id),
+                    _ => format_ident!("{field_enum_name}_{index}").to_token_stream()
                 };
                 if ty.constraints().map_or(true, |c| c.is_empty()) {
                     ids.push((variant_name, type_id, identifier_value));

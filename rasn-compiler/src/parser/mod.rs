@@ -196,6 +196,8 @@ fn top_level_value_declaration<'a>(input: &'a str) -> IResult<&'a str, ToplevelV
                 tag(OBJECT_IDENTIFIER),
                 tag(OCTET_STRING),
                 tag(BIT_STRING),
+                recognize(pair(tag(SEQUENCE_OF), skip_ws_and_comments(identifier))),
+                recognize(pair(tag(SET_OF), skip_ws_and_comments(identifier))),
                 identifier,
             ))),
             preceded(assignment, skip_ws_and_comments(asn1_value)),
@@ -755,6 +757,14 @@ mod tests {
                 parameterization: None,
                 tag: None
             }
+        )
+    }
+
+    #[test]
+    fn parses_sequence_of_value() {
+        println!(
+            "{:?}",
+            top_level_value_declaration(r#"test-Sequence SEQUENCE OF INTEGER ::= { 1, 2, 3 }"#).unwrap().1
         )
     }
 

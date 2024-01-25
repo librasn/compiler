@@ -14,6 +14,9 @@ In order to compile ASN1 in your build process, invoke the `rasn-compiler` in yo
 use std::path::PathBuf;
 use rasn_compiler::prelude::*;
 
+// The compiler's default backend can be replaced
+// with a custom backend to generate bindings for
+// a different language or framework.
 struct CustomBackend;
 
 impl Backend for CustomBackend {
@@ -73,7 +76,6 @@ Currently, `rasn` supports the following encoding rules:
 * `NumericString` type and value
 * `VisibleString` type and value
 * `IA5String` type and value
-* `TeletexString` type and value
 * `GeneralString` type and value
 * `UTF8String` type and value
 * `BMPString` type and value
@@ -83,12 +85,13 @@ Currently, `rasn` supports the following encoding rules:
 * `OBJECT IDENTIFIER` type and value
 * `SEQUENCE` type and value
 * `SET` type and value
-* `SEQUENCE OF` type
+* `SEQUENCE OF` type and value
+* `SET OF` type and value
 * `ENUMERATED` type and value
 * `CHOICE` type and value
 * `UTCTime` type and value
 * `GeneralizedTime` type and value
-
+  
 #### Constraints
 * Single value constraints
 * Value range constraints
@@ -96,9 +99,14 @@ Currently, `rasn` supports the following encoding rules:
 * Size constraints
 * Permitted alphabet constraints
 * Constraint set operations
+* Table constraints
 
 #### Misc
 * `DEFAULT` member values
+* `COMPONENTS OF` notation
+* Choice selection type notation (e.g. `option-1 < Example-choice`)
 * extensions and extension groups
 * Parameterization (the `rasn-compiler` creates rust representations for invocations of the parameterized data elements in the given spec, i.e. it does not preserve the parameterization itself)
-* Information Object Classes (however, the `rasn-compiler` does not link type references in class instances)
+* Information Object Classes (however, they are not represented in the rust bindings)
+* Information Objects
+* Information Object Sets

@@ -1,38 +1,6 @@
 #![allow(non_camel_case_types)]
 use rasn_compiler_tests::e2e_pdu;
 
-#[test]
-fn t() {
-    println!(
-        "{}",
-        rasn_compiler::Compiler::new()
-            .add_asn_literal(
-                r#" 
-        TestModule DEFINITIONS AUTOMATIC TAGS ::= BEGIN
-
-        Test ::= SEQUENCE {
-            int IntWithDefault DEFAULT first,
-            enum EnumWithDefault DEFAULT first,
-        }
-        
-        IntWithDefault ::= INTEGER {
-            first(1),
-            second(2)
-        } (1..10)
-
-        EnumWithDefault ::= ENUMERATED {
-            first(1),
-            second(2)
-        }
-
-        END
-        "#
-            )
-            .compile_to_string()
-            .unwrap().generated
-    )
-}
-
 e2e_pdu!(
     distinguished_value_range,
     r#" Restricted ::= Distinguished (second|fourth..sixth|eighth)
