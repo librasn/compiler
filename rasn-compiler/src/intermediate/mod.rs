@@ -1,12 +1,11 @@
-//! The `intermediate` module describes the single elements of the ASN1 notation.
-//! It includes constants for the various ASN1 keywords and types to represent the
-//! single ASN1 data elements in an intermediate representation from which the
-//! generator module produces de-/encodable types.
+//! The `intermediate` module provides an intermediate representation for ASN.1 notation.
+//! It includes constants for the various ASN.1 keywords and types to represent the
+//! single ASN.1 data elements in an intermediate representation from which the
+//! generator module produces bindings.
 //! The intermediate representation aims to preserve as much information as possible
 //! from the original specification, even though some of that information might not actually
 //! be relevant for decoding and encoding in any of the common encoding rules
 //! (inner type constraints are such an example).
-
 pub mod constraints;
 pub mod encoding_rules;
 pub mod error;
@@ -17,13 +16,13 @@ pub mod utils;
 
 use std::{
     collections::BTreeMap,
-    ops::{Add},
+    ops::Add,
     rc::Rc,
 };
 
 use constraints::Constraint;
 use error::{GrammarError, GrammarErrorType};
-use information_object::{InformationObjectFieldReference, ToplevelInformationDeclaration};
+use information_object::{InformationObjectFieldReference, ToplevelInformationDefinition};
 use parameterization::Parameterization;
 use quote::{ToTokens, TokenStreamExt, quote};
 use types::*;
@@ -261,18 +260,24 @@ impl Add<&TaggingEnvironment> for &TaggingEnvironment {
     }
 }
 
+/// Represents the extensibility environment as specified in 
+/// Rec. ITU-T X.680 (02/2021) § 13.4
 #[derive(Debug, Clone, PartialEq)]
 pub enum ExtensibilityEnvironment {
     Implied,
     Explicit,
 }
 
+/// Represents compatibility selectors as specified in
+/// Rec. ITU-T X.680 (02/2021) § 13.16 (f)
 #[derive(Debug, Clone, PartialEq)]
 pub enum With {
     Successors,
     Descendants,
 }
 
+/// Represents a module import as specified in
+/// Rec. ITU-T X.680 (02/2021) § 13.16
 #[derive(Debug, Clone, PartialEq)]
 pub struct Import {
     pub types: Vec<String>,
@@ -294,7 +299,7 @@ impl
         ),
     ) -> Self {
         Self {
-            types: value.0.into_iter().map(|s| String::from(s)).collect(),
+            types: value.0.into_iter().map(String::from).collect(),
             origin_name: value.1 .0.into(),
             origin_identifier: value.1 .1,
             with: value.1 .2.map(|with| {
@@ -308,6 +313,8 @@ impl
     }
 }
 
+/// Represents a module export as specified in
+/// Rec. ITU-T X.680 (02/2021) § 13.13
 #[derive(Debug, Clone, PartialEq)]
 pub enum Exports {
     Identifier(Vec<String>),
@@ -320,6 +327,8 @@ impl From<Vec<&str>> for Exports {
     }
 }
 
+/// Represents a module header's definitive identifier as specified in
+/// Rec. ITU-T X.680 (02/2021) § 13.8
 #[derive(Debug, Clone, PartialEq)]
 pub enum DefinitiveIdentifier {
     DefinitiveOID(ObjectIdentifierValue),
@@ -342,6 +351,8 @@ impl From<(ObjectIdentifierValue, Option<&str>)> for DefinitiveIdentifier {
     }
 }
 
+/// Represents a module header as specified in
+/// Rec. ITU-T X.680 (02/2021) § 13
 #[derive(Debug, Clone, PartialEq)]
 pub struct ModuleReference {
     pub name: String,
@@ -351,43 +362,6 @@ pub struct ModuleReference {
     pub extensibility_environment: ExtensibilityEnvironment,
     pub imports: Vec<Import>,
     pub exports: Option<Exports>,
-}
-
-impl ModuleReference {
-    pub fn print(&self) -> String {
-        format!(
-            r#"
-            // =====================================================
-            // {name}
-            // {oid}
-            // =====================================================
-            "#,
-            name = self.name.clone(),
-            oid = self
-                .module_identifier
-                .as_ref()
-                .map(|oid| {
-                    match oid {
-                        DefinitiveIdentifier::DefinitiveOID(id)
-                        | DefinitiveIdentifier::DefinitiveOIDandIRI { oid: id, iri: _ } => {
-                            format!(
-                                "{{ {} }}",
-                                id.0.iter()
-                                    .map(|arc| match (arc.name.clone(), arc.number) {
-                                        (Some(name), Some(no)) => format!("{name}({no})"),
-                                        (Some(name), None) => format!("{name}"),
-                                        (None, Some(no)) => format!("{no}"),
-                                        _ => Default::default(),
-                                    })
-                                    .collect::<Vec<String>>()
-                                    .join(" ")
-                            )
-                        }
-                    }
-                })
-                .unwrap_or_default()
-        )
-    }
 }
 
 impl
@@ -434,6 +408,8 @@ impl
     }
 }
 
+/// Represents an object identifier value as specified in
+/// Rec. ITU-T X.680 (02/2021) §32
 #[derive(Debug, Clone, PartialEq)]
 pub struct ObjectIdentifierValue(pub Vec<ObjectIdentifierArc>);
 
@@ -443,6 +419,8 @@ impl From<Vec<ObjectIdentifierArc>> for ObjectIdentifierValue {
     }
 }
 
+/// Represents a single arc of an object identifier value 
+/// as specified in Rec. ITU-T X.680 (02/2021) §32
 #[derive(Debug, Clone, PartialEq)]
 pub struct ObjectIdentifierArc {
     pub name: Option<String>,
@@ -476,18 +454,26 @@ impl From<(&str, u128)> for ObjectIdentifierArc {
     }
 }
 
+/// Represents a top-level ASN.1 definition.
+/// The compiler distinguished three different variants of top-level definitions.
+/// * `Type` definitions define custom types based on ASN.1's built-in types
+/// * `Value` definitions define values using custom ot built-in types
+/// * `Information` definitions define abstraction concepts introduced in ITU-T X.681
+/// 
+/// The linker and any [Backend] for this compiler consumes top-level definitions in
+/// order to generate bindings.
 #[derive(Debug, Clone, PartialEq)]
-pub enum ToplevelDeclaration {
-    Type(ToplevelTypeDeclaration),
-    Value(ToplevelValueDeclaration),
-    Information(ToplevelInformationDeclaration),
+pub enum ToplevelDefinition {
+    Type(ToplevelTypeDefinition),
+    Value(ToplevelValueDefinition),
+    Information(ToplevelInformationDefinition),
 }
 
-impl ToplevelDeclaration {
+impl ToplevelDefinition {
     pub(crate) fn has_enum_value(&self, type_name: Option<&String>, identifier: &String) -> bool {
-        if let ToplevelDeclaration::Type(ToplevelTypeDeclaration {
+        if let ToplevelDefinition::Type(ToplevelTypeDefinition {
             name,
-            r#type: ASN1Type::Enumerated(e),
+            ty: ASN1Type::Enumerated(e),
             ..
         }) = self
         {
@@ -500,36 +486,36 @@ impl ToplevelDeclaration {
         }
     }
 
-    pub fn set_index(&mut self, module_reference: Rc<ModuleReference>, item_no: usize) {
+    pub(crate) fn set_index(&mut self, module_reference: Rc<ModuleReference>, item_no: usize) {
         match self {
-            ToplevelDeclaration::Type(ref mut t) => {
+            ToplevelDefinition::Type(ref mut t) => {
                 t.index = Some((module_reference, item_no));
             }
-            ToplevelDeclaration::Value(ref mut v) => {
+            ToplevelDefinition::Value(ref mut v) => {
                 v.index = Some((module_reference, item_no));
             }
-            ToplevelDeclaration::Information(ref mut i) => {
+            ToplevelDefinition::Information(ref mut i) => {
                 i.index = Some((module_reference, item_no));
             }
         }
     }
 
-    pub fn get_index(&self) -> Option<&(Rc<ModuleReference>, usize)> {
+    pub(crate) fn get_index(&self) -> Option<&(Rc<ModuleReference>, usize)> {
         match self {
-            ToplevelDeclaration::Type(ref t) => t.index.as_ref(),
-            ToplevelDeclaration::Value(ref v) => v.index.as_ref(),
-            ToplevelDeclaration::Information(ref i) => i.index.as_ref(),
+            ToplevelDefinition::Type(ref t) => t.index.as_ref(),
+            ToplevelDefinition::Value(ref v) => v.index.as_ref(),
+            ToplevelDefinition::Information(ref i) => i.index.as_ref(),
         }
     }
 
-    pub fn apply_tagging_environment(&mut self, environment: &TaggingEnvironment) {
-        if let (env, ToplevelDeclaration::Type(ty)) = (environment, self) {
+    pub(crate) fn apply_tagging_environment(&mut self, environment: &TaggingEnvironment) {
+        if let (env, ToplevelDefinition::Type(ty)) = (environment, self) {
             ty.tag = ty.tag.as_ref().map(|t| AsnTag {
                 environment: env + &t.environment,
                 tag_class: t.tag_class,
                 id: t.id,
             });
-            match &mut ty.r#type {
+            match &mut ty.ty {
                 ASN1Type::Sequence(s) | ASN1Type::Set(s) => s.members.iter_mut().for_each(|m| {
                     m.tag = m.tag.as_ref().map(|t| AsnTag {
                         environment: env + &t.environment,
@@ -549,17 +535,36 @@ impl ToplevelDeclaration {
         }
     }
 
+    /// Returns the name of a top-level definition.
+    /// ### Example
+    /// ```
+    /// # use rasn_compiler::prelude::ir::*;
+    /// assert_eq!(
+    ///     ToplevelDefinition::Value(
+    ///         ToplevelValueDefinition {
+    ///             comments: String::from("Comments from the ASN.1 spec"),
+    ///             name: String::from("the-answer"),
+    ///             associated_type: String::from("INTEGER"),
+    ///             value: ASN1Value::Integer(42),
+    ///             index: None,
+    ///         }
+    ///     ).name(),
+    ///     &String::from("the-answer")
+    /// );
+    /// ```
     pub fn name(&self) -> &String {
         match self {
-            ToplevelDeclaration::Information(i) => &i.name,
-            ToplevelDeclaration::Type(t) => &t.name,
-            ToplevelDeclaration::Value(v) => &v.name,
+            ToplevelDefinition::Information(i) => &i.name,
+            ToplevelDefinition::Type(t) => &t.name,
+            ToplevelDefinition::Value(v) => &v.name,
         }
     }
 }
 
+/// Represents a top-level definition of a value
+/// using a custom or built-in ASN.1 type.
 #[derive(Debug, Clone, PartialEq)]
-pub struct ToplevelValueDeclaration {
+pub struct ToplevelValueDefinition {
     pub comments: String,
     pub name: String,
     pub associated_type: String,
@@ -567,7 +572,7 @@ pub struct ToplevelValueDeclaration {
     pub index: Option<(Rc<ModuleReference>, usize)>,
 }
 
-impl From<(Vec<&str>, &str, &str, ASN1Value)> for ToplevelValueDeclaration {
+impl From<(Vec<&str>, &str, &str, ASN1Value)> for ToplevelValueDefinition {
     fn from(value: (Vec<&str>, &str, &str, ASN1Value)) -> Self {
         Self {
             comments: value.0.join("\n"),
@@ -580,18 +585,18 @@ impl From<(Vec<&str>, &str, &str, ASN1Value)> for ToplevelValueDeclaration {
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct ToplevelTypeDeclaration {
+pub struct ToplevelTypeDefinition {
     pub comments: String,
     pub tag: Option<AsnTag>,
     pub name: String,
-    pub r#type: ASN1Type,
+    pub ty: ASN1Type,
     pub parameterization: Option<Parameterization>,
     pub index: Option<(Rc<ModuleReference>, usize)>,
 }
 
-impl ToplevelTypeDeclaration {
+impl ToplevelTypeDefinition {
     pub fn pdu(&self) -> &ASN1Type {
-        &self.r#type
+        &self.ty
     }
 }
 
@@ -601,7 +606,7 @@ impl
         &str,
         Option<Parameterization>,
         (Option<AsnTag>, ASN1Type),
-    )> for ToplevelTypeDeclaration
+    )> for ToplevelTypeDefinition
 {
     fn from(
         value: (
@@ -615,7 +620,7 @@ impl
             comments: value.0.join("\n"),
             name: value.1.into(),
             parameterization: value.2,
-            r#type: value.3 .1,
+            ty: value.3 .1,
             tag: value.3 .0,
             index: None,
         }

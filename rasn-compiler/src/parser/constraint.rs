@@ -881,7 +881,7 @@ mod tests {
                             }),
                             InformationObjectField::TypeField(TypeField {
                                 identifier: "&Type".into(),
-                                r#type: ASN1Type::Integer(Integer {
+                                ty: ASN1Type::Integer(Integer {
                                     constraints: vec![Constraint::SubtypeConstraint(ElementSet {
                                         set: ElementOrSetOperation::Element(
                                             SubtypeElement::ValueRange {

@@ -121,19 +121,19 @@ mod tests {
                     ChoiceOption {
                         name: "normal".into(),
                         tag: None,
-                        r#type: ASN1Type::Null,
+                        ty: ASN1Type::Null,
                         constraints: vec![]
                     },
                     ChoiceOption {
                         name: "high".into(),
                         tag: None,
-                        r#type: ASN1Type::Null,
+                        ty: ASN1Type::Null,
                         constraints: vec![]
                     },
                     ChoiceOption {
                         name: "medium".into(),
                         tag: None,
-                        r#type: ASN1Type::Null,
+                        ty: ASN1Type::Null,
                         constraints: vec![]
                     }
                 ],

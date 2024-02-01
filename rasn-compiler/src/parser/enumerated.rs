@@ -11,7 +11,7 @@ use crate::intermediate::{constraints::*, types::*, *};
 
 use super::common::*;
 
-pub fn enumerated_value<'a>(input: &'a str) -> IResult<&'a str, ToplevelValueDeclaration> {
+pub fn enumerated_value<'a>(input: &'a str) -> IResult<&'a str, ToplevelValueDefinition> {
     map(
         tuple((
             skip_ws(many0(comment)),
@@ -19,7 +19,7 @@ pub fn enumerated_value<'a>(input: &'a str) -> IResult<&'a str, ToplevelValueDec
             skip_ws_and_comments(identifier),
             preceded(assignment, skip_ws_and_comments(value_identifier)),
         )),
-        |(c, n, p, e)| ToplevelValueDeclaration {
+        |(c, n, p, e)| ToplevelValueDefinition {
             comments: c.into_iter().fold(String::new(), |mut acc, s| {
                 acc = acc + "\n" + s;
                 acc
@@ -322,7 +322,7 @@ mod tests {
             )
             .unwrap()
             .1,
-            ToplevelValueDeclaration {
+            ToplevelValueDefinition {
                 comments: String::from("\n Alias of another enumeral"),
                 name: String::from("enumeral-alias"),
                 associated_type: "Test-Enum".into(),

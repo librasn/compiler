@@ -9,7 +9,7 @@ impl From<Vec<(&str, Option<&str>)>> for Parameterization {
             parameters: value
                 .into_iter()
                 .map(|(t, i)| ParameterizationArgument {
-                    r#type: t.into(),
+                    ty: t.into(),
                     name: i.map(|n| n.into()),
                 })
                 .collect(),
@@ -19,6 +19,6 @@ impl From<Vec<(&str, Option<&str>)>> for Parameterization {
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct ParameterizationArgument {
-    pub r#type: String,
+    pub ty: String,
     pub name: Option<String>,
 }

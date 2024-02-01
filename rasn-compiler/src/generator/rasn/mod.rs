@@ -10,9 +10,9 @@ mod utils;
 
 pub struct Rust;
 
-fn generate(tld: ToplevelDeclaration) -> Result<TokenStream, GeneratorError> {
+fn generate(tld: ToplevelDefinition) -> Result<TokenStream, GeneratorError> {
     match tld {
-        ToplevelDeclaration::Type(t) => match t.r#type {
+        ToplevelDefinition::Type(t) => match t.ty {
             ASN1Type::Null => generate_null(t),
             ASN1Type::Boolean(_) => generate_boolean(t),
             ASN1Type::Integer(_) => generate_integer(t),
@@ -38,8 +38,8 @@ fn generate(tld: ToplevelDeclaration) -> Result<TokenStream, GeneratorError> {
             ASN1Type::UTCTime(_) => generate_utc_time(t),
             ASN1Type::ChoiceSelectionType(_) => unreachable!(),
         },
-        ToplevelDeclaration::Value(v) => generate_value(v),
-        ToplevelDeclaration::Information(i) => match i.value {
+        ToplevelDefinition::Value(v) => generate_value(v),
+        ToplevelDefinition::Information(i) => match i.value {
             ASN1Information::ObjectSet(_) => generate_information_object_set(i),
             _ => Ok(TokenStream::new()),
         },

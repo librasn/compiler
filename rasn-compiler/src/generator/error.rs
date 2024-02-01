@@ -3,17 +3,17 @@ use std::error::Error;
 
 use proc_macro2::LexError;
 
-use crate::intermediate::{error::GrammarError, ToplevelDeclaration};
+use crate::intermediate::{error::GrammarError, ToplevelDefinition};
 
 #[derive(Debug, Clone)]
 pub struct GeneratorError {
-    pub top_level_declaration: Option<ToplevelDeclaration>,
+    pub top_level_declaration: Option<ToplevelDefinition>,
     pub details: String,
     pub kind: GeneratorErrorType,
 }
 
 impl GeneratorError {
-    pub fn new(tld: Option<ToplevelDeclaration>, details: &str, kind: GeneratorErrorType) -> Self {
+    pub fn new(tld: Option<ToplevelDefinition>, details: &str, kind: GeneratorErrorType) -> Self {
         GeneratorError {
             top_level_declaration: tld,
             details: details.into(),
@@ -69,14 +69,14 @@ impl From<LexError> for GeneratorError {
 impl Display for GeneratorError {
     fn fmt(&self, f: &mut Formatter) -> Result {
         let name = match &self.top_level_declaration {
-            Some(ToplevelDeclaration::Type(t)) => &t.name,
-            Some(ToplevelDeclaration::Value(v)) => &v.name,
-            Some(ToplevelDeclaration::Information(i)) => &i.name,
+            Some(ToplevelDefinition::Type(t)) => &t.name,
+            Some(ToplevelDefinition::Value(v)) => &v.name,
+            Some(ToplevelDefinition::Information(i)) => &i.name,
             None => "",
         };
         write!(
             f,
-            "{:?} generating Rust representation for {name}: {}",
+            "{:?} generating bindings for {name}: {}",
             self.kind, self.details
         )
     }

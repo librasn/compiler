@@ -1,7 +1,7 @@
 use super::{constraints::*, *};
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct ToplevelInformationDeclaration {
+pub struct ToplevelInformationDefinition {
     pub comments: String,
     pub name: String,
     pub class: Option<ClassLink>,
@@ -15,13 +15,13 @@ pub enum ClassLink {
     ByReference(InformationObjectClass),
 }
 
-impl ToplevelInformationDeclaration {
+impl ToplevelInformationDefinition {
     pub fn pdu(&self) -> &ASN1Information {
         &self.value
     }
 }
 
-impl From<(Vec<&str>, &str, &str, InformationObjectFields)> for ToplevelInformationDeclaration {
+impl From<(Vec<&str>, &str, &str, InformationObjectFields)> for ToplevelInformationDefinition {
     fn from(value: (Vec<&str>, &str, &str, InformationObjectFields)) -> Self {
         Self {
             comments: value.0.join("\n"),
@@ -36,7 +36,7 @@ impl From<(Vec<&str>, &str, &str, InformationObjectFields)> for ToplevelInformat
     }
 }
 
-impl From<(Vec<&str>, &str, &str, ObjectSet)> for ToplevelInformationDeclaration {
+impl From<(Vec<&str>, &str, &str, ObjectSet)> for ToplevelInformationDefinition {
     fn from(value: (Vec<&str>, &str, &str, ObjectSet)) -> Self {
         Self {
             comments: value.0.join("\n"),
@@ -48,7 +48,7 @@ impl From<(Vec<&str>, &str, &str, ObjectSet)> for ToplevelInformationDeclaration
     }
 }
 
-impl From<(Vec<&str>, &str, InformationObjectClass)> for ToplevelInformationDeclaration {
+impl From<(Vec<&str>, &str, InformationObjectClass)> for ToplevelInformationDefinition {
     fn from(value: (Vec<&str>, &str, InformationObjectClass)) -> Self {
         Self {
             comments: value.0.join("\n"),
@@ -223,7 +223,7 @@ impl
 #[derive(Debug, Clone, PartialEq)]
 pub struct InformationObjectClassField {
     pub identifier: ObjectFieldIdentifier,
-    pub r#type: Option<ASN1Type>,
+    pub ty: Option<ASN1Type>,
     pub is_optional: bool,
     pub default: Option<ASN1Value>,
     pub is_unique: bool,
@@ -249,7 +249,7 @@ impl
     ) -> Self {
         Self {
             identifier: value.0,
-            r#type: value.1,
+            ty: value.1,
             is_unique: value.2.is_some(),
             is_optional: value.3.is_some() || value.4.is_some(),
             default: value.4,
@@ -367,14 +367,14 @@ impl From<(ObjectFieldIdentifier, ASN1Value)> for InformationObjectField {
 #[derive(Debug, Clone, PartialEq)]
 pub struct TypeField {
     pub identifier: String,
-    pub r#type: ASN1Type,
+    pub ty: ASN1Type,
 }
 
 impl From<(ObjectFieldIdentifier, ASN1Type)> for InformationObjectField {
     fn from(value: (ObjectFieldIdentifier, ASN1Type)) -> Self {
         Self::TypeField(TypeField {
             identifier: value.0.identifier().clone(),
-            r#type: value.1,
+            ty: value.1,
         })
     }
 }

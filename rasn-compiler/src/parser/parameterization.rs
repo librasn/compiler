@@ -60,7 +60,7 @@ mod tests {
                 .1,
             Parameterization {
                 parameters: vec![ParameterizationArgument {
-                    r#type: "REG-EXT-ID-AND-TYPE".into(),
+                    ty: "REG-EXT-ID-AND-TYPE".into(),
                     name: Some("Set".into())
                 }]
             }

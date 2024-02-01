@@ -54,14 +54,14 @@ mod util;
 
 pub fn asn_spec<'a>(
     input: &'a str,
-) -> Result<Vec<(ModuleReference, Vec<ToplevelDeclaration>)>, ParserError> {
+) -> Result<Vec<(ModuleReference, Vec<ToplevelDefinition>)>, ParserError> {
     many1(pair(
         module_reference,
         terminated(
             many0(skip_ws(alt((
-                map(top_level_information_declaration,ToplevelDeclaration::Information),
-                map(top_level_type_declaration, ToplevelDeclaration::Type),
-                map(top_level_value_declaration, ToplevelDeclaration::Value),
+                map(top_level_information_declaration,ToplevelDefinition::Information),
+                map(top_level_type_declaration, ToplevelDefinition::Type),
+                map(top_level_value_declaration, ToplevelDefinition::Value),
             )))),
             skip_ws_and_comments(alt((encoding_control, end))),
         ),
@@ -85,7 +85,7 @@ fn end<'a>(input: &'a str) -> IResult<&'a str, &'a str> {
     ))(input)
 }
 
-pub fn top_level_type_declaration<'a>(input: &'a str) -> IResult<&'a str, ToplevelTypeDeclaration> {
+pub fn top_level_type_declaration<'a>(input: &'a str) -> IResult<&'a str, ToplevelTypeDefinition> {
     into(tuple((
         skip_ws(many0(comment)),
         skip_ws(title_case_identifier),
@@ -96,7 +96,7 @@ pub fn top_level_type_declaration<'a>(input: &'a str) -> IResult<&'a str, Toplev
 
 pub fn top_level_information_declaration<'a>(
     input: &'a str,
-) -> IResult<&'a str, ToplevelInformationDeclaration> {
+) -> IResult<&'a str, ToplevelInformationDefinition> {
     skip_ws(alt((
         top_level_information_object_declaration,
         top_level_object_set_declaration,
@@ -186,7 +186,7 @@ pub fn elsewhere_declared_type<'a>(input: &'a str) -> IResult<&'a str, ASN1Type>
     )(input)
 }
 
-fn top_level_value_declaration<'a>(input: &'a str) -> IResult<&'a str, ToplevelValueDeclaration> {
+fn top_level_value_declaration<'a>(input: &'a str) -> IResult<&'a str, ToplevelValueDefinition> {
     alt((
         into(tuple((
             skip_ws(many0(comment)),
@@ -208,7 +208,7 @@ fn top_level_value_declaration<'a>(input: &'a str) -> IResult<&'a str, ToplevelV
 
 fn top_level_information_object_declaration<'a>(
     input: &'a str,
-) -> IResult<&'a str, ToplevelInformationDeclaration> {
+) -> IResult<&'a str, ToplevelInformationDefinition> {
     into(tuple((
         skip_ws(many0(comment)),
         skip_ws(identifier),
@@ -219,7 +219,7 @@ fn top_level_information_object_declaration<'a>(
 
 fn top_level_object_set_declaration<'a>(
     input: &'a str,
-) -> IResult<&'a str, ToplevelInformationDeclaration> {
+) -> IResult<&'a str, ToplevelInformationDefinition> {
     into(tuple((
         skip_ws(many0(comment)),
         skip_ws(identifier),
@@ -230,7 +230,7 @@ fn top_level_object_set_declaration<'a>(
 
 fn top_level_object_class_declaration<'a>(
     input: &'a str,
-) -> IResult<&'a str, ToplevelInformationDeclaration> {
+) -> IResult<&'a str, ToplevelInformationDefinition> {
     into(tuple((
         skip_ws(many0(comment)),
         skip_ws(uppercase_identifier),
@@ -271,7 +271,7 @@ mod tests {
         .1;
         assert_eq!(tld.name, String::from("CardinalNumber3b"));
         assert!(tld.comments.contains("@revision: Created in V2.1.1"));
-        if let ASN1Type::Integer(int) = tld.r#type {
+        if let ASN1Type::Integer(int) = tld.ty {
             assert!(!int.constraints.is_empty());
             assert_eq!(
                 *int.constraints.first().unwrap(),
@@ -310,7 +310,7 @@ mod tests {
       } (0.. 161, ...)"#).unwrap().1;
         assert_eq!(tld.name, String::from("AccelerationMagnitudeValue"));
         assert!(tld.comments.contains("@unit 0,1 m/s^2"));
-        if let ASN1Type::Integer(int) = tld.r#type {
+        if let ASN1Type::Integer(int) = tld.ty {
             assert_eq!(
                 *int.constraints.first().unwrap(),
                 Constraint::SubtypeConstraint(ElementSet {
@@ -352,7 +352,7 @@ mod tests {
             tld.comments,
             String::from(" Coverage Enhancement level encoded according to TS 36.331 [16] ")
         );
-        if let ASN1Type::Enumerated(e) = tld.r#type {
+        if let ASN1Type::Enumerated(e) = tld.ty {
             assert_eq!(e.members.len(), 1);
             assert_eq!(
                 e.members[0],
@@ -387,7 +387,7 @@ mod tests {
             .comments
             .contains("@revision: editorial update in V2.1.1"));
         assert_eq!(
-            tld.r#type,
+            tld.ty,
             ASN1Type::Boolean(Boolean {
                 constraints: vec![]
             })
@@ -407,11 +407,11 @@ mod tests {
         .1;
         assert_eq!(
             tld,
-            ToplevelTypeDeclaration {
+            ToplevelTypeDefinition {
                 parameterization: None,
                 comments: " Comments go here".into(),
                 name: "EventZone".into(),
-                r#type: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+                ty: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                     parent: None,
                     identifier: "EventHistory".into(),
                     constraints: vec![Constraint::SubtypeConstraint(ElementSet {
@@ -455,11 +455,11 @@ mod tests {
         .1;
         assert_eq!(
             tld,
-            ToplevelTypeDeclaration {
+            ToplevelTypeDefinition {
                 parameterization: None,
                 comments: "Comments".into(),
                 name: "InterferenceManagementZones".into(),
-                r#type: ASN1Type::SequenceOf(SequenceOrSetOf {
+                ty: ASN1Type::SequenceOf(SequenceOrSetOf {
                     constraints: vec![Constraint::SubtypeConstraint(ElementSet {
                         set: ElementOrSetOperation::Element(SubtypeElement::SizeConstraint(
                             Box::new(ElementOrSetOperation::Element(SubtypeElement::ValueRange {
@@ -470,7 +470,7 @@ mod tests {
                         )),
                         extensible: true
                     })],
-                    r#type: Box::new(ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+                    element_type: Box::new(ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                         parent: None,
                         identifier: "InterferenceManagementZone".into(),
                         constraints: vec![]
@@ -495,7 +495,7 @@ mod tests {
             )
             .unwrap()
             .1,
-            ToplevelInformationDeclaration {
+            ToplevelInformationDefinition {
                 comments: "comments".into(),
                 name: "CpmContainers".into(),
                 index: None,
@@ -559,7 +559,7 @@ mod tests {
             )
             .unwrap()
             .1,
-            ToplevelInformationDeclaration {
+            ToplevelInformationDefinition {
                 comments: "".into(),
                 index: None,
                 name: "Reg-AdvisorySpeed".into(),
@@ -583,7 +583,7 @@ mod tests {
             )
             .unwrap()
             .1,
-            ToplevelInformationDeclaration {
+            ToplevelInformationDefinition {
                 comments: "".into(),
                 name: "REG-EXT-ID-AND-TYPE".into(),
                 class: None,
@@ -592,7 +592,7 @@ mod tests {
                     fields: vec![
                         InformationObjectClassField {
                             identifier: ObjectFieldIdentifier::SingleValue("&id".into()),
-                            r#type: Some(ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+                            ty: Some(ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                                 parent: None,
                                 identifier: "RegionId".into(),
                                 constraints: vec![]
@@ -603,7 +603,7 @@ mod tests {
                         },
                         InformationObjectClassField {
                             identifier: ObjectFieldIdentifier::MultipleValue("&Type".into()),
-                            r#type: None,
+                            ty: None,
                             is_optional: false,
                             default: None,
                             is_unique: false
@@ -637,11 +637,11 @@ mod tests {
             )
             .unwrap()
             .1,
-            ToplevelTypeDeclaration {
+            ToplevelTypeDefinition {
                 comments: "".into(),
                 index: None,
                 name: "RegionalExtension".into(),
-                r#type: ASN1Type::Sequence(SequenceOrSet {
+                ty: ASN1Type::Sequence(SequenceOrSet {
                     extensible: None,
                     components_of: vec![],
                     constraints: vec![],
@@ -649,7 +649,7 @@ mod tests {
                         SequenceOrSetMember {
                             name: "regionId".into(),
                             tag: None,
-                            r#type: ASN1Type::InformationObjectFieldReference(
+                            ty: ASN1Type::InformationObjectFieldReference(
                                 InformationObjectFieldReference {
                                     class: "REG-EXT-ID-AND-TYPE".into(),
                                     field_path: vec![ObjectFieldIdentifier::SingleValue(
@@ -675,7 +675,7 @@ mod tests {
                         SequenceOrSetMember {
                             name: "regExtValue".into(),
                             tag: None,
-                            r#type: ASN1Type::InformationObjectFieldReference(
+                            ty: ASN1Type::InformationObjectFieldReference(
                                 InformationObjectFieldReference {
                                     class: "REG-EXT-ID-AND-TYPE".into(),
                                     field_path: vec![ObjectFieldIdentifier::MultipleValue(
@@ -705,7 +705,7 @@ mod tests {
                 }),
                 parameterization: Some(Parameterization {
                     parameters: vec![ParameterizationArgument {
-                        r#type: "REG-EXT-ID-AND-TYPE".into(),
+                        ty: "REG-EXT-ID-AND-TYPE".into(),
                         name: Some("Set".into())
                     }]
                 }),
@@ -726,29 +726,29 @@ mod tests {
             )
             .unwrap()
             .1,
-            ToplevelTypeDeclaration {
+            ToplevelTypeDefinition {
                 comments: "".into(),
                 index: None,
                 name: "Choice-example".into(),
-                r#type: ASN1Type::Choice(Choice {
+                ty: ASN1Type::Choice(Choice {
                     extensible: Some(2),
                     options: vec![
                         ChoiceOption {
                             name: "normal".into(),
                             tag: None,
-                            r#type: ASN1Type::Null,
+                            ty: ASN1Type::Null,
                             constraints: vec![]
                         },
                         ChoiceOption {
                             name: "high".into(),
                             tag: None,
-                            r#type: ASN1Type::Null,
+                            ty: ASN1Type::Null,
                             constraints: vec![]
                         },
                         ChoiceOption {
                             name: "medium".into(),
                             tag: None,
-                            r#type: ASN1Type::Null,
+                            ty: ASN1Type::Null,
                             constraints: vec![]
                         }
                     ],

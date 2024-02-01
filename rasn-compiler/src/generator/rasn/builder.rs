@@ -5,10 +5,10 @@ use quote::{quote, TokenStreamExt, ToTokens, format_ident};
 use crate::{generator::{Backend, GeneratedModule}, intermediate::{
     information_object::{
         ASN1Information, ClassLink, InformationObjectClass, InformationObjectFields,
-        ObjectSetValue, ToplevelInformationDeclaration,
+        ObjectSetValue, ToplevelInformationDefinition,
     },
     utils::{to_rust_const_case, to_rust_title_case, to_rust_snake_case, to_rust_enum_identifier},
-    ASN1Type, ASN1Value, ToplevelDeclaration, ToplevelTypeDeclaration, ToplevelValueDeclaration,
+    ASN1Type, ASN1Value, ToplevelDefinition, ToplevelTypeDefinition, ToplevelValueDefinition,
     INTEGER, constraints::Constraint, NULL, BOOLEAN, BIT_STRING, OCTET_STRING, GENERALIZED_TIME, UTC_TIME,
 }};
 
@@ -18,7 +18,7 @@ use super::{
 };
 
 impl Backend for Rust {
-    fn generate_module(&self, tlds: Vec<ToplevelDeclaration>) -> Result<GeneratedModule, GeneratorError> {
+    fn generate_module(&self, tlds: Vec<ToplevelDefinition>) -> Result<GeneratedModule, GeneratorError> {
         if let Some((module_ref, _)) = tlds.first().and_then(|tld| tld.get_index().cloned()) {
             let name = to_rust_snake_case(&module_ref.name);
             let imports = module_ref.imports.iter().map(|import| {
@@ -62,8 +62,8 @@ impl Backend for Rust {
     }
 }
 
-pub fn generate_typealias(tld: ToplevelTypeDeclaration) -> Result<TokenStream, GeneratorError> {
-    if let ASN1Type::ElsewhereDeclaredType(dec) = &tld.r#type {
+pub fn generate_typealias(tld: ToplevelTypeDefinition) -> Result<TokenStream, GeneratorError> {
+    if let ASN1Type::ElsewhereDeclaredType(dec) = &tld.ty {
         Ok(typealias_template(
             format_comments(&tld.comments)?,
             to_rust_title_case(&tld.name),
@@ -73,14 +73,14 @@ pub fn generate_typealias(tld: ToplevelTypeDeclaration) -> Result<TokenStream, G
         ))
     } else {
         Err(GeneratorError::new(
-            Some(ToplevelDeclaration::Type(tld)),
+            Some(ToplevelDefinition::Type(tld)),
             "Expected type alias top-level declaration",
             GeneratorErrorType::Asn1TypeMismatch,
         ))
     }
 }
 
-pub fn generate_integer_value(tld: ToplevelValueDeclaration) -> Result<TokenStream, GeneratorError> {
+pub fn generate_integer_value(tld: ToplevelValueDefinition) -> Result<TokenStream, GeneratorError> {
     if let ASN1Value::LinkedIntValue{ integer_type, .. } = tld.value {
         let formatted_value = value_to_tokens(&tld.value, None)?;
         let ty = to_rust_title_case(&tld.associated_type);
@@ -108,15 +108,15 @@ pub fn generate_integer_value(tld: ToplevelValueDeclaration) -> Result<TokenStre
         }
     } else {
         Err(GeneratorError::new(
-            Some(ToplevelDeclaration::Value(tld)),
+            Some(ToplevelDefinition::Value(tld)),
             "Expected INTEGER value top-level declaration",
             GeneratorErrorType::Asn1TypeMismatch,
         ))
     }
 }
 
-pub fn generate_integer(tld: ToplevelTypeDeclaration) -> Result<TokenStream, GeneratorError> {
-    if let ASN1Type::Integer(ref int) = tld.r#type {
+pub fn generate_integer(tld: ToplevelTypeDefinition) -> Result<TokenStream, GeneratorError> {
+    if let ASN1Type::Integer(ref int) = tld.ty {
         Ok(integer_template(
             format_comments(&tld.comments)?,
             to_rust_title_case(&tld.name),
@@ -126,15 +126,15 @@ pub fn generate_integer(tld: ToplevelTypeDeclaration) -> Result<TokenStream, Gen
         ))
     } else {
         Err(GeneratorError::new(
-            Some(ToplevelDeclaration::Type(tld)),
+            Some(ToplevelDefinition::Type(tld)),
             "Expected INTEGER top-level declaration",
             GeneratorErrorType::Asn1TypeMismatch,
         ))
     }
 }
 
-pub fn generate_bit_string(tld: ToplevelTypeDeclaration) -> Result<TokenStream, GeneratorError> {
-    if let ASN1Type::BitString(ref bitstr) = tld.r#type {
+pub fn generate_bit_string(tld: ToplevelTypeDefinition) -> Result<TokenStream, GeneratorError> {
+    if let ASN1Type::BitString(ref bitstr) = tld.ty {
         Ok(bit_string_template(
             format_comments(&tld.comments)?,
             to_rust_title_case(&tld.name),
@@ -143,15 +143,15 @@ pub fn generate_bit_string(tld: ToplevelTypeDeclaration) -> Result<TokenStream, 
         ))
     } else {
         Err(GeneratorError::new(
-            Some(ToplevelDeclaration::Type(tld)),
+            Some(ToplevelDefinition::Type(tld)),
             "Expected BIT STRING top-level declaration",
             GeneratorErrorType::Asn1TypeMismatch,
         ))
     }
 }
 
-pub fn generate_octet_string(tld: ToplevelTypeDeclaration) -> Result<TokenStream, GeneratorError> {
-    if let ASN1Type::OctetString(ref oct_str) = tld.r#type {
+pub fn generate_octet_string(tld: ToplevelTypeDefinition) -> Result<TokenStream, GeneratorError> {
+    if let ASN1Type::OctetString(ref oct_str) = tld.ty {
         Ok(octet_string_template(
             format_comments(&tld.comments)?,
             to_rust_title_case(&tld.name),
@@ -160,35 +160,35 @@ pub fn generate_octet_string(tld: ToplevelTypeDeclaration) -> Result<TokenStream
         ))
     } else {
         Err(GeneratorError::new(
-            Some(ToplevelDeclaration::Type(tld)),
+            Some(ToplevelDefinition::Type(tld)),
             "Expected OCTET STRING top-level declaration",
             GeneratorErrorType::Asn1TypeMismatch,
         ))
     }
 }
 
-pub fn generate_character_string(tld: ToplevelTypeDeclaration) -> Result<TokenStream, GeneratorError> {
-    if let ASN1Type::CharacterString(ref char_str) = tld.r#type {
+pub fn generate_character_string(tld: ToplevelTypeDefinition) -> Result<TokenStream, GeneratorError> {
+    if let ASN1Type::CharacterString(ref char_str) = tld.ty {
         Ok(char_string_template(
             format_comments(&tld.comments)?,
             to_rust_title_case(&tld.name),
-            string_type(&char_str.r#type)?,
+            string_type(&char_str.ty)?,
             join_annotations(vec![quote!(delegate), format_range_annotations(false, &char_str.constraints)?,
-            format_alphabet_annotations(char_str.r#type, &char_str.constraints)?,
+            format_alphabet_annotations(char_str.ty, &char_str.constraints)?,
             format_tag(tld.tag.as_ref(), false)]),
         ))
     } else {
         Err(GeneratorError::new(
-            Some(ToplevelDeclaration::Type(tld)),
+            Some(ToplevelDefinition::Type(tld)),
             "Expected Character String top-level declaration",
             GeneratorErrorType::Asn1TypeMismatch,
         ))
     }
 }
 
-pub fn generate_boolean(tld: ToplevelTypeDeclaration) -> Result<TokenStream, GeneratorError> {
+pub fn generate_boolean(tld: ToplevelTypeDefinition) -> Result<TokenStream, GeneratorError> {
     // TODO: process boolean constraints
-    if let ASN1Type::Boolean(_) = tld.r#type {
+    if let ASN1Type::Boolean(_) = tld.ty {
         Ok(boolean_template(
             format_comments(&tld.comments)?,
             to_rust_title_case(&tld.name),
@@ -196,7 +196,7 @@ pub fn generate_boolean(tld: ToplevelTypeDeclaration) -> Result<TokenStream, Gen
         ))
     } else {
         Err(GeneratorError::new(
-            Some(ToplevelDeclaration::Type(tld)),
+            Some(ToplevelDefinition::Type(tld)),
             "Expected BOOLEAN top-level declaration",
             GeneratorErrorType::Asn1TypeMismatch,
         ))
@@ -221,7 +221,7 @@ macro_rules! assignment {
     }};
 }
 
-pub fn generate_value(tld: ToplevelValueDeclaration) -> Result<TokenStream, GeneratorError> {
+pub fn generate_value(tld: ToplevelValueDefinition) -> Result<TokenStream, GeneratorError> {
     let ty = tld.associated_type.as_str();
     match &tld.value {
         ASN1Value::Null if ty == NULL => call_template!(primitive_value_template, tld, quote!(()), quote!(())),
@@ -282,7 +282,7 @@ pub fn generate_value(tld: ToplevelValueDeclaration) -> Result<TokenStream, Gene
     }
 }
 
-pub fn generate_any(tld: ToplevelTypeDeclaration) -> Result<TokenStream, GeneratorError> {
+pub fn generate_any(tld: ToplevelTypeDefinition) -> Result<TokenStream, GeneratorError> {
     Ok(any_template(
         format_comments(&tld.comments)?,
         to_rust_title_case(&tld.name),
@@ -290,8 +290,8 @@ pub fn generate_any(tld: ToplevelTypeDeclaration) -> Result<TokenStream, Generat
     ))
 }
 
-pub fn generate_generalized_time(tld: ToplevelTypeDeclaration) -> Result<TokenStream, GeneratorError> {
-    if let ASN1Type::GeneralizedTime(_) = &tld.r#type {
+pub fn generate_generalized_time(tld: ToplevelTypeDefinition) -> Result<TokenStream, GeneratorError> {
+    if let ASN1Type::GeneralizedTime(_) = &tld.ty {
         Ok(generalized_time_template(
             format_comments(&tld.comments)?,
             to_rust_title_case(&tld.name),
@@ -299,15 +299,15 @@ pub fn generate_generalized_time(tld: ToplevelTypeDeclaration) -> Result<TokenSt
         ))
     } else {
         Err(GeneratorError::new(
-            Some(ToplevelDeclaration::Type(tld)),
+            Some(ToplevelDefinition::Type(tld)),
             "Expected GeneralizedTime top-level declaration",
             GeneratorErrorType::Asn1TypeMismatch,
         ))
     }
 }
 
-pub fn generate_utc_time(tld: ToplevelTypeDeclaration) -> Result<TokenStream, GeneratorError> {
-    if let ASN1Type::UTCTime(_) = &tld.r#type {
+pub fn generate_utc_time(tld: ToplevelTypeDefinition) -> Result<TokenStream, GeneratorError> {
+    if let ASN1Type::UTCTime(_) = &tld.ty {
         Ok(utc_time_template(
             format_comments(&tld.comments)?,
             to_rust_title_case(&tld.name),
@@ -315,15 +315,15 @@ pub fn generate_utc_time(tld: ToplevelTypeDeclaration) -> Result<TokenStream, Ge
         ))
     } else {
         Err(GeneratorError::new(
-            Some(ToplevelDeclaration::Type(tld)),
+            Some(ToplevelDefinition::Type(tld)),
             "Expected UTCTime top-level declaration",
             GeneratorErrorType::Asn1TypeMismatch,
         ))
     }
 }
 
-pub fn generate_oid(tld: ToplevelTypeDeclaration) -> Result<TokenStream, GeneratorError> {
-    if let ASN1Type::ObjectIdentifier(oid) = &tld.r#type {
+pub fn generate_oid(tld: ToplevelTypeDefinition) -> Result<TokenStream, GeneratorError> {
+    if let ASN1Type::ObjectIdentifier(oid) = &tld.ty {
         Ok(oid_template(
             format_comments(&tld.comments)?,
             to_rust_title_case(&tld.name),
@@ -332,15 +332,15 @@ pub fn generate_oid(tld: ToplevelTypeDeclaration) -> Result<TokenStream, Generat
         ))
     } else {
         Err(GeneratorError::new(
-            Some(ToplevelDeclaration::Type(tld)),
+            Some(ToplevelDefinition::Type(tld)),
             "Expected OBJECT IDENTIFIER top-level declaration",
             GeneratorErrorType::Asn1TypeMismatch,
         ))
     }
 }
 
-pub fn generate_null(tld: ToplevelTypeDeclaration) -> Result<TokenStream, GeneratorError> {
-    if let ASN1Type::Null = tld.r#type {
+pub fn generate_null(tld: ToplevelTypeDefinition) -> Result<TokenStream, GeneratorError> {
+    if let ASN1Type::Null = tld.ty {
         Ok(null_template(
             format_comments(&tld.comments)?,
             to_rust_title_case(&tld.name),
@@ -348,15 +348,15 @@ pub fn generate_null(tld: ToplevelTypeDeclaration) -> Result<TokenStream, Genera
         ))
     } else {
         Err(GeneratorError::new(
-            Some(ToplevelDeclaration::Type(tld)),
+            Some(ToplevelDefinition::Type(tld)),
             "Expected NULL top-level declaration",
             GeneratorErrorType::Asn1TypeMismatch,
         ))
     }
 }
 
-pub fn generate_enumerated(tld: ToplevelTypeDeclaration) -> Result<TokenStream, GeneratorError> {
-    if let ASN1Type::Enumerated(ref enumerated) = tld.r#type {
+pub fn generate_enumerated(tld: ToplevelTypeDefinition) -> Result<TokenStream, GeneratorError> {
+    if let ASN1Type::Enumerated(ref enumerated) = tld.ty {
         let extensible = enumerated.extensible.map(|_| {
             quote!{
                 #[non_exhaustive]}
@@ -370,15 +370,15 @@ pub fn generate_enumerated(tld: ToplevelTypeDeclaration) -> Result<TokenStream, 
         ))
     } else {
         Err(GeneratorError::new(
-            Some(ToplevelDeclaration::Type(tld)),
+            Some(ToplevelDefinition::Type(tld)),
             "Expected ENUMERATED top-level declaration",
             GeneratorErrorType::Asn1TypeMismatch,
         ))
     }
 }
 
-pub fn generate_choice(tld: ToplevelTypeDeclaration) -> Result<TokenStream, GeneratorError> {
-    if let ASN1Type::Choice(ref choice) = tld.r#type {
+pub fn generate_choice(tld: ToplevelTypeDefinition) -> Result<TokenStream, GeneratorError> {
+    if let ASN1Type::Choice(ref choice) = tld.ty {
         let name = to_rust_title_case(&tld.name);
         let inner_options = format_nested_choice_options(choice, &name.to_string())?;
         let extensible = choice.extensible.map(|_| {
@@ -395,30 +395,30 @@ pub fn generate_choice(tld: ToplevelTypeDeclaration) -> Result<TokenStream, Gene
         ))
     } else {
         Err(GeneratorError::new(
-            Some(ToplevelDeclaration::Type(tld)),
+            Some(ToplevelDefinition::Type(tld)),
             "Expected CHOICE top-level declaration",
             GeneratorErrorType::Asn1TypeMismatch,
         ))
     }
 }
 
-pub fn generate_sequence_or_set(tld: ToplevelTypeDeclaration) -> Result<TokenStream, GeneratorError> {
-    match tld.r#type {
+pub fn generate_sequence_or_set(tld: ToplevelTypeDefinition) -> Result<TokenStream, GeneratorError> {
+    match tld.ty {
         ASN1Type::Sequence(ref seq) | ASN1Type::Set(ref seq) => {
             let name = to_rust_title_case(&tld.name);
             let extensible = seq.extensible.map(|_| {
                 quote!{
                     #[non_exhaustive]}
             }).unwrap_or_default();
-            let set_annotation = if let ASN1Type::Set(_) = tld.r#type {
+            let set_annotation = if let ASN1Type::Set(_) = tld.ty {
                 quote!(set)
             } else {
                 TokenStream::new()
             };
-            let class_fields = seq.members.iter().fold(TokenStream::new(), |mut acc, m| { [m.constraints.clone(), m.r#type.constraints().map_or(vec![], |c| c.to_vec())].concat().iter().for_each(|c| {
+            let class_fields = seq.members.iter().fold(TokenStream::new(), |mut acc, m| { [m.constraints.clone(), m.ty.constraints().map_or(vec![], |c| c.to_vec())].concat().iter().for_each(|c| {
                 let decode_fn = format_ident!("decode_{}", to_rust_snake_case(&m.name));
                 let open_field_name = to_rust_snake_case(&m.name);
-                if let (Constraint::TableConstraint(t), ASN1Type::InformationObjectFieldReference(iofr)) = (c, &m.r#type) {
+                if let (Constraint::TableConstraint(t), ASN1Type::InformationObjectFieldReference(iofr)) = (c, &m.ty) {
                         let identifier = t.linked_fields.iter().map(|l| 
                             to_rust_snake_case(&l.field_name)
                         );
@@ -459,44 +459,44 @@ pub fn generate_sequence_or_set(tld: ToplevelTypeDeclaration) -> Result<TokenStr
             ))
         }
         _ => Err(GeneratorError::new(
-            Some(ToplevelDeclaration::Type(tld)),
+            Some(ToplevelDefinition::Type(tld)),
             "Expected SEQUENCE top-level declaration",
             GeneratorErrorType::Asn1TypeMismatch,
         )),
     }
 }
 
-pub fn generate_sequence_or_set_of(tld: ToplevelTypeDeclaration) -> Result<TokenStream, GeneratorError> {
-    let (is_set_of, seq_or_set_of) = match &tld.r#type {
+pub fn generate_sequence_or_set_of(tld: ToplevelTypeDefinition) -> Result<TokenStream, GeneratorError> {
+    let (is_set_of, seq_or_set_of) = match &tld.ty {
         ASN1Type::SetOf(se_of) => (true, se_of),
         ASN1Type::SequenceOf(se_of) => (false, se_of),
         _ => {
             return Err(GeneratorError::new(
-                Some(ToplevelDeclaration::Type(tld)),
+                Some(ToplevelDefinition::Type(tld)),
                 "Expected SEQUENCE OF top-level declaration",
                 GeneratorErrorType::Asn1TypeMismatch,
             ))
         }
     };
     let name = to_rust_title_case(&tld.name);
-    let anonymous_item = match seq_or_set_of.r#type.as_ref() {
+    let anonymous_item = match seq_or_set_of.element_type.as_ref() {
         ASN1Type::ElsewhereDeclaredType(_) => None,
-        n => Some(generate(ToplevelDeclaration::Type(
-            ToplevelTypeDeclaration {
+        n => Some(generate(ToplevelDefinition::Type(
+            ToplevelTypeDefinition {
                 parameterization: None,
                 comments: format!(
                     " Anonymous {} OF member ",
                     if is_set_of { "SET" } else { "SEQUENCE" }
                 ),
                 name: String::from("Anonymous") + &name.to_string(),
-                r#type: n.clone(),
+                ty: n.clone(),
                 tag: None,
                 index: None,
             },
         ))?),
     }
     .unwrap_or_default();
-    let member_type = match seq_or_set_of.r#type.as_ref() {
+    let member_type = match seq_or_set_of.element_type.as_ref() {
         ASN1Type::ElsewhereDeclaredType(d) => to_rust_title_case(&d.identifier),
         _ => format_ident!("Anonymous{}", &name.to_string()).to_token_stream(),
     };
@@ -512,7 +512,7 @@ pub fn generate_sequence_or_set_of(tld: ToplevelTypeDeclaration) -> Result<Token
 }
 
 pub fn generate_information_object_set(
-    tld: ToplevelInformationDeclaration,
+    tld: ToplevelInformationDefinition,
 ) -> Result<TokenStream, GeneratorError> {
     if let ASN1Information::ObjectSet(o) = &tld.value {
         let class: &InformationObjectClass = match tld.class {
@@ -539,7 +539,7 @@ pub fn generate_information_object_set(
                     },
                     ObjectSetValue::Inline(InformationObjectFields::CustomSyntax(_)) => {
                         Err(GeneratorError::new(
-                            Some(ToplevelDeclaration::Information(tld.clone())),
+                            Some(ToplevelDefinition::Information(tld.clone())),
                             "Unexpectedly encountered unresolved custom syntax!",
                             GeneratorErrorType::MissingClassKey,
                         ))
@@ -558,7 +558,7 @@ pub fn generate_information_object_set(
                     .get(index)
                     .map(|f| f.identifier.identifier())
                     .ok_or_else(|| GeneratorError {
-                        top_level_declaration: Some(ToplevelDeclaration::Information(tld.clone())),
+                        top_level_declaration: Some(ToplevelDefinition::Information(tld.clone())),
                         details: "Could not find class field for index.".into(),
                         kind: GeneratorErrorType::SyntaxMismatch,
                     })?;
@@ -575,7 +575,7 @@ pub fn generate_information_object_set(
         let class_unique_id_type = class
             .fields
             .iter()
-            .find_map(|f| (f.is_unique).then(|| f.r#type.clone()))
+            .find_map(|f| (f.is_unique).then(|| f.ty.clone()))
             .flatten()
             .ok_or_else(|| GeneratorError {
                 top_level_declaration: None,
@@ -606,7 +606,7 @@ pub fn generate_information_object_set(
                     inner_types.push(TokenStream::new());
                 } else {
                     let (signed_range, character_string_type) = match ty {
-                        ASN1Type::CharacterString(c) => (false, Some(c.r#type)),
+                        ASN1Type::CharacterString(c) => (false, Some(c.ty)),
                         ASN1Type::Integer(_) => (true, None),
                         ASN1Type::Real(_) => (true, None),
                         ASN1Type::BitString(_) => (false, None),
@@ -685,7 +685,7 @@ pub fn generate_information_object_set(
         Ok(quote!(#(#field_enums)*))
     } else {
         Err(GeneratorError::new(
-            Some(ToplevelDeclaration::Information(tld)),
+            Some(ToplevelDefinition::Information(tld)),
             "Expected Object Set top-level declaration",
             GeneratorErrorType::Asn1TypeMismatch,
         ))

@@ -6,7 +6,7 @@ impl Constraint {
     pub(super) fn link_cross_reference(
         &mut self,
         identifier: &String,
-        tlds: &BTreeMap<String, ToplevelDeclaration>,
+        tlds: &BTreeMap<String, ToplevelDefinition>,
     ) -> Result<bool, GrammarError> {
         match self {
             Constraint::SubtypeConstraint(t) => t.set.link_cross_reference(identifier, tlds),
@@ -27,7 +27,7 @@ impl SubtypeElement {
     pub(super) fn link_cross_reference(
         &mut self,
         identifier: &String,
-        tlds: &BTreeMap<String, ToplevelDeclaration>,
+        tlds: &BTreeMap<String, ToplevelDefinition>,
     ) -> Result<bool, GrammarError> {
         match self {
             SubtypeElement::SingleValue {
@@ -104,7 +104,7 @@ impl ElementOrSetOperation {
     pub(super) fn link_cross_reference(
         &mut self,
         identifier: &String,
-        tlds: &BTreeMap<String, ToplevelDeclaration>,
+        tlds: &BTreeMap<String, ToplevelDefinition>,
     ) -> Result<bool, GrammarError> {
         match self {
             ElementOrSetOperation::Element(e) => e.link_cross_reference(identifier, tlds),

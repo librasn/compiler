@@ -10,16 +10,16 @@ mod linking;
 
 use std::{collections::BTreeMap, error::Error, ops::Not};
 
-use crate::intermediate::{constraints::*, types::*, *, information_object::{ClassLink, ToplevelInformationDeclaration}};
+use crate::intermediate::{constraints::*, types::*, *, information_object::{ClassLink, ToplevelInformationDefinition}};
 
 use self::error::{ValidatorError, ValidatorErrorType};
 
 pub struct Validator {
-    tlds: BTreeMap<String, ToplevelDeclaration>,
+    tlds: BTreeMap<String, ToplevelDefinition>,
 }
 
 impl Validator {
-    pub fn new(tlds: Vec<ToplevelDeclaration>) -> Validator {
+    pub fn new(tlds: Vec<ToplevelDefinition>) -> Validator {
         Self {
             tlds: tlds
                 .into_iter()
@@ -32,46 +32,46 @@ impl Validator {
         let mut warnings: Vec<Box<dyn Error>> = vec![];
         // Linking of ASN1 values depends on linked ASN1 types, so we order the key colelction accordingly (note that we pop keys)
         let mut keys = self.tlds.iter()
-            .filter_map(|(k, v)| matches![v, ToplevelDeclaration::Value(_)].then_some(k.clone()))
+            .filter_map(|(k, v)| matches![v, ToplevelDefinition::Value(_)].then_some(k.clone()))
             .chain(
                 self.tlds.iter()
-                .filter_map(|(k, v)| matches![v, ToplevelDeclaration::Value(_)].not().then_some(k.clone()))
+                .filter_map(|(k, v)| matches![v, ToplevelDefinition::Value(_)].not().then_some(k.clone()))
             ).collect::<Vec<String>>();
         while let Some(key) = keys.pop() {
             if self.references_class_by_name(&key) {
                 match self.tlds.remove(&key) {
-                    Some(ToplevelDeclaration::Type(mut tld)) => {
-                        tld.r#type = tld.r#type.resolve_class_reference(&self.tlds);
+                    Some(ToplevelDefinition::Type(mut tld)) => {
+                        tld.ty = tld.ty.resolve_class_reference(&self.tlds);
                         self.tlds
-                        .insert(tld.name.clone(), ToplevelDeclaration::Type(tld));
+                        .insert(tld.name.clone(), ToplevelDefinition::Type(tld));
                         },
-                    Some(ToplevelDeclaration::Information(mut tld)) => {
+                    Some(ToplevelDefinition::Information(mut tld)) => {
                         tld = tld.resolve_class_reference(&self.tlds);
                         self.tlds
-                        .insert(tld.name.clone(), ToplevelDeclaration::Information(tld));
+                        .insert(tld.name.clone(), ToplevelDefinition::Information(tld));
                     },
                     _ => ()
                 }
             }
             if self.has_components_of_notation(&key) {
-                if let Some(ToplevelDeclaration::Type(mut tld)) = self.tlds.remove(&key) {
-                    tld.r#type.link_components_of_notation(&self.tlds);
+                if let Some(ToplevelDefinition::Type(mut tld)) = self.tlds.remove(&key) {
+                    tld.ty.link_components_of_notation(&self.tlds);
                     self.tlds
-                        .insert(tld.name.clone(), ToplevelDeclaration::Type(tld));
+                        .insert(tld.name.clone(), ToplevelDefinition::Type(tld));
                 }
             } 
             if self.has_choice_selection_type(&key) {
-                if let Some(ToplevelDeclaration::Type(mut tld)) = self.tlds.remove(&key) {
-                    tld.r#type.link_choice_selection_type(&self.tlds)?;
+                if let Some(ToplevelDefinition::Type(mut tld)) = self.tlds.remove(&key) {
+                    tld.ty.link_choice_selection_type(&self.tlds)?;
                     self.tlds
-                        .insert(tld.name.clone(), ToplevelDeclaration::Type(tld));
+                        .insert(tld.name.clone(), ToplevelDefinition::Type(tld));
                 }
             }
             if self.references_object_set_by_name(&key) {
-                if let Some(ToplevelDeclaration::Information(mut tld)) = self.tlds.remove(&key) {
+                if let Some(ToplevelDefinition::Information(mut tld)) = self.tlds.remove(&key) {
                     tld.value.link_object_set_reference(&self.tlds);
                     self.tlds
-                        .insert(tld.name.clone(), ToplevelDeclaration::Information(tld));
+                        .insert(tld.name.clone(), ToplevelDefinition::Information(tld));
                 }
             }
             if self.has_constraint_reference(&key) {
@@ -107,7 +107,7 @@ impl Validator {
     fn has_constraint_reference(&mut self, key: &String) -> bool {
         self.tlds
             .get(key)
-            .map(ToplevelDeclaration::has_constraint_reference)
+            .map(ToplevelDefinition::has_constraint_reference)
             .unwrap_or(false)
     }
 
@@ -115,8 +115,8 @@ impl Validator {
         self.tlds
             .get(key)
             .map(|t| match t {
-                ToplevelDeclaration::Type(t) => t.r#type.references_class_by_name(),
-                ToplevelDeclaration::Information(i) => i.class.as_ref().map_or(false, |c| match c {
+                ToplevelDefinition::Type(t) => t.ty.references_class_by_name(),
+                ToplevelDefinition::Information(i) => i.class.as_ref().map_or(false, |c| match c {
                     ClassLink::ByReference(_) => false,
                     ClassLink::ByName(_) => true
                 }),
@@ -130,7 +130,7 @@ impl Validator {
             .get(key)
             .map(|t|
                 match t {
-                ToplevelDeclaration::Information(ToplevelInformationDeclaration { value, .. }) => value.references_object_set_by_name(),
+                ToplevelDefinition::Information(ToplevelInformationDefinition { value, .. }) => value.references_object_set_by_name(),
                 _ => false,
             })
             .unwrap_or(false)
@@ -140,7 +140,7 @@ impl Validator {
         self.tlds
             .get(key)
             .map(|t| match t {
-                ToplevelDeclaration::Type(t) => t.r#type.has_choice_selection_type(),
+                ToplevelDefinition::Type(t) => t.ty.has_choice_selection_type(),
                 _ => false,
             })
             .unwrap_or(false)
@@ -150,7 +150,7 @@ impl Validator {
         self.tlds
             .get(key)
             .map(|t| match t {
-                ToplevelDeclaration::Type(t) => t.r#type.contains_components_of_notation(),
+                ToplevelDefinition::Type(t) => t.ty.contains_components_of_notation(),
                 _ => false,
             })
             .unwrap_or(false)
@@ -158,11 +158,11 @@ impl Validator {
 
     pub fn validate(
         mut self,
-    ) -> Result<(Vec<ToplevelDeclaration>, Vec<Box<dyn Error>>), Box<dyn Error>> {
+    ) -> Result<(Vec<ToplevelDefinition>, Vec<Box<dyn Error>>), Box<dyn Error>> {
         let warnings: Vec<Box<dyn Error>>;
         (self, warnings) = self.link()?;
         Ok(self.tlds.into_iter().fold(
-            (Vec::<ToplevelDeclaration>::new(), warnings),
+            (Vec::<ToplevelDefinition>::new(), warnings),
             |(mut tlds, mut errors), (_, tld)| {
                 match tld.validate() {
                     Ok(_) => tlds.push(tld),
@@ -178,18 +178,18 @@ pub trait Validate {
     fn validate(&self) -> Result<(), ValidatorError>;
 }
 
-impl Validate for ToplevelDeclaration {
+impl Validate for ToplevelDefinition {
     fn validate(&self) -> Result<(), ValidatorError> {
         match self {
-            ToplevelDeclaration::Type(t) => {
-                if let Err(mut e) = t.r#type.validate() {
+            ToplevelDefinition::Type(t) => {
+                if let Err(mut e) = t.ty.validate() {
                     e.specify_data_element(t.name.clone());
                     return Err(e);
                 }
                 Ok(())
             }
-            ToplevelDeclaration::Value(_v) => Ok(()),
-            ToplevelDeclaration::Information(_i) => Ok(()),
+            ToplevelDefinition::Value(_v) => Ok(()),
+            ToplevelDefinition::Information(_i) => Ok(()),
         }
     }
 }

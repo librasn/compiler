@@ -4,7 +4,7 @@
 
 use std::error::Error;
 
-use crate::intermediate::ToplevelDeclaration;
+use crate::intermediate::ToplevelDefinition;
 
 use self::error::GeneratorError;
 
@@ -20,7 +20,7 @@ pub trait Backend: Sized {
     /// - `top_level_declarations` vector of [TopLevelDeclaration]s that are defined in the ASN.1 module
     fn generate_module(
         &self,
-        top_level_declarations: Vec<ToplevelDeclaration>,
+        top_level_declarations: Vec<ToplevelDefinition>,
     ) -> Result<GeneratedModule, GeneratorError>;
 }
 

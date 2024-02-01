@@ -1,13 +1,18 @@
 # Rasn compiler
+[![crates.io](https://img.shields.io/crates/d/rasn-compiler.svg)](https://crates.io/crates/rasn-compiler)
+[![Help Wanted](https://img.shields.io/github/issues/librasn/compiler/help%20wanted?color=green)](https://github.com/librasn/compiler/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22)
+[![Lines Of Code](https://tokei.rs/b1/github/librasn/compiler?category=code)](https://github.com/XAMPPRocky/tokei)
+[![Documentation](https://docs.rs/rasn-compiler/badge.svg)](https://docs.rs/rasn/)
+
 [Try compiling some ASN.1 online.](https://librasn.github.io/)
 
-The `rasn-compiler` library is a parser combinator that parses ASN1 specifications and outputs
-encoding-rule-agnotic rust representations of the ASN1 data elements to be used with the [`rasn`](https://github.com/librasn/rasn) crate. 
+The `rasn-compiler` library is a parser combinator that parses ASN.1 specifications and outputs
+encoding-rule-agnotic bindings for ASN.1 data elements to be used with the [`rasn`](https://github.com/librasn/rasn) crate. 
 The compiler heavily relies on the great library [nom](https://docs.rs/nom/latest/nom/) for its basic parsers.
-The parser has been designed to generate rasn ASN1 representations. I should not be used as a validating tool for ASN1 modules (yet), since some of the parsers are more lenient than the ASN1 syntax specification. The compiler aims to become fully compliant with X680 in this regard.
+The parser has been designed to generate rasn bindings for ASN.1. It should not be used as a validating tool for ASN.1 modules (yet), since some of the parsers are more lenient than the ASN.1 syntax specification. The compiler aims to become fully compliant with X680 in this regard.
 
 ## Example
-In order to compile ASN1 in your build process, invoke the `rasn-compiler` in your [`build.rs` build script](https://doc.rust-lang.org/cargo/reference/build-scripts.html).
+In order to compile ASN.1 in your build process, invoke the `rasn-compiler` in your [`build.rs` build script](https://doc.rust-lang.org/cargo/reference/build-scripts.html).
 
 ```rust
 // build.rs build script
@@ -22,7 +27,7 @@ struct CustomBackend;
 impl Backend for CustomBackend {
     fn generate_module(
         &self,
-        top_level_declarations: Vec<ToplevelDeclaration>,
+        top_level_declarations: Vec<ToplevelDefinition>,
     ) -> Result<GeneratedModule, GeneratorError> {
         // implement a custom backend to generate bindings in a language of your choice
         Ok(GeneratedModule::empty())
@@ -45,7 +50,6 @@ fn main() {
     .set_output_path(PathBuf::from("./asn/generated.rs"))
     // you may also compile literal ASN1 snippets
     .add_asn_literal("My-test-integer ::= INTEGER (1..128)")
-    // optionally choose to support `no_std`
     .compile() {
     Ok(warnings /* Vec<Box<dyn Error>> */) => { /* handle compilation warnings */ }
     Err(error /* Box<dyn Error> */) => { /* handle unrecoverable compilation error */ }

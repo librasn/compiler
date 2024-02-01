@@ -77,7 +77,7 @@ mod tests {
             sequence_of("SEQUENCE OF BOOLEAN").unwrap().1,
             ASN1Type::SequenceOf(SequenceOrSetOf {
                 constraints: vec![],
-                r#type: Box::new(ASN1Type::Boolean(Boolean {
+                element_type: Box::new(ASN1Type::Boolean(Boolean {
                     constraints: vec![]
                 }))
             })
@@ -90,7 +90,7 @@ mod tests {
             sequence_of("SEQUENCE OF Things").unwrap().1,
             ASN1Type::SequenceOf(SequenceOrSetOf {
                 constraints: vec![],
-                r#type: Box::new(ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+                element_type: Box::new(ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                     parent: None,
                     identifier: "Things".into(),
                     constraints: vec![]
@@ -116,7 +116,7 @@ mod tests {
                     ))),
                     extensible: false
                 })],
-                r#type: Box::new(ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+                element_type: Box::new(ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                     parent: None,
                     identifier: "CorrelationCellValue".into(),
                     constraints: vec![]
@@ -142,7 +142,7 @@ mod tests {
                     ))),
                     extensible: false
                 })],
-                r#type: Box::new(ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+                element_type: Box::new(ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                     parent: None,
                     identifier: "CorrelationCellValue".into(),
                     constraints: vec![]
@@ -172,7 +172,7 @@ mod tests {
                     ))),
                     extensible: false
                 })],
-                r#type: Box::new(ASN1Type::Integer(Integer {
+                element_type: Box::new(ASN1Type::Integer(Integer {
                     constraints: vec![Constraint::SubtypeConstraint(ElementSet {
                         set: ElementOrSetOperation::Element(SubtypeElement::ValueRange {
                             min: Some(ASN1Value::Integer(1)),
@@ -210,7 +210,7 @@ mod tests {
                     ))),
                     extensible: false
                 })],
-                r#type: Box::new(ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+                element_type: Box::new(ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                     parent: None,
                     identifier: "RegionalExtension".into(),
                     constraints: vec![Constraint::Parameter(vec![Parameter::ObjectSetParameter(

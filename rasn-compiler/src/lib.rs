@@ -1,11 +1,11 @@
 #![allow(clippy::needless_doctest_main)]
 //! The `rasn-compiler` library is a parser combinator that parses ASN1 specifications and outputs
-//! encoding-rule-agnotic rust representations of the ASN1 data elements to be used with the `rasn` crate.
+//! encoding-rule-agnotic bindings for the ASN.1 data elements to be used with the `rasn` crate.
 //! The compiler heavily relies on the great library [nom](https://docs.rs/nom/latest/nom/) for its basic parsers.
 //!
 //! ## Example
 //!
-//! In order to compile ASN1 in your build process, invoke the rasn compiler in your [`build.rs` build script](https://doc.rust-lang.org/cargo/reference/build-scripts.html).
+//! In order to compile ASN.1 in your build process, invoke the rasn compiler in your [`build.rs` build script](https://doc.rust-lang.org/cargo/reference/build-scripts.html).
 //!
 //! ```rust
 //! // build.rs build script
@@ -18,7 +18,7 @@
 //!   impl Backend for CustomBackend {
 //!     fn generate_module(
 //!          &self,
-//!          top_level_declarations: Vec<ToplevelDeclaration>,
+//!          top_level_declarations: Vec<ToplevelDefinition>,
 //!     ) -> Result<GeneratedModule, GeneratorError> {
 //!         Ok(GeneratedModule::empty())
 //!     }
@@ -63,17 +63,19 @@ use std::{
 };
 
 use generator::{rasn::Rust, Backend};
-use intermediate::ToplevelDeclaration;
+use intermediate::ToplevelDefinition;
 use parser::asn_spec;
 use validator::Validator;
 
 pub mod prelude {
+    //! Convenience module that collects all necessary imports for
+    //! using and customizing the compiler.
     pub use super::{
         CompileResult, Compiler, CompilerMissingParams, CompilerOutputSet, CompilerReady,
         CompilerSourcesSet,
     };
     pub use crate::generator::{error::*, Backend, GeneratedModule};
-    pub use crate::intermediate::ToplevelDeclaration;
+    pub use crate::intermediate::ToplevelDefinition;
     pub mod ir {
         pub use crate::intermediate::{
             *,
@@ -81,7 +83,6 @@ pub mod prelude {
             information_object::*,
             parameterization::*,
             types::*,
-            utils::*,
             encoding_rules::{*, per_visible::*},
             error::*,
         };
@@ -367,7 +368,7 @@ impl<B: Backend> Compiler<B, CompilerSourcesSet> {
 
     /// Runs the rasn compiler command and returns stringified Rust.
     /// Returns a Result wrapping a compilation result:
-    /// * _Ok_  - tuple containing the stringified Rust representation of the ASN1 spec as well as a vector of warnings raised during the compilation
+    /// * _Ok_  - tuple containing the stringified bindings for the ASN1 spec as well as a vector of warnings raised during the compilation
     /// * _Err_ - Unrecoverable error, no rust representations were generated
     pub fn compile_to_string(self) -> Result<CompileResult, Box<dyn Error>> {
         self.internal_compile().map(CompileResult::rust_fmt)
@@ -376,7 +377,7 @@ impl<B: Backend> Compiler<B, CompilerSourcesSet> {
     fn internal_compile(&self) -> Result<CompileResult, Box<dyn Error>> {
         let mut generated_modules = vec![];
         let mut warnings = Vec::<Box<dyn Error>>::new();
-        let mut modules: Vec<ToplevelDeclaration> = vec![];
+        let mut modules: Vec<ToplevelDefinition> = vec![];
         for src in &self.state.sources {
             let stringified_src = match src {
                 AsnSource::Path(p) => read_to_string(p)?,
@@ -398,7 +399,7 @@ impl<B: Backend> Compiler<B, CompilerSourcesSet> {
         }
         let (valid_items, mut validator_errors) = Validator::new(modules).validate()?;
         let modules = valid_items.into_iter().fold(
-            BTreeMap::<String, Vec<ToplevelDeclaration>>::new(),
+            BTreeMap::<String, Vec<ToplevelDefinition>>::new(),
             |mut modules, tld| {
                 let key = tld
                     .get_index()
@@ -482,7 +483,7 @@ impl<B: Backend> Compiler<B, CompilerReady> {
 
     /// Runs the rasn compiler command and returns stringified Rust.
     /// Returns a Result wrapping a compilation result:
-    /// * _Ok_  - tuple containing the stringified Rust representation of the ASN1 spec as well as a vector of warnings raised during the compilation
+    /// * _Ok_  - tuple containing the stringified bindings for the ASN1 spec as well as a vector of warnings raised during the compilation
     /// * _Err_ - Unrecoverable error, no rust representations were generated
     pub fn compile_to_string(self) -> Result<CompileResult, Box<dyn Error>> {
         Compiler {

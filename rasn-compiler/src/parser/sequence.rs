@@ -85,7 +85,7 @@ fn extension_group<'a>(input: &'a str) -> IResult<&'a str, SequenceComponent> {
             SequenceComponent::Member(SequenceOrSetMember {
                 name: String::from("ext_group_") + &members.first().unwrap().name,
                 tag: None,
-                r#type: ASN1Type::Sequence(SequenceOrSet {
+                ty: ASN1Type::Sequence(SequenceOrSet {
                     components_of,
                     extensible: None,
                     constraints: vec![],
@@ -111,7 +111,7 @@ pub fn sequence_component<'a>(input: &'a str) -> IResult<&'a str, SequenceCompon
             ),
             |id| SequenceComponent::ComponentsOf(id.into()),
         ),
-        map(sequence_or_set_member, |m| SequenceComponent::Member(m)),
+        map(sequence_or_set_member, SequenceComponent::Member),
     )))(input)
 }
 
@@ -212,7 +212,7 @@ mod tests {
                 SequenceOrSetMember {
                     name: "clusterBoundingBoxShape".into(),
                     tag: None,
-                    r#type: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere { parent: None,
+                    ty: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere { parent: None,
                         identifier: "Shape".into(), constraints: vec![Constraint::SubtypeConstraint(ElementSet { set: ElementOrSetOperation::Element(SubtypeElement::SingleTypeConstraint(InnerTypeConstraint { is_partial: true, constraints: vec![ConstrainedComponent { identifier: "elliptical".into(), constraints: vec![], presence: ComponentPresence::Absent },ConstrainedComponent { identifier: "radial".into(), constraints: vec![], presence: ComponentPresence::Absent },ConstrainedComponent { identifier: "radialShapes".into(), constraints: vec![], presence: ComponentPresence::Absent }] })), extensible: false })
                      ]}),
                     default_value: None,
@@ -244,7 +244,7 @@ mod tests {
                         name: "value".into(),
 
                         tag: None,
-                        r#type: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+                        ty: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                             parent: None,
                             identifier: "AccelerationValue".into(),
                             constraints: vec![]
@@ -257,7 +257,7 @@ mod tests {
                         name: "confidence".into(),
 
                         tag: None,
-                        r#type: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+                        ty: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                             parent: None,
                             identifier: "AccelerationConfidence".into(),
                             constraints: vec![]
@@ -293,7 +293,7 @@ mod tests {
                         name: "xCoordinate".into(),
 
                         tag: None,
-                        r#type: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+                        ty: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                             parent: None,
                             identifier: "CartesianCoordinateWithConfidence".into(),
                             constraints: vec![]
@@ -305,7 +305,7 @@ mod tests {
                     SequenceOrSetMember {
                         name: "yCoordinate".into(),
                         tag: None,
-                        r#type: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+                        ty: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                             parent: None,
                             identifier: "CartesianCoordinateWithConfidence".into(),
                             constraints: vec![]
@@ -317,7 +317,7 @@ mod tests {
                     SequenceOrSetMember {
                         name: "zCoordinate".into(),
                         tag: None,
-                        r#type: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+                        ty: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                             parent: None,
                             identifier: "CartesianCoordinateWithConfidence".into(),
                             constraints: vec![]
@@ -353,7 +353,7 @@ mod tests {
                     SequenceOrSetMember {
                         name: "horizontalPositionConfidence".into(),
                         tag: None,
-                        r#type: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+                        ty: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                             parent: None,
                             identifier: "PosConfidenceEllipse".into(),
                             constraints: vec![]
@@ -365,7 +365,7 @@ mod tests {
                     SequenceOrSetMember {
                         name: "deltaAltitude".into(),
                         tag: None,
-                        r#type: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+                        ty: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                             parent: None,
                             identifier: "DeltaAltitude".into(),
                             constraints: vec![]
@@ -381,7 +381,7 @@ mod tests {
                     SequenceOrSetMember {
                         name: "altitudeConfidence".into(),
                         tag: None,
-                        r#type: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+                        ty: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                             parent: None,
                             identifier: "AltitudeConfidence".into(),
                             constraints: vec![]
@@ -420,7 +420,7 @@ mod tests {
                     SequenceOrSetMember {
                         name: "unNumber".into(),
                         tag: None,
-                        r#type: ASN1Type::Integer(Integer {
+                        ty: ASN1Type::Integer(Integer {
                             constraints: vec![Constraint::SubtypeConstraint(ElementSet {
                                 set: ElementOrSetOperation::Element(SubtypeElement::ValueRange {
                                     min: Some(ASN1Value::Integer(0)),
@@ -438,7 +438,7 @@ mod tests {
                     SequenceOrSetMember {
                         name: "limitedQuantity".into(),
                         tag: None,
-                        r#type: ASN1Type::Boolean(Boolean {
+                        ty: ASN1Type::Boolean(Boolean {
                             constraints: vec![]
                         }),
                         default_value: Some(ASN1Value::Boolean(false)),
@@ -448,7 +448,7 @@ mod tests {
                     SequenceOrSetMember {
                         name: "emergencyActionCode".into(),
                         tag: None,
-                        r#type: ASN1Type::OctetString(OctetString {
+                        ty: ASN1Type::OctetString(OctetString {
                             constraints: vec![Constraint::SubtypeConstraint(ElementSet {
                                 set: ElementOrSetOperation::Element(
                                     SubtypeElement::SizeConstraint(Box::new(
@@ -501,7 +501,7 @@ mod tests {
                     name: "nested".into(),
 
                     tag: None,
-                    r#type: ASN1Type::Sequence(SequenceOrSet {
+                    ty: ASN1Type::Sequence(SequenceOrSet {
                         components_of: vec![],
                         extensible: Some(3),
                         constraints: vec![],
@@ -510,7 +510,7 @@ mod tests {
                                 name: "wow".into(),
 
                                 tag: None,
-                                r#type: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+                                ty: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                                     parent: None,
                                     identifier: "Wow".into(),
                                     constraints: vec![]
@@ -523,7 +523,7 @@ mod tests {
                                 name: "this-is-annoying".into(),
 
                                 tag: None,
-                                r#type: ASN1Type::Boolean(Boolean {
+                                ty: ASN1Type::Boolean(Boolean {
                                     constraints: vec![]
                                 }),
                                 default_value: Some(ASN1Value::Boolean(true)),
@@ -534,7 +534,7 @@ mod tests {
                                 name: "another".into(),
 
                                 tag: None,
-                                r#type: ASN1Type::Sequence(SequenceOrSet {
+                                ty: ASN1Type::Sequence(SequenceOrSet {
                                     components_of: vec![],
                                     extensible: None,
                                     constraints: vec![],
@@ -542,7 +542,7 @@ mod tests {
                                         name: "inner".into(),
 
                                         tag: None,
-                                        r#type: ASN1Type::BitString(BitString {
+                                        ty: ASN1Type::BitString(BitString {
                                             constraints: vec![Constraint::SubtypeConstraint(
                                                 ElementSet {
                                                     set: ElementOrSetOperation::Element(
@@ -624,7 +624,7 @@ mod tests {
                     SequenceOrSetMember {
                         name: "item-code".into(),
                         tag: None,
-                        r#type: ASN1Type::Integer(Integer {
+                        ty: ASN1Type::Integer(Integer {
                             constraints: vec![Constraint::SubtypeConstraint(ElementSet {
                                 set: ElementOrSetOperation::Element(SubtypeElement::ValueRange {
                                     min: Some(ASN1Value::Integer(0)),
@@ -642,7 +642,7 @@ mod tests {
                     SequenceOrSetMember {
                         name: "ext_group_alternate-item-code".into(),
                         tag: None,
-                        r#type: ASN1Type::Sequence(SequenceOrSet {
+                        ty: ASN1Type::Sequence(SequenceOrSet {
                             components_of: vec![],
                             extensible: None,
                             constraints: vec![],
@@ -650,7 +650,7 @@ mod tests {
                                 SequenceOrSetMember {
                                     name: "alternate-item-code".into(),
                                     tag: None,
-                                    r#type: ASN1Type::Integer(Integer {
+                                    ty: ASN1Type::Integer(Integer {
                                         constraints: vec![Constraint::SubtypeConstraint(
                                             ElementSet {
                                                 set: ElementOrSetOperation::Element(
@@ -672,7 +672,7 @@ mod tests {
                                 SequenceOrSetMember {
                                     name: "and-another".into(),
                                     tag: None,
-                                    r#type: ASN1Type::Boolean(Boolean {
+                                    ty: ASN1Type::Boolean(Boolean {
                                         constraints: vec![]
                                     }),
                                     default_value: Some(ASN1Value::Boolean(true)),
@@ -708,7 +708,7 @@ mod tests {
                 members: vec![SequenceOrSetMember {
                     name: "bilateral-information".into(),
                     tag: None,
-                    r#type: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+                    ty: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                         parent: None,
                         identifier: "TypeB".into(),
                         constraints: vec![]

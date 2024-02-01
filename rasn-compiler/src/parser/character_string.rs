@@ -115,7 +115,7 @@ mod tests {
             character_string(sample).unwrap().1,
             ASN1Type::CharacterString(CharacterString {
                 constraints: vec![],
-                r#type: CharacterStringType::IA5String
+                ty: CharacterStringType::IA5String
             })
         )
     }
@@ -135,7 +135,7 @@ mod tests {
                     ))),
                     extensible: false
                 })],
-                r#type: CharacterStringType::IA5String
+                ty: CharacterStringType::IA5String
             })
         )
     }
@@ -156,7 +156,7 @@ mod tests {
                     ))),
                     extensible: false
                 })],
-                r#type: CharacterStringType::IA5String
+                ty: CharacterStringType::IA5String
             })
         )
     }
@@ -177,7 +177,7 @@ mod tests {
                     ))),
                     extensible: false
                 })],
-                r#type: CharacterStringType::IA5String
+                ty: CharacterStringType::IA5String
             })
         )
     }
@@ -198,7 +198,7 @@ mod tests {
                     ))),
                     extensible: false
                 })],
-                r#type: CharacterStringType::IA5String
+                ty: CharacterStringType::IA5String
             })
         )
     }

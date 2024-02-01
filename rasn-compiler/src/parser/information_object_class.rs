@@ -39,7 +39,7 @@ pub fn type_identifier<'a>(input: &'a str) -> IResult<&'a str, InformationObject
             fields: vec![
                 InformationObjectClassField {
                     identifier: ObjectFieldIdentifier::SingleValue("id".into()),
-                    r#type: Some(ASN1Type::ObjectIdentifier(ObjectIdentifier {
+                    ty: Some(ASN1Type::ObjectIdentifier(ObjectIdentifier {
                         constraints: vec![],
                     })),
                     is_optional: false,
@@ -48,7 +48,7 @@ pub fn type_identifier<'a>(input: &'a str) -> IResult<&'a str, InformationObject
                 },
                 InformationObjectClassField {
                     identifier: ObjectFieldIdentifier::MultipleValue("Type".into()),
-                    r#type: None,
+                    ty: None,
                     is_optional: false,
                     default: None,
                     is_unique: false,
@@ -275,13 +275,13 @@ mod tests {
                 fields: vec![
                     InformationObjectClassField {
                         identifier: ObjectFieldIdentifier::SingleValue("&operationCode".into()),
-                        r#type: Some(ASN1Type::Choice(Choice {
+                        ty: Some(ASN1Type::Choice(Choice {
                             extensible: None,
                             options: vec![
                                 ChoiceOption {
                                     name: "local".into(),
                                     tag: None,
-                                    r#type: ASN1Type::Integer(Integer {
+                                    ty: ASN1Type::Integer(Integer {
                                         constraints: vec![],
                                         distinguished_values: None,
                                     }),
@@ -290,7 +290,7 @@ mod tests {
                                 ChoiceOption {
                                     name: "global".into(),
                                     tag: None,
-                                    r#type: ASN1Type::OctetString(OctetString {
+                                    ty: ASN1Type::OctetString(OctetString {
                                         constraints: vec![],
                                     }),
                                     constraints: vec![]
@@ -304,21 +304,21 @@ mod tests {
                     },
                     InformationObjectClassField {
                         identifier: ObjectFieldIdentifier::MultipleValue("&ArgumentType".into()),
-                        r#type: None,
+                        ty: None,
                         is_optional: false,
                         is_unique: false,
                         default: None
                     },
                     InformationObjectClassField {
                         identifier: ObjectFieldIdentifier::MultipleValue("&ResultType".into()),
-                        r#type: None,
+                        ty: None,
                         is_optional: false,
                         is_unique: false,
                         default: None
                     },
                     InformationObjectClassField {
                         identifier: ObjectFieldIdentifier::MultipleValue("&Errors".into()),
-                        r#type: Some(ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+                        ty: Some(ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                             parent: None,
                             constraints: vec![],
                             identifier: "ERROR".into()
@@ -381,7 +381,7 @@ mod tests {
                         }),
                         InformationObjectField::TypeField(TypeField {
                             identifier: "&ParameterType".into(),
-                            r#type: ASN1Type::Boolean(Boolean {
+                            ty: ASN1Type::Boolean(Boolean {
                                 constraints: vec![]
                             })
                         })
@@ -417,7 +417,7 @@ mod tests {
                 fields: vec![
                     InformationObjectClassField {
                         identifier: ObjectFieldIdentifier::SingleValue("&itsaidCtxRef".into()),
-                        r#type: Some(ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+                        ty: Some(ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                             parent: None,
                             identifier: "ItsAidCtxRef".into(),
                             constraints: vec![]
@@ -428,7 +428,7 @@ mod tests {
                     },
                     InformationObjectClassField {
                         identifier: ObjectFieldIdentifier::MultipleValue("&ContextInfo".into()),
-                        r#type: None,
+                        ty: None,
                         is_optional: true,
                         default: None,
                         is_unique: false
@@ -471,11 +471,11 @@ mod tests {
             top_level_type_declaration(r#"AttributeValue ::= OPEN.&Type"#)
                 .unwrap()
                 .1,
-            ToplevelTypeDeclaration {
+            ToplevelTypeDefinition {
                 comments: "".into(),
                 tag: None,
                 name: "AttributeValue".into(),
-                r#type: ASN1Type::InformationObjectFieldReference(
+                ty: ASN1Type::InformationObjectFieldReference(
                     InformationObjectFieldReference {
                         class: "OPEN".into(),
                         field_path: vec![ObjectFieldIdentifier::MultipleValue("&Type".into())],

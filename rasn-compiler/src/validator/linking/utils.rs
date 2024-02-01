@@ -11,9 +11,9 @@ use self::types::*;
 pub(crate) fn find_tld_or_enum_value_by_name(
     type_name: &String,
     name: &String,
-    tlds: &BTreeMap<String, ToplevelDeclaration>,
+    tlds: &BTreeMap<String, ToplevelDefinition>,
 ) -> Option<ASN1Value> {
-    if let Some(ToplevelDeclaration::Value(v)) = tlds.get(name) {
+    if let Some(ToplevelDefinition::Value(v)) = tlds.get(name) {
         return Some(v.value.clone());
     } else {
         for (_, tld) in tlds.iter() {
@@ -141,7 +141,7 @@ pub fn resolve_custom_syntax(
                                     index,
                                     InformationObjectField::TypeField(TypeField {
                                         identifier: token.name_or_empty().to_owned(),
-                                        r#type: ASN1Type::ElsewhereDeclaredType(t.clone()),
+                                        ty: ASN1Type::ElsewhereDeclaredType(t.clone()),
                                     }),
                                 ));
                             }
@@ -160,7 +160,7 @@ pub fn resolve_custom_syntax(
                                     index,
                                     InformationObjectField::TypeField(TypeField {
                                         identifier: token.name_or_empty().to_owned(),
-                                        r#type: t.clone(),
+                                        ty: t.clone(),
                                     }),
                                 ));
                             }
@@ -244,7 +244,7 @@ pub(crate) fn built_in_type(associated_type: &str) -> Option<ASN1Type> {
             let identifier = ty.replace(SEQUENCE_OF, "").trim().to_string();
             Some(ASN1Type::SequenceOf(SequenceOrSetOf {
                 constraints: vec![],
-                r#type: Box::new(built_in_type(&identifier).unwrap_or(
+                element_type: Box::new(built_in_type(&identifier).unwrap_or(
                     ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                         parent: None,
                         identifier,
@@ -257,7 +257,7 @@ pub(crate) fn built_in_type(associated_type: &str) -> Option<ASN1Type> {
             let identifier = ty.replace(SET_OF, "").trim().to_string();
             Some(ASN1Type::SetOf(SequenceOrSetOf {
                 constraints: vec![],
-                r#type: Box::new(built_in_type(&identifier).unwrap_or(
+                element_type: Box::new(built_in_type(&identifier).unwrap_or(
                     ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                         parent: None,
                         identifier,

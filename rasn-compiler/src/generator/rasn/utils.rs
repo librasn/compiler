@@ -12,7 +12,7 @@ use crate::intermediate::{
     types::{Choice, ChoiceOption, Enumerated, SequenceOrSet, SequenceOrSetMember},
     utils::{to_rust_const_case, to_rust_enum_identifier, to_rust_snake_case, to_rust_title_case},
     ASN1Type, ASN1Value, AsnTag, CharacterStringType, IntegerType, TagClass, TaggingEnvironment,
-    ToplevelDeclaration, ToplevelTypeDeclaration,
+    ToplevelDefinition, ToplevelTypeDefinition,
 };
 
 use crate::generator::error::{GeneratorError, GeneratorErrorType};
@@ -248,7 +248,7 @@ fn format_sequence_member(
 ) -> Result<(TokenStream, NameType), GeneratorError> {
     let name = to_rust_snake_case(&member.name);
     let (mut all_constraints, mut formatted_type_name) =
-        constraints_and_type_name(&member.r#type, &member.name, parent_name)?;
+        constraints_and_type_name(&member.ty, &member.name, parent_name)?;
     all_constraints.append(&mut member.constraints.clone());
     if member.is_optional && member.default_value.is_none() {
         formatted_type_name = quote!(Option<#formatted_type_name>);
@@ -262,11 +262,11 @@ fn format_sequence_member(
         })
         .unwrap_or_default();
     let range_annotations = format_range_annotations(
-        matches!(member.r#type, ASN1Type::Integer(_)),
+        matches!(member.ty, ASN1Type::Integer(_)),
         &all_constraints,
     )?;
-    let alphabet_annotations = if let ASN1Type::CharacterString(c_string) = &member.r#type {
-        format_alphabet_annotations(c_string.r#type, &all_constraints)?
+    let alphabet_annotations = if let ASN1Type::CharacterString(c_string) = &member.ty {
+        format_alphabet_annotations(c_string.ty, &all_constraints)?
     } else {
         TokenStream::new()
     };
@@ -322,14 +322,14 @@ fn format_choice_option(
     extension_annotation: TokenStream,
 ) -> Result<TokenStream, GeneratorError> {
     let (mut all_constraints, formatted_type_name) =
-        constraints_and_type_name(&member.r#type, &member.name, parent_name)?;
+        constraints_and_type_name(&member.ty, &member.name, parent_name)?;
     all_constraints.append(&mut member.constraints.clone());
     let range_annotations = format_range_annotations(
-        matches!(member.r#type, ASN1Type::Integer(_)),
+        matches!(member.ty, ASN1Type::Integer(_)),
         &all_constraints,
     )?;
-    let alphabet_annotations = if let ASN1Type::CharacterString(c_string) = &member.r#type {
-        format_alphabet_annotations(c_string.r#type, &all_constraints)?
+    let alphabet_annotations = if let ASN1Type::CharacterString(c_string) = &member.ty {
+        format_alphabet_annotations(c_string.ty, &all_constraints)?
     } else {
         TokenStream::new()
     };
@@ -378,7 +378,7 @@ fn constraints_and_type_name(
                 kind: GeneratorErrorType::NotYetInplemented,
             })
         }
-        ASN1Type::CharacterString(c) => (c.constraints.clone(), string_type(&c.r#type)?),
+        ASN1Type::CharacterString(c) => (c.constraints.clone(), string_type(&c.ty)?),
         ASN1Type::Enumerated(_)
         | ASN1Type::Choice(_)
         | ASN1Type::Sequence(_)
@@ -455,10 +455,10 @@ pub fn format_default_methods(
             let val = value_to_tokens(
                 value,
                 Some(&to_rust_title_case(
-                    &type_to_tokens(&member.r#type)?.to_string(),
+                    &type_to_tokens(&member.ty)?.to_string(),
                 )),
             )?;
-            let ty = type_to_tokens(&member.r#type)?;
+            let ty = type_to_tokens(&member.ty)?;
             let method_name =
                 TokenStream::from_str(&default_method_name(parent_name, &member.name))?;
             output.append_all(quote! {
@@ -493,7 +493,7 @@ pub fn type_to_tokens(ty: &ASN1Type) -> Result<TokenStream, GeneratorError> {
             "Sequence values are currently unsupported!"
         )),
         ASN1Type::SetOf(so) | ASN1Type::SequenceOf(so) => {
-            let inner = type_to_tokens(&so.r#type)?;
+            let inner = type_to_tokens(&so.element_type)?;
             Ok(quote!(SequenceOf<#inner>))
         }
         ASN1Type::ObjectIdentifier(_) => Err(error!(
@@ -665,7 +665,7 @@ pub fn format_nested_sequence_members(
         .iter()
         .filter(|m| {
             matches!(
-                m.r#type,
+                m.ty,
                 ASN1Type::Enumerated(_)
                     | ASN1Type::Choice(_)
                     | ASN1Type::Sequence(_)
@@ -674,11 +674,11 @@ pub fn format_nested_sequence_members(
             )
         })
         .map(|m| {
-            generate(ToplevelDeclaration::Type(ToplevelTypeDeclaration {
+            generate(ToplevelDefinition::Type(ToplevelTypeDefinition {
                 parameterization: None,
                 comments: " Inner type ".into(),
                 name: inner_name(&m.name, parent_name).to_string(),
-                r#type: m.r#type.clone(),
+                ty: m.ty.clone(),
                 tag: None,
                 index: None,
             }))
@@ -695,7 +695,7 @@ pub fn format_nested_choice_options(
         .iter()
         .filter(|m| {
             matches!(
-                m.r#type,
+                m.ty,
                 ASN1Type::Enumerated(_)
                     | ASN1Type::Choice(_)
                     | ASN1Type::Sequence(_)
@@ -704,11 +704,11 @@ pub fn format_nested_choice_options(
             )
         })
         .map(|m| {
-            generate(ToplevelDeclaration::Type(ToplevelTypeDeclaration {
+            generate(ToplevelDefinition::Type(ToplevelTypeDefinition {
                 parameterization: None,
                 comments: " Inner type ".into(),
                 name: inner_name(&m.name, parent_name).to_string(),
-                r#type: m.r#type.clone(),
+                ty: m.ty.clone(),
                 tag: None,
                 index: None,
             }))
@@ -772,7 +772,7 @@ pub fn resolve_standard_syntax(
             if class_field.identifier.identifier() == field.identifier() {
                 match field {
                     InformationObjectField::TypeField(f) => {
-                        field_index_map.push((index, f.r#type.clone()));
+                        field_index_map.push((index, f.ty.clone()));
                     }
                     InformationObjectField::FixedValueField(f) => {
                         key = Some(f.value.clone());
@@ -828,11 +828,11 @@ impl ASN1Type {
                     acc.max_restrictive(c.integer_constraints())
                 }) != IntegerType::Unbounded
             }
-            ASN1Type::Choice(c) => c.options.iter().fold(true, |acc, opt| opt.r#type.is_const_type() && acc),
+            ASN1Type::Choice(c) => c.options.iter().fold(true, |acc, opt| opt.ty.is_const_type() && acc),
             ASN1Type::Set(s) |
-            ASN1Type::Sequence(s) => s.members.iter().fold(true, |acc, m| m.r#type.is_const_type() && acc),
+            ASN1Type::Sequence(s) => s.members.iter().fold(true, |acc, m| m.ty.is_const_type() && acc),
             ASN1Type::SetOf(s) |
-            ASN1Type::SequenceOf(s) => s.r#type.is_const_type(),
+            ASN1Type::SequenceOf(s) => s.element_type.is_const_type(),
             _ => false
         }
     }
@@ -894,7 +894,7 @@ mod tests {
                         SequenceOrSetMember {
                             name: "testMember0".into(),
                             tag: None,
-                            r#type: ASN1Type::Boolean(Boolean {
+                            ty: ASN1Type::Boolean(Boolean {
                                 constraints: vec![]
                             }),
                             default_value: None,
@@ -904,7 +904,7 @@ mod tests {
                         SequenceOrSetMember {
                             name: "testMember1".into(),
                             tag: None,
-                            r#type: ASN1Type::Integer(Integer {
+                            ty: ASN1Type::Integer(Integer {
                                 distinguished_values: None,
                                 constraints: vec![Constraint::SubtypeConstraint(ElementSet {
                             extensible: false,
@@ -980,7 +980,7 @@ mod tests {
                         ChoiceOption {
                             name: "testMember0".into(),
                             tag: None,
-                            r#type: ASN1Type::Boolean(Boolean {
+                            ty: ASN1Type::Boolean(Boolean {
                                 constraints: vec![]
                             }),
                             constraints: vec![]
@@ -988,7 +988,7 @@ mod tests {
                         ChoiceOption {
                             name: "testMember1".into(),
                             tag: None,
-                            r#type: ASN1Type::Integer(Integer {
+                            ty: ASN1Type::Integer(Integer {
                                 distinguished_values: None,
                                 constraints: vec![Constraint::SubtypeConstraint(ElementSet {
                                     extensible: false,

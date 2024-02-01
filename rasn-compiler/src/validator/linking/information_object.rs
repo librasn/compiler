@@ -7,10 +7,10 @@ use super::{
     GrammarError, GrammarErrorType,
 };
 
-impl ToplevelInformationDeclaration {
-    pub fn resolve_class_reference(mut self, tlds: &BTreeMap<String, ToplevelDeclaration>) -> Self {
+impl ToplevelInformationDefinition {
+    pub fn resolve_class_reference(mut self, tlds: &BTreeMap<String, ToplevelDefinition>) -> Self {
         if let Some(ClassLink::ByName(name)) = &self.class {
-            if let Some(ToplevelDeclaration::Information(ToplevelInformationDeclaration {
+            if let Some(ToplevelDefinition::Information(ToplevelInformationDefinition {
                 value: ASN1Information::ObjectClass(c),
                 ..
             })) = tlds.get(name)
@@ -22,11 +22,11 @@ impl ToplevelInformationDeclaration {
     }
 
     /// Collects supertypes of ASN1 values.
-    /// In `ToplevelTypeDeclaration`s, values will appear only as `DEFAULT`
+    /// In `ToplevelTypeDefinition`s, values will appear only as `DEFAULT`
     /// values in `SET`s or `SEQUENCE`s.
     pub fn collect_supertypes(
         &mut self,
-        tlds: &BTreeMap<String, ToplevelDeclaration>,
+        tlds: &BTreeMap<String, ToplevelDefinition>,
     ) -> Result<(), GrammarError> {
         match (&mut self.value, &self.class) {
             (ASN1Information::Object(ref mut o), Some(ClassLink::ByReference(class))) => {
@@ -50,7 +50,7 @@ impl ToplevelInformationDeclaration {
 fn link_object_fields(
     fields: &mut InformationObjectFields,
     class: &InformationObjectClass,
-    tlds: &BTreeMap<String, ToplevelDeclaration>,
+    tlds: &BTreeMap<String, ToplevelDefinition>,
 ) -> Result<(), GrammarError> {
     match fields {
         InformationObjectFields::DefaultSyntax(ref mut fields) => {
@@ -61,7 +61,7 @@ fn link_object_fields(
                     .find_map(|f| {
                         (f.identifier
                             == ObjectFieldIdentifier::SingleValue(fixed.identifier.clone()))
-                        .then_some(f.r#type.as_ref())
+                        .then_some(f.ty.as_ref())
                     })
                     .flatten()
                     .ok_or_else(|| GrammarError {
@@ -87,7 +87,7 @@ fn link_object_fields(
 impl ASN1Information {
     pub fn link_object_set_reference(
         &mut self,
-        tlds: &BTreeMap<String, ToplevelDeclaration>,
+        tlds: &BTreeMap<String, ToplevelDefinition>,
     ) -> bool {
         match self {
             ASN1Information::ObjectSet(s) => s.link_object_set_reference(tlds),
@@ -108,7 +108,7 @@ impl ASN1Information {
 impl SyntaxApplication {
     pub fn link_object_set_reference(
         &mut self,
-        tlds: &BTreeMap<String, ToplevelDeclaration>,
+        tlds: &BTreeMap<String, ToplevelDefinition>,
     ) -> bool {
         match self {
             SyntaxApplication::ObjectSetDeclaration(o) => o.link_object_set_reference(tlds),
@@ -136,7 +136,7 @@ impl InformationObjectClass {
 impl InformationObject {
     pub fn link_object_set_reference(
         &mut self,
-        tlds: &BTreeMap<String, ToplevelDeclaration>,
+        tlds: &BTreeMap<String, ToplevelDefinition>,
     ) -> bool {
         match &mut self.fields {
             InformationObjectFields::DefaultSyntax(d) => d.iter_mut().any(|field| field.link_object_set_reference(tlds)),
@@ -155,11 +155,11 @@ impl InformationObject {
 impl ObjectSetValue {
     pub fn link_object_set_reference(
         &mut self,
-        tlds: &BTreeMap<String, ToplevelDeclaration>,
+        tlds: &BTreeMap<String, ToplevelDefinition>,
     ) -> bool {
         match self {
             ObjectSetValue::Reference(id) => {
-                if let Some(ToplevelDeclaration::Information(ToplevelInformationDeclaration {
+                if let Some(ToplevelDefinition::Information(ToplevelInformationDefinition {
                     value: ASN1Information::Object(obj),
                     ..
                 })) = tlds.get(id)
@@ -195,7 +195,7 @@ impl ObjectSetValue {
 impl ObjectSet {
     pub fn link_object_set_reference(
         &mut self,
-        tlds: &BTreeMap<String, ToplevelDeclaration>,
+        tlds: &BTreeMap<String, ToplevelDefinition>,
     ) -> bool {
         self.values
             .iter_mut()
@@ -212,7 +212,7 @@ impl ObjectSet {
 impl InformationObjectField {
     pub fn link_object_set_reference(
         &mut self,
-        tlds: &BTreeMap<String, ToplevelDeclaration>,
+        tlds: &BTreeMap<String, ToplevelDefinition>,
     ) -> bool {
         match self {
             InformationObjectField::ObjectSetField(ObjectSetField { value, .. }) => {
