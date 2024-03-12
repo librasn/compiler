@@ -38,7 +38,7 @@ e2e_pdu!(
     sized_sequence_of_in_sequence_field,
     r#"PersonnelRecord ::=  SET {
         title VisibleString,
-        children SEQUENCE SIZE(0..4) OF INTEGER DEFAULT {}
+        children SEQUENCE SIZE(0..4) OF VisibleString DEFAULT {}
     }"#,
     r#"
         #[derive (AsnType, Debug, Clone, Decode, Encode, PartialEq)]
