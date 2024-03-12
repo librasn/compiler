@@ -9,7 +9,7 @@
 -- See also ITU-T Q.2751.1 (09/1997)
 -- See also the index of all ASN.1 assignments needed in this document
 
-Q2751DefinedTypesModule {itu-t(0) recommendation(0) q(17) omap2(2751) 
+Q2751DefinedTypesModule {itu-t(0) recommendation(0) q(17) omap2(2751)
   part1(1) informationModel(0) asn1Modules(2) q2751DefinedTypesModule(0)}
 DEFINITIONS IMPLICIT TAGS ::=
 BEGIN
@@ -82,67 +82,67 @@ Ss7SpecificErrorInformation ::= INTEGER {
   -- alternatively different specific error parameters could be defined for implementation dependent needs
   -- reserved for errors common to Q.751.x and Q.2751.x: Range 1000..1999
   adjPcInconsistencyError(1000),
-  -- The attribute adjPc in the containing signLinkSetTp and in at least 
+  -- The attribute adjPc in the containing signLinkSetTp and in at least
   -- one of the specified signDataLinkTp instances are different.
   adjPcNotUsedBySignRouteSetNePartError(1001),
-  -- No signRouteSetNePart instance exists for the specified value of adjPc 
+  -- No signRouteSetNePart instance exists for the specified value of adjPc
   -- within the mtpSignPoint.
   administrativeStateUnlockedError(1002),
-  -- The administrativeState of this object instance is not locked. This is a 
-  -- strict prerequisite in order to delete the object instance or to change 
+  -- The administrativeState of this object instance is not locked. This is a
+  -- strict prerequisite in order to delete the object instance or to change
   -- one of the specified attributes.
   congestionControlMethodInconsistencyError(1003),
-  -- The link would reference a ProtocolProfile where the appropriate 
-  -- packages for the congestionControlMethod of the superior 
+  -- The link would reference a ProtocolProfile where the appropriate
+  -- packages for the congestionControlMethod of the superior
   -- signLinkSetTp are not present.
   containedObjectsExistError(1004),
-  -- This object instance still contains one or more instances of other objects. 
+  -- This object instance still contains one or more instances of other objects.
   -- These instances must be deleted first.
   invalidSignDataLinkTpAndProtocolProfileError(1005),
-  -- It is tried to reference a combination of a mtpL2ProtocolProfile and a 
+  -- It is tried to reference a combination of a mtpL2ProtocolProfile and a
   -- signDataLinkTp, in which attribute transmissionRate is not present or
-  -- it is tried to reference a combination of a saalNniProtocolProfile and a 
+  -- it is tried to reference a combination of a saalNniProtocolProfile and a
   -- signDataLinkTp in which the attribute vcTTpPointer is not present.
   signLinkTpNotDeactivatedError(1006),
   -- The linkTpStatus does not contain the value deactivated.
   nameAlreadyUsedInObjectClassError(1007),
   -- The given name is already used by another instance of the same object class.
   numberOfTimeslotsInvalidError(1008),
-  -- The number of timeslots in the object instance referred by 
+  -- The number of timeslots in the object instance referred by
   -- interworkingPointPointer is not suitable for a signDataLinkTp
   objectStillReferencedError(1009),
-  -- This object instance is still referenced by one or more instances of other 
+  -- This object instance is still referenced by one or more instances of other
   -- objects and therefore must not be deleted.
   signDataLinkTpInconsistencyError(1010),
-  -- At least one of the specified signDataLinkTp instances points to a 
+  -- At least one of the specified signDataLinkTp instances points to a
   -- signDataLinkTp which is not contained in the same mtpSignPoint.
   signDataLinkTpInUseError(1011),
-  -- At least one of the specified signDataLinkTp instance is already referenced 
+  -- At least one of the specified signDataLinkTp instance is already referenced
   -- by another signLinkTp instance.
   spTimersProfileInconsistencyError(1012),
-  -- The link would reference an mtpL2ProtocolProfile whose l2TimerT2 
-  -- is not bigger than the q704-t17 of the spTimersProfile referenced by the 
+  -- The link would reference an mtpL2ProtocolProfile whose l2TimerT2
+  -- is not bigger than the q704-t17 of the spTimersProfile referenced by the
   -- containing mtpSignPoint.
   thresholdLevelsInconsistencyError(1013),
-  -- A threshold belonging to a lower level of congestion is not lower than a 
-  -- threshold of a higher level or the threshold for onset/abatement/discard in 
+  -- A threshold belonging to a lower level of congestion is not lower than a
+  -- threshold of a higher level or the threshold for onset/abatement/discard in
   -- one level do not fit together.
   timersInconsistencyError(1014),
-  -- The link would reference an mtpL2ProtocolProfile whose l2TimerT2 is 
+  -- The link would reference an mtpL2ProtocolProfile whose l2TimerT2 is
   -- not bigger than the q704-t17 of the containing mtpSignPoint.
   transmissionRateInconsistencyError(1015),
-  -- The attribute transmissionRate both of at least one of the specified 
-  -- signDataLinkTp instances  and of the mtpL2ProtocolProfile instance 
-  -- referenced by one signLinkTp instance must be equal. This request 
+  -- The attribute transmissionRate both of at least one of the specified
+  -- signDataLinkTp instances  and of the mtpL2ProtocolProfile instance
+  -- referenced by one signLinkTp instance must be equal. This request
   -- would have resulted in a non-matching combination.
-  -- In case of a broadband signDataLinkTp, the ingress- and egress traffic 
+  -- In case of a broadband signDataLinkTp, the ingress- and egress traffic
   -- descriptors do not match the referenced saalNniProtocolProfile.
   -- reserved for additional errors for Q.751.3: Range 3000..3999
   -- reserved for additional errors for Q.751.4: Range 4000..4999
   -- reserved for additional errors for Q.2751.1: Range 21000..21999
   invalidAttributeInVcTTpError(21000)
-  
--- An attribute in the object instance referred by vcTTpPointer is not 
+
+-- An attribute in the object instance referred by vcTTpPointer is not
 -- suitable for a signDataLinkTp.
 }(0..65535)
 

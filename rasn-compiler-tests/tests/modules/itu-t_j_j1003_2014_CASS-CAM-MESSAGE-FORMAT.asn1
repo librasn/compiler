@@ -14,7 +14,7 @@
 -- [1] CASS-CAM Security Protocol Message Format (Normal Mode)
 -- ============================================================
 -- [1-1] Protocol Message Header format : MSB first for all header data transfer
--- [1-1-1] The values of Message Type (2 byte) 
+-- [1-1-1] The values of Message Type (2 byte)
 -- RCASAnnounce Message ~~~~~~~~~~~0x0001
 -- RCASDownload Message~~~~~~~~~~~0x0002
 -- KeyRequest Message~~~~~~~~~~~~~0x0003
@@ -39,9 +39,9 @@ BEGIN
 -- RCASAnnounceMessage
 -- ============================================================
 RcasAncMsgContent ::= SEQUENCE {
-  -- If the value of protocolTypeFlag is 0x01, 
+  -- If the value of protocolTypeFlag is 0x01,
   -- the RCAS network protocol works as Normal mode
-  -- If the value of protocolTypeFlag is 0x02, 
+  -- If the value of protocolTypeFlag is 0x02,
   -- the RCAS network protocol works as Fast mode
   -- The other values are reserved
   protocolTypeFlag  OCTET STRING(SIZE (1)),
@@ -129,7 +129,7 @@ RSAEncryptedContent ::=
 RSAENCRYPTED{ToBeEnciphered} ::=
   BIT STRING
     (CONSTRAINED BY {
-       -- shall be the result of applying the encipherment procedure 
+       -- shall be the result of applying the encipherment procedure
        -- to the BER-encoded octets of a value of --ToBeEnciphered})
 
 -- ============================================================
@@ -168,7 +168,7 @@ RenewInfoMsgContent ::= SEQUENCE {
   -- => 0x02 : DRM Client Image
   -- => 0x03 : ASD Client Image
   clientType          OCTET STRING(SIZE (1)),
-  -- This field is used for identify Common IM or Individual IM 
+  -- This field is used for identify Common IM or Individual IM
   -- => 0x01 : Common IM
   -- => 0x02 : Individual IM
   -- => 0x03 : Deliver Common IM & Individual IM Simultaneously

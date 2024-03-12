@@ -2,9 +2,9 @@ AlgorithmObjectIdentifiers {joint-iso-itu-t ds(5) module(1) algorithmObjectIdent
 DEFINITIONS ::=
 BEGIN
 
--- EXPORTS All 
+-- EXPORTS All
 
-/* 
+/*
 The values defined in this module are primarily taking from various specifications and
 collected here for easy reference by other specifcations.
 
@@ -12,7 +12,7 @@ Wen values are copied form an IETF RFC, the IETF RFC number is shown.
 
 When values are copied from the NIST Computer Security Objects Register (CSOR),
 the label CSOR is used.
-*/ 
+*/
 
 IMPORTS
   algorithm, authenticationFramework
@@ -25,14 +25,14 @@ ID ::= OBJECT IDENTIFIER
 
 -- Object identifier allocations
 
--- Object identifiers allocated by this Specification (but not used)  
+-- Object identifiers allocated by this Specification (but not used)
 
 nullAlgorithm           ID ::= {algorithm 0}
 encryptionAlgorithm     ID ::= {algorithm 1}
 hashAlgorithm           ID ::= {algorithm 2}
 signatureAlgorithm      ID ::= {algorithm 3}
 
--- synonyms 
+-- synonyms
 
 id-ea                   ID ::= encryptionAlgorithm
 id-ha                   ID ::= hashAlgorithm
@@ -83,7 +83,7 @@ id-aes256-CBC           ID ::= { aes 42 } -- CSOR
 
 id-aes128-wrap          ID ::= { aes 5 }
 id-aes192-wrap          ID ::= { aes 25 }
-id-aes256-wrap          ID ::= { aes 45 } 
+id-aes256-wrap          ID ::= { aes 45 }
 
 -- Pubkic key algorithm object identifiers
 
@@ -117,7 +117,7 @@ hashAlg                 ID ::= {  iso(1) identified-organization(3) dod(6) inter
 -- SIGNATURE ALGORITHM IDS
 
 -- RSASSA-PKCS1-v1_5 signature algorithm object identifiers (From IETF RFC 3447)
- 
+
 sha1WithRSAEncryption   ID ::= { pkcs-1 sha1WithRSAEncryption(5) }
 sha256WithRSAEncryption ID ::= { pkcs-1 sha256WithRSAEncryption(11) }
 sha384WithRSAEncryption ID ::= { pkcs-1 sha384WithRSAEncryption(12) }
@@ -134,7 +134,7 @@ id-mgf1                 ID ::= { pkcs-1 8 }
 id-dsa-with-sha1        ID ::= {iso(1) member-body(2) us(840) x9-57(10040) x9algorithm(4)
                                 dsa-with-sha1(3)}
 id-dsa-with-sha224      ID ::= { sigAlgs 1 } -- CSOR
-id-dsa-with-sha256      ID ::= { sigAlgs 2 } -- CSOR 
+id-dsa-with-sha256      ID ::= { sigAlgs 2 } -- CSOR
 
 -- From IETF RFC 5758
 ecdsa-with-SHA224       ID ::= { ansi-x9-62 signatures(4)
@@ -199,7 +199,7 @@ id-gmac                 ID ::= { iso9797 part3(3) gmac(4) } -- ISO/IEC 9797-3
 
 -- Hashing alogorithms
 
-mD5Algorithm ALGORITHM ::= { 
+mD5Algorithm ALGORITHM ::= {
   PARMS          NULL
   IDENTIFIED BY {iso(1) member-body(2) us(840) rsadsi(113549) digestAlgorithm(2) md5(5)}}
 
@@ -207,14 +207,14 @@ mD5Algorithm ALGORITHM ::= {
 
 sha1Algorithm ALGORITHM ::= {
   PARMS          NULL
-  IDENTIFIED BY id-sha1 }  
+  IDENTIFIED BY id-sha1 }
 
 -- Note that the SHA1 algorithm may not be considered secure
 
 sha224 ALGORITHM ::= { -- IETF RFC 5754
   IDENTIFIED BY id-sha224 }
 
-sha256 ALGORITHM ::= { -- IETF RFC 5754 
+sha256 ALGORITHM ::= { -- IETF RFC 5754
   IDENTIFIED BY id-sha256 }
 
 sha384 ALGORITHM ::= { -- IETF RFC 5754
@@ -231,7 +231,7 @@ HashAlgorithms ALGORITHM ::= {sha1Algorithm |
 
 -- Symmetric encryption algorithms
 
-aes128-CBC ALGORITHM ::= {  -- CSOR 
+aes128-CBC ALGORITHM ::= {  -- CSOR
   PARMS         AES-InitializationVector
   IDENTIFIED BY id-aes128-CBC }
 
@@ -329,7 +329,7 @@ rSASSA-PSS ALGORITHM ::= {
     trailerField     [3]  INTEGER DEFAULT 1 }
   IDENTIFIED BY         id-RSASSA-PSS }
 
--- 
+--
 
 -- DSA signature algorithms
 
@@ -341,7 +341,7 @@ dsa-with-sha256 ALGORITHM ::= { -- IETF RFC 5754
 
 -- ECDSA signature algorithms
 
-ecdsa-with-SHA224-Algorithm ALGORITHM ::= { -- IETF RFC  
+ecdsa-with-SHA224-Algorithm ALGORITHM ::= { -- IETF RFC
   IDENTIFIED BY ecdsa-with-SHA224 }
 
 ecdsa-with-SHA256-Algorithm ALGORITHM ::= { -- IETF RFC 5758

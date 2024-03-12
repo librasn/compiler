@@ -43,12 +43,12 @@ cpRequest OPERATION ::=
   RESULT    CpRequestRes
   ERRORS
     {notAvailable |
-      
+
       -- feature not available in combination with the basic service
       invalidCallState | -- call park not possible in current call state
        resourceUnavailable | -- maximum number of parked calls reached
        supplementaryServiceInteractionNotAllowed |
-      
+
       -- other supplementary service prohibits call park invocation
       undefined -- undefined reason--}
   CODE      local:106
@@ -71,17 +71,17 @@ CpRequestRes ::= SEQUENCE {
   ...
 }
 
-cpSetup OPERATION ::= { -- sent from parked endpoint to the parked-to endpoint 
+cpSetup OPERATION ::= { -- sent from parked endpoint to the parked-to endpoint
   ARGUMENT  CpSetupArg
   RESULT    CpSetupRes
   ERRORS
     {notAvailable |
-      
+
       -- feature not available in combination with the basic service
       invalidCallState | -- call park not possible in current call state
        resourceUnavailable | -- maximum number of parked calls reached
        supplementaryServiceInteractionNotAllowed |
-      
+
       -- other supplementary service prohibits call park invocation
       undefined -- undefined reason --}
   CODE      local:107
@@ -105,7 +105,7 @@ CpSetupRes ::= SEQUENCE {
 }
 
 groupIndicationOn OPERATION ::=
-  { -- sent from the parked-to endpoint/alerting endpoint to the group members 
+  { -- sent from the parked-to endpoint/alerting endpoint to the group members
   ARGUMENT  GroupIndicationOnArg
   RESULT    GroupIndicationOnRes
   ERRORS    {undefined -- undefined reason--}
@@ -119,9 +119,9 @@ GroupIndicationOnArg ::= SEQUENCE {
   -- alerting call within Setup-UUIE
   groupMemberUserNr  EndpointAddress,
   retrieveCallType   CallType,
-  partyToRetrieve    EndpointAddress, -- Parked or Calling User 
+  partyToRetrieve    EndpointAddress, -- Parked or Calling User
   retrieveAddress    EndpointAddress, -- parked-to or alerting entity address
-  
+
   -- (may also be a GK, see 9.2)
   parkPosition       ParkedToPosition OPTIONAL,
   extensionArg       SEQUENCE SIZE (0..255) OF MixedExtension OPTIONAL,
@@ -134,7 +134,7 @@ GroupIndicationOnRes ::= SEQUENCE {
 }
 
 groupIndicationOff OPERATION ::=
-  { -- sent from the parked-to endpoint/alerting endpoint to the group members 
+  { -- sent from the parked-to endpoint/alerting endpoint to the group members
   ARGUMENT  GroupIndicationOffArg
   RESULT    GroupIndicationOffRes
   ERRORS
@@ -162,7 +162,7 @@ pickrequ OPERATION ::= { -- sent from the picking-up user to the parked-to/
   RESULT    PickrequRes
   ERRORS
     {undefined | -- undefined reason
-      
+
       callAlreadyPickedUp -- call has already been picked up by another user --}
   CODE      local:110
 }
@@ -180,10 +180,10 @@ PickrequArg ::= SEQUENCE {
 
 PickrequRes ::= SEQUENCE {
   callPickupId  CallIdentifier,
-  -- identification of the call that is being picked up (parked or alerting call), 
+  -- identification of the call that is being picked up (parked or alerting call),
   -- if not sent in pickrequ invoke, it is assigned at the parked-to/alerting
   -- endpoint and reflects the CallIdentification of the parked/alerting call for
-  -- later association with the pickExe invoke APDU. 
+  -- later association with the pickExe invoke APDU.
   extensionRes  SEQUENCE SIZE (0..255) OF MixedExtension OPTIONAL,
   ...
 }
@@ -194,19 +194,19 @@ pickup OPERATION ::=
   -- be local (i.e. parked-to/alerting endpoint equals picking-up
   -- endpoint) or may be remote (i.e. picking-up user is located at a
   -- remote picking-up endpoint having sent pickrequ invoke APDU to the
-  -- parked-to/alerting endpoint). 
+  -- parked-to/alerting endpoint).
   ARGUMENT  PickupArg
   RESULT    PickupRes
   ERRORS
     {undefined | -- undefined reason
-      
+
       callAlreadyPickedUp -- call has already been picked up by another user --}
   CODE      local:111
 }
 
 PickupArg ::= SEQUENCE {
   callPickupId      CallIdentifier,
-  -- identification of this call to be picked up (parked or alerting call); 
+  -- identification of this call to be picked up (parked or alerting call);
   -- equals the CallIdentifier value that was assigned to this call in Setup-UUIE
   picking-upNumber  EndpointAddress,
   extensionArg      SEQUENCE SIZE (0..255) OF MixedExtension OPTIONAL,
@@ -224,7 +224,7 @@ pickExe OPERATION ::=
   RESULT    PickExeRes
   ERRORS
     {undefined | -- undefined reason
-      
+
       callPickupIdInvalid
       -- value not matching with the previous SS-PICKUP request
       }
@@ -233,7 +233,7 @@ pickExe OPERATION ::=
 
 PickExeArg ::= SEQUENCE {
   callPickupId      CallIdentifier,
-  -- identification of the parked/alerting call to be picked-up; 
+  -- identification of the parked/alerting call to be picked-up;
   -- required at picking-up endpoint to associate the SS-PICKUP invoked with this
   -- incoming setup message carrying the pickExe invoke APDU.
   picking-upNumber  EndpointAddress,

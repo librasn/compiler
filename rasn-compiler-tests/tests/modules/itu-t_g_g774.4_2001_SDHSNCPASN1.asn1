@@ -13,7 +13,7 @@ SDHSNCPASN1 {itu-t(0) recommendation(0) g(7) g774(774) hyphen(127) sncp(4)
   informationModel(0) asn1Module(2) sdhsncp(0)} DEFINITIONS IMPLICIT TAGS ::=
 BEGIN
 
---  EXPORTS everything 
+--  EXPORTS everything
 IMPORTS
   ObjectInstance
     FROM CMIP-1 {joint-iso-ccitt ms(9) cmip(1) modules(0) protocol(3)}
@@ -48,9 +48,9 @@ g774-04Package OBJECT IDENTIFIER ::= {sdhSNCP package(4)}
 g774-04StandardSpecificExtension OBJECT IDENTIFIER ::=
   {sdhSNCP standardSpecificExtension(0)}
 
---  The following value assignments are for the Protection Criteria in the 
+--  The following value assignments are for the Protection Criteria in the
 --  context of SDH.
---  These values shall always be assigned by this Recommendation in the context 
+--  These values shall always be assigned by this Recommendation in the context
 --  of SDH.
 sncpProtectionCriteria OBJECT IDENTIFIER ::=
   {g774-04StandardSpecificExtension 0}
@@ -72,24 +72,24 @@ PointToPointProtection ::= SEQUENCE {
 }
 
 --  The object Instance of the xCon of PointToPoint represents the object
---  instance of the created connectionProtection 
+--  instance of the created connectionProtection
 PointToMultipointProtection ::= SEQUENCE {
   protectedPointToMultipoint   PointToMultipoint,
   protectingPointToMultipoint  ProtectingConnection
 }
 
---  The object Instance of the xConnections and mpXCon of PointToMultipoint 
---  represents the object instances of the created crossConnections and 
+--  The object Instance of the xConnections and mpXCon of PointToMultipoint
+--  represents the object instances of the created crossConnections and
 --  mpConnectionProtection
---  The protectingPointToMultipoint represents the object instance of the 
---  unreliable TP and the object instance of the created mpConnectionProtection 
+--  The protectingPointToMultipoint represents the object instance of the
+--  unreliable TP and the object instance of the created mpConnectionProtection
 --  of the protecting connection
 ProtectedAddLeg ::= CHOICE {protected    [0]  AddLeg,
                             unProtected  [1]  AddLeg
 }
 
---  The object Instance of the mpXCon of AddLeg represents the object instance of 
---  the mpConnectionProtection to which new legs are added 
+--  The object Instance of the mpXCon of AddLeg represents the object instance of
+--  the mpConnectionProtection to which new legs are added
 ProtectedConnectInformation ::= SEQUENCE {
   connectionType
     CHOICE {connect        [0]  ProtectedConnection,
@@ -125,7 +125,7 @@ ProtectedConnectResult ::=
             unprotected  [2]  Unprotected}
 
 --  the n-th element in the "SEQUENCE OF" is related to the n-th element in the
---  "SEQUENCE OF" of the "ProtectedConnectInformation" type. 
+--  "SEQUENCE OF" of the "ProtectedConnectInformation" type.
 ProtectingConnection ::= SEQUENCE {
   unreliableTp  ObjectInstance,
   conProt       ObjectInstance

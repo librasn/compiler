@@ -125,7 +125,7 @@ ReleaseCompleteReason ::= CHOICE {
   facilityCallDeflection    NULL, -- call was deflected using a Facility message
   securityDenied            NULL, -- incompatible security settings
   calledPartyNotRegistered  NULL, -- used by gatekeeper when endpoint has
-  
+
   -- preGrantedARQ to bypass ARQ/ACF
   callerNotRegistered       NULL
 } -- used by gatekeeper when endpoint has
@@ -188,7 +188,7 @@ ConferenceList ::= SEQUENCE {
 
 FacilityReason ::= CHOICE {
   routeCallToGatekeeper  NULL, -- call must use gatekeeper model
-  
+
   -- gatekeeper is alternativeAddress
   callForwarded          NULL,
   routeCallToMC          NULL,
@@ -503,7 +503,7 @@ RequestSeqNum ::= INTEGER(1..65535)
 GatekeeperIdentifier ::= BMPString(SIZE (1..128))
 
 BandWidth ::= INTEGER(0..4294967295) -- in 100s of bits
-                     
+
 
 CallReferenceValue ::= INTEGER(0..65535)
 
@@ -515,7 +515,7 @@ ProtocolIdentifier ::= OBJECT IDENTIFIER
 -- {itu-t (0) recommendation (0) h (8) 2250
 -- version (0) 2}
 TimeToLive ::= INTEGER(1..4294967295) --in seconds
-                      
+
 
 CallIdentifier ::= SEQUENCE {guid  GloballyUniqueID,
                              ...
@@ -532,15 +532,15 @@ NonIsoIntegrityMechanism ::=
   CHOICE { -- HMAC mechanism used, no truncation, tagging may be necessary!
   hMAC-MD5           NULL,
   hMAC-iso10118-2-s  EncryptIntAlg, -- according to ISO/IEC 10118-2 using
-  
+
   -- EncryptIntAlg as core block encryption algorithm
   -- (short MAC)
   hMAC-iso10118-2-l  EncryptIntAlg, -- according to ISO/IEC 10118-2 using
-  
+
   -- EncryptIntAlg as core block encryption algorithm
   -- (long MAC)
   hMAC-iso10118-3    OBJECT IDENTIFIER, -- according to ISO/IEC 10118-3 using
-  
+
   -- OID as hash function (OID is SHA-1,
   -- RIPE-MD160,
   -- RIPE-MD128)
@@ -551,7 +551,7 @@ IntegrityMechanism ::= CHOICE { -- for RAS message integrity
   nonStandard  NonStandardParameter,
   digSig       NULL, -- indicates to apply a digital signature
   iso9797      OBJECT IDENTIFIER, -- according to ISO/IEC 9797 using OID as
-  
+
   -- core encryption algorithm (X-CBC MAC)
   nonIsoIM     NonIsoIntegrityMechanism,
   ...
@@ -836,7 +836,7 @@ UnregRejectReason ::= CHOICE {
   undefinedReason         NULL,
   ...,
   permissionDenied        NULL, -- requesting user not allowed to unregister
-  
+
   -- specified user
   securityDenial          NULL
 }

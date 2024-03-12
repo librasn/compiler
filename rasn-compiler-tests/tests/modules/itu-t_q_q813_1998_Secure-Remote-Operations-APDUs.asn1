@@ -9,7 +9,7 @@
 -- See also ITU-T Q.813 (06/1998)
 -- See also the index of all ASN.1 assignments needed in this document
 
-Secure-Remote-Operations-APDUs {itu-t recommendation q(17) q813(813) 
+Secure-Remote-Operations-APDUs {itu-t recommendation q(17) q813(813)
   stase(1) stase-pci(0) stase-data(2)} DEFINITIONS IMPLICIT TAGS ::=
 BEGIN
 
@@ -80,7 +80,7 @@ Hash ::= SEQUENCE {
   encryptionParameters  EncryptionParameters OPTIONAL
 }
 
--- hashValue represents the message digest resulting from hashing the DER encoded 
+-- hashValue represents the message digest resulting from hashing the DER encoded
 -- ROSE PDU.
 -- encryptionParameters represents the parameters used for the hashing algorithm.
 HashedROSEpdu ::= SEQUENCE {
@@ -90,7 +90,7 @@ HashedROSEpdu ::= SEQUENCE {
 }
 
 -- data represents the DER encoded ROSE PDU
--- hash represents the hash value either as a simple OCTET STRING or the Hash 
+-- hash represents the hash value either as a simple OCTET STRING or the Hash
 -- structure defined above.
 Seal ::= SEQUENCE {
   sealValue             OCTET STRING(SIZE (8..128)),
@@ -106,7 +106,7 @@ SealedROSEpdu ::= SEQUENCE {
 }
 
 -- data represents the DER encoded ROSE PDU
--- seal represents the seal value either as a simple OCTET STRING or the Seal structure 
+-- seal represents the seal value either as a simple OCTET STRING or the Seal structure
 -- defined above.
 Signature ::= SEQUENCE {
   signatureValue        SEQUENCE (SIZE (1..4)) OF INTEGER,
@@ -123,7 +123,7 @@ SignedROSEpdu ::= SEQUENCE {
 }
 
 -- data contains the DER encoding of the ROSE PDU.
--- signature represents the signature of the DER encoded ROSE PDU, either as a simple 
+-- signature represents the signature of the DER encoded ROSE PDU, either as a simple
 -- INTEGER or the Signature structure defined above.
 ConfidentialSigned ::= SEQUENCE {
   encrypted  OCTET STRING,
@@ -193,7 +193,7 @@ EncryptionParameters ::= SET {
   encryptionCertificate               [22]  EncryptionCertificate OPTIONAL,
   -- X.509 certificate or certification path of the sender's public key used for encryption only
   signatureCertificate                [23]  SignatureCertificate OPTIONAL,
-  -- X.509 certificate or certification path of the sender's public key used for digital signatures only 
+  -- X.509 certificate or certification path of the sender's public key used for digital signatures only
   encryptedAuthenticatedSymmetricKey
     [24]  EncryptedAuthenticatedSymmetricKey OPTIONAL,
   -- symmetric session key, encrypted with the receiver's public key and signed with sender's key
@@ -202,8 +202,8 @@ EncryptionParameters ::= SET {
 }
 
 -- EncryptionParameters is an extensible type that is used as a catch-all for any
--- parameters that may be used by any of the STs. In most applications only a small 
--- number, if any, of the components of EncryptionParameters will be used. 
+-- parameters that may be used by any of the STs. In most applications only a small
+-- number, if any, of the components of EncryptionParameters will be used.
 KeyId ::= CHOICE {name    GraphicString,
                   number  INTEGER
 }

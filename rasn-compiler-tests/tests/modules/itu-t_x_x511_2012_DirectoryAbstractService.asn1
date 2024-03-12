@@ -14,7 +14,7 @@ DirectoryAbstractService {joint-iso-itu-t ds(5) module(1)
   directoryAbstractService(2) 7} DEFINITIONS ::=
 BEGIN
 
--- EXPORTS All 
+-- EXPORTS All
 -- The types and values defined in this module are exported for use in the other ASN.1
 -- modules contained within these Directory Specifications, and for the use of other
 -- applications which will use them to access Directory services. Other applications may
@@ -29,7 +29,7 @@ IMPORTS
     FROM UsefulDefinitions {joint-iso-itu-t ds(5) module(1)
       usefulDefinitions(0) 7}
   Attribute{}, ATTRIBUTE, AttributeType, AttributeTypeAndValue,
-    AttributeTypeAssertion, AttributeValue, AttributeValueAssertion, 
+    AttributeTypeAssertion, AttributeValue, AttributeValueAssertion,
     CONTEXT, ContextAssertion, DistinguishedName, MATCHING-RULE, Name,
     OBJECT-CLASS, RelativeDistinguishedName, SupportedAttributes,
     SupportedContexts
@@ -73,7 +73,7 @@ IMPORTS
     FROM Lightweight-Directory-Access-Protocol-V3 {iso(1)
       identified-organization(3) dod(6) internet(1) directory(1) ldap(18)};
 
--- Common data types 
+-- Common data types
 CommonArguments ::= SET {
   serviceControls      [30]  ServiceControls DEFAULT {},
   securityParameters   [29]  SecurityParameters OPTIONAL,
@@ -157,7 +157,7 @@ EntryInformationSelection ::= SET {
   attributes
     CHOICE {allUserAttributes  [0]  NULL,
             select             [1]  SET OF AttributeType
-            -- empty set implies no attributes are requested 
+            -- empty set implies no attributes are requested
   } DEFAULT allUserAttributes:NULL,
   infoTypes
     [2]  INTEGER {attributeTypesOnly(0), attributeTypesAndValues(1)}
@@ -205,7 +205,7 @@ EntryInformation ::= SEQUENCE {
               ...} OPTIONAL,
   incompleteEntry  [3]  BOOLEAN DEFAULT FALSE, -- not in first edition systems
   partialName      [4]  BOOLEAN DEFAULT FALSE, -- not in first or second edition systems
-  derivedEntry     [5]  BOOLEAN DEFAULT FALSE, -- not in pre-fourth edition systems 
+  derivedEntry     [5]  BOOLEAN DEFAULT FALSE, -- not in pre-fourth edition systems
   ...
 }
 
@@ -277,7 +277,7 @@ MatchingRuleAssertion ::= SEQUENCE {
   matchValue
     [3]  MATCHING-RULE.&AssertionType
            (CONSTRAINED BY {
-              -- matchValue shall be a value of  type specified by the &AssertionType field of 
+              -- matchValue shall be a value of  type specified by the &AssertionType field of
               -- one of the MATCHING-RULE information objects identified by matchingRule -- }),
   dnAttributes  [4]  BOOLEAN DEFAULT FALSE,
   ...
@@ -326,7 +326,7 @@ Time ::= CHOICE {
 
 ErrorProtectionRequest ::= INTEGER {none(0), signed(1)}
 
---  Bind and unbind operations 
+--  Bind and unbind operations
 directoryBind OPERATION ::= {
   ARGUMENT  DirectoryBindArgument
   RESULT    DirectoryBindResult
@@ -427,7 +427,7 @@ directoryBindError ERROR ::= {
 
 BindKeyInfo ::= ENCRYPTED{BIT STRING}
 
---  Operations, arguments, and results 
+--  Operations, arguments, and results
 read OPERATION ::= {
   ARGUMENT  ReadArgument
   RESULT    ReadResult
@@ -579,7 +579,7 @@ PartialOutcomeQualifier ::= SET {
             lowEstimate   [8]  INTEGER,
             exact         [9]  INTEGER,
             ...} OPTIONAL
-  --                            [10] Not to be used 
+  --                            [10] Not to be used
 }
 
 LimitProblem ::= INTEGER {
@@ -909,7 +909,7 @@ LinkedArgumentData ::= SEQUENCE {
 
 LinkedResult ::= NULL
 
--- Errors and parameters 
+-- Errors and parameters
 abandoned ERROR ::= { -- not literally an "error"
   PARAMETER OPTIONALLY-PROTECTED  {AbandonedData}
   CODE                            id-errcode-abandoned
@@ -1068,7 +1068,7 @@ UpdateProblem ::= INTEGER {
   insufficientPasswordQuality(13), passwordInHistory(14), noPasswordSlot(15)
 }
 
--- attribute types 
+-- attribute types
 id-at-family-information OBJECT IDENTIFIER ::= {id-at 64}
 
 END -- DirectoryAbstractService

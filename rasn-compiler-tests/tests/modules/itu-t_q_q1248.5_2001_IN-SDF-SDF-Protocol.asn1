@@ -62,10 +62,10 @@ indspContract CONTRACT ::= {
   ID                     id-contract-indsp
 }
 
--- In the indspContract either DSA may assume the role of initiator and invoke the operations of the 
+-- In the indspContract either DSA may assume the role of initiator and invoke the operations of the
 -- contract.
--- When a pair of DSAs from different open systems interact, this association contract is realised as an 
--- SS7 application layer protocol, referred to as the IN Directory System Protocol (DSP). The definition 
+-- When a pair of DSAs from different open systems interact, this association contract is realised as an
+-- SS7 application layer protocol, referred to as the IN Directory System Protocol (DSP). The definition
 -- of this protocol in terms of an SS7 application context is provided in this module.
 dspConnectionPackage CONNECTION-PACKAGE ::= {
   BIND    dSABind
@@ -104,15 +104,15 @@ shadowSupplierContract CONTRACT ::= {
   ID                     id-contract-shadowSupplier
 }
 
--- Since the shadow consumer is the initiator of the ShadowConsumerContract, it assumes the role of 
--- consumer of the shadowConsumerPackage. This means that the shadow consumer invokes the 
--- IN-RequestShadowUpdate operation and that the shadow supplier invokes the IN-UpdateShadow 
+-- Since the shadow consumer is the initiator of the ShadowConsumerContract, it assumes the role of
+-- consumer of the shadowConsumerPackage. This means that the shadow consumer invokes the
+-- IN-RequestShadowUpdate operation and that the shadow supplier invokes the IN-UpdateShadow
 -- operation.
 -- Since the shadow supplier is the initiator of the shadowSupplierContract, it assumes the role of
--- supplier of the shadowSupplierPackage. This means that the shadow supplier invokes the 
+-- supplier of the shadowSupplierPackage. This means that the shadow supplier invokes the
 -- operations of the contract.
--- The SS7 realisation of the two forms of Shadow Abstract Service, referred to as the IN 
--- Directory Information Shadowing Protocol (DISP) are defined in terms of several SS7 
+-- The SS7 realisation of the two forms of Shadow Abstract Service, referred to as the IN
+-- Directory Information Shadowing Protocol (DISP) are defined in terms of several SS7
 -- application contexts provided in this module.
 dispConnectionPackage CONNECTION-PACKAGE ::= {
   BIND    dSAShadowBind
@@ -133,7 +133,7 @@ shadowSupplierPackage OPERATION-PACKAGE ::= {
 }
 
 -- DSP Abstract-Syntaxes
--- The Directory ASEs that realise the DSP operation packages specified in the above share the 
+-- The Directory ASEs that realise the DSP operation packages specified in the above share the
 -- following single abstract syntax.
 inDirectorySystemAbstractSyntax ABSTRACT-SYNTAX ::= {
   BasicDSP-PDUs
@@ -162,7 +162,7 @@ DSABinding-PDUs ::= CHOICE {bind    Bind{dSABind},
 }
 
 -- DISP Abstaract-Syntaxes
--- The Directory ASEs that realise the DISP operation packages specified in the above share the 
+-- The Directory ASEs that realise the DISP operation packages specified in the above share the
 -- following abstract syntax.
 inDirectoryShadowAbstractSyntax ABSTRACT-SYNTAX ::= {
   BasicDISP-PDUs
@@ -177,8 +177,8 @@ DISP-Invokable OPERATION ::=
 DISP-Returnable OPERATION ::=
   {requestShadowUpdate | updateShadow | coordinateShadowUpdate}
 
--- The realisation of the DISP connection package specified in the above uses a separate abstract 
--- syntax as follows. 
+-- The realisation of the DISP connection package specified in the above uses a separate abstract
+-- syntax as follows.
 inDirectoryDSAShadowBindingAbstractSyntax ABSTRACT-SYNTAX ::= {
   DISPBinding-PDUs
   IDENTIFIED BY  id-as-indsaShadowBindingAS
@@ -212,7 +212,7 @@ inDirectorySystemWith3seAC APPLICATION-CONTEXT ::= {
   APPLICATION CONTEXT NAME  id-ac-indirectorySystemWith3seAC
 }
 
--- The inDirectorySystemWith3seAC is used for the realisation of indspContract when 3-way 
+-- The inDirectorySystemWith3seAC is used for the realisation of indspContract when 3-way
 -- authentication is required.
 -- DISP Application Contexts
 inShadowSupplierInitiatedAC APPLICATION-CONTEXT ::= {
@@ -237,7 +237,7 @@ inShadowSupplierInitiatedWith3seAC APPLICATION-CONTEXT ::= {
   APPLICATION CONTEXT NAME  id-ac-inShadowSupplierInitiatedWith3seAC
 }
 
--- The inShadowSupplierInitiatedWith3seAC is used for the realisation of shadowSupplierContract 
+-- The inShadowSupplierInitiatedWith3seAC is used for the realisation of shadowSupplierContract
 -- when 3-way authentication is required.
 inShadowConsumerInitiatedAC APPLICATION-CONTEXT ::= {
   CONTRACT                  shadowConsumerContract
@@ -261,11 +261,11 @@ inShadowConsumerInitiatedWith3seAC APPLICATION-CONTEXT ::= {
   APPLICATION CONTEXT NAME  id-ac-inShadowConsumerInitiatedWith3seAC
 }
 
--- The inShadowConsumerInitiatedWith3seAC is used for the realisation of 
+-- The inShadowConsumerInitiatedWith3seAC is used for the realisation of
 --shadowConsumerContract when 3-way authentication is required.
 -- DSP/DISP Common Application Context
 -- trafficFlowControlAC APPLICATION-CONTEXT
--- This is defined in Q.1248.4. 
+-- This is defined in Q.1248.4.
 -- Contracts, packages, and abstract syntaxes used in the trafficFlowControlAC is also shown in Q.1248.4.
 END
 

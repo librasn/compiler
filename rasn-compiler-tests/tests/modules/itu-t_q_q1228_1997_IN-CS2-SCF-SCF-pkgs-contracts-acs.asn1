@@ -9,7 +9,7 @@
 -- See also ITU-T Q.1228 (09/1997)
 -- See also the index of all ASN.1 assignments needed in this document
 
--- This subclause includes all of the ASN.1 type and value definitions contained in this SCF/SCF Specification, in the 
+-- This subclause includes all of the ASN.1 type and value definitions contained in this SCF/SCF Specification, in the
 -- form of the ASN.1 module, " IN-CS2-SCF-SCF-pkgs-contracts-acs ".
 IN-CS2-SCF-SCF-pkgs-contracts-acs {itu-t recommendation q 1228 modules(0)
   in-cs2-scf-scf-pkgs-contracts-acs(14) version1(0)} DEFINITIONS ::=
@@ -76,7 +76,7 @@ IMPORTS
     FROM UsefulDefinitions {joint-iso-itu-t ds(5) module(1)
       usefulDefinitions(0) 3};
 
--- Application Contexts 
+-- Application Contexts
 scf-scfOperationsAC APPLICATION-CONTEXT ::= {
   CONTRACT                  scf-scfContract
   DIALOGUE MODE             structured
@@ -119,7 +119,7 @@ distributedSCFSystemWith3seAC APPLICATION-CONTEXT ::= {
   APPLICATION CONTEXT NAME  id-ac-distributedSCFSystemWith3seAC
 }
 
--- Contracts 
+-- Contracts
 scf-scfContract CONTRACT ::= {
   CONNECTION             scf-scfConnectionPackage {networkSpecificBoundSet}
   INITIATOR CONSUMER OF
@@ -139,8 +139,8 @@ dsspContract CONTRACT ::= {
   ID                     id-contract-dssp
 }
 
---  Connection Package 
-scf-scfConnectionPackage{PARAMETERS-BOUND:bound} CONNECTION-PACKAGE ::= 
+--  Connection Package
+scf-scfConnectionPackage{PARAMETERS-BOUND:bound} CONNECTION-PACKAGE ::=
 {
   BIND              scfBind {bound}
   UNBIND            scfUnbind
@@ -148,7 +148,7 @@ scf-scfConnectionPackage{PARAMETERS-BOUND:bound} CONNECTION-PACKAGE ::=
   ID                id-package-scf-scfConnection
 }
 
-dsspConnectionPackage{PARAMETERS-BOUND:bound} CONNECTION-PACKAGE ::= 
+dsspConnectionPackage{PARAMETERS-BOUND:bound} CONNECTION-PACKAGE ::=
 {
   BIND              scfBind {bound}
   UNBIND            scfUnbind
@@ -156,15 +156,15 @@ dsspConnectionPackage{PARAMETERS-BOUND:bound} CONNECTION-PACKAGE ::=
   ID                id-package-dsspConnection
 }
 
---  handlingInformation package 
-handlingInformationPackage{PARAMETERS-BOUND:bound} OPERATION-PACKAGE ::= 
+--  handlingInformation package
+handlingInformationPackage{PARAMETERS-BOUND:bound} OPERATION-PACKAGE ::=
 {
   CONSUMER INVOKES  {handlingInformationRequest  {bound}}
   SUPPLIER INVOKES  {handlingInformationResult  {bound}}
   ID                id-package-handlingInformation
 }
 
---  notification package 
+--  notification package
 notificationPackage{PARAMETERS-BOUND:bound} OPERATION-PACKAGE ::= {
   CONSUMER INVOKES  {requestNotification{bound}}
   SUPPLIER INVOKES
@@ -172,8 +172,8 @@ notificationPackage{PARAMETERS-BOUND:bound} OPERATION-PACKAGE ::= {
   ID                id-package-notification
 }
 
---  chargingInformation package 
-chargingInformationPackage{PARAMETERS-BOUND:bound} OPERATION-PACKAGE ::= 
+--  chargingInformation package
+chargingInformationPackage{PARAMETERS-BOUND:bound} OPERATION-PACKAGE ::=
 {
   CONSUMER INVOKES  {establishChargingRecord{bound}}
   SUPPLIER INVOKES
@@ -182,22 +182,22 @@ chargingInformationPackage{PARAMETERS-BOUND:bound} OPERATION-PACKAGE ::=
   ID                id-package-chargingInformation
 }
 
---  userInformation package 
-userInformationPackage{PARAMETERS-BOUND:bound} OPERATION-PACKAGE ::= 
+--  userInformation package
+userInformationPackage{PARAMETERS-BOUND:bound} OPERATION-PACKAGE ::=
 {
   CONSUMER INVOKES  {provideUserInformation  {bound}}
   ID                id-package-userInformation
 }
 
---  networkCapability package 
-networkCapabilityPackage{PARAMETERS-BOUND:bound} OPERATION-PACKAGE ::= 
+--  networkCapability package
+networkCapabilityPackage{PARAMETERS-BOUND:bound} OPERATION-PACKAGE ::=
 {
   CONSUMER INVOKES  {networkCapability{bound}}
   ID                id-package-networkCapability
 }
 
---  chainedSCFOperation package 
-chainedSCFOperationPackage{PARAMETERS-BOUND:bound} OPERATION-PACKAGE ::= 
+--  chainedSCFOperation package
+chainedSCFOperationPackage{PARAMETERS-BOUND:bound} OPERATION-PACKAGE ::=
 {
   CONSUMER INVOKES
     {chainedHandlingInformationRequest{bound} |
@@ -213,7 +213,7 @@ chainedSCFOperationPackage{PARAMETERS-BOUND:bound} OPERATION-PACKAGE ::=
   ID                id-package-chainedSCFOperations
 }
 
--- abstract syntaxes 
+-- abstract syntaxes
 scf-scfOperationsAbstractSyntax ABSTRACT-SYNTAX ::= {
   BasicSCF-SCF-PDUs
   IDENTIFIED BY  id-as-scf-scfOperationsAS

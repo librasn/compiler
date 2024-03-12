@@ -11,7 +11,7 @@ use self::error::GeneratorError;
 pub mod error;
 pub mod rasn;
 
-/// Implementors of the `Backend` trait can be used 
+/// Implementors of the `Backend` trait can be used
 /// as a backend to the compiler in order to create bindings
 /// for other frameworks and languages than the default backend.
 pub trait Backend: Sized {

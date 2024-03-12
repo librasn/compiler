@@ -223,13 +223,13 @@ pub fn sequence_or_set_value_template(
     members: TokenStream,
 ) -> TokenStream {
     quote! {
-    lazy_static! {
-        #comments
-        pub static ref #name: #vtype = #vtype ::new(
-            #members
-        );
+        lazy_static! {
+            #comments
+            pub static ref #name: #vtype = #vtype ::new(
+                #members
+            );
+        }
     }
-}
 }
 
 #[allow(clippy::too_many_arguments)]

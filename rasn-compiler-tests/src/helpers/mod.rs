@@ -28,7 +28,6 @@ macro_rules! e2e_pdu {
     };
 }
 
-
 #[macro_export]
 macro_rules! e2e_module {
     ($suite:ident, $asn1:literal, $expected:literal) => {

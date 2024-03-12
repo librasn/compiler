@@ -33,10 +33,10 @@ fn parses_modules() {
         "./parse_test_results.txt",
         format!(
             r#"
-Success rate of {success_rate}%. 
+Success rate of {success_rate}%.
 Parsed {succeeded} ASN1 modules without running into unrecoverable errors.
 Failed to parse {failed} modules with the following errors:
-    
+
     "#
         ) + &errors,
     )

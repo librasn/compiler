@@ -91,56 +91,56 @@ X520name ::= DirectoryString {ub-name}
 -- Naming attributes of type X520CommonName
 id-at-commonName				AttributeType ::= { id-at 3 }
 at-x520CommonName				ATTRIBUTE ::=
-{TYPE X520CommonName	
+{TYPE X520CommonName
 IDENTIFIED BY id-at-commonName }
 X520CommonName ::= DirectoryString {ub-common-name}
 -- Naming attributes of type X520LocalityName
 id-at-localityName				AttributeType ::= { id-at 7 }
-at-x520LocalityName			ATTRIBUTE ::= { 
-TYPE X520LocalityName 
+at-x520LocalityName			ATTRIBUTE ::= {
+TYPE X520LocalityName
 IDENTIFIED BY id-at-localityName }
 X520LocalityName ::= DirectoryString {ub-locality-name}
 -- Naming attributes of type X520StateOrProvinceName
 id-at-stateOrProvinceName		AttributeType ::= { id-at 8 }
-at-x520StateOrProvinceName 	ATTRIBUTE ::= { 
+at-x520StateOrProvinceName 	ATTRIBUTE ::= {
 TYPE DirectoryString {ub-state-name}
 IDENTIFIED BY id-at-stateOrProvinceName }
 X520StateOrProvinceName ::= DirectoryString {ub-state-name}
 -- Naming attributes of type X520OrganizationName
 id-at-organizationName		AttributeType ::= { id-at 10 }
-at-x520OrganizationName		ATTRIBUTE ::= { 
+at-x520OrganizationName		ATTRIBUTE ::= {
 TYPE DirectoryString {ub-organization-name}
 IDENTIFIED BY id-at-organizationName }
 X520OrganizationName ::= DirectoryString {ub-organization-name}
 -- Naming attributes of type X520OrganizationalUnitName
 id-at-organizationalUnitName	AttributeType ::= { id-at 11 }
-at-x520OrganizationalUnitName 	ATTRIBUTE ::= { 
+at-x520OrganizationalUnitName 	ATTRIBUTE ::= {
 TYPE DirectoryString  {ub-organizational-unit-name}
 IDENTIFIED BY id-at-organizationalUnitName }
 X520OrganizationalUnitName ::= DirectoryString{ub-organizational-unit-name}
 -- Naming attributes of type X520Title
 id-at-title             		AttributeType ::= { id-at 12 }
-at-x520Title 					ATTRIBUTE ::= { 
+at-x520Title 					ATTRIBUTE ::= {
 TYPE DirectoryString { ub-title }
 IDENTIFIED BY id-at-title }
 -- Naming attributes of type X520dnQualifier
 id-at-dnQualifier       		AttributeType ::= { id-at 46 }
-at-x520dnQualifier 			ATTRIBUTE ::= { 
+at-x520dnQualifier 			ATTRIBUTE ::= {
 TYPE PrintableString
 IDENTIFIED BY id-at-dnQualifier }
 -- Naming attributes of type X520countryName (digraph from IS 3166)
 id-at-countryName       		AttributeType ::= { id-at 6 }
-at-x520countryName 			ATTRIBUTE ::= { 
+at-x520countryName 			ATTRIBUTE ::= {
 TYPE PrintableString (SIZE (2))
 IDENTIFIED BY id-at-countryName }
 -- Naming attributes of type X520SerialNumber
 id-at-serialNumber      		AttributeType ::= { id-at 5 }
 at-x520SerialNumber			ATTRIBUTE ::=  {
-TYPE PrintableString(SIZE (1..ub-serial-number)) 
+TYPE PrintableString(SIZE (1..ub-serial-number))
 IDENTIFIED BY id-at-serialNumber }
 -- Naming attributes of type X520Pseudonym
 id-at-pseudonym         		AttributeType ::= { id-at 65 }
-at-x520Pseudonym 				ATTRIBUTE ::= { 
+at-x520Pseudonym 				ATTRIBUTE ::= {
 TYPE DirectoryString {ub-pseudonym}
 IDENTIFIED BY id-at-pseudonym }
 -- Naming attributes of type DomainComponent (from RFC 2247)
@@ -156,14 +156,14 @@ pkcs-9 OBJECT IDENTIFIER ::=
 id-emailAddress          		AttributeType ::= { pkcs-9 1 }
 at-emailAddress 				ATTRIBUTE ::= {
 TYPE IA5String
-(SIZE (1..ub-emailaddress-length)) 
+(SIZE (1..ub-emailaddress-length))
 IDENTIFIED BY id-emailAddress }
 -- naming data types --
 Name ::= CHOICE { -- only one possibility for now --
 rdnSequence  RDNSequence }
 RDNSequence ::= SEQUENCE OF RelativeDistinguishedName
 DistinguishedName ::=   RDNSequence
-RelativeDistinguishedName  ::= SET SIZE (1 .. MAX) OF 
+RelativeDistinguishedName  ::= SET SIZE (1 .. MAX) OF
 SingleAttribute { {SupportedAttributes} }
 --  These are the known name elements for a DN
 SupportedAttributes ATTRIBUTE ::= {
@@ -173,8 +173,8 @@ at-x520LocalityName | at-x520StateOrProvinceName |
 at-x520OrganizationName | at-x520OrganizationalUnitName |
 at-x520Title | at-x520dnQualifier | at-x520countryName |
 at-x520SerialNumber | at-x520Pseudonym | at-domainComponent |
-at-emailAddress, 
-... 
+at-emailAddress,
+...
 }
 --
 -- Certificate- and CRL-specific structures begin here
@@ -196,8 +196,8 @@ subjectUniqueID		[2]  IMPLICIT UniqueIdentifier OPTIONAL
 ]],
 [[3:				-- If present, version MUST be v3 --
 extensions			[3]  Extensions{{CertExtensions}} OPTIONAL
-]], 
-... 
+]],
+...
 }
 Version  ::=  INTEGER  {  v1(0), v2(1), v3(2)  }
 CertificateSerialNumber  ::=  INTEGER
@@ -207,7 +207,7 @@ notAfter	Time
 }
 Time ::= CHOICE {
 utcTime	UTCTime,
-generalTime	GeneralizedTime 
+generalTime	GeneralizedTime
 }
 UniqueIdentifier  ::=  BIT STRING
 SubjectPublicKeyInfo  ::=  SEQUENCE  {
@@ -237,8 +237,8 @@ revokedCertificates  	SEQUENCE SIZE (1..MAX) OF SEQUENCE {
 [[2:			-- if present, version MUST be v2
 crlExtensions	[0] Extensions{{CrlExtensions}}
 	OPTIONAL
-]], 
-... 
+]],
+...
 }
 -- Version, Time, CertificateSerialNumber, and Extensions were
 -- defined earlier for use in the certificate structure
@@ -257,7 +257,7 @@ crlExtensions	[0] Extensions{{CrlExtensions}}
 --  }
 SignatureAlgorithms SIGNATURE-ALGORITHM ::= {
 PKIXAlgs-2009.SignatureAlgs, ...,
-PKIX1-PSS-OAEP-Algorithms-2009.SignatureAlgs 
+PKIX1-PSS-OAEP-Algorithms-2009.SignatureAlgs
 }
 PublicKeyAlgorithms PUBLIC-KEY ::= {
 PKIXAlgs-2009.PublicKeys, ...,
@@ -325,7 +325,7 @@ algorithmIdentifier	SEQUENCE {
 	parameters	SIGNATURE-ALGORITHM.&Params({SignatureAlgorithms}
 		{@algorithmIdentifier.algorithm}) OPTIONAL
 	},
-signature			BIT STRING 
+signature			BIT STRING
 	(CONTAINING SIGNATURE-ALGORITHM.&Value
 	({SignatureAlgorithms}{@algorithmIdentifier.algorithm}))
 }

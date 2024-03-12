@@ -4,7 +4,7 @@ use nom::{
     bytes::complete::tag,
     character::complete::char,
     combinator::{into, map, opt, recognize, value},
-    multi::{separated_list1, many0},
+    multi::{many0, separated_list1},
     sequence::{delimited, pair, preceded, terminated, tuple},
     IResult,
 };
@@ -136,9 +136,9 @@ mod tests {
         assert_eq!(module_reference(r#"--! @options: no-fields-header
 
     ETSI-ITS-CDD {itu-t (0) identified-organization (4) etsi (0) itsDomain (5) wg1 (1) 102894 cdd (2) major-version-3 (3) minor-version-1 (1)}
-    
+
     DEFINITIONS AUTOMATIC TAGS ::=
-    
+
     BEGIN
     "#).unwrap().1,
     ModuleReference {name:"ETSI-ITS-CDD".into(),module_identifier:Some(DefinitiveIdentifier::DefinitiveOID(ObjectIdentifierValue(vec![ObjectIdentifierArc{name:Some("itu-t".into()),number:Some(0)},ObjectIdentifierArc{name:Some("identified-organization".into()),number:Some(4)},ObjectIdentifierArc{name:Some("etsi".into()),number:Some(0)},ObjectIdentifierArc{name:Some("itsDomain".into()),number:Some(5)},ObjectIdentifierArc{name:Some("wg1".into()),number:Some(1)},ObjectIdentifierArc{name:None,number:Some(102894)},ObjectIdentifierArc{name:Some("cdd".into()),number:Some(2)},ObjectIdentifierArc{name:Some("major-version-3".into()),number:Some(3)},ObjectIdentifierArc{name:Some("minor-version-1".into()),number:Some(1)}]))),encoding_reference_default:None,tagging_environment:crate::intermediate::TaggingEnvironment::Automatic,extensibility_environment:crate::intermediate::ExtensibilityEnvironment::Explicit, imports: vec![], exports: None }
@@ -150,18 +150,18 @@ mod tests {
         assert_eq!(module_reference(r#"CPM-PDU-Descriptions { itu-t (0) identified-organization (4) etsi (0) itsDomain (5) wg1 (1) ts (103324) cpm (1) major-version-1 (1) minor-version-1(1)}
 
         DEFINITIONS AUTOMATIC TAGS ::=
-        
+
         BEGIN
-        
+
         IMPORTS
-        
+
         ItsPduHeader, MessageRateHz, MessageSegmentationInfo, OrdinalNumber1B,  ReferencePosition, StationType, TimestampIts
         FROM ETSI-ITS-CDD {itu-t (0) identified-organization (4) etsi (0) itsDomain (5) wg1 (1) ts (102894) cdd (2) major-version-3 (3) minor-version-1 (1)}
         WITH SUCCESSORS
-        
+
         OriginatingRsuContainer, OriginatingVehicleContainer
         FROM CPM-OriginatingStationContainers {itu-t (0) identified-organization (4) etsi (0) itsDomain (5) wg1 (1) ts (103324) originatingStationContainers (2) major-version-1 (1) minor-version-1(1)}
-        WITH SUCCESSORS;        
+        WITH SUCCESSORS;
     "#).unwrap().1,
     ModuleReference { name: "CPM-PDU-Descriptions".into(), module_identifier: Some(DefinitiveIdentifier::DefinitiveOID(ObjectIdentifierValue(vec![ObjectIdentifierArc { name: Some("itu-t".into()), number: Some(0) }, ObjectIdentifierArc { name: Some("identified-organization".into()), number: Some(4) }, ObjectIdentifierArc { name: Some("etsi".into()), number: Some(0) }, ObjectIdentifierArc { name: Some("itsDomain".into()), number: Some(5) }, ObjectIdentifierArc { name: Some("wg1".into()), number: Some(1) }, ObjectIdentifierArc { name: Some("ts".into()), number: Some(103324) }, ObjectIdentifierArc { name: Some("cpm".into()), number: Some(1) }, ObjectIdentifierArc { name: Some("major-version-1".into()), number: Some(1) }, ObjectIdentifierArc { name: Some("minor-version-1".into()), number: Some(1) }]))), encoding_reference_default: None, tagging_environment: TaggingEnvironment::Automatic, extensibility_environment: ExtensibilityEnvironment::Explicit, imports: vec![Import { types: vec!["ItsPduHeader".into(), "MessageRateHz".into(), "MessageSegmentationInfo".into(), "OrdinalNumber1B".into(), "ReferencePosition".into(), "StationType".into(), "TimestampIts".into()], origin_name: "ETSI-ITS-CDD".into(), origin_identifier: Some(ObjectIdentifierValue(vec![ObjectIdentifierArc { name: Some("itu-t".into()), number: Some(0) }, ObjectIdentifierArc { name: Some("identified-organization".into()), number: Some(4) }, ObjectIdentifierArc { name: Some("etsi".into()), number: Some(0) }, ObjectIdentifierArc { name: Some("itsDomain".into()), number: Some(5) }, ObjectIdentifierArc { name: Some("wg1".into()), number: Some(1) }, ObjectIdentifierArc { name: Some("ts".into()), number: Some(102894) }, ObjectIdentifierArc { name: Some("cdd".into()), number: Some(2) }, ObjectIdentifierArc { name: Some("major-version-3".into()), number: Some(3) }, ObjectIdentifierArc { name: Some("minor-version-1".into()), number: Some(1) }])), with: Some(With::Successors) }, Import { types: vec!["OriginatingRsuContainer".into(), "OriginatingVehicleContainer".into()], origin_name: "CPM-OriginatingStationContainers".into(), origin_identifier: Some(ObjectIdentifierValue(vec![ObjectIdentifierArc { name: Some("itu-t".into()), number: Some(0) }, ObjectIdentifierArc { name: Some("identified-organization".into()), number: Some(4) }, ObjectIdentifierArc { name: Some("etsi".into()), number: Some(0) }, ObjectIdentifierArc { name: Some("itsDomain".into()), number: Some(5) }, ObjectIdentifierArc { name: Some("wg1".into()), number: Some(1) }, ObjectIdentifierArc { name: Some("ts".into()), number: Some(103324) }, ObjectIdentifierArc { name: Some("originatingStationContainers".into()), number: Some(2) }, ObjectIdentifierArc { name: Some("major-version-1".into()), number: Some(1) }, ObjectIdentifierArc { name: Some("minor-version-1".into()), number: Some(1) }])), with: Some(With::Successors) }], exports: None } )
     }
@@ -173,14 +173,14 @@ mod tests {
         DEFINITIONS ::=
         BEGIN
         EXPORTS ALL;
-        IMPORTS 
+        IMPORTS
         ALGORITHM,AlgorithmIdentifier{}
         FROM AlgorithmInformation-2009
         {iso(1) identified-organization(3) dod(6) internet(1) security(5)
         mechanisms(5) pkix(7) id-mod(0) id-mod-algorithmInformation-02(58)} WITH DESCENDANTS;"#).unwrap().1,
-        ModuleReference { 
-            name: "CMSCKMKeyManagement".into(), 
-            module_identifier: Some(DefinitiveIdentifier::DefinitiveOIDandIRI { 
+        ModuleReference {
+            name: "CMSCKMKeyManagement".into(),
+            module_identifier: Some(DefinitiveIdentifier::DefinitiveOIDandIRI {
                 oid: ObjectIdentifierValue(vec![
                     ObjectIdentifierArc { name: Some("itu-t".into()), number: None },
                     ObjectIdentifierArc { name: Some("recommendation".into()), number: Some(0) },
@@ -189,16 +189,16 @@ mod tests {
                     ObjectIdentifierArc { name: Some("module".into()), number: Some(0) },
                     ObjectIdentifierArc { name: Some("cKMKeyManagement".into()), number: Some(1) },
                     ObjectIdentifierArc { name: Some("version1".into()), number: Some(1) },
-                ]), 
+                ]),
                 iri: "ITU-T/Recommendation/X/CMS-Profile/Module/CKMKeyManagement/Version1".into()
-            }), 
-            encoding_reference_default: None, 
-            tagging_environment: TaggingEnvironment::Explicit, 
-            extensibility_environment: ExtensibilityEnvironment::Explicit, 
+            }),
+            encoding_reference_default: None,
+            tagging_environment: TaggingEnvironment::Explicit,
+            extensibility_environment: ExtensibilityEnvironment::Explicit,
             imports: vec![
-                Import { 
-                    types: vec!["ALGORITHM".into(), "AlgorithmIdentifier".into()], 
-                    origin_name: "AlgorithmInformation-2009".into(), 
+                Import {
+                    types: vec!["ALGORITHM".into(), "AlgorithmIdentifier".into()],
+                    origin_name: "AlgorithmInformation-2009".into(),
                     origin_identifier: Some(ObjectIdentifierValue(vec![
                         ObjectIdentifierArc { name: Some("iso".into()), number: Some(1) },
                         ObjectIdentifierArc { name: Some("identified-organization".into()), number: Some(3) },
@@ -209,9 +209,9 @@ mod tests {
                         ObjectIdentifierArc { name: Some("pkix".into()), number: Some(7) },
                         ObjectIdentifierArc { name: Some("id-mod".into()), number: Some(0) },
                         ObjectIdentifierArc { name: Some("id-mod-algorithmInformation-02".into()), number: Some(58) },
-                    ])), 
+                    ])),
                     with: Some(With::Descendants) }
-            ], 
+            ],
             exports: Some(Exports::All)
         })
     }
@@ -220,7 +220,7 @@ mod tests {
     fn parses_imports() {
         assert_eq!(
             imports(
-                r#"IMPORTS 
+                r#"IMPORTS
             DomainParameters
             FROM ANSI-X9-42
             {iso(1) member-body(2) us(840) ansi-x942(10046) module(5) 1}

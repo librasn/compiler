@@ -43,12 +43,12 @@ IMPORTS
     FROM IN-CS2-object-identifiers {itu-t recommendation q 1228 modules(0)
       in-cs2-object-identifiers(17) version1(0)};
 
--- Direction: SCF ® CUSF, Timer: Tat 
--- This operation is used to check for the continued existence of a relationship between the SCF 
--- and CUSF. If the relationship is still in existence, then the CUSF will respond. If no reply is 
--- received, then the SCF will assume that the CUSF has failed in some way and will take the 
+-- Direction: SCF ® CUSF, Timer: Tat
+-- This operation is used to check for the continued existence of a relationship between the SCF
+-- and CUSF. If the relationship is still in existence, then the CUSF will respond. If no reply is
+-- received, then the SCF will assume that the CUSF has failed in some way and will take the
 -- appropriate action.
-activationReceivedAndAuthorized{PARAMETERS-BOUND:bound} OPERATION ::= 
+activationReceivedAndAuthorized{PARAMETERS-BOUND:bound} OPERATION ::=
 {
   ARGUMENT       ActivationReceivedAndAuthorizedArg {bound}
   RETURN RESULT  FALSE
@@ -60,10 +60,10 @@ activationReceivedAndAuthorized{PARAMETERS-BOUND:bound} OPERATION ::=
 }
 
 -- Direction: CUSF ® SCF, Timer: Tara
--- This operation is used to indicate the desire from an end user to establish an association between the end user 
--- and a network (e.g. Q.932 REGISTER message), and the authority/ability to establish the association is 
--- verified (BCUSM DP - Activation Received And Authorized). As the association request can have a request to 
--- invoke an operation between the user and the network, this operation optionally indicates the component of 
+-- This operation is used to indicate the desire from an end user to establish an association between the end user
+-- and a network (e.g. Q.932 REGISTER message), and the authority/ability to establish the association is
+-- verified (BCUSM DP - Activation Received And Authorized). As the association request can have a request to
+-- invoke an operation between the user and the network, this operation optionally indicates the component of
 -- the operation to the SCF.
 ActivationReceivedAndAuthorizedArg{PARAMETERS-BOUND:bound} ::= SEQUENCE {
   callUnrelatedDpSpecificCommonParameters
@@ -89,8 +89,8 @@ associationReleaseRequested{PARAMETERS-BOUND:bound} OPERATION ::= {
 
 -- Direction: CUSF ® SCF, Timer: Tarr
 -- This operation is issued by the CUSF for reporting the TDP/EDP event to the SCF that a
--- request of association release 
--- with optionally an operation invocation request or an response/error has been received, and criteria for the 
+-- request of association release
+-- with optionally an operation invocation request or an response/error has been received, and criteria for the
 -- AssociationReleasedRequested DP were met.
 AssociationReleaseRequestedArg{PARAMETERS-BOUND:bound} ::= SEQUENCE {
   callUnrelatedDpSpecificCommonParameters
@@ -147,7 +147,7 @@ initiateAssociation{PARAMETERS-BOUND:bound} OPERATION ::= {
 -- This operation is used for allowing the SCF to initiate a call unrelated association with the user.
 -- The subsequent operations can be sent in the same TCAP message in the following order:
 -- 	- the RequestReportBCUSMEvent operation if an answer from the CUSF is expected
--- 	- the SendComponent operation 
+-- 	- the SendComponent operation
 InitiateAssociationArg{PARAMETERS-BOUND:bound} ::= SEQUENCE {
   calledPartyNumber  [0]  CalledPartyNumber{bound},
   extensions
@@ -164,7 +164,7 @@ releaseAssociation{PARAMETERS-BOUND:bound} OPERATION ::= {
 }
 
 --  Direction: SCF ® CUSF, Timer: Trel
---  This operation is used to indicate the CUSF to release the existing association between the user and the 
+--  This operation is used to indicate the CUSF to release the existing association between the user and the
 --  network, during the BCUSM suspended at a DP.
 ReleaseAssociationArg{PARAMETERS-BOUND:bound} ::=
   Cause{bound}
@@ -179,8 +179,8 @@ requestReportBCUSMEvent{PARAMETERS-BOUND:bound} OPERATION ::= {
 }
 
 -- Direction: SCF ® CUSF, Timer: Trrbce
--- This operation is used to request the CUSF to report the reception of invocation of an operation or return result/reject 
--- from the end user to the SCF. The requesting event can be either the result, return error/reject from the end user as the 
+-- This operation is used to request the CUSF to report the reception of invocation of an operation or return result/reject
+-- from the end user to the SCF. The requesting event can be either the result, return error/reject from the end user as the
 -- response for the SCF specified invocation/result with the SendComponent operation
 -- or the independent invocation/result error from the end user.
 RequestReportBCUSMEventArg{PARAMETERS-BOUND:bound} ::= SEQUENCE {

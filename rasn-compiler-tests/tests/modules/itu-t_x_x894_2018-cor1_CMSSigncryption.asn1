@@ -3,7 +3,7 @@ CMSSigncryption {itu-t recommendation(0) x(24) cms-profile(894) module(0) signcr
 "/ITU-T/Recommendation/X/CMS-Profile/Module/Signcryption/Version1"
 DEFINITIONS AUTOMATIC TAGS ::=
 BEGIN
-IMPORTS 
+IMPORTS
 ALGORITHM,AlgorithmIdentifier{}
 FROM AlgorithmInformation-2009
 {iso(1) identified-organization(3) dod(6) internet(1) security(5) mechanisms(5) pkix(7) id-mod(0) id-mod-algorithmInformation-02(58)}
@@ -17,16 +17,16 @@ FROM CryptographicMessageSyntax-2010
 { iso(1) member-body(2) us(840) rsadsi(113549) pkcs(1) pkcs-9(9) smime(16) modules(0) id-mod-cms-2009(58) }
 SigncryptionMechanism
 FROM Signcryption
-{iso(1) standard(0) signcryption(29150) asn1-module(0) 
+{iso(1) standard(0) signcryption(29150) asn1-module(0)
 signcryption-mechanisms(0)version(1)}
 signcrypted-attributes,signcrypted-components,signcrypted-content,
 signcrypted-envelope,xPath
 FROM CMSObjectIdentifiers
 {iso(1) identified-organization(3) tc68(133) country(16) x9(840)x9Standards(9) x9-73(73) module(0) oids(1) v2009(1)};
-id-signcryptedData 	OBJECT IDENTIFIER ::= 
+id-signcryptedData 	OBJECT IDENTIFIER ::=
 {itu-t recommendation(0) x(24) cms-profile(894) signcryption(0) data(0)}
 ct-SigncryptedData	CONTENT-TYPE ::= {
-TYPE SigncryptedData IDENTIFIED BY id-signcryptedData}	
+TYPE SigncryptedData IDENTIFIED BY id-signcryptedData}
 SigncryptedData	::= SEQUENCE {
 version		CMSVersion,
 contentInformation	ContentInformation,
@@ -86,7 +86,7 @@ signcryptedEnvelope ATTRIBUTE ::= {
 TYPE SigncryptedKey IDENTIFIED BY signcrypted-envelope
 }
 SigncryptedKey ::= OCTET STRING
-SigncryptedDataAlgorithmIdentifier ::= 
+SigncryptedDataAlgorithmIdentifier ::=
 AlgorithmIdentifier{ALGORITHM,{SigncryptAlgorithms}}
 SigncryptAlgorithms ALGORITHM ::= {
 SigncryptionMechanism, -- ISO/IEC 29150 Signcryption --

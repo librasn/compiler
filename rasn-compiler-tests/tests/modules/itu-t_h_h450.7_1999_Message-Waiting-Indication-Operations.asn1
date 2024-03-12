@@ -118,16 +118,16 @@ NbOfMessages ::= INTEGER(0..65535)
 
 TimeStamp ::= GeneralizedTime(SIZE (12..19))
 
--- a VisibleString representation of date and time following ISO 8601 
+-- a VisibleString representation of date and time following ISO 8601
 -- containing:
 --	- the (local) date in 8 digits (YYYYMMDD),
 --	- followed by (local) time of day in 4 or 6 digits [HHMM(SS)],
---	-	optionally followed by the letter "Z" or by a local time differential 
+--	-	optionally followed by the letter "Z" or by a local time differential
 --		from UTC time in 5 digits ("+"HHMM or "-"HHMM);
 -- Examples:
 --	1) 19970621194530, meaning 21 June 1997, 19:45:30;
 --	2) 19970621194530Z, meaning the same as 1);
---	3) 19970621194530-0500, meaning the same as 1), 
+--	3) 19970621194530-0500, meaning the same as 1),
 --		5 hours retarded in relation to UTC time
 undefined ERROR ::= {
   PARAMETER  SEQUENCE SIZE (0..255) OF MixedExtension
@@ -136,7 +136,7 @@ undefined ERROR ::= {
 }
 
 invalidMsgCentreId ERROR ::=
-  { -- returned by a Message Centre endpoint when an unknown Message 
+  { -- returned by a Message Centre endpoint when an unknown Message
   -- Centre Identifier is specified in a mwiInterrogate invoke
   CODE  local:1018
 }

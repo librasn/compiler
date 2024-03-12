@@ -14,9 +14,9 @@ ServiceAdministration {joint-iso-itu-t ds(5) module(1)
   serviceAdministration(33) 5} DEFINITIONS ::=
 BEGIN
 
--- EXPORTS All 
--- The types and values defined in this module are exported for use in the other ASN.1 modules contained 
--- within the Directory Specifications, and for the use of other applications which will use them to access 
+-- EXPORTS All
+-- The types and values defined in this module are exported for use in the other ASN.1 modules contained
+-- within the Directory Specifications, and for the use of other applications which will use them to access
 -- Directory services. Other applications may use them for their own purposes, but this will not constrain
 -- extensions and modifications needed to maintain or improve the Directory service.
 IMPORTS
@@ -32,7 +32,7 @@ IMPORTS
     ServiceControlOptions
     FROM DirectoryAbstractService directoryAbstractService;
 
--- types 
+-- types
 SearchRule ::= SEQUENCE {
   COMPONENTS OF SearchRuleId,
   serviceType           [1]  OBJECT IDENTIFIER OPTIONAL,
@@ -151,7 +151,7 @@ Mapping ::= SEQUENCE {
   mappingFunction
     OBJECT IDENTIFIER
       (CONSTRAINED BY {-- shall be an--
-         
+
          -- object identifier of a mapping-based matching algorithm -- }),
   level            INTEGER DEFAULT 0
 }
@@ -162,7 +162,7 @@ MRSubstitution ::= SEQUENCE {
   newMatchingRule  [1]  MATCHING-RULE.&id OPTIONAL
 }
 
--- ASN.1 information object classes 
+-- ASN.1 information object classes
 SEARCH-RULE ::= CLASS {
   &dmdId                 OBJECT IDENTIFIER,
   &serviceType           OBJECT IDENTIFIER OPTIONAL,

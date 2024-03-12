@@ -25,7 +25,7 @@ IMPORTS
       asn1Module(2) 1}
   ObjectInstance
     FROM CMIP-1 {joint-iso-itu-t ms(9) cmip(1) modules(0) protocol(3)}
-  LocationAddress, PersonReach, ServiceDescription -- from TC1 
+  LocationAddress, PersonReach, ServiceDescription -- from TC1
     FROM X790ASN1Module {itu-t(0) recommendation(0) x(24) x790(790)
       informationModel(0) asn1module(2)};
 
@@ -66,7 +66,7 @@ AddToSagError ::= ENUMERATED {
   resourcesNotAvailable(3), ...
   }
 
-AliasName ::= Name -- from TC1 
+AliasName ::= Name -- from TC1
 
 Bandwidth ::= CHOICE {
   bitsPerSecond      [0]  Number,
@@ -96,7 +96,7 @@ Cpe ::= CHOICE {name    Name,
 CreateSadError ::= ENUMERATED {
   invalidServiceType(0), invalidServiceDescription(1),
   duplicateSADIdentifier(2), contractViolation(4), ...
-  } -- from TC1 
+  } -- from TC1
 
 CreateSagError ::= ENUMERATED {
   invalidLocation(0), invalidSagId(1), invalidSadId(2), ...
@@ -123,7 +123,7 @@ CreateLinkConnectionError ::= ENUMERATED {
 
 DeleteLCSError ::= ENUMERATED {
   alreadyDeleted(0), invalidCircuitNumber(1), invalidServiceTerminationDate(2),
-  notBeingInAppropriateServiceAdministrativeState(3), contractViolation(4), 
+  notBeingInAppropriateServiceAdministrativeState(3), contractViolation(4),
   ...
   }
 
@@ -136,28 +136,28 @@ DeleteLinkConnectionError ::= ENUMERATED {
 
 DeleteSadError ::= ENUMERATED {
   invalidSADId(0), sADContainsSAGs(1), resourceInUse(2), ...
-  } -- from TC1 
+  } -- from TC1
 
 DeleteSagError ::= ENUMERATED {invalidSagId(0), invalidSadId(1), ...
                                }
 
 Diversity ::= CHOICE {
   topologicalElements  [1]  SET OF TopologicalEntity,
-  -- the topological entities from which the circuit should be diverse 
+  -- the topological entities from which the circuit should be diverse
   otherCircuits        [2]  SET OF CircuitId,
-  -- other circuits from which the circuit should be diverse 
+  -- other circuits from which the circuit should be diverse
   severalGroups
     [3]  SET OF
            SEQUENCE {numberOfCircuits     INTEGER,
-                     -- the number of circuits in the diverse group 
+                     -- the number of circuits in the diverse group
                      topologicalElements  SET OF TopologicalEntity
-                     -- the topological entities from which the circuits in the group should be diverse 
+                     -- the topological entities from which the circuits in the group should be diverse
            }
 }
 
-EquipmentManufacturer ::= Name -- from TC1 
+EquipmentManufacturer ::= Name -- from TC1
 
-EquipmentType ::= Name -- from TC1 
+EquipmentType ::= Name -- from TC1
 
 LcsModifyProgressProblemReport ::= SEQUENCE {
   sourceIndicator                     [1]  SourceIndicator OPTIONAL,
@@ -226,7 +226,7 @@ M3108FunctionalUnits ::= BIT STRING {
   transportServiceOrderHistory(2), transportServiceModify(3),
   transportResourceVisibility(4)}
 
-ModelType ::= Name -- from TC1 
+ModelType ::= Name -- from TC1
 
 ModifyLCSError ::= UpdateLCSError
 
@@ -237,7 +237,7 @@ ModifyLinkConnectionError ::= ENUMERATED {
 
 NumberOfUnspecifiedSaps ::= INTEGER(1..MAX)
 
-Name ::= GraphicString -- from TC1 
+Name ::= GraphicString -- from TC1
 
 Number ::= INTEGER(0..MAX)
 
@@ -245,7 +245,7 @@ Null ::= NULL
 
 OriginatingLocation ::= LocationAddress
 
-Procedure ::= CHOICE {name    Name, -- from TC1 
+Procedure ::= CHOICE {name    Name, -- from TC1
                       number  INTEGER
 }
 
@@ -273,7 +273,7 @@ SagId ::= NameType
 
 SagLocation ::= LocationAddress
 
-Sap ::= Name -- from TC1 
+Sap ::= Name -- from TC1
 
 ServiceRequestState ::= ENUMERATED {
   pre-processing(0), open-active(1), pending(2), closed(3)}
@@ -282,11 +282,11 @@ ServiceTerminationDate ::= CHOICE {time       Time,
                                    continous  NULL
 }
 
--- continous means that no termination date has been specified, this is the default value 
+-- continous means that no termination date has been specified, this is the default value
 -- for ServiceTerminationDate
 Time ::= GeneralizedTime
 
--- without fractions of seconds, with time zone indication. 
+-- without fractions of seconds, with time zone indication.
 TerminatingLocation ::=
   LocationAddress
 

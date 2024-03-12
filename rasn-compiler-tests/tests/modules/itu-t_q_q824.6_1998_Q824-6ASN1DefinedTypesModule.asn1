@@ -59,7 +59,7 @@ AalMode ::= ENUMERATED {
   streamingUnassured(3)}
 
 AalType ::= ENUMERATED {
-  aal1(0), aal2(1), -- encoded for future use 
+  aal1(0), aal2(1), -- encoded for future use
   aal34(2), aal5(3)}
 
 AbstractDestinationPtr ::= ObjectInstance
@@ -99,7 +99,7 @@ CallingPartyCategory ::= CHOICE {unused    NULL,
 }
 
 Category ::= BIT STRING(SIZE (8)) -- acc. Rec. Q.2763
-                       
+
 
 CarrierCode ::= NetworkIdentification
 
@@ -122,7 +122,7 @@ CSPRequired ::= Boolean
 
 ConnLineIdRestrictionOptions ::= SEQUENCE {
   mode     INTEGER {permanent(1), temporary(2)},
-  default  INTEGER {restricted(1), notRestr(2)} OPTIONAL -- for temporary mode only 
+  default  INTEGER {restricted(1), notRestr(2)} OPTIONAL -- for temporary mode only
 }
 
 ConnectionIdOffering ::= INTEGER {
@@ -137,14 +137,14 @@ CdpnRepresentationType ::= INTEGER {
 CugBarring ::= INTEGER {none(1), incomingCallsBarred(2), outgoingCallsBarred(3)
 }
 
-CugDataNetworkIdentification ::= NumericString(SIZE (4)) -- Rec. Q.2763 
-                                              
+CugDataNetworkIdentification ::= NumericString(SIZE (4)) -- Rec. Q.2763
 
-CugIndex ::= INTEGER(0..65535) -- Rec. Q.2955 
-                    
 
-CugInterlockCode ::= INTEGER(0..65535) -- Rec. Q.2763 
-                            
+CugIndex ::= INTEGER(0..65535) -- Rec. Q.2955
+
+
+CugInterlockCode ::= INTEGER(0..65535) -- Rec. Q.2763
+
 
 DestinationCode ::= DigitString15
 
@@ -325,7 +325,7 @@ OwnInternationalCode ::=
 
 PollAfterRetransmission ::= BOOLEAN
 
-PreferredCarrier ::= SEQUENCE { -- acc. Rec. Q.2763 
+PreferredCarrier ::= SEQUENCE { -- acc. Rec. Q.2763
   networkIdentificationPlan     NetworkIdentificationPlan,
   typesOfNetworkIdentification  TypesOfNetworkIdentification,
   networkIdentification         NetworkIdentification
@@ -350,7 +350,7 @@ RemoveTerminationPointReply ::=
   SEQUENCE OF
     SEQUENCE {tpInstance        ObjectInstance,
               tpRemovalProblem  ProblemCause OPTIONAL
-    } -- absent if tpInstance is removed 
+    } -- absent if tpInstance is removed
 
 ReqBandwidthEgress ::= SEQUENCE {lowerLimit  INTEGER,
                                  upperLimit  INTEGER
@@ -406,12 +406,12 @@ sscopTimerPollDefault SscopTimerPoll ::= 750
 SscsType ::= INTEGER {null(0), dataAssured(1), dataNonAssured(2), frameRelay(3)
 }
 
-SubscriberCategory ::= INTEGER { -- acc. Rec. Q.2763 
-  unknownAtThisMoment(0), -- for national use 
+SubscriberCategory ::= INTEGER { -- acc. Rec. Q.2763
+  unknownAtThisMoment(0), -- for national use
   operatorLanguageFrench(1), operatorLanguageEnglish(2),
   operatorLanguageGerman(3), operatorLanguageRussian(4),
   operatorLanguageSpanish(5),
-  nationalOperator(9), -- for national use 
+  nationalOperator(9), -- for national use
   ordinaryCallingSubscriber(10), callingSubscriberWithPriority(11),
   dataCall(12), testCall(13), payPhone(15)}(0..255)
 

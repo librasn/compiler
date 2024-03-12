@@ -14,7 +14,7 @@ AuthenticationFramework {joint-iso-itu-t ds(5) module(1)
   authenticationFramework(7) 7} DEFINITIONS ::=
 BEGIN
 
--- EXPORTS All 
+-- EXPORTS All
 -- The types and values defined in this module are exported for use in the other ASN.1
 -- modules contained within the Directory Specifications, and for the use of other
 -- applications which will use them to access Directory services. Other applications may
@@ -27,7 +27,7 @@ IMPORTS
     FROM UsefulDefinitions {joint-iso-itu-t ds(5) module(1)
       usefulDefinitions(0) 7}
   ATTRIBUTE, DistinguishedName, MATCHING-RULE, Name, NAME-FORM, OBJECT-CLASS,
-    pwdHistory{}, pwdRecentlyExpired{}, pwdHistoryMatch{}, SYNTAX-NAME, 
+    pwdHistory{}, pwdRecentlyExpired{}, pwdHistoryMatch{}, SYNTAX-NAME,
     top
     FROM InformationFramework informationFramework
   bitStringMatch, boolean, booleanMatch, caseExactMatch, commonName,
@@ -43,11 +43,11 @@ IMPORTS
     CertificatePairAssertion, CertificatePairExactAssertion
     FROM CertificateExtensions certificateExtensions;
 
--- parameterized types 
+-- parameterized types
 ENCRYPTED{ToBeEnciphered} ::=
   BIT STRING
     (CONSTRAINED BY {
-       -- shall be the result of applying an encipherment procedure 
+       -- shall be the result of applying an encipherment procedure
        -- to the BER-encoded octets of a value of --ToBeEnciphered})
 
 HASH{ToBeHashed} ::= SEQUENCE {
@@ -79,7 +79,7 @@ SIGNED{ToBeSigned} ::= SEQUENCE {
   ...
 }
 
--- public-key certificate definition 
+-- public-key certificate definition
 Certificate ::= SIGNED{TBSCertificate}
 
 TBSCertificate ::= SEQUENCE {
@@ -170,7 +170,7 @@ ExtensionSet EXTENSION ::=
   {...}
 
 EXTENSION ::= CLASS {&id        OBJECT IDENTIFIER UNIQUE,
-                     &ExtnType  
+                     &ExtnType
 }WITH SYNTAX {SYNTAX &ExtnType
               IDENTIFIED BY &id
 }
@@ -277,7 +277,7 @@ pkiCertPath OBJECT-CLASS ::= {
   ID           id-oc-pkiCertPath
 }
 
--- PKI directory attributes 
+-- PKI directory attributes
 userCertificate ATTRIBUTE ::= {
   WITH SYNTAX             Certificate
   EQUALITY MATCHING RULE  certificateExactMatch
@@ -380,7 +380,7 @@ POLICY ::= TYPE-IDENTIFIER
 HashedPolicyInfo ::= POLICY.&Type({Policies})
 
 Policies POLICY ::=
-  {...} -- Defined by implementors 
+  {...} -- Defined by implementors
 
 certificatePolicy ATTRIBUTE ::= {
   WITH SYNTAX  PolicySyntax
@@ -760,8 +760,8 @@ x509SupportedAlgorithm SYNTAX-NAME ::= {
   ID                id-lsx-x509SupportedAlgorithm
 }
 
--- object identifier assignments 
--- object classes 
+-- object identifier assignments
+-- object classes
 id-oc-cRLDistributionPoint OBJECT IDENTIFIER ::=
   {id-oc 19}
 
@@ -803,7 +803,7 @@ id-at-pkiPath OBJECT IDENTIFIER ::= {id-at 70}
 
 id-at-userPwd OBJECT IDENTIFIER ::= {id-at 85}
 
--- operational attributes 
+-- operational attributes
 id-oa-pwdStartTime OBJECT IDENTIFIER ::= {id-oa 22}
 
 id-oa-pwdExpiryTime OBJECT IDENTIFIER ::= {id-oa 23}

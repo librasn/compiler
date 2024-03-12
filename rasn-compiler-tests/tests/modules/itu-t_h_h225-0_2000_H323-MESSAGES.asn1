@@ -177,19 +177,19 @@ ReleaseCompleteReason ::= CHOICE {
   facilityCallDeflection       NULL, -- call was deflected using a Facility message
   securityDenied               NULL, -- incompatible security settings
   calledPartyNotRegistered     NULL, -- used by gatekeeper when endpoint has
-  
+
   -- preGrantedARQ to bypass ARQ/ACF
   callerNotRegistered          NULL, -- used by gatekeeper when endpoint has
-  
+
   -- preGrantedARQ to bypass ARQ/ACF
   newConnectionNeeded          NULL, -- indicates that the Setup was not accepted on this
-  
+
   -- connection, but that the Setup may be accepted on
   -- a new connection
   nonStandardReason            NonStandardParameter,
-  replaceWithConferenceInvite  ConferenceIdentifier, -- call dropped due to subsequent 
-  
-  -- invitation to a conference 
+  replaceWithConferenceInvite  ConferenceIdentifier, -- call dropped due to subsequent
+
+  -- invitation to a conference
   -- (see H.323 8.4.3.8)
   genericDataReason            NULL,
   neededFeatureNotSupported    NULL,
@@ -204,7 +204,7 @@ Setup-UUIE ::= SEQUENCE {
   sourceInfo                     EndpointType,
   destinationAddress             SEQUENCE OF AliasAddress OPTIONAL,
   destCallSignalAddress          TransportAddress OPTIONAL,
-  destExtraCallInfo              SEQUENCE OF AliasAddress OPTIONAL, -- Note 1 
+  destExtraCallInfo              SEQUENCE OF AliasAddress OPTIONAL, -- Note 1
   destExtraCRV                   SEQUENCE OF CallReferenceValue OPTIONAL, -- Note 1
   activeMC                       BOOLEAN,
   conferenceID                   ConferenceIdentifier,
@@ -256,7 +256,7 @@ Setup-UUIE ::= SEQUENCE {
 ScnConnectionType ::= CHOICE {
   unknown     NULL, -- should be seleceted when connection type is unknown
   bChannel    NULL, -- each individual connection on the SCN is 64kbps.
-  
+
   -- Note that where SCN delivers 56kbps usable data, the
   -- actual bandwidth allocated on SCN is still 64kbps.
   hybrid2x64  NULL, -- each connection is a 128kbps hybrid call
@@ -264,7 +264,7 @@ ScnConnectionType ::= CHOICE {
   hybrid1536  NULL, -- each connection is an H11 (1536kbps) hybrid call
   hybrid1920  NULL, -- each connection is an H12 (1920kbps) hybrid call
   multirate   NULL, -- bandwidth supplied by SCN using multirate.
-  
+
   -- In this case, the information transfer rate octet in the
   -- bearer capability shall be set to multirate and the rate
   -- multiplier octet shall denote the number of B channels.
@@ -276,7 +276,7 @@ ScnConnectionAggregation ::= CHOICE {
   none          NULL, -- call produced using a single SCN connection
   h221          NULL, -- use H.221 framing to aggregate the connections
   bonded-mode1  NULL, -- use ISO/IEC 13871 bonding mode 1.
-  
+
   -- Use bonded-mode1 to signal a bonded call if the precise
   -- bonding mode to be used is unknown.
   bonded-mode2  NULL, -- use ISO/IEC 13871 bonding mode 2
@@ -302,7 +302,7 @@ ScreeningIndicator ::= ENUMERATED {
   userProvidedVerifiedAndFailed(2),
   -- number was provided by user
   -- equipment (or by a remote network), and the
-  -- gatekeeper has determined that the 
+  -- gatekeeper has determined that the
   -- information is incorrect
   networkProvided(3),
   -- number was provided by a gatekeeper
@@ -343,7 +343,7 @@ ConferenceList ::= SEQUENCE {
 
 FacilityReason ::= CHOICE {
   routeCallToGatekeeper   NULL, -- call must use gatekeeper model
-  
+
   -- gatekeeper is alternativeAddress
   callForwarded           NULL,
   routeCallToMC           NULL,
@@ -697,14 +697,14 @@ ANSI-41-UIM ::= SEQUENCE {
   -- MIN refers to Mobile Identification Number
   -- MDN refers to Mobile Directory Number
   -- MSISDN refers to Mobile Station ISDN number
-  -- ESN Refers to Electronic Serial Number 
+  -- ESN Refers to Electronic Serial Number
   -- MSCID refers to Mobile Switching Center number + Market ID or System ID
   -- SID refers to System Identification and MID refers to Market Identification
   -- SystemMyTypeCode refers to vendor identification number
   -- SystemAccessType refers to the system access type like power down registration or call
   -- origination or Short Message repsonse etc.
   -- Qualification Information Code refers to the validity
-  -- SESN Refers to SIM Electronic Serial Number for Security purposes of User Identification 
+  -- SESN Refers to SIM Electronic Serial Number for Security purposes of User Identification
   -- SOC refers to System Operator Code
 }
 
@@ -717,7 +717,7 @@ GSM-UIM ::= SEQUENCE {
   vplmn   TBCD-STRING(SIZE (1..4)) OPTIONAL,
   -- IMSI refers to International Mobile Station Identificaiton
   -- MSISDN refers to Mobile Station ISDN number
-  -- IMEI Refers to International Mobile Equipment Identification 
+  -- IMEI Refers to International Mobile Equipment Identification
   -- VPLMN or HPLMN refers to Visiting or Home Public Land Mobile Network number
   ...
 }
@@ -818,7 +818,7 @@ RequestSeqNum ::= INTEGER(1..65535)
 GatekeeperIdentifier ::= BMPString(SIZE (1..128))
 
 BandWidth ::= INTEGER(0..4294967295) -- in 100s of bits
-                     
+
 
 CallReferenceValue ::= INTEGER(0..65535)
 
@@ -827,7 +827,7 @@ EndpointIdentifier ::= BMPString(SIZE (1..128))
 ProtocolIdentifier ::= OBJECT IDENTIFIER
 
 TimeToLive ::= INTEGER(1..4294967295) -- in seconds
-                      
+
 
 H248PackagesDescriptor ::=
   OCTET STRING -- This octet string contains ASN.1 PER encoded H.248
@@ -854,15 +854,15 @@ NonIsoIntegrityMechanism ::=
   CHOICE { -- HMAC mechanism used, no truncation, tagging may be necessary!
   hMAC-MD5           NULL,
   hMAC-iso10118-2-s  EncryptIntAlg, -- according to ISO/IEC 10118-2 using
-  
-  -- EncryptIntAlg as core block encryption algorithm 
+
+  -- EncryptIntAlg as core block encryption algorithm
   -- (short MAC)
   hMAC-iso10118-2-l  EncryptIntAlg, -- according to ISO/IEC 10118-2 using
-  
-  -- EncryptIntAlg as core block encryption algorithm 
+
+  -- EncryptIntAlg as core block encryption algorithm
   -- (long MAC)
   hMAC-iso10118-3    OBJECT IDENTIFIER, -- according to ISO/IEC 10118-3 using
-  
+
   -- OID as hash function (OID is SHA-1,
   -- RIPE-MD160,
   -- RIPE-MD128)
@@ -873,7 +873,7 @@ IntegrityMechanism ::= CHOICE { -- for RAS message integrity
   nonStandard  NonStandardParameter,
   digSig       NULL, -- indicates to apply a digital signature
   iso9797      OBJECT IDENTIFIER, -- according to ISO/IEC 9797 using OID as
-  
+
   -- core encryption algorithm (X-CBC MAC)
   nonIsoIM     NonIsoIntegrityMechanism,
   ...
@@ -893,7 +893,7 @@ FastStartToken ::=
        timeStamp  PRESENT,
        dhkey      PRESENT,
        generalID  PRESENT
-     
+
      -- set to 'alias' --})
 
 EncodedFastStartToken ::= TYPE-IDENTIFIER.&Type(FastStartToken)
@@ -1006,8 +1006,8 @@ GroupID ::= SEQUENCE {
 }
 
 ServiceControlDescriptor ::= CHOICE {
-  url                       IA5String(SIZE (0..512)), -- indicates a URL-referenced 
-  
+  url                       IA5String(SIZE (0..512)), -- indicates a URL-referenced
+
   -- protocol/resource
   signal                    H248SignalsDescriptor,
   nonStandard               NonStandardParameter,
@@ -1312,7 +1312,7 @@ RegistrationConfirm ::= SEQUENCE --(RCF)
               useGKCallSignalAddressToAnswer    BOOLEAN,
               ...,
               irrFrequencyInCall                INTEGER(1..65535) OPTIONAL, -- in seconds; not--
-              -- present if GK 
+              -- present if GK
               -- does not want IRRs
               totalBandwidthRestriction         BandWidth OPTIONAL, -- total limit for all --
               -- concurrent calls
@@ -1432,7 +1432,7 @@ UnregRejectReason ::= CHOICE {
   undefinedReason         NULL,
   ...,
   permissionDenied        NULL, -- requesting user not allowed to unregister
-  
+
   -- specified user
   securityDenial          NULL
 }

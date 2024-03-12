@@ -10,18 +10,18 @@
 -- See also ITU-T X.501 (08/2005)
 -- See also the index of all ASN.1 assignments needed in this document
 
-InformationFramework {joint-iso-itu-t ds(5) module(1) informationFramework(1) 
+InformationFramework {joint-iso-itu-t ds(5) module(1) informationFramework(1)
   5} DEFINITIONS ::=
 BEGIN
 
--- EXPORTS All 
--- The types and values defined in this module are exported for use in the other ASN.1 modules contained 
--- within the Directory Specifications, and for the use of other applications which will use them to access 
+-- EXPORTS All
+-- The types and values defined in this module are exported for use in the other ASN.1 modules contained
+-- within the Directory Specifications, and for the use of other applications which will use them to access
 -- Directory services. Other applications may use them for their own purposes, but this will not constrain
 -- extensions and modifications needed to maintain or improve the Directory service.
 IMPORTS
   -- from ITU-T Rec. X.501 | ISO/IEC 9594-2
-  directoryAbstractService, id-ar, id-at, id-mr, id-nf, id-oa, id-oc, 
+  directoryAbstractService, id-ar, id-at, id-mr, id-nf, id-oa, id-oc,
     id-sc, selectedAttributeTypes, serviceAdministration, upperBounds
     FROM UsefulDefinitions {joint-iso-itu-t ds(5) module(1)
       usefulDefinitions(0) 5}
@@ -38,7 +38,7 @@ IMPORTS
   ub-search
     FROM UpperBounds upperBounds;
 
--- attribute data types 
+-- attribute data types
 Attribute ::= SEQUENCE {
   type               ATTRIBUTE.&id({SupportedAttributes}),
   values
@@ -85,7 +85,7 @@ AttributeTypeAssertion ::= SEQUENCE {
 
 -- Definition of the following information object set is deferred, perhaps to standardized
 -- profiles or to protocol implementation conformance statements. The set is required to
--- specify a table constraint on the values component of Attribute, the value component 
+-- specify a table constraint on the values component of Attribute, the value component
 -- of AttributeTypeAndValue, and the assertion component of AttributeValueAssertion.
 SupportedAttributes ATTRIBUTE ::=
   {objectClass | aliasedEntryName, ...}
@@ -96,7 +96,7 @@ SupportedAttributes ATTRIBUTE ::=
 SupportedContexts CONTEXT ::=
   {...}
 
--- naming data types 
+-- naming data types
 Name ::= CHOICE { -- only one possibility for now --rdnSequence  RDNSequence
 }
 
@@ -119,7 +119,7 @@ AttributeTypeAndDistinguishedValue ::= SEQUENCE {
                 contextList       SET SIZE (1..MAX) OF Context} OPTIONAL
 }
 
--- subtree data types 
+-- subtree data types
 SubtreeSpecification ::= SEQUENCE {
   base                 [0]  LocalName DEFAULT {},
   COMPONENTS OF ChopSpecification,
@@ -147,7 +147,7 @@ Refinement ::= CHOICE {
   not   [3]  Refinement
 }
 
--- OBJECT-CLASS information object class specification 
+-- OBJECT-CLASS information object class specification
 OBJECT-CLASS ::= CLASS {
   &Superclasses         OBJECT-CLASS OPTIONAL,
   &kind                 ObjectClassKind DEFAULT structural,
@@ -165,7 +165,7 @@ WITH SYNTAX {
 
 ObjectClassKind ::= ENUMERATED {abstract(0), structural(1), auxiliary(2)}
 
--- object classes 
+-- object classes
 top OBJECT-CLASS ::= {
   KIND          abstract
   MUST CONTAIN  {objectClass}
@@ -186,17 +186,17 @@ child OBJECT-CLASS ::= {KIND  auxiliary
                         ID    id-oc-child
 }
 
--- ATTRIBUTE information object class specification 
+-- ATTRIBUTE information object class specification
 ATTRIBUTE ::= CLASS {
   &derivation            ATTRIBUTE OPTIONAL,
-  &Type                  OPTIONAL, -- either &Type or &derivation required 
+  &Type                  OPTIONAL, -- either &Type or &derivation required
   &equality-match        MATCHING-RULE OPTIONAL,
   &ordering-match        MATCHING-RULE OPTIONAL,
   &substrings-match      MATCHING-RULE OPTIONAL,
   &single-valued         BOOLEAN DEFAULT FALSE,
   &collective            BOOLEAN DEFAULT FALSE,
   &dummy                 BOOLEAN DEFAULT FALSE,
-  -- operational extensions 
+  -- operational extensions
   &no-user-modification  BOOLEAN DEFAULT FALSE,
   &usage                 AttributeUsage DEFAULT userApplications,
   &id                    OBJECT IDENTIFIER UNIQUE
@@ -219,7 +219,7 @@ AttributeUsage ::= ENUMERATED {
   userApplications(0), directoryOperation(1), distributedOperation(2),
   dSAOperation(3)}
 
--- attributes 
+-- attributes
 objectClass ATTRIBUTE ::= {
   WITH SYNTAX             OBJECT IDENTIFIER
   EQUALITY MATCHING RULE  objectIdentifierMatch
@@ -233,7 +233,7 @@ aliasedEntryName ATTRIBUTE ::= {
   ID                      id-at-aliasedEntryName
 }
 
--- MATCHING-RULE information object class specification 
+-- MATCHING-RULE information object class specification
 MATCHING-RULE ::= CLASS {
   &ParentMatchingRules   MATCHING-RULE OPTIONAL,
   &AssertionType         OPTIONAL,
@@ -247,7 +247,7 @@ WITH SYNTAX {
   ID &id
 }
 
--- matching rules 
+-- matching rules
 objectIdentifierMatch MATCHING-RULE ::= {
   SYNTAX  OBJECT IDENTIFIER
   ID      id-mr-objectIdentifierMatch
@@ -282,7 +282,7 @@ WITH SYNTAX {
   ID &id
 }
 
--- NAME-FORM information object class specification 
+-- NAME-FORM information object class specification
 NAME-FORM ::= CLASS {
   &namedObjectClass     OBJECT-CLASS,
   &MandatoryAttributes  ATTRIBUTE,
@@ -296,7 +296,7 @@ WITH SYNTAX {
   ID &id
 }
 
--- STRUCTURE-RULE class and DIT structure rule data types 
+-- STRUCTURE-RULE class and DIT structure rule data types
 STRUCTURE-RULE ::= CLASS {
   &nameForm                NAME-FORM,
   &SuperiorStructureRules  STRUCTURE-RULE.&id OPTIONAL,
@@ -317,7 +317,7 @@ DITStructureRule ::= SEQUENCE {
 
 RuleIdentifier ::= INTEGER
 
--- CONTENT-RULE class and DIT content rule data types 
+-- CONTENT-RULE class and DIT content rule data types
 CONTENT-RULE ::= CLASS {
   &structuralClass  OBJECT-CLASS.&id UNIQUE,
   &Auxiliaries      OBJECT-CLASS OPTIONAL,
@@ -380,8 +380,8 @@ FRIENDS ::= CLASS {
               FRIENDS &Friends
 }
 
--- system schema information objects 
--- object classes 
+-- system schema information objects
+-- object classes
 subentry OBJECT-CLASS ::= {
   SUBCLASS OF   {top}
   KIND          structural
@@ -417,7 +417,7 @@ serviceAdminSubentry OBJECT-CLASS ::= {
   ID            id-sc-serviceAdminSubentry
 }
 
--- attributes 
+-- attributes
 subtreeSpecification ATTRIBUTE ::= {
   WITH SYNTAX  SubtreeSpecification
   USAGE        directoryOperation
@@ -598,8 +598,8 @@ hierarchyTop ATTRIBUTE ::= {
   ID                      id-oa-hierarchyTop
 }
 
--- object identifier assignments 
--- object classes 
+-- object identifier assignments
+-- object classes
 id-oc-top OBJECT IDENTIFIER ::=
   {id-oc 0}
 
@@ -609,17 +609,17 @@ id-oc-parent OBJECT IDENTIFIER ::= {id-oc 28}
 
 id-oc-child OBJECT IDENTIFIER ::= {id-oc 29}
 
--- attributes 
+-- attributes
 id-at-objectClass OBJECT IDENTIFIER ::= {id-at 0}
 
 id-at-aliasedEntryName OBJECT IDENTIFIER ::= {id-at 1}
 
--- matching rules 
+-- matching rules
 id-mr-objectIdentifierMatch OBJECT IDENTIFIER ::= {id-mr 0}
 
 id-mr-distinguishedNameMatch OBJECT IDENTIFIER ::= {id-mr 1}
 
--- operational attributes 
+-- operational attributes
 id-oa-excludeAllCollectiveAttributes OBJECT IDENTIFIER ::=
   {id-oa 0}
 
@@ -665,7 +665,7 @@ id-oa-hierarchyTop OBJECT IDENTIFIER ::= {id-oa 20}
 
 id-oa-allAttributeTypes OBJECT IDENTIFIER ::= {id-oa 48}
 
--- subentry classes 
+-- subentry classes
 id-sc-subentry OBJECT IDENTIFIER ::= {id-sc 0}
 
 id-sc-accessControlSubentry OBJECT IDENTIFIER ::= {id-sc 1}
@@ -676,10 +676,10 @@ id-sc-contextAssertionSubentry OBJECT IDENTIFIER ::= {id-sc 3}
 
 id-sc-serviceAdminSubentry OBJECT IDENTIFIER ::= {id-sc 4}
 
---  Name forms 
+--  Name forms
 id-nf-subentryNameForm OBJECT IDENTIFIER ::= {id-nf 16}
 
--- administrative roles 
+-- administrative roles
 id-ar-autonomousArea OBJECT IDENTIFIER ::= {id-ar 1}
 
 id-ar-accessControlSpecificArea OBJECT IDENTIFIER ::= {id-ar 2}

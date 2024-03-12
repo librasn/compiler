@@ -266,7 +266,7 @@ PerRecipientProbeTransferExtensions EXTENSION ::=
   {-- May contain the following extensions, private extensions, and future standardised extensions,
    -- at most one instance of each extension type:
    originator-requested-alternate-recipient | requested-delivery-method |
-   physical-rendition-attributes | redirection-history | PrivateExtensions, 
+   physical-rendition-attributes | redirection-history | PrivateExtensions,
    ...}
 
 --	Report Transfer Envelope
@@ -284,7 +284,7 @@ ReportTransferEnvelopeExtensions EXTENSION ::=
    message-security-label | redirection-history |
    originator-and-DL-expansion-history | reporting-DL-name |
    reporting-MTA-certificate | report-origin-authentication-check |
-   internal-trace-information | reporting-MTA-name | PrivateExtensions, 
+   internal-trace-information | reporting-MTA-name | PrivateExtensions,
    ...}
 
 --	Report Transfer Content
@@ -344,7 +344,7 @@ PerDomainBilateralInformation ::= SEQUENCE {
 }
 
 BILATERAL ::= CLASS {&id    BilateralDomain UNIQUE,
-                     &Type  
+                     &Type
 }WITH SYNTAX {&Type,
               IDENTIFIED BY &id
 }
@@ -382,7 +382,7 @@ PerRecipientIndicators ::= BIT STRING {
   -- originator-non-delivery-report bit 'one' requests a 'non-delivery-report';
   -- both bits 'zero' requests 'no-report'
   reserved-5(5), reserved-6(6), reserved-7(7)
-                                
+
 -- reserved- bits 5 - 7 shall be 'zero' --}(SIZE (8..ub-bit-options))
 
 ProbeIdentifier ::= MTSIdentifier
@@ -397,9 +397,9 @@ MessageOrProbeIdentifier ::= MTSIdentifier
 
 SubjectIntermediateTraceInformation ::= TraceInformation
 
---	AdditionalInformation is retained for backwards compatibility only, 
+--	AdditionalInformation is retained for backwards compatibility only,
 --	and use in new systems is strongly deprecated
-ADDITIONAL ::= CLASS {&Type  
+ADDITIONAL ::= CLASS {&Type
 }
 
 AdditionalInformation ::=

@@ -24,25 +24,25 @@ ext-BasicConstraints | ext-NameConstraints |
 ext-PolicyConstraints | ext-ExtKeyUsage |
 ext-CRLDistributionPoints | ext-InhibitAnyPolicy |
 ext-FreshestCRL | ext-AuthorityInfoAccess |
-ext-SubjectInfoAccessSyntax, 
-... 
+ext-SubjectInfoAccessSyntax,
+...
 }
 CrlExtensions EXTENSION ::= {
 ext-AuthorityKeyIdentifier | ext-IssuerAltName |
 ext-CRLNumber | ext-DeltaCRLIndicator |
-ext-IssuingDistributionPoint |  ext-FreshestCRL, 
-... 
+ext-IssuingDistributionPoint |  ext-FreshestCRL,
+...
 }
 CrlEntryExtensions EXTENSION ::= {
 ext-CRLReason | ext-CertificateIssuer |
-ext-HoldInstructionCode | ext-InvalidityDate, 
-... 
+ext-HoldInstructionCode | ext-InvalidityDate,
+...
 }
 -- Shared arc for standard certificate and CRL extensions
 id-ce OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2) ds(5) 29 }
 -- authority key identifier OID and syntax
-ext-AuthorityKeyIdentifier EXTENSION ::= { 
-SYNTAX AuthorityKeyIdentifier 
+ext-AuthorityKeyIdentifier EXTENSION ::= {
+SYNTAX AuthorityKeyIdentifier
 IDENTIFIED BY id-ce-authorityKeyIdentifier }
 id-ce-authorityKeyIdentifier OBJECT IDENTIFIER ::=  { id-ce 35 }
 AuthorityKeyIdentifier ::= SEQUENCE {
@@ -61,13 +61,13 @@ authorityCertSerialNumber	ABSENT
 })
 KeyIdentifier ::= OCTET STRING
 -- subject key identifier OID and syntax
-ext-SubjectKeyIdentifier EXTENSION ::= { 
-SYNTAX KeyIdentifier 
+ext-SubjectKeyIdentifier EXTENSION ::= {
+SYNTAX KeyIdentifier
 IDENTIFIED BY id-ce-subjectKeyIdentifier }
 id-ce-subjectKeyIdentifier OBJECT IDENTIFIER ::=  { id-ce 14 }
 -- key usage extension OID and syntax
-ext-KeyUsage EXTENSION ::= { 
-SYNTAX KeyUsage 
+ext-KeyUsage EXTENSION ::= {
+SYNTAX KeyUsage
 IDENTIFIED BY id-ce-keyUsage }
 id-ce-keyUsage OBJECT IDENTIFIER ::=  { id-ce 15 }
 KeyUsage ::= BIT STRING {
@@ -84,8 +84,8 @@ encipherOnly	(7),
 decipherOnly	(8)
 }
 -- private key usage period extension OID and syntax
-ext-PrivateKeyUsagePeriod EXTENSION ::= { 
-SYNTAX PrivateKeyUsagePeriod 
+ext-PrivateKeyUsagePeriod EXTENSION ::= {
+SYNTAX PrivateKeyUsagePeriod
 IDENTIFIED BY id-ce-privateKeyUsagePeriod }
 id-ce-privateKeyUsagePeriod OBJECT IDENTIFIER ::=  { id-ce 16 }
 PrivateKeyUsagePeriod ::= SEQUENCE {
@@ -94,8 +94,8 @@ notAfter	[1]     GeneralizedTime OPTIONAL }
 (WITH COMPONENTS {..., notBefore  PRESENT } |
 WITH COMPONENTS {..., notAfter  PRESENT })
 -- certificate policies extension OID and syntax
-ext-CertificatePolicies EXTENSION ::= { 
-SYNTAX CertificatePolicies 
+ext-CertificatePolicies EXTENSION ::= {
+SYNTAX CertificatePolicies
 IDENTIFIED BY id-ce-certificatePolicies}
 id-ce-certificatePolicies OBJECT IDENTIFIER ::=  { id-ce 32 }
 CertificatePolicies ::= SEQUENCE SIZE (1..MAX) OF PolicyInformation
@@ -114,7 +114,7 @@ qualifier	CERT-POLICY-QUALIFIER.&Type
 PolicyQualifierId CERT-POLICY-QUALIFIER ::=
 { pqid-cps | pqid-unotice, ... }
 pqid-cps CERT-POLICY-QUALIFIER ::= { CPSuri IDENTIFIED BY id-qt-cps }
-pqid-unotice CERT-POLICY-QUALIFIER ::= { 
+pqid-unotice CERT-POLICY-QUALIFIER ::= {
 UserNotice
 IDENTIFIED BY id-qt-unotice }
 -- CPS pointer qualifier
@@ -140,7 +140,7 @@ bmpString        BMPString      (SIZE (1..200)),
 utf8String       UTF8String     (SIZE (1..200))
 }
 -- policy mapping extension OID and syntax
-ext-PolicyMappings EXTENSION ::= { 
+ext-PolicyMappings EXTENSION ::= {
 SYNTAX PolicyMappings IDENTIFIED BY id-ce-policyMappings }
 id-ce-policyMappings OBJECT IDENTIFIER ::=  { id-ce 33 }
 PolicyMappings ::= SEQUENCE SIZE (1..MAX) OF SEQUENCE {
@@ -148,8 +148,8 @@ issuerDomainPolicy		CertPolicyId,
 subjectDomainPolicy	CertPolicyId
 }
 -- subject alternative name extension OID and syntax
-ext-SubjectAltName EXTENSION ::= { 
-SYNTAX GeneralNames 
+ext-SubjectAltName EXTENSION ::= {
+SYNTAX GeneralNames
 IDENTIFIED BY id-ce-subjectAltName }
 id-ce-subjectAltName OBJECT IDENTIFIER ::=  { id-ce 17 }
 GeneralNames ::= SEQUENCE SIZE (1..MAX) OF GeneralName
@@ -172,19 +172,19 @@ nameAssigner	[0] DirectoryString {ubMax} OPTIONAL,
 partyName		[1] DirectoryString {ubMax}
 }
 -- issuer alternative name extension OID and syntax
-ext-IssuerAltName EXTENSION ::= { 
-SYNTAX GeneralNames 
+ext-IssuerAltName EXTENSION ::= {
+SYNTAX GeneralNames
 IDENTIFIED BY id-ce-issuerAltName }
 id-ce-issuerAltName OBJECT IDENTIFIER ::=  { id-ce 18 }
-ext-SubjectDirectoryAttributes EXTENSION ::= { 
-SYNTAX SubjectDirectoryAttributes 
+ext-SubjectDirectoryAttributes EXTENSION ::= {
+SYNTAX SubjectDirectoryAttributes
 IDENTIFIED BY id-ce-subjectDirectoryAttributes }
 id-ce-subjectDirectoryAttributes OBJECT IDENTIFIER ::=  { id-ce 9 }
 SubjectDirectoryAttributes ::= SEQUENCE SIZE (1..MAX) OF
 AttributeSet{{SupportedAttributes}}
 -- basic constraints extension OID and syntax
-ext-BasicConstraints EXTENSION ::= { 
-SYNTAX BasicConstraints 
+ext-BasicConstraints EXTENSION ::= {
+SYNTAX BasicConstraints
 IDENTIFIED BY id-ce-basicConstraints }
 id-ce-basicConstraints OBJECT IDENTIFIER ::=  { id-ce 19 }
 BasicConstraints ::= SEQUENCE {
@@ -192,8 +192,8 @@ cA				BOOLEAN DEFAULT FALSE,
 pathLenConstraint	INTEGER (0..MAX) OPTIONAL
 }
 -- name constraints extension OID and syntax
-ext-NameConstraints EXTENSION ::= { 
-SYNTAX NameConstraints 
+ext-NameConstraints EXTENSION ::= {
+SYNTAX NameConstraints
 IDENTIFIED BY id-ce-nameConstraints }
 id-ce-nameConstraints OBJECT IDENTIFIER ::=  { id-ce 30 }
 NameConstraints ::= SEQUENCE {
@@ -214,13 +214,13 @@ maximum	[1] BaseDistance OPTIONAL
 }
 BaseDistance ::= INTEGER (0..MAX)
 -- policy constraints extension OID and syntax
-ext-PolicyConstraints EXTENSION ::= { 
-SYNTAX PolicyConstraints 
+ext-PolicyConstraints EXTENSION ::= {
+SYNTAX PolicyConstraints
 IDENTIFIED BY id-ce-policyConstraints }
 id-ce-policyConstraints OBJECT IDENTIFIER ::=  { id-ce 36 }
 PolicyConstraints ::= SEQUENCE {
 requireExplicitPolicy	[0] SkipCerts OPTIONAL,
-inhibitPolicyMapping	[1] SkipCerts OPTIONAL 
+inhibitPolicyMapping	[1] SkipCerts OPTIONAL
 }
 --
 --  This is a constraint in the issued certificates by CAs,
@@ -230,8 +230,8 @@ inhibitPolicyMapping	[1] SkipCerts OPTIONAL
 --  WITH COMPONENTS { ..., inhibitPolicyMapping PRESENT})
 SkipCerts ::= INTEGER (0..MAX)
 -- CRL distribution points extension OID and syntax
-ext-CRLDistributionPoints EXTENSION ::= { 
-SYNTAX CRLDistributionPoints 
+ext-CRLDistributionPoints EXTENSION ::= {
+SYNTAX CRLDistributionPoints
 IDENTIFIED BY id-ce-cRLDistributionPoints}
 id-ce-cRLDistributionPoints     OBJECT IDENTIFIER  ::=  {id-ce 31}
 CRLDistributionPoints ::= SEQUENCE SIZE (1..MAX) OF DistributionPoint
@@ -262,8 +262,8 @@ privilegeWithdrawn		(7),
 aACompromise		(8)
 }
 -- extended key usage extension OID and syntax
-ext-ExtKeyUsage EXTENSION ::= { 
-SYNTAX ExtKeyUsageSyntax 
+ext-ExtKeyUsage EXTENSION ::= {
+SYNTAX ExtKeyUsageSyntax
 IDENTIFIED BY id-ce-extKeyUsage }
 id-ce-extKeyUsage OBJECT IDENTIFIER ::= {id-ce 37}
 ExtKeyUsageSyntax ::= SEQUENCE SIZE (1..MAX) OF KeyPurposeId
@@ -279,17 +279,17 @@ id-kp-timeStamping     OBJECT IDENTIFIER ::= { id-kp 8 }
 id-kp-OCSPSigning      OBJECT IDENTIFIER ::= { id-kp 9 }
 -- inhibit any policy OID and syntax
 ext-InhibitAnyPolicy EXTENSION  ::= {
-SYNTAX	SkipCerts 
+SYNTAX	SkipCerts
 IDENTIFIED BY id-ce-inhibitAnyPolicy }
 id-ce-inhibitAnyPolicy OBJECT IDENTIFIER ::=  { id-ce 54 }
 -- freshest (delta)CRL extension OID and syntax
 ext-FreshestCRL EXTENSION ::= {
-SYNTAX CRLDistributionPoints 
+SYNTAX CRLDistributionPoints
 IDENTIFIED BY id-ce-freshestCRL }
 id-ce-freshestCRL OBJECT IDENTIFIER ::=  { id-ce 46 }
 -- authority info access
-ext-AuthorityInfoAccess EXTENSION ::= { 
-SYNTAX AuthorityInfoAccessSyntax 
+ext-AuthorityInfoAccess EXTENSION ::= {
+SYNTAX AuthorityInfoAccessSyntax
 IDENTIFIED BY id-pe-authorityInfoAccess }
 id-pe-authorityInfoAccess OBJECT IDENTIFIER ::= { id-pe 1 }
 AuthorityInfoAccessSyntax  ::= SEQUENCE SIZE (1..MAX) OF AccessDescription
@@ -298,20 +298,20 @@ accessMethod	OBJECT IDENTIFIER,
 accessLocation	GeneralName
 }
 -- subject info access
-ext-SubjectInfoAccessSyntax EXTENSION ::= { 
-SYNTAX SubjectInfoAccessSyntax 
+ext-SubjectInfoAccessSyntax EXTENSION ::= {
+SYNTAX SubjectInfoAccessSyntax
 IDENTIFIED BY id-pe-subjectInfoAccess }
 id-pe-subjectInfoAccess OBJECT IDENTIFIER ::= { id-pe 11 }
 SubjectInfoAccessSyntax  ::= SEQUENCE SIZE (1..MAX) OF AccessDescription
 -- CRL number extension OID and syntax
 ext-CRLNumber EXTENSION ::= {
-SYNTAX INTEGER (0..MAX) 
+SYNTAX INTEGER (0..MAX)
 IDENTIFIED BY id-ce-cRLNumber }
 id-ce-cRLNumber OBJECT IDENTIFIER ::= { id-ce 20 }
 CRLNumber ::= INTEGER (0..MAX)
 -- issuing distribution point extension OID and syntax
-ext-IssuingDistributionPoint EXTENSION ::= { 
-SYNTAX IssuingDistributionPoint 
+ext-IssuingDistributionPoint EXTENSION ::= {
+SYNTAX IssuingDistributionPoint
 IDENTIFIED BY id-ce-issuingDistributionPoint }
 id-ce-issuingDistributionPoint OBJECT IDENTIFIER ::= { id-ce 28 }
 IssuingDistributionPoint ::= SEQUENCE {
@@ -324,13 +324,13 @@ onlyContainsAttributeCerts	[5] BOOLEAN DEFAULT FALSE
 }
 -- at most one of onlyContainsUserCerts, onlyContainsCACerts,
 -- or onlyContainsAttributeCerts may be set to TRUE.
-ext-DeltaCRLIndicator EXTENSION ::= { 
-SYNTAX CRLNumber 
+ext-DeltaCRLIndicator EXTENSION ::= {
+SYNTAX CRLNumber
 IDENTIFIED BY id-ce-deltaCRLIndicator }
 id-ce-deltaCRLIndicator OBJECT IDENTIFIER ::= { id-ce 27 }
 -- CRL reasons extension OID and syntax
-ext-CRLReason EXTENSION ::= { 
-SYNTAX CRLReason 
+ext-CRLReason EXTENSION ::= {
+SYNTAX CRLReason
 IDENTIFIED BY id-ce-cRLReasons }
 id-ce-cRLReasons OBJECT IDENTIFIER ::= { id-ce 21 }
 CRLReason ::= ENUMERATED {
@@ -346,24 +346,24 @@ privilegeWithdrawn		(9),
 aACompromise		(10)
 }
 -- certificate issuer CRL entry extension OID and syntax
-ext-CertificateIssuer EXTENSION ::= { 
-SYNTAX GeneralNames 
+ext-CertificateIssuer EXTENSION ::= {
+SYNTAX GeneralNames
 IDENTIFIED BY id-ce-certificateIssuer }
 id-ce-certificateIssuer OBJECT IDENTIFIER ::= { id-ce 29 }
 -- hold instruction extension OID and syntax
-ext-HoldInstructionCode EXTENSION ::= { 
-SYNTAX OBJECT IDENTIFIER 
+ext-HoldInstructionCode EXTENSION ::= {
+SYNTAX OBJECT IDENTIFIER
 IDENTIFIED BY id-ce-holdInstructionCode }
 id-ce-holdInstructionCode OBJECT IDENTIFIER ::= { id-ce 23 }
 -- ANSI x9 holdinstructions
-holdInstruction OBJECT IDENTIFIER ::= 
+holdInstruction OBJECT IDENTIFIER ::=
 {joint-iso-itu-t(2) member-body(2) us(840) x9cm(10040) 2}
 id-holdinstruction-none OBJECT IDENTIFIER  ::= {holdInstruction 1} -- deprecated
 id-holdinstruction-callissuer OBJECT IDENTIFIER ::= {holdInstruction 2}
 id-holdinstruction-reject OBJECT IDENTIFIER ::= {holdInstruction 3}
 -- invalidity date CRL entry extension OID and syntax
-ext-InvalidityDate EXTENSION  ::=  { 
-SYNTAX GeneralizedTime 
+ext-InvalidityDate EXTENSION  ::=  {
+SYNTAX GeneralizedTime
 IDENTIFIED BY id-ce-invalidityDate }
 id-ce-invalidityDate OBJECT IDENTIFIER ::= { id-ce 24 }
 -- Upper bounds

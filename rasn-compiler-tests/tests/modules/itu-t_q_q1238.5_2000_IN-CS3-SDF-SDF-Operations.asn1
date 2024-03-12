@@ -13,7 +13,7 @@
 --
 -- This section describes INAP ASN.1 definition in SDF-SDF interface. All the definitions
 -- are defined by subtyping X.500 related definitions or by using them. The modules in this
--- section are only for information, and the syntax is not assured. 
+-- section are only for information, and the syntax is not assured.
 --
 -- 9.1	INAP DEFINED BY SUBTYPED X.500 RELATED DEFINITION
 --
@@ -58,7 +58,7 @@ IMPORTS
       remote-operations(4) informationObjects(5) version1(0)}
   execute, in-AddEntry, in-DirectoryBind, in-RemoveEntry, in-Search,
     in-ModifyEntry
-    FROM IN-CS3-SCF-SDF-Additional-Definitions {itu-t recommendation q 
+    FROM IN-CS3-SCF-SDF-Additional-Definitions {itu-t recommendation q
       1238 modules(1) in-cs3-scf-sdf-additional-definitions(28) version1(0)};
 
 -- IN X.500 DISP definition
@@ -68,15 +68,15 @@ IN-ShadowingAgreementInfo ::=
                            master  ABSENT
                          })
 
--- shadowSubject specifies the subtree, entries and attributes to shadow. The components of 
+-- shadowSubject specifies the subtree, entries and attributes to shadow. The components of
 -- UnitOfReplicationare defined in section 9.2 of Recommendation X.525.
--- updateMode specifies when updates of a shadowed area are scheduled to occur. The components of 
+-- updateMode specifies when updates of a shadowed area are scheduled to occur. The components of
 -- updateMode are defined in section 9.3 of Recommendation X.525.
--- master contains the access point of the DSA containing the mastered area. "As this information is 
+-- master contains the access point of the DSA containing the mastered area. "As this information is
 -- already known by the DSA it is not required for IN."
--- secondaryShadows permits secondary shadow information to be subsequently supplied to the shadow 
--- supplier. 
--- The secondary shadows are ignored in the IN context (assumption 5), then this component should not 
+-- secondaryShadows permits secondary shadow information to be subsequently supplied to the shadow
+-- supplier.
+-- The secondary shadows are ignored in the IN context (assumption 5), then this component should not
 -- be included.
 in-DSAShadowBind OPERATION ::=
   in-DirectoryBind
@@ -89,7 +89,7 @@ in-CoordinateShadowUpdate OPERATION ::= {
   CODE      id-opcode-coordinateShadowUpdate
 }
 
--- The IN-CoordinateShadowUpdate operation is used by the shadow supplier to indicate the shadowing 
+-- The IN-CoordinateShadowUpdate operation is used by the shadow supplier to indicate the shadowing
 -- agreement for which it intends to send updates.
 IN-CoordinateShadowUpdateArgument ::=
   CoordinateShadowUpdateArgument
@@ -110,12 +110,12 @@ IN-CoordinateShadowUpdateResult ::=
 -- The various parameters have the meanings defined below:
 -- a)	The agreementID argument identifies the shadowing agreement.
 -- b)	The lastUpdate argument indicates the shadow supplier's understanding of the time at which
--- 	the last update for this agreement was sent and is the time as provided by the shadow supplier 
--- 	DSA. This argument may only be omitted in the first instance of either a 
+-- 	the last update for this agreement was sent and is the time as provided by the shadow supplier
+-- 	DSA. This argument may only be omitted in the first instance of either a
 -- 	IN-CoordinateShadowUpdate or IN-RequestShadowUpdate operation for a particular
 --	shadowing agreement
--- c)	The updateStrategy argument identifies the update strategy the shadow supplier intends to use 
--- 	for this update. For IN CS-3, a total or incremental replacement strategy should be used. 
+-- c)	The updateStrategy argument identifies the update strategy the shadow supplier intends to use
+-- 	for this update. For IN CS-3, a total or incremental replacement strategy should be used.
 -- 	The "NoChanges" option will not be used.
 -- d)	The securityParameters argument is defined in 7.10 of ITU-T Rec. X.511 | ISO/IEC 9594?3.
 in-UpdateShadow OPERATION ::= {
@@ -125,9 +125,9 @@ in-UpdateShadow OPERATION ::= {
   CODE      id-opcode-updateShadow
 }
 
--- An IN-UpdateShadow operation is invoked by the shadow supplier to send updates to the shadow 
--- consumer for a unit of replication. Prior to this operation being initiated, a 
--- IN-CoordinateShadowUpdate or IN-RequestShadowUpdate operation must have been successfully 
+-- An IN-UpdateShadow operation is invoked by the shadow supplier to send updates to the shadow
+-- consumer for a unit of replication. Prior to this operation being initiated, a
+-- IN-CoordinateShadowUpdate or IN-RequestShadowUpdate operation must have been successfully
 -- completed for the identified shadowing agreement.
 IN-UpdateShadowArgument ::=
   UpdateShadowArgument
@@ -147,14 +147,14 @@ IN-UpdateShadowResult ::=
 
 -- The various parameters have the meanings as defined below:
 -- a)	The agreementID identifies the shadowing agreement that has been established.
--- b)	The updateTime argument is supplied by the shadow supplier. This time is used during the 
--- 	next IN-CoordinateShadowUpdate or IN-RequestShadowUpdate to ensure that the shadow 
+-- b)	The updateTime argument is supplied by the shadow supplier. This time is used during the
+-- 	next IN-CoordinateShadowUpdate or IN-RequestShadowUpdate to ensure that the shadow
 -- 	supplier and shadow consumer have a common view of the shadowed information.
--- c)	The updateWindow argument, when present, indicates the next window during which the 
+-- c)	The updateWindow argument, when present, indicates the next window during which the
 -- 	shadow supplier expects to send an update.
--- d)	The updatedInfo argument provides the information required by the shadow consumer to 
--- 	update its shadowed information. The semantics of the information conveyed in this parameter 
--- 	shall result in the shadow consumer reflecting the changes supplied. 
+-- d)	The updatedInfo argument provides the information required by the shadow consumer to
+-- 	update its shadowed information. The semantics of the information conveyed in this parameter
+-- 	shall result in the shadow consumer reflecting the changes supplied.
 -- e)	The securityParameters argument is defined in 7.10 of ITU-T Rec. X.511 | ISO/IEC 9594?3.
 IN-RefreshInformation ::=
   RefreshInformation(WITH COMPONENTS {
@@ -163,22 +163,22 @@ IN-RefreshInformation ::=
                      })
 
 -- The various parameters have the meanings as defined below:
--- a)	noRefresh indicates that there have been no changes to the shadowed information from the 
--- 	previous instance to the present. This may be used where an IN-UpdateShadow operation 
--- 	must be supplied at a certain interval defined in the shadowing agreement (updateMode), but 
+-- a)	noRefresh indicates that there have been no changes to the shadowed information from the
+-- 	previous instance to the present. This may be used where an IN-UpdateShadow operation
+-- 	must be supplied at a certain interval defined in the shadowing agreement (updateMode), but
 --	no modification has actually occurred.
--- b)	total provides a new instance of the shadowed information. The incremental strategy should 
+-- b)	total provides a new instance of the shadowed information. The incremental strategy should
 -- 	be preferably used because it saves signalling.
--- c)	incremental provides, instead of a complete replacement of the shadowed information, only 
--- 	the changes which have occurred to that shadowed information between lastUpdate in the 
--- 	most recent IN-CoordinateShadowUpdate (or IN-RequestShadowUpdate) request and 
--- 	updateTime in the current IN-UpdateShadow request (or IN-RequestShadowUpdate 
+-- c)	incremental provides, instead of a complete replacement of the shadowed information, only
+-- 	the changes which have occurred to that shadowed information between lastUpdate in the
+-- 	most recent IN-CoordinateShadowUpdate (or IN-RequestShadowUpdate) request and
+-- 	updateTime in the current IN-UpdateShadow request (or IN-RequestShadowUpdate
 -- 	response).
--- d)	otherStrategy provides the ability to send updates by mechanisms outside the scope of the 
+-- d)	otherStrategy provides the ability to send updates by mechanisms outside the scope of the
 --	Directory Specification. For IN CS-3, either a total or incremental strategy should be used.
--- 	Should the request succeed, a result will be returned, although no information will be 
+-- 	Should the request succeed, a result will be returned, although no information will be
 --	conveyd with it. Should the request fail, a shadowError shall be reported. Circumstances
--- 	under which the particular shadow problems will be returned are defined in X.525 Section 
+-- 	under which the particular shadow problems will be returned are defined in X.525 Section
 -- 	11.3.3.
 in-RequestShadowUpdate OPERATION ::= {
   ARGUMENT  IN-RequestShadowUpdateArgument
@@ -187,8 +187,8 @@ in-RequestShadowUpdate OPERATION ::= {
   CODE      id-opcode-requestShadowUpdate
 }
 
--- An IN-RequestShadowUpdate operation is used by the shadow consumer to request updates from the 
--- shadow supplier. 
+-- An IN-RequestShadowUpdate operation is used by the shadow consumer to request updates from the
+-- shadow supplier.
 IN-RequestShadowUpdateArgument ::=
   RequestShadowUpdateArgument
     (WITH COMPONENTS {
@@ -208,12 +208,12 @@ IN-RequestShadowUpdateResult ::=
 
 -- The various parameters have the meanings as defined below:
 -- a)	The agreementID identifies the shadowing agreement.
--- b)	The lastUpdate argument is the time provided by the shadow supplier in the most recent 
---	successful update. This argument may only be omitted in the first instance of either a 
---	IN-CoordinateShadowUpdate or IN-RequestShadowUpdate operation for a particular 
+-- b)	The lastUpdate argument is the time provided by the shadow supplier in the most recent
+--	successful update. This argument may only be omitted in the first instance of either a
+--	IN-CoordinateShadowUpdate or IN-RequestShadowUpdate operation for a particular
 --	shadowing agreement.
--- c)	The requestedStrategy argument identifies the type of update being requested by the shadow 
---	consumer. The shadow consumer may request either an incremental or a total update from 
+-- c)	The requestedStrategy argument identifies the type of update being requested by the shadow
+--	consumer. The shadow consumer may request either an incremental or a total update from
 --	the shadow supplier.
 -- d)	The securityParameters argument is defined in 7.10 of ITU-T Rec. X.511 | ISO/IEC 9594?3.
 -- IN X.500 DSP definition
@@ -225,9 +225,9 @@ IN-ChainingArguments ::=
        info         ABSENT,
        timeLimit    ABSENT
      }) --EDITOR: non-OPTIONAL components cannot be ABSENT
-    
 
--- The IN-ChainingArguments are present in each chained operation, to convey to a DSA the 
+
+-- The IN-ChainingArguments are present in each chained operation, to convey to a DSA the
 -- informatio needed to successfully perform its part of the overall task:
 IN-ChainingResults ::=
   ChainingResults
@@ -237,14 +237,14 @@ IN-ChainingResults ::=
        crossReferences  ABSENT
      })
 
--- The ChainingResults are present in the result of each operation and provide feedback to 
+-- The ChainingResults are present in the result of each operation and provide feedback to
 -- the DSA which invoked the operation.
 IN-ReferenceType ::=
   ReferenceType
     (superior | subordinate | nonSpecificSubordinate | supplier | master |
      immediateSuperior | self)
 
--- A ReferenceType value indicates one of the various kinds of reference defined in ITU-T 
+-- A ReferenceType value indicates one of the various kinds of reference defined in ITU-T
 -- Rec. X.501 | ISO/IEC 9594-2.
 -- Value (3)(cross reference) is not applicable for IN CS-3 as direct references are assumed.
 IN-AccessPoint ::=
@@ -264,17 +264,17 @@ IN-MasterOrShadowAccessPoint ::=
                               protocolInformation  ABSENT
                             })
 
--- A MasterOrShadowAccessPoint value identifies an access point to the Directory. 
--- The category, either master or shadow, of the access point is dependent upon whether it points to a 
+-- A MasterOrShadowAccessPoint value identifies an access point to the Directory.
+-- The category, either master or shadow, of the access point is dependent upon whether it points to a
 -- naming context or commonly useable replicated area.
 IN-MasterAndShadowAccessPoints ::=
   MasterOrShadowAccessPoint
 
--- A MasterAndShadowAccessPoints value identifies a set of access points to the Directory, i.e., a set of 
--- related DSAs. These access points share the property that each refers to a DSA holding entry 
--- information from a common naming context (or a common set of naming contexts mastered in one 
--- DSA when the value is a value of the nonSpecificKnowledge attribute. 
--- A MasterAndShadowAccessPoints value indicates the category of each AccessPoint value it contains. 
+-- A MasterAndShadowAccessPoints value identifies a set of access points to the Directory, i.e., a set of
+-- related DSAs. These access points share the property that each refers to a DSA holding entry
+-- information from a common naming context (or a common set of naming contexts mastered in one
+-- DSA when the value is a value of the nonSpecificKnowledge attribute.
+-- A MasterAndShadowAccessPoints value indicates the category of each AccessPoint value it contains.
 -- The access point of the master DSA of the naming context need not be included in the set.
 -- An AccessPointInformation value identifies one or more access points to the Directory.
 IN-AccessPointInformation ::=
@@ -293,59 +293,59 @@ IN-ContinuationReference ::=
        accessPoints   (SET OF IN-AccessPoint)
      })
 
--- A ContinuationReference describes how the performance of all or part of an operation can be 
--- continued at a different DSA or DSAs. It is typically returned as a referral when the DSA involved is 
+-- A ContinuationReference describes how the performance of all or part of an operation can be
+-- continued at a different DSA or DSAs. It is typically returned as a referral when the DSA involved is
 -- unable or unwilling to propagate the request itself.
 -- The various components have the meanings as defined below:
--- a)	The targetObject name indicates the name which is proposed to be used in continuing the 
+-- a)	The targetObject name indicates the name which is proposed to be used in continuing the
 -- 	operation. This might be different from the targetObject name received on the incoming request
 -- 	if, for example, an alias has been dereferenced, or the base object in a search has been located.
--- b)	The aliasedRDNs component indicates how many (if any) of the RDNs in the target object 
---	name have been produced by dereferencing an alias. Since alias entries in IN are just a 
---	means to provide an alternative name for an object and therefore should be dereferenced 
+-- b)	The aliasedRDNs component indicates how many (if any) of the RDNs in the target object
+--	name have been produced by dereferencing an alias. Since alias entries in IN are just a
+--	means to provide an alternative name for an object and therefore should be dereferenced
 --	when needed, there is no need for this indicator.
 -- c)	The operationProgress indicates the amount of name resolution which has been achieved, and
--- 	which will govern the further performance of the operation by the DSAs named, should the 
+-- 	which will govern the further performance of the operation by the DSAs named, should the
 --	DSA or DUA receiving the ContinuationReference wish to follow it up.
--- d)	The rdnsResolved component value (which need only be present if some of the RDNs in the 
---	name have not been the subject of full name resolution, but have been assumed to be correct 
---	from a cross reference) indicates how many RDNs have actually been resolved, using internal 
+-- d)	The rdnsResolved component value (which need only be present if some of the RDNs in the
+--	name have not been the subject of full name resolution, but have been assumed to be correct
+--	from a cross reference) indicates how many RDNs have actually been resolved, using internal
 --	references only. Since direct knowledge references are assumed, this parameter is deemed not
 -- 	applicable for IN CS-3.
--- e)	The referenceType component indicates what type of knowledge was used in generating this 
+-- e)	The referenceType component indicates what type of knowledge was used in generating this
 --	continuation.
--- f)	The accessPoints component indicates the access points which are to be contacted to achieve 
--- 	this continuation. Only where non-specific subordinate references are involved can there be 
+-- f)	The accessPoints component indicates the access points which are to be contacted to achieve
+-- 	this continuation. Only where non-specific subordinate references are involved can there be
 -- 	more than one AccessPointInformation item.
--- g)	The entryOnly component is set to TRUE if the original operation was a search, with the 
--- 	subset argument set to oneLevel, and an alias entry was encountered as an immediate 
--- 	subordinate of the baseObject. The DSA which successfully performs name resolution on the 
---	targetObject name, shall perform object evaluation 
--- 	on only the named entry. Since alias 
---	entries in IN are just a means to provide an alternative name for an object and therefore 
+-- g)	The entryOnly component is set to TRUE if the original operation was a search, with the
+-- 	subset argument set to oneLevel, and an alias entry was encountered as an immediate
+-- 	subordinate of the baseObject. The DSA which successfully performs name resolution on the
+--	targetObject name, shall perform object evaluation
+-- 	on only the named entry. Since alias
+--	entries in IN are just a means to provide an alternative name for an object and therefore
 --	should be dereferenced when needed, there is no need for this indicator.
--- h)	The exclusions component identifies a set of subordinate naming contexts that should not be 
+-- h)	The exclusions component identifies a set of subordinate naming contexts that should not be
 --	explored by the receiving DSA.
--- i)	The returnToDUA element is optionally supplied when the DSA creating the continuation 
--- 	reference wishes to indicate that it is unwilling to return information via an intermediate DSA 
--- 	(e.g., for security reasons), and wishes to indicate that information may be directly available 
--- 	via an operation over DAP between the originating DUA and the DSA. When returnToDUA is 
--- 	set to TRUE, referenceType may be set to self. This element may be used in IN for support of 
--- 	the shadowing agreement established between network operators (e.g., SDFv to SDFh Modify 
+-- i)	The returnToDUA element is optionally supplied when the DSA creating the continuation
+-- 	reference wishes to indicate that it is unwilling to return information via an intermediate DSA
+-- 	(e.g., for security reasons), and wishes to indicate that information may be directly available
+-- 	via an operation over DAP between the originating DUA and the DSA. When returnToDUA is
+-- 	set to TRUE, referenceType may be set to self. This element may be used in IN for support of
+-- 	the shadowing agreement established between network operators (e.g., SDFv to SDFh Modify
 --	may fail based upon access control restrictions).
--- j)	The nameResolveOnMaster element is optionally supplied when the DSA creating the 
--- 	continuation reference has encountered NSSRs. Since direct knowledge references are 
+-- j)	The nameResolveOnMaster element is optionally supplied when the DSA creating the
+-- 	continuation reference has encountered NSSRs. Since direct knowledge references are
 -- 	assumed, this parameter is deemed not applicable for IN CS-3.
 in-DSABind OPERATION ::=
   in-DirectoryBind
 
--- An IN-DSABind operation is used to begin of a period of cooperation between two DSAs providing 
+-- An IN-DSABind operation is used to begin of a period of cooperation between two DSAs providing
 -- the Directory service.
--- A DSA, having received an operation from a DUA, may elect to construct a chained form of that 
--- operation to propagate to another DSA. For IN CS-3 a DSA, having received a chained form of an 
--- operation, must either process the operation or if the originating DSA is in another network, chain it 
--- to another DSA within the same network as the receiving DSA. The DSA invoking a chained form of 
--- an operation may optionally sign the argument of the operation; the DSA performing the operation, 
+-- A DSA, having received an operation from a DUA, may elect to construct a chained form of that
+-- operation to propagate to another DSA. For IN CS-3 a DSA, having received a chained form of an
+-- operation, must either process the operation or if the originating DSA is in another network, chain it
+-- to another DSA within the same network as the receiving DSA. The DSA invoking a chained form of
+-- an operation may optionally sign the argument of the operation; the DSA performing the operation,
 --if so requested, may sign the result of the operation.
 -- The chained form of an operation is specified using the parameterized type IN-chained {}.
 in-Chained{OPERATION:operation} OPERATION ::= {
@@ -377,8 +377,8 @@ in-ChainedModifyEntry OPERATION ::= in-Chained{in-ModifyEntry}
 in-DSAReferral ERROR ::=
   dsaReferral --EDITOR: The following constraint ought to be applied to the field "&ParameterType" of the information object "dsaReferral":
 
--- The IN-DSAReferral error is generated by the DSA when, for whatever reason, it doesnt wish to 
--- continue performing an operation by chaining the operation to another DSA. For this CS, DSAs may 
+-- The IN-DSAReferral error is generated by the DSA when, for whatever reason, it doesnt wish to
+-- continue performing an operation by chaining the operation to another DSA. For this CS, DSAs may
 -- not chain operations incoming from another DSA unless the DSA is in another network.
 -- The various parameter have the meanings as described below:
 -- a) The IN-ContinueReference contains the information needed by the invoker to propagate
@@ -390,9 +390,9 @@ in-DSAReferral ERROR ::=
 -- confidential to that DSA). Since direct knowledge references are assumed for IN-CS3, this parameter
 -- is not applicable.
 -- IN DISP/DSP common Operation definition
--- inUnbind  OPERATION 
+-- inUnbind  OPERATION
 -- This operation is described in Q.1238.1.
--- The INUnbind operation replaces the X.525 dSAShadowUnbind operation and the X.518 dSAUnbind 
+-- The INUnbind operation replaces the X.525 dSAShadowUnbind operation and the X.518 dSAUnbind
 -- operation to provide class 4 operation behaviour for unbind procedures.
 -- This operation is also used to unbind the TFCBind.
 -- trafficFlowControl OPERATION

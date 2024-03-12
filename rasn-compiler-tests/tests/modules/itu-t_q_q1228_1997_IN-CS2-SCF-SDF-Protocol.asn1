@@ -13,11 +13,11 @@ IN-CS2-SCF-SDF-Protocol {itu-t recommendation q 1228 modules(0)
   in-scf-sdf-protocol(12) version1(0)} DEFINITIONS ::=
 BEGIN
 
--- EXPORTS All 
--- The types and values defined in this module are exported for use in the other ASN.1 modules contained 
--- within the Directory Specifications, and for the use of other applications which will use them to access 
--- Directory services. Other applications may use them for their own purposes, but this will not constrain 
--- extensions and modifications needed to maintain or improve the Directory service. 
+-- EXPORTS All
+-- The types and values defined in this module are exported for use in the other ASN.1 modules contained
+-- within the Directory Specifications, and for the use of other applications which will use them to access
+-- Directory services. Other applications may use them for their own purposes, but this will not constrain
+-- extensions and modifications needed to maintain or improve the Directory service.
 IMPORTS
   directoryAbstractService, directorySecurityExchanges,
     protocolObjectIdentifiers
@@ -61,7 +61,7 @@ IMPORTS
     FROM IN-CS2-SCF-SDF-Operations {itu-t recommendation q 1228 modules(0)
       scf-sdf-operations(11) version1(0)};
 
--- application contexts 
+-- application contexts
 iNdirectoryAccessAC APPLICATION-CONTEXT ::= {
   CONTRACT                  dapContract
   DIALOGUE MODE             structured
@@ -104,7 +104,7 @@ inExtendedDirectoryAccessWith3seAC APPLICATION-CONTEXT ::= {
   APPLICATION CONTEXT NAME  id-ac-inExtendedDirectoryAccessWith3seAC
 }
 
--- ROS-objects 
+-- ROS-objects
 dua ROS-OBJECT-CLASS ::= {
   INITIATES  {dapContract | dapExecuteContract}
   ID         id-rosObject-dua
@@ -120,7 +120,7 @@ dap-dsa ROS-OBJECT-CLASS ::= {
   ID        id-rosObject-dapDSA
 }
 
--- contracts 
+-- contracts
 dapContract CONTRACT ::= {
   CONNECTION             dapConnectionPackage
   INITIATOR CONSUMER OF  {searchPackage | modifyPackage}
@@ -133,7 +133,7 @@ dapExecuteContract CONTRACT ::= {
   ID                     id-contract-dapExecute
 }
 
--- connection package 
+-- connection package
 dapConnectionPackage CONNECTION-PACKAGE ::= {
   BIND    directoryBind
   UNBIND  in-directoryUnbind
@@ -156,7 +156,7 @@ executePackage OPERATION-PACKAGE ::= {
   ID                id-package-execute
 }
 
--- abstract-syntaxes 
+-- abstract-syntaxes
 inDirectoryOperationsAbstractSyntax ABSTRACT-SYNTAX ::= {
   BasicDAP-PDUs
   IDENTIFIED BY  id-as-indirectoryOperationsAS

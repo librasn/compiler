@@ -78,13 +78,13 @@ pub mod prelude {
     pub use crate::intermediate::ToplevelDefinition;
     pub mod ir {
         pub use crate::intermediate::{
-            *,
             constraints::*,
+            encoding_rules::{per_visible::*, *},
+            error::*,
             information_object::*,
             parameterization::*,
             types::*,
-            encoding_rules::{*, per_visible::*},
-            error::*,
+            *,
         };
     }
 }
@@ -107,11 +107,14 @@ pub fn compile(asn1: &str) -> Result<Generated, JsValue> {
         .compile_to_string()
         .map(|result| Generated {
             rust: result.generated,
-            warnings: result.warnings.into_iter().fold(String::new(), |mut acc, w| {
-                acc += &w.to_string();
-                acc += "\n";
-                acc
-            }),
+            warnings: result
+                .warnings
+                .into_iter()
+                .fold(String::new(), |mut acc, w| {
+                    acc += &w.to_string();
+                    acc += "\n";
+                    acc
+                }),
         })
         .map_err(|e| JsValue::from(e.to_string()))
 }

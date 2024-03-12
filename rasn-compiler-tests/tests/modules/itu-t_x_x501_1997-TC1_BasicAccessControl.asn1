@@ -14,9 +14,9 @@ BasicAccessControl {joint-iso-itu-t ds(5) module(1) basicAccessControl(24) 3}
 DEFINITIONS ::=
 BEGIN
 
--- EXPORTS All 
--- The types and values defined in this module are exported for use in the other ASN.1 modules contained 
--- within the Directory Specifications, and for the use of other applications which will use them to access 
+-- EXPORTS All
+-- The types and values defined in this module are exported for use in the other ASN.1 modules contained
+-- within the Directory Specifications, and for the use of other applications which will use them to access
 -- Directory services. Other applications may use them for their own purposes, but this will not constrain
 -- extensions and modifications needed to maintain or improve the Directory service.
 IMPORTS
@@ -38,7 +38,7 @@ IMPORTS
     FROM DirectoryAbstractService {joint-iso-itu-t ds(5) module(1)
       directoryAbstractService(2) 3};
 
--- types 
+-- types
 ACIItem ::= SEQUENCE {
   identificationTag    DirectoryString{ub-tag},
   precedence           Precedence,
@@ -84,13 +84,13 @@ UserClasses ::= SEQUENCE {
   name       [2]  SET OF NameAndOptionalUID OPTIONAL,
   userGroup  [3]  SET OF NameAndOptionalUID OPTIONAL,
   -- dn component must be the name of an
-  -- entry of GroupOfUniqueNames 
+  -- entry of GroupOfUniqueNames
   subtree    [4]  SET OF SubtreeSpecification OPTIONAL
 }
 
 ItemPermission ::= SEQUENCE {
   precedence        Precedence OPTIONAL,
-  -- defaults to precedence in ACIItem 
+  -- defaults to precedence in ACIItem
   userClasses       UserClasses,
   grantsAndDenials  GrantsAndDenials
 }
@@ -112,7 +112,7 @@ AuthenticationLevel ::= CHOICE {
 
 GrantsAndDenials ::= BIT STRING {
   -- permissions that may be used in conjunction
-  -- with any component of ProtectedItems 
+  -- with any component of ProtectedItems
   grantAdd(0), denyAdd(1), grantDiscloseOnError(2), denyDiscloseOnError(3),
   grantRead(4), denyRead(5), grantRemove(6),
   denyRemove(7),
@@ -132,7 +132,7 @@ AttributeTypeAndValue ::= SEQUENCE {
   value  ATTRIBUTE.&Type({SupportedAttributes}{@type})
 }
 
--- attributes 
+-- attributes
 accessControlScheme ATTRIBUTE ::= {
   WITH SYNTAX             OBJECT IDENTIFIER
   EQUALITY MATCHING RULE  objectIdentifierMatch
@@ -162,8 +162,8 @@ subentryACI ATTRIBUTE ::= {
   ID                      id-aca-subentryACI
 }
 
--- object identifier assignments 
--- attributes 
+-- object identifier assignments
+-- attributes
 id-aca-accessControlScheme OBJECT IDENTIFIER ::=
   {id-aca 1}
 

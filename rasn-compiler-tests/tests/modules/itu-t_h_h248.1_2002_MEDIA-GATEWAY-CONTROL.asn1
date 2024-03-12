@@ -51,7 +51,7 @@ MId ::= CHOICE {
   --        |  PC        | NI |
   --        24 - 14 bits    2 bits
   -- Note: 14 bits are defined for international use.
-  -- Two national options exist where the point code is 16 or 24 
+  -- Two national options exist where the point code is 16 or 24
   -- bits.
   -- To octet align the mtpAddress the MSBs shall be encoded as 0s.
   ...
@@ -88,7 +88,7 @@ Transaction ::= CHOICE {
 }
 
 TransactionId ::= INTEGER(0..4294967295) -- 32 bit unsigned integer
-                         
+
 
 TransactionRequest ::= SEQUENCE {
   transactionId  TransactionId,
@@ -129,7 +129,7 @@ ErrorText ::= IA5String
 ContextID ::= INTEGER(0..4294967295)
 
 -- Context NULL Value: 0
--- Context CHOOSE Value: 4294967294 (0xFFFFFFFE) 
+-- Context CHOOSE Value: 4294967294 (0xFFFFFFFE)
 -- Context ALL Value: 4294967295 (0xFFFFFFFF)
 ActionRequest ::= SEQUENCE {
   contextId            ContextID,
@@ -518,7 +518,7 @@ PkgdName ::= OCTET STRING(SIZE (4))
 -- To wildcard a package use 0xFFFF for first two octets, choose
 -- is not allowed. To reference native property tag specified in
 -- Annex C, use 0x0000 as first two octets.
--- To wildcard a Property, Event, Signal, or Statistics ID, use 
+-- To wildcard a Property, Event, Signal, or Statistics ID, use
 -- 0xFFFF for last two octets, choose is not allowed.
 -- Wildcarding of Package Name is permitted only if Property,
 --Event, Signal, or Statistics ID is
@@ -552,11 +552,11 @@ MuxDescriptor ::= SEQUENCE {
   ...
 }
 
-MuxType ::= ENUMERATED {h221(0), h223(1), h226(2), v76(3), ..., 
+MuxType ::= ENUMERATED {h221(0), h223(1), h226(2), v76(3), ...,
                         nx64k(4)}
 
 StreamID ::= INTEGER(0..65535) -- 16 bit unsigned integer
-                    
+
 
 EventsDescriptor ::= SEQUENCE {
   requestID  RequestID OPTIONAL,
@@ -662,7 +662,7 @@ SigParameter ::= SEQUENCE {
 -- For an AuditCapReply with all events, the RequestID SHALL be ALL.
 -- ALL is represented by 0xffffffff.
 RequestID ::= INTEGER(0..4294967295) -- 32 bit unsigned integer
-                     
+
 
 ModemDescriptor ::= SEQUENCE {
   mtl              SEQUENCE OF ModemType,
@@ -704,12 +704,12 @@ ServiceChangeParm ::= SEQUENCE {
   serviceChangeReason   Value,
   -- A serviceChangeReason consists of a numeric reason code
   -- and an optional text description.
-  -- The serviceChangeReason SHALL be a string consisting of 
-  -- a decimal reason code, optionally followed by a single 
+  -- The serviceChangeReason SHALL be a string consisting of
+  -- a decimal reason code, optionally followed by a single
   -- space character and a textual description string.
   -- This string is first BER-encoded as an IA5String.
   -- The result of this BER-encoding is then encoded as
-  -- an ASN.1 OCTET STRING type, "double wrapping" the 
+  -- an ASN.1 OCTET STRING type, "double wrapping" the
   --value
   -- as was done for package elements.
   serviceChangeDelay    INTEGER(0..4294967295) OPTIONAL,

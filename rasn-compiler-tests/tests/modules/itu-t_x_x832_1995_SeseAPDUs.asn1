@@ -13,7 +13,7 @@ SeseAPDUs {joint-iso-itu-t genericULS(20) modules(1) seseAPDUs(6)} DEFINITIONS
 AUTOMATIC TAGS ::=
 BEGIN
 
--- EXPORTS ALL 
+-- EXPORTS ALL
 IMPORTS
   notation
     FROM ObjectIdentifiers {joint-iso-itu-t genericULS(20) modules(1)
@@ -34,30 +34,30 @@ SESEapdus{SECURITY-EXCHANGE:ValidSEs, InvocationId:InvocationIdSet} ::=
 SETransfer{SECURITY-EXCHANGE:ValidSEs, InvocationId:InvocationIdSet} ::=
   SEQUENCE {
   seIdentifier    SECURITY-EXCHANGE.&sE-Identifier({ValidSEs}),
-  -- This identifies one of the security- 
-  -- exchanges supported by the particular SESE 
+  -- This identifies one of the security-
+  -- exchanges supported by the particular SESE
   -- abstract syntax
   itemIdentifier
     SECURITY-EXCHANGE.&SE-Items.&itemId({ValidSEs}{@seIdentifier}),
   -- This identifies one of the security-
-  -- exchange-items of the security exchange 
-  -- indicated by "seIdentifier" 
+  -- exchange-items of the security exchange
+  -- indicated by "seIdentifier"
   seItem
     SECURITY-EXCHANGE.&SE-Items.&ItemType
       ({ValidSEs}{@seIdentifier, @itemIdentifier}),
   invocationId
     InvocationId(InvocationIdSet)
       (CONSTRAINED BY {-- Must be the same as the---- invocationId on an active security exchange--
-         
+
          -- if start flag is not true -- }) DEFAULT noInvocationId,
   startFlag       BOOLEAN DEFAULT FALSE,
   -- This field is set only as the first security-
-  -- exchange-item of a security-exchange is 
-  -- transferred. 
-  endFlag         BOOLEAN DEFAULT FALSE-- This field is set as the last security-exchange- 
--- item of a security-exchange is transferred. It is 
--- needed to accommodate those mechanisms requiring 
--- n exchanges, where n is not known a priori 
+  -- exchange-item of a security-exchange is
+  -- transferred.
+  endFlag         BOOLEAN DEFAULT FALSE-- This field is set as the last security-exchange-
+-- item of a security-exchange is transferred. It is
+-- needed to accommodate those mechanisms requiring
+-- n exchanges, where n is not known a priori
 }
 
 SEUAbort{SECURITY-EXCHANGE:ValidSEs, InvocationId:InvocationIdSet} ::=
@@ -65,7 +65,7 @@ SEUAbort{SECURITY-EXCHANGE:ValidSEs, InvocationId:InvocationIdSet} ::=
   invocationId
     InvocationId(InvocationIdSet)
       (CONSTRAINED BY {-- Must be the same as the----  invocationId on an active or just-completed--
-         
+
          --  security exchange -- }) DEFAULT noInvocationId,
   itemIdentifier
     SECURITY-EXCHANGE.&SE-Items.&itemId({ValidSEs.&SE-Items})
@@ -74,7 +74,7 @@ SEUAbort{SECURITY-EXCHANGE:ValidSEs, InvocationId:InvocationIdSet} ::=
   --  when the Abort is generated subsequent
   --  to receipt of a SETransfer APDU.
   errors          SEQUENCE OF SEerror{{ValidSEs}} OPTIONAL
-  --  needed to handle multiple error codes 
+  --  needed to handle multiple error codes
 }
 
 SEPAbort{SECURITY-EXCHANGE:ValidSEs, InvocationId:InvocationIdSet} ::=

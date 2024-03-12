@@ -288,34 +288,34 @@ m-Set-Confirmed OPERATION ::= {
 }
 
 -- INFORMATION OBJECT definitions
--- While it is possible to use the Information object class definitions defined below to specify 
--- Action types, Attribute types,  Event Report types, and their associated ASN.1 type definitions, 
--- the alternative approach using GDMO templates, as defined in ITU-T Rec. 722 | ISO/IEC 10165-5, 
+-- While it is possible to use the Information object class definitions defined below to specify
+-- Action types, Attribute types,  Event Report types, and their associated ASN.1 type definitions,
+-- the alternative approach using GDMO templates, as defined in ITU-T Rec. 722 | ISO/IEC 10165-5,
 -- continues to be available for use with this Recommendation | International Standard.
 CMIP-ACTION ::= CLASS {&id     ActionTypeId UNIQUE,
-                       &Value  
+                       &Value
 }WITH SYNTAX {TYPE &Value
               ID &id
 }
 
 CMIP-ATTRIBUTE ::= CLASS {&id     AttributeId UNIQUE,
-                          &Value  
+                          &Value
 }WITH SYNTAX {TYPE &Value
               ID &id
 }
 
 CMIP-AVA ::= CLASS {&id     OBJECT IDENTIFIER UNIQUE,
-                    &Value  
+                    &Value
 }
 
 CMIP-EVENT ::= CLASS {&id     EventTypeId UNIQUE,
-                      &Value  
+                      &Value
 }WITH SYNTAX {TYPE &Value
               ID &id
 }
 
 CMIP-SPECIFICERROR ::= CLASS {&id     OBJECT IDENTIFIER UNIQUE,
-                              &Value  
+                              &Value
 }WITH SYNTAX {TYPE &Value
               ID &id
 }
@@ -394,7 +394,7 @@ AttributeError ::= SEQUENCE {
                 invalidOperation(24), invalidOperator(25), ...
                 },
   modifyOperator  [2] IMPLICIT ModifyOperator OPTIONAL, -- present for invalidOperator
-  
+
   -- and invalidOperation
   attributeId     CMIP-ATTRIBUTE.&id({AttributeSet}),
   attributeValue
@@ -639,7 +639,7 @@ ObjectInstance ::= CHOICE {
   localDistinguishedName  [4] IMPLICIT RDNSequence
 }
 
--- localDistinguishedName is that portion of the distinguished name that is necessary to unambiguously identify the 
+-- localDistinguishedName is that portion of the distinguished name that is necessary to unambiguously identify the
 -- managed object within the context of communication between the open systems
 ProcessingFailure ::= SEQUENCE {
   managedObjectClass     ObjectClass,

@@ -1,18 +1,18 @@
 RINF-module {joint-iso-itu-t ors(50) modules(0) rinf(1) version1(1)}
 DEFINITIONS AUTOMATIC TAGS ::=
 BEGIN
-IMPORTS 	
-	ALGORITHM, 
-	AlgorithmIdentifier{}, 
+IMPORTS
+	ALGORITHM,
+	AlgorithmIdentifier{},
 	SupportedAlgorithms
 FROM AuthenticationFramework {joint-iso-itu-t ds(5) module(1) authenticationFramework(7) 6};
 
-/* This is an importation of security types from Rec. ITU-T X.509 | ISO/IEC 9594-8 
+/* This is an importation of security types from Rec. ITU-T X.509 | ISO/IEC 9594-8
 	to provide the semantics and types used for encipherment */
 
 RegistrationInformation ::= CHOICE {
 	noDisclosure	NULL /* No information is provided */,
-	disclosure		Information 
+	disclosure		Information
 }
 
 Information ::= SEQUENCE {
@@ -30,7 +30,7 @@ RegistrationDetails ::= SEQUENCE {
 		enciphered-registrant	SEQUENCE {
 			algorithmIdentifier	AlgorithmIdentifier{{SupportedAlgorithms}},
 			enciphered		OCTET STRING (CONSTRAINED BY {
-			/* Shall contain the result of applying the encipherment procedure 		   
+			/* Shall contain the result of applying the encipherment procedure
 			to the EXTENDED-XER encoding */ RegistrantContactDetails})
 		}
 		/* See Rec. ITU-T X.509 | ISO/IEC 9594-8, clause 6.1,"Digital signatures", for how to encipher

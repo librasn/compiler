@@ -2,7 +2,7 @@ DirectoryAbstractService {joint-iso-itu-t ds(5) module(1) directoryAbstractServi
 DEFINITIONS ::=
 BEGIN
 
--- EXPORTS All 
+-- EXPORTS All
 /*
 The types and values defined in this module are exported for use in the other ASN.1
 modules contained within these Directory Specifications, and for the use of other
@@ -17,14 +17,14 @@ IMPORTS
   id-at
     FROM UsefulDefinitions
       {joint-iso-itu-t ds(5) module(1) usefulDefinitions(0) 9} WITH SUCCESSORS
-  
+
   Attribute{}, ATTRIBUTE, AttributeType, AttributeTypeAndValue, AttributeTypeAssertion,
   AttributeValue, AttributeValueAssertion, CONTEXT, ContextAssertion,
   DistinguishedName, MATCHING-RULE, Name, OBJECT-CLASS,
   RelativeDistinguishedName, SupportedAttributes, SupportedContexts
     FROM InformationFramework
-      {joint-iso-itu-t ds(5) module(1) informationFramework(1) 9} WITH SUCCESSORS 
-  
+      {joint-iso-itu-t ds(5) module(1) informationFramework(1) 9} WITH SUCCESSORS
+
   RelaxationPolicy
     FROM ServiceAdministration
       {joint-iso-itu-t ds(5) module(1) serviceAdministration(33) 9} WITH SUCCESSORS
@@ -32,13 +32,13 @@ IMPORTS
   OPTIONALLY-PROTECTED{}, OPTIONALLY-PROTECTED-SEQ{}
     FROM EnhancedSecurity
       {joint-iso-itu-t ds(5) modules(1) enhancedSecurity(28) 9} WITH SUCCESSORS
- 
+
  -- from Rec. ITU-T X.518 | ISO/IEC 9594-4
 
   AccessPoint, ContinuationReference, Exclusions, OperationProgress, ReferenceType
     FROM DistributedOperations
       {joint-iso-itu-t ds(5) module(1) distributedOperations(3) 9} WITH SUCCESSORS
-  
+
 -- from Rec. ITU-T X.519 | ISO/IEC 9594-5
 
   Code, ERROR, id-errcode-abandoned, id-errcode-abandonFailed,
@@ -51,7 +51,7 @@ IMPORTS
   id-opcode-search, InvokeId, OPERATION
     FROM CommonProtocolSpecification
       {joint-iso-itu-t ds(5) module(1) commonProtocolSpecification(35) 9} WITH SUCCESSORS
-  
+
 -- from Rec. ITU-T X.520 | ISO/IEC 9594-6
 
   DirectoryString{}, UnboundedDirectoryString
@@ -68,14 +68,14 @@ IMPORTS
   UserPwd
     FROM PasswordPolicy
       {joint-iso-itu-t ds(5) module(1) passwordPolicy(39) 9} WITH SUCCESSORS
- 
+
   AttributeCertificationPath
     FROM AttributeCertificateDefinitions
       {joint-iso-itu-t ds(5) module(1) attributeCertificateDefinitions(32) 9}
        WITH SUCCESSORS
 
   -- from Rec. ITU-T X.525 | ISO/IEC 9594-9
- 
+
   AgreementID
     FROM DirectoryShadowAbstractService
       {joint-iso-itu-t ds(5) module(1) directoryShadowAbstractService(15) 9}
@@ -93,13 +93,13 @@ IMPORTS
     FROM Lightweight-Directory-Access-Protocol-V3
       {iso(1) identified-organization(3) dod(6) internet(1) directory(1) ldap(18)} ;
 
--- Common data types 
+-- Common data types
 
 CommonArguments ::= SET {
   serviceControls      [30]  ServiceControls    DEFAULT {},
   securityParameters   [29]  SecurityParameters OPTIONAL,
   requestor            [28]  DistinguishedName  OPTIONAL,
-  operationProgress    [27]  OperationProgress 
+  operationProgress    [27]  OperationProgress
                              DEFAULT {nameResolutionPhase notStarted},
   aliasedRDNs          [26]  INTEGER            OPTIONAL,
   criticalExtensions   [25]  BIT STRING         OPTIONAL,
@@ -115,7 +115,7 @@ CommonArgumentsSeq ::= SEQUENCE {
   serviceControls      [30]  ServiceControls    DEFAULT {},
   securityParameters   [29]  SecurityParameters OPTIONAL,
   requestor            [28]  DistinguishedName  OPTIONAL,
-  operationProgress    [27]  OperationProgress 
+  operationProgress    [27]  OperationProgress
                              DEFAULT {nameResolutionPhase notStarted},
   aliasedRDNs          [26]  INTEGER            OPTIONAL,
   criticalExtensions   [25]  BIT STRING         OPTIONAL,
@@ -272,7 +272,7 @@ FilterItem ::= CHOICE {
       control                Attribute{{SupportedAttributes}},
                     -- Used to specify interpretation of following items
       ... },
-    ... }, 
+    ... },
   greaterOrEqual    [2]  AttributeValueAssertion,
   lessOrEqual       [3]  AttributeValueAssertion,
   present           [4]  AttributeType,
@@ -285,7 +285,7 @@ MatchingRuleAssertion ::= SEQUENCE {
   matchingRule  [1]  SET SIZE (1..MAX) OF MATCHING-RULE.&id,
   type          [2]  AttributeType OPTIONAL,
   matchValue    [3]  MATCHING-RULE.&AssertionType (CONSTRAINED BY {
-    -- matchValue shall be a value of  type specified by the &AssertionType field of 
+    -- matchValue shall be a value of  type specified by the &AssertionType field of
     -- one of the MATCHING-RULE information objects identified by matchingRule -- }),
   dnAttributes  [4]  BOOLEAN DEFAULT FALSE,
   ... }
@@ -329,7 +329,7 @@ Time ::= CHOICE {
 
 ErrorProtectionRequest ::= INTEGER {none(0), signed(1)}
 
---  Bind and unbind operations 
+--  Bind and unbind operations
 
 directoryBind OPERATION ::= {
   ARGUMENT  DirectoryBindArgument
@@ -425,7 +425,7 @@ directoryBindError ERROR ::= {
 
 BindKeyInfo ::= ENCRYPTED{BIT STRING}
 
---  Operations, arguments, and results 
+--  Operations, arguments, and results
 
 
 read OPERATION ::= {
@@ -447,7 +447,7 @@ ReadArgumentData ::= SET {
   modifyRightsRequest  [2]  BOOLEAN DEFAULT FALSE,
   ...,
   ...,
-  COMPONENTS OF             CommonArguments } 
+  COMPONENTS OF             CommonArguments }
 
 ReadResult ::= OPTIONALLY-PROTECTED { ReadResultData }
 
@@ -513,7 +513,7 @@ AbandonArgument ::=
 
 AbandonArgumentData ::= SEQUENCE {
   invokeID  [0]  InvokeId,
-  ... } 
+  ... }
 
 AbandonResult ::= CHOICE {
   null          NULL,
@@ -545,7 +545,7 @@ ListArgumentData ::= SET {
   ...,
   ...,
   COMPONENTS OF      CommonArguments
-  } 
+  }
 
 ListResult ::= OPTIONALLY-PROTECTED { ListResultData }
 
@@ -563,7 +563,7 @@ ListResultData ::= CHOICE {
     COMPONENTS OF                CommonResults
     },
   uncorrelatedListInfo    [0]  SET OF ListResult,
-  ... } 
+  ... }
 
 PartialOutcomeQualifier ::= SET {
   limitProblem                  [0]  LimitProblem OPTIONAL,
@@ -599,7 +599,7 @@ search OPERATION ::= {
 
 SearchArgument ::= OPTIONALLY-PROTECTED { SearchArgumentData }
 
-SearchArgumentData ::= SET { 
+SearchArgumentData ::= SET {
   baseObject            [0]  Name,
   subset                [1]  INTEGER {
     baseObject    (0),
@@ -638,7 +638,7 @@ HierarchySelections ::= BIT STRING {
   all                   (9) }
 
 SearchControlOptions ::= BIT STRING {
-  searchAliases         (0), 
+  searchAliases         (0),
   matchedValuesOnly     (1),
   checkOverspecified    (2),
   performExactly        (3),
@@ -823,18 +823,18 @@ ModifyDNResultData ::= SEQUENCE {
   ...,
   COMPONENTS OF CommonResultsSeq }
 
-changePassword OPERATION ::= { 
-  ARGUMENT  ChangePasswordArgument 
-  RESULT    ChangePasswordResult 
+changePassword OPERATION ::= {
+  ARGUMENT  ChangePasswordArgument
+  RESULT    ChangePasswordResult
   ERRORS    {securityError |
-             updateError } 
-  CODE      id-opcode-changePassword } 
+             updateError }
+  CODE      id-opcode-changePassword }
 
 ChangePasswordArgument ::= OPTIONALLY-PROTECTED-SEQ { ChangePasswordArgumentData }
 
 ChangePasswordArgumentData ::= SEQUENCE {
-  object   [0]  DistinguishedName, 
-  oldPwd   [1]  UserPwd, 
+  object   [0]  DistinguishedName,
+  oldPwd   [1]  UserPwd,
   newPwd   [2]  UserPwd,
   ... }
 
@@ -848,18 +848,18 @@ ChangePasswordResultData ::= SEQUENCE {
   ...,
   COMPONENTS OF CommonResultsSeq }
 
-administerPassword OPERATION ::= { 
-  ARGUMENT  AdministerPasswordArgument 
-  RESULT    AdministerPasswordResult 
+administerPassword OPERATION ::= {
+  ARGUMENT  AdministerPasswordArgument
+  RESULT    AdministerPasswordResult
   ERRORS    {securityError |
-             updateError} 
-  CODE      id-opcode-administerPassword } 
+             updateError}
+  CODE      id-opcode-administerPassword }
 
 AdministerPasswordArgument ::=
   OPTIONALLY-PROTECTED-SEQ { AdministerPasswordArgumentData }
 
 AdministerPasswordArgumentData ::= SEQUENCE {
-  object  [0]  DistinguishedName, 
+  object  [0]  DistinguishedName,
   newPwd  [1]  UserPwd,
   ... }
 
@@ -918,7 +918,7 @@ LinkedArgumentData ::= SEQUENCE {
 
 LinkedResult ::= NULL
 
--- Errors and parameters 
+-- Errors and parameters
 
 abandoned ERROR ::= {-- not literally an "error"
   PARAMETER     OPTIONALLY-PROTECTED { AbandonedData }
@@ -999,7 +999,7 @@ ReferralData ::= SET {
   candidate  [0] ContinuationReference,
   ...,
   ...,
-  COMPONENTS OF  CommonResults } 
+  COMPONENTS OF  CommonResults }
 
 securityError  ERROR  ::=  {
   PARAMETER   OPTIONALLY-PROTECTED { SecurityErrorData }
@@ -1094,7 +1094,7 @@ UpdateProblem ::= INTEGER {
   passwordInHistory                 (14),
   noPasswordSlot                    (15) }
 
--- attribute types 
+-- attribute types
 
 id-at-family-information OBJECT IDENTIFIER ::= {id-at 64}
 
@@ -1105,40 +1105,40 @@ Annex B
 Operational semantics for Basic Access Control
 (This annex does not form an integral part of this Recommendation | International Standard.)
 This annex contains a number of charts that describe the semantics associated with Basic Access Control as it applies to the processing of a Directory operation (see Figures B.1 to B.16).
- 
+
 Figure B.1 â Alias dereferencing in Name Resolution
 
- 
+
 Figure B.2 â Return of Name Error
- 
+
 Figure B.3 â Non-disclosure of the existence of an Entry
 
- 
+
 Figure B.4 â Return of Distinguished Name
- 
+
 Figure B.5 â Read operation
- 
+
 Figure B.6 â NoSuchAttributeOrValue for Read
- 
+
 Figure B.7 â Compare operation
- 
+
 Figure B.8 â List operation
- 
+
 Figure B.9 â Search operation
- 
+
 Figure B.10 â Alias dereference in Search
- 
+
 Figure B.11 â Entry selection in Search
- 
+
 Figure B.12 â Add Entry operation
 
- 
+
 Figure B.13 â Remove Entry operation
- 
+
 Figure B.14 â Modify Entry operation
- 
+
 Figure B.15 â ModifyDN operation
- 
+
 Figure B.16 â Modify Add Attribute or Values
 â
 Annex C
@@ -1147,7 +1147,7 @@ Examples of searching families of entries
 (This annex does not form an integral part of this Recommendation | International Standard.)
 C.1	Single family example
 Suppose Charles Smith has multiple modes of communication: A landline telephone, a fax, a mobile phone and e-mail, and each mode has its own associated parameters. Suppose further that Charles Smith has two e-mail accounts, one at his place of work and one at home, and that both offer POP3 mailboxes and SMTP servers. All this information can be held in a compound entry, with Charles Smith''s member being the ancestor, with each mode of communication being a child member, and with each e-mail service being a child of the e-mail mode of communication. This is shown in Figure C.1 below. As all the members immediately subordinate to the ancestor has the same structural object class (comAddr), the compound entry consists of a single family.
- 
+
 Figure C.1 â Charles Smith''s family of entries
 Suppose a search request is generated with a base object of {...o=Andersen Express}, a filter of {telNo=1234 & tariff=normal}, and a subset of wholeSubtree or oneLevel. With the familyGrouping parameter set to:
 a)	entryOnly: No members of the family would match the filter.
@@ -1159,7 +1159,7 @@ i)	contributingEntriesOnly: The members marked as contributing members, i.e., me
 ii)	participatingEntriesOnly and compoundEntry: All the members in the compound entry would be returned.
 C.2	Multiple families example
 Suppose Charles Smith only has a landline telephone and e-mail, but also has two postal addresses with associated parameters. All this information can be held in a compound entry, with Charles Smith''s member being the ancestor and with each mode of communication or postal address being a child member. This is shown in Figure C.2 below. As the members immediately subordinate to the ancestor are of two different structural object classes (comAddr and postAddr), the compound entry consists of two families, where members 1, 2 and 3 constitute one family, and members 1, 4, 5, 6, 7, 8 and 9 constitute another family.
- 
+
 Figure C.2 â Charles Smith''s families of entries
 C.2.1	Filter example 1
 Now suppose a Search request is generated with a base object of {...o=Andersen Express}, a filter of {telNo=1234 & service=e-mail & streetAddr=Main & postalCode=3740 }, and a subset of wholeSubtree or oneLevel. With the familyGrouping parameter set to:
@@ -1240,7 +1240,7 @@ IMPORTS
     FROM AuthenticationFramework {joint-iso-itu-t(2) ds(5) module(1)
       authenticationFramework(7) 9} WITH SUCCESSORS ;
 
--- types 
+-- types
 
 SPKM-REQ ::= SEQUENCE {
   requestToken  REQ-TOKEN,
@@ -1435,8 +1435,8 @@ Del-Header ::= SEQUENCE {
   snd-seq     [1]  SeqNum OPTIONAL
 }
 
--- other types 
--- from [RFC-1508] 
+-- other types
+-- from [RFC-1508]
 MechType ::= OBJECT IDENTIFIER
 
 InitialContextToken ::= [APPLICATION 0] IMPLICIT SEQUENCE {
@@ -1459,7 +1459,7 @@ AuthorizationData ::=
   SEQUENCE OF SEQUENCE {ad-type  INTEGER,
                         ad-data  OCTET STRING}
 
--- object identifier assignments 
+-- object identifier assignments
 md5-DES-CBC OBJECT IDENTIFIER ::=
   {iso(1) identified-organization(3) dod(6) internet(1) security(5)
    integrity(3) md5-DES-CBC(1)}

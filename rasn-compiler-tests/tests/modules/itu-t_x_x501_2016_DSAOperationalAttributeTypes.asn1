@@ -2,7 +2,7 @@ DSAOperationalAttributeTypes {joint-iso-itu-t ds(5) module(1) dsaOperationalAttr
 DEFINITIONS ::=
 BEGIN
 
--- EXPORTS All 
+-- EXPORTS All
 -- The types and values defined in this module are exported for use in the other ASN.1
 -- modules contained within these Directory Specifications, and for the use of other
 -- applications which will use them to access Directory services. Other applications may
@@ -41,25 +41,25 @@ dseType ATTRIBUTE ::= {
   ID                      id-doa-dseType }
 
 DSEType ::= BIT STRING {
-  root           (0),  -- root DSE 
-  glue           (1),  -- represents knowledge of a name only 
-  cp             (2),  -- context prefix 
-  entry          (3),  -- object entry 
-  alias          (4),  -- alias entry 
-  subr           (5),  -- subordinate reference 
-  nssr           (6),  -- non-specific subordinate reference 
-  supr           (7),  -- superior reference 
-  xr             (8),  -- cross reference 
-  admPoint       (9),  -- administrative point 
-  subentry       (10), -- subentry 
-  shadow         (11), -- shadow copy 
-  immSupr        (13), -- immediate superior reference 
-  rhob           (14), -- rhob information 
-  sa             (15), -- subordinate reference to alias entry 
-  dsSubentry     (16), -- DSA Specific subentry 
-  familyMember   (17), -- family member 
-  ditBridge      (18)} -- DIT bridge reference 
---writeableCopy  (19)     writeable copy (currently not used) 
+  root           (0),  -- root DSE
+  glue           (1),  -- represents knowledge of a name only
+  cp             (2),  -- context prefix
+  entry          (3),  -- object entry
+  alias          (4),  -- alias entry
+  subr           (5),  -- subordinate reference
+  nssr           (6),  -- non-specific subordinate reference
+  supr           (7),  -- superior reference
+  xr             (8),  -- cross reference
+  admPoint       (9),  -- administrative point
+  subentry       (10), -- subentry
+  shadow         (11), -- shadow copy
+  immSupr        (13), -- immediate superior reference
+  rhob           (14), -- rhob information
+  sa             (15), -- subordinate reference to alias entry
+  dsSubentry     (16), -- DSA Specific subentry
+  familyMember   (17), -- family member
+  ditBridge      (18)} -- DIT bridge reference
+--writeableCopy  (19)     writeable copy (currently not used)
 
 myAccessPoint ATTRIBUTE ::= {
   WITH SYNTAX             AccessPoint
@@ -92,12 +92,12 @@ nonSpecificKnowledge ATTRIBUTE ::= {
   ID                      id-doa-nonSpecificKnowledge }
 
 SupplierOrConsumer ::= SET {
-  COMPONENTS OF              AccessPoint, -- supplier or consumer 
+  COMPONENTS OF              AccessPoint, -- supplier or consumer
   agreementID           [3]  OperationalBindingID,
   ... }
 
 SupplierInformation ::= SET {
-  COMPONENTS OF              SupplierOrConsumer, -- supplier 
+  COMPONENTS OF              SupplierOrConsumer, -- supplier
   supplier-is-master    [4]  BOOLEAN DEFAULT TRUE,
   non-supplying-master  [5]  AccessPoint OPTIONAL,
   ... }
@@ -109,7 +109,7 @@ supplierKnowledge ATTRIBUTE ::= {
   USAGE                   dSAOperation
   ID                      id-doa-supplierKnowledge }
 
-ConsumerInformation ::= SupplierOrConsumer -- consumer 
+ConsumerInformation ::= SupplierOrConsumer -- consumer
 
 consumerKnowledge ATTRIBUTE ::= {
   WITH SYNTAX             ConsumerInformation
@@ -119,7 +119,7 @@ consumerKnowledge ATTRIBUTE ::= {
   ID                      id-doa-consumerKnowledge }
 
 SupplierAndConsumers ::= SET {
-  COMPONENTS OF         AccessPoint, -- supplier 
+  COMPONENTS OF         AccessPoint, -- supplier
   consumers        [3]  SET OF AccessPoint,
   ... }
 
@@ -137,7 +137,7 @@ ditBridgeKnowledge ATTRIBUTE ::= {
   USAGE                   dSAOperation
   ID                      id-doa-ditBridgeKnowledge }
 
--- matching rules 
+-- matching rules
 
 accessPointMatch MATCHING-RULE ::= {
   SYNTAX  Name
@@ -157,9 +157,9 @@ supplierAndConsumersMatch MATCHING-RULE ::= {
   SYNTAX  Name
   ID      id-kmr-supplierConsumersMatch }
 
--- object identifier assignments 
+-- object identifier assignments
 
--- dsa operational attributes 
+-- dsa operational attributes
 
 id-doa-dseType                  OBJECT IDENTIFIER ::= {id-doa 0}
 id-doa-myAccessPoint            OBJECT IDENTIFIER ::= {id-doa 1}
@@ -171,7 +171,7 @@ id-doa-consumerKnowledge        OBJECT IDENTIFIER ::= {id-doa 6}
 id-doa-secondaryShadows         OBJECT IDENTIFIER ::= {id-doa 7}
 id-doa-ditBridgeKnowledge       OBJECT IDENTIFIER ::= {id-doa 8}
 
--- knowledge matching rules 
+-- knowledge matching rules
 
 id-kmr-accessPointMatch         OBJECT IDENTIFIER ::= {id-kmr 0}
 id-kmr-masterShadowMatch        OBJECT IDENTIFIER ::= {id-kmr 1}

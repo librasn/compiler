@@ -18,13 +18,13 @@ IMPORTS
   id-aca, id-acScheme
     FROM UsefulDefinitions
       {joint-iso-itu-t ds(5) module(1) usefulDefinitions(0) 9} WITH SUCCESSORS
-  
+
   ATTRIBUTE, AttributeType, AttributeTypeAndValue, ContextAssertion, DistinguishedName,
   MATCHING-RULE, objectIdentifierMatch, Refinement, SubtreeSpecification,
   SupportedAttributes
     FROM InformationFramework
       {joint-iso-itu-t ds(5) module(1) informationFramework(1) 9} WITH SUCCESSORS
- 
+
  -- from Rec. ITU-T X.511 | ISO/IEC 9594-3
 
   Filter
@@ -45,7 +45,7 @@ accessControlScheme ATTRIBUTE ::= {
   USAGE                   directoryOperation
   ID                      id-aca-accessControlScheme }
 
--- types 
+-- types
 
 ACIItem ::= SEQUENCE {
   identificationTag    UnboundedDirectoryString,
@@ -104,7 +104,7 @@ UserClasses ::= SEQUENCE {
   name       [2]  SET SIZE (1..MAX) OF NameAndOptionalUID   OPTIONAL,
   userGroup  [3]  SET SIZE (1..MAX) OF NameAndOptionalUID   OPTIONAL,
                   -- dn component shall be the name of an
-                  -- entry of GroupOfUniqueNames 
+                  -- entry of GroupOfUniqueNames
   subtree    [4]  SET SIZE (1..MAX) OF SubtreeSpecification OPTIONAL,
   ... }
 
@@ -123,7 +123,7 @@ UserPermission ::= SEQUENCE {
   ... }
 
 AuthenticationLevel ::= CHOICE {
-  basicLevels     SEQUENCE { 
+  basicLevels     SEQUENCE {
     level           ENUMERATED {none(0), simple(1), strong(2),...},
     localQualifier  INTEGER OPTIONAL,
     signed          BOOLEAN DEFAULT FALSE,
@@ -133,7 +133,7 @@ AuthenticationLevel ::= CHOICE {
 
 GrantsAndDenials ::= BIT STRING {
   -- permissions that may be used in conjunction
-  -- with any component of ProtectedItems 
+  -- with any component of ProtectedItems
   grantAdd             (0),
   denyAdd              (1),
   grantDiscloseOnError (2),
@@ -165,7 +165,7 @@ GrantsAndDenials ::= BIT STRING {
   grantInvoke          (24),
   denyInvoke           (25) }
 
--- attributes 
+-- attributes
 
 prescriptiveACI ATTRIBUTE ::= {
   WITH SYNTAX             ACIItem
@@ -185,9 +185,9 @@ subentryACI ATTRIBUTE ::= {
   USAGE                   directoryOperation
   ID                      id-aca-subentryACI }
 
--- object identifier assignments 
+-- object identifier assignments
 
--- attributes 
+-- attributes
 
 id-aca-accessControlScheme     OBJECT IDENTIFIER ::= {id-aca 1}
 id-aca-prescriptiveACI         OBJECT IDENTIFIER ::= {id-aca 4}

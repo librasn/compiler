@@ -14,9 +14,9 @@ SchemaAdministration {joint-iso-itu-t ds(5) module(1) schemaAdministration(23)
   5} DEFINITIONS ::=
 BEGIN
 
--- EXPORTS All 
--- The types and values defined in this module are exported for use in the other ASN.1 modules contained 
--- within the Directory Specifications, and for the use of other applications which will use them to access 
+-- EXPORTS All
+-- The types and values defined in this module are exported for use in the other ASN.1 modules contained
+-- within the Directory Specifications, and for the use of other applications which will use them to access
 -- Directory services. Other applications may use them for their own purposes, but this will not constrain
 -- extensions and modifications needed to maintain or improve the Directory service.
 IMPORTS
@@ -35,7 +35,7 @@ IMPORTS
   ub-schema
     FROM UpperBounds upperBounds;
 
--- types 
+-- types
 DITStructureRuleDescription ::= SEQUENCE {
   COMPONENTS OF DITStructureRule,
   name         [1]  SET SIZE (1..MAX) OF DirectoryString{ub-schema} OPTIONAL,
@@ -142,7 +142,7 @@ DITContextUseInformation ::= SEQUENCE {
   optionalContexts   [2]  SET SIZE (1..MAX) OF CONTEXT.&id OPTIONAL
 }
 
--- object classes 
+-- object classes
 subschema OBJECT-CLASS ::= {
   KIND         auxiliary
   MAY CONTAIN
@@ -152,7 +152,7 @@ subschema OBJECT-CLASS ::= {
   ID           id-soc-subschema
 }
 
--- attributes 
+-- attributes
 dITStructureRules ATTRIBUTE ::= {
   WITH SYNTAX             DITStructureRuleDescription
   EQUALITY MATCHING RULE  integerFirstComponentMatch
@@ -249,12 +249,12 @@ FriendsDescription ::= SEQUENCE {
   friends      [0]  SET OF ATTRIBUTE.&id
 }
 
--- object identifier assignments 
--- schema object classes 
+-- object identifier assignments
+-- schema object classes
 id-soc-subschema OBJECT IDENTIFIER ::=
   {id-soc 1}
 
--- schema operational attributes 
+-- schema operational attributes
 id-soa-dITStructureRule OBJECT IDENTIFIER ::=
   {id-soa 1}
 

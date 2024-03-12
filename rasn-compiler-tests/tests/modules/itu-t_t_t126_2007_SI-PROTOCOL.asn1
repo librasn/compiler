@@ -10,7 +10,7 @@
 -- See also the index of all ASN.1 assignments needed in this document
 
 --  Begin SI Definitions
-SI-PROTOCOL {itu-t(0) recommendation(0) t(20) t126(126) version(0) 2 
+SI-PROTOCOL {itu-t(0) recommendation(0) t(20) t126(126) version(0) 2
   asn1Modules(2) sI-PROTOCOL(1)} DEFINITIONS AUTOMATIC TAGS ::=
 BEGIN
 
@@ -187,7 +187,7 @@ BitmapHeaderT6 ::= SEQUENCE {...
 }
 
 --  BitmapHeaderT81
---  This type is used to specify the parameters necessary to 
+--  This type is used to specify the parameters necessary to
 --  decode and display a T.81 (JPEG) image that are not specified
 --  within the T.81 bitstream.
 BitmapHeaderT81 ::= SEQUENCE {
@@ -203,7 +203,7 @@ BitmapHeaderT81 ::= SEQUENCE {
 }
 
 --  BitmapHeaderT82
---  This type is used to specify the parameters necessary to 
+--  This type is used to specify the parameters necessary to
 --  decode and display a T.82 (JBIG) image that are not specified
 --  within the T.82 bitstream.
 BitmapHeaderT82 ::= SEQUENCE {
@@ -369,8 +369,8 @@ ColorCIExyChromaticity ::= SEQUENCE {
 }
 
 --  ColorIndexTable
---  This type is used to specify collections of color 
---  values.  All entries are references to absolute 
+--  This type is used to specify collections of color
+--  values.  All entries are references to absolute
 --  color palette data.
 ColorIndexTable ::= SEQUENCE (SIZE (1..256)) OF INTEGER(0..255)
 
@@ -399,7 +399,7 @@ ColorPalette ::= SEQUENCE {
 --  ColorResolutionModeSpecifier
 ColorResolutionModeSpecifier ::= CHOICE {
   resolution4-4-4            NULL,
-  --  Indicates single component 
+  --  Indicates single component
   --  4:4:4
   resolution-4-2-2           NULL,
   --  4:2:2 chrominance sub-sampling
@@ -516,7 +516,7 @@ DrawingType ::= CHOICE {
   --  Points connected with straight lines. The last point is not
   --  connected to the first.
   closedPolyLine          NULL,
-  --  Points connected with straight lines. 
+  --  Points connected with straight lines.
   --  The last point is connected to the first.
   rectangle               NULL,
   --  A rectangle defined by two corners
@@ -643,7 +643,7 @@ KeyPressState ::= CHOICE {
 
 --  LineStyle
 --  The LineStyle attribute is used during a line draw procedure. It
---  specifies the type of line drawn. 
+--  specifies the type of line drawn.
 LineStyle ::= CHOICE {
   solid             NULL,
   --  All pixels between endpoints are to be drawn.
@@ -663,18 +663,18 @@ LineStyle ::= CHOICE {
   ...
 }
 
---  MCSUserID 
+--  MCSUserID
 --  This type is used to specify MCS User IDs.
 MCSUserID ::= INTEGER(1001..65535)
 
---  H221NonStandardIdentifier 
+--  H221NonStandardIdentifier
 --  Used to specify non-standard objects using H.221 numbering.
 --  The first four octets shall designate country code and
 --  manufacturer code, assigned as specified in
 --  Annex A/H.221, for NS-cap and NS-comm.
 H221NonStandardIdentifier ::= OCTET STRING(SIZE (4..255))
 
---  NonStandardIdentifier 
+--  NonStandardIdentifier
 --  Unique identifier used to specify non-standard capabilities and
 --  parameters either as an ASN.1 OBJECT IDENTIFIER or as an H.221
 --  non-standard object.
@@ -683,7 +683,7 @@ NonStandardIdentifier ::= CHOICE {
   h221nonStandard  H221NonStandardIdentifier
 }
 
---  NonStandardParameter 
+--  NonStandardParameter
 --  Used to specify non-standard parameters.  This includes a
 --  data field which may be used to fill in parameter values
 --  of the type indicated by the NonStandardIdentifier.
@@ -721,9 +721,9 @@ PenThickness ::= INTEGER(1..255)
 --  source and destination planes are permanent.
 PermanentPlaneCopyDescriptor ::= SEQUENCE {
   sourceRegion       WorkspaceRegion,
-  --  Source rectangle to be copied. 
+  --  Source rectangle to be copied.
   destinationRegion  WorkspaceRegion,
-  --  Destination rectangle to be copied. 
+  --  Destination rectangle to be copied.
   --  May be restricted by caps to be the same size as
   --  the source region.
   ...
@@ -739,7 +739,7 @@ PixelAspectRatio ::= CHOICE {
   --  pixel aspect ratio is 12:11 (hor:ver)
   fax1                    NULL,
   --  385:800 (hor:ver)
-  --  8 lines/mm horizontally, 
+  --  8 lines/mm horizontally,
   --  3.85 lines/mm vertically
   fax2                    NULL,
   --  770:800 (hor:ver)
@@ -845,7 +845,7 @@ PointDiff16 ::= SEQUENCE {
 }
 
 --  RemoteEventDestinationAddress
---  A RemoteEventDestinationAddress specifies the destination of 
+--  A RemoteEventDestinationAddress specifies the destination of
 --  a remote event.
 RemoteEventDestinationAddress ::= CHOICE {
   softCopyWorkspace       Handle,
@@ -874,7 +874,7 @@ RotationSpecifier ::= SEQUENCE {
 }
 
 --  SoftCopyDataPlaneAddress
---  Address of a workspace data plane. 
+--  Address of a workspace data plane.
 SoftCopyDataPlaneAddress ::= SEQUENCE {
   workspaceHandle  Handle,
   plane            DataPlaneID
@@ -939,7 +939,7 @@ VideoSourceIdentifier ::= CHOICE {
   default                      NULL,
   h243SourceIdentifier         OCTET STRING(SIZE (2)),
   --  A two-octet field. The first octet should contain
-  --  the H.243 MCU ID (M), and the second octet should 
+  --  the H.243 MCU ID (M), and the second octet should
   --  contain the H.243 Terminal ID (T).
   h245SourceIdentifier         INTEGER(0..65535),
   dSMCCConnBinder              SEQUENCE OF DSMCCTap,
@@ -1060,7 +1060,7 @@ WorkspaceColor ::= CHOICE {
 WorkspaceCoordinate ::= INTEGER(-21845..43690)
 
 --  WorkspaceDeleteReason
---  This value represents the reason codes for the 
+--  This value represents the reason codes for the
 --  WorkspaceDeletePDU.
 WorkspaceDeleteReason ::= CHOICE {
   userInitiated        NULL,
@@ -1169,7 +1169,7 @@ WorkspaceIdentifier ::= CHOICE {
 }
 
 --  WorkspacePoint
---  A WorkspacePoint is a two-dimensional address of a location in a 
+--  A WorkspacePoint is a two-dimensional address of a location in a
 --  workspace plane including points in the invisible border areas.
 WorkspacePoint ::= SEQUENCE {
   xCoordinate  WorkspaceCoordinate,
@@ -1179,7 +1179,7 @@ WorkspacePoint ::= SEQUENCE {
 }
 
 --  WorkspaceRegion
---  This type can be used to describe both the size and 
+--  This type can be used to describe both the size and
 --  position of a rectangular region within a workspace.
 WorkspaceRegion ::= SEQUENCE {
   upperLeft   WorkspacePoint,
@@ -1263,7 +1263,7 @@ ArchiveAcknowledgePDU ::= SEQUENCE {
 }
 
 --  ArchiveClosePDU
---  The ArchiveClosePDU is used to close an archive that was 
+--  The ArchiveClosePDU is used to close an archive that was
 --  previously opened during an SI session.
 ArchiveClosePDU ::= SEQUENCE {
   archiveHandle          Handle,
@@ -1275,7 +1275,7 @@ ArchiveClosePDU ::= SEQUENCE {
 }
 
 --  ArchiveErrorPDU
---  The ArchiveErrorPDU is used by a terminal receiving an 
+--  The ArchiveErrorPDU is used by a terminal receiving an
 --  archive PDU to signal error conditions to the sender.
 ArchiveErrorPDU ::= SEQUENCE {
   archiveHandle          Handle,
@@ -1292,7 +1292,7 @@ ArchiveErrorPDU ::= SEQUENCE {
 }
 
 --  ArchiveOpenPDU
---  The ArchiveOpenPDU is used to open an archive at a 
+--  The ArchiveOpenPDU is used to open an archive at a
 --  remote terminal that supports this capability.
 ArchiveOpenPDU ::= SEQUENCE {
   archiveHandle      header                 ArchiveHeader,
@@ -1302,7 +1302,7 @@ ArchiveOpenPDU ::= SEQUENCE {
   maxEntries             INTEGER(1..65535) OPTIONAL,
   --  This parameter allows remote terminals to estimate the local
   --  resource usage for the specified archive so they can signal an
-  --  error early in the archiving process. It is only to be specified if 
+  --  error early in the archiving process. It is only to be specified if
   --  the archive open mode is set to "create".
   nonStandardParameters  SET OF NonStandardParameter OPTIONAL,
   --  Allowed only if the corresponding non-standard capabilities are
@@ -1311,7 +1311,7 @@ ArchiveOpenPDU ::= SEQUENCE {
 }
 
 --  BitmapAbortPDU
---  This PDU is used by both the transmitting SICE to signal that a 
+--  This PDU is used by both the transmitting SICE to signal that a
 --  bitmap exchange is being aborted and by an SICE requesting that
 --  a bitmap exchange in progress be aborted.
 BitmapAbortPDU ::= SEQUENCE {
@@ -1381,7 +1381,7 @@ BitmapCreatePDU ::= SEQUENCE {
     CHOICE
      --  The following headers provide image bitstream parameters
     --  that are outside the scope of the corresponding coding
-    --  standard but are necessary for image decompression. 
+    --  standard but are necessary for image decompression.
     --  NOTE: Some bitmap formats are disallowed depending
     --  on the value of the destinationAddress parameter.
     {bitmapHeaderUncompressed  BitmapHeaderUncompressed,
@@ -1393,10 +1393,10 @@ BitmapCreatePDU ::= SEQUENCE {
      --  Parameters for T6 (G4) encoded bitstreams outside
      --  the T.6 standards scope
      bitmapHeaderT81           BitmapHeaderT81,
-     --  Parameters for T.81 (JPEG) encoded bitstreams 
+     --  Parameters for T.81 (JPEG) encoded bitstreams
      --  outside the T.81 standards scope
      bitmapHeaderT82           BitmapHeaderT82,
-     --  Parameters for T.82 (JBIG) encoded bitstreams 
+     --  Parameters for T.82 (JBIG) encoded bitstreams
      --  outside the T.82 standards scope
      bitmapHeaderNonStandard   NonStandardParameter,
      ...},
@@ -1491,12 +1491,12 @@ ConductorPrivilegeRequestPDU ::= SEQUENCE {
 }
 
 --  DrawingCreatePDU
---  A drawingCreate PDU is used to deposit one or more 
+--  A drawingCreate PDU is used to deposit one or more
 --  drawing elements to a workspace plane.
 DrawingCreatePDU ::= SEQUENCE {
   drawingHandle          Handle OPTIONAL,
   --  Handle to be used to reference this drawing object in
-  --  future exchanges. Note that editing and deleting objects is 
+  --  future exchanges. Note that editing and deleting objects is
   --  only valid if the target plane is of type "editable".
   destinationAddress     DrawingDestinationAddress,
   --  Destination of drawing
@@ -1531,7 +1531,7 @@ DrawingCreatePDU ::= SEQUENCE {
 }
 
 --  DrawingDeletePDU
---  A DrawingDeletePDU is used to delete one 
+--  A DrawingDeletePDU is used to delete one
 --  graphical element from a workspace plane.
 DrawingDeletePDU ::= SEQUENCE {
   drawingHandle          Handle,
@@ -1543,7 +1543,7 @@ DrawingDeletePDU ::= SEQUENCE {
 }
 
 --  DrawingEditPDU
---  A DrawingEditPDU is used to alter one or more of 
+--  A DrawingEditPDU is used to alter one or more of
 --  a drawing elements attributes or parameters.
 DrawingEditPDU ::= SEQUENCE {
   drawingHandle          Handle,
@@ -1677,7 +1677,7 @@ SINonStandardPDU ::= SEQUENCE {
   ...
 }
 
---  SIPDU 
+--  SIPDU
 --  The set of all SIPDUs.
 SIPDU ::= CHOICE {
   archiveAcknowledgePDU            ArchiveAcknowledgePDU,
@@ -1719,7 +1719,7 @@ SIPDU ::= CHOICE {
   videoWindowEditPDU               VideoWindowEditPDU
 }
 
---  TextCreatePDU 
+--  TextCreatePDU
 TextCreatePDU ::= SEQUENCE {
   nonStandardParameters  SET OF NonStandardParameter OPTIONAL,
   --  Allowed only if the corresponding non-standard capabilities
@@ -1756,7 +1756,7 @@ VideoWindowDeletePDU ::= SEQUENCE {
 }
 
 --  WorkspaceCreateAcknowledgePDU
---  This PDU acknowledges the reception of a WorkspaceCreatePDU in 
+--  This PDU acknowledges the reception of a WorkspaceCreatePDU in
 --  the case of unsynchronized workspace.
 WorkspaceCreateAcknowledgePDU ::= SEQUENCE {
   workspaceIdentifier    WorkspaceIdentifier,
@@ -1847,7 +1847,7 @@ WorkspacePlaneCopyPDU ::= SEQUENCE {
 }
 
 -- WorkspaceReadyPDU
---  This PDU signals that a workspace create is complete (for 
+--  This PDU signals that a workspace create is complete (for
 --  unsynchronized workspaces).
 WorkspaceReadyPDU ::= SEQUENCE {
   workspaceIdentifier    WorkspaceIdentifier,
@@ -1859,7 +1859,7 @@ WorkspaceReadyPDU ::= SEQUENCE {
 }
 
 --  WorkspaceRefreshStatusPDU
---  This PDU is used by an SICE to announce or remit its status as 
+--  This PDU is used by an SICE to announce or remit its status as
 --  the session refresh SICE for SICEs that join late.
 WorkspaceRefreshStatusPDU ::= SEQUENCE {
   refreshStatus          BOOLEAN,

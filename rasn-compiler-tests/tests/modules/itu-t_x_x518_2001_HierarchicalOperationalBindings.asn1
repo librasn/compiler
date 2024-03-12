@@ -14,9 +14,9 @@ HierarchicalOperationalBindings {joint-iso-itu-t ds(5) module(1)
   hierarchicalOperationalBindings(20) 4} DEFINITIONS ::=
 BEGIN
 
--- EXPORTS All 
--- The types and values defined in this module are exported for use in the other ASN.1 modules contained 
--- within the Directory Specifications, and for the use of other applications which will use them to access 
+-- EXPORTS All
+-- The types and values defined in this module are exported for use in the other ASN.1 modules contained
+-- within the Directory Specifications, and for the use of other applications which will use them to access
 -- Directory services. Other applications may use them for their own purposes, but this will not constrain
 -- extensions and modifications needed to maintain or improve the Directory service.
 IMPORTS
@@ -42,7 +42,7 @@ IMPORTS
     FROM DirectoryOperationalBindingTypes {joint-iso-itu-t ds(5) module(1)
       directoryOperationalBindingTypes(25) 4};
 
--- types 
+-- types
 HierarchicalAgreement ::= SEQUENCE {
   rdn                [0]  RelativeDistinguishedName,
   immediateSuperior  [1]  DistinguishedName
@@ -96,7 +96,7 @@ NHOBSubordinateToSuperior ::= SEQUENCE {
   subentries    [3]  SET SIZE (1..MAX) OF SubentryInfo OPTIONAL
 }
 
--- operational binding information objects 
+-- operational binding information objects
 hierarchicalOperationalBinding OPERATIONAL-BINDING ::= {
   AGREEMENT             HierarchicalAgreement
   APPLICATION CONTEXTS  {{directorySystemAC}}

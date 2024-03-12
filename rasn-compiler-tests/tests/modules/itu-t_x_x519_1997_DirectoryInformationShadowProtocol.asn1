@@ -14,9 +14,9 @@ DirectoryInformationShadowProtocol {joint-iso-itu-t ds(5) module(1) disp(16) 3}
 DEFINITIONS ::=
 BEGIN
 
--- EXPORTS All 
--- The types and values defined in this module are exported for use in the other ASN.1 modules contained 
--- within the Directory Specifications, and for the use of other applications which will use them to access 
+-- EXPORTS All
+-- The types and values defined in this module are exported for use in the other ASN.1 modules contained
+-- within the Directory Specifications, and for the use of other applications which will use them to access
 -- Directory services. Other applications may use them for their own purposes, but this will not constrain
 -- extensions and modifications needed to maintain or improve the Directory service.
 IMPORTS
@@ -24,7 +24,7 @@ IMPORTS
     directorySecurityExchanges
     FROM UsefulDefinitions {joint-iso-itu-t ds(5) module(1)
       usefulDefinitions(0) 3}
-  ROS-OBJECT-CLASS, CONTRACT, OPERATION-PACKAGE, CONNECTION-PACKAGE, 
+  ROS-OBJECT-CLASS, CONTRACT, OPERATION-PACKAGE, CONNECTION-PACKAGE,
     Code, OPERATION
     FROM Remote-Operations-Information-Objects {joint-iso-itu-t
       remote-operations(4) informationObjects(5) version1(0)}
@@ -67,7 +67,7 @@ IMPORTS
     FROM DirectorySecurityExchanges {joint-iso-itu-t ds(5) module(1)
       directorySecurityExchanges(29) 1};
 
--- application contexts 
+-- application contexts
 shadowSupplierInitiatedAC APPLICATION-CONTEXT ::= {
   CONTRACT                  shadowSupplierContract
   ESTABLISHED BY            acse
@@ -162,7 +162,7 @@ reliableShadowConsumerInitiatedWith2or3seAC APPLICATION-CONTEXT ::= {
   APPLICATION CONTEXT NAME  id-ac-reliableShadowConsumerInitiatedWith2or3seAC
 }
 
--- ROS objects 
+-- ROS objects
 initiating-consumer-dsa ROS-OBJECT-CLASS ::= {
   INITIATES  {shadowConsumerContract}
   ID         id-rosObject-initiatingConsumerDSA
@@ -183,7 +183,7 @@ responding-consumer-dsa ROS-OBJECT-CLASS ::= {
   ID        id-rosObject-respondingConsumerDSA
 }
 
--- contracts 
+-- contracts
 shadowConsumerContract CONTRACT ::= {
   CONNECTION             dispConnectionPackage
   INITIATOR CONSUMER OF  {shadowConsumerPackage}
@@ -196,14 +196,14 @@ shadowSupplierContract CONTRACT ::= {
   ID                     id-contract-shadowSupplier
 }
 
--- connection package 
+-- connection package
 dispConnectionPackage CONNECTION-PACKAGE ::= {
   BIND    dSAShadowBind
   UNBIND  dSAShadowUnbind
   ID      id-package-dispConnection
 }
 
--- packages 
+-- packages
 shadowConsumerPackage OPERATION-PACKAGE ::= {
   CONSUMER INVOKES  {requestShadowUpdate}
   SUPPLIER INVOKES  {updateShadow}
@@ -215,7 +215,7 @@ shadowSupplierPackage OPERATION-PACKAGE ::= {
   ID                id-package-shadowSupplier
 }
 
--- abstract syntaxes 
+-- abstract syntaxes
 directoryShadowAbstractSyntax ABSTRACT-SYNTAX ::= {
   DISP-PDUs
   IDENTIFIED BY  id-as-directoryShadowAS
@@ -254,14 +254,14 @@ DISP-Invokable OPERATION ::=
 DISP-Returnable OPERATION ::=
   {requestShadowUpdate | updateShadow | coordinateShadowUpdate}
 
---  remote operation codes 
+--  remote operation codes
 id-opcode-requestShadowUpdate Code ::= local:1
 
 id-opcode-updateShadow Code ::= local:2
 
 id-opcode-coordinateShadowUpdate Code ::= local:3
 
--- remote error codes 
+-- remote error codes
 id-errcode-shadowError Code ::= local:1
 
 END

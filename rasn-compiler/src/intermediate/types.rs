@@ -49,7 +49,6 @@ pub struct Boolean {
     pub constraints: Vec<Constraint>,
 }
 
-
 impl From<Option<Vec<Constraint>>> for Boolean {
     fn from(value: Option<Vec<Constraint>>) -> Self {
         Self {
@@ -156,7 +155,7 @@ pub struct GeneralizedTime {
     pub constraints: Vec<Constraint>,
 }
 
-/// Representation of an ASN1 Universal time (a.k.a UTCTime) 
+/// Representation of an ASN1 Universal time (a.k.a UTCTime)
 /// data element with corresponding constraints.
 /// *As defined in Rec. ITU-T X.680 (02/2021) §47*
 #[derive(Debug, Clone, PartialEq)]
@@ -253,8 +252,8 @@ impl From<(&str, Option<Vec<Constraint>>)> for CharacterString {
 /// Representation of an ASN1 SEQUENCE OF and SET OF data element
 /// with corresponding constraints and element type info
 /// Whether the struct describes a SEQUENCE OF or a SET OF
-/// is identified by the `ASN1Type` enum variant that 
-/// holds this struct as a value (i.e. `ASN1Type::SetOf(SequenceOrSetOf { .. })` 
+/// is identified by the `ASN1Type` enum variant that
+/// holds this struct as a value (i.e. `ASN1Type::SetOf(SequenceOrSetOf { .. })`
 /// or `ASN1Type::SequenceOf(SequenceOrSetOf { .. })`).
 /// *As defined in Rec. ITU-T X.680 (02/2021) §26 and §28*
 #[derive(Debug, Clone, PartialEq)]
@@ -288,8 +287,8 @@ impl From<(Option<Vec<Constraint>>, ASN1Type)> for SequenceOrSetOf {
 /// Representation of an ASN1 SEQUENCE or SET data element
 /// with corresponding members and extension information.
 /// Whether the struct describes a SEQUENCE or a SET
-/// is identified by the `ASN1Type` enum variant that 
-/// holds this struct as a value (i.e. `ASN1Type::Set(SequenceOrSet { .. })` 
+/// is identified by the `ASN1Type` enum variant that
+/// holds this struct as a value (i.e. `ASN1Type::Set(SequenceOrSet { .. })`
 /// or `ASN1Type::Sequence(SequenceOrSet { .. })`).
 /// *As defined in Rec. ITU-T X.680 (02/2021) §25 and §27*
 #[derive(Debug, Clone, PartialEq)]
@@ -393,8 +392,8 @@ pub enum SequenceComponent {
 /// ### Example
 /// The ASN.1 SEQUENCE defined as
 /// ```ignore
-/// Test-Sequence ::= SEQUENCE { 
-///     int-member [0] INTEGER (0..2) DEFAULT 1 
+/// Test-Sequence ::= SEQUENCE {
+///     int-member [0] INTEGER (0..2) DEFAULT 1
 /// }
 /// ```
 /// defines one member, which is representated as follows
@@ -506,7 +505,7 @@ impl
 /// ### Example
 /// The ASN.1 CHOICE defined as
 /// ```ignore
-/// Test-Choice ::= CHOICE { 
+/// Test-Choice ::= CHOICE {
 ///     boolean-option [0] BOOLEAN
 /// }
 /// ```

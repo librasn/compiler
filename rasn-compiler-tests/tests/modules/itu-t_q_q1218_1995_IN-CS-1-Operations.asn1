@@ -13,7 +13,7 @@ IN-CS-1-Operations {itu-t recommendation q 1218 modules(0) cs-1-operations(0)
   version2(1)}
 --  This module contains the type definitions for the IN CS-1 operations.
 --  There may be functional redundancies in the operation set related to call processing.
---  This may make product interworking more difficult. Administrations wishing to deploy 
+--  This may make product interworking more difficult. Administrations wishing to deploy
 --  IN and equipment manufacturers implementing IN should take this into account.
 DEFINITIONS ::=
 BEGIN
@@ -33,7 +33,7 @@ IMPORTS
   --  argument types
   ActivateServiceFilteringArg, AnalysedInformationArg, AnalyseInformationArg,
     ApplyChargingArg, ApplyChargingReportArg, AssistRequestInstructionsArg,
-    CallGapArg, CallInformationReportArg, CallInformationRequestArg, 
+    CallGapArg, CallInformationReportArg, CallInformationRequestArg,
     CancelArg, CancelStatusReportRequestArg, CollectedInformationArg,
     CollectInformationArg, ConnectArg, ConnectToResourceArg,
     EstablishTemporaryConnectionArg, EventNotificationChargingArg,
@@ -85,20 +85,20 @@ activateServiceFiltering OPERATION ::= {
   CODE           op-activateServiceFiltering
 }
 
---  Direction: SCF -> SSF, Timer: Tasf 
---  When receiving this operation, the SSF handles calls to destination in a specified manner 
---  without sending queries for every detected call. It is used for example for providing 
---  televoting or mass calling services. Simple registration functionality (counters) and 
---  announcement control may be  located at the SSF. The operation initializes the specified 
+--  Direction: SCF -> SSF, Timer: Tasf
+--  When receiving this operation, the SSF handles calls to destination in a specified manner
+--  without sending queries for every detected call. It is used for example for providing
+--  televoting or mass calling services. Simple registration functionality (counters) and
+--  announcement control may be  located at the SSF. The operation initializes the specified
 --  counters in the SSF.
 activityTest OPERATION ::= {RETURN RESULT  TRUE
                             CODE           op-activityTest
 }
 
---  Direction: SCF -> SSF, Timer: Tat 
---  This operation is used to check for the continued existence of a relationship between the SCF 
---  and SSF. If the relationship is still in existence, then the SSF will respond. If no reply is 
---  received, then the SCF will assume that the SSF has failed in some way and will take the 
+--  Direction: SCF -> SSF, Timer: Tat
+--  This operation is used to check for the continued existence of a relationship between the SCF
+--  and SSF. If the relationship is still in existence, then the SSF will respond. If no reply is
+--  received, then the SCF will assume that the SSF has failed in some way and will take the
 --  appropriate action.
 analysedInformation OPERATION ::= {
   ARGUMENT       AnalysedInformationArg
@@ -110,10 +110,10 @@ analysedInformation OPERATION ::= {
   CODE           op-analysedInformation
 }
 
---  Direction:  SSF -> SCF, Timer: Tadi 
---  This operation is used to indicate availability of routing address and call type. (DP 3 - 
---  Analysed_Info). 
---  For additional information on this operation and its use with open numbering plans, refer to 
+--  Direction:  SSF -> SCF, Timer: Tadi
+--  This operation is used to indicate availability of routing address and call type. (DP 3 -
+--  Analysed_Info).
+--  For additional information on this operation and its use with open numbering plans, refer to
 --  4.2.2.2a)3)/Q.1214.
 analyseInformation OPERATION ::= {
   ARGUMENT       AnalyseInformationArg
@@ -124,13 +124,13 @@ analyseInformation OPERATION ::= {
   CODE           op-analyseInformation
 }
 
---  Direction: SCF ->  SSF, Timer: Tai 
---  This operation is used to request the SSF to perform the originating basic call processing actions 
---  to analyse destination information that is either collected from a calling party or provided by the SCF 
---  (e.g. for number translation). This includes actions to validate the information according to an office 
---  or customized dialling plan, and if valid, to determine call termination information, to include the called 
---  party address, the type of call (e.g. intra-network or inter-network), and carrier (if inter-network). 
---  If the called party is not served by the SSF, the SSF also determines a route index based on the called 
+--  Direction: SCF ->  SSF, Timer: Tai
+--  This operation is used to request the SSF to perform the originating basic call processing actions
+--  to analyse destination information that is either collected from a calling party or provided by the SCF
+--  (e.g. for number translation). This includes actions to validate the information according to an office
+--  or customized dialling plan, and if valid, to determine call termination information, to include the called
+--  party address, the type of call (e.g. intra-network or inter-network), and carrier (if inter-network).
+--  If the called party is not served by the SSF, the SSF also determines a route index based on the called
 --  party address and class of service, where the route index points to a list of outgoing trunk groups.
 applyCharging OPERATION ::= {
   ARGUMENT       ApplyChargingArg
@@ -141,9 +141,9 @@ applyCharging OPERATION ::= {
   CODE           op-applyCharging
 }
 
---  Direction: SCF ->  SSF, Timer: Tac 
---  This operation is used for interacting from the SCF with the SSF charging mechanisms. The 
---  ApplyChargingReport operation provides the feedback from the SSF to the SCF. 
+--  Direction: SCF ->  SSF, Timer: Tac
+--  This operation is used for interacting from the SCF with the SSF charging mechanisms. The
+--  ApplyChargingReport operation provides the feedback from the SSF to the SCF.
 applyChargingReport OPERATION ::= {
   ARGUMENT       ApplyChargingReportArg
   RETURN RESULT  FALSE
@@ -153,7 +153,7 @@ applyChargingReport OPERATION ::= {
   CODE           op-applyChargingReport
 }
 
---  Direction: SSF -> SCF, Timer: Tacr 
+--  Direction: SSF -> SCF, Timer: Tacr
 --  This operation is used by the SSF to report to the SCF the occurrence of a specific charging event as
 --  requested by the SCF using the ApplyCharging operation.
 assistRequestInstructions OPERATION ::= {
@@ -165,20 +165,20 @@ assistRequestInstructions OPERATION ::= {
   CODE           op-assistRequestInstructions
 }
 
---  Direction: SSF ->  SCF or SRF ->  SCF, Timer: Tari 
---  This operation is used when there is an assist or a hand-off procedure and may be sent by the SSF 
+--  Direction: SSF ->  SCF or SRF ->  SCF, Timer: Tari
+--  This operation is used when there is an assist or a hand-off procedure and may be sent by the SSF
 --  or SRF to the SCF. This operation is sent by the assisting SSF or assisting SRF to the SCF, when the
---  initiating SSF has set up a connection to the SRF or to the assisting SSF as a result of receiving 
---  an EstablishTemporaryConnection or Connect operation (in the case of hand-off) from the SCF. 
---  Refer to clause 3 for a description of the procedures associated with this operation. 
+--  initiating SSF has set up a connection to the SRF or to the assisting SSF as a result of receiving
+--  an EstablishTemporaryConnection or Connect operation (in the case of hand-off) from the SCF.
+--  Refer to clause 3 for a description of the procedures associated with this operation.
 callGap OPERATION ::= {
   ARGUMENT       CallGapArg
   RETURN RESULT  FALSE
   CODE           op-callGap
 }
 
--- Direction: SCF -> SSF, Timer: Tcg 
---  This operation is used to request the SSF to reduce the rate at which specific service requests are sent to 
+-- Direction: SCF -> SSF, Timer: Tcg
+--  This operation is used to request the SSF to reduce the rate at which specific service requests are sent to
 --  the SCF. Use of this operation by the SCF to gap queries and updates at the SDF is for further study.
 callInformationReport OPERATION ::= {
   ARGUMENT       CallInformationReportArg
@@ -186,8 +186,8 @@ callInformationReport OPERATION ::= {
   CODE           op-callInformationReport
 }
 
---  Direction: SSF -> SCF, Timer: Tcirp 
---  This operation is used to send specific call information for a single call to the SCF as requested by the 
+--  Direction: SSF -> SCF, Timer: Tcirp
+--  This operation is used to send specific call information for a single call to the SCF as requested by the
 --  SCF in a previous CallInformationRequest.
 callInformationRequest OPERATION ::= {
   ARGUMENT       CallInformationRequestArg
@@ -199,9 +199,9 @@ callInformationRequest OPERATION ::= {
   CODE           op-callInformationRequest
 }
 
---  Direction: SCF -> SSF, Timer: Tcirq 
---  This operation is used to request the SSF to record specific information about a single call and report it to 
---  the SCF (with a CallInformationReport operation). 
+--  Direction: SCF -> SSF, Timer: Tcirq
+--  This operation is used to request the SSF to record specific information about a single call and report it to
+--  the SCF (with a CallInformationReport operation).
 cancel OPERATION ::= {
   ARGUMENT       CancelArg
   RETURN RESULT  FALSE
@@ -209,8 +209,8 @@ cancel OPERATION ::= {
   CODE           op-cancel
 }
 
---  Direction: SCF -> SSF, or SCF -> SRF, Timer: Tcan 
---  This generic operation cancels the correlated previous operation or all previous requests. The following 
+--  Direction: SCF -> SSF, or SCF -> SRF, Timer: Tcan
+--  This generic operation cancels the correlated previous operation or all previous requests. The following
 --  operations can be canceled: PlayAnnouncement, PromptAndCollectUserInformation.
 cancelStatusReportRequest OPERATION ::= {
   ARGUMENT       CancelStatusReportRequestArg
@@ -219,8 +219,8 @@ cancelStatusReportRequest OPERATION ::= {
   CODE           op-cancelStatusReportRequest
 }
 
---  Direction: SCF -> SSF, Timer: Tcsr 
---  This operation cancels the following processes: RequestFirstStatusMatchReport and 
+--  Direction: SCF -> SSF, Timer: Tcsr
+--  This operation cancels the following processes: RequestFirstStatusMatchReport and
 --  RequestEveryStatusChangeReport.
 collectedInformation OPERATION ::= {
   ARGUMENT       CollectedInformationArg
@@ -232,11 +232,11 @@ collectedInformation OPERATION ::= {
   CODE           op-collectedInformation
 }
 
---  Direction: SSF -> SCF, Timer: Tcdi 
---  This operation is used to indicate availability of complete initial information package/dialling string from 
---  originating party. (This event may have already occurred in the case of en bloc signalling, in which case 
---  the waiting duration in this PIC is zero.) (DP 2 - Collected_Info). For additional information on this 
---  operation and its use with open numbering plans, refer to 4.2.2.2.1-2/Q.1214. 
+--  Direction: SSF -> SCF, Timer: Tcdi
+--  This operation is used to indicate availability of complete initial information package/dialling string from
+--  originating party. (This event may have already occurred in the case of en bloc signalling, in which case
+--  the waiting duration in this PIC is zero.) (DP 2 - Collected_Info). For additional information on this
+--  operation and its use with open numbering plans, refer to 4.2.2.2.1-2/Q.1214.
 collectInformation OPERATION ::= {
   ARGUMENT       CollectInformationArg
   RETURN RESULT  FALSE
@@ -246,9 +246,9 @@ collectInformation OPERATION ::= {
   CODE           op-collectInformation
 }
 
---  Direction: SCF -> SSF, Timer: Tci 
---  This operation is used to request the SSF to perform the originating basic call processing actions to 
---  prompt a calling party for destination information, then collect destination information according to a 
+--  Direction: SCF -> SSF, Timer: Tci
+--  This operation is used to request the SSF to perform the originating basic call processing actions to
+--  prompt a calling party for destination information, then collect destination information according to a
 --  specified numbering plan (e.g. for virtual private networks).
 connect OPERATION ::= {
   ARGUMENT       ConnectArg
@@ -259,10 +259,10 @@ connect OPERATION ::= {
   CODE           op-connect
 }
 
---  Direction: SCF -> SSF, Timer: Tcon 
---  This operation is used to request the SSF to perform the call processing actions to route or forward a call 
---  to a specified destination. To do so, the SSF may or may not use destination information from the calling 
---  party (e.g. dialled digits) and existing call set-up information (e.g. route index to a list of trunk groups), 
+--  Direction: SCF -> SSF, Timer: Tcon
+--  This operation is used to request the SSF to perform the call processing actions to route or forward a call
+--  to a specified destination. To do so, the SSF may or may not use destination information from the calling
+--  party (e.g. dialled digits) and existing call set-up information (e.g. route index to a list of trunk groups),
 --  depending on the information provided by the SCF.
 --  When address information is only included in the Connect operation, call processing resumes at PIC3 in
 --  the O-BCSM.
@@ -276,16 +276,16 @@ connectToResource OPERATION ::= {
   CODE           op-connectToResource
 }
 
---  Direction: SCF -> SSF, Timer: Tctr 
---  This operation is used to connect a call from the SSP to the physical entity containing the SRF. 
+--  Direction: SCF -> SSF, Timer: Tctr
+--  This operation is used to connect a call from the SSP to the physical entity containing the SRF.
 --  Refer to clause 3 for a description of the procedures associated with this operation.
 continue OPERATION ::= {RETURN RESULT  FALSE
                         CODE           op-continue
 }
 
---  Direction: SCF -> SSF, Timer: Tcue 
---  This operation is used to request the SSF to proceed with call processing at the DP at which it 
---  previously suspended call processing to await SCF instructions (i.e. proceed to the next point 
+--  Direction: SCF -> SSF, Timer: Tcue
+--  This operation is used to request the SSF to proceed with call processing at the DP at which it
+--  previously suspended call processing to await SCF instructions (i.e. proceed to the next point
 --  in call in the BCSM). The SSF continues call processing without substituting new data from SCF.
 disconnectForwardConnection OPERATION ::= {
   RETURN RESULT  FALSE
@@ -293,9 +293,9 @@ disconnectForwardConnection OPERATION ::= {
   CODE           op-disconnectForwardConnection
 }
 
---  Direction: SCF -> SSF, Timer: Tdfc 
---  This operation is used to disconnect a forward temporary connection or a connection to a resource. 
---  Refer to clause 3 for a description of the procedures associated with this operation. 
+--  Direction: SCF -> SSF, Timer: Tdfc
+--  This operation is used to disconnect a forward temporary connection or a connection to a resource.
+--  Refer to clause 3 for a description of the procedures associated with this operation.
 establishTemporaryConnection OPERATION ::= {
   ARGUMENT       EstablishTemporaryConnectionArg
   RETURN RESULT  FALSE
@@ -305,9 +305,9 @@ establishTemporaryConnection OPERATION ::= {
   CODE           op-establishTemporaryConnection
 }
 
---  Direction: SCF -> SSF, Timer: Tetc 
---  This operation is used to create a connection to a resource for a limited period of time 
---  (e.g. to play an announcement, to collect user information); it implies the use of the assist 
+--  Direction: SCF -> SSF, Timer: Tetc
+--  This operation is used to create a connection to a resource for a limited period of time
+--  (e.g. to play an announcement, to collect user information); it implies the use of the assist
 --  procedure. Refer to clause 3 for a description of the procedures associated with this operation.
 eventNotificationCharging OPERATION ::= {
   ARGUMENT       EventNotificationChargingArg
@@ -315,17 +315,17 @@ eventNotificationCharging OPERATION ::= {
   CODE           op-eventNotificationCharging
 }
 
---  Direction: SSF -> SCF, Timer: Tenc 
---  This operation is used by the SSF to report to the SCF the occurrence of a specific charging event 
---  type as previously requested by the SCF in a RequestNotificationChargingEvent operation. 
+--  Direction: SSF -> SCF, Timer: Tenc
+--  This operation is used by the SSF to report to the SCF the occurrence of a specific charging event
+--  type as previously requested by the SCF in a RequestNotificationChargingEvent operation.
 eventReportBCSM OPERATION ::= {
   ARGUMENT       EventReportBCSMArg
   RETURN RESULT  FALSE
   CODE           op-eventReportBCSM
 }
 
---  Direction: SSF -> SCF, Timer: Terb 
---  This operation is used to notify the SCF of a call-related event (e.g. BCSM events such as busy or 
+--  Direction: SSF -> SCF, Timer: Terb
+--  This operation is used to notify the SCF of a call-related event (e.g. BCSM events such as busy or
 --  no answer) previously requested by the SCF in a RequestReportBCSMEvent operation.
 furnishChargingInformation OPERATION ::= {
   ARGUMENT       FurnishChargingInformationArg
@@ -336,8 +336,8 @@ furnishChargingInformation OPERATION ::= {
   CODE           op-furnishChargingInformation
 }
 
---  Direction: SCF -> SSF, Timer: Tfci 
---  This operation is used to request the SSF to generate, register a call record or to include some 
+--  Direction: SCF -> SSF, Timer: Tfci
+--  This operation is used to request the SSF to generate, register a call record or to include some
 --  information in the default call record. The registered call record is intended for off line charging of the
 --  call.
 holdCallInNetwork OPERATION ::= {
@@ -349,8 +349,8 @@ holdCallInNetwork OPERATION ::= {
   CODE           op-holdCallInNetwork
 }
 
---  Direction: SCF -> SSF, Timer: Thcn 
---  This operation is used to provide the capability of queueing a call during the set-up phase (e.g. to provide 
+--  Direction: SCF -> SSF, Timer: Thcn
+--  This operation is used to provide the capability of queueing a call during the set-up phase (e.g. to provide
 --  a call completion to busy, the call would be queued until the destination becomes free).
 initialDP OPERATION ::= {
   ARGUMENT       InitialDPArg
@@ -362,7 +362,7 @@ initialDP OPERATION ::= {
   CODE           op-initialDP
 }
 
---  Direction: SSF -> SCF, Timer: Tidp 
+--  Direction: SSF -> SCF, Timer: Tidp
 --  This operation is used after a TDP to indicate request for service.
 initiateCallAttempt OPERATION ::= {
   ARGUMENT       InitiateCallAttemptArg
@@ -373,9 +373,9 @@ initiateCallAttempt OPERATION ::= {
   CODE           op-initiateCallAttempt
 }
 
---  Direction: SCF -> SSF, Timer: Tica 
---  This operation is used to request the SSF to create a new call to one call party using address 
---  information provided by the SCF. 
+--  Direction: SCF -> SSF, Timer: Tica
+--  This operation is used to request the SSF to create a new call to one call party using address
+--  information provided by the SCF.
 oAnswer OPERATION ::= {
   ARGUMENT       OAnswerArg
   RETURN RESULT  FALSE
@@ -386,11 +386,11 @@ oAnswer OPERATION ::= {
   CODE           op-oAnswer
 }
 
---  Direction: SSF -> SCF, Timer: Toa 
---  This operation is used for indication from the terminating half BCSM that the call is accepted and 
---  answered by terminating party (e.g. terminating party goes offhook, Q.931 Connect message received, 
+--  Direction: SSF -> SCF, Timer: Toa
+--  This operation is used for indication from the terminating half BCSM that the call is accepted and
+--  answered by terminating party (e.g. terminating party goes offhook, Q.931 Connect message received,
 --  ISDN-UP Answer message received) (DP 7 - O_Answer). For additional information on this operation,
---  refer to 4.2.2.2.1-5/Q.1214. 
+--  refer to 4.2.2.2.1-5/Q.1214.
 oCalledPartyBusy OPERATION ::= {
   ARGUMENT       OCalledPartyBusyArg
   RETURN RESULT  FALSE
@@ -401,9 +401,9 @@ oCalledPartyBusy OPERATION ::= {
   CODE           op-oCalledPartyBusy
 }
 
---  Direction: SSF -> SCF, Timer: Tob 
+--  Direction: SSF -> SCF, Timer: Tob
 --  This operation is used for Indication from the terminating half BCSM that the terminating party is busy
---  (DP 5 - O_Called_Party_Busy). For additional information on this operation, refer to 4.2.2.2.1-4/Q.1214. 
+--  (DP 5 - O_Called_Party_Busy). For additional information on this operation, refer to 4.2.2.2.1-4/Q.1214.
 oDisconnect OPERATION ::= {
   ARGUMENT       ODisconnectArg
   RETURN RESULT  FALSE
@@ -414,10 +414,10 @@ oDisconnect OPERATION ::= {
   CODE           op-oDisconnect
 }
 
---  Direction: SSF -> SCF, Timer: Tod 
---  This operation is used for a disconnect indication (e.g. onhook, Q.931 Disconnect message, SS7 Release 
+--  Direction: SSF -> SCF, Timer: Tod
+--  This operation is used for a disconnect indication (e.g. onhook, Q.931 Disconnect message, SS7 Release
 --  message) is received from the originating party, or received from the terminating party via the terminating
---  half BCSM. (DP 9 - O_Disconnect). For additional information on this operation, refer to 
+--  half BCSM. (DP 9 - O_Disconnect). For additional information on this operation, refer to
 --  4.2.2.2.1?5/Q.1214
 oMidCall OPERATION ::= {
   ARGUMENT       MidCallArg
@@ -429,10 +429,10 @@ oMidCall OPERATION ::= {
   CODE           op-oMidCall
 }
 
---  Direction: SSF -> SCF, Timer: Tomc 
---  This operation is used to indicate a feature request is received from the originating party 
---  (e.g. hook flash, ISDN feature activation, Q.931 HOLD or RETrieve message). (DP 8 - O_Mid_Call). 
---  For additional information on this operation, refer to 4.2.2.2.1-5/Q.1214. 
+--  Direction: SSF -> SCF, Timer: Tomc
+--  This operation is used to indicate a feature request is received from the originating party
+--  (e.g. hook flash, ISDN feature activation, Q.931 HOLD or RETrieve message). (DP 8 - O_Mid_Call).
+--  For additional information on this operation, refer to 4.2.2.2.1-5/Q.1214.
 oNoAnswer OPERATION ::= {
   ARGUMENT       ONoAnswerArg
   RETURN RESULT  FALSE
@@ -443,9 +443,9 @@ oNoAnswer OPERATION ::= {
   CODE           op-oNoAnswer
 }
 
---  Direction: SSF -> SCF, Timer: Tona 
+--  Direction: SSF -> SCF, Timer: Tona
 --  This operation is used for indication from the terminating half BCSM that the terminating party does not
---  answer within a specified time period (DP 6 - O_No_Answer). For additional information on this 
+--  answer within a specified time period (DP 6 - O_No_Answer). For additional information on this
 --  operation, refer to 4.2.2.2.1-4/Q.1214.
 originationAttemptAuthorized OPERATION ::= {
   ARGUMENT       OriginationAttemptAuthorizedArg
@@ -457,9 +457,9 @@ originationAttemptAuthorized OPERATION ::= {
   CODE           op-originationAttemptAuthorized
 }
 
---  Direction: SSF -> SCF, Timer: Toaa 
---  This operation is used to indicate the desire to place outgoing call (e.g. offhook, Q.931 Set-up message, 
---  ISDN-UP IAM message) and authority/ability to place outgoing call verified 
+--  Direction: SSF -> SCF, Timer: Toaa
+--  This operation is used to indicate the desire to place outgoing call (e.g. offhook, Q.931 Set-up message,
+--  ISDN-UP IAM message) and authority/ability to place outgoing call verified
 --  (DP 1 - Origination_Attempt_Authorized). For additional information on this operation, refer to
 --  4.2.2.2.1?1/Q.1214.
 releaseCall OPERATION ::= {
@@ -468,8 +468,8 @@ releaseCall OPERATION ::= {
   CODE           op-releaseCall
 }
 
---  Direction: SCF -> SSF, Timer: Trc 
---  This operation is used to tear down an existing call at any phase of the call for all parties 
+--  Direction: SCF -> SSF, Timer: Trc
+--  This operation is used to tear down an existing call at any phase of the call for all parties
 --  involved in the call.
 requestCurrentStatusReport OPERATION ::= {
   ARGUMENT       RequestCurrentStatusReportArg
@@ -481,8 +481,8 @@ requestCurrentStatusReport OPERATION ::= {
   CODE           op-requestCurrentStatusReport
 }
 
---  Direction: SCF -> SSF, Timer: Trcs 
---  This operation is used to request the SSF to report immediately the busy/idle status of a physical 
+--  Direction: SCF -> SSF, Timer: Trcs
+--  This operation is used to request the SSF to report immediately the busy/idle status of a physical
 --  termination resource.
 requestEveryStatusChangeReport OPERATION ::= {
   ARGUMENT       RequestEveryStatusChangeReportArg
@@ -493,8 +493,8 @@ requestEveryStatusChangeReport OPERATION ::= {
   CODE           op-requestEveryStatusChangeReport
 }
 
---  Direction: SCF -> SSF, Timer: Tres 
---  This operation is used to request the SSF to report every change of busy/idle status of a physical 
+--  Direction: SCF -> SSF, Timer: Tres
+--  This operation is used to request the SSF to report every change of busy/idle status of a physical
 --  termination resource.
 requestFirstStatusMatchReport OPERATION ::= {
   ARGUMENT       RequestFirstStatusMatchReportArg
@@ -505,8 +505,8 @@ requestFirstStatusMatchReport OPERATION ::= {
   CODE           op-requestFirstStatusMatchReport
 }
 
---  Direction: SCF -> SSF, Timer: Trfs 
---  This operation is used to request the SSF to report the first change busy/idle to the specified status of 
+--  Direction: SCF -> SSF, Timer: Trfs
+--  This operation is used to request the SSF to report the first change busy/idle to the specified status of
 --  a physical termination resource.
 requestNotificationChargingEvent OPERATION ::= {
   ARGUMENT       RequestNotificationChargingEventArg
@@ -517,7 +517,7 @@ requestNotificationChargingEvent OPERATION ::= {
   CODE           op-requestNotificationChargingEvent
 }
 
---  Direction: SCF -> SSF, Timer: Trnc 
+--  Direction: SCF -> SSF, Timer: Trnc
 --  This operation is used by the SCF to instruct the SSF on how to manage the charging events
 --  which are received from other FE's and not under control of the service logic instance.
 requestReportBCSMEvent OPERATION ::= {
@@ -538,14 +538,14 @@ requestReportBCSMEvent OPERATION ::= {
 --  NOTE	-	The application context should identify whether Request Report BCSM Event ASE and DP
 --		Generic BCSM EventReport ASE are being used, or whether Request Report BCSM EventASE,
 --		Basic BCP DP ASE, and Advanced BCP DP ASE are being used.
---	-	For a particular IN, only one of the two alternatives identified by the respective ASEs should be 
+--	-	For a particular IN, only one of the two alternatives identified by the respective ASEs should be
 --		selected (i.e. only one approach should be selected for a given application context).
---	-	Further study is required to identify the small set of parameters required to be conveyed for EDPs 
+--	-	Further study is required to identify the small set of parameters required to be conveyed for EDPs
 --		when the Basic BCP DP ASE and Advanced BCP DP ASE are used.
 --	-	For CS2 further study should be given for the feasibility of progressing of one of both
 --		alternatives for both TDPs and EDPs.
 --	-	Every EDP must be explicitly armed by the SCF via a RequestReportBCSMEvent operation. No
---		 implicit arming of EDPs at the SSF after reception of any operation (different from 
+--		 implicit arming of EDPs at the SSF after reception of any operation (different from
 --		RequestReportBCSMEvent) from the SCF is allowed.
 resetTimer OPERATION ::= {
   ARGUMENT       ResetTimerArg
@@ -556,7 +556,7 @@ resetTimer OPERATION ::= {
   CODE           op-resetTimer
 }
 
---  Direction: SCF -> SSF, Timer: Trt 
+--  Direction: SCF -> SSF, Timer: Trt
 --  This operation is used to request the SSF to refresh an application timer in the SSF.
 routeSelectFailure OPERATION ::= {
   ARGUMENT       RouteSelectFailureArg
@@ -568,11 +568,11 @@ routeSelectFailure OPERATION ::= {
   CODE           op-routeSelectFailure
 }
 
---  Direction: SSF -> SCF, Timer: Trsf 
+--  Direction: SSF -> SCF, Timer: Trsf
 --  This operation is used to indicate that the SSP is unable to select a route (e.g. unable to determine a
---  correct route, no more routes on route list) or indication from the terminating half BCSM that a call 
---  cannot be presented to the terminating party (e.g. network congestion) (DP 4 - Route_Select_Failure). 
---  For additional information on this operation, refer to 4.2.2.2.1-4/Q.1214. 
+--  correct route, no more routes on route list) or indication from the terminating half BCSM that a call
+--  cannot be presented to the terminating party (e.g. network congestion) (DP 4 - Route_Select_Failure).
+--  For additional information on this operation, refer to 4.2.2.2.1-4/Q.1214.
 selectFacility OPERATION ::= {
   ARGUMENT       SelectFacilityArg
   RETURN RESULT  FALSE
@@ -582,10 +582,10 @@ selectFacility OPERATION ::= {
   CODE           op-selectFacility
 }
 
---  Direction: SCF ->  SSF, Timer: Tsf 
---  This operation is used to request the SSF to perform the terminating basic call processing 
---  actions to select the terminating line if it is idle, or selects an idle line from a multi-line hunt 
---  group, or selects an idle trunk from a trunk group, as appropriate. If no idle line or trunk is 
+--  Direction: SCF ->  SSF, Timer: Tsf
+--  This operation is used to request the SSF to perform the terminating basic call processing
+--  actions to select the terminating line if it is idle, or selects an idle line from a multi-line hunt
+--  group, or selects an idle trunk from a trunk group, as appropriate. If no idle line or trunk is
 --  available, the SSF determines that the terminating facility is busy.
 selectRoute OPERATION ::= {
   ARGUMENT       SelectRouteArg
@@ -597,12 +597,12 @@ selectRoute OPERATION ::= {
 }
 
 --  Direction: SCF -> SSF, Timer: Tsr
---  This operation is used to request the SSF to perform the originating basic call processing actions to 
---  determine routing information and select a route for a call, based either on call information available 
---  to the SSF, or on call information provided by the SCF (e.g. for alternate routing), to include the 
---  called party address, type of call, carrier, route index, and one or more alternate route indices. 
---  Based on the routing information, the SSF attempts to select a primary route for the call, and if the 
---  route is busy, attempts to select an alternate route. The SSF may fail to select a route for the call 
+--  This operation is used to request the SSF to perform the originating basic call processing actions to
+--  determine routing information and select a route for a call, based either on call information available
+--  to the SSF, or on call information provided by the SCF (e.g. for alternate routing), to include the
+--  called party address, type of call, carrier, route index, and one or more alternate route indices.
+--  Based on the routing information, the SSF attempts to select a primary route for the call, and if the
+--  route is busy, attempts to select an alternate route. The SSF may fail to select a route for the call
 --  if all routes are busy.
 sendChargingInformation OPERATION ::= {
   ARGUMENT       SendChargingInformationArg
@@ -614,7 +614,7 @@ sendChargingInformation OPERATION ::= {
 }
 
 --  Direction: SCF -> SSF, Timer: Tsci
---  This operation is used to instruct the SSF on the charging information to send by the SSF. The charging 
+--  This operation is used to instruct the SSF on the charging information to send by the SSF. The charging
 --  information can either be sent back by means of signalling or internal if the SSF is located in the local
 --  exchange. In the local exchange this information may be used to update the charge meter or to create a
 --  standard call record.
@@ -624,8 +624,8 @@ serviceFilteringResponse OPERATION ::= {
   CODE           op-serviceFilteringResponse
 }
 
---  Direction: SSF ->  SCF, Timer: Tsfr 
---  This operation is used to send back to the SCF the values of counters specified in a previous 
+--  Direction: SSF ->  SCF, Timer: Tsfr
+--  This operation is used to send back to the SCF the values of counters specified in a previous
 --  ActivateServiceFiltering operation.
 statusReport OPERATION ::= {
   ARGUMENT       StatusReportArg
@@ -633,8 +633,8 @@ statusReport OPERATION ::= {
   CODE           op-statusReport
 }
 
---  Direction: SSF -> SCF, Timer: Tsrp 
---  This operation is used as a response to RequestFirstStatusMatchReport or 
+--  Direction: SSF -> SCF, Timer: Tsrp
+--  This operation is used as a response to RequestFirstStatusMatchReport or
 --  RequestEveryStatusChangeReport operations.
 tAnswer OPERATION ::= {
   ARGUMENT       TAnswerArg
@@ -646,9 +646,9 @@ tAnswer OPERATION ::= {
   CODE           op-tAnswer
 }
 
---  Direction: SSF -> SFC, Timer: Tta 
+--  Direction: SSF -> SFC, Timer: Tta
 --  This operation is used to indicate that the call is accepted and answered by terminating party
---  (e.g. terminating party goes offhook, Q.931 Connect message received, ISDN-UP Answer message 
+--  (e.g. terminating party goes offhook, Q.931 Connect message received, ISDN-UP Answer message
 --  received) (DP 15 - T_Answer). For additional information on this operation, refer to 4.2.2.2.2-10/Q.1214.
 tBusy OPERATION ::= {
   ARGUMENT       TBusyArg
@@ -673,11 +673,11 @@ tDisconnect OPERATION ::= {
   CODE           op-tDisconnect
 }
 
---  Direction: SSF -> SCF, Timer: Ttd 
---  This operation is used for a disconnect indication (e.g. onhook, Q.931 Disconnect message, 
---  SS7 Release message) is received from the terminating party, or received from the originating party 
+--  Direction: SSF -> SCF, Timer: Ttd
+--  This operation is used for a disconnect indication (e.g. onhook, Q.931 Disconnect message,
+--  SS7 Release message) is received from the terminating party, or received from the originating party
 --  via the originating half BCSM. (DP 17 - T_Disconnect.) For additional information on this operation,
---  refer to 4.2.2.2.2-10/Q.1214. 
+--  refer to 4.2.2.2.2-10/Q.1214.
 termAttemptAuthorized OPERATION ::= {
   ARGUMENT       TermAttemptAuthorizedArg
   RETURN RESULT  FALSE
@@ -688,10 +688,10 @@ termAttemptAuthorized OPERATION ::= {
   CODE           op-termAttemptAuthorized
 }
 
---  Direction: SSF -> SCF, Timer: Ttaa 
---  This operation is used for indication of incoming call received from originating half BCSM and authority 
+--  Direction: SSF -> SCF, Timer: Ttaa
+--  This operation is used for indication of incoming call received from originating half BCSM and authority
 --  to route call to a specified terminating resource (or group) verified. (DP 12 - Termination_Authorized.)
---  For additional information on this operation, refer to 4.2.2.2.2-7/Q.1214. 
+--  For additional information on this operation, refer to 4.2.2.2.2-7/Q.1214.
 tMidCall OPERATION ::= {
   ARGUMENT       MidCallArg
   RETURN RESULT  FALSE
@@ -702,10 +702,10 @@ tMidCall OPERATION ::= {
   CODE           op-tMidCall
 }
 
---  Direction: SSF -> SCF, Timer: Ttmc 
---  This operation is used to indicate that a feature request is received from the terminating party (e.g. hook 
+--  Direction: SSF -> SCF, Timer: Ttmc
+--  This operation is used to indicate that a feature request is received from the terminating party (e.g. hook
 --  flash, ISDN feature activation Q.931 HOLD or RETrieve message). (DP 16 - T_Mid_Call.)
---  For additional information on this operation, refer to 4.2.2.2.2-10/Q.1214. 
+--  For additional information on this operation, refer to 4.2.2.2.2-10/Q.1214.
 tNoAnswer OPERATION ::= {
   ARGUMENT       TNoAnswerArg
   RETURN RESULT  FALSE
@@ -716,9 +716,9 @@ tNoAnswer OPERATION ::= {
   CODE           op-tNoAnswer
 }
 
---  Direction: SSF -> SCF, Timer: Ttna 
---  This operation is used to indicate that the terminating party does not answer within a specified duration. 
---  (DP 14 - T_No_Answer.) For additional information on this operation, refer to 4.2.2.2.2-9/Q.1214. 
+--  Direction: SSF -> SCF, Timer: Ttna
+--  This operation is used to indicate that the terminating party does not answer within a specified duration.
+--  (DP 14 - T_No_Answer.) For additional information on this operation, refer to 4.2.2.2.2-9/Q.1214.
 --  SCF-SRF operations
 --  AssistRequestInstructions
 --  SRF -> SCF
@@ -737,12 +737,12 @@ playAnnouncement OPERATION ::= {
   CODE           op-playAnnouncement
 }
 
---  Direction: SCF -> SRF, Timer: Tpa 
---  This operation is to be used after Establish Temporary Connection (assist procedure with a second SSP) 
---  or a Connect to Resource (no assist) operation. It may be used for inband interaction with an analogue 
---  user, or for interaction with an ISDN user. In the former case, the SRF is usually collocated with the SSF 
---  for standard tones (congestion tone...) or standard announcements. In the latter case, the SRF is always 
---  collocated with the SSF in the switch. Any error is returned to the SCF. The timer associated with this 
+--  Direction: SCF -> SRF, Timer: Tpa
+--  This operation is to be used after Establish Temporary Connection (assist procedure with a second SSP)
+--  or a Connect to Resource (no assist) operation. It may be used for inband interaction with an analogue
+--  user, or for interaction with an ISDN user. In the former case, the SRF is usually collocated with the SSF
+--  for standard tones (congestion tone...) or standard announcements. In the latter case, the SRF is always
+--  collocated with the SSF in the switch. Any error is returned to the SCF. The timer associated with this
 --  operation must be of a sufficient duration to allow its linked operation to be correctly correlated.
 promptAndCollectUserInformation OPERATION ::= {
   ARGUMENT       PromptAndCollectUserInformationArg
@@ -756,7 +756,7 @@ promptAndCollectUserInformation OPERATION ::= {
   CODE           op-promptAndCollectUserInformation
 }
 
---  Direction: SCF -> SRF, Timer: Tpc 
+--  Direction: SCF -> SRF, Timer: Tpc
 --  This operation is used to interact with a user to collect information.
 specializedResourceReport OPERATION ::= {
   ARGUMENT       SpecializedResourceReportArg
@@ -764,9 +764,9 @@ specializedResourceReport OPERATION ::= {
   CODE           op-specializedResourceReport
 }
 
---  Direction: SRF -> SCF, Timer: Tsrr 
---  This operation is used as the response to a PlayAnnouncement operation when the announcement 
---  completed report indication is set. 
+--  Direction: SRF -> SCF, Timer: Tsrr
+--  This operation is used as the response to a PlayAnnouncement operation when the announcement
+--  completed report indication is set.
 END
 
 -- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D

@@ -91,7 +91,7 @@ ReturnError{ERROR:Errors} ::= SEQUENCE {
        RejectProblem:returnError-errorResponseUnexpected),
   errcode
     ERROR.&errorCode({Errors} !RejectProblem:returnError-unrecognizedError)
-      (CONSTRAINED BY {--must be in the &Errors field of the associated operation -- 
+      (CONSTRAINED BY {--must be in the &Errors field of the associated operation --
          } !RejectProblem:returnError-unexpectedError),
   parameter
     ERROR.&ParameterType
@@ -152,7 +152,7 @@ NoInvokeId InvokeId ::= {noInvokeId}
 
 Errors{OPERATION:Operations} ERROR ::= {Operations.&Errors}
 
--- the Range of the Invoke-Id's must be restricted to -32768..32767 
+-- the Range of the Invoke-Id's must be restricted to -32768..32767
 Components{OPERATION:Invokable, OPERATION:Returnable} ::= CHOICE {
   gfpROS  ROS{{GFPInvokeIDSet}, {Invokable}, {Returnable}}
 }

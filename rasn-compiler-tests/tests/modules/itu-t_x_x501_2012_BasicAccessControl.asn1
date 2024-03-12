@@ -14,7 +14,7 @@ BasicAccessControl {joint-iso-itu-t ds(5) module(1) basicAccessControl(24) 7}
 DEFINITIONS ::=
 BEGIN
 
--- EXPORTS All 
+-- EXPORTS All
 -- The types and values defined in this module are exported for use in the other ASN.1
 -- modules contained within these Directory Specifications, and for the use of other
 -- applications which will use them to access Directory services. Other applications may
@@ -46,7 +46,7 @@ accessControlScheme ATTRIBUTE ::= {
   ID                      id-aca-accessControlScheme
 }
 
--- types 
+-- types
 ACIItem ::= SEQUENCE {
   identificationTag    UnboundedDirectoryString,
   precedence           Precedence,
@@ -107,7 +107,7 @@ UserClasses ::= SEQUENCE {
   name       [2]  SET SIZE (1..MAX) OF NameAndOptionalUID OPTIONAL,
   userGroup  [3]  SET SIZE (1..MAX) OF NameAndOptionalUID OPTIONAL,
   -- dn component shall be the name of an
-  -- entry of GroupOfUniqueNames 
+  -- entry of GroupOfUniqueNames
   subtree    [4]  SET SIZE (1..MAX) OF SubtreeSpecification OPTIONAL,
   ...
 }
@@ -141,7 +141,7 @@ AuthenticationLevel ::= CHOICE {
 
 GrantsAndDenials ::= BIT STRING {
   -- permissions that may be used in conjunction
-  -- with any component of ProtectedItems 
+  -- with any component of ProtectedItems
   grantAdd(0), denyAdd(1), grantDiscloseOnError(2), denyDiscloseOnError(3),
   grantRead(4), denyRead(5), grantRemove(6),
   denyRemove(7),
@@ -156,7 +156,7 @@ GrantsAndDenials ::= BIT STRING {
   grantCompare(20), denyCompare(21), grantFilterMatch(22), denyFilterMatch(23),
   grantInvoke(24), denyInvoke(25)}
 
--- attributes 
+-- attributes
 prescriptiveACI ATTRIBUTE ::= {
   WITH SYNTAX             ACIItem
   EQUALITY MATCHING RULE  directoryStringFirstComponentMatch
@@ -178,8 +178,8 @@ subentryACI ATTRIBUTE ::= {
   ID                      id-aca-subentryACI
 }
 
--- object identifier assignments 
--- attributes 
+-- object identifier assignments
+-- attributes
 id-aca-accessControlScheme OBJECT IDENTIFIER ::=
   {id-aca 1}
 

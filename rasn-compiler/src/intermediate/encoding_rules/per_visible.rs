@@ -449,9 +449,9 @@ pub fn per_visible_range_constraints(
 
 /// 10.3.21	If a constraint that is PER-visible is part of an INTERSECTION construction,
 /// then the resulting constraint is PER-visible, and consists of the INTERSECTION of
-/// all PER-visible parts (with the non-PER-visible parts ignored).  
+/// all PER-visible parts (with the non-PER-visible parts ignored).
 /// If a constraint which is not PER-visible is part of a UNION construction,
-/// then the resulting constraint is not PER-visible.  
+/// then the resulting constraint is not PER-visible.
 /// If a constraint has an EXCEPT clause, the EXCEPT and the following value set is completely ignored,
 /// whether the value set following the EXCEPT is PER-visible or not.
 fn fold_constraint_set(

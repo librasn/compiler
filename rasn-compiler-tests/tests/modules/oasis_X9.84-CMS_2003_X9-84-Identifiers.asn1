@@ -1,5 +1,5 @@
 
-X9-84-Identifiers {iso(1) identified-organization(3) tc68(133) country(16) x9(840) x9Standards(9) x9-84(84) module(0) ids(3) rev(1)} 
+X9-84-Identifiers {iso(1) identified-organization(3) tc68(133) country(16) x9(840) x9Standards(9) x9-84(84) module(0) ids(3) rev(1)}
    DEFINITIONS AUTOMATIC TAGS ::= BEGIN
 
 -- EXPORTS All;
@@ -52,7 +52,7 @@ RelOID ::= RELATIVE-OID  -- Alias
 -- id-thermal-Face-Image          { 1 3 133 16 840 9 84 1 16    }
 -- id-thermal-Hand-Image          { 1 3 133 16 840 9 84 1 17    }
 -- id-lip-Movement                { 1 3 133 16 840 9 84 1 18    }
--- id-gait                        { 1 3 133 16 840 9 84 1 19    } 
+-- id-gait                        { 1 3 133 16 840 9 84 1 19    }
 -- processing-algorithm           { 1 3 133 16 840 9 84 2       }
 -- matching-method                { 1 3 133 16 840 9 84 3       }
 -- format-Owner                   { 1 3 133 16 840 9 84 4       }
@@ -91,7 +91,7 @@ x9-84 OID ::= {
 
 -- X9.84 ASN.1 modules --
 
-x9-84-Module OID ::= { x9-84 modules(0) } 
+x9-84-Module OID ::= { x9-84 modules(0) }
 
 x9-84-Biometrics  OID ::= { x9-84-Module biometrics(1) rev(1) }
 
@@ -104,7 +104,7 @@ x9-84-Identifiers OID ::= { x9-84-Module ids(3) rev(1) }
 biometric OID ::= { x9-84 biometrics(1) }
 
 id-unknown-Type       OID ::= { biometric unknownType(0) }
-id-body-Odor          OID ::= { biometric bodyOdor(1) } 
+id-body-Odor          OID ::= { biometric bodyOdor(1) }
 id-dna                OID ::= { biometric dna(2) }
 id-ear-Shape          OID ::= { biometric ear-Shape(3) }
 id-facial-Features    OID ::= { biometric facialFeatures(4) }
@@ -124,7 +124,7 @@ id-thermal-Hand-Image OID ::= { biometric thermalHandImage(17) }
 id-lip-Movement       OID ::= { biometric lipMovement(18) }
 id-gait               OID ::= { biometric gait(19) }
 
--- X9.84 biometric technology object identifier fragments -- 
+-- X9.84 biometric technology object identifier fragments --
 
 unknown-Type        RelOID ::= { unknownType(0) }
 body-Odor           RelOID ::= { bodyOdor(1) }
@@ -147,7 +147,7 @@ thermal-Hand-Image  RelOID ::= { thermalHandImage(17) }
 lip-Movement        RelOID ::= { lipMovement(18) }
 gait                RelOID ::= { gait(19) }
 
-BiometricTypes BIOMETRIC ::= { 
+BiometricTypes BIOMETRIC ::= {
    { BIOMETRIC id : unknown-Type       } |
    { BIOMETRIC id : body-Odor          } |
    { BIOMETRIC id : dna                } |
@@ -191,7 +191,7 @@ ibia-Owner  OID ::= { format-Owner ibia(1) }
 
 x9-Owner    OID ::= { format-Owner x9(2) }
 
--- IBIA vendor specific formats registered at http://www.ibia.org 
+-- IBIA vendor specific formats registered at http://www.ibia.org
 
 id-ibia-SAFLINK                OID ::= { ibia-Owner  1 }
 id-ibia-Bioscrypt              OID ::= { ibia-Owner  2 }
@@ -215,7 +215,7 @@ id-ibia-STMicroelectronics     OID ::= { ibia-Owner 18 }
 
 -- When represented as values of type OBJECT IDENTIFIER, these
 -- IBIA vendor specific formats may be associated with any ASN.1
--- type.   
+-- type.
 
 IBIAoidFormats BIOMETRIC ::= {
    { BIOMETRIC oid : id-ibia-SAFLINK                DATA Any } |
@@ -246,7 +246,7 @@ Any ::= TYPE-IDENTIFIER.&Type  -- Application constrained
 -- IBIA vendor specific formats defined as OBJECT IDENTIFIER
 -- values above are used to identify these formats when they must
 -- comply with the fixed format requirements of the BioAPI 1.1
--- specification and are associated with a two byte integer value.  
+-- specification and are associated with a two byte integer value.
 
 ibia-SAFLINK                RelOID ::= {  1 }
 ibia-Bioscrypt              RelOID ::= {  2 }
@@ -358,17 +358,17 @@ x509-biometricTemplates OID ::= { certificate-Extensions 1 }
 
 -- RSA PKCS #7 Content type
 
-id-data OID ::= { 
+id-data OID ::= {
    iso(1) member-body(2) us(840) rsadsi(113549) pkcs(1)
       pkcs7(7) data(1)
 }
 
--- Security object identifiers 
+-- Security object identifiers
 
 
 -- FIPS 180-1 and FIPS 180-2 Secure Hash Algorithm --
 
-id-sha1 OID ::= { 
+id-sha1 OID ::= {
    iso(1) identified-organization(3) oiw(14) secsig(3)
       algorithm(2) 26
 }
@@ -400,7 +400,7 @@ NoIV ::= NULL  -- No initialization vector
 dsa-with-sha1 OID ::=  {
    iso(1) member-body(2) us(840) x9-57(10040) x9algorithm(4) 3 }
 
---  X9.71 HMAC with SHA-1 algorithm 
+--  X9.71 HMAC with SHA-1 algorithm
 
 hmac-with-SHA1 OID ::= {
    iso(1)  identified-organization(3) dod(6)
@@ -411,7 +411,7 @@ hmac-with-SHA1 OID ::= {
 sha1WithRSAEncryption OID  ::=  {
    iso(1) member-body(2) us(840) rsadsi(113549) pkcs(1) 1 5 }
 
-rsaEncryption OBJECT IDENTIFIER ::=  { 
+rsaEncryption OBJECT IDENTIFIER ::=  {
    iso(1) member-body(2) us(840) rsadsi(113549) pkcs(1) 1 1 }
 
 -- ANS X9.52 Triple DES Modes of Operation --

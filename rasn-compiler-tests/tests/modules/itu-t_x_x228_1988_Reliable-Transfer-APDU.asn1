@@ -17,7 +17,7 @@ IMPORTS
     FROM Remote-Operations-Information-Objects {joint-iso-itu-t
       remote-operations(4) informationObjects(5) version1(0)};
 
-OPEN ::= CLASS {&Type  
+OPEN ::= CLASS {&Type
 }WITH SYNTAX {TYPE &Type
 }
 
@@ -37,8 +37,8 @@ RTSE-apdus ::= CHOICE {
 }
 
 -- Tags [19], [20], [21] are used by the values of the UNBIND macro of the RO-notation of
--- Recommendation X.219. Tags [0] to [15] inclusive are reserved for the 
--- use by the APDUs of ROSE (Recommendation X229). Any occurrence of 
+-- Recommendation X.219. Tags [0] to [15] inclusive are reserved for the
+-- use by the APDUs of ROSE (Recommendation X229). Any occurrence of
 -- ANY in this module shall be replaced by a single ASN. 1 type (if any) in an RTSE-user
 -- protocol specification. In addition any RTSE-user protocol sharing a single named
 -- abstract syntax with the RTSE protocol shall use distinct tags for the single
@@ -89,12 +89,12 @@ RTABapdu ::= SET {
   -- 8 bits maximum, only if abortReason is invalidParameter
   userdataAB
     [2]  OPEN.&Type OPTIONAL -- only in normal mode and if abortReason--
-  -- is userError 
+  -- is userError
 }
 
 ConnectionData ::= CHOICE {
   open     [0]  OPEN.&Type, -- RTSE user data
-  
+
   -- this alternative is encoded as [0] IMPLICIT NULL
   -- in the case of absence of RTSE user data,
   recover  [1] IMPLICIT SessionConnectionIdentifier
@@ -127,7 +127,7 @@ AbortReason ::= INTEGER {
   temporaryProblem(3),
   -- the RTSE cannot accept a session for a period of time
   protocolError(4), -- RTSE level protocol error
-  permanentProblem(5), --provider-abort solely in normal mode 
+  permanentProblem(5), --provider-abort solely in normal mode
   userError(6), -- user-abort solely in normal mode
   transferCompleted(7) -- activity can't be discarded--}
 

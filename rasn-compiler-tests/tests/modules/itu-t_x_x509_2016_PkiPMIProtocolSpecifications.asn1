@@ -2,7 +2,7 @@ PkiPMIProtocolSpecifications {joint-iso-itu-t ds(5) module(1) pkiPMIProtocolSpec
 DEFINITIONS ::=
 BEGIN
 
--- EXPORTS All 
+-- EXPORTS All
 
 IMPORTS
 
@@ -33,7 +33,7 @@ IMPORTS
 
   -- from Rec. ITU-T X.520 | ISO/IEC 9594-6
 
-  objectIdentifierMatch, octetStringMatch 
+  objectIdentifierMatch, octetStringMatch
     FROM SelectedAttributeTypes selectedAttributeTypes ;
 
 -- PDU types
@@ -203,7 +203,7 @@ RejectAVL ::= SEQUENCE {
 -- CA subscription
 
 CASPcommonComponents ::= SEQUENCE {
-  version    CASPversion DEFAULT v1,                                                                              
+  version    CASPversion DEFAULT v1,
   sequence   CASPsequence,
   ... }
 
@@ -259,7 +259,7 @@ CASP-CertStatusCode ::= ENUMERATED {
   ... }
 
 CertSubscribeErr ::= SEQUENCE {
-  code       CASP-error, 
+  code       CASP-error,
   ... }
 
 certUnsubscribeReq WRAPPED-PDU ::= {
@@ -295,9 +295,9 @@ CertUnsubscribeOK ::= SEQUENCE (SIZE (1..MAX)) OF CHOICE {
     status       CASP-CertStatusCode,
     ... },
   ... }
- 
+
 CertUnsubscribeErr ::= SEQUENCE {
-  code         CASP-error, 
+  code         CASP-error,
   ... }
 
 certReplaceReq WRAPPED-PDU ::= {
@@ -336,7 +336,7 @@ CertReplaceOK ::= SEQUENCE (SIZE (1..MAX)) OF CHOICE {
 
 CertReplaceErr ::= SEQUENCE {
   code        CHOICE {
-    signedData     [0]  SignedData-error,  
+    signedData     [0]  SignedData-error,
     envelopedData  [1]  EnvelopedData-error,
     casp           [2]  CASP-error,
     ... },
@@ -351,7 +351,7 @@ CertUpdateReq ::= SEQUENCE {
   certs  SEQUENCE (SIZE (1..MAX)) OF SEQUENCE {
     subject      Name,
     serialNumber CertificateSerialNumber,
-    certStatus   CertStatus,    
+    certStatus   CertStatus,
     ... },
   ... }
 
@@ -371,14 +371,14 @@ CertUpdateOK ::= SEQUENCE (SIZE (1..MAX)) OF CHOICE {
   ok        [0] SEQUENCE {
     subject       Name,
     serialNumber  CertificateSerialNumber,
-    ... }, 
+    ... },
   not-ok    [1] SEQUENCE {
     status        CASP-CertStatusCode,
     ... },
   ... }
 
 CertUpdateErr ::= SEQUENCE {
-  code          CASP-error, 
+  code          CASP-error,
   ... }
 
 rejectCAsubscribe  WRAPPED-PDU ::= {
@@ -491,7 +491,7 @@ TBOK ::= SEQUENCE {
 
 TBerror ::= SEQUENCE {
   code        ENUMERATED {
-    caCertInvalid        (1), 
+    caCertInvalid        (1),
     unknownCert          (2),
     unknownCertStatus    (3),
     subjectCertRevoked   (4),

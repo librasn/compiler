@@ -129,7 +129,7 @@ ms-access-contract-94 CONTRACT ::= {
 }
 
 ms-access-contract-88 CONTRACT ::= {
-  CONNECTION             ms-connect -- with all 1994 extensions omitted 
+  CONNECTION             ms-connect -- with all 1994 extensions omitted
   INITIATOR CONSUMER OF  {retrieval-88 | submission | administration-88}
   ID                     id-crt-ms-access-88
 }
@@ -152,7 +152,7 @@ retrieval PORT ::= {
 }
 
 retrieval-88 PORT ::= {
-  -- With all 1994 extensions to the abstract-operations absent 
+  -- With all 1994 extensions to the abstract-operations absent
   OPERATIONS        {operationObject1, ...}
   CONSUMER INVOKES  {summarize | list | fetch | delete | register-MS}
   SUPPLIER INVOKES  {alert}
@@ -175,7 +175,7 @@ X413ATTRIBUTE ::= CLASS {
   &substringsMatch  MATCHING-RULE OPTIONAL,
   &orderingMatch    MATCHING-RULE OPTIONAL,
   &numeration       ENUMERATED {single-valued(0), multi-valued(1)},
-  -- 1994 extension 
+  -- 1994 extension
   &OtherMatches     MATCHING-RULE OPTIONAL
 }
 WITH SYNTAX {
@@ -241,14 +241,14 @@ MSExtensions ::= SEQUENCE SIZE (1..ub-extensions) OF MSExtensionItem
 -- Common data-types related to the information model
 EntryClass ::= INTEGER {
   delivery(0),
-  -- 1994 extensions 
+  -- 1994 extensions
   submission(1), draft(2), stored-message(3), delivery-log(4),
   submission-log(5), message-log(6), auto-action-log(7)}(0..ub-entry-classes)
 
 EntryType ::= INTEGER {
   delivered-message(0), delivered-report(1),
   returned-content(2),
-  -- 1994 extensions 
+  -- 1994 extensions
   submitted-message(3), submitted-probe(4), draft-message(5),
   auto-action-event(6)}
 
@@ -273,7 +273,7 @@ MSBindArgument ::= SET {
   security-context            [3] IMPLICIT SecurityContext OPTIONAL,
   fetch-restrictions          [4]  Restrictions OPTIONAL -- default is none--,
   ms-configuration-request    [5]  BOOLEAN DEFAULT FALSE,
-  -- 1994 extensions 
+  -- 1994 extensions
   ua-registration-identifier  [6]  RegistrationIdentifier OPTIONAL,
   bind-extensions             [7]  MSExtensions OPTIONAL
 }
@@ -303,7 +303,7 @@ MSBindResult ::= SET {
   alert-indication              [5]  BOOLEAN DEFAULT FALSE,
   content-types-supported
     [6]  SET SIZE (1..ub-content-types) OF OBJECT IDENTIFIER OPTIONAL,
-  -- 1994 extensions 
+  -- 1994 extensions
   entry-classes-supported
     [7]  SET SIZE (1..ub-entry-classes) OF EntryClass OPTIONAL,
   matching-rules-supported
@@ -343,7 +343,7 @@ AutoActionErrorIndication ::= CHOICE {
 ms-bind-error ABSTRACT-ERROR ::= {
   PARAMETER
     CHOICE {unqualified-error  BindProblem,
-            -- 1994 extension 
+            -- 1994 extension
             qualified-error
               SET {bind-problem               [0]  BindProblem,
                    supplementary-information
@@ -356,7 +356,7 @@ ms-bind-error ABSTRACT-ERROR ::= {
 
 BindProblem ::= ENUMERATED {
   authentication-error(0), unacceptable-security-context(1),
-  unable-to-establish-association(2), ... -- 1994 extension addition --, 
+  unable-to-establish-association(2), ... -- 1994 extension addition --,
   bind-extension-problem(3), inadequate-association-confidentiality(4)
 }
 
@@ -408,7 +408,7 @@ FilterItem ::= CHOICE {
   less-or-equal      [3]  AttributeValueAssertion,
   present            [4]  X413ATTRIBUTE.&id({AttributeTable}),
   approximate-match  [5]  AttributeValueAssertion,
-  -- 1994 extension 
+  -- 1994 extension
   other-match        [6]  MatchingRuleAssertion
 }
 
@@ -454,7 +454,7 @@ AttributeSelection ::= SET {
 EntryInformation ::= SEQUENCE {
   sequence-number       SequenceNumber,
   attributes            SET SIZE (1..ub-per-entry) OF Attribute OPTIONAL,
-  -- 1994 extension 
+  -- 1994 extension
   value-count-exceeded
     [0]  SET SIZE (1..ub-per-entry) OF AttributeValueCount OPTIONAL
 }
@@ -481,7 +481,7 @@ originator-token MS-EXTENSION ::= {
 OriginatorToken ::=
   MessageToken
     (CONSTRAINED BY {
-       
+
        -- Must contain an asymmetric-token with an encrypted-data component --})
 
 originator-certificate-selectors-override MS-EXTENSION ::= {
@@ -518,7 +518,7 @@ SummarizeArgument ::= SET {
     [2]  SEQUENCE SIZE (1..ub-summaries) OF
            X413ATTRIBUTE.&id({AttributeTable})
       OPTIONAL -- absent if no summaries are requested--,
-  -- 1994 extension 
+  -- 1994 extension
   summarize-extensions  [3]  MSExtensions OPTIONAL
 }
 
@@ -529,7 +529,7 @@ SummarizeResult ::= SET {
   span                         [2]  Span OPTIONAL -- of the entries selected,---- omitted if count is zero --,
   summaries
     [3]  SEQUENCE SIZE (1..ub-summaries) OF Summary OPTIONAL,
-  -- 1994 extension 
+  -- 1994 extension
   summarize-result-extensions  [4]  MSExtensions OPTIONAL
 }
 
@@ -549,7 +549,7 @@ Summary ::= SET {
                      count  INTEGER(1..ub-messages)} OPTIONAL
 }
 
--- 
+--
 list ABSTRACT-OPERATION ::= {
   ARGUMENT  ListArgument
   RESULT    ListResult
@@ -565,7 +565,7 @@ ListArgument ::= SET {
   entry-class           [0]  EntryClass DEFAULT delivery,
   selector              [1]  Selector,
   requested-attributes  [3]  EntryInformationSelection OPTIONAL,
-  -- 1994 extension 
+  -- 1994 extension
   list-extensions       [4]  MSExtensions OPTIONAL
 }
 
@@ -573,11 +573,11 @@ ListResult ::= SET {
   next                    [0]  SequenceNumber OPTIONAL,
   requested
     [1]  SEQUENCE SIZE (1..ub-messages) OF EntryInformation OPTIONAL--omitted if none found--,
-  -- 1994 extension 
+  -- 1994 extension
   list-result-extensions  [2]  MSExtensions OPTIONAL
 }
 
--- 
+--
 fetch ABSTRACT-OPERATION ::= {
   ARGUMENT  FetchArgument
   RESULT    FetchResult
@@ -596,7 +596,7 @@ FetchArgument ::= SET {
     CHOICE {search   [1]  Selector,
             precise  [2]  SequenceNumber},
   requested-attributes  [3]  EntryInformationSelection OPTIONAL,
-  -- 1994 extension 
+  -- 1994 extension
   fetch-extensions      [4]  MSExtensions OPTIONAL
 }
 
@@ -606,11 +606,11 @@ FetchResult ::= SET {
   list
     [1]  SEQUENCE SIZE (1..ub-messages) OF SequenceNumber OPTIONAL,
   next                     [2]  SequenceNumber OPTIONAL,
-  -- 1994 extension 
+  -- 1994 extension
   fetch-result-extensions  [3]  MSExtensions OPTIONAL
 }
 
--- 
+--
 delete ABSTRACT-OPERATION ::= {
   ARGUMENT  DeleteArgument
   RESULT    DeleteResult
@@ -635,14 +635,14 @@ DeleteArgument ::= SET {
 
 DeleteResult ::= CHOICE {
   delete-result-88  NULL,
-  -- 1994 extension 
+  -- 1994 extension
   delete-result-94
     SET {entries-deleted
            [0]  SEQUENCE SIZE (1..ub-messages) OF SequenceNumber OPTIONAL,
          delete-result-extensions  [1]  MSExtensions OPTIONAL}
 }
 
--- 
+--
 register-MS ABSTRACT-OPERATION ::= {
   ARGUMENT  Register-MSArgument
   RESULT    Register-MSResult
@@ -670,11 +670,11 @@ Register-MSArgument ::= SET {
   change-credentials
     [4]  SEQUENCE {old-credentials
                      [0]  Credentials(WITH COMPONENTS {
-                                        simple  
+                                        simple
                                       }),
                    new-credentials
                      [1]  Credentials(WITH COMPONENTS {
-                                        simple  
+                                        simple
                                       })} OPTIONAL,
   user-security-labels
     [5]  SET SIZE (1..ub-labels-and-redirections) OF SecurityLabel OPTIONAL,
@@ -748,7 +748,7 @@ ProtectedChangeCredentials ::= SEQUENCE {
 
 Register-MSResult ::= CHOICE {
   no-status-information   NULL,
-  -- 1994 extension 
+  -- 1994 extension
   registered-information
     SET {auto-action-registrations
            [0]  SET SIZE (1..ub-auto-registrations) OF AutoActionRegistration
@@ -768,7 +768,7 @@ Register-MSResult ::= CHOICE {
          register-ms-result-extensions  [6]  MSExtensions OPTIONAL}
 }
 
--- 
+--
 alert ABSTRACT-OPERATION ::= {
   ARGUMENT  AlertArgument
   RESULT    AlertResult
@@ -784,7 +784,7 @@ AlertArgument ::= SET {
 
 AlertResult ::= NULL
 
--- 
+--
 modify ABSTRACT-OPERATION ::= {
   ARGUMENT  ModifyArgument
   RESULT    ModifyResult
@@ -821,7 +821,7 @@ OrderedAttribute ::= SEQUENCE {
   attribute-type    X413ATTRIBUTE.&id({AttributeTable}),
   attribute-values
     SEQUENCE SIZE (1..ub-attribute-values) OF
-      SEQUENCE {-- at least one must be specified 
+      SEQUENCE {-- at least one must be specified
                 value
                   [0]  X413ATTRIBUTE.&Type
                          ({AttributeTable}{@attribute-type}) OPTIONAL,
@@ -852,7 +852,7 @@ ms-message-submission ABSTRACT-OPERATION ::= {
 MSMessageSubmissionArgument ::= SEQUENCE {
   COMPONENTS OF
     MessageSubmissionArgument -- This imported type has IMPLICIT tags --,
-  -- 1994 extension 
+  -- 1994 extension
   submission-options  [4]  MSSubmissionOptions OPTIONAL
 }
 
@@ -865,13 +865,13 @@ MSMessageSubmissionResult ::= CHOICE {
   mts-result
     SET {COMPONENTS OF
            MessageSubmissionResult-- This imported type has IMPLICIT tags -- ,
-         -- 1994 extension 
+         -- 1994 extension
          ms-message-result  [4]  CommonSubmissionResults OPTIONAL},
-  -- 1994 extension 
+  -- 1994 extension
   store-draft-result  [4]  CommonSubmissionResults
 }
 
--- 
+--
 ms-probe-submission ABSTRACT-OPERATION ::= {
   ARGUMENT  MSProbeSubmissionArgument
   RESULT    MSProbeSubmissionResult
@@ -888,14 +888,14 @@ ms-probe-submission ABSTRACT-OPERATION ::= {
 MSProbeSubmissionArgument ::= SET {
   COMPONENTS OF
     ProbeSubmissionArgument -- This imported type has IMPLICIT tags --,
-  -- 1994 extension 
+  -- 1994 extension
   submission-options  [4]  MSSubmissionOptions OPTIONAL
 }
 
 MSProbeSubmissionResult ::= SET {
   COMPONENTS OF
     ProbeSubmissionResult -- This imported type has IMPLICIT tags --,
-  -- 1994 extension 
+  -- 1994 extension
   ms-probe-result  [4]  CommonSubmissionResults OPTIONAL
 }
 
@@ -920,11 +920,11 @@ AttributeProblem ::= INTEGER {
   invalid-attribute-value(0), unavailable-attribute-type(1),
   inappropriate-matching(2), attribute-type-not-subscribed(3),
   inappropriate-for-operation(4),
-  -- 1994 extensions 
+  -- 1994 extensions
   inappropriate-modification(5), single-valued-attribute(6)
 }(0..ub-error-reasons)
 
--- 
+--
 auto-action-request-error ABSTRACT-ERROR ::= {
   PARAMETER
     SET {problems
@@ -938,17 +938,17 @@ auto-action-request-error ABSTRACT-ERROR ::= {
 AutoActionRequestProblem ::= INTEGER {
   unavailable-auto-action-type(0),
   auto-action-type-not-subscribed(1),
-  -- 1994 extension 
+  -- 1994 extension
   not-willing-to-perform(2)}(0..ub-error-reasons)
 
--- 
+--
 delete-error ABSTRACT-ERROR ::= {
   PARAMETER
     SET {problems
            [0]  SET SIZE (1..ub-messages) OF
                   SET {problem          [0]  DeleteProblem,
                        sequence-number  [1]  SequenceNumber},
-         -- 1994 extension 
+         -- 1994 extension
          entries-deleted
            [1]  SET SIZE (1..ub-messages) OF SequenceNumber OPTIONAL}
   CODE       err-delete-error
@@ -957,11 +957,11 @@ delete-error ABSTRACT-ERROR ::= {
 DeleteProblem ::= INTEGER {
   child-entry-specified(0),
   delete-restriction-problem(1),
-  -- 1994 extensions 
+  -- 1994 extensions
   new-entry-specified(2), entry-class-restriction(3), stored-message-exists(4)
 }(0..ub-error-reasons)
 
--- 
+--
 fetch-restriction-error ABSTRACT-ERROR ::= {
   PARAMETER
     SET {problems
@@ -978,13 +978,13 @@ FetchRestrictionProblem ::= INTEGER {
   content-type-problem(1), eit-problem(2), maximum-length-problem(3)
 }(0..ub-error-reasons)
 
--- 
+--
 invalid-parameters-error ABSTRACT-ERROR ::= {
   PARAMETER  NULL
   CODE       err-invalid-parameters-error
 }
 
--- 
+--
 range-error ABSTRACT-ERROR ::= {
   PARAMETER  SET {problem  [0]  RangeProblem}
   CODE       err-range-error
@@ -992,7 +992,7 @@ range-error ABSTRACT-ERROR ::= {
 
 RangeProblem ::= INTEGER {reversed(0)}(0..ub-error-reasons)
 
--- 
+--
 sequence-number-error ABSTRACT-ERROR ::= {
   PARAMETER
     SET {problems
@@ -1004,7 +1004,7 @@ sequence-number-error ABSTRACT-ERROR ::= {
 
 SequenceNumberProblem ::= INTEGER {no-such-entry(0)}(0..ub-error-reasons)
 
--- 
+--
 service-error ABSTRACT-ERROR ::= {
   PARAMETER  ServiceErrorParameter
   CODE       err-service-error
@@ -1012,7 +1012,7 @@ service-error ABSTRACT-ERROR ::= {
 
 ServiceErrorParameter ::= SET {
   problem                    [0]  ServiceProblem,
-  -- 1994 extension 
+  -- 1994 extension
   supplementary-information
     [1]  GeneralString(SIZE (1..ub-supplementary-info-length)) OPTIONAL
 }
@@ -1020,7 +1020,7 @@ ServiceErrorParameter ::= SET {
 ServiceProblem ::= INTEGER {busy(0), unavailable(1), unwilling-to-perform(2)
 }(0..ub-error-reasons)
 
--- 
+--
 message-group-error ABSTRACT-ERROR ::= {
   PARAMETER  MessageGroupErrorParameter
   CODE       err-message-group-error
@@ -1036,7 +1036,7 @@ MessageGroupProblem ::= INTEGER {
   group-not-empty(3), name-in-use(4), child-group-registered(5),
   group-depth-exceeded(6)}(0..ub-error-reasons)
 
--- 
+--
 ms-extension-error ABSTRACT-ERROR ::= {
   PARAMETER  MSExtensionErrorParameter
   CODE       err-ms-extension-error
@@ -1047,7 +1047,7 @@ MSExtensionErrorParameter ::= CHOICE {
   unknown-ms-extension  [1]  OBJECT IDENTIFIER
 }
 
--- 
+--
 register-ms-error ABSTRACT-ERROR ::= {
   PARAMETER
     SET {problem            [0]  RegistrationProblem,
@@ -1060,7 +1060,7 @@ RegistrationProblem ::= ENUMERATED {
   registration-limit-exceeded(2), ... -- For future extension additions --
   }
 
--- 
+--
 modify-error ABSTRACT-ERROR ::= {
   PARAMETER  ModifyErrorParameter
   CODE       err-modify-error
@@ -1079,7 +1079,7 @@ ModifyProblem ::= INTEGER {
   attribute-or-value-already-exists(2), invalid-position(3),
   modify-restriction-problem(4)}(0..ub-error-reasons)
 
--- 
+--
 entry-class-error ABSTRACT-ERROR ::= {
   PARAMETER  EntryClassErrorParameter
   CODE       err-entry-class-error

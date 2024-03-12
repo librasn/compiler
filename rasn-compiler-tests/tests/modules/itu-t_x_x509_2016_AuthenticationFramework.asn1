@@ -2,7 +2,7 @@ AuthenticationFramework {joint-iso-itu-t ds(5) module(1) authenticationFramework
 DEFINITIONS ::=
 BEGIN
 
--- EXPORTS All 
+-- EXPORTS All
 -- The types and values defined in this module are exported for use in the other ASN.1
 -- modules contained within the Directory Specifications, and for the use of other
 -- applications which will use them to access Directory services. Other applications may
@@ -22,11 +22,11 @@ IMPORTS
   directoryString, distinguishedNameMatch, generalizedTime,
   generalizedTimeMatch, generalizedTimeOrderingMatch, integer, integerMatch,
   integerOrderingMatch, objectIdentifierMatch, octetString, octetStringMatch,
-  UnboundedDirectoryString, UniqueIdentifier, uri 
+  UnboundedDirectoryString, UniqueIdentifier, uri
     FROM SelectedAttributeTypes selectedAttributeTypes
 
   algorithmIdentifierMatch, certificateExactMatch, certificateListExactMatch,
-  certificatePairExactMatch, CertificatePoliciesSyntax, CertPolicyId, GeneralNames, 
+  certificatePairExactMatch, CertificatePoliciesSyntax, CertPolicyId, GeneralNames,
   KeyUsage,
   CertificateAssertion, CertificateExactAssertion, CertificateListAssertion,
   CertificateListExactAssertion, CertificatePairAssertion,
@@ -34,7 +34,7 @@ IMPORTS
       FROM CertificateExtensions certificateExtensions ;
 
 
--- parameterized types 
+-- parameterized types
 
 SIGNATURE ::= SEQUENCE {
   algorithmIdentifier  AlgorithmIdentifier{{SupportedAlgorithms}},
@@ -54,7 +54,7 @@ HASH{ToBeHashed} ::= SEQUENCE {
   ... }
 
 ENCRYPTED{ToBeEnciphered} ::= BIT STRING (CONSTRAINED BY {
-   -- shall be the result of applying an encipherment procedure 
+   -- shall be the result of applying an encipherment procedure
    -- to the BER-encoded octets of a value of -- ToBeEnciphered } )
 
 ENCRYPTED-HASH{ToBeSigned} ::= BIT STRING (CONSTRAINED BY {
@@ -91,7 +91,7 @@ SupportedCurves OBJECT IDENTIFIER ::= {dummyCurv, ...}
 
 dummyCurv OBJECT IDENTIFIER ::= {2 5 5}
 
--- public-key certificate definition 
+-- public-key certificate definition
 
 Certificate ::= SIGNED{TBSCertificate}
 
@@ -239,7 +239,7 @@ ScopeRestriction ::= SEQUENCE {
   ... }
 
 protRestrict EXTENSION ::= {
-  SYNTAX        ProtRestriction  
+  SYNTAX        ProtRestriction
   IDENTIFIED BY id-protRestrict }
 
 ProtRestriction ::= SEQUENCE (SIZE (1..MAX)) OF OBJECT IDENTIFIER
@@ -308,7 +308,7 @@ pkiCertPath OBJECT-CLASS ::= {
   LDAP-DESC           "PKI Certification Path"
   ID                  id-oc-pkiCertPath }
 
--- PKI directory attributes 
+-- PKI directory attributes
 
 userCertificate ATTRIBUTE ::= {
   WITH SYNTAX              Certificate
@@ -403,7 +403,7 @@ POLICY ::= TYPE-IDENTIFIER
 
 HashedPolicyInfo ::= POLICY.&Type({Policies})
 
-Policies POLICY ::= {...} -- Defined by implementors 
+Policies POLICY ::= {...} -- Defined by implementors
 
 certificatePolicy ATTRIBUTE ::= {
   WITH SYNTAX  PolicySyntax
@@ -449,9 +449,9 @@ x509SupportedAlgorithm SYNTAX-NAME ::= {
   DIRECTORY SYNTAX  SupportedAlgorithm
   ID                id-lsx-x509SupportedAlgorithm }
 
--- object identifier assignments 
+-- object identifier assignments
 
--- object classes 
+-- object classes
 
 id-oc-cRLDistributionPoint          OBJECT IDENTIFIER ::= {id-oc 19}
 id-oc-pkiUser                       OBJECT IDENTIFIER ::= {id-oc 21}

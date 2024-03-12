@@ -7,7 +7,7 @@
 TSM {itu-t(0) recommendation(0) x(24) tsm-1(1084) modules(0) tls-extended-protocol(1) version1(1)}
 DEFINITIONS AUTOMATIC TAGS ::=
 BEGIN
-IMPORTS 
+IMPORTS
 
 BioAPI-BFP-SCHEMA,BioAPI-BSP-SCHEMA,BioAPI-FMR,BioAPI-BIR,
 BioAPI-BIR-BIOMETRIC-TYPE
@@ -32,7 +32,7 @@ UINT8	::=	INTEGER(0..255)
 UINT16	::=	INTEGER(0..65535)
 UINT24	::=	INTEGER(0..16777215)
 UINT32	::=	INTEGER(0..4294967295)
-UINT64	::=	INTEGER(0..18446744073709551615) 
+UINT64	::=	INTEGER(0..18446744073709551615)
 Opaque	::=	OCTET STRING
 BiometricType ::= BioAPI-BIR-BIOMETRIC-TYPE
 SampleData ::= BioAPI-BIR
@@ -57,7 +57,7 @@ biometric-verify 		(102),
 biometric-retry-request (103),
 biometric-finished 	(104),
 biometric-ttp-request 	(105),
-biometric-ttp-response	(106)	
+biometric-ttp-response	(106)
 } (0..255)
 HANDSHAKE	::= CLASS {
 &Type,
@@ -322,7 +322,7 @@ certificates	Certificates
 }
 Certificates		::=	SEQUENCE OF X509Certificate
 X509Certificate 	::=	OCTET STRING(CONTAINING Certificate ENCODED BY der)
-der	OBJECT IDENTIFIER ::= 
+der	OBJECT IDENTIFIER ::=
 {joint-iso-itu-t asn1(1) ber-derived(2) distinguished-encoding(1)}
 serverKeyExchange	HANDSHAKE	::= {
 ServerKeyExchange	IDENTIFIED BY server-key-exchange
@@ -541,7 +541,7 @@ BiometricServerHello ::=       BiometricAuthenticationRequest
 Quality ::= INTEGER(0..100)
 BiometricAuthenticationRequest ::=      SEQUENCE {
 biometricMethod 		BiometricMethod,
-requestFMR       		BioAPI-FMR,     
+requestFMR       		BioAPI-FMR,
 				-- (32-bit integer value:requestFMR/231-1)
 requestTrialNumber	INTEGER(1..15),
 requestQuality		Quality,
@@ -565,14 +565,14 @@ biometricData   CHOICE  {
 	comparison-outsourcing-by-server-model  [8] BDforCObyServerModel,
 	storage-comparison-outsourcing-by-client-model	[9]
 	BDforSCObyClientModel,
- 	storage-comparison-outsourcing-by-server-model [10] 
+ 	storage-comparison-outsourcing-by-server-model [10]
 		BDforSCObyServerModel,
 	...
 	},
 digitalSignature        SignedDatabyClient
 }
 SignedDatabyClient ::= CHOICE {
-digital-signature       [0] SignedData,             
+digital-signature       [0] SignedData,
 			--import from X9.84-CMS
 aCBioOnClient           [1] SignedDataACBio
 			--import from ISO/IEC 24761
@@ -731,7 +731,7 @@ sampleQuality	Quality,
 score			BioAPI-FMR
 }
 SignedDatabyTTP ::= CHOICE {
-digital-signature		[0] SignedData,             
+digital-signature		[0] SignedData,
 				--import from X9.84-CMS
 aCBioOnTTP			[1] SignedDataACBio
 				--import from ISO/IEC 24761

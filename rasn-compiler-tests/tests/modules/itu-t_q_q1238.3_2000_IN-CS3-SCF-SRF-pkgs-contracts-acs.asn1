@@ -131,8 +131,8 @@ networkSpecificSSFSCFBoundSet SCF-SSF-BOUNDS ::= {
   NUM-OF-ADDRESSES                      13
  -- example value--}
 
--- Application Contexts 
--- Application Contexts 
+-- Application Contexts
+-- Application Contexts
 srf-scf-ac APPLICATION-CONTEXT ::= {
   CONTRACT                  srf-scf-contract
   DIALOGUE MODE             structured
@@ -142,7 +142,7 @@ srf-scf-ac APPLICATION-CONTEXT ::= {
   APPLICATION CONTEXT NAME  id-ac-srf-scfAC
 }
 
--- Contracts 
+-- Contracts
 srf-scf-contract CONTRACT ::= {
   INITIATOR CONSUMER OF
     {srf-scfActivationOfAssistPackage{networkSpecificBoundSet,
@@ -163,8 +163,8 @@ srf-scf-contract CONTRACT ::= {
   ID                     id-contract-srf-scf
 }
 
--- specializedResourceControl package 
-specializedResourceControlPackage{B1:b1, B2:b2, B3:b3} OPERATION-PACKAGE ::= 
+-- specializedResourceControl package
+specializedResourceControlPackage{B1:b1, B2:b2, B3:b3} OPERATION-PACKAGE ::=
 {
   CONSUMER INVOKES
     {playAnnouncement{b1, b2, b3} |
@@ -173,13 +173,13 @@ specializedResourceControlPackage{B1:b1, B2:b2, B3:b3} OPERATION-PACKAGE ::=
   ID                id-package-specializedResourceControl
 }
 
--- srf-scfCancel package 
+-- srf-scfCancel package
 srf-scfCancelPackage{B2:b2} OPERATION-PACKAGE ::= {
   CONSUMER INVOKES  {cancel{b2}}
   ID                id-package-srf-scfCancel
 }
 
--- scriptControl package 
+-- scriptControl package
 scriptControlPackage{B1:b1, B2:b2} OPERATION-PACKAGE ::= {
   CONSUMER INVOKES
     {scriptClose{b1, b2} | scriptRun{b1, b2} | scriptInformation{b1, b2}}
@@ -199,7 +199,7 @@ srfManagementPackage{B1:b1, B2:b2} OPERATION-PACKAGE ::= {
   ID                id-package-srfManagement
 }
 
--- Abstract Syntaxes 
+-- Abstract Syntaxes
 srf-scf-abstract-syntax ABSTRACT-SYNTAX ::= {
   BASIC-SRF-SCF-PDUs
   IDENTIFIED BY  id-as-basic-srf-scf

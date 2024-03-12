@@ -41,7 +41,7 @@ BasicLocationInDocumentType ::= SEQUENCE {
 ConstituentLocationInDocumentType ::= SEQUENCE {
   document              [0]  Document-Id OPTIONAL,
   constituent-location  [1]  Constituent-Locator OPTIONAL
-} -- It is optional for styles and 
+} -- It is optional for styles and
 
 -- root
 Document-Id ::= CHOICE {
@@ -70,7 +70,7 @@ ListArgument ::=
   QueryType
 
 QueryType ::= CHOICE {
-  basic  [0]  Document-Profile-Descriptor, -- Some values of document profile attributes 
+  basic  [0]  Document-Profile-Descriptor, -- Some values of document profile attributes
   not    [1]  QueryType,
   and    [2]  SET OF QueryType,
   or     [3]  SET OF QueryType
@@ -117,7 +117,7 @@ SearchResult ::= SEQUENCE {
 -- Create
 CreateArgument ::= SEQUENCE {
   constituent-or-subtree  [0]  SEQUENCE OF ConstituentType, -- If the elements of this
-  
+
   -- sequence are objects, they
   -- form a subtree
   location-in-document    [1]  ConstituentLocationInDocumentType OPTIONAL,
@@ -145,7 +145,7 @@ ModifyResult ::= SuccessType
 -- Replace
 ReplaceArgument ::= SEQUENCE {
   constituent-or-subtree  [0]  SEQUENCE OF ConstituentType, -- If the elements of this
-  
+
   -- sequence are objects, they
   -- form a subtree
   location-in-document    [1]  ConstituentLocationInDocumentType

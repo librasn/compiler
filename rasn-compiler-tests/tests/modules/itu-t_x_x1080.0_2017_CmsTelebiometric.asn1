@@ -3,7 +3,7 @@ CmsTelebiometric { joint-iso-itu-t(2) telebiometrics(42) th(3) part0(0)
 DEFINITIONS ::=
 BEGIN
 
--- EXPORTS All 
+-- EXPORTS All
 
 IMPORTS
 
@@ -13,13 +13,13 @@ IMPORTS
     FROM InformationFramework {joint-iso-itu-t ds(5) module(1) informationFramework(1) 8}
 
   -- from Rec. ITU-T X.509 | ISO/IEC 9594-8
-  
+
   ALGORITHM, AlgorithmIdentifier, Certificate, CertificateSerialNumber
     FROM AuthenticationFramework {joint-iso-itu-t ds(5) module(1) authenticationFramework(7) 8}
 
   -- from Rec. ITU-T X.520 | ISO/IEC 9594-6
 
-  integerMatch, octetStringMatch 
+  integerMatch, octetStringMatch
     FROM SelectedAttributeTypes {joint-iso-itu-t ds(5) module(1) selectedAttributeTypes(5) 8}  ;
 
 CONTENT-TYPE ::= TYPE-IDENTIFIER
@@ -32,7 +32,7 @@ ContentInfo ::= SEQUENCE {
           ({TelebSupportedcontentTypes}{@contentType})OPTIONAL,
   ... }
 
-TelebSupportedcontentTypes CONTENT-TYPE ::= 
+TelebSupportedcontentTypes CONTENT-TYPE ::=
   { signedData | envelopedData | ct-authEnvelopedData, ...}
 
 CMSVersion ::= INTEGER{ v0(0), v1(1), v2(2), v3(3), v4(4), v5(5) }
@@ -95,7 +95,7 @@ UnsignedAttributes ATTRIBUTE ::= {...}
 
 envelopedData CONTENT-TYPE ::= {
                 EnvelopedData
-  IDENTIFIED BY id-envelopedData } 
+  IDENTIFIED BY id-envelopedData }
 
 EnvelopedData ::= SEQUENCE {
   version                    CMSVersion(v0 | v2),
@@ -111,7 +111,7 @@ RecipientInfos ::= SET SIZE (1) OF RecipientInfo
 UnprotectedAttributes ATTRIBUTE ::=
   { aa-CEKReference | aa-CEKMaxDecrypts | aa-KEKDerivationAlg }
 
-RecipientInfo ::= CHOICE { 
+RecipientInfo ::= CHOICE {
 --ktri      KeyTransRecipientInfo,
   kari  [1] KeyAgreeRecipientInfo,
   kekri [2] KEKRecipientInfo,
@@ -257,7 +257,7 @@ PBKDF2-params ::= SEQUENCE {
 
 PBKDF2-PRFs ALGORITHM ::= {...}
 
-id-pkcs OBJECT IDENTIFIER ::= 
+id-pkcs OBJECT IDENTIFIER ::=
    { iso(1) member-body(2) usa(840) rsadsi(113549) pkcs(1) }
 
 id-pkcs-9 OBJECT IDENTIFIER ::= { id-pkcs pkcs-9(9) }

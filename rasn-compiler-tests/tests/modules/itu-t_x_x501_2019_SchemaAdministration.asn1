@@ -1,4 +1,4 @@
-SchemaAdministration {joint-iso-itu-t ds(5) module(1) schemaAdministration(23) 9} 
+SchemaAdministration {joint-iso-itu-t ds(5) module(1) schemaAdministration(23) 9}
 DEFINITIONS ::=
 BEGIN
 
@@ -13,12 +13,12 @@ modifications needed to maintain or improve the Directory service.
 IMPORTS
 
   -- from Rec. ITU-T X.501 | ISO/IEC 9594-2
-  
+
   id-soa, id-soc
     FROM UsefulDefinitions
       {joint-iso-itu-t ds(5) module(1) usefulDefinitions(0) 9} WITH SUCCESSORS
 
-  ATTRIBUTE, AttributeUsage, CONTEXT, DITContentRule, DITStructureRule, MATCHING-RULE, 
+  ATTRIBUTE, AttributeUsage, CONTEXT, DITContentRule, DITStructureRule, MATCHING-RULE,
   NAME-FORM, OBJECT-CLASS, ObjectClassKind, objectIdentifierMatch, SYNTAX-NAME
     FROM InformationFramework
       {joint-iso-itu-t ds(5) module(1) informationFramework(1) 9} WITH SUCCESSORS
@@ -38,8 +38,8 @@ IMPORTS
 
 subschema OBJECT-CLASS ::= {
   KIND        auxiliary
-  MAY CONTAIN { dITStructureRules | 
-                nameForms | 
+  MAY CONTAIN { dITStructureRules |
+                nameForms |
                 dITContentRules |
                 objectClasses |
                 attributeTypes |
@@ -95,7 +95,7 @@ MatchingRuleDescription ::= SEQUENCE {
   name              SET SIZE (1..MAX) OF UnboundedDirectoryString OPTIONAL,
   description       UnboundedDirectoryString OPTIONAL,
   obsolete          BOOLEAN DEFAULT FALSE,
-  information  [0]  UnboundedDirectoryString OPTIONAL, 
+  information  [0]  UnboundedDirectoryString OPTIONAL,
                 -- describes the ASN.1 syntax
   ... }
 
@@ -260,13 +260,13 @@ FriendsDescription ::= SEQUENCE {
   friends      [0]  SET SIZE (1..MAX) OF ATTRIBUTE.&id,
   ... }
 
--- object identifier assignments 
+-- object identifier assignments
 
--- schema object classes 
+-- schema object classes
 
 id-soc-subschema OBJECT IDENTIFIER              ::= {id-soc 1}
 
--- schema operational attributes 
+-- schema operational attributes
 
 id-soa-dITStructureRule       OBJECT IDENTIFIER ::= {id-soa 1}
 id-soa-dITContentRules        OBJECT IDENTIFIER ::= {id-soa 2}

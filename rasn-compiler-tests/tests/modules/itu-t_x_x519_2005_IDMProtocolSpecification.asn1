@@ -14,8 +14,8 @@ IDMProtocolSpecification {joint-iso-itu-t ds(5) module(1)
   iDMProtocolSpecification(30) 5} DEFINITIONS ::=
 BEGIN
 
--- EXPORTS All 
--- The types and values defined in this module are exported for use in the other ASN.1 modules contained 
+-- EXPORTS All
+-- The types and values defined in this module are exported for use in the other ASN.1 modules contained
 -- within the Directory Specifications, and for the use of other applications which will use them to access Directory
 -- services. Other applications may use them for their own purposes, but this will not constrain extensions
 -- and modifications needed to maintain or improve the Directory service.
@@ -35,7 +35,7 @@ IMPORTS
   InvokeId, OPERATION
     FROM CommonProtocolSpecification commonProtocolSpecification;
 
--- IDM-protocol information object class 
+-- IDM-protocol information object class
 IDM-PROTOCOL ::= CLASS {
   &bind-operation  OPERATION,
   &Operations      OPERATION,
@@ -47,7 +47,7 @@ WITH SYNTAX {
   ID &id
 }
 
--- IDM protocol 
+-- IDM protocol
 IDM-PDU{IDM-PROTOCOL:protocol} ::= CHOICE {
   bind         [0]  IdmBind{{protocol}},
   bindResult   [1]  IdmBindResult{{protocol}},

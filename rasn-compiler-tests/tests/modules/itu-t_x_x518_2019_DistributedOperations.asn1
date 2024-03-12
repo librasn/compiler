@@ -5,7 +5,7 @@ BEGIN
 -- EXPORTS All
 /*
 The types and values defined in this module are exported for use in the other ASN.1
-modules contained within these Directory Specifications, and for the use of other 
+modules contained within these Directory Specifications, and for the use of other
 applications which will use them to access Directory services. Other applications may
 use them for their own purposes, but this will not constrain extensions and
 modifications needed to maintain or improve the Directory service.
@@ -25,14 +25,14 @@ IMPORTS
   AuthenticationLevel
     FROM BasicAccessControl
       {joint-iso-itu-t ds(5) module(1) basicAccessControl(24) 9} WITH SUCCESSORS
-  
+
   OPTIONALLY-PROTECTED{}
     FROM EnhancedSecurity
       {joint-iso-itu-t ds(5) modules(1) enhancedSecurity(28) 9} WITH SUCCESSORS
 
   -- from Rec. ITU-T X.511 | ISO/IEC 9594-3
 
-  abandon, addEntry, administerPassword, changePassword, CommonResults, compare, 
+  abandon, addEntry, administerPassword, changePassword, CommonResults, compare,
   directoryBindError, ldapTransport, linkedLDAP, list, modifyDN, modifyEntry,
   read, referral, removeEntry, search, SecurityParameters, SimpleCredentials,
   SpkmCredentials, StrongCredentials, Versions
@@ -52,7 +52,7 @@ IMPORTS
     FROM SelectedAttributeTypes
       {joint-iso-itu-t ds(5) module(1) selectedAttributeTypes(5) 9} WITH SUCCESSORS ;
 
--- errors and parameters 
+-- errors and parameters
 
 dsaReferral ERROR ::= {
   PARAMETER           OPTIONALLY-PROTECTED { DsaReferralData }
@@ -64,13 +64,13 @@ DsaReferralData ::= SET {
   ...,
   ...,
   COMPONENTS OF       CommonResults }
- 
---  common arguments and results 
+
+--  common arguments and results
 
 ChainingArguments ::= SET {
   originator                 [0]  DistinguishedName OPTIONAL,
   targetObject               [1]  DistinguishedName OPTIONAL,
-  operationProgress          [2]  OperationProgress 
+  operationProgress          [2]  OperationProgress
                                DEFAULT {nameResolutionPhase notStarted},
   traceInformation           [3]  TraceInformation,
   aliasDereferenced          [4]  BOOLEAN DEFAULT FALSE,
@@ -188,7 +188,7 @@ ContinuationReference ::= SET {
   nameResolveOnMaster  [9]  BOOLEAN DEFAULT FALSE,
   ... }
 
---  bind unbind operation 
+--  bind unbind operation
 
 dSABind OPERATION ::= {
   ARGUMENT     DSABindArgument
@@ -209,7 +209,7 @@ DSACredentials  ::=  CHOICE  {
 
 DSABindResult  ::=  DSABindArgument
 
- -- parameterized type for deriving chained operations 
+ -- parameterized type for deriving chained operations
 
   chained{OPERATION:operation} OPERATION ::= {
     ARGUMENT             OPTIONALLY-PROTECTED {SET {
@@ -222,7 +222,7 @@ DSABindResult  ::=  DSABindArgument
       {operation.&Errors EXCEPT referral | dsaReferral}
     CODE                 operation.&operationCode }
 
- --  chained operations 
+ --  chained operations
 
 chainedRead               OPERATION ::= chained{read}
 chainedCompare            OPERATION ::= chained{compare}

@@ -16,7 +16,7 @@ PKIX1Explicit93 {iso(1) identified-organization(3) dod(6) internet(1)
 DEFINITIONS EXPLICIT TAGS ::=
 BEGIN
 
--- EXPORTS All; 
+-- EXPORTS All;
 IMPORTS
   authorityKeyIdentifier, subjectKeyIdentifier, keyUsage, extendedKeyUsage,
     privateKeyUsagePeriod, certificatePolicies, policyMappings, subjectAltName,
@@ -27,7 +27,7 @@ IMPORTS
     FROM PKIX1Implicit93 {iso(1) identified-organization(3) dod(6) internet(1)
       security(5) mechanisms(5) pkix(7) id-mod(0) id-pkix1-implicit-93(4)};
 
---  Locally defined OIDs 
+--  Locally defined OIDs
 id-pkix OBJECT IDENTIFIER ::=
   {iso(1) identified-organization(3) dod(6) internet(1) security(5)
    mechanisms(5) pkix(7)}
@@ -50,7 +50,7 @@ id-qt-unotice OBJECT IDENTIFIER ::= {id-qt 2}
 -- OID for user notice qualifier
 -- based on excerpts from AuthenticationFramework
 --    {joint-iso-ccitt ds(5) modules(1) authenticationFramework(7) 2}
--- Public Key Certificate 
+-- Public Key Certificate
 Certificate ::=
   SIGNED
     {SEQUENCE {version                  [0]  Version DEFAULT v1,
@@ -96,7 +96,7 @@ Extension ::= SEQUENCE {
 
 -- contains a DER encoding of a value of type
 -- &ExtnType for the
--- extension object identified by extnId 
+-- extension object identified by extnId
 -- The following information object set is defined to constrain the
 -- set of legal certificate extensions.
 ExtensionSet EXTENSION ::=
@@ -107,12 +107,12 @@ ExtensionSet EXTENSION ::=
    authorityInfoAccess}
 
 EXTENSION ::= CLASS {&id        OBJECT IDENTIFIER UNIQUE,
-                     &ExtnType  
+                     &ExtnType
 }WITH SYNTAX {SYNTAX &ExtnType
               IDENTIFIED BY &id
 }
 
--- Certificate Revocation List 
+-- Certificate Revocation List
 CertificateList ::=
   SIGNED
     {SEQUENCE {version              Version OPTIONAL, -- if present, shall be v2
@@ -138,7 +138,7 @@ CRLExtension ::= SEQUENCE {
 
 -- contains a DER encoding of a value of type
 -- &ExtnType for the
--- extension object identified by extnId 
+-- extension object identified by extnId
 -- The following information object set is defined to constrain the
 -- set of legal CRL extensions.
 CRLExtensionSet EXTENSION ::=
@@ -154,7 +154,7 @@ EntryExtension ::= SEQUENCE {
   extnValue  OCTET STRING
   -- contains a DER encoding of a value of type
   -- &ExtnType for the
-  -- extension object identified by extnId 
+  -- extension object identified by extnId
 }
 
 -- The following information object set is defined to constrain the
@@ -162,9 +162,9 @@ EntryExtension ::= SEQUENCE {
 EntryExtensionSet EXTENSION ::=
   {certificateIssuer | invalidityDate | instructionCode | reasonCode}
 
--- information object classes used in the defintion 
--- of certificates and CRLs 
--- Parameterized Type SIGNED 
+-- information object classes used in the defintion
+-- of certificates and CRLs
+-- Parameterized Type SIGNED
 SIGNED{ToBeSigned} ::= SEQUENCE {
   toBeSigned  ToBeSigned,
   algorithm   AlgorithmIdentifier,
@@ -267,7 +267,7 @@ Dss-Parms ::= SEQUENCE {p  INTEGER,
 
 -- The ASN.1 in this section supports the Name type
 -- and the directoryAttribute extension
--- attribute data types 
+-- attribute data types
 Attribute ::= SEQUENCE {
   type    ATTRIBUTE.&id({SupportedAttributes}),
   values
@@ -279,8 +279,8 @@ AttributeTypeAndValue ::= SEQUENCE {
   value  ATTRIBUTE.&Type({SupportedAttributes}{@type})
 }
 
--- naming data types 
-Name ::= CHOICE { -- only one possibility for now 
+-- naming data types
+Name ::= CHOICE { -- only one possibility for now
   rdnSequence  RDNSequence
 }
 
@@ -387,11 +387,11 @@ pkcs-9 OBJECT IDENTIFIER ::=
 emailAddress OBJECT IDENTIFIER ::= {pkcs-9 1}
 
 -- object identifiers for Name type and directory attribute support
--- Object identifier assignments 
+-- Object identifier assignments
 id-at OBJECT IDENTIFIER ::=
   {joint-iso-itu-t(2) ds(5) 4}
 
--- Attributes 
+-- Attributes
 id-at-commonName OBJECT IDENTIFIER ::= {id-at 3}
 
 id-at-surname OBJECT IDENTIFIER ::= {id-at 4}
@@ -418,7 +418,7 @@ id-at-generationQualifier OBJECT IDENTIFIER ::= {id-at 44}
 
 id-at-dnQualifier OBJECT IDENTIFIER ::= {id-at 46}
 
--- Directory string type, used extensively in Name types 
+-- Directory string type, used extensively in Name types
 DirectoryString{INTEGER:maxSize} ::= CHOICE {
   teletexString    TeletexString(SIZE (1..maxSize)),
   printableString  PrintableString(SIZE (1..maxSize)),
@@ -427,10 +427,10 @@ DirectoryString{INTEGER:maxSize} ::= CHOICE {
   utf8String       UTF8String(SIZE (1..maxSize))
 }
 
--- End of ASN.1 for Name type and directory attribute support 
--- The ASN.1 in this section supports X.400 style names 
--- for implementations that use the x400Address component 
--- of GeneralName. 
+-- End of ASN.1 for Name type and directory attribute support
+-- The ASN.1 in this section supports X.400 style names
+-- for implementations that use the x400Address component
+-- of GeneralName.
 ORAddress ::= SEQUENCE {
   built-in-standard-attributes        BuiltInStandardAttributes,
   built-in-domain-defined-attributes  BuiltInDomainDefinedAttributes OPTIONAL,
@@ -456,7 +456,7 @@ BuiltInStandardAttributes ::= SEQUENCE {
   personal-name               [5]  PersonalName OPTIONAL,
   -- see also teletex-personal-name
   organizational-unit-names   [6]  OrganizationalUnitNames OPTIONAL
-  -- see also teletex-organizational-unit-names 
+  -- see also teletex-organizational-unit-names
 }
 
 CountryName ::= [APPLICATION 1]  CHOICE {
@@ -528,7 +528,7 @@ ExtensionAttribute ::= SEQUENCE {
 
 EXTENSION-ATTRIBUTE ::= CLASS {
   &id    INTEGER(0..ub-extension-attributes) UNIQUE,
-  &Type  
+  &Type
 }WITH SYNTAX {&Type
               IDENTIFIED BY &id
 }
@@ -652,7 +652,7 @@ physical-delivery-organization-name EXTENSION-ATTRIBUTE ::= {
 
 PhysicalDeliveryOrganizationName ::= PDSParameter
 
-extension-physical-delivery-address-components EXTENSION-ATTRIBUTE ::= 
+extension-physical-delivery-address-components EXTENSION-ATTRIBUTE ::=
 {ExtensionPhysicalDeliveryAddressComponents
  IDENTIFIED BY  15
 }
@@ -755,8 +755,8 @@ TeletexDomainDefinedAttribute ::= SEQUENCE {
   value  TeletexString(SIZE (1..ub-domain-defined-attribute-value-length))
 }
 
--- specifications of Upper Bounds shall be regarded as 
--- mandatory from Annex B of ITU-T X.411 Reference 
+-- specifications of Upper Bounds shall be regarded as
+-- mandatory from Annex B of ITU-T X.411 Reference
 -- Definition of MTS Parameter Upper Bounds
 --      Upper Bounds
 ub-name INTEGER ::=
@@ -834,7 +834,7 @@ ub-x121-address-length INTEGER ::= 16
 -- A significantly greater number of octets will be required to hold
 -- such a value.  As a minimum, 16 octets, or twice the specified upper
 -- bound, whichever is the larger, should be allowed.
-END -- PKIX1Explicit93 (RFC 2459:1999) 
+END -- PKIX1Explicit93 (RFC 2459:1999)
 
 -- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
 

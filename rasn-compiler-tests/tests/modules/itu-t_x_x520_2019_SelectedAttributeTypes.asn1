@@ -17,7 +17,7 @@ IMPORTS
   id-at, id-avc, id, id-asx, id-cat, id-coat, id-lmr, id-lsx, id-mr, id-not, id-pr
     FROM UsefulDefinitions
       {joint-iso-itu-t ds(5) module(1) usefulDefinitions(0) 9} WITH SUCCESSORS
- 
+
   Attribute{}, ATTRIBUTE, AttributeType, AttributeValueAssertion, CONTEXT,
   ContextAssertion, DistinguishedName, distinguishedNameMatch,
   MAPPING-BASED-MATCHING{}, MATCHING-RULE, OBJECT-CLASS,
@@ -60,7 +60,7 @@ IMPORTS
 
 /*from IETF RFC 3727
 
-The following import is provided for information only (see clause 7.2.16), it is not 
+The following import is provided for information only (see clause 7.2.16), it is not
 referenced by any ASN.1 construct within these Directory Specifications. Note that
 the ASN.1 module in RFC 3727 imports from the InformationFramework module of edition
 4 of Rec. ITU-T X.501 | ISO/IEC 9594-2. A specification importing from both these
@@ -70,7 +70,7 @@ by making a copy of the ASN.1 module of RFC 3727 and then update the IMPORT stat
   allComponentsMatch, componentFilterMatch, directoryComponentsMatch, presentMatch, rdnMatch
     FROM ComponentMatching {iso(1) 2 36 79672281 xed(3) module (0) component-matching(4)} */
 
--- Directory string type 
+-- Directory string type
 
 UnboundedDirectoryString ::= CHOICE {
   teletexString    TeletexString(SIZE (1..MAX)),
@@ -86,7 +86,7 @@ DirectoryString{INTEGER:maxSize} ::= CHOICE {
   universalString  UniversalString(SIZE (1..maxSize,...)),
   uTF8String       UTF8String(SIZE (1..maxSize,...)) }
 
--- Attribute types 
+-- Attribute types
 
 knowledgeInformation ATTRIBUTE ::= {
   WITH SYNTAX              UnboundedDirectoryString
@@ -182,7 +182,7 @@ UUID ::= OCTET STRING(SIZE (16)) -- UUID format only
 
 uri ATTRIBUTE ::= {
   WITH SYNTAX              URI
-  EQUALITY MATCHING RULE   uriMatch 
+  EQUALITY MATCHING RULE   uriMatch
   LDAP-SYNTAX              directoryString.&id
   LDAP-NAME                {"uri"}
   ID                       id-at-uri }
@@ -193,7 +193,7 @@ urn ATTRIBUTE ::= {
   SUBTYPE OF               uri
   LDAP-SYNTAX              directoryString.&id
   LDAP-NAME                {"urn"}
-  ID                       id-at-urn } 
+  ID                       id-at-urn }
 
 url ATTRIBUTE ::= {
   SUBTYPE OF               uri
@@ -726,7 +726,7 @@ dmdName ATTRIBUTE ::= {
   WITH SYNTAX              UnboundedDirectoryString
   ID                       id-at-dmdName }
 
---  Hierarchical attribute types 
+--  Hierarchical attribute types
 
 oidC1 ATTRIBUTE ::= {
   WITH SYNTAX              INTEGER
@@ -754,7 +754,7 @@ urnC ATTRIBUTE ::= {
   LDAP-NAME                {"urnC"}
   ID                       id-at-urnC }
 
---  Attribute types for tag-based identification 
+--  Attribute types for tag-based identification
 
 tagOid ATTRIBUTE ::= {
   WITH SYNTAX              OBJECT IDENTIFIER
@@ -836,9 +836,9 @@ epcFormat  ATTRIBUTE  ::=  {
 EpcFormat ::= SEQUENCE {
   fields          SEQUENCE SIZE (1..MAX) OF SEQUENCE {
     bits            INTEGER,
-    charField       CHOICE { 
+    charField       CHOICE {
       characters  [0] INTEGER,
-      maxValue    [1] INTEGER }, 
+      maxValue    [1] INTEGER },
     result          ENUMERATED {
       numericPad     (0),
       numeric        (1),
@@ -867,7 +867,7 @@ tagLocation ATTRIBUTE ::= {
   LDAP-NAME                {"tagLocation"}
   ID                       id-at-tagLocation }
 
--- Notification attributes 
+-- Notification attributes
 
 dSAProblem ATTRIBUTE ::= {
   WITH SYNTAX              OBJECT IDENTIFIER
@@ -989,7 +989,7 @@ dc ATTRIBUTE ::= {
   LDAP-NAME                {"dc"}
   ID                       id-coat-dc }
 
--- Matching rules 
+-- Matching rules
 
 caseExactMatch MATCHING-RULE ::= {
   SYNTAX       UnboundedDirectoryString
@@ -1543,7 +1543,7 @@ substringAssertion SYNTAX-NAME ::= {
   DIRECTORY SYNTAX  SubstringAssertion
   ID                id-lsx-substringAssertion }
 
--- Contexts 
+-- Contexts
 
 languageContext CONTEXT ::= {
   WITH SYNTAX  LanguageContextSyntax
@@ -1628,7 +1628,7 @@ NamedDay ::= CHOICE {
     friday      (6),
     saturday    (7)},
   bitNamedDays BIT STRING {
-    sunday      (0), 
+    sunday      (0),
     monday      (1),
     tuesday     (2),
     wednesday   (3),
@@ -1679,7 +1679,7 @@ AttributeOptionList ::= SEQUENCE OF UTF8String
 -- Object identifier assignments
 -- object identifiers assigned in other modules are shown in comments
 
--- Attributes 
+-- Attributes
 
 -- id-at-objectClass                      OBJECT IDENTIFIER ::= {id-at 0}
 -- id-at-aliasedEntryName                 OBJECT IDENTIFIER ::= {id-at 1}
@@ -1838,7 +1838,7 @@ id-at-dmdName                             OBJECT IDENTIFIER ::= {id-at 54}
 -- id-at-encryptedDefaultDirQop           OBJECT IDENTIFIER ::= {id-at 56 2}
 -- id-at-attributeIntegrityInfo           OBJECT IDENTIFIER ::= {id-at 57}
 -- id-at-encryptedAttributeIntegrityInfo  OBJECT IDENTIFIER ::= {id-at 57 2}
--- id-at-attributeCertificate             OBJECT IDENTIFIER ::= {id-at 58} X.509|Part 8 
+-- id-at-attributeCertificate             OBJECT IDENTIFIER ::= {id-at 58} X.509|Part 8
 -- id-at-encryptedAttributeCertificate    OBJECT IDENTIFIER ::=	{id-at 58 2}
 -- id-at-attributeCertificateRevocationList
 --                                        OBJECT IDENTIFIER ::=	{id-at 59} X.509|Part 8
@@ -1965,14 +1965,14 @@ id-oidC2                                  OBJECT IDENTIFIER ::= {id 1}
 id-oidC                                   OBJECT IDENTIFIER ::= {id 2}
 
 
--- Control  attributes 
+-- Control  attributes
 
 id-cat-sequenceMatchType                  OBJECT IDENTIFIER ::= {id-cat 1}
 id-cat-wordMatchType                      OBJECT IDENTIFIER ::= {id-cat 2}
 id-cat-characterMatchTypes                OBJECT IDENTIFIER ::= {id-cat 3}
 id-cat-selectedContexts                   OBJECT IDENTIFIER ::= {id-cat 4}
 
--- Notification attributes 
+-- Notification attributes
 
 id-not-dSAProblem                         OBJECT IDENTIFIER ::= {id-not 0}
 id-not-searchServiceProblem               OBJECT IDENTIFIER ::= {id-not 1}
@@ -1993,7 +1993,7 @@ id-not-appliedRelaxation                  OBJECT IDENTIFIER ::= {id-not 15}
 id-not-pwdResponse                        OBJECT IDENTIFIER ::= {id-not 16}
 id-not-ldapDiagnosticMsg                  OBJECT IDENTIFIER ::= {id-not 17}
 
--- Problem definitions 
+-- Problem definitions
 
 id-pr-targetDsaUnavailable                OBJECT IDENTIFIER ::= {id-pr 1}
 id-pr-dataSourceUnavailable               OBJECT IDENTIFIER ::= {id-pr 2}
@@ -2035,7 +2035,7 @@ id-pr-relaxationNotSupported              OBJECT IDENTIFIER ::= {id-pr 36}
 id-coat-uid                               OBJECT IDENTIFIER ::= {id-coat 1}
 id-coat-dc                                OBJECT IDENTIFIER ::= {id-coat 25}
 
--- Matching rules 
+-- Matching rules
 
 -- id-mr-objectIdentifierMatch            OBJECT IDENTIFIER ::= {id-mr 0} X.501|Part2
 -- id-mr-distinguishedNameMatch           OBJECT IDENTIFIER ::= {id-mr 1} X.501|Part2
@@ -2121,7 +2121,7 @@ id-lmr-caseExactIA5Match                  OBJECT IDENTIFIER ::= {id-lmr 1}
 id-lmr-caseIgnoreIA5Match                 OBJECT IDENTIFIER ::= {id-lmr 2}
 id-lmr-caseIgnoreIA5SubstringsMatch       OBJECT IDENTIFIER ::= {id-lmr 3}
 
--- contexts 
+-- contexts
 
 id-avc-language                           OBJECT IDENTIFIER ::= {id-avc 0}
 id-avc-temporal                           OBJECT IDENTIFIER ::= {id-avc 1}

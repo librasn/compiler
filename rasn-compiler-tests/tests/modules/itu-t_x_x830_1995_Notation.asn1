@@ -14,9 +14,9 @@ Notation {joint-iso-itu-t genericULS(20) modules(1) notation(1)} DEFINITIONS
 AUTOMATIC TAGS ::=
 BEGIN
 
--- EXPORTS All 
+-- EXPORTS All
 IMPORTS
-  -- From Directory Standards: 
+  -- From Directory Standards:
   informationFramework, selectedAttributeTypes, authenticationFramework
     FROM UsefulDefinitions {joint-iso-itu-t ds(5) module(1)
       usefulDefinitions(0) 3}
@@ -29,7 +29,7 @@ IMPORTS
   AlgorithmIdentifier
     FROM AuthenticationFramework {joint-iso-itu-t ds(5) module(1)
       authenticationFramework(7) 3}
-  -- From Other GULS Modules: 
+  -- From Other GULS Modules:
   genericProtectingTransferSyntax
     FROM ObjectIdentifiers {joint-iso-itu-t genericULS(20) modules(1)
       objectIdentifiers(0)}
@@ -37,9 +37,9 @@ IMPORTS
     FROM GenericProtectingTransferSyntax {joint-iso-itu-t genericULS(20)
       modules(1) genericProtectingTransferSyntax(7)};
 
--- ************************************************* 
--- Notation for security identity and SA-identifiers 
--- ************************************************* 
+-- *************************************************
+-- Notation for security identity and SA-identifiers
+-- *************************************************
 -- Values of the SecurityIdentity type are used to identify entities
 -- which assign externally-established security association identifiers,
 -- and for other security-related purposes requiring globally-unique
@@ -55,9 +55,9 @@ ExternalSAID ::= SEQUENCE {
   -- Identity of the system which assigned the integer value
 }
 
--- ****************************************** 
--- Notation for specifying security exchanges 
--- ****************************************** 
+-- ******************************************
+-- Notation for specifying security exchanges
+-- ******************************************
 SECURITY-EXCHANGE ::=
   CLASS
    -- This information object class definition is for use when
@@ -105,9 +105,9 @@ SE-ERROR ::= CLASS {
               ERROR-CODE &errorCode
 }
 
--- ************************************************ 
--- Notation for specifying security transformations 
--- ************************************************ 
+-- ************************************************
+-- Notation for specifying security transformations
+-- ************************************************
 SECURITY-TRANSFORMATION ::=
   CLASS
    -- This information object class definition is for use when
@@ -146,9 +146,9 @@ WITH SYNTAX
   [QUALIFIER-TYPE &QualifierType]
 }
 
--- ************************************************** 
--- Notation for specifying selective field protection 
--- ************************************************** 
+-- **************************************************
+-- Notation for specifying selective field protection
+-- **************************************************
 PROTECTED{BaseType, PROTECTION-MAPPING:protectionReqd} ::= CHOICE {
   dirEncrypt
     BIT STRING
@@ -205,7 +205,7 @@ PROTECTED{BaseType, PROTECTION-MAPPING:protectionReqd} ::= CHOICE {
                                                                &protTransferSyntax})
                                }),
               data-value      (CONTAINING BaseType)
-            
+
             -- The data value encoded is a value of type BaseType
             })
 }
@@ -225,9 +225,9 @@ PROTECTED-Q{BaseType, PROTECTION-MAPPING:protectionReqd,
 -- the importation into the user's module of the PROTECTED parameterized
 -- type, together with the necessary PROTECTION-MAPPING object
 -- definition.
--- ******************************************* 
--- Notation for specifying protection mappings 
--- ******************************************* 
+-- *******************************************
+-- Notation for specifying protection mappings
+-- *******************************************
 PROTECTION-MAPPING ::= CLASS {
   &SecurityTransformation  SECURITY-TRANSFORMATION,
   -- &SecurityTransformation specifies an ASN.1 object set of the

@@ -11,9 +11,9 @@ DistributedOperations {joint-iso-itu-t ds(5) module(1) distributedOperations(3)
   5} DEFINITIONS ::=
 BEGIN
 
--- EXPORTS All 
--- The types and values defined in this module are exported for use in the other ASN.1 modules contained 
--- within the Directory Specifications, and for the use of other applications which will use them to access 
+-- EXPORTS All
+-- The types and values defined in this module are exported for use in the other ASN.1 modules contained
+-- within the Directory Specifications, and for the use of other applications which will use them to access
 -- Directory services. Other applications may use them for their own purposes, but this will not constrain
 -- extensions and modifications needed to maintain or improve the Directory service.
 IMPORTS
@@ -46,7 +46,7 @@ IMPORTS
   ub-domainLocalID, ub-labeledURI
     FROM UpperBounds upperBounds;
 
--- parameterized type for deriving chained operations 
+-- parameterized type for deriving chained operations
 chained{OPERATION:operation} OPERATION ::= {
   ARGUMENT OPTIONALLY-PROTECTED
     {SET {chainedArgument  ChainingArguments,
@@ -59,7 +59,7 @@ chained{OPERATION:operation} OPERATION ::= {
   CODE                           operation.&operationCode
 }
 
---  bind and unbind operations 
+--  bind and unbind operations
 dSABind OPERATION ::= {
   ARGUMENT  DSABindArgument
   RESULT    DSABindResult
@@ -81,7 +81,7 @@ DSACredentials ::= CHOICE {
 DSABindResult ::= DSABindArgument
 
 --dSAUnbind  		OPERATION  ::=  directoryUnbind
---  chained operations 
+--  chained operations
 chainedRead OPERATION ::=
   chained{read}
 
@@ -101,7 +101,7 @@ chainedModifyEntry OPERATION ::= chained{modifyEntry}
 
 chainedModifyDN OPERATION ::= chained{modifyDN}
 
--- errors and parameters 
+-- errors and parameters
 dsaReferral ERROR ::= {
   PARAMETER OPTIONALLY-PROTECTED
     {SET {reference      [0]  ContinuationReference,
@@ -110,7 +110,7 @@ dsaReferral ERROR ::= {
   CODE                            id-errcode-dsaReferral
 }
 
---  common arguments and results 
+--  common arguments and results
 ChainingArguments ::= SET {
   originator              [0]  DistinguishedName OPTIONAL,
   targetObject            [1]  DistinguishedName OPTIONAL,

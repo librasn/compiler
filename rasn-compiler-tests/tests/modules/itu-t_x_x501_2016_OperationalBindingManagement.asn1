@@ -2,7 +2,7 @@ OperationalBindingManagement {joint-iso-itu-t ds(5) module(1) opBindingManagemen
 DEFINITIONS ::=
 BEGIN
 
--- EXPORTS All 
+-- EXPORTS All
 -- The types and values defined in this module are exported for use in the other ASN.1
 -- modules contained within these Directory Specifications, and for the use of other
 -- applications which will use them to access Directory services. Other applications may
@@ -23,7 +23,7 @@ IMPORTS
 
   hierarchicalOperationalBinding, nonSpecificHierarchicalOperationalBinding
     FROM HierarchicalOperationalBindings hierarchicalOperationalBindings
-  
+
 -- from Rec. ITU-T X.511 | ISO/IEC 9594-3
 
   CommonResultsSeq, securityError, SecurityParameters
@@ -49,7 +49,7 @@ IMPORTS
   shadowOperationalBinding
     FROM DirectoryShadowAbstractService directoryShadowAbstractService ;
 
--- bind and unbind 
+-- bind and unbind
 
 dSAOperationalBindingManagementBind OPERATION ::= dSABind
 
@@ -91,7 +91,7 @@ WITH SYNTAX {
   [TERMINATION-INITIATOR    &terminate]
   [TERMINATION-PARAMETER    &TerminateParam] }
 
--- operations, arguments and results 
+-- operations, arguments and results
 
 establishOperationalBinding OPERATION ::= {
   ARGUMENT   EstablishOperationalBindingArgument
@@ -106,7 +106,7 @@ EstablishOperationalBindingArgumentData ::= SEQUENCE {
   bindingType        [0]  OPERATIONAL-BINDING.&id({OpBindingSet}),
   bindingID          [1]  OperationalBindingID OPTIONAL,
   accessPoint        [2]  AccessPoint,
-               -- symmetric, Role A initiates, or Role B initiates 
+               -- symmetric, Role A initiates, or Role B initiates
   initiator               CHOICE {
     symmetric          [3]  OPERATIONAL-BINDING.&both.&EstablishParam
                             ({OpBindingSet}{@bindingType}),
@@ -152,7 +152,7 @@ EstablishOperationalBindingResultData ::= SEQUENCE {
   bindingType   [0]  OPERATIONAL-BINDING.&id({OpBindingSet}),
   bindingID     [1]  OperationalBindingID OPTIONAL,
   accessPoint   [2]  AccessPoint,
-  -- symmetric, Role A replies, or Role B replies 
+  -- symmetric, Role A replies, or Role B replies
   initiator          CHOICE {
     symmetric     [3]  OPERATIONAL-BINDING.&both.&EstablishParam
                          ({OpBindingSet}{@bindingType}),
@@ -177,7 +177,7 @@ ModifyOperationalBindingArgumentData ::= SEQUENCE {
   bindingType       [0]  OPERATIONAL-BINDING.&id({OpBindingSet}),
   bindingID         [1]  OperationalBindingID,
   accessPoint       [2]  AccessPoint OPTIONAL,
-  -- symmetric, Role A initiates, or Role B initiates 
+  -- symmetric, Role A initiates, or Role B initiates
   initiator              CHOICE {
     symmetric         [3]  OPERATIONAL-BINDING.&both.&ModifyParam
                           ({OpBindingSet}{@bindingType}),
@@ -231,7 +231,7 @@ TerminateOperationalBindingArgument ::=
 TerminateOperationalBindingArgumentData ::= SEQUENCE {
   bindingType         [0]  OPERATIONAL-BINDING.&id({OpBindingSet}),
   bindingID           [1]  OperationalBindingID,
-  -- symmetric, Role A initiates, or Role B initiates 
+  -- symmetric, Role A initiates, or Role B initiates
   initiator                CHOICE {
     symmetric           [2]  OPERATIONAL-BINDING.&both.&TerminateParam
                             ({OpBindingSet}{@bindingType}),
@@ -256,7 +256,7 @@ TerminateOperationalBindingResultData ::= SEQUENCE {
   ...,
   COMPONENTS OF   CommonResultsSeq }
 
--- errors and parameters 
+-- errors and parameters
 
 operationalBindingError ERROR ::= {
   PARAMETER OPTIONALLY-PROTECTED-SEQ  {OpBindingErrorParam}

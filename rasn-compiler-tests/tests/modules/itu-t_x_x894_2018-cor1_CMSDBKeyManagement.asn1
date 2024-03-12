@@ -1,7 +1,7 @@
 -- 16 Module CMSDBKeyManagement
 CMSDBKeyManagement {itu-t recommendation(0) x(24) cms-profile(894) module(0) dBKeyManagement(2) version1(1)}
 "/ITU-T/Recommendation/X/CMS-Profile/Module/DBKeyManagement/Version1"
-DEFINITIONS AUTOMATIC TAGS ::= 
+DEFINITIONS AUTOMATIC TAGS ::=
 BEGIN
 IMPORTS
 ALGORITHM,AlgorithmIdentifier{}
@@ -43,7 +43,7 @@ MasterKeyAlgorithms	ALGORITHM ::= {
 }
 DatabaseServerToKeyManager ::= SEQUENCE {
 encryptedKey	MasterKeyEncryptedHMACkey,
-uniqueID		UniqueIdentifier OPTIONAL 
+uniqueID		UniqueIdentifier OPTIONAL
 				-- May be known system wide --
 }
 UniqueIdentifier ::= UniqueID{{SchemaIdentifier}}
@@ -63,7 +63,7 @@ UniqueID{DBEKM:IOSet} ::= SEQUENCE {
 name	DBEKM.&id({IOSet}),
 type	DBEKM.&Type({IOSet}{@name}) OPTIONAL
 }
-DbEKMAttributeSet ::= 
+DbEKMAttributeSet ::=
 SEQUENCE(SIZE(1..MAX)) OF Attribute{{DbEKMAttributes}}
 DbEKMAttributes ATTRIBUTE ::= {
 uniqueIdentifier,

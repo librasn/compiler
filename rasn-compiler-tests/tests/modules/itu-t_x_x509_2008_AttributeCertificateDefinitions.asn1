@@ -14,7 +14,7 @@ AttributeCertificateDefinitions {joint-iso-itu-t ds(5) module(1)
   attributeCertificateDefinitions(32) 6} DEFINITIONS IMPLICIT TAGS ::=
 BEGIN
 
--- EXPORTS ALL 
+-- EXPORTS ALL
 IMPORTS
   basicAccessControl, id-at, id-ce, id-mr, informationFramework,
     authenticationFramework, selectedAttributeTypes, id-oc,
@@ -40,7 +40,7 @@ IMPORTS
 
 -- Unless explicitly noted otherwise, there is no significance to the ordering
 -- of components of a SEQUENCE OF construct in this Specification.
--- attribute certificate constructs 
+-- attribute certificate constructs
 AttributeCertificate ::=
   SIGNED{AttributeCertificateInfo}
 
@@ -64,7 +64,7 @@ Holder ::= SEQUENCE {
   entityName         [1]  GeneralNames OPTIONAL,
   -- the name of the entity or role
   objectDigestInfo   [2]  ObjectDigestInfo OPTIONAL-- used to directly authenticate the holder, e.g., an executable
--- at least one of baseCertificateID, entityName or objectDigestInfo shall be present 
+-- at least one of baseCertificateID, entityName or objectDigestInfo shall be present
 }
 
 ObjectDigestInfo ::= SEQUENCE {
@@ -374,7 +374,7 @@ GeneralSubtree ::= SEQUENCE {
 
 BaseDistance ::= INTEGER(0..MAX)
 
--- PMI object classes 
+-- PMI object classes
 pmiUser OBJECT-CLASS ::= {
   SUBCLASS OF  {top}
   KIND         auxiliary
@@ -429,7 +429,7 @@ protectedPrivilegePolicy OBJECT-CLASS ::= {
   ID           id-oc-protectedPrivilegePolicy
 }
 
--- PMI directory attributes 
+-- PMI directory attributes
 attributeCertificateAttribute ATTRIBUTE ::= {
   WITH SYNTAX             AttributeCertificate
   EQUALITY MATCHING RULE  attributeCertificateExactMatch
@@ -483,7 +483,7 @@ xmlPrivPolicy ATTRIBUTE ::= {
   ID           id-at-xmlPrivPolicy
 }
 
--- Attribute certificate extensions and matching rules 
+-- Attribute certificate extensions and matching rules
 attributeCertificateExactMatch MATCHING-RULE ::= {
   SYNTAX  AttributeCertificateExactAssertion
   ID      id-mr-attributeCertificateExactMatch
@@ -533,8 +533,8 @@ extensionPresenceMatch MATCHING-RULE ::= {
   ID      id-mr-extensionPresenceMatch
 }
 
--- object identifier assignments 
--- object classes 
+-- object identifier assignments
+-- object classes
 id-oc-pmiUser OBJECT IDENTIFIER ::=
   {id-oc 24}
 
@@ -550,7 +550,7 @@ id-oc-pmiDelegationPath OBJECT IDENTIFIER ::= {id-oc 33}
 
 id-oc-protectedPrivilegePolicy OBJECT IDENTIFIER ::= {id-oc 34}
 
--- directory attributes 
+-- directory attributes
 id-at-attributeCertificate OBJECT IDENTIFIER ::=
   {id-at 58}
 
@@ -576,7 +576,7 @@ id-at-xmlPrivPolicy OBJECT IDENTIFIER ::= {id-at 76}
 
 id-at-permission OBJECT IDENTIFIER ::= {id-at 82}
 
--- attribute certificate extensions 
+-- attribute certificate extensions
 id-ce-authorityAttributeIdentifier OBJECT IDENTIFIER ::=
   {id-ce 38}
 
@@ -618,7 +618,7 @@ id-ce-attributeMappings OBJECT IDENTIFIER ::= {id-ce 68}
 
 id-ce-holderNameConstraints OBJECT IDENTIFIER ::= {id-ce 69}
 
--- PMI matching rules 
+-- PMI matching rules
 id-mr-attributeCertificateMatch OBJECT IDENTIFIER ::=
   {id-mr 42}
 

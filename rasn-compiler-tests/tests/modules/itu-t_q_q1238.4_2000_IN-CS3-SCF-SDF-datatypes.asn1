@@ -76,8 +76,8 @@ SDFCriteria ::= SEQUENCE {object  [0] IMPLICIT DistinguishedName,
 }
 
 TFCcriteria ::= CHOICE {
-  sdf  [0] IMPLICIT SDFCriteria, -- used if initiating FE is an SDF 
-  scf  [1] IMPLICIT SCFCriteria, -- used if initiating FE is an SCF 
+  sdf  [0] IMPLICIT SDFCriteria, -- used if initiating FE is an SDF
+  scf  [1] IMPLICIT SCFCriteria, -- used if initiating FE is an SCF
   ...
 }
 
@@ -122,7 +122,7 @@ GrantsAndDenials ::= BIT STRING {
 -- denyExecuteMethod means that the user cannot perform the specific Methods for the Entry
 ItemPermission ::= SEQUENCE {
   precedence        Precedence OPTIONAL,
-  -- defaults to precedence in ACIItem 
+  -- defaults to precedence in ACIItem
   userClasses       UserClasses,
   grantsAndDenials  GrantsAndDenials
 }
@@ -163,7 +163,7 @@ UserPermission ::= SEQUENCE {
   grantsAndDenials  GrantsAndDenials
 }
 
--- attribute data types 
+-- attribute data types
 --	Definition of the following information object set is deferred, perhaps to standardized
 --	profiles or to protocol implementation conformance statements. The set is required to
 --	specify a table constraint on the values component of Attribute, the value component
@@ -265,7 +265,7 @@ bindLevelIfOK ATTRIBUTE ::= {
   ID            id-at-bindLevelIfOK
 }
 
--- bindLevelIfOK is a mono-valued attribute that contains an AuthenticationLevel. It is to be used by the 
+-- bindLevelIfOK is a mono-valued attribute that contains an AuthenticationLevel. It is to be used by the
 -- bind operation to determine the level of privileges granted to the user. When this attribute is absent
 -- and a bind operation is invoked, the bind operation returns the error provided by the method.
 lockSession ATTRIBUTE ::= {
@@ -279,12 +279,12 @@ LockSession ::= SEQUENCE {
   atribute   [1]  OBJECT IDENTIFIER
 }
 
--- lockSession is a mono-valued attribute that contains the name of the entry and the mono-valued 
+-- lockSession is a mono-valued attribute that contains the name of the entry and the mono-valued
 -- attribute of type boolean of this entry used to lock a dialogue to a mono-session (the timer set as temporal
--- context on this lock attribute is the same for all the users). If this attribute is present and a bind 
--- operation is at the origin of the method invocation, the method checks first that the pointed attribute is 
+-- context on this lock attribute is the same for all the users). If this attribute is present and a bind
+-- operation is at the origin of the method invocation, the method checks first that the pointed attribute is
 -- FALSE before proceeding.
--- For some security facilities, it is useful to count the number of failures and if necessary to lock the 
+-- For some security facilities, it is useful to count the number of failures and if necessary to lock the
 -- facility when a threshold is reached. The two following attributes are used to store this information
 failureCounter ATTRIBUTE ::= {
   WITH SYNTAX             INTEGER
@@ -300,8 +300,8 @@ maxAttempts ATTRIBUTE ::= {
   ID                      id-at-maxAttempts
 }
 
--- To check, the no replay of a challenge RAND drawn in another domain, it is necessary to maintain a 
--- list of the random already used for the valid period indicated by RS. The currentList attribute contains 
+-- To check, the no replay of a challenge RAND drawn in another domain, it is necessary to maintain a
+-- list of the random already used for the valid period indicated by RS. The currentList attribute contains
 -- a list of RAND already played for the current period of time.
 currentList ATTRIBUTE ::= {
   WITH SYNTAX             BIT STRING
@@ -327,9 +327,9 @@ source ATTRIBUTE ::= {
 
 SourceType ::= DistinguishedName
 
--- In the visited network, the source attribute will be used to store the DN of the entry of class derived 
--- from stockId. In the home network, the attribute will contain the DN of an entry of class 
--- securityUserInfo, the token is generated using the method defined in the fillMethodIdentifier field of 
+-- In the visited network, the source attribute will be used to store the DN of the entry of class derived
+-- from stockId. In the home network, the attribute will contain the DN of an entry of class
+-- securityUserInfo, the token is generated using the method defined in the fillMethodIdentifier field of
 -- this entry of class securityUserInfo.
 sizeOfRestocking ATTRIBUTE ::= {
   WITH SYNTAX             INTEGER
@@ -338,7 +338,7 @@ sizeOfRestocking ATTRIBUTE ::= {
   ID                      id-at-sizeOfRestocking
 }
 
--- sizeOfRestocking is a mono-valued attribute that indicates how many tokens have to be requested or 
+-- sizeOfRestocking is a mono-valued attribute that indicates how many tokens have to be requested or
 -- computed when the tokens attribute is empty.
 -- The following attribute could contain the precomputed set of
 --  (CHALLENGE,RES[,DCK][,NCHALLENGE,NRES]) (2, 3,4 or 5 values)
@@ -380,11 +380,11 @@ BasicService ::= INTEGER {
   internationalVideotex(8), telex(9), messageHandlingSystems(10),
   osiApplication(11), audioVisual(12)}
 
--- This Basic Service context associates an attribute value with a basic service for which the attribute 
--- value is semantically valid. For example, the Basic Service context will be associated with an ISDN 
--- address to indicate the type of basic service that could be used with it.  In the UPT case, this context 
+-- This Basic Service context associates an attribute value with a basic service for which the attribute
+-- value is semantically valid. For example, the Basic Service context will be associated with an ISDN
+-- address to indicate the type of basic service that could be used with it.  In the UPT case, this context
 -- allows the definition of registration addresses for different basic services.
--- A presented value is considered to match a stored value if the context value (i.e., a basic service value) 
+-- A presented value is considered to match a stored value if the context value (i.e., a basic service value)
 -- in the presented value is identical to that in the stored value.
 lineIdentityContext{SCF-SSF-BOUNDS:b2} CONTEXT ::= {
   WITH SYNTAX  IsdnAddress {b2}
@@ -393,8 +393,8 @@ lineIdentityContext{SCF-SSF-BOUNDS:b2} CONTEXT ::= {
 
 IsdnAddress{SCF-SSF-BOUNDS:b2} ::= Digits{b2}
 
--- The line identity context associates an attribute value with the identity of a line for which the attribute 
--- value is semantically valid.  For example, this Line Identity context will be associated with a routing 
+-- The line identity context associates an attribute value with the identity of a line for which the attribute
+-- value is semantically valid.  For example, this Line Identity context will be associated with a routing
 -- number to provide calling-line dependent routing.
 -- Q763 Generic Digits is applied for encoding.  The bound definition is as follows:
 sCFSSFBoundSetforSCFSDF SCF-SSF-BOUNDS ::=
@@ -471,10 +471,10 @@ assignmentContext CONTEXT ::= {
   ID           id-avc-assignment
 }
 
--- The assignment context associates an attribute value with a Distinguished name (e.g. customer's 
--- number or customer's name) for which the attribute value is assigned. For example, assuming that a set 
--- of available resources is modelled as a multivalued attribute and customer has been designated by a 
--- distinguished name, this Assignment context will be associated with the used resource to provide the 
+-- The assignment context associates an attribute value with a Distinguished name (e.g. customer's
+-- number or customer's name) for which the attribute value is assigned. For example, assuming that a set
+-- of available resources is modelled as a multivalued attribute and customer has been designated by a
+-- distinguished name, this Assignment context will be associated with the used resource to provide the
 -- state of the resource (reserved) and the name of the current customer using it.
 END
 
