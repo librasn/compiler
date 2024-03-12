@@ -45,4 +45,52 @@ pub fn set<'a>(input: &'a str) -> IResult<&'a str, ASN1Type> {
 }
 
 #[cfg(test)]
-mod tests {}
+mod tests {
+    use set::types::{CharacterString, SequenceOrSet, SequenceOrSetMember, SequenceOrSetOf};
+
+    use super::*;
+
+    #[test]
+    fn issue_2_test() {
+        assert_eq!(
+            set(r#"SET {
+            title VisibleString,
+            children SEQUENCE OF VisibleString DEFAULT {}
+        }"#)
+            .unwrap()
+            .1,
+            ASN1Type::Set(SequenceOrSet {
+                components_of: vec![],
+                extensible: None,
+                constraints: vec![],
+                members: vec![
+                    SequenceOrSetMember {
+                        name: "title".into(),
+                        tag: None,
+                        ty: ASN1Type::CharacterString(CharacterString {
+                            constraints: vec![],
+                            ty: CharacterStringType::VisibleString
+                        }),
+                        default_value: None,
+                        is_optional: false,
+                        constraints: vec![],
+                    },
+                    SequenceOrSetMember {
+                        name: "children".into(),
+                        tag: None,
+                        ty: ASN1Type::SequenceOf(SequenceOrSetOf {
+                            constraints: vec![],
+                            element_type: Box::new(ASN1Type::CharacterString(CharacterString {
+                                constraints: vec![],
+                                ty: CharacterStringType::VisibleString
+                            }))
+                        }),
+                        default_value: Some(ASN1Value::SequenceOrSet(vec![])),
+                        is_optional: true,
+                        constraints: vec![]
+                    }
+                ]
+            })
+        );
+    }
+}

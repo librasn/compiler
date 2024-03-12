@@ -15,13 +15,16 @@ pub fn sequence_value<'a>(input: &'a str) -> IResult<&'a str, ASN1Value> {
     map(
         in_braces(separated_list0(
             skip_ws_and_comments(char(',')),
-            skip_ws_and_comments(pair(value_identifier, skip_ws_and_comments(asn1_value))),
+            skip_ws_and_comments(pair(
+                opt(value_identifier),
+                skip_ws_and_comments(asn1_value),
+            )),
         )),
         |fields| {
             ASN1Value::SequenceOrSet(
                 fields
                     .into_iter()
-                    .map(|(id, val)| (id.to_owned(), Box::new(val)))
+                    .map(|(id, val)| (id.map(|str| str.to_owned()), Box::new(val)))
                     .collect(),
             )
         },
@@ -198,7 +201,7 @@ mod tests {
     fn parses_subtyped_sequence() {
         assert_eq!(
         sequence(
-            r#"SEQUENCE { 
+            r#"SEQUENCE {
               clusterBoundingBoxShape    Shape (WITH COMPONENTS{..., elliptical ABSENT, radial ABSENT, radialShapes ABSENT}) OPTIONAL,
               ...
            }"#
@@ -371,10 +374,9 @@ mod tests {
                             constraints: vec![]
                         }),
                         default_value: Some(ASN1Value::ElsewhereDeclaredValue {
-                                identifier: "unavailable".into(),
-                                parent: None
-                            }
-                        ),
+                            identifier: "unavailable".into(),
+                            parent: None
+                        }),
                         is_optional: true,
                         constraints: vec![],
                     },
@@ -387,10 +389,9 @@ mod tests {
                             constraints: vec![]
                         }),
                         default_value: Some(ASN1Value::ElsewhereDeclaredValue {
-                                identifier: "unavailable".into(),
-                                parent: None
-                            }
-                        ),
+                            identifier: "unavailable".into(),
+                            parent: None
+                        }),
                         is_optional: true,
                         constraints: vec![],
                     }
@@ -587,14 +588,14 @@ mod tests {
                 .1,
             ASN1Value::SequenceOrSet(vec![
                 (
-                    "itsaid".into(),
+                    Some("itsaid".into()),
                     Box::new(ASN1Value::Choice(
                         "content".into(),
                         Box::new(ASN1Value::Integer(0))
                     ))
                 ),
                 (
-                    "ctx".into(),
+                    Some("ctx".into()),
                     Box::new(ASN1Value::ElsewhereDeclaredValue {
                         identifier: "c-ctxRefNull".into(),
                         parent: None
