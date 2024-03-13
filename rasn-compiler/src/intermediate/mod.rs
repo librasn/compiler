@@ -14,23 +14,19 @@ pub mod parameterization;
 pub mod types;
 pub mod utils;
 
-use std::{
-    collections::BTreeMap,
-    ops::Add,
-    rc::Rc,
-};
+use std::{collections::BTreeMap, ops::Add, rc::Rc};
 
 use constraints::Constraint;
 use error::{GrammarError, GrammarErrorType};
 use information_object::{InformationObjectFieldReference, ToplevelInformationDefinition};
 use parameterization::Parameterization;
-use quote::{ToTokens, TokenStreamExt, quote};
+use quote::{quote, ToTokens, TokenStreamExt};
 use types::*;
 
 // Comment tokens
-pub const BLOCK_COMMENT_START: &str= "/*";
-pub const BLOCK_COMMENT_END: &str= "*/";
-pub const LINE_COMMENT: &str= "--";
+pub const BLOCK_COMMENT_START: &str = "/*";
+pub const BLOCK_COMMENT_END: &str = "*/";
+pub const LINE_COMMENT: &str = "--";
 
 // Bracket tokens
 pub const LEFT_PARENTHESIS: char = '(';
@@ -43,120 +39,120 @@ pub const LEFT_CHEVRON: char = '<';
 pub const RIGHT_CHEVRON: char = '>';
 
 // Type tokens
-pub const NULL: &str= "NULL";
-pub const BOOLEAN: &str= "BOOLEAN";
-pub const INTEGER: &str= "INTEGER";
-pub const REAL: &str= "REAL";
-pub const BIT_STRING: &str= "BIT STRING";
-pub const OCTET_STRING: &str= "OCTET STRING";
-pub const IA5_STRING: &str= "IA5String";
-pub const UTF8_STRING: &str= "UTF8String";
-pub const NUMERIC_STRING: &str= "NumericString";
-pub const VISIBLE_STRING: &str= "VisibleString";
-pub const TELETEX_STRING: &str= "TeletexString";
-pub const VIDEOTEX_STRING: &str= "VideotexString";
-pub const GRAPHIC_STRING: &str= "GraphicString";
-pub const GENERAL_STRING: &str= "GeneralString";
-pub const UNIVERSAL_STRING: &str= "UniversalString";
-pub const BMP_STRING: &str= "BMPString";
-pub const PRINTABLE_STRING: &str= "PrintableString";
-pub const GENERALIZED_TIME: &str= "GeneralizedTime";
-pub const UTC_TIME: &str= "UTCTime";
-pub const ENUMERATED: &str= "ENUMERATED";
-pub const CHOICE: &str= "CHOICE";
-pub const SEQUENCE: &str= "SEQUENCE";
-pub const SEQUENCE_OF: &str= "SEQUENCE OF";
-pub const SET_OF: &str= "SET OF";
-pub const OF: &str= "OF";
-pub const ALL: &str= "ALL";
-pub const SET: &str= "SET";
-pub const OBJECT_IDENTIFIER: &str= "OBJECT IDENTIFIER";
-pub const COMPONENTS_OF: &str= "COMPONENTS OF";
+pub const NULL: &str = "NULL";
+pub const BOOLEAN: &str = "BOOLEAN";
+pub const INTEGER: &str = "INTEGER";
+pub const REAL: &str = "REAL";
+pub const BIT_STRING: &str = "BIT STRING";
+pub const OCTET_STRING: &str = "OCTET STRING";
+pub const IA5_STRING: &str = "IA5String";
+pub const UTF8_STRING: &str = "UTF8String";
+pub const NUMERIC_STRING: &str = "NumericString";
+pub const VISIBLE_STRING: &str = "VisibleString";
+pub const TELETEX_STRING: &str = "TeletexString";
+pub const VIDEOTEX_STRING: &str = "VideotexString";
+pub const GRAPHIC_STRING: &str = "GraphicString";
+pub const GENERAL_STRING: &str = "GeneralString";
+pub const UNIVERSAL_STRING: &str = "UniversalString";
+pub const BMP_STRING: &str = "BMPString";
+pub const PRINTABLE_STRING: &str = "PrintableString";
+pub const GENERALIZED_TIME: &str = "GeneralizedTime";
+pub const UTC_TIME: &str = "UTCTime";
+pub const ENUMERATED: &str = "ENUMERATED";
+pub const CHOICE: &str = "CHOICE";
+pub const SEQUENCE: &str = "SEQUENCE";
+pub const SEQUENCE_OF: &str = "SEQUENCE OF";
+pub const SET_OF: &str = "SET OF";
+pub const OF: &str = "OF";
+pub const ALL: &str = "ALL";
+pub const SET: &str = "SET";
+pub const OBJECT_IDENTIFIER: &str = "OBJECT IDENTIFIER";
+pub const COMPONENTS_OF: &str = "COMPONENTS OF";
 
 // Tagging tokens
-pub const UNIVERSAL: &str= "UNIVERSAL";
-pub const PRIVATE: &str= "PRIVATE";
-pub const APPLICATION: &str= "APPLICATION";
+pub const UNIVERSAL: &str = "UNIVERSAL";
+pub const PRIVATE: &str = "PRIVATE";
+pub const APPLICATION: &str = "APPLICATION";
 
 // Value tokens
-pub const TRUE: &str= "TRUE";
-pub const FALSE: &str= "FALSE";
+pub const TRUE: &str = "TRUE";
+pub const FALSE: &str = "FALSE";
 
 // Header tokens
-pub const BEGIN: &str= "BEGIN";
-pub const END: &str= "END";
-pub const DEFINITIONS: &str= "DEFINITIONS";
-pub const AUTOMATIC: &str= "AUTOMATIC";
-pub const EXPLICIT: &str= "EXPLICIT";
-pub const IMPLICIT: &str= "IMPLICIT";
-pub const IMPORTS: &str= "IMPORTS";
-pub const EXPORTS: &str= "EXPORTS";
-pub const FROM: &str= "FROM";
-pub const INSTRUCTIONS: &str= "INSTRUCTIONS";
-pub const TAGS: &str= "TAGS";
-pub const EXTENSIBILITY_IMPLIED: &str= "EXTENSIBILITY IMPLIED";
-pub const WITH_SUCCESSORS: &str= "WITH SUCCESSORS";
-pub const WITH_DESCENDANTS: &str= "WITH DESCENDANTS";
+pub const BEGIN: &str = "BEGIN";
+pub const END: &str = "END";
+pub const DEFINITIONS: &str = "DEFINITIONS";
+pub const AUTOMATIC: &str = "AUTOMATIC";
+pub const EXPLICIT: &str = "EXPLICIT";
+pub const IMPLICIT: &str = "IMPLICIT";
+pub const IMPORTS: &str = "IMPORTS";
+pub const EXPORTS: &str = "EXPORTS";
+pub const FROM: &str = "FROM";
+pub const INSTRUCTIONS: &str = "INSTRUCTIONS";
+pub const TAGS: &str = "TAGS";
+pub const EXTENSIBILITY_IMPLIED: &str = "EXTENSIBILITY IMPLIED";
+pub const WITH_SUCCESSORS: &str = "WITH SUCCESSORS";
+pub const WITH_DESCENDANTS: &str = "WITH DESCENDANTS";
 pub const SEMICOLON: char = ';';
 
 // Information Object Class tokens
 pub const AMPERSAND: char = '&';
-pub const CLASS: &str= "CLASS";
-pub const UNIQUE: &str= "UNIQUE";
-pub const WITH_SYNTAX: &str= "WITH SYNTAX";
+pub const CLASS: &str = "CLASS";
+pub const UNIQUE: &str = "UNIQUE";
+pub const WITH_SYNTAX: &str = "WITH SYNTAX";
 pub const AT: char = '@';
 pub const DOT: char = '.';
 
 // Subtyping tokens
-pub const SIZE: &str= "SIZE";
-pub const CONSTRAINED_BY: &str= "CONSTRAINED BY";
-pub const PATTERN: &str= "PATTERN";
-pub const DEFAULT: &str= "DEFAULT";
-pub const OPTIONAL: &str= "OPTIONAL";
-pub const WITH_COMPONENTS: &str= "WITH COMPONENTS";
-pub const WITH_COMPONENT: &str= "WITH COMPONENT";
-pub const UNION: &str= "UNION";
-pub const EXCEPT: &str= "EXCEPT";
-pub const INTERSECTION: &str= "INTERSECTION";
-pub const ABSENT: &str= "ABSENT";
-pub const PRESENT: &str= "PRESENT";
-pub const INCLUDES: &str= "INCLUDES";
-pub const MIN: &str= "MIN";
-pub const MAX: &str= "MAX";
+pub const SIZE: &str = "SIZE";
+pub const CONSTRAINED_BY: &str = "CONSTRAINED BY";
+pub const PATTERN: &str = "PATTERN";
+pub const DEFAULT: &str = "DEFAULT";
+pub const OPTIONAL: &str = "OPTIONAL";
+pub const WITH_COMPONENTS: &str = "WITH COMPONENTS";
+pub const WITH_COMPONENT: &str = "WITH COMPONENT";
+pub const UNION: &str = "UNION";
+pub const EXCEPT: &str = "EXCEPT";
+pub const INTERSECTION: &str = "INTERSECTION";
+pub const ABSENT: &str = "ABSENT";
+pub const PRESENT: &str = "PRESENT";
+pub const INCLUDES: &str = "INCLUDES";
+pub const MIN: &str = "MIN";
+pub const MAX: &str = "MAX";
 pub const LESS_THAN: char = '<';
 pub const GREATER_THAN: char = '>';
-pub const PIPE: &str= "|";
-pub const CARET: &str= "^";
+pub const PIPE: &str = "|";
+pub const CARET: &str = "^";
 
-pub const ASSIGN: &str= "::=";
-pub const RANGE: &str= "..";
-pub const ELLIPSIS: &str= "...";
+pub const ASSIGN: &str = "::=";
+pub const RANGE: &str = "..";
+pub const ELLIPSIS: &str = "...";
 pub const COMMA: char = ',';
 pub const COLON: char = ':';
 pub const SINGLE_QUOTE: char = '\'';
 
 // invalid syntax word tokens
-pub const ABSTRACT_SYNTAX: &str= "ABSTRACT-SYNTAX";
-pub const BIT: &str= "BIT";
-pub const CHARACTER: &str= "CHARACTER";
-pub const CONTAINING: &str= "CONTAINING";
-pub const DATE: &str= "DATE";
-pub const DATE_TIME: &str= "DATE-TIME";
-pub const DURATION: &str= "DURATION";
-pub const EMBEDDED_PDV: &str= "EMBEDDED PDV";
-pub const EXTERNAL: &str= "EXTERNAL";
-pub const INSTANCE_OF: &str= "INSTANCE OF";
-pub const MINUS_INFINITY: &str= "MINUS-INFINITY";
-pub const NOT_A_NUMBER: &str= "NOT-A-NUMBER";
-pub const OBJECT: &str= "OBJECT";
-pub const OCTET: &str= "OCTET";
-pub const OID_IRI: &str= "OID-IRI";
-pub const PLUS_INFINITY: &str= "PLUS-INFINITY";
-pub const RELATIVE_OID: &str= "RELATIVE-OID";
-pub const RELATIVE_OID_IRI: &str= "RELATIVE-OID-IRI";
-pub const TIME: &str= "TIME";
-pub const TIME_OF_DAY: &str= "TIME-OF-DAY";
-pub const TYPE_IDENTIFIER: &str= "TYPE-IDENTIFIER";
+pub const ABSTRACT_SYNTAX: &str = "ABSTRACT-SYNTAX";
+pub const BIT: &str = "BIT";
+pub const CHARACTER: &str = "CHARACTER";
+pub const CONTAINING: &str = "CONTAINING";
+pub const DATE: &str = "DATE";
+pub const DATE_TIME: &str = "DATE-TIME";
+pub const DURATION: &str = "DURATION";
+pub const EMBEDDED_PDV: &str = "EMBEDDED PDV";
+pub const EXTERNAL: &str = "EXTERNAL";
+pub const INSTANCE_OF: &str = "INSTANCE OF";
+pub const MINUS_INFINITY: &str = "MINUS-INFINITY";
+pub const NOT_A_NUMBER: &str = "NOT-A-NUMBER";
+pub const OBJECT: &str = "OBJECT";
+pub const OCTET: &str = "OCTET";
+pub const OID_IRI: &str = "OID-IRI";
+pub const PLUS_INFINITY: &str = "PLUS-INFINITY";
+pub const RELATIVE_OID: &str = "RELATIVE-OID";
+pub const RELATIVE_OID_IRI: &str = "RELATIVE-OID-IRI";
+pub const TIME: &str = "TIME";
+pub const TIME_OF_DAY: &str = "TIME-OF-DAY";
+pub const TYPE_IDENTIFIER: &str = "TYPE-IDENTIFIER";
 
 pub const ASN1_KEYWORDS: [&str; 63] = [
     ABSTRACT_SYNTAX,
@@ -260,7 +256,7 @@ impl Add<&TaggingEnvironment> for &TaggingEnvironment {
     }
 }
 
-/// Represents the extensibility environment as specified in 
+/// Represents the extensibility environment as specified in
 /// Rec. ITU-T X.680 (02/2021) § 13.4
 #[derive(Debug, Clone, PartialEq)]
 pub enum ExtensibilityEnvironment {
@@ -419,7 +415,7 @@ impl From<Vec<ObjectIdentifierArc>> for ObjectIdentifierValue {
     }
 }
 
-/// Represents a single arc of an object identifier value 
+/// Represents a single arc of an object identifier value
 /// as specified in Rec. ITU-T X.680 (02/2021) §32
 #[derive(Debug, Clone, PartialEq)]
 pub struct ObjectIdentifierArc {
@@ -459,7 +455,7 @@ impl From<(&str, u128)> for ObjectIdentifierArc {
 /// * `Type` definitions define custom types based on ASN.1's built-in types
 /// * `Value` definitions define values using custom ot built-in types
 /// * `Information` definitions define abstraction concepts introduced in ITU-T X.681
-/// 
+///
 /// The linker and any [Backend] for this compiler consumes top-level definitions in
 /// order to generate bindings.
 #[derive(Debug, Clone, PartialEq)]
@@ -821,8 +817,9 @@ pub enum ASN1Value {
     Null,
     Boolean(bool),
     Choice(String, Box<ASN1Value>),
-    SequenceOrSet(Vec<(String, Box<ASN1Value>)>),
-    SequenceOrSetOf(Vec<ASN1Value>),
+    /// In ASN.1, value definitions are ambiguous between SEQUENCE, SET, SEQUENCE OF, and SET OF
+    /// For example, `{ my-elem FALSE }` could be a value of all four types
+    SequenceOrSet(Vec<(Option<String>, Box<ASN1Value>)>),
     Integer(i128),
     Real(f64),
     String(String),
@@ -849,7 +846,7 @@ pub enum ASN1Value {
     /// }
     /// ```
     /// the relation of the default value to `ExampleSubset` will not be picked up by the parser.
-    /// However, in some representations, this relation is critical information.  
+    /// However, in some representations, this relation is critical information.
     LinkedNestedValue {
         /// typereferences of supertypes
         supertypes: Vec<String>,
@@ -862,9 +859,11 @@ pub enum ASN1Value {
     },
     /// Struct-like values such as SEQUENCE values need type information that will not always be picked up by the parser on first pass.
     LinkedStructLikeValue(Vec<(String, StructLikeFieldValue)>),
+    /// Array-like values such as SEQUENCE OF values need type information that will not always be picked up by the parser on first pass.
+    LinkedArrayLikeValue(Vec<Box<ASN1Value>>),
     /// Character string values such as UTF8String values need type information that will not always be picked up by the parser on first pass.
     LinkedCharStringValue(CharacterStringType, String),
-    LinkedElsewhereDefinedValue{
+    LinkedElsewhereDefinedValue {
         parent: Option<String>,
         identifier: String,
         can_be_const: bool,
@@ -875,21 +874,19 @@ pub enum ASN1Value {
 #[derive(Debug, Clone, PartialEq)]
 pub enum StructLikeFieldValue {
     Explicit(Box<ASN1Value>),
-    Implicit(Box<ASN1Value>)
+    Implicit(Box<ASN1Value>),
 }
 
 impl StructLikeFieldValue {
     pub fn into_value(self) -> ASN1Value {
         match self {
-            StructLikeFieldValue::Explicit(v) |
-            StructLikeFieldValue::Implicit(v) => *v,
+            StructLikeFieldValue::Explicit(v) | StructLikeFieldValue::Implicit(v) => *v,
         }
     }
 
     pub fn value(&self) -> &ASN1Value {
         match self {
-            StructLikeFieldValue::Explicit(v) |
-            StructLikeFieldValue::Implicit(v) => &*v,
+            StructLikeFieldValue::Explicit(v) | StructLikeFieldValue::Implicit(v) => &*v,
         }
     }
 }

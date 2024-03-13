@@ -1,8 +1,8 @@
-SchemaAdministration {joint-iso-itu-t ds(5) module(1) schemaAdministration(23) 8} 
+SchemaAdministration {joint-iso-itu-t ds(5) module(1) schemaAdministration(23) 8}
 DEFINITIONS ::=
 BEGIN
 
--- EXPORTS All 
+-- EXPORTS All
 -- The types and values defined in this module are exported for use in the other ASN.1
 -- modules contained within the Directory Specifications, and for the use of other
 -- applications which will use them to access Directory services. Other applications may
@@ -12,11 +12,11 @@ BEGIN
 IMPORTS
 
   -- from Rec. ITU-T X.501 | ISO/IEC 9594-2
-  
+
   id-soa, id-soc, informationFramework, ldapSystemSchema, selectedAttributeTypes
     FROM UsefulDefinitions {joint-iso-itu-t ds(5) module(1) usefulDefinitions(0) 8}
 
-  ATTRIBUTE, AttributeUsage, CONTEXT, DITContentRule, DITStructureRule, MATCHING-RULE, 
+  ATTRIBUTE, AttributeUsage, CONTEXT, DITContentRule, DITStructureRule, MATCHING-RULE,
   NAME-FORM, OBJECT-CLASS, ObjectClassKind, objectIdentifierMatch, SYNTAX-NAME
     FROM InformationFramework informationFramework
 
@@ -33,8 +33,8 @@ IMPORTS
 
 subschema OBJECT-CLASS ::= {
   KIND        auxiliary
-  MAY CONTAIN { dITStructureRules | 
-                nameForms | 
+  MAY CONTAIN { dITStructureRules |
+                nameForms |
                 dITContentRules |
                 objectClasses |
                 attributeTypes |
@@ -90,7 +90,7 @@ MatchingRuleDescription ::= SEQUENCE {
   name              SET SIZE (1..MAX) OF UnboundedDirectoryString OPTIONAL,
   description       UnboundedDirectoryString OPTIONAL,
   obsolete          BOOLEAN DEFAULT FALSE,
-  information  [0]  UnboundedDirectoryString OPTIONAL, 
+  information  [0]  UnboundedDirectoryString OPTIONAL,
                 -- describes the ASN.1 syntax
   ... }
 
@@ -255,13 +255,13 @@ FriendsDescription ::= SEQUENCE {
   friends      [0]  SET SIZE (1..MAX) OF ATTRIBUTE.&id,
   ... }
 
--- object identifier assignments 
+-- object identifier assignments
 
--- schema object classes 
+-- schema object classes
 
 id-soc-subschema OBJECT IDENTIFIER              ::= {id-soc 1}
 
--- schema operational attributes 
+-- schema operational attributes
 
 id-soa-dITStructureRule       OBJECT IDENTIFIER ::= {id-soa 1}
 id-soa-dITContentRules        OBJECT IDENTIFIER ::= {id-soa 2}

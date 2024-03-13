@@ -22,7 +22,10 @@ pub fn time_value<'a>(input: &'a str) -> IResult<&'a str, ASN1Value> {
 }
 
 pub fn time<'a>(input: &'a str) -> IResult<&'a str, ASN1Type> {
-    map(skip_ws_and_comments(preceded(tag(TIME), opt(constraint))), |t| ASN1Type::Time(t.into()))(input)
+    map(
+        skip_ws_and_comments(preceded(tag(TIME), opt(constraint))),
+        |t| ASN1Type::Time(t.into()),
+    )(input)
 }
 
 pub fn generalized_time<'a>(input: &'a str) -> IResult<&'a str, ASN1Type> {

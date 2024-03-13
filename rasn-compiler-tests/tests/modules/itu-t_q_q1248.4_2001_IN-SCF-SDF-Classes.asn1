@@ -28,7 +28,7 @@ IMPORTS
     maxAttempts, stockId, stock{}, source, sizeOfRestocking
     FROM IN-SCF-SDF-datatypes scf-sdf-datatypes;
 
--- METHOD information object class specification 
+-- METHOD information object class specification
 METHOD ::= CLASS {
   &InputAttributes   ATTRIBUTE OPTIONAL,
   &SpecificInput     OPTIONAL,
@@ -55,7 +55,7 @@ WITH SYNTAX {
 -- The &SpecificOutput field provides that syntax of additional information
 -- which may be used as output to the method execution.
 -- The &id field uniquely identifies the method.
--- method 
+-- method
 verifyCredentials METHOD ::= {
   SPECIFIC-INPUT   TwoPartMessage
   -- see the definition of this type below
@@ -166,14 +166,14 @@ METHOD-USE-RULE ::= CLASS {
 
 -- The METHOD-USE-RULE definition for a particular object-class also applies to any subclass
 -- which may be subsequently defined.
--- method-use-rule 
+-- method-use-rule
 securityUserInfoRule{INTEGER:n} METHOD-USE-RULE ::= {
   OBJECT-CLASS TYPE  id-oc-securityUserInfo
   METHODS
     {verifyCredentials | fillSecurityTokens{n} | conformCredentials}
 }
 
--- object class 
+-- object class
 -- The following object class could be used to store the necessary information about the user security.
 -- For each UPT user, an entry of the securityUserInfo object class may be created, subordinated to each
 -- entry of class uptUser.

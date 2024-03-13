@@ -13,16 +13,16 @@ DirectoryAccessProtocol {joint-iso-itu-t ds(5) module(1) dap(11) 3} DEFINITIONS
 ::=
 BEGIN
 
--- EXPORTS All 
--- The types and values defined in this module are exported for use in the other ASN.1 modules contained 
--- within the Directory Specifications, and for the use of other applications which will use them to access 
+-- EXPORTS All
+-- The types and values defined in this module are exported for use in the other ASN.1 modules contained
+-- within the Directory Specifications, and for the use of other applications which will use them to access
 -- Directory services. Other applications may use them for their own purposes, but this will not constrain
 -- extensions and modifications needed to maintain or improve the Directory service.
 IMPORTS
   directoryAbstractService, protocolObjectIdentifiers
     FROM UsefulDefinitions {joint-iso-itu-t ds(5) module(1)
       usefulDefinitions(0) 3}
-  ROS-OBJECT-CLASS, CONTRACT, OPERATION-PACKAGE, CONNECTION-PACKAGE, 
+  ROS-OBJECT-CLASS, CONTRACT, OPERATION-PACKAGE, CONNECTION-PACKAGE,
     Code, OPERATION
     FROM Remote-Operations-Information-Objects {joint-iso-itu-t
       remote-operations(4) informationObjects(5) version1(0)}
@@ -49,7 +49,7 @@ IMPORTS
     FROM DirectoryAbstractService {joint-iso-itu-t ds(5) module(1)
       directoryAbstractService(2) 3};
 
--- application contexts 
+-- application contexts
 directoryAccessAC APPLICATION-CONTEXT ::= {
   CONTRACT                  dapContract
   ESTABLISHED BY            acse
@@ -59,7 +59,7 @@ directoryAccessAC APPLICATION-CONTEXT ::= {
   APPLICATION CONTEXT NAME  id-ac-directoryAccessAC
 }
 
--- ROS objects 
+-- ROS objects
 dua ROS-OBJECT-CLASS ::= {INITIATES  {dapContract}
                           ID         id-rosObject-dua
 }
@@ -74,39 +74,39 @@ dap-dsa ROS-OBJECT-CLASS ::= {
   ID        id-rosObject-dapDSA
 }
 
--- contracts 
+-- contracts
 dapContract CONTRACT ::= {
   CONNECTION             dapConnectionPackage
   INITIATOR CONSUMER OF  {readPackage | searchPackage | modifyPackage}
   ID                     id-contract-dap
 }
 
--- connection package 
+-- connection package
 dapConnectionPackage CONNECTION-PACKAGE ::= {
   BIND    directoryBind
   UNBIND  directoryUnbind
   ID      id-package-dapConnection
 }
 
---  read package 
+--  read package
 readPackage OPERATION-PACKAGE ::= {
   CONSUMER INVOKES  {read | compare | abandon}
   ID                id-package-read
 }
 
---  search package 
+--  search package
 searchPackage OPERATION-PACKAGE ::= {
   CONSUMER INVOKES  {list | search}
   ID                id-package-search
 }
 
---  modify Package 
+--  modify Package
 modifyPackage OPERATION-PACKAGE ::= {
   CONSUMER INVOKES  {addEntry | removeEntry | modifyEntry | modifyDN}
   ID                id-package-modify
 }
 
--- abstract syntaxes 
+-- abstract syntaxes
 directoryAccessAbstractSyntax ABSTRACT-SYNTAX ::= {
   DAP-PDUs
   IDENTIFIED BY  id-as-directoryAccessAS
@@ -128,7 +128,7 @@ DAP-Returnable OPERATION ::=
   {read | compare | abandon | list | search | addEntry | removeEntry |
    modifyEntry | modifyDN}
 
---  remote operation codes 
+--  remote operation codes
 id-opcode-read Code ::= local:1
 
 id-opcode-compare Code ::= local:2
@@ -147,7 +147,7 @@ id-opcode-modifyEntry Code ::= local:8
 
 id-opcode-modifyDN Code ::= local:9
 
--- remote error codes 
+-- remote error codes
 id-errcode-attributeError Code ::= local:1
 
 id-errcode-nameError Code ::= local:2
@@ -164,7 +164,7 @@ id-errcode-abandonFailed Code ::= local:7
 
 id-errcode-updateError Code ::= local:8
 
--- remote error code for DSP 
+-- remote error code for DSP
 id-errcode-dsaReferral Code ::= local:9
 
 END -- DirectoryAccessProtocol

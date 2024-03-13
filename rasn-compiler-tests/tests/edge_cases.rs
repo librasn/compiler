@@ -24,10 +24,9 @@ e2e_pdu!(
         pub struct Restricted(pub Distinguished);         "#
 );
 
-
 e2e_pdu!(
     distinguished_value_range_in_choice,
-    r#" 
+    r#"
         TestChoice ::= CHOICE {
             restricted Distinguished (second|fourth..sixth|eighth),
             ...
@@ -58,12 +57,12 @@ e2e_pdu!(
 
 e2e_pdu!(
     enum_and_distinguished_defaults,
-    r#" 
+    r#"
         Test ::= SEQUENCE {
             int IntWithDefault DEFAULT first,
             enum EnumWithDefault DEFAULT first,
         }
-        
+
         IntWithDefault ::= INTEGER {
             first(1),
             second(2)
@@ -74,7 +73,7 @@ e2e_pdu!(
             second(2)
         }
     "#,
-    r#" 
+    r#"
         #[derive(AsnType, Debug, Clone, Copy, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]
         #[rasn(enumerated)]
         pub enum EnumWithDefault {

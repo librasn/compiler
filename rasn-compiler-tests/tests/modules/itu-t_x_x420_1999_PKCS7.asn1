@@ -31,14 +31,14 @@ IMPORTS
     FROM AuthenticationFramework {joint-iso-itu-t ds(5) module(1)
       authenticationFramework(7) 3};
 
--- In PKCS#7 the HASHED parameterised type applies the hash function to the 
+-- In PKCS#7 the HASHED parameterised type applies the hash function to the
 -- contents octets component of a DER encoding of a value of the parameter.
--- The ENCRYPTED parameterised type is redefined here because PKCS#7 encrypted values are 
+-- The ENCRYPTED parameterised type is redefined here because PKCS#7 encrypted values are
 -- defined as OCTET STRING, instead of BIT STRING as in the Directory Authentication Framework
 ENCRYPTED{ToBeEnciphered} ::=
   OCTET STRING
     (CONSTRAINED BY {
-       -- must be the result of applying an encipherment procedure to the contents octets component 
+       -- must be the result of applying an encipherment procedure to the contents octets component
        -- of a definite-length BER-encoding of a value of --ToBeEnciphered})
 
 ContentInfo ::= SEQUENCE {

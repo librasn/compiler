@@ -3,7 +3,7 @@ PKIXAttributeCertificate-2009 {iso(1) identified-organization(3) dod(6) internet
 DEFINITIONS IMPLICIT TAGS ::=
 BEGIN
 IMPORTS
-AttributeSet{}, Extensions{}, SecurityCategory{},EXTENSION, ATTRIBUTE, 
+AttributeSet{}, Extensions{}, SecurityCategory{},EXTENSION, ATTRIBUTE,
 SECURITY-CATEGORY
 FROM PKIX-CommonTypes-2009
 {iso(1) identified-organization(3) dod(6) internet(1) security(5)
@@ -31,60 +31,60 @@ pkcs(1) pkcs-9(9) smime(16) modules(0) id-mod-cms-2009(58) };
 --  Define the set of extensions that can appear.
 --  Some of these are imported from PKIX Cert
 AttributeCertExtensions EXTENSION ::= {
-ext-auditIdentity			| 
+ext-auditIdentity			|
 ext-targetInformation 		|
-ext-AuthorityKeyIdentifier 	| 
+ext-AuthorityKeyIdentifier 	|
 ext-AuthorityInfoAccess 		|
-ext-CRLDistributionPoints 	| 
-ext-noRevAvail 			| 
+ext-CRLDistributionPoints 	|
+ext-noRevAvail 			|
 ext-ac-proxying 			|
-ext-aaControls, 
+ext-aaControls,
 ... }
-ext-auditIdentity EXTENSION ::= { 
-SYNTAX OCTET STRING 
+ext-auditIdentity EXTENSION ::= {
+SYNTAX OCTET STRING
 IDENTIFIED BY id-pe-ac-auditIdentity}
-ext-targetInformation EXTENSION ::= { 
-SYNTAX Targets 
+ext-targetInformation EXTENSION ::= {
+SYNTAX Targets
 IDENTIFIED BY id-ce-targetInformation }
-ext-noRevAvail EXTENSION ::= { 
-SYNTAX NULL 
+ext-noRevAvail EXTENSION ::= {
+SYNTAX NULL
 IDENTIFIED BY id-ce-noRevAvail}
-ext-ac-proxying EXTENSION ::= { 
-SYNTAX ProxyInfo 
+ext-ac-proxying EXTENSION ::= {
+SYNTAX ProxyInfo
 IDENTIFIED BY id-pe-ac-proxying}
-ext-aaControls EXTENSION ::= { 
-SYNTAX AAControls 
+ext-aaControls EXTENSION ::= {
+SYNTAX AAControls
 IDENTIFIED BY id-pe-aaControls}
 -- Define the set of attributes used here
 AttributesDefined ATTRIBUTE ::= {  at-authenticationInfo |
-at-accesIdentity 		| 
-at-chargingIdentity 	| 
+at-accesIdentity 		|
+at-chargingIdentity 	|
 at-group 			|
-at-role 			| 
-at-clearance 		| 
+at-role 			|
+at-clearance 		|
 at-encAttrs, ...}
-at-authenticationInfo ATTRIBUTE ::= { 
+at-authenticationInfo ATTRIBUTE ::= {
 TYPE SvceAuthInfo
 IDENTIFIED BY id-aca-authenticationInfo}
-at-accesIdentity ATTRIBUTE ::= { 
+at-accesIdentity ATTRIBUTE ::= {
 TYPE SvceAuthInfo
 IDENTIFIED BY id-aca-accessIdentity}
-at-chargingIdentity ATTRIBUTE ::= { 
+at-chargingIdentity ATTRIBUTE ::= {
 TYPE IetfAttrSyntax
 IDENTIFIED BY id-aca-chargingIdentity}
-at-group ATTRIBUTE ::= { 
+at-group ATTRIBUTE ::= {
 TYPE IetfAttrSyntax
 IDENTIFIED BY id-aca-group}
-at-role ATTRIBUTE ::= { 
+at-role ATTRIBUTE ::= {
 TYPE RoleSyntax
 IDENTIFIED BY id-at-role}
-at-clearance ATTRIBUTE ::= { 
+at-clearance ATTRIBUTE ::= {
 TYPE Clearance
 IDENTIFIED BY id-at-clearance}
 at-clearance-RFC3281 ATTRIBUTE ::= {
 TYPE Clearance-rfc3281
 IDENTIFIED BY id-at-clearance-rfc3281 }
-at-encAttrs ATTRIBUTE ::= { 
+at-encAttrs ATTRIBUTE ::= {
 TYPE ContentInfo
 IDENTIFIED BY id-aca-encAttrs}
 --

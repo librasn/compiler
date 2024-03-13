@@ -7,9 +7,9 @@ DirectoryShadowAbstractService {joint-iso-itu-t ds(5) module(1)
   directoryShadowAbstractService(15) 4} DEFINITIONS IMPLICIT TAGS ::=
 BEGIN
 
--- EXPORTS All 
--- The types and values defined in this module are exported for use in the other ASN.1 modules contained 
--- within the Directory Specifications, and for the use of other applications which will use them to access 
+-- EXPORTS All
+-- The types and values defined in this module are exported for use in the other ASN.1 modules contained
+-- within the Directory Specifications, and for the use of other applications which will use them to access
 -- directory services. Other applications may use them for their own purposes, but this will not constrain
 -- extensions and modifications needed to maintain or improve the directory service.
 IMPORTS
@@ -56,12 +56,12 @@ IMPORTS
     FROM Remote-Operations-Information-Objects {joint-iso-itu-t
       remote-operations(4) informationObjects(5) version1(0)};
 
--- bind and unbind operations 
+-- bind and unbind operations
 dSAShadowBind OPERATION ::= directoryBind
 
 dSAShadowUnbind OPERATION ::= directoryUnbind
 
--- shadow operational binding 
+-- shadow operational binding
 shadowOperationalBinding OPERATIONAL-BINDING ::= {
   AGREEMENT             ShadowingAgreementInfo
   APPLICATION CONTEXTS
@@ -87,7 +87,7 @@ shadowOperationalBinding OPERATIONAL-BINDING ::= {
   ID                    id-op-binding-shadow
 }
 
--- types 
+-- types
 ModificationParameter ::= SEQUENCE {
   secondaryShadows  SET OF SupplierAndConsumers
 }
@@ -151,7 +151,7 @@ SupplierUpdateMode ::= CHOICE {
 ConsumerUpdateMode ::= SchedulingParameters
 
 SchedulingParameters ::= SEQUENCE {
-  periodic    PeriodicStrategy OPTIONAL, -- must be present if othertimes is set to FALSE 
+  periodic    PeriodicStrategy OPTIONAL, -- must be present if othertimes is set to FALSE
   othertimes  BOOLEAN DEFAULT FALSE
 }
 
@@ -164,7 +164,7 @@ PeriodicStrategy ::= SEQUENCE {
 Time ::= GeneralizedTime
 
 -- as per 34.2 b) and c) of CCITT Rec. X.208 and ISO/IEC 8824
--- shadow operations, arguments, and results 
+-- shadow operations, arguments, and results
 All-operations-consumer-initiated OPERATION ::=
   {requestShadowUpdate | updateShadow}
 
@@ -307,7 +307,7 @@ SubordinateChanges ::= SEQUENCE {
   changes      IncrementalStepRefresh
 }
 
--- errors and parameters 
+-- errors and parameters
 shadowError ERROR ::= {
   PARAMETER OPTIONALLY-PROTECTED-SEQ
     {SEQUENCE {problem       ShadowProblem,

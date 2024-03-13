@@ -18,7 +18,7 @@ ReceiptNotice		::= ReceiptNoticeType
 SignedReceiptNotice	::= SignedReceiptNoticeType
 
 DigitalPostmarkType	::= SEQUENCE {
-	mimeMessageHash	SEQUENCE (SIZE(1..MAX)) OF 
+	mimeMessageHash	SEQUENCE (SIZE(1..MAX)) OF
 		mimeMessageHash HashValueType,
 	signature	SEQUENCE (SIZE(0..MAX)) OF
 		signature	SignatureType,
@@ -32,7 +32,7 @@ DigitalPostmarkType	::= SEQUENCE {
 EnvelopeInformationType	::= SEQUENCE {
 	contentEnvelopeInformation	ContentEnvelopeInformationType,
 	entities			EntitiesType,
-	signature		SEQUENCE (SIZE(0..MAX)) OF 
+	signature		SEQUENCE (SIZE(0..MAX)) OF
 		signature SignatureType
 	}
 
@@ -52,7 +52,7 @@ EntityType	::= SEQUENCE {
 	cipheredEnvelopeKey	CipheredEnvelopeKeyType,
 	certificate		CertificateType,
 	emailAddress		String
-		(CONSTRAINED BY 
+		(CONSTRAINED BY
 		{-- "Email address has to be in IETF RFC 822 format --}),
 	type	ENUMERATED {
 		from,
@@ -76,7 +76,7 @@ CertificateType	::= SEQUENCE {
 EntitiesType	::= SEQUENCE {
 	entity		SEQUENCE(SIZE(1..MAX)) OF entity EntityType
 	}
-	
+
 SignedDepositNoticeType	::= SEQUENCE {
 	digitalPostmark		DigitalPostmarkType,
 	envelopeInformation	EnvelopeInformationType
@@ -147,7 +147,7 @@ ENCODING-CONTROL XER
 	[NAME AS CAPITALIZED] EnvelopeInformationType.entities
 	[NAME AS CAPITALIZED] EnvelopeInformationType.signature
 	[UNTAGGED] EnvelopeInformationType.signature
-	[NAME AS CAPITALIZED] 
+	[NAME AS CAPITALIZED]
 		ContentEnvelopeInformationType.uncipheredEnvelopeHash
 	[NAME AS CAPITALIZED]
 		ContentEnvelopeInformationType.cipheredEnvelopeHash
@@ -187,7 +187,7 @@ ENCODING-CONTROL XER
 	[ATTRIBUTE] HashValueType.algorithmOID
 	[TEXT AS "1.3.14.3.2.26"] HashValueType.algorithmOID:sha-1
 	[TEXT AS "2.16.840.1.101.3.4.2.1"] HashValueType.algorithmOID:sha-256
-	[NAME AS CAPITALIZED] 
+	[NAME AS CAPITALIZED]
 		EntityEnvelopeInformationType.BodyEnvelopeInformation
 	[NAME AS CAPITALIZED]
 		EntityEnvelopeInformationType.entityChallenge

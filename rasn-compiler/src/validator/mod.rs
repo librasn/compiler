@@ -10,7 +10,12 @@ mod linking;
 
 use std::{collections::BTreeMap, error::Error, ops::Not};
 
-use crate::intermediate::{constraints::*, types::*, *, information_object::{ClassLink, ToplevelInformationDefinition}};
+use crate::intermediate::{
+    constraints::*,
+    information_object::{ClassLink, ToplevelInformationDefinition},
+    types::*,
+    *,
+};
 
 use self::error::{ValidatorError, ValidatorErrorType};
 
@@ -31,26 +36,30 @@ impl Validator {
     fn link(mut self) -> Result<(Self, Vec<Box<dyn Error>>), ValidatorError> {
         let mut warnings: Vec<Box<dyn Error>> = vec![];
         // Linking of ASN1 values depends on linked ASN1 types, so we order the key colelction accordingly (note that we pop keys)
-        let mut keys = self.tlds.iter()
+        let mut keys = self
+            .tlds
+            .iter()
             .filter_map(|(k, v)| matches![v, ToplevelDefinition::Value(_)].then_some(k.clone()))
-            .chain(
-                self.tlds.iter()
-                .filter_map(|(k, v)| matches![v, ToplevelDefinition::Value(_)].not().then_some(k.clone()))
-            ).collect::<Vec<String>>();
+            .chain(self.tlds.iter().filter_map(|(k, v)| {
+                matches![v, ToplevelDefinition::Value(_)]
+                    .not()
+                    .then_some(k.clone())
+            }))
+            .collect::<Vec<String>>();
         while let Some(key) = keys.pop() {
             if self.references_class_by_name(&key) {
                 match self.tlds.remove(&key) {
                     Some(ToplevelDefinition::Type(mut tld)) => {
                         tld.ty = tld.ty.resolve_class_reference(&self.tlds);
                         self.tlds
-                        .insert(tld.name.clone(), ToplevelDefinition::Type(tld));
-                        },
+                            .insert(tld.name.clone(), ToplevelDefinition::Type(tld));
+                    }
                     Some(ToplevelDefinition::Information(mut tld)) => {
                         tld = tld.resolve_class_reference(&self.tlds);
                         self.tlds
-                        .insert(tld.name.clone(), ToplevelDefinition::Information(tld));
-                    },
-                    _ => ()
+                            .insert(tld.name.clone(), ToplevelDefinition::Information(tld));
+                    }
+                    _ => (),
                 }
             }
             if self.has_components_of_notation(&key) {
@@ -59,7 +68,7 @@ impl Validator {
                     self.tlds
                         .insert(tld.name.clone(), ToplevelDefinition::Type(tld));
                 }
-            } 
+            }
             if self.has_choice_selection_type(&key) {
                 if let Some(ToplevelDefinition::Type(mut tld)) = self.tlds.remove(&key) {
                     tld.ty.link_choice_selection_type(&self.tlds)?;
@@ -83,10 +92,10 @@ impl Validator {
                 if !tld.link_constraint_reference(&self.tlds)? {
                     warnings.push(
                         Box::new(
-                            ValidatorError { 
-                                data_element: Some(tld.name().to_string()), 
+                            ValidatorError {
+                                data_element: Some(tld.name().to_string()),
                                 details: format!(
-                                    "Failed to link cross-reference to elsewhere defined value in constraint of {}", 
+                                    "Failed to link cross-reference to elsewhere defined value in constraint of {}",
                                     tld.name()),
                                 kind: ValidatorErrorType::MissingDependency
                             }
@@ -118,7 +127,7 @@ impl Validator {
                 ToplevelDefinition::Type(t) => t.ty.references_class_by_name(),
                 ToplevelDefinition::Information(i) => i.class.as_ref().map_or(false, |c| match c {
                     ClassLink::ByReference(_) => false,
-                    ClassLink::ByName(_) => true
+                    ClassLink::ByName(_) => true,
                 }),
                 _ => false,
             })
@@ -128,9 +137,10 @@ impl Validator {
     fn references_object_set_by_name(&mut self, key: &String) -> bool {
         self.tlds
             .get(key)
-            .map(|t|
-                match t {
-                ToplevelDefinition::Information(ToplevelInformationDefinition { value, .. }) => value.references_object_set_by_name(),
+            .map(|t| match t {
+                ToplevelDefinition::Information(ToplevelInformationDefinition {
+                    value, ..
+                }) => value.references_object_set_by_name(),
                 _ => false,
             })
             .unwrap_or(false)

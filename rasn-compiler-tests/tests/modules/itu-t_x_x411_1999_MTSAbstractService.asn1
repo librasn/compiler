@@ -316,7 +316,7 @@ MessageSubmissionResult ::= SET {
 MessageSubmissionResultExtensions EXTENSION ::=
   {-- May contain the following extensions, private extensions, and future standardised extensions,
    -- at most one instance of each extension type:
-   originating-MTA-certificate | proof-of-submission | PrivateExtensions, 
+   originating-MTA-certificate | proof-of-submission | PrivateExtensions,
    ...}
 
 probe-submission ABSTRACT-OPERATION ::= {
@@ -698,10 +698,10 @@ change-credentials ABSTRACT-OPERATION ::= {
 
 ChangeCredentialsArgument ::= SET {
   old-credentials  [0]  Credentials(WITH COMPONENTS {
-                                      simple  
+                                      simple
                                     }),
   new-credentials  [1]  Credentials(WITH COMPONENTS {
-                                      simple  
+                                      simple
                                     })
 }
 
@@ -742,7 +742,7 @@ DeliverableClass ::=
        priority         ABSENT,
        -- The 'objects' component shall always be defaulted.
        -- objects ABSENT,
-       -- A component with a DEFAULT clause cannot be ABSENT 
+       -- A component with a DEFAULT clause cannot be ABSENT
        applies-only-to  ABSENT
      })
 
@@ -750,10 +750,10 @@ DefaultDeliveryControls ::=
   Controls
     (WITH COMPONENTS {
        ...,
-       
+
        -- The 'restrict' component shall always be defaulted.
        -- restrict ABSENT,
-       -- A component with a DEFAULT clause cannot be ABSENT 
+       -- A component with a DEFAULT clause cannot be ABSENT
        permissible-security-context  ABSENT
      })
 
@@ -778,7 +778,7 @@ MessageClass ::= SET {
   objects
     [5]  ENUMERATED {messages(0), reports(1), both(2), ...
                      } DEFAULT both,
-  applies-only-to                        [6]  SEQUENCE OF Restriction OPTIONAL, -- Not considered in the case of Reports 
+  applies-only-to                        [6]  SEQUENCE OF Restriction OPTIONAL, -- Not considered in the case of Reports
   extensions
     [7]  SET OF ExtensionField{{MessageClassExtensions}} DEFAULT {}
 }
@@ -1046,38 +1046,38 @@ ContentIdentifier ::=
 
 PerMessageIndicators ::= [APPLICATION 8]  BIT STRING {
   disclosure-of-other-recipients(0), -- disclosure-of-other-recipients-requested 'one',
-  
+
   -- disclosure-of-other-recipients-prohibited 'zero';
   -- ignored for Probe-submission
-  implicit-conversion-prohibited(1), -- implicit-conversion-prohibited 'one', 
-  
+  implicit-conversion-prohibited(1), -- implicit-conversion-prohibited 'one',
+
   -- implicit-conversion-allowed 'zero'
   alternate-recipient-allowed(2), -- alternate-recipient-allowed 'one',
-  
+
   -- alternate-recipient-prohibited 'zero'
-  content-return-request(3), -- content-return-requested 'one', 
-  
+  content-return-request(3), -- content-return-requested 'one',
+
   -- content-return-not-requested 'zero';
   -- ignored for Probe-submission
   reserved(4), -- bit reserved by MOTIS 1986
   bit-5(5),
   bit-6(6), -- notification type-1 : bit 5 'zero' and bit 6 'one'
-  
+
   -- notification type-2 : bit 5 'one' and bit 6 'zero'
   -- notification type-3 : bit 5 'one' and bit 6 'one'
   -- the mapping between notification type 1, 2, 3
   -- and the content specific notification types are defined
   -- in relevant content specifications
   service-message(7) -- the message content is for service purposes;
-  
-  
+
+
 -- it may be a notification related to a service message;
 -- used only by bilateral agreement --}(SIZE (0..ub-bit-options))
 
 RecipientName ::= ORAddressAndOrDirectoryName
 
 OriginatorReportRequest ::= BIT STRING {report(3), non-delivery-report(4)
-                                                   
+
 -- at most one bit shall be 'one':
 -- report bit 'one' requests a 'report';
 -- non-delivery-report bit 'one' requests a 'non-delivery-report';
@@ -1104,8 +1104,8 @@ MessageDeliveryIdentifier ::= MTSIdentifier
 MessageDeliveryTime ::= Time
 
 DeliveryFlags ::= BIT STRING {
-  implicit-conversion-prohibited(1) -- implicit-conversion-prohibited 'one', 
-  
+  implicit-conversion-prohibited(1) -- implicit-conversion-prohibited 'one',
+
   -- implicit-conversion-allowed 'zero' --}(SIZE (0..ub-bit-options))
 
 OtherRecipientNames ::= SEQUENCE SIZE (1..ub-recipients) OF OtherRecipientName
@@ -1207,7 +1207,7 @@ ExtensionType ::= CHOICE {
 
 Criticality ::= BIT STRING {for-submission(0), for-transfer(1), for-delivery(2)
 }(SIZE (0..ub-bit-options)) -- critical 'one', non-critical 'zero'
- 
+
 
 ExtensionField{EXTENSION:ChosenFrom} ::= SEQUENCE {
   type         EXTENSION.&id({ChosenFrom}),
@@ -1239,8 +1239,8 @@ originator-requested-alternate-recipient EXTENSION ::= {
 
 OriginatorRequestedAlternateRecipient ::= ORAddressAndOrDirectoryName
 
--- OriginatorRequestedAlternateRecipient as defined here differs from the field of the same name 
--- defined in Figure 4, since on submission the OR-address need not be present, but on 
+-- OriginatorRequestedAlternateRecipient as defined here differs from the field of the same name
+-- defined in Figure 4, since on submission the OR-address need not be present, but on
 -- transfer the OR-address must be present.
 dl-expansion-prohibited EXTENSION ::= {
   DLExpansionProhibited
@@ -1318,7 +1318,7 @@ PhysicalDeliveryModes ::= BIT STRING {
   counter-collection(3), counter-collection-with-telephone-advice(4),
   counter-collection-with-telex-advice(5),
   counter-collection-with-teletex-advice(6), bureau-fax-delivery(7)
-                                             
+
 -- bits 0 to 6 are mutually exclusive
 -- bit 7 can be set independently of any of bits 0 to 6 --}
 (SIZE (0..ub-bit-options))
@@ -1675,7 +1675,7 @@ certificate-selectors-override EXTENSION ::= {
 -- Some standard-extensions are defined elsewhere:
 --	36 (forwarding-request) in ITU-T Rec. X.413 | ISO/IEC 10021-5;
 --	37 (trace-information), and 38 (internal-trace-information) in Figure 4;
---	41 (blind-copy-recipients), 43 (body-part-encryption-token), and 44 (forwarded-content-token) in 
+--	41 (blind-copy-recipients), 43 (body-part-encryption-token), and 44 (forwarded-content-token) in
 --		ITU-T Rec. X.420 | ISO/IEC 10021-7
 --	Common Parameter Types
 Content ::=
@@ -1739,7 +1739,7 @@ BuiltInStandardAttributes ::= SEQUENCE {
   personal-name               [5]  PersonalName OPTIONAL,
   -- see also teletex-personal-name
   organizational-unit-names   [6]  OrganizationalUnitNames OPTIONAL
-  -- see also teletex-organizational-unit-names 
+  -- see also teletex-organizational-unit-names
 }
 
 CountryName ::= [APPLICATION 1]  CHOICE {
@@ -1811,7 +1811,7 @@ ExtensionAttribute ::= SEQUENCE {
 
 EXTENSION-ATTRIBUTE ::= CLASS {
   &id    INTEGER(0..ub-extension-attributes) UNIQUE,
-  &Type  
+  &Type
 }WITH SYNTAX {&Type
               IDENTIFIED BY &id
 }
@@ -2027,14 +2027,14 @@ physical-delivery-organization-name EXTENSION-ATTRIBUTE ::= {
 
 PhysicalDeliveryOrganizationName ::= PDSParameter
 
-universal-physical-delivery-organization-name EXTENSION-ATTRIBUTE ::= 
+universal-physical-delivery-organization-name EXTENSION-ATTRIBUTE ::=
 {UniversalPhysicalDeliveryOrganizationName
  IDENTIFIED BY  33
 }
 
 UniversalPhysicalDeliveryOrganizationName ::= UniversalPDSParameter
 
-extension-physical-delivery-address-components EXTENSION-ATTRIBUTE ::= 
+extension-physical-delivery-address-components EXTENSION-ATTRIBUTE ::=
 {ExtensionPhysicalDeliveryAddressComponents
  IDENTIFIED BY  15
 }
@@ -2234,7 +2234,7 @@ G3FacsimileNonBasicParameters ::= BIT STRING {
   width-middle-864-of-1728(37), -- It is recommended that implementations
   width-middle-1216-of-1728(38), -- should not encode more than 32 bits unless
   resolution-type(44), -- higher numbered bits are non-zero.
-  resolution-400x400(45), resolution-300x300(46), resolution-8x15(47), 
+  resolution-400x400(45), resolution-300x300(46), resolution-8x15(47),
   edi(49), dtm(50), bft(51), mixed-mode(58), character-mode(60),
   twelve-bits(65), preferred-huffmann(66), full-colour(67), jpeg(68),
   processable-mode-26(71)}
@@ -2289,7 +2289,7 @@ TokenData ::= SEQUENCE {
 }
 
 TOKEN-DATA ::= CLASS {&id    INTEGER UNIQUE,
-                      &Type  
+                      &Type
 }WITH SYNTAX {&Type
               IDENTIFIED BY &id
 }

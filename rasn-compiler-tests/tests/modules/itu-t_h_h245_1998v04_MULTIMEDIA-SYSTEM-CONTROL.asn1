@@ -1321,7 +1321,7 @@ EncryptionSync ::=
   {
   nonStandard  NonStandardParameter OPTIONAL,
   synchFlag    INTEGER(0..255), -- may need to be larger for H.324, etc
-  
+
   -- shall be the Dynamic Payload# for H.323
   h235Key      OCTET STRING(SIZE (1..65535)), -- H.235 encoded value
   escrowentry  SEQUENCE SIZE (1..256) OF EscrowData OPTIONAL,
@@ -1393,7 +1393,7 @@ H2250LogicalChannelAckParameters ::= SEQUENCE {
   mediaChannel           TransportAddress OPTIONAL,
   mediaControlChannel    TransportAddress OPTIONAL, -- forward RTCP channel
   dynamicRTPPayloadType  INTEGER(96..127) OPTIONAL, -- used only by the master
-  
+
   -- or MC
   ...,
   flowControlToZero      BOOLEAN,
@@ -1899,7 +1899,7 @@ CommunicationModeTableEntry ::= SEQUENCE {
   sessionID                       INTEGER(1..255),
   associatedSessionID             INTEGER(1..255) OPTIONAL,
   terminalLabel                   TerminalLabel OPTIONAL, -- if not present,
-  
+
   -- it refers to all participants
   -- in the conference
   sessionDescription              BMPString(SIZE (1..128)),
@@ -1930,7 +1930,7 @@ ConferenceRequest ::= CHOICE {
   requestTerminalID           TerminalLabel, -- same as TCP (term->MC)
   enterH243Password           NULL, -- same as H.230 TCS1(MC->term)
   enterH243TerminalID         NULL, -- same as H.230 TCS2/TCI
-  
+
   -- (MC->term)
   enterH243ConferenceID       NULL, -- same as H.230 TCS3 (MC->term)
   ...,
@@ -1973,10 +1973,10 @@ TerminalNumber ::= INTEGER(0..192)
 ConferenceResponse ::= CHOICE {
   mCTerminalIDResponse
     SEQUENCE-- response to TCP(same as TIP)-- {-- sent by MC only--terminalLabel
-                                                                   
+
                                                                     TerminalLabel,
                                                                    terminalID
-                                                                   
+
                                                                     TerminalID,
                                                                    ...
   },
@@ -2032,7 +2032,7 @@ ConferenceResponse ::= CHOICE {
 }
 
 TerminalID ::= OCTET STRING(SIZE (1..128)) -- as per H.230
-                           
+
 
 ConferenceID ::= OCTET STRING(SIZE (1..32))
 
@@ -2400,7 +2400,7 @@ ConferenceIndication ::= CHOICE {
   requestForFloor              NULL, -- same as H.230 TIF
   ...,
   withdrawChairToken           NULL, -- same as H.230 CCR
-  
+
   -- MC-> chair
   floorRequested               TerminalLabel
 } -- same as H.230 TIF
@@ -2472,7 +2472,7 @@ H2250MaximumSkewIndication ::= SEQUENCE {
 -- ===================================================================================
 MCLocationIndication ::= SEQUENCE {
   signalAddress  TransportAddress, -- this is the H.323 Call Signalling
-  
+
   -- address of the entity which
   -- contains the MC
   ...
@@ -2485,7 +2485,7 @@ VendorIdentification ::= SEQUENCE {
   vendor         NonStandardIdentifier,
   productNumber  OCTET STRING(SIZE (1..256)) OPTIONAL, -- per vendor
   versionNumber  OCTET STRING(SIZE (1..256)) OPTIONAL, -- per
-  
+
   -- productNumber
   ...
 }

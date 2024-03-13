@@ -14,7 +14,7 @@ DirectoryShadowAbstractService {joint-iso-itu-t ds(5) module(1)
   directoryShadowAbstractService(15) 7} DEFINITIONS IMPLICIT TAGS ::=
 BEGIN
 
--- EXPORTS All 
+-- EXPORTS All
 -- The types and values defined in this module are exported for use in the other ASN.1
 -- modules contained within the Directory Specifications, and for the use of other
 -- applications which will use them to access directory services. Other applications
@@ -52,10 +52,10 @@ IMPORTS
     id-opcode-requestShadowUpdate, id-opcode-updateShadow
     FROM CommonProtocolSpecification commonProtocolSpecification;
 
--- bind operation 
+-- bind operation
 dSAShadowBind OPERATION ::= dSABind
 
--- shadow operational binding 
+-- shadow operational binding
 shadowOperationalBinding OPERATIONAL-BINDING ::= {
   AGREEMENT             ShadowingAgreementInfo
   APPLICATION CONTEXTS
@@ -77,7 +77,7 @@ shadowOperationalBinding OPERATIONAL-BINDING ::= {
   ID                    id-op-binding-shadow
 }
 
--- types 
+-- types
 ModificationParameter ::= SEQUENCE {
   secondaryShadows  SET OF SupplierAndConsumers,
   ...
@@ -148,8 +148,8 @@ ConsumerUpdateMode ::= SchedulingParameters
 
 SchedulingParameters ::= SEQUENCE {
   periodic    PeriodicStrategy OPTIONAL, -- shall be present if othertimes
-  
-  --                                        is set to FALSE 
+
+  --                                        is set to FALSE
   othertimes  BOOLEAN DEFAULT FALSE,
   ...
 }
@@ -164,7 +164,7 @@ PeriodicStrategy ::= SEQUENCE {
 Time ::= GeneralizedTime
 
 -- as per 46.3 b) and c) of Rec. ITU-T X.680 | ISO/IEC 8824-1
--- shadow operations, arguments, and results 
+-- shadow operations, arguments, and results
 All-operations-consumer-initiated OPERATION ::=
   {requestShadowUpdate | updateShadow}
 
@@ -343,7 +343,7 @@ SubordinateChanges ::= SEQUENCE {
   ...
 }
 
--- errors and parameters 
+-- errors and parameters
 shadowError ERROR ::= {
   PARAMETER OPTIONALLY-PROTECTED-SEQ  {ShadowErrorData}
   CODE                                id-errcode-shadowError

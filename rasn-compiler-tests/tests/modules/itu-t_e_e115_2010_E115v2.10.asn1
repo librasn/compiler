@@ -56,7 +56,7 @@ CommAddressService ::= SET {
   eml                       [ATTRIBUTE][TAG: 10] IMPLICIT BOOLEAN DEFAULT FALSE,
   sms                       [ATTRIBUTE][TAG: 11] IMPLICIT BOOLEAN DEFAULT FALSE,
   mms                       [ATTRIBUTE][TAG: 12] IMPLICIT BOOLEAN DEFAULT FALSE,
-  emg                       [ATTRIBUTE][TAG: 13] IMPLICIT BOOLEAN DEFAULT FALSE } 
+  emg                       [ATTRIBUTE][TAG: 13] IMPLICIT BOOLEAN DEFAULT FALSE }
 
 CommAddressServiceReq ::= SET {
   fax                       [ATTRIBUTE][TAG: 10] IMPLICIT BOOLEAN,
@@ -95,7 +95,7 @@ PhoneService ::= SET {
   data                      [ATTRIBUTE][TAG: 7]  IMPLICIT BOOLEAN DEFAULT FALSE,
   sms                       [ATTRIBUTE][TAG: 8]  IMPLICIT BOOLEAN DEFAULT FALSE,
   mms                       [ATTRIBUTE][TAG: 9]  IMPLICIT BOOLEAN DEFAULT FALSE,
-  emg                       [ATTRIBUTE][TAG: 10] IMPLICIT BOOLEAN DEFAULT FALSE } 
+  emg                       [ATTRIBUTE][TAG: 10] IMPLICIT BOOLEAN DEFAULT FALSE }
 
 InquiryPhoneChar ::= SET {
   ftn                       [ATTRIBUTE][TAG: 0]  IMPLICIT BOOLEAN DEFAULT FALSE,
@@ -178,7 +178,7 @@ InquiryData ::= [ TAG: APPLICATION 1 ] IMPLICIT SET {
   geoExpansion              [ATTRIBUTE][TAG: 1]  IMPLICIT
                               E115NumericString (SIZE(1..3)) OPTIONAL,
   maxSelectionLevel         [ATTRIBUTE][TAG: 2] IMPLICIT
-                              E115NumericString (SIZE(1..3)) DEFAULT "99", 
+                              E115NumericString (SIZE(1..3)) DEFAULT "99",
   subscriberName            [TAG: 10]  IMPLICIT E115StringUb256 OPTIONAL,
   forename                  [TAG: 11]  IMPLICIT E115StringUb256 OPTIONAL,
   countryCode               [TAG: 12]  IMPLICIT CountryCode     OPTIONAL,
@@ -225,10 +225,10 @@ ReplyHeader ::= [TAG: APPLICATION 3] IMPLICIT SET {
   totalAvailableListings    [ATTRIBUTE][TAG: 4]  IMPLICIT E115String (SIZE(1..10))
                               OPTIONAL,
   directory                 [ATTRIBUTE][TAG: 5]  IMPLICIT E115StringUb256      OPTIONAL,
-  version                   [ATTRIBUTE][TAG: 6]  IMPLICIT Version              OPTIONAL, 
+  version                   [ATTRIBUTE][TAG: 6]  IMPLICIT Version              OPTIONAL,
   message                   [TAG: 10]  IMPLICIT E115StringUb256                OPTIONAL,
   replyCoordinateType       [TAG: 11]  IMPLICIT SET {
-                              COMPONENTS OF CoordinateTypeDescription }        OPTIONAL,  
+                              COMPONENTS OF CoordinateTypeDescription }        OPTIONAL,
   searchCenter              [TAG: 12] IMPLICIT SET {
                               COMPONENTS OF Coordinate }                       OPTIONAL }
 
@@ -245,12 +245,12 @@ ProvinceList ::= SEQUENCE OF Province
 Subscriber ::= SET {
   indentLevel               [ATTRIBUTE][TAG: 0] IMPLICIT
                               E115NumericString (SIZE(1..3))   DEFAULT "0",
-  priority                  [ATTRIBUTE][TAG: 1]  IMPLICIT 
-                              E115NumericString (SIZE(1..2))   OPTIONAL, 
+  priority                  [ATTRIBUTE][TAG: 1]  IMPLICIT
+                              E115NumericString (SIZE(1..2))   OPTIONAL,
   commAddresses             [TAG: 10] IMPLICIT CommAddresses   OPTIONAL,
   subscriberName            [TAG: 11] IMPLICIT E115StringUb256 OPTIONAL,
   forename                  [TAG: 12] IMPLICIT E115StringUb256 OPTIONAL,
-  countryCode               [TAG: 13] IMPLICIT CountryCode     OPTIONAL, 
+  countryCode               [TAG: 13] IMPLICIT CountryCode     OPTIONAL,
   countyStateOrProvince     [TAG: 14] IMPLICIT E115StringUb256 OPTIONAL,
   localityName              [TAG: 15] IMPLICIT E115StringUb256 OPTIONAL,
   postalCode                [TAG: 16] IMPLICIT E115StringUb256 OPTIONAL,
@@ -292,7 +292,7 @@ CommAddresses ::= SEQUENCE (SIZE(1..MAX)) OF CHOICE {
     base                      [UNTAGGED]   E115StringUb256 } }
 
 Locality ::= SET {
-  countryCode               [TAG: 10] IMPLICIT CountryCode             OPTIONAL, 
+  countryCode               [TAG: 10] IMPLICIT CountryCode             OPTIONAL,
   countyStateOrProvince     [TAG: 11] IMPLICIT E115StringUb256         OPTIONAL,
   localityName              [TAG: 12] IMPLICIT E115StringUb256,
   postalCode                [TAG: 13] IMPLICIT E115StringUb256         OPTIONAL,
@@ -303,7 +303,7 @@ Locality ::= SET {
                               COMPONENTS OF Coordinate }               OPTIONAL }
 
 BusinessCategory ::= SET {
-  countryCode               [TAG: 10] IMPLICIT CountryCode        OPTIONAL, 
+  countryCode               [TAG: 10] IMPLICIT CountryCode        OPTIONAL,
   countyStateOrProvince     [TAG: 11] IMPLICIT E115StringUb256    OPTIONAL,
   localityName              [TAG: 12] IMPLICIT E115StringUb256    OPTIONAL,
   postalCode                [TAG: 13] IMPLICIT E115StringUb256    OPTIONAL,
@@ -312,7 +312,7 @@ BusinessCategory ::= SET {
   count                     [TAG: 16] IMPLICIT E115NumericString  OPTIONAL }
 
 Street ::= SET {
-  countryCode               [TAG: 10] IMPLICIT CountryCode     OPTIONAL, 
+  countryCode               [TAG: 10] IMPLICIT CountryCode     OPTIONAL,
   countyStateOrProvince     [TAG: 11] IMPLICIT E115StringUb256 OPTIONAL,
   localityName              [TAG: 12] IMPLICIT E115StringUb256 OPTIONAL,
   postalCode                [TAG: 13] IMPLICIT E115StringUb256 OPTIONAL,
@@ -322,7 +322,7 @@ Street ::= SET {
                               COMPONENTS OF Coordinate }       OPTIONAL }
 
 Province ::= SET {
-  countryCode               [TAG: 13] IMPLICIT CountryCode     OPTIONAL, 
+  countryCode               [TAG: 13] IMPLICIT CountryCode     OPTIONAL,
   countyStateOrProvince     [TAG: 14] IMPLICIT E115StringUb256,
   postalCode                [TAG: 16] IMPLICIT E115StringUb256 OPTIONAL,
   supplementaryData         [TAG: 22] IMPLICIT E115StringUb256 OPTIONAL,
@@ -364,7 +364,7 @@ DirectoryReplyData ::= [TAG: APPLICATION 12] IMPLICIT SEQUENCE OF
       blocked      (3) } OPTIONAL,
     functionalityActiveSince [ATTRIBUTE][TAG: 2]  IMPLICIT DateAndTime OPTIONAL,
     base                               [UNTAGGED] SEQUENCE OF
-      countryCode                                   CountryCode }  
+      countryCode                                   CountryCode }
 
 FunctionalityInquiry ::= SEQUENCE {
   functionalityInquiryHeader [TAG: APPLICATION 13] IMPLICIT SET {
@@ -387,8 +387,8 @@ FunctionalityReplyHeader ::= [TAG: APPLICATION 15] IMPLICIT SET {
   messageCode               [ATTRIBUTE][TAG: 3]  IMPLICIT E115String (SIZE(2)),
   directory                 [ATTRIBUTE][TAG: 4]  IMPLICIT E115StringUb256      OPTIONAL,
   version                   [ATTRIBUTE][TAG: 5]  IMPLICIT Version              OPTIONAL }
-  
-FunctionalityReplyData ::= SEQUENCE OF 
+
+FunctionalityReplyData ::= SEQUENCE OF
   functionality SEQUENCE {
     directory [ATTRIBUTE][TAG: 0]  IMPLICIT E115StringUb256      OPTIONAL,
     version   [ATTRIBUTE][TAG: 1]  IMPLICIT Version      OPTIONAL,
@@ -409,8 +409,8 @@ FunctionalityReplyData ::= SEQUENCE OF
           wordRotation    [ATTRIBUTE][TAG: 0]  IMPLICIT BOOLEAN,
           phonetic        [ATTRIBUTE][TAG: 1]  IMPLICIT BOOLEAN,
           alias           [ATTRIBUTE][TAG: 2]  IMPLICIT BOOLEAN,
-          base          [UNTAGGED] SEQUENCE (SIZE(1..6)) OF    
-            category        SET { 
+          base          [UNTAGGED] SEQUENCE (SIZE(1..6)) OF
+            category        SET {
               business             [TAG: 0]  IMPLICIT BOOLEAN,
               residential          [TAG: 1]  IMPLICIT BOOLEAN,
               government           [TAG: 2]  IMPLICIT BOOLEAN } } OPTIONAL,
@@ -419,8 +419,8 @@ FunctionalityReplyData ::= SEQUENCE OF
           wordRotation    [ATTRIBUTE][TAG: 0]  IMPLICIT BOOLEAN,
           phonetic        [ATTRIBUTE][TAG: 1]  IMPLICIT BOOLEAN,
           alias           [ATTRIBUTE][TAG: 2]  IMPLICIT BOOLEAN,
-          base            [UNTAGGED] SEQUENCE (SIZE(1..6)) OF    
-            category        SET { 
+          base            [UNTAGGED] SEQUENCE (SIZE(1..6)) OF
+            category        SET {
               business             [TAG: 0]  IMPLICIT BOOLEAN,
               residential          [TAG: 1]  IMPLICIT BOOLEAN,
               government           [TAG: 2]  IMPLICIT BOOLEAN } } OPTIONAL,
@@ -428,7 +428,7 @@ FunctionalityReplyData ::= SEQUENCE OF
         inquiryCharacterSubset     [ATTRIBUTE][TAG: 0] IMPLICIT CharacterSubset,
         replyCharacterSubset       [ATTRIBUTE][TAG: 1] IMPLICIT CharacterSubset }
                                      OPTIONAL,
-      supportedCharacterSubsetCombinations [TAG: 14] IMPLICIT SEQUENCE (SIZE(1..MAX)) OF 
+      supportedCharacterSubsetCombinations [TAG: 14] IMPLICIT SEQUENCE (SIZE(1..MAX)) OF
         supportedCharacterSubsetCombination  SEQUENCE {
           inquiryCharacterSubset     [ATTRIBUTE][TAG: 0] IMPLICIT CharacterSubset,
           replyCharacterSubset       [ATTRIBUTE][TAG: 1] IMPLICIT CharacterSubset }
@@ -437,33 +437,33 @@ FunctionalityReplyData ::= SEQUENCE OF
         inquiryLanguage                   [ATTRIBUTE][TAG: 0]  E115String (SIZE(3)),
         replyLanguage                     [ATTRIBUTE][TAG: 1]  E115String (SIZE(3))
                                             OPTIONAL},
-      supportedLanguageCombinations  [TAG: 16] IMPLICIT SEQUENCE (SIZE(1..MAX)) OF 
+      supportedLanguageCombinations  [TAG: 16] IMPLICIT SEQUENCE (SIZE(1..MAX)) OF
         supportedLanguageCombination  SEQUENCE {
           inquiryLanguage                   [ATTRIBUTE][TAG: 0]  E115String (SIZE(3)),
           replyLanguage                     [ATTRIBUTE][TAG: 1]  E115String (SIZE(3)) }
                                               OPTIONAL,
       defaultCoordinateTypeCombination [TAG: 17] IMPLICIT SEQUENCE {
         inquiryCoordinateType    [TAG: 0]  IMPLICIT SET {
-          geodaticDatum          [ATTRIBUTE] GeodeticDatum,        
+          geodaticDatum          [ATTRIBUTE] GeodeticDatum,
           geographicalType       [ATTRIBUTE] GeographicalType } OPTIONAL,
         replyCoordinateType      [TAG: 1]  IMPLICIT SET {
-          geodaticDatum          [ATTRIBUTE] GeodeticDatum,        
+          geodaticDatum          [ATTRIBUTE] GeodeticDatum,
           geographicalType       [ATTRIBUTE] GeographicalType } OPTIONAL } OPTIONAL,
       supportedCoordinateTypeCombinations [TAG: 18] IMPLICIT SEQUENCE (SIZE(1..MAX)) OF
         supportedCoordinateTypeCombination  SET {
           inquiryCoordinateType    [TAG: 0]  IMPLICIT SET {
-            geodaticDatum          [ATTRIBUTE] GeodeticDatum,        
+            geodaticDatum          [ATTRIBUTE] GeodeticDatum,
             geographicalType       [ATTRIBUTE] GeographicalType } OPTIONAL,
           replyCoordinateType      [TAG: 1]  IMPLICIT SET {
-            geodaticDatum          [ATTRIBUTE] GeodeticDatum,        
+            geodaticDatum          [ATTRIBUTE] GeodeticDatum,
             geographicalType       [ATTRIBUTE] GeographicalType } OPTIONAL } OPTIONAL,
       supportedCombinations                [TAG: 19] IMPLICIT SEQUENCE (SIZE(1..MAX)) OF
         supportedCombination          SupportedCombination OPTIONAL
     }
-  }   
+  }
 
 SupportedCombination ::= SET {
-  applicableCategoryCombinations   [TAG: 0] IMPLICIT SEQUENCE (SIZE(1..MAX)) OF 
+  applicableCategoryCombinations   [TAG: 0] IMPLICIT SEQUENCE (SIZE(1..MAX)) OF
     applicableCategoryCombination   SET {
       business           [ATTRIBUTE][TAG: 0]  BOOLEAN,
       residential        [ATTRIBUTE][TAG: 1]  BOOLEAN,
@@ -532,14 +532,14 @@ SupportedCombination ::= SET {
   matchingRuleField             [TAG: 28] IMPLICIT SET {
     mandatory           [ATTRIBUTE][TAG: 0] IMPLICIT BOOLEAN } OPTIONAL,
   selectionField                [TAG: 29] IMPLICIT SET { } OPTIONAL }
-      
+
 
 ENCODING-CONTROL XER
   GLOBAL-DEFAULTS MODIFIED-ENCODINGS
-  TEXT CharacterSubset:ALL, GeographicalType:ALL, 
+  TEXT CharacterSubset:ALL, GeographicalType:ALL,
     InquiryHeader.requestedReplyType:ALL,
-    CommAddresses.*.phone.restriction:ALL, 
-    CommAddresses.*.email.restriction:ALL, 
+    CommAddresses.*.phone.restriction:ALL,
+    CommAddresses.*.email.restriction:ALL,
     CommAddresses.*.uri.restriction:ALL,
     DirectoryReplyData.directory.availability:ALL
 

@@ -14,7 +14,7 @@ OSIProtocolSpecification {joint-iso-itu-t ds(5) module(1)
   oSIProtocolSpecification(36) 7} DEFINITIONS ::=
 BEGIN
 
--- EXPORTS All 
+-- EXPORTS All
 -- The types and values defined in this module are exported for use in the other ASN.1
 -- modules contained within the Directory Specifications, and for the use of other
 -- applications which will use them to access Directory services. Other applications may
@@ -37,7 +37,7 @@ IMPORTS
   APPLICATION-CONTEXT
     FROM DirectoryOSIProtocols directoryOSIProtocols;
 
--- OSI protocol 
+-- OSI protocol
 OSI-PDU{APPLICATION-CONTEXT:protocol} ::=
   TYPE-IDENTIFIER.&Type
     (OsiBind{{protocol}} | OsiBindResult{{protocol}} | OsiBindError{{protocol}}
@@ -58,19 +58,19 @@ OsiBind{APPLICATION-CONTEXT:Protocols} ::= SET {
                              [4] IMPLICIT Context-list,
                            user-data
                              CHOICE {fully-encoded-data
-                                       [APPLICATION 1] IMPLICIT SEQUENCE 
+                                       [APPLICATION 1] IMPLICIT SEQUENCE
                                                                   SIZE (1) OF
                                                                   SEQUENCE {transfer-syntax-name
-                                                                    
+
                                                                     Transfer-syntax-name
                                                                     OPTIONAL,
                                                                     presentation-context-identifier
-                                                                    
+
                                                                     Presentation-context-identifier,
                                                                     presentation-data-values
-                                                                    
+
                                                                     CHOICE {single-ASN1-type
-                                                                    
+
                                                                     [0]  ABSTRACT-SYNTAX.
                                                                     &Type
                                                                     (AARQ-apdu
@@ -155,19 +155,19 @@ OsiBindResult{APPLICATION-CONTEXT:Protocols} ::= SET {
                                             },
                            user-data
                              CHOICE {fully-encoded-data
-                                       [APPLICATION 1] IMPLICIT SEQUENCE 
+                                       [APPLICATION 1] IMPLICIT SEQUENCE
                                                                   SIZE (1) OF
                                                                   SEQUENCE {transfer-syntax-name
-                                                                    
+
                                                                     Transfer-syntax-name
                                                                     OPTIONAL,
                                                                     presentation-context-identifier
-                                                                    
+
                                                                     Presentation-context-identifier,
                                                                     presentation-data-values
-                                                                    
+
                                                                     CHOICE {single-ASN1-type
-                                                                    
+
                                                                     [0]  ABSTRACT-SYNTAX.
                                                                     &Type
                                                                     (AARE-apdu
@@ -246,16 +246,16 @@ OsiBindError{APPLICATION-CONTEXT:Protocols} ::= CHOICE {
                 CHOICE {fully-encoded-data
                           [APPLICATION 1] IMPLICIT SEQUENCE SIZE (1) OF
                                                      SEQUENCE {transfer-syntax-name
-                                                               
+
                                                                  Transfer-syntax-name
                                                                    OPTIONAL,
                                                                presentation-context-identifier
-                                                               
+
                                                                  Presentation-context-identifier,
                                                                presentation-data-values
-                                                               
+
                                                                  CHOICE {single-ASN1-type
-                                                                    
+
                                                                     [0]  ABSTRACT-SYNTAX.
                                                                     &Type
                                                                     (AAREerr-apdu
@@ -430,16 +430,16 @@ ARU-PPDU ::= CHOICE {
                              [0] IMPLICIT Presentation-context-identifier-list,
                            user-data
                              CHOICE {fully-encoded-data
-                                       [APPLICATION 1] IMPLICIT SEQUENCE 
+                                       [APPLICATION 1] IMPLICIT SEQUENCE
                                                                   SIZE (1..MAX)
                                                                   OF
                                                                   SEQUENCE {presentation-context-identifier
-                                                                    
+
                                                                     Presentation-context-identifier,
                                                                     presentation-data-values
-                                                                    
+
                                                                     CHOICE {single-ASN1-type
-                                                                    
+
                                                                     [0]  ABSTRACT-SYNTAX.
                                                                     &Type
                                                                     (ABRT-apdu)

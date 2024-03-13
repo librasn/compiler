@@ -188,7 +188,9 @@ impl ASN1Type {
                 .iter()
                 .map(|o| o.ty.has_choice_selection_type())
                 .any(|b| b),
-            ASN1Type::SequenceOf(s) | ASN1Type::SetOf(s) => s.element_type.has_choice_selection_type(),
+            ASN1Type::SequenceOf(s) | ASN1Type::SetOf(s) => {
+                s.element_type.has_choice_selection_type()
+            }
             _ => false,
         }
     }
@@ -392,14 +394,8 @@ impl ASN1Type {
 
     pub fn references_class_by_name(&self) -> bool {
         match self {
-            ASN1Type::Choice(c) => c
-                .options
-                .iter()
-                .any(|o| o.ty.references_class_by_name()),
-            ASN1Type::Sequence(s) => s
-                .members
-                .iter()
-                .any(|m| m.ty.references_class_by_name()),
+            ASN1Type::Choice(c) => c.options.iter().any(|o| o.ty.references_class_by_name()),
+            ASN1Type::Sequence(s) => s.members.iter().any(|m| m.ty.references_class_by_name()),
             ASN1Type::SequenceOf(so) => so.element_type.references_class_by_name(),
             ASN1Type::InformationObjectFieldReference(io_ref) => {
                 matches!(
@@ -592,10 +588,20 @@ impl ASN1Value {
                 }
                 Ok(())
             }
-            (ASN1Type::SetOf(s), ASN1Value::SequenceOrSetOf(val))
-            | (ASN1Type::SequenceOf(s), ASN1Value::SequenceOrSetOf(val)) => val
-                .iter_mut()
-                .try_for_each(|v| v.link_with_type(tlds, &s.element_type)),
+            (ASN1Type::SetOf(s), ASN1Value::SequenceOrSet(val))
+            | (ASN1Type::SequenceOf(s), ASN1Value::SequenceOrSet(val)) => {
+                *self = Self::link_array_like(val, s, tlds)?;
+                Ok(())
+            }
+            (ASN1Type::SetOf(s), ASN1Value::LinkedNestedValue { value, .. })
+            | (ASN1Type::SequenceOf(s), ASN1Value::LinkedNestedValue { value, .. })
+                if matches![**value, ASN1Value::SequenceOrSet(_)] =>
+            {
+                if let ASN1Value::SequenceOrSet(val) = &mut **value {
+                    *value = Box::new(Self::link_array_like(val, s, tlds)?);
+                }
+                Ok(())
+            }
             (ASN1Type::Integer(i), ASN1Value::Integer(val)) => {
                 *self = ASN1Value::LinkedIntValue {
                     integer_type: i.int_type(),
@@ -769,17 +775,29 @@ impl ASN1Value {
         }
     }
 
+    fn link_array_like(
+        val: &mut [(Option<String>, Box<ASN1Value>)],
+        s: &SequenceOrSetOf,
+        tlds: &BTreeMap<String, ToplevelDefinition>,
+    ) -> Result<ASN1Value, GrammarError> {
+        val.iter_mut()
+            .try_for_each(|v| v.1.link_with_type(tlds, &*s.element_type));
+        Ok(ASN1Value::LinkedArrayLikeValue(
+            val.iter().map(|v| v.1.clone()).collect(),
+        ))
+    }
+
     fn link_struct_like(
-        val: &mut [(String, Box<ASN1Value>)],
+        val: &mut [(Option<String>, Box<ASN1Value>)],
         s: &SequenceOrSet,
         tlds: &BTreeMap<String, ToplevelDefinition>,
     ) -> Result<ASN1Value, GrammarError> {
         val.iter_mut().try_for_each(|v| {
-            if let Some(member) = s.members.iter().find(|m| m.name == v.0) {
+            if let Some(member) = s.members.iter().find(|m| Some(&m.name) == v.0.as_ref()) {
                 v.1.link_with_type(tlds, &member.ty)
             } else {
                 Err(GrammarError {
-                    details: format!("Failed to link value with '{}'", v.0),
+                    details: format!("Failed to link value with '{:?}'", v.0),
                     kind: GrammarErrorType::LinkerError,
                 })
             }
@@ -790,7 +808,7 @@ impl ASN1Value {
             .map(|member| {
                 val.iter()
                     .find_map(|(name, value)| {
-                        (name == &member.name)
+                        (name.as_ref() == Some(&member.name))
                             .then_some(StructLikeFieldValue::Explicit(value.clone()))
                     })
                     .or(member

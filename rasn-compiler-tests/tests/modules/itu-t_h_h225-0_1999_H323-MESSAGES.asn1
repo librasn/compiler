@@ -149,13 +149,13 @@ ReleaseCompleteReason ::= CHOICE {
   facilityCallDeflection       NULL, -- call was deflected using a Facility message
   securityDenied               NULL, -- incompatible security settings
   calledPartyNotRegistered     NULL, -- used by gatekeeper when endpoint has
-  
+
   -- preGrantedARQ to bypass ARQ/ACF
   callerNotRegistered          NULL, -- used by gatekeeper when endpoint has
-  
+
   -- preGrantedARQ to bypass ARQ/ACF
   newConnectionNeeded          NULL, -- indicates that the Setup was not accepted on this
-  
+
   -- connection, but that the Setup may be accepted on
   -- a new connection
   nonStandardReason            NonStandardParameter,
@@ -214,7 +214,7 @@ Setup-UUIE ::= SEQUENCE {
 ScnConnectionType ::= CHOICE {
   unknown     NULL, -- should be seleceted when connection type is unknown
   bChannel    NULL, -- each individual connection on the SCN is 64kbps.
-  
+
   -- Note that where SCN delivers 56kbps usable data, the
   -- actual bandwidth allocated on SCN is still 64kbps.
   hybrid2x64  NULL, -- each connection is a 128kbps hybrid call
@@ -222,7 +222,7 @@ ScnConnectionType ::= CHOICE {
   hybrid1536  NULL, -- each connection is an H11 (1536kbps) hybrid call
   hybrid1920  NULL, -- each connection is an H12 (1920kbps) hybrid call
   multirate   NULL, -- bandwidth supplied by SCN using multirate.
-  
+
   -- In this case, the information transfer rate octet in the
   -- bearer capability shall be set to multirate and the rate
   -- multiplier octet shall denote the number of B channels.
@@ -234,7 +234,7 @@ ScnConnectionAggregation ::= CHOICE {
   none          NULL, -- call produced using a single SCN connection
   h221          NULL, -- use H.221 framing to aggregate the connections
   bonded-mode1  NULL, -- use ISO/IEC 13871 bonding mode 1.
-  
+
   -- Use bonded-mode1 to signal a bonded call if the precise
   -- bonding mode to be used is unknown.
   bonded-mode2  NULL, -- use ISO/IEC 13871 bonding mode 2
@@ -292,7 +292,7 @@ ConferenceList ::= SEQUENCE {
 
 FacilityReason ::= CHOICE {
   routeCallToGatekeeper  NULL, -- call must use gatekeeper model
-  
+
   -- gatekeeper is alternativeAddress
   callForwarded          NULL,
   routeCallToMC          NULL,
@@ -629,7 +629,7 @@ RequestSeqNum ::= INTEGER(1..65535)
 GatekeeperIdentifier ::= BMPString(SIZE (1..128))
 
 BandWidth ::= INTEGER(0..4294967295) -- in 100s of bits
-                     
+
 
 CallReferenceValue ::= INTEGER(0..65535)
 
@@ -640,7 +640,7 @@ ProtocolIdentifier ::= OBJECT IDENTIFIER
 -- shall be set to
 -- {itu-t (0) recommendation (0) h (8) 2250 version (0) 3}
 TimeToLive ::= INTEGER(1..4294967295) --in seconds
-                      
+
 
 CallIdentifier ::= SEQUENCE {guid  GloballyUniqueID,
                              ...
@@ -657,15 +657,15 @@ NonIsoIntegrityMechanism ::=
   CHOICE { -- HMAC mechanism used, no truncation, tagging may be necessary!
   hMAC-MD5           NULL,
   hMAC-iso10118-2-s  EncryptIntAlg, -- according to ISO/IEC 10118-2 using
-  
+
   -- EncryptIntAlg as core block encryption algorithm
   -- (short MAC)
   hMAC-iso10118-2-l  EncryptIntAlg, -- according to ISO/IEC 10118-2 using
-  
+
   -- EncryptIntAlg as core block encryption algorithm
   -- (long MAC)
   hMAC-iso10118-3    OBJECT IDENTIFIER, -- according to ISO/IEC 10118-3 using
-  
+
   -- OID as hash function (OID is SHA-1,
   -- RIPE-MD160,
   -- RIPE-MD128)
@@ -676,7 +676,7 @@ IntegrityMechanism ::= CHOICE { -- for RAS message integrity
   nonStandard  NonStandardParameter,
   digSig       NULL, -- indicates to apply a digital signature
   iso9797      OBJECT IDENTIFIER, -- according to ISO/IEC 9797 using OID as
-  
+
   -- core encryption algorithm (X-CBC MAC)
   nonIsoIM     NonIsoIntegrityMechanism,
   ...
@@ -695,8 +695,8 @@ FastStartToken ::=
        timeStamp  PRESENT,
        dhkey      PRESENT,
        generalID  PRESENT
-     }) -- set to 'alias' 
-    
+     }) -- set to 'alias'
+
 
 EncodedFastStartToken ::= TYPE-IDENTIFIER.&Type(FastStartToken)
 
@@ -704,17 +704,17 @@ CryptoH323Token ::= CHOICE {
   cryptoEPPwdHash
     SEQUENCE {alias      AliasAddress, -- alias of entity generating hash--
               timeStamp  TimeStamp, -- timestamp used in hash--
-              token      HASHED{EncodedPwdCertToken} -- generalID set to 'alias' 
+              token      HASHED{EncodedPwdCertToken} -- generalID set to 'alias'
   },
   cryptoGKPwdHash
     SEQUENCE {gatekeeperId  GatekeeperIdentifier, -- GatekeeperID of GK generating hash--
               timeStamp     TimeStamp, -- timestamp used in hash--
-              token         HASHED{EncodedPwdCertToken} -- generalID set to Gatekeeperid 
+              token         HASHED{EncodedPwdCertToken} -- generalID set to Gatekeeperid
   },
-  cryptoEPPwdEncr    ENCRYPTED{EncodedPwdCertToken}, -- generalID set to Gatekeeperid 
-  cryptoGKPwdEncr    ENCRYPTED{EncodedPwdCertToken}, -- generalID set to Gatekeeperid 
-  cryptoEPCert       SIGNED{EncodedPwdCertToken}, -- generalID set to Gatekeeperid 
-  cryptoGKCert       SIGNED{EncodedPwdCertToken}, -- generalID set to alias 
+  cryptoEPPwdEncr    ENCRYPTED{EncodedPwdCertToken}, -- generalID set to Gatekeeperid
+  cryptoGKPwdEncr    ENCRYPTED{EncodedPwdCertToken}, -- generalID set to Gatekeeperid
+  cryptoEPCert       SIGNED{EncodedPwdCertToken}, -- generalID set to Gatekeeperid
+  cryptoGKCert       SIGNED{EncodedPwdCertToken}, -- generalID set to alias
   cryptoFastStart    SIGNED{EncodedFastStartToken},
   nestedcryptoToken  CryptoToken,
   ...
@@ -967,7 +967,7 @@ UnregRejectReason ::= CHOICE {
   undefinedReason         NULL,
   ...,
   permissionDenied        NULL, -- requesting user not allowed to unregister
-  
+
   -- specified user
   securityDenial          NULL
 }

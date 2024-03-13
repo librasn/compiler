@@ -17,7 +17,7 @@ BEGIN
 -- These protection mappings generate bit-compatible encodings
 -- to the parameterized types in the Directory Authentication
 -- Framework
--- EXPORTS All 
+-- EXPORTS All
 IMPORTS
   notation, gulsSecurityTransformations
     FROM ObjectIdentifiers {joint-iso-itu-t genericULS(20) modules(1)
@@ -26,12 +26,12 @@ IMPORTS
     FROM Notation {joint-iso-itu-t genericULS(20) modules(1) notation(1)}
   dirEncryptedTransformation, dirSignedTransformation,
     dirSignatureTransformation
-    FROM GulsSecurityTransformations {joint-iso-itu-t genericULS(20) 
+    FROM GulsSecurityTransformations {joint-iso-itu-t genericULS(20)
       modules(1) gulsSecurityTransformations(3)};
 
--- ************************************** 
--- Directory encrypted Protection Mapping 
--- ************************************** 
+-- **************************************
+-- Directory encrypted Protection Mapping
+-- **************************************
 -- This protection mapping enables the notation
 -- PROTECTED {BaseType, encrypted}
 -- to replace the notation
@@ -43,9 +43,9 @@ encrypted PROTECTION-MAPPING ::= {
   SECURITY-TRANSFORMATION  {dirEncryptedTransformation}
 }
 
--- *********************************** 
--- Directory signed Protection Mapping 
--- *********************************** 
+-- ***********************************
+-- Directory signed Protection Mapping
+-- ***********************************
 -- This protection mapping enables the notation
 -- PROTECTED {BaseType, signed}
 -- to replace the notation
@@ -58,9 +58,9 @@ signed PROTECTION-MAPPING ::= {
   SECURITY-TRANSFORMATION  {dirSignedTransformation}
 }
 
--- ************************************** 
--- Directory signature Protection Mapping 
--- ************************************** 
+-- **************************************
+-- Directory signature Protection Mapping
+-- **************************************
 -- This protection mapping enables the notation
 -- PROTECTED {BaseType, signature}
 -- to provide a functionally-equivalent replacement of the notation

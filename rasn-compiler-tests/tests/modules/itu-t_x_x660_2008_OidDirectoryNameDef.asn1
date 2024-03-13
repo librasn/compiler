@@ -14,7 +14,7 @@ OidDirectoryNameDef {joint-iso-itu-t registration-procedures(17) module(1)
   oidDirectoryNameDef(1)} DEFINITIONS ::=
 BEGIN
 
--- EXPORTS All 
+-- EXPORTS All
 IMPORTS
   ATTRIBUTE, MATCHING-RULE, OBJECT-CLASS, NAME-FORM, alias
     FROM InformationFramework {joint-iso-itu-t ds(5) module(1)
@@ -23,7 +23,7 @@ IMPORTS
     FROM SelectedAttributeTypes {joint-iso-itu-t ds(5) module(1)
       selectedAttributeTypes(5) 4};
 
--- Attribute types 
+-- Attribute types
 oidC1 ATTRIBUTE ::= {
   WITH SYNTAX             INTEGER
   EQUALITY MATCHING RULE  integerMatch
@@ -42,21 +42,21 @@ oidC ATTRIBUTE ::= {
   ID                      id-oidC
 }
 
--- Object class definition 
+-- Object class definition
 oidRoot OBJECT-CLASS ::= {
   SUBCLASS OF   {alias}
   MUST CONTAIN  {oidC1 | oidC2 | oidC}
   ID            id-oidRoot
 }
 
--- Name form 
+-- Name form
 oidRootNf NAME-FORM ::= {
   NAMES            oidRoot
   WITH ATTRIBUTES  {oidC1 | oidC2 | oidC}
   ID               id-oidRootNf
 }
 
--- Object identifier assignments 
+-- Object identifier assignments
 id OBJECT IDENTIFIER ::=
   {joint-iso-itu-t registration-procedures(17) module(1) directory-defs(2)}
 

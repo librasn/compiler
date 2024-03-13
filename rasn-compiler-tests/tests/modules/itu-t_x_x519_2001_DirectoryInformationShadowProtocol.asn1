@@ -14,9 +14,9 @@ DirectoryInformationShadowProtocol {joint-iso-itu-t ds(5) module(1) disp(16) 4}
 DEFINITIONS ::=
 BEGIN
 
--- EXPORTS All 
--- The types and values defined in this module are exported for use in the other ASN.1 modules contained 
--- within the Directory Specifications, and for the use of other applications which will use them to access 
+-- EXPORTS All
+-- The types and values defined in this module are exported for use in the other ASN.1 modules contained
+-- within the Directory Specifications, and for the use of other applications which will use them to access
 -- Directory services. Other applications may use them for their own purposes, but this will not constrain
 -- extensions and modifications needed to maintain or improve the Directory service.
 IMPORTS
@@ -86,7 +86,7 @@ RTABapdu ::= SET {
   userdataAB          [2]  TYPE-IDENTIFIER.&Type OPTIONAL
 } -- only in normal mode and if abortReason
 
--- is userError 
+-- is userError
 AbortReason ::= INTEGER {
   localSystemProblem(0),
   invalidParameter(1), -- reflectedParameter supplied
@@ -94,11 +94,11 @@ AbortReason ::= INTEGER {
   temporaryProblem(3),
   -- the RTSE cannot accept a session for a period of time
   protocolError(4), -- RTSE level protocol error
-  permanentProblem(5), --provider-abort solely in normal mode 
+  permanentProblem(5), --provider-abort solely in normal mode
   userError(6), -- user-abort solely in normal mode
   transferCompleted(7) -- activity can't be discarded--}
 
--- application contexts 
+-- application contexts
 shadowSupplierInitiatedAC APPLICATION-CONTEXT ::= {
   CONTRACT                  shadowSupplierContract
   ESTABLISHED BY            acse
@@ -155,7 +155,7 @@ reliableShadowConsumerInitiatedAC APPLICATION-CONTEXT ::= {
   APPLICATION CONTEXT NAME  id-ac-reliableShadowConsumerInitiatedAC
 }
 
--- ROS objects 
+-- ROS objects
 initiating-consumer-dsa ROS-OBJECT-CLASS ::= {
   INITIATES  {shadowConsumerContract}
   ID         id-rosObject-initiatingConsumerDSA
@@ -176,7 +176,7 @@ responding-consumer-dsa ROS-OBJECT-CLASS ::= {
   ID        id-rosObject-respondingConsumerDSA
 }
 
--- contracts 
+-- contracts
 shadowConsumerContract CONTRACT ::= {
   CONNECTION             dispConnectionPackage
   INITIATOR CONSUMER OF  {shadowConsumerPackage}
@@ -189,14 +189,14 @@ shadowSupplierContract CONTRACT ::= {
   ID                     id-contract-shadowSupplier
 }
 
--- connection package 
+-- connection package
 dispConnectionPackage CONNECTION-PACKAGE ::= {
   BIND    dSAShadowBind
   UNBIND  dSAShadowUnbind
   ID      id-package-dispConnection
 }
 
--- packages 
+-- packages
 shadowConsumerPackage OPERATION-PACKAGE ::= {
   CONSUMER INVOKES  {requestShadowUpdate}
   SUPPLIER INVOKES  {updateShadow}
@@ -208,7 +208,7 @@ shadowSupplierPackage OPERATION-PACKAGE ::= {
   ID                id-package-shadowSupplier
 }
 
--- abstract syntaxes 
+-- abstract syntaxes
 directoryShadowAbstractSyntax ABSTRACT-SYNTAX ::= {
   DISP-PDUs
   IDENTIFIED BY  id-as-directoryShadowAS
@@ -247,14 +247,14 @@ DISP-Invokable OPERATION ::=
 DISP-Returnable OPERATION ::=
   {requestShadowUpdate | updateShadow | coordinateShadowUpdate}
 
---  remote operation codes 
+--  remote operation codes
 id-opcode-requestShadowUpdate Code ::= local:1
 
 id-opcode-updateShadow Code ::= local:2
 
 id-opcode-coordinateShadowUpdate Code ::= local:3
 
--- remote error codes 
+-- remote error codes
 id-errcode-shadowError Code ::= local:1
 
 END -- DirectoryInformationShadowProtocol

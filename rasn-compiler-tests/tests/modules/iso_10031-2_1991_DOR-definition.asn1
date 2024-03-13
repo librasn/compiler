@@ -13,7 +13,7 @@
 -- Copyright © ISO/IEC 1991. This version of
 -- this ASN.1 module is part of ISO/IEC 10031-2:1991;
 -- see the ISO|IEC text itself for full legal notices.
--- 
+--
 DOR-definition {joint-iso-itu-t dor(4) reference-definition(0)} DEFINITIONS ::=
 BEGIN
 
@@ -65,7 +65,7 @@ AE-Identifier ::= SEQUENCE { -- at least one component shall be present
 Locational-identifier ::= SEQUENCE {
   presentation-address  [0]  PresentationAddress,
   ae-title              [1]  AE-title OPTIONAL,
-  -- as defined in ISO 8650:1988/Cor.1:1990 
+  -- as defined in ISO 8650:1988/Cor.1:1990
   application-contexts  SET OF OBJECT IDENTIFIER
 }
 
@@ -82,7 +82,7 @@ Quality-of-Service ::= SEQUENCE {
 QoS-level ::= CHOICE {
   level-1  [1] IMPLICIT NULL,
   level-2  [2] IMPLICIT GeneralizedTime,
-  -- specifying the produce time 
+  -- specifying the produce time
   level-3
     [3] IMPLICIT SEQUENCE {produce-time   GeneralizedTime,
                            fidelity-time  GeneralizedTime}
@@ -122,21 +122,21 @@ Extend-QoS ::= SEQUENCE {
 Altered-value ::= ENUMERATED {
   value-not-altered(1), value-altered(2), undefined(3)}
 
--- dw: definition of AE-title, as defined in ISO 8650:1988/Cor.1:1990 
+-- dw: definition of AE-title, as defined in ISO 8650:1988/Cor.1:1990
 -- dw: defined in-line here so we don't need to import it, original comments
 -- dw: are as they appear in the 8650:1988 Annex E
 AP-title ::= TYPE-IDENTIFIER.&Type
 
 -- The exact definition and values used for AP-title
--- should be chosen taking into account the ongoing 
--- work in areas of naming, the Directory, and the 
+-- should be chosen taking into account the ongoing
+-- work in areas of naming, the Directory, and the
 -- Registration Authority procedures for AE titles,
 -- AE titles, and AE qualifiers
 AE-qualifier ::= TYPE-IDENTIFIER.&Type
 
 -- The exact definition and values used for AE-qualifier
--- should be chosen taking into account the ongoing 
--- work in areas of naming, the Directory, and the 
+-- should be chosen taking into account the ongoing
+-- work in areas of naming, the Directory, and the
 -- Registration Authority procedures for AE titles,
 -- AE titles, and AE qualifiers
 AE-title ::= SEQUENCE {ap  AP-title,

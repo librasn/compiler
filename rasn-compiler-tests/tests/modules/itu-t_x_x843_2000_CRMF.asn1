@@ -13,7 +13,7 @@
 CRMF DEFINITIONS IMPLICIT TAGS ::=
 BEGIN
 
--- EXPORTS ALL; 
+-- EXPORTS ALL;
 IMPORTS
   -- Directory Information Framework (X.501)
   Name
@@ -23,11 +23,11 @@ IMPORTS
   AlgorithmIdentifier, Extensions, SubjectPublicKeyInfo, Time, Version
     FROM AuthenticationFramework {joint-iso-itu-t(2) ds(5) module(1)
       authenticationFramework(7) 3}
-  -- Directory Selected Attributes (X.520) 
+  -- Directory Selected Attributes (X.520)
   UniqueIdentifier
     FROM SelectedAttributeTypes {joint-iso-itu-t(2) ds(5) module(1)
       selectedAttributeTypes(5) 3}
-  -- Certificate Extensions (X.509) 
+  -- Certificate Extensions (X.509)
   GeneralName
     FROM CertificateExtensions {joint-iso-itu-t(2) ds(5) module(1)
       certificateExtensions(26) 0}
@@ -81,7 +81,7 @@ CRMF-Table TYPE-IDENTIFIER ::=
 
 ProofOfPossession ::= CHOICE {
   raVerified  [0]  NULL,
-  -- used if the RA has already verified that the requester is in 
+  -- used if the RA has already verified that the requester is in
   -- possession of the private key
   signature   [1]  POPOSigningKey
 }
@@ -92,20 +92,20 @@ POPOSigningKey ::= SEQUENCE {
   signature            BIT STRING
 }
 
--- The signature (using "algorithmIdentifier") is on the 
--- DER-encoded value of poposkInput.  NOTE - If the CertReqMsg 
--- certReq CertTemplate contains the subject and publicKey values, 
--- then poposkInput SHALL be omitted and the signature SHALL be 
--- computed on the DER-encoded value of CertReqMsg certReq.  If 
--- the CertReqMsg certReq CertTemplate does not contain the public 
--- key and subject values, then poposkInput SHALL be present and 
--- SHALL be signed.  This strategy ensures that the public key is 
--- not present in both the poposkInput and CertReqMsg certReq 
+-- The signature (using "algorithmIdentifier") is on the
+-- DER-encoded value of poposkInput.  NOTE - If the CertReqMsg
+-- certReq CertTemplate contains the subject and publicKey values,
+-- then poposkInput SHALL be omitted and the signature SHALL be
+-- computed on the DER-encoded value of CertReqMsg certReq.  If
+-- the CertReqMsg certReq CertTemplate does not contain the public
+-- key and subject values, then poposkInput SHALL be present and
+-- SHALL be signed.  This strategy ensures that the public key is
+-- not present in both the poposkInput and CertReqMsg certReq
 -- CertTemplate fields.
 POPOSigningKeyInput ::= SEQUENCE {
   authInfo
     CHOICE {sender        [0] EXPLICIT GeneralName,
-            -- used only if an authenticated identity has been 
+            -- used only if an authenticated identity has been
             -- established for the sender (e.g. a DN from a
             -- previously-issued and currently-valid certificate
             publicKeyMAC  PKMACValue},
@@ -132,7 +132,7 @@ PBMParameter ::= SEQUENCE {
   -- the MAC AlgorithmIdentifier (e.g. DES-MAC, Triple-DES-MAC as in PKCS #11,
 } -- or HMAC as in RFC2104, RFC2202)
 
--- Object identifier assignments 
+-- Object identifier assignments
 id-pkix OBJECT IDENTIFIER ::=
   {iso(1) identified-organization(3) dod(6) internet(1) security(5)
    mechanisms(5) 7}
@@ -151,7 +151,7 @@ RegToken ::= UTF8String
 
 id-regCtrl-authenticator OBJECT IDENTIFIER ::= {id-regCtrl 2}
 
---with syntax: 
+--with syntax:
 Authenticator ::= UTF8String
 
 id-regCtrl-pkiPublicationInfo OBJECT IDENTIFIER ::= {id-regCtrl 3}
@@ -163,7 +163,7 @@ PKIPublicationInfo ::= SEQUENCE {
 }
 
 -- pubInfos SHALL not be present if action is "dontPublish"
--- (if action is "pleasePublish" and pubInfos is omitted, 
+-- (if action is "pleasePublish" and pubInfos is omitted,
 -- "dontCare" is assumed)
 SinglePubInfo ::= SEQUENCE {
   pubMethod    INTEGER {dontCare(0), x500(1), web(2), ldap(3)},
@@ -175,7 +175,7 @@ EncryptedKey ::= CHOICE {
   envelopedData   [0]  EnvelopedData
 }
 
--- The encrypted private key SHALL be placed in the envelopedData 
+-- The encrypted private key SHALL be placed in the envelopedData
 -- encryptedContentInfo encryptedContent OCTET STRING.
 EncryptedValue ::= SEQUENCE {
   intendedAlg  [0]  AlgorithmIdentifier OPTIONAL,
@@ -199,7 +199,7 @@ CertId ::= SEQUENCE {issuer        GeneralName,
 
 id-regCtrl-protocolEncrKey OBJECT IDENTIFIER ::= {id-regCtrl 6}
 
---with syntax: 
+--with syntax:
 ProtocolEncrKey ::= SubjectPublicKeyInfo
 
 -- Registration Info in CRMF

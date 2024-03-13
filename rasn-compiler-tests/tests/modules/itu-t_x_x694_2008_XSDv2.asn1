@@ -27,7 +27,7 @@ content SEQUENCE {
 	elem-list SEQUENCE OF elem String
 	  (CONSTRAINED BY {
 	     	/* Shall conform to the "AnyElementFormat" specified
-     		   in ITU-T Rec. X.693 | ISO/IEC 8825-4, clause 19 */ } ) 
+     		   in ITU-T Rec. X.693 | ISO/IEC 8825-4, clause 19 */ } )
 } OPTIONAL }
                  (CONSTRAINED BY {
                /* Shall conform to ITU-T Rec. X.693 | ISO/IEC 8825-4, clause 25 */ } )
@@ -51,7 +51,7 @@ DateTime ::= TIME ((SETTINGS "Basic=Date-Time Date=YMD Midnight=Start"))
 (CONSTRAINED BY {/*The time-zone shall be in the range -14 to +14*/})
 (CONSTRAINED BY {/*The seconds and fractions of a second shall be less
                    than 60 (no leap seconds supported, in accordance with
-                   W3C XML Schema 1.0 Part 2, 3.2.7)*/}) 
+                   W3C XML Schema 1.0 Part 2, 3.2.7)*/})
 (CONSTRAINED BY {/*The type is constrained to "Time=HMSFn" for any n*/})/* xsd:decimal */
 Decimal ::= REAL	(WITH COMPONENTS {..., base(10)})
 		(ALL EXCEPT(-0 | MINUS-INFINITY | PLUS-INFINITY | NOT-A-NUMBER))
@@ -71,7 +71,7 @@ Duration ::= GenericTimeTypeChoice {
 			VisibleString
 	                  (FROM ("0".."9" | "DHMPSTY:.+-"))
    			 (CONSTRAINED BY {/* W3C XML Schema 1.0 Part 2, 3.2.6
-                                   and used for negative durations */})} 
+                                   and used for negative durations */})}
 
 /* xsd:ENTITIES */
 ENTITIES ::= SEQUENCE (SIZE(1..MAX)) OF ENTITY
@@ -113,7 +113,7 @@ IDREF ::= NCName
 /* xsd:IDREFS */
 IDREFS ::= SEQUENCE (SIZE(1..MAX)) OF IDREF
 /* xsd:int */
-Int ::= INTEGER (-2147483648..2147483647) 
+Int ::= INTEGER (-2147483648..2147483647)
 /* xsd:language */
 Language ::= VisibleString (FROM ("a".."z" | "A".."Z" | "-" | "0".."9"))
 (PATTERN
@@ -131,7 +131,7 @@ NCName ::= Name
                  /* The Name shall be an NCName as defined in W3C XML Namespaces, 2 */ } )
 /* xsd:NMTOKEN */
 NMTOKEN ::= Token (XMLStringWithNoWhitespace)
-	(CONSTRAINED BY { 
+	(CONSTRAINED BY {
                    /* The Token shall be an NMTOKEN as defined in W3C XML 1.0, 2.3 */ } )
 /* xsd:NMTOKENS */
 NMTOKENS ::= SEQUENCE (SIZE(1..MAX)) OF NMTOKEN
@@ -156,7 +156,7 @@ Time ::= TIME ((SETTINGS "Basic=Time")
 (CONSTRAINED BY {/*The time-zone shall be in the range -14 to +14*/})
 (CONSTRAINED BY {/*The seconds and fractions of a second shall be less
                    than 60 (no leap seconds supported, in accordance with
-                   W3C XML Schema 1.0 Part 2, D.2)*/}) 
+                   W3C XML Schema 1.0 Part 2, D.2)*/})
 (CONSTRAINED BY {/*Constrained to "Time=HMSFn" for any n*/})
 /* xsd:token */
 Token ::= NormalizedString (CONSTRAINED BY {
@@ -170,20 +170,20 @@ UnsignedLong ::=	 INTEGER (0..18446744073709551615)
 UnsignedShort ::= INTEGER (0..65535)
 
 /* ASN.1 type definitions supporting the mapping of W3C XML Schema built-in types */
-XMLCompatibleString ::= UTF8String (FROM( 
+XMLCompatibleString ::= UTF8String (FROM(
 {0, 0, 0, 9} |
 {0, 0, 0, 10} |
 {0, 0, 0, 13} |
-{0, 0, 0, 32} .. {0, 0, 215, 255} | 
-{0, 0, 224, 0} .. {0, 0, 255, 253} | 
+{0, 0, 0, 32} .. {0, 0, 215, 255} |
+{0, 0, 224, 0} .. {0, 0, 255, 253} |
 {0, 1, 0, 0} .. {0, 16, 255, 253}))
-XMLStringWithNoWhitespace ::= UTF8String (FROM( 
-{0, 0, 0, 33} .. {0, 0, 215, 255} | 
-{0, 0, 224, 0} .. {0, 0, 255, 253} | 
+XMLStringWithNoWhitespace ::= UTF8String (FROM(
+{0, 0, 0, 33} .. {0, 0, 215, 255} |
+{0, 0, 224, 0} .. {0, 0, 255, 253} |
 {0, 1, 0, 0} .. {0, 16, 255, 253}))
-XMLStringWithNoCRLFHT ::= UTF8String (FROM( 
-{0, 0, 0, 32} .. {0, 0, 215, 255} | 
-{0, 0, 224, 0} .. {0, 0, 255, 253} | 
+XMLStringWithNoCRLFHT ::= UTF8String (FROM(
+{0, 0, 0, 32} .. {0, 0, 215, 255} |
+{0, 0, 224, 0} .. {0, 0, 255, 253} |
 {0, 1, 0, 0} .. {0, 16, 255, 253}))
 /* ASN.1 type definitions supporting the mapping of W3C XML Schema built-in date and time types */
 GenericTimeTypeChoice {BasicType, Alternative} ::= CHOICE {
@@ -191,7 +191,7 @@ GenericTimeTypeChoice {BasicType, Alternative} ::= CHOICE {
 		othervalues			Alternative}
 		(CONSTRAINED BY
              {/* The "othervalues" alternative shall not be used for abstract
-                 values in the "asn1supportedvalue" alternative */}) 
+                 values in the "asn1supportedvalue" alternative */})
 
 DateTimeType ::= VisibleString	(FROM ("0".."9" | "TZ:.+-"))
 		(CONSTRAINED BY {/* W3C XML Schema Part 2, 3.2.7 */})
@@ -206,8 +206,8 @@ ENCODING-CONTROL XER
 	GLOBAL-DEFAULTS CONTROL-NAMESPACE
 		"http://www.w3.org/2001/XMLSchema-instance"
 		PREFIX "xsi"
-	NAMESPACE ALL, ALL IN ALL AS 
-		"http://www.w3.org/2001/XMLSchema" 
+	NAMESPACE ALL, ALL IN ALL AS
+		"http://www.w3.org/2001/XMLSchema"
 		PREFIX "xsd"
 	USE-QNAME QName
 	DECIMAL Decimal
@@ -219,13 +219,13 @@ ENCODING-CONTROL XER
 		NAME AnySimpleType, AnyURI, Date, DateTime, Decimal, Double, Duration,
 		Float, GDay, GMonth, GMonthDay, GYear, GYearMonth,
 		Int, Language, Long,
-				NormalizedString, Short, 
+				NormalizedString, Short,
 		String, Time, Token,
 		UnsignedInt, UnsignedLong, UnsignedShort
 		AS UNCAPITALIZED
 	NAME GenericTimeTypeChoice.ALL AS ""
 	USE-NIL AnyType-nillable
-	USE-UNION GenericTimeTypeChoice 
+	USE-UNION GenericTimeTypeChoice
 	WHITESPACE AnyURI, Language, Token, DateTimeType COLLAPSE
 	WHITESPACE NormalizedString REPLACE
 END

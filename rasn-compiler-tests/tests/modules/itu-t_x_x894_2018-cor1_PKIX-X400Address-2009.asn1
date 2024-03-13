@@ -33,7 +33,7 @@ CountryName ::= [APPLICATION 1] CHOICE {
 x121-dcc-code		NumericString
 	(SIZE (ub-country-name-numeric-length)),
 iso-3166-alpha2-code	PrintableString
-	(SIZE (ub-country-name-alpha-length)) 
+	(SIZE (ub-country-name-alpha-length))
 }
 AdministrationDomainName ::= [APPLICATION 2] CHOICE {
 numeric	NumericString(SIZE (0..ub-domain-name-length)),
@@ -57,7 +57,7 @@ given-name			[1] IMPLICIT PrintableString
 initials			[2] IMPLICIT PrintableString
 	(SIZE (1..ub-initials-length)) OPTIONAL,
 generation-qualifier	[3] IMPLICIT PrintableString
-	(SIZE (1..ub-generation-qualifier-length)) OPTIONAL 
+	(SIZE (1..ub-generation-qualifier-length)) OPTIONAL
 }
 -- see also teletex-personal-name
 OrganizationalUnitNames ::= SEQUENCE SIZE (1..ub-organizational-units)
@@ -72,7 +72,7 @@ BuiltInDomainDefinedAttribute ::= SEQUENCE {
 type PrintableString
 (SIZE(1..ub-domain-defined-attribute-type-length)),
 value PrintableString
-(SIZE(1..ub-domain-defined-attribute-value-length)) 
+(SIZE(1..ub-domain-defined-attribute-value-length))
 }
 -- Extension Attributes
 ExtensionAttributes ::= SET SIZE (1..ub-extension-attributes) OF
@@ -88,26 +88,26 @@ extension-attribute-value		[1] EXTENSION-ATTRIBUTE.
 	&Type({SupportedExtensionAttributes}{@extension-attribute-type})
 }
 SupportedExtensionAttributes EXTENSION-ATTRIBUTE ::= {
-ea-commonName | ea-teletexCommonName | ea-teletexOrganizationName | 
+ea-commonName | ea-teletexCommonName | ea-teletexOrganizationName |
 ea-teletexPersonalName | ea-teletexOrganizationalUnitNames |
 ea-pDSName | ea-physicalDeliveryCountryName | ea-postalCode |
 ea-physicalDeliveryOfficeName | ea-physicalDeliveryOfficeNumber |
-ea-extensionORAddressComponents | ea-physicalDeliveryPersonalName | 
+ea-extensionORAddressComponents | ea-physicalDeliveryPersonalName |
 ea-physicalDeliveryOrganizationName |
 ea-extensionPhysicalDeliveryAddressComponents |
 ea-unformattedPostalAddress | ea-streetAddress |
 ea-postOfficeBoxAddress | ea-posteRestanteAddress |
 ea-uniquePostalName | ea-localPostalAttributes |
 ea-extendedNetworkAddress | ea-terminalType |
-ea-teletexDomainDefinedAttributes, 
+ea-teletexDomainDefinedAttributes,
 ...
 }
 -- Extension types and attribute values
-ea-commonName EXTENSION-ATTRIBUTE ::= { 
+ea-commonName EXTENSION-ATTRIBUTE ::= {
 PrintableString (SIZE (1..ub-common-name-length)) IDENTIFIED BY 1 }
 ea-teletexCommonName EXTENSION-ATTRIBUTE ::= {
 TeletexString(SIZE (1..ub-common-name-length)) IDENTIFIED BY 2 }
-ea-teletexOrganizationName EXTENSION-ATTRIBUTE::= { 
+ea-teletexOrganizationName EXTENSION-ATTRIBUTE::= {
 TeletexString(SIZE (1..ub-organization-name-length)) IDENTIFIED BY 3 }
 ea-teletexPersonalName EXTENSION-ATTRIBUTE ::= {
 SET {
@@ -119,25 +119,25 @@ SET {
 		(SIZE (1..ub-initials-length)) OPTIONAL,
 	generation-qualifier [3] IMPLICIT TeletexString
 		(SIZE (1..ub-generation-qualifier-length)) OPTIONAL
-	} 
+	}
 IDENTIFIED BY 4 }
-ea-teletexOrganizationalUnitNames EXTENSION-ATTRIBUTE ::={ 
+ea-teletexOrganizationalUnitNames EXTENSION-ATTRIBUTE ::={
 SEQUENCE SIZE (1..ub-organizational-units) OF
-	TeletexOrganizationalUnitName 
+	TeletexOrganizationalUnitName
 IDENTIFIED BY 5 }
 TeletexOrganizationalUnitName ::= TeletexString
 (SIZE (1..ub-organizational-unit-name-length))
 ea-pDSName EXTENSION-ATTRIBUTE ::= {PrintableString
 (SIZE (1..ub-pds-name-length)) IDENTIFIED BY 7 }
-ea-physicalDeliveryCountryName EXTENSION-ATTRIBUTE ::= { 
+ea-physicalDeliveryCountryName EXTENSION-ATTRIBUTE ::= {
 CHOICE {
-	x121-dcc-code 		NumericString 
+	x121-dcc-code 		NumericString
 	(SIZE (ub-country-name-numeric-length)),
 	iso-3166-alpha2-code 	PrintableString
 	(SIZE (ub-country-name-alpha-length))
 	}
 IDENTIFIED BY 8 }
-ea-postalCode EXTENSION-ATTRIBUTE ::= { 
+ea-postalCode EXTENSION-ATTRIBUTE ::= {
 CHOICE {
 	numeric-code 	NumericString (SIZE (1..ub-postal-code-length)),
 	printable-code	PrintableString (SIZE (1..ub-postal-code-length))
@@ -155,12 +155,12 @@ ea-physicalDeliveryOrganizationName EXTENSION-ATTRIBUTE ::=
 {PDSParameter IDENTIFIED BY 14 }
 ea-extensionPhysicalDeliveryAddressComponents EXTENSION-ATTRIBUTE ::=
 {PDSParameter IDENTIFIED BY 15 }
-ea-unformattedPostalAddress EXTENSION-ATTRIBUTE ::= { 
+ea-unformattedPostalAddress EXTENSION-ATTRIBUTE ::= {
 SET {
 	printable-address	SEQUENCE SIZE (1..ub-pds-physical-address-lines)
 	OF PrintableString (SIZE (1..ub-pds-parameter-length)) OPTIONAL,
 	teletex-string TeletexString (SIZE (1..ub-unformatted-address-length))
-		OPTIONAL 
+		OPTIONAL
 	}
 IDENTIFIED BY 16 }
 ea-streetAddress EXTENSION-ATTRIBUTE ::=
@@ -188,7 +188,7 @@ CHOICE {
 			(SIZE (1..ub-e163-4-sub-address-length)) OPTIONAL
 		},
 	psap-address	[0] IMPLICIT PresentationAddress
-	} 
+	}
 IDENTIFIED BY 22
 }
 PresentationAddress ::= SEQUENCE {
@@ -207,9 +207,9 @@ ea-terminalType 	EXTENSION-ATTRIBUTE ::= {INTEGER {
 		} (0..ub-integer-options)
 IDENTIFIED BY 23 }
 -- Extension Domain-defined Attributes
-ea-teletexDomainDefinedAttributes EXTENSION-ATTRIBUTE ::= { 
+ea-teletexDomainDefinedAttributes EXTENSION-ATTRIBUTE ::= {
 SEQUENCE SIZE (1..ub-domain-defined-attributes) OF
-	TeletexDomainDefinedAttribute 
+	TeletexDomainDefinedAttribute
 IDENTIFIED BY 6 }
 TeletexDomainDefinedAttribute ::= SEQUENCE {
 type TeletexString (SIZE (1..ub-domain-defined-attribute-type-length)),

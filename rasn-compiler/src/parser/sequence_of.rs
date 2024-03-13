@@ -15,27 +15,6 @@ use super::{
     constraint::constraint,
 };
 
-/// Tries to parse an ASN1 SEQUENCE OF Value
-///
-/// *`input` - string slice to be matched against
-///
-/// `sequence_of_value` will try to match an SEQUENCE OF value declaration in the `input` string.
-/// If the match succeeds, the parser will consume the match and return the remaining string
-/// and a wrapped `SequenceOf` value representing the ASN1 declaration.
-/// If the match fails, the parser will not consume the input and will return an error.
-pub fn sequence_or_set_of_value<'a>(input: &'a str) -> IResult<&'a str, ASN1Value> {
-    map(
-        in_braces(separated_list0(
-            skip_ws_and_comments(char(COMMA)),
-            skip_ws_and_comments(alt((
-                preceded(value_identifier, skip_ws_and_comments(asn1_value)),
-                asn1_value,
-            ))),
-        )),
-        |seq| ASN1Value::SequenceOrSetOf(seq),
-    )(input)
-}
-
 /// Tries to parse an ASN1 SEQUENCE OF
 ///
 /// *`input` - string slice to be matched against
@@ -194,7 +173,7 @@ mod tests {
     fn parses_parameterized_constrained_sequence_of() {
         assert_eq!(
             sequence_of(
-                r#"SEQUENCE (SIZE(1..4)) OF 
+                r#"SEQUENCE (SIZE(1..4)) OF
       RegionalExtension {{Reg-MapData}} OPTIONAL,"#
             )
             .unwrap()

@@ -14,9 +14,9 @@ AnySimpleType ::= XMLCompatibleString
 AnyType ::= SEQUENCE {
   embed-values  SEQUENCE OF String,
   attr
-    SEQUENCE 
+    SEQUENCE
       (CONSTRAINED BY {
-         
+
          /* Each item shall conform to the "AnyAttributeFormat" specified
 	in ITU-T Rec. X.693 | ISO/IEC 8825-4, clause 18 */ })
       OF String,
@@ -24,20 +24,20 @@ AnyType ::= SEQUENCE {
     SEQUENCE OF elem
       String
         (CONSTRAINED BY {
-           
+
            /* Shall conform to the "AnyElementFormat" specified
         in ITU-T Rec. X.693 | ISO/IEC 8825-4, clause 19 */ })
 }
 (CONSTRAINED BY {
-   
+
    /* Shall conform to ITU-T Rec. X.693 | ISO/IEC 8825-4, clause 25 */})
 
 AnyType-nillable ::= SEQUENCE {
   embed-values  SEQUENCE OF String,
   attr
-    SEQUENCE 
+    SEQUENCE
       (CONSTRAINED BY {
-         
+
          /* Each item shall conform to the "AnyAttributeFormat" specified
 	in ITU-T Rec. X.693 | ISO/IEC 8825-4, clause 18 */ })
       OF String,
@@ -46,20 +46,20 @@ AnyType-nillable ::= SEQUENCE {
                 SEQUENCE OF elem
                   String
                     (CONSTRAINED BY {
-                       
+
                        /* Shall conform to the "AnyElementFormat" specified
      		   in ITU-T Rec. X.693 | ISO/IEC 8825-4, clause 19 */ })
   } OPTIONAL
 }
 (CONSTRAINED BY {
-   
+
    /* Shall conform to ITU-T Rec. X.693 | ISO/IEC 8825-4, clause 25 */})
 
 /* xsd:anyUri */
 AnyURI ::=
   XMLStringWithNoCRLFHT
     (CONSTRAINED BY {
-       
+
        /* The XMLStringWithNoCRLFHT shall be a valid URI as defined in IETF RFC
 	 2396 */})
 
@@ -143,21 +143,21 @@ Long ::= INTEGER(-9223372036854775808..9223372036854775807)
 Name ::=
   Token(XMLStringWithNoWhitespace)
     (CONSTRAINED BY {
-       
+
        /* The Token shall be a Name as defined in W3C XML 1.0, 2.3 */})
 
 /* xsd:NCName */
 NCName ::=
   Name
     (CONSTRAINED BY {
-       
+
        /* The Name shall be an NCName as defined in W3C XML Namespaces, 2 */})
 
 /* xsd:NMTOKEN */
 NMTOKEN ::=
   Token(XMLStringWithNoWhitespace)
     (CONSTRAINED BY {
-       
+
        /* The Token shall be an NMTOKEN as defined in W3C XML 1.0, 2.3 */})
 
 /* xsd:NMTOKENS */
@@ -167,7 +167,7 @@ NMTOKENS ::= SEQUENCE (SIZE (1..MAX)) OF NMTOKEN
 NormalizedString ::=
   String(XMLStringWithNoCRLFHT)
     (CONSTRAINED BY {
-       
+
        /* The String shall be a normalizedString as defined in W3C XML Schema
        Part 2, 3.3.1 */})
 
@@ -192,7 +192,7 @@ Time ::= DateTimeType(TimeOnly)
 Token ::=
   NormalizedString
     (CONSTRAINED BY {
-       
+
        /* The NormalizedString shall be a token as defined in W3C XML Schema Part 2,
    3.3.2 */})
 
@@ -273,8 +273,8 @@ ENCODING-CONTROL XER
 	GLOBAL-DEFAULTS CONTROL-NAMESPACE
 		"http://www.w3.org/2001/XMLSchema-instance"
 		PREFIX "xsi"
-	NAMESPACE ALL, ALL IN ALL AS 
-		"http://www.w3.org/2001/XMLSchema" 
+	NAMESPACE ALL, ALL IN ALL AS
+		"http://www.w3.org/2001/XMLSchema"
 		PREFIX "xsd"
 	USE-QNAME QName
 	DECIMAL Decimal
@@ -287,7 +287,7 @@ ENCODING-CONTROL XER
 		NAME AnySimpleType, AnyURI, Boolean,
 			Byte, Date, DateTime, Decimal, Double, Duration,
 		Float, GDay, GMonth, GMonthDay, GYear, GYearMonth,
-		Int, Language, Long, NormalizedString, Short, 
+		Int, Language, Long, NormalizedString, Short,
 		String, Time, Token,
 		UnsignedInt, UnsignedLong, UnsignedShort
 		AS UNCAPITALIZED

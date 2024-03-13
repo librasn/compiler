@@ -16,7 +16,7 @@ TimeStampToken
 FROM TrustedTimeStamp
 { iso(1) identified-organization(3) tc68(133) country(16) x9(840) x9standards(9)
 	x9-95(95) module(0) tts(1) v2010-2016(1)};
-aa-signerInfo ATTRIBUTE ::= 
+aa-signerInfo ATTRIBUTE ::=
 {TYPE SignerInfo IDENTIFIED BY id-signerInfo}
 id-signerInfo OBJECT IDENTIFIER ::= {itu-t recommendation(0) x(24)
 cms-profile(894) attribute(2) signerInfo(0)}
@@ -24,17 +24,17 @@ aa-signerInfos	ATTRIBUTE ::=
 {TYPE SignerInfos IDENTIFIED BY id-signerInfos}
 id-signerInfos 	OBJECT IDENTIFIER ::= {itu-t recommendation(0) x(24)
 cms-profile(894) attribute(2) signerInfos(1)}
-aa-contentLocation ATTRIBUTE ::= 
+aa-contentLocation ATTRIBUTE ::=
 {TYPE URI IDENTIFIED BY id-contentLocation}
 URI ::= UTF8String(SIZE(1..MAX))
 id-contentLocation OBJECT IDENTIFIER ::= {itu-t recommendation(0) x(24)
 cms-profile(894) attribute(2) contentLocation(2)}
-aa-contentLocations	ATTRIBUTE ::= 
+aa-contentLocations	ATTRIBUTE ::=
 {TYPE URIs IDENTIFIED BY id-contentLocations}
 URIs ::= SEQUENCE SIZE(1..MAX) OF uri URI
 id-contentLocations OBJECT IDENTIFIER ::= {itu-t recommendation(0) x(24)
 cms-profile(894) attribute(2) contentLocations(3)}
-aa-precedingBlock	ATTRIBUTE ::= 
+aa-precedingBlock	ATTRIBUTE ::=
 {TYPE HashPointer IDENTIFIED BY id-precedingBlock}
 HashPointer 	::= SEQUENCE {
 hash		DigestedData 	OPTIONAL,

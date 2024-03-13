@@ -27,7 +27,7 @@ content SEQUENCE {
 	elem-list SEQUENCE OF elem String
 	  (CONSTRAINED BY {
 	     	/* Shall conform to the "AnyElementFormat" specified
-     		   in ITU-T Rec. X.693 | ISO/IEC 8825-4, clause 19 */ } ) 
+     		   in ITU-T Rec. X.693 | ISO/IEC 8825-4, clause 19 */ } )
 } OPTIONAL }
 (CONSTRAINED BY {
 /* Shall conform to ITU-T Rec. X.693 | ISO/IEC 8825-4, clause 25 */ } )
@@ -78,7 +78,7 @@ IDREF ::= NCName
 /* xsd:IDREFS */
 IDREFS ::= SEQUENCE (SIZE(1..MAX)) OF IDREF
 /* xsd:int */
-Int ::= INTEGER (-2147483648..2147483647) 
+Int ::= INTEGER (-2147483648..2147483647)
 /* xsd:language */
 Language ::= VisibleString (FROM ("a".."z" | "A".."Z" | "-" | "0".."9"))
 (PATTERN
@@ -96,7 +96,7 @@ NCName ::= Name
                  /* The Name shall be an NCName as defined in W3C XML Namespaces, 2 */ } )
 /* xsd:NMTOKEN */
 NMTOKEN ::= Token (XMLStringWithNoWhitespace)
-	(CONSTRAINED BY { 
+	(CONSTRAINED BY {
                    /* The Token shall be an NMTOKEN as defined in W3C XML 1.0, 2.3 */ } )
 /* xsd:NMTOKENS */
 NMTOKENS ::= SEQUENCE (SIZE(1..MAX)) OF NMTOKEN
@@ -129,20 +129,20 @@ UnsignedLong ::=	 INTEGER (0..18446744073709551615)
 UnsignedShort ::= INTEGER (0..65535)
 
 /* ASN.1 type definitions supporting the mapping of W3C XML Schema built-in types */
-XMLCompatibleString ::= UTF8String (FROM( 
+XMLCompatibleString ::= UTF8String (FROM(
 {0, 0, 0, 9} |
 {0, 0, 0, 10} |
 {0, 0, 0, 13} |
-{0, 0, 0, 32} .. {0, 0, 215, 255} | 
-{0, 0, 224, 0} .. {0, 0, 255, 253} | 
+{0, 0, 0, 32} .. {0, 0, 215, 255} |
+{0, 0, 224, 0} .. {0, 0, 255, 253} |
 {0, 1, 0, 0} .. {0, 16, 255, 253}))
-XMLStringWithNoWhitespace ::= UTF8String (FROM( 
-{0, 0, 0, 33} .. {0, 0, 215, 255} | 
-{0, 0, 224, 0} .. {0, 0, 255, 253} | 
+XMLStringWithNoWhitespace ::= UTF8String (FROM(
+{0, 0, 0, 33} .. {0, 0, 215, 255} |
+{0, 0, 224, 0} .. {0, 0, 255, 253} |
 {0, 1, 0, 0} .. {0, 16, 255, 253}))
-XMLStringWithNoCRLFHT ::= UTF8String (FROM( 
-{0, 0, 0, 32} .. {0, 0, 215, 255} | 
-{0, 0, 224, 0} .. {0, 0, 255, 253} | 
+XMLStringWithNoCRLFHT ::= UTF8String (FROM(
+{0, 0, 0, 32} .. {0, 0, 215, 255} |
+{0, 0, 224, 0} .. {0, 0, 255, 253} |
 {0, 1, 0, 0} .. {0, 16, 255, 253}))
 
 /* ASN.1 type definitions supporting the mapping of W3C XML Schema built-in date and time types */
@@ -169,8 +169,8 @@ ENCODING-CONTROL XER
 	GLOBAL-DEFAULTS CONTROL-NAMESPACE
 		"http://www.w3.org/2001/XMLSchema-instance"
 		PREFIX "xsi"
-	NAMESPACE ALL, ALL IN ALL AS 
-		"http://www.w3.org/2001/XMLSchema" 
+	NAMESPACE ALL, ALL IN ALL AS
+		"http://www.w3.org/2001/XMLSchema"
 		PREFIX "xsd"
 	USE-QNAME QName
 	DECIMAL Decimal
@@ -178,12 +178,12 @@ ENCODING-CONTROL XER
 	EMBED-VALUES AnyType, AnyType-nillable
 	ANY-ATTRIBUTES AnyType.attr, AnyType-nillable.attr
 	ANY-ELEMENT AnyType.elem-list.*, AnyType-nillable.content.elem-list.*
-	UNTAGGED AnyType.elem-list, AnyType-nillable.content.elem-list 
+	UNTAGGED AnyType.elem-list, AnyType-nillable.content.elem-list
 		NAME AnySimpleType, AnyURI, Boolean,
 		Byte, Date, DateTime, Decimal, Double, Duration,
 		Float, GDay, GMonth, GMonthDay, GYear, GYearMonth,
 		Int, Language, Long,
-		NormalizedString, Short, 
+		NormalizedString, Short,
 		String, Time, Token,
 		UnsignedInt, UnsignedLong, UnsignedShort
 		AS UNCAPITALIZED

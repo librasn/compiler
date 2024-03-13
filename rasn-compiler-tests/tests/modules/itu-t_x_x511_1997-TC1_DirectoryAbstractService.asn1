@@ -14,13 +14,13 @@ DirectoryAbstractService {joint-iso-itu-t ds(5) module(1)
   directoryAbstractService(2) 3} DEFINITIONS ::=
 BEGIN
 
--- EXPORTS All 
--- The types and values defined in this module are exported for use in the other ASN.1 modules contained 
--- within the Directory Specifications, and for the use of other applications which will use them to access 
+-- EXPORTS All
+-- The types and values defined in this module are exported for use in the other ASN.1 modules contained
+-- within the Directory Specifications, and for the use of other applications which will use them to access
 -- Directory services. Other applications may use them for their own purposes, but this will not constrain
 -- extensions and modifications needed to maintain or improve the Directory service.
 IMPORTS
-  informationFramework, distributedOperations, authenticationFramework, 
+  informationFramework, distributedOperations, authenticationFramework,
     dap, id-at, directoryShadowAbstractService, enhancedSecurity
     FROM UsefulDefinitions {joint-iso-itu-t ds(5) module(1)
       usefulDefinitions(0) 3}
@@ -64,8 +64,8 @@ IMPORTS
   PROTECTED{}
     FROM Notation {joint-iso-itu-t genericULS(20) modules(1) notation(1)};
 
--- Common data types 
--- Parameterized type for representing optional signing 
+-- Common data types
+-- Parameterized type for representing optional signing
 OPTIONALLY-SIGNED{Type} ::= CHOICE {unsigned  Type,
                                     signed    SIGNED{Type}
 }
@@ -119,7 +119,7 @@ EntryInformationSelection ::= SET {
   attributes
     CHOICE {allUserAttributes  [0]  NULL,
             select             [1]  SET OF AttributeType
-            --  empty set implies no attributes are requested 
+            --  empty set implies no attributes are requested
   } DEFAULT allUserAttributes:NULL,
   infoTypes
     [2]  INTEGER {attributeTypesOnly(0), attributeTypesAndValues(1)}
@@ -194,7 +194,7 @@ MatchingRuleAssertion ::= SEQUENCE {
   matchValue
     [3]  MATCHING-RULE.&AssertionType
            (CONSTRAINED BY {
-              -- matchValue must be a value of type specified by the &AssertionType field of 
+              -- matchValue must be a value of type specified by the &AssertionType field of
               -- one of the MATCHING-RULE information objects identified by matchingRule -- }),
   dnAttributes  [4]  BOOLEAN DEFAULT FALSE
 }
@@ -264,7 +264,7 @@ Time ::= CHOICE {utcTime          UTCTime,
                  generalizedTime  GeneralizedTime
 }
 
---  Bind and unbind operations 
+--  Bind and unbind operations
 directoryBind OPERATION ::= {
   ARGUMENT  DirectoryBindArgument
   RESULT    DirectoryBindResult
@@ -338,7 +338,7 @@ BindKeyInfo ::= ENCRYPTED{BIT STRING}
 
 directoryUnbind OPERATION ::= emptyUnbind
 
---  Operations, arguments, and results 
+--  Operations, arguments, and results
 read OPERATION ::= {
   ARGUMENT  ReadArgument
   RESULT    ReadResult
@@ -610,7 +610,7 @@ ModifyDNResult ::= CHOICE {
       }, dirqop.&dapModifyDNRes-QOP}
 }
 
--- Errors and parameters 
+-- Errors and parameters
 abandoned ERROR ::= { -- not literally an "error"
   PARAMETER OPTIONALLY-PROTECTED
     {SET {COMPONENTS OF CommonResults},

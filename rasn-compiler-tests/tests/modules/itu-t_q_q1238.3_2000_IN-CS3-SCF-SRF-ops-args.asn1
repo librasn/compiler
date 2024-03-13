@@ -60,20 +60,20 @@ B2 ::= SCF-SSF-BOUNDS
 
 B3 ::= SCF-SRF-BOUNDS
 
--- activityTest OPERATION 
--- This operation is described in Recommendation Q.1238.2. 
--- assistRequestInstruction OPERATION 
--- This operation is described in Recommendation Q.1238.2. 
---cancel OPERATION 
--- This operation is described in Recommendation Q.1238.2. 
---connectToResource OPERATION 
--- This operation is described in Recommendation Q.1238.2. 
---disconnectForwardConnection OPERATION 
--- This operation is described in Recommendation Q.1238.2. 
--- disconnectForwardConnectionWithArgument OPERATION 
--- This operation is described in Recommendation Q.1238.2. 
--- establishTemporaryConnection OPERATION 
--- This operation is described in Recommendation Q.1238.2. 
+-- activityTest OPERATION
+-- This operation is described in Recommendation Q.1238.2.
+-- assistRequestInstruction OPERATION
+-- This operation is described in Recommendation Q.1238.2.
+--cancel OPERATION
+-- This operation is described in Recommendation Q.1238.2.
+--connectToResource OPERATION
+-- This operation is described in Recommendation Q.1238.2.
+--disconnectForwardConnection OPERATION
+-- This operation is described in Recommendation Q.1238.2.
+-- disconnectForwardConnectionWithArgument OPERATION
+-- This operation is described in Recommendation Q.1238.2.
+-- establishTemporaryConnection OPERATION
+-- This operation is described in Recommendation Q.1238.2.
 playAnnouncement{B1:b1, B2:b2, B3:b3} OPERATION ::= {
   ARGUMENT         PlayAnnouncementArg {b1,
                                         b2,
@@ -89,11 +89,11 @@ playAnnouncement{B1:b1, B2:b2, B3:b3} OPERATION ::= {
 }
 
 -- Direction: SCF -> SRF, Timer: Tpa
--- This operation is to be used after Establish Temporary Connection (assist procedure with a second SSP) 
--- or a Connect to Resource (no assist) operation. It may be used for inband interaction with an analogue user, 
--- or for interaction with an ISDN user. In the former case, the SRF is usually collocated with the SSF for 
--- standard tones (congestion tone ...) or standard announcements. In the latter case, the SRF is always 
--- collocated with the SSF in the switch. Any error is returned to the SCF. The timer associated with this 
+-- This operation is to be used after Establish Temporary Connection (assist procedure with a second SSP)
+-- or a Connect to Resource (no assist) operation. It may be used for inband interaction with an analogue user,
+-- or for interaction with an ISDN user. In the former case, the SRF is usually collocated with the SSF for
+-- standard tones (congestion tone ...) or standard announcements. In the latter case, the SRF is always
+-- collocated with the SSF in the switch. Any error is returned to the SCF. The timer associated with this
 -- operation must be of a sufficient duration to allow its linked operation to be correctly correlated.
 PlayAnnouncementArg{B1:b1, B2:b2, B3:b3} ::= SEQUENCE {
   informationToSend            [0]  InformationToSend{b2, b3},
@@ -118,7 +118,7 @@ promptAndCollectUserInformation{B1:b1, B2:b2, B3:b3} OPERATION ::= {
   CODE      opcode-promptAndCollectUserInformation
 }
 
--- Direction: SCF -> SRF, Timer: Tpc 
+-- Direction: SCF -> SRF, Timer: Tpc
 -- This operation is used to interact with a user to collect information.
 PromptAndCollectUserInformationArg{B1:b1, B2:b2, B3:b3} ::= SEQUENCE {
   collectedInfo              [0]  CollectedInfo,
@@ -171,12 +171,12 @@ MessageReceivedArg{B1:b1, B3:b3} ::= SEQUENCE {
   ...
 }
 
--- reportUTSI OPERATION 
--- This operation is described in Recommendation Q.1238.2. 
--- requestReportUTSI OPERATION 
--- This operation is described in Recommendation Q.1238.2. 
--- sendSTUI OPERATION 
--- This operation is described in Recommendation Q.1238.2. 
+-- reportUTSI OPERATION
+-- This operation is described in Recommendation Q.1238.2.
+-- requestReportUTSI OPERATION
+-- This operation is described in Recommendation Q.1238.2.
+-- sendSTUI OPERATION
+-- This operation is described in Recommendation Q.1238.2.
 scriptClose{B1:b1, B2:b2} OPERATION ::= {
   ARGUMENT         ScriptCloseArg {b1,
                                    b2}
@@ -274,9 +274,9 @@ specializedResourceReport OPERATION ::= {
   CODE             opcode-specializedResourceReport
 }
 
--- Direction: SRF -> SCF, Timer: Tsrr 
--- This operation is used as the response to a PlayAnnouncement operation when the announcement completed 
--- report indication is set. 
+-- Direction: SRF -> SCF, Timer: Tsrr
+-- This operation is used as the response to a PlayAnnouncement operation when the announcement completed
+-- report indication is set.
 SpecializedResourceReportArg ::= NULL
 
 sRFCallGap{B1:b1, B2:b2} OPERATION ::= {
@@ -287,9 +287,9 @@ sRFCallGap{B1:b1, B2:b2} OPERATION ::= {
   CODE             opcode-srfCallGap
 }
 
--- Direction: SRF -> SCF, Timer: Tcg 
--- This operation is used to request the SCF to reduce the rate at which specific service requests are sent to 
--- the SRF. 
+-- Direction: SRF -> SCF, Timer: Tcg
+-- This operation is used to request the SCF to reduce the rate at which specific service requests are sent to
+-- the SRF.
 SRFCallGapArg{B1:b1, B2:b2} ::= SEQUENCE {
   sRFgapCriteria  [0]  SRFGapCriteria{b2},
   gapIndicators   [1]  GapIndicators,

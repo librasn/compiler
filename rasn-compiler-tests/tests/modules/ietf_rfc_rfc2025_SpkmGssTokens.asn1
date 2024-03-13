@@ -19,7 +19,7 @@ SpkmGssTokens {iso(1) identified-organization(3) dod(6) internet(1) security(5)
 DEFINITIONS IMPLICIT TAGS ::=
 BEGIN
 
--- EXPORTS ALL 
+-- EXPORTS ALL
 IMPORTS
   Name
     FROM InformationFramework {joint-iso-itu-t(2) ds(5) module(1)
@@ -28,7 +28,7 @@ IMPORTS
     FROM AuthenticationFramework {joint-iso-itu-t(2) ds(5) module(1)
       authenticationFramework(7) 3};
 
--- types 
+-- types
 SPKM-REQ ::= SEQUENCE {
   requestToken  REQ-TOKEN,
   certif-data   [0]  CertificationData OPTIONAL,
@@ -220,8 +220,8 @@ Del-Header ::= SEQUENCE {
   snd-seq     [1]  SeqNum OPTIONAL
 }
 
--- other types 
--- from [RFC-1508] 
+-- other types
+-- from [RFC-1508]
 MechType ::= OBJECT IDENTIFIER
 
 InitialContextToken ::= [APPLICATION 0] IMPLICIT SEQUENCE {
@@ -239,12 +239,12 @@ SPKMInnerContextToken ::= CHOICE {
   del     [6]  SPKM-DEL
 }
 
--- from [RFC-1510] 
+-- from [RFC-1510]
 AuthorizationData ::=
   SEQUENCE OF SEQUENCE {ad-type  INTEGER,
                         ad-data  OCTET STRING}
 
--- object identifier assignments 
+-- object identifier assignments
 md5-DES-CBC OBJECT IDENTIFIER ::=
   {iso(1) identified-organization(3) dod(6) internet(1) security(5)
    integrity(3) md5-DES-CBC(1)}

@@ -14,10 +14,10 @@ EnhancedSecurity {joint-iso-itu-t ds(5) modules(1) enhancedSecurity(28) 7}
 DEFINITIONS IMPLICIT TAGS ::=
 BEGIN
 
--- EXPORTS All 
+-- EXPORTS All
 IMPORTS
   -- from Rec. ITU-T X.501 | ISO/IEC 9594-2
-  authenticationFramework, basicAccessControl, certificateExtensions, 
+  authenticationFramework, basicAccessControl, certificateExtensions,
     id-at, id-avc, id-mr, id-oc, informationFramework
     FROM UsefulDefinitions {joint-iso-itu-t ds(5) module(1)
       usefulDefinitions(0) 7}
@@ -41,7 +41,7 @@ OPTIONALLY-PROTECTED-SEQ{Type} ::= CHOICE {
 }
 
 attributeValueSecurityLabelContext CONTEXT ::= {
-  WITH SYNTAX  SignedSecurityLabel -- At most one security label context can 
+  WITH SYNTAX  SignedSecurityLabel -- At most one security label context can
   -- be assigned to an attribute value
   ID           id-avc-attributeValueSecurityLabelContext
 }
@@ -151,7 +151,7 @@ SpecificallyIdentified ::= SEQUENCE {
 Scope ::= CHOICE {
   wholeEntry     [0]  NULL, -- Signature protects all attribute values in this entry
   selectedTypes  [1]  SelectedTypes,
-  -- Signature protects all attribute values of the selected attribute types 
+  -- Signature protects all attribute values of the selected attribute types
   ...
 }
 
@@ -192,12 +192,12 @@ AttributeTypeValueContexts ::= SEQUENCE {
   ...
 }
 
--- Object identifier assignments 
--- object classes 
+-- Object identifier assignments
+-- object classes
 id-oc-integrityInfo OBJECT IDENTIFIER ::=
   {id-oc 40}
 
--- attributes 
+-- attributes
 id-at-clearance OBJECT IDENTIFIER ::= {id-at 55}
 
 -- id-at-defaultDirQop                    OBJECT IDENTIFIER ::= {id-at 56}
@@ -205,7 +205,7 @@ id-at-attributeIntegrityInfo OBJECT IDENTIFIER ::=
   {id-at 57}
 
 -- id-at-confKeyInfo                      OBJECT IDENTIFIER ::= {id-at 60}
--- matching rules 
+-- matching rules
 -- id-mr-readerAndKeyIDMatch              OBJECT IDENTIFIER ::= {id-mr 43}
 -- contexts
 id-avc-attributeValueSecurityLabelContext OBJECT IDENTIFIER ::=

@@ -18,7 +18,7 @@ BEGIN
 -- preceding protection mappings which were specifically designed
 -- to generate identical bit-encodings as the Directory
 -- Authentication Framework parameterized types.
--- EXPORTS All 
+-- EXPORTS All
 IMPORTS
   notation, gulsSecurityTransformations
     FROM ObjectIdentifiers {joint-iso-itu-t genericULS(20) modules(1)
@@ -28,12 +28,12 @@ IMPORTS
   dirEncryptedTransformation, gulsSignedTransformation{},
     gulsSignatureTransformation, symmetricKeyInformation,
     asymmetricKeyInformation
-    FROM GulsSecurityTransformations {joint-iso-itu-t genericULS(20) 
+    FROM GulsSecurityTransformations {joint-iso-itu-t genericULS(20)
       modules(1) gulsSecurityTransformations(3)};
 
--- ********************************** 
--- confidentiality Protection Mapping 
--- ********************************** 
+-- **********************************
+-- confidentiality Protection Mapping
+-- **********************************
 -- This protection mapping enables the notation
 -- PROTECTED {BaseType, confidentiality}
 -- to map to either dirEncryptedTransformation or to no transformation
@@ -45,9 +45,9 @@ confidentiality PROTECTION-MAPPING ::= {
   BYPASS-PERMITTED         TRUE
 }
 
--- ****************************** 
--- GULS signed Protection Mapping 
--- ****************************** 
+-- ******************************
+-- GULS signed Protection Mapping
+-- ******************************
 -- This protection mapping causes the notation
 -- PROTECTED {BaseType, signed}
 -- to map to the gulsSignedTransformation.
@@ -59,9 +59,9 @@ signed PROTECTION-MAPPING ::= {
        {{symmetricKeyInformation | asymmetricKeyInformation}}}
 }
 
--- ********************************* 
--- GULS signature Protection Mapping 
--- ********************************* 
+-- *********************************
+-- GULS signature Protection Mapping
+-- *********************************
 -- This protection mapping causes the notation
 -- PROTECTED {BaseType, signature}
 -- to map to the gulsSignatureTransformation.

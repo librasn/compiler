@@ -139,15 +139,23 @@ impl InformationObject {
         tlds: &BTreeMap<String, ToplevelDefinition>,
     ) -> bool {
         match &mut self.fields {
-            InformationObjectFields::DefaultSyntax(d) => d.iter_mut().any(|field| field.link_object_set_reference(tlds)),
-            InformationObjectFields::CustomSyntax(c) => c.iter_mut().any(|field| field.link_object_set_reference(tlds)),
+            InformationObjectFields::DefaultSyntax(d) => d
+                .iter_mut()
+                .any(|field| field.link_object_set_reference(tlds)),
+            InformationObjectFields::CustomSyntax(c) => c
+                .iter_mut()
+                .any(|field| field.link_object_set_reference(tlds)),
         }
     }
 
     pub fn references_object_set_by_name(&self) -> bool {
         match &self.fields {
-            InformationObjectFields::DefaultSyntax(d) => d.iter().any(|field| field.references_object_set_by_name()),
-            InformationObjectFields::CustomSyntax(c) => c.iter().any(|field| field.references_object_set_by_name()),
+            InformationObjectFields::DefaultSyntax(d) => {
+                d.iter().any(|field| field.references_object_set_by_name())
+            }
+            InformationObjectFields::CustomSyntax(c) => {
+                c.iter().any(|field| field.references_object_set_by_name())
+            }
         }
     }
 }
@@ -170,12 +178,12 @@ impl ObjectSetValue {
                     false
                 }
             }
-            ObjectSetValue::Inline(InformationObjectFields::CustomSyntax(c)) => {
-                c.iter_mut().any(|field| field.link_object_set_reference(tlds))
-            }
-            ObjectSetValue::Inline(InformationObjectFields::DefaultSyntax(d)) => {
-                d.iter_mut().any(|field| field.link_object_set_reference(tlds))
-            }
+            ObjectSetValue::Inline(InformationObjectFields::CustomSyntax(c)) => c
+                .iter_mut()
+                .any(|field| field.link_object_set_reference(tlds)),
+            ObjectSetValue::Inline(InformationObjectFields::DefaultSyntax(d)) => d
+                .iter_mut()
+                .any(|field| field.link_object_set_reference(tlds)),
         }
     }
 

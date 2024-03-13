@@ -2,7 +2,7 @@
 TSM {itu-t(0) recommendation(0) x(24) tsm-1(1084) modules(0) protocol(0) version1(1)}
 DEFINITIONS AUTOMATIC TAGS ::=
 BEGIN
-IMPORTS 
+IMPORTS
 
 BioAPI-BFP-SCHEMA,BioAPI-BSP-SCHEMA,BioAPI-FMR,BioAPI-BIR,
 BioAPI-BIR-BIOMETRIC-TYPE
@@ -27,7 +27,7 @@ UINT8	::=	INTEGER(0..255)
 UINT16	::=	INTEGER(0..65535)
 UINT24	::=	INTEGER(0..16777215)
 UINT32	::=	INTEGER(0..4294967295)
-UINT64	::=	INTEGER(0..18446744073709551615) 
+UINT64	::=	INTEGER(0..18446744073709551615)
 Opaque	::=	OCTET STRING
 
 BiometricType ::= BioAPI-BIR-BIOMETRIC-TYPE
@@ -109,7 +109,7 @@ storage-comparison-outsourcing-by-server-model  (10),
 ...
 }
 biometricServerHello	HANDSHAKE ::= {
-BiometricServerHello	IDENTIFIED-BY biometric-server-hello 
+BiometricServerHello	IDENTIFIED-BY biometric-server-hello
 }
 BiometricServerHello ::=       SEQUENCE {
 request	BiometricAuthenticationRequest
@@ -117,7 +117,7 @@ request	BiometricAuthenticationRequest
 Quality ::= INTEGER(0..100)
 BiometricAuthenticationRequest ::=      SEQUENCE {
 biometricMethod 	BiometricMethod,
-requestFMR             BioAPI-FMR,     
+requestFMR             BioAPI-FMR,
 				-- (32-bit integer value:requestFMR/231-1)
 requestTrialNumber     INTEGER(1..15),
 requestQuality         Quality,
@@ -157,11 +157,11 @@ insufficient-security			(71),
 internal-error				(80),
 user-canceled				(90),
 no-renegotiation				(100),
-unsupported-extension			(110),           
-certificate-unobtainable		(111),       
-unrecognized-name				(112),               
-bad-certificate-status-response	(113), 
-bad-certificate-hash-value		(114), 
+unsupported-extension			(110),
+certificate-unobtainable		(111),
+unrecognized-name				(112),
+bad-certificate-status-response	(113),
+bad-certificate-hash-value		(114),
 unacceptable-model      		(115),	-- Extension item for TSM
 unacceptable-biometrics 		(116),	-- Extension item for TSM
 unsupported-biometrics			(117) 	-- Extension item for TSM
@@ -497,7 +497,7 @@ verify-data	Opaque(SIZE(12))
 }
 XtsmTemplate    ::=     BiometricCertificate	-- Import from TAI
 SignedDatabyClient ::= CHOICE {
-digital-signature		[0] SignedData,             
+digital-signature		[0] SignedData,
 				--import from X9.84-CMS
 aCBioOnClient		[1] SignedDataACBio
 				--import from ISO/IEC 24761
@@ -579,7 +579,7 @@ aCforBioOnTTP	ACBioContentInformation OPTIONAL
 TTPRequestCObyClientModel	::=	SEQUENCE {
 templateData	XtsmTemplate,
 sampleData		SampleData	-- BIR: BioAPI defined format --
-}	
+}
 TTPResponseCObyClientModel	::=	SEQUENCE {
 bFPSchemaOnTTPProcess	BSP-BFP-Schemas,
 templateID		TemplateID,

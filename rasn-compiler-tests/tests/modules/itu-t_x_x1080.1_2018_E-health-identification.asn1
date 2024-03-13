@@ -3,7 +3,7 @@ E-health-identification { joint-iso-itu-t(2) telebiometrics(42) thprot(10) part1
 DEFINITIONS AUTOMATIC TAGS::=
 BEGIN
 
-IMPORTS 
+IMPORTS
 
   id-thprot, id-obj-cat
     FROM Telebiometrics { joint-iso-itu-t(2) telebiometrics(42) thprot(10) part1(1)
@@ -85,12 +85,12 @@ medicalStaffIdentification IDENTIFICATION ::= {
 
 MedicalStaffIdentification ::= SEQUENCE {
   scheme          MEDICAL-STAFF-SCHEME.&id ({MedicalStaffSchemes}),
-  schemeName      MEDICAL-STAFF-SCHEME.&name 
+  schemeName      MEDICAL-STAFF-SCHEME.&name
                   ({MedicalStaffSchemes}{@.scheme}) OPTIONAL,
   medicalStaffId  MEDICAL-STAFF-SCHEME.&Identification
                   ({MedicalStaffSchemes}{@.scheme}),
   qualifications  MEDICAL-STAFF-SCHEME.&Qualifications
-                 ({MedicalStaffSchemes}{@.scheme}) OPTIONAL} 
+                 ({MedicalStaffSchemes}{@.scheme}) OPTIONAL}
 
 MEDICAL-STAFF-SCHEME ::= CLASS {
   &id              OBJECT IDENTIFIER UNIQUE,
@@ -99,7 +99,7 @@ MEDICAL-STAFF-SCHEME ::= CLASS {
   &Qualifications,
   &Observer }
 WITH SYNTAX {
-  SCHEME [NAME &name] IDENTIFIED BY &id USING &Identification 
+  SCHEME [NAME &name] IDENTIFIED BY &id USING &Identification
   WITH &Qualifications AND &Observer }
 
 MedicalStaffSchemes MEDICAL-STAFF-SCHEME ::= {...}
@@ -122,7 +122,7 @@ PharmaceuticalStaffIdentification ::= SEQUENCE {
   scheme          MEDICAL-STAFF-SCHEME.&id ({MedicalStaffSchemes}),
   schemeName      MEDICAL-STAFF-SCHEME.&name ({MedicalStaffSchemes}{@.scheme}) OPTIONAL,
   medicalStaffId  MEDICAL-STAFF-SCHEME.&Identification ({MedicalStaffSchemes}{@.scheme}),
-  qualifications  MEDICAL-STAFF-SCHEME.&Qualifications ({MedicalStaffSchemes}{@.scheme}) OPTIONAL} 
+  qualifications  MEDICAL-STAFF-SCHEME.&Qualifications ({MedicalStaffSchemes}{@.scheme}) OPTIONAL}
 
 laboratoryIdentification IDENTIFICATION ::= {
   CATEGORY        id-lab
@@ -133,7 +133,7 @@ LaboratoryIdentification ::= SEQUENCE {
   schemeName     LABORATORY-SCHEME.&name ({LaboratorySchemes}{@.scheme})
                  OPTIONAL,
   qualifications LABORATORY-SCHEME.&Qualifications
-                 ({LaboratorySchemes}{@.scheme}) OPTIONAL} 
+                 ({LaboratorySchemes}{@.scheme}) OPTIONAL}
 
 LABORATORY-SCHEME ::= CLASS {
   &id		OBJECT IDENTIFIER UNIQUE,
@@ -149,10 +149,10 @@ manufacturerIdentification IDENTIFICATION ::= {
   IDENTIFIED WITH ManufacturerIdentification }
 
 ManufacturerIdentification ::= SEQUENCE {
-  scheme         MANUFACTURER-SCHEME.&id ({ManufacturerSchemes}), 
+  scheme         MANUFACTURER-SCHEME.&id ({ManufacturerSchemes}),
   schemeName     MANUFACTURER-SCHEME.&name ({ManufacturerSchemes}{@.scheme}) OPTIONAL,
   manufacturerId MANUFACTURER-SCHEME.&Manufacturer ({ManufacturerSchemes}{@.scheme}),
-  drugId         MANUFACTURER-SCHEME.&Drug ({ManufacturerSchemes}{@.scheme})} 
+  drugId         MANUFACTURER-SCHEME.&Drug ({ManufacturerSchemes}{@.scheme})}
 
 MANUFACTURER-SCHEME ::= CLASS {
   &id           OBJECT IDENTIFIER UNIQUE,
@@ -160,7 +160,7 @@ MANUFACTURER-SCHEME ::= CLASS {
   &Manufacturer,
   &Drug }
 WITH SYNTAX {
-  SCHEME [NAME &name] IDENTIFIED BY &id FOR &Manufacturer 
+  SCHEME [NAME &name] IDENTIFIED BY &id FOR &Manufacturer
   PRODUCING &Drug }
 
 ManufacturerSchemes MANUFACTURER-SCHEME ::= {...}
@@ -172,7 +172,7 @@ DEVICE-SCHEME 	::= CLASS {
   &Device,
   &supportedFormats   Supported-formats }
 WITH SYNTAX {
-  SCHEME [NAME &name] IDENTIFIED BY &id FOR &Manufacturer 
+  SCHEME [NAME &name] IDENTIFIED BY &id FOR &Manufacturer
   PRODUCING &Device SUPPORTING &supportedFormats}
 
 Supported-formats ::= CHOICE {
@@ -203,7 +203,7 @@ SOFTWARE-SCHEME ::= CLASS {
   &Manufacturer,
   &Software }
 WITH SYNTAX {
-  SCHEME [NAME &name] IDENTIFIED BY &id FOR &Manufacturer 
+  SCHEME [NAME &name] IDENTIFIED BY &id FOR &Manufacturer
   PRODUCING &Software }
 
 SoftwareIdentification ::= SEQUENCE {
@@ -211,7 +211,7 @@ SoftwareIdentification ::= SEQUENCE {
   schemeName     SOFTWARE-SCHEME.&name ({SoftwareSchemes}{@.scheme}) OPTIONAL,
   manufacturerId SOFTWARE-SCHEME.&Manufacturer ({SoftwareSchemes}{@.scheme})
                    OPTIONAL,
-  software       SOFTWARE-SCHEME.&Software ({SoftwareSchemes}{@.scheme})} 
+  software       SOFTWARE-SCHEME.&Software ({SoftwareSchemes}{@.scheme})}
 
 SoftwareSchemes	SOFTWARE-SCHEME ::= {...}
 
@@ -224,7 +224,7 @@ InsuranceIdentification ::= SEQUENCE {
   schemeName     INSURANCE-SCHEME.&name ({InsuranceSchemes}{@.scheme}) OPTIONAL,
   manufacturerId INSURANCE-SCHEME.&Company ({InsuranceSchemes}{@.scheme}),
   insurance      INSURANCE-SCHEME.&InsuranceType ({InsuranceSchemes}{@.scheme}),
-  insuranceCert  INSURANCE-SCHEME.&Certification ({InsuranceSchemes}{@.scheme})} 
+  insuranceCert  INSURANCE-SCHEME.&Certification ({InsuranceSchemes}{@.scheme})}
 
 INSURANCE-SCHEME ::= CLASS {
   &id           OBJECT IDENTIFIER UNIQUE,
@@ -258,7 +258,7 @@ MEDICAL-RECORD-SCHEME ::= CLASS {
 WITH SYNTAX {
   SCHEME
   [NAME         &name]
-  IDENTIFIED BY &id 
+  IDENTIFIED BY &id
   FOR           &Organisation
   USING         &RecordType
   WITH FORMAT   &Record }

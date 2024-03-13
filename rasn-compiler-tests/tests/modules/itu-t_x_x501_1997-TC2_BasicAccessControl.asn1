@@ -13,9 +13,9 @@ BasicAccessControl {joint-iso-itu-t ds(5) module(1) basicAccessControl(24) 3}
 DEFINITIONS ::=
 BEGIN
 
--- EXPORTS All 
--- The types and values defined in this module are exported for use in the other ASN.1 modules contained 
--- within the Directory Specifications, and for the use of other applications which will use them to access 
+-- EXPORTS All
+-- The types and values defined in this module are exported for use in the other ASN.1 modules contained
+-- within the Directory Specifications, and for the use of other applications which will use them to access
 -- Directory services. Other applications may use them for their own purposes, but this will not constrain
 -- extensions and modifications needed to maintain or improve the Directory service.
 IMPORTS
@@ -37,7 +37,7 @@ IMPORTS
     FROM SelectedAttributeTypes {joint-iso-itu-t ds(5) module(1)
       selectedAttributeTypes(5) 3};
 
--- types 
+-- types
 ACIItem ::= SEQUENCE {
   identificationTag    DirectoryString{ub-tag},
   precedence           Precedence,
@@ -90,7 +90,7 @@ UserClasses ::= SEQUENCE {
   name       [2]  SET SIZE (1..MAX) OF NameAndOptionalUID OPTIONAL,
   userGroup  [3]  SET SIZE (1..MAX) OF NameAndOptionalUID OPTIONAL,
   -- dn component must be the name of an
-  -- entry of GroupOfUniqueNames 
+  -- entry of GroupOfUniqueNames
   subtree    [4]  SET SIZE (1..MAX) OF SubtreeSpecification OPTIONAL
 }
 
@@ -118,7 +118,7 @@ AuthenticationLevel ::= CHOICE {
 
 GrantsAndDenials ::= BIT STRING {
   -- permissions that may be used in conjunction
-  -- with any component of ProtectedItems 
+  -- with any component of ProtectedItems
   grantAdd(0), denyAdd(1), grantDiscloseOnError(2), denyDiscloseOnError(3),
   grantRead(4), denyRead(5), grantRemove(6),
   denyRemove(7),
@@ -138,7 +138,7 @@ AttributeTypeAndValue ::= SEQUENCE {
   value  ATTRIBUTE.&Type({SupportedAttributes}{@type})
 }
 
--- attributes 
+-- attributes
 accessControlScheme ATTRIBUTE ::= {
   WITH SYNTAX             OBJECT IDENTIFIER
   EQUALITY MATCHING RULE  objectIdentifierMatch
@@ -168,8 +168,8 @@ subentryACI ATTRIBUTE ::= {
   ID                      id-aca-subentryACI
 }
 
--- object identifier assignments 
--- attributes 
+-- object identifier assignments
+-- attributes
 id-aca-accessControlScheme OBJECT IDENTIFIER ::=
   {id-aca 1}
 

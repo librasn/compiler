@@ -14,9 +14,9 @@ DistributedOperations {joint-iso-itu-t ds(5) module(1) distributedOperations(3)
   7} DEFINITIONS ::=
 BEGIN
 
--- EXPORTS All 
+-- EXPORTS All
 -- The types and values defined in this module are exported for use in the other ASN.1
--- modules contained within these Directory Specifications, and for the use of other 
+-- modules contained within these Directory Specifications, and for the use of other
 -- applications which will use them to access Directory services. Other applications may
 -- use them for their own purposes, but this will not constrain extensions and
 -- modifications needed to maintain or improve the Directory service.
@@ -49,7 +49,7 @@ IMPORTS
     UniqueIdentifier
     FROM SelectedAttributeTypes selectedAttributeTypes;
 
--- errors and parameters 
+-- errors and parameters
 dsaReferral ERROR ::= {
   PARAMETER OPTIONALLY-PROTECTED  {DsaReferralData}
   CODE                            id-errcode-dsaReferral
@@ -63,7 +63,7 @@ DsaReferralData ::= SET {
   COMPONENTS OF CommonResults
 }
 
---  common arguments and results 
+--  common arguments and results
 ChainingArguments ::= SET {
   originator              [0]  DistinguishedName OPTIONAL,
   targetObject            [1]  DistinguishedName OPTIONAL,
@@ -136,7 +136,7 @@ TraceItem ::= SET {
 
 ReferenceType ::= ENUMERATED {
   superior(1), subordinate(2), cross(3), nonSpecificSubordinate(4),
-  supplier(5), master(6), immediateSuperior(7), self(8), ditBridge(9), 
+  supplier(5), master(6), immediateSuperior(7), self(8), ditBridge(9),
   ...
   }
 
@@ -187,7 +187,7 @@ ContinuationReference ::= SET {
   ...
 }
 
---  bind unbind operation 
+--  bind unbind operation
 dSABind OPERATION ::= {
   ARGUMENT  DSABindArgument
   RESULT    DSABindResult
@@ -210,7 +210,7 @@ DSACredentials ::= CHOICE {
 
 DSABindResult ::= DSABindArgument
 
--- parameterized type for deriving chained operations 
+-- parameterized type for deriving chained operations
 chained{OPERATION:operation} OPERATION ::= {
   ARGUMENT OPTIONALLY-PROTECTED
     {SET {chainedArgument  ChainingArguments,
@@ -223,7 +223,7 @@ chained{OPERATION:operation} OPERATION ::= {
   CODE                           operation.&operationCode
 }
 
---  chained operations 
+--  chained operations
 chainedRead OPERATION ::= chained{read}
 
 chainedCompare OPERATION ::= chained{compare}

@@ -14,9 +14,9 @@ DSAOperationalAttributeTypes {joint-iso-itu-t ds(5) module(1)
   dsaOperationalAttributeTypes(22) 4} DEFINITIONS ::=
 BEGIN
 
--- EXPORTS All 
--- The types and values defined in this module are exported for use in the other ASN.1 modules contained 
--- within the Directory Specifications, and for the use of other applications which will use them to access 
+-- EXPORTS All
+-- The types and values defined in this module are exported for use in the other ASN.1 modules contained
+-- within the Directory Specifications, and for the use of other applications which will use them to access
 -- Directory services. Other applications may use them for their own purposes, but this will not constrain
 -- extensions and modifications needed to maintain or improve the Directory service.
 IMPORTS
@@ -40,45 +40,45 @@ IMPORTS
     FROM SelectedAttributeTypes {joint-iso-itu-t ds(5) module(1)
       selectedAttributeTypes(5) 4};
 
--- data types 
+-- data types
 DSEType ::= BIT STRING {
-  root(0), -- root DSE 
-  glue(1), -- represents knowledge of a name only 
-  cp(2), -- context prefix 
-  entry(3), -- object entry 
-  alias(4), -- alias entry 
-  subr(5), -- subordinate reference 
-  nssr(6), -- non-specific subordinate reference 
-  supr(7), -- superior reference 
-  xr(8), -- cross reference 
-  admPoint(9), -- administrative point 
-  subentry(10), -- subentry 
-  shadow(11), -- shadow copy 
-  immSupr(13), -- immediate superior reference 
-  rhob(14), -- rhob information 
-  sa(15), -- subordinate reference to alias entry 
-  dsSubentry(16), -- DSA Specific subentry 
-  familyMember(17)} -- family member 
+  root(0), -- root DSE
+  glue(1), -- represents knowledge of a name only
+  cp(2), -- context prefix
+  entry(3), -- object entry
+  alias(4), -- alias entry
+  subr(5), -- subordinate reference
+  nssr(6), -- non-specific subordinate reference
+  supr(7), -- superior reference
+  xr(8), -- cross reference
+  admPoint(9), -- administrative point
+  subentry(10), -- subentry
+  shadow(11), -- shadow copy
+  immSupr(13), -- immediate superior reference
+  rhob(14), -- rhob information
+  sa(15), -- subordinate reference to alias entry
+  dsSubentry(16), -- DSA Specific subentry
+  familyMember(17)} -- family member
 
 SupplierOrConsumer ::= SET {
-  COMPONENTS OF AccessPoint, -- supplier or consumer 
+  COMPONENTS OF AccessPoint, -- supplier or consumer
   agreementID  [3]  OperationalBindingID
 }
 
 SupplierInformation ::= SET {
-  COMPONENTS OF SupplierOrConsumer, -- supplier 
+  COMPONENTS OF SupplierOrConsumer, -- supplier
   supplier-is-master    [4]  BOOLEAN DEFAULT TRUE,
   non-supplying-master  [5]  AccessPoint OPTIONAL
 }
 
-ConsumerInformation ::= SupplierOrConsumer -- consumer 
+ConsumerInformation ::= SupplierOrConsumer -- consumer
 
 SupplierAndConsumers ::= SET {
-  COMPONENTS OF AccessPoint, -- supplier 
+  COMPONENTS OF AccessPoint, -- supplier
   consumers  [3]  SET OF AccessPoint
 }
 
--- attribute types 
+-- attribute types
 dseType ATTRIBUTE ::= {
   WITH SYNTAX             DSEType
   EQUALITY MATCHING RULE  bitStringMatch
@@ -146,7 +146,7 @@ secondaryShadows ATTRIBUTE ::= {
   ID                      id-doa-secondaryShadows
 }
 
--- matching rules 
+-- matching rules
 accessPointMatch MATCHING-RULE ::= {
   SYNTAX  Name
   ID      id-kmr-accessPointMatch
@@ -169,8 +169,8 @@ supplierAndConsumersMatch MATCHING-RULE ::= {
   ID      id-kmr-supplierConsumersMatch
 }
 
--- object identifier assignments 
--- dsa operational attributes 
+-- object identifier assignments
+-- dsa operational attributes
 id-doa-dseType OBJECT IDENTIFIER ::=
   {id-doa 0}
 
@@ -188,7 +188,7 @@ id-doa-consumerKnowledge OBJECT IDENTIFIER ::= {id-doa 6}
 
 id-doa-secondaryShadows OBJECT IDENTIFIER ::= {id-doa 7}
 
--- knowledge matching rules 
+-- knowledge matching rules
 id-kmr-accessPointMatch OBJECT IDENTIFIER ::=
   {id-kmr 0}
 

@@ -14,9 +14,9 @@ DistributedOperations {joint-iso-itu-t ds(5) module(1) distributedOperations(3)
   6} DEFINITIONS ::=
 BEGIN
 
--- EXPORTS All 
--- The types and values defined in this module are exported for use in the other ASN.1 modules contained 
--- within the Directory Specifications, and for the use of other applications which will use them to access 
+-- EXPORTS All
+-- The types and values defined in this module are exported for use in the other ASN.1 modules contained
+-- within the Directory Specifications, and for the use of other applications which will use them to access
 -- Directory services. Other applications may use them for their own purposes, but this will not constrain
 -- extensions and modifications needed to maintain or improve the Directory service.
 IMPORTS
@@ -48,7 +48,7 @@ IMPORTS
     UniqueIdentifier
     FROM SelectedAttributeTypes selectedAttributeTypes;
 
--- parameterized type for deriving chained operations 
+-- parameterized type for deriving chained operations
 chained{OPERATION:operation} OPERATION ::= {
   ARGUMENT OPTIONALLY-PROTECTED
     {SET {chainedArgument  ChainingArguments,
@@ -61,7 +61,7 @@ chained{OPERATION:operation} OPERATION ::= {
   CODE                           operation.&operationCode
 }
 
---  bind unbind operation 
+--  bind unbind operation
 dSABind OPERATION ::= {
   ARGUMENT  DSABindArgument
   RESULT    DSABindResult
@@ -82,7 +82,7 @@ DSACredentials ::= CHOICE {
 
 DSABindResult ::= DSABindArgument
 
---  chained operations 
+--  chained operations
 chainedRead OPERATION ::= chained{read}
 
 chainedCompare OPERATION ::= chained{compare}
@@ -101,7 +101,7 @@ chainedModifyEntry OPERATION ::= chained{modifyEntry}
 
 chainedModifyDN OPERATION ::= chained{modifyDN}
 
--- errors and parameters 
+-- errors and parameters
 dsaReferral ERROR ::= {
   PARAMETER OPTIONALLY-PROTECTED
     {SET {reference      [0]  ContinuationReference,
@@ -110,7 +110,7 @@ dsaReferral ERROR ::= {
   CODE                            id-errcode-dsaReferral
 }
 
---  common arguments and results 
+--  common arguments and results
 ChainingArguments ::= SET {
   originator              [0]  DistinguishedName OPTIONAL,
   targetObject            [1]  DistinguishedName OPTIONAL,
@@ -182,7 +182,7 @@ AccessPoint ::= SET {
   ae-title             [0]  Name,
   address              [1]  PresentationAddress,
   protocolInformation  [2]  SET SIZE (1..MAX) OF ProtocolInformation OPTIONAL
-  --				[6]	Not to be used 
+  --				[6]	Not to be used
 }
 
 MasterOrShadowAccessPoint ::= SET {

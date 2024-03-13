@@ -28,10 +28,10 @@ IMPORTS
     FROM Addressing-Data-Elements {itu-t recommendation h 450 1 version2(1)
       addressing-data-elements(9)}
   NonStandardParameter
-    FROM H323-MESSAGES {itu-t(0) recommendation(0) h(8) h225-0(2250) 
+    FROM H323-MESSAGES {itu-t(0) recommendation(0) h(8) h225-0(2250)
       version(0) 7 h323-messages(0)} -- see H.225.0
   H225InformationElement
-    FROM H225-generic-parameters-definition {itu-t recommendation h 450 
+    FROM H225-generic-parameters-definition {itu-t recommendation h 450
       1 version2(1) h225-generic-parameters(6)};
 
 H323CallTransferOperations OPERATION ::=
@@ -161,7 +161,7 @@ CTUpdateArg ::= SEQUENCE {
   redirectionNumber      EndpointAddress,
   redirectionInfo        BMPString(SIZE (1..128)) OPTIONAL,
   basicCallInfoElements  H225InformationElement OPTIONAL,
-  -- Information element 
+  -- Information element
   -- Progress indicator may be conveyed
   argumentExtension
     CHOICE {extensionSeq     ExtensionSeq,
@@ -233,7 +233,7 @@ invalidReroutingNumber ERROR ::=
 
 unrecognizedCallIdentity ERROR ::=
   { -- used when establishment of the new connection fails because it
-  -- could not be associated with a SS-CT entity at the 
+  -- could not be associated with a SS-CT entity at the
   -- transferred-to endpoint
   CODE  local:1005
 }

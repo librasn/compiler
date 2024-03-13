@@ -2,7 +2,7 @@ AttributeCertificateDefinitions {joint-iso-itu-t ds(5) module(1) attributeCertif
 DEFINITIONS IMPLICIT TAGS ::=
 BEGIN
 
--- EXPORTS ALL 
+-- EXPORTS ALL
 
 IMPORTS
 
@@ -10,14 +10,14 @@ IMPORTS
   authenticationFramework, selectedAttributeTypes, id-oc, certificateExtensions,
   pkiPmiExternalDataTypes
     FROM UsefulDefinitions {joint-iso-itu-t ds(5) module(1) usefulDefinitions(0) 8}
- 
+
   ATTRIBUTE, Attribute{}, AttributeType, MATCHING-RULE, Name, OBJECT-CLASS,
   RelativeDistinguishedName, SupportedAttributes, SYNTAX-NAME, top
     FROM InformationFramework informationFramework
- 
+
   AttributeTypeAndValue
     FROM BasicAccessControl basicAccessControl
- 
+
   AlgorithmIdentifier, Certificate, CertificateList, CertificateSerialNumber,
     EXTENSION, Extensions, InfoSyntax, PolicySyntax, SIGNED{}, SupportedAlgorithms,
     x509CertificateList
@@ -35,7 +35,7 @@ IMPORTS
 -- Unless explicitly noted otherwise, there is no significance to the ordering
 -- of components of a SEQUENCE OF construct in this Specification.
 
--- attribute certificate constructs 
+-- attribute certificate constructs
 
 AttributeCertificate ::= SIGNED{TBSAttributeCertificate}
 
@@ -338,7 +338,7 @@ GeneralSubtree ::= SEQUENCE {
 
 BaseDistance ::= INTEGER(0..MAX)
 
--- PMI object classes 
+-- PMI object classes
 
 pmiUser OBJECT-CLASS ::= {
   SUBCLASS OF  {top}
@@ -387,7 +387,7 @@ protectedPrivilegePolicy OBJECT-CLASS ::= {
   MAY CONTAIN  {protPrivPolicy}
   ID           id-oc-protectedPrivilegePolicy }
 
--- PMI directory attributes 
+-- PMI directory attributes
 
 attributeCertificateAttribute ATTRIBUTE ::= {
   WITH SYNTAX             AttributeCertificate
@@ -447,7 +447,7 @@ xmlPrivPolicy ATTRIBUTE ::= {
   WITH SYNTAX  UTF8String -- XML-encoded privilege policy information
   ID           id-at-xmlPrivPolicy }
 
--- Attribute certificate extensions and matching rules 
+-- Attribute certificate extensions and matching rules
 
 attributeCertificateExactMatch MATCHING-RULE ::= {
   SYNTAX  AttributeCertificateExactAssertion
@@ -496,9 +496,9 @@ extensionPresenceMatch MATCHING-RULE ::= {
   SYNTAX  EXTENSION.&id
   ID      id-mr-extensionPresenceMatch }
 
--- object identifier assignments 
+-- object identifier assignments
 
--- object classes 
+-- object classes
 
 id-oc-pmiUser                            OBJECT IDENTIFIER ::= {id-oc 24}
 id-oc-pmiAA                              OBJECT IDENTIFIER ::= {id-oc 25}
@@ -508,7 +508,7 @@ id-oc-privilegePolicy                    OBJECT IDENTIFIER ::= {id-oc 32}
 id-oc-pmiDelegationPath                  OBJECT IDENTIFIER ::= {id-oc 33}
 id-oc-protectedPrivilegePolicy           OBJECT IDENTIFIER ::= {id-oc 34}
 
--- directory attributes 
+-- directory attributes
 
 id-at-attributeCertificate               OBJECT IDENTIFIER ::= {id-at 58}
 id-at-attributeCertificateRevocationList OBJECT IDENTIFIER ::= {id-at 59}
@@ -524,7 +524,7 @@ id-at-xmlPrivPolicy                      OBJECT IDENTIFIER ::= {id-at 76}
 id-at-permission                         OBJECT IDENTIFIER ::= {id-at 82}
 id-at-eeAttrCertificateRevocationList    OBJECT IDENTIFIER ::= {id-at 102}
 
--- attribute certificate extensions 
+-- attribute certificate extensions
 
 id-ce-authorityAttributeIdentifier       OBJECT IDENTIFIER ::= {id-ce 38}
 id-ce-roleSpecCertIdentifier             OBJECT IDENTIFIER ::= {id-ce 39}
@@ -547,7 +547,7 @@ id-ce-allowedAttributeAssignments        OBJECT IDENTIFIER ::= {id-ce 67}
 id-ce-attributeMappings                  OBJECT IDENTIFIER ::= {id-ce 68}
 id-ce-holderNameConstraints              OBJECT IDENTIFIER ::= {id-ce 69}
 
--- PMI matching rules 
+-- PMI matching rules
 
 id-mr-attributeCertificateMatch          OBJECT IDENTIFIER ::= {id-mr 42}
 id-mr-attributeCertificateExactMatch     OBJECT IDENTIFIER ::= {id-mr 45}

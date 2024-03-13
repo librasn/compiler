@@ -340,25 +340,27 @@ fn property_settings_constraint<'a>(input: &'a str) -> IResult<&'a str, SubtypeE
     preceded(
         skip_ws_and_comments(tag("SETTINGS")),
         map_res(
-        skip_ws_and_comments(delimited(
-            char('"'),
-            many1(
-                skip_ws_and_comments(
-                separated_pair(settings_identifier, char('='), identifier)),
-            ),
-            char('"'),
-        )),
-        |res| {
-            res.into_iter()
-                .map(|pair| PropertyAndSettingsPair::try_from(pair))
-                .collect::<Result<Vec<PropertyAndSettingsPair>, _>>()
-                .map(|settings| {
-                    SubtypeElement::PropertySettings(PropertySettings {
-                        property_settings_list: settings,
+            skip_ws_and_comments(delimited(
+                char('"'),
+                many1(skip_ws_and_comments(separated_pair(
+                    settings_identifier,
+                    char('='),
+                    identifier,
+                ))),
+                char('"'),
+            )),
+            |res| {
+                res.into_iter()
+                    .map(|pair| PropertyAndSettingsPair::try_from(pair))
+                    .collect::<Result<Vec<PropertyAndSettingsPair>, _>>()
+                    .map(|settings| {
+                        SubtypeElement::PropertySettings(PropertySettings {
+                            property_settings_list: settings,
+                        })
                     })
-                })
-        },
-    ))(input)
+            },
+        ),
+    )(input)
 }
 
 fn settings_identifier<'a>(input: &'a str) -> IResult<&'a str, &'a str> {
@@ -818,20 +820,21 @@ mod tests {
             vec![Constraint::SubtypeConstraint(ElementSet {
                 set: ElementOrSetOperation::SetOperation(SetOperation {
                     base: SubtypeElement::SingleValue {
-                        value: ASN1Value::ElsewhereDeclaredValue { identifier: "unknown".to_string(),
-                                parent: None
-                            },
+                        value: ASN1Value::ElsewhereDeclaredValue {
+                            identifier: "unknown".to_string(),
+                            parent: None
+                        },
                         extensible: false
                     },
                     operator: SetOperator::Union,
                     operant: Box::new(ElementOrSetOperation::SetOperation(SetOperation {
                         base: SubtypeElement::ValueRange {
-                            min: Some(ASN1Value::ElsewhereDeclaredValue { identifier: 
-                                "passengerCar".to_string()
-                            ,
+                            min: Some(ASN1Value::ElsewhereDeclaredValue {
+                                identifier: "passengerCar".to_string(),
                                 parent: None
                             }),
-                            max: Some(ASN1Value::ElsewhereDeclaredValue { identifier: "tram".to_string(),
+                            max: Some(ASN1Value::ElsewhereDeclaredValue {
+                                identifier: "tram".to_string(),
                                 parent: None
                             }),
                             extensible: false
@@ -839,11 +842,10 @@ mod tests {
                         operator: SetOperator::Union,
                         operant: Box::new(ElementOrSetOperation::Element(
                             SubtypeElement::SingleValue {
-                                value: ASN1Value::ElsewhereDeclaredValue { identifier: 
-                                    "agricultural".to_string()
-                                ,
-                                parent: None
-                            },
+                                value: ASN1Value::ElsewhereDeclaredValue {
+                                    identifier: "agricultural".to_string(),
+                                    parent: None
+                                },
                                 extensible: false
                             }
                         ))
@@ -897,29 +899,23 @@ mod tests {
                             })
                         ])),
                         ObjectSetValue::Inline(InformationObjectFields::CustomSyntax(vec![
-                            SyntaxApplication::LiteralOrTypeReference(
-                                DeclarationElsewhere {
-                                    parent: None,
-                                    identifier: "ConnectionManeuverAssist-addGrpC".into(),
-                                    constraints: vec![]
-                                }
-                            ),
-                            SyntaxApplication::LiteralOrTypeReference(
-                                DeclarationElsewhere {
-                                    parent: None,
-                                    identifier: "IDENTIFIED".into(),
-                                    constraints: vec![]
-                                }
-                            ),
-                            SyntaxApplication::LiteralOrTypeReference(
-                                DeclarationElsewhere {
-                                    parent: None,
-                                    identifier: "BY".into(),
-                                    constraints: vec![]
-                                }
-                            ),
-                            SyntaxApplication::ValueReference(ASN1Value::ElsewhereDeclaredValue { identifier:
-                                "addGrpC".into(),
+                            SyntaxApplication::LiteralOrTypeReference(DeclarationElsewhere {
+                                parent: None,
+                                identifier: "ConnectionManeuverAssist-addGrpC".into(),
+                                constraints: vec![]
+                            }),
+                            SyntaxApplication::LiteralOrTypeReference(DeclarationElsewhere {
+                                parent: None,
+                                identifier: "IDENTIFIED".into(),
+                                constraints: vec![]
+                            }),
+                            SyntaxApplication::LiteralOrTypeReference(DeclarationElsewhere {
+                                parent: None,
+                                identifier: "BY".into(),
+                                constraints: vec![]
+                            }),
+                            SyntaxApplication::ValueReference(ASN1Value::ElsewhereDeclaredValue {
+                                identifier: "addGrpC".into(),
                                 parent: None
                             })
                         ]))
@@ -1129,18 +1125,18 @@ mod tests {
         assert_eq!(
             constraint(
                 r#"(CONSTRAINED BY {/* XML representation of the XSD pattern "\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d[-,+]\d\d:\d\d" */})"#
-            ).unwrap().1, 
+            ).unwrap().1,
             vec![
                 Constraint::SubtypeConstraint(
-                    ElementSet { 
+                    ElementSet {
                         set: ElementOrSetOperation::Element(
                             SubtypeElement::UserDefinedConstraint(
-                                UserDefinedConstraint { 
+                                UserDefinedConstraint {
                                     definition: "/* XML representation of the XSD pattern \"\\d\\d\\d\\d-\\d\\d-\\d\\dT\\d\\d:\\d\\d:\\d\\d[-,+]\\d\\d:\\d\\d\" */".into()
                                 }
                                 )
-                            ), 
-                            extensible: false 
+                            ),
+                            extensible: false
                         }
                     )
                 ]
@@ -1149,30 +1145,48 @@ mod tests {
 
     #[test]
     fn parses_two_variants_of_extensible_size() {
-        assert_eq!(constraint("(SIZE(1..4),...)").unwrap().1, vec![Constraint::SubtypeConstraint(ElementSet { set: ElementOrSetOperation::Element(SubtypeElement::SizeConstraint(Box::new(ElementOrSetOperation::Element(SubtypeElement::ValueRange { min: Some(ASN1Value::Integer(1)), max: Some(ASN1Value::Integer(4)), extensible: false })))), extensible: true })]);
-        assert_eq!(constraint("(SIZE(1..4,...))").unwrap().1, vec![Constraint::SubtypeConstraint(ElementSet { set: ElementOrSetOperation::Element(SubtypeElement::SizeConstraint(Box::new(ElementOrSetOperation::Element(SubtypeElement::ValueRange { min: Some(ASN1Value::Integer(1)), max: Some(ASN1Value::Integer(4)), extensible: true })))), extensible: false })])
+        assert_eq!(
+            constraint("(SIZE(1..4),...)").unwrap().1,
+            vec![Constraint::SubtypeConstraint(ElementSet {
+                set: ElementOrSetOperation::Element(SubtypeElement::SizeConstraint(Box::new(
+                    ElementOrSetOperation::Element(SubtypeElement::ValueRange {
+                        min: Some(ASN1Value::Integer(1)),
+                        max: Some(ASN1Value::Integer(4)),
+                        extensible: false
+                    })
+                ))),
+                extensible: true
+            })]
+        );
+        assert_eq!(
+            constraint("(SIZE(1..4,...))").unwrap().1,
+            vec![Constraint::SubtypeConstraint(ElementSet {
+                set: ElementOrSetOperation::Element(SubtypeElement::SizeConstraint(Box::new(
+                    ElementOrSetOperation::Element(SubtypeElement::ValueRange {
+                        min: Some(ASN1Value::Integer(1)),
+                        max: Some(ASN1Value::Integer(4)),
+                        extensible: true
+                    })
+                ))),
+                extensible: false
+            })]
+        )
     }
 
     #[test]
     fn parses_property_settings_constraint() {
         assert_eq!(
-            constraint(r#"(SETTINGS "Midnight=Start")"#).unwrap().1, 
-            vec![
-                Constraint::SubtypeConstraint(
-                    ElementSet { 
-                        set: ElementOrSetOperation::Element(
-                            SubtypeElement::PropertySettings(
-                                PropertySettings { 
-                                    property_settings_list: vec![
-                                        PropertyAndSettingsPair::Midnight(MidnightSettings::StartOfDay)
-                                    ] 
-                                }
-                            )
-                        ), 
-                        extensible: false 
+            constraint(r#"(SETTINGS "Midnight=Start")"#).unwrap().1,
+            vec![Constraint::SubtypeConstraint(ElementSet {
+                set: ElementOrSetOperation::Element(SubtypeElement::PropertySettings(
+                    PropertySettings {
+                        property_settings_list: vec![PropertyAndSettingsPair::Midnight(
+                            MidnightSettings::StartOfDay
+                        )]
                     }
-                )
-            ]
+                )),
+                extensible: false
+            })]
         );
     }
 }

@@ -1,6 +1,6 @@
-use proc_macro2::TokenStream;
-use crate::intermediate::{*};
 use self::{builder::*, information_object::ASN1Information};
+use crate::intermediate::*;
+use proc_macro2::TokenStream;
 
 use super::error::{GeneratorError, GeneratorErrorType};
 

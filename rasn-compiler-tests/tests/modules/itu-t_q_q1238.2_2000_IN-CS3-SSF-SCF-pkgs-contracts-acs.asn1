@@ -231,7 +231,7 @@ networkSpecificB3 SCF-SRF-BOUNDS ::= {
   NUM-OF-VARIABLE-PARTS               5
  -- example value--}
 
--- Application Contexts 
+-- Application Contexts
 cs3ssf-scfGenericAC APPLICATION-CONTEXT ::= {
   CONTRACT                  inCs3SsfToScfGeneric
   DIALOGUE MODE             structured
@@ -312,11 +312,11 @@ cs3scf-ssfTriggerManagementAC APPLICATION-CONTEXT ::= {
   APPLICATION CONTEXT NAME  id-ac-cs3-scf-ssfTriggerManagementAC
 }
 
--- Contracts 
+-- Contracts
 inCs3SsfToScfGeneric CONTRACT ::= {
   -- dialogue initiated by SSF with InitialDP Operation
-  --The inCs3SsfToScfGeneric contract expresses the form of the service in which the SSF, 
-  --a ROS object of class ssf, initiates the generic triggering approach contract. 
+  --The inCs3SsfToScfGeneric contract expresses the form of the service in which the SSF,
+  --a ROS object of class ssf, initiates the generic triggering approach contract.
   --A ROS-object of class scf, responds to this contract.
   INITIATOR CONSUMER OF
     {activityTestPackage | exceptionInformPackage{networkSpecificB2} |
@@ -358,7 +358,7 @@ inCs3SsfToScfGeneric CONTRACT ::= {
 inCs3SsfToScfDpSpecific CONTRACT ::= {
   -- dialogue initiated by SSF with DP Specific Iniltial Operations
   --The inCs3SsfToScfDpSpecific contract expresses the form of the service in which the SSF,
-  -- a ROS-object of class ssf, initiates the DP specific triggering approach contract. 
+  -- a ROS-object of class ssf, initiates the DP specific triggering approach contract.
   --A ROS-object of class scf, responds to this contract.
   INITIATOR CONSUMER OF
     {activityTestPackage |
@@ -401,7 +401,7 @@ inCs3SsfToScfDpSpecific CONTRACT ::= {
 inCs3AssistHandoffSsfToScf CONTRACT ::= {
   -- dialogue initiated by SSF with AssistRequestInstructions
   --The inCs3AssistHandoffSsfToScf contract expresses the form of the service in which the SSF,
-  -- a ROS-object of class ssf, initiates the Assist or Hand-off contract. 
+  -- a ROS-object of class ssf, initiates the Assist or Hand-off contract.
   --A ROS-object of class scf, responds to this contract.
   INITIATOR CONSUMER OF
     {activityTestPackage |
@@ -426,8 +426,8 @@ inCs3AssistHandoffSsfToScf CONTRACT ::= {
 
 inCs3ScfToSsfGeneric CONTRACT ::= {
   --dialogue initiated by SCF with InitiateCallAttempt or CreateCallSegmentAssociation , Generic Case
-  --The inCs3ScfToSsfGeneric contract expresses the form of the service in which the SCF, 
-  --a ROS-object of class scf, initiates the generic messaging approach for the SCF 
+  --The inCs3ScfToSsfGeneric contract expresses the form of the service in which the SCF,
+  --a ROS-object of class scf, initiates the generic messaging approach for the SCF
   --Initiate Call Attempt contract. A ROS-object of class ssf, responds to this contract.
   INITIATOR CONSUMER OF
     {activityTestPackage |
@@ -505,7 +505,7 @@ inCs3ScfToSsfDpSpecific CONTRACT ::= {
 
 inCs3ScfToSsfTrafficManagement CONTRACT ::= {
   -- dialogue initiated by SCF with CallGap
-  --The inCs3ScfToSsfTrafficManagement contract expresses the form of the service in 
+  --The inCs3ScfToSsfTrafficManagement contract expresses the form of the service in
   --which the SCF, a ROS-object of class scf, initiates the Traffic Management related contract.
   -- A ROS-object of class ssf, responds to this contract.
   INITIATOR CONSUMER OF
@@ -531,9 +531,9 @@ inCs3ScfToSsfServiceManagement CONTRACT ::= {
 
 inCs3SsfToScfServiceManagement CONTRACT ::= {
   -- dialogue initiated/ended by SSF with ServiceFilteringResponse
-  --The inCs3SsfToScfServiceManagement contract expresses the form of the service in 
+  --The inCs3SsfToScfServiceManagement contract expresses the form of the service in
   --which the SSF, a ROS-object of class ssf, initiates the Service Management related contract
-  -- for reporting Service Management results. 
+  -- for reporting Service Management results.
   INITIATOR CONSUMER OF
     {serviceManagementResponsePackage  {networkSpecificB1,
                                         networkSpecificB2}}
@@ -542,8 +542,8 @@ inCs3SsfToScfServiceManagement CONTRACT ::= {
 
 inCs3ScfToSsfStatusReporting CONTRACT ::= {
   -- dialogue initiated by SCF with StatusReporting Operations
-  --The inCs3ScfToSsfStatusReporting contract expresses the form of the service 
-  --in which the SCF, a ROS-object of class scf, initiates the Status Reporting related contract. 
+  --The inCs3ScfToSsfStatusReporting contract expresses the form of the service
+  --in which the SCF, a ROS-object of class scf, initiates the Status Reporting related contract.
   --A ROS-object of class ssf, responds to this contract.
   INITIATOR CONSUMER OF
     {statusReportingPackage  {networkSpecificB1,
@@ -564,7 +564,7 @@ inCs3ScfToSsfTriggerManagement CONTRACT ::= {
   ID                     id-inCs3ScfToSsfTriggerManagement
 }
 
--- Packages 
+-- Packages
 scfActivationPackage{B1:b1, B2:b2} OPERATION-PACKAGE ::= {
   CONSUMER INVOKES  {initialDP  { --!--b1,
                                        b2}}
@@ -590,19 +590,19 @@ advancedBCPDPPackage{B1:b1, B2:b2} OPERATION-PACKAGE ::= {
   ID                id-package-advancedBCPDP
 }
 
-srf-scfActivationOfAssistPackage{B1:b1, B2:b2} OPERATION-PACKAGE ::= 
+srf-scfActivationOfAssistPackage{B1:b1, B2:b2} OPERATION-PACKAGE ::=
 {
   CONSUMER INVOKES  {assistRequestInstructions{b1, b2}}
   ID                id-package-srf-scfActivationOfAssist
 }
 
-assistConnectionEstablishmentPackage{B1:b1, B2:b2} OPERATION-PACKAGE ::= 
+assistConnectionEstablishmentPackage{B1:b1, B2:b2} OPERATION-PACKAGE ::=
 {
   CONSUMER INVOKES  {establishTemporaryConnection{b1, b2}}
   ID                id-package-assistConnectionEstablishment
 }
 
-genericDisconnectResourcePackage{B1:b1, B2:b2} OPERATION-PACKAGE ::= 
+genericDisconnectResourcePackage{B1:b1, B2:b2} OPERATION-PACKAGE ::=
 {
   CONSUMER INVOKES
     {disconnectForwardConnection |
@@ -610,7 +610,7 @@ genericDisconnectResourcePackage{B1:b1, B2:b2} OPERATION-PACKAGE ::=
   ID                id-package-genericDisconnectResource
 }
 
-nonAssistedConnectionEstablishmentPackage{B1:b1, B2:b2} OPERATION-PACKAGE ::= 
+nonAssistedConnectionEstablishmentPackage{B1:b1, B2:b2} OPERATION-PACKAGE ::=
 {
   CONSUMER INVOKES  {connectToResource{b1, b2}}
   ID                id-package-nonAssistedConnectionEstablishment
@@ -688,13 +688,13 @@ trafficManagementPackage{B1:b1, B2:b2, B3:b3} OPERATION-PACKAGE ::= {
   ID                id-package-trafficManagement
 }
 
-serviceManagementActivatePackage{B1:b1, B2:b2, B3:b3} OPERATION-PACKAGE ::= 
+serviceManagementActivatePackage{B1:b1, B2:b2, B3:b3} OPERATION-PACKAGE ::=
 {
   CONSUMER INVOKES  {activateServiceFiltering{b1, b2, b3}}
   ID                id-package-serviceManagementActivate
 }
 
-serviceManagementResponsePackage{B1:b1, B2:b2} OPERATION-PACKAGE ::= 
+serviceManagementResponsePackage{B1:b1, B2:b2} OPERATION-PACKAGE ::=
 {
   CONSUMER INVOKES  {serviceFilteringResponse{b1, b2}}
   ID                id-package-serviceManagementResponse
@@ -771,7 +771,7 @@ facilityIEHandlingPackage{B1:b1} OPERATION-PACKAGE ::= {
   ID                id-package-facilityIEHandling
 }
 
--- Abstract Syntaxes 
+-- Abstract Syntaxes
 ssf-scfGenericAbstractSyntax ABSTRACT-SYNTAX ::= {
   GenericSSF-SCF-PDUs
   IDENTIFIED BY  id-as-ssf-scfGenericAS

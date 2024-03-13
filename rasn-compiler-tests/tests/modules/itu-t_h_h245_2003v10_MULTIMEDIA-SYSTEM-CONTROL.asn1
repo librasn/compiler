@@ -453,7 +453,7 @@ RSVPParameters ::= SEQUENCE {
   bucketSize  INTEGER(1..4294967295) OPTIONAL, -- size in bytes
   peakRate    INTEGER(1..4294967295) OPTIONAL,
   -- peak bandwidth bytes/sec
-  minPoliced  INTEGER(1..4294967295) OPTIONAL, -- 
+  minPoliced  INTEGER(1..4294967295) OPTIONAL, --
   maxPktSize  INTEGER(1..4294967295) OPTIONAL, -- size in bytes
   ...
 }
@@ -483,7 +483,7 @@ QOSCapability ::= SEQUENCE {
 MediaTransportType ::= CHOICE {
   ip-UDP               NULL,
   ip-TCP               NULL,
-  atm-AAL5-UNIDIR      NULL, -- virtual circuits used as unidirectional 
+  atm-AAL5-UNIDIR      NULL, -- virtual circuits used as unidirectional
   atm-AAL5-BIDIR       NULL, -- virtual circuits used as bidirectional
   ...,
   atm-AAL5-compressed  SEQUENCE {variable-delta  BOOLEAN,
@@ -1073,7 +1073,7 @@ T38FaxTcpOptions ::= SEQUENCE {t38TCPBidirectionalMode  BOOLEAN,
 }
 
 -- ===================================================================================
--- Encryption Capability Definitions: 
+-- Encryption Capability Definitions:
 -- ===================================================================================
 EncryptionAuthenticationAndIntegrity ::= SEQUENCE {
   encryptionCapability      EncryptionCapability OPTIONAL,
@@ -1116,7 +1116,7 @@ UserInputCapability ::= CHOICE {
   encryptedBasicString    NULL, -- encrypted Basic string in encryptedAlphanumeric
   encryptedIA5String      NULL, -- encrypted IA5 string in encryptedSignalType
   encryptedGeneralString  NULL, -- encrypted general string in
-  
+
   -- extendedAlphanumeric.encryptedalphanumeric
   secureDTMF              NULL -- secure DTMF using encryptedSignalType
 }
@@ -1142,7 +1142,7 @@ GenericCapability ::= SEQUENCE {
   collapsing            SEQUENCE OF GenericParameter OPTIONAL,
   nonCollapsing         SEQUENCE OF GenericParameter OPTIONAL,
   nonCollapsingRaw      OCTET STRING OPTIONAL, -- Typically contains ASN.1
-  
+
   -- PER encoded data describing capability
   transport             DataProtocolCapability OPTIONAL,
   ...
@@ -1150,7 +1150,7 @@ GenericCapability ::= SEQUENCE {
 
 CapabilityIdentifier ::= CHOICE {
   standard         OBJECT IDENTIFIER,
-  -- e.g. { itu-t (0) recommendation (0) h (8) 267 
+  -- e.g. { itu-t (0) recommendation (0) h (8) 267
   -- version (0) 2 subIdentifier (0)}
   h221NonStandard  NonStandardParameter,
   uuid             OCTET STRING(SIZE (16)),
@@ -1159,7 +1159,7 @@ CapabilityIdentifier ::= CHOICE {
 }
 
 -- Note. The ranges of parameter values have been selected to ensure that the GenericParameter
--- preamble, standard part of ParameterIdentifier and the encoding of that choice, and the preamble 
+-- preamble, standard part of ParameterIdentifier and the encoding of that choice, and the preamble
 -- of ParameterValue to fit into 2 octets.
 GenericParameter ::= SEQUENCE {
   parameterIdentifier  ParameterIdentifier,
@@ -1171,7 +1171,7 @@ GenericParameter ::= SEQUENCE {
 ParameterIdentifier ::= CHOICE {
   standard         INTEGER(0..127), -- Assigned by Capability specifications
   h221NonStandard  NonStandardParameter, -- N.B. NonStandardIdentifier is
-  
+
   -- not sufficient in this case
   uuid             OCTET STRING(SIZE (16)), -- For non-standard
   domainBased      IA5String(SIZE (1..64)),
@@ -1179,8 +1179,8 @@ ParameterIdentifier ::= CHOICE {
 }
 
 ParameterValue ::= CHOICE {
-  logical           NULL, -- Only acceptable if all 
-  
+  logical           NULL, -- Only acceptable if all
+
   -- entities include this option
   booleanArray      INTEGER(0..255), -- array of 8 logical types
   unsignedMin       INTEGER(0..65535), -- Look for min common value
@@ -1275,7 +1275,7 @@ OpenLogicalChannel ::= SEQUENCE {
                         h2250LogicalChannelParameters
                           H2250LogicalChannelParameters,
                         none                           NULL}, -- for use with Separate Stack when--
-              -- multiplexParameters are not required 
+              -- multiplexParameters are not required
               -- or appropriate
               ...,
               forwardLogicalChannelDependency     LogicalChannelNumber OPTIONAL,
@@ -1300,9 +1300,9 @@ OpenLogicalChannel ::= SEQUENCE {
               replacementFor                      LogicalChannelNumber OPTIONAL
   } OPTIONAL, -- Not present for uni-directional channel request
   ...,
-  separateStack                    NetworkAccessParameters OPTIONAL, -- for Open responder to establish the stack 
+  separateStack                    NetworkAccessParameters OPTIONAL, -- for Open responder to establish the stack
   encryptionSync                   EncryptionSync OPTIONAL
-} -- used only by Master 
+} -- used only by Master
 
 LogicalChannelNumber ::= INTEGER(1..65535)
 
@@ -1646,8 +1646,8 @@ EncryptionSync ::=
   {
   nonStandard  NonStandardParameter OPTIONAL,
   synchFlag    INTEGER(0..255), -- may need to be larger for H.324, etc
-  
-  -- shall be the Dynamic Payload# for H.323 
+
+  -- shall be the Dynamic Payload# for H.323
   h235Key      OCTET STRING(SIZE (1..65535)), -- H.235 encoded value
   escrowentry  SEQUENCE SIZE (1..256) OF EscrowData OPTIONAL,
   ...
@@ -1683,7 +1683,7 @@ OpenLogicalChannelAck ::= SEQUENCE {
             -- V.76  parameters are never present in the Ack
             h2250LogicalChannelAckParameters  H2250LogicalChannelAckParameters,
             ...} OPTIONAL,
-  encryptionSync                    EncryptionSync OPTIONAL -- used only by Master 
+  encryptionSync                    EncryptionSync OPTIONAL -- used only by Master
 }
 
 OpenLogicalChannelReject ::= SEQUENCE {
@@ -1790,9 +1790,9 @@ MultiplexElement ::= SEQUENCE {
             subElementList        SEQUENCE SIZE (2..255) OF MultiplexElement
   },
   repeatCount
-    CHOICE {-- repeats of type 
+    CHOICE {-- repeats of type
             finite            INTEGER(1..65535),
-            -- used for last element 
+            -- used for last element
             untilClosingFlag  NULL}
 }
 
@@ -1990,7 +1990,7 @@ H223ModeParameters ::= SEQUENCE {
             al2WithSequenceNumbers     NULL,
             al3
               SEQUENCE {controlFieldOctets  INTEGER(0..2),
-                        -- units octets 
+                        -- units octets
                         sendBufferSize      INTEGER(0..16777215)},
             ...,
             al1M                       H223AL1MParameters,
@@ -2296,12 +2296,12 @@ CommunicationModeTableEntry ::= SEQUENCE {
   nonStandard                     SEQUENCE OF NonStandardParameter OPTIONAL,
   sessionID                       INTEGER(1..255),
   associatedSessionID             INTEGER(1..255) OPTIONAL,
-  terminalLabel                   TerminalLabel OPTIONAL, -- if not present, 
-  
-  -- it refers to all participants 
+  terminalLabel                   TerminalLabel OPTIONAL, -- if not present,
+
+  -- it refers to all participants
   -- in the conference
   sessionDescription              BMPString(SIZE (1..128)),
-  -- Basic ISO/IEC 10646-1 (Unicode) 
+  -- Basic ISO/IEC 10646-1 (Unicode)
   dataType
     CHOICE {videoData  VideoCapability,
             audioData  AudioCapability,
@@ -2328,7 +2328,7 @@ ConferenceRequest ::= CHOICE {
   requestTerminalID           TerminalLabel, -- same as TCP (term->MC)
   enterH243Password           NULL, -- same as H.230 TCS1(MC->term)
   enterH243TerminalID         NULL, -- same as H.230 TCS2/TCI
-  
+
   --  (MC->term)
   enterH243ConferenceID       NULL, -- same as H.230 TCS3 (MC->term)
   ...,
@@ -2371,10 +2371,10 @@ TerminalNumber ::= INTEGER(0..192)
 ConferenceResponse ::= CHOICE {
   mCTerminalIDResponse
     SEQUENCE-- response to TCP(same as TIP)-- {-- sent by MC only--terminalLabel
-                                                                   
+
                                                                     TerminalLabel,
                                                                    terminalID
-                                                                   
+
                                                                     TerminalID,
                                                                    ...
   },
@@ -2430,7 +2430,7 @@ ConferenceResponse ::= CHOICE {
 }
 
 TerminalID ::= OCTET STRING(SIZE (1..128)) -- as per H.230
-                           
+
 
 ConferenceID ::= OCTET STRING(SIZE (1..32))
 
@@ -2556,7 +2556,7 @@ ConnectionIdentifier ::= SEQUENCE {
 -- Logical channel bit-rate change definitions
 -- ===================================================================================
 MaximumBitRate ::= INTEGER(0..4294967295) -- units of 100 bit/s
-                          
+
 
 LogicalChannelRateRequest ::= SEQUENCE {
   sequenceNumber        SequenceNumber,
@@ -2733,10 +2733,10 @@ MiscellaneousCommand ::= SEQUENCE {
             recoveryReferencePicture              SEQUENCE OF PictureReference,
             encryptionUpdateCommand
               SEQUENCE-- for ack'ed key update in H.235V3-- {encryptionSync
-                                                             
+
                                                                EncryptionSync,
                                                              multiplePayloadStream
-                                                             
+
                                                                MultiplePayloadStream
                                                                  OPTIONAL,
                                                              ...},
@@ -2886,10 +2886,10 @@ ConferenceIndication ::= CHOICE {
   requestForFloor                         NULL, -- same as H.230 TIF
   ...,
   withdrawChairToken                      NULL, -- same as H.230 CCR
-  
+
   -- MC-> chair
   floorRequested                          TerminalLabel, -- same as H.230 TIF
-  
+
   -- MC-> chair
   terminalYouAreSeeingInSubPictureNumber
     TerminalYouAreSeeingInSubPictureNumber,
@@ -2972,7 +2972,7 @@ H2250MaximumSkewIndication ::= SEQUENCE {
 -- ===================================================================================
 MCLocationIndication ::= SEQUENCE {
   signalAddress  TransportAddress, -- this is the H.323 Call Signalling
-  
+
   -- address of the entity which
   -- contains the MC
   ...
@@ -3038,19 +3038,19 @@ NewATMVCIndication ::= SEQUENCE {
 -- ===================================================================================
 -- Indication Message : user input
 -- ===================================================================================
-IV8 ::= OCTET STRING(SIZE (8)) -- initial value for 
-                    
+IV8 ::= OCTET STRING(SIZE (8)) -- initial value for
+
 
 -- 64-bit block ciphers
-IV16 ::= OCTET STRING(SIZE (16)) -- initial value for 
-                     
+IV16 ::= OCTET STRING(SIZE (16)) -- initial value for
+
 
 -- 128-bit block ciphers
 Params ::= SEQUENCE {
   iv8   IV8 OPTIONAL, -- 8 octet initialization vector
   iv16  IV16 OPTIONAL, -- 16 octet initialization vector
   iv    OCTET STRING OPTIONAL, -- arbitrary length
-  
+
   -- initialization vector
   ...
 }
@@ -3070,7 +3070,7 @@ UserInputIndication ::= CHOICE {
             ...,
             -- indicates encrypted Basic string
             encryptedBasicString    NULL,
-            -- indicates encrypted IA5 string 
+            -- indicates encrypted IA5 string
             encryptedIA5String      NULL,
             -- indicates encrypted general string
             encryptedGeneralString  NULL},

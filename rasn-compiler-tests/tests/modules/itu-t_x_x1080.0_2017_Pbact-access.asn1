@@ -2,7 +2,7 @@ Pbact-access { joint-iso-itu-t(2) telebiometrics(42) e-health-protocol(3) module
 DEFINITIONS IMPLICIT TAGS ::=
 BEGIN
 
--- EXPORTS All 
+-- EXPORTS All
 
 IMPORTS
 
@@ -34,7 +34,7 @@ AccessService ::= SEQUENCE {
 
 ObjectSel ::= SEQUENCE {
   objecClass         OBJECT-CLASS.&id,
-  objSelect          CHOICE { 
+  objSelect          CHOICE {
     allObj        [0]  TargetSelect,
     objectNames   [1]  SEQUENCE SIZE (1..MAX) OF SEQUENCE {
       object             CHOICE {
@@ -49,7 +49,7 @@ ObjectSel ::= SEQUENCE {
 TargetSelect ::= SEQUENCE {
   objOper   ObjectOperations OPTIONAL,
   attrSel   AttributeSel     OPTIONAL,
-  ... }      
+  ... }
   (WITH COMPONENTS {..., objOper  PRESENT } |
    WITH COMPONENTS {..., attrSel  PRESENT } )
 
@@ -207,7 +207,7 @@ ModifyRequest ::= SEQUENCE {
   changes       SEQUENCE SIZE (1..MAX) OF ObjectModification,
   select        InformationSelection,
   ... }
-  
+
 ObjectModification ::= CHOICE {
   addAttribute     [0]  Attribute{{SupportedAttributes}},
   deleteAttribute  [1]  AttributeType,
@@ -313,7 +313,7 @@ AssignErr ::= ENUMERATED {
 
 -- top tree
 
-id-pbact             OBJECT IDENTIFIER ::= 
+id-pbact             OBJECT IDENTIFIER ::=
   { joint-iso-itu-t(2) telebiometrics(42) e-health-protocol(3) pbact(20) }
 id-pbactmodule       OBJECT IDENTIFIER ::= { id-pbact module(0) }
 id-pbactCont         OBJECT IDENTIFIER ::= { id-pbact cmsCont(1) }

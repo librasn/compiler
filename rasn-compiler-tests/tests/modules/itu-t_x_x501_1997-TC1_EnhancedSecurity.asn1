@@ -14,7 +14,7 @@ EnhancedSecurity {joint-iso-itu-t ds(5) module(1) enhancedSecurity(28) 1}
 DEFINITIONS AUTOMATIC TAGS ::=
 BEGIN
 
--- EXPORTS All 
+-- EXPORTS All
 IMPORTS
   -- from ITU-T Rec. X.411 | ISO/IEC 10021-4
   SecurityLabel, SecurityCategory
@@ -30,7 +30,7 @@ IMPORTS
     FROM InformationFramework {joint-iso-itu-t ds(5) module(1)
       informationFramework(1) 3}
   -- from ITU-T Rec. X.509 | ISO/IEC 9594-8
-  AlgorithmIdentifier, CertificateSerialNumber, Extensions, Validity, 
+  AlgorithmIdentifier, CertificateSerialNumber, Extensions, Validity,
     SIGNED{}, HASH{}, ENCRYPTED{}
     FROM AuthenticationFramework {joint-iso-itu-t ds(5) module(1)
       authenticationFramework(7) 3}
@@ -44,10 +44,10 @@ IMPORTS
   SECURITY-TRANSFORMATION, PROTECTION-MAPPING, PROTECTED{}
     FROM Notation {joint-iso-itu-t genericULS(20) modules(1) notation(1)}
   dirSignedTransformation, KEY-INFORMATION
-    FROM GulsSecurityTransformations {joint-iso-itu-t genericULS(20) 
+    FROM GulsSecurityTransformations {joint-iso-itu-t genericULS(20)
       modules(1) gulsSecurityTransformations(3)}
   signed
-    FROM DirectoryProtectionMappings {joint-iso-itu-t genericULS(20) 
+    FROM DirectoryProtectionMappings {joint-iso-itu-t genericULS(20)
       modules(1) dirProtectionMappings(4)};
 
 -- The "signed" Protection Mapping and associated "dirSignedTransformations" imported
@@ -76,7 +76,7 @@ genEncryptedTransform{KEY-INFORMATION:SupportedKIClasses}
               encData
                 BIT STRING
                   (CONSTRAINED BY {
-                     -- the encData value must be generated following 
+                     -- the encData value must be generated following
                      -- the procedure specified in 15.3.1-- })}
 }
 
@@ -117,8 +117,8 @@ defaultDirQop ATTRIBUTE ::= {
 
 DIRQOP ::=
   CLASS
-   -- This information object class is used to define the quality of protection 
-  -- required throughout directory operation. 
+   -- This information object class is used to define the quality of protection
+  -- required throughout directory operation.
   -- The Quality Of Protection can be signed, encrypted, signedAndEncrypt
   {
   &dirqop-Id                       OBJECT IDENTIFIER UNIQUE,
@@ -288,7 +288,7 @@ AttributeIntegrityInfo ::=
 Scope ::= CHOICE {
   wholeEntry     [0]  NULL, -- Signature protects all attribute values in this entry
   selectedTypes  [1]  SelectedTypes
-  -- Signature protects all attribute values of the selected attribute types 
+  -- Signature protects all attribute values of the selected attribute types
 }
 
 SelectedTypes ::= SEQUENCE OF AttributeType
@@ -365,7 +365,7 @@ EncAttKey ::= PROTECTED{SymmetricKey, keyProtection}
 SymmetricKey ::= BIT STRING
 
 --This definition is missing in the base document; to be changed
-genEncryption{KEY-INFORMATION:SupportedKIClasses} SECURITY-TRANSFORMATION ::= 
+genEncryption{KEY-INFORMATION:SupportedKIClasses} SECURITY-TRANSFORMATION ::=
 {
   IDENTIFIER         {1 2 3}
   XFORMED-DATA-TYPE
@@ -381,7 +381,7 @@ genEncryption{KEY-INFORMATION:SupportedKIClasses} SECURITY-TRANSFORMATION ::=
               encData
                 BIT STRING
                   (CONSTRAINED BY {
-                     -- the encData value must be generated following 
+                     -- the encData value must be generated following
                      -- the procedure specified in 15.3.1-- })}
 }
 
@@ -410,8 +410,8 @@ ReaderAndKeyIDAssertion ::= SEQUENCE {
   authReaders    AuthReaders OPTIONAL
 }
 
--- Object identifier assignments 
--- attributes 
+-- Object identifier assignments
+-- attributes
 id-at-clearance OBJECT IDENTIFIER ::=
   {id-at 55}
 
@@ -421,12 +421,12 @@ id-at-attributeIntegrityInfo OBJECT IDENTIFIER ::= {id-at 57}
 
 id-at-confKeyInfo OBJECT IDENTIFIER ::= {id-at 60}
 
--- matching rules 
+-- matching rules
 id-mr-readerAndKeyIDMatch OBJECT IDENTIFIER ::= {id-mr 43}
 
 id-mr-attributeIntegrityMatch OBJECT IDENTIFIER ::= {id-mr 44}
 
--- contexts 
+-- contexts
 id-avc-attributeValueSecurityLabelContext OBJECT IDENTIFIER ::=
   {id-avc 3}
 

@@ -2,17 +2,17 @@ EnhancedSecurity {joint-iso-itu-t ds(5) modules(1) enhancedSecurity(28) 8}
 DEFINITIONS IMPLICIT TAGS ::=
 BEGIN
 
--- EXPORTS All 
+-- EXPORTS All
 
 IMPORTS
 
   -- from Rec. ITU-T X.501 | ISO/IEC 9594-2
 
-  authenticationFramework, basicAccessControl, certificateExtensions, 
+  authenticationFramework, basicAccessControl, certificateExtensions,
   id-at, id-avc, id-mr, id-oc, informationFramework
     FROM UsefulDefinitions {joint-iso-itu-t ds(5) module(1) usefulDefinitions(0) 8}
 
-  Attribute{}, ATTRIBUTE, AttributeType, AttributeTypeAndValue, Context, CONTEXT, 
+  Attribute{}, ATTRIBUTE, AttributeType, AttributeTypeAndValue, Context, CONTEXT,
   Name, OBJECT-CLASS, objectIdentifierMatch, SupportedAttributes, top
     FROM InformationFramework informationFramework
 
@@ -33,7 +33,7 @@ OPTIONALLY-PROTECTED-SEQ{Type} ::= CHOICE {
   signed    [0]  SIGNED{Type} }
 
 attributeValueSecurityLabelContext CONTEXT ::= {
-  WITH SYNTAX    SignedSecurityLabel -- At most one security label context can 
+  WITH SYNTAX    SignedSecurityLabel -- At most one security label context can
                                      -- be assigned to an attribute value
   ID             id-avc-attributeValueSecurityLabelContext }
 
@@ -58,7 +58,7 @@ SecurityPolicyIdentifier ::= OBJECT IDENTIFIER
 
 SecurityClassification ::= INTEGER {
   unmarked      (0),
-  unclassified  (1), 
+  unclassified  (1),
   restricted    (2),
   confidential  (3),
   secret        (4),
@@ -106,7 +106,7 @@ AttributeIntegrityInfoContent ::= SEQUENCE {
   scope        Scope,           -- Identifies the attributes protected
   signer       Signer OPTIONAL, -- Authority or data originators name
   attribsHash  AttribsHash,     -- Hash value of protected attributes
-  ... } 
+  ... }
 
 Signer ::= CHOICE {
   thisEntry   [0]  EXPLICIT ThisEntry,
@@ -127,13 +127,13 @@ SpecificallyIdentified ::= SEQUENCE {
   name    GeneralName,
   issuer  GeneralName OPTIONAL,
   serial  CertificateSerialNumber OPTIONAL }
-  (WITH COMPONENTS { ..., issuer PRESENT, serial PRESENT } | 
+  (WITH COMPONENTS { ..., issuer PRESENT, serial PRESENT } |
   (WITH COMPONENTS { ..., issuer ABSENT, serial ABSENT }))
 
 Scope ::= CHOICE {
   wholeEntry     [0]  NULL, -- Signature protects all attribute values in this entry
   selectedTypes  [1]  SelectedTypes,
-      -- Signature protects all attribute values of the selected attribute types 
+      -- Signature protects all attribute values of the selected attribute types
   ... }
 
 SelectedTypes ::= SEQUENCE SIZE (1..MAX) OF AttributeType
@@ -158,7 +158,7 @@ AttributeValueIntegrityInfo ::= SIGNED{AttributeValueIntegrityInfoContent}
 AttributeValueIntegrityInfoContent ::= SEQUENCE {
   signer   Signer OPTIONAL, -- Authority or data originators name
   aVIHash  AVIHash,         -- Hash value of protected attribute
-  ... } 
+  ... }
 
 AVIHash ::= HASH{AttributeTypeValueContexts}
   -- Attribute type and value with associated context values
@@ -169,19 +169,19 @@ AttributeTypeValueContexts ::= SEQUENCE {
   contextList  SET SIZE (1..MAX) OF Context OPTIONAL,
   ... }
 
--- Object identifier assignments 
--- object classes 
+-- Object identifier assignments
+-- object classes
 
 id-oc-integrityInfo OBJECT IDENTIFIER ::=  {id-oc 40}
 
--- attributes 
+-- attributes
 
 id-at-clearance                           OBJECT IDENTIFIER ::= {id-at 55}
 -- id-at-defaultDirQop                    OBJECT IDENTIFIER ::= {id-at 56}
 id-at-attributeIntegrityInfo              OBJECT IDENTIFIER ::= {id-at 57}
 -- id-at-confKeyInfo                      OBJECT IDENTIFIER ::= {id-at 60}
 
--- matching rules 
+-- matching rules
 
 -- id-mr-readerAndKeyIDMatch              OBJECT IDENTIFIER ::= {id-mr 43}
 

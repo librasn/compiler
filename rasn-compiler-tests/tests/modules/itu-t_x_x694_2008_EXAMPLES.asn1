@@ -1,9 +1,9 @@
 EXAMPLES {joint-iso-itu-t asn1(1) examples(999) xml-defined-types(3)}
-DEFINITIONS 
+DEFINITIONS
 XER INSTRUCTIONS AUTOMATIC TAGS ::=
 BEGIN
 IMPORTS String, Decimal, Int, Date, AnyType
-  
+
 FROM XSD
   {joint-iso-itu-t asn1(1) specification(0) modules(0) xsd-module(2) version1(1)};
 /* For a Version 2 mapping, the last component of the module identifier would be version2(2) */
@@ -13,19 +13,19 @@ number               Decimal,
 daysOfTheWeek        ListOfDays,
 namesOfMemberNations NamesOfMemberNations,
 fileIdentifier-list  [UNTAGGED]
-       SEQUENCE (SIZE(1..MAX)) OF fileidentifier FileIdentifier } 
+       SEQUENCE (SIZE(1..MAX)) OF fileidentifier FileIdentifier }
 PersonnelRecord  ::= 	[NAME AS UNCAPITALIZED] SEQUENCE {
 name 			Name,
 title 		XSD.String,
 number 		INTEGER,
 dateOfHire 		XSD.Date,
 nameOfSpouse 	NameOfSpouse,
-children 		Children } 
+children 		Children }
 NameOfSpouse ::= 	[NAME AS UNCAPITALIZED] Name
 Name ::= [NAME AS UNCAPITALIZED] SEQUENCE {
 givenName 		XSD.String,
 initial 		XSD.String,
-familyName 		XSD.String } 
+familyName 		XSD.String }
 Children ::= [NAME AS UNCAPITALIZED] SEQUENCE {
 childInformation-list [UNTAGGED]
 		SEQUENCE OF

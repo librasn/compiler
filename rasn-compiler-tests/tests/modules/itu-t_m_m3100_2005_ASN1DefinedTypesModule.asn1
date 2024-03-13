@@ -188,8 +188,8 @@ line-OC768-STS768-and-MS-STM256 CharacteristicInformation ::=
 
 tenGigabit-Ethernet CharacteristicInformation ::= {characteristicInfo  47}
 
--- The following value assignments are for the Probable Cause when Integer Choice is used within the 
--- TMN application context.  These values shall always be assigned by this Recommendation in the context 
+-- The following value assignments are for the Probable Cause when Integer Choice is used within the
+-- TMN application context.  These values shall always be assigned by this Recommendation in the context
 -- of TMN.
 indeterminate ProbableCause ::=
   localValue:0
@@ -410,14 +410,14 @@ sfwrDownloadFailure ProbableCause ::= localValue:156
 lossOfRealTime ProbableCause ::= localValue:157
 
 -- A processing error alarm to be issued if the system detects that it has lost the time in
--- the real time clock but  the clock itself is working. This could happen e.g. during a power 
+-- the real time clock but  the clock itself is working. This could happen e.g. during a power
 -- cut in a small NE which does not have battery backup for the real time clock.
 reinitialized ProbableCause ::=
   localValue:158
 
--- A processing error alarm to be issued after the system has reinitialised. This will indicate 
--- to the management systems that the view they have of the managed system may no longer 
--- be valid. Usage example: The managed 
+-- A processing error alarm to be issued after the system has reinitialised. This will indicate
+-- to the management systems that the view they have of the managed system may no longer
+-- be valid. Usage example: The managed
 -- system issues this alarm after a reinitialization with severity warning to inform the
 -- management system about the event. No clearing notification will be sent.
 applicationSubsystemFailure ProbableCause ::=
@@ -439,7 +439,7 @@ underlayingResourceUnavailable ProbableCause ::= localValue:166
 
 versionMismatch ProbableCause ::= localValue:167
 
--- Values 168-200 are reserved for processing error alarm related probable causes. 
+-- Values 168-200 are reserved for processing error alarm related probable causes.
 bandwidthReduced ProbableCause ::=
   localValue:201
 
@@ -587,8 +587,8 @@ CreateError ::= INTEGER
 CrossConnectionName ::= GraphicString
 
 CrossConnectionObjectPointer ::= CHOICE {
-  notConnected         [0]  ObjectInstance, -- Fabric object 
-  connected            [1]  ObjectInstance, -- Cross-connection object 
+  notConnected         [0]  ObjectInstance, -- Fabric object
+  connected            [1]  ObjectInstance, -- Cross-connection object
   multipleConnections  MultipleConnections
 }
 
@@ -596,7 +596,7 @@ CTPUpstreamPointer ::=
   ConnectivityPointer
     (WITH COMPONENTS {
        ...,
-       
+
        -- the other two choices are present
        concatenated  ABSENT
      })
@@ -607,7 +607,7 @@ CTPDownstreamPointer ::=
        ...,
        concatenated           ABSENT,
        broadcastConcatenated  ABSENT
-     
+
      -- other choices are present
      })
 
@@ -679,18 +679,18 @@ maxNumberExceeded GeneralErrorCause ::= localValue:7
 containedObjects GeneralErrorCause ::= localValue:8
 
 -- ObjectInIncompatibleState is used to specify that the object is in a state
--- that does not allow the operation. Details of the state should be 
+-- that does not allow the operation. Details of the state should be
 -- provided.
 -- NoValidRelatedObject is used to specify related objects that do not
 -- exist in the MIB.
 -- InvolvedInOffering is used to identify object(s) that are already
 -- involved in a conflicting service offering.
--- ServiceNotSupported is used to indicate that the operation is 
--- attempting to initiate a service that is not supported by the 
+-- ServiceNotSupported is used to indicate that the operation is
+-- attempting to initiate a service that is not supported by the
 -- equipment.
--- ProvisioningOrderConflict is used to identify that a service is 
--- being provisioned in an order that is not supported by the equipment. 
--- EquipmentFailure is used to indicate that an equipment failure as 
+-- ProvisioningOrderConflict is used to identify that a service is
+-- being provisioned in an order that is not supported by the equipment.
+-- EquipmentFailure is used to indicate that an equipment failure as
 -- occured during the operation.
 -- MaxNumberExceeded is used to indicate that requested create operation
 -- cannot be completed as the maximum number of instances are reached.
@@ -718,8 +718,8 @@ IndividualResult ::= CHOICE {failed  [0]  Failed,
 InformationTransferCapabilities ::= ENUMERATED {
   speech(0), audio3pt1(1), audio7(2), audioComb(3), digitalRestricted56(4),
   digitalUnrestricted64(5)
-  
--- "..." these ellipses defined in ASN.1 amendment are used here to indicate that this is 
+
+-- "..." these ellipses defined in ASN.1 amendment are used here to indicate that this is
 -- an  extensible type and additional enumerations may be added in future --}
 
 ListOfCharacteristicInformation ::= SET OF CharacteristicInformation
@@ -787,7 +787,7 @@ ProblemCause ::= CHOICE {unknown       NULL,
 }
 
 -- The values of integer value for ProblemCause and integerValue for ResourceProblem shall always be
--- assigned by this Recommendation.  No values of integerValue for ResourceProblem have been assigned. 
+-- assigned by this Recommendation.  No values of integerValue for ResourceProblem have been assigned.
 -- The following values are used for integerValue of ProblemCause.
 noSuchTpInstance ProblemCause ::=
   integerValue:0
@@ -816,7 +816,7 @@ noMoreThanTwoTpsAreAllowed ProblemCause ::= integerValue:11
 
 alreadyConnected ProblemCause ::= integerValue:12
 
--- alreadyConnected is used to indicate the two termination points requested to be cross-connected are already 
+-- alreadyConnected is used to indicate the two termination points requested to be cross-connected are already
 -- cross-connected versus involvedInCrossConnection is used to indicate one or more termination points are
 -- cross-connected but not to each other.
 notAlreadyConnected ProblemCause ::=
@@ -877,8 +877,8 @@ RemoveTpsResultInformation ::= SEQUENCE {
   tps                 SET OF ObjectInstance
 }
 
--- If the TP Pool or GTP is deleted, the deleted TP Pool or GTP should be provided in the 
--- RemoveTpsResultInformation 
+-- If the TP Pool or GTP is deleted, the deleted TP Pool or GTP should be provided in the
+-- RemoveTpsResultInformation
 Replaceable ::= ENUMERATED {yes(0), no(1), notapplicable(2)}
 
 ResourceProblem ::= CHOICE {unknown       NULL,
@@ -891,8 +891,8 @@ SerialNumber ::= GraphicString
 
 SignallingCapabilities ::= ENUMERATED {
   isup(0), isup92(1), itu-tNo5(2), r2(3), itu-tNo6(4), tup(5)
-                                                       
--- "..." these ellipses defined in ASN.1 amendment are used here to indicate that this is 
+
+-- "..." these ellipses defined in ASN.1 amendment are used here to indicate that this is
 -- an  extensible type and additional enumerations may be added in future --}
 
 SignalRateAndMappingList ::=
@@ -902,7 +902,7 @@ SignalRateAndMappingList ::=
               mappingList  MappingList OPTIONAL,
               wavelength   WaveLength OPTIONAL} -- used for WDM
 
--- the SignalRateAndMappingList is a SET OF to accommodate 
+-- the SignalRateAndMappingList is a SET OF to accommodate
 -- multiple wavelengths on a single TTP
 SignalType ::= CHOICE {
   simple   CharacteristicInformation,

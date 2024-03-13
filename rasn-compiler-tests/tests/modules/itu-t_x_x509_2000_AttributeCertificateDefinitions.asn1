@@ -14,7 +14,7 @@ AttributeCertificateDefinitions {joint-iso-itu-t ds(5) module(1)
   attributeCertificateDefinitions(32) 4} DEFINITIONS IMPLICIT TAGS ::=
 BEGIN
 
--- EXPORTS ALL 
+-- EXPORTS ALL
 IMPORTS
   id-at, id-ce, id-mr, informationFramework, authenticationFramework,
     selectedAttributeTypes, upperBounds, id-oc, certificateExtensions
@@ -45,7 +45,7 @@ IMPORTS
 
 -- Unless explicitly noted otherwise, there is no significance to the ordering
 -- of components of a SEQUENCE OF construct in this Specification.
--- attribute certificate constructs 
+-- attribute certificate constructs
 AttributeCertificate ::=
   SIGNED{AttributeCertificateInfo}
 
@@ -69,7 +69,7 @@ Holder ::= SEQUENCE {
   entityName         [1]  GeneralNames OPTIONAL,
   -- the name of the entity or role
   objectDigestInfo   [2]  ObjectDigestInfo OPTIONAL-- used to directly authenticate the holder, e.g. an executable
--- at least one of baseCertificateID, entityName or objectDigestInfo shall be present 
+-- at least one of baseCertificateID, entityName or objectDigestInfo shall be present
 }
 
 ObjectDigestInfo ::= SEQUENCE {
@@ -120,7 +120,7 @@ ACPathData ::= SEQUENCE {
 
 PrivilegePolicy ::= OBJECT IDENTIFIER
 
--- privilege attributes 
+-- privilege attributes
 role ATTRIBUTE ::= {WITH SYNTAX  RoleSyntax
                     ID           id-at-role
 }
@@ -130,7 +130,7 @@ RoleSyntax ::= SEQUENCE {
   roleName       [1]  GeneralName
 }
 
--- PMI object classes 
+-- PMI object classes
 pmiUser OBJECT-CLASS ::= {
   SUBCLASS OF  {top}
   KIND         auxiliary
@@ -179,7 +179,7 @@ privilegePolicy OBJECT-CLASS ::= {
   ID           id-oc-privilegePolicy
 }
 
--- PMI directory attributes 
+-- PMI directory attributes
 attributeCertificateAttribute ATTRIBUTE ::= {
   WITH SYNTAX             AttributeCertificate
   EQUALITY MATCHING RULE  attributeCertificateExactMatch
@@ -222,7 +222,7 @@ privPolicy ATTRIBUTE ::= {
   ID           id-at-privPolicy
 }
 
---Attribute certificate extensions and matching rules 
+--Attribute certificate extensions and matching rules
 attributeCertificateExactMatch MATCHING-RULE ::= {
   SYNTAX  AttributeCertificateExactAssertion
   ID      id-mr-attributeCertificateExactMatch
@@ -418,8 +418,8 @@ acceptablePrivilegePolicies EXTENSION ::= {
 
 AcceptablePrivilegePoliciesSyntax ::= SEQUENCE SIZE (1..MAX) OF PrivilegePolicy
 
--- object identifier assignments 
--- object classes 
+-- object identifier assignments
+-- object classes
 id-oc-pmiUser OBJECT IDENTIFIER ::=
   {id-oc 24}
 
@@ -433,7 +433,7 @@ id-oc-privilegePolicy OBJECT IDENTIFIER ::= {id-oc 32}
 
 id-oc-pmiDelegationPath OBJECT IDENTIFIER ::= {id-oc 33}
 
--- directory attributes 
+-- directory attributes
 id-at-attributeCertificate OBJECT IDENTIFIER ::=
   {id-at 58}
 
@@ -451,7 +451,7 @@ id-at-role OBJECT IDENTIFIER ::= {id-at 72}
 
 id-at-delegationPath OBJECT IDENTIFIER ::= {id-at 73}
 
---attribute certificate extensions 
+--attribute certificate extensions
 id-ce-authorityAttributeIdentifier OBJECT IDENTIFIER ::=
   {id-ce 38}
 
@@ -477,7 +477,7 @@ id-ce-noRevAvail OBJECT IDENTIFIER ::= {id-ce 56}
 
 id-ce-acceptablePrivilegePolicies OBJECT IDENTIFIER ::= {id-ce 57}
 
--- PMI matching rules 
+-- PMI matching rules
 id-mr-attributeCertificateMatch OBJECT IDENTIFIER ::=
   {id-mr 42}
 

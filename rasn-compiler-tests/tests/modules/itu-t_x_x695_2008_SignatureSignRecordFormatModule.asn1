@@ -26,7 +26,7 @@ Header ::= SEQUENCE {
   formatId [NULL]
       -- This specifies that the IA5String is to
       -- be followed by a zero(NULL) octet in
-      -- the encoding. 
+      -- the encoding.
                          IA5String("SDI"),
   standardVersion      [NULL] -- As above.
                          IA5String(SIZE (3))-- " 10" (space-one-zero) for this version --,
@@ -56,8 +56,8 @@ ChannelInclusions ::= SEQUENCE {
     y-included  (TRUE)
   })
 
-ChannelDescriptions ::= [OPTIONALITY-IN Header.channel-inclusions] 
-  
+ChannelDescriptions ::= [OPTIONALITY-IN Header.channel-inclusions]
+
   -- This specifies that the optionality bit-map is
   -- taken from the channel inclusions.  The
   -- channel-inclusions structure is needed because
@@ -117,10 +117,10 @@ ScalingValue ::= SEQUENCE {
 Body ::= [SIZE 8] SEQUENCE {
   -- 8 bit optionality bit-map, with only one bit used.  Other
   -- bits will be set to zero by encoders, ignored by decoders.
-  samplePoints [LENGTH 3] [COUNT-OCTETS] SEQUENCE 
+  samplePoints [LENGTH 3] [COUNT-OCTETS] SEQUENCE
       -- Prevents optimisation for short
       -- iterations, forcing 3 octets in
-      -- all cases 
+      -- all cases
       SIZE (0..16777215) OF SamplePoint,
   extendedData [TERMINATED-BY-CARRIER] -- The end of this octet string can only
       -- be determined by running out of the
@@ -159,7 +159,7 @@ UnsignedInt16 ::= INTEGER(0..65535)
 
 SignedInt16 ::= [ENCODE-DIRECTLY] INTEGER(-32768..32767)
 
--- As above 
+-- As above
 UnsignedInt8 ::= INTEGER(0..255)
 
 END

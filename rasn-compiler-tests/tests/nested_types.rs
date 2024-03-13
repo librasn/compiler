@@ -9,11 +9,11 @@ e2e_pdu!(
     r#" #[derive(AsnType, Debug, Clone, Copy, Decode, Encode, PartialEq)]
         #[rasn(delegate)]
         pub struct TestBoolean(pub bool);
-        
+
         #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
         #[rasn(delegate)]
-        pub struct WrappingBoolean(pub TestBoolean);                                 
-        
+        pub struct WrappingBoolean(pub TestBoolean);
+
         pub const VALUE: WrappingBoolean = WrappingBoolean(TestBoolean(false));         "#
 );
 
@@ -25,11 +25,11 @@ e2e_pdu!(
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]
         #[rasn(delegate, value("0..=123723"))]
         pub struct TestInt(pub u32);
-        
+
         #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
         #[rasn(delegate, value("0..=123"))]
-        pub struct WrappingInt(pub TestInt);                                 
-        
+        pub struct WrappingInt(pub TestInt);
+
         pub const VALUE: WrappingInt = WrappingInt(TestInt(4));         "#
 );
 
@@ -92,10 +92,10 @@ e2e_pdu!(
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]
         #[rasn(delegate, value("0..=123723"))]
         pub struct TestInt(pub u32);
-        
+
         #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
         #[rasn(delegate, value("0..=5"))]
-        pub struct WrappingInt(pub TestInt);                                 
-        
+        pub struct WrappingInt(pub TestInt);
+
         pub const VALUE: TestInt = TestInt(5);         "#
 );

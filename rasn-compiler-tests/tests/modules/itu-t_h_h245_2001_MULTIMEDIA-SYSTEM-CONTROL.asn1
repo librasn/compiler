@@ -140,12 +140,12 @@ NonStandardIdentifier ::= CHOICE {
     SEQUENCE {t35CountryCode    INTEGER(0..255), -- country, per --
               -- Annex A/T.35
               t35Extension      INTEGER(0..255),
-              -- assigned nationally unless 
+              -- assigned nationally unless
               -- t35CountryCode is binary
-              -- 1111 1111, in which case it shall 
+              -- 1111 1111, in which case it shall
               -- contain the country code
               -- according to Annex B/T.35
-              manufacturerCode  INTEGER(0..65535) -- assigned nationally 
+              manufacturerCode  INTEGER(0..65535) -- assigned nationally
   }
 }
 
@@ -263,8 +263,8 @@ H235SecurityCapability ::= SEQUENCE {
   encryptionAuthenticationAndIntegrity  EncryptionAuthenticationAndIntegrity,
   mediaCapability                       CapabilityTableEntryNumber,
   -- NOTE ( The mediaCapability shall refer to Capability Table Entries
-  -- that do contain a transmit, receive, or receiveAndTransmit 
-  -- AudioCapability, VideoCapability, DataApplicationCapability, or 
+  -- that do contain a transmit, receive, or receiveAndTransmit
+  -- AudioCapability, VideoCapability, DataApplicationCapability, or
   -- similar capability indicated by a NonStandardParameter only
   ...
 }
@@ -433,17 +433,17 @@ MediaPacketizationCapability ::= SEQUENCE {
 
 RSVPParameters ::= SEQUENCE {
   qosMode     QOSMode OPTIONAL,
-  tokenRate   INTEGER(1..4294967295) OPTIONAL, -- rate in 
-  
+  tokenRate   INTEGER(1..4294967295) OPTIONAL, -- rate in
+
   -- bytes/sec
-  bucketSize  INTEGER(1..4294967295) OPTIONAL, -- size in 
-  
+  bucketSize  INTEGER(1..4294967295) OPTIONAL, -- size in
+
   -- bytes
   peakRate    INTEGER(1..4294967295) OPTIONAL,
   -- peak bandwidth bytes/s
-  minPoliced  INTEGER(1..4294967295) OPTIONAL, -- 
-  maxPktSize  INTEGER(1..4294967295) OPTIONAL, -- size in 
-  
+  minPoliced  INTEGER(1..4294967295) OPTIONAL, --
+  maxPktSize  INTEGER(1..4294967295) OPTIONAL, -- size in
+
   -- bytes
   ...
 }
@@ -458,7 +458,7 @@ ATMParameters ::= SEQUENCE {
   atmUBR      BOOLEAN, -- unspecified bit rate
   atmrtVBR    BOOLEAN, -- real time variable bit rate
   atmnrtVBR   BOOLEAN, -- non real time variable
-  
+
   -- bit rate
   atmABR      BOOLEAN, -- available bit rate
   atmCBR      BOOLEAN, -- constant bit rate
@@ -475,7 +475,7 @@ QOSCapability ::= SEQUENCE {
 MediaTransportType ::= CHOICE {
   ip-UDP               NULL,
   ip-TCP               NULL,
-  atm-AAL5-UNIDIR      NULL, -- virtual circuits used as unidirectional 
+  atm-AAL5-UNIDIR      NULL, -- virtual circuits used as unidirectional
   atm-AAL5-BIDIR       NULL, -- virtual circuits used as bidirectional
   ...,
   atm-AAL5-compressed  SEQUENCE {variable-delta  BOOLEAN,
@@ -517,12 +517,12 @@ RTPH263VideoRedundancyEncoding ::= SEQUENCE {
     CHOICE {roundrobin  NULL,
             custom
               SEQUENCE SIZE (1..256) OF RTPH263VideoRedundancyFrameMapping,
-            -- empty SEQUENCE for capability 
-            -- negotiation meaningful contents only 
+            -- empty SEQUENCE for capability
+            -- negotiation meaningful contents only
             -- OpenLogicalChannel
             ...},
   containedThreads         SEQUENCE SIZE (1..256) OF INTEGER(0..15) OPTIONAL,
-  -- only used for opening of logical 
+  -- only used for opening of logical
   -- channels
   ...
 }
@@ -847,9 +847,9 @@ IS11172VideoCapability ::= SEQUENCE {
 -- ======================================================================
 -- Capability exchange definitions: Audio capabilities
 -- ======================================================================
--- For an H.222 multiplex, the integers indicate the size of the STD buffer in 
--- units of 256 octets 
--- For an H.223 multiplex, the integers indicate the maximum number of audio 
+-- For an H.222 multiplex, the integers indicate the size of the STD buffer in
+-- units of 256 octets
+-- For an H.223 multiplex, the integers indicate the maximum number of audio
 -- frames per AL-SDU
 -- For an H.225.0 multiplex, the integers indicate the maximum number of audio
 -- frames per packet
@@ -1044,14 +1044,14 @@ T38FaxProfile ::= SEQUENCE {
   transcodingMMR           BOOLEAN,
   ...,
   version                  INTEGER(0..255),
-  -- Version 0, the default, refers to T.38 
+  -- Version 0, the default, refers to T.38
   -- (1998)
   t38FaxRateManagement     T38FaxRateManagement,
   -- The default Data Rate Management is
   -- determined by the choice of
   -- DataProtocolCapability
   t38FaxUdpOptions         T38FaxUdpOptions OPTIONAL,
-  -- For UDP,  t38UDPRedundancy is the 
+  -- For UDP,  t38UDPRedundancy is the
   -- default
   t38FaxTcpOptions         T38FaxTcpOptions OPTIONAL
 }
@@ -1112,8 +1112,8 @@ UserInputCapability ::= CHOICE {
   basicString           NULL, -- alphanumeric
   iA5String             NULL, -- alphanumeric
   generalString         NULL, -- alphanumeric
-  dtmf                  NULL, -- supports dtmf using signal and 
-  
+  dtmf                  NULL, -- supports dtmf using signal and
+
   -- signalUpdate
   hookflash             NULL, -- supports hookflash using signal
   ...,
@@ -1141,7 +1141,7 @@ GenericCapability ::= SEQUENCE {
   collapsing            SEQUENCE OF GenericParameter OPTIONAL,
   nonCollapsing         SEQUENCE OF GenericParameter OPTIONAL,
   nonCollapsingRaw      OCTET STRING OPTIONAL, -- Typically contains ASN.1
-  
+
   -- PER encoded data describing
   -- capability
   transport             DataProtocolCapability OPTIONAL,
@@ -1150,7 +1150,7 @@ GenericCapability ::= SEQUENCE {
 
 CapabilityIdentifier ::= CHOICE {
   standard         OBJECT IDENTIFIER,
-  -- e.g. { itu-t (0) recommendation (0) h (8) 267 
+  -- e.g. { itu-t (0) recommendation (0) h (8) 267
   -- version (0) 2 subIdentifier (0)}
   h221NonStandard  NonStandardParameter,
   uuid             OCTET STRING(SIZE (16)),
@@ -1158,9 +1158,9 @@ CapabilityIdentifier ::= CHOICE {
   ...
 }
 
--- NOTE ( The ranges of parameter values have been selected to ensure that the 
--- GenericParameter preamble, standard part of ParameterIdentifier and the 
--- encoding of that choice, and the preamble of ParameterValue to fit into 
+-- NOTE ( The ranges of parameter values have been selected to ensure that the
+-- GenericParameter preamble, standard part of ParameterIdentifier and the
+-- encoding of that choice, and the preamble of ParameterValue to fit into
 -- 2 octets.
 GenericParameter ::= SEQUENCE {
   parameterIdentifier  ParameterIdentifier,
@@ -1170,12 +1170,12 @@ GenericParameter ::= SEQUENCE {
 }
 
 ParameterIdentifier ::= CHOICE {
-  standard         INTEGER(0..127), -- Assigned by Capability 
-  
+  standard         INTEGER(0..127), -- Assigned by Capability
+
   -- specifications
-  h221NonStandard  NonStandardParameter, -- N.B. NonStandardIdentifier 
-  
-  -- is not sufficient in this 
+  h221NonStandard  NonStandardParameter, -- N.B. NonStandardIdentifier
+
+  -- is not sufficient in this
   -- case
   uuid             OCTET STRING(SIZE (16)), -- For non-standard
   domainBased      IA5String(SIZE (1..64)),
@@ -1183,14 +1183,14 @@ ParameterIdentifier ::= CHOICE {
 }
 
 ParameterValue ::= CHOICE {
-  logical           NULL, -- Only acceptable if all 
-  
+  logical           NULL, -- Only acceptable if all
+
   -- entities include this option
   booleanArray      INTEGER(0..255), -- array of 8 logical types
   unsignedMin       INTEGER(0..65535), -- Look for min common value
   unsignedMax       INTEGER(0..65535), -- Look for max common value
-  unsigned32Min     INTEGER(0..4294967295), -- Look for min common 
-  
+  unsigned32Min     INTEGER(0..4294967295), -- Look for min common
+
   -- value
   unsigned32Max     INTEGER(0..4294967295), -- Look for max common value
   octetString       OCTET STRING, -- non-collapsing octet string
@@ -1216,13 +1216,13 @@ MultiplexFormat ::= CHOICE {
 }
 
 -- ======================================================================
--- Capability Exchange Definitions: AudioTelephonyEventCapability and 
+-- Capability Exchange Definitions: AudioTelephonyEventCapability and
 -- AudioToneCapability
 -- ======================================================================
 AudioTelephonyEventCapability ::= SEQUENCE {
   dynamicRTPPayloadType  INTEGER(96..127),
-  audioTelephoneEvent    GeneralString, -- As per <list of values> 
-  
+  audioTelephoneEvent    GeneralString, -- As per <list of values>
+
   -- in 3.9/RFC 2833
   ...
 }
@@ -1234,7 +1234,7 @@ AudioToneCapability ::= SEQUENCE {dynamicRTPPayloadType  INTEGER(96..127),
 -- ======================================================================
 -- Logical channel signalling definitions
 -- ======================================================================
--- "Forward" is used to refer to transmission in the direction from the terminal 
+-- "Forward" is used to refer to transmission in the direction from the terminal
 -- making the original request for a logical channel to the other terminal, and
 -- "reverse" is used to refer to the opposite direction of transmission, in the
 -- case of a bidirectional channel request.
@@ -1257,7 +1257,7 @@ OpenLogicalChannel ::= SEQUENCE {
               -- Stack when
               --  multiplexParameters are
               -- not required
-              -- or appropriate 
+              -- or appropriate
               ...,
               forwardLogicalChannelDependency     LogicalChannelNumber OPTIONAL,
               -- also used to refer to the
@@ -1270,14 +1270,14 @@ OpenLogicalChannel ::= SEQUENCE {
     SEQUENCE {dataType                            DataType,
               multiplexParameters
                 CHOICE {-- H.222 parameters are never present in reverse direction--h223LogicalChannelParameters
-                                                                    
+
                                                                     H223LogicalChannelParameters,
                                                                     v76LogicalChannelParameters
-                                                                    
+
                                                                     V76LogicalChannelParameters,
                                                                     ...,
                                                                     h2250LogicalChannelParameters
-                                                                    
+
                                                                     H2250LogicalChannelParameters
               } OPTIONAL, -- Not present for H.222--
               ...,
@@ -1286,14 +1286,14 @@ OpenLogicalChannel ::= SEQUENCE {
               -- redundancy coding
               replacementFor                      LogicalChannelNumber OPTIONAL
   } OPTIONAL, -- Not present for unidirectional
-  
+
   -- channel request
   ...,
   separateStack                    NetworkAccessParameters OPTIONAL,
   -- for Open responder to
   -- establish the stack
   encryptionSync                   EncryptionSync OPTIONAL
-} -- used only by Master 
+} -- used only by Master
 
 LogicalChannelNumber ::= INTEGER(1..65535)
 
@@ -1379,7 +1379,7 @@ H223LogicalChannelParameters ::= SEQUENCE {
             al2WithSequenceNumbers     NULL,
             al3
               SEQUENCE {controlFieldOctets  INTEGER(0..2),
-                        sendBufferSize      INTEGER(0..16777215) -- units octets 
+                        sendBufferSize      INTEGER(0..16777215) -- units octets
             },
             ...,
             al1M                       H223AL1MParameters,
@@ -1484,8 +1484,8 @@ V76LogicalChannelParameters ::= SEQUENCE {
   associatedSessionID             INTEGER(1..255) OPTIONAL,
   mediaChannel                    TransportAddress OPTIONAL,
   mediaGuaranteedDelivery         BOOLEAN OPTIONAL,
-  mediaControlChannel             TransportAddress OPTIONAL, -- reverse RTCP 
-  
+  mediaControlChannel             TransportAddress OPTIONAL, -- reverse RTCP
+
   -- channel
   mediaControlGuaranteedDelivery  BOOLEAN OPTIONAL,
   silenceSuppression              BOOLEAN OPTIONAL,
@@ -1566,13 +1566,13 @@ MulticastAddress ::= CHOICE {
 
 EncryptionSync ::=
   SEQUENCE
-   -- used to supply new key and 
+   -- used to supply new key and
   -- synchronization point
   {
   nonStandard  NonStandardParameter OPTIONAL,
   synchFlag    INTEGER(0..255),
   -- may need to be larger for H.324, etc.
-  -- shall be the Dynamic Payload# for H.323 
+  -- shall be the Dynamic Payload# for H.323
   h235Key      OCTET STRING(SIZE (1..65535)),
   -- H.235 encoded value
   escrowentry  SEQUENCE SIZE (1..256) OF EscrowData OPTIONAL,
@@ -1599,12 +1599,12 @@ OpenLogicalChannelAck ::= SEQUENCE {
                           H2250LogicalChannelParameters} OPTIONAL, -- Not present for H.223--
               ...,
               replacementFor               LogicalChannelNumber OPTIONAL
-  } OPTIONAL, -- Not present for unidirectional 
-  
+  } OPTIONAL, -- Not present for unidirectional
+
   -- channel request
   ...,
   separateStack                     NetworkAccessParameters OPTIONAL,
-  -- for Open requester to establish 
+  -- for Open requester to establish
   -- the stack
   forwardMultiplexAckParameters
     CHOICE {-- H.222 parameters are never present in the Ack
@@ -1723,7 +1723,7 @@ MultiplexElement ::= SEQUENCE {
   },
   repeatCount
     CHOICE {finite            INTEGER(1..65535), -- repeats of type --
-            untilClosingFlag  NULL} -- used for last element 
+            untilClosingFlag  NULL} -- used for last element
 }
 
 MultiplexTableEntryNumber ::= INTEGER(1..15)
@@ -1787,7 +1787,7 @@ RequestMultiplexEntryRelease ::= SEQUENCE {
 -- ======================================================================
 -- Request mode definitions
 -- ======================================================================
--- RequestMode is a list, in order or preference, of modes that a terminal would 
+-- RequestMode is a list, in order or preference, of modes that a terminal would
 -- like to have transmitted to it.
 RequestMode ::= SEQUENCE {
   sequenceNumber  SequenceNumber,
@@ -1865,7 +1865,7 @@ H223ModeParameters ::= SEQUENCE {
             al2WithSequenceNumbers     NULL,
             al3
               SEQUENCE {controlFieldOctets  INTEGER(0..2),
-                        sendBufferSize      INTEGER(0..16777215) -- units octets 
+                        sendBufferSize      INTEGER(0..16777215) -- units octets
             },
             ...,
             al1M                       H223AL1MParameters,
@@ -1927,7 +1927,7 @@ H262VideoMode ::= SEQUENCE {
   videoBitRate         INTEGER(0..1073741823) OPTIONAL, -- units 400 bit/s
   vbvBufferSize        INTEGER(0..262143) OPTIONAL, -- units 16 384 bits
   samplesPerLine       INTEGER(0..16383) OPTIONAL, -- units samples/
-  
+
   -- line
   linesPerFrame        INTEGER(0..16383) OPTIONAL, -- units lines/frame
   framesPerSecond      INTEGER(0..15) OPTIONAL, -- frame_rate_code
@@ -2162,10 +2162,10 @@ CommunicationModeTableEntry ::= SEQUENCE {
   sessionID                       INTEGER(1..255),
   associatedSessionID             INTEGER(1..255) OPTIONAL,
   terminalLabel                   TerminalLabel OPTIONAL,
-  -- if not present, it refers to all 
+  -- if not present, it refers to all
   -- participants in the conference
   sessionDescription              BMPString(SIZE (1..128)),
-  -- Basic ISO/IEC 10646-1 (Unicode) 
+  -- Basic ISO/IEC 10646-1 (Unicode)
   dataType
     CHOICE {videoData  VideoCapability,
             audioData  AudioCapability,
@@ -2193,7 +2193,7 @@ ConferenceRequest ::= CHOICE {
   requestTerminalID           TerminalLabel, -- same as TCP (term->MC)
   enterH243Password           NULL, -- same as H.230 TCS1(MC->term)
   enterH243TerminalID         NULL, -- same as H.230 TCS2/TCI
-  
+
   -- (MC->term)
   enterH243ConferenceID       NULL, -- same as H.230 TCS3 (MC->term)
   ...,
@@ -2236,10 +2236,10 @@ TerminalNumber ::= INTEGER(0..192)
 ConferenceResponse ::= CHOICE {
   mCTerminalIDResponse
     SEQUENCE-- response to TCP(same as TIP) -- {-- sent by MC only--terminalLabel
-                                                                    
+
                                                                     TerminalLabel,
                                                                     terminalID
-                                                                    
+
                                                                     TerminalID,
                                                                     ...
   },
@@ -2293,7 +2293,7 @@ ConferenceResponse ::= CHOICE {
 }
 
 TerminalID ::= OCTET STRING(SIZE (1..128)) -- as per H.230
-                           
+
 
 ConferenceID ::= OCTET STRING(SIZE (1..32))
 
@@ -2348,7 +2348,7 @@ MultilinkRequest ::= CHOICE {
     SEQUENCE {requestType
                 CHOICE {currentIntervalInformation  NULL,
                         requestedInterval           INTEGER(0..65535), -- Max Header --
-                        -- Interval, 
+                        -- Interval,
                         -- milliseconds
                         ...},
               ...},
@@ -2393,8 +2393,8 @@ MultilinkIndication ::= CHOICE {
 DiallingInformation ::= CHOICE {
   nonStandard       NonStandardMessage,
   differential      SET SIZE (1..65535) OF DiallingInformationNumber,
-  -- list of numbers for all additional 
-  -- channels; only least significant digits 
+  -- list of numbers for all additional
+  -- channels; only least significant digits
   -- different from initial channel's number
   infoNotAvailable  INTEGER(1..65535),
   -- maximum no. of additional channels
@@ -2425,8 +2425,8 @@ ConnectionIdentifier ::= SEQUENCE {
 -- ======================================================================
 -- Logical channel bit-rate change definitions
 -- ======================================================================
-MaximumBitRate ::= INTEGER(0..4294967295) -- units of 
-                          
+MaximumBitRate ::= INTEGER(0..4294967295) -- units of
+
 
 -- 100 bit/s
 LogicalChannelRateRequest ::= SEQUENCE {
@@ -2482,8 +2482,8 @@ SendTerminalCapabilitySet ::= CHOICE {
 -- Command Message: Encryption
 -- ======================================================================
 EncryptionCommand ::= CHOICE {
-  encryptionSE           OCTET STRING, -- per H.233, but no 
-  
+  encryptionSE           OCTET STRING, -- per H.233, but no
+
   -- error protection
   encryptionIVRequest    NULL, -- requests new IV
   encryptionAlgorithmID
@@ -2606,7 +2606,7 @@ MiscellaneousCommand ::= SEQUENCE {
 }
 
 KeyProtectionMethod ::=
-  SEQUENCE -- specify how the new key is to be protected 
+  SEQUENCE -- specify how the new key is to be protected
    {
   secureChannel     BOOLEAN,
   sharedSecret      BOOLEAN,
@@ -2659,7 +2659,7 @@ NewATMVCCommand ::= SEQUENCE {
                         errorCorrection
                           CHOICE {nullErrorCorrection  NULL,
                                   longInterleaver      NULL,
-    
+
                         ...},
             aal5
               SEQUENCE {forwardMaximumSDUSize   INTEGER(0..65535), -- units octets--
@@ -2712,7 +2712,7 @@ FunctionNotUnderstood ::= CHOICE {
 -- ======================================================================
 -- Indication Message: Function not Supported
 -- ======================================================================
--- This is used to return a complete request, response or command that is not 
+-- This is used to return a complete request, response or command that is not
 -- recognized
 FunctionNotSupported ::= SEQUENCE {
   cause
@@ -2728,15 +2728,15 @@ FunctionNotSupported ::= SEQUENCE {
 -- Indication Message: Conference
 -- ======================================================================
 ConferenceIndication ::= CHOICE {
-  sbeNumber                               INTEGER(0..9), -- same as H.230 SBE 
-  
+  sbeNumber                               INTEGER(0..9), -- same as H.230 SBE
+
   -- Number
   terminalNumberAssign                    TerminalLabel, -- same as H.230 TIA
   terminalJoinedConference                TerminalLabel, -- same as H.230 TIN
   terminalLeftConference                  TerminalLabel, -- same as H.230 TID
   seenByAtLeastOneOther                   NULL, -- same as H.230 MIV
-  cancelSeenByAtLeastOneOther             NULL, -- same as H.230 
-  
+  cancelSeenByAtLeastOneOther             NULL, -- same as H.230
+
   -- cancel MIV
   seenByAll                               NULL, -- like H.230 MIV
   cancelSeenByAll                         NULL, -- like H.230 MIV
@@ -2744,10 +2744,10 @@ ConferenceIndication ::= CHOICE {
   requestForFloor                         NULL, -- same as H.230 TIF
   ...,
   withdrawChairToken                      NULL, -- same as H.230 CCR
-  
+
   -- MC-> chair
   floorRequested                          TerminalLabel, -- same as H.230 TIF
-  
+
   -- MC-> chair
   terminalYouAreSeeingInSubPictureNumber
     TerminalYouAreSeeingInSubPictureNumber,

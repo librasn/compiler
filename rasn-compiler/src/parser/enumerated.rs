@@ -96,7 +96,6 @@ fn enumerated_body<'a>(
 
 #[cfg(test)]
 mod tests {
-    
 
     use super::*;
 
@@ -225,9 +224,9 @@ mod tests {
         assert_eq!(
             enumerated(
                 r#"ENUMERATED {
-                permanentCenDsrcTolling (0), 
-                ..., 
-                temporaryCenDsrcTolling (1) 
+                permanentCenDsrcTolling (0),
+                ...,
+                temporaryCenDsrcTolling (1)
             }"#
             )
             .unwrap()
@@ -294,7 +293,7 @@ mod tests {
             enumerated(
                 r#"ENUMERATED {
           forward  -- this, too, ignored --   (1),
-          -- let's consider this a comment concerning 'forward' -- ... 
+          -- let's consider this a comment concerning 'forward' -- ...
       }"#
             )
             .unwrap()

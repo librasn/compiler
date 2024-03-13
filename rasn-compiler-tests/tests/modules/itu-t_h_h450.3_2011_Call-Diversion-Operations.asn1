@@ -22,10 +22,10 @@ IMPORTS
     FROM Manufacturer-specific-service-extension-definition {itu-t
       recommendation h 450 1 version2(1) msi-definition(18)}
   H225InformationElement
-    FROM H225-generic-parameters-definition {itu-t recommendation h 450 
+    FROM H225-generic-parameters-definition {itu-t recommendation h 450
       1 version2(1) h225-generic-parameters(6)}
   NonStandardParameter
-    FROM H323-MESSAGES {itu-t(0) recommendation(0) h(8) h225-0(2250) 
+    FROM H323-MESSAGES {itu-t(0) recommendation(0) h(8) h225-0(2250)
       version(0) 7 h323-messages(0)} -- see ITU-T H.225.0
   EndpointAddress, PartySubaddress, PresentationAllowedIndicator
     FROM Addressing-Data-Elements {itu-t recommendation h 450 1 version2(1)
@@ -138,10 +138,10 @@ callRerouting OPERATION ::=
               calledAddress            EndpointAddress,
               diversionCounter         INTEGER(1..15),
               h225InfoElement          H225InformationElement,
-              -- The ITU-T H.225.0 information elements Bearer capability, 
-              -- High layer compatibility, Low layer compatibility and 
-              -- Progress Indicator information element may be embedded 
-              -- in the h225InfoElement in accordance with ITU-T H.450.1. 
+              -- The ITU-T H.225.0 information elements Bearer capability,
+              -- High layer compatibility, Low layer compatibility and
+              -- Progress Indicator information element may be embedded
+              -- in the h225InfoElement in accordance with ITU-T H.450.1.
               lastReroutingNr          EndpointAddress,
               subscriptionOption       SubscriptionOption,
               callingPartySubaddress   PartySubaddress OPTIONAL,
@@ -167,10 +167,10 @@ callRerouting OPERATION ::=
 }
 
 divertingLegInformation1 OPERATION ::=
-  { -- sent from the re-routing ITU-T h.323-endpoint to the originating ITU-T h.323-endpoint  -- if the re-routing endpoint equals the originating endpoint, this operation 
+  { -- sent from the re-routing ITU-T h.323-endpoint to the originating ITU-T h.323-endpoint  -- if the re-routing endpoint equals the originating endpoint, this operation
 
-  -- is not applicable; may also be sent from the rerouting endpoint to other 
-  -- members of a conference, if subscription option allows. 
+  -- is not applicable; may also be sent from the rerouting endpoint to other
+  -- members of a conference, if subscription option allows.
   ARGUMENT
     SEQUENCE {diversionReason     DiversionReason,
               subscriptionOption  SubscriptionOption,
@@ -188,7 +188,7 @@ divertingLegInformation1 OPERATION ::=
 }
 
 divertingLegInformation2 OPERATION ::=
-  { --sent from the re-routing ITU-T h.323-endpoint to the diverted-to ITU-T h.323-endpoint 
+  { --sent from the re-routing ITU-T h.323-endpoint to the diverted-to ITU-T h.323-endpoint
 
   ARGUMENT
     SEQUENCE {diversionCounter         INTEGER(1..15),
@@ -225,9 +225,9 @@ divertingLegInformation3 OPERATION ::=
 }
 
 divertingLegInformation4 OPERATION ::=
-  { -- If call diversion in not performed by the forwarding terminal but by a -- gatekeeper, the gatekeeper may send divertingLegInformation4 apdu to the 
+  { -- If call diversion in not performed by the forwarding terminal but by a -- gatekeeper, the gatekeeper may send divertingLegInformation4 apdu to the
 
-  -- forwarding terminal. 
+  -- forwarding terminal.
   ARGUMENT
     SEQUENCE {diversionReason     DiversionReason,
               subscriptionOption  SubscriptionOption,
@@ -315,11 +315,11 @@ BasicService ::= ENUMERATED {
   -- teletex (33),
   -- telefaxGroup4Class1 (34),
   -- videotexSyntaxBased (35),
-  -- videotelephony (36), 
+  -- videotelephony (36),
   ...
   }
 
--- For multimedia calls the value "allServices" shall be used only. 
+-- For multimedia calls the value "allServices" shall be used only.
 -- The usage of the other codepoints for multimedia calls is for further study.
 ExtensionSeq ::= SEQUENCE OF Extension{{ExtensionSet}}
 

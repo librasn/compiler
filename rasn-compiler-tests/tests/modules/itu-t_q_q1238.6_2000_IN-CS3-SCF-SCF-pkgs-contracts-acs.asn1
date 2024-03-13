@@ -115,7 +115,7 @@ IMPORTS
     FROM IN-CS3-SCF-SRF-classes {itu-t recommendation q 1238 modules(1)
       in-cs3-scf-srf-classes(11) version1(0)};
 
--- The following short-hand notation is used to refer to ASN.1 Information Object Classes 
+-- The following short-hand notation is used to refer to ASN.1 Information Object Classes
 -- representing parameters bounds.
 B1 ::=
   COMMON-BOUNDS -- defined in Recommendation Q.1238.1
@@ -126,7 +126,7 @@ B3 ::= SCF-SRF-BOUNDS -- defined in Recommendation Q.1238.3
 
 B6 ::= SCF-SCF-BOUNDS -- defined in Recommendation Q.1238.6
 
--- Application Contexts 
+-- Application Contexts
 scf-scfOperationsAC APPLICATION-CONTEXT ::= {
   CONTRACT                  scf-scfContract
   DIALOGUE MODE             structured
@@ -171,7 +171,7 @@ distributedSCFSystemWith3seAC APPLICATION-CONTEXT ::= {
 
 -- trafficFlowControlAC  APPLICATION-CONTEXT
 --  defined in Recommendation Q.1238.4
--- Contracts 
+-- Contracts
 scf-scfContract CONTRACT ::= {
   CONNECTION             scf-scfConnectionPackage {nsb6}
   INITIATOR CONSUMER OF
@@ -193,7 +193,7 @@ dsspContract CONTRACT ::= {
   ID                     id-contract-dssp
 }
 
--- Connection Package 
+-- Connection Package
 scf-scfConnectionPackage{B6:b6} CONNECTION-PACKAGE ::= {
   BIND              scfBind {b6}
   UNBIND            in-unbind
@@ -208,8 +208,8 @@ dsspConnectionPackage{B6:b6} CONNECTION-PACKAGE ::= {
   ID                id-package-dsspConnection
 }
 
---  handlingInformation package 
-handlingInformationPackage{B1:b1, B2:b2, B6:b6} OPERATION-PACKAGE ::= 
+--  handlingInformation package
+handlingInformationPackage{B1:b1, B2:b2, B6:b6} OPERATION-PACKAGE ::=
 {
   CONSUMER INVOKES  {handlingInformationRequest{b1, b2, b6}}
   SUPPLIER INVOKES  {handlingInformationResult  {b1,
@@ -217,7 +217,7 @@ handlingInformationPackage{B1:b1, B2:b2, B6:b6} OPERATION-PACKAGE ::=
   ID                id-package-handlingInformation
 }
 
---  notification package 
+--  notification package
 notificationPackage{B1:b1, B2:b2} OPERATION-PACKAGE ::= {
   CONSUMER INVOKES  {requestNotification{b1, b2}}
   SUPPLIER INVOKES
@@ -225,8 +225,8 @@ notificationPackage{B1:b1, B2:b2} OPERATION-PACKAGE ::= {
   ID                id-package-notification
 }
 
---  chargingInformation package 
-chargingInformationPackage{B1:b1, B2:b2, B6:b6} OPERATION-PACKAGE ::= 
+--  chargingInformation package
+chargingInformationPackage{B1:b1, B2:b2, B6:b6} OPERATION-PACKAGE ::=
 {
   CONSUMER INVOKES  {establishChargingRecord{b1, b2, b6}}
   SUPPLIER INVOKES
@@ -235,14 +235,14 @@ chargingInformationPackage{B1:b1, B2:b2, B6:b6} OPERATION-PACKAGE ::=
   ID                id-package-chargingInformation
 }
 
---  userInformation package 
+--  userInformation package
 userInformationPackage{B1:b1, B2:b2, B6:b6} OPERATION-PACKAGE ::= {
   CONSUMER INVOKES
     {provideUserInformation{b1, b2, b6} | runUserScript{b1, b2, b6}}
   ID                id-package-userInformation
 }
 
---  networkCapability package 
+--  networkCapability package
 networkCapabilityPackage{B1:b1} OPERATION-PACKAGE ::= {
   CONSUMER INVOKES  {networkCapability{b1}}
   ID                id-package-networkCapability
@@ -254,8 +254,8 @@ transferStsiPackage{B1:b1, B6:b6} OPERATION-PACKAGE ::= {
   ID          id-package-transferStsi
 }
 
---  chainedSCFOperation package 
-chainedSCFOperationPackage{B1:b1, B2:b2, B6:b6} OPERATION-PACKAGE ::= 
+--  chainedSCFOperation package
+chainedSCFOperationPackage{B1:b1, B2:b2, B6:b6} OPERATION-PACKAGE ::=
 {
   CONSUMER INVOKES
     {chainedHandlingInformationRequest{b1, b2, b6} |
@@ -273,7 +273,7 @@ chainedSCFOperationPackage{B1:b1, B2:b2, B6:b6} OPERATION-PACKAGE ::=
   ID                id-package-chainedSCFOperations
 }
 
--- abstract syntaxes 
+-- abstract syntaxes
 scf-scfOperationsAbstractSyntax ABSTRACT-SYNTAX ::= {
   BasicSCF-SCF-PDUs
   IDENTIFIED BY  id-as-scf-scfOperationsAS

@@ -59,8 +59,8 @@ IMPORTS
     FROM IN-CS3-SCF-SDF-Operations {itu-t recommendation q 1238 modules(1)
       in-cs3-scf-sdf-ops-args(16) version1(0)};
 
--- application contexts 
--- Though new application context IDs are assigned in all the following APPLICATION-CONTEXT 
+-- application contexts
+-- Though new application context IDs are assigned in all the following APPLICATION-CONTEXT
 -- definition, note that the functionality are identical to IN CS-2.
 iNdirectoryAccessAC APPLICATION-CONTEXT ::= {
   CONTRACT                  dapContract
@@ -84,7 +84,7 @@ iNdirectoryAccessWith3seAC APPLICATION-CONTEXT ::= {
   APPLICATION CONTEXT NAME  id-ac-indirectoryAccessWith3seAC
 }
 
--- The iNdirectoryAccessWith3seAC is used for the realization of dapContract when 3-way 
+-- The iNdirectoryAccessWith3seAC is used for the realization of dapContract when 3-way
 -- authentication is required.
 inExtendedDirectoryAccessAC APPLICATION-CONTEXT ::= {
   CONTRACT                  dapExecuteContract
@@ -108,7 +108,7 @@ inExtendedDirectoryAccessWith3seAC APPLICATION-CONTEXT ::= {
   APPLICATION CONTEXT NAME  id-ac-inExtendedDirectoryAccessWith3seAC
 }
 
--- The inExtendedDirectoryAccessWith3seAC is used for the realization of dapExecuteContract when 
+-- The inExtendedDirectoryAccessWith3seAC is used for the realization of dapExecuteContract when
 -- 3-way authentication is required.
 trafficFlowControlAC APPLICATION-CONTEXT ::= {
   CONTRACT                  tfcContract
@@ -120,7 +120,7 @@ trafficFlowControlAC APPLICATION-CONTEXT ::= {
 }
 
 -- The trafficFlowControlAC is used for the realization of tfcContract.
--- contracts 
+-- contracts
 dapContract CONTRACT ::= {
   CONNECTION             dapConnectionPackage
   INITIATOR CONSUMER OF  {searchPackage | modifyPackage}
@@ -139,7 +139,7 @@ tfcContract CONTRACT ::= {
   ID                     id-contract-tfc
 }
 
--- packages 
+-- packages
 dapConnectionPackage CONNECTION-PACKAGE ::= {
   BIND    directoryBind
   UNBIND  inUnbind
@@ -172,7 +172,7 @@ tfcPackage OPERATION-PACKAGE ::= {
   ID                id-package-tfcOperations
 }
 
--- abstract-syntaxes 
+-- abstract-syntaxes
 inDirectoryOperationsAbstractSyntax ABSTRACT-SYNTAX ::= {
   BasicDAP-PDUs
   IDENTIFIED BY  id-as-indirectoryOperationsAS

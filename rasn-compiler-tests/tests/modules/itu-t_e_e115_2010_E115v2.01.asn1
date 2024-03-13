@@ -1,14 +1,14 @@
 E115v2 {itu-t recommendation(0) e(5) da(115) version2(2) release(1)} DEFINITIONS XER INSTRUCTIONS ::=
 BEGIN
 
-E115String ::= UTF8String (FROM ({0, 0, 0, 32}..{0, 0, 255, 253})) 
+E115String ::= UTF8String (FROM ({0, 0, 0, 32}..{0, 0, 255, 253}))
 
 E115StringUb256 ::= E115String (SIZE(1..256))
 
 E115NumericString ::= [NAME AS "NumericString"]
            UTF8String (FROM ( {0, 0, 0, 48}..{0, 0, 0, 57} ))
 
-SimpleAttribute ::= BOOLEAN (TRUE) 
+SimpleAttribute ::= BOOLEAN (TRUE)
 
 CharacterSubSet ::= ENUMERATED {
   basic             (0),
@@ -45,7 +45,7 @@ CommAddressService ::= SEQUENCE {
   eml                       [ATTRIBUTE][TAG: 10] IMPLICIT SimpleAttribute OPTIONAL,
   sms                       [ATTRIBUTE][TAG: 11] IMPLICIT SimpleAttribute OPTIONAL,
   mms                       [ATTRIBUTE][TAG: 12] IMPLICIT SimpleAttribute OPTIONAL,
-  emg                       [ATTRIBUTE][TAG: 13] IMPLICIT SimpleAttribute OPTIONAL } 
+  emg                       [ATTRIBUTE][TAG: 13] IMPLICIT SimpleAttribute OPTIONAL }
 
 InquiryCommAddressChar ::= SEQUENCE {
   ftn                       [ATTRIBUTE][TAG: 0]  IMPLICIT SimpleAttribute OPTIONAL,
@@ -63,7 +63,7 @@ PhoneService ::= SEQUENCE {
   data                      [ATTRIBUTE][TAG: 7]  IMPLICIT SimpleAttribute OPTIONAL,
   sms                       [ATTRIBUTE][TAG: 8] IMPLICIT SimpleAttribute OPTIONAL,
   mms                       [ATTRIBUTE][TAG: 9] IMPLICIT SimpleAttribute OPTIONAL,
-  emg                       [ATTRIBUTE][TAG: 10] IMPLICIT SimpleAttribute OPTIONAL } 
+  emg                       [ATTRIBUTE][TAG: 10] IMPLICIT SimpleAttribute OPTIONAL }
 
 InquiryPhoneChar ::= SEQUENCE {
   ftn                       [ATTRIBUTE][TAG: 0]  IMPLICIT SimpleAttribute OPTIONAL,
@@ -158,7 +158,7 @@ InquiryData ::= [ TAG: APPLICATION 1 ] IMPLICIT SET {
     phonetic                  [ATTRIBUTE][TAG: 1] IMPLICIT BOOLEAN OPTIONAL,
     alias                     [ATTRIBUTE][TAG: 2] IMPLICIT BOOLEAN OPTIONAL } OPTIONAL,
   maxSelectionLevel         [ATTRIBUTE][TAG: 21] IMPLICIT
-                              E115NumericString (SIZE(1..3)) DEFAULT "99" } 
+                              E115NumericString (SIZE(1..3)) DEFAULT "99" }
 
 Reply ::= SEQUENCE {
   replyHeader  ReplyHeader,
@@ -174,7 +174,7 @@ ReplyHeader ::= [TAG: APPLICATION 3] IMPLICIT SET {
   dbSelectionCount          [ATTRIBUTE][TAG: 5]  IMPLICIT E115String (SIZE(1..10))
                               OPTIONAL,
   replyCoordinateType       [TAG: 6]  IMPLICIT SEQUENCE {
-                              COMPONENTS OF CoordinateTypeDescription } OPTIONAL,  
+                              COMPONENTS OF CoordinateTypeDescription } OPTIONAL,
   searchCenter              [TAG: 7] IMPLICIT SEQUENCE {
                               COMPONENTS OF Coordinate }OPTIONAL }
 
@@ -210,7 +210,7 @@ CommAddresses ::= SEQUENCE (SIZE(1..MAX)) OF CHOICE {
     phoneService              [TAG: 3] IMPLICIT SEQUENCE { COMPONENTS OF PhoneService }
                                         OPTIONAL,
     phoneChar                 [TAG: 4] IMPLICIT SEQUENCE { COMPONENTS OF ReplyPhoneChar }
-                                        OPTIONAL, 
+                                        OPTIONAL,
     restriction               [ATTRIBUTE] ENUMERATED {
                                  disclose    (1),
                                  nonDisclose (2) } DEFAULT disclose },
@@ -230,10 +230,10 @@ CommAddresses ::= SEQUENCE (SIZE(1..MAX)) OF CHOICE {
 
 ENCODING-CONTROL XER
   GLOBAL-DEFAULTS MODIFIED-ENCODINGS
-  TEXT CharacterSubSet:ALL, GeographicalType:ALL, 
+  TEXT CharacterSubSet:ALL, GeographicalType:ALL,
     InquiryHeader.requestedReplyType:ALL,
-    CommAddresses.*.phone.restriction:ALL, 
-    CommAddresses.*.email.restriction:ALL, 
+    CommAddresses.*.phone.restriction:ALL,
+    CommAddresses.*.email.restriction:ALL,
     CommAddresses.*.uri.restriction:ALL
 
 END

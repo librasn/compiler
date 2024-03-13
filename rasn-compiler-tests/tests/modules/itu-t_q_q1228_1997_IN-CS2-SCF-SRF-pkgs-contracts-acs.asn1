@@ -47,7 +47,7 @@ IMPORTS
     FROM IN-CS2-object-identifiers {itu-t recommendation q 1228 modules(0)
       in-cs2-object-identifiers(17) version1(0)};
 
--- Application Contexts 
+-- Application Contexts
 srf-scf-ac APPLICATION-CONTEXT ::= {
   CONTRACT                  srf-scf-contract
   DIALOGUE MODE             structured
@@ -57,7 +57,7 @@ srf-scf-ac APPLICATION-CONTEXT ::= {
   APPLICATION CONTEXT NAME  id-ac-srf-scf
 }
 
--- Contracts 
+-- Contracts
 srf-scf-contract CONTRACT ::= {
   CONNECTION             emptyConnectionPackage
   INITIATOR CONSUMER OF
@@ -70,7 +70,7 @@ srf-scf-contract CONTRACT ::= {
   ID                     id-contract-srf-scf
 }
 
--- specializedResourceControl package 
+-- specializedResourceControl package
 specializedResourceControlPackage{PARAMETERS-BOUND:bound} OPERATION-PACKAGE ::=
   {
   CONSUMER INVOKES
@@ -79,13 +79,13 @@ specializedResourceControlPackage{PARAMETERS-BOUND:bound} OPERATION-PACKAGE ::=
   ID                id-package-specializedResourceControl
 }
 
--- srf-scfCancel package 
+-- srf-scfCancel package
 srf-scfCancelPackage{PARAMETERS-BOUND:bound} OPERATION-PACKAGE ::= {
   CONSUMER INVOKES  {cancel  {bound}}
   ID                id-package-srf-scfCancel
 }
 
--- scriptControl package 
+-- scriptControl package
 scriptControlPackage{PARAMETERS-BOUND:bound} OPERATION-PACKAGE ::= {
   CONSUMER INVOKES
     {scriptClose{bound} | scriptRun{bound} | scriptInformation{bound}}
@@ -99,7 +99,7 @@ messageControlPackage{PARAMETERS-BOUND:bound} OPERATION-PACKAGE ::= {
   ID                id-package-messageControl
 }
 
--- Abstract Syntaxes 
+-- Abstract Syntaxes
 srf-scf-abstract-syntax ABSTRACT-SYNTAX ::= {
   BASIC-SRF-SCF-PDUs
   IDENTIFIED BY  id-as-basic-srf-scf

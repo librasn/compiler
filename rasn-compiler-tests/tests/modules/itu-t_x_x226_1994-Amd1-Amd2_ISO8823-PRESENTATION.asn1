@@ -11,10 +11,10 @@
 ISO8823-PRESENTATION DEFINITIONS ::=
 BEGIN
 
--- 
+--
 --  In X.410-1984 mode, the value of the SS-user data parameter of the S-CONNECT request and
 --  indication session-service primitives shall be a CP-type value.
--- 
+--
 --  In normal mode, the value of the SS-user data parameter of the S-CONNECT request and
 --  indication session-service primitives shall be a CP-type value, followed as a requestor's
 --  option by zero or more CPC-type values.
@@ -23,11 +23,11 @@ IMPORTS
     FROM Reliable-Transfer-APDU {joint-iso-itu-t(2) reliable-transfer(3)
       apdus(0)};
 
--- 
+--
 CP-type ::= SET {
   mode-selector           [0] IMPLICIT Mode-selector,
   x410-mode-parameters
-    [1] IMPLICIT SET {COMPONENTS OF Reliable-Transfer-APDU.RTORQapdu} OPTIONAL--  This OPTIONAL element shall be absent for a 
+    [1] IMPLICIT SET {COMPONENTS OF Reliable-Transfer-APDU.RTORQapdu} OPTIONAL--  This OPTIONAL element shall be absent for a
   --  nested presentation connection.
   --  Shall be used for X.410 mode only. Shall be bitwise
   --  compatible with CCITT Recommendation X.410-1984.
@@ -79,16 +79,16 @@ CPC-type ::=
 --  in the CP PPDU. Each instance of this data type shall contain all of the presentation data
 --  values which were contained in the User data parameter of the CP PPDU.
 --  This shall be the same set of presentation data values which were contained in the CP-type.
--- 
---  The SS-user data parameter value of the S-CONNECT response 
---  and confirm session-service primitives shall be a CPA-PPDU 
---  value when the Result parameter value is "accept". 
+--
+--  The SS-user data parameter value of the S-CONNECT response
+--  and confirm session-service primitives shall be a CPA-PPDU
+--  value when the Result parameter value is "accept".
 --
 --
 CPA-PPDU ::= SET {
   mode-selector           [0] IMPLICIT Mode-selector,
   x410-mode-parameters
-    [1] IMPLICIT SET {COMPONENTS OF Reliable-Transfer-APDU.RTOACapdu} OPTIONAL--  This OPTIONAL element shall be absent for a 
+    [1] IMPLICIT SET {COMPONENTS OF Reliable-Transfer-APDU.RTOACapdu} OPTIONAL--  This OPTIONAL element shall be absent for a
   --  nested presentation connection.
   --  Shall be used for X.410 mode only. Shall be bitwise
   --  compatible with CCITT Recommendation X.410-1984.
@@ -107,13 +107,13 @@ CPA-PPDU ::= SET {
                            user-session-requirements
                              [9] IMPLICIT User-session-requirements OPTIONAL,
                            --  shall not be present if equal to the Revised session
-                           --  requirements parameter 
+                           --  requirements parameter
                            protocol-options
                              [11]  Protocol-options DEFAULT {},
                            --  shall be absent if no options are selected
                            responders-nominated-context
                              [13]  Presentation-context-identifier OPTIONAL,
-                           --  shall only be present if nominated-context is 
+                           --  shall only be present if nominated-context is
                            --  selected in protocol-options
                            user-data
                              User-data OPTIONAL} OPTIONAL
@@ -122,13 +122,13 @@ CPA-PPDU ::= SET {
 
 --
 --
---  The SS-user data parameter value of the S-CONNECT response 
---  and confirm session-service primitives shall be a CPR-PPDU 
---  value when the Result parameter value is "reject by SS-provider" 
---  or "reject by called SS-user". 
+--  The SS-user data parameter value of the S-CONNECT response
+--  and confirm session-service primitives shall be a CPR-PPDU
+--  value when the Result parameter value is "reject by SS-provider"
+--  or "reject by called SS-user".
 --
 CPR-PPDU ::= CHOICE {
-  x400-mode-parameters    SET {COMPONENTS OF Reliable-Transfer-APDU.RTORJapdu}--  This OPTIONAL element shall be absent for a 
+  x400-mode-parameters    SET {COMPONENTS OF Reliable-Transfer-APDU.RTORJapdu}--  This OPTIONAL element shall be absent for a
   --  nested presentation connection.
   --  Shall be used for X.410 mode only. Shall be bitwise
   --  compatible with CCITT Recommendation X.410-1984.
@@ -147,17 +147,17 @@ CPR-PPDU ::= CHOICE {
                 [10] IMPLICIT Provider-reason OPTIONAL,
               user-data                                    User-data OPTIONAL
   }
-  --  Shall be used for normal mode only. 
+  --  Shall be used for normal mode only.
 }
 
 --
 --
---  The SS-user data parameter of the S-U-ABORT request and indication 
---  service primitives shall be an Abort-type value. 
+--  The SS-user data parameter of the S-U-ABORT request and indication
+--  service primitives shall be an Abort-type value.
 --
 Abort-type ::= CHOICE {
   aru-ppdu  ARU-PPDU--  for a P-U-ABORT -- ,
-  arp-ppdu  ARP-PPDU --  for a P-P-ABORT 
+  arp-ppdu  ARP-PPDU --  for a P-P-ABORT
 }
 
 --
@@ -182,8 +182,8 @@ ARP-PPDU ::= SEQUENCE {
 
 --
 --
---  The SS-user data parameter value of the S-TYPED-DATA request 
---  and indication service primitives shall be a Typed-data-type value. 
+--  The SS-user data parameter value of the S-TYPED-DATA request
+--  and indication service primitives shall be a Typed-data-type value.
 --
 Typed-data-type ::= CHOICE {
   acPPDU   [0] IMPLICIT AC-PPDU--  P-ALTER-CONTEXT request and indication -- ,
@@ -211,8 +211,8 @@ ACA-PPDU ::= SEQUENCE {
 
 --
 --
---  The SS-user data parameter value of the S-RESYNCHRONIZE request and 
---  indication service primitives shall be an RS-PPDU value. 
+--  The SS-user data parameter value of the S-RESYNCHRONIZE request and
+--  indication service primitives shall be an RS-PPDU value.
 --
 RS-PPDU ::= SEQUENCE {
   presentation-context-identifier-list
@@ -221,9 +221,9 @@ RS-PPDU ::= SEQUENCE {
 }
 
 --
---  The SS-user data parameter value of the S-RESYNCHRONIZE response and 
---  confirm service primitives shall be an RSA-PPDU value. 
--- 
+--  The SS-user data parameter value of the S-RESYNCHRONIZE response and
+--  confirm service primitives shall be an RSA-PPDU value.
+--
 RSA-PPDU ::= SEQUENCE {
   presentation-context-identifier-list
     [0] IMPLICIT Presentation-context-identifier-list OPTIONAL,
@@ -232,13 +232,13 @@ RSA-PPDU ::= SEQUENCE {
 
 --
 --
---  The SS-user data parameter values of the S-DATA, S-CAPABILITY-DATA, 
---  S-EXPEDITED-DATA request and indication session-service primitives 
---  and S-CAPABILITY-DATA response and confirm session-service primitives 
---  shall be of type User-data. 
+--  The SS-user data parameter values of the S-DATA, S-CAPABILITY-DATA,
+--  S-EXPEDITED-DATA request and indication session-service primitives
+--  and S-CAPABILITY-DATA response and confirm session-service primitives
+--  shall be of type User-data.
 --
---  The SS-user data parameter values of all other session-service 
---  primitives not described above shall be of type User-data. 
+--  The SS-user data parameter values of all other session-service
+--  primitives not described above shall be of type User-data.
 --
 --
 --
@@ -361,7 +361,7 @@ PDV-list ::= SEQUENCE {
     CHOICE {single-ASN1-type
               [0]  ABSTRACT-SYNTAX.&Type
                      (CONSTRAINED BY {
-                        
+
                         --  Type corresponding to presentation context identifier -- }),
             octet-aligned     [1] IMPLICIT OCTET STRING,
             arbitrary         [2] IMPLICIT BIT STRING}

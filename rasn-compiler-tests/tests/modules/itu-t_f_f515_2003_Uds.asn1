@@ -24,7 +24,7 @@ PagedResults ::= SEQUENCE {
   queryReference  OCTET STRING OPTIONAL
 }
 
--- Unified Directory Search Request 
+-- Unified Directory Search Request
 SearchRequest ::= SEQUENCE {
   entryLimit     INTEGER(1..MAX) OPTIONAL,
   extendedArea   INTEGER(0..MAX) DEFAULT 0,
@@ -67,7 +67,7 @@ Ub512 ::= UTF8String(SIZE (0..512))
 Ub1024 ::= UTF8String(SIZE (0..1024))
 
 AttributeType ::= ENUMERATED {
-  country, locality, stateOrProvince, streetAddress, houseId, givenName, 
+  country, locality, stateOrProvince, streetAddress, houseId, givenName,
   title, description, businessCategory, postalCode, postOfficeBox, dmdName,
   localityCode, localityNDC, subscriberName, subscriberType, secondFamilyName,
   profession, language, telephone, orAddress, mail, url, commService,
@@ -397,7 +397,7 @@ UrlSub ::= SEQUENCE {
 }
 
 ComServiceType ::= ENUMERATED {
-  voice, fax, textPhone, videoPhone, publicPhoneBox, switchBoard, pager, 
+  voice, fax, textPhone, videoPhone, publicPhoneBox, switchBoard, pager,
   data, e-mail, web}
 
 ComServiceTypes ::= SEQUENCE OF ComServiceType
@@ -543,42 +543,42 @@ NotSupported ::= Options
 /*
 
 ENCODING-CONTROL XER
-    ELEMENT-LIST ALL.value, SearchRequest.infoSelect.family, 
+    ELEMENT-LIST ALL.value, SearchRequest.infoSelect.family,
          CommsAddress.attribute
     TEXT ENUMERATED
     NAME SearchRequest, ReqHead, CommsAddress, Country, CountryAs,
          Locality, LocalitySub, StateOrProvince, StateOrProvinceSub,
          StreetAddress, StreetAddressSub, HouseId, HouseIdSub, GivenName,
-         GivenNameSub, Title, TitleSub, Description, BusinessCategory, 
+         GivenNameSub, Title, TitleSub, Description, BusinessCategory,
          BusinessCategorySub, PostalCode, PostalCodeSub, PostOfficeBox,
          PostOfficeBoxSub, DmdName, DmdNameSub, LocalityCode,
-         LocalityCodeAs, LocalityNDC, LocalityNDCAs, SubscriberName, 
-         SubscriberNameSub, SubscriberType, SubscriberTypeAs, 
-         SecondFamilyName, SecondFamilyNameSub, Profession, ProfessionSub, 
-         Language, LanguageAs, Telephone, TelephoneSub, OrAddress, 
-         OrAddressSub, Mail, MailSub, Url, UrlSub, CommService, 
-         CommServiceAs, CommNetwork, CommNetworkAs, AddrValidFrom, 
-         AddrValidUntil, AddrValidity, AddrValidityAs, AddrCoverage,   
-         AddrCoverageAs, AddrTariff, AddrTariffAs, AddrRestriction, 
-         AddrRestrictionAs, LimitProblem, ServiceProblem, 
-         AttributeTypeList, FilterNot, FilterItem, ProviderName, 
-         HierarchySelectList, SearchControlOptionsList, WordRestriction,  
+         LocalityCodeAs, LocalityNDC, LocalityNDCAs, SubscriberName,
+         SubscriberNameSub, SubscriberType, SubscriberTypeAs,
+         SecondFamilyName, SecondFamilyNameSub, Profession, ProfessionSub,
+         Language, LanguageAs, Telephone, TelephoneSub, OrAddress,
+         OrAddressSub, Mail, MailSub, Url, UrlSub, CommService,
+         CommServiceAs, CommNetwork, CommNetworkAs, AddrValidFrom,
+         AddrValidUntil, AddrValidity, AddrValidityAs, AddrCoverage,
+         AddrCoverageAs, AddrTariff, AddrTariffAs, AddrRestriction,
+         AddrRestrictionAs, LimitProblem, ServiceProblem,
+         AttributeTypeList, FilterNot, FilterItem, ProviderName,
+         HierarchySelectList, SearchControlOptionsList, WordRestriction,
          NotSupported AS UNCAPITALIZED
     LIST AttributeTypes, HierarchySelections, SearchOptions, SubscrTypes,
-         ComServiceTypes, StringMatchTypes, WordMatchTypes, 
+         ComServiceTypes, StringMatchTypes, WordMatchTypes,
          CharacterMatchTypes, Options
     UNTAGGED ALL.base IN ALL
     NAME SearchRequest.infoSelect.family, AttributeType.localityCode,
-         CommsAddress.attribute, FilterItem.assertion, 
+         CommsAddress.attribute, FilterItem.assertion,
          FilterItem.substrings, ALL IN Filter AS CAPITALIZED
     NAME NumericString-1 AS "NumericString"
-    ATTRIBUTE ALL IN PagedResults, SearchRequest.entryLimit, 
-         SearchRequest.hierSelect, SearchRequest.searchOptions, 
-         SearchRequest.extendedArea, SearchRequest.base.entryIdentifier, 
-         ALL IN AssertionAttr, ALL IN SubstringAttr, ALL IN      
-         SubstringValueAttr, Title.lang, Description.lang, 
-         BusinessCategory.lang, SubscriberName.lang, Profession.lang, 
-         WordRestriction.otherMinimum, WordRestriction.initialMinimum, 
+    ATTRIBUTE ALL IN PagedResults, SearchRequest.entryLimit,
+         SearchRequest.hierSelect, SearchRequest.searchOptions,
+         SearchRequest.extendedArea, SearchRequest.base.entryIdentifier,
+         ALL IN AssertionAttr, ALL IN SubstringAttr, ALL IN
+         SubstringValueAttr, Title.lang, Description.lang,
+         BusinessCategory.lang, SubscriberName.lang, Profession.lang,
+         WordRestriction.otherMinimum, WordRestriction.initialMinimum,
          WordRestriction.attributeType
 
 */

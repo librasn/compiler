@@ -22,7 +22,7 @@ Alert ::= SEQUENCE {
   sent
     XSD.DateTime
       (CONSTRAINED BY {/* XML representation of the XSD pattern "\d\d\d\d-\d\d-\d\dT
-                \d\d:\d\d:\d\d[-,+]\d\d:\d\d" */ 
+                \d\d:\d\d:\d\d[-,+]\d\d:\d\d" */
          }),
   status       ENUMERATED {actual, draft, exercise, system, test},
   msgType      ENUMERATED {ack, alert, cancel, error, update},
@@ -39,8 +39,8 @@ Alert ::= SEQUENCE {
       SEQUENCE {language           XSD.Language OPTIONAL,
                 category-list
                   SEQUENCE (SIZE (1..MAX)) OF category
-                    ENUMERATED {cBRNE, env, fire, geo, health, infra, 
-                                met, other, rescue, safety, security, 
+                    ENUMERATED {cBRNE, env, fire, geo, health, infra,
+                                met, other, rescue, safety, security,
                                 transport},
                 event              XSD.String,
                 responseType-list
@@ -61,17 +61,17 @@ Alert ::= SEQUENCE {
                 effective
                   XSD.DateTime
                     (CONSTRAINED BY {/* XML representation of the XSD pattern "\d\d\d\d-
-                          \d\d-\d\dT\d\d:\d\d:\d\d[-,+]\d\d:\d\d" */ 
+                          \d\d-\d\dT\d\d:\d\d:\d\d[-,+]\d\d:\d\d" */
                        }) OPTIONAL,
                 onset
                   XSD.DateTime
                     (CONSTRAINED BY {/* XML representation of the XSD pattern "\d\d\d\d-
-                          \d\d-\d\dT\d\d:\d\d:\d\d[-,+]\d\d:\d\d" */ 
+                          \d\d-\d\dT\d\d:\d\d:\d\d[-,+]\d\d:\d\d" */
                        }) OPTIONAL,
                 expires
                   XSD.DateTime
                     (CONSTRAINED BY {/* XML representation of the XSD pattern "\d\d\d\d-
-                          \d\d-\d\dT\d\d:\d\d:\d\d[-,+]\d\d:\d\d" */ 
+                          \d\d-\d\dT\d\d:\d\d:\d\d[-,+]\d\d:\d\d" */
                        }) OPTIONAL,
                 senderName         XSD.String OPTIONAL,
                 headline           XSD.String OPTIONAL,
@@ -106,7 +106,7 @@ Alert ::= SEQUENCE {
     SEQUENCE OF elem
       XSD.String
         (CONSTRAINED BY {/* Shall conform to the "AnyElementFormat" specified
-                in ITU-T Rec. X.693 | ISO/IEC 8825-4, clause 19 */ 
+                in ITU-T Rec. X.693 | ISO/IEC 8825-4, clause 19 */
            })
 }
 
@@ -124,10 +124,10 @@ ENCODING-CONTROL XER
     UNTAGGED SEQUENCE OF
     ANY-ELEMENT Alert.elem-list.elem FROM "http://www.w3.org/2000/09/xmldsig#"
     DEFAULT-FOR-EMPTY Alert.info-list.info.language AS "en-US"
-    TEXT Alert.status:ALL, Alert.msgType:ALL, Alert.scope:ALL, 
-        Alert.info-list.info.category-list.category:ALL, 
-        Alert.info-list.info.responseType-list.responseType:ALL, 
-        Alert.info-list.info.urgency:ALL, Alert.info-list.info.severity:ALL, 
+    TEXT Alert.status:ALL, Alert.msgType:ALL, Alert.scope:ALL,
+        Alert.info-list.info.category-list.category:ALL,
+        Alert.info-list.info.responseType-list.responseType:ALL,
+        Alert.info-list.info.urgency:ALL, Alert.info-list.info.severity:ALL,
         Alert.info-list.info.certainty:ALL AS CAPITALIZED
 END
 

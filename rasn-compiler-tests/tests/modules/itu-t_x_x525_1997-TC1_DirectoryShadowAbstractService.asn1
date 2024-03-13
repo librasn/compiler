@@ -14,9 +14,9 @@ DirectoryShadowAbstractService {joint-iso-itu-t ds(5) module(1)
   directoryShadowAbstractService(15) 3} DEFINITIONS IMPLICIT TAGS ::=
 BEGIN
 
--- EXPORTS All 
--- The types and values defined in this module are exported for use in the other ASN.1 modules contained 
--- within the Directory Specifications, and for the use of other applications which will use them to access 
+-- EXPORTS All
+-- The types and values defined in this module are exported for use in the other ASN.1 modules contained
+-- within the Directory Specifications, and for the use of other applications which will use them to access
 -- directory services. Other applications may use them for their own purposes, but this will not constrain
 -- extensions and modifications needed to maintain or improve the directory service.
 IMPORTS
@@ -52,12 +52,12 @@ IMPORTS
   dirqop, OPTIONALLY-PROTECTED{}
     FROM EnhancedSecurity enhancedSecurity;
 
--- bind and unbind operations 
+-- bind and unbind operations
 dSAShadowBind OPERATION ::= directoryBind
 
 dSAShadowUnbind OPERATION ::= directoryUnbind
 
--- shadow operational binding 
+-- shadow operational binding
 shadowOperationalBinding OPERATIONAL-BINDING ::= {
   AGREEMENT             ShadowingAgreementInfo
   APPLICATION CONTEXTS
@@ -83,7 +83,7 @@ shadowOperationalBinding OPERATIONAL-BINDING ::= {
   ID                    id-op-binding-shadow
 }
 
--- types 
+-- types
 ModificationParameter ::= SEQUENCE {
   secondaryShadows  SET OF SupplierAndConsumers
 }
@@ -142,7 +142,7 @@ SupplierUpdateMode ::= CHOICE {
 ConsumerUpdateMode ::= SchedulingParameters
 
 SchedulingParameters ::= SEQUENCE {
-  periodic    PeriodicStrategy OPTIONAL, -- must be present if othertimes is set to FALSE 
+  periodic    PeriodicStrategy OPTIONAL, -- must be present if othertimes is set to FALSE
   othertimes  BOOLEAN DEFAULT FALSE
 }
 
@@ -159,7 +159,7 @@ UpdateWindow ::= SEQUENCE {start  Time,
                            stop   Time
 }
 
--- shadow operations, arguments, and results 
+-- shadow operations, arguments, and results
 coordinateShadowUpdate OPERATION ::= {
   ARGUMENT  CoordinateShadowUpdateArgument
   RESULT    CoordinateShadowUpdateResult
@@ -292,7 +292,7 @@ RequestShadowUpdateResult ::= CHOICE {
       }, dirqop.&dispRequestShadowUpdateRes-QOP}
 }
 
--- errors and parameters 
+-- errors and parameters
 shadowError ERROR ::= {
   PARAMETER
     SEQUENCE {problem       ShadowProblem,

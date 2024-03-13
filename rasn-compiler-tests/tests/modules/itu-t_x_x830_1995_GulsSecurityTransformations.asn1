@@ -14,7 +14,7 @@ GulsSecurityTransformations {joint-iso-itu-t genericULS(20) modules(1)
   gulsSecurityTransformations(3)} DEFINITIONS AUTOMATIC TAGS ::=
 BEGIN
 
--- EXPORTS All 
+-- EXPORTS All
 IMPORTS
   securityTransformations, notation
     FROM ObjectIdentifiers {joint-iso-itu-t genericULS(20) modules(1)
@@ -25,9 +25,9 @@ IMPORTS
     FROM AuthenticationFramework {joint-iso-itu-t ds(5) module(1)
       authenticationFramework(7) 3};
 
--- *************************************** 
--- Notation for specifying key information 
--- *************************************** 
+-- ***************************************
+-- Notation for specifying key information
+-- ***************************************
 KEY-INFORMATION ::=
   CLASS
    -- This information object class definition is for use when
@@ -41,7 +41,7 @@ KEY-INFORMATION ::=
                         global  OBJECT IDENTIFIER
                         -- global objects are defined elsewhere
   } UNIQUE,
-  &KiType   
+  &KiType
 }WITH SYNTAX {KEY-INFO-CLASS &kiClass
               KEY-INFO-TYPE &KiType
 }
@@ -62,9 +62,9 @@ asymmetricKeyInformation KEY-INFORMATION ::= {
               keyIdentifier     BIT STRING OPTIONAL}
 }
 
--- ******************************************* 
--- Directory ENCRYPTED Security Transformation 
--- ******************************************* 
+-- *******************************************
+-- Directory ENCRYPTED Security Transformation
+-- *******************************************
 dirEncryptedTransformation SECURITY-TRANSFORMATION ::= {
   IDENTIFIER              {securityTransformations dir-encrypted(1)}
   -- This transformation transforms a string of octets to a
@@ -73,9 +73,9 @@ dirEncryptedTransformation SECURITY-TRANSFORMATION ::= {
   XFORMED-DATA-TYPE       BIT STRING
 }
 
--- **************************************** 
--- Directory SIGNED Security Transformation 
--- **************************************** 
+-- ****************************************
+-- Directory SIGNED Security Transformation
+-- ****************************************
 dirSignedTransformation SECURITY-TRANSFORMATION ::= {
   IDENTIFIER              {securityTransformations dir-signed(2)}
   INITIAL-ENCODING-RULES
@@ -84,29 +84,29 @@ dirSignedTransformation SECURITY-TRANSFORMATION ::= {
     SEQUENCE {toBeSigned
                 ABSTRACT-SYNTAX.&Type
                   (CONSTRAINED BY {
-                     
+
                      -- this type is constrained to being the to-be-signed type -- }),
               algorithmId     AlgorithmIdentifier,
-              -- of the algorithms used to compute the signature 
+              -- of the algorithms used to compute the signature
               encipheredHash  BIT STRING}
 }
 
--- ******************************************* 
--- Directory SIGNATURE Security Transformation 
--- ******************************************* 
+-- *******************************************
+-- Directory SIGNATURE Security Transformation
+-- *******************************************
 dirSignatureTransformation SECURITY-TRANSFORMATION ::= {
   IDENTIFIER              {securityTransformations dir-signature(3)}
   INITIAL-ENCODING-RULES
     {joint-iso-itu-t asn1(1) ber-derived(2) distinguished-encoding(1)}
   XFORMED-DATA-TYPE
     SEQUENCE {algorithmId     AlgorithmIdentifier,
-              -- of the algorithms used to compute the signature 
+              -- of the algorithms used to compute the signature
               encipheredHash  BIT STRING}
 }
 
--- *********************************** 
--- GULS SIGNED Security Transformation 
--- *********************************** 
+-- ***********************************
+-- GULS SIGNED Security Transformation
+-- ***********************************
 gulsSignedTransformation{KEY-INFORMATION:SupportedKIClasses}
   SECURITY-TRANSFORMATION ::= {
   IDENTIFIER              {securityTransformations guls-signed(4)}
@@ -125,7 +125,7 @@ gulsSignedTransformation{KEY-INFORMATION:SupportedKIClasses}
                                                             -- the intermediate value -- })PRESENT
                                       }),
                      data-value      (CONTAINING IntermediateType{{SupportedKIClasses}})
-                   
+
                    -- The data value encoded is a value of type
                    -- IntermediateType
                    }),
@@ -149,7 +149,7 @@ IntermediateType{KEY-INFORMATION:SupportedKIClasses} ::= SEQUENCE {
   signOrSealAlgorithm  AlgorithmIdentifier OPTIONAL,
   -- Identifies the signing or
   -- sealing algorithm, and can convey
-  -- algorithm parameters 
+  -- algorithm parameters
   hashAlgorithm        AlgorithmIdentifier OPTIONAL,
   -- Identifies a hash function,
   -- for use if a hash function is required
@@ -169,9 +169,9 @@ IntermediateType{KEY-INFORMATION:SupportedKIClasses} ::= SEQUENCE {
   -- definitive ASN.1 module)
 }
 
--- ************************************** 
--- GULS SIGNATURE Security Transformation 
--- ************************************** 
+-- **************************************
+-- GULS SIGNATURE Security Transformation
+-- **************************************
 gulsSignatureTransformation{KEY-INFORMATION:SupportedKIClasses}
   SECURITY-TRANSFORMATION ::= {
   IDENTIFIER              {securityTransformations guls-signature(5)}
@@ -188,7 +188,7 @@ gulsSignatureTransformation{KEY-INFORMATION:SupportedKIClasses}
               signOrSealAlgorithm  AlgorithmIdentifier OPTIONAL,
               -- Identifies the signing or
               -- sealing algorithm, and can convey
-              -- algorithm parameters 
+              -- algorithm parameters
               hashAlgorithm        AlgorithmIdentifier OPTIONAL,
               -- Identifies a hash function,
               -- for use if a hash function is required

@@ -22,29 +22,29 @@ BEGIN
 -- in ITU-T X.1303
 Alert ::= SEQUENCE {
   identifier   IdentifierString,
-  -- Unambiguous identification of the message 
+  -- Unambiguous identification of the message
   -- from all messages from
-  -- this sender, in a format defined by the sender and 
+  -- this sender, in a format defined by the sender and
   -- identified in the "sender" field below.
   sender       String,
   -- The globally unambiguous identification of the sender.
-  -- This specification does not define the root of 
-  -- a global identification tree (there is no international 
+  -- This specification does not define the root of
+  -- a global identification tree (there is no international
   -- agreement on such a root), so it relies
-  -- on human-readable text to define globally and 
+  -- on human-readable text to define globally and
   -- unambiguously the sender.
-  -- An internet domain name or use of "iri:/ITU-T/..." 
+  -- An internet domain name or use of "iri:/ITU-T/..."
   -- are possible, but
   -- the choice needs to be clearly stated in human-readable form.
   sent         DateTime,
   status       AlertStatus,
   msgType      AlertMessageType,
   source       String OPTIONAL,
-  -- Not standardised human-readable identification 
+  -- Not standardised human-readable identification
   -- of the source of the alert.
   scope        AlertScope,
   restriction  String OPTIONAL,
-  -- Not standardised human-readable restrictions 
+  -- Not standardised human-readable restrictions
   -- on the distribution of the alert message
   addresses    String OPTIONAL,
   -- A space separated list of addressees for private messages
@@ -78,7 +78,7 @@ AlertInformation ::= SEQUENCE {
   -- (see 7.2.2)
   category-list      SEQUENCE (SIZE (1..MAX)) OF category InformationCategory,
   event              String,
-  -- Not standardised human-readable text describing the 
+  -- Not standardised human-readable text describing the
   -- type of the event (see 7.2.2)
   responseType-list
     SEQUENCE SIZE ((0..MAX)) OF responseType InformationResponseType,
@@ -86,7 +86,7 @@ AlertInformation ::= SEQUENCE {
   severity           HowSevere,
   certainty          HowCertain,
   audience           String OPTIONAL,
-  -- Not standardised human-readable text describing the 
+  -- Not standardised human-readable text describing the
   -- intended audience for the message (see 7.2.2)
   eventCode-list
     SEQUENCE SIZE ((0..MAX)) OF eventCode
@@ -96,20 +96,20 @@ AlertInformation ::= SEQUENCE {
   onset              DateTime OPTIONAL,
   expires            DateTime OPTIONAL,
   senderName         String OPTIONAL,
-  -- Not standardised human-readable name of the authority 
+  -- Not standardised human-readable name of the authority
   -- issuing the message (see 7.2.2)
   headline           String(SIZE (1..160, ...)) OPTIONAL,
-  -- Not standardised human-readable short statement (headline) 
+  -- Not standardised human-readable short statement (headline)
   -- of the alert (see 7.2.2)
   description        String OPTIONAL,
-  -- Not standardised human-readable extended description of 
+  -- Not standardised human-readable extended description of
   -- the event (see 7.2.2)
   instruction        String OPTIONAL,
   -- Not standardised human-readable recommended action
   -- (see 7.2.2)
   web                AnyURI OPTIONAL,
   contact            String OPTIONAL,
-  -- Not standardised human-readable contact details for 
+  -- Not standardised human-readable contact details for
   -- follow-up (see 7.2.2)
   parameter-list
     SEQUENCE SIZE ((0..MAX)) OF parameter
@@ -137,18 +137,18 @@ ResourceFile ::= SEQUENCE {
   -- Information about an associated resource file
   -- (see 7.2.3)
   resourceDesc  String,
-  -- Not standardised human-readable description of the type 
+  -- Not standardised human-readable description of the type
   -- and content of
-  -- an associated resource file (for example a map or 
+  -- an associated resource file (for example a map or
   -- photograph)(see 7.2.3)
   mimeType      String OPTIONAL,
   size          INTEGER OPTIONAL, -- In bytes
   uri           AnyURI OPTIONAL,
   derefUri      String OPTIONAL,
-  -- An alternative to the URI giving the Base64-encoded 
+  -- An alternative to the URI giving the Base64-encoded
   -- content of the resource file (see 7.2.3)
   digest        String OPTIONAL-- SHA-1 hash of the resource file for error detection
--- (see 7.2.3) 
+-- (see 7.2.3)
 }
 
 Area ::= SEQUENCE {
@@ -158,7 +158,7 @@ Area ::= SEQUENCE {
   polygon-list  SEQUENCE OF polygon String,
   -- Each element is a space-separated list of coordinate pairs
   -- The complete list starts and ends with the same point and
-  -- defines the polygon that defines the area 
+  -- defines the polygon that defines the area
   -- (see 7.2.4).
   circle-list   SEQUENCE OF circle String,
   -- A space-separated list of coordinates for a point and a radius
@@ -171,10 +171,10 @@ Area ::= SEQUENCE {
   altitude      String OPTIONAL,
   -- Specific or minimum altitude of the affected area
   ceiling       String OPTIONAL
-  -- Maximum altitude of the affected area 
+  -- Maximum altitude of the affected area
 }
 
-ValueName ::= String -- A not standardised name for 
+ValueName ::= String -- A not standardised name for
 
 -- an information event code, a parameter or a geocode
 Value ::=
@@ -207,7 +207,7 @@ Language ::=
 -- The semantics of Language is specified in IETF RFC 3066
 
 DateTime ::= TIME (SETTINGS "Basic=Date-Time Date=YMD Year=Basic Time=HMS Local-or-UTC=LD")
--- This is the ISO 8601 format using local time and a 
+-- This is the ISO 8601 format using local time and a
 -- time difference
 StringWithNoCRLFHT ::=
   UTF8String
@@ -231,13 +231,13 @@ ENCODING-CONTROL XER
     NAME Alert, Area AS UNCAPITALIZED
     UNTAGGED SEQUENCE OF
     DEFAULT-FOR-EMPTY AlertInformation.language AS "en-US"
-    TEXT AlertStatus:ALL, 
-         AlertMessageType:ALL, 
-         AlertScope:ALL, 
-         InformationCategory:ALL, 
-         InformationResponseType:ALL, 
+    TEXT AlertStatus:ALL,
+         AlertMessageType:ALL,
+         AlertScope:ALL,
+         InformationCategory:ALL,
+         InformationResponseType:ALL,
          HowUrgent:ALL,
-         HowSevere:ALL, 
+         HowSevere:ALL,
          HowCertain:ALL AS CAPITALIZED
     WHITESPACE Language, AnyURI COLLAPSE
 END

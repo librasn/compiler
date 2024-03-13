@@ -14,9 +14,9 @@ SelectedAttributeTypes {joint-iso-itu-t ds(5) module(1)
   selectedAttributeTypes(5) 4} DEFINITIONS ::=
 BEGIN
 
--- EXPORTS All 
--- The types and values defined in this module are exported for use in the other ASN.1 modules contained 
--- within the Directory Specifications, and for the use of other applications which will use them to access 
+-- EXPORTS All
+-- The types and values defined in this module are exported for use in the other ASN.1 modules contained
+-- within the Directory Specifications, and for the use of other applications which will use them to access
 -- Directory services. Other applications may use them for their own purposes, but this will not constrain
 -- extensions and modifications needed to maintain or improve the Directory service.
 IMPORTS
@@ -54,7 +54,7 @@ IMPORTS
     FROM MTSAbstractService {joint-iso-itu-t mhs(6) mts(3) modules(0)
       mts-abstract-service(1) version-1999(1)};
 
--- Directory string type 
+-- Directory string type
 DirectoryString{INTEGER:maxSize} ::= CHOICE {
   teletexString    TeletexString(SIZE (1..maxSize)),
   printableString  PrintableString(SIZE (1..maxSize)),
@@ -63,7 +63,7 @@ DirectoryString{INTEGER:maxSize} ::= CHOICE {
   uTF8String       UTF8String(SIZE (1..maxSize))
 }
 
--- Attribute types 
+-- Attribute types
 knowledgeInformation ATTRIBUTE ::= {
   WITH SYNTAX             DirectoryString {ub-knowledge-information}
   EQUALITY MATCHING RULE  caseIgnoreMatch
@@ -144,7 +144,7 @@ countryName ATTRIBUTE ::= {
 }
 
 CountryName ::= PrintableString(SIZE (2)) -- ISO 3166 codes only
-                               
+
 
 localityName ATTRIBUTE ::= {
   SUBTYPE OF   name
@@ -526,7 +526,7 @@ dmdName ATTRIBUTE ::= {
   ID           id-at-dmdName
 }
 
--- Notification attributes 
+-- Notification attributes
 dSAProblem ATTRIBUTE ::= {
   WITH SYNTAX             OBJECT IDENTIFIER
   EQUALITY MATCHING RULE  objectIdentifierMatch
@@ -624,7 +624,7 @@ appliedRelaxation ATTRIBUTE ::= {
   ID                      id-not-appliedRelaxation
 }
 
--- Matching rules 
+-- Matching rules
 caseIgnoreMatch MATCHING-RULE ::= {
   SYNTAX  DirectoryString {ub-match}
   ID      id-mr-caseIgnoreMatch
@@ -872,14 +872,14 @@ zonalMatch MATCHING-RULE ::= {
   ID                      id-mr-zonalMatch
 }
 
--- Contexts 
+-- Contexts
 languageContext CONTEXT ::= {
   WITH SYNTAX  LanguageContextSyntax
   ID           id-avc-language
 }
 
 LanguageContextSyntax ::= PrintableString(SIZE (2..3)) -- ISO 639-2 codes only
-                                         
+
 
 temporalContext CONTEXT ::= {
   WITH SYNTAX  TimeSpecification
@@ -973,7 +973,7 @@ LocaleContextSyntax ::= CHOICE {
 
 -- Object identifier assignments -
 -- object identifiers assigned in other modules are shown in comments
--- Attributes 
+-- Attributes
 -- id-at-objectClass						OBJECT IDENTIFIER	::=	{id-at 0}
 -- id-at-aliasedEntryName				OBJECT IDENTIFIER	::=	{id-at 1}
 id-at-encryptedAliasedEntryName OBJECT IDENTIFIER ::=
@@ -1256,7 +1256,7 @@ id-at-encryptedClearance OBJECT IDENTIFIER ::=
 id-at-encryptedAttributeIntegrityInfo OBJECT IDENTIFIER ::=
   {id-at 57 2}
 
--- id-at-attributeCertificate				OBJECT IDENTIFIER	::=	{id-at 58} 
+-- id-at-attributeCertificate				OBJECT IDENTIFIER	::=	{id-at 58}
 id-at-encryptedAttributeCertificate OBJECT IDENTIFIER ::=
   {id-at 58 2}
 
@@ -1285,7 +1285,7 @@ id-at-communicationsNetwork OBJECT IDENTIFIER ::= {id-at 67}
 -- id-at-privPolicy						OBJECT IDENTIFIER	::=	{id-at 71}
 -- id-at-role							OBJECT IDENTIFIER	::=	{id-at 72}
 -- id-at-delegationPath					OBJECT IDENTIFIER	::=	{id-at 73}
--- Control  attributes 
+-- Control  attributes
 id-cat-sequenceMatchType OBJECT IDENTIFIER ::=
   {id-cat 1}
 
@@ -1295,7 +1295,7 @@ id-cat-characterMatchTypes OBJECT IDENTIFIER ::= {id-cat 3}
 
 id-cat-selectedContexts OBJECT IDENTIFIER ::= {id-cat 4}
 
--- Notification attributes 
+-- Notification attributes
 id-not-dSAProblem OBJECT IDENTIFIER ::= {id-not 0}
 
 id-not-searchServiceProblem OBJECT IDENTIFIER ::= {id-not 1}
@@ -1328,7 +1328,7 @@ id-not-proposedRelaxation OBJECT IDENTIFIER ::= {id-not 14}
 
 id-not-appliedRelaxation OBJECT IDENTIFIER ::= {id-not 15}
 
--- Problem definitions 
+-- Problem definitions
 id-pr-targetDsaUnavailable OBJECT IDENTIFIER ::=
   {id-pr 1}
 
@@ -1402,7 +1402,7 @@ id-pr-temporaryRestriction OBJECT IDENTIFIER ::= {id-pr 35}
 
 id-pr-relaxationNotSupported OBJECT IDENTIFIER ::= {id-pr 36}
 
--- Matching rules 
+-- Matching rules
 -- id-mr-objectIdentifierMatch 				OBJECT IDENTIFIER	::=	{id-mr 0}
 -- id-mr-distinguishedNameMatch			OBJECT IDENTIFIER	::=	{id-mr 1}
 id-mr-caseIgnoreMatch OBJECT IDENTIFIER ::=
@@ -1513,7 +1513,7 @@ id-mr-facsimileNumberMatch OBJECT IDENTIFIER ::=
 
 id-mr-facsimileNumberSubstringsMatch OBJECT IDENTIFIER ::= {id-mr 64}
 
--- contexts 
+-- contexts
 id-avc-language OBJECT IDENTIFIER ::= {id-avc 0}
 
 id-avc-temporal OBJECT IDENTIFIER ::= {id-avc 1}

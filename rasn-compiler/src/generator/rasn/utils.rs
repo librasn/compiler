@@ -29,6 +29,8 @@ macro_rules! error {
 
 pub(crate) use error;
 
+use self::types::{CharacterString, Constrainable};
+
 use super::*;
 
 impl IntegerType {
@@ -261,10 +263,8 @@ fn format_sequence_member(
             quote!(default = #default_fn)
         })
         .unwrap_or_default();
-    let range_annotations = format_range_annotations(
-        matches!(member.ty, ASN1Type::Integer(_)),
-        &all_constraints,
-    )?;
+    let range_annotations =
+        format_range_annotations(matches!(member.ty, ASN1Type::Integer(_)), &all_constraints)?;
     let alphabet_annotations = if let ASN1Type::CharacterString(c_string) = &member.ty {
         format_alphabet_annotations(c_string.ty, &all_constraints)?
     } else {
@@ -324,10 +324,8 @@ fn format_choice_option(
     let (mut all_constraints, formatted_type_name) =
         constraints_and_type_name(&member.ty, &member.name, parent_name)?;
     all_constraints.append(&mut member.constraints.clone());
-    let range_annotations = format_range_annotations(
-        matches!(member.ty, ASN1Type::Integer(_)),
-        &all_constraints,
-    )?;
+    let range_annotations =
+        format_range_annotations(matches!(member.ty, ASN1Type::Integer(_)), &all_constraints)?;
     let alphabet_annotations = if let ASN1Type::CharacterString(c_string) = &member.ty {
         format_alphabet_annotations(c_string.ty, &all_constraints)?
     } else {
@@ -382,9 +380,12 @@ fn constraints_and_type_name(
         ASN1Type::Enumerated(_)
         | ASN1Type::Choice(_)
         | ASN1Type::Sequence(_)
-        | ASN1Type::SequenceOf(_)
         | ASN1Type::SetOf(_)
         | ASN1Type::Set(_) => (vec![], inner_name(name, parent_name).to_token_stream()),
+        ASN1Type::SequenceOf(s) => {
+            let inner_type = type_to_tokens(&s.element_type)?;
+            (s.constraints().clone(), quote!(SequenceOf<#inner_type>))
+        }
         ASN1Type::ElsewhereDeclaredType(e) => (
             e.constraints.clone(),
             to_rust_title_case(&e.identifier).to_token_stream(),
@@ -479,7 +480,7 @@ pub fn type_to_tokens(ty: &ASN1Type) -> Result<TokenStream, GeneratorError> {
         ASN1Type::Real(_) => Ok(quote!(f64)),
         ASN1Type::BitString(_) => Ok(quote!(BitString)),
         ASN1Type::OctetString(_) => Ok(quote!(OctetString)),
-        ASN1Type::CharacterString(_) => Ok(quote!(Utf8String)),
+        ASN1Type::CharacterString(CharacterString { ty, .. }) => string_type(ty),
         ASN1Type::Enumerated(_) => Err(error!(
             NotYetInplemented,
             "Enumerated values are currently unsupported!"
@@ -578,8 +579,8 @@ pub fn value_to_tokens(
             let enumerable_id = to_rust_enum_identifier(enumerable);
             Ok(quote!(#enum_name::#enumerable_id))
         }
-        ASN1Value::LinkedElsewhereDefinedValue { identifier: e, .. } |
-        ASN1Value::ElsewhereDeclaredValue { identifier: e, .. } => {
+        ASN1Value::LinkedElsewhereDefinedValue { identifier: e, .. }
+        | ASN1Value::ElsewhereDeclaredValue { identifier: e, .. } => {
             Ok(to_rust_const_case(e).to_token_stream())
         }
         ASN1Value::ObjectIdentifier(oid) => {
@@ -593,7 +594,7 @@ pub fn value_to_tokens(
             Some(time_type) => Ok(quote!(#t.parse::<#time_type>().unwrap())),
             None => Ok(quote!(#t.parse::<_>().unwrap())),
         },
-        ASN1Value::SequenceOrSetOf(seq) => {
+        ASN1Value::LinkedArrayLikeValue(seq) => {
             let elems = seq
                 .iter()
                 .map(|v| value_to_tokens(v, None))
@@ -669,7 +670,6 @@ pub fn format_nested_sequence_members(
                 ASN1Type::Enumerated(_)
                     | ASN1Type::Choice(_)
                     | ASN1Type::Sequence(_)
-                    | ASN1Type::SequenceOf(_)
                     | ASN1Type::Set(_)
             )
         })
@@ -732,16 +732,21 @@ pub fn format_new_impl(name: &TokenStream, name_types: Vec<NameType>) -> TokenSt
     }
 }
 
-pub fn format_sequence_or_set_of_item_type(type_name: String, first_item: Option<&ASN1Value>) -> TokenStream {
+pub fn format_sequence_or_set_of_item_type(
+    type_name: String,
+    first_item: Option<&ASN1Value>,
+) -> TokenStream {
     match type_name {
         name if name == NULL => quote!(()),
         name if name == BOOLEAN => quote!(bool),
         name if name == INTEGER => {
             match first_item {
-                Some(ASN1Value::LinkedIntValue { integer_type, .. }) => integer_type.to_token_stream(),
-                _ => quote!(Integer) // best effort
+                Some(ASN1Value::LinkedIntValue { integer_type, .. }) => {
+                    integer_type.to_token_stream()
+                }
+                _ => quote!(Integer), // best effort
             }
-        },
+        }
         name if name == BIT_STRING => quote!(BitString),
         name if name == OCTET_STRING => quote!(OctetString),
         name if name == GENERALIZED_TIME => quote!(GeneralizedTime),
@@ -820,20 +825,22 @@ impl ASN1Value {
 impl ASN1Type {
     pub fn is_const_type(&self) -> bool {
         match self {
-            ASN1Type::Null |
-            ASN1Type::Enumerated(_) |
-            ASN1Type::Boolean(_) => true,
+            ASN1Type::Null | ASN1Type::Enumerated(_) | ASN1Type::Boolean(_) => true,
             ASN1Type::Integer(i) => {
                 i.constraints.iter().fold(IntegerType::Unbounded, |acc, c| {
                     acc.max_restrictive(c.integer_constraints())
                 }) != IntegerType::Unbounded
             }
-            ASN1Type::Choice(c) => c.options.iter().fold(true, |acc, opt| opt.ty.is_const_type() && acc),
-            ASN1Type::Set(s) |
-            ASN1Type::Sequence(s) => s.members.iter().fold(true, |acc, m| m.ty.is_const_type() && acc),
-            ASN1Type::SetOf(s) |
-            ASN1Type::SequenceOf(s) => s.element_type.is_const_type(),
-            _ => false
+            ASN1Type::Choice(c) => c
+                .options
+                .iter()
+                .fold(true, |acc, opt| opt.ty.is_const_type() && acc),
+            ASN1Type::Set(s) | ASN1Type::Sequence(s) => s
+                .members
+                .iter()
+                .fold(true, |acc, m| m.ty.is_const_type() && acc),
+            ASN1Type::SetOf(s) | ASN1Type::SequenceOf(s) => s.element_type.is_const_type(),
+            _ => false,
         }
     }
 }

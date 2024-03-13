@@ -12,7 +12,7 @@
 
 XSD {joint-iso-itu-t asn1(1) specification(0) modules(0)
 xsd-module(2) version1(1)}
-DEFINITIONS AUTOMATIC TAGS 
+DEFINITIONS AUTOMATIC TAGS
 ::=
 BEGIN
 
@@ -30,13 +30,13 @@ AnyType ::= SEQUENCE  {
  embed-values  SEQUENCE OF String,
  attr
 
-    SEQUENCE  
-      
-      
+    SEQUENCE
+
+
       (CONSTRAINED BY  {
-      
-      
-         
+
+
+
          /* Each item shall conform to the
          "AnyAttributeFormat" specified
          in ITU-T Rec. X.693 | ISO/IEC 8825-4, clause 18 */ })
@@ -45,16 +45,16 @@ AnyType ::= SEQUENCE  {
       OF String,
  elem-list
 
-    SEQUENCE OF 
+    SEQUENCE OF
 elem
 
       String
 
 
         (CONSTRAINED BY  {
-        
-        
-           
+
+
+
            /* Shall conform to the
            "AnyElementFormat" specified
             in ITU-T Rec. X.693 |
@@ -64,7 +64,7 @@ elem
 (CONSTRAINED BY  {
 
 
-   
+
    /* Shall conform to ITU-T Rec. X.693 | ISO/IEC 8825-4, clause 25 */})
 
 
@@ -77,9 +77,9 @@ AnyURI ::=
 
 
     (CONSTRAINED BY  {
-    
-    
-       
+
+
+
        /* The XMLStringWithNoCRLFHT shall be a valid URI as defined in IETF RFC 2396 */})
 
 
@@ -118,7 +118,7 @@ DateTime ::= DateTimeType
 /* xsd:decimal */
 Decimal ::=
 
-  REAL(WITH COMPONENTS 
+  REAL(WITH COMPONENTS
 {
  ...,
  base  (10)
@@ -141,7 +141,7 @@ Double ::=
      mantissa  (-9007199254740991..9007199254740991),
      base      (2),
      exponent  (-1075..970)
-    
+
      })
 
 
@@ -175,7 +175,7 @@ Float ::=
      mantissa  (-16777215..16777215),
      base      (2),
      exponent  (-149..104)
-    
+
      })
 
 
@@ -273,9 +273,9 @@ Name ::=
 
 
     (CONSTRAINED BY  {
-    
-    
-       
+
+
+
        /* The Token shall be a Name as defined in W3C XML 1.0, 2.3 */})
 
 
@@ -288,9 +288,9 @@ NCName ::=
 
 
     (CONSTRAINED BY  {
-    
-    
-       
+
+
+
        /* The Name shall be an NCName as defined in W3C XML Namespaces, 2 */})
 
 
@@ -310,9 +310,9 @@ NMTOKEN ::=
 
 
     (CONSTRAINED BY  {
-    
-    
-       
+
+
+
        /* The Token shall be an NMTOKEN as defined in W3C XML 1.0, 2.3 */})
 
 
@@ -346,9 +346,9 @@ NormalizedString ::=
 
 
     (CONSTRAINED BY  {
-    
-    
-       
+
+
+
        /* The String shall be a normalizedString as defined in W3C XML Schema Part 2, 3.3.1 */})
 
 
@@ -368,7 +368,7 @@ PositiveInteger ::= INTEGER(1..MAX)
 
 
 /* xsd:QName */
-QName ::= SEQUENCE 
+QName ::= SEQUENCE
 {uri   AnyURI OPTIONAL,
 
 name  NCName
@@ -399,9 +399,9 @@ Token ::=
 
 
     (CONSTRAINED BY  {
-    
-    
-       
+
+
+
        /* The NormalizedString shall be a token as defined in W3C XML Schema Part 2, 3.3.2 */})
 
 
@@ -439,13 +439,13 @@ XMLCompatibleString ::=
 
 
     (FROM ({0,
-    0, 0, 9} |  {0, 0, 0, 10} | 
+    0, 0, 9} |  {0, 0, 0, 10} |
     {0, 0, 0, 13} |
-    
+
      {0, 0, 0,
     32}..{0, 0, 215, 255} |  {0, 0, 224,
     0}..{0, 0, 255, 253} |
-    
+
      {0, 1, 0,
     0}..{0, 16, 255, 253}))
 
@@ -460,7 +460,7 @@ XMLStringWithNoWhitespace ::=
     (FROM ({0,
     0, 0, 33}..{0, 0, 215, 255} |  {0, 0, 224,
     0}..{0, 0, 255, 253} |
-    
+
      {0, 1, 0,
     0}..{0, 16, 255, 253}))
 
@@ -475,7 +475,7 @@ XMLStringWithNoCRLFHT ::=
     (FROM ({0,
     0, 0, 32}..{0, 0, 215, 255} |  {0, 0, 224,
     0}..{0, 0, 255, 253} |
-    
+
      {0, 1, 0,
     0}..{0, 16, 255, 253}))
 

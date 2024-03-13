@@ -110,12 +110,13 @@ impl SyntaxApplication {
                 SyntaxApplication::LiteralOrTypeReference(DeclarationElsewhere {
                     identifier, ..
                 }),
-            ) => {
-                syntax.iter().find(|(_, t)| match t {
+            ) => syntax
+                .iter()
+                .find(|(_, t)| match t {
                     SyntaxToken::Literal(lit) => lit == identifier,
                     _ => false,
-                }).is_none()
-            }
+                })
+                .is_none(),
             (
                 SyntaxToken::Field(ObjectFieldIdentifier::SingleValue(_)),
                 SyntaxApplication::ValueReference(_),

@@ -9,13 +9,13 @@
 -- See also ITU-T Q.754 (06/1997)
 -- See also the index of all ASN.1 assignments needed in this document
 
--- OMASE  protocol 
+-- OMASE  protocol
 OMASE {itu-t(0) recommendation q 754 omase(0) version2(2)} DEFINITIONS EXPLICIT
 TAGS ::=
 BEGIN
 
 -- the OPERATION and ERROR information objects defined here are equivalent to the respective MACROs in
--- TCAPMessages {ccitt recommendation q 773 modules(2) messages(1) version2(2) } of Rec. Q.773 (1993) 
+-- TCAPMessages {ccitt recommendation q 773 modules(2) messages(1) version2(2) } of Rec. Q.773 (1993)
 OPERATION ::= CLASS {
   &ArgumentType   OPTIONAL,
   &ResultType     OPTIONAL,
@@ -42,7 +42,7 @@ Code ::= CHOICE {localValue   INTEGER,
                  globalValue  OBJECT IDENTIFIER
 }
 
--- OMASE operators 
+-- OMASE operators
 eventReport OPERATION ::= {
   PARAMETER  EventReportArgument
   CODE       localValue:0
@@ -75,7 +75,7 @@ noSuchAction ERROR ::= {PARAMETER  NoSuchAction
 }
 
 processingFailure ERROR ::= {
-  PARAMETER  ProcessingFailure -- optional 
+  PARAMETER  ProcessingFailure -- optional
   CODE       localValue:10
 }
 
@@ -88,7 +88,7 @@ invalidArgumentValue ERROR ::= {
   CODE       localValue:15
 }
 
--- The following gives the supporting type definitions: 
+-- The following gives the supporting type definitions:
 ActionArgument ::= SEQUENCE {
   COMPONENTS OF BaseManagedObjectId,
   accessControl  [5]  AccessControl OPTIONAL,
@@ -102,7 +102,7 @@ ActionInfo ::= SEQUENCE {
 }
 
 ActionSet CNF-ACTION ::=
-  {...} -- dynamically extensible 
+  {...} -- dynamically extensible
 
 ActionResult ::= SEQUENCE {
   managedObjectClass     ObjectClass OPTIONAL,
@@ -145,7 +145,7 @@ ActionReply ::= SEQUENCE {
 
 AccessControl ::= EXTERNAL
 
--- AccessControl syntax is to be compatible with that defined in CMIP coded X.209 
+-- AccessControl syntax is to be compatible with that defined in CMIP coded X.209
 InvalidArgumentValue ::= CHOICE {
   actionValue  [0] IMPLICIT ActionInfo,
   eventValue
@@ -176,7 +176,7 @@ ObjectClass ::= CHOICE {globalForm  [0] IMPLICIT OBJECT IDENTIFIER,
 }
 
 ObjectInstance ::= CHOICE {
-  -- ... 
+  -- ...
   nonSpecificForm  [3] IMPLICIT OCTET STRING,
   ...
 }
@@ -187,7 +187,7 @@ ProcessingFailure ::= SEQUENCE {
   specificErrorInfo      [5] IMPLICIT SpecificErrorInfo
 }
 
-SpecificError ::= INTEGER -- defined by object class 
+SpecificError ::= INTEGER -- defined by object class
 
 SpecificErrorInfo ::= SEQUENCE {
   errorType  [0] IMPLICIT SPECIFIC-ERROR.&errorCode({ErrorSet}),
@@ -202,7 +202,7 @@ ErrorSet SPECIFIC-ERROR ::=
 Timer ::= INTEGER -- seconds -
 
 -- Specific event reports are categorized by object class. The protocol uses may be described
--- by the EVENT MACRO below. 
+-- by the EVENT MACRO below.
 EVENT ::= CLASS {
   &EventInfoType  OPTIONAL,
   &operationCode  INTEGER UNIQUE OPTIONAL
@@ -211,7 +211,7 @@ EVENT ::= CLASS {
 }
 
 -- Specific Actions are categorized by object class. The protocol uses may be described
--- by the CNF-ACTION INFORMATION OBJECT below. 
+-- by the CNF-ACTION INFORMATION OBJECT below.
 CNF-ACTION ::= CLASS {
   &ActionArgType     OPTIONAL,
   &ActionResultType  OPTIONAL,
@@ -225,7 +225,7 @@ WITH SYNTAX {
   [CODE &operationCode]
 }
 
--- Errors that are action or event specific are defined using the SPECIFIC-ERROR macro below. 
+-- Errors that are action or event specific are defined using the SPECIFIC-ERROR macro below.
 SPECIFIC-ERROR ::= CLASS {
   &ProcessingErrorParmType  OPTIONAL,
   &errorCode                INTEGER UNIQUE OPTIONAL
@@ -233,7 +233,7 @@ SPECIFIC-ERROR ::= CLASS {
               [CODE &errorCode]
 }
 
--- specific OMASE constructs follow 
+-- specific OMASE constructs follow
 testRoute CNF-ACTION ::= {
   ACTIONARG
     SEQUENCE {initiatingSP                 [0] IMPLICIT PointCode,
@@ -257,7 +257,7 @@ testRoute CNF-ACTION ::= {
               routePriorityList
                 [12] IMPLICIT RoutePriorityList OPTIONAL,
               -- routePriorityList can only be used in MRVT
-              -- and only if the infoRequest parameter is present. 
+              -- and only if the infoRequest parameter is present.
               infoRequest
                 [13] IMPLICIT BIT STRING {pointCode(0), pointCodeList(1),
                                           routePriorityList(2),
@@ -276,7 +276,7 @@ testRoute CNF-ACTION ::= {
               -- if the test initiator is unknown). Bit 0 represents an RVT parameter with tag value 15, bit 1
               -- an RVT parameter with tag value 16, etc. To avoid confusion in the copyData field, when
               -- defining a new parameter in the RVR message, the tag should have the same value as it has
-              -- in the RVT message. This parameter can only be present if infoRequest is present. - 
+              -- in the RVT message. This parameter can only be present if infoRequest is present. -
               directRouteCheck             [15] IMPLICIT BOOLEAN OPTIONAL,
               -- directRouteCheck can only be used in MRVT.
               currentRouteIndicatorList    [17] IMPLICIT BOOLEAN OPTIONAL,
@@ -309,7 +309,7 @@ FormIndicator ::= INTEGER {compare(0), noCompare(1)}(0..1)
 GlobalTitle ::= OCTET STRING
 
 -- the GlobalTitle here consists of the SCCP GTI + GT, the GTI should be encoded exactly as in
--- 3.4.1/Q.713, and the GT as in 3.4.2.1 to 3.4.2.4/Q.713 as appropriate. 
+-- 3.4.1/Q.713, and the GT as in 3.4.2.1 to 3.4.2.4/Q.713 as appropriate.
 SubsystemNumber ::= OCTET STRING
 
 failure SPECIFIC-ERROR ::= {
@@ -319,7 +319,7 @@ failure SPECIFIC-ERROR ::= {
               copyData     [2] IMPLICIT CopyData OPTIONAL,
               -- copyData might be present if failureType is unknownInitiatingSp, traceSent is FALSE,
               -- and the prompting RVT message contained a requestInfo parameter, or returnUnknownParams
-              -- was in the RVT message. 
+              -- was in the RVT message.
               ...}
   CODE       1
 }
@@ -329,17 +329,17 @@ FailureString ::= BIT STRING {
   routeInaccessible(3), processingFailure(4), unknownInitiatingSP(5),
   timerExpired(6),
   sPNotAnSTP(7),
-  -- wrongSp is a synonym, used in SRVT, of sPNotAnSTP. 
+  -- wrongSp is a synonym, used in SRVT, of sPNotAnSTP.
   incorrectTranslation-Primary(8), incorrectTranslation-Secondary(9),
   incorrectTranslation-Intermediate(10), notPrimaryDestination(11),
   notSecondaryDestination(12), notRecognizedPrimary(13),
   notRecognizedSecondary(14),
   routingProblem(15),
-  -- bits 8 through 15 might only be set in SRVT, not MRVT. 
+  -- bits 8 through 15 might only be set in SRVT, not MRVT.
   maxNrMRVTestsAlready(16),
-  -- maxNrSRVTestsAlready is a synonym, used in SRVT, of maxNrMRVTestsAlready. 
+  -- maxNrSRVTestsAlready is a synonym, used in SRVT, of maxNrMRVTestsAlready.
   indirectRoute(17),
-  -- indirectRoute might only be set in MRVT, not SRVT. 
+  -- indirectRoute might only be set in MRVT, not SRVT.
   unknownParameter(18)}(SIZE (32))
 
 CopyData ::= OCTET STRING
@@ -351,7 +351,7 @@ partialSuccess SPECIFIC-ERROR ::= {
               copyData     [4] IMPLICIT CopyData OPTIONAL,
               -- copyData might be present if failureType is unknownInitiatingSP, traceSent is FALSE,
               -- and the prompting RVT message contained a requestInfo parameter,
-              -- or returnUnknownParams was in the RVT message. 
+              -- or returnUnknownParams was in the RVT message.
               ...}
   CODE       2
 }
@@ -367,7 +367,7 @@ routeTrace EVENT ::= {
             unknownInitiatingSP                [6] IMPLICIT PointCode,
             timerExpired                       [7] IMPLICIT PointCodeList,
             sPNotAnSTP                         [8] IMPLICIT PointCodeList,
-            -- wrongSP is a synonym, used in SRVT, for sPNotAnSTP. 
+            -- wrongSP is a synonym, used in SRVT, for sPNotAnSTP.
             incorrectTranslation-Primary       [9] IMPLICIT PointCodeList,
             incorrectTranslation-Secondary     [10] IMPLICIT PointCodeList,
             incorrectTranslation-Intermediate  [11] IMPLICIT PointCodeList,
@@ -376,7 +376,7 @@ routeTrace EVENT ::= {
             notRecognizedPrimary               [14] IMPLICIT PointCodeList,
             notRecognizedSecondary             [15] IMPLICIT PointCodeList,
             routingProblem                     [16] IMPLICIT PointCodeList
-            -- the choices with tags 9 through 16 can only be used in SRVT. 
+            -- the choices with tags 9 through 16 can only be used in SRVT.
   }
   CODE       2
 }
@@ -409,20 +409,20 @@ ErrorTag ::= INTEGER {
   success(0), detectedLoop(1), excessiveLengthRoute(2), unknownDestination(3),
   routeInaccessible(4), processingFailure(5), unknownInitiatingS(6),
   timerExpired(7),
-  -- wrongSP is a synonym, used in SRVT, of sPNotAnSTP. 
+  -- wrongSP is a synonym, used in SRVT, of sPNotAnSTP.
   incorrectTranslation-Primary(9), incorrectTranslation-Secondary(10),
   incorrectTranslation-Intermediate(11), notPrimaryDestination(12),
   notSecondaryDestination(13), notRecognizedPrimary(14),
   notRecognizedSecondary(15),
   routingProblem(16),
-  -- values 9 through 16 are applicable only in SRVT, not in MRVT. 
+  -- values 9 through 16 are applicable only in SRVT, not in MRVT.
   maxNrMRVTestsAlready(17),
-  -- maxNrSRVTestsAlready is a synonym, used in SRVT, of maxNrMRVTestsAlready. 
+  -- maxNrSRVTestsAlready is a synonym, used in SRVT, of maxNrMRVTestsAlready.
   indirectRoute(18),
-  -- value 18 is applicable only in MRVT, not SRVT. 
+  -- value 18 is applicable only in MRVT, not SRVT.
   unknownParameter(19)}(0..255)
 
-END -- OMASE protocol 
+END -- OMASE protocol
 
 -- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
 

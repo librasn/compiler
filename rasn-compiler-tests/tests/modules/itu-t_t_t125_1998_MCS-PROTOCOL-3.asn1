@@ -15,7 +15,7 @@ BEGIN
 -- Part 1:  Fundamental MCS types
 H221NonStandardIdentifier ::= OCTET STRING(SIZE (4..255))
 
--- First four octets shall be country 
+-- First four octets shall be country
 -- code and Manufacturer code, assigned
 -- as specified in Annex A/H.221 for
 -- NS-cap and NS-comm
@@ -30,13 +30,13 @@ NonStandardParameter ::= SEQUENCE {key   Key,
 }
 
 ChannelId ::= INTEGER(0..65535) -- range is 16 bits
-                     
+
 
 StaticChannelId ::= ChannelId(1..1000) -- those known permanently
-                             
+
 
 DynamicChannelId ::= ChannelId(1001..65535) -- those created and deleted
-                              
+
 
 UserId ::= DynamicChannelId -- created by Attach-User
 
@@ -50,7 +50,7 @@ AssignedChannelId ::=
 
 -- deleted by last Channel-Leave
 TokenId ::= INTEGER(1..65535) -- all are known permanently
-                   
+
 
 TokenStatus ::= CHOICE {
   notInUse        NULL,

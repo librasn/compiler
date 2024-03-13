@@ -14,9 +14,9 @@ SelectedObjectClasses {joint-iso-itu-t ds(5) module(1) selectedObjectClasses(6)
   4} DEFINITIONS ::=
 BEGIN
 
---  EXPORTS All 
---  The types and values defined in this module are exported for use in the other ASN.1 modules contained 
---  within the Directory Specifications, and for the use of other applications which will use them to access 
+--  EXPORTS All
+--  The types and values defined in this module are exported for use in the other ASN.1 modules contained
+--  within the Directory Specifications, and for the use of other applications which will use them to access
 --  Directory services. Other applications may use them for their own purposes, but this will not constrain
 --  extensions and modifications needed to maintain or improve the Directory service.
 IMPORTS
@@ -33,7 +33,7 @@ IMPORTS
     organizationName, owner, physicalDeliveryOfficeName, postalAddress,
     postalCode, postOfficeBox, preferredDeliveryMethod, presentationAddress,
     registeredAddress, roleOccupant, searchGuide, seeAlso, serialNumber,
-    stateOrProvinceName, streetAddress, supportedApplicationContext, 
+    stateOrProvinceName, streetAddress, supportedApplicationContext,
     surname, telephoneNumber, telexNumber, title, uniqueMember, x121Address
     FROM SelectedAttributeTypes {joint-iso-itu-t ds(5) module(1)
       selectedAttributeTypes(5) 4}
@@ -43,7 +43,7 @@ IMPORTS
     FROM AuthenticationFramework {joint-iso-itu-t ds(5) module(1)
       authenticationFramework(7) 4};
 
---  Attribute sets 
+--  Attribute sets
 TelecommunicationAttributeSet ATTRIBUTE ::=
   {facsimileTelephoneNumber | internationalISDNNumber | telephoneNumber |
     --	teletexTerminalIdentifier | 	Attribute type has been deleted
@@ -62,7 +62,7 @@ OrganizationalAttributeSet ATTRIBUTE ::=
    TelecommunicationAttributeSet | businessCategory | seeAlso | searchGuide |
    userPassword}
 
---  Object classes 
+--  Object classes
 country OBJECT-CLASS ::= {
   SUBCLASS OF   {top}
   MUST CONTAIN  {countryName}
@@ -210,7 +210,7 @@ dMD OBJECT-CLASS ::= {
   ID            id-oc-dmd
 }
 
---  Name forms 
+--  Name forms
 countryNameForm NAME-FORM ::= {
   NAMES            country
   WITH ATTRIBUTES  {countryName}
@@ -303,9 +303,9 @@ dMDNameForm NAME-FORM ::= {
   ID               id-nf-dMDNameForm
 }
 
---  Object identifier assignments 
+--  Object identifier assignments
 --  object identifiers assigned in other modules are shown in comments
---  Object classes 
+--  Object classes
 --  id-oc-top   				OBJECT IDENTIFIER	::=	{id-oc 0}	Defined in X.501 | 9594-2
 --  id-oc-alias				OBJECT IDENTIFIER	::=	{id-oc 1}	Defined in X.501 | 9594-2
 id-oc-country OBJECT IDENTIFIER ::=
@@ -365,7 +365,7 @@ id-oc-dmd OBJECT IDENTIFIER ::=
 -- id-oc-pkiCertPath			OBJECT IDENTIFIER	::=	{id-oc 31}	Defined in X.509 | 9594-8
 -- id-oc-privilegePolicy			OBJECT IDENTIFIER	::=	{id-oc 32}	Defined in X.509 | 9594-8
 -- id-oc-pmiDelegationPath		OBJECT IDENTIFIER	::=	{id-oc 33}	Defined in X.509 | 9594-8
---  Name forms 
+--  Name forms
 id-nf-countryNameForm OBJECT IDENTIFIER ::=
   {id-nf 0}
 

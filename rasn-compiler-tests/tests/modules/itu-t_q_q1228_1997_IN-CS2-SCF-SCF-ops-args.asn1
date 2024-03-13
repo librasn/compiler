@@ -11,8 +11,8 @@
 
 IN-CS2-SCF-SCF-ops-args {itu-t recommendation q 1228 modules(0)
   in-cs2-scf-scf-ops-args(13) version1(0)}
--- The profiling of Directory Operations Parameters for the SCF-SCF relationship is outside the scope of 
--- IN CS-2. Optional parameters received but not used in the SCF-SCF case are ignored. 
+-- The profiling of Directory Operations Parameters for the SCF-SCF relationship is outside the scope of
+-- IN CS-2. Optional parameters received but not used in the SCF-SCF case are ignored.
 -- Appropriate parameters to be used should be established via agreement ahead of time.
 DEFINITIONS IMPLICIT TAGS ::=
 BEGIN
@@ -95,7 +95,7 @@ establishChargingRecord{PARAMETERS-BOUND:bound} OPERATION ::= {
 }
 
 -- Direction: supporting SCF ® controlling SCF, Timer: Tecr
--- This operation is used by the supporting SCF to give charging information to the controlling 
+-- This operation is used by the supporting SCF to give charging information to the controlling
 -- SCF so that it can charge the user (on-line charging included).
 EstablishChargingRecordArg{PARAMETERS-BOUND:bound} ::=
   OPTIONALLY-PROTECTED
@@ -121,7 +121,7 @@ handlingInformationRequest{PARAMETERS-BOUND:bound} OPERATION ::= {
 }
 
 -- Direction: controlling SCF ® supporting SCF (or IAF), Timer: Thi
--- This operation  may be used to  request the  execution of an SLP 
+-- This operation  may be used to  request the  execution of an SLP
 -- in the assisting SCF and to provide to the  assisting
 -- SCF the context of the call so that it can help the  controlling SCF in the processing of the call.
 HandlingInformationRequestArg{PARAMETERS-BOUND:bound} ::=
@@ -170,8 +170,8 @@ handlingInformationResult{PARAMETERS-BOUND:bound} OPERATION ::= {
 }
 
 -- Direction: supporting SCF(or IAF) ® controlling SCF, Timer: Thir
--- This operation is used by the assisting SCF to send information to the  controlling SCF on how 
--- to process the call and to give conditions under which it should be involved in the call 
+-- This operation is used by the assisting SCF to send information to the  controlling SCF on how
+-- to process the call and to give conditions under which it should be involved in the call
 -- processing.
 HandlingInformationResultArg{PARAMETERS-BOUND:bound} ::=
   OPTIONALLY-PROTECTED
@@ -204,7 +204,7 @@ networkCapability{PARAMETERS-BOUND:bound} OPERATION ::= {
 }
 
 -- Direction: supporting SCF ® controlling  SCF, Timer: Tnc
--- This operation is used by the supporting SCF to request from the controlling SCF which type of 
+-- This operation is used by the supporting SCF to request from the controlling SCF which type of
 -- service it supports.
 NetworkCapabilityArg{PARAMETERS-BOUND:bound} ::=
   OPTIONALLY-PROTECTED
@@ -241,8 +241,8 @@ notificationProvided{PARAMETERS-BOUND:bound} OPERATION ::= {
 }
 
 -- Direction: controlling SCF ® supporting SCF(or IAF), Timer: Tnp
--- This operation is used by the controlling SCF to request assistance from the assisting SCF 
--- under specific call conditions specified prior to the sending of the operation or to notify the 
+-- This operation is used by the controlling SCF to request assistance from the assisting SCF
+-- under specific call conditions specified prior to the sending of the operation or to notify the
 -- outcome of a previous intervention of the assisting SCF.
 NotificationProvidedArg{PARAMETERS-BOUND:bound} ::=
   OPTIONALLY-PROTECTED
@@ -272,13 +272,13 @@ provideUserInformation{PARAMETERS-BOUND:bound} OPERATION ::= {
 }
 
 -- Direction: supporting SCF ® controlling SCF, Timer: Tpui
--- This operation is used by the supporting SCF to request information from the user that can be 
+-- This operation is used by the supporting SCF to request information from the user that can be
 -- interrogated by the controlling SCF.
 ProvideUserInformationArg{PARAMETERS-BOUND:bound} ::=
   OPTIONALLY-PROTECTED
     {SEQUENCE {constraints             [0]  CollectedInfo,
-               --	infoToSend			[1] InformationToSend {bound}, 
-               --	errorInfo			[2] InformationToSend {bound}	OPTIONAL, 
+               --	infoToSend			[1] InformationToSend {bound},
+               --	errorInfo			[2] InformationToSend {bound}	OPTIONAL,
                typeOfRequestedInfo     [3]  InfoType DEFAULT numericString,
                numberOfAllowedRetries  [4]  INTEGER(0..127) DEFAULT 0,
                actions                 [5]  Actions OPTIONAL,
@@ -350,7 +350,7 @@ reportChargingInformation{PARAMETERS-BOUND:bound} OPERATION ::= {
 }
 
 -- Direction: controlling SCF ® supporting SCF, Timer: Trci
--- This operation is used to give to the assisting network charging information collected by the 
+-- This operation is used to give to the assisting network charging information collected by the
 -- controlling network.
 ReportChargingInformationArg{PARAMETERS-BOUND:bound} ::=
   OPTIONALLY-PROTECTED
@@ -379,7 +379,7 @@ requestNotification{PARAMETERS-BOUND:bound} OPERATION ::= {
 }
 
 -- Direction: supporting SCF  (or IAF) ® controlling SCF, Timer: Trn
--- This operation is used by the assisting SCF to request notification from the controlling SCF 
+-- This operation is used by the assisting SCF to request notification from the controlling SCF
 -- under specific call conditions specified by this operation.
 RequestNotificationArg{PARAMETERS-BOUND:bound} ::=
   OPTIONALLY-PROTECTED
@@ -394,8 +394,8 @@ scfBind{PARAMETERS-BOUND:bound} OPERATION ::= {
 }
 
 -- Direction: controlling SCF ® assisting SCF (or IAF), Timer: Tbi
--- This operation is used to establish a relationship between two SCFs. It is sent by the controlling SCF each time it 
--- needs to initiate communications with another (supporting) SCF. 
+-- This operation is used to establish a relationship between two SCFs. It is sent by the controlling SCF each time it
+-- needs to initiate communications with another (supporting) SCF.
 SCFBindArgument{PARAMETERS-BOUND:bound} ::= SEQUENCE {
   agreementID            [0]  AgreementID,
   originatingScfAddress  [1]  ScfAddress{bound} OPTIONAL,
@@ -415,9 +415,9 @@ scfUnbind OPERATION ::= {RETURN RESULT    FALSE
                          ALWAYS RESPONDS  FALSE
 }
 
--- Direction: controlling SCF ® assisting SCF (or IAF) 
--- The SCF Unbind operation is used by the controlling SCF to close the relationship with the supporting SCF. 
-scfChained{OPERATION:operation, PARAMETERS-BOUND:bound} OPERATION ::= 
+-- Direction: controlling SCF ® assisting SCF (or IAF)
+-- The SCF Unbind operation is used by the controlling SCF to close the relationship with the supporting SCF.
+scfChained{OPERATION:operation, PARAMETERS-BOUND:bound} OPERATION ::=
 {
   ARGUMENT OPTIONALLY-PROTECTED
     {SEQUENCE {chainedArgument  ChainingArgument{bound},

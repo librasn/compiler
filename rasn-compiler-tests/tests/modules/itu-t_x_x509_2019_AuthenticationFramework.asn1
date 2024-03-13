@@ -25,12 +25,12 @@ IMPORTS
   directoryString, generalizedTime,
   generalizedTimeMatch, generalizedTimeOrderingMatch, integer, integerMatch,
   integerOrderingMatch, octetString, octetStringMatch,
-  UnboundedDirectoryString, UniqueIdentifier, uri 
+  UnboundedDirectoryString, UniqueIdentifier, uri
     FROM SelectedAttributeTypes
       {joint-iso-itu-t ds(5) module(1) selectedAttributeTypes(5) 9} WITH SUCCESSORS
 
   algorithmIdentifierMatch, certificateExactMatch, certificateListExactMatch,
-  certificatePairExactMatch, CertificatePoliciesSyntax, CertPolicyId, GeneralNames, 
+  certificatePairExactMatch, CertificatePoliciesSyntax, CertPolicyId, GeneralNames,
   KeyUsage, pkiPathMatch, policyMatch,
   CertificateAssertion, CertificateExactAssertion, CertificateListAssertion,
   CertificateListExactAssertion, CertificatePairAssertion,
@@ -38,13 +38,13 @@ IMPORTS
       FROM CertificateExtensions
         {joint-iso-itu-t ds(5) module(1) certificateExtensions(26) 9} WITH SUCCESSORS ;
 
--- parameterized types 
+-- parameterized types
 
 SIGNATURE ::= SEQUENCE {
   agorithmIdentifier  AlgorithmIdentifier{{SupportedAlgorithms}},
   signature            BIT STRING,
   ... }
- 
+
 SIGNED{ToBeSigned} ::= SEQUENCE {
   toBeSigned              ToBeSigned,
   algorithmIdentifier     AlgorithmIdentifier{{SupportedAlgorithms}},
@@ -52,7 +52,7 @@ SIGNED{ToBeSigned} ::= SEQUENCE {
   ...,
 [[4:
   altAlgorithmIdentifier  AlgorithmIdentifier{{SupportedAltAlgorithms}} OPTIONAL,
-  altSignature            BIT STRING OPTIONAL]] 
+  altSignature            BIT STRING OPTIONAL]]
   } (WITH COMPONENTS {..., altAlgorithmIdentifier PRESENT, altSignature PRESENT } |
      WITH COMPONENTS {..., altAlgorithmIdentifier ABSENT,  altSignature ABSENT } )
 
@@ -64,7 +64,7 @@ HASH{ToBeHashed} ::= SEQUENCE {
   ... }
 
 ENCRYPTED{ToBeEnciphered} ::= BIT STRING (CONSTRAINED BY {
-   -- shall be the result of applying an encipherment procedure 
+   -- shall be the result of applying an encipherment procedure
    -- to the BER-encoded octets of a value of -- ToBeEnciphered } )
 
 ENCRYPTED-HASH{ToBeSigned} ::= BIT STRING (CONSTRAINED BY {
@@ -101,7 +101,7 @@ ecPublicKey ALGORITHM ::= {  -- copied IETF RFC 5480
   IDENTIFIED  BY id-ecPublicKey }
 
 id-ecPublicKey OBJECT IDENTIFIER ::= {iso(1) member-body(2) us(840) ansi-X9-62(10045)
-                                      keyType(2) 1 } 
+                                      keyType(2) 1 }
 
 /* The definitions of the following information value set is deferred to referencing
 specifications having a requirement for specific value sets.*/
@@ -110,7 +110,7 @@ SupportedCurves OBJECT IDENTIFIER ::= {dummyCurv, ...}
 
 dummyCurv OBJECT IDENTIFIER ::= {2 5 5}
 
--- public-key certificate definition 
+-- public-key certificate definition
 
 Certificate ::= SIGNED{TBSCertificate}
 
@@ -311,7 +311,7 @@ pkiCertPath OBJECT-CLASS ::= {
   LDAP-DESC           "PKI Certification Path"
   ID                  id-oc-pkiCertPath }
 
--- PKI directory attributes 
+-- PKI directory attributes
 
 userCertificate ATTRIBUTE ::= {
   WITH SYNTAX              Certificate
@@ -406,7 +406,7 @@ POLICY ::= TYPE-IDENTIFIER
 
 HashedPolicyInfo ::= POLICY.&Type({Policies})
 
-Policies POLICY ::= {...} -- Defined by implementors 
+Policies POLICY ::= {...} -- Defined by implementors
 
 certificatePolicy ATTRIBUTE ::= {
   WITH SYNTAX             PolicySyntax
@@ -483,9 +483,9 @@ x509SupportedAlgorithm SYNTAX-NAME ::= {
   DIRECTORY SYNTAX  SupportedAlgorithm
   ID                id-lsx-x509SupportedAlgorithm }
 
--- object identifier assignments 
+-- object identifier assignments
 
--- object classes 
+-- object classes
 
 id-oc-cRLDistributionPoint          OBJECT IDENTIFIER ::= {id-oc 19}
 id-oc-pkiUser                       OBJECT IDENTIFIER ::= {id-oc 21}

@@ -14,9 +14,9 @@ DirectorySystemProtocol {joint-iso-itu-t ds(5) module(1) dsp(12) 4} DEFINITIONS
 ::=
 BEGIN
 
--- EXPORTS All 
--- The types and values defined in this module are exported for use in the other ASN.1 modules contained 
--- within the Directory Specifications, and for the use of other applications which will use them to access 
+-- EXPORTS All
+-- The types and values defined in this module are exported for use in the other ASN.1 modules contained
+-- within the Directory Specifications, and for the use of other applications which will use them to access
 -- Directory services. Other applications may use them for their own purposes, but this will not constrain
 -- extensions and modifications needed to maintain or improve the Directory service.
 IMPORTS
@@ -56,7 +56,7 @@ IMPORTS
     FROM Remote-Operations-Abstract-Syntaxes {joint-iso-itu-t
       remote-operations(4) remote-operations-abstract-syntaxes(12) version1(0)};
 
--- application contexts 
+-- application contexts
 directorySystemAC APPLICATION-CONTEXT ::= {
   CONTRACT                  dspContract
   ESTABLISHED BY            acse
@@ -66,12 +66,12 @@ directorySystemAC APPLICATION-CONTEXT ::= {
   APPLICATION CONTEXT NAME  id-ac-directorySystemAC
 }
 
--- ROS objects 
+-- ROS objects
 dsp-dsa ROS-OBJECT-CLASS ::= {BOTH  {dspContract}
                               ID    id-rosObject-dspDSA
 }
 
--- contracts 
+-- contracts
 dspContract CONTRACT ::= {
   CONNECTION     dspConnectionPackage
   OPERATIONS OF
@@ -79,26 +79,26 @@ dspContract CONTRACT ::= {
   ID             id-contract-dsp
 }
 
--- connection package 
+-- connection package
 dspConnectionPackage CONNECTION-PACKAGE ::= {
   BIND    dSABind
   UNBIND  dSAUnbind
   ID      id-package-dspConnection
 }
 
---  chained read package 
+--  chained read package
 chainedReadPackage OPERATION-PACKAGE ::= {
   OPERATIONS  {chainedRead | chainedCompare | chainedAbandon}
   ID          id-package-chainedRead
 }
 
---  chained search package 
+--  chained search package
 chainedSearchPackage OPERATION-PACKAGE ::= {
   OPERATIONS  {chainedList | chainedSearch}
   ID          id-package-chainedSearch
 }
 
---  chained modify package 
+--  chained modify package
 chainedModifyPackage OPERATION-PACKAGE ::= {
   OPERATIONS
     {chainedAddEntry | chainedRemoveEntry | chainedModifyEntry |
@@ -106,7 +106,7 @@ chainedModifyPackage OPERATION-PACKAGE ::= {
   ID          id-package-chainedModify
 }
 
--- abstract syntaxes 
+-- abstract syntaxes
 directorySystemAbstractSyntax ABSTRACT-SYNTAX ::= {
   DSP-PDUs
   IDENTIFIED BY  id-as-directorySystemAS

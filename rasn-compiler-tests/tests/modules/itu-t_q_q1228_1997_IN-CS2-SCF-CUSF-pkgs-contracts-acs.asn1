@@ -47,7 +47,7 @@ IMPORTS
     FROM IN-CS2-SSF-SCF-ops-args {itu-t recommendation q 1228 modules(0)
       in-cs2-ssf-scf-ops-args(5) version1(0)};
 
--- application contexts 
+-- application contexts
 cusf-scf-ac APPLICATION-CONTEXT ::= {
   CONTRACT                  cusf-scf-contract
   DIALOGUE MODE             structured
@@ -66,7 +66,7 @@ scf-cusf-ac APPLICATION-CONTEXT ::= {
   APPLICATION CONTEXT NAME  id-ac-scf-cusf
 }
 
--- contracts 
+-- contracts
 cusf-scf-contract CONTRACT ::= {
   CONNECTION             emptyConnectionPackage
   INITIATOR CONSUMER OF  {basic-cusf-scf-package{networkSpecificBoundSet}}
@@ -81,8 +81,8 @@ scf-cusf-contract CONTRACT ::= {
   ID                     id-contract-cusf-scf
 }
 
--- basic cusf-scf package 
-basic-cusf-scf-package{PARAMETERS-BOUND:bound} OPERATION-PACKAGE ::= 
+-- basic cusf-scf package
+basic-cusf-scf-package{PARAMETERS-BOUND:bound} OPERATION-PACKAGE ::=
 {
   CONSUMER INVOKES
     {activationReceivedAndAuthorized{bound} | componentReceived{bound} |
@@ -93,8 +93,8 @@ basic-cusf-scf-package{PARAMETERS-BOUND:bound} OPERATION-PACKAGE ::=
   ID                id-package-basic-cusf-scf
 }
 
---  basic scf-cusf package 
-basic-scf-cusf-package{PARAMETERS-BOUND:bound} OPERATION-PACKAGE ::= 
+--  basic scf-cusf package
+basic-scf-cusf-package{PARAMETERS-BOUND:bound} OPERATION-PACKAGE ::=
 {
   CONSUMER INVOKES
     {initiateAssociation{bound} | sendComponent{bound} |
@@ -104,7 +104,7 @@ basic-scf-cusf-package{PARAMETERS-BOUND:bound} OPERATION-PACKAGE ::=
   ID                id-package-basic-scf-cusf
 }
 
--- abstract syntaxes 
+-- abstract syntaxes
 cusf-scf-abstract-syntax ABSTRACT-SYNTAX ::= {
   BASIC-CUSF-SCF-PDUs
   IDENTIFIED BY  id-as-basic-cusf-scf

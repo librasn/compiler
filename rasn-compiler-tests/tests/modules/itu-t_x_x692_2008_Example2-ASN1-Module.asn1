@@ -50,23 +50,23 @@ ConditionalPresenceOnValue ::= SEQUENCE {
   a  INTEGER(0..4),
   b  INTEGER(1..10),
   c  BOOLEAN OPTIONAL,
-  -- Condition: "c" is present  if "a" is 0, otherwise "c" is absent 
+  -- Condition: "c" is present  if "a" is 0, otherwise "c" is absent
   d  BOOLEAN OPTIONAL
-  -- Condition: "d" is absent  if "a" is 1, otherwise "d" is present 
+  -- Condition: "d" is absent  if "a" is 1, otherwise "d" is present
 }
 
 -- Note the implied presence constraints in comments.
--- Note also that the integer field "a" carries application semantics 
--- and has values other than zero and one.  If  "a" has value 0, both 
--- "c" and "d" are present.  If "a" has value 1, both "c" and "d" are missing. 
--- If "a" has values 3 or 4, "c" is absent and "d" is present. 
+-- Note also that the integer field "a" carries application semantics
+-- and has values other than zero and one.  If  "a" has value 0, both
+-- "c" and "d" are present.  If "a" has value 1, both "c" and "d" are missing.
+-- If "a" has values 3 or 4, "c" is absent and "d" is present.
 -- These conditions are very hard to express formally using ASN.1 alone.
 conditionalPresenceOnValue ExampleMessages ::=
   conditionalPresenceOnValue:{a 2, b 5, d TRUE}
 
 ConditionalPresenceOnExternalCondition ::= SEQUENCE {
   a  BOOLEAN OPTIONAL-- Condition: "a" is present  if the external  condition "C" holds,
--- otherwise "a" absent 
+-- otherwise "a" absent
 }
 
 -- Note that the presence constraint can only be supplied in comment.
@@ -78,7 +78,7 @@ EnclosingStructureForList ::= SEQUENCE {list  VariableLengthList
 
 VariableLengthList ::= SEQUENCE (SIZE (0..1023)) OF INTEGER(1..2)
 
--- Normally the list contains only a few elements (0..31), 
+-- Normally the list contains only a few elements (0..31),
 -- but it might contain many.
 enclosingStructureForList ExampleMessages ::=
   enclosingStructureForList:{list {1, 2, 1}}
@@ -87,8 +87,8 @@ EqualLengthLists ::= SEQUENCE {list1  List1,
                                list2  List2
 }
 (CONSTRAINED BY {
-   
-   -- "list1" and "list2" always have the same number of elements. 
+
+   -- "list1" and "list2" always have the same number of elements.
    })
 
 List1 ::= SEQUENCE (SIZE (0..1023)) OF BOOLEAN

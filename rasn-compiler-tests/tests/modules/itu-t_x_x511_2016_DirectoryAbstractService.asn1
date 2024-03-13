@@ -2,7 +2,7 @@ DirectoryAbstractService {joint-iso-itu-t ds(5) module(1) directoryAbstractServi
 DEFINITIONS ::=
 BEGIN
 
--- EXPORTS All 
+-- EXPORTS All
 -- The types and values defined in this module are exported for use in the other ASN.1
 -- modules contained within these Directory Specifications, and for the use of other
 -- applications which will use them to access Directory services. Other applications may
@@ -18,24 +18,24 @@ IMPORTS
   distributedOperations, enhancedSecurity, id-at, informationFramework,
   selectedAttributeTypes, serviceAdministration, passwordPolicy
     FROM UsefulDefinitions {joint-iso-itu-t ds(5) module(1) usefulDefinitions(0) 8}
-  
+
   Attribute{}, ATTRIBUTE, AttributeType, AttributeTypeAndValue, AttributeTypeAssertion,
   AttributeValue, AttributeValueAssertion, CONTEXT, ContextAssertion,
   DistinguishedName, MATCHING-RULE, Name, OBJECT-CLASS,
   RelativeDistinguishedName, SupportedAttributes, SupportedContexts
     FROM InformationFramework informationFramework
-  
+
   RelaxationPolicy
     FROM ServiceAdministration serviceAdministration
 
   OPTIONALLY-PROTECTED{}, OPTIONALLY-PROTECTED-SEQ{}
     FROM EnhancedSecurity enhancedSecurity
- 
+
  -- from Rec. ITU-T X.518 | ISO/IEC 9594-4
 
   AccessPoint, ContinuationReference, Exclusions, OperationProgress, ReferenceType
     FROM DistributedOperations distributedOperations
-  
+
 -- from Rec. ITU-T X.519 | ISO/IEC 9594-5
 
   Code, ERROR, id-errcode-abandoned, id-errcode-abandonFailed,
@@ -47,7 +47,7 @@ IMPORTS
   id-opcode-modifyEntry, id-opcode-read, id-opcode-removeEntry,
   id-opcode-search, InvokeId, OPERATION
     FROM CommonProtocolSpecification commonProtocolSpecification
-  
+
 -- from Rec. ITU-T X.520 | ISO/IEC 9594-6
 
   DirectoryString{}, UnboundedDirectoryString
@@ -61,12 +61,12 @@ IMPORTS
 
   UserPwd
     FROM PasswordPolicy passwordPolicy
- 
+
   AttributeCertificationPath
     FROM AttributeCertificateDefinitions attributeCertificateDefinitions
 
   -- from Rec. ITU-T X.525 | ISO/IEC 9594-9
- 
+
  AgreementID
     FROM DirectoryShadowAbstractService directoryShadowAbstractService
 
@@ -82,13 +82,13 @@ IMPORTS
     FROM Lightweight-Directory-Access-Protocol-V3 {iso(1) identified-organization(3) dod(6) internet(1)
       directory(1) ldap(18)} ;
 
--- Common data types 
+-- Common data types
 
 CommonArguments ::= SET {
   serviceControls      [30]  ServiceControls    DEFAULT {},
   securityParameters   [29]  SecurityParameters OPTIONAL,
   requestor            [28]  DistinguishedName  OPTIONAL,
-  operationProgress    [27]  OperationProgress 
+  operationProgress    [27]  OperationProgress
                              DEFAULT {nameResolutionPhase notStarted},
   aliasedRDNs          [26]  INTEGER            OPTIONAL,
   criticalExtensions   [25]  BIT STRING         OPTIONAL,
@@ -104,7 +104,7 @@ CommonArgumentsSeq ::= SEQUENCE {
   serviceControls      [30]  ServiceControls    DEFAULT {},
   securityParameters   [29]  SecurityParameters OPTIONAL,
   requestor            [28]  DistinguishedName  OPTIONAL,
-  operationProgress    [27]  OperationProgress 
+  operationProgress    [27]  OperationProgress
                              DEFAULT {nameResolutionPhase notStarted},
   aliasedRDNs          [26]  INTEGER            OPTIONAL,
   criticalExtensions   [25]  BIT STRING         OPTIONAL,
@@ -261,7 +261,7 @@ FilterItem ::= CHOICE {
       control                Attribute{{SupportedAttributes}},
                     -- Used to specify interpretation of following items
       ... },
-    ... }, 
+    ... },
   greaterOrEqual    [2]  AttributeValueAssertion,
   lessOrEqual       [3]  AttributeValueAssertion,
   present           [4]  AttributeType,
@@ -274,7 +274,7 @@ MatchingRuleAssertion ::= SEQUENCE {
   matchingRule  [1]  SET SIZE (1..MAX) OF MATCHING-RULE.&id,
   type          [2]  AttributeType OPTIONAL,
   matchValue    [3]  MATCHING-RULE.&AssertionType (CONSTRAINED BY {
-    -- matchValue shall be a value of  type specified by the &AssertionType field of 
+    -- matchValue shall be a value of  type specified by the &AssertionType field of
     -- one of the MATCHING-RULE information objects identified by matchingRule -- }),
   dnAttributes  [4]  BOOLEAN DEFAULT FALSE,
   ... }
@@ -318,7 +318,7 @@ Time ::= CHOICE {
 
 ErrorProtectionRequest ::= INTEGER {none(0), signed(1)}
 
---  Bind and unbind operations 
+--  Bind and unbind operations
 
 directoryBind OPERATION ::= {
   ARGUMENT  DirectoryBindArgument
@@ -414,7 +414,7 @@ directoryBindError ERROR ::= {
 
 BindKeyInfo ::= ENCRYPTED{BIT STRING}
 
---  Operations, arguments, and results 
+--  Operations, arguments, and results
 
 
 read OPERATION ::= {
@@ -436,7 +436,7 @@ ReadArgumentData ::= SET {
   modifyRightsRequest  [2]  BOOLEAN DEFAULT FALSE,
   ...,
   ...,
-  COMPONENTS OF             CommonArguments } 
+  COMPONENTS OF             CommonArguments }
 
 ReadResult ::= OPTIONALLY-PROTECTED { ReadResultData }
 
@@ -502,7 +502,7 @@ AbandonArgument ::=
 
 AbandonArgumentData ::= SEQUENCE {
   invokeID  [0]  InvokeId,
-  ... } 
+  ... }
 
 AbandonResult ::= CHOICE {
   null          NULL,
@@ -534,7 +534,7 @@ ListArgumentData ::= SET {
   ...,
   ...,
   COMPONENTS OF      CommonArguments
-  } 
+  }
 
 ListResult ::= OPTIONALLY-PROTECTED { ListResultData }
 
@@ -552,7 +552,7 @@ ListResultData ::= CHOICE {
     COMPONENTS OF                CommonResults
     },
   uncorrelatedListInfo    [0]  SET OF ListResult,
-  ... } 
+  ... }
 
 PartialOutcomeQualifier ::= SET {
   limitProblem                  [0]  LimitProblem OPTIONAL,
@@ -588,7 +588,7 @@ search OPERATION ::= {
 
 SearchArgument ::= OPTIONALLY-PROTECTED { SearchArgumentData }
 
-SearchArgumentData ::= SET { 
+SearchArgumentData ::= SET {
   baseObject            [0]  Name,
   subset                [1]  INTEGER {
     baseObject    (0),
@@ -627,7 +627,7 @@ HierarchySelections ::= BIT STRING {
   all                   (9) }
 
 SearchControlOptions ::= BIT STRING {
-  searchAliases         (0), 
+  searchAliases         (0),
   matchedValuesOnly     (1),
   checkOverspecified    (2),
   performExactly        (3),
@@ -812,18 +812,18 @@ ModifyDNResultData ::= SEQUENCE {
   ...,
   COMPONENTS OF CommonResultsSeq }
 
-changePassword OPERATION ::= { 
-  ARGUMENT  ChangePasswordArgument 
-  RESULT    ChangePasswordResult 
+changePassword OPERATION ::= {
+  ARGUMENT  ChangePasswordArgument
+  RESULT    ChangePasswordResult
   ERRORS    {securityError |
-             updateError } 
-  CODE      id-opcode-changePassword } 
+             updateError }
+  CODE      id-opcode-changePassword }
 
 ChangePasswordArgument ::= OPTIONALLY-PROTECTED-SEQ { ChangePasswordArgumentData }
 
 ChangePasswordArgumentData ::= SEQUENCE {
-  object   [0]  DistinguishedName, 
-  oldPwd   [1]  UserPwd, 
+  object   [0]  DistinguishedName,
+  oldPwd   [1]  UserPwd,
   newPwd   [2]  UserPwd,
   ... }
 
@@ -837,18 +837,18 @@ ChangePasswordResultData ::= SEQUENCE {
   ...,
   COMPONENTS OF CommonResultsSeq }
 
-administerPassword OPERATION ::= { 
-  ARGUMENT  AdministerPasswordArgument 
-  RESULT    AdministerPasswordResult 
+administerPassword OPERATION ::= {
+  ARGUMENT  AdministerPasswordArgument
+  RESULT    AdministerPasswordResult
   ERRORS    {securityError |
-             updateError} 
-  CODE      id-opcode-administerPassword } 
+             updateError}
+  CODE      id-opcode-administerPassword }
 
 AdministerPasswordArgument ::=
   OPTIONALLY-PROTECTED-SEQ { AdministerPasswordArgumentData }
 
 AdministerPasswordArgumentData ::= SEQUENCE {
-  object  [0]  DistinguishedName, 
+  object  [0]  DistinguishedName,
   newPwd  [1]  UserPwd,
   ... }
 
@@ -907,7 +907,7 @@ LinkedArgumentData ::= SEQUENCE {
 
 LinkedResult ::= NULL
 
--- Errors and parameters 
+-- Errors and parameters
 
 abandoned ERROR ::= {-- not literally an "error"
   PARAMETER     OPTIONALLY-PROTECTED { AbandonedData }
@@ -988,7 +988,7 @@ ReferralData ::= SET {
   candidate  [0] ContinuationReference,
   ...,
   ...,
-  COMPONENTS OF  CommonResults } 
+  COMPONENTS OF  CommonResults }
 
 securityError  ERROR  ::=  {
   PARAMETER   OPTIONALLY-PROTECTED { SecurityErrorData }
@@ -1083,7 +1083,7 @@ UpdateProblem ::= INTEGER {
   passwordInHistory                 (14),
   noPasswordSlot                    (15) }
 
--- attribute types 
+-- attribute types
 
 id-at-family-information OBJECT IDENTIFIER ::= {id-at 64}
 

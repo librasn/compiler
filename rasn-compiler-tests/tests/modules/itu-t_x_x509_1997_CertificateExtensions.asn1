@@ -13,7 +13,7 @@ CertificateExtensions {joint-iso-itu-t ds(5) module(1)
   certificateExtensions(26) 0} DEFINITIONS IMPLICIT TAGS ::=
 BEGIN
 
---  EXPORTS ALL 
+--  EXPORTS ALL
 IMPORTS
   id-at, id-ce, id-mr, informationFramework, authenticationFramework,
     selectedAttributeTypes, upperBounds
@@ -34,7 +34,7 @@ IMPORTS
 
 --  Unless explicitly noted otherwise, there is no significance to the ordering
 --  of components of a SEQUENCE OF construct in this Specification.
---  Key and policy information extensions 
+--  Key and policy information extensions
 authorityKeyIdentifier EXTENSION ::= {
   SYNTAX         AuthorityKeyIdentifier
   IDENTIFIED BY  id-ce-authorityKeyIdentifier
@@ -151,7 +151,7 @@ SupportedAlgorithm ::= SEQUENCE {
   intendedCertificatePolicies  [1]  CertificatePoliciesSyntax OPTIONAL
 }
 
---  Certificate subject and certificate issuer attributes extensions 
+--  Certificate subject and certificate issuer attributes extensions
 subjectAltName EXTENSION ::= {
   SYNTAX         GeneralNames
   IDENTIFIED BY  id-ce-subjectAltName
@@ -190,7 +190,7 @@ subjectDirectoryAttributes EXTENSION ::= {
 
 AttributesSyntax ::= SEQUENCE SIZE (1..MAX) OF Attribute
 
---  Certification path constraints extensions 
+--  Certification path constraints extensions
 basicConstraints EXTENSION ::= {
   SYNTAX         BasicConstraintsSyntax
   IDENTIFIED BY  id-ce-basicConstraints
@@ -245,7 +245,7 @@ SkipCerts ::= INTEGER(0..MAX)
 
 CertPolicySet ::= SEQUENCE SIZE (1..MAX) OF CertPolicyId
 
---  Basic CRL extensions 
+--  Basic CRL extensions
 cRLNumber EXTENSION ::= {
   SYNTAX         CRLNumber
   IDENTIFIED BY  id-ce-cRLNumber
@@ -275,7 +275,7 @@ invalidityDate EXTENSION ::= {
   IDENTIFIED BY  id-ce-invalidityDate
 }
 
---  CRL distribution points and delta-CRL extensions 
+--  CRL distribution points and delta-CRL extensions
 cRLDistributionPoints EXTENSION ::= {
   SYNTAX         CRLDistPointsSyntax
   IDENTIFIED BY  id-ce-cRLDistributionPoints
@@ -329,7 +329,7 @@ deltaRevocationList ATTRIBUTE ::= {
   ID                      id-at-deltaRevocationList
 }
 
---  Matching rules 
+--  Matching rules
 certificateExactMatch MATCHING-RULE ::= {
   SYNTAX  CertificateExactAssertion
   ID      id-mr-certificateExactMatch
@@ -431,7 +431,7 @@ algorithmIdentifierMatch MATCHING-RULE ::= {
   ID      id-mr-algorithmIdentifierMatch
 }
 
---  Object identifier assignments 
+--  Object identifier assignments
 id-at-supportedAlgorithms OBJECT IDENTIFIER ::=
   {id-at 52}
 
@@ -499,7 +499,7 @@ id-ce-inhibitAnyPolicy OBJECT IDENTIFIER ::= {id-ce 54}
 
 --  The following OBJECT IDENTIFIERS are not used by this Specification:
 --  {id-ce 2}, {id-ce 3}, {id-ce 4}, {id-ce 5}, {id-ce 6}, {id-ce 7},
---  {id-ce 8}, {id-ce 10}, {id-ce 11}, {id-ce 12}, {id-ce 13}, 
+--  {id-ce 8}, {id-ce 10}, {id-ce 11}, {id-ce 12}, {id-ce 13},
 --  {id-ce 22}, {id-ce 25}, {id-ce 26}, {id-ce 30}
 END
 

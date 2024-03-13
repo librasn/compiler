@@ -53,11 +53,11 @@ playAnnouncement{PARAMETERS-BOUND:bound} OPERATION ::= {
 }
 
 -- Direction: SCF ® SRF, Timer: Tpa
--- This operation is to be used after Establish Temporary Connection (assist procedure with a second SSP) 
--- or a Connect to Resource (no assist) operation. It may be used for in-band interaction with an analogue user, 
--- or for interaction with an ISDN user. In the former case, the SRF is usually collocated with the SSF for 
--- standard tones (congestion tone...) or standard announcements. In the latter case, the SRF is always 
--- collocated with the SSF in the switch. Any error is returned to the SCF. The timer associated with this 
+-- This operation is to be used after Establish Temporary Connection (assist procedure with a second SSP)
+-- or a Connect to Resource (no assist) operation. It may be used for in-band interaction with an analogue user,
+-- or for interaction with an ISDN user. In the former case, the SRF is usually collocated with the SSF for
+-- standard tones (congestion tone...) or standard announcements. In the latter case, the SRF is always
+-- collocated with the SSF in the switch. Any error is returned to the SCF. The timer associated with this
 -- operation must be of a sufficient duration to allow its linked operation to be correctly correlated.
 PlayAnnouncementArg{PARAMETERS-BOUND:bound} ::= SEQUENCE {
   informationToSend            [0]  InformationToSend{bound},
@@ -72,7 +72,7 @@ PlayAnnouncementArg{PARAMETERS-BOUND:bound} ::= SEQUENCE {
   ...
 }
 
-promptAndCollectUserInformation{PARAMETERS-BOUND:bound} OPERATION ::= 
+promptAndCollectUserInformation{PARAMETERS-BOUND:bound} OPERATION ::=
 {
   ARGUMENT  PromptAndCollectUserInformationArg {bound}
   RESULT    ReceivedInformationArg {bound}
@@ -84,7 +84,7 @@ promptAndCollectUserInformation{PARAMETERS-BOUND:bound} OPERATION ::=
   CODE      opcode-promptAndCollectUserInformation
 }
 
--- Direction: SCF ® SRF, Timer: Tpc 
+-- Direction: SCF ® SRF, Timer: Tpc
 -- This operation is used to interact with a user to collect information.
 PromptAndCollectUserInformationArg{PARAMETERS-BOUND:bound} ::= SEQUENCE {
   collectedInfo              [0]  CollectedInfo,
@@ -245,9 +245,9 @@ specializedResourceReport OPERATION ::= {
   CODE             opcode-specializedResourceReport
 }
 
--- Direction: SRF ® SCF, Timer: Tsrr 
--- This operation is used as  the response to a PlayAnnouncement operation when the announcement completed 
--- report indication is set. 
+-- Direction: SRF ® SCF, Timer: Tsrr
+-- This operation is used as  the response to a PlayAnnouncement operation when the announcement completed
+-- report indication is set.
 SpecializedResourceReportArg ::= NULL
 
 END

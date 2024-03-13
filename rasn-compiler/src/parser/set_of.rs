@@ -169,7 +169,7 @@ mod tests {
     fn parses_parameterized_constrained_set_of() {
         assert_eq!(
             set_of(
-                r#"SET (SIZE(1..4)) OF 
+                r#"SET (SIZE(1..4)) OF
       RegionalExtension {{Reg-MapData}} OPTIONAL,"#
             )
             .unwrap()

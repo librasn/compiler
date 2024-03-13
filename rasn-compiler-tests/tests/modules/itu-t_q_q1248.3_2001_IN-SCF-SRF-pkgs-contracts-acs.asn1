@@ -58,25 +58,25 @@ networkSpecificB1 COMMON-BOUNDS ::= {NUM-OF-EXTENSIONS  1
  --example value--}
 
 networkSpecificB2 SCF-SSF-BOUNDS ::= {
-  MINIMUM-FOR-DIGITS               1 --example value 
-  MAXIMUM-FOR-DIGITS               5 --example value 
-  MINIMUM-FOR-DISPLAY              1 --example value 
-  MAXIMUM-FOR-DISPLAY              5 --example value 
-  MINIMUM-FOR-GENERIC-NUMBER       1 --example value 
-  MAXIMUM-FOR-GENERIC-NUMBER       5 --example value 
-  MINIMUM-FOR-IP-AVAILABLE         1 --example value 
-  MAXIMUM-FOR-IP-AVAILABLE         5 --example value 
-  MINIMUM-FOR-IP-SSP-CAPABILITIES  1 --example value 
-  MAXIMUM-FOR-IP-SSP-CAPABILITIES  5 --example value 
-  MINIMUM-FOR-SCF-ID               1 --example value 
-  MAXIMUM-FOR-SCF-ID               5 --example value 
-  MINIMUM-FOR-SDSS-INFORMATION     1 --example value 
+  MINIMUM-FOR-DIGITS               1 --example value
+  MAXIMUM-FOR-DIGITS               5 --example value
+  MINIMUM-FOR-DISPLAY              1 --example value
+  MAXIMUM-FOR-DISPLAY              5 --example value
+  MINIMUM-FOR-GENERIC-NUMBER       1 --example value
+  MAXIMUM-FOR-GENERIC-NUMBER       5 --example value
+  MINIMUM-FOR-IP-AVAILABLE         1 --example value
+  MAXIMUM-FOR-IP-AVAILABLE         5 --example value
+  MINIMUM-FOR-IP-SSP-CAPABILITIES  1 --example value
+  MAXIMUM-FOR-IP-SSP-CAPABILITIES  5 --example value
+  MINIMUM-FOR-SCF-ID               1 --example value
+  MAXIMUM-FOR-SCF-ID               5 --example value
+  MINIMUM-FOR-SDSS-INFORMATION     1 --example value
   MAXIMUM-FOR-SDSS-INFORMATION     5 --example value
   NUM-OF-CSS                       2 --example value
   NUM-OF-GENERIC-NUMBERS           2
  --example value --}
 
--- Application Contexts 
+-- Application Contexts
 srf-scf-ac APPLICATION-CONTEXT ::= {
   CONTRACT                  srf-scf-contract
   DIALOGUE MODE             structured
@@ -86,7 +86,7 @@ srf-scf-ac APPLICATION-CONTEXT ::= {
   APPLICATION CONTEXT NAME  id-ac-srf-scfAC
 }
 
--- Contracts 
+-- Contracts
 srf-scf-contract CONTRACT ::= {
   INITIATOR CONSUMER OF
     {srf-scfActivationOfAssistPackage{networkSpecificB1, networkSpecificB2} |
@@ -102,8 +102,8 @@ srf-scf-contract CONTRACT ::= {
   ID                     id-contract-srf-scf
 }
 
--- specializedResourceControl package 
-specializedResourceControlPackage{B1:b1, B2:b2, B3:b3} OPERATION-PACKAGE ::= 
+-- specializedResourceControl package
+specializedResourceControlPackage{B1:b1, B2:b2, B3:b3} OPERATION-PACKAGE ::=
 {
   CONSUMER INVOKES
     {playAnnouncement{b1, b2, b3} |
@@ -112,13 +112,13 @@ specializedResourceControlPackage{B1:b1, B2:b2, B3:b3} OPERATION-PACKAGE ::=
   ID                id-package-specializedResourceControl
 }
 
--- srf-scfCancel package 
+-- srf-scfCancel package
 srf-scfCancelPackage{B2:b2} OPERATION-PACKAGE ::= {
   CONSUMER INVOKES  {cancel{b2}}
   ID                id-package-srf-scfCancel
 }
 
--- scriptControl package 
+-- scriptControl package
 scriptControlPackage{B1:b1, B2:b2} OPERATION-PACKAGE ::= {
   CONSUMER INVOKES
     {scriptClose{b1, b2} | scriptRun{b1, b2} | scriptInformation{b1, b2}}
@@ -138,7 +138,7 @@ srfManagementPackage{B1:b1, B2:b2} OPERATION-PACKAGE ::= {
   ID                id-package-srfManagement
 }
 
--- Abstract Syntaxes 
+-- Abstract Syntaxes
 srf-scf-abstract-syntax ABSTRACT-SYNTAX ::= {
   BASIC-SRF-SCF-PDUs
   IDENTIFIED BY  id-as-basic-srf-scf

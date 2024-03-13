@@ -13,9 +13,9 @@ IN-CS2-SDF-BasicAccessControl {itu-t recommendation q 1228 modules(0)
   sdfBasicAccessControl(10) version1(0)} DEFINITIONS ::=
 BEGIN
 
--- EXPORTS All 
--- The types and values defined in this module are exported for use in the other ASN.1 modules contained 
--- within the Directory Specifications, and for the use of other applications which will use them to access 
+-- EXPORTS All
+-- The types and values defined in this module are exported for use in the other ASN.1 modules contained
+-- within the Directory Specifications, and for the use of other applications which will use them to access
 -- Directory services. Other applications may use them for their own purposes, but this will not constrain
 -- extensions and modifications needed to maintain or improve the Directory service.
 IMPORTS
@@ -24,7 +24,7 @@ IMPORTS
     FROM UsefulDefinitions {joint-iso-itu-t ds(5) module(1)
       usefulDefinitions(0) 3}
   ATTRIBUTE, AttributeType,
-    --AttributeTypeAndValue, 
+    --AttributeTypeAndValue,
     SubtreeSpecification, ContextAssertion
     FROM InformationFramework {joint-iso-itu-t ds(5) module(1)
       informationFramework(1) 3}
@@ -49,7 +49,7 @@ IMPORTS
     FROM SelectedAttributeTypes {joint-iso-itu-t ds(5) module(1)
       selectedAttributeTypes(5) 3};
 
--- types 
+-- types
 ACIItem ::= SEQUENCE {
   identificationTag    DirectoryString{ub-tag},
   precedence           Precedence,
@@ -87,13 +87,13 @@ UserClasses ::= SEQUENCE {
   name       [2]  SET OF NameAndOptionalUID OPTIONAL,
   userGroup  [3]  SET OF NameAndOptionalUID OPTIONAL,
   -- dn component must be the name of an
-  -- entry of GroupOfUniqueNames 
+  -- entry of GroupOfUniqueNames
   subtree    [4]  SET OF SubtreeSpecification OPTIONAL
 }
 
 ItemPermission ::= SEQUENCE {
   precedence        Precedence OPTIONAL,
-  -- defaults to precedence in ACIItem 
+  -- defaults to precedence in ACIItem
   userClasses       UserClasses,
   grantsAndDenials  GrantsAndDenials
 }
@@ -107,7 +107,7 @@ UserPermission ::= SEQUENCE {
 
 GrantsAndDenials ::= BIT STRING {
   -- permissions that may be used in conjunction
-  -- with any component of ProtectedItems 
+  -- with any component of ProtectedItems
   grantAdd(0), denyAdd(1), grantDiscloseOnError(2), denyDiscloseOnError(3),
   grantRead(4), denyRead(5), grantRemove(6),
   denyRemove(7),
@@ -118,14 +118,14 @@ GrantsAndDenials ::= BIT STRING {
   grantRename(16), denyRename(17), grantReturnDN(18),
   denyReturnDN(19),
   -- permissions that may be used in conjunction
-  -- with any component, except entry, of ProtectedItems 
+  -- with any component, except entry, of ProtectedItems
   grantCompare(20), denyCompare(21), grantFilterMatch(22),
   denyFilterMatch(23),
   -- permissions that may be used in conjunction
-  -- with entryMethod component of ProtectedItems 
+  -- with entryMethod component of ProtectedItems
   grantExecuteMethod(30), denyExecuteMethod(31)}
 
--- attributes 
+-- attributes
 prescriptiveACI ATTRIBUTE ::= {
   WITH SYNTAX             ACIItem
   EQUALITY MATCHING RULE  directoryStringFirstComponentMatch

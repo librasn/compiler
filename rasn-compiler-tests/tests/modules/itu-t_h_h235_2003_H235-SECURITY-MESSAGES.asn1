@@ -16,7 +16,7 @@ BEGIN
 ChallengeString ::= OCTET STRING(SIZE (8..128))
 
 TimeStamp ::= INTEGER(1..4294967295) -- seconds since 00:00 1/1/1970 UTC
-                     
+
 
 RandomVal ::= INTEGER -- 32-bit Integer
 
@@ -31,7 +31,7 @@ NonStandardParameter ::= SEQUENCE {
   data                   OCTET STRING
 }
 
--- if local octet representations of these bit strings are used they shall 
+-- if local octet representations of these bit strings are used they shall
 -- utilize standard Network Octet ordering (e.g. Big Endian)
 DHset ::= SEQUENCE {
   halfkey    BIT STRING(SIZE (0..2048)), -- = g^x mod n
@@ -78,28 +78,28 @@ ECKASDH ::=
   },
   eckasdh2
     SEQUENCE-- parameters for elliptic curves of characteristic 2 -- {public-key
-                                                                        
+
                                                                     ECpoint, -- This field contains representation of the ECKAS-DH2 public key value. --
-                                                                    -- This field contains the initiator's ECKAS-DH2 public key value (aP) when this information 
-                                                                    -- element is sent from originator to receiver. This field contains the responder's ECKAS-DH2 
+                                                                    -- This field contains the initiator's ECKAS-DH2 public key value (aP) when this information
+                                                                    -- element is sent from originator to receiver. This field contains the responder's ECKAS-DH2
                                                                     -- public key value (bP) when this information element is sent back from receiver to originator.
                                                                     fieldSize
-                                                                    
+
                                                                     BIT STRING
                                                                     (SIZE (0..
                                                                     511)), -- This field contains representation of the--
                                                                     -- ECKAS-DH2 field size value (m).
                                                                     base
-                                                                    
+
                                                                     ECpoint, -- This field contains representation of  the ECKAS-DH2 public base (P).--
                                                                     weierstrassA
-                                                                    
+
                                                                     BIT STRING
                                                                     (SIZE (0..
                                                                     511)), --This field contains representation of the--
                                                                     -- ECKAS-DH2 Weierstrass coefficient (a).
                                                                     weierstrassB
-                                                                    
+
                                                                     BIT STRING
                                                                     (SIZE (0..
                                                                     511))--This field contains representation of the--
@@ -112,7 +112,7 @@ ECGDSASignature ::=
   SEQUENCE -- parameters for elliptic curve digital signature algorithm
    {
   r  BIT STRING(SIZE (0..511)), -- This field contains the representation of the r component of the
-  
+
   -- ECGDSA  digital signature.
   s
     BIT STRING
@@ -157,7 +157,7 @@ ClearToken ::= SEQUENCE -- a "token" may contain multiple value types.
   nonStandard    NonStandardParameter OPTIONAL,
   ...,
   eckasdhkey     ECKASDH OPTIONAL, -- elliptic curve Key Agreement Scheme-Diffie
-  
+
   -- Hellman Analogue (ECKAS-DH)
   sendersID      Identifier OPTIONAL,
   h235Key        H235Key OPTIONAL -- central distributed key in V3
@@ -190,12 +190,12 @@ HASHED{ToBeHashed} ::= SEQUENCE {
 }(CONSTRAINED BY { -- Hash --ToBeHashed})
 
 IV8 ::= OCTET STRING(SIZE (8)) -- initial value for 64-bit block ciphers
-                    
+
 
 IV16 ::= OCTET STRING(SIZE (16)) -- initial value for 128-bit block ciphers
-                     
 
--- signing algorithm used must select one of these types of parameters 
+
+-- signing algorithm used must select one of these types of parameters
 -- needed by receiving end of signature.
 Params ::= SEQUENCE {
   ranInt        INTEGER OPTIONAL, -- some integer value
@@ -308,7 +308,7 @@ V3KeySyncMaterial ::= SEQUENCE {
   ...
 }
 
-END -- End of H235-SECURITY-MESSAGES DEFINITIONS 
+END -- End of H235-SECURITY-MESSAGES DEFINITIONS
 
 -- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D
 

@@ -5,7 +5,7 @@ DEFINITIONS IMPLICIT TAGS ::= BEGIN
 -- EXPORTS All; --
 IMPORTS
    -- ISO/IEC 9594-8 | ITU-T Rec. X.509 AuthenticationFramework --
-EXTENSION 
+EXTENSION
 FROM AuthenticationFramework {
 joint-iso-itu-t ds(5) module(1) authenticationFramework(7) 8 }
 -- ISO/IEC 9594-8 | ITU-T Rec. X.509 CertificateExtensions --
@@ -71,7 +71,7 @@ grantedWithMods        (1), -- modifications were needed, requester is
 rejection              (2), -- request not fulfilled, the failure code
                             -- provides additional information
 waiting                (3), -- request not yet processed, requester
-                            -- receives a receipt that the 
+                            -- receives a receipt that the
                             -- request has been received
 revocationWarning      (4), -- a revocation is imminent
   -- a revocation has occurred
@@ -83,7 +83,7 @@ badRequest             (2), -- transaction not permitted or supported
 badDataFormat          (5), -- data submitted has the wrong format
 timeNotAvailable      (14), -- TSAs service is not available
 unacceptedPolicy      (15), -- requested TSA policy is not supported
-unacceptedExtension   (16), -- requested TSA extension is not supported 
+unacceptedExtension   (16), -- requested TSA extension is not supported
 addInfoNotAvailable   (17), -- requested additional info not available
 systemNotAvailable    (24), -- system is not available
 systemFailure         (25), -- system failure
@@ -124,7 +124,7 @@ micros   [1] INTEGER(1..999)  OPTIONAL
 } (ALL EXCEPT({ -- No components present -- }))
 -- TSTInfo encapsulation --
 ETSTInfo ::= OCTET STRING (CONTAINING TSTInfo)
-id-ct-TSTInfo OID ::= { iso(1) member-body(2) us(840) rsadsi(113549) pkcs(1) 
+id-ct-TSTInfo OID ::= { iso(1) member-body(2) us(840) rsadsi(113549) pkcs(1)
 pkcs-9(9) smime(16) ct(1) tstInfo(4) }
 EContents CONTENTS ::= {
 { ETSTInfo IDENTIFIED BY id-ct-TSTInfo },
@@ -151,7 +151,7 @@ requestID  RequestID  OPTIONAL
 ExtendReq ::= SEQUENCE {
 version    Version,
 tst        TimeStampToken,
-requestID  [0] OCTET STRING  OPTIONAL 
+requestID  [0] OCTET STRING  OPTIONAL
 }
 ExtendResp ::= SEQUENCE {
    version    Version,
@@ -166,7 +166,7 @@ extnId     EXTENSION.&id({ExtensionSet}),
 critical   BOOLEAN DEFAULT FALSE,
 extnValue  OCTET STRING
 }
-Extensions ::= SEQUENCE OF Extension{{TSExtensions}}  
+Extensions ::= SEQUENCE OF Extension{{TSExtensions}}
 TSExtensions EXTENSION ::= {
 extHash    |
 extMethod  |
@@ -193,11 +193,11 @@ Methods METHOD ::= {
 --
 ... -- Any time stamping method --
 }
-extRenewal EXTENSION ::= { 
-SYNTAX ExtRenewal IDENTIFIED BY tsp-ext-renewal 
+extRenewal EXTENSION ::= {
+SYNTAX ExtRenewal IDENTIFIED BY tsp-ext-renewal
 }
 ExtRenewal ::= TimeStampToken
-tsp-ext-renewal OID ::= { 
+tsp-ext-renewal OID ::= {
 iso(1) standard(0) time-stamp(18014) extensions(1) renewal(3) }
 -- Information object identifiers
 tsp-ext-hash OID ::= {
@@ -214,14 +214,14 @@ tsp-req-link-ds OID ::= {
 iso(1) standard(0) time-stamp(18014) lt(3) link-ds(2)}
 id-signedData OID ::= {
 iso(1) member-body(2) us(840) rsadsi(113549) pkcs(1) pkcs7(7) 2 }
-id-ct-authData OID ::= { 
-iso(1) member-body(2) us(840) rsadsi(113549) pkcs(1) 
+id-ct-authData OID ::= {
+iso(1) member-body(2) us(840) rsadsi(113549) pkcs(1)
 pkcs-9(9) smime(16) ct(1) authData(2) }
 id-digestedData OID ::= {
 iso(1) member-body(2) us(840) rsadsi(113549) pkcs(1) pkcs7(7) 5 }
 -- Linked token encapsulation object identifiers --
 tsp-digestedData OID ::= {
-iso(1) standard(0) time-stamp(18014) lt(3) digestedData(8) } 
+iso(1) standard(0) time-stamp(18014) lt(3) digestedData(8) }
 tsp-signedData OID ::= {
 iso(1) standard(0) time-stamp(18014) lt(3) signedData(9) }
 -- Link token types 
@@ -270,7 +270,7 @@ reference  [1] INTEGER
 Imprints ::=  SEQUENCE SIZE(1..MAX) OF Imprint
 Imprint ::= OCTET STRING
 -- BindingInfo extensions --
-BindingInfoExtensions ::= SEQUENCE OF Extension{{BIExtensions}}  
+BindingInfoExtensions ::= SEQUENCE OF Extension{{BIExtensions}}
 BIExtensions EXTENSION ::= {
 extName        |
 extTime        |
@@ -280,14 +280,14 @@ extPublication,
 }
 extName EXTENSION ::= { SYNTAX ExtName IDENTIFIED BY tsp-ext-name }
 ExtName ::= GeneralName
-tsp-ext-name OID ::= { 
+tsp-ext-name OID ::= {
 iso(1) standard(0) time-stamp(18014) lt(3) name(5) }
 extTime EXTENSION ::= { SYNTAX ExtTime IDENTIFIED BY tsp-ext-time }
 ExtTime ::= GeneralizedTime
 tsp-ext-time OID ::= {
 iso(1) standard(0) time-stamp(18014) lt(3) time (6) }
-extPublication EXTENSION ::= { 
-SYNTAX ExtPublication IDENTIFIED BY tsp-ext-publication 
+extPublication EXTENSION ::= {
+SYNTAX ExtPublication IDENTIFIED BY tsp-ext-publication
 }
 ExtPublication ::= SEQUENCE SIZE (1..MAX) OF PublicationInfo
 tsp-ext-publication OID ::= {
@@ -306,7 +306,7 @@ merkle-chain ALGORITHM ::= {
 OID id-merkle-chain PARMS MerkleChainParms
 }
 MerkleChainParms ::= SEQUENCE SIZE(1..MAX) OF HashFunction
-HashFunction ::= DigestAlgorithmIdentifier 
+HashFunction ::= DigestAlgorithmIdentifier
 -- Time calibration --
 TimeCalibrationReport ::= SEQUENCE {
 version        Version,
@@ -316,8 +316,8 @@ dutInfo        [0] EntityInfo  OPTIONAL,
 timingMetrics  TimingMetrics
 }
 EntityInfo ::= SEQUENCE {
-entityName    UTF8String  OPTIONAL, 
-entityID      OBJECT IDENTIFIER  OPTIONAL, 
+entityName    UTF8String  OPTIONAL,
+entityID      OBJECT IDENTIFIER  OPTIONAL,
 entityOption  OCTET STRING  OPTIONAL
 } (ALL EXCEPT ({ -- None; at least one component shall be present -- }))
 TimingMetrics ::= SEQUENCE {
@@ -332,7 +332,7 @@ action   INTEGER(0..1)  -- 1: last minute has 61 seconds --
                         -- 0: last minute has 59 seconds --
 }
 -- Supporting definitions --
-OID ::= OBJECT IDENTIFIER -- Alias 
+OID ::= OBJECT IDENTIFIER -- Alias
 OIDS ::= CLASS {
 &id OBJECT IDENTIFIER  UNIQUE
 }

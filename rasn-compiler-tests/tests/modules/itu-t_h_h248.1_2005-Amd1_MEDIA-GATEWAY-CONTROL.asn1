@@ -90,7 +90,7 @@ Transaction ::= CHOICE {
 }
 
 TransactionId ::= INTEGER(0..4294967295) -- 32-bit unsigned integer
-                         
+
 
 TransactionRequest ::= SEQUENCE {
   transactionId  TransactionId,
@@ -142,7 +142,7 @@ ErrorText ::= IA5String
 ContextID ::= INTEGER(0..4294967295)
 
 -- Context NULL Value: 0
--- Context CHOOSE Value: 4294967294 (0xFFFFFFFE) 
+-- Context CHOOSE Value: 4294967294 (0xFFFFFFFE)
 -- Context ALL Value: 4294967295 (0xFFFFFFFF)
 ActionRequest ::= SEQUENCE {
   contextId            ContextID,
@@ -180,7 +180,7 @@ ContextAttrAuditRequest ::= SEQUENCE {
   selectpriority        INTEGER(0..15) OPTIONAL,
   -- to select given priority
   selectemergency       BOOLEAN OPTIONAL,
-  -- to select if emergency set/not set (T/F) 
+  -- to select if emergency set/not set (T/F)
   selectiepscallind     BOOLEAN OPTIONAL,
   -- to select if IEPS set/not set (T/F)
   selectLogic           SelectLogic OPTIONAL -- default is AND
@@ -376,7 +376,7 @@ IndAudPropertyParm ::= SEQUENCE {
   propertyParms     PropertyParm OPTIONAL
 }
 
---   to select based on property values 
+--   to select based on property values
 --  AND/OR selection logic is specified at context level
 IndAudLocalRemoteDescriptor ::= SEQUENCE {
   propGroupID  INTEGER(0..65535) OPTIONAL,
@@ -613,11 +613,11 @@ MuxDescriptor ::= SEQUENCE {
   ...
 }
 
-MuxType ::= ENUMERATED {h221(0), h223(1), h226(2), v76(3), ..., 
+MuxType ::= ENUMERATED {h221(0), h223(1), h226(2), v76(3), ...,
                         nx64k(4)}
 
 StreamID ::= INTEGER(0..65535) -- 16-bit unsigned integer
-                    
+
 
 EventsDescriptor ::= SEQUENCE {
   requestID  RequestID OPTIONAL,
@@ -746,7 +746,7 @@ SigParameter ::= SEQUENCE {
 -- For an AuditCapReply with all events, the RequestID shall be ALL.
 -- ALL is represented by 0xffffffff.
 RequestID ::= INTEGER(0..4294967295) -- 32-bit unsigned integer
-                     
+
 
 ModemDescriptor ::= SEQUENCE {
   mtl              SEQUENCE OF ModemType,
@@ -787,12 +787,12 @@ ServiceChangeParm ::= SEQUENCE {
   serviceChangeReason             Value,
   -- A serviceChangeReason consists of a numeric reason code
   -- and an optional text description.
-  -- The serviceChangeReason shall be a string consisting of 
-  -- a decimal reason code, optionally followed by a single 
+  -- The serviceChangeReason shall be a string consisting of
+  -- a decimal reason code, optionally followed by a single
   -- space character and a textual description string.
   -- This string is first BER-encoded as an IA5String.
   -- The result of this BER-encoding is then encoded as
-  -- an ASN.1 OCTET STRING type, "double wrapping" the 
+  -- an ASN.1 OCTET STRING type, "double wrapping" the
   -- value as was done for package elements.
   serviceChangeDelay              INTEGER(0..4294967295) OPTIONAL,
   -- 32-bit unsigned integer

@@ -9,13 +9,13 @@
 -- See also ITU-T X.519 (1997) Technical Cor. 2 (02/2001)
 -- See also the index of all ASN.1 assignments needed in this document
 
-DirectoryOperationalBindingManagementProtocol {joint-iso-itu-t ds(5) 
+DirectoryOperationalBindingManagementProtocol {joint-iso-itu-t ds(5)
   module(1) dop(17) 3} DEFINITIONS ::=
 BEGIN
 
--- EXPORTS All 
--- The types and values defined in this module are exported for use in the other ASN.1 modules contained 
--- within the Directory Specifications, and for the use of other applications which will use them to access 
+-- EXPORTS All
+-- The types and values defined in this module are exported for use in the other ASN.1 modules contained
+-- within the Directory Specifications, and for the use of other applications which will use them to access
 -- Directory services. Other applications may use them for their own purposes, but this will not constrain
 -- extensions and modifications needed to maintain or improve the Directory service.
 IMPORTS
@@ -24,7 +24,7 @@ IMPORTS
       usefulDefinitions(0) 3}
   directoryBind, directoryUnbind
     FROM DirectoryAbstractService directoryAbstractService
-  ROS-OBJECT-CLASS, CONTRACT, OPERATION-PACKAGE, CONNECTION-PACKAGE, 
+  ROS-OBJECT-CLASS, CONTRACT, OPERATION-PACKAGE, CONNECTION-PACKAGE,
     Code, OPERATION
     FROM Remote-Operations-Information-Objects {joint-iso-itu-t
       remote-operations(4) informationObjects(5) version1(0)}
@@ -52,7 +52,7 @@ IMPORTS
     FROM OperationalBindingManagement {joint-iso-itu-t ds(5) module(1)
       opBindingManagement(18) 3};
 
--- application contexts 
+-- application contexts
 directoryOperationalBindingManagementAC APPLICATION-CONTEXT ::= {
   CONTRACT                  dopContract
   ESTABLISHED BY            acse
@@ -63,26 +63,26 @@ directoryOperationalBindingManagementAC APPLICATION-CONTEXT ::= {
   APPLICATION CONTEXT NAME  id-ac-directoryOperationalBindingManagementAC
 }
 
--- ROS objects 
+-- ROS objects
 dop-dsa ROS-OBJECT-CLASS ::= {BOTH  {dopContract}
                               ID    id-rosObject-dopDSA
 }
 
--- contracts 
+-- contracts
 dopContract CONTRACT ::= {
   CONNECTION     dopConnectionPackage
   OPERATIONS OF  {dopPackage}
   ID             id-contract-dop
 }
 
--- connection package 
+-- connection package
 dopConnectionPackage CONNECTION-PACKAGE ::= {
   BIND    dSAOperationalBindingManagementBind
   UNBIND  dSAOperationalBindingManagementUnbind
   ID      id-package-dopConnection
 }
 
---  packages 
+--  packages
 dopPackage OPERATION-PACKAGE ::= {
   CONSUMER INVOKES
     {establishOperationalBinding | modifyOperationalBinding |
@@ -90,8 +90,8 @@ dopPackage OPERATION-PACKAGE ::= {
   ID                id-package-operationalBindingManagement
 }
 
--- abstract syntaxes 
-directoryOperationalBindingManagementAbstractSyntax ABSTRACT-SYNTAX ::= 
+-- abstract syntaxes
+directoryOperationalBindingManagementAbstractSyntax ABSTRACT-SYNTAX ::=
 {DOP-PDUs
  IDENTIFIED BY  id-as-directoryOperationalBindingManagementAS
 }
@@ -112,14 +112,14 @@ DOP-Returnable OPERATION ::=
   {establishOperationalBinding | modifyOperationalBinding |
    terminateOperationalBinding}
 
--- remote operation codes 
+-- remote operation codes
 id-op-establishOperationalBinding Code ::= local:100
 
 id-op-modifyOperationalBinding Code ::= local:102
 
 id-op-terminateOperationalBinding Code ::= local:101
 
--- remote error codes 
+-- remote error codes
 id-err-operationalBindingError Code ::= local:100
 
 END -- DirectoryOperationalBindingManagementProtocol

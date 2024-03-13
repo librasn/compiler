@@ -14,14 +14,14 @@ EnhancedSecurity {joint-iso-itu-t ds(5) module(1) enhancedSecurity(28) 4}
 DEFINITIONS IMPLICIT TAGS ::=
 BEGIN
 
--- EXPORTS All 
+-- EXPORTS All
 IMPORTS
   -- from ITU-T Rec. X.501 | ISO/IEC 9594-2
-  authenticationFramework, basicAccessControl, certificateExtensions, 
+  authenticationFramework, basicAccessControl, certificateExtensions,
     id-at, id-avc, id-mr, informationFramework, upperBounds
     FROM UsefulDefinitions {joint-iso-itu-t ds(5) module(1)
       usefulDefinitions(0) 4}
-  Attribute, ATTRIBUTE, AttributeType, Context, CONTEXT, MATCHING-RULE, 
+  Attribute, ATTRIBUTE, AttributeType, Context, CONTEXT, MATCHING-RULE,
     Name, objectIdentifierMatch, SupportedAttributes
     FROM InformationFramework {joint-iso-itu-t ds(5) module(1)
       informationFramework(1) 4}
@@ -29,7 +29,7 @@ IMPORTS
     FROM BasicAccessControl {joint-iso-itu-t ds(5) module(1)
       basicAccessControl(24) 4}
   -- from ITU-T Rec. X.509 | ISO/IEC 9594-8
-  AlgorithmIdentifier, CertificateSerialNumber, ENCRYPTED{}, HASH{}, 
+  AlgorithmIdentifier, CertificateSerialNumber, ENCRYPTED{}, HASH{},
     SIGNED{}
     FROM AuthenticationFramework {joint-iso-itu-t ds(5) module(1)
       authenticationFramework(7) 4}
@@ -63,7 +63,7 @@ OPTIONALLY-PROTECTED-SEQ{Type} ::= CHOICE {
 }
 
 -- The following out-commented ASN.1 specification are know to be erroneous and are therefore deprecated.
--- genEncryptedTransform {KEY-INFORMATION: SupportedKIClasses }  SECURITY-TRANSFORMATION  ::= 
+-- genEncryptedTransform {KEY-INFORMATION: SupportedKIClasses }  SECURITY-TRANSFORMATION  ::=
 --	{
 --	IDENTIFIER  			{ enhancedSecurity  gen-encrypted(2) }
 --	INITIAL-ENCODING-RULES	{ joint-iso-itu-t  asn1(1)  ber(1) }
@@ -80,7 +80,7 @@ OPTIONALLY-PROTECTED-SEQ{Type} ::= CHOICE {
 -- of the KEY-INFORMATION information object class (defined in ITU-T
 -- Rec. X.830 | ISO/IEC 11586-1)
 --			encData	BIT STRING ( CONSTRAINED BY {
--- the encData value shall be generated following 
+-- the encData value shall be generated following
 -- the procedure specified in 17.3.1-- -- })
 --			}
 --	}
@@ -118,8 +118,8 @@ OPTIONALLY-PROTECTED-SEQ{Type} ::= CHOICE {
 --	USAGE					directoryOperation
 --	ID						id-at-defaultDirQop }
 -- DIRQOP  ::=  CLASS
--- This information object class is used to define the quality of protection 
--- required throughout directory operation. 
+-- This information object class is used to define the quality of protection
+-- required throughout directory operation.
 -- The Quality Of Protection can be signed, encrypted, signedAndEncrypt
 --  {
 --	&dirqop-Id    				OBJECT IDENTIFIER UNIQUE,
@@ -295,7 +295,7 @@ SpecificallyIdentified ::= SEQUENCE {
 Scope ::= CHOICE {
   wholeEntry     [0]  NULL, -- Signature protects all attribute values in this entry
   selectedTypes  [1]  SelectedTypes
-  -- Signature protects all attribute values of the selected attribute types 
+  -- Signature protects all attribute values of the selected attribute types
 }
 
 SelectedTypes ::= SEQUENCE SIZE (1..MAX) OF AttributeType
@@ -355,8 +355,8 @@ AttributeTypeValueContexts ::= SEQUENCE {
 -- ReaderAndKeyIDAssertion  ::=  SEQUENCE {
 --	keyIdentifier	KeyIdentifier,
 --	authReaders	AuthReaders OPTIONAL }
--- Object identifier assignments 
--- attributes 
+-- Object identifier assignments
+-- attributes
 id-at-clearance OBJECT IDENTIFIER ::=
   {id-at 55}
 
@@ -365,7 +365,7 @@ id-at-attributeIntegrityInfo OBJECT IDENTIFIER ::=
   {id-at 57}
 
 -- id-at-confKeyInfo							OBJECT IDENTIFIER	::=	{id-at 60}
--- matching rules 
+-- matching rules
 -- id-mr-readerAndKeyIDMatch					OBJECT IDENTIFIER	::=	{id-mr 43}
 -- contexts
 id-avc-attributeValueSecurityLabelContext OBJECT IDENTIFIER ::=

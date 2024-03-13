@@ -1,24 +1,34 @@
-use std::{collections::BTreeMap, error::Error, str::FromStr};
 use proc_macro2::TokenStream;
-use quote::{quote, TokenStreamExt, ToTokens, format_ident};
+use quote::{format_ident, quote, ToTokens, TokenStreamExt};
+use std::{collections::BTreeMap, error::Error, str::FromStr};
 
-use crate::{generator::{Backend, GeneratedModule}, intermediate::{
-    information_object::{
-        ASN1Information, ClassLink, InformationObjectClass, InformationObjectFields,
-        ObjectSetValue, ToplevelInformationDefinition,
+use crate::{
+    generator::{Backend, GeneratedModule},
+    intermediate::{
+        constraints::Constraint,
+        information_object::{
+            ASN1Information, ClassLink, InformationObjectClass, InformationObjectFields,
+            ObjectSetValue, ToplevelInformationDefinition,
+        },
+        utils::{
+            to_rust_const_case, to_rust_enum_identifier, to_rust_snake_case, to_rust_title_case,
+        },
+        ASN1Type, ASN1Value, ToplevelDefinition, ToplevelTypeDefinition, ToplevelValueDefinition,
+        BIT_STRING, BOOLEAN, GENERALIZED_TIME, INTEGER, NULL, OCTET_STRING, UTC_TIME,
     },
-    utils::{to_rust_const_case, to_rust_title_case, to_rust_snake_case, to_rust_enum_identifier},
-    ASN1Type, ASN1Value, ToplevelDefinition, ToplevelTypeDefinition, ToplevelValueDefinition,
-    INTEGER, constraints::Constraint, NULL, BOOLEAN, BIT_STRING, OCTET_STRING, GENERALIZED_TIME, UTC_TIME,
-}};
-
-use crate::generator::error::{GeneratorError, GeneratorErrorType};
-use super::{
-    generate, template::*, utils::*, Rust, BMP_STRING, GENERAL_STRING, IA5_STRING, NUMERIC_STRING, OBJECT_IDENTIFIER, PRINTABLE_STRING, SEQUENCE_OF, SET_OF, UTF8_STRING, VISIBLE_STRING
 };
 
+use super::{
+    generate, template::*, utils::*, Rust, BMP_STRING, GENERAL_STRING, IA5_STRING, NUMERIC_STRING,
+    OBJECT_IDENTIFIER, PRINTABLE_STRING, SEQUENCE_OF, SET_OF, UTF8_STRING, VISIBLE_STRING,
+};
+use crate::generator::error::{GeneratorError, GeneratorErrorType};
+
 impl Backend for Rust {
-    fn generate_module(&self, tlds: Vec<ToplevelDefinition>) -> Result<GeneratedModule, GeneratorError> {
+    fn generate_module(
+        &self,
+        tlds: Vec<ToplevelDefinition>,
+    ) -> Result<GeneratedModule, GeneratorError> {
         if let Some((module_ref, _)) = tlds.first().and_then(|tld| tld.get_index().cloned()) {
             let name = to_rust_snake_case(&module_ref.name);
             let imports = module_ref.imports.iter().map(|import| {
@@ -29,24 +39,36 @@ impl Backend for Rust {
                         usages = None;
                         break 'imports;
                     } else if usage.starts_with(|c: char| c.is_lowercase()) {
-                        if let Some(us) = usages.as_mut() { us.push(to_rust_const_case(usage).to_token_stream()) }
+                        if let Some(us) = usages.as_mut() {
+                            us.push(to_rust_const_case(usage).to_token_stream())
+                        }
                     } else if usage.starts_with(|c: char| c.is_uppercase()) {
-                        if let Some(us) = usages.as_mut() { us.push(to_rust_title_case(usage).to_token_stream()) }
+                        if let Some(us) = usages.as_mut() {
+                            us.push(to_rust_title_case(usage).to_token_stream())
+                        }
                     }
                 }
                 let used_imports = usages.unwrap_or(vec![TokenStream::from_str("*").unwrap()]);
                 quote!(use super:: #module::{ #(#used_imports),* };)
             });
-            let (pdus, warnings): (Vec<TokenStream>, Vec<Box<dyn Error>>) = tlds.into_iter().fold((vec![], vec![]), |mut acc, tld| match generate(tld) {
-                Ok(s) => { acc.0.push(s); acc },
-                Err(e) => { acc.1.push(Box::new(e)); acc }
-            });
+            let (pdus, warnings): (Vec<TokenStream>, Vec<Box<dyn Error>>) =
+                tlds.into_iter()
+                    .fold((vec![], vec![]), |mut acc, tld| match generate(tld) {
+                        Ok(s) => {
+                            acc.0.push(s);
+                            acc
+                        }
+                        Err(e) => {
+                            acc.1.push(Box::new(e));
+                            acc
+                        }
+                    });
             Ok(GeneratedModule {
                 generated: Some(quote! {
                 #[allow(non_camel_case_types, non_snake_case, non_upper_case_globals, unused)]
                 pub mod #name {
                     extern crate alloc;
-                    
+
                     use core::borrow::Borrow;
                     use rasn::prelude::*;
                     use lazy_static::lazy_static;
@@ -68,8 +90,11 @@ pub fn generate_typealias(tld: ToplevelTypeDefinition) -> Result<TokenStream, Ge
             format_comments(&tld.comments)?,
             to_rust_title_case(&tld.name),
             to_rust_title_case(&dec.identifier),
-            join_annotations(vec![quote!(delegate), format_tag(tld.tag.as_ref(), false),
-            format_range_annotations(true, &dec.constraints)?]),
+            join_annotations(vec![
+                quote!(delegate),
+                format_tag(tld.tag.as_ref(), false),
+                format_range_annotations(true, &dec.constraints)?,
+            ]),
         ))
     } else {
         Err(GeneratorError::new(
@@ -81,7 +106,7 @@ pub fn generate_typealias(tld: ToplevelTypeDefinition) -> Result<TokenStream, Ge
 }
 
 pub fn generate_integer_value(tld: ToplevelValueDefinition) -> Result<TokenStream, GeneratorError> {
-    if let ASN1Value::LinkedIntValue{ integer_type, .. } = tld.value {
+    if let ASN1Value::LinkedIntValue { integer_type, .. } = tld.value {
         let formatted_value = value_to_tokens(&tld.value, None)?;
         let ty = to_rust_title_case(&tld.associated_type);
         if tld.associated_type == INTEGER {
@@ -120,9 +145,12 @@ pub fn generate_integer(tld: ToplevelTypeDefinition) -> Result<TokenStream, Gene
         Ok(integer_template(
             format_comments(&tld.comments)?,
             to_rust_title_case(&tld.name),
-            join_annotations(vec![quote!(delegate), format_range_annotations(true, &int.constraints)?,
-            format_tag(tld.tag.as_ref(), false)]),
-            int.int_type().to_token_stream()
+            join_annotations(vec![
+                quote!(delegate),
+                format_range_annotations(true, &int.constraints)?,
+                format_tag(tld.tag.as_ref(), false),
+            ]),
+            int.int_type().to_token_stream(),
         ))
     } else {
         Err(GeneratorError::new(
@@ -138,8 +166,11 @@ pub fn generate_bit_string(tld: ToplevelTypeDefinition) -> Result<TokenStream, G
         Ok(bit_string_template(
             format_comments(&tld.comments)?,
             to_rust_title_case(&tld.name),
-            join_annotations(vec![quote!(delegate), format_range_annotations(true, &bitstr.constraints)?,
-            format_tag(tld.tag.as_ref(), false)]),
+            join_annotations(vec![
+                quote!(delegate),
+                format_range_annotations(true, &bitstr.constraints)?,
+                format_tag(tld.tag.as_ref(), false),
+            ]),
         ))
     } else {
         Err(GeneratorError::new(
@@ -155,8 +186,11 @@ pub fn generate_octet_string(tld: ToplevelTypeDefinition) -> Result<TokenStream,
         Ok(octet_string_template(
             format_comments(&tld.comments)?,
             to_rust_title_case(&tld.name),
-            join_annotations(vec![quote!(delegate), format_range_annotations(true, &oct_str.constraints)?,
-            format_tag(tld.tag.as_ref(), false)]),
+            join_annotations(vec![
+                quote!(delegate),
+                format_range_annotations(true, &oct_str.constraints)?,
+                format_tag(tld.tag.as_ref(), false),
+            ]),
         ))
     } else {
         Err(GeneratorError::new(
@@ -167,15 +201,20 @@ pub fn generate_octet_string(tld: ToplevelTypeDefinition) -> Result<TokenStream,
     }
 }
 
-pub fn generate_character_string(tld: ToplevelTypeDefinition) -> Result<TokenStream, GeneratorError> {
+pub fn generate_character_string(
+    tld: ToplevelTypeDefinition,
+) -> Result<TokenStream, GeneratorError> {
     if let ASN1Type::CharacterString(ref char_str) = tld.ty {
         Ok(char_string_template(
             format_comments(&tld.comments)?,
             to_rust_title_case(&tld.name),
             string_type(&char_str.ty)?,
-            join_annotations(vec![quote!(delegate), format_range_annotations(false, &char_str.constraints)?,
-            format_alphabet_annotations(char_str.ty, &char_str.constraints)?,
-            format_tag(tld.tag.as_ref(), false)]),
+            join_annotations(vec![
+                quote!(delegate),
+                format_range_annotations(false, &char_str.constraints)?,
+                format_alphabet_annotations(char_str.ty, &char_str.constraints)?,
+                format_tag(tld.tag.as_ref(), false),
+            ]),
         ))
     } else {
         Err(GeneratorError::new(
@@ -207,7 +246,7 @@ macro_rules! call_template {
     ($fn:ident, $tld:ident, $($args:expr),*) => {
         Ok($fn(
             format_comments(&$tld.comments)?,
-            to_rust_const_case(&$tld.name), 
+            to_rust_const_case(&$tld.name),
             $($args),*
         ))
     };
@@ -224,60 +263,200 @@ macro_rules! assignment {
 pub fn generate_value(tld: ToplevelValueDefinition) -> Result<TokenStream, GeneratorError> {
     let ty = tld.associated_type.as_str();
     match &tld.value {
-        ASN1Value::Null if ty == NULL => call_template!(primitive_value_template, tld, quote!(()), quote!(())),
-        ASN1Value::Null => call_template!(primitive_value_template, tld, to_rust_title_case(&tld.associated_type), assignment!(&tld.associated_type, quote!(()))),
-        ASN1Value::Boolean(b) if ty == BOOLEAN  => call_template!(primitive_value_template, tld, quote!(bool), b.to_token_stream()),
-        ASN1Value::Boolean(b)  => call_template!(primitive_value_template, tld, to_rust_title_case(&tld.associated_type), assignment!(&tld.associated_type, b.to_token_stream())),
+        ASN1Value::Null if ty == NULL => {
+            call_template!(primitive_value_template, tld, quote!(()), quote!(()))
+        }
+        ASN1Value::Null => call_template!(
+            primitive_value_template,
+            tld,
+            to_rust_title_case(&tld.associated_type),
+            assignment!(&tld.associated_type, quote!(()))
+        ),
+        ASN1Value::Boolean(b) if ty == BOOLEAN => call_template!(
+            primitive_value_template,
+            tld,
+            quote!(bool),
+            b.to_token_stream()
+        ),
+        ASN1Value::Boolean(b) => call_template!(
+            primitive_value_template,
+            tld,
+            to_rust_title_case(&tld.associated_type),
+            assignment!(&tld.associated_type, b.to_token_stream())
+        ),
         ASN1Value::LinkedIntValue { .. } => generate_integer_value(tld),
-        ASN1Value::BitString(_) if ty == BIT_STRING => call_template!(lazy_static_value_template, tld, quote!(BitString), value_to_tokens(&tld.value, None)?),
-        ASN1Value::OctetString(_) if ty == OCTET_STRING => call_template!(lazy_static_value_template, tld, quote!(OctetString), value_to_tokens(&tld.value, None)?),
+        ASN1Value::BitString(_) if ty == BIT_STRING => call_template!(
+            lazy_static_value_template,
+            tld,
+            quote!(BitString),
+            value_to_tokens(&tld.value, None)?
+        ),
+        ASN1Value::OctetString(_) if ty == OCTET_STRING => call_template!(
+            lazy_static_value_template,
+            tld,
+            quote!(OctetString),
+            value_to_tokens(&tld.value, None)?
+        ),
         ASN1Value::Choice(choice, inner) => {
             if inner.is_const_type() {
-                call_template!(const_choice_value_template, tld, to_rust_title_case(&tld.associated_type), to_rust_enum_identifier(choice), value_to_tokens(inner, None)?)
+                call_template!(
+                    const_choice_value_template,
+                    tld,
+                    to_rust_title_case(&tld.associated_type),
+                    to_rust_enum_identifier(choice),
+                    value_to_tokens(inner, None)?
+                )
             } else {
-                call_template!(choice_value_template, tld, to_rust_title_case(&tld.associated_type), to_rust_enum_identifier(choice), value_to_tokens(inner, None)?)
+                call_template!(
+                    choice_value_template,
+                    tld,
+                    to_rust_title_case(&tld.associated_type),
+                    to_rust_enum_identifier(choice),
+                    value_to_tokens(inner, None)?
+                )
             }
-        },
-        ASN1Value::EnumeratedValue { enumerated, enumerable } => call_template!(enum_value_template, tld, to_rust_title_case(enumerated), to_rust_enum_identifier(enumerable)),
-        ASN1Value::Time(_) if ty == GENERALIZED_TIME => call_template!(lazy_static_value_template, tld, quote!(GeneralizedTime), value_to_tokens(&tld.value, Some(&quote!(GeneralizedTime)))?),
-        ASN1Value::Time(_) if ty == UTC_TIME => call_template!(lazy_static_value_template, tld, quote!(UtcTime), value_to_tokens(&tld.value, Some(&quote!(UtcTime)))?),
+        }
+        ASN1Value::EnumeratedValue {
+            enumerated,
+            enumerable,
+        } => call_template!(
+            enum_value_template,
+            tld,
+            to_rust_title_case(enumerated),
+            to_rust_enum_identifier(enumerable)
+        ),
+        ASN1Value::Time(_) if ty == GENERALIZED_TIME => call_template!(
+            lazy_static_value_template,
+            tld,
+            quote!(GeneralizedTime),
+            value_to_tokens(&tld.value, Some(&quote!(GeneralizedTime)))?
+        ),
+        ASN1Value::Time(_) if ty == UTC_TIME => call_template!(
+            lazy_static_value_template,
+            tld,
+            quote!(UtcTime),
+            value_to_tokens(&tld.value, Some(&quote!(UtcTime)))?
+        ),
         ASN1Value::LinkedStructLikeValue(s) => {
-            let members = s.iter().map(|(_, val)| {
-                value_to_tokens(val.value(), None)
-            }).collect::<Result<Vec<TokenStream>, _>>()?;
-            call_template!(sequence_or_set_value_template, tld, to_rust_title_case(&tld.associated_type), quote!(#(#members),*))
-        },
+            let members = s
+                .iter()
+                .map(|(_, val)| value_to_tokens(val.value(), None))
+                .collect::<Result<Vec<TokenStream>, _>>()?;
+            call_template!(
+                sequence_or_set_value_template,
+                tld,
+                to_rust_title_case(&tld.associated_type),
+                quote!(#(#members),*)
+            )
+        }
         ASN1Value::LinkedNestedValue { supertypes, value } => {
             let parent = supertypes.last().map(to_rust_title_case);
             if value.is_const_type() {
-                call_template!(primitive_value_template, tld, to_rust_title_case(&tld.associated_type), assignment!(&tld.associated_type, value_to_tokens(&tld.value, parent.as_ref())?))
+                call_template!(
+                    primitive_value_template,
+                    tld,
+                    to_rust_title_case(&tld.associated_type),
+                    assignment!(
+                        &tld.associated_type,
+                        value_to_tokens(&tld.value, parent.as_ref())?
+                    )
+                )
             } else {
-                call_template!(lazy_static_value_template, tld, to_rust_title_case(&tld.associated_type), assignment!(&tld.associated_type, value_to_tokens(&tld.value, parent.as_ref())?))
+                call_template!(
+                    lazy_static_value_template,
+                    tld,
+                    to_rust_title_case(&tld.associated_type),
+                    assignment!(
+                        &tld.associated_type,
+                        value_to_tokens(&tld.value, parent.as_ref())?
+                    )
+                )
             }
-        },
-        ASN1Value::ObjectIdentifier(_) if ty == OBJECT_IDENTIFIER => call_template!(lazy_static_value_template, tld, quote!(ObjectIdentifier), value_to_tokens(&tld.value, None)?),
-        ASN1Value::LinkedCharStringValue(_, _) if ty == NUMERIC_STRING => call_template!(lazy_static_value_template, tld, quote!(NumericString), value_to_tokens(&tld.value, None)?),
-        ASN1Value::LinkedCharStringValue(_, _) if ty == VISIBLE_STRING => call_template!(lazy_static_value_template, tld, quote!(VisibleString), value_to_tokens(&tld.value, None)?),
-        ASN1Value::LinkedCharStringValue(_, _) if ty == IA5_STRING => call_template!(lazy_static_value_template, tld, quote!(IA5String), value_to_tokens(&tld.value, None)?),
-        ASN1Value::LinkedCharStringValue(_, _) if ty == UTF8_STRING => call_template!(lazy_static_value_template, tld, quote!(UTF8String), value_to_tokens(&tld.value, None)?),
-        ASN1Value::LinkedCharStringValue(_, _) if ty == BMP_STRING => call_template!(lazy_static_value_template, tld, quote!(BMPString), value_to_tokens(&tld.value, None)?),
-        ASN1Value::LinkedCharStringValue(_, _) if ty == PRINTABLE_STRING => call_template!(lazy_static_value_template, tld, quote!(PrintableString), value_to_tokens(&tld.value, None)?),
-        ASN1Value::LinkedCharStringValue(_, _) if ty == GENERAL_STRING => call_template!(lazy_static_value_template, tld, quote!(GeneralString), value_to_tokens(&tld.value, None)?),
-        ASN1Value::SequenceOrSetOf(s) if ty.contains(SEQUENCE_OF) => {
-            let item_type = format_sequence_or_set_of_item_type(ty.replace(SEQUENCE_OF, "").trim().to_string(), s.first());
-            call_template!(lazy_static_value_template, tld, quote!(Vec<#item_type>), value_to_tokens(&tld.value, None)?)
-        },
-        ASN1Value::SequenceOrSetOf(s) if ty.contains(SET_OF) => {
-            let item_type = format_sequence_or_set_of_item_type(ty.replace(SET_OF, "").trim().to_string(), s.first());
-            call_template!(lazy_static_value_template, tld, quote!(Vec<#item_type>), value_to_tokens(&tld.value, None)?)
-        },
-        ASN1Value::BitString(_) |
-        ASN1Value::Time(_) |
-        ASN1Value::LinkedCharStringValue(_, _) |
-        ASN1Value::ObjectIdentifier(_) |
-        ASN1Value::SequenceOrSetOf(_) |
-        ASN1Value::ElsewhereDeclaredValue { .. } |
-        ASN1Value::OctetString(_) => call_template!(lazy_static_value_template, tld, to_rust_title_case(&tld.associated_type), assignment!(&tld.associated_type, value_to_tokens(&tld.value, None)?)),
+        }
+        ASN1Value::ObjectIdentifier(_) if ty == OBJECT_IDENTIFIER => call_template!(
+            lazy_static_value_template,
+            tld,
+            quote!(ObjectIdentifier),
+            value_to_tokens(&tld.value, None)?
+        ),
+        ASN1Value::LinkedCharStringValue(_, _) if ty == NUMERIC_STRING => call_template!(
+            lazy_static_value_template,
+            tld,
+            quote!(NumericString),
+            value_to_tokens(&tld.value, None)?
+        ),
+        ASN1Value::LinkedCharStringValue(_, _) if ty == VISIBLE_STRING => call_template!(
+            lazy_static_value_template,
+            tld,
+            quote!(VisibleString),
+            value_to_tokens(&tld.value, None)?
+        ),
+        ASN1Value::LinkedCharStringValue(_, _) if ty == IA5_STRING => call_template!(
+            lazy_static_value_template,
+            tld,
+            quote!(IA5String),
+            value_to_tokens(&tld.value, None)?
+        ),
+        ASN1Value::LinkedCharStringValue(_, _) if ty == UTF8_STRING => call_template!(
+            lazy_static_value_template,
+            tld,
+            quote!(UTF8String),
+            value_to_tokens(&tld.value, None)?
+        ),
+        ASN1Value::LinkedCharStringValue(_, _) if ty == BMP_STRING => call_template!(
+            lazy_static_value_template,
+            tld,
+            quote!(BMPString),
+            value_to_tokens(&tld.value, None)?
+        ),
+        ASN1Value::LinkedCharStringValue(_, _) if ty == PRINTABLE_STRING => call_template!(
+            lazy_static_value_template,
+            tld,
+            quote!(PrintableString),
+            value_to_tokens(&tld.value, None)?
+        ),
+        ASN1Value::LinkedCharStringValue(_, _) if ty == GENERAL_STRING => call_template!(
+            lazy_static_value_template,
+            tld,
+            quote!(GeneralString),
+            value_to_tokens(&tld.value, None)?
+        ),
+        ASN1Value::LinkedArrayLikeValue(s) if ty.contains(SEQUENCE_OF) => {
+            let item_type = format_sequence_or_set_of_item_type(
+                ty.replace(SEQUENCE_OF, "").trim().to_string(),
+                s.first().map(|i| &**i),
+            );
+            call_template!(
+                lazy_static_value_template,
+                tld,
+                quote!(Vec<#item_type>),
+                value_to_tokens(&tld.value, None)?
+            )
+        }
+        ASN1Value::LinkedArrayLikeValue(s) if ty.contains(SET_OF) => {
+            let item_type = format_sequence_or_set_of_item_type(
+                ty.replace(SET_OF, "").trim().to_string(),
+                s.first().map(|i| &**i),
+            );
+            call_template!(
+                lazy_static_value_template,
+                tld,
+                quote!(Vec<#item_type>),
+                value_to_tokens(&tld.value, None)?
+            )
+        }
+        ASN1Value::BitString(_)
+        | ASN1Value::Time(_)
+        | ASN1Value::LinkedCharStringValue(_, _)
+        | ASN1Value::ObjectIdentifier(_)
+        | ASN1Value::LinkedArrayLikeValue(_)
+        | ASN1Value::ElsewhereDeclaredValue { .. }
+        | ASN1Value::OctetString(_) => call_template!(
+            lazy_static_value_template,
+            tld,
+            to_rust_title_case(&tld.associated_type),
+            assignment!(&tld.associated_type, value_to_tokens(&tld.value, None)?)
+        ),
         _ => Ok(TokenStream::new()),
     }
 }
@@ -290,7 +469,9 @@ pub fn generate_any(tld: ToplevelTypeDefinition) -> Result<TokenStream, Generato
     ))
 }
 
-pub fn generate_generalized_time(tld: ToplevelTypeDefinition) -> Result<TokenStream, GeneratorError> {
+pub fn generate_generalized_time(
+    tld: ToplevelTypeDefinition,
+) -> Result<TokenStream, GeneratorError> {
     if let ASN1Type::GeneralizedTime(_) = &tld.ty {
         Ok(generalized_time_template(
             format_comments(&tld.comments)?,
@@ -327,8 +508,11 @@ pub fn generate_oid(tld: ToplevelTypeDefinition) -> Result<TokenStream, Generato
         Ok(oid_template(
             format_comments(&tld.comments)?,
             to_rust_title_case(&tld.name),
-            join_annotations(vec![quote!(delegate), format_tag(tld.tag.as_ref(), false),
-            format_range_annotations(false, &oid.constraints)?]),
+            join_annotations(vec![
+                quote!(delegate),
+                format_tag(tld.tag.as_ref(), false),
+                format_range_annotations(false, &oid.constraints)?,
+            ]),
         ))
     } else {
         Err(GeneratorError::new(
@@ -357,16 +541,22 @@ pub fn generate_null(tld: ToplevelTypeDefinition) -> Result<TokenStream, Generat
 
 pub fn generate_enumerated(tld: ToplevelTypeDefinition) -> Result<TokenStream, GeneratorError> {
     if let ASN1Type::Enumerated(ref enumerated) = tld.ty {
-        let extensible = enumerated.extensible.map(|_| {
-            quote!{
+        let extensible = enumerated
+            .extensible
+            .map(|_| {
+                quote! {
                 #[non_exhaustive]}
-        }).unwrap_or_default();
+            })
+            .unwrap_or_default();
         Ok(enumerated_template(
             format_comments(&tld.comments)?,
             to_rust_title_case(&tld.name),
             extensible,
             format_enum_members(enumerated),
-            join_annotations(vec![quote!(enumerated), format_tag(tld.tag.as_ref(), false)]),
+            join_annotations(vec![
+                quote!(enumerated),
+                format_tag(tld.tag.as_ref(), false),
+            ]),
         ))
     } else {
         Err(GeneratorError::new(
@@ -381,10 +571,13 @@ pub fn generate_choice(tld: ToplevelTypeDefinition) -> Result<TokenStream, Gener
     if let ASN1Type::Choice(ref choice) = tld.ty {
         let name = to_rust_title_case(&tld.name);
         let inner_options = format_nested_choice_options(choice, &name.to_string())?;
-        let extensible = choice.extensible.map(|_| {
-            quote!{
+        let extensible = choice
+            .extensible
+            .map(|_| {
+                quote! {
                 #[non_exhaustive]}
-        }).unwrap_or_default();
+            })
+            .unwrap_or_default();
         Ok(choice_template(
             format_comments(&tld.comments)?,
             name.clone(),
@@ -402,14 +595,19 @@ pub fn generate_choice(tld: ToplevelTypeDefinition) -> Result<TokenStream, Gener
     }
 }
 
-pub fn generate_sequence_or_set(tld: ToplevelTypeDefinition) -> Result<TokenStream, GeneratorError> {
+pub fn generate_sequence_or_set(
+    tld: ToplevelTypeDefinition,
+) -> Result<TokenStream, GeneratorError> {
     match tld.ty {
         ASN1Type::Sequence(ref seq) | ASN1Type::Set(ref seq) => {
             let name = to_rust_title_case(&tld.name);
-            let extensible = seq.extensible.map(|_| {
-                quote!{
+            let extensible = seq
+                .extensible
+                .map(|_| {
+                    quote! {
                     #[non_exhaustive]}
-            }).unwrap_or_default();
+                })
+                .unwrap_or_default();
             let set_annotation = if let ASN1Type::Set(_) = tld.ty {
                 quote!(set)
             } else {
@@ -419,7 +617,7 @@ pub fn generate_sequence_or_set(tld: ToplevelTypeDefinition) -> Result<TokenStre
                 let decode_fn = format_ident!("decode_{}", to_rust_snake_case(&m.name));
                 let open_field_name = to_rust_snake_case(&m.name);
                 if let (Constraint::TableConstraint(t), ASN1Type::InformationObjectFieldReference(iofr)) = (c, &m.ty) {
-                        let identifier = t.linked_fields.iter().map(|l| 
+                        let identifier = t.linked_fields.iter().map(|l|
                             to_rust_snake_case(&l.field_name)
                         );
                         let field_name = iofr.field_path.last().unwrap().identifier().replace('&', "");
@@ -455,7 +653,7 @@ pub fn generate_sequence_or_set(tld: ToplevelTypeDefinition) -> Result<TokenStre
                 join_annotations(vec![set_annotation, format_tag(tld.tag.as_ref(), true)]),
                 format_default_methods(&seq.members, &name.to_string())?,
                 format_new_impl(&name, name_types),
-                class_fields
+                class_fields,
             ))
         }
         _ => Err(GeneratorError::new(
@@ -466,7 +664,9 @@ pub fn generate_sequence_or_set(tld: ToplevelTypeDefinition) -> Result<TokenStre
     }
 }
 
-pub fn generate_sequence_or_set_of(tld: ToplevelTypeDefinition) -> Result<TokenStream, GeneratorError> {
+pub fn generate_sequence_or_set_of(
+    tld: ToplevelTypeDefinition,
+) -> Result<TokenStream, GeneratorError> {
     let (is_set_of, seq_or_set_of) = match &tld.ty {
         ASN1Type::SetOf(se_of) => (true, se_of),
         ASN1Type::SequenceOf(se_of) => (false, se_of),
@@ -506,8 +706,11 @@ pub fn generate_sequence_or_set_of(tld: ToplevelTypeDefinition) -> Result<TokenS
         name,
         anonymous_item,
         member_type,
-        join_annotations(vec![quote!(delegate), format_range_annotations(true, &seq_or_set_of.constraints)?,
-        format_tag(tld.tag.as_ref(), false)]),
+        join_annotations(vec![
+            quote!(delegate),
+            format_range_annotations(true, &seq_or_set_of.constraints)?,
+            format_tag(tld.tag.as_ref(), false),
+        ]),
     ))
 }
 
@@ -528,25 +731,21 @@ pub fn generate_information_object_set(
         let mut keys_to_types = o
             .values
             .iter()
-            .map(|v| {
-                match v {
-                    ObjectSetValue::Reference(r) => {
-                        Err(GeneratorError::new(
-                            None,
-                            &format!("Could not resolve reference of Information Object Set {r}"),
-                            GeneratorErrorType::MissingClassKey,
-                        ))
-                    },
-                    ObjectSetValue::Inline(InformationObjectFields::CustomSyntax(_)) => {
-                        Err(GeneratorError::new(
-                            Some(ToplevelDefinition::Information(tld.clone())),
-                            "Unexpectedly encountered unresolved custom syntax!",
-                            GeneratorErrorType::MissingClassKey,
-                        ))
-                    }
-                    ObjectSetValue::Inline(InformationObjectFields::DefaultSyntax(s)) => {
-                        resolve_standard_syntax(class, s)
-                    }
+            .map(|v| match v {
+                ObjectSetValue::Reference(r) => Err(GeneratorError::new(
+                    None,
+                    &format!("Could not resolve reference of Information Object Set {r}"),
+                    GeneratorErrorType::MissingClassKey,
+                )),
+                ObjectSetValue::Inline(InformationObjectFields::CustomSyntax(_)) => {
+                    Err(GeneratorError::new(
+                        Some(ToplevelDefinition::Information(tld.clone())),
+                        "Unexpectedly encountered unresolved custom syntax!",
+                        GeneratorErrorType::MissingClassKey,
+                    ))
+                }
+                ObjectSetValue::Inline(InformationObjectFields::DefaultSyntax(s)) => {
+                    resolve_standard_syntax(class, s)
                 }
             })
             .collect::<Result<Vec<(ASN1Value, Vec<(usize, ASN1Type)>)>, _>>()?;
@@ -587,9 +786,13 @@ pub fn generate_information_object_set(
         let mut field_enums = vec![];
         for (field_name, fields) in choices.iter() {
             let field_enum_name = format_ident!("{name}_{}", field_name.replace('&', ""));
-            let (mut ids, mut inner_types) = (vec![], vec![]); 
+            let (mut ids, mut inner_types) = (vec![], vec![]);
             for (index, (id, ty)) in fields.iter().enumerate() {
-                let identifier_value = if let ASN1Value::LinkedElsewhereDefinedValue { can_be_const: false, .. } = id {
+                let identifier_value = if let ASN1Value::LinkedElsewhereDefinedValue {
+                    can_be_const: false,
+                    ..
+                } = id
+                {
                     let tokenized_value = value_to_tokens(id, Some(&class_unique_id_type_name))?;
                     quote!(*#tokenized_value)
                 } else {
@@ -597,9 +800,13 @@ pub fn generate_information_object_set(
                 };
                 let type_id = type_to_tokens(ty).unwrap_or(quote!(Option<()>));
                 let variant_name = match id {
-                    ASN1Value::LinkedElsewhereDefinedValue { identifier: ref_id, .. } |
-                    ASN1Value::ElsewhereDeclaredValue{identifier: ref_id, ..} => to_rust_title_case(ref_id),
-                    _ => format_ident!("{field_enum_name}_{index}").to_token_stream()
+                    ASN1Value::LinkedElsewhereDefinedValue {
+                        identifier: ref_id, ..
+                    }
+                    | ASN1Value::ElsewhereDeclaredValue {
+                        identifier: ref_id, ..
+                    } => to_rust_title_case(ref_id),
+                    _ => format_ident!("{field_enum_name}_{index}").to_token_stream(),
                 };
                 if ty.constraints().map_or(true, |c| c.is_empty()) {
                     ids.push((variant_name, type_id, identifier_value));
@@ -611,26 +818,43 @@ pub fn generate_information_object_set(
                         ASN1Type::Real(_) => (true, None),
                         ASN1Type::BitString(_) => (false, None),
                         ASN1Type::OctetString(_) => (false, None),
-                        _ => (false, None)
-                        
+                        _ => (false, None),
                     };
-                    let delegate_id = &format!("Inner_{field_enum_name}_{index}").parse::<TokenStream>().unwrap();
-                    let range_constraints = format_range_annotations(signed_range, ty.constraints().unwrap_or(&Vec::<_>::new())).unwrap();
-                    let alphabet_constraints = character_string_type.and_then(|c| format_alphabet_annotations(c, ty.constraints().unwrap_or(&Vec::<_>::new())).ok()).unwrap_or_default();
-                    let annotations = join_annotations(vec![range_constraints, alphabet_constraints, quote!(delegate)]);
+                    let delegate_id = &format!("Inner_{field_enum_name}_{index}")
+                        .parse::<TokenStream>()
+                        .unwrap();
+                    let range_constraints = format_range_annotations(
+                        signed_range,
+                        ty.constraints().unwrap_or(&Vec::<_>::new()),
+                    )
+                    .unwrap();
+                    let alphabet_constraints = character_string_type
+                        .and_then(|c| {
+                            format_alphabet_annotations(
+                                c,
+                                ty.constraints().unwrap_or(&Vec::<_>::new()),
+                            )
+                            .ok()
+                        })
+                        .unwrap_or_default();
+                    let annotations = join_annotations(vec![
+                        range_constraints,
+                        alphabet_constraints,
+                        quote!(delegate),
+                    ]);
                     ids.push((variant_name, delegate_id.clone(), identifier_value));
-                    inner_types.push(quote!{
+                    inner_types.push(quote! {
                         #[derive(Debug, Clone, PartialEq, AsnType, Decode, Encode)]
                         #annotations
                         pub struct #delegate_id (pub #type_id);
 
                     });
                 }
-            };
-            
-            let variants = ids.iter().map(|(variant_name, type_id, _)| {
-                quote!(#variant_name (#type_id),)
-            });
+            }
+
+            let variants = ids
+                .iter()
+                .map(|(variant_name, type_id, _)| quote!(#variant_name (#type_id),));
 
             let de_match_arms = ids.iter().map(|(variant_name, _, identifier_value)| {
                 quote!(i if i == &#identifier_value => Ok(decoder.codec().decode_from_binary(open_type_payload.ok_or_else(|| rasn::error::DecodeError::from_kind(
@@ -680,7 +904,7 @@ pub fn generate_information_object_set(
                 }
 
             });
-        };
+        }
 
         Ok(quote!(#(#field_enums)*))
     } else {

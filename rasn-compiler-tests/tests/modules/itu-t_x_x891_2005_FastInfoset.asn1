@@ -95,24 +95,24 @@ Element ::= SEQUENCE {
 Attribute ::= SEQUENCE {
   qualified-name    QualifiedNameOrIndex-- ATTRIBUTE NAME category --,
   normalized-value  NonIdentifyingStringOrIndex
-} -- ATTRIBUTE VALUE category 
+} -- ATTRIBUTE VALUE category
 
 ProcessingInstruction ::= SEQUENCE {
   target   IdentifyingStringOrIndex-- OTHER NCNAME category --,
   content  NonIdentifyingStringOrIndex
-} -- OTHER STRING category 
+} -- OTHER STRING category
 
 UnexpandedEntityReference ::= SEQUENCE {
   name               IdentifyingStringOrIndex-- OTHER NCNAME category --,
   system-identifier  IdentifyingStringOrIndex OPTIONAL-- OTHER URI category --,
   public-identifier  IdentifyingStringOrIndex OPTIONAL
-} -- OTHER URI category 
+} -- OTHER URI category
 
 CharacterChunk ::= SEQUENCE {character-codes  NonIdentifyingStringOrIndex
-} -- CONTENT CHARACTER CHUNK category 
+} -- CONTENT CHARACTER CHUNK category
 
 Comment ::= SEQUENCE {content  NonIdentifyingStringOrIndex
-} -- OTHER STRING category 
+} -- OTHER STRING category
 
 DocumentTypeDeclaration ::= SEQUENCE {
   system-identifier  IdentifyingStringOrIndex OPTIONAL-- OTHER URI category --,
@@ -125,18 +125,18 @@ UnparsedEntity ::= SEQUENCE {
   system-identifier  IdentifyingStringOrIndex-- OTHER URI category --,
   public-identifier  IdentifyingStringOrIndex OPTIONAL-- OTHER URI category --,
   notation-name      IdentifyingStringOrIndex
-} -- OTHER NCNAME category 
+} -- OTHER NCNAME category
 
 Notation ::= SEQUENCE {
   name               IdentifyingStringOrIndex-- OTHER NCNAME category --,
   system-identifier  IdentifyingStringOrIndex OPTIONAL-- OTHER URI category --,
   public-identifier  IdentifyingStringOrIndex OPTIONAL
-} -- OTHER URI category 
+} -- OTHER URI category
 
 NamespaceAttribute ::= SEQUENCE {
   prefix          IdentifyingStringOrIndex OPTIONAL-- PREFIX category --,
   namespace-name  IdentifyingStringOrIndex OPTIONAL
-} -- NAMESPACE NAME category 
+} -- NAMESPACE NAME category
 
 IdentifyingStringOrIndex ::= CHOICE {
   literal-character-string  NonEmptyOctetString,
@@ -155,14 +155,14 @@ NameSurrogate ::= SEQUENCE {
   namespace-name-string-index  INTEGER(1..one-meg) OPTIONAL,
   local-name-string-index      INTEGER(1..one-meg)
 }(CONSTRAINED BY {}) -- prefix-string-index shall only be present if
- 
 
--- namespace-name-string-index is present 
+
+-- namespace-name-string-index is present
 QualifiedNameOrIndex ::= CHOICE {
   literal-qualified-name
     SEQUENCE {prefix          IdentifyingStringOrIndex OPTIONAL-- PREFIX category --,
               namespace-name  IdentifyingStringOrIndex OPTIONAL-- NAMESPACE NAME category --,
-              local-name      IdentifyingStringOrIndex}, -- LOCAL NAME category 
+              local-name      IdentifyingStringOrIndex}, -- LOCAL NAME category
   name-surrogate-index    INTEGER(1..one-meg)
 }
 

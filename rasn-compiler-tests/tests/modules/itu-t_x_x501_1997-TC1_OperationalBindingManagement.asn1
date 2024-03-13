@@ -14,9 +14,9 @@ OperationalBindingManagement {joint-iso-itu-t ds(5) module(1)
   opBindingManagement(18) 3} DEFINITIONS ::=
 BEGIN
 
--- EXPORTS All 
--- The types and values defined in this module are exported for use in the other ASN.1 modules contained 
--- within the Directory Specifications, and for the use of other applications which will use them to access 
+-- EXPORTS All
+-- The types and values defined in this module are exported for use in the other ASN.1 modules contained
+-- within the Directory Specifications, and for the use of other applications which will use them to access
 -- Directory services. Other applications may use them for their own purposes, but this will not constrain
 -- extensions and modifications needed to maintain or improve the Directory service.
 IMPORTS
@@ -56,13 +56,13 @@ IMPORTS
   PROTECTED{}
     FROM Notation {joint-iso-itu-t genericULS(20) modules(1) notation(1)};
 
--- bind and unbind 
+-- bind and unbind
 dSAOperationalBindingManagementBind OPERATION ::=
   directoryBind
 
 dSAOperationalBindingManagementUnbind OPERATION ::= directoryUnbind
 
--- operations, arguments and results 
+-- operations, arguments and results
 establishOperationalBinding OPERATION ::= {
   ARGUMENT  EstablishOperationalBindingArgument
   RESULT    EstablishOperationalBindingResult
@@ -76,7 +76,7 @@ EstablishOperationalBindingArgument ::=
                  [0]  OPERATIONAL-BINDING.&id({OpBindingSet}),
                bindingID           [1]  OperationalBindingID OPTIONAL,
                accessPoint         [2]  AccessPoint,
-               -- symmetric, Role A initiates, or Role B initiates 
+               -- symmetric, Role A initiates, or Role B initiates
                initiator
                  CHOICE {symmetric
                            [3]  OPERATIONAL-BINDING.
@@ -115,7 +115,7 @@ EstablishOperationalBindingResult ::=
     {SET {bindingType  [0]  OPERATIONAL-BINDING.&id({OpBindingSet}),
           bindingID    [1]  OperationalBindingID OPTIONAL,
           accessPoint  [2]  AccessPoint,
-          -- symmetric, Role A replies , or Role B replies 
+          -- symmetric, Role A replies , or Role B replies
           initiator
             CHOICE {symmetric
                       [3]  OPERATIONAL-BINDING.&both.&EstablishParam
@@ -141,7 +141,7 @@ ModifyOperationalBindingArgument ::=
                  [0]  OPERATIONAL-BINDING.&id({OpBindingSet}),
                bindingID           [1]  OperationalBindingID,
                accessPoint         [2]  AccessPoint OPTIONAL,
-               -- symmetric, Role A initiates, or Role B initiates 
+               -- symmetric, Role A initiates, or Role B initiates
                initiator
                  CHOICE {symmetric
                            [3]  OPERATIONAL-BINDING.&both.&ModifyParam
@@ -186,7 +186,7 @@ TerminateOperationalBindingArgument ::=
     {SEQUENCE {bindingType
                  [0]  OPERATIONAL-BINDING.&id({OpBindingSet}),
                bindingID           [1]  OperationalBindingID,
-               -- symmetric, Role A initiates, or Role B initiates 
+               -- symmetric, Role A initiates, or Role B initiates
                initiator
                  CHOICE {symmetric
                            [2]  OPERATIONAL-BINDING.
@@ -215,7 +215,7 @@ TerminateOperationalBindingResult ::= CHOICE {
            }, dirqop.&dopTermOpBindRes-QOP}
 }
 
--- errors and parameters 
+-- errors and parameters
 operationalBindingError ERROR ::= {
   PARAMETER OPTIONALLY-PROTECTED
     {OpBindingErrorParam,
@@ -238,7 +238,7 @@ OpBindingErrorParam ::= SET {
   COMPONENTS OF CommonResults
 }
 
--- information object classes 
+-- information object classes
 OPERATIONAL-BINDING ::= CLASS {
   &Agreement    ,
   &Cooperation  OP-BINDING-COOP,

@@ -85,7 +85,7 @@ IMPORTS
   SCF-SRF-BOUNDS
     FROM IN-SCF-SRF-Classes scf-srf-classes;
 
--- The following short-hand notation is used to refer to ASN.1 Information Object Classes 
+-- The following short-hand notation is used to refer to ASN.1 Information Object Classes
 -- representing parameters bounds.
 B1 ::=
   COMMON-BOUNDS -- defined in Recommendation Q.1248.1
@@ -105,7 +105,7 @@ announcementCompletionReport OPERATION ::= {
 
 -- Direction: controlling-SCF -> supporting-SCF, Timer: Tanr
 -- This operation is used as the response to a ProvideAnnouncementRequest operation when the announcement
--- completed report indication is set. 
+-- completed report indication is set.
 AnnouncementCompletionReportArg ::= NULL
 
 establishChargingRecord{B1:b1, B2:b2, B6:b6} OPERATION ::= {
@@ -122,7 +122,7 @@ establishChargingRecord{B1:b1, B2:b2, B6:b6} OPERATION ::= {
 }
 
 -- Direction: supporting SCF -> controlling SCF, Timer Tecr
--- This operation is used by the supporting SCF to give charging information to the controlling 
+-- This operation is used by the supporting SCF to give charging information to the controlling
 -- SCF so that it can charge the user (on-line charging included).
 EstablishChargingRecordArg{B1:b1, B2:b2, B6:b6} ::=
   OPTIONALLY-PROTECTED
@@ -159,7 +159,7 @@ handlingInformationRequest{B1:b1, B2:b2, B6:b6} OPERATION ::= {
 }
 
 -- Direction: controlling SCF -> supporting SCF , Timer Thi
--- This operation  may be used to request the  execution of an SLP 
+-- This operation  may be used to request the  execution of an SLP
 -- in the assisting SCF and to provide to the  assisting
 -- SCF the context of the call so that it can help the  controlling SCF in the processing of the call.
 HandlingInformationRequestArg{B1:b1, B2:b2, B6:b6} ::=
@@ -206,8 +206,8 @@ handlingInformationResult{B1:b1, B2:b2} OPERATION ::= {
 }
 
 -- Direction: supporting SCF ->controlling SCF, Timer Thir
--- This operation is used by the assisting SCF to send information to the controlling SCF on how 
--- to process the call and to give conditions under which it should be involved in the call 
+-- This operation is used by the assisting SCF to send information to the controlling SCF on how
+-- to process the call and to give conditions under which it should be involved in the call
 -- processing.
 HandlingInformationResultArg{B1:b1, B2:b2} ::=
   OPTIONALLY-PROTECTED
@@ -261,7 +261,7 @@ networkCapability{B1:b1} OPERATION ::= {
 }
 
 -- Direction: supporting SCF ->controlling  SCF, Timer Tnc
--- This operation is used by the supporting SCF to request from the controlling SCF which type of 
+-- This operation is used by the supporting SCF to request from the controlling SCF which type of
 -- service it supports.
 NetworkCapabilityArg{B1:b1} ::=
   OPTIONALLY-PROTECTED
@@ -294,8 +294,8 @@ notificationProvided{B1:b1, B2:b2} OPERATION ::= {
 }
 
 -- Direction: controlling SCF -> supporting SCF, Timer Tnp
--- This operation is used by the controlling SCF to request assistance from the assisting SCF 
--- under specific call conditions specified prior to the sending of the operation or to notify the 
+-- This operation is used by the controlling SCF to request assistance from the assisting SCF
+-- under specific call conditions specified prior to the sending of the operation or to notify the
 -- outcome of a previous intervention of the assisting SCF.
 NotificationProvidedArg{B1:b1, B2:b2} ::=
   OPTIONALLY-PROTECTED
@@ -352,7 +352,7 @@ provideUserInformation{B1:b1, B2:b2, B6:b6} OPERATION ::= {
 }
 
 -- Direction: supporting SCF -> controlling SCF, Timer Tpui
--- This operation is used by the supporting SCF to request information from the user that can be 
+-- This operation is used by the supporting SCF to request information from the user that can be
 -- interrogated by the controlling SCF.
 ProvideUserInformationArg{B1:b1, B2:b2} ::=
   OPTIONALLY-PROTECTED
@@ -390,7 +390,7 @@ reportChargingInformation{B1:b1, B2:b2, B6:b6} OPERATION ::= {
 }
 
 -- Direction: controlling SCF -> supporting SCF, Timer Trci
--- This operation is used to give to the assisting network charging information collected by the 
+-- This operation is used to give to the assisting network charging information collected by the
 -- controlling network.
 ReportChargingInformationArg{B1:b1, B2:b2, B6:b6} ::=
   OPTIONALLY-PROTECTED
@@ -427,7 +427,7 @@ requestNotification{B1:b1, B2:b2} OPERATION ::= {
 }
 
 -- Direction: supporting SCF  -> controlling SCF, Timer Trn
--- This operation is used by the supporting SCF to request notification from the controlling SCF 
+-- This operation is used by the supporting SCF to request notification from the controlling SCF
 -- under specific call conditions specified by this operation.
 RequestNotificationArg{B1:b1, B2:b2} ::=
   OPTIONALLY-PROTECTED
@@ -478,18 +478,18 @@ scfBind{B6:b6} OPERATION ::= {
 
 -- Direction: controlling SCF -> supporting SCF, or supporting SCF -> controlling SCF, Timer Tbi
 -- This operation is used to establish a relationship between two SCFs. It is sent by the controlling/supporting SCF
---  each time it needs to initiate communications with another SCF. 
+--  each time it needs to initiate communications with another SCF.
 SCFBindArgument{B6:b6} ::= SEQUENCE {
   agreementID            [0]  AgreementID,
   originatingScfAddress  [1]  ScfAddress{b6} OPTIONAL,
-  -- absent in a chained operation request which crosses 
+  -- absent in a chained operation request which crosses
   -- an international internetworking boundary
   credentials            [2]  Credentials OPTIONAL
 }
 
 SCFBindResult{B6:b6} ::= SEQUENCE {
   respondingScfAddress  [0]  ScfAddress{b6} OPTIONAL,
-  -- absent in a chained operation request which crosses 
+  -- absent in a chained operation request which crosses
   -- an international internetworking boundary
   returnedCredentials   [1]  Credentials OPTIONAL
 }
@@ -505,7 +505,7 @@ transferSTSI{B1:b1, B6:b6} OPERATION ::= {
   CODE             opcode-transferSTSI
 }
 
--- Direction: controlling SCF -> supporting SCF, or supporting SCF -> controlling SCF, Timer Ttstsi 
+-- Direction: controlling SCF -> supporting SCF, or supporting SCF -> controlling SCF, Timer Ttstsi
 -- This operation is used by the invoking SCF to request or report service information from/to the responding SCF
 TransferSTSIArg{B1:b1, B6:b6} ::=
   OPTIONALLY-PROTECTED

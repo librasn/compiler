@@ -383,8 +383,8 @@ HeadingExtensions EDIM-EXTENSION ::=
 
 primary-body-part-compression-indication EDIM-EXTENSION ::= {
   VALUE          CompressionParameter, -- as defined for IPM File Transfer Body
-                   
-                   
+
+
   -- Part
   CRITICALITY    TRUE
   IDENTIFIED BY  id-edi-compression
@@ -467,7 +467,7 @@ BodyPartPlaceHolder ::=
 EDIM-ExtendedBodyPart ::= SEQUENCE {
   body-part-reference  [0]  BodyPartReference OPTIONAL,
   extended-body-part
-    [1]  ExtendedBodyPart{{IPMBodyPartTable}}-- from IPMS -- 
+    [1]  ExtendedBodyPart{{IPMBodyPartTable}}-- from IPMS --
 }
 
 BodyPartReference ::= INTEGER -- shall be unique within a EDIM
@@ -561,85 +561,85 @@ NNUAMSReasonCodeField ::= SEQUENCE {
   nn-ua-ms-diagnostic  [1]  NNUAMSDiagnosticField OPTIONAL
 }
 
---	Negative Notification Basic Reason Codes from an EDI-UA or EDI-MS. These codes are 
---	those specified in Annex B of ITU-T Rec. F.435 | ISO/IEC 10021-8 
+--	Negative Notification Basic Reason Codes from an EDI-UA or EDI-MS. These codes are
+--	those specified in Annex B of ITU-T Rec. F.435 | ISO/IEC 10021-8
 --	for the element of service "EDI Notification Request".
 NNUAMSBasicCodeField ::= INTEGER {
   unspecified(0),
-  cannot-deliver-to-user(1), -- the EDI Interchange can not be passed on to the 
-  
+  cannot-deliver-to-user(1), -- the EDI Interchange can not be passed on to the
+
   -- user
-  delivery-timeout(2), -- the EDI Interchange could not be passed on to the 
-  
+  delivery-timeout(2), -- the EDI Interchange could not be passed on to the
+
   -- user within a specified time limit
   message-discarded(3), -- the UA/MS discarded the message before handoff to
-  
+
   -- user
-  subscription-terminated(4), -- recipient's subscription terminated after delivery 
-  
+  subscription-terminated(4), -- recipient's subscription terminated after delivery
+
   -- but before handoff to user
   forwarding-error(5), -- EDI Forwarding was attempted, but failed
   security-error(6) -- security error
-  
-  
+
+
 -- physical delivery errors indicated by "cannot-deliver-to-user"
 }(0..ub-reason-code)
 
 --	Negative Notification Diagnostic Codes from an EDI-UA or EDI-MS
 NNUAMSDiagnosticField ::= INTEGER {
-  -- This field may be used to further specify the error signalled in nn-ua-ms 
-  -- basic-code. 
+  -- This field may be used to further specify the error signalled in nn-ua-ms
+  -- basic-code.
   -- Additional information may be indicated in nn-supplementary-information general
   -- diagnostic codes
   protocol-violation(1), -- used if the UA detects a protocol error
   edim-originator-unknown(2), edim-recipient-unknown(3),
-  edim-recipient-ambiguous(4), -- used if the EDIM recipients or originator are 
-  
+  edim-recipient-ambiguous(4), -- used if the EDIM recipients or originator are
+
   -- not valid
-  action-request-not-supported(5), -- used when the action requested by the 
-  
+  action-request-not-supported(5), -- used when the action requested by the
+
   -- recipient is not performed
-  edim-expired(6), -- used when the expiry date of the received 
-  
-  -- EDIM occurred before the subject EDIM was 
+  edim-expired(6), -- used when the expiry date of the received
+
+  -- EDIM occurred before the subject EDIM was
   -- successfully passed to the user or forwarded
   -- by the EDI-UA
-  edim-obsoleted(7), -- used when the EDIM Identifier of the received 
-  
-  -- EDIM was contained in the Obsoleted EDIM 
+  edim-obsoleted(7), -- used when the EDIM Identifier of the received
+
+  -- EDIM was contained in the Obsoleted EDIM
   -- field of a previously received EDIM
-  duplicate-edim(8), -- used when the same EDIM is received more than 
-  
+  duplicate-edim(8), -- used when the same EDIM is received more than
+
   -- once from the same originator
-  unsupported-extension(9), -- used if the EDIM contains an extension which 
-  
+  unsupported-extension(9), -- used if the EDIM contains an extension which
+
   -- is not supported by the UA
-  incomplete-copy-rejected(10), -- used if the EDI-UA does not accept EDIMs with 
-  
+  incomplete-copy-rejected(10), -- used if the EDI-UA does not accept EDIMs with
+
   -- the Incomplete Copy Indication true
-  edim-too-large-for-application(11), -- used if the EDIM cannot be delivered to the 
-  
+  edim-too-large-for-application(11), -- used if the EDIM cannot be delivered to the
+
   -- user due to length constraints
   -- FORWARDING ERROR DIAGNOSTIC CODES
-  forwarded-edim-not-delivered(12), -- used when an Non-Delivery Report is received 
-  
+  forwarded-edim-not-delivered(12), -- used when an Non-Delivery Report is received
+
   -- for forwarded EDIM
-  forwarded-edim-delivery-time-out(13), -- used when no Delivery Report is received 
-  
+  forwarded-edim-delivery-time-out(13), -- used when no Delivery Report is received
+
   -- within a given period
-  forwarding-loop-detected(14), -- used if the UA receives an EDIM which 
-  
+  forwarding-loop-detected(14), -- used if the UA receives an EDIM which
+
   -- contains a previously forwarded EDIM
-  unable-to-accept-responsibility(15), -- used if the EDI-UA cannot accept or forward 
-  
+  unable-to-accept-responsibility(15), -- used if the EDI-UA cannot accept or forward
+
   -- responsibility
   -- INTERCHANGE HEADER DIAGNOSTIC CODES
-  interchange-sender-unknown(16), -- used when the UA does not recognize the 
-  
+  interchange-sender-unknown(16), -- used when the UA does not recognize the
+
   -- interchange-sender of the EDI interchange
-  interchange-recipient-unknown(17), -- used when the UA cannot find a valid 
-  
-  -- interchange recipient in the Recipient 
+  interchange-recipient-unknown(17), -- used when the UA cannot find a valid
+
+  -- interchange recipient in the Recipient
   -- Specifier
   invalid-heading-field(18), invalid-bodypart-type(19),
   invalid-message-type(20),
@@ -663,13 +663,13 @@ NNUserReasonCodeField ::= SEQUENCE {
 --	Negative Notification Basic Reason Codes from a user
 NNUserBasicCodeField ::= INTEGER {
   unspecified(0),
-  syntax-error(1), -- used when the user discovers a syntax error 
-  
+  syntax-error(1), -- used when the user discovers a syntax error
+
   -- within the EDI interchange
   interchange-sender-unknown(2),
-  interchange-recipient-unknown(3), -- used when the UA cannot find a valid 
-  
-  -- interchange recipient in the Recipient 
+  interchange-recipient-unknown(3), -- used when the UA cannot find a valid
+
+  -- interchange recipient in the Recipient
   -- Specifier
   invalid-heading-field(4), invalid-bodypart-type(5), invalid-message-type(6),
   functional-group-not-supported(7),
@@ -681,7 +681,7 @@ NNUserDiagnosticField ::= INTEGER {
   compression-unsupported(1) -- the received compression is not supported --
 }(1..ub-reason-code)
 
--- Contains reason passed by user when the value of nn-user-basic-code is 
+-- Contains reason passed by user when the value of nn-user-basic-code is
 -- user-defined-reason.
 -- Additional information may be indicated in nn-supplementary-information
 --	Negative Notification Reason Codes from a PDAU
@@ -694,10 +694,10 @@ NNPDAUReasonCodeField ::= SEQUENCE {
 NNPDAUBasicCodeField ::= INTEGER {
   unspecified(0),
   undeliverable-mail(1),
-  -- used if the PDAU determines that it cannot perform physical delivery of the 
-  -- EDIM 
+  -- used if the PDAU determines that it cannot perform physical delivery of the
+  -- EDIM
   physical-rendition-not-performed(2)
-  
+
 -- used if the PDAU cannot perform the physical rendition of the EDIM --}
 (0..ub-reason-code)
 
@@ -757,7 +757,7 @@ FNUAMSReasonCodeField ::= SEQUENCE {
 FNUAMSBasicCodeField ::= INTEGER {
   unspecified(0),
   onward-routing(1),
-  -- used whenever the UA decides to re-route the subject EDIM for local reasons 
+  -- used whenever the UA decides to re-route the subject EDIM for local reasons
   edim-recipient-unknown(2), edim-originator-unknown(3), forwarded-by-edi-ms(4)
 }(0..ub-reason-code)
 

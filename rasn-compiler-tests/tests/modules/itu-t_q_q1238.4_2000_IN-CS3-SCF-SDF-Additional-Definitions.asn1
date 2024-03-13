@@ -77,7 +77,7 @@ IN-EntryInformation ::=
     (WITH COMPONENTS {
        ...,
        fromEntry    (TRUE),
-       information  (WITH COMPONENT 
+       information  (WITH COMPONENT
                        (WITH COMPONENTS {
                           ...,
                           attributeType  ABSENT
@@ -89,8 +89,8 @@ IN-EntryInformation ::=
 --execute OPERATION ::= {
 --	ARGUMENT	IN-ExecuteArgument
 --	RESULT		ExecuteResult
---	ERRORS 		{ attributeError | nameError |  in-ServiceError | referral | 
---				securityError | updateError | executionError } 
+--	ERRORS 		{ attributeError | nameError |  in-ServiceError | referral |
+--				securityError | updateError | executionError }
 --	CODE		opcode-execute }
 -- Direction: SCF->SDF
 IN-ExecuteArgument ::=
@@ -162,9 +162,9 @@ IN-ModifyEntryResult ::=
 
 -- EDITOR: ModifyEntryResult is a NULL type and cannot be followed by a WITH COMPONENTS constraint.
 --(WITH COMPONENTS {
---	..., 
+--	...,
 --	information	 (WITH COMPONENTS {
---			..., 
+--			...,
 --			entry	(IN-EntryInformation)})}
 -- The information is to be returned in the entry component of the information result.
 in-RemoveEntry OPERATION ::= {
@@ -222,7 +222,7 @@ IN-SearchResult ::=
                          searchInfo  (WITH COMPONENTS {
                                         ...,
                                         entries                  (WITH
-                                                                    COMPONENT 
+                                                                    COMPONENT
                                                                     (IN-EntryInformation)),
                                         partialOutcomeQualifier  (PartialOutcomeQualifier
                                                                     (WITH COMPONENTS {
@@ -236,14 +236,14 @@ IN-SearchResult ::=
 -- Errors definition
 in-DirectoryBindError ERROR ::= directoryBindError
 
---EDITOR: The following constraint ought to be applied to the field "&ParameterType" 
+--EDITOR: The following constraint ought to be applied to the field "&ParameterType"
 --of the **information object** "directoryBindError":
 -- SecurityProblem 10 indicates that the supplied SPKM token was found to be valid.
 -- In reception, all the possible errors should be supported to understand a Bind error
 in-ServiceError ERROR ::=
   serviceError
 
---EDITOR: The following constraint ought to be applied to the field "&ParameterType" 
+--EDITOR: The following constraint ought to be applied to the field "&ParameterType"
 --of the **information object** "serviceError":
 --invalidQueryReference should not be sent because it is linked to the use of paged results.
 -- The error code is the same as defined in X.511.

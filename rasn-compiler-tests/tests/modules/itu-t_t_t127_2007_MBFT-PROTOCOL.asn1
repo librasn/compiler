@@ -9,7 +9,7 @@
 -- See also ITU-T T.127 (08/2007)
 -- See also the index of all ASN.1 assignments needed in this document
 
-MBFT-PROTOCOL {itu-t(0) recommendation(0) t(20) t127(127) version(0) 2 
+MBFT-PROTOCOL {itu-t(0) recommendation(0) t(20) t127(127) version(0) 2
   asn1Modules(2) mBFT-PROTOCOL(1)} DEFINITIONS AUTOMATIC TAGS ::=
 BEGIN
 
@@ -22,7 +22,7 @@ IMPORTS
 -- Export all symbols
 -- Part 1: Message Components
 Handle ::= INTEGER(0..65535) -- 16-bit value
-                  
+
 
 Contents-Type-Attribute ::= CHOICE {
   -- See Annex B/ISO 8571-2 for more information
@@ -55,7 +55,7 @@ Filename-Attribute ::= SEQUENCE OF GraphicString
 
 Access-Control-Attribute ::= CHOICE {
   simple-password  [0]  OCTET STRING,
-  -- A simplified form of the access control syntax. Specifies 
+  -- A simplified form of the access control syntax. Specifies
   -- one password for all types of access to the files and its attributes
   actual-values    [1]  SET OF Access-Control-Element
   -- The semantics of this attribute are described in ISO 8571-2
@@ -170,18 +170,18 @@ MBFTPrivilege ::= ENUMERATED {
   file-request-privilege(1), -- Privilege to request files
   create-private-privilege(2), -- Privilege to create private channels
   medium-priority-privilege(3), -- Privilege to use medium priority for
-  
+
   -- file transfers
   abort-privilege(4), -- Privilege to issue File-AbortPDUs
   nonstandard-privilege(5), -- Privilege to use non-standard options
-  
+
   -- subject to negotiation
   ...
   }
 
 DirectoryEntry ::= SEQUENCE {
   subdirectory-flag  BOOLEAN, -- TRUE for sub-directory entries
-  
+
   -- FALSE for file entries
   attributes         FileHeader,
   ...
@@ -295,7 +295,7 @@ File-StartPDU ::= SEQUENCE {
   file-header            FileHeader,
   file-handle            Handle,
   eof-flag               BOOLEAN, -- True if last packet of data
-  crc-flag               BOOLEAN, -- True if CRC present 
+  crc-flag               BOOLEAN, -- True if CRC present
   compression-specifier  CompressionSpecifier OPTIONAL,
   comp-filesize          INTEGER OPTIONAL,
   data-offset            INTEGER,

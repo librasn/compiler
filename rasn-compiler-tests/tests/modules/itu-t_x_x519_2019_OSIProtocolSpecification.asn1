@@ -34,12 +34,12 @@ IMPORTS
     FROM DirectoryOSIProtocols
       {joint-iso-itu-t ds(5) module(1) directoryOSIProtocols(37) 9} WITH SUCCESSORS ;
 
--- OSI protocol 
+-- OSI protocol
 
 OSI-PDU{APPLICATION-CONTEXT:protocol} ::= TYPE-IDENTIFIER.&Type (
-  OsiBind{{protocol}} | 
-  OsiBindResult{{protocol}} | 
-  OsiBindError{{protocol}} | 
+  OsiBind{{protocol}} |
+  OsiBindResult{{protocol}} |
+  OsiBindError{{protocol}} |
   OsiOperation{{protocol.&Operations}} |
   OsiUnbind |
   PresentationAbort )
@@ -88,7 +88,7 @@ AARQ-apdu{APPLICATION-CONTEXT:Protocols} ::= [APPLICATION 0] IMPLICIT SEQUENCE {
   calling-AP-invocation-identifier  [8]  AP-invocation-identifier     OPTIONAL,
   calling-AE-invocation-identifier  [9]  AE-invocation-identifier     OPTIONAL,
   implementation-information        [29] IMPLICIT Implementation-data OPTIONAL,
-  user-information                  [30] IMPLICIT 
+  user-information                  [30] IMPLICIT
                                            Association-informationBind{{Protocols}}}
 
 Association-informationBind{APPLICATION-CONTEXT:Protocols} ::=
@@ -117,7 +117,7 @@ OsiBindResult{APPLICATION-CONTEXT:Protocols} ::= SET {
     protocol-version                 [0] IMPLICIT BIT STRING {version-1(0)}
                                            DEFAULT {version-1},
     responding-presentation-selector [3] IMPLICIT Presentation-selector OPTIONAL,
-    presentation-context-definition-result-list 
+    presentation-context-definition-result-list
                                      [5] IMPLICIT SEQUENCE SIZE (2) OF SEQUENCE {
       result                           [0] IMPLICIT Result(acceptance),
       transfer-syntax-name             [1] IMPLICIT Transfer-syntax-name },
@@ -149,7 +149,7 @@ AARE-apdu{APPLICATION-CONTEXT:Protocols} ::= [APPLICATION 1] IMPLICIT SEQUENCE {
                                         Association-informationBindRes{{Protocols}}}
 
 Association-informationBindRes{APPLICATION-CONTEXT:Protocols} ::=
-  SEQUENCE SIZE (1) OF 
+  SEQUENCE SIZE (1) OF
     EXTERNAL (
       WITH COMPONENTS {
         identification         (WITH COMPONENTS {..., syntax ABSENT}),
@@ -157,7 +157,7 @@ Association-informationBindRes{APPLICATION-CONTEXT:Protocols} ::=
         data-value             (CONTAINING TheOsiBindRes{{Protocols}})})
 
 Associate-result ::= INTEGER {
-  accepted           (0), 
+  accepted           (0),
   rejected-permanent (1),
   rejected-transient (2)}(0..2, ...)
 
@@ -233,7 +233,7 @@ AAREerr-apdu{APPLICATION-CONTEXT:Protocols} ::=  [APPLICATION 1] IMPLICIT SEQUEN
   user-information                    [30] IMPLICIT
                                 Association-informationBindErr{{Protocols}} OPTIONAL }
 
-Association-informationBindErr{APPLICATION-CONTEXT:Protocols} ::= 
+Association-informationBindErr{APPLICATION-CONTEXT:Protocols} ::=
   SEQUENCE SIZE (1) OF
     EXTERNAL (
       WITH COMPONENTS {
@@ -336,7 +336,7 @@ PresentationAbort ::= CHOICE {
 
 ARU-PPDU ::= CHOICE {
   normal-mode-parameters     [0] IMPLICIT SEQUENCE {
-    presentation-context-identifier-list 
+    presentation-context-identifier-list
                                     [0] IMPLICIT Presentation-context-identifier-list,
     user-data                           CHOICE {
       fully-encoded-data [APPLICATION 1]  IMPLICIT SEQUENCE SIZE(1..MAX) OF SEQUENCE {

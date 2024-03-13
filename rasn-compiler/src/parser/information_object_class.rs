@@ -456,7 +456,7 @@ mod tests {
             "{:?}",
             information_object_class(
                 r#"CLASS {&id    BilateralDomain UNIQUE,
-            &Type  
+            &Type
 }WITH SYNTAX {&Type,
      IDENTIFIED BY &id
 }"#
@@ -475,13 +475,11 @@ mod tests {
                 comments: "".into(),
                 tag: None,
                 name: "AttributeValue".into(),
-                ty: ASN1Type::InformationObjectFieldReference(
-                    InformationObjectFieldReference {
-                        class: "OPEN".into(),
-                        field_path: vec![ObjectFieldIdentifier::MultipleValue("&Type".into())],
-                        constraints: vec![]
-                    }
-                ),
+                ty: ASN1Type::InformationObjectFieldReference(InformationObjectFieldReference {
+                    class: "OPEN".into(),
+                    field_path: vec![ObjectFieldIdentifier::MultipleValue("&Type".into())],
+                    constraints: vec![]
+                }),
                 parameterization: None,
                 index: None
             }

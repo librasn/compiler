@@ -113,7 +113,7 @@ B7 ::= SCF-CUSF-BOUNDS -- defined in Recommendation Q.1238.7
 -- Operation package definition
 -- activityTestPackage   OPERATION-PACKAGE
 -- This package is described in Q.1238.2.
-cusfTDPSpecificInvocationPackage{B1:b1, B2:b2} OPERATION-PACKAGE ::= 
+cusfTDPSpecificInvocationPackage{B1:b1, B2:b2} OPERATION-PACKAGE ::=
 {
   CONSUMER INVOKES
     {activationReceivedAndAuthorized{b1, b2} | componentReceived{b1, b2} |
@@ -126,7 +126,7 @@ cusfTDPGenericInvocationPackage{B1:b1, B2:b2} OPERATION-PACKAGE ::= {
   ID                id-package-cusfTDPGenericInvocation
 }
 
-cusfDPSpecificEventHandlingPackage{B1:b1, B2:b2, B7:b7} OPERATION-PACKAGE ::= 
+cusfDPSpecificEventHandlingPackage{B1:b1, B2:b2, B7:b7} OPERATION-PACKAGE ::=
 {
   CONSUMER INVOKES  {requestReportBCUSMEvent{b1, b7}}
   SUPPLIER INVOKES
@@ -134,7 +134,7 @@ cusfDPSpecificEventHandlingPackage{B1:b1, B2:b2, B7:b7} OPERATION-PACKAGE ::=
   ID                id-package-cusfDPSpecificEventHandling
 }
 
-cusfGenericEventHandlingPackage{B1:b1, B2:b2, B7:b7} OPERATION-PACKAGE ::= 
+cusfGenericEventHandlingPackage{B1:b1, B2:b2, B7:b7} OPERATION-PACKAGE ::=
 {
   CONSUMER INVOKES  {requestReportBCUSMEvent{b1, b7}}
   SUPPLIER INVOKES  {eventReportBCUSM{b1, b2, b7}}

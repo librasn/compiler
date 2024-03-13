@@ -1,4 +1,4 @@
-GCC-PROTOCOL {itu-t(0) recommendation(0) t(20) t124(124) version(0) 2 asn1Modules(2) gcc-protocol(1)} 
+GCC-PROTOCOL {itu-t(0) recommendation(0) t(20) t124(124) version(0) 2 asn1Modules(2) gcc-protocol(1)}
 DEFINITIONS AUTOMATIC TAGS ::=
 BEGIN
 
@@ -306,13 +306,13 @@ ISDNConnection ::= SEQUENCE {
   ...
 }
 
--- Note 1:	digital-2x64k differs from multirate-base-64k 
--- 			with a multiplier value of 2; 
---			in the first case 
+-- Note 1:	digital-2x64k differs from multirate-base-64k
+-- 			with a multiplier value of 2;
+--			in the first case
 --			the network is requested an 8 kHz integrity with Restricted
---			Differential Time Delay (RDTD); 
+--			Differential Time Delay (RDTD);
 --			in the second case
---			the network is requested a Time Slot 
+--			the network is requested a Time Slot
 --			Sequence integrity (see 4.5.5/Q.931)
 
 CSDNConnection ::= SEQUENCE {
@@ -334,7 +334,7 @@ ATMConnection ::= SEQUENCE {
   networkAddress
     CHOICE {extendedE164  ExtendedE164NetworkAddress,
             nsapAddress   TransportAddress,
-            -- this case is reserved for NSAPs only: the 
+            -- this case is reserved for NSAPs only: the
             -- optional transport selector shall never be used
             nonStandard   NonStandardParameter},
   maxTransferRate  INTEGER(0..MAX) OPTIONAL,
@@ -351,7 +351,7 @@ NetworkConnection ::= CHOICE {
   extendedE164NetworkAddress  ExtendedE164NetworkAddress,
   -- Note: LAN connections and leased
   transportAddress            TransportAddress,
-  -- lines (Rec. G.703/G.704) may be 
+  -- lines (Rec. G.703/G.704) may be
   nonStandard                 NonStandardParameter,
   -- covered by one of these
   ...
@@ -493,7 +493,7 @@ RegistryEntryOwner ::= CHOICE {
   owned
     SEQUENCE {nodeID    UserID, -- Node ID of the owning node--
               entityID  EntityID -- Entity ID of the owning
-}, 
+},
 -- Appliction Protocol Entity
   notOwned  NULL -- There is no current owner
 }
@@ -603,7 +603,7 @@ ConferenceJoinResponse ::=
   result
     ENUMERATED {success(0), userRejected(1), invalidConference(2),
                 invalidPassword(3), invalidConvenerPassword(4),
-                challengeResponseRequired(5), invalidChallengeResponse(6), 
+                challengeResponseRequired(5), invalidChallengeResponse(6),
                 ...
                 },
   userData                    UserData OPTIONAL,
@@ -799,7 +799,7 @@ ConferenceTransferIndication ::=
 RosterUpdateIndication ::= SEQUENCE { -- MCS-Send-Data on Node ID Channel or
   -- MCS-Uniform-Send-Data on GCC-Broadcast-Channel
   fullRefresh             BOOLEAN,
-  -- Conference Roster and all 
+  -- Conference Roster and all
   -- ApplicationProtocol Sessions refreshed
   nodeInformation
     SEQUENCE {nodeRecordList

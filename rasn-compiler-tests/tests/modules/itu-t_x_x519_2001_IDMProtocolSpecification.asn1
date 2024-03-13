@@ -14,7 +14,7 @@ IDMProtocolSpecification {joint-iso-itu-t ds(5) module(1)
   iDMProtocolSpecification(30) 4} DEFINITIONS ::=
 BEGIN
 
--- EXPORTS All 
+-- EXPORTS All
 -- The types and values defined in this module are exported for use in the
 -- other ASN.1 modules contained within the Directory Specifications, and for
 -- the use of other applications which will use them to access Directory
@@ -36,7 +36,7 @@ IMPORTS
 -- module to stand independently of the ROSE module.
 -- IMPORTS
 --	OPERATION, ERROR
---		FROM Remote-Operations-Information-Objects 
+--		FROM Remote-Operations-Information-Objects
 --			{joint-iso-itu-t remote-operations(4) informationObjects(5) version1(0)} ;
 OPERATION ::= CLASS {
   &ArgumentType   OPTIONAL,
@@ -61,7 +61,7 @@ Code ::= CHOICE {local   INTEGER,
                  global  OBJECT IDENTIFIER
 }
 
--- IDM-protocol information object class 
+-- IDM-protocol information object class
 IDM-PROTOCOL ::= CLASS {
   &bind-operation  OPERATION,
   &Operations      OPERATION,
@@ -73,7 +73,7 @@ WITH SYNTAX {
   ID &id
 }
 
--- IDM protocol 
+-- IDM protocol
 IDM-PDU{IDM-PROTOCOL:protocol} ::= CHOICE {
   bind        [0]  Bind{{protocol}},
   bindResult  [1]  BindResult{{protocol}},

@@ -285,7 +285,7 @@ and one */"#
 
     #[test]
     fn parses_multiline_block_comment() {
-        assert_eq!(comment(r#"/** 
+        assert_eq!(comment(r#"/**
       * This DE indicates a change of acceleration.
       *
       * The value shall be set to:
@@ -296,7 +296,7 @@ and one */"#
       * @revision: Created in V2.1.1
      */
     StartOfDeclaration"#).unwrap().1,
-      "* \n      * This DE indicates a change of acceleration.\n      *\n      * The value shall be set to:\n      * - 0 - `accelerate` - if the magnitude of the horizontal velocity vector increases.\n      * - 1 - `decelerate` - if the magnitude of the horizontal velocity vector decreases.\n      *\n      * @category: Kinematic information\n      * @revision: Created in V2.1.1\n     "
+      "*\n      * This DE indicates a change of acceleration.\n      *\n      * The value shall be set to:\n      * - 0 - `accelerate` - if the magnitude of the horizontal velocity vector increases.\n      * - 1 - `decelerate` - if the magnitude of the horizontal velocity vector decreases.\n      *\n      * @category: Kinematic information\n      * @revision: Created in V2.1.1\n     "
     )
     }
 
@@ -383,7 +383,7 @@ and one */"#
     fn parses_distinguished_values() {
         let sample = r#"{
     positiveOutOfRange (160),
-    unavailable        (161)  
+    unavailable        (161)
 }"#;
         assert_eq!(
             distinguished_values(sample).unwrap().1,
@@ -405,7 +405,7 @@ and one */"#
         let sample = r#"{
     negativeOutOfRange (159), -- ignore this comment
     positiveOutOfRange (160), -- ignore this comment, too
-    unavailable        (161)  
+    unavailable        (161)
 }"#;
         assert_eq!(
             distinguished_values(sample).unwrap().1,

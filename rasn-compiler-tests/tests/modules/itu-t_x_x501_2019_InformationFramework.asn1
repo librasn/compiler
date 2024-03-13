@@ -37,7 +37,7 @@ IMPORTS
     FROM SelectedAttributeTypes
       {joint-iso-itu-t ds(5) module(1) selectedAttributeTypes(5) 9} WITH SUCCESSORS ;
 
--- attribute data types 
+-- attribute data types
 
 Attribute {ATTRIBUTE:SupportedAttributes} ::= SEQUENCE {
   type                ATTRIBUTE.&id({SupportedAttributes}),
@@ -79,7 +79,7 @@ AttributeTypeAssertion ::= SEQUENCE {
   assertedContexts  SEQUENCE SIZE (1..MAX) OF ContextAssertion OPTIONAL,
   ... }
 
--- Definition of the following information object set is deferred, perhaps to 
+-- Definition of the following information object set is deferred, perhaps to
 -- standardized profiles or to protocol implementation conformance statements. The set
 -- is required to specify a table constraint on the values component of Attribute, the
 -- value component of AttributeTypeAndValue, and the assertion component of
@@ -93,7 +93,7 @@ SupportedAttributes ATTRIBUTE ::= {objectClass | aliasedEntryName, ...}
 
 SupportedContexts CONTEXT ::= {...}
 
--- naming data types 
+-- naming data types
 
 Name ::= CHOICE { -- only one possibility for now -- rdnSequence  RDNSequence }
 
@@ -108,7 +108,7 @@ AttributeTypeAndValue ::= SEQUENCE {
   value                 ATTRIBUTE.&Type({SupportedAttributes}{@type}),
   ... }
 
--- subtree data types 
+-- subtree data types
 
 SubtreeSpecification ::= SEQUENCE {
   base                 [0]  LocalName DEFAULT {},
@@ -137,7 +137,7 @@ Refinement ::= CHOICE {
   not   [3]  Refinement,
   ... }
 
--- OBJECT-CLASS information object class specification 
+-- OBJECT-CLASS information object class specification
 
 OBJECT-CLASS ::= CLASS {
   &Superclasses         OBJECT-CLASS OPTIONAL,
@@ -161,7 +161,7 @@ ObjectClassKind ::= ENUMERATED {
   structural (1),
   auxiliary  (2)}
 
--- object classes 
+-- object classes
 
 top OBJECT-CLASS ::= {
   KIND          abstract
@@ -183,18 +183,18 @@ child OBJECT-CLASS ::= {
   KIND          auxiliary
   ID            id-oc-child }
 
--- ATTRIBUTE information object class specification 
+-- ATTRIBUTE information object class specification
 
 ATTRIBUTE ::= CLASS {
   &derivation               ATTRIBUTE OPTIONAL,
-  &Type                     OPTIONAL, -- either &Type or &derivation required 
+  &Type                     OPTIONAL, -- either &Type or &derivation required
   &equality-match           MATCHING-RULE OPTIONAL,
   &ordering-match           MATCHING-RULE OPTIONAL,
   &substrings-match         MATCHING-RULE OPTIONAL,
   &single-valued            BOOLEAN DEFAULT FALSE,
   &collective               BOOLEAN DEFAULT FALSE,
   &dummy                    BOOLEAN DEFAULT FALSE,
-  -- operational extensions 
+  -- operational extensions
   &no-user-modification     BOOLEAN DEFAULT FALSE,
   &usage                    AttributeUsage DEFAULT userApplications,
   &ldapSyntax               SYNTAX-NAME.&id OPTIONAL,
@@ -226,7 +226,7 @@ AttributeUsage ::= ENUMERATED {
   dSAOperation         (3),
   ... }
 
--- attributes 
+-- attributes
 
 objectClass ATTRIBUTE ::= {
   WITH SYNTAX             OBJECT IDENTIFIER
@@ -244,7 +244,7 @@ aliasedEntryName ATTRIBUTE ::= {
   ID                      id-at-aliasedEntryName }
 
 -- MATCHING-RULE information object class specification
- 
+
 MATCHING-RULE ::= CLASS {
   &ParentMatchingRules    MATCHING-RULE OPTIONAL,
   &AssertionType          OPTIONAL,
@@ -278,7 +278,7 @@ distinguishedNameMatch MATCHING-RULE ::= {
 
 
 -- MATCHING-RULE information object class specification
- 
+
 MAPPING-BASED-MATCHING
   {SelectedBy, BOOLEAN:combinable, MappingResult, OBJECT IDENTIFIER:matchingRule} ::=
 CLASS {
@@ -302,7 +302,7 @@ WITH SYNTAX {
   MATCHING RULE         &matching-rule
   ID                    &id }
 
--- NAME-FORM information object class specification 
+-- NAME-FORM information object class specification
 
 NAME-FORM ::= CLASS {
   &namedObjectClass     OBJECT-CLASS,
@@ -407,9 +407,9 @@ WITH SYNTAX {
   ID                      &id }
 
 -- system schema information objects
- 
+
 -- object classes
- 
+
 subentry OBJECT-CLASS ::= {
   SUBCLASS OF      {top}
   KIND             structural
@@ -457,7 +457,7 @@ modifyTimestamp ATTRIBUTE ::= {
   ORDERING MATCHING RULE  generalizedTimeOrderingMatch
   SINGLE VALUE            TRUE
   NO USER MODIFICATION    TRUE
-  USAGE                   directoryOperation 
+  USAGE                   directoryOperation
   LDAP-SYNTAX             generalizedTime.&id
   LDAP-NAME               {"modifyTimestamp"}
   ID                      id-oa-modifyTimestamp }
@@ -608,23 +608,23 @@ pwdHistory{ATTRIBUTE:passwordAttribute,MATCHING-RULE:historyMatch,OBJECT IDENTIF
 ATTRIBUTE ::= {
   WITH SYNTAX             PwdHistory{passwordAttribute}
   EQUALITY MATCHING RULE  historyMatch
-  USAGE                   directoryOperation 
-  ID                      id} 
+  USAGE                   directoryOperation
+  ID                      id}
 
 PwdHistory{ATTRIBUTE:passwordAttribute} ::= SEQUENCE {
   time       GeneralizedTime,
   password   passwordAttribute.&Type,
   ...}
 
-pwdRecentlyExpired{ATTRIBUTE:passwordAttribute,OBJECT IDENTIFIER:id} ATTRIBUTE ::= { 
+pwdRecentlyExpired{ATTRIBUTE:passwordAttribute,OBJECT IDENTIFIER:id} ATTRIBUTE ::= {
   WITH SYNTAX             passwordAttribute.&Type
   EQUALITY MATCHING RULE  passwordAttribute.&equality-match
   SINGLE VALUE            TRUE
-  USAGE                   directoryOperation 
-  ID                      id} 
+  USAGE                   directoryOperation
+  ID                      id}
 
-pwdHistoryMatch{ATTRIBUTE:passwordAttribute,OBJECT IDENTIFIER:id} 
-MATCHING-RULE ::= { 
+pwdHistoryMatch{ATTRIBUTE:passwordAttribute,OBJECT IDENTIFIER:id}
+MATCHING-RULE ::= {
   SYNTAX     passwordAttribute.&Type
   ID         id}
 
@@ -664,27 +664,27 @@ hierarchyTop ATTRIBUTE ::= {
   USAGE                   directoryOperation
   ID                      id-oa-hierarchyTop }
 
--- object identifier assignments 
+-- object identifier assignments
 
--- object classes 
+-- object classes
 
 id-oc-top                              OBJECT IDENTIFIER ::= {id-oc 0}
 id-oc-alias                            OBJECT IDENTIFIER ::= {id-oc 1}
 id-oc-parent                           OBJECT IDENTIFIER ::= {id-oc 28}
 id-oc-child                            OBJECT IDENTIFIER ::= {id-oc 29}
 
--- attributes 
+-- attributes
 
 id-at-objectClass                      OBJECT IDENTIFIER ::= {id-at 0}
 id-at-aliasedEntryName                 OBJECT IDENTIFIER ::= {id-at 1}
 id-at-pwdAttribute                     OBJECT IDENTIFIER ::= {id-at 84}
 
--- matching rules 
+-- matching rules
 
 id-mr-objectIdentifierMatch            OBJECT IDENTIFIER ::= {id-mr 0}
 id-mr-distinguishedNameMatch           OBJECT IDENTIFIER ::= {id-mr 1}
 
--- operational attributes 
+-- operational attributes
 
 id-oa-excludeAllCollectiveAttributes   OBJECT IDENTIFIER ::= {id-oa 0}
 id-oa-createTimestamp                  OBJECT IDENTIFIER ::= {id-oa 1}
@@ -737,7 +737,7 @@ id-oa-pwdAdminSubentryList             OBJECT IDENTIFIER ::= {id-oa 21}
 id-oa-allAttributeTypes                OBJECT IDENTIFIER ::= {id-oa 48}
 
 -- subentry classes
- 
+
 id-sc-subentry                         OBJECT IDENTIFIER ::= {id-sc 0}
 id-sc-accessControlSubentry            OBJECT IDENTIFIER ::= {id-sc 1}
 id-sc-collectiveAttributeSubentry      OBJECT IDENTIFIER ::= {id-sc 2}
@@ -745,11 +745,11 @@ id-sc-contextAssertionSubentry         OBJECT IDENTIFIER ::= {id-sc 3}
 id-sc-serviceAdminSubentry             OBJECT IDENTIFIER ::= {id-sc 4}
 id-sc-pwdAdminSubentry                 OBJECT IDENTIFIER ::= {id-sc 5}
 
---  Name forms 
+--  Name forms
 
 id-nf-subentryNameForm                 OBJECT IDENTIFIER ::= {id-nf 16}
 
--- administrative roles 
+-- administrative roles
 
 id-ar-autonomousArea                   OBJECT IDENTIFIER ::= {id-ar 1}
 id-ar-accessControlSpecificArea        OBJECT IDENTIFIER ::= {id-ar 2}

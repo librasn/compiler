@@ -13,7 +13,7 @@ AuthenticationFramework {joint-iso-itu-t ds(5) module(1)
   authenticationFramework(7) 3} DEFINITIONS ::=
 BEGIN
 
---  EXPORTS All 
+--  EXPORTS All
 --  The types and values defined in this module are exported for use in the other ASN.1 modules contained
 --  within the Directory Specifications, and for the use of other applications which will use them to access
 --  Directory services. Other applications may use them for their own purposes, but this will not constrain
@@ -50,7 +50,7 @@ Certificate ::=
                subjectUniqueIdentifier  [2] IMPLICIT UniqueIdentifier OPTIONAL,
                --  if present, version must be v2 or v3
                extensions               [3]  Extensions OPTIONAL
-    }} --  If present, version must be v3 
+    }} --  If present, version must be v3
 
 Version ::= INTEGER {v1(0), v2(1), v3(2)}
 
@@ -65,7 +65,7 @@ AlgorithmIdentifier ::= SEQUENCE {
 --	profiles or to protocol implementation conformance statements. The set is required to
 --	specify a table constraint on the parameters component of AlgorithmIdentifier.
 SupportedAlgorithms ALGORITHM ::=
-  {...} -- an IOS of class  TYPE-IDENTIFIER is needed 
+  {...} -- an IOS of class  TYPE-IDENTIFIER is needed
 
 Validity ::= SEQUENCE {notBefore  Time,
                        notAfter   Time
@@ -90,12 +90,12 @@ Extension ::= SEQUENCE {
   extnValue  OCTET STRING
 } --  contains a DER encoding of a value of type &ExtnType
 
---  for the extension object identified by extnId 
+--  for the extension object identified by extnId
 ExtensionSet EXTENSION ::=
   {...}
 
 EXTENSION ::= CLASS {&id        OBJECT IDENTIFIER UNIQUE,
-                     &ExtnType  
+                     &ExtnType
 }WITH SYNTAX {SYNTAX &ExtnType
               IDENTIFIED BY &id
 }
@@ -118,7 +118,7 @@ CertificationPath ::= SEQUENCE {
 CertificatePair ::= SEQUENCE {
   issuedByThisCA  [0]  Certificate OPTIONAL,
   issuedToThisCA  [1]  Certificate OPTIONAL
-} --  at least one of the pair shall be present 
+} --  at least one of the pair shall be present
 
 --  Certificate Revocation List (CRL)
 CertificateList ::=
@@ -195,7 +195,7 @@ AttributeCertificateAssertion ::= SEQUENCE {
 }
 
 --  At least one component of the sequence must be present
---  attribute types 
+--  attribute types
 userPassword ATTRIBUTE ::= {
   WITH SYNTAX             OCTET STRING(SIZE (0..ub-user-password))
   EQUALITY MATCHING RULE  octetStringMatch
@@ -237,30 +237,30 @@ attributeCertificateRevocationList ATTRIBUTE ::= {
   ID           id-at-attributeCertificateRevocationList
 }
 
---  information object classes 
+--  information object classes
 ALGORITHM ::= TYPE-IDENTIFIER
 
---  parameterized types 
+--  parameterized types
 HASH{ToBeHashed} ::= SEQUENCE {
   algorithmIdentifier  AlgorithmIdentifier,
   hashValue
     BIT STRING
       (CONSTRAINED BY {
-         -- must be the result of applying a hashing procedure to the DER-encoded octets 
+         -- must be the result of applying a hashing procedure to the DER-encoded octets
          -- of a value of -- ToBeHashed})
 }
 
 ENCRYPTED-HASH{ToBeSigned} ::=
   BIT STRING
     (CONSTRAINED BY {
-       --  must be the result of applying a hashing procedure to the DER-encoded octets 
-       --  of a value of --ToBeSigned}) --  and then applying an encipherment procedure to those octets 
-    
+       --  must be the result of applying a hashing procedure to the DER-encoded octets
+       --  of a value of --ToBeSigned}) --  and then applying an encipherment procedure to those octets
+
 
 ENCRYPTED{ToBeEnciphered} ::=
   BIT STRING
     (CONSTRAINED BY {
-       --  must be the result of applying an encipherment procedure 
+       --  must be the result of applying an encipherment procedure
        --  to the BER-encoded octets of a value of --ToBeEnciphered})
 
 SIGNATURE{ToBeSigned} ::= SEQUENCE {
@@ -273,7 +273,7 @@ SIGNED{ToBeSigned} ::= SEQUENCE {
   COMPONENTS OF SIGNATURE{ToBeSigned}
 }
 
---  object identifier assignments 
+--  object identifier assignments
 id-at-userPassword OBJECT IDENTIFIER ::=
   {id-at 35}
 
