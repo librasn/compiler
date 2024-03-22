@@ -1,16 +1,17 @@
 use crate::intermediate::*;
 use nom::{
     branch::alt,
-    bytes::complete::tag,
+    bytes::complete::{is_not, tag, take_until},
     character::complete::char,
-    combinator::{into, map, opt, recognize, value},
+    combinator::{into, map, not, opt, peek, recognize, value},
     multi::{many0, separated_list1},
-    sequence::{delimited, pair, preceded, terminated, tuple},
-    IResult,
+    sequence::{delimited, pair, preceded, separated_pair, terminated, tuple},
+    IResult, Parser,
 };
 
 use super::{
     common::{identifier, skip_ws, skip_ws_and_comments, value_identifier},
+    in_braces,
     object_identifier::object_identifier_value,
 };
 
@@ -66,6 +67,54 @@ fn parameterized_identifier<'a>(input: &'a str) -> IResult<&'a str, &'a str> {
     terminated(identifier, tag("{}"))(input)
 }
 
+fn global_module_reference(input: &str) -> IResult<&str, GlobalModuleReference> {
+    into(skip_ws_and_comments(pair(
+        identifier,
+        alt((
+            map(
+                skip_ws_and_comments(object_identifier_value),
+                AssignedIdentifier::ObjectIdentifierValue,
+            ),
+            map(
+                skip_ws_and_comments(separated_pair(identifier, char(DOT), value_identifier)),
+                |(mod_ref, val_ref)| {
+                    AssignedIdentifier::ExternalValueReference(ExternalValueReference {
+                        module_reference: mod_ref.to_owned(),
+                        value_reference: val_ref.to_owned(),
+                    })
+                },
+            ),
+            map(
+                skip_ws_and_comments(pair(
+                    value_identifier,
+                    skip_ws(recognize(in_braces(take_until("}")))),
+                )),
+                |(v, p)| AssignedIdentifier::ParameterizedValue {
+                    value_reference: v.to_owned(),
+                    actual_parameter_list: p.to_owned(),
+                },
+            ),
+            map(
+                skip_ws_and_comments(terminated(
+                    value_identifier,
+                    not(skip_ws_and_comments(alt((
+                        peek(value((), tag(FROM))),
+                        peek(value((), char(COMMA))),
+                    )))),
+                )),
+                |v| AssignedIdentifier::ValueReference(v.to_owned()),
+            ),
+            value(
+                AssignedIdentifier::Empty,
+                not(skip_ws_and_comments(alt((
+                    peek(value((), tag(FROM))),
+                    peek(value((), char(COMMA))),
+                )))),
+            ),
+        )),
+    )))(input)
+}
+
 fn import<'a>(input: &'a str) -> IResult<&'a str, Import> {
     into(skip_ws_and_comments(pair(
         separated_list1(
@@ -74,17 +123,13 @@ fn import<'a>(input: &'a str) -> IResult<&'a str, Import> {
         ),
         preceded(
             skip_ws_and_comments(tag(FROM)),
-            skip_ws_and_comments(tuple((
-                identifier,
-                alt((
-                    value(None, skip_ws_and_comments(value_identifier)),
-                    opt(skip_ws_and_comments(object_identifier_value)),
-                )),
+            skip_ws_and_comments(pair(
+                global_module_reference,
                 opt(skip_ws_and_comments(alt((
                     tag(WITH_SUCCESSORS),
                     tag(WITH_DESCENDANTS),
                 )))),
-            ))),
+            )),
         ),
     )))(input)
 }
@@ -163,7 +208,7 @@ mod tests {
         FROM CPM-OriginatingStationContainers {itu-t (0) identified-organization (4) etsi (0) itsDomain (5) wg1 (1) ts (103324) originatingStationContainers (2) major-version-1 (1) minor-version-1(1)}
         WITH SUCCESSORS;
     "#).unwrap().1,
-    ModuleReference { name: "CPM-PDU-Descriptions".into(), module_identifier: Some(DefinitiveIdentifier::DefinitiveOID(ObjectIdentifierValue(vec![ObjectIdentifierArc { name: Some("itu-t".into()), number: Some(0) }, ObjectIdentifierArc { name: Some("identified-organization".into()), number: Some(4) }, ObjectIdentifierArc { name: Some("etsi".into()), number: Some(0) }, ObjectIdentifierArc { name: Some("itsDomain".into()), number: Some(5) }, ObjectIdentifierArc { name: Some("wg1".into()), number: Some(1) }, ObjectIdentifierArc { name: Some("ts".into()), number: Some(103324) }, ObjectIdentifierArc { name: Some("cpm".into()), number: Some(1) }, ObjectIdentifierArc { name: Some("major-version-1".into()), number: Some(1) }, ObjectIdentifierArc { name: Some("minor-version-1".into()), number: Some(1) }]))), encoding_reference_default: None, tagging_environment: TaggingEnvironment::Automatic, extensibility_environment: ExtensibilityEnvironment::Explicit, imports: vec![Import { types: vec!["ItsPduHeader".into(), "MessageRateHz".into(), "MessageSegmentationInfo".into(), "OrdinalNumber1B".into(), "ReferencePosition".into(), "StationType".into(), "TimestampIts".into()], origin_name: "ETSI-ITS-CDD".into(), origin_identifier: Some(ObjectIdentifierValue(vec![ObjectIdentifierArc { name: Some("itu-t".into()), number: Some(0) }, ObjectIdentifierArc { name: Some("identified-organization".into()), number: Some(4) }, ObjectIdentifierArc { name: Some("etsi".into()), number: Some(0) }, ObjectIdentifierArc { name: Some("itsDomain".into()), number: Some(5) }, ObjectIdentifierArc { name: Some("wg1".into()), number: Some(1) }, ObjectIdentifierArc { name: Some("ts".into()), number: Some(102894) }, ObjectIdentifierArc { name: Some("cdd".into()), number: Some(2) }, ObjectIdentifierArc { name: Some("major-version-3".into()), number: Some(3) }, ObjectIdentifierArc { name: Some("minor-version-1".into()), number: Some(1) }])), with: Some(With::Successors) }, Import { types: vec!["OriginatingRsuContainer".into(), "OriginatingVehicleContainer".into()], origin_name: "CPM-OriginatingStationContainers".into(), origin_identifier: Some(ObjectIdentifierValue(vec![ObjectIdentifierArc { name: Some("itu-t".into()), number: Some(0) }, ObjectIdentifierArc { name: Some("identified-organization".into()), number: Some(4) }, ObjectIdentifierArc { name: Some("etsi".into()), number: Some(0) }, ObjectIdentifierArc { name: Some("itsDomain".into()), number: Some(5) }, ObjectIdentifierArc { name: Some("wg1".into()), number: Some(1) }, ObjectIdentifierArc { name: Some("ts".into()), number: Some(103324) }, ObjectIdentifierArc { name: Some("originatingStationContainers".into()), number: Some(2) }, ObjectIdentifierArc { name: Some("major-version-1".into()), number: Some(1) }, ObjectIdentifierArc { name: Some("minor-version-1".into()), number: Some(1) }])), with: Some(With::Successors) }], exports: None } )
+    ModuleReference { name: "CPM-PDU-Descriptions".into(), module_identifier: Some(DefinitiveIdentifier::DefinitiveOID(ObjectIdentifierValue(vec![ObjectIdentifierArc { name: Some("itu-t".into()), number: Some(0) }, ObjectIdentifierArc { name: Some("identified-organization".into()), number: Some(4) }, ObjectIdentifierArc { name: Some("etsi".into()), number: Some(0) }, ObjectIdentifierArc { name: Some("itsDomain".into()), number: Some(5) }, ObjectIdentifierArc { name: Some("wg1".into()), number: Some(1) }, ObjectIdentifierArc { name: Some("ts".into()), number: Some(103324) }, ObjectIdentifierArc { name: Some("cpm".into()), number: Some(1) }, ObjectIdentifierArc { name: Some("major-version-1".into()), number: Some(1) }, ObjectIdentifierArc { name: Some("minor-version-1".into()), number: Some(1) }]))), encoding_reference_default: None, tagging_environment: TaggingEnvironment::Automatic, extensibility_environment: ExtensibilityEnvironment::Explicit, imports: vec![Import { types: vec!["ItsPduHeader".into(), "MessageRateHz".into(), "MessageSegmentationInfo".into(), "OrdinalNumber1B".into(), "ReferencePosition".into(), "StationType".into(), "TimestampIts".into()], global_module_reference: GlobalModuleReference { module_reference: "ETSI-ITS-CDD".into(), assigned_identifier: AssignedIdentifier::ObjectIdentifierValue(ObjectIdentifierValue(vec![ObjectIdentifierArc { name: Some("itu-t".into()), number: Some(0) }, ObjectIdentifierArc { name: Some("identified-organization".into()), number: Some(4) }, ObjectIdentifierArc { name: Some("etsi".into()), number: Some(0) }, ObjectIdentifierArc { name: Some("itsDomain".into()), number: Some(5) }, ObjectIdentifierArc { name: Some("wg1".into()), number: Some(1) }, ObjectIdentifierArc { name: Some("ts".into()), number: Some(102894) }, ObjectIdentifierArc { name: Some("cdd".into()), number: Some(2) }, ObjectIdentifierArc { name: Some("major-version-3".into()), number: Some(3) }, ObjectIdentifierArc { name: Some("minor-version-1".into()), number: Some(1) }]))}, with: Some(With::Successors) }, Import { types: vec!["OriginatingRsuContainer".into(), "OriginatingVehicleContainer".into()], global_module_reference: GlobalModuleReference { module_reference: "CPM-OriginatingStationContainers".into(), assigned_identifier: AssignedIdentifier::ObjectIdentifierValue(ObjectIdentifierValue(vec![ObjectIdentifierArc { name: Some("itu-t".into()), number: Some(0) }, ObjectIdentifierArc { name: Some("identified-organization".into()), number: Some(4) }, ObjectIdentifierArc { name: Some("etsi".into()), number: Some(0) }, ObjectIdentifierArc { name: Some("itsDomain".into()), number: Some(5) }, ObjectIdentifierArc { name: Some("wg1".into()), number: Some(1) }, ObjectIdentifierArc { name: Some("ts".into()), number: Some(103324) }, ObjectIdentifierArc { name: Some("originatingStationContainers".into()), number: Some(2) }, ObjectIdentifierArc { name: Some("major-version-1".into()), number: Some(1) }, ObjectIdentifierArc { name: Some("minor-version-1".into()), number: Some(1) }]))}, with: Some(With::Successors) }], exports: None } )
     }
 
     #[test]
@@ -198,18 +243,20 @@ mod tests {
             imports: vec![
                 Import {
                     types: vec!["ALGORITHM".into(), "AlgorithmIdentifier".into()],
-                    origin_name: "AlgorithmInformation-2009".into(),
-                    origin_identifier: Some(ObjectIdentifierValue(vec![
-                        ObjectIdentifierArc { name: Some("iso".into()), number: Some(1) },
-                        ObjectIdentifierArc { name: Some("identified-organization".into()), number: Some(3) },
-                        ObjectIdentifierArc { name: Some("dod".into()), number: Some(6) },
-                        ObjectIdentifierArc { name: Some("internet".into()), number: Some(1) },
-                        ObjectIdentifierArc { name: Some("security".into()), number: Some(5) },
-                        ObjectIdentifierArc { name: Some("mechanisms".into()), number: Some(5) },
-                        ObjectIdentifierArc { name: Some("pkix".into()), number: Some(7) },
-                        ObjectIdentifierArc { name: Some("id-mod".into()), number: Some(0) },
-                        ObjectIdentifierArc { name: Some("id-mod-algorithmInformation-02".into()), number: Some(58) },
-                    ])),
+                    global_module_reference: GlobalModuleReference {
+                        module_reference: "AlgorithmInformation-2009".into(),
+                        assigned_identifier: AssignedIdentifier::ObjectIdentifierValue(ObjectIdentifierValue(vec![
+                            ObjectIdentifierArc { name: Some("iso".into()), number: Some(1) },
+                            ObjectIdentifierArc { name: Some("identified-organization".into()), number: Some(3) },
+                            ObjectIdentifierArc { name: Some("dod".into()), number: Some(6) },
+                            ObjectIdentifierArc { name: Some("internet".into()), number: Some(1) },
+                            ObjectIdentifierArc { name: Some("security".into()), number: Some(5) },
+                            ObjectIdentifierArc { name: Some("mechanisms".into()), number: Some(5) },
+                            ObjectIdentifierArc { name: Some("pkix".into()), number: Some(7) },
+                            ObjectIdentifierArc { name: Some("id-mod".into()), number: Some(0) },
+                            ObjectIdentifierArc { name: Some("id-mod-algorithmInformation-02".into()), number: Some(58) },
+                        ]))
+                    },
                     with: Some(With::Descendants) }
             ],
             exports: Some(Exports::All)
@@ -233,67 +280,173 @@ mod tests {
             vec![
                 Import {
                     types: vec!["DomainParameters".into()],
-                    origin_name: "ANSI-X9-42".into(),
-                    origin_identifier: Some(ObjectIdentifierValue(vec![
-                        ObjectIdentifierArc {
-                            name: Some("iso".into()),
-                            number: Some(1)
-                        },
-                        ObjectIdentifierArc {
-                            name: Some("member-body".into()),
-                            number: Some(2)
-                        },
-                        ObjectIdentifierArc {
-                            name: Some("us".into()),
-                            number: Some(840)
-                        },
-                        ObjectIdentifierArc {
-                            name: Some("ansi-x942".into()),
-                            number: Some(10046)
-                        },
-                        ObjectIdentifierArc {
-                            name: Some("module".into()),
-                            number: Some(5)
-                        },
-                        ObjectIdentifierArc {
-                            name: None,
-                            number: Some(1)
-                        },
-                    ])),
+                    global_module_reference: GlobalModuleReference {
+                        module_reference: "ANSI-X9-42".into(),
+                        assigned_identifier: AssignedIdentifier::ObjectIdentifierValue(
+                            ObjectIdentifierValue(vec![
+                                ObjectIdentifierArc {
+                                    name: Some("iso".into()),
+                                    number: Some(1)
+                                },
+                                ObjectIdentifierArc {
+                                    name: Some("member-body".into()),
+                                    number: Some(2)
+                                },
+                                ObjectIdentifierArc {
+                                    name: Some("us".into()),
+                                    number: Some(840)
+                                },
+                                ObjectIdentifierArc {
+                                    name: Some("ansi-x942".into()),
+                                    number: Some(10046)
+                                },
+                                ObjectIdentifierArc {
+                                    name: Some("module".into()),
+                                    number: Some(5)
+                                },
+                                ObjectIdentifierArc {
+                                    name: None,
+                                    number: Some(1)
+                                },
+                            ])
+                        )
+                    },
                     with: None
                 },
                 Import {
                     types: vec!["ECDomainParameters".into()],
-                    origin_name: "ANSI-X9-62".into(),
-                    origin_identifier: Some(ObjectIdentifierValue(vec![
-                        ObjectIdentifierArc {
-                            name: Some("iso".into()),
-                            number: Some(1)
-                        },
-                        ObjectIdentifierArc {
-                            name: Some("member-body".into()),
-                            number: Some(2)
-                        },
-                        ObjectIdentifierArc {
-                            name: Some("us".into()),
-                            number: Some(840)
-                        },
-                        ObjectIdentifierArc {
-                            name: None,
-                            number: Some(10045)
-                        },
-                        ObjectIdentifierArc {
-                            name: Some("modules".into()),
-                            number: Some(0)
-                        },
-                        ObjectIdentifierArc {
-                            name: None,
-                            number: Some(2)
-                        },
-                    ])),
+                    global_module_reference: GlobalModuleReference {
+                        module_reference: "ANSI-X9-62".into(),
+                        assigned_identifier: AssignedIdentifier::ObjectIdentifierValue(
+                            ObjectIdentifierValue(vec![
+                                ObjectIdentifierArc {
+                                    name: Some("iso".into()),
+                                    number: Some(1)
+                                },
+                                ObjectIdentifierArc {
+                                    name: Some("member-body".into()),
+                                    number: Some(2)
+                                },
+                                ObjectIdentifierArc {
+                                    name: Some("us".into()),
+                                    number: Some(840)
+                                },
+                                ObjectIdentifierArc {
+                                    name: None,
+                                    number: Some(10045)
+                                },
+                                ObjectIdentifierArc {
+                                    name: Some("modules".into()),
+                                    number: Some(0)
+                                },
+                                ObjectIdentifierArc {
+                                    name: None,
+                                    number: Some(2)
+                                },
+                            ])
+                        )
+                    },
                     with: None
                 }
             ]
         )
+    }
+
+    #[test]
+    fn global_module_reference_empty_assigned_identifier() {
+        assert_eq!(
+            global_module_reference(r#" EMPTY-assigned-ID next-module-import, "#).unwrap(),
+            (
+                " next-module-import, ",
+                GlobalModuleReference {
+                    module_reference: "EMPTY-assigned-ID".to_owned(),
+                    assigned_identifier: AssignedIdentifier::Empty
+                }
+            )
+        )
+    }
+
+    #[test]
+    fn global_module_reference_val_ref_assigned_identifier() {
+        assert_eq!(
+            global_module_reference(r#" VALref-assigned-ID valref next-module-import,"#)
+                .unwrap()
+                .1,
+            GlobalModuleReference {
+                module_reference: "VALref-assigned-ID".to_owned(),
+                assigned_identifier: AssignedIdentifier::ValueReference("valref".to_owned())
+            }
+        )
+    }
+
+    #[test]
+    fn global_module_reference_ext_val_ref_assigned_identifier() {
+        assert_eq!(
+            global_module_reference(
+                r#" ext-VALref-assigned-ID MODULE-ref.valref next-module-import,"#
+            )
+            .unwrap()
+            .1,
+            GlobalModuleReference {
+                module_reference: "ext-VALref-assigned-ID".to_owned(),
+                assigned_identifier: AssignedIdentifier::ExternalValueReference(
+                    ExternalValueReference {
+                        module_reference: "MODULE-ref".to_owned(),
+                        value_reference: "valref".to_owned()
+                    }
+                )
+            }
+        )
+    }
+
+    #[test]
+    fn issue_4_imports() {
+        assert_eq!(
+            imports(
+                r#"IMPORTS
+
+            Criticality,
+            Presence,
+            PrivateIE-ID,
+            ProtocolExtensionID,
+            ProtocolIE-ID
+        FROM NGAP-CommonDataTypes
+
+            maxPrivateIEs,
+            maxProtocolExtensions,
+            maxProtocolIEs
+        FROM NGAP-Constants;"#
+            )
+            .unwrap()
+            .1,
+            vec![
+                Import {
+                    types: vec![
+                        "Criticality".to_owned(),
+                        "Presence".to_owned(),
+                        "PrivateIE-ID".to_owned(),
+                        "ProtocolExtensionID".to_owned(),
+                        "ProtocolIE-ID".to_owned(),
+                    ],
+                    global_module_reference: GlobalModuleReference {
+                        module_reference: "NGAP-CommonDataTypes".to_owned(),
+                        assigned_identifier: AssignedIdentifier::Empty
+                    },
+                    with: None
+                },
+                Import {
+                    types: vec![
+                        "maxPrivateIEs".to_owned(),
+                        "maxProtocolExtensions".to_owned(),
+                        "maxProtocolIEs".to_owned()
+                    ],
+                    global_module_reference: GlobalModuleReference {
+                        module_reference: "NGAP-Constants".to_owned(),
+                        assigned_identifier: AssignedIdentifier::Empty
+                    },
+                    with: None
+                }
+            ]
+        );
     }
 }

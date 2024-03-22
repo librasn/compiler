@@ -35,7 +35,7 @@ impl ToplevelInformationDefinition {
             }
             (ASN1Information::ObjectSet(ref mut o), Some(ClassLink::ByReference(class))) => {
                 o.values.iter_mut().try_for_each(|value| match value {
-                    ObjectSetValue::Reference(_) => todo!(),
+                    ObjectSetValue::Reference(_) => Err(GrammarError { details: "Collecting supertypes of information object set values is currently unsupported!".into(), kind: GrammarErrorType::NotYetInplemented }),
                     ObjectSetValue::Inline(ref mut fields) => {
                         resolve_custom_syntax(fields, class)?;
                         link_object_fields(fields, class, tlds)
