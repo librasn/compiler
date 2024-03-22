@@ -272,33 +272,60 @@ pub enum With {
     Descendants,
 }
 
+/// Represents a global module reference as specified in
+/// Rec. ITU-T X.680 (02/2021)
+#[derive(Debug, Clone, PartialEq)]
+pub struct ExternalValueReference {
+    pub module_reference: String,
+    pub value_reference: String,
+}
+
+/// Represents a global module reference as specified in
+/// Rec. ITU-T X.680 (02/2021)
+#[derive(Debug, Clone, PartialEq)]
+pub struct GlobalModuleReference {
+    pub module_reference: String,
+    pub assigned_identifier: AssignedIdentifier,
+}
+
+impl From<(&str, AssignedIdentifier)> for GlobalModuleReference {
+    fn from(value: (&str, AssignedIdentifier)) -> Self {
+        Self {
+            module_reference: value.0.to_owned(),
+            assigned_identifier: value.1,
+        }
+    }
+}
+
+/// Represents an assigned identifier as specified in
+/// Rec. ITU-T X.680 (02/2021)
+#[derive(Debug, Clone, PartialEq)]
+pub enum AssignedIdentifier {
+    ObjectIdentifierValue(ObjectIdentifierValue),
+    ExternalValueReference(ExternalValueReference),
+    ValueReference(String),
+    ParameterizedValue {
+        value_reference: String,
+        actual_parameter_list: String,
+    },
+    Empty,
+}
+
 /// Represents a module import as specified in
 /// Rec. ITU-T X.680 (02/2021) § 13.16
 #[derive(Debug, Clone, PartialEq)]
 pub struct Import {
     pub types: Vec<String>,
-    pub origin_name: String,
-    pub origin_identifier: Option<ObjectIdentifierValue>,
+    pub global_module_reference: GlobalModuleReference,
     pub with: Option<With>,
 }
 
-impl
-    From<(
-        Vec<&str>,
-        (&str, Option<ObjectIdentifierValue>, Option<&str>),
-    )> for Import
-{
-    fn from(
-        value: (
-            Vec<&str>,
-            (&str, Option<ObjectIdentifierValue>, Option<&str>),
-        ),
-    ) -> Self {
+impl From<(Vec<&str>, (GlobalModuleReference, Option<&str>))> for Import {
+    fn from(value: (Vec<&str>, (GlobalModuleReference, Option<&str>))) -> Self {
         Self {
             types: value.0.into_iter().map(String::from).collect(),
-            origin_name: value.1 .0.into(),
-            origin_identifier: value.1 .1,
-            with: value.1 .2.map(|with| {
+            global_module_reference: value.1 .0,
+            with: value.1 .1.map(|with| {
                 if with == WITH_SUCCESSORS {
                     With::Successors
                 } else {

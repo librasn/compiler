@@ -32,7 +32,7 @@ impl Backend for Rust {
         if let Some((module_ref, _)) = tlds.first().and_then(|tld| tld.get_index().cloned()) {
             let name = to_rust_snake_case(&module_ref.name);
             let imports = module_ref.imports.iter().map(|import| {
-                let module = to_rust_snake_case(&import.origin_name);
+                let module = to_rust_snake_case(&import.global_module_reference.module_reference);
                 let mut usages = Some(vec![]);
                 'imports: for usage in &import.types {
                     if usage.contains("{}") || usage.chars().all(|c| c.is_uppercase() || c == '-') {

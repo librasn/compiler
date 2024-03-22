@@ -506,8 +506,14 @@ pub fn type_to_tokens(ty: &ASN1Type) -> Result<TokenStream, GeneratorError> {
             "Set values are currently unsupported!"
         )),
         ASN1Type::ElsewhereDeclaredType(e) => Ok(to_rust_title_case(&e.identifier)),
-        ASN1Type::InformationObjectFieldReference(_) => todo!(),
-        ASN1Type::Time(_) => todo!(),
+        ASN1Type::InformationObjectFieldReference(_) => Err(error!(
+            NotYetInplemented,
+            "Information Object field reference values are currently unsupported!"
+        )),
+        ASN1Type::Time(_) => Err(error!(
+            NotYetInplemented,
+            "Time values are currently unsupported!"
+        )),
         ASN1Type::GeneralizedTime(_) => Ok(quote!(GeneralizedTime)),
         ASN1Type::UTCTime(_) => Ok(quote!(UtcTime)),
         ASN1Type::EmbeddedPdv | ASN1Type::External => Ok(quote!(Any)),
