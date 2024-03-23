@@ -25,6 +25,13 @@ macro_rules! error {
 }
 
 impl ToplevelDefinition {
+    pub(crate) fn is_parameterized(&self) -> bool {
+        match self {
+            ToplevelDefinition::Type(t) => t.parameterization.is_some(),
+            _ => false, // TODO: implement parameterization for information objects and values
+        }
+    }
+
     pub(crate) fn get_distinguished_or_enum_value(
         &self,
         type_name: Option<&String>,

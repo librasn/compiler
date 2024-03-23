@@ -114,10 +114,15 @@ impl Validator {
     }
 
     fn has_constraint_reference(&mut self, key: &String) -> bool {
-        self.tlds
-            .get(key)
-            .map(ToplevelDefinition::has_constraint_reference)
-            .unwrap_or(false)
+        if let Some(tld) = self.tlds.get(key) {
+            if tld.is_parameterized() {
+                false
+            } else {
+                tld.has_constraint_reference()
+            }
+        } else {
+            false
+        }
     }
 
     fn references_class_by_name(&mut self, key: &String) -> bool {

@@ -32,9 +32,9 @@ pub fn parameters<'a>(input: &'a str) -> IResult<&'a str, Vec<Parameter>> {
     into(in_braces(separated_list1(
         char(COMMA),
         skip_ws_and_comments(alt((
-            map(asn1_type, |t| Parameter::TypeParameter(t)),
-            map(asn1_value, |v| Parameter::ValueParameter(v)),
-            map(object_set, |o| Parameter::ObjectSetParameter(o)),
+            map(asn1_value, Parameter::ValueParameter),
+            map(asn1_type, Parameter::TypeParameter),
+            map(object_set, Parameter::ObjectSetParameter),
             map(information_object, |o| {
                 Parameter::InformationObjectParameter(o)
             }),
@@ -75,6 +75,27 @@ mod tests {
                 values: vec![ObjectSetValue::Reference("Reg-MapData".into())],
                 extensible: None
             })]
+        )
+    }
+
+    #[test]
+    fn parses_builtin_type_params() {
+        assert_eq!(
+            parameterization(r#"{ INTEGER: lower, BOOLEAN: flag }"#)
+                .unwrap()
+                .1,
+            Parameterization {
+                parameters: vec![
+                    ParameterizationArgument {
+                        ty: "INTEGER".to_owned(),
+                        name: Some("lower".to_owned())
+                    },
+                    ParameterizationArgument {
+                        ty: "BOOLEAN".to_owned(),
+                        name: Some("flag".to_owned())
+                    }
+                ]
+            }
         )
     }
 }
