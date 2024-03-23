@@ -35,7 +35,7 @@ impl ToplevelInformationDefinition {
             }
             (ASN1Information::ObjectSet(ref mut o), Some(ClassLink::ByReference(class))) => {
                 o.values.iter_mut().try_for_each(|value| match value {
-                    ObjectSetValue::Reference(_) => Err(GrammarError { details: "Collecting supertypes of information object set values is currently unsupported!".into(), kind: GrammarErrorType::NotYetInplemented }),
+                    ObjectSetValue::Reference(_) => Ok(()),
                     ObjectSetValue::Inline(ref mut fields) => {
                         resolve_custom_syntax(fields, class)?;
                         link_object_fields(fields, class, tlds)
@@ -214,6 +214,47 @@ impl ObjectSet {
         self.values
             .iter()
             .any(|val| val.references_object_set_by_name())
+    }
+
+    pub fn resolve_object_set_references(
+        &mut self,
+        tlds: &BTreeMap<String, ToplevelDefinition>,
+    ) -> Result<(), GrammarError> {
+        let mut flattened_members = Vec::new();
+        let mut needs_recursing = false;
+        'resolving_references: for mut value in std::mem::take(&mut self.values) {
+            if let ObjectSetValue::Reference(id) = value {
+                match tlds.get(&id) {
+                    Some(ToplevelDefinition::Information(ToplevelInformationDefinition {
+                        value: ASN1Information::ObjectSet(set),
+                        ..
+                    })) => {
+                        set.values
+                            .iter()
+                            .for_each(|v| flattened_members.push(v.clone()));
+                        needs_recursing = true;
+                        continue 'resolving_references;
+                    }
+                    Some(ToplevelDefinition::Information(ToplevelInformationDefinition {
+                        value: ASN1Information::Object(obj),
+                        ..
+                    })) => value = ObjectSetValue::Inline(obj.fields.clone()),
+                    _ => {
+                        return Err(GrammarError {
+                            details: "Failed to resolve reference in object set.".to_owned(),
+                            kind: GrammarErrorType::LinkerError,
+                        })
+                    }
+                }
+            }
+            flattened_members.push(value)
+        }
+        self.values = flattened_members;
+        if needs_recursing {
+            self.resolve_object_set_references(tlds)
+        } else {
+            Ok(())
+        }
     }
 }
 

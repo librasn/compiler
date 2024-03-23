@@ -17,7 +17,10 @@ use crate::intermediate::{
     *,
 };
 
-use self::error::{ValidatorError, ValidatorErrorType};
+use self::{
+    error::{ValidatorError, ValidatorErrorType},
+    information_object::{ASN1Information, ObjectSet},
+};
 
 pub struct Validator {
     tlds: BTreeMap<String, ToplevelDefinition>,
@@ -47,6 +50,29 @@ impl Validator {
             }))
             .collect::<Vec<String>>();
         while let Some(key) = keys.pop() {
+            if matches![
+                self.tlds.get(&key),
+                Some(ToplevelDefinition::Information(
+                    ToplevelInformationDefinition {
+                        value: ASN1Information::ObjectSet(ObjectSet { .. }),
+                        ..
+                    }
+                ))
+            ] {
+                let mut item = self.tlds.remove(&key);
+                if let Some(ToplevelDefinition::Information(ToplevelInformationDefinition {
+                    value: ASN1Information::ObjectSet(set),
+                    ..
+                })) = &mut item
+                {
+                    if let Err(e) = set.resolve_object_set_references(&self.tlds) {
+                        warnings.push(Box::new(e))
+                    }
+                }
+                if let Some(tld) = item {
+                    self.tlds.insert(tld.name().clone(), tld);
+                }
+            }
             if self.references_class_by_name(&key) {
                 match self.tlds.remove(&key) {
                     Some(ToplevelDefinition::Type(mut tld)) => {
