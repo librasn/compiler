@@ -12,7 +12,7 @@ use nom::{
     branch::alt,
     bytes::complete::{tag, take_until},
     character::complete::multispace1,
-    combinator::{into, map, opt, recognize},
+    combinator::{into, map, opt, recognize, success, value},
     multi::{many0, many1},
     sequence::{delimited, pair, preceded, terminated, tuple},
     IResult,
@@ -215,6 +215,7 @@ fn top_level_information_object_declaration(
     into(tuple((
         skip_ws(many0(comment)),
         skip_ws(identifier),
+        skip_ws(opt(parameterization)),
         skip_ws(uppercase_identifier),
         preceded(assignment, information_object),
     )))(input)
@@ -224,6 +225,7 @@ fn top_level_object_set_declaration(input: &str) -> IResult<&str, ToplevelInform
     into(tuple((
         skip_ws(many0(comment)),
         skip_ws(identifier),
+        skip_ws(opt(parameterization)),
         skip_ws(uppercase_identifier),
         preceded(assignment, object_set),
     )))(input)
@@ -233,6 +235,7 @@ fn top_level_object_class_declaration(input: &str) -> IResult<&str, ToplevelInfo
     into(tuple((
         skip_ws(many0(comment)),
         skip_ws(uppercase_identifier),
+        skip_ws(opt(parameterization)),
         preceded(assignment, alt((type_identifier, information_object_class))),
     )))(input)
 }
@@ -498,6 +501,7 @@ mod tests {
                 comments: "comments".into(),
                 name: "CpmContainers".into(),
                 index: None,
+                parameterization: None,
                 class: Some(ClassLink::ByName("CPM-CONTAINER-ID-AND-TYPE".into())),
                 value: ASN1Information::ObjectSet(ObjectSet {
                     values: vec![
@@ -561,6 +565,7 @@ mod tests {
             ToplevelInformationDefinition {
                 comments: "".into(),
                 index: None,
+                parameterization: None,
                 name: "Reg-AdvisorySpeed".into(),
                 class: Some(ClassLink::ByName("REG-EXT-ID-AND-TYPE".into())),
                 value: ASN1Information::ObjectSet(ObjectSet {
@@ -587,6 +592,7 @@ mod tests {
                 name: "REG-EXT-ID-AND-TYPE".into(),
                 class: None,
                 index: None,
+                parameterization: None,
                 value: ASN1Information::ObjectClass(InformationObjectClass {
                     fields: vec![
                         InformationObjectClassField {

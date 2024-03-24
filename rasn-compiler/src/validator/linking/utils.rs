@@ -104,9 +104,9 @@ pub fn resolve_custom_syntax(
         let mut unsorted_default_syntax = Vec::<(usize, InformationObjectField)>::new();
 
         let mut application_index = 0;
-        'syntax_matching: for (required, token) in &tokens {
+        'syntax_matching: for (i, (required, token)) in tokens.iter().enumerate() {
             if let Some(expr) = application.get(application_index) {
-                if expr.matches(token, &tokens) {
+                if expr.matches(token, &tokens, i) {
                     match expr {
                         SyntaxApplication::ObjectSetDeclaration(o) => {
                             if let Some(index) =

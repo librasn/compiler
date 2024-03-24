@@ -787,7 +787,8 @@ impl ASN1Value {
         s: &SequenceOrSetOf,
         tlds: &BTreeMap<String, ToplevelDefinition>,
     ) -> Result<ASN1Value, GrammarError> {
-        let _ = val.iter_mut()
+        let _ = val
+            .iter_mut()
             .try_for_each(|v| v.1.link_with_type(tlds, &s.element_type));
         Ok(ASN1Value::LinkedArrayLikeValue(
             val.iter().map(|v| v.1.clone()).collect(),
@@ -926,11 +927,11 @@ impl ASN1Value {
                     for i in 0..c.len() {
                         if let Some(SyntaxApplication::ValueReference(val)) = c.get(i) {
                             match (c.get(i - 1), before, c.get(i + 1), after) {
-                                (Some(a), Some(b), _, _) if a.matches(b, &tokens) => {
+                                (Some(a), Some(b), _, _) if a.matches(b, &tokens, i) => {
                                     *self = val.clone();
                                     return Ok(());
                                 }
-                                (_, _, Some(c), Some(d)) if c.matches(d, &tokens) => {
+                                (_, _, Some(c), Some(d)) if c.matches(d, &tokens, i) => {
                                     *self = val.clone();
                                     return Ok(());
                                 }
