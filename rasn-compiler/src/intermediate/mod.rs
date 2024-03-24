@@ -597,6 +597,19 @@ pub struct ToplevelValueDefinition {
     pub index: Option<(Rc<ModuleReference>, usize)>,
 }
 
+impl From<(&str, ASN1Value, &str)> for ToplevelValueDefinition {
+    fn from(value: (&str, ASN1Value, &str)) -> Self {
+        Self {
+            comments: String::new(),
+            name: value.0.to_owned(),
+            associated_type: value.2.to_owned(),
+            parameterization: None,
+            value: value.1,
+            index: None,
+        }
+    }
+}
+
 impl From<(Vec<&str>, &str, Option<Parameterization>, &str, ASN1Value)>
     for ToplevelValueDefinition
 {
@@ -625,6 +638,19 @@ pub struct ToplevelTypeDefinition {
 impl ToplevelTypeDefinition {
     pub fn pdu(&self) -> &ASN1Type {
         &self.ty
+    }
+}
+
+impl From<(&str, ASN1Type)> for ToplevelTypeDefinition {
+    fn from(value: (&str, ASN1Type)) -> Self {
+        Self {
+            comments: String::new(),
+            tag: None,
+            name: value.0.to_owned(),
+            ty: value.1,
+            parameterization: None,
+            index: None,
+        }
     }
 }
 
@@ -685,6 +711,157 @@ pub enum ASN1Type {
 }
 
 impl ASN1Type {
+    pub fn as_str(&self) -> &str {
+        match self {
+            ASN1Type::Null => NULL,
+            ASN1Type::Boolean(_) => BOOLEAN,
+            ASN1Type::Integer(_) => INTEGER,
+            ASN1Type::Real(_) => REAL,
+            ASN1Type::BitString(_) => BIT_STRING,
+            ASN1Type::OctetString(_) => OCTET_STRING,
+            ASN1Type::CharacterString(CharacterString {
+                ty: CharacterStringType::BMPString,
+                ..
+            }) => BMP_STRING,
+            ASN1Type::CharacterString(CharacterString {
+                ty: CharacterStringType::UTF8String,
+                ..
+            }) => UTF8_STRING,
+            ASN1Type::CharacterString(CharacterString {
+                ty: CharacterStringType::PrintableString,
+                ..
+            }) => PRINTABLE_STRING,
+            ASN1Type::CharacterString(CharacterString {
+                ty: CharacterStringType::TeletexString,
+                ..
+            }) => TELETEX_STRING,
+            ASN1Type::CharacterString(CharacterString {
+                ty: CharacterStringType::IA5String,
+                ..
+            }) => IA5_STRING,
+            ASN1Type::CharacterString(CharacterString {
+                ty: CharacterStringType::UniversalString,
+                ..
+            }) => UNIVERSAL_STRING,
+            ASN1Type::CharacterString(CharacterString {
+                ty: CharacterStringType::VisibleString,
+                ..
+            }) => VISIBLE_STRING,
+            ASN1Type::CharacterString(CharacterString {
+                ty: CharacterStringType::GeneralString,
+                ..
+            }) => GENERAL_STRING,
+            ASN1Type::CharacterString(CharacterString {
+                ty: CharacterStringType::VideotexString,
+                ..
+            }) => VIDEOTEX_STRING,
+            ASN1Type::CharacterString(CharacterString {
+                ty: CharacterStringType::GraphicString,
+                ..
+            }) => GRAPHIC_STRING,
+            ASN1Type::CharacterString(CharacterString {
+                ty: CharacterStringType::NumericString,
+                ..
+            }) => NUMERIC_STRING,
+            ASN1Type::Enumerated(_) => ENUMERATED,
+            ASN1Type::Choice(_) => CHOICE,
+            ASN1Type::Sequence(_) => SEQUENCE,
+            ASN1Type::SequenceOf(_) => SEQUENCE_OF,
+            ASN1Type::Set(_) => SET,
+            ASN1Type::SetOf(_) => SET_OF,
+            ASN1Type::Time(_) => TIME,
+            ASN1Type::GeneralizedTime(_) => GENERALIZED_TIME,
+            ASN1Type::UTCTime(_) => UTC_TIME,
+            ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere { identifier, .. }) => &identifier,
+            ASN1Type::ChoiceSelectionType(_) => todo!(),
+            ASN1Type::ObjectIdentifier(_) => OBJECT_IDENTIFIER,
+            ASN1Type::InformationObjectFieldReference(_) => todo!(),
+            ASN1Type::EmbeddedPdv => EMBEDDED_PDV,
+            ASN1Type::External => EXTERNAL,
+        }
+    }
+
+    pub fn builtin_or_elsewhere(
+        parent: Option<&str>,
+        identifier: &str,
+        constraints: Option<Vec<Constraint>>,
+    ) -> ASN1Type {
+        match (parent, identifier) {
+            (None, NULL) => ASN1Type::Null,
+            (None, BOOLEAN) => ASN1Type::Boolean(Boolean {
+                constraints: constraints.unwrap_or_default(),
+            }),
+            (None, REAL) => ASN1Type::Real(Real {
+                constraints: constraints.unwrap_or_default(),
+            }),
+            (None, INTEGER) => ASN1Type::Integer(Integer {
+                constraints: constraints.unwrap_or_default(),
+                distinguished_values: None,
+            }),
+            (None, BIT_STRING) => ASN1Type::BitString(BitString {
+                constraints: constraints.unwrap_or_default(),
+                distinguished_values: None,
+            }),
+            (None, OCTET_STRING) => ASN1Type::OctetString(OctetString {
+                constraints: constraints.unwrap_or_default(),
+            }),
+            (None, GENERALIZED_TIME) => ASN1Type::GeneralizedTime(GeneralizedTime {
+                constraints: constraints.unwrap_or_default(),
+            }),
+            (None, UTC_TIME) => ASN1Type::UTCTime(UTCTime {
+                constraints: constraints.unwrap_or_default(),
+            }),
+            (None, OBJECT_IDENTIFIER) => ASN1Type::ObjectIdentifier(ObjectIdentifier {
+                constraints: constraints.unwrap_or_default(),
+            }),
+            (None, BMP_STRING) => ASN1Type::CharacterString(CharacterString {
+                constraints: constraints.unwrap_or_default(),
+                ty: CharacterStringType::BMPString,
+            }),
+            (None, UTF8_STRING) => ASN1Type::CharacterString(CharacterString {
+                constraints: constraints.unwrap_or_default(),
+                ty: CharacterStringType::UTF8String,
+            }),
+            (None, PRINTABLE_STRING) => ASN1Type::CharacterString(CharacterString {
+                constraints: constraints.unwrap_or_default(),
+                ty: CharacterStringType::PrintableString,
+            }),
+            (None, TELETEX_STRING) => ASN1Type::CharacterString(CharacterString {
+                constraints: constraints.unwrap_or_default(),
+                ty: CharacterStringType::TeletexString,
+            }),
+            (None, IA5_STRING) => ASN1Type::CharacterString(CharacterString {
+                constraints: constraints.unwrap_or_default(),
+                ty: CharacterStringType::IA5String,
+            }),
+            (None, UNIVERSAL_STRING) => ASN1Type::CharacterString(CharacterString {
+                constraints: constraints.unwrap_or_default(),
+                ty: CharacterStringType::UniversalString,
+            }),
+            (None, VISIBLE_STRING) => ASN1Type::CharacterString(CharacterString {
+                constraints: constraints.unwrap_or_default(),
+                ty: CharacterStringType::VisibleString,
+            }),
+            (None, GENERAL_STRING) => ASN1Type::CharacterString(CharacterString {
+                constraints: constraints.unwrap_or_default(),
+                ty: CharacterStringType::GeneralString,
+            }),
+            (None, VIDEOTEX_STRING) => ASN1Type::CharacterString(CharacterString {
+                constraints: constraints.unwrap_or_default(),
+                ty: CharacterStringType::VideotexString,
+            }),
+            (None, GRAPHIC_STRING) => ASN1Type::CharacterString(CharacterString {
+                constraints: constraints.unwrap_or_default(),
+                ty: CharacterStringType::GraphicString,
+            }),
+            (None, NUMERIC_STRING) => ASN1Type::CharacterString(CharacterString {
+                constraints: constraints.unwrap_or_default(),
+                ty: CharacterStringType::NumericString,
+            }),
+            _ => ASN1Type::ElsewhereDeclaredType((parent, identifier, constraints).into()),
+        }
+    }
+
     pub fn constraints(&self) -> Option<&Vec<Constraint>> {
         match self {
             ASN1Type::Boolean(b) => Some(b.constraints()),

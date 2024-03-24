@@ -184,7 +184,7 @@ pub fn elsewhere_declared_type(input: &str) -> IResult<&str, ASN1Type> {
             skip_ws_and_comments(title_case_identifier),
             opt(skip_ws_and_comments(constraint)),
         )),
-        |m| ASN1Type::ElsewhereDeclaredType(m.into()),
+        |(parent, id, constraints)| ASN1Type::builtin_or_elsewhere(parent, id, constraints),
     )(input)
 }
 
@@ -248,7 +248,7 @@ mod tests {
     use crate::{
         intermediate::{
             constraints::*,
-            parameterization::{Parameterization, ParameterizationArgument},
+            parameterization::{ParameterGovernor, Parameterization, ParameterizationArgument},
             types::*,
         },
         parser::end,
@@ -710,8 +710,8 @@ mod tests {
                 }),
                 parameterization: Some(Parameterization {
                     parameters: vec![ParameterizationArgument {
-                        ty: "REG-EXT-ID-AND-TYPE".into(),
-                        name: Some("Set".into())
+                        dummy_reference: "Set".into(),
+                        param_governor: ParameterGovernor::Class("REG-EXT-ID-AND-TYPE".into())
                     }]
                 }),
                 tag: None
