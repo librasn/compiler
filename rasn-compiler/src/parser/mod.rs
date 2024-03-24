@@ -52,8 +52,8 @@ mod set_of;
 mod time;
 mod util;
 
-pub fn asn_spec<'a>(
-    input: &'a str,
+pub fn asn_spec(
+    input: &str,
 ) -> Result<Vec<(ModuleReference, Vec<ToplevelDefinition>)>, ParserError> {
     many1(pair(
         module_reference,
@@ -73,7 +73,7 @@ pub fn asn_spec<'a>(
     .map_err(|e| e.into())
 }
 
-fn encoding_control<'a>(input: &'a str) -> IResult<&'a str, &'a str> {
+fn encoding_control(input: &str) -> IResult<&str, &str> {
     delimited(
         skip_ws_and_comments(tag("ENCODING-CONTROL")),
         take_until(END),
@@ -81,14 +81,14 @@ fn encoding_control<'a>(input: &'a str) -> IResult<&'a str, &'a str> {
     )(input)
 }
 
-fn end<'a>(input: &'a str) -> IResult<&'a str, &'a str> {
+fn end(input: &str) -> IResult<&str, &str> {
     skip_ws_and_comments(preceded(
         tag(END),
         recognize(many0(alt((comment, multispace1)))),
     ))(input)
 }
 
-pub fn top_level_type_declaration<'a>(input: &'a str) -> IResult<&'a str, ToplevelTypeDefinition> {
+pub fn top_level_type_declaration(input: &str) -> IResult<&str, ToplevelTypeDefinition> {
     into(tuple((
         skip_ws(many0(comment)),
         skip_ws(title_case_identifier),
@@ -97,9 +97,9 @@ pub fn top_level_type_declaration<'a>(input: &'a str) -> IResult<&'a str, Toplev
     )))(input)
 }
 
-pub fn top_level_information_declaration<'a>(
-    input: &'a str,
-) -> IResult<&'a str, ToplevelInformationDefinition> {
+pub fn top_level_information_declaration(
+    input: &str,
+) -> IResult<&str, ToplevelInformationDefinition> {
     skip_ws(alt((
         top_level_information_object_declaration,
         top_level_object_set_declaration,
@@ -107,7 +107,7 @@ pub fn top_level_information_declaration<'a>(
     )))(input)
 }
 
-pub fn asn1_type<'a>(input: &'a str) -> IResult<&'a str, ASN1Type> {
+pub fn asn1_type(input: &str) -> IResult<&str, ASN1Type> {
     alt((
         alt((
             null,
@@ -141,7 +141,7 @@ pub fn asn1_type<'a>(input: &'a str) -> IResult<&'a str, ASN1Type> {
     ))(input)
 }
 
-pub fn asn1_value<'a>(input: &'a str) -> IResult<&'a str, ASN1Value> {
+pub fn asn1_value(input: &str) -> IResult<&str, ASN1Value> {
     alt((
         all_value,
         null_value,
@@ -158,7 +158,7 @@ pub fn asn1_value<'a>(input: &'a str) -> IResult<&'a str, ASN1Value> {
     ))(input)
 }
 
-pub fn elsewhere_declared_value<'a>(input: &'a str) -> IResult<&'a str, ASN1Value> {
+pub fn elsewhere_declared_value(input: &str) -> IResult<&str, ASN1Value> {
     map(
         pair(
             opt(skip_ws_and_comments(recognize(many1(pair(
@@ -174,7 +174,7 @@ pub fn elsewhere_declared_value<'a>(input: &'a str) -> IResult<&'a str, ASN1Valu
     )(input)
 }
 
-pub fn elsewhere_declared_type<'a>(input: &'a str) -> IResult<&'a str, ASN1Type> {
+pub fn elsewhere_declared_type(input: &str) -> IResult<&str, ASN1Type> {
     map(
         tuple((
             opt(skip_ws_and_comments(recognize(many1(pair(
@@ -188,11 +188,12 @@ pub fn elsewhere_declared_type<'a>(input: &'a str) -> IResult<&'a str, ASN1Type>
     )(input)
 }
 
-fn top_level_value_declaration<'a>(input: &'a str) -> IResult<&'a str, ToplevelValueDefinition> {
+fn top_level_value_declaration(input: &str) -> IResult<&str, ToplevelValueDefinition> {
     alt((
         into(tuple((
             skip_ws(many0(comment)),
             skip_ws(value_identifier),
+            skip_ws_and_comments(opt(parameterization)),
             skip_ws(alt((
                 // Cover built-in types with spaces
                 tag(OBJECT_IDENTIFIER),
@@ -208,9 +209,9 @@ fn top_level_value_declaration<'a>(input: &'a str) -> IResult<&'a str, ToplevelV
     ))(input)
 }
 
-fn top_level_information_object_declaration<'a>(
-    input: &'a str,
-) -> IResult<&'a str, ToplevelInformationDefinition> {
+fn top_level_information_object_declaration(
+    input: &str,
+) -> IResult<&str, ToplevelInformationDefinition> {
     into(tuple((
         skip_ws(many0(comment)),
         skip_ws(identifier),
@@ -219,9 +220,7 @@ fn top_level_information_object_declaration<'a>(
     )))(input)
 }
 
-fn top_level_object_set_declaration<'a>(
-    input: &'a str,
-) -> IResult<&'a str, ToplevelInformationDefinition> {
+fn top_level_object_set_declaration(input: &str) -> IResult<&str, ToplevelInformationDefinition> {
     into(tuple((
         skip_ws(many0(comment)),
         skip_ws(identifier),
@@ -230,9 +229,7 @@ fn top_level_object_set_declaration<'a>(
     )))(input)
 }
 
-fn top_level_object_class_declaration<'a>(
-    input: &'a str,
-) -> IResult<&'a str, ToplevelInformationDefinition> {
+fn top_level_object_class_declaration(input: &str) -> IResult<&str, ToplevelInformationDefinition> {
     into(tuple((
         skip_ws(many0(comment)),
         skip_ws(uppercase_identifier),

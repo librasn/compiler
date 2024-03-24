@@ -566,6 +566,7 @@ impl ToplevelDefinition {
     ///     ToplevelDefinition::Value(
     ///         ToplevelValueDefinition {
     ///             comments: String::from("Comments from the ASN.1 spec"),
+    ///             parameterization: None,
     ///             name: String::from("the-answer"),
     ///             associated_type: String::from("INTEGER"),
     ///             value: ASN1Value::Integer(42),
@@ -591,17 +592,21 @@ pub struct ToplevelValueDefinition {
     pub comments: String,
     pub name: String,
     pub associated_type: String,
+    pub parameterization: Option<Parameterization>,
     pub value: ASN1Value,
     pub index: Option<(Rc<ModuleReference>, usize)>,
 }
 
-impl From<(Vec<&str>, &str, &str, ASN1Value)> for ToplevelValueDefinition {
-    fn from(value: (Vec<&str>, &str, &str, ASN1Value)) -> Self {
+impl From<(Vec<&str>, &str, Option<Parameterization>, &str, ASN1Value)>
+    for ToplevelValueDefinition
+{
+    fn from(value: (Vec<&str>, &str, Option<Parameterization>, &str, ASN1Value)) -> Self {
         Self {
             comments: value.0.join("\n"),
             name: value.1.into(),
-            associated_type: value.2.into(),
-            value: value.3,
+            parameterization: value.2,
+            associated_type: value.3.into(),
+            value: value.4,
             index: None,
         }
     }

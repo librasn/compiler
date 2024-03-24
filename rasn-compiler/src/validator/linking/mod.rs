@@ -787,8 +787,8 @@ impl ASN1Value {
         s: &SequenceOrSetOf,
         tlds: &BTreeMap<String, ToplevelDefinition>,
     ) -> Result<ASN1Value, GrammarError> {
-        val.iter_mut()
-            .try_for_each(|v| v.1.link_with_type(tlds, &*s.element_type));
+        let _ = val.iter_mut()
+            .try_for_each(|v| v.1.link_with_type(tlds, &s.element_type));
         Ok(ASN1Value::LinkedArrayLikeValue(
             val.iter().map(|v| v.1.clone()).collect(),
         ))
@@ -1046,6 +1046,7 @@ mod tests {
         let mut example_value = ToplevelValueDefinition {
             comments: String::new(),
             name: "exampleValue".into(),
+            parameterization: None,
             associated_type: "BaseChoice".into(),
             index: None,
             value: ASN1Value::Choice(String::from("first"), Box::new(ASN1Value::Boolean(true))),
@@ -1057,6 +1058,7 @@ mod tests {
                 comments: "".into(),
                 name: "exampleValue".into(),
                 associated_type: "BaseChoice".into(),
+                parameterization: None,
                 value: ASN1Value::Choice(
                     "first".into(),
                     Box::new(ASN1Value::LinkedNestedValue {
