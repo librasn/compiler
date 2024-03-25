@@ -18,10 +18,11 @@ use super::{
     },
     information_object_class::object_set,
     parameterization::parameters,
+    skip_ws,
     util::{opt_delimited, take_until_and_not, take_until_unbalanced},
 };
 
-pub fn constraint<'a>(input: &'a str) -> IResult<&'a str, Vec<Constraint>> {
+pub fn constraint(input: &str) -> IResult<&str, Vec<Constraint>> {
     skip_ws_and_comments(many1(alt((
         single_constraint,
         // Handle SIZE constraint without external parentheses
@@ -31,18 +32,19 @@ pub fn constraint<'a>(input: &'a str) -> IResult<&'a str, Vec<Constraint>> {
                 extensible: false,
             })
         }),
-        map(parameters, |p| Constraint::Parameter(p)),
+        map(parameters, Constraint::Parameter),
     ))))(input)
 }
 
-pub fn single_constraint<'a>(input: &'a str) -> IResult<&'a str, Constraint> {
+pub fn single_constraint(input: &str) -> IResult<&str, Constraint> {
     skip_ws_and_comments(in_parentheses(alt((
-        map(table_constraint, |t| Constraint::TableConstraint(t)),
-        map(element_set, |set| Constraint::SubtypeConstraint(set)),
+        map(content_constraint, Constraint::ContentConstraint),
+        map(table_constraint, Constraint::TableConstraint),
+        map(element_set, Constraint::SubtypeConstraint),
     ))))(input)
 }
 
-pub fn set_operator<'a>(input: &'a str) -> IResult<&'a str, SetOperator> {
+pub fn set_operator(input: &str) -> IResult<&str, SetOperator> {
     skip_ws_and_comments(alt((
         value(SetOperator::Intersection, tag(INTERSECTION)),
         value(SetOperator::Intersection, tag(CARET)),
@@ -52,7 +54,7 @@ pub fn set_operator<'a>(input: &'a str) -> IResult<&'a str, SetOperator> {
     )))(input)
 }
 
-fn element_set<'a>(input: &'a str) -> IResult<&'a str, ElementSet> {
+fn element_set(input: &str) -> IResult<&str, ElementSet> {
     into(pair(
         alt((
             map(set_operation, |v| ElementOrSetOperation::SetOperation(v)),
@@ -65,7 +67,7 @@ fn element_set<'a>(input: &'a str) -> IResult<&'a str, ElementSet> {
     ))(input)
 }
 
-fn set_operation<'a>(input: &'a str) -> IResult<&'a str, SetOperation> {
+fn set_operation(input: &str) -> IResult<&str, SetOperation> {
     into(tuple((
         subtype_element,
         set_operator,
@@ -76,7 +78,7 @@ fn set_operation<'a>(input: &'a str) -> IResult<&'a str, SetOperation> {
     )))(input)
 }
 
-fn subtype_element<'a>(input: &'a str) -> IResult<&'a str, SubtypeElement> {
+fn subtype_element(input: &str) -> IResult<&str, SubtypeElement> {
     alt((
         single_type_constraint,
         multiple_type_constraints,
@@ -91,7 +93,7 @@ fn subtype_element<'a>(input: &'a str) -> IResult<&'a str, SubtypeElement> {
     ))(input)
 }
 
-fn extension_additions<'a>(input: &'a str) -> IResult<&'a str, ()> {
+fn extension_additions(input: &str) -> IResult<&str, ()> {
     value(
         (),
         opt(pair(
@@ -99,12 +101,11 @@ fn extension_additions<'a>(input: &'a str) -> IResult<&'a str, ()> {
             skip_ws_and_comments(separated_list0(
                 skip_ws_and_comments(char(COMMA)),
                 skip_ws_and_comments(alt((
-                    value(0, asn1_value),
                     value(
                         0,
                         pair(
                             terminated(
-                                alt((value(None, tag(MIN)), map(asn1_value, |v| Some(v)))),
+                                alt((value(None, tag(MIN)), map(asn1_value, Some))),
                                 skip_ws_and_comments(opt(char(GREATER_THAN))),
                             ),
                             preceded(
@@ -113,19 +114,20 @@ fn extension_additions<'a>(input: &'a str) -> IResult<&'a str, ()> {
                                     opt(char(LESS_THAN)),
                                     skip_ws_and_comments(alt((
                                         value(None, tag(MAX)),
-                                        map(asn1_value, |v| Some(v)),
+                                        map(asn1_value, Some),
                                     ))),
                                 ),
                             ),
                         ),
                     ),
+                    value(0, asn1_value),
                 ))),
             )),
         )),
     )(input)
 }
 
-fn single_value<'a>(input: &'a str) -> IResult<&'a str, SubtypeElement> {
+fn single_value(input: &str) -> IResult<&str, SubtypeElement> {
     opt_delimited::<char, SubtypeElement, char, Error<&str>, _, _, _>(
         skip_ws_and_comments(char(LEFT_PARENTHESIS)),
         skip_ws_and_comments(into(pair(
@@ -140,7 +142,7 @@ fn single_value<'a>(input: &'a str) -> IResult<&'a str, SubtypeElement> {
     )(input)
 }
 
-fn contained_subtype<'a>(input: &'a str) -> IResult<&'a str, SubtypeElement> {
+fn contained_subtype(input: &str) -> IResult<&str, SubtypeElement> {
     opt_delimited::<char, SubtypeElement, char, Error<&str>, _, _, _>(
         skip_ws_and_comments(char(LEFT_PARENTHESIS)),
         skip_ws_and_comments(map(
@@ -160,23 +162,20 @@ fn contained_subtype<'a>(input: &'a str) -> IResult<&'a str, SubtypeElement> {
     )(input)
 }
 
-fn value_range<'a>(input: &'a str) -> IResult<&'a str, SubtypeElement> {
+fn value_range(input: &str) -> IResult<&str, SubtypeElement> {
     opt_delimited::<char, SubtypeElement, char, Error<&str>, _, _, _>(
         skip_ws_and_comments(char(LEFT_PARENTHESIS)),
         skip_ws_and_comments(map(
             tuple((
                 terminated(
-                    alt((value(None, tag(MIN)), map(asn1_value, |v| Some(v)))),
+                    alt((value(None, tag(MIN)), map(asn1_value, Some))),
                     skip_ws_and_comments(opt(char(GREATER_THAN))),
                 ),
                 preceded(
                     range_seperator,
                     preceded(
                         opt(char(LESS_THAN)),
-                        skip_ws_and_comments(alt((
-                            value(None, tag(MAX)),
-                            map(asn1_value, |v| Some(v)),
-                        ))),
+                        skip_ws_and_comments(alt((value(None, tag(MAX)), map(asn1_value, Some)))),
                     ),
                 ),
                 opt(skip_ws_and_comments(delimited(
@@ -195,7 +194,7 @@ fn value_range<'a>(input: &'a str) -> IResult<&'a str, SubtypeElement> {
     )(input)
 }
 
-fn size_constraint<'a>(input: &'a str) -> IResult<&'a str, SubtypeElement> {
+fn size_constraint(input: &str) -> IResult<&str, SubtypeElement> {
     opt_delimited::<char, SubtypeElement, char, Error<&str>, _, _, _>(
         skip_ws_and_comments(char(LEFT_PARENTHESIS)),
         skip_ws_and_comments(into(preceded(tag(SIZE), single_constraint))),
@@ -203,7 +202,7 @@ fn size_constraint<'a>(input: &'a str) -> IResult<&'a str, SubtypeElement> {
     )(input)
 }
 
-fn pattern_constraint<'a>(input: &'a str) -> IResult<&'a str, SubtypeElement> {
+fn pattern_constraint(input: &str) -> IResult<&str, SubtypeElement> {
     map(
         opt_delimited::<char, PatternConstraint, char, Error<&str>, _, _, _>(
             skip_ws_and_comments(char(LEFT_PARENTHESIS)),
@@ -221,7 +220,7 @@ fn pattern_constraint<'a>(input: &'a str) -> IResult<&'a str, SubtypeElement> {
     )(input)
 }
 
-fn user_defined_constraint<'a>(input: &'a str) -> IResult<&'a str, SubtypeElement> {
+fn user_defined_constraint(input: &str) -> IResult<&str, SubtypeElement> {
     map(
         opt_delimited::<char, UserDefinedConstraint, char, Error<&str>, _, _, _>(
             skip_ws_and_comments(char(LEFT_PARENTHESIS)),
@@ -245,7 +244,7 @@ fn user_defined_constraint<'a>(input: &'a str) -> IResult<&'a str, SubtypeElemen
 /// >* _51.7.2 A "PermittedAlphabet" specifies all values which can be constructed using a sub-alphabet of the parent string. This notation can only be applied to restricted character string types._
 /// >* _51.7.3 The "Constraint" shall use the "SubtypeConstraint" alternative of "ConstraintSpec". Each "SubtypeElements" within that "SubtypeConstraint" shall be one of the four alternatives "SingleValue", "ContainedSubtype", "ValueRange", and "SizeConstraint". The sub-alphabet includes precisely those characters which appear in one or more of the values of the parent string type which are allowed by the "Constraint"._
 /// >* _51.7.4 If "Constraint" is extensible, then the set of values selected by the permitted alphabet constraint is extensible. The set of values in the root are those permitted by the root of "Constraint", and the extension additions are those values permitted by the root together with the extension-additions of "Constraint", excluding those values already in the root._
-fn permitted_alphabet_constraint<'a>(input: &'a str) -> IResult<&'a str, SubtypeElement> {
+fn permitted_alphabet_constraint(input: &str) -> IResult<&str, SubtypeElement> {
     opt_delimited::<char, SubtypeElement, char, Error<&str>, _, _, _>(
         skip_ws_and_comments(char(LEFT_PARENTHESIS)),
         skip_ws_and_comments(map(
@@ -262,7 +261,7 @@ fn permitted_alphabet_constraint<'a>(input: &'a str) -> IResult<&'a str, Subtype
     )(input)
 }
 
-fn single_type_constraint<'a>(input: &'a str) -> IResult<&'a str, SubtypeElement> {
+fn single_type_constraint(input: &str) -> IResult<&str, SubtypeElement> {
     opt_delimited::<char, SubtypeElement, char, Error<&str>, _, _, _>(
         skip_ws_and_comments(char(LEFT_PARENTHESIS)),
         skip_ws_and_comments(into(preceded(
@@ -282,7 +281,7 @@ fn single_type_constraint<'a>(input: &'a str) -> IResult<&'a str, SubtypeElement
     )(input)
 }
 
-fn multiple_type_constraints<'a>(input: &'a str) -> IResult<&'a str, SubtypeElement> {
+fn multiple_type_constraints(input: &str) -> IResult<&str, SubtypeElement> {
     opt_delimited::<char, SubtypeElement, char, Error<&str>, _, _, _>(
         skip_ws_and_comments(char(LEFT_PARENTHESIS)),
         skip_ws_and_comments(preceded(
@@ -302,9 +301,9 @@ fn multiple_type_constraints<'a>(input: &'a str) -> IResult<&'a str, SubtypeElem
     )(input)
 }
 
-fn subset_member<'a>(
-    input: &'a str,
-) -> IResult<&'a str, (&str, Option<Vec<Constraint>>, Option<ComponentPresence>)> {
+fn subset_member(
+    input: &str,
+) -> IResult<&str, (&str, Option<Vec<Constraint>>, Option<ComponentPresence>)> {
     skip_ws_and_comments(tuple((
         identifier,
         opt(skip_ws_and_comments(constraint)),
@@ -315,7 +314,28 @@ fn subset_member<'a>(
     )))(input)
 }
 
-fn table_constraint<'a>(input: &'a str) -> IResult<&'a str, TableConstraint> {
+fn content_constraint(input: &str) -> IResult<&str, ContentConstraint> {
+    opt_delimited::<char, ContentConstraint, char, Error<&str>, _, _, _>(
+        skip_ws_and_comments(char(LEFT_PARENTHESIS)),
+        skip_ws_and_comments(alt((
+            into(pair(
+                preceded(skip_ws_and_comments(tag(CONTAINING)), skip_ws(asn1_type)),
+                preceded(skip_ws_and_comments(tag(ENCODED_BY)), skip_ws(asn1_value)),
+            )),
+            into(preceded(
+                skip_ws_and_comments(tag(CONTAINING)),
+                skip_ws(asn1_type),
+            )),
+            into(preceded(
+                skip_ws_and_comments(tag(ENCODED_BY)),
+                skip_ws(asn1_value),
+            )),
+        ))),
+        skip_ws_and_comments(char(RIGHT_PARENTHESIS)),
+    )(input)
+}
+
+fn table_constraint(input: &str) -> IResult<&str, TableConstraint> {
     opt_delimited::<char, TableConstraint, char, Error<&str>, _, _, _>(
         skip_ws_and_comments(char(LEFT_PARENTHESIS)),
         skip_ws_and_comments(into(pair(
@@ -329,14 +349,14 @@ fn table_constraint<'a>(input: &'a str) -> IResult<&'a str, TableConstraint> {
     )(input)
 }
 
-fn relational_constraint<'a>(input: &'a str) -> IResult<&'a str, RelationalConstraint> {
+fn relational_constraint(input: &str) -> IResult<&str, RelationalConstraint> {
     into(skip_ws_and_comments(preceded(
         char(AT),
         pair(many0_count(char(DOT)), identifier),
     )))(input)
 }
 
-fn property_settings_constraint<'a>(input: &'a str) -> IResult<&'a str, SubtypeElement> {
+fn property_settings_constraint(input: &str) -> IResult<&str, SubtypeElement> {
     preceded(
         skip_ws_and_comments(tag("SETTINGS")),
         map_res(
@@ -363,7 +383,7 @@ fn property_settings_constraint<'a>(input: &'a str) -> IResult<&'a str, SubtypeE
     )(input)
 }
 
-fn settings_identifier<'a>(input: &'a str) -> IResult<&'a str, &'a str> {
+fn settings_identifier(input: &str) -> IResult<&str, &str> {
     alt((
         tag(BasicSettings::NAME),
         tag(DateSettings::NAME),
@@ -1188,5 +1208,20 @@ mod tests {
                 extensible: false
             })]
         );
+    }
+
+    #[test]
+    fn parses_extended_range_constraint() {
+        assert_eq!(
+            constraint(r#"(1..65535, ..., 65536..109999)"#).unwrap().1,
+            vec![Constraint::SubtypeConstraint(ElementSet {
+                set: ElementOrSetOperation::Element(SubtypeElement::ValueRange {
+                    min: Some(ASN1Value::Integer(1)),
+                    max: Some(ASN1Value::Integer(65535)),
+                    extensible: true
+                }),
+                extensible: false
+            })]
+        )
     }
 }
