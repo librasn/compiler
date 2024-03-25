@@ -154,31 +154,9 @@ impl ToplevelDefinition {
         tlds: &BTreeMap<String, ToplevelDefinition>,
     ) -> Result<(), GrammarError> {
         match self {
-            ToplevelDefinition::Type(t) => t.collect_supertypes(tlds),
+            ToplevelDefinition::Type(t) => t.ty.collect_supertypes(tlds),
             ToplevelDefinition::Value(v) => v.collect_supertypes(tlds),
             ToplevelDefinition::Information(i) => i.collect_supertypes(tlds),
-        }
-    }
-}
-
-impl ToplevelTypeDefinition {
-    /// Collects supertypes of ASN1 values.
-    /// In `ToplevelTypeDefinition`s, values will appear only as `DEFAULT`
-    /// values in `SET`s or `SEQUENCE`s.
-    pub fn collect_supertypes(
-        &mut self,
-        tlds: &BTreeMap<String, ToplevelDefinition>,
-    ) -> Result<(), GrammarError> {
-        match self.ty {
-            ASN1Type::Set(ref mut s) | ASN1Type::Sequence(ref mut s) => {
-                s.members.iter_mut().try_for_each(|m| {
-                    m.default_value
-                        .as_mut()
-                        .map(|d| d.link_with_type(tlds, &m.ty))
-                        .unwrap_or(Ok(()))
-                })
-            }
-            _ => Ok(()),
         }
     }
 }
@@ -212,6 +190,26 @@ impl ToplevelValueDefinition {
 }
 
 impl ASN1Type {
+    /// Collects supertypes of ASN1 values.
+    /// In `ToplevelTypeDefinition`s, values will appear only as `DEFAULT`
+    /// values in `SET`s or `SEQUENCE`s.
+    pub fn collect_supertypes(
+        &mut self,
+        tlds: &BTreeMap<String, ToplevelDefinition>,
+    ) -> Result<(), GrammarError> {
+        match self {
+            ASN1Type::Set(ref mut s) | ASN1Type::Sequence(ref mut s) => {
+                s.members.iter_mut().try_for_each(|m| {
+                    m.default_value
+                        .as_mut()
+                        .map(|d| d.link_with_type(tlds, &m.ty))
+                        .unwrap_or(Ok(()))
+                })
+            }
+            _ => Ok(()),
+        }
+    }
+
     pub fn has_choice_selection_type(&self) -> bool {
         match self {
             ASN1Type::ChoiceSelectionType(_) => true,
@@ -385,7 +383,7 @@ impl ASN1Type {
             ty => {
                 if let Some(c) = ty.constraints_mut() {
                     for c in c.iter_mut() {
-                        c.link_cross_reference(name, tlds);
+                        c.link_cross_reference(name, tlds)?;
                     }
                 }
             }
@@ -448,7 +446,10 @@ impl ASN1Type {
                         }
                 }
                 impl_template.link_elsewhere_declared(&impl_tlds)?;
-                impl_template.link_constraint_reference(&identifier, &impl_tlds)?;
+                impl_template.link_constraint_reference(identifier, &impl_tlds)?;
+                impl_template.link_constraint_reference(identifier, tlds)?;
+                impl_template.collect_supertypes(&impl_tlds)?;
+                impl_template.collect_supertypes(tlds)?;
                 Ok(impl_template)
             }
             _ => Err(GrammarError {
@@ -848,6 +849,20 @@ impl ASN1Value {
                 }
                 Ok(())
             }
+            (
+                _,
+                ASN1Value::ElsewhereDeclaredValue {
+                    parent: None,
+                    identifier,
+                },
+            ) => {
+                if let Some(ToplevelDefinition::Value(tld)) = tlds.get(identifier) {
+                    *self = tld.value.clone();
+                    self.link_with_type(tlds, ty)?;
+                }
+                Ok(())
+            }
+            (_, ASN1Value::ElsewhereDeclaredValue { parent, identifier }) => todo!(),
             _ => Ok(()),
         }
     }
