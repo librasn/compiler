@@ -7,12 +7,39 @@ fn param_type() {
         rasn_compiler::Compiler::new()
             .add_asn_literal(
                 r#"
-    Param-Test DEFINITIONS AUTOMATIC TAGS ::= BEGIN
-    ParamType { INTEGER: lower, BOOLEAN: flag } ::= SEQUENCE {
-            int-value INTEGER (lower..12),
-            bool-value BOOLEAN DEFAULT flag
-    }
-    ImplType ::= ParamType { 2, TRUE }
+    NGAP-Test DEFINITIONS AUTOMATIC TAGS ::= BEGIN
+        NGAP-PROTOCOL-EXTENSION ::= CLASS {
+            &id				INTEGER			UNIQUE,
+            &criticality	INTEGER,
+            &Extension,
+            &presence		BOOLEAN
+        }
+        WITH SYNTAX {
+            ID				&id
+            CRITICALITY		&criticality
+            EXTENSION		&Extension
+            PRESENCE		&presence
+        }
+
+        ProtocolExtensionContainer {NGAP-PROTOCOL-EXTENSION : ExtensionSetParam} ::= 
+            SEQUENCE (SIZE (1..maxProtocolExtensions)) OF
+            ProtocolExtensionField {{ExtensionSetParam}}
+
+        ProtocolExtensionField {NGAP-PROTOCOL-EXTENSION : ExtensionSetParam} ::= SEQUENCE {
+            id					NGAP-PROTOCOL-EXTENSION.&id				({ExtensionSetParam}),
+            criticality			NGAP-PROTOCOL-EXTENSION.&criticality	({ExtensionSetParam}{@id}),
+            extensionValue		NGAP-PROTOCOL-EXTENSION.&Extension		({ExtensionSetParam}{@id})
+        }
+
+        A2X-PC5-FlowBitRates ::= SEQUENCE {
+            a2X-GuaranteedFlowBitRate		BOOLEAN,
+            iE-Extensions		ProtocolExtensionContainer { {A2X-PC5-FlowBitRates-ExtIEs} }	OPTIONAL,
+            ...
+        }
+
+        A2X-PC5-FlowBitRates-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {
+            ...
+        }
     END
     "#
             )

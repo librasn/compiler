@@ -2,6 +2,7 @@ use std::str::FromStr;
 
 use proc_macro2::{Ident, Literal, Punct, Spacing, TokenStream};
 use quote::{format_ident, quote, ToTokens, TokenStreamExt};
+use utils::types::SequenceOrSetOf;
 
 use crate::intermediate::{
     constraints::Constraint,
@@ -383,7 +384,7 @@ fn constraints_and_type_name(
         | ASN1Type::SetOf(_)
         | ASN1Type::Set(_) => (vec![], inner_name(name, parent_name).to_token_stream()),
         ASN1Type::SequenceOf(s) => {
-            let inner_type = type_to_tokens(&s.element_type)?;
+            let (_, inner_type) = constraints_and_type_name(&s.element_type, name, parent_name)?;
             (s.constraints().clone(), quote!(SequenceOf<#inner_type>))
         }
         ASN1Type::ElsewhereDeclaredType(e) => (
@@ -670,15 +671,7 @@ pub fn format_nested_sequence_members(
     sequence_or_set
         .members
         .iter()
-        .filter(|m| {
-            matches!(
-                m.ty,
-                ASN1Type::Enumerated(_)
-                    | ASN1Type::Choice(_)
-                    | ASN1Type::Sequence(_)
-                    | ASN1Type::Set(_)
-            )
-        })
+        .filter(|m| needs_unnesting(&m.ty))
         .map(|m| {
             generate(ToplevelDefinition::Type(ToplevelTypeDefinition {
                 parameterization: None,
@@ -690,6 +683,18 @@ pub fn format_nested_sequence_members(
             }))
         })
         .collect::<Result<Vec<_>, _>>()
+}
+
+fn needs_unnesting(ty: &ASN1Type) -> bool {
+    match ty {
+        ASN1Type::Enumerated(_)
+        | ASN1Type::Choice(_)
+        | ASN1Type::Sequence(_)
+        | ASN1Type::Set(_) => true,
+        ASN1Type::SequenceOf(SequenceOrSetOf { element_type, .. })
+        | ASN1Type::SetOf(SequenceOrSetOf { element_type, .. }) => needs_unnesting(element_type),
+        _ => false,
+    }
 }
 
 pub fn format_nested_choice_options(

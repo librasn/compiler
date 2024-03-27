@@ -110,7 +110,7 @@ impl Validator {
                 }
             }
             if self.has_constraint_reference(&key) {
-                let mut tld = self.tlds.remove(&key).ok_or(ValidatorError {
+                let mut tld = self.tlds.remove(&key).ok_or_else(|| ValidatorError {
                     data_element: Some(key.clone()),
                     details: "Could not find toplevel declaration to remove!".into(),
                     kind: ValidatorErrorType::MissingDependency,

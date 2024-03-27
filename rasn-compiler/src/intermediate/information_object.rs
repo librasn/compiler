@@ -1,3 +1,5 @@
+use crate::parser::asn1_value;
+
 use super::{constraints::*, *};
 
 #[derive(Debug, Clone, PartialEq)]
@@ -8,6 +10,19 @@ pub struct ToplevelInformationDefinition {
     pub class: Option<ClassLink>,
     pub value: ASN1Information,
     pub index: Option<(Rc<ModuleReference>, usize)>,
+}
+
+impl From<(&str, ASN1Information, &str)> for ToplevelInformationDefinition {
+    fn from(value: (&str, ASN1Information, &str)) -> Self {
+        Self {
+            comments: String::new(),
+            name: value.0.to_owned(),
+            parameterization: None,
+            class: Some(ClassLink::ByName(value.2.to_owned())),
+            value: value.1,
+            index: None,
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -165,6 +180,17 @@ impl SyntaxApplication {
                 SyntaxToken::Field(ObjectFieldIdentifier::SingleValue(_)),
                 SyntaxApplication::ValueReference(_),
             ) => true,
+            (SyntaxToken::Field(ObjectFieldIdentifier::SingleValue(_)), SyntaxApplication::LiteralOrTypeReference(DeclarationElsewhere { identifier: lit, .. })) |
+            (SyntaxToken::Field(ObjectFieldIdentifier::SingleValue(_)), SyntaxApplication::Literal(lit)) => {
+                let val = asn1_value(lit.as_str());
+                match val {
+                    Ok((_, ASN1Value::ElsewhereDeclaredValue { identifier, .. })) => {
+                        false
+                    },
+                    Ok((_, _)) => true,
+                    _ => false
+                }
+            }
             _ => false,
         }
     }

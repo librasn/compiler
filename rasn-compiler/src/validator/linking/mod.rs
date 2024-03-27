@@ -6,7 +6,7 @@ mod information_object;
 mod types;
 mod utils;
 
-use std::{borrow::BorrowMut, collections::BTreeMap, error::Error};
+use std::{borrow::BorrowMut, collections::BTreeMap};
 
 use crate::{
     intermediate::{error::*, information_object::*, types::*, utils::*, *},
@@ -346,11 +346,8 @@ impl ASN1Type {
                     b.link_cross_reference(name, tlds)?;
                 }
                 for m in s.members.iter_mut() {
-                    for c in m.constraints.iter_mut() {
-                        c.link_cross_reference(name, tlds)?;
-                    }
-                    for c in m.ty.constraints_mut().unwrap_or(&mut vec![]).iter_mut() {
-                        c.link_cross_reference(name, tlds)?;
+                    if let Some(replacement) = m.ty.link_constraint_reference(name, tlds)? {
+                        m.ty = replacement;
                     }
                 }
             }
@@ -372,7 +369,6 @@ impl ASN1Type {
                         tlds,
                         args,
                     )?);
-                // TODO: handle types with both constraint references and parameter impls
                 } else {
                     let id_clone = e.identifier.clone();
                     for c in e.constraints_mut() {
@@ -391,7 +387,7 @@ impl ASN1Type {
         Ok(self_replacement)
     }
 
-    fn resolve_parameters(
+    pub(crate) fn resolve_parameters(
         identifier: &String,
         parent: Option<&String>,
         tlds: &BTreeMap<String, ToplevelDefinition>,
@@ -404,7 +400,7 @@ impl ASN1Type {
                 ..
             })) => {
                 let mut impl_template = ty.clone();
-                let mut impl_tlds = BTreeMap::<String, ToplevelDefinition>::new();
+                let mut impl_tlds = tlds.clone();
                 for (
                     index,
                     ParameterizationArgument {
@@ -438,18 +434,34 @@ impl ASN1Type {
                                 );
                             },
                             (Parameter::InformationObjectParameter(_), _) => todo!(),
-                            (Parameter::ObjectSetParameter(_), _) => todo!(),
+                            (Parameter::ObjectSetParameter(o), ParameterGovernor::Class(c)) => {
+                                let mut info = ASN1Information::ObjectSet(o.clone());
+                                info.link_object_set_reference(tlds);
+                                let mut tld = ToplevelInformationDefinition::from((
+                                    dummy_reference.as_str(),
+                                    info,
+                                    c.as_str()
+                                ));
+                                tld = tld.resolve_class_reference(tlds);
+                                impl_tlds.insert(
+                                    dummy_reference.clone(),
+                                    ToplevelDefinition::Information(tld),
+                                );
+                            },
                             _ => return Err(GrammarError {
                                 details: format!("Mismatching argument for parameter {dummy_reference} of {identifier}"),
                                 kind: GrammarErrorType::LinkerError,
                             })
                         }
                 }
-                impl_template.link_elsewhere_declared(&impl_tlds)?;
-                impl_template.link_constraint_reference(identifier, &impl_tlds)?;
-                impl_template.link_constraint_reference(identifier, tlds)?;
-                impl_template.collect_supertypes(&impl_tlds)?;
-                impl_template.collect_supertypes(tlds)?;
+                impl_template
+                    .link_elsewhere_declared(&impl_tlds)?;
+                if let Some(replacement) = impl_template.link_constraint_reference(identifier, &impl_tlds)? {
+                        impl_template = replacement;
+                };
+                impl_template
+                    .collect_supertypes(&impl_tlds)
+                    .or_else(|_| impl_template.collect_supertypes(tlds))?;
                 Ok(impl_template)
             }
             _ => Err(GrammarError {
@@ -491,8 +503,11 @@ impl ASN1Type {
                     })
                 }
             }
-            ASN1Type::ChoiceSelectionType(_) => todo!(),
-            ASN1Type::InformationObjectFieldReference(_) => todo!(),
+            ASN1Type::ChoiceSelectionType(_) |
+            ASN1Type::InformationObjectFieldReference(_) => Err(GrammarError {
+                details: "Linking elsewhere defined information object field references is not yet supported!".to_string(),
+                kind: GrammarErrorType::NotYetInplemented,
+            }),
             _ => Ok(()),
         }
     }

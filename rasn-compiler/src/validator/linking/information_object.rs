@@ -72,7 +72,10 @@ fn link_object_fields(
                         kind: GrammarErrorType::LinkerError,
                     })
                     .and_then(|ty| fixed.value.link_with_type(tlds, ty)),
-                InformationObjectField::ObjectSetField(_) => todo!(),
+                InformationObjectField::ObjectSetField(_) => Err(GrammarError {
+                    details: format!("Linking object set fields is not yet supported!",),
+                    kind: GrammarErrorType::NotYetInplemented,
+                }),
                 _ => Ok(()),
             })
         }
@@ -164,26 +167,32 @@ impl ObjectSetValue {
     pub fn link_object_set_reference(
         &mut self,
         tlds: &BTreeMap<String, ToplevelDefinition>,
-    ) -> bool {
+    ) -> Option<Vec<ObjectSetValue>> {
         match self {
-            ObjectSetValue::Reference(id) => {
-                if let Some(ToplevelDefinition::Information(ToplevelInformationDefinition {
+            ObjectSetValue::Reference(id) => match tlds.get(id) {
+                Some(ToplevelDefinition::Information(ToplevelInformationDefinition {
                     value: ASN1Information::Object(obj),
                     ..
-                })) = tlds.get(id)
-                {
+                })) => {
                     *self = ObjectSetValue::Inline(obj.fields.clone());
-                    true
-                } else {
-                    false
+                    None
                 }
+                Some(ToplevelDefinition::Information(ToplevelInformationDefinition {
+                    value: ASN1Information::ObjectSet(obj),
+                    ..
+                })) => Some(obj.values.clone()),
+                _ => None,
+            },
+            ObjectSetValue::Inline(InformationObjectFields::CustomSyntax(c)) => {
+                c.iter_mut()
+                    .any(|field| field.link_object_set_reference(tlds));
+                None
             }
-            ObjectSetValue::Inline(InformationObjectFields::CustomSyntax(c)) => c
-                .iter_mut()
-                .any(|field| field.link_object_set_reference(tlds)),
-            ObjectSetValue::Inline(InformationObjectFields::DefaultSyntax(d)) => d
-                .iter_mut()
-                .any(|field| field.link_object_set_reference(tlds)),
+            ObjectSetValue::Inline(InformationObjectFields::DefaultSyntax(d)) => {
+                d.iter_mut()
+                    .any(|field| field.link_object_set_reference(tlds));
+                None
+            }
         }
     }
 
@@ -205,9 +214,11 @@ impl ObjectSet {
         &mut self,
         tlds: &BTreeMap<String, ToplevelDefinition>,
     ) -> bool {
-        self.values
+        let mut flattened: Vec<_> = self.values
             .iter_mut()
-            .any(|val| val.link_object_set_reference(tlds))
+            .flat_map(|val| val.link_object_set_reference(tlds).unwrap_or_default()).collect();
+        self.values.append(&mut flattened);
+        true
     }
 
     pub fn references_object_set_by_name(&self) -> bool {

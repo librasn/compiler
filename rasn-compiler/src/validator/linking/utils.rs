@@ -1,9 +1,12 @@
 use std::collections::BTreeMap;
 
-use crate::intermediate::{
-    error::{GrammarError, GrammarErrorType},
-    information_object::*,
-    *,
+use crate::{
+    intermediate::{
+        error::{GrammarError, GrammarErrorType},
+        information_object::*,
+        *,
+    },
+    parser::asn1_value,
 };
 
 use self::types::*;
@@ -105,7 +108,7 @@ pub fn resolve_custom_syntax(
 
         let mut application_index = 0;
         'syntax_matching: for (i, (required, token)) in tokens.iter().enumerate() {
-            if let Some(expr) = application.get(application_index) {
+            if let Some(expr) = application.get_mut(application_index) {
                 if expr.matches(token, &tokens, i) {
                     match expr {
                         SyntaxApplication::ObjectSetDeclaration(o) => {

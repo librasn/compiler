@@ -49,12 +49,13 @@ fn compile_etsi() {
     println!(
         "{:?}",
         Compiler::new()
-            .add_asn_by_path("../rasn-compiler/test_asn1/ngap_class.asn")
-            .add_asn_by_path("../rasn-compiler/test_asn1/ngap_common.asn")
-            .add_asn_by_path("../rasn-compiler/test_asn1/ngap_const.asn")
-            .add_asn_by_path("../rasn-compiler/test_asn1/ngap_container.asn")
-            .add_asn_by_path("../rasn-compiler/test_asn1/ngap_ies.asn")
-            .add_asn_by_path("../rasn-compiler/test_asn1/ngap_pdus.asn")
+            // .add_asn_by_path("../rasn-compiler/test_asn1/ngap_class.asn")
+            // .add_asn_by_path("../rasn-compiler/test_asn1/ngap_common.asn")
+            // .add_asn_by_path("../rasn-compiler/test_asn1/ngap_const.asn")
+            // .add_asn_by_path("../rasn-compiler/test_asn1/ngap_container.asn")
+            // .add_asn_by_path("../rasn-compiler/test_asn1/ngap_ies.asn")
+            // .add_asn_by_path("../rasn-compiler/test_asn1/ngap_pdus.asn")
+            .add_asn_by_path("../rasn-compiler/test_asn1/ngap_subset.asn")
             .set_output_path("./tests")
             .compile()
     );
