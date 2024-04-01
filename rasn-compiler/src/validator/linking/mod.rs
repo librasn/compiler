@@ -21,7 +21,7 @@ use self::{
     utils::{built_in_type, find_tld_or_enum_value_by_name, octet_string_to_bit_string},
 };
 
-use super::{Constraint, Parameter};
+use super::{Constraint, Parameter, TableConstraint};
 
 macro_rules! error {
     ($kind:ident, $($arg:tt)*) => {
@@ -401,6 +401,7 @@ impl ASN1Type {
             })) => {
                 let mut impl_template = ty.clone();
                 let mut impl_tlds = tlds.clone();
+                let mut table_constraint_replacements = BTreeMap::new();
                 for (
                     index,
                     ParameterizationArgument {
@@ -435,6 +436,13 @@ impl ASN1Type {
                             },
                             (Parameter::InformationObjectParameter(_), _) => todo!(),
                             (Parameter::ObjectSetParameter(o), ParameterGovernor::Class(c)) => {
+                                match &o.values.first() {
+                                    Some(osv) if o.values.len() == 1 => {
+                                        #[allow(suspicious_double_ref_op)]
+                                        table_constraint_replacements.insert(dummy_reference, osv.clone());
+                                    }
+                                    _ => return Err(GrammarError { details: "Expected object set value argument to contain single object set value!".to_owned(), kind: GrammarErrorType::LinkerError })
+                                }
                                 let mut info = ASN1Information::ObjectSet(o.clone());
                                 info.link_object_set_reference(tlds);
                                 let mut tld = ToplevelInformationDefinition::from((
@@ -463,6 +471,9 @@ impl ASN1Type {
                 impl_template
                     .collect_supertypes(&impl_tlds)
                     .or_else(|_| impl_template.collect_supertypes(tlds))?;
+                for (dummy_reference, osv) in table_constraint_replacements {
+                    impl_template.reassign_table_constraint(dummy_reference, osv)?;
+                }
                 Ok(impl_template)
             }
             _ => Err(GrammarError {
@@ -471,6 +482,57 @@ impl ASN1Type {
                 ),
                 kind: GrammarErrorType::LinkerError,
             }),
+        }
+    }
+
+    /// In certain parameterization cases, the constraining object set of a table constraint
+    /// has to be reassigned. Consider the following example:
+    /// ```ignore
+    /// ProtocolExtensionContainer {NGAP-PROTOCOL-EXTENSION : ExtensionSetParam} ::=
+    ///     SEQUENCE (SIZE (1..4)) OF
+    ///     ProtocolExtensionField {{ExtensionSetParam}}
+    ///
+    /// ProtocolExtensionField {NGAP-PROTOCOL-EXTENSION : ExtensionSetParam} ::= SEQUENCE {
+    ///     id                    NGAP-PROTOCOL-EXTENSION.&id                ({ExtensionSetParam}),
+    ///     extensionValue        NGAP-PROTOCOL-EXTENSION.&Extension        ({ExtensionSetParam}{@id})
+    /// }
+    ///
+    /// ActualExtensions ::= ProtocolExtensionContainer { {ApplicableSet} }
+    /// ApplicableSet NGAP-PROTOCOL-EXTENSION ::= { ... }
+    /// ```
+    /// Since the compiler only creates bindings for actual implementations of abstract items,
+    /// the `ExtensionSetParam` references in `ProtocolExtensionField`'s table constraints need
+    /// to be reassigned to the actual object sets that are passed in by the implementations of
+    /// the abstract classes.
+    fn reassign_table_constraint(
+        &mut self,
+        reference_id_before: &str,
+        replacement: &ObjectSetValue,
+    ) -> Result<(), GrammarError> {
+        match self {
+            ASN1Type::Sequence(s) | ASN1Type::Set(s) => {
+                for m in &mut s.members {
+                    if let Some(constraints) = m.ty.constraints_mut() {
+                        for c in constraints {
+                            if let Constraint::TableConstraint(TableConstraint { object_set: ObjectSet { values, .. }, .. }) = c {
+                                for value in values {
+                                    match value {
+                                        ObjectSetValue::Reference(r) if r == reference_id_before => {
+                                            *value = replacement.clone();
+                                        },
+                                        _ => ()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                Ok(())
+            },
+            ASN1Type::SequenceOf(s) | ASN1Type::SetOf(s) => {
+                s.element_type.reassign_table_constraint(reference_id_before, replacement)
+            },
+            _ => Ok(())
         }
     }
 
