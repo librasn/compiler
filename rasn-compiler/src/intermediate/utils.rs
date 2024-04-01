@@ -22,15 +22,15 @@ pub fn int_type_token<'a>(min: i128, max: i128, is_extensible: bool) -> &'a str 
     }
 }
 
-const RUST_KEYWORDS: [&'static str; 38] = [
+const RUST_KEYWORDS: [&str; 38] = [
     "as", "async", "await", "break", "const", "continue", "crate", "dyn", "else", "enum", "extern",
     "false", "fn", "for", "if", "impl", "in", "let", "loop", "match", "mod", "move", "mut", "pub",
     "ref", "return", "self", "Self", "static", "struct", "super", "trait", "true", "type",
     "unsafe", "use", "where", "while",
 ];
 
-pub fn to_rust_snake_case(input: &String) -> Ident {
-    let mut input = input.replace("-", "_");
+pub fn to_rust_snake_case(input: &str) -> Ident {
+    let mut input = input.replace('-', "_");
     let input = input.drain(..).fold(String::new(), |mut acc, c| {
         if acc.is_empty() && c.is_uppercase() {
             acc.push(c.to_ascii_lowercase());
@@ -51,22 +51,22 @@ pub fn to_rust_snake_case(input: &String) -> Ident {
     Ident::new(&name, Span::call_site())
 }
 
-pub fn to_rust_const_case(input: &String) -> Ident {
+pub fn to_rust_const_case(input: &str) -> Ident {
     Ident::new(
         &to_rust_snake_case(input).to_string().to_uppercase(),
         Span::call_site(),
     )
 }
 
-pub fn to_rust_enum_identifier(input: &String) -> Ident {
-    let mut formatted = format_ident!("{}", input.replace("-", "_"));
-    if RUST_KEYWORDS.contains(&input.as_str()) {
+pub fn to_rust_enum_identifier(input: &str) -> Ident {
+    let mut formatted = format_ident!("{}", input.replace('-', "_"));
+    if RUST_KEYWORDS.contains(&input) {
         formatted = format_ident!("R_{formatted}");
     }
     formatted
 }
 
-pub fn to_rust_title_case(input: &String) -> TokenStream {
+pub fn to_rust_title_case(input: &str) -> TokenStream {
     let mut input = input.replace("-", "_");
     let input = input.drain(..).fold(String::new(), |mut acc, c| {
         if acc.is_empty() && c.is_lowercase() {

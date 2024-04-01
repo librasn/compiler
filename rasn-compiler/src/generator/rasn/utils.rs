@@ -439,7 +439,7 @@ pub fn join_annotations(elements: Vec<TokenStream>) -> TokenStream {
     }
 }
 
-pub fn default_method_name(parent_name: &String, field_name: &String) -> String {
+pub fn default_method_name(parent_name: &str, field_name: &str) -> String {
     format!(
         "{}_{}_default",
         to_rust_snake_case(parent_name),
@@ -449,7 +449,7 @@ pub fn default_method_name(parent_name: &String, field_name: &String) -> String 
 
 pub fn format_default_methods(
     members: &Vec<SequenceOrSetMember>,
-    parent_name: &String,
+    parent_name: &str,
 ) -> Result<TokenStream, GeneratorError> {
     let mut output = TokenStream::new();
     for member in members {

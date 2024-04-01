@@ -214,9 +214,11 @@ impl ObjectSet {
         &mut self,
         tlds: &BTreeMap<String, ToplevelDefinition>,
     ) -> bool {
-        let mut flattened: Vec<_> = self.values
+        let mut flattened: Vec<_> = self
+            .values
             .iter_mut()
-            .flat_map(|val| val.link_object_set_reference(tlds).unwrap_or_default()).collect();
+            .flat_map(|val| val.link_object_set_reference(tlds).unwrap_or_default())
+            .collect();
         self.values.append(&mut flattened);
         true
     }

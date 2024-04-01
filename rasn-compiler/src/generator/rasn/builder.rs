@@ -19,8 +19,9 @@ use crate::{
 };
 
 use super::{
-    generate, template::*, utils::*, Rust, BMP_STRING, GENERAL_STRING, IA5_STRING, NUMERIC_STRING,
-    OBJECT_IDENTIFIER, PRINTABLE_STRING, SEQUENCE_OF, SET_OF, UTF8_STRING, VISIBLE_STRING,
+    generate, information_object::InformationObjectClassField, template::*, utils::*, Rust,
+    BMP_STRING, GENERAL_STRING, IA5_STRING, NUMERIC_STRING, OBJECT_IDENTIFIER, PRINTABLE_STRING,
+    SEQUENCE_OF, SET_OF, UTF8_STRING, VISIBLE_STRING,
 };
 use crate::generator::error::{GeneratorError, GeneratorErrorType};
 
@@ -350,7 +351,7 @@ pub fn generate_value(tld: ToplevelValueDefinition) -> Result<TokenStream, Gener
             )
         }
         ASN1Value::LinkedNestedValue { supertypes, value } => {
-            let parent = supertypes.last().map(to_rust_title_case);
+            let parent = supertypes.last().map(|s| to_rust_title_case(s));
             if value.is_const_type() {
                 call_template!(
                     primitive_value_template,
@@ -613,7 +614,16 @@ pub fn generate_sequence_or_set(
             } else {
                 TokenStream::new()
             };
-            let class_fields = seq.members.iter().fold(TokenStream::new(), |mut acc, m| { [m.constraints.clone(), m.ty.constraints().map_or(vec![], |c| c.to_vec())].concat().iter().for_each(|c| {
+            let class_fields = seq.members.iter().fold(
+                    TokenStream::new(),
+                    |mut acc, m| {
+                        [
+                            m.constraints.clone(),
+                            m.ty.constraints().map_or(vec![], |c| c.to_vec())
+                        ]
+                        .concat()
+                        .iter()
+                        .for_each(|c| {
                 let decode_fn = format_ident!("decode_{}", to_rust_snake_case(&m.name));
                 let open_field_name = to_rust_snake_case(&m.name);
                 if let (Constraint::TableConstraint(t), ASN1Type::InformationObjectFieldReference(iofr)) = (c, &m.ty) {
@@ -767,6 +777,12 @@ pub fn generate_information_object_set(
                         choices.insert(id.clone(), vec![(key.clone(), item)]);
                     }
                 }
+            }
+        }
+
+        if choices.is_empty() {
+            for InformationObjectClassField { identifier, .. } in &class.fields {
+                choices.insert(identifier.identifier().clone(), Vec::new());
             }
         }
 

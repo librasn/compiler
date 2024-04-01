@@ -180,15 +180,22 @@ impl SyntaxApplication {
                 SyntaxToken::Field(ObjectFieldIdentifier::SingleValue(_)),
                 SyntaxApplication::ValueReference(_),
             ) => true,
-            (SyntaxToken::Field(ObjectFieldIdentifier::SingleValue(_)), SyntaxApplication::LiteralOrTypeReference(DeclarationElsewhere { identifier: lit, .. })) |
-            (SyntaxToken::Field(ObjectFieldIdentifier::SingleValue(_)), SyntaxApplication::Literal(lit)) => {
+            (
+                SyntaxToken::Field(ObjectFieldIdentifier::SingleValue(_)),
+                SyntaxApplication::LiteralOrTypeReference(DeclarationElsewhere {
+                    identifier: lit,
+                    ..
+                }),
+            )
+            | (
+                SyntaxToken::Field(ObjectFieldIdentifier::SingleValue(_)),
+                SyntaxApplication::Literal(lit),
+            ) => {
                 let val = asn1_value(lit.as_str());
                 match val {
-                    Ok((_, ASN1Value::ElsewhereDeclaredValue { identifier, .. })) => {
-                        false
-                    },
+                    Ok((_, ASN1Value::ElsewhereDeclaredValue { identifier, .. })) => false,
                     Ok((_, _)) => true,
-                    _ => false
+                    _ => false,
                 }
             }
             _ => false,

@@ -454,10 +454,11 @@ impl ASN1Type {
                             })
                         }
                 }
-                impl_template
-                    .link_elsewhere_declared(&impl_tlds)?;
-                if let Some(replacement) = impl_template.link_constraint_reference(identifier, &impl_tlds)? {
-                        impl_template = replacement;
+                impl_template.link_elsewhere_declared(&impl_tlds)?;
+                if let Some(replacement) =
+                    impl_template.link_constraint_reference(identifier, &impl_tlds)?
+                {
+                    impl_template = replacement;
                 };
                 impl_template
                     .collect_supertypes(&impl_tlds)
