@@ -265,7 +265,9 @@ fn format_sequence_member(
     let (mut all_constraints, mut formatted_type_name) =
         constraints_and_type_name(&member.ty, &member.name, parent_name)?;
     all_constraints.append(&mut member.constraints.clone());
-    if member.is_optional && member.default_value.is_none() {
+    if (member.is_optional && member.default_value.is_none())
+        || member.name.starts_with("ext_group_")
+    {
         formatted_type_name = quote!(Option<#formatted_type_name>);
     }
     let default_annotation = member

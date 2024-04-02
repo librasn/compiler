@@ -831,7 +831,7 @@ pub fn generate_sequence_or_set_of(
     .unwrap_or_default();
     let member_type = match seq_or_set_of.element_type.as_ref() {
         ASN1Type::ElsewhereDeclaredType(d) => to_rust_title_case(&d.identifier),
-        _ => format_ident!("{INNER_ARRAY_LIKE_PREFIX}{}", &name.to_string()).to_token_stream(),
+        _ => format_ident!("Anonymous{}", &name.to_string()).to_token_stream(),
     };
     let mut annotations = vec![
         quote!(delegate),

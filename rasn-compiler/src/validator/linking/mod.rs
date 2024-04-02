@@ -333,6 +333,9 @@ impl ASN1Type {
                     b.link_cross_reference(name, tlds)?;
                 }
                 for opt in c.options.iter_mut() {
+                    if let Some(replacement) = opt.ty.link_constraint_reference(name, tlds)? {
+                        opt.ty = replacement;
+                    }
                     for c in opt.constraints.iter_mut() {
                         c.link_cross_reference(name, tlds)?;
                     }
@@ -355,7 +358,9 @@ impl ASN1Type {
                 for b in s.constraints.iter_mut() {
                     b.link_cross_reference(name, tlds)?;
                 }
-                s.element_type.link_constraint_reference(name, tlds)?;
+                if let Some(replacement) = s.element_type.link_constraint_reference(name, tlds)? {
+                    s.element_type = Box::new(replacement);
+                }
             }
             ASN1Type::ElsewhereDeclaredType(e) => {
                 if let Some(Constraint::Parameter(args)) = e
@@ -572,9 +577,32 @@ impl ASN1Type {
                     })
                 }
             }
-            ASN1Type::ChoiceSelectionType(_) |
-            ASN1Type::InformationObjectFieldReference(_) => Err(GrammarError {
-                details: "Linking elsewhere defined information object field references is not yet supported!".to_string(),
+            ASN1Type::InformationObjectFieldReference(iofr) => {
+                if let Some(ToplevelDefinition::Information(ToplevelInformationDefinition {
+                    value: ASN1Information::ObjectClass(c),
+                    ..
+                })) = tlds.get(&iofr.class)
+                {
+                    if let Some(field) = c.get_field(&iofr.field_path) {
+                        *self = field.ty.clone().unwrap_or(ASN1Type::External);
+                        return Ok(());
+                    }
+                }
+                Err(GrammarError {
+                    details: format!(
+                        "Failed to resolve argument {}.{} of parameterized implementation.",
+                        iofr.class,
+                        iofr.field_path
+                            .iter()
+                            .map(|f| f.identifier().clone())
+                            .collect::<Vec<_>>()
+                            .join(".")
+                    ),
+                    kind: GrammarErrorType::LinkerError,
+                })
+            }
+            ASN1Type::ChoiceSelectionType(_) => Err(GrammarError {
+                details: "Linking choice selection type is not yet supported!".to_string(),
                 kind: GrammarErrorType::NotYetInplemented,
             }),
             _ => Ok(()),
