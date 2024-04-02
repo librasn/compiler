@@ -11,7 +11,6 @@ mod utils;
 pub struct Rust;
 
 fn generate(tld: ToplevelDefinition) -> Result<TokenStream, GeneratorError> {
-    //println!("{tld:#?}");
     match tld {
         ToplevelDefinition::Type(t) => {
             if t.parameterization.is_some() {

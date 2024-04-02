@@ -67,7 +67,7 @@ pub fn to_rust_enum_identifier(input: &str) -> Ident {
 }
 
 pub fn to_rust_title_case(input: &str) -> TokenStream {
-    let mut input = input.replace("-", "_");
+    let mut input = input.replace('-', "_");
     let input = input.drain(..).fold(String::new(), |mut acc, c| {
         if acc.is_empty() && c.is_lowercase() {
             acc.push(c.to_ascii_uppercase());

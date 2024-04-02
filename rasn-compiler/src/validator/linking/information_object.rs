@@ -30,8 +30,25 @@ impl ToplevelInformationDefinition {
     ) -> Result<(), GrammarError> {
         match (&mut self.value, &self.class) {
             (ASN1Information::Object(ref mut o), Some(ClassLink::ByReference(class))) => {
-                resolve_custom_syntax(&mut o.fields, class)?;
-                link_object_fields(&mut o.fields, class, tlds)
+                match resolve_and_link(&mut o.fields, class, tlds)? {
+                    Some(ToplevelInformationDefinition {
+                        value: ASN1Information::Object(obj),
+                        ..
+                    }) => {
+                        self.value = ASN1Information::ObjectSet(ObjectSet {
+                            values: vec![ObjectSetValue::Inline(obj.fields.clone())],
+                            extensible: None,
+                        });
+                    }
+                    Some(ToplevelInformationDefinition {
+                        value: ASN1Information::ObjectSet(set),
+                        ..
+                    }) => {
+                        self.value = ASN1Information::ObjectSet(set.clone());
+                    }
+                    _ => (),
+                }
+                Ok(())
             }
             (ASN1Information::ObjectSet(ref mut o), Some(ClassLink::ByReference(class))) => {
                 o.values.iter_mut().try_for_each(|value| match value {
@@ -44,6 +61,35 @@ impl ToplevelInformationDefinition {
             }
             _ => Ok(()),
         }
+    }
+}
+
+fn resolve_and_link(
+    fields: &mut InformationObjectFields,
+    class: &InformationObjectClass,
+    tlds: &BTreeMap<String, ToplevelDefinition>,
+) -> Result<Option<ToplevelInformationDefinition>, GrammarError> {
+    match resolve_custom_syntax(fields, class) {
+        Ok(()) => link_object_fields(fields, class, tlds).map(|_| None),
+        Err(GrammarError {
+            kind: GrammarErrorType::SyntaxMismatch,
+            details,
+        }) => {
+            if let InformationObjectFields::CustomSyntax(c) = &fields {
+                if let Some(id) = c.first().and_then(SyntaxApplication::as_str_or_none) {
+                    if let Some(ToplevelDefinition::Information(tld)) = tlds.get(id) {
+                        let mut tld_clone = tld.clone().resolve_class_reference(tlds);
+                        tld_clone.collect_supertypes(tlds)?;
+                        return Ok(Some(tld_clone));
+                    }
+                }
+            }
+            Err(GrammarError {
+                details,
+                kind: GrammarErrorType::SyntaxMismatch,
+            })
+        }
+        Err(e) => Err(e),
     }
 }
 

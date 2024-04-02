@@ -193,7 +193,7 @@ pub fn resolve_custom_syntax(
                 } else if *required {
                     return Err(GrammarError {
                         details: "Syntax mismatch while resolving information object.".to_string(),
-                        kind: GrammarErrorType::LinkerError,
+                        kind: GrammarErrorType::SyntaxMismatch,
                     });
                 } else {
                     continue 'syntax_matching;
@@ -201,7 +201,7 @@ pub fn resolve_custom_syntax(
             } else if *required {
                 return Err(GrammarError {
                     details: "Syntax mismatch while resolving information object.".to_string(),
-                    kind: GrammarErrorType::LinkerError,
+                    kind: GrammarErrorType::SyntaxMismatch,
                 });
             } else {
                 continue 'syntax_matching;

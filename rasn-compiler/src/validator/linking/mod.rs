@@ -514,13 +514,19 @@ impl ASN1Type {
                 for m in &mut s.members {
                     if let Some(constraints) = m.ty.constraints_mut() {
                         for c in constraints {
-                            if let Constraint::TableConstraint(TableConstraint { object_set: ObjectSet { values, .. }, .. }) = c {
+                            if let Constraint::TableConstraint(TableConstraint {
+                                object_set: ObjectSet { values, .. },
+                                ..
+                            }) = c
+                            {
                                 for value in values {
                                     match value {
-                                        ObjectSetValue::Reference(r) if r == reference_id_before => {
+                                        ObjectSetValue::Reference(r)
+                                            if r == reference_id_before =>
+                                        {
                                             *value = replacement.clone();
-                                        },
-                                        _ => ()
+                                        }
+                                        _ => (),
                                     }
                                 }
                             }
@@ -528,11 +534,11 @@ impl ASN1Type {
                     }
                 }
                 Ok(())
-            },
-            ASN1Type::SequenceOf(s) | ASN1Type::SetOf(s) => {
-                s.element_type.reassign_table_constraint(reference_id_before, replacement)
-            },
-            _ => Ok(())
+            }
+            ASN1Type::SequenceOf(s) | ASN1Type::SetOf(s) => s
+                .element_type
+                .reassign_table_constraint(reference_id_before, replacement),
+            _ => Ok(()),
         }
     }
 

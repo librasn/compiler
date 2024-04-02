@@ -61,9 +61,9 @@ r#"
         #[derive (AsnType, Debug, Clone, Decode, Encode, PartialEq)]
         #[rasn (automatic_tags)]
         pub struct ImplType {
-            #[rasn(value("2..=12"))]
+            #[rasn(value("2..=12"), identifier = "int-value")]
             pub int_value : u8,
-            #[rasn (default = "impl_type_bool_value_default")]
+            #[rasn (default = "impl_type_bool_value_default", identifier = "bool-value")]
             pub bool_value : bool,
         }
 

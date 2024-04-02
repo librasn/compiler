@@ -26,6 +26,7 @@ pub enum GrammarErrorType {
     LinkerError,
     PerVisibleConstraintError,
     NotYetInplemented,
+    SyntaxMismatch,
 }
 
 impl Display for GrammarError {

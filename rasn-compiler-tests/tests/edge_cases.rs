@@ -88,7 +88,7 @@ e2e_pdu!(
         pub struct Test {
             #[rasn(default = "test_int_default")]
             pub int: IntWithDefault,
-            #[rasn(default = "test_r_enum_default")]
+            #[rasn(default = "test_r_enum_default", identifier = "enum")]
             pub r_enum: EnumWithDefault,
         }
         impl Test {

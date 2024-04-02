@@ -193,12 +193,36 @@ impl SyntaxApplication {
             ) => {
                 let val = asn1_value(lit.as_str());
                 match val {
-                    Ok((_, ASN1Value::ElsewhereDeclaredValue { identifier, .. })) => false,
+                    Ok((_, ASN1Value::ElsewhereDeclaredValue { .. })) => false,
                     Ok((_, _)) => true,
                     _ => false,
                 }
             }
             _ => false,
+        }
+    }
+
+    pub(crate) fn as_str_or_none(&self) -> Option<&str> {
+        match self {
+            SyntaxApplication::ObjectSetDeclaration(_) => None,
+            SyntaxApplication::ValueReference(ASN1Value::ElsewhereDeclaredValue {
+                parent: None,
+                identifier,
+            })
+            | SyntaxApplication::LiteralOrTypeReference(DeclarationElsewhere {
+                parent: None,
+                identifier,
+                ..
+            })
+            | SyntaxApplication::TypeReference(ASN1Type::ElsewhereDeclaredType(
+                DeclarationElsewhere {
+                    parent: None,
+                    identifier,
+                    ..
+                },
+            )) => Some(&identifier),
+            SyntaxApplication::Literal(l) => Some(&l),
+            _ => None,
         }
     }
 }
