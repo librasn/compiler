@@ -38,7 +38,10 @@
 //!     // set an output path for the generated rust code
 //!     .set_output_path(PathBuf::from("./asn/generated.rs"))
 //!     // you may also compile literal ASN1 snippets
-//!     .add_asn_literal("My-test-integer ::= INTEGER (1..128)")
+//!     .add_asn_literal(format!(
+//!         "TestModule DEFINITIONS AUTOMATIC TAGS::= BEGIN {} END",
+//!         "My-test-integer ::= INTEGER (1..128)"
+//!     ))
 //!     .compile() {
 //!     Ok(warnings /* Vec<Box<dyn Error>> */) => { /* handle compilation warnings */ }
 //!     Err(error /* Box<dyn Error> */) => { /* handle unrecoverable compilation error */ }
@@ -235,7 +238,10 @@ impl<B: Backend> Compiler<B, CompilerMissingParams> {
     /// * `literal` - literal ASN1 statement to include
     /// ```rust
     /// # use rasn_compiler::Compiler;
-    /// Compiler::new().add_asn_literal("My-test-integer ::= INTEGER (1..128)").compile_to_string();
+    /// Compiler::new().add_asn_literal(format!(
+    ///     "TestModule DEFINITIONS AUTOMATIC TAGS::= BEGIN {} END",
+    ///     "My-test-integer ::= INTEGER (1..128)"
+    /// )).compile_to_string();
     /// ```
     pub fn add_asn_literal(self, literal: impl Into<String>) -> Compiler<B, CompilerSourcesSet> {
         Compiler {
@@ -298,7 +304,10 @@ impl<B: Backend> Compiler<B, CompilerOutputSet> {
     /// * `literal` - literal ASN1 statement to include
     /// ```rust
     /// # use rasn_compiler::Compiler;
-    /// Compiler::new().add_asn_literal("My-test-integer ::= INTEGER (1..128)").compile_to_string();
+    /// Compiler::new().add_asn_literal(format!(
+    ///     "TestModule DEFINITIONS AUTOMATIC TAGS::= BEGIN {} END",
+    ///     "My-test-integer ::= INTEGER (1..128)"
+    /// )).compile_to_string();
     /// ```
     pub fn add_asn_literal(self, literal: impl Into<String>) -> Compiler<B, CompilerReady> {
         Compiler {
@@ -344,7 +353,10 @@ impl<B: Backend> Compiler<B, CompilerSourcesSet> {
     /// * `literal` - literal ASN1 statement to include
     /// ```rust
     /// # use rasn_compiler::Compiler;
-    /// Compiler::new().add_asn_literal("My-test-integer ::= INTEGER (1..128)").compile_to_string();
+    /// Compiler::new().add_asn_literal(format!(
+    ///     "TestModule DEFINITIONS AUTOMATIC TAGS::= BEGIN {} END",
+    ///     "My-test-integer ::= INTEGER (1..128)"
+    /// )).compile_to_string();
     /// ```
     pub fn add_asn_literal(self, literal: impl Into<String>) -> Compiler<B, CompilerSourcesSet> {
         let mut sources: Vec<AsnSource> = self.state.sources;
@@ -470,7 +482,10 @@ impl<B: Backend> Compiler<B, CompilerReady> {
     /// * `literal` - literal ASN1 statement to include
     /// ```rust
     /// # use rasn_compiler::Compiler;
-    /// Compiler::new().add_asn_literal("My-test-integer ::= INTEGER (1..128)").compile_to_string();
+    /// Compiler::new().add_asn_literal(format!(
+    ///     "TestModule DEFINITIONS AUTOMATIC TAGS::= BEGIN {} END",
+    ///     "My-test-integer ::= INTEGER (1..128)"
+    /// )).compile_to_string();
     /// ```
     pub fn add_asn_literal(self, literal: impl Into<String>) -> Compiler<B, CompilerReady> {
         let mut sources: Vec<AsnSource> = self.state.sources;
