@@ -49,7 +49,10 @@ fn main() {
     // set an output path for the generated rust code
     .set_output_path(PathBuf::from("./asn/generated.rs"))
     // you may also compile literal ASN1 snippets
-    .add_asn_literal("My-test-integer ::= INTEGER (1..128)")
+    .add_asn_literal(format!(
+        "TestModule DEFINITIONS AUTOMATIC TAGS::= BEGIN {} END",
+        "My-test-integer ::= INTEGER (1..128)"
+    ))
     .compile() {
     Ok(warnings /* Vec<Box<dyn Error>> */) => { /* handle compilation warnings */ }
     Err(error /* Box<dyn Error> */) => { /* handle unrecoverable compilation error */ }
