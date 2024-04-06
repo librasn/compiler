@@ -1,12 +1,12 @@
 use crate::intermediate::*;
 use nom::{
     branch::alt,
-    bytes::complete::{is_not, tag, take_until},
+    bytes::complete::{tag, take_until},
     character::complete::char,
     combinator::{into, map, not, opt, peek, recognize, value},
     multi::{many0, separated_list1},
     sequence::{delimited, pair, preceded, separated_pair, terminated, tuple},
-    IResult, Parser,
+    IResult,
 };
 
 use super::{

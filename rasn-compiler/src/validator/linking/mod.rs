@@ -394,7 +394,7 @@ impl ASN1Type {
 
     pub(crate) fn resolve_parameters(
         identifier: &String,
-        parent: Option<&String>,
+        _parent: Option<&String>,
         tlds: &BTreeMap<String, ToplevelDefinition>,
         args: &[Parameter],
     ) -> Result<ASN1Type, GrammarError> {
@@ -999,7 +999,7 @@ impl ASN1Value {
                 }
                 Ok(())
             }
-            (_, ASN1Value::ElsewhereDeclaredValue { parent, identifier }) => todo!(),
+            (_, ASN1Value::ElsewhereDeclaredValue { .. }) => todo!(),
             _ => Ok(()),
         }
     }

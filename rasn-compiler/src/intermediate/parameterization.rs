@@ -1,6 +1,4 @@
-use std::default;
-
-use super::{information_object::InformationObjectClass, ASN1Type};
+use super::ASN1Type;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Parameterization {

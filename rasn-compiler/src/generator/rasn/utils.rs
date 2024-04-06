@@ -1,4 +1,4 @@
-use std::{mem, str::FromStr};
+use std::str::FromStr;
 
 use proc_macro2::{Ident, Literal, Punct, Spacing, TokenStream};
 use quote::{format_ident, quote, ToTokens, TokenStreamExt};

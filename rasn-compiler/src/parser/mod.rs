@@ -12,7 +12,7 @@ use nom::{
     branch::alt,
     bytes::complete::{tag, take_until},
     character::complete::multispace1,
-    combinator::{into, map, opt, recognize, success, value},
+    combinator::{into, map, opt, recognize},
     multi::{many0, many1},
     sequence::{delimited, pair, preceded, terminated, tuple},
     IResult,
