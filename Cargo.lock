@@ -290,9 +290,9 @@ checksum = "e6d5a32815ae3f33302d95fdcb2ce17862f8c65363dcfd29360480ba1001fc9c"
 
 [[package]]
 name = "getrandom"
-version = "0.2.12"
+version = "0.2.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "190092ea657667030ac6a35e305e62fc4dd69fd98ac98631e5d3a2b1575a12b5"
+checksum = "a06fddc2749e0528d2813f95e050e87e52c8cbbae56223b9babf73b3e53b0cc6"
 dependencies = [
  "cfg-if",
  "libc",
@@ -547,30 +547,9 @@ checksum = "dc33ff2d4973d518d823d61aa239014831e521c75da58e3df4840d3f47749d09"
 
 [[package]]
 name = "rasn"
-version = "0.10.6"
+version = "0.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "76def3a472085e40dae01e4eeb106f2ed70f8c7dabe041faed1668a00ee143ef"
-dependencies = [
- "arrayvec",
- "bitvec",
- "bitvec-nom2",
- "bytes",
- "chrono",
- "either",
- "konst",
- "nom",
- "num-bigint",
- "num-integer",
- "num-traits",
- "once_cell",
- "rasn-derive 0.10.6",
- "snafu",
-]
-
-[[package]]
-name = "rasn"
-version = "0.13.1"
-source = "git+https://github.com/librasn/rasn#285f0043c5d2a77d7d1acd03b3045886b65637f6"
+checksum = "39df916fdbba892afb9a7e91f4117c58ba36b14a236aa45bfa12fcf623641051"
 dependencies = [
  "arrayvec",
  "bitvec",
@@ -585,13 +564,27 @@ dependencies = [
  "num-integer",
  "num-traits",
  "once_cell",
- "rasn-derive 0.13.1",
+ "rasn-derive",
  "snafu",
 ]
 
 [[package]]
 name = "rasn-compiler"
 version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e980f4a383df8bbc6f18048f62a69973aa3edd590254348b6e9c043d0ff1aea5"
+dependencies = [
+ "chrono",
+ "nom",
+ "num",
+ "proc-macro2",
+ "quote",
+ "wasm-bindgen",
+]
+
+[[package]]
+name = "rasn-compiler"
+version = "0.1.2"
 dependencies = [
  "chrono",
  "clap",
@@ -606,47 +599,33 @@ dependencies = [
 
 [[package]]
 name = "rasn-compiler-derive"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "proc-macro2",
- "rasn-compiler",
+ "rasn-compiler 0.1.1",
  "syn 2.0.58",
 ]
 
 [[package]]
 name = "rasn-compiler-tests"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "bitvec",
  "bitvec-nom",
  "bytes",
  "lazy_static",
  "num-bigint",
- "rasn 0.13.1",
- "rasn-compiler",
+ "rasn",
+ "rasn-compiler 0.1.2",
  "rasn-compiler-derive",
  "rasn-kerberos",
 ]
 
 [[package]]
 name = "rasn-derive"
-version = "0.10.6"
+version = "0.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "48d1fd02e16232e942b5e7ce305b447c550d09a9146255a3e8a2cf62a0e2ac2d"
-dependencies = [
- "either",
- "itertools",
- "proc-macro2",
- "quote",
- "rayon",
- "syn 1.0.109",
- "uuid",
-]
-
-[[package]]
-name = "rasn-derive"
-version = "0.13.1"
-source = "git+https://github.com/librasn/rasn#285f0043c5d2a77d7d1acd03b3045886b65637f6"
+checksum = "7e81213825a788a1afeab661c7ecdbaf55c06cefca003a4f1dd14d1d9d854d55"
 dependencies = [
  "either",
  "itertools",
@@ -659,11 +638,11 @@ dependencies = [
 
 [[package]]
 name = "rasn-kerberos"
-version = "0.10.6"
+version = "0.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5ba4e011a029bfa443933ac8df4ff1969dd3af4d1385e731d98c56517cdef06d"
+checksum = "2b6e4fd2c773037d04360dfcf697132a1d284c73752d8289a227846fd16ddb29"
 dependencies = [
- "rasn 0.10.6",
+ "rasn",
 ]
 
 [[package]]
