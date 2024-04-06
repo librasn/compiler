@@ -1,7 +1,8 @@
-use std::str::FromStr;
+use std::{mem, str::FromStr};
 
 use proc_macro2::{Ident, Literal, Punct, Spacing, TokenStream};
 use quote::{format_ident, quote, ToTokens, TokenStreamExt};
+use utils::types::SequenceOrSetOf;
 
 use crate::intermediate::{
     constraints::Constraint,
@@ -69,12 +70,24 @@ pub fn int_type_token(opt_min: Option<i128>, opt_max: Option<i128>, is_extensibl
     }
 }
 
-pub fn format_comments(comments: &String) -> Result<TokenStream, GeneratorError> {
+pub fn format_comments(comments: &str) -> Result<TokenStream, GeneratorError> {
     if comments.is_empty() {
         Ok(TokenStream::new())
     } else {
         let joined = String::from("///") + &comments.replace('\n', "\n ///") + "\n";
         Ok(TokenStream::from_str(&joined)?)
+    }
+}
+
+pub fn format_identifier_annotation(name: &str, comments: &str, ty: &ASN1Type) -> TokenStream {
+    if comments == " Inner type "
+        || comments.starts_with(" Anonymous ")
+        || name.starts_with("ext_group_")
+    {
+        let identifier = ty.as_str().replace(' ', "_");
+        quote!(identifier = #identifier)
+    } else {
+        quote!(identifier = #name)
     }
 }
 
@@ -252,7 +265,9 @@ fn format_sequence_member(
     let (mut all_constraints, mut formatted_type_name) =
         constraints_and_type_name(&member.ty, &member.name, parent_name)?;
     all_constraints.append(&mut member.constraints.clone());
-    if member.is_optional && member.default_value.is_none() {
+    if (member.is_optional && member.default_value.is_none())
+        || member.name.starts_with("ext_group_")
+    {
         formatted_type_name = quote!(Option<#formatted_type_name>);
     }
     let default_annotation = member
@@ -270,13 +285,17 @@ fn format_sequence_member(
     } else {
         TokenStream::new()
     };
-    let annotations = join_annotations(vec![
+    let mut annotation_items = vec![
         extension_annotation,
         range_annotations,
         alphabet_annotations,
         format_tag(member.tag.as_ref(), false),
         default_annotation,
-    ]);
+    ];
+    if name != member.name || member.name.starts_with("ext_group_") {
+        annotation_items.push(format_identifier_annotation(&member.name, "", &member.ty));
+    }
+    let annotations = join_annotations(annotation_items);
     Ok((
         quote! {
             #annotations
@@ -331,12 +350,16 @@ fn format_choice_option(
     } else {
         TokenStream::new()
     };
-    let annotations = join_annotations(vec![
+    let mut annotation_items = vec![
         extension_annotation,
         range_annotations,
         alphabet_annotations,
         format_tag(member.tag.as_ref(), false),
-    ]);
+    ];
+    if name != member.name || member.name.starts_with("ext_group_") {
+        annotation_items.push(format_identifier_annotation(&member.name, "", &member.ty));
+    }
+    let annotations = join_annotations(annotation_items);
     Ok(quote! {
             #annotations
             #name(#formatted_type_name),
@@ -383,7 +406,7 @@ fn constraints_and_type_name(
         | ASN1Type::SetOf(_)
         | ASN1Type::Set(_) => (vec![], inner_name(name, parent_name).to_token_stream()),
         ASN1Type::SequenceOf(s) => {
-            let inner_type = type_to_tokens(&s.element_type)?;
+            let (_, inner_type) = constraints_and_type_name(&s.element_type, name, parent_name)?;
             (s.constraints().clone(), quote!(SequenceOf<#inner_type>))
         }
         ASN1Type::ElsewhereDeclaredType(e) => (
@@ -438,7 +461,7 @@ pub fn join_annotations(elements: Vec<TokenStream>) -> TokenStream {
     }
 }
 
-pub fn default_method_name(parent_name: &String, field_name: &String) -> String {
+pub fn default_method_name(parent_name: &str, field_name: &str) -> String {
     format!(
         "{}_{}_default",
         to_rust_snake_case(parent_name),
@@ -448,7 +471,7 @@ pub fn default_method_name(parent_name: &String, field_name: &String) -> String 
 
 pub fn format_default_methods(
     members: &Vec<SequenceOrSetMember>,
-    parent_name: &String,
+    parent_name: &str,
 ) -> Result<TokenStream, GeneratorError> {
     let mut output = TokenStream::new();
     for member in members {
@@ -474,7 +497,7 @@ pub fn format_default_methods(
 
 pub fn type_to_tokens(ty: &ASN1Type) -> Result<TokenStream, GeneratorError> {
     match ty {
-        ASN1Type::Null => Ok(quote!(Asn1Null)),
+        ASN1Type::Null => Ok(quote!(())),
         ASN1Type::Boolean(_) => Ok(quote!(bool)),
         ASN1Type::Integer(i) => Ok(i.int_type().to_token_stream()),
         ASN1Type::Real(_) => Ok(quote!(f64)),
@@ -670,15 +693,7 @@ pub fn format_nested_sequence_members(
     sequence_or_set
         .members
         .iter()
-        .filter(|m| {
-            matches!(
-                m.ty,
-                ASN1Type::Enumerated(_)
-                    | ASN1Type::Choice(_)
-                    | ASN1Type::Sequence(_)
-                    | ASN1Type::Set(_)
-            )
-        })
+        .filter(|m| needs_unnesting(&m.ty))
         .map(|m| {
             generate(ToplevelDefinition::Type(ToplevelTypeDefinition {
                 parameterization: None,
@@ -690,6 +705,18 @@ pub fn format_nested_sequence_members(
             }))
         })
         .collect::<Result<Vec<_>, _>>()
+}
+
+fn needs_unnesting(ty: &ASN1Type) -> bool {
+    match ty {
+        ASN1Type::Enumerated(_)
+        | ASN1Type::Choice(_)
+        | ASN1Type::Sequence(_)
+        | ASN1Type::Set(_) => true,
+        ASN1Type::SequenceOf(SequenceOrSetOf { element_type, .. })
+        | ASN1Type::SetOf(SequenceOrSetOf { element_type, .. }) => needs_unnesting(element_type),
+        _ => false,
+    }
 }
 
 pub fn format_nested_choice_options(
@@ -777,6 +804,17 @@ pub fn resolve_standard_syntax(
     let mut key = None;
     let mut field_index_map = Vec::<(usize, ASN1Type)>::new();
 
+    let key_index = class
+        .fields
+        .iter()
+        .enumerate()
+        .find_map(|(i, f)| f.is_unique.then_some(i))
+        .ok_or_else(|| GeneratorError {
+            details: format!("Could not find key for class {class:?}"),
+            kind: GeneratorErrorType::MissingClassKey,
+            ..Default::default()
+        })?;
+
     let mut appl_iter = application.iter().enumerate();
     'syntax_matching: for class_field in &class.fields {
         if let Some((index, field)) = appl_iter.next() {
@@ -786,7 +824,9 @@ pub fn resolve_standard_syntax(
                         field_index_map.push((index, f.ty.clone()));
                     }
                     InformationObjectField::FixedValueField(f) => {
-                        key = Some(f.value.clone());
+                        if index == key_index {
+                            key = Some(f.value.clone());
+                        }
                     }
                     InformationObjectField::ObjectSetField(_) => todo!(),
                 }
@@ -941,8 +981,9 @@ mod tests {
             .0
             .to_string(),
             r#"
+                #[rasn(identifier = "testMember0")]
                 pub test_member0: Option<bool>,
-                #[rasn(extension_addition, value("4", extensible), default = "parent_test_member1_default")]
+                #[rasn(extension_addition, value("4", extensible), default = "parent_test_member1_default", identifier = "testMember1")]
                 pub test_member1: Integer,
             "#
         );
@@ -1043,5 +1084,45 @@ mod tests {
             .to_string(),
             "Outer (Inner (true))"
         )
+    }
+
+    #[test]
+    fn formats_identifier_annotation() {
+        assert_eq!(
+            format_identifier_annotation(
+                "original-name",
+                "",
+                &ASN1Type::Boolean(Boolean::default())
+            )
+            .to_string(),
+            quote!(identifier = "original-name").to_string()
+        );
+        assert_eq!(
+            format_identifier_annotation(
+                "ext_group_original-name",
+                "",
+                &ASN1Type::Boolean(Boolean::default())
+            )
+            .to_string(),
+            quote!(identifier = "BOOLEAN").to_string()
+        );
+        assert_eq!(
+            format_identifier_annotation(
+                "original-name",
+                " Anonymous ",
+                &ASN1Type::Boolean(Boolean::default())
+            )
+            .to_string(),
+            quote!(identifier = "BOOLEAN").to_string()
+        );
+        assert_eq!(
+            format_identifier_annotation(
+                "original-name",
+                " Inner type ",
+                &ASN1Type::Boolean(Boolean::default())
+            )
+            .to_string(),
+            quote!(identifier = "BOOLEAN").to_string()
+        );
     }
 }

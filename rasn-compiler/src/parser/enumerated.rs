@@ -7,7 +7,10 @@ use nom::{
     IResult,
 };
 
-use crate::intermediate::{constraints::*, types::*, *};
+use crate::{
+    intermediate::{constraints::*, types::*, *},
+    parser::parameterization,
+};
 
 use super::common::*;
 
@@ -16,15 +19,17 @@ pub fn enumerated_value<'a>(input: &'a str) -> IResult<&'a str, ToplevelValueDef
         tuple((
             skip_ws(many0(comment)),
             skip_ws(value_identifier),
+            skip_ws_and_comments(opt(parameterization)),
             skip_ws_and_comments(identifier),
             preceded(assignment, skip_ws_and_comments(value_identifier)),
         )),
-        |(c, n, p, e)| ToplevelValueDefinition {
+        |(c, n, params, p, e)| ToplevelValueDefinition {
             comments: c.into_iter().fold(String::new(), |mut acc, s| {
                 acc = acc + "\n" + s;
                 acc
             }),
             name: n.to_string(),
+            parameterization: params,
             associated_type: p.into(),
             value: ASN1Value::EnumeratedValue {
                 enumerated: p.to_string(),
@@ -325,6 +330,7 @@ mod tests {
                 comments: String::from("\n Alias of another enumeral"),
                 name: String::from("enumeral-alias"),
                 associated_type: "Test-Enum".into(),
+                parameterization: None,
                 value: ASN1Value::EnumeratedValue {
                     enumerated: String::from("Test-Enum"),
                     enumerable: String::from("enumeral")

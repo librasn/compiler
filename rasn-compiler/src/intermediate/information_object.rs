@@ -1,12 +1,28 @@
+use crate::parser::asn1_value;
+
 use super::{constraints::*, *};
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct ToplevelInformationDefinition {
     pub comments: String,
     pub name: String,
+    pub parameterization: Option<Parameterization>,
     pub class: Option<ClassLink>,
     pub value: ASN1Information,
     pub index: Option<(Rc<ModuleReference>, usize)>,
+}
+
+impl From<(&str, ASN1Information, &str)> for ToplevelInformationDefinition {
+    fn from(value: (&str, ASN1Information, &str)) -> Self {
+        Self {
+            comments: String::new(),
+            name: value.0.to_owned(),
+            parameterization: None,
+            class: Some(ClassLink::ByName(value.2.to_owned())),
+            value: value.1,
+            index: None,
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -21,40 +37,75 @@ impl ToplevelInformationDefinition {
     }
 }
 
-impl From<(Vec<&str>, &str, &str, InformationObjectFields)> for ToplevelInformationDefinition {
-    fn from(value: (Vec<&str>, &str, &str, InformationObjectFields)) -> Self {
+impl
+    From<(
+        Vec<&str>,
+        &str,
+        Option<Parameterization>,
+        &str,
+        InformationObjectFields,
+    )> for ToplevelInformationDefinition
+{
+    fn from(
+        value: (
+            Vec<&str>,
+            &str,
+            Option<Parameterization>,
+            &str,
+            InformationObjectFields,
+        ),
+    ) -> Self {
         Self {
             comments: value.0.join("\n"),
             name: value.1.into(),
-            class: Some(ClassLink::ByName(value.2.into())),
+            class: Some(ClassLink::ByName(value.3.into())),
+            parameterization: value.2,
             value: ASN1Information::Object(InformationObject {
-                class_name: value.2.into(),
-                fields: value.3,
+                class_name: value.3.into(),
+                fields: value.4,
             }),
             index: None,
         }
     }
 }
 
-impl From<(Vec<&str>, &str, &str, ObjectSet)> for ToplevelInformationDefinition {
-    fn from(value: (Vec<&str>, &str, &str, ObjectSet)) -> Self {
+impl From<(Vec<&str>, &str, Option<Parameterization>, &str, ObjectSet)>
+    for ToplevelInformationDefinition
+{
+    fn from(value: (Vec<&str>, &str, Option<Parameterization>, &str, ObjectSet)) -> Self {
         Self {
             comments: value.0.join("\n"),
             name: value.1.into(),
-            class: Some(ClassLink::ByName(value.2.into())),
-            value: ASN1Information::ObjectSet(value.3),
+            parameterization: value.2,
+            class: Some(ClassLink::ByName(value.3.into())),
+            value: ASN1Information::ObjectSet(value.4),
             index: None,
         }
     }
 }
 
-impl From<(Vec<&str>, &str, InformationObjectClass)> for ToplevelInformationDefinition {
-    fn from(value: (Vec<&str>, &str, InformationObjectClass)) -> Self {
+impl
+    From<(
+        Vec<&str>,
+        &str,
+        Option<Parameterization>,
+        InformationObjectClass,
+    )> for ToplevelInformationDefinition
+{
+    fn from(
+        value: (
+            Vec<&str>,
+            &str,
+            Option<Parameterization>,
+            InformationObjectClass,
+        ),
+    ) -> Self {
         Self {
             comments: value.0.join("\n"),
             name: value.1.into(),
+            parameterization: value.2,
             class: None,
-            value: ASN1Information::ObjectClass(value.2),
+            value: ASN1Information::ObjectClass(value.3),
             index: None,
         }
     }
@@ -87,7 +138,12 @@ pub enum SyntaxApplication {
 impl SyntaxApplication {
     /// Checks if a token of a syntactic expression matches a given syntax token,
     /// considering the entire syntax (in form of a flattened SyntaxExpression Vec), in order to reliably match Literals
-    pub fn matches(&self, next_token: &SyntaxToken, syntax: &Vec<(bool, SyntaxToken)>) -> bool {
+    pub fn matches(
+        &self,
+        next_token: &SyntaxToken,
+        syntax: &[(bool, SyntaxToken)],
+        current_index: usize,
+    ) -> bool {
         match (next_token, self) {
             (SyntaxToken::Comma, SyntaxApplication::Comma) => true,
             (SyntaxToken::Literal(t), SyntaxApplication::Literal(a)) if t == a => true,
@@ -110,18 +166,63 @@ impl SyntaxApplication {
                 SyntaxApplication::LiteralOrTypeReference(DeclarationElsewhere {
                     identifier, ..
                 }),
-            ) => syntax
-                .iter()
-                .find(|(_, t)| match t {
-                    SyntaxToken::Literal(lit) => lit == identifier,
-                    _ => false,
-                })
-                .is_none(),
+            ) => {
+                for (required, token) in &syntax[current_index + 1..] {
+                    if token.as_str() == identifier {
+                        return false;
+                    } else if *required {
+                        return true;
+                    }
+                }
+                true
+            }
             (
                 SyntaxToken::Field(ObjectFieldIdentifier::SingleValue(_)),
                 SyntaxApplication::ValueReference(_),
             ) => true,
+            (
+                SyntaxToken::Field(ObjectFieldIdentifier::SingleValue(_)),
+                SyntaxApplication::LiteralOrTypeReference(DeclarationElsewhere {
+                    identifier: lit,
+                    ..
+                }),
+            )
+            | (
+                SyntaxToken::Field(ObjectFieldIdentifier::SingleValue(_)),
+                SyntaxApplication::Literal(lit),
+            ) => {
+                let val = asn1_value(lit.as_str());
+                match val {
+                    Ok((_, ASN1Value::ElsewhereDeclaredValue { .. })) => false,
+                    Ok((_, _)) => true,
+                    _ => false,
+                }
+            }
             _ => false,
+        }
+    }
+
+    pub(crate) fn as_str_or_none(&self) -> Option<&str> {
+        match self {
+            SyntaxApplication::ObjectSetDeclaration(_) => None,
+            SyntaxApplication::ValueReference(ASN1Value::ElsewhereDeclaredValue {
+                parent: None,
+                identifier,
+            })
+            | SyntaxApplication::LiteralOrTypeReference(DeclarationElsewhere {
+                parent: None,
+                identifier,
+                ..
+            })
+            | SyntaxApplication::TypeReference(ASN1Type::ElsewhereDeclaredType(
+                DeclarationElsewhere {
+                    parent: None,
+                    identifier,
+                    ..
+                },
+            )) => Some(&identifier),
+            SyntaxApplication::Literal(l) => Some(&l),
+            _ => None,
         }
     }
 }
@@ -134,6 +235,14 @@ pub enum SyntaxToken {
 }
 
 impl SyntaxToken {
+    pub fn as_str(&self) -> &str {
+        match self {
+            SyntaxToken::Literal(s) => s.as_str(),
+            SyntaxToken::Comma => ",",
+            SyntaxToken::Field(_) => self.name_or_empty(),
+        }
+    }
+
     pub fn name_or_empty(&self) -> &str {
         match self {
             SyntaxToken::Field(ObjectFieldIdentifier::SingleValue(v))
@@ -172,7 +281,7 @@ impl InformationObjectSyntax {
     /// flatten the nested structure into a sequence of tokens with a `required` marker.
     pub fn flatten(&self) -> Vec<(bool, SyntaxToken)> {
         fn iter_expressions(
-            expressions: &Vec<SyntaxExpression>,
+            expressions: &[SyntaxExpression],
             optional_recursion: bool,
         ) -> Vec<(bool, &SyntaxExpression)> {
             expressions
@@ -267,8 +376,8 @@ pub enum ObjectFieldIdentifier {
 impl ObjectFieldIdentifier {
     pub fn identifier(&self) -> &String {
         match self {
-            ObjectFieldIdentifier::SingleValue(s) => &s,
-            ObjectFieldIdentifier::MultipleValue(s) => &s,
+            ObjectFieldIdentifier::SingleValue(s) => s,
+            ObjectFieldIdentifier::MultipleValue(s) => s,
         }
     }
 }
@@ -324,7 +433,7 @@ impl
         ),
     ) -> Self {
         let index_of_first_extension = value.0.len();
-        value.0.append(&mut value.2.unwrap_or(vec![]));
+        value.0.append(&mut value.2.unwrap_or_default());
         ObjectSet {
             values: value.0,
             extensible: value.1.map(|_| index_of_first_extension),

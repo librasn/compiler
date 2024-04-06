@@ -160,6 +160,7 @@ impl CompilerState for CompilerOutputSet {}
 impl CompilerState for CompilerSourcesSet {}
 impl CompilerState for CompilerMissingParams {}
 
+#[derive(Debug)]
 pub struct CompileResult {
     pub generated: String,
     pub warnings: Vec<Box<dyn Error>>,

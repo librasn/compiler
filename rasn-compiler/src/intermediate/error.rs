@@ -1,4 +1,7 @@
-use std::fmt::{Display, Formatter, Result};
+use std::{
+    error::Error,
+    fmt::{Display, Formatter, Result},
+};
 
 #[derive(Debug, Clone)]
 pub struct GrammarError {
@@ -15,12 +18,15 @@ impl GrammarError {
     }
 }
 
+impl Error for GrammarError {}
+
 #[derive(Debug, Clone)]
 pub enum GrammarErrorType {
     UnpackingError,
     LinkerError,
     PerVisibleConstraintError,
     NotYetInplemented,
+    SyntaxMismatch,
 }
 
 impl Display for GrammarError {

@@ -17,7 +17,10 @@ use crate::intermediate::{
     *,
 };
 
-use self::error::{ValidatorError, ValidatorErrorType};
+use self::{
+    error::{ValidatorError, ValidatorErrorType},
+    information_object::{ASN1Information, ObjectSet},
+};
 
 pub struct Validator {
     tlds: BTreeMap<String, ToplevelDefinition>,
@@ -47,6 +50,29 @@ impl Validator {
             }))
             .collect::<Vec<String>>();
         while let Some(key) = keys.pop() {
+            if matches![
+                self.tlds.get(&key),
+                Some(ToplevelDefinition::Information(
+                    ToplevelInformationDefinition {
+                        value: ASN1Information::ObjectSet(ObjectSet { .. }),
+                        ..
+                    }
+                ))
+            ] {
+                let mut item = self.tlds.remove(&key);
+                if let Some(ToplevelDefinition::Information(ToplevelInformationDefinition {
+                    value: ASN1Information::ObjectSet(set),
+                    ..
+                })) = &mut item
+                {
+                    if let Err(e) = set.resolve_object_set_references(&self.tlds) {
+                        warnings.push(Box::new(e))
+                    }
+                }
+                if let Some(tld) = item {
+                    self.tlds.insert(tld.name().clone(), tld);
+                }
+            }
             if self.references_class_by_name(&key) {
                 match self.tlds.remove(&key) {
                     Some(ToplevelDefinition::Type(mut tld)) => {
@@ -71,7 +97,9 @@ impl Validator {
             }
             if self.has_choice_selection_type(&key) {
                 if let Some(ToplevelDefinition::Type(mut tld)) = self.tlds.remove(&key) {
-                    tld.ty.link_choice_selection_type(&self.tlds)?;
+                    if let Err(e) = tld.ty.link_choice_selection_type(&self.tlds) {
+                        warnings.push(Box::new(e));
+                    }
                     self.tlds
                         .insert(tld.name.clone(), ToplevelDefinition::Type(tld));
                 }
@@ -84,28 +112,26 @@ impl Validator {
                 }
             }
             if self.has_constraint_reference(&key) {
-                let mut tld = self.tlds.remove(&key).ok_or(ValidatorError {
+                match self.tlds.remove(&key).ok_or_else(|| ValidatorError {
                     data_element: Some(key.clone()),
                     details: "Could not find toplevel declaration to remove!".into(),
                     kind: ValidatorErrorType::MissingDependency,
-                })?;
-                if !tld.link_constraint_reference(&self.tlds)? {
-                    warnings.push(
-                        Box::new(
-                            ValidatorError {
-                                data_element: Some(tld.name().to_string()),
-                                details: format!(
-                                    "Failed to link cross-reference to elsewhere defined value in constraint of {}",
-                                    tld.name()),
-                                kind: ValidatorErrorType::MissingDependency
-                            }
-                        )
-                    )
-                }
-                self.tlds.insert(tld.name().clone(), tld);
+                }) {
+                    Ok(mut tld) => {
+                        if let Err(e) = tld.link_constraint_reference(&self.tlds) {
+                            warnings.push(Box::new(e));
+                        }
+                        self.tlds.insert(tld.name().clone(), tld);
+                    }
+                    Err(e) => {
+                        warnings.push(Box::new(e));
+                    }
+                };
             }
             if let Some(mut tld) = self.tlds.remove(&key) {
-                tld.collect_supertypes(&self.tlds)?;
+                if let Err(e) = tld.collect_supertypes(&self.tlds) {
+                    warnings.push(Box::new(e));
+                }
                 self.tlds.insert(key, tld);
             }
         }
@@ -114,10 +140,15 @@ impl Validator {
     }
 
     fn has_constraint_reference(&mut self, key: &String) -> bool {
-        self.tlds
-            .get(key)
-            .map(ToplevelDefinition::has_constraint_reference)
-            .unwrap_or(false)
+        if let Some(tld) = self.tlds.get(key) {
+            if tld.is_parameterized() {
+                false
+            } else {
+                tld.has_constraint_reference()
+            }
+        } else {
+            false
+        }
     }
 
     fn references_class_by_name(&mut self, key: &String) -> bool {

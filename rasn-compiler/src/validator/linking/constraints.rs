@@ -7,18 +7,18 @@ impl Constraint {
         &mut self,
         identifier: &String,
         tlds: &BTreeMap<String, ToplevelDefinition>,
-    ) -> Result<bool, GrammarError> {
+    ) -> Result<(), GrammarError> {
         match self {
             Constraint::SubtypeConstraint(t) => t.set.link_cross_reference(identifier, tlds),
-            _ => Ok(false),
+            _ => Ok(()),
         }
     }
 
     pub(super) fn has_cross_reference(&self) -> bool {
-        if let Self::SubtypeConstraint(c) = self {
-            c.set.has_cross_reference()
-        } else {
-            false
+        match self {
+            Self::SubtypeConstraint(c) => c.set.has_cross_reference(),
+            Self::Parameter(_) => true,
+            _ => false,
         }
     }
 }
@@ -28,43 +28,50 @@ impl SubtypeElement {
         &mut self,
         identifier: &String,
         tlds: &BTreeMap<String, ToplevelDefinition>,
-    ) -> Result<bool, GrammarError> {
+    ) -> Result<(), GrammarError> {
         match self {
             SubtypeElement::SingleValue {
                 value,
                 extensible: _,
-            } => value.link_elsewhere_declared(identifier, tlds),
-            SubtypeElement::PermittedAlphabet(e) => e.link_cross_reference(identifier, tlds),
+            } => {
+                value.link_elsewhere_declared(identifier, tlds)?;
+            }
+            SubtypeElement::PermittedAlphabet(e) => {
+                e.link_cross_reference(identifier, tlds)?;
+            }
             SubtypeElement::ContainedSubtype {
                 subtype,
                 extensible: _,
-            } => subtype.link_subtype_constraint(tlds),
+            } => {
+                subtype.link_subtype_constraint(tlds)?;
+            }
             SubtypeElement::ValueRange {
                 min,
                 max,
                 extensible: _,
             } => {
-                let a = min
-                    .as_mut()
-                    .map_or(Ok(false), |m| m.link_elsewhere_declared(identifier, tlds))?;
-                let b = max
-                    .as_mut()
-                    .map_or(Ok(false), |m| m.link_elsewhere_declared(identifier, tlds))?;
-                Ok(a || b)
+                min.as_mut()
+                    .map(|m| m.link_elsewhere_declared(identifier, tlds))
+                    .transpose()?;
+                max.as_mut()
+                    .map(|m| m.link_elsewhere_declared(identifier, tlds))
+                    .transpose()?;
             }
-            SubtypeElement::SizeConstraint(s) => s.link_cross_reference(identifier, tlds),
-            SubtypeElement::TypeConstraint(t) => t.link_constraint_reference(identifier, tlds),
+            SubtypeElement::SizeConstraint(s) => {
+                s.link_cross_reference(identifier, tlds)?;
+            }
+            SubtypeElement::TypeConstraint(t) => {
+                t.link_constraint_reference(identifier, tlds)?;
+            }
             SubtypeElement::SingleTypeConstraint(s)
-            | SubtypeElement::MultipleTypeConstraints(s) => s
-                .constraints
-                .iter_mut()
-                .flat_map(|cc| &mut cc.constraints)
-                .try_fold(false, |acc, b| {
-                    b.link_cross_reference(identifier, tlds)
-                        .map(|res| res || acc)
-                }),
-            _ => Ok(false),
+            | SubtypeElement::MultipleTypeConstraints(s) => {
+                for b in s.constraints.iter_mut().flat_map(|cc| &mut cc.constraints) {
+                    b.link_cross_reference(identifier, tlds)?;
+                }
+            }
+            _ => (),
         }
+        Ok(())
     }
 
     pub(super) fn has_cross_reference(&self) -> bool {
@@ -105,13 +112,12 @@ impl ElementOrSetOperation {
         &mut self,
         identifier: &String,
         tlds: &BTreeMap<String, ToplevelDefinition>,
-    ) -> Result<bool, GrammarError> {
+    ) -> Result<(), GrammarError> {
         match self {
             ElementOrSetOperation::Element(e) => e.link_cross_reference(identifier, tlds),
             ElementOrSetOperation::SetOperation(s) => {
-                let a = s.base.link_cross_reference(identifier, tlds)?;
-                let b = s.operant.link_cross_reference(identifier, tlds)?;
-                Ok(a || b)
+                s.base.link_cross_reference(identifier, tlds)?;
+                s.operant.link_cross_reference(identifier, tlds)
             }
         }
     }

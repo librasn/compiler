@@ -30,12 +30,29 @@ impl ToplevelInformationDefinition {
     ) -> Result<(), GrammarError> {
         match (&mut self.value, &self.class) {
             (ASN1Information::Object(ref mut o), Some(ClassLink::ByReference(class))) => {
-                resolve_custom_syntax(&mut o.fields, class)?;
-                link_object_fields(&mut o.fields, class, tlds)
+                match resolve_and_link(&mut o.fields, class, tlds)? {
+                    Some(ToplevelInformationDefinition {
+                        value: ASN1Information::Object(obj),
+                        ..
+                    }) => {
+                        self.value = ASN1Information::ObjectSet(ObjectSet {
+                            values: vec![ObjectSetValue::Inline(obj.fields.clone())],
+                            extensible: None,
+                        });
+                    }
+                    Some(ToplevelInformationDefinition {
+                        value: ASN1Information::ObjectSet(set),
+                        ..
+                    }) => {
+                        self.value = ASN1Information::ObjectSet(set.clone());
+                    }
+                    _ => (),
+                }
+                Ok(())
             }
             (ASN1Information::ObjectSet(ref mut o), Some(ClassLink::ByReference(class))) => {
                 o.values.iter_mut().try_for_each(|value| match value {
-                    ObjectSetValue::Reference(_) => Err(GrammarError { details: "Collecting supertypes of information object set values is currently unsupported!".into(), kind: GrammarErrorType::NotYetInplemented }),
+                    ObjectSetValue::Reference(_) => Ok(()),
                     ObjectSetValue::Inline(ref mut fields) => {
                         resolve_custom_syntax(fields, class)?;
                         link_object_fields(fields, class, tlds)
@@ -44,6 +61,35 @@ impl ToplevelInformationDefinition {
             }
             _ => Ok(()),
         }
+    }
+}
+
+fn resolve_and_link(
+    fields: &mut InformationObjectFields,
+    class: &InformationObjectClass,
+    tlds: &BTreeMap<String, ToplevelDefinition>,
+) -> Result<Option<ToplevelInformationDefinition>, GrammarError> {
+    match resolve_custom_syntax(fields, class) {
+        Ok(()) => link_object_fields(fields, class, tlds).map(|_| None),
+        Err(GrammarError {
+            kind: GrammarErrorType::SyntaxMismatch,
+            details,
+        }) => {
+            if let InformationObjectFields::CustomSyntax(c) = &fields {
+                if let Some(id) = c.first().and_then(SyntaxApplication::as_str_or_none) {
+                    if let Some(ToplevelDefinition::Information(tld)) = tlds.get(id) {
+                        let mut tld_clone = tld.clone().resolve_class_reference(tlds);
+                        tld_clone.collect_supertypes(tlds)?;
+                        return Ok(Some(tld_clone));
+                    }
+                }
+            }
+            Err(GrammarError {
+                details,
+                kind: GrammarErrorType::SyntaxMismatch,
+            })
+        }
+        Err(e) => Err(e),
     }
 }
 
@@ -72,7 +118,10 @@ fn link_object_fields(
                         kind: GrammarErrorType::LinkerError,
                     })
                     .and_then(|ty| fixed.value.link_with_type(tlds, ty)),
-                InformationObjectField::ObjectSetField(_) => todo!(),
+                InformationObjectField::ObjectSetField(_) => Err(GrammarError {
+                    details: format!("Linking object set fields is not yet supported!",),
+                    kind: GrammarErrorType::NotYetInplemented,
+                }),
                 _ => Ok(()),
             })
         }
@@ -164,26 +213,32 @@ impl ObjectSetValue {
     pub fn link_object_set_reference(
         &mut self,
         tlds: &BTreeMap<String, ToplevelDefinition>,
-    ) -> bool {
+    ) -> Option<Vec<ObjectSetValue>> {
         match self {
-            ObjectSetValue::Reference(id) => {
-                if let Some(ToplevelDefinition::Information(ToplevelInformationDefinition {
+            ObjectSetValue::Reference(id) => match tlds.get(id) {
+                Some(ToplevelDefinition::Information(ToplevelInformationDefinition {
                     value: ASN1Information::Object(obj),
                     ..
-                })) = tlds.get(id)
-                {
+                })) => {
                     *self = ObjectSetValue::Inline(obj.fields.clone());
-                    true
-                } else {
-                    false
+                    None
                 }
+                Some(ToplevelDefinition::Information(ToplevelInformationDefinition {
+                    value: ASN1Information::ObjectSet(obj),
+                    ..
+                })) => Some(obj.values.clone()),
+                _ => None,
+            },
+            ObjectSetValue::Inline(InformationObjectFields::CustomSyntax(c)) => {
+                c.iter_mut()
+                    .any(|field| field.link_object_set_reference(tlds));
+                None
             }
-            ObjectSetValue::Inline(InformationObjectFields::CustomSyntax(c)) => c
-                .iter_mut()
-                .any(|field| field.link_object_set_reference(tlds)),
-            ObjectSetValue::Inline(InformationObjectFields::DefaultSyntax(d)) => d
-                .iter_mut()
-                .any(|field| field.link_object_set_reference(tlds)),
+            ObjectSetValue::Inline(InformationObjectFields::DefaultSyntax(d)) => {
+                d.iter_mut()
+                    .any(|field| field.link_object_set_reference(tlds));
+                None
+            }
         }
     }
 
@@ -205,15 +260,60 @@ impl ObjectSet {
         &mut self,
         tlds: &BTreeMap<String, ToplevelDefinition>,
     ) -> bool {
-        self.values
+        let mut flattened: Vec<_> = self
+            .values
             .iter_mut()
-            .any(|val| val.link_object_set_reference(tlds))
+            .flat_map(|val| val.link_object_set_reference(tlds).unwrap_or_default())
+            .collect();
+        self.values.append(&mut flattened);
+        true
     }
 
     pub fn references_object_set_by_name(&self) -> bool {
         self.values
             .iter()
             .any(|val| val.references_object_set_by_name())
+    }
+
+    pub fn resolve_object_set_references(
+        &mut self,
+        tlds: &BTreeMap<String, ToplevelDefinition>,
+    ) -> Result<(), GrammarError> {
+        let mut flattened_members = Vec::new();
+        let mut needs_recursing = false;
+        'resolving_references: for mut value in std::mem::take(&mut self.values) {
+            if let ObjectSetValue::Reference(id) = value {
+                match tlds.get(&id) {
+                    Some(ToplevelDefinition::Information(ToplevelInformationDefinition {
+                        value: ASN1Information::ObjectSet(set),
+                        ..
+                    })) => {
+                        set.values
+                            .iter()
+                            .for_each(|v| flattened_members.push(v.clone()));
+                        needs_recursing = true;
+                        continue 'resolving_references;
+                    }
+                    Some(ToplevelDefinition::Information(ToplevelInformationDefinition {
+                        value: ASN1Information::Object(obj),
+                        ..
+                    })) => value = ObjectSetValue::Inline(obj.fields.clone()),
+                    _ => {
+                        return Err(GrammarError {
+                            details: "Failed to resolve reference in object set.".to_owned(),
+                            kind: GrammarErrorType::LinkerError,
+                        })
+                    }
+                }
+            }
+            flattened_members.push(value)
+        }
+        self.values = flattened_members;
+        if needs_recursing {
+            self.resolve_object_set_references(tlds)
+        } else {
+            Ok(())
+        }
     }
 }
 

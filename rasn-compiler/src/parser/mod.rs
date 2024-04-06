@@ -12,7 +12,7 @@ use nom::{
     branch::alt,
     bytes::complete::{tag, take_until},
     character::complete::multispace1,
-    combinator::{into, map, opt, recognize},
+    combinator::{into, map, opt, recognize, success, value},
     multi::{many0, many1},
     sequence::{delimited, pair, preceded, terminated, tuple},
     IResult,
@@ -52,8 +52,8 @@ mod set_of;
 mod time;
 mod util;
 
-pub fn asn_spec<'a>(
-    input: &'a str,
+pub fn asn_spec(
+    input: &str,
 ) -> Result<Vec<(ModuleReference, Vec<ToplevelDefinition>)>, ParserError> {
     many1(pair(
         module_reference,
@@ -73,7 +73,7 @@ pub fn asn_spec<'a>(
     .map_err(|e| e.into())
 }
 
-fn encoding_control<'a>(input: &'a str) -> IResult<&'a str, &'a str> {
+fn encoding_control(input: &str) -> IResult<&str, &str> {
     delimited(
         skip_ws_and_comments(tag("ENCODING-CONTROL")),
         take_until(END),
@@ -81,14 +81,14 @@ fn encoding_control<'a>(input: &'a str) -> IResult<&'a str, &'a str> {
     )(input)
 }
 
-fn end<'a>(input: &'a str) -> IResult<&'a str, &'a str> {
+fn end(input: &str) -> IResult<&str, &str> {
     skip_ws_and_comments(preceded(
         tag(END),
         recognize(many0(alt((comment, multispace1)))),
     ))(input)
 }
 
-pub fn top_level_type_declaration<'a>(input: &'a str) -> IResult<&'a str, ToplevelTypeDefinition> {
+pub fn top_level_type_declaration(input: &str) -> IResult<&str, ToplevelTypeDefinition> {
     into(tuple((
         skip_ws(many0(comment)),
         skip_ws(title_case_identifier),
@@ -97,9 +97,9 @@ pub fn top_level_type_declaration<'a>(input: &'a str) -> IResult<&'a str, Toplev
     )))(input)
 }
 
-pub fn top_level_information_declaration<'a>(
-    input: &'a str,
-) -> IResult<&'a str, ToplevelInformationDefinition> {
+pub fn top_level_information_declaration(
+    input: &str,
+) -> IResult<&str, ToplevelInformationDefinition> {
     skip_ws(alt((
         top_level_information_object_declaration,
         top_level_object_set_declaration,
@@ -107,7 +107,7 @@ pub fn top_level_information_declaration<'a>(
     )))(input)
 }
 
-pub fn asn1_type<'a>(input: &'a str) -> IResult<&'a str, ASN1Type> {
+pub fn asn1_type(input: &str) -> IResult<&str, ASN1Type> {
     alt((
         alt((
             null,
@@ -141,7 +141,7 @@ pub fn asn1_type<'a>(input: &'a str) -> IResult<&'a str, ASN1Type> {
     ))(input)
 }
 
-pub fn asn1_value<'a>(input: &'a str) -> IResult<&'a str, ASN1Value> {
+pub fn asn1_value(input: &str) -> IResult<&str, ASN1Value> {
     alt((
         all_value,
         null_value,
@@ -158,7 +158,7 @@ pub fn asn1_value<'a>(input: &'a str) -> IResult<&'a str, ASN1Value> {
     ))(input)
 }
 
-pub fn elsewhere_declared_value<'a>(input: &'a str) -> IResult<&'a str, ASN1Value> {
+pub fn elsewhere_declared_value(input: &str) -> IResult<&str, ASN1Value> {
     map(
         pair(
             opt(skip_ws_and_comments(recognize(many1(pair(
@@ -174,7 +174,7 @@ pub fn elsewhere_declared_value<'a>(input: &'a str) -> IResult<&'a str, ASN1Valu
     )(input)
 }
 
-pub fn elsewhere_declared_type<'a>(input: &'a str) -> IResult<&'a str, ASN1Type> {
+pub fn elsewhere_declared_type(input: &str) -> IResult<&str, ASN1Type> {
     map(
         tuple((
             opt(skip_ws_and_comments(recognize(many1(pair(
@@ -184,15 +184,16 @@ pub fn elsewhere_declared_type<'a>(input: &'a str) -> IResult<&'a str, ASN1Type>
             skip_ws_and_comments(title_case_identifier),
             opt(skip_ws_and_comments(constraint)),
         )),
-        |m| ASN1Type::ElsewhereDeclaredType(m.into()),
+        |(parent, id, constraints)| ASN1Type::builtin_or_elsewhere(parent, id, constraints),
     )(input)
 }
 
-fn top_level_value_declaration<'a>(input: &'a str) -> IResult<&'a str, ToplevelValueDefinition> {
+fn top_level_value_declaration(input: &str) -> IResult<&str, ToplevelValueDefinition> {
     alt((
         into(tuple((
             skip_ws(many0(comment)),
             skip_ws(value_identifier),
+            skip_ws_and_comments(opt(parameterization)),
             skip_ws(alt((
                 // Cover built-in types with spaces
                 tag(OBJECT_IDENTIFIER),
@@ -208,34 +209,33 @@ fn top_level_value_declaration<'a>(input: &'a str) -> IResult<&'a str, ToplevelV
     ))(input)
 }
 
-fn top_level_information_object_declaration<'a>(
-    input: &'a str,
-) -> IResult<&'a str, ToplevelInformationDefinition> {
+fn top_level_information_object_declaration(
+    input: &str,
+) -> IResult<&str, ToplevelInformationDefinition> {
     into(tuple((
         skip_ws(many0(comment)),
         skip_ws(identifier),
+        skip_ws(opt(parameterization)),
         skip_ws(uppercase_identifier),
         preceded(assignment, information_object),
     )))(input)
 }
 
-fn top_level_object_set_declaration<'a>(
-    input: &'a str,
-) -> IResult<&'a str, ToplevelInformationDefinition> {
+fn top_level_object_set_declaration(input: &str) -> IResult<&str, ToplevelInformationDefinition> {
     into(tuple((
         skip_ws(many0(comment)),
         skip_ws(identifier),
+        skip_ws(opt(parameterization)),
         skip_ws(uppercase_identifier),
         preceded(assignment, object_set),
     )))(input)
 }
 
-fn top_level_object_class_declaration<'a>(
-    input: &'a str,
-) -> IResult<&'a str, ToplevelInformationDefinition> {
+fn top_level_object_class_declaration(input: &str) -> IResult<&str, ToplevelInformationDefinition> {
     into(tuple((
         skip_ws(many0(comment)),
         skip_ws(uppercase_identifier),
+        skip_ws(opt(parameterization)),
         preceded(assignment, alt((type_identifier, information_object_class))),
     )))(input)
 }
@@ -248,7 +248,7 @@ mod tests {
     use crate::{
         intermediate::{
             constraints::*,
-            parameterization::{Parameterization, ParameterizationArgument},
+            parameterization::{ParameterGovernor, Parameterization, ParameterizationArgument},
             types::*,
         },
         parser::end,
@@ -501,6 +501,7 @@ mod tests {
                 comments: "comments".into(),
                 name: "CpmContainers".into(),
                 index: None,
+                parameterization: None,
                 class: Some(ClassLink::ByName("CPM-CONTAINER-ID-AND-TYPE".into())),
                 value: ASN1Information::ObjectSet(ObjectSet {
                     values: vec![
@@ -564,6 +565,7 @@ mod tests {
             ToplevelInformationDefinition {
                 comments: "".into(),
                 index: None,
+                parameterization: None,
                 name: "Reg-AdvisorySpeed".into(),
                 class: Some(ClassLink::ByName("REG-EXT-ID-AND-TYPE".into())),
                 value: ASN1Information::ObjectSet(ObjectSet {
@@ -590,6 +592,7 @@ mod tests {
                 name: "REG-EXT-ID-AND-TYPE".into(),
                 class: None,
                 index: None,
+                parameterization: None,
                 value: ASN1Information::ObjectClass(InformationObjectClass {
                     fields: vec![
                         InformationObjectClassField {
@@ -707,8 +710,8 @@ mod tests {
                 }),
                 parameterization: Some(Parameterization {
                     parameters: vec![ParameterizationArgument {
-                        ty: "REG-EXT-ID-AND-TYPE".into(),
-                        name: Some("Set".into())
+                        dummy_reference: "Set".into(),
+                        param_governor: ParameterGovernor::Class("REG-EXT-ID-AND-TYPE".into())
                     }]
                 }),
                 tag: None
@@ -779,5 +782,33 @@ mod tests {
 
         -- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D"#)
         .is_ok())
+    }
+
+    #[test]
+    fn parses_parameterized_type_impl() {
+        assert_eq!(
+            top_level_type_declaration(
+                r#"
+        ImplType ::= ParamType { 2, TRUE }
+        "#
+            )
+            .unwrap()
+            .1,
+            ToplevelTypeDefinition {
+                comments: "".to_owned(),
+                tag: None,
+                name: "ImplType".to_owned(),
+                ty: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+                    parent: None,
+                    identifier: "ParamType".to_owned(),
+                    constraints: vec![Constraint::Parameter(vec![
+                        Parameter::ValueParameter(ASN1Value::Integer(2)),
+                        Parameter::ValueParameter(ASN1Value::Boolean(true)),
+                    ])]
+                }),
+                parameterization: None,
+                index: None,
+            }
+        )
     }
 }

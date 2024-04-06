@@ -490,13 +490,22 @@ mod tests {
     fn tld_test() {
         println!(
             "{:?}",
-            super::information_object(
-                r#"{
-            WITH SYNTAX              DistinguishedName
-            USAGE                    dSAOperation
-            LDAP-SYNTAX              dn.&id
-            LDAP-NAME                {"namingContexts"}
-            ID                       id-lat-namingContexts }"#
+            super::information_object_class(
+                r#"CLASS {
+                    &InitiatingMessage				,
+                    &SuccessfulOutcome							OPTIONAL,
+                    &UnsuccessfulOutcome						OPTIONAL,
+                    &procedureCode				ProcedureCode	UNIQUE,
+                    &criticality				Criticality	DEFAULT ignore
+                }
+                
+                WITH SYNTAX {
+                    INITIATING MESSAGE			&InitiatingMessage
+                    [SUCCESSFUL OUTCOME			&SuccessfulOutcome]
+                    [UNSUCCESSFUL OUTCOME		&UnsuccessfulOutcome]
+                    PROCEDURE CODE				&procedureCode
+                    [CRITICALITY				&criticality]
+                }"#
             )
         )
     }

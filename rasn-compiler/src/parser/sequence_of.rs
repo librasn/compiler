@@ -1,17 +1,14 @@
 use crate::intermediate::*;
 use nom::{
-    branch::alt,
     bytes::complete::tag,
-    character::complete::char,
     combinator::{map, opt},
-    multi::separated_list0,
     sequence::{pair, preceded},
     IResult,
 };
 
 use super::{
-    asn1_type, asn1_value,
-    common::{in_braces, opt_parentheses, skip_ws_and_comments, value_identifier},
+    asn1_type,
+    common::{opt_parentheses, skip_ws_and_comments, value_identifier},
     constraint::constraint,
 };
 
@@ -23,7 +20,7 @@ use super::{
 /// If the match succeeds, the parser will consume the match and return the remaining string
 /// and a wrapped `SequenceOf` type representing the ASN1 declaration.
 /// If the match fails, the parser will not consume the input and will return an error.
-pub fn sequence_of<'a>(input: &'a str) -> IResult<&'a str, ASN1Type> {
+pub fn sequence_of(input: &str) -> IResult<&str, ASN1Type> {
     map(
         pair(
             preceded(

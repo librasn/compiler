@@ -37,6 +37,7 @@ e2e_pdu!(
           #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
     #[rasn(automatic_tags)]
     pub struct Actual {
+        #[rasn(identifier = "errorCode")]
         pub error_code: ErrorCode,
         pub parameter: Option<Any>,
     }

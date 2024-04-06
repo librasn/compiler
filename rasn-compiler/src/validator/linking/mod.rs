@@ -10,10 +10,18 @@ use std::{borrow::BorrowMut, collections::BTreeMap};
 
 use crate::{
     intermediate::{error::*, information_object::*, types::*, utils::*, *},
-    validator::linking::utils::bit_string_to_octet_string,
+    validator::{
+        linking::utils::bit_string_to_octet_string,
+        parameterization::{Parameterization, ParameterizationArgument},
+    },
 };
 
-use self::utils::{built_in_type, find_tld_or_enum_value_by_name, octet_string_to_bit_string};
+use self::{
+    parameterization::ParameterGovernor,
+    utils::{built_in_type, find_tld_or_enum_value_by_name, octet_string_to_bit_string},
+};
+
+use super::{Constraint, Parameter, TableConstraint};
 
 macro_rules! error {
     ($kind:ident, $($arg:tt)*) => {
@@ -25,6 +33,13 @@ macro_rules! error {
 }
 
 impl ToplevelDefinition {
+    pub(crate) fn is_parameterized(&self) -> bool {
+        match self {
+            ToplevelDefinition::Type(t) => t.parameterization.is_some(),
+            _ => false, // TODO: implement parameterization for information objects and values
+        }
+    }
+
     pub(crate) fn get_distinguished_or_enum_value(
         &self,
         type_name: Option<&String>,
@@ -97,6 +112,23 @@ impl ToplevelDefinition {
     /// }
     /// ```
     /// The method handles linking of multiple constraint references within a top-level declaration.
+    ///
+    /// ## Parameterization
+    /// This linking step also resolves implementations of parameterized types.
+    /// The compiler does not create representations of abstract parameterized types
+    /// but only of actual implementations. For example, no rust output
+    /// will be generated for
+    /// ```ignore
+    /// ParamType { INTEGER: lower, BOOLEAN: flag } ::= SEQUENCE {
+    ///     int-value INTEGER (lower..12),
+    ///     bool-value BOOLEAN DEFAULT flag
+    /// }
+    /// ```
+    /// but an implementing type such as
+    /// ```ignore
+    /// ImplType ::= ParamType { 2, TRUE }
+    /// ```
+    /// will be represented in the generated rust bindings.
     /// ### Params
     ///  * `tlds` - vector of other top-level declarations that will be searched as the method resolves a reference
     /// returns `true` if the reference was resolved successfully.
@@ -105,7 +137,12 @@ impl ToplevelDefinition {
         tlds: &BTreeMap<String, ToplevelDefinition>,
     ) -> Result<bool, GrammarError> {
         match self {
-            ToplevelDefinition::Type(t) => t.ty.link_constraint_reference(&t.name, tlds),
+            ToplevelDefinition::Type(t) => {
+                if let Some(replacement) = t.ty.link_constraint_reference(&t.name, tlds)? {
+                    t.ty = replacement;
+                }
+                Ok(true)
+            }
             // TODO: Cover constraint references in other types of top-level declarations
             _ => Ok(false),
         }
@@ -117,31 +154,9 @@ impl ToplevelDefinition {
         tlds: &BTreeMap<String, ToplevelDefinition>,
     ) -> Result<(), GrammarError> {
         match self {
-            ToplevelDefinition::Type(t) => t.collect_supertypes(tlds),
+            ToplevelDefinition::Type(t) => t.ty.collect_supertypes(tlds),
             ToplevelDefinition::Value(v) => v.collect_supertypes(tlds),
             ToplevelDefinition::Information(i) => i.collect_supertypes(tlds),
-        }
-    }
-}
-
-impl ToplevelTypeDefinition {
-    /// Collects supertypes of ASN1 values.
-    /// In `ToplevelTypeDefinition`s, values will appear only as `DEFAULT`
-    /// values in `SET`s or `SEQUENCE`s.
-    pub fn collect_supertypes(
-        &mut self,
-        tlds: &BTreeMap<String, ToplevelDefinition>,
-    ) -> Result<(), GrammarError> {
-        match self.ty {
-            ASN1Type::Set(ref mut s) | ASN1Type::Sequence(ref mut s) => {
-                s.members.iter_mut().try_for_each(|m| {
-                    m.default_value
-                        .as_mut()
-                        .map(|d| d.link_with_type(tlds, &m.ty))
-                        .unwrap_or(Ok(()))
-                })
-            }
-            _ => Ok(()),
         }
     }
 }
@@ -175,6 +190,26 @@ impl ToplevelValueDefinition {
 }
 
 impl ASN1Type {
+    /// Collects supertypes of ASN1 values.
+    /// In `ToplevelTypeDefinition`s, values will appear only as `DEFAULT`
+    /// values in `SET`s or `SEQUENCE`s.
+    pub fn collect_supertypes(
+        &mut self,
+        tlds: &BTreeMap<String, ToplevelDefinition>,
+    ) -> Result<(), GrammarError> {
+        match self {
+            ASN1Type::Set(ref mut s) | ASN1Type::Sequence(ref mut s) => {
+                s.members.iter_mut().try_for_each(|m| {
+                    m.default_value
+                        .as_mut()
+                        .map(|d| d.link_with_type(tlds, &m.ty))
+                        .unwrap_or(Ok(()))
+                })
+            }
+            _ => Ok(()),
+        }
+    }
+
     pub fn has_choice_selection_type(&self) -> bool {
         match self {
             ASN1Type::ChoiceSelectionType(_) => true,
@@ -289,71 +324,288 @@ impl ASN1Type {
         &mut self,
         name: &String,
         tlds: &BTreeMap<String, ToplevelDefinition>,
-    ) -> Result<bool, GrammarError> {
+    ) -> Result<Option<ASN1Type>, GrammarError> {
+        let mut self_replacement = None;
         match self {
-            ASN1Type::Null => Ok(false),
+            ASN1Type::Null => (),
             ASN1Type::Choice(c) => {
-                let constraints = c.constraints.iter_mut().try_fold(false, |acc, b| {
-                    b.link_cross_reference(name, tlds).map(|res| res || acc)
-                })?;
-                let options = c.options.iter_mut().try_fold(false, |linked, opt| {
-                    Ok(linked
-                        || opt.constraints.iter_mut().try_fold(false, |acc, c| {
-                            c.link_cross_reference(name, tlds).map(|res| res || acc)
-                        })?
-                        || opt
-                            .ty
-                            .constraints_mut()
-                            .unwrap_or(&mut vec![])
-                            .iter_mut()
-                            .try_fold(false, |acc, c| {
-                                c.link_cross_reference(name, tlds).map(|res| res || acc)
-                            })?)
-                })?;
-                Ok(constraints || options)
+                for b in c.constraints.iter_mut() {
+                    b.link_cross_reference(name, tlds)?;
+                }
+                for opt in c.options.iter_mut() {
+                    if let Some(replacement) = opt.ty.link_constraint_reference(name, tlds)? {
+                        opt.ty = replacement;
+                    }
+                    for c in opt.constraints.iter_mut() {
+                        c.link_cross_reference(name, tlds)?;
+                    }
+                    for c in opt.ty.constraints_mut().unwrap_or(&mut vec![]).iter_mut() {
+                        c.link_cross_reference(name, tlds)?;
+                    }
+                }
             }
-            ASN1Type::Sequence(s) => {
-                let constraints = s.constraints.iter_mut().try_fold(false, |acc, b| {
-                    b.link_cross_reference(name, tlds).map(|res| res || acc)
-                })?;
-                let members = s.members.iter_mut().try_fold(false, |linked, m| {
-                    Ok(linked
-                        || m.constraints.iter_mut().try_fold(false, |acc, c| {
-                            c.link_cross_reference(name, tlds).map(|res| res || acc)
-                        })?
-                        || m.ty
-                            .constraints_mut()
-                            .unwrap_or(&mut vec![])
-                            .iter_mut()
-                            .try_fold(false, |acc, c| {
-                                c.link_cross_reference(name, tlds).map(|res| res || acc)
-                            })?)
-                })?;
-                Ok(constraints || members)
+            ASN1Type::Set(s) | ASN1Type::Sequence(s) => {
+                for b in s.constraints.iter_mut() {
+                    b.link_cross_reference(name, tlds)?;
+                }
+                for m in s.members.iter_mut() {
+                    if let Some(replacement) = m.ty.link_constraint_reference(name, tlds)? {
+                        m.ty = replacement;
+                    }
+                }
             }
-            ASN1Type::SequenceOf(s) => {
-                let a = s.constraints.iter_mut().try_fold(false, |acc, b| {
-                    b.link_cross_reference(name, tlds).map(|res| res || acc)
-                })?;
-                let b = s.element_type.link_constraint_reference(name, tlds)?;
-                Ok(a || b)
+            ASN1Type::SetOf(s) | ASN1Type::SequenceOf(s) => {
+                for b in s.constraints.iter_mut() {
+                    b.link_cross_reference(name, tlds)?;
+                }
+                if let Some(replacement) = s.element_type.link_constraint_reference(name, tlds)? {
+                    s.element_type = Box::new(replacement);
+                }
             }
             ASN1Type::ElsewhereDeclaredType(e) => {
-                let id_clone = e.identifier.clone();
-                e.constraints_mut().iter_mut().try_fold(false, |acc, b| {
-                    b.link_cross_reference(&id_clone, tlds)
-                        .map(|res| res || acc)
-                })
+                if let Some(Constraint::Parameter(args)) = e
+                    .constraints()
+                    .iter()
+                    .find(|c| matches![c, Constraint::Parameter(_)])
+                {
+                    self_replacement = Some(Self::resolve_parameters(
+                        &e.identifier,
+                        e.parent.as_ref(),
+                        tlds,
+                        args,
+                    )?);
+                } else {
+                    let id_clone = e.identifier.clone();
+                    for c in e.constraints_mut() {
+                        c.link_cross_reference(&id_clone, tlds)?;
+                    }
+                }
             }
             ty => {
                 if let Some(c) = ty.constraints_mut() {
-                    c.iter_mut().try_fold(false, |acc, b| {
-                        b.link_cross_reference(name, tlds).map(|res| res || acc)
-                    })
-                } else {
-                    Ok(false)
+                    for c in c.iter_mut() {
+                        c.link_cross_reference(name, tlds)?;
+                    }
                 }
             }
+        }
+        Ok(self_replacement)
+    }
+
+    pub(crate) fn resolve_parameters(
+        identifier: &String,
+        parent: Option<&String>,
+        tlds: &BTreeMap<String, ToplevelDefinition>,
+        args: &[Parameter],
+    ) -> Result<ASN1Type, GrammarError> {
+        match tlds.get(identifier) {
+            Some(ToplevelDefinition::Type(ToplevelTypeDefinition {
+                ty,
+                parameterization: Some(Parameterization { parameters }),
+                ..
+            })) => {
+                let mut impl_template = ty.clone();
+                let mut impl_tlds = tlds.clone();
+                let mut table_constraint_replacements = BTreeMap::new();
+                for (
+                    index,
+                    ParameterizationArgument {
+                        dummy_reference,
+                        param_governor,
+                    },
+                ) in parameters.iter().enumerate()
+                {
+                    let arg = args.get(index).ok_or_else(|| GrammarError {
+                            details: format!("Did not find an argument for parameter {dummy_reference} of {identifier}"),
+                            kind: GrammarErrorType::LinkerError,
+                        })?;
+                    match (arg, param_governor) {
+                            (Parameter::ValueParameter(v), ParameterGovernor::TypeOrClass(gov)) => {
+                                impl_tlds.insert(
+                                    dummy_reference.clone(),
+                                    ToplevelDefinition::Value(ToplevelValueDefinition::from((
+                                        dummy_reference.as_str(),
+                                        v.clone(),
+                                        gov.as_str(),
+                                    ))),
+                                );
+                            }
+                            (Parameter::TypeParameter(t), _) => {
+                                impl_tlds.insert(
+                                    dummy_reference.clone(),
+                                    ToplevelDefinition::Type(ToplevelTypeDefinition::from((
+                                        dummy_reference.as_str(),
+                                        t.clone(),
+                                    ))),
+                                );
+                            },
+                            (Parameter::InformationObjectParameter(_), _) => todo!(),
+                            (Parameter::ObjectSetParameter(o), ParameterGovernor::Class(c)) => {
+                                match &o.values.first() {
+                                    Some(osv) if o.values.len() == 1 => {
+                                        #[allow(suspicious_double_ref_op)]
+                                        table_constraint_replacements.insert(dummy_reference, osv.clone());
+                                    }
+                                    _ => return Err(GrammarError { details: "Expected object set value argument to contain single object set value!".to_owned(), kind: GrammarErrorType::LinkerError })
+                                }
+                                let mut info = ASN1Information::ObjectSet(o.clone());
+                                info.link_object_set_reference(tlds);
+                                let mut tld = ToplevelInformationDefinition::from((
+                                    dummy_reference.as_str(),
+                                    info,
+                                    c.as_str()
+                                ));
+                                tld = tld.resolve_class_reference(tlds);
+                                impl_tlds.insert(
+                                    dummy_reference.clone(),
+                                    ToplevelDefinition::Information(tld),
+                                );
+                            },
+                            _ => return Err(GrammarError {
+                                details: format!("Mismatching argument for parameter {dummy_reference} of {identifier}"),
+                                kind: GrammarErrorType::LinkerError,
+                            })
+                        }
+                }
+                impl_template.link_elsewhere_declared(&impl_tlds)?;
+                if let Some(replacement) =
+                    impl_template.link_constraint_reference(identifier, &impl_tlds)?
+                {
+                    impl_template = replacement;
+                };
+                impl_template
+                    .collect_supertypes(&impl_tlds)
+                    .or_else(|_| impl_template.collect_supertypes(tlds))?;
+                for (dummy_reference, osv) in table_constraint_replacements {
+                    impl_template.reassign_table_constraint(dummy_reference, osv)?;
+                }
+                Ok(impl_template)
+            }
+            _ => Err(GrammarError {
+                details: format!(
+                    "Failed to resolve supertype {identifier} of parameterized implementation."
+                ),
+                kind: GrammarErrorType::LinkerError,
+            }),
+        }
+    }
+
+    /// In certain parameterization cases, the constraining object set of a table constraint
+    /// has to be reassigned. Consider the following example:
+    /// ```ignore
+    /// ProtocolExtensionContainer {NGAP-PROTOCOL-EXTENSION : ExtensionSetParam} ::=
+    ///     SEQUENCE (SIZE (1..4)) OF
+    ///     ProtocolExtensionField {{ExtensionSetParam}}
+    ///
+    /// ProtocolExtensionField {NGAP-PROTOCOL-EXTENSION : ExtensionSetParam} ::= SEQUENCE {
+    ///     id                    NGAP-PROTOCOL-EXTENSION.&id                ({ExtensionSetParam}),
+    ///     extensionValue        NGAP-PROTOCOL-EXTENSION.&Extension        ({ExtensionSetParam}{@id})
+    /// }
+    ///
+    /// ActualExtensions ::= ProtocolExtensionContainer { {ApplicableSet} }
+    /// ApplicableSet NGAP-PROTOCOL-EXTENSION ::= { ... }
+    /// ```
+    /// Since the compiler only creates bindings for actual implementations of abstract items,
+    /// the `ExtensionSetParam` references in `ProtocolExtensionField`'s table constraints need
+    /// to be reassigned to the actual object sets that are passed in by the implementations of
+    /// the abstract classes.
+    fn reassign_table_constraint(
+        &mut self,
+        reference_id_before: &str,
+        replacement: &ObjectSetValue,
+    ) -> Result<(), GrammarError> {
+        match self {
+            ASN1Type::Sequence(s) | ASN1Type::Set(s) => {
+                for m in &mut s.members {
+                    if let Some(constraints) = m.ty.constraints_mut() {
+                        for c in constraints {
+                            if let Constraint::TableConstraint(TableConstraint {
+                                object_set: ObjectSet { values, .. },
+                                ..
+                            }) = c
+                            {
+                                for value in values {
+                                    match value {
+                                        ObjectSetValue::Reference(r)
+                                            if r == reference_id_before =>
+                                        {
+                                            *value = replacement.clone();
+                                        }
+                                        _ => (),
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                Ok(())
+            }
+            ASN1Type::SequenceOf(s) | ASN1Type::SetOf(s) => s
+                .element_type
+                .reassign_table_constraint(reference_id_before, replacement),
+            _ => Ok(()),
+        }
+    }
+
+    fn link_elsewhere_declared(
+        &mut self,
+        tlds: &BTreeMap<String, ToplevelDefinition>,
+    ) -> Result<(), GrammarError> {
+        match self {
+            ASN1Type::Choice(c) => c
+                .options
+                .iter_mut()
+                .try_for_each(|o| o.ty.link_elsewhere_declared(tlds)),
+            ASN1Type::Set(s) | ASN1Type::Sequence(s) => s
+                .members
+                .iter_mut()
+                .try_for_each(|o| o.ty.link_elsewhere_declared(tlds)),
+            ASN1Type::SequenceOf(s) | ASN1Type::SetOf(s) => {
+                s.element_type.link_elsewhere_declared(tlds)
+            }
+            ASN1Type::ElsewhereDeclaredType(e) => {
+                if let Some(ToplevelDefinition::Type(tld)) = tlds.get(&e.identifier) {
+                    *self = tld.ty.clone();
+                    Ok(())
+                } else {
+                    Err(GrammarError {
+                        details: format!(
+                            "Failed to resolve argument {} of parameterized implementation.",
+                            e.identifier
+                        ),
+                        kind: GrammarErrorType::LinkerError,
+                    })
+                }
+            }
+            ASN1Type::InformationObjectFieldReference(iofr) => {
+                if let Some(ToplevelDefinition::Information(ToplevelInformationDefinition {
+                    value: ASN1Information::ObjectClass(c),
+                    ..
+                })) = tlds.get(&iofr.class)
+                {
+                    if let Some(field) = c.get_field(&iofr.field_path) {
+                        *self = field.ty.clone().unwrap_or(ASN1Type::External);
+                        return Ok(());
+                    }
+                }
+                Err(GrammarError {
+                    details: format!(
+                        "Failed to resolve argument {}.{} of parameterized implementation.",
+                        iofr.class,
+                        iofr.field_path
+                            .iter()
+                            .map(|f| f.identifier().clone())
+                            .collect::<Vec<_>>()
+                            .join(".")
+                    ),
+                    kind: GrammarErrorType::LinkerError,
+                })
+            }
+            ASN1Type::ChoiceSelectionType(_) => Err(GrammarError {
+                details: "Linking choice selection type is not yet supported!".to_string(),
+                kind: GrammarErrorType::NotYetInplemented,
+            }),
+            _ => Ok(()),
         }
     }
 
@@ -374,14 +626,17 @@ impl ASN1Type {
                             || o.constraints.iter().any(|c| c.has_cross_reference())
                     })
             }
-            ASN1Type::Sequence(s) => {
+            ASN1Type::Set(s) | ASN1Type::Sequence(s) => {
                 s.constraints.iter().any(|c| c.has_cross_reference())
                     || s.members.iter().any(|m| {
                         m.ty.contains_constraint_reference()
+                            || m.default_value
+                                .as_ref()
+                                .map_or(false, |d| d.is_elsewhere_declared())
                             || m.constraints.iter().any(|c| c.has_cross_reference())
                     })
             }
-            ASN1Type::SequenceOf(s) => {
+            ASN1Type::SetOf(s) | ASN1Type::SequenceOf(s) => {
                 s.constraints.iter().any(|c| c.has_cross_reference())
                     || s.element_type.contains_constraint_reference()
             }
@@ -462,17 +717,13 @@ impl ASN1Type {
     pub fn link_subtype_constraint(
         &mut self,
         tlds: &BTreeMap<String, ToplevelDefinition>,
-    ) -> Result<bool, GrammarError> {
-        match self {
-            Self::ElsewhereDeclaredType(e) => {
-                if let Some(ToplevelDefinition::Type(t)) = tlds.get(&e.identifier) {
-                    *self = t.ty.clone();
-                    return Ok(true);
-                }
-                Ok(false)
+    ) -> Result<(), GrammarError> {
+        if let Self::ElsewhereDeclaredType(e) = self {
+            if let Some(ToplevelDefinition::Type(t)) = tlds.get(&e.identifier) {
+                *self = t.ty.clone();
             }
-            _ => Ok(false),
         }
+        Ok(())
     }
 }
 
@@ -515,25 +766,36 @@ impl ASN1Value {
                     vec![e.identifier.clone()],
                 )? {
                     *self = value;
-                } else {
-                    *self = ASN1Value::LinkedElsewhereDefinedValue {
-                        parent: parent.clone(),
-                        identifier: identifier.clone(),
-                        can_be_const: e.root(tlds)?.is_const_type(),
+                    return Ok(());
+                } else if let Some((ToplevelDefinition::Type(ty), ToplevelDefinition::Value(val))) =
+                    tlds.get(&e.identifier).zip(tlds.get(identifier))
+                {
+                    if ty.name != val.associated_type {
+                        // When it comes to `DEFAULT` values, the ASN.1 type system
+                        // is more lenient than Rust's. For example, the it is acceptable
+                        // to pass `int-value` as a `DEFAULT` value for `Int-Like-Type` in
+                        // the following example:
+                        // ```ignore
+                        // int-value INTEGER ::= 600
+                        // Int-Like-Type ::= INTEGER (1..605)
+                        // Sequence-With-Defaults ::= SEQUENCE {
+                        //     numeric Int-Like-Type DEFAULT int-value
+                        // }
+                        // ```
+                        // Cases like these need to be explicitly cast in the rust bindings.
+                        *self = val.clone().value;
+                        self.link_with_type(tlds, &ASN1Type::ElsewhereDeclaredType(e.clone()))?;
+                        return Ok(());
                     }
                 }
+                *self = ASN1Value::LinkedElsewhereDefinedValue {
+                    parent: parent.clone(),
+                    identifier: identifier.clone(),
+                    can_be_const: e.root(tlds)?.is_const_type(),
+                };
                 Ok(())
             }
             (ASN1Type::ElsewhereDeclaredType(e), val) => {
-                if let ASN1Value::Integer(value) = *val {
-                    let int_type = e.constraints.iter().fold(IntegerType::Unbounded, |acc, c| {
-                        c.integer_constraints().max_restrictive(acc)
-                    });
-                    *val = ASN1Value::LinkedIntValue {
-                        integer_type: int_type,
-                        value,
-                    };
-                }
                 *self = ASN1Value::LinkedNestedValue {
                     supertypes: vec![e.identifier.clone()],
                     value: Box::new((*val).clone()),
@@ -669,6 +931,20 @@ impl ASN1Value {
                 }
                 Ok(())
             }
+            (ASN1Type::Integer(i), ASN1Value::LinkedNestedValue { value, .. })
+                if matches![**value, ASN1Value::Integer(_)] =>
+            {
+                if let ASN1Value::Integer(v) = &**value {
+                    let int_type = i.constraints.iter().fold(IntegerType::Unbounded, |acc, c| {
+                        c.integer_constraints().max_restrictive(acc)
+                    });
+                    *value = Box::new(ASN1Value::LinkedIntValue {
+                        integer_type: int_type,
+                        value: *v,
+                    });
+                }
+                Ok(())
+            }
             (ASN1Type::Integer(i), ASN1Value::ElsewhereDeclaredValue { identifier, .. }) => {
                 if let Some(value) = i.distinguished_values.as_ref().and_then(|dist_vals| {
                     dist_vals
@@ -710,6 +986,20 @@ impl ASN1Value {
                 }
                 Ok(())
             }
+            (
+                _,
+                ASN1Value::ElsewhereDeclaredValue {
+                    parent: None,
+                    identifier,
+                },
+            ) => {
+                if let Some(ToplevelDefinition::Value(tld)) = tlds.get(identifier) {
+                    *self = tld.value.clone();
+                    self.link_with_type(tlds, ty)?;
+                }
+                Ok(())
+            }
+            (_, ASN1Value::ElsewhereDeclaredValue { parent, identifier }) => todo!(),
             _ => Ok(()),
         }
     }
@@ -780,8 +1070,9 @@ impl ASN1Value {
         s: &SequenceOrSetOf,
         tlds: &BTreeMap<String, ToplevelDefinition>,
     ) -> Result<ASN1Value, GrammarError> {
-        val.iter_mut()
-            .try_for_each(|v| v.1.link_with_type(tlds, &*s.element_type));
+        let _ = val
+            .iter_mut()
+            .try_for_each(|v| v.1.link_with_type(tlds, &s.element_type));
         Ok(ASN1Value::LinkedArrayLikeValue(
             val.iter().map(|v| v.1.clone()).collect(),
         ))
@@ -919,11 +1210,11 @@ impl ASN1Value {
                     for i in 0..c.len() {
                         if let Some(SyntaxApplication::ValueReference(val)) = c.get(i) {
                             match (c.get(i - 1), before, c.get(i + 1), after) {
-                                (Some(a), Some(b), _, _) if a.matches(b, &tokens) => {
+                                (Some(a), Some(b), _, _) if a.matches(b, &tokens, i) => {
                                     *self = val.clone();
                                     return Ok(());
                                 }
-                                (_, _, Some(c), Some(d)) if c.matches(d, &tokens) => {
+                                (_, _, Some(c), Some(d)) if c.matches(d, &tokens, i) => {
                                     *self = val.clone();
                                     return Ok(());
                                 }
@@ -945,12 +1236,12 @@ impl ASN1Value {
         &mut self,
         identifier: &String,
         tlds: &BTreeMap<String, ToplevelDefinition>,
-    ) -> Result<bool, GrammarError> {
+    ) -> Result<(), GrammarError> {
         match self {
             Self::ElsewhereDeclaredValue {
                 parent: Some(_), ..
             } => {
-                return self.resolve_elsewhere_with_parent(tlds).map(|_| true);
+                return self.resolve_elsewhere_with_parent(tlds);
             }
             Self::ElsewhereDeclaredValue {
                 identifier: e,
@@ -962,12 +1253,11 @@ impl ASN1Value {
             } => {
                 if let Some(v) = find_tld_or_enum_value_by_name(identifier, e, tlds) {
                     *self = v;
-                    return Ok(true);
                 }
             }
             _ => {}
         }
-        Ok(false)
+        Ok(())
     }
 }
 
@@ -1039,6 +1329,7 @@ mod tests {
         let mut example_value = ToplevelValueDefinition {
             comments: String::new(),
             name: "exampleValue".into(),
+            parameterization: None,
             associated_type: "BaseChoice".into(),
             index: None,
             value: ASN1Value::Choice(String::from("first"), Box::new(ASN1Value::Boolean(true))),
@@ -1050,6 +1341,7 @@ mod tests {
                 comments: "".into(),
                 name: "exampleValue".into(),
                 associated_type: "BaseChoice".into(),
+                parameterization: None,
                 value: ASN1Value::Choice(
                     "first".into(),
                     Box::new(ASN1Value::LinkedNestedValue {

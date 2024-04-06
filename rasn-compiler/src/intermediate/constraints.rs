@@ -26,6 +26,7 @@ pub enum Constraint {
     SubtypeConstraint(ElementSet),
     TableConstraint(TableConstraint),
     Parameter(Vec<Parameter>),
+    ContentConstraint(ContentConstraint),
 }
 
 impl Constraint {
@@ -108,6 +109,37 @@ impl Constraint {
             ),
             kind: GrammarErrorType::UnpackingError,
         })
+    }
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum ContentConstraint {
+    Containing(ASN1Type),
+    EncodedBy(ASN1Value),
+    ContainingEncodedBy {
+        containing: ASN1Type,
+        encoded_by: ASN1Value,
+    },
+}
+
+impl From<ASN1Type> for ContentConstraint {
+    fn from(value: ASN1Type) -> Self {
+        ContentConstraint::Containing(value)
+    }
+}
+
+impl From<ASN1Value> for ContentConstraint {
+    fn from(value: ASN1Value) -> Self {
+        ContentConstraint::EncodedBy(value)
+    }
+}
+
+impl From<(ASN1Type, ASN1Value)> for ContentConstraint {
+    fn from(value: (ASN1Type, ASN1Value)) -> Self {
+        ContentConstraint::ContainingEncodedBy {
+            containing: value.0,
+            encoded_by: value.1,
+        }
     }
 }
 
