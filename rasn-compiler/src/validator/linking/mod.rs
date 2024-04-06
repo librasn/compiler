@@ -766,6 +766,23 @@ impl ASN1Value {
                     vec![e.identifier.clone()],
                 )? {
                     *self = value;
+                } else if let Some((ToplevelDefinition::Type(ty), ToplevelDefinition::Value(val))) = tlds.get(&e.identifier).zip(tlds.get(identifier)) {
+                    if ty.name != val.associated_type {
+                        // When it comes to `DEFAULT` values, the ASN.1 type system
+                        // is more lenient than Rust's. For example, the it is acceptable
+                        // to pass `int-value` as a `DEFAULT` value for `Int-Like-Type` in
+                        // the following example:
+                        // ```ignore
+                        // int-value INTEGER ::= 600
+                        // Int-Like-Type ::= INTEGER (1..605)
+                        // Sequence-With-Defaults ::= SEQUENCE {
+                        //     numeric Int-Like-Type DEFAULT int-value
+                        // }
+                        // ```
+                        // Cases like these need to be explicitly cast in the rust bindings.
+                        *self = val.clone().value;
+                        self.link_with_type(tlds, &ASN1Type::ElsewhereDeclaredType(e.clone()))?;
+                    }
                 } else {
                     *self = ASN1Value::LinkedElsewhereDefinedValue {
                         parent: parent.clone(),
