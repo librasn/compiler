@@ -194,13 +194,20 @@ pub fn format_enum_members(enumerated: &Enumerated) -> TokenStream {
     let enumerals = enumerated.members.iter().enumerate().map(|(i, e)| {
         let name = to_rust_enum_identifier(&e.name);
         let index = Literal::i128_unsuffixed(e.index);
-        let extension = if i >= first_extension_index.unwrap_or(usize::MAX) {
-            quote!(#[rasn(extension_addition)])
+        let extension_annotation = if i >= first_extension_index.unwrap_or(usize::MAX) {
+            quote!(extension_addition)
         } else {
             TokenStream::new()
         };
+        let identifier_annotation = if name.to_string() != e.name {
+            let name = &e.name;
+            quote!(identifier = #name)
+        } else {
+            TokenStream::new()
+        };
+        let annotations = join_annotations(vec![extension_annotation, identifier_annotation]);
         quote!(
-            #extension
+            #annotations
             #name = #index,
         )
     });
@@ -1015,9 +1022,11 @@ mod tests {
             })
             .to_string(),
             r#"
+            #[rasn(identifier="test-option-1")]
             test_option_1=0,
+            #[rasn(identifier="test-option-2")]
             test_option_2=2,
-            #[rasn(extension_addition)]
+            #[rasn(extension_addition,identifier="test-option-3")]
             test_option_3=5,
             "#
         )
