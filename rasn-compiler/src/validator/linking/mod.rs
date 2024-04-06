@@ -793,15 +793,6 @@ impl ASN1Value {
                 Ok(())
             }
             (ASN1Type::ElsewhereDeclaredType(e), val) => {
-                if let ASN1Value::Integer(value) = *val {
-                    let int_type = e.constraints.iter().fold(IntegerType::Unbounded, |acc, c| {
-                        c.integer_constraints().max_restrictive(acc)
-                    });
-                    *val = ASN1Value::LinkedIntValue {
-                        integer_type: int_type,
-                        value,
-                    };
-                }
                 *self = ASN1Value::LinkedNestedValue {
                     supertypes: vec![e.identifier.clone()],
                     value: Box::new((*val).clone()),
@@ -934,6 +925,20 @@ impl ASN1Value {
                             value: distinguished_value,
                         });
                     }
+                }
+                Ok(())
+            }
+            (ASN1Type::Integer(i), ASN1Value::LinkedNestedValue { value, .. })
+                if matches![**value, ASN1Value::Integer(_)] =>
+            {
+                if let ASN1Value::Integer(v) = &**value {
+                    let int_type = i.constraints.iter().fold(IntegerType::Unbounded, |acc, c| {
+                        c.integer_constraints().max_restrictive(acc)
+                    });
+                    *value = Box::new(ASN1Value::LinkedIntValue {
+                        integer_type: int_type,
+                        value: *v,
+                    });
                 }
                 Ok(())
             }

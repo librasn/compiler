@@ -497,7 +497,7 @@ pub fn format_default_methods(
 
 pub fn type_to_tokens(ty: &ASN1Type) -> Result<TokenStream, GeneratorError> {
     match ty {
-        ASN1Type::Null => Ok(quote!(Asn1Null)),
+        ASN1Type::Null => Ok(quote!(())),
         ASN1Type::Boolean(_) => Ok(quote!(bool)),
         ASN1Type::Integer(i) => Ok(i.int_type().to_token_stream()),
         ASN1Type::Real(_) => Ok(quote!(f64)),
