@@ -278,7 +278,9 @@ e2e_pdu!(
     r#" #[derive(AsnType, Debug, Clone, Copy, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]
         #[rasn(enumerated, identifier = "Test-Enum")]
         pub enum TestEnum {
+            #[rasn(identifier = "test-1")]
             test_1 = 0,
+            #[rasn(identifier = "test-2")]
             test_2 = 7,
         }
         pub const TEST_ENUM_VAL: TestEnum = TestEnum::test_2;                                "#
@@ -294,7 +296,9 @@ e2e_pdu!(
     r#" #[derive(AsnType, Debug, Clone, Copy, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]
         #[rasn(enumerated, identifier = "Test-Enum")]
         pub enum TestEnum {
+            #[rasn(identifier = "test-1")]
             test_1 = 3,
+            #[rasn(identifier = "test-2")]
             test_2 = -7,
         }
         pub const TEST_ENUM_VAL: TestEnum = TestEnum::test_2;                                "#
@@ -322,8 +326,9 @@ e2e_pdu!(
         #[rasn(enumerated, identifier = "Test-Enum")]
         #[non_exhaustive]
         pub enum TestEnum {
+            #[rasn(identifier = "test-1")]
             test_1 = 0,
-            #[rasn(extension_addition)]
+            #[rasn(extension_addition, identifier = "test-2")]
             test_2 = 7,
         }
         pub const TEST_ENUM_VAL: TestEnum = TestEnum::test_2;                                "#
