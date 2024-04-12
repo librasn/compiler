@@ -30,23 +30,24 @@ const RUST_KEYWORDS: [&str; 38] = [
 ];
 
 pub fn to_rust_snake_case(input: &str) -> Ident {
-    let mut input = input.replace('-', "_");
-    let input = input.drain(..).fold(String::new(), |mut acc, c| {
-        if acc.is_empty() && c.is_uppercase() {
-            acc.push(c.to_ascii_lowercase());
-        } else if acc.ends_with(|last: char| last.is_lowercase() || last == '_') && c.is_uppercase()
-        {
-            acc.push('_');
-            acc.push(c.to_ascii_lowercase());
+    let input = input.replace('-', "_");
+    let mut lowercase = String::with_capacity(input.len());
+
+    let peekable = &mut input.chars().peekable();
+    while let Some(c) = peekable.next() {
+        if c.is_lowercase() || c == '_' || c.is_numeric() {
+            lowercase.push(c);
+            if peekable.peek().map_or(false, |next| next.is_uppercase()) {
+                lowercase.push('_');
+            }
         } else {
-            acc.push(c);
+            lowercase.push(c.to_ascii_lowercase());
         }
-        acc
-    });
-    let name = if RUST_KEYWORDS.contains(&input.as_str()) {
-        String::from("r_") + &input
+    }
+    let name = if RUST_KEYWORDS.contains(&lowercase.as_str()) {
+        String::from("r_") + &lowercase
     } else {
-        input
+        lowercase
     };
     Ident::new(&name, Span::call_site())
 }
@@ -112,7 +113,7 @@ use quote::format_ident;
 
 #[cfg(test)]
 mod tests {
-    use super::int_type_token;
+    use super::{int_type_token, to_rust_snake_case};
 
     #[test]
     fn determines_int_type() {
@@ -125,5 +126,17 @@ mod tests {
         );
         assert_eq!(int_type_token(-67463, 23123, false), "i32");
         assert_eq!(int_type_token(255, 257, false), "u16");
+    }
+
+    #[test]
+    fn converts_to_snake_case() {
+        assert_eq!(to_rust_snake_case("HelloWorld"), "hello_world");
+        assert_eq!(to_rust_snake_case("helloWorld"), "hello_world");
+        assert_eq!(to_rust_snake_case("hello-world"), "hello_world");
+        assert_eq!(to_rust_snake_case("HELLOWORLD"), "helloworld");
+        assert_eq!(to_rust_snake_case("HelloWORLD"), "hello_world");
+        assert_eq!(to_rust_snake_case("HELLO-WORLD"), "hello__world");
+        assert_eq!(to_rust_snake_case("struct"), "r_struct");
+        assert_eq!(to_rust_snake_case("STRUCT"), "r_struct");
     }
 }
