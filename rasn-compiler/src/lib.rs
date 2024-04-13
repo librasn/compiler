@@ -55,12 +55,9 @@ mod validator;
 
 use std::{
     collections::BTreeMap,
-    env::{self},
     error::Error,
     fs::{self, read_to_string},
-    io::{self, Write},
     path::PathBuf,
-    process::{Command, Stdio},
     rc::Rc,
     vec,
 };
@@ -167,8 +164,8 @@ pub struct CompileResult {
 }
 
 impl CompileResult {
-    fn rust_fmt(mut self) -> Self {
-        self.generated = format_bindings(&self.generated).unwrap_or(self.generated);
+    fn fmt<B: Backend>(mut self) -> Self {
+        self.generated = B::format_bindings(&self.generated).unwrap_or(self.generated);
         self
     }
 }
@@ -387,7 +384,7 @@ impl<B: Backend> Compiler<B, CompilerSourcesSet> {
     /// * _Ok_  - tuple containing the stringified bindings for the ASN1 spec as well as a vector of warnings raised during the compilation
     /// * _Err_ - Unrecoverable error, no rust representations were generated
     pub fn compile_to_string(self) -> Result<CompileResult, Box<dyn Error>> {
-        self.internal_compile().map(CompileResult::rust_fmt)
+        self.internal_compile().map(CompileResult::fmt::<B>)
     }
 
     fn internal_compile(&self) -> Result<CompileResult, Box<dyn Error>> {
@@ -526,7 +523,7 @@ impl<B: Backend> Compiler<B, CompilerReady> {
             backend: self.backend,
         }
         .internal_compile()?
-        .rust_fmt();
+        .fmt::<B>();
         fs::write(
             self.state
                 .output_path
@@ -537,51 +534,5 @@ impl<B: Backend> Compiler<B, CompilerReady> {
         )?;
 
         Ok(result.warnings)
-    }
-}
-
-fn format_bindings(bindings: &String) -> Result<String, Box<dyn Error>> {
-    let mut rustfmt = PathBuf::from(env::var("CARGO_HOME")?);
-    rustfmt.push("bin/rustfmt");
-    let mut cmd = Command::new(&*rustfmt);
-
-    cmd.stdin(Stdio::piped()).stdout(Stdio::piped());
-
-    let mut child = cmd.spawn()?;
-    let mut child_stdin = child.stdin.take().unwrap();
-    let mut child_stdout = child.stdout.take().unwrap();
-
-    // Write to stdin in a new thread, so that we can read from stdout on this
-    // thread. This keeps the child from blocking on writing to its stdout which
-    // might block us from writing to its stdin.
-    let bindings = bindings.to_owned();
-    let stdin_handle = ::std::thread::spawn(move || {
-        let _ = child_stdin.write_all(bindings.as_bytes());
-        bindings
-    });
-
-    let mut output = vec![];
-    io::copy(&mut child_stdout, &mut output)?;
-
-    let status = child.wait()?;
-    let bindings = stdin_handle.join().expect(
-        "The thread writing to rustfmt's stdin doesn't do \
-             anything that could panic",
-    );
-
-    match String::from_utf8(output) {
-        Ok(bindings) => match status.code() {
-            Some(0) => Ok(bindings),
-            Some(2) => Err(Box::new(io::Error::new(
-                io::ErrorKind::Other,
-                "Rustfmt parsing errors.".to_string(),
-            ))),
-            Some(3) => Ok(bindings),
-            _ => Err(Box::new(io::Error::new(
-                io::ErrorKind::Other,
-                "Internal rustfmt error".to_string(),
-            ))),
-        },
-        _ => Ok(bindings),
     }
 }

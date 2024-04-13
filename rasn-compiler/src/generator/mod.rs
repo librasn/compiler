@@ -22,6 +22,10 @@ pub trait Backend: Sized {
         &self,
         top_level_declarations: Vec<ToplevelDefinition>,
     ) -> Result<GeneratedModule, GeneratorError>;
+
+    fn format_bindings(bindings: &String) -> Result<String, Box<dyn Error>> {
+        Ok(bindings.clone())
+    }
 }
 
 pub struct GeneratedModule {
