@@ -863,6 +863,12 @@ impl ASN1Type {
         }
     }
 
+    pub fn is_builtin_type(&self) -> bool {
+        !matches!(self, ASN1Type::ElsewhereDeclaredType(_)
+            | ASN1Type::ChoiceSelectionType(_)
+            | ASN1Type::InformationObjectFieldReference(_))
+    }
+
     pub fn constraints(&self) -> Option<&Vec<Constraint>> {
         match self {
             ASN1Type::Boolean(b) => Some(b.constraints()),
@@ -1026,7 +1032,11 @@ pub enum ASN1Value {
     All,
     Null,
     Boolean(bool),
-    Choice(String, Box<ASN1Value>),
+    Choice {
+        type_name: Option<String>,
+        variant_name: String,
+        inner_value: Box<ASN1Value>,
+    },
     /// In ASN.1, value definitions are ambiguous between SEQUENCE, SET, SEQUENCE OF, and SET OF
     /// For example, `{ my-elem FALSE }` could be a value of all four types
     SequenceOrSet(Vec<(Option<String>, Box<ASN1Value>)>),
@@ -1068,7 +1078,8 @@ pub enum ASN1Value {
         value: i128,
     },
     /// Struct-like values such as SEQUENCE values need type information that will not always be picked up by the parser on first pass.
-    LinkedStructLikeValue(Vec<(String, StructLikeFieldValue)>),
+    /// Contains a vector of the struct-like's fields, with the field name, the field type, and the field value as a tuple
+    LinkedStructLikeValue(Vec<(String, ASN1Type, StructLikeFieldValue)>),
     /// Array-like values such as SEQUENCE OF values need type information that will not always be picked up by the parser on first pass.
     LinkedArrayLikeValue(Vec<Box<ASN1Value>>),
     /// Character string values such as UTF8String values need type information that will not always be picked up by the parser on first pass.
@@ -1097,6 +1108,13 @@ impl StructLikeFieldValue {
     pub fn value(&self) -> &ASN1Value {
         match self {
             StructLikeFieldValue::Explicit(v) | StructLikeFieldValue::Implicit(v) => &*v,
+        }
+    }
+
+    pub fn value_mut(&mut self) -> &mut ASN1Value {
+        match self {
+            StructLikeFieldValue::Explicit(ref mut v)
+            | StructLikeFieldValue::Implicit(ref mut v) => &mut *v,
         }
     }
 }

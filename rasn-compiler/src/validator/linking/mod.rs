@@ -6,9 +6,10 @@ mod information_object;
 mod types;
 mod utils;
 
-use std::{borrow::BorrowMut, collections::BTreeMap};
+use std::{borrow::BorrowMut, collections::BTreeMap, mem, ops::Not};
 
 use crate::{
+    common::INTERNAL_NESTED_TYPE_NAME_PREFIX,
     intermediate::{error::*, information_object::*, types::*, utils::*, *},
     validator::{
         linking::utils::bit_string_to_octet_string,
@@ -178,13 +179,13 @@ impl ToplevelValueDefinition {
         tlds: &BTreeMap<String, ToplevelDefinition>,
     ) -> Result<(), GrammarError> {
         if let Some(ToplevelDefinition::Type(tld)) = tlds.get(&self.associated_type) {
-            self.value.link_with_type(tlds, &tld.ty)
+            self.value.link_with_type(tlds, &tld.ty, Some(&tld.name))
         } else {
             let ty = match built_in_type(self.associated_type.as_str()) {
                 Some(value) => value,
                 None => return Ok(()),
             };
-            self.value.link_with_type(tlds, &ty)
+            self.value.link_with_type(tlds, &ty, None)
         }
     }
 }
@@ -202,7 +203,7 @@ impl ASN1Type {
                 s.members.iter_mut().try_for_each(|m| {
                     m.default_value
                         .as_mut()
-                        .map(|d| d.link_with_type(tlds, &m.ty))
+                        .map(|d| d.link_with_type(tlds, &m.ty, Some(&m.ty.as_str().to_owned())))
                         .unwrap_or(Ok(()))
                 })
             }
@@ -732,6 +733,7 @@ impl ASN1Value {
         &mut self,
         tlds: &BTreeMap<String, ToplevelDefinition>,
         ty: &ASN1Type,
+        type_name: Option<&String>,
     ) -> Result<(), GrammarError> {
         #[allow(clippy::useless_asref)] // false positive
         match (ty, self.as_mut()) {
@@ -747,7 +749,7 @@ impl ASN1Value {
                     *integer_type = int_type;
                 }
                 if let Some(ToplevelDefinition::Type(t)) = tlds.get(&e.identifier) {
-                    self.link_with_type(tlds, &t.ty)
+                    self.link_with_type(tlds, &t.ty, Some(&t.name))
                 } else {
                     Err(GrammarError {
                         details: format!("Failed to link value with '{}'", e.identifier),
@@ -784,7 +786,11 @@ impl ASN1Value {
                         // ```
                         // Cases like these need to be explicitly cast in the rust bindings.
                         *self = val.clone().value;
-                        self.link_with_type(tlds, &ASN1Type::ElsewhereDeclaredType(e.clone()))?;
+                        self.link_with_type(
+                            tlds,
+                            &ASN1Type::ElsewhereDeclaredType(e.clone()),
+                            None,
+                        )?;
                         return Ok(());
                     }
                 }
@@ -801,7 +807,7 @@ impl ASN1Value {
                     value: Box::new((*val).clone()),
                 };
                 if let Some(ToplevelDefinition::Type(t)) = tlds.get(&e.identifier) {
-                    self.link_with_type(tlds, &t.ty)
+                    self.link_with_type(tlds, &t.ty, Some(&t.name))
                 } else {
                     Err(GrammarError {
                         details: format!("Failed to link value with '{}'", e.identifier),
@@ -809,26 +815,48 @@ impl ASN1Value {
                     })
                 }
             }
-            (ASN1Type::Choice(c), ASN1Value::Choice(opt, val)) => {
-                if let Some(option) = c.options.iter().find(|o| &o.name == opt) {
-                    val.link_with_type(tlds, &option.ty)
+            (
+                ASN1Type::Choice(c),
+                ASN1Value::Choice {
+                    type_name: tn,
+                    variant_name,
+                    inner_value,
+                },
+            ) => {
+                if let Some(option) = c.options.iter().find(|o| &o.name == variant_name) {
+                    *tn = type_name.cloned();
+                    inner_value.link_with_type(
+                        tlds,
+                        &option.ty,
+                        Some(&option.ty.as_str().to_owned()),
+                    )
                 } else {
                     Err(GrammarError {
-                        details: format!("Failed to link value with '{}'", opt),
+                        details: format!("Failed to link value with '{}'", variant_name),
                         kind: GrammarErrorType::LinkerError,
                     })
                 }
             }
             (ASN1Type::Choice(c), ASN1Value::LinkedNestedValue { supertypes, value })
-                if matches![**value, ASN1Value::Choice(_, _)] =>
+                if matches![**value, ASN1Value::Choice { .. }] =>
             {
-                supertypes.pop();
-                if let ASN1Value::Choice(opt, val) = &mut **value {
-                    if let Some(option) = c.options.iter().find(|o| &o.name == opt) {
-                        val.link_with_type(tlds, &option.ty)
+                let enum_name = supertypes.pop();
+                if let ASN1Value::Choice {
+                    type_name,
+                    variant_name,
+                    inner_value,
+                } = &mut **value
+                {
+                    if let Some(option) = c.options.iter().find(|o| &o.name == variant_name) {
+                        *type_name = enum_name;
+                        inner_value.link_with_type(
+                            tlds,
+                            &option.ty,
+                            Some(&option.ty.as_str().to_owned()),
+                        )
                     } else {
                         Err(GrammarError {
-                            details: format!("Failed to link value with '{}'", opt),
+                            details: format!("Failed to link value with '{}'", variant_name),
                             kind: GrammarErrorType::LinkerError,
                         })
                     }
@@ -838,7 +866,7 @@ impl ASN1Value {
             }
             (ASN1Type::Set(s), ASN1Value::SequenceOrSet(val))
             | (ASN1Type::Sequence(s), ASN1Value::SequenceOrSet(val)) => {
-                *self = Self::link_struct_like(val, s, tlds)?;
+                *self = Self::link_struct_like(val, s, tlds, type_name)?;
                 Ok(())
             }
             (ASN1Type::Set(s), ASN1Value::LinkedNestedValue { value, .. })
@@ -846,7 +874,7 @@ impl ASN1Value {
                 if matches![**value, ASN1Value::SequenceOrSet(_)] =>
             {
                 if let ASN1Value::SequenceOrSet(val) = &mut **value {
-                    *value = Box::new(Self::link_struct_like(val, s, tlds)?);
+                    *value = Box::new(Self::link_struct_like(val, s, tlds, type_name)?);
                 }
                 Ok(())
             }
@@ -995,7 +1023,7 @@ impl ASN1Value {
             ) => {
                 if let Some(ToplevelDefinition::Value(tld)) = tlds.get(identifier) {
                     *self = tld.value.clone();
-                    self.link_with_type(tlds, ty)?;
+                    self.link_with_type(tlds, ty, type_name)?;
                 }
                 Ok(())
             }
@@ -1070,9 +1098,13 @@ impl ASN1Value {
         s: &SequenceOrSetOf,
         tlds: &BTreeMap<String, ToplevelDefinition>,
     ) -> Result<ASN1Value, GrammarError> {
-        let _ = val
-            .iter_mut()
-            .try_for_each(|v| v.1.link_with_type(tlds, &s.element_type));
+        let _ = val.iter_mut().try_for_each(|v| {
+            v.1.link_with_type(
+                tlds,
+                &s.element_type,
+                Some(&s.element_type.as_str().to_owned()),
+            )
+        });
         Ok(ASN1Value::LinkedArrayLikeValue(
             val.iter().map(|v| v.1.clone()).collect(),
         ))
@@ -1082,10 +1114,26 @@ impl ASN1Value {
         val: &mut [(Option<String>, Box<ASN1Value>)],
         s: &SequenceOrSet,
         tlds: &BTreeMap<String, ToplevelDefinition>,
+        type_name: Option<&String>,
     ) -> Result<ASN1Value, GrammarError> {
         val.iter_mut().try_for_each(|v| {
             if let Some(member) = s.members.iter().find(|m| Some(&m.name) == v.0.as_ref()) {
-                v.1.link_with_type(tlds, &member.ty)
+                let type_name = match (member.ty.is_builtin_type(), type_name) {
+                    (true, Some(parent)) => Some(
+                        INTERNAL_NESTED_TYPE_NAME_PREFIX.to_owned() + &member.name + "$" + parent,
+                    ),
+                    (false, _) => Some(member.ty.as_str().to_owned()),
+                    _ => {
+                        return Err(GrammarError {
+                            details: format!(
+                                "Failed to determine parent name of field {}",
+                                member.name
+                            ),
+                            kind: GrammarErrorType::LinkerError,
+                        })
+                    }
+                };
+                v.1.link_with_type(tlds, &member.ty, type_name.as_ref())
             } else {
                 Err(GrammarError {
                     details: format!("Failed to link value with '{:?}'", v.0),
@@ -1110,7 +1158,7 @@ impl ASN1Value {
                         details: format!("No value for field {} found!", member.name),
                         kind: GrammarErrorType::LinkerError,
                     })
-                    .map(|field_value| (member.name.clone(), field_value))
+                    .map(|field_value| (member.name.clone(), member.ty.clone(), field_value))
             })
             .collect::<Result<Vec<_>, _>>()
             .map(ASN1Value::LinkedStructLikeValue)
@@ -1332,7 +1380,11 @@ mod tests {
             parameterization: None,
             associated_type: "BaseChoice".into(),
             index: None,
-            value: ASN1Value::Choice(String::from("first"), Box::new(ASN1Value::Boolean(true))),
+            value: ASN1Value::Choice {
+                type_name: None,
+                variant_name: "first".into(),
+                inner_value: Box::new(ASN1Value::Boolean(true)),
+            },
         };
         example_value.collect_supertypes(&tlds).unwrap();
         assert_eq!(
@@ -1342,13 +1394,14 @@ mod tests {
                 name: "exampleValue".into(),
                 associated_type: "BaseChoice".into(),
                 parameterization: None,
-                value: ASN1Value::Choice(
-                    "first".into(),
-                    Box::new(ASN1Value::LinkedNestedValue {
+                value: ASN1Value::Choice {
+                    type_name: None,
+                    variant_name: "first".into(),
+                    inner_value: Box::new(ASN1Value::LinkedNestedValue {
                         supertypes: vec!["IntermediateBool".into(), "RootBool".into()],
                         value: Box::new(ASN1Value::Boolean(true))
                     })
-                ),
+                },
                 index: None
             }
         )

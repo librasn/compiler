@@ -48,6 +48,7 @@
 //!   }
 //! }
 //! ```
+pub(crate) mod common;
 mod generator;
 pub mod intermediate;
 mod parser;

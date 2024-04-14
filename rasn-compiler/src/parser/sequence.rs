@@ -589,10 +589,11 @@ mod tests {
             ASN1Value::SequenceOrSet(vec![
                 (
                     Some("itsaid".into()),
-                    Box::new(ASN1Value::Choice(
-                        "content".into(),
-                        Box::new(ASN1Value::Integer(0))
-                    ))
+                    Box::new(ASN1Value::Choice {
+                        type_name: None,
+                        variant_name: "content".into(),
+                        inner_value: Box::new(ASN1Value::Integer(0))
+                    })
                 ),
                 (
                     Some("ctx".into()),

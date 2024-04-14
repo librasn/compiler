@@ -1,19 +1,21 @@
 use std::str::FromStr;
 
-use proc_macro2::{Ident, Literal, Punct, Spacing, TokenStream};
+use proc_macro2::{Ident, Literal, Punct, Spacing, Span, TokenStream};
 use quote::{format_ident, quote, ToTokens, TokenStreamExt};
 use utils::types::SequenceOrSetOf;
 
-use crate::intermediate::{
-    constraints::Constraint,
-    encoding_rules::per_visible::{
-        per_visible_range_constraints, CharsetSubset, PerVisibleAlphabetConstraints,
+use crate::{
+    common::INTERNAL_NESTED_TYPE_NAME_PREFIX,
+    intermediate::{
+        constraints::Constraint,
+        encoding_rules::per_visible::{
+            per_visible_range_constraints, CharsetSubset, PerVisibleAlphabetConstraints,
+        },
+        information_object::{InformationObjectClass, InformationObjectField},
+        types::{Choice, ChoiceOption, Enumerated, SequenceOrSet, SequenceOrSetMember},
+        ASN1Type, ASN1Value, AsnTag, CharacterStringType, IntegerType, TagClass,
+        TaggingEnvironment, ToplevelDefinition, ToplevelTypeDefinition,
     },
-    information_object::{InformationObjectClass, InformationObjectField},
-    types::{Choice, ChoiceOption, Enumerated, SequenceOrSet, SequenceOrSetMember},
-    utils::{to_rust_const_case, to_rust_enum_identifier, to_rust_snake_case, to_rust_title_case},
-    ASN1Type, ASN1Value, AsnTag, CharacterStringType, IntegerType, TagClass, TaggingEnvironment,
-    ToplevelDefinition, ToplevelTypeDefinition,
 };
 
 use crate::generator::error::{GeneratorError, GeneratorErrorType};
@@ -55,16 +57,32 @@ pub struct NameType {
     typ: TokenStream,
 }
 
-pub fn inner_name(name: &String, parent_name: &String) -> Ident {
+pub fn inner_name(name: &str, parent_name: &str) -> Ident {
     format_ident!("{}{}", parent_name, to_rust_title_case(name).to_string())
 }
 
 pub fn int_type_token(opt_min: Option<i128>, opt_max: Option<i128>, is_extensible: bool) -> Ident {
     if let (Some(min), Some(max)) = (opt_min, opt_max) {
-        format_ident!(
-            "{}",
-            crate::intermediate::utils::int_type_token(min, max, is_extensible)
-        )
+        let as_str = if is_extensible {
+            "Integer"
+        } else if min >= 0 {
+            match max {
+                r if r <= u8::MAX.into() => "u8",
+                r if r <= u16::MAX.into() => "u16",
+                r if r <= u32::MAX.into() => "u32",
+                r if r <= u64::MAX.into() => "u64",
+                _ => "Integer",
+            }
+        } else {
+            match (min, max) {
+                (mi, ma) if mi >= i8::MIN.into() && ma <= i8::MAX.into() => "i8",
+                (mi, ma) if mi >= i16::MIN.into() && ma <= i16::MAX.into() => "i16",
+                (mi, ma) if mi >= i32::MIN.into() && ma <= i32::MAX.into() => "i32",
+                (mi, ma) if mi >= i64::MIN.into() && ma <= i64::MAX.into() => "i64",
+                _ => "Integer",
+            }
+        };
+        format_ident!("{as_str}")
     } else {
         format_ident!("Integer")
     }
@@ -565,8 +583,27 @@ pub fn value_to_tokens(
             "rasn does not support ALL values."
         )),
         ASN1Value::Null => Ok(quote!(())),
-        ASN1Value::Choice(i, v) => {
-            if let Some(ty_n) = type_name {
+        ASN1Value::Choice {
+            type_name: tn,
+            variant_name: i,
+            inner_value: v,
+        } => {
+            let rust_ty_name = tn
+            .as_ref()
+            .map(|t| if t.starts_with(INTERNAL_NESTED_TYPE_NAME_PREFIX) {
+                let split: Vec<&str> = t.split('$').collect();
+                if split.len() != 3 {
+                    Err(GeneratorError {
+                        details: format!("Expected three parts in an internal nested choice name, found {split:?}"),
+                        ..Default::default()
+                    })
+                } else {
+                    Ok(inner_name(split[1], split[2]).to_token_stream())
+                }
+            } else {
+                Ok(to_rust_title_case(t))
+            }).transpose()?;
+            if let Some(ty_n) = rust_ty_name.as_ref().or(type_name) {
                 let option = to_rust_enum_identifier(i);
                 let inner = value_to_tokens(v, None)?;
                 Ok(quote!(#ty_n::#option(#inner)))
@@ -589,7 +626,9 @@ pub fn value_to_tokens(
             if let Some(ty_n) = type_name {
                 let tokenized_fields = fields
                     .iter()
-                    .map(|(_, val)| value_to_tokens(val.value(), None))
+                    .map(|(_, ty, val)| {
+                        value_to_tokens(val.value(), type_to_tokens(ty).ok().as_ref())
+                    })
                     .collect::<Result<Vec<TokenStream>, _>>()?;
                 Ok(quote!(#ty_n ::new(#(#tokenized_fields),*)))
             } else {
@@ -864,7 +903,7 @@ impl ASN1Value {
     pub fn is_const_type(&self) -> bool {
         match self {
             ASN1Value::Null | ASN1Value::Boolean(_) | ASN1Value::EnumeratedValue { .. } => true,
-            ASN1Value::Choice(_, v) => v.is_const_type(),
+            ASN1Value::Choice { inner_value, .. } => inner_value.is_const_type(),
             ASN1Value::LinkedIntValue { integer_type, .. } => {
                 integer_type != &IntegerType::Unbounded
             }
@@ -908,6 +947,74 @@ macro_rules! assert_eq_ignore_ws {
     };
 }
 
+const RUST_KEYWORDS: [&str; 38] = [
+    "as", "async", "await", "break", "const", "continue", "crate", "dyn", "else", "enum", "extern",
+    "false", "fn", "for", "if", "impl", "in", "let", "loop", "match", "mod", "move", "mut", "pub",
+    "ref", "return", "self", "Self", "static", "struct", "super", "trait", "true", "type",
+    "unsafe", "use", "where", "while",
+];
+
+pub fn to_rust_snake_case(input: &str) -> Ident {
+    let mut input = input.replace('-', "_");
+    let input = input.drain(..).fold(String::new(), |mut acc, c| {
+        if acc.is_empty() && c.is_uppercase() {
+            acc.push(c.to_ascii_lowercase());
+        } else if acc.ends_with(|last: char| last.is_lowercase() || last == '_') && c.is_uppercase()
+        {
+            acc.push('_');
+            acc.push(c.to_ascii_lowercase());
+        } else {
+            acc.push(c);
+        }
+        acc
+    });
+    let name = if RUST_KEYWORDS.contains(&input.as_str()) {
+        String::from("r_") + &input
+    } else {
+        input
+    };
+    Ident::new(&name, Span::call_site())
+}
+
+pub fn to_rust_const_case(input: &str) -> Ident {
+    Ident::new(
+        &to_rust_snake_case(input).to_string().to_uppercase(),
+        Span::call_site(),
+    )
+}
+
+pub fn to_rust_enum_identifier(input: &str) -> Ident {
+    let mut formatted = format_ident!("{}", input.replace('-', "_"));
+    if RUST_KEYWORDS.contains(&input) {
+        formatted = format_ident!("R_{formatted}");
+    }
+    formatted
+}
+
+pub fn to_rust_title_case(input: &str) -> TokenStream {
+    let mut input = input.replace('-', "_");
+    let input = input.drain(..).fold(String::new(), |mut acc, c| {
+        if acc.is_empty() && c.is_lowercase() {
+            acc.push(c.to_ascii_uppercase());
+        } else if acc.ends_with(|last: char| last == '_') && c.is_uppercase() {
+            acc.pop();
+            acc.push(c);
+        } else if acc.ends_with(|last: char| last == '_') {
+            acc.pop();
+            acc.push(c.to_ascii_uppercase());
+        } else {
+            acc.push(c);
+        }
+        acc
+    });
+    let name = if RUST_KEYWORDS.contains(&input.as_str()) {
+        String::from("R_") + &input
+    } else {
+        input
+    };
+    TokenStream::from_str(&name).unwrap()
+}
+
 #[cfg(test)]
 mod tests {
     use quote::quote;
@@ -922,6 +1029,19 @@ mod tests {
     };
 
     use super::*;
+
+    #[test]
+    fn determines_int_type() {
+        assert_eq!(int_type_token(Some(600), Some(600), false), "u16");
+        assert_eq!(int_type_token(Some(0), Some(0), false), "u8");
+        assert_eq!(int_type_token(Some(-1), Some(1), false), "i8");
+        assert_eq!(
+            int_type_token(Some(0), Some(124213412341389457931857915125), false),
+            "Integer"
+        );
+        assert_eq!(int_type_token(Some(-67463), Some(23123), false), "i32");
+        assert_eq!(int_type_token(Some(255), Some(257), false), "u16");
+    }
 
     #[test]
     fn joins_annotations() {
