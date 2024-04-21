@@ -38,8 +38,9 @@ impl Backend for Rust {
         tlds: Vec<ToplevelDefinition>,
     ) -> Result<GeneratedModule, GeneratorError> {
         if let Some((module_ref, _)) = tlds.first().and_then(|tld| tld.get_index().cloned()) {
-            let name = to_rust_snake_case(&module_ref.name);
-            let imports = module_ref.imports.iter().map(|import| {
+            let module = module_ref.borrow();
+            let name = to_rust_snake_case(&module.name);
+            let imports = module.imports.iter().map(|import| {
                 let module = to_rust_snake_case(&import.global_module_reference.module_reference);
                 let mut usages = Some(vec![]);
                 'imports: for usage in &import.types {
@@ -405,7 +406,11 @@ pub fn generate_value(tld: ToplevelValueDefinition) -> Result<TokenStream, Gener
             quote!(OctetString),
             value_to_tokens(&tld.value, None)?
         ),
-        ASN1Value::Choice { variant_name, inner_value, .. }=> {
+        ASN1Value::Choice {
+            variant_name,
+            inner_value,
+            ..
+        } => {
             if inner_value.is_const_type() {
                 call_template!(
                     const_choice_value_template,

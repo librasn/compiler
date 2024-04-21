@@ -8,7 +8,13 @@
 pub(crate) mod error;
 mod linking;
 
-use std::{collections::BTreeMap, error::Error, ops::Not};
+use std::{
+    cell::{RefCell, RefMut},
+    collections::{BTreeMap, HashSet},
+    error::Error,
+    ops::Not,
+    rc::Rc,
+};
 
 use crate::intermediate::{
     constraints::*,
@@ -19,7 +25,9 @@ use crate::intermediate::{
 
 use self::{
     error::{ValidatorError, ValidatorErrorType},
-    information_object::{ASN1Information, ObjectSet},
+    information_object::{
+        ASN1Information, InformationObjectClass, InformationObjectClassField, ObjectSet,
+    },
 };
 
 pub struct Validator {
@@ -49,6 +57,7 @@ impl Validator {
                     .then_some(k.clone())
             }))
             .collect::<Vec<String>>();
+        let mut visited_headers = HashSet::<String>::new();
         while let Some(key) = keys.pop() {
             if matches![
                 self.tlds.get(&key),
@@ -105,6 +114,7 @@ impl Validator {
                 }
             }
             if self.references_object_set_by_name(&key) {
+                // TODO: Replace self.tlds.remove with remove entry to retrieve key string for reinsertion later
                 if let Some(ToplevelDefinition::Information(mut tld)) = self.tlds.remove(&key) {
                     tld.value.link_object_set_reference(&self.tlds);
                     self.tlds
@@ -128,15 +138,172 @@ impl Validator {
                     }
                 };
             }
-            if let Some(mut tld) = self.tlds.remove(&key) {
+            if let Some((k, mut tld)) = self.tlds.remove_entry(&key) {
                 if let Err(e) = tld.collect_supertypes(&self.tlds) {
                     warnings.push(Box::new(e));
                 }
-                self.tlds.insert(key, tld);
+                self.tlds.insert(k, tld);
+            }
+            if self
+                .tlds
+                .get(&key)
+                .and_then(ToplevelDefinition::get_module_reference)
+                .map_or(false, |m| visited_headers.contains(&m.borrow().name).not())
+            {
+                self.fill_in_associated_type_imports(key, &mut visited_headers);
             }
         }
 
         Ok((self, warnings))
+    }
+
+    fn fill_in_associated_type_imports(
+        &mut self,
+        key: String,
+        visited_headers: &mut HashSet<String>,
+    ) {
+        let tld = self.tlds.remove(&key).unwrap();
+        {
+            let mod_ref = tld.get_module_reference().unwrap();
+
+            let mut associated_type_imports = Vec::new();
+            if let ToplevelDefinition::Information(ToplevelInformationDefinition {
+                class: Some(ClassLink::ByReference(ref class_ref)),
+                ..
+            }) = tld
+            {
+                for field in &class_ref.fields {
+                    self.associated_import_type_class_field(
+                        field,
+                        mod_ref.clone(),
+                        &mut associated_type_imports,
+                    );
+                }
+            }
+            for import_modules in &mod_ref.borrow().imports {
+                for import in &import_modules.types {
+                    if import.starts_with(|c: char| c.is_lowercase()) {
+                        match self.tlds.get(import) {
+                            Some(ToplevelDefinition::Information(
+                                ToplevelInformationDefinition {
+                                    class: Some(ClassLink::ByReference(class_ref)),
+                                    ..
+                                },
+                            )) => {
+                                for field in &class_ref.fields {
+                                    self.associated_import_type_class_field(
+                                        field,
+                                        mod_ref.clone(),
+                                        &mut associated_type_imports,
+                                    );
+                                }
+                            }
+                            Some(ToplevelDefinition::Value(ToplevelValueDefinition {
+                                associated_type,
+                                ..
+                            })) => {
+                                self.associated_import_type(
+                                    associated_type,
+                                    mod_ref.clone(),
+                                    &mut associated_type_imports,
+                                );
+                            }
+                            _ => (),
+                        }
+                    }
+                }
+            }
+            for mut import in associated_type_imports {
+                if let Some(mod_imports) = mod_ref
+                    .borrow_mut()
+                    .imports
+                    .iter_mut()
+                    .find(|i| i.global_module_reference == import.global_module_reference)
+                {
+                    if mod_imports.types.contains(&import.types[0]).not() {
+                        mod_imports.types.push(std::mem::take(&mut import.types[0]));
+                    }
+                } else {
+                    mod_ref.borrow_mut().imports.push(import);
+                }
+            }
+
+            visited_headers.insert(mod_ref.borrow().name.clone());
+        }
+        self.tlds.insert(key, tld);
+    }
+
+    fn associated_import_type(
+        &self,
+        associated_type: &String,
+        mod_ref: Rc<RefCell<ModuleReference>>,
+        associated_type_imports: &mut Vec<Import>,
+    ) {
+        if let Some(ToplevelDefinition::Type(ToplevelTypeDefinition {
+            name,
+            parameterization,
+            index: Some((m_ref, _)),
+            ..
+        })) = self.tlds.get(associated_type)
+        {
+            let v_type_name = format!("{}{}", name, parameterization.as_ref().map_or("", |_| "{}"));
+            let v_type_mod_name = &m_ref.borrow().name;
+            if v_type_mod_name != &mod_ref.borrow().name
+                && mod_ref.borrow().find_import(&v_type_name).is_none()
+            {
+                associated_type_imports.push(Import {
+                    types: vec![v_type_name],
+                    global_module_reference: GlobalModuleReference {
+                        module_reference: m_ref.borrow().name.clone(),
+                        assigned_identifier: match &m_ref.borrow().module_identifier {
+                            Some(DefinitiveIdentifier::DefinitiveOID(oid))
+                            | Some(DefinitiveIdentifier::DefinitiveOIDandIRI { oid, .. }) => {
+                                AssignedIdentifier::ObjectIdentifierValue(oid.clone())
+                            }
+                            None => AssignedIdentifier::Empty,
+                        },
+                    },
+                    with: None,
+                })
+            }
+        }
+    }
+
+    fn associated_import_type_class_field(
+        &self,
+        field: &InformationObjectClassField,
+        mod_ref: Rc<RefCell<ModuleReference>>,
+        associated_type_imports: &mut Vec<Import>,
+    ) {
+        if let Some(ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+            parent: Some(class_id),
+            identifier,
+            ..
+        })) = &field.ty
+        {
+            if let Some(ToplevelDefinition::Information(ToplevelInformationDefinition {
+                value: ASN1Information::ObjectClass(InformationObjectClass { fields, .. }),
+                ..
+            })) = self.tlds.get(class_id)
+            {
+                if let Some(field) = fields
+                    .iter()
+                    .find(|f| f.identifier.identifier() == identifier)
+                {
+                    self.associated_import_type_class_field(
+                        field,
+                        mod_ref,
+                        associated_type_imports,
+                    );
+                }
+            }
+        } else if let Some(ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+            identifier,
+            ..
+        })) = &field.ty
+        {
+            self.associated_import_type(identifier, mod_ref, associated_type_imports)
+        }
     }
 
     fn has_constraint_reference(&mut self, key: &String) -> bool {

@@ -117,7 +117,11 @@ fn link_object_fields(
                         ),
                         kind: GrammarErrorType::LinkerError,
                     })
-                    .and_then(|ty| fixed.value.link_with_type(tlds, ty, Some(&ty.as_str().to_string()))),
+                    .and_then(|ty| {
+                        fixed
+                            .value
+                            .link_with_type(tlds, ty, Some(&ty.as_str().to_string()))
+                    }),
                 InformationObjectField::ObjectSetField(_) => Err(GrammarError {
                     details: "Linking object set fields is not yet supported!".to_string(),
                     kind: GrammarErrorType::NotYetInplemented,

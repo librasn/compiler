@@ -6,7 +6,12 @@ mod information_object;
 mod types;
 mod utils;
 
-use std::{borrow::BorrowMut, collections::BTreeMap, mem, ops::Not};
+use std::{
+    borrow::{Borrow, BorrowMut},
+    collections::BTreeMap,
+    mem,
+    ops::Not,
+};
 
 use crate::{
     common::INTERNAL_NESTED_TYPE_NAME_PREFIX,
@@ -203,7 +208,7 @@ impl ASN1Type {
                 s.members.iter_mut().try_for_each(|m| {
                     m.default_value
                         .as_mut()
-                        .map(|d| d.link_with_type(tlds, &m.ty, Some(&m.ty.as_str().to_owned())))
+                        .map(|d| d.link_with_type(tlds, &m.ty, Some(&m.ty.as_str().into_owned())))
                         .unwrap_or(Ok(()))
                 })
             }
@@ -425,9 +430,9 @@ impl ASN1Type {
                                 impl_tlds.insert(
                                     dummy_reference.clone(),
                                     ToplevelDefinition::Value(ToplevelValueDefinition::from((
-                                        dummy_reference.as_str(),
+                                        dummy_reference.as_str().borrow(),
                                         v.clone(),
-                                        gov.as_str(),
+                                        gov.as_str().borrow(),
                                     ))),
                                 );
                             }
@@ -828,7 +833,7 @@ impl ASN1Value {
                     inner_value.link_with_type(
                         tlds,
                         &option.ty,
-                        Some(&option.ty.as_str().to_owned()),
+                        Some(&option.ty.as_str().into_owned()),
                     )
                 } else {
                     Err(GrammarError {
@@ -852,7 +857,7 @@ impl ASN1Value {
                         inner_value.link_with_type(
                             tlds,
                             &option.ty,
-                            Some(&option.ty.as_str().to_owned()),
+                            Some(&option.ty.as_str().into_owned()),
                         )
                     } else {
                         Err(GrammarError {
@@ -1102,7 +1107,7 @@ impl ASN1Value {
             v.1.link_with_type(
                 tlds,
                 &s.element_type,
-                Some(&s.element_type.as_str().to_owned()),
+                Some(&s.element_type.as_str().into_owned()),
             )
         });
         Ok(ASN1Value::LinkedArrayLikeValue(
@@ -1122,7 +1127,7 @@ impl ASN1Value {
                     (true, Some(parent)) => Some(
                         INTERNAL_NESTED_TYPE_NAME_PREFIX.to_owned() + &member.name + "$" + parent,
                     ),
-                    (false, _) => Some(member.ty.as_str().to_owned()),
+                    (false, _) => Some(member.ty.as_str().into_owned()),
                     _ => {
                         return Err(GrammarError {
                             details: format!(
@@ -1395,7 +1400,7 @@ mod tests {
                 associated_type: "BaseChoice".into(),
                 parameterization: None,
                 value: ASN1Value::Choice {
-                    type_name: None,
+                    type_name: Some("BaseChoice".into()),
                     variant_name: "first".into(),
                     inner_value: Box::new(ASN1Value::LinkedNestedValue {
                         supertypes: vec!["IntermediateBool".into(), "RootBool".into()],

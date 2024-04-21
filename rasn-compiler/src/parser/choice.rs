@@ -11,7 +11,7 @@ use crate::intermediate::{types::*, *};
 
 use super::{constraint::constraint, *};
 
-pub fn choice_value(input: & str) -> IResult<&str, ASN1Value> {
+pub fn choice_value(input: &str) -> IResult<&str, ASN1Value> {
     map(
         skip_ws_and_comments(separated_pair(identifier, char(':'), asn1_value)),
         |(id, val)| ASN1Value::Choice {
