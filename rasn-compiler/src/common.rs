@@ -11,6 +11,7 @@ pub const INTERNAL_NESTED_TYPE_NAME_PREFIX: &str = "INNER$";
 /// `INTERNAL_ITEM_TYPE_NAME_PREFIX` is a prefix that is prepended
 /// to stringified type names of array-like types' item types, so that they
 /// can be properly identified by the individual compiler backends.
+#[allow(dead_code)]
 pub const INTERNAL_ITEM_TYPE_NAME_PREFIX: &str = "ITEM$";
 /// `INTERNAL_IO_FIELD_REF_TYPE_NAME_PREFIX` is a prefix that is prepended
 /// to stringified type names of information object field reference types, so that they

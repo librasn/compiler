@@ -9,8 +9,6 @@ mod utils;
 use std::{
     borrow::{Borrow, BorrowMut},
     collections::BTreeMap,
-    mem,
-    ops::Not,
 };
 
 use crate::{
@@ -430,7 +428,7 @@ impl ASN1Type {
                                 impl_tlds.insert(
                                     dummy_reference.clone(),
                                     ToplevelDefinition::Value(ToplevelValueDefinition::from((
-                                        dummy_reference.as_str().borrow(),
+                                        dummy_reference.as_str(),
                                         v.clone(),
                                         gov.as_str().borrow(),
                                     ))),

@@ -9,7 +9,7 @@ pub(crate) mod error;
 mod linking;
 
 use std::{
-    cell::{RefCell, RefMut},
+    cell::RefCell,
     collections::{BTreeMap, HashSet},
     error::Error,
     ops::Not,

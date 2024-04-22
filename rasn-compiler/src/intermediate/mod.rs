@@ -14,13 +14,7 @@ pub mod parameterization;
 pub mod types;
 pub mod utils;
 
-use std::{
-    borrow::Cow,
-    cell::{Ref, RefCell, RefMut},
-    collections::BTreeMap,
-    ops::Add,
-    rc::Rc,
-};
+use std::{borrow::Cow, cell::RefCell, collections::BTreeMap, ops::Add, rc::Rc};
 
 use crate::common::INTERNAL_IO_FIELD_REF_TYPE_NAME_PREFIX;
 use constraints::Constraint;
