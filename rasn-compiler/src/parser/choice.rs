@@ -11,10 +11,14 @@ use crate::intermediate::{types::*, *};
 
 use super::{constraint::constraint, *};
 
-pub fn choice_value<'a>(input: &'a str) -> IResult<&'a str, ASN1Value> {
+pub fn choice_value(input: &str) -> IResult<&str, ASN1Value> {
     map(
         skip_ws_and_comments(separated_pair(identifier, char(':'), asn1_value)),
-        |(id, val)| ASN1Value::Choice(id.to_owned(), Box::new(val)),
+        |(id, val)| ASN1Value::Choice {
+            type_name: None,
+            variant_name: id.to_owned(),
+            inner_value: Box::new(val),
+        },
     )(input)
 }
 
@@ -38,14 +42,14 @@ pub fn choice_value<'a>(input: &'a str) -> IResult<&'a str, ASN1Value> {
 /// contains anonymous members, these nested members will be represented as
 /// structs within the same global scope.
 /// If the match fails, the parser will not consume the input and will return an error.
-pub fn selection_type_choice<'a>(input: &'a str) -> IResult<&'a str, ASN1Type> {
+pub fn selection_type_choice(input: &str) -> IResult<&str, ASN1Type> {
     map(
         into(separated_pair(
             skip_ws_and_comments(value_identifier),
             skip_ws_and_comments(char(LEFT_CHEVRON)),
             skip_ws_and_comments(title_case_identifier),
         )),
-        |st| ASN1Type::ChoiceSelectionType(st),
+        ASN1Type::ChoiceSelectionType,
     )(input)
 }
 
@@ -59,7 +63,7 @@ pub fn selection_type_choice<'a>(input: &'a str) -> IResult<&'a str, ASN1Type> {
 /// contains anonymous members, these nested members will be represented as
 /// structs within the same global scope.
 /// If the match fails, the parser will not consume the input and will return an error.
-pub fn choice<'a>(input: &'a str) -> IResult<&'a str, ASN1Type> {
+pub fn choice(input: &str) -> IResult<&str, ASN1Type> {
     map(
         preceded(
             skip_ws_and_comments(tag(CHOICE)),
@@ -82,7 +86,7 @@ pub fn choice<'a>(input: &'a str) -> IResult<&'a str, ASN1Type> {
     )(input)
 }
 
-fn choice_option<'a>(input: &'a str) -> IResult<&'a str, ChoiceOption> {
+fn choice_option(input: &str) -> IResult<&str, ChoiceOption> {
     into(tuple((
         skip_ws_and_comments(identifier),
         opt(asn_tag),

@@ -14,8 +14,15 @@ pub mod parameterization;
 pub mod types;
 pub mod utils;
 
-use std::{collections::BTreeMap, ops::Add, rc::Rc};
+use std::{
+    borrow::Cow,
+    cell::{Ref, RefCell, RefMut},
+    collections::BTreeMap,
+    ops::Add,
+    rc::Rc,
+};
 
+use crate::common::INTERNAL_IO_FIELD_REF_TYPE_NAME_PREFIX;
 use constraints::Constraint;
 use error::{GrammarError, GrammarErrorType};
 use information_object::{InformationObjectFieldReference, ToplevelInformationDefinition};
@@ -388,6 +395,15 @@ pub struct ModuleReference {
     pub exports: Option<Exports>,
 }
 
+impl ModuleReference {
+    /// Returns an import that matches a given identifier, if present.
+    pub fn find_import(&self, identifier: &str) -> Option<&String> {
+        self.imports
+            .iter()
+            .find_map(|i| i.types.iter().find(|id| *id == identifier))
+    }
+}
+
 impl
     From<(
         &str,
@@ -510,7 +526,11 @@ impl ToplevelDefinition {
         }
     }
 
-    pub(crate) fn set_index(&mut self, module_reference: Rc<ModuleReference>, item_no: usize) {
+    pub(crate) fn set_index(
+        &mut self,
+        module_reference: Rc<RefCell<ModuleReference>>,
+        item_no: usize,
+    ) {
         match self {
             ToplevelDefinition::Type(ref mut t) => {
                 t.index = Some((module_reference, item_no));
@@ -524,11 +544,19 @@ impl ToplevelDefinition {
         }
     }
 
-    pub(crate) fn get_index(&self) -> Option<&(Rc<ModuleReference>, usize)> {
+    pub(crate) fn get_index(&self) -> Option<&(Rc<RefCell<ModuleReference>>, usize)> {
         match self {
             ToplevelDefinition::Type(ref t) => t.index.as_ref(),
             ToplevelDefinition::Value(ref v) => v.index.as_ref(),
             ToplevelDefinition::Information(ref i) => i.index.as_ref(),
+        }
+    }
+
+    pub(crate) fn get_module_reference(&self) -> Option<Rc<RefCell<ModuleReference>>> {
+        match self {
+            ToplevelDefinition::Type(ref t) => t.index.as_ref().map(|(m, _)| m.clone()),
+            ToplevelDefinition::Value(ref v) => v.index.as_ref().map(|(m, _)| m.clone()),
+            ToplevelDefinition::Information(ref i) => i.index.as_ref().map(|(m, _)| m.clone()),
         }
     }
 
@@ -595,7 +623,7 @@ pub struct ToplevelValueDefinition {
     pub associated_type: String,
     pub parameterization: Option<Parameterization>,
     pub value: ASN1Value,
-    pub index: Option<(Rc<ModuleReference>, usize)>,
+    pub index: Option<(Rc<RefCell<ModuleReference>>, usize)>,
 }
 
 impl From<(&str, ASN1Value, &str)> for ToplevelValueDefinition {
@@ -633,7 +661,7 @@ pub struct ToplevelTypeDefinition {
     pub name: String,
     pub ty: ASN1Type,
     pub parameterization: Option<Parameterization>,
-    pub index: Option<(Rc<ModuleReference>, usize)>,
+    pub index: Option<(Rc<RefCell<ModuleReference>>, usize)>,
 }
 
 impl ToplevelTypeDefinition {
@@ -712,73 +740,79 @@ pub enum ASN1Type {
 }
 
 impl ASN1Type {
-    pub fn as_str(&self) -> &str {
+    pub fn as_str<'a>(&'a self) -> Cow<'a, str> {
         match self {
-            ASN1Type::Null => NULL,
-            ASN1Type::Boolean(_) => BOOLEAN,
-            ASN1Type::Integer(_) => INTEGER,
-            ASN1Type::Real(_) => REAL,
-            ASN1Type::BitString(_) => BIT_STRING,
-            ASN1Type::OctetString(_) => OCTET_STRING,
+            ASN1Type::Null => Cow::Borrowed(NULL),
+            ASN1Type::Boolean(_) => Cow::Borrowed(BOOLEAN),
+            ASN1Type::Integer(_) => Cow::Borrowed(INTEGER),
+            ASN1Type::Real(_) => Cow::Borrowed(REAL),
+            ASN1Type::BitString(_) => Cow::Borrowed(BIT_STRING),
+            ASN1Type::OctetString(_) => Cow::Borrowed(OCTET_STRING),
             ASN1Type::CharacterString(CharacterString {
                 ty: CharacterStringType::BMPString,
                 ..
-            }) => BMP_STRING,
+            }) => Cow::Borrowed(BMP_STRING),
             ASN1Type::CharacterString(CharacterString {
                 ty: CharacterStringType::UTF8String,
                 ..
-            }) => UTF8_STRING,
+            }) => Cow::Borrowed(UTF8_STRING),
             ASN1Type::CharacterString(CharacterString {
                 ty: CharacterStringType::PrintableString,
                 ..
-            }) => PRINTABLE_STRING,
+            }) => Cow::Borrowed(PRINTABLE_STRING),
             ASN1Type::CharacterString(CharacterString {
                 ty: CharacterStringType::TeletexString,
                 ..
-            }) => TELETEX_STRING,
+            }) => Cow::Borrowed(TELETEX_STRING),
             ASN1Type::CharacterString(CharacterString {
                 ty: CharacterStringType::IA5String,
                 ..
-            }) => IA5_STRING,
+            }) => Cow::Borrowed(IA5_STRING),
             ASN1Type::CharacterString(CharacterString {
                 ty: CharacterStringType::UniversalString,
                 ..
-            }) => UNIVERSAL_STRING,
+            }) => Cow::Borrowed(UNIVERSAL_STRING),
             ASN1Type::CharacterString(CharacterString {
                 ty: CharacterStringType::VisibleString,
                 ..
-            }) => VISIBLE_STRING,
+            }) => Cow::Borrowed(VISIBLE_STRING),
             ASN1Type::CharacterString(CharacterString {
                 ty: CharacterStringType::GeneralString,
                 ..
-            }) => GENERAL_STRING,
+            }) => Cow::Borrowed(GENERAL_STRING),
             ASN1Type::CharacterString(CharacterString {
                 ty: CharacterStringType::VideotexString,
                 ..
-            }) => VIDEOTEX_STRING,
+            }) => Cow::Borrowed(VIDEOTEX_STRING),
             ASN1Type::CharacterString(CharacterString {
                 ty: CharacterStringType::GraphicString,
                 ..
-            }) => GRAPHIC_STRING,
+            }) => Cow::Borrowed(GRAPHIC_STRING),
             ASN1Type::CharacterString(CharacterString {
                 ty: CharacterStringType::NumericString,
                 ..
-            }) => NUMERIC_STRING,
-            ASN1Type::Enumerated(_) => ENUMERATED,
-            ASN1Type::Choice(_) => CHOICE,
-            ASN1Type::Sequence(_) => SEQUENCE,
-            ASN1Type::SequenceOf(_) => SEQUENCE_OF,
-            ASN1Type::Set(_) => SET,
-            ASN1Type::SetOf(_) => SET_OF,
-            ASN1Type::Time(_) => TIME,
-            ASN1Type::GeneralizedTime(_) => GENERALIZED_TIME,
-            ASN1Type::UTCTime(_) => UTC_TIME,
-            ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere { identifier, .. }) => &identifier,
+            }) => Cow::Borrowed(NUMERIC_STRING),
+            ASN1Type::Enumerated(_) => Cow::Borrowed(ENUMERATED),
+            ASN1Type::Choice(_) => Cow::Borrowed(CHOICE),
+            ASN1Type::Sequence(_) => Cow::Borrowed(SEQUENCE),
+            ASN1Type::SequenceOf(_) => Cow::Borrowed(SEQUENCE_OF),
+            ASN1Type::Set(_) => Cow::Borrowed(SET),
+            ASN1Type::SetOf(_) => Cow::Borrowed(SET_OF),
+            ASN1Type::Time(_) => Cow::Borrowed(TIME),
+            ASN1Type::GeneralizedTime(_) => Cow::Borrowed(GENERALIZED_TIME),
+            ASN1Type::UTCTime(_) => Cow::Borrowed(UTC_TIME),
+            ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere { identifier, .. }) => {
+                Cow::Borrowed(identifier)
+            }
             ASN1Type::ChoiceSelectionType(_) => todo!(),
-            ASN1Type::ObjectIdentifier(_) => OBJECT_IDENTIFIER,
-            ASN1Type::InformationObjectFieldReference(_) => todo!(),
-            ASN1Type::EmbeddedPdv => EMBEDDED_PDV,
-            ASN1Type::External => EXTERNAL,
+            ASN1Type::ObjectIdentifier(_) => Cow::Borrowed(OBJECT_IDENTIFIER),
+            ASN1Type::InformationObjectFieldReference(ifr) => Cow::Owned(format!(
+                "{INTERNAL_IO_FIELD_REF_TYPE_NAME_PREFIX}{}${}",
+                ifr.class,
+                ifr.field_path_as_str()
+            )),
+            ASN1Type::EmbeddedPdv => Cow::Borrowed(EMBEDDED_PDV),
+            ASN1Type::External => Cow::Borrowed(EXTERNAL),
         }
     }
 
@@ -861,6 +895,15 @@ impl ASN1Type {
             }),
             _ => ASN1Type::ElsewhereDeclaredType((parent, identifier, constraints).into()),
         }
+    }
+
+    pub fn is_builtin_type(&self) -> bool {
+        !matches!(
+            self,
+            ASN1Type::ElsewhereDeclaredType(_)
+                | ASN1Type::ChoiceSelectionType(_)
+                | ASN1Type::InformationObjectFieldReference(_)
+        )
     }
 
     pub fn constraints(&self) -> Option<&Vec<Constraint>> {
@@ -1026,7 +1069,11 @@ pub enum ASN1Value {
     All,
     Null,
     Boolean(bool),
-    Choice(String, Box<ASN1Value>),
+    Choice {
+        type_name: Option<String>,
+        variant_name: String,
+        inner_value: Box<ASN1Value>,
+    },
     /// In ASN.1, value definitions are ambiguous between SEQUENCE, SET, SEQUENCE OF, and SET OF
     /// For example, `{ my-elem FALSE }` could be a value of all four types
     SequenceOrSet(Vec<(Option<String>, Box<ASN1Value>)>),
@@ -1068,7 +1115,8 @@ pub enum ASN1Value {
         value: i128,
     },
     /// Struct-like values such as SEQUENCE values need type information that will not always be picked up by the parser on first pass.
-    LinkedStructLikeValue(Vec<(String, StructLikeFieldValue)>),
+    /// Contains a vector of the struct-like's fields, with the field name, the field type, and the field value as a tuple
+    LinkedStructLikeValue(Vec<(String, ASN1Type, StructLikeFieldValue)>),
     /// Array-like values such as SEQUENCE OF values need type information that will not always be picked up by the parser on first pass.
     LinkedArrayLikeValue(Vec<Box<ASN1Value>>),
     /// Character string values such as UTF8String values need type information that will not always be picked up by the parser on first pass.
@@ -1097,6 +1145,13 @@ impl StructLikeFieldValue {
     pub fn value(&self) -> &ASN1Value {
         match self {
             StructLikeFieldValue::Explicit(v) | StructLikeFieldValue::Implicit(v) => &*v,
+        }
+    }
+
+    pub fn value_mut(&mut self) -> &mut ASN1Value {
+        match self {
+            StructLikeFieldValue::Explicit(ref mut v)
+            | StructLikeFieldValue::Implicit(ref mut v) => &mut *v,
         }
     }
 }

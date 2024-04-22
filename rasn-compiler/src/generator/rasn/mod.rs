@@ -40,7 +40,12 @@ fn generate(tld: ToplevelDefinition) -> Result<TokenStream, GeneratorError> {
                 | ASN1Type::External => generate_any(t),
                 ASN1Type::GeneralizedTime(_) => generate_generalized_time(t),
                 ASN1Type::UTCTime(_) => generate_utc_time(t),
-                ASN1Type::ChoiceSelectionType(_) => unreachable!(),
+                ASN1Type::ChoiceSelectionType(_) => Err(GeneratorError {
+                    kind: GeneratorErrorType::Asn1TypeMismatch,
+                    details: "Choice selection type should have been resolved at this point!"
+                        .into(),
+                    top_level_declaration: None,
+                }),
             }
         }
         ToplevelDefinition::Value(v) => generate_value(v),

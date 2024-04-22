@@ -18,9 +18,6 @@ use crate::{
             ASN1Information, ClassLink, InformationObjectClass, InformationObjectFields,
             ObjectSetValue, ToplevelInformationDefinition,
         },
-        utils::{
-            to_rust_const_case, to_rust_enum_identifier, to_rust_snake_case, to_rust_title_case,
-        },
         ASN1Type, ASN1Value, ToplevelDefinition, ToplevelTypeDefinition, ToplevelValueDefinition,
         BIT_STRING, BOOLEAN, GENERALIZED_TIME, INTEGER, NULL, OCTET_STRING, UTC_TIME,
     },
@@ -41,8 +38,9 @@ impl Backend for Rust {
         tlds: Vec<ToplevelDefinition>,
     ) -> Result<GeneratedModule, GeneratorError> {
         if let Some((module_ref, _)) = tlds.first().and_then(|tld| tld.get_index().cloned()) {
-            let name = to_rust_snake_case(&module_ref.name);
-            let imports = module_ref.imports.iter().map(|import| {
+            let module = module_ref.borrow();
+            let name = to_rust_snake_case(&module.name);
+            let imports = module.imports.iter().map(|import| {
                 let module = to_rust_snake_case(&import.global_module_reference.module_reference);
                 let mut usages = Some(vec![]);
                 'imports: for usage in &import.types {
@@ -408,22 +406,26 @@ pub fn generate_value(tld: ToplevelValueDefinition) -> Result<TokenStream, Gener
             quote!(OctetString),
             value_to_tokens(&tld.value, None)?
         ),
-        ASN1Value::Choice(choice, inner) => {
-            if inner.is_const_type() {
+        ASN1Value::Choice {
+            variant_name,
+            inner_value,
+            ..
+        } => {
+            if inner_value.is_const_type() {
                 call_template!(
                     const_choice_value_template,
                     tld,
                     to_rust_title_case(&tld.associated_type),
-                    to_rust_enum_identifier(choice),
-                    value_to_tokens(inner, None)?
+                    to_rust_enum_identifier(variant_name),
+                    value_to_tokens(inner_value, None)?
                 )
             } else {
                 call_template!(
                     choice_value_template,
                     tld,
                     to_rust_title_case(&tld.associated_type),
-                    to_rust_enum_identifier(choice),
-                    value_to_tokens(inner, None)?
+                    to_rust_enum_identifier(variant_name),
+                    value_to_tokens(inner_value, None)?
                 )
             }
         }
@@ -451,7 +453,7 @@ pub fn generate_value(tld: ToplevelValueDefinition) -> Result<TokenStream, Gener
         ASN1Value::LinkedStructLikeValue(s) => {
             let members = s
                 .iter()
-                .map(|(_, val)| value_to_tokens(val.value(), None))
+                .map(|(_, ty, val)| value_to_tokens(val.value(), type_to_tokens(ty).ok().as_ref()))
                 .collect::<Result<Vec<TokenStream>, _>>()?;
             call_template!(
                 sequence_or_set_value_template,

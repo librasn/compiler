@@ -9,7 +9,7 @@ pub struct ToplevelInformationDefinition {
     pub parameterization: Option<Parameterization>,
     pub class: Option<ClassLink>,
     pub value: ASN1Information,
-    pub index: Option<(Rc<ModuleReference>, usize)>,
+    pub index: Option<(Rc<RefCell<ModuleReference>>, usize)>,
 }
 
 impl From<(&str, ASN1Information, &str)> for ToplevelInformationDefinition {
@@ -509,6 +509,20 @@ pub struct InformationObjectFieldReference {
     pub class: String,
     pub field_path: Vec<ObjectFieldIdentifier>,
     pub constraints: Vec<Constraint>,
+}
+
+impl InformationObjectFieldReference {
+    /// Returns the field path as string.
+    /// The field path is stringified by joining
+    /// the stringified `ObjectFieldIdentifier`s with
+    /// the `$` character as a separator.
+    pub fn field_path_as_str(&self) -> String {
+        self.field_path
+            .iter()
+            .map(|o| o.identifier().clone())
+            .collect::<Vec<_>>()
+            .join("$")
+    }
 }
 
 impl From<(&str, Vec<ObjectFieldIdentifier>, Option<Vec<Constraint>>)>
