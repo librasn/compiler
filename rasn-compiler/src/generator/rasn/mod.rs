@@ -7,7 +7,7 @@ use std::{
     str::FromStr,
 };
 
-use self::{builder::*, information_object::ASN1Information};
+use self::information_object::ASN1Information;
 use crate::intermediate::*;
 use proc_macro2::TokenStream;
 use quote::{quote, ToTokens};
@@ -22,13 +22,30 @@ mod template;
 mod utils;
 
 #[derive(Debug, Default)]
+/// A compiler backend that generates bindings to be used with
+/// the `rasn` framework for rust. 
 pub struct Rasn {
     config: Config,
 }
 
 #[derive(Debug, Default)]
+/// A configuration for the [Rasn] backend
 pub struct Config {
-    opaque_open_types: bool,
+    /// ASN.1 Open Types are represented as the `rasn::types::Any` type,
+    /// which holds a binary `content`. If `opaque_open_types` is `false`,
+    /// the compiler will generate de-/encode methods for all rust types 
+    /// that hold an open type. In this way, for example a SEQUENCE field
+    /// of an Open Type can be completely decoded to a rust type instance.
+    /// While with `opaque_open_type == true`, the same SEQUENCE field would
+    /// be represented as an `Any`-wrapped `Vec<u8>` containing the encoded
+    /// actual value of the Open Type.
+    pub opaque_open_types: bool,
+    /// The compiler will try to match module import dependencies of the ASN.1
+    /// module as close as possible, importing only those types from other modules
+    /// that are imported in the ASN.1 module. If the `default_wildcard_imports`
+    /// is set to `true` , the compiler will import the entire module using 
+    /// the wildcard `*` for each module that the input ASN.1 module imports from.
+    pub default_wildcard_imports: bool,
 }
 
 impl Backend for Rasn {
@@ -67,7 +84,11 @@ impl Backend for Rasn {
                         }
                     }
                 }
-                let used_imports = usages.unwrap_or(vec![TokenStream::from_str("*").unwrap()]);
+                let used_imports = if self.config.default_wildcard_imports {
+                    vec![TokenStream::from_str("*").unwrap()]
+                } else {
+                    usages.unwrap_or(vec![TokenStream::from_str("*").unwrap()])
+                };
                 quote!(use super:: #module::{ #(#used_imports),* };)
             });
             let (pdus, warnings): (Vec<TokenStream>, Vec<Box<dyn Error>>) =

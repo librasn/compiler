@@ -1,10 +1,10 @@
 use std::collections::BTreeMap;
 
-use crate::intermediate::{
+use crate::{intermediate::{
     error::{GrammarError, GrammarErrorType},
     information_object::*,
     *,
-};
+}, parser::asn1_value};
 
 use self::types::*;
 
@@ -142,6 +142,28 @@ pub fn resolve_custom_syntax(
                                     InformationObjectField::TypeField(TypeField {
                                         identifier: token.name_or_empty().to_owned(),
                                         ty: ASN1Type::ElsewhereDeclaredType(t.clone()),
+                                    }),
+                                ));
+                            } else if let Some(index) =
+                                class.fields.iter().enumerate().find_map(|(i, v)| {
+                                    (v.identifier
+                                        == ObjectFieldIdentifier::SingleValue(
+                                            token.name_or_empty().to_owned(),
+                                        ))
+                                    .then_some(i)
+                                })
+                            {
+                                unsorted_default_syntax.push((
+                                    index,
+                                    InformationObjectField::FixedValueField(FixedValueField {
+                                        identifier: token.name_or_empty().to_owned(),
+                                        value: match asn1_value(&t.identifier) {
+                                            Ok((_, v)) => Ok(v),
+                                            Err(e) => Err(GrammarError {
+                                                details: format!("Syntax mismatch while resolving information object: {e:?}"),
+                                                kind: GrammarErrorType::SyntaxMismatch,
+                                            }),
+                                        }?,
                                     }),
                                 ));
                             }

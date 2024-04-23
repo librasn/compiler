@@ -738,7 +738,10 @@ impl Rasn {
                 } else {
                     TokenStream::new()
                 };
-                let class_fields = seq.members.iter().fold(
+                let class_fields = if self.config.opaque_open_types {
+                    TokenStream::new()
+                } else {
+                    seq.members.iter().fold(
                     TokenStream::new(),
                     |mut acc, m| {
                         [
@@ -748,35 +751,36 @@ impl Rasn {
                         .concat()
                         .iter()
                         .for_each(|c| {
-                let decode_fn = format_ident!("decode_{}", self.to_rust_snake_case(&m.name));
-                let open_field_name = self.to_rust_snake_case(&m.name);
-                if let (Constraint::TableConstraint(t), ASN1Type::InformationObjectFieldReference(iofr)) = (c, &m.ty) {
-                        let identifier = t.linked_fields.iter().map(|l|
-                            self.to_rust_snake_case(&l.field_name)
-                        );
-                        let field_name = iofr.field_path.last().unwrap().identifier().replace('&', "");
-                        if field_name.starts_with(|initial: char| initial.is_lowercase()) {
-                            // Fixed-value fields of Information Object usages should have been resolved at this point
-                            return;
-                        }
-                        let obj_set_name = match t.object_set.values.first() {
-                            Some(ObjectSetValue::Reference(s)) => self.to_rust_title_case(s),
-                            _ => todo!()
-                        };
-                        let field_enum_name = format_ident!("{obj_set_name}_{field_name}");
-                        let input = m.is_optional.then(|| quote!(self. #open_field_name .as_ref())).unwrap_or(quote!(Some(&self. #open_field_name)));
-                        acc.append_all(quote! {
-
-                            impl #name {
-                                pub fn #decode_fn<D: Decoder>(&self, decoder: &mut D) -> Result<#field_enum_name, D::Error> {
-                                    #field_enum_name ::decode(decoder, #input, &self. #(#identifier).*)
+                            if let (Constraint::TableConstraint(t), ASN1Type::InformationObjectFieldReference(iofr)) = (c, &m.ty) {
+                                let decode_fn = format_ident!("decode_{}", self.to_rust_snake_case(&m.name));
+                                let open_field_name = self.to_rust_snake_case(&m.name);
+                                let identifier = t.linked_fields.iter().map(|l|
+                                    self.to_rust_snake_case(&l.field_name)
+                                );
+                                let field_name = iofr.field_path.last().unwrap().identifier().replace('&', "");
+                                if field_name.starts_with(|initial: char| initial.is_lowercase()) {
+                                    // Fixed-value fields of Information Object usages should have been resolved at this point
+                                    return;
                                 }
-                            }
+                                let obj_set_name = match t.object_set.values.first() {
+                                    Some(ObjectSetValue::Reference(s)) => self.to_rust_title_case(s),
+                                    _ => todo!()
+                                };
+                                let field_enum_name = format_ident!("{obj_set_name}_{field_name}");
+                                let input = m.is_optional.then(|| quote!(self. #open_field_name .as_ref())).unwrap_or(quote!(Some(&self. #open_field_name)));
+                                acc.append_all(quote! {
+
+                                    impl #name {
+                                        pub fn #decode_fn<D: Decoder>(&self, decoder: &mut D) -> Result<#field_enum_name, D::Error> {
+                                            #field_enum_name ::decode(decoder, #input, &self. #(#identifier).*)
+                                        }
+                                    }
+                                });
+                            };
                         });
+                        acc
+                    })
                 };
-            });
-            acc
-            });
                 let (declaration, name_types) =
                     self.format_sequence_or_set_members(seq, &name.to_string())?;
                 let mut annotations = vec![set_annotation, self.format_tag(tld.tag.as_ref(), true)];
@@ -866,6 +870,9 @@ impl Rasn {
         &self,
         tld: ToplevelInformationDefinition,
     ) -> Result<TokenStream, GeneratorError> {
+        if self.config.opaque_open_types {
+            return Ok(TokenStream::new());
+        }
         if let ASN1Information::ObjectSet(o) = &tld.value {
             let class: &InformationObjectClass = match tld.class {
                 Some(ClassLink::ByReference(ref c)) => c,

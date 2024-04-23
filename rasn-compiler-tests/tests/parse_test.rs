@@ -48,14 +48,14 @@ Failed to parse {failed} modules with the following errors:
 fn compile_etsi() {
     println!(
         "{:?}",
-        Compiler::<RasnBackend, _>::new()
+        Compiler::<RasnBackend, _>::new_with_config(rasn_compiler::prelude::RasnConfig { opaque_open_types: false, default_wildcard_imports: true })
             // .add_asn_by_path("../rasn-compiler/test_asn1/ngap_class.asn")
             // .add_asn_by_path("../rasn-compiler/test_asn1/ngap_common.asn")
             // .add_asn_by_path("../rasn-compiler/test_asn1/ngap_const.asn")
             // .add_asn_by_path("../rasn-compiler/test_asn1/ngap_container.asn")
             // .add_asn_by_path("../rasn-compiler/test_asn1/ngap_ies.asn")
             // .add_asn_by_path("../rasn-compiler/test_asn1/ngap_pdus.asn")
-            .add_asn_by_path("../rasn-compiler/test_asn1/s1ap.asn")
+            .add_asn_by_path("../rasn-compiler/test_asn1/Simple.asn")
             .set_output_path("./tests")
             .compile()
     );

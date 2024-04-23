@@ -68,57 +68,64 @@ impl Validator {
                     }
                 ))
             ] {
-                let mut item = self.tlds.remove(&key);
-                if let Some(ToplevelDefinition::Information(ToplevelInformationDefinition {
-                    value: ASN1Information::ObjectSet(set),
-                    ..
-                })) = &mut item
+                let mut item = self.tlds.remove_entry(&key);
+                if let Some((
+                    _,
+                    ToplevelDefinition::Information(ToplevelInformationDefinition {
+                        value: ASN1Information::ObjectSet(set),
+                        ..
+                    }),
+                )) = &mut item
                 {
                     if let Err(e) = set.resolve_object_set_references(&self.tlds) {
                         warnings.push(Box::new(e))
                     }
                 }
-                if let Some(tld) = item {
-                    self.tlds.insert(tld.name().clone(), tld);
+                if let Some((k, tld)) = item {
+                    self.tlds.insert(k, tld);
                 }
             }
             if self.references_class_by_name(&key) {
-                match self.tlds.remove(&key) {
-                    Some(ToplevelDefinition::Type(mut tld)) => {
+                match self.tlds.remove_entry(&key) {
+                    Some((k, ToplevelDefinition::Type(mut tld))) => {
                         tld.ty = tld.ty.resolve_class_reference(&self.tlds);
-                        self.tlds
-                            .insert(tld.name.clone(), ToplevelDefinition::Type(tld));
+                        self.tlds.insert(k, ToplevelDefinition::Type(tld));
                     }
-                    Some(ToplevelDefinition::Information(mut tld)) => {
+                    Some((k, ToplevelDefinition::Information(mut tld))) => {
                         tld = tld.resolve_class_reference(&self.tlds);
-                        self.tlds
-                            .insert(tld.name.clone(), ToplevelDefinition::Information(tld));
+                        self.tlds.insert(k, ToplevelDefinition::Information(tld));
                     }
                     _ => (),
                 }
             }
+            // if self.is_parameterized(&key) {
+            //     if let Some((k, mut tld)) = self.tlds.remove_entry(&key) {
+            //         if let Err(e) = tld.resolve_parameterization(&self.tlds) {
+            //             warnings.push(Box::new(e));
+            //         }
+            //         self.tlds.insert(k, tld);
+            //     }
+            // }
             if self.has_components_of_notation(&key) {
-                if let Some(ToplevelDefinition::Type(mut tld)) = self.tlds.remove(&key) {
+                if let Some((k, ToplevelDefinition::Type(mut tld))) = self.tlds.remove_entry(&key) {
                     tld.ty.link_components_of_notation(&self.tlds);
-                    self.tlds
-                        .insert(tld.name.clone(), ToplevelDefinition::Type(tld));
+                    self.tlds.insert(k, ToplevelDefinition::Type(tld));
                 }
             }
             if self.has_choice_selection_type(&key) {
-                if let Some(ToplevelDefinition::Type(mut tld)) = self.tlds.remove(&key) {
+                if let Some((k, ToplevelDefinition::Type(mut tld))) = self.tlds.remove_entry(&key) {
                     if let Err(e) = tld.ty.link_choice_selection_type(&self.tlds) {
                         warnings.push(Box::new(e));
                     }
-                    self.tlds
-                        .insert(tld.name.clone(), ToplevelDefinition::Type(tld));
+                    self.tlds.insert(k, ToplevelDefinition::Type(tld));
                 }
             }
             if self.references_object_set_by_name(&key) {
-                // TODO: Replace self.tlds.remove with remove entry to retrieve key string for reinsertion later
-                if let Some(ToplevelDefinition::Information(mut tld)) = self.tlds.remove(&key) {
+                if let Some((k, ToplevelDefinition::Information(mut tld))) =
+                    self.tlds.remove_entry(&key)
+                {
                     tld.value.link_object_set_reference(&self.tlds);
-                    self.tlds
-                        .insert(tld.name.clone(), ToplevelDefinition::Information(tld));
+                    self.tlds.insert(k, ToplevelDefinition::Information(tld));
                 }
             }
             if self.has_constraint_reference(&key) {
@@ -214,8 +221,8 @@ impl Validator {
                 }
             }
             for mut import in associated_type_imports {
-                if let Some(mod_imports) = mod_ref
-                    .borrow_mut()
+                let mut mut_mod_ref = mod_ref.borrow_mut();
+                if let Some(mod_imports) = mut_mod_ref
                     .imports
                     .iter_mut()
                     .find(|i| i.global_module_reference == import.global_module_reference)
@@ -224,7 +231,7 @@ impl Validator {
                         mod_imports.types.push(std::mem::take(&mut import.types[0]));
                     }
                 } else {
-                    mod_ref.borrow_mut().imports.push(import);
+                    mut_mod_ref.imports.push(import);
                 }
             }
 
@@ -308,11 +315,7 @@ impl Validator {
 
     fn has_constraint_reference(&mut self, key: &String) -> bool {
         if let Some(tld) = self.tlds.get(key) {
-            if tld.is_parameterized() {
-                false
-            } else {
-                tld.has_constraint_reference()
-            }
+            tld.is_parameterized() || tld.has_constraint_reference()
         } else {
             false
         }
@@ -329,6 +332,13 @@ impl Validator {
                 }),
                 _ => false,
             })
+            .unwrap_or(false)
+    }
+
+    fn is_parameterized(&mut self, key: &String) -> bool {
+        self.tlds
+            .get(key)
+            .map(ToplevelDefinition::is_parameterized)
             .unwrap_or(false)
     }
 

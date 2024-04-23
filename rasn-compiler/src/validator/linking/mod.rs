@@ -25,7 +25,7 @@ use self::{
     utils::{built_in_type, find_tld_or_enum_value_by_name, octet_string_to_bit_string},
 };
 
-use super::{Constraint, Parameter, TableConstraint};
+use super::{error::ValidatorError, Constraint, Parameter, TableConstraint};
 
 macro_rules! error {
     ($kind:ident, $($arg:tt)*) => {
@@ -39,8 +39,82 @@ macro_rules! error {
 impl ToplevelDefinition {
     pub(crate) fn is_parameterized(&self) -> bool {
         match self {
-            ToplevelDefinition::Type(t) => t.parameterization.is_some(),
-            _ => false, // TODO: implement parameterization for information objects and values
+            ToplevelDefinition::Information(ToplevelInformationDefinition {
+                parameterization: Some(_),
+                ..
+            })
+            | ToplevelDefinition::Type(ToplevelTypeDefinition {
+                parameterization: Some(_),
+                ..
+            })
+            | ToplevelDefinition::Value(ToplevelValueDefinition {
+                parameterization: Some(_),
+                ..
+            }) => true,
+            ToplevelDefinition::Type(ToplevelTypeDefinition {
+                ty: ASN1Type::Sequence(s),
+                ..
+            })
+            | ToplevelDefinition::Type(ToplevelTypeDefinition {
+                ty: ASN1Type::Set(s),
+                ..
+            }) => s.members.iter().any(|m| {
+                m.constraints
+                    .iter()
+                    .any(|c| matches!(c, Constraint::Parameter(_)))
+            }),
+            ToplevelDefinition::Type(ToplevelTypeDefinition {
+                ty: ASN1Type::SequenceOf(s),
+                ..
+            })
+            | ToplevelDefinition::Type(ToplevelTypeDefinition {
+                ty: ASN1Type::SetOf(s),
+                ..
+            }) => s.element_type.constraints().map_or(false, |constraints| {
+                constraints
+                    .iter()
+                    .any(|c| matches!(c, Constraint::Parameter(_)))
+            }),
+            _ => false,
+        }
+    }
+
+    pub(crate) fn resolve_parameterization(
+        &mut self,
+        tlds: &BTreeMap<String, ToplevelDefinition>,
+    ) -> Result<(), ValidatorError> {
+        match self {
+            ToplevelDefinition::Type(ToplevelTypeDefinition {
+                name,
+                ty: ASN1Type::Sequence(s),
+                ..
+            })
+            | ToplevelDefinition::Type(ToplevelTypeDefinition {
+                name,
+                ty: ASN1Type::Set(s),
+                ..
+            }) => s.members.iter_mut().try_for_each(|m| {
+                if let Some(replacement) = m.ty.link_constraint_reference(&name, tlds)? {
+                    m.ty = replacement;
+                }
+                Ok(())
+            }),
+            ToplevelDefinition::Type(ToplevelTypeDefinition {
+                name,
+                ty: ASN1Type::SequenceOf(s),
+                ..
+            })
+            | ToplevelDefinition::Type(ToplevelTypeDefinition {
+                name,
+                ty: ASN1Type::SetOf(s),
+                ..
+            }) => {
+                if let Some(replacement) = s.element_type.link_constraint_reference(&name, tlds)? {
+                    s.element_type = Box::new(replacement);
+                }
+                Ok(())
+            }
+            _ => Ok(()),
         }
     }
 
@@ -385,6 +459,19 @@ impl ASN1Type {
                     }
                 }
             }
+            ASN1Type::InformationObjectFieldReference(iofr) => {
+                if let Some(ToplevelDefinition::Information(ToplevelInformationDefinition {
+                    value: ASN1Information::ObjectClass(clazz),
+                    ..
+                })) = tlds.get(&iofr.class)
+                {
+                    if let Some(InformationObjectClassField { ty: Some(ty), .. }) =
+                        clazz.get_field(&iofr.field_path)
+                    {
+                        self_replacement = Some(ty.clone());
+                    }
+                }
+            }
             ty => {
                 if let Some(c) = ty.constraints_mut() {
                     for c in c.iter_mut() {
@@ -588,7 +675,9 @@ impl ASN1Type {
                 })) = tlds.get(&iofr.class)
                 {
                     if let Some(field) = c.get_field(&iofr.field_path) {
-                        *self = field.ty.clone().unwrap_or(ASN1Type::External);
+                        if let Some(ref ty) = field.ty {
+                            *self = ty.clone();
+                        }
                         return Ok(());
                     }
                 }

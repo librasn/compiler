@@ -81,7 +81,7 @@ use std::{
     vec,
 };
 
-use generator::{rasn::Rasn, Backend};
+use generator::Backend;
 use intermediate::ToplevelDefinition;
 use parser::asn_spec;
 use validator::Validator;
@@ -98,6 +98,7 @@ pub mod prelude {
         rasn::{Config as RasnConfig, Rasn as RasnBackend},
         Backend, GeneratedModule,
     };
+
     pub use crate::intermediate::ToplevelDefinition;
     pub mod ir {
         pub use crate::intermediate::{
