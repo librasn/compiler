@@ -335,13 +335,6 @@ impl Validator {
             .unwrap_or(false)
     }
 
-    fn is_parameterized(&mut self, key: &String) -> bool {
-        self.tlds
-            .get(key)
-            .map(ToplevelDefinition::is_parameterized)
-            .unwrap_or(false)
-    }
-
     fn references_object_set_by_name(&mut self, key: &String) -> bool {
         self.tlds
             .get(key)

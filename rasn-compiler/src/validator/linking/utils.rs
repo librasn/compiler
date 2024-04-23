@@ -1,10 +1,13 @@
 use std::collections::BTreeMap;
 
-use crate::{intermediate::{
-    error::{GrammarError, GrammarErrorType},
-    information_object::*,
-    *,
-}, parser::asn1_value};
+use crate::{
+    intermediate::{
+        error::{GrammarError, GrammarErrorType},
+        information_object::*,
+        *,
+    },
+    parser::asn1_value,
+};
 
 use self::types::*;
 

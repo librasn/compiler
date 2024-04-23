@@ -23,7 +23,7 @@ mod utils;
 
 #[derive(Debug, Default)]
 /// A compiler backend that generates bindings to be used with
-/// the `rasn` framework for rust. 
+/// the `rasn` framework for rust.
 pub struct Rasn {
     config: Config,
 }
@@ -33,7 +33,7 @@ pub struct Rasn {
 pub struct Config {
     /// ASN.1 Open Types are represented as the `rasn::types::Any` type,
     /// which holds a binary `content`. If `opaque_open_types` is `false`,
-    /// the compiler will generate de-/encode methods for all rust types 
+    /// the compiler will generate de-/encode methods for all rust types
     /// that hold an open type. In this way, for example a SEQUENCE field
     /// of an Open Type can be completely decoded to a rust type instance.
     /// While with `opaque_open_type == true`, the same SEQUENCE field would
@@ -43,7 +43,7 @@ pub struct Config {
     /// The compiler will try to match module import dependencies of the ASN.1
     /// module as close as possible, importing only those types from other modules
     /// that are imported in the ASN.1 module. If the `default_wildcard_imports`
-    /// is set to `true` , the compiler will import the entire module using 
+    /// is set to `true` , the compiler will import the entire module using
     /// the wildcard `*` for each module that the input ASN.1 module imports from.
     pub default_wildcard_imports: bool,
 }

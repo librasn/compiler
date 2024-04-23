@@ -109,7 +109,7 @@ impl ToplevelDefinition {
                 ty: ASN1Type::SetOf(s),
                 ..
             }) => {
-                if let Some(replacement) = s.element_type.link_constraint_reference(&name, tlds)? {
+                if let Some(replacement) = s.element_type.link_constraint_reference(name, tlds)? {
                     s.element_type = Box::new(replacement);
                 }
                 Ok(())
