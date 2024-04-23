@@ -1,6 +1,7 @@
 extern crate proc_macro;
 
 use proc_macro::TokenStream;
+use rasn_compiler::prelude::RasnBackend;
 use syn::{parse::Parse, parse_macro_input, LitStr};
 
 const DUMMY_HEADER: &str = r#"asn1 { dummy(999) header(999) }
@@ -30,7 +31,7 @@ pub fn asn1(input: TokenStream) -> TokenStream {
         v => String::from(DUMMY_HEADER) + &v + DUMMY_FOOTER,
     };
 
-    rasn_compiler::Compiler::new()
+    rasn_compiler::Compiler::<RasnBackend, _>::new()
         .add_asn_literal(literal_asn1)
         .compile_to_string()
         .unwrap()
