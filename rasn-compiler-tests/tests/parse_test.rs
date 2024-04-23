@@ -1,4 +1,4 @@
-use rasn_compiler::Compiler;
+use rasn_compiler::{prelude::RasnBackend, Compiler};
 
 #[test]
 #[ignore]
@@ -10,7 +10,7 @@ fn parses_modules() {
     for entry in read_dir.flatten() {
         let path = entry.path();
         println!("{:?}", &path);
-        if let Err(e) = Compiler::new()
+        if let Err(e) = Compiler::<RasnBackend, _>::new()
             .add_asn_by_path(path.clone())
             .compile_to_string()
         {
@@ -48,7 +48,7 @@ Failed to parse {failed} modules with the following errors:
 fn compile_etsi() {
     println!(
         "{:?}",
-        Compiler::new()
+        Compiler::<RasnBackend, _>::new()
             // .add_asn_by_path("../rasn-compiler/test_asn1/ngap_class.asn")
             // .add_asn_by_path("../rasn-compiler/test_asn1/ngap_common.asn")
             // .add_asn_by_path("../rasn-compiler/test_asn1/ngap_const.asn")

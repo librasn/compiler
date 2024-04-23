@@ -13,7 +13,7 @@ macro_rules! e2e_pdu {
         fn $suite() {
             rasn_compiler_derive::asn1!($asn1);
             assert_eq!(
-                rasn_compiler::Compiler::new()
+                rasn_compiler::Compiler::<rasn_compiler::prelude::RasnBackend, _>::new()
                     .add_asn_literal(&format!("TestModule DEFINITIONS AUTOMATIC TAGS::= BEGIN {} END", $asn1))
                     .compile_to_string()
                     .unwrap()

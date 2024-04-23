@@ -11,23 +11,40 @@
 //! // build.rs build script
 //! use std::path::PathBuf;
 //! use rasn_compiler::prelude::*;
+//! use proc_macro2::TokenStream;
 //!
 //! fn main() {
+//!   #[derive(Default)]
 //!   struct CustomBackend;
 //!
 //!   impl Backend for CustomBackend {
+//!     type Config = ();
+//!
 //!     fn generate_module(
 //!          &self,
 //!          top_level_declarations: Vec<ToplevelDefinition>,
 //!     ) -> Result<GeneratedModule, GeneratorError> {
 //!         Ok(GeneratedModule::empty())
 //!     }
+//!
+//!     fn generate(
+//!         &self,
+//!         tld: ToplevelDefinition
+//!     ) -> Result<TokenStream, GeneratorError> {
+//!         Ok(TokenStream::new())
+//!     }
+//!
+//!     fn config(&self) -> &Self::Config {
+//!         &()
+//!     }
+//!
+//!     fn from_config(config: Self::Config) -> Self {
+//!         CustomBackend
+//!     }
 //!   }
 //!
 //!   // Initialize the compiler
-//!   match Compiler::new()
-//!     // optionally provide a custom backend
-//!     .with_backend(CustomBackend)
+//!   match Compiler::<CustomBackend, _>::new()
 //!     // add a single ASN1 source file
 //!     .add_asn_by_path(PathBuf::from("spec_1.asn"))
 //!     // add several ASN1 source files
@@ -64,7 +81,7 @@ use std::{
     vec,
 };
 
-use generator::{rasn::Rust, Backend};
+use generator::{rasn::Rasn, Backend};
 use intermediate::ToplevelDefinition;
 use parser::asn_spec;
 use validator::Validator;
@@ -76,7 +93,11 @@ pub mod prelude {
         CompileResult, Compiler, CompilerMissingParams, CompilerOutputSet, CompilerReady,
         CompilerSourcesSet,
     };
-    pub use crate::generator::{error::*, Backend, GeneratedModule};
+    pub use crate::generator::{
+        error::*,
+        rasn::{Config as RasnConfig, Rasn as RasnBackend},
+        Backend, GeneratedModule,
+    };
     pub use crate::intermediate::ToplevelDefinition;
     pub mod ir {
         pub use crate::intermediate::{
@@ -178,9 +199,9 @@ enum AsnSource {
     Literal(String),
 }
 
-impl Default for Compiler<Rust, CompilerMissingParams> {
+impl<B: Backend> Default for Compiler<B, CompilerMissingParams> {
     fn default() -> Self {
-        Compiler::new()
+        Self::new()
     }
 }
 
@@ -193,12 +214,20 @@ impl<B: Backend, S: CompilerState> Compiler<B, S> {
     }
 }
 
-impl Compiler<Rust, CompilerMissingParams> {
+impl<B: Backend> Compiler<B, CompilerMissingParams> {
     /// Provides a Builder for building rasn compiler commands
-    pub fn new() -> Compiler<Rust, CompilerMissingParams> {
+    pub fn new() -> Compiler<B, CompilerMissingParams> {
         Compiler {
             state: CompilerMissingParams,
-            backend: Rust,
+            backend: B::default(),
+        }
+    }
+
+    /// Provides a Builder for building rasn compiler commands
+    pub fn new_with_config(config: B::Config) -> Compiler<B, CompilerMissingParams> {
+        Compiler {
+            state: CompilerMissingParams,
+            backend: B::from_config(config),
         }
     }
 }
@@ -237,8 +266,8 @@ impl<B: Backend> Compiler<B, CompilerMissingParams> {
     /// Add a literal ASN1 source to the compile command
     /// * `literal` - literal ASN1 statement to include
     /// ```rust
-    /// # use rasn_compiler::Compiler;
-    /// Compiler::new().add_asn_literal(format!(
+    /// # use rasn_compiler::prelude::*;
+    /// Compiler::<RasnBackend, _>::new().add_asn_literal(format!(
     ///     "TestModule DEFINITIONS AUTOMATIC TAGS::= BEGIN {} END",
     ///     "My-test-integer ::= INTEGER (1..128)"
     /// )).compile_to_string();
@@ -303,8 +332,8 @@ impl<B: Backend> Compiler<B, CompilerOutputSet> {
     /// Add a literal ASN1 source to the compile command
     /// * `literal` - literal ASN1 statement to include
     /// ```rust
-    /// # use rasn_compiler::Compiler;
-    /// Compiler::new().add_asn_literal(format!(
+    /// # use rasn_compiler::prelude::*;
+    /// Compiler::<RasnBackend, _>::new().add_asn_literal(format!(
     ///     "TestModule DEFINITIONS AUTOMATIC TAGS::= BEGIN {} END",
     ///     "My-test-integer ::= INTEGER (1..128)"
     /// )).compile_to_string();
@@ -352,8 +381,8 @@ impl<B: Backend> Compiler<B, CompilerSourcesSet> {
     /// Add a literal ASN1 source to the compile command
     /// * `literal` - literal ASN1 statement to include
     /// ```rust
-    /// # use rasn_compiler::Compiler;
-    /// Compiler::new().add_asn_literal(format!(
+    /// # use rasn_compiler::prelude::*;
+    /// Compiler::<RasnBackend, _>::new().add_asn_literal(format!(
     ///     "TestModule DEFINITIONS AUTOMATIC TAGS::= BEGIN {} END",
     ///     "My-test-integer ::= INTEGER (1..128)"
     /// )).compile_to_string();
@@ -481,8 +510,8 @@ impl<B: Backend> Compiler<B, CompilerReady> {
     /// Add a literal ASN1 source to the compile command
     /// * `literal` - literal ASN1 statement to include
     /// ```rust
-    /// # use rasn_compiler::Compiler;
-    /// Compiler::new().add_asn_literal(format!(
+    /// # use rasn_compiler::prelude::*;
+    /// Compiler::<RasnBackend, _>::new().add_asn_literal(format!(
     ///     "TestModule DEFINITIONS AUTOMATIC TAGS::= BEGIN {} END",
     ///     "My-test-integer ::= INTEGER (1..128)"
     /// )).compile_to_string();
