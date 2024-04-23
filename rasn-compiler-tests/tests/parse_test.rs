@@ -1,4 +1,4 @@
-use rasn_compiler::Compiler;
+use rasn_compiler::{prelude::RasnBackend, Compiler};
 
 #[test]
 #[ignore]
@@ -10,7 +10,7 @@ fn parses_modules() {
     for entry in read_dir.flatten() {
         let path = entry.path();
         println!("{:?}", &path);
-        if let Err(e) = Compiler::new()
+        if let Err(e) = Compiler::<RasnBackend, _>::new()
             .add_asn_by_path(path.clone())
             .compile_to_string()
         {
@@ -48,15 +48,18 @@ Failed to parse {failed} modules with the following errors:
 fn compile_etsi() {
     println!(
         "{:?}",
-        Compiler::new()
-            // .add_asn_by_path("../rasn-compiler/test_asn1/ngap_class.asn")
-            // .add_asn_by_path("../rasn-compiler/test_asn1/ngap_common.asn")
-            // .add_asn_by_path("../rasn-compiler/test_asn1/ngap_const.asn")
-            // .add_asn_by_path("../rasn-compiler/test_asn1/ngap_container.asn")
-            // .add_asn_by_path("../rasn-compiler/test_asn1/ngap_ies.asn")
-            // .add_asn_by_path("../rasn-compiler/test_asn1/ngap_pdus.asn")
-            .add_asn_by_path("../rasn-compiler/test_asn1/s1ap.asn")
-            .set_output_path("./tests")
-            .compile()
+        Compiler::<RasnBackend, _>::new_with_config(rasn_compiler::prelude::RasnConfig {
+            opaque_open_types: false,
+            default_wildcard_imports: true
+        })
+        // .add_asn_by_path("../rasn-compiler/test_asn1/ngap_class.asn")
+        // .add_asn_by_path("../rasn-compiler/test_asn1/ngap_common.asn")
+        // .add_asn_by_path("../rasn-compiler/test_asn1/ngap_const.asn")
+        // .add_asn_by_path("../rasn-compiler/test_asn1/ngap_container.asn")
+        // .add_asn_by_path("../rasn-compiler/test_asn1/ngap_ies.asn")
+        // .add_asn_by_path("../rasn-compiler/test_asn1/ngap_pdus.asn")
+        .add_asn_by_path("../rasn-compiler/test_asn1/Simple.asn")
+        .set_output_path("./tests")
+        .compile()
     );
 }

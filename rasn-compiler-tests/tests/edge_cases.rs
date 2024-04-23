@@ -1,34 +1,6 @@
 #![allow(non_camel_case_types)]
 use rasn_compiler_tests::e2e_pdu;
 
-#[test]
-fn t() {
-    println!(
-        "{:?}",
-        rasn_compiler::Compiler::new()
-            .add_asn_literal(
-                r#"TestModule DEFINITIONS AUTOMATIC TAGS::= BEGIN 
-
-    Restricted ::= Distinguished (second|fourth..sixth|eighth)
-    Distinguished ::= INTEGER {
-        first(1),
-        second(2),
-        third(3),
-        fourth(4),
-        fifth(5),
-        sixth(6),
-        seventh(7),
-        eighth(8),
-        ninth(9),
-        tenth(10),
-    } (1..10)
-     END"#
-            )
-            .compile_to_string()
-            .unwrap()
-    );
-}
-
 e2e_pdu!(
     distinguished_value_range,
     r#" Restricted ::= Distinguished (second|fourth..sixth|eighth)
