@@ -4,8 +4,6 @@
 
 use std::{error::Error, fmt::Debug};
 
-use proc_macro2::TokenStream;
-
 use crate::intermediate::ToplevelDefinition;
 
 use self::error::GeneratorError;
@@ -29,7 +27,7 @@ pub trait Backend: Sized + Default {
     /// generates bindings for a single ASN.1 item
     /// ### Params
     /// - `tld` [TopLevelDeclaration] for which the bindings should be generated
-    fn generate(&self, tld: ToplevelDefinition) -> Result<TokenStream, GeneratorError>;
+    fn generate(&self, tld: ToplevelDefinition) -> Result<String, GeneratorError>;
 
     /// Formats the bindings using the language- or framework-specific linters.
     /// For example, the Rust backend uses rustfmt for formatting bindings.

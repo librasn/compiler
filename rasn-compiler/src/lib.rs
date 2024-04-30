@@ -30,8 +30,8 @@
 //!     fn generate(
 //!         &self,
 //!         tld: ToplevelDefinition
-//!     ) -> Result<TokenStream, GeneratorError> {
-//!         Ok(TokenStream::new())
+//!     ) -> Result<String, GeneratorError> {
+//!         Ok(String::new())
 //!     }
 //!
 //!     fn config(&self) -> &Self::Config {

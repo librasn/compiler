@@ -43,6 +43,57 @@ macro_rules! assignment {
 }
 
 impl Rasn {
+    pub(crate) fn generate_tld(
+        &self,
+        tld: ToplevelDefinition,
+    ) -> Result<TokenStream, GeneratorError> {
+        match tld {
+            ToplevelDefinition::Type(t) => {
+                if t.parameterization.is_some() {
+                    return Ok(TokenStream::new());
+                }
+                match t.ty {
+                    ASN1Type::Null => self.generate_null(t),
+                    ASN1Type::Boolean(_) => self.generate_boolean(t),
+                    ASN1Type::Integer(_) => self.generate_integer(t),
+                    ASN1Type::Enumerated(_) => self.generate_enumerated(t),
+                    ASN1Type::BitString(_) => self.generate_bit_string(t),
+                    ASN1Type::CharacterString(_) => self.generate_character_string(t),
+                    ASN1Type::Sequence(_) | ASN1Type::Set(_) => self.generate_sequence_or_set(t),
+                    ASN1Type::SequenceOf(_) | ASN1Type::SetOf(_) => {
+                        self.generate_sequence_or_set_of(t)
+                    }
+                    ASN1Type::ElsewhereDeclaredType(_) => self.generate_typealias(t),
+                    ASN1Type::Choice(_) => self.generate_choice(t),
+                    ASN1Type::OctetString(_) => self.generate_octet_string(t),
+                    ASN1Type::Time(_) => unimplemented!("rasn does not support TIME types yet!"),
+                    ASN1Type::Real(_) => Err(GeneratorError {
+                        kind: GeneratorErrorType::NotYetInplemented,
+                        details: "Real types are currently unsupported!".into(),
+                        top_level_declaration: None,
+                    }),
+                    ASN1Type::ObjectIdentifier(_) => self.generate_oid(t),
+                    ASN1Type::InformationObjectFieldReference(_)
+                    | ASN1Type::EmbeddedPdv
+                    | ASN1Type::External => self.generate_any(t),
+                    ASN1Type::GeneralizedTime(_) => self.generate_generalized_time(t),
+                    ASN1Type::UTCTime(_) => self.generate_utc_time(t),
+                    ASN1Type::ChoiceSelectionType(_) => Err(GeneratorError {
+                        kind: GeneratorErrorType::Asn1TypeMismatch,
+                        details: "Choice selection type should have been resolved at this point!"
+                            .into(),
+                        top_level_declaration: None,
+                    }),
+                }
+            }
+            ToplevelDefinition::Value(v) => self.generate_value(v),
+            ToplevelDefinition::Information(i) => match i.value {
+                ASN1Information::ObjectSet(_) => self.generate_information_object_set(i),
+                _ => Ok(TokenStream::new()),
+            },
+        }
+    }
+
     pub(crate) fn generate_typealias(
         &self,
         tld: ToplevelTypeDefinition,
@@ -830,7 +881,7 @@ impl Rasn {
         let anonymous_item = match seq_or_set_of.element_type.as_ref() {
             ASN1Type::ElsewhereDeclaredType(_) => None,
             n => Some(
-                self.generate(ToplevelDefinition::Type(ToplevelTypeDefinition {
+                self.generate_tld(ToplevelDefinition::Type(ToplevelTypeDefinition {
                     parameterization: None,
                     comments: format!(
                         " Anonymous {} OF member ",
