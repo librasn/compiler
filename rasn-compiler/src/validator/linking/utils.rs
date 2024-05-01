@@ -6,7 +6,7 @@ use crate::{
         information_object::*,
         *,
     },
-    parser::asn1_value,
+    lexer::asn1_value,
 };
 
 use self::types::*;

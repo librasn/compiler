@@ -174,7 +174,7 @@ fn environments<'a>(
 mod tests {
     use std::vec;
 
-    use crate::parser::module_reference::*;
+    use crate::lexer::module_reference::*;
 
     #[test]
     fn parses_a_module_reference() {

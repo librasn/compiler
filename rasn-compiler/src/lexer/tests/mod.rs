@@ -7,10 +7,10 @@ use crate::{
         parameterization::{ParameterGovernor, Parameterization, ParameterizationArgument},
         types::*,
     },
-    parser::end,
+    lexer::*,
 };
 
-use crate::parser::top_level_information_declaration;
+use crate::lexer::top_level_information_declaration;
 
 use super::*;
 

@@ -401,7 +401,7 @@ fn settings_identifier(input: &str) -> IResult<&str, &str> {
 mod tests {
     use crate::intermediate::{information_object::*, types::*};
 
-    use crate::parser::constraint::*;
+    use crate::lexer::constraint::*;
 
     #[test]
     fn parses_value_constraint() {

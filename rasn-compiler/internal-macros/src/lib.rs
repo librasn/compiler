@@ -19,7 +19,7 @@ pub fn enum_debug_derive(input: proc_macro::TokenStream) -> proc_macro::TokenStr
                 Fields::Unit => quote!(#ident::#variant_name => f.write_str(#variant_literal)),
                 Fields::Unnamed(FieldsUnnamed { unnamed, .. }) => {
                     let field_names = (0..unnamed.len()).map(|i| format_ident!("f{i}"));
-                    let field_debugs = unnamed.iter().enumerate().map(|(i, f)| {
+                    let field_debugs = (0..unnamed.len()).map(|i| {
                         let field_name = format_ident!("f{i}");
                         quote!(.field(&#field_name))
                     });
@@ -42,7 +42,7 @@ pub fn enum_debug_derive(input: proc_macro::TokenStream) -> proc_macro::TokenStr
                 }
             }
         });
-        let ident_literal = ident.to_string();
+        let ident_literal = format!("{ident}::");
         quote! {
             impl std::fmt::Debug for #ident {
                 fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {

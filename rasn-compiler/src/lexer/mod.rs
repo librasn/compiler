@@ -1,13 +1,13 @@
-//! The `parser` module contains the parser combinator
+//! The `lexer` module contains the lexer combinator
 //! responsible for interpreting the input as ASN1 notation.
-//! The parser is made up of a number of sub-parsers that
+//! The lexer is made up of a number of sub-lexers that
 //! interpret single elements of ASN1 syntax.SS
 //!
-//! The `parser` submodules provide parsers for their
+//! The `lexer` submodules provide lexers for their
 //! respective eponymous ASN1 type, with the exception
-//! of `common`, which contains parsers for the more
+//! of `common`, which contains lexers for the more
 //! generic elements of ASN1 syntax, and `util`, which
-//! contains helper parsers not specific to ASN1's notation.
+//! contains helper lexers not specific to ASN1's notation.
 use nom::{
     branch::alt,
     bytes::complete::{tag, take_until},
@@ -22,7 +22,7 @@ use crate::intermediate::{information_object::*, *};
 
 use self::{
     bit_string::*, boolean::*, character_string::*, choice::*, common::*, constraint::*,
-    embedded_pdv::*, enumerated::*, error::ParserError, external::*, information_object_class::*,
+    embedded_pdv::*, enumerated::*, error::LexerError, external::*, information_object_class::*,
     integer::*, module_reference::*, null::*, object_identifier::*, octet_string::*,
     parameterization::*, real::*, sequence::*, sequence_of::*, set::*, set_of::*, time::*,
 };
@@ -57,7 +57,7 @@ mod tests;
 
 pub fn asn_spec(
     input: &str,
-) -> Result<Vec<(ModuleReference, Vec<ToplevelDefinition>)>, ParserError> {
+) -> Result<Vec<(ModuleReference, Vec<ToplevelDefinition>)>, LexerError> {
     many1(pair(
         module_reference,
         terminated(

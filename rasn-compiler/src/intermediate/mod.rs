@@ -241,7 +241,7 @@ impl From<&str> for EncodingReferenceDefault {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(EnumDebug, Clone, Copy, PartialEq)]
 pub enum TaggingEnvironment {
     Automatic,
     Implicit,
@@ -950,7 +950,7 @@ pub const PRINTABLE_STRING_CHARSET: [char; 74] = [
 ];
 
 /// The types of an ASN1 character strings.
-#[derive(Debug, Clone, PartialEq, Copy)]
+#[derive(EnumDebug, Clone, PartialEq, Copy)]
 pub enum CharacterStringType {
     NumericString,
     VisibleString,
@@ -1097,24 +1097,24 @@ pub enum ASN1Value {
     ///     int AnotherSubset DEFAULT 3
     /// }
     /// ```
-    /// the relation of the default value to `ExampleSubset` will not be picked up by the parser.
+    /// the relation of the default value to `ExampleSubset` will not be picked up by the lexer.
     /// However, in some representations, this relation is critical information.
     LinkedNestedValue {
         /// typereferences of supertypes
         supertypes: Vec<String>,
         value: Box<ASN1Value>,
     },
-    /// Integer values need type information that will not always be picked up by the parser on first pass.
+    /// Integer values need type information that will not always be picked up by the lexer on first pass.
     LinkedIntValue {
         integer_type: IntegerType,
         value: i128,
     },
-    /// Struct-like values such as SEQUENCE values need type information that will not always be picked up by the parser on first pass.
+    /// Struct-like values such as SEQUENCE values need type information that will not always be picked up by the lexer on first pass.
     /// Contains a vector of the struct-like's fields, with the field name, the field type, and the field value as a tuple
     LinkedStructLikeValue(Vec<(String, ASN1Type, StructLikeFieldValue)>),
-    /// Array-like values such as SEQUENCE OF values need type information that will not always be picked up by the parser on first pass.
+    /// Array-like values such as SEQUENCE OF values need type information that will not always be picked up by the lexer on first pass.
     LinkedArrayLikeValue(Vec<Box<ASN1Value>>),
-    /// Character string values such as UTF8String values need type information that will not always be picked up by the parser on first pass.
+    /// Character string values such as UTF8String values need type information that will not always be picked up by the lexer on first pass.
     LinkedCharStringValue(CharacterStringType, String),
     LinkedElsewhereDefinedValue {
         parent: Option<String>,
