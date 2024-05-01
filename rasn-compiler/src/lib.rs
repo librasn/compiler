@@ -568,3 +568,23 @@ impl<B: Backend> Compiler<B, CompilerReady> {
         Ok(result.warnings)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    fn expected_parse_result(literal: &str) -> String {
+        format!("{:?}", crate::parser::asn_spec(literal).unwrap())
+    }
+
+    #[test]
+    #[ignore]
+    fn generate_stepwise_e2e_test() {
+        let input = "";
+
+        let mut file = std::fs::OpenOptions::new()
+            .append(true)
+            .open("./src/parser/tests/mod.rs")
+            .unwrap();
+
+        let expected = expected_parse_result(input);
+    }
+}

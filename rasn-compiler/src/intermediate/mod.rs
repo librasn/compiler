@@ -20,6 +20,7 @@ use crate::common::INTERNAL_IO_FIELD_REF_TYPE_NAME_PREFIX;
 use constraints::Constraint;
 use error::{GrammarError, GrammarErrorType};
 use information_object::{InformationObjectFieldReference, ToplevelInformationDefinition};
+use internal_macros::EnumDebug;
 use parameterization::Parameterization;
 use quote::{quote, ToTokens, TokenStreamExt};
 use types::*;
@@ -260,7 +261,7 @@ impl Add<&TaggingEnvironment> for &TaggingEnvironment {
 
 /// Represents the extensibility environment as specified in
 /// Rec. ITU-T X.680 (02/2021) § 13.4
-#[derive(Debug, Clone, PartialEq)]
+#[derive(EnumDebug, Clone, PartialEq)]
 pub enum ExtensibilityEnvironment {
     Implied,
     Explicit,
@@ -268,7 +269,7 @@ pub enum ExtensibilityEnvironment {
 
 /// Represents compatibility selectors as specified in
 /// Rec. ITU-T X.680 (02/2021) § 13.16 (f)
-#[derive(Debug, Clone, PartialEq)]
+#[derive(EnumDebug, Clone, PartialEq)]
 pub enum With {
     Successors,
     Descendants,
@@ -301,7 +302,7 @@ impl From<(&str, AssignedIdentifier)> for GlobalModuleReference {
 
 /// Represents an assigned identifier as specified in
 /// Rec. ITU-T X.680 (02/2021)
-#[derive(Debug, Clone, PartialEq)]
+#[derive(EnumDebug, Clone, PartialEq)]
 pub enum AssignedIdentifier {
     ObjectIdentifierValue(ObjectIdentifierValue),
     ExternalValueReference(ExternalValueReference),
@@ -340,7 +341,7 @@ impl From<(Vec<&str>, (GlobalModuleReference, Option<&str>))> for Import {
 
 /// Represents a module export as specified in
 /// Rec. ITU-T X.680 (02/2021) § 13.13
-#[derive(Debug, Clone, PartialEq)]
+#[derive(EnumDebug, Clone, PartialEq)]
 pub enum Exports {
     Identifier(Vec<String>),
     All,
@@ -354,7 +355,7 @@ impl From<Vec<&str>> for Exports {
 
 /// Represents a module header's definitive identifier as specified in
 /// Rec. ITU-T X.680 (02/2021) § 13.8
-#[derive(Debug, Clone, PartialEq)]
+#[derive(EnumDebug, Clone, PartialEq)]
 pub enum DefinitiveIdentifier {
     DefinitiveOID(ObjectIdentifierValue),
     DefinitiveOIDandIRI {
@@ -496,7 +497,7 @@ impl From<(&str, u128)> for ObjectIdentifierArc {
 ///
 /// The linker and any [Backend] for this compiler consumes top-level definitions in
 /// order to generate bindings.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(EnumDebug, Clone, PartialEq)]
 pub enum ToplevelDefinition {
     Type(ToplevelTypeDefinition),
     Value(ToplevelValueDefinition),
@@ -707,7 +708,7 @@ impl
 /// The possible types of an ASN1 data element.
 /// In addition, the `ElsewhereDeclaredType` enumeral denotes an type
 /// specified in the same or an imported ASN1 specification.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(EnumDebug, Clone, PartialEq)]
 pub enum ASN1Type {
     Null,
     Boolean(Boolean),
@@ -1058,7 +1059,7 @@ impl IntegerType {
 }
 
 /// The possible types of an ASN1 value.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(EnumDebug, Clone, PartialEq)]
 pub enum ASN1Value {
     All,
     Null,
@@ -1123,7 +1124,7 @@ pub enum ASN1Value {
 }
 
 /// Representation of a field value of a struct-like ASN1 value
-#[derive(Debug, Clone, PartialEq)]
+#[derive(EnumDebug, Clone, PartialEq)]
 pub enum StructLikeFieldValue {
     Explicit(Box<ASN1Value>),
     Implicit(Box<ASN1Value>),

@@ -25,7 +25,7 @@ impl From<(&str, ASN1Information, &str)> for ToplevelInformationDefinition {
     }
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(EnumDebug, Clone, PartialEq)]
 pub enum ClassLink {
     ByName(String),
     ByReference(InformationObjectClass),
@@ -112,20 +112,20 @@ impl
 }
 
 /// The possible types of an ASN1 information object.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(EnumDebug, Clone, PartialEq)]
 pub enum ASN1Information {
     ObjectClass(InformationObjectClass),
     ObjectSet(ObjectSet),
     Object(InformationObject),
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(EnumDebug, Clone, PartialEq)]
 pub enum SyntaxExpression {
     Required(SyntaxToken),
     Optional(Vec<SyntaxExpression>),
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(EnumDebug, Clone, PartialEq)]
 pub enum SyntaxApplication {
     ObjectSetDeclaration(ObjectSet),
     ValueReference(ASN1Value),
@@ -227,7 +227,7 @@ impl SyntaxApplication {
     }
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(EnumDebug, Clone, PartialEq)]
 pub enum SyntaxToken {
     Literal(String),
     Comma,
@@ -367,7 +367,7 @@ impl
     }
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(EnumDebug, Clone, PartialEq)]
 pub enum ObjectFieldIdentifier {
     SingleValue(String),
     MultipleValue(String),
@@ -388,13 +388,13 @@ pub struct InformationObject {
     pub fields: InformationObjectFields,
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(EnumDebug, Clone, PartialEq)]
 pub enum InformationObjectFields {
     DefaultSyntax(Vec<InformationObjectField>),
     CustomSyntax(Vec<SyntaxApplication>),
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(EnumDebug, Clone, PartialEq)]
 pub enum ObjectSetValue {
     Reference(String),
     Inline(InformationObjectFields),
@@ -441,7 +441,7 @@ impl
     }
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(EnumDebug, Clone, PartialEq)]
 pub enum InformationObjectField {
     TypeField(TypeField),
     FixedValueField(FixedValueField),
