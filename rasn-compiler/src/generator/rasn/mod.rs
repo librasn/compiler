@@ -171,6 +171,6 @@ impl Backend for Rasn {
     }
 
     fn generate(&self, tld: ToplevelDefinition) -> Result<String, GeneratorError> {
-        self.generate_tld(tld).and_then(|s| Ok(s.to_string()))
+        self.generate_tld(tld).map(|ts| ts.to_string())
     }
 }
