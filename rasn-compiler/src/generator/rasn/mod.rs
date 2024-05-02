@@ -92,8 +92,8 @@ impl Backend for Rasn {
                 quote!(use super:: #module::{ #(#used_imports),* };)
             });
             let (pdus, warnings): (Vec<TokenStream>, Vec<Box<dyn Error>>) =
-                tlds.into_iter()
-                    .fold((vec![], vec![]), |mut acc, tld| match self.generate(tld) {
+                tlds.into_iter().fold((vec![], vec![]), |mut acc, tld| {
+                    match self.generate_tld(tld) {
                         Ok(s) => {
                             acc.0.push(s);
                             acc
@@ -102,7 +102,8 @@ impl Backend for Rasn {
                             acc.1.push(Box::new(e));
                             acc
                         }
-                    });
+                    }
+                });
             Ok(GeneratedModule {
                 generated: Some(quote! {
                 #[allow(non_camel_case_types, non_snake_case, non_upper_case_globals, unused)]
@@ -169,51 +170,7 @@ impl Backend for Rasn {
         }
     }
 
-    fn generate(&self, tld: ToplevelDefinition) -> Result<TokenStream, GeneratorError> {
-        match tld {
-            ToplevelDefinition::Type(t) => {
-                if t.parameterization.is_some() {
-                    return Ok(TokenStream::new());
-                }
-                match t.ty {
-                    ASN1Type::Null => self.generate_null(t),
-                    ASN1Type::Boolean(_) => self.generate_boolean(t),
-                    ASN1Type::Integer(_) => self.generate_integer(t),
-                    ASN1Type::Enumerated(_) => self.generate_enumerated(t),
-                    ASN1Type::BitString(_) => self.generate_bit_string(t),
-                    ASN1Type::CharacterString(_) => self.generate_character_string(t),
-                    ASN1Type::Sequence(_) | ASN1Type::Set(_) => self.generate_sequence_or_set(t),
-                    ASN1Type::SequenceOf(_) | ASN1Type::SetOf(_) => {
-                        self.generate_sequence_or_set_of(t)
-                    }
-                    ASN1Type::ElsewhereDeclaredType(_) => self.generate_typealias(t),
-                    ASN1Type::Choice(_) => self.generate_choice(t),
-                    ASN1Type::OctetString(_) => self.generate_octet_string(t),
-                    ASN1Type::Time(_) => unimplemented!("rasn does not support TIME types yet!"),
-                    ASN1Type::Real(_) => Err(GeneratorError {
-                        kind: GeneratorErrorType::NotYetInplemented,
-                        details: "Real types are currently unsupported!".into(),
-                        top_level_declaration: None,
-                    }),
-                    ASN1Type::ObjectIdentifier(_) => self.generate_oid(t),
-                    ASN1Type::InformationObjectFieldReference(_)
-                    | ASN1Type::EmbeddedPdv
-                    | ASN1Type::External => self.generate_any(t),
-                    ASN1Type::GeneralizedTime(_) => self.generate_generalized_time(t),
-                    ASN1Type::UTCTime(_) => self.generate_utc_time(t),
-                    ASN1Type::ChoiceSelectionType(_) => Err(GeneratorError {
-                        kind: GeneratorErrorType::Asn1TypeMismatch,
-                        details: "Choice selection type should have been resolved at this point!"
-                            .into(),
-                        top_level_declaration: None,
-                    }),
-                }
-            }
-            ToplevelDefinition::Value(v) => self.generate_value(v),
-            ToplevelDefinition::Information(i) => match i.value {
-                ASN1Information::ObjectSet(_) => self.generate_information_object_set(i),
-                _ => Ok(TokenStream::new()),
-            },
-        }
+    fn generate(&self, tld: ToplevelDefinition) -> Result<String, GeneratorError> {
+        self.generate_tld(tld).map(|ts| ts.to_string())
     }
 }
