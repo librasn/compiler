@@ -791,7 +791,7 @@ impl Rasn {
             .iter()
             .filter(|m| self.needs_unnesting(&m.ty))
             .map(|m| {
-                self.generate(ToplevelDefinition::Type(ToplevelTypeDefinition {
+                self.generate_tld(ToplevelDefinition::Type(ToplevelTypeDefinition {
                     parameterization: None,
                     comments: " Inner type ".into(),
                     name: self.inner_name(&m.name, parent_name).to_string(),
@@ -836,7 +836,7 @@ impl Rasn {
                 )
             })
             .map(|m| {
-                self.generate(ToplevelDefinition::Type(ToplevelTypeDefinition {
+                self.generate_tld(ToplevelDefinition::Type(ToplevelTypeDefinition {
                     parameterization: None,
                     comments: " Inner type ".into(),
                     name: self.inner_name(&m.name, parent_name).to_string(),
