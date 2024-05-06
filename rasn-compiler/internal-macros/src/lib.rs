@@ -4,6 +4,9 @@ extern crate syn;
 use quote::{format_ident, quote};
 use syn::{Data, DataEnum, DeriveInput, Fields, FieldsNamed, FieldsUnnamed};
 
+/// Extension of the standard `Debug` derive macro.
+/// Prefixes the variant identifier with the enum identifier separated by `::`.
+/// This extension serves the `rasn_compiler::tests::generate_stepwise_e2e_test` test generator.
 #[proc_macro_derive(EnumDebug)]
 pub fn enum_debug_derive(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     if let DeriveInput {

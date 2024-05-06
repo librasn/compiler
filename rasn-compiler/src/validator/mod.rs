@@ -7,6 +7,8 @@
 //! constraints and value definitions.
 pub(crate) mod error;
 mod linking;
+#[cfg(test)]
+mod tests;
 
 use std::{
     cell::RefCell,
