@@ -86,8 +86,9 @@ pub fn value_to_tokens(value: &ASN1Value) -> Result<String, GeneratorError> {
         } => value_to_tokens(inner_value).map(|inner| {
             format!(
                 r#"{{
-                            {variant_name}: {inner}
-                        }}"#
+                    {}: {inner}
+                }}"#,
+                to_jer_identifier(variant_name)
             )
         }),
         ASN1Value::OctetString(o) => Ok(o.iter().fold(String::from("\""), |mut acc, byte| {
