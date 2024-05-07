@@ -19,6 +19,8 @@
 //!
 //!   impl Backend for CustomBackend {
 //!     type Config = ();
+//! 
+//!     const FILE_EXTENSION: &'static str = ".ext";
 //!
 //!     fn generate_module(
 //!          &self,
