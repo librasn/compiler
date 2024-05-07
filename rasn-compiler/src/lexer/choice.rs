@@ -37,11 +37,11 @@ pub fn choice_value(input: &str) -> IResult<&str, ASN1Value> {
 /// // ... is the following assignment
 /// Type-3-alias ::= alt3 < Example-choice
 /// ```
-/// If the match succeeds, the parser will consume the match and return the remaining string
+/// If the match succeeds, the lexer will consume the match and return the remaining string
 /// and a wrapped `Choice` value representing the ASN1 declaration. If the defined CHOICE
 /// contains anonymous members, these nested members will be represented as
 /// structs within the same global scope.
-/// If the match fails, the parser will not consume the input and will return an error.
+/// If the match fails, the lexer will not consume the input and will return an error.
 pub fn selection_type_choice(input: &str) -> IResult<&str, ASN1Type> {
     map(
         into(separated_pair(
@@ -58,11 +58,11 @@ pub fn selection_type_choice(input: &str) -> IResult<&str, ASN1Type> {
 /// *`input` - string slice to be matched against
 ///
 /// `choice` will try to match an CHOICE declaration in the `input` string.
-/// If the match succeeds, the parser will consume the match and return the remaining string
+/// If the match succeeds, the lexer will consume the match and return the remaining string
 /// and a wrapped `Choice` value representing the ASN1 declaration. If the defined CHOICE
 /// contains anonymous members, these nested members will be represented as
 /// structs within the same global scope.
-/// If the match fails, the parser will not consume the input and will return an error.
+/// If the match fails, the lexer will not consume the input and will return an error.
 pub fn choice(input: &str) -> IResult<&str, ASN1Type> {
     map(
         preceded(
@@ -102,10 +102,10 @@ mod tests {
             types::{Choice, ChoiceOption, ChoiceSelectionType},
             ASN1Type,
         },
-        parser::choice::selection_type_choice,
+        lexer::choice::selection_type_choice,
     };
 
-    use crate::parser::choice;
+    use crate::lexer::choice;
 
     #[test]
     fn parses_extensible_choice() {

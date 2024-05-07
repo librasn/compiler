@@ -1,5 +1,6 @@
 //! `types` contains representations for ASN.1's basic types, such as `BOOLEAN`s
 //! or `SEQUENCE`s.
+use internal_macros::EnumDebug;
 use std::vec;
 
 use super::{constraints::*, *};
@@ -372,17 +373,17 @@ impl
 /// Intermediate parsing type to parse COMPONENTS OF notation.
 /// `SequenceComponent` is an intermediary type that implementors of
 /// a [Backend] will usually not interact with.
-/// When parsing the body of an ASN.1 SEQUENCE or SET, the parser
+/// When parsing the body of an ASN.1 SEQUENCE or SET, the lexer
 /// distinguishes between a group of members (`SequenceComponent::ComponentsOf`) that is imnported from
 /// another ASN.1 data element using the `COMPONENTS OF` notation
 /// (i.e. `Extending-Sequence ::= SEQUENCE { COMPONENTS OF Another-Sequence, added-field BOOLEAN }`)
 /// and the regular member declaration (`SequenceComponent::Member`)
 /// (i.e. `Simple-Sequence ::= SEQUENCE { field BOOLEAN }`).
-/// When the parser assembles the complete [SequenceOrSet] struct,
+/// When the lexer assembles the complete [SequenceOrSet] struct,
 /// it groups the parsed `SequenceComponent` items into the `members`
 /// and `components_of` fields of the [SequenceOrSet] struct. The linker
 /// will subsequently try to resolve the `components_of` identifiers.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(EnumDebug, Clone, PartialEq)]
 pub enum SequenceComponent {
     Member(SequenceOrSetMember),
     ComponentsOf(String),

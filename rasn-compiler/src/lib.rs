@@ -68,7 +68,9 @@
 pub(crate) mod common;
 mod generator;
 pub mod intermediate;
-mod parser;
+mod lexer;
+#[cfg(test)]
+mod tests;
 mod validator;
 
 use std::{
@@ -83,7 +85,7 @@ use std::{
 
 use generator::Backend;
 use intermediate::ToplevelDefinition;
-use parser::asn_spec;
+use lexer::asn_spec;
 use validator::Validator;
 
 pub mod prelude {

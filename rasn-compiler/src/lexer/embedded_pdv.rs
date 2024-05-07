@@ -9,9 +9,9 @@ use super::common::skip_ws_and_comments;
 /// *`input` - string slice to be matched against
 ///
 /// `embedded_pdv` will try to match an EMBEDDED PDV declaration in the `input` string.
-/// If the match succeeds, the parser will consume the match and return the remaining string
+/// If the match succeeds, the lexer will consume the match and return the remaining string
 /// and an `ASN1Type::EmbeddedPdv` value representing the ASN1 declaration.
-/// If the match fails, the parser will not consume the input and will return an error.
+/// If the match fails, the lexer will not consume the input and will return an error.
 /// ##_X680_:
 /// _The term "Embedded PDV" means an abstract value from a possibly_
 /// _different abstract syntax (essentially, the value and encoding_

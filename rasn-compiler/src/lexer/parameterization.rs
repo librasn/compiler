@@ -59,7 +59,7 @@ mod tests {
         ASN1Type, DeclarationElsewhere,
     };
 
-    use crate::parser::parameterization::{parameterization, parameters};
+    use crate::lexer::parameterization::{parameterization, parameters};
 
     #[test]
     fn parses_class_parameterization_param() {

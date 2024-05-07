@@ -1,4 +1,4 @@
-//! The `object_identifier` module contains parsers for
+//! The `object_identifier` module contains lexers for
 //! parsing ASN1 OBJECT IDENTIFIERs in a specification.
 //! OBJECT IDENTIFIERs serve to uniquely and globally (really globally!)
 //! identify a so-called _information object_.
@@ -29,9 +29,9 @@ use super::{
 /// *`input` - string slice to be matched against
 ///
 /// `object_identifier` will try to match an OBJECT IDENTIFIER declaration in the `input` string.
-/// If the match succeeds, the parser will consume the match and return the remaining string
+/// If the match succeeds, the lexer will consume the match and return the remaining string
 /// and an `ObjectIdentifier` value representing the ASN1 declaration.
-/// If the match fails, the parser will not consume the input and will return an error.
+/// If the match fails, the lexer will not consume the input and will return an error.
 pub fn object_identifier_value<'a>(input: &'a str) -> IResult<&'a str, ObjectIdentifierValue> {
     into(skip_ws_and_comments(preceded(
         opt(tag(OBJECT_IDENTIFIER)),

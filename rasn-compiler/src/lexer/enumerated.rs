@@ -9,7 +9,7 @@ use nom::{
 
 use crate::{
     intermediate::{constraints::*, types::*, *},
-    parser::parameterization,
+    lexer::parameterization,
 };
 
 use super::common::*;
@@ -45,9 +45,9 @@ pub fn enumerated_value<'a>(input: &'a str) -> IResult<&'a str, ToplevelValueDef
 /// *`input` - string slice to be matched against
 ///
 /// `enumerated` will try to match an ENUMERATED declaration in the `input` string.
-/// If the match succeeds, the parser will consume the match and return the remaining string
+/// If the match succeeds, the lexer will consume the match and return the remaining string
 /// and a wrapped `Enumerated` value representing the ASN1 declaration.
-/// If the match fails, the parser will not consume the input and will return an error.
+/// If the match fails, the lexer will not consume the input and will return an error.
 pub fn enumerated<'a>(input: &'a str) -> IResult<&'a str, ASN1Type> {
     map(
         preceded(skip_ws_and_comments(tag(ENUMERATED)), enumerated_body),

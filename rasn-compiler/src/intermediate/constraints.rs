@@ -1,3 +1,4 @@
+use internal_macros::EnumDebug;
 use std::error::Error;
 
 use super::{
@@ -21,7 +22,7 @@ pub struct RangeSeperator();
 #[derive(Debug, Clone, PartialEq)]
 pub struct ExtensionMarker();
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(EnumDebug, Clone, PartialEq)]
 pub enum Constraint {
     SubtypeConstraint(ElementSet),
     TableConstraint(TableConstraint),
@@ -112,7 +113,7 @@ impl Constraint {
     }
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(EnumDebug, Clone, PartialEq)]
 pub enum ContentConstraint {
     Containing(ASN1Type),
     EncodedBy(ASN1Value),
@@ -143,7 +144,7 @@ impl From<(ASN1Type, ASN1Value)> for ContentConstraint {
     }
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(EnumDebug, Clone, PartialEq)]
 pub enum Parameter {
     ValueParameter(ASN1Value),
     TypeParameter(ASN1Type),
@@ -151,7 +152,7 @@ pub enum Parameter {
     ObjectSetParameter(ObjectSet),
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(EnumDebug, Clone, PartialEq)]
 pub enum SetOperator {
     Intersection,
     Union,
@@ -191,7 +192,7 @@ impl
     }
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(EnumDebug, Clone, PartialEq)]
 pub enum ComponentPresence {
     Absent,
     Present,
@@ -344,7 +345,7 @@ impl From<Vec<&str>> for PropertySettings {
     }
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(EnumDebug, Clone, PartialEq)]
 pub enum PropertyAndSettingsPair {
     Basic(BasicSettings),
     Date(DateSettings),
@@ -403,7 +404,7 @@ pub trait PropertySetting {
         Self: Sized;
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(EnumDebug, Clone, PartialEq)]
 pub enum BasicSettings {
     Date,
     Time,
@@ -466,7 +467,7 @@ impl PropertySetting for DateSettings {
     }
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(EnumDebug, Clone, PartialEq)]
 pub enum DateSettings {
     Century,
     Year,
@@ -500,7 +501,7 @@ impl PropertySetting for YearSettings {
     }
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(EnumDebug, Clone, PartialEq)]
 pub enum YearSettings {
     Basic,
     Proleptic,
@@ -541,7 +542,7 @@ impl PropertySetting for TimeSettings {
     }
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(EnumDebug, Clone, PartialEq)]
 pub enum TimeSettings {
     Hour,
     HourMinute,
@@ -572,7 +573,7 @@ impl PropertySetting for LocalOrUtcSettings {
     }
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(EnumDebug, Clone, PartialEq)]
 pub enum LocalOrUtcSettings {
     Local,
     Utc,
@@ -602,7 +603,7 @@ impl PropertySetting for IntervalTypeSettings {
     }
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(EnumDebug, Clone, PartialEq)]
 pub enum IntervalTypeSettings {
     StartAndEnd,
     Duration,
@@ -631,7 +632,7 @@ impl PropertySetting for StartEndPointSettings {
     }
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(EnumDebug, Clone, PartialEq)]
 pub enum StartEndPointSettings {
     Date,
     Time,
@@ -659,7 +660,7 @@ impl PropertySetting for RecurrenceSettings {
     }
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(EnumDebug, Clone, PartialEq)]
 pub enum RecurrenceSettings {
     Unlimited,
     Recurrences(usize),
@@ -684,13 +685,13 @@ impl PropertySetting for MidnightSettings {
     }
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(EnumDebug, Clone, PartialEq)]
 pub enum MidnightSettings {
     StartOfDay,
     EndOfDay,
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(EnumDebug, Clone, PartialEq)]
 pub enum SubtypeElement {
     SingleValue {
         value: ASN1Value,
@@ -777,7 +778,7 @@ impl From<(ElementOrSetOperation, Option<ExtensionMarker>)> for ElementSet {
     }
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(EnumDebug, Clone, PartialEq)]
 pub enum ElementOrSetOperation {
     Element(SubtypeElement),
     SetOperation(SetOperation),

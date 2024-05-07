@@ -169,10 +169,10 @@ where
 #[cfg(test)]
 mod tests {
 
-    use crate::parser::asn1_value;
-    use crate::parser::common::{in_parentheses, skip_ws_and_comments};
+    use crate::lexer::asn1_value;
+    use crate::lexer::common::{in_parentheses, skip_ws_and_comments};
 
-    use crate::parser::util::{opt_delimited, take_until_and_not};
+    use crate::lexer::util::{opt_delimited, take_until_and_not};
 
     use crate::intermediate::{ASN1Value, LEFT_PARENTHESIS, RIGHT_PARENTHESIS};
     use nom::character::streaming::char;

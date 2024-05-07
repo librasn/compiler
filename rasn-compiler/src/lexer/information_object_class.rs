@@ -251,8 +251,8 @@ mod tests {
 
     use crate::intermediate::types::*;
 
-    use crate::parser::information_object_class::{information_object_class, object_set};
-    use crate::parser::top_level_type_declaration;
+    use crate::lexer::information_object_class::{information_object_class, object_set};
+    use crate::lexer::top_level_type_declaration;
 
     use super::*;
 
