@@ -695,7 +695,7 @@ pub struct UInt32(pub u32);
 ///
 /// NOTE: RFC 1510 had an incorrect value (5) for "dod" in its OID.
 
-pub const ID_KRB5: &'static Oid = &Oid::const_new(&[1, 3, 6, 1, 5, 2]);
+pub const ID_KRB5: &Oid = Oid::const_new(&[1, 3, 6, 1, 5, 2]);
 
 #[test]
 fn as_rep() {

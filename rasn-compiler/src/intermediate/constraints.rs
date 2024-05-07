@@ -278,7 +278,7 @@ impl From<(ObjectSet, Option<Vec<RelationalConstraint>>)> for TableConstraint {
     fn from(value: (ObjectSet, Option<Vec<RelationalConstraint>>)) -> Self {
         Self {
             object_set: value.0,
-            linked_fields: value.1.unwrap_or(vec![]),
+            linked_fields: value.1.unwrap_or_default(),
         }
     }
 }
@@ -361,32 +361,19 @@ pub enum PropertyAndSettingsPair {
 impl TryFrom<(&str, &str)> for PropertyAndSettingsPair {
     fn try_from(value: (&str, &str)) -> Result<PropertyAndSettingsPair, Box<dyn Error>> {
         match value.0 {
-            BasicSettings::NAME => {
-                BasicSettings::from_str(value.1).map(|settings| Self::Basic(settings))
-            }
-            DateSettings::NAME => {
-                DateSettings::from_str(value.1).map(|settings| Self::Date(settings))
-            }
-            YearSettings::NAME => {
-                YearSettings::from_str(value.1).map(|settings| Self::Year(settings))
-            }
-            TimeSettings::NAME => {
-                TimeSettings::from_str(value.1).map(|settings| Self::Time(settings))
-            }
-            LocalOrUtcSettings::NAME => {
-                LocalOrUtcSettings::from_str(value.1).map(|settings| Self::LocalOrUtc(settings))
-            }
+            BasicSettings::NAME => BasicSettings::from_str(value.1).map(Self::Basic),
+            DateSettings::NAME => DateSettings::from_str(value.1).map(Self::Date),
+            YearSettings::NAME => YearSettings::from_str(value.1).map(Self::Year),
+            TimeSettings::NAME => TimeSettings::from_str(value.1).map(Self::Time),
+            LocalOrUtcSettings::NAME => LocalOrUtcSettings::from_str(value.1).map(Self::LocalOrUtc),
             IntervalTypeSettings::NAME => {
-                IntervalTypeSettings::from_str(value.1).map(|settings| Self::IntervalType(settings))
+                IntervalTypeSettings::from_str(value.1).map(Self::IntervalType)
             }
-            StartEndPointSettings::NAME => StartEndPointSettings::from_str(value.1)
-                .map(|settings| Self::StartEndPoint(settings)),
-            RecurrenceSettings::NAME => {
-                RecurrenceSettings::from_str(value.1).map(|settings| Self::Recurrence(settings))
+            StartEndPointSettings::NAME => {
+                StartEndPointSettings::from_str(value.1).map(Self::StartEndPoint)
             }
-            MidnightSettings::NAME => {
-                MidnightSettings::from_str(value.1).map(|settings| Self::Midnight(settings))
-            }
+            RecurrenceSettings::NAME => RecurrenceSettings::from_str(value.1).map(Self::Recurrence),
+            MidnightSettings::NAME => MidnightSettings::from_str(value.1).map(Self::Midnight),
             _ => Err("Unknown Settings value.".into()),
         }
     }
@@ -397,9 +384,9 @@ impl TryFrom<(&str, &str)> for PropertyAndSettingsPair {
 pub trait PropertySetting {
     const NAME: &'static str;
 
-    fn setting_name<'a>(&'a self) -> String;
+    fn setting_name(&self) -> String;
 
-    fn from_str<'a>(value: &'a str) -> Result<Self, Box<dyn Error>>
+    fn from_str(value: &str) -> Result<Self, Box<dyn Error>>
     where
         Self: Sized;
 }
@@ -416,7 +403,7 @@ pub enum BasicSettings {
 impl PropertySetting for BasicSettings {
     const NAME: &'static str = "Basic";
 
-    fn setting_name<'a>(&'a self) -> String {
+    fn setting_name(&self) -> String {
         match self {
             BasicSettings::Date => "Date".into(),
             BasicSettings::Time => "Time".into(),
@@ -426,7 +413,7 @@ impl PropertySetting for BasicSettings {
         }
     }
 
-    fn from_str<'a>(value: &'a str) -> Result<Self, Box<dyn Error>> {
+    fn from_str(value: &str) -> Result<Self, Box<dyn Error>> {
         match value {
             "Date" => Ok(BasicSettings::Date),
             "Time" => Ok(BasicSettings::Time),
@@ -441,7 +428,7 @@ impl PropertySetting for BasicSettings {
 impl PropertySetting for DateSettings {
     const NAME: &'static str = "Date";
 
-    fn setting_name<'a>(&'a self) -> String {
+    fn setting_name(&self) -> String {
         match self {
             DateSettings::Century => "C".into(),
             DateSettings::Year => "Y".into(),
@@ -453,7 +440,7 @@ impl PropertySetting for DateSettings {
         }
     }
 
-    fn from_str<'a>(value: &'a str) -> Result<Self, Box<dyn Error>> {
+    fn from_str(value: &str) -> Result<Self, Box<dyn Error>> {
         match value {
             "C" => Ok(DateSettings::Century),
             "Y" => Ok(DateSettings::Year),
@@ -481,7 +468,7 @@ pub enum DateSettings {
 impl PropertySetting for YearSettings {
     const NAME: &'static str = "Year";
 
-    fn setting_name<'a>(&'a self) -> String {
+    fn setting_name(&self) -> String {
         match self {
             YearSettings::Basic => "Basic".into(),
             YearSettings::Proleptic => "Proleptic".into(),
@@ -490,12 +477,12 @@ impl PropertySetting for YearSettings {
         }
     }
 
-    fn from_str<'a>(value: &'a str) -> Result<Self, Box<dyn Error>> {
+    fn from_str(value: &str) -> Result<Self, Box<dyn Error>> {
         match value {
             "Basic" => Ok(YearSettings::Basic),
             "Proleptic" => Ok(YearSettings::Proleptic),
             "Negative" => Ok(YearSettings::Negative),
-            s if s.starts_with("L") => Ok(s[1..].parse().map(|i| YearSettings::Large(i))?),
+            s if s.starts_with('L') => Ok(s[1..].parse().map(YearSettings::Large)?),
             _ => Err("Unknown Settings value.".into()),
         }
     }
@@ -512,7 +499,7 @@ pub enum YearSettings {
 impl PropertySetting for TimeSettings {
     const NAME: &'static str = "Time";
 
-    fn setting_name<'a>(&'a self) -> String {
+    fn setting_name(&self) -> String {
         match self {
             TimeSettings::Hour => "H".into(),
             TimeSettings::HourMinute => "HM".into(),
@@ -523,20 +510,20 @@ impl PropertySetting for TimeSettings {
         }
     }
 
-    fn from_str<'a>(value: &'a str) -> Result<Self, Box<dyn Error>> {
+    fn from_str(value: &str) -> Result<Self, Box<dyn Error>> {
         match value {
             "H" => Ok(TimeSettings::Hour),
             "HM" => Ok(TimeSettings::HourMinute),
             "HMS" => Ok(TimeSettings::HourMinuteSecond),
-            s if s.starts_with("HF") => Ok(s[2..]
-                .parse()
-                .map(|i| TimeSettings::HourDecimalFraction(i))?),
-            s if s.starts_with("HMF") => Ok(s[3..]
-                .parse()
-                .map(|i| TimeSettings::HourMinuteFraction(i))?),
-            s if s.starts_with("HMSF") => Ok(s[4..]
-                .parse()
-                .map(|i| TimeSettings::HourMinuteSecondFraction(i))?),
+            s if s.starts_with("HF") => {
+                Ok(s[2..].parse().map(TimeSettings::HourDecimalFraction)?)
+            }
+            s if s.starts_with("HMF") => {
+                Ok(s[3..].parse().map(TimeSettings::HourMinuteFraction)?)
+            }
+            s if s.starts_with("HMSF") => {
+                Ok(s[4..].parse().map(TimeSettings::HourMinuteSecondFraction)?)
+            }
             _ => Err("Unknown Settings value.".into()),
         }
     }
@@ -555,7 +542,7 @@ pub enum TimeSettings {
 impl PropertySetting for LocalOrUtcSettings {
     const NAME: &'static str = "Local-or-UTC";
 
-    fn setting_name<'a>(&'a self) -> String {
+    fn setting_name(&self) -> String {
         match self {
             LocalOrUtcSettings::Local => "L".into(),
             LocalOrUtcSettings::Utc => "Z".into(),
@@ -563,7 +550,7 @@ impl PropertySetting for LocalOrUtcSettings {
         }
     }
 
-    fn from_str<'a>(value: &'a str) -> Result<Self, Box<dyn Error>> {
+    fn from_str(value: &str) -> Result<Self, Box<dyn Error>> {
         match value {
             "L" => Ok(LocalOrUtcSettings::Local),
             "Z" => Ok(LocalOrUtcSettings::Utc),
@@ -583,7 +570,7 @@ pub enum LocalOrUtcSettings {
 impl PropertySetting for IntervalTypeSettings {
     const NAME: &'static str = "Interval-type";
 
-    fn setting_name<'a>(&'a self) -> String {
+    fn setting_name(&self) -> String {
         match self {
             IntervalTypeSettings::StartAndEnd => "SE".into(),
             IntervalTypeSettings::Duration => "D".into(),
@@ -592,7 +579,7 @@ impl PropertySetting for IntervalTypeSettings {
         }
     }
 
-    fn from_str<'a>(value: &'a str) -> Result<Self, Box<dyn Error>> {
+    fn from_str(value: &str) -> Result<Self, Box<dyn Error>> {
         match value {
             "SE" => Ok(IntervalTypeSettings::StartAndEnd),
             "D" => Ok(IntervalTypeSettings::Duration),
@@ -614,7 +601,7 @@ pub enum IntervalTypeSettings {
 impl PropertySetting for StartEndPointSettings {
     const NAME: &'static str = "SE-point";
 
-    fn setting_name<'a>(&'a self) -> String {
+    fn setting_name(&self) -> String {
         match self {
             StartEndPointSettings::Date => "Date".into(),
             StartEndPointSettings::Time => "Time".into(),
@@ -622,7 +609,7 @@ impl PropertySetting for StartEndPointSettings {
         }
     }
 
-    fn from_str<'a>(value: &'a str) -> Result<Self, Box<dyn Error>> {
+    fn from_str(value: &str) -> Result<Self, Box<dyn Error>> {
         match value {
             "Date" => Ok(StartEndPointSettings::Date),
             "Time" => Ok(StartEndPointSettings::Time),
@@ -642,19 +629,17 @@ pub enum StartEndPointSettings {
 impl PropertySetting for RecurrenceSettings {
     const NAME: &'static str = "Recurrence";
 
-    fn setting_name<'a>(&'a self) -> String {
+    fn setting_name(&self) -> String {
         match self {
             RecurrenceSettings::Unlimited => "Unlimited".into(),
             RecurrenceSettings::Recurrences(i) => format!("R{i}"),
         }
     }
 
-    fn from_str<'a>(value: &'a str) -> Result<Self, Box<dyn Error>> {
+    fn from_str(value: &str) -> Result<Self, Box<dyn Error>> {
         match value {
             "Unlimited" => Ok(RecurrenceSettings::Unlimited),
-            s if s.starts_with("R") => {
-                Ok(s[1..].parse().map(|i| RecurrenceSettings::Recurrences(i))?)
-            }
+            s if s.starts_with('R') => Ok(s[1..].parse().map(RecurrenceSettings::Recurrences)?),
             _ => Err("Unknown Settings value.".into()),
         }
     }
@@ -669,14 +654,14 @@ pub enum RecurrenceSettings {
 impl PropertySetting for MidnightSettings {
     const NAME: &'static str = "Midnight";
 
-    fn setting_name<'a>(&'a self) -> String {
+    fn setting_name(&self) -> String {
         match self {
             MidnightSettings::StartOfDay => "Start".into(),
             MidnightSettings::EndOfDay => "End".into(),
         }
     }
 
-    fn from_str<'a>(value: &'a str) -> Result<Self, Box<dyn Error>> {
+    fn from_str(value: &str) -> Result<Self, Box<dyn Error>> {
         match value {
             "Start" => Ok(MidnightSettings::StartOfDay),
             "End" => Ok(MidnightSettings::EndOfDay),

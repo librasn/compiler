@@ -79,45 +79,6 @@ impl ToplevelDefinition {
         }
     }
 
-    pub(crate) fn resolve_parameterization(
-        &mut self,
-        tlds: &BTreeMap<String, ToplevelDefinition>,
-    ) -> Result<(), ValidatorError> {
-        match self {
-            ToplevelDefinition::Type(ToplevelTypeDefinition {
-                name,
-                ty: ASN1Type::Sequence(s),
-                ..
-            })
-            | ToplevelDefinition::Type(ToplevelTypeDefinition {
-                name,
-                ty: ASN1Type::Set(s),
-                ..
-            }) => s.members.iter_mut().try_for_each(|m| {
-                if let Some(replacement) = m.ty.link_constraint_reference(&name, tlds)? {
-                    m.ty = replacement;
-                }
-                Ok(())
-            }),
-            ToplevelDefinition::Type(ToplevelTypeDefinition {
-                name,
-                ty: ASN1Type::SequenceOf(s),
-                ..
-            })
-            | ToplevelDefinition::Type(ToplevelTypeDefinition {
-                name,
-                ty: ASN1Type::SetOf(s),
-                ..
-            }) => {
-                if let Some(replacement) = s.element_type.link_constraint_reference(name, tlds)? {
-                    s.element_type = Box::new(replacement);
-                }
-                Ok(())
-            }
-            _ => Ok(()),
-        }
-    }
-
     pub(crate) fn get_distinguished_or_enum_value(
         &self,
         type_name: Option<&String>,

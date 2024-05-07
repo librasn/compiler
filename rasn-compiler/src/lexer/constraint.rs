@@ -4,7 +4,6 @@ use nom::{
     bytes::complete::tag,
     character::complete::char,
     combinator::{into, map, map_res, opt, value},
-    error::Error,
     multi::{many0_count, many1, separated_list0, separated_list1},
     sequence::{delimited, pair, preceded, separated_pair, terminated, tuple},
     IResult,
@@ -57,8 +56,8 @@ pub fn set_operator(input: &str) -> IResult<&str, SetOperator> {
 fn element_set(input: &str) -> IResult<&str, ElementSet> {
     into(pair(
         alt((
-            map(set_operation, |v| ElementOrSetOperation::SetOperation(v)),
-            map(subtype_element, |v| ElementOrSetOperation::Element(v)),
+            map(set_operation, ElementOrSetOperation::SetOperation),
+            map(subtype_element, ElementOrSetOperation::Element),
         )),
         opt(skip_ws_and_comments(preceded(
             char(COMMA),
@@ -72,8 +71,8 @@ fn set_operation(input: &str) -> IResult<&str, SetOperation> {
         subtype_element,
         set_operator,
         alt((
-            map(set_operation, |v| ElementOrSetOperation::SetOperation(v)),
-            map(subtype_element, |v| ElementOrSetOperation::Element(v)),
+            map(set_operation, ElementOrSetOperation::SetOperation),
+            map(subtype_element, ElementOrSetOperation::Element),
         )),
     )))(input)
 }
@@ -128,7 +127,7 @@ fn extension_additions(input: &str) -> IResult<&str, ()> {
 }
 
 fn single_value(input: &str) -> IResult<&str, SubtypeElement> {
-    opt_delimited::<char, SubtypeElement, char, Error<&str>, _, _, _>(
+    opt_delimited::<char, SubtypeElement, char, _, _, _>(
         skip_ws_and_comments(char(LEFT_PARENTHESIS)),
         skip_ws_and_comments(into(pair(
             asn1_value,
@@ -143,7 +142,7 @@ fn single_value(input: &str) -> IResult<&str, SubtypeElement> {
 }
 
 fn contained_subtype(input: &str) -> IResult<&str, SubtypeElement> {
-    opt_delimited::<char, SubtypeElement, char, Error<&str>, _, _, _>(
+    opt_delimited::<char, SubtypeElement, char, _, _, _>(
         skip_ws_and_comments(char(LEFT_PARENTHESIS)),
         skip_ws_and_comments(map(
             pair(
@@ -163,7 +162,7 @@ fn contained_subtype(input: &str) -> IResult<&str, SubtypeElement> {
 }
 
 fn value_range(input: &str) -> IResult<&str, SubtypeElement> {
-    opt_delimited::<char, SubtypeElement, char, Error<&str>, _, _, _>(
+    opt_delimited::<char, SubtypeElement, char, _, _, _>(
         skip_ws_and_comments(char(LEFT_PARENTHESIS)),
         skip_ws_and_comments(map(
             tuple((
@@ -195,7 +194,7 @@ fn value_range(input: &str) -> IResult<&str, SubtypeElement> {
 }
 
 fn size_constraint(input: &str) -> IResult<&str, SubtypeElement> {
-    opt_delimited::<char, SubtypeElement, char, Error<&str>, _, _, _>(
+    opt_delimited::<char, SubtypeElement, char, _, _, _>(
         skip_ws_and_comments(char(LEFT_PARENTHESIS)),
         skip_ws_and_comments(into(preceded(tag(SIZE), single_constraint))),
         skip_ws_and_comments(char(RIGHT_PARENTHESIS)),
@@ -204,7 +203,7 @@ fn size_constraint(input: &str) -> IResult<&str, SubtypeElement> {
 
 fn pattern_constraint(input: &str) -> IResult<&str, SubtypeElement> {
     map(
-        opt_delimited::<char, PatternConstraint, char, Error<&str>, _, _, _>(
+        opt_delimited::<char, PatternConstraint, char, _, _, _>(
             skip_ws_and_comments(char(LEFT_PARENTHESIS)),
             skip_ws_and_comments(into(preceded(
                 tag(PATTERN),
@@ -216,13 +215,13 @@ fn pattern_constraint(input: &str) -> IResult<&str, SubtypeElement> {
             ))),
             skip_ws_and_comments(char(RIGHT_PARENTHESIS)),
         ),
-        |p| SubtypeElement::PatternConstraint(p),
+        SubtypeElement::PatternConstraint,
     )(input)
 }
 
 fn user_defined_constraint(input: &str) -> IResult<&str, SubtypeElement> {
     map(
-        opt_delimited::<char, UserDefinedConstraint, char, Error<&str>, _, _, _>(
+        opt_delimited::<char, UserDefinedConstraint, char, _, _, _>(
             skip_ws_and_comments(char(LEFT_PARENTHESIS)),
             skip_ws_and_comments(into(preceded(
                 tag(CONSTRAINED_BY),
@@ -234,7 +233,7 @@ fn user_defined_constraint(input: &str) -> IResult<&str, SubtypeElement> {
             ))),
             skip_ws_and_comments(char(RIGHT_PARENTHESIS)),
         ),
-        |c| SubtypeElement::UserDefinedConstraint(c),
+        SubtypeElement::UserDefinedConstraint,
     )(input)
 }
 
@@ -245,14 +244,14 @@ fn user_defined_constraint(input: &str) -> IResult<&str, SubtypeElement> {
 /// >* _51.7.3 The "Constraint" shall use the "SubtypeConstraint" alternative of "ConstraintSpec". Each "SubtypeElements" within that "SubtypeConstraint" shall be one of the four alternatives "SingleValue", "ContainedSubtype", "ValueRange", and "SizeConstraint". The sub-alphabet includes precisely those characters which appear in one or more of the values of the parent string type which are allowed by the "Constraint"._
 /// >* _51.7.4 If "Constraint" is extensible, then the set of values selected by the permitted alphabet constraint is extensible. The set of values in the root are those permitted by the root of "Constraint", and the extension additions are those values permitted by the root together with the extension-additions of "Constraint", excluding those values already in the root._
 fn permitted_alphabet_constraint(input: &str) -> IResult<&str, SubtypeElement> {
-    opt_delimited::<char, SubtypeElement, char, Error<&str>, _, _, _>(
+    opt_delimited::<char, SubtypeElement, char, _, _, _>(
         skip_ws_and_comments(char(LEFT_PARENTHESIS)),
         skip_ws_and_comments(map(
             preceded(
                 tag(FROM),
                 in_parentheses(alt((
-                    map(set_operation, |v| ElementOrSetOperation::SetOperation(v)),
-                    map(subtype_element, |v| ElementOrSetOperation::Element(v)),
+                    map(set_operation, ElementOrSetOperation::SetOperation),
+                    map(subtype_element, ElementOrSetOperation::Element),
                 ))),
             ),
             |i| SubtypeElement::PermittedAlphabet(Box::new(i)),
@@ -262,7 +261,7 @@ fn permitted_alphabet_constraint(input: &str) -> IResult<&str, SubtypeElement> {
 }
 
 fn single_type_constraint(input: &str) -> IResult<&str, SubtypeElement> {
-    opt_delimited::<char, SubtypeElement, char, Error<&str>, _, _, _>(
+    opt_delimited::<char, SubtypeElement, char, _, _, _>(
         skip_ws_and_comments(char(LEFT_PARENTHESIS)),
         skip_ws_and_comments(into(preceded(
             tag(WITH_COMPONENTS),
@@ -282,7 +281,7 @@ fn single_type_constraint(input: &str) -> IResult<&str, SubtypeElement> {
 }
 
 fn multiple_type_constraints(input: &str) -> IResult<&str, SubtypeElement> {
-    opt_delimited::<char, SubtypeElement, char, Error<&str>, _, _, _>(
+    opt_delimited::<char, SubtypeElement, char, _, _, _>(
         skip_ws_and_comments(char(LEFT_PARENTHESIS)),
         skip_ws_and_comments(preceded(
             tag(WITH_COMPONENT),
@@ -315,7 +314,7 @@ fn subset_member(
 }
 
 fn content_constraint(input: &str) -> IResult<&str, ContentConstraint> {
-    opt_delimited::<char, ContentConstraint, char, Error<&str>, _, _, _>(
+    opt_delimited::<char, ContentConstraint, char, _, _, _>(
         skip_ws_and_comments(char(LEFT_PARENTHESIS)),
         skip_ws_and_comments(alt((
             into(pair(
@@ -336,7 +335,7 @@ fn content_constraint(input: &str) -> IResult<&str, ContentConstraint> {
 }
 
 fn table_constraint(input: &str) -> IResult<&str, TableConstraint> {
-    opt_delimited::<char, TableConstraint, char, Error<&str>, _, _, _>(
+    opt_delimited::<char, TableConstraint, char, _, _, _>(
         skip_ws_and_comments(char(LEFT_PARENTHESIS)),
         skip_ws_and_comments(into(pair(
             object_set,
@@ -371,7 +370,7 @@ fn property_settings_constraint(input: &str) -> IResult<&str, SubtypeElement> {
             )),
             |res| {
                 res.into_iter()
-                    .map(|pair| PropertyAndSettingsPair::try_from(pair))
+                    .map(PropertyAndSettingsPair::try_from)
                     .collect::<Result<Vec<PropertyAndSettingsPair>, _>>()
                     .map(|settings| {
                         SubtypeElement::PropertySettings(PropertySettings {

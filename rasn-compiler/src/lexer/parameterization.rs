@@ -56,7 +56,7 @@ mod tests {
         information_object::{ObjectSet, ObjectSetValue},
         parameterization::{ParameterGovernor, Parameterization, ParameterizationArgument},
         types::{Boolean, Integer},
-        ASN1Type, DeclarationElsewhere,
+        ASN1Type,
     };
 
     use crate::lexer::parameterization::{parameterization, parameters};

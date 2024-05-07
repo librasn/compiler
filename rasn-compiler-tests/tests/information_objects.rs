@@ -2,9 +2,12 @@ use rasn_compiler_tests::e2e_pdu;
 
 // This suite contains tests to test x681 Information Object Classes and its
 // associated notations
-
 e2e_pdu!(
     information_object,
+    rasn_compiler::prelude::RasnConfig {
+        opaque_open_types: false,
+        ..Default::default()
+    },
     r#"
           ERROR ::= CLASS {
             &errorCode ErrorCode UNIQUE,

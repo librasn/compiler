@@ -11,7 +11,7 @@ use crate::intermediate::*;
 
 use super::{common::*, constraint::constraint};
 
-pub fn character_string_value<'a>(input: &'a str) -> IResult<&'a str, ASN1Value> {
+pub fn character_string_value(input: &str) -> IResult<&str, ASN1Value> {
     map(
         skip_ws_and_comments(alt((
             map(
@@ -40,7 +40,7 @@ pub fn character_string_value<'a>(input: &'a str) -> IResult<&'a str, ASN1Value>
 /// _In all cases, the set of permitted characters may be restricted by subtyping._
 ///
 /// __Currently, the rasn compiler only supports group `0`__
-fn quadruple<'a>(input: &'a str) -> IResult<&'a str, char> {
+fn quadruple(input: &str) -> IResult<&str, char> {
     map_res(
         in_braces(tuple((
             terminated(skip_ws(u8), skip_ws(char(COMMA))),
@@ -51,13 +51,13 @@ fn quadruple<'a>(input: &'a str) -> IResult<&'a str, char> {
         |(group, plane, row, cell)| {
             if group > 0 {
                 Err(nom::Err::Failure(nom::error::Error {
-                    input: input,
+                    input,
                     code: nom::error::ErrorKind::Char,
                 }))
             } else {
                 let code_point = (plane as u32) << 16 | (row as u32) << 8 | cell as u32;
                 char::from_u32(code_point).ok_or(nom::Err::Failure(nom::error::Error {
-                    input: input,
+                    input,
                     code: nom::error::ErrorKind::Char,
                 }))
             }
@@ -75,7 +75,7 @@ fn quadruple<'a>(input: &'a str) -> IResult<&'a str, char> {
 /// If the match succeeds, the lexer will consume the match and return the remaining string
 /// and a wrapped `CharacterString` value representing the ASN1 declaration.
 /// If the match fails, the lexer will not consume the input and will return an error.
-pub fn character_string<'a>(input: &'a str) -> IResult<&'a str, ASN1Type> {
+pub fn character_string(input: &str) -> IResult<&str, ASN1Type> {
     map(
         pair(
             skip_ws_and_comments(alt((

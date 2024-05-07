@@ -26,6 +26,24 @@ macro_rules! e2e_pdu {
             )
         }
     };
+    ($suite:ident, $config:expr, $asn1:literal, $expected:literal) => {
+        #[test]
+        fn $suite() {
+            rasn_compiler_derive::asn1!($asn1);
+            assert_eq!(
+                rasn_compiler::Compiler::<rasn_compiler::prelude::RasnBackend, _>::new_with_config($config)
+                    .add_asn_literal(&format!("TestModule DEFINITIONS AUTOMATIC TAGS::= BEGIN {} END", $asn1))
+                    .compile_to_string()
+                    .unwrap()
+                    .generated
+                    .replace(|c: char| c.is_whitespace(), "")
+                    .replace("#[allow(non_camel_case_types,non_snake_case,non_upper_case_globals,unused)]pubmodtest_module{externcratealloc;usecore::borrow::Borrow;uselazy_static::lazy_static;userasn::prelude::*;", ""),
+                format!("{}}}", $expected)
+                    .to_string()
+                    .replace(|c: char| c.is_whitespace(), ""),
+            )
+        }
+    };
 }
 
 #[macro_export]

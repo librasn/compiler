@@ -140,7 +140,7 @@ pub fn take_until_unbalanced<'a>(
     }
 }
 
-pub fn opt_delimited<'a, O1, O2, O3, E: ParseError<&'a str>, F, G, H>(
+pub fn opt_delimited<'a, O1, O2, O3, F, G, H>(
     mut first: F,
     mut second: G,
     mut third: H,
@@ -184,7 +184,7 @@ mod tests {
     #[test]
     fn optional_delimiter() {
         assert_eq!(
-            opt_delimited::<&str, &str, &str, Error<&str>, _, _, _>(
+            opt_delimited::<&str, &str, &str, _, _, _>(
                 skip_ws_and_comments(tag("1")),
                 skip_ws_and_comments(tag("ab")),
                 skip_ws_and_comments(tag("2"))
@@ -192,7 +192,7 @@ mod tests {
             Ok(("", "ab"))
         );
         assert_eq!(
-            opt_delimited::<char, &str, char, Error<&str>, _, _, _>(
+            opt_delimited::<char, &str, char, _, _, _>(
                 skip_ws_and_comments(char('(')),
                 skip_ws_and_comments(tag("ab")),
                 skip_ws_and_comments(char(')'))
@@ -200,7 +200,7 @@ mod tests {
             Ok(("", "ab"))
         );
         assert_eq!(
-            opt_delimited::<char, &str, char, Error<&str>, _, _, _>(
+            opt_delimited::<char, &str, char, _, _, _>(
                 skip_ws_and_comments(char('(')),
                 skip_ws_and_comments(tag("ab")),
                 skip_ws_and_comments(char(')'))
@@ -211,7 +211,7 @@ mod tests {
             }))
         );
         assert_eq!(
-            opt_delimited::<char, &str, char, Error<&str>, _, _, _>(
+            opt_delimited::<char, &str, char, _, _, _>(
                 skip_ws_and_comments(char('(')),
                 skip_ws_and_comments(tag("ab")),
                 skip_ws_and_comments(char(')'))
@@ -219,7 +219,7 @@ mod tests {
             Ok((" )", "ab"))
         );
         assert_eq!(
-            in_parentheses(opt_delimited::<char, &str, char, Error<&str>, _, _, _>(
+            in_parentheses(opt_delimited::<char, &str, char, _, _, _>(
                 skip_ws_and_comments(char('(')),
                 skip_ws_and_comments(tag("ab")),
                 skip_ws_and_comments(char(')'))
@@ -231,7 +231,6 @@ mod tests {
                 char,
                 ASN1Value,
                 char,
-                Error<&str>,
                 _,
                 _,
                 _,

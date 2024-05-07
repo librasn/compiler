@@ -21,7 +21,7 @@ use super::{common::optional_comma, constraint::constraint, sequence::sequence_c
 /// contains anonymous built-in types as members, these nested built-in types will be represented as
 /// structs within the same global scope.
 /// If the match fails, the lexer will not consume the input and will return an error.
-pub fn set<'a>(input: &'a str) -> IResult<&'a str, ASN1Type> {
+pub fn set(input: &str) -> IResult<&str, ASN1Type> {
     map(
         preceded(
             skip_ws_and_comments(tag(SET)),

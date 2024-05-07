@@ -211,7 +211,7 @@ impl Typescript {
             ASN1Type::Sequence(ref seq) | ASN1Type::Set(ref seq) => Ok(sequence_or_set_template(
                 &format_comments(&tld.comments),
                 &to_jer_identifier(&tld.name),
-                &format_sequence_or_set_members(&seq),
+                &format_sequence_or_set_members(seq),
             )),
             _ => Err(GeneratorError::new(
                 Some(ToplevelDefinition::Type(tld)),

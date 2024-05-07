@@ -33,6 +33,10 @@ r#"
 
 e2e_pdu! {
     parameterized_information_object_classes,
+    rasn_compiler::prelude::RasnConfig {
+        opaque_open_types: false,
+        ..Default::default()
+    },
     r#"
         NGAP-PROTOCOL-EXTENSION ::= CLASS {
             &id				INTEGER			UNIQUE,

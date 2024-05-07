@@ -20,7 +20,7 @@ use super::common::skip_ws_and_comments;
 /// _"Embedded Presentation Data Value" from its use in the OSI_
 /// _Presentation Layer, but this expansion is not used today,_
 /// _and it should be interpreted as "embedded value"._
-pub fn embedded_pdv<'a>(input: &'a str) -> IResult<&'a str, ASN1Type> {
+pub fn embedded_pdv(input: &str) -> IResult<&str, ASN1Type> {
     value(
         ASN1Type::EmbeddedPdv,
         skip_ws_and_comments(tag(EMBEDDED_PDV)),

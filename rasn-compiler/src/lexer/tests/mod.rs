@@ -12,8 +12,6 @@ use crate::{
 
 use crate::lexer::top_level_information_declaration;
 
-use super::*;
-
 #[test]
 fn parses_toplevel_simple_integer_declaration() {
     let tld = top_level_type_declaration(

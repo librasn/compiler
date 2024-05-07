@@ -7,15 +7,11 @@ use std::{
     str::FromStr,
 };
 
-use self::information_object::ASN1Information;
 use crate::intermediate::*;
 use proc_macro2::TokenStream;
 use quote::{quote, ToTokens};
 
-use super::{
-    error::{GeneratorError, GeneratorErrorType},
-    Backend, GeneratedModule,
-};
+use super::{error::GeneratorError, Backend, GeneratedModule};
 
 mod builder;
 mod template;
@@ -28,17 +24,17 @@ pub struct Rasn {
     config: Config,
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug)]
 /// A configuration for the [Rasn] backend
 pub struct Config {
     /// ASN.1 Open Types are represented as the `rasn::types::Any` type,
     /// which holds a binary `content`. If `opaque_open_types` is `false`,
-    /// the compiler will generate de-/encode methods for all rust types
-    /// that hold an open type. In this way, for example a SEQUENCE field
-    /// of an Open Type can be completely decoded to a rust type instance.
-    /// While with `opaque_open_type == true`, the same SEQUENCE field would
-    /// be represented as an `Any`-wrapped `Vec<u8>` containing the encoded
-    /// actual value of the Open Type.
+    /// the compiler will generate additional de-/encode methods for
+    /// all rust types that hold an open type.
+    /// For example, bindings for a `SEQUENCE` with a field of Open Type
+    /// value will include a method for explicitly decoding the Open Type field.
+    /// _Non-opaque open types are still experimental. If you have trouble_
+    /// _generating correct bindings, switch back to opaque open types._
     pub opaque_open_types: bool,
     /// The compiler will try to match module import dependencies of the ASN.1
     /// module as close as possible, importing only those types from other modules
@@ -46,6 +42,15 @@ pub struct Config {
     /// is set to `true` , the compiler will import the entire module using
     /// the wildcard `*` for each module that the input ASN.1 module imports from.
     pub default_wildcard_imports: bool,
+}
+
+impl Default for Config {
+    fn default() -> Self {
+        Self {
+            opaque_open_types: true,
+            default_wildcard_imports: false,
+        }
+    }
 }
 
 impl Backend for Rasn {

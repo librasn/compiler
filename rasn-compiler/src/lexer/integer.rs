@@ -10,8 +10,8 @@ use crate::intermediate::{ASN1Type, ASN1Value, INTEGER};
 
 use super::{constraint::*, *};
 
-pub fn integer_value<'a>(input: &'a str) -> IResult<&'a str, ASN1Value> {
-    map(skip_ws_and_comments(i128), |m| ASN1Value::Integer(m))(input)
+pub fn integer_value(input: &str) -> IResult<&str, ASN1Value> {
+    map(skip_ws_and_comments(i128), ASN1Value::Integer)(input)
 }
 
 /// Tries to parse an ASN1 INTEGER
@@ -22,7 +22,7 @@ pub fn integer_value<'a>(input: &'a str) -> IResult<&'a str, ASN1Value> {
 /// If the match succeeds, the lexer will consume the match and return the remaining string
 /// and a wrapped `Integer` value representing the ASN1 declaration.
 /// If the match fails, the lexer will not consume the input and will return an error.
-pub fn integer<'a>(input: &'a str) -> IResult<&'a str, ASN1Type> {
+pub fn integer(input: &str) -> IResult<&str, ASN1Type> {
     map(
         tuple((
             skip_ws_and_comments(tag(INTEGER)),

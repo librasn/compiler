@@ -11,7 +11,7 @@ use crate::intermediate::{types::*, *};
 
 use super::{common::optional_comma, constraint::constraint, *};
 
-pub fn sequence_value<'a>(input: &'a str) -> IResult<&'a str, ASN1Value> {
+pub fn sequence_value(input: &str) -> IResult<&str, ASN1Value> {
     map(
         in_braces(separated_list0(
             skip_ws_and_comments(char(',')),
@@ -41,7 +41,7 @@ pub fn sequence_value<'a>(input: &'a str) -> IResult<&'a str, ASN1Value> {
 /// contains anonymous SEQUENCEs as members, these nested SEQUENCEs will be represented as
 /// structs within the same global scope.
 /// If the match fails, the lexer will not consume the input and will return an error.
-pub fn sequence<'a>(input: &'a str) -> IResult<&'a str, ASN1Type> {
+pub fn sequence(input: &str) -> IResult<&str, ASN1Type> {
     map(
         preceded(
             skip_ws_and_comments(tag(SEQUENCE)),
@@ -64,7 +64,7 @@ pub fn sequence<'a>(input: &'a str) -> IResult<&'a str, ASN1Type> {
     )(input)
 }
 
-fn extension_group<'a>(input: &'a str) -> IResult<&'a str, SequenceComponent> {
+fn extension_group(input: &str) -> IResult<&str, SequenceComponent> {
     map(
         in_version_brackets(preceded(
             opt(pair(
@@ -102,7 +102,7 @@ fn extension_group<'a>(input: &'a str) -> IResult<&'a str, SequenceComponent> {
     )(input)
 }
 
-pub fn sequence_component<'a>(input: &'a str) -> IResult<&'a str, SequenceComponent> {
+pub fn sequence_component(input: &str) -> IResult<&str, SequenceComponent> {
     skip_ws_and_comments(alt((
         map(
             preceded(
@@ -118,7 +118,7 @@ pub fn sequence_component<'a>(input: &'a str) -> IResult<&'a str, SequenceCompon
     )))(input)
 }
 
-pub fn sequence_or_set_member<'a>(input: &'a str) -> IResult<&'a str, SequenceOrSetMember> {
+pub fn sequence_or_set_member(input: &str) -> IResult<&str, SequenceOrSetMember> {
     into(tuple((
         skip_ws_and_comments(identifier),
         opt(asn_tag),

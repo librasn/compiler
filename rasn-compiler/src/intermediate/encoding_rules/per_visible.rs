@@ -72,7 +72,7 @@ impl PerVisibleAlphabetConstraints {
             Constraint::SubtypeConstraint(c) => match &c.set {
                 ElementOrSetOperation::Element(e) => Self::from_subtype_elem(Some(e), string_type),
                 ElementOrSetOperation::SetOperation(s) => Self::from_subtype_elem(
-                    fold_constraint_set(&s, Some(&string_type.character_set()))?.as_ref(),
+                    fold_constraint_set(s, Some(&string_type.character_set()))?.as_ref(),
                     string_type,
                 ),
             },
@@ -138,13 +138,13 @@ impl PerVisibleAlphabetConstraints {
                     return Err(GrammarError {
                     details: format!("Invalid range for permitted alphabet: Charset {:?}; Range: {lower}..={upper}", char_set),
                     kind: GrammarErrorType::UnpackingError
-                  }.into());
+                  });
                 }
                 Ok(Some(PerVisibleAlphabetConstraints {
                     string_type,
                     character_by_index: char_set
                         .iter()
-                        .filter_map(|(i, c)| (lower..=upper).contains(&i).then(|| *c))
+                        .filter_map(|(i, c)| (lower..=upper).contains(i).then_some(*c))
                         .enumerate()
                         .collect(),
                     index_by_character: None,
@@ -208,14 +208,11 @@ fn find_string_index(
 fn find_char_index(char_set: &BTreeMap<usize, char>, as_char: char) -> Result<usize, GrammarError> {
     char_set
         .iter()
-        .find_map(|(i, c)| (as_char == *c).then(|| *i))
-        .ok_or(
-            GrammarError {
-                details: format!("Character {as_char} is not in char set: {:?}", char_set),
-                kind: GrammarErrorType::UnpackingError,
-            }
-            .into(),
-        )
+        .find_map(|(i, c)| (as_char == *c).then_some(*i))
+        .ok_or(GrammarError {
+            details: format!("Character {as_char} is not in char set: {:?}", char_set),
+            kind: GrammarErrorType::UnpackingError,
+        })
 }
 
 impl AddAssign<&mut PerVisibleAlphabetConstraints> for PerVisibleAlphabetConstraints {
@@ -224,22 +221,12 @@ impl AddAssign<&mut PerVisibleAlphabetConstraints> for PerVisibleAlphabetConstra
     }
 }
 
+#[derive(Default)]
 pub struct PerVisibleRangeConstraints {
     min: Option<i128>,
     max: Option<i128>,
     extensible: bool,
     is_size_constraint: bool,
-}
-
-impl Default for PerVisibleRangeConstraints {
-    fn default() -> Self {
-        Self {
-            min: None,
-            max: None,
-            extensible: false,
-            is_size_constraint: false,
-        }
-    }
 }
 
 impl PerVisibleRangeConstraints {
@@ -257,11 +244,11 @@ impl PerVisibleRangeConstraints {
     }
 
     pub fn min<I: num::Integer + num::FromPrimitive>(&self) -> Option<I> {
-        self.min.map(|m| I::from_i128(m)).flatten()
+        self.min.and_then(|m| I::from_i128(m))
     }
 
     pub fn max<I: num::Integer + num::FromPrimitive>(&self) -> Option<I> {
-        self.max.map(|m| I::from_i128(m)).flatten()
+        self.max.and_then(|m| I::from_i128(m))
     }
 
     pub fn is_size_constraint(&self) -> bool {
@@ -313,7 +300,7 @@ impl TryFrom<&Constraint> for PerVisibleRangeConstraints {
                 let mut per_visible: PerVisibleRangeConstraints = match &c.set {
                     ElementOrSetOperation::Element(e) => Some(e).try_into(),
                     ElementOrSetOperation::SetOperation(s) => {
-                        fold_constraint_set(&s, None)?.as_ref().try_into()
+                        fold_constraint_set(s, None)?.as_ref().try_into()
                     }
                 }?;
                 if let (PerVisibleRangeConstraints { min, max, .. }, true) =
@@ -349,8 +336,8 @@ impl TryFrom<Option<&SubtypeElement>> for PerVisibleRangeConstraints {
                 max,
                 extensible,
             }) => Ok(Self {
-                min: min.as_ref().map(|i| i.unwrap_as_integer().ok()).flatten(),
-                max: max.as_ref().map(|i| i.unwrap_as_integer().ok()).flatten(),
+                min: min.as_ref().and_then(|i| i.unwrap_as_integer().ok()),
+                max: max.as_ref().and_then(|i| i.unwrap_as_integer().ok()),
                 extensible: *extensible,
                 is_size_constraint: false,
             }),
@@ -364,7 +351,7 @@ impl TryFrom<Option<&SubtypeElement>> for PerVisibleRangeConstraints {
                 }),
                 ElementOrSetOperation::SetOperation(s) => {
                     <Option<&SubtypeElement> as TryInto<PerVisibleRangeConstraints>>::try_into(
-                        fold_constraint_set(&s, None)?.as_ref(),
+                        fold_constraint_set(s, None)?.as_ref(),
                     )
                     .map(|mut c| {
                         c.is_size_constraint = true;
@@ -417,9 +404,9 @@ impl PerVisible for SubtypeElement {
             SubtypeElement::ContainedSubtype {
                 subtype: s,
                 extensible: _,
-            } => s.constraints().map_or(false, |c| {
-                c.iter().fold(false, |acc, c| acc || c.per_visible())
-            }),
+            } => s
+                .constraints()
+                .map_or(false, |c| c.iter().any(|c| c.per_visible())),
             SubtypeElement::ValueRange {
                 min: _,
                 max: _,
@@ -538,15 +525,14 @@ fn fold_constraint_set(
                 | (ASN1Value::Integer(_), ASN1Value::String(_), true) => Ok(folded_operant),
                 (ASN1Value::Integer(i1), ASN1Value::Integer(i2), _) => {
                     if *i1 != *i2 {
-                        return Err(GrammarError {
+                        Err(GrammarError {
                             details: format!(
                                 "Empty intersection result for {:?} and {:?}",
                                 v1,
                                 ASN1Value::Integer(*i2)
                             ),
                             kind: GrammarErrorType::UnpackingError,
-                        }
-                        .into());
+                        })
                     } else {
                         Ok(Some(SubtypeElement::SingleValue {
                             value: ASN1Value::Integer(*i2),
@@ -567,8 +553,7 @@ fn fold_constraint_set(
                                     ASN1Value::String(s2.clone())
                                 ),
                                 kind: GrammarErrorType::UnpackingError,
-                            }
-                            .into());
+                            });
                         }
                         Ok(Some(SubtypeElement::SingleValue {
                             value: ASN1Value::String(permitted),
@@ -579,8 +564,7 @@ fn fold_constraint_set(
                 (v1, v2, _) => Err(GrammarError {
                     details: format!("Unsupported operation for ASN1Values {:?} and {:?}", v1, v2),
                     kind: GrammarErrorType::UnpackingError,
-                }
-                .into()),
+                }),
             },
             (
                 SubtypeElement::SingleValue {
@@ -603,7 +587,7 @@ fn fold_constraint_set(
                     value,
                     extensible: x1,
                 }),
-            ) => intersect_single_and_range(&value, min.as_ref(), max.as_ref(), *x1, *x2, char_set),
+            ) => intersect_single_and_range(value, min.as_ref(), max.as_ref(), *x1, *x2, char_set),
             (
                 _,
                 Some(SubtypeElement::SingleValue {
@@ -701,8 +685,7 @@ fn fold_constraint_set(
                 _ => Err(GrammarError {
                     details: format!("Unsupported operation for ASN1Values {:?} and {:?}", v1, v2),
                     kind: GrammarErrorType::UnpackingError,
-                }
-                .into()),
+                }),
             },
             (
                 SubtypeElement::ValueRange {
@@ -852,8 +835,7 @@ fn intersect_single_and_range(
                 value, min, max
             ),
             kind: GrammarErrorType::UnpackingError,
-        }
-        .into()),
+        }),
     }
 }
 
@@ -901,8 +883,7 @@ fn union_single_and_range(
                 v, min, max
             ),
             kind: GrammarErrorType::UnpackingError,
-        }
-        .into()),
+        }),
     }
 }
 

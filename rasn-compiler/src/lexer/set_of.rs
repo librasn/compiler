@@ -20,7 +20,7 @@ use super::{
 /// If the match succeeds, the lexer will consume the match and return the remaining string
 /// and a wrapped `SetOf` value representing the ASN1 declaration.
 /// If the match fails, the lexer will not consume the input and will return an error.
-pub fn set_of<'a>(input: &'a str) -> IResult<&'a str, ASN1Type> {
+pub fn set_of(input: &str) -> IResult<&str, ASN1Type> {
     map(
         pair(
             preceded(

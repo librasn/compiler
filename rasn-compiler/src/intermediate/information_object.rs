@@ -220,8 +220,8 @@ impl SyntaxApplication {
                     identifier,
                     ..
                 },
-            )) => Some(&identifier),
-            SyntaxApplication::Literal(l) => Some(&l),
+            )) => Some(identifier),
+            SyntaxApplication::Literal(l) => Some(l),
             _ => None,
         }
     }

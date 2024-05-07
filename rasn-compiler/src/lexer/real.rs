@@ -13,10 +13,10 @@ use super::{
     constraint::constraint,
 };
 
-pub fn real_value<'a>(input: &'a str) -> IResult<&'a str, ASN1Value> {
+pub fn real_value(input: &str) -> IResult<&str, ASN1Value> {
     map(
         skip_ws_and_comments(alt((dot_notation, mbe_notation))),
-        |v| ASN1Value::Real(v),
+        ASN1Value::Real,
     )(input)
 }
 
@@ -28,7 +28,7 @@ pub fn real_value<'a>(input: &'a str) -> IResult<&'a str, ASN1Value> {
 /// If the match succeeds, the lexer will consume the match and return the remaining string
 /// and a wrapped `Real` value representing the ASN1 declaration.
 /// If the match fails, the lexer will not consume the input and will return an error.
-pub fn real<'a>(input: &'a str) -> IResult<&'a str, ASN1Type> {
+pub fn real(input: &str) -> IResult<&str, ASN1Type> {
     map(
         preceded(
             skip_ws_and_comments(tag(REAL)),
@@ -38,7 +38,7 @@ pub fn real<'a>(input: &'a str) -> IResult<&'a str, ASN1Type> {
     )(input)
 }
 
-fn dot_notation<'a>(input: &'a str) -> IResult<&'a str, f64> {
+fn dot_notation(input: &str) -> IResult<&str, f64> {
     map(
         skip_ws_and_comments(separated_pair(i64, char('.'), u64)),
         |(wholes, decimals)| {
@@ -55,7 +55,7 @@ fn dot_notation<'a>(input: &'a str) -> IResult<&'a str, f64> {
     )(input)
 }
 
-fn mbe_notation<'a>(input: &'a str) -> IResult<&'a str, f64> {
+fn mbe_notation(input: &str) -> IResult<&str, f64> {
     map(
         in_braces(tuple((
             delimited(

@@ -13,7 +13,7 @@ use super::{common::*, constraint::constraint, util::hex_to_bools};
 
 /// Parses a BIT STRING value. Currently, the lexer only supports parsing binary and
 /// hexadecimal values, but not the named bit notation in curly braces.
-pub fn bit_string_value<'a>(input: &'a str) -> IResult<&'a str, ASN1Value> {
+pub fn bit_string_value(input: &str) -> IResult<&str, ASN1Value> {
     map(
         skip_ws_and_comments(pair(
             delimited(
@@ -28,7 +28,7 @@ pub fn bit_string_value<'a>(input: &'a str) -> IResult<&'a str, ASN1Value> {
         )),
         |(value, encoding)| {
             if encoding == 'B' {
-                ASN1Value::BitString(value.chars().into_iter().map(|c| c == '1').collect())
+                ASN1Value::BitString(value.chars().map(|c| c == '1').collect())
             } else {
                 ASN1Value::BitString(value.chars().flat_map(hex_to_bools).collect())
             }
@@ -44,7 +44,7 @@ pub fn bit_string_value<'a>(input: &'a str) -> IResult<&'a str, ASN1Value> {
 /// If the match succeeds, the lexer will consume the match and return the remaining string
 /// and a wrapped `BitString` value representing the ASN1 declaration.
 /// If the match fails, the lexer will not consume the input and will return an error.
-pub fn bit_string<'a>(input: &'a str) -> IResult<&'a str, ASN1Type> {
+pub fn bit_string(input: &str) -> IResult<&str, ASN1Type> {
     map(
         preceded(
             skip_ws_and_comments(tag(BIT_STRING)),

@@ -735,7 +735,7 @@ pub enum ASN1Type {
 }
 
 impl ASN1Type {
-    pub fn as_str<'a>(&'a self) -> Cow<'a, str> {
+    pub fn as_str(&self) -> Cow<'_, str> {
         match self {
             ASN1Type::Null => Cow::Borrowed(NULL),
             ASN1Type::Boolean(_) => Cow::Borrowed(BOOLEAN),
@@ -1139,7 +1139,7 @@ impl StructLikeFieldValue {
 
     pub fn value(&self) -> &ASN1Value {
         match self {
-            StructLikeFieldValue::Explicit(v) | StructLikeFieldValue::Implicit(v) => &*v,
+            StructLikeFieldValue::Explicit(v) | StructLikeFieldValue::Implicit(v) => v,
         }
     }
 
@@ -1251,7 +1251,7 @@ impl From<(Option<&str>, &str, Option<Vec<Constraint>>)> for DeclarationElsewher
         DeclarationElsewhere {
             parent: value.0.map(ToString::to_string),
             identifier: value.1.into(),
-            constraints: value.2.unwrap_or(vec![]),
+            constraints: value.2.unwrap_or_default(),
         }
     }
 }

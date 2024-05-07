@@ -32,24 +32,24 @@ use super::{
 /// If the match succeeds, the lexer will consume the match and return the remaining string
 /// and an `ObjectIdentifier` value representing the ASN1 declaration.
 /// If the match fails, the lexer will not consume the input and will return an error.
-pub fn object_identifier_value<'a>(input: &'a str) -> IResult<&'a str, ObjectIdentifierValue> {
+pub fn object_identifier_value(input: &str) -> IResult<&str, ObjectIdentifierValue> {
     into(skip_ws_and_comments(preceded(
         opt(tag(OBJECT_IDENTIFIER)),
         in_braces(many1(skip_ws(object_identifier_arc))),
     )))(input)
 }
 
-pub fn object_identifier<'a>(input: &'a str) -> IResult<&'a str, ASN1Type> {
+pub fn object_identifier(input: &str) -> IResult<&str, ASN1Type> {
     map(
         into(preceded(
             skip_ws_and_comments(tag(OBJECT_IDENTIFIER)),
             opt(skip_ws_and_comments(constraint)),
         )),
-        |oid| ASN1Type::ObjectIdentifier(oid),
+        ASN1Type::ObjectIdentifier,
     )(input)
 }
 
-fn object_identifier_arc<'a>(input: &'a str) -> IResult<&'a str, ObjectIdentifierArc> {
+fn object_identifier_arc(input: &str) -> IResult<&str, ObjectIdentifierArc> {
     skip_ws(alt((
         numeric_id,
         into(pair(value_identifier, skip_ws(in_parentheses(u128)))),
@@ -57,7 +57,7 @@ fn object_identifier_arc<'a>(input: &'a str) -> IResult<&'a str, ObjectIdentifie
     )))(input)
 }
 
-fn numeric_id<'a>(input: &'a str) -> IResult<&'a str, ObjectIdentifierArc> {
+fn numeric_id(input: &str) -> IResult<&str, ObjectIdentifierArc> {
     map(u128, |i| i.into())(input)
 }
 

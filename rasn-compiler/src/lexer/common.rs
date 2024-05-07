@@ -29,11 +29,11 @@ use super::{
 /// _The lexical item "comment" can have two forms:_
 ///    * _One-line comments which begin with "--" as defined in 12.6.3;_
 ///    * _Multiple-line comments which begin with "/*" as defined in 12.6.4._
-pub fn comment<'a>(input: &'a str) -> IResult<&'a str, &'a str> {
+pub fn comment(input: &str) -> IResult<&str, &str> {
     skip_ws(alt((block_comment, line_comment)))(input)
 }
 
-pub fn line_comment<'a>(input: &'a str) -> IResult<&'a str, &'a str> {
+pub fn line_comment(input: &str) -> IResult<&str, &str> {
     delimited(
         tag(LINE_COMMENT),
         take_until_or("\n", LINE_COMMENT),
@@ -41,7 +41,7 @@ pub fn line_comment<'a>(input: &'a str) -> IResult<&'a str, &'a str> {
     )(input)
 }
 
-pub fn block_comment<'a>(input: &'a str) -> IResult<&'a str, &'a str> {
+pub fn block_comment(input: &str) -> IResult<&str, &str> {
     delimited(
         tag(BLOCK_COMMENT_START),
         take_until_unbalanced(BLOCK_COMMENT_START, BLOCK_COMMENT_END),
@@ -60,14 +60,14 @@ pub fn block_comment<'a>(input: &'a str) -> IResult<&'a str, &'a str> {
 /// _12.3 An "identifier" shall consist of an arbitrary number (one or more) of letters, digits,
 /// and hyphens. The initial character shall be a lower-case letter. A hyphen shall not be the
 /// last character. A hyphen shall not be immediately followed by another hyphen._
-pub fn identifier<'a>(input: &'a str) -> IResult<&'a str, &'a str> {
+pub fn identifier(input: &str) -> IResult<&str, &str> {
     skip_ws_and_comments(recognize(pair(
         alpha1,
         many0(alt((preceded(char('-'), alphanumeric1), alphanumeric1))),
     )))(input)
 }
 
-pub fn title_case_identifier<'a>(input: &'a str) -> IResult<&'a str, &'a str> {
+pub fn title_case_identifier(input: &str) -> IResult<&str, &str> {
     map_res(
         recognize(pair(
             one_of("ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890"),
@@ -76,7 +76,7 @@ pub fn title_case_identifier<'a>(input: &'a str) -> IResult<&'a str, &'a str> {
         |identifier| {
             if ASN1_KEYWORDS.contains(&identifier) {
                 Err(nom::Err::Error(Error {
-                    input: input,
+                    input,
                     code: nom::error::ErrorKind::Tag,
                 }))
             } else {
@@ -86,7 +86,7 @@ pub fn title_case_identifier<'a>(input: &'a str) -> IResult<&'a str, &'a str> {
     )(input)
 }
 
-pub fn value_identifier<'a>(input: &'a str) -> IResult<&'a str, &'a str> {
+pub fn value_identifier(input: &str) -> IResult<&str, &str> {
     recognize(pair(
         one_of("abcdefghijklmnopqrstuvwxyz"),
         many0(alt((preceded(char('-'), alphanumeric1), alphanumeric1))),
@@ -144,7 +144,7 @@ pub fn opt_parentheses<'a, F, O>(inner: F) -> impl FnMut(&'a str) -> IResult<&'a
 where
     F: FnMut(&'a str) -> IResult<&'a str, O>,
 {
-    opt_delimited::<char, O, char, Error<&str>, _, _, _>(
+    opt_delimited::<char, O, char, _, _, _>(
         skip_ws_and_comments(char(LEFT_BRACKET)),
         skip_ws_and_comments(inner),
         skip_ws_and_comments(char(RIGHT_BRACKET)),
@@ -162,11 +162,11 @@ where
     )
 }
 
-pub fn all_value<'a>(input: &'a str) -> IResult<&'a str, ASN1Value> {
+pub fn all_value(input: &str) -> IResult<&str, ASN1Value> {
     value(ASN1Value::All, skip_ws_and_comments(tag(ALL)))(input)
 }
 
-pub fn asn_tag<'a>(input: &'a str) -> IResult<&'a str, AsnTag> {
+pub fn asn_tag(input: &str) -> IResult<&str, AsnTag> {
     into(pair(
         in_brackets(pair(
             opt(skip_ws_and_comments(alt((
@@ -183,19 +183,19 @@ pub fn asn_tag<'a>(input: &'a str) -> IResult<&'a str, AsnTag> {
     ))(input)
 }
 
-pub fn range_seperator<'a>(input: &'a str) -> IResult<&'a str, RangeSeperator> {
+pub fn range_seperator(input: &str) -> IResult<&str, RangeSeperator> {
     skip_ws_and_comments(tag(RANGE))(input).map(|(remaining, _)| (remaining, RangeSeperator()))
 }
 
-pub fn extension_marker<'a>(input: &'a str) -> IResult<&'a str, ExtensionMarker> {
+pub fn extension_marker(input: &str) -> IResult<&str, ExtensionMarker> {
     skip_ws_and_comments(tag(ELLIPSIS))(input).map(|(remaining, _)| (remaining, ExtensionMarker()))
 }
 
-pub fn assignment<'a>(input: &'a str) -> IResult<&'a str, &'a str> {
+pub fn assignment(input: &str) -> IResult<&str, &str> {
     skip_ws_and_comments(tag(ASSIGN))(input)
 }
 
-pub fn distinguished_values<'a>(input: &'a str) -> IResult<&'a str, Vec<DistinguishedValue>> {
+pub fn distinguished_values(input: &str) -> IResult<&str, Vec<DistinguishedValue>> {
     delimited(
         skip_ws_and_comments(char(LEFT_BRACE)),
         many0(terminated(
@@ -206,26 +206,26 @@ pub fn distinguished_values<'a>(input: &'a str) -> IResult<&'a str, Vec<Distingu
     )(input)
 }
 
-pub fn distinguished_val<'a>(input: &'a str) -> IResult<&'a str, DistinguishedValue> {
+pub fn distinguished_val(input: &str) -> IResult<&str, DistinguishedValue> {
     map_into(pair(skip_ws_and_comments(identifier), in_parentheses(i128)))(input)
 }
 
-pub fn optional_comma<'a>(input: &'a str) -> IResult<&'a str, Option<char>> {
+pub fn optional_comma(input: &str) -> IResult<&str, Option<char>> {
     skip_ws_and_comments(opt(char(COMMA)))(input)
 }
 
-pub fn optional_marker<'a>(input: &'a str) -> IResult<&'a str, Option<OptionalMarker>> {
+pub fn optional_marker(input: &str) -> IResult<&str, Option<OptionalMarker>> {
     opt(into(skip_ws_and_comments(tag(OPTIONAL))))(input)
 }
 
-pub fn default<'a>(input: &'a str) -> IResult<&'a str, Option<ASN1Value>> {
+pub fn default(input: &str) -> IResult<&str, Option<ASN1Value>> {
     opt(preceded(
         skip_ws_and_comments(tag(DEFAULT)),
         skip_ws_and_comments(asn1_value),
     ))(input)
 }
 
-pub fn uppercase_identifier<'a>(input: &'a str) -> IResult<&'a str, &'a str> {
+pub fn uppercase_identifier(input: &str) -> IResult<&str, &str> {
     alt((
         recognize(pair(
             one_of("ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"),

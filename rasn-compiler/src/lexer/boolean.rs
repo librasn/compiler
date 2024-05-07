@@ -10,7 +10,7 @@ use crate::intermediate::{ASN1Type, ASN1Value, BOOLEAN, FALSE, TRUE};
 
 use super::{common::skip_ws_and_comments, constraint::constraint};
 
-pub fn boolean_value<'a>(input: &'a str) -> IResult<&'a str, ASN1Value> {
+pub fn boolean_value(input: &str) -> IResult<&str, ASN1Value> {
     alt((
         value(ASN1Value::Boolean(true), skip_ws_and_comments(tag(TRUE))),
         value(ASN1Value::Boolean(false), skip_ws_and_comments(tag(FALSE))),
@@ -25,13 +25,13 @@ pub fn boolean_value<'a>(input: &'a str) -> IResult<&'a str, ASN1Value> {
 /// If the match succeeds, the lexer will consume the match and return the remaining string
 /// and an `ASN1Type::Boolean` value representing the ASN1 declaration.
 /// If the match fails, the lexer will not consume the input and will return an error.
-pub fn boolean<'a>(input: &'a str) -> IResult<&'a str, ASN1Type> {
+pub fn boolean(input: &str) -> IResult<&str, ASN1Type> {
     map(
         into(skip_ws_and_comments(preceded(
             tag(BOOLEAN),
             skip_ws_and_comments(opt(constraint)),
         ))),
-        |b| ASN1Type::Boolean(b),
+        ASN1Type::Boolean,
     )(input)
 }
 

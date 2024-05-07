@@ -244,7 +244,7 @@ impl Rasn {
             } else {
                 TokenStream::new()
             };
-            let identifier_annotation = if name.to_string() != e.name {
+            let identifier_annotation = if name != e.name {
                 let name = &e.name;
                 quote!(identifier = #name)
             } else {
@@ -731,7 +731,7 @@ impl Rasn {
                     }
                 }
                 Ok(nester(
-                    &self,
+                    self,
                     self.value_to_tokens(value, type_name)?,
                     supertypes.clone(),
                 ))
@@ -958,7 +958,7 @@ impl Rasn {
         }
     }
 
-    const RUST_KEYWORDS: [&str; 38] = [
+    const RUST_KEYWORDS: [&'static str; 38] = [
         "as", "async", "await", "break", "const", "continue", "crate", "dyn", "else", "enum",
         "extern", "false", "fn", "for", "if", "impl", "in", "let", "loop", "match", "mod", "move",
         "mut", "pub", "ref", "return", "self", "Self", "static", "struct", "super", "trait",

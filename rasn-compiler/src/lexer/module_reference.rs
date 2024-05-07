@@ -15,7 +15,7 @@ use super::{
     object_identifier::object_identifier_value,
 };
 
-pub fn module_reference<'a>(input: &'a str) -> IResult<&'a str, ModuleReference> {
+pub fn module_reference(input: &str) -> IResult<&str, ModuleReference> {
     skip_ws_and_comments(into(tuple((
         identifier,
         opt(skip_ws(definitive_identification)),
@@ -29,11 +29,11 @@ pub fn module_reference<'a>(input: &'a str) -> IResult<&'a str, ModuleReference>
     ))))(input)
 }
 
-fn definitive_identification<'a>(input: &'a str) -> IResult<&'a str, DefinitiveIdentifier> {
+fn definitive_identification(input: &str) -> IResult<&str, DefinitiveIdentifier> {
     into(pair(object_identifier_value, opt(iri_value)))(input)
 }
 
-fn iri_value<'a>(input: &'a str) -> IResult<&'a str, &'a str> {
+fn iri_value(input: &str) -> IResult<&str, &str> {
     skip_ws_and_comments(delimited(
         tag("\"/"),
         recognize(separated_list1(char('/'), identifier)),
@@ -41,7 +41,7 @@ fn iri_value<'a>(input: &'a str) -> IResult<&'a str, &'a str> {
     ))(input)
 }
 
-fn exports<'a>(input: &'a str) -> IResult<&'a str, Exports> {
+fn exports(input: &str) -> IResult<&str, Exports> {
     skip_ws_and_comments(delimited(
         tag(EXPORTS),
         skip_ws(alt((
@@ -55,7 +55,7 @@ fn exports<'a>(input: &'a str) -> IResult<&'a str, Exports> {
     ))(input)
 }
 
-fn imports<'a>(input: &'a str) -> IResult<&'a str, Vec<Import>> {
+fn imports(input: &str) -> IResult<&str, Vec<Import>> {
     skip_ws_and_comments(delimited(
         tag(IMPORTS),
         skip_ws_and_comments(many0(import)),
@@ -63,7 +63,7 @@ fn imports<'a>(input: &'a str) -> IResult<&'a str, Vec<Import>> {
     ))(input)
 }
 
-fn parameterized_identifier<'a>(input: &'a str) -> IResult<&'a str, &'a str> {
+fn parameterized_identifier(input: &str) -> IResult<&str, &str> {
     terminated(identifier, tag("{}"))(input)
 }
 
@@ -115,7 +115,7 @@ fn global_module_reference(input: &str) -> IResult<&str, GlobalModuleReference> 
     )))(input)
 }
 
-fn import<'a>(input: &'a str) -> IResult<&'a str, Import> {
+fn import(input: &str) -> IResult<&str, Import> {
     into(skip_ws_and_comments(pair(
         separated_list1(
             skip_ws(char(COMMA)),
@@ -134,10 +134,10 @@ fn import<'a>(input: &'a str) -> IResult<&'a str, Import> {
     )))(input)
 }
 
-fn environments<'a>(
-    input: &'a str,
+fn environments(
+    input: &str,
 ) -> IResult<
-    &'a str,
+    &str,
     (
         Option<EncodingReferenceDefault>,
         TaggingEnvironment,

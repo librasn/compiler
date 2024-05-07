@@ -15,20 +15,20 @@ use crate::intermediate::{
 
 use super::{common::skip_ws_and_comments, constraint::constraint};
 
-pub fn time_value<'a>(input: &'a str) -> IResult<&'a str, ASN1Value> {
+pub fn time_value(input: &str) -> IResult<&str, ASN1Value> {
     map(skip_ws_and_comments(t_string), |t_string| {
         ASN1Value::Time(t_string.to_owned())
     })(input)
 }
 
-pub fn time<'a>(input: &'a str) -> IResult<&'a str, ASN1Type> {
+pub fn time(input: &str) -> IResult<&str, ASN1Type> {
     map(
         skip_ws_and_comments(preceded(tag(TIME), opt(constraint))),
         |t| ASN1Type::Time(t.into()),
     )(input)
 }
 
-pub fn generalized_time<'a>(input: &'a str) -> IResult<&'a str, ASN1Type> {
+pub fn generalized_time(input: &str) -> IResult<&str, ASN1Type> {
     map(
         skip_ws_and_comments(preceded(tag(GENERALIZED_TIME), opt(constraint))),
         |cnst| {
@@ -39,7 +39,7 @@ pub fn generalized_time<'a>(input: &'a str) -> IResult<&'a str, ASN1Type> {
     )(input)
 }
 
-pub fn utc_time<'a>(input: &'a str) -> IResult<&'a str, ASN1Type> {
+pub fn utc_time(input: &str) -> IResult<&str, ASN1Type> {
     map(
         skip_ws_and_comments(preceded(tag(UTC_TIME), opt(constraint))),
         |cnst| {
@@ -59,7 +59,7 @@ const NON_NUMERIC_TIME_CHARS: [char; 17] = [
 /// _A "tstring" shall consist of one or more of the characters:_
 /// _0 1 2 3 4 5 6 7 8 9 + - : . , / C D H M R P S T W Y Z_
 /// _preceded and followed by a QUOTATION MARK (34) character (")._
-fn t_string<'a>(input: &'a str) -> IResult<&'a str, &'a str> {
+fn t_string(input: &str) -> IResult<&str, &str> {
     delimited(
         char('"'),
         map_res(
@@ -71,7 +71,7 @@ fn t_string<'a>(input: &'a str) -> IResult<&'a str, &'a str> {
                     Ok(tstring)
                 } else {
                     Err(nom::Err::Error(Error {
-                        input: input,
+                        input,
                         code: nom::error::ErrorKind::Satisfy,
                     }))
                 }
