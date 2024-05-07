@@ -1,28 +1,9 @@
-use proc_macro2::TokenStream;
-use quote::{format_ident, quote, ToTokens, TokenStreamExt};
-use std::collections::BTreeMap;
-
-use crate::{
-    generator::Backend,
-    intermediate::{
-        constraints::Constraint,
-        information_object::{
-            ASN1Information, ClassLink, InformationObjectClass, InformationObjectFields,
-            ObjectSetValue, ToplevelInformationDefinition,
-        },
-        ASN1Type, ASN1Value, ToplevelDefinition, ToplevelTypeDefinition, ToplevelValueDefinition,
-        BIT_STRING, BOOLEAN, GENERALIZED_TIME, INTEGER, NULL, OCTET_STRING, UTC_TIME,
-    },
+use crate::intermediate::{
+    ASN1Type, ToplevelDefinition, ToplevelTypeDefinition, ToplevelValueDefinition,
 };
 
-use super::{
-    information_object::InformationObjectClassField, template::*, utils::*, Typescript, BMP_STRING,
-    GENERAL_STRING, IA5_STRING, NUMERIC_STRING, OBJECT_IDENTIFIER, PRINTABLE_STRING, SEQUENCE_OF,
-    SET_OF, UTF8_STRING, VISIBLE_STRING,
-};
+use super::{template::*, utils::*, Typescript};
 use crate::generator::error::{GeneratorError, GeneratorErrorType};
-
-pub(crate) const INNER_ARRAY_LIKE_PREFIX: &str = "Anonymous_";
 
 impl Typescript {
     pub(crate) fn generate_typealias(
