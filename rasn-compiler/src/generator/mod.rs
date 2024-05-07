@@ -10,12 +10,18 @@ use self::error::GeneratorError;
 
 pub mod error;
 pub mod rasn;
+pub mod typescript;
 
 /// Implementors of the `Backend` trait can be used
 /// as a backend to the compiler in order to create bindings
 /// for other frameworks and languages than the default backend.
 pub trait Backend: Sized + Default {
     type Config: Sized + Default + Debug;
+
+    /// File extension that should be used for output file containing the generated bindings.
+    /// For example: `.ts` for Typescript, `.rs` for Rasn bindings.
+    const FILE_EXTENSION: &'static str;
+
     /// generates bindings for an ASN.1 module
     /// ### Params
     /// - `top_level_declarations` vector of [TopLevelDeclaration]s that are defined in the ASN.1 module

@@ -19,6 +19,8 @@
 //!
 //!   impl Backend for CustomBackend {
 //!     type Config = ();
+//! 
+//!     const FILE_EXTENSION: &'static str = ".ext";
 //!
 //!     fn generate_module(
 //!          &self,
@@ -98,6 +100,7 @@ pub mod prelude {
     pub use crate::generator::{
         error::*,
         rasn::{Config as RasnConfig, Rasn as RasnBackend},
+        typescript::{Config as TsConfig, Typescript as TypescriptBackend},
         Backend, GeneratedModule,
     };
 
@@ -562,7 +565,11 @@ impl<B: Backend> Compiler<B, CompilerReady> {
             self.state
                 .output_path
                 .is_dir()
-                .then(|| self.state.output_path.join("generated.rs"))
+                .then(|| {
+                    self.state
+                        .output_path
+                        .join(format!("generated{}", B::FILE_EXTENSION))
+                })
                 .unwrap_or(self.state.output_path),
             result.generated,
         )?;
