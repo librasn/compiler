@@ -51,6 +51,8 @@ pub struct Config {
 impl Backend for Rasn {
     type Config = Config;
 
+    const FILE_EXTENSION: &'static str = ".rs";
+
     fn from_config(config: Self::Config) -> Self {
         Self { config }
     }
