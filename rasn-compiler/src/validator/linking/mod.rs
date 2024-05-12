@@ -25,7 +25,7 @@ use self::{
     utils::{built_in_type, find_tld_or_enum_value_by_name, octet_string_to_bit_string},
 };
 
-use super::{error::ValidatorError, Constraint, Parameter, TableConstraint};
+use super::{Constraint, Parameter, TableConstraint};
 
 macro_rules! error {
     ($kind:ident, $($arg:tt)*) => {
