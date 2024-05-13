@@ -1,3 +1,4 @@
+#[cfg(test)]
 use internal_macros::EnumDebug;
 use std::error::Error;
 
@@ -22,7 +23,9 @@ pub struct RangeSeperator();
 #[derive(Debug, Clone, PartialEq)]
 pub struct ExtensionMarker();
 
-#[derive(EnumDebug, Clone, PartialEq)]
+#[cfg_attr(test, derive(EnumDebug))]
+#[cfg_attr(not(test), derive(Debug))]
+#[derive(Clone, PartialEq)]
 pub enum Constraint {
     SubtypeConstraint(ElementSet),
     TableConstraint(TableConstraint),
@@ -113,7 +116,9 @@ impl Constraint {
     }
 }
 
-#[derive(EnumDebug, Clone, PartialEq)]
+#[cfg_attr(test, derive(EnumDebug))]
+#[cfg_attr(not(test), derive(Debug))]
+#[derive(Clone, PartialEq)]
 pub enum ContentConstraint {
     Containing(ASN1Type),
     EncodedBy(ASN1Value),
@@ -144,7 +149,9 @@ impl From<(ASN1Type, ASN1Value)> for ContentConstraint {
     }
 }
 
-#[derive(EnumDebug, Clone, PartialEq)]
+#[cfg_attr(test, derive(EnumDebug))]
+#[cfg_attr(not(test), derive(Debug))]
+#[derive(Clone, PartialEq)]
 pub enum Parameter {
     ValueParameter(ASN1Value),
     TypeParameter(ASN1Type),
@@ -152,7 +159,9 @@ pub enum Parameter {
     ObjectSetParameter(ObjectSet),
 }
 
-#[derive(EnumDebug, Clone, PartialEq)]
+#[cfg_attr(test, derive(EnumDebug))]
+#[cfg_attr(not(test), derive(Debug))]
+#[derive(Clone, PartialEq)]
 pub enum SetOperator {
     Intersection,
     Union,
@@ -192,7 +201,9 @@ impl
     }
 }
 
-#[derive(EnumDebug, Clone, PartialEq)]
+#[cfg_attr(test, derive(EnumDebug))]
+#[cfg_attr(not(test), derive(Debug))]
+#[derive(Clone, PartialEq)]
 pub enum ComponentPresence {
     Absent,
     Present,
@@ -225,7 +236,7 @@ pub struct ValueConstraint {
     pub extensible: bool,
 }
 
-impl<'a> From<ASN1Value> for ValueConstraint {
+impl From<ASN1Value> for ValueConstraint {
     fn from(value: ASN1Value) -> Self {
         Self {
             min_value: Some(value.clone()),
@@ -235,7 +246,7 @@ impl<'a> From<ASN1Value> for ValueConstraint {
     }
 }
 
-impl<'a> From<(ASN1Value, RangeSeperator, ASN1Value)> for ValueConstraint {
+impl From<(ASN1Value, RangeSeperator, ASN1Value)> for ValueConstraint {
     fn from(value: (ASN1Value, RangeSeperator, ASN1Value)) -> Self {
         Self {
             min_value: Some(value.0),
@@ -245,7 +256,7 @@ impl<'a> From<(ASN1Value, RangeSeperator, ASN1Value)> for ValueConstraint {
     }
 }
 
-impl<'a> From<(ASN1Value, ExtensionMarker)> for ValueConstraint {
+impl From<(ASN1Value, ExtensionMarker)> for ValueConstraint {
     fn from(value: (ASN1Value, ExtensionMarker)) -> Self {
         Self {
             min_value: Some(value.0.clone()),
@@ -255,7 +266,7 @@ impl<'a> From<(ASN1Value, ExtensionMarker)> for ValueConstraint {
     }
 }
 
-impl<'a> From<(ASN1Value, RangeSeperator, ASN1Value, ExtensionMarker)> for ValueConstraint {
+impl From<(ASN1Value, RangeSeperator, ASN1Value, ExtensionMarker)> for ValueConstraint {
     fn from(value: (ASN1Value, RangeSeperator, ASN1Value, ExtensionMarker)) -> Self {
         Self {
             min_value: Some(value.0),
@@ -345,7 +356,9 @@ impl From<Vec<&str>> for PropertySettings {
     }
 }
 
-#[derive(EnumDebug, Clone, PartialEq)]
+#[cfg_attr(test, derive(EnumDebug))]
+#[cfg_attr(not(test), derive(Debug))]
+#[derive(Clone, PartialEq)]
 pub enum PropertyAndSettingsPair {
     Basic(BasicSettings),
     Date(DateSettings),
@@ -391,7 +404,9 @@ pub trait PropertySetting {
         Self: Sized;
 }
 
-#[derive(EnumDebug, Clone, PartialEq)]
+#[cfg_attr(test, derive(EnumDebug))]
+#[cfg_attr(not(test), derive(Debug))]
+#[derive(Clone, PartialEq)]
 pub enum BasicSettings {
     Date,
     Time,
@@ -454,7 +469,9 @@ impl PropertySetting for DateSettings {
     }
 }
 
-#[derive(EnumDebug, Clone, PartialEq)]
+#[cfg_attr(test, derive(EnumDebug))]
+#[cfg_attr(not(test), derive(Debug))]
+#[derive(Clone, PartialEq)]
 pub enum DateSettings {
     Century,
     Year,
@@ -488,7 +505,9 @@ impl PropertySetting for YearSettings {
     }
 }
 
-#[derive(EnumDebug, Clone, PartialEq)]
+#[cfg_attr(test, derive(EnumDebug))]
+#[cfg_attr(not(test), derive(Debug))]
+#[derive(Clone, PartialEq)]
 pub enum YearSettings {
     Basic,
     Proleptic,
@@ -529,7 +548,9 @@ impl PropertySetting for TimeSettings {
     }
 }
 
-#[derive(EnumDebug, Clone, PartialEq)]
+#[cfg_attr(test, derive(EnumDebug))]
+#[cfg_attr(not(test), derive(Debug))]
+#[derive(Clone, PartialEq)]
 pub enum TimeSettings {
     Hour,
     HourMinute,
@@ -560,7 +581,9 @@ impl PropertySetting for LocalOrUtcSettings {
     }
 }
 
-#[derive(EnumDebug, Clone, PartialEq)]
+#[cfg_attr(test, derive(EnumDebug))]
+#[cfg_attr(not(test), derive(Debug))]
+#[derive(Clone, PartialEq)]
 pub enum LocalOrUtcSettings {
     Local,
     Utc,
@@ -590,7 +613,9 @@ impl PropertySetting for IntervalTypeSettings {
     }
 }
 
-#[derive(EnumDebug, Clone, PartialEq)]
+#[cfg_attr(test, derive(EnumDebug))]
+#[cfg_attr(not(test), derive(Debug))]
+#[derive(Clone, PartialEq)]
 pub enum IntervalTypeSettings {
     StartAndEnd,
     Duration,
@@ -619,7 +644,9 @@ impl PropertySetting for StartEndPointSettings {
     }
 }
 
-#[derive(EnumDebug, Clone, PartialEq)]
+#[cfg_attr(test, derive(EnumDebug))]
+#[cfg_attr(not(test), derive(Debug))]
+#[derive(Clone, PartialEq)]
 pub enum StartEndPointSettings {
     Date,
     Time,
@@ -645,7 +672,9 @@ impl PropertySetting for RecurrenceSettings {
     }
 }
 
-#[derive(EnumDebug, Clone, PartialEq)]
+#[cfg_attr(test, derive(EnumDebug))]
+#[cfg_attr(not(test), derive(Debug))]
+#[derive(Clone, PartialEq)]
 pub enum RecurrenceSettings {
     Unlimited,
     Recurrences(usize),
@@ -670,13 +699,17 @@ impl PropertySetting for MidnightSettings {
     }
 }
 
-#[derive(EnumDebug, Clone, PartialEq)]
+#[cfg_attr(test, derive(EnumDebug))]
+#[cfg_attr(not(test), derive(Debug))]
+#[derive(Clone, PartialEq)]
 pub enum MidnightSettings {
     StartOfDay,
     EndOfDay,
 }
 
-#[derive(EnumDebug, Clone, PartialEq)]
+#[cfg_attr(test, derive(EnumDebug))]
+#[cfg_attr(not(test), derive(Debug))]
+#[derive(Clone, PartialEq)]
 pub enum SubtypeElement {
     SingleValue {
         value: ASN1Value,
@@ -763,7 +796,9 @@ impl From<(ElementOrSetOperation, Option<ExtensionMarker>)> for ElementSet {
     }
 }
 
-#[derive(EnumDebug, Clone, PartialEq)]
+#[cfg_attr(test, derive(EnumDebug))]
+#[cfg_attr(not(test), derive(Debug))]
+#[derive(Clone, PartialEq)]
 pub enum ElementOrSetOperation {
     Element(SubtypeElement),
     SetOperation(SetOperation),

@@ -25,7 +25,9 @@ impl From<(&str, ASN1Information, &str)> for ToplevelInformationDefinition {
     }
 }
 
-#[derive(EnumDebug, Clone, PartialEq)]
+#[cfg_attr(test, derive(EnumDebug))]
+#[cfg_attr(not(test), derive(Debug))]
+#[derive(Clone, PartialEq)]
 pub enum ClassLink {
     ByName(String),
     ByReference(InformationObjectClass),
@@ -112,20 +114,26 @@ impl
 }
 
 /// The possible types of an ASN1 information object.
-#[derive(EnumDebug, Clone, PartialEq)]
+#[cfg_attr(test, derive(EnumDebug))]
+#[cfg_attr(not(test), derive(Debug))]
+#[derive(Clone, PartialEq)]
 pub enum ASN1Information {
     ObjectClass(InformationObjectClass),
     ObjectSet(ObjectSet),
     Object(InformationObject),
 }
 
-#[derive(EnumDebug, Clone, PartialEq)]
+#[cfg_attr(test, derive(EnumDebug))]
+#[cfg_attr(not(test), derive(Debug))]
+#[derive(Clone, PartialEq)]
 pub enum SyntaxExpression {
     Required(SyntaxToken),
     Optional(Vec<SyntaxExpression>),
 }
 
-#[derive(EnumDebug, Clone, PartialEq)]
+#[cfg_attr(test, derive(EnumDebug))]
+#[cfg_attr(not(test), derive(Debug))]
+#[derive(Clone, PartialEq)]
 pub enum SyntaxApplication {
     ObjectSetDeclaration(ObjectSet),
     ValueReference(ASN1Value),
@@ -227,7 +235,9 @@ impl SyntaxApplication {
     }
 }
 
-#[derive(EnumDebug, Clone, PartialEq)]
+#[cfg_attr(test, derive(EnumDebug))]
+#[cfg_attr(not(test), derive(Debug))]
+#[derive(Clone, PartialEq)]
 pub enum SyntaxToken {
     Literal(String),
     Comma,
@@ -367,7 +377,9 @@ impl
     }
 }
 
-#[derive(EnumDebug, Clone, PartialEq)]
+#[cfg_attr(test, derive(EnumDebug))]
+#[cfg_attr(not(test), derive(Debug))]
+#[derive(Clone, PartialEq)]
 pub enum ObjectFieldIdentifier {
     SingleValue(String),
     MultipleValue(String),
@@ -388,13 +400,17 @@ pub struct InformationObject {
     pub fields: InformationObjectFields,
 }
 
-#[derive(EnumDebug, Clone, PartialEq)]
+#[cfg_attr(test, derive(EnumDebug))]
+#[cfg_attr(not(test), derive(Debug))]
+#[derive(Clone, PartialEq)]
 pub enum InformationObjectFields {
     DefaultSyntax(Vec<InformationObjectField>),
     CustomSyntax(Vec<SyntaxApplication>),
 }
 
-#[derive(EnumDebug, Clone, PartialEq)]
+#[cfg_attr(test, derive(EnumDebug))]
+#[cfg_attr(not(test), derive(Debug))]
+#[derive(Clone, PartialEq)]
 pub enum ObjectSetValue {
     Reference(String),
     Inline(InformationObjectFields),
@@ -441,7 +457,9 @@ impl
     }
 }
 
-#[derive(EnumDebug, Clone, PartialEq)]
+#[cfg_attr(test, derive(EnumDebug))]
+#[cfg_attr(not(test), derive(Debug))]
+#[derive(Clone, PartialEq)]
 pub enum InformationObjectField {
     TypeField(TypeField),
     FixedValueField(FixedValueField),

@@ -1,5 +1,6 @@
 //! `types` contains representations for ASN.1's basic types, such as `BOOLEAN`s
 //! or `SEQUENCE`s.
+#[cfg(test)]
 use internal_macros::EnumDebug;
 use std::vec;
 
@@ -383,7 +384,9 @@ impl
 /// it groups the parsed `SequenceComponent` items into the `members`
 /// and `components_of` fields of the [SequenceOrSet] struct. The linker
 /// will subsequently try to resolve the `components_of` identifiers.
-#[derive(EnumDebug, Clone, PartialEq)]
+#[cfg_attr(test, derive(EnumDebug))]
+#[cfg_attr(not(test), derive(Debug))]
+#[derive(Clone, PartialEq)]
 pub enum SequenceComponent {
     Member(SequenceOrSetMember),
     ComponentsOf(String),

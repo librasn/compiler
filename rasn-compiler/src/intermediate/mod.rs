@@ -20,6 +20,7 @@ use crate::common::INTERNAL_IO_FIELD_REF_TYPE_NAME_PREFIX;
 use constraints::Constraint;
 use error::{GrammarError, GrammarErrorType};
 use information_object::{InformationObjectFieldReference, ToplevelInformationDefinition};
+#[cfg(test)]
 use internal_macros::EnumDebug;
 use parameterization::Parameterization;
 use quote::{quote, ToTokens, TokenStreamExt};
@@ -241,7 +242,9 @@ impl From<&str> for EncodingReferenceDefault {
     }
 }
 
-#[derive(EnumDebug, Clone, Copy, PartialEq)]
+#[cfg_attr(test, derive(EnumDebug))]
+#[cfg_attr(not(test), derive(Debug))]
+#[derive(Clone, Copy, PartialEq)]
 pub enum TaggingEnvironment {
     Automatic,
     Implicit,
@@ -261,7 +264,9 @@ impl Add<&TaggingEnvironment> for &TaggingEnvironment {
 
 /// Represents the extensibility environment as specified in
 /// Rec. ITU-T X.680 (02/2021) § 13.4
-#[derive(EnumDebug, Clone, PartialEq)]
+#[cfg_attr(test, derive(EnumDebug))]
+#[cfg_attr(not(test), derive(Debug))]
+#[derive(Clone, PartialEq)]
 pub enum ExtensibilityEnvironment {
     Implied,
     Explicit,
@@ -269,7 +274,9 @@ pub enum ExtensibilityEnvironment {
 
 /// Represents compatibility selectors as specified in
 /// Rec. ITU-T X.680 (02/2021) § 13.16 (f)
-#[derive(EnumDebug, Clone, PartialEq)]
+#[cfg_attr(test, derive(EnumDebug))]
+#[cfg_attr(not(test), derive(Debug))]
+#[derive(Clone, PartialEq)]
 pub enum With {
     Successors,
     Descendants,
@@ -302,7 +309,9 @@ impl From<(&str, AssignedIdentifier)> for GlobalModuleReference {
 
 /// Represents an assigned identifier as specified in
 /// Rec. ITU-T X.680 (02/2021)
-#[derive(EnumDebug, Clone, PartialEq)]
+#[cfg_attr(test, derive(EnumDebug))]
+#[cfg_attr(not(test), derive(Debug))]
+#[derive(Clone, PartialEq)]
 pub enum AssignedIdentifier {
     ObjectIdentifierValue(ObjectIdentifierValue),
     ExternalValueReference(ExternalValueReference),
@@ -341,7 +350,9 @@ impl From<(Vec<&str>, (GlobalModuleReference, Option<&str>))> for Import {
 
 /// Represents a module export as specified in
 /// Rec. ITU-T X.680 (02/2021) § 13.13
-#[derive(EnumDebug, Clone, PartialEq)]
+#[cfg_attr(test, derive(EnumDebug))]
+#[cfg_attr(not(test), derive(Debug))]
+#[derive(Clone, PartialEq)]
 pub enum Exports {
     Identifier(Vec<String>),
     All,
@@ -355,7 +366,9 @@ impl From<Vec<&str>> for Exports {
 
 /// Represents a module header's definitive identifier as specified in
 /// Rec. ITU-T X.680 (02/2021) § 13.8
-#[derive(EnumDebug, Clone, PartialEq)]
+#[cfg_attr(test, derive(EnumDebug))]
+#[cfg_attr(not(test), derive(Debug))]
+#[derive(Clone, PartialEq)]
 pub enum DefinitiveIdentifier {
     DefinitiveOID(ObjectIdentifierValue),
     DefinitiveOIDandIRI {
@@ -497,7 +510,9 @@ impl From<(&str, u128)> for ObjectIdentifierArc {
 ///
 /// The linker and any [Backend] for this compiler consumes top-level definitions in
 /// order to generate bindings.
-#[derive(EnumDebug, Clone, PartialEq)]
+#[cfg_attr(test, derive(EnumDebug))]
+#[cfg_attr(not(test), derive(Debug))]
+#[derive(Clone, PartialEq)]
 pub enum ToplevelDefinition {
     Type(ToplevelTypeDefinition),
     Value(ToplevelValueDefinition),
@@ -708,7 +723,9 @@ impl
 /// The possible types of an ASN1 data element.
 /// In addition, the `ElsewhereDeclaredType` enumeral denotes an type
 /// specified in the same or an imported ASN1 specification.
-#[derive(EnumDebug, Clone, PartialEq)]
+#[cfg_attr(test, derive(EnumDebug))]
+#[cfg_attr(not(test), derive(Debug))]
+#[derive(Clone, PartialEq)]
 pub enum ASN1Type {
     Null,
     Boolean(Boolean),
@@ -950,7 +967,9 @@ pub const PRINTABLE_STRING_CHARSET: [char; 74] = [
 ];
 
 /// The types of an ASN1 character strings.
-#[derive(EnumDebug, Clone, PartialEq, Copy)]
+#[cfg_attr(test, derive(EnumDebug))]
+#[cfg_attr(not(test), derive(Debug))]
+#[derive(Clone, PartialEq, Copy)]
 pub enum CharacterStringType {
     NumericString,
     VisibleString,
@@ -1059,7 +1078,9 @@ impl IntegerType {
 }
 
 /// The possible types of an ASN1 value.
-#[derive(EnumDebug, Clone, PartialEq)]
+#[cfg_attr(test, derive(EnumDebug))]
+#[cfg_attr(not(test), derive(Debug))]
+#[derive(Clone, PartialEq)]
 pub enum ASN1Value {
     All,
     Null,
@@ -1124,7 +1145,9 @@ pub enum ASN1Value {
 }
 
 /// Representation of a field value of a struct-like ASN1 value
-#[derive(EnumDebug, Clone, PartialEq)]
+#[cfg_attr(test, derive(EnumDebug))]
+#[cfg_attr(not(test), derive(Debug))]
+#[derive(Clone, PartialEq)]
 pub enum StructLikeFieldValue {
     Explicit(Box<ASN1Value>),
     Implicit(Box<ASN1Value>),
