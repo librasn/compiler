@@ -21,6 +21,12 @@ struct CompilerArgs {
     /// Set the output path for the generated rust module
     #[arg(short, long, default_value = ".")]
     output_path: PathBuf,
+
+    /// Specify which compiler backend to use:
+    ///  - "rasn" [DEFAULT]: generates rust-bindings for the rasn framework
+    ///  - "typescript": generates typescript type definitions
+    #[arg(short, long, default_value = "rasn")]
+    backend: String,
 }
 
 pub fn main() {
@@ -53,11 +59,19 @@ pub fn main() {
         )
     }
 
-    match Compiler::<RasnBackend, _>::new()
-        .add_asn_sources_by_path(modules.into_iter())
-        .set_output_path(args.output_path)
-        .compile()
-    {
+    let results = if args.backend == "typescript" {
+        Compiler::<TypescriptBackend, _>::new()
+            .add_asn_sources_by_path(modules.into_iter())
+            .set_output_path(args.output_path)
+            .compile()
+    } else {
+        Compiler::<RasnBackend, _>::new()
+            .add_asn_sources_by_path(modules.into_iter())
+            .set_output_path(args.output_path)
+            .compile()
+    };
+
+    match results {
         Ok(warnings) => {
             for warning in warnings {
                 println!(
