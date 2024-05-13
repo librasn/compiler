@@ -3,7 +3,7 @@ use std::path::PathBuf;
 
 use clap::{arg, command, Parser};
 use colored::Colorize;
-use rasn_compiler::*;
+use rasn_compiler::prelude::*;
 use walkdir::WalkDir;
 
 #[derive(clap::Parser, Debug)]
@@ -53,7 +53,7 @@ pub fn main() {
         )
     }
 
-    match Compiler::new()
+    match Compiler::<RasnBackend, _>::new()
         .add_asn_sources_by_path(modules.into_iter())
         .set_output_path(args.output_path)
         .compile()
