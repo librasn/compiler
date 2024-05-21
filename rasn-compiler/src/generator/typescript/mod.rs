@@ -83,7 +83,7 @@ impl Backend for Typescript {
             Ok(GeneratedModule {
                 generated: Some(format!(
                     r#"
-                namespace {namespace} {{
+                export namespace {namespace} {{
                     {imports}
 
                     {pdus}
