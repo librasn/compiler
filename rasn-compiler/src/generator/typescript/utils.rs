@@ -65,8 +65,9 @@ pub fn format_sequence_or_set_members(se: &SequenceOrSet) -> String {
         se.members
             .iter()
             .map(|m| format!(
-                r#"{}: {},"#,
+                r#"{}{}: {},"#,
                 to_jer_identifier(&m.name),
+                if m.is_optional { "?" } else { "" },
                 type_to_tokens(&m.ty)
             ))
             .collect::<Vec<_>>()
