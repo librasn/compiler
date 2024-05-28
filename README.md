@@ -169,6 +169,7 @@ Currently, `rasn` supports the following encoding rules:
 -   `BIT STRING` type and value (hex- and bitstring declations)
 -   `OCTET STRING` type and value (hex- and bitstring declations)
 -   `OBJECT IDENTIFIER` type and value
+-   `RELATIVE-OID` type and value
 -   `SEQUENCE` type and value
 -   `SET` type and value
 -   `SEQUENCE OF` type and value

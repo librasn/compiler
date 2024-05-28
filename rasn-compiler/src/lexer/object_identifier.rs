@@ -18,7 +18,7 @@ use nom::{
 
 use super::{
     common::{in_braces, in_parentheses, skip_ws, skip_ws_and_comments, value_identifier},
-    constraint::constraint,
+    constraint::constraint, RELATIVE_OID,
 };
 
 /// Tries to parse an ASN1 OBJECT IDENTIFIER
@@ -34,7 +34,8 @@ use super::{
 /// If the match fails, the lexer will not consume the input and will return an error.
 pub fn object_identifier_value(input: &str) -> IResult<&str, ObjectIdentifierValue> {
     into(skip_ws_and_comments(preceded(
-        opt(tag(OBJECT_IDENTIFIER)),
+        // TODO: store info whether the object id is relative
+        opt(alt((tag(OBJECT_IDENTIFIER), tag(RELATIVE_OID)))),
         in_braces(many1(skip_ws(object_identifier_arc))),
     )))(input)
 }
@@ -42,7 +43,7 @@ pub fn object_identifier_value(input: &str) -> IResult<&str, ObjectIdentifierVal
 pub fn object_identifier(input: &str) -> IResult<&str, ASN1Type> {
     map(
         into(preceded(
-            skip_ws_and_comments(tag(OBJECT_IDENTIFIER)),
+            skip_ws_and_comments(alt((tag(OBJECT_IDENTIFIER), tag(RELATIVE_OID)))),
             opt(skip_ws_and_comments(constraint)),
         )),
         ASN1Type::ObjectIdentifier,
