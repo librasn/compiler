@@ -11,6 +11,9 @@ use crate::intermediate::*;
 use proc_macro2::TokenStream;
 use quote::{quote, ToTokens};
 
+#[cfg(target_family = "wasm")]
+use wasm_bindgen::prelude::*;
+
 use super::{error::GeneratorError, Backend, GeneratedModule};
 
 mod builder;
@@ -24,6 +27,7 @@ pub struct Rasn {
     config: Config,
 }
 
+#[cfg_attr(target_family = "wasm", wasm_bindgen)]
 #[derive(Debug)]
 /// A configuration for the [Rasn] backend
 pub struct Config {
@@ -42,6 +46,18 @@ pub struct Config {
     /// is set to `true` , the compiler will import the entire module using
     /// the wildcard `*` for each module that the input ASN.1 module imports from.
     pub default_wildcard_imports: bool,
+}
+
+#[cfg(target_family = "wasm")]
+#[wasm_bindgen]
+impl Config {
+    #[wasm_bindgen(constructor)]
+    pub fn new(opaque_open_types: bool, default_wildcard_imports: bool) -> Self {
+        Self {
+            opaque_open_types,
+            default_wildcard_imports,
+        }
+    }
 }
 
 impl Default for Config {

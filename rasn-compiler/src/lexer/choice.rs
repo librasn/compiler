@@ -76,10 +76,22 @@ pub fn choice(input: &str) -> IResult<&str, ASN1Type> {
                     extension_marker,
                     opt(skip_ws_and_comments(char(COMMA))),
                 )),
-                opt(many0(terminated(
-                    skip_ws_and_comments(choice_option),
-                    optional_comma,
-                ))),
+                opt(map(
+                    many0(alt((
+                        map(
+                            terminated(skip_ws_and_comments(choice_option), optional_comma),
+                            |extension| vec![extension],
+                        ),
+                        terminated(
+                            in_brackets(in_brackets(many1(terminated(
+                                skip_ws_and_comments(choice_option),
+                                optional_comma,
+                            )))),
+                            optional_comma,
+                        ),
+                    ))),
+                    |extensions| extensions.into_iter().flatten().collect(),
+                )),
             ))),
         ),
         |m| ASN1Type::Choice(m.into()),
@@ -100,7 +112,7 @@ mod tests {
     use crate::{
         intermediate::{
             types::{Choice, ChoiceOption, ChoiceSelectionType},
-            ASN1Type,
+            ASN1Type, DeclarationElsewhere,
         },
         lexer::choice::selection_type_choice,
     };
@@ -156,6 +168,70 @@ mod tests {
                 choice_name: "ObjectInstance".into(),
                 selected_option: "localDistinguishedName".into()
             })
+        )
+    }
+
+    #[test]
+    fn parses_extension_groups() {
+        assert_eq!(
+            ASN1Type::Choice(Choice {
+                extensible: Some(1,),
+                options: vec![
+                    ChoiceOption {
+                        name: "glc".into(),
+                        tag: None,
+                        ty: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+                            parent: None,
+                            identifier: "GeographicLocationContainer".into(),
+                            constraints: vec![],
+                        },),
+                        constraints: vec![],
+                    },
+                    ChoiceOption {
+                        name: "avc".into(),
+                        tag: None,
+                        ty: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+                            parent: None,
+                            identifier: "AutomatedVehicleContainer".into(),
+                            constraints: vec![],
+                        },),
+                        constraints: vec![],
+                    },
+                    ChoiceOption {
+                        name: "rsc".into(),
+                        tag: None,
+                        ty: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+                            parent: None,
+                            identifier: "RoadSurfaceContainer".into(),
+                            constraints: vec![],
+                        },),
+                        constraints: vec![],
+                    },
+                    ChoiceOption {
+                        name: "isc".into(),
+                        tag: None,
+                        ty: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+                            parent: None,
+                            identifier: "InfrastructureSupportContainer".into(),
+                            constraints: vec![],
+                        },),
+                        constraints: vec![],
+                    },
+                ],
+                constraints: vec![],
+            },),
+            choice(
+                r#"CHOICE {
+            glc	    GeographicLocationContainer,
+            ...,	-- original extension indicator of V1
+         [[ 
+            avc	    AutomatedVehicleContainer,	
+            rsc	    RoadSurfaceContainer ]], -- Extension in V2
+            isc      InfrastructureSupportContainer  -- Extension in V3.1
+         }"#
+            )
+            .unwrap()
+            .1
         )
     }
 }

@@ -62,28 +62,42 @@ pub struct Generated {
 
 #[cfg(target_family = "wasm")]
 #[wasm_bindgen]
-pub fn compile(asn1: &str, backend: &str) -> Result<Generated, JsValue> {
-    if backend == "typescript" {
-        Compiler::<crate::prelude::TypescriptBackend, _>::new()
+pub fn compile_to_typescript(asn1: &str) -> Result<Generated, JsValue> {
+    Compiler::<crate::prelude::TypescriptBackend, _>::new()
+        .add_asn_literal(asn1)
+        .compile_to_string()
+        .map(|result| Generated {
+            rust: result.generated,
+            warnings: result
+                .warnings
+                .into_iter()
+                .fold(String::new(), |mut acc, w| {
+                    acc += &w.to_string();
+                    acc += "\n";
+                    acc
+                }),
+        })
+        .map_err(|e| JsValue::from(e.to_string()))
+}
+
+#[cfg(target_family = "wasm")]
+#[wasm_bindgen]
+pub fn compile_to_rust(asn1: &str, config: crate::prelude::RasnConfig) -> Result<Generated, JsValue> {
+    Compiler::<crate::prelude::RasnBackend, _>::new_with_config(config)
             .add_asn_literal(asn1)
             .compile_to_string()
-    } else {
-        Compiler::<crate::prelude::RasnBackend, _>::new()
-            .add_asn_literal(asn1)
-            .compile_to_string()
-    }
-    .map(|result| Generated {
-        rust: result.generated,
-        warnings: result
-            .warnings
-            .into_iter()
-            .fold(String::new(), |mut acc, w| {
-                acc += &w.to_string();
-                acc += "\n";
-                acc
-            }),
-    })
-    .map_err(|e| JsValue::from(e.to_string()))
+            .map(|result| Generated {
+                rust: result.generated,
+                warnings: result
+                    .warnings
+                    .into_iter()
+                    .fold(String::new(), |mut acc, w| {
+                        acc += &w.to_string();
+                        acc += "\n";
+                        acc
+                    }),
+            })
+            .map_err(|e| JsValue::from(e.to_string()))
 }
 
 /// The rasn compiler
