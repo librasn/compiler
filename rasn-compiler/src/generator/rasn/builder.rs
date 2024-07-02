@@ -130,8 +130,8 @@ impl Rasn {
     ) -> Result<TokenStream, GeneratorError> {
         if let ASN1Value::LinkedIntValue { integer_type, .. } = tld.value {
             let formatted_value = self.value_to_tokens(&tld.value, None)?;
-            let ty = self.to_rust_title_case(&tld.associated_type);
-            if tld.associated_type == INTEGER {
+            let ty = self.to_rust_title_case(&tld.associated_type.as_str());
+            if tld.associated_type.as_str() == INTEGER {
                 Ok(lazy_static_value_template(
                     self.format_comments(&tld.comments)?,
                     self.to_rust_const_case(&tld.name),
@@ -331,8 +331,8 @@ impl Rasn {
                 self,
                 primitive_value_template,
                 tld,
-                self.to_rust_title_case(&tld.associated_type),
-                assignment!(self, &tld.associated_type, quote!(()))
+                self.to_rust_title_case(&tld.associated_type.as_str()),
+                assignment!(self, &tld.associated_type.as_str(), quote!(()))
             ),
             ASN1Value::Boolean(b) if ty == BOOLEAN => call_template!(
                 self,
@@ -345,8 +345,8 @@ impl Rasn {
                 self,
                 primitive_value_template,
                 tld,
-                self.to_rust_title_case(&tld.associated_type),
-                assignment!(self, &tld.associated_type, b.to_token_stream())
+                self.to_rust_title_case(&tld.associated_type.as_str()),
+                assignment!(self, &tld.associated_type.as_str(), b.to_token_stream())
             ),
             ASN1Value::LinkedIntValue { .. } => self.generate_integer_value(tld),
             ASN1Value::BitString(_) if ty == BIT_STRING => call_template!(
@@ -373,7 +373,7 @@ impl Rasn {
                         self,
                         const_choice_value_template,
                         tld,
-                        self.to_rust_title_case(&tld.associated_type),
+                        self.to_rust_title_case(&tld.associated_type.as_str()),
                         self.to_rust_enum_identifier(variant_name),
                         self.value_to_tokens(inner_value, None)?
                     )
@@ -382,7 +382,7 @@ impl Rasn {
                         self,
                         choice_value_template,
                         tld,
-                        self.to_rust_title_case(&tld.associated_type),
+                        self.to_rust_title_case(&tld.associated_type.as_str()),
                         self.to_rust_enum_identifier(variant_name),
                         self.value_to_tokens(inner_value, None)?
                     )
@@ -423,7 +423,7 @@ impl Rasn {
                     self,
                     sequence_or_set_value_template,
                     tld,
-                    self.to_rust_title_case(&tld.associated_type),
+                    self.to_rust_title_case(&tld.associated_type.as_str()),
                     quote!(#(#members),*)
                 )
             }
@@ -434,10 +434,10 @@ impl Rasn {
                         self,
                         primitive_value_template,
                         tld,
-                        self.to_rust_title_case(&tld.associated_type),
+                        self.to_rust_title_case(&tld.associated_type.as_str()),
                         assignment!(
                             self,
-                            &tld.associated_type,
+                            &tld.associated_type.as_str(),
                             self.value_to_tokens(&tld.value, parent.as_ref())?
                         )
                     )
@@ -446,10 +446,10 @@ impl Rasn {
                         self,
                         lazy_static_value_template,
                         tld,
-                        self.to_rust_title_case(&tld.associated_type),
+                        self.to_rust_title_case(&tld.associated_type.as_str()),
                         assignment!(
                             self,
-                            &tld.associated_type,
+                            &tld.associated_type.as_str(),
                             self.value_to_tokens(&tld.value, parent.as_ref())?
                         )
                     )
@@ -513,7 +513,10 @@ impl Rasn {
             ),
             ASN1Value::LinkedArrayLikeValue(s) if ty.contains(SEQUENCE_OF) => {
                 let item_type = self.format_sequence_or_set_of_item_type(
-                    ty.replace(SEQUENCE_OF, "").trim().to_string(),
+                    match tld.associated_type {
+                        ASN1Type::SequenceOf(seq) => seq.element_type.as_str().into_owned(),
+                        _ => unreachable!(),
+                    },
                     s.first().map(|i| &**i),
                 );
                 call_template!(
@@ -526,7 +529,10 @@ impl Rasn {
             }
             ASN1Value::LinkedArrayLikeValue(s) if ty.contains(SET_OF) => {
                 let item_type = self.format_sequence_or_set_of_item_type(
-                    ty.replace(SET_OF, "").trim().to_string(),
+                    match tld.associated_type {
+                        ASN1Type::SetOf(set) => set.element_type.as_str().into_owned(),
+                        _ => unreachable!(),
+                    },
                     s.first().map(|i| &**i),
                 );
                 call_template!(
@@ -547,10 +553,10 @@ impl Rasn {
                 self,
                 lazy_static_value_template,
                 tld,
-                self.to_rust_title_case(&tld.associated_type),
+                self.to_rust_title_case(&tld.associated_type.as_str()),
                 assignment!(
                     self,
-                    &tld.associated_type,
+                    &tld.associated_type.as_str(),
                     self.value_to_tokens(&tld.value, None)?
                 )
             ),

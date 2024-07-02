@@ -607,7 +607,10 @@ impl ToplevelDefinition {
     ///             comments: String::from("Comments from the ASN.1 spec"),
     ///             parameterization: None,
     ///             name: String::from("the-answer"),
-    ///             associated_type: String::from("INTEGER"),
+    ///             associated_type: ASN1Type::Integer(Integer {
+    ///                 constraints: vec![],
+    ///                 distinguished_values: None,
+    ///             }),
     ///             value: ASN1Value::Integer(42),
     ///             index: None,
     ///         }
@@ -630,14 +633,14 @@ impl ToplevelDefinition {
 pub struct ToplevelValueDefinition {
     pub comments: String,
     pub name: String,
-    pub associated_type: String,
+    pub associated_type: ASN1Type,
     pub parameterization: Option<Parameterization>,
     pub value: ASN1Value,
     pub index: Option<(Rc<RefCell<ModuleReference>>, usize)>,
 }
 
-impl From<(&str, ASN1Value, &str)> for ToplevelValueDefinition {
-    fn from(value: (&str, ASN1Value, &str)) -> Self {
+impl From<(&str, ASN1Value, ASN1Type)> for ToplevelValueDefinition {
+    fn from(value: (&str, ASN1Value, ASN1Type)) -> Self {
         Self {
             comments: String::new(),
             name: value.0.to_owned(),
@@ -649,10 +652,10 @@ impl From<(&str, ASN1Value, &str)> for ToplevelValueDefinition {
     }
 }
 
-impl From<(Vec<&str>, &str, Option<Parameterization>, &str, ASN1Value)>
+impl From<(Vec<&str>, &str, Option<Parameterization>, ASN1Type, ASN1Value)>
     for ToplevelValueDefinition
 {
-    fn from(value: (Vec<&str>, &str, Option<Parameterization>, &str, ASN1Value)) -> Self {
+    fn from(value: (Vec<&str>, &str, Option<Parameterization>, ASN1Type, ASN1Value)) -> Self {
         Self {
             comments: value.0.join("\n"),
             name: value.1.into(),

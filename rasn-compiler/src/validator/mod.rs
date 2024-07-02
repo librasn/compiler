@@ -212,7 +212,7 @@ impl Validator {
                                 ..
                             })) => {
                                 self.associated_import_type(
-                                    associated_type,
+                                    &associated_type.as_str().into_owned(),
                                     mod_ref.clone(),
                                     &mut associated_type_imports,
                                 );

@@ -197,20 +197,7 @@ fn top_level_value_declaration(input: &str) -> IResult<&str, ToplevelValueDefini
             skip_ws(many0(comment)),
             skip_ws(value_identifier),
             skip_ws_and_comments(opt(parameterization)),
-            // TODO full type parsing
-            terminated(
-                skip_ws(alt((
-                    // Cover built-in types with spaces
-                    tag(OBJECT_IDENTIFIER),
-                    tag(OCTET_STRING),
-                    tag(BIT_STRING),
-                    recognize(pair(tag(SEQUENCE_OF), skip_ws_and_comments(identifier))),
-                    recognize(pair(tag(SET_OF), skip_ws_and_comments(identifier))),
-                    identifier,
-                ))),
-                // Ignore possible constraint
-                skip_ws_and_comments(opt(constraint))
-            ),
+            skip_ws_and_comments(asn1_type),
             preceded(assignment, skip_ws_and_comments(asn1_value)),
         ))),
         enumerated_value,
