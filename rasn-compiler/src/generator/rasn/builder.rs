@@ -135,7 +135,7 @@ impl Rasn {
                 Ok(lazy_static_value_template(
                     self.format_comments(&tld.comments)?,
                     self.to_rust_const_case(&tld.name),
-                    quote!(Integer),
+                    integer_type.to_token_stream(),
                     formatted_value,
                 ))
             } else if integer_type.is_unbounded() {
