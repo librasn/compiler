@@ -197,6 +197,7 @@ fn top_level_value_declaration(input: &str) -> IResult<&str, ToplevelValueDefini
             skip_ws(many0(comment)),
             skip_ws(value_identifier),
             skip_ws_and_comments(opt(parameterization)),
+            // TODO full type parsing
             terminated(
                 skip_ws(alt((
                     // Cover built-in types with spaces
