@@ -216,7 +216,7 @@ impl ToplevelValueDefinition {
         &mut self,
         tlds: &BTreeMap<String, ToplevelDefinition>,
     ) -> Result<(), GrammarError> {
-        if let Some(ToplevelDefinition::Type(tld)) = tlds.get(&self.associated_type.as_str().into_owned()) {
+        if let Some(ToplevelDefinition::Type(tld)) = tlds.get(self.associated_type.as_str().as_ref()) {
             self.value.link_with_type(tlds, &tld.ty, Some(&tld.name))
         } else {
             self.value.link_with_type(tlds, &self.associated_type, None)

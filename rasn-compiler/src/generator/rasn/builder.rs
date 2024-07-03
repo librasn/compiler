@@ -9,13 +9,11 @@ use crate::intermediate::{
         ObjectSetValue, ToplevelInformationDefinition,
     },
     ASN1Type, ASN1Value, ToplevelDefinition, ToplevelTypeDefinition, ToplevelValueDefinition,
-    BIT_STRING, BOOLEAN, GENERALIZED_TIME, INTEGER, NULL, OCTET_STRING, UTC_TIME,
+    CharacterStringType
 };
 
 use super::{
-    information_object::InformationObjectClassField, template::*, Rasn, BMP_STRING, GENERAL_STRING,
-    IA5_STRING, NUMERIC_STRING, OBJECT_IDENTIFIER, PRINTABLE_STRING, SEQUENCE_OF, SET_OF,
-    UTF8_STRING, VISIBLE_STRING,
+    information_object::InformationObjectClassField, template::*, Rasn,
 };
 use crate::generator::error::{GeneratorError, GeneratorErrorType};
 
@@ -131,7 +129,7 @@ impl Rasn {
         if let ASN1Value::LinkedIntValue { integer_type, .. } = tld.value {
             let formatted_value = self.value_to_tokens(&tld.value, None)?;
             let ty = self.to_rust_title_case(&tld.associated_type.as_str());
-            if tld.associated_type.as_str() == INTEGER {
+            if tld.associated_type.is_builtin_type() {
                 Ok(lazy_static_value_template(
                     self.format_comments(&tld.comments)?,
                     self.to_rust_const_case(&tld.name),
@@ -322,19 +320,20 @@ impl Rasn {
         &self,
         tld: ToplevelValueDefinition,
     ) -> Result<TokenStream, GeneratorError> {
-        let ty = tld.associated_type.as_str();
+        let ty = &tld.associated_type;
         match &tld.value {
-            ASN1Value::Null if ty == NULL => {
+            ASN1Value::Null if ty.is_builtin_type() => {
                 call_template!(self, primitive_value_template, tld, quote!(()), quote!(()))
             }
-            ASN1Value::Null => call_template!(
+            ASN1Value::Null => {
+                call_template!(
                 self,
                 primitive_value_template,
                 tld,
-                self.to_rust_title_case(&tld.associated_type.as_str()),
-                assignment!(self, &tld.associated_type.as_str(), quote!(()))
-            ),
-            ASN1Value::Boolean(b) if ty == BOOLEAN => call_template!(
+                self.to_rust_title_case(&ty.as_str()),
+                assignment!(self, &ty.as_str(), quote!(()))
+            )},
+            ASN1Value::Boolean(b) if ty.is_builtin_type() => call_template!(
                 self,
                 primitive_value_template,
                 tld,
@@ -345,18 +344,18 @@ impl Rasn {
                 self,
                 primitive_value_template,
                 tld,
-                self.to_rust_title_case(&tld.associated_type.as_str()),
-                assignment!(self, &tld.associated_type.as_str(), b.to_token_stream())
+                self.to_rust_title_case(&ty.as_str()),
+                assignment!(self, &ty.as_str(), b.to_token_stream())
             ),
             ASN1Value::LinkedIntValue { .. } => self.generate_integer_value(tld),
-            ASN1Value::BitString(_) if ty == BIT_STRING => call_template!(
+            ASN1Value::BitString(_) if ty.is_builtin_type() => call_template!(
                 self,
                 lazy_static_value_template,
                 tld,
                 quote!(BitString),
                 self.value_to_tokens(&tld.value, None)?
             ),
-            ASN1Value::OctetString(_) if ty == OCTET_STRING => call_template!(
+            ASN1Value::OctetString(_) if ty.is_builtin_type() => call_template!(
                 self,
                 lazy_static_value_template,
                 tld,
@@ -373,7 +372,7 @@ impl Rasn {
                         self,
                         const_choice_value_template,
                         tld,
-                        self.to_rust_title_case(&tld.associated_type.as_str()),
+                        self.to_rust_title_case(&ty.as_str()),
                         self.to_rust_enum_identifier(variant_name),
                         self.value_to_tokens(inner_value, None)?
                     )
@@ -382,7 +381,7 @@ impl Rasn {
                         self,
                         choice_value_template,
                         tld,
-                        self.to_rust_title_case(&tld.associated_type.as_str()),
+                        self.to_rust_title_case(&ty.as_str()),
                         self.to_rust_enum_identifier(variant_name),
                         self.value_to_tokens(inner_value, None)?
                     )
@@ -398,20 +397,29 @@ impl Rasn {
                 self.to_rust_title_case(enumerated),
                 self.to_rust_enum_identifier(enumerable)
             ),
-            ASN1Value::Time(_) if ty == GENERALIZED_TIME => call_template!(
-                self,
-                lazy_static_value_template,
-                tld,
-                quote!(GeneralizedTime),
-                self.value_to_tokens(&tld.value, Some(&quote!(GeneralizedTime)))?
-            ),
-            ASN1Value::Time(_) if ty == UTC_TIME => call_template!(
-                self,
-                lazy_static_value_template,
-                tld,
-                quote!(UtcTime),
-                self.value_to_tokens(&tld.value, Some(&quote!(UtcTime)))?
-            ),
+            ASN1Value::Time(_) if ty.is_builtin_type() => {
+                match ty {
+                    ASN1Type::GeneralizedTime(_) => call_template!(
+                        self,
+                        lazy_static_value_template,
+                        tld,
+                        quote!(GeneralizedTime),
+                        self.value_to_tokens(&tld.value, Some(&quote!(GeneralizedTime)))?
+                    ),
+                    ASN1Type::UTCTime(_) => call_template!(
+                        self,
+                        lazy_static_value_template,
+                        tld,
+                        quote!(UtcTime),
+                        self.value_to_tokens(&tld.value, Some(&quote!(UtcTime)))?
+                    ),
+                    _ => Err(GeneratorError::new(
+                        Some(ToplevelDefinition::Value(tld)),
+                        "Time value does not match expected type",
+                        GeneratorErrorType::Asn1TypeMismatch,
+                    )),
+                }
+            }
             ASN1Value::LinkedStructLikeValue(s) => {
                 let members = s
                     .iter()
@@ -423,7 +431,7 @@ impl Rasn {
                     self,
                     sequence_or_set_value_template,
                     tld,
-                    self.to_rust_title_case(&tld.associated_type.as_str()),
+                    self.to_rust_title_case(&ty.as_str()),
                     quote!(#(#members),*)
                 )
             }
@@ -434,10 +442,10 @@ impl Rasn {
                         self,
                         primitive_value_template,
                         tld,
-                        self.to_rust_title_case(&tld.associated_type.as_str()),
+                        self.to_rust_title_case(&ty.as_str()),
                         assignment!(
                             self,
-                            &tld.associated_type.as_str(),
+                            &ty.as_str(),
                             self.value_to_tokens(&tld.value, parent.as_ref())?
                         )
                     )
@@ -446,95 +454,63 @@ impl Rasn {
                         self,
                         lazy_static_value_template,
                         tld,
-                        self.to_rust_title_case(&tld.associated_type.as_str()),
+                        self.to_rust_title_case(&ty.as_str()),
                         assignment!(
                             self,
-                            &tld.associated_type.as_str(),
+                            &ty.as_str(),
                             self.value_to_tokens(&tld.value, parent.as_ref())?
                         )
                     )
                 }
             }
-            ASN1Value::ObjectIdentifier(_) if ty == OBJECT_IDENTIFIER => call_template!(
+            ASN1Value::ObjectIdentifier(_) if ty.is_builtin_type() => call_template!(
                 self,
                 lazy_static_value_template,
                 tld,
                 quote!(ObjectIdentifier),
                 self.value_to_tokens(&tld.value, None)?
             ),
-            ASN1Value::LinkedCharStringValue(_, _) if ty == NUMERIC_STRING => call_template!(
-                self,
-                lazy_static_value_template,
-                tld,
-                quote!(NumericString),
-                self.value_to_tokens(&tld.value, None)?
-            ),
-            ASN1Value::LinkedCharStringValue(_, _) if ty == VISIBLE_STRING => call_template!(
-                self,
-                lazy_static_value_template,
-                tld,
-                quote!(VisibleString),
-                self.value_to_tokens(&tld.value, None)?
-            ),
-            ASN1Value::LinkedCharStringValue(_, _) if ty == IA5_STRING => call_template!(
-                self,
-                lazy_static_value_template,
-                tld,
-                quote!(IA5String),
-                self.value_to_tokens(&tld.value, None)?
-            ),
-            ASN1Value::LinkedCharStringValue(_, _) if ty == UTF8_STRING => call_template!(
-                self,
-                lazy_static_value_template,
-                tld,
-                quote!(UTF8String),
-                self.value_to_tokens(&tld.value, None)?
-            ),
-            ASN1Value::LinkedCharStringValue(_, _) if ty == BMP_STRING => call_template!(
-                self,
-                lazy_static_value_template,
-                tld,
-                quote!(BMPString),
-                self.value_to_tokens(&tld.value, None)?
-            ),
-            ASN1Value::LinkedCharStringValue(_, _) if ty == PRINTABLE_STRING => call_template!(
-                self,
-                lazy_static_value_template,
-                tld,
-                quote!(PrintableString),
-                self.value_to_tokens(&tld.value, None)?
-            ),
-            ASN1Value::LinkedCharStringValue(_, _) if ty == GENERAL_STRING => call_template!(
-                self,
-                lazy_static_value_template,
-                tld,
-                quote!(GeneralString),
-                self.value_to_tokens(&tld.value, None)?
-            ),
-            ASN1Value::LinkedArrayLikeValue(s) if ty.contains(SEQUENCE_OF) => {
-                let item_type = self.format_sequence_or_set_of_item_type(
-                    match tld.associated_type {
-                        ASN1Type::SequenceOf(seq) => seq.element_type.as_str().into_owned(),
-                        _ => unreachable!(),
-                    },
-                    s.first().map(|i| &**i),
-                );
+            ASN1Value::LinkedCharStringValue(cs_ty, _) if ty.is_builtin_type() => {
+                let ty_ts = match cs_ty {
+                    CharacterStringType::NumericString => quote!(NumericString),
+                    CharacterStringType::VisibleString => quote!(VisibleString),
+                    CharacterStringType::IA5String => quote!(IA5String),
+                    CharacterStringType::UTF8String => quote!(UTF8String),
+                    CharacterStringType::BMPString => quote!(BMPString),
+                    CharacterStringType::PrintableString => quote!(PrintableString),
+                    CharacterStringType::GeneralString => quote!(GeneralString),
+                    CharacterStringType::GraphicString
+                    | CharacterStringType::TeletexString
+                    | CharacterStringType::VideotexString
+                    | CharacterStringType::UniversalString => {
+                        return Err(GeneratorError::new(
+                           None,
+                           &format!("{:?} values are currently unsupported", cs_ty),
+                           GeneratorErrorType::NotYetInplemented,
+                        ))
+                    }
+                };
                 call_template!(
                     self,
                     lazy_static_value_template,
                     tld,
-                    quote!(Vec<#item_type>),
+                    ty_ts,
                     self.value_to_tokens(&tld.value, None)?
                 )
             }
-            ASN1Value::LinkedArrayLikeValue(s) if ty.contains(SET_OF) => {
+            ASN1Value::LinkedArrayLikeValue(s) if ty.is_builtin_type() => {
                 let item_type = self.format_sequence_or_set_of_item_type(
-                    match tld.associated_type {
-                        ASN1Type::SetOf(set) => set.element_type.as_str().into_owned(),
-                        _ => unreachable!(),
+                    match ty {
+                        ASN1Type::SequenceOf(seq) => &*seq.element_type,
+                        ASN1Type::SetOf(set) => &*set.element_type,
+                        _ => return Err(GeneratorError::new(
+                            Some(ToplevelDefinition::Value(tld)),
+                            "LinkedArrayLikeValue does not match SEQUENCE/SET OF type",
+                            GeneratorErrorType::Asn1TypeMismatch,
+                        ))
                     },
                     s.first().map(|i| &**i),
-                );
+                )?;
                 call_template!(
                     self,
                     lazy_static_value_template,
@@ -553,10 +529,10 @@ impl Rasn {
                 self,
                 lazy_static_value_template,
                 tld,
-                self.to_rust_title_case(&tld.associated_type.as_str()),
+                self.to_rust_title_case(&ty.as_str()),
                 assignment!(
                     self,
-                    &tld.associated_type.as_str(),
+                    &ty.as_str(),
                     self.value_to_tokens(&tld.value, None)?
                 )
             ),

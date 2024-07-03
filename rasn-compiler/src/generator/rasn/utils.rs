@@ -870,33 +870,49 @@ impl Rasn {
 
     pub(crate) fn format_sequence_or_set_of_item_type(
         &self,
-        type_name: String,
+        ty: &ASN1Type,
         first_item: Option<&ASN1Value>,
-    ) -> TokenStream {
-        match type_name {
-            name if name == NULL => quote!(()),
-            name if name == BOOLEAN => quote!(bool),
-            name if name == INTEGER => {
+    ) -> Result<TokenStream, GeneratorError> {
+        if ty.is_builtin_type() {
+        match ty {
+            ASN1Type::Null => Ok(quote!(())),
+            ASN1Type::Boolean(_) => Ok(quote!(bool)),
+            ASN1Type::Integer(_) => {
                 match first_item {
                     Some(ASN1Value::LinkedIntValue { integer_type, .. }) => {
-                        integer_type.to_token_stream()
+                        Ok(integer_type.to_token_stream())
                     }
-                    _ => quote!(Integer), // best effort
+                    _ => Ok(quote!(Integer)), // best effort
                 }
             }
-            name if name == BIT_STRING => quote!(BitString),
-            name if name == OCTET_STRING => quote!(OctetString),
-            name if name == GENERALIZED_TIME => quote!(GeneralizedTime),
-            name if name == UTC_TIME => quote!(UtcTime),
-            name if name == OBJECT_IDENTIFIER => quote!(ObjectIdentifier),
-            name if name == NUMERIC_STRING => quote!(NumericString),
-            name if name == VISIBLE_STRING => quote!(VisibleString),
-            name if name == IA5_STRING => quote!(IA5String),
-            name if name == UTF8_STRING => quote!(UTF8String),
-            name if name == BMP_STRING => quote!(BMPString),
-            name if name == PRINTABLE_STRING => quote!(PrintableString),
-            name if name == GENERAL_STRING => quote!(GeneralString),
-            name => self.to_rust_title_case(&name),
+            ASN1Type::BitString(_) => Ok(quote!(BitString)),
+            ASN1Type::OctetString(_) => Ok(quote!(OctetString)),
+            ASN1Type::GeneralizedTime(_) => Ok(quote!(GeneralizedTime)),
+            ASN1Type::UTCTime(_) => Ok(quote!(UtcTime)),
+            ASN1Type::ObjectIdentifier(_) => Ok(quote!(ObjectIdentifier)),
+            ASN1Type::CharacterString(cs) => {
+                match cs.ty {
+                    CharacterStringType::NumericString => Ok(quote!(NumericString)),
+                    CharacterStringType::VisibleString => Ok(quote!(VisibleString)),
+                    CharacterStringType::IA5String => Ok(quote!(IA5String)),
+                    CharacterStringType::UTF8String => Ok(quote!(UTF8String)),
+                    CharacterStringType::BMPString => Ok(quote!(BMPString)),
+                    CharacterStringType::PrintableString => Ok(quote!(PrintableString)),
+                    CharacterStringType::GeneralString => Ok(quote!(GeneralString)),
+                    CharacterStringType::VideotexString
+                    | CharacterStringType::GraphicString
+                    | CharacterStringType::UniversalString
+                    | CharacterStringType::TeletexString => Err(GeneratorError::new(
+                        None,
+                        &format!("{:?} values are currently unsupported!", cs.ty),
+                        GeneratorErrorType::NotYetInplemented,
+                    )),
+                }
+            },
+            _ => Ok(self.to_rust_title_case(&ty.as_str())),
+        }
+        } else {
+            Ok(self.to_rust_title_case(&ty.as_str()))
         }
     }
 
