@@ -132,13 +132,16 @@ pub fn object_set(input: &str) -> IResult<&str, ObjectSet> {
             opt(char(COMMA)),
             extension_marker,
         ))),
-        opt(separated_list1(
-            skip_ws_and_comments(alt((tag(PIPE), tag(UNION)))),
-            skip_ws_and_comments(alt((
-                into(information_object),
-                into(skip_ws_and_comments(identifier)),
-            ))),
-        )),
+        opt(skip_ws_and_comments(preceded(
+            char(COMMA),
+            separated_list1(
+                skip_ws_and_comments(alt((tag(PIPE), tag(UNION)))),
+                skip_ws_and_comments(alt((
+                    into(information_object),
+                    into(skip_ws_and_comments(identifier)),
+                ))),
+            )
+        ))),
     ))))(input)
 }
 
