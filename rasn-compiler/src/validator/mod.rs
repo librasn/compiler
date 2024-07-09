@@ -212,7 +212,7 @@ impl Validator {
                                 ..
                             })) => {
                                 self.associated_import_type(
-                                    associated_type,
+                                    associated_type.as_str().as_ref(),
                                     mod_ref.clone(),
                                     &mut associated_type_imports,
                                 );
@@ -244,7 +244,7 @@ impl Validator {
 
     fn associated_import_type(
         &self,
-        associated_type: &String,
+        associated_type: &str,
         mod_ref: Rc<RefCell<ModuleReference>>,
         associated_type_imports: &mut Vec<Import>,
     ) {

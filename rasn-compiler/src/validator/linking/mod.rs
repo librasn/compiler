@@ -216,14 +216,12 @@ impl ToplevelValueDefinition {
         &mut self,
         tlds: &BTreeMap<String, ToplevelDefinition>,
     ) -> Result<(), GrammarError> {
-        if let Some(ToplevelDefinition::Type(tld)) = tlds.get(&self.associated_type) {
+        if let Some(ToplevelDefinition::Type(tld)) =
+            tlds.get(self.associated_type.as_str().as_ref())
+        {
             self.value.link_with_type(tlds, &tld.ty, Some(&tld.name))
         } else {
-            let ty = match built_in_type(self.associated_type.as_str()) {
-                Some(value) => value,
-                None => return Ok(()),
-            };
-            self.value.link_with_type(tlds, &ty, None)
+            self.value.link_with_type(tlds, &self.associated_type, None)
         }
     }
 }
@@ -478,7 +476,7 @@ impl ASN1Type {
                                     ToplevelDefinition::Value(ToplevelValueDefinition::from((
                                         dummy_reference.as_str(),
                                         v.clone(),
-                                        gov.as_str().borrow(),
+                                        gov.clone(),
                                     ))),
                                 );
                             }
@@ -825,7 +823,7 @@ impl ASN1Value {
                 } else if let Some((ToplevelDefinition::Type(ty), ToplevelDefinition::Value(val))) =
                     tlds.get(&e.identifier).zip(tlds.get(identifier))
                 {
-                    if ty.name != val.associated_type {
+                    if ty.name != val.associated_type.as_str() {
                         // When it comes to `DEFAULT` values, the ASN.1 type system
                         // is more lenient than Rust's. For example, the it is acceptable
                         // to pass `int-value` as a `DEFAULT` value for `Int-Like-Type` in
@@ -1431,7 +1429,11 @@ mod tests {
             comments: String::new(),
             name: "exampleValue".into(),
             parameterization: None,
-            associated_type: "BaseChoice".into(),
+            associated_type: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+                parent: None,
+                identifier: "BaseChoice".into(),
+                constraints: vec![],
+            }),
             index: None,
             value: ASN1Value::Choice {
                 type_name: None,
@@ -1445,7 +1447,11 @@ mod tests {
             ToplevelValueDefinition {
                 comments: "".into(),
                 name: "exampleValue".into(),
-                associated_type: "BaseChoice".into(),
+                associated_type: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+                    parent: None,
+                    identifier: "BaseChoice".into(),
+                    constraints: vec![]
+                }),
                 parameterization: None,
                 value: ASN1Value::Choice {
                     type_name: Some("BaseChoice".into()),

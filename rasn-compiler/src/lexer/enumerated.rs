@@ -9,7 +9,7 @@ use nom::{
 
 use crate::{
     intermediate::{constraints::*, types::*, *},
-    lexer::parameterization,
+    lexer::{asn1_type, parameterization},
 };
 
 use super::common::*;
@@ -20,7 +20,7 @@ pub fn enumerated_value(input: &str) -> IResult<&str, ToplevelValueDefinition> {
             skip_ws(many0(comment)),
             skip_ws(value_identifier),
             skip_ws_and_comments(opt(parameterization)),
-            skip_ws_and_comments(identifier),
+            skip_ws_and_comments(asn1_type),
             preceded(assignment, skip_ws_and_comments(value_identifier)),
         )),
         |(c, n, params, p, e)| ToplevelValueDefinition {
@@ -30,9 +30,9 @@ pub fn enumerated_value(input: &str) -> IResult<&str, ToplevelValueDefinition> {
             }),
             name: n.to_string(),
             parameterization: params,
-            associated_type: p.into(),
+            associated_type: p.clone().into(),
             value: ASN1Value::EnumeratedValue {
-                enumerated: p.to_string(),
+                enumerated: p.as_str().into_owned(),
                 enumerable: e.to_string(),
             },
             index: None,
@@ -327,7 +327,11 @@ mod tests {
             ToplevelValueDefinition {
                 comments: String::from("\n Alias of another enumeral"),
                 name: String::from("enumeral-alias"),
-                associated_type: "Test-Enum".into(),
+                associated_type: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+                    parent: None,
+                    identifier: String::from("Test-Enum"),
+                    constraints: vec![],
+                }),
                 parameterization: None,
                 value: ASN1Value::EnumeratedValue {
                     enumerated: String::from("Test-Enum"),
