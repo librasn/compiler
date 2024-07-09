@@ -126,32 +126,27 @@ impl Rasn {
         &self,
         tld: ToplevelValueDefinition,
     ) -> Result<TokenStream, GeneratorError> {
-        if let ASN1Value::LinkedIntValue { mut integer_type, .. } = tld.value {
+        if let ASN1Value::LinkedIntValue { integer_type, .. } = tld.value {
             let formatted_value = self.value_to_tokens(&tld.value, None)?;
-            let ty = self.to_rust_title_case(&tld.associated_type.as_str());
-            if let ASN1Type::Integer(i) = &tld.associated_type {
-                integer_type = i.int_type();
-            }
-            if tld.associated_type.is_builtin_type() {
+            let (ty, val) = if tld.associated_type.is_builtin_type() {
+                (integer_type.into_token_stream(), formatted_value)
+            } else {
+                let ty = self.to_rust_title_case(&tld.associated_type.as_str());
+                (ty.clone(), quote!(#ty(#formatted_value)))
+            };
+            if integer_type.is_unbounded() {
                 Ok(lazy_static_value_template(
                     self.format_comments(&tld.comments)?,
                     self.to_rust_const_case(&tld.name),
-                    integer_type.to_token_stream(),
-                    formatted_value,
-                ))
-            } else if integer_type.is_unbounded() {
-                Ok(lazy_static_value_template(
-                    self.format_comments(&tld.comments)?,
-                    self.to_rust_const_case(&tld.name),
-                    ty.clone(),
-                    quote!(#ty(#formatted_value)),
+                    ty,
+                    val,
                 ))
             } else {
                 Ok(integer_value_template(
                     self.format_comments(&tld.comments)?,
                     self.to_rust_const_case(&tld.name),
-                    ty.clone(),
-                    quote!(#ty(#formatted_value)),
+                    ty,
+                    val,
                 ))
             }
         } else {

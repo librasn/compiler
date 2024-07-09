@@ -32,7 +32,13 @@ e2e_pdu!(
 e2e_pdu!(
     integer_value_constrained,
     "test-int INTEGER(0..255) ::= 4",
-    r#" lazy_static! { pub static ref TEST_INT: u8 = 4; } "#
+    r#"pub const TEST_INT: u8 = 4;"#
+);
+
+e2e_pdu!(
+    integer_value_large_constrained,
+    "test-int INTEGER(0..MAX) ::= 4",
+    r#"lazy_static! { pub static ref TEST_INT: Integer = Integer::from(4); }"#
 );
 
 e2e_pdu!(
