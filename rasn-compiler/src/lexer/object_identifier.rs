@@ -18,7 +18,8 @@ use nom::{
 
 use super::{
     common::{in_braces, in_parentheses, skip_ws, skip_ws_and_comments, value_identifier},
-    constraint::constraint, RELATIVE_OID,
+    constraint::constraint,
+    RELATIVE_OID,
 };
 
 /// Tries to parse an ASN1 OBJECT IDENTIFIER

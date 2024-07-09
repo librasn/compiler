@@ -8,13 +8,11 @@ use crate::intermediate::{
         ASN1Information, ClassLink, InformationObjectClass, InformationObjectFields,
         ObjectSetValue, ToplevelInformationDefinition,
     },
-    ASN1Type, ASN1Value, ToplevelDefinition, ToplevelTypeDefinition, ToplevelValueDefinition,
-    CharacterStringType
+    ASN1Type, ASN1Value, CharacterStringType, ToplevelDefinition, ToplevelTypeDefinition,
+    ToplevelValueDefinition,
 };
 
-use super::{
-    information_object::InformationObjectClassField, template::*, Rasn,
-};
+use super::{information_object::InformationObjectClassField, template::*, Rasn};
 use crate::generator::error::{GeneratorError, GeneratorErrorType};
 
 pub(crate) const INNER_ARRAY_LIKE_PREFIX: &str = "Anonymous_";
@@ -325,12 +323,13 @@ impl Rasn {
             }
             ASN1Value::Null => {
                 call_template!(
-                self,
-                primitive_value_template,
-                tld,
-                self.to_rust_title_case(&ty.as_str()),
-                assignment!(self, &ty.as_str(), quote!(()))
-            )},
+                    self,
+                    primitive_value_template,
+                    tld,
+                    self.to_rust_title_case(&ty.as_str()),
+                    assignment!(self, &ty.as_str(), quote!(()))
+                )
+            }
             ASN1Value::Boolean(b) if ty.is_builtin_type() => call_template!(
                 self,
                 primitive_value_template,
@@ -395,29 +394,27 @@ impl Rasn {
                 self.to_rust_title_case(enumerated),
                 self.to_rust_enum_identifier(enumerable)
             ),
-            ASN1Value::Time(_) if ty.is_builtin_type() => {
-                match ty {
-                    ASN1Type::GeneralizedTime(_) => call_template!(
-                        self,
-                        lazy_static_value_template,
-                        tld,
-                        quote!(GeneralizedTime),
-                        self.value_to_tokens(&tld.value, Some(&quote!(GeneralizedTime)))?
-                    ),
-                    ASN1Type::UTCTime(_) => call_template!(
-                        self,
-                        lazy_static_value_template,
-                        tld,
-                        quote!(UtcTime),
-                        self.value_to_tokens(&tld.value, Some(&quote!(UtcTime)))?
-                    ),
-                    _ => Err(GeneratorError::new(
-                        Some(ToplevelDefinition::Value(tld)),
-                        "Time value does not match expected type",
-                        GeneratorErrorType::Asn1TypeMismatch,
-                    )),
-                }
-            }
+            ASN1Value::Time(_) if ty.is_builtin_type() => match ty {
+                ASN1Type::GeneralizedTime(_) => call_template!(
+                    self,
+                    lazy_static_value_template,
+                    tld,
+                    quote!(GeneralizedTime),
+                    self.value_to_tokens(&tld.value, Some(&quote!(GeneralizedTime)))?
+                ),
+                ASN1Type::UTCTime(_) => call_template!(
+                    self,
+                    lazy_static_value_template,
+                    tld,
+                    quote!(UtcTime),
+                    self.value_to_tokens(&tld.value, Some(&quote!(UtcTime)))?
+                ),
+                _ => Err(GeneratorError::new(
+                    Some(ToplevelDefinition::Value(tld)),
+                    "Time value does not match expected type",
+                    GeneratorErrorType::Asn1TypeMismatch,
+                )),
+            },
             ASN1Value::LinkedStructLikeValue(s) => {
                 let members = s
                     .iter()
@@ -482,9 +479,9 @@ impl Rasn {
                     | CharacterStringType::VideotexString
                     | CharacterStringType::UniversalString => {
                         return Err(GeneratorError::new(
-                           None,
-                           &format!("{:?} values are currently unsupported", cs_ty),
-                           GeneratorErrorType::NotYetInplemented,
+                            None,
+                            &format!("{:?} values are currently unsupported", cs_ty),
+                            GeneratorErrorType::NotYetInplemented,
                         ))
                     }
                 };
@@ -501,11 +498,13 @@ impl Rasn {
                     match ty {
                         ASN1Type::SequenceOf(seq) => &*seq.element_type,
                         ASN1Type::SetOf(set) => &*set.element_type,
-                        _ => return Err(GeneratorError::new(
-                            Some(ToplevelDefinition::Value(tld)),
-                            "LinkedArrayLikeValue does not match SEQUENCE/SET OF type",
-                            GeneratorErrorType::Asn1TypeMismatch,
-                        ))
+                        _ => {
+                            return Err(GeneratorError::new(
+                                Some(ToplevelDefinition::Value(tld)),
+                                "LinkedArrayLikeValue does not match SEQUENCE/SET OF type",
+                                GeneratorErrorType::Asn1TypeMismatch,
+                            ))
+                        }
                     },
                     s.first().map(|i| &**i),
                 )?;
@@ -528,11 +527,7 @@ impl Rasn {
                 lazy_static_value_template,
                 tld,
                 self.to_rust_title_case(&ty.as_str()),
-                assignment!(
-                    self,
-                    &ty.as_str(),
-                    self.value_to_tokens(&tld.value, None)?
-                )
+                assignment!(self, &ty.as_str(), self.value_to_tokens(&tld.value, None)?)
             ),
             _ => Ok(TokenStream::new()),
         }

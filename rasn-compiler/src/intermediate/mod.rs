@@ -652,10 +652,24 @@ impl From<(&str, ASN1Value, ASN1Type)> for ToplevelValueDefinition {
     }
 }
 
-impl From<(Vec<&str>, &str, Option<Parameterization>, ASN1Type, ASN1Value)>
-    for ToplevelValueDefinition
+impl
+    From<(
+        Vec<&str>,
+        &str,
+        Option<Parameterization>,
+        ASN1Type,
+        ASN1Value,
+    )> for ToplevelValueDefinition
 {
-    fn from(value: (Vec<&str>, &str, Option<Parameterization>, ASN1Type, ASN1Value)) -> Self {
+    fn from(
+        value: (
+            Vec<&str>,
+            &str,
+            Option<Parameterization>,
+            ASN1Type,
+            ASN1Value,
+        ),
+    ) -> Self {
         Self {
             comments: value.0.join("\n"),
             name: value.1.into(),

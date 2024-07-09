@@ -874,24 +874,23 @@ impl Rasn {
         first_item: Option<&ASN1Value>,
     ) -> Result<TokenStream, GeneratorError> {
         if ty.is_builtin_type() {
-        match ty {
-            ASN1Type::Null => Ok(quote!(())),
-            ASN1Type::Boolean(_) => Ok(quote!(bool)),
-            ASN1Type::Integer(_) => {
-                match first_item {
-                    Some(ASN1Value::LinkedIntValue { integer_type, .. }) => {
-                        Ok(integer_type.to_token_stream())
+            match ty {
+                ASN1Type::Null => Ok(quote!(())),
+                ASN1Type::Boolean(_) => Ok(quote!(bool)),
+                ASN1Type::Integer(_) => {
+                    match first_item {
+                        Some(ASN1Value::LinkedIntValue { integer_type, .. }) => {
+                            Ok(integer_type.to_token_stream())
+                        }
+                        _ => Ok(quote!(Integer)), // best effort
                     }
-                    _ => Ok(quote!(Integer)), // best effort
                 }
-            }
-            ASN1Type::BitString(_) => Ok(quote!(BitString)),
-            ASN1Type::OctetString(_) => Ok(quote!(OctetString)),
-            ASN1Type::GeneralizedTime(_) => Ok(quote!(GeneralizedTime)),
-            ASN1Type::UTCTime(_) => Ok(quote!(UtcTime)),
-            ASN1Type::ObjectIdentifier(_) => Ok(quote!(ObjectIdentifier)),
-            ASN1Type::CharacterString(cs) => {
-                match cs.ty {
+                ASN1Type::BitString(_) => Ok(quote!(BitString)),
+                ASN1Type::OctetString(_) => Ok(quote!(OctetString)),
+                ASN1Type::GeneralizedTime(_) => Ok(quote!(GeneralizedTime)),
+                ASN1Type::UTCTime(_) => Ok(quote!(UtcTime)),
+                ASN1Type::ObjectIdentifier(_) => Ok(quote!(ObjectIdentifier)),
+                ASN1Type::CharacterString(cs) => match cs.ty {
                     CharacterStringType::NumericString => Ok(quote!(NumericString)),
                     CharacterStringType::VisibleString => Ok(quote!(VisibleString)),
                     CharacterStringType::IA5String => Ok(quote!(IA5String)),
@@ -907,10 +906,9 @@ impl Rasn {
                         &format!("{:?} values are currently unsupported!", cs.ty),
                         GeneratorErrorType::NotYetInplemented,
                     )),
-                }
-            },
-            _ => Ok(self.to_rust_title_case(&ty.as_str())),
-        }
+                },
+                _ => Ok(self.to_rust_title_case(&ty.as_str())),
+            }
         } else {
             Ok(self.to_rust_title_case(&ty.as_str()))
         }
