@@ -140,7 +140,7 @@ pub fn object_set(input: &str) -> IResult<&str, ObjectSet> {
                     into(information_object),
                     into(skip_ws_and_comments(identifier)),
                 ))),
-            )
+            ),
         ))),
     ))))(input)
 }
