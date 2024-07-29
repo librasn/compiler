@@ -129,7 +129,8 @@ impl Backend for Rasn {
                 });
             Ok(GeneratedModule {
                 generated: Some(quote! {
-                #[allow(non_camel_case_types, non_snake_case, non_upper_case_globals, unused)]
+                #[allow(non_camel_case_types, non_snake_case, non_upper_case_globals, unused,
+                        clippy::too_many_arguments,)]
                 pub mod #name {
                     extern crate alloc;
 
