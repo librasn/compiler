@@ -7,7 +7,7 @@ mod types;
 mod utils;
 
 use std::{
-    borrow::{Borrow, BorrowMut},
+    borrow::BorrowMut,
     collections::BTreeMap,
 };
 
@@ -22,7 +22,7 @@ use crate::{
 
 use self::{
     parameterization::ParameterGovernor,
-    utils::{built_in_type, find_tld_or_enum_value_by_name, octet_string_to_bit_string},
+    utils::{find_tld_or_enum_value_by_name, octet_string_to_bit_string},
 };
 
 use super::{Constraint, Parameter, TableConstraint};

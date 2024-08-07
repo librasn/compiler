@@ -29,7 +29,9 @@ impl<'a> From<nom::Err<nom::error::Error<&'a str>>> for LexerError {
 #[derive(Debug, Clone)]
 pub enum LexerErrorType {
     NotEnoughData,
+    #[allow(dead_code)]
     MatchingError(nom::error::ErrorKind),
+    #[allow(dead_code)]
     Failure(nom::error::ErrorKind),
 }
 

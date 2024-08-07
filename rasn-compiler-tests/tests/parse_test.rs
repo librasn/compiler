@@ -1,5 +1,5 @@
 use rasn_compiler::{
-    prelude::{RasnBackend, TypescriptBackend},
+    prelude::RasnBackend,
     Compiler,
 };
 
