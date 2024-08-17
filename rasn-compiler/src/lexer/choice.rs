@@ -4,19 +4,18 @@ use nom::{
     combinator::{into, opt},
     multi::many0,
     sequence::{separated_pair, terminated, tuple},
-    IResult,
 };
 
 use crate::intermediate::{types::*, *};
 
 use super::{constraint::constraint, *};
 
-pub fn choice_value(input: &str) -> IResult<&str, ASN1Value> {
+pub fn choice_value(input: Span) -> LexerResult<ASN1Value> {
     map(
         skip_ws_and_comments(separated_pair(identifier, char(':'), asn1_value)),
         |(id, val)| ASN1Value::Choice {
             type_name: None,
-            variant_name: id.to_owned(),
+            variant_name: id.to_string(),
             inner_value: Box::new(val),
         },
     )(input)
@@ -42,7 +41,7 @@ pub fn choice_value(input: &str) -> IResult<&str, ASN1Value> {
 /// contains anonymous members, these nested members will be represented as
 /// structs within the same global scope.
 /// If the match fails, the lexer will not consume the input and will return an error.
-pub fn selection_type_choice(input: &str) -> IResult<&str, ASN1Type> {
+pub fn selection_type_choice(input: Span) -> LexerResult<ASN1Type> {
     map(
         into(separated_pair(
             skip_ws_and_comments(value_identifier),
@@ -63,7 +62,7 @@ pub fn selection_type_choice(input: &str) -> IResult<&str, ASN1Type> {
 /// contains anonymous members, these nested members will be represented as
 /// structs within the same global scope.
 /// If the match fails, the lexer will not consume the input and will return an error.
-pub fn choice(input: &str) -> IResult<&str, ASN1Type> {
+pub fn choice(input: Span) -> LexerResult<ASN1Type> {
     map(
         preceded(
             skip_ws_and_comments(tag(CHOICE)),
@@ -98,7 +97,7 @@ pub fn choice(input: &str) -> IResult<&str, ASN1Type> {
     )(input)
 }
 
-fn choice_option(input: &str) -> IResult<&str, ChoiceOption> {
+fn choice_option(input: Span) -> LexerResult<ChoiceOption> {
     into(tuple((
         skip_ws_and_comments(identifier),
         opt(asn_tag),
@@ -114,7 +113,7 @@ mod tests {
             types::{Choice, ChoiceOption, ChoiceSelectionType},
             ASN1Type, DeclarationElsewhere,
         },
-        lexer::choice::selection_type_choice,
+        lexer::{choice::selection_type_choice, Span},
     };
 
     use crate::lexer::choice;
@@ -122,13 +121,13 @@ mod tests {
     #[test]
     fn parses_extensible_choice() {
         assert_eq!(
-            choice(
+            choice(Span::new(
                 r#"CHOICE
     {normal NULL,
     high NULL,
     ...,
     medium NULL }"#
-            )
+            ))
             .unwrap()
             .1,
             ASN1Type::Choice(Choice {
@@ -161,7 +160,7 @@ mod tests {
     #[test]
     fn parses_selection_type_choice() {
         assert_eq!(
-            selection_type_choice("localDistinguishedName < ObjectInstance")
+            selection_type_choice(Span::new("localDistinguishedName < ObjectInstance"))
                 .unwrap()
                 .1,
             ASN1Type::ChoiceSelectionType(ChoiceSelectionType {
@@ -220,7 +219,7 @@ mod tests {
                 ],
                 constraints: vec![],
             },),
-            choice(
+            choice(Span::new(
                 r#"CHOICE {
             glc	    GeographicLocationContainer,
             ...,	-- original extension indicator of V1
@@ -229,7 +228,7 @@ mod tests {
             rsc	    RoadSurfaceContainer ]], -- Extension in V2
             isc      InfrastructureSupportContainer  -- Extension in V3.1
          }"#
-            )
+            ))
             .unwrap()
             .1
         )

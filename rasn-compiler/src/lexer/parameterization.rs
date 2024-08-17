@@ -4,7 +4,6 @@ use nom::{
     combinator::{into, map},
     multi::separated_list1,
     sequence::separated_pair,
-    IResult,
 };
 
 use crate::intermediate::{constraints::Parameter, parameterization::*, *};
@@ -13,10 +12,10 @@ use super::{
     asn1_type, asn1_value,
     common::{identifier, in_braces, skip_ws_and_comments},
     information_object_class::{information_object, object_set},
-    value_identifier,
+    value_identifier, LexerResult, Span,
 };
 
-pub fn parameterization(input: &str) -> IResult<&str, Parameterization> {
+pub fn parameterization(input: Span) -> LexerResult<Parameterization> {
     into(in_braces(separated_list1(
         char(COMMA),
         skip_ws_and_comments(alt((
@@ -35,7 +34,7 @@ pub fn parameterization(input: &str) -> IResult<&str, Parameterization> {
     )))(input)
 }
 
-pub fn parameters(input: &str) -> IResult<&str, Vec<Parameter>> {
+pub fn parameters(input: Span) -> LexerResult<Vec<Parameter>> {
     into(in_braces(separated_list1(
         char(COMMA),
         skip_ws_and_comments(alt((
@@ -59,12 +58,15 @@ mod tests {
         ASN1Type,
     };
 
-    use crate::lexer::parameterization::{parameterization, parameters};
+    use crate::lexer::{
+        parameterization::{parameterization, parameters},
+        Span,
+    };
 
     #[test]
     fn parses_class_parameterization_param() {
         assert_eq!(
-            parameterization(r#"{REG-EXT-ID-AND-TYPE : Set}"#)
+            parameterization(Span::new(r#"{REG-EXT-ID-AND-TYPE : Set}"#))
                 .unwrap()
                 .1,
             Parameterization {
@@ -79,7 +81,7 @@ mod tests {
     #[test]
     fn parses_object_set_parameter() {
         assert_eq!(
-            parameters("{{Reg-MapData}}").unwrap().1,
+            parameters(Span::new("{{Reg-MapData}}")).unwrap().1,
             vec![Parameter::ObjectSetParameter(ObjectSet {
                 values: vec![ObjectSetValue::Reference("Reg-MapData".into())],
                 extensible: None
@@ -90,7 +92,7 @@ mod tests {
     #[test]
     fn parses_builtin_type_params() {
         assert_eq!(
-            parameterization(r#"{ INTEGER: lower, BOOLEAN: flag }"#)
+            parameterization(Span::new(r#"{ INTEGER: lower, BOOLEAN: flag }"#))
                 .unwrap()
                 .1,
             Parameterization {

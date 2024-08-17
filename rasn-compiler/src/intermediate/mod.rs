@@ -16,7 +16,7 @@ pub mod utils;
 
 use std::{borrow::Cow, cell::RefCell, collections::BTreeMap, ops::Add, rc::Rc};
 
-use crate::common::INTERNAL_IO_FIELD_REF_TYPE_NAME_PREFIX;
+use crate::{common::INTERNAL_IO_FIELD_REF_TYPE_NAME_PREFIX, lexer::Span};
 use constraints::Constraint;
 use error::{GrammarError, GrammarErrorType};
 use information_object::{InformationObjectFieldReference, ToplevelInformationDefinition};
@@ -236,9 +236,9 @@ macro_rules! error {
 #[derive(Debug, Clone, PartialEq)]
 pub struct EncodingReferenceDefault(pub String);
 
-impl From<&str> for EncodingReferenceDefault {
-    fn from(value: &str) -> Self {
-        Self(value.into())
+impl From<Span<'_>> for EncodingReferenceDefault {
+    fn from(value: Span) -> Self {
+        Self(value.to_string())
     }
 }
 
@@ -298,10 +298,10 @@ pub struct GlobalModuleReference {
     pub assigned_identifier: AssignedIdentifier,
 }
 
-impl From<(&str, AssignedIdentifier)> for GlobalModuleReference {
-    fn from(value: (&str, AssignedIdentifier)) -> Self {
+impl From<(Span<'_>, AssignedIdentifier)> for GlobalModuleReference {
+    fn from(value: (Span, AssignedIdentifier)) -> Self {
         Self {
-            module_reference: value.0.to_owned(),
+            module_reference: value.0.to_string(),
             assigned_identifier: value.1,
         }
     }
@@ -332,13 +332,13 @@ pub struct Import {
     pub with: Option<With>,
 }
 
-impl From<(Vec<&str>, (GlobalModuleReference, Option<&str>))> for Import {
-    fn from(value: (Vec<&str>, (GlobalModuleReference, Option<&str>))) -> Self {
+impl From<(Vec<Span<'_>>, (GlobalModuleReference, Option<Span<'_>>))> for Import {
+    fn from(value: (Vec<Span>, (GlobalModuleReference, Option<Span>))) -> Self {
         Self {
-            types: value.0.into_iter().map(String::from).collect(),
+            types: value.0.iter().map(Span::to_string).collect(),
             global_module_reference: value.1 .0,
             with: value.1 .1.map(|with| {
-                if with == WITH_SUCCESSORS {
+                if *with == WITH_SUCCESSORS {
                     With::Successors
                 } else {
                     With::Descendants
@@ -358,8 +358,8 @@ pub enum Exports {
     All,
 }
 
-impl From<Vec<&str>> for Exports {
-    fn from(value: Vec<&str>) -> Self {
+impl From<Vec<Span<'_>>> for Exports {
+    fn from(value: Vec<Span>) -> Self {
         Self::Identifier(value.iter().map(ToString::to_string).collect())
     }
 }
@@ -377,12 +377,12 @@ pub enum DefinitiveIdentifier {
     },
 }
 
-impl From<(ObjectIdentifierValue, Option<&str>)> for DefinitiveIdentifier {
-    fn from(value: (ObjectIdentifierValue, Option<&str>)) -> Self {
+impl From<(ObjectIdentifierValue, Option<Span<'_>>)> for DefinitiveIdentifier {
+    fn from(value: (ObjectIdentifierValue, Option<Span>)) -> Self {
         if let Some(iri_value) = value.1 {
             Self::DefinitiveOIDandIRI {
                 oid: value.0,
-                iri: iri_value.to_owned(),
+                iri: iri_value.to_string(),
             }
         } else {
             Self::DefinitiveOID(value.0)
@@ -414,7 +414,7 @@ impl ModuleReference {
 
 impl
     From<(
-        &str,
+        Span<'_>,
         Option<DefinitiveIdentifier>,
         Option<(
             Option<EncodingReferenceDefault>,
@@ -427,7 +427,7 @@ impl
 {
     fn from(
         value: (
-            &str,
+            Span,
             Option<DefinitiveIdentifier>,
             Option<(
                 Option<EncodingReferenceDefault>,
@@ -445,7 +445,7 @@ impl
                 ExtensibilityEnvironment::Explicit,
             ));
         Self {
-            name: value.0.into(),
+            name: value.0.to_string(),
             module_identifier: value.1,
             encoding_reference_default,
             tagging_environment,
@@ -484,19 +484,19 @@ impl From<u128> for ObjectIdentifierArc {
     }
 }
 
-impl From<&str> for ObjectIdentifierArc {
-    fn from(value: &str) -> Self {
+impl From<Span<'_>> for ObjectIdentifierArc {
+    fn from(value: Span) -> Self {
         Self {
-            name: Some(value.into()),
+            name: Some(value.to_string()),
             number: None,
         }
     }
 }
 
-impl From<(&str, u128)> for ObjectIdentifierArc {
-    fn from(value: (&str, u128)) -> Self {
+impl From<(Span<'_>, u128)> for ObjectIdentifierArc {
+    fn from(value: (Span, u128)) -> Self {
         Self {
-            name: Some(value.0.into()),
+            name: Some(value.0.to_string()),
             number: Some(value.1),
         }
     }
@@ -639,11 +639,11 @@ pub struct ToplevelValueDefinition {
     pub index: Option<(Rc<RefCell<ModuleReference>>, usize)>,
 }
 
-impl From<(&str, ASN1Value, ASN1Type)> for ToplevelValueDefinition {
-    fn from(value: (&str, ASN1Value, ASN1Type)) -> Self {
+impl From<(Span<'_>, ASN1Value, ASN1Type)> for ToplevelValueDefinition {
+    fn from(value: (Span, ASN1Value, ASN1Type)) -> Self {
         Self {
             comments: String::new(),
-            name: value.0.to_owned(),
+            name: value.0.to_string(),
             associated_type: value.2.to_owned(),
             parameterization: None,
             value: value.1,
@@ -654,8 +654,8 @@ impl From<(&str, ASN1Value, ASN1Type)> for ToplevelValueDefinition {
 
 impl
     From<(
-        Vec<&str>,
-        &str,
+        Vec<Span<'_>>,
+        Span<'_>,
         Option<Parameterization>,
         ASN1Type,
         ASN1Value,
@@ -663,16 +663,21 @@ impl
 {
     fn from(
         value: (
-            Vec<&str>,
-            &str,
+            Vec<Span>,
+            Span,
             Option<Parameterization>,
             ASN1Type,
             ASN1Value,
         ),
     ) -> Self {
         Self {
-            comments: value.0.join("\n"),
-            name: value.1.into(),
+            comments: value
+                .0
+                .into_iter()
+                .map(Span::into_fragment)
+                .collect::<Vec<&str>>()
+                .join("\n"),
+            name: value.1.to_string(),
             parameterization: value.2,
             associated_type: value.3.into(),
             value: value.4,
@@ -697,12 +702,12 @@ impl ToplevelTypeDefinition {
     }
 }
 
-impl From<(&str, ASN1Type)> for ToplevelTypeDefinition {
-    fn from(value: (&str, ASN1Type)) -> Self {
+impl From<(Span<'_>, ASN1Type)> for ToplevelTypeDefinition {
+    fn from(value: (Span, ASN1Type)) -> Self {
         Self {
             comments: String::new(),
             tag: None,
-            name: value.0.to_owned(),
+            name: value.0.to_string(),
             ty: value.1,
             parameterization: None,
             index: None,
@@ -712,23 +717,28 @@ impl From<(&str, ASN1Type)> for ToplevelTypeDefinition {
 
 impl
     From<(
-        Vec<&str>,
-        &str,
+        Vec<Span<'_>>,
+        Span<'_>,
         Option<Parameterization>,
         (Option<AsnTag>, ASN1Type),
     )> for ToplevelTypeDefinition
 {
     fn from(
         value: (
-            Vec<&str>,
-            &str,
+            Vec<Span>,
+            Span,
             Option<Parameterization>,
             (Option<AsnTag>, ASN1Type),
         ),
     ) -> Self {
         Self {
-            comments: value.0.join("\n"),
-            name: value.1.into(),
+            comments: value
+                .0
+                .into_iter()
+                .map(Span::into_fragment)
+                .collect::<Vec<&str>>()
+                .join("\n"),
+            name: value.1.to_string(),
             parameterization: value.2,
             ty: value.3 .1,
             tag: value.3 .0,
@@ -846,11 +856,11 @@ impl ASN1Type {
     }
 
     pub fn builtin_or_elsewhere(
-        parent: Option<&str>,
-        identifier: &str,
+        parent: Option<Span>,
+        identifier: Span,
         constraints: Option<Vec<Constraint>>,
     ) -> ASN1Type {
-        match (parent, identifier) {
+        match (parent, identifier.as_ref()) {
             (None, NULL) => ASN1Type::Null,
             (None, BOOLEAN) => ASN1Type::Boolean(Boolean {
                 constraints: constraints.unwrap_or_default(),
@@ -1022,9 +1032,9 @@ impl CharacterStringType {
     }
 }
 
-impl From<&str> for CharacterStringType {
-    fn from(value: &str) -> Self {
-        match value {
+impl From<Span<'_>> for CharacterStringType {
+    fn from(value: Span) -> Self {
+        match *value {
             IA5_STRING => Self::IA5String,
             NUMERIC_STRING => Self::NumericString,
             VISIBLE_STRING => Self::VisibleString,
@@ -1286,11 +1296,11 @@ pub struct DeclarationElsewhere {
     pub constraints: Vec<Constraint>,
 }
 
-impl From<(Option<&str>, &str, Option<Vec<Constraint>>)> for DeclarationElsewhere {
-    fn from(value: (Option<&str>, &str, Option<Vec<Constraint>>)) -> Self {
+impl From<(Option<Span<'_>>, Span<'_>, Option<Vec<Constraint>>)> for DeclarationElsewhere {
+    fn from(value: (Option<Span>, Span, Option<Vec<Constraint>>)) -> Self {
         DeclarationElsewhere {
-            parent: value.0.map(ToString::to_string),
-            identifier: value.1.into(),
+            parent: value.0.as_ref().map(Span::to_string),
+            identifier: value.1.to_string(),
             constraints: value.2.unwrap_or_default(),
         }
     }
@@ -1313,9 +1323,9 @@ pub struct AsnTag {
     pub id: u64,
 }
 
-impl From<((Option<&str>, u64), Option<TaggingEnvironment>)> for AsnTag {
-    fn from(value: ((Option<&str>, u64), Option<TaggingEnvironment>)) -> Self {
-        let tag_class = match value.0 .0 {
+impl From<((Option<Span<'_>>, u64), Option<TaggingEnvironment>)> for AsnTag {
+    fn from(value: ((Option<Span>, u64), Option<TaggingEnvironment>)) -> Self {
+        let tag_class = match value.0 .0.map(|span| *span) {
             Some("APPLICATION") => TagClass::Application,
             Some("UNIVERSAL") => TagClass::Universal,
             Some("PRIVATE") => TagClass::Private,

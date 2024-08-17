@@ -3,13 +3,13 @@ use nom::{
     bytes::complete::tag,
     combinator::{map, opt},
     sequence::{pair, preceded},
-    IResult,
 };
 
 use super::{
     asn1_type,
     common::{opt_parentheses, skip_ws_and_comments, value_identifier},
     constraint::constraint,
+    LexerResult, Span,
 };
 
 /// Tries to parse an ASN1 SEQUENCE OF
@@ -20,7 +20,7 @@ use super::{
 /// If the match succeeds, the lexer will consume the match and return the remaining string
 /// and a wrapped `SequenceOf` type representing the ASN1 declaration.
 /// If the match fails, the lexer will not consume the input and will return an error.
-pub fn sequence_of(input: &str) -> IResult<&str, ASN1Type> {
+pub fn sequence_of(input: Span) -> LexerResult<ASN1Type> {
     map(
         pair(
             preceded(
@@ -45,12 +45,12 @@ mod tests {
         *,
     };
 
-    use crate::lexer::sequence_of;
+    use crate::lexer::{sequence_of, Span};
 
     #[test]
     fn parses_simple_sequence_of() {
         assert_eq!(
-            sequence_of("SEQUENCE OF BOOLEAN").unwrap().1,
+            sequence_of(Span::new("SEQUENCE OF BOOLEAN")).unwrap().1,
             ASN1Type::SequenceOf(SequenceOrSetOf {
                 constraints: vec![],
                 element_type: Box::new(ASN1Type::Boolean(Boolean {
@@ -63,7 +63,7 @@ mod tests {
     #[test]
     fn parses_simple_sequence_of_elsewhere_declared_type() {
         assert_eq!(
-            sequence_of("SEQUENCE OF Things").unwrap().1,
+            sequence_of(Span::new("SEQUENCE OF Things")).unwrap().1,
             ASN1Type::SequenceOf(SequenceOrSetOf {
                 constraints: vec![],
                 element_type: Box::new(ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
@@ -78,9 +78,11 @@ mod tests {
     #[test]
     fn parses_constraint_sequence_of_elsewhere_declared_type() {
         assert_eq!(
-            sequence_of("SEQUENCE SIZE (1..13,...) OF CorrelationCellValue  ")
-                .unwrap()
-                .1,
+            sequence_of(Span::new(
+                "SEQUENCE SIZE (1..13,...) OF CorrelationCellValue  "
+            ))
+            .unwrap()
+            .1,
             ASN1Type::SequenceOf(SequenceOrSetOf {
                 constraints: vec![Constraint::SubtypeConstraint(ElementSet {
                     set: ElementOrSetOperation::Element(SubtypeElement::SizeConstraint(Box::new(
@@ -104,9 +106,11 @@ mod tests {
     #[test]
     fn parses_constraint_sequence_of_with_extra_parentheses() {
         assert_eq!(
-            sequence_of("SEQUENCE (SIZE (1..13, ...)) OF CorrelationCellValue  ")
-                .unwrap()
-                .1,
+            sequence_of(Span::new(
+                "SEQUENCE (SIZE (1..13, ...)) OF CorrelationCellValue  "
+            ))
+            .unwrap()
+            .1,
             ASN1Type::SequenceOf(SequenceOrSetOf {
                 constraints: vec![Constraint::SubtypeConstraint(ElementSet {
                     set: ElementOrSetOperation::Element(SubtypeElement::SizeConstraint(Box::new(
@@ -130,11 +134,11 @@ mod tests {
     #[test]
     fn parses_constraint_sequence_of_constraint_integer() {
         assert_eq!(
-            sequence_of(
+            sequence_of(Span::new(
                 r#"SEQUENCE SIZE (1..13,...) OF INTEGER {
               one-distinguished-value (12)
             } (1..13,...) "#
-            )
+            ))
             .unwrap()
             .1,
             ASN1Type::SequenceOf(SequenceOrSetOf {
@@ -169,10 +173,10 @@ mod tests {
     #[test]
     fn parses_parameterized_constrained_sequence_of() {
         assert_eq!(
-            sequence_of(
+            sequence_of(Span::new(
                 r#"SEQUENCE (SIZE(1..4)) OF
       RegionalExtension {{Reg-MapData}} OPTIONAL,"#
-            )
+            ))
             .unwrap()
             .1,
             ASN1Type::SequenceOf(SequenceOrSetOf {
@@ -204,12 +208,12 @@ mod tests {
     fn handles_object_field_ref() {
         println!(
             "{:?}",
-            sequence_of(
+            sequence_of(Span::new(
                 r#"SEQUENCE (SIZE(1..MAX)) OF
         IEEE1609DOT2-HEADERINFO-CONTRIBUTED-EXTENSION.&Extn({
         Ieee1609Dot2HeaderInfoContributedExtensions
       }{@.contributorId})"#
-            )
+            ))
             .unwrap()
             .1
         )

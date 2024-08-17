@@ -15,7 +15,6 @@ use nom::{
     combinator::{into, map, opt, recognize},
     multi::{many0, many1},
     sequence::{delimited, pair, preceded, terminated, tuple},
-    IResult,
 };
 
 use crate::intermediate::{information_object::*, *};
@@ -52,11 +51,14 @@ mod set_of;
 mod time;
 mod util;
 
+pub(crate) type Span<'i> = nom_locate::LocatedSpan<&'i str, ()>;
+pub(crate) type LexerResult<'i, O> = nom::IResult<Span<'i>, O, nom::error::Error<Span<'i>>>;
+
 #[cfg(test)]
 mod tests;
 
 pub fn asn_spec(
-    input: &str,
+    input: Span,
 ) -> Result<Vec<(ModuleReference, Vec<ToplevelDefinition>)>, LexerError> {
     many1(pair(
         module_reference,
@@ -76,7 +78,7 @@ pub fn asn_spec(
     .map_err(|e| e.into())
 }
 
-fn encoding_control(input: &str) -> IResult<&str, &str> {
+fn encoding_control(input: Span) -> LexerResult<Span> {
     delimited(
         skip_ws_and_comments(tag("ENCODING-CONTROL")),
         take_until(END),
@@ -84,14 +86,14 @@ fn encoding_control(input: &str) -> IResult<&str, &str> {
     )(input)
 }
 
-fn end(input: &str) -> IResult<&str, &str> {
+fn end(input: Span) -> LexerResult<Span> {
     skip_ws_and_comments(preceded(
         tag(END),
         recognize(many0(alt((comment, multispace1)))),
     ))(input)
 }
 
-pub fn top_level_type_declaration(input: &str) -> IResult<&str, ToplevelTypeDefinition> {
+pub fn top_level_type_declaration(input: Span) -> LexerResult<ToplevelTypeDefinition> {
     into(tuple((
         skip_ws(many0(comment)),
         skip_ws(title_case_identifier),
@@ -101,8 +103,8 @@ pub fn top_level_type_declaration(input: &str) -> IResult<&str, ToplevelTypeDefi
 }
 
 pub fn top_level_information_declaration(
-    input: &str,
-) -> IResult<&str, ToplevelInformationDefinition> {
+    input: Span,
+) -> LexerResult<ToplevelInformationDefinition> {
     skip_ws(alt((
         top_level_information_object_declaration,
         top_level_object_set_declaration,
@@ -110,7 +112,7 @@ pub fn top_level_information_declaration(
     )))(input)
 }
 
-pub fn asn1_type(input: &str) -> IResult<&str, ASN1Type> {
+pub fn asn1_type(input: Span) -> LexerResult<ASN1Type> {
     alt((
         alt((
             null,
@@ -144,7 +146,7 @@ pub fn asn1_type(input: &str) -> IResult<&str, ASN1Type> {
     ))(input)
 }
 
-pub fn asn1_value(input: &str) -> IResult<&str, ASN1Value> {
+pub fn asn1_value(input: Span) -> LexerResult<ASN1Value> {
     alt((
         all_value,
         null_value,
@@ -161,7 +163,7 @@ pub fn asn1_value(input: &str) -> IResult<&str, ASN1Value> {
     ))(input)
 }
 
-pub fn elsewhere_declared_value(input: &str) -> IResult<&str, ASN1Value> {
+pub fn elsewhere_declared_value(input: Span) -> LexerResult<ASN1Value> {
     map(
         pair(
             opt(skip_ws_and_comments(recognize(many1(pair(
@@ -171,13 +173,13 @@ pub fn elsewhere_declared_value(input: &str) -> IResult<&str, ASN1Value> {
             value_identifier,
         ),
         |(p, id)| ASN1Value::ElsewhereDeclaredValue {
-            parent: p.map(ToString::to_string),
-            identifier: id.into(),
+            parent: p.map(|span| span.to_string()),
+            identifier: id.to_string(),
         },
     )(input)
 }
 
-pub fn elsewhere_declared_type(input: &str) -> IResult<&str, ASN1Type> {
+pub fn elsewhere_declared_type(input: Span) -> LexerResult<ASN1Type> {
     map(
         tuple((
             opt(skip_ws_and_comments(recognize(many1(pair(
@@ -191,7 +193,7 @@ pub fn elsewhere_declared_type(input: &str) -> IResult<&str, ASN1Type> {
     )(input)
 }
 
-fn top_level_value_declaration(input: &str) -> IResult<&str, ToplevelValueDefinition> {
+fn top_level_value_declaration(input: Span) -> LexerResult<ToplevelValueDefinition> {
     alt((
         into(tuple((
             skip_ws(many0(comment)),
@@ -205,8 +207,8 @@ fn top_level_value_declaration(input: &str) -> IResult<&str, ToplevelValueDefini
 }
 
 fn top_level_information_object_declaration(
-    input: &str,
-) -> IResult<&str, ToplevelInformationDefinition> {
+    input: Span,
+) -> LexerResult<ToplevelInformationDefinition> {
     into(tuple((
         skip_ws(many0(comment)),
         skip_ws(identifier),
@@ -216,7 +218,7 @@ fn top_level_information_object_declaration(
     )))(input)
 }
 
-fn top_level_object_set_declaration(input: &str) -> IResult<&str, ToplevelInformationDefinition> {
+fn top_level_object_set_declaration(input: Span) -> LexerResult<ToplevelInformationDefinition> {
     into(tuple((
         skip_ws(many0(comment)),
         skip_ws(identifier),
@@ -226,7 +228,7 @@ fn top_level_object_set_declaration(input: &str) -> IResult<&str, ToplevelInform
     )))(input)
 }
 
-fn top_level_object_class_declaration(input: &str) -> IResult<&str, ToplevelInformationDefinition> {
+fn top_level_object_class_declaration(input: Span) -> LexerResult<ToplevelInformationDefinition> {
     into(tuple((
         skip_ws(many0(comment)),
         skip_ws(uppercase_identifier),

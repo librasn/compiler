@@ -19,7 +19,7 @@ use std::{
 
 use generator::Backend;
 use intermediate::ToplevelDefinition;
-use lexer::asn_spec;
+use lexer::{asn_spec, Span};
 use validator::Validator;
 
 pub mod prelude {
@@ -389,7 +389,7 @@ impl<B: Backend> Compiler<B, CompilerSourcesSet> {
                 AsnSource::Literal(l) => l.clone(),
             };
             modules.append(
-                &mut asn_spec(&stringified_src)?
+                &mut asn_spec(Span::new(&stringified_src))?
                     .into_iter()
                     .flat_map(|(header, tlds)| {
                         let header_ref = Rc::new(RefCell::new(header));

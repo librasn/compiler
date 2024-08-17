@@ -6,14 +6,12 @@ mod information_object;
 mod types;
 mod utils;
 
-use std::{
-    borrow::BorrowMut,
-    collections::BTreeMap,
-};
+use std::{borrow::BorrowMut, collections::BTreeMap};
 
 use crate::{
     common::INTERNAL_NESTED_TYPE_NAME_PREFIX,
     intermediate::{error::*, information_object::*, types::*, utils::*, *},
+    lexer::Span,
     validator::{
         linking::utils::bit_string_to_octet_string,
         parameterization::{Parameterization, ParameterizationArgument},
@@ -474,7 +472,7 @@ impl ASN1Type {
                                 impl_tlds.insert(
                                     dummy_reference.clone(),
                                     ToplevelDefinition::Value(ToplevelValueDefinition::from((
-                                        dummy_reference.as_str(),
+                                        Span::new(dummy_reference),
                                         v.clone(),
                                         gov.clone(),
                                     ))),
@@ -484,7 +482,7 @@ impl ASN1Type {
                                 impl_tlds.insert(
                                     dummy_reference.clone(),
                                     ToplevelDefinition::Type(ToplevelTypeDefinition::from((
-                                        dummy_reference.as_str(),
+                                        Span::new(dummy_reference),
                                         t.clone(),
                                     ))),
                                 );
@@ -501,7 +499,7 @@ impl ASN1Type {
                                 let mut info = ASN1Information::ObjectSet(o.clone());
                                 info.link_object_set_reference(tlds);
                                 let mut tld = ToplevelInformationDefinition::from((
-                                    dummy_reference.as_str(),
+                                    Span::new(dummy_reference),
                                     info,
                                     c.as_str()
                                 ));

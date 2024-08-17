@@ -3,8 +3,10 @@ use std::cmp::min;
 use nom::{
     bytes::complete::tag,
     error::{Error, ErrorKind, ParseError},
-    Err, FindSubstring, IResult, InputLength, InputTake, Parser,
+    Err, FindSubstring, IResult, InputLength, InputTake, Parser, Slice as _,
 };
+
+use super::{LexerResult, Span};
 
 pub fn hex_to_bools(c: char) -> [bool; 4] {
     match c {
@@ -68,20 +70,20 @@ where
 /// `take_until("\"")` would match only `[a-zA-Z]#`, until the next `"`.
 /// `take_unitl_and_not("\"","\"\"")` will match the entire pattern
 /// `[a-zA-Z]#""(1,8)""(-[a-zA-Z0-9]#(1,8))*`
-pub fn take_until_and_not<'a, Error: ParseError<&'a str>>(
+pub fn take_until_and_not<'a, Error: ParseError<Span<'a>>>(
     end_tag: &'a str,
     however_tag: &'a str,
-) -> impl Fn(&'a str) -> IResult<&'a str, &'a str, Error> {
-    move |i: &str| {
-        fn recursive_until<'a, Error: ParseError<&'a str>>(
-            i: &'a str,
+) -> impl Fn(Span<'a>) -> IResult<Span<'a>, Span<'a>, Error> {
+    move |i: Span| {
+        fn recursive_until<'a, Error: ParseError<Span<'a>>>(
+            i: Span<'a>,
             index: usize,
             t1: &'a str,
             t2: &'a str,
-        ) -> IResult<&'a str, &'a str, Error> {
+        ) -> IResult<Span<'a>, Span<'a>, Error> {
             match (
-                (&i[index..]).find_substring(t1),
-                (&i[index..]).find_substring(t2),
+                i.slice(index..).find_substring(t1),
+                i.slice(index..).find_substring(t2),
             ) {
                 (None, _) => Err(Err::Error(Error::from_error_kind(i, ErrorKind::TakeUntil))),
                 (Some(offset), None) => Ok(i.take_split(index + offset)),
@@ -104,8 +106,8 @@ pub fn take_until_and_not<'a, Error: ParseError<&'a str>>(
 pub fn take_until_unbalanced<'a>(
     opening_tag: &'a str,
     closing_tag: &'a str,
-) -> impl Fn(&'a str) -> IResult<&str, &str> {
-    move |i: &str| {
+) -> impl Fn(Span<'a>) -> LexerResult<Span> {
+    move |i: Span| {
         let mut index = 0;
         let mut bracket_counter = 0;
         'consume: loop {
@@ -128,12 +130,12 @@ pub fn take_until_unbalanced<'a>(
             if bracket_counter == -1 {
                 // We do not consume it.
                 index -= closing_tag.len();
-                return Ok((&i[index..], &i[0..index]));
+                return Ok((i.slice(index..), i.slice(0..index)));
             };
         }
 
         if bracket_counter == 0 {
-            Ok(("", i))
+            Ok((i.slice(i.len()..), i))
         } else {
             Err(Err::Error(Error::from_error_kind(i, ErrorKind::TakeUntil)))
         }
@@ -144,11 +146,11 @@ pub fn opt_delimited<'a, O1, O2, O3, F, G, H>(
     mut first: F,
     mut second: G,
     mut third: H,
-) -> impl FnMut(&'a str) -> IResult<&'a str, O2, Error<&'a str>>
+) -> impl FnMut(Span<'a>) -> LexerResult<O2>
 where
-    F: Parser<&'a str, O1, Error<&'a str>>,
-    G: Parser<&'a str, O2, Error<&'a str>>,
-    H: Parser<&'a str, O3, Error<&'a str>>,
+    F: Parser<Span<'a>, O1, Error<Span<'a>>>,
+    G: Parser<Span<'a>, O2, Error<Span<'a>>>,
+    H: Parser<Span<'a>, O3, Error<Span<'a>>>,
     O1: std::fmt::Debug,
 {
     move |input| {
@@ -169,8 +171,8 @@ where
 #[cfg(test)]
 mod tests {
 
-    use crate::lexer::asn1_value;
     use crate::lexer::common::{in_parentheses, skip_ws_and_comments};
+    use crate::lexer::{asn1_value, Span};
 
     use crate::lexer::util::{opt_delimited, take_until_and_not};
 
@@ -179,95 +181,131 @@ mod tests {
 
     use nom::multi::many1;
 
-    use nom::{bytes::complete::tag, error::Error};
+    use nom::{bytes::complete::tag, Slice as _};
 
     #[test]
-    fn optional_delimiter() {
+    fn optional_delimiter_simple() {
+        let input = Span::new("1ab2");
+        let result = opt_delimited(
+            skip_ws_and_comments(tag("1")),
+            skip_ws_and_comments(tag("ab")),
+            skip_ws_and_comments(tag("2")),
+        )(input);
+        let expect_remainder = input.slice(4..);
+        let expect_value = input.slice(1..3);
+        assert_eq!(*expect_remainder, "");
+        assert_eq!(*expect_value, "ab");
+        assert_eq!(result, Ok((expect_remainder, expect_value)));
+    }
+
+    #[test]
+    fn optional_delimiter_unmatched_delimiter() {
+        let input = Span::new("ab");
+        let result = opt_delimited::<char, Span, char, _, _, _>(
+            skip_ws_and_comments(char('(')),
+            skip_ws_and_comments(tag("ab")),
+            skip_ws_and_comments(char(')')),
+        )(input);
+        let expect_remainder = input.slice(2..);
+        let expect_value = input.slice(0..2);
+        assert_eq!(*expect_remainder, "");
+        assert_eq!(*expect_value, "ab");
+        assert_eq!(result, Ok((expect_remainder, expect_value)));
+    }
+
+    #[test]
+    fn optional_delimiter_missing_end_delimiter() {
+        let input = Span::new("( abc");
+        let result = opt_delimited(
+            skip_ws_and_comments(char('(')),
+            skip_ws_and_comments(tag("ab")),
+            skip_ws_and_comments(char(')')),
+        )(input);
+        let expect_remainder = input.slice(4..);
+        assert_eq!(*expect_remainder, "c");
         assert_eq!(
-            opt_delimited::<&str, &str, &str, _, _, _>(
-                skip_ws_and_comments(tag("1")),
-                skip_ws_and_comments(tag("ab")),
-                skip_ws_and_comments(tag("2"))
-            )("1ab2"),
-            Ok(("", "ab"))
-        );
-        assert_eq!(
-            opt_delimited::<char, &str, char, _, _, _>(
-                skip_ws_and_comments(char('(')),
-                skip_ws_and_comments(tag("ab")),
-                skip_ws_and_comments(char(')'))
-            )("ab"),
-            Ok(("", "ab"))
-        );
-        assert_eq!(
-            opt_delimited::<char, &str, char, _, _, _>(
-                skip_ws_and_comments(char('(')),
-                skip_ws_and_comments(tag("ab")),
-                skip_ws_and_comments(char(')'))
-            )("( abc"),
-            Err(nom::Err::Error(Error {
-                input: "c",
+            result,
+            Err(nom::Err::Error(nom::error::Error {
+                input: expect_remainder,
                 code: nom::error::ErrorKind::Char
             }))
-        );
-        assert_eq!(
-            opt_delimited::<char, &str, char, _, _, _>(
-                skip_ws_and_comments(char('(')),
-                skip_ws_and_comments(tag("ab")),
-                skip_ws_and_comments(char(')'))
-            )(" ab )"),
-            Ok((" )", "ab"))
-        );
-        assert_eq!(
-            in_parentheses(opt_delimited::<char, &str, char, _, _, _>(
-                skip_ws_and_comments(char('(')),
-                skip_ws_and_comments(tag("ab")),
-                skip_ws_and_comments(char(')'))
-            ))("(( ab ))"),
-            Ok(("", "ab"))
-        );
-        assert_eq!(
-            many1(in_parentheses(opt_delimited::<
-                char,
-                ASN1Value,
-                char,
-                _,
-                _,
-                _,
-            >(
-                skip_ws_and_comments(char(LEFT_PARENTHESIS)),
-                skip_ws_and_comments(asn1_value),
-                skip_ws_and_comments(char(RIGHT_PARENTHESIS))
-            )))("((5))"),
-            Ok(("", vec![ASN1Value::Integer(5)]))
         );
     }
 
     #[test]
-    fn takes_until_and_not() {
-        assert_eq!(
-            take_until_and_not::<nom::error::Error<&str>>("\"", "\"\"")(
-                r#"[a-zA-Z]#""(1,8)""(-[a-zA-Z0-9]#(1,8))*""#
-            )
-            .unwrap()
-            .1,
-            r#"[a-zA-Z]#""(1,8)""(-[a-zA-Z0-9]#(1,8))*"#
-        );
-        assert_eq!(
-            take_until_and_not::<nom::error::Error<&str>>("\"", "\"\"")(
-                r#"[a-zA-Z]#(1,8)""(-[a-zA-Z0-9]#(1,8))*""#
-            )
-            .unwrap()
-            .1,
-            r#"[a-zA-Z]#(1,8)""(-[a-zA-Z0-9]#(1,8))*"#
-        );
-        assert_eq!(
-            take_until_and_not::<nom::error::Error<&str>>("\"", "\"\"")(
-                r#"[a-zA-Z]#(1,8)(-[a-zA-Z0-9]#(1,8))*""#
-            )
-            .unwrap()
-            .1,
-            r#"[a-zA-Z]#(1,8)(-[a-zA-Z0-9]#(1,8))*"#
-        )
+    fn optional_delimiter_missing_start_delimiter() {
+        let input = Span::new(" ab )");
+        let result = opt_delimited(
+            skip_ws_and_comments(char('(')),
+            skip_ws_and_comments(tag("ab")),
+            skip_ws_and_comments(char(')')),
+        )(input);
+        let expect_remainder = input.slice(3..);
+        let expect_value = input.slice(1..3);
+        assert_eq!(*expect_remainder, " )");
+        assert_eq!(*expect_value, "ab");
+        assert_eq!(result, Ok((expect_remainder, expect_value)));
+    }
+
+    #[test]
+    fn optional_delimiter_in_parentheses() {
+        let input = Span::new("(( ab ))");
+        let result = in_parentheses(opt_delimited(
+            skip_ws_and_comments(char('(')),
+            skip_ws_and_comments(tag("ab")),
+            skip_ws_and_comments(char(')')),
+        ))(input);
+        let expect_remainder = input.slice(8..);
+        let expect_value = input.slice(3..5);
+        assert_eq!(*expect_remainder, "");
+        assert_eq!(*expect_value, "ab");
+        assert_eq!(result, Ok((expect_remainder, expect_value)));
+    }
+
+    #[test]
+    fn optional_delimiter_parenthesised_list() {
+        let input = Span::new("((5))");
+        let result = many1(in_parentheses(opt_delimited(
+            skip_ws_and_comments(char(LEFT_PARENTHESIS)),
+            skip_ws_and_comments(asn1_value),
+            skip_ws_and_comments(char(RIGHT_PARENTHESIS)),
+        )))(input);
+        let expect_remainder = input.slice(5..);
+        let expect_value = vec![ASN1Value::Integer(5)];
+        assert_eq!(*expect_remainder, "");
+        assert_eq!(result, Ok((expect_remainder, expect_value)));
+    }
+
+    #[test]
+    fn takes_until_and_not_two_however_tag() {
+        let input = Span::new(r#"[a-zA-Z]#""(1,8)""(-[a-zA-Z0-9]#(1,8))*""#);
+        let result = take_until_and_not::<nom::error::Error<Span>>("\"", "\"\"")(input);
+        let expect_remainder = input.slice(39..);
+        let expect_value = input.slice(..39);
+        assert_eq!(*expect_remainder, "\"");
+        assert_eq!(*expect_value, r#"[a-zA-Z]#""(1,8)""(-[a-zA-Z0-9]#(1,8))*"#);
+        assert_eq!(result, Ok((expect_remainder, expect_value)));
+    }
+
+    #[test]
+    fn takes_until_and_not_one_however_tag() {
+        let input = Span::new(r#"[a-zA-Z]#(1,8)""(-[a-zA-Z0-9]#(1,8))*""#);
+        let result = take_until_and_not::<nom::error::Error<Span>>("\"", "\"\"")(input);
+        let expect_remainder = input.slice(37..);
+        let expect_value = input.slice(..37);
+        assert_eq!(*expect_remainder, "\"");
+        assert_eq!(*expect_value, r#"[a-zA-Z]#(1,8)""(-[a-zA-Z0-9]#(1,8))*"#);
+        assert_eq!(result, Ok((expect_remainder, expect_value)));
+    }
+
+    #[test]
+    fn takes_until_and_not_zero_however_tag() {
+        let input = Span::new(r#"[a-zA-Z]#(1,8)(-[a-zA-Z0-9]#(1,8))*""#);
+        let result = take_until_and_not::<nom::error::Error<Span>>("\"", "\"\"")(input);
+        let expect_remainder = input.slice(35..);
+        let expect_value = input.slice(..35);
+        assert_eq!(*expect_remainder, "\"");
+        assert_eq!(*expect_value, r#"[a-zA-Z]#(1,8)(-[a-zA-Z0-9]#(1,8))*"#);
+        assert_eq!(result, Ok((expect_remainder, expect_value)));
     }
 }

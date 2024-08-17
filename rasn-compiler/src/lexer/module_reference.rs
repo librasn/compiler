@@ -6,16 +6,16 @@ use nom::{
     combinator::{into, map, not, opt, peek, recognize, value},
     multi::{many0, separated_list1},
     sequence::{delimited, pair, preceded, separated_pair, terminated, tuple},
-    IResult,
 };
 
 use super::{
     common::{identifier, skip_ws, skip_ws_and_comments, value_identifier},
     in_braces,
     object_identifier::object_identifier_value,
+    LexerResult, Span,
 };
 
-pub fn module_reference(input: &str) -> IResult<&str, ModuleReference> {
+pub fn module_reference(input: Span) -> LexerResult<ModuleReference> {
     skip_ws_and_comments(into(tuple((
         identifier,
         opt(skip_ws(definitive_identification)),
@@ -29,11 +29,11 @@ pub fn module_reference(input: &str) -> IResult<&str, ModuleReference> {
     ))))(input)
 }
 
-fn definitive_identification(input: &str) -> IResult<&str, DefinitiveIdentifier> {
+fn definitive_identification(input: Span) -> LexerResult<DefinitiveIdentifier> {
     into(pair(object_identifier_value, opt(iri_value)))(input)
 }
 
-fn iri_value(input: &str) -> IResult<&str, &str> {
+fn iri_value(input: Span) -> LexerResult<Span> {
     skip_ws_and_comments(delimited(
         tag("\"/"),
         recognize(separated_list1(char('/'), identifier)),
@@ -41,7 +41,7 @@ fn iri_value(input: &str) -> IResult<&str, &str> {
     ))(input)
 }
 
-fn exports(input: &str) -> IResult<&str, Exports> {
+fn exports(input: Span) -> LexerResult<Exports> {
     skip_ws_and_comments(delimited(
         tag(EXPORTS),
         skip_ws(alt((
@@ -55,7 +55,7 @@ fn exports(input: &str) -> IResult<&str, Exports> {
     ))(input)
 }
 
-fn imports(input: &str) -> IResult<&str, Vec<Import>> {
+fn imports(input: Span) -> LexerResult<Vec<Import>> {
     skip_ws_and_comments(delimited(
         tag(IMPORTS),
         skip_ws_and_comments(many0(import)),
@@ -63,11 +63,11 @@ fn imports(input: &str) -> IResult<&str, Vec<Import>> {
     ))(input)
 }
 
-fn parameterized_identifier(input: &str) -> IResult<&str, &str> {
+fn parameterized_identifier(input: Span) -> LexerResult<Span> {
     terminated(identifier, tag("{}"))(input)
 }
 
-fn global_module_reference(input: &str) -> IResult<&str, GlobalModuleReference> {
+fn global_module_reference(input: Span) -> LexerResult<GlobalModuleReference> {
     into(skip_ws_and_comments(pair(
         identifier,
         alt((
@@ -79,8 +79,8 @@ fn global_module_reference(input: &str) -> IResult<&str, GlobalModuleReference> 
                 skip_ws_and_comments(separated_pair(identifier, char(DOT), value_identifier)),
                 |(mod_ref, val_ref)| {
                     AssignedIdentifier::ExternalValueReference(ExternalValueReference {
-                        module_reference: mod_ref.to_owned(),
-                        value_reference: val_ref.to_owned(),
+                        module_reference: mod_ref.to_string(),
+                        value_reference: val_ref.to_string(),
                     })
                 },
             ),
@@ -90,8 +90,8 @@ fn global_module_reference(input: &str) -> IResult<&str, GlobalModuleReference> 
                     skip_ws(recognize(in_braces(take_until("}")))),
                 )),
                 |(v, p)| AssignedIdentifier::ParameterizedValue {
-                    value_reference: v.to_owned(),
-                    actual_parameter_list: p.to_owned(),
+                    value_reference: v.to_string(),
+                    actual_parameter_list: p.to_string(),
                 },
             ),
             map(
@@ -102,7 +102,7 @@ fn global_module_reference(input: &str) -> IResult<&str, GlobalModuleReference> 
                         peek(value((), char(COMMA))),
                     )))),
                 )),
-                |v| AssignedIdentifier::ValueReference(v.to_owned()),
+                |v| AssignedIdentifier::ValueReference(v.to_string()),
             ),
             value(
                 AssignedIdentifier::Empty,
@@ -115,7 +115,7 @@ fn global_module_reference(input: &str) -> IResult<&str, GlobalModuleReference> 
     )))(input)
 }
 
-fn import(input: &str) -> IResult<&str, Import> {
+fn import(input: Span) -> LexerResult<Import> {
     into(skip_ws_and_comments(pair(
         separated_list1(
             skip_ws(char(COMMA)),
@@ -135,15 +135,12 @@ fn import(input: &str) -> IResult<&str, Import> {
 }
 
 fn environments(
-    input: &str,
-) -> IResult<
-    &str,
-    (
-        Option<EncodingReferenceDefault>,
-        TaggingEnvironment,
-        ExtensibilityEnvironment,
-    ),
-> {
+    input: Span,
+) -> LexerResult<(
+    Option<EncodingReferenceDefault>,
+    TaggingEnvironment,
+    ExtensibilityEnvironment,
+)> {
     tuple((
         opt(skip_ws_and_comments(into(terminated(
             identifier,
@@ -152,7 +149,7 @@ fn environments(
         skip_ws_and_comments(terminated(
             map(
                 alt((tag(AUTOMATIC), tag(IMPLICIT), tag(EXPLICIT))),
-                |m| match m {
+                |m: Span| match *m {
                     AUTOMATIC => TaggingEnvironment::Automatic,
                     IMPLICIT => TaggingEnvironment::Implicit,
                     _ => TaggingEnvironment::Explicit,
@@ -174,25 +171,27 @@ fn environments(
 mod tests {
     use std::vec;
 
+    use nom::Slice as _;
+
     use crate::lexer::module_reference::*;
 
     #[test]
     fn parses_a_module_reference() {
-        assert_eq!(module_reference(r#"--! @options: no-fields-header
+        assert_eq!(module_reference(Span::new(r#"--! @options: no-fields-header
 
     ETSI-ITS-CDD {itu-t (0) identified-organization (4) etsi (0) itsDomain (5) wg1 (1) 102894 cdd (2) major-version-3 (3) minor-version-1 (1)}
 
     DEFINITIONS AUTOMATIC TAGS ::=
 
     BEGIN
-    "#).unwrap().1,
+    "#)).unwrap().1,
     ModuleReference {name:"ETSI-ITS-CDD".into(),module_identifier:Some(DefinitiveIdentifier::DefinitiveOID(ObjectIdentifierValue(vec![ObjectIdentifierArc{name:Some("itu-t".into()),number:Some(0)},ObjectIdentifierArc{name:Some("identified-organization".into()),number:Some(4)},ObjectIdentifierArc{name:Some("etsi".into()),number:Some(0)},ObjectIdentifierArc{name:Some("itsDomain".into()),number:Some(5)},ObjectIdentifierArc{name:Some("wg1".into()),number:Some(1)},ObjectIdentifierArc{name:None,number:Some(102894)},ObjectIdentifierArc{name:Some("cdd".into()),number:Some(2)},ObjectIdentifierArc{name:Some("major-version-3".into()),number:Some(3)},ObjectIdentifierArc{name:Some("minor-version-1".into()),number:Some(1)}]))),encoding_reference_default:None,tagging_environment:crate::intermediate::TaggingEnvironment::Automatic,extensibility_environment:crate::intermediate::ExtensibilityEnvironment::Explicit, imports: vec![], exports: None }
   )
     }
 
     #[test]
     fn parses_a_module_reference_with_imports() {
-        assert_eq!(module_reference(r#"CPM-PDU-Descriptions { itu-t (0) identified-organization (4) etsi (0) itsDomain (5) wg1 (1) ts (103324) cpm (1) major-version-1 (1) minor-version-1(1)}
+        assert_eq!(module_reference(Span::new(r#"CPM-PDU-Descriptions { itu-t (0) identified-organization (4) etsi (0) itsDomain (5) wg1 (1) ts (103324) cpm (1) major-version-1 (1) minor-version-1(1)}
 
         DEFINITIONS AUTOMATIC TAGS ::=
 
@@ -207,13 +206,13 @@ mod tests {
         OriginatingRsuContainer, OriginatingVehicleContainer
         FROM CPM-OriginatingStationContainers {itu-t (0) identified-organization (4) etsi (0) itsDomain (5) wg1 (1) ts (103324) originatingStationContainers (2) major-version-1 (1) minor-version-1(1)}
         WITH SUCCESSORS;
-    "#).unwrap().1,
+    "#)).unwrap().1,
     ModuleReference { name: "CPM-PDU-Descriptions".into(), module_identifier: Some(DefinitiveIdentifier::DefinitiveOID(ObjectIdentifierValue(vec![ObjectIdentifierArc { name: Some("itu-t".into()), number: Some(0) }, ObjectIdentifierArc { name: Some("identified-organization".into()), number: Some(4) }, ObjectIdentifierArc { name: Some("etsi".into()), number: Some(0) }, ObjectIdentifierArc { name: Some("itsDomain".into()), number: Some(5) }, ObjectIdentifierArc { name: Some("wg1".into()), number: Some(1) }, ObjectIdentifierArc { name: Some("ts".into()), number: Some(103324) }, ObjectIdentifierArc { name: Some("cpm".into()), number: Some(1) }, ObjectIdentifierArc { name: Some("major-version-1".into()), number: Some(1) }, ObjectIdentifierArc { name: Some("minor-version-1".into()), number: Some(1) }]))), encoding_reference_default: None, tagging_environment: TaggingEnvironment::Automatic, extensibility_environment: ExtensibilityEnvironment::Explicit, imports: vec![Import { types: vec!["ItsPduHeader".into(), "MessageRateHz".into(), "MessageSegmentationInfo".into(), "OrdinalNumber1B".into(), "ReferencePosition".into(), "StationType".into(), "TimestampIts".into()], global_module_reference: GlobalModuleReference { module_reference: "ETSI-ITS-CDD".into(), assigned_identifier: AssignedIdentifier::ObjectIdentifierValue(ObjectIdentifierValue(vec![ObjectIdentifierArc { name: Some("itu-t".into()), number: Some(0) }, ObjectIdentifierArc { name: Some("identified-organization".into()), number: Some(4) }, ObjectIdentifierArc { name: Some("etsi".into()), number: Some(0) }, ObjectIdentifierArc { name: Some("itsDomain".into()), number: Some(5) }, ObjectIdentifierArc { name: Some("wg1".into()), number: Some(1) }, ObjectIdentifierArc { name: Some("ts".into()), number: Some(102894) }, ObjectIdentifierArc { name: Some("cdd".into()), number: Some(2) }, ObjectIdentifierArc { name: Some("major-version-3".into()), number: Some(3) }, ObjectIdentifierArc { name: Some("minor-version-1".into()), number: Some(1) }]))}, with: Some(With::Successors) }, Import { types: vec!["OriginatingRsuContainer".into(), "OriginatingVehicleContainer".into()], global_module_reference: GlobalModuleReference { module_reference: "CPM-OriginatingStationContainers".into(), assigned_identifier: AssignedIdentifier::ObjectIdentifierValue(ObjectIdentifierValue(vec![ObjectIdentifierArc { name: Some("itu-t".into()), number: Some(0) }, ObjectIdentifierArc { name: Some("identified-organization".into()), number: Some(4) }, ObjectIdentifierArc { name: Some("etsi".into()), number: Some(0) }, ObjectIdentifierArc { name: Some("itsDomain".into()), number: Some(5) }, ObjectIdentifierArc { name: Some("wg1".into()), number: Some(1) }, ObjectIdentifierArc { name: Some("ts".into()), number: Some(103324) }, ObjectIdentifierArc { name: Some("originatingStationContainers".into()), number: Some(2) }, ObjectIdentifierArc { name: Some("major-version-1".into()), number: Some(1) }, ObjectIdentifierArc { name: Some("minor-version-1".into()), number: Some(1) }]))}, with: Some(With::Successors) }], exports: None } )
     }
 
     #[test]
     fn parses_iri_value() {
-        assert_eq!(module_reference(r#"CMSCKMKeyManagement {itu-t recommendation(0) x(24) cms-profile(894) module(0) cKMKeyManagement(1) version1(1)}
+        assert_eq!(module_reference(Span::new(r#"CMSCKMKeyManagement {itu-t recommendation(0) x(24) cms-profile(894) module(0) cKMKeyManagement(1) version1(1)}
         "/ITU-T/Recommendation/X/CMS-Profile/Module/CKMKeyManagement/Version1"
         DEFINITIONS ::=
         BEGIN
@@ -222,7 +221,8 @@ mod tests {
         ALGORITHM,AlgorithmIdentifier{}
         FROM AlgorithmInformation-2009
         {iso(1) identified-organization(3) dod(6) internet(1) security(5)
-        mechanisms(5) pkix(7) id-mod(0) id-mod-algorithmInformation-02(58)} WITH DESCENDANTS;"#).unwrap().1,
+        mechanisms(5) pkix(7) id-mod(0) id-mod-algorithmInformation-02(58)} WITH DESCENDANTS;"#
+        )).unwrap().1,
         ModuleReference {
             name: "CMSCKMKeyManagement".into(),
             module_identifier: Some(DefinitiveIdentifier::DefinitiveOIDandIRI {
@@ -266,7 +266,7 @@ mod tests {
     #[test]
     fn parses_imports() {
         assert_eq!(
-            imports(
+            imports(Span::new(
                 r#"IMPORTS
             DomainParameters
             FROM ANSI-X9-42
@@ -274,7 +274,7 @@ mod tests {
             ECDomainParameters
             FROM ANSI-X9-62
             {iso(1) member-body(2) us(840) 10045 modules(0) 2};"#
-            )
+            ))
             .unwrap()
             .1,
             vec![
@@ -354,10 +354,13 @@ mod tests {
 
     #[test]
     fn global_module_reference_empty_assigned_identifier() {
+        let input = Span::new(r#" EMPTY-assigned-ID next-module-import, "#);
+        let expect_rest = input.slice(18..);
+        assert_eq!(*expect_rest, " next-module-import, ");
         assert_eq!(
-            global_module_reference(r#" EMPTY-assigned-ID next-module-import, "#).unwrap(),
+            global_module_reference(input).unwrap(),
             (
-                " next-module-import, ",
+                expect_rest,
                 GlobalModuleReference {
                     module_reference: "EMPTY-assigned-ID".to_owned(),
                     assigned_identifier: AssignedIdentifier::Empty
@@ -369,9 +372,11 @@ mod tests {
     #[test]
     fn global_module_reference_val_ref_assigned_identifier() {
         assert_eq!(
-            global_module_reference(r#" VALref-assigned-ID valref next-module-import,"#)
-                .unwrap()
-                .1,
+            global_module_reference(Span::new(
+                r#" VALref-assigned-ID valref next-module-import,"#
+            ))
+            .unwrap()
+            .1,
             GlobalModuleReference {
                 module_reference: "VALref-assigned-ID".to_owned(),
                 assigned_identifier: AssignedIdentifier::ValueReference("valref".to_owned())
@@ -382,9 +387,9 @@ mod tests {
     #[test]
     fn global_module_reference_ext_val_ref_assigned_identifier() {
         assert_eq!(
-            global_module_reference(
+            global_module_reference(Span::new(
                 r#" ext-VALref-assigned-ID MODULE-ref.valref next-module-import,"#
-            )
+            ))
             .unwrap()
             .1,
             GlobalModuleReference {
@@ -402,7 +407,7 @@ mod tests {
     #[test]
     fn issue_4_imports() {
         assert_eq!(
-            imports(
+            imports(Span::new(
                 r#"IMPORTS
 
             Criticality,
@@ -416,7 +421,7 @@ mod tests {
             maxProtocolExtensions,
             maxProtocolIEs
         FROM NGAP-Constants;"#
-            )
+            ))
             .unwrap()
             .1,
             vec![

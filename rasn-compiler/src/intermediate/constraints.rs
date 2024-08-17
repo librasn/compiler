@@ -2,6 +2,8 @@
 use internal_macros::EnumDebug;
 use std::error::Error;
 
+use crate::lexer::Span;
+
 use super::{
     error::{GrammarError, GrammarErrorType},
     information_object::{InformationObjectFields, ObjectSet},
@@ -11,8 +13,8 @@ use super::{
 #[derive(Debug, PartialEq)]
 pub struct OptionalMarker();
 
-impl From<&str> for OptionalMarker {
-    fn from(_: &str) -> Self {
+impl From<Span<'_>> for OptionalMarker {
+    fn from(_: Span) -> Self {
         OptionalMarker()
     }
 }
@@ -304,10 +306,10 @@ pub struct RelationalConstraint {
     pub level: usize,
 }
 
-impl From<(usize, &str)> for RelationalConstraint {
-    fn from(value: (usize, &str)) -> Self {
+impl From<(usize, Span<'_>)> for RelationalConstraint {
+    fn from(value: (usize, Span)) -> Self {
         Self {
-            field_name: value.1.into(),
+            field_name: value.1.to_string(),
             level: value.0,
         }
     }
@@ -320,10 +322,10 @@ pub struct PatternConstraint {
     pub pattern: String,
 }
 
-impl From<&str> for PatternConstraint {
-    fn from(value: &str) -> Self {
+impl From<Span<'_>> for PatternConstraint {
+    fn from(value: Span) -> Self {
         Self {
-            pattern: value.into(),
+            pattern: value.to_string(),
         }
     }
 }
@@ -335,10 +337,10 @@ pub struct UserDefinedConstraint {
     pub definition: String,
 }
 
-impl From<&str> for UserDefinedConstraint {
-    fn from(value: &str) -> Self {
+impl From<Span<'_>> for UserDefinedConstraint {
+    fn from(value: Span) -> Self {
         Self {
-            definition: value.into(),
+            definition: value.to_string(),
         }
     }
 }
@@ -371,22 +373,26 @@ pub enum PropertyAndSettingsPair {
     Midnight(MidnightSettings),
 }
 
-impl TryFrom<(&str, &str)> for PropertyAndSettingsPair {
-    fn try_from(value: (&str, &str)) -> Result<PropertyAndSettingsPair, Box<dyn Error>> {
-        match value.0 {
-            BasicSettings::NAME => BasicSettings::from_str(value.1).map(Self::Basic),
-            DateSettings::NAME => DateSettings::from_str(value.1).map(Self::Date),
-            YearSettings::NAME => YearSettings::from_str(value.1).map(Self::Year),
-            TimeSettings::NAME => TimeSettings::from_str(value.1).map(Self::Time),
-            LocalOrUtcSettings::NAME => LocalOrUtcSettings::from_str(value.1).map(Self::LocalOrUtc),
+impl TryFrom<(Span<'_>, Span<'_>)> for PropertyAndSettingsPair {
+    fn try_from(value: (Span, Span)) -> Result<PropertyAndSettingsPair, Box<dyn Error>> {
+        match *value.0 {
+            BasicSettings::NAME => BasicSettings::from_str(*value.1).map(Self::Basic),
+            DateSettings::NAME => DateSettings::from_str(*value.1).map(Self::Date),
+            YearSettings::NAME => YearSettings::from_str(*value.1).map(Self::Year),
+            TimeSettings::NAME => TimeSettings::from_str(*value.1).map(Self::Time),
+            LocalOrUtcSettings::NAME => {
+                LocalOrUtcSettings::from_str(*value.1).map(Self::LocalOrUtc)
+            }
             IntervalTypeSettings::NAME => {
-                IntervalTypeSettings::from_str(value.1).map(Self::IntervalType)
+                IntervalTypeSettings::from_str(*value.1).map(Self::IntervalType)
             }
             StartEndPointSettings::NAME => {
-                StartEndPointSettings::from_str(value.1).map(Self::StartEndPoint)
+                StartEndPointSettings::from_str(*value.1).map(Self::StartEndPoint)
             }
-            RecurrenceSettings::NAME => RecurrenceSettings::from_str(value.1).map(Self::Recurrence),
-            MidnightSettings::NAME => MidnightSettings::from_str(value.1).map(Self::Midnight),
+            RecurrenceSettings::NAME => {
+                RecurrenceSettings::from_str(*value.1).map(Self::Recurrence)
+            }
+            MidnightSettings::NAME => MidnightSettings::from_str(*value.1).map(Self::Midnight),
             _ => Err("Unknown Settings value.".into()),
         }
     }
@@ -757,13 +763,13 @@ impl From<Constraint> for SubtypeElement {
 impl
     From<(
         Option<ExtensionMarker>,
-        Vec<(&str, Option<Vec<Constraint>>, Option<ComponentPresence>)>,
+        Vec<(Span<'_>, Option<Vec<Constraint>>, Option<ComponentPresence>)>,
     )> for SubtypeElement
 {
     fn from(
         value: (
             Option<ExtensionMarker>,
-            Vec<(&str, Option<Vec<Constraint>>, Option<ComponentPresence>)>,
+            Vec<(Span, Option<Vec<Constraint>>, Option<ComponentPresence>)>,
         ),
     ) -> Self {
         SubtypeElement::SingleTypeConstraint(InnerTypeConstraint {
@@ -772,7 +778,7 @@ impl
                 .1
                 .into_iter()
                 .map(|(id, constraint, presence)| ConstrainedComponent {
-                    identifier: String::from(id),
+                    identifier: String::from(*id),
                     constraints: constraint.unwrap_or(vec![]),
                     presence: presence.unwrap_or(ComponentPresence::Unspecified),
                 })

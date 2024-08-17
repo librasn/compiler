@@ -12,11 +12,11 @@ pub struct ToplevelInformationDefinition {
     pub index: Option<(Rc<RefCell<ModuleReference>>, usize)>,
 }
 
-impl From<(&str, ASN1Information, &str)> for ToplevelInformationDefinition {
-    fn from(value: (&str, ASN1Information, &str)) -> Self {
+impl From<(Span<'_>, ASN1Information, &str)> for ToplevelInformationDefinition {
+    fn from(value: (Span, ASN1Information, &str)) -> Self {
         Self {
             comments: String::new(),
-            name: value.0.to_owned(),
+            name: value.0.to_string(),
             parameterization: None,
             class: Some(ClassLink::ByName(value.2.to_owned())),
             value: value.1,
@@ -41,29 +41,34 @@ impl ToplevelInformationDefinition {
 
 impl
     From<(
-        Vec<&str>,
-        &str,
+        Vec<Span<'_>>,
+        Span<'_>,
         Option<Parameterization>,
-        &str,
+        Span<'_>,
         InformationObjectFields,
     )> for ToplevelInformationDefinition
 {
     fn from(
         value: (
-            Vec<&str>,
-            &str,
+            Vec<Span>,
+            Span,
             Option<Parameterization>,
-            &str,
+            Span,
             InformationObjectFields,
         ),
     ) -> Self {
         Self {
-            comments: value.0.join("\n"),
-            name: value.1.into(),
-            class: Some(ClassLink::ByName(value.3.into())),
+            comments: value
+                .0
+                .into_iter()
+                .map(Span::into_fragment)
+                .collect::<Vec<&str>>()
+                .join("\n"),
+            name: value.1.to_string(),
+            class: Some(ClassLink::ByName(value.3.to_string())),
             parameterization: value.2,
             value: ASN1Information::Object(InformationObject {
-                class_name: value.3.into(),
+                class_name: value.3.to_string(),
                 fields: value.4,
             }),
             index: None,
@@ -71,15 +76,26 @@ impl
     }
 }
 
-impl From<(Vec<&str>, &str, Option<Parameterization>, &str, ObjectSet)>
-    for ToplevelInformationDefinition
+impl
+    From<(
+        Vec<Span<'_>>,
+        Span<'_>,
+        Option<Parameterization>,
+        Span<'_>,
+        ObjectSet,
+    )> for ToplevelInformationDefinition
 {
-    fn from(value: (Vec<&str>, &str, Option<Parameterization>, &str, ObjectSet)) -> Self {
+    fn from(value: (Vec<Span>, Span, Option<Parameterization>, Span, ObjectSet)) -> Self {
         Self {
-            comments: value.0.join("\n"),
-            name: value.1.into(),
+            comments: value
+                .0
+                .into_iter()
+                .map(Span::into_fragment)
+                .collect::<Vec<&str>>()
+                .join("\n"),
+            name: value.1.to_string(),
             parameterization: value.2,
-            class: Some(ClassLink::ByName(value.3.into())),
+            class: Some(ClassLink::ByName(value.3.to_string())),
             value: ASN1Information::ObjectSet(value.4),
             index: None,
         }
@@ -88,23 +104,28 @@ impl From<(Vec<&str>, &str, Option<Parameterization>, &str, ObjectSet)>
 
 impl
     From<(
-        Vec<&str>,
-        &str,
+        Vec<Span<'_>>,
+        Span<'_>,
         Option<Parameterization>,
         InformationObjectClass,
     )> for ToplevelInformationDefinition
 {
     fn from(
         value: (
-            Vec<&str>,
-            &str,
+            Vec<Span>,
+            Span,
             Option<Parameterization>,
             InformationObjectClass,
         ),
     ) -> Self {
         Self {
-            comments: value.0.join("\n"),
-            name: value.1.into(),
+            comments: value
+                .0
+                .into_iter()
+                .map(Span::into_fragment)
+                .collect::<Vec<&str>>()
+                .join("\n"),
+            name: value.1.to_string(),
             parameterization: value.2,
             class: None,
             value: ASN1Information::ObjectClass(value.3),
@@ -199,7 +220,7 @@ impl SyntaxApplication {
                 SyntaxToken::Field(ObjectFieldIdentifier::SingleValue(_)),
                 SyntaxApplication::Literal(lit),
             ) => {
-                let val = asn1_value(lit.as_str());
+                let val = asn1_value(Span::new(lit));
                 match val {
                     Ok((_, ASN1Value::ElsewhereDeclaredValue { .. })) => false,
                     Ok((_, _)) => true,
@@ -268,12 +289,12 @@ impl From<ObjectFieldIdentifier> for SyntaxToken {
     }
 }
 
-impl From<&str> for SyntaxToken {
-    fn from(value: &str) -> Self {
-        if value == "," {
+impl From<Span<'_>> for SyntaxToken {
+    fn from(value: Span) -> Self {
+        if *value == "," {
             Self::Comma
         } else {
-            Self::Literal(value.into())
+            Self::Literal(value.to_string())
         }
     }
 }
@@ -353,7 +374,7 @@ impl
     From<(
         ObjectFieldIdentifier,
         Option<ASN1Type>,
-        Option<&str>,
+        Option<Span<'_>>,
         Option<OptionalMarker>,
         Option<ASN1Value>,
     )> for InformationObjectClassField
@@ -362,7 +383,7 @@ impl
         value: (
             ObjectFieldIdentifier,
             Option<ASN1Type>,
-            Option<&str>,
+            Option<Span>,
             Option<OptionalMarker>,
             Option<ASN1Value>,
         ),
@@ -416,9 +437,9 @@ pub enum ObjectSetValue {
     Inline(InformationObjectFields),
 }
 
-impl From<&str> for ObjectSetValue {
-    fn from(value: &str) -> Self {
-        Self::Reference(value.into())
+impl From<Span<'_>> for ObjectSetValue {
+    fn from(value: Span) -> Self {
+        Self::Reference(value.to_string())
     }
 }
 
@@ -543,12 +564,16 @@ impl InformationObjectFieldReference {
     }
 }
 
-impl From<(&str, Vec<ObjectFieldIdentifier>, Option<Vec<Constraint>>)>
-    for InformationObjectFieldReference
+impl
+    From<(
+        Span<'_>,
+        Vec<ObjectFieldIdentifier>,
+        Option<Vec<Constraint>>,
+    )> for InformationObjectFieldReference
 {
-    fn from(value: (&str, Vec<ObjectFieldIdentifier>, Option<Vec<Constraint>>)) -> Self {
+    fn from(value: (Span, Vec<ObjectFieldIdentifier>, Option<Vec<Constraint>>)) -> Self {
         Self {
-            class: value.0.into(),
+            class: value.0.to_string(),
             field_path: value.1,
             constraints: value.2.unwrap_or_default(),
         }

@@ -13,13 +13,12 @@ use nom::{
     combinator::{into, map, opt},
     multi::many1,
     sequence::{pair, preceded},
-    IResult,
 };
 
 use super::{
     common::{in_braces, in_parentheses, skip_ws, skip_ws_and_comments, value_identifier},
     constraint::constraint,
-    RELATIVE_OID,
+    LexerResult, Span, RELATIVE_OID,
 };
 
 /// Tries to parse an ASN1 OBJECT IDENTIFIER
@@ -33,7 +32,7 @@ use super::{
 /// If the match succeeds, the lexer will consume the match and return the remaining string
 /// and an `ObjectIdentifier` value representing the ASN1 declaration.
 /// If the match fails, the lexer will not consume the input and will return an error.
-pub fn object_identifier_value(input: &str) -> IResult<&str, ObjectIdentifierValue> {
+pub fn object_identifier_value(input: Span) -> LexerResult<ObjectIdentifierValue> {
     into(skip_ws_and_comments(preceded(
         // TODO: store info whether the object id is relative
         opt(alt((tag(OBJECT_IDENTIFIER), tag(RELATIVE_OID)))),
@@ -41,7 +40,7 @@ pub fn object_identifier_value(input: &str) -> IResult<&str, ObjectIdentifierVal
     )))(input)
 }
 
-pub fn object_identifier(input: &str) -> IResult<&str, ASN1Type> {
+pub fn object_identifier(input: Span) -> LexerResult<ASN1Type> {
     map(
         into(preceded(
             skip_ws_and_comments(alt((tag(OBJECT_IDENTIFIER), tag(RELATIVE_OID)))),
@@ -51,7 +50,7 @@ pub fn object_identifier(input: &str) -> IResult<&str, ASN1Type> {
     )(input)
 }
 
-fn object_identifier_arc(input: &str) -> IResult<&str, ObjectIdentifierArc> {
+fn object_identifier_arc(input: Span) -> LexerResult<ObjectIdentifierArc> {
     skip_ws(alt((
         numeric_id,
         into(pair(value_identifier, skip_ws(in_parentheses(u128)))),
@@ -59,7 +58,7 @@ fn object_identifier_arc(input: &str) -> IResult<&str, ObjectIdentifierArc> {
     )))(input)
 }
 
-fn numeric_id(input: &str) -> IResult<&str, ObjectIdentifierArc> {
+fn numeric_id(input: Span) -> LexerResult<ObjectIdentifierArc> {
     map(u128, |i| i.into())(input)
 }
 
@@ -70,9 +69,11 @@ mod tests {
     #[test]
     fn parses_ansi_x9_62() {
         assert_eq!(
-            object_identifier_value(r#"{iso(1) member-body(2) us(840) 10045 modules(0) 2}"#)
-                .unwrap()
-                .1,
+            object_identifier_value(Span::new(
+                r#"{iso(1) member-body(2) us(840) 10045 modules(0) 2}"#
+            ))
+            .unwrap()
+            .1,
             ObjectIdentifierValue(vec![
                 ObjectIdentifierArc {
                     name: Some("iso".into()),

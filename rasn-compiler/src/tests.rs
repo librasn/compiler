@@ -2,7 +2,7 @@ use std::{cell::RefCell, io::Write, rc::Rc};
 
 use nom::FindSubstring;
 
-use crate::validator::Validator;
+use crate::{lexer::Span, validator::Validator};
 
 /// This function generates a stepwise-end-to-end test for a given ASN.1 module,
 /// i.e. it generates test functions with corresponding inputs and expected outputs for
@@ -142,11 +142,11 @@ fn as_decl_string<I: std::fmt::Debug>(input: I) -> String {
 }
 
 fn expected_lexer_result(literal: &str) -> String {
-    as_decl_string(crate::lexer::asn_spec(literal).unwrap())
+    as_decl_string(crate::lexer::asn_spec(Span::new(literal)).unwrap())
 }
 
 fn validator_io(literal: &str) -> (String, String) {
-    let input = crate::lexer::asn_spec(literal)
+    let input = crate::lexer::asn_spec(Span::new(literal))
         .unwrap()
         .into_iter()
         .flat_map(|(header, tlds)| {

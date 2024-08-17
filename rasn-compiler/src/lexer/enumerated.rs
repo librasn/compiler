@@ -4,7 +4,6 @@ use nom::{
     combinator::{map, opt},
     multi::{fold_many0, many0},
     sequence::{preceded, terminated, tuple},
-    IResult,
 };
 
 use crate::{
@@ -12,9 +11,9 @@ use crate::{
     lexer::{asn1_type, parameterization},
 };
 
-use super::common::*;
+use super::{common::*, LexerResult, Span};
 
-pub fn enumerated_value(input: &str) -> IResult<&str, ToplevelValueDefinition> {
+pub fn enumerated_value(input: Span) -> LexerResult<ToplevelValueDefinition> {
     map(
         tuple((
             skip_ws(many0(comment)),
@@ -25,7 +24,7 @@ pub fn enumerated_value(input: &str) -> IResult<&str, ToplevelValueDefinition> {
         )),
         |(c, n, params, p, e)| ToplevelValueDefinition {
             comments: c.into_iter().fold(String::new(), |mut acc, s| {
-                acc = acc + "\n" + s;
+                acc = acc + "\n" + *s;
                 acc
             }),
             name: n.to_string(),
@@ -48,14 +47,14 @@ pub fn enumerated_value(input: &str) -> IResult<&str, ToplevelValueDefinition> {
 /// If the match succeeds, the lexer will consume the match and return the remaining string
 /// and a wrapped `Enumerated` value representing the ASN1 declaration.
 /// If the match fails, the lexer will not consume the input and will return an error.
-pub fn enumerated(input: &str) -> IResult<&str, ASN1Type> {
+pub fn enumerated(input: Span) -> LexerResult<ASN1Type> {
     map(
         preceded(skip_ws_and_comments(tag(ENUMERATED)), enumerated_body),
         |m| ASN1Type::Enumerated(m.into()),
     )(input)
 }
 
-fn enumeral(input: &str) -> IResult<&str, (&str, Option<i128>, Option<char>, Option<&str>)> {
+fn enumeral(input: Span) -> LexerResult<(Span, Option<i128>, Option<char>, Option<Span>)> {
     skip_ws_and_comments(tuple((
         skip_ws(identifier),
         skip_ws(opt(in_parentheses(skip_ws_and_comments(i128)))),
@@ -64,14 +63,14 @@ fn enumeral(input: &str) -> IResult<&str, (&str, Option<i128>, Option<char>, Opt
     )))(input)
 }
 
-fn enumerals<'a>(start_index: usize) -> impl FnMut(&'a str) -> IResult<&'a str, Vec<Enumeral>> {
+fn enumerals<'a>(start_index: usize) -> impl FnMut(Span<'a>) -> LexerResult<'a, Vec<Enumeral>> {
     fold_many0(
         enumeral,
         Vec::<Enumeral>::new,
         move |mut acc, (name, index, _, comments)| {
             acc.push(Enumeral {
-                name: name.into(),
-                description: comments.map(|c| c.into()),
+                name: name.to_string(),
+                description: comments.map(|c| c.to_string()),
                 index: index.unwrap_or((acc.len() + start_index) as i128),
             });
             acc
@@ -80,15 +79,12 @@ fn enumerals<'a>(start_index: usize) -> impl FnMut(&'a str) -> IResult<&'a str, 
 }
 
 fn enumerated_body(
-    input: &str,
-) -> IResult<
-    &str,
-    (
-        Vec<Enumeral>,
-        Option<ExtensionMarker>,
-        Option<Vec<Enumeral>>,
-    ),
-> {
+    input: Span,
+) -> LexerResult<(
+    Vec<Enumeral>,
+    Option<ExtensionMarker>,
+    Option<Vec<Enumeral>>,
+)> {
     in_braces(|input| {
         let (input, root_enumerals) = enumerals(0)(input)?;
         let (input, ext_marker) = opt(terminated(extension_marker, opt(char(COMMA))))(input)?;
@@ -105,12 +101,12 @@ mod tests {
     #[test]
     fn parses_enumerals_with_line_comments() {
         assert_eq!(
-            enumerals(0)(
+            enumerals(0)(Span::new(
                 r#"forward     (1), -- This means forward
       backward    (2), -- This means backward
       unavailable (3)  -- This means nothing
       "#
-            )
+            ))
             .unwrap()
             .1,
             [
@@ -136,13 +132,13 @@ mod tests {
     #[test]
     fn parses_enumerated() {
         assert_eq!(
-            enumerated(
+            enumerated(Span::new(
                 r#"ENUMERATED {
       onePerMeter-0-1,
       outOfRange,
       unavailable
   }"#
-            )
+            ))
             .unwrap()
             .1,
             ASN1Type::Enumerated(Enumerated {
@@ -172,9 +168,11 @@ mod tests {
     #[test]
     fn parses_extended_enumerated() {
         assert_eq!(
-            enumerated("ENUMERATED {m1, m2, m3 -- another annoying comment we'll ignore --,...}")
-                .unwrap()
-                .1,
+            enumerated(Span::new(
+                "ENUMERATED {m1, m2, m3 -- another annoying comment we'll ignore --,...}"
+            ))
+            .unwrap()
+            .1,
             ASN1Type::Enumerated(Enumerated {
                 constraints: vec![],
                 members: vec![
@@ -202,7 +200,9 @@ mod tests {
     #[test]
     fn parses_extended_enumerated_without_indices() {
         assert_eq!(
-            enumerated(r#"ENUMERATED { One, ..., Three }"#).unwrap().1,
+            enumerated(Span::new(r#"ENUMERATED { One, ..., Three }"#))
+                .unwrap()
+                .1,
             ASN1Type::Enumerated(Enumerated {
                 constraints: vec![],
                 members: vec![
@@ -225,13 +225,13 @@ mod tests {
     #[test]
     fn parses_enumerated_with_ellipsis() {
         assert_eq!(
-            enumerated(
+            enumerated(Span::new(
                 r#"ENUMERATED {
                 permanentCenDsrcTolling (0),
                 ...,
                 temporaryCenDsrcTolling (1)
             }"#
-            )
+            ))
             .unwrap()
             .1,
             ASN1Type::Enumerated(Enumerated {
@@ -256,14 +256,14 @@ mod tests {
     #[test]
     fn parses_indexed_enumerated() {
         assert_eq!(
-            enumerated(
+            enumerated(Span::new(
                 r#"ENUMERATED {
           forward     (1),--This means forward
           -- Annoyance
           -- another annoyance -- backward    (2), --This means backward
           unavailable (3)--This means nothing
       }"#
-            )
+            ))
             .unwrap()
             .1,
             ASN1Type::Enumerated(Enumerated {
@@ -293,12 +293,12 @@ mod tests {
     #[test]
     fn parses_indexed_extended_enumerated() {
         assert_eq!(
-            enumerated(
+            enumerated(Span::new(
                 r#"ENUMERATED {
           forward  -- this, too, ignored --   (1),
           -- let's consider this a comment concerning 'forward' -- ...
       }"#
-            )
+            ))
             .unwrap()
             .1,
             ASN1Type::Enumerated(Enumerated {
@@ -318,10 +318,10 @@ mod tests {
     #[test]
     fn parses_enumerated_value() {
         assert_eq!(
-            enumerated_value(
+            enumerated_value(Span::new(
                 r#"-- Alias of another enumeral
             enumeral-alias Test-Enum ::= enumeral"#
-            )
+            ))
             .unwrap()
             .1,
             ToplevelValueDefinition {

@@ -1,3 +1,5 @@
+use crate::lexer::Span;
+
 use super::ASN1Type;
 
 #[derive(Debug, Clone, PartialEq)]
@@ -17,29 +19,29 @@ pub struct ParameterizationArgument {
     pub param_governor: ParameterGovernor,
 }
 
-impl From<&str> for ParameterizationArgument {
-    fn from(value: &str) -> Self {
+impl From<Span<'_>> for ParameterizationArgument {
+    fn from(value: Span) -> Self {
         Self {
-            dummy_reference: value.to_owned(),
+            dummy_reference: value.to_string(),
             param_governor: ParameterGovernor::None,
         }
     }
 }
 
-impl From<(ASN1Type, &str)> for ParameterizationArgument {
-    fn from(value: (ASN1Type, &str)) -> Self {
+impl From<(ASN1Type, Span<'_>)> for ParameterizationArgument {
+    fn from(value: (ASN1Type, Span)) -> Self {
         Self {
-            dummy_reference: value.1.to_owned(),
+            dummy_reference: value.1.to_string(),
             param_governor: ParameterGovernor::TypeOrClass(value.0),
         }
     }
 }
 
-impl From<(&str, &str)> for ParameterizationArgument {
-    fn from(value: (&str, &str)) -> Self {
+impl From<(Span<'_>, Span<'_>)> for ParameterizationArgument {
+    fn from(value: (Span, Span)) -> Self {
         Self {
-            dummy_reference: value.1.to_owned(),
-            param_governor: ParameterGovernor::Class(value.0.to_owned()),
+            dummy_reference: value.1.to_string(),
+            param_governor: ParameterGovernor::Class(value.0.to_string()),
         }
     }
 }

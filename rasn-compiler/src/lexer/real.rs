@@ -5,15 +5,15 @@ use nom::{
     character::complete::{char, i32, i64, u64},
     combinator::{map, opt, value},
     sequence::{delimited, preceded, separated_pair, tuple},
-    IResult,
 };
 
 use super::{
     common::{in_braces, skip_ws_and_comments},
     constraint::constraint,
+    LexerResult, Span,
 };
 
-pub fn real_value(input: &str) -> IResult<&str, ASN1Value> {
+pub fn real_value(input: Span) -> LexerResult<ASN1Value> {
     map(
         skip_ws_and_comments(alt((dot_notation, mbe_notation))),
         ASN1Value::Real,
@@ -28,7 +28,7 @@ pub fn real_value(input: &str) -> IResult<&str, ASN1Value> {
 /// If the match succeeds, the lexer will consume the match and return the remaining string
 /// and a wrapped `Real` value representing the ASN1 declaration.
 /// If the match fails, the lexer will not consume the input and will return an error.
-pub fn real(input: &str) -> IResult<&str, ASN1Type> {
+pub fn real(input: Span) -> LexerResult<ASN1Type> {
     map(
         preceded(
             skip_ws_and_comments(tag(REAL)),
@@ -38,7 +38,7 @@ pub fn real(input: &str) -> IResult<&str, ASN1Type> {
     )(input)
 }
 
-fn dot_notation(input: &str) -> IResult<&str, f64> {
+fn dot_notation(input: Span) -> LexerResult<f64> {
     map(
         skip_ws_and_comments(separated_pair(i64, char('.'), u64)),
         |(wholes, decimals)| {
@@ -55,7 +55,7 @@ fn dot_notation(input: &str) -> IResult<&str, f64> {
     )(input)
 }
 
-fn mbe_notation(input: &str) -> IResult<&str, f64> {
+fn mbe_notation(input: Span) -> LexerResult<f64> {
     map(
         in_braces(tuple((
             delimited(
@@ -88,17 +88,17 @@ mod tests {
         ASN1Type, ASN1Value,
     };
 
-    use crate::lexer::real::real_value;
+    use crate::lexer::{real::real_value, Span};
 
     use super::real;
 
     #[test]
     fn parses_simple_real_type() {
         assert_eq!(
-            real(
+            real(Span::new(
                 r#" REAL -- Nothing here
         NextType ::= TestType"#
-            )
+            ))
             .unwrap()
             .1,
             ASN1Type::Real(Real {
@@ -110,12 +110,12 @@ mod tests {
     #[test]
     fn parses_constraint_real_type() {
         assert_eq!(
-            real(
+            real(Span::new(
                 r#"REAL (WITH COMPONENTS {
                     mantissa (-16777215..16777215),
                     base (2),
                     exponent (-125..128) } )"#
-            )
+            ))
             .unwrap()
             .1,
             ASN1Type::Real(Real {
@@ -176,16 +176,19 @@ mod tests {
 
     #[test]
     fn parses_dot_notation_real_value() {
-        assert_eq!(real_value("2.23412").unwrap().1, ASN1Value::Real(2.23412));
         assert_eq!(
-            real_value("-12.23412").unwrap().1,
+            real_value(Span::new("2.23412")).unwrap().1,
+            ASN1Value::Real(2.23412)
+        );
+        assert_eq!(
+            real_value(Span::new("-12.23412")).unwrap().1,
             ASN1Value::Real(-12.23412)
         )
     }
 
     #[test]
     fn parses_mbe_notation_real_value() {
-        if let ASN1Value::Real(r) = real_value("{mantissa 334159, base 10, exponent -5}")
+        if let ASN1Value::Real(r) = real_value(Span::new("{mantissa 334159, base 10, exponent -5}"))
             .unwrap()
             .1
         {
@@ -193,7 +196,10 @@ mod tests {
         } else {
             unreachable!()
         }
-        if let ASN1Value::Real(r) = real_value("{mantissa 0, base 2, exponent 100}").unwrap().1 {
+        if let ASN1Value::Real(r) = real_value(Span::new("{mantissa 0, base 2, exponent 100}"))
+            .unwrap()
+            .1
+        {
             assert!(r < 0.0000001 && r > -0.000001);
         } else {
             unreachable!()

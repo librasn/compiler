@@ -4,14 +4,13 @@ use nom::{
     combinator::{into, opt, recognize},
     multi::{many0, separated_list0, separated_list1},
     sequence::{terminated, tuple},
-    IResult,
 };
 
 use crate::intermediate::{types::*, *};
 
 use super::{common::optional_comma, constraint::constraint, *};
 
-pub fn sequence_value(input: &str) -> IResult<&str, ASN1Value> {
+pub fn sequence_value(input: Span) -> LexerResult<ASN1Value> {
     map(
         in_braces(separated_list0(
             skip_ws_and_comments(char(',')),
@@ -24,7 +23,7 @@ pub fn sequence_value(input: &str) -> IResult<&str, ASN1Value> {
             ASN1Value::SequenceOrSet(
                 fields
                     .into_iter()
-                    .map(|(id, val)| (id.map(|str| str.to_owned()), Box::new(val)))
+                    .map(|(id, val)| (id.map(|span| span.to_string()), Box::new(val)))
                     .collect(),
             )
         },
@@ -41,7 +40,7 @@ pub fn sequence_value(input: &str) -> IResult<&str, ASN1Value> {
 /// contains anonymous SEQUENCEs as members, these nested SEQUENCEs will be represented as
 /// structs within the same global scope.
 /// If the match fails, the lexer will not consume the input and will return an error.
-pub fn sequence(input: &str) -> IResult<&str, ASN1Type> {
+pub fn sequence(input: Span) -> LexerResult<ASN1Type> {
     map(
         preceded(
             skip_ws_and_comments(tag(SEQUENCE)),
@@ -64,7 +63,7 @@ pub fn sequence(input: &str) -> IResult<&str, ASN1Type> {
     )(input)
 }
 
-fn extension_group(input: &str) -> IResult<&str, SequenceComponent> {
+fn extension_group(input: Span) -> LexerResult<SequenceComponent> {
     map(
         in_version_brackets(preceded(
             opt(pair(
@@ -102,7 +101,7 @@ fn extension_group(input: &str) -> IResult<&str, SequenceComponent> {
     )(input)
 }
 
-pub fn sequence_component(input: &str) -> IResult<&str, SequenceComponent> {
+pub fn sequence_component(input: Span) -> LexerResult<SequenceComponent> {
     skip_ws_and_comments(alt((
         map(
             preceded(
@@ -112,13 +111,13 @@ pub fn sequence_component(input: &str) -> IResult<&str, SequenceComponent> {
                     title_case_identifier,
                 ))),
             ),
-            |id| SequenceComponent::ComponentsOf(id.into()),
+            |id| SequenceComponent::ComponentsOf(id.to_string()),
         ),
         map(sequence_or_set_member, SequenceComponent::Member),
     )))(input)
 }
 
-pub fn sequence_or_set_member(input: &str) -> IResult<&str, SequenceOrSetMember> {
+pub fn sequence_or_set_member(input: Span) -> LexerResult<SequenceOrSetMember> {
     into(tuple((
         skip_ws_and_comments(identifier),
         opt(asn_tag),
@@ -140,16 +139,16 @@ mod tests {
     #[test]
     fn parses_optional_marker() {
         assert_eq!(
-            optional_marker("\n\tOPTIONAL").unwrap().1,
+            optional_marker(Span::new("\n\tOPTIONAL")).unwrap().1,
             Some(OptionalMarker())
         );
-        assert_eq!(optional_marker("DEFAULT").unwrap().1, None);
+        assert_eq!(optional_marker(Span::new("DEFAULT")).unwrap().1, None);
     }
 
     #[test]
     fn parses_default_int() {
         assert_eq!(
-            default("\n\tDEFAULT\t-1").unwrap().1,
+            default(Span::new("\n\tDEFAULT\t-1")).unwrap().1,
             Some(ASN1Value::Integer(-1))
         );
     }
@@ -157,7 +156,7 @@ mod tests {
     #[test]
     fn parses_default_boolean() {
         assert_eq!(
-            default("  DEFAULT   TRUE").unwrap().1,
+            default(Span::new("  DEFAULT   TRUE")).unwrap().1,
             Some(ASN1Value::Boolean(true))
         );
     }
@@ -165,13 +164,13 @@ mod tests {
     #[test]
     fn parses_default_bitstring() {
         assert_eq!(
-            default("  DEFAULT '001010011'B").unwrap().1,
+            default(Span::new("  DEFAULT '001010011'B")).unwrap().1,
             Some(ASN1Value::BitString(vec![
                 false, false, true, false, true, false, false, true, true
             ]))
         );
         assert_eq!(
-            default("DEFAULT 'F60E'H").unwrap().1,
+            default(Span::new("DEFAULT 'F60E'H")).unwrap().1,
             Some(ASN1Value::BitString(vec![
                 true, true, true, true, false, true, true, false, false, false, false, false, true,
                 true, true, false
@@ -182,14 +181,14 @@ mod tests {
     #[test]
     fn parses_default_enumeral() {
         assert_eq!(
-            default("  DEFAULT enumeral1").unwrap().1,
+            default(Span::new("  DEFAULT enumeral1")).unwrap().1,
             Some(ASN1Value::ElsewhereDeclaredValue {
                 identifier: "enumeral1".into(),
                 parent: None
             })
         );
         assert_eq!(
-            default("DEFAULT enumeral1").unwrap().1,
+            default(Span::new("DEFAULT enumeral1")).unwrap().1,
             Some(ASN1Value::ElsewhereDeclaredValue {
                 identifier: "enumeral1".into(),
                 parent: None
@@ -201,10 +200,10 @@ mod tests {
     fn parses_subtyped_sequence() {
         assert_eq!(
         sequence(
-            r#"SEQUENCE {
+            Span::new(r#"SEQUENCE {
               clusterBoundingBoxShape    Shape (WITH COMPONENTS{..., elliptical ABSENT, radial ABSENT, radialShapes ABSENT}) OPTIONAL,
               ...
-           }"#
+           }"#)
         )
         .unwrap()
         .1,
@@ -230,12 +229,12 @@ mod tests {
     #[test]
     fn parses_simple_sequence() {
         assert_eq!(
-            sequence(
+            sequence(Span::new(
                 r#"SEQUENCE {
         value         AccelerationValue,
         confidence    AccelerationConfidence
     }"#
-            )
+            ))
             .unwrap()
             .1,
             ASN1Type::Sequence(SequenceOrSet {
@@ -277,14 +276,14 @@ mod tests {
     #[test]
     fn parses_sequence_with_optionals() {
         assert_eq!(
-            sequence(
+            sequence(Span::new(
                 r#"SEQUENCE{
                   xCoordinate    CartesianCoordinateWithConfidence,
                   --x
                   yCoordinate    CartesianCoordinateWithConfidence, -- y --
                   zCoordinate    CartesianCoordinateWithConfidence OPTIONAL -- this is optional
               }"#
-            )
+            ))
             .unwrap()
             .1,
             ASN1Type::Sequence(SequenceOrSet {
@@ -337,7 +336,7 @@ mod tests {
     #[test]
     fn parses_extended_sequence_with_default() {
         assert_eq!(
-            sequence(
+            sequence(Span::new(
                 r#"SEQUENCE {
                   horizontalPositionConfidence  PosConfidenceEllipse OPTIONAL,
                   deltaAltitude -- COMMENT --   DeltaAltitude DEFAULT unavailable,
@@ -345,7 +344,7 @@ mod tests {
                   -- Attention: Extension!
                   ...
                 }"#
-            )
+            ))
             .unwrap()
             .1,
             ASN1Type::Sequence(SequenceOrSet {
@@ -403,14 +402,14 @@ mod tests {
     #[test]
     fn parses_sequence_with_primitives() {
         assert_eq!(
-            sequence(
+            sequence(Span::new(
                 r#"SEQUENCE {
                   unNumber                INTEGER (0..9999),
                   limitedQuantity         BOOLEAN DEFAULT FALSE,
                   emergencyActionCode     OCTET STRING (SIZE (1..24)) OPTIONAL,
                   ...
               }"#
-            )
+            ))
             .unwrap()
             .1,
             ASN1Type::Sequence(SequenceOrSet {
@@ -477,7 +476,7 @@ mod tests {
     #[test]
     fn parses_nested_sequence() {
         assert_eq!(
-            sequence(
+            sequence(Span::new(
                 r#"SEQUENCE {
                   nested                SEQUENCE {
                     wow         Wow -- WOW!
@@ -491,7 +490,7 @@ mod tests {
                   },
                   ...
               }"#
-            )
+            ))
             .unwrap()
             .1,
             ASN1Type::Sequence(SequenceOrSet {
@@ -583,7 +582,7 @@ mod tests {
     #[test]
     fn parses_sequence_value() {
         assert_eq!(
-            sequence_value("{itsaid content:0, ctx c-ctxRefNull}")
+            sequence_value(Span::new("{itsaid content:0, ctx c-ctxRefNull}"))
                 .unwrap()
                 .1,
             ASN1Value::SequenceOrSet(vec![
@@ -609,13 +608,13 @@ mod tests {
     #[test]
     fn parses_sequence_with_extension_group() {
         assert_eq!(
-            sequence(
+            sequence(Span::new(
                 "SEQUENCE {item-code INTEGER (0..254),
                 ...,
                 [[ alternate-item-code INTEGER (0..254),
                     and-another BOOLEAN DEFAULT TRUE
                  ]] }"
-            )
+            ))
             .unwrap()
             .1,
             ASN1Type::Sequence(SequenceOrSet {
@@ -695,12 +694,12 @@ mod tests {
     #[test]
     fn parses_sequence_with_components_of_notation() {
         assert_eq!(
-            sequence(
+            sequence(Span::new(
                 r#"SEQUENCE {
             COMPONENTS OF TypeA,
             bilateral-information TypeB
           }"#
-            )
+            ))
             .unwrap()
             .1,
             ASN1Type::Sequence(SequenceOrSet {
@@ -727,7 +726,7 @@ mod tests {
     fn parse_x284() {
         println!(
             "{:?}",
-            sequence(
+            sequence(Span::new(
                 r#"SEQUENCE --(GRJ)
         {
 requestSeqNum           RequestSeqNum,
@@ -741,7 +740,7 @@ tokens                  SEQUENCE OF ClearToken OPTIONAL,
 cryptoTokens            SEQUENCE OF CryptoH323Token OPTIONAL,
 integrityCheckValue     ICV OPTIONAL
 }"#
-            )
+            ))
         )
     }
 }

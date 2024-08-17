@@ -6,9 +6,8 @@ use crate::{
         information_object::*,
         *,
     },
-    lexer::asn1_value,
+    lexer::{asn1_value, Span},
 };
-
 
 pub(crate) fn find_tld_or_enum_value_by_name(
     type_name: &String,
@@ -159,7 +158,7 @@ pub fn resolve_custom_syntax(
                                     index,
                                     InformationObjectField::FixedValueField(FixedValueField {
                                         identifier: token.name_or_empty().to_owned(),
-                                        value: match asn1_value(&t.identifier) {
+                                        value: match asn1_value(Span::new(&t.identifier)) {
                                             Ok((_, v)) => Ok(v),
                                             Err(e) => Err(GrammarError {
                                                 details: format!("Syntax mismatch while resolving information object: {e:?}"),

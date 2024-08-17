@@ -114,14 +114,14 @@ impl From<(Option<i128>, Option<i128>, bool)> for Integer {
 
 impl
     From<(
-        &str,
+        Span<'_>,
         Option<Vec<DistinguishedValue>>,
         Option<Vec<Constraint>>,
     )> for Integer
 {
     fn from(
         value: (
-            &str,
+            Span,
             Option<Vec<DistinguishedValue>>,
             Option<Vec<Constraint>>,
         ),
@@ -242,8 +242,8 @@ pub struct CharacterString {
     pub ty: CharacterStringType,
 }
 
-impl From<(&str, Option<Vec<Constraint>>)> for CharacterString {
-    fn from(value: (&str, Option<Vec<Constraint>>)) -> Self {
+impl From<(Span<'_>, Option<Vec<Constraint>>)> for CharacterString {
+    fn from(value: (Span, Option<Vec<Constraint>>)) -> Self {
         CharacterString {
             constraints: value.1.unwrap_or_default(),
             ty: value.0.into(),
@@ -442,7 +442,7 @@ pub struct SequenceOrSetMember {
 
 impl
     From<(
-        &str,
+        Span<'_>,
         Option<AsnTag>,
         ASN1Type,
         Option<Vec<Constraint>>,
@@ -452,7 +452,7 @@ impl
 {
     fn from(
         value: (
-            &str,
+            Span,
             Option<AsnTag>,
             ASN1Type,
             Option<Vec<Constraint>>,
@@ -461,7 +461,7 @@ impl
         ),
     ) -> Self {
         SequenceOrSetMember {
-            name: value.0.into(),
+            name: value.0.to_string(),
             tag: value.1,
             ty: value.2,
             is_optional: value.4.is_some() || value.5.is_some(),
@@ -539,10 +539,10 @@ pub struct ChoiceOption {
     pub constraints: Vec<Constraint>,
 }
 
-impl From<(&str, Option<AsnTag>, ASN1Type, Option<Vec<Constraint>>)> for ChoiceOption {
-    fn from(value: (&str, Option<AsnTag>, ASN1Type, Option<Vec<Constraint>>)) -> Self {
+impl From<(Span<'_>, Option<AsnTag>, ASN1Type, Option<Vec<Constraint>>)> for ChoiceOption {
+    fn from(value: (Span, Option<AsnTag>, ASN1Type, Option<Vec<Constraint>>)) -> Self {
         ChoiceOption {
-            name: value.0.into(),
+            name: value.0.to_string(),
             tag: value.1,
             ty: value.2,
             constraints: value.3.unwrap_or_default(),
@@ -620,10 +620,10 @@ pub struct DistinguishedValue {
     pub value: i128,
 }
 
-impl From<(&str, i128)> for DistinguishedValue {
-    fn from(value: (&str, i128)) -> Self {
+impl From<(Span<'_>, i128)> for DistinguishedValue {
+    fn from(value: (Span, i128)) -> Self {
         Self {
-            name: value.0.into(),
+            name: value.0.to_string(),
             value: value.1,
         }
     }
@@ -637,11 +637,11 @@ pub struct ChoiceSelectionType {
     pub selected_option: String,
 }
 
-impl From<(&str, &str)> for ChoiceSelectionType {
-    fn from(value: (&str, &str)) -> Self {
+impl From<(Span<'_>, Span<'_>)> for ChoiceSelectionType {
+    fn from(value: (Span, Span)) -> Self {
         Self {
-            choice_name: value.1.into(),
-            selected_option: value.0.into(),
+            choice_name: value.1.to_string(),
+            selected_option: value.0.to_string(),
         }
     }
 }

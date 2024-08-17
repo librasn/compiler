@@ -14,7 +14,7 @@ use crate::lexer::top_level_information_declaration;
 
 #[test]
 fn parses_toplevel_simple_integer_declaration() {
-    let tld = top_level_type_declaration(
+    let tld = top_level_type_declaration(Span::new(
         "/**
           * The DE represents a cardinal number that counts the size of a set.
           *
@@ -22,7 +22,7 @@ fn parses_toplevel_simple_integer_declaration() {
           * @revision: Created in V2.1.1
          */
          CardinalNumber3b ::= INTEGER(1..8)",
-    )
+    ))
     .unwrap()
     .1;
     assert_eq!(tld.name, String::from("CardinalNumber3b"));
@@ -47,7 +47,7 @@ fn parses_toplevel_simple_integer_declaration() {
 
 #[test]
 fn parses_toplevel_macro_integer_declaration() {
-    let tld = top_level_type_declaration(r#"/**
+    let tld = top_level_type_declaration(Span::new(r#"/**
         * This DE represents the magnitude of the acceleration vector in a defined coordinate system.
         *
         * The value shall be set to:
@@ -63,7 +63,7 @@ fn parses_toplevel_macro_integer_declaration() {
       AccelerationMagnitudeValue ::= INTEGER {
           positiveOutOfRange (160),
           unavailable        (161)
-      } (0.. 161, ...)"#).unwrap().1;
+      } (0.. 161, ...)"#)).unwrap().1;
     assert_eq!(tld.name, String::from("AccelerationMagnitudeValue"));
     assert!(tld.comments.contains("@unit 0,1 m/s^2"));
     if let ASN1Type::Integer(int) = tld.ty {
@@ -94,13 +94,13 @@ fn parses_toplevel_macro_integer_declaration() {
 
 #[test]
 fn parses_toplevel_enumerated_declaration() {
-    let tld = top_level_type_declaration(
+    let tld = top_level_type_declaration(Span::new(
         r#"-- Coverage Enhancement level encoded according to TS 36.331 [16] --
         CE-mode-B-SupportIndicator ::= ENUMERATED {
            supported,
            ...
         }"#,
-    )
+    ))
     .unwrap()
     .1;
     assert_eq!(tld.name, String::from("CE-mode-B-SupportIndicator"));
@@ -127,14 +127,14 @@ fn parses_toplevel_enumerated_declaration() {
 #[test]
 fn parses_toplevel_boolean_declaration() {
     let tld = top_level_type_declaration(
-            r#"/**
+            Span::new(r#"/**
             * This DE indicates whether a vehicle (e.g. public transport vehicle, truck) is under the embarkation process.
             * If that is the case, the value is *TRUE*, otherwise *FALSE*.
             *
             * @category: Vehicle information
             * @revision: editorial update in V2.1.1
             */
-           EmbarkationStatus ::= BOOLEAN"#,
+           EmbarkationStatus ::= BOOLEAN"#,)
         )
         .unwrap()
         .1;
@@ -152,13 +152,13 @@ fn parses_toplevel_boolean_declaration() {
 
 #[test]
 fn parses_toplevel_crossrefering_declaration() {
-    let tld = top_level_type_declaration(
+    let tld = top_level_type_declaration(Span::new(
         r#"-- Comments go here
         EventZone::= EventHistory
         ((WITH COMPONENT (WITH COMPONENTS {..., eventDeltaTime PRESENT})) |
          (WITH COMPONENT (WITH COMPONENTS {..., eventDeltaTime ABSENT})))
          }"#,
-    )
+    ))
     .unwrap()
     .1;
     assert_eq!(
@@ -203,10 +203,10 @@ fn parses_toplevel_crossrefering_declaration() {
 
 #[test]
 fn parses_anonymous_sequence_of_declaration() {
-    let tld = top_level_type_declaration(
+    let tld = top_level_type_declaration(Span::new(
         r#"--Comments
         InterferenceManagementZones ::= SEQUENCE (SIZE(1..16), ...) OF InterferenceManagementZone"#,
-    )
+    ))
     .unwrap()
     .1;
     assert_eq!(
@@ -241,14 +241,14 @@ fn parses_anonymous_sequence_of_declaration() {
 #[test]
 fn parses_object_set_value() {
     assert_eq!(
-        top_level_information_declaration(
+        top_level_information_declaration(Span::new(
             r#"--comments
         CpmContainers CPM-CONTAINER-ID-AND-TYPE ::= {
         {OriginatingVehicleContainer IDENTIFIED BY originatingVehicleContainer} |
         {PerceivedObjectContainer IDENTIFIED BY perceivedObjectContainer},
         ...
     }"#
-        )
+        ))
         .unwrap()
         .1,
         ToplevelInformationDefinition {
@@ -311,9 +311,9 @@ fn parses_object_set_value() {
 #[test]
 fn parses_empty_extensible_object_set() {
     assert_eq!(
-        top_level_information_declaration(
+        top_level_information_declaration(Span::new(
             r#"Reg-AdvisorySpeed	            REG-EXT-ID-AND-TYPE ::= { ... }"#
-        )
+        ))
         .unwrap()
         .1,
         ToplevelInformationDefinition {
@@ -333,12 +333,12 @@ fn parses_empty_extensible_object_set() {
 #[test]
 fn parses_class_declaration() {
     assert_eq!(
-        top_level_information_declaration(
+        top_level_information_declaration(Span::new(
             r#"REG-EXT-ID-AND-TYPE ::= CLASS {
                   &id     RegionId UNIQUE,
                   &Type
                 } WITH SYNTAX {&Type IDENTIFIED BY &id}"#
-        )
+        ))
         .unwrap()
         .1,
         ToplevelInformationDefinition {
@@ -388,12 +388,12 @@ fn parses_class_declaration() {
 #[test]
 fn parses_parameterized_declaration() {
     assert_eq!(
-        top_level_type_declaration(
+        top_level_type_declaration(Span::new(
             r#"RegionalExtension {REG-EXT-ID-AND-TYPE : Set} ::= SEQUENCE {
                   regionId     REG-EXT-ID-AND-TYPE.&id( {Set} ),
                   regExtValue  REG-EXT-ID-AND-TYPE.&Type( {Set}{@regionId} )
                 }"#
-        )
+        ))
         .unwrap()
         .1,
         ToplevelTypeDefinition {
@@ -466,13 +466,13 @@ fn parses_parameterized_declaration() {
 #[test]
 fn parses_choice() {
     assert_eq!(
-        top_level_type_declaration(
+        top_level_type_declaration(Span::new(
             r#"Choice-example ::= CHOICE
                 {normal NULL,
                 high NULL,
                 ...,
                 medium NULL }"#
-        )
+        ))
         .unwrap()
         .1,
         ToplevelTypeDefinition {
@@ -513,17 +513,21 @@ fn parses_choice() {
 fn parses_sequence_of_value() {
     println!(
         "{:?}",
-        top_level_value_declaration(r#"test-Sequence SEQUENCE OF INTEGER ::= { 1, 2, 3 }"#)
-            .unwrap()
-            .1
+        top_level_value_declaration(Span::new(
+            r#"test-Sequence SEQUENCE OF INTEGER ::= { 1, 2, 3 }"#
+        ))
+        .unwrap()
+        .1
     )
 }
 
 #[test]
 fn parses_comment_after_end() {
-    assert!(end(r#"
+    assert!(end(Span::new(
+        r#"
         END
 
-        -- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D"#)
+        -- Generated by Asnp, the ASN.1 pretty-printer of France Telecom R&D"#
+    ))
     .is_ok())
 }

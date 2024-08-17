@@ -1,25 +1,27 @@
 use core::fmt::{Display, Formatter, Result};
 use std::error::Error;
 
+use super::Span;
+
 #[derive(Debug, Clone)]
 pub struct LexerError {
     pub details: String,
     pub kind: LexerErrorType,
 }
 
-impl<'a> From<nom::Err<nom::error::Error<&'a str>>> for LexerError {
-    fn from(value: nom::Err<nom::error::Error<&'a str>>) -> Self {
+impl From<nom::Err<nom::error::Error<Span<'_>>>> for LexerError {
+    fn from(value: nom::Err<nom::error::Error<Span>>) -> Self {
         match value {
             nom::Err::Incomplete(_) => Self {
                 details: "Unexpected end of input!".into(),
                 kind: LexerErrorType::NotEnoughData,
             },
             nom::Err::Error(e) => Self {
-                details: "Error matching ASN syntax while parsing:".to_owned() + e.input,
+                details: format!("Error matching ASN syntax while parsing: {}", e.input),
                 kind: LexerErrorType::MatchingError(e.code),
             },
             nom::Err::Failure(e) => Self {
-                details: "Unrecoverable error while parsing:".to_owned() + e.input,
+                details: format!("Unrecoverable error while parsing: {}", e.input),
                 kind: LexerErrorType::Failure(e.code),
             },
         }

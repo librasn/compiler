@@ -4,19 +4,18 @@ use nom::{
     character::complete::{char, u8},
     combinator::{map, map_res, opt},
     sequence::{delimited, pair, terminated, tuple},
-    IResult,
 };
 
 use crate::intermediate::*;
 
-use super::{common::*, constraint::constraint};
+use super::{common::*, constraint::constraint, LexerResult, Span};
 
-pub fn character_string_value(input: &str) -> IResult<&str, ASN1Value> {
+pub fn character_string_value(input: Span) -> LexerResult<ASN1Value> {
     map(
         skip_ws_and_comments(alt((
             map(
                 delimited(tag("\""), take_until("\""), tag("\"")),
-                ToString::to_string,
+                |span: Span| span.to_string(),
             ),
             map(quadruple, |c| c.to_string()),
         ))),
@@ -40,7 +39,7 @@ pub fn character_string_value(input: &str) -> IResult<&str, ASN1Value> {
 /// _In all cases, the set of permitted characters may be restricted by subtyping._
 ///
 /// __Currently, the rasn compiler only supports group `0`__
-fn quadruple(input: &str) -> IResult<&str, char> {
+fn quadruple(input: Span) -> LexerResult<char> {
     map_res(
         in_braces(tuple((
             terminated(skip_ws(u8), skip_ws(char(COMMA))),
@@ -75,7 +74,7 @@ fn quadruple(input: &str) -> IResult<&str, char> {
 /// If the match succeeds, the lexer will consume the match and return the remaining string
 /// and a wrapped `CharacterString` value representing the ASN1 declaration.
 /// If the match fails, the lexer will not consume the input and will return an error.
-pub fn character_string(input: &str) -> IResult<&str, ASN1Type> {
+pub fn character_string(input: Span) -> LexerResult<ASN1Type> {
     map(
         pair(
             skip_ws_and_comments(alt((
@@ -104,13 +103,14 @@ mod tests {
     use crate::lexer::{
         asn1_value,
         character_string::{character_string_value, quadruple},
+        Span,
     };
 
     use super::character_string;
 
     #[test]
     fn parses_unconfined_characterstring() {
-        let sample = "   IA5String";
+        let sample = Span::new("   IA5String");
         assert_eq!(
             character_string(sample).unwrap().1,
             ASN1Type::CharacterString(CharacterString {
@@ -122,7 +122,7 @@ mod tests {
 
     #[test]
     fn parses_strictly_constrained_characterstring() {
-        let sample = "   IA5String(SIZE (8))";
+        let sample = Span::new("   IA5String(SIZE (8))");
         assert_eq!(
             character_string(sample).unwrap().1,
             ASN1Type::CharacterString(CharacterString {
@@ -142,7 +142,7 @@ mod tests {
 
     #[test]
     fn parses_range_constrained_characterstring() {
-        let sample = "   IA5String -- even here?!?!? -- (SIZE (8 ..18))";
+        let sample = Span::new("   IA5String -- even here?!?!? -- (SIZE (8 ..18))");
         assert_eq!(
             character_string(sample).unwrap().1,
             ASN1Type::CharacterString(CharacterString {
@@ -163,8 +163,10 @@ mod tests {
 
     #[test]
     fn parses_strictly_constrained_extended_characterstring() {
-        let sample = r#"  IA5String
-        (SIZE (2, ...))"#;
+        let sample = Span::new(
+            r#"  IA5String
+        (SIZE (2, ...))"#,
+        );
         assert_eq!(
             character_string(sample).unwrap().1,
             ASN1Type::CharacterString(CharacterString {
@@ -184,7 +186,7 @@ mod tests {
 
     #[test]
     fn parses_range_constrained_extended_characterstring() {
-        let sample = "   IA5String (SIZE (8 --  comment -- .. 18, ...))";
+        let sample = Span::new("   IA5String (SIZE (8 --  comment -- .. 18, ...))");
         assert_eq!(
             character_string(sample).unwrap().1,
             ASN1Type::CharacterString(CharacterString {
@@ -206,7 +208,7 @@ mod tests {
     #[test]
     fn parses_character_string_value() {
         assert_eq!(
-            character_string_value("\"a\"").unwrap().1,
+            character_string_value(Span::new("\"a\"")).unwrap().1,
             ASN1Value::String("a".to_owned())
         )
     }
@@ -214,19 +216,19 @@ mod tests {
     #[test]
     fn parses_character_string_asn1_value() {
         assert_eq!(
-            asn1_value("\"a\"").unwrap().1,
+            asn1_value(Span::new("\"a\"")).unwrap().1,
             ASN1Value::String("a".to_owned())
         )
     }
 
     #[test]
     fn parses_iso_10646_quadruple() {
-        assert_eq!(quadruple("{0,0,0,9}").unwrap().1, '\t');
-        assert_eq!(quadruple("{0,0,0,10}").unwrap().1, '\n');
-        assert_eq!(quadruple("{0,0,0,13}").unwrap().1, '\r');
-        assert_eq!(quadruple("{0,0,0,32}").unwrap().1, ' ');
-        assert_eq!(quadruple("{0,0,215,23}").unwrap().1, '휗');
-        assert_eq!(quadruple("{0,0,249,0}").unwrap().1, '豈');
-        assert_eq!(quadruple("{0,1,0,0}").unwrap().1, '𐀀');
+        assert_eq!(quadruple(Span::new("{0,0,0,9}")).unwrap().1, '\t');
+        assert_eq!(quadruple(Span::new("{0,0,0,10}")).unwrap().1, '\n');
+        assert_eq!(quadruple(Span::new("{0,0,0,13}")).unwrap().1, '\r');
+        assert_eq!(quadruple(Span::new("{0,0,0,32}")).unwrap().1, ' ');
+        assert_eq!(quadruple(Span::new("{0,0,215,23}")).unwrap().1, '휗');
+        assert_eq!(quadruple(Span::new("{0,0,249,0}")).unwrap().1, '豈');
+        assert_eq!(quadruple(Span::new("{0,1,0,0}")).unwrap().1, '𐀀');
     }
 }

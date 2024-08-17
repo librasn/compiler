@@ -3,14 +3,13 @@ use nom::{
     bytes::complete::tag,
     combinator::{into, map, opt, value},
     sequence::preceded,
-    IResult,
 };
 
 use crate::intermediate::{ASN1Type, ASN1Value, BOOLEAN, FALSE, TRUE};
 
-use super::{common::skip_ws_and_comments, constraint::constraint};
+use super::{common::skip_ws_and_comments, constraint::constraint, LexerResult, Span};
 
-pub fn boolean_value(input: &str) -> IResult<&str, ASN1Value> {
+pub fn boolean_value(input: Span) -> LexerResult<ASN1Value> {
     alt((
         value(ASN1Value::Boolean(true), skip_ws_and_comments(tag(TRUE))),
         value(ASN1Value::Boolean(false), skip_ws_and_comments(tag(FALSE))),
@@ -25,7 +24,7 @@ pub fn boolean_value(input: &str) -> IResult<&str, ASN1Value> {
 /// If the match succeeds, the lexer will consume the match and return the remaining string
 /// and an `ASN1Type::Boolean` value representing the ASN1 declaration.
 /// If the match fails, the lexer will not consume the input and will return an error.
-pub fn boolean(input: &str) -> IResult<&str, ASN1Type> {
+pub fn boolean(input: Span) -> LexerResult<ASN1Type> {
     map(
         into(skip_ws_and_comments(preceded(
             tag(BOOLEAN),
@@ -44,7 +43,7 @@ mod tests {
     #[test]
     fn parses_boolean() {
         assert_eq!(
-            boolean(" --who would put a comment here?--BOOLEAN")
+            boolean(Span::new(" --who would put a comment here?--BOOLEAN"))
                 .unwrap()
                 .1,
             ASN1Type::Boolean(Boolean {

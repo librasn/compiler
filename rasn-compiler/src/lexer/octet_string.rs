@@ -2,12 +2,11 @@ use nom::{
     bytes::complete::tag,
     combinator::{map, opt},
     sequence::preceded,
-    IResult,
 };
 
 use crate::intermediate::*;
 
-use super::{common::*, constraint::constraint};
+use super::{common::*, constraint::constraint, LexerResult, Span};
 
 /// Tries to parse an ASN1 OCTET STRING
 ///
@@ -17,7 +16,7 @@ use super::{common::*, constraint::constraint};
 /// If the match succeeds, the lexer will consume the match and return the remaining string
 /// and a wrapped `OctetString` value representing the ASN1 declaration.
 /// If the match fails, the lexer will not consume the input and will return an error.
-pub fn octet_string(input: &str) -> IResult<&str, ASN1Type> {
+pub fn octet_string(input: Span) -> LexerResult<ASN1Type> {
     map(
         preceded(skip_ws_and_comments(tag(OCTET_STRING)), opt(constraint)),
         |m| ASN1Type::OctetString(m.into()),
@@ -26,13 +25,16 @@ pub fn octet_string(input: &str) -> IResult<&str, ASN1Type> {
 
 #[cfg(test)]
 mod tests {
-    use crate::intermediate::{constraints::*, types::*, *};
+    use crate::{
+        intermediate::{constraints::*, types::*, *},
+        lexer::Span,
+    };
 
     use super::octet_string;
 
     #[test]
     fn parses_unconfined_octetstring() {
-        let sample = "  OCTET STRING";
+        let sample = Span::new("  OCTET STRING");
         assert_eq!(
             octet_string(sample).unwrap().1,
             ASN1Type::OctetString(OctetString {
@@ -43,7 +45,7 @@ mod tests {
 
     #[test]
     fn parses_strictly_constrained_octetstring() {
-        let sample = "  OCTET STRING(SIZE (8))";
+        let sample = Span::new("  OCTET STRING(SIZE (8))");
         assert_eq!(
             octet_string(sample).unwrap().1,
             ASN1Type::OctetString(OctetString {
@@ -62,7 +64,7 @@ mod tests {
 
     #[test]
     fn parses_range_constrained_octetstring() {
-        let sample = "  OCTET STRING -- even here?!?!? -- (SIZE (8 ..18))";
+        let sample = Span::new("  OCTET STRING -- even here?!?!? -- (SIZE (8 ..18))");
         assert_eq!(
             octet_string(sample).unwrap().1,
             ASN1Type::OctetString(OctetString {
@@ -82,7 +84,7 @@ mod tests {
 
     #[test]
     fn parses_strictly_constrained_extended_octetstring() {
-        let sample = "  OCTET STRING (SIZE (2, ...))";
+        let sample = Span::new("  OCTET STRING (SIZE (2, ...))");
         assert_eq!(
             octet_string(sample).unwrap().1,
             ASN1Type::OctetString(OctetString {
@@ -101,7 +103,7 @@ mod tests {
 
     #[test]
     fn parses_range_constrained_extended_octetstring() {
-        let sample = "  OCTET STRING (SIZE (8 -- comment -- .. 18, ...))";
+        let sample = Span::new("  OCTET STRING (SIZE (8 -- comment -- .. 18, ...))");
         assert_eq!(
             octet_string(sample).unwrap().1,
             ASN1Type::OctetString(OctetString {

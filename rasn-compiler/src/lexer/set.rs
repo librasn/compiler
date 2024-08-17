@@ -4,7 +4,6 @@ use nom::{
     combinator::opt,
     multi::many0,
     sequence::{terminated, tuple},
-    IResult,
 };
 
 use crate::intermediate::*;
@@ -21,7 +20,7 @@ use super::{common::optional_comma, constraint::constraint, sequence::sequence_c
 /// contains anonymous built-in types as members, these nested built-in types will be represented as
 /// structs within the same global scope.
 /// If the match fails, the lexer will not consume the input and will return an error.
-pub fn set(input: &str) -> IResult<&str, ASN1Type> {
+pub fn set(input: Span) -> LexerResult<ASN1Type> {
     map(
         preceded(
             skip_ws_and_comments(tag(SET)),
@@ -53,10 +52,12 @@ mod tests {
     #[test]
     fn issue_2_test() {
         assert_eq!(
-            set(r#"SET {
+            set(Span::new(
+                r#"SET {
             title VisibleString,
             children SEQUENCE OF VisibleString DEFAULT {}
-        }"#)
+        }"#
+            ))
             .unwrap()
             .1,
             ASN1Type::Set(SequenceOrSet {
