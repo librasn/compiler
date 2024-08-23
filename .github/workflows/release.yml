@@ -1,0 +1,50 @@
+name: release
+
+permissions:
+  pull-requests: write
+  contents: write
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  release-rasn-compiler:
+    name: Release rasn compiler
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Release-plz compiler
+        uses: MarcoIeni/release-plz-action@v0.5
+        with:
+            manifest_path: rasn-compiler/Cargo.toml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+
+    #   - name: Update compiler dep in macro
+    #     run: |
+    #         git pull
+    #         LATEST_TAG="$(git describe --tags --abbrev=0)"
+    #         VERSION_PREFIX="rasn-compiler-v"
+    #         VERSION=\"${LATEST_TAG#"$VERSION_PREFIX"}\"
+    #         sed -i "s/rasn\-compiler \= \{ version \= [\"\.0-9]+/rasn-compiler = { version = $VERSION/g" rasn-compiler-derive/Cargo.toml
+    #         git add rasn-compiler-derive/Cargo.toml
+    #         git commit -m "chore(macros): update compiler dependency"
+    #         git push
+    
+    #   - name: Release-plz macros
+    #     uses: MarcoIeni/release-plz-action@v0.5
+    #     with:
+    #         manifest_path: rasn-compiler-derive/Cargo.toml
+    #     env:
+    #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #       CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
