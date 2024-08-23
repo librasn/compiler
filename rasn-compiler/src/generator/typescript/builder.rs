@@ -166,11 +166,11 @@ impl Typescript {
                     .into_iter()
                     .fold(String::new(), |mut acc, en| {
                         acc.push_str(&format!(
-                            r#"{}{} = "{}",
+                            r#"{} = "{}", {}
                         "#,
-                            en.description.map_or(String::default(), |d| d + "\n"),
                             to_jer_identifier(&en.name),
                             en.name,
+                            en.description.map_or(String::default(), |d| format!("//{}", d)),
                         ));
                         acc
                     }),
