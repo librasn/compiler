@@ -1,7 +1,4 @@
-use rasn_compiler::{
-    prelude::RasnBackend,
-    Compiler,
-};
+use rasn_compiler::{prelude::RasnBackend, Compiler};
 
 #[test]
 #[ignore]
