@@ -46,6 +46,11 @@ pub struct Config {
     /// is set to `true` , the compiler will import the entire module using
     /// the wildcard `*` for each module that the input ASN.1 module imports from.
     pub default_wildcard_imports: bool,
+    /// To make working with the generated types a bit more ergonomic, the compiler
+    /// can generate `From` impls for a `CHOICE`. This is disabled by default to
+    /// generate less code, but can be enabled with `generate_from_impls` set to
+    /// `true`.
+    pub generate_from_impls: bool,
 }
 
 #[cfg(target_family = "wasm")]
@@ -65,6 +70,7 @@ impl Default for Config {
         Self {
             opaque_open_types: true,
             default_wildcard_imports: false,
+            generate_from_impls: false,
         }
     }
 }

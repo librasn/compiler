@@ -725,14 +725,31 @@ impl Rasn {
                     &tld.ty,
                 ));
             }
-            Ok(choice_template(
+            let mut choice_str = choice_template(
                 self.format_comments(&tld.comments)?,
-                name.clone(),
+                &name,
                 extensible,
                 self.format_choice_options(choice, &name.to_string())?,
                 inner_options,
                 self.join_annotations(annotations),
-            ))
+            );
+            if self.config.generate_from_impls {
+                choice_str = std::iter::once(choice_str)
+                    .map(|x| Ok(x))
+                    .chain(choice.options.iter().map(|o| {
+                        let (_, formatted_type_name) =
+                            self.constraints_and_type_name(&o.ty, &o.name, &name.to_string())?;
+
+                        let o_name = self.to_rust_enum_identifier(&o.name);
+                        Ok::<_, GeneratorError>(choice_from_impl_template(
+                            &name,
+                            o_name,
+                            formatted_type_name,
+                        ))
+                    }))
+                    .collect::<Result<TokenStream, _>>()?;
+            }
+            Ok(choice_str)
         } else {
             Err(GeneratorError::new(
                 Some(ToplevelDefinition::Type(tld)),
