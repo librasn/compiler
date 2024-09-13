@@ -47,9 +47,10 @@ pub struct Config {
     /// the wildcard `*` for each module that the input ASN.1 module imports from.
     pub default_wildcard_imports: bool,
     /// To make working with the generated types a bit more ergonomic, the compiler
-    /// can generate `From` impls for a `CHOICE`. This is disabled by default to
-    /// generate less code, but can be enabled with `generate_from_impls` set to
-    /// `true`.
+    /// can generate `From` impls for the wrapper inner types in a `CHOICE`, as long
+    /// as the generated impls are not ambiguous.
+    /// This is disabled by default to generate less code, but can be enabled with
+    /// `generate_from_impls` set to `true`.
     pub generate_from_impls: bool,
 }
 

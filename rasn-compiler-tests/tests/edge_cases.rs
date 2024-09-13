@@ -143,3 +143,40 @@ e2e_pdu!(
             EnumWithDefault::first
         }                                           "#
 );
+
+e2e_pdu!(
+    same_variant_name,
+    rasn_compiler::prelude::RasnConfig {
+        generate_from_impls: true,
+        ..Default::default()
+    },
+    r#"
+        ChoiceType ::= CHOICE {
+            number INTEGER,
+            anotherNumber INTEGER,
+            bool BOOLEAN,
+            oneMoreNumber INTEGER,
+            aString IA5String
+        }
+    "#,
+    r#"
+        #[derive(AsnType,Debug,Clone,Decode,Encode,PartialEq)]
+        #[rasn(choice,automatic_tags)]
+        pub enum ChoiceType {
+            number(Integer),
+            anotherNumber(Integer),
+            bool(bool),
+            oneMoreNumber(Integer),
+            aString(Ia5String),
+        }
+        impl From<bool> for ChoiceType {
+            fn from(value:bool) -> Self {
+                Self::bool(value)
+            }
+        }
+        impl From<Ia5String> for ChoiceType {
+            fn from(value:Ia5String) -> Self {
+                Self::aString(value)
+            }
+        }                                           "#
+);

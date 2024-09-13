@@ -725,7 +725,7 @@ impl Rasn {
                     &tld.ty,
                 ));
             }
-            let mut choice_str = choice_template(
+            let choice_str = choice_template(
                 self.format_comments(&tld.comments)?,
                 &name,
                 extensible,
@@ -734,20 +734,31 @@ impl Rasn {
                 self.join_annotations(annotations),
             );
             if self.config.generate_from_impls {
-                choice_str = std::iter::once(choice_str)
-                    .map(|x| Ok(x))
-                    .chain(choice.options.iter().map(|o| {
+                let mut map = BTreeMap::new();
+
+                let opts = choice
+                    .options
+                    .iter()
+                    .map(|o| {
                         let (_, formatted_type_name) =
                             self.constraints_and_type_name(&o.ty, &o.name, &name.to_string())?;
 
                         let o_name = self.to_rust_enum_identifier(&o.name);
-                        Ok::<_, GeneratorError>(choice_from_impl_template(
-                            &name,
-                            o_name,
-                            formatted_type_name,
-                        ))
+                        map.entry(formatted_type_name.to_string())
+                            .and_modify(|counter| *counter += 1)
+                            .or_insert(1);
+                        Ok::<_, GeneratorError>((o_name, formatted_type_name))
+                    })
+                    .collect::<Result<Vec<_>, _>>()?;
+
+                return Ok(std::iter::once(choice_str)
+                    .chain(opts.into_iter().filter_map(|(o_name, ty)| {
+                        if map[&ty.to_string()] > 1 {
+                            return None;
+                        }
+                        Some(choice_from_impl_template(&name, o_name, ty))
                     }))
-                    .collect::<Result<TokenStream, _>>()?;
+                    .collect::<TokenStream>());
             }
             Ok(choice_str)
         } else {
