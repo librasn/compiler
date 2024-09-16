@@ -312,7 +312,7 @@ pub fn const_choice_value_template(
 
 pub fn choice_template(
     comments: TokenStream,
-    name: TokenStream,
+    name: &TokenStream,
     extensible: TokenStream,
     options: TokenStream,
     nested_options: Vec<TokenStream>,
@@ -326,6 +326,20 @@ pub fn choice_template(
         #extensible
         pub enum #name {
             #options
+        }
+    }
+}
+
+pub fn choice_from_impl_template(
+    name: &TokenStream,
+    variant: Ident,
+    wrapped: TokenStream,
+) -> TokenStream {
+    quote! {
+        impl From<#wrapped> for #name {
+            fn from(value: #wrapped) -> Self {
+                Self::#variant(value)
+            }
         }
     }
 }

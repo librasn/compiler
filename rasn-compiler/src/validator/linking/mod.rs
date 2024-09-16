@@ -6,10 +6,7 @@ mod information_object;
 mod types;
 mod utils;
 
-use std::{
-    borrow::BorrowMut,
-    collections::BTreeMap,
-};
+use std::{borrow::BorrowMut, collections::BTreeMap};
 
 use crate::{
     common::INTERNAL_NESTED_TYPE_NAME_PREFIX,

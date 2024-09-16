@@ -725,14 +725,42 @@ impl Rasn {
                     &tld.ty,
                 ));
             }
-            Ok(choice_template(
+            let choice_str = choice_template(
                 self.format_comments(&tld.comments)?,
-                name.clone(),
+                &name,
                 extensible,
                 self.format_choice_options(choice, &name.to_string())?,
                 inner_options,
                 self.join_annotations(annotations),
-            ))
+            );
+            if self.config.generate_from_impls {
+                let mut map = BTreeMap::new();
+
+                let opts = choice
+                    .options
+                    .iter()
+                    .map(|o| {
+                        let (_, formatted_type_name) =
+                            self.constraints_and_type_name(&o.ty, &o.name, &name.to_string())?;
+
+                        let o_name = self.to_rust_enum_identifier(&o.name);
+                        map.entry(formatted_type_name.to_string())
+                            .and_modify(|counter| *counter += 1)
+                            .or_insert(1);
+                        Ok::<_, GeneratorError>((o_name, formatted_type_name))
+                    })
+                    .collect::<Result<Vec<_>, _>>()?;
+
+                return Ok(std::iter::once(choice_str)
+                    .chain(opts.into_iter().filter_map(|(o_name, ty)| {
+                        if map[&ty.to_string()] > 1 {
+                            return None;
+                        }
+                        Some(choice_from_impl_template(&name, o_name, ty))
+                    }))
+                    .collect::<TokenStream>());
+            }
+            Ok(choice_str)
         } else {
             Err(GeneratorError::new(
                 Some(ToplevelDefinition::Type(tld)),

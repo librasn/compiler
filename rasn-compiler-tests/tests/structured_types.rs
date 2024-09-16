@@ -97,3 +97,55 @@ e2e_pdu!(
             pub static ref NESTED_TYPE_VAL: NestedType = NestedType::new(NestedTypeChoiceField::one(Integer::from(4)));
         }          "#
 );
+
+e2e_pdu!(
+    nested_choice_value_from_impl,
+    rasn_compiler::prelude::RasnConfig {
+        generate_from_impls: true,
+        ..Default::default()
+    },
+    r#"
+        NestedType ::= SEQUENCE {
+            choiceField CHOICE {
+                one INTEGER,
+                two BOOLEAN
+            }
+        }
+
+        nestedTypeVal NestedType ::= { choiceField one:4 }
+    "#,
+    r#"
+        #[doc = "Inner type"]
+        #[derive(AsnType,Debug,Clone,Decode,Encode,PartialEq)]
+        #[rasn(choice, automatic_tags)]
+        pub enum NestedTypeChoiceField {
+            one(Integer),
+            two(bool),
+        }
+        impl From<Integer> for NestedTypeChoiceField {
+            fn from(value: Integer) -> Self {
+                Self::one(value)
+            }
+        }
+        impl From<bool> for NestedTypeChoiceField {
+            fn from(value: bool) -> Self {
+                Self::two(value)
+            }
+        }
+
+        #[derive(AsnType,Debug,Clone,Decode,Encode,PartialEq)]
+        #[rasn(automatic_tags)]
+        pub struct NestedType{
+            #[rasn(identifier="choiceField")]
+            pub choice_field: NestedTypeChoiceField,
+        }
+        impl NestedType {
+            pub fn new(choice_field: NestedTypeChoiceField) -> Self {
+                Self { choice_field }
+            }
+        }
+
+        lazy_static! {
+            pub static ref NESTED_TYPE_VAL: NestedType = NestedType::new(NestedTypeChoiceField::one(Integer::from(4)));
+        }          "#
+);

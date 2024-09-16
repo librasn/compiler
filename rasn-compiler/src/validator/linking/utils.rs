@@ -9,7 +9,6 @@ use crate::{
     lexer::asn1_value,
 };
 
-
 pub(crate) fn find_tld_or_enum_value_by_name(
     type_name: &String,
     name: &String,
