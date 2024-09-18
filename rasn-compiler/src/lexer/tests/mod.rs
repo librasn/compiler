@@ -216,6 +216,7 @@ fn parses_anonymous_sequence_of_declaration() {
             comments: "Comments".into(),
             name: "InterferenceManagementZones".into(),
             ty: ASN1Type::SequenceOf(SequenceOrSetOf {
+                is_recursive: false,
                 constraints: vec![Constraint::SubtypeConstraint(ElementSet {
                     set: ElementOrSetOperation::Element(SubtypeElement::SizeConstraint(Box::new(
                         ElementOrSetOperation::Element(SubtypeElement::ValueRange {
@@ -406,6 +407,7 @@ fn parses_parameterized_declaration() {
                 constraints: vec![],
                 members: vec![
                     SequenceOrSetMember {
+                        is_recursive: false,
                         name: "regionId".into(),
                         tag: None,
                         ty: ASN1Type::InformationObjectFieldReference(
@@ -426,6 +428,7 @@ fn parses_parameterized_declaration() {
                         constraints: vec![]
                     },
                     SequenceOrSetMember {
+                        is_recursive: false,
                         name: "regExtValue".into(),
                         tag: None,
                         ty: ASN1Type::InformationObjectFieldReference(
@@ -483,18 +486,21 @@ fn parses_choice() {
                 extensible: Some(2),
                 options: vec![
                     ChoiceOption {
+                        is_recursive: false,
                         name: "normal".into(),
                         tag: None,
                         ty: ASN1Type::Null,
                         constraints: vec![]
                     },
                     ChoiceOption {
+                        is_recursive: false,
                         name: "high".into(),
                         tag: None,
                         ty: ASN1Type::Null,
                         constraints: vec![]
                     },
                     ChoiceOption {
+                        is_recursive: false,
                         name: "medium".into(),
                         tag: None,
                         ty: ASN1Type::Null,

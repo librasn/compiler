@@ -135,18 +135,21 @@ mod tests {
                 extensible: Some(2),
                 options: vec![
                     ChoiceOption {
+                        is_recursive: false,
                         name: "normal".into(),
                         tag: None,
                         ty: ASN1Type::Null,
                         constraints: vec![]
                     },
                     ChoiceOption {
+                        is_recursive: false,
                         name: "high".into(),
                         tag: None,
                         ty: ASN1Type::Null,
                         constraints: vec![]
                     },
                     ChoiceOption {
+                        is_recursive: false,
                         name: "medium".into(),
                         tag: None,
                         ty: ASN1Type::Null,
@@ -178,6 +181,7 @@ mod tests {
                 extensible: Some(1,),
                 options: vec![
                     ChoiceOption {
+                        is_recursive: false,
                         name: "glc".into(),
                         tag: None,
                         ty: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
@@ -188,6 +192,7 @@ mod tests {
                         constraints: vec![],
                     },
                     ChoiceOption {
+                        is_recursive: false,
                         name: "avc".into(),
                         tag: None,
                         ty: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
@@ -198,6 +203,7 @@ mod tests {
                         constraints: vec![],
                     },
                     ChoiceOption {
+                        is_recursive: false,
                         name: "rsc".into(),
                         tag: None,
                         ty: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
@@ -208,6 +214,7 @@ mod tests {
                         constraints: vec![],
                     },
                     ChoiceOption {
+                        is_recursive: false,
                         name: "isc".into(),
                         tag: None,
                         ty: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {

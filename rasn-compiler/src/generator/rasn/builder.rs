@@ -741,7 +741,7 @@ impl Rasn {
                     .iter()
                     .map(|o| {
                         let (_, formatted_type_name) =
-                            self.constraints_and_type_name(&o.ty, &o.name, &name.to_string())?;
+                            self.constraints_and_type_name(&o.ty, &o.name, &name.to_string(), o.is_recursive)?;
 
                         let o_name = self.to_rust_enum_identifier(&o.name);
                         map.entry(formatted_type_name.to_string())

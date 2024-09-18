@@ -320,8 +320,12 @@ impl Rasn {
         extension_annotation: TokenStream,
     ) -> Result<(TokenStream, NameType), GeneratorError> {
         let name = self.to_rust_snake_case(&member.name);
-        let (mut all_constraints, mut formatted_type_name) =
-            self.constraints_and_type_name(&member.ty, &member.name, parent_name)?;
+        let (mut all_constraints, mut formatted_type_name) = self.constraints_and_type_name(
+            &member.ty,
+            &member.name,
+            parent_name,
+            member.is_recursive,
+        )?;
         all_constraints.append(&mut member.constraints.clone());
         if (member.is_optional && member.default_value.is_none())
             || member.name.starts_with("ext_group_")
@@ -402,8 +406,12 @@ impl Rasn {
         parent_name: &String,
         extension_annotation: TokenStream,
     ) -> Result<TokenStream, GeneratorError> {
-        let (mut all_constraints, formatted_type_name) =
-            self.constraints_and_type_name(&member.ty, &member.name, parent_name)?;
+        let (mut all_constraints, formatted_type_name) = self.constraints_and_type_name(
+            &member.ty,
+            &member.name,
+            parent_name,
+            member.is_recursive,
+        )?;
         all_constraints.append(&mut member.constraints.clone());
         let range_annotations = self.format_range_annotations(
             matches!(member.ty, ASN1Type::Integer(_)),
@@ -435,6 +443,7 @@ impl Rasn {
         ty: &ASN1Type,
         name: &String,
         parent_name: &String,
+        is_recursive: bool,
     ) -> Result<(Vec<Constraint>, TokenStream), GeneratorError> {
         Ok(match ty {
             ASN1Type::Null => (vec![], quote!(())),
@@ -469,16 +478,29 @@ impl Rasn {
             | ASN1Type::Choice(_)
             | ASN1Type::Sequence(_)
             | ASN1Type::SetOf(_)
-            | ASN1Type::Set(_) => (vec![], self.inner_name(name, parent_name).to_token_stream()),
+            | ASN1Type::Set(_) => {
+                let mut tokenized = self.inner_name(name, parent_name).to_token_stream();
+                if is_recursive {
+                    tokenized = boxed_type(tokenized);
+                }
+                (vec![], tokenized)
+            }
             ASN1Type::SequenceOf(s) => {
-                let (_, inner_type) =
-                    self.constraints_and_type_name(&s.element_type, name, parent_name)?;
+                let (_, inner_type) = self.constraints_and_type_name(
+                    &s.element_type,
+                    name,
+                    parent_name,
+                    s.is_recursive,
+                )?;
                 (s.constraints().clone(), quote!(SequenceOf<#inner_type>))
             }
-            ASN1Type::ElsewhereDeclaredType(e) => (
-                e.constraints.clone(),
-                self.to_rust_title_case(&e.identifier).to_token_stream(),
-            ),
+            ASN1Type::ElsewhereDeclaredType(e) => {
+                let mut tokenized = self.to_rust_title_case(&e.identifier).to_token_stream();
+                if is_recursive {
+                    tokenized = boxed_type(tokenized);
+                };
+                (e.constraints.clone(), tokenized)
+            }
             ASN1Type::InformationObjectFieldReference(_)
             | ASN1Type::EmbeddedPdv
             | ASN1Type::External => (vec![], quote!(Any)),
@@ -1042,6 +1064,10 @@ impl Rasn {
     }
 }
 
+fn boxed_type(tokens: TokenStream) -> TokenStream {
+    quote!(Box<#tokens>)
+}
+
 impl ASN1Value {
     pub(crate) fn is_const_type(&self) -> bool {
         match self {
@@ -1144,6 +1170,7 @@ mod tests {
                         constraints: vec![],
                         members: vec![
                             SequenceOrSetMember {
+                                is_recursive: false,
                                 name: "testMember0".into(),
                                 tag: None,
                                 ty: ASN1Type::Boolean(Boolean {
@@ -1154,6 +1181,7 @@ mod tests {
                                 constraints: vec![]
                             },
                             SequenceOrSetMember {
+                                is_recursive: false,
                                 name: "testMember1".into(),
                                 tag: None,
                                 ty: ASN1Type::Integer(Integer {
@@ -1238,6 +1266,7 @@ mod tests {
                     constraints: vec![],
                     options: vec![
                         ChoiceOption {
+is_recursive: false,
                             name: "testMember0".into(),
                             tag: None,
                             ty: ASN1Type::Boolean(Boolean {
@@ -1246,6 +1275,7 @@ mod tests {
                             constraints: vec![]
                         },
                         ChoiceOption {
+is_recursive: false,
                             name: "testMember1".into(),
                             tag: None,
                             ty: ASN1Type::Integer(Integer {

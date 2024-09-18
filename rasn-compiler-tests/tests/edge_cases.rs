@@ -1,5 +1,40 @@
 #![allow(non_camel_case_types)]
+use rasn_compiler::prelude::RasnBackend;
 use rasn_compiler_tests::e2e_pdu;
+
+#[test]
+fn recursion() {
+    println!(
+        "{}",
+        rasn_compiler::Compiler::<RasnBackend, _>::new()
+            .add_asn_literal(
+                r#"
+                TestModule DEFINITIONS AUTOMATIC TAGS::= BEGIN
+    Filter ::= CHOICE {
+         and             [0] SET SIZE (1..MAX) OF filter Filter,
+         or              [1] SET SIZE (1..MAX) OF filter Filter,
+         not             [2] Filter,
+         equalityMatch   [3] AttributeValueAssertion,
+         ...
+    }
+
+    AttributeValueAssertion ::= SEQUENCE {
+         attributeDesc   AttributeDescription,
+         assertionValue  AssertionValue }
+
+    AssertionValue ::= OCTET STRING
+
+    AttributeDescription ::= LDAPString
+
+    LDAPString ::= [UNIVERSAL 4] IMPLICIT UTF8String
+    END
+"#
+            )
+            .compile_to_string()
+            .unwrap()
+            .generated
+    )
+}
 
 e2e_pdu!(
     distinguished_value_range,

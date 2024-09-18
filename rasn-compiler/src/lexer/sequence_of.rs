@@ -52,6 +52,7 @@ mod tests {
         assert_eq!(
             sequence_of("SEQUENCE OF BOOLEAN").unwrap().1,
             ASN1Type::SequenceOf(SequenceOrSetOf {
+                is_recursive: false,
                 constraints: vec![],
                 element_type: Box::new(ASN1Type::Boolean(Boolean {
                     constraints: vec![]
@@ -65,6 +66,7 @@ mod tests {
         assert_eq!(
             sequence_of("SEQUENCE OF Things").unwrap().1,
             ASN1Type::SequenceOf(SequenceOrSetOf {
+                is_recursive: false,
                 constraints: vec![],
                 element_type: Box::new(ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                     parent: None,
@@ -82,6 +84,7 @@ mod tests {
                 .unwrap()
                 .1,
             ASN1Type::SequenceOf(SequenceOrSetOf {
+                is_recursive: false,
                 constraints: vec![Constraint::SubtypeConstraint(ElementSet {
                     set: ElementOrSetOperation::Element(SubtypeElement::SizeConstraint(Box::new(
                         ElementOrSetOperation::Element(SubtypeElement::ValueRange {
@@ -108,6 +111,7 @@ mod tests {
                 .unwrap()
                 .1,
             ASN1Type::SequenceOf(SequenceOrSetOf {
+                is_recursive: false,
                 constraints: vec![Constraint::SubtypeConstraint(ElementSet {
                     set: ElementOrSetOperation::Element(SubtypeElement::SizeConstraint(Box::new(
                         ElementOrSetOperation::Element(SubtypeElement::ValueRange {
@@ -138,6 +142,7 @@ mod tests {
             .unwrap()
             .1,
             ASN1Type::SequenceOf(SequenceOrSetOf {
+                is_recursive: false,
                 constraints: vec![Constraint::SubtypeConstraint(ElementSet {
                     set: ElementOrSetOperation::Element(SubtypeElement::SizeConstraint(Box::new(
                         ElementOrSetOperation::Element(SubtypeElement::ValueRange {
@@ -176,6 +181,7 @@ mod tests {
             .unwrap()
             .1,
             ASN1Type::SequenceOf(SequenceOrSetOf {
+                is_recursive: false,
                 constraints: vec![Constraint::SubtypeConstraint(ElementSet {
                     set: ElementOrSetOperation::Element(SubtypeElement::SizeConstraint(Box::new(
                         ElementOrSetOperation::Element(SubtypeElement::ValueRange {

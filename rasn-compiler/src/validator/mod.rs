@@ -100,14 +100,6 @@ impl Validator {
                     _ => (),
                 }
             }
-            // if self.is_parameterized(&key) {
-            //     if let Some((k, mut tld)) = self.tlds.remove_entry(&key) {
-            //         if let Err(e) = tld.resolve_parameterization(&self.tlds) {
-            //             warnings.push(Box::new(e));
-            //         }
-            //         self.tlds.insert(k, tld);
-            //     }
-            // }
             if self.has_components_of_notation(&key) {
                 if let Some((k, ToplevelDefinition::Type(mut tld))) = self.tlds.remove_entry(&key) {
                     tld.ty.link_components_of_notation(&self.tlds);
@@ -149,6 +141,12 @@ impl Validator {
             }
             if let Some((k, mut tld)) = self.tlds.remove_entry(&key) {
                 if let Err(e) = tld.collect_supertypes(&self.tlds) {
+                    warnings.push(Box::new(e));
+                }
+                self.tlds.insert(k, tld);
+            }
+            if let Some((k, mut tld)) = self.tlds.remove_entry(&key) {
+                if let Err(e) = tld.mark_recursive(&self.tlds) {
                     warnings.push(Box::new(e));
                 }
                 self.tlds.insert(k, tld);
