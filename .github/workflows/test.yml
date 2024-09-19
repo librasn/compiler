@@ -33,6 +33,18 @@ jobs:
           command: build
           args: --bin rasn_compiler_cli --features=cli
 
+      - name: Install WASM target
+        uses: actions-rs/toolchain@v1
+        with:
+            toolchain: stable
+            target: wasm32-unknown-unknown
+
+      - name: Build
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --target wasm32-unknown-unknown
+
       - name: Test
         uses: actions-rs/cargo@v1
         with:
