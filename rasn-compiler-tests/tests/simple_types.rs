@@ -4,7 +4,7 @@ use rasn_compiler_tests::e2e_pdu;
 e2e_pdu!(
     boolean,
     "Test-Boolean ::= BOOLEAN",
-    r#" #[derive(AsnType, Debug, Clone, Copy, Decode, Encode, PartialEq)]
+    r#" #[derive(AsnType, Debug, Clone, Copy, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #[rasn(delegate, identifier = "Test-Boolean")]
         pub struct TestBoolean(pub bool);                                 "#
 );
@@ -118,7 +118,7 @@ e2e_pdu!(
 e2e_pdu!(
     null,
     "Test-Int ::= NULL",
-    r#" #[derive(AsnType, Debug, Clone, Copy, Decode, Encode, PartialEq)]
+    r#" #[derive(AsnType, Debug, Clone, Copy, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #[rasn(delegate, identifier = "Test-Int")]
         pub struct TestInt(());                                 "#
 );
@@ -133,7 +133,7 @@ e2e_pdu!(
     bit_string,
     r#" Test-Bits ::= BIT STRING
         test-bits-val Test-Bits ::= '10101010'B"#,
-    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #[rasn(delegate, identifier = "Test-Bits")]
         pub struct TestBits(pub BitString);
         lazy_static!{
@@ -161,7 +161,7 @@ e2e_pdu!(
             first(0) -- first bit --,
             last(1),
         } SIZE(2)                                           "#,
-    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #[rasn(delegate, size("2"), identifier = "Test-Bits")]
         pub struct TestBits(pub BitString);                     "#
 );
@@ -169,7 +169,7 @@ e2e_pdu!(
 e2e_pdu!(
     bit_string_strict,
     "Test-Bits ::= BIT STRING SIZE(4)",
-    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #[rasn(delegate, size("4"), identifier = "Test-Bits")]
         pub struct TestBits(pub BitString);                                 "#
 );
@@ -177,7 +177,7 @@ e2e_pdu!(
 e2e_pdu!(
     bit_string_strict_ext,
     "Test-Bits ::= BIT STRING (SIZE(4,...))",
-    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #[rasn(delegate, size("4", extensible), identifier = "Test-Bits")]
         pub struct TestBits(pub BitString);                                 "#
 );
@@ -186,7 +186,7 @@ e2e_pdu!(
     bit_string_range,
     r#" Test-Bits ::= BIT STRING (SIZE(4..6))
         test-bits-val Test-Bits ::= '10101'B"#,
-    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #[rasn(delegate, size("4..=6"), identifier = "Test-Bits")]
         pub struct TestBits(pub BitString);
         lazy_static!{
@@ -200,7 +200,7 @@ e2e_pdu!(
     bit_string_range_ext,
     r#" Test-Bits ::= BIT STRING (SIZE(4..6,...))
         test-bits-val Test-Bits ::= 'D5'H"#,
-    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #[rasn(delegate, size("4..=6", extensible), identifier = "Test-Bits")]
         pub struct TestBits(pub BitString);
         lazy_static!{
@@ -214,7 +214,7 @@ e2e_pdu!(
     octet_string,
     r#" Test-Octets ::= OCTET STRING
         test-octets-val Test-Octets ::= '10101010'B"#,
-    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #[rasn(delegate, identifier = "Test-Octets")]
         pub struct TestOctets(pub OctetString);
         lazy_static!{
@@ -239,7 +239,7 @@ e2e_pdu!(
 e2e_pdu!(
     octet_string_strict,
     "Test-Octets ::= OCTET STRING SIZE(4)",
-    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #[rasn(delegate, size("4"), identifier = "Test-Octets")]
         pub struct TestOctets(pub OctetString);                                 "#
 );
@@ -247,7 +247,7 @@ e2e_pdu!(
 e2e_pdu!(
     octet_string_strict_ext,
     "Test-Octets ::= OCTET STRING (SIZE(4,...))",
-    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #[rasn(delegate, size("4", extensible), identifier = "Test-Octets")]
         pub struct TestOctets(pub OctetString);                                 "#
 );
@@ -256,7 +256,7 @@ e2e_pdu!(
     octet_string_range,
     r#" Test-Octets ::= OCTET STRING (SIZE(4..6))
         test-octets-val Test-Octets ::= 'FF010201FF'H"#,
-    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #[rasn(delegate, size("4..=6"), identifier = "Test-Octets")]
         pub struct TestOctets(pub OctetString);
         lazy_static!{
@@ -270,7 +270,7 @@ e2e_pdu!(
     octet_string_range_ext,
     r#" Test-Octets ::= OCTET STRING SIZE(4..6,...)
         test-octets-val Test-Octets ::= 'FF010201FF2EDD60'H"#,
-    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #[rasn(delegate, size("4..=6", extensible), identifier = "Test-Octets")]
         pub struct TestOctets(pub OctetString);
         lazy_static!{
@@ -352,7 +352,7 @@ e2e_pdu!(
     bmp,
     r#" Test-String ::= BMPString
         test-string-val Test-String ::= "012345""#,
-    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #[rasn(delegate, identifier = "Test-String")]
         pub struct TestString(pub BmpString);
         lazy_static!{
@@ -365,7 +365,7 @@ e2e_pdu!(
     bmp_strict,
     r#" Test-String ::= BMPString SIZE (4)
         test-string-val Test-String ::= "012345""#,
-    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #[rasn(delegate, size("4"), identifier = "Test-String")]
         pub struct TestString(pub BmpString);
         lazy_static!{
@@ -379,7 +379,7 @@ e2e_pdu!(
     bmp_strict_ext,
     r#" Test-String ::= BMPString SIZE (4,...)
         test-string-val Test-String ::= "012345""#,
-    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #[rasn(delegate, size("4", extensible), identifier = "Test-String")]
         pub struct TestString(pub BmpString);
         lazy_static!{
@@ -393,7 +393,7 @@ e2e_pdu!(
     bmp_range,
     r#" Test-String ::= BMPString SIZE (4..6)
         test-string-val Test-String ::= "012345""#,
-    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #[rasn(delegate, size("4..=6"), identifier = "Test-String")]
         pub struct TestString(pub BmpString);
         lazy_static!{
@@ -407,7 +407,7 @@ e2e_pdu!(
     bmp_range_ext,
     r#" Test-String ::= BMPString SIZE (4..6,...)
         test-string-val Test-String ::= "012345""#,
-    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #[rasn(delegate, size("4..=6", extensible), identifier = "Test-String")]
         pub struct TestString(pub BmpString);
         lazy_static!{
@@ -421,7 +421,7 @@ e2e_pdu!(
     numeric,
     r#" Test-String ::= NumericString
         test-string-val Test-String ::= "012345""#,
-    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #[rasn(delegate, identifier = "Test-String")]
         pub struct TestString(pub NumericString);
         lazy_static!{
@@ -434,7 +434,7 @@ e2e_pdu!(
     numeric_strict,
     r#" Test-String ::= NumericString SIZE (4)
         test-string-val Test-String ::= "012345""#,
-    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #[rasn(delegate, size("4"), identifier = "Test-String")]
         pub struct TestString(pub NumericString);
         lazy_static!{
@@ -448,7 +448,7 @@ e2e_pdu!(
     numeric_strict_ext,
     r#" Test-String ::= NumericString SIZE (4,...)
         test-string-val Test-String ::= "012345""#,
-    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #[rasn(delegate, size("4", extensible), identifier = "Test-String")]
         pub struct TestString(pub NumericString);
         lazy_static!{
@@ -462,7 +462,7 @@ e2e_pdu!(
     numeric_range,
     r#" Test-String ::= NumericString SIZE (4..6)
         test-string-val Test-String ::= "012345""#,
-    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #[rasn(delegate, size("4..=6"), identifier = "Test-String")]
         pub struct TestString(pub NumericString);
         lazy_static!{
@@ -476,7 +476,7 @@ e2e_pdu!(
     numeric_range_ext,
     r#" Test-String ::= NumericString SIZE (4..6,...)
         test-string-val Test-String ::= "012345""#,
-    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #[rasn(delegate, size("4..=6", extensible), identifier = "Test-String")]
         pub struct TestString(pub NumericString);
         lazy_static!{
@@ -490,7 +490,7 @@ e2e_pdu!(
     ia5,
     r#" Test-String ::= IA5String
         test-string-val Test-String ::= "012345""#,
-    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #[rasn(delegate, identifier = "Test-String")]
         pub struct TestString(pub Ia5String);
         lazy_static!{
@@ -503,7 +503,7 @@ e2e_pdu!(
     ia5_strict,
     r#" Test-String ::= IA5String SIZE (4)
         test-string-val Test-String ::= "012345""#,
-    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #[rasn(delegate, size("4"), identifier = "Test-String")]
         pub struct TestString(pub Ia5String);
         lazy_static!{
@@ -517,7 +517,7 @@ e2e_pdu!(
     ia5_strict_ext,
     r#" Test-String ::= IA5String SIZE (4,...)
         test-string-val Test-String ::= "012345""#,
-    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #[rasn(delegate, size("4", extensible), identifier = "Test-String")]
         pub struct TestString(pub Ia5String);
         lazy_static!{
@@ -531,7 +531,7 @@ e2e_pdu!(
     ia5_range,
     r#" Test-String ::= IA5String SIZE (4..6)
         test-string-val Test-String ::= "012345""#,
-    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #[rasn(delegate, size("4..=6"), identifier = "Test-String")]
         pub struct TestString(pub Ia5String);
         lazy_static!{
@@ -545,7 +545,7 @@ e2e_pdu!(
     ia5_range_ext,
     r#" Test-String ::= IA5String SIZE (4..6,...)
         test-string-val Test-String ::= "012345""#,
-    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #[rasn(delegate, size("4..=6", extensible), identifier = "Test-String")]
         pub struct TestString(pub Ia5String);
         lazy_static!{
@@ -559,7 +559,7 @@ e2e_pdu!(
     printable,
     r#" Test-String ::= PrintableString
         test-string-val Test-String ::= "012345""#,
-    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #[rasn(delegate, identifier = "Test-String")]
         pub struct TestString(pub PrintableString);
         lazy_static!{
@@ -572,7 +572,7 @@ e2e_pdu!(
     printable_strict,
     r#" Test-String ::= PrintableString SIZE (4)
         test-string-val Test-String ::= "012345""#,
-    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #[rasn(delegate, size("4"), identifier = "Test-String")]
         pub struct TestString(pub PrintableString);
         lazy_static!{
@@ -586,7 +586,7 @@ e2e_pdu!(
     printable_strict_ext,
     r#" Test-String ::= PrintableString SIZE (4,...)
         test-string-val Test-String ::= "012345""#,
-    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #[rasn(delegate, size("4", extensible), identifier = "Test-String")]
         pub struct TestString(pub PrintableString);
         lazy_static!{
@@ -600,7 +600,7 @@ e2e_pdu!(
     printable_range,
     r#" Test-String ::= PrintableString SIZE (4..6)
         test-string-val Test-String ::= "012345""#,
-    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #[rasn(delegate, size("4..=6"), identifier = "Test-String")]
         pub struct TestString(pub PrintableString);
         lazy_static!{
@@ -614,7 +614,7 @@ e2e_pdu!(
     printable_range_ext,
     r#" Test-String ::= PrintableString SIZE (4..6,...)
         test-string-val Test-String ::= "012345""#,
-    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #[rasn(delegate, size("4..=6", extensible), identifier = "Test-String")]
         pub struct TestString(pub PrintableString);
         lazy_static!{
@@ -628,7 +628,7 @@ e2e_pdu!(
     general,
     r#" Test-String ::= GeneralString
         test-string-val Test-String ::= "012345""#,
-    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #[rasn(delegate, identifier = "Test-String")]
         pub struct TestString(pub GeneralString);
         lazy_static!{
@@ -641,7 +641,7 @@ e2e_pdu!(
     general_strict,
     r#" Test-String ::= GeneralString SIZE (4)
         test-string-val Test-String ::= "012345""#,
-    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #[rasn(delegate, size("4"), identifier = "Test-String")]
         pub struct TestString(pub GeneralString);
         lazy_static!{
@@ -655,7 +655,7 @@ e2e_pdu!(
     general_strict_ext,
     r#" Test-String ::= GeneralString SIZE (4,...)
         test-string-val Test-String ::= "012345""#,
-    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #[rasn(delegate, size("4", extensible), identifier = "Test-String")]
         pub struct TestString(pub GeneralString);
         lazy_static!{
@@ -669,7 +669,7 @@ e2e_pdu!(
     general_range,
     r#" Test-String ::= GeneralString SIZE (4..6)
         test-string-val Test-String ::= "012345""#,
-    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #[rasn(delegate, size("4..=6"), identifier = "Test-String")]
         pub struct TestString(pub GeneralString);
         lazy_static!{
@@ -683,7 +683,7 @@ e2e_pdu!(
     general_range_ext,
     r#" Test-String ::= GeneralString SIZE (4..6,...)
         test-string-val Test-String ::= "012345""#,
-    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #[rasn(delegate, size("4..=6", extensible), identifier = "Test-String")]
         pub struct TestString(pub GeneralString);
         lazy_static!{
@@ -697,7 +697,7 @@ e2e_pdu!(
     utf8,
     r#" Test-String ::= UTF8String
         test-string-val Test-String ::= "012345""#,
-    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #[rasn(delegate, identifier = "Test-String")]
         pub struct TestString(pub Utf8String);
         lazy_static!{
@@ -710,7 +710,7 @@ e2e_pdu!(
     utf8_strict,
     r#" Test-String ::= UTF8String SIZE (4)
         test-string-val Test-String ::= "012345""#,
-    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #[rasn(delegate, size("4"), identifier = "Test-String")]
         pub struct TestString(pub Utf8String);
         lazy_static!{
@@ -724,7 +724,7 @@ e2e_pdu!(
     utf8_strict_ext,
     r#" Test-String ::= UTF8String SIZE (4,...)
         test-string-val Test-String ::= "012345""#,
-    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #[rasn(delegate, size("4", extensible), identifier = "Test-String")]
         pub struct TestString(pub Utf8String);
         lazy_static!{
@@ -738,7 +738,7 @@ e2e_pdu!(
     utf8_range,
     r#" Test-String ::= UTF8String SIZE (4..6)
         test-string-val Test-String ::= "012345""#,
-    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #[rasn(delegate, size("4..=6"), identifier = "Test-String")]
         pub struct TestString(pub Utf8String);
         lazy_static!{
@@ -752,7 +752,7 @@ e2e_pdu!(
     utf8_range_ext,
     r#" Test-String ::= UTF8String SIZE (4..6,...)
         test-string-val Test-String ::= "012345""#,
-    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #[rasn(delegate, size("4..=6", extensible), identifier = "Test-String")]
         pub struct TestString(pub Utf8String);
         lazy_static!{
@@ -766,7 +766,7 @@ e2e_pdu!(
     visible,
     r#" Test-String ::= VisibleString
         test-string-val Test-String ::= "012345""#,
-    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #[rasn(delegate, identifier = "Test-String")]
         pub struct TestString(pub VisibleString);
         lazy_static!{
@@ -779,7 +779,7 @@ e2e_pdu!(
     visible_strict,
     r#" Test-String ::= VisibleString SIZE (4)
         test-string-val Test-String ::= "012345""#,
-    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #[rasn(delegate, size("4"), identifier = "Test-String")]
         pub struct TestString(pub VisibleString);
         lazy_static!{
@@ -793,7 +793,7 @@ e2e_pdu!(
     visible_strict_ext,
     r#" Test-String ::= VisibleString SIZE (4,...)
         test-string-val Test-String ::= "012345""#,
-    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #[rasn(delegate, size("4", extensible), identifier = "Test-String")]
         pub struct TestString(pub VisibleString);
         lazy_static!{
@@ -807,7 +807,7 @@ e2e_pdu!(
     visible_range,
     r#" Test-String ::= VisibleString SIZE (4..6)
         test-string-val Test-String ::= "012345""#,
-    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #[rasn(delegate, size("4..=6"), identifier = "Test-String")]
         pub struct TestString(pub VisibleString);
         lazy_static!{
@@ -821,7 +821,7 @@ e2e_pdu!(
     visible_range_ext,
     r#" Test-String ::= VisibleString SIZE (4..6,...)
         test-string-val Test-String ::= "012345""#,
-    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #[rasn(delegate, size("4..=6", extensible), identifier = "Test-String")]
         pub struct TestString(pub VisibleString);
         lazy_static!{

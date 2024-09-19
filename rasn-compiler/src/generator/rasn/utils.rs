@@ -477,7 +477,6 @@ impl Rasn {
             ASN1Type::Enumerated(_)
             | ASN1Type::Choice(_)
             | ASN1Type::Sequence(_)
-            | ASN1Type::SetOf(_)
             | ASN1Type::Set(_) => {
                 let mut tokenized = self.inner_name(name, parent_name).to_token_stream();
                 if is_recursive {
@@ -493,6 +492,15 @@ impl Rasn {
                     s.is_recursive,
                 )?;
                 (s.constraints().clone(), quote!(SequenceOf<#inner_type>))
+            }
+            ASN1Type::SetOf(s) => {
+                let (_, inner_type) = self.constraints_and_type_name(
+                    &s.element_type,
+                    name,
+                    parent_name,
+                    s.is_recursive,
+                )?;
+                (s.constraints().clone(), quote!(SetOf<#inner_type>))
             }
             ASN1Type::ElsewhereDeclaredType(e) => {
                 let mut tokenized = self.to_rust_title_case(&e.identifier).to_token_stream();
@@ -842,7 +850,7 @@ impl Rasn {
     pub(crate) fn format_nested_choice_options(
         &self,
         choice: &Choice,
-        parent_name: &String,
+        parent_name: &str,
     ) -> Result<Vec<TokenStream>, GeneratorError> {
         choice
             .options
@@ -853,7 +861,6 @@ impl Rasn {
                     ASN1Type::Enumerated(_)
                         | ASN1Type::Choice(_)
                         | ASN1Type::Sequence(_)
-                        | ASN1Type::SequenceOf(_)
                         | ASN1Type::Set(_)
                 )
             })
@@ -869,6 +876,7 @@ impl Rasn {
             })
             .collect::<Result<Vec<_>, _>>()
     }
+    
 
     pub(crate) fn format_new_impl(
         &self,
@@ -994,9 +1002,9 @@ impl Rasn {
         }
     }
 
-    const RUST_KEYWORDS: [&'static str; 38] = [
+    const RUST_KEYWORDS: [&'static str; 39] = [
         "as", "async", "await", "break", "const", "continue", "crate", "dyn", "else", "enum",
-        "extern", "false", "fn", "for", "if", "impl", "in", "let", "loop", "match", "mod", "move",
+        "extern", "false", "final", "fn", "for", "if", "impl", "in", "let", "loop", "match", "mod", "move",
         "mut", "pub", "ref", "return", "self", "Self", "static", "struct", "super", "trait",
         "true", "type", "unsafe", "use", "where", "while",
     ];

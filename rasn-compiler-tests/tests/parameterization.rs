@@ -10,7 +10,7 @@ r#"
         ImplType ::= ParamType { 2, TRUE }
     "#,
 r#"
-        #[derive (AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+        #[derive (AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #[rasn (automatic_tags)]
         pub struct ImplType {
             #[rasn(value("2..=12"), identifier = "int-value")]
@@ -73,7 +73,7 @@ e2e_pdu! {
     "#,
     r#"
     #[doc = " Anonymous SEQUENCE OF member "]
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
     #[rasn(automatic_tags, identifier = "SEQUENCE")]
     pub struct AnonymousA2XPC5FlowBitRatesIEExtensions {
         pub id: Integer,
@@ -103,12 +103,12 @@ e2e_pdu! {
         }
     }
     #[doc = " Inner type "]
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
     #[rasn(delegate, size("1.."))]
     pub struct A2XPC5FlowBitRatesIEExtensions(
         pub SequenceOf<AnonymousA2XPC5FlowBitRatesIEExtensions>,
     );
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
     #[rasn(automatic_tags, identifier = "A2X-PC5-FlowBitRates")]
     #[non_exhaustive]
     pub struct A2XPC5FlowBitRates {

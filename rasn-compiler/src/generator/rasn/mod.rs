@@ -25,6 +25,8 @@ mod utils;
 /// the `rasn` framework for rust.
 pub struct Rasn {
     config: Config,
+    tagging_environment: TaggingEnvironment,
+    extensibility_environment: ExtensibilityEnvironment,
 }
 
 #[cfg_attr(target_family = "wasm", wasm_bindgen)]
@@ -81,8 +83,23 @@ impl Backend for Rasn {
 
     const FILE_EXTENSION: &'static str = ".rs";
 
+    fn new(
+        config: Self::Config,
+        tagging_environment: TaggingEnvironment,
+        extensibility_environment: ExtensibilityEnvironment,
+    ) -> Self {
+        Self {
+            config,
+            extensibility_environment,
+            tagging_environment,
+        }
+    }
+
     fn from_config(config: Self::Config) -> Self {
-        Self { config }
+        Self {
+            config,
+            ..Default::default()
+        }
     }
 
     fn config(&self) -> &Self::Config {
@@ -90,11 +107,13 @@ impl Backend for Rasn {
     }
 
     fn generate_module(
-        &self,
+        &mut self,
         tlds: Vec<ToplevelDefinition>,
     ) -> Result<GeneratedModule, GeneratorError> {
         if let Some((module_ref, _)) = tlds.first().and_then(|tld| tld.get_index().cloned()) {
             let module = module_ref.borrow();
+            self.tagging_environment = module.tagging_environment;
+            self.extensibility_environment = module.extensibility_environment;
             let name = self.to_rust_snake_case(&module.name);
             let imports = module.imports.iter().map(|import| {
                 let module =
@@ -123,7 +142,9 @@ impl Backend for Rasn {
             });
             let (pdus, warnings): (Vec<TokenStream>, Vec<Box<dyn Error>>) =
                 tlds.into_iter().fold((vec![], vec![]), |mut acc, tld| {
-                    match self.generate_tld(tld) {
+                    match self.generate_tld(
+                        tld,
+                    ) {
                         Ok(s) => {
                             acc.0.push(s);
                             acc

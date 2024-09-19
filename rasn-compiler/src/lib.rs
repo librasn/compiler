@@ -36,7 +36,10 @@ pub mod prelude {
         Backend, GeneratedModule,
     };
 
-    pub use crate::intermediate::ToplevelDefinition;
+    pub use crate::intermediate::{
+        ExtensibilityEnvironment, TaggingEnvironment, ToplevelDefinition,
+    };
+
     pub mod ir {
         pub use crate::intermediate::{
             constraints::*,
@@ -375,11 +378,11 @@ impl<B: Backend> Compiler<B, CompilerSourcesSet> {
     /// Returns a Result wrapping a compilation result:
     /// * _Ok_  - tuple containing the stringified bindings for the ASN1 spec as well as a vector of warnings raised during the compilation
     /// * _Err_ - Unrecoverable error, no rust representations were generated
-    pub fn compile_to_string(self) -> Result<CompileResult, Box<dyn Error>> {
+    pub fn compile_to_string(mut self) -> Result<CompileResult, Box<dyn Error>> {
         self.internal_compile().map(CompileResult::fmt::<B>)
     }
 
-    fn internal_compile(&self) -> Result<CompileResult, Box<dyn Error>> {
+    fn internal_compile(&mut self) -> Result<CompileResult, Box<dyn Error>> {
         let mut generated_modules = vec![];
         let mut warnings = Vec::<Box<dyn Error>>::new();
         let mut modules: Vec<ToplevelDefinition> = vec![];

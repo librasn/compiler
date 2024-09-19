@@ -37,8 +37,12 @@ impl Backend for Typescript {
         &self.config
     }
 
+    fn new(config: Self::Config, _: TaggingEnvironment, _: ExtensibilityEnvironment) -> Self {
+        Self::from_config(config)
+    }
+
     fn generate_module(
-        &self,
+        &mut self,
         tlds: Vec<ToplevelDefinition>,
     ) -> Result<GeneratedModule, GeneratorError> {
         if let Some((module_ref, _)) = tlds.first().and_then(|tld| tld.get_index().cloned()) {

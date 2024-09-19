@@ -12,7 +12,10 @@ use crate::intermediate::{
     ToplevelValueDefinition,
 };
 
-use super::{information_object::InformationObjectClassField, template::*, Rasn};
+use super::{
+    information_object::InformationObjectClassField, template::*, ExtensibilityEnvironment, Rasn,
+    TaggingEnvironment,
+};
 use crate::generator::error::{GeneratorError, GeneratorErrorType};
 
 pub(crate) const INNER_ARRAY_LIKE_PREFIX: &str = "Anonymous_";
@@ -672,6 +675,10 @@ impl Rasn {
         if let ASN1Type::Enumerated(ref enumerated) = tld.ty {
             let extensible = enumerated
                 .extensible
+                .or(
+                    (self.extensibility_environment == ExtensibilityEnvironment::Implied)
+                        .then_some(enumerated.members.len()),
+                )
                 .map(|_| {
                     quote! {
                     #[non_exhaustive]}
@@ -712,12 +719,22 @@ impl Rasn {
             let inner_options = self.format_nested_choice_options(choice, &name.to_string())?;
             let extensible = choice
                 .extensible
+                .or(
+                    (self.extensibility_environment == ExtensibilityEnvironment::Implied)
+                        .then_some(choice.options.len()),
+                )
                 .map(|_| {
                     quote! {
                     #[non_exhaustive]}
                 })
                 .unwrap_or_default();
-            let mut annotations = vec![quote!(choice), self.format_tag(tld.tag.as_ref(), true)];
+            let mut annotations = vec![
+                quote!(choice),
+                self.format_tag(
+                    tld.tag.as_ref(),
+                    self.tagging_environment == TaggingEnvironment::Automatic,
+                ),
+            ];
             if name.to_string() != tld.name {
                 annotations.push(self.format_identifier_annotation(
                     &tld.name,
@@ -740,8 +757,12 @@ impl Rasn {
                     .options
                     .iter()
                     .map(|o| {
-                        let (_, formatted_type_name) =
-                            self.constraints_and_type_name(&o.ty, &o.name, &name.to_string(), o.is_recursive)?;
+                        let (_, formatted_type_name) = self.constraints_and_type_name(
+                            &o.ty,
+                            &o.name,
+                            &name.to_string(),
+                            o.is_recursive,
+                        )?;
 
                         let o_name = self.to_rust_enum_identifier(&o.name);
                         map.entry(formatted_type_name.to_string())
@@ -779,6 +800,10 @@ impl Rasn {
                 let name = self.to_rust_title_case(&tld.name);
                 let extensible = seq
                     .extensible
+                    .or(
+                        (self.extensibility_environment == ExtensibilityEnvironment::Implied)
+                            .then_some(seq.members.len()),
+                    )
                     .map(|_| {
                         quote! {
                         #[non_exhaustive]}
@@ -834,7 +859,13 @@ impl Rasn {
                 };
                 let (declaration, name_types) =
                     self.format_sequence_or_set_members(seq, &name.to_string())?;
-                let mut annotations = vec![set_annotation, self.format_tag(tld.tag.as_ref(), true)];
+                let mut annotations = vec![
+                    set_annotation,
+                    self.format_tag(
+                        tld.tag.as_ref(),
+                        self.tagging_environment == TaggingEnvironment::Automatic,
+                    ),
+                ];
                 if name.to_string() != tld.name {
                     annotations.push(self.format_identifier_annotation(
                         &tld.name,

@@ -146,7 +146,7 @@ impl Validator {
                 self.tlds.insert(k, tld);
             }
             if let Some((k, mut tld)) = self.tlds.remove_entry(&key) {
-                if let Err(e) = tld.mark_recursive(&self.tlds) {
+                if let Err(e) = tld.mark_recursive() {
                     warnings.push(Box::new(e));
                 }
                 self.tlds.insert(k, tld);

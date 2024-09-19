@@ -7,7 +7,7 @@ mod types;
 mod utils;
 
 use std::{
-    borrow::{Borrow, BorrowMut, Cow},
+    borrow::{BorrowMut, Cow},
     collections::BTreeMap,
 };
 
@@ -188,17 +188,14 @@ impl ToplevelDefinition {
     }
 
     /// Traverses top-level declarations and marks recursive types
-    pub fn mark_recursive(
-        &mut self,
-        tlds: &BTreeMap<String, ToplevelDefinition>,
-    ) -> Result<(), GrammarError> {
+    pub fn mark_recursive(&mut self) -> Result<(), GrammarError> {
         match self {
             ToplevelDefinition::Type(t) => {
-                let _ = t.ty.mark_recursive(&t.name, tlds)?;
+                let _ = t.ty.mark_recursive(&t.name)?;
                 Ok(())
             }
-            ToplevelDefinition::Value(_v) => todo!("Mark recursive values"),
-            ToplevelDefinition::Information(_i) => todo!("Mark recursive information objects"),
+            ToplevelDefinition::Value(_v) => Ok(()), // TODO
+            ToplevelDefinition::Information(_i) => Ok(()), // TODO
         }
     }
 
@@ -556,11 +553,7 @@ impl ASN1Type {
     }
 
     /// Traverses type and marks if recursive. Returns a vector of traversed type IDs since the last recursion detection or the leaf type.
-    pub fn mark_recursive(
-        &mut self,
-        name: &str,
-        tlds: &BTreeMap<String, ToplevelDefinition>,
-    ) -> Result<Vec<Cow<str>>, GrammarError> {
+    pub fn mark_recursive(&mut self, name: &str) -> Result<Vec<Cow<str>>, GrammarError> {
         match self {
             ASN1Type::Choice(choice) => {
                 let mut children = Vec::new();
@@ -569,13 +562,10 @@ impl ASN1Type {
                         option.is_recursive = true;
                         continue;
                     }
-                    let mut opt_children = option.ty.mark_recursive(&option.name, tlds)?;
-                    if opt_children
-                        .iter()
-                        .any(|id: &Cow<'_, str>| id.borrow() == option.name)
-                    {
+                    let opt_ty_name = option.ty.as_str().into_owned();
+                    let mut opt_children = option.ty.mark_recursive(&opt_ty_name)?;
+                    if opt_children.iter().any(|id: &Cow<'_, str>| id == name) {
                         option.is_recursive = true;
-                        children.push(Cow::Borrowed(option.name.as_str()))
                     } else {
                         children.append(&mut opt_children);
                     }
@@ -589,36 +579,24 @@ impl ASN1Type {
                         member.is_recursive = true;
                         continue;
                     }
-                    let mut mem_children = member.ty.mark_recursive(&member.name, tlds)?;
-                    if mem_children
-                        .iter()
-                        .any(|id: &Cow<'_, str>| id.borrow() == member.name)
-                    {
+                    let mem_ty_name = member.ty.as_str().into_owned();
+                    let mut mem_children = member.ty.mark_recursive(&mem_ty_name)?;
+                    if mem_children.iter().any(|id: &Cow<'_, str>| id == name) {
                         member.is_recursive = true;
-                        children.push(Cow::Borrowed(member.name.as_str()))
                     } else {
                         children.append(&mut mem_children);
                     }
                 }
                 Ok(children)
             }
-            ASN1Type::SequenceOf(s) | ASN1Type::SetOf(s) => {
-                let elem_children = s.element_type.mark_recursive(name, tlds)?;
-                Ok(
-                    if elem_children.iter().any(|id: &Cow<'_, str>| id == name) {
-                        s.is_recursive = true;
-                        vec![Cow::Owned(name.to_owned())]
-                    } else {
-                        elem_children
-                    },
-                )
-            }
+            // SequenceOf and SetOf provide the necessary indirection
+            ASN1Type::SequenceOf(_) | ASN1Type::SetOf(_) => Ok(Vec::new()),
             ASN1Type::ChoiceSelectionType(_) => {
                 unreachable!("Choice selection types should be resolved by now")
             }
             ASN1Type::InformationObjectFieldReference(_information_object_field_reference) => {
-                todo!("Recursive information object fields")
-            }
+                Ok(Vec::new())
+            } // TODO
             n => Ok(vec![n.as_str()]),
         }
     }

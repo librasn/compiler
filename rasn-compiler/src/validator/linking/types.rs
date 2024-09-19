@@ -1,7 +1,7 @@
 use std::collections::BTreeMap;
 
 use super::{
-    ASN1Type, ChoiceOption, DeclarationElsewhere, GrammarError, ToplevelDefinition, ToplevelTypeDefinition
+    ASN1Type, DeclarationElsewhere, GrammarError, ToplevelDefinition, ToplevelTypeDefinition
 };
 
 impl DeclarationElsewhere {

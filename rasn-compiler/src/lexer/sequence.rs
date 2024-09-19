@@ -15,10 +15,10 @@ pub fn sequence_value(input: &str) -> IResult<&str, ASN1Value> {
     map(
         in_braces(separated_list0(
             skip_ws_and_comments(char(',')),
-            skip_ws_and_comments(pair(
-                opt(value_identifier),
-                skip_ws_and_comments(asn1_value),
-            )),
+            skip_ws_and_comments(alt((
+                pair(opt(value_identifier), skip_ws_and_comments(asn1_value)),
+                map(skip_ws_and_comments(asn1_value), |v| (None, v)),
+            ))),
         )),
         |fields| {
             ASN1Value::SequenceOrSet(
@@ -747,10 +747,8 @@ is_recursive: false,
 
     #[test]
     fn parse_x284() {
-        println!(
-            "{:?}",
-            sequence(
-                r#"SEQUENCE --(GRJ)
+        assert!(sequence(
+            r#"SEQUENCE --(GRJ)
         {
 requestSeqNum           RequestSeqNum,
 protocolIdentifier      ProtocolIdentifier,
@@ -763,7 +761,60 @@ tokens                  SEQUENCE OF ClearToken OPTIONAL,
 cryptoTokens            SEQUENCE OF CryptoH323Token OPTIONAL,
 integrityCheckValue     ICV OPTIONAL
 }"#
-            )
         )
+        .is_ok())
+    }
+
+    #[test]
+    fn complex_set_of_value() {
+        assert_eq!(
+            sequence_value(
+                r#"{ not:equalityMatch:{ attributeDesc "ABCDLMYZ", assertionValue 'A2'H }, equalityMatch:{ attributeDesc "XY", assertionValue '00'H } }"#
+            )
+            .unwrap().1,
+            ASN1Value::SequenceOrSet(vec![
+                (None, Box::new(
+                    ASN1Value::Choice {
+                        type_name: None,
+                        variant_name: "not".into(),
+                        inner_value: Box::new(ASN1Value::Choice {
+                            type_name: None,
+                            variant_name: "equalityMatch".into(),
+                            inner_value: Box::new(ASN1Value::SequenceOrSet(vec![
+                                (
+                                    Some("attributeDesc".into()),
+                                    Box::new(ASN1Value::String("ABCDLMYZ".into())),
+                                ),
+                                (
+                                    Some("assertionValue".into()),
+                                    Box::new(ASN1Value::BitString(vec![
+                                        true, false, true, false, false, false, true, false
+                                    ],)),
+                                ),
+                            ])),
+                        })
+                    }
+                )),
+                (None, Box::new(
+                    ASN1Value::Choice {
+                        type_name: None,
+                        variant_name: "equalityMatch".into(),
+                        inner_value: Box::new(ASN1Value::SequenceOrSet(vec![
+                            (
+                                Some("attributeDesc".into()),
+                                Box::new(ASN1Value::String("XY".into())),
+                            ),
+                            (
+                                Some("assertionValue".into()),
+                                Box::new(ASN1Value::BitString(vec![
+                                    false, false, false, false, false, false, false, false,
+                                ],)),
+                            ),
+                        ])),
+                    }
+                ))
+            ])
+            
+        );
     }
 }

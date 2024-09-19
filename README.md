@@ -89,7 +89,7 @@ impl Backend for CustomBackend {
     const FILE_EXTENSION: &'static str = ".ext";
 
     fn generate_module(
-         &self,
+         &mut self,
          top_level_declarations: Vec<ToplevelDefinition>,
     ) -> Result<GeneratedModule, GeneratorError> {
         Ok(GeneratedModule::empty())
@@ -107,6 +107,14 @@ impl Backend for CustomBackend {
     }
 
     fn from_config(config: Self::Config) -> Self {
+        CustomBackend
+    }
+
+    fn new(
+        config: Self::Config,
+        tagging_environment: TaggingEnvironment,
+        extensibility_environment: ExtensibilityEnvironment,
+    ) -> Self {
         CustomBackend
     }
 }

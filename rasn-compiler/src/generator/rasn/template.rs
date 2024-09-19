@@ -9,7 +9,7 @@ pub fn typealias_template(
 ) -> TokenStream {
     quote! {
         #comments
-        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #annotations
         pub struct #name (pub #alias);
     }
@@ -63,7 +63,7 @@ pub fn generalized_time_template(
 ) -> TokenStream {
     quote! {
         #comments
-        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #annotations
         pub struct #name(pub GeneralizedTime);
     }
@@ -76,7 +76,7 @@ pub fn utc_time_template(
 ) -> TokenStream {
     quote! {
         #comments
-        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #annotations
         pub struct #name(pub UtcTime);
     }
@@ -89,7 +89,7 @@ pub fn bit_string_template(
 ) -> TokenStream {
     quote! {
         #comments
-        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #annotations
         pub struct #name(pub BitString);
     }
@@ -102,7 +102,7 @@ pub fn octet_string_template(
 ) -> TokenStream {
     quote! {
         #comments
-        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #annotations
         pub struct #name(pub OctetString);
     }
@@ -116,7 +116,7 @@ pub fn char_string_template(
 ) -> TokenStream {
     quote! {
         #comments
-        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #annotations
         pub struct #name(pub #string_type);
     }
@@ -129,7 +129,7 @@ pub fn boolean_template(
 ) -> TokenStream {
     quote! {
         #comments
-        #[derive(AsnType, Debug, Clone, Copy, Decode, Encode, PartialEq)]
+        #[derive(AsnType, Debug, Clone, Copy, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #annotations
         pub struct #name(pub bool);
     }
@@ -166,7 +166,7 @@ pub fn null_template(
 ) -> TokenStream {
     quote! {
         #comments
-        #[derive(AsnType, Debug, Clone, Copy, Decode, Encode, PartialEq)]
+        #[derive(AsnType, Debug, Clone, Copy, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #annotations
         pub struct #name(());
     }
@@ -179,7 +179,7 @@ pub fn any_template(
 ) -> TokenStream {
     quote! {
         #comments
-        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #annotations
         pub struct #name(Any);
     }
@@ -192,7 +192,7 @@ pub fn oid_template(
 ) -> TokenStream {
     quote! {
         #comments
-        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #annotations
         pub struct #name(pub ObjectIdentifier);
     }
@@ -247,7 +247,7 @@ pub fn sequence_or_set_template(
     quote! {
         #(#nested_members)*
         #comments
-        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #annotations
         #extensible
         pub struct #name {
@@ -276,7 +276,7 @@ pub fn sequence_or_set_of_template(
     quote! {
             #anonymous_item
             #comments
-            #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+            #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
             #annotations
             pub struct #name(pub #generic_type<#member_type>);
     }
@@ -321,7 +321,7 @@ pub fn choice_template(
     quote! {
         #(#nested_options)*
         #comments
-        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
         #annotations
         #extensible
         pub enum #name {

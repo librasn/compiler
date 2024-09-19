@@ -407,6 +407,7 @@ pub enum SequenceComponent {
 /// # use rasn_compiler::prelude::ir::*;
 /// # let test =
 /// SequenceOrSetMember {
+///     is_recursive: false,
 ///     name: String::from("int-member"),
 ///     tag: Some(AsnTag {
 ///         environment: TaggingEnvironment::Automatic,
@@ -523,6 +524,7 @@ impl
 /// # let test =
 /// ChoiceOption {
 ///     name: String::from("boolean-option"),
+///     is_recursive: false,
 ///     tag: Some(AsnTag {
 ///         environment: TaggingEnvironment::Automatic,
 ///         tag_class: TagClass::ContextSpecific,
