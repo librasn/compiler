@@ -244,9 +244,10 @@ impl From<&str> for EncodingReferenceDefault {
 
 #[cfg_attr(test, derive(EnumDebug))]
 #[cfg_attr(not(test), derive(Debug))]
-#[derive(Clone, Copy, PartialEq)]
+#[derive(Clone, Copy, PartialEq, Default)]
 pub enum TaggingEnvironment {
     Automatic,
+    #[default]
     Implicit,
     Explicit,
 }
@@ -266,9 +267,10 @@ impl Add<&TaggingEnvironment> for &TaggingEnvironment {
 /// Rec. ITU-T X.680 (02/2021) § 13.4
 #[cfg_attr(test, derive(EnumDebug))]
 #[cfg_attr(not(test), derive(Debug))]
-#[derive(Clone, PartialEq)]
+#[derive(Clone, Copy, PartialEq, Default)]
 pub enum ExtensibilityEnvironment {
     Implied,
+    #[default]
     Explicit,
 }
 
@@ -674,7 +676,7 @@ impl
             comments: value.0.join("\n"),
             name: value.1.into(),
             parameterization: value.2,
-            associated_type: value.3.into(),
+            associated_type: value.3,
             value: value.4,
             index: None,
         }

@@ -4,7 +4,7 @@ extern crate alloc;
 
 use rasn::prelude::*;
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 pub struct ADANDOR {
     #[rasn(tag(explicit(context, 0)))]
     condition_count: Int32,
@@ -12,11 +12,11 @@ pub struct ADANDOR {
     elements: AuthorizationData,
 }
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 #[rasn(delegate)]
 pub struct ADIFRELEVANT(pub AuthorizationData);
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 pub struct ADKDCIssued {
     #[rasn(tag(explicit(context, 0)))]
     ad_checksum: Checksum,
@@ -28,11 +28,11 @@ pub struct ADKDCIssued {
     elements: AuthorizationData,
 }
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 #[rasn(delegate)]
 pub struct ADMANDATORYFORKDC(pub AuthorizationData);
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 #[rasn(tag(explicit(application, 15)))]
 pub struct APREP {
     #[rasn(value("5..=5"), tag(explicit(context, 0)))]
@@ -43,7 +43,7 @@ pub struct APREP {
     enc_part: EncryptedData,
 }
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 #[rasn(tag(explicit(application, 14)))]
 pub struct APREQ {
     #[rasn(value("5..=5"), tag(explicit(context, 0)))]
@@ -58,7 +58,7 @@ pub struct APREQ {
     authenticator: EncryptedData,
 }
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 #[rasn(delegate)]
 pub struct APOptions(pub KerberosFlags);
 
@@ -86,7 +86,7 @@ pub struct APOptions(pub KerberosFlags);
 /// renew(30),
 /// validate(31)
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 #[rasn(delegate, tag(explicit(application, 11)))]
 pub struct ASREP(pub KDCREP);
 
@@ -106,7 +106,7 @@ pub struct ASREP(pub KDCREP);
 /// transited-policy-checked(12),
 /// ok-as-delegate(13)
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 #[rasn(delegate, tag(explicit(application, 10)))]
 pub struct ASREQ(pub KDCREQ);
 
@@ -115,7 +115,7 @@ pub struct ASREQ(pub KDCREQ);
 /// mutual-required(2)
 /// Unencrypted authenticator
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 #[rasn(tag(explicit(application, 2)))]
 pub struct Authenticator {
     #[rasn(value("5..=5"), tag(explicit(context, 0)))]
@@ -140,7 +140,7 @@ pub struct Authenticator {
 
 /// Anonymous SEQUENCE OF member
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 pub struct AnonymousAuthorizationData {
     #[rasn(tag(context, 0))]
     ad_type: Int32,
@@ -151,11 +151,11 @@ pub struct AnonymousAuthorizationData {
 /// NOTE: AuthorizationData is always used as an OPTIONAL field and
 /// should not be empty.
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 #[rasn(delegate)]
 pub struct AuthorizationData(pub SequenceOf<AnonymousAuthorizationData>);
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 pub struct Checksum {
     #[rasn(tag(explicit(context, 0)))]
     cksumtype: Int32,
@@ -163,11 +163,11 @@ pub struct Checksum {
     checksum: OctetString,
 }
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 #[rasn(delegate)]
 pub struct ETYPEINFO(pub SequenceOf<ETYPEINFOENTRY>);
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 pub struct ETYPEINFOENTRY {
     #[rasn(tag(explicit(context, 0)))]
     etype: Int32,
@@ -175,11 +175,11 @@ pub struct ETYPEINFOENTRY {
     salt: Option<OctetString>,
 }
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 #[rasn(delegate, size("1.."))]
 pub struct ETYPEINFO2(pub SequenceOf<ETYPEINFO2ENTRY>);
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 pub struct ETYPEINFO2ENTRY {
     #[rasn(tag(explicit(context, 0)))]
     etype: Int32,
@@ -189,7 +189,7 @@ pub struct ETYPEINFO2ENTRY {
     s2kparams: Option<OctetString>,
 }
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 #[rasn(tag(explicit(application, 27)))]
 pub struct EncAPRepPart {
     #[rasn(tag(explicit(context, 0)))]
@@ -202,11 +202,11 @@ pub struct EncAPRepPart {
     seq_number: Option<UInt32>,
 }
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 #[rasn(delegate, tag(explicit(application, 25)))]
 pub struct EncASRepPart(pub EncKDCRepPart);
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 pub struct EncKDCRepPart {
     #[rasn(tag(explicit(context, 0)))]
     key: EncryptionKey,
@@ -236,11 +236,11 @@ pub struct EncKDCRepPart {
 
 /// Inner type
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 #[rasn(delegate)]
 pub struct EncKrbCredPartTicketInfo(pub SequenceOf<KrbCredInfo>);
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 #[rasn(tag(explicit(application, 29)))]
 pub struct EncKrbCredPart {
     #[rasn(tag(explicit(context, 0)))]
@@ -257,7 +257,7 @@ pub struct EncKrbCredPart {
     r_address: Option<HostAddress>,
 }
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 #[rasn(tag(explicit(application, 28)))]
 pub struct EncKrbPrivPart {
     #[rasn(tag(explicit(context, 0)))]
@@ -274,13 +274,13 @@ pub struct EncKrbPrivPart {
     r_address: Option<HostAddress>,
 }
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 #[rasn(delegate, tag(explicit(application, 26)))]
 pub struct EncTGSRepPart(pub EncKDCRepPart);
 
 /// Encrypted part of ticket
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 #[rasn(tag(explicit(application, 3)))]
 pub struct EncTicketPart {
     #[rasn(tag(explicit(context, 0)))]
@@ -310,7 +310,7 @@ pub struct EncTicketPart {
 /// minimum number of bits shall be sent,
 /// but no fewer than 32
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 pub struct EncryptedData {
     #[rasn(tag(explicit(context, 0)))]
     etype: Int32,
@@ -320,7 +320,7 @@ pub struct EncryptedData {
     cipher: OctetString,
 }
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 pub struct EncryptionKey {
     #[rasn(tag(explicit(context, 0)))]
     keytype: Int32,
@@ -330,7 +330,7 @@ pub struct EncryptionKey {
 
 /// with no fractional seconds
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 pub struct HostAddress {
     #[rasn(tag(explicit(context, 0)))]
     addr_type: Int32,
@@ -341,7 +341,7 @@ pub struct HostAddress {
 /// NOTE: HostAddresses is always used as an OPTIONAL field and
 /// should not be empty.
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 #[rasn(delegate)]
 pub struct HostAddresses(pub SequenceOf<HostAddress>);
 
@@ -351,11 +351,11 @@ pub struct Int32(pub i32);
 
 /// Inner type
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 #[rasn(delegate)]
 pub struct KDCREPPadata(pub SequenceOf<PADATA>);
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 pub struct KDCREP {
     #[rasn(value("5..=5"), tag(explicit(context, 0)))]
     pvno: u8,
@@ -375,11 +375,11 @@ pub struct KDCREP {
 
 /// Inner type
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 #[rasn(delegate)]
 pub struct KDCREQPadata(pub SequenceOf<PADATA>);
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 pub struct KDCREQ {
     #[rasn(value("5..=5"), tag(explicit(context, 1)))]
     pvno: u8,
@@ -393,17 +393,17 @@ pub struct KDCREQ {
 
 /// Inner type
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 #[rasn(delegate)]
 pub struct KDCREQBODYEtype(pub SequenceOf<Int32>);
 
 /// Inner type
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 #[rasn(delegate)]
 pub struct KDCREQBODYAdditionalTickets(pub SequenceOf<Ticket>);
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 pub struct KDCREQBODY {
     #[rasn(tag(explicit(context, 0)))]
     kdc_options: KDCOptions,
@@ -431,17 +431,17 @@ pub struct KDCREQBODY {
     additional_tickets: Option<KDCREQBODYAdditionalTickets>,
 }
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 #[rasn(delegate)]
 pub struct KDCOptions(pub KerberosFlags);
 
 /// Inner type
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 #[rasn(delegate)]
 pub struct KRBCREDTickets(pub SequenceOf<Ticket>);
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 #[rasn(tag(explicit(application, 22)))]
 pub struct KRBCRED {
     #[rasn(value("5..=5"), tag(explicit(context, 0)))]
@@ -454,7 +454,7 @@ pub struct KRBCRED {
     enc_part: EncryptedData,
 }
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 #[rasn(tag(explicit(application, 30)))]
 pub struct KRBERROR {
     #[rasn(value("5..=5"), tag(explicit(context, 0)))]
@@ -485,7 +485,7 @@ pub struct KRBERROR {
     e_data: Option<OctetString>,
 }
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 #[rasn(tag(explicit(application, 21)))]
 pub struct KRBPRIV {
     #[rasn(value("5..=5"), tag(explicit(context, 0)))]
@@ -496,7 +496,7 @@ pub struct KRBPRIV {
     enc_part: EncryptedData,
 }
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 #[rasn(tag(explicit(application, 20)))]
 pub struct KRBSAFE {
     #[rasn(value("5..=5"), tag(explicit(context, 0)))]
@@ -509,7 +509,7 @@ pub struct KRBSAFE {
     cksum: Checksum,
 }
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 pub struct KRBSAFEBODY {
     #[rasn(tag(explicit(context, 0)))]
     user_data: OctetString,
@@ -525,21 +525,21 @@ pub struct KRBSAFEBODY {
     r_address: Option<HostAddress>,
 }
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 #[rasn(delegate, size("32.."))]
 pub struct KerberosFlags(pub BitString);
 
 /// microseconds
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 #[rasn(delegate, value("0.."))]
 pub struct KerberosString(pub GeneralString);
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 #[rasn(delegate)]
 pub struct KerberosTime(pub GeneralizedTime);
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 pub struct KrbCredInfo {
     #[rasn(tag(explicit(context, 0)))]
     key: EncryptionKey,
@@ -567,7 +567,7 @@ pub struct KrbCredInfo {
 
 /// Anonymous SEQUENCE OF member
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 pub struct AnonymousLastReq {
     #[rasn(tag(context, 0))]
     lr_type: Int32,
@@ -575,11 +575,11 @@ pub struct AnonymousLastReq {
     lr_value: KerberosTime,
 }
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 #[rasn(delegate)]
 pub struct LastReq(pub SequenceOf<AnonymousLastReq>);
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 #[rasn(delegate)]
 pub struct METHODDATA(pub SequenceOf<PADATA>);
 
@@ -589,7 +589,7 @@ pub struct METHODDATA(pub SequenceOf<PADATA>);
 #[rasn(delegate, value("0..=999999"))]
 pub struct Microseconds(pub u32);
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 pub struct PADATA {
     #[rasn(tag(explicit(context, 1)))]
     padata_type: Int32,
@@ -599,13 +599,13 @@ pub struct PADATA {
 
 /// preauth stuff follows
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 #[rasn(delegate)]
 pub struct PAENCTIMESTAMP(pub EncryptedData);
 
 /// PA-ENC-TS-ENC
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 pub struct PAENCTSENC {
     #[rasn(tag(explicit(context, 0)))]
     patimestamp: KerberosTime,
@@ -615,11 +615,11 @@ pub struct PAENCTSENC {
 
 /// Inner type
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 #[rasn(delegate)]
 pub struct PrincipalNameNameString(pub SequenceOf<KerberosString>);
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 pub struct PrincipalName {
     #[rasn(tag(explicit(context, 0)))]
     name_type: Int32,
@@ -627,21 +627,21 @@ pub struct PrincipalName {
     name_string: PrincipalNameNameString,
 }
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 #[rasn(delegate)]
 pub struct Realm(pub KerberosString);
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 #[rasn(delegate, tag(explicit(application, 13)))]
 pub struct TGSREP(pub KDCREP);
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 #[rasn(delegate, tag(explicit(application, 12)))]
 pub struct TGSREQ(pub KDCREQ);
 
 /// Anonymous SEQUENCE OF member
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 pub struct AnonymousTYPEDDATA {
     #[rasn(tag(context, 0))]
     data_type: Int32,
@@ -649,11 +649,11 @@ pub struct AnonymousTYPEDDATA {
     data_value: Option<OctetString>,
 }
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 #[rasn(delegate, size("1.."))]
 pub struct TYPEDDATA(pub SequenceOf<AnonymousTYPEDDATA>);
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 #[rasn(tag(explicit(application, 1)))]
 pub struct Ticket {
     #[rasn(value("5..=5"), tag(explicit(context, 0)))]
@@ -666,13 +666,13 @@ pub struct Ticket {
     enc_part: EncryptedData,
 }
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 #[rasn(delegate)]
 pub struct TicketFlags(pub KerberosFlags);
 
 /// encoded Transited field
 
-#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq)]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
 pub struct TransitedEncoding {
     #[rasn(tag(explicit(context, 0)))]
     tr_type: Int32,

@@ -278,6 +278,7 @@ mod tests {
                             extensible: None,
                             options: vec![
                                 ChoiceOption {
+                                    is_recursive: false,
                                     name: "local".into(),
                                     tag: None,
                                     ty: ASN1Type::Integer(Integer {
@@ -287,6 +288,7 @@ mod tests {
                                     constraints: vec![]
                                 },
                                 ChoiceOption {
+                                    is_recursive: false,
                                     name: "global".into(),
                                     tag: None,
                                     ty: ASN1Type::OctetString(OctetString {

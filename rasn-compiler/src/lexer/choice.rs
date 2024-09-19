@@ -114,7 +114,7 @@ mod tests {
             types::{Choice, ChoiceOption, ChoiceSelectionType},
             ASN1Type, DeclarationElsewhere,
         },
-        lexer::choice::selection_type_choice,
+        lexer::{choice::selection_type_choice, choice_value, ASN1Value},
     };
 
     use crate::lexer::choice;
@@ -135,18 +135,21 @@ mod tests {
                 extensible: Some(2),
                 options: vec![
                     ChoiceOption {
+                        is_recursive: false,
                         name: "normal".into(),
                         tag: None,
                         ty: ASN1Type::Null,
                         constraints: vec![]
                     },
                     ChoiceOption {
+                        is_recursive: false,
                         name: "high".into(),
                         tag: None,
                         ty: ASN1Type::Null,
                         constraints: vec![]
                     },
                     ChoiceOption {
+                        is_recursive: false,
                         name: "medium".into(),
                         tag: None,
                         ty: ASN1Type::Null,
@@ -178,6 +181,7 @@ mod tests {
                 extensible: Some(1,),
                 options: vec![
                     ChoiceOption {
+                        is_recursive: false,
                         name: "glc".into(),
                         tag: None,
                         ty: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
@@ -188,6 +192,7 @@ mod tests {
                         constraints: vec![],
                     },
                     ChoiceOption {
+                        is_recursive: false,
                         name: "avc".into(),
                         tag: None,
                         ty: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
@@ -198,6 +203,7 @@ mod tests {
                         constraints: vec![],
                     },
                     ChoiceOption {
+                        is_recursive: false,
                         name: "rsc".into(),
                         tag: None,
                         ty: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
@@ -208,6 +214,7 @@ mod tests {
                         constraints: vec![],
                     },
                     ChoiceOption {
+                        is_recursive: false,
                         name: "isc".into(),
                         tag: None,
                         ty: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
@@ -232,6 +239,78 @@ mod tests {
             )
             .unwrap()
             .1
+        )
+    }
+
+    #[test]
+    fn constructed_choice_value() {
+        assert_eq!(
+            choice_value(r#"equalityMatch: { attributeDesc "ABCDLMYZ", assertionValue 'A2'H }"#)
+                .unwrap()
+                .1,
+            ASN1Value::Choice {
+                type_name: None,
+                variant_name: "equalityMatch".into(),
+                inner_value: Box::new(ASN1Value::SequenceOrSet(vec![
+                    (
+                        Some("attributeDesc".into()),
+                        Box::new(ASN1Value::String("ABCDLMYZ".into())),
+                    ),
+                    (
+                        Some("assertionValue".into()),
+                        Box::new(ASN1Value::BitString(vec![
+                            true, false, true, false, false, false, true, false
+                        ],)),
+                    ),
+                ])),
+            },
+        )
+    }
+
+    #[test]
+    fn nested_choice_value() {
+        assert_eq!(
+            choice_value(r#"not:equalityMatch: "ABCDLMYZ""#).unwrap().1,
+            ASN1Value::Choice {
+                type_name: None,
+                variant_name: "not".into(),
+                inner_value: Box::new(ASN1Value::Choice {
+                    type_name: None,
+                    variant_name: "equalityMatch".into(),
+                    inner_value: Box::new(ASN1Value::String("ABCDLMYZ".into()))
+                }),
+            },
+        )
+    }
+
+    #[test]
+    fn nested_constructed_choice_value() {
+        assert_eq!(
+            choice_value(
+                r#"not:equalityMatch: { attributeDesc "ABCDLMYZ", assertionValue 'A2'H }"#
+            )
+            .unwrap()
+            .1,
+            ASN1Value::Choice {
+                type_name: None,
+                variant_name: "not".into(),
+                inner_value: Box::new(ASN1Value::Choice {
+                    type_name: None,
+                    variant_name: "equalityMatch".into(),
+                    inner_value: Box::new(ASN1Value::SequenceOrSet(vec![
+                        (
+                            Some("attributeDesc".into()),
+                            Box::new(ASN1Value::String("ABCDLMYZ".into())),
+                        ),
+                        (
+                            Some("assertionValue".into()),
+                            Box::new(ASN1Value::BitString(vec![
+                                true, false, true, false, false, false, true, false
+                            ],)),
+                        ),
+                    ])),
+                })
+            },
         )
     }
 }

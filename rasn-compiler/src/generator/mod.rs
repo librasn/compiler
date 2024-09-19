@@ -4,7 +4,7 @@
 
 use std::{error::Error, fmt::Debug};
 
-use crate::intermediate::ToplevelDefinition;
+use crate::intermediate::{ExtensibilityEnvironment, TaggingEnvironment, ToplevelDefinition};
 
 use self::error::GeneratorError;
 
@@ -26,7 +26,7 @@ pub trait Backend: Sized + Default {
     /// ### Params
     /// - `top_level_declarations` vector of [TopLevelDeclaration]s that are defined in the ASN.1 module
     fn generate_module(
-        &self,
+        &mut self,
         top_level_declarations: Vec<ToplevelDefinition>,
     ) -> Result<GeneratedModule, GeneratorError>;
 
@@ -46,6 +46,15 @@ pub trait Backend: Sized + Default {
 
     /// Creates a backend from its config
     fn from_config(config: Self::Config) -> Self;
+
+    /// Creates a backend from its fields.
+    /// Usually, the tagging and extensibility environments do not
+    /// have to be set manually, but will follow the respective module header.
+    fn new(
+        config: Self::Config,
+        tagging_environment: TaggingEnvironment,
+        extensibility_environment: ExtensibilityEnvironment,
+    ) -> Self;
 }
 
 pub struct GeneratedModule {

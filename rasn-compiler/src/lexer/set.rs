@@ -65,6 +65,7 @@ mod tests {
                 constraints: vec![],
                 members: vec![
                     SequenceOrSetMember {
+                        is_recursive: false,
                         name: "title".into(),
                         tag: None,
                         ty: ASN1Type::CharacterString(CharacterString {
@@ -76,9 +77,11 @@ mod tests {
                         constraints: vec![],
                     },
                     SequenceOrSetMember {
+                        is_recursive: false,
                         name: "children".into(),
                         tag: None,
                         ty: ASN1Type::SequenceOf(SequenceOrSetOf {
+                            is_recursive: false,
                             constraints: vec![],
                             element_type: Box::new(ASN1Type::CharacterString(CharacterString {
                                 constraints: vec![],

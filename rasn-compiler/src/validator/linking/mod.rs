@@ -6,7 +6,10 @@ mod information_object;
 mod types;
 mod utils;
 
-use std::{borrow::BorrowMut, collections::BTreeMap};
+use std::{
+    borrow::{BorrowMut, Cow},
+    collections::BTreeMap,
+};
 
 use crate::{
     common::INTERNAL_NESTED_TYPE_NAME_PREFIX,
@@ -181,6 +184,18 @@ impl ToplevelDefinition {
             }
             // TODO: Cover constraint references in other types of top-level declarations
             _ => Ok(false),
+        }
+    }
+
+    /// Traverses top-level declarations and marks recursive types
+    pub fn mark_recursive(&mut self) -> Result<(), GrammarError> {
+        match self {
+            ToplevelDefinition::Type(t) => {
+                let _ = t.ty.mark_recursive(&t.name)?;
+                Ok(())
+            }
+            ToplevelDefinition::Value(_v) => Ok(()), // TODO
+            ToplevelDefinition::Information(_i) => Ok(()), // TODO
         }
     }
 
@@ -537,6 +552,55 @@ impl ASN1Type {
         }
     }
 
+    /// Traverses type and marks if recursive. Returns a vector of traversed type IDs since the last recursion detection or the leaf type.
+    pub fn mark_recursive(&mut self, name: &str) -> Result<Vec<Cow<str>>, GrammarError> {
+        match self {
+            ASN1Type::Choice(choice) => {
+                let mut children = Vec::new();
+                for option in &mut choice.options {
+                    if option.ty.as_str() == name {
+                        option.is_recursive = true;
+                        continue;
+                    }
+                    let opt_ty_name = option.ty.as_str().into_owned();
+                    let mut opt_children = option.ty.mark_recursive(&opt_ty_name)?;
+                    if opt_children.iter().any(|id: &Cow<'_, str>| id == name) {
+                        option.is_recursive = true;
+                    } else {
+                        children.append(&mut opt_children);
+                    }
+                }
+                Ok(children)
+            }
+            ASN1Type::Set(s) | ASN1Type::Sequence(s) => {
+                let mut children = Vec::new();
+                for member in &mut s.members {
+                    if member.ty.as_str() == name {
+                        member.is_recursive = true;
+                        continue;
+                    }
+                    let mem_ty_name = member.ty.as_str().into_owned();
+                    let mut mem_children = member.ty.mark_recursive(&mem_ty_name)?;
+                    if mem_children.iter().any(|id: &Cow<'_, str>| id == name) {
+                        member.is_recursive = true;
+                    } else {
+                        children.append(&mut mem_children);
+                    }
+                }
+                Ok(children)
+            }
+            // SequenceOf and SetOf provide the necessary indirection
+            ASN1Type::SequenceOf(_) | ASN1Type::SetOf(_) => Ok(Vec::new()),
+            ASN1Type::ChoiceSelectionType(_) => {
+                unreachable!("Choice selection types should be resolved by now")
+            }
+            ASN1Type::InformationObjectFieldReference(_information_object_field_reference) => {
+                Ok(Vec::new())
+            } // TODO
+            n => Ok(vec![n.as_str()]),
+        }
+    }
+
     /// In certain parameterization cases, the constraining object set of a table constraint
     /// has to be reassigned. Consider the following example:
     /// ```ignore
@@ -719,6 +783,7 @@ impl ASN1Type {
                     .options
                     .into_iter()
                     .map(|option| ChoiceOption {
+                        is_recursive: false,
                         name: option.name,
                         tag: option.tag,
                         ty: option.ty.resolve_class_reference(tlds),
@@ -1408,6 +1473,7 @@ mod tests {
                         extensible: None,
                         constraints: vec![],
                         options: vec![ChoiceOption {
+                            is_recursive: false,
                             name: String::from("first"),
                             constraints: vec![],
                             tag: None,

@@ -51,6 +51,7 @@ mod tests {
         assert_eq!(
             set_of("SET OF BOOLEAN").unwrap().1,
             ASN1Type::SetOf(SequenceOrSetOf {
+                is_recursive: false,
                 constraints: vec![],
                 element_type: Box::new(ASN1Type::Boolean(Boolean {
                     constraints: vec![]
@@ -64,6 +65,7 @@ mod tests {
         assert_eq!(
             set_of("SET OF Things").unwrap().1,
             ASN1Type::SetOf(SequenceOrSetOf {
+                is_recursive: false,
                 constraints: vec![],
                 element_type: Box::new(ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                     parent: None,
@@ -81,6 +83,7 @@ mod tests {
                 .unwrap()
                 .1,
             ASN1Type::SetOf(SequenceOrSetOf {
+                is_recursive: false,
                 constraints: vec![Constraint::SubtypeConstraint(ElementSet {
                     set: ElementOrSetOperation::Element(SubtypeElement::SizeConstraint(Box::new(
                         ElementOrSetOperation::Element(SubtypeElement::ValueRange {
@@ -107,6 +110,7 @@ mod tests {
                 .unwrap()
                 .1,
             ASN1Type::SetOf(SequenceOrSetOf {
+                is_recursive: false,
                 constraints: vec![Constraint::SubtypeConstraint(ElementSet {
                     set: ElementOrSetOperation::Element(SubtypeElement::SizeConstraint(Box::new(
                         ElementOrSetOperation::Element(SubtypeElement::ValueRange {
@@ -137,6 +141,7 @@ mod tests {
             .unwrap()
             .1,
             ASN1Type::SetOf(SequenceOrSetOf {
+                is_recursive: false,
                 constraints: vec![Constraint::SubtypeConstraint(ElementSet {
                     set: ElementOrSetOperation::Element(SubtypeElement::SizeConstraint(Box::new(
                         ElementOrSetOperation::Element(SubtypeElement::ValueRange {
@@ -175,6 +180,7 @@ mod tests {
             .unwrap()
             .1,
             ASN1Type::SetOf(SequenceOrSetOf {
+                is_recursive: false,
                 constraints: vec![Constraint::SubtypeConstraint(ElementSet {
                     set: ElementOrSetOperation::Element(SubtypeElement::SizeConstraint(Box::new(
                         ElementOrSetOperation::Element(SubtypeElement::ValueRange {
