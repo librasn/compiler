@@ -60,10 +60,11 @@ pub struct Config {
 #[wasm_bindgen]
 impl Config {
     #[wasm_bindgen(constructor)]
-    pub fn new(opaque_open_types: bool, default_wildcard_imports: bool) -> Self {
+    pub fn new(opaque_open_types: bool, default_wildcard_imports: bool, generate_from_impls: Option<bool>) -> Self {
         Self {
             opaque_open_types,
             default_wildcard_imports,
+            generate_from_impls: generate_from_impls.unwrap_or(false),
         }
     }
 }
