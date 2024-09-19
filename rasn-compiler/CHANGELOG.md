@@ -6,6 +6,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0](https://github.com/librasn/compiler/compare/rasn-compiler-v0.4.0...rasn-compiler-v0.5.0) - 2024-09-19
+
+### Added
+
+- consider tagging and extensibility environments
+- *(validator)* box direct recursive children
+
+### Fixed
+
+- *(wasm)* add field to wasm config constructor
+
 ## [0.4.0](https://github.com/librasn/compiler/compare/rasn-compiler-v0.3.2...rasn-compiler-v0.4.0) - 2024-09-16
 
 ### Other
