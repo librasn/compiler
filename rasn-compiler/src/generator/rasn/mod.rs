@@ -60,7 +60,11 @@ pub struct Config {
 #[wasm_bindgen]
 impl Config {
     #[wasm_bindgen(constructor)]
-    pub fn new(opaque_open_types: bool, default_wildcard_imports: bool, generate_from_impls: Option<bool>) -> Self {
+    pub fn new(
+        opaque_open_types: bool,
+        default_wildcard_imports: bool,
+        generate_from_impls: Option<bool>,
+    ) -> Self {
         Self {
             opaque_open_types,
             default_wildcard_imports,
@@ -143,9 +147,7 @@ impl Backend for Rasn {
             });
             let (pdus, warnings): (Vec<TokenStream>, Vec<Box<dyn Error>>) =
                 tlds.into_iter().fold((vec![], vec![]), |mut acc, tld| {
-                    match self.generate_tld(
-                        tld,
-                    ) {
+                    match self.generate_tld(tld) {
                         Ok(s) => {
                             acc.0.push(s);
                             acc

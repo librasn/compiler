@@ -15,7 +15,7 @@ e2e_pdu!(
         children SEQUENCE OF VisibleString DEFAULT {}
     }"#,
     r#"
-        #[derive (AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
+        #[derive (AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn (set , automatic_tags)]
         pub struct PersonnelRecord {
             pub title : VisibleString,
@@ -41,7 +41,7 @@ e2e_pdu!(
         children SEQUENCE SIZE(0..4) OF VisibleString DEFAULT {}
     }"#,
     r#"
-        #[derive (AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
+        #[derive (AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn (set , automatic_tags)]
         pub struct PersonnelRecord {
             pub title : VisibleString,
@@ -74,14 +74,14 @@ e2e_pdu!(
     "#,
     r#"
         #[doc = "Inner type"]
-        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
+        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(choice, automatic_tags)]
         pub enum NestedTypeChoiceField {
             one(Integer),
             two(bool),
         }
         
-        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
+        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(automatic_tags)]
         pub struct NestedType{
             #[rasn(identifier="choiceField")]
@@ -116,7 +116,7 @@ e2e_pdu!(
     "#,
     r#"
         #[doc = "Inner type"]
-        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
+        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(choice, automatic_tags)]
         pub enum NestedTypeChoiceField {
             one(Integer),
@@ -133,7 +133,7 @@ e2e_pdu!(
             }
         }
 
-        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
+        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(automatic_tags)]
         pub struct NestedType{
             #[rasn(identifier="choiceField")]

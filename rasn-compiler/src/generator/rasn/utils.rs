@@ -876,7 +876,6 @@ impl Rasn {
             })
             .collect::<Result<Vec<_>, _>>()
     }
-    
 
     pub(crate) fn format_new_impl(
         &self,
@@ -1004,9 +1003,9 @@ impl Rasn {
 
     const RUST_KEYWORDS: [&'static str; 39] = [
         "as", "async", "await", "break", "const", "continue", "crate", "dyn", "else", "enum",
-        "extern", "false", "final", "fn", "for", "if", "impl", "in", "let", "loop", "match", "mod", "move",
-        "mut", "pub", "ref", "return", "self", "Self", "static", "struct", "super", "trait",
-        "true", "type", "unsafe", "use", "where", "while",
+        "extern", "false", "final", "fn", "for", "if", "impl", "in", "let", "loop", "match", "mod",
+        "move", "mut", "pub", "ref", "return", "self", "Self", "static", "struct", "super",
+        "trait", "true", "type", "unsafe", "use", "where", "while",
     ];
 
     pub(crate) fn to_rust_snake_case(&self, input: &str) -> Ident {
