@@ -16,10 +16,10 @@ e2e_pdu!(
             ninth(9),
             tenth(10),
         } (1..10)"#,
-    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(delegate, value("1..=10"))]
         pub struct Distinguished(pub u8);
-        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
+        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(delegate, value("2..=8"))]
         pub struct Restricted(pub Distinguished);         "#
 );
@@ -43,10 +43,10 @@ e2e_pdu!(
             ninth(9),
             tenth(10),
         } (1..10)"#,
-    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(delegate, value("1..=10"))]
         pub struct Distinguished(pub u8);
-        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
+        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(choice, automatic_tags)]
         #[non_exhaustive]
         pub enum TestChoice {
@@ -78,10 +78,10 @@ e2e_pdu!(
             ninth(9),
             tenth(10),
         } (1..10)"#,
-    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(delegate, value("1..=10"))]
         pub struct Distinguished(pub u8);
-        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
+        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(choice, automatic_tags)]
         #[non_exhaustive]
         pub enum TestChoice {
@@ -114,16 +114,16 @@ e2e_pdu!(
         }
     "#,
     r#"
-        #[derive(AsnType, Debug, Clone, Copy, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]
+        #[derive(AsnType, Debug, Clone, Copy, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(enumerated)]
         pub enum EnumWithDefault {
             first = 1,
             second = 2,
         }
-        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord, Hash)]
+        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(delegate, value("1..=10"))]
         pub struct IntWithDefault(pub u8);
-        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
+        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(automatic_tags)]
         pub struct Test {
             #[rasn(default = "test_int_default")]
@@ -160,7 +160,7 @@ e2e_pdu!(
         }
     "#,
     r#"
-        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
+        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(choice,automatic_tags)]
         pub enum ChoiceType {
             number(Integer),
@@ -206,15 +206,15 @@ e2e_pdu!(
         LDAPString ::= [UNIVERSAL 4] IMPLICIT UTF8String
     "#,
     r#"
-        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
+        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(delegate)]
         pub struct AssertionValue(pub OctetString);
 
-        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
+        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(delegate)]
         pub struct AttributeDescription(pub LDAPString);
 
-        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
+        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(automatic_tags)]
         pub struct AttributeValueAssertion {
             #[rasn(identifier = "attributeDesc")]
@@ -232,7 +232,7 @@ e2e_pdu!(
             }
         }
 
-        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
+        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(choice, automatic_tags)]
         #[non_exhaustive]
         pub enum Filter {
@@ -246,7 +246,7 @@ e2e_pdu!(
             equalityMatch(AttributeValueAssertion),
         }
 
-        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
+        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(delegate, tag(universal, 4))]
         pub struct LDAPString(pub Utf8String);
                            "#

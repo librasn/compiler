@@ -37,7 +37,7 @@ e2e_pdu!(
           asn-val-unknown-order ErrorCode ::= local: 3
           "#,
     r#"
-          #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
+          #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
     pub struct Actual {
         #[rasn(identifier = "errorCode")]
@@ -60,7 +60,7 @@ e2e_pdu!(
             Errors_ParameterType::decode(decoder, self.parameter.as_ref(), &self.error_code)
         }
     }
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, PartialOrd, Eq, Ord)]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(choice, automatic_tags)]
     pub enum ErrorCode {
         local(Integer),

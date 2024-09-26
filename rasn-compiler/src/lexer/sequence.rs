@@ -814,7 +814,6 @@ integrityCheckValue     ICV OPTIONAL
                     }
                 ))
             ])
-            
         );
     }
 }
