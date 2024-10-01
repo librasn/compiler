@@ -95,6 +95,20 @@ pub fn bit_string_template(
     }
 }
 
+pub fn fixed_bit_string_template(
+    comments: TokenStream,
+    name: TokenStream,
+    annotations: TokenStream,
+    size: TokenStream,
+) -> TokenStream {
+    quote! {
+        #comments
+        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #annotations
+        pub struct #name(pub FixedBitString<#size>);
+    }
+}
+
 pub fn octet_string_template(
     comments: TokenStream,
     name: TokenStream,
@@ -105,6 +119,20 @@ pub fn octet_string_template(
         #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #annotations
         pub struct #name(pub OctetString);
+    }
+}
+
+pub fn fixed_octet_string_template(
+    comments: TokenStream,
+    name: TokenStream,
+    annotations: TokenStream,
+    size: TokenStream,
+) -> TokenStream {
+    quote! {
+        #comments
+        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #annotations
+        pub struct #name(pub FixedOctetString<#size>);
     }
 }
 

@@ -162,16 +162,16 @@ e2e_pdu!(
             last(1),
         } SIZE(2)                                           "#,
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-        #[rasn(delegate, size("2"), identifier = "Test-Bits")]
-        pub struct TestBits(pub BitString);                     "#
+        #[rasn(delegate, identifier = "Test-Bits")]
+        pub struct TestBits(pub FixedBitString<2usize>);                     "#
 );
 
 e2e_pdu!(
     bit_string_strict,
     "Test-Bits ::= BIT STRING SIZE(4)",
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-        #[rasn(delegate, size("4"), identifier = "Test-Bits")]
-        pub struct TestBits(pub BitString);                                 "#
+        #[rasn(delegate, identifier = "Test-Bits")]
+        pub struct TestBits(pub FixedBitString<4usize>);                                 "#
 );
 
 e2e_pdu!(
@@ -240,8 +240,8 @@ e2e_pdu!(
     octet_string_strict,
     "Test-Octets ::= OCTET STRING SIZE(4)",
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-        #[rasn(delegate, size("4"), identifier = "Test-Octets")]
-        pub struct TestOctets(pub OctetString);                                 "#
+        #[rasn(delegate, identifier = "Test-Octets")]
+        pub struct TestOctets(pub FixedOctetString<4usize>);                                 "#
 );
 
 e2e_pdu!(
