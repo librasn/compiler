@@ -198,11 +198,10 @@ impl Rasn {
     ) -> Result<TokenStream, GeneratorError> {
         if let ASN1Type::BitString(ref bitstr) = tld.ty {
             let name = self.to_rust_title_case(&tld.name);
-            let mut annotations = vec![
-                quote!(delegate),
-                self.format_range_annotations(true, &bitstr.constraints)?,
-                self.format_tag(tld.tag.as_ref(), false),
-            ];
+            let mut annotations = vec![quote!(delegate), self.format_tag(tld.tag.as_ref(), false)];
+            if bitstr.fixed_size().is_none() {
+                annotations.push(self.format_range_annotations(true, &bitstr.constraints)?);
+            }
             if name.to_string() != tld.name {
                 annotations.push(self.format_identifier_annotation(
                     &tld.name,
@@ -210,11 +209,20 @@ impl Rasn {
                     &tld.ty,
                 ));
             }
-            Ok(bit_string_template(
-                self.format_comments(&tld.comments)?,
-                name,
-                self.join_annotations(annotations),
-            ))
+            if let Some(size) = bitstr.fixed_size() {
+                Ok(fixed_bit_string_template(
+                    self.format_comments(&tld.comments)?,
+                    name,
+                    self.join_annotations(annotations),
+                    size.to_token_stream(),
+                ))
+            } else {
+                Ok(bit_string_template(
+                    self.format_comments(&tld.comments)?,
+                    name,
+                    self.join_annotations(annotations),
+                ))
+            }
         } else {
             Err(GeneratorError::new(
                 Some(ToplevelDefinition::Type(tld)),
@@ -230,11 +238,10 @@ impl Rasn {
     ) -> Result<TokenStream, GeneratorError> {
         if let ASN1Type::OctetString(ref oct_str) = tld.ty {
             let name = self.to_rust_title_case(&tld.name);
-            let mut annotations = vec![
-                quote!(delegate),
-                self.format_range_annotations(true, &oct_str.constraints)?,
-                self.format_tag(tld.tag.as_ref(), false),
-            ];
+            let mut annotations = vec![quote!(delegate), self.format_tag(tld.tag.as_ref(), false)];
+            if oct_str.fixed_size().is_none() {
+                annotations.push(self.format_range_annotations(true, &oct_str.constraints)?);
+            }
             if name.to_string() != tld.name {
                 annotations.push(self.format_identifier_annotation(
                     &tld.name,
@@ -242,11 +249,20 @@ impl Rasn {
                     &tld.ty,
                 ));
             }
-            Ok(octet_string_template(
-                self.format_comments(&tld.comments)?,
-                name,
-                self.join_annotations(annotations),
-            ))
+            if let Some(size) = oct_str.fixed_size() {
+                Ok(fixed_octet_string_template(
+                    self.format_comments(&tld.comments)?,
+                    name,
+                    self.join_annotations(annotations),
+                    size.to_token_stream(),
+                ))
+            } else {
+                Ok(octet_string_template(
+                    self.format_comments(&tld.comments)?,
+                    name,
+                    self.join_annotations(annotations),
+                ))
+            }
         } else {
             Err(GeneratorError::new(
                 Some(ToplevelDefinition::Type(tld)),

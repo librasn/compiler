@@ -2,6 +2,7 @@ use std::str::FromStr;
 
 use proc_macro2::{Ident, Literal, Punct, Spacing, Span, TokenStream};
 use quote::{format_ident, quote, ToTokens, TokenStreamExt};
+use types::{BitString, OctetString};
 use utils::types::SequenceOrSetOf;
 
 use crate::{
@@ -1113,6 +1114,28 @@ impl ASN1Type {
     }
 }
 
+impl OctetString {
+    pub(crate) fn fixed_size(&self) -> Option<usize> {
+        let constraints = per_visible_range_constraints(true, &self.constraints).ok()?;
+        (constraints.is_size_constraint()
+            && !constraints.is_extensible()
+            && constraints.min::<usize>() == constraints.max())
+        .then_some(constraints.min::<usize>())
+        .flatten()
+    }
+}
+
+impl BitString {
+    pub(crate) fn fixed_size(&self) -> Option<usize> {
+        let constraints = per_visible_range_constraints(true, &self.constraints).ok()?;
+        (constraints.is_size_constraint()
+            && !constraints.is_extensible()
+            && constraints.min::<usize>() == constraints.max())
+        .then_some(constraints.min::<usize>())
+        .flatten()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use quote::quote;
@@ -1390,5 +1413,55 @@ is_recursive: false,
         assert_eq!(generator.to_rust_snake_case("HELLO-WORLD"), "hello__world");
         assert_eq!(generator.to_rust_snake_case("struct"), "r_struct");
         assert_eq!(generator.to_rust_snake_case("STRUCT"), "r_struct");
+    }
+
+    #[test]
+    fn detects_fixed_octet_string() {
+        assert_eq!(
+            OctetString {
+                constraints: vec![Constraint::SubtypeConstraint(ElementSet {
+                    set: constraints::ElementOrSetOperation::Element(
+                        constraints::SubtypeElement::SizeConstraint(Box::new(
+                            constraints::ElementOrSetOperation::Element(
+                                constraints::SubtypeElement::SingleValue {
+                                    value: ASN1Value::Integer(4),
+                                    extensible: false,
+                                },
+                            ),
+                        )),
+                    ),
+                    extensible: false,
+                })],
+            }
+            .fixed_size(),
+            Some(4)
+        );
+        assert_eq!(
+            OctetString {
+                constraints: vec![Constraint::SubtypeConstraint(ElementSet {
+                    set: constraints::ElementOrSetOperation::Element(
+                        constraints::SubtypeElement::SizeConstraint(Box::new(
+                            constraints::ElementOrSetOperation::Element(
+                                constraints::SubtypeElement::ValueRange {
+                                    min: Some(ASN1Value::Integer(1)),
+                                    max: Some(ASN1Value::Integer(4)),
+                                    extensible: false
+                                }
+                            ),
+                        )),
+                    ),
+                    extensible: false,
+                })],
+            }
+            .fixed_size(),
+            None
+        );
+        assert_eq!(
+            OctetString {
+                constraints: vec![]
+            }
+            .fixed_size(),
+            None
+        );
     }
 }
