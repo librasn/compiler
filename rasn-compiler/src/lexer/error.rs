@@ -15,11 +15,17 @@ impl<'a> From<nom::Err<nom::error::Error<&'a str>>> for LexerError {
                 kind: LexerErrorType::NotEnoughData,
             },
             nom::Err::Error(e) => Self {
-                details: "Error matching ASN syntax while parsing:".to_owned() + e.input,
+                details: format!(
+                    "Error matching ASN syntax at while parsing: {}",
+                    &e.input[..(e.input.len().min(300))]
+                ),
                 kind: LexerErrorType::MatchingError(e.code),
             },
             nom::Err::Failure(e) => Self {
-                details: "Unrecoverable error while parsing:".to_owned() + e.input,
+                details: format!(
+                    "Unrecoverable error while parsing: {}",
+                    &e.input[..(e.input.len().min(300))]
+                ),
                 kind: LexerErrorType::Failure(e.code),
             },
         }

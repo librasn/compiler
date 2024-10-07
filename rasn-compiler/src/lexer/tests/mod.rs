@@ -517,8 +517,26 @@ fn parses_choice() {
 
 #[test]
 fn parses_sequence_of_value() {
-    println!(
-        "{:?}",
+    assert_eq!(
+        ToplevelValueDefinition {
+            comments: "".into(),
+            name: "test-Sequence".into(),
+            associated_type: ASN1Type::SequenceOf(SequenceOrSetOf {
+                constraints: vec![],
+                element_type: Box::new(ASN1Type::Integer(Integer {
+                    constraints: vec![],
+                    distinguished_values: None
+                })),
+                is_recursive: false
+            }),
+            parameterization: None,
+            value: ASN1Value::SequenceOrSet(vec![
+                (None, Box::new(ASN1Value::Integer(1))),
+                (None, Box::new(ASN1Value::Integer(2))),
+                (None, Box::new(ASN1Value::Integer(3)))
+            ]),
+            index: None
+        },
         top_level_value_declaration(r#"test-Sequence SEQUENCE OF INTEGER ::= { 1, 2, 3 }"#)
             .unwrap()
             .1
