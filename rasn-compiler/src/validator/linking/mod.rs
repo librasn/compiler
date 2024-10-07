@@ -558,9 +558,15 @@ impl ASN1Type {
             ASN1Type::Choice(choice) => {
                 let mut children = Vec::new();
                 for option in &mut choice.options {
-                    if option.ty.as_str() == name {
-                        option.is_recursive = true;
-                        continue;
+                    match &option.ty {
+                        ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+                            identifier,
+                            ..
+                        }) if identifier == name => {
+                            option.is_recursive = true;
+                            continue;
+                        }
+                        _ => (),
                     }
                     let opt_ty_name = option.ty.as_str().into_owned();
                     let mut opt_children = option.ty.mark_recursive(&opt_ty_name)?;
@@ -575,9 +581,15 @@ impl ASN1Type {
             ASN1Type::Set(s) | ASN1Type::Sequence(s) => {
                 let mut children = Vec::new();
                 for member in &mut s.members {
-                    if member.ty.as_str() == name {
-                        member.is_recursive = true;
-                        continue;
+                    match &member.ty {
+                        ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+                            identifier,
+                            ..
+                        }) if identifier == name => {
+                            member.is_recursive = true;
+                            continue;
+                        }
+                        _ => (),
                     }
                     let mem_ty_name = member.ty.as_str().into_owned();
                     let mut mem_children = member.ty.mark_recursive(&mem_ty_name)?;

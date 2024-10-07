@@ -31,6 +31,7 @@ pub fn parameterization(input: &str) -> IResult<&str, Parameterization> {
                 skip_ws_and_comments(char(COLON)),
                 skip_ws_and_comments(identifier),
             ))),
+            into(skip_ws_and_comments(identifier)),
         ))),
     )))(input)
 }
