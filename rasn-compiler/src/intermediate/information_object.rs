@@ -199,7 +199,7 @@ impl SyntaxApplication {
                 SyntaxToken::Field(ObjectFieldIdentifier::SingleValue(_)),
                 SyntaxApplication::Literal(lit),
             ) => {
-                let val = asn1_value(lit.as_str());
+                let val = asn1_value(lit.as_str().into());
                 match val {
                     Ok((_, ASN1Value::ElsewhereDeclaredValue { .. })) => false,
                     Ok((_, _)) => true,

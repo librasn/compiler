@@ -1,3 +1,4 @@
+use input::Input;
 use nom::{
     bytes::complete::tag,
     character::complete::char,
@@ -11,7 +12,7 @@ use crate::intermediate::{types::*, *};
 
 use super::{constraint::constraint, *};
 
-pub fn choice_value(input: &str) -> IResult<&str, ASN1Value> {
+pub fn choice_value(input: Input<'_>) -> IResult<Input<'_>, ASN1Value> {
     map(
         skip_ws_and_comments(separated_pair(identifier, char(':'), asn1_value)),
         |(id, val)| ASN1Value::Choice {
@@ -42,7 +43,7 @@ pub fn choice_value(input: &str) -> IResult<&str, ASN1Value> {
 /// contains anonymous members, these nested members will be represented as
 /// structs within the same global scope.
 /// If the match fails, the lexer will not consume the input and will return an error.
-pub fn selection_type_choice(input: &str) -> IResult<&str, ASN1Type> {
+pub fn selection_type_choice(input: Input<'_>) -> IResult<Input<'_>, ASN1Type> {
     map(
         into(separated_pair(
             skip_ws_and_comments(value_identifier),
@@ -63,7 +64,7 @@ pub fn selection_type_choice(input: &str) -> IResult<&str, ASN1Type> {
 /// contains anonymous members, these nested members will be represented as
 /// structs within the same global scope.
 /// If the match fails, the lexer will not consume the input and will return an error.
-pub fn choice(input: &str) -> IResult<&str, ASN1Type> {
+pub fn choice(input: Input<'_>) -> IResult<Input<'_>, ASN1Type> {
     map(
         preceded(
             skip_ws_and_comments(tag(CHOICE)),
@@ -98,7 +99,7 @@ pub fn choice(input: &str) -> IResult<&str, ASN1Type> {
     )(input)
 }
 
-fn choice_option(input: &str) -> IResult<&str, ChoiceOption> {
+fn choice_option(input: Input<'_>) -> IResult<Input<'_>, ChoiceOption> {
     into(tuple((
         skip_ws_and_comments(identifier),
         opt(asn_tag),
@@ -128,6 +129,7 @@ mod tests {
     high NULL,
     ...,
     medium NULL }"#
+                    .into()
             )
             .unwrap()
             .1,
@@ -164,7 +166,7 @@ mod tests {
     #[test]
     fn parses_selection_type_choice() {
         assert_eq!(
-            selection_type_choice("localDistinguishedName < ObjectInstance")
+            selection_type_choice("localDistinguishedName < ObjectInstance".into())
                 .unwrap()
                 .1,
             ASN1Type::ChoiceSelectionType(ChoiceSelectionType {
@@ -236,6 +238,7 @@ mod tests {
             rsc	    RoadSurfaceContainer ]], -- Extension in V2
             isc      InfrastructureSupportContainer  -- Extension in V3.1
          }"#
+                .into()
             )
             .unwrap()
             .1
@@ -245,9 +248,11 @@ mod tests {
     #[test]
     fn constructed_choice_value() {
         assert_eq!(
-            choice_value(r#"equalityMatch: { attributeDesc "ABCDLMYZ", assertionValue 'A2'H }"#)
-                .unwrap()
-                .1,
+            choice_value(
+                r#"equalityMatch: { attributeDesc "ABCDLMYZ", assertionValue 'A2'H }"#.into()
+            )
+            .unwrap()
+            .1,
             ASN1Value::Choice {
                 type_name: None,
                 variant_name: "equalityMatch".into(),
@@ -270,7 +275,9 @@ mod tests {
     #[test]
     fn nested_choice_value() {
         assert_eq!(
-            choice_value(r#"not:equalityMatch: "ABCDLMYZ""#).unwrap().1,
+            choice_value(r#"not:equalityMatch: "ABCDLMYZ""#.into())
+                .unwrap()
+                .1,
             ASN1Value::Choice {
                 type_name: None,
                 variant_name: "not".into(),
@@ -287,7 +294,7 @@ mod tests {
     fn nested_constructed_choice_value() {
         assert_eq!(
             choice_value(
-                r#"not:equalityMatch: { attributeDesc "ABCDLMYZ", assertionValue 'A2'H }"#
+                r#"not:equalityMatch: { attributeDesc "ABCDLMYZ", assertionValue 'A2'H }"#.into()
             )
             .unwrap()
             .1,

@@ -158,7 +158,7 @@ pub fn resolve_custom_syntax(
                                     index,
                                     InformationObjectField::FixedValueField(FixedValueField {
                                         identifier: token.name_or_empty().to_owned(),
-                                        value: match asn1_value(&t.identifier) {
+                                        value: match asn1_value((t.identifier.as_str()).into()) {
                                             Ok((_, v)) => Ok(v),
                                             Err(e) => Err(GrammarError {
                                                 details: format!("Syntax mismatch while resolving information object: {e:?}"),

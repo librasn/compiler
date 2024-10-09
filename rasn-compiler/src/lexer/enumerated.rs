@@ -12,9 +12,9 @@ use crate::{
     lexer::{asn1_type, parameterization},
 };
 
-use super::common::*;
+use super::{common::*, input::Input};
 
-pub fn enumerated_value(input: &str) -> IResult<&str, ToplevelValueDefinition> {
+pub fn enumerated_value(input: Input<'_>) -> IResult<Input<'_>, ToplevelValueDefinition> {
     map(
         tuple((
             skip_ws(many0(comment)),
@@ -48,14 +48,16 @@ pub fn enumerated_value(input: &str) -> IResult<&str, ToplevelValueDefinition> {
 /// If the match succeeds, the lexer will consume the match and return the remaining string
 /// and a wrapped `Enumerated` value representing the ASN1 declaration.
 /// If the match fails, the lexer will not consume the input and will return an error.
-pub fn enumerated(input: &str) -> IResult<&str, ASN1Type> {
+pub fn enumerated(input: Input<'_>) -> IResult<Input<'_>, ASN1Type> {
     map(
         preceded(skip_ws_and_comments(tag(ENUMERATED)), enumerated_body),
         |m| ASN1Type::Enumerated(m.into()),
     )(input)
 }
 
-fn enumeral(input: &str) -> IResult<&str, (&str, Option<i128>, Option<char>, Option<&str>)> {
+fn enumeral(
+    input: Input<'_>,
+) -> IResult<Input<'_>, (&str, Option<i128>, Option<char>, Option<&str>)> {
     skip_ws_and_comments(tuple((
         skip_ws(identifier),
         skip_ws(opt(in_parentheses(skip_ws_and_comments(i128)))),
@@ -64,7 +66,7 @@ fn enumeral(input: &str) -> IResult<&str, (&str, Option<i128>, Option<char>, Opt
     )))(input)
 }
 
-fn enumerals<'a>(start_index: usize) -> impl FnMut(&'a str) -> IResult<&'a str, Vec<Enumeral>> {
+fn enumerals<'a>(start_index: usize) -> impl FnMut(Input<'a>) -> IResult<Input<'a>, Vec<Enumeral>> {
     fold_many0(
         enumeral,
         Vec::<Enumeral>::new,
@@ -80,9 +82,9 @@ fn enumerals<'a>(start_index: usize) -> impl FnMut(&'a str) -> IResult<&'a str, 
 }
 
 fn enumerated_body(
-    input: &str,
+    input: Input<'_>,
 ) -> IResult<
-    &str,
+    Input<'_>,
     (
         Vec<Enumeral>,
         Option<ExtensionMarker>,
@@ -110,6 +112,7 @@ mod tests {
       backward    (2), -- This means backward
       unavailable (3)  -- This means nothing
       "#
+                .into()
             )
             .unwrap()
             .1,
@@ -142,6 +145,7 @@ mod tests {
       outOfRange,
       unavailable
   }"#
+                .into()
             )
             .unwrap()
             .1,
@@ -172,9 +176,11 @@ mod tests {
     #[test]
     fn parses_extended_enumerated() {
         assert_eq!(
-            enumerated("ENUMERATED {m1, m2, m3 -- another annoying comment we'll ignore --,...}")
-                .unwrap()
-                .1,
+            enumerated(
+                "ENUMERATED {m1, m2, m3 -- another annoying comment we'll ignore --,...}".into()
+            )
+            .unwrap()
+            .1,
             ASN1Type::Enumerated(Enumerated {
                 constraints: vec![],
                 members: vec![
@@ -202,7 +208,9 @@ mod tests {
     #[test]
     fn parses_extended_enumerated_without_indices() {
         assert_eq!(
-            enumerated(r#"ENUMERATED { One, ..., Three }"#).unwrap().1,
+            enumerated(r#"ENUMERATED { One, ..., Three }"#.into())
+                .unwrap()
+                .1,
             ASN1Type::Enumerated(Enumerated {
                 constraints: vec![],
                 members: vec![
@@ -231,6 +239,7 @@ mod tests {
                 ...,
                 temporaryCenDsrcTolling (1)
             }"#
+                .into()
             )
             .unwrap()
             .1,
@@ -263,6 +272,7 @@ mod tests {
           -- another annoyance -- backward    (2), --This means backward
           unavailable (3)--This means nothing
       }"#
+                .into()
             )
             .unwrap()
             .1,
@@ -298,6 +308,7 @@ mod tests {
           forward  -- this, too, ignored --   (1),
           -- let's consider this a comment concerning 'forward' -- ...
       }"#
+                .into()
             )
             .unwrap()
             .1,
@@ -321,6 +332,7 @@ mod tests {
             enumerated_value(
                 r#"-- Alias of another enumeral
             enumeral-alias Test-Enum ::= enumeral"#
+                    .into()
             )
             .unwrap()
             .1,

@@ -10,6 +10,7 @@ use super::{
     asn1_type,
     common::{opt_parentheses, skip_ws_and_comments, value_identifier},
     constraint::constraint,
+    input::Input,
 };
 
 /// Tries to parse an ASN1 SET OF
@@ -20,7 +21,7 @@ use super::{
 /// If the match succeeds, the lexer will consume the match and return the remaining string
 /// and a wrapped `SetOf` value representing the ASN1 declaration.
 /// If the match fails, the lexer will not consume the input and will return an error.
-pub fn set_of(input: &str) -> IResult<&str, ASN1Type> {
+pub fn set_of(input: Input<'_>) -> IResult<Input<'_>, ASN1Type> {
     map(
         pair(
             preceded(
@@ -49,7 +50,7 @@ mod tests {
     #[test]
     fn parses_simple_set_of() {
         assert_eq!(
-            set_of("SET OF BOOLEAN").unwrap().1,
+            set_of("SET OF BOOLEAN".into()).unwrap().1,
             ASN1Type::SetOf(SequenceOrSetOf {
                 is_recursive: false,
                 constraints: vec![],
@@ -63,7 +64,7 @@ mod tests {
     #[test]
     fn parses_simple_set_of_elsewhere_declared_type() {
         assert_eq!(
-            set_of("SET OF Things").unwrap().1,
+            set_of("SET OF Things".into()).unwrap().1,
             ASN1Type::SetOf(SequenceOrSetOf {
                 is_recursive: false,
                 constraints: vec![],
@@ -79,7 +80,7 @@ mod tests {
     #[test]
     fn parses_constraint_set_of_elsewhere_declared_type() {
         assert_eq!(
-            set_of("SET SIZE (1..13,...) OF CorrelationCellValue  ")
+            set_of("SET SIZE (1..13,...) OF CorrelationCellValue  ".into())
                 .unwrap()
                 .1,
             ASN1Type::SetOf(SequenceOrSetOf {
@@ -106,7 +107,7 @@ mod tests {
     #[test]
     fn parses_constraint_set_of_with_extra_parentheses() {
         assert_eq!(
-            set_of("SET (SIZE (1..13, ...)) OF CorrelationCellValue  ")
+            set_of("SET (SIZE (1..13, ...)) OF CorrelationCellValue  ".into())
                 .unwrap()
                 .1,
             ASN1Type::SetOf(SequenceOrSetOf {
@@ -137,6 +138,7 @@ mod tests {
                 r#"SET SIZE (1..13,...) OF INTEGER {
               one-distinguished-value (12)
             } (1..13,...) "#
+                    .into()
             )
             .unwrap()
             .1,
@@ -176,6 +178,7 @@ mod tests {
             set_of(
                 r#"SET (SIZE(1..4)) OF
       RegionalExtension {{Reg-MapData}} OPTIONAL,"#
+                    .into()
             )
             .unwrap()
             .1,
@@ -214,6 +217,7 @@ mod tests {
         IEEE1609DOT2-HEADERINFO-CONTRIBUTED-EXTENSION.&Extn({
         Ieee1609Dot2HeaderInfoContributedExtensions
       }{@.contributorId})"#
+                    .into()
             )
             .unwrap()
             .1

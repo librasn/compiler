@@ -88,6 +88,12 @@ pub struct Input<'a> {
     tracked_parsers: Vec<TrackedParser>,
 }
 
+impl<'a> Input<'a> {
+    pub fn into_inner(self) -> &'a str {
+        self.inner
+    }
+}
+
 impl Input<'_> {
     pub fn tracked_parsers(&self) -> &[TrackedParser] {
         &self.tracked_parsers
@@ -111,6 +117,18 @@ impl Input<'_> {
 
     pub fn offset(&self) -> usize {
         self.offset
+    }
+
+    pub fn inner(&self) -> &str {
+        self.inner
+    }
+
+    pub fn len(&self) -> usize {
+        self.inner.len()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.len() == 0
     }
 
     pub fn add_untracked(&mut self, parsers: &[TrackedParser]) {

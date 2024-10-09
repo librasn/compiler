@@ -17,6 +17,8 @@ use super::{
         optional_marker, skip_ws_and_comments, uppercase_identifier,
     },
     constraint::constraint,
+    input::Input,
+    into_inner,
 };
 
 /// Tries to parse an ASN1 TYPE-IDENTIFIER
@@ -33,7 +35,7 @@ use super::{
 /// }
 /// WITH SYNTAX {&Type IDENTIFIED BY &id}
 /// ```
-pub fn type_identifier(input: &str) -> IResult<&str, InformationObjectClass> {
+pub fn type_identifier(input: Input<'_>) -> IResult<Input<'_>, InformationObjectClass> {
     skip_ws_and_comments(value(
         InformationObjectClass {
             fields: vec![
@@ -67,7 +69,7 @@ pub fn type_identifier(input: &str) -> IResult<&str, InformationObjectClass> {
 /// ## _X680:_
 /// _G.2.18: Use an instance-of to specify a type containing an object identifier field_
 /// _and an open type value whose type is determined by the object identifier._
-pub fn instance_of(input: &str) -> IResult<&str, ASN1Type> {
+pub fn instance_of(input: Input<'_>) -> IResult<Input<'_>, ASN1Type> {
     map(
         preceded(
             tag(INSTANCE_OF),
@@ -86,7 +88,7 @@ pub fn instance_of(input: &str) -> IResult<&str, ASN1Type> {
     )(input)
 }
 
-pub fn information_object_class(input: &str) -> IResult<&str, InformationObjectClass> {
+pub fn information_object_class(input: Input<'_>) -> IResult<Input<'_>, InformationObjectClass> {
     into(preceded(
         skip_ws_and_comments(tag(CLASS)),
         pair(
@@ -100,8 +102,8 @@ pub fn information_object_class(input: &str) -> IResult<&str, InformationObjectC
 }
 
 pub fn information_object_field_reference(
-    input: &str,
-) -> IResult<&str, InformationObjectFieldReference> {
+    input: Input<'_>,
+) -> IResult<Input<'_>, InformationObjectFieldReference> {
     into(tuple((
         skip_ws_and_comments(uppercase_identifier),
         many1(skip_ws_and_comments(preceded(
@@ -112,14 +114,14 @@ pub fn information_object_field_reference(
     )))(input)
 }
 
-pub fn information_object(input: &str) -> IResult<&str, InformationObjectFields> {
+pub fn information_object(input: Input<'_>) -> IResult<Input<'_>, InformationObjectFields> {
     in_braces(alt((
         default_syntax_information_object,
         custom_syntax_information_object,
     )))(input)
 }
 
-pub fn object_set(input: &str) -> IResult<&str, ObjectSet> {
+pub fn object_set(input: Input<'_>) -> IResult<Input<'_>, ObjectSet> {
     into(in_braces(tuple((
         separated_list0(
             skip_ws_and_comments(alt((tag(PIPE), tag(UNION)))),
@@ -145,7 +147,9 @@ pub fn object_set(input: &str) -> IResult<&str, ObjectSet> {
     ))))(input)
 }
 
-fn custom_syntax_information_object(input: &str) -> IResult<&str, InformationObjectFields> {
+fn custom_syntax_information_object(
+    input: Input<'_>,
+) -> IResult<Input<'_>, InformationObjectFields> {
     map(
         skip_ws_and_comments(many1(skip_ws_and_comments(alt((
             value(SyntaxApplication::Comma, char(COMMA)),
@@ -161,7 +165,9 @@ fn custom_syntax_information_object(input: &str) -> IResult<&str, InformationObj
     )(input)
 }
 
-fn default_syntax_information_object(input: &str) -> IResult<&str, InformationObjectFields> {
+fn default_syntax_information_object(
+    input: Input<'_>,
+) -> IResult<Input<'_>, InformationObjectFields> {
     map(
         many1(terminated(
             skip_ws_and_comments(alt((
@@ -181,66 +187,69 @@ fn default_syntax_information_object(input: &str) -> IResult<&str, InformationOb
     )(input)
 }
 
-fn information_object_field(input: &str) -> IResult<&str, InformationObjectClassField> {
+fn information_object_field(input: Input<'_>) -> IResult<Input<'_>, InformationObjectClassField> {
     into(tuple((
         skip_ws_and_comments(object_field_identifier),
         opt(skip_ws_and_comments(asn1_type)),
-        opt(skip_ws_and_comments(tag(UNIQUE))),
+        opt(into_inner(skip_ws_and_comments(tag(UNIQUE)))),
         optional_marker,
         default,
     )))(input)
 }
 
-fn object_field_identifier(input: &str) -> IResult<&str, ObjectFieldIdentifier> {
+fn object_field_identifier(input: Input<'_>) -> IResult<Input<'_>, ObjectFieldIdentifier> {
     alt((single_value_field_id, multiple_value_field_id))(input)
 }
 
-fn single_value_field_id(input: &str) -> IResult<&str, ObjectFieldIdentifier> {
+fn single_value_field_id(input: Input<'_>) -> IResult<Input<'_>, ObjectFieldIdentifier> {
     map(
-        recognize(tuple((
+        into_inner(recognize(tuple((
             char(AMPERSAND),
             one_of("abcdefghijklmnopqrstuvwxyz"),
             many0(alt((preceded(char('-'), alphanumeric1), alphanumeric1))),
-        ))),
+        )))),
         |s| ObjectFieldIdentifier::SingleValue(String::from(s)),
     )(input)
 }
 
-fn multiple_value_field_id(input: &str) -> IResult<&str, ObjectFieldIdentifier> {
+fn multiple_value_field_id(input: Input<'_>) -> IResult<Input<'_>, ObjectFieldIdentifier> {
     map(
-        recognize(tuple((
+        into_inner(recognize(tuple((
             char(AMPERSAND),
             one_of("ABCDEFGHIJKLMNOPQRSTUVWXYZ"),
             many0(alt((preceded(char('-'), alphanumeric1), alphanumeric1))),
-        ))),
+        )))),
         |m| ObjectFieldIdentifier::MultipleValue(String::from(m)),
     )(input)
 }
 
-fn syntax(input: &str) -> IResult<&str, Vec<SyntaxExpression>> {
+fn syntax(input: Input<'_>) -> IResult<Input<'_>, Vec<SyntaxExpression>> {
     in_braces(many1(syntax_token_or_group_spec))(input)
 }
 
-fn syntax_token_or_group_spec(input: &str) -> IResult<&str, SyntaxExpression> {
+fn syntax_token_or_group_spec(input: Input<'_>) -> IResult<Input<'_>, SyntaxExpression> {
     alt((
         map(syntax_token, SyntaxExpression::Required),
         map(syntax_optional_group, SyntaxExpression::Optional),
     ))(input)
 }
 
-fn syntax_optional_group(input: &str) -> IResult<&str, Vec<SyntaxExpression>> {
+fn syntax_optional_group(input: Input<'_>) -> IResult<Input<'_>, Vec<SyntaxExpression>> {
     in_brackets(skip_ws_and_comments(many1(syntax_token_or_group_spec)))(input)
 }
 
-fn syntax_token(input: &str) -> IResult<&str, SyntaxToken> {
+fn syntax_token(input: Input<'_>) -> IResult<Input<'_>, SyntaxToken> {
     skip_ws_and_comments(alt((
         map(syntax_literal, SyntaxToken::from),
         map(object_field_identifier, SyntaxToken::from),
-        map(tag(COMMA.to_string().as_str()), SyntaxToken::from),
+        map(
+            into_inner(tag(COMMA.to_string().as_str())),
+            SyntaxToken::from,
+        ),
     )))(input)
 }
 
-fn syntax_literal(input: &str) -> IResult<&str, &str> {
+fn syntax_literal(input: Input<'_>) -> IResult<Input<'_>, &str> {
     uppercase_identifier(input)
 }
 
@@ -266,6 +275,7 @@ mod tests {
       &ArgumentType,
       &ResultType,
       &Errors ERROR OPTIONAL }"#
+                    .into()
             )
             .unwrap()
             .1,
@@ -336,7 +346,7 @@ mod tests {
     #[test]
     fn parses_simple_object_set() {
         assert_eq!(
-            object_set(r#"{My-ops}"#).unwrap().1,
+            object_set(r#"{My-ops}"#.into()).unwrap().1,
             ObjectSet {
                 values: vec![ObjectSetValue::Reference("My-ops".into())],
                 extensible: None
@@ -347,7 +357,7 @@ mod tests {
     #[test]
     fn parses_extended_value_set() {
         assert_eq!(
-            object_set(r#"{My-ops | Other-ops, ...}"#).unwrap().1,
+            object_set(r#"{My-ops | Other-ops, ...}"#.into()).unwrap().1,
             ObjectSet {
                 values: vec![
                     ObjectSetValue::Reference("My-ops".into()),
@@ -367,6 +377,7 @@ mod tests {
                 {&errorCode asn-val-unknown-order},
                 ...
             }"#
+                .into()
             )
             .unwrap()
             .1,
@@ -411,6 +422,7 @@ mod tests {
             &ContextInfo OPTIONAL
             }
             WITH SYNTAX {&ContextInfo IDENTIFIED BY &itsaidCtxRef}"#
+                    .into()
             )
             .unwrap()
             .1,
@@ -461,6 +473,7 @@ mod tests {
 }WITH SYNTAX {&Type,
      IDENTIFIED BY &id
 }"#
+                .into()
             )
             .unwrap()
         )
@@ -469,7 +482,7 @@ mod tests {
     #[test]
     fn parses_top_level_information_object_field_ref() {
         assert_eq!(
-            top_level_type_declaration(r#"AttributeValue ::= OPEN.&Type"#)
+            top_level_type_declaration(r#"AttributeValue ::= OPEN.&Type"#.into())
                 .unwrap()
                 .1,
             ToplevelTypeDefinition {
@@ -507,6 +520,7 @@ mod tests {
                     PROCEDURE CODE				&procedureCode
                     [CRITICALITY				&criticality]
                 }"#
+                .into()
             )
         )
     }

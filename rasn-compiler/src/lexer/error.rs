@@ -1,14 +1,18 @@
 use core::fmt::{Display, Formatter, Result};
 use std::error::Error;
 
+use nom::Slice;
+
+use super::input::Input;
+
 #[derive(Debug, Clone)]
 pub struct LexerError {
     pub details: String,
     pub kind: LexerErrorType,
 }
 
-impl<'a> From<nom::Err<nom::error::Error<&'a str>>> for LexerError {
-    fn from(value: nom::Err<nom::error::Error<&'a str>>) -> Self {
+impl<'a> From<nom::Err<nom::error::Error<Input<'a>>>> for LexerError {
+    fn from(value: nom::Err<nom::error::Error<Input<'a>>>) -> Self {
         match value {
             nom::Err::Incomplete(_) => Self {
                 details: "Unexpected end of input!".into(),
@@ -17,14 +21,14 @@ impl<'a> From<nom::Err<nom::error::Error<&'a str>>> for LexerError {
             nom::Err::Error(e) => Self {
                 details: format!(
                     "Error matching ASN syntax at while parsing: {}",
-                    &e.input[..(e.input.len().min(300))]
+                    &e.input.slice(..(e.input.len().min(300))).into_inner()
                 ),
                 kind: LexerErrorType::MatchingError(e.code),
             },
             nom::Err::Failure(e) => Self {
                 details: format!(
                     "Unrecoverable error while parsing: {}",
-                    &e.input[..(e.input.len().min(300))]
+                    &e.input.slice(..(e.input.len().min(300))).into_inner()
                 ),
                 kind: LexerErrorType::Failure(e.code),
             },

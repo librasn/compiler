@@ -2,7 +2,7 @@ use nom::{bytes::complete::tag, combinator::value, IResult};
 
 use crate::intermediate::*;
 
-use super::common::skip_ws_and_comments;
+use super::{common::skip_ws_and_comments, input::Input};
 
 /// Tries to parse an ASN1 EXTERNAL
 ///
@@ -12,6 +12,6 @@ use super::common::skip_ws_and_comments;
 /// If the match succeeds, the lexer will consume the match and return the remaining string
 /// and an `ASN1Type::External` value representing the ASN1 declaration.
 /// If the match fails, the lexer will not consume the input and will return an error.
-pub fn external(input: &str) -> IResult<&str, ASN1Type> {
+pub fn external(input: Input<'_>) -> IResult<Input<'_>, ASN1Type> {
     value(ASN1Type::External, skip_ws_and_comments(tag(EMBEDDED_PDV)))(input)
 }
