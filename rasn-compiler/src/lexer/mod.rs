@@ -27,6 +27,7 @@ use self::{
     parameterization::*, real::*, sequence::*, sequence_of::*, set::*, set_of::*, time::*,
 };
 
+mod alt;
 mod bit_string;
 mod boolean;
 mod character_string;
@@ -38,6 +39,7 @@ mod enumerated;
 mod error;
 mod external;
 mod information_object_class;
+mod input;
 mod integer;
 mod module_reference;
 mod null;

@@ -40,16 +40,16 @@ impl CompilerArgs {
         if let Some(dir) = args.directory {
             for entry in WalkDir::new(dir)
                 .follow_links(true)
-                    .into_iter()
-                    .filter_map(|e| e.ok())
-                    {
-                        let file_name = entry.file_name().to_string_lossy();
+                .into_iter()
+                .filter_map(|e| e.ok())
+            {
+                let file_name = entry.file_name().to_string_lossy();
 
-                        if file_name.ends_with(".asn") || file_name.ends_with(".asn1") {
-                            println!("Found ASN1 module {} in directory", file_name);
-                            modules.push(entry.into_path());
-                        }
-                    }
+                if file_name.ends_with(".asn") || file_name.ends_with(".asn1") {
+                    println!("Found ASN1 module {} in directory", file_name);
+                    modules.push(entry.into_path());
+                }
+            }
         }
 
         if modules.is_empty() {
