@@ -13,7 +13,7 @@ use super::{common::optional_comma, constraint::constraint, sequence::sequence_c
 
 /// Tries to parse an ASN1 SET
 ///
-/// *`input` - string slice to be matched against
+/// *`input` - [Input]-wrapped string slice to be matched against
 ///
 /// `set` will try to match an SET declaration in the `input` string.
 /// If the match succeeds, the lexer will consume the match and return the remaining string
@@ -22,7 +22,7 @@ use super::{common::optional_comma, constraint::constraint, sequence::sequence_c
 /// structs within the same global scope.
 /// If the match fails, the lexer will not consume the input and will return an error.
 pub fn set(input: Input<'_>) -> IResult<Input<'_>, ASN1Type> {
-    map(
+    with_parser("SetType", map(
         preceded(
             skip_ws_and_comments(tag(SET)),
             pair(
@@ -41,7 +41,7 @@ pub fn set(input: Input<'_>) -> IResult<Input<'_>, ASN1Type> {
             ),
         ),
         |m| ASN1Type::Set(m.into()),
-    )(input)
+    ))(input)
 }
 
 #[cfg(test)]

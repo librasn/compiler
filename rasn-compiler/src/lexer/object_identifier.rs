@@ -7,7 +7,6 @@ use crate::intermediate::{
 };
 
 use nom::{
-    branch::alt,
     bytes::complete::tag,
     character::complete::u128,
     combinator::{into, map, opt},
@@ -17,9 +16,10 @@ use nom::{
 };
 
 use super::{
+    alt::alt,
     common::{in_braces, in_parentheses, skip_ws, skip_ws_and_comments, value_identifier},
     constraint::constraint,
-    input::Input,
+    input::{with_parser, Input},
     RELATIVE_OID,
 };
 
@@ -28,7 +28,7 @@ use super::{
 /// In some places of an ASN1 spec, we do not encounter the `OBJECT IDENTIFIER` keyword
 /// before an OBJECT IDENTIFIER value, such as in the header's module identifier.
 ///
-/// *`input` - string slice to be matched against
+/// *`input` - [Input]-wrapped string slice to be matched against
 ///
 /// `object_identifier` will try to match an OBJECT IDENTIFIER declaration in the `input` string.
 /// If the match succeeds, the lexer will consume the match and return the remaining string
@@ -43,13 +43,13 @@ pub fn object_identifier_value(input: Input<'_>) -> IResult<Input<'_>, ObjectIde
 }
 
 pub fn object_identifier(input: Input<'_>) -> IResult<Input<'_>, ASN1Type> {
-    map(
+    with_parser("ObjectIdentifierType", map(
         into(preceded(
             skip_ws_and_comments(alt((tag(OBJECT_IDENTIFIER), tag(RELATIVE_OID)))),
             opt(skip_ws_and_comments(constraint)),
         )),
         ASN1Type::ObjectIdentifier,
-    )(input)
+    ))(input)
 }
 
 fn object_identifier_arc(input: Input<'_>) -> IResult<Input<'_>, ObjectIdentifierArc> {

@@ -38,20 +38,20 @@ pub fn bit_string_value(input: Input<'_>) -> IResult<Input<'_>, ASN1Value> {
 
 /// Tries to parse an ASN1 BIT STRING
 ///
-/// *`input` - string slice to be matched against
+/// *`input` - [Input]-wrapped string slice to be matched against
 ///
 /// `bit_string` will try to match an BIT STRING declaration in the `input` string.
 /// If the match succeeds, the lexer will consume the match and return the remaining string
 /// and a wrapped `BitString` value representing the ASN1 declaration.
 /// If the match fails, the lexer will not consume the input and will return an error.
 pub fn bit_string(input: Input<'_>) -> IResult<Input<'_>, ASN1Type> {
-    map(
+    with_parser("BitStringType", map(
         preceded(
             skip_ws_and_comments(tag(BIT_STRING)),
             pair(opt(distinguished_values), opt(constraint)),
         ),
         |m| ASN1Type::BitString(m.into()),
-    )(input)
+    ))(input)
 }
 
 #[cfg(test)]

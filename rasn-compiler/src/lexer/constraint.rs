@@ -1,6 +1,5 @@
 use crate::intermediate::{constraints::*, *};
 use nom::{
-    branch::alt,
     bytes::complete::tag,
     character::complete::char,
     combinator::{into, map, map_res, opt, value},
@@ -10,6 +9,7 @@ use nom::{
 };
 
 use super::{
+    alt::alt,
     asn1_type, asn1_value,
     common::{
         extension_marker, identifier, in_braces, in_parentheses, range_seperator,

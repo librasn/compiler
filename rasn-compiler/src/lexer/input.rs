@@ -1,6 +1,6 @@
 //! provides a [custom input type](https://github.com/rust-bakery/nom/blob/54557471141b73ca3b2d07be88d6709a43495b10/doc/custom_input_types.md)
 //! for parsing ASN.1 sources with [`nom``](https://github.com/rust-bakery/nom).
-//! The `Input` type is a thin wrapper around a string slice, with additional
+//! The `Input` type is a thin wrapper around a [Input]-wrapped string slice, with additional
 //! data for debugging purposes.
 //! This module owes a lot to fflorent's [`nom_locate`](https://github.com/fflorent/nom_locate).
 
@@ -14,7 +14,6 @@ use nom::{
     AsBytes, Compare, ExtendInto, FindSubstring, FindToken, IResult, InputIter, InputLength,
     InputTake, InputTakeAtPosition, Offset, ParseTo, Slice,
 };
-use rand::{rngs::SmallRng, RngCore, SeedableRng};
 
 /// Tracks the parser name and success in the parser `Input`.
 pub fn with_parser<'a, F, O: Debug>(
@@ -25,10 +24,11 @@ where
     F: FnMut(Input<'a>) -> IResult<Input<'a>, O>,
 {
     move |mut input| {
-        let uuid = input.track_parser(parser_name, false);
+        input.track_parser(parser_name, false);
         match inner(input) {
             Ok((mut rem, res)) => {
-                rem.track_parser_success(uuid);
+                rem.reset_parser_tracking();
+                rem.track_parser(parser_name, true);
                 Ok((rem, res))
             }
             res => res,
@@ -36,19 +36,16 @@ where
     }
 }
 
-/// Delimits a parser or set of parsers that are tracked as one operation
-/// in the parser's `Input`. In particular, `tracking_boundary` resets the `Input`'s tracking arrays.
-pub fn tracking_boundary<'a, F, O>(mut inner: F) -> impl FnMut(Input<'a>) -> IResult<Input<'a>, O>
+/// Informs `Input` of a context switch.
+pub fn context_boundary<'a, F, O: Debug>(
+    mut inner: F,
+) -> impl FnMut(Input<'a>) -> IResult<Input<'a>, O>
 where
     F: FnMut(Input<'a>) -> IResult<Input<'a>, O>,
 {
     move |mut input| {
-        let tracked = input.drain_tracked_parsers();
-        inner(input).map(|(mut res, o)| {
-            res.reset_parser_tracking();
-            res.add_untracked(&tracked);
-            (res, o)
-        })
+        input.reset_context();
+        inner(input)
     }
 }
 
@@ -57,16 +54,13 @@ where
 pub struct TrackedParser {
     pub name: &'static str,
     pub success: bool,
-    // UUID for tracking a specific parser call
-    pub uuid: u32,
 }
 
 impl TrackedParser {
-    pub fn new(name: &'static str, success: bool, uuid: u32) -> Self {
+    pub fn new(name: &'static str, success: bool) -> Self {
         Self {
             name,
             success,
-            uuid,
         }
     }
 }
@@ -80,6 +74,10 @@ pub struct Input<'a> {
     inner: &'a str,
     /// current line position of parser, starts at 1
     line: usize,
+    /// The context is an excerpt of an ASN.1 source
+    /// that is returned along with the line in which
+    /// an error was encountered.
+    context: &'a str,
     /// current column position of parser, starts at 1
     column: usize,
     /// current offset of parser from start of initial input, starts at 0
@@ -103,10 +101,6 @@ impl Input<'_> {
         self.tracked_parsers.drain(..).collect()
     }
 
-    pub fn tracked_parser_name_success_at(&self, index: usize) -> Option<(&'static str, bool)> {
-        self.tracked_parsers.get(index).map(|p| (p.name, p.success))
-    }
-
     pub fn line(&self) -> usize {
         self.line
     }
@@ -115,8 +109,8 @@ impl Input<'_> {
         self.column
     }
 
-    pub fn offset(&self) -> usize {
-        self.offset
+    pub fn context(&self) -> &str {
+        self.context
     }
 
     pub fn inner(&self) -> &str {
@@ -127,8 +121,25 @@ impl Input<'_> {
         self.inner.len()
     }
 
-    pub fn is_empty(&self) -> bool {
-        self.len() == 0
+    pub fn reset_context(&mut self) {
+        self.context = self.inner;
+    }
+
+    #[cfg(test)]
+    pub fn tracked_parser_name_success_at(&self, index: usize) -> Option<(&'static str, bool)> {
+        self.tracked_parsers.get(index).map(|p| (p.name, p.success))
+    }
+
+    #[cfg(test)]
+    pub fn with_line_column_and_offset(&self, line: usize, column: usize, offset: usize) -> Self {
+        Self {
+            inner: self.inner,
+            line,
+            context: self.context,
+            column,
+            offset,
+            tracked_parsers: self.tracked_parsers.clone(),
+        }
     }
 
     pub fn add_untracked(&mut self, parsers: &[TrackedParser]) {
@@ -141,31 +152,13 @@ impl Input<'_> {
         }
     }
 
-    fn track_parser(&mut self, parser: &'static str, success: bool) -> u32 {
-        let uuid = SmallRng::from_entropy().next_u32();
+    fn track_parser(&mut self, parser: &'static str, success: bool) {
         self.tracked_parsers
-            .push(TrackedParser::new(parser, success, uuid));
-        uuid
-    }
-
-    fn track_parser_success(&mut self, uuid: u32) {
-        if let Some(parser) = self.tracked_parsers.iter_mut().find(|p| p.uuid == uuid) {
-            parser.success = true;
-        }
+            .push(TrackedParser::new(parser, success));
     }
 
     fn reset_parser_tracking(&mut self) {
         self.tracked_parsers.clear();
-    }
-
-    fn with_line_column_and_offset(&self, line: usize, column: usize, offset: usize) -> Self {
-        Self {
-            inner: self.inner,
-            line,
-            column,
-            offset,
-            tracked_parsers: self.tracked_parsers.clone(),
-        }
     }
 }
 
@@ -174,6 +167,7 @@ impl<'a> From<&'a str> for Input<'a> {
         Self {
             inner: value,
             line: 1,
+            context: value,
             column: 1,
             offset: 0,
             tracked_parsers: Vec::new(),
@@ -302,6 +296,7 @@ where
                 line: self.line,
                 column: self.column,
                 offset: self.offset,
+                context: self.context,
                 inner,
                 tracked_parsers: self.tracked_parsers.clone(),
             }
@@ -319,6 +314,7 @@ where
             Input {
                 line,
                 column,
+                context: self.context,
                 inner,
                 offset: self.offset + consumed_len,
                 tracked_parsers: self.tracked_parsers.clone(),
@@ -410,7 +406,7 @@ mod tests {
     use nom::{
         bytes::complete::{tag, take_until},
         error::Error,
-        sequence::{pair, tuple},
+        sequence::pair,
     };
 
     use crate::lexer::alt::alt;
@@ -471,7 +467,6 @@ mod tests {
         .unwrap();
         assert_eq!(remaining.line(), 1);
         assert_eq!(remaining.column(), 11);
-        assert_eq!(remaining.offset(), 10);
         assert_eq!(
             remaining.tracked_parser_name_success_at(0).unwrap(),
             ("first", true)
@@ -492,7 +487,6 @@ mod tests {
         .unwrap();
         assert_eq!(remaining.line(), 3);
         assert_eq!(remaining.column(), 4);
-        assert_eq!(remaining.offset(), 16);
         println!("{:?}", remaining.tracked_parsers());
 
         assert_eq!(
@@ -506,108 +500,6 @@ mod tests {
         assert_eq!(
             remaining.tracked_parser_name_success_at(2).unwrap(),
             ("third", true)
-        );
-    }
-
-    #[test]
-    fn respects_tracking_boundaries() {
-        let mut parser = pair(
-            tracking_boundary(alt((
-                with_parser("how", tag("Hello")),
-                with_parser("can", tag("stranger")),
-                with_parser("it", take_until("\n")),
-            ))),
-            tracking_boundary(alt((
-                with_parser("escape", tag("do they have")),
-                with_parser("cities", tag("\nmore important things to do")),
-            ))),
-        );
-        if let nom::Err::Error(result_1) = parser(Input::from("Hello, stranger")).unwrap_err() {
-            assert_eq!(
-                result_1.input.tracked_parser_name_success_at(0).unwrap(),
-                ("escape", false)
-            );
-            assert_eq!(
-                result_1.input.tracked_parser_name_success_at(1).unwrap(),
-                ("cities", false)
-            );
-        } else {
-            panic!("Expected result_1 to be recoverable error.");
-        };
-        if let nom::Err::Error(result_2) =
-            parser(Input::from("do they have more important things to do")).unwrap_err()
-        {
-            assert_eq!(
-                result_2.input.tracked_parser_name_success_at(0).unwrap(),
-                ("how", false)
-            );
-            assert_eq!(
-                result_2.input.tracked_parser_name_success_at(1).unwrap(),
-                ("can", false)
-            );
-            assert_eq!(
-                result_2.input.tracked_parser_name_success_at(2).unwrap(),
-                ("it", false)
-            );
-        } else {
-            panic!("Expected result_2 to be recoverable error.");
-        };
-        let (result_3, _) =
-            parser(Input::from("do they have\nmore important things to do")).unwrap();
-        assert_eq!(
-            result_3.tracked_parser_name_success_at(0).unwrap(),
-            ("escape", false)
-        );
-        assert_eq!(
-            result_3.tracked_parser_name_success_at(1).unwrap(),
-            ("cities", true)
-        );
-    }
-
-    #[test]
-    fn respects_nested_tracking_boundaries() {
-        let mut parser = tuple((
-            with_parser("loud", tag("he ")),
-            with_parser(
-                "city",
-                tracking_boundary(tuple((
-                    with_parser("in", tag("is ")),
-                    with_parser("a", tag("running ")),
-                    with_parser("suit", tag("through ")),
-                ))),
-            ),
-            with_parser(
-                "made",
-                pair(
-                    with_parser("out", tag("my ")),
-                    with_parser("of", tag("eyes")),
-                ),
-            ),
-            with_parser("song", take_until("\n")),
-        ));
-        if let nom::Err::Error(result_1) =
-            parser(Input::from("he is important things")).unwrap_err()
-        {
-            assert_eq!(
-                result_1.input.tracked_parser_name_success_at(0).unwrap(),
-                ("in", true)
-            );
-            assert_eq!(
-                result_1.input.tracked_parser_name_success_at(1).unwrap(),
-                ("a", false)
-            );
-        } else {
-            panic!("Expected result_2 to be recoverable error.");
-        };
-        let (result_2, _) = parser(Input::from("he is running through my eyes\neyes")).unwrap();
-        assert_eq!(
-            result_2
-                .tracked_parsers()
-                .iter()
-                .filter_map(|p| p.success.then_some(p.name))
-                .collect::<Vec<_>>()
-                .join(" "),
-            String::from("loud city made out of song")
         );
     }
 }

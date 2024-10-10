@@ -7,21 +7,21 @@ use nom::{
 
 use crate::intermediate::*;
 
-use super::{common::*, constraint::constraint, input::Input};
+use super::{common::*, constraint::constraint, input::{with_parser, Input}};
 
 /// Tries to parse an ASN1 OCTET STRING
 ///
-/// *`input` - string slice to be matched against
+/// *`input` - [Input]-wrapped string slice to be matched against
 ///
 /// `octet_string` will try to match an OCTET STRING declaration in the `input` string.
 /// If the match succeeds, the lexer will consume the match and return the remaining string
 /// and a wrapped `OctetString` value representing the ASN1 declaration.
 /// If the match fails, the lexer will not consume the input and will return an error.
 pub fn octet_string(input: Input<'_>) -> IResult<Input<'_>, ASN1Type> {
-    map(
+    with_parser("OctetStringType", map(
         preceded(skip_ws_and_comments(tag(OCTET_STRING)), opt(constraint)),
         |m| ASN1Type::OctetString(m.into()),
-    )(input)
+    ))(input)
 }
 
 #[cfg(test)]

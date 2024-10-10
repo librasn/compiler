@@ -1,5 +1,4 @@
 use nom::{
-    branch::alt,
     bytes::complete::{is_not, tag},
     character::complete::{
         alpha1, alphanumeric1, char, i128, multispace0, multispace1, one_of, u64,
@@ -14,6 +13,7 @@ use nom::{
 use crate::intermediate::{constraints::*, types::*, *};
 
 use super::{
+    alt::alt,
     asn1_value,
     input::*,
     util::{map_into, opt_delimited, take_until_or, take_until_unbalanced},
@@ -21,9 +21,9 @@ use super::{
 
 /// Parses an ASN1 comment.
 ///
-/// * `input` string slice reference used as an input for the lexer
+/// * `input` [Input]-wrapped string slice reference used as an input for the lexer
 ///
-/// returns a `Result` yielding a tuple containing a reference to the remaining string slice
+/// returns a `Result` yielding a tuple containing a reference to the remaining [Input]-wrapped string slice
 /// and the parsed comment in case of sucess, or a parsing error if unsuccessful.
 ///
 /// #### X680
@@ -52,9 +52,9 @@ pub fn block_comment(input: Input<'_>) -> IResult<Input<'_>, &str> {
 
 /// Parses an ASN1 identifier.
 ///
-/// * `input` string slice reference used as an input for the lexer
+/// * `input` [Input]-wrapped string slice reference used as an input for the lexer
 ///
-/// returns a `Result` yielding a tuple containing a reference to the remaining string slice
+/// returns a `Result` yielding a tuple containing a reference to the remaining [Input]-wrapped string slice
 /// and the parsed identifier in case of sucess, or a parsing error if unsuccessful.
 ///
 /// #### X.680
@@ -345,17 +345,17 @@ and one */"#
                 r#" -- This means backward
       unavailable"#
                     .into()
-            ),
-            Ok(("\n      unavailable".into(), " This means backward",),)
+            ).map(|(i, o)| (i.into_inner(), o)),
+            Ok(("\n      unavailable", " This means backward",),)
         );
         assert_eq!(
             comment(
                 r#"-- This means forward
         backward    (2), -- This means backward"#
                     .into()
-            ),
+            ).map(|(i, o)| (i.into_inner(), o)),
             Ok((
-                "\n        backward    (2), -- This means backward".into(),
+                "\n        backward    (2), -- This means backward",
                 " This means forward",
             ),)
         )
@@ -364,71 +364,71 @@ and one */"#
     #[test]
     fn parses_valid_identifiers() {
         assert_eq!(
-            identifier("EEE-DDD".into()),
-            Ok(("".into(), "EEE-DDD"))
+            identifier("EEE-DDD".into()).unwrap().1,
+            "EEE-DDD"
         );
         assert_eq!(
-            identifier("GenericLane ".into()),
-            Ok((" ".into(), "GenericLane"))
+            identifier("GenericLane ".into()).unwrap().1,
+            "GenericLane"
         );
         assert_eq!(
-            identifier("regional ".into()),
-            Ok((" ".into(), "regional"))
+            identifier("regional ".into()).unwrap().1,
+            "regional"
         );
         assert_eq!(
-            identifier("NodeXY64".into()),
-            Ok(("".into(), "NodeXY64"))
+            identifier("NodeXY64".into()).unwrap().1,
+            "NodeXY64"
         );
         assert_eq!(
-            identifier("Sub-Cause-Code  ".into()),
-            Ok(("  ".into(), "Sub-Cause-Code"))
+            identifier("Sub-Cause-Code  ".into()).unwrap().1,
+            "Sub-Cause-Code"
         );
     }
 
     #[test]
     fn handles_invalid_identifiers() {
         assert_eq!(
-            identifier("EEE--DDD".into()),
-            Ok(("--DDD".into(), "EEE"))
+            identifier("EEE--DDD".into()).map(|(i, o)| (i.into_inner(), o)).unwrap(),
+            ("--DDD", "EEE")
         );
         assert!(identifier("-GenericLane".into()).is_err());
         assert!(identifier("64NodeXY".into()).is_err());
         assert!(identifier("&regional".into()).is_err());
         assert_eq!(
-            identifier("Sub-Cause-Code-".into()),
-            Ok(("-".into(), "Sub-Cause-Code"))
+            identifier("Sub-Cause-Code-".into()).map(|(i, o)| (i.into_inner(), o)).unwrap(),
+            ("-", "Sub-Cause-Code")
         );
     }
 
     #[test]
     fn discards_whitespace() {
         assert_eq!(
-            skip_ws(identifier)(" EEE-DDD".into()),
-            Ok(("".into(), "EEE-DDD"))
+            skip_ws(identifier)(" EEE-DDD".into()).unwrap().1,
+            "EEE-DDD"
         );
         assert_eq!(
-            skip_ws(identifier)("\nGenericLane ".into()),
-            Ok((" ".into(), "GenericLane"))
+            skip_ws(identifier)("\nGenericLane ".into()).unwrap().1,
+            "GenericLane"
         );
         assert_eq!(
-            skip_ws(identifier)("\t regional ".into()),
-            Ok((" ".into(), "regional"))
+            skip_ws(identifier)("\t regional ".into()).unwrap().1,
+            "regional"
         );
         assert_eq!(
-            skip_ws(identifier)("   NodeXY64".into()),
-            Ok(("".into(), "NodeXY64"))
+            skip_ws(identifier)("   NodeXY64".into()).unwrap().1,
+            "NodeXY64"
         );
         assert_eq!(
-            skip_ws(identifier)("\r\n\nSub-Cause-Code  ".into()),
-            Ok(("  ".into(), "Sub-Cause-Code"))
+            skip_ws(identifier)("\r\n\nSub-Cause-Code  ".into()).unwrap().1,
+            "Sub-Cause-Code"
         );
     }
 
     #[test]
     fn discards_whitespace_and_comments() {
         assert_eq!(
-            skip_ws_and_comments(identifier)(" -- comment --EEE-DDD".into()),
-            Ok(("".into(), "EEE-DDD"))
+            skip_ws_and_comments(identifier)(" -- comment --EEE-DDD".into()).unwrap().1,
+            "EEE-DDD"
         );
     }
 

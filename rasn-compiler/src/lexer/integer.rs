@@ -17,21 +17,21 @@ pub fn integer_value(input: Input<'_>) -> IResult<Input<'_>, ASN1Value> {
 
 /// Tries to parse an ASN1 INTEGER
 ///
-/// *`input` - string slice to be matched against
+/// *`input` - [Input]-wrapped string slice to be matched against
 ///
 /// `integer` will try to match an INTEGER declaration in the `input` string.
 /// If the match succeeds, the lexer will consume the match and return the remaining string
 /// and a wrapped `Integer` value representing the ASN1 declaration.
 /// If the match fails, the lexer will not consume the input and will return an error.
 pub fn integer(input: Input<'_>) -> IResult<Input<'_>, ASN1Type> {
-    map(
+    with_parser("IntegerType", map(
         tuple((
             into_inner(skip_ws_and_comments(tag(INTEGER))),
             opt(skip_ws_and_comments(distinguished_values)),
             opt(skip_ws_and_comments(constraint)),
         )),
         |m| ASN1Type::Integer(m.into()),
-    )(input)
+    ))(input)
 }
 
 #[cfg(test)]
@@ -44,8 +44,8 @@ mod tests {
     #[test]
     fn parses_integer() {
         assert_eq!(
-            integer("INTEGER".into()),
-            Ok(("".into(), ASN1Type::Integer(Integer::default())))
+            integer("INTEGER".into()).unwrap().1,
+            ASN1Type::Integer(Integer::default())
         );
         assert_eq!(
             integer("INTEGER  (-9..-4, ...)".into()).unwrap().1,

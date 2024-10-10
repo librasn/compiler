@@ -33,7 +33,7 @@ pub fn sequence_value(input: Input<'_>) -> IResult<Input<'_>, ASN1Value> {
 
 /// Tries to parse an ASN1 SEQUENCE
 ///
-/// *`input` - string slice to be matched against
+/// *`input` - [Input]-wrapped string slice to be matched against
 ///
 /// `sequence` will try to match an SEQUENCE declaration in the `input` string.
 /// If the match succeeds, the lexer will consume the match and return the remaining string
@@ -42,7 +42,7 @@ pub fn sequence_value(input: Input<'_>) -> IResult<Input<'_>, ASN1Value> {
 /// structs within the same global scope.
 /// If the match fails, the lexer will not consume the input and will return an error.
 pub fn sequence(input: Input<'_>) -> IResult<Input<'_>, ASN1Type> {
-    map(
+    with_parser("SequenceType", map(
         preceded(
             skip_ws_and_comments(tag(SEQUENCE)),
             pair(
@@ -61,11 +61,11 @@ pub fn sequence(input: Input<'_>) -> IResult<Input<'_>, ASN1Type> {
             ),
         ),
         |m| ASN1Type::Sequence(m.into()),
-    )(input)
+    ))(input)
 }
 
 fn extension_group(input: Input<'_>) -> IResult<Input<'_>, SequenceComponent> {
-    map(
+    with_parser("ExtensionAdditionGroup", map(
         in_version_brackets(preceded(
             opt(pair(
                 skip_ws_and_comments(i128),
@@ -100,7 +100,7 @@ fn extension_group(input: Input<'_>) -> IResult<Input<'_>, SequenceComponent> {
                 constraints: vec![],
             })
         },
-    )(input)
+    ))(input)
 }
 
 pub fn sequence_component(input: Input<'_>) -> IResult<Input<'_>, SequenceComponent> {
@@ -120,14 +120,14 @@ pub fn sequence_component(input: Input<'_>) -> IResult<Input<'_>, SequenceCompon
 }
 
 pub fn sequence_or_set_member(input: Input<'_>) -> IResult<Input<'_>, SequenceOrSetMember> {
-    into(tuple((
+    with_parser("ComponentType", into(tuple((
         skip_ws_and_comments(identifier),
         opt(asn_tag),
         skip_ws_and_comments(asn1_type),
         opt(constraint),
         optional_marker,
         default,
-    )))(input)
+    ))))(input)
 }
 
 #[cfg(test)]

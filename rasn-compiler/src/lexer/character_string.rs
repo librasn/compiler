@@ -1,5 +1,4 @@
 use nom::{
-    branch::alt,
     bytes::complete::{tag, take_until},
     character::complete::{char, u8},
     combinator::{map, map_res, opt},
@@ -9,7 +8,7 @@ use nom::{
 
 use crate::intermediate::*;
 
-use super::{common::*, constraint::constraint, input::Input};
+use super::{alt::alt, common::*, constraint::constraint, input::{with_parser, Input}};
 
 pub fn character_string_value(input: Input<'_>) -> IResult<Input<'_>, ASN1Value> {
     map(
@@ -67,7 +66,7 @@ fn quadruple(input: Input<'_>) -> IResult<Input<'_>, char> {
 
 /// Tries to parse an ASN1 Character String type
 ///
-/// *`input` - string slice to be matched against
+/// *`input` - [Input]-wrapped string slice to be matched against
 ///
 /// `character_string` will try to match an Character String type declaration in the `input`
 /// string, i.e. ASN1 types such as IA5String, UTF8String, VideotexString, but also
@@ -76,7 +75,7 @@ fn quadruple(input: Input<'_>) -> IResult<Input<'_>, char> {
 /// and a wrapped `CharacterString` value representing the ASN1 declaration.
 /// If the match fails, the lexer will not consume the input and will return an error.
 pub fn character_string(input: Input<'_>) -> IResult<Input<'_>, ASN1Type> {
-    map(
+    with_parser("CharacterStringType", map(
         pair(
             into_inner(skip_ws_and_comments(alt((
                 tag(IA5_STRING),
@@ -94,7 +93,7 @@ pub fn character_string(input: Input<'_>) -> IResult<Input<'_>, ASN1Type> {
             opt(constraint),
         ),
         |m| ASN1Type::CharacterString(m.into()),
-    )(input)
+    ))(input)
 }
 
 #[cfg(test)]

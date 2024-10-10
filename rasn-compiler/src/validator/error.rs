@@ -1,7 +1,7 @@
 use core::fmt::{Display, Formatter, Result};
 use std::error::Error;
 
-use crate::intermediate::error::GrammarError;
+use crate::{error::CompilerError, intermediate::error::GrammarError};
 
 #[derive(Debug, Clone)]
 pub struct ValidatorError {
@@ -42,6 +42,16 @@ impl Display for ValidatorError {
             self.data_element.as_ref().unwrap_or(&"".into()),
             self.details
         )
+    }
+}
+
+impl CompilerError for ValidatorError {
+    fn as_report(&self) -> String {
+        format!("{self:#?}")
+    }
+
+    fn as_styled_report(&self) -> String {
+        self.as_report()
     }
 }
 

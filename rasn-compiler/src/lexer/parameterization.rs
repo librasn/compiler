@@ -1,5 +1,4 @@
 use nom::{
-    branch::alt,
     character::complete::char,
     combinator::{into, map},
     multi::separated_list1,
@@ -10,6 +9,7 @@ use nom::{
 use crate::intermediate::{constraints::Parameter, parameterization::*, *};
 
 use super::{
+    alt::alt,
     asn1_type, asn1_value,
     common::{identifier, in_braces, skip_ws_and_comments},
     information_object_class::{information_object, object_set},

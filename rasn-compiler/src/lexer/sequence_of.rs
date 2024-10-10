@@ -10,19 +10,19 @@ use super::{
     asn1_type,
     common::{opt_parentheses, skip_ws_and_comments, value_identifier},
     constraint::constraint,
-    input::Input,
+    input::{with_parser, Input},
 };
 
 /// Tries to parse an ASN1 SEQUENCE OF
 ///
-/// *`input` - string slice to be matched against
+/// *`input` - [Input]-wrapped string slice to be matched against
 ///
 /// `sequence_of` will try to match an SEQUENCE OF declaration in the `input` string.
 /// If the match succeeds, the lexer will consume the match and return the remaining string
 /// and a wrapped `SequenceOf` type representing the ASN1 declaration.
 /// If the match fails, the lexer will not consume the input and will return an error.
 pub fn sequence_of(input: Input<'_>) -> IResult<Input<'_>, ASN1Type> {
-    map(
+    with_parser("SequenceOfType", map(
         pair(
             preceded(
                 skip_ws_and_comments(tag(SEQUENCE)),
@@ -34,7 +34,7 @@ pub fn sequence_of(input: Input<'_>) -> IResult<Input<'_>, ASN1Type> {
             ),
         ),
         |m| ASN1Type::SequenceOf(m.into()),
-    )(input)
+    ))(input)
 }
 
 #[cfg(test)]

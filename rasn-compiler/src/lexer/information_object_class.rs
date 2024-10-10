@@ -1,5 +1,4 @@
 use nom::{
-    branch::alt,
     bytes::complete::tag,
     character::complete::{alphanumeric1, char, one_of},
     combinator::{into, map, opt, recognize, value},
@@ -11,6 +10,7 @@ use nom::{
 use crate::intermediate::{information_object::*, types::ObjectIdentifier, *};
 
 use super::{
+    alt::alt,
     asn1_type, asn1_value,
     common::{
         default, extension_marker, identifier, in_braces, in_brackets, optional_comma,
@@ -23,7 +23,7 @@ use super::{
 
 /// Tries to parse an ASN1 TYPE-IDENTIFIER
 ///
-/// *`input` - string slice to be matched against
+/// *`input` - [Input]-wrapped string slice to be matched against
 ///
 /// ## _X681:_
 /// _Annex A: The TYPE-IDENTIFIER information object class is defined as:
@@ -64,7 +64,7 @@ pub fn type_identifier(input: Input<'_>) -> IResult<Input<'_>, InformationObject
 
 /// Tries to parse an ASN1 INSTANCE OF
 ///
-/// *`input` - string slice to be matched against
+/// *`input` - [Input]-wrapped string slice to be matched against
 ///
 /// ## _X680:_
 /// _G.2.18: Use an instance-of to specify a type containing an object identifier field_

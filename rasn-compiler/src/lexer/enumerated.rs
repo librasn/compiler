@@ -12,7 +12,7 @@ use crate::{
     lexer::{asn1_type, parameterization},
 };
 
-use super::{common::*, input::Input};
+use super::{common::*, input::{with_parser, Input}};
 
 pub fn enumerated_value(input: Input<'_>) -> IResult<Input<'_>, ToplevelValueDefinition> {
     map(
@@ -42,17 +42,17 @@ pub fn enumerated_value(input: Input<'_>) -> IResult<Input<'_>, ToplevelValueDef
 
 /// Tries to parse an ASN1 ENUMERATED
 ///
-/// *`input` - string slice to be matched against
+/// *`input` - [Input]-wrapped string slice to be matched against
 ///
 /// `enumerated` will try to match an ENUMERATED declaration in the `input` string.
 /// If the match succeeds, the lexer will consume the match and return the remaining string
 /// and a wrapped `Enumerated` value representing the ASN1 declaration.
 /// If the match fails, the lexer will not consume the input and will return an error.
 pub fn enumerated(input: Input<'_>) -> IResult<Input<'_>, ASN1Type> {
-    map(
+    with_parser("EnumeratedType", map(
         preceded(skip_ws_and_comments(tag(ENUMERATED)), enumerated_body),
         |m| ASN1Type::Enumerated(m.into()),
-    )(input)
+    ))(input)
 }
 
 fn enumeral(

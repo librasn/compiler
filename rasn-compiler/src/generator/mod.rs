@@ -2,9 +2,12 @@
 //! decoding and encoding of the parsed and validated ASN1 data elements.
 //! The `generator` uses string templates for generating rust code.
 
-use std::{error::Error, fmt::Debug};
+use std::fmt::Debug;
 
-use crate::intermediate::{ExtensibilityEnvironment, TaggingEnvironment, ToplevelDefinition};
+use crate::{
+    error::CompilerError,
+    intermediate::{ExtensibilityEnvironment, TaggingEnvironment, ToplevelDefinition},
+};
 
 use self::error::GeneratorError;
 
@@ -37,7 +40,7 @@ pub trait Backend: Sized + Default {
 
     /// Formats the bindings using the language- or framework-specific linters.
     /// For example, the Rust backend uses rustfmt for formatting bindings.
-    fn format_bindings(bindings: &str) -> Result<String, Box<dyn Error>> {
+    fn format_bindings(bindings: &str) -> Result<String, Box<dyn CompilerError>> {
         Ok(bindings.to_owned())
     }
 
@@ -59,7 +62,7 @@ pub trait Backend: Sized + Default {
 
 pub struct GeneratedModule {
     pub generated: Option<String>,
-    pub warnings: Vec<Box<dyn Error>>,
+    pub warnings: Vec<Box<dyn CompilerError>>,
 }
 
 impl GeneratedModule {

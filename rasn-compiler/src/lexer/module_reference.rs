@@ -1,6 +1,5 @@
 use crate::intermediate::*;
 use nom::{
-    branch::alt,
     bytes::complete::{tag, take_until},
     character::complete::char,
     combinator::{into, map, not, opt, peek, recognize, value},
@@ -10,59 +9,75 @@ use nom::{
 };
 
 use super::{
+    alt::alt,
     common::{identifier, skip_ws, skip_ws_and_comments, value_identifier},
     in_braces,
-    input::Input,
+    input::{context_boundary, with_parser, Input},
     into_inner,
     object_identifier::object_identifier_value,
 };
 
 pub fn module_reference(input: Input<'_>) -> IResult<Input<'_>, ModuleReference> {
-    skip_ws_and_comments(into(tuple((
-        identifier,
-        opt(skip_ws(definitive_identification)),
-        skip_ws_and_comments(delimited(
-            tag(DEFINITIONS),
-            opt(environments),
-            skip_ws_and_comments(pair(tag(ASSIGN), skip_ws_and_comments(tag(BEGIN)))),
-        )),
-        opt(exports),
-        opt(imports),
-    ))))(input)
+    with_parser(
+        "ModuleDefinition",
+        skip_ws_and_comments(into(tuple((
+            identifier,
+            opt(skip_ws(definitive_identification)),
+            skip_ws_and_comments(delimited(
+                tag(DEFINITIONS),
+                opt(environments),
+                skip_ws_and_comments(pair(tag(ASSIGN), skip_ws_and_comments(tag(BEGIN)))),
+            )),
+            context_boundary(opt(exports)),
+            context_boundary(opt(imports)),
+        )))),
+    )(input)
 }
 
 fn definitive_identification(input: Input<'_>) -> IResult<Input<'_>, DefinitiveIdentifier> {
-    into(pair(object_identifier_value, opt(iri_value)))(input)
+    with_parser(
+        "DefinitiveIdentification",
+        into(pair(object_identifier_value, opt(iri_value))),
+    )(input)
 }
 
 fn iri_value(input: Input<'_>) -> IResult<Input<'_>, &str> {
-    into_inner(skip_ws_and_comments(delimited(
-        tag("\"/"),
-        recognize(separated_list1(char('/'), identifier)),
-        char('"'),
-    )))(input)
+    with_parser(
+        "IRIValue",
+        into_inner(skip_ws_and_comments(delimited(
+            tag("\"/"),
+            recognize(separated_list1(char('/'), identifier)),
+            char('"'),
+        ))),
+    )(input)
 }
 
 fn exports(input: Input<'_>) -> IResult<Input<'_>, Exports> {
-    skip_ws_and_comments(delimited(
-        tag(EXPORTS),
-        skip_ws(alt((
-            value(Exports::All, tag(ALL)),
-            into(separated_list1(
-                skip_ws(char(COMMA)),
-                skip_ws(alt((parameterized_identifier, identifier))),
-            )),
-        ))),
-        char(SEMICOLON),
-    ))(input)
+    with_parser(
+        "Exports",
+        skip_ws_and_comments(delimited(
+            tag(EXPORTS),
+            skip_ws(alt((
+                value(Exports::All, tag(ALL)),
+                into(separated_list1(
+                    skip_ws(char(COMMA)),
+                    skip_ws(alt((parameterized_identifier, identifier))),
+                )),
+            ))),
+            char(SEMICOLON),
+        )),
+    )(input)
 }
 
 fn imports(input: Input<'_>) -> IResult<Input<'_>, Vec<Import>> {
-    skip_ws_and_comments(delimited(
-        tag(IMPORTS),
-        skip_ws_and_comments(many0(import)),
-        skip_ws_and_comments(char(SEMICOLON)),
-    ))(input)
+    with_parser(
+        "Imports",
+        skip_ws_and_comments(delimited(
+            tag(IMPORTS),
+            skip_ws_and_comments(many0(import)),
+            skip_ws_and_comments(char(SEMICOLON)),
+        )),
+    )(input)
 }
 
 fn parameterized_identifier(input: Input<'_>) -> IResult<Input<'_>, &str> {
@@ -147,28 +162,37 @@ fn environments(
     ),
 > {
     tuple((
-        opt(skip_ws_and_comments(into(terminated(
-            identifier,
-            into_inner(skip_ws(tag(INSTRUCTIONS))),
-        )))),
-        skip_ws_and_comments(terminated(
-            map(
-                into_inner(alt((tag(AUTOMATIC), tag(IMPLICIT), tag(EXPLICIT)))),
+        with_parser(
+            "EncodingReferenceDefault",
+            opt(skip_ws_and_comments(into(terminated(
+                identifier,
+                into_inner(skip_ws(tag(INSTRUCTIONS))),
+            )))),
+        ),
+        with_parser(
+            "TagDefault",
+            skip_ws_and_comments(map(
+                opt(terminated(
+                    into_inner(alt((tag(AUTOMATIC), tag(IMPLICIT), tag(EXPLICIT)))),
+                    skip_ws(tag(TAGS)),
+                )),
                 |m| match m {
-                    AUTOMATIC => TaggingEnvironment::Automatic,
-                    IMPLICIT => TaggingEnvironment::Implicit,
-                    _ => TaggingEnvironment::Explicit,
+                    Some(AUTOMATIC) => TaggingEnvironment::Automatic,
+                    Some(EXPLICIT) => TaggingEnvironment::Explicit,
+                    _ => TaggingEnvironment::Implicit,
                 },
-            ),
-            skip_ws(tag(TAGS)),
-        )),
-        skip_ws_and_comments(map(opt(tag(EXTENSIBILITY_IMPLIED)), |m| {
-            if m.is_some() {
-                ExtensibilityEnvironment::Implied
-            } else {
-                ExtensibilityEnvironment::Explicit
-            }
-        })),
+            )),
+        ),
+        with_parser(
+            "ExtensionDefault",
+            skip_ws_and_comments(map(opt(tag(EXTENSIBILITY_IMPLIED)), |m| {
+                if m.is_some() {
+                    ExtensibilityEnvironment::Implied
+                } else {
+                    ExtensibilityEnvironment::Explicit
+                }
+            })),
+        ),
     ))(input)
 }
 
@@ -360,7 +384,7 @@ mod tests {
         assert_eq!(
             global_module_reference(r#" EMPTY-assigned-ID next-module-import, "#.into()).unwrap(),
             (
-                " next-module-import, ".into(),
+                Input::from(" next-module-import, ").with_line_column_and_offset(1, 19, 18),
                 GlobalModuleReference {
                     module_reference: "EMPTY-assigned-ID".to_owned(),
                     assigned_identifier: AssignedIdentifier::Empty

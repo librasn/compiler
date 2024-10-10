@@ -604,7 +604,7 @@ impl ASN1Type {
             // SequenceOf and SetOf provide the necessary indirection
             ASN1Type::SequenceOf(_) | ASN1Type::SetOf(_) => Ok(Vec::new()),
             ASN1Type::ChoiceSelectionType(_) => {
-                unreachable!("Choice selection types should be resolved by now")
+                Err(GrammarError { details: "Choice selection types should be resolved by now".into(), kind: GrammarErrorType::LinkerError })
             }
             ASN1Type::InformationObjectFieldReference(_information_object_field_reference) => {
                 Ok(Vec::new())
@@ -1152,7 +1152,7 @@ impl ASN1Value {
                 }
                 Ok(())
             }
-            (_, ASN1Value::ElsewhereDeclaredValue { .. }) => todo!(),
+            (_, ASN1Value::ElsewhereDeclaredValue { .. }) => Err(GrammarError::todo()),
             _ => Ok(()),
         }
     }

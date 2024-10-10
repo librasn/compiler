@@ -3,6 +3,8 @@ use std::{
     fmt::{Display, Formatter, Result},
 };
 
+use crate::error::CompilerError;
+
 #[derive(Debug, Clone)]
 pub struct GrammarError {
     pub details: String,
@@ -15,6 +17,23 @@ impl GrammarError {
             details: data_details.into(),
             kind,
         }
+    }
+
+    pub fn todo() -> Self {
+        GrammarError {
+            details: "Not yet implemented!".into(),
+            kind: GrammarErrorType::NotYetInplemented,
+        }
+    }
+}
+
+impl CompilerError for GrammarError {
+    fn as_report(&self) -> String {
+        format!("{self:#?}")
+    }
+
+    fn as_styled_report(&self) -> String {
+        self.as_report()
     }
 }
 

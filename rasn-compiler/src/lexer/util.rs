@@ -6,9 +6,22 @@ use nom::{
     Err, FindSubstring, IResult, InputLength, InputTake, Parser, Slice,
 };
 
-use crate::lexer::into_inner;
-
 use super::input::Input;
+
+pub fn until_next_unindented(input: &str, fallback_len: usize) -> &str {
+    let mut next_newline = input.find('\n');
+    while let Some(i) = next_newline {
+        if input[i..]
+            .chars()
+            .next()
+            .is_some_and(|c| c.is_alphanumeric())
+        {
+            return &input[..i].trim();
+        }
+        next_newline = input[i..].find('\n');
+    }
+    &input[..input.len().min(fallback_len)]
+}
 
 pub fn hex_to_bools(c: char) -> [bool; 4] {
     match c {
@@ -195,16 +208,18 @@ mod tests {
                 skip_ws_and_comments(tag("1")),
                 skip_ws_and_comments(tag("ab")),
                 skip_ws_and_comments(tag("2"))
-            )("1ab2".into()),
-            Ok(("".into(), "ab".into()))
+            )("1ab2".into())
+            .map(|(i, o)| (i.into_inner(), o.into_inner())),
+            Ok(("", "ab"))
         );
         assert_eq!(
             opt_delimited::<char, Input<'_>, char, _, _, _>(
                 skip_ws_and_comments(char('(')),
                 skip_ws_and_comments(tag("ab")),
                 skip_ws_and_comments(char(')'))
-            )("ab".into()),
-            Ok(("".into(), "ab".into()))
+            )("ab".into())
+            .map(|(i, o)| (i.into_inner(), o.into_inner())),
+            Ok(("", "ab"))
         );
         assert_eq!(
             opt_delimited::<char, Input<'_>, char, _, _, _>(
@@ -213,7 +228,7 @@ mod tests {
                 skip_ws_and_comments(char(')'))
             )("( abc".into()),
             Err(nom::Err::Error(Error {
-                input: "c".into(),
+                input: Input::from("c").with_line_column_and_offset(1, 5, 4),
                 code: nom::error::ErrorKind::Char
             }))
         );
@@ -222,16 +237,18 @@ mod tests {
                 skip_ws_and_comments(char('(')),
                 skip_ws_and_comments(tag("ab")),
                 skip_ws_and_comments(char(')'))
-            )(" ab )".into()),
-            Ok((" )".into(), "ab".into()))
+            )(" ab )".into())
+            .map(|(i, o)| (i.into_inner(), o.into_inner())),
+            Ok((" )", "ab"))
         );
         assert_eq!(
             in_parentheses(opt_delimited::<char, Input<'_>, char, _, _, _>(
                 skip_ws_and_comments(char('(')),
                 skip_ws_and_comments(tag("ab")),
                 skip_ws_and_comments(char(')'))
-            ))("(( ab ))".into()),
-            Ok(("".into(), "ab".into()))
+            ))("(( ab ))".into())
+            .map(|(i, o)| (i.into_inner(), o.into_inner())),
+            Ok(("", "ab"))
         );
         assert_eq!(
             many1(in_parentheses(opt_delimited::<
@@ -245,8 +262,9 @@ mod tests {
                 skip_ws_and_comments(char(LEFT_PARENTHESIS)),
                 skip_ws_and_comments(asn1_value),
                 skip_ws_and_comments(char(RIGHT_PARENTHESIS))
-            )))("((5))".into()),
-            Ok(("".into(), vec![ASN1Value::Integer(5)]))
+            )))("((5))".into())
+            .map(|(i, o)| (i.into_inner(), o)),
+            Ok(("", vec![ASN1Value::Integer(5)]))
         );
     }
 

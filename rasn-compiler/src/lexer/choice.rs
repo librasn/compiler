@@ -25,7 +25,7 @@ pub fn choice_value(input: Input<'_>) -> IResult<Input<'_>, ASN1Value> {
 
 /// Tries to parse the named alternative an ASN1 CHOICE
 ///
-/// *`input` - string slice to be matched against
+/// *`input` - [Input]-wrapped string slice to be matched against
 ///
 /// `selection_type_choice` will try to match a CHOICE selection type in the `input` string.
 /// ```ignore
@@ -56,7 +56,7 @@ pub fn selection_type_choice(input: Input<'_>) -> IResult<Input<'_>, ASN1Type> {
 
 /// Tries to parse an ASN1 CHOICE
 ///
-/// *`input` - string slice to be matched against
+/// *`input` - [Input]-wrapped string slice to be matched against
 ///
 /// `choice` will try to match an CHOICE declaration in the `input` string.
 /// If the match succeeds, the lexer will consume the match and return the remaining string
@@ -65,7 +65,7 @@ pub fn selection_type_choice(input: Input<'_>) -> IResult<Input<'_>, ASN1Type> {
 /// structs within the same global scope.
 /// If the match fails, the lexer will not consume the input and will return an error.
 pub fn choice(input: Input<'_>) -> IResult<Input<'_>, ASN1Type> {
-    map(
+    with_parser("ChoiceType", map(
         preceded(
             skip_ws_and_comments(tag(CHOICE)),
             in_braces(tuple((
@@ -96,7 +96,7 @@ pub fn choice(input: Input<'_>) -> IResult<Input<'_>, ASN1Type> {
             ))),
         ),
         |m| ASN1Type::Choice(m.into()),
-    )(input)
+    ))(input)
 }
 
 fn choice_option(input: Input<'_>) -> IResult<Input<'_>, ChoiceOption> {

@@ -13,7 +13,7 @@ use crate::intermediate::{
     ASN1Type, ASN1Value, GENERALIZED_TIME, TIME, UTC_TIME,
 };
 
-use super::{common::skip_ws_and_comments, constraint::constraint, input::Input, into_inner};
+use super::{common::skip_ws_and_comments, constraint::constraint, input::{with_parser, Input}, into_inner};
 
 pub fn time_value(input: Input<'_>) -> IResult<Input<'_>, ASN1Value> {
     map(skip_ws_and_comments(t_string), |t_string| {
@@ -22,10 +22,10 @@ pub fn time_value(input: Input<'_>) -> IResult<Input<'_>, ASN1Value> {
 }
 
 pub fn time(input: Input<'_>) -> IResult<Input<'_>, ASN1Type> {
-    map(
+    with_parser("TimeType", map(
         skip_ws_and_comments(preceded(tag(TIME), opt(constraint))),
         |t| ASN1Type::Time(t.into()),
-    )(input)
+    ))(input)
 }
 
 pub fn generalized_time(input: Input<'_>) -> IResult<Input<'_>, ASN1Type> {

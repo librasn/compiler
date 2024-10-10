@@ -1,6 +1,5 @@
 use crate::intermediate::*;
 use nom::{
-    branch::alt,
     bytes::complete::tag,
     character::complete::{char, i32, i64, u64},
     combinator::{map, opt, value},
@@ -9,9 +8,10 @@ use nom::{
 };
 
 use super::{
+    alt::alt,
     common::{in_braces, skip_ws_and_comments},
     constraint::constraint,
-    input::Input,
+    input::{with_parser, Input},
 };
 
 pub fn real_value(input: Input<'_>) -> IResult<Input<'_>, ASN1Value> {
@@ -23,20 +23,20 @@ pub fn real_value(input: Input<'_>) -> IResult<Input<'_>, ASN1Value> {
 
 /// Tries to parse an ASN1 REAL
 ///
-/// *`input` - string slice to be matched against
+/// *`input` - [Input]-wrapped string slice to be matched against
 ///
 /// `real` will try to match an REAL declaration in the `input` string.
 /// If the match succeeds, the lexer will consume the match and return the remaining string
 /// and a wrapped `Real` value representing the ASN1 declaration.
 /// If the match fails, the lexer will not consume the input and will return an error.
 pub fn real(input: Input<'_>) -> IResult<Input<'_>, ASN1Type> {
-    map(
+    with_parser("RealType", map(
         preceded(
             skip_ws_and_comments(tag(REAL)),
             opt(skip_ws_and_comments(constraint)),
         ),
         |m| ASN1Type::Real(m.into()),
-    )(input)
+    ))(input)
 }
 
 fn dot_notation(input: Input<'_>) -> IResult<Input<'_>, f64> {

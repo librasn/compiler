@@ -13,17 +13,16 @@ mod tests;
 use std::{
     cell::RefCell,
     collections::{BTreeMap, HashSet},
-    error::Error,
     ops::Not,
     rc::Rc,
 };
 
-use crate::intermediate::{
+use crate::{error::CompilerError, intermediate::{
     constraints::*,
     information_object::{ClassLink, ToplevelInformationDefinition},
     types::*,
     *,
-};
+}};
 
 use self::{
     error::{ValidatorError, ValidatorErrorType},
@@ -46,8 +45,8 @@ impl Validator {
         }
     }
 
-    fn link(mut self) -> Result<(Self, Vec<Box<dyn Error>>), ValidatorError> {
-        let mut warnings: Vec<Box<dyn Error>> = vec![];
+    fn link(mut self) -> Result<(Self, Vec<Box<dyn CompilerError>>), ValidatorError> {
+        let mut warnings: Vec<Box<dyn CompilerError>> = vec![];
         // Linking of ASN1 values depends on linked ASN1 types, so we order the key colelction accordingly (note that we pop keys)
         let mut keys = self
             .tlds
@@ -369,9 +368,9 @@ impl Validator {
 
     pub fn validate(
         mut self,
-    ) -> Result<(Vec<ToplevelDefinition>, Vec<Box<dyn Error>>), Box<dyn Error>> {
-        let warnings: Vec<Box<dyn Error>>;
-        (self, warnings) = self.link()?;
+    ) -> Result<(Vec<ToplevelDefinition>, Vec<Box<dyn CompilerError>>), Box<dyn CompilerError>> {
+        let warnings: Vec<Box<dyn CompilerError>>;
+        (self, warnings) = self.link().map_err(|e| Box::new(e) as Box<dyn CompilerError>)?;
         Ok(self.tlds.into_iter().fold(
             (Vec::<ToplevelDefinition>::new(), warnings),
             |(mut tlds, mut errors), (_, tld)| {
