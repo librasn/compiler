@@ -2,6 +2,7 @@
 pub(crate) mod common;
 mod error;
 mod generator;
+mod input;
 pub mod intermediate;
 mod lexer;
 #[cfg(test)]

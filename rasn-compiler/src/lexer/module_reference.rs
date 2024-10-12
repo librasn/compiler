@@ -1,24 +1,27 @@
-use crate::intermediate::*;
+use crate::{
+    input::{context_boundary, Input},
+    intermediate::*,
+};
 use nom::{
+    branch::alt,
     bytes::complete::{tag, take_until},
     character::complete::char,
     combinator::{into, map, not, opt, peek, recognize, value},
+    error::context,
     multi::{many0, separated_list1},
     sequence::{delimited, pair, preceded, separated_pair, terminated, tuple},
     IResult,
 };
 
 use super::{
-    alt::alt,
     common::{identifier, skip_ws, skip_ws_and_comments, value_identifier},
-    in_braces,
-    input::{context_boundary, with_parser, Input},
-    into_inner,
+    error::ParserResult,
+    in_braces, into_inner,
     object_identifier::object_identifier_value,
 };
 
-pub fn module_reference(input: Input<'_>) -> IResult<Input<'_>, ModuleReference> {
-    with_parser(
+pub fn module_reference(input: Input<'_>) -> ParserResult<'_, ModuleReference> {
+    context(
         "ModuleDefinition",
         skip_ws_and_comments(into(tuple((
             identifier,
@@ -34,15 +37,15 @@ pub fn module_reference(input: Input<'_>) -> IResult<Input<'_>, ModuleReference>
     )(input)
 }
 
-fn definitive_identification(input: Input<'_>) -> IResult<Input<'_>, DefinitiveIdentifier> {
-    with_parser(
+fn definitive_identification(input: Input<'_>) -> ParserResult<'_, DefinitiveIdentifier> {
+    context(
         "DefinitiveIdentification",
         into(pair(object_identifier_value, opt(iri_value))),
     )(input)
 }
 
-fn iri_value(input: Input<'_>) -> IResult<Input<'_>, &str> {
-    with_parser(
+fn iri_value(input: Input<'_>) -> ParserResult<'_, &str> {
+    context(
         "IRIValue",
         into_inner(skip_ws_and_comments(delimited(
             tag("\"/"),
@@ -52,8 +55,8 @@ fn iri_value(input: Input<'_>) -> IResult<Input<'_>, &str> {
     )(input)
 }
 
-fn exports(input: Input<'_>) -> IResult<Input<'_>, Exports> {
-    with_parser(
+fn exports(input: Input<'_>) -> ParserResult<'_, Exports> {
+    context(
         "Exports",
         skip_ws_and_comments(delimited(
             tag(EXPORTS),
@@ -69,8 +72,8 @@ fn exports(input: Input<'_>) -> IResult<Input<'_>, Exports> {
     )(input)
 }
 
-fn imports(input: Input<'_>) -> IResult<Input<'_>, Vec<Import>> {
-    with_parser(
+fn imports(input: Input<'_>) -> ParserResult<'_, Vec<Import>> {
+    context(
         "Imports",
         skip_ws_and_comments(delimited(
             tag(IMPORTS),
@@ -80,11 +83,11 @@ fn imports(input: Input<'_>) -> IResult<Input<'_>, Vec<Import>> {
     )(input)
 }
 
-fn parameterized_identifier(input: Input<'_>) -> IResult<Input<'_>, &str> {
+fn parameterized_identifier(input: Input<'_>) -> ParserResult<'_, &str> {
     terminated(identifier, tag("{}"))(input)
 }
 
-fn global_module_reference(input: Input<'_>) -> IResult<Input<'_>, GlobalModuleReference> {
+fn global_module_reference(input: Input<'_>) -> ParserResult<'_, GlobalModuleReference> {
     into(skip_ws_and_comments(pair(
         identifier,
         alt((
@@ -132,7 +135,7 @@ fn global_module_reference(input: Input<'_>) -> IResult<Input<'_>, GlobalModuleR
     )))(input)
 }
 
-fn import(input: Input<'_>) -> IResult<Input<'_>, Import> {
+fn import(input: Input<'_>) -> ParserResult<'_, Import> {
     into(skip_ws_and_comments(pair(
         separated_list1(
             skip_ws(char(COMMA)),
@@ -153,8 +156,8 @@ fn import(input: Input<'_>) -> IResult<Input<'_>, Import> {
 
 fn environments(
     input: Input<'_>,
-) -> IResult<
-    Input<'_>,
+) -> ParserResult<
+    '_,
     (
         Option<EncodingReferenceDefault>,
         TaggingEnvironment,
@@ -162,14 +165,14 @@ fn environments(
     ),
 > {
     tuple((
-        with_parser(
+        context(
             "EncodingReferenceDefault",
             opt(skip_ws_and_comments(into(terminated(
                 identifier,
                 into_inner(skip_ws(tag(INSTRUCTIONS))),
             )))),
         ),
-        with_parser(
+        context(
             "TagDefault",
             skip_ws_and_comments(map(
                 opt(terminated(
@@ -183,7 +186,7 @@ fn environments(
                 },
             )),
         ),
-        with_parser(
+        context(
             "ExtensionDefault",
             skip_ws_and_comments(map(opt(tag(EXTENSIBILITY_IMPLIED)), |m| {
                 if m.is_some() {

@@ -1,13 +1,14 @@
 use nom::{
     bytes::complete::tag,
     combinator::{map, opt},
+    error::context,
     sequence::preceded,
     IResult,
 };
 
-use crate::intermediate::*;
+use crate::{input::Input, intermediate::*};
 
-use super::{common::*, constraint::constraint, input::{with_parser, Input}};
+use super::{common::*, constraint::constraint, error::ParserResult};
 
 /// Tries to parse an ASN1 OCTET STRING
 ///
@@ -17,11 +18,14 @@ use super::{common::*, constraint::constraint, input::{with_parser, Input}};
 /// If the match succeeds, the lexer will consume the match and return the remaining string
 /// and a wrapped `OctetString` value representing the ASN1 declaration.
 /// If the match fails, the lexer will not consume the input and will return an error.
-pub fn octet_string(input: Input<'_>) -> IResult<Input<'_>, ASN1Type> {
-    with_parser("OctetStringType", map(
-        preceded(skip_ws_and_comments(tag(OCTET_STRING)), opt(constraint)),
-        |m| ASN1Type::OctetString(m.into()),
-    ))(input)
+pub fn octet_string(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
+    context(
+        "OctetStringType",
+        map(
+            preceded(skip_ws_and_comments(tag(OCTET_STRING)), opt(constraint)),
+            |m| ASN1Type::OctetString(m.into()),
+        ),
+    )(input)
 }
 
 #[cfg(test)]

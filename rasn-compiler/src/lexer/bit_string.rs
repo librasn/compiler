@@ -2,18 +2,19 @@ use nom::{
     bytes::complete::tag,
     character::complete::{char, one_of},
     combinator::{map, opt},
+    error::context,
     multi::fold_many0,
     sequence::{delimited, pair, preceded},
     IResult,
 };
 
-use crate::intermediate::*;
+use crate::{input::Input, intermediate::*};
 
-use super::{common::*, constraint::constraint, input::*, util::hex_to_bools};
+use super::{common::*, constraint::constraint, error::ParserResult, util::hex_to_bools};
 
 /// Parses a BIT STRING value. Currently, the lexer only supports parsing binary and
 /// hexadecimal values, but not the named bit notation in curly braces.
-pub fn bit_string_value(input: Input<'_>) -> IResult<Input<'_>, ASN1Value> {
+pub fn bit_string_value(input: Input<'_>) -> ParserResult<'_, ASN1Value> {
     map(
         skip_ws_and_comments(pair(
             delimited(
@@ -44,14 +45,17 @@ pub fn bit_string_value(input: Input<'_>) -> IResult<Input<'_>, ASN1Value> {
 /// If the match succeeds, the lexer will consume the match and return the remaining string
 /// and a wrapped `BitString` value representing the ASN1 declaration.
 /// If the match fails, the lexer will not consume the input and will return an error.
-pub fn bit_string(input: Input<'_>) -> IResult<Input<'_>, ASN1Type> {
-    with_parser("BitStringType", map(
-        preceded(
-            skip_ws_and_comments(tag(BIT_STRING)),
-            pair(opt(distinguished_values), opt(constraint)),
+pub fn bit_string(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
+    context(
+        "BitStringType",
+        map(
+            preceded(
+                skip_ws_and_comments(tag(BIT_STRING)),
+                pair(opt(distinguished_values), opt(constraint)),
+            ),
+            |m| ASN1Type::BitString(m.into()),
         ),
-        |m| ASN1Type::BitString(m.into()),
-    ))(input)
+    )(input)
 }
 
 #[cfg(test)]

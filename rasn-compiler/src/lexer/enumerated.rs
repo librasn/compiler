@@ -2,19 +2,21 @@ use nom::{
     bytes::complete::tag,
     character::complete::{char, i128},
     combinator::{map, opt},
+    error::context,
     multi::{fold_many0, many0},
     sequence::{preceded, terminated, tuple},
     IResult,
 };
 
 use crate::{
+    input::Input,
     intermediate::{constraints::*, types::*, *},
     lexer::{asn1_type, parameterization},
 };
 
-use super::{common::*, input::{with_parser, Input}};
+use super::{common::*, error::ParserResult};
 
-pub fn enumerated_value(input: Input<'_>) -> IResult<Input<'_>, ToplevelValueDefinition> {
+pub fn enumerated_value(input: Input<'_>) -> ParserResult<'_, ToplevelValueDefinition> {
     map(
         tuple((
             skip_ws(many0(comment)),
@@ -48,16 +50,19 @@ pub fn enumerated_value(input: Input<'_>) -> IResult<Input<'_>, ToplevelValueDef
 /// If the match succeeds, the lexer will consume the match and return the remaining string
 /// and a wrapped `Enumerated` value representing the ASN1 declaration.
 /// If the match fails, the lexer will not consume the input and will return an error.
-pub fn enumerated(input: Input<'_>) -> IResult<Input<'_>, ASN1Type> {
-    with_parser("EnumeratedType", map(
-        preceded(skip_ws_and_comments(tag(ENUMERATED)), enumerated_body),
-        |m| ASN1Type::Enumerated(m.into()),
-    ))(input)
+pub fn enumerated(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
+    context(
+        "EnumeratedType",
+        map(
+            preceded(skip_ws_and_comments(tag(ENUMERATED)), enumerated_body),
+            |m| ASN1Type::Enumerated(m.into()),
+        ),
+    )(input)
 }
 
 fn enumeral(
     input: Input<'_>,
-) -> IResult<Input<'_>, (&str, Option<i128>, Option<char>, Option<&str>)> {
+) -> ParserResult<'_, (&str, Option<i128>, Option<char>, Option<&str>)> {
     skip_ws_and_comments(tuple((
         skip_ws(identifier),
         skip_ws(opt(in_parentheses(skip_ws_and_comments(i128)))),
@@ -66,7 +71,7 @@ fn enumeral(
     )))(input)
 }
 
-fn enumerals<'a>(start_index: usize) -> impl FnMut(Input<'a>) -> IResult<Input<'a>, Vec<Enumeral>> {
+fn enumerals<'a>(start_index: usize) -> impl FnMut(Input<'a>) -> ParserResult<'a, Vec<Enumeral>> {
     fold_many0(
         enumeral,
         Vec::<Enumeral>::new,
@@ -83,8 +88,8 @@ fn enumerals<'a>(start_index: usize) -> impl FnMut(Input<'a>) -> IResult<Input<'
 
 fn enumerated_body(
     input: Input<'_>,
-) -> IResult<
-    Input<'_>,
+) -> ParserResult<
+    '_,
     (
         Vec<Enumeral>,
         Option<ExtensionMarker>,

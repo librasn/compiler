@@ -1,4 +1,5 @@
 use nom::{
+    branch::alt,
     character::complete::char,
     combinator::{into, map},
     multi::separated_list1,
@@ -6,18 +7,20 @@ use nom::{
     IResult,
 };
 
-use crate::intermediate::{constraints::Parameter, parameterization::*, *};
+use crate::{
+    input::Input,
+    intermediate::{constraints::Parameter, parameterization::*, *},
+};
 
 use super::{
-    alt::alt,
     asn1_type, asn1_value,
     common::{identifier, in_braces, skip_ws_and_comments},
+    error::ParserResult,
     information_object_class::{information_object, object_set},
-    input::Input,
     value_identifier,
 };
 
-pub fn parameterization(input: Input<'_>) -> IResult<Input<'_>, Parameterization> {
+pub fn parameterization(input: Input<'_>) -> ParserResult<'_, Parameterization> {
     into(in_braces(separated_list1(
         char(COMMA),
         skip_ws_and_comments(alt((
@@ -37,7 +40,7 @@ pub fn parameterization(input: Input<'_>) -> IResult<Input<'_>, Parameterization
     )))(input)
 }
 
-pub fn parameters(input: Input<'_>) -> IResult<Input<'_>, Vec<Parameter>> {
+pub fn parameters(input: Input<'_>) -> ParserResult<'_, Vec<Parameter>> {
     into(in_braces(separated_list1(
         char(COMMA),
         skip_ws_and_comments(alt((

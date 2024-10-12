@@ -1,8 +1,8 @@
-use nom::{bytes::complete::tag, combinator::value, IResult};
+use nom::{bytes::complete::tag, combinator::value, error::context, IResult};
 
-use crate::intermediate::*;
+use crate::{input::Input, intermediate::*};
 
-use super::{common::skip_ws_and_comments, input::{with_parser, Input}};
+use super::{common::skip_ws_and_comments, error::ParserResult};
 
 /// Tries to parse an ASN1 EMBEDDED PDV
 ///
@@ -20,9 +20,12 @@ use super::{common::skip_ws_and_comments, input::{with_parser, Input}};
 /// _"Embedded Presentation Data Value" from its use in the OSI_
 /// _Presentation Layer, but this expansion is not used today,_
 /// _and it should be interpreted as "embedded value"._
-pub fn embedded_pdv(input: Input<'_>) -> IResult<Input<'_>, ASN1Type> {
-    with_parser("EmbeddedPDVType", value(
-        ASN1Type::EmbeddedPdv,
-        skip_ws_and_comments(tag(EMBEDDED_PDV)),
-    ))(input)
+pub fn embedded_pdv(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
+    context(
+        "EmbeddedPDVType",
+        value(
+            ASN1Type::EmbeddedPdv,
+            skip_ws_and_comments(tag(EMBEDDED_PDV)),
+        ),
+    )(input)
 }

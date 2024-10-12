@@ -14,7 +14,10 @@ use quote::{quote, ToTokens};
 #[cfg(target_family = "wasm")]
 use wasm_bindgen::prelude::*;
 
-use super::{error::{GeneratorError, GeneratorErrorType}, Backend, GeneratedModule};
+use super::{
+    error::{GeneratorError, GeneratorErrorType},
+    Backend, GeneratedModule,
+};
 
 mod builder;
 mod template;
@@ -180,11 +183,13 @@ impl Backend for Rasn {
     }
 
     fn format_bindings(bindings: &str) -> Result<String, Box<dyn CompilerError>> {
-        Self::internal_fmt(bindings).map_err(|e| Box::new(GeneratorError {
-            top_level_declaration: None,
-            details: e.to_string(),
-            kind: GeneratorErrorType::FormattingError
-        }) as Box<dyn CompilerError>)
+        Self::internal_fmt(bindings).map_err(|e| {
+            Box::new(GeneratorError {
+                top_level_declaration: None,
+                details: e.to_string(),
+                kind: GeneratorErrorType::FormattingError,
+            }) as Box<dyn CompilerError>
+        })
     }
 
     fn generate(&self, tld: ToplevelDefinition) -> Result<String, GeneratorError> {

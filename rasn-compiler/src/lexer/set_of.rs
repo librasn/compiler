@@ -1,7 +1,8 @@
-use crate::intermediate::*;
+use crate::{input::Input, intermediate::*};
 use nom::{
     bytes::complete::tag,
     combinator::{map, opt},
+    error::context,
     sequence::{pair, preceded},
     IResult,
 };
@@ -10,7 +11,7 @@ use super::{
     asn1_type,
     common::{opt_parentheses, skip_ws_and_comments, value_identifier},
     constraint::constraint,
-    input::{with_parser, Input},
+    error::ParserResult,
 };
 
 /// Tries to parse an ASN1 SET OF
@@ -21,20 +22,26 @@ use super::{
 /// If the match succeeds, the lexer will consume the match and return the remaining string
 /// and a wrapped `SetOf` value representing the ASN1 declaration.
 /// If the match fails, the lexer will not consume the input and will return an error.
-pub fn set_of(input: Input<'_>) -> IResult<Input<'_>, ASN1Type> {
-    with_parser("SetOfType", map(
-        pair(
-            preceded(
-                skip_ws_and_comments(tag(SET)),
-                opt(opt_parentheses(constraint)),
+pub fn set_of(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
+    context(
+        "SetOfType",
+        map(
+            pair(
+                preceded(
+                    skip_ws_and_comments(tag(SET)),
+                    opt(opt_parentheses(constraint)),
+                ),
+                preceded(
+                    skip_ws_and_comments(pair(
+                        tag(OF),
+                        opt(skip_ws_and_comments(value_identifier)),
+                    )),
+                    asn1_type,
+                ),
             ),
-            preceded(
-                skip_ws_and_comments(pair(tag(OF), opt(skip_ws_and_comments(value_identifier)))),
-                asn1_type,
-            ),
+            |m| ASN1Type::SetOf(m.into()),
         ),
-        |m| ASN1Type::SetOf(m.into()),
-    ))(input)
+    )(input)
 }
 
 #[cfg(test)]

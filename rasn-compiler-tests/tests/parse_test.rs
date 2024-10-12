@@ -8,7 +8,9 @@ fn parses_modules() {
     let mut succeeded = 0;
     let mut failed = 0;
     for entry in read_dir.flatten() {
-        if failed > 10 { break }
+        if failed > 10 {
+            break;
+        }
         let path = entry.path();
         println!("{:?}", &path);
         if let Err(e) = Compiler::<RasnBackend, _>::new()
@@ -24,7 +26,7 @@ fn parses_modules() {
 {}
 
                     "#,
-                e.as_report()
+                e.as_report(&std::fs::read_to_string(path.clone()).unwrap())
             ))
         } else {
             succeeded += 1;
@@ -57,7 +59,9 @@ fn compile_etsi() {
             // .add_asn_by_path("../rasn-compiler/test_asn1/ngap_container.asn")
             // .add_asn_by_path("../rasn-compiler/test_asn1/ngap_ies.asn")
             // .add_asn_by_path("../rasn-compiler/test_asn1/ngap_pdus.asn")
-            .add_asn_by_path("../rasn-compiler/test_asn1/nr.asn")
+            .add_asn_by_path(
+                "./tests/modules/itu-t_q_q1228_1997_IN-CS2-SCF-SCF-pkgs-contracts-acs.asn1"
+            )
             .set_output_path("./tests")
             .compile()
     );

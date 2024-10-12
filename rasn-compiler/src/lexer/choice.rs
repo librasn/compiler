@@ -1,18 +1,22 @@
-use input::Input;
 use nom::{
+    branch::alt,
     bytes::complete::tag,
     character::complete::char,
     combinator::{into, opt},
+    error::context,
     multi::many0,
     sequence::{separated_pair, terminated, tuple},
     IResult,
 };
 
-use crate::intermediate::{types::*, *};
+use crate::{
+    input::Input,
+    intermediate::{types::*, *},
+};
 
-use super::{constraint::constraint, *};
+use super::{constraint::constraint, error::ParserResult, *};
 
-pub fn choice_value(input: Input<'_>) -> IResult<Input<'_>, ASN1Value> {
+pub fn choice_value(input: Input<'_>) -> ParserResult<'_, ASN1Value> {
     map(
         skip_ws_and_comments(separated_pair(identifier, char(':'), asn1_value)),
         |(id, val)| ASN1Value::Choice {
@@ -43,7 +47,7 @@ pub fn choice_value(input: Input<'_>) -> IResult<Input<'_>, ASN1Value> {
 /// contains anonymous members, these nested members will be represented as
 /// structs within the same global scope.
 /// If the match fails, the lexer will not consume the input and will return an error.
-pub fn selection_type_choice(input: Input<'_>) -> IResult<Input<'_>, ASN1Type> {
+pub fn selection_type_choice(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
     map(
         into(separated_pair(
             skip_ws_and_comments(value_identifier),
@@ -64,42 +68,45 @@ pub fn selection_type_choice(input: Input<'_>) -> IResult<Input<'_>, ASN1Type> {
 /// contains anonymous members, these nested members will be represented as
 /// structs within the same global scope.
 /// If the match fails, the lexer will not consume the input and will return an error.
-pub fn choice(input: Input<'_>) -> IResult<Input<'_>, ASN1Type> {
-    with_parser("ChoiceType", map(
-        preceded(
-            skip_ws_and_comments(tag(CHOICE)),
-            in_braces(tuple((
-                many0(terminated(
-                    skip_ws_and_comments(choice_option),
-                    optional_comma,
-                )),
-                opt(terminated(
-                    extension_marker,
-                    opt(skip_ws_and_comments(char(COMMA))),
-                )),
-                opt(map(
-                    many0(alt((
-                        map(
-                            terminated(skip_ws_and_comments(choice_option), optional_comma),
-                            |extension| vec![extension],
-                        ),
-                        terminated(
-                            in_brackets(in_brackets(many1(terminated(
-                                skip_ws_and_comments(choice_option),
+pub fn choice(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
+    context(
+        "ChoiceType",
+        map(
+            preceded(
+                skip_ws_and_comments(tag(CHOICE)),
+                in_braces(tuple((
+                    many0(terminated(
+                        skip_ws_and_comments(choice_option),
+                        optional_comma,
+                    )),
+                    opt(terminated(
+                        extension_marker,
+                        opt(skip_ws_and_comments(char(COMMA))),
+                    )),
+                    opt(map(
+                        many0(alt((
+                            map(
+                                terminated(skip_ws_and_comments(choice_option), optional_comma),
+                                |extension| vec![extension],
+                            ),
+                            terminated(
+                                in_brackets(in_brackets(many1(terminated(
+                                    skip_ws_and_comments(choice_option),
+                                    optional_comma,
+                                )))),
                                 optional_comma,
-                            )))),
-                            optional_comma,
-                        ),
-                    ))),
-                    |extensions| extensions.into_iter().flatten().collect(),
-                )),
-            ))),
+                            ),
+                        ))),
+                        |extensions| extensions.into_iter().flatten().collect(),
+                    )),
+                ))),
+            ),
+            |m| ASN1Type::Choice(m.into()),
         ),
-        |m| ASN1Type::Choice(m.into()),
-    ))(input)
+    )(input)
 }
 
-fn choice_option(input: Input<'_>) -> IResult<Input<'_>, ChoiceOption> {
+fn choice_option(input: Input<'_>) -> ParserResult<'_, ChoiceOption> {
     into(tuple((
         skip_ws_and_comments(identifier),
         opt(asn_tag),

@@ -3,7 +3,10 @@ use std::error::Error;
 
 use proc_macro2::LexError;
 
-use crate::{error::CompilerError, intermediate::{error::GrammarError, ToplevelDefinition}};
+use crate::{
+    error::CompilerError,
+    intermediate::{error::GrammarError, ToplevelDefinition},
+};
 
 #[derive(Debug, Clone)]
 pub struct GeneratorError {
@@ -39,12 +42,12 @@ pub enum GeneratorErrorType {
 impl Error for GeneratorError {}
 
 impl CompilerError for GeneratorError {
-    fn as_report(&self) -> String {
+    fn as_report(&self, input: &str) -> String {
         format!("{self:#?}")
     }
 
     fn as_styled_report(&self) -> String {
-        self.as_report()
+        format!("{self:#?}")
     }
 }
 

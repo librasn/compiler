@@ -1,20 +1,21 @@
-use crate::intermediate::*;
+use crate::{input::Input, intermediate::*};
 use nom::{
+    branch::alt,
     bytes::complete::tag,
     character::complete::{char, i32, i64, u64},
     combinator::{map, opt, value},
+    error::context,
     sequence::{delimited, preceded, separated_pair, tuple},
     IResult,
 };
 
 use super::{
-    alt::alt,
     common::{in_braces, skip_ws_and_comments},
     constraint::constraint,
-    input::{with_parser, Input},
+    error::ParserResult,
 };
 
-pub fn real_value(input: Input<'_>) -> IResult<Input<'_>, ASN1Value> {
+pub fn real_value(input: Input<'_>) -> ParserResult<'_, ASN1Value> {
     map(
         skip_ws_and_comments(alt((dot_notation, mbe_notation))),
         ASN1Value::Real,
@@ -29,17 +30,20 @@ pub fn real_value(input: Input<'_>) -> IResult<Input<'_>, ASN1Value> {
 /// If the match succeeds, the lexer will consume the match and return the remaining string
 /// and a wrapped `Real` value representing the ASN1 declaration.
 /// If the match fails, the lexer will not consume the input and will return an error.
-pub fn real(input: Input<'_>) -> IResult<Input<'_>, ASN1Type> {
-    with_parser("RealType", map(
-        preceded(
-            skip_ws_and_comments(tag(REAL)),
-            opt(skip_ws_and_comments(constraint)),
+pub fn real(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
+    context(
+        "RealType",
+        map(
+            preceded(
+                skip_ws_and_comments(tag(REAL)),
+                opt(skip_ws_and_comments(constraint)),
+            ),
+            |m| ASN1Type::Real(m.into()),
         ),
-        |m| ASN1Type::Real(m.into()),
-    ))(input)
+    )(input)
 }
 
-fn dot_notation(input: Input<'_>) -> IResult<Input<'_>, f64> {
+fn dot_notation(input: Input<'_>) -> ParserResult<'_, f64> {
     map(
         skip_ws_and_comments(separated_pair(i64, char('.'), u64)),
         |(wholes, decimals)| {
@@ -56,7 +60,7 @@ fn dot_notation(input: Input<'_>) -> IResult<Input<'_>, f64> {
     )(input)
 }
 
-fn mbe_notation(input: Input<'_>) -> IResult<Input<'_>, f64> {
+fn mbe_notation(input: Input<'_>) -> ParserResult<'_, f64> {
     map(
         in_braces(tuple((
             delimited(

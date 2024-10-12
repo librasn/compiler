@@ -28,12 +28,12 @@ impl GrammarError {
 }
 
 impl CompilerError for GrammarError {
-    fn as_report(&self) -> String {
+    fn as_report(&self, input: &str) -> String {
         format!("{self:#?}")
     }
 
     fn as_styled_report(&self) -> String {
-        self.as_report()
+        format!("{self:#?}")
     }
 }
 

@@ -15,33 +15,14 @@ use nom::{
     InputTake, InputTakeAtPosition, Offset, ParseTo, Slice,
 };
 
-/// Tracks the parser name and success in the parser `Input`.
-pub fn with_parser<'a, F, O: Debug>(
-    parser_name: &'static str,
-    mut inner: F,
-) -> impl FnMut(Input<'a>) -> IResult<Input<'a>, O>
-where
-    F: FnMut(Input<'a>) -> IResult<Input<'a>, O>,
-{
-    move |mut input| {
-        input.track_parser(parser_name, false);
-        match inner(input) {
-            Ok((mut rem, res)) => {
-                rem.reset_parser_tracking();
-                rem.track_parser(parser_name, true);
-                Ok((rem, res))
-            }
-            res => res,
-        }
-    }
-}
+use crate::lexer::error::ParserResult;
 
 /// Informs `Input` of a context switch.
 pub fn context_boundary<'a, F, O: Debug>(
     mut inner: F,
-) -> impl FnMut(Input<'a>) -> IResult<Input<'a>, O>
+) -> impl FnMut(Input<'a>) -> ParserResult<'a, O>
 where
-    F: FnMut(Input<'a>) -> IResult<Input<'a>, O>,
+    F: FnMut(Input<'a>) -> ParserResult<'a, O>,
 {
     move |mut input| {
         input.reset_context();
@@ -58,10 +39,7 @@ pub struct TrackedParser {
 
 impl TrackedParser {
     pub fn new(name: &'static str, success: bool) -> Self {
-        Self {
-            name,
-            success,
-        }
+        Self { name, success }
     }
 }
 
@@ -74,10 +52,16 @@ pub struct Input<'a> {
     inner: &'a str,
     /// current line position of parser, starts at 1
     line: usize,
+    /// Starting line of the current context.
     /// The context is an excerpt of an ASN.1 source
     /// that is returned along with the line in which
     /// an error was encountered.
-    context: &'a str,
+    context_start_line: usize,
+    /// Starting offset of the current context.
+    /// The context is an excerpt of an ASN.1 source
+    /// that is returned along with the line in which
+    /// an error was encountered.
+    context_start_offset: usize,
     /// current column position of parser, starts at 1
     column: usize,
     /// current offset of parser from start of initial input, starts at 0
@@ -109,8 +93,16 @@ impl Input<'_> {
         self.column
     }
 
-    pub fn context(&self) -> &str {
-        self.context
+    pub fn offset(&self) -> usize {
+        self.offset
+    }
+
+    pub fn context_start_line(&self) -> usize {
+        self.context_start_line
+    }
+
+    pub fn context_start_offset(&self) -> usize {
+        self.context_start_offset
     }
 
     pub fn inner(&self) -> &str {
@@ -122,7 +114,7 @@ impl Input<'_> {
     }
 
     pub fn reset_context(&mut self) {
-        self.context = self.inner;
+        self.context_start_line = self.line;
     }
 
     #[cfg(test)]
@@ -135,7 +127,8 @@ impl Input<'_> {
         Self {
             inner: self.inner,
             line,
-            context: self.context,
+            context_start_line: self.context_start_line,
+            context_start_offset: self.context_start_offset,
             column,
             offset,
             tracked_parsers: self.tracked_parsers.clone(),
@@ -167,7 +160,8 @@ impl<'a> From<&'a str> for Input<'a> {
         Self {
             inner: value,
             line: 1,
-            context: value,
+            context_start_line: 1,
+            context_start_offset: 0,
             column: 1,
             offset: 0,
             tracked_parsers: Vec::new(),
@@ -296,7 +290,8 @@ where
                 line: self.line,
                 column: self.column,
                 offset: self.offset,
-                context: self.context,
+                context_start_line: self.context_start_line,
+                context_start_offset: self.context_start_offset,
                 inner,
                 tracked_parsers: self.tracked_parsers.clone(),
             }
@@ -314,7 +309,8 @@ where
             Input {
                 line,
                 column,
-                context: self.context,
+                context_start_line: self.context_start_line,
+                context_start_offset: self.context_start_offset,
                 inner,
                 offset: self.offset + consumed_len,
                 tracked_parsers: self.tracked_parsers.clone(),
@@ -405,11 +401,9 @@ impl<R: FromStr> ParseTo<R> for Input<'_> {
 mod tests {
     use nom::{
         bytes::complete::{tag, take_until},
-        error::Error,
+        error::{context, Error},
         sequence::pair,
     };
-
-    use crate::lexer::alt::alt;
 
     use super::*;
 
@@ -461,8 +455,8 @@ mod tests {
     #[test]
     fn tracks_applied_parsers() {
         let (remaining, _) = pair(
-            with_parser("first", tag("test1")),
-            with_parser("second", tag("test2")),
+            context("first", tag::<&str, Input<'_>, Error<Input<'_>>>("test1")),
+            context("second", tag("test2")),
         )(Input::from("test1test2test3"))
         .unwrap();
         assert_eq!(remaining.line(), 1);
@@ -474,32 +468,6 @@ mod tests {
         assert_eq!(
             remaining.tracked_parser_name_success_at(1).unwrap(),
             ("second", true)
-        );
-    }
-
-    #[test]
-    fn tracks_alt_applied_parsers() {
-        let (remaining, _) = alt((
-            with_parser("first", tag("not matching")),
-            with_parser("second", tag("not matching either")),
-            with_parser("third", take_until("test3")),
-        ))(Input::from("test1\n  test2\n  test3"))
-        .unwrap();
-        assert_eq!(remaining.line(), 3);
-        assert_eq!(remaining.column(), 4);
-        println!("{:?}", remaining.tracked_parsers());
-
-        assert_eq!(
-            remaining.tracked_parser_name_success_at(0).unwrap(),
-            ("first", false)
-        );
-        assert_eq!(
-            remaining.tracked_parser_name_success_at(1).unwrap(),
-            ("second", false)
-        );
-        assert_eq!(
-            remaining.tracked_parser_name_success_at(2).unwrap(),
-            ("third", true)
         );
     }
 }

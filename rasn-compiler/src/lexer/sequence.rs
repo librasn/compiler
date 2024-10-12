@@ -11,7 +11,7 @@ use crate::intermediate::{types::*, *};
 
 use super::{common::optional_comma, constraint::constraint, *};
 
-pub fn sequence_value(input: Input<'_>) -> IResult<Input<'_>, ASN1Value> {
+pub fn sequence_value(input: Input<'_>) -> ParserResult<'_, ASN1Value> {
     map(
         in_braces(separated_list0(
             skip_ws_and_comments(char(',')),
@@ -41,69 +41,75 @@ pub fn sequence_value(input: Input<'_>) -> IResult<Input<'_>, ASN1Value> {
 /// contains anonymous SEQUENCEs as members, these nested SEQUENCEs will be represented as
 /// structs within the same global scope.
 /// If the match fails, the lexer will not consume the input and will return an error.
-pub fn sequence(input: Input<'_>) -> IResult<Input<'_>, ASN1Type> {
-    with_parser("SequenceType", map(
-        preceded(
-            skip_ws_and_comments(tag(SEQUENCE)),
-            pair(
-                in_braces(tuple((
-                    many0(terminated(
-                        skip_ws_and_comments(sequence_component),
-                        optional_comma,
-                    )),
-                    opt(terminated(extension_marker, opt(char(COMMA)))),
-                    opt(many0(terminated(
-                        skip_ws_and_comments(alt((extension_group, sequence_component))),
-                        optional_comma,
+pub fn sequence(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
+    context(
+        "SequenceType",
+        map(
+            preceded(
+                skip_ws_and_comments(tag(SEQUENCE)),
+                pair(
+                    in_braces(tuple((
+                        many0(terminated(
+                            skip_ws_and_comments(sequence_component),
+                            optional_comma,
+                        )),
+                        opt(terminated(extension_marker, opt(char(COMMA)))),
+                        opt(many0(terminated(
+                            skip_ws_and_comments(alt((extension_group, sequence_component))),
+                            optional_comma,
+                        ))),
                     ))),
-                ))),
-                opt(constraint),
+                    opt(constraint),
+                ),
             ),
+            |m| ASN1Type::Sequence(m.into()),
         ),
-        |m| ASN1Type::Sequence(m.into()),
-    ))(input)
+    )(input)
 }
 
-fn extension_group(input: Input<'_>) -> IResult<Input<'_>, SequenceComponent> {
-    with_parser("ExtensionAdditionGroup", map(
-        in_version_brackets(preceded(
-            opt(pair(
-                skip_ws_and_comments(i128),
-                skip_ws_and_comments(char(':')),
+fn extension_group(input: Input<'_>) -> ParserResult<'_, SequenceComponent> {
+    context(
+        "ExtensionAdditionGroup",
+        map(
+            in_version_brackets(preceded(
+                opt(pair(
+                    skip_ws_and_comments(i128),
+                    skip_ws_and_comments(char(':')),
+                )),
+                skip_ws_and_comments(many1(terminated(
+                    skip_ws_and_comments(sequence_component),
+                    optional_comma,
+                ))),
             )),
-            skip_ws_and_comments(many1(terminated(
-                skip_ws_and_comments(sequence_component),
-                optional_comma,
-            ))),
-        )),
-        |ext_group| {
-            let mut components_of = vec![];
-            let mut members = vec![];
-            for comp in ext_group {
-                match comp {
-                    SequenceComponent::Member(m) => members.push(m),
-                    SequenceComponent::ComponentsOf(c) => components_of.push(c),
+            |ext_group| {
+                let mut components_of = vec![];
+                let mut members = vec![];
+                for comp in ext_group {
+                    match comp {
+                        SequenceComponent::Member(m) => members.push(m),
+                        SequenceComponent::ComponentsOf(c) => components_of.push(c),
+                    }
                 }
-            }
-            SequenceComponent::Member(SequenceOrSetMember {
-                is_recursive: false,
-                name: String::from("ext_group_") + &members.first().unwrap().name,
-                tag: None,
-                ty: ASN1Type::Sequence(SequenceOrSet {
-                    components_of,
-                    extensible: None,
+                SequenceComponent::Member(SequenceOrSetMember {
+                    is_recursive: false,
+                    name: String::from("ext_group_") + &members.first().unwrap().name,
+                    tag: None,
+                    ty: ASN1Type::Sequence(SequenceOrSet {
+                        components_of,
+                        extensible: None,
+                        constraints: vec![],
+                        members,
+                    }),
+                    default_value: None,
+                    is_optional: false,
                     constraints: vec![],
-                    members,
-                }),
-                default_value: None,
-                is_optional: false,
-                constraints: vec![],
-            })
-        },
-    ))(input)
+                })
+            },
+        ),
+    )(input)
 }
 
-pub fn sequence_component(input: Input<'_>) -> IResult<Input<'_>, SequenceComponent> {
+pub fn sequence_component(input: Input<'_>) -> ParserResult<'_, SequenceComponent> {
     skip_ws_and_comments(alt((
         map(
             preceded(
@@ -119,15 +125,18 @@ pub fn sequence_component(input: Input<'_>) -> IResult<Input<'_>, SequenceCompon
     )))(input)
 }
 
-pub fn sequence_or_set_member(input: Input<'_>) -> IResult<Input<'_>, SequenceOrSetMember> {
-    with_parser("ComponentType", into(tuple((
-        skip_ws_and_comments(identifier),
-        opt(asn_tag),
-        skip_ws_and_comments(asn1_type),
-        opt(constraint),
-        optional_marker,
-        default,
-    ))))(input)
+pub fn sequence_or_set_member(input: Input<'_>) -> ParserResult<'_, SequenceOrSetMember> {
+    context(
+        "ComponentType",
+        into(tuple((
+            skip_ws_and_comments(identifier),
+            opt(asn_tag),
+            skip_ws_and_comments(asn1_type),
+            opt(constraint),
+            optional_marker,
+            default,
+        ))),
+    )(input)
 }
 
 #[cfg(test)]

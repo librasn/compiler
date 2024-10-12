@@ -1,4 +1,5 @@
 use nom::{
+    branch::alt,
     bytes::complete::{is_not, tag},
     character::complete::{
         alpha1, alphanumeric1, char, i128, multispace0, multispace1, one_of, u64,
@@ -7,15 +8,16 @@ use nom::{
     error::Error,
     multi::{many0, many1},
     sequence::{delimited, pair, preceded, terminated},
-    IResult,
 };
 
-use crate::intermediate::{constraints::*, types::*, *};
+use crate::{
+    input::Input,
+    intermediate::{constraints::*, types::*, *},
+};
 
 use super::{
-    alt::alt,
     asn1_value,
-    input::*,
+    error::{MiscError, ParserResult},
     util::{map_into, opt_delimited, take_until_or, take_until_unbalanced},
 };
 
@@ -30,11 +32,11 @@ use super::{
 /// _The lexical item "comment" can have two forms:_
 ///    * _One-line comments which begin with "--" as defined in 12.6.3;_
 ///    * _Multiple-line comments which begin with "/*" as defined in 12.6.4._
-pub fn comment(input: Input<'_>) -> IResult<Input<'_>, &str> {
+pub fn comment(input: Input<'_>) -> ParserResult<'_, &str> {
     skip_ws(alt((block_comment, line_comment)))(input)
 }
 
-pub fn line_comment(input: Input<'_>) -> IResult<Input<'_>, &str> {
+pub fn line_comment(input: Input<'_>) -> ParserResult<'_, &str> {
     delimited(
         tag(LINE_COMMENT),
         into_inner(take_until_or("\n", LINE_COMMENT)),
@@ -42,7 +44,7 @@ pub fn line_comment(input: Input<'_>) -> IResult<Input<'_>, &str> {
     )(input)
 }
 
-pub fn block_comment(input: Input<'_>) -> IResult<Input<'_>, &str> {
+pub fn block_comment(input: Input<'_>) -> ParserResult<'_, &str> {
     delimited(
         tag(BLOCK_COMMENT_START),
         take_until_unbalanced(BLOCK_COMMENT_START, BLOCK_COMMENT_END),
@@ -61,7 +63,7 @@ pub fn block_comment(input: Input<'_>) -> IResult<Input<'_>, &str> {
 /// _12.3 An "identifier" shall consist of an arbitrary number (one or more) of letters, digits,
 /// and hyphens. The initial character shall be a lower-case letter. A hyphen shall not be the
 /// last character. A hyphen shall not be immediately followed by another hyphen._
-pub fn identifier(input: Input<'_>) -> IResult<Input<'_>, &str> {
+pub fn identifier(input: Input<'_>) -> ParserResult<'_, &str> {
     skip_ws_and_comments(into_inner(recognize(pair(
         alpha1,
         many0(alt((
@@ -71,14 +73,14 @@ pub fn identifier(input: Input<'_>) -> IResult<Input<'_>, &str> {
     ))))(input)
 }
 
-pub fn into_inner<'a, F>(parser: F) -> impl FnMut(Input<'a>) -> IResult<Input<'a>, &'a str>
+pub fn into_inner<'a, F>(parser: F) -> impl FnMut(Input<'a>) -> ParserResult<'a, &'a str>
 where
-    F: FnMut(Input<'a>) -> IResult<Input<'a>, Input<'a>>,
+    F: FnMut(Input<'a>) -> ParserResult<'a, Input<'a>>,
 {
     map(parser, |s: Input<'_>| s.into_inner())
 }
 
-pub fn title_case_identifier(input: Input<'_>) -> IResult<Input<'_>, &str> {
+pub fn title_case_identifier(input: Input<'_>) -> ParserResult<'_, &str> {
     map_res(
         recognize(pair(
             one_of("ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890"),
@@ -89,10 +91,7 @@ pub fn title_case_identifier(input: Input<'_>) -> IResult<Input<'_>, &str> {
         )),
         |identifier| {
             if ASN1_KEYWORDS.contains(&identifier.inner()) {
-                Err(nom::Err::Error(Error {
-                    input: input.clone(),
-                    code: nom::error::ErrorKind::Tag,
-                }))
+                Err(MiscError("Identifier is ASN.1 keyword."))
             } else {
                 Ok(identifier.into_inner())
             }
@@ -100,7 +99,7 @@ pub fn title_case_identifier(input: Input<'_>) -> IResult<Input<'_>, &str> {
     )(input.clone())
 }
 
-pub fn value_identifier(input: Input<'_>) -> IResult<Input<'_>, &str> {
+pub fn value_identifier(input: Input<'_>) -> ParserResult<'_, &str> {
     into_inner(recognize(pair(
         one_of("abcdefghijklmnopqrstuvwxyz"),
         many0(alt((
@@ -110,23 +109,23 @@ pub fn value_identifier(input: Input<'_>) -> IResult<Input<'_>, &str> {
     )))(input)
 }
 
-pub fn skip_ws<'a, F, O>(inner: F) -> impl FnMut(Input<'a>) -> IResult<Input<'a>, O>
+pub fn skip_ws<'a, F, O>(inner: F) -> impl FnMut(Input<'a>) -> ParserResult<'a, O>
 where
-    F: FnMut(Input<'a>) -> IResult<Input<'a>, O>,
+    F: FnMut(Input<'a>) -> ParserResult<'a, O>,
 {
     preceded(multispace0, inner)
 }
 
-pub fn skip_ws_and_comments<'a, F, O>(inner: F) -> impl FnMut(Input<'a>) -> IResult<Input<'a>, O>
+pub fn skip_ws_and_comments<'a, F, O>(inner: F) -> impl FnMut(Input<'a>) -> ParserResult<'a, O>
 where
-    F: FnMut(Input<'a>) -> IResult<Input<'a>, O>,
+    F: FnMut(Input<'a>) -> ParserResult<'a, O>,
 {
     preceded(many0(alt((comment, into_inner(multispace1)))), inner)
 }
 
-pub fn in_parentheses<'a, F, O>(inner: F) -> impl FnMut(Input<'a>) -> IResult<Input<'a>, O>
+pub fn in_parentheses<'a, F, O>(inner: F) -> impl FnMut(Input<'a>) -> ParserResult<'a, O>
 where
-    F: FnMut(Input<'a>) -> IResult<Input<'a>, O>,
+    F: FnMut(Input<'a>) -> ParserResult<'a, O>,
 {
     delimited(
         skip_ws_and_comments(char(LEFT_PARENTHESIS)),
@@ -135,9 +134,9 @@ where
     )
 }
 
-pub fn in_brackets<'a, F, O>(inner: F) -> impl FnMut(Input<'a>) -> IResult<Input<'a>, O>
+pub fn in_brackets<'a, F, O>(inner: F) -> impl FnMut(Input<'a>) -> ParserResult<'a, O>
 where
-    F: FnMut(Input<'a>) -> IResult<Input<'a>, O>,
+    F: FnMut(Input<'a>) -> ParserResult<'a, O>,
 {
     delimited(
         skip_ws_and_comments(char(LEFT_BRACKET)),
@@ -146,9 +145,9 @@ where
     )
 }
 
-pub fn in_version_brackets<'a, F, O>(inner: F) -> impl FnMut(Input<'a>) -> IResult<Input<'a>, O>
+pub fn in_version_brackets<'a, F, O>(inner: F) -> impl FnMut(Input<'a>) -> ParserResult<'a, O>
 where
-    F: FnMut(Input<'a>) -> IResult<Input<'a>, O>,
+    F: FnMut(Input<'a>) -> ParserResult<'a, O>,
 {
     delimited(
         skip_ws_and_comments(tag("[[")),
@@ -157,9 +156,9 @@ where
     )
 }
 
-pub fn opt_parentheses<'a, F, O>(inner: F) -> impl FnMut(Input<'a>) -> IResult<Input<'a>, O>
+pub fn opt_parentheses<'a, F, O>(inner: F) -> impl FnMut(Input<'a>) -> ParserResult<'a, O>
 where
-    F: FnMut(Input<'a>) -> IResult<Input<'a>, O>,
+    F: FnMut(Input<'a>) -> ParserResult<'a, O>,
 {
     opt_delimited::<char, O, char, _, _, _>(
         skip_ws_and_comments(char(LEFT_BRACKET)),
@@ -168,9 +167,9 @@ where
     )
 }
 
-pub fn in_braces<'a, F, O>(inner: F) -> impl FnMut(Input<'a>) -> IResult<Input<'a>, O>
+pub fn in_braces<'a, F, O>(inner: F) -> impl FnMut(Input<'a>) -> ParserResult<'a, O>
 where
-    F: FnMut(Input<'a>) -> IResult<Input<'a>, O>,
+    F: FnMut(Input<'a>) -> ParserResult<'a, O>,
 {
     delimited(
         skip_ws_and_comments(char(LEFT_BRACE)),
@@ -179,11 +178,11 @@ where
     )
 }
 
-pub fn all_value(input: Input<'_>) -> IResult<Input<'_>, ASN1Value> {
+pub fn all_value(input: Input<'_>) -> ParserResult<'_, ASN1Value> {
     value(ASN1Value::All, skip_ws_and_comments(tag(ALL)))(input)
 }
 
-pub fn asn_tag(input: Input<'_>) -> IResult<Input<'_>, AsnTag> {
+pub fn asn_tag(input: Input<'_>) -> ParserResult<'_, AsnTag> {
     into(pair(
         in_brackets(pair(
             opt(into_inner(skip_ws_and_comments(alt((
@@ -200,19 +199,19 @@ pub fn asn_tag(input: Input<'_>) -> IResult<Input<'_>, AsnTag> {
     ))(input)
 }
 
-pub fn range_seperator(input: Input<'_>) -> IResult<Input<'_>, RangeSeperator> {
+pub fn range_seperator(input: Input<'_>) -> ParserResult<'_, RangeSeperator> {
     skip_ws_and_comments(tag(RANGE))(input).map(|(remaining, _)| (remaining, RangeSeperator()))
 }
 
-pub fn extension_marker(input: Input<'_>) -> IResult<Input<'_>, ExtensionMarker> {
+pub fn extension_marker(input: Input<'_>) -> ParserResult<'_, ExtensionMarker> {
     skip_ws_and_comments(tag(ELLIPSIS))(input).map(|(remaining, _)| (remaining, ExtensionMarker()))
 }
 
-pub fn assignment(input: Input<'_>) -> IResult<Input<'_>, &str> {
+pub fn assignment(input: Input<'_>) -> ParserResult<'_, &str> {
     into_inner(skip_ws_and_comments(tag(ASSIGN)))(input)
 }
 
-pub fn distinguished_values(input: Input<'_>) -> IResult<Input<'_>, Vec<DistinguishedValue>> {
+pub fn distinguished_values(input: Input<'_>) -> ParserResult<'_, Vec<DistinguishedValue>> {
     delimited(
         skip_ws_and_comments(char(LEFT_BRACE)),
         many0(terminated(
@@ -223,26 +222,26 @@ pub fn distinguished_values(input: Input<'_>) -> IResult<Input<'_>, Vec<Distingu
     )(input)
 }
 
-pub fn distinguished_val(input: Input<'_>) -> IResult<Input<'_>, DistinguishedValue> {
+pub fn distinguished_val(input: Input<'_>) -> ParserResult<'_, DistinguishedValue> {
     map_into(pair(skip_ws_and_comments(identifier), in_parentheses(i128)))(input)
 }
 
-pub fn optional_comma(input: Input<'_>) -> IResult<Input<'_>, Option<char>> {
+pub fn optional_comma(input: Input<'_>) -> ParserResult<'_, Option<char>> {
     skip_ws_and_comments(opt(char(COMMA)))(input)
 }
 
-pub fn optional_marker(input: Input<'_>) -> IResult<Input<'_>, Option<OptionalMarker>> {
+pub fn optional_marker(input: Input<'_>) -> ParserResult<'_, Option<OptionalMarker>> {
     opt(into(into_inner(skip_ws_and_comments(tag(OPTIONAL)))))(input)
 }
 
-pub fn default(input: Input<'_>) -> IResult<Input<'_>, Option<ASN1Value>> {
+pub fn default(input: Input<'_>) -> ParserResult<'_, Option<ASN1Value>> {
     opt(preceded(
         skip_ws_and_comments(tag(DEFAULT)),
         skip_ws_and_comments(asn1_value),
     ))(input)
 }
 
-pub fn uppercase_identifier(input: Input<'_>) -> IResult<Input<'_>, &str> {
+pub fn uppercase_identifier(input: Input<'_>) -> ParserResult<'_, &str> {
     alt((
         into_inner(recognize(pair(
             one_of("ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"),
@@ -345,7 +344,8 @@ and one */"#
                 r#" -- This means backward
       unavailable"#
                     .into()
-            ).map(|(i, o)| (i.into_inner(), o)),
+            )
+            .map(|(i, o)| (i.into_inner(), o)),
             Ok(("\n      unavailable", " This means backward",),)
         );
         assert_eq!(
@@ -353,7 +353,8 @@ and one */"#
                 r#"-- This means forward
         backward    (2), -- This means backward"#
                     .into()
-            ).map(|(i, o)| (i.into_inner(), o)),
+            )
+            .map(|(i, o)| (i.into_inner(), o)),
             Ok((
                 "\n        backward    (2), -- This means backward",
                 " This means forward",
@@ -363,22 +364,10 @@ and one */"#
 
     #[test]
     fn parses_valid_identifiers() {
-        assert_eq!(
-            identifier("EEE-DDD".into()).unwrap().1,
-            "EEE-DDD"
-        );
-        assert_eq!(
-            identifier("GenericLane ".into()).unwrap().1,
-            "GenericLane"
-        );
-        assert_eq!(
-            identifier("regional ".into()).unwrap().1,
-            "regional"
-        );
-        assert_eq!(
-            identifier("NodeXY64".into()).unwrap().1,
-            "NodeXY64"
-        );
+        assert_eq!(identifier("EEE-DDD".into()).unwrap().1, "EEE-DDD");
+        assert_eq!(identifier("GenericLane ".into()).unwrap().1, "GenericLane");
+        assert_eq!(identifier("regional ".into()).unwrap().1, "regional");
+        assert_eq!(identifier("NodeXY64".into()).unwrap().1, "NodeXY64");
         assert_eq!(
             identifier("Sub-Cause-Code  ".into()).unwrap().1,
             "Sub-Cause-Code"
@@ -388,24 +377,25 @@ and one */"#
     #[test]
     fn handles_invalid_identifiers() {
         assert_eq!(
-            identifier("EEE--DDD".into()).map(|(i, o)| (i.into_inner(), o)).unwrap(),
+            identifier("EEE--DDD".into())
+                .map(|(i, o)| (i.into_inner(), o))
+                .unwrap(),
             ("--DDD", "EEE")
         );
         assert!(identifier("-GenericLane".into()).is_err());
         assert!(identifier("64NodeXY".into()).is_err());
         assert!(identifier("&regional".into()).is_err());
         assert_eq!(
-            identifier("Sub-Cause-Code-".into()).map(|(i, o)| (i.into_inner(), o)).unwrap(),
+            identifier("Sub-Cause-Code-".into())
+                .map(|(i, o)| (i.into_inner(), o))
+                .unwrap(),
             ("-", "Sub-Cause-Code")
         );
     }
 
     #[test]
     fn discards_whitespace() {
-        assert_eq!(
-            skip_ws(identifier)(" EEE-DDD".into()).unwrap().1,
-            "EEE-DDD"
-        );
+        assert_eq!(skip_ws(identifier)(" EEE-DDD".into()).unwrap().1, "EEE-DDD");
         assert_eq!(
             skip_ws(identifier)("\nGenericLane ".into()).unwrap().1,
             "GenericLane"
@@ -419,7 +409,9 @@ and one */"#
             "NodeXY64"
         );
         assert_eq!(
-            skip_ws(identifier)("\r\n\nSub-Cause-Code  ".into()).unwrap().1,
+            skip_ws(identifier)("\r\n\nSub-Cause-Code  ".into())
+                .unwrap()
+                .1,
             "Sub-Cause-Code"
         );
     }
@@ -427,7 +419,9 @@ and one */"#
     #[test]
     fn discards_whitespace_and_comments() {
         assert_eq!(
-            skip_ws_and_comments(identifier)(" -- comment --EEE-DDD".into()).unwrap().1,
+            skip_ws_and_comments(identifier)(" -- comment --EEE-DDD".into())
+                .unwrap()
+                .1,
             "EEE-DDD"
         );
     }

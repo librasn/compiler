@@ -1,16 +1,22 @@
 use nom::{
+    branch::alt,
     bytes::complete::{tag, take_until},
     character::complete::{char, u8},
     combinator::{map, map_res, opt},
+    error::context,
     sequence::{delimited, pair, terminated, tuple},
     IResult,
 };
 
-use crate::intermediate::*;
+use crate::{input::Input, intermediate::*};
 
-use super::{alt::alt, common::*, constraint::constraint, input::{with_parser, Input}};
+use super::{
+    common::*,
+    constraint::constraint,
+    error::{MiscError, ParserResult},
+};
 
-pub fn character_string_value(input: Input<'_>) -> IResult<Input<'_>, ASN1Value> {
+pub fn character_string_value(input: Input<'_>) -> ParserResult<'_, ASN1Value> {
     map(
         skip_ws_and_comments(alt((
             map(
@@ -39,7 +45,7 @@ pub fn character_string_value(input: Input<'_>) -> IResult<Input<'_>, ASN1Value>
 /// _In all cases, the set of permitted characters may be restricted by subtyping._
 ///
 /// __Currently, the rasn compiler only supports group `0`__
-fn quadruple(input: Input<'_>) -> IResult<Input<'_>, char> {
+fn quadruple(input: Input<'_>) -> ParserResult<'_, char> {
     map_res(
         in_braces(tuple((
             terminated(skip_ws(u8), skip_ws(char(COMMA))),
@@ -49,16 +55,12 @@ fn quadruple(input: Input<'_>) -> IResult<Input<'_>, char> {
         ))),
         |(group, plane, row, cell)| {
             if group > 0 {
-                Err(nom::Err::Failure(nom::error::Error {
-                    input: input.clone(),
-                    code: nom::error::ErrorKind::Char,
-                }))
+                Err(MiscError("Currently, only group 0 is supported."))
             } else {
                 let code_point = (plane as u32) << 16 | (row as u32) << 8 | cell as u32;
-                char::from_u32(code_point).ok_or(nom::Err::Failure(nom::error::Error {
-                    input: input.clone(),
-                    code: nom::error::ErrorKind::Char,
-                }))
+                char::from_u32(code_point).ok_or(MiscError(
+                    "Failed to determine character from code point quadruple.",
+                ))
             }
         },
     )(input.clone())
@@ -74,26 +76,29 @@ fn quadruple(input: Input<'_>) -> IResult<Input<'_>, char> {
 /// If the match succeeds, the lexer will consume the match and return the remaining string
 /// and a wrapped `CharacterString` value representing the ASN1 declaration.
 /// If the match fails, the lexer will not consume the input and will return an error.
-pub fn character_string(input: Input<'_>) -> IResult<Input<'_>, ASN1Type> {
-    with_parser("CharacterStringType", map(
-        pair(
-            into_inner(skip_ws_and_comments(alt((
-                tag(IA5_STRING),
-                tag(UTF8_STRING),
-                tag(NUMERIC_STRING),
-                tag(VISIBLE_STRING),
-                tag(TELETEX_STRING),
-                tag(VIDEOTEX_STRING),
-                tag(GRAPHIC_STRING),
-                tag(GENERAL_STRING),
-                tag(UNIVERSAL_STRING),
-                tag(BMP_STRING),
-                tag(PRINTABLE_STRING),
-            )))),
-            opt(constraint),
+pub fn character_string(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
+    context(
+        "CharacterStringType",
+        map(
+            pair(
+                into_inner(skip_ws_and_comments(alt((
+                    tag(IA5_STRING),
+                    tag(UTF8_STRING),
+                    tag(NUMERIC_STRING),
+                    tag(VISIBLE_STRING),
+                    tag(TELETEX_STRING),
+                    tag(VIDEOTEX_STRING),
+                    tag(GRAPHIC_STRING),
+                    tag(GENERAL_STRING),
+                    tag(UNIVERSAL_STRING),
+                    tag(BMP_STRING),
+                    tag(PRINTABLE_STRING),
+                )))),
+                opt(constraint),
+            ),
+            |m| ASN1Type::CharacterString(m.into()),
         ),
-        |m| ASN1Type::CharacterString(m.into()),
-    ))(input)
+    )(input)
 }
 
 #[cfg(test)]

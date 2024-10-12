@@ -17,12 +17,15 @@ use std::{
     rc::Rc,
 };
 
-use crate::{error::CompilerError, intermediate::{
-    constraints::*,
-    information_object::{ClassLink, ToplevelInformationDefinition},
-    types::*,
-    *,
-}};
+use crate::{
+    error::CompilerError,
+    intermediate::{
+        constraints::*,
+        information_object::{ClassLink, ToplevelInformationDefinition},
+        types::*,
+        *,
+    },
+};
 
 use self::{
     error::{ValidatorError, ValidatorErrorType},
@@ -368,9 +371,12 @@ impl Validator {
 
     pub fn validate(
         mut self,
-    ) -> Result<(Vec<ToplevelDefinition>, Vec<Box<dyn CompilerError>>), Box<dyn CompilerError>> {
+    ) -> Result<(Vec<ToplevelDefinition>, Vec<Box<dyn CompilerError>>), Box<dyn CompilerError>>
+    {
         let warnings: Vec<Box<dyn CompilerError>>;
-        (self, warnings) = self.link().map_err(|e| Box::new(e) as Box<dyn CompilerError>)?;
+        (self, warnings) = self
+            .link()
+            .map_err(|e| Box::new(e) as Box<dyn CompilerError>)?;
         Ok(self.tlds.into_iter().fold(
             (Vec::<ToplevelDefinition>::new(), warnings),
             |(mut tlds, mut errors), (_, tld)| {

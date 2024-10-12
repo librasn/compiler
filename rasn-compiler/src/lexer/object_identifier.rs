@@ -2,24 +2,26 @@
 //! parsing ASN1 OBJECT IDENTIFIERs in a specification.
 //! OBJECT IDENTIFIERs serve to uniquely and globally (really globally!)
 //! identify a so-called _information object_.
-use crate::intermediate::{
-    ASN1Type, ObjectIdentifierArc, ObjectIdentifierValue, OBJECT_IDENTIFIER,
+use crate::{
+    input::Input,
+    intermediate::{ASN1Type, ObjectIdentifierArc, ObjectIdentifierValue, OBJECT_IDENTIFIER},
 };
 
 use nom::{
+    branch::alt,
     bytes::complete::tag,
     character::complete::u128,
     combinator::{into, map, opt},
+    error::context,
     multi::many1,
     sequence::{pair, preceded},
     IResult,
 };
 
 use super::{
-    alt::alt,
     common::{in_braces, in_parentheses, skip_ws, skip_ws_and_comments, value_identifier},
     constraint::constraint,
-    input::{with_parser, Input},
+    error::ParserResult,
     RELATIVE_OID,
 };
 
@@ -34,7 +36,7 @@ use super::{
 /// If the match succeeds, the lexer will consume the match and return the remaining string
 /// and an `ObjectIdentifier` value representing the ASN1 declaration.
 /// If the match fails, the lexer will not consume the input and will return an error.
-pub fn object_identifier_value(input: Input<'_>) -> IResult<Input<'_>, ObjectIdentifierValue> {
+pub fn object_identifier_value(input: Input<'_>) -> ParserResult<'_, ObjectIdentifierValue> {
     into(skip_ws_and_comments(preceded(
         // TODO: store info whether the object id is relative
         opt(alt((tag(OBJECT_IDENTIFIER), tag(RELATIVE_OID)))),
@@ -42,17 +44,20 @@ pub fn object_identifier_value(input: Input<'_>) -> IResult<Input<'_>, ObjectIde
     )))(input)
 }
 
-pub fn object_identifier(input: Input<'_>) -> IResult<Input<'_>, ASN1Type> {
-    with_parser("ObjectIdentifierType", map(
-        into(preceded(
-            skip_ws_and_comments(alt((tag(OBJECT_IDENTIFIER), tag(RELATIVE_OID)))),
-            opt(skip_ws_and_comments(constraint)),
-        )),
-        ASN1Type::ObjectIdentifier,
-    ))(input)
+pub fn object_identifier(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
+    context(
+        "ObjectIdentifierType",
+        map(
+            into(preceded(
+                skip_ws_and_comments(alt((tag(OBJECT_IDENTIFIER), tag(RELATIVE_OID)))),
+                opt(skip_ws_and_comments(constraint)),
+            )),
+            ASN1Type::ObjectIdentifier,
+        ),
+    )(input)
 }
 
-fn object_identifier_arc(input: Input<'_>) -> IResult<Input<'_>, ObjectIdentifierArc> {
+fn object_identifier_arc(input: Input<'_>) -> ParserResult<'_, ObjectIdentifierArc> {
     skip_ws(alt((
         numeric_id,
         into(pair(value_identifier, skip_ws(in_parentheses(u128)))),
@@ -60,7 +65,7 @@ fn object_identifier_arc(input: Input<'_>) -> IResult<Input<'_>, ObjectIdentifie
     )))(input)
 }
 
-fn numeric_id(input: Input<'_>) -> IResult<Input<'_>, ObjectIdentifierArc> {
+fn numeric_id(input: Input<'_>) -> ParserResult<'_, ObjectIdentifierArc> {
     map(u128, |i| i.into())(input)
 }
 

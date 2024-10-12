@@ -1,4 +1,5 @@
 use nom::{
+    branch::alt,
     bytes::complete::tag,
     character::complete::{alphanumeric1, char, one_of},
     combinator::{into, map, opt, recognize, value},
@@ -7,17 +8,19 @@ use nom::{
     IResult,
 };
 
-use crate::intermediate::{information_object::*, types::ObjectIdentifier, *};
+use crate::{
+    input::Input,
+    intermediate::{information_object::*, types::ObjectIdentifier, *},
+};
 
 use super::{
-    alt::alt,
     asn1_type, asn1_value,
     common::{
         default, extension_marker, identifier, in_braces, in_brackets, optional_comma,
         optional_marker, skip_ws_and_comments, uppercase_identifier,
     },
     constraint::constraint,
-    input::Input,
+    error::ParserResult,
     into_inner,
 };
 
@@ -35,7 +38,7 @@ use super::{
 /// }
 /// WITH SYNTAX {&Type IDENTIFIED BY &id}
 /// ```
-pub fn type_identifier(input: Input<'_>) -> IResult<Input<'_>, InformationObjectClass> {
+pub fn type_identifier(input: Input<'_>) -> ParserResult<'_, InformationObjectClass> {
     skip_ws_and_comments(value(
         InformationObjectClass {
             fields: vec![
@@ -69,7 +72,7 @@ pub fn type_identifier(input: Input<'_>) -> IResult<Input<'_>, InformationObject
 /// ## _X680:_
 /// _G.2.18: Use an instance-of to specify a type containing an object identifier field_
 /// _and an open type value whose type is determined by the object identifier._
-pub fn instance_of(input: Input<'_>) -> IResult<Input<'_>, ASN1Type> {
+pub fn instance_of(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
     map(
         preceded(
             tag(INSTANCE_OF),
@@ -88,7 +91,7 @@ pub fn instance_of(input: Input<'_>) -> IResult<Input<'_>, ASN1Type> {
     )(input)
 }
 
-pub fn information_object_class(input: Input<'_>) -> IResult<Input<'_>, InformationObjectClass> {
+pub fn information_object_class(input: Input<'_>) -> ParserResult<'_, InformationObjectClass> {
     into(preceded(
         skip_ws_and_comments(tag(CLASS)),
         pair(
@@ -103,7 +106,7 @@ pub fn information_object_class(input: Input<'_>) -> IResult<Input<'_>, Informat
 
 pub fn information_object_field_reference(
     input: Input<'_>,
-) -> IResult<Input<'_>, InformationObjectFieldReference> {
+) -> ParserResult<'_, InformationObjectFieldReference> {
     into(tuple((
         skip_ws_and_comments(uppercase_identifier),
         many1(skip_ws_and_comments(preceded(
@@ -114,14 +117,14 @@ pub fn information_object_field_reference(
     )))(input)
 }
 
-pub fn information_object(input: Input<'_>) -> IResult<Input<'_>, InformationObjectFields> {
+pub fn information_object(input: Input<'_>) -> ParserResult<'_, InformationObjectFields> {
     in_braces(alt((
         default_syntax_information_object,
         custom_syntax_information_object,
     )))(input)
 }
 
-pub fn object_set(input: Input<'_>) -> IResult<Input<'_>, ObjectSet> {
+pub fn object_set(input: Input<'_>) -> ParserResult<'_, ObjectSet> {
     into(in_braces(tuple((
         separated_list0(
             skip_ws_and_comments(alt((tag(PIPE), tag(UNION)))),
@@ -147,9 +150,7 @@ pub fn object_set(input: Input<'_>) -> IResult<Input<'_>, ObjectSet> {
     ))))(input)
 }
 
-fn custom_syntax_information_object(
-    input: Input<'_>,
-) -> IResult<Input<'_>, InformationObjectFields> {
+fn custom_syntax_information_object(input: Input<'_>) -> ParserResult<'_, InformationObjectFields> {
     map(
         skip_ws_and_comments(many1(skip_ws_and_comments(alt((
             value(SyntaxApplication::Comma, char(COMMA)),
@@ -167,7 +168,7 @@ fn custom_syntax_information_object(
 
 fn default_syntax_information_object(
     input: Input<'_>,
-) -> IResult<Input<'_>, InformationObjectFields> {
+) -> ParserResult<'_, InformationObjectFields> {
     map(
         many1(terminated(
             skip_ws_and_comments(alt((
@@ -187,7 +188,7 @@ fn default_syntax_information_object(
     )(input)
 }
 
-fn information_object_field(input: Input<'_>) -> IResult<Input<'_>, InformationObjectClassField> {
+fn information_object_field(input: Input<'_>) -> ParserResult<'_, InformationObjectClassField> {
     into(tuple((
         skip_ws_and_comments(object_field_identifier),
         opt(skip_ws_and_comments(asn1_type)),
@@ -197,11 +198,11 @@ fn information_object_field(input: Input<'_>) -> IResult<Input<'_>, InformationO
     )))(input)
 }
 
-fn object_field_identifier(input: Input<'_>) -> IResult<Input<'_>, ObjectFieldIdentifier> {
+fn object_field_identifier(input: Input<'_>) -> ParserResult<'_, ObjectFieldIdentifier> {
     alt((single_value_field_id, multiple_value_field_id))(input)
 }
 
-fn single_value_field_id(input: Input<'_>) -> IResult<Input<'_>, ObjectFieldIdentifier> {
+fn single_value_field_id(input: Input<'_>) -> ParserResult<'_, ObjectFieldIdentifier> {
     map(
         into_inner(recognize(tuple((
             char(AMPERSAND),
@@ -212,7 +213,7 @@ fn single_value_field_id(input: Input<'_>) -> IResult<Input<'_>, ObjectFieldIden
     )(input)
 }
 
-fn multiple_value_field_id(input: Input<'_>) -> IResult<Input<'_>, ObjectFieldIdentifier> {
+fn multiple_value_field_id(input: Input<'_>) -> ParserResult<'_, ObjectFieldIdentifier> {
     map(
         into_inner(recognize(tuple((
             char(AMPERSAND),
@@ -223,22 +224,22 @@ fn multiple_value_field_id(input: Input<'_>) -> IResult<Input<'_>, ObjectFieldId
     )(input)
 }
 
-fn syntax(input: Input<'_>) -> IResult<Input<'_>, Vec<SyntaxExpression>> {
+fn syntax(input: Input<'_>) -> ParserResult<'_, Vec<SyntaxExpression>> {
     in_braces(many1(syntax_token_or_group_spec))(input)
 }
 
-fn syntax_token_or_group_spec(input: Input<'_>) -> IResult<Input<'_>, SyntaxExpression> {
+fn syntax_token_or_group_spec(input: Input<'_>) -> ParserResult<'_, SyntaxExpression> {
     alt((
         map(syntax_token, SyntaxExpression::Required),
         map(syntax_optional_group, SyntaxExpression::Optional),
     ))(input)
 }
 
-fn syntax_optional_group(input: Input<'_>) -> IResult<Input<'_>, Vec<SyntaxExpression>> {
+fn syntax_optional_group(input: Input<'_>) -> ParserResult<'_, Vec<SyntaxExpression>> {
     in_brackets(skip_ws_and_comments(many1(syntax_token_or_group_spec)))(input)
 }
 
-fn syntax_token(input: Input<'_>) -> IResult<Input<'_>, SyntaxToken> {
+fn syntax_token(input: Input<'_>) -> ParserResult<'_, SyntaxToken> {
     skip_ws_and_comments(alt((
         map(syntax_literal, SyntaxToken::from),
         map(object_field_identifier, SyntaxToken::from),
@@ -249,7 +250,7 @@ fn syntax_token(input: Input<'_>) -> IResult<Input<'_>, SyntaxToken> {
     )))(input)
 }
 
-fn syntax_literal(input: Input<'_>) -> IResult<Input<'_>, &str> {
+fn syntax_literal(input: Input<'_>) -> ParserResult<'_, &str> {
     uppercase_identifier(input)
 }
 

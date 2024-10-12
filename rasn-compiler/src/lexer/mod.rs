@@ -8,26 +8,30 @@
 //! of `common`, which contains lexers for the more
 //! generic elements of ASN1 syntax, and `util`, which
 //! contains helper lexers not specific to ASN1's notation.
-use input::{context_boundary, with_parser, Input};
+use error::ParserResult;
 use nom::{
+    branch::alt,
     bytes::complete::{tag, take_until},
     character::complete::multispace1,
     combinator::{into, map, opt, recognize},
+    error::context,
     multi::{many0, many1},
     sequence::{delimited, pair, preceded, terminated, tuple},
     IResult,
 };
 
-use crate::intermediate::{information_object::*, *};
+use crate::{
+    input::{context_boundary, Input},
+    intermediate::{information_object::*, *},
+};
 
 use self::{
-    alt::alt, bit_string::*, boolean::*, character_string::*, choice::*, common::*, constraint::*,
+    bit_string::*, boolean::*, character_string::*, choice::*, common::*, constraint::*,
     embedded_pdv::*, enumerated::*, error::LexerError, external::*, information_object_class::*,
     integer::*, module_reference::*, null::*, object_identifier::*, octet_string::*,
     parameterization::*, real::*, sequence::*, sequence_of::*, set::*, set_of::*, time::*,
 };
 
-mod alt;
 mod bit_string;
 mod boolean;
 mod character_string;
@@ -39,7 +43,6 @@ mod enumerated;
 pub(crate) mod error;
 mod external;
 mod information_object_class;
-mod input;
 mod integer;
 mod module_reference;
 mod null;
@@ -78,8 +81,8 @@ pub fn asn_spec(
     .map_err(|e| e.into())
 }
 
-fn encoding_control(input: Input<'_>) -> IResult<Input<'_>, &str> {
-    with_parser(
+fn encoding_control(input: Input<'_>) -> ParserResult<'_, &str> {
+    context(
         "EncodingControlSections",
         into_inner(delimited(
             skip_ws_and_comments(tag("ENCODING-CONTROL")),
@@ -89,15 +92,15 @@ fn encoding_control(input: Input<'_>) -> IResult<Input<'_>, &str> {
     )(input)
 }
 
-fn end(input: Input<'_>) -> IResult<Input<'_>, &str> {
+fn end(input: Input<'_>) -> ParserResult<'_, &str> {
     skip_ws_and_comments(into_inner(preceded(
         tag(END),
         recognize(many0(alt((comment, into_inner(multispace1))))),
     )))(input)
 }
 
-pub fn top_level_type_declaration(input: Input<'_>) -> IResult<Input<'_>, ToplevelTypeDefinition> {
-    with_parser(
+pub fn top_level_type_declaration(input: Input<'_>) -> ParserResult<'_, ToplevelTypeDefinition> {
+    context(
         "TypeAssignment",
         into(tuple((
             skip_ws(many0(comment)),
@@ -110,7 +113,7 @@ pub fn top_level_type_declaration(input: Input<'_>) -> IResult<Input<'_>, Toplev
 
 pub fn top_level_information_declaration(
     input: Input<'_>,
-) -> IResult<Input<'_>, ToplevelInformationDefinition> {
+) -> ParserResult<'_, ToplevelInformationDefinition> {
     skip_ws(alt((
         top_level_information_object_declaration,
         top_level_object_set_declaration,
@@ -118,7 +121,7 @@ pub fn top_level_information_declaration(
     )))(input)
 }
 
-pub fn asn1_type(input: Input<'_>) -> IResult<Input<'_>, ASN1Type> {
+pub fn asn1_type(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
     alt((
         alt((
             null,
@@ -152,7 +155,7 @@ pub fn asn1_type(input: Input<'_>) -> IResult<Input<'_>, ASN1Type> {
     ))(input)
 }
 
-pub fn asn1_value(input: Input<'_>) -> IResult<Input<'_>, ASN1Value> {
+pub fn asn1_value(input: Input<'_>) -> ParserResult<'_, ASN1Value> {
     alt((
         all_value,
         null_value,
@@ -169,8 +172,8 @@ pub fn asn1_value(input: Input<'_>) -> IResult<Input<'_>, ASN1Value> {
     ))(input)
 }
 
-pub fn elsewhere_declared_value(input: Input<'_>) -> IResult<Input<'_>, ASN1Value> {
-    with_parser(
+pub fn elsewhere_declared_value(input: Input<'_>) -> ParserResult<'_, ASN1Value> {
+    context(
         "ReferencedValue",
         map(
             pair(
@@ -188,8 +191,8 @@ pub fn elsewhere_declared_value(input: Input<'_>) -> IResult<Input<'_>, ASN1Valu
     )(input)
 }
 
-pub fn elsewhere_declared_type(input: Input<'_>) -> IResult<Input<'_>, ASN1Type> {
-    with_parser(
+pub fn elsewhere_declared_type(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
+    context(
         "ReferencedType",
         map(
             tuple((
@@ -207,8 +210,8 @@ pub fn elsewhere_declared_type(input: Input<'_>) -> IResult<Input<'_>, ASN1Type>
     )(input)
 }
 
-fn top_level_value_declaration(input: Input<'_>) -> IResult<Input<'_>, ToplevelValueDefinition> {
-    with_parser(
+fn top_level_value_declaration(input: Input<'_>) -> ParserResult<'_, ToplevelValueDefinition> {
+    context(
         "ValueAssignment",
         alt((
             into(tuple((
@@ -225,8 +228,8 @@ fn top_level_value_declaration(input: Input<'_>) -> IResult<Input<'_>, ToplevelV
 
 fn top_level_information_object_declaration(
     input: Input<'_>,
-) -> IResult<Input<'_>, ToplevelInformationDefinition> {
-    with_parser(
+) -> ParserResult<'_, ToplevelInformationDefinition> {
+    context(
         "ObjectAssignment",
         into(tuple((
             skip_ws(many0(comment)),
@@ -240,8 +243,8 @@ fn top_level_information_object_declaration(
 
 fn top_level_object_set_declaration(
     input: Input<'_>,
-) -> IResult<Input<'_>, ToplevelInformationDefinition> {
-    with_parser(
+) -> ParserResult<'_, ToplevelInformationDefinition> {
+    context(
         "ObjectSetAssignment",
         into(tuple((
             skip_ws(many0(comment)),
@@ -255,8 +258,8 @@ fn top_level_object_set_declaration(
 
 fn top_level_object_class_declaration(
     input: Input<'_>,
-) -> IResult<Input<'_>, ToplevelInformationDefinition> {
-    with_parser(
+) -> ParserResult<'_, ToplevelInformationDefinition> {
+    context(
         "ObjectClassAssignment",
         into(tuple((
             skip_ws(many0(comment)),
