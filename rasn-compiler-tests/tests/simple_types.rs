@@ -1,4 +1,5 @@
 #![allow(non_camel_case_types)]
+use rasn_compiler::prelude::RasnBackend;
 use rasn_compiler_tests::e2e_pdu;
 
 e2e_pdu!(
@@ -348,485 +349,485 @@ e2e_pdu!(
 
 // REAL Types are currently not supported by rasn
 
-// e2e_pdu!(
-//     bmp,
-//     r#" Test-String ::= BMPString
-//         test-string-val Test-String ::= "012345""#,
-//     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-//         #[rasn(delegate, identifier = "Test-String")]
-//         pub struct TestString(pub BmpString);
-//         lazy_static!{
-//             pub static ref TEST_STRING_VAL: TestString = TestString(
-//                 BmpString::try_from("012345").unwrap()
-//             );
-//         }                                                           "#
-// );
-// e2e_pdu!(
-//     bmp_strict,
-//     r#" Test-String ::= BMPString SIZE (4)
-//         test-string-val Test-String ::= "012345""#,
-//     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-//         #[rasn(delegate, size("4"), identifier = "Test-String")]
-//         pub struct TestString(pub BmpString);
-//         lazy_static!{
-//             pub static ref TEST_STRING_VAL: TestString = TestString(
-//                 BmpString::try_from("012345").unwrap()
-//             );
-//         }                                                           "#
-// );
+e2e_pdu!(
+    bmp,
+    r#" Test-String ::= BMPString
+        test-string-val Test-String ::= "012345""#,
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(delegate, identifier = "Test-String")]
+        pub struct TestString(pub BmpString);
+        lazy_static!{
+            pub static ref TEST_STRING_VAL: TestString = TestString(
+                BmpString::try_from("012345").unwrap()
+            );
+        }                                                           "#
+);
+e2e_pdu!(
+    bmp_strict,
+    r#" Test-String ::= BMPString SIZE (4)
+        test-string-val Test-String ::= "012345""#,
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(delegate, size("4"), identifier = "Test-String")]
+        pub struct TestString(pub BmpString);
+        lazy_static!{
+            pub static ref TEST_STRING_VAL: TestString = TestString(
+                BmpString::try_from("012345").unwrap()
+            );
+        }                                                           "#
+);
 
-// e2e_pdu!(
-//     bmp_strict_ext,
-//     r#" Test-String ::= BMPString SIZE (4,...)
-//         test-string-val Test-String ::= "012345""#,
-//     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-//         #[rasn(delegate, size("4", extensible), identifier = "Test-String")]
-//         pub struct TestString(pub BmpString);
-//         lazy_static!{
-//             pub static ref TEST_STRING_VAL: TestString = TestString(
-//                 BmpString::try_from("012345").unwrap()
-//             );
-//         }                                                           "#
-// );
+e2e_pdu!(
+    bmp_strict_ext,
+    r#" Test-String ::= BMPString SIZE (4,...)
+        test-string-val Test-String ::= "012345""#,
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(delegate, size("4", extensible), identifier = "Test-String")]
+        pub struct TestString(pub BmpString);
+        lazy_static!{
+            pub static ref TEST_STRING_VAL: TestString = TestString(
+                BmpString::try_from("012345").unwrap()
+            );
+        }                                                           "#
+);
 
-// e2e_pdu!(
-//     bmp_range,
-//     r#" Test-String ::= BMPString SIZE (4..6)
-//         test-string-val Test-String ::= "012345""#,
-//     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-//         #[rasn(delegate, size("4..=6"), identifier = "Test-String")]
-//         pub struct TestString(pub BmpString);
-//         lazy_static!{
-//             pub static ref TEST_STRING_VAL: TestString = TestString(
-//                 BmpString::try_from("012345").unwrap()
-//             );
-//         }                                                           "#
-// );
+e2e_pdu!(
+    bmp_range,
+    r#" Test-String ::= BMPString SIZE (4..6)
+        test-string-val Test-String ::= "012345""#,
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(delegate, size("4..=6"), identifier = "Test-String")]
+        pub struct TestString(pub BmpString);
+        lazy_static!{
+            pub static ref TEST_STRING_VAL: TestString = TestString(
+                BmpString::try_from("012345").unwrap()
+            );
+        }                                                           "#
+);
 
-// e2e_pdu!(
-//     bmp_range_ext,
-//     r#" Test-String ::= BMPString SIZE (4..6,...)
-//         test-string-val Test-String ::= "012345""#,
-//     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-//         #[rasn(delegate, size("4..=6", extensible), identifier = "Test-String")]
-//         pub struct TestString(pub BmpString);
-//         lazy_static!{
-//             pub static ref TEST_STRING_VAL: TestString = TestString(
-//                 BmpString::try_from("012345").unwrap()
-//             );
-//         }                                                           "#
-// );
+e2e_pdu!(
+    bmp_range_ext,
+    r#" Test-String ::= BMPString SIZE (4..6,...)
+        test-string-val Test-String ::= "012345""#,
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(delegate, size("4..=6", extensible), identifier = "Test-String")]
+        pub struct TestString(pub BmpString);
+        lazy_static!{
+            pub static ref TEST_STRING_VAL: TestString = TestString(
+                BmpString::try_from("012345").unwrap()
+            );
+        }                                                           "#
+);
 
-// e2e_pdu!(
-//     numeric,
-//     r#" Test-String ::= NumericString
-//         test-string-val Test-String ::= "012345""#,
-//     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-//         #[rasn(delegate, identifier = "Test-String")]
-//         pub struct TestString(pub NumericString);
-//         lazy_static!{
-//             pub static ref TEST_STRING_VAL: TestString = TestString(
-//                 NumericString::try_from("012345").unwrap()
-//             );
-//         }                                                           "#
-// );
-// e2e_pdu!(
-//     numeric_strict,
-//     r#" Test-String ::= NumericString SIZE (4)
-//         test-string-val Test-String ::= "012345""#,
-//     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-//         #[rasn(delegate, size("4"), identifier = "Test-String")]
-//         pub struct TestString(pub NumericString);
-//         lazy_static!{
-//             pub static ref TEST_STRING_VAL: TestString = TestString(
-//                 NumericString::try_from("012345").unwrap()
-//             );
-//         }                                                           "#
-// );
+e2e_pdu!(
+    numeric,
+    r#" Test-String ::= NumericString
+        test-string-val Test-String ::= "012345""#,
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(delegate, identifier = "Test-String")]
+        pub struct TestString(pub NumericString);
+        lazy_static!{
+            pub static ref TEST_STRING_VAL: TestString = TestString(
+                NumericString::try_from("012345").unwrap()
+            );
+        }                                                           "#
+);
+e2e_pdu!(
+    numeric_strict,
+    r#" Test-String ::= NumericString SIZE (4)
+        test-string-val Test-String ::= "012345""#,
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(delegate, size("4"), identifier = "Test-String")]
+        pub struct TestString(pub NumericString);
+        lazy_static!{
+            pub static ref TEST_STRING_VAL: TestString = TestString(
+                NumericString::try_from("012345").unwrap()
+            );
+        }                                                           "#
+);
 
-// e2e_pdu!(
-//     numeric_strict_ext,
-//     r#" Test-String ::= NumericString SIZE (4,...)
-//         test-string-val Test-String ::= "012345""#,
-//     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-//         #[rasn(delegate, size("4", extensible), identifier = "Test-String")]
-//         pub struct TestString(pub NumericString);
-//         lazy_static!{
-//             pub static ref TEST_STRING_VAL: TestString = TestString(
-//                 NumericString::try_from("012345").unwrap()
-//             );
-//         }                                                           "#
-// );
+e2e_pdu!(
+    numeric_strict_ext,
+    r#" Test-String ::= NumericString SIZE (4,...)
+        test-string-val Test-String ::= "012345""#,
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(delegate, size("4", extensible), identifier = "Test-String")]
+        pub struct TestString(pub NumericString);
+        lazy_static!{
+            pub static ref TEST_STRING_VAL: TestString = TestString(
+                NumericString::try_from("012345").unwrap()
+            );
+        }                                                           "#
+);
 
-// e2e_pdu!(
-//     numeric_range,
-//     r#" Test-String ::= NumericString SIZE (4..6)
-//         test-string-val Test-String ::= "012345""#,
-//     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-//         #[rasn(delegate, size("4..=6"), identifier = "Test-String")]
-//         pub struct TestString(pub NumericString);
-//         lazy_static!{
-//             pub static ref TEST_STRING_VAL: TestString = TestString(
-//                 NumericString::try_from("012345").unwrap()
-//             );
-//         }                                                           "#
-// );
+e2e_pdu!(
+    numeric_range,
+    r#" Test-String ::= NumericString SIZE (4..6)
+        test-string-val Test-String ::= "012345""#,
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(delegate, size("4..=6"), identifier = "Test-String")]
+        pub struct TestString(pub NumericString);
+        lazy_static!{
+            pub static ref TEST_STRING_VAL: TestString = TestString(
+                NumericString::try_from("012345").unwrap()
+            );
+        }                                                           "#
+);
 
-// e2e_pdu!(
-//     numeric_range_ext,
-//     r#" Test-String ::= NumericString SIZE (4..6,...)
-//         test-string-val Test-String ::= "012345""#,
-//     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-//         #[rasn(delegate, size("4..=6", extensible), identifier = "Test-String")]
-//         pub struct TestString(pub NumericString);
-//         lazy_static!{
-//             pub static ref TEST_STRING_VAL: TestString = TestString(
-//                 NumericString::try_from("012345").unwrap()
-//             );
-//         }                                                           "#
-// );
+e2e_pdu!(
+    numeric_range_ext,
+    r#" Test-String ::= NumericString SIZE (4..6,...)
+        test-string-val Test-String ::= "012345""#,
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(delegate, size("4..=6", extensible), identifier = "Test-String")]
+        pub struct TestString(pub NumericString);
+        lazy_static!{
+            pub static ref TEST_STRING_VAL: TestString = TestString(
+                NumericString::try_from("012345").unwrap()
+            );
+        }                                                           "#
+);
 
-// e2e_pdu!(
-//     ia5,
-//     r#" Test-String ::= IA5String
-//         test-string-val Test-String ::= "012345""#,
-//     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-//         #[rasn(delegate, identifier = "Test-String")]
-//         pub struct TestString(pub Ia5String);
-//         lazy_static!{
-//             pub static ref TEST_STRING_VAL: TestString = TestString(
-//                 Ia5String::try_from("012345").unwrap()
-//             );
-//         }                                                           "#
-// );
-// e2e_pdu!(
-//     ia5_strict,
-//     r#" Test-String ::= IA5String SIZE (4)
-//         test-string-val Test-String ::= "012345""#,
-//     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-//         #[rasn(delegate, size("4"), identifier = "Test-String")]
-//         pub struct TestString(pub Ia5String);
-//         lazy_static!{
-//             pub static ref TEST_STRING_VAL: TestString = TestString(
-//                 Ia5String::try_from("012345").unwrap()
-//             );
-//         }                                                           "#
-// );
+e2e_pdu!(
+    ia5,
+    r#" Test-String ::= IA5String
+        test-string-val Test-String ::= "012345""#,
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(delegate, identifier = "Test-String")]
+        pub struct TestString(pub Ia5String);
+        lazy_static!{
+            pub static ref TEST_STRING_VAL: TestString = TestString(
+                Ia5String::try_from("012345").unwrap()
+            );
+        }                                                           "#
+);
+e2e_pdu!(
+    ia5_strict,
+    r#" Test-String ::= IA5String SIZE (4)
+        test-string-val Test-String ::= "012345""#,
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(delegate, size("4"), identifier = "Test-String")]
+        pub struct TestString(pub Ia5String);
+        lazy_static!{
+            pub static ref TEST_STRING_VAL: TestString = TestString(
+                Ia5String::try_from("012345").unwrap()
+            );
+        }                                                           "#
+);
 
-// e2e_pdu!(
-//     ia5_strict_ext,
-//     r#" Test-String ::= IA5String SIZE (4,...)
-//         test-string-val Test-String ::= "012345""#,
-//     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-//         #[rasn(delegate, size("4", extensible), identifier = "Test-String")]
-//         pub struct TestString(pub Ia5String);
-//         lazy_static!{
-//             pub static ref TEST_STRING_VAL: TestString = TestString(
-//                 Ia5String::try_from("012345").unwrap()
-//             );
-//         }                                                           "#
-// );
+e2e_pdu!(
+    ia5_strict_ext,
+    r#" Test-String ::= IA5String SIZE (4,...)
+        test-string-val Test-String ::= "012345""#,
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(delegate, size("4", extensible), identifier = "Test-String")]
+        pub struct TestString(pub Ia5String);
+        lazy_static!{
+            pub static ref TEST_STRING_VAL: TestString = TestString(
+                Ia5String::try_from("012345").unwrap()
+            );
+        }                                                           "#
+);
 
-// e2e_pdu!(
-//     ia5_range,
-//     r#" Test-String ::= IA5String SIZE (4..6)
-//         test-string-val Test-String ::= "012345""#,
-//     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-//         #[rasn(delegate, size("4..=6"), identifier = "Test-String")]
-//         pub struct TestString(pub Ia5String);
-//         lazy_static!{
-//             pub static ref TEST_STRING_VAL: TestString = TestString(
-//                 Ia5String::try_from("012345").unwrap()
-//             );
-//         }                                                           "#
-// );
+e2e_pdu!(
+    ia5_range,
+    r#" Test-String ::= IA5String SIZE (4..6)
+        test-string-val Test-String ::= "012345""#,
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(delegate, size("4..=6"), identifier = "Test-String")]
+        pub struct TestString(pub Ia5String);
+        lazy_static!{
+            pub static ref TEST_STRING_VAL: TestString = TestString(
+                Ia5String::try_from("012345").unwrap()
+            );
+        }                                                           "#
+);
 
-// e2e_pdu!(
-//     ia5_range_ext,
-//     r#" Test-String ::= IA5String SIZE (4..6,...)
-//         test-string-val Test-String ::= "012345""#,
-//     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-//         #[rasn(delegate, size("4..=6", extensible), identifier = "Test-String")]
-//         pub struct TestString(pub Ia5String);
-//         lazy_static!{
-//             pub static ref TEST_STRING_VAL: TestString = TestString(
-//                 Ia5String::try_from("012345").unwrap()
-//             );
-//         }                                                           "#
-// );
+e2e_pdu!(
+    ia5_range_ext,
+    r#" Test-String ::= IA5String SIZE (4..6,...)
+        test-string-val Test-String ::= "012345""#,
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(delegate, size("4..=6", extensible), identifier = "Test-String")]
+        pub struct TestString(pub Ia5String);
+        lazy_static!{
+            pub static ref TEST_STRING_VAL: TestString = TestString(
+                Ia5String::try_from("012345").unwrap()
+            );
+        }                                                           "#
+);
 
-// e2e_pdu!(
-//     printable,
-//     r#" Test-String ::= PrintableString
-//         test-string-val Test-String ::= "012345""#,
-//     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-//         #[rasn(delegate, identifier = "Test-String")]
-//         pub struct TestString(pub PrintableString);
-//         lazy_static!{
-//             pub static ref TEST_STRING_VAL: TestString = TestString(
-//                 PrintableString::try_from("012345").unwrap()
-//             );
-//         }                                                           "#
-// );
-// e2e_pdu!(
-//     printable_strict,
-//     r#" Test-String ::= PrintableString SIZE (4)
-//         test-string-val Test-String ::= "012345""#,
-//     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-//         #[rasn(delegate, size("4"), identifier = "Test-String")]
-//         pub struct TestString(pub PrintableString);
-//         lazy_static!{
-//             pub static ref TEST_STRING_VAL: TestString = TestString(
-//                 PrintableString::try_from("012345").unwrap()
-//             );
-//         }                                                           "#
-// );
+e2e_pdu!(
+    printable,
+    r#" Test-String ::= PrintableString
+        test-string-val Test-String ::= "012345""#,
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(delegate, identifier = "Test-String")]
+        pub struct TestString(pub PrintableString);
+        lazy_static!{
+            pub static ref TEST_STRING_VAL: TestString = TestString(
+                PrintableString::try_from("012345").unwrap()
+            );
+        }                                                           "#
+);
+e2e_pdu!(
+    printable_strict,
+    r#" Test-String ::= PrintableString SIZE (4)
+        test-string-val Test-String ::= "012345""#,
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(delegate, size("4"), identifier = "Test-String")]
+        pub struct TestString(pub PrintableString);
+        lazy_static!{
+            pub static ref TEST_STRING_VAL: TestString = TestString(
+                PrintableString::try_from("012345").unwrap()
+            );
+        }                                                           "#
+);
 
-// e2e_pdu!(
-//     printable_strict_ext,
-//     r#" Test-String ::= PrintableString SIZE (4,...)
-//         test-string-val Test-String ::= "012345""#,
-//     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-//         #[rasn(delegate, size("4", extensible), identifier = "Test-String")]
-//         pub struct TestString(pub PrintableString);
-//         lazy_static!{
-//             pub static ref TEST_STRING_VAL: TestString = TestString(
-//                 PrintableString::try_from("012345").unwrap()
-//             );
-//         }                                                           "#
-// );
+e2e_pdu!(
+    printable_strict_ext,
+    r#" Test-String ::= PrintableString SIZE (4,...)
+        test-string-val Test-String ::= "012345""#,
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(delegate, size("4", extensible), identifier = "Test-String")]
+        pub struct TestString(pub PrintableString);
+        lazy_static!{
+            pub static ref TEST_STRING_VAL: TestString = TestString(
+                PrintableString::try_from("012345").unwrap()
+            );
+        }                                                           "#
+);
 
-// e2e_pdu!(
-//     printable_range,
-//     r#" Test-String ::= PrintableString SIZE (4..6)
-//         test-string-val Test-String ::= "012345""#,
-//     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-//         #[rasn(delegate, size("4..=6"), identifier = "Test-String")]
-//         pub struct TestString(pub PrintableString);
-//         lazy_static!{
-//             pub static ref TEST_STRING_VAL: TestString = TestString(
-//                 PrintableString::try_from("012345").unwrap()
-//             );
-//         }                                                           "#
-// );
+e2e_pdu!(
+    printable_range,
+    r#" Test-String ::= PrintableString SIZE (4..6)
+        test-string-val Test-String ::= "012345""#,
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(delegate, size("4..=6"), identifier = "Test-String")]
+        pub struct TestString(pub PrintableString);
+        lazy_static!{
+            pub static ref TEST_STRING_VAL: TestString = TestString(
+                PrintableString::try_from("012345").unwrap()
+            );
+        }                                                           "#
+);
 
-// e2e_pdu!(
-//     printable_range_ext,
-//     r#" Test-String ::= PrintableString SIZE (4..6,...)
-//         test-string-val Test-String ::= "012345""#,
-//     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-//         #[rasn(delegate, size("4..=6", extensible), identifier = "Test-String")]
-//         pub struct TestString(pub PrintableString);
-//         lazy_static!{
-//             pub static ref TEST_STRING_VAL: TestString = TestString(
-//                 PrintableString::try_from("012345").unwrap()
-//             );
-//         }                                                           "#
-// );
+e2e_pdu!(
+    printable_range_ext,
+    r#" Test-String ::= PrintableString SIZE (4..6,...)
+        test-string-val Test-String ::= "012345""#,
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(delegate, size("4..=6", extensible), identifier = "Test-String")]
+        pub struct TestString(pub PrintableString);
+        lazy_static!{
+            pub static ref TEST_STRING_VAL: TestString = TestString(
+                PrintableString::try_from("012345").unwrap()
+            );
+        }                                                           "#
+);
 
-// e2e_pdu!(
-//     general,
-//     r#" Test-String ::= GeneralString
-//         test-string-val Test-String ::= "012345""#,
-//     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-//         #[rasn(delegate, identifier = "Test-String")]
-//         pub struct TestString(pub GeneralString);
-//         lazy_static!{
-//             pub static ref TEST_STRING_VAL: TestString = TestString(
-//                 GeneralString::try_from(String::from("012345")).unwrap()
-//             );
-//         }                                                           "#
-// );
-// e2e_pdu!(
-//     general_strict,
-//     r#" Test-String ::= GeneralString SIZE (4)
-//         test-string-val Test-String ::= "012345""#,
-//     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-//         #[rasn(delegate, size("4"), identifier = "Test-String")]
-//         pub struct TestString(pub GeneralString);
-//         lazy_static!{
-//             pub static ref TEST_STRING_VAL: TestString = TestString(
-//                 GeneralString::try_from(String::from("012345")).unwrap()
-//             );
-//         }                                                           "#
-// );
+e2e_pdu!(
+    general,
+    r#" Test-String ::= GeneralString
+        test-string-val Test-String ::= "012345""#,
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(delegate, identifier = "Test-String")]
+        pub struct TestString(pub GeneralString);
+        lazy_static!{
+            pub static ref TEST_STRING_VAL: TestString = TestString(
+                GeneralString::try_from(String::from("012345")).unwrap()
+            );
+        }                                                           "#
+);
+e2e_pdu!(
+    general_strict,
+    r#" Test-String ::= GeneralString SIZE (4)
+        test-string-val Test-String ::= "012345""#,
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(delegate, size("4"), identifier = "Test-String")]
+        pub struct TestString(pub GeneralString);
+        lazy_static!{
+            pub static ref TEST_STRING_VAL: TestString = TestString(
+                GeneralString::try_from(String::from("012345")).unwrap()
+            );
+        }                                                           "#
+);
 
-// e2e_pdu!(
-//     general_strict_ext,
-//     r#" Test-String ::= GeneralString SIZE (4,...)
-//         test-string-val Test-String ::= "012345""#,
-//     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-//         #[rasn(delegate, size("4", extensible), identifier = "Test-String")]
-//         pub struct TestString(pub GeneralString);
-//         lazy_static!{
-//             pub static ref TEST_STRING_VAL: TestString = TestString(
-//                 GeneralString::try_from(String::from("012345")).unwrap()
-//             );
-//         }                                                           "#
-// );
+e2e_pdu!(
+    general_strict_ext,
+    r#" Test-String ::= GeneralString SIZE (4,...)
+        test-string-val Test-String ::= "012345""#,
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(delegate, size("4", extensible), identifier = "Test-String")]
+        pub struct TestString(pub GeneralString);
+        lazy_static!{
+            pub static ref TEST_STRING_VAL: TestString = TestString(
+                GeneralString::try_from(String::from("012345")).unwrap()
+            );
+        }                                                           "#
+);
 
-// e2e_pdu!(
-//     general_range,
-//     r#" Test-String ::= GeneralString SIZE (4..6)
-//         test-string-val Test-String ::= "012345""#,
-//     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-//         #[rasn(delegate, size("4..=6"), identifier = "Test-String")]
-//         pub struct TestString(pub GeneralString);
-//         lazy_static!{
-//             pub static ref TEST_STRING_VAL: TestString = TestString(
-//                 GeneralString::try_from(String::from("012345")).unwrap()
-//             );
-//         }                                                           "#
-// );
+e2e_pdu!(
+    general_range,
+    r#" Test-String ::= GeneralString SIZE (4..6)
+        test-string-val Test-String ::= "012345""#,
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(delegate, size("4..=6"), identifier = "Test-String")]
+        pub struct TestString(pub GeneralString);
+        lazy_static!{
+            pub static ref TEST_STRING_VAL: TestString = TestString(
+                GeneralString::try_from(String::from("012345")).unwrap()
+            );
+        }                                                           "#
+);
 
-// e2e_pdu!(
-//     general_range_ext,
-//     r#" Test-String ::= GeneralString SIZE (4..6,...)
-//         test-string-val Test-String ::= "012345""#,
-//     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-//         #[rasn(delegate, size("4..=6", extensible), identifier = "Test-String")]
-//         pub struct TestString(pub GeneralString);
-//         lazy_static!{
-//             pub static ref TEST_STRING_VAL: TestString = TestString(
-//                 GeneralString::try_from(String::from("012345")).unwrap()
-//             );
-//         }                                                           "#
-// );
+e2e_pdu!(
+    general_range_ext,
+    r#" Test-String ::= GeneralString SIZE (4..6,...)
+        test-string-val Test-String ::= "012345""#,
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(delegate, size("4..=6", extensible), identifier = "Test-String")]
+        pub struct TestString(pub GeneralString);
+        lazy_static!{
+            pub static ref TEST_STRING_VAL: TestString = TestString(
+                GeneralString::try_from(String::from("012345")).unwrap()
+            );
+        }                                                           "#
+);
 
-// e2e_pdu!(
-//     utf8,
-//     r#" Test-String ::= UTF8String
-//         test-string-val Test-String ::= "012345""#,
-//     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-//         #[rasn(delegate, identifier = "Test-String")]
-//         pub struct TestString(pub Utf8String);
-//         lazy_static!{
-//             pub static ref TEST_STRING_VAL: TestString = TestString(
-//                 String::from("012345")
-//             );
-//         }                                                           "#
-// );
-// e2e_pdu!(
-//     utf8_strict,
-//     r#" Test-String ::= UTF8String SIZE (4)
-//         test-string-val Test-String ::= "012345""#,
-//     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-//         #[rasn(delegate, size("4"), identifier = "Test-String")]
-//         pub struct TestString(pub Utf8String);
-//         lazy_static!{
-//             pub static ref TEST_STRING_VAL: TestString = TestString(
-//                 String::from("012345")
-//             );
-//         }                                                           "#
-// );
+e2e_pdu!(
+    utf8,
+    r#" Test-String ::= UTF8String
+        test-string-val Test-String ::= "012345""#,
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(delegate, identifier = "Test-String")]
+        pub struct TestString(pub Utf8String);
+        lazy_static!{
+            pub static ref TEST_STRING_VAL: TestString = TestString(
+                String::from("012345")
+            );
+        }                                                           "#
+);
+e2e_pdu!(
+    utf8_strict,
+    r#" Test-String ::= UTF8String SIZE (4)
+        test-string-val Test-String ::= "012345""#,
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(delegate, size("4"), identifier = "Test-String")]
+        pub struct TestString(pub Utf8String);
+        lazy_static!{
+            pub static ref TEST_STRING_VAL: TestString = TestString(
+                String::from("012345")
+            );
+        }                                                           "#
+);
 
-// e2e_pdu!(
-//     utf8_strict_ext,
-//     r#" Test-String ::= UTF8String SIZE (4,...)
-//         test-string-val Test-String ::= "012345""#,
-//     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-//         #[rasn(delegate, size("4", extensible), identifier = "Test-String")]
-//         pub struct TestString(pub Utf8String);
-//         lazy_static!{
-//             pub static ref TEST_STRING_VAL: TestString = TestString(
-//                 String::from("012345")
-//             );
-//         }                                                           "#
-// );
+e2e_pdu!(
+    utf8_strict_ext,
+    r#" Test-String ::= UTF8String SIZE (4,...)
+        test-string-val Test-String ::= "012345""#,
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(delegate, size("4", extensible), identifier = "Test-String")]
+        pub struct TestString(pub Utf8String);
+        lazy_static!{
+            pub static ref TEST_STRING_VAL: TestString = TestString(
+                String::from("012345")
+            );
+        }                                                           "#
+);
 
-// e2e_pdu!(
-//     utf8_range,
-//     r#" Test-String ::= UTF8String SIZE (4..6)
-//         test-string-val Test-String ::= "012345""#,
-//     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-//         #[rasn(delegate, size("4..=6"), identifier = "Test-String")]
-//         pub struct TestString(pub Utf8String);
-//         lazy_static!{
-//             pub static ref TEST_STRING_VAL: TestString = TestString(
-//                 String::from("012345")
-//             );
-//         }                                                           "#
-// );
+e2e_pdu!(
+    utf8_range,
+    r#" Test-String ::= UTF8String SIZE (4..6)
+        test-string-val Test-String ::= "012345""#,
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(delegate, size("4..=6"), identifier = "Test-String")]
+        pub struct TestString(pub Utf8String);
+        lazy_static!{
+            pub static ref TEST_STRING_VAL: TestString = TestString(
+                String::from("012345")
+            );
+        }                                                           "#
+);
 
-// e2e_pdu!(
-//     utf8_range_ext,
-//     r#" Test-String ::= UTF8String SIZE (4..6,...)
-//         test-string-val Test-String ::= "012345""#,
-//     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-//         #[rasn(delegate, size("4..=6", extensible), identifier = "Test-String")]
-//         pub struct TestString(pub Utf8String);
-//         lazy_static!{
-//             pub static ref TEST_STRING_VAL: TestString = TestString(
-//                 String::from("012345")
-//             );
-//         }                                                           "#
-// );
+e2e_pdu!(
+    utf8_range_ext,
+    r#" Test-String ::= UTF8String SIZE (4..6,...)
+        test-string-val Test-String ::= "012345""#,
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(delegate, size("4..=6", extensible), identifier = "Test-String")]
+        pub struct TestString(pub Utf8String);
+        lazy_static!{
+            pub static ref TEST_STRING_VAL: TestString = TestString(
+                String::from("012345")
+            );
+        }                                                           "#
+);
 
-// e2e_pdu!(
-//     visible,
-//     r#" Test-String ::= VisibleString
-//         test-string-val Test-String ::= "012345""#,
-//     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-//         #[rasn(delegate, identifier = "Test-String")]
-//         pub struct TestString(pub VisibleString);
-//         lazy_static!{
-//             pub static ref TEST_STRING_VAL: TestString = TestString(
-//                 VisibleString::try_from("012345").unwrap()
-//             );
-//         }                                                           "#
-// );
-// e2e_pdu!(
-//     visible_strict,
-//     r#" Test-String ::= VisibleString SIZE (4)
-//         test-string-val Test-String ::= "012345""#,
-//     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-//         #[rasn(delegate, size("4"), identifier = "Test-String")]
-//         pub struct TestString(pub VisibleString);
-//         lazy_static!{
-//             pub static ref TEST_STRING_VAL: TestString = TestString(
-//                 VisibleString::try_from("012345").unwrap()
-//             );
-//         }                                                           "#
-// );
+e2e_pdu!(
+    visible,
+    r#" Test-String ::= VisibleString
+        test-string-val Test-String ::= "012345""#,
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(delegate, identifier = "Test-String")]
+        pub struct TestString(pub VisibleString);
+        lazy_static!{
+            pub static ref TEST_STRING_VAL: TestString = TestString(
+                VisibleString::try_from("012345").unwrap()
+            );
+        }                                                           "#
+);
+e2e_pdu!(
+    visible_strict,
+    r#" Test-String ::= VisibleString SIZE (4)
+        test-string-val Test-String ::= "012345""#,
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(delegate, size("4"), identifier = "Test-String")]
+        pub struct TestString(pub VisibleString);
+        lazy_static!{
+            pub static ref TEST_STRING_VAL: TestString = TestString(
+                VisibleString::try_from("012345").unwrap()
+            );
+        }                                                           "#
+);
 
-// e2e_pdu!(
-//     visible_strict_ext,
-//     r#" Test-String ::= VisibleString SIZE (4,...)
-//         test-string-val Test-String ::= "012345""#,
-//     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-//         #[rasn(delegate, size("4", extensible), identifier = "Test-String")]
-//         pub struct TestString(pub VisibleString);
-//         lazy_static!{
-//             pub static ref TEST_STRING_VAL: TestString = TestString(
-//                 VisibleString::try_from("012345").unwrap()
-//             );
-//         }                                                           "#
-// );
+e2e_pdu!(
+    visible_strict_ext,
+    r#" Test-String ::= VisibleString SIZE (4,...)
+        test-string-val Test-String ::= "012345""#,
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(delegate, size("4", extensible), identifier = "Test-String")]
+        pub struct TestString(pub VisibleString);
+        lazy_static!{
+            pub static ref TEST_STRING_VAL: TestString = TestString(
+                VisibleString::try_from("012345").unwrap()
+            );
+        }                                                           "#
+);
 
-// e2e_pdu!(
-//     visible_range,
-//     r#" Test-String ::= VisibleString SIZE (4..6)
-//         test-string-val Test-String ::= "012345""#,
-//     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-//         #[rasn(delegate, size("4..=6"), identifier = "Test-String")]
-//         pub struct TestString(pub VisibleString);
-//         lazy_static!{
-//             pub static ref TEST_STRING_VAL: TestString = TestString(
-//                 VisibleString::try_from("012345").unwrap()
-//             );
-//         }                                                           "#
-// );
+e2e_pdu!(
+    visible_range,
+    r#" Test-String ::= VisibleString SIZE (4..6)
+        test-string-val Test-String ::= "012345""#,
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(delegate, size("4..=6"), identifier = "Test-String")]
+        pub struct TestString(pub VisibleString);
+        lazy_static!{
+            pub static ref TEST_STRING_VAL: TestString = TestString(
+                VisibleString::try_from("012345").unwrap()
+            );
+        }                                                           "#
+);
 
-// e2e_pdu!(
-//     visible_range_ext,
-//     r#" Test-String ::= VisibleString SIZE (4..6,...)
-//         test-string-val Test-String ::= "012345""#,
-//     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-//         #[rasn(delegate, size("4..=6", extensible), identifier = "Test-String")]
-//         pub struct TestString(pub VisibleString);
-//         lazy_static!{
-//             pub static ref TEST_STRING_VAL: TestString = TestString(
-//                 VisibleString::try_from("012345").unwrap()
-//             );
-//         }                                                           "#
-// );
+e2e_pdu!(
+    visible_range_ext,
+    r#" Test-String ::= VisibleString SIZE (4..6,...)
+        test-string-val Test-String ::= "012345""#,
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(delegate, size("4..=6", extensible), identifier = "Test-String")]
+        pub struct TestString(pub VisibleString);
+        lazy_static!{
+            pub static ref TEST_STRING_VAL: TestString = TestString(
+                VisibleString::try_from("012345").unwrap()
+            );
+        }                                                           "#
+);

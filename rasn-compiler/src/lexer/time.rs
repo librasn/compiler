@@ -61,6 +61,11 @@ pub fn utc_time(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
     )(input)
 }
 
+
+const NON_NUMERIC_TIME_CHARS: [char; 17] = [
+    '+', '-', ':', '.', ',', '/', 'C', 'D', 'H', 'M', 'R', 'P', 'S', 'T', 'W', 'Y', 'Z',
+];
+
 /// Parses a time value character string
 /// ### X680
 /// _A "tstring" shall consist of one or more of the characters:_
@@ -69,7 +74,18 @@ pub fn utc_time(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
 fn t_string(input: Input<'_>) -> ParserResult<'_, &str> {
     delimited(
         char('"'),
-        into_inner(recognize(many1(one_of("0123456789+-:.,/CDHMRPSTWYZ")))),
+        map_res(
+            into_inner(recognize(many1(one_of("0123456789+-:.,/CDHMRPSTWYZ")))),
+            |tstring: &str| {
+                if tstring.contains(char::is_numeric)
+                    && tstring.contains(|c| NON_NUMERIC_TIME_CHARS.contains(&c))
+                {
+                    Ok(tstring)
+                } else {
+                    Err(MiscError("String does not fullfil tstring requirements."))
+                }
+            },
+        ),
         char('"'),
     )(input.clone())
 }
