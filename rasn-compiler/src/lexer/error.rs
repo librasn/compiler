@@ -1,5 +1,5 @@
 use core::fmt::{Display, Formatter, Result};
-use std::{error::Error, io};
+use std::{collections::VecDeque, error::Error, io};
 
 use colored::Colorize;
 use nom::{
@@ -7,10 +7,7 @@ use nom::{
     IResult, Slice,
 };
 
-use crate::{
-    error::CompilerError,
-    input::{Input, TrackedParser},
-};
+use crate::{error::CompilerError, input::Input};
 
 use super::util::until_next_unindented;
 
@@ -29,10 +26,11 @@ impl CompilerError for LexerError {
             let error = "Error:";
             let line = report_data.line;
             let context = until_next_unindented(
-                &input[report_data.context_start_line..],
-                report_data.context_start_offset,
+                &input[report_data.context_start_offset..],
+                report_data.offset - report_data.context_start_offset + 1,
                 300,
             );
+            println!("CONTEXT: '{context}'");
             let pdu_lines = context.match_indices('\n').count();
             let start_line = report_data.context_start_line;
             let end_line = report_data.context_start_line + pdu_lines;
@@ -57,15 +55,8 @@ impl CompilerError for LexerError {
                     .tracked_parsers
                     .iter()
                     .for_each(|tp: &TrackedParser| {
-                        let name = tp.name;
-                        let tabbing = 40 - tp.name.len();
-                        let status = if tp.success {
-                            "successful"
-                        } else {
-                            "unsuccessful"
-                        };
-                        tried_parsers +=
-                            &format!("\n{indentation}   │  {name}{indentation:tabbing$}{status}")
+                        let name = tp.name();
+                        tried_parsers += &format!("\n{indentation}   │  {name}")
                     });
             }
             format!(
@@ -85,48 +76,7 @@ impl CompilerError for LexerError {
     }
 
     fn as_styled_report(&self) -> String {
-        if let Some(report_data) = &self.report_data {
-            let error = "Error:".red().bold();
-            let line = report_data.line;
-            let digits = report_data.line.checked_ilog10().unwrap_or(0) as usize;
-            let spacer = "─".repeat(digits);
-            let column = report_data.column;
-            let snippet = &report_data.context_start_line;
-            let ws = " ";
-            let arrow_head = "┬".red().bold();
-            let arrow_tail = "╰── failed to parse input from here on".red().bold();
-            let mut tried_parsers = String::from("   │");
-            if !report_data.tracked_parsers.is_empty() {
-                tried_parsers += "\n   │  Applied the following parsers:\n   │";
-                report_data
-                    .tracked_parsers
-                    .iter()
-                    .for_each(|tp: &TrackedParser| {
-                        let name = tp.name.italic();
-                        let indentation = 40 - tp.name.len();
-                        let status = if tp.success {
-                            "successful".green()
-                        } else {
-                            "unsuccessful".red()
-                        };
-                        tried_parsers += &format!("\n  │  {name}{ws:indentation$}{status}")
-                    });
-            }
-            format!(
-                r#"
-{error} 
-{ws:digits$}  ╭─[line {line}, column {column}]
-{ws:digits$}  │
-{ws:digits$}{line} │ {ws:column$}{snippet}
-{ws:digits$}  │ {ws:column$}{arrow_head}
-{ws:digits$}  │ {ws:column$}{arrow_tail}
-{ws:digits$}{tried_parsers}
-{spacer}───╯
-        "#
-            )
-        } else {
-            self.details.clone()
-        }
+        self.as_report("input")
     }
 }
 
@@ -139,24 +89,12 @@ impl<'a> From<nom::Err<ErrorTree<'a>>> for LexerError {
                 report_data: None,
             },
             nom::Err::Error(e) | nom::Err::Failure(e) => {
-                println!("{e:#?}");
-                let mut input = e.into_input();
+                //println!("{e:#?}");
                 Self {
-                    details: format!(
-                        "Error matching ASN syntax at while parsing: {}",
-                        &input.slice(..(input.len().min(300))).into_inner()
-                    ),
-                    kind: LexerErrorType::MatchingError(nom::error::ErrorKind::Alpha),
-                    report_data: Some(ReportData {
-                        context_start_line: input.context_start_line(),
-                        context_start_offset: input.context_start_offset(),
-                        line: input.line(),
-                        offset: input.offset(),
-                        column: input.column(),
-                        tracked_parsers: input.drain_tracked_parsers(),
-                    }),
-                }
-            }
+                details: "Error matching ASN syntax at while parsing".to_string(),
+                kind: LexerErrorType::MatchingError(nom::error::ErrorKind::Alpha),
+                report_data: Some(e.into()),
+            }},
         }
     }
 }
@@ -193,14 +131,85 @@ impl Display for LexerError {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 struct ReportData {
     pub context_start_line: usize,
     pub context_start_offset: usize,
     pub line: usize,
     pub offset: usize,
     pub column: usize,
+    pub reason: String,
     pub tracked_parsers: Vec<TrackedParser>,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+enum TrackedParser {
+    Link(&'static str),
+    Fork(&'static str),
+}
+
+impl TrackedParser {
+    pub fn name(&self) -> &'static str {
+        match self {
+            Self::Fork(s) | Self::Link(s) => s,
+        }
+    }
+}
+
+impl From<ErrorTree<'_>> for ReportData {
+    fn from(value: ErrorTree<'_>) -> Self {
+        match value {
+            ErrorTree::Leaf { input, kind } => Self {
+                context_start_line: input.context_start_line(),
+                context_start_offset: input.context_start_offset(),
+                line: input.line(),
+                offset: input.offset(),
+                column: input.column(),
+                reason: match kind {
+                    ErrorKind::Nom(e) => format!("Failed to parse next input. Code: {e:?}"),
+                    ErrorKind::External(e) => e,
+                },
+                tracked_parsers: vec![],
+            },
+            ErrorTree::Branch { tip, links } => {
+                let mut leaf = Self::from(*tip);
+                leaf.tracked_parsers
+                    .extend(links.into_iter().filter_map(|l| match l.context {
+                        Context::ErrorKind(_) => None,
+                        Context::Name(name) => Some(TrackedParser::Link(name)),
+                    }));
+                leaf
+            }
+            ErrorTree::Fork { mut branches } => {
+                fn first_named(e: ErrorTree<'_>) -> Option<TrackedParser> {
+                    match e {
+                        ErrorTree::Leaf { .. } => None,
+                        ErrorTree::Branch { links, .. } => {
+                            links.into_iter().find_map(|l| match l.context {
+                                Context::ErrorKind(_) => None,
+                                Context::Name(name) => Some(TrackedParser::Link(name)),
+                            })
+                        }
+                        ErrorTree::Fork { mut branches } => {
+                            branches.pop_front().and_then(first_named)
+                        }
+                    }
+                }
+
+                let mut leaf = Self::from(
+                    branches
+                        .pop_front()
+                        .expect("Error Tree branch not to be empty."),
+                );
+                leaf.tracked_parsers.extend(
+                    branches
+                        .into_iter()
+                        .filter_map(|b| first_named(b).map(|t| TrackedParser::Fork(t.name()))),
+                );
+                leaf
+            }
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -228,7 +237,7 @@ pub enum ErrorTree<'a> {
         links: Vec<ErrorLink<'a>>,
     },
     Fork {
-        branches: Vec<Self>,
+        branches: VecDeque<Self>,
     },
 }
 
@@ -267,7 +276,7 @@ impl<'a> ErrorTree<'a> {
                     .input
             }
             ErrorTree::Fork { mut branches } => branches
-                .pop()
+                .pop_back()
                 .expect("error tree branch to have at least one link")
                 .into_input(),
         }
@@ -318,10 +327,10 @@ impl<'a> ParseError<Input<'a>> for ErrorTree<'a> {
             }
             (branch, ErrorTree::Fork { mut branches })
             | (ErrorTree::Fork { mut branches }, branch) => {
-                branches.push(branch);
+                branches.push_back(branch);
                 branches
             }
-            (branch_1, branch_2) => vec![branch_1, branch_2],
+            (branch_1, branch_2) => vec![branch_1, branch_2].into(),
         };
 
         ErrorTree::Fork { branches }

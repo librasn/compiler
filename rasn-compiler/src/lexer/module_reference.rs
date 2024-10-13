@@ -267,7 +267,7 @@ mod tests {
                 iri: "ITU-T/Recommendation/X/CMS-Profile/Module/CKMKeyManagement/Version1".into()
             }),
             encoding_reference_default: None,
-            tagging_environment: TaggingEnvironment::Explicit,
+            tagging_environment: TaggingEnvironment::Implicit,
             extensibility_environment: ExtensibilityEnvironment::Explicit,
             imports: vec![
                 Import {

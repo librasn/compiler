@@ -4,7 +4,6 @@ use nom::{
     combinator::{into, opt, recognize},
     multi::{many0, separated_list0, separated_list1},
     sequence::{terminated, tuple},
-    IResult,
 };
 
 use crate::intermediate::{types::*, *};
@@ -48,17 +47,17 @@ pub fn sequence(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
             preceded(
                 skip_ws_and_comments(tag(SEQUENCE)),
                 pair(
-                    in_braces(tuple((
-                        many0(terminated(
+                     context("ComponentTypeLists",in_braces(tuple((
+                        context("RootComponentTypeList",many0(terminated(
                             skip_ws_and_comments(sequence_component),
                             optional_comma,
-                        )),
+                        ))),
                         opt(terminated(extension_marker, opt(char(COMMA)))),
-                        opt(many0(terminated(
+                        context("ExtensionAdditions", opt(many0(terminated(
                             skip_ws_and_comments(alt((extension_group, sequence_component))),
                             optional_comma,
-                        ))),
-                    ))),
+                        )))),
+                    )))),
                     opt(constraint),
                 ),
             ),

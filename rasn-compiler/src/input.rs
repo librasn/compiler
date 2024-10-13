@@ -11,7 +11,7 @@ use std::{
 };
 
 use nom::{
-    AsBytes, Compare, ExtendInto, FindSubstring, FindToken, IResult, InputIter, InputLength,
+    AsBytes, Compare, ExtendInto, FindSubstring, FindToken, InputIter, InputLength,
     InputTake, InputTakeAtPosition, Offset, ParseTo, Slice,
 };
 
@@ -27,19 +27,6 @@ where
     move |mut input| {
         input.reset_context();
         inner(input)
-    }
-}
-
-/// Success status of an applied parser. Used for tracking the parser's progress within a tracking boundary.
-#[derive(Debug, Clone, PartialEq)]
-pub struct TrackedParser {
-    pub name: &'static str,
-    pub success: bool,
-}
-
-impl TrackedParser {
-    pub fn new(name: &'static str, success: bool) -> Self {
-        Self { name, success }
     }
 }
 
@@ -66,8 +53,6 @@ pub struct Input<'a> {
     column: usize,
     /// current offset of parser from start of initial input, starts at 0
     offset: usize,
-    /// tracks the applied parsers within an tracking boundary
-    tracked_parsers: Vec<TrackedParser>,
 }
 
 impl<'a> Input<'a> {
@@ -77,14 +62,6 @@ impl<'a> Input<'a> {
 }
 
 impl Input<'_> {
-    pub fn tracked_parsers(&self) -> &[TrackedParser] {
-        &self.tracked_parsers
-    }
-
-    pub fn drain_tracked_parsers(&mut self) -> Vec<TrackedParser> {
-        self.tracked_parsers.drain(..).collect()
-    }
-
     pub fn line(&self) -> usize {
         self.line
     }
@@ -115,11 +92,7 @@ impl Input<'_> {
 
     pub fn reset_context(&mut self) {
         self.context_start_line = self.line;
-    }
-
-    #[cfg(test)]
-    pub fn tracked_parser_name_success_at(&self, index: usize) -> Option<(&'static str, bool)> {
-        self.tracked_parsers.get(index).map(|p| (p.name, p.success))
+        self.context_start_offset = self.offset;
     }
 
     #[cfg(test)]
@@ -131,27 +104,7 @@ impl Input<'_> {
             context_start_offset: self.context_start_offset,
             column,
             offset,
-            tracked_parsers: self.tracked_parsers.clone(),
         }
-    }
-
-    pub fn add_untracked(&mut self, parsers: &[TrackedParser]) {
-        let mut i = 0;
-        while let (own, Some(other)) = (self.tracked_parsers.get(i), parsers.get(i)) {
-            if own != Some(other) {
-                self.tracked_parsers.push(other.clone());
-            }
-            i += 1;
-        }
-    }
-
-    fn track_parser(&mut self, parser: &'static str, success: bool) {
-        self.tracked_parsers
-            .push(TrackedParser::new(parser, success));
-    }
-
-    fn reset_parser_tracking(&mut self) {
-        self.tracked_parsers.clear();
     }
 }
 
@@ -164,7 +117,6 @@ impl<'a> From<&'a str> for Input<'a> {
             context_start_offset: 0,
             column: 1,
             offset: 0,
-            tracked_parsers: Vec::new(),
         }
     }
 }
@@ -293,7 +245,6 @@ where
                 context_start_line: self.context_start_line,
                 context_start_offset: self.context_start_offset,
                 inner,
-                tracked_parsers: self.tracked_parsers.clone(),
             }
         } else {
             let consumed = self.inner.slice(..consumed_len);
@@ -313,7 +264,6 @@ where
                 context_start_offset: self.context_start_offset,
                 inner,
                 offset: self.offset + consumed_len,
-                tracked_parsers: self.tracked_parsers.clone(),
             }
         }
     }
@@ -399,11 +349,7 @@ impl<R: FromStr> ParseTo<R> for Input<'_> {
 
 #[cfg(test)]
 mod tests {
-    use nom::{
-        bytes::complete::{tag, take_until},
-        error::{context, Error},
-        sequence::pair,
-    };
+    use nom::{bytes::complete::take_until, error::Error};
 
     use super::*;
 
@@ -450,24 +396,5 @@ mod tests {
         ))
         .unwrap();
         assert_eq!(remaining.with_line_column_and_offset(3, 4, 16), remaining);
-    }
-
-    #[test]
-    fn tracks_applied_parsers() {
-        let (remaining, _) = pair(
-            context("first", tag::<&str, Input<'_>, Error<Input<'_>>>("test1")),
-            context("second", tag("test2")),
-        )(Input::from("test1test2test3"))
-        .unwrap();
-        assert_eq!(remaining.line(), 1);
-        assert_eq!(remaining.column(), 11);
-        assert_eq!(
-            remaining.tracked_parser_name_success_at(0).unwrap(),
-            ("first", true)
-        );
-        assert_eq!(
-            remaining.tracked_parser_name_success_at(1).unwrap(),
-            ("second", true)
-        );
     }
 }

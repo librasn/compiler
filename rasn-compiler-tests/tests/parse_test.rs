@@ -51,7 +51,7 @@ Failed to parse {failed} modules with the following errors:
 #[ignore]
 fn compile_etsi() {
     println!(
-        "{:?}",
+        "{}",
         Compiler::<RasnBackend, _>::new_with_config(rasn_compiler::prelude::RasnConfig::default())
             // .add_asn_by_path("../rasn-compiler/test_asn1/ngap_class.asn")
             // .add_asn_by_path("../rasn-compiler/test_asn1/ngap_common.asn")
@@ -60,9 +60,9 @@ fn compile_etsi() {
             // .add_asn_by_path("../rasn-compiler/test_asn1/ngap_ies.asn")
             // .add_asn_by_path("../rasn-compiler/test_asn1/ngap_pdus.asn")
             .add_asn_by_path(
-                "./tests/modules/itu-t_q_q1228_1997_IN-CS2-SCF-SCF-pkgs-contracts-acs.asn1"
+                "../rasn-compiler/test_asn1/test.asn"
             )
             .set_output_path("./tests")
-            .compile()
+            .compile().unwrap_err().as_report(&std::fs::read_to_string("../rasn-compiler/test_asn1/test.asn").unwrap())
     );
 }

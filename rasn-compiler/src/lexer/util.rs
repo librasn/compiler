@@ -11,7 +11,7 @@ use crate::input::Input;
 use super::error::{ErrorTree, ParserResult};
 
 pub fn until_next_unindented(input: &str, at_least_until: usize, fallback_len: usize) -> &str {
-    match regex::Regex::new("^[A-Za-z0-9]")
+    match regex::Regex::new("\n[A-Za-z0-9]")
         .ok()
         .and_then(|needle| needle.find(&input[at_least_until..]))
     {
