@@ -3,9 +3,7 @@ use nom::{
     bytes::complete::{tag, take_until},
     character::complete::{char, u8},
     combinator::{map, map_res, opt},
-    error::context,
     sequence::{delimited, pair, terminated, tuple},
-    IResult,
 };
 
 use crate::{input::Input, intermediate::*};
@@ -77,27 +75,24 @@ fn quadruple(input: Input<'_>) -> ParserResult<'_, char> {
 /// and a wrapped `CharacterString` value representing the ASN1 declaration.
 /// If the match fails, the lexer will not consume the input and will return an error.
 pub fn character_string(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
-    context(
-        "CharacterStringType",
-        map(
-            pair(
-                into_inner(skip_ws_and_comments(alt((
-                    tag(IA5_STRING),
-                    tag(UTF8_STRING),
-                    tag(NUMERIC_STRING),
-                    tag(VISIBLE_STRING),
-                    tag(TELETEX_STRING),
-                    tag(VIDEOTEX_STRING),
-                    tag(GRAPHIC_STRING),
-                    tag(GENERAL_STRING),
-                    tag(UNIVERSAL_STRING),
-                    tag(BMP_STRING),
-                    tag(PRINTABLE_STRING),
-                )))),
-                opt(constraint),
-            ),
-            |m| ASN1Type::CharacterString(m.into()),
+    map(
+        pair(
+            into_inner(skip_ws_and_comments(alt((
+                tag(IA5_STRING),
+                tag(UTF8_STRING),
+                tag(NUMERIC_STRING),
+                tag(VISIBLE_STRING),
+                tag(TELETEX_STRING),
+                tag(VIDEOTEX_STRING),
+                tag(GRAPHIC_STRING),
+                tag(GENERAL_STRING),
+                tag(UNIVERSAL_STRING),
+                tag(BMP_STRING),
+                tag(PRINTABLE_STRING),
+            )))),
+            opt(constraint),
         ),
+        |m| ASN1Type::CharacterString(m.into()),
     )(input)
 }
 

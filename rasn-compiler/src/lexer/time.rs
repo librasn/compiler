@@ -2,10 +2,8 @@ use nom::{
     bytes::complete::tag,
     character::complete::{char, one_of},
     combinator::{map, map_res, opt, recognize},
-    error::{context, Error},
     multi::many1,
     sequence::{delimited, preceded},
-    IResult,
 };
 
 use crate::{
@@ -30,12 +28,9 @@ pub fn time_value(input: Input<'_>) -> ParserResult<'_, ASN1Value> {
 }
 
 pub fn time(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
-    context(
-        "TimeType",
-        map(
-            skip_ws_and_comments(preceded(tag(TIME), opt(constraint))),
-            |t| ASN1Type::Time(t.into()),
-        ),
+    map(
+        skip_ws_and_comments(preceded(tag(TIME), opt(constraint))),
+        |t| ASN1Type::Time(t.into()),
     )(input)
 }
 
@@ -60,7 +55,6 @@ pub fn utc_time(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
         },
     )(input)
 }
-
 
 const NON_NUMERIC_TIME_CHARS: [char; 17] = [
     '+', '-', ':', '.', ',', '/', 'C', 'D', 'H', 'M', 'R', 'P', 'S', 'T', 'W', 'Y', 'Z',

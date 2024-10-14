@@ -14,10 +14,8 @@ use nom::{
     bytes::complete::{tag, take_until},
     character::complete::multispace1,
     combinator::{into, map, opt, recognize},
-    error::context,
     multi::{many0, many1},
     sequence::{delimited, pair, preceded, terminated, tuple},
-    IResult,
 };
 
 use crate::{
@@ -66,14 +64,14 @@ pub fn asn_spec(
     many1(pair(
         module_reference,
         terminated(
-            many0(skip_ws(context_boundary(alt((
+            many0(skip_ws(alt((
                 map(
                     top_level_information_declaration,
                     ToplevelDefinition::Information,
                 ),
                 map(top_level_type_declaration, ToplevelDefinition::Type),
                 map(top_level_value_declaration, ToplevelDefinition::Value),
-            ))))),
+            )))),
             context_boundary(skip_ws_and_comments(alt((encoding_control, end)))),
         ),
     ))(input.into())
@@ -82,14 +80,11 @@ pub fn asn_spec(
 }
 
 fn encoding_control(input: Input<'_>) -> ParserResult<'_, &str> {
-    context(
-        "EncodingControlSections",
-        into_inner(delimited(
-            skip_ws_and_comments(tag("ENCODING-CONTROL")),
-            take_until(END),
-            end,
-        )),
-    )(input)
+    into_inner(delimited(
+        skip_ws_and_comments(tag("ENCODING-CONTROL")),
+        take_until(END),
+        end,
+    ))(input)
 }
 
 fn end(input: Input<'_>) -> ParserResult<'_, &str> {
@@ -100,15 +95,12 @@ fn end(input: Input<'_>) -> ParserResult<'_, &str> {
 }
 
 pub fn top_level_type_declaration(input: Input<'_>) -> ParserResult<'_, ToplevelTypeDefinition> {
-    context(
-        "TypeAssignment",
-        into(tuple((
-            skip_ws(many0(comment)),
-            skip_ws(title_case_identifier),
-            opt(parameterization),
-            preceded(assignment, pair(opt(asn_tag), asn1_type)),
-        ))),
-    )(input)
+    into(tuple((
+        skip_ws(many0(comment)),
+        skip_ws(title_case_identifier),
+        opt(parameterization),
+        preceded(assignment, pair(opt(asn_tag), asn1_type)),
+    )))(input)
 }
 
 pub fn top_level_information_declaration(
@@ -173,99 +165,81 @@ pub fn asn1_value(input: Input<'_>) -> ParserResult<'_, ASN1Value> {
 }
 
 pub fn elsewhere_declared_value(input: Input<'_>) -> ParserResult<'_, ASN1Value> {
-    context(
-        "ReferencedValue",
-        map(
-            pair(
-                opt(skip_ws_and_comments(recognize(many1(pair(
-                    identifier,
-                    tag(".&"),
-                ))))),
-                value_identifier,
-            ),
-            |(p, id)| ASN1Value::ElsewhereDeclaredValue {
-                parent: p.map(|par| par.inner().to_string()),
-                identifier: id.into(),
-            },
+    map(
+        pair(
+            opt(skip_ws_and_comments(recognize(many1(pair(
+                identifier,
+                tag(".&"),
+            ))))),
+            value_identifier,
         ),
+        |(p, id)| ASN1Value::ElsewhereDeclaredValue {
+            parent: p.map(|par| par.inner().to_string()),
+            identifier: id.into(),
+        },
     )(input)
 }
 
 pub fn elsewhere_declared_type(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
-    context(
-        "ReferencedType",
-        map(
-            tuple((
-                opt(skip_ws_and_comments(recognize(many1(pair(
-                    identifier,
-                    tag(".&"),
-                ))))),
-                skip_ws_and_comments(title_case_identifier),
-                opt(skip_ws_and_comments(constraint)),
-            )),
-            |(parent, id, constraints)| {
-                ASN1Type::builtin_or_elsewhere(parent.map(|p| p.into_inner()), id, constraints)
-            },
-        ),
+    map(
+        tuple((
+            opt(skip_ws_and_comments(recognize(many1(pair(
+                identifier,
+                tag(".&"),
+            ))))),
+            skip_ws_and_comments(title_case_identifier),
+            opt(skip_ws_and_comments(constraint)),
+        )),
+        |(parent, id, constraints)| {
+            ASN1Type::builtin_or_elsewhere(parent.map(|p| p.into_inner()), id, constraints)
+        },
     )(input)
 }
 
 fn top_level_value_declaration(input: Input<'_>) -> ParserResult<'_, ToplevelValueDefinition> {
-    context(
-        "ValueAssignment",
-        alt((
-            into(tuple((
-                skip_ws(many0(comment)),
-                skip_ws(value_identifier),
-                skip_ws_and_comments(opt(parameterization)),
-                skip_ws_and_comments(asn1_type),
-                preceded(assignment, skip_ws_and_comments(asn1_value)),
-            ))),
-            enumerated_value,
-        )),
-    )(input)
+    alt((
+        into(tuple((
+            skip_ws(many0(comment)),
+            skip_ws(context_boundary(value_identifier)),
+            skip_ws_and_comments(opt(parameterization)),
+            skip_ws_and_comments(asn1_type),
+            preceded(assignment, skip_ws_and_comments(asn1_value)),
+        ))),
+        enumerated_value,
+    ))(input)
 }
 
 fn top_level_information_object_declaration(
     input: Input<'_>,
 ) -> ParserResult<'_, ToplevelInformationDefinition> {
-    context(
-        "ObjectAssignment",
-        into(tuple((
-            skip_ws(many0(comment)),
-            skip_ws(identifier),
-            skip_ws(opt(parameterization)),
-            skip_ws(uppercase_identifier),
-            preceded(assignment, information_object),
-        ))),
-    )(input)
+    into(tuple((
+        skip_ws(many0(comment)),
+        skip_ws(context_boundary(identifier)),
+        skip_ws(opt(parameterization)),
+        skip_ws(uppercase_identifier),
+        preceded(assignment, information_object),
+    )))(input)
 }
 
 fn top_level_object_set_declaration(
     input: Input<'_>,
 ) -> ParserResult<'_, ToplevelInformationDefinition> {
-    context(
-        "ObjectSetAssignment",
-        into(tuple((
-            skip_ws(many0(comment)),
-            skip_ws(identifier),
-            skip_ws(opt(parameterization)),
-            skip_ws(uppercase_identifier),
-            preceded(assignment, object_set),
-        ))),
-    )(input)
+    into(tuple((
+        skip_ws(many0(comment)),
+        skip_ws(context_boundary(identifier)),
+        skip_ws(opt(parameterization)),
+        skip_ws(uppercase_identifier),
+        preceded(assignment, object_set),
+    )))(input)
 }
 
 fn top_level_object_class_declaration(
     input: Input<'_>,
 ) -> ParserResult<'_, ToplevelInformationDefinition> {
-    context(
-        "ObjectClassAssignment",
-        into(tuple((
-            skip_ws(many0(comment)),
-            skip_ws(uppercase_identifier),
-            skip_ws(opt(parameterization)),
-            preceded(assignment, alt((type_identifier, information_object_class))),
-        ))),
-    )(input)
+    into(tuple((
+        skip_ws(many0(comment)),
+        skip_ws(context_boundary(uppercase_identifier)),
+        skip_ws(opt(parameterization)),
+        preceded(assignment, alt((type_identifier, information_object_class))),
+    )))(input)
 }

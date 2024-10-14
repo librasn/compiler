@@ -5,12 +5,10 @@ use crate::{
 use nom::{
     branch::alt,
     bytes::complete::{tag, take_until},
-    character::complete::char,
+    character::complete::{alphanumeric0, char, one_of},
     combinator::{into, map, not, opt, peek, recognize, value},
-    error::context,
-    multi::{many0, separated_list1},
+    multi::{many0, many1, separated_list1},
     sequence::{delimited, pair, preceded, separated_pair, terminated, tuple},
-    IResult,
 };
 
 use super::{
@@ -21,66 +19,58 @@ use super::{
 };
 
 pub fn module_reference(input: Input<'_>) -> ParserResult<'_, ModuleReference> {
-    context(
-        "ModuleDefinition",
-        skip_ws_and_comments(into(tuple((
-            identifier,
-            opt(skip_ws(definitive_identification)),
-            skip_ws_and_comments(delimited(
-                tag(DEFINITIONS),
-                opt(environments),
-                skip_ws_and_comments(pair(tag(ASSIGN), skip_ws_and_comments(tag(BEGIN)))),
-            )),
-            context_boundary(opt(exports)),
-            context_boundary(opt(imports)),
-        )))),
-    )(input)
+    skip_ws_and_comments(into(tuple((
+        identifier,
+        opt(skip_ws(definitive_identification)),
+        skip_ws_and_comments(delimited(
+            tag(DEFINITIONS),
+            opt(environments),
+            skip_ws_and_comments(pair(tag(ASSIGN), skip_ws_and_comments(tag(BEGIN)))),
+        )),
+        context_boundary(opt(exports)),
+        context_boundary(opt(imports)),
+    ))))(input)
 }
 
 fn definitive_identification(input: Input<'_>) -> ParserResult<'_, DefinitiveIdentifier> {
-    context(
-        "DefinitiveIdentification",
-        into(pair(object_identifier_value, opt(iri_value))),
-    )(input)
+    into(pair(object_identifier_value, opt(iri_value)))(input)
 }
 
 fn iri_value(input: Input<'_>) -> ParserResult<'_, &str> {
-    context(
-        "IRIValue",
-        into_inner(skip_ws_and_comments(delimited(
-            tag("\"/"),
-            recognize(separated_list1(char('/'), identifier)),
-            char('"'),
-        ))),
-    )(input)
+    into_inner(skip_ws_and_comments(delimited(
+        tag("\"/"),
+        recognize(separated_list1(char('/'), unicode_label)),
+        char('"'),
+    )))(input)
 }
 
+fn unicode_label(input: Input<'_>) -> ParserResult<'_, &str> {
+    skip_ws_and_comments(into_inner(recognize(many1(
+        one_of("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567890-_~.")
+    ))))(input)
+}
+
+
 fn exports(input: Input<'_>) -> ParserResult<'_, Exports> {
-    context(
-        "Exports",
-        skip_ws_and_comments(delimited(
-            tag(EXPORTS),
-            skip_ws(alt((
-                value(Exports::All, tag(ALL)),
-                into(separated_list1(
-                    skip_ws(char(COMMA)),
-                    skip_ws(alt((parameterized_identifier, identifier))),
-                )),
-            ))),
-            char(SEMICOLON),
-        )),
-    )(input)
+    skip_ws_and_comments(delimited(
+        tag(EXPORTS),
+        skip_ws(alt((
+            value(Exports::All, tag(ALL)),
+            into(separated_list1(
+                skip_ws(char(COMMA)),
+                skip_ws(alt((parameterized_identifier, identifier))),
+            )),
+        ))),
+        char(SEMICOLON),
+    ))(input)
 }
 
 fn imports(input: Input<'_>) -> ParserResult<'_, Vec<Import>> {
-    context(
-        "Imports",
-        skip_ws_and_comments(delimited(
-            tag(IMPORTS),
-            skip_ws_and_comments(many0(import)),
-            skip_ws_and_comments(char(SEMICOLON)),
-        )),
-    )(input)
+    skip_ws_and_comments(delimited(
+        tag(IMPORTS),
+        skip_ws_and_comments(many0(import)),
+        skip_ws_and_comments(char(SEMICOLON)),
+    ))(input)
 }
 
 fn parameterized_identifier(input: Input<'_>) -> ParserResult<'_, &str> {
@@ -165,37 +155,28 @@ fn environments(
     ),
 > {
     tuple((
-        context(
-            "EncodingReferenceDefault",
-            opt(skip_ws_and_comments(into(terminated(
-                identifier,
-                into_inner(skip_ws(tag(INSTRUCTIONS))),
-            )))),
-        ),
-        context(
-            "TagDefault",
-            skip_ws_and_comments(map(
-                opt(terminated(
-                    into_inner(alt((tag(AUTOMATIC), tag(IMPLICIT), tag(EXPLICIT)))),
-                    skip_ws(tag(TAGS)),
-                )),
-                |m| match m {
-                    Some(AUTOMATIC) => TaggingEnvironment::Automatic,
-                    Some(EXPLICIT) => TaggingEnvironment::Explicit,
-                    _ => TaggingEnvironment::Implicit,
-                },
+        opt(skip_ws_and_comments(into(terminated(
+            identifier,
+            into_inner(skip_ws(tag(INSTRUCTIONS))),
+        )))),
+        skip_ws_and_comments(map(
+            opt(terminated(
+                into_inner(alt((tag(AUTOMATIC), tag(IMPLICIT), tag(EXPLICIT)))),
+                skip_ws(tag(TAGS)),
             )),
-        ),
-        context(
-            "ExtensionDefault",
-            skip_ws_and_comments(map(opt(tag(EXTENSIBILITY_IMPLIED)), |m| {
-                if m.is_some() {
-                    ExtensibilityEnvironment::Implied
-                } else {
-                    ExtensibilityEnvironment::Explicit
-                }
-            })),
-        ),
+            |m| match m {
+                Some(AUTOMATIC) => TaggingEnvironment::Automatic,
+                Some(EXPLICIT) => TaggingEnvironment::Explicit,
+                _ => TaggingEnvironment::Implicit,
+            },
+        )),
+        skip_ws_and_comments(map(opt(tag(EXTENSIBILITY_IMPLIED)), |m| {
+            if m.is_some() {
+                ExtensibilityEnvironment::Implied
+            } else {
+                ExtensibilityEnvironment::Explicit
+            }
+        })),
     ))(input)
 }
 

@@ -2,10 +2,8 @@ use nom::{
     bytes::complete::tag,
     character::complete::{char, i128},
     combinator::{map, opt},
-    error::context,
     multi::{fold_many0, many0},
     sequence::{preceded, terminated, tuple},
-    IResult,
 };
 
 use crate::{
@@ -51,12 +49,9 @@ pub fn enumerated_value(input: Input<'_>) -> ParserResult<'_, ToplevelValueDefin
 /// and a wrapped `Enumerated` value representing the ASN1 declaration.
 /// If the match fails, the lexer will not consume the input and will return an error.
 pub fn enumerated(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
-    context(
-        "EnumeratedType",
-        map(
-            preceded(skip_ws_and_comments(tag(ENUMERATED)), enumerated_body),
-            |m| ASN1Type::Enumerated(m.into()),
-        ),
+    map(
+        preceded(skip_ws_and_comments(tag(ENUMERATED)), enumerated_body),
+        |m| ASN1Type::Enumerated(m.into()),
     )(input)
 }
 

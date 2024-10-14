@@ -3,10 +3,8 @@ use nom::{
     bytes::complete::tag,
     character::complete::char,
     combinator::{into, opt},
-    error::context,
     multi::many0,
     sequence::{separated_pair, terminated, tuple},
-    IResult,
 };
 
 use crate::{
@@ -69,40 +67,37 @@ pub fn selection_type_choice(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
 /// structs within the same global scope.
 /// If the match fails, the lexer will not consume the input and will return an error.
 pub fn choice(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
-    context(
-        "ChoiceType",
-        map(
-            preceded(
-                skip_ws_and_comments(tag(CHOICE)),
-                in_braces(tuple((
-                    many0(terminated(
-                        skip_ws_and_comments(choice_option),
-                        optional_comma,
-                    )),
-                    opt(terminated(
-                        extension_marker,
-                        opt(skip_ws_and_comments(char(COMMA))),
-                    )),
-                    opt(map(
-                        many0(alt((
-                            map(
-                                terminated(skip_ws_and_comments(choice_option), optional_comma),
-                                |extension| vec![extension],
-                            ),
-                            terminated(
-                                in_brackets(in_brackets(many1(terminated(
-                                    skip_ws_and_comments(choice_option),
-                                    optional_comma,
-                                )))),
+    map(
+        preceded(
+            skip_ws_and_comments(tag(CHOICE)),
+            in_braces(tuple((
+                many0(terminated(
+                    skip_ws_and_comments(choice_option),
+                    optional_comma,
+                )),
+                opt(terminated(
+                    extension_marker,
+                    opt(skip_ws_and_comments(char(COMMA))),
+                )),
+                opt(map(
+                    many0(alt((
+                        map(
+                            terminated(skip_ws_and_comments(choice_option), optional_comma),
+                            |extension| vec![extension],
+                        ),
+                        terminated(
+                            in_brackets(in_brackets(many1(terminated(
+                                skip_ws_and_comments(choice_option),
                                 optional_comma,
-                            ),
-                        ))),
-                        |extensions| extensions.into_iter().flatten().collect(),
-                    )),
-                ))),
-            ),
-            |m| ASN1Type::Choice(m.into()),
+                            )))),
+                            optional_comma,
+                        ),
+                    ))),
+                    |extensions| extensions.into_iter().flatten().collect(),
+                )),
+            ))),
         ),
+        |m| ASN1Type::Choice(m.into()),
     )(input)
 }
 

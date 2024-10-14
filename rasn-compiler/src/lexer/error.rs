@@ -25,12 +25,13 @@ impl CompilerError for LexerError {
         if let Some(report_data) = &self.report_data {
             let error = "Error:";
             let line = report_data.line;
+            let context_offset = report_data.context_start_offset;
+            let offset = report_data.offset;
             let context = until_next_unindented(
                 &input[report_data.context_start_offset..],
                 report_data.offset - report_data.context_start_offset + 1,
                 300,
             );
-            println!("CONTEXT: '{context}'");
             let pdu_lines = context.match_indices('\n').count();
             let start_line = report_data.context_start_line;
             let end_line = report_data.context_start_line + pdu_lines;
@@ -43,30 +44,24 @@ impl CompilerError for LexerError {
                 .lines()
                 .enumerate()
                 .fold(String::new(), |acc, (i, l)| {
+                    if l.trim().is_empty() {
+                        return acc;
+                    }
                     let line_no = format!("{:0>digits$}", (start_line + i).to_string());
-                    format!("{acc}\n {line_no} │  {l}")
+                    let mut ln = format!("{acc}\n {line_no} │  {}", l.trim_end());
+                    if i + start_line == line {
+                        ln += " <──── Failed at this line";
+                    }
+                    ln
                 });
-            let mut tried_parsers = String::from("   │");
-            if !report_data.tracked_parsers.is_empty() {
-                tried_parsers += &format!(
-                    "\n{indentation}   │  Applied the following parsers:\n{indentation}   │"
-                );
-                report_data
-                    .tracked_parsers
-                    .iter()
-                    .for_each(|tp: &TrackedParser| {
-                        let name = tp.name();
-                        tried_parsers += &format!("\n{indentation}   │  {name}")
-                    });
-            }
+            
             format!(
                 r#"
-{error} 
+{error}
 {indentation}   ╭─[line {line}, column {column}]
 {indentation}   │
 {indentation}   │ {pdu}
 {indentation}   │
-{indentation}{tried_parsers}
 {spacer}───╯
         "#
             )
@@ -88,13 +83,11 @@ impl<'a> From<nom::Err<ErrorTree<'a>>> for LexerError {
                 kind: LexerErrorType::NotEnoughData,
                 report_data: None,
             },
-            nom::Err::Error(e) | nom::Err::Failure(e) => {
-                //println!("{e:#?}");
-                Self {
+            nom::Err::Error(e) | nom::Err::Failure(e) => Self {
                 details: "Error matching ASN syntax at while parsing".to_string(),
                 kind: LexerErrorType::MatchingError(nom::error::ErrorKind::Alpha),
                 report_data: Some(e.into()),
-            }},
+            },
         }
     }
 }

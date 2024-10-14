@@ -2,9 +2,7 @@ use crate::{input::Input, intermediate::*};
 use nom::{
     bytes::complete::tag,
     combinator::{map, opt},
-    error::context,
     sequence::{pair, preceded},
-    IResult,
 };
 
 use super::{
@@ -23,24 +21,18 @@ use super::{
 /// and a wrapped `SequenceOf` type representing the ASN1 declaration.
 /// If the match fails, the lexer will not consume the input and will return an error.
 pub fn sequence_of(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
-    context(
-        "SequenceOfType",
-        map(
-            pair(
-                preceded(
-                    skip_ws_and_comments(tag(SEQUENCE)),
-                    opt(opt_parentheses(constraint)),
-                ),
-                preceded(
-                    skip_ws_and_comments(pair(
-                        tag(OF),
-                        opt(skip_ws_and_comments(value_identifier)),
-                    )),
-                    asn1_type,
-                ),
+    map(
+        pair(
+            preceded(
+                skip_ws_and_comments(tag(SEQUENCE)),
+                opt(opt_parentheses(constraint)),
             ),
-            |m| ASN1Type::SequenceOf(m.into()),
+            preceded(
+                skip_ws_and_comments(pair(tag(OF), opt(skip_ws_and_comments(value_identifier)))),
+                asn1_type,
+            ),
         ),
+        |m| ASN1Type::SequenceOf(m.into()),
     )(input)
 }
 

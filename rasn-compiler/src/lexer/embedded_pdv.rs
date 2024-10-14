@@ -1,4 +1,4 @@
-use nom::{bytes::complete::tag, combinator::value, error::context, IResult};
+use nom::{bytes::complete::tag, combinator::value};
 
 use crate::{input::Input, intermediate::*};
 
@@ -21,11 +21,8 @@ use super::{common::skip_ws_and_comments, error::ParserResult};
 /// _Presentation Layer, but this expansion is not used today,_
 /// _and it should be interpreted as "embedded value"._
 pub fn embedded_pdv(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
-    context(
-        "EmbeddedPDVType",
-        value(
-            ASN1Type::EmbeddedPdv,
-            skip_ws_and_comments(tag(EMBEDDED_PDV)),
-        ),
+    value(
+        ASN1Type::EmbeddedPdv,
+        skip_ws_and_comments(tag(EMBEDDED_PDV)),
     )(input)
 }

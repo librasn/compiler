@@ -1,4 +1,4 @@
-use nom::{bytes::complete::tag, combinator::value, error::context, IResult};
+use nom::{bytes::complete::tag, combinator::value};
 
 use crate::{
     input::Input,
@@ -20,10 +20,7 @@ pub fn null_value(input: Input<'_>) -> ParserResult<'_, ASN1Value> {
 /// and an `ASN1Type::Null` value representing the ASN1 declaration.
 /// If the match fails, the lexer will not consume the input and will return an error.
 pub fn null(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
-    context(
-        "NullType",
-        value(ASN1Type::Null, skip_ws_and_comments(tag(NULL))),
-    )(input)
+    value(ASN1Type::Null, skip_ws_and_comments(tag(NULL)))(input)
 }
 
 #[cfg(test)]

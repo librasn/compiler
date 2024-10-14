@@ -4,9 +4,7 @@ use nom::{
     bytes::complete::tag,
     character::complete::{char, i32, i64, u64},
     combinator::{map, opt, value},
-    error::context,
     sequence::{delimited, preceded, separated_pair, tuple},
-    IResult,
 };
 
 use super::{
@@ -31,15 +29,12 @@ pub fn real_value(input: Input<'_>) -> ParserResult<'_, ASN1Value> {
 /// and a wrapped `Real` value representing the ASN1 declaration.
 /// If the match fails, the lexer will not consume the input and will return an error.
 pub fn real(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
-    context(
-        "RealType",
-        map(
-            preceded(
-                skip_ws_and_comments(tag(REAL)),
-                opt(skip_ws_and_comments(constraint)),
-            ),
-            |m| ASN1Type::Real(m.into()),
+    map(
+        preceded(
+            skip_ws_and_comments(tag(REAL)),
+            opt(skip_ws_and_comments(constraint)),
         ),
+        |m| ASN1Type::Real(m.into()),
     )(input)
 }
 

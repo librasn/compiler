@@ -12,10 +12,8 @@ use nom::{
     bytes::complete::tag,
     character::complete::u128,
     combinator::{into, map, opt},
-    error::context,
     multi::many1,
     sequence::{pair, preceded},
-    IResult,
 };
 
 use super::{
@@ -45,15 +43,12 @@ pub fn object_identifier_value(input: Input<'_>) -> ParserResult<'_, ObjectIdent
 }
 
 pub fn object_identifier(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
-    context(
-        "ObjectIdentifierType",
-        map(
-            into(preceded(
-                skip_ws_and_comments(alt((tag(OBJECT_IDENTIFIER), tag(RELATIVE_OID)))),
-                opt(skip_ws_and_comments(constraint)),
-            )),
-            ASN1Type::ObjectIdentifier,
-        ),
+    map(
+        into(preceded(
+            skip_ws_and_comments(alt((tag(OBJECT_IDENTIFIER), tag(RELATIVE_OID)))),
+            opt(skip_ws_and_comments(constraint)),
+        )),
+        ASN1Type::ObjectIdentifier,
     )(input)
 }
 

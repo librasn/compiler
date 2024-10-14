@@ -2,9 +2,7 @@ use nom::{
     branch::alt,
     bytes::complete::tag,
     combinator::{into, map, opt, value},
-    error::context,
     sequence::preceded,
-    IResult,
 };
 
 use crate::{
@@ -30,15 +28,12 @@ pub fn boolean_value(input: Input<'_>) -> ParserResult<'_, ASN1Value> {
 /// and an `ASN1Type::Boolean` value representing the ASN1 declaration.
 /// If the match fails, the lexer will not consume the input and will return an error.
 pub fn boolean(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
-    context(
-        "BooleanType",
-        map(
-            into(skip_ws_and_comments(preceded(
-                tag(BOOLEAN),
-                skip_ws_and_comments(opt(constraint)),
-            ))),
-            ASN1Type::Boolean,
-        ),
+    map(
+        into(skip_ws_and_comments(preceded(
+            tag(BOOLEAN),
+            skip_ws_and_comments(opt(constraint)),
+        ))),
+        ASN1Type::Boolean,
     )(input)
 }
 

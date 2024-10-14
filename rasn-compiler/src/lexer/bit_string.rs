@@ -46,15 +46,12 @@ pub fn bit_string_value(input: Input<'_>) -> ParserResult<'_, ASN1Value> {
 /// and a wrapped `BitString` value representing the ASN1 declaration.
 /// If the match fails, the lexer will not consume the input and will return an error.
 pub fn bit_string(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
-    context(
-        "BitStringType",
-        map(
-            preceded(
-                skip_ws_and_comments(tag(BIT_STRING)),
-                pair(opt(distinguished_values), opt(constraint)),
-            ),
-            |m| ASN1Type::BitString(m.into()),
+    map(
+        preceded(
+            skip_ws_and_comments(tag(BIT_STRING)),
+            pair(opt(distinguished_values), opt(constraint)),
         ),
+        |m| ASN1Type::BitString(m.into()),
     )(input)
 }
 

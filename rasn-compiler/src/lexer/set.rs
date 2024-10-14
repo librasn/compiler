@@ -4,7 +4,6 @@ use nom::{
     combinator::opt,
     multi::many0,
     sequence::{terminated, tuple},
-    IResult,
 };
 
 use crate::intermediate::*;
@@ -22,8 +21,6 @@ use super::{common::optional_comma, constraint::constraint, sequence::sequence_c
 /// structs within the same global scope.
 /// If the match fails, the lexer will not consume the input and will return an error.
 pub fn set(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
-    context(
-        "SetType",
         map(
             preceded(
                 skip_ws_and_comments(tag(SET)),
@@ -43,7 +40,6 @@ pub fn set(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
                 ),
             ),
             |m| ASN1Type::Set(m.into()),
-        ),
     )(input)
 }
 

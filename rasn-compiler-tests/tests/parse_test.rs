@@ -8,9 +8,9 @@ fn parses_modules() {
     let mut succeeded = 0;
     let mut failed = 0;
     for entry in read_dir.flatten() {
-        if failed > 10 {
-            break;
-        }
+        // if failed > 10 {
+        //     break;
+        // }
         let path = entry.path();
         println!("{:?}", &path);
         if let Err(e) = Compiler::<RasnBackend, _>::new()

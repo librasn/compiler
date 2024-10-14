@@ -1,21 +1,32 @@
-use std::cmp::min;
+use std::{cmp::min, fmt::Debug};
 
 use nom::{
-    bytes::complete::tag,
-    error::{Error, ErrorKind, ParseError},
-    Err, FindSubstring, IResult, InputLength, InputTake, Parser, Slice,
+    bytes::complete::tag, combinator::{map, peek}, error::{Error, ErrorKind, ParseError}, multi::many_till, Err, FindSubstring, IResult, InputLength, InputTake, Parser, Slice
 };
 
 use crate::input::Input;
 
 use super::error::{ErrorTree, ParserResult};
 
+#[allow(dead_code)]
+pub fn debug_result<'a, O, F>(mut parser: F) -> impl FnMut(Input<'a>) -> ParserResult<'a, O>
+where
+    O: Debug,
+    F: FnMut(Input<'a>) -> ParserResult<'a, O>,
+{
+    move |input| {
+        let result = parser(input);
+        println!("{result:#?}");
+        result
+    }
+}
+
 pub fn until_next_unindented(input: &str, at_least_until: usize, fallback_len: usize) -> &str {
     match regex::Regex::new("\n[A-Za-z0-9]")
         .ok()
         .and_then(|needle| needle.find(&input[at_least_until..]))
     {
-        Some(m) => input[..m.start()].trim(),
+        Some(m) => &input[..(m.start() + at_least_until)],
         _ => input[..input.len().min(fallback_len)].trim(),
     }
 }
