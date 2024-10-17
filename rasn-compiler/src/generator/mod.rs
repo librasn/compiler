@@ -40,7 +40,7 @@ pub trait Backend: Sized + Default {
 
     /// Formats the bindings using the language- or framework-specific linters.
     /// For example, the Rust backend uses rustfmt for formatting bindings.
-    fn format_bindings(bindings: &str) -> Result<String, Box<dyn CompilerError>> {
+    fn format_bindings(bindings: &str) -> Result<String, CompilerError> {
         Ok(bindings.to_owned())
     }
 
@@ -62,7 +62,7 @@ pub trait Backend: Sized + Default {
 
 pub struct GeneratedModule {
     pub generated: Option<String>,
-    pub warnings: Vec<Box<dyn CompilerError>>,
+    pub warnings: Vec<CompilerError>,
 }
 
 impl GeneratedModule {

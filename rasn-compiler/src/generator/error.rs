@@ -3,12 +3,9 @@ use std::error::Error;
 
 use proc_macro2::LexError;
 
-use crate::{
-    error::CompilerError,
-    intermediate::{error::GrammarError, ToplevelDefinition},
-};
+use crate::intermediate::{error::GrammarError, ToplevelDefinition};
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct GeneratorError {
     pub top_level_declaration: Option<ToplevelDefinition>,
     pub details: String,
@@ -25,7 +22,7 @@ impl GeneratorError {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum GeneratorErrorType {
     Asn1TypeMismatch,
     EmptyChoiceType,
@@ -40,16 +37,6 @@ pub enum GeneratorErrorType {
 }
 
 impl Error for GeneratorError {}
-
-impl CompilerError for GeneratorError {
-    fn as_report(&self, input: &str) -> String {
-        format!("{self:#?}")
-    }
-
-    fn as_styled_report(&self) -> String {
-        format!("{self:#?}")
-    }
-}
 
 impl Default for GeneratorError {
     fn default() -> Self {

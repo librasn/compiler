@@ -1,92 +1,82 @@
 use core::fmt::{Display, Formatter, Result};
 use std::{collections::VecDeque, error::Error, io};
 
-use colored::Colorize;
 use nom::{
     error::{ContextError, FromExternalError, ParseError},
-    IResult, Slice,
+    IResult,
 };
 
-use crate::{error::CompilerError, input::Input};
+use crate::input::Input;
 
 use super::util::until_next_unindented;
 
 pub type ParserResult<'a, O> = IResult<Input<'a>, O, ErrorTree<'a>>;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct LexerError {
-    pub details: String,
     pub kind: LexerErrorType,
-    report_data: Option<ReportData>,
 }
 
-impl CompilerError for LexerError {
-    fn as_report(&self, input: &str) -> String {
-        if let Some(report_data) = &self.report_data {
-            let error = "Error:";
-            let line = report_data.line;
-            let context_offset = report_data.context_start_offset;
-            let offset = report_data.offset;
-            let context = until_next_unindented(
-                &input[report_data.context_start_offset..],
-                report_data.offset - report_data.context_start_offset + 1,
-                300,
-            );
-            let pdu_lines = context.match_indices('\n').count();
-            let start_line = report_data.context_start_line;
-            let end_line = report_data.context_start_line + pdu_lines;
-            let column = report_data.column;
-            let n = end_line.checked_ilog10().unwrap_or(0) as usize;
-            let digits = n + 1;
-            let spacer = "─".repeat(n);
-            let indentation = " ".repeat(n);
-            let pdu = context
-                .lines()
-                .enumerate()
-                .fold(String::new(), |acc, (i, l)| {
-                    if l.trim().is_empty() {
-                        return acc;
-                    }
-                    let line_no = format!("{:0>digits$}", (start_line + i).to_string());
-                    let mut ln = format!("{acc}\n {line_no} │  {}", l.trim_end());
-                    if i + start_line == line {
-                        ln += " <──── Failed at this line";
-                    }
-                    ln
-                });
-            
-            format!(
-                r#"
-{error}
+impl LexerError {
+    pub fn contextualize(&self, input: &str) -> String {
+        match &self.kind {
+            LexerErrorType::MatchingError(report_data) => {
+                let line = report_data.line;
+                let context = until_next_unindented(
+                    &input[report_data.context_start_offset..],
+                    report_data.offset - report_data.context_start_offset + 1,
+                    300,
+                );
+                let pdu_lines = context.match_indices('\n').count();
+                let start_line = report_data.context_start_line;
+                let end_line = report_data.context_start_line + pdu_lines;
+                let column = report_data.column;
+                let n = end_line.checked_ilog10().unwrap_or(0) as usize;
+                let digits = n + 1;
+                let spacer = "─".repeat(n);
+                let indentation = " ".repeat(n);
+                let pdu = context
+                    .lines()
+                    .enumerate()
+                    .fold(String::new(), |acc, (i, l)| {
+                        if l.trim().is_empty() {
+                            return acc;
+                        }
+                        let line_no = format!("{:0>digits$}", (start_line + i).to_string());
+                        let mut ln = format!("{acc}\n {line_no} │  {}", l.trim_end());
+                        if i + start_line == line {
+                            ln += " ◀▪▪▪▪▪▪▪▪▪▪ FAILED AT THIS LINE";
+                        }
+                        ln
+                    });
+
+                format!(
+                    r#"
+Error matching ASN syntax at while parsing:
 {indentation}   ╭─[line {line}, column {column}]
 {indentation}   │
 {indentation}   │ {pdu}
 {indentation}   │
 {spacer}───╯
         "#
-            )
-        } else {
-            self.details.clone()
+                )
+            }
+            _ => format!("{self}"),
         }
-    }
-
-    fn as_styled_report(&self) -> String {
-        self.as_report("input")
     }
 }
 
 impl<'a> From<nom::Err<ErrorTree<'a>>> for LexerError {
     fn from(value: nom::Err<ErrorTree<'a>>) -> Self {
         match value {
-            nom::Err::Incomplete(_) => Self {
-                details: "Unexpected end of input!".into(),
-                kind: LexerErrorType::NotEnoughData,
-                report_data: None,
+            nom::Err::Incomplete(needed) => Self {
+                kind: LexerErrorType::NotEnoughData(match needed {
+                    nom::Needed::Unknown => None,
+                    nom::Needed::Size(i) => Some(i.get()),
+                }),
             },
             nom::Err::Error(e) | nom::Err::Failure(e) => Self {
-                details: "Error matching ASN syntax at while parsing".to_string(),
-                kind: LexerErrorType::MatchingError(nom::error::ErrorKind::Alpha),
-                report_data: Some(e.into()),
+                kind: LexerErrorType::MatchingError(e.into()),
             },
         }
     }
@@ -95,37 +85,42 @@ impl<'a> From<nom::Err<ErrorTree<'a>>> for LexerError {
 impl From<io::Error> for LexerError {
     fn from(value: io::Error) -> Self {
         LexerError {
-            details: value.to_string(),
-            kind: LexerErrorType::IO,
-            report_data: None,
+            kind: LexerErrorType::IO(value.to_string()),
         }
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum LexerErrorType {
-    NotEnoughData,
-    #[allow(dead_code)]
-    MatchingError(nom::error::ErrorKind),
-    #[allow(dead_code)]
-    Failure(nom::error::ErrorKind),
-    IO,
+    NotEnoughData(Option<usize>),
+    MatchingError(ReportData),
+    IO(String),
 }
 
 impl Error for LexerError {}
 
 impl Display for LexerError {
     fn fmt(&self, f: &mut Formatter) -> Result {
-        write!(
-            f,
-            "Encountered error while parsing {:?} - {}",
-            self.kind, self.details
-        )
+        match &self.kind {
+            LexerErrorType::NotEnoughData(needed) => write!(
+                f,
+                "Unexpected end of input.{}",
+                needed.map_or(String::new(), |i| format!(
+                    " Need another {i} characters of input."
+                ))
+            ),
+            LexerErrorType::MatchingError(report_data) => write!(
+                f,
+                "Error matching ASN syntax at while parsing line {} column {}.",
+                report_data.line, report_data.column
+            ),
+            LexerErrorType::IO(reason) => write!(f, "Failed to read ASN.1 source. {reason}"),
+        }
     }
 }
 
 #[derive(Debug, Clone, PartialEq)]
-struct ReportData {
+pub struct ReportData {
     pub context_start_line: usize,
     pub context_start_offset: usize,
     pub line: usize,

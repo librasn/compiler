@@ -153,7 +153,7 @@ impl CompilerState for CompilerMissingParams {}
 #[derive(Debug)]
 pub struct CompileResult {
     pub generated: String,
-    pub warnings: Vec<Box<dyn CompilerError>>,
+    pub warnings: Vec<CompilerError>,
 }
 
 impl CompileResult {
@@ -384,23 +384,22 @@ impl<B: Backend> Compiler<B, CompilerSourcesSet> {
     /// Returns a Result wrapping a compilation result:
     /// * _Ok_  - tuple containing the stringified bindings for the ASN1 spec as well as a vector of warnings raised during the compilation
     /// * _Err_ - Unrecoverable error, no rust representations were generated
-    pub fn compile_to_string(mut self) -> Result<CompileResult, Box<dyn CompilerError>> {
+    pub fn compile_to_string(mut self) -> Result<CompileResult, CompilerError> {
         self.internal_compile().map(CompileResult::fmt::<B>)
     }
 
-    fn internal_compile(&mut self) -> Result<CompileResult, Box<dyn CompilerError>> {
+    fn internal_compile(&mut self) -> Result<CompileResult, CompilerError> {
         let mut generated_modules = vec![];
-        let mut warnings = Vec::<Box<dyn CompilerError>>::new();
+        let mut warnings = Vec::<CompilerError>::new();
         let mut modules: Vec<ToplevelDefinition> = vec![];
         for src in &self.state.sources {
             let stringified_src = match src {
                 AsnSource::Path(p) => read_to_string(p)
-                    .map_err(|e| Box::new(LexerError::from(e)) as Box<dyn CompilerError>)?,
+                    .map_err(LexerError::from)?,
                 AsnSource::Literal(l) => l.clone(),
             };
             modules.append(
-                &mut asn_spec(&stringified_src)
-                    .map_err(|e| Box::new(e) as Box<dyn CompilerError>)?
+                &mut asn_spec(&stringified_src)?
                     .into_iter()
                     .flat_map(|(header, tlds)| {
                         let header_ref = Rc::new(RefCell::new(header));
@@ -434,8 +433,7 @@ impl<B: Backend> Compiler<B, CompilerSourcesSet> {
         for (_, module) in modules {
             let mut generated_module = self
                 .backend
-                .generate_module(module)
-                .map_err(|e| Box::new(e) as Box<dyn CompilerError>)?;
+                .generate_module(module)?;
             if let Some(m) = generated_module.generated {
                 generated_modules.push(m);
             }
@@ -507,7 +505,7 @@ impl<B: Backend> Compiler<B, CompilerReady> {
     /// Returns a Result wrapping a compilation result:
     /// * _Ok_  - tuple containing the stringified bindings for the ASN1 spec as well as a vector of warnings raised during the compilation
     /// * _Err_ - Unrecoverable error, no rust representations were generated
-    pub fn compile_to_string(self) -> Result<CompileResult, Box<dyn CompilerError>> {
+    pub fn compile_to_string(self) -> Result<CompileResult, CompilerError> {
         Compiler {
             state: CompilerSourcesSet {
                 sources: self.state.sources,
@@ -521,7 +519,7 @@ impl<B: Backend> Compiler<B, CompilerReady> {
     /// Returns a Result wrapping a compilation result:
     /// * _Ok_  - Vector of warnings raised during the compilation
     /// * _Err_ - Unrecoverable error, no rust representations were generated
-    pub fn compile(self) -> Result<Vec<Box<dyn CompilerError>>, Box<dyn CompilerError>> {
+    pub fn compile(self) -> Result<Vec<CompilerError>, CompilerError> {
         let result = Compiler {
             state: CompilerSourcesSet {
                 sources: self.state.sources,
@@ -542,12 +540,11 @@ impl<B: Backend> Compiler<B, CompilerReady> {
                 .unwrap_or(self.state.output_path),
             result.generated,
         )
-        .map_err(|e| {
-            Box::new(GeneratorError {
+        .map_err(|e| GeneratorError {
                 top_level_declaration: None,
                 details: e.to_string(),
                 kind: GeneratorErrorType::IO,
-            }) as Box<dyn CompilerError>
+            
         })?;
 
         Ok(result.warnings)

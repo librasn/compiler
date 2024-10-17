@@ -8,9 +8,6 @@ fn parses_modules() {
     let mut succeeded = 0;
     let mut failed = 0;
     for entry in read_dir.flatten() {
-        // if failed > 10 {
-        //     break;
-        // }
         let path = entry.path();
         println!("{:?}", &path);
         if let Err(e) = Compiler::<RasnBackend, _>::new()
@@ -26,7 +23,7 @@ fn parses_modules() {
 {}
 
                     "#,
-                e.as_report(&std::fs::read_to_string(path.clone()).unwrap())
+                e.contextualize(&std::fs::read_to_string(path.clone()).unwrap())
             ))
         } else {
             succeeded += 1;
@@ -51,7 +48,7 @@ Failed to parse {failed} modules with the following errors:
 #[ignore]
 fn compile_etsi() {
     println!(
-        "{}",
+        "{:?}",
         Compiler::<RasnBackend, _>::new_with_config(rasn_compiler::prelude::RasnConfig::default())
             // .add_asn_by_path("../rasn-compiler/test_asn1/ngap_class.asn")
             // .add_asn_by_path("../rasn-compiler/test_asn1/ngap_common.asn")
@@ -63,6 +60,6 @@ fn compile_etsi() {
                 "../rasn-compiler/test_asn1/test.asn"
             )
             .set_output_path("./tests")
-            .compile().unwrap_err().as_report(&std::fs::read_to_string("../rasn-compiler/test_asn1/test.asn").unwrap())
+            .compile()
     );
 }

@@ -3,9 +3,7 @@ use std::{
     fmt::{Display, Formatter, Result},
 };
 
-use crate::error::CompilerError;
-
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct GrammarError {
     pub details: String,
     pub kind: GrammarErrorType,
@@ -27,19 +25,9 @@ impl GrammarError {
     }
 }
 
-impl CompilerError for GrammarError {
-    fn as_report(&self, input: &str) -> String {
-        format!("{self:#?}")
-    }
-
-    fn as_styled_report(&self) -> String {
-        format!("{self:#?}")
-    }
-}
-
 impl Error for GrammarError {}
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum GrammarErrorType {
     UnpackingError,
     LinkerError,

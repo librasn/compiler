@@ -1,18 +1,18 @@
 use core::fmt::{Display, Formatter, Result};
 use std::error::Error;
 
-use crate::{error::CompilerError, intermediate::error::GrammarError};
+use crate::intermediate::error::GrammarError;
 
-#[derive(Debug, Clone)]
-pub struct ValidatorError {
+#[derive(Debug, Clone, PartialEq)]
+pub struct LinkerError {
     pub data_element: Option<String>,
     pub details: String,
-    pub kind: ValidatorErrorType,
+    pub kind: LinkerErrorType,
 }
 
-impl ValidatorError {
-    pub fn new(data_element: Option<String>, details: &str, kind: ValidatorErrorType) -> Self {
-        ValidatorError {
+impl LinkerError {
+    pub fn new(data_element: Option<String>, details: &str, kind: LinkerErrorType) -> Self {
+        LinkerError {
             data_element,
             details: details.into(),
             kind,
@@ -24,16 +24,16 @@ impl ValidatorError {
     }
 }
 
-#[derive(Debug, Clone)]
-pub enum ValidatorErrorType {
+#[derive(Debug, Clone, PartialEq)]
+pub enum LinkerErrorType {
     MissingDependency,
     InvalidConstraintsError,
     Unknown,
 }
 
-impl Error for ValidatorError {}
+impl Error for LinkerError {}
 
-impl Display for ValidatorError {
+impl Display for LinkerError {
     fn fmt(&self, f: &mut Formatter) -> Result {
         write!(
             f,
@@ -45,22 +45,12 @@ impl Display for ValidatorError {
     }
 }
 
-impl CompilerError for ValidatorError {
-    fn as_report(&self, input: &str) -> String {
-        format!("{self:#?}")
-    }
-
-    fn as_styled_report(&self) -> String {
-        format!("{self:#?}")
-    }
-}
-
-impl From<GrammarError> for ValidatorError {
+impl From<GrammarError> for LinkerError {
     fn from(value: GrammarError) -> Self {
         Self {
             data_element: None,
             details: value.details,
-            kind: ValidatorErrorType::Unknown,
+            kind: LinkerErrorType::Unknown,
         }
     }
 }

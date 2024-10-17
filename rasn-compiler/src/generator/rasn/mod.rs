@@ -148,7 +148,7 @@ impl Backend for Rasn {
                 };
                 quote!(use super:: #module::{ #(#used_imports),* };)
             });
-            let (pdus, warnings): (Vec<TokenStream>, Vec<Box<dyn CompilerError>>) =
+            let (pdus, warnings): (Vec<TokenStream>, Vec<CompilerError>) =
                 tlds.into_iter().fold((vec![], vec![]), |mut acc, tld| {
                     match self.generate_tld(tld) {
                         Ok(s) => {
@@ -156,7 +156,7 @@ impl Backend for Rasn {
                             acc
                         }
                         Err(e) => {
-                            acc.1.push(Box::new(e));
+                            acc.1.push(e.into());
                             acc
                         }
                     }
@@ -182,14 +182,12 @@ impl Backend for Rasn {
         }
     }
 
-    fn format_bindings(bindings: &str) -> Result<String, Box<dyn CompilerError>> {
-        Self::internal_fmt(bindings).map_err(|e| {
-            Box::new(GeneratorError {
+    fn format_bindings(bindings: &str) -> Result<String, CompilerError> {
+        Self::internal_fmt(bindings).map_err(|e| GeneratorError {
                 top_level_declaration: None,
                 details: e.to_string(),
                 kind: GeneratorErrorType::FormattingError,
-            }) as Box<dyn CompilerError>
-        })
+            }.into())
     }
 
     fn generate(&self, tld: ToplevelDefinition) -> Result<String, GeneratorError> {

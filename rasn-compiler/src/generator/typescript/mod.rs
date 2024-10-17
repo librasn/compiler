@@ -67,7 +67,7 @@ impl Backend for Typescript {
                     acc.push_str(&usages.join("\n"));
                     acc
                 });
-            let (pdus, warnings): (String, Vec<Box<dyn CompilerError>>) =
+            let (pdus, warnings): (String, Vec<CompilerError>) =
                 tlds.into_iter()
                     .fold((String::new(), vec![]), |mut acc, tld| {
                         match self.generate(tld) {
@@ -77,7 +77,7 @@ impl Backend for Typescript {
                                 acc
                             }
                             Err(e) => {
-                                acc.1.push(Box::new(e));
+                                acc.1.push(e.into());
                                 acc
                             }
                         }
@@ -99,7 +99,7 @@ impl Backend for Typescript {
         }
     }
 
-    fn format_bindings(bindings: &str) -> Result<String, Box<dyn CompilerError>> {
+    fn format_bindings(bindings: &str) -> Result<String, CompilerError> {
         Ok(bindings.to_string())
     }
 
