@@ -61,7 +61,31 @@ mod tests;
 pub fn asn_spec(
     input: &str,
 ) -> Result<Vec<(ModuleReference, Vec<ToplevelDefinition>)>, LexerError> {
-    many1(pair(
+    let mut result = Vec::new();
+    let mut remaining_input = Input::from(input);
+    loop {
+        match asn_module(remaining_input) {
+            Ok((remaining, res)) => {
+                result.push(res);
+                remaining_input = remaining;
+                if remaining_input.is_empty() {
+                    return Ok(result);
+                }
+            }
+            Err(nom::Err::Error(e)) if e.is_eof_error() => {
+                return Ok(result);
+            }
+            Err(e) => {
+                return Err(e.into());
+            }
+        }
+    }
+}
+
+pub(crate) fn asn_module(
+    input: Input<'_>,
+) -> ParserResult<'_, (ModuleReference, Vec<ToplevelDefinition>)> {
+    pair(
         module_reference,
         terminated(
             many0(skip_ws(alt((
@@ -72,16 +96,14 @@ pub fn asn_spec(
                 map(top_level_type_declaration, ToplevelDefinition::Type),
                 map(top_level_value_declaration, ToplevelDefinition::Value),
             )))),
-            context_boundary(skip_ws_and_comments(alt((encoding_control, end)))),
+            context_boundary(skip_ws_and_comments(alt((end, encoding_control)))),
         ),
-    ))(input.into())
-    .map(|(_, res)| res)
-    .map_err(|e| e.into())
+    )(input)
 }
 
 fn encoding_control(input: Input<'_>) -> ParserResult<'_, &str> {
     into_inner(delimited(
-        skip_ws_and_comments(tag("ENCODING-CONTROL")),
+        skip_ws_and_comments(tag(ENCODING_CONTROL)),
         take_until(END),
         end,
     ))(input)
@@ -242,4 +264,40 @@ fn top_level_object_class_declaration(
         skip_ws(opt(parameterization)),
         preceded(assignment, alt((type_identifier, information_object_class))),
     )))(input)
+}
+
+#[test]
+fn eof_comments() {
+    println!(
+        "{:#?}",
+        pair(
+            module_reference,
+            terminated(
+                many0(skip_ws(alt((
+                    map(
+                        top_level_information_declaration,
+                        ToplevelDefinition::Information,
+                    ),
+                    map(top_level_type_declaration, ToplevelDefinition::Type),
+                    map(top_level_value_declaration, ToplevelDefinition::Value),
+                )))),
+                context_boundary(skip_ws_and_comments(into_inner(preceded(
+                    tag(END),
+                    recognize(many0(alt((comment, into_inner(multispace1))))),
+                ))))
+            )
+        )(
+            r#"
+LdapSystemSchema {joint-iso-itu-t ds(5) module(1) ldapSystemSchema(38) 9}
+DEFINITIONS ::=
+BEGIN
+
+id-oat-supportedFeatures                  OBJECT IDENTIFIER ::= {10 5}
+
+END -- LdapSystemSchema"#
+                .into()
+        )
+        .unwrap()
+        .0
+    );
 }

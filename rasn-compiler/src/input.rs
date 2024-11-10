@@ -90,6 +90,10 @@ impl Input<'_> {
         self.inner.len()
     }
 
+    pub fn is_empty(&self) -> bool {
+        self.inner.is_empty()
+    }
+
     pub fn reset_context(&mut self) {
         self.context_start_line = self.line;
         self.context_start_offset = self.offset;

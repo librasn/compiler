@@ -4,7 +4,7 @@ use nom::{
     character::complete::{
         alpha1, alphanumeric1, char, i128, multispace0, multispace1, one_of, u64,
     },
-    combinator::{into, map, map_res, opt, peek, recognize, value},
+    combinator::{into, map, map_res, opt, peek, recognize, rest, value},
     multi::{many0, many1},
     sequence::{delimited, pair, preceded, terminated},
 };
@@ -38,7 +38,10 @@ pub fn comment(input: Input<'_>) -> ParserResult<'_, &str> {
 pub fn line_comment(input: Input<'_>) -> ParserResult<'_, &str> {
     delimited(
         tag(LINE_COMMENT),
-        into_inner(take_until_or("\n", LINE_COMMENT)),
+        alt((
+            into_inner(take_until_or("\n", LINE_COMMENT)),
+            into_inner(rest),
+        )),
         opt(tag(LINE_COMMENT)),
     )(input)
 }
@@ -471,6 +474,14 @@ and one */"#
                     value: 161,
                 },
             ]
+        )
+    }
+
+    #[test]
+    fn parses_eof_line_comment() {
+        assert_eq!(
+            line_comment(r#"-- LdapSystemSchema"#.into()).unwrap().1,
+            " LdapSystemSchema"
         )
     }
 }

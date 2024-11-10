@@ -34,6 +34,7 @@ pub enum GeneratorErrorType {
     FormattingError,
     IO,
     NotYetInplemented,
+    Unsupported,
 }
 
 impl Error for GeneratorError {}
