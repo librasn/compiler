@@ -7,14 +7,17 @@ use std::{
     str::FromStr,
 };
 
-use crate::intermediate::*;
+use crate::{error::CompilerError, intermediate::*};
 use proc_macro2::TokenStream;
 use quote::{quote, ToTokens};
 
 #[cfg(target_family = "wasm")]
 use wasm_bindgen::prelude::*;
 
-use super::{error::GeneratorError, Backend, GeneratedModule};
+use super::{
+    error::{GeneratorError, GeneratorErrorType},
+    Backend, GeneratedModule,
+};
 
 mod builder;
 mod template;
@@ -145,7 +148,7 @@ impl Backend for Rasn {
                 };
                 quote!(use super:: #module::{ #(#used_imports),* };)
             });
-            let (pdus, warnings): (Vec<TokenStream>, Vec<Box<dyn Error>>) =
+            let (pdus, warnings): (Vec<TokenStream>, Vec<CompilerError>) =
                 tlds.into_iter().fold((vec![], vec![]), |mut acc, tld| {
                     match self.generate_tld(tld) {
                         Ok(s) => {
@@ -153,7 +156,7 @@ impl Backend for Rasn {
                             acc
                         }
                         Err(e) => {
-                            acc.1.push(Box::new(e));
+                            acc.1.push(e.into());
                             acc
                         }
                     }
@@ -179,7 +182,24 @@ impl Backend for Rasn {
         }
     }
 
-    fn format_bindings(bindings: &str) -> Result<String, Box<dyn Error>> {
+    fn format_bindings(bindings: &str) -> Result<String, CompilerError> {
+        Self::internal_fmt(bindings).map_err(|e| {
+            GeneratorError {
+                top_level_declaration: None,
+                details: e.to_string(),
+                kind: GeneratorErrorType::FormattingError,
+            }
+            .into()
+        })
+    }
+
+    fn generate(&self, tld: ToplevelDefinition) -> Result<String, GeneratorError> {
+        self.generate_tld(tld).map(|ts| ts.to_string())
+    }
+}
+
+impl Rasn {
+    fn internal_fmt(bindings: &str) -> Result<String, Box<dyn Error>> {
         let mut rustfmt = PathBuf::from(env::var("CARGO_HOME")?);
         rustfmt.push("bin/rustfmt");
         let mut cmd = Command::new(&*rustfmt);
@@ -223,9 +243,5 @@ impl Backend for Rasn {
             },
             _ => Ok(bindings),
         }
-    }
-
-    fn generate(&self, tld: ToplevelDefinition) -> Result<String, GeneratorError> {
-        self.generate_tld(tld).map(|ts| ts.to_string())
     }
 }

@@ -71,10 +71,12 @@ fn resolve_and_link(
 ) -> Result<Option<ToplevelInformationDefinition>, GrammarError> {
     match resolve_custom_syntax(fields, class) {
         Ok(()) => link_object_fields(fields, class, tlds).map(|_| None),
-        Err(GrammarError {
-            kind: GrammarErrorType::SyntaxMismatch,
-            details,
-        }) => {
+        Err(
+            err @ GrammarError {
+                kind: GrammarErrorType::SyntaxMismatch,
+                ..
+            },
+        ) => {
             if let InformationObjectFields::CustomSyntax(c) = &fields {
                 if let Some(id) = c.first().and_then(SyntaxApplication::as_str_or_none) {
                     if let Some(ToplevelDefinition::Information(tld)) = tlds.get(id) {
@@ -84,10 +86,7 @@ fn resolve_and_link(
                     }
                 }
             }
-            Err(GrammarError {
-                details,
-                kind: GrammarErrorType::SyntaxMismatch,
-            })
+            Err(err)
         }
         Err(e) => Err(e),
     }
@@ -110,30 +109,31 @@ fn link_object_fields(
                         .then_some(f.ty.as_ref())
                     })
                     .flatten()
-                    .ok_or_else(|| GrammarError {
-                        details: format!(
-                            "Could not determine type of fixed value field {}",
-                            fixed.identifier,
-                        ),
-                        kind: GrammarErrorType::LinkerError,
+                    .ok_or_else(|| {
+                        GrammarError::new(
+                            &format!(
+                                "Could not determine type of fixed value field {}",
+                                fixed.identifier
+                            ),
+                            GrammarErrorType::LinkerError,
+                        )
                     })
                     .and_then(|ty| {
                         fixed
                             .value
                             .link_with_type(tlds, ty, Some(&ty.as_str().to_string()))
                     }),
-                InformationObjectField::ObjectSetField(_) => Err(GrammarError {
-                    details: "Linking object set fields is not yet supported!".to_string(),
-                    kind: GrammarErrorType::NotYetInplemented,
-                }),
+                InformationObjectField::ObjectSetField(_) => Err(GrammarError::new(
+                    "Linking object set fields is not yet supported!",
+                    GrammarErrorType::NotYetInplemented,
+                )),
                 _ => Ok(()),
             })
         }
-        InformationObjectFields::CustomSyntax(_) => Err(GrammarError {
-            details: "Unexpectedly encountered unresolved custom syntax linking information object"
-                .to_string(),
-            kind: GrammarErrorType::LinkerError,
-        }),
+        InformationObjectFields::CustomSyntax(_) => Err(GrammarError::new(
+            "Unexpectedly encountered unresolved custom syntax linking information object",
+            GrammarErrorType::LinkerError,
+        )),
     }
 }
 
@@ -303,10 +303,10 @@ impl ObjectSet {
                         ..
                     })) => value = ObjectSetValue::Inline(obj.fields.clone()),
                     _ => {
-                        return Err(GrammarError {
-                            details: "Failed to resolve reference in object set.".to_owned(),
-                            kind: GrammarErrorType::LinkerError,
-                        })
+                        return Err(GrammarError::new(
+                            "Failed to resolve reference in object set.",
+                            GrammarErrorType::LinkerError,
+                        ))
                     }
                 }
             }

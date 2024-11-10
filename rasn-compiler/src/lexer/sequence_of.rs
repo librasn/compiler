@@ -1,26 +1,26 @@
-use crate::intermediate::*;
+use crate::{input::Input, intermediate::*};
 use nom::{
     bytes::complete::tag,
     combinator::{map, opt},
     sequence::{pair, preceded},
-    IResult,
 };
 
 use super::{
     asn1_type,
     common::{opt_parentheses, skip_ws_and_comments, value_identifier},
     constraint::constraint,
+    error::ParserResult,
 };
 
 /// Tries to parse an ASN1 SEQUENCE OF
 ///
-/// *`input` - string slice to be matched against
+/// *`input` - [Input]-wrapped string slice to be matched against
 ///
 /// `sequence_of` will try to match an SEQUENCE OF declaration in the `input` string.
 /// If the match succeeds, the lexer will consume the match and return the remaining string
 /// and a wrapped `SequenceOf` type representing the ASN1 declaration.
 /// If the match fails, the lexer will not consume the input and will return an error.
-pub fn sequence_of(input: &str) -> IResult<&str, ASN1Type> {
+pub fn sequence_of(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
     map(
         pair(
             preceded(
@@ -50,7 +50,7 @@ mod tests {
     #[test]
     fn parses_simple_sequence_of() {
         assert_eq!(
-            sequence_of("SEQUENCE OF BOOLEAN").unwrap().1,
+            sequence_of("SEQUENCE OF BOOLEAN".into()).unwrap().1,
             ASN1Type::SequenceOf(SequenceOrSetOf {
                 is_recursive: false,
                 constraints: vec![],
@@ -64,7 +64,7 @@ mod tests {
     #[test]
     fn parses_simple_sequence_of_elsewhere_declared_type() {
         assert_eq!(
-            sequence_of("SEQUENCE OF Things").unwrap().1,
+            sequence_of("SEQUENCE OF Things".into()).unwrap().1,
             ASN1Type::SequenceOf(SequenceOrSetOf {
                 is_recursive: false,
                 constraints: vec![],
@@ -80,7 +80,7 @@ mod tests {
     #[test]
     fn parses_constraint_sequence_of_elsewhere_declared_type() {
         assert_eq!(
-            sequence_of("SEQUENCE SIZE (1..13,...) OF CorrelationCellValue  ")
+            sequence_of("SEQUENCE SIZE (1..13,...) OF CorrelationCellValue  ".into())
                 .unwrap()
                 .1,
             ASN1Type::SequenceOf(SequenceOrSetOf {
@@ -107,7 +107,7 @@ mod tests {
     #[test]
     fn parses_constraint_sequence_of_with_extra_parentheses() {
         assert_eq!(
-            sequence_of("SEQUENCE (SIZE (1..13, ...)) OF CorrelationCellValue  ")
+            sequence_of("SEQUENCE (SIZE (1..13, ...)) OF CorrelationCellValue  ".into())
                 .unwrap()
                 .1,
             ASN1Type::SequenceOf(SequenceOrSetOf {
@@ -138,6 +138,7 @@ mod tests {
                 r#"SEQUENCE SIZE (1..13,...) OF INTEGER {
               one-distinguished-value (12)
             } (1..13,...) "#
+                    .into()
             )
             .unwrap()
             .1,
@@ -177,6 +178,7 @@ mod tests {
             sequence_of(
                 r#"SEQUENCE (SIZE(1..4)) OF
       RegionalExtension {{Reg-MapData}} OPTIONAL,"#
+                    .into()
             )
             .unwrap()
             .1,
@@ -215,6 +217,7 @@ mod tests {
         IEEE1609DOT2-HEADERINFO-CONTRIBUTED-EXTENSION.&Extn({
         Ieee1609Dot2HeaderInfoContributedExtensions
       }{@.contributorId})"#
+                    .into()
             )
             .unwrap()
             .1

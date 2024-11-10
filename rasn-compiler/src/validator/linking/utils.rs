@@ -52,10 +52,10 @@ pub(crate) fn bit_string_to_octet_string(bits: &[bool]) -> Result<Vec<u8>, Gramm
     let mut octets = vec![];
     for byte in bits.chunks(8) {
         if byte.len() != 8 {
-            return Err(GrammarError {
-                details: "Binary octet string value needs to be a multiple of 8 bits!".into(),
-                kind: GrammarErrorType::LinkerError,
-            });
+            return Err(GrammarError::new(
+                "Binary octet string value needs to be a multiple of 8 bits!",
+                GrammarErrorType::LinkerError,
+            ));
         }
         octets.push(byte.iter().enumerate().fold(0u8, |acc, (i, bit)| {
             acc + if *bit { 2u8.pow(7 - i as u32) } else { 0 }
@@ -95,10 +95,10 @@ pub fn resolve_custom_syntax(
         let tokens = match &class.syntax {
             Some(s) => s.flatten(),
             None => {
-                return Err(GrammarError {
-                    details: "No syntax definition for information object class found!".into(),
-                    kind: GrammarErrorType::LinkerError,
-                })
+                return Err(GrammarError::new(
+                    "No syntax definition for information object class found!",
+                    GrammarErrorType::LinkerError,
+                ))
             }
         };
 
@@ -158,12 +158,14 @@ pub fn resolve_custom_syntax(
                                     index,
                                     InformationObjectField::FixedValueField(FixedValueField {
                                         identifier: token.name_or_empty().to_owned(),
-                                        value: match asn1_value(&t.identifier) {
+                                        value: match asn1_value((t.identifier.as_str()).into()) {
                                             Ok((_, v)) => Ok(v),
-                                            Err(e) => Err(GrammarError {
-                                                details: format!("Syntax mismatch while resolving information object: {e:?}"),
-                                                kind: GrammarErrorType::SyntaxMismatch,
-                                            }),
+                                            Err(e) => Err(GrammarError::new(
+                                                &format!(
+                                                    "Syntax mismatch while resolving information object: {e:?}"
+                                                ),
+                                                GrammarErrorType::SyntaxMismatch,
+                                            )),
                                         }?,
                                     }),
                                 ));
@@ -211,18 +213,18 @@ pub fn resolve_custom_syntax(
                     }
                     application_index += 1;
                 } else if *required {
-                    return Err(GrammarError {
-                        details: "Syntax mismatch while resolving information object.".to_string(),
-                        kind: GrammarErrorType::SyntaxMismatch,
-                    });
+                    return Err(GrammarError::new(
+                        "Syntax mismatch while resolving information object.",
+                        GrammarErrorType::SyntaxMismatch,
+                    ));
                 } else {
                     continue 'syntax_matching;
                 }
             } else if *required {
-                return Err(GrammarError {
-                    details: "Syntax mismatch while resolving information object.".to_string(),
-                    kind: GrammarErrorType::SyntaxMismatch,
-                });
+                return Err(GrammarError::new(
+                    "Syntax mismatch while resolving information object.",
+                    GrammarErrorType::SyntaxMismatch,
+                ));
             } else {
                 continue 'syntax_matching;
             }

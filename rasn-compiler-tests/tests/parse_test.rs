@@ -20,9 +20,10 @@ fn parses_modules() {
 ----------------------------------------------------------------------------
 {path:?}
 ----------------------------------------------------------------------------
-{e:#?}
+{}
 
-                    "#
+                    "#,
+                e.contextualize(&std::fs::read_to_string(path.clone()).unwrap())
             ))
         } else {
             succeeded += 1;
@@ -55,7 +56,7 @@ fn compile_etsi() {
             // .add_asn_by_path("../rasn-compiler/test_asn1/ngap_container.asn")
             // .add_asn_by_path("../rasn-compiler/test_asn1/ngap_ies.asn")
             // .add_asn_by_path("../rasn-compiler/test_asn1/ngap_pdus.asn")
-            .add_asn_by_path("../rasn-compiler/test_asn1/nr.asn")
+            .add_asn_by_path("../rasn-compiler/test_asn1/test.asn")
             .set_output_path("./tests")
             .compile()
     );

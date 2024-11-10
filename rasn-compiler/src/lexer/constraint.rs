@@ -1,4 +1,7 @@
-use crate::intermediate::{constraints::*, *};
+use crate::{
+    input::Input,
+    intermediate::{constraints::*, *},
+};
 use nom::{
     branch::alt,
     bytes::complete::tag,
@@ -6,7 +9,6 @@ use nom::{
     combinator::{into, map, map_res, opt, value},
     multi::{many0_count, many1, separated_list0, separated_list1},
     sequence::{delimited, pair, preceded, separated_pair, terminated, tuple},
-    IResult,
 };
 
 use super::{
@@ -15,13 +17,15 @@ use super::{
         extension_marker, identifier, in_braces, in_parentheses, range_seperator,
         skip_ws_and_comments,
     },
+    error::{MiscError, ParserResult},
     information_object_class::object_set,
+    into_inner,
     parameterization::parameters,
     skip_ws,
     util::{opt_delimited, take_until_and_not, take_until_unbalanced},
 };
 
-pub fn constraint(input: &str) -> IResult<&str, Vec<Constraint>> {
+pub fn constraint(input: Input<'_>) -> ParserResult<'_, Vec<Constraint>> {
     skip_ws_and_comments(many1(alt((
         single_constraint,
         // Handle SIZE constraint without external parentheses
@@ -35,7 +39,7 @@ pub fn constraint(input: &str) -> IResult<&str, Vec<Constraint>> {
     ))))(input)
 }
 
-pub fn single_constraint(input: &str) -> IResult<&str, Constraint> {
+pub fn single_constraint(input: Input<'_>) -> ParserResult<'_, Constraint> {
     skip_ws_and_comments(in_parentheses(alt((
         map(content_constraint, Constraint::ContentConstraint),
         map(table_constraint, Constraint::TableConstraint),
@@ -43,7 +47,7 @@ pub fn single_constraint(input: &str) -> IResult<&str, Constraint> {
     ))))(input)
 }
 
-pub fn set_operator(input: &str) -> IResult<&str, SetOperator> {
+pub fn set_operator(input: Input<'_>) -> ParserResult<'_, SetOperator> {
     skip_ws_and_comments(alt((
         value(SetOperator::Intersection, tag(INTERSECTION)),
         value(SetOperator::Intersection, tag(CARET)),
@@ -53,7 +57,7 @@ pub fn set_operator(input: &str) -> IResult<&str, SetOperator> {
     )))(input)
 }
 
-fn element_set(input: &str) -> IResult<&str, ElementSet> {
+fn element_set(input: Input<'_>) -> ParserResult<'_, ElementSet> {
     into(pair(
         alt((
             map(set_operation, ElementOrSetOperation::SetOperation),
@@ -66,7 +70,7 @@ fn element_set(input: &str) -> IResult<&str, ElementSet> {
     ))(input)
 }
 
-fn set_operation(input: &str) -> IResult<&str, SetOperation> {
+fn set_operation(input: Input<'_>) -> ParserResult<'_, SetOperation> {
     into(tuple((
         subtype_element,
         set_operator,
@@ -77,7 +81,7 @@ fn set_operation(input: &str) -> IResult<&str, SetOperation> {
     )))(input)
 }
 
-fn subtype_element(input: &str) -> IResult<&str, SubtypeElement> {
+fn subtype_element(input: Input<'_>) -> ParserResult<'_, SubtypeElement> {
     alt((
         single_type_constraint,
         multiple_type_constraints,
@@ -92,7 +96,7 @@ fn subtype_element(input: &str) -> IResult<&str, SubtypeElement> {
     ))(input)
 }
 
-fn extension_additions(input: &str) -> IResult<&str, ()> {
+fn extension_additions(input: Input<'_>) -> ParserResult<'_, ()> {
     value(
         (),
         opt(pair(
@@ -126,7 +130,7 @@ fn extension_additions(input: &str) -> IResult<&str, ()> {
     )(input)
 }
 
-fn single_value(input: &str) -> IResult<&str, SubtypeElement> {
+fn single_value(input: Input<'_>) -> ParserResult<'_, SubtypeElement> {
     opt_delimited::<char, SubtypeElement, char, _, _, _>(
         skip_ws_and_comments(char(LEFT_PARENTHESIS)),
         skip_ws_and_comments(into(pair(
@@ -141,7 +145,7 @@ fn single_value(input: &str) -> IResult<&str, SubtypeElement> {
     )(input)
 }
 
-fn contained_subtype(input: &str) -> IResult<&str, SubtypeElement> {
+fn contained_subtype(input: Input<'_>) -> ParserResult<'_, SubtypeElement> {
     opt_delimited::<char, SubtypeElement, char, _, _, _>(
         skip_ws_and_comments(char(LEFT_PARENTHESIS)),
         skip_ws_and_comments(map(
@@ -161,7 +165,7 @@ fn contained_subtype(input: &str) -> IResult<&str, SubtypeElement> {
     )(input)
 }
 
-fn value_range(input: &str) -> IResult<&str, SubtypeElement> {
+fn value_range(input: Input<'_>) -> ParserResult<'_, SubtypeElement> {
     opt_delimited::<char, SubtypeElement, char, _, _, _>(
         skip_ws_and_comments(char(LEFT_PARENTHESIS)),
         skip_ws_and_comments(map(
@@ -193,7 +197,7 @@ fn value_range(input: &str) -> IResult<&str, SubtypeElement> {
     )(input)
 }
 
-fn size_constraint(input: &str) -> IResult<&str, SubtypeElement> {
+fn size_constraint(input: Input<'_>) -> ParserResult<'_, SubtypeElement> {
     opt_delimited::<char, SubtypeElement, char, _, _, _>(
         skip_ws_and_comments(char(LEFT_PARENTHESIS)),
         skip_ws_and_comments(into(preceded(tag(SIZE), single_constraint))),
@@ -201,7 +205,7 @@ fn size_constraint(input: &str) -> IResult<&str, SubtypeElement> {
     )(input)
 }
 
-fn pattern_constraint(input: &str) -> IResult<&str, SubtypeElement> {
+fn pattern_constraint(input: Input<'_>) -> ParserResult<'_, SubtypeElement> {
     map(
         opt_delimited::<char, PatternConstraint, char, _, _, _>(
             skip_ws_and_comments(char(LEFT_PARENTHESIS)),
@@ -219,7 +223,7 @@ fn pattern_constraint(input: &str) -> IResult<&str, SubtypeElement> {
     )(input)
 }
 
-fn user_defined_constraint(input: &str) -> IResult<&str, SubtypeElement> {
+fn user_defined_constraint(input: Input<'_>) -> ParserResult<'_, SubtypeElement> {
     map(
         opt_delimited::<char, UserDefinedConstraint, char, _, _, _>(
             skip_ws_and_comments(char(LEFT_PARENTHESIS)),
@@ -243,7 +247,7 @@ fn user_defined_constraint(input: &str) -> IResult<&str, SubtypeElement> {
 /// >* _51.7.2 A "PermittedAlphabet" specifies all values which can be constructed using a sub-alphabet of the parent string. This notation can only be applied to restricted character string types._
 /// >* _51.7.3 The "Constraint" shall use the "SubtypeConstraint" alternative of "ConstraintSpec". Each "SubtypeElements" within that "SubtypeConstraint" shall be one of the four alternatives "SingleValue", "ContainedSubtype", "ValueRange", and "SizeConstraint". The sub-alphabet includes precisely those characters which appear in one or more of the values of the parent string type which are allowed by the "Constraint"._
 /// >* _51.7.4 If "Constraint" is extensible, then the set of values selected by the permitted alphabet constraint is extensible. The set of values in the root are those permitted by the root of "Constraint", and the extension additions are those values permitted by the root together with the extension-additions of "Constraint", excluding those values already in the root._
-fn permitted_alphabet_constraint(input: &str) -> IResult<&str, SubtypeElement> {
+fn permitted_alphabet_constraint(input: Input<'_>) -> ParserResult<'_, SubtypeElement> {
     opt_delimited::<char, SubtypeElement, char, _, _, _>(
         skip_ws_and_comments(char(LEFT_PARENTHESIS)),
         skip_ws_and_comments(map(
@@ -260,7 +264,7 @@ fn permitted_alphabet_constraint(input: &str) -> IResult<&str, SubtypeElement> {
     )(input)
 }
 
-fn single_type_constraint(input: &str) -> IResult<&str, SubtypeElement> {
+fn single_type_constraint(input: Input<'_>) -> ParserResult<'_, SubtypeElement> {
     opt_delimited::<char, SubtypeElement, char, _, _, _>(
         skip_ws_and_comments(char(LEFT_PARENTHESIS)),
         skip_ws_and_comments(into(preceded(
@@ -280,7 +284,7 @@ fn single_type_constraint(input: &str) -> IResult<&str, SubtypeElement> {
     )(input)
 }
 
-fn multiple_type_constraints(input: &str) -> IResult<&str, SubtypeElement> {
+fn multiple_type_constraints(input: Input<'_>) -> ParserResult<'_, SubtypeElement> {
     opt_delimited::<char, SubtypeElement, char, _, _, _>(
         skip_ws_and_comments(char(LEFT_PARENTHESIS)),
         skip_ws_and_comments(preceded(
@@ -301,8 +305,8 @@ fn multiple_type_constraints(input: &str) -> IResult<&str, SubtypeElement> {
 }
 
 fn subset_member(
-    input: &str,
-) -> IResult<&str, (&str, Option<Vec<Constraint>>, Option<ComponentPresence>)> {
+    input: Input<'_>,
+) -> ParserResult<'_, (&str, Option<Vec<Constraint>>, Option<ComponentPresence>)> {
     skip_ws_and_comments(tuple((
         identifier,
         opt(skip_ws_and_comments(constraint)),
@@ -313,7 +317,7 @@ fn subset_member(
     )))(input)
 }
 
-fn content_constraint(input: &str) -> IResult<&str, ContentConstraint> {
+fn content_constraint(input: Input<'_>) -> ParserResult<'_, ContentConstraint> {
     opt_delimited::<char, ContentConstraint, char, _, _, _>(
         skip_ws_and_comments(char(LEFT_PARENTHESIS)),
         skip_ws_and_comments(alt((
@@ -334,7 +338,7 @@ fn content_constraint(input: &str) -> IResult<&str, ContentConstraint> {
     )(input)
 }
 
-fn table_constraint(input: &str) -> IResult<&str, TableConstraint> {
+fn table_constraint(input: Input<'_>) -> ParserResult<'_, TableConstraint> {
     opt_delimited::<char, TableConstraint, char, _, _, _>(
         skip_ws_and_comments(char(LEFT_PARENTHESIS)),
         skip_ws_and_comments(into(pair(
@@ -348,14 +352,14 @@ fn table_constraint(input: &str) -> IResult<&str, TableConstraint> {
     )(input)
 }
 
-fn relational_constraint(input: &str) -> IResult<&str, RelationalConstraint> {
+fn relational_constraint(input: Input<'_>) -> ParserResult<'_, RelationalConstraint> {
     into(skip_ws_and_comments(preceded(
         char(AT),
         pair(many0_count(char(DOT)), identifier),
     )))(input)
 }
 
-fn property_settings_constraint(input: &str) -> IResult<&str, SubtypeElement> {
+fn property_settings_constraint(input: Input<'_>) -> ParserResult<'_, SubtypeElement> {
     preceded(
         skip_ws_and_comments(tag("SETTINGS")),
         map_res(
@@ -370,7 +374,10 @@ fn property_settings_constraint(input: &str) -> IResult<&str, SubtypeElement> {
             )),
             |res| {
                 res.into_iter()
-                    .map(PropertyAndSettingsPair::try_from)
+                    .map(|s| {
+                        PropertyAndSettingsPair::try_from(s)
+                            .map_err(|_| MiscError("Failed to parse property-settings pair."))
+                    })
                     .collect::<Result<Vec<PropertyAndSettingsPair>, _>>()
                     .map(|settings| {
                         SubtypeElement::PropertySettings(PropertySettings {
@@ -382,8 +389,8 @@ fn property_settings_constraint(input: &str) -> IResult<&str, SubtypeElement> {
     )(input)
 }
 
-fn settings_identifier(input: &str) -> IResult<&str, &str> {
-    alt((
+fn settings_identifier(input: Input<'_>) -> ParserResult<'_, &str> {
+    into_inner(alt((
         tag(BasicSettings::NAME),
         tag(DateSettings::NAME),
         tag(YearSettings::NAME),
@@ -393,7 +400,7 @@ fn settings_identifier(input: &str) -> IResult<&str, &str> {
         tag(StartEndPointSettings::NAME),
         tag(RecurrenceSettings::NAME),
         tag(MidnightSettings::NAME),
-    ))(input)
+    )))(input)
 }
 
 #[cfg(test)]
@@ -405,7 +412,7 @@ mod tests {
     #[test]
     fn parses_value_constraint() {
         assert_eq!(
-            constraint("(5)").unwrap().1,
+            constraint("(5)".into()).unwrap().1,
             vec![Constraint::SubtypeConstraint(ElementSet {
                 set: ElementOrSetOperation::Element(SubtypeElement::SingleValue {
                     value: ASN1Value::Integer(5),
@@ -415,7 +422,7 @@ mod tests {
             })]
         );
         assert_eq!(
-            constraint("(5..9)").unwrap().1,
+            constraint("(5..9)".into()).unwrap().1,
             vec![Constraint::SubtypeConstraint(ElementSet {
                 set: ElementOrSetOperation::Element(SubtypeElement::ValueRange {
                     min: Some(ASN1Value::Integer(5)),
@@ -426,7 +433,7 @@ mod tests {
             })]
         );
         assert_eq!(
-            constraint("(-5..9)").unwrap().1,
+            constraint("(-5..9)".into()).unwrap().1,
             vec![Constraint::SubtypeConstraint(ElementSet {
                 set: ElementOrSetOperation::Element(SubtypeElement::ValueRange {
                     min: Some(ASN1Value::Integer(-5)),
@@ -437,7 +444,7 @@ mod tests {
             })]
         );
         assert_eq!(
-            constraint("(-9..-4,...)").unwrap().1,
+            constraint("(-9..-4,...)".into()).unwrap().1,
             vec![Constraint::SubtypeConstraint(ElementSet {
                 set: ElementOrSetOperation::Element(SubtypeElement::ValueRange {
                     min: Some(ASN1Value::Integer(-9)),
@@ -452,7 +459,7 @@ mod tests {
     #[test]
     fn handles_added_extension_values() {
         assert_eq!(
-            constraint("(1..32767,..., 8388607)").unwrap().1,
+            constraint("(1..32767,..., 8388607)".into()).unwrap().1,
             vec![Constraint::SubtypeConstraint(ElementSet {
                 set: ElementOrSetOperation::Element(SubtypeElement::ValueRange {
                     min: Some(ASN1Value::Integer(1)),
@@ -467,7 +474,7 @@ mod tests {
     #[test]
     fn handles_redundant_parentheses() {
         assert_eq!(
-            constraint("((5..9))").unwrap().1,
+            constraint("((5..9))".into()).unwrap().1,
             vec![Constraint::SubtypeConstraint(ElementSet {
                 set: ElementOrSetOperation::Element(SubtypeElement::ValueRange {
                     min: Some(ASN1Value::Integer(5)),
@@ -482,7 +489,9 @@ mod tests {
     #[test]
     fn parses_value_constraint_with_inserted_comment() {
         assert_eq!(
-            constraint("(-9..-4, -- Very annoying! -- ...)").unwrap().1,
+            constraint("(-9..-4, -- Very annoying! -- ...)".into())
+                .unwrap()
+                .1,
             vec![Constraint::SubtypeConstraint(ElementSet {
                 set: ElementOrSetOperation::Element(SubtypeElement::ValueRange {
                     min: Some(ASN1Value::Integer(-9)),
@@ -493,7 +502,9 @@ mod tests {
             })]
         );
         assert_eq!(
-            constraint("(-9-- Very annoying! --..-4,  ...)").unwrap().1,
+            constraint("(-9-- Very annoying! --..-4,  ...)".into())
+                .unwrap()
+                .1,
             vec![Constraint::SubtypeConstraint(ElementSet {
                 set: ElementOrSetOperation::Element(SubtypeElement::ValueRange {
                     min: Some(ASN1Value::Integer(-9)),
@@ -508,7 +519,7 @@ mod tests {
     #[test]
     fn parses_size_constraint() {
         assert_eq!(
-            constraint("(SIZE(3..16, ...))").unwrap().1,
+            constraint("(SIZE(3..16, ...))".into()).unwrap().1,
             vec![Constraint::SubtypeConstraint(ElementSet {
                 set: ElementOrSetOperation::Element(SubtypeElement::SizeConstraint(Box::new(
                     ElementOrSetOperation::Element(SubtypeElement::ValueRange {
@@ -525,7 +536,7 @@ mod tests {
     #[test]
     fn parses_composite_constraint() {
         assert_eq!(
-            constraint(r#"(ALL EXCEPT 1)"#).unwrap().1,
+            constraint(r#"(ALL EXCEPT 1)"#.into()).unwrap().1,
             vec![Constraint::SubtypeConstraint(ElementSet {
                 set: ElementOrSetOperation::SetOperation(SetOperation {
                     base: SubtypeElement::SingleValue {
@@ -551,6 +562,7 @@ mod tests {
             constraint(
                 r#"((WITH COMPONENT (WITH COMPONENTS {..., containerId (ALL EXCEPT 1)})) |
           (WITH COMPONENT (WITH COMPONENTS {..., containerId (ALL EXCEPT 2)})))"#
+                    .into()
             )
             .unwrap()
             .1,
@@ -619,6 +631,7 @@ mod tests {
                   {ordering ABSENT ,
                   sales (0..5) PRESENT,
                   e-cash-return ABSENT } )"
+                    .into()
             )
             .unwrap()
             .1,
@@ -667,6 +680,7 @@ mod tests {
                       {... ,
                       ordering ABSENT,
                       sales (0..5) } )"
+                    .into()
             )
             .unwrap()
             .1,
@@ -709,6 +723,7 @@ mod tests {
                 "((WITH COMPONENT (WITH COMPONENTS {..., eventDeltaTime PRESENT})) |
                     (WITH COMPONENT (WITH COMPONENTS {..., eventDeltaTime ABSENT})))
                 "
+                .into()
             )
             .unwrap()
             .1,
@@ -746,6 +761,7 @@ mod tests {
                 "((WITH COMPONENTS {..., laneId PRESENT, connectionId ABSENT }) |
                     (WITH COMPONENTS {..., laneId ABSENT, connectionId PRESENT }))
                 "
+                .into()
             )
             .unwrap()
             .1,
@@ -796,6 +812,7 @@ mod tests {
             constraint(
                 "(0..3|5..8|10)
                 "
+                .into()
             )
             .unwrap()
             .1,
@@ -833,6 +850,7 @@ mod tests {
             constraint(
                 "(unknown   | passengerCar..tram
                   | agricultural)"
+                    .into()
             )
             .unwrap()
             .1,
@@ -888,6 +906,7 @@ mod tests {
                   {ConnectionManeuverAssist-addGrpC  IDENTIFIED BY addGrpC},
                   ...
                 })"
+                .into()
             )
             .unwrap()
             .1,
@@ -949,7 +968,7 @@ mod tests {
     #[test]
     fn parses_character_value_range() {
         assert_eq!(
-            value_range(r#""a".."z""#).unwrap().1,
+            value_range(r#""a".."z""#.into()).unwrap().1,
             SubtypeElement::ValueRange {
                 min: Some(ASN1Value::String("a".to_owned())),
                 max: Some(ASN1Value::String("z".to_owned())),
@@ -961,9 +980,11 @@ mod tests {
     #[test]
     fn parses_permitted_alphabet_constraint() {
         assert_eq!(
-            permitted_alphabet_constraint(r#"(FROM ("a".."z" | "A".."Z" | "0".."9" | ".-"))"#)
-                .unwrap()
-                .1,
+            permitted_alphabet_constraint(
+                r#"(FROM ("a".."z" | "A".."Z" | "0".."9" | ".-"))"#.into()
+            )
+            .unwrap()
+            .1,
             SubtypeElement::PermittedAlphabet(Box::new(ElementOrSetOperation::SetOperation(
                 SetOperation {
                     base: SubtypeElement::ValueRange {
@@ -1002,7 +1023,7 @@ mod tests {
     #[test]
     fn parses_serial_constraints() {
         assert_eq!(
-            constraint(r#"(FROM ("a".."z" | "A".."Z" | "0".."9" | ".-")) (SIZE (1..255))"#)
+            constraint(r#"(FROM ("a".."z" | "A".."Z" | "0".."9" | ".-")) (SIZE (1..255))"#.into())
                 .unwrap()
                 .1,
             vec![
@@ -1065,6 +1086,7 @@ mod tests {
                 mantissa (-16777215..16777215),
                 base (2),
                 exponent (-125..128) } )"#
+                    .into()
             )
             .unwrap()
             .1,
@@ -1125,7 +1147,7 @@ mod tests {
     #[test]
     fn parses_pattern_constraint() {
         assert_eq!(
-            constraint(r#"(PATTERN "[a-zA-Z]#(1,8)(-[a-zA-Z0-9]#(1,8))*")"#)
+            constraint(r#"(PATTERN "[a-zA-Z]#(1,8)(-[a-zA-Z0-9]#(1,8))*")"#.into())
                 .unwrap()
                 .1,
             vec![Constraint::SubtypeConstraint(ElementSet {
@@ -1143,7 +1165,7 @@ mod tests {
     fn parses_user_defined_constraint() {
         assert_eq!(
             constraint(
-                r#"(CONSTRAINED BY {/* XML representation of the XSD pattern "\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d[-,+]\d\d:\d\d" */})"#
+                r#"(CONSTRAINED BY {/* XML representation of the XSD pattern "\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d[-,+]\d\d:\d\d" */})"#.into()
             ).unwrap().1,
             vec![
                 Constraint::SubtypeConstraint(
@@ -1165,7 +1187,7 @@ mod tests {
     #[test]
     fn parses_two_variants_of_extensible_size() {
         assert_eq!(
-            constraint("(SIZE(1..4),...)").unwrap().1,
+            constraint("(SIZE(1..4),...)".into()).unwrap().1,
             vec![Constraint::SubtypeConstraint(ElementSet {
                 set: ElementOrSetOperation::Element(SubtypeElement::SizeConstraint(Box::new(
                     ElementOrSetOperation::Element(SubtypeElement::ValueRange {
@@ -1178,7 +1200,7 @@ mod tests {
             })]
         );
         assert_eq!(
-            constraint("(SIZE(1..4,...))").unwrap().1,
+            constraint("(SIZE(1..4,...))".into()).unwrap().1,
             vec![Constraint::SubtypeConstraint(ElementSet {
                 set: ElementOrSetOperation::Element(SubtypeElement::SizeConstraint(Box::new(
                     ElementOrSetOperation::Element(SubtypeElement::ValueRange {
@@ -1195,7 +1217,9 @@ mod tests {
     #[test]
     fn parses_property_settings_constraint() {
         assert_eq!(
-            constraint(r#"(SETTINGS "Midnight=Start")"#).unwrap().1,
+            constraint(r#"(SETTINGS "Midnight=Start")"#.into())
+                .unwrap()
+                .1,
             vec![Constraint::SubtypeConstraint(ElementSet {
                 set: ElementOrSetOperation::Element(SubtypeElement::PropertySettings(
                     PropertySettings {
@@ -1212,7 +1236,9 @@ mod tests {
     #[test]
     fn parses_extended_range_constraint() {
         assert_eq!(
-            constraint(r#"(1..65535, ..., 65536..109999)"#).unwrap().1,
+            constraint(r#"(1..65535, ..., 65536..109999)"#.into())
+                .unwrap()
+                .1,
             vec![Constraint::SubtypeConstraint(ElementSet {
                 set: ElementOrSetOperation::Element(SubtypeElement::ValueRange {
                     min: Some(ASN1Value::Integer(1)),

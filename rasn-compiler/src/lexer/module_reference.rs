@@ -1,21 +1,24 @@
-use crate::intermediate::*;
+use crate::{
+    input::{context_boundary, Input},
+    intermediate::*,
+};
 use nom::{
     branch::alt,
     bytes::complete::{tag, take_until},
-    character::complete::char,
+    character::complete::{char, one_of},
     combinator::{into, map, not, opt, peek, recognize, value},
-    multi::{many0, separated_list1},
+    multi::{many0, many1, separated_list1},
     sequence::{delimited, pair, preceded, separated_pair, terminated, tuple},
-    IResult,
 };
 
 use super::{
     common::{identifier, skip_ws, skip_ws_and_comments, value_identifier},
-    in_braces,
+    error::ParserResult,
+    in_braces, into_inner,
     object_identifier::object_identifier_value,
 };
 
-pub fn module_reference(input: &str) -> IResult<&str, ModuleReference> {
+pub fn module_reference(input: Input<'_>) -> ParserResult<'_, ModuleReference> {
     skip_ws_and_comments(into(tuple((
         identifier,
         opt(skip_ws(definitive_identification)),
@@ -24,24 +27,30 @@ pub fn module_reference(input: &str) -> IResult<&str, ModuleReference> {
             opt(environments),
             skip_ws_and_comments(pair(tag(ASSIGN), skip_ws_and_comments(tag(BEGIN)))),
         )),
-        opt(exports),
-        opt(imports),
+        context_boundary(opt(exports)),
+        context_boundary(opt(imports)),
     ))))(input)
 }
 
-fn definitive_identification(input: &str) -> IResult<&str, DefinitiveIdentifier> {
+fn definitive_identification(input: Input<'_>) -> ParserResult<'_, DefinitiveIdentifier> {
     into(pair(object_identifier_value, opt(iri_value)))(input)
 }
 
-fn iri_value(input: &str) -> IResult<&str, &str> {
-    skip_ws_and_comments(delimited(
+fn iri_value(input: Input<'_>) -> ParserResult<'_, &str> {
+    into_inner(skip_ws_and_comments(delimited(
         tag("\"/"),
-        recognize(separated_list1(char('/'), identifier)),
+        recognize(separated_list1(char('/'), unicode_label)),
         char('"'),
-    ))(input)
+    )))(input)
 }
 
-fn exports(input: &str) -> IResult<&str, Exports> {
+fn unicode_label(input: Input<'_>) -> ParserResult<'_, &str> {
+    skip_ws_and_comments(into_inner(recognize(many1(one_of(
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567890-_~.",
+    )))))(input)
+}
+
+fn exports(input: Input<'_>) -> ParserResult<'_, Exports> {
     skip_ws_and_comments(delimited(
         tag(EXPORTS),
         skip_ws(alt((
@@ -55,7 +64,7 @@ fn exports(input: &str) -> IResult<&str, Exports> {
     ))(input)
 }
 
-fn imports(input: &str) -> IResult<&str, Vec<Import>> {
+fn imports(input: Input<'_>) -> ParserResult<'_, Vec<Import>> {
     skip_ws_and_comments(delimited(
         tag(IMPORTS),
         skip_ws_and_comments(many0(import)),
@@ -63,11 +72,11 @@ fn imports(input: &str) -> IResult<&str, Vec<Import>> {
     ))(input)
 }
 
-fn parameterized_identifier(input: &str) -> IResult<&str, &str> {
+fn parameterized_identifier(input: Input<'_>) -> ParserResult<'_, &str> {
     terminated(identifier, tag("{}"))(input)
 }
 
-fn global_module_reference(input: &str) -> IResult<&str, GlobalModuleReference> {
+fn global_module_reference(input: Input<'_>) -> ParserResult<'_, GlobalModuleReference> {
     into(skip_ws_and_comments(pair(
         identifier,
         alt((
@@ -91,7 +100,7 @@ fn global_module_reference(input: &str) -> IResult<&str, GlobalModuleReference> 
                 )),
                 |(v, p)| AssignedIdentifier::ParameterizedValue {
                     value_reference: v.to_owned(),
-                    actual_parameter_list: p.to_owned(),
+                    actual_parameter_list: p.inner().to_owned(),
                 },
             ),
             map(
@@ -115,7 +124,7 @@ fn global_module_reference(input: &str) -> IResult<&str, GlobalModuleReference> 
     )))(input)
 }
 
-fn import(input: &str) -> IResult<&str, Import> {
+fn import(input: Input<'_>) -> ParserResult<'_, Import> {
     into(skip_ws_and_comments(pair(
         separated_list1(
             skip_ws(char(COMMA)),
@@ -125,19 +134,19 @@ fn import(input: &str) -> IResult<&str, Import> {
             skip_ws_and_comments(tag(FROM)),
             skip_ws_and_comments(pair(
                 global_module_reference,
-                opt(skip_ws_and_comments(alt((
+                opt(into_inner(skip_ws_and_comments(alt((
                     tag(WITH_SUCCESSORS),
                     tag(WITH_DESCENDANTS),
-                )))),
+                ))))),
             )),
         ),
     )))(input)
 }
 
 fn environments(
-    input: &str,
-) -> IResult<
-    &str,
+    input: Input<'_>,
+) -> ParserResult<
+    '_,
     (
         Option<EncodingReferenceDefault>,
         TaggingEnvironment,
@@ -147,18 +156,18 @@ fn environments(
     tuple((
         opt(skip_ws_and_comments(into(terminated(
             identifier,
-            skip_ws(tag(INSTRUCTIONS)),
+            into_inner(skip_ws(tag(INSTRUCTIONS))),
         )))),
-        skip_ws_and_comments(terminated(
-            map(
-                alt((tag(AUTOMATIC), tag(IMPLICIT), tag(EXPLICIT))),
-                |m| match m {
-                    AUTOMATIC => TaggingEnvironment::Automatic,
-                    IMPLICIT => TaggingEnvironment::Implicit,
-                    _ => TaggingEnvironment::Explicit,
-                },
-            ),
-            skip_ws(tag(TAGS)),
+        skip_ws_and_comments(map(
+            opt(terminated(
+                into_inner(alt((tag(AUTOMATIC), tag(IMPLICIT), tag(EXPLICIT)))),
+                skip_ws(tag(TAGS)),
+            )),
+            |m| match m {
+                Some(AUTOMATIC) => TaggingEnvironment::Automatic,
+                Some(EXPLICIT) => TaggingEnvironment::Explicit,
+                _ => TaggingEnvironment::Implicit,
+            },
         )),
         skip_ws_and_comments(map(opt(tag(EXTENSIBILITY_IMPLIED)), |m| {
             if m.is_some() {
@@ -185,7 +194,7 @@ mod tests {
     DEFINITIONS AUTOMATIC TAGS ::=
 
     BEGIN
-    "#).unwrap().1,
+    "#.into()).unwrap().1,
     ModuleReference {name:"ETSI-ITS-CDD".into(),module_identifier:Some(DefinitiveIdentifier::DefinitiveOID(ObjectIdentifierValue(vec![ObjectIdentifierArc{name:Some("itu-t".into()),number:Some(0)},ObjectIdentifierArc{name:Some("identified-organization".into()),number:Some(4)},ObjectIdentifierArc{name:Some("etsi".into()),number:Some(0)},ObjectIdentifierArc{name:Some("itsDomain".into()),number:Some(5)},ObjectIdentifierArc{name:Some("wg1".into()),number:Some(1)},ObjectIdentifierArc{name:None,number:Some(102894)},ObjectIdentifierArc{name:Some("cdd".into()),number:Some(2)},ObjectIdentifierArc{name:Some("major-version-3".into()),number:Some(3)},ObjectIdentifierArc{name:Some("minor-version-1".into()),number:Some(1)}]))),encoding_reference_default:None,tagging_environment:crate::intermediate::TaggingEnvironment::Automatic,extensibility_environment:crate::intermediate::ExtensibilityEnvironment::Explicit, imports: vec![], exports: None }
   )
     }
@@ -207,7 +216,7 @@ mod tests {
         OriginatingRsuContainer, OriginatingVehicleContainer
         FROM CPM-OriginatingStationContainers {itu-t (0) identified-organization (4) etsi (0) itsDomain (5) wg1 (1) ts (103324) originatingStationContainers (2) major-version-1 (1) minor-version-1(1)}
         WITH SUCCESSORS;
-    "#).unwrap().1,
+    "#.into()).unwrap().1,
     ModuleReference { name: "CPM-PDU-Descriptions".into(), module_identifier: Some(DefinitiveIdentifier::DefinitiveOID(ObjectIdentifierValue(vec![ObjectIdentifierArc { name: Some("itu-t".into()), number: Some(0) }, ObjectIdentifierArc { name: Some("identified-organization".into()), number: Some(4) }, ObjectIdentifierArc { name: Some("etsi".into()), number: Some(0) }, ObjectIdentifierArc { name: Some("itsDomain".into()), number: Some(5) }, ObjectIdentifierArc { name: Some("wg1".into()), number: Some(1) }, ObjectIdentifierArc { name: Some("ts".into()), number: Some(103324) }, ObjectIdentifierArc { name: Some("cpm".into()), number: Some(1) }, ObjectIdentifierArc { name: Some("major-version-1".into()), number: Some(1) }, ObjectIdentifierArc { name: Some("minor-version-1".into()), number: Some(1) }]))), encoding_reference_default: None, tagging_environment: TaggingEnvironment::Automatic, extensibility_environment: ExtensibilityEnvironment::Explicit, imports: vec![Import { types: vec!["ItsPduHeader".into(), "MessageRateHz".into(), "MessageSegmentationInfo".into(), "OrdinalNumber1B".into(), "ReferencePosition".into(), "StationType".into(), "TimestampIts".into()], global_module_reference: GlobalModuleReference { module_reference: "ETSI-ITS-CDD".into(), assigned_identifier: AssignedIdentifier::ObjectIdentifierValue(ObjectIdentifierValue(vec![ObjectIdentifierArc { name: Some("itu-t".into()), number: Some(0) }, ObjectIdentifierArc { name: Some("identified-organization".into()), number: Some(4) }, ObjectIdentifierArc { name: Some("etsi".into()), number: Some(0) }, ObjectIdentifierArc { name: Some("itsDomain".into()), number: Some(5) }, ObjectIdentifierArc { name: Some("wg1".into()), number: Some(1) }, ObjectIdentifierArc { name: Some("ts".into()), number: Some(102894) }, ObjectIdentifierArc { name: Some("cdd".into()), number: Some(2) }, ObjectIdentifierArc { name: Some("major-version-3".into()), number: Some(3) }, ObjectIdentifierArc { name: Some("minor-version-1".into()), number: Some(1) }]))}, with: Some(With::Successors) }, Import { types: vec!["OriginatingRsuContainer".into(), "OriginatingVehicleContainer".into()], global_module_reference: GlobalModuleReference { module_reference: "CPM-OriginatingStationContainers".into(), assigned_identifier: AssignedIdentifier::ObjectIdentifierValue(ObjectIdentifierValue(vec![ObjectIdentifierArc { name: Some("itu-t".into()), number: Some(0) }, ObjectIdentifierArc { name: Some("identified-organization".into()), number: Some(4) }, ObjectIdentifierArc { name: Some("etsi".into()), number: Some(0) }, ObjectIdentifierArc { name: Some("itsDomain".into()), number: Some(5) }, ObjectIdentifierArc { name: Some("wg1".into()), number: Some(1) }, ObjectIdentifierArc { name: Some("ts".into()), number: Some(103324) }, ObjectIdentifierArc { name: Some("originatingStationContainers".into()), number: Some(2) }, ObjectIdentifierArc { name: Some("major-version-1".into()), number: Some(1) }, ObjectIdentifierArc { name: Some("minor-version-1".into()), number: Some(1) }]))}, with: Some(With::Successors) }], exports: None } )
     }
 
@@ -222,7 +231,7 @@ mod tests {
         ALGORITHM,AlgorithmIdentifier{}
         FROM AlgorithmInformation-2009
         {iso(1) identified-organization(3) dod(6) internet(1) security(5)
-        mechanisms(5) pkix(7) id-mod(0) id-mod-algorithmInformation-02(58)} WITH DESCENDANTS;"#).unwrap().1,
+        mechanisms(5) pkix(7) id-mod(0) id-mod-algorithmInformation-02(58)} WITH DESCENDANTS;"#.into()).unwrap().1,
         ModuleReference {
             name: "CMSCKMKeyManagement".into(),
             module_identifier: Some(DefinitiveIdentifier::DefinitiveOIDandIRI {
@@ -238,7 +247,7 @@ mod tests {
                 iri: "ITU-T/Recommendation/X/CMS-Profile/Module/CKMKeyManagement/Version1".into()
             }),
             encoding_reference_default: None,
-            tagging_environment: TaggingEnvironment::Explicit,
+            tagging_environment: TaggingEnvironment::Implicit,
             extensibility_environment: ExtensibilityEnvironment::Explicit,
             imports: vec![
                 Import {
@@ -274,6 +283,7 @@ mod tests {
             ECDomainParameters
             FROM ANSI-X9-62
             {iso(1) member-body(2) us(840) 10045 modules(0) 2};"#
+                    .into()
             )
             .unwrap()
             .1,
@@ -355,9 +365,9 @@ mod tests {
     #[test]
     fn global_module_reference_empty_assigned_identifier() {
         assert_eq!(
-            global_module_reference(r#" EMPTY-assigned-ID next-module-import, "#).unwrap(),
+            global_module_reference(r#" EMPTY-assigned-ID next-module-import, "#.into()).unwrap(),
             (
-                " next-module-import, ",
+                Input::from(" next-module-import, ").with_line_column_and_offset(1, 19, 18),
                 GlobalModuleReference {
                     module_reference: "EMPTY-assigned-ID".to_owned(),
                     assigned_identifier: AssignedIdentifier::Empty
@@ -369,7 +379,7 @@ mod tests {
     #[test]
     fn global_module_reference_val_ref_assigned_identifier() {
         assert_eq!(
-            global_module_reference(r#" VALref-assigned-ID valref next-module-import,"#)
+            global_module_reference(r#" VALref-assigned-ID valref next-module-import,"#.into())
                 .unwrap()
                 .1,
             GlobalModuleReference {
@@ -383,7 +393,7 @@ mod tests {
     fn global_module_reference_ext_val_ref_assigned_identifier() {
         assert_eq!(
             global_module_reference(
-                r#" ext-VALref-assigned-ID MODULE-ref.valref next-module-import,"#
+                r#" ext-VALref-assigned-ID MODULE-ref.valref next-module-import,"#.into()
             )
             .unwrap()
             .1,
@@ -416,6 +426,7 @@ mod tests {
             maxProtocolExtensions,
             maxProtocolIEs
         FROM NGAP-Constants;"#
+                    .into()
             )
             .unwrap()
             .1,

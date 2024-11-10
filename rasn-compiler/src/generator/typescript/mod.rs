@@ -1,7 +1,5 @@
-use std::error::Error;
-
 use self::utils::to_jer_identifier;
-use crate::intermediate::*;
+use crate::{error::CompilerError, intermediate::*};
 
 use super::{
     error::{GeneratorError, GeneratorErrorType},
@@ -69,7 +67,7 @@ impl Backend for Typescript {
                     acc.push_str(&usages.join("\n"));
                     acc
                 });
-            let (pdus, warnings): (String, Vec<Box<dyn Error>>) =
+            let (pdus, warnings): (String, Vec<CompilerError>) =
                 tlds.into_iter()
                     .fold((String::new(), vec![]), |mut acc, tld| {
                         match self.generate(tld) {
@@ -79,7 +77,7 @@ impl Backend for Typescript {
                                 acc
                             }
                             Err(e) => {
-                                acc.1.push(Box::new(e));
+                                acc.1.push(e.into());
                                 acc
                             }
                         }
@@ -101,7 +99,7 @@ impl Backend for Typescript {
         }
     }
 
-    fn format_bindings(bindings: &str) -> Result<String, Box<dyn Error>> {
+    fn format_bindings(bindings: &str) -> Result<String, CompilerError> {
         Ok(bindings.to_string())
     }
 

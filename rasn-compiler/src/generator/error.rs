@@ -5,7 +5,7 @@ use proc_macro2::LexError;
 
 use crate::intermediate::{error::GrammarError, ToplevelDefinition};
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct GeneratorError {
     pub top_level_declaration: Option<ToplevelDefinition>,
     pub details: String,
@@ -22,7 +22,7 @@ impl GeneratorError {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum GeneratorErrorType {
     Asn1TypeMismatch,
     EmptyChoiceType,
@@ -31,6 +31,8 @@ pub enum GeneratorErrorType {
     MissingClassKey,
     Unidentified,
     LexerError,
+    FormattingError,
+    IO,
     NotYetInplemented,
 }
 

@@ -4,7 +4,6 @@ use nom::{
     combinator::opt,
     multi::many0,
     sequence::{terminated, tuple},
-    IResult,
 };
 
 use crate::intermediate::*;
@@ -13,7 +12,7 @@ use super::{common::optional_comma, constraint::constraint, sequence::sequence_c
 
 /// Tries to parse an ASN1 SET
 ///
-/// *`input` - string slice to be matched against
+/// *`input` - [Input]-wrapped string slice to be matched against
 ///
 /// `set` will try to match an SET declaration in the `input` string.
 /// If the match succeeds, the lexer will consume the match and return the remaining string
@@ -21,7 +20,7 @@ use super::{common::optional_comma, constraint::constraint, sequence::sequence_c
 /// contains anonymous built-in types as members, these nested built-in types will be represented as
 /// structs within the same global scope.
 /// If the match fails, the lexer will not consume the input and will return an error.
-pub fn set(input: &str) -> IResult<&str, ASN1Type> {
+pub fn set(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
     map(
         preceded(
             skip_ws_and_comments(tag(SET)),
@@ -56,7 +55,8 @@ mod tests {
             set(r#"SET {
             title VisibleString,
             children SEQUENCE OF VisibleString DEFAULT {}
-        }"#)
+        }"#
+            .into())
             .unwrap()
             .1,
             ASN1Type::Set(SequenceOrSet {

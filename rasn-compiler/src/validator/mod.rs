@@ -13,20 +13,22 @@ mod tests;
 use std::{
     cell::RefCell,
     collections::{BTreeMap, HashSet},
-    error::Error,
     ops::Not,
     rc::Rc,
 };
 
-use crate::intermediate::{
-    constraints::*,
-    information_object::{ClassLink, ToplevelInformationDefinition},
-    types::*,
-    *,
+use crate::{
+    error::CompilerError,
+    intermediate::{
+        constraints::*,
+        information_object::{ClassLink, ToplevelInformationDefinition},
+        types::*,
+        *,
+    },
 };
 
 use self::{
-    error::{ValidatorError, ValidatorErrorType},
+    error::{LinkerError, LinkerErrorType},
     information_object::{
         ASN1Information, InformationObjectClass, InformationObjectClassField, ObjectSet,
     },
@@ -46,8 +48,8 @@ impl Validator {
         }
     }
 
-    fn link(mut self) -> Result<(Self, Vec<Box<dyn Error>>), ValidatorError> {
-        let mut warnings: Vec<Box<dyn Error>> = vec![];
+    fn link(mut self) -> Result<(Self, Vec<CompilerError>), LinkerError> {
+        let mut warnings: Vec<CompilerError> = vec![];
         // Linking of ASN1 values depends on linked ASN1 types, so we order the key colelction accordingly (note that we pop keys)
         let mut keys = self
             .tlds
@@ -79,8 +81,9 @@ impl Validator {
                     }),
                 )) = &mut item
                 {
-                    if let Err(e) = set.resolve_object_set_references(&self.tlds) {
-                        warnings.push(Box::new(e))
+                    if let Err(mut e) = set.resolve_object_set_references(&self.tlds) {
+                        e.contextualize(&key);
+                        warnings.push(e.into())
                     }
                 }
                 if let Some((k, tld)) = item {
@@ -108,8 +111,9 @@ impl Validator {
             }
             if self.has_choice_selection_type(&key) {
                 if let Some((k, ToplevelDefinition::Type(mut tld))) = self.tlds.remove_entry(&key) {
-                    if let Err(e) = tld.ty.link_choice_selection_type(&self.tlds) {
-                        warnings.push(Box::new(e));
+                    if let Err(mut e) = tld.ty.link_choice_selection_type(&self.tlds) {
+                        e.contextualize(&key);
+                        warnings.push(e.into());
                     }
                     self.tlds.insert(k, ToplevelDefinition::Type(tld));
                 }
@@ -123,31 +127,35 @@ impl Validator {
                 }
             }
             if self.has_constraint_reference(&key) {
-                match self.tlds.remove(&key).ok_or_else(|| ValidatorError {
-                    data_element: Some(key.clone()),
+                match self.tlds.remove(&key).ok_or_else(|| LinkerError {
+                    pdu: Some(key.clone()),
                     details: "Could not find toplevel declaration to remove!".into(),
-                    kind: ValidatorErrorType::MissingDependency,
+                    kind: LinkerErrorType::MissingDependency,
                 }) {
                     Ok(mut tld) => {
-                        if let Err(e) = tld.link_constraint_reference(&self.tlds) {
-                            warnings.push(Box::new(e));
+                        if let Err(mut e) = tld.link_constraint_reference(&self.tlds) {
+                            e.contextualize(&key);
+                            warnings.push(e.into());
                         }
                         self.tlds.insert(tld.name().clone(), tld);
                     }
-                    Err(e) => {
-                        warnings.push(Box::new(e));
+                    Err(mut e) => {
+                        e.contextualize(&key);
+                        warnings.push(e.into());
                     }
                 };
             }
             if let Some((k, mut tld)) = self.tlds.remove_entry(&key) {
-                if let Err(e) = tld.collect_supertypes(&self.tlds) {
-                    warnings.push(Box::new(e));
+                if let Err(mut e) = tld.collect_supertypes(&self.tlds) {
+                    e.contextualize(&key);
+                    warnings.push(e.into());
                 }
                 self.tlds.insert(k, tld);
             }
             if let Some((k, mut tld)) = self.tlds.remove_entry(&key) {
-                if let Err(e) = tld.mark_recursive() {
-                    warnings.push(Box::new(e));
+                if let Err(mut e) = tld.mark_recursive() {
+                    e.contextualize(&key);
+                    warnings.push(e.into());
                 }
                 self.tlds.insert(k, tld);
             }
@@ -369,15 +377,15 @@ impl Validator {
 
     pub fn validate(
         mut self,
-    ) -> Result<(Vec<ToplevelDefinition>, Vec<Box<dyn Error>>), Box<dyn Error>> {
-        let warnings: Vec<Box<dyn Error>>;
+    ) -> Result<(Vec<ToplevelDefinition>, Vec<CompilerError>), CompilerError> {
+        let warnings: Vec<CompilerError>;
         (self, warnings) = self.link()?;
         Ok(self.tlds.into_iter().fold(
             (Vec::<ToplevelDefinition>::new(), warnings),
             |(mut tlds, mut errors), (_, tld)| {
                 match tld.validate() {
                     Ok(_) => tlds.push(tld),
-                    Err(e) => errors.push(Box::new(e)),
+                    Err(e) => errors.push(e.into()),
                 }
                 (tlds, errors)
             },
@@ -386,15 +394,15 @@ impl Validator {
 }
 
 pub trait Validate {
-    fn validate(&self) -> Result<(), ValidatorError>;
+    fn validate(&self) -> Result<(), LinkerError>;
 }
 
 impl Validate for ToplevelDefinition {
-    fn validate(&self) -> Result<(), ValidatorError> {
+    fn validate(&self) -> Result<(), LinkerError> {
         match self {
             ToplevelDefinition::Type(t) => {
                 if let Err(mut e) = t.ty.validate() {
-                    e.specify_data_element(t.name.clone());
+                    e.contextualize(&t.name);
                     return Err(e);
                 }
                 Ok(())
@@ -406,7 +414,7 @@ impl Validate for ToplevelDefinition {
 }
 
 impl Validate for ASN1Type {
-    fn validate(&self) -> Result<(), ValidatorError> {
+    fn validate(&self) -> Result<(), LinkerError> {
         match self {
             ASN1Type::Integer(ref i) => i.validate(),
             ASN1Type::BitString(ref b) => b.validate(),
@@ -417,7 +425,7 @@ impl Validate for ASN1Type {
 }
 
 impl Validate for Integer {
-    fn validate(&self) -> Result<(), ValidatorError> {
+    fn validate(&self) -> Result<(), LinkerError> {
         for c in &self.constraints {
             c.validate()?;
         }
@@ -426,7 +434,7 @@ impl Validate for Integer {
 }
 
 impl Validate for BitString {
-    fn validate(&self) -> Result<(), ValidatorError> {
+    fn validate(&self) -> Result<(), LinkerError> {
         for c in &self.constraints {
             c.validate()?;
         }
@@ -435,7 +443,7 @@ impl Validate for BitString {
 }
 
 impl Validate for CharacterString {
-    fn validate(&self) -> Result<(), ValidatorError> {
+    fn validate(&self) -> Result<(), LinkerError> {
         for c in &self.constraints {
             c.validate()?;
         }
@@ -444,7 +452,7 @@ impl Validate for CharacterString {
 }
 
 impl Validate for Constraint {
-    fn validate(&self) -> Result<(), ValidatorError> {
+    fn validate(&self) -> Result<(), LinkerError> {
         if let Constraint::SubtypeConstraint(c) = self {
             if let ElementOrSetOperation::Element(SubtypeElement::ValueRange {
                 min,
@@ -456,10 +464,10 @@ impl Validate for Constraint {
                     min.as_ref().zip(max.as_ref())
                 {
                     if min > max {
-                        return Err(ValidatorError::new(
+                        return Err(LinkerError::new(
                             None,
                             "Mininum value exceeds maximum value!",
-                            ValidatorErrorType::InvalidConstraintsError,
+                            LinkerErrorType::InvalidConstraintsError,
                         ));
                     }
                 }

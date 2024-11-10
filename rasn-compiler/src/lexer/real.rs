@@ -1,19 +1,19 @@
-use crate::intermediate::*;
+use crate::{input::Input, intermediate::*};
 use nom::{
     branch::alt,
     bytes::complete::tag,
     character::complete::{char, i32, i64, u64},
     combinator::{map, opt, value},
     sequence::{delimited, preceded, separated_pair, tuple},
-    IResult,
 };
 
 use super::{
     common::{in_braces, skip_ws_and_comments},
     constraint::constraint,
+    error::ParserResult,
 };
 
-pub fn real_value(input: &str) -> IResult<&str, ASN1Value> {
+pub fn real_value(input: Input<'_>) -> ParserResult<'_, ASN1Value> {
     map(
         skip_ws_and_comments(alt((dot_notation, mbe_notation))),
         ASN1Value::Real,
@@ -22,13 +22,13 @@ pub fn real_value(input: &str) -> IResult<&str, ASN1Value> {
 
 /// Tries to parse an ASN1 REAL
 ///
-/// *`input` - string slice to be matched against
+/// *`input` - [Input]-wrapped string slice to be matched against
 ///
 /// `real` will try to match an REAL declaration in the `input` string.
 /// If the match succeeds, the lexer will consume the match and return the remaining string
 /// and a wrapped `Real` value representing the ASN1 declaration.
 /// If the match fails, the lexer will not consume the input and will return an error.
-pub fn real(input: &str) -> IResult<&str, ASN1Type> {
+pub fn real(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
     map(
         preceded(
             skip_ws_and_comments(tag(REAL)),
@@ -38,7 +38,7 @@ pub fn real(input: &str) -> IResult<&str, ASN1Type> {
     )(input)
 }
 
-fn dot_notation(input: &str) -> IResult<&str, f64> {
+fn dot_notation(input: Input<'_>) -> ParserResult<'_, f64> {
     map(
         skip_ws_and_comments(separated_pair(i64, char('.'), u64)),
         |(wholes, decimals)| {
@@ -55,7 +55,7 @@ fn dot_notation(input: &str) -> IResult<&str, f64> {
     )(input)
 }
 
-fn mbe_notation(input: &str) -> IResult<&str, f64> {
+fn mbe_notation(input: Input<'_>) -> ParserResult<'_, f64> {
     map(
         in_braces(tuple((
             delimited(
@@ -98,6 +98,7 @@ mod tests {
             real(
                 r#" REAL -- Nothing here
         NextType ::= TestType"#
+                    .into()
             )
             .unwrap()
             .1,
@@ -115,6 +116,7 @@ mod tests {
                     mantissa (-16777215..16777215),
                     base (2),
                     exponent (-125..128) } )"#
+                    .into()
             )
             .unwrap()
             .1,
@@ -176,16 +178,19 @@ mod tests {
 
     #[test]
     fn parses_dot_notation_real_value() {
-        assert_eq!(real_value("2.23412").unwrap().1, ASN1Value::Real(2.23412));
         assert_eq!(
-            real_value("-12.23412").unwrap().1,
+            real_value("2.23412".into()).unwrap().1,
+            ASN1Value::Real(2.23412)
+        );
+        assert_eq!(
+            real_value("-12.23412".into()).unwrap().1,
             ASN1Value::Real(-12.23412)
         )
     }
 
     #[test]
     fn parses_mbe_notation_real_value() {
-        if let ASN1Value::Real(r) = real_value("{mantissa 334159, base 10, exponent -5}")
+        if let ASN1Value::Real(r) = real_value("{mantissa 334159, base 10, exponent -5}".into())
             .unwrap()
             .1
         {
@@ -193,7 +198,10 @@ mod tests {
         } else {
             unreachable!()
         }
-        if let ASN1Value::Real(r) = real_value("{mantissa 0, base 2, exponent 100}").unwrap().1 {
+        if let ASN1Value::Real(r) = real_value("{mantissa 0, base 2, exponent 100}".into())
+            .unwrap()
+            .1
+        {
             assert!(r < 0.0000001 && r > -0.000001);
         } else {
             unreachable!()

@@ -224,12 +224,9 @@ pub const ASN1_KEYWORDS: [&str; 63] = [
     TAGS,
 ];
 
-macro_rules! error {
+macro_rules! grammar_error {
     ($kind:ident, $($arg:tt)*) => {
-        GrammarError {
-            details: format!($($arg)*),
-            kind: GrammarErrorType::$kind,
-        }
+        GrammarError::new(&format!($($arg)*),GrammarErrorType::$kind)
     };
 }
 
@@ -1232,7 +1229,7 @@ impl ASN1Value {
             }
             (ASN1Value::String(s), ASN1Value::String(o), Some(set)) => {
                 if s.len() != 1 || o.len() != 1 {
-                    return Err(error!(
+                    return Err(grammar_error!(
                         UnpackingError,
                         "Unsupported operation for ASN1Values {self:?} and {other:?}"
                     ));
@@ -1255,13 +1252,13 @@ impl ASN1Value {
                             Ok(other.clone())
                         }
                     }
-                    _ => Err(error!(
+                    _ => Err(grammar_error!(
                             UnpackingError,
                             "Failed to find ASN1Values {self:?} and {other:?} in character set {char_set:?}",
                         )),
                 }
             }
-            _ => Err(error!(
+            _ => Err(grammar_error!(
                 UnpackingError,
                 "Unsupported operation for ASN1Values {self:?} and {other:?}",
             )),
@@ -1272,7 +1269,10 @@ impl ASN1Value {
         if let ASN1Value::Integer(i) = self {
             Ok(*i)
         } else {
-            Err(error!(UnpackingError, "Cannot unwrap {self:?} as integer!"))
+            Err(grammar_error!(
+                UnpackingError,
+                "Cannot unwrap {self:?} as integer!"
+            ))
         }
     }
 }

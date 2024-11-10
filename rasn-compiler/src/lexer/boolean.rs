@@ -3,14 +3,16 @@ use nom::{
     bytes::complete::tag,
     combinator::{into, map, opt, value},
     sequence::preceded,
-    IResult,
 };
 
-use crate::intermediate::{ASN1Type, ASN1Value, BOOLEAN, FALSE, TRUE};
+use crate::{
+    input::Input,
+    intermediate::{ASN1Type, ASN1Value, BOOLEAN, FALSE, TRUE},
+};
 
-use super::{common::skip_ws_and_comments, constraint::constraint};
+use super::{common::skip_ws_and_comments, constraint::constraint, error::ParserResult};
 
-pub fn boolean_value(input: &str) -> IResult<&str, ASN1Value> {
+pub fn boolean_value(input: Input<'_>) -> ParserResult<'_, ASN1Value> {
     alt((
         value(ASN1Value::Boolean(true), skip_ws_and_comments(tag(TRUE))),
         value(ASN1Value::Boolean(false), skip_ws_and_comments(tag(FALSE))),
@@ -19,13 +21,13 @@ pub fn boolean_value(input: &str) -> IResult<&str, ASN1Value> {
 
 /// Tries to parse an ASN1 BOOLEAN
 ///
-/// *`input` - string slice to be matched against
+/// *`input` - [Input]-wrapped string slice to be matched against
 ///
 /// `boolean` will try to match an BOOLEAN declaration in the `input` string.
 /// If the match succeeds, the lexer will consume the match and return the remaining string
 /// and an `ASN1Type::Boolean` value representing the ASN1 declaration.
 /// If the match fails, the lexer will not consume the input and will return an error.
-pub fn boolean(input: &str) -> IResult<&str, ASN1Type> {
+pub fn boolean(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
     map(
         into(skip_ws_and_comments(preceded(
             tag(BOOLEAN),
@@ -44,7 +46,7 @@ mod tests {
     #[test]
     fn parses_boolean() {
         assert_eq!(
-            boolean(" --who would put a comment here?--BOOLEAN")
+            boolean(" --who would put a comment here?--BOOLEAN".into())
                 .unwrap()
                 .1,
             ASN1Type::Boolean(Boolean {
