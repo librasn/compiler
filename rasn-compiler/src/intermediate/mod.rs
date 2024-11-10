@@ -157,6 +157,7 @@ pub const RELATIVE_OID_IRI: &str = "RELATIVE-OID-IRI";
 pub const TIME: &str = "TIME";
 pub const TIME_OF_DAY: &str = "TIME-OF-DAY";
 pub const TYPE_IDENTIFIER: &str = "TYPE-IDENTIFIER";
+pub const ENCODING_CONTROL: &str = "ENCODING-CONTROL";
 
 pub const ASN1_KEYWORDS: [&str; 63] = [
     ABSTRACT_SYNTAX,

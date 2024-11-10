@@ -32,6 +32,7 @@ pub mod prelude {
     //! Convenience module that collects all necessary imports for
     //! using and customizing the compiler.
     pub use super::{
+        error::CompilerError,
         CompileResult, Compiler, CompilerMissingParams, CompilerOutputSet, CompilerReady,
         CompilerSourcesSet,
     };
@@ -45,6 +46,9 @@ pub mod prelude {
     pub use crate::intermediate::{
         ExtensibilityEnvironment, TaggingEnvironment, ToplevelDefinition,
     };
+
+    pub use crate::lexer::error::{LexerError, LexerErrorType, ReportData};
+    pub use crate::validator::error::{LinkerError, LinkerErrorType};
 
     pub mod ir {
         pub use crate::intermediate::{

@@ -737,7 +737,18 @@ impl Rasn {
                 let arcs = oid
                     .0
                     .iter()
-                    .filter_map(|arc| arc.number.map(|id| id.to_token_stream()));
+                    .filter_map(|arc| {
+                        arc.number.map(|id| {
+                            u32::try_from(id)
+                                .map(|arc| arc.to_token_stream())
+                                .map_err(|_| GeneratorError {
+                                    top_level_declaration: None,
+                                    details: "OID arc out of u32 range".into(),
+                                    kind: GeneratorErrorType::Unsupported,
+                                })
+                        })
+                    })
+                    .collect::<Result<Vec<_>, _>>()?;
                 Ok(quote!(Oid::const_new(&[#(#arcs),*]).to_owned()))
             }
             ASN1Value::Time(t) => match type_name {

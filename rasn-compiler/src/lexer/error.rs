@@ -127,6 +127,7 @@ pub struct ReportData {
     pub offset: usize,
     pub column: usize,
     pub reason: String,
+    pub unexpected_eof: bool,
 }
 
 impl From<ErrorTree<'_>> for ReportData {
@@ -138,6 +139,7 @@ impl From<ErrorTree<'_>> for ReportData {
                 line: input.line(),
                 offset: input.offset(),
                 column: input.column(),
+                unexpected_eof: kind == ErrorKind::Nom(nom::error::ErrorKind::Eof),
                 reason: match kind {
                     ErrorKind::Nom(e) => format!("Failed to parse next input. Code: {e:?}"),
                     ErrorKind::External(e) => e,
@@ -220,6 +222,14 @@ impl<'a> ErrorTree<'a> {
                 .pop_back()
                 .expect("error tree branch to have at least one link")
                 .into_input(),
+        }
+    }
+
+    pub fn is_eof_error(&self) -> bool {
+        match self {
+            ErrorTree::Leaf { kind, .. } => kind == &ErrorKind::Nom(nom::error::ErrorKind::Eof),
+            ErrorTree::Branch { tip, .. } => tip.is_eof_error(),
+            ErrorTree::Fork { branches } => branches.back().map_or(false, |b| b.is_eof_error()),
         }
     }
 }
@@ -334,10 +344,11 @@ c-ctxRefNull CtxRef ::= 0
                 column: 6,
                 offset: 172,
                 reason: "Test".into(),
+                unexpected_eof: false,
             }),
         };
         assert_eq!(
-            error.contextualize(&input),
+            error.contextualize(input),
             r#"
 Error matching ASN syntax at while parsing:
    ╭─[line 6, column 6]
