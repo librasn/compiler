@@ -81,7 +81,8 @@ impl Validator {
                     }),
                 )) = &mut item
                 {
-                    if let Err(e) = set.resolve_object_set_references(&self.tlds) {
+                    if let Err(mut e) = set.resolve_object_set_references(&self.tlds) {
+                        e.contextualize(&key);
                         warnings.push(e.into())
                     }
                 }
@@ -110,7 +111,8 @@ impl Validator {
             }
             if self.has_choice_selection_type(&key) {
                 if let Some((k, ToplevelDefinition::Type(mut tld))) = self.tlds.remove_entry(&key) {
-                    if let Err(e) = tld.ty.link_choice_selection_type(&self.tlds) {
+                    if let Err(mut e) = tld.ty.link_choice_selection_type(&self.tlds) {
+                        e.contextualize(&key);
                         warnings.push(e.into());
                     }
                     self.tlds.insert(k, ToplevelDefinition::Type(tld));
@@ -126,29 +128,33 @@ impl Validator {
             }
             if self.has_constraint_reference(&key) {
                 match self.tlds.remove(&key).ok_or_else(|| LinkerError {
-                    data_element: Some(key.clone()),
+                    pdu: Some(key.clone()),
                     details: "Could not find toplevel declaration to remove!".into(),
                     kind: LinkerErrorType::MissingDependency,
                 }) {
                     Ok(mut tld) => {
-                        if let Err(e) = tld.link_constraint_reference(&self.tlds) {
+                        if let Err(mut e) = tld.link_constraint_reference(&self.tlds) {
+                            e.contextualize(&key);
                             warnings.push(e.into());
                         }
                         self.tlds.insert(tld.name().clone(), tld);
                     }
-                    Err(e) => {
+                    Err(mut e) => {
+                        e.contextualize(&key);
                         warnings.push(e.into());
                     }
                 };
             }
             if let Some((k, mut tld)) = self.tlds.remove_entry(&key) {
-                if let Err(e) = tld.collect_supertypes(&self.tlds) {
+                if let Err(mut e) = tld.collect_supertypes(&self.tlds) {
+                    e.contextualize(&key);
                     warnings.push(e.into());
                 }
                 self.tlds.insert(k, tld);
             }
             if let Some((k, mut tld)) = self.tlds.remove_entry(&key) {
-                if let Err(e) = tld.mark_recursive() {
+                if let Err(mut e) = tld.mark_recursive() {
+                    e.contextualize(&key);
                     warnings.push(e.into());
                 }
                 self.tlds.insert(k, tld);
@@ -371,11 +377,9 @@ impl Validator {
 
     pub fn validate(
         mut self,
-    ) -> Result<(Vec<ToplevelDefinition>, Vec<CompilerError>), CompilerError>
-    {
+    ) -> Result<(Vec<ToplevelDefinition>, Vec<CompilerError>), CompilerError> {
         let warnings: Vec<CompilerError>;
-        (self, warnings) = self
-            .link()?;
+        (self, warnings) = self.link()?;
         Ok(self.tlds.into_iter().fold(
             (Vec::<ToplevelDefinition>::new(), warnings),
             |(mut tlds, mut errors), (_, tld)| {
@@ -398,7 +402,7 @@ impl Validate for ToplevelDefinition {
         match self {
             ToplevelDefinition::Type(t) => {
                 if let Err(mut e) = t.ty.validate() {
-                    e.specify_data_element(t.name.clone());
+                    e.contextualize(&t.name);
                     return Err(e);
                 }
                 Ok(())

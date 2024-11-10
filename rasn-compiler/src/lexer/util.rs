@@ -1,7 +1,9 @@
 use std::{cmp::min, fmt::Debug};
 
 use nom::{
-    bytes::complete::tag, combinator::{map, peek}, error::{Error, ErrorKind, ParseError}, multi::many_till, Err, FindSubstring, IResult, InputLength, InputTake, Parser, Slice
+    bytes::complete::tag,
+    error::{Error, ErrorKind, ParseError},
+    Err, FindSubstring, IResult, InputLength, InputTake, Parser, Slice,
 };
 
 use crate::input::Input;
@@ -213,7 +215,7 @@ mod tests {
 
     use nom::multi::many1;
 
-    use nom::{bytes::complete::tag, error::Error};
+    use nom::bytes::complete::tag;
 
     #[test]
     fn optional_delimiter() {

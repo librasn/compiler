@@ -183,11 +183,14 @@ impl Backend for Rasn {
     }
 
     fn format_bindings(bindings: &str) -> Result<String, CompilerError> {
-        Self::internal_fmt(bindings).map_err(|e| GeneratorError {
+        Self::internal_fmt(bindings).map_err(|e| {
+            GeneratorError {
                 top_level_declaration: None,
                 details: e.to_string(),
                 kind: GeneratorErrorType::FormattingError,
-            }.into())
+            }
+            .into()
+        })
     }
 
     fn generate(&self, tld: ToplevelDefinition) -> Result<String, GeneratorError> {

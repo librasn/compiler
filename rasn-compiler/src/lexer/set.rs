@@ -21,25 +21,25 @@ use super::{common::optional_comma, constraint::constraint, sequence::sequence_c
 /// structs within the same global scope.
 /// If the match fails, the lexer will not consume the input and will return an error.
 pub fn set(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
-        map(
-            preceded(
-                skip_ws_and_comments(tag(SET)),
-                pair(
-                    in_braces(tuple((
-                        many0(terminated(
-                            skip_ws_and_comments(sequence_component),
-                            optional_comma,
-                        )),
-                        opt(terminated(extension_marker, opt(char(COMMA)))),
-                        opt(many0(terminated(
-                            skip_ws_and_comments(sequence_component),
-                            optional_comma,
-                        ))),
+    map(
+        preceded(
+            skip_ws_and_comments(tag(SET)),
+            pair(
+                in_braces(tuple((
+                    many0(terminated(
+                        skip_ws_and_comments(sequence_component),
+                        optional_comma,
+                    )),
+                    opt(terminated(extension_marker, opt(char(COMMA)))),
+                    opt(many0(terminated(
+                        skip_ws_and_comments(sequence_component),
+                        optional_comma,
                     ))),
-                    opt(constraint),
-                ),
+                ))),
+                opt(constraint),
             ),
-            |m| ASN1Type::Set(m.into()),
+        ),
+        |m| ASN1Type::Set(m.into()),
     )(input)
 }
 

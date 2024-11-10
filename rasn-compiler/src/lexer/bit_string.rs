@@ -2,10 +2,8 @@ use nom::{
     bytes::complete::tag,
     character::complete::{char, one_of},
     combinator::{map, opt},
-    error::context,
     multi::fold_many0,
     sequence::{delimited, pair, preceded},
-    IResult,
 };
 
 use crate::{input::Input, intermediate::*};

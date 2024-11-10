@@ -27,12 +27,9 @@ use self::{
 
 use super::{Constraint, Parameter, TableConstraint};
 
-macro_rules! error {
+macro_rules! grammar_error {
     ($kind:ident, $($arg:tt)*) => {
-        GrammarError {
-            details: format!($($arg)*),
-            kind: GrammarErrorType::$kind,
-        }
+        GrammarError::new(&format!($($arg)*), GrammarErrorType::$kind)
     };
 }
 
@@ -289,9 +286,10 @@ impl ASN1Type {
                     *self = parent.ty.clone();
                     Ok(())
                 } else {
-                    Err(error!(
+                    Err(grammar_error!(
                         LinkerError,
-                        "Could not find Choice {} of selection type.", c.choice_name
+                        "Could not find Choice {} of selection type.",
+                        c.choice_name
                     ))
                 }
             }
@@ -477,57 +475,56 @@ impl ASN1Type {
                     },
                 ) in parameters.iter().enumerate()
                 {
-                    let arg = args.get(index).ok_or_else(|| GrammarError {
-                            details: format!("Did not find an argument for parameter {dummy_reference} of {identifier}"),
-                            kind: GrammarErrorType::LinkerError,
-                        })?;
+                    let arg = args.get(index).ok_or_else(|| grammar_error!(LinkerError, "Did not find an argument for parameter {dummy_reference} of {identifier}"))?;
                     match (arg, param_governor) {
-                            (Parameter::ValueParameter(v), ParameterGovernor::TypeOrClass(gov)) => {
-                                impl_tlds.insert(
-                                    dummy_reference.clone(),
-                                    ToplevelDefinition::Value(ToplevelValueDefinition::from((
-                                        dummy_reference.as_str(),
-                                        v.clone(),
-                                        gov.clone(),
-                                    ))),
-                                );
-                            }
-                            (Parameter::TypeParameter(t), _) => {
-                                impl_tlds.insert(
-                                    dummy_reference.clone(),
-                                    ToplevelDefinition::Type(ToplevelTypeDefinition::from((
-                                        dummy_reference.as_str(),
-                                        t.clone(),
-                                    ))),
-                                );
-                            },
-                            (Parameter::InformationObjectParameter(_), _) => todo!(),
-                            (Parameter::ObjectSetParameter(o), ParameterGovernor::Class(c)) => {
-                                match &o.values.first() {
+                        (Parameter::ValueParameter(v), ParameterGovernor::TypeOrClass(gov)) => {
+                            impl_tlds.insert(
+                                dummy_reference.clone(),
+                                ToplevelDefinition::Value(ToplevelValueDefinition::from((
+                                    dummy_reference.as_str(),
+                                    v.clone(),
+                                    gov.clone(),
+                                ))),
+                            );
+                        }
+                        (Parameter::TypeParameter(t), _) => {
+                            impl_tlds.insert(
+                                dummy_reference.clone(),
+                                ToplevelDefinition::Type(ToplevelTypeDefinition::from((
+                                    dummy_reference.as_str(),
+                                    t.clone(),
+                                ))),
+                            );
+                        }
+                        (Parameter::InformationObjectParameter(_), _) => todo!(),
+                        (Parameter::ObjectSetParameter(o), ParameterGovernor::Class(c)) => {
+                            match &o.values.first() {
                                     Some(osv) if o.values.len() == 1 => {
                                         #[allow(suspicious_double_ref_op)]
                                         table_constraint_replacements.insert(dummy_reference, osv.clone());
                                     }
-                                    _ => return Err(GrammarError { details: "Expected object set value argument to contain single object set value!".to_owned(), kind: GrammarErrorType::LinkerError })
+                                    _ => return Err(grammar_error!(LinkerError, "Expected object set value argument to contain single object set value!"))
                                 }
-                                let mut info = ASN1Information::ObjectSet(o.clone());
-                                info.link_object_set_reference(tlds);
-                                let mut tld = ToplevelInformationDefinition::from((
-                                    dummy_reference.as_str(),
-                                    info,
-                                    c.as_str()
-                                ));
-                                tld = tld.resolve_class_reference(tlds);
-                                impl_tlds.insert(
-                                    dummy_reference.clone(),
-                                    ToplevelDefinition::Information(tld),
-                                );
-                            },
-                            _ => return Err(GrammarError {
-                                details: format!("Mismatching argument for parameter {dummy_reference} of {identifier}"),
-                                kind: GrammarErrorType::LinkerError,
-                            })
+                            let mut info = ASN1Information::ObjectSet(o.clone());
+                            info.link_object_set_reference(tlds);
+                            let mut tld = ToplevelInformationDefinition::from((
+                                dummy_reference.as_str(),
+                                info,
+                                c.as_str(),
+                            ));
+                            tld = tld.resolve_class_reference(tlds);
+                            impl_tlds.insert(
+                                dummy_reference.clone(),
+                                ToplevelDefinition::Information(tld),
+                            );
                         }
+                        _ => {
+                            return Err(grammar_error!(
+                            LinkerError,
+                            "Mismatching argument for parameter {dummy_reference} of {identifier}"
+                        ))
+                        }
+                    }
                 }
                 impl_template.link_elsewhere_declared(&impl_tlds)?;
                 if let Some(replacement) =
@@ -543,12 +540,10 @@ impl ASN1Type {
                 }
                 Ok(impl_template)
             }
-            _ => Err(GrammarError {
-                details: format!(
-                    "Failed to resolve supertype {identifier} of parameterized implementation."
-                ),
-                kind: GrammarErrorType::LinkerError,
-            }),
+            _ => Err(grammar_error!(
+                LinkerError,
+                "Failed to resolve supertype {identifier} of parameterized implementation."
+            )),
         }
     }
 
@@ -603,10 +598,10 @@ impl ASN1Type {
             }
             // SequenceOf and SetOf provide the necessary indirection
             ASN1Type::SequenceOf(_) | ASN1Type::SetOf(_) => Ok(Vec::new()),
-            ASN1Type::ChoiceSelectionType(_) => Err(GrammarError {
-                details: "Choice selection types should be resolved by now".into(),
-                kind: GrammarErrorType::LinkerError,
-            }),
+            ASN1Type::ChoiceSelectionType(_) => Err(grammar_error!(
+                LinkerError,
+                "Choice selection types should be resolved by now"
+            )),
             ASN1Type::InformationObjectFieldReference(_information_object_field_reference) => {
                 Ok(Vec::new())
             } // TODO
@@ -692,13 +687,11 @@ impl ASN1Type {
                     *self = tld.ty.clone();
                     Ok(())
                 } else {
-                    Err(GrammarError {
-                        details: format!(
-                            "Failed to resolve argument {} of parameterized implementation.",
-                            e.identifier
-                        ),
-                        kind: GrammarErrorType::LinkerError,
-                    })
+                    Err(grammar_error!(
+                        LinkerError,
+                        "Failed to resolve argument {} of parameterized implementation.",
+                        e.identifier
+                    ))
                 }
             }
             ASN1Type::InformationObjectFieldReference(iofr) => {
@@ -714,23 +707,21 @@ impl ASN1Type {
                         return Ok(());
                     }
                 }
-                Err(GrammarError {
-                    details: format!(
-                        "Failed to resolve argument {}.{} of parameterized implementation.",
-                        iofr.class,
-                        iofr.field_path
-                            .iter()
-                            .map(|f| f.identifier().clone())
-                            .collect::<Vec<_>>()
-                            .join(".")
-                    ),
-                    kind: GrammarErrorType::LinkerError,
-                })
+                Err(grammar_error!(
+                    LinkerError,
+                    "Failed to resolve argument {}.{} of parameterized implementation.",
+                    iofr.class,
+                    iofr.field_path
+                        .iter()
+                        .map(|f| f.identifier().clone())
+                        .collect::<Vec<_>>()
+                        .join(".")
+                ))
             }
-            ASN1Type::ChoiceSelectionType(_) => Err(GrammarError {
-                details: "Linking choice selection type is not yet supported!".to_string(),
-                kind: GrammarErrorType::NotYetInplemented,
-            }),
+            ASN1Type::ChoiceSelectionType(_) => Err(grammar_error!(
+                LinkerError,
+                "Linking choice selection type is not yet supported!"
+            )),
             _ => Ok(()),
         }
     }
@@ -877,10 +868,11 @@ impl ASN1Value {
                 if let Some(ToplevelDefinition::Type(t)) = tlds.get(&e.identifier) {
                     self.link_with_type(tlds, &t.ty, Some(&t.name))
                 } else {
-                    Err(GrammarError {
-                        details: format!("Failed to link value with '{}'", e.identifier),
-                        kind: GrammarErrorType::LinkerError,
-                    })
+                    Err(grammar_error!(
+                        LinkerError,
+                        "Failed to link value with '{}'",
+                        e.identifier
+                    ))
                 }
             }
             (
@@ -935,10 +927,11 @@ impl ASN1Value {
                 if let Some(ToplevelDefinition::Type(t)) = tlds.get(&e.identifier) {
                     self.link_with_type(tlds, &t.ty, Some(&t.name))
                 } else {
-                    Err(GrammarError {
-                        details: format!("Failed to link value with '{}'", e.identifier),
-                        kind: GrammarErrorType::LinkerError,
-                    })
+                    Err(grammar_error!(
+                        LinkerError,
+                        "Failed to link value with '{}'",
+                        e.identifier
+                    ))
                 }
             }
             (
@@ -957,10 +950,11 @@ impl ASN1Value {
                         Some(&option.ty.as_str().into_owned()),
                     )
                 } else {
-                    Err(GrammarError {
-                        details: format!("Failed to link value with '{}'", variant_name),
-                        kind: GrammarErrorType::LinkerError,
-                    })
+                    Err(grammar_error!(
+                        LinkerError,
+                        "Failed to link value with '{}'",
+                        variant_name
+                    ))
                 }
             }
             (ASN1Type::Choice(c), ASN1Value::LinkedNestedValue { supertypes, value })
@@ -981,10 +975,11 @@ impl ASN1Value {
                             Some(&option.ty.as_str().into_owned()),
                         )
                     } else {
-                        Err(GrammarError {
-                            details: format!("Failed to link value with '{}'", variant_name),
-                            kind: GrammarErrorType::LinkerError,
-                        })
+                        Err(grammar_error!(
+                            LinkerError,
+                            "Failed to link value with '{}'",
+                            variant_name
+                        ))
                     }
                 } else {
                     Ok(())
@@ -1250,21 +1245,20 @@ impl ASN1Value {
                     ),
                     (false, _) => Some(member.ty.as_str().into_owned()),
                     _ => {
-                        return Err(GrammarError {
-                            details: format!(
-                                "Failed to determine parent name of field {}",
-                                member.name
-                            ),
-                            kind: GrammarErrorType::LinkerError,
-                        })
+                        return Err(grammar_error!(
+                            LinkerError,
+                            "Failed to determine parent name of field {}",
+                            member.name
+                        ))
                     }
                 };
                 v.1.link_with_type(tlds, &member.ty, type_name.as_ref())
             } else {
-                Err(GrammarError {
-                    details: format!("Failed to link value with '{:?}'", v.0),
-                    kind: GrammarErrorType::LinkerError,
-                })
+                Err(grammar_error!(
+                    LinkerError,
+                    "Failed to link value with '{:?}'",
+                    v.0
+                ))
             }
         })?;
 
@@ -1280,9 +1274,8 @@ impl ASN1Value {
                         .default_value
                         .as_ref()
                         .map(|d| StructLikeFieldValue::Implicit(Box::new(d.clone()))))
-                    .ok_or_else(|| GrammarError {
-                        details: format!("No value for field {} found!", member.name),
-                        kind: GrammarErrorType::LinkerError,
+                    .ok_or_else(|| {
+                        grammar_error!(LinkerError, "No value for field {} found!", member.name)
                     })
                     .map(|field_value| (member.name.clone(), member.ty.clone(), field_value))
             })
@@ -1326,7 +1319,7 @@ impl ASN1Value {
         } = self
         {
             if object_name.contains('.') {
-                return Err(error!(NotYetInplemented, "Value references of path length > 2 are not yet supported! Found reference {object_name}.{identifier}"));
+                return Err(grammar_error!(NotYetInplemented, "Value references of path length > 2 are not yet supported! Found reference {object_name}.{identifier}"));
             }
             let object = get_declaration![
                 tlds,
@@ -1334,7 +1327,7 @@ impl ASN1Value {
                 Information,
                 ASN1Information::Object
             ]
-            .ok_or_else(|| error!(LinkerError, "No information object found for identifier {object_name}, parent of {identifier}"))?;
+            .ok_or_else(|| grammar_error!(LinkerError, "No information object found for identifier {object_name}, parent of {identifier}"))?;
             match &object.fields {
                 InformationObjectFields::DefaultSyntax(d) => {
                     match d.iter().find(|elem| elem.identifier() == identifier) {
@@ -1342,7 +1335,7 @@ impl ASN1Value {
                             *self = value.clone();
                             return Ok(())
                         }
-                        _ => return Err(error!(
+                        _ => return Err(grammar_error!(
                             LinkerError,
                                 "No matching value field for identifier {identifier} found in object {object_name}"
                         ))
@@ -1357,13 +1350,13 @@ impl ASN1Value {
                         ASN1Information::ObjectClass
                     ]
                     .ok_or_else(|| {
-                        error!(
+                        grammar_error!(
                             LinkerError,
                             "No information object class found for identifier {class_name}"
                         )
                     })?;
                     let syntax = class.syntax.as_ref().ok_or_else(|| {
-                        error!(LinkerError, "No syntax info found for class {class_name}")
+                        grammar_error!(LinkerError, "No syntax info found for class {class_name}")
                     })?;
                     let tokens = syntax.flatten();
                     let (mut before, mut after) = (None, None);
@@ -1396,7 +1389,7 @@ impl ASN1Value {
                             };
                         }
                     }
-                    return Err(error!(
+                    return Err(grammar_error!(
                         LinkerError,
                         "Failed to match expression to syntax of class {class_name}"
                     ));

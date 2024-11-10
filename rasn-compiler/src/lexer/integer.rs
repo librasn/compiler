@@ -3,9 +3,7 @@ use nom::{
     bytes::complete::tag,
     character::complete::i128,
     combinator::{map, opt},
-    error::context,
     sequence::tuple,
-    IResult,
 };
 
 use crate::intermediate::{ASN1Type, ASN1Value, INTEGER};

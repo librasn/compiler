@@ -5,7 +5,6 @@ use nom::{
         alpha1, alphanumeric1, char, i128, multispace0, multispace1, one_of, u64,
     },
     combinator::{into, map, map_res, opt, peek, recognize, value},
-    error::Error,
     multi::{many0, many1},
     sequence::{delimited, pair, preceded, terminated},
 };

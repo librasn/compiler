@@ -11,8 +11,8 @@ use std::{
 };
 
 use nom::{
-    AsBytes, Compare, ExtendInto, FindSubstring, FindToken, InputIter, InputLength,
-    InputTake, InputTakeAtPosition, Offset, ParseTo, Slice,
+    AsBytes, Compare, ExtendInto, FindSubstring, FindToken, InputIter, InputLength, InputTake,
+    InputTakeAtPosition, Offset, ParseTo, Slice,
 };
 
 use crate::lexer::error::ParserResult;

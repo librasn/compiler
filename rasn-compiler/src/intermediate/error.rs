@@ -7,6 +7,7 @@ use std::{
 pub struct GrammarError {
     pub details: String,
     pub kind: GrammarErrorType,
+    pub pdu: Option<String>,
 }
 
 impl GrammarError {
@@ -14,6 +15,7 @@ impl GrammarError {
         GrammarError {
             details: data_details.into(),
             kind,
+            pdu: None,
         }
     }
 
@@ -21,7 +23,12 @@ impl GrammarError {
         GrammarError {
             details: "Not yet implemented!".into(),
             kind: GrammarErrorType::NotYetInplemented,
+            pdu: None,
         }
+    }
+
+    pub fn contextualize(&mut self, pdu: &str) {
+        self.pdu = Some(pdu.into());
     }
 }
 

@@ -5,22 +5,22 @@ use crate::intermediate::error::GrammarError;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct LinkerError {
-    pub data_element: Option<String>,
+    pub pdu: Option<String>,
     pub details: String,
     pub kind: LinkerErrorType,
 }
 
 impl LinkerError {
-    pub fn new(data_element: Option<String>, details: &str, kind: LinkerErrorType) -> Self {
+    pub fn new(pdu: Option<String>, details: &str, kind: LinkerErrorType) -> Self {
         LinkerError {
-            data_element,
+            pdu,
             details: details.into(),
             kind,
         }
     }
 
-    pub fn specify_data_element(&mut self, data_element: String) {
-        self.data_element = Some(data_element)
+    pub fn contextualize(&mut self, pdu: &str) {
+        self.pdu = Some(pdu.into())
     }
 }
 
@@ -37,9 +37,9 @@ impl Display for LinkerError {
     fn fmt(&self, f: &mut Formatter) -> Result {
         write!(
             f,
-            "{:?} validating parsed data element {}: {}",
+            "{:?} validating PDU {}: {}",
             self.kind,
-            self.data_element.as_ref().unwrap_or(&"".into()),
+            self.pdu.as_ref().unwrap_or(&"".into()),
             self.details
         )
     }
@@ -48,7 +48,7 @@ impl Display for LinkerError {
 impl From<GrammarError> for LinkerError {
     fn from(value: GrammarError) -> Self {
         Self {
-            data_element: None,
+            pdu: None,
             details: value.details,
             kind: LinkerErrorType::Unknown,
         }

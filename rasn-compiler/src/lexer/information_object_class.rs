@@ -5,7 +5,6 @@ use nom::{
     combinator::{into, map, opt, recognize, value},
     multi::{many0, many1, separated_list0, separated_list1},
     sequence::{pair, preceded, terminated, tuple},
-    IResult,
 };
 
 use crate::{

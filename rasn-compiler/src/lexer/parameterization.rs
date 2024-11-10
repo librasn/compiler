@@ -4,7 +4,6 @@ use nom::{
     combinator::{into, map},
     multi::separated_list1,
     sequence::separated_pair,
-    IResult,
 };
 
 use crate::{

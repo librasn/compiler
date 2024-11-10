@@ -9,7 +9,6 @@ use nom::{
     combinator::{into, map, map_res, opt, value},
     multi::{many0_count, many1, separated_list0, separated_list1},
     sequence::{delimited, pair, preceded, separated_pair, terminated, tuple},
-    IResult,
 };
 
 use super::{

@@ -127,21 +127,6 @@ pub struct ReportData {
     pub offset: usize,
     pub column: usize,
     pub reason: String,
-    pub tracked_parsers: Vec<TrackedParser>,
-}
-
-#[derive(Debug, Clone, PartialEq)]
-enum TrackedParser {
-    Link(&'static str),
-    Fork(&'static str),
-}
-
-impl TrackedParser {
-    pub fn name(&self) -> &'static str {
-        match self {
-            Self::Fork(s) | Self::Link(s) => s,
-        }
-    }
 }
 
 impl From<ErrorTree<'_>> for ReportData {
@@ -157,45 +142,13 @@ impl From<ErrorTree<'_>> for ReportData {
                     ErrorKind::Nom(e) => format!("Failed to parse next input. Code: {e:?}"),
                     ErrorKind::External(e) => e,
                 },
-                tracked_parsers: vec![],
             },
-            ErrorTree::Branch { tip, links } => {
-                let mut leaf = Self::from(*tip);
-                leaf.tracked_parsers
-                    .extend(links.into_iter().filter_map(|l| match l.context {
-                        Context::ErrorKind(_) => None,
-                        Context::Name(name) => Some(TrackedParser::Link(name)),
-                    }));
-                leaf
-            }
-            ErrorTree::Fork { mut branches } => {
-                fn first_named(e: ErrorTree<'_>) -> Option<TrackedParser> {
-                    match e {
-                        ErrorTree::Leaf { .. } => None,
-                        ErrorTree::Branch { links, .. } => {
-                            links.into_iter().find_map(|l| match l.context {
-                                Context::ErrorKind(_) => None,
-                                Context::Name(name) => Some(TrackedParser::Link(name)),
-                            })
-                        }
-                        ErrorTree::Fork { mut branches } => {
-                            branches.pop_front().and_then(first_named)
-                        }
-                    }
-                }
-
-                let mut leaf = Self::from(
-                    branches
-                        .pop_front()
-                        .expect("Error Tree branch not to be empty."),
-                );
-                leaf.tracked_parsers.extend(
-                    branches
-                        .into_iter()
-                        .filter_map(|b| first_named(b).map(|t| TrackedParser::Fork(t.name()))),
-                );
-                leaf
-            }
+            ErrorTree::Branch { tip, .. } => Self::from(*tip),
+            ErrorTree::Fork { mut branches } => Self::from(
+                branches
+                    .pop_front()
+                    .expect("Error Tree branch not to be empty."),
+            ),
         }
     }
 }
@@ -357,72 +310,46 @@ impl<'a, E: Error> FromExternalError<Input<'a>, E> for ErrorTree<'a> {
 
 #[cfg(test)]
 mod tests {
-    //     use super::*;
+    use super::*;
 
-    //     #[test]
-    //     fn reports_parsing_error() {
-    //         assert_eq!(
-    //             "\u{1b}[1;31mError:\u{1b}[0m
-    //    ╭─[line 2, column 2]
-    //    │
-    //  2 │   IntermediateResponse ::= [APPLICATION 25] SEQUENCE {
-    //    │   \u{1b}[1;31m┬\u{1b}[0m
-    //    │   \u{1b}[1;31m╰── failed to parse input from here on\u{1b}[0m
-    //    │
-    // ───╯",
-    //             LexerError::from(nom::Err::Error(nom::error::Error::new(
-    //                 Input::from(
-    //                     r#"  IntermediateResponse ::= [APPLICATION 25] SEQUENCE {
-    //              responseName     [0] LDAPOID OPTIONAL,
-    //              responseValue    [1] OCTET STRING OPTIONAL }
+    #[test]
+    fn contextualizes_error() {
+        let input = r#"GAP-Test DEFINITIONS AUTOMATIC TAGS ::= BEGIN
+c-CtxTypeSystemNull ItsAidCtxRef ::=  { itsaid content:0, ctx c-ctxRefNull }
 
-    //         END
-    //         "#
-    //                 )
-    //                 .with_line_column_and_offset(2, 2, 4),
-    //                 nom::error::ErrorKind::IsNot
-    //             )))
-    //             .as_styled_report()
-    //             .trim()
-    //         )
-    //     }
+ItsAidCtxRef ::= SEQUENCE {
+ itsaid ITSaid,
+ ctx CtxRef
+ }
 
-    //     #[test]
-    //     fn reports_parsing_error_with_tried_parsers() {
-    //         let mut input = Input::from(
-    //             r#"  IntermediateResponse ::= [APPLICATION 25] SEQUENCE {
-    //  responseName     [0] LDAPOID OPTIONAL,
-    //  responseValue    [1] OCTET STRING OPTIONAL }
+CtxRef ::INTEGER(0..255)
+c-ctxRefNull CtxRef ::= 0
 
-    // END
-    // "#,
-    //         )
-    //         .with_line_column_and_offset(2, 2, 4);
-    //         input.add_untracked(&[
-    //             TrackedParser::new("first", true),
-    //             TrackedParser::new("second", false),
-    //             TrackedParser::new("third", false),
-    //         ]);
-    //         assert_eq!(
-    //             "\u{1b}[1;31mError:\u{1b}[0m
-    //    ╭─[line 2, column 2]
-    //    │
-    //  2 │   IntermediateResponse ::= [APPLICATION 25] SEQUENCE {
-    //    │   \u{1b}[1;31m┬\u{1b}[0m
-    //    │   \u{1b}[1;31m╰── failed to parse input from here on\u{1b}[0m
-    //    │
-    //    │  Applied the following parsers:
-    //    │
-    //    │  \u{1b}[3mfirst\u{1b}[0m                                   \u{1b}[32msuccessful\u{1b}[0m
-    //    │  \u{1b}[3msecond\u{1b}[0m                                  \u{1b}[31munsuccessful\u{1b}[0m
-    //    │  \u{1b}[3mthird\u{1b}[0m                                   \u{1b}[31munsuccessful\u{1b}[0m
-    // ───╯",
-    //             LexerError::from(nom::Err::Error(nom::error::Error::new(
-    //                 input,
-    //                 nom::error::ErrorKind::IsNot
-    //             )))
-    //             .as_styled_report()
-    //             .trim()
-    //         )
-    //     }
+    END"#;
+        let error = LexerError {
+            kind: LexerErrorType::MatchingError(ReportData {
+                context_start_line: 4,
+                context_start_offset: 123,
+                line: 6,
+                column: 6,
+                offset: 172,
+                reason: "Test".into(),
+            }),
+        };
+        assert_eq!(
+            error.contextualize(&input),
+            r#"
+Error matching ASN syntax at while parsing:
+   ╭─[line 6, column 6]
+   │
+   │ 
+ 5 │  ItsAidCtxRef ::= SEQUENCE {
+ 6 │   itsaid ITSaid, ◀▪▪▪▪▪▪▪▪▪▪ FAILED AT THIS LINE
+ 7 │   ctx CtxRef
+ 8 │   }
+   │
+───╯
+        "#
+        )
+    }
 }

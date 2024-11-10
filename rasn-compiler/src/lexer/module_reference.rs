@@ -5,7 +5,7 @@ use crate::{
 use nom::{
     branch::alt,
     bytes::complete::{tag, take_until},
-    character::complete::{alphanumeric0, char, one_of},
+    character::complete::{char, one_of},
     combinator::{into, map, not, opt, peek, recognize, value},
     multi::{many0, many1, separated_list1},
     sequence::{delimited, pair, preceded, separated_pair, terminated, tuple},
@@ -45,11 +45,10 @@ fn iri_value(input: Input<'_>) -> ParserResult<'_, &str> {
 }
 
 fn unicode_label(input: Input<'_>) -> ParserResult<'_, &str> {
-    skip_ws_and_comments(into_inner(recognize(many1(
-        one_of("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567890-_~.")
-    ))))(input)
+    skip_ws_and_comments(into_inner(recognize(many1(one_of(
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567890-_~.",
+    )))))(input)
 }
-
 
 fn exports(input: Input<'_>) -> ParserResult<'_, Exports> {
     skip_ws_and_comments(delimited(

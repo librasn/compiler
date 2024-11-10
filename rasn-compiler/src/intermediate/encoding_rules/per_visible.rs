@@ -135,10 +135,8 @@ impl PerVisibleAlphabetConstraints {
                     _ => (0, char_set.len() - 1),
                 };
                 if lower > upper {
-                    return Err(GrammarError {
-                    details: format!("Invalid range for permitted alphabet: Charset {:?}; Range: {lower}..={upper}", char_set),
-                    kind: GrammarErrorType::UnpackingError
-                  });
+                    return Err(GrammarError::new(&format!("Invalid range for permitted alphabet: Charset {:?}; Range: {lower}..={upper}", char_set), GrammarErrorType::UnpackingError
+                    ));
                 }
                 Ok(Some(PerVisibleAlphabetConstraints {
                     string_type,
@@ -209,10 +207,10 @@ fn find_char_index(char_set: &BTreeMap<usize, char>, as_char: char) -> Result<us
     char_set
         .iter()
         .find_map(|(i, c)| (as_char == *c).then_some(*i))
-        .ok_or(GrammarError {
-            details: format!("Character {as_char} is not in char set: {:?}", char_set),
-            kind: GrammarErrorType::UnpackingError,
-        })
+        .ok_or(GrammarError::new(
+            &format!("Character {as_char} is not in char set: {:?}", char_set),
+            GrammarErrorType::UnpackingError,
+        ))
 }
 
 impl AddAssign<&mut PerVisibleAlphabetConstraints> for PerVisibleAlphabetConstraints {
@@ -434,7 +432,7 @@ pub fn per_visible_range_constraints(
     Ok(constraints)
 }
 
-/// 10.3.21	If a constraint that is PER-visible is part of an INTERSECTION construction,
+/// 10.3.21 If a constraint that is PER-visible is part of an INTERSECTION construction,
 /// then the resulting constraint is PER-visible, and consists of the INTERSECTION of
 /// all PER-visible parts (with the non-PER-visible parts ignored).
 /// If a constraint which is not PER-visible is part of a UNION construction,
@@ -525,14 +523,14 @@ fn fold_constraint_set(
                 | (ASN1Value::Integer(_), ASN1Value::String(_), true) => Ok(folded_operant),
                 (ASN1Value::Integer(i1), ASN1Value::Integer(i2), _) => {
                     if *i1 != *i2 {
-                        Err(GrammarError {
-                            details: format!(
+                        Err(GrammarError::new(
+                            &format!(
                                 "Empty intersection result for {:?} and {:?}",
                                 v1,
                                 ASN1Value::Integer(*i2)
                             ),
-                            kind: GrammarErrorType::UnpackingError,
-                        })
+                            GrammarErrorType::UnpackingError,
+                        ))
                     } else {
                         Ok(Some(SubtypeElement::SingleValue {
                             value: ASN1Value::Integer(*i2),
@@ -546,14 +544,14 @@ fn fold_constraint_set(
                     } else {
                         let permitted: String = s2.chars().filter(|c| s1.contains(*c)).collect();
                         if permitted.is_empty() {
-                            return Err(GrammarError {
-                                details: format!(
+                            return Err(GrammarError::new(
+                                &format!(
                                     "Empty intersection result for {:?} and {:?}",
                                     v1,
                                     ASN1Value::String(s2.clone())
                                 ),
-                                kind: GrammarErrorType::UnpackingError,
-                            });
+                                GrammarErrorType::UnpackingError,
+                            ));
                         }
                         Ok(Some(SubtypeElement::SingleValue {
                             value: ASN1Value::String(permitted),
@@ -561,10 +559,10 @@ fn fold_constraint_set(
                         }))
                     }
                 }
-                (v1, v2, _) => Err(GrammarError {
-                    details: format!("Unsupported operation for ASN1Values {:?} and {:?}", v1, v2),
-                    kind: GrammarErrorType::UnpackingError,
-                }),
+                (v1, v2, _) => Err(GrammarError::new(
+                    &format!("Unsupported operation for ASN1Values {:?} and {:?}", v1, v2),
+                    GrammarErrorType::UnpackingError,
+                )),
             },
             (
                 SubtypeElement::SingleValue {
@@ -682,10 +680,10 @@ fn fold_constraint_set(
                         extensible: *x1 || x2,
                     }))
                 }
-                _ => Err(GrammarError {
-                    details: format!("Unsupported operation for ASN1Values {:?} and {:?}", v1, v2),
-                    kind: GrammarErrorType::UnpackingError,
-                }),
+                _ => Err(GrammarError::new(
+                    &format!("Unsupported operation for ASN1Values {:?} and {:?}", v1, v2),
+                    GrammarErrorType::UnpackingError,
+                )),
             },
             (
                 SubtypeElement::ValueRange {
@@ -829,13 +827,13 @@ fn intersect_single_and_range(
                 extensible: false,
             }))
         }
-        _ => Err(GrammarError {
-            details: format!(
+        _ => Err(GrammarError::new(
+            &format!(
                 "Unsupported operation for ASN1Values {:?} and {:?}..{:?}",
                 value, min, max
             ),
-            kind: GrammarErrorType::UnpackingError,
-        }),
+            GrammarErrorType::UnpackingError,
+        )),
     }
 }
 
@@ -877,13 +875,13 @@ fn union_single_and_range(
                 extensible: false,
             }))
         }
-        _ => Err(GrammarError {
-            details: format!(
+        _ => Err(GrammarError::new(
+            &format!(
                 "Unsupported operation for values {:?} and {:?}..{:?}",
                 v, min, max
             ),
-            kind: GrammarErrorType::UnpackingError,
-        }),
+            GrammarErrorType::UnpackingError,
+        )),
     }
 }
 

@@ -87,13 +87,13 @@ impl Constraint {
                 return Ok((min, max, *extensible));
             }
         }
-        Err(GrammarError {
-            details: format!(
+        Err(GrammarError::new(
+            &format!(
                 "Failed to unpack constraint as value range. Constraint: {:?}",
                 self
             ),
-            kind: GrammarErrorType::UnpackingError,
-        })
+            GrammarErrorType::UnpackingError,
+        ))
     }
 
     pub fn unpack_as_strict_value(&self) -> Result<(&ASN1Value, bool), GrammarError> {
@@ -106,13 +106,13 @@ impl Constraint {
                 return Ok((value, *extensible));
             }
         }
-        Err(GrammarError {
-            details: format!(
+        Err(GrammarError::new(
+            &format!(
                 "Failed to unpack constraint as strict value. Constraint: {:?}",
                 self
             ),
-            kind: GrammarErrorType::UnpackingError,
-        })
+            GrammarErrorType::UnpackingError,
+        ))
     }
 }
 

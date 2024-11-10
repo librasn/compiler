@@ -394,8 +394,7 @@ impl<B: Backend> Compiler<B, CompilerSourcesSet> {
         let mut modules: Vec<ToplevelDefinition> = vec![];
         for src in &self.state.sources {
             let stringified_src = match src {
-                AsnSource::Path(p) => read_to_string(p)
-                    .map_err(LexerError::from)?,
+                AsnSource::Path(p) => read_to_string(p).map_err(LexerError::from)?,
                 AsnSource::Literal(l) => l.clone(),
             };
             modules.append(
@@ -431,9 +430,7 @@ impl<B: Backend> Compiler<B, CompilerSourcesSet> {
             },
         );
         for (_, module) in modules {
-            let mut generated_module = self
-                .backend
-                .generate_module(module)?;
+            let mut generated_module = self.backend.generate_module(module)?;
             if let Some(m) = generated_module.generated {
                 generated_modules.push(m);
             }
@@ -541,10 +538,9 @@ impl<B: Backend> Compiler<B, CompilerReady> {
             result.generated,
         )
         .map_err(|e| GeneratorError {
-                top_level_declaration: None,
-                details: e.to_string(),
-                kind: GeneratorErrorType::IO,
-            
+            top_level_declaration: None,
+            details: e.to_string(),
+            kind: GeneratorErrorType::IO,
         })?;
 
         Ok(result.warnings)
