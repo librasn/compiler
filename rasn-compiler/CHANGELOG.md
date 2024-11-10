@@ -6,6 +6,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.0](https://github.com/librasn/compiler/compare/rasn-compiler-v0.5.3...rasn-compiler-v0.6.0) - 2024-11-10
+
+### Added
+
+- *(error)* contextualize linker and grammar errors
+- *(lexer)* return error snippet
+- *(lexer)* collect errors in tree
+- *(lexer)* return error pdu
+- *(lexer)* custom input type
+
+### Fixed
+
+- return parsing errors for multi-module input
+- *(cli)* add colored dependency
+- *(lexer)* extract exact error snippet
+- *(lexer)* tstring validation
+
+### Other
+
+- *(error)* return enum instead of boxed trait
+- *(lexer)* use Input type
+
 ## [0.5.3](https://github.com/librasn/compiler/compare/rasn-compiler-v0.5.2...rasn-compiler-v0.5.3) - 2024-10-07
 
 ### Added
