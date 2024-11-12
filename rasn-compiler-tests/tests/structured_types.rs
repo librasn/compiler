@@ -149,3 +149,31 @@ e2e_pdu!(
             pub static ref NESTED_TYPE_VAL: NestedType = NestedType::new(NestedTypeChoiceField::one(Integer::from(4)));
         }          "#
 );
+
+use rasn::prelude::*;
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+#[rasn(delegate, size("2"))]
+pub struct FixedSizeAliasSequence(pub [IntegerAlias; 2usize]);
+
+#[doc = " Anonymous SEQUENCE OF member "]
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+#[rasn(delegate, value("1..=4"), identifier = "INTEGER")]
+pub struct AnonymousFixedSizeIntegerSequence(pub u8);
+
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+#[rasn(delegate, size("4"))]
+pub struct FixedSizeIntegerSequence(pub [AnonymousFixedSizeIntegerSequence; 4usize]);
+
+#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+#[rasn(delegate, value("10..=14"))]
+pub struct IntegerAlias(pub u8);
+
+e2e_pdu!(
+    fixed_size_sequence_of,
+    r#"
+    FixedSizeIntegerSequence ::= SEQUENCE SIZE(4) OF INTEGER (1..4)
+    IntegerAlias ::= INTEGER (10..14)
+    FixedSizeAliasSequence ::= SEQUENCE (SIZE (2)) OF IntegerAlias
+    "#,
+    ""
+);

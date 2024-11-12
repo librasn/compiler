@@ -1,5 +1,6 @@
 use std::str::FromStr;
 
+use encoding_rules::per_visible::to_per_visible;
 use proc_macro2::{Ident, Literal, Punct, Spacing, Span, TokenStream};
 use quote::{format_ident, quote, ToTokens, TokenStreamExt};
 use types::{BitString, OctetString};
@@ -1196,8 +1197,20 @@ impl BitString {
     }
 }
 
+/// returns the fixed size of a an ASN.1 type's constraints, if the constraints' `SIZE`
+/// constraints can be narrowed down to a unambiguous size and not a range.
+pub fn defines_fixed_size(constraints: &[Constraint]) -> Option<usize> {
+    let (per_visible, _) = to_per_visible(constraints, None).ok()?;
+    (per_visible.is_size_constraint()
+        && !per_visible.is_extensible()
+        && (per_visible.min::<usize>() == per_visible.max::<usize>()))
+    .then_some(per_visible.min::<usize>())
+    .flatten()
+}
+
 #[cfg(test)]
 mod tests {
+    use constraints::ElementOrSetOperation;
     use quote::quote;
 
     use crate::intermediate::{
@@ -1522,6 +1535,68 @@ is_recursive: false,
             }
             .fixed_size(),
             None
+        );
+    }
+
+    #[test]
+    fn detects_fixed_size_contraint() {
+        assert_eq!(
+            defines_fixed_size(&[Constraint::SubtypeConstraint(ElementSet {
+                extensible: false,
+                set: constraints::ElementOrSetOperation::Element(
+                    constraints::SubtypeElement::SizeConstraint(Box::new(
+                        ElementOrSetOperation::Element(constraints::SubtypeElement::SingleValue {
+                            value: ASN1Value::Integer(4),
+                            extensible: false
+                        })
+                    ))
+                )
+            })]),
+            Some(4)
+        );
+        assert_eq!(
+            defines_fixed_size(&[Constraint::SubtypeConstraint(ElementSet {
+                extensible: false,
+                set: constraints::ElementOrSetOperation::Element(
+                    constraints::SubtypeElement::SizeConstraint(Box::new(
+                        ElementOrSetOperation::Element(constraints::SubtypeElement::SingleValue {
+                            value: ASN1Value::Integer(4),
+                            extensible: true
+                        })
+                    ))
+                )
+            })]),
+            None
+        );
+        assert_eq!(
+            defines_fixed_size(&[
+                Constraint::SubtypeConstraint(ElementSet {
+                    extensible: false,
+                    set: constraints::ElementOrSetOperation::Element(
+                        constraints::SubtypeElement::SizeConstraint(Box::new(
+                            ElementOrSetOperation::Element(
+                                constraints::SubtypeElement::ValueRange {
+                                    min: Some(ASN1Value::Integer(1)),
+                                    max: Some(ASN1Value::Integer(6)),
+                                    extensible: false
+                                }
+                            )
+                        ))
+                    )
+                }),
+                Constraint::SubtypeConstraint(ElementSet {
+                    extensible: false,
+                    set: constraints::ElementOrSetOperation::Element(
+                        constraints::SubtypeElement::SizeConstraint(Box::new(
+                            ElementOrSetOperation::Element(constraints::SubtypeElement::SingleValue {
+                                value: ASN1Value::Integer(4),
+                                extensible: false
+                            })
+                        ))
+                    )
+                })
+            ]),
+            Some(4)
         );
     }
 }

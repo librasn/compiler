@@ -290,6 +290,23 @@ pub fn sequence_or_set_template(
     }
 }
 
+pub fn fixed_size_sequence_of_template(
+    comments: TokenStream,
+    name: TokenStream,
+    anonymous_item: TokenStream,
+    member_type: TokenStream,
+    annotations: TokenStream,
+    size: TokenStream,
+) -> TokenStream {
+    quote! {
+            #anonymous_item
+            #comments
+            #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+            #annotations
+            pub struct #name(pub [#member_type; #size]);
+    }
+}
+
 pub fn sequence_or_set_of_template(
     is_set_of: bool,
     comments: TokenStream,

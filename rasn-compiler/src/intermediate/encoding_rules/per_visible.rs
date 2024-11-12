@@ -7,7 +7,7 @@ use crate::intermediate::{
 use std::{collections::BTreeMap, ops::AddAssign};
 
 pub fn to_per_visible(
-    constraints: Vec<Constraint>,
+    constraints: &[Constraint],
     character_string_type: Option<CharacterStringType>,
 ) -> Result<
     (
@@ -160,8 +160,9 @@ impl PerVisibleAlphabetConstraints {
                     let mut permitted_alphabet =
                         PerVisibleAlphabetConstraints::default_for(string_type);
                     for c in &c_string.constraints {
-                        PerVisibleAlphabetConstraints::try_new(c, c_string.ty)?
-                            .map(|mut p| permitted_alphabet += &mut p);
+                        if let Some(mut p) = PerVisibleAlphabetConstraints::try_new(c, c_string.ty)? {
+                            permitted_alphabet += &mut p
+                        }
                     }
                     Ok(Some(permitted_alphabet))
                 } else {
@@ -196,7 +197,7 @@ impl PerVisibleAlphabetConstraints {
 }
 
 fn find_string_index(
-    value: &String,
+    value: &str,
     char_set: &BTreeMap<usize, char>,
 ) -> Result<usize, GrammarError> {
     let as_char = value.chars().next().unwrap();
@@ -362,7 +363,7 @@ impl TryFrom<Option<&SubtypeElement>> for PerVisibleRangeConstraints {
                 extensible: _,
             }) => per_visible_range_constraints(
                 matches!(subtype, ASN1Type::Integer(_)),
-                subtype.constraints().unwrap_or(&mut vec![]),
+                subtype.constraints().unwrap_or(&vec![]),
             ),
             x => {
                 println!("{x:?}");
@@ -419,7 +420,7 @@ impl PerVisible for SubtypeElement {
 
 pub fn per_visible_range_constraints(
     signed: bool,
-    constraint_list: &Vec<Constraint>,
+    constraint_list: &[Constraint],
 ) -> Result<PerVisibleRangeConstraints, GrammarError> {
     let mut constraints = if signed {
         PerVisibleRangeConstraints::default()

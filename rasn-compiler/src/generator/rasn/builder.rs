@@ -1,6 +1,6 @@
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote, ToTokens, TokenStreamExt};
-use std::collections::BTreeMap;
+use std::{collections::BTreeMap, ops::Not};
 
 use crate::intermediate::{
     constraints::Constraint,
@@ -13,8 +13,8 @@ use crate::intermediate::{
 };
 
 use super::{
-    information_object::InformationObjectClassField, template::*, ExtensibilityEnvironment, Rasn,
-    TaggingEnvironment,
+    information_object::InformationObjectClassField, template::*, types::Constrainable,
+    utils::defines_fixed_size, ExtensibilityEnvironment, Rasn, TaggingEnvironment,
 };
 use crate::generator::error::{GeneratorError, GeneratorErrorType};
 
@@ -954,14 +954,28 @@ impl Rasn {
         if name.to_string() != tld.name {
             annotations.push(self.format_identifier_annotation(&tld.name, &tld.comments, &tld.ty));
         }
-        Ok(sequence_or_set_of_template(
-            is_set_of,
-            self.format_comments(&tld.comments)?,
-            name,
-            anonymous_item,
-            member_type,
-            self.join_annotations(annotations),
-        ))
+        if let Some(Some(size)) = is_set_of
+            .not()
+            .then_some(defines_fixed_size(seq_or_set_of.constraints()))
+        {
+            Ok(fixed_size_sequence_of_template(
+                self.format_comments(&tld.comments)?,
+                name,
+                anonymous_item,
+                member_type,
+                self.join_annotations(annotations),
+                size.to_token_stream(),
+            ))
+        } else {
+            Ok(sequence_or_set_of_template(
+                is_set_of,
+                self.format_comments(&tld.comments)?,
+                name,
+                anonymous_item,
+                member_type,
+                self.join_annotations(annotations),
+            ))
+        }
     }
 
     pub(crate) fn generate_information_object_set(
