@@ -149,3 +149,82 @@ e2e_pdu!(
             pub static ref NESTED_TYPE_VAL: NestedType = NestedType::new(NestedTypeChoiceField::one(Integer::from(4)));
         }          "#
 );
+
+e2e_pdu!(
+    deeply_nested_type,
+    r#"
+        TFCS-ReconfAdd-r12 ::= SEQUENCE {
+            ctfcSize							CHOICE {
+                ctfc8Bit							SEQUENCE (SIZE (1..maxTFC)) OF SEQUENCE {
+                    ctfc8								INTEGER (0..255),
+                },
+                ctfc16Bit							SEQUENCE (SIZE (1..maxTFC)) OF SEQUENCE {
+                    ctfc16								INTEGER(0..65535),
+                }
+            }
+        }
+
+        maxTFC						INTEGER ::= 1024
+    "#,
+    r#"
+        #[doc = " Anonymous SEQUENCE OF member "]
+        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(automatic_tags, identifier = "SEQUENCE")]
+        pub struct AnonymousTFCSReconfAddR12CtfcSizeCtfc8Bit {
+            #[rasn(value("0..=255"))]
+            pub ctfc8: u8,
+        }
+        impl AnonymousTFCSReconfAddR12CtfcSizeCtfc8Bit {
+            pub fn new(ctfc8: u8) -> Self {
+                Self { ctfc8 }
+            }
+        }
+        #[doc = " Inner type "]
+        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(delegate, size("1..=1024"))]
+        pub struct TFCSReconfAddR12CtfcSizeCtfc8Bit(
+            pub SequenceOf<AnonymousTFCSReconfAddR12CtfcSizeCtfc8Bit>,
+        );
+        #[doc = " Anonymous SEQUENCE OF member "]
+        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(automatic_tags, identifier = "SEQUENCE")]
+        pub struct AnonymousTFCSReconfAddR12CtfcSizeCtfc16Bit {
+            #[rasn(value("0..=65535"))]
+            pub ctfc16: u16,
+        }
+        impl AnonymousTFCSReconfAddR12CtfcSizeCtfc16Bit {
+            pub fn new(ctfc16: u16) -> Self {
+                Self { ctfc16 }
+            }
+        }
+        #[doc = " Inner type "]
+        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(delegate, size("1..=1024"))]
+        pub struct TFCSReconfAddR12CtfcSizeCtfc16Bit(
+            pub SequenceOf<AnonymousTFCSReconfAddR12CtfcSizeCtfc16Bit>,
+        );
+        #[doc = " Inner type "]
+        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(choice, automatic_tags)]
+        pub enum TFCSReconfAddR12CtfcSize {
+            #[rasn(size("1..=1024"))]
+            ctfc8Bit(SequenceOf<TFCSReconfAddR12CtfcSizeCtfc8Bit>),
+            #[rasn(size("1..=1024"))]
+            ctfc16Bit(SequenceOf<TFCSReconfAddR12CtfcSizeCtfc16Bit>),
+        }
+        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(automatic_tags, identifier = "TFCS-ReconfAdd-r12")]
+        pub struct TFCSReconfAddR12 {
+            #[rasn(identifier = "ctfcSize")]
+            pub ctfc_size: TFCSReconfAddR12CtfcSize,
+        }
+        impl TFCSReconfAddR12 {
+            pub fn new(ctfc_size: TFCSReconfAddR12CtfcSize) -> Self {
+                Self { ctfc_size }
+            }
+        }
+        lazy_static! {
+            pub static ref MAX_TFC: Integer = Integer::from(1024);
+        }
+    "#
+);

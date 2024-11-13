@@ -32,9 +32,8 @@ pub mod prelude {
     //! Convenience module that collects all necessary imports for
     //! using and customizing the compiler.
     pub use super::{
-        error::CompilerError,
-        CompileResult, Compiler, CompilerMissingParams, CompilerOutputSet, CompilerReady,
-        CompilerSourcesSet,
+        error::CompilerError, CompileResult, Compiler, CompilerMissingParams, CompilerOutputSet,
+        CompilerReady, CompilerSourcesSet,
     };
     pub use crate::generator::{
         error::*,
