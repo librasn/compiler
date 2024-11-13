@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.1](https://github.com/librasn/compiler/compare/rasn-compiler-v0.6.0...rasn-compiler-v0.6.1) - 2024-11-13
+
+### Fixed
+
+- *(rasn)* handle deeply nested types
+
 ## [0.6.0](https://github.com/librasn/compiler/compare/rasn-compiler-v0.5.3...rasn-compiler-v0.6.0) - 2024-11-10
 
 ### Added
