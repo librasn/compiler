@@ -53,9 +53,23 @@ impl IntegerType {
     }
 }
 
+#[derive(Debug)]
 pub struct NameType {
     name: Ident,
     typ: TokenStream,
+}
+
+#[derive(Debug, Default)]
+pub struct FormattedMembers {
+    pub struct_body: TokenStream,
+    pub name_types: Vec<NameType>,
+    pub nested_anonymous_types: Vec<TokenStream>,
+}
+
+#[derive(Debug, Default)]
+pub struct FormattedOptions {
+    pub enum_body: TokenStream,
+    pub nested_anonymous_types: Vec<TokenStream>,
 }
 
 #[cfg(test)]
@@ -290,11 +304,27 @@ impl Rasn {
         &self,
         sequence_or_set: &SequenceOrSet,
         parent_name: &String,
-    ) -> Result<(TokenStream, Vec<NameType>), GeneratorError> {
+    ) -> Result<FormattedMembers, GeneratorError> {
         let first_extension_index = sequence_or_set.extensible;
+
         sequence_or_set.members.iter().enumerate().try_fold(
-            (TokenStream::new(), Vec::new()),
+            FormattedMembers::default(),
             |mut acc, (i, m)| {
+                let nested = if self.needs_unnesting(&m.ty) {
+                    Some(
+                        self.generate_tld(ToplevelDefinition::Type(ToplevelTypeDefinition {
+                            parameterization: None,
+                            comments: " Inner type ".into(),
+                            name: self.inner_name(&m.name, parent_name).to_string(),
+                            ty: m.ty.clone(),
+                            tag: m.tag.clone(),
+                            index: None,
+                        })),
+                    )
+                    .transpose()
+                } else {
+                    Ok(None)
+                };
                 let extension_annotation = if i >= first_extension_index.unwrap_or(usize::MAX)
                     && m.name.starts_with("ext_group_")
                 {
@@ -305,9 +335,15 @@ impl Rasn {
                     TokenStream::new()
                 };
                 self.format_sequence_member(m, parent_name, extension_annotation)
-                    .map(|(declaration, name_type)| {
-                        acc.0.append_all([declaration, quote!(, )]);
-                        acc.1.push(name_type);
+                    .and_then(|(declaration, name_type)| {
+                        nested.map(|n| (declaration, name_type, n))
+                    })
+                    .map(|(declaration, name_type, nested)| {
+                        acc.struct_body.append_all([declaration, quote!(, )]);
+                        acc.name_types.push(name_type);
+                        if let Some(n) = nested {
+                            acc.nested_anonymous_types.push(n);
+                        }
                         acc
                     })
             },
@@ -377,13 +413,26 @@ impl Rasn {
         &self,
         choice: &Choice,
         parent_name: &String,
-    ) -> Result<TokenStream, GeneratorError> {
+    ) -> Result<FormattedOptions, GeneratorError> {
         let first_extension_index = choice.extensible;
-        let options = choice
-            .options
-            .iter()
-            .enumerate()
-            .map(|(i, o)| {
+        choice.options.iter().enumerate().try_fold(
+            FormattedOptions::default(),
+            |mut acc, (i, o)| {
+                let nested = if self.needs_unnesting(&o.ty) {
+                    Some(
+                        self.generate_tld(ToplevelDefinition::Type(ToplevelTypeDefinition {
+                            parameterization: None,
+                            comments: " Inner type ".into(),
+                            name: self.inner_name(&o.name, parent_name).to_string(),
+                            ty: o.ty.clone(),
+                            tag: o.tag.clone(),
+                            index: None,
+                        })),
+                    )
+                    .transpose()
+                } else {
+                    Ok(None)
+                };
                 let extension_annotation = if i >= first_extension_index.unwrap_or(usize::MAX)
                     && o.name.starts_with("ext_group_")
                 {
@@ -395,9 +444,16 @@ impl Rasn {
                 };
                 let name = self.to_rust_enum_identifier(&o.name);
                 self.format_choice_option(name, o, parent_name, extension_annotation)
-            })
-            .collect::<Result<Vec<_>, _>>()?;
-        Ok(quote!(#(#options)*))
+                    .and_then(|declaration| nested.map(|n| (declaration, n)))
+                    .map(|(declaration, nested)| {
+                        acc.enum_body.append_all(declaration);
+                        if let Some(n) = nested {
+                            acc.nested_anonymous_types.push(n);
+                        }
+                        acc
+                    })
+            },
+        )
     }
 
     pub(crate) fn format_choice_option(
@@ -823,28 +879,6 @@ impl Rasn {
         }
     }
 
-    pub(crate) fn format_nested_sequence_members(
-        &self,
-        sequence_or_set: &SequenceOrSet,
-        parent_name: &String,
-    ) -> Result<Vec<TokenStream>, GeneratorError> {
-        sequence_or_set
-            .members
-            .iter()
-            .filter(|m| self.needs_unnesting(&m.ty))
-            .map(|m| {
-                self.generate_tld(ToplevelDefinition::Type(ToplevelTypeDefinition {
-                    parameterization: None,
-                    comments: " Inner type ".into(),
-                    name: self.inner_name(&m.name, parent_name).to_string(),
-                    ty: m.ty.clone(),
-                    tag: None,
-                    index: None,
-                }))
-            })
-            .collect::<Result<Vec<_>, _>>()
-    }
-
     pub(crate) fn needs_unnesting(&self, ty: &ASN1Type) -> bool {
         match ty {
             ASN1Type::Enumerated(_)
@@ -857,36 +891,6 @@ impl Rasn {
             }
             _ => false,
         }
-    }
-
-    pub(crate) fn format_nested_choice_options(
-        &self,
-        choice: &Choice,
-        parent_name: &str,
-    ) -> Result<Vec<TokenStream>, GeneratorError> {
-        choice
-            .options
-            .iter()
-            .filter(|m| {
-                matches!(
-                    m.ty,
-                    ASN1Type::Enumerated(_)
-                        | ASN1Type::Choice(_)
-                        | ASN1Type::Sequence(_)
-                        | ASN1Type::Set(_)
-                )
-            })
-            .map(|m| {
-                self.generate_tld(ToplevelDefinition::Type(ToplevelTypeDefinition {
-                    parameterization: None,
-                    comments: " Inner type ".into(),
-                    name: self.inner_name(&m.name, parent_name).to_string(),
-                    ty: m.ty.clone(),
-                    tag: None,
-                    index: None,
-                }))
-            })
-            .collect::<Result<Vec<_>, _>>()
     }
 
     pub(crate) fn format_new_impl(
@@ -1295,7 +1299,7 @@ mod tests {
                     &"Parent".into(),
                 )
                 .unwrap()
-                .0
+                .struct_body
                 .to_string(),
             r#"
                 #[rasn(identifier = "testMember0")]
@@ -1387,6 +1391,7 @@ is_recursive: false,
                 &"Parent".into(),
             )
             .unwrap()
+            .enum_body
             .to_string(),
             r#"
                 testMember0(bool),

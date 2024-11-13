@@ -6,6 +6,12 @@ use std::vec;
 
 use super::{constraints::*, *};
 
+/// Trait shared by ASN1 `SET`, `SEQUENCE`, AND `CHOICE` that allows iterating
+/// over their field types.
+pub trait IterNameTypes {
+    fn iter_name_types(&self) -> impl Iterator<Item = (&str, &ASN1Type)>;
+}
+
 /// Trait shared by all ASN1 types that can be constrained a.k.a subtyped.
 /// *See also Rec. ITU-T X.680 (02/2021) §49 - §51*
 pub trait Constrainable {
@@ -303,6 +309,12 @@ pub struct SequenceOrSet {
     pub members: Vec<SequenceOrSetMember>,
 }
 
+impl IterNameTypes for SequenceOrSet {
+    fn iter_name_types(&self) -> impl Iterator<Item = (&str, &ASN1Type)> {
+        self.members.iter().map(|m| (m.name.as_str(), &m.ty))
+    }
+}
+
 impl
     From<(
         (
@@ -484,6 +496,12 @@ pub struct Choice {
     pub extensible: Option<usize>,
     pub options: Vec<ChoiceOption>,
     pub constraints: Vec<Constraint>,
+}
+
+impl IterNameTypes for Choice {
+    fn iter_name_types(&self) -> impl Iterator<Item = (&str, &ASN1Type)> {
+        self.options.iter().map(|o| (o.name.as_str(), &o.ty))
+    }
 }
 
 impl

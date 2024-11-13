@@ -732,7 +732,6 @@ impl Rasn {
     ) -> Result<TokenStream, GeneratorError> {
         if let ASN1Type::Choice(ref choice) = tld.ty {
             let name = self.to_rust_title_case(&tld.name);
-            let inner_options = self.format_nested_choice_options(choice, &name.to_string())?;
             let extensible = choice
                 .extensible
                 .or(
@@ -758,12 +757,13 @@ impl Rasn {
                     &tld.ty,
                 ));
             }
+            let formatted_options = self.format_choice_options(choice, &name.to_string())?;
             let choice_str = choice_template(
                 self.format_comments(&tld.comments)?,
                 &name,
                 extensible,
-                self.format_choice_options(choice, &name.to_string())?,
-                inner_options,
+                formatted_options.enum_body,
+                formatted_options.nested_anonymous_types,
                 self.join_annotations(annotations),
             );
             if self.config.generate_from_impls {
@@ -873,7 +873,7 @@ impl Rasn {
                         acc
                     })
                 };
-                let (declaration, name_types) =
+                let formatted_members =
                     self.format_sequence_or_set_members(seq, &name.to_string())?;
                 let mut annotations = vec![
                     set_annotation,
@@ -893,11 +893,11 @@ impl Rasn {
                     self.format_comments(&tld.comments)?,
                     name.clone(),
                     extensible,
-                    declaration,
-                    self.format_nested_sequence_members(seq, &name.to_string())?,
+                    formatted_members.struct_body,
+                    formatted_members.nested_anonymous_types,
                     self.join_annotations(annotations),
                     self.format_default_methods(&seq.members, &name.to_string())?,
-                    self.format_new_impl(&name, name_types),
+                    self.format_new_impl(&name, formatted_members.name_types),
                     class_fields,
                 ))
             }
