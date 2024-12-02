@@ -117,6 +117,11 @@ pub fn value_to_tokens(value: &ASN1Value) -> Result<String, GeneratorError> {
         ASN1Value::Integer(i) => Ok(i.to_string()),
         ASN1Value::String(s) => Ok(format!(r#""{s}""#)),
         ASN1Value::Real(r) => Ok(r.to_string()),
+        ASN1Value::BitStringNamedBits(_) => Err(GeneratorError {
+            top_level_declaration: None,
+            details: "Named bits should be resolved by this point!".into(),
+            kind: crate::prelude::GeneratorErrorType::Unidentified,
+        }),
         ASN1Value::BitString(b) => {
             let value = b.chunks(8).fold(String::new(), |mut value, bits| {
                 let mut bits = bits.to_vec();

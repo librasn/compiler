@@ -246,6 +246,7 @@ impl ASN1Type {
         match self {
             ASN1Type::Set(ref mut s) | ASN1Type::Sequence(ref mut s) => {
                 s.members.iter_mut().try_for_each(|m| {
+                    m.ty.collect_supertypes(tlds)?;
                     m.default_value
                         .as_mut()
                         .map(|d| d.link_with_type(tlds, &m.ty, Some(&m.ty.as_str().into_owned())))
@@ -1036,6 +1037,115 @@ impl ASN1Value {
                 *self = ASN1Value::BitString(octet_string_to_bit_string(o));
                 Ok(())
             }
+            (
+                ASN1Type::BitString(BitString {
+                    distinguished_values: Some(_),
+                    ..
+                }),
+                ASN1Value::SequenceOrSet(o),
+            ) => {
+                *self = ASN1Value::BitStringNamedBits(
+                    o.iter().filter_map(|(_, v)| match &**v {
+                        ASN1Value::ElsewhereDeclaredValue { identifier, .. } => Some(identifier.clone()),
+                        ASN1Value::EnumeratedValue { enumerable, .. } => Some(enumerable.clone()),
+                        _ => None
+                    }).collect()
+                );
+                self.link_with_type(tlds, ty, type_name)
+            }
+            (
+                ASN1Type::BitString(BitString {
+                    distinguished_values: Some(_),
+                    ..
+                }),
+                ASN1Value::LinkedNestedValue { value, .. },
+            ) if matches![**value, ASN1Value::SequenceOrSet(_)] => {
+                if let ASN1Value::SequenceOrSet(o) = &**value {
+                    *value = Box::new(ASN1Value::BitStringNamedBits(
+                        o.iter().filter_map(|(_, v)| match &**v {
+                            ASN1Value::ElsewhereDeclaredValue { identifier, .. } => Some(identifier.clone()),
+                            ASN1Value::EnumeratedValue { enumerable, .. } => Some(enumerable.clone()),
+                            _ => None
+                        }).collect()
+                    ));
+                    self.link_with_type(tlds, ty, type_name)?;
+                }
+                Ok(())
+            }
+            (
+                ASN1Type::BitString(BitString {
+                    distinguished_values: Some(_),
+                    ..
+                }),
+                ASN1Value::ObjectIdentifier(o),
+            ) => {
+                *self = ASN1Value::BitStringNamedBits(
+                    o.0.iter().filter_map(|arc| arc.name.clone()).collect(),
+                );
+                self.link_with_type(tlds, ty, type_name)
+            }
+            (
+                ASN1Type::BitString(BitString {
+                    distinguished_values: Some(_),
+                    ..
+                }),
+                ASN1Value::LinkedNestedValue { value, .. },
+            ) if matches![**value, ASN1Value::ObjectIdentifier(_)] => {
+                if let ASN1Value::ObjectIdentifier(o) = &**value {
+                    *value = Box::new(ASN1Value::BitStringNamedBits(
+                        o.0.iter().filter_map(|arc| arc.name.clone()).collect(),
+                    ));
+                    self.link_with_type(tlds, ty, type_name)?;
+                }
+                Ok(())
+            }
+            (
+                ASN1Type::BitString(BitString {
+                    distinguished_values: Some(distinguished),
+                    ..
+                }),
+                ASN1Value::BitStringNamedBits(o),
+            ) => {
+                if let Some(highest_distinguished_bit) = distinguished.iter().map(|d| d.value).max()
+                {
+                    *self = ASN1Value::BitString(bit_string_value_from_named_bits(
+                        highest_distinguished_bit,
+                        o,
+                        distinguished,
+                    ));
+                    Ok(())
+                } else {
+                    Err(GrammarError {
+                        details: format!("Failed to resolve BIT STRING value {o:?}"),
+                        kind: GrammarErrorType::LinkerError,
+                        pdu: None,
+                    })
+                }
+            }
+            (
+                ASN1Type::BitString(BitString {
+                    distinguished_values: Some(distinguished),
+                    ..
+                }),
+                ASN1Value::LinkedNestedValue { value, .. },
+            ) if matches![**value, ASN1Value::BitStringNamedBits(_)] => {
+                if let (ASN1Value::BitStringNamedBits(o), Some(highest_distinguished_bit)) =
+                    (&**value, distinguished.iter().map(|d| d.value).max())
+                {
+                    *value = Box::new(ASN1Value::BitString(bit_string_value_from_named_bits(
+                        highest_distinguished_bit,
+                        o,
+                        distinguished,
+                    )));
+                    Ok(())
+                } else {
+                    Err(GrammarError {
+                        details: format!("Failed to resolve BIT STRING value {value:?}"),
+                        kind: GrammarErrorType::LinkerError,
+                        pdu: None,
+                    })
+                }
+            }
             (ASN1Type::BitString(_), ASN1Value::LinkedNestedValue { value, .. })
                 if matches![**value, ASN1Value::OctetString(_)] =>
             {
@@ -1426,6 +1536,23 @@ impl ASN1Value {
         }
         Ok(())
     }
+}
+
+fn bit_string_value_from_named_bits(
+    highest_distinguished_bit: i128,
+    named_bits: &[String],
+    distinguished: &[DistinguishedValue],
+) -> Vec<bool> {
+    (0..=highest_distinguished_bit)
+        .map(|i| {
+            named_bits.iter().any(|bit| {
+                Some(bit)
+                    == distinguished
+                        .iter()
+                        .find_map(|d| (d.value == i).then_some(&d.name))
+            })
+        })
+        .collect()
 }
 
 #[cfg(test)]
