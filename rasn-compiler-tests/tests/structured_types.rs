@@ -228,3 +228,102 @@ e2e_pdu!(
         }
     "#
 );
+
+e2e_pdu!(
+    single_named_bit_default,
+    r#"
+        Test::= SET {
+            parameters[0] IMPLICIT SEQUENCE {
+                        color [0] IMPLICIT Color DEFAULT {blue}
+            }
+        }
+
+        Color ::= BIT STRING {red(0), blue(1), yellow(2)}
+    "#,
+    r#"
+        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(delegate)]
+        pub struct Color(pub BitString);
+        
+        #[doc="Inner type"]
+        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(tag(context, 0))]
+        pub struct TestParameters {
+            #[rasn(tag(context, 0), default="test_parameters_color_default")]
+            pub color: Color,
+        }
+        
+        impl TestParameters {
+            pub fn new(color: Color) -> Self {
+                Self { color }
+            }
+        }
+        
+        fn test_parameters_color_default() -> Color {
+            Color([false, true, false].into_iter().collect())
+        }
+        
+        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(set)]
+        pub struct Test {
+            #[rasn(tag(context, 0))]
+            pub parameters: TestParameters,
+        }
+        
+        impl Test {
+            pub fn new(parameters: TestParameters) -> Self {
+                Self { parameters }
+            }
+        }
+    "#
+);
+
+
+e2e_pdu!(
+    multiple_named_bits_default,
+    r#"
+        Test::= SET {
+            parameters[0] IMPLICIT SEQUENCE {
+                        color [0] IMPLICIT Color DEFAULT {blue, yellow}
+            }
+        }
+
+        Color ::= BIT STRING {red(0), blue(1), yellow(2)}
+    "#,
+    r#"
+        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(delegate)]
+        pub struct Color(pub BitString);
+        
+        #[doc="Inner type"]
+        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(tag(context, 0))]
+        pub struct TestParameters {
+            #[rasn(tag(context, 0), default="test_parameters_color_default")]
+            pub color: Color,
+        }
+        
+        impl TestParameters {
+            pub fn new(color: Color) -> Self {
+                Self { color }
+            }
+        }
+        
+        fn test_parameters_color_default() -> Color {
+            Color([false, true, true].into_iter().collect())
+        }
+        
+        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(set)]
+        pub struct Test {
+            #[rasn(tag(context, 0))]
+            pub parameters: TestParameters,
+        }
+        
+        impl Test {
+            pub fn new(parameters: TestParameters) -> Self {
+                Self { parameters }
+            }
+        }
+    "#
+);

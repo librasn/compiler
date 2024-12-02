@@ -773,6 +773,11 @@ impl Rasn {
             ASN1Value::Integer(i) => Ok(Literal::i128_unsuffixed(*i).to_token_stream()),
             ASN1Value::String(s) => Ok(s.to_token_stream()),
             ASN1Value::Real(r) => Ok(r.to_token_stream()),
+            ASN1Value::BitStringNamedBits(_) => Err(GeneratorError {
+                top_level_declaration: None,
+                details: "Named bits should be resolved by this point!".into(),
+                kind: crate::prelude::GeneratorErrorType::Unidentified,
+            }),
             ASN1Value::BitString(b) => {
                 let bits = b.iter().map(|bit| bit.to_token_stream());
                 Ok(quote!([#(#bits),*].into_iter().collect()))
