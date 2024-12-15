@@ -253,6 +253,10 @@ impl ASN1Type {
                         .unwrap_or(Ok(()))
                 })
             }
+            ASN1Type::Choice(ref mut c) => c
+                .options
+                .iter_mut()
+                .try_for_each(|o| o.ty.collect_supertypes(tlds)),
             _ => Ok(()),
         }
     }
