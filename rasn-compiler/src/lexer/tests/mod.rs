@@ -175,24 +175,40 @@ fn parses_toplevel_crossrefering_declaration() {
                 identifier: "EventHistory".into(),
                 constraints: vec![Constraint::SubtypeConstraint(ElementSet {
                     set: ElementOrSetOperation::SetOperation(SetOperation {
-                        base: SubtypeElement::MultipleTypeConstraints(InnerTypeConstraint {
-                            is_partial: true,
-                            constraints: vec![ConstrainedComponent {
-                                identifier: "eventDeltaTime".into(),
-                                constraints: vec![],
-                                presence: ComponentPresence::Present
-                            }]
-                        }),
+                        base: SubtypeElement::SingleTypeConstraint(vec![
+                            Constraint::SubtypeConstraint(ElementSet {
+                                extensible: false,
+                                set: ElementOrSetOperation::Element(
+                                    SubtypeElement::MultipleTypeConstraints(InnerTypeConstraint {
+                                        is_partial: true,
+                                        constraints: vec![ConstrainedComponent {
+                                            identifier: "eventDeltaTime".into(),
+                                            constraints: vec![],
+                                            presence: ComponentPresence::Present
+                                        }]
+                                    })
+                                )
+                            })
+                        ]),
                         operator: SetOperator::Union,
                         operant: Box::new(ElementOrSetOperation::Element(
-                            SubtypeElement::MultipleTypeConstraints(InnerTypeConstraint {
-                                is_partial: true,
-                                constraints: vec![ConstrainedComponent {
-                                    identifier: "eventDeltaTime".into(),
-                                    constraints: vec![],
-                                    presence: ComponentPresence::Absent
-                                }]
-                            })
+                            SubtypeElement::SingleTypeConstraint(vec![
+                                Constraint::SubtypeConstraint(ElementSet {
+                                    extensible: false,
+                                    set: ElementOrSetOperation::Element(
+                                        SubtypeElement::MultipleTypeConstraints(
+                                            InnerTypeConstraint {
+                                                is_partial: true,
+                                                constraints: vec![ConstrainedComponent {
+                                                    identifier: "eventDeltaTime".into(),
+                                                    constraints: vec![],
+                                                    presence: ComponentPresence::Absent
+                                                }]
+                                            }
+                                        )
+                                    )
+                                })
+                            ])
                         ))
                     }),
                     extensible: false

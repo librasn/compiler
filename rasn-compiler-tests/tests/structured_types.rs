@@ -278,7 +278,6 @@ e2e_pdu!(
     "#
 );
 
-
 e2e_pdu!(
     multiple_named_bits_default,
     r#"

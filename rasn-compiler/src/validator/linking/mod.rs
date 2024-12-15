@@ -1045,11 +1045,17 @@ impl ASN1Value {
                 ASN1Value::SequenceOrSet(o),
             ) => {
                 *self = ASN1Value::BitStringNamedBits(
-                    o.iter().filter_map(|(_, v)| match &**v {
-                        ASN1Value::ElsewhereDeclaredValue { identifier, .. } => Some(identifier.clone()),
-                        ASN1Value::EnumeratedValue { enumerable, .. } => Some(enumerable.clone()),
-                        _ => None
-                    }).collect()
+                    o.iter()
+                        .filter_map(|(_, v)| match &**v {
+                            ASN1Value::ElsewhereDeclaredValue { identifier, .. } => {
+                                Some(identifier.clone())
+                            }
+                            ASN1Value::EnumeratedValue { enumerable, .. } => {
+                                Some(enumerable.clone())
+                            }
+                            _ => None,
+                        })
+                        .collect(),
                 );
                 self.link_with_type(tlds, ty, type_name)
             }
@@ -1062,11 +1068,17 @@ impl ASN1Value {
             ) if matches![**value, ASN1Value::SequenceOrSet(_)] => {
                 if let ASN1Value::SequenceOrSet(o) = &**value {
                     *value = Box::new(ASN1Value::BitStringNamedBits(
-                        o.iter().filter_map(|(_, v)| match &**v {
-                            ASN1Value::ElsewhereDeclaredValue { identifier, .. } => Some(identifier.clone()),
-                            ASN1Value::EnumeratedValue { enumerable, .. } => Some(enumerable.clone()),
-                            _ => None
-                        }).collect()
+                        o.iter()
+                            .filter_map(|(_, v)| match &**v {
+                                ASN1Value::ElsewhereDeclaredValue { identifier, .. } => {
+                                    Some(identifier.clone())
+                                }
+                                ASN1Value::EnumeratedValue { enumerable, .. } => {
+                                    Some(enumerable.clone())
+                                }
+                                _ => None,
+                            })
+                            .collect(),
                     ));
                     self.link_with_type(tlds, ty, type_name)?;
                 }

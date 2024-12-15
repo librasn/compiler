@@ -122,7 +122,7 @@ mod tests {
             .1,
             ASN1Type::Real(Real {
                 constraints: vec![Constraint::SubtypeConstraint(ElementSet {
-                    set: ElementOrSetOperation::Element(SubtypeElement::SingleTypeConstraint(
+                    set: ElementOrSetOperation::Element(SubtypeElement::MultipleTypeConstraints(
                         InnerTypeConstraint {
                             is_partial: false,
                             constraints: vec![

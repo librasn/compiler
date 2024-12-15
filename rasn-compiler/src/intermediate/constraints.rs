@@ -727,7 +727,7 @@ pub enum SubtypeElement {
     PermittedAlphabet(Box<ElementOrSetOperation>),
     SizeConstraint(Box<ElementOrSetOperation>),
     TypeConstraint(ASN1Type),
-    SingleTypeConstraint(InnerTypeConstraint),
+    SingleTypeConstraint(Vec<Constraint>),
     MultipleTypeConstraints(InnerTypeConstraint),
     PatternConstraint(PatternConstraint),
     UserDefinedConstraint(UserDefinedConstraint),
@@ -766,7 +766,7 @@ impl
             Vec<(&str, Option<Vec<Constraint>>, Option<ComponentPresence>)>,
         ),
     ) -> Self {
-        SubtypeElement::SingleTypeConstraint(InnerTypeConstraint {
+        SubtypeElement::MultipleTypeConstraints(InnerTypeConstraint {
             is_partial: value.0.is_some(),
             constraints: value
                 .1
