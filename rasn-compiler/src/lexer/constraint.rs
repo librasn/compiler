@@ -268,6 +268,17 @@ fn single_type_constraint(input: Input<'_>) -> ParserResult<'_, SubtypeElement> 
     opt_delimited::<char, SubtypeElement, char, _, _, _>(
         skip_ws_and_comments(char(LEFT_PARENTHESIS)),
         skip_ws_and_comments(into(preceded(
+            tag(WITH_COMPONENT),
+            skip_ws_and_comments(map(constraint, SubtypeElement::SingleTypeConstraint)),
+        ))),
+        skip_ws_and_comments(char(RIGHT_PARENTHESIS)),
+    )(input)
+}
+
+fn multiple_type_constraints(input: Input<'_>) -> ParserResult<'_, SubtypeElement> {
+    opt_delimited::<char, SubtypeElement, char, _, _, _>(
+        skip_ws_and_comments(char(LEFT_PARENTHESIS)),
+        skip_ws_and_comments(into(preceded(
             tag(WITH_COMPONENTS),
             in_braces(pair(
                 opt(skip_ws_and_comments(terminated(
@@ -280,26 +291,6 @@ fn single_type_constraint(input: Input<'_>) -> ParserResult<'_, SubtypeElement> 
                 )),
             )),
         ))),
-        skip_ws_and_comments(char(RIGHT_PARENTHESIS)),
-    )(input)
-}
-
-fn multiple_type_constraints(input: Input<'_>) -> ParserResult<'_, SubtypeElement> {
-    opt_delimited::<char, SubtypeElement, char, _, _, _>(
-        skip_ws_and_comments(char(LEFT_PARENTHESIS)),
-        skip_ws_and_comments(preceded(
-            tag(WITH_COMPONENT),
-            skip_ws_and_comments(alt((
-                map(single_type_constraint, |s| {
-                    if let SubtypeElement::SingleTypeConstraint(c) = s {
-                        SubtypeElement::MultipleTypeConstraints(c)
-                    } else {
-                        s
-                    }
-                }),
-                multiple_type_constraints,
-            ))),
-        )),
         skip_ws_and_comments(char(RIGHT_PARENTHESIS)),
     )(input)
 }
@@ -568,54 +559,82 @@ mod tests {
             .1,
             vec![Constraint::SubtypeConstraint(ElementSet {
                 set: ElementOrSetOperation::SetOperation(SetOperation {
-                    base: SubtypeElement::MultipleTypeConstraints(InnerTypeConstraint {
-                        is_partial: true,
-                        constraints: vec![ConstrainedComponent {
-                            identifier: "containerId".into(),
-                            constraints: vec![Constraint::SubtypeConstraint(ElementSet {
-                                set: ElementOrSetOperation::SetOperation(SetOperation {
-                                    base: SubtypeElement::SingleValue {
-                                        value: ASN1Value::All,
-                                        extensible: false
-                                    },
-                                    operator: SetOperator::Except,
-                                    operant: Box::new(ElementOrSetOperation::Element(
-                                        SubtypeElement::SingleValue {
-                                            value: ASN1Value::Integer(1),
-                                            extensible: false
-                                        }
-                                    ))
-                                }),
-                                extensible: false
-                            })],
-                            presence: ComponentPresence::Unspecified
-                        }]
-                    }),
-                    operator: SetOperator::Union,
-                    operant: Box::new(ElementOrSetOperation::Element(
-                        SubtypeElement::MultipleTypeConstraints(InnerTypeConstraint {
-                            is_partial: true,
-                            constraints: vec![ConstrainedComponent {
-                                identifier: "containerId".into(),
-                                constraints: vec![Constraint::SubtypeConstraint(ElementSet {
-                                    set: ElementOrSetOperation::SetOperation(SetOperation {
-                                        base: SubtypeElement::SingleValue {
-                                            value: ASN1Value::All,
-                                            extensible: false
-                                        },
-                                        operator: SetOperator::Except,
-                                        operant: Box::new(ElementOrSetOperation::Element(
-                                            SubtypeElement::SingleValue {
-                                                value: ASN1Value::Integer(2),
+                    base: SubtypeElement::SingleTypeConstraint(vec![
+                        Constraint::SubtypeConstraint(ElementSet {
+                            extensible: false,
+                            set: ElementOrSetOperation::Element(
+                                SubtypeElement::MultipleTypeConstraints(InnerTypeConstraint {
+                                    is_partial: true,
+                                    constraints: vec![ConstrainedComponent {
+                                        identifier: "containerId".into(),
+                                        constraints: vec![Constraint::SubtypeConstraint(
+                                            ElementSet {
+                                                set: ElementOrSetOperation::SetOperation(
+                                                    SetOperation {
+                                                        base: SubtypeElement::SingleValue {
+                                                            value: ASN1Value::All,
+                                                            extensible: false
+                                                        },
+                                                        operator: SetOperator::Except,
+                                                        operant: Box::new(
+                                                            ElementOrSetOperation::Element(
+                                                                SubtypeElement::SingleValue {
+                                                                    value: ASN1Value::Integer(1),
+                                                                    extensible: false
+                                                                }
+                                                            )
+                                                        )
+                                                    }
+                                                ),
                                                 extensible: false
                                             }
-                                        ))
-                                    }),
-                                    extensible: false
-                                })],
-                                presence: ComponentPresence::Unspecified
-                            }]
+                                        )],
+                                        presence: ComponentPresence::Unspecified
+                                    }]
+                                })
+                            )
                         })
+                    ]),
+                    operator: SetOperator::Union,
+                    operant: Box::new(ElementOrSetOperation::Element(
+                        SubtypeElement::SingleTypeConstraint(vec![Constraint::SubtypeConstraint(
+                            ElementSet {
+                                extensible: false,
+                                set: ElementOrSetOperation::Element(
+                                    SubtypeElement::MultipleTypeConstraints(InnerTypeConstraint {
+                                        is_partial: true,
+                                        constraints: vec![ConstrainedComponent {
+                                            identifier: "containerId".into(),
+                                            constraints: vec![Constraint::SubtypeConstraint(
+                                                ElementSet {
+                                                    set: ElementOrSetOperation::SetOperation(
+                                                        SetOperation {
+                                                            base: SubtypeElement::SingleValue {
+                                                                value: ASN1Value::All,
+                                                                extensible: false
+                                                            },
+                                                            operator: SetOperator::Except,
+                                                            operant: Box::new(
+                                                                ElementOrSetOperation::Element(
+                                                                    SubtypeElement::SingleValue {
+                                                                        value: ASN1Value::Integer(
+                                                                            2
+                                                                        ),
+                                                                        extensible: false
+                                                                    }
+                                                                )
+                                                            )
+                                                        }
+                                                    ),
+                                                    extensible: false
+                                                }
+                                            )],
+                                            presence: ComponentPresence::Unspecified
+                                        }]
+                                    })
+                                )
+                            }
+                        )])
                     ))
                 }),
                 extensible: false
@@ -636,7 +655,7 @@ mod tests {
             .unwrap()
             .1,
             vec![Constraint::SubtypeConstraint(ElementSet {
-                set: ElementOrSetOperation::Element(SubtypeElement::SingleTypeConstraint(
+                set: ElementOrSetOperation::Element(SubtypeElement::MultipleTypeConstraints(
                     InnerTypeConstraint {
                         is_partial: false,
                         constraints: vec![
@@ -685,7 +704,7 @@ mod tests {
             .unwrap()
             .1,
             vec![Constraint::SubtypeConstraint(ElementSet {
-                set: ElementOrSetOperation::Element(SubtypeElement::SingleTypeConstraint(
+                set: ElementOrSetOperation::Element(SubtypeElement::MultipleTypeConstraints(
                     InnerTypeConstraint {
                         is_partial: true,
                         constraints: vec![
@@ -729,24 +748,38 @@ mod tests {
             .1,
             vec![Constraint::SubtypeConstraint(ElementSet {
                 set: ElementOrSetOperation::SetOperation(SetOperation {
-                    base: SubtypeElement::MultipleTypeConstraints(InnerTypeConstraint {
-                        is_partial: true,
-                        constraints: vec![ConstrainedComponent {
-                            identifier: "eventDeltaTime".into(),
-                            constraints: vec![],
-                            presence: ComponentPresence::Present
-                        }]
-                    }),
+                    base: SubtypeElement::SingleTypeConstraint(vec![
+                        Constraint::SubtypeConstraint(ElementSet {
+                            set: ElementOrSetOperation::Element(
+                                SubtypeElement::MultipleTypeConstraints(InnerTypeConstraint {
+                                    is_partial: true,
+                                    constraints: vec![ConstrainedComponent {
+                                        identifier: "eventDeltaTime".into(),
+                                        constraints: vec![],
+                                        presence: ComponentPresence::Present
+                                    }]
+                                }),
+                            ),
+                            extensible: false
+                        })
+                    ]),
                     operator: SetOperator::Union,
                     operant: Box::new(ElementOrSetOperation::Element(
-                        SubtypeElement::MultipleTypeConstraints(InnerTypeConstraint {
-                            is_partial: true,
-                            constraints: vec![ConstrainedComponent {
-                                identifier: "eventDeltaTime".into(),
-                                constraints: vec![],
-                                presence: ComponentPresence::Absent
-                            }]
-                        })
+                        SubtypeElement::SingleTypeConstraint(vec![Constraint::SubtypeConstraint(
+                            ElementSet {
+                                set: ElementOrSetOperation::Element(
+                                    SubtypeElement::MultipleTypeConstraints(InnerTypeConstraint {
+                                        is_partial: true,
+                                        constraints: vec![ConstrainedComponent {
+                                            identifier: "eventDeltaTime".into(),
+                                            constraints: vec![],
+                                            presence: ComponentPresence::Absent
+                                        }]
+                                    })
+                                ),
+                                extensible: false
+                            }
+                        )])
                     ))
                 }),
                 extensible: false
@@ -767,7 +800,7 @@ mod tests {
             .1,
             vec![Constraint::SubtypeConstraint(ElementSet {
                 set: ElementOrSetOperation::SetOperation(SetOperation {
-                    base: SubtypeElement::SingleTypeConstraint(InnerTypeConstraint {
+                    base: SubtypeElement::MultipleTypeConstraints(InnerTypeConstraint {
                         is_partial: true,
                         constraints: vec![
                             ConstrainedComponent {
@@ -784,7 +817,7 @@ mod tests {
                     }),
                     operator: SetOperator::Union,
                     operant: Box::new(ElementOrSetOperation::Element(
-                        SubtypeElement::SingleTypeConstraint(InnerTypeConstraint {
+                        SubtypeElement::MultipleTypeConstraints(InnerTypeConstraint {
                             is_partial: true,
                             constraints: vec![
                                 ConstrainedComponent {
@@ -1091,7 +1124,7 @@ mod tests {
             .unwrap()
             .1,
             vec![Constraint::SubtypeConstraint(ElementSet {
-                set: ElementOrSetOperation::Element(SubtypeElement::SingleTypeConstraint(
+                set: ElementOrSetOperation::Element(SubtypeElement::MultipleTypeConstraints(
                     InnerTypeConstraint {
                         is_partial: false,
                         constraints: vec![
@@ -1247,6 +1280,42 @@ mod tests {
                 }),
                 extensible: false
             })]
+        )
+    }
+
+    #[test]
+    fn with_component_intersection() {
+        assert_eq!(
+            vec![Constraint::SubtypeConstraint(ElementSet {
+                set: ElementOrSetOperation::SetOperation(SetOperation {
+                    base: SubtypeElement::SingleTypeConstraint(vec![
+                        Constraint::SubtypeConstraint(ElementSet {
+                            set: ElementOrSetOperation::Element(SubtypeElement::ContainedSubtype {
+                                subtype: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+                                    parent: None,
+                                    identifier: "EtsiTs103097Certificate".into(),
+                                    constraints: vec![],
+                                }),
+                                extensible: false,
+                            }),
+                            extensible: false,
+                        }),
+                    ]),
+                    operator: SetOperator::Intersection,
+                    operant: Box::new(ElementOrSetOperation::Element(
+                        SubtypeElement::SizeConstraint(Box::new(ElementOrSetOperation::Element(
+                            SubtypeElement::SingleValue {
+                                value: ASN1Value::Integer(1,),
+                                extensible: false,
+                            },
+                        ))),
+                    ))
+                }),
+                extensible: false,
+            })],
+            constraint(r#"((WITH COMPONENT (EtsiTs103097Certificate))^(SIZE(1)))"#.into())
+                .unwrap()
+                .1
         )
     }
 }

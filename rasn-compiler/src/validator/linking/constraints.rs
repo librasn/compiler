@@ -63,8 +63,12 @@ impl SubtypeElement {
             SubtypeElement::TypeConstraint(t) => {
                 t.link_constraint_reference(identifier, tlds)?;
             }
-            SubtypeElement::SingleTypeConstraint(s)
-            | SubtypeElement::MultipleTypeConstraints(s) => {
+            SubtypeElement::SingleTypeConstraint(constraints) => {
+                for c in constraints {
+                    c.link_cross_reference(identifier, tlds)?;
+                }
+            }
+            SubtypeElement::MultipleTypeConstraints(s) => {
                 for b in s.constraints.iter_mut().flat_map(|cc| &mut cc.constraints) {
                     b.link_cross_reference(identifier, tlds)?;
                 }
@@ -98,8 +102,10 @@ impl SubtypeElement {
             }
             SubtypeElement::SizeConstraint(s) => s.has_cross_reference(),
             SubtypeElement::TypeConstraint(t) => t.references_class_by_name(),
-            SubtypeElement::MultipleTypeConstraints(s)
-            | SubtypeElement::SingleTypeConstraint(s) => s
+            SubtypeElement::SingleTypeConstraint(c) => {
+                c.iter().any(|constraint| constraint.has_cross_reference())
+            }
+            SubtypeElement::MultipleTypeConstraints(s) => s
                 .constraints
                 .iter()
                 .any(|cc| cc.constraints.iter().any(|c| c.has_cross_reference())),
