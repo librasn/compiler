@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.1](https://github.com/librasn/compiler/compare/rasn-compiler-v0.7.0...rasn-compiler-v0.7.1) - 2024-12-15
+
+### Fixed
+
+- *(linker)* link defaults in nested choices
+- error parsing single subtype constraint
+
 ## [0.7.0](https://github.com/librasn/compiler/compare/rasn-compiler-v0.6.1...rasn-compiler-v0.7.0) - 2024-12-02
 
 ### Added
