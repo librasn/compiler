@@ -56,7 +56,7 @@ fn compile_etsi() {
             // .add_asn_by_path("../rasn-compiler/test_asn1/ngap_container.asn")
             // .add_asn_by_path("../rasn-compiler/test_asn1/ngap_ies.asn")
             // .add_asn_by_path("../rasn-compiler/test_asn1/ngap_pdus.asn")
-            .add_asn_by_path("../rasn-compiler/test_asn1/rrc.asn")
+            .add_asn_by_path("../rasn-compiler/test_asn1/test.asn")
             .set_output_path("./tests")
             .compile()
     );
