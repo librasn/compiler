@@ -120,7 +120,7 @@ e2e_pdu!(
     "Test-Int ::= NULL",
     r#" #[derive(AsnType, Debug, Clone, Copy, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(delegate, identifier = "Test-Int")]
-        pub struct TestInt(());                                 "#
+        pub struct TestInt(pub ());                                 "#
 );
 
 e2e_pdu!(

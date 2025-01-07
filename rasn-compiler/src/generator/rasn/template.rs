@@ -196,7 +196,7 @@ pub fn null_template(
         #comments
         #[derive(AsnType, Debug, Clone, Copy, Decode, Encode, PartialEq, Eq, Hash)]
         #annotations
-        pub struct #name(());
+        pub struct #name(pub ());
     }
 }
 
@@ -209,7 +209,7 @@ pub fn any_template(
         #comments
         #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #annotations
-        pub struct #name(Any);
+        pub struct #name(pub Any);
     }
 }
 
