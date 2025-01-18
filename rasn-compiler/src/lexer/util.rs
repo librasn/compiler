@@ -136,7 +136,7 @@ pub fn take_until_and_not<'a>(
 pub fn take_until_unbalanced<'a>(
     opening_tag: &'a str,
     closing_tag: &'a str,
-) -> impl Fn(Input<'a>) -> ParserResult<'_, &str> {
+) -> impl Fn(Input<'a>) -> ParserResult<'a, &'a str> {
     move |i: Input<'_>| {
         let mut index = 0;
         let mut bracket_counter = 0;
