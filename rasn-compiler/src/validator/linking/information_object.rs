@@ -181,7 +181,7 @@ impl InformationObjectClass {
     pub fn get_field<'a>(
         &'a self,
         path: &'a Vec<ObjectFieldIdentifier>,
-    ) -> Option<&InformationObjectClassField> {
+    ) -> Option<&'a InformationObjectClassField> {
         walk_object_field_ref_path(&self.fields, path, 0)
     }
 }
