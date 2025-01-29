@@ -493,8 +493,8 @@ impl Rasn {
                     CharacterStringType::BMPString => quote!(BMPString),
                     CharacterStringType::PrintableString => quote!(PrintableString),
                     CharacterStringType::GeneralString => quote!(GeneralString),
-                    CharacterStringType::GraphicString
-                    | CharacterStringType::TeletexString
+                    CharacterStringType::GraphicString => quote!(GraphicString),
+                    CharacterStringType::TeletexString
                     | CharacterStringType::VideotexString
                     | CharacterStringType::UniversalString => {
                         return Err(GeneratorError::new(
