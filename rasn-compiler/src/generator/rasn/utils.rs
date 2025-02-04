@@ -587,11 +587,7 @@ impl Rasn {
                 details: "VideotexString is currently unsupported!".into(),
                 top_level_declaration: None,
             }),
-            CharacterStringType::GraphicString => Err(GeneratorError {
-                kind: GeneratorErrorType::NotYetInplemented,
-                details: "GraphicString is currently unsupported!".into(),
-                top_level_declaration: None,
-            }),
+            CharacterStringType::GraphicString => Ok(quote!(GraphicString)),
             CharacterStringType::GeneralString => Ok(quote!(GeneralString)),
             CharacterStringType::UniversalString => Err(GeneratorError {
                 kind: GeneratorErrorType::NotYetInplemented,
@@ -871,8 +867,10 @@ impl Rasn {
                     CharacterStringType::GeneralString => {
                         Ok(quote!(GeneralString::try_from(String::from(#val)).unwrap()))
                     }
+                    CharacterStringType::GraphicString => {
+                        Ok(quote!(GraphicString::try_from(String::from(#val)).unwrap()))
+                    }
                     CharacterStringType::VideotexString
-                    | CharacterStringType::GraphicString
                     | CharacterStringType::UniversalString
                     | CharacterStringType::TeletexString => Err(GeneratorError::new(
                         None,
@@ -948,8 +946,8 @@ impl Rasn {
                     CharacterStringType::BMPString => Ok(quote!(BMPString)),
                     CharacterStringType::PrintableString => Ok(quote!(PrintableString)),
                     CharacterStringType::GeneralString => Ok(quote!(GeneralString)),
+                    CharacterStringType::GraphicString => Ok(quote!(GraphicString)),
                     CharacterStringType::VideotexString
-                    | CharacterStringType::GraphicString
                     | CharacterStringType::UniversalString
                     | CharacterStringType::TeletexString => Err(GeneratorError::new(
                         None,
