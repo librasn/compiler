@@ -401,6 +401,7 @@ pub struct ModuleReference {
     pub extensibility_environment: ExtensibilityEnvironment,
     pub imports: Vec<Import>,
     pub exports: Option<Exports>,
+    pub custom_imports: Vec<String>,
 }
 
 impl ModuleReference {
@@ -452,6 +453,7 @@ impl
             extensibility_environment,
             exports: value.3,
             imports: value.4.unwrap_or_default(),
+            custom_imports: Vec::new(),
         }
     }
 }

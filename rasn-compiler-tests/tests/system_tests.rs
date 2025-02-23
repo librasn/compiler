@@ -52,3 +52,34 @@ fn multi_module_error() {
         })
     ))
 }
+
+#[test]
+fn custom_imports_on_path_asn() {
+    let generated = rasn_compiler::Compiler::<rasn_compiler::prelude::RasnBackend, _>::new()
+        .add_asn_by_path_with_custom_imports(
+            "tests/modules/itu-t_x_x692_2008_Example6-ASN1-Module.asn1",
+            ["my::special::import::*", "my::custom::Struct"],
+        )
+        .compile_to_string()
+        .unwrap()
+        .generated;
+    assert!(generated.contains("use my::custom::Struct;"));
+    assert!(generated.contains("use my::special::import::*;"));
+}
+
+#[test]
+fn custom_imports_on_literal() {
+    let generated = rasn_compiler::Compiler::<rasn_compiler::prelude::RasnBackend, _>::new()
+        .add_asn_literal_with_custom_imports(
+            r#"
+                TestModuleA DEFINITIONS AUTOMATIC TAGS::= BEGIN
+                    Hello ::= INTEGER (4..8)
+                END"#,
+            ["my::special::import::*", "my::custom::Struct"],
+        )
+        .compile_to_string()
+        .unwrap()
+        .generated;
+    assert!(generated.contains("use my::custom::Struct;"));
+    assert!(generated.contains("use my::special::import::*;"));
+}
