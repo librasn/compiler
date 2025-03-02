@@ -50,7 +50,7 @@ impl Validator {
 
     fn link(mut self) -> Result<(Self, Vec<CompilerError>), LinkerError> {
         let mut warnings: Vec<CompilerError> = vec![];
-        // Linking of ASN1 values depends on linked ASN1 types, so we order the key colelction accordingly (note that we pop keys)
+        // Linking of ASN1 values depends on linked ASN1 types, so we order the key collection accordingly (note that we pop keys)
         let mut keys = self
             .tlds
             .iter()
