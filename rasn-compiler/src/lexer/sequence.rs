@@ -823,4 +823,48 @@ integrityCheckValue     ICV OPTIONAL
             ])
         );
     }
+
+    #[test]
+    fn parses_anonymous_sequence_of_item_in_field() {
+        assert_eq!(
+            sequence(
+                r#"
+            SEQUENCE {
+                ages		SEQUENCE OF INTEGER (1..5)
+            }
+        "#
+                .into()
+            )
+            .unwrap()
+            .1,
+            ASN1Type::Sequence(SequenceOrSet {
+                components_of: vec![],
+                extensible: None,
+                constraints: vec![],
+                members: vec![SequenceOrSetMember {
+                    name: "ages".into(),
+                    tag: None,
+                    ty: ASN1Type::SequenceOf(SequenceOrSetOf {
+                        constraints: vec![],
+                        element_type: Box::new(ASN1Type::Integer(Integer {
+                            constraints: vec![Constraint::SubtypeConstraint(ElementSet {
+                                set: ElementOrSetOperation::Element(SubtypeElement::ValueRange {
+                                    min: Some(ASN1Value::Integer(1,),),
+                                    max: Some(ASN1Value::Integer(5,),),
+                                    extensible: false,
+                                },),
+                                extensible: false,
+                            },),],
+                            distinguished_values: None,
+                        },)),
+                        is_recursive: false,
+                    },),
+                    default_value: None,
+                    is_optional: false,
+                    is_recursive: false,
+                    constraints: vec![],
+                }],
+            },)
+        )
+    }
 }

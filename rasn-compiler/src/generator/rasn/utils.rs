@@ -1,4 +1,4 @@
-use std::str::FromStr;
+use std::{ops::Not, str::FromStr};
 
 use proc_macro2::{Ident, Literal, Punct, Spacing, Span, TokenStream};
 use quote::{format_ident, quote, ToTokens, TokenStreamExt};
@@ -310,7 +310,7 @@ impl Rasn {
         sequence_or_set.members.iter().enumerate().try_fold(
             FormattedMembers::default(),
             |mut acc, (i, m)| {
-                let nested = if self.needs_unnesting(&m.ty) {
+                let nested = if Self::needs_unnesting(&m.ty) {
                     Some(
                         self.generate_tld(ToplevelDefinition::Type(ToplevelTypeDefinition {
                             parameterization: None,
@@ -363,7 +363,13 @@ impl Rasn {
             parent_name,
             member.is_recursive,
         )?;
-        all_constraints.append(&mut member.constraints.clone());
+        if Self::needs_unnesting(&member.ty) {
+            formatted_type_name = self.inner_name(&member.name, parent_name).to_token_stream();
+            // All constraints are applied on the delegate type
+            all_constraints = Vec::new();
+        } else {
+            all_constraints.append(&mut member.constraints.clone());
+        }
         if (member.is_optional && member.default_value.is_none())
             || member.name.starts_with("ext_group_")
         {
@@ -418,7 +424,7 @@ impl Rasn {
         choice.options.iter().enumerate().try_fold(
             FormattedOptions::default(),
             |mut acc, (i, o)| {
-                let nested = if self.needs_unnesting(&o.ty) {
+                let nested = if Self::needs_unnesting(&o.ty) {
                     Some(
                         self.generate_tld(ToplevelDefinition::Type(ToplevelTypeDefinition {
                             parameterization: None,
@@ -463,13 +469,19 @@ impl Rasn {
         parent_name: &String,
         extension_annotation: TokenStream,
     ) -> Result<TokenStream, GeneratorError> {
-        let (mut all_constraints, formatted_type_name) = self.constraints_and_type_name(
+        let (mut all_constraints, mut formatted_type_name) = self.constraints_and_type_name(
             &member.ty,
             &member.name,
             parent_name,
             member.is_recursive,
         )?;
-        all_constraints.append(&mut member.constraints.clone());
+        if Self::needs_unnesting(&member.ty) {
+            formatted_type_name = self.inner_name(&member.name, parent_name).to_token_stream();
+            // All constraints are applied on the delegate type
+            all_constraints = Vec::new();
+        } else {
+            all_constraints.append(&mut member.constraints.clone());
+        }
         let range_annotations = self.format_range_annotations(
             matches!(member.ty, ASN1Type::Integer(_)),
             &all_constraints,
@@ -882,7 +894,7 @@ impl Rasn {
         }
     }
 
-    pub(crate) fn needs_unnesting(&self, ty: &ASN1Type) -> bool {
+    pub(crate) fn needs_unnesting(ty: &ASN1Type) -> bool {
         match ty {
             ASN1Type::Enumerated(_)
             | ASN1Type::Choice(_)
@@ -890,7 +902,10 @@ impl Rasn {
             | ASN1Type::Set(_) => true,
             ASN1Type::SequenceOf(SequenceOrSetOf { element_type, .. })
             | ASN1Type::SetOf(SequenceOrSetOf { element_type, .. }) => {
-                self.needs_unnesting(element_type)
+                Self::needs_unnesting(element_type)
+                    || element_type
+                        .constraints()
+                        .is_some_and(|c| c.is_empty().not())
             }
             _ => false,
         }

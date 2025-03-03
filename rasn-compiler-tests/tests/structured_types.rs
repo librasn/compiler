@@ -207,10 +207,8 @@ e2e_pdu!(
         #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(choice, automatic_tags)]
         pub enum TFCSReconfAddR12CtfcSize {
-            #[rasn(size("1..=1024"))]
-            ctfc8Bit(SequenceOf<TFCSReconfAddR12CtfcSizeCtfc8Bit>),
-            #[rasn(size("1..=1024"))]
-            ctfc16Bit(SequenceOf<TFCSReconfAddR12CtfcSizeCtfc16Bit>),
+            ctfc8Bit(TFCSReconfAddR12CtfcSizeCtfc8Bit),
+            ctfc16Bit(TFCSReconfAddR12CtfcSizeCtfc16Bit),
         }
         #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(automatic_tags, identifier = "TFCS-ReconfAdd-r12")]
@@ -323,6 +321,81 @@ e2e_pdu!(
             pub fn new(parameters: TestParameters) -> Self {
                 Self { parameters }
             }
+        }
+    "#
+);
+
+e2e_pdu!(
+    anonymous_sequence_of_item_in_sequence_member,
+    r#"
+    Ticket ::= SEQUENCE {
+        ages		SEQUENCE OF INTEGER (1..5),	 
+        passenger	Passenger OPTIONAL
+    }
+
+    Passenger ::= ENUMERATED {
+        adult	(0),
+        youth	(1),
+        ...
+    }
+    "#,
+    r#"
+        #[derive(AsnType, Debug, Clone, Copy, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(enumerated)]
+        #[non_exhaustive]
+        pub enum Passenger{
+            adult = 0,
+            youth = 1,
+        }
+
+        #[doc = " Anonymous SEQUENCE OF member "]
+        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(delegate, value("1..=5"), identifier = "INTEGER")]
+        pub struct AnonymousTicketAges(pub u8);
+
+        #[doc = " Inner type "]
+        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(delegate)]
+        pub struct TicketAges(pub SequenceOf<AnonymousTicketAges>);
+
+        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(automatic_tags)]
+        pub struct Ticket {
+            pub ages: TicketAges,
+            pub passenger: Option<Passenger>,
+        }
+
+        impl Ticket {
+            pub fn new(ages: TicketAges, passenger: Option<Passenger>) -> Self {
+                Self { ages, passenger }
+            }
+        }
+    "#
+);
+
+e2e_pdu!(
+    anonymous_set_of_item_in_choice_option,
+    r#"
+    Ticket ::= CHOICE {
+        age-set		SET (SIZE (1..4)) OF INTEGER (1..5)
+    }
+    "#,
+    r#"
+        #[doc = " Anonymous SET OF member "]
+        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(delegate, value("1..=5"), identifier = "INTEGER")]
+        pub struct AnonymousTicketAgeSet(pub u8);
+
+        #[doc = " Inner type "]
+        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(delegate, size("1..=4"))]
+        pub struct TicketAgeSet(pub SetOf<AnonymousTicketAgeSet>);
+
+        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(choice, automatic_tags)]
+        pub enum Ticket {
+            #[rasn(identifier = "age-set")]
+            age_set(TicketAgeSet),
         }
     "#
 );
