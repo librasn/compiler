@@ -233,7 +233,7 @@ e2e_pdu!(
         }
 
         #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-        #[rasn(choice, automatic_tags)]
+        #[rasn(choice)]
         #[non_exhaustive]
         pub enum Filter {
             #[rasn(size("1.."), tag(context, 0))]

@@ -747,7 +747,8 @@ impl Rasn {
                 quote!(choice),
                 self.format_tag(
                     tld.tag.as_ref(),
-                    self.tagging_environment == TaggingEnvironment::Automatic,
+                    self.tagging_environment == TaggingEnvironment::Automatic
+                        && !choice.options.iter().any(|o| o.tag.is_some()),
                 ),
             ];
             if name.to_string() != tld.name {
