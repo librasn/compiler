@@ -115,6 +115,15 @@ impl ToplevelDefinition {
         }
     }
 
+    /// Checks if at any depth down the arbitrarily nested `self`, an elsewhere declared type with the name `name` exists.
+    /// Sequence Ofs and Set Ofs break the recursion tree, because they use heap-based data structures.
+    pub fn recurses(&self, name: &str, tlds: &BTreeMap<String, ToplevelDefinition>) -> bool {
+        match self {
+            ToplevelDefinition::Type(ToplevelTypeDefinition { ty, .. }) => ty.recurses(name, tlds),
+            _ => false, // TODO: Check recursion for values and information objects
+        }
+    }
+
     /// Traverses a top-level declaration to check for references to other top-level declarations
     /// in a constraint. An example would be the constraint of the `intercontinental` field in the
     /// following example.
@@ -185,10 +194,13 @@ impl ToplevelDefinition {
     }
 
     /// Traverses top-level declarations and marks recursive types
-    pub fn mark_recursive(&mut self) -> Result<(), GrammarError> {
+    pub fn mark_recursive(
+        &mut self,
+        tlds: &BTreeMap<String, ToplevelDefinition>,
+    ) -> Result<(), GrammarError> {
         match self {
             ToplevelDefinition::Type(t) => {
-                let _ = t.ty.mark_recursive(&t.name)?;
+                let _ = t.ty.mark_recursive(&t.name, tlds)?;
                 Ok(())
             }
             ToplevelDefinition::Value(_v) => Ok(()), // TODO
@@ -552,24 +564,37 @@ impl ASN1Type {
         }
     }
 
+    /// Checks if at any depth down the arbitrarily nested `self`, an elsewhere declared type with the name `name` exists.
+    /// Sequence Ofs and Set Ofs break the recursion tree, because they use heap-based data structures.
+    pub fn recurses(&self, name: &str, tlds: &BTreeMap<String, ToplevelDefinition>) -> bool {
+        match self {
+            ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere { identifier, .. }) => {
+                identifier == name
+                    || tlds
+                        .get(identifier)
+                        .is_some_and(|tld| tld.recurses(name, tlds))
+            }
+            ASN1Type::Choice(c) => c.options.iter().any(|opt| opt.ty.recurses(name, tlds)),
+            ASN1Type::Sequence(s) | ASN1Type::Set(s) => {
+                s.members.iter().any(|m| m.ty.recurses(name, tlds))
+            }
+            _ => false,
+        }
+    }
+
     /// Traverses type and marks if recursive. Returns a vector of traversed type IDs since the last recursion detection or the leaf type.
-    pub fn mark_recursive(&mut self, name: &str) -> Result<Vec<Cow<str>>, GrammarError> {
+    pub fn mark_recursive(
+        &mut self,
+        name: &str,
+        tlds: &BTreeMap<String, ToplevelDefinition>,
+    ) -> Result<Vec<Cow<str>>, GrammarError> {
         match self {
             ASN1Type::Choice(choice) => {
                 let mut children = Vec::new();
                 for option in &mut choice.options {
-                    match &option.ty {
-                        ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
-                            identifier,
-                            ..
-                        }) if identifier == name => {
-                            option.is_recursive = true;
-                            continue;
-                        }
-                        _ => (),
-                    }
+                    option.is_recursive = option.ty.recurses(name, tlds);
                     let opt_ty_name = option.ty.as_str().into_owned();
-                    let mut opt_children = option.ty.mark_recursive(&opt_ty_name)?;
+                    let mut opt_children = option.ty.mark_recursive(&opt_ty_name, tlds)?;
                     if opt_children.iter().any(|id: &Cow<'_, str>| id == name) {
                         option.is_recursive = true;
                     } else {
@@ -581,18 +606,9 @@ impl ASN1Type {
             ASN1Type::Set(s) | ASN1Type::Sequence(s) => {
                 let mut children = Vec::new();
                 for member in &mut s.members {
-                    match &member.ty {
-                        ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
-                            identifier,
-                            ..
-                        }) if identifier == name => {
-                            member.is_recursive = true;
-                            continue;
-                        }
-                        _ => (),
-                    }
+                    member.is_recursive = member.ty.recurses(name, tlds);
                     let mem_ty_name = member.ty.as_str().into_owned();
-                    let mut mem_children = member.ty.mark_recursive(&mem_ty_name)?;
+                    let mut mem_children = member.ty.mark_recursive(&mem_ty_name, tlds)?;
                     if mem_children.iter().any(|id: &Cow<'_, str>| id == name) {
                         member.is_recursive = true;
                     } else {

@@ -399,3 +399,43 @@ e2e_pdu!(
         }
     "#
 );
+
+e2e_pdu!(
+    nested_recursion,
+    r#"
+        TypeDescription ::= CHOICE {
+            boolean [0] IMPLICIT BOOLEAN,
+            string [2] IMPLICIT UTF8String,
+            array [3] IMPLICIT SEQUENCE {
+                size [0] IMPLICIT INTEGER (0..MAX),
+                element-type [1] TypeDescription
+            }
+        }
+    "#,
+    r#"
+        #[doc = " Inner type "]
+        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(tag(context, 3))]
+        pub struct TypeDescriptionArray {
+            #[rasn(value("0.."), tag(context, 0))]
+            pub size: Integer,
+            #[rasn(tag(context, 1), identifier = "element-type")]
+            pub element_type: TypeDescription,
+        }
+        impl TypeDescriptionArray {
+            pub fn new(size: Integer, element_type: TypeDescription) -> Self {
+                Self { size, element_type }
+            }
+        }
+        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(choice)]
+        pub enum TypeDescription {
+            #[rasn(tag(context, 0))]
+            boolean(bool),
+            #[rasn(tag(context, 2))]
+            string(Utf8String),
+            #[rasn(tag(context, 3))]
+            array(Box<TypeDescriptionArray>),
+        }
+    "#
+);

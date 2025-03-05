@@ -365,6 +365,9 @@ impl Rasn {
         )?;
         if Self::needs_unnesting(&member.ty) {
             formatted_type_name = self.inner_name(&member.name, parent_name).to_token_stream();
+            if member.is_recursive {
+                formatted_type_name = boxed_type(formatted_type_name);
+            }
             // All constraints are applied on the delegate type
             all_constraints = Vec::new();
         } else {
@@ -477,6 +480,9 @@ impl Rasn {
         )?;
         if Self::needs_unnesting(&member.ty) {
             formatted_type_name = self.inner_name(&member.name, parent_name).to_token_stream();
+            if member.is_recursive {
+                formatted_type_name = boxed_type(formatted_type_name);
+            }
             // All constraints are applied on the delegate type
             all_constraints = Vec::new();
         } else {
