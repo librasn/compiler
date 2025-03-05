@@ -201,24 +201,20 @@ impl Backend for Rasn {
 impl Rasn {
     fn get_rustfmt_path() -> Result<PathBuf, Box<dyn Error>> {
         // Try ~/.cargo/bin/rustfmt style paths first
-        if let Ok(path) = env::var("CARGO_HOME")
-            .map(PathBuf::from)
-            .map(|mut path| {
-                path.push("bin/rustfmt");
-                path
-            }) {
+        if let Ok(path) = env::var("CARGO_HOME").map(PathBuf::from).map(|mut path| {
+            path.push("bin/rustfmt");
+            path
+        }) {
             if path.exists() {
                 return Ok(path);
             }
         }
 
         // Alternatively, maybe rustfmt and cargo are in the same directory
-        if let Ok(path) = env::var("CARGO")
-            .map(PathBuf::from)
-            .map(|mut path| {
-                path.set_file_name("rustfmt");
-                path
-            }) {
+        if let Ok(path) = env::var("CARGO").map(PathBuf::from).map(|mut path| {
+            path.set_file_name("rustfmt");
+            path
+        }) {
             if path.exists() {
                 return Ok(path);
             }
