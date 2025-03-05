@@ -1,3 +1,4 @@
+use std::error::Error;
 use std::fmt::Display;
 
 use crate::{
@@ -33,6 +34,8 @@ impl Display for CompilerError {
         }
     }
 }
+
+impl Error for CompilerError {}
 
 impl From<LexerError> for CompilerError {
     fn from(value: LexerError) -> Self {
