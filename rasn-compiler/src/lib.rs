@@ -170,6 +170,14 @@ impl CompileResult {
 enum AsnSource {
     Path(PathBuf),
     Literal(String),
+    PathWithCustomImports {
+        path: PathBuf,
+        imports: Vec<String>,
+    },
+    LiteralWithCustomImports {
+        literal: String,
+        imports: Vec<String>,
+    },
 }
 
 impl<B: Backend> Default for Compiler<B, CompilerMissingParams> {
@@ -230,6 +238,79 @@ impl<B: Backend> Compiler<B, CompilerMissingParams> {
             state: CompilerSourcesSet {
                 sources: paths_to_sources
                     .map(|p| AsnSource::Path(p.into()))
+                    .collect(),
+            },
+            backend: self.backend,
+        }
+    }
+
+    /// Add a literal ASN1 source with custom imports to the compile command
+    /// * `literal` - literal ASN1 statement to include
+    /// * `custom_imports` - paths to items that will be imported into all
+    ///   generated modules with a [use declaration](https://doc.rust-lang.org/reference/items/use-declarations.html)
+    /// ```rust
+    /// # use rasn_compiler::prelude::*;
+    /// Compiler::<RasnBackend, _>::new().add_asn_literal_with_custom_imports(format!(
+    ///     "TestModule DEFINITIONS AUTOMATIC TAGS::= BEGIN {} END",
+    ///     "My-test-integer ::= INTEGER (1..128)"
+    /// ), ["path::to::my::Struct"]).compile_to_string();
+    /// ```
+    pub fn add_asn_literal_with_custom_imports<S: Into<String>, I: IntoIterator<Item = S>>(
+        self,
+        literal: impl Into<String>,
+        custom_imports: I,
+    ) -> Compiler<B, CompilerSourcesSet> {
+        Compiler {
+            state: CompilerSourcesSet {
+                sources: vec![AsnSource::LiteralWithCustomImports {
+                    literal: literal.into(),
+                    imports: custom_imports.into_iter().map(S::into).collect(),
+                }],
+            },
+            backend: self.backend,
+        }
+    }
+
+    /// Add an ASN1 source with custom importsto the compile command by path
+    /// * `path_to_source` - path to ASN1 file to include
+    /// * `custom_imports` - paths to items that will be imported into all
+    ///   generated modules with a [use declaration](https://doc.rust-lang.org/reference/items/use-declarations.html)
+    pub fn add_asn_by_path_with_custom_imports<S: Into<String>, I: IntoIterator<Item = S>>(
+        self,
+        path_to_source: impl Into<PathBuf>,
+        custom_imports: I,
+    ) -> Compiler<B, CompilerSourcesSet> {
+        Compiler {
+            state: CompilerSourcesSet {
+                sources: vec![AsnSource::PathWithCustomImports {
+                    path: path_to_source.into(),
+                    imports: custom_imports.into_iter().map(S::into).collect(),
+                }],
+            },
+            backend: self.backend,
+        }
+    }
+
+    /// Add several ASN1 sources by path to the compile command
+    /// * `path_to_source` - iterator of paths to the ASN1 files to be included
+    /// * `custom_imports` - paths to items that will be imported into all
+    /// generated modules with [use declarations](https://doc.rust-lang.org/reference/items/use-declarations.html)
+    pub fn add_asn_sources_by_path_with_custom_imports<
+        S: Into<String>,
+        I: IntoIterator<Item = S>,
+    >(
+        self,
+        paths_to_sources: impl Iterator<Item = impl Into<PathBuf>>,
+        custom_imports: I,
+    ) -> Compiler<B, CompilerSourcesSet> {
+        let imports: Vec<String> = custom_imports.into_iter().map(S::into).collect();
+        Compiler {
+            state: CompilerSourcesSet {
+                sources: paths_to_sources
+                    .map(|p| AsnSource::PathWithCustomImports {
+                        path: p.into(),
+                        imports: imports.clone(),
+                    })
                     .collect(),
             },
             backend: self.backend,
@@ -369,6 +450,79 @@ impl<B: Backend> Compiler<B, CompilerSourcesSet> {
         }
     }
 
+    /// Add a literal ASN1 source with custom imports to the compile command
+    /// * `literal` - literal ASN1 statement to include
+    /// * `custom_imports` - paths to items that will be imported into all
+    ///   generated modules with a [use declaration](https://doc.rust-lang.org/reference/items/use-declarations.html)
+    /// ```rust
+    /// # use rasn_compiler::prelude::*;
+    /// Compiler::<RasnBackend, _>::new().add_asn_literal_with_custom_imports(format!(
+    ///     "TestModule DEFINITIONS AUTOMATIC TAGS::= BEGIN {} END",
+    ///     "My-test-integer ::= INTEGER (1..128)"
+    /// ), ["path::to::my::Struct"]).compile_to_string();
+    /// ```
+    pub fn add_asn_literal_with_custom_imports<S: Into<String>, I: IntoIterator<Item = S>>(
+        self,
+        literal: impl Into<String>,
+        custom_imports: I,
+    ) -> Compiler<B, CompilerSourcesSet> {
+        Compiler {
+            state: CompilerSourcesSet {
+                sources: vec![AsnSource::LiteralWithCustomImports {
+                    literal: literal.into(),
+                    imports: custom_imports.into_iter().map(S::into).collect(),
+                }],
+            },
+            backend: self.backend,
+        }
+    }
+
+    /// Add an ASN1 source with custom importsto the compile command by path
+    /// * `path_to_source` - path to ASN1 file to include
+    /// * `custom_imports` - paths to items that will be imported into all
+    ///   generated modules with a [use declaration](https://doc.rust-lang.org/reference/items/use-declarations.html)
+    pub fn add_asn_by_path_with_custom_imports<S: Into<String>, I: IntoIterator<Item = S>>(
+        self,
+        path_to_source: impl Into<PathBuf>,
+        custom_imports: I,
+    ) -> Compiler<B, CompilerSourcesSet> {
+        Compiler {
+            state: CompilerSourcesSet {
+                sources: vec![AsnSource::PathWithCustomImports {
+                    path: path_to_source.into(),
+                    imports: custom_imports.into_iter().map(S::into).collect(),
+                }],
+            },
+            backend: self.backend,
+        }
+    }
+
+    /// Add several ASN1 sources by path to the compile command
+    /// * `path_to_source` - iterator of paths to the ASN1 files to be included
+    /// * `custom_imports` - paths to items that will be imported into all
+    ///    generated modules with [use declarations](https://doc.rust-lang.org/reference/items/use-declarations.html)
+    pub fn add_asn_sources_by_path_with_custom_imports<
+        S: Into<String>,
+        I: IntoIterator<Item = S>,
+    >(
+        self,
+        paths_to_sources: impl Iterator<Item = impl Into<PathBuf>>,
+        custom_imports: I,
+    ) -> Compiler<B, CompilerSourcesSet> {
+        let imports: Vec<String> = custom_imports.into_iter().map(S::into).collect();
+        Compiler {
+            state: CompilerSourcesSet {
+                sources: paths_to_sources
+                    .map(|p| AsnSource::PathWithCustomImports {
+                        path: p.into(),
+                        imports: imports.clone(),
+                    })
+                    .collect(),
+            },
+            backend: self.backend,
+        }
+    }
+
     /// Set the output path for the generated rust representation.
     /// * `output_path` - path to an output file or directory, if path points to
     ///                   a directory, the compiler will generate a file for every ASN.1 module.
@@ -396,14 +550,21 @@ impl<B: Backend> Compiler<B, CompilerSourcesSet> {
         let mut warnings = Vec::<CompilerError>::new();
         let mut modules: Vec<ToplevelDefinition> = vec![];
         for src in &self.state.sources {
-            let stringified_src = match src {
-                AsnSource::Path(p) => read_to_string(p).map_err(LexerError::from)?,
-                AsnSource::Literal(l) => l.clone(),
+            let (stringified_src, custom_imports) = match src {
+                AsnSource::Path(p) => (read_to_string(p).map_err(LexerError::from)?, &Vec::new()),
+                AsnSource::Literal(l) => (l.clone(), &Vec::new()),
+                AsnSource::LiteralWithCustomImports { literal, imports } => {
+                    (literal.clone(), imports)
+                }
+                AsnSource::PathWithCustomImports { path, imports } => {
+                    (read_to_string(path).map_err(LexerError::from)?, imports)
+                }
             };
             modules.append(
                 &mut asn_spec(&stringified_src)?
                     .into_iter()
-                    .flat_map(|(header, tlds)| {
+                    .flat_map(|(mut header, tlds)| {
+                        header.custom_imports = custom_imports.clone();
                         let header_ref = Rc::new(RefCell::new(header));
                         tlds.into_iter().enumerate().map(move |(index, mut tld)| {
                             tld.apply_tagging_environment(&header_ref.borrow().tagging_environment);
@@ -496,6 +657,79 @@ impl<B: Backend> Compiler<B, CompilerReady> {
             state: CompilerReady {
                 output_path: self.state.output_path,
                 sources,
+            },
+            backend: self.backend,
+        }
+    }
+
+    /// Add a literal ASN1 source with custom imports to the compile command
+    /// * `literal` - literal ASN1 statement to include
+    /// * `custom_imports` - paths to items that will be imported into all
+    ///   generated modules with a [use declaration](https://doc.rust-lang.org/reference/items/use-declarations.html)
+    /// ```rust
+    /// # use rasn_compiler::prelude::*;
+    /// Compiler::<RasnBackend, _>::new().add_asn_literal_with_custom_imports(format!(
+    ///     "TestModule DEFINITIONS AUTOMATIC TAGS::= BEGIN {} END",
+    ///     "My-test-integer ::= INTEGER (1..128)"
+    /// ), ["path::to::my::Struct"]).compile_to_string();
+    /// ```
+    pub fn add_asn_literal_with_custom_imports<S: Into<String>, I: IntoIterator<Item = S>>(
+        self,
+        literal: impl Into<String>,
+        custom_imports: I,
+    ) -> Compiler<B, CompilerSourcesSet> {
+        Compiler {
+            state: CompilerSourcesSet {
+                sources: vec![AsnSource::LiteralWithCustomImports {
+                    literal: literal.into(),
+                    imports: custom_imports.into_iter().map(S::into).collect(),
+                }],
+            },
+            backend: self.backend,
+        }
+    }
+
+    /// Add an ASN1 source with custom importsto the compile command by path
+    /// * `path_to_source` - path to ASN1 file to include
+    /// * `custom_imports` - paths to items that will be imported into all
+    ///   generated modules with a [use declaration](https://doc.rust-lang.org/reference/items/use-declarations.html)
+    pub fn add_asn_by_path_with_custom_imports<S: Into<String>, I: IntoIterator<Item = S>>(
+        self,
+        path_to_source: impl Into<PathBuf>,
+        custom_imports: I,
+    ) -> Compiler<B, CompilerSourcesSet> {
+        Compiler {
+            state: CompilerSourcesSet {
+                sources: vec![AsnSource::PathWithCustomImports {
+                    path: path_to_source.into(),
+                    imports: custom_imports.into_iter().map(S::into).collect(),
+                }],
+            },
+            backend: self.backend,
+        }
+    }
+
+    /// Add several ASN1 sources by path to the compile command
+    /// * `path_to_source` - iterator of paths to the ASN1 files to be included
+    /// * `custom_imports` - paths to items that will be imported into all
+    ///    generated modules with [use declarations](https://doc.rust-lang.org/reference/items/use-declarations.html)
+    pub fn add_asn_sources_by_path_with_custom_imports<
+        S: Into<String>,
+        I: IntoIterator<Item = S>,
+    >(
+        self,
+        paths_to_sources: impl Iterator<Item = impl Into<PathBuf>>,
+        custom_imports: I,
+    ) -> Compiler<B, CompilerSourcesSet> {
+        let imports: Vec<String> = custom_imports.into_iter().map(S::into).collect();
+        Compiler {
+            state: CompilerSourcesSet {
+                sources: paths_to_sources
+                    .map(|p| AsnSource::PathWithCustomImports {
+                        path: p.into(),
+                        imports: imports.clone(),
+                    })
+                    .collect(),
             },
             backend: self.backend,
         }

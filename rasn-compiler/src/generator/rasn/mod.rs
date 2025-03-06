@@ -123,6 +123,25 @@ impl Backend for Rasn {
             self.tagging_environment = module.tagging_environment;
             self.extensibility_environment = module.extensibility_environment;
             let name = self.to_rust_snake_case(&module.name);
+            let custom_imports =
+                module
+                    .custom_imports
+                    .iter()
+                    .try_fold(TokenStream::new(), |acc, import| {
+                        import
+                            .parse::<TokenStream>()
+                            .map_err(|e| GeneratorError {
+                                kind: GeneratorErrorType::Unsupported,
+                                details: e.to_string(),
+                                ..Default::default()
+                            })
+                            .map(|as_tokens| {
+                                quote! {
+                                    #acc
+                                    use #as_tokens;
+                                }
+                            })
+                    })?;
             let imports = module.imports.iter().map(|import| {
                 let module =
                     self.to_rust_snake_case(&import.global_module_reference.module_reference);
@@ -171,7 +190,7 @@ impl Backend for Rasn {
                     use core::borrow::Borrow;
                     use rasn::prelude::*;
                     use lazy_static::lazy_static;
-
+                    #custom_imports
                     #(#imports)*
 
                     #(#pdus)*
