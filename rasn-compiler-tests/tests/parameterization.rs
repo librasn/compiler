@@ -113,18 +113,18 @@ e2e_pdu! {
     #[non_exhaustive]
     pub struct A2XPC5FlowBitRates {
         #[rasn(identifier = "a2X-GuaranteedFlowBitRate")]
-        pub a2_x__guaranteed_flow_bit_rate: bool,
+        pub a2_x_guaranteed_flow_bit_rate: bool,
         #[rasn(identifier = "iE-Extensions")]
-        pub i_e__extensions: Option<A2XPC5FlowBitRatesIEExtensions>,
+        pub i_e_extensions: Option<A2XPC5FlowBitRatesIEExtensions>,
     }
     impl A2XPC5FlowBitRates {
         pub fn new(
-            a2_x__guaranteed_flow_bit_rate: bool,
-            i_e__extensions: Option<A2XPC5FlowBitRatesIEExtensions>,
+            a2_x_guaranteed_flow_bit_rate: bool,
+            i_e_extensions: Option<A2XPC5FlowBitRatesIEExtensions>,
         ) -> Self {
             Self {
-                a2_x__guaranteed_flow_bit_rate,
-                i_e__extensions,
+                a2_x_guaranteed_flow_bit_rate,
+                i_e_extensions,
             }
         }
     }
