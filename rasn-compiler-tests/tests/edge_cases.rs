@@ -114,7 +114,7 @@ e2e_pdu!(
         }
     "#,
     r#"
-        #[derive(AsnType, Debug, Clone, Copy, Decode, Encode, PartialEq, Eq, Hash)]
+        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
         #[rasn(enumerated)]
         pub enum EnumWithDefault {
             first = 1,

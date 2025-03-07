@@ -66,7 +66,7 @@ e2e_pdu!(
         local(Integer),
         global(ObjectIdentifier),
     }
-    #[derive(Debug, Clone, PartialEq, AsnType, Decode, Encode)]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(size("4"), delegate)]
     pub struct Inner_Errors_ParameterType_2(pub BitString);
     #[derive(Debug, Clone, PartialEq)]
