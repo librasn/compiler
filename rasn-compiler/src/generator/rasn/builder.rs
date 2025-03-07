@@ -112,7 +112,7 @@ impl Rasn {
                 self.format_comments(&tld.comments)?,
                 name,
                 self.to_rust_title_case(&dec.identifier),
-                self.join_annotations(annotations),
+                self.join_annotations(annotations, false, true)?,
             ))
         } else {
             Err(GeneratorError::new(
@@ -180,7 +180,7 @@ impl Rasn {
             Ok(integer_template(
                 self.format_comments(&tld.comments)?,
                 name,
-                self.join_annotations(annotations),
+                self.join_annotations(annotations, false, true)?,
                 int.int_type().to_token_stream(),
             ))
         } else {
@@ -213,14 +213,14 @@ impl Rasn {
                 Ok(fixed_bit_string_template(
                     self.format_comments(&tld.comments)?,
                     name,
-                    self.join_annotations(annotations),
+                    self.join_annotations(annotations, false, true)?,
                     size.to_token_stream(),
                 ))
             } else {
                 Ok(bit_string_template(
                     self.format_comments(&tld.comments)?,
                     name,
-                    self.join_annotations(annotations),
+                    self.join_annotations(annotations, false, true)?,
                 ))
             }
         } else {
@@ -253,14 +253,14 @@ impl Rasn {
                 Ok(fixed_octet_string_template(
                     self.format_comments(&tld.comments)?,
                     name,
-                    self.join_annotations(annotations),
+                    self.join_annotations(annotations, false, true)?,
                     size.to_token_stream(),
                 ))
             } else {
                 Ok(octet_string_template(
                     self.format_comments(&tld.comments)?,
                     name,
-                    self.join_annotations(annotations),
+                    self.join_annotations(annotations, false, true)?,
                 ))
             }
         } else {
@@ -295,7 +295,7 @@ impl Rasn {
                 self.format_comments(&tld.comments)?,
                 name,
                 self.string_type(&char_str.ty)?,
-                self.join_annotations(annotations),
+                self.join_annotations(annotations, false, true)?,
             ))
         } else {
             Err(GeneratorError::new(
@@ -320,7 +320,7 @@ impl Rasn {
             Ok(boolean_template(
                 self.format_comments(&tld.comments)?,
                 name,
-                self.join_annotations(annotations),
+                self.join_annotations(annotations, true, true)?,
             ))
         } else {
             Err(GeneratorError::new(
@@ -564,7 +564,7 @@ impl Rasn {
         Ok(any_template(
             self.format_comments(&tld.comments)?,
             name,
-            self.join_annotations(annotations),
+            self.join_annotations(annotations, false, true)?,
         ))
     }
 
@@ -585,7 +585,7 @@ impl Rasn {
             Ok(generalized_time_template(
                 self.format_comments(&tld.comments)?,
                 name,
-                self.join_annotations(annotations),
+                self.join_annotations(annotations, false, true)?,
             ))
         } else {
             Err(GeneratorError::new(
@@ -613,7 +613,7 @@ impl Rasn {
             Ok(utc_time_template(
                 self.format_comments(&tld.comments)?,
                 name,
-                self.join_annotations(annotations),
+                self.join_annotations(annotations, false, true)?,
             ))
         } else {
             Err(GeneratorError::new(
@@ -645,7 +645,7 @@ impl Rasn {
             Ok(oid_template(
                 self.format_comments(&tld.comments)?,
                 name,
-                self.join_annotations(annotations),
+                self.join_annotations(annotations, false, true)?,
             ))
         } else {
             Err(GeneratorError::new(
@@ -673,7 +673,7 @@ impl Rasn {
             Ok(null_template(
                 self.format_comments(&tld.comments)?,
                 name,
-                self.join_annotations(annotations),
+                self.join_annotations(annotations, true, true)?,
             ))
         } else {
             Err(GeneratorError::new(
@@ -714,8 +714,8 @@ impl Rasn {
                 self.format_comments(&tld.comments)?,
                 name,
                 extensible,
-                self.format_enum_members(enumerated),
-                self.join_annotations(annotations),
+                self.format_enum_members(enumerated)?,
+                self.join_annotations(annotations, true, true)?,
             ))
         } else {
             Err(GeneratorError::new(
@@ -765,7 +765,7 @@ impl Rasn {
                 extensible,
                 formatted_options.enum_body,
                 formatted_options.nested_anonymous_types,
-                self.join_annotations(annotations),
+                self.join_annotations(annotations, false, true)?,
             );
             if self.config.generate_from_impls {
                 let mut map = BTreeMap::new();
@@ -897,7 +897,7 @@ impl Rasn {
                     extensible,
                     formatted_members.struct_body,
                     formatted_members.nested_anonymous_types,
-                    self.join_annotations(annotations),
+                    self.join_annotations(annotations, false, true)?,
                     self.format_default_methods(&seq.members, &name.to_string())?,
                     self.format_new_impl(&name, formatted_members.name_types),
                     class_fields,
@@ -962,7 +962,7 @@ impl Rasn {
             name,
             anonymous_item,
             member_type,
-            self.join_annotations(annotations),
+            self.join_annotations(annotations, false, true)?,
         ))
     }
 
@@ -1124,14 +1124,13 @@ impl Rasn {
                                 .ok()
                             })
                             .unwrap_or_default();
-                        let annotations = self.join_annotations(vec![
-                            range_constraints,
-                            alphabet_constraints,
-                            quote!(delegate),
-                        ]);
+                        let annotations = self.join_annotations(
+                            vec![range_constraints, alphabet_constraints, quote!(delegate)],
+                            false,
+                            true,
+                        )?;
                         ids.push((variant_name, delegate_id.clone(), identifier_value));
                         inner_types.push(quote! {
-                            #[derive(Debug, Clone, PartialEq, AsnType, Decode, Encode)]
                             #annotations
                             pub struct #delegate_id (pub #type_id);
 

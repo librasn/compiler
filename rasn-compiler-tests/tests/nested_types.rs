@@ -6,7 +6,7 @@ e2e_pdu!(
     r#" Test-Boolean ::= BOOLEAN
         Wrapping-Boolean ::= Test-Boolean
         value Wrapping-Boolean ::= FALSE"#,
-    r#" #[derive(AsnType, Debug, Clone, Copy, Decode, Encode, PartialEq, Eq, Hash)]
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
         #[rasn(delegate, identifier = "Test-Boolean")]
         pub struct TestBoolean(pub bool);
 
@@ -44,7 +44,7 @@ e2e_pdu!(
             boolean Wrapping-Boolean,
         }
         value Test-Sequence ::= { boolean TRUE }"#,
-    r#" #[derive(AsnType, Debug, Clone, Copy, Decode, Encode, PartialEq, Eq, Hash)]
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
         #[rasn(delegate, identifier = "Test-Boolean")]
         pub struct TestBoolean(pub bool);
 

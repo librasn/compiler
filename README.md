@@ -60,14 +60,26 @@ The compiler backends can be configured by instantiating the compiler using the 
 
 The `RasnBackend` configuration supports the following parameters:
 
--   **opaque_open_types**: `bool`: [Default: `false`] ASN.1 Open Types are represented as the `rasn::types::Any` type,
-    which holds a binary `content`. If `opaque_open_types` is `false`, the compiler will generate additional de-/encode methods for
-    all rust types that hold an open type. For example, bindings for a `SEQUENCE` with a field of Open Type value will include a method for explicitly decoding the Open Type field. _Non-opaque open types are still
+-   **opaque_open_types**: `bool`: [Default: `true`] ASN.1 Open Types are represented as the `rasn::types::Any` type,
+    which holds a binary `content`. If `opaque_open_types` is `false`, the compiler will generate additional de-/encode
+    methods for all rust types that hold an open type. For example, bindings for a `SEQUENCE` with a field of Open Type
+    value will include a method for explicitly decoding the Open Type field. _Non-opaque open types are still
     experimental. If you have trouble generating correct bindings, switch back to opaque open types._
 -   **default_wildcard_imports**: `bool`: [Default: `false`] The compiler will try to match module import dependencies
     of the ASN.1 module as close as possible, importing only those types from other modules that are imported in the
     ASN.1 module. If the `default_wildcard_imports` is set to `true` , the compiler will instead always import the
     entire module using the wildcard `*` for each module that the input ASN.1 module imports from.
+-   **generate_from_impls**: `bool`: [Default: `false`] To make working with the generated types a bit more ergonomic,
+    the compiler can generate `From` impls for the wrapper inner types in a `CHOICE`, as long as the generated impls are
+    not ambiguous.
+-   **custom_imports**: `Vec<String>`: Stringified paths to items that will be imported into all generated modules with
+    a [use declaration](https://doc.rust-lang.org/reference/items/use-declarations.html). For example
+    `vec![String::from("my::module::*"), String::from("path::to::my::Struct")]`.
+-   **type_annotations**: `Vec<String>`: [Default:
+    `vec![String::from("#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]")]`] Annotations to be
+    added to all generated rust types of the bindings. Each vector element will generate a new line of annotations. Note
+    that the compiler will automatically add all pound-derives needed by `rasn` **except** `Eq` and `Hash`, which are
+    needed only when working with `SET`s.
 
 ### Creating a Custom Backend
 
@@ -160,6 +172,8 @@ Currently, `rasn` supports the following encoding rules:
 -   Aligned Packed Encoding Rules (APER)
 -   Unaligned Packed Encoding Rules (UPER)
 -   JSON Encoding Rules (JER)
+-   Octet Encoding Rules (OER)
+-   XML Encoding Rules (XER)
 
 `rasn` and the `rasn-compiler` support the following ASN1 features:
 
@@ -167,9 +181,11 @@ Currently, `rasn` supports the following encoding rules:
 
 -   `NULL` type and value
 -   `BOOLEAN` type and value
+-   `REAL` type and value
 -   `NumericString` type and value
 -   `VisibleString` type and value
 -   `IA5String` type and value
+-   `GraphicString` type and value
 -   `GeneralString` type and value
 -   `UTF8String` type and value
 -   `BMPString` type and value
@@ -212,5 +228,7 @@ Currently, `rasn` supports the following encoding rules:
 ## Troubleshooting
 
 If you have trouble generating correct bindings:
- * try playing around with the compiler configuration that can be passed to the `Compiler::new_with_config` constructor
- * open an issue [here](https://github.com/librasn/compiler/issues), if possible with a sample of the problematic ASN.1 spec
+
+-   try playing around with the compiler configuration that can be passed to the `Compiler::new_with_config` constructor
+-   open an issue [here](https://github.com/librasn/compiler/issues), if possible with a sample of the problematic ASN.1
+    spec
