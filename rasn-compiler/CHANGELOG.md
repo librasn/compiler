@@ -6,6 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.0](https://github.com/librasn/compiler/compare/rasn-compiler-v0.7.5...rasn-compiler-v0.8.0) - 2025-03-07
+
+### Added
+
+- *(error)* implement Error for CompilerError
+
+### Fixed
+
+- *(generator)* use single underscore in kebab to snake case conversion
+
 ## [0.7.5](https://github.com/librasn/compiler/compare/rasn-compiler-v0.7.4...rasn-compiler-v0.7.5) - 2025-03-03
 
 ### Fixed
