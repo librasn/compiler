@@ -32,7 +32,7 @@ pub struct Rasn {
     extensibility_environment: ExtensibilityEnvironment,
 }
 
-#[cfg_attr(target_family = "wasm", wasm_bindgen)]
+#[cfg_attr(target_family = "wasm", wasm_bindgen(getter_with_clone))]
 #[derive(Debug)]
 /// A configuration for the [Rasn] backend
 pub struct Config {
@@ -57,6 +57,16 @@ pub struct Config {
     /// This is disabled by default to generate less code, but can be enabled with
     /// `generate_from_impls` set to `true`.
     pub generate_from_impls: bool,
+    /// Stringified paths to items that will be imported into all generated modules with a
+    /// [use declaration](https://doc.rust-lang.org/reference/items/use-declarations.html).
+    /// For example `vec![String::from("my::module::*"), String::from("path::to::my::Struct")]`.
+    pub custom_imports: Vec<String>,
+    /// Annotations to be added to all generated rust types of the bindings. Each vector element
+    /// will generate a new line of annotations. Note that the compiler will automatically add all pound-derives
+    /// needed by `rasn` __except__ `Eq` and `Hash`, which are needed only when working with `SET`s.
+    ///
+    /// Default: `vec![String::from("#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]")]`
+    pub type_annotations: Vec<String>,
 }
 
 #[cfg(target_family = "wasm")]
@@ -67,11 +77,16 @@ impl Config {
         opaque_open_types: bool,
         default_wildcard_imports: bool,
         generate_from_impls: Option<bool>,
+        custom_imports: Option<Box<[String]>>,
+        type_annotations: Option<Box<[String]>>,
     ) -> Self {
         Self {
             opaque_open_types,
             default_wildcard_imports,
             generate_from_impls: generate_from_impls.unwrap_or(false),
+            custom_imports: custom_imports.map_or(Vec::new(), |c| c.into_vec()),
+            type_annotations: type_annotations
+                .map_or(Config::default().type_annotations, |c| c.into_vec()),
         }
     }
 }
@@ -82,6 +97,10 @@ impl Default for Config {
             opaque_open_types: true,
             default_wildcard_imports: false,
             generate_from_impls: false,
+            custom_imports: Vec::default(),
+            type_annotations: vec![String::from(
+                "#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]",
+            )],
         }
     }
 }
@@ -123,6 +142,16 @@ impl Backend for Rasn {
             self.tagging_environment = module.tagging_environment;
             self.extensibility_environment = module.extensibility_environment;
             let name = self.to_rust_snake_case(&module.name);
+            let custom_imports = self
+                .config
+                .custom_imports
+                .iter()
+                .map(|i| TokenStream::from_str(i.as_str()).map(|i| quote!(use #i;)))
+                .collect::<Result<Vec<_>, _>>()
+                .map_err(|e| GeneratorError {
+                    details: e.to_string(),
+                    ..Default::default()
+                })?;
             let imports = module.imports.iter().map(|import| {
                 let module =
                     self.to_rust_snake_case(&import.global_module_reference.module_reference);
@@ -171,7 +200,7 @@ impl Backend for Rasn {
                     use core::borrow::Borrow;
                     use rasn::prelude::*;
                     use lazy_static::lazy_static;
-
+                    #(#custom_imports)*
                     #(#imports)*
 
                     #(#pdus)*

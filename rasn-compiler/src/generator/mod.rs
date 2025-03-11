@@ -18,8 +18,8 @@ pub mod typescript;
 /// Implementors of the `Backend` trait can be used
 /// as a backend to the compiler in order to create bindings
 /// for other frameworks and languages than the default backend.
-pub trait Backend: Sized + Default {
-    type Config: Sized + Default + Debug;
+pub trait Backend: Default {
+    type Config: Default + Debug;
 
     /// File extension that should be used for output file containing the generated bindings.
     /// For example: `.ts` for Typescript, `.rs` for Rasn bindings.

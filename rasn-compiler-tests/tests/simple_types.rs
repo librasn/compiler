@@ -4,7 +4,7 @@ use rasn_compiler_tests::e2e_pdu;
 e2e_pdu!(
     boolean,
     "Test-Boolean ::= BOOLEAN",
-    r#" #[derive(AsnType, Debug, Clone, Copy, Decode, Encode, PartialEq, Eq, Hash)]
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
         #[rasn(delegate, identifier = "Test-Boolean")]
         pub struct TestBoolean(pub bool);                                 "#
 );
@@ -118,7 +118,7 @@ e2e_pdu!(
 e2e_pdu!(
     null,
     "Test-Int ::= NULL",
-    r#" #[derive(AsnType, Debug, Clone, Copy, Decode, Encode, PartialEq, Eq, Hash)]
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
         #[rasn(delegate, identifier = "Test-Int")]
         pub struct TestInt(pub ());                                 "#
 );
@@ -287,7 +287,7 @@ e2e_pdu!(
             test-2(7)
         }
         test-enum-val Test-Enum ::= test-2          "#,
-    r#" #[derive(AsnType, Debug, Clone, Copy, Decode, Encode, PartialEq, Eq, Hash)]
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
         #[rasn(enumerated, identifier = "Test-Enum")]
         pub enum TestEnum {
             #[rasn(identifier = "test-1")]
@@ -305,7 +305,7 @@ e2e_pdu!(
             test-2(-7)
         }
         test-enum-val Test-Enum ::= test-2          "#,
-    r#" #[derive(AsnType, Debug, Clone, Copy, Decode, Encode, PartialEq, Eq, Hash)]
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
         #[rasn(enumerated, identifier = "Test-Enum")]
         pub enum TestEnum {
             #[rasn(identifier = "test-1")]
@@ -320,7 +320,7 @@ e2e_pdu!(
     empty_enumerated,
     r#" Test-Enum ::= ENUMERATED {
         }                           "#,
-    r#" #[derive(AsnType, Debug, Clone, Copy, Decode, Encode, PartialEq, Eq, Hash)]
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
         #[rasn(enumerated, identifier = "Test-Enum")]
         pub enum TestEnum {
         }                                               "#
@@ -334,7 +334,7 @@ e2e_pdu!(
             test-2(7),
         }
         test-enum-val Test-Enum ::= test-2          "#,
-    r#" #[derive(AsnType, Debug, Clone, Copy, Decode, Encode, PartialEq, Eq, Hash)]
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
         #[rasn(enumerated, identifier = "Test-Enum")]
         #[non_exhaustive]
         pub enum TestEnum {
