@@ -1132,7 +1132,7 @@ impl Rasn {
         while let Some(c) = peekable.next() {
             if c.is_lowercase() || c == '_' || c.is_numeric() {
                 lowercase.push(c);
-                if peekable.peek().is_some_and(|next| next.is_uppercase()) {
+                if c != '_' && peekable.peek().map_or(false, |next| next.is_uppercase()) {
                     lowercase.push('_');
                 }
             } else {
@@ -1167,9 +1167,6 @@ impl Rasn {
         let input = input.drain(..).fold(String::new(), |mut acc, c| {
             if acc.is_empty() && c.is_lowercase() {
                 acc.push(c.to_ascii_uppercase());
-            } else if acc.ends_with('_') && c.is_uppercase() {
-                acc.pop();
-                acc.push(c);
             } else if acc.ends_with('_') {
                 acc.pop();
                 acc.push(c.to_ascii_uppercase());
@@ -1595,7 +1592,7 @@ is_recursive: false,
         assert_eq!(generator.to_rust_snake_case("hello-world"), "hello_world");
         assert_eq!(generator.to_rust_snake_case("HELLOWORLD"), "helloworld");
         assert_eq!(generator.to_rust_snake_case("HelloWORLD"), "hello_world");
-        assert_eq!(generator.to_rust_snake_case("HELLO-WORLD"), "hello__world");
+        assert_eq!(generator.to_rust_snake_case("HELLO-WORLD"), "hello_world");
         assert_eq!(generator.to_rust_snake_case("struct"), "r_struct");
         assert_eq!(generator.to_rust_snake_case("STRUCT"), "r_struct");
     }
