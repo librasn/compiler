@@ -32,7 +32,7 @@ pub struct Rasn {
     extensibility_environment: ExtensibilityEnvironment,
 }
 
-#[cfg_attr(target_family = "wasm", wasm_bindgen)]
+#[cfg_attr(target_family = "wasm", wasm_bindgen(getter_with_clone))]
 #[derive(Debug)]
 /// A configuration for the [Rasn] backend
 pub struct Config {
@@ -77,15 +77,16 @@ impl Config {
         opaque_open_types: bool,
         default_wildcard_imports: bool,
         generate_from_impls: Option<bool>,
-        custom_imports: Option<Vec<String>>,
-        type_annotations: Option<Vec<String>>,
+        custom_imports: Option<Box<[String]>>,
+        type_annotations: Option<Box<[String]>>,
     ) -> Self {
         Self {
             opaque_open_types,
             default_wildcard_imports,
             generate_from_impls: generate_from_impls.unwrap_or(false),
-            custom_imports: custom_imports.unwrap_or_default(),
-            type_annotations: type_annotations.unwrap_or(Config::default().type_annotations),
+            custom_imports: custom_imports.map_or(Vec::new(), |c| c.into_vec()),
+            type_annotations: type_annotations
+                .map_or(Config::default().type_annotations, |c| c.into_vec()),
         }
     }
 }
