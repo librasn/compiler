@@ -439,3 +439,50 @@ e2e_pdu!(
         }
     "#
 );
+
+e2e_pdu!(
+    nested_recursion_elsewhere,
+    r#"
+        TypeSpecification ::= CHOICE {
+            array			[1] IMPLICIT SEQUENCE
+            {
+                elementType		[2] TypeSpecification
+            }
+        }
+
+        GetVariableAccessAttributesResponse ::= SEQUENCE
+        {
+            typeSpecification	[2] TypeSpecification
+        }
+    "#,
+    r#"
+        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        pub struct GetVariableAccessAttributesResponse {
+            #[rasn(tag(context, 2), identifier = "typeSpecification")]
+            pub type_specification: TypeSpecification,
+        }
+        impl GetVariableAccessAttributesResponse {
+            pub fn new(type_specification: TypeSpecification) -> Self {
+                Self { type_specification }
+            }
+        }
+        #[doc = " Inner type "]
+        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(tag(context, 1))]
+        pub struct TypeSpecificationArray {
+            #[rasn(tag(context, 2), identifier = "elementType")]
+            pub element_type: TypeSpecification,
+        }
+        impl TypeSpecificationArray {
+            pub fn new(element_type: TypeSpecification) -> Self {
+                Self { element_type }
+            }
+        }
+        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(choice)]
+        pub enum TypeSpecification {
+            #[rasn(tag(context, 1))]
+            array(Box<TypeSpecificationArray>),
+        }
+    "#
+);

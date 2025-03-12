@@ -574,10 +574,16 @@ impl ASN1Type {
                         .get(identifier)
                         .is_some_and(|tld| tld.recurses(name, tlds))
             }
-            ASN1Type::Choice(c) => c.options.iter().any(|opt| opt.ty.recurses(name, tlds)),
-            ASN1Type::Sequence(s) | ASN1Type::Set(s) => {
-                s.members.iter().any(|m| m.ty.recurses(name, tlds))
-            }
+            ASN1Type::Choice(c) => c.options.iter().any(|opt|
+                    // if an option is already marked recursive,
+                    // it will be boxed and constitute a recursion
+                    // boundary between `self` and the option type
+                    !opt.is_recursive && opt.ty.recurses(name, tlds)),
+            ASN1Type::Sequence(s) | ASN1Type::Set(s) => s.members.iter().any(|m|
+                    // if a member is already marked recursive,
+                    // it will be boxed and thus constitutes a recursion
+                    // boundary between `self` and the member type
+                    !m.is_recursive && m.ty.recurses(name, tlds)),
             _ => false,
         }
     }
