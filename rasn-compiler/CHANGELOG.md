@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.0](https://github.com/librasn/compiler/compare/rasn-compiler-v0.8.1...rasn-compiler-v0.9.0) - 2025-03-14
+
+### Fixed
+
+- *(linker)* build reference graph to stop at circular references in recursion detection
+
 ## [0.8.1](https://github.com/librasn/compiler/compare/rasn-compiler-v0.8.0...rasn-compiler-v0.8.1) - 2025-03-12
 
 ### Fixed
