@@ -30,7 +30,7 @@ pub fn enumerated_value(input: Input<'_>) -> ParserResult<'_, ToplevelValueDefin
             }),
             name: n.to_string(),
             parameterization: params,
-            associated_type: p.clone().into(),
+            associated_type: p.clone(),
             value: ASN1Value::EnumeratedValue {
                 enumerated: p.as_str().into_owned(),
                 enumerable: e.to_string(),

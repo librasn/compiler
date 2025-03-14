@@ -97,8 +97,8 @@ impl SubtypeElement {
                 max,
                 extensible: _,
             } => {
-                min.as_ref().map_or(false, |s| s.is_elsewhere_declared())
-                    || max.as_ref().map_or(false, |s| s.is_elsewhere_declared())
+                min.as_ref().is_some_and(|s| s.is_elsewhere_declared())
+                    || max.as_ref().is_some_and(|s| s.is_elsewhere_declared())
             }
             SubtypeElement::SizeConstraint(s) => s.has_cross_reference(),
             SubtypeElement::TypeConstraint(t) => t.references_class_by_name(),

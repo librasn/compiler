@@ -67,7 +67,7 @@ impl ToplevelDefinition {
             | ToplevelDefinition::Type(ToplevelTypeDefinition {
                 ty: ASN1Type::SetOf(s),
                 ..
-            }) => s.element_type.constraints().map_or(false, |constraints| {
+            }) => s.element_type.constraints().is_some_and(|constraints| {
                 constraints
                     .iter()
                     .any(|c| matches!(c, Constraint::Parameter(_)))
@@ -87,15 +87,14 @@ impl ToplevelDefinition {
             }
             match &t.ty {
                 ASN1Type::Enumerated(e) => {
-                    return e
-                        .members
-                        .iter()
-                        .find_map(|m| (&m.name == identifier).then(|| ASN1Value::Integer(m.index)))
+                    return e.members.iter().find_map(|m| {
+                        (&m.name == identifier).then_some(ASN1Value::Integer(m.index))
+                    })
                 }
                 ASN1Type::Integer(i) => {
                     return i.distinguished_values.as_ref().and_then(|dv| {
                         dv.iter().find_map(|d| {
-                            (&d.name == identifier).then(|| ASN1Value::Integer(d.value))
+                            (&d.name == identifier).then_some(ASN1Value::Integer(d.value))
                         })
                     })
                 }
@@ -117,9 +116,16 @@ impl ToplevelDefinition {
 
     /// Checks if at any depth down the arbitrarily nested `self`, an elsewhere declared type with the name `name` exists.
     /// Sequence Ofs and Set Ofs break the recursion tree, because they use heap-based data structures.
-    pub fn recurses(&self, name: &str, tlds: &BTreeMap<String, ToplevelDefinition>) -> bool {
+    pub fn recurses(
+        &self,
+        name: &str,
+        tlds: &BTreeMap<String, ToplevelDefinition>,
+        reference_graph: Vec<&str>,
+    ) -> bool {
         match self {
-            ToplevelDefinition::Type(ToplevelTypeDefinition { ty, .. }) => ty.recurses(name, tlds),
+            ToplevelDefinition::Type(ToplevelTypeDefinition { ty, .. }) => {
+                ty.recurses(name, tlds, reference_graph)
+            }
             _ => false, // TODO: Check recursion for values and information objects
         }
     }
@@ -176,7 +182,7 @@ impl ToplevelDefinition {
     /// will be represented in the generated rust bindings.
     /// ### Params
     ///  * `tlds` - vector of other top-level declarations that will be searched as the method resolves a reference
-    /// returns `true` if the reference was resolved successfully.
+    ///    returns `true` if the reference was resolved successfully.
     pub fn link_constraint_reference(
         &mut self,
         tlds: &BTreeMap<String, ToplevelDefinition>,
@@ -276,16 +282,10 @@ impl ASN1Type {
     pub fn has_choice_selection_type(&self) -> bool {
         match self {
             ASN1Type::ChoiceSelectionType(_) => true,
-            ASN1Type::Sequence(s) | ASN1Type::Set(s) => s
-                .members
-                .iter()
-                .map(|m| m.ty.has_choice_selection_type())
-                .any(|b| b),
-            ASN1Type::Choice(c) => c
-                .options
-                .iter()
-                .map(|o| o.ty.has_choice_selection_type())
-                .any(|b| b),
+            ASN1Type::Sequence(s) | ASN1Type::Set(s) => {
+                s.members.iter().any(|m| m.ty.has_choice_selection_type())
+            }
+            ASN1Type::Choice(c) => c.options.iter().any(|o| o.ty.has_choice_selection_type()),
             ASN1Type::SequenceOf(s) | ASN1Type::SetOf(s) => {
                 s.element_type.has_choice_selection_type()
             }
@@ -566,24 +566,33 @@ impl ASN1Type {
 
     /// Checks if at any depth down the arbitrarily nested `self`, an elsewhere declared type with the name `name` exists.
     /// Sequence Ofs and Set Ofs break the recursion tree, because they use heap-based data structures.
-    pub fn recurses(&self, name: &str, tlds: &BTreeMap<String, ToplevelDefinition>) -> bool {
+    /// The `reference_graph` serves to detect circular references in the recursion tree. If a circular reference is detected,
+    /// recursion detection is stopped. The circular reference will be marked recursive once the respective type is captured mutably in `mark_recursive`.
+    pub fn recurses(
+        &self,
+        name: &str,
+        tlds: &BTreeMap<String, ToplevelDefinition>,
+        mut reference_graph: Vec<&str>,
+    ) -> bool {
         match self {
             ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere { identifier, .. }) => {
-                identifier == name
-                    || tlds
-                        .get(identifier)
-                        .is_some_and(|tld| tld.recurses(name, tlds))
+                !reference_graph.contains(&identifier.as_str())
+                    && (identifier == name
+                        || tlds.get(identifier).is_some_and(|tld| {
+                            reference_graph.push(identifier);
+                            tld.recurses(name, tlds, reference_graph)
+                        }))
             }
             ASN1Type::Choice(c) => c.options.iter().any(|opt|
                     // if an option is already marked recursive,
                     // it will be boxed and constitute a recursion
                     // boundary between `self` and the option type
-                    !opt.is_recursive && opt.ty.recurses(name, tlds)),
+                    !opt.is_recursive && opt.ty.recurses(name, tlds, reference_graph.clone())),
             ASN1Type::Sequence(s) | ASN1Type::Set(s) => s.members.iter().any(|m|
                     // if a member is already marked recursive,
                     // it will be boxed and thus constitutes a recursion
                     // boundary between `self` and the member type
-                    !m.is_recursive && m.ty.recurses(name, tlds)),
+                    !m.is_recursive && m.ty.recurses(name, tlds, reference_graph.clone())),
             _ => false,
         }
     }
@@ -598,7 +607,7 @@ impl ASN1Type {
             ASN1Type::Choice(choice) => {
                 let mut children = Vec::new();
                 for option in &mut choice.options {
-                    option.is_recursive = option.ty.recurses(name, tlds);
+                    option.is_recursive = option.ty.recurses(name, tlds, Vec::new());
                     let opt_ty_name = option.ty.as_str().into_owned();
                     let mut opt_children = option.ty.mark_recursive(&opt_ty_name, tlds)?;
                     if opt_children.iter().any(|id: &Cow<'_, str>| id == name) {
@@ -612,7 +621,7 @@ impl ASN1Type {
             ASN1Type::Set(s) | ASN1Type::Sequence(s) => {
                 let mut children = Vec::new();
                 for member in &mut s.members {
-                    member.is_recursive = member.ty.recurses(name, tlds);
+                    member.is_recursive = member.ty.recurses(name, tlds, Vec::new());
                     let mem_ty_name = member.ty.as_str().into_owned();
                     let mut mem_children = member.ty.mark_recursive(&mem_ty_name, tlds)?;
                     if mem_children.iter().any(|id: &Cow<'_, str>| id == name) {
@@ -776,7 +785,7 @@ impl ASN1Type {
                         m.ty.contains_constraint_reference()
                             || m.default_value
                                 .as_ref()
-                                .map_or(false, |d| d.is_elsewhere_declared())
+                                .is_some_and(|d| d.is_elsewhere_declared())
                             || m.constraints.iter().any(|c| c.has_cross_reference())
                     })
             }

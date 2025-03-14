@@ -1077,7 +1077,7 @@ impl IntegerType {
     /// Returns the Integer type with more restrictions
     /// - an IntegerType with a smaller set of values is considered more restrictive
     /// - an unsigned IntegerType is considered more restrictive if the size of the set of values is equal
-    /// if equal, `self` is returned
+    ///   if equal, `self` is returned
     pub fn max_restrictive(self, rhs: IntegerType) -> IntegerType {
         match (self, rhs) {
             (x, y) if x == y => x,

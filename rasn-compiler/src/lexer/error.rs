@@ -229,7 +229,7 @@ impl<'a> ErrorTree<'a> {
         match self {
             ErrorTree::Leaf { kind, .. } => kind == &ErrorKind::Nom(nom::error::ErrorKind::Eof),
             ErrorTree::Branch { tip, .. } => tip.is_eof_error(),
-            ErrorTree::Fork { branches } => branches.back().map_or(false, |b| b.is_eof_error()),
+            ErrorTree::Fork { branches } => branches.back().is_some_and(|b| b.is_eof_error()),
         }
     }
 }
