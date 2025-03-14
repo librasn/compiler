@@ -160,8 +160,10 @@ impl PerVisibleAlphabetConstraints {
                     let mut permitted_alphabet =
                         PerVisibleAlphabetConstraints::default_for(string_type);
                     for c in &c_string.constraints {
-                        PerVisibleAlphabetConstraints::try_new(c, c_string.ty)?
-                            .map(|mut p| permitted_alphabet += &mut p);
+                        if let Some(mut p) = PerVisibleAlphabetConstraints::try_new(c, c_string.ty)?
+                        {
+                            permitted_alphabet += &mut p
+                        }
                     }
                     Ok(Some(permitted_alphabet))
                 } else {
@@ -195,10 +197,7 @@ impl PerVisibleAlphabetConstraints {
     }
 }
 
-fn find_string_index(
-    value: &String,
-    char_set: &BTreeMap<usize, char>,
-) -> Result<usize, GrammarError> {
+fn find_string_index(value: &str, char_set: &BTreeMap<usize, char>) -> Result<usize, GrammarError> {
     let as_char = value.chars().next().unwrap();
     find_char_index(char_set, as_char)
 }
@@ -362,7 +361,7 @@ impl TryFrom<Option<&SubtypeElement>> for PerVisibleRangeConstraints {
                 extensible: _,
             }) => per_visible_range_constraints(
                 matches!(subtype, ASN1Type::Integer(_)),
-                subtype.constraints().unwrap_or(&mut vec![]),
+                subtype.constraints().unwrap_or(&vec![]),
             ),
             x => {
                 println!("{x:?}");
@@ -404,7 +403,7 @@ impl PerVisible for SubtypeElement {
                 extensible: _,
             } => s
                 .constraints()
-                .map_or(false, |c| c.iter().any(|c| c.per_visible())),
+                .is_some_and(|c| c.iter().any(|c| c.per_visible())),
             SubtypeElement::ValueRange {
                 min: _,
                 max: _,
@@ -419,7 +418,7 @@ impl PerVisible for SubtypeElement {
 
 pub fn per_visible_range_constraints(
     signed: bool,
-    constraint_list: &Vec<Constraint>,
+    constraint_list: &[Constraint],
 ) -> Result<PerVisibleRangeConstraints, GrammarError> {
     let mut constraints = if signed {
         PerVisibleRangeConstraints::default()

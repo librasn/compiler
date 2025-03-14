@@ -334,7 +334,7 @@ impl Validator {
             .get(key)
             .map(|t| match t {
                 ToplevelDefinition::Type(t) => t.ty.references_class_by_name(),
-                ToplevelDefinition::Information(i) => i.class.as_ref().map_or(false, |c| match c {
+                ToplevelDefinition::Information(i) => i.class.as_ref().is_some_and(|c| match c {
                     ClassLink::ByReference(_) => false,
                     ClassLink::ByName(_) => true,
                 }),
