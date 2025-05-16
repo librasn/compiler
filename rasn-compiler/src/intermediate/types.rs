@@ -281,14 +281,16 @@ pub struct SequenceOrSetOf {
     /// # ;
     /// ```
     pub element_type: Box<ASN1Type>,
+    pub element_tag: Option<AsnTag>,
     pub is_recursive: bool,
 }
 
-impl From<(Option<Vec<Constraint>>, ASN1Type)> for SequenceOrSetOf {
-    fn from(value: (Option<Vec<Constraint>>, ASN1Type)) -> Self {
+impl From<(Option<Vec<Constraint>>, (Option<AsnTag>, ASN1Type))> for SequenceOrSetOf {
+    fn from(value: (Option<Vec<Constraint>>, (Option<AsnTag>, ASN1Type))) -> Self {
         Self {
             constraints: value.0.unwrap_or_default(),
-            element_type: Box::new(value.1),
+            element_type: Box::new(value.1 .1),
+            element_tag: value.1 .0,
             is_recursive: false,
         }
     }

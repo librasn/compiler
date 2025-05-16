@@ -32,10 +32,10 @@ pub fn character_string_value(input: Input<'_>) -> ParserResult<'_, ASN1Value> {
 /// Sets to be used with Escape Sequences), or by reference to ISO/IEC 10646." The registration number
 /// can be expressed as a Quadruple of "Group", "Plane", "Row", and "Cell".
 ///
-/// _41.12	The "number" in the "Plane", "Row" and "Cell" productions shall be_
+/// _41.12 The "number" in the "Plane", "Row" and "Cell" productions shall be_
 /// _less than 256, and in the "Group" production it shall be less than 128._
 ///
-/// _41.13	The "Group" specifies a group in the coding space of the UCS,_
+/// _41.13 The "Group" specifies a group in the coding space of the UCS,_
 /// _the "Plane" specifies a plane within the group, the "Row" specifies a_
 /// _row within the plane, and the "Cell" specifies a cell within the row._
 /// _The abstract character identified by this notation is the abstract character_

@@ -32,8 +32,8 @@ use super::{
 /// ```ignore
 /// TYPE-IDENTIFIER ::= CLASS
 /// {
-/// 	&id OBJECT IDENTIFIER UNIQUE,
-/// 	&Type
+///    &id OBJECT IDENTIFIER UNIQUE,
+///    &Type
 /// }
 /// WITH SYNTAX {&Type IDENTIFIED BY &id}
 /// ```

@@ -236,6 +236,7 @@ fn parses_anonymous_sequence_of_declaration() {
             comments: "Comments".into(),
             name: "InterferenceManagementZones".into(),
             ty: ASN1Type::SequenceOf(SequenceOrSetOf {
+                element_tag: None,
                 is_recursive: false,
                 constraints: vec![Constraint::SubtypeConstraint(ElementSet {
                     set: ElementOrSetOperation::Element(SubtypeElement::SizeConstraint(Box::new(
@@ -551,6 +552,7 @@ fn parses_sequence_of_value() {
                     constraints: vec![],
                     distinguished_values: None
                 })),
+                element_tag: None,
                 is_recursive: false
             }),
             parameterization: None,

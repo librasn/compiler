@@ -25,6 +25,8 @@ use super::{
     util::{opt_delimited, take_until_and_not, take_until_unbalanced},
 };
 
+type SubsetMember<'s> = (&'s str, Option<Vec<Constraint>>, Option<ComponentPresence>);
+
 pub fn constraint(input: Input<'_>) -> ParserResult<'_, Vec<Constraint>> {
     skip_ws_and_comments(many1(alt((
         single_constraint,
@@ -295,9 +297,7 @@ fn multiple_type_constraints(input: Input<'_>) -> ParserResult<'_, SubtypeElemen
     )(input)
 }
 
-fn subset_member(
-    input: Input<'_>,
-) -> ParserResult<'_, (&str, Option<Vec<Constraint>>, Option<ComponentPresence>)> {
+fn subset_member(input: Input<'_>) -> ParserResult<'_, SubsetMember<'_>> {
     skip_ws_and_comments(tuple((
         identifier,
         opt(skip_ws_and_comments(constraint)),

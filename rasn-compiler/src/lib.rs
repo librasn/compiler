@@ -386,7 +386,7 @@ impl<B: Backend> Compiler<B, CompilerSourcesSet> {
     /// Runs the rasn compiler command and returns stringified Rust.
     /// Returns a Result wrapping a compilation result:
     /// * _Ok_  - tuple containing the stringified bindings for the ASN1 spec as well as a vector of warnings raised during the compilation
-    /// * _Err_ - Unrecoverable error, no rust representations were generated
+    /// * _Err_ - Unrecoverable error, no bindings were generated
     pub fn compile_to_string(mut self) -> Result<CompileResult, CompilerError> {
         self.internal_compile().map(CompileResult::fmt::<B>)
     }
@@ -504,7 +504,7 @@ impl<B: Backend> Compiler<B, CompilerReady> {
     /// Runs the rasn compiler command and returns stringified Rust.
     /// Returns a Result wrapping a compilation result:
     /// * _Ok_  - tuple containing the stringified bindings for the ASN1 spec as well as a vector of warnings raised during the compilation
-    /// * _Err_ - Unrecoverable error, no rust representations were generated
+    /// * _Err_ - Unrecoverable error, no bindings were generated
     pub fn compile_to_string(self) -> Result<CompileResult, CompilerError> {
         Compiler {
             state: CompilerSourcesSet {
@@ -518,7 +518,7 @@ impl<B: Backend> Compiler<B, CompilerReady> {
     /// Runs the rasn compiler command.
     /// Returns a Result wrapping a compilation result:
     /// * _Ok_  - Vector of warnings raised during the compilation
-    /// * _Err_ - Unrecoverable error, no rust representations were generated
+    /// * _Err_ - Unrecoverable error, no bindings were generated
     pub fn compile(self) -> Result<Vec<CompilerError>, CompilerError> {
         let result = Compiler {
             state: CompilerSourcesSet {

@@ -81,6 +81,7 @@ mod tests {
                         name: "children".into(),
                         tag: None,
                         ty: ASN1Type::SequenceOf(SequenceOrSetOf {
+                            element_tag: None,
                             is_recursive: false,
                             constraints: vec![],
                             element_type: Box::new(ASN1Type::CharacterString(CharacterString {

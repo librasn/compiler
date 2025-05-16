@@ -152,7 +152,7 @@ impl Rasn {
     pub(crate) fn format_range_annotations(
         &self,
         signed: bool,
-        constraints: &Vec<Constraint>,
+        constraints: &[Constraint],
     ) -> Result<TokenStream, GeneratorError> {
         if constraints.is_empty() {
             return Ok(TokenStream::new());
@@ -930,12 +930,21 @@ impl Rasn {
             | ASN1Type::Choice(_)
             | ASN1Type::Sequence(_)
             | ASN1Type::Set(_) => true,
-            ASN1Type::SequenceOf(SequenceOrSetOf { element_type, .. })
-            | ASN1Type::SetOf(SequenceOrSetOf { element_type, .. }) => {
+            ASN1Type::SequenceOf(SequenceOrSetOf {
+                element_type,
+                element_tag,
+                ..
+            })
+            | ASN1Type::SetOf(SequenceOrSetOf {
+                element_type,
+                element_tag,
+                ..
+            }) => {
                 Self::needs_unnesting(element_type)
                     || element_type
                         .constraints()
                         .is_some_and(|c| c.is_empty().not())
+                    || element_tag.is_some()
             }
             _ => false,
         }
@@ -1132,7 +1141,7 @@ impl Rasn {
         while let Some(c) = peekable.next() {
             if c.is_lowercase() || c == '_' || c.is_numeric() {
                 lowercase.push(c);
-                if c != '_' && peekable.peek().map_or(false, |next| next.is_uppercase()) {
+                if c != '_' && peekable.peek().is_some_and(|next| next.is_uppercase()) {
                     lowercase.push('_');
                 }
             } else {
