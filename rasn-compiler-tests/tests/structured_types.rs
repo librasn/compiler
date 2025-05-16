@@ -587,3 +587,35 @@ e2e_pdu!(
         }
     "#
 );
+
+e2e_pdu!(
+    tagged_prefix_type,
+    r#"
+        A ::= SEQUENCE {
+            member SEQUENCE OF [0] INTEGER,
+        }
+    "#,
+    r#"
+        #[doc = " Anonymous SEQUENCE OF member "]
+        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(delegate, tag(context, 0), identifier = "INTEGER")]
+        pub struct AnonymousAMember(pub Integer);
+
+        #[doc = " Inner type "]
+        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(delegate)]
+        pub struct AMember(pub SequenceOf<AnonymousAMember>);
+
+        #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(automatic_tags)]
+        pub struct A {
+            pub member: AMember,
+        }
+
+        impl A {
+            pub fn new(member: AMember) -> Self {
+                Self { member }
+            }
+        }
+    "#
+);

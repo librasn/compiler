@@ -14,6 +14,13 @@ use crate::{
 
 use super::{common::*, error::ParserResult};
 
+type EnumeralInput<'s> = (&'s str, Option<i128>, Option<char>, Option<&'s str>);
+type EnumeralBody = (
+    Vec<Enumeral>,
+    Option<ExtensionMarker>,
+    Option<Vec<Enumeral>>,
+);
+
 pub fn enumerated_value(input: Input<'_>) -> ParserResult<'_, ToplevelValueDefinition> {
     map(
         tuple((
@@ -55,9 +62,7 @@ pub fn enumerated(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
     )(input)
 }
 
-fn enumeral(
-    input: Input<'_>,
-) -> ParserResult<'_, (&str, Option<i128>, Option<char>, Option<&str>)> {
+fn enumeral(input: Input<'_>) -> ParserResult<'_, EnumeralInput<'_>> {
     skip_ws_and_comments(tuple((
         skip_ws(identifier),
         skip_ws(opt(in_parentheses(skip_ws_and_comments(i128)))),
@@ -81,16 +86,7 @@ fn enumerals<'a>(start_index: usize) -> impl FnMut(Input<'a>) -> ParserResult<'a
     )
 }
 
-fn enumerated_body(
-    input: Input<'_>,
-) -> ParserResult<
-    '_,
-    (
-        Vec<Enumeral>,
-        Option<ExtensionMarker>,
-        Option<Vec<Enumeral>>,
-    ),
-> {
+fn enumerated_body(input: Input<'_>) -> ParserResult<'_, EnumeralBody> {
     in_braces(|input| {
         let (input, root_enumerals) = enumerals(0)(input)?;
         let (input, ext_marker) = opt(terminated(extension_marker, opt(char(COMMA))))(input)?;

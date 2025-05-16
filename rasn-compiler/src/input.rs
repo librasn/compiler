@@ -131,7 +131,7 @@ impl AsBytes for Input<'_> {
     }
 }
 
-impl<'a, 'b> Compare<&'b str> for Input<'a> {
+impl<'b> Compare<&'b str> for Input<'_> {
     fn compare(&self, t: &'b str) -> nom::CompareResult {
         self.inner.compare(t)
     }
@@ -141,7 +141,7 @@ impl<'a, 'b> Compare<&'b str> for Input<'a> {
     }
 }
 
-impl<'a, 'b> Compare<&'b [u8]> for Input<'a> {
+impl<'b> Compare<&'b [u8]> for Input<'_> {
     fn compare(&self, t: &'b [u8]) -> nom::CompareResult {
         self.inner.compare(t)
     }
@@ -165,25 +165,25 @@ impl ExtendInto for Input<'_> {
     }
 }
 
-impl<'a, 'b> FindSubstring<&'b str> for Input<'a> {
+impl<'b> FindSubstring<&'b str> for Input<'_> {
     fn find_substring(&self, substr: &'b str) -> Option<usize> {
         self.inner.find_substring(substr)
     }
 }
 
-impl<'a, 'b> FindToken<&'b u8> for Input<'a> {
+impl<'b> FindToken<&'b u8> for Input<'_> {
     fn find_token(&self, token: &'b u8) -> bool {
         self.inner.find_token(token)
     }
 }
 
-impl<'a> FindToken<u8> for Input<'a> {
+impl FindToken<u8> for Input<'_> {
     fn find_token(&self, token: u8) -> bool {
         self.inner.find_token(token)
     }
 }
 
-impl<'a> FindToken<char> for Input<'a> {
+impl FindToken<char> for Input<'_> {
     fn find_token(&self, token: char) -> bool {
         self.inner.find_token(token)
     }

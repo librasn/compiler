@@ -515,8 +515,8 @@ impl Rasn {
             ASN1Value::LinkedArrayLikeValue(s) if ty.is_builtin_type() => {
                 let item_type = self.format_sequence_or_set_of_item_type(
                     match ty {
-                        ASN1Type::SequenceOf(seq) => &*seq.element_type,
-                        ASN1Type::SetOf(set) => &*set.element_type,
+                        ASN1Type::SequenceOf(seq) => &seq.element_type,
+                        ASN1Type::SetOf(set) => &set.element_type,
                         _ => {
                             return Err(GeneratorError::new(
                                 Some(ToplevelDefinition::Value(tld)),
@@ -938,7 +938,7 @@ impl Rasn {
                     ),
                     name: String::from(INNER_ARRAY_LIKE_PREFIX) + &name.to_string(),
                     ty: n.clone(),
-                    tag: None,
+                    tag: seq_or_set_of.element_tag.clone(),
                     index: None,
                 }))?,
             ),

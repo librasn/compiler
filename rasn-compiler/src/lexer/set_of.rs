@@ -7,7 +7,7 @@ use nom::{
 
 use super::{
     asn1_type,
-    common::{opt_parentheses, skip_ws_and_comments, value_identifier},
+    common::{asn_tag, opt_parentheses, skip_ws_and_comments, value_identifier},
     constraint::constraint,
     error::ParserResult,
 };
@@ -29,7 +29,7 @@ pub fn set_of(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
             ),
             preceded(
                 skip_ws_and_comments(pair(tag(OF), opt(skip_ws_and_comments(value_identifier)))),
-                asn1_type,
+                skip_ws_and_comments(pair(opt(asn_tag), skip_ws_and_comments(asn1_type))),
             ),
         ),
         |m| ASN1Type::SetOf(m.into()),
@@ -51,6 +51,7 @@ mod tests {
         assert_eq!(
             set_of("SET OF BOOLEAN".into()).unwrap().1,
             ASN1Type::SetOf(SequenceOrSetOf {
+                element_tag: None,
                 is_recursive: false,
                 constraints: vec![],
                 element_type: Box::new(ASN1Type::Boolean(Boolean {
@@ -65,6 +66,7 @@ mod tests {
         assert_eq!(
             set_of("SET OF Things".into()).unwrap().1,
             ASN1Type::SetOf(SequenceOrSetOf {
+                element_tag: None,
                 is_recursive: false,
                 constraints: vec![],
                 element_type: Box::new(ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
@@ -83,6 +85,7 @@ mod tests {
                 .unwrap()
                 .1,
             ASN1Type::SetOf(SequenceOrSetOf {
+                element_tag: None,
                 is_recursive: false,
                 constraints: vec![Constraint::SubtypeConstraint(ElementSet {
                     set: ElementOrSetOperation::Element(SubtypeElement::SizeConstraint(Box::new(
@@ -110,6 +113,7 @@ mod tests {
                 .unwrap()
                 .1,
             ASN1Type::SetOf(SequenceOrSetOf {
+                element_tag: None,
                 is_recursive: false,
                 constraints: vec![Constraint::SubtypeConstraint(ElementSet {
                     set: ElementOrSetOperation::Element(SubtypeElement::SizeConstraint(Box::new(
@@ -142,6 +146,7 @@ mod tests {
             .unwrap()
             .1,
             ASN1Type::SetOf(SequenceOrSetOf {
+                element_tag: None,
                 is_recursive: false,
                 constraints: vec![Constraint::SubtypeConstraint(ElementSet {
                     set: ElementOrSetOperation::Element(SubtypeElement::SizeConstraint(Box::new(
@@ -182,6 +187,7 @@ mod tests {
             .unwrap()
             .1,
             ASN1Type::SetOf(SequenceOrSetOf {
+                element_tag: None,
                 is_recursive: false,
                 constraints: vec![Constraint::SubtypeConstraint(ElementSet {
                     set: ElementOrSetOperation::Element(SubtypeElement::SizeConstraint(Box::new(
