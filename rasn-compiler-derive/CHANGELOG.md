@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.10.0](https://github.com/librasn/compiler/compare/rasn-compiler-derive-v0.9.0...rasn-compiler-derive-v0.10.0) - 2025-05-16
+
+### Added
+
+- add support for tagged sequence of items
+
 ## [0.5.0](https://github.com/librasn/compiler/compare/rasn-compiler-derive-v0.4.0...rasn-compiler-derive-v0.5.0) - 2024-09-19
 
 ### Added
