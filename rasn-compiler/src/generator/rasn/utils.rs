@@ -1270,6 +1270,18 @@ impl Rasn {
             .iter()
             .any(|s| regex.is_match(s)))
     }
+
+    pub(super) fn type_mismatch_error<T>(
+        &self,
+        tld: ToplevelTypeDefinition,
+        expected_type: &str
+    ) -> Result<T, GeneratorError> {
+        Err(GeneratorError::new(
+            Some(ToplevelDefinition::Type(tld)),
+            &format!("Expected {} top-level declaration", expected_type),
+            GeneratorErrorType::Asn1TypeMismatch,
+        ))
+    }
 }
 
 fn boxed_type(tokens: TokenStream) -> TokenStream {

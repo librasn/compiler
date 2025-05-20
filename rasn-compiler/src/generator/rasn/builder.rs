@@ -104,11 +104,7 @@ impl Rasn {
                 self.join_annotations(annotations, false, true)?,
             ))
         } else {
-            Err(GeneratorError::new(
-                Some(ToplevelDefinition::Type(tld)),
-                "Expected type alias top-level declaration",
-                GeneratorErrorType::Asn1TypeMismatch,
-            ))
+            self.type_mismatch_error(tld, "type alias")
         }
     }
 
@@ -142,7 +138,7 @@ impl Rasn {
         } else {
             Err(GeneratorError::new(
                 Some(ToplevelDefinition::Value(tld)),
-                "Expected INTEGER value top-level declaration",
+                "Expected INTEGER value declaration",
                 GeneratorErrorType::Asn1TypeMismatch,
             ))
         }
@@ -162,11 +158,7 @@ impl Rasn {
                 int.int_type().to_token_stream(),
             ))
         } else {
-            Err(GeneratorError::new(
-                Some(ToplevelDefinition::Type(tld)),
-                "Expected INTEGER top-level declaration",
-                GeneratorErrorType::Asn1TypeMismatch,
-            ))
+            self.type_mismatch_error(tld, "INTEGER")
         }
     }
 
@@ -194,11 +186,7 @@ impl Rasn {
                 ))
             }
         } else {
-            Err(GeneratorError::new(
-                Some(ToplevelDefinition::Type(tld)),
-                "Expected BIT STRING top-level declaration",
-                GeneratorErrorType::Asn1TypeMismatch,
-            ))
+            self.type_mismatch_error(tld, "BIT STRING")
         }
     }
 
@@ -226,11 +214,7 @@ impl Rasn {
                 ))
             }
         } else {
-            Err(GeneratorError::new(
-                Some(ToplevelDefinition::Type(tld)),
-                "Expected OCTET STRING top-level declaration",
-                GeneratorErrorType::Asn1TypeMismatch,
-            ))
+            self.type_mismatch_error(tld, "OCTET STRING")
         }
     }
 
@@ -251,11 +235,7 @@ impl Rasn {
                 self.join_annotations(annotations, false, true)?,
             ))
         } else {
-            Err(GeneratorError::new(
-                Some(ToplevelDefinition::Type(tld)),
-                "Expected Character String top-level declaration",
-                GeneratorErrorType::Asn1TypeMismatch,
-            ))
+            self.type_mismatch_error(tld, "Character String")
         }
     }
 
@@ -272,11 +252,7 @@ impl Rasn {
                 self.join_annotations(annotations, true, true)?,
             ))
         } else {
-            Err(GeneratorError::new(
-                Some(ToplevelDefinition::Type(tld)),
-                "Expected BOOLEAN top-level declaration",
-                GeneratorErrorType::Asn1TypeMismatch,
-            ))
+            self.type_mismatch_error(tld, "BOOLEAN")
         }
     }
 
@@ -529,11 +505,7 @@ impl Rasn {
                 self.join_annotations(annotations, false, true)?,
             ))
         } else {
-            Err(GeneratorError::new(
-                Some(ToplevelDefinition::Type(tld)),
-                "Expected GeneralizedTime top-level declaration",
-                GeneratorErrorType::Asn1TypeMismatch,
-            ))
+            self.type_mismatch_error(tld, "GeneralizedTime")
         }
     }
 
@@ -549,11 +521,7 @@ impl Rasn {
                 self.join_annotations(annotations, false, true)?,
             ))
         } else {
-            Err(GeneratorError::new(
-                Some(ToplevelDefinition::Type(tld)),
-                "Expected UTCTime top-level declaration",
-                GeneratorErrorType::Asn1TypeMismatch,
-            ))
+            self.type_mismatch_error(tld, "UTCTime")
         }
     }
 
@@ -570,11 +538,7 @@ impl Rasn {
                 self.join_annotations(annotations, false, true)?,
             ))
         } else {
-            Err(GeneratorError::new(
-                Some(ToplevelDefinition::Type(tld)),
-                "Expected OBJECT IDENTIFIER top-level declaration",
-                GeneratorErrorType::Asn1TypeMismatch,
-            ))
+            self.type_mismatch_error(tld, "OBJECT IDENTIFIER")
         }
     }
 
@@ -590,11 +554,7 @@ impl Rasn {
                 self.join_annotations(annotations, true, true)?,
             ))
         } else {
-            Err(GeneratorError::new(
-                Some(ToplevelDefinition::Type(tld)),
-                "Expected NULL top-level declaration",
-                GeneratorErrorType::Asn1TypeMismatch,
-            ))
+            self.type_mismatch_error(tld, "NULL")
         }
     }
 
@@ -632,11 +592,7 @@ impl Rasn {
                 self.join_annotations(annotations, true, true)?,
             ))
         } else {
-            Err(GeneratorError::new(
-                Some(ToplevelDefinition::Type(tld)),
-                "Expected ENUMERATED top-level declaration",
-                GeneratorErrorType::Asn1TypeMismatch,
-            ))
+            self.type_mismatch_error(tld, "ENUMERATED")
         }
     }
 
@@ -714,11 +670,7 @@ impl Rasn {
             }
             Ok(choice_str)
         } else {
-            Err(GeneratorError::new(
-                Some(ToplevelDefinition::Type(tld)),
-                "Expected CHOICE top-level declaration",
-                GeneratorErrorType::Asn1TypeMismatch,
-            ))
+            self.type_mismatch_error(tld, "CHOICE")
         }
     }
 
@@ -817,11 +769,7 @@ impl Rasn {
                     class_fields,
                 ))
             }
-            _ => Err(GeneratorError::new(
-                Some(ToplevelDefinition::Type(tld)),
-                "Expected SEQUENCE top-level declaration",
-                GeneratorErrorType::Asn1TypeMismatch,
-            )),
+            _ => self.type_mismatch_error(tld, "SEQUENCE"),
         }
     }
 
