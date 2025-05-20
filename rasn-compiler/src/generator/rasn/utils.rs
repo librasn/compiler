@@ -17,6 +17,7 @@ use crate::{
         ASN1Type, ASN1Value, AsnTag, CharacterStringType, IntegerType, TagClass,
         TaggingEnvironment, ToplevelDefinition, ToplevelTypeDefinition,
     },
+    prelude::ir::MemberOrOption,
 };
 
 use crate::generator::error::{GeneratorError, GeneratorErrorType};
@@ -57,6 +58,12 @@ impl IntegerType {
 pub struct NameType {
     name: Ident,
     typ: TokenStream,
+}
+
+#[derive(Debug)]
+pub struct FormattedMemberOrOption {
+    formatted_type_name: TokenStream,
+    annotations: TokenStream,
 }
 
 #[derive(Debug, Default)]
@@ -370,27 +377,6 @@ impl Rasn {
         extension_annotation: TokenStream,
     ) -> Result<(TokenStream, NameType), GeneratorError> {
         let name = self.to_rust_snake_case(&member.name);
-        let (mut all_constraints, mut formatted_type_name) = self.constraints_and_type_name(
-            &member.ty,
-            &member.name,
-            parent_name,
-            member.is_recursive,
-        )?;
-        if Self::needs_unnesting(&member.ty) {
-            formatted_type_name = self.inner_name(&member.name, parent_name).to_token_stream();
-            if member.is_recursive {
-                formatted_type_name = boxed_type(formatted_type_name);
-            }
-            // All constraints are applied on the delegate type
-            all_constraints = Vec::new();
-        } else {
-            all_constraints.append(&mut member.constraints.clone());
-        }
-        if (member.is_optional && member.default_value.is_none())
-            || member.name.starts_with("ext_group_")
-        {
-            formatted_type_name = quote!(Option<#formatted_type_name>);
-        }
         let default_annotation = member
             .default_value
             .as_ref()
@@ -399,26 +385,21 @@ impl Rasn {
                 quote!(default = #default_fn)
             })
             .unwrap_or_default();
-        let range_annotations = self.format_range_annotations(
-            matches!(member.ty, ASN1Type::Integer(_)),
-            &all_constraints,
-        )?;
-        let alphabet_annotations = if let ASN1Type::CharacterString(c_string) = &member.ty {
-            self.format_alphabet_annotations(c_string.ty, &all_constraints)?
-        } else {
-            TokenStream::new()
-        };
-        let mut annotation_items = vec![
+        let FormattedMemberOrOption {
+            mut formatted_type_name,
+            annotations,
+        } = self.format_member_or_option(
+            member,
+            parent_name,
+            &name,
             extension_annotation,
-            range_annotations,
-            alphabet_annotations,
-            self.format_tag(member.tag.as_ref(), false),
-            default_annotation,
-        ];
-        if name != member.name || member.name.starts_with("ext_group_") {
-            annotation_items.push(self.format_identifier_annotation(&member.name, "", &member.ty));
+            Some(default_annotation),
+        )?;
+        if (member.is_optional && member.default_value.is_none())
+            || member.name.starts_with("ext_group_")
+        {
+            formatted_type_name = quote!(Option<#formatted_type_name>);
         }
-        let annotations = self.join_annotations(annotation_items, false, false)?;
         Ok((
             quote! {
                 #annotations
@@ -485,27 +466,47 @@ impl Rasn {
         parent_name: &String,
         extension_annotation: TokenStream,
     ) -> Result<TokenStream, GeneratorError> {
+        let FormattedMemberOrOption {
+            formatted_type_name,
+            annotations,
+        } = self.format_member_or_option(member, parent_name, &name, extension_annotation, None)?;
+        Ok(quote! {
+                #annotations
+                #name(#formatted_type_name),
+        })
+    }
+
+    fn format_member_or_option<M: MemberOrOption>(
+        &self,
+        member: &M,
+        parent_name: &str,
+        name: &Ident,
+        extension_annotation: TokenStream,
+        default_annotation: Option<TokenStream>,
+    ) -> Result<FormattedMemberOrOption, GeneratorError> {
         let (mut all_constraints, mut formatted_type_name) = self.constraints_and_type_name(
-            &member.ty,
-            &member.name,
+            member.ty(),
+            member.name(),
             parent_name,
-            member.is_recursive,
+            member.is_recursive(),
         )?;
-        if Self::needs_unnesting(&member.ty) {
-            formatted_type_name = self.inner_name(&member.name, parent_name).to_token_stream();
-            if member.is_recursive {
+        if Self::needs_unnesting(member.ty()) {
+            formatted_type_name = self
+                .inner_name(member.name(), parent_name)
+                .to_token_stream();
+            if member.is_recursive() {
                 formatted_type_name = boxed_type(formatted_type_name);
             }
             // All constraints are applied on the delegate type
             all_constraints = Vec::new();
         } else {
-            all_constraints.append(&mut member.constraints.clone());
+            all_constraints.append(&mut member.constraints().to_owned());
         }
         let range_annotations = self.format_range_annotations(
-            matches!(member.ty, ASN1Type::Integer(_)),
+            matches!(member.ty(), ASN1Type::Integer(_)),
             &all_constraints,
         )?;
-        let alphabet_annotations = if let ASN1Type::CharacterString(c_string) = &member.ty {
+        let alphabet_annotations = if let ASN1Type::CharacterString(c_string) = member.ty() {
             self.format_alphabet_annotations(c_string.ty, &all_constraints)?
         } else {
             TokenStream::new()
@@ -514,23 +515,30 @@ impl Rasn {
             extension_annotation,
             range_annotations,
             alphabet_annotations,
-            self.format_tag(member.tag.as_ref(), false),
+            self.format_tag(member.tag(), false),
         ];
-        if name != member.name || member.name.starts_with("ext_group_") {
-            annotation_items.push(self.format_identifier_annotation(&member.name, "", &member.ty));
+        if let Some(default) = default_annotation {
+            annotation_items.push(default);
+        }
+        if name != member.name() || member.name().starts_with("ext_group_") {
+            annotation_items.push(self.format_identifier_annotation(
+                member.name(),
+                "",
+                member.ty(),
+            ));
         }
         let annotations = self.join_annotations(annotation_items, false, false)?;
-        Ok(quote! {
-                #annotations
-                #name(#formatted_type_name),
+        Ok(FormattedMemberOrOption {
+            formatted_type_name,
+            annotations,
         })
     }
 
     pub(crate) fn constraints_and_type_name(
         &self,
         ty: &ASN1Type,
-        name: &String,
-        parent_name: &String,
+        name: &str,
+        parent_name: &str,
         is_recursive: bool,
     ) -> Result<(Vec<Constraint>, TokenStream), GeneratorError> {
         Ok(match ty {
