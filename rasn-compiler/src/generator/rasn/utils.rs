@@ -6,7 +6,7 @@ use types::{BitString, OctetString};
 use utils::types::SequenceOrSetOf;
 
 use crate::{
-    common::INTERNAL_NESTED_TYPE_NAME_PREFIX,
+    common::{INTERNAL_EXTENSION_GROUP_NAME_PREFIX, INTERNAL_NESTED_TYPE_NAME_PREFIX},
     intermediate::{
         constraints::Constraint,
         encoding_rules::per_visible::{
@@ -37,6 +37,8 @@ pub(crate) use error;
 use self::types::{CharacterString, Constrainable};
 
 use super::*;
+
+const INNER_TYPE_COMMENT: &str = " Inner type ";
 
 impl IntegerType {
     fn to_token_stream(self) -> TokenStream {
@@ -145,9 +147,9 @@ impl Rasn {
         comments: &str,
         ty: &ASN1Type,
     ) -> TokenStream {
-        if comments == " Inner type "
+        if comments == INNER_TYPE_COMMENT
             || comments.starts_with(" Anonymous ")
-            || name.starts_with("ext_group_")
+            || name.starts_with(INTERNAL_EXTENSION_GROUP_NAME_PREFIX)
         {
             let identifier = ty.as_str().replace(' ', "_");
             quote!(identifier = #identifier)
@@ -334,7 +336,7 @@ impl Rasn {
                     Some(
                         self.generate_tld(ToplevelDefinition::Type(ToplevelTypeDefinition {
                             parameterization: None,
-                            comments: " Inner type ".into(),
+                            comments: INNER_TYPE_COMMENT.into(),
                             name: self.inner_name(&m.name, parent_name).to_string(),
                             ty: m.ty.clone(),
                             tag: m.tag.clone(),
@@ -346,7 +348,7 @@ impl Rasn {
                     Ok(None)
                 };
                 let extension_annotation = if i >= first_extension_index.unwrap_or(usize::MAX)
-                    && m.name.starts_with("ext_group_")
+                    && m.name.starts_with(INTERNAL_EXTENSION_GROUP_NAME_PREFIX)
                 {
                     quote!(extension_addition_group)
                 } else if i >= first_extension_index.unwrap_or(usize::MAX) {
@@ -396,7 +398,9 @@ impl Rasn {
             Some(default_annotation),
         )?;
         if (member.is_optional && member.default_value.is_none())
-            || member.name.starts_with("ext_group_")
+            || member
+                .name
+                .starts_with(INTERNAL_EXTENSION_GROUP_NAME_PREFIX)
         {
             formatted_type_name = quote!(Option<#formatted_type_name>);
         }
@@ -425,7 +429,7 @@ impl Rasn {
                     Some(
                         self.generate_tld(ToplevelDefinition::Type(ToplevelTypeDefinition {
                             parameterization: None,
-                            comments: " Inner type ".into(),
+                            comments: INNER_TYPE_COMMENT.into(),
                             name: self.inner_name(&o.name, parent_name).to_string(),
                             ty: o.ty.clone(),
                             tag: o.tag.clone(),
@@ -437,7 +441,7 @@ impl Rasn {
                     Ok(None)
                 };
                 let extension_annotation = if i >= first_extension_index.unwrap_or(usize::MAX)
-                    && o.name.starts_with("ext_group_")
+                    && o.name.starts_with(INTERNAL_EXTENSION_GROUP_NAME_PREFIX)
                 {
                     quote!(extension_addition_group)
                 } else if i >= first_extension_index.unwrap_or(usize::MAX) {
@@ -520,7 +524,11 @@ impl Rasn {
         if let Some(default) = default_annotation {
             annotation_items.push(default);
         }
-        if name != member.name() || member.name().starts_with("ext_group_") {
+        if name != member.name()
+            || member
+                .name()
+                .starts_with(INTERNAL_EXTENSION_GROUP_NAME_PREFIX)
+        {
             annotation_items.push(self.format_identifier_annotation(
                 member.name(),
                 "",
@@ -1200,6 +1208,20 @@ impl Rasn {
         TokenStream::from_str(&name).unwrap()
     }
 
+    pub(super) fn format_name_and_common_annotations(
+        &self,
+        tld: &ToplevelTypeDefinition,
+    ) -> Result<(TokenStream, Vec<TokenStream>), GeneratorError> {
+        let name = self.to_rust_title_case(&tld.name);
+        let mut annotations = vec![quote!(delegate), self.format_tag(tld.tag.as_ref(), false)];
+
+        if name.to_string() != tld.name {
+            annotations.push(self.format_identifier_annotation(&tld.name, &tld.comments, &tld.ty));
+        }
+
+        Ok((name, annotations))
+    }
+
     fn required_annotations(&self, needs_copy: bool) -> Result<Vec<TokenStream>, GeneratorError> {
         let mut required_derives = Vec::new();
         for derive in Self::REQUIRED_DERIVES {
@@ -1592,7 +1614,7 @@ is_recursive: false,
             generator
                 .format_identifier_annotation(
                     "original-name",
-                    " Inner type ",
+                    INNER_TYPE_COMMENT,
                     &ASN1Type::Boolean(Boolean::default())
                 )
                 .to_string(),

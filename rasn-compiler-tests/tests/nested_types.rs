@@ -23,11 +23,11 @@ e2e_pdu!(
         Wrapping-Int ::= Test-Int (0..123)
         value Wrapping-Int ::= 4"#,
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-        #[rasn(delegate, value("0..=123723"), identifier = "Test-Int")]
+        #[rasn(delegate, identifier = "Test-Int", value("0..=123723"))]
         pub struct TestInt(pub u32);
 
         #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-        #[rasn(delegate, value("0..=123"), identifier = "Wrapping-Int")]
+        #[rasn(delegate, identifier = "Wrapping-Int", value("0..=123"))]
         pub struct WrappingInt(pub TestInt);
 
         pub const VALUE: WrappingInt = WrappingInt(TestInt(4));         "#
@@ -49,7 +49,7 @@ e2e_pdu!(
         pub struct TestBoolean(pub bool);
 
         #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-        #[rasn(delegate, value("0..=123723"), identifier = "Test-Int")]
+        #[rasn(delegate, identifier = "Test-Int", value("0..=123723"))]
         pub struct TestInt(pub u32);
 
         #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
@@ -73,7 +73,7 @@ e2e_pdu!(
         pub struct WrappingBoolean(pub TestBoolean);
 
         #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-        #[rasn(delegate, value("0..=123"), identifier = "Wrapping-Int")]
+        #[rasn(delegate, identifier = "Wrapping-Int", value("0..=123"))]
         pub struct WrappingInt(pub TestInt);
 
         lazy_static! {
@@ -90,11 +90,11 @@ e2e_pdu!(
         Wrapping-Int ::= Test-Int (0..value)
         value Test-Int ::= 5"#,
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-        #[rasn(delegate, value("0..=123723"), identifier = "Test-Int")]
+        #[rasn(delegate, identifier = "Test-Int", value("0..=123723"))]
         pub struct TestInt(pub u32);
 
         #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-        #[rasn(delegate, value("0..=5"), identifier = "Wrapping-Int")]
+        #[rasn(delegate, identifier = "Wrapping-Int", value("0..=5"))]
         pub struct WrappingInt(pub TestInt);
 
         pub const VALUE: TestInt = TestInt(5);         "#
