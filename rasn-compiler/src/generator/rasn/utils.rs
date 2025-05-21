@@ -233,19 +233,22 @@ impl Rasn {
             .charset_subsets()
             .iter()
             .map(|subset| match subset {
-                CharsetSubset::Single(c) => format!("{}", c.escape_unicode()),
+                CharsetSubset::Single(c) => format!("\"{}\"", c.escape_unicode()),
                 CharsetSubset::Range { from, to } => format!(
-                    "{}..{}",
+                    "\"{}..{}\"",
                     from.map_or(String::from(""), |c| format!("{}", c.escape_unicode())),
                     to.map_or(String::from(""), |c| format!("{}", c.escape_unicode()))
                 ),
             })
-            .collect::<Vec<String>>()
+            .collect::<Vec<_>>()
             .join(", ");
         Ok(if alphabet_unicode.is_empty() {
             TokenStream::new()
         } else {
-            quote!(from(#alphabet_unicode))
+            let alphabet_ts: TokenStream = alphabet_unicode
+                .parse()                           // turn the text into *tokens*
+                .expect("internal error: cannot parse generated unicode list");
+            quote!(from(#alphabet_ts))
         })
     }
 
