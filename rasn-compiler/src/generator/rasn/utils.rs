@@ -234,8 +234,9 @@ impl Rasn {
             .iter()
             .map(|subset| match subset {
                 CharsetSubset::Single(c) => format!("\"{}\"", c.escape_unicode()),
+                // ITU-T Rec. X.680 (07/2002) 47.4.1, E.2.2.2. range endpoints are inclusive
                 CharsetSubset::Range { from, to } => format!(
-                    "\"{}..{}\"",
+                    "\"{}..={}\"",
                     from.map_or(String::from(""), |c| format!("{}", c.escape_unicode())),
                     to.map_or(String::from(""), |c| format!("{}", c.escape_unicode()))
                 ),
