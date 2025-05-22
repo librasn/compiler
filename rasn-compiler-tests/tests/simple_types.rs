@@ -900,3 +900,11 @@ e2e_pdu!(
             );
         }                                                           "#
 );
+
+e2e_pdu!(
+    visible_from,
+    r#" FQDN ::= VisibleString(FROM ("a".."z" | "A".."Z" | "0".."9" | ".-")) (SIZE (1..255))"#,
+    r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+        #[rasn(delegate, size("1..=255"), from("\u{2d}", "\u{2e}", "\u{30}..=\u{39}", "\u{41}..=\u{5a}", "\u{61}..=\u{7a}"))]
+        pub struct FQDN(pub VisibleString);                             "#
+);

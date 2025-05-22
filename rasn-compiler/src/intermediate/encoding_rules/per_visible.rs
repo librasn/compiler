@@ -86,13 +86,33 @@ impl PerVisibleAlphabetConstraints {
     ) -> Result<Option<Self>, GrammarError> {
         match element {
             None => Ok(None),
-            Some(SubtypeElement::PermittedAlphabet(elem_or_set)) => match &**elem_or_set {
-                ElementOrSetOperation::Element(e) => Self::from_subtype_elem(Some(e), string_type),
-                ElementOrSetOperation::SetOperation(s) => Self::from_subtype_elem(
-                    fold_constraint_set(s, Some(&string_type.character_set()))?.as_ref(),
-                    string_type,
-                ),
-            },
+            Some(SubtypeElement::PermittedAlphabet(elem_or_set)) => {
+                let mut result = PerVisibleAlphabetConstraints::default_for(string_type);
+                match &**elem_or_set {
+                    ElementOrSetOperation::Element(e) => {
+                        if let Some(mut p) = Self::from_subtype_elem(Some(e), string_type)? {
+                            result += &mut p;
+                        }
+                    }
+                    ElementOrSetOperation::SetOperation(s) => {
+                        fn flatten_set(elems: &mut Vec<SubtypeElement>, set: &SetOperation) {
+                            elems.push(set.base.clone());
+                            match &*set.operant {
+                                ElementOrSetOperation::Element(e2) => elems.push(e2.clone()),
+                                ElementOrSetOperation::SetOperation(inner) => flatten_set(elems, inner),
+                            }
+                        }
+                        let mut elems = Vec::new();
+                        flatten_set(&mut elems, s);
+                        for elem in elems {
+                            if let Some(mut p) = Self::from_subtype_elem(Some(&elem), string_type)? {
+                                result += &mut p;
+                            }
+                        }
+                    }
+                }
+                Ok(Some(result))
+            }
             Some(SubtypeElement::SingleValue { value, extensible }) => match (value, extensible) {
                 (ASN1Value::String(s), false) => {
                     let mut char_subset = s
@@ -179,12 +199,17 @@ impl PerVisibleAlphabetConstraints {
     }
 
     pub fn finalize(&mut self) {
+        // sort charset_subsets by starting character to ensure consistent order
+        self.charset_subsets.sort_by_key(|subset| match subset {
+            CharsetSubset::Single(c) => *c,
+            CharsetSubset::Range { from, .. } => from.unwrap_or('\0'),
+        });
         self.index_by_character = Some(
             self.character_by_index
                 .iter()
                 .map(|(i, c)| (*c, *i))
                 .collect(),
-        )
+        );
     }
 
     pub fn default_for(string_type: CharacterStringType) -> Self {
@@ -214,7 +239,10 @@ fn find_char_index(char_set: &BTreeMap<usize, char>, as_char: char) -> Result<us
 
 impl AddAssign<&mut PerVisibleAlphabetConstraints> for PerVisibleAlphabetConstraints {
     fn add_assign(&mut self, rhs: &mut PerVisibleAlphabetConstraints) {
-        self.character_by_index.append(&mut rhs.character_by_index)
+        // merge character index mappings
+        self.character_by_index.append(&mut rhs.character_by_index);
+        // merge charset subsets (ranges and singletons)
+        self.charset_subsets.append(&mut rhs.charset_subsets);
     }
 }
 
