@@ -6,7 +6,10 @@ use nom::{
     sequence::{terminated, tuple},
 };
 
-use crate::intermediate::{types::*, *};
+use crate::{
+    common::INTERNAL_EXTENSION_GROUP_NAME_PREFIX,
+    intermediate::{types::*, *},
+};
 
 use super::{common::optional_comma, constraint::constraint, *};
 
@@ -86,7 +89,8 @@ fn extension_group(input: Input<'_>) -> ParserResult<'_, SequenceComponent> {
             }
             SequenceComponent::Member(SequenceOrSetMember {
                 is_recursive: false,
-                name: String::from("ext_group_") + &members.first().unwrap().name,
+                name: String::from(INTERNAL_EXTENSION_GROUP_NAME_PREFIX)
+                    + &members.first().unwrap().name,
                 tag: None,
                 ty: ASN1Type::Sequence(SequenceOrSet {
                     components_of,

@@ -350,7 +350,7 @@ e2e_pdu!(
 
         #[doc = " Anonymous SEQUENCE OF member "]
         #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-        #[rasn(delegate, value("1..=5"), identifier = "INTEGER")]
+        #[rasn(delegate, identifier = "INTEGER", value("1..=5"))]
         pub struct AnonymousTicketAges(pub u8);
 
         #[doc = " Inner type "]
@@ -383,7 +383,7 @@ e2e_pdu!(
     r#"
         #[doc = " Anonymous SET OF member "]
         #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-        #[rasn(delegate, value("1..=5"), identifier = "INTEGER")]
+        #[rasn(delegate, identifier = "INTEGER", value("1..=5"))]
         pub struct AnonymousTicketAgeSet(pub u8);
 
         #[doc = " Inner type "]

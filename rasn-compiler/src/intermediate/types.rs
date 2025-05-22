@@ -12,6 +12,16 @@ pub trait IterNameTypes {
     fn iter_name_types(&self) -> impl Iterator<Item = (&str, &ASN1Type)>;
 }
 
+/// Convenience trait for processing members of constructed types (`SEQUENCE`, `SET`) and `CHOICE`s.
+pub trait MemberOrOption {
+    const IS_CHOICE_OPTION: bool;
+    fn name(&self) -> &str;
+    fn ty(&self) -> &ASN1Type;
+    fn constraints(&self) -> &[Constraint];
+    fn is_recursive(&self) -> bool;
+    fn tag(&self) -> Option<&AsnTag>;
+}
+
 /// Trait shared by all ASN1 types that can be constrained a.k.a subtyped.
 /// *See also Rec. ITU-T X.680 (02/2021) §49 - §51*
 pub trait Constrainable {
@@ -458,6 +468,30 @@ pub struct SequenceOrSetMember {
     pub constraints: Vec<Constraint>,
 }
 
+impl MemberOrOption for SequenceOrSetMember {
+    fn name(&self) -> &str {
+        &self.name
+    }
+
+    fn ty(&self) -> &ASN1Type {
+        &self.ty
+    }
+
+    fn constraints(&self) -> &[Constraint] {
+        &self.constraints
+    }
+
+    fn is_recursive(&self) -> bool {
+        self.is_recursive
+    }
+
+    fn tag(&self) -> Option<&AsnTag> {
+        self.tag.as_ref()
+    }
+
+    const IS_CHOICE_OPTION: bool = false;
+}
+
 impl
     From<(
         &str,
@@ -564,6 +598,30 @@ pub struct ChoiceOption {
     pub ty: ASN1Type,
     pub constraints: Vec<Constraint>,
     pub is_recursive: bool,
+}
+
+impl MemberOrOption for ChoiceOption {
+    fn name(&self) -> &str {
+        &self.name
+    }
+
+    fn ty(&self) -> &ASN1Type {
+        &self.ty
+    }
+
+    fn constraints(&self) -> &[Constraint] {
+        &self.constraints
+    }
+
+    fn is_recursive(&self) -> bool {
+        self.is_recursive
+    }
+
+    fn tag(&self) -> Option<&AsnTag> {
+        self.tag.as_ref()
+    }
+
+    const IS_CHOICE_OPTION: bool = true;
 }
 
 impl From<(&str, Option<AsnTag>, ASN1Type, Option<Vec<Constraint>>)> for ChoiceOption {

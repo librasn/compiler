@@ -6,7 +6,7 @@ use types::{BitString, OctetString};
 use utils::types::SequenceOrSetOf;
 
 use crate::{
-    common::INTERNAL_NESTED_TYPE_NAME_PREFIX,
+    common::{INTERNAL_EXTENSION_GROUP_NAME_PREFIX, INTERNAL_NESTED_TYPE_NAME_PREFIX},
     intermediate::{
         constraints::Constraint,
         encoding_rules::per_visible::{
@@ -17,6 +17,7 @@ use crate::{
         ASN1Type, ASN1Value, AsnTag, CharacterStringType, IntegerType, TagClass,
         TaggingEnvironment, ToplevelDefinition, ToplevelTypeDefinition,
     },
+    prelude::ir::MemberOrOption,
 };
 
 use crate::generator::error::{GeneratorError, GeneratorErrorType};
@@ -36,6 +37,8 @@ pub(crate) use error;
 use self::types::{CharacterString, Constrainable};
 
 use super::*;
+
+const INNER_TYPE_COMMENT: &str = " Inner type ";
 
 impl IntegerType {
     fn to_token_stream(self) -> TokenStream {
@@ -57,6 +60,12 @@ impl IntegerType {
 pub struct NameType {
     name: Ident,
     typ: TokenStream,
+}
+
+#[derive(Debug)]
+pub struct FormattedMemberOrOption {
+    formatted_type_name: TokenStream,
+    annotations: TokenStream,
 }
 
 #[derive(Debug, Default)]
@@ -138,9 +147,9 @@ impl Rasn {
         comments: &str,
         ty: &ASN1Type,
     ) -> TokenStream {
-        if comments == " Inner type "
+        if comments == INNER_TYPE_COMMENT
             || comments.starts_with(" Anonymous ")
-            || name.starts_with("ext_group_")
+            || name.starts_with(INTERNAL_EXTENSION_GROUP_NAME_PREFIX)
         {
             let identifier = ty.as_str().replace(' ', "_");
             quote!(identifier = #identifier)
@@ -331,7 +340,7 @@ impl Rasn {
                     Some(
                         self.generate_tld(ToplevelDefinition::Type(ToplevelTypeDefinition {
                             parameterization: None,
-                            comments: " Inner type ".into(),
+                            comments: INNER_TYPE_COMMENT.into(),
                             name: self.inner_name(&m.name, parent_name).to_string(),
                             ty: m.ty.clone(),
                             tag: m.tag.clone(),
@@ -343,7 +352,7 @@ impl Rasn {
                     Ok(None)
                 };
                 let extension_annotation = if i >= first_extension_index.unwrap_or(usize::MAX)
-                    && m.name.starts_with("ext_group_")
+                    && m.name.starts_with(INTERNAL_EXTENSION_GROUP_NAME_PREFIX)
                 {
                     quote!(extension_addition_group)
                 } else if i >= first_extension_index.unwrap_or(usize::MAX) {
@@ -374,27 +383,6 @@ impl Rasn {
         extension_annotation: TokenStream,
     ) -> Result<(TokenStream, NameType), GeneratorError> {
         let name = self.to_rust_snake_case(&member.name);
-        let (mut all_constraints, mut formatted_type_name) = self.constraints_and_type_name(
-            &member.ty,
-            &member.name,
-            parent_name,
-            member.is_recursive,
-        )?;
-        if Self::needs_unnesting(&member.ty) {
-            formatted_type_name = self.inner_name(&member.name, parent_name).to_token_stream();
-            if member.is_recursive {
-                formatted_type_name = boxed_type(formatted_type_name);
-            }
-            // All constraints are applied on the delegate type
-            all_constraints = Vec::new();
-        } else {
-            all_constraints.append(&mut member.constraints.clone());
-        }
-        if (member.is_optional && member.default_value.is_none())
-            || member.name.starts_with("ext_group_")
-        {
-            formatted_type_name = quote!(Option<#formatted_type_name>);
-        }
         let default_annotation = member
             .default_value
             .as_ref()
@@ -403,26 +391,23 @@ impl Rasn {
                 quote!(default = #default_fn)
             })
             .unwrap_or_default();
-        let range_annotations = self.format_range_annotations(
-            matches!(member.ty, ASN1Type::Integer(_)),
-            &all_constraints,
-        )?;
-        let alphabet_annotations = if let ASN1Type::CharacterString(c_string) = &member.ty {
-            self.format_alphabet_annotations(c_string.ty, &all_constraints)?
-        } else {
-            TokenStream::new()
-        };
-        let mut annotation_items = vec![
+        let FormattedMemberOrOption {
+            mut formatted_type_name,
+            annotations,
+        } = self.format_member_or_option(
+            member,
+            parent_name,
+            &name,
             extension_annotation,
-            range_annotations,
-            alphabet_annotations,
-            self.format_tag(member.tag.as_ref(), false),
-            default_annotation,
-        ];
-        if name != member.name || member.name.starts_with("ext_group_") {
-            annotation_items.push(self.format_identifier_annotation(&member.name, "", &member.ty));
+            Some(default_annotation),
+        )?;
+        if (member.is_optional && member.default_value.is_none())
+            || member
+                .name
+                .starts_with(INTERNAL_EXTENSION_GROUP_NAME_PREFIX)
+        {
+            formatted_type_name = quote!(Option<#formatted_type_name>);
         }
-        let annotations = self.join_annotations(annotation_items, false, false)?;
         Ok((
             quote! {
                 #annotations
@@ -448,7 +433,7 @@ impl Rasn {
                     Some(
                         self.generate_tld(ToplevelDefinition::Type(ToplevelTypeDefinition {
                             parameterization: None,
-                            comments: " Inner type ".into(),
+                            comments: INNER_TYPE_COMMENT.into(),
                             name: self.inner_name(&o.name, parent_name).to_string(),
                             ty: o.ty.clone(),
                             tag: o.tag.clone(),
@@ -460,7 +445,7 @@ impl Rasn {
                     Ok(None)
                 };
                 let extension_annotation = if i >= first_extension_index.unwrap_or(usize::MAX)
-                    && o.name.starts_with("ext_group_")
+                    && o.name.starts_with(INTERNAL_EXTENSION_GROUP_NAME_PREFIX)
                 {
                     quote!(extension_addition_group)
                 } else if i >= first_extension_index.unwrap_or(usize::MAX) {
@@ -489,27 +474,47 @@ impl Rasn {
         parent_name: &String,
         extension_annotation: TokenStream,
     ) -> Result<TokenStream, GeneratorError> {
+        let FormattedMemberOrOption {
+            formatted_type_name,
+            annotations,
+        } = self.format_member_or_option(member, parent_name, &name, extension_annotation, None)?;
+        Ok(quote! {
+                #annotations
+                #name(#formatted_type_name),
+        })
+    }
+
+    fn format_member_or_option<M: MemberOrOption>(
+        &self,
+        member: &M,
+        parent_name: &str,
+        name: &Ident,
+        extension_annotation: TokenStream,
+        default_annotation: Option<TokenStream>,
+    ) -> Result<FormattedMemberOrOption, GeneratorError> {
         let (mut all_constraints, mut formatted_type_name) = self.constraints_and_type_name(
-            &member.ty,
-            &member.name,
+            member.ty(),
+            member.name(),
             parent_name,
-            member.is_recursive,
+            member.is_recursive(),
         )?;
-        if Self::needs_unnesting(&member.ty) {
-            formatted_type_name = self.inner_name(&member.name, parent_name).to_token_stream();
-            if member.is_recursive {
+        if Self::needs_unnesting(member.ty()) {
+            formatted_type_name = self
+                .inner_name(member.name(), parent_name)
+                .to_token_stream();
+            if member.is_recursive() {
                 formatted_type_name = boxed_type(formatted_type_name);
             }
             // All constraints are applied on the delegate type
             all_constraints = Vec::new();
         } else {
-            all_constraints.append(&mut member.constraints.clone());
+            all_constraints.append(&mut member.constraints().to_owned());
         }
         let range_annotations = self.format_range_annotations(
-            matches!(member.ty, ASN1Type::Integer(_)),
+            matches!(member.ty(), ASN1Type::Integer(_)),
             &all_constraints,
         )?;
-        let alphabet_annotations = if let ASN1Type::CharacterString(c_string) = &member.ty {
+        let alphabet_annotations = if let ASN1Type::CharacterString(c_string) = member.ty() {
             self.format_alphabet_annotations(c_string.ty, &all_constraints)?
         } else {
             TokenStream::new()
@@ -518,23 +523,34 @@ impl Rasn {
             extension_annotation,
             range_annotations,
             alphabet_annotations,
-            self.format_tag(member.tag.as_ref(), false),
+            self.format_tag(member.tag(), false),
         ];
-        if name != member.name || member.name.starts_with("ext_group_") {
-            annotation_items.push(self.format_identifier_annotation(&member.name, "", &member.ty));
+        if let Some(default) = default_annotation {
+            annotation_items.push(default);
+        }
+        if name != member.name()
+            || member
+                .name()
+                .starts_with(INTERNAL_EXTENSION_GROUP_NAME_PREFIX)
+        {
+            annotation_items.push(self.format_identifier_annotation(
+                member.name(),
+                "",
+                member.ty(),
+            ));
         }
         let annotations = self.join_annotations(annotation_items, false, false)?;
-        Ok(quote! {
-                #annotations
-                #name(#formatted_type_name),
+        Ok(FormattedMemberOrOption {
+            formatted_type_name,
+            annotations,
         })
     }
 
     pub(crate) fn constraints_and_type_name(
         &self,
         ty: &ASN1Type,
-        name: &String,
-        parent_name: &String,
+        name: &str,
+        parent_name: &str,
         is_recursive: bool,
     ) -> Result<(Vec<Constraint>, TokenStream), GeneratorError> {
         Ok(match ty {
@@ -1196,6 +1212,20 @@ impl Rasn {
         TokenStream::from_str(&name).unwrap()
     }
 
+    pub(super) fn format_name_and_common_annotations(
+        &self,
+        tld: &ToplevelTypeDefinition,
+    ) -> Result<(TokenStream, Vec<TokenStream>), GeneratorError> {
+        let name = self.to_rust_title_case(&tld.name);
+        let mut annotations = vec![quote!(delegate), self.format_tag(tld.tag.as_ref(), false)];
+
+        if name.to_string() != tld.name {
+            annotations.push(self.format_identifier_annotation(&tld.name, &tld.comments, &tld.ty));
+        }
+
+        Ok((name, annotations))
+    }
+
     fn required_annotations(&self, needs_copy: bool) -> Result<Vec<TokenStream>, GeneratorError> {
         let mut required_derives = Vec::new();
         for derive in Self::REQUIRED_DERIVES {
@@ -1243,6 +1273,18 @@ impl Rasn {
             .type_annotations
             .iter()
             .any(|s| regex.is_match(s)))
+    }
+
+    pub(super) fn type_mismatch_error<T>(
+        &self,
+        tld: ToplevelTypeDefinition,
+        expected_type: &str
+    ) -> Result<T, GeneratorError> {
+        Err(GeneratorError::new(
+            Some(ToplevelDefinition::Type(tld)),
+            &format!("Expected {} top-level declaration", expected_type),
+            GeneratorErrorType::Asn1TypeMismatch,
+        ))
     }
 }
 
@@ -1588,7 +1630,7 @@ is_recursive: false,
             generator
                 .format_identifier_annotation(
                     "original-name",
-                    " Inner type ",
+                    INNER_TYPE_COMMENT,
                     &ASN1Type::Boolean(Boolean::default())
                 )
                 .to_string(),
