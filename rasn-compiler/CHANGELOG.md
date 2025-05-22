@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.10.1](https://github.com/librasn/compiler/compare/rasn-compiler-v0.10.0...rasn-compiler-v0.10.1) - 2025-05-22
+
+### Other
+
+- Merge pull request #107 from librasn/refactor/dry
+- VisibleString range endpoints are inclusive
+- Fixes multiples character subset parsing, like: VisibleString(FROM ("a".."z" | "A".."Z" | "0".."9" | ".-"))
+
 ## [0.10.0](https://github.com/librasn/compiler/compare/rasn-compiler-v0.9.0...rasn-compiler-v0.10.0) - 2025-05-16
 
 ### Added
