@@ -45,23 +45,30 @@ impl CompilerArgs {
 
         // Scan directory, if given
         if let Some(dir) = &args.source.directory {
-            for entry in WalkDir::new(dir)
-                .follow_links(true)
-                .into_iter()
-                .filter_map(|e| e.ok())
-            {
+            let mut module_found = false;
+            for entry in WalkDir::new(dir).follow_links(true) {
+                let entry = match entry {
+                    Ok(entry) => entry,
+                    Err(err) => {
+                        println!("{}", format!("Warning: {}", err).yellow());
+                        continue;
+                    }
+                };
                 let file_name = entry.file_name().to_string_lossy();
 
                 if file_name.ends_with(".asn") || file_name.ends_with(".asn1") {
                     println!("Found ASN1 module {} in directory", file_name);
                     modules.push(entry.into_path());
+                    module_found = true;
                 }
             }
-        }
 
-        if modules.is_empty() {
-            println!("{}", "No modules found".red());
-            return;
+            if !module_found {
+                println!(
+                    "{}",
+                    format!("No modules where found in '{}'", dir.display()).yellow()
+                );
+            }
         }
 
         let results = if args.backend == "typescript" {
