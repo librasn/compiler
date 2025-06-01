@@ -50,14 +50,14 @@ impl CompilerArgs {
                 let entry = match entry {
                     Ok(entry) => entry,
                     Err(err) => {
-                        println!("{}", format!("Warning: {}", err).yellow());
+                        println!("{}: {err}", "warning".yellow());
                         continue;
                     }
                 };
                 let file_name = entry.file_name().to_string_lossy();
 
                 if file_name.ends_with(".asn") || file_name.ends_with(".asn1") {
-                    println!("Found ASN1 module {} in directory", file_name);
+                    println!("{}: Found ASN1 module {}", "info".blue(), file_name);
                     modules.push(entry.into_path());
                     module_found = true;
                 }
@@ -65,10 +65,16 @@ impl CompilerArgs {
 
             if !module_found {
                 println!(
-                    "{}",
-                    format!("No modules where found in '{}'", dir.display()).yellow()
+                    "{}: No modules where found in '{}'",
+                    "warning".yellow(),
+                    dir.display(),
                 );
             }
+        }
+
+        if modules.is_empty() {
+            println!("{}: No modules", "error".red());
+            return;
         }
 
         let results = if args.backend == "typescript" {
@@ -86,19 +92,11 @@ impl CompilerArgs {
         match results {
             Ok(warnings) => {
                 for warning in warnings {
-                    println!(
-                        "{}\n{}",
-                        "Rasn compiler warning:".yellow(),
-                        warning.to_string().yellow()
-                    )
+                    println!("{}: {warning}", "warning".yellow())
                 }
             }
             Err(error) => {
-                println!(
-                    "{}\n{}",
-                    "Rasn compiler error:".red(),
-                    error.to_string().red()
-                )
+                println!("{}: {error}", "error".red());
             }
         }
     }
