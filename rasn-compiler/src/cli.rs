@@ -1,4 +1,5 @@
 use std::path::PathBuf;
+use std::process::ExitCode;
 
 use crate::prelude::*;
 
@@ -37,7 +38,7 @@ pub struct SourceArgsGroup {
 }
 
 impl CompilerArgs {
-    pub fn drive() {
+    pub fn drive() -> ExitCode {
         let args = CompilerArgs::parse();
 
         // Read module paths
@@ -74,7 +75,7 @@ impl CompilerArgs {
 
         if modules.is_empty() {
             println!("{}: No modules", "error".red());
-            return;
+            return ExitCode::FAILURE;
         }
 
         let results = if args.backend == "typescript" {
@@ -94,9 +95,11 @@ impl CompilerArgs {
                 for warning in warnings {
                     println!("{}: {warning}", "warning".yellow())
                 }
+                ExitCode::SUCCESS
             }
             Err(error) => {
                 println!("{}: {error}", "error".red());
+                ExitCode::FAILURE
             }
         }
     }
