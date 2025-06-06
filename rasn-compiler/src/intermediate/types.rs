@@ -4,6 +4,9 @@
 use internal_macros::EnumDebug;
 use std::vec;
 
+#[cfg(doc)]
+use crate::Backend;
+
 use super::{constraints::*, *};
 
 /// Trait shared by ASN1 `SET`, `SEQUENCE`, AND `CHOICE` that allows iterating

@@ -19,7 +19,7 @@ pub struct Typescript {
 }
 
 #[derive(Debug, Default)]
-/// A configuration for the [Rasn] backend
+/// A configuration for the [Typescript] backend
 pub struct Config {}
 
 impl Backend for Typescript {
