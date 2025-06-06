@@ -17,11 +17,9 @@ pub struct CompilerArgs {
     #[arg(short, long, default_value = ".")]
     output_path: PathBuf,
 
-    /// Specify which compiler backend to use:
-    ///  - "rasn" [DEFAULT]: generates rust-bindings for the rasn framework
-    ///  - "typescript": generates typescript type definitions
+    /// Specify which compiler backend to use
     #[arg(short, long, default_value = "rasn")]
-    backend: String,
+    backend: BackendArg,
 }
 
 #[derive(clap::Args, Debug)]
@@ -35,6 +33,14 @@ pub struct SourceArgsGroup {
     /// Add an ASN1 module by path. Multiple modules can be added by appending "-m PATH_TO_MODULE"
     #[arg(short, long = "module", num_args(0..))]
     module_files: Vec<PathBuf>,
+}
+
+#[derive(clap::ValueEnum, Debug, Clone, Copy, PartialEq, Eq)]
+enum BackendArg {
+    /// Generate rust-bindings for the rasn framework
+    Rasn,
+    /// Generate typescript type definitions
+    Typescript,
 }
 
 impl CompilerArgs {
@@ -78,16 +84,15 @@ impl CompilerArgs {
             return ExitCode::FAILURE;
         }
 
-        let results = if args.backend == "typescript" {
-            Compiler::<TypescriptBackend, _>::new()
+        let results = match args.backend {
+            BackendArg::Rasn => Compiler::<TypescriptBackend, _>::new()
                 .add_asn_sources_by_path(modules.into_iter())
                 .set_output_path(args.output_path)
-                .compile()
-        } else {
-            Compiler::<RasnBackend, _>::new()
+                .compile(),
+            BackendArg::Typescript => Compiler::<RasnBackend, _>::new()
                 .add_asn_sources_by_path(modules.into_iter())
                 .set_output_path(args.output_path)
-                .compile()
+                .compile(),
         };
 
         match results {
