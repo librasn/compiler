@@ -26,6 +26,9 @@ use parameterization::Parameterization;
 use quote::{quote, ToTokens, TokenStreamExt};
 use types::*;
 
+#[cfg(doc)]
+use crate::Backend;
+
 // Comment tokens
 pub const BLOCK_COMMENT_START: &str = "/*";
 pub const BLOCK_COMMENT_END: &str = "*/";
@@ -504,9 +507,6 @@ impl From<(&str, u128)> for ObjectIdentifierArc {
 
 /// Represents a top-level ASN.1 definition.
 /// The compiler distinguished three different variants of top-level definitions.
-/// * `Type` definitions define custom types based on ASN.1's built-in types
-/// * `Value` definitions define values using custom ot built-in types
-/// * `Information` definitions define abstraction concepts introduced in ITU-T X.681
 ///
 /// The linker and any [Backend] for this compiler consumes top-level definitions in
 /// order to generate bindings.
@@ -514,8 +514,11 @@ impl From<(&str, u128)> for ObjectIdentifierArc {
 #[cfg_attr(not(test), derive(Debug))]
 #[derive(Clone, PartialEq)]
 pub enum ToplevelDefinition {
+    /// Definition for a custom type based on ASN.1's built-in type.
     Type(ToplevelTypeDefinition),
+    /// Definition for a value using custom or built-in type.
     Value(ToplevelValueDefinition),
+    /// Definition for an abstraction concept introduced in ITU-T X.681.
     Information(ToplevelInformationDefinition),
 }
 
