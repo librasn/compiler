@@ -950,6 +950,7 @@ impl ASN1Type {
             ASN1Type::SetOf(s) | ASN1Type::SequenceOf(s) => Some(s.constraints()),
             ASN1Type::ElsewhereDeclaredType(e) => Some(e.constraints()),
             ASN1Type::InformationObjectFieldReference(f) => Some(f.constraints()),
+            ASN1Type::ObjectIdentifier(o) => Some(&o.constraints),
             _ => None,
         }
     }
@@ -969,6 +970,7 @@ impl ASN1Type {
             ASN1Type::SetOf(s) | ASN1Type::SequenceOf(s) => Some(s.constraints_mut()),
             ASN1Type::ElsewhereDeclaredType(e) => Some(e.constraints_mut()),
             ASN1Type::InformationObjectFieldReference(f) => Some(f.constraints_mut()),
+            ASN1Type::ObjectIdentifier(o) => Some(&mut o.constraints),
             _ => None,
         }
     }
