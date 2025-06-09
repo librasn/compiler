@@ -46,7 +46,7 @@ pub fn set(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
 #[cfg(test)]
 mod tests {
     use set::types::{CharacterString, SequenceOrSet, SequenceOrSetMember, SequenceOrSetOf};
-
+    use crate::intermediate::types::SequenceComponent;
     use super::*;
 
     #[test]
@@ -60,11 +60,10 @@ mod tests {
             .unwrap()
             .1,
             ASN1Type::Set(SequenceOrSet {
-                components_of: vec![],
-                extensible: None,
+                extensible: false,
                 constraints: vec![],
-                members: vec![
-                    SequenceOrSetMember {
+                fixed_components: vec![
+                    SequenceComponent::Member(SequenceOrSetMember {
                         is_recursive: false,
                         name: "title".into(),
                         tag: None,
@@ -75,8 +74,8 @@ mod tests {
                         default_value: None,
                         is_optional: false,
                         constraints: vec![],
-                    },
-                    SequenceOrSetMember {
+                    }),
+                    SequenceComponent::Member(SequenceOrSetMember {
                         is_recursive: false,
                         name: "children".into(),
                         tag: None,
@@ -92,8 +91,10 @@ mod tests {
                         default_value: Some(ASN1Value::SequenceOrSet(vec![])),
                         is_optional: true,
                         constraints: vec![]
-                    }
-                ]
+                    }),
+                ],
+                extension_components: vec![],
+                suffix_components: vec![],
             })
         );
     }

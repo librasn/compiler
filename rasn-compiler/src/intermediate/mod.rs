@@ -578,13 +578,20 @@ impl ToplevelDefinition {
                 id: t.id,
             });
             match &mut ty.ty {
-                ASN1Type::Sequence(s) | ASN1Type::Set(s) => s.members.iter_mut().for_each(|m| {
-                    m.tag = m.tag.as_ref().map(|t| AsnTag {
-                        environment: env + &t.environment,
-                        tag_class: t.tag_class,
-                        id: t.id,
-                    });
-                }),
+                ASN1Type::Sequence(s) | ASN1Type::Set(s) => {
+                    for s in [&mut s.fixed_components, &mut s.suffix_components, &mut s.extension_components] {
+                        s.iter_mut().for_each(|m| {
+                            if let SequenceComponent::Member(m) = m {
+                                m.tag = m.tag.as_ref().map(|t| AsnTag {
+                                    environment: env + &t.environment,
+                                    tag_class: t.tag_class,
+                                    id: t.id,
+                                });
+                            }
+                        })
+                        
+                    }
+                },
                 ASN1Type::Choice(c) => c.options.iter_mut().for_each(|o| {
                     o.tag = o.tag.as_ref().map(|t| AsnTag {
                         environment: env + &t.environment,

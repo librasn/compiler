@@ -55,7 +55,7 @@ impl ToplevelDefinition {
             | ToplevelDefinition::Type(ToplevelTypeDefinition {
                 ty: ASN1Type::Set(s),
                 ..
-            }) => s.members.iter().any(|m| {
+            }) => s.direct_members().any(|m| {
                 m.constraints
                     .iter()
                     .any(|c| matches!(c, Constraint::Parameter(_)))
@@ -263,7 +263,7 @@ impl ASN1Type {
     ) -> Result<(), GrammarError> {
         match self {
             ASN1Type::Set(ref mut s) | ASN1Type::Sequence(ref mut s) => {
-                s.members.iter_mut().try_for_each(|m| {
+                s.direct_members_mut().try_for_each(|m| {
                     m.ty.collect_supertypes(tlds)?;
                     m.default_value
                         .as_mut()
@@ -283,7 +283,7 @@ impl ASN1Type {
         match self {
             ASN1Type::ChoiceSelectionType(_) => true,
             ASN1Type::Sequence(s) | ASN1Type::Set(s) => {
-                s.members.iter().any(|m| m.ty.has_choice_selection_type())
+                s.direct_members().any(|m| m.ty.has_choice_selection_type())
             }
             ASN1Type::Choice(c) => c.options.iter().any(|o| o.ty.has_choice_selection_type()),
             ASN1Type::SequenceOf(s) | ASN1Type::SetOf(s) => {
@@ -311,8 +311,7 @@ impl ASN1Type {
                 }
             }
             ASN1Type::Sequence(s) | ASN1Type::Set(s) => s
-                .members
-                .iter_mut()
+                .direct_members_mut()
                 .try_for_each(|m| m.ty.link_choice_selection_type(tlds)),
             ASN1Type::Choice(c) => c
                 .options
@@ -332,10 +331,16 @@ impl ASN1Type {
                 .iter()
                 .any(|o| o.ty.contains_components_of_notation()),
             ASN1Type::Set(s) | ASN1Type::Sequence(s) => {
-                !s.components_of.is_empty()
-                    || s.members
-                        .iter()
-                        .any(|m| m.ty.contains_components_of_notation())
+                fn contains_components_of(members: &Vec<SequenceComponent>) -> bool {
+                    members.iter()
+                        .any(|m| match m {
+                            SequenceComponent::Member(m) => m.ty.contains_components_of_notation(),
+                            SequenceComponent::ComponentsOf(_) => true,
+                        })
+                }
+                [&s.fixed_components, &s.extension_components, &s.suffix_components]
+                    .into_iter()
+                    .any(contains_components_of)
             }
             ASN1Type::SequenceOf(so) => so.element_type.contains_components_of_notation(),
             _ => false,
@@ -352,32 +357,38 @@ impl ASN1Type {
                 .iter_mut()
                 .any(|o| o.ty.link_components_of_notation(tlds)),
             ASN1Type::Set(s) | ASN1Type::Sequence(s) => {
-                let mut member_linking = s
-                    .members
-                    .iter_mut()
-                    .any(|m| m.ty.link_components_of_notation(tlds));
-                // TODO: properly link components of in extensions
-                // TODO: link components of Class field, such as COMPONENTS OF BILATERAL.&id
-                for comp_link in &s.components_of {
-                    if let Some(ToplevelDefinition::Type(linked)) = tlds.get(comp_link) {
-                        if let ASN1Type::Sequence(linked_seq) = &linked.ty {
-                            linked_seq
-                                .members
-                                .iter()
-                                .enumerate()
-                                .for_each(|(index, member)| {
-                                    if index < linked_seq.extensible.unwrap_or(usize::MAX) {
-                                        if let Some(index_of_first_ext) = s.extensible {
-                                            s.extensible = Some(index_of_first_ext + 1)
-                                        }
-                                        s.members.push(member.clone());
+                let mut changed = false;
+                for part in [&mut s.fixed_components, &mut s.extension_components, &mut s.suffix_components] {
+                    let old_part = std::mem::replace(part, vec![]);
+                    // TODO: properly link components of in extensions
+                    for member in old_part {
+                        match member {
+                            SequenceComponent::Member(mut m) => {
+                                changed = changed || m.ty.link_components_of_notation(tlds);
+                                part.push(SequenceComponent::Member(m))
+                            },
+                            SequenceComponent::ComponentsOf(comp_link) => {
+                                // TODO: ensure that COMPONENTS OF in the included type are correctly handled.
+                                if let Some(ToplevelDefinition::Type(linked)) = tlds.get(&comp_link) {
+                                    if let ASN1Type::Sequence(linked_seq) = &linked.ty {
+                                        let ext_range = linked_seq.extension_range();
+                                        linked_seq
+                                            .direct_members()
+                                            .enumerate()
+                                            .for_each(|(index, member)| {
+                                                if !ext_range.contains(&index) {
+                                                    part.push(SequenceComponent::Member(member.clone()));
+                                                }
+                                            });
+                                        changed = true;
                                     }
-                                });
-                            member_linking = true;
+                                }
+                            }
                         }
                     }
                 }
-                member_linking
+                // TODO: link components of Class field, such as COMPONENTS OF BILATERAL.&id
+                changed
             }
             ASN1Type::SequenceOf(so) => so.element_type.link_components_of_notation(tlds),
             _ => false,
@@ -412,7 +423,7 @@ impl ASN1Type {
                 for b in s.constraints.iter_mut() {
                     b.link_cross_reference(name, tlds)?;
                 }
-                for m in s.members.iter_mut() {
+                for m in s.direct_members_mut() {
                     if let Some(replacement) = m.ty.link_constraint_reference(name, tlds)? {
                         m.ty = replacement;
                     }
@@ -588,7 +599,7 @@ impl ASN1Type {
                     // it will be boxed and constitute a recursion
                     // boundary between `self` and the option type
                     !opt.is_recursive && opt.ty.recurses(name, tlds, reference_graph.clone())),
-            ASN1Type::Sequence(s) | ASN1Type::Set(s) => s.members.iter().any(|m|
+            ASN1Type::Sequence(s) | ASN1Type::Set(s) => s.direct_members().any(|m|
                     // if a member is already marked recursive,
                     // it will be boxed and thus constitutes a recursion
                     // boundary between `self` and the member type
@@ -620,7 +631,7 @@ impl ASN1Type {
             }
             ASN1Type::Set(s) | ASN1Type::Sequence(s) => {
                 let mut children = Vec::new();
-                for member in &mut s.members {
+                for member in s.direct_members_mut() {
                     member.is_recursive = member.ty.recurses(name, tlds, Vec::new());
                     let mem_ty_name = member.ty.as_str().into_owned();
                     let mut mem_children = member.ty.mark_recursive(&mem_ty_name, tlds)?;
@@ -671,7 +682,7 @@ impl ASN1Type {
     ) -> Result<(), GrammarError> {
         match self {
             ASN1Type::Sequence(s) | ASN1Type::Set(s) => {
-                for m in &mut s.members {
+                for m in s.direct_members_mut() {
                     if let Some(constraints) = m.ty.constraints_mut() {
                         for c in constraints {
                             if let Constraint::TableConstraint(TableConstraint {
@@ -712,8 +723,7 @@ impl ASN1Type {
                 .iter_mut()
                 .try_for_each(|o| o.ty.link_elsewhere_declared(tlds)),
             ASN1Type::Set(s) | ASN1Type::Sequence(s) => s
-                .members
-                .iter_mut()
+                .direct_members_mut()
                 .try_for_each(|o| o.ty.link_elsewhere_declared(tlds)),
             ASN1Type::SequenceOf(s) | ASN1Type::SetOf(s) => {
                 s.element_type.link_elsewhere_declared(tlds)
@@ -781,7 +791,7 @@ impl ASN1Type {
             }
             ASN1Type::Set(s) | ASN1Type::Sequence(s) => {
                 s.constraints.iter().any(|c| c.has_cross_reference())
-                    || s.members.iter().any(|m| {
+                    || s.direct_members().any(|m| {
                         m.ty.contains_constraint_reference()
                             || m.default_value
                                 .as_ref()
@@ -803,7 +813,7 @@ impl ASN1Type {
     pub fn references_class_by_name(&self) -> bool {
         match self {
             ASN1Type::Choice(c) => c.options.iter().any(|o| o.ty.references_class_by_name()),
-            ASN1Type::Sequence(s) => s.members.iter().any(|m| m.ty.references_class_by_name()),
+            ASN1Type::Sequence(s) => s.direct_members().any(|m| m.ty.references_class_by_name()),
             ASN1Type::SequenceOf(so) => so.element_type.references_class_by_name(),
             ASN1Type::InformationObjectFieldReference(io_ref) => {
                 matches!(
@@ -832,20 +842,15 @@ impl ASN1Type {
                     .collect(),
                 constraints: c.constraints,
             }),
-            ASN1Type::Sequence(s) => ASN1Type::Sequence(SequenceOrSet {
-                extensible: s.extensible,
-                constraints: s.constraints,
-                components_of: s.components_of,
-                members: s
-                    .members
-                    .into_iter()
-                    .map(|mut member| {
-                        member.constraints = vec![];
-                        member.ty = member.ty.resolve_class_reference(tlds);
-                        member
-                    })
-                    .collect(),
-            }),
+            ASN1Type::Sequence(mut s) => {
+                for member in s.direct_members_mut() {
+                    // TODO: document why the constraints are being removed here
+                    member.constraints = vec![];
+                    let old_ty = std::mem::replace(&mut member.ty, ASN1Type::EmbeddedPdv);
+                    member.ty = old_ty.resolve_class_reference(tlds);
+                }
+                ASN1Type::Sequence(s)
+            },
             ASN1Type::InformationObjectFieldReference(_) => self.reassign_type_for_ref(tlds),
             _ => self,
         }
@@ -1395,7 +1400,7 @@ impl ASN1Value {
         type_name: Option<&String>,
     ) -> Result<ASN1Value, GrammarError> {
         val.iter_mut().try_for_each(|v| {
-            if let Some(member) = s.members.iter().find(|m| Some(&m.name) == v.0.as_ref()) {
+            if let Some(member) = s.direct_members().find(|m| Some(&m.name) == v.0.as_ref()) {
                 let type_name = match (member.ty.is_builtin_type(), type_name) {
                     (true, Some(parent)) => Some(
                         INTERNAL_NESTED_TYPE_NAME_PREFIX.to_owned() + &member.name + "$" + parent,
@@ -1419,8 +1424,7 @@ impl ASN1Value {
             }
         })?;
 
-        s.members
-            .iter()
+        s.direct_members()
             .map(|member| {
                 val.iter()
                     .find_map(|(name, value)| {
