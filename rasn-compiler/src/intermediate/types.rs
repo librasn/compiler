@@ -318,15 +318,86 @@ impl From<(Option<Vec<Constraint>>, (Option<AsnTag>, ASN1Type))> for SequenceOrS
 /// *As defined in Rec. ITU-T X.680 (02/2021) §25 and §27*
 #[derive(Debug, Clone, PartialEq)]
 pub struct SequenceOrSet {
-    pub components_of: Vec<String>,
-    pub extensible: Option<usize>,
+    pub fixed_components: Vec<SequenceComponent>,
+    pub extension_components: Vec<SequenceComponent>,
+    pub suffix_components: Vec<SequenceComponent>,
+    pub extensible: bool,
     pub constraints: Vec<Constraint>,
-    pub members: Vec<SequenceOrSetMember>,
+}
+
+impl SequenceOrSet {
+    pub fn direct_members(&self) -> impl Iterator<Item=&SequenceOrSetMember> {
+        [&self.fixed_components, &self.extension_components, &self.suffix_components]
+            .into_iter()
+            .flat_map(|x| x)
+            .flat_map(|x| {
+                if let SequenceComponent::Member(m) = x {
+                    Some(m)
+                } else {
+                    None
+                }
+            })
+    }
+
+    pub fn direct_members_mut(&mut self) -> impl Iterator<Item=&mut SequenceOrSetMember> {
+        [&mut self.fixed_components, &mut self.extension_components, &mut self.suffix_components]
+            .into_iter()
+            .flat_map(|x| x)
+            .flat_map(|x| {
+                if let SequenceComponent::Member(m) = x {
+                    Some(m)
+                } else {
+                    None
+                }
+            })
+    }
+
+    pub fn extension_range(&self) -> std::ops::Range<usize> {
+        self.fixed_components.len() .. self.fixed_components.len() + self.extension_components.len()
+    }
 }
 
 impl IterNameTypes for SequenceOrSet {
     fn iter_name_types(&self) -> impl Iterator<Item = (&str, &ASN1Type)> {
-        self.members.iter().map(|m| (m.name.as_str(), &m.ty))
+        self.direct_members()
+            .map(|m| (m.name.as_str(), &m.ty))
+    }
+}
+
+impl
+    From<(
+        (
+            Vec<SequenceComponent>,
+            Option<(
+                Vec<SequenceComponent>,
+                Vec<SequenceComponent>,
+            )>,
+        ),
+        Option<Vec<Constraint>>,
+    )> for SequenceOrSet
+{
+    fn from(
+        mut value: (
+            (
+                Vec<SequenceComponent>,
+                Option<(
+                    Vec<SequenceComponent>,
+                    Vec<SequenceComponent>,
+                )>,
+            ),
+            Option<Vec<Constraint>>,
+        ),
+    ) -> Self {
+        let extensible = value.0 .1.is_some();
+        let (extension_components, suffix_components) = value.0 .1.unwrap_or_default();
+
+        SequenceOrSet {
+            fixed_components: value.0 .0,
+            extension_components,
+            suffix_components,
+            constraints: value.1.unwrap_or_default(),
+            extensible,
+        }
     }
 }
 
@@ -350,52 +421,12 @@ impl
             Option<Vec<Constraint>>,
         ),
     ) -> Self {
-        let index_of_first_extension = value.0 .0.len();
-        value.0 .0.append(&mut value.0 .2.unwrap_or_default());
-        let mut components_of = vec![];
-        let mut members = vec![];
-        for comp in value.0 .0 {
-            match comp {
-                SequenceComponent::Member(m) => members.push(m),
-                SequenceComponent::ComponentsOf(c) => components_of.push(c),
-            }
-        }
         SequenceOrSet {
-            components_of,
+            fixed_components: value.0 .0.into_iter().collect(),
+            extension_components: value.0 .2.into_iter().flat_map(|x| x).collect(),
+            suffix_components: vec![],
             constraints: value.1.unwrap_or_default(),
-            extensible: value.0 .1.map(|_| index_of_first_extension),
-            members,
-        }
-    }
-}
-
-impl
-    From<(
-        (
-            Vec<SequenceOrSetMember>,
-            Option<ExtensionMarker>,
-            Option<Vec<SequenceOrSetMember>>,
-        ),
-        Option<Vec<Constraint>>,
-    )> for SequenceOrSet
-{
-    fn from(
-        mut value: (
-            (
-                Vec<SequenceOrSetMember>,
-                Option<ExtensionMarker>,
-                Option<Vec<SequenceOrSetMember>>,
-            ),
-            Option<Vec<Constraint>>,
-        ),
-    ) -> Self {
-        let index_of_first_extension = value.0 .0.len();
-        value.0 .0.append(&mut value.0 .2.unwrap_or_default());
-        SequenceOrSet {
-            components_of: vec![],
-            constraints: value.1.unwrap_or_default(),
-            extensible: value.0 .1.map(|_| index_of_first_extension),
-            members: value.0 .0,
+            extensible: value.0 .1.is_some(),
         }
     }
 }

@@ -331,9 +331,8 @@ impl Rasn {
         sequence_or_set: &SequenceOrSet,
         parent_name: &String,
     ) -> Result<FormattedMembers, GeneratorError> {
-        let first_extension_index = sequence_or_set.extensible;
-
-        sequence_or_set.members.iter().enumerate().try_fold(
+        let extension_range = sequence_or_set.extension_range();
+        sequence_or_set.direct_members().enumerate().try_fold(
             FormattedMembers::default(),
             |mut acc, (i, m)| {
                 let nested = if Self::needs_unnesting(&m.ty) {
@@ -351,11 +350,11 @@ impl Rasn {
                 } else {
                     Ok(None)
                 };
-                let extension_annotation = if i >= first_extension_index.unwrap_or(usize::MAX)
+                let extension_annotation = if extension_range.contains(&i)
                     && m.name.starts_with(INTERNAL_EXTENSION_GROUP_NAME_PREFIX)
                 {
                     quote!(extension_addition_group)
-                } else if i >= first_extension_index.unwrap_or(usize::MAX) {
+                } else if extension_range.contains(&i) {
                     quote!(extension_addition)
                 } else {
                     TokenStream::new()
@@ -1096,7 +1095,7 @@ impl Rasn {
 
     const REQUIRED_DERIVES: [&'static str; 6] =
         ["Debug", "AsnType", "Encode", "Decode", "PartialEq", "Clone"];
-    const COPY_DERIVE: &str = "Copy";
+    const COPY_DERIVE: &'static str = "Copy";
     const RUST_KEYWORDS: [&'static str; 53] = [
         "as",
         "break",
@@ -1321,8 +1320,7 @@ impl ASN1Type {
                 .iter()
                 .fold(true, |acc, opt| opt.ty.is_const_type() && acc),
             ASN1Type::Set(s) | ASN1Type::Sequence(s) => s
-                .members
-                .iter()
+                .direct_members()
                 .fold(true, |acc, m| m.ty.is_const_type() && acc),
             ASN1Type::SetOf(s) | ASN1Type::SequenceOf(s) => s.element_type.is_const_type(),
             _ => false,
@@ -1361,7 +1359,7 @@ mod tests {
         types::{Boolean, Enumeral, Integer},
         AsnTag,
     };
-
+    use crate::prelude::ir::SequenceComponent;
     use super::*;
 
     #[test]
@@ -1430,11 +1428,10 @@ mod tests {
             generator
                 .format_sequence_or_set_members(
                     &SequenceOrSet {
-                        components_of: vec![],
-                        extensible: Some(1),
+                        extensible: true,
                         constraints: vec![],
-                        members: vec![
-                            SequenceOrSetMember {
+                        fixed_components: vec![
+                            SequenceComponent::Member(SequenceOrSetMember {
                                 is_recursive: false,
                                 name: "testMember0".into(),
                                 tag: None,
@@ -1444,28 +1441,31 @@ mod tests {
                                 default_value: None,
                                 is_optional: true,
                                 constraints: vec![]
-                            },
-                            SequenceOrSetMember {
+                            })
+                        ],
+                        extension_components: vec![
+                            SequenceComponent::Member(SequenceOrSetMember {
                                 is_recursive: false,
                                 name: "testMember1".into(),
                                 tag: None,
                                 ty: ASN1Type::Integer(Integer {
                                     distinguished_values: None,
                                     constraints: vec![Constraint::SubtypeConstraint(ElementSet {
-                            extensible: false,
-                            set: crate::intermediate::constraints::ElementOrSetOperation::Element(
-                                crate::intermediate::constraints::SubtypeElement::SingleValue {
-                                    value: ASN1Value::Integer(4),
-                                    extensible: true
-                                }
-                            )
-                        })]
+                                        extensible: false,
+                                        set: crate::intermediate::constraints::ElementOrSetOperation::Element(
+                                            crate::intermediate::constraints::SubtypeElement::SingleValue {
+                                                value: ASN1Value::Integer(4),
+                                                extensible: true
+                                            }
+                                        )
+                                    })]
                                 }),
                                 default_value: Some(ASN1Value::Integer(4)),
                                 is_optional: true,
                                 constraints: vec![]
-                            }
-                        ]
+                            }),
+                        ],
+                        suffix_components: vec![],
                     },
                     &"Parent".into(),
                 )
