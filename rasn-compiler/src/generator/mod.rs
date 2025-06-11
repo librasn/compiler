@@ -27,7 +27,7 @@ pub trait Backend: Default {
 
     /// generates bindings for an ASN.1 module
     /// ### Params
-    /// - `top_level_declarations` vector of [TopLevelDeclaration]s that are defined in the ASN.1 module
+    /// - `top_level_declarations` vector of [ToplevelDefinition]s that are defined in the ASN.1 module
     fn generate_module(
         &mut self,
         top_level_declarations: Vec<ToplevelDefinition>,
@@ -35,7 +35,7 @@ pub trait Backend: Default {
 
     /// generates bindings for a single ASN.1 item
     /// ### Params
-    /// - `tld` [TopLevelDeclaration] for which the bindings should be generated
+    /// - `tld` [ToplevelDefinition] for which the bindings should be generated
     fn generate(&self, tld: ToplevelDefinition) -> Result<String, GeneratorError>;
 
     /// Formats the bindings using the language- or framework-specific linters.
