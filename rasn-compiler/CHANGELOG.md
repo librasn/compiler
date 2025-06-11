@@ -6,6 +6,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.10.2](https://github.com/librasn/compiler/compare/rasn-compiler-v0.10.1...rasn-compiler-v0.10.2) - 2025-06-11
+
+### Added
+
+- feat(cli) Set non-zero exit code on error
+- *(cli)* prefix output with colored severity
+- *(cli)* report walk dir errors
+- *(cli)* move -d and -m to required group
+
+### Other
+
+- Set MSRV
+
 ## [0.10.1](https://github.com/librasn/compiler/compare/rasn-compiler-v0.10.0...rasn-compiler-v0.10.1) - 2025-05-22
 
 ### Other
