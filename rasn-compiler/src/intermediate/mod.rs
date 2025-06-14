@@ -162,7 +162,18 @@ pub const TIME_OF_DAY: &str = "TIME-OF-DAY";
 pub const TYPE_IDENTIFIER: &str = "TYPE-IDENTIFIER";
 pub const ENCODING_CONTROL: &str = "ENCODING-CONTROL";
 
-pub const ASN1_KEYWORDS: [&str; 63] = [
+// SNMP MACRO names
+pub const MODULE_COMPLIANCE: &str = "MODULE-COMPLIANCE";
+pub const MODULE_IDENTITY: &str = "MODULE-IDENTITY";
+pub const NOTIFICATION_TYPE: &str = "NOTIFICATION-TYPE";
+pub const OBJECT_TYPE: &str = "OBJECT-TYPE";
+pub const OBJECT_GROUP: &str = "OBJECT-GROUP";
+pub const NOTIFICATION_GROUP: &str = "NOTIFICATION-GROUP";
+pub const TEXTUAL_CONVENTION: &str = "TEXTUAL-CONVENTION";
+// SNMP MACRO keywords that can collide with other types
+pub const MANDATORY_GROUPS: &str = "MANDATORY-GROUPS";
+
+pub const ASN1_KEYWORDS: [&str; 71] = [
     ABSTRACT_SYNTAX,
     BIT,
     CHARACTER,
@@ -226,6 +237,14 @@ pub const ASN1_KEYWORDS: [&str; 63] = [
     FROM,
     INSTRUCTIONS,
     TAGS,
+    MODULE_IDENTITY,
+    MODULE_COMPLIANCE,
+    TEXTUAL_CONVENTION,
+    OBJECT_TYPE,
+    OBJECT_GROUP,
+    NOTIFICATION_TYPE,
+    NOTIFICATION_GROUP,
+    MANDATORY_GROUPS,
 ];
 
 macro_rules! grammar_error {

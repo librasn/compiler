@@ -14,17 +14,14 @@ use super::{
     error::{MiscError, ParserResult},
 };
 
-pub fn character_string_value(input: Input<'_>) -> ParserResult<'_, ASN1Value> {
-    map(
-        skip_ws_and_comments(alt((
-            map(
-                into_inner(delimited(tag("\""), take_until("\""), tag("\""))),
-                ToString::to_string,
-            ),
-            map(quadruple, |c| c.to_string()),
-        ))),
-        |m: String| ASN1Value::String(m),
-    )(input)
+pub fn character_string_value(input: Input<'_>) -> ParserResult<'_, String> {
+    skip_ws_and_comments(alt((
+        map(
+            into_inner(delimited(tag("\""), take_until("\""), tag("\""))),
+            ToString::to_string,
+        ),
+        map(quadruple, |c| c.to_string()),
+    )))(input)
 }
 
 /// A ASN1 character value can be specified "by reference to a registration number in the ISO
@@ -205,10 +202,7 @@ mod tests {
 
     #[test]
     fn parses_character_string_value() {
-        assert_eq!(
-            character_string_value("\"a\"".into()).unwrap().1,
-            ASN1Value::String("a".to_owned())
-        )
+        assert_eq!(character_string_value("\"a\"".into()).unwrap().1, "a")
     }
 
     #[test]

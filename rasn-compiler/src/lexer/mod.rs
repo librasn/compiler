@@ -20,7 +20,7 @@ use nom::{
 
 use crate::{
     input::{context_boundary, Input},
-    intermediate::{information_object::*, *},
+    intermediate::{information_object::*, types::ObjectIdentifier, *},
 };
 
 use self::{
@@ -52,6 +52,7 @@ mod sequence;
 mod sequence_of;
 mod set;
 mod set_of;
+mod snmp;
 mod time;
 mod util;
 
@@ -161,6 +162,46 @@ pub fn asn1_type(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
             time,
             octet_string,
             character_string,
+            map(snmp::module_identity, |_| {
+                // Discard all info for now.
+                ASN1Type::ObjectIdentifier(ObjectIdentifier {
+                    constraints: Vec::new(),
+                })
+            }),
+            map(snmp::textual_convention, |t| {
+                // Discard all info for now, except the type.
+                t.syntax
+            }),
+            map(snmp::object_type, |_| {
+                // Discard all info for now.
+                ASN1Type::ObjectIdentifier(ObjectIdentifier {
+                    constraints: Vec::new(),
+                })
+            }),
+            map(snmp::notification_type, |_| {
+                // Discard all info for now.
+                ASN1Type::ObjectIdentifier(ObjectIdentifier {
+                    constraints: Vec::new(),
+                })
+            }),
+            map(snmp::module_compliance, |_| {
+                // Discard all info for now.
+                ASN1Type::ObjectIdentifier(ObjectIdentifier {
+                    constraints: Vec::new(),
+                })
+            }),
+            map(snmp::object_group, |_| {
+                // Discard all info for now.
+                ASN1Type::ObjectIdentifier(ObjectIdentifier {
+                    constraints: Vec::new(),
+                })
+            }),
+            map(snmp::notification_group, |_| {
+                // Discard all info for now.
+                ASN1Type::ObjectIdentifier(ObjectIdentifier {
+                    constraints: Vec::new(),
+                })
+            }),
             map(information_object_field_reference, |i| {
                 ASN1Type::InformationObjectFieldReference(i)
             }),
@@ -181,7 +222,7 @@ pub fn asn1_value(input: Input<'_>) -> ParserResult<'_, ASN1Value> {
         bit_string_value,
         boolean_value,
         integer_value,
-        character_string_value,
+        map(character_string_value, ASN1Value::String),
         elsewhere_declared_value,
     ))(input)
 }
