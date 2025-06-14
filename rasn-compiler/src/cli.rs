@@ -85,11 +85,11 @@ impl CompilerArgs {
         }
 
         let results = match args.backend {
-            BackendArg::Rasn => Compiler::<TypescriptBackend, _>::new()
+            BackendArg::Rasn => Compiler::<RasnBackend, _>::new()
                 .add_asn_sources_by_path(modules.into_iter())
                 .set_output_path(args.output_path)
                 .compile(),
-            BackendArg::Typescript => Compiler::<RasnBackend, _>::new()
+            BackendArg::Typescript => Compiler::<TypescriptBackend, _>::new()
                 .add_asn_sources_by_path(modules.into_iter())
                 .set_output_path(args.output_path)
                 .compile(),
