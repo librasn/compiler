@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.10.3](https://github.com/librasn/compiler/compare/rasn-compiler-v0.10.2...rasn-compiler-v0.10.3) - 2025-06-14
+
+### Fixed
+
+- Backend selection was flipped
+
 ## [0.10.2](https://github.com/librasn/compiler/compare/rasn-compiler-v0.10.1...rasn-compiler-v0.10.2) - 2025-06-11
 
 ### Added
