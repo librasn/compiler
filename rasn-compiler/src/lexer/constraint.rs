@@ -59,7 +59,7 @@ pub fn set_operator(input: Input<'_>) -> ParserResult<'_, SetOperator> {
     )))(input)
 }
 
-fn element_set(input: Input<'_>) -> ParserResult<'_, ElementSet> {
+pub fn element_set(input: Input<'_>) -> ParserResult<'_, ElementSet> {
     into(pair(
         alt((
             map(set_operation, ElementOrSetOperation::SetOperation),
