@@ -1,7 +1,6 @@
 use num::pow::Pow;
 
 use crate::generator::error::GeneratorError;
-
 use super::{
     types::{BitString, Choice, SequenceOrSet},
     ASN1Type, ASN1Value,
@@ -62,8 +61,7 @@ pub fn format_sequence_or_set_members(se: &SequenceOrSet) -> String {
         r#"{{
             {}{}
         }}"#,
-        se.members
-            .iter()
+        se.direct_members()
             .map(|m| format!(
                 r#"{}{}: {},"#,
                 to_jer_identifier(&m.name),
@@ -72,8 +70,11 @@ pub fn format_sequence_or_set_members(se: &SequenceOrSet) -> String {
             ))
             .collect::<Vec<_>>()
             .join("\n"),
-        se.extensible
-            .map_or(String::new(), |_| String::from("\n\t[key: string]: any"))
+        if se.extensible {
+            String::from("\n\t[key: string]: any")
+        } else {
+            String::new()
+        }
     )
 }
 

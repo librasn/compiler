@@ -426,11 +426,10 @@ fn parses_parameterized_declaration() {
             index: None,
             name: "RegionalExtension".into(),
             ty: ASN1Type::Sequence(SequenceOrSet {
-                extensible: None,
-                components_of: vec![],
+                extensible: false,
                 constraints: vec![],
-                members: vec![
-                    SequenceOrSetMember {
+                fixed_components: vec![
+                    SequenceComponent::Member(SequenceOrSetMember {
                         is_recursive: false,
                         name: "regionId".into(),
                         tag: None,
@@ -450,8 +449,8 @@ fn parses_parameterized_declaration() {
                         default_value: None,
                         is_optional: false,
                         constraints: vec![]
-                    },
-                    SequenceOrSetMember {
+                    }),
+                    SequenceComponent::Member(SequenceOrSetMember {
                         is_recursive: false,
                         name: "regExtValue".into(),
                         tag: None,
@@ -476,8 +475,10 @@ fn parses_parameterized_declaration() {
                         default_value: None,
                         is_optional: false,
                         constraints: vec![]
-                    }
-                ]
+                    })
+                ],
+                extension_components: vec![],
+                suffix_components: vec![],
             }),
             parameterization: Some(Parameterization {
                 parameters: vec![ParameterizationArgument {
