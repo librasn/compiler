@@ -800,7 +800,7 @@ impl Rasn {
                     ),
                     name: String::from(INNER_ARRAY_LIKE_PREFIX) + &name.to_string(),
                     ty: n.clone(),
-                    tag: seq_or_set_of.element_tag.clone(),
+                    tag: None,
                     index: None,
                 }))?,
             ),

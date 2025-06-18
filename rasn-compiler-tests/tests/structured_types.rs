@@ -245,7 +245,6 @@ e2e_pdu!(
         
         #[doc="Inner type"]
         #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-        #[rasn(tag(context, 0))]
         pub struct TestParameters {
             #[rasn(tag(context, 0), default="test_parameters_color_default")]
             pub color: Color,
@@ -294,7 +293,6 @@ e2e_pdu!(
         
         #[doc="Inner type"]
         #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-        #[rasn(tag(context, 0))]
         pub struct TestParameters {
             #[rasn(tag(context, 0), default="test_parameters_color_default")]
             pub color: Color,
@@ -415,7 +413,6 @@ e2e_pdu!(
     r#"
         #[doc = " Inner type "]
         #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-        #[rasn(tag(context, 3))]
         pub struct TypeDescriptionArray {
             #[rasn(value("0.."), tag(context, 0))]
             pub size: Integer,
@@ -468,7 +465,6 @@ e2e_pdu!(
         }
         #[doc = " Inner type "]
         #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-        #[rasn(tag(context, 1))]
         pub struct TypeSpecificationArray {
             #[rasn(tag(context, 2), identifier = "elementType")]
             pub element_type: TypeSpecification,
@@ -514,7 +510,6 @@ e2e_pdu!(
     r#"
         #[doc = " Inner type "]
         #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-        #[rasn(tag(context, 1))]
         pub struct TypeDescriptionArray {
             #[rasn(tag(context, 2), identifier = "elementType")]
             pub element_type: TypeSpecification,
@@ -538,13 +533,12 @@ e2e_pdu!(
         }
         #[doc = " Inner type "]
         #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-        #[rasn(delegate, tag(context, 1))]
+        #[rasn(delegate)]
         pub struct TypeDescriptionStructureComponents(
             pub SequenceOf<AnonymousTypeDescriptionStructureComponents>,
         );
         #[doc = " Inner type "]
         #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-        #[rasn(tag(context, 2))]
         pub struct TypeDescriptionStructure {
             #[rasn(tag(context, 1))]
             pub components: TypeDescriptionStructureComponents,
@@ -569,7 +563,7 @@ e2e_pdu!(
         }
         #[doc = " Inner type "]
         #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-        #[rasn(tag(context, 2))]
+        #[rasn(automatic_tags)]
         pub struct VariableSpecificationVariableDescription {
             #[rasn(identifier = "typeSpecification")]
             pub type_specification: TypeSpecification,
@@ -598,7 +592,7 @@ e2e_pdu!(
     r#"
         #[doc = " Anonymous SEQUENCE OF member "]
         #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-        #[rasn(delegate, tag(context, 0), identifier = "INTEGER")]
+        #[rasn(delegate, identifier = "INTEGER")]
         pub struct AnonymousAMember(pub Integer);
 
         #[doc = " Inner type "]
