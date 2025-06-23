@@ -343,7 +343,7 @@ impl Rasn {
                             comments: INNER_TYPE_COMMENT.into(),
                             name: self.inner_name(&m.name, parent_name).to_string(),
                             ty: m.ty.clone(),
-                            tag: m.tag.clone(),
+                            tag: None,
                             index: None,
                         })),
                     )
@@ -436,7 +436,7 @@ impl Rasn {
                             comments: INNER_TYPE_COMMENT.into(),
                             name: self.inner_name(&o.name, parent_name).to_string(),
                             ty: o.ty.clone(),
-                            tag: o.tag.clone(),
+                            tag: None,
                             index: None,
                         })),
                     )
