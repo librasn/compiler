@@ -211,6 +211,7 @@ impl ToplevelDefinition {
             }
             ToplevelDefinition::Value(_v) => Ok(()), // TODO
             ToplevelDefinition::Information(_i) => Ok(()), // TODO
+            ToplevelDefinition::Macro(_m) => Ok(()), // TODO
         }
     }
 
@@ -223,6 +224,7 @@ impl ToplevelDefinition {
             ToplevelDefinition::Type(t) => t.ty.collect_supertypes(tlds),
             ToplevelDefinition::Value(v) => v.collect_supertypes(tlds),
             ToplevelDefinition::Information(i) => i.collect_supertypes(tlds),
+            ToplevelDefinition::Macro(_) => Ok(()),
         }
     }
 }

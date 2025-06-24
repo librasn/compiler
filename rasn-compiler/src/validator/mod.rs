@@ -409,6 +409,7 @@ impl Validate for ToplevelDefinition {
             }
             ToplevelDefinition::Value(_v) => Ok(()),
             ToplevelDefinition::Information(_i) => Ok(()),
+            ToplevelDefinition::Macro(_m) => Ok(()),
         }
     }
 }

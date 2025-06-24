@@ -1,6 +1,6 @@
 use nom::{
     branch::alt,
-    bytes::complete::{tag, take_until},
+    bytes::complete::tag,
     character::complete::{char, u8},
     combinator::{map, map_res, opt},
     sequence::{delimited, pair, terminated, tuple},
@@ -12,19 +12,51 @@ use super::{
     common::*,
     constraint::constraint,
     error::{MiscError, ParserResult},
+    util::take_until_and_not,
 };
 
 pub fn character_string_value(input: Input<'_>) -> ParserResult<'_, ASN1Value> {
     map(
-        skip_ws_and_comments(alt((
-            map(
-                into_inner(delimited(tag("\""), take_until("\""), tag("\""))),
-                ToString::to_string,
-            ),
-            map(quadruple, |c| c.to_string()),
-        ))),
+        skip_ws_and_comments(alt((cstring, map(quadruple, |c| c.to_string())))),
         |m: String| ASN1Value::String(m),
     )(input)
+}
+
+/// Parses a ASN1 cstring
+///
+/// 12.14.1  A "cstring" shall consist of an arbitrary number (possibly zero)
+/// of graphic symbols and spacing characters from the character set referenced
+/// by the character string type, preceded and followed by a
+/// QUOTATION MARK (34) character (").
+///
+/// If the character set includes a QUOTATION MARK (34) character, this
+/// character (if present in the character string being represented by the
+/// "cstring") shall be represented in the "cstring" by a pair of
+/// QUOTATION MARK (34) characters on the same line with no intervening spacing
+/// character.
+///
+/// The "cstring" may span more than one line of text, in which case the
+/// character string being represented shall not include spacing characters in
+/// the position prior to or following the end of line in the "cstring". Any
+/// spacing characters that appear immediately prior to or following the end of
+/// line in the "cstring" have no significance.
+pub fn cstring(input: Input<'_>) -> ParserResult<'_, String> {
+    map(raw_string_literal, |s| {
+        // Replace any escaped quote with a single `"`
+        // TODO: Remove whitespace around newlines in multiline strings.
+        s.replace("\"\"", "\"")
+    })(input)
+}
+
+/// Parses a string literal into its raw value.
+///
+/// String literals are text inside `"`, that can span multiple lines.
+/// Contained `"` is escaped with another `"`.
+///
+/// This is a raw string in the sense that it is the string slice as written
+/// in the source, including any indentation and double quotes (`""`).
+pub fn raw_string_literal(input: Input<'_>) -> ParserResult<'_, &'_ str> {
+    delimited(char('"'), take_until_and_not("\"", "\"\""), char('"'))(input)
 }
 
 /// A ASN1 character value can be specified "by reference to a registration number in the ISO
@@ -98,11 +130,12 @@ pub fn character_string(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
 
 #[cfg(test)]
 mod tests {
+    use crate::input::Input;
     use crate::intermediate::{constraints::*, types::*, *};
 
     use crate::lexer::{
         asn1_value,
-        character_string::{character_string_value, quadruple},
+        character_string::{character_string_value, quadruple, raw_string_literal},
     };
 
     use super::character_string;
@@ -228,5 +261,20 @@ mod tests {
         assert_eq!(quadruple("{0,0,215,23}".into()).unwrap().1, '휗');
         assert_eq!(quadruple("{0,0,249,0}".into()).unwrap().1, '豈');
         assert_eq!(quadruple("{0,1,0,0}".into()).unwrap().1, '𐀀');
+    }
+
+    #[test]
+    fn parses_raw_string_literal() {
+        let input = Input::from(
+            r#""""There's no nondestructive test for indestructibility.""
+                - Randall Munroe"
+            "#,
+        );
+        let (_, result) = raw_string_literal(input).unwrap();
+        assert_eq!(
+            result,
+            "\"\"There's no nondestructive test for indestructibility.\"\"
+                - Randall Munroe"
+        );
     }
 }
