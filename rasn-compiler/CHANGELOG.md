@@ -6,6 +6,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.11.0](https://github.com/librasn/compiler/compare/rasn-compiler-v0.10.3...rasn-compiler-v0.11.0) - 2025-06-24
+
+### Added
+
+- *(lexer)* Support skipping over MACROs
+- *(lexer)* Handle escaped `"` in character string value
+
+### Fixed
+
+- remove tags on anonymous types
+
 ## [0.10.3](https://github.com/librasn/compiler/compare/rasn-compiler-v0.10.2...rasn-compiler-v0.10.3) - 2025-06-14
 
 ### Fixed
