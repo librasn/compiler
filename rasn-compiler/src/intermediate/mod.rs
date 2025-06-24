@@ -10,6 +10,7 @@ pub mod constraints;
 pub mod encoding_rules;
 pub mod error;
 pub mod information_object;
+pub mod macros;
 pub mod parameterization;
 pub mod types;
 pub mod utils;
@@ -22,6 +23,7 @@ use error::{GrammarError, GrammarErrorType};
 use information_object::{InformationObjectFieldReference, ToplevelInformationDefinition};
 #[cfg(test)]
 use internal_macros::EnumDebug;
+use macros::ToplevelMacroDefinition;
 use parameterization::Parameterization;
 use quote::{quote, ToTokens, TokenStreamExt};
 use types::*;
@@ -132,6 +134,9 @@ pub const GREATER_THAN: char = '>';
 pub const PIPE: &str = "|";
 pub const CARET: &str = "^";
 
+// Macro tokens
+pub const MACRO: &str = "MACRO";
+
 pub const ASSIGN: &str = "::=";
 pub const RANGE: &str = "..";
 pub const ELLIPSIS: &str = "...";
@@ -162,7 +167,7 @@ pub const TIME_OF_DAY: &str = "TIME-OF-DAY";
 pub const TYPE_IDENTIFIER: &str = "TYPE-IDENTIFIER";
 pub const ENCODING_CONTROL: &str = "ENCODING-CONTROL";
 
-pub const ASN1_KEYWORDS: [&str; 63] = [
+pub const ASN1_KEYWORDS: [&str; 64] = [
     ABSTRACT_SYNTAX,
     BIT,
     CHARACTER,
@@ -226,6 +231,7 @@ pub const ASN1_KEYWORDS: [&str; 63] = [
     FROM,
     INSTRUCTIONS,
     TAGS,
+    MACRO,
 ];
 
 macro_rules! grammar_error {
@@ -520,6 +526,8 @@ pub enum ToplevelDefinition {
     Value(ToplevelValueDefinition),
     /// Definition for an abstraction concept introduced in ITU-T X.681.
     Information(ToplevelInformationDefinition),
+    /// Definition for a macro.
+    Macro(ToplevelMacroDefinition),
 }
 
 impl ToplevelDefinition {
@@ -554,6 +562,9 @@ impl ToplevelDefinition {
             ToplevelDefinition::Information(ref mut i) => {
                 i.index = Some((module_reference, item_no));
             }
+            ToplevelDefinition::Macro(ref mut m) => {
+                m.index = Some((module_reference, item_no));
+            }
         }
     }
 
@@ -562,6 +573,7 @@ impl ToplevelDefinition {
             ToplevelDefinition::Type(ref t) => t.index.as_ref(),
             ToplevelDefinition::Value(ref v) => v.index.as_ref(),
             ToplevelDefinition::Information(ref i) => i.index.as_ref(),
+            ToplevelDefinition::Macro(ref m) => m.index.as_ref(),
         }
     }
 
@@ -570,6 +582,7 @@ impl ToplevelDefinition {
             ToplevelDefinition::Type(ref t) => t.index.as_ref().map(|(m, _)| m.clone()),
             ToplevelDefinition::Value(ref v) => v.index.as_ref().map(|(m, _)| m.clone()),
             ToplevelDefinition::Information(ref i) => i.index.as_ref().map(|(m, _)| m.clone()),
+            ToplevelDefinition::Macro(ref m) => m.index.as_ref().map(|(m, _)| m.clone()),
         }
     }
 
@@ -626,6 +639,7 @@ impl ToplevelDefinition {
             ToplevelDefinition::Information(i) => &i.name,
             ToplevelDefinition::Type(t) => &t.name,
             ToplevelDefinition::Value(v) => &v.name,
+            ToplevelDefinition::Macro(v) => &v.name,
         }
     }
 }

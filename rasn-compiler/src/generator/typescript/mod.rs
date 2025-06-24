@@ -140,6 +140,11 @@ impl Backend for Typescript {
                 }
             }
             ToplevelDefinition::Value(v) => self.generate_value(v),
+            ToplevelDefinition::Macro(_) => Err(GeneratorError {
+                kind: GeneratorErrorType::NotYetInplemented,
+                details: "MACROs are currently unsupported!".to_string(),
+                top_level_declaration: Some(tld),
+            }),
             _ => Ok(String::new()),
         }
     }

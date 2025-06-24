@@ -75,6 +75,7 @@ impl Display for GeneratorError {
             Some(ToplevelDefinition::Type(t)) => &t.name,
             Some(ToplevelDefinition::Value(v)) => &v.name,
             Some(ToplevelDefinition::Information(i)) => &i.name,
+            Some(ToplevelDefinition::Macro(m)) => &m.name,
             None => "",
         };
         write!(

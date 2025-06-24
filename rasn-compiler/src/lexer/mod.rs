@@ -18,6 +18,8 @@ use nom::{
     sequence::{delimited, pair, preceded, terminated, tuple},
 };
 
+use crate::intermediate::macros::ToplevelMacroDefinition;
+use crate::lexer::macros::macro_definition;
 use crate::{
     input::{context_boundary, Input},
     intermediate::{information_object::*, *},
@@ -42,6 +44,7 @@ pub(crate) mod error;
 mod external;
 mod information_object_class;
 mod integer;
+pub(crate) mod macros;
 mod module_reference;
 mod null;
 mod object_identifier;
@@ -95,6 +98,9 @@ pub(crate) fn asn_module(
                 ),
                 map(top_level_type_declaration, ToplevelDefinition::Type),
                 map(top_level_value_declaration, ToplevelDefinition::Value),
+                map(macro_definition, |m| {
+                    ToplevelDefinition::Macro(ToplevelMacroDefinition::from(m))
+                }),
             )))),
             context_boundary(skip_ws_and_comments(alt((end, encoding_control)))),
         ),
