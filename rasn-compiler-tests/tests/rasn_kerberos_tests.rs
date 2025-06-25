@@ -811,7 +811,7 @@ fn as_req() {
             ]),
             addresses: Some(HostAddresses(vec![HostAddress {
                 addr_type: Int32(20),
-                address: OctetString::from("CLIENT01        "),
+                address: OctetString::from_static(b"CLIENT01        "),
             }])),
             enc_authorization_data: None,
             additional_tickets: None,
