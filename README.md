@@ -177,7 +177,7 @@ Currently, `rasn` supports the following encoding rules:
 
 -   `NULL` type and value
 -   `BOOLEAN` type and value
--   `REAL` type and value
+-   `REAL` type and value (de-/encoding support for XER, JER, and OER only)
 -   `NumericString` type and value
 -   `VisibleString` type and value
 -   `IA5String` type and value
