@@ -3,7 +3,7 @@ use nom::{
     bytes::complete::tag,
     character::complete::i128,
     combinator::{map, opt},
-    sequence::tuple,
+    Parser,
 };
 
 use crate::intermediate::{ASN1Type, ASN1Value, INTEGER};
@@ -11,7 +11,7 @@ use crate::intermediate::{ASN1Type, ASN1Value, INTEGER};
 use super::{constraint::*, *};
 
 pub fn integer_value(input: Input<'_>) -> ParserResult<'_, ASN1Value> {
-    map(skip_ws_and_comments(i128), ASN1Value::Integer)(input)
+    map(skip_ws_and_comments(i128), ASN1Value::Integer).parse(input)
 }
 
 /// Tries to parse an ASN1 INTEGER
@@ -24,13 +24,14 @@ pub fn integer_value(input: Input<'_>) -> ParserResult<'_, ASN1Value> {
 /// If the match fails, the lexer will not consume the input and will return an error.
 pub fn integer(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
     map(
-        tuple((
+        (
             into_inner(skip_ws_and_comments(tag(INTEGER))),
             opt(skip_ws_and_comments(distinguished_values)),
             opt(skip_ws_and_comments(constraint)),
-        )),
+        ),
         |m| ASN1Type::Integer(m.into()),
-    )(input)
+    )
+    .parse(input)
 }
 
 #[cfg(test)]

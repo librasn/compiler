@@ -6,27 +6,22 @@
 
 use std::{
     fmt::Debug,
-    ops::RangeTo,
+    slice::SliceIndex,
     str::{CharIndices, Chars, FromStr},
 };
 
-use nom::{
-    AsBytes, Compare, ExtendInto, FindSubstring, FindToken, InputIter, InputLength, InputTake,
-    InputTakeAtPosition, Offset, ParseTo, Slice,
-};
-
-use crate::lexer::error::ParserResult;
+use nom::{AsBytes, Compare, ExtendInto, FindSubstring, FindToken, Offset, ParseTo, Parser};
 
 /// Informs `Input` of a context switch.
-pub fn context_boundary<'a, F, O: Debug>(
+pub fn context_boundary<'a, F>(
     mut inner: F,
-) -> impl FnMut(Input<'a>) -> ParserResult<'a, O>
+) -> impl Parser<Input<'a>, Output = F::Output, Error = F::Error>
 where
-    F: FnMut(Input<'a>) -> ParserResult<'a, O>,
+    F: Parser<Input<'a>>,
 {
-    move |mut input| {
+    move |mut input: Input<'a>| {
         input.reset_context();
-        inner(input)
+        inner.parse(input)
     }
 }
 
@@ -189,57 +184,9 @@ impl FindToken<char> for Input<'_> {
     }
 }
 
-impl<'a> InputIter for Input<'a> {
-    type Item = char;
-    type Iter = CharIndices<'a>;
-    type IterElem = Chars<'a>;
-
-    #[inline]
-    fn iter_indices(&self) -> Self::Iter {
-        self.inner.iter_indices()
-    }
-
-    #[inline]
-    fn iter_elements(&self) -> Self::IterElem {
-        self.inner.iter_elements()
-    }
-
-    #[inline]
-    fn position<P>(&self, predicate: P) -> Option<usize>
-    where
-        P: Fn(Self::Item) -> bool,
-    {
-        self.inner.position(predicate)
-    }
-
-    #[inline]
-    fn slice_index(&self, count: usize) -> Result<usize, nom::Needed> {
-        self.inner.slice_index(count)
-    }
-}
-
-impl InputLength for Input<'_> {
-    fn input_len(&self) -> usize {
-        self.inner.len()
-    }
-}
-
-impl InputTake for Input<'_> {
-    fn take(&self, count: usize) -> Self {
-        self.slice(..count)
-    }
-
-    fn take_split(&self, count: usize) -> (Self, Self) {
-        (self.slice(count..), self.slice(..count))
-    }
-}
-
-impl<'a, R> Slice<R> for Input<'a>
-where
-    &'a str: Slice<R> + Slice<RangeTo<usize>>,
-{
-    fn slice(&self, range: R) -> Self {
-        let inner = self.inner.slice(range);
+impl<'a> Input<'a> {
+    pub fn slice(&self, range: impl SliceIndex<str, Output = str>) -> Self {
+        let inner = &self.inner[range];
         let consumed_len = self.inner.offset(inner);
         if consumed_len == 0 {
             Input {
@@ -251,7 +198,7 @@ where
                 inner,
             }
         } else {
-            let consumed = self.inner.slice(..consumed_len);
+            let consumed = &self.inner[..consumed_len];
             let line_breaks = consumed.match_indices('\n');
             let last_line_break = line_breaks.clone().last();
             let column = if let Some(last) = last_line_break {
@@ -273,8 +220,10 @@ where
     }
 }
 
-impl InputTakeAtPosition for Input<'_> {
+impl<'a> nom::Input for Input<'a> {
     type Item = char;
+    type Iter = Chars<'a>;
+    type IterIndices = CharIndices<'a>;
 
     fn split_at_position<P, E: nom::error::ParseError<Self>>(
         &self,
@@ -315,6 +264,41 @@ impl InputTakeAtPosition for Input<'_> {
             Err(nom::Err::Incomplete(_)) => Ok(self.take_split(self.input_len())),
             res => res,
         }
+    }
+
+    fn input_len(&self) -> usize {
+        self.inner.len()
+    }
+
+    fn take(&self, count: usize) -> Self {
+        self.slice(..count)
+    }
+
+    fn take_from(&self, index: usize) -> Self {
+        self.slice(index..)
+    }
+
+    fn take_split(&self, count: usize) -> (Self, Self) {
+        (self.slice(count..), self.slice(..count))
+    }
+
+    fn position<P>(&self, predicate: P) -> Option<usize>
+    where
+        P: Fn(Self::Item) -> bool,
+    {
+        self.inner.position(predicate)
+    }
+
+    fn iter_elements(&self) -> Self::Iter {
+        self.inner.iter_elements()
+    }
+
+    fn iter_indices(&self) -> Self::IterIndices {
+        self.inner.iter_indices()
+    }
+
+    fn slice_index(&self, count: usize) -> Result<usize, nom::Needed> {
+        self.inner.slice_index(count)
     }
 
     fn split_at_position1_complete<P, E: nom::error::ParseError<Self>>(

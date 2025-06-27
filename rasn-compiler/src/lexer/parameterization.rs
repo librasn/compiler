@@ -4,6 +4,7 @@ use nom::{
     combinator::{into, map},
     multi::separated_list1,
     sequence::separated_pair,
+    Parser,
 };
 
 use crate::{
@@ -36,7 +37,8 @@ pub fn parameterization(input: Input<'_>) -> ParserResult<'_, Parameterization> 
             ))),
             into(skip_ws_and_comments(identifier)),
         ))),
-    )))(input)
+    )))
+    .parse(input)
 }
 
 pub fn parameters(input: Input<'_>) -> ParserResult<'_, Vec<Parameter>> {
@@ -50,7 +52,8 @@ pub fn parameters(input: Input<'_>) -> ParserResult<'_, Vec<Parameter>> {
                 Parameter::InformationObjectParameter(o)
             }),
         ))),
-    )))(input)
+    )))
+    .parse(input)
 }
 
 #[cfg(test)]

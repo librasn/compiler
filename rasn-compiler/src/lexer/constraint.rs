@@ -8,7 +8,8 @@ use nom::{
     character::complete::char,
     combinator::{into, map, map_res, opt, value},
     multi::{many0_count, many1, separated_list0, separated_list1},
-    sequence::{delimited, pair, preceded, separated_pair, terminated, tuple},
+    sequence::{delimited, pair, preceded, separated_pair, terminated},
+    Parser,
 };
 
 use super::{
@@ -38,7 +39,8 @@ pub fn constraint(input: Input<'_>) -> ParserResult<'_, Vec<Constraint>> {
             })
         }),
         map(parameters, Constraint::Parameter),
-    ))))(input)
+    ))))
+    .parse(input)
 }
 
 pub fn single_constraint(input: Input<'_>) -> ParserResult<'_, Constraint> {
@@ -46,7 +48,8 @@ pub fn single_constraint(input: Input<'_>) -> ParserResult<'_, Constraint> {
         map(content_constraint, Constraint::ContentConstraint),
         map(table_constraint, Constraint::TableConstraint),
         map(element_set, Constraint::SubtypeConstraint),
-    ))))(input)
+    ))))
+    .parse(input)
 }
 
 pub fn set_operator(input: Input<'_>) -> ParserResult<'_, SetOperator> {
@@ -56,7 +59,8 @@ pub fn set_operator(input: Input<'_>) -> ParserResult<'_, SetOperator> {
         value(SetOperator::Union, tag(UNION)),
         value(SetOperator::Union, tag(PIPE)),
         value(SetOperator::Except, tag(EXCEPT)),
-    )))(input)
+    )))
+    .parse(input)
 }
 
 fn element_set(input: Input<'_>) -> ParserResult<'_, ElementSet> {
@@ -69,18 +73,20 @@ fn element_set(input: Input<'_>) -> ParserResult<'_, ElementSet> {
             char(COMMA),
             extension_marker,
         ))),
-    ))(input)
+    ))
+    .parse(input)
 }
 
 fn set_operation(input: Input<'_>) -> ParserResult<'_, SetOperation> {
-    into(tuple((
+    into((
         subtype_element,
         set_operator,
         alt((
             map(set_operation, ElementOrSetOperation::SetOperation),
             map(subtype_element, ElementOrSetOperation::Element),
         )),
-    )))(input)
+    ))
+    .parse(input)
 }
 
 fn subtype_element(input: Input<'_>) -> ParserResult<'_, SubtypeElement> {
@@ -95,7 +101,8 @@ fn subtype_element(input: Input<'_>) -> ParserResult<'_, SubtypeElement> {
         value_range,
         single_value,
         contained_subtype,
-    ))(input)
+    ))
+    .parse(input)
 }
 
 fn extension_additions(input: Input<'_>) -> ParserResult<'_, ()> {
@@ -129,11 +136,12 @@ fn extension_additions(input: Input<'_>) -> ParserResult<'_, ()> {
                 ))),
             )),
         )),
-    )(input)
+    )
+    .parse(input)
 }
 
 fn single_value(input: Input<'_>) -> ParserResult<'_, SubtypeElement> {
-    opt_delimited::<char, SubtypeElement, char, _, _, _>(
+    opt_delimited(
         skip_ws_and_comments(char(LEFT_PARENTHESIS)),
         skip_ws_and_comments(into(pair(
             asn1_value,
@@ -144,11 +152,12 @@ fn single_value(input: Input<'_>) -> ParserResult<'_, SubtypeElement> {
             ))),
         ))),
         skip_ws_and_comments(char(RIGHT_PARENTHESIS)),
-    )(input)
+    )
+    .parse(input)
 }
 
 fn contained_subtype(input: Input<'_>) -> ParserResult<'_, SubtypeElement> {
-    opt_delimited::<char, SubtypeElement, char, _, _, _>(
+    opt_delimited(
         skip_ws_and_comments(char(LEFT_PARENTHESIS)),
         skip_ws_and_comments(map(
             pair(
@@ -164,14 +173,15 @@ fn contained_subtype(input: Input<'_>) -> ParserResult<'_, SubtypeElement> {
             },
         )),
         skip_ws_and_comments(char(RIGHT_PARENTHESIS)),
-    )(input)
+    )
+    .parse(input)
 }
 
 fn value_range(input: Input<'_>) -> ParserResult<'_, SubtypeElement> {
-    opt_delimited::<char, SubtypeElement, char, _, _, _>(
+    opt_delimited(
         skip_ws_and_comments(char(LEFT_PARENTHESIS)),
         skip_ws_and_comments(map(
-            tuple((
+            (
                 terminated(
                     alt((value(None, tag(MIN)), map(asn1_value, Some))),
                     skip_ws_and_comments(opt(char(GREATER_THAN))),
@@ -188,7 +198,7 @@ fn value_range(input: Input<'_>) -> ParserResult<'_, SubtypeElement> {
                     extension_marker,
                     extension_additions,
                 ))),
-            )),
+            ),
             |(min, max, ext)| SubtypeElement::ValueRange {
                 min,
                 max,
@@ -196,20 +206,22 @@ fn value_range(input: Input<'_>) -> ParserResult<'_, SubtypeElement> {
             },
         )),
         skip_ws_and_comments(char(RIGHT_PARENTHESIS)),
-    )(input)
+    )
+    .parse(input)
 }
 
 fn size_constraint(input: Input<'_>) -> ParserResult<'_, SubtypeElement> {
-    opt_delimited::<char, SubtypeElement, char, _, _, _>(
+    opt_delimited(
         skip_ws_and_comments(char(LEFT_PARENTHESIS)),
         skip_ws_and_comments(into(preceded(tag(SIZE), single_constraint))),
         skip_ws_and_comments(char(RIGHT_PARENTHESIS)),
-    )(input)
+    )
+    .parse(input)
 }
 
 fn pattern_constraint(input: Input<'_>) -> ParserResult<'_, SubtypeElement> {
     map(
-        opt_delimited::<char, PatternConstraint, char, _, _, _>(
+        opt_delimited(
             skip_ws_and_comments(char(LEFT_PARENTHESIS)),
             skip_ws_and_comments(into(preceded(
                 tag(PATTERN),
@@ -222,12 +234,13 @@ fn pattern_constraint(input: Input<'_>) -> ParserResult<'_, SubtypeElement> {
             skip_ws_and_comments(char(RIGHT_PARENTHESIS)),
         ),
         SubtypeElement::PatternConstraint,
-    )(input)
+    )
+    .parse(input)
 }
 
 fn user_defined_constraint(input: Input<'_>) -> ParserResult<'_, SubtypeElement> {
     map(
-        opt_delimited::<char, UserDefinedConstraint, char, _, _, _>(
+        opt_delimited(
             skip_ws_and_comments(char(LEFT_PARENTHESIS)),
             skip_ws_and_comments(into(preceded(
                 tag(CONSTRAINED_BY),
@@ -240,7 +253,8 @@ fn user_defined_constraint(input: Input<'_>) -> ParserResult<'_, SubtypeElement>
             skip_ws_and_comments(char(RIGHT_PARENTHESIS)),
         ),
         SubtypeElement::UserDefinedConstraint,
-    )(input)
+    )
+    .parse(input)
 }
 
 /// Parses a PermittedAlphabet constraint.
@@ -250,7 +264,7 @@ fn user_defined_constraint(input: Input<'_>) -> ParserResult<'_, SubtypeElement>
 /// >* _51.7.3 The "Constraint" shall use the "SubtypeConstraint" alternative of "ConstraintSpec". Each "SubtypeElements" within that "SubtypeConstraint" shall be one of the four alternatives "SingleValue", "ContainedSubtype", "ValueRange", and "SizeConstraint". The sub-alphabet includes precisely those characters which appear in one or more of the values of the parent string type which are allowed by the "Constraint"._
 /// >* _51.7.4 If "Constraint" is extensible, then the set of values selected by the permitted alphabet constraint is extensible. The set of values in the root are those permitted by the root of "Constraint", and the extension additions are those values permitted by the root together with the extension-additions of "Constraint", excluding those values already in the root._
 fn permitted_alphabet_constraint(input: Input<'_>) -> ParserResult<'_, SubtypeElement> {
-    opt_delimited::<char, SubtypeElement, char, _, _, _>(
+    opt_delimited(
         skip_ws_and_comments(char(LEFT_PARENTHESIS)),
         skip_ws_and_comments(map(
             preceded(
@@ -263,22 +277,24 @@ fn permitted_alphabet_constraint(input: Input<'_>) -> ParserResult<'_, SubtypeEl
             |i| SubtypeElement::PermittedAlphabet(Box::new(i)),
         )),
         skip_ws_and_comments(char(RIGHT_PARENTHESIS)),
-    )(input)
+    )
+    .parse(input)
 }
 
 fn single_type_constraint(input: Input<'_>) -> ParserResult<'_, SubtypeElement> {
-    opt_delimited::<char, SubtypeElement, char, _, _, _>(
+    opt_delimited(
         skip_ws_and_comments(char(LEFT_PARENTHESIS)),
         skip_ws_and_comments(into(preceded(
             tag(WITH_COMPONENT),
             skip_ws_and_comments(map(constraint, SubtypeElement::SingleTypeConstraint)),
         ))),
         skip_ws_and_comments(char(RIGHT_PARENTHESIS)),
-    )(input)
+    )
+    .parse(input)
 }
 
 fn multiple_type_constraints(input: Input<'_>) -> ParserResult<'_, SubtypeElement> {
-    opt_delimited::<char, SubtypeElement, char, _, _, _>(
+    opt_delimited(
         skip_ws_and_comments(char(LEFT_PARENTHESIS)),
         skip_ws_and_comments(into(preceded(
             tag(WITH_COMPONENTS),
@@ -294,22 +310,24 @@ fn multiple_type_constraints(input: Input<'_>) -> ParserResult<'_, SubtypeElemen
             )),
         ))),
         skip_ws_and_comments(char(RIGHT_PARENTHESIS)),
-    )(input)
+    )
+    .parse(input)
 }
 
 fn subset_member(input: Input<'_>) -> ParserResult<'_, SubsetMember<'_>> {
-    skip_ws_and_comments(tuple((
+    skip_ws_and_comments((
         identifier,
         opt(skip_ws_and_comments(constraint)),
         opt(skip_ws_and_comments(alt((
             value(ComponentPresence::Present, tag(PRESENT)),
             value(ComponentPresence::Absent, tag(ABSENT)),
         )))),
-    )))(input)
+    ))
+    .parse(input)
 }
 
 fn content_constraint(input: Input<'_>) -> ParserResult<'_, ContentConstraint> {
-    opt_delimited::<char, ContentConstraint, char, _, _, _>(
+    opt_delimited(
         skip_ws_and_comments(char(LEFT_PARENTHESIS)),
         skip_ws_and_comments(alt((
             into(pair(
@@ -326,11 +344,12 @@ fn content_constraint(input: Input<'_>) -> ParserResult<'_, ContentConstraint> {
             )),
         ))),
         skip_ws_and_comments(char(RIGHT_PARENTHESIS)),
-    )(input)
+    )
+    .parse(input)
 }
 
 fn table_constraint(input: Input<'_>) -> ParserResult<'_, TableConstraint> {
-    opt_delimited::<char, TableConstraint, char, _, _, _>(
+    opt_delimited(
         skip_ws_and_comments(char(LEFT_PARENTHESIS)),
         skip_ws_and_comments(into(pair(
             object_set,
@@ -340,14 +359,16 @@ fn table_constraint(input: Input<'_>) -> ParserResult<'_, TableConstraint> {
             ))),
         ))),
         skip_ws_and_comments(char(RIGHT_PARENTHESIS)),
-    )(input)
+    )
+    .parse(input)
 }
 
 fn relational_constraint(input: Input<'_>) -> ParserResult<'_, RelationalConstraint> {
     into(skip_ws_and_comments(preceded(
         char(AT),
         pair(many0_count(char(DOT)), identifier),
-    )))(input)
+    )))
+    .parse(input)
 }
 
 fn property_settings_constraint(input: Input<'_>) -> ParserResult<'_, SubtypeElement> {
@@ -377,7 +398,8 @@ fn property_settings_constraint(input: Input<'_>) -> ParserResult<'_, SubtypeEle
                     })
             },
         ),
-    )(input)
+    )
+    .parse(input)
 }
 
 fn settings_identifier(input: Input<'_>) -> ParserResult<'_, &str> {
@@ -391,7 +413,8 @@ fn settings_identifier(input: Input<'_>) -> ParserResult<'_, &str> {
         tag(StartEndPointSettings::NAME),
         tag(RecurrenceSettings::NAME),
         tag(MidnightSettings::NAME),
-    )))(input)
+    )))
+    .parse(input)
 }
 
 #[cfg(test)]

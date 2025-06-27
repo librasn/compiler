@@ -3,7 +3,7 @@ use nom::{
     character::complete::char,
     combinator::opt,
     multi::many0,
-    sequence::{terminated, tuple},
+    sequence::{terminated},
 };
 
 use crate::intermediate::*;
@@ -25,7 +25,7 @@ pub fn set(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
         preceded(
             skip_ws_and_comments(tag(SET)),
             pair(
-                in_braces(tuple((
+                in_braces((
                     many0(terminated(
                         skip_ws_and_comments(sequence_component),
                         optional_comma,
@@ -35,12 +35,12 @@ pub fn set(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
                         skip_ws_and_comments(sequence_component),
                         optional_comma,
                     ))),
-                ))),
+                )),
                 opt(constraint),
             ),
         ),
         |m| ASN1Type::Set(m.into()),
-    )(input)
+    ).parse(input)
 }
 
 #[cfg(test)]

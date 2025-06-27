@@ -3,7 +3,8 @@ use nom::bytes::complete::tag;
 use nom::character::complete::char;
 use nom::combinator::{cut, map, map_res, not, opt, peek, value};
 use nom::multi::{many0, many1, separated_list1};
-use nom::sequence::{delimited, pair, preceded, separated_pair, terminated, tuple};
+use nom::sequence::{delimited, pair, preceded, separated_pair, terminated};
+use nom::Parser;
 
 use crate::input::{context_boundary, Input};
 use crate::intermediate::{
@@ -70,7 +71,8 @@ pub fn macro_definition(input: Input<'_>) -> ParserResult<'_, MacroDefinition> {
             name: v.0,
             substance: v.1,
         },
-    )(input)
+    )
+    .parse(input)
 }
 
 /// Parse a macro substance.
@@ -96,7 +98,8 @@ fn macro_substance(input: Input<'_>) -> ParserResult<'_, MacroSubstance> {
                 macro_reference: v.1,
             }
         }),
-    )))(input)
+    )))
+    .parse(input)
 }
 
 /// Parse a macro body.
@@ -118,7 +121,7 @@ fn macro_substance(input: Input<'_>) -> ParserResult<'_, MacroSubstance> {
 /// ```
 fn macro_body(input: Input<'_>) -> ParserResult<'_, MacroBody> {
     map(
-        tuple((
+        (
             preceded(
                 pair(
                     skip_ws_and_comments(tag("TYPE NOTATION")),
@@ -134,13 +137,14 @@ fn macro_body(input: Input<'_>) -> ParserResult<'_, MacroBody> {
                 skip_ws_and_comments(macro_alternative_list),
             ),
             supporting_productions,
-        )),
+        ),
         |v| MacroBody {
             type_production: v.0,
             value_production: v.1,
             supporting_productions: v.2,
         },
-    )(input)
+    )
+    .parse(input)
 }
 
 /// Parse supporting productions.
@@ -170,7 +174,8 @@ fn supporting_productions(input: Input<'_>) -> ParserResult<'_, Vec<Production>>
             name: v.0,
             alternatives: v.1,
         },
-    ))(input)
+    ))
+    .parse(input)
 }
 
 /// Parse an external macro reference.
@@ -186,7 +191,8 @@ fn external_macro_reference(input: Input<'_>) -> ParserResult<'_, (&'_ str, &'_ 
         title_case_identifier,
         skip_ws_and_comments(char(DOT)),
         skip_ws_and_comments(macro_reference),
-    )(input)
+    )
+    .parse(input)
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -235,7 +241,7 @@ pub enum SymbolDefn<'i> {
 /// MacroAlternative ::= SymbolList
 /// ```
 fn macro_alternative_list(input: Input<'_>) -> ParserResult<'_, Vec<Vec<SymbolElement>>> {
-    separated_list1(skip_ws_and_comments(tag(PIPE)), symbol_list)(input)
+    separated_list1(skip_ws_and_comments(tag(PIPE)), symbol_list).parse(input)
 }
 
 /// Parse a symbol list.
@@ -258,7 +264,8 @@ fn symbol_list(input: Input<'_>) -> ParserResult<'_, Vec<SymbolElement>> {
             map(embedded_definitions, SymbolElement::EmbeddedDefinitions),
         ))),
         skip_ws_and_comments(not(peek(tag(ASSIGN)))),
-    ))(input)
+    ))
+    .parse(input)
 }
 
 /// Parse a symbol definition.
@@ -310,7 +317,8 @@ fn symbol_defn(input: Input<'_>) -> ParserResult<'_, SymbolDefn<'_>> {
                 ),
             )))),
         ),
-    )))(input)
+    )))
+    .parse(input)
 }
 
 /// Parse astring, that is, a string literal.
@@ -318,7 +326,7 @@ fn symbol_defn(input: Input<'_>) -> ParserResult<'_, SymbolDefn<'_>> {
 /// String literals in MACROs are a bit simpler than regular string literals. The only
 /// transformation is to replace any escaped double quotes `""` with a single `"`.
 fn astring(input: Input<'_>) -> ParserResult<'_, String> {
-    map(raw_string_literal, |s| s.replace("\"\"", "\""))(input)
+    map(raw_string_literal, |s| s.replace("\"\"", "\"")).parse(input)
 }
 
 /// Parse a macro type.
@@ -341,7 +349,8 @@ fn macro_type(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
             ))
         }
         _ => Ok(v),
-    }))(input)
+    }))
+    .parse(input)
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -379,7 +388,8 @@ fn embedded_definitions(input: Input<'_>) -> ParserResult<'_, Vec<EmbeddedDefini
         skip_ws_and_comments(char(LESS_THAN)),
         cut(many1(skip_ws_and_comments(embedded_definition))),
         skip_ws_and_comments(char(GREATER_THAN)),
-    )(input)
+    )
+    .parse(input)
 }
 
 /// Parse an embedded definition.
@@ -395,7 +405,8 @@ fn embedded_definition(input: Input<'_>) -> ParserResult<'_, EmbeddedDefinition>
     alt((
         map(local_type_assignement, EmbeddedDefinition::Type),
         map(local_value_assignement, EmbeddedDefinition::Value),
-    ))(input)
+    ))
+    .parse(input)
 }
 
 /// Parse a local type assignement.
@@ -414,7 +425,8 @@ fn local_type_assignement(input: Input<'_>) -> ParserResult<'_, LocalTypeassignm
             skip_ws_and_comments(macro_type),
         ),
         |v| LocalTypeassignment { name: v.0, ty: v.1 },
-    )(input)
+    )
+    .parse(input)
 }
 
 /// Parse a local value assignement.
@@ -427,17 +439,18 @@ fn local_type_assignement(input: Input<'_>) -> ParserResult<'_, LocalTypeassignm
 /// ```
 fn local_value_assignement(input: Input<'_>) -> ParserResult<'_, LocalValueassignment> {
     map(
-        tuple((
+        (
             skip_ws_and_comments(local_value_reference),
             skip_ws_and_comments(macro_type),
             skip_ws_and_comments(preceded(tag(ASSIGN), skip_ws_and_comments(macro_value))),
-        )),
+        ),
         |v| LocalValueassignment {
             name: v.0,
             ty: v.1,
             value: v.2,
         },
-    )(input)
+    )
+    .parse(input)
 }
 
 /// Parse a macro value.
@@ -460,7 +473,8 @@ fn macro_value(input: Input<'_>) -> ParserResult<'_, ASN1Value> {
             ))
         }
         _ => Ok(v),
-    }))(input)
+    }))
+    .parse(input)
 }
 
 /// Keywords not allowed for some MACRO items.
@@ -483,7 +497,8 @@ fn macro_reference(input: Input<'_>) -> ParserResult<'_, &'_ str> {
         } else {
             Ok(v)
         }
-    })(input)
+    })
+    .parse(input)
 }
 
 /// Parse a production reference.
@@ -496,7 +511,8 @@ fn production_reference(input: Input<'_>) -> ParserResult<'_, &'_ str> {
         } else {
             Ok(v)
         }
-    })(input)
+    })
+    .parse(input)
 }
 
 /// Parse a local type reference.
@@ -509,7 +525,8 @@ fn local_type_reference(input: Input<'_>) -> ParserResult<'_, &'_ str> {
         } else {
             Ok(v)
         }
-    })(input)
+    })
+    .parse(input)
 }
 
 /// Parse a local value reference
@@ -522,7 +539,8 @@ fn local_value_reference(input: Input<'_>) -> ParserResult<'_, &'_ str> {
         } else {
             Ok(v)
         }
-    })(input)
+    })
+    .parse(input)
 }
 
 #[cfg(test)]

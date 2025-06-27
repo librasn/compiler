@@ -3,7 +3,8 @@ use nom::{
     bytes::complete::tag,
     character::complete::{char, u8},
     combinator::{map, map_res, opt},
-    sequence::{delimited, pair, terminated, tuple},
+    sequence::{delimited, pair, terminated},
+    Parser,
 };
 
 use crate::{input::Input, intermediate::*};
@@ -19,7 +20,8 @@ pub fn character_string_value(input: Input<'_>) -> ParserResult<'_, ASN1Value> {
     map(
         skip_ws_and_comments(alt((cstring, map(quadruple, |c| c.to_string())))),
         |m: String| ASN1Value::String(m),
-    )(input)
+    )
+    .parse(input)
 }
 
 /// Parses a ASN1 cstring
@@ -45,7 +47,8 @@ pub fn cstring(input: Input<'_>) -> ParserResult<'_, String> {
         // Replace any escaped quote with a single `"`
         // TODO: Remove whitespace around newlines in multiline strings.
         s.replace("\"\"", "\"")
-    })(input)
+    })
+    .parse(input)
 }
 
 /// Parses a string literal into its raw value.
@@ -56,7 +59,7 @@ pub fn cstring(input: Input<'_>) -> ParserResult<'_, String> {
 /// This is a raw string in the sense that it is the string slice as written
 /// in the source, including any indentation and double quotes (`""`).
 pub fn raw_string_literal(input: Input<'_>) -> ParserResult<'_, &'_ str> {
-    delimited(char('"'), take_until_and_not("\"", "\"\""), char('"'))(input)
+    delimited(char('"'), take_until_and_not("\"", "\"\""), char('"')).parse(input)
 }
 
 /// A ASN1 character value can be specified "by reference to a registration number in the ISO
@@ -77,12 +80,12 @@ pub fn raw_string_literal(input: Input<'_>) -> ParserResult<'_, &'_ str> {
 /// __Currently, the rasn compiler only supports group `0`__
 fn quadruple(input: Input<'_>) -> ParserResult<'_, char> {
     map_res(
-        in_braces(tuple((
+        in_braces((
             terminated(skip_ws(u8), skip_ws(char(COMMA))),
             terminated(skip_ws(u8), skip_ws(char(COMMA))),
             terminated(skip_ws(u8), skip_ws(char(COMMA))),
             skip_ws(u8),
-        ))),
+        )),
         |(group, plane, row, cell)| {
             if group > 0 {
                 Err(MiscError("Currently, only group 0 is supported."))
@@ -93,7 +96,8 @@ fn quadruple(input: Input<'_>) -> ParserResult<'_, char> {
                 ))
             }
         },
-    )(input.clone())
+    )
+    .parse(input)
 }
 
 /// Tries to parse an ASN1 Character String type
@@ -125,7 +129,8 @@ pub fn character_string(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
             opt(constraint),
         ),
         |m| ASN1Type::CharacterString(m.into()),
-    )(input)
+    )
+    .parse(input)
 }
 
 #[cfg(test)]

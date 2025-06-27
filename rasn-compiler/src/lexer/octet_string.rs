@@ -2,6 +2,7 @@ use nom::{
     bytes::complete::tag,
     combinator::{map, opt},
     sequence::preceded,
+    Parser,
 };
 
 use crate::{input::Input, intermediate::*};
@@ -20,7 +21,8 @@ pub fn octet_string(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
     map(
         preceded(skip_ws_and_comments(tag(OCTET_STRING)), opt(constraint)),
         |m| ASN1Type::OctetString(m.into()),
-    )(input)
+    )
+    .parse(input)
 }
 
 #[cfg(test)]

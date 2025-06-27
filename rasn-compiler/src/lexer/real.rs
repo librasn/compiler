@@ -4,7 +4,8 @@ use nom::{
     bytes::complete::tag,
     character::complete::{char, i32, i64, u64},
     combinator::{map, opt, value},
-    sequence::{delimited, preceded, separated_pair, tuple},
+    sequence::{delimited, preceded, separated_pair},
+    Parser,
 };
 
 use super::{
@@ -17,7 +18,8 @@ pub fn real_value(input: Input<'_>) -> ParserResult<'_, ASN1Value> {
     map(
         skip_ws_and_comments(alt((dot_notation, mbe_notation))),
         ASN1Value::Real,
-    )(input)
+    )
+    .parse(input)
 }
 
 /// Tries to parse an ASN1 REAL
@@ -35,7 +37,8 @@ pub fn real(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
             opt(skip_ws_and_comments(constraint)),
         ),
         |m| ASN1Type::Real(m.into()),
-    )(input)
+    )
+    .parse(input)
 }
 
 fn dot_notation(input: Input<'_>) -> ParserResult<'_, f64> {
@@ -52,12 +55,13 @@ fn dot_notation(input: Input<'_>) -> ParserResult<'_, f64> {
                 wholes as f64 - decimals_f64
             }
         },
-    )(input)
+    )
+    .parse(input)
 }
 
 fn mbe_notation(input: Input<'_>) -> ParserResult<'_, f64> {
     map(
-        in_braces(tuple((
+        in_braces((
             delimited(
                 tag("mantissa"),
                 skip_ws_and_comments(i64),
@@ -72,9 +76,10 @@ fn mbe_notation(input: Input<'_>) -> ParserResult<'_, f64> {
                 skip_ws_and_comments(tag("exponent")),
                 skip_ws_and_comments(i32),
             ),
-        ))),
+        )),
         |(mantissa, base, exponent)| mantissa as f64 * (base as f64).powf(exponent as f64),
-    )(input)
+    )
+    .parse(input)
 }
 
 #[cfg(test)]
