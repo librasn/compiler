@@ -5,12 +5,12 @@ use nom::{
     multi::{many0, separated_list0, separated_list1},
     sequence::{terminated, tuple},
 };
-
+use nom::combinator::value;
 use crate::{
     common::INTERNAL_EXTENSION_GROUP_NAME_PREFIX,
     intermediate::{types::*, *},
 };
-
+use crate::lexer::util::opt_delimited;
 use super::{common::optional_comma, constraint::constraint, *};
 
 pub fn sequence_value(input: Input<'_>) -> ParserResult<'_, ASN1Value> {
@@ -33,6 +33,7 @@ pub fn sequence_value(input: Input<'_>) -> ParserResult<'_, ASN1Value> {
     )(input)
 }
 
+
 /// Tries to parse an ASN1 SEQUENCE
 ///
 /// *`input` - [Input]-wrapped string slice to be matched against
@@ -48,17 +49,38 @@ pub fn sequence(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
         preceded(
             skip_ws_and_comments(tag(SEQUENCE)),
             pair(
-                in_braces(tuple((
-                    many0(terminated(
-                        skip_ws_and_comments(sequence_component),
-                        optional_comma,
-                    )),
-                    opt(terminated(extension_marker, opt(char(COMMA)))),
-                    opt(many0(terminated(
-                        skip_ws_and_comments(alt((extension_group, sequence_component))),
-                        optional_comma,
-                    ))),
-                ))),
+                in_braces(
+                    pair(
+                        separated_list0(
+                            skip_ws_and_comments(char(COMMA)),
+                            sequence_component
+                        ),
+                        opt(preceded(
+                            pair(
+                                skip_ws_and_comments(char(COMMA)),
+                                extension_marker
+                            ),
+                            pair(
+                                many0(
+                                    preceded(
+                                        skip_ws_and_comments(char(COMMA)),
+                                        alt((sequence_component, extension_group)),
+                                    )
+                                ),
+                                map(
+                                    opt(
+                                        preceded(
+                                            pair(skip_ws_and_comments(char(COMMA)), extension_marker),
+                                            many0(
+                                                preceded(skip_ws_and_comments(char(COMMA)), sequence_component))
+                                            )
+                                    ),
+                                    |suf| suf.unwrap_or_default()
+                                )
+                            )
+                        ))
+                    ),
+                ),
                 opt(constraint),
             ),
         ),
@@ -79,24 +101,26 @@ fn extension_group(input: Input<'_>) -> ParserResult<'_, SequenceComponent> {
             ))),
         )),
         |ext_group| {
-            let mut components_of = vec![];
-            let mut members = vec![];
-            for comp in ext_group {
-                match comp {
-                    SequenceComponent::Member(m) => members.push(m),
-                    SequenceComponent::ComponentsOf(c) => components_of.push(c),
-                }
-            }
+            // TODO: Make this None, so that generators can choose their own names
+            let name =
+                String::from(INTERNAL_EXTENSION_GROUP_NAME_PREFIX) +
+                ext_group.iter().find_map(|c| {
+                    if let SequenceComponent::Member(m) = c {
+                        Some(m.name.as_str())
+                    } else {
+                        None
+                    }
+                }).unwrap_or("");
             SequenceComponent::Member(SequenceOrSetMember {
                 is_recursive: false,
-                name: String::from(INTERNAL_EXTENSION_GROUP_NAME_PREFIX)
-                    + &members.first().unwrap().name,
+                name,
                 tag: None,
                 ty: ASN1Type::Sequence(SequenceOrSet {
-                    components_of,
-                    extensible: None,
+                    fixed_components: ext_group,
+                    extension_components: vec![],
+                    suffix_components: vec![],
+                    extensible: false,
                     constraints: vec![],
-                    members,
                 }),
                 default_value: None,
                 is_optional: false,
@@ -213,10 +237,10 @@ mod tests {
         .unwrap()
         .1,
         ASN1Type::Sequence(SequenceOrSet {
-            components_of: vec![],extensible: Some(1),
+            extensible: true,
             constraints: vec![],
-            members: vec![
-                SequenceOrSetMember {
+            fixed_components: vec![
+                SequenceComponent::Member(SequenceOrSetMember {
 is_recursive: false,
                     name: "clusterBoundingBoxShape".into(),
                     tag: None,
@@ -226,8 +250,10 @@ is_recursive: false,
                     default_value: None,
                     is_optional: true,
                     constraints: vec![],
-                }
-            ]
+                })
+            ],
+            extension_components: vec![],
+            suffix_components: vec![],
         })
     )
     }
@@ -245,11 +271,10 @@ is_recursive: false,
             .unwrap()
             .1,
             ASN1Type::Sequence(SequenceOrSet {
-                components_of: vec![],
-                extensible: None,
+                extensible: false,
                 constraints: vec![],
-                members: vec![
-                    SequenceOrSetMember {
+                fixed_components: vec![
+                    SequenceComponent::Member(SequenceOrSetMember {
                         is_recursive: false,
                         name: "value".into(),
                         tag: None,
@@ -261,8 +286,8 @@ is_recursive: false,
                         default_value: None,
                         is_optional: false,
                         constraints: vec![]
-                    },
-                    SequenceOrSetMember {
+                    }),
+                    SequenceComponent::Member(SequenceOrSetMember {
                         is_recursive: false,
                         name: "confidence".into(),
 
@@ -275,8 +300,10 @@ is_recursive: false,
                         default_value: None,
                         is_optional: false,
                         constraints: vec![],
-                    }
-                ]
+                    }),
+                ],
+                extension_components: vec![],
+                suffix_components: vec![],
             })
         )
     }
@@ -296,11 +323,10 @@ is_recursive: false,
             .unwrap()
             .1,
             ASN1Type::Sequence(SequenceOrSet {
-                components_of: vec![],
-                extensible: None,
+                extensible: false,
                 constraints: vec![],
-                members: vec![
-                    SequenceOrSetMember {
+                fixed_components: vec![
+                    SequenceComponent::Member(SequenceOrSetMember {
                         is_recursive: false,
                         name: "xCoordinate".into(),
 
@@ -313,8 +339,8 @@ is_recursive: false,
                         default_value: None,
                         is_optional: false,
                         constraints: vec![],
-                    },
-                    SequenceOrSetMember {
+                    }),
+                    SequenceComponent::Member(SequenceOrSetMember {
                         is_recursive: false,
                         name: "yCoordinate".into(),
                         tag: None,
@@ -326,8 +352,8 @@ is_recursive: false,
                         default_value: None,
                         is_optional: false,
                         constraints: vec![],
-                    },
-                    SequenceOrSetMember {
+                    }),
+                    SequenceComponent::Member(SequenceOrSetMember {
                         is_recursive: false,
                         name: "zCoordinate".into(),
                         tag: None,
@@ -339,8 +365,10 @@ is_recursive: false,
                         default_value: None,
                         is_optional: true,
                         constraints: vec![],
-                    }
-                ]
+                    }),
+                ],
+                extension_components: vec![],
+                suffix_components: vec![],
             })
         )
     }
@@ -361,11 +389,10 @@ is_recursive: false,
             .unwrap()
             .1,
             ASN1Type::Sequence(SequenceOrSet {
-                components_of: vec![],
-                extensible: Some(3),
+                extensible: true,
                 constraints: vec![],
-                members: vec![
-                    SequenceOrSetMember {
+                fixed_components: vec![
+                    SequenceComponent::Member(SequenceOrSetMember {
                         is_recursive: false,
                         name: "horizontalPositionConfidence".into(),
                         tag: None,
@@ -377,8 +404,8 @@ is_recursive: false,
                         default_value: None,
                         is_optional: true,
                         constraints: vec![],
-                    },
-                    SequenceOrSetMember {
+                    }),
+                    SequenceComponent::Member(SequenceOrSetMember {
                         is_recursive: false,
                         name: "deltaAltitude".into(),
                         tag: None,
@@ -393,8 +420,8 @@ is_recursive: false,
                         }),
                         is_optional: true,
                         constraints: vec![],
-                    },
-                    SequenceOrSetMember {
+                    }),
+                    SequenceComponent::Member(SequenceOrSetMember {
                         is_recursive: false,
                         name: "altitudeConfidence".into(),
                         tag: None,
@@ -409,8 +436,10 @@ is_recursive: false,
                         }),
                         is_optional: true,
                         constraints: vec![],
-                    }
-                ]
+                    })
+                ],
+                extension_components: vec![],
+                suffix_components: vec![],
             })
         )
     }
@@ -430,11 +459,10 @@ is_recursive: false,
             .unwrap()
             .1,
             ASN1Type::Sequence(SequenceOrSet {
-                components_of: vec![],
-                extensible: Some(3),
+                extensible: true,
                 constraints: vec![],
-                members: vec![
-                    SequenceOrSetMember {
+                fixed_components: vec![
+                    SequenceComponent::Member(SequenceOrSetMember {
                         is_recursive: false,
                         name: "unNumber".into(),
                         tag: None,
@@ -452,8 +480,8 @@ is_recursive: false,
                         default_value: None,
                         is_optional: false,
                         constraints: vec![],
-                    },
-                    SequenceOrSetMember {
+                    }),
+                    SequenceComponent::Member(SequenceOrSetMember {
                         is_recursive: false,
                         name: "limitedQuantity".into(),
                         tag: None,
@@ -463,8 +491,8 @@ is_recursive: false,
                         default_value: Some(ASN1Value::Boolean(false)),
                         is_optional: true,
                         constraints: vec![],
-                    },
-                    SequenceOrSetMember {
+                    }),
+                    SequenceComponent::Member(SequenceOrSetMember {
                         is_recursive: false,
                         name: "emergencyActionCode".into(),
                         tag: None,
@@ -487,8 +515,10 @@ is_recursive: false,
                         default_value: None,
                         is_optional: true,
                         constraints: vec![],
-                    }
-                ]
+                    })
+                ],
+                extension_components: vec![],
+                suffix_components: vec![],
             })
         )
     }
@@ -515,20 +545,18 @@ is_recursive: false,
             .unwrap()
             .1,
             ASN1Type::Sequence(SequenceOrSet {
-                components_of: vec![],
-                extensible: Some(1),
+                extensible: true,
                 constraints: vec![],
-                members: vec![SequenceOrSetMember {
+                fixed_components: vec![SequenceComponent::Member(SequenceOrSetMember {
                     is_recursive: false,
                     name: "nested".into(),
 
                     tag: None,
                     ty: ASN1Type::Sequence(SequenceOrSet {
-                        components_of: vec![],
-                        extensible: Some(3),
+                        extensible: true,
                         constraints: vec![],
-                        members: vec![
-                            SequenceOrSetMember {
+                        fixed_components: vec![
+                            SequenceComponent::Member(SequenceOrSetMember {
                                 is_recursive: false,
                                 name: "wow".into(),
 
@@ -541,8 +569,8 @@ is_recursive: false,
                                 default_value: None,
                                 is_optional: false,
                                 constraints: vec![],
-                            },
-                            SequenceOrSetMember {
+                            }),
+                            SequenceComponent::Member(SequenceOrSetMember {
                                 is_recursive: false,
                                 name: "this-is-annoying".into(),
 
@@ -553,17 +581,16 @@ is_recursive: false,
                                 default_value: Some(ASN1Value::Boolean(true)),
                                 is_optional: true,
                                 constraints: vec![],
-                            },
-                            SequenceOrSetMember {
+                            }),
+                            SequenceComponent::Member(SequenceOrSetMember {
                                 is_recursive: false,
                                 name: "another".into(),
 
                                 tag: None,
                                 ty: ASN1Type::Sequence(SequenceOrSet {
-                                    components_of: vec![],
-                                    extensible: None,
+                                    extensible: false,
                                     constraints: vec![],
-                                    members: vec![SequenceOrSetMember {
+                                    fixed_components: vec![SequenceComponent::Member(SequenceOrSetMember {
                                         is_recursive: false,
                                         name: "inner".into(),
 
@@ -589,18 +616,24 @@ is_recursive: false,
                                         default_value: Some(ASN1Value::BitString(vec![false])),
                                         is_optional: true,
                                         constraints: vec![],
-                                    }]
+                                    })],
+                                    extension_components: vec![],
+                                    suffix_components: vec![],
                                 }),
                                 default_value: None,
                                 is_optional: true,
                                 constraints: vec![],
-                            }
-                        ]
+                            })
+                        ],
+                        extension_components: vec![],
+                        suffix_components: vec![]
                     }),
                     default_value: None,
                     is_optional: false,
                     constraints: vec![],
-                }]
+                })],
+                extension_components: vec![],
+                suffix_components: vec![]
             })
         )
     }
@@ -645,11 +678,10 @@ is_recursive: false,
             .unwrap()
             .1,
             ASN1Type::Sequence(SequenceOrSet {
-                components_of: vec![],
-                extensible: Some(1),
+                extensible: true,
                 constraints: vec![],
-                members: vec![
-                    SequenceOrSetMember {
+                fixed_components: vec![
+                    SequenceComponent::Member(SequenceOrSetMember {
                         is_recursive: false,
                         name: "item-code".into(),
                         tag: None,
@@ -667,17 +699,17 @@ is_recursive: false,
                         default_value: None,
                         is_optional: false,
                         constraints: vec![]
-                    },
-                    SequenceOrSetMember {
+                    })],
+                extension_components: vec![
+                    SequenceComponent::Member(SequenceOrSetMember {
                         is_recursive: false,
                         name: "ext_group_alternate-item-code".into(),
                         tag: None,
                         ty: ASN1Type::Sequence(SequenceOrSet {
-                            components_of: vec![],
-                            extensible: None,
+                            extensible: false,
                             constraints: vec![],
-                            members: vec![
-                                SequenceOrSetMember {
+                            fixed_components: vec![
+                                SequenceComponent::Member(SequenceOrSetMember {
                                     is_recursive: false,
                                     name: "alternate-item-code".into(),
                                     tag: None,
@@ -699,8 +731,8 @@ is_recursive: false,
                                     default_value: None,
                                     is_optional: false,
                                     constraints: vec![]
-                                },
-                                SequenceOrSetMember {
+                                }),
+                                SequenceComponent::Member(SequenceOrSetMember {
                                     is_recursive: false,
                                     name: "and-another".into(),
                                     tag: None,
@@ -710,14 +742,17 @@ is_recursive: false,
                                     default_value: Some(ASN1Value::Boolean(true)),
                                     is_optional: true,
                                     constraints: vec![]
-                                }
-                            ]
+                                })
+                            ],
+                            extension_components: vec![],
+                            suffix_components: vec![]
                         }),
                         default_value: None,
                         is_optional: false,
                         constraints: vec![]
-                    }
-                ]
+                    })
+                ],
+                suffix_components: vec![]
             })
         )
     }
@@ -735,22 +770,26 @@ is_recursive: false,
             .unwrap()
             .1,
             ASN1Type::Sequence(SequenceOrSet {
-                components_of: vec!["TypeA".into()],
-                extensible: None,
+                extensible: false,
                 constraints: vec![],
-                members: vec![SequenceOrSetMember {
-                    is_recursive: false,
-                    name: "bilateral-information".into(),
-                    tag: None,
-                    ty: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
-                        parent: None,
-                        identifier: "TypeB".into(),
+                fixed_components: vec![
+                    SequenceComponent::ComponentsOf("TypeA".into()),
+                    SequenceComponent::Member(SequenceOrSetMember {
+                        is_recursive: false,
+                        name: "bilateral-information".into(),
+                        tag: None,
+                        ty: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+                            parent: None,
+                            identifier: "TypeB".into(),
+                            constraints: vec![]
+                        }),
+                        default_value: None,
+                        is_optional: false,
                         constraints: vec![]
                     }),
-                    default_value: None,
-                    is_optional: false,
-                    constraints: vec![]
-                }]
+                ],
+                extension_components: vec![],
+                suffix_components: vec![],
             })
         )
     }
@@ -842,10 +881,9 @@ integrityCheckValue     ICV OPTIONAL
             .unwrap()
             .1,
             ASN1Type::Sequence(SequenceOrSet {
-                components_of: vec![],
-                extensible: None,
+                extensible: false,
                 constraints: vec![],
-                members: vec![SequenceOrSetMember {
+                fixed_components: vec![SequenceComponent::Member(SequenceOrSetMember {
                     name: "ages".into(),
                     tag: None,
                     ty: ASN1Type::SequenceOf(SequenceOrSetOf {
@@ -868,7 +906,9 @@ integrityCheckValue     ICV OPTIONAL
                     is_optional: false,
                     is_recursive: false,
                     constraints: vec![],
-                }],
+                })],
+                extension_components: vec![],
+                suffix_components: vec![],
             },)
         )
     }
@@ -888,10 +928,9 @@ integrityCheckValue     ICV OPTIONAL
             .unwrap()
             .1,
             ASN1Type::Sequence(SequenceOrSet {
-                components_of: vec![],
-                extensible: None,
+                extensible: false,
                 constraints: vec![],
-                members: vec![SequenceOrSetMember {
+                fixed_components: vec![SequenceComponent::Member(SequenceOrSetMember {
                     name: "member".into(),
                     tag: None,
                     ty: ASN1Type::SequenceOf(SequenceOrSetOf {
@@ -911,7 +950,9 @@ integrityCheckValue     ICV OPTIONAL
                     is_optional: false,
                     is_recursive: false,
                     constraints: vec![],
-                },],
+                })],
+                extension_components: vec![],
+                suffix_components: vec![],
             },)
         )
     }

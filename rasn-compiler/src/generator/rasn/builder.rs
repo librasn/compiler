@@ -17,6 +17,7 @@ use super::{
     TaggingEnvironment,
 };
 use crate::generator::error::{GeneratorError, GeneratorErrorType};
+use crate::prelude::ir::SequenceComponent;
 
 pub(crate) const INNER_ARRAY_LIKE_PREFIX: &str = "Anonymous_";
 
@@ -686,17 +687,11 @@ impl Rasn {
         match tld.ty {
             ASN1Type::Sequence(ref seq) | ASN1Type::Set(ref seq) => {
                 let name = self.to_rust_title_case(&tld.name);
-                let extensible = seq
-                    .extensible
-                    .or(
-                        (self.extensibility_environment == ExtensibilityEnvironment::Implied)
-                            .then_some(seq.members.len()),
-                    )
-                    .map(|_| {
-                        quote! {
-                        #[non_exhaustive]}
-                    })
-                    .unwrap_or_default();
+                let extensible = if seq.extensible || self.extensibility_environment == ExtensibilityEnvironment::Implied {
+                    quote! {#[non_exhaustive]}
+                } else {
+                    TokenStream::new()
+                };
                 let set_annotation = if let ASN1Type::Set(_) = tld.ty {
                     quote!(set)
                 } else {
@@ -705,7 +700,8 @@ impl Rasn {
                 let class_fields = if self.config.opaque_open_types {
                     TokenStream::new()
                 } else {
-                    seq.members.iter().fold(
+                    seq.direct_members()
+                        .fold(
                     TokenStream::new(),
                     |mut acc, m| {
                         [
@@ -752,7 +748,7 @@ impl Rasn {
                     self.format_tag(
                         tld.tag.as_ref(),
                         self.tagging_environment == TaggingEnvironment::Automatic
-                            && !seq.members.iter().any(|m| m.tag.is_some()),
+                            && !seq.direct_members().any(|m| m.tag.is_some()),
                     ),
                 ];
                 if name.to_string() != tld.name {
@@ -769,7 +765,7 @@ impl Rasn {
                     formatted_members.struct_body,
                     formatted_members.nested_anonymous_types,
                     self.join_annotations(annotations, false, true)?,
-                    self.format_default_methods(&seq.members, &name.to_string())?,
+                    self.format_default_methods(&seq.direct_members().cloned().collect(), &name.to_string())?,
                     self.format_new_impl(&name, formatted_members.name_types),
                     class_fields,
                 ))
