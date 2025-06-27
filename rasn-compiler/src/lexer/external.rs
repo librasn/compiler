@@ -1,4 +1,4 @@
-use nom::{bytes::complete::tag, combinator::value};
+use nom::{bytes::complete::tag, combinator::value, Parser};
 
 use crate::{input::Input, intermediate::*};
 
@@ -13,5 +13,5 @@ use super::{common::skip_ws_and_comments, error::ParserResult};
 /// and an `ASN1Type::External` value representing the ASN1 declaration.
 /// If the match fails, the lexer will not consume the input and will return an error.
 pub fn external(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
-    value(ASN1Type::External, skip_ws_and_comments(tag(EXTERNAL)))(input)
+    value(ASN1Type::External, skip_ws_and_comments(tag(EXTERNAL))).parse(input)
 }

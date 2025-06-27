@@ -8,6 +8,7 @@ use crate::{
 };
 
 use nom::{
+    Parser,
     branch::alt,
     bytes::complete::tag,
     character::complete::u128,
@@ -39,7 +40,7 @@ pub fn object_identifier_value(input: Input<'_>) -> ParserResult<'_, ObjectIdent
         // TODO: store info whether the object id is relative
         opt(alt((tag(OBJECT_IDENTIFIER), tag(RELATIVE_OID)))),
         in_braces(many1(skip_ws(object_identifier_arc))),
-    )))(input)
+    ))).parse(input)
 }
 
 pub fn object_identifier(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
@@ -49,7 +50,7 @@ pub fn object_identifier(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
             opt(skip_ws_and_comments(constraint)),
         )),
         ASN1Type::ObjectIdentifier,
-    )(input)
+    ).parse(input)
 }
 
 fn object_identifier_arc(input: Input<'_>) -> ParserResult<'_, ObjectIdentifierArc> {
@@ -57,11 +58,11 @@ fn object_identifier_arc(input: Input<'_>) -> ParserResult<'_, ObjectIdentifierA
         numeric_id,
         into(pair(value_identifier, skip_ws(in_parentheses(u128)))),
         into(value_identifier),
-    )))(input)
+    ))).parse(input)
 }
 
 fn numeric_id(input: Input<'_>) -> ParserResult<'_, ObjectIdentifierArc> {
-    map(u128, |i| i.into())(input)
+    map(u128, |i| i.into()).parse(input)
 }
 
 #[cfg(test)]

@@ -1,4 +1,4 @@
-use nom::{bytes::complete::tag, combinator::value};
+use nom::{bytes::complete::tag, combinator::value, Parser};
 
 use crate::{input::Input, intermediate::*};
 
@@ -24,5 +24,6 @@ pub fn embedded_pdv(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
     value(
         ASN1Type::EmbeddedPdv,
         skip_ws_and_comments(tag(EMBEDDED_PDV)),
-    )(input)
+    )
+    .parse(input)
 }

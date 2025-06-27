@@ -4,7 +4,8 @@ use nom::{
     character::complete::{alphanumeric1, char, one_of},
     combinator::{into, map, opt, recognize, value},
     multi::{many0, many1, separated_list0, separated_list1},
-    sequence::{pair, preceded, terminated, tuple},
+    sequence::{pair, preceded, terminated},
+    Parser,
 };
 
 use crate::{
@@ -61,7 +62,8 @@ pub fn type_identifier(input: Input<'_>) -> ParserResult<'_, InformationObjectCl
             syntax: None,
         },
         tag(TYPE_IDENTIFIER),
-    ))(input)
+    ))
+    .parse(input)
 }
 
 /// Tries to parse an ASN1 INSTANCE OF
@@ -87,7 +89,8 @@ pub fn instance_of(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
                 constraints,
             })
         },
-    )(input)
+    )
+    .parse(input)
 }
 
 pub fn information_object_class(input: Input<'_>) -> ParserResult<'_, InformationObjectClass> {
@@ -100,31 +103,34 @@ pub fn information_object_class(input: Input<'_>) -> ParserResult<'_, Informatio
             ))),
             opt(preceded(skip_ws_and_comments(tag(WITH_SYNTAX)), syntax)),
         ),
-    ))(input)
+    ))
+    .parse(input)
 }
 
 pub fn information_object_field_reference(
     input: Input<'_>,
 ) -> ParserResult<'_, InformationObjectFieldReference> {
-    into(tuple((
+    into((
         skip_ws_and_comments(uppercase_identifier),
         many1(skip_ws_and_comments(preceded(
             char(DOT),
             skip_ws_and_comments(object_field_identifier),
         ))),
         opt(constraint),
-    )))(input)
+    ))
+    .parse(input)
 }
 
 pub fn information_object(input: Input<'_>) -> ParserResult<'_, InformationObjectFields> {
     in_braces(alt((
         default_syntax_information_object,
         custom_syntax_information_object,
-    )))(input)
+    )))
+    .parse(input)
 }
 
 pub fn object_set(input: Input<'_>) -> ParserResult<'_, ObjectSet> {
-    into(in_braces(tuple((
+    into(in_braces((
         separated_list0(
             skip_ws_and_comments(alt((tag(PIPE), tag(UNION)))),
             skip_ws_and_comments(alt((
@@ -146,7 +152,8 @@ pub fn object_set(input: Input<'_>) -> ParserResult<'_, ObjectSet> {
                 ))),
             ),
         ))),
-    ))))(input)
+    )))
+    .parse(input)
 }
 
 fn custom_syntax_information_object(input: Input<'_>) -> ParserResult<'_, InformationObjectFields> {
@@ -162,7 +169,8 @@ fn custom_syntax_information_object(input: Input<'_>) -> ParserResult<'_, Inform
             map(syntax_literal, |m| SyntaxApplication::Literal(m.into())),
         ))))),
         InformationObjectFields::CustomSyntax,
-    )(input)
+    )
+    .parse(input)
 }
 
 fn default_syntax_information_object(
@@ -184,58 +192,63 @@ fn default_syntax_information_object(
             optional_comma,
         )),
         InformationObjectFields::DefaultSyntax,
-    )(input)
+    )
+    .parse(input)
 }
 
 fn information_object_field(input: Input<'_>) -> ParserResult<'_, InformationObjectClassField> {
-    into(tuple((
+    into((
         skip_ws_and_comments(object_field_identifier),
         opt(skip_ws_and_comments(asn1_type)),
         opt(into_inner(skip_ws_and_comments(tag(UNIQUE)))),
         optional_marker,
         default,
-    )))(input)
+    ))
+    .parse(input)
 }
 
 fn object_field_identifier(input: Input<'_>) -> ParserResult<'_, ObjectFieldIdentifier> {
-    alt((single_value_field_id, multiple_value_field_id))(input)
+    alt((single_value_field_id, multiple_value_field_id)).parse(input)
 }
 
 fn single_value_field_id(input: Input<'_>) -> ParserResult<'_, ObjectFieldIdentifier> {
     map(
-        into_inner(recognize(tuple((
+        into_inner(recognize((
             char(AMPERSAND),
             one_of("abcdefghijklmnopqrstuvwxyz"),
             many0(alt((preceded(char('-'), alphanumeric1), alphanumeric1))),
-        )))),
+        ))),
         |s| ObjectFieldIdentifier::SingleValue(String::from(s)),
-    )(input)
+    )
+    .parse(input)
 }
 
 fn multiple_value_field_id(input: Input<'_>) -> ParserResult<'_, ObjectFieldIdentifier> {
     map(
-        into_inner(recognize(tuple((
+        into_inner(recognize((
             char(AMPERSAND),
             one_of("ABCDEFGHIJKLMNOPQRSTUVWXYZ"),
             many0(alt((preceded(char('-'), alphanumeric1), alphanumeric1))),
-        )))),
+        ))),
         |m| ObjectFieldIdentifier::MultipleValue(String::from(m)),
-    )(input)
+    )
+    .parse(input)
 }
 
 fn syntax(input: Input<'_>) -> ParserResult<'_, Vec<SyntaxExpression>> {
-    in_braces(many1(syntax_token_or_group_spec))(input)
+    in_braces(many1(syntax_token_or_group_spec)).parse(input)
 }
 
 fn syntax_token_or_group_spec(input: Input<'_>) -> ParserResult<'_, SyntaxExpression> {
     alt((
         map(syntax_token, SyntaxExpression::Required),
         map(syntax_optional_group, SyntaxExpression::Optional),
-    ))(input)
+    ))
+    .parse(input)
 }
 
 fn syntax_optional_group(input: Input<'_>) -> ParserResult<'_, Vec<SyntaxExpression>> {
-    in_brackets(skip_ws_and_comments(many1(syntax_token_or_group_spec)))(input)
+    in_brackets(skip_ws_and_comments(many1(syntax_token_or_group_spec))).parse(input)
 }
 
 fn syntax_token(input: Input<'_>) -> ParserResult<'_, SyntaxToken> {
@@ -246,11 +259,12 @@ fn syntax_token(input: Input<'_>) -> ParserResult<'_, SyntaxToken> {
             into_inner(tag(COMMA.to_string().as_str())),
             SyntaxToken::from,
         ),
-    )))(input)
+    )))
+    .parse(input)
 }
 
 fn syntax_literal(input: Input<'_>) -> ParserResult<'_, &str> {
-    uppercase_identifier(input)
+    uppercase_identifier.parse(input)
 }
 
 #[cfg(test)]

@@ -5,6 +5,7 @@ use nom::{
     combinator::{map, opt},
     multi::{fold_many0, separated_list0},
     sequence::{delimited, pair, preceded},
+    Parser,
 };
 
 use crate::{input::Input, intermediate::*};
@@ -45,7 +46,8 @@ pub fn bit_string_value(input: Input<'_>) -> ParserResult<'_, ASN1Value> {
                 ASN1Value::BitStringNamedBits(named_bits.into_iter().map(String::from).collect())
             },
         ),
-    ))(input)
+    ))
+    .parse(input)
 }
 
 /// Tries to parse an ASN1 BIT STRING
@@ -63,7 +65,8 @@ pub fn bit_string(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
             pair(opt(distinguished_values), opt(constraint)),
         ),
         |m| ASN1Type::BitString(m.into()),
-    )(input)
+    )
+    .parse(input)
 }
 
 #[cfg(test)]

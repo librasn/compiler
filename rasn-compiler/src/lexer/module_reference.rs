@@ -8,7 +8,8 @@ use nom::{
     character::complete::{char, one_of},
     combinator::{into, map, not, opt, peek, recognize, value},
     multi::{many0, many1, separated_list1},
-    sequence::{delimited, pair, preceded, separated_pair, terminated, tuple},
+    sequence::{delimited, pair, preceded, separated_pair, terminated},
+    Parser,
 };
 
 use super::{
@@ -19,7 +20,7 @@ use super::{
 };
 
 pub fn module_reference(input: Input<'_>) -> ParserResult<'_, ModuleReference> {
-    skip_ws_and_comments(into(tuple((
+    skip_ws_and_comments(into((
         identifier,
         opt(skip_ws(definitive_identification)),
         skip_ws_and_comments(delimited(
@@ -29,11 +30,12 @@ pub fn module_reference(input: Input<'_>) -> ParserResult<'_, ModuleReference> {
         )),
         context_boundary(opt(exports)),
         context_boundary(opt(imports)),
-    ))))(input)
+    )))
+    .parse(input)
 }
 
 fn definitive_identification(input: Input<'_>) -> ParserResult<'_, DefinitiveIdentifier> {
-    into(pair(object_identifier_value, opt(iri_value)))(input)
+    into(pair(object_identifier_value, opt(iri_value))).parse(input)
 }
 
 fn iri_value(input: Input<'_>) -> ParserResult<'_, &str> {
@@ -41,13 +43,15 @@ fn iri_value(input: Input<'_>) -> ParserResult<'_, &str> {
         tag("\"/"),
         recognize(separated_list1(char('/'), unicode_label)),
         char('"'),
-    )))(input)
+    )))
+    .parse(input)
 }
 
 fn unicode_label(input: Input<'_>) -> ParserResult<'_, &str> {
     skip_ws_and_comments(into_inner(recognize(many1(one_of(
         "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567890-_~.",
-    )))))(input)
+    )))))
+    .parse(input)
 }
 
 fn exports(input: Input<'_>) -> ParserResult<'_, Exports> {
@@ -61,7 +65,8 @@ fn exports(input: Input<'_>) -> ParserResult<'_, Exports> {
             )),
         ))),
         char(SEMICOLON),
-    ))(input)
+    ))
+    .parse(input)
 }
 
 fn imports(input: Input<'_>) -> ParserResult<'_, Vec<Import>> {
@@ -69,11 +74,12 @@ fn imports(input: Input<'_>) -> ParserResult<'_, Vec<Import>> {
         tag(IMPORTS),
         skip_ws_and_comments(many0(import)),
         skip_ws_and_comments(char(SEMICOLON)),
-    ))(input)
+    ))
+    .parse(input)
 }
 
 fn parameterized_identifier(input: Input<'_>) -> ParserResult<'_, &str> {
-    terminated(identifier, tag("{}"))(input)
+    terminated(identifier, tag("{}")).parse(input)
 }
 
 fn global_module_reference(input: Input<'_>) -> ParserResult<'_, GlobalModuleReference> {
@@ -121,7 +127,8 @@ fn global_module_reference(input: Input<'_>) -> ParserResult<'_, GlobalModuleRef
                 )))),
             ),
         )),
-    )))(input)
+    )))
+    .parse(input)
 }
 
 fn import(input: Input<'_>) -> ParserResult<'_, Import> {
@@ -140,7 +147,8 @@ fn import(input: Input<'_>) -> ParserResult<'_, Import> {
                 ))))),
             )),
         ),
-    )))(input)
+    )))
+    .parse(input)
 }
 
 fn environments(
@@ -153,7 +161,7 @@ fn environments(
         ExtensibilityEnvironment,
     ),
 > {
-    tuple((
+    (
         opt(skip_ws_and_comments(into(terminated(
             identifier,
             into_inner(skip_ws(tag(INSTRUCTIONS))),
@@ -176,7 +184,8 @@ fn environments(
                 ExtensibilityEnvironment::Explicit
             }
         })),
-    ))(input)
+    )
+        .parse(input)
 }
 
 #[cfg(test)]

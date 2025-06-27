@@ -3,7 +3,7 @@ use nom::{
     character::complete::{char, i128},
     combinator::{into, opt, recognize},
     multi::{many0, separated_list0, separated_list1},
-    sequence::{terminated, tuple},
+    sequence::terminated,
 };
 
 use crate::{
@@ -30,7 +30,8 @@ pub fn sequence_value(input: Input<'_>) -> ParserResult<'_, ASN1Value> {
                     .collect(),
             )
         },
-    )(input)
+    )
+    .parse(input)
 }
 
 /// Tries to parse an ASN1 SEQUENCE
@@ -48,7 +49,7 @@ pub fn sequence(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
         preceded(
             skip_ws_and_comments(tag(SEQUENCE)),
             pair(
-                in_braces(tuple((
+                in_braces((
                     many0(terminated(
                         skip_ws_and_comments(sequence_component),
                         optional_comma,
@@ -58,12 +59,13 @@ pub fn sequence(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
                         skip_ws_and_comments(alt((extension_group, sequence_component))),
                         optional_comma,
                     ))),
-                ))),
+                )),
                 opt(constraint),
             ),
         ),
         |m| ASN1Type::Sequence(m.into()),
-    )(input)
+    )
+    .parse(input)
 }
 
 fn extension_group(input: Input<'_>) -> ParserResult<'_, SequenceComponent> {
@@ -103,7 +105,8 @@ fn extension_group(input: Input<'_>) -> ParserResult<'_, SequenceComponent> {
                 constraints: vec![],
             })
         },
-    )(input)
+    )
+    .parse(input)
 }
 
 pub fn sequence_component(input: Input<'_>) -> ParserResult<'_, SequenceComponent> {
@@ -119,18 +122,20 @@ pub fn sequence_component(input: Input<'_>) -> ParserResult<'_, SequenceComponen
             |id| SequenceComponent::ComponentsOf(id.into()),
         ),
         map(sequence_or_set_member, SequenceComponent::Member),
-    )))(input)
+    )))
+    .parse(input)
 }
 
 pub fn sequence_or_set_member(input: Input<'_>) -> ParserResult<'_, SequenceOrSetMember> {
-    into(tuple((
+    into((
         skip_ws_and_comments(identifier),
         opt(asn_tag),
         skip_ws_and_comments(asn1_type),
         opt(constraint),
         optional_marker,
         default,
-    )))(input)
+    ))
+    .parse(input)
 }
 
 #[cfg(test)]

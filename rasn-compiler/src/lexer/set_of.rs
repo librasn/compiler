@@ -3,6 +3,7 @@ use nom::{
     bytes::complete::tag,
     combinator::{map, opt},
     sequence::{pair, preceded},
+    Parser,
 };
 
 use super::{
@@ -33,7 +34,8 @@ pub fn set_of(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
             ),
         ),
         |m| ASN1Type::SetOf(m.into()),
-    )(input)
+    )
+    .parse(input)
 }
 
 #[cfg(test)]
