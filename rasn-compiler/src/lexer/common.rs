@@ -90,7 +90,7 @@ where
 pub fn title_case_identifier(input: Input<'_>) -> ParserResult<'_, &str> {
     map_res(
         recognize(pair(
-            one_of("ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890"),
+            one_of("ABCDEFGHIJKLMNOPQRSTUVWXYZ"),
             many0(alt((
                 preceded(char('-'), into_inner(alphanumeric1)),
                 into_inner(alphanumeric1),
@@ -268,14 +268,14 @@ pub fn default(input: Input<'_>) -> ParserResult<'_, Option<ASN1Value>> {
 pub fn uppercase_identifier(input: Input<'_>) -> ParserResult<'_, &str> {
     alt((
         into_inner(recognize(pair(
-            one_of("ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"),
+            one_of("ABCDEFGHIJKLMNOPQRSTUVWXYZ"),
             many1(alt((
                 preceded(char('-'), one_of("ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890")),
                 one_of("ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"),
             ))),
         ))),
         terminated(
-            into_inner(recognize(one_of("ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"))),
+            into_inner(recognize(one_of("ABCDEFGHIJKLMNOPQRSTUVWXYZ"))),
             peek(is_not("abcdefghijklmnopqrstuvwxyz-")),
         ),
     ))
