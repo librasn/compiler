@@ -380,15 +380,13 @@ fn parses_class_declaration() {
                             identifier: "RegionId".into(),
                             constraints: vec![]
                         })),
-                        is_optional: false,
-                        default: None,
+                        optionality: Optionality::Required,
                         is_unique: true
                     },
                     InformationObjectClassField {
                         identifier: ObjectFieldIdentifier::MultipleValue("&Type".into()),
                         ty: None,
-                        is_optional: false,
-                        default: None,
+                        optionality: Optionality::Required,
                         is_unique: false
                     }
                 ],
