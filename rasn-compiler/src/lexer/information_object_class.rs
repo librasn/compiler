@@ -2,7 +2,7 @@ use nom::{
     branch::alt,
     bytes::complete::tag,
     character::complete::{alphanumeric1, char, one_of},
-    combinator::{into, map, opt, recognize, value},
+    combinator::{cut, into, map, opt, recognize, success, value},
     multi::{many0, many1, separated_list0, separated_list1},
     sequence::{pair, preceded, terminated},
     Parser,
@@ -11,13 +11,14 @@ use nom::{
 use crate::{
     input::Input,
     intermediate::{information_object::*, types::ObjectIdentifier, *},
+    lexer::error::ErrorTree,
 };
 
 use super::{
     asn1_type, asn1_value,
     common::{
-        default, extension_marker, identifier, in_braces, in_brackets, optional_comma,
-        optional_marker, skip_ws_and_comments, uppercase_identifier,
+        extension_marker, identifier, in_braces, in_brackets, optional_comma, skip_ws_and_comments,
+        uppercase_identifier,
     },
     constraint::constraint,
     error::ParserResult,
@@ -47,15 +48,13 @@ pub fn type_identifier(input: Input<'_>) -> ParserResult<'_, InformationObjectCl
                     ty: Some(ASN1Type::ObjectIdentifier(ObjectIdentifier {
                         constraints: vec![],
                     })),
-                    is_optional: false,
-                    default: None,
+                    optionality: Optionality::Required,
                     is_unique: true,
                 },
                 InformationObjectClassField {
                     identifier: ObjectFieldIdentifier::MultipleValue("Type".into()),
                     ty: None,
-                    is_optional: false,
-                    default: None,
+                    optionality: Optionality::Required,
                     is_unique: false,
                 },
             ],
@@ -201,8 +200,7 @@ fn information_object_field(input: Input<'_>) -> ParserResult<'_, InformationObj
         skip_ws_and_comments(object_field_identifier),
         opt(skip_ws_and_comments(asn1_type)),
         opt(into_inner(skip_ws_and_comments(tag(UNIQUE)))),
-        optional_marker,
-        default,
+        skip_ws_and_comments(optionality(asn1_value)),
     ))
     .parse(input)
 }
@@ -233,6 +231,31 @@ fn multiple_value_field_id(input: Input<'_>) -> ParserResult<'_, ObjectFieldIden
         |m| ObjectFieldIdentifier::MultipleValue(String::from(m)),
     )
     .parse(input)
+}
+
+/// Parse the "optionality" of the class field.
+///
+/// When optionality is DEFAULT, the argument `f` is used to parse the value.
+///
+/// # Syntax
+/// ```text
+/// OptionalitySpec ::= OPTIONAL | DEFAULT <f> | empty
+/// ```
+fn optionality<'a, F>(
+    f: F,
+) -> impl Parser<Input<'a>, Output = Optionality<F::Output>, Error = F::Error>
+where
+    F: Parser<Input<'a>, Error = ErrorTree<'a>>,
+    F::Output: Clone,
+{
+    alt((
+        value(Optionality::Optional, tag(OPTIONAL)),
+        preceded(
+            tag(DEFAULT),
+            cut(skip_ws_and_comments(f.map(Optionality::Default))),
+        ),
+        success(Optionality::Required),
+    ))
 }
 
 fn syntax(input: Input<'_>) -> ParserResult<'_, Vec<SyntaxExpression>> {
@@ -323,23 +346,20 @@ mod tests {
                             ],
                             constraints: vec![]
                         })),
-                        is_optional: false,
+                        optionality: Optionality::Required,
                         is_unique: true,
-                        default: None
                     },
                     InformationObjectClassField {
                         identifier: ObjectFieldIdentifier::MultipleValue("&ArgumentType".into()),
                         ty: None,
-                        is_optional: false,
+                        optionality: Optionality::Required,
                         is_unique: false,
-                        default: None
                     },
                     InformationObjectClassField {
                         identifier: ObjectFieldIdentifier::MultipleValue("&ResultType".into()),
                         ty: None,
-                        is_optional: false,
+                        optionality: Optionality::Required,
                         is_unique: false,
-                        default: None
                     },
                     InformationObjectClassField {
                         identifier: ObjectFieldIdentifier::MultipleValue("&Errors".into()),
@@ -348,9 +368,8 @@ mod tests {
                             constraints: vec![],
                             identifier: "ERROR".into()
                         })),
-                        is_optional: true,
+                        optionality: Optionality::Optional,
                         is_unique: false,
-                        default: None
                     }
                 ]
             }
@@ -449,15 +468,13 @@ mod tests {
                             identifier: "ItsAidCtxRef".into(),
                             constraints: vec![]
                         })),
-                        is_optional: false,
-                        default: None,
+                        optionality: Optionality::Required,
                         is_unique: true
                     },
                     InformationObjectClassField {
                         identifier: ObjectFieldIdentifier::MultipleValue("&ContextInfo".into()),
                         ty: None,
-                        is_optional: true,
-                        default: None,
+                        optionality: Optionality::Optional,
                         is_unique: false
                     }
                 ],
@@ -537,5 +554,35 @@ mod tests {
                 .into()
             )
         )
+    }
+
+    #[test]
+    fn parses_optionality_optional() {
+        let input = Input::from("OPTIONAL,");
+
+        let (rest, res) = optionality(asn1_value).parse(input).unwrap();
+
+        assert_eq!(rest.inner(), ",");
+        assert_eq!(res, Optionality::Optional);
+    }
+
+    #[test]
+    fn parses_optionality_default() {
+        let input = Input::from("DEFAULT 123,");
+
+        let (rest, res) = optionality(asn1_value).parse(input).unwrap();
+
+        assert_eq!(rest.inner(), ",");
+        assert_eq!(res, Optionality::Default(ASN1Value::Integer(123)));
+    }
+
+    #[test]
+    fn parses_optionality_required() {
+        let input = Input::from(",");
+
+        let (rest, res) = optionality(asn1_value).parse(input).unwrap();
+
+        assert_eq!(rest.inner(), ",");
+        assert_eq!(res, Optionality::Required);
     }
 }

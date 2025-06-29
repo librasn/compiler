@@ -344,9 +344,19 @@ impl
 pub struct InformationObjectClassField {
     pub identifier: ObjectFieldIdentifier,
     pub ty: Option<ASN1Type>,
-    pub is_optional: bool,
-    pub default: Option<ASN1Value>,
+    pub optionality: Optionality<ASN1Value>,
     pub is_unique: bool,
+}
+
+/// Defines the optionality of a class field.
+#[derive(Debug, Clone, PartialEq)]
+pub enum Optionality<T> {
+    /// All definitions are required to specify this field.
+    Required,
+    /// The field can be left undefined.
+    Optional,
+    /// Default if the field is omitted.
+    Default(T),
 }
 
 impl
@@ -354,8 +364,7 @@ impl
         ObjectFieldIdentifier,
         Option<ASN1Type>,
         Option<&str>,
-        Option<OptionalMarker>,
-        Option<ASN1Value>,
+        Optionality<ASN1Value>,
     )> for InformationObjectClassField
 {
     fn from(
@@ -363,16 +372,14 @@ impl
             ObjectFieldIdentifier,
             Option<ASN1Type>,
             Option<&str>,
-            Option<OptionalMarker>,
-            Option<ASN1Value>,
+            Optionality<ASN1Value>,
         ),
     ) -> Self {
         Self {
             identifier: value.0,
             ty: value.1,
             is_unique: value.2.is_some(),
-            is_optional: value.3.is_some() || value.4.is_some(),
-            default: value.4,
+            optionality: value.3,
         }
     }
 }
