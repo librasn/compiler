@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.12.0](https://github.com/librasn/compiler/compare/rasn-compiler-v0.11.0...rasn-compiler-v0.12.0) - 2025-06-30
+
+### Other
+
+- Use a tri-state for InformationObjectClassField optionality
+- Upgrade nom to version 8
+- *(README)* specify REAL support
+
 ## [0.11.0](https://github.com/librasn/compiler/compare/rasn-compiler-v0.10.3...rasn-compiler-v0.11.0) - 2025-06-24
 
 ### Added
