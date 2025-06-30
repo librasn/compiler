@@ -23,7 +23,7 @@ use crate::intermediate::macros::ToplevelMacroDefinition;
 use crate::lexer::macros::macro_definition;
 use crate::{
     input::{context_boundary, Input},
-    intermediate::{information_object::*, *},
+    intermediate::{information_object::*, constraints::Constraint, *},
 };
 
 use self::{
@@ -98,6 +98,7 @@ pub(crate) fn asn_module(
                     ToplevelDefinition::Information,
                 ),
                 map(top_level_type_declaration, ToplevelDefinition::Type),
+                map(top_level_valueset_declaration, ToplevelDefinition::Type),
                 map(top_level_value_declaration, ToplevelDefinition::Value),
                 map(macro_definition, |m| {
                     ToplevelDefinition::Macro(ToplevelMacroDefinition::from(m))
@@ -248,6 +249,32 @@ fn top_level_value_declaration(input: Input<'_>) -> ParserResult<'_, ToplevelVal
     .parse(input)
 }
 
+fn top_level_valueset_declaration(input: Input<'_>) -> ParserResult<'_, ToplevelTypeDefinition> {
+    map(
+        tuple((
+            skip_ws(many0(comment)),
+            skip_ws(context_boundary(title_case_identifier)),
+            skip_ws_and_comments(opt(parameterization)),
+            skip_ws_and_comments(asn1_type),
+            preceded(assignment, in_braces(element_set))
+        )),
+        |mut value| {
+            if let Some(constraints) = value.3.constraints_mut() {
+                constraints.push(Constraint::SubtypeConstraint(value.4))
+            } else {
+                eprintln!("{name}: unable to push constraints to {ty:?}", name=value.1, ty=value.3);
+            }
+            ToplevelTypeDefinition{
+                comments: value.0.join("\n"),
+                tag: None,
+                name: value.1.to_string(),
+                ty: value.3,
+                parameterization: value.2,
+                index: None,
+            }
+        }
+    )(input)
+}
 fn top_level_information_object_declaration(
     input: Input<'_>,
 ) -> ParserResult<'_, ToplevelInformationDefinition> {
