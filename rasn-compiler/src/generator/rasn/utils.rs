@@ -12,7 +12,7 @@ use crate::{
         encoding_rules::per_visible::{
             per_visible_range_constraints, CharsetSubset, PerVisibleAlphabetConstraints,
         },
-        information_object::{InformationObjectClass, InformationObjectField},
+        information_object::{InformationObjectClass, InformationObjectField, Optionality},
         types::{Choice, ChoiceOption, Enumerated, SequenceOrSet, SequenceOrSetMember},
         ASN1Type, ASN1Value, AsnTag, CharacterStringType, IntegerType, TagClass,
         TaggingEnvironment, ToplevelDefinition, ToplevelTypeDefinition,
@@ -1071,7 +1071,7 @@ impl Rasn {
                         }
                         InformationObjectField::ObjectSetField(_) => todo!(),
                     }
-                } else if !class_field.is_optional {
+                } else if class_field.optionality == Optionality::Required {
                     return Err(GeneratorError {
                         top_level_declaration: None,
                         details: "Syntax mismatch while resolving information object.".to_string(),
