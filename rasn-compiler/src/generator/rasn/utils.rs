@@ -12,7 +12,7 @@ use crate::{
         encoding_rules::per_visible::{
             per_visible_range_constraints, CharsetSubset, PerVisibleAlphabetConstraints,
         },
-        information_object::{InformationObjectClass, InformationObjectField, Optionality},
+        information_object::{InformationObjectField, ObjectClassDefn, Optionality},
         types::{Choice, ChoiceOption, Enumerated, SequenceOrSet, SequenceOrSetMember},
         ASN1Type, ASN1Value, AsnTag, CharacterStringType, IntegerType, TagClass,
         TaggingEnvironment, ToplevelDefinition, ToplevelTypeDefinition,
@@ -1039,7 +1039,7 @@ impl Rasn {
     /// Resolves the custom syntax declared in an information object class' WITH SYNTAX clause
     pub(crate) fn resolve_standard_syntax(
         &self,
-        class: &InformationObjectClass,
+        class: &ObjectClassDefn,
         application: &[InformationObjectField],
     ) -> Result<(ASN1Value, Vec<(usize, ASN1Type)>), GeneratorError> {
         let mut key = None;

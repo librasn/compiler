@@ -30,7 +30,7 @@ impl From<(&str, ASN1Information, &str)> for ToplevelInformationDefinition {
 #[derive(Clone, PartialEq)]
 pub enum ClassLink {
     ByName(String),
-    ByReference(InformationObjectClass),
+    ByReference(ObjectClassDefn),
 }
 
 impl ToplevelInformationDefinition {
@@ -86,22 +86,10 @@ impl From<(Vec<&str>, &str, Option<Parameterization>, &str, ObjectSet)>
     }
 }
 
-impl
-    From<(
-        Vec<&str>,
-        &str,
-        Option<Parameterization>,
-        InformationObjectClass,
-    )> for ToplevelInformationDefinition
+impl From<(Vec<&str>, &str, Option<Parameterization>, ObjectClassDefn)>
+    for ToplevelInformationDefinition
 {
-    fn from(
-        value: (
-            Vec<&str>,
-            &str,
-            Option<Parameterization>,
-            InformationObjectClass,
-        ),
-    ) -> Self {
+    fn from(value: (Vec<&str>, &str, Option<Parameterization>, ObjectClassDefn)) -> Self {
         Self {
             comments: value.0.join("\n"),
             name: value.1.into(),
@@ -118,7 +106,7 @@ impl
 #[cfg_attr(not(test), derive(Debug))]
 #[derive(Clone, PartialEq)]
 pub enum ASN1Information {
-    ObjectClass(InformationObjectClass),
+    ObjectClass(ObjectClassDefn),
     ObjectSet(ObjectSet),
     Object(InformationObject),
 }
@@ -313,9 +301,15 @@ impl InformationObjectSyntax {
     }
 }
 
+/// X.681 9.3  Every class is ultimately defined by an "ObjectClassDefn".
+///
+/// Allows the definer to provide the field specifications, and optionally a syntax list. The
+/// definer may also specify semantics associated with the definition of the class.
 #[derive(Debug, Clone, PartialEq)]
-pub struct InformationObjectClass {
+pub struct ObjectClassDefn {
+    /// Named field specifications, as defined in 9.4.
     pub fields: Vec<InformationObjectClassField>,
+    /// An information object definition syntax ("SyntaxList"), as defined in 10.5.
     pub syntax: Option<InformationObjectSyntax>,
 }
 
@@ -323,7 +317,7 @@ impl
     From<(
         Vec<InformationObjectClassField>,
         Option<Vec<SyntaxExpression>>,
-    )> for InformationObjectClass
+    )> for ObjectClassDefn
 {
     fn from(
         value: (

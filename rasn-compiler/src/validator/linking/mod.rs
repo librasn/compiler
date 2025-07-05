@@ -104,7 +104,7 @@ impl ToplevelDefinition {
         None
     }
 
-    pub fn is_class_with_name(&self, name: &String) -> Option<&InformationObjectClass> {
+    pub fn is_class_with_name(&self, name: &String) -> Option<&ObjectClassDefn> {
         match self {
             ToplevelDefinition::Information(info) => match &info.value {
                 ASN1Information::ObjectClass(class) => (&info.name == name).then_some(class),

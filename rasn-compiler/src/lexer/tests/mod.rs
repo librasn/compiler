@@ -371,7 +371,7 @@ fn parses_class_declaration() {
             class: None,
             index: None,
             parameterization: None,
-            value: ASN1Information::ObjectClass(InformationObjectClass {
+            value: ASN1Information::ObjectClass(ObjectClassDefn {
                 fields: vec![
                     InformationObjectClassField {
                         identifier: ObjectFieldIdentifier::SingleValue("&id".into()),

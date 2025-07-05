@@ -30,7 +30,7 @@ use crate::{
 use self::{
     error::{LinkerError, LinkerErrorType},
     information_object::{
-        ASN1Information, InformationObjectClass, InformationObjectClassField, ObjectSet,
+        ASN1Information, InformationObjectClassField, ObjectClassDefn, ObjectSet,
     },
 };
 
@@ -297,7 +297,7 @@ impl Validator {
         })) = &field.ty
         {
             if let Some(ToplevelDefinition::Information(ToplevelInformationDefinition {
-                value: ASN1Information::ObjectClass(InformationObjectClass { fields, .. }),
+                value: ASN1Information::ObjectClass(ObjectClassDefn { fields, .. }),
                 ..
             })) = self.tlds.get(class_id)
             {

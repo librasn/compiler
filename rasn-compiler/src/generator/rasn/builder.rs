@@ -5,8 +5,8 @@ use std::collections::BTreeMap;
 use crate::intermediate::{
     constraints::Constraint,
     information_object::{
-        ASN1Information, ClassLink, InformationObjectClass, InformationObjectFields,
-        ObjectSetValue, ToplevelInformationDefinition,
+        ASN1Information, ClassLink, InformationObjectFields, ObjectClassDefn, ObjectSetValue,
+        ToplevelInformationDefinition,
     },
     ASN1Type, ASN1Value, CharacterStringType, ToplevelDefinition, ToplevelTypeDefinition,
     ToplevelValueDefinition,
@@ -841,7 +841,7 @@ impl Rasn {
             return Ok(TokenStream::new());
         }
         if let ASN1Information::ObjectSet(o) = &tld.value {
-            let class: &InformationObjectClass = match tld.class {
+            let class: &ObjectClassDefn = match tld.class {
                 Some(ClassLink::ByReference(ref c)) => c,
                 _ => {
                     return Err(GeneratorError::new(

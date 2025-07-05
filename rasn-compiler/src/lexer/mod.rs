@@ -281,7 +281,7 @@ fn top_level_object_class_declaration(
         skip_ws(many0(comment)),
         skip_ws(context_boundary(uppercase_identifier)),
         skip_ws(opt(parameterization)),
-        preceded(assignment, alt((type_identifier, information_object_class))),
+        preceded(assignment, alt((type_identifier, object_class_defn))),
     ))
     .parse(input)
 }
