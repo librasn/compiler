@@ -402,7 +402,7 @@ impl From<(ObjectIdentifierValue, Option<&str>)> for DefinitiveIdentifier {
 /// Represents a module header as specified in
 /// Rec. ITU-T X.680 (02/2021) § 13
 #[derive(Debug, Clone, PartialEq)]
-pub struct ModuleReference {
+pub struct ModuleHeader {
     pub name: String,
     pub module_identifier: Option<DefinitiveIdentifier>,
     pub encoding_reference_default: Option<EncodingReferenceDefault>,
@@ -412,7 +412,7 @@ pub struct ModuleReference {
     pub exports: Option<Exports>,
 }
 
-impl ModuleReference {
+impl ModuleHeader {
     /// Returns an import that matches a given identifier, if present.
     pub fn find_import(&self, identifier: &str) -> Option<&String> {
         self.imports
@@ -432,7 +432,7 @@ impl
         )>,
         Option<Exports>,
         Option<Vec<Import>>,
-    )> for ModuleReference
+    )> for ModuleHeader
 {
     fn from(
         value: (
@@ -547,28 +547,24 @@ impl ToplevelDefinition {
         }
     }
 
-    pub(crate) fn set_index(
-        &mut self,
-        module_reference: Rc<RefCell<ModuleReference>>,
-        item_no: usize,
-    ) {
+    pub(crate) fn set_index(&mut self, module_header: Rc<RefCell<ModuleHeader>>, item_no: usize) {
         match self {
             ToplevelDefinition::Type(ref mut t) => {
-                t.index = Some((module_reference, item_no));
+                t.index = Some((module_header, item_no));
             }
             ToplevelDefinition::Value(ref mut v) => {
-                v.index = Some((module_reference, item_no));
+                v.index = Some((module_header, item_no));
             }
             ToplevelDefinition::Information(ref mut i) => {
-                i.index = Some((module_reference, item_no));
+                i.index = Some((module_header, item_no));
             }
             ToplevelDefinition::Macro(ref mut m) => {
-                m.index = Some((module_reference, item_no));
+                m.index = Some((module_header, item_no));
             }
         }
     }
 
-    pub(crate) fn get_index(&self) -> Option<&(Rc<RefCell<ModuleReference>>, usize)> {
+    pub(crate) fn get_index(&self) -> Option<&(Rc<RefCell<ModuleHeader>>, usize)> {
         match self {
             ToplevelDefinition::Type(ref t) => t.index.as_ref(),
             ToplevelDefinition::Value(ref v) => v.index.as_ref(),
@@ -577,7 +573,7 @@ impl ToplevelDefinition {
         }
     }
 
-    pub(crate) fn get_module_reference(&self) -> Option<Rc<RefCell<ModuleReference>>> {
+    pub(crate) fn get_module_header(&self) -> Option<Rc<RefCell<ModuleHeader>>> {
         match self {
             ToplevelDefinition::Type(ref t) => t.index.as_ref().map(|(m, _)| m.clone()),
             ToplevelDefinition::Value(ref v) => v.index.as_ref().map(|(m, _)| m.clone()),
@@ -653,7 +649,7 @@ pub struct ToplevelValueDefinition {
     pub associated_type: ASN1Type,
     pub parameterization: Option<Parameterization>,
     pub value: ASN1Value,
-    pub index: Option<(Rc<RefCell<ModuleReference>>, usize)>,
+    pub index: Option<(Rc<RefCell<ModuleHeader>>, usize)>,
 }
 
 impl From<(&str, ASN1Value, ASN1Type)> for ToplevelValueDefinition {
@@ -705,7 +701,7 @@ pub struct ToplevelTypeDefinition {
     pub name: String,
     pub ty: ASN1Type,
     pub parameterization: Option<Parameterization>,
-    pub index: Option<(Rc<RefCell<ModuleReference>>, usize)>,
+    pub index: Option<(Rc<RefCell<ModuleHeader>>, usize)>,
 }
 
 impl ToplevelTypeDefinition {

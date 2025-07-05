@@ -29,8 +29,8 @@ use crate::{
 use self::{
     bit_string::*, boolean::*, character_string::*, choice::*, common::*, constraint::*,
     embedded_pdv::*, enumerated::*, error::LexerError, external::*, information_object_class::*,
-    integer::*, module_reference::*, null::*, object_identifier::*, octet_string::*,
-    parameterization::*, real::*, sequence::*, sequence_of::*, set::*, set_of::*, time::*,
+    integer::*, null::*, object_identifier::*, octet_string::*, parameterization::*, real::*,
+    sequence::*, sequence_of::*, set::*, set_of::*, time::*,
 };
 
 mod bit_string;
@@ -46,7 +46,7 @@ mod external;
 mod information_object_class;
 mod integer;
 pub(crate) mod macros;
-mod module_reference;
+mod module_header;
 mod null;
 mod object_identifier;
 mod octet_string;
@@ -62,9 +62,7 @@ mod util;
 #[cfg(test)]
 mod tests;
 
-pub fn asn_spec(
-    input: &str,
-) -> Result<Vec<(ModuleReference, Vec<ToplevelDefinition>)>, LexerError> {
+pub fn asn_spec(input: &str) -> Result<Vec<(ModuleHeader, Vec<ToplevelDefinition>)>, LexerError> {
     let mut result = Vec::new();
     let mut remaining_input = Input::from(input);
     loop {
@@ -88,9 +86,9 @@ pub fn asn_spec(
 
 pub(crate) fn asn_module(
     input: Input<'_>,
-) -> ParserResult<'_, (ModuleReference, Vec<ToplevelDefinition>)> {
+) -> ParserResult<'_, (ModuleHeader, Vec<ToplevelDefinition>)> {
     pair(
-        module_reference,
+        module_header::module_header,
         terminated(
             many0(skip_ws(alt((
                 map(
@@ -291,7 +289,7 @@ fn eof_comments() {
     println!(
         "{:#?}",
         pair(
-            module_reference,
+            module_header::module_header,
             terminated(
                 many0(skip_ws(alt((
                     map(

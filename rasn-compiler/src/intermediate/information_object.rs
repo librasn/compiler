@@ -9,7 +9,7 @@ pub struct ToplevelInformationDefinition {
     pub parameterization: Option<Parameterization>,
     pub class: Option<ClassLink>,
     pub value: ASN1Information,
-    pub index: Option<(Rc<RefCell<ModuleReference>>, usize)>,
+    pub index: Option<(Rc<RefCell<ModuleHeader>>, usize)>,
 }
 
 impl From<(&str, ASN1Information, &str)> for ToplevelInformationDefinition {
