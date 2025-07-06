@@ -617,9 +617,9 @@ impl Rasn {
                 };
                 (e.constraints.clone(), tokenized)
             }
-            ASN1Type::InformationObjectFieldReference(_)
-            | ASN1Type::EmbeddedPdv
-            | ASN1Type::External => (vec![], quote!(Any)),
+            ASN1Type::ObjectClassField(_) | ASN1Type::EmbeddedPdv | ASN1Type::External => {
+                (vec![], quote!(Any))
+            }
             ASN1Type::ChoiceSelectionType(_) => unreachable!(),
         })
     }
@@ -742,9 +742,9 @@ impl Rasn {
                 "Set values are currently unsupported!"
             )),
             ASN1Type::ElsewhereDeclaredType(e) => Ok(self.to_rust_title_case(&e.identifier)),
-            ASN1Type::InformationObjectFieldReference(_) => Err(error!(
+            ASN1Type::ObjectClassField(_) => Err(error!(
                 NotYetInplemented,
-                "Information Object field reference values are currently unsupported!"
+                "Object class field types are currently unsupported!"
             )),
             ASN1Type::Time(_) => Err(error!(
                 NotYetInplemented,

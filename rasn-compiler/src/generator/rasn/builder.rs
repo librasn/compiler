@@ -69,9 +69,9 @@ impl Rasn {
                         top_level_declaration: None,
                     }),
                     ASN1Type::ObjectIdentifier(_) => self.generate_oid(t),
-                    ASN1Type::InformationObjectFieldReference(_)
-                    | ASN1Type::EmbeddedPdv
-                    | ASN1Type::External => self.generate_any(t),
+                    ASN1Type::ObjectClassField(_) | ASN1Type::EmbeddedPdv | ASN1Type::External => {
+                        self.generate_any(t)
+                    }
                     ASN1Type::GeneralizedTime(_) => self.generate_generalized_time(t),
                     ASN1Type::UTCTime(_) => self.generate_utc_time(t),
                     ASN1Type::ChoiceSelectionType(_) => Err(GeneratorError {
@@ -715,7 +715,7 @@ impl Rasn {
                         .concat()
                         .iter()
                         .for_each(|c| {
-                            if let (Constraint::TableConstraint(t), ASN1Type::InformationObjectFieldReference(iofr)) = (c, &m.ty) {
+                            if let (Constraint::TableConstraint(t), ASN1Type::ObjectClassField(iofr)) = (c, &m.ty) {
                                 let decode_fn = format_ident!("decode_{}", self.to_rust_snake_case(&m.name));
                                 let open_field_name = self.to_rust_snake_case(&m.name);
                                 let identifier = t.linked_fields.iter().map(|l|

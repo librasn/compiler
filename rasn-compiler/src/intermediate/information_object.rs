@@ -523,14 +523,17 @@ impl From<(ObjectFieldIdentifier, ObjectSet)> for InformationObjectField {
     }
 }
 
+/// #### X.681 14 Notation for the object class field type
+/// _The type that is referenced by this notation depends on the category of the field name. For
+/// the different categories of field names, 14.2 to 14.5 specify the type that is referenced._
 #[derive(Debug, Clone, PartialEq)]
-pub struct InformationObjectFieldReference {
+pub struct ObjectClassFieldType {
     pub class: String,
     pub field_path: Vec<ObjectFieldIdentifier>,
     pub constraints: Vec<Constraint>,
 }
 
-impl InformationObjectFieldReference {
+impl ObjectClassFieldType {
     /// Returns the field path as string.
     /// The field path is stringified by joining
     /// the stringified `ObjectFieldIdentifier`s with
@@ -544,9 +547,7 @@ impl InformationObjectFieldReference {
     }
 }
 
-impl From<(&str, Vec<ObjectFieldIdentifier>, Option<Vec<Constraint>>)>
-    for InformationObjectFieldReference
-{
+impl From<(&str, Vec<ObjectFieldIdentifier>, Option<Vec<Constraint>>)> for ObjectClassFieldType {
     fn from(value: (&str, Vec<ObjectFieldIdentifier>, Option<Vec<Constraint>>)) -> Self {
         Self {
             class: value.0.into(),

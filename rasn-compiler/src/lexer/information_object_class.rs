@@ -118,9 +118,17 @@ pub fn object_class_defn(input: Input<'_>) -> ParserResult<'_, ObjectClassDefn> 
     .parse(input)
 }
 
-pub fn information_object_field_reference(
-    input: Input<'_>,
-) -> ParserResult<'_, InformationObjectFieldReference> {
+/// Parses an ObjectClassFieldType.
+///
+/// # Syntax
+///
+/// ```text
+/// ObjectClassFieldType ::=
+///     DefinedObjectClass
+///     "."
+///     FieldName
+/// ```
+pub fn object_class_field_type(input: Input<'_>) -> ParserResult<'_, ObjectClassFieldType> {
     into((
         skip_ws_and_comments(uppercase_identifier),
         many1(skip_ws_and_comments(preceded(
@@ -532,7 +540,7 @@ mod tests {
                 comments: "".into(),
                 tag: None,
                 name: "AttributeValue".into(),
-                ty: ASN1Type::InformationObjectFieldReference(InformationObjectFieldReference {
+                ty: ASN1Type::ObjectClassField(ObjectClassFieldType {
                     class: "OPEN".into(),
                     field_path: vec![ObjectFieldIdentifier::MultipleValue("&Type".into())],
                     constraints: vec![]
