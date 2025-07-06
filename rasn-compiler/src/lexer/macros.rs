@@ -12,7 +12,7 @@ use crate::intermediate::{
     GREATER_THAN, LESS_THAN, MACRO, PIPE,
 };
 use crate::lexer::common::{
-    in_parentheses, skip_ws_and_comments, title_case_identifier, uppercase_identifier,
+    in_parentheses, module_reference, skip_ws_and_comments, type_reference, uppercase_identifier,
     value_reference,
 };
 use crate::lexer::error::{MiscError, ParserResult};
@@ -188,7 +188,7 @@ fn supporting_productions(input: Input<'_>) -> ParserResult<'_, Vec<Production>>
 /// ```
 fn external_macro_reference(input: Input<'_>) -> ParserResult<'_, (&'_ str, &'_ str)> {
     separated_pair(
-        title_case_identifier,
+        module_reference,
         skip_ws_and_comments(char(DOT)),
         skip_ws_and_comments(macro_reference),
     )
@@ -502,8 +502,12 @@ fn macro_reference(input: Input<'_>) -> ParserResult<'_, &'_ str> {
 }
 
 /// Parse a production reference.
+///
+/// #### X.680 1994 J.2.2 Productionreference
+/// _A "productionreference" shall consist of the sequence of characters specified for a
+/// "typereference" in 9.2._
 fn production_reference(input: Input<'_>) -> ParserResult<'_, &'_ str> {
-    map_res(title_case_identifier, |v| {
+    map_res(type_reference, |v| {
         if ADDITIONAL_KEYWORDS.contains(&v) {
             Err(MiscError(
                 "Production reference can not be a keyword when used in ASN.1 MACRO.",
@@ -516,8 +520,13 @@ fn production_reference(input: Input<'_>) -> ParserResult<'_, &'_ str> {
 }
 
 /// Parse a local type reference.
+///
+/// #### X.680 1994 J.2.3 Localtypereference
+/// _A "localtypereference" shall consist of the sequence of characters specified for a
+/// "typereference" in 9.2. A "localtypereference" is used as an identifier for types which are
+/// recognized during syntax analysis of an instance of the new type or value notation._
 fn local_type_reference(input: Input<'_>) -> ParserResult<'_, &'_ str> {
-    map_res(title_case_identifier, |v| {
+    map_res(type_reference, |v| {
         if ADDITIONAL_KEYWORDS.contains(&v) {
             Err(MiscError(
                 "Type reference can not be a keyword when used in ASN.1 MACRO.",

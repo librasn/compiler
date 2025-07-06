@@ -116,7 +116,7 @@ pub fn sequence_component(input: Input<'_>) -> ParserResult<'_, SequenceComponen
                 tag(COMPONENTS_OF),
                 skip_ws_and_comments(alt((
                     into_inner(recognize(separated_list1(tag(".&"), identifier))),
-                    title_case_identifier,
+                    type_reference,
                 ))),
             ),
             |id| SequenceComponent::ComponentsOf(id.into()),

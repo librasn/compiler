@@ -51,7 +51,7 @@ pub fn selection_type_choice(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
         into(separated_pair(
             skip_ws_and_comments(value_reference),
             skip_ws_and_comments(char(LEFT_CHEVRON)),
-            skip_ws_and_comments(title_case_identifier),
+            skip_ws_and_comments(type_reference),
         )),
         ASN1Type::ChoiceSelectionType,
     )

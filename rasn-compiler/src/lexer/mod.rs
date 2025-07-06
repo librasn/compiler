@@ -127,7 +127,7 @@ fn end(input: Input<'_>) -> ParserResult<'_, &str> {
 pub fn top_level_type_declaration(input: Input<'_>) -> ParserResult<'_, ToplevelTypeDefinition> {
     into((
         skip_ws(many0(comment)),
-        skip_ws(title_case_identifier),
+        skip_ws(type_reference),
         opt(parameterization),
         preceded(assignment, pair(opt(asn_tag), asn1_type)),
     ))
@@ -220,7 +220,7 @@ pub fn elsewhere_declared_type(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
                 identifier,
                 tag(".&"),
             ))))),
-            skip_ws_and_comments(title_case_identifier),
+            skip_ws_and_comments(type_reference),
             opt(skip_ws_and_comments(constraint)),
         ),
         |(parent, id, constraints)| {
