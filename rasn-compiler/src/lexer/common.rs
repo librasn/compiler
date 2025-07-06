@@ -80,6 +80,23 @@ pub fn identifier(input: Input<'_>) -> ParserResult<'_, &str> {
     .parse(input)
 }
 
+/// Parses a valuereference lexical item.
+///
+/// #### X.680 12.4  Value references
+/// _A "valuereference" shall consist of the sequence of characters specified for an "identifier" in
+/// 12.3. In analyzing an instance of use of this notation, a "valuereference" is distinguished
+/// from an "identifier" by the context in which it appears._
+pub fn value_reference(input: Input<'_>) -> ParserResult<'_, &'_ str> {
+    into_inner(recognize(pair(
+        one_of("abcdefghijklmnopqrstuvwxyz"),
+        many0(alt((
+            preceded(char('-'), into_inner(alphanumeric1)),
+            into_inner(alphanumeric1),
+        ))),
+    )))
+    .parse(input)
+}
+
 pub fn into_inner<'a, F>(parser: F) -> impl Parser<Input<'a>, Output = &'a str, Error = F::Error>
 where
     F: Parser<Input<'a>, Output = Input<'a>>,
@@ -105,17 +122,6 @@ pub fn title_case_identifier(input: Input<'_>) -> ParserResult<'_, &str> {
         },
     )
     .parse(input.clone())
-}
-
-pub fn value_identifier(input: Input<'_>) -> ParserResult<'_, &str> {
-    into_inner(recognize(pair(
-        one_of("abcdefghijklmnopqrstuvwxyz"),
-        many0(alt((
-            preceded(char('-'), into_inner(alphanumeric1)),
-            into_inner(alphanumeric1),
-        ))),
-    )))
-    .parse(input)
 }
 
 pub fn skip_ws<'a, F>(inner: F) -> impl Parser<Input<'a>, Output = F::Output, Error = F::Error>

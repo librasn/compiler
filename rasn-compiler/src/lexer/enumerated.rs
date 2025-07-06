@@ -26,10 +26,10 @@ pub fn enumerated_value(input: Input<'_>) -> ParserResult<'_, ToplevelValueDefin
     map(
         (
             skip_ws(many0(comment)),
-            skip_ws(value_identifier),
+            skip_ws(value_reference),
             skip_ws_and_comments(opt(parameterization)),
             skip_ws_and_comments(asn1_type),
-            preceded(assignment, skip_ws_and_comments(value_identifier)),
+            preceded(assignment, skip_ws_and_comments(value_reference)),
         ),
         |(c, n, params, p, e)| ToplevelValueDefinition {
             comments: c.into_iter().fold(String::new(), |mut acc, s| {

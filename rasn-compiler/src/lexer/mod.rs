@@ -203,7 +203,7 @@ pub fn elsewhere_declared_value(input: Input<'_>) -> ParserResult<'_, ASN1Value>
                 identifier,
                 tag(".&"),
             ))))),
-            value_identifier,
+            value_reference,
         ),
         |(p, id)| ASN1Value::ElsewhereDeclaredValue {
             parent: p.map(|par| par.inner().to_string()),
@@ -234,7 +234,7 @@ fn top_level_value_declaration(input: Input<'_>) -> ParserResult<'_, ToplevelVal
     alt((
         into((
             skip_ws(many0(comment)),
-            skip_ws(context_boundary(value_identifier)),
+            skip_ws(context_boundary(value_reference)),
             skip_ws_and_comments(opt(parameterization)),
             skip_ws_and_comments(asn1_type),
             preceded(assignment, skip_ws_and_comments(asn1_value)),

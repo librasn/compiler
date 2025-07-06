@@ -18,7 +18,7 @@ use nom::{
 };
 
 use super::{
-    common::{in_braces, in_parentheses, skip_ws, skip_ws_and_comments, value_identifier},
+    common::{in_braces, in_parentheses, skip_ws, skip_ws_and_comments, value_reference},
     constraint::constraint,
     error::ParserResult,
     RELATIVE_OID,
@@ -56,8 +56,8 @@ pub fn object_identifier(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
 fn object_identifier_arc(input: Input<'_>) -> ParserResult<'_, ObjectIdentifierArc> {
     skip_ws(alt((
         numeric_id,
-        into(pair(value_identifier, skip_ws(in_parentheses(u128)))),
-        into(value_identifier),
+        into(pair(value_reference, skip_ws(in_parentheses(u128)))),
+        into(value_reference),
     ))).parse(input)
 }
 

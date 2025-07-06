@@ -49,7 +49,7 @@ pub fn choice_value(input: Input<'_>) -> ParserResult<'_, ASN1Value> {
 pub fn selection_type_choice(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
     map(
         into(separated_pair(
-            skip_ws_and_comments(value_identifier),
+            skip_ws_and_comments(value_reference),
             skip_ws_and_comments(char(LEFT_CHEVRON)),
             skip_ws_and_comments(title_case_identifier),
         )),

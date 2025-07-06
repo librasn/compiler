@@ -13,7 +13,7 @@ use crate::intermediate::{
 };
 use crate::lexer::common::{
     in_parentheses, skip_ws_and_comments, title_case_identifier, uppercase_identifier,
-    value_identifier,
+    value_reference,
 };
 use crate::lexer::error::{MiscError, ParserResult};
 use crate::lexer::{asn1_type, asn1_value};
@@ -531,7 +531,7 @@ fn local_type_reference(input: Input<'_>) -> ParserResult<'_, &'_ str> {
 
 /// Parse a local value reference
 fn local_value_reference(input: Input<'_>) -> ParserResult<'_, &'_ str> {
-    map_res(value_identifier, |v| {
+    map_res(value_reference, |v| {
         if ADDITIONAL_KEYWORDS.contains(&v) {
             Err(MiscError(
                 "Value reference can not be a keyword when used in ASN.1 MACRO.",

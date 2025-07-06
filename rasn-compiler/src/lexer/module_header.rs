@@ -13,7 +13,7 @@ use nom::{
 };
 
 use super::{
-    common::{identifier, skip_ws, skip_ws_and_comments, value_identifier},
+    common::{identifier, skip_ws, skip_ws_and_comments, value_reference},
     error::ParserResult,
     in_braces, into_inner,
     object_identifier::object_identifier_value,
@@ -91,7 +91,7 @@ fn global_module_reference(input: Input<'_>) -> ParserResult<'_, GlobalModuleRef
                 AssignedIdentifier::ObjectIdentifierValue,
             ),
             map(
-                skip_ws_and_comments(separated_pair(identifier, char(DOT), value_identifier)),
+                skip_ws_and_comments(separated_pair(identifier, char(DOT), value_reference)),
                 |(mod_ref, val_ref)| {
                     AssignedIdentifier::ExternalValueReference(ExternalValueReference {
                         module_reference: mod_ref.to_owned(),
@@ -101,7 +101,7 @@ fn global_module_reference(input: Input<'_>) -> ParserResult<'_, GlobalModuleRef
             ),
             map(
                 skip_ws_and_comments(pair(
-                    value_identifier,
+                    value_reference,
                     skip_ws(recognize(in_braces(take_until("}")))),
                 )),
                 |(v, p)| AssignedIdentifier::ParameterizedValue {
@@ -111,7 +111,7 @@ fn global_module_reference(input: Input<'_>) -> ParserResult<'_, GlobalModuleRef
             ),
             map(
                 skip_ws_and_comments(terminated(
-                    value_identifier,
+                    value_reference,
                     not(skip_ws_and_comments(alt((
                         peek(value((), tag(FROM))),
                         peek(value((), char(COMMA))),
