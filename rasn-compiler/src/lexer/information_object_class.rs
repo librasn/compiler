@@ -39,9 +39,9 @@ use super::{
 /// }
 /// WITH SYNTAX {&Type IDENTIFIED BY &id}
 /// ```
-pub fn type_identifier(input: Input<'_>) -> ParserResult<'_, InformationObjectClass> {
+pub fn type_identifier(input: Input<'_>) -> ParserResult<'_, ObjectClassDefn> {
     skip_ws_and_comments(value(
-        InformationObjectClass {
+        ObjectClassDefn {
             fields: vec![
                 InformationObjectClassField {
                     identifier: ObjectFieldIdentifier::SingleValue("id".into()),
@@ -92,7 +92,19 @@ pub fn instance_of(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
     .parse(input)
 }
 
-pub fn information_object_class(input: Input<'_>) -> ParserResult<'_, InformationObjectClass> {
+/// Parses an ObjectClassDefn.
+///
+/// # Syntax
+///
+/// ```text
+/// ObjectClassDefn ::=
+///     CLASS
+///     "{" FieldSpec "," + "}"
+///     WithSyntaxSpec?
+///
+/// WithSyntaxSpec ::= WITH SYNTAX SyntaxList
+/// ```
+pub fn object_class_defn(input: Input<'_>) -> ParserResult<'_, ObjectClassDefn> {
     into(preceded(
         skip_ws_and_comments(tag(CLASS)),
         pair(
@@ -106,9 +118,17 @@ pub fn information_object_class(input: Input<'_>) -> ParserResult<'_, Informatio
     .parse(input)
 }
 
-pub fn information_object_field_reference(
-    input: Input<'_>,
-) -> ParserResult<'_, InformationObjectFieldReference> {
+/// Parses an ObjectClassFieldType.
+///
+/// # Syntax
+///
+/// ```text
+/// ObjectClassFieldType ::=
+///     DefinedObjectClass
+///     "."
+///     FieldName
+/// ```
+pub fn object_class_field_type(input: Input<'_>) -> ParserResult<'_, ObjectClassFieldType> {
     into((
         skip_ws_and_comments(uppercase_identifier),
         many1(skip_ws_and_comments(preceded(
@@ -296,15 +316,15 @@ mod tests {
 
     use crate::intermediate::types::*;
 
-    use crate::lexer::information_object_class::{information_object_class, object_set};
+    use crate::lexer::information_object_class::object_set;
     use crate::lexer::top_level_type_declaration;
 
     use super::*;
 
     #[test]
-    fn parses_information_object_class() {
+    fn parses_object_class_defn() {
         assert_eq!(
-            information_object_class(
+            object_class_defn(
                 r#"CLASS
       {&operationCode CHOICE {local INTEGER,
       global OCTET STRING}
@@ -316,7 +336,7 @@ mod tests {
             )
             .unwrap()
             .1,
-            InformationObjectClass {
+            ObjectClassDefn {
                 syntax: None,
                 fields: vec![
                     InformationObjectClassField {
@@ -447,9 +467,9 @@ mod tests {
     }
 
     #[test]
-    fn parses_information_object_class_with_custom_syntax() {
+    fn parses_object_class_defn_with_custom_syntax() {
         assert_eq!(
-            information_object_class(
+            object_class_defn(
                 r#"CLASS{
             &itsaidCtxRef ItsAidCtxRef UNIQUE,
             &ContextInfo OPTIONAL
@@ -459,7 +479,7 @@ mod tests {
             )
             .unwrap()
             .1,
-            InformationObjectClass {
+            ObjectClassDefn {
                 fields: vec![
                     InformationObjectClassField {
                         identifier: ObjectFieldIdentifier::SingleValue("&itsaidCtxRef".into()),
@@ -495,10 +515,10 @@ mod tests {
     }
 
     #[test]
-    fn parses_information_object_with_custom_syntax() {
+    fn parses_object_class_defn_with_custom_syntax_2() {
         println!(
             "{:?}",
-            information_object_class(
+            object_class_defn(
                 r#"CLASS {&id    BilateralDomain UNIQUE,
             &Type
 }WITH SYNTAX {&Type,
@@ -520,7 +540,7 @@ mod tests {
                 comments: "".into(),
                 tag: None,
                 name: "AttributeValue".into(),
-                ty: ASN1Type::InformationObjectFieldReference(InformationObjectFieldReference {
+                ty: ASN1Type::ObjectClassField(ObjectClassFieldType {
                     class: "OPEN".into(),
                     field_path: vec![ObjectFieldIdentifier::MultipleValue("&Type".into())],
                     constraints: vec![]
@@ -535,7 +555,7 @@ mod tests {
     fn tld_test() {
         println!(
             "{:?}",
-            super::information_object_class(
+            super::object_class_defn(
                 r#"CLASS {
                     &InitiatingMessage				,
                     &SuccessfulOutcome							OPTIONAL,

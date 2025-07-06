@@ -9,7 +9,7 @@ pub struct ToplevelInformationDefinition {
     pub parameterization: Option<Parameterization>,
     pub class: Option<ClassLink>,
     pub value: ASN1Information,
-    pub index: Option<(Rc<RefCell<ModuleReference>>, usize)>,
+    pub index: Option<(Rc<RefCell<ModuleHeader>>, usize)>,
 }
 
 impl From<(&str, ASN1Information, &str)> for ToplevelInformationDefinition {
@@ -30,7 +30,7 @@ impl From<(&str, ASN1Information, &str)> for ToplevelInformationDefinition {
 #[derive(Clone, PartialEq)]
 pub enum ClassLink {
     ByName(String),
-    ByReference(InformationObjectClass),
+    ByReference(ObjectClassDefn),
 }
 
 impl ToplevelInformationDefinition {
@@ -86,22 +86,10 @@ impl From<(Vec<&str>, &str, Option<Parameterization>, &str, ObjectSet)>
     }
 }
 
-impl
-    From<(
-        Vec<&str>,
-        &str,
-        Option<Parameterization>,
-        InformationObjectClass,
-    )> for ToplevelInformationDefinition
+impl From<(Vec<&str>, &str, Option<Parameterization>, ObjectClassDefn)>
+    for ToplevelInformationDefinition
 {
-    fn from(
-        value: (
-            Vec<&str>,
-            &str,
-            Option<Parameterization>,
-            InformationObjectClass,
-        ),
-    ) -> Self {
+    fn from(value: (Vec<&str>, &str, Option<Parameterization>, ObjectClassDefn)) -> Self {
         Self {
             comments: value.0.join("\n"),
             name: value.1.into(),
@@ -118,7 +106,7 @@ impl
 #[cfg_attr(not(test), derive(Debug))]
 #[derive(Clone, PartialEq)]
 pub enum ASN1Information {
-    ObjectClass(InformationObjectClass),
+    ObjectClass(ObjectClassDefn),
     ObjectSet(ObjectSet),
     Object(InformationObject),
 }
@@ -313,9 +301,15 @@ impl InformationObjectSyntax {
     }
 }
 
+/// X.681 9.3  Every class is ultimately defined by an "ObjectClassDefn".
+///
+/// Allows the definer to provide the field specifications, and optionally a syntax list. The
+/// definer may also specify semantics associated with the definition of the class.
 #[derive(Debug, Clone, PartialEq)]
-pub struct InformationObjectClass {
+pub struct ObjectClassDefn {
+    /// Named field specifications, as defined in 9.4.
     pub fields: Vec<InformationObjectClassField>,
+    /// An information object definition syntax ("SyntaxList"), as defined in 10.5.
     pub syntax: Option<InformationObjectSyntax>,
 }
 
@@ -323,7 +317,7 @@ impl
     From<(
         Vec<InformationObjectClassField>,
         Option<Vec<SyntaxExpression>>,
-    )> for InformationObjectClass
+    )> for ObjectClassDefn
 {
     fn from(
         value: (
@@ -529,14 +523,17 @@ impl From<(ObjectFieldIdentifier, ObjectSet)> for InformationObjectField {
     }
 }
 
+/// #### X.681 14 Notation for the object class field type
+/// _The type that is referenced by this notation depends on the category of the field name. For
+/// the different categories of field names, 14.2 to 14.5 specify the type that is referenced._
 #[derive(Debug, Clone, PartialEq)]
-pub struct InformationObjectFieldReference {
+pub struct ObjectClassFieldType {
     pub class: String,
     pub field_path: Vec<ObjectFieldIdentifier>,
     pub constraints: Vec<Constraint>,
 }
 
-impl InformationObjectFieldReference {
+impl ObjectClassFieldType {
     /// Returns the field path as string.
     /// The field path is stringified by joining
     /// the stringified `ObjectFieldIdentifier`s with
@@ -550,9 +547,7 @@ impl InformationObjectFieldReference {
     }
 }
 
-impl From<(&str, Vec<ObjectFieldIdentifier>, Option<Vec<Constraint>>)>
-    for InformationObjectFieldReference
-{
+impl From<(&str, Vec<ObjectFieldIdentifier>, Option<Vec<Constraint>>)> for ObjectClassFieldType {
     fn from(value: (&str, Vec<ObjectFieldIdentifier>, Option<Vec<Constraint>>)) -> Self {
         Self {
             class: value.0.into(),

@@ -104,7 +104,7 @@ impl ToplevelDefinition {
         None
     }
 
-    pub fn is_class_with_name(&self, name: &String) -> Option<&InformationObjectClass> {
+    pub fn is_class_with_name(&self, name: &String) -> Option<&ObjectClassDefn> {
         match self {
             ToplevelDefinition::Information(info) => match &info.value {
                 ASN1Information::ObjectClass(class) => (&info.name == name).then_some(class),
@@ -447,14 +447,14 @@ impl ASN1Type {
                     }
                 }
             }
-            ASN1Type::InformationObjectFieldReference(iofr) => {
+            ASN1Type::ObjectClassField(ocf) => {
                 if let Some(ToplevelDefinition::Information(ToplevelInformationDefinition {
                     value: ASN1Information::ObjectClass(clazz),
                     ..
-                })) = tlds.get(&iofr.class)
+                })) = tlds.get(&ocf.class)
                 {
                     if let Some(InformationObjectClassField { ty: Some(ty), .. }) =
-                        clazz.get_field(&iofr.field_path)
+                        clazz.get_field(&ocf.field_path)
                     {
                         self_replacement = Some(ty.clone());
                     }
@@ -640,9 +640,7 @@ impl ASN1Type {
                 LinkerError,
                 "Choice selection types should be resolved by now"
             )),
-            ASN1Type::InformationObjectFieldReference(_information_object_field_reference) => {
-                Ok(Vec::new())
-            } // TODO
+            ASN1Type::ObjectClassField(_object_class_field_type) => Ok(Vec::new()), // TODO
             n => Ok(vec![n.as_str()]),
         }
     }
@@ -732,13 +730,13 @@ impl ASN1Type {
                     ))
                 }
             }
-            ASN1Type::InformationObjectFieldReference(iofr) => {
+            ASN1Type::ObjectClassField(ocf) => {
                 if let Some(ToplevelDefinition::Information(ToplevelInformationDefinition {
                     value: ASN1Information::ObjectClass(c),
                     ..
-                })) = tlds.get(&iofr.class)
+                })) = tlds.get(&ocf.class)
                 {
-                    if let Some(field) = c.get_field(&iofr.field_path) {
+                    if let Some(field) = c.get_field(&ocf.field_path) {
                         if let Some(ref ty) = field.ty {
                             *self = ty.clone();
                         }
@@ -748,8 +746,8 @@ impl ASN1Type {
                 Err(grammar_error!(
                     LinkerError,
                     "Failed to resolve argument {}.{} of parameterized implementation.",
-                    iofr.class,
-                    iofr.field_path
+                    ocf.class,
+                    ocf.field_path
                         .iter()
                         .map(|f| f.identifier().clone())
                         .collect::<Vec<_>>()
@@ -807,9 +805,9 @@ impl ASN1Type {
             ASN1Type::Choice(c) => c.options.iter().any(|o| o.ty.references_class_by_name()),
             ASN1Type::Sequence(s) => s.members.iter().any(|m| m.ty.references_class_by_name()),
             ASN1Type::SequenceOf(so) => so.element_type.references_class_by_name(),
-            ASN1Type::InformationObjectFieldReference(io_ref) => {
+            ASN1Type::ObjectClassField(ocf) => {
                 matches!(
-                    io_ref.field_path.last(),
+                    ocf.field_path.last(),
                     Some(ObjectFieldIdentifier::SingleValue(_))
                 )
             }
@@ -848,18 +846,18 @@ impl ASN1Type {
                     })
                     .collect(),
             }),
-            ASN1Type::InformationObjectFieldReference(_) => self.reassign_type_for_ref(tlds),
+            ASN1Type::ObjectClassField(_) => self.reassign_type_for_ref(tlds),
             _ => self,
         }
     }
 
     fn reassign_type_for_ref(mut self, tlds: &BTreeMap<String, ToplevelDefinition>) -> Self {
-        if let Self::InformationObjectFieldReference(ref ior) = self {
+        if let Self::ObjectClassField(ref ocf) = self {
             if let Some(t) = tlds
                 .iter()
                 .find_map(|(_, c)| {
-                    c.is_class_with_name(&ior.class)
-                        .map(|clazz| clazz.get_field(&ior.field_path))
+                    c.is_class_with_name(&ocf.class)
+                        .map(|clazz| clazz.get_field(&ocf.field_path))
                 })
                 .flatten()
                 .and_then(|class_field| class_field.ty.clone())

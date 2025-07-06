@@ -66,7 +66,7 @@ impl ToplevelInformationDefinition {
 
 fn resolve_and_link(
     fields: &mut InformationObjectFields,
-    class: &InformationObjectClass,
+    class: &ObjectClassDefn,
     tlds: &BTreeMap<String, ToplevelDefinition>,
 ) -> Result<Option<ToplevelInformationDefinition>, GrammarError> {
     match resolve_custom_syntax(fields, class) {
@@ -94,7 +94,7 @@ fn resolve_and_link(
 
 fn link_object_fields(
     fields: &mut InformationObjectFields,
-    class: &InformationObjectClass,
+    class: &ObjectClassDefn,
     tlds: &BTreeMap<String, ToplevelDefinition>,
 ) -> Result<(), GrammarError> {
     match fields {
@@ -177,7 +177,7 @@ impl SyntaxApplication {
     }
 }
 
-impl InformationObjectClass {
+impl ObjectClassDefn {
     pub fn get_field<'a>(
         &'a self,
         path: &'a Vec<ObjectFieldIdentifier>,

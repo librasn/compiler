@@ -123,9 +123,9 @@ impl Backend for Typescript {
                     ASN1Type::Choice(_) => self.generate_choice(t),
                     ASN1Type::Time(_) => unimplemented!("rasn does not support TIME types yet!"),
                     ASN1Type::Real(_) => self.generate_number_like(t),
-                    ASN1Type::InformationObjectFieldReference(_)
-                    | ASN1Type::EmbeddedPdv
-                    | ASN1Type::External => self.generate_any(t),
+                    ASN1Type::ObjectClassField(_) | ASN1Type::EmbeddedPdv | ASN1Type::External => {
+                        self.generate_any(t)
+                    }
                     ASN1Type::OctetString(_) => self.generate_octet_string(t),
                     ASN1Type::ObjectIdentifier(_)
                     | ASN1Type::GeneralizedTime(_)

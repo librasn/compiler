@@ -13,13 +13,13 @@ use nom::{
 };
 
 use super::{
-    common::{identifier, skip_ws, skip_ws_and_comments, value_identifier},
+    common::{identifier, skip_ws, skip_ws_and_comments, value_reference},
     error::ParserResult,
     in_braces, into_inner,
     object_identifier::object_identifier_value,
 };
 
-pub fn module_reference(input: Input<'_>) -> ParserResult<'_, ModuleReference> {
+pub fn module_header(input: Input<'_>) -> ParserResult<'_, ModuleHeader> {
     skip_ws_and_comments(into((
         identifier,
         opt(skip_ws(definitive_identification)),
@@ -91,7 +91,7 @@ fn global_module_reference(input: Input<'_>) -> ParserResult<'_, GlobalModuleRef
                 AssignedIdentifier::ObjectIdentifierValue,
             ),
             map(
-                skip_ws_and_comments(separated_pair(identifier, char(DOT), value_identifier)),
+                skip_ws_and_comments(separated_pair(identifier, char(DOT), value_reference)),
                 |(mod_ref, val_ref)| {
                     AssignedIdentifier::ExternalValueReference(ExternalValueReference {
                         module_reference: mod_ref.to_owned(),
@@ -101,7 +101,7 @@ fn global_module_reference(input: Input<'_>) -> ParserResult<'_, GlobalModuleRef
             ),
             map(
                 skip_ws_and_comments(pair(
-                    value_identifier,
+                    value_reference,
                     skip_ws(recognize(in_braces(take_until("}")))),
                 )),
                 |(v, p)| AssignedIdentifier::ParameterizedValue {
@@ -111,7 +111,7 @@ fn global_module_reference(input: Input<'_>) -> ParserResult<'_, GlobalModuleRef
             ),
             map(
                 skip_ws_and_comments(terminated(
-                    value_identifier,
+                    value_reference,
                     not(skip_ws_and_comments(alt((
                         peek(value((), tag(FROM))),
                         peek(value((), char(COMMA))),
@@ -192,11 +192,11 @@ fn environments(
 mod tests {
     use std::vec;
 
-    use crate::lexer::module_reference::*;
+    use crate::lexer::module_header::*;
 
     #[test]
-    fn parses_a_module_reference() {
-        assert_eq!(module_reference(r#"--! @options: no-fields-header
+    fn parses_a_module_header() {
+        assert_eq!(module_header(r#"--! @options: no-fields-header
 
     ETSI-ITS-CDD {itu-t (0) identified-organization (4) etsi (0) itsDomain (5) wg1 (1) 102894 cdd (2) major-version-3 (3) minor-version-1 (1)}
 
@@ -204,13 +204,13 @@ mod tests {
 
     BEGIN
     "#.into()).unwrap().1,
-    ModuleReference {name:"ETSI-ITS-CDD".into(),module_identifier:Some(DefinitiveIdentifier::DefinitiveOID(ObjectIdentifierValue(vec![ObjectIdentifierArc{name:Some("itu-t".into()),number:Some(0)},ObjectIdentifierArc{name:Some("identified-organization".into()),number:Some(4)},ObjectIdentifierArc{name:Some("etsi".into()),number:Some(0)},ObjectIdentifierArc{name:Some("itsDomain".into()),number:Some(5)},ObjectIdentifierArc{name:Some("wg1".into()),number:Some(1)},ObjectIdentifierArc{name:None,number:Some(102894)},ObjectIdentifierArc{name:Some("cdd".into()),number:Some(2)},ObjectIdentifierArc{name:Some("major-version-3".into()),number:Some(3)},ObjectIdentifierArc{name:Some("minor-version-1".into()),number:Some(1)}]))),encoding_reference_default:None,tagging_environment:crate::intermediate::TaggingEnvironment::Automatic,extensibility_environment:crate::intermediate::ExtensibilityEnvironment::Explicit, imports: vec![], exports: None }
+    ModuleHeader {name:"ETSI-ITS-CDD".into(),module_identifier:Some(DefinitiveIdentifier::DefinitiveOID(ObjectIdentifierValue(vec![ObjectIdentifierArc{name:Some("itu-t".into()),number:Some(0)},ObjectIdentifierArc{name:Some("identified-organization".into()),number:Some(4)},ObjectIdentifierArc{name:Some("etsi".into()),number:Some(0)},ObjectIdentifierArc{name:Some("itsDomain".into()),number:Some(5)},ObjectIdentifierArc{name:Some("wg1".into()),number:Some(1)},ObjectIdentifierArc{name:None,number:Some(102894)},ObjectIdentifierArc{name:Some("cdd".into()),number:Some(2)},ObjectIdentifierArc{name:Some("major-version-3".into()),number:Some(3)},ObjectIdentifierArc{name:Some("minor-version-1".into()),number:Some(1)}]))),encoding_reference_default:None,tagging_environment:crate::intermediate::TaggingEnvironment::Automatic,extensibility_environment:crate::intermediate::ExtensibilityEnvironment::Explicit, imports: vec![], exports: None }
   )
     }
 
     #[test]
-    fn parses_a_module_reference_with_imports() {
-        assert_eq!(module_reference(r#"CPM-PDU-Descriptions { itu-t (0) identified-organization (4) etsi (0) itsDomain (5) wg1 (1) ts (103324) cpm (1) major-version-1 (1) minor-version-1(1)}
+    fn parses_a_module_header_with_imports() {
+        assert_eq!(module_header(r#"CPM-PDU-Descriptions { itu-t (0) identified-organization (4) etsi (0) itsDomain (5) wg1 (1) ts (103324) cpm (1) major-version-1 (1) minor-version-1(1)}
 
         DEFINITIONS AUTOMATIC TAGS ::=
 
@@ -226,12 +226,12 @@ mod tests {
         FROM CPM-OriginatingStationContainers {itu-t (0) identified-organization (4) etsi (0) itsDomain (5) wg1 (1) ts (103324) originatingStationContainers (2) major-version-1 (1) minor-version-1(1)}
         WITH SUCCESSORS;
     "#.into()).unwrap().1,
-    ModuleReference { name: "CPM-PDU-Descriptions".into(), module_identifier: Some(DefinitiveIdentifier::DefinitiveOID(ObjectIdentifierValue(vec![ObjectIdentifierArc { name: Some("itu-t".into()), number: Some(0) }, ObjectIdentifierArc { name: Some("identified-organization".into()), number: Some(4) }, ObjectIdentifierArc { name: Some("etsi".into()), number: Some(0) }, ObjectIdentifierArc { name: Some("itsDomain".into()), number: Some(5) }, ObjectIdentifierArc { name: Some("wg1".into()), number: Some(1) }, ObjectIdentifierArc { name: Some("ts".into()), number: Some(103324) }, ObjectIdentifierArc { name: Some("cpm".into()), number: Some(1) }, ObjectIdentifierArc { name: Some("major-version-1".into()), number: Some(1) }, ObjectIdentifierArc { name: Some("minor-version-1".into()), number: Some(1) }]))), encoding_reference_default: None, tagging_environment: TaggingEnvironment::Automatic, extensibility_environment: ExtensibilityEnvironment::Explicit, imports: vec![Import { types: vec!["ItsPduHeader".into(), "MessageRateHz".into(), "MessageSegmentationInfo".into(), "OrdinalNumber1B".into(), "ReferencePosition".into(), "StationType".into(), "TimestampIts".into()], global_module_reference: GlobalModuleReference { module_reference: "ETSI-ITS-CDD".into(), assigned_identifier: AssignedIdentifier::ObjectIdentifierValue(ObjectIdentifierValue(vec![ObjectIdentifierArc { name: Some("itu-t".into()), number: Some(0) }, ObjectIdentifierArc { name: Some("identified-organization".into()), number: Some(4) }, ObjectIdentifierArc { name: Some("etsi".into()), number: Some(0) }, ObjectIdentifierArc { name: Some("itsDomain".into()), number: Some(5) }, ObjectIdentifierArc { name: Some("wg1".into()), number: Some(1) }, ObjectIdentifierArc { name: Some("ts".into()), number: Some(102894) }, ObjectIdentifierArc { name: Some("cdd".into()), number: Some(2) }, ObjectIdentifierArc { name: Some("major-version-3".into()), number: Some(3) }, ObjectIdentifierArc { name: Some("minor-version-1".into()), number: Some(1) }]))}, with: Some(With::Successors) }, Import { types: vec!["OriginatingRsuContainer".into(), "OriginatingVehicleContainer".into()], global_module_reference: GlobalModuleReference { module_reference: "CPM-OriginatingStationContainers".into(), assigned_identifier: AssignedIdentifier::ObjectIdentifierValue(ObjectIdentifierValue(vec![ObjectIdentifierArc { name: Some("itu-t".into()), number: Some(0) }, ObjectIdentifierArc { name: Some("identified-organization".into()), number: Some(4) }, ObjectIdentifierArc { name: Some("etsi".into()), number: Some(0) }, ObjectIdentifierArc { name: Some("itsDomain".into()), number: Some(5) }, ObjectIdentifierArc { name: Some("wg1".into()), number: Some(1) }, ObjectIdentifierArc { name: Some("ts".into()), number: Some(103324) }, ObjectIdentifierArc { name: Some("originatingStationContainers".into()), number: Some(2) }, ObjectIdentifierArc { name: Some("major-version-1".into()), number: Some(1) }, ObjectIdentifierArc { name: Some("minor-version-1".into()), number: Some(1) }]))}, with: Some(With::Successors) }], exports: None } )
+    ModuleHeader { name: "CPM-PDU-Descriptions".into(), module_identifier: Some(DefinitiveIdentifier::DefinitiveOID(ObjectIdentifierValue(vec![ObjectIdentifierArc { name: Some("itu-t".into()), number: Some(0) }, ObjectIdentifierArc { name: Some("identified-organization".into()), number: Some(4) }, ObjectIdentifierArc { name: Some("etsi".into()), number: Some(0) }, ObjectIdentifierArc { name: Some("itsDomain".into()), number: Some(5) }, ObjectIdentifierArc { name: Some("wg1".into()), number: Some(1) }, ObjectIdentifierArc { name: Some("ts".into()), number: Some(103324) }, ObjectIdentifierArc { name: Some("cpm".into()), number: Some(1) }, ObjectIdentifierArc { name: Some("major-version-1".into()), number: Some(1) }, ObjectIdentifierArc { name: Some("minor-version-1".into()), number: Some(1) }]))), encoding_reference_default: None, tagging_environment: TaggingEnvironment::Automatic, extensibility_environment: ExtensibilityEnvironment::Explicit, imports: vec![Import { types: vec!["ItsPduHeader".into(), "MessageRateHz".into(), "MessageSegmentationInfo".into(), "OrdinalNumber1B".into(), "ReferencePosition".into(), "StationType".into(), "TimestampIts".into()], global_module_reference: GlobalModuleReference { module_reference: "ETSI-ITS-CDD".into(), assigned_identifier: AssignedIdentifier::ObjectIdentifierValue(ObjectIdentifierValue(vec![ObjectIdentifierArc { name: Some("itu-t".into()), number: Some(0) }, ObjectIdentifierArc { name: Some("identified-organization".into()), number: Some(4) }, ObjectIdentifierArc { name: Some("etsi".into()), number: Some(0) }, ObjectIdentifierArc { name: Some("itsDomain".into()), number: Some(5) }, ObjectIdentifierArc { name: Some("wg1".into()), number: Some(1) }, ObjectIdentifierArc { name: Some("ts".into()), number: Some(102894) }, ObjectIdentifierArc { name: Some("cdd".into()), number: Some(2) }, ObjectIdentifierArc { name: Some("major-version-3".into()), number: Some(3) }, ObjectIdentifierArc { name: Some("minor-version-1".into()), number: Some(1) }]))}, with: Some(With::Successors) }, Import { types: vec!["OriginatingRsuContainer".into(), "OriginatingVehicleContainer".into()], global_module_reference: GlobalModuleReference { module_reference: "CPM-OriginatingStationContainers".into(), assigned_identifier: AssignedIdentifier::ObjectIdentifierValue(ObjectIdentifierValue(vec![ObjectIdentifierArc { name: Some("itu-t".into()), number: Some(0) }, ObjectIdentifierArc { name: Some("identified-organization".into()), number: Some(4) }, ObjectIdentifierArc { name: Some("etsi".into()), number: Some(0) }, ObjectIdentifierArc { name: Some("itsDomain".into()), number: Some(5) }, ObjectIdentifierArc { name: Some("wg1".into()), number: Some(1) }, ObjectIdentifierArc { name: Some("ts".into()), number: Some(103324) }, ObjectIdentifierArc { name: Some("originatingStationContainers".into()), number: Some(2) }, ObjectIdentifierArc { name: Some("major-version-1".into()), number: Some(1) }, ObjectIdentifierArc { name: Some("minor-version-1".into()), number: Some(1) }]))}, with: Some(With::Successors) }], exports: None } )
     }
 
     #[test]
     fn parses_iri_value() {
-        assert_eq!(module_reference(r#"CMSCKMKeyManagement {itu-t recommendation(0) x(24) cms-profile(894) module(0) cKMKeyManagement(1) version1(1)}
+        assert_eq!(module_header(r#"CMSCKMKeyManagement {itu-t recommendation(0) x(24) cms-profile(894) module(0) cKMKeyManagement(1) version1(1)}
         "/ITU-T/Recommendation/X/CMS-Profile/Module/CKMKeyManagement/Version1"
         DEFINITIONS ::=
         BEGIN
@@ -241,7 +241,7 @@ mod tests {
         FROM AlgorithmInformation-2009
         {iso(1) identified-organization(3) dod(6) internet(1) security(5)
         mechanisms(5) pkix(7) id-mod(0) id-mod-algorithmInformation-02(58)} WITH DESCENDANTS;"#.into()).unwrap().1,
-        ModuleReference {
+        ModuleHeader {
             name: "CMSCKMKeyManagement".into(),
             module_identifier: Some(DefinitiveIdentifier::DefinitiveOIDandIRI {
                 oid: ObjectIdentifierValue(vec![

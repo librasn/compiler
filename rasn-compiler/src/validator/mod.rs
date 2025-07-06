@@ -30,7 +30,7 @@ use crate::{
 use self::{
     error::{LinkerError, LinkerErrorType},
     information_object::{
-        ASN1Information, InformationObjectClass, InformationObjectClassField, ObjectSet,
+        ASN1Information, InformationObjectClassField, ObjectClassDefn, ObjectSet,
     },
 };
 
@@ -162,7 +162,7 @@ impl Validator {
             if self
                 .tlds
                 .get(&key)
-                .and_then(ToplevelDefinition::get_module_reference)
+                .and_then(ToplevelDefinition::get_module_header)
                 .is_some_and(|m| visited_headers.contains(&m.borrow().name).not())
             {
                 self.fill_in_associated_type_imports(key, &mut visited_headers);
@@ -179,7 +179,7 @@ impl Validator {
     ) {
         let tld = self.tlds.remove(&key).unwrap();
         {
-            let mod_ref = tld.get_module_reference().unwrap();
+            let module_header = tld.get_module_header().unwrap();
 
             let mut associated_type_imports = Vec::new();
             if let ToplevelDefinition::Information(ToplevelInformationDefinition {
@@ -190,12 +190,12 @@ impl Validator {
                 for field in &class_ref.fields {
                     self.associated_import_type_class_field(
                         field,
-                        mod_ref.clone(),
+                        module_header.clone(),
                         &mut associated_type_imports,
                     );
                 }
             }
-            for import_modules in &mod_ref.borrow().imports {
+            for import_modules in &module_header.borrow().imports {
                 for import in &import_modules.types {
                     if import.starts_with(|c: char| c.is_lowercase()) {
                         match self.tlds.get(import) {
@@ -208,7 +208,7 @@ impl Validator {
                                 for field in &class_ref.fields {
                                     self.associated_import_type_class_field(
                                         field,
-                                        mod_ref.clone(),
+                                        module_header.clone(),
                                         &mut associated_type_imports,
                                     );
                                 }
@@ -219,7 +219,7 @@ impl Validator {
                             })) => {
                                 self.associated_import_type(
                                     associated_type.as_str().as_ref(),
-                                    mod_ref.clone(),
+                                    module_header.clone(),
                                     &mut associated_type_imports,
                                 );
                             }
@@ -229,8 +229,8 @@ impl Validator {
                 }
             }
             for mut import in associated_type_imports {
-                let mut mut_mod_ref = mod_ref.borrow_mut();
-                if let Some(mod_imports) = mut_mod_ref
+                let mut mut_module_header = module_header.borrow_mut();
+                if let Some(mod_imports) = mut_module_header
                     .imports
                     .iter_mut()
                     .find(|i| i.global_module_reference == import.global_module_reference)
@@ -239,11 +239,11 @@ impl Validator {
                         mod_imports.types.push(std::mem::take(&mut import.types[0]));
                     }
                 } else {
-                    mut_mod_ref.imports.push(import);
+                    mut_module_header.imports.push(import);
                 }
             }
 
-            visited_headers.insert(mod_ref.borrow().name.clone());
+            visited_headers.insert(module_header.borrow().name.clone());
         }
         self.tlds.insert(key, tld);
     }
@@ -251,26 +251,26 @@ impl Validator {
     fn associated_import_type(
         &self,
         associated_type: &str,
-        mod_ref: Rc<RefCell<ModuleReference>>,
+        module_header: Rc<RefCell<ModuleHeader>>,
         associated_type_imports: &mut Vec<Import>,
     ) {
         if let Some(ToplevelDefinition::Type(ToplevelTypeDefinition {
             name,
             parameterization,
-            index: Some((m_ref, _)),
+            index: Some((m_hdr, _)),
             ..
         })) = self.tlds.get(associated_type)
         {
             let v_type_name = format!("{}{}", name, parameterization.as_ref().map_or("", |_| "{}"));
-            let v_type_mod_name = &m_ref.borrow().name;
-            if v_type_mod_name != &mod_ref.borrow().name
-                && mod_ref.borrow().find_import(&v_type_name).is_none()
+            let v_type_mod_name = &m_hdr.borrow().name;
+            if v_type_mod_name != &module_header.borrow().name
+                && module_header.borrow().find_import(&v_type_name).is_none()
             {
                 associated_type_imports.push(Import {
                     types: vec![v_type_name],
                     global_module_reference: GlobalModuleReference {
-                        module_reference: m_ref.borrow().name.clone(),
-                        assigned_identifier: match &m_ref.borrow().module_identifier {
+                        module_reference: m_hdr.borrow().name.clone(),
+                        assigned_identifier: match &m_hdr.borrow().module_identifier {
                             Some(DefinitiveIdentifier::DefinitiveOID(oid))
                             | Some(DefinitiveIdentifier::DefinitiveOIDandIRI { oid, .. }) => {
                                 AssignedIdentifier::ObjectIdentifierValue(oid.clone())
@@ -287,7 +287,7 @@ impl Validator {
     fn associated_import_type_class_field(
         &self,
         field: &InformationObjectClassField,
-        mod_ref: Rc<RefCell<ModuleReference>>,
+        module_header: Rc<RefCell<ModuleHeader>>,
         associated_type_imports: &mut Vec<Import>,
     ) {
         if let Some(ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
@@ -297,7 +297,7 @@ impl Validator {
         })) = &field.ty
         {
             if let Some(ToplevelDefinition::Information(ToplevelInformationDefinition {
-                value: ASN1Information::ObjectClass(InformationObjectClass { fields, .. }),
+                value: ASN1Information::ObjectClass(ObjectClassDefn { fields, .. }),
                 ..
             })) = self.tlds.get(class_id)
             {
@@ -307,7 +307,7 @@ impl Validator {
                 {
                     self.associated_import_type_class_field(
                         field,
-                        mod_ref,
+                        module_header,
                         associated_type_imports,
                     );
                 }
@@ -317,7 +317,7 @@ impl Validator {
             ..
         })) = &field.ty
         {
-            self.associated_import_type(identifier, mod_ref, associated_type_imports)
+            self.associated_import_type(identifier, module_header, associated_type_imports)
         }
     }
 

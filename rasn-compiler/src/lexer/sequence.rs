@@ -18,7 +18,7 @@ pub fn sequence_value(input: Input<'_>) -> ParserResult<'_, ASN1Value> {
         in_braces(separated_list0(
             skip_ws_and_comments(char(',')),
             skip_ws_and_comments(alt((
-                pair(opt(value_identifier), skip_ws_and_comments(asn1_value)),
+                pair(opt(value_reference), skip_ws_and_comments(asn1_value)),
                 map(skip_ws_and_comments(asn1_value), |v| (None, v)),
             ))),
         )),
@@ -116,7 +116,7 @@ pub fn sequence_component(input: Input<'_>) -> ParserResult<'_, SequenceComponen
                 tag(COMPONENTS_OF),
                 skip_ws_and_comments(alt((
                     into_inner(recognize(separated_list1(tag(".&"), identifier))),
-                    title_case_identifier,
+                    type_reference,
                 ))),
             ),
             |id| SequenceComponent::ComponentsOf(id.into()),

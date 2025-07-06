@@ -17,7 +17,7 @@ use super::{
     common::{identifier, in_braces, skip_ws_and_comments},
     error::ParserResult,
     information_object_class::{information_object, object_set},
-    value_identifier,
+    value_reference,
 };
 
 pub fn parameterization(input: Input<'_>) -> ParserResult<'_, Parameterization> {
@@ -27,9 +27,9 @@ pub fn parameterization(input: Input<'_>) -> ParserResult<'_, Parameterization> 
             into(separated_pair(
                 asn1_type,
                 skip_ws_and_comments(char(COLON)),
-                skip_ws_and_comments(value_identifier),
+                skip_ws_and_comments(value_reference),
             )),
-            into(skip_ws_and_comments(value_identifier)),
+            into(skip_ws_and_comments(value_reference)),
             into(skip_ws_and_comments(separated_pair(
                 identifier,
                 skip_ws_and_comments(char(COLON)),

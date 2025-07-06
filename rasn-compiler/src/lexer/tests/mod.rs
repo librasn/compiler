@@ -371,7 +371,7 @@ fn parses_class_declaration() {
             class: None,
             index: None,
             parameterization: None,
-            value: ASN1Information::ObjectClass(InformationObjectClass {
+            value: ASN1Information::ObjectClass(ObjectClassDefn {
                 fields: vec![
                     InformationObjectClassField {
                         identifier: ObjectFieldIdentifier::SingleValue("&id".into()),
@@ -432,19 +432,17 @@ fn parses_parameterized_declaration() {
                         is_recursive: false,
                         name: "regionId".into(),
                         tag: None,
-                        ty: ASN1Type::InformationObjectFieldReference(
-                            InformationObjectFieldReference {
-                                class: "REG-EXT-ID-AND-TYPE".into(),
-                                field_path: vec![ObjectFieldIdentifier::SingleValue("&id".into())],
-                                constraints: vec![Constraint::TableConstraint(TableConstraint {
-                                    object_set: ObjectSet {
-                                        values: vec![ObjectSetValue::Reference("Set".into())],
-                                        extensible: None
-                                    },
-                                    linked_fields: vec![]
-                                })]
-                            }
-                        ),
+                        ty: ASN1Type::ObjectClassField(ObjectClassFieldType {
+                            class: "REG-EXT-ID-AND-TYPE".into(),
+                            field_path: vec![ObjectFieldIdentifier::SingleValue("&id".into())],
+                            constraints: vec![Constraint::TableConstraint(TableConstraint {
+                                object_set: ObjectSet {
+                                    values: vec![ObjectSetValue::Reference("Set".into())],
+                                    extensible: None
+                                },
+                                linked_fields: vec![]
+                            })]
+                        }),
                         default_value: None,
                         is_optional: false,
                         constraints: vec![]
@@ -453,24 +451,20 @@ fn parses_parameterized_declaration() {
                         is_recursive: false,
                         name: "regExtValue".into(),
                         tag: None,
-                        ty: ASN1Type::InformationObjectFieldReference(
-                            InformationObjectFieldReference {
-                                class: "REG-EXT-ID-AND-TYPE".into(),
-                                field_path: vec![ObjectFieldIdentifier::MultipleValue(
-                                    "&Type".into()
-                                )],
-                                constraints: vec![Constraint::TableConstraint(TableConstraint {
-                                    object_set: ObjectSet {
-                                        values: vec![ObjectSetValue::Reference("Set".into())],
-                                        extensible: None
-                                    },
-                                    linked_fields: vec![RelationalConstraint {
-                                        field_name: "regionId".into(),
-                                        level: 0
-                                    }]
-                                })]
-                            }
-                        ),
+                        ty: ASN1Type::ObjectClassField(ObjectClassFieldType {
+                            class: "REG-EXT-ID-AND-TYPE".into(),
+                            field_path: vec![ObjectFieldIdentifier::MultipleValue("&Type".into())],
+                            constraints: vec![Constraint::TableConstraint(TableConstraint {
+                                object_set: ObjectSet {
+                                    values: vec![ObjectSetValue::Reference("Set".into())],
+                                    extensible: None
+                                },
+                                linked_fields: vec![RelationalConstraint {
+                                    field_name: "regionId".into(),
+                                    level: 0
+                                }]
+                            })]
+                        }),
                         default_value: None,
                         is_optional: false,
                         constraints: vec![]

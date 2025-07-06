@@ -39,7 +39,7 @@ pub fn bit_string_value(input: Input<'_>) -> ParserResult<'_, ASN1Value> {
         map(
             skip_ws_and_comments(delimited(
                 char(LEFT_BRACE),
-                separated_list0(char(','), skip_ws_and_comments(value_identifier)),
+                separated_list0(char(','), skip_ws_and_comments(value_reference)),
                 char(RIGHT_BRACE),
             )),
             |named_bits| {

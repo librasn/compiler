@@ -20,7 +20,7 @@ use std::{borrow::Cow, cell::RefCell, collections::BTreeMap, ops::Add, rc::Rc};
 use crate::common::INTERNAL_IO_FIELD_REF_TYPE_NAME_PREFIX;
 use constraints::Constraint;
 use error::{GrammarError, GrammarErrorType};
-use information_object::{InformationObjectFieldReference, ToplevelInformationDefinition};
+use information_object::{ObjectClassFieldType, ToplevelInformationDefinition};
 #[cfg(test)]
 use internal_macros::EnumDebug;
 use macros::ToplevelMacroDefinition;
@@ -402,7 +402,7 @@ impl From<(ObjectIdentifierValue, Option<&str>)> for DefinitiveIdentifier {
 /// Represents a module header as specified in
 /// Rec. ITU-T X.680 (02/2021) § 13
 #[derive(Debug, Clone, PartialEq)]
-pub struct ModuleReference {
+pub struct ModuleHeader {
     pub name: String,
     pub module_identifier: Option<DefinitiveIdentifier>,
     pub encoding_reference_default: Option<EncodingReferenceDefault>,
@@ -412,7 +412,7 @@ pub struct ModuleReference {
     pub exports: Option<Exports>,
 }
 
-impl ModuleReference {
+impl ModuleHeader {
     /// Returns an import that matches a given identifier, if present.
     pub fn find_import(&self, identifier: &str) -> Option<&String> {
         self.imports
@@ -432,7 +432,7 @@ impl
         )>,
         Option<Exports>,
         Option<Vec<Import>>,
-    )> for ModuleReference
+    )> for ModuleHeader
 {
     fn from(
         value: (
@@ -547,28 +547,24 @@ impl ToplevelDefinition {
         }
     }
 
-    pub(crate) fn set_index(
-        &mut self,
-        module_reference: Rc<RefCell<ModuleReference>>,
-        item_no: usize,
-    ) {
+    pub(crate) fn set_index(&mut self, module_header: Rc<RefCell<ModuleHeader>>, item_no: usize) {
         match self {
             ToplevelDefinition::Type(ref mut t) => {
-                t.index = Some((module_reference, item_no));
+                t.index = Some((module_header, item_no));
             }
             ToplevelDefinition::Value(ref mut v) => {
-                v.index = Some((module_reference, item_no));
+                v.index = Some((module_header, item_no));
             }
             ToplevelDefinition::Information(ref mut i) => {
-                i.index = Some((module_reference, item_no));
+                i.index = Some((module_header, item_no));
             }
             ToplevelDefinition::Macro(ref mut m) => {
-                m.index = Some((module_reference, item_no));
+                m.index = Some((module_header, item_no));
             }
         }
     }
 
-    pub(crate) fn get_index(&self) -> Option<&(Rc<RefCell<ModuleReference>>, usize)> {
+    pub(crate) fn get_index(&self) -> Option<&(Rc<RefCell<ModuleHeader>>, usize)> {
         match self {
             ToplevelDefinition::Type(ref t) => t.index.as_ref(),
             ToplevelDefinition::Value(ref v) => v.index.as_ref(),
@@ -577,7 +573,7 @@ impl ToplevelDefinition {
         }
     }
 
-    pub(crate) fn get_module_reference(&self) -> Option<Rc<RefCell<ModuleReference>>> {
+    pub(crate) fn get_module_header(&self) -> Option<Rc<RefCell<ModuleHeader>>> {
         match self {
             ToplevelDefinition::Type(ref t) => t.index.as_ref().map(|(m, _)| m.clone()),
             ToplevelDefinition::Value(ref v) => v.index.as_ref().map(|(m, _)| m.clone()),
@@ -653,7 +649,7 @@ pub struct ToplevelValueDefinition {
     pub associated_type: ASN1Type,
     pub parameterization: Option<Parameterization>,
     pub value: ASN1Value,
-    pub index: Option<(Rc<RefCell<ModuleReference>>, usize)>,
+    pub index: Option<(Rc<RefCell<ModuleHeader>>, usize)>,
 }
 
 impl From<(&str, ASN1Value, ASN1Type)> for ToplevelValueDefinition {
@@ -705,7 +701,7 @@ pub struct ToplevelTypeDefinition {
     pub name: String,
     pub ty: ASN1Type,
     pub parameterization: Option<Parameterization>,
-    pub index: Option<(Rc<RefCell<ModuleReference>>, usize)>,
+    pub index: Option<(Rc<RefCell<ModuleHeader>>, usize)>,
 }
 
 impl ToplevelTypeDefinition {
@@ -780,7 +776,7 @@ pub enum ASN1Type {
     ElsewhereDeclaredType(DeclarationElsewhere),
     ChoiceSelectionType(ChoiceSelectionType),
     ObjectIdentifier(ObjectIdentifier),
-    InformationObjectFieldReference(InformationObjectFieldReference),
+    ObjectClassField(ObjectClassFieldType),
     EmbeddedPdv,
     External,
 }
@@ -852,7 +848,7 @@ impl ASN1Type {
             }
             ASN1Type::ChoiceSelectionType(_) => todo!(),
             ASN1Type::ObjectIdentifier(_) => Cow::Borrowed(OBJECT_IDENTIFIER),
-            ASN1Type::InformationObjectFieldReference(ifr) => Cow::Owned(format!(
+            ASN1Type::ObjectClassField(ifr) => Cow::Owned(format!(
                 "{INTERNAL_IO_FIELD_REF_TYPE_NAME_PREFIX}{}${}",
                 ifr.class,
                 ifr.field_path_as_str()
@@ -948,7 +944,7 @@ impl ASN1Type {
             self,
             ASN1Type::ElsewhereDeclaredType(_)
                 | ASN1Type::ChoiceSelectionType(_)
-                | ASN1Type::InformationObjectFieldReference(_)
+                | ASN1Type::ObjectClassField(_)
         )
     }
 
@@ -966,7 +962,7 @@ impl ASN1Type {
             ASN1Type::Set(s) | ASN1Type::Sequence(s) => Some(s.constraints()),
             ASN1Type::SetOf(s) | ASN1Type::SequenceOf(s) => Some(s.constraints()),
             ASN1Type::ElsewhereDeclaredType(e) => Some(e.constraints()),
-            ASN1Type::InformationObjectFieldReference(f) => Some(f.constraints()),
+            ASN1Type::ObjectClassField(f) => Some(f.constraints()),
             _ => None,
         }
     }
@@ -985,7 +981,7 @@ impl ASN1Type {
             ASN1Type::Set(s) | ASN1Type::Sequence(s) => Some(s.constraints_mut()),
             ASN1Type::SetOf(s) | ASN1Type::SequenceOf(s) => Some(s.constraints_mut()),
             ASN1Type::ElsewhereDeclaredType(e) => Some(e.constraints_mut()),
-            ASN1Type::InformationObjectFieldReference(f) => Some(f.constraints_mut()),
+            ASN1Type::ObjectClassField(f) => Some(f.constraints_mut()),
             _ => None,
         }
     }

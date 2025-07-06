@@ -58,6 +58,34 @@ pub fn block_comment(input: Input<'_>) -> ParserResult<'_, &str> {
     .parse(input)
 }
 
+/// Parses a typereference lexical item.
+///
+/// #### X.680 12.2  Type references
+/// _A "typereference" shall consist of an arbitrary number (one or more) of letters, digits, and
+/// hyphens. The initial character shall be an upper-case letter. A hyphen shall not be the last
+/// character. A hyphen shall not be immediately followed by another hyphen. NOTE – The rules
+/// concerning hyphen are designed to avoid ambiguity with (possibly following) comment. 12.2.2A
+/// "typereference" shall not be one of the reserved character sequences listed in 12.38._
+pub fn type_reference(input: Input<'_>) -> ParserResult<'_, &'_ str> {
+    map_res(
+        recognize(pair(
+            one_of("ABCDEFGHIJKLMNOPQRSTUVWXYZ"),
+            many0(alt((
+                preceded(char('-'), into_inner(alphanumeric1)),
+                into_inner(alphanumeric1),
+            ))),
+        )),
+        |identifier| {
+            if ASN1_KEYWORDS.contains(&identifier.inner()) {
+                Err(MiscError("Identifier is ASN.1 keyword."))
+            } else {
+                Ok(identifier.into_inner())
+            }
+        },
+    )
+    .parse(input.clone())
+}
+
 /// Parses an ASN1 identifier.
 ///
 /// * `input` [Input]-wrapped string slice reference used as an input for the lexer
@@ -80,34 +108,13 @@ pub fn identifier(input: Input<'_>) -> ParserResult<'_, &str> {
     .parse(input)
 }
 
-pub fn into_inner<'a, F>(parser: F) -> impl Parser<Input<'a>, Output = &'a str, Error = F::Error>
-where
-    F: Parser<Input<'a>, Output = Input<'a>>,
-{
-    map(parser, Input::into_inner)
-}
-
-pub fn title_case_identifier(input: Input<'_>) -> ParserResult<'_, &str> {
-    map_res(
-        recognize(pair(
-            one_of("ABCDEFGHIJKLMNOPQRSTUVWXYZ"),
-            many0(alt((
-                preceded(char('-'), into_inner(alphanumeric1)),
-                into_inner(alphanumeric1),
-            ))),
-        )),
-        |identifier| {
-            if ASN1_KEYWORDS.contains(&identifier.inner()) {
-                Err(MiscError("Identifier is ASN.1 keyword."))
-            } else {
-                Ok(identifier.into_inner())
-            }
-        },
-    )
-    .parse(input.clone())
-}
-
-pub fn value_identifier(input: Input<'_>) -> ParserResult<'_, &str> {
+/// Parses a valuereference lexical item.
+///
+/// #### X.680 12.4  Value references
+/// _A "valuereference" shall consist of the sequence of characters specified for an "identifier" in
+/// 12.3. In analyzing an instance of use of this notation, a "valuereference" is distinguished
+/// from an "identifier" by the context in which it appears._
+pub fn value_reference(input: Input<'_>) -> ParserResult<'_, &'_ str> {
     into_inner(recognize(pair(
         one_of("abcdefghijklmnopqrstuvwxyz"),
         many0(alt((
@@ -116,6 +123,23 @@ pub fn value_identifier(input: Input<'_>) -> ParserResult<'_, &str> {
         ))),
     )))
     .parse(input)
+}
+
+/// Parses a modulereference lexical item.
+///
+/// #### X.680 12.5 Module references
+/// _A "modulereference" shall consist of the sequence of characters specified for a
+/// "typereference" in 12.2. In analyzing an instance of use of this notation, a "modulereference"
+/// is distinguished from a "typereference" by the context in which it appears._
+pub fn module_reference(input: Input<'_>) -> ParserResult<'_, &'_ str> {
+    type_reference(input)
+}
+
+pub fn into_inner<'a, F>(parser: F) -> impl Parser<Input<'a>, Output = &'a str, Error = F::Error>
+where
+    F: Parser<Input<'a>, Output = Input<'a>>,
+{
+    map(parser, Input::into_inner)
 }
 
 pub fn skip_ws<'a, F>(inner: F) -> impl Parser<Input<'a>, Output = F::Output, Error = F::Error>

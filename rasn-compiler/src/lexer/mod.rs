@@ -29,8 +29,8 @@ use crate::{
 use self::{
     bit_string::*, boolean::*, character_string::*, choice::*, common::*, constraint::*,
     embedded_pdv::*, enumerated::*, error::LexerError, external::*, information_object_class::*,
-    integer::*, module_reference::*, null::*, object_identifier::*, octet_string::*,
-    parameterization::*, real::*, sequence::*, sequence_of::*, set::*, set_of::*, time::*,
+    integer::*, null::*, object_identifier::*, octet_string::*, parameterization::*, real::*,
+    sequence::*, sequence_of::*, set::*, set_of::*, time::*,
 };
 
 mod bit_string;
@@ -46,7 +46,7 @@ mod external;
 mod information_object_class;
 mod integer;
 pub(crate) mod macros;
-mod module_reference;
+mod module_header;
 mod null;
 mod object_identifier;
 mod octet_string;
@@ -62,9 +62,7 @@ mod util;
 #[cfg(test)]
 mod tests;
 
-pub fn asn_spec(
-    input: &str,
-) -> Result<Vec<(ModuleReference, Vec<ToplevelDefinition>)>, LexerError> {
+pub fn asn_spec(input: &str) -> Result<Vec<(ModuleHeader, Vec<ToplevelDefinition>)>, LexerError> {
     let mut result = Vec::new();
     let mut remaining_input = Input::from(input);
     loop {
@@ -88,9 +86,9 @@ pub fn asn_spec(
 
 pub(crate) fn asn_module(
     input: Input<'_>,
-) -> ParserResult<'_, (ModuleReference, Vec<ToplevelDefinition>)> {
+) -> ParserResult<'_, (ModuleHeader, Vec<ToplevelDefinition>)> {
     pair(
-        module_reference,
+        module_header::module_header,
         terminated(
             many0(skip_ws(alt((
                 map(
@@ -129,7 +127,7 @@ fn end(input: Input<'_>) -> ParserResult<'_, &str> {
 pub fn top_level_type_declaration(input: Input<'_>) -> ParserResult<'_, ToplevelTypeDefinition> {
     into((
         skip_ws(many0(comment)),
-        skip_ws(title_case_identifier),
+        skip_ws(type_reference),
         opt(parameterization),
         preceded(assignment, pair(opt(asn_tag), asn1_type)),
     ))
@@ -173,9 +171,7 @@ pub fn asn1_type(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
             time,
             octet_string,
             character_string,
-            map(information_object_field_reference, |i| {
-                ASN1Type::InformationObjectFieldReference(i)
-            }),
+            map(object_class_field_type, |i| ASN1Type::ObjectClassField(i)),
             elsewhere_declared_type,
         )),
     ))
@@ -207,7 +203,7 @@ pub fn elsewhere_declared_value(input: Input<'_>) -> ParserResult<'_, ASN1Value>
                 identifier,
                 tag(".&"),
             ))))),
-            value_identifier,
+            value_reference,
         ),
         |(p, id)| ASN1Value::ElsewhereDeclaredValue {
             parent: p.map(|par| par.inner().to_string()),
@@ -224,7 +220,7 @@ pub fn elsewhere_declared_type(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
                 identifier,
                 tag(".&"),
             ))))),
-            skip_ws_and_comments(title_case_identifier),
+            skip_ws_and_comments(type_reference),
             opt(skip_ws_and_comments(constraint)),
         ),
         |(parent, id, constraints)| {
@@ -238,7 +234,7 @@ fn top_level_value_declaration(input: Input<'_>) -> ParserResult<'_, ToplevelVal
     alt((
         into((
             skip_ws(many0(comment)),
-            skip_ws(context_boundary(value_identifier)),
+            skip_ws(context_boundary(value_reference)),
             skip_ws_and_comments(opt(parameterization)),
             skip_ws_and_comments(asn1_type),
             preceded(assignment, skip_ws_and_comments(asn1_value)),
@@ -281,7 +277,7 @@ fn top_level_object_class_declaration(
         skip_ws(many0(comment)),
         skip_ws(context_boundary(uppercase_identifier)),
         skip_ws(opt(parameterization)),
-        preceded(assignment, alt((type_identifier, information_object_class))),
+        preceded(assignment, alt((type_identifier, object_class_defn))),
     ))
     .parse(input)
 }
@@ -291,7 +287,7 @@ fn eof_comments() {
     println!(
         "{:#?}",
         pair(
-            module_reference,
+            module_header::module_header,
             terminated(
                 many0(skip_ws(alt((
                     map(
