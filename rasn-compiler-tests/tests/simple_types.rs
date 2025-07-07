@@ -26,7 +26,7 @@ e2e_pdu!(
 e2e_pdu!(
     integer_value,
     "test-int INTEGER ::= 4",
-    r#" lazy_static! { pub static ref TEST_INT: Integer = Integer::from(4); }                           "#
+    r#" pub static TEST_INT: LazyLock<Integer> = LazyLock::new(|| Integer::from(4));                           "#
 );
 
 e2e_pdu!(
@@ -38,7 +38,7 @@ e2e_pdu!(
 e2e_pdu!(
     integer_value_large_constrained,
     "test-int INTEGER(0..MAX) ::= 4",
-    r#"lazy_static! { pub static ref TEST_INT: Integer = Integer::from(4); }"#
+    r#"pub static TEST_INT: LazyLock<Integer> = LazyLock::new(|| Integer::from(4));"#
 );
 
 e2e_pdu!(
@@ -60,9 +60,9 @@ e2e_pdu!(
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(delegate, identifier = "Test-Int")]
         pub struct TestInt(pub Integer);
-        lazy_static!{
-            pub static ref TEST_INT_VAL: TestInt = TestInt(Integer::from(4));
-        }                                                                            "#
+        pub static TEST_INT_VAL: LazyLock<TestInt> = LazyLock::new(||
+            TestInt(Integer::from(4))
+        );                                                                            "#
 );
 
 e2e_pdu!(
@@ -88,9 +88,9 @@ e2e_pdu!(
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(delegate, identifier = "Test-Int", value("4", extensible))]
         pub struct TestInt(pub Integer);
-        lazy_static!{
-            pub static ref TEST_INT_VAL: TestInt = TestInt(Integer::from(4));
-        }                                                                            "#
+        pub static TEST_INT_VAL: LazyLock<TestInt> = LazyLock::new(||
+            TestInt(Integer::from(4))
+        );                                                                            "#
 );
 
 e2e_pdu!(
@@ -110,9 +110,9 @@ e2e_pdu!(
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(delegate, identifier = "Test-Int", value("4..=6", extensible))]
         pub struct TestInt(pub Integer);
-        lazy_static!{
-            pub static ref TEST_INT_VAL: TestInt = TestInt(Integer::from(5));
-        }                                                                            "#
+        pub static TEST_INT_VAL: LazyLock<TestInt> = LazyLock::new(||
+            TestInt(Integer::from(5))
+        );                                                                            "#
 );
 
 e2e_pdu!(
@@ -136,23 +136,23 @@ e2e_pdu!(
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(delegate, identifier = "Test-Bits")]
         pub struct TestBits(pub BitString);
-        lazy_static!{
-            pub static ref TEST_BITS_VAL: TestBits = TestBits(
-                [true,false,true,false,true,false,true,false].into_iter().collect()
-            );
-        }                                                       "#
+        pub static TEST_BITS_VAL: LazyLock<TestBits> = LazyLock::new(|| {
+            TestBits(
+                [true,false,true,false,true,false,true,false].into_iter().collect(),
+            )
+        });                                                       "#
 );
 
 e2e_pdu!(
     bit_string_value,
     "test-bits BIT STRING ::= '1010'B",
-    r#" lazy_static! { pub static ref TEST_BITS: BitString = [true,false,true,false].into_iter().collect(); }                           "#
+    r#" pub static TEST_BITS: LazyLock<BitString> = LazyLock::new(|| [true,false,true,false].into_iter().collect());                           "#
 );
 
 e2e_pdu!(
     bit_string_value_hex,
     "test-bits BIT STRING ::= 'FF'H",
-    r#" lazy_static! { pub static ref TEST_BITS: BitString = [true,true,true,true,true,true,true,true].into_iter().collect(); }                           "#
+    r#" pub static TEST_BITS: LazyLock<BitString> = LazyLock::new(|| { [true,true,true,true,true,true,true,true].into_iter().collect() });                           "#
 );
 
 e2e_pdu!(
@@ -189,11 +189,11 @@ e2e_pdu!(
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(delegate, identifier = "Test-Bits", size("4..=6"))]
         pub struct TestBits(pub BitString);
-        lazy_static!{
-            pub static ref TEST_BITS_VAL: TestBits = TestBits(
+        pub static TEST_BITS_VAL: LazyLock<TestBits> = LazyLock::new(||
+            TestBits(
                 [true,false,true,false,true].into_iter().collect()
-            );
-        }                                                                   "#
+            )
+        );                                                                   "#
 );
 
 e2e_pdu!(
@@ -203,11 +203,11 @@ e2e_pdu!(
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(delegate, identifier = "Test-Bits", size("4..=6", extensible))]
         pub struct TestBits(pub BitString);
-        lazy_static!{
-            pub static ref TEST_BITS_VAL: TestBits = TestBits(
-                [true,true,false,true,false,true,false,true].into_iter().collect()
-            );
-        }                                                                          "#
+        pub static TEST_BITS_VAL: LazyLock<TestBits> = LazyLock::new(|| {
+            TestBits(
+                [true,true,false,true,false,true,false,true].into_iter().collect(),
+            )
+        });                                                                          "#
 );
 
 e2e_pdu!(
@@ -217,23 +217,23 @@ e2e_pdu!(
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(delegate, identifier = "Test-Octets")]
         pub struct TestOctets(pub OctetString);
-        lazy_static!{
-            pub static ref TEST_OCTETS_VAL: TestOctets = TestOctets(
+        pub static TEST_OCTETS_VAL: LazyLock<TestOctets> = LazyLock::new(||
+            TestOctets(
                 <OctetStringasFrom<&'static[u8]>>::from(&[170])
-            );
-        }                                                           "#
+            )
+        );                                                           "#
 );
 
 e2e_pdu!(
     octet_string_value,
     "test-bytes OCTET STRING ::= 'FF'H",
-    r#" lazy_static! { pub static ref TEST_BYTES: OctetString = <OctetString as From<&'static[u8]>>::from(&[255]); }                           "#
+    r#" pub static TEST_BYTES: LazyLock<OctetString> = LazyLock::new(|| <OctetString as From<&'static[u8]>>::from(&[255]));                           "#
 );
 
 e2e_pdu!(
     octet_string_value_binary,
     "test-bytes OCTET STRING ::= '11111111'B",
-    r#" lazy_static! { pub static ref TEST_BYTES: OctetString = <OctetString as From<&'static[u8]>>::from(&[255]); }                           "#
+    r#"pub static TEST_BYTES: LazyLock<OctetString> = LazyLock::new(|| <OctetString as From<&'static[u8]>>::from(&[255]));                           "#
 );
 
 e2e_pdu!(
@@ -259,11 +259,11 @@ e2e_pdu!(
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(delegate, identifier = "Test-Octets", size("4..=6"))]
         pub struct TestOctets(pub OctetString);
-        lazy_static!{
-            pub static ref TEST_OCTETS_VAL: TestOctets = TestOctets(
-                <OctetString as From<&'static[u8]>>::from(&[255, 1, 2, 1, 255])
-            );
-        }                                                                       "#
+        pub static TEST_OCTETS_VAL: LazyLock<TestOctets> = LazyLock::new(|| {
+            TestOctets(
+                <OctetString as From<&'static[u8]>>::from(&[255, 1, 2, 1, 255,])
+            )
+        });                                                                       "#
 );
 
 e2e_pdu!(
@@ -273,11 +273,11 @@ e2e_pdu!(
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(delegate, identifier = "Test-Octets", size("4..=6", extensible))]
         pub struct TestOctets(pub OctetString);
-        lazy_static!{
-            pub static ref TEST_OCTETS_VAL: TestOctets = TestOctets(
-                <OctetString as From<&'static[u8]>>::from(&[255, 1, 2, 1, 255, 46, 221, 96])
-            );
-        }                                                                       "#
+        pub static TEST_OCTETS_VAL: LazyLock<TestOctets> = LazyLock::new(|| {
+            TestOctets(
+                <OctetString as From<&'static[u8]>>::from(&[255, 1, 2, 1, 255, 46, 221, 96,])
+            )
+        });                                                                       "#
 );
 
 e2e_pdu!(
@@ -355,11 +355,9 @@ e2e_pdu!(
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(delegate, identifier = "Test-String")]
         pub struct TestString(pub BmpString);
-        lazy_static!{
-            pub static ref TEST_STRING_VAL: TestString = TestString(
-                BmpString::try_from("012345").unwrap()
-            );
-        }                                                           "#
+        pub static TEST_STRING_VAL: LazyLock<TestString> = LazyLock::new(||
+            TestString(BmpString::try_from("012345").unwrap())
+        );"#
 );
 e2e_pdu!(
     bmp_strict,
@@ -368,11 +366,11 @@ e2e_pdu!(
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(delegate, identifier = "Test-String", size("4"))]
         pub struct TestString(pub BmpString);
-        lazy_static!{
-            pub static ref TEST_STRING_VAL: TestString = TestString(
+        pub static TEST_STRING_VAL: LazyLock<TestString> = LazyLock::new(||
+            TestString(
                 BmpString::try_from("012345").unwrap()
-            );
-        }                                                           "#
+            )
+        );                                                           "#
 );
 
 e2e_pdu!(
@@ -382,11 +380,11 @@ e2e_pdu!(
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(delegate, identifier = "Test-String", size("4", extensible))]
         pub struct TestString(pub BmpString);
-        lazy_static!{
-            pub static ref TEST_STRING_VAL: TestString = TestString(
+        pub static TEST_STRING_VAL: LazyLock<TestString> = LazyLock::new(||
+            TestString(
                 BmpString::try_from("012345").unwrap()
-            );
-        }                                                           "#
+            )
+        );                                                           "#
 );
 
 e2e_pdu!(
@@ -396,11 +394,11 @@ e2e_pdu!(
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(delegate, identifier = "Test-String", size("4..=6"))]
         pub struct TestString(pub BmpString);
-        lazy_static!{
-            pub static ref TEST_STRING_VAL: TestString = TestString(
+        pub static TEST_STRING_VAL: LazyLock<TestString> = LazyLock::new(||
+            TestString(
                 BmpString::try_from("012345").unwrap()
-            );
-        }                                                           "#
+            )
+        );                                                           "#
 );
 
 e2e_pdu!(
@@ -410,11 +408,11 @@ e2e_pdu!(
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(delegate, identifier = "Test-String", size("4..=6", extensible))]
         pub struct TestString(pub BmpString);
-        lazy_static!{
-            pub static ref TEST_STRING_VAL: TestString = TestString(
+        pub static TEST_STRING_VAL: LazyLock<TestString> = LazyLock::new(||
+            TestString(
                 BmpString::try_from("012345").unwrap()
-            );
-        }                                                           "#
+            )
+        );                                                           "#
 );
 
 e2e_pdu!(
@@ -424,11 +422,11 @@ e2e_pdu!(
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(delegate, identifier = "Test-String")]
         pub struct TestString(pub NumericString);
-        lazy_static!{
-            pub static ref TEST_STRING_VAL: TestString = TestString(
+        pub static TEST_STRING_VAL: LazyLock<TestString> = LazyLock::new(||
+            TestString(
                 NumericString::try_from("012345").unwrap()
-            );
-        }                                                           "#
+            )
+        );                                                           "#
 );
 e2e_pdu!(
     numeric_strict,
@@ -437,11 +435,11 @@ e2e_pdu!(
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(delegate, identifier = "Test-String", size("4"))]
         pub struct TestString(pub NumericString);
-        lazy_static!{
-            pub static ref TEST_STRING_VAL: TestString = TestString(
+        pub static TEST_STRING_VAL: LazyLock<TestString> = LazyLock::new(||
+            TestString(
                 NumericString::try_from("012345").unwrap()
-            );
-        }                                                           "#
+            )
+        );                                                           "#
 );
 
 e2e_pdu!(
@@ -451,11 +449,11 @@ e2e_pdu!(
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(delegate, identifier = "Test-String", size("4", extensible))]
         pub struct TestString(pub NumericString);
-        lazy_static!{
-            pub static ref TEST_STRING_VAL: TestString = TestString(
+        pub static TEST_STRING_VAL: LazyLock<TestString> = LazyLock::new(||
+            TestString(
                 NumericString::try_from("012345").unwrap()
-            );
-        }                                                           "#
+            )
+        );                                                           "#
 );
 
 e2e_pdu!(
@@ -465,11 +463,11 @@ e2e_pdu!(
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(delegate, identifier = "Test-String", size("4..=6"))]
         pub struct TestString(pub NumericString);
-        lazy_static!{
-            pub static ref TEST_STRING_VAL: TestString = TestString(
+        pub static TEST_STRING_VAL: LazyLock<TestString> = LazyLock::new(||
+            TestString(
                 NumericString::try_from("012345").unwrap()
-            );
-        }                                                           "#
+            )
+        );                                                           "#
 );
 
 e2e_pdu!(
@@ -479,11 +477,11 @@ e2e_pdu!(
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(delegate, identifier = "Test-String", size("4..=6", extensible))]
         pub struct TestString(pub NumericString);
-        lazy_static!{
-            pub static ref TEST_STRING_VAL: TestString = TestString(
+        pub static TEST_STRING_VAL: LazyLock<TestString> = LazyLock::new(||
+            TestString(
                 NumericString::try_from("012345").unwrap()
-            );
-        }                                                           "#
+            )
+        );                                                           "#
 );
 
 e2e_pdu!(
@@ -493,11 +491,11 @@ e2e_pdu!(
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(delegate, identifier = "Test-String")]
         pub struct TestString(pub Ia5String);
-        lazy_static!{
-            pub static ref TEST_STRING_VAL: TestString = TestString(
+        pub static TEST_STRING_VAL: LazyLock<TestString> = LazyLock::new(||
+            TestString(
                 Ia5String::try_from("012345").unwrap()
-            );
-        }                                                           "#
+            )
+        );                                                           "#
 );
 e2e_pdu!(
     ia5_strict,
@@ -506,11 +504,11 @@ e2e_pdu!(
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(delegate, identifier = "Test-String", size("4"))]
         pub struct TestString(pub Ia5String);
-        lazy_static!{
-            pub static ref TEST_STRING_VAL: TestString = TestString(
+        pub static TEST_STRING_VAL: LazyLock<TestString> = LazyLock::new(||
+            TestString(
                 Ia5String::try_from("012345").unwrap()
-            );
-        }                                                           "#
+            )
+        );                                                           "#
 );
 
 e2e_pdu!(
@@ -520,11 +518,11 @@ e2e_pdu!(
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(delegate, identifier = "Test-String", size("4", extensible))]
         pub struct TestString(pub Ia5String);
-        lazy_static!{
-            pub static ref TEST_STRING_VAL: TestString = TestString(
+        pub static TEST_STRING_VAL: LazyLock<TestString> = LazyLock::new(||
+            TestString(
                 Ia5String::try_from("012345").unwrap()
-            );
-        }                                                           "#
+            )
+        );                                                           "#
 );
 
 e2e_pdu!(
@@ -534,11 +532,11 @@ e2e_pdu!(
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(delegate, identifier = "Test-String", size("4..=6"))]
         pub struct TestString(pub Ia5String);
-        lazy_static!{
-            pub static ref TEST_STRING_VAL: TestString = TestString(
+        pub static TEST_STRING_VAL: LazyLock<TestString> = LazyLock::new(||
+            TestString(
                 Ia5String::try_from("012345").unwrap()
-            );
-        }                                                           "#
+            )
+        );                                                           "#
 );
 
 e2e_pdu!(
@@ -548,11 +546,11 @@ e2e_pdu!(
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(delegate, identifier = "Test-String", size("4..=6", extensible))]
         pub struct TestString(pub Ia5String);
-        lazy_static!{
-            pub static ref TEST_STRING_VAL: TestString = TestString(
+        pub static TEST_STRING_VAL: LazyLock<TestString> = LazyLock::new(||
+            TestString(
                 Ia5String::try_from("012345").unwrap()
-            );
-        }                                                           "#
+            )
+        );                                                           "#
 );
 
 e2e_pdu!(
@@ -562,11 +560,11 @@ e2e_pdu!(
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(delegate, identifier = "Test-String")]
         pub struct TestString(pub PrintableString);
-        lazy_static!{
-            pub static ref TEST_STRING_VAL: TestString = TestString(
+        pub static TEST_STRING_VAL: LazyLock<TestString> = LazyLock::new(||
+            TestString(
                 PrintableString::try_from("012345").unwrap()
-            );
-        }                                                           "#
+            )
+        );                                                           "#
 );
 e2e_pdu!(
     printable_strict,
@@ -575,11 +573,11 @@ e2e_pdu!(
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(delegate, identifier = "Test-String", size("4"))]
         pub struct TestString(pub PrintableString);
-        lazy_static!{
-            pub static ref TEST_STRING_VAL: TestString = TestString(
+        pub static TEST_STRING_VAL: LazyLock<TestString> = LazyLock::new(||
+            TestString(
                 PrintableString::try_from("012345").unwrap()
-            );
-        }                                                           "#
+            )
+        );                                                           "#
 );
 
 e2e_pdu!(
@@ -589,11 +587,11 @@ e2e_pdu!(
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(delegate, identifier = "Test-String", size("4", extensible))]
         pub struct TestString(pub PrintableString);
-        lazy_static!{
-            pub static ref TEST_STRING_VAL: TestString = TestString(
+        pub static TEST_STRING_VAL: LazyLock<TestString> = LazyLock::new(||
+            TestString(
                 PrintableString::try_from("012345").unwrap()
-            );
-        }                                                           "#
+            )
+        );                                                           "#
 );
 
 e2e_pdu!(
@@ -603,11 +601,9 @@ e2e_pdu!(
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(delegate, identifier = "Test-String", size("4..=6"))]
         pub struct TestString(pub PrintableString);
-        lazy_static!{
-            pub static ref TEST_STRING_VAL: TestString = TestString(
-                PrintableString::try_from("012345").unwrap()
-            );
-        }                                                           "#
+        pub static TEST_STRING_VAL: LazyLock<TestString> = LazyLock::new(||
+            TestString(PrintableString::try_from("012345").unwrap())
+        );                                                           "#
 );
 
 e2e_pdu!(
@@ -617,11 +613,9 @@ e2e_pdu!(
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(delegate, identifier = "Test-String", size("4..=6", extensible))]
         pub struct TestString(pub PrintableString);
-        lazy_static!{
-            pub static ref TEST_STRING_VAL: TestString = TestString(
-                PrintableString::try_from("012345").unwrap()
-            );
-        }                                                           "#
+        pub static TEST_STRING_VAL: LazyLock<TestString> = LazyLock::new(||
+            TestString(PrintableString::try_from("012345").unwrap())
+        );                                                           "#
 );
 
 e2e_pdu!(
@@ -631,11 +625,9 @@ e2e_pdu!(
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(delegate, identifier = "Test-String")]
         pub struct TestString(pub GeneralString);
-        lazy_static!{
-            pub static ref TEST_STRING_VAL: TestString = TestString(
-                GeneralString::try_from(String::from("012345")).unwrap()
-            );
-        }                                                           "#
+        pub static TEST_STRING_VAL: LazyLock<TestString> = LazyLock::new(||
+            TestString(GeneralString::try_from(String::from("012345")).unwrap())
+        );                                                           "#
 );
 e2e_pdu!(
     general_strict,
@@ -644,11 +636,9 @@ e2e_pdu!(
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(delegate, identifier = "Test-String", size("4"))]
         pub struct TestString(pub GeneralString);
-        lazy_static!{
-            pub static ref TEST_STRING_VAL: TestString = TestString(
-                GeneralString::try_from(String::from("012345")).unwrap()
-            );
-        }                                                           "#
+        pub static  TEST_STRING_VAL: LazyLock<TestString> = LazyLock::new(||
+            TestString(GeneralString::try_from(String::from("012345")).unwrap())
+        );                                                           "#
 );
 
 e2e_pdu!(
@@ -658,11 +648,9 @@ e2e_pdu!(
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(delegate, identifier = "Test-String", size("4", extensible))]
         pub struct TestString(pub GeneralString);
-        lazy_static!{
-            pub static ref TEST_STRING_VAL: TestString = TestString(
-                GeneralString::try_from(String::from("012345")).unwrap()
-            );
-        }                                                           "#
+        pub static  TEST_STRING_VAL: LazyLock<TestString> = LazyLock::new(||
+            TestString(GeneralString::try_from(String::from("012345")).unwrap())
+        );                                                           "#
 );
 
 e2e_pdu!(
@@ -672,11 +660,9 @@ e2e_pdu!(
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(delegate, identifier = "Test-String", size("4..=6"))]
         pub struct TestString(pub GeneralString);
-        lazy_static!{
-            pub static ref TEST_STRING_VAL: TestString = TestString(
-                GeneralString::try_from(String::from("012345")).unwrap()
-            );
-        }                                                           "#
+        pub static TEST_STRING_VAL: LazyLock<TestString> = LazyLock::new(||
+            TestString(GeneralString::try_from(String::from("012345")).unwrap())
+        );                                                           "#
 );
 
 e2e_pdu!(
@@ -686,11 +672,9 @@ e2e_pdu!(
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(delegate, identifier = "Test-String", size("4..=6", extensible))]
         pub struct TestString(pub GeneralString);
-        lazy_static!{
-            pub static ref TEST_STRING_VAL: TestString = TestString(
-                GeneralString::try_from(String::from("012345")).unwrap()
-            );
-        }                                                           "#
+        pub static TEST_STRING_VAL: LazyLock<TestString> = LazyLock::new(||
+            TestString(GeneralString::try_from(String::from("012345")).unwrap())
+        );                                                           "#
 );
 
 e2e_pdu!(
@@ -700,11 +684,9 @@ e2e_pdu!(
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(delegate, identifier = "Test-String")]
         pub struct TestString(pub GraphicString);
-        lazy_static!{
-            pub static ref TEST_STRING_VAL: TestString = TestString(
-                GraphicString::try_from(String::from("012345")).unwrap()
-            );
-        }                                                           "#
+        pub static TEST_STRING_VAL: LazyLock<TestString> = LazyLock::new(||
+            TestString(GraphicString::try_from(String::from("012345")).unwrap())
+        );                                                           "#
 );
 
 e2e_pdu!(
@@ -714,11 +696,9 @@ e2e_pdu!(
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(delegate, identifier = "Test-String", size("4"))]
         pub struct TestString(pub GraphicString);
-        lazy_static!{
-            pub static ref TEST_STRING_VAL: TestString = TestString(
-                GraphicString::try_from(String::from("012345")).unwrap()
-            );
-        }                                                           "#
+        pub static TEST_STRING_VAL: LazyLock<TestString> = LazyLock::new(||
+            TestString(GraphicString::try_from(String::from("012345")).unwrap())
+        );                                                           "#
 );
 
 e2e_pdu!(
@@ -728,11 +708,9 @@ e2e_pdu!(
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(delegate, identifier = "Test-String", size("4", extensible))]
         pub struct TestString(pub GraphicString);
-        lazy_static!{
-            pub static ref TEST_STRING_VAL: TestString = TestString(
-                GraphicString::try_from(String::from("012345")).unwrap()
-            );
-        }                                                           "#
+        pub static TEST_STRING_VAL: LazyLock<TestString> = LazyLock::new(||
+            TestString(GraphicString::try_from(String::from("012345")).unwrap())
+        );                                                           "#
 );
 
 e2e_pdu!(
@@ -742,11 +720,9 @@ e2e_pdu!(
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(delegate, identifier = "Test-String", size("4..=6"))]
         pub struct TestString(pub GraphicString);
-        lazy_static!{
-            pub static ref TEST_STRING_VAL: TestString = TestString(
-                GraphicString::try_from(String::from("012345")).unwrap()
-            );
-        }                                                           "#
+        pub static TEST_STRING_VAL: LazyLock<TestString> = LazyLock::new(||
+            TestString(GraphicString::try_from(String::from("012345")).unwrap())
+        );                                                           "#
 );
 
 e2e_pdu!(
@@ -756,11 +732,9 @@ e2e_pdu!(
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(delegate, identifier = "Test-String", size("4..=6", extensible))]
         pub struct TestString(pub GraphicString);
-        lazy_static!{
-            pub static ref TEST_STRING_VAL: TestString = TestString(
-                GraphicString::try_from(String::from("012345")).unwrap()
-            );
-        }                                                           "#
+        pub static TEST_STRING_VAL: LazyLock<TestString> = LazyLock::new(||
+            TestString(GraphicString::try_from(String::from("012345")).unwrap())
+        );                                                           "#
 );
 
 e2e_pdu!(
@@ -770,11 +744,9 @@ e2e_pdu!(
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(delegate, identifier = "Test-String")]
         pub struct TestString(pub Utf8String);
-        lazy_static!{
-            pub static ref TEST_STRING_VAL: TestString = TestString(
-                String::from("012345")
-            );
-        }                                                           "#
+        pub static TEST_STRING_VAL: LazyLock<TestString> = LazyLock::new(||
+            TestString(String::from("012345"))
+        );                                                          "#
 );
 e2e_pdu!(
     utf8_strict,
@@ -783,11 +755,9 @@ e2e_pdu!(
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(delegate, identifier = "Test-String", size("4"))]
         pub struct TestString(pub Utf8String);
-        lazy_static!{
-            pub static ref TEST_STRING_VAL: TestString = TestString(
-                String::from("012345")
-            );
-        }                                                           "#
+        pub static TEST_STRING_VAL: LazyLock<TestString> = LazyLock::new(||
+            TestString(String::from("012345"))
+        );                                                          "#
 );
 
 e2e_pdu!(
@@ -797,11 +767,9 @@ e2e_pdu!(
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(delegate, identifier = "Test-String", size("4", extensible))]
         pub struct TestString(pub Utf8String);
-        lazy_static!{
-            pub static ref TEST_STRING_VAL: TestString = TestString(
-                String::from("012345")
-            );
-        }                                                           "#
+        pub static TEST_STRING_VAL: LazyLock<TestString> = LazyLock::new(||
+            TestString(String::from("012345"))
+        );                                                          "#
 );
 
 e2e_pdu!(
@@ -811,11 +779,9 @@ e2e_pdu!(
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(delegate, identifier = "Test-String", size("4..=6"))]
         pub struct TestString(pub Utf8String);
-        lazy_static!{
-            pub static ref TEST_STRING_VAL: TestString = TestString(
-                String::from("012345")
-            );
-        }                                                           "#
+        pub static TEST_STRING_VAL: LazyLock<TestString> = LazyLock::new(||
+            TestString(String::from("012345"))
+        );                                                          "#
 );
 
 e2e_pdu!(
@@ -825,11 +791,9 @@ e2e_pdu!(
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(delegate, identifier = "Test-String", size("4..=6", extensible))]
         pub struct TestString(pub Utf8String);
-        lazy_static!{
-            pub static ref TEST_STRING_VAL: TestString = TestString(
-                String::from("012345")
-            );
-        }                                                           "#
+        pub static TEST_STRING_VAL: LazyLock<TestString> = LazyLock::new(||
+            TestString(String::from("012345"))
+        );                                                          "#
 );
 
 e2e_pdu!(
@@ -839,11 +803,9 @@ e2e_pdu!(
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(delegate, identifier = "Test-String")]
         pub struct TestString(pub VisibleString);
-        lazy_static!{
-            pub static ref TEST_STRING_VAL: TestString = TestString(
-                VisibleString::try_from("012345").unwrap()
-            );
-        }                                                           "#
+        pub static TEST_STRING_VAL: LazyLock<TestString> = LazyLock::new(||
+            TestString(VisibleString::try_from("012345").unwrap())
+        );                                                          "#
 );
 e2e_pdu!(
     visible_strict,
@@ -852,11 +814,9 @@ e2e_pdu!(
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(delegate, identifier = "Test-String", size("4"))]
         pub struct TestString(pub VisibleString);
-        lazy_static!{
-            pub static ref TEST_STRING_VAL: TestString = TestString(
-                VisibleString::try_from("012345").unwrap()
-            );
-        }                                                           "#
+        pub static TEST_STRING_VAL: LazyLock<TestString> = LazyLock::new(||
+            TestString(VisibleString::try_from("012345").unwrap())
+        );                                                          "#
 );
 
 e2e_pdu!(
@@ -866,11 +826,9 @@ e2e_pdu!(
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(delegate, identifier = "Test-String", size("4", extensible))]
         pub struct TestString(pub VisibleString);
-        lazy_static!{
-            pub static ref TEST_STRING_VAL: TestString = TestString(
-                VisibleString::try_from("012345").unwrap()
-            );
-        }                                                           "#
+        pub static TEST_STRING_VAL: LazyLock<TestString> = LazyLock::new(||
+            TestString(VisibleString::try_from("012345").unwrap())
+        );                                                          "#
 );
 
 e2e_pdu!(
@@ -880,11 +838,9 @@ e2e_pdu!(
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(delegate, identifier = "Test-String", size("4..=6"))]
         pub struct TestString(pub VisibleString);
-        lazy_static!{
-            pub static ref TEST_STRING_VAL: TestString = TestString(
-                VisibleString::try_from("012345").unwrap()
-            );
-        }                                                           "#
+        pub static TEST_STRING_VAL: LazyLock<TestString> = LazyLock::new(||
+            TestString(VisibleString::try_from("012345").unwrap())
+        );                                                          "#
 );
 
 e2e_pdu!(
@@ -894,11 +850,9 @@ e2e_pdu!(
     r#" #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
         #[rasn(delegate, identifier = "Test-String", size("4..=6", extensible))]
         pub struct TestString(pub VisibleString);
-        lazy_static!{
-            pub static ref TEST_STRING_VAL: TestString = TestString(
-                VisibleString::try_from("012345").unwrap()
-            );
-        }                                                           "#
+        pub static TEST_STRING_VAL: LazyLock<TestString> = LazyLock::new(||
+            TestString(VisibleString::try_from("012345").unwrap())
+        );                                                          "#
 );
 
 e2e_pdu!(

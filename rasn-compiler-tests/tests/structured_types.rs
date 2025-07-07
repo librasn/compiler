@@ -3,9 +3,9 @@ use rasn_compiler_tests::e2e_pdu;
 e2e_pdu!(
     sequence_of_primitive_value,
     r#" value SEQUENCE OF INTEGER ::= { 1, 2, 3 }"#,
-    r#" lazy_static! {
-            pub static ref VALUE: Vec<Integer> = alloc::vec![Integer::from(1), Integer::from(2), Integer::from(3)];
-        }                                                       "#
+    r#" pub static VALUE: LazyLock<Vec<Integer>> = LazyLock::new(||
+        alloc::vec![Integer::from(1), Integer::from(2), Integer::from(3)]
+    );                                                       "#
 );
 
 e2e_pdu!(
@@ -93,9 +93,9 @@ e2e_pdu!(
             }
         }         
         
-        lazy_static! {
-            pub static ref NESTED_TYPE_VAL: NestedType = NestedType::new(NestedTypeChoiceField::one(Integer::from(4)));
-        }          "#
+        pub static NESTED_TYPE_VAL: LazyLock<NestedType> = LazyLock::new(||
+            NestedType::new(NestedTypeChoiceField::one(Integer::from(4)))
+        );          "#
 );
 
 e2e_pdu!(
@@ -145,9 +145,9 @@ e2e_pdu!(
             }
         }
 
-        lazy_static! {
-            pub static ref NESTED_TYPE_VAL: NestedType = NestedType::new(NestedTypeChoiceField::one(Integer::from(4)));
-        }          "#
+        pub static NESTED_TYPE_VAL: LazyLock<NestedType> = LazyLock::new(||
+            NestedType::new(NestedTypeChoiceField::one(Integer::from(4)))
+        );          "#
 );
 
 e2e_pdu!(
@@ -221,9 +221,9 @@ e2e_pdu!(
                 Self { ctfc_size }
             }
         }
-        lazy_static! {
-            pub static ref MAX_TFC: Integer = Integer::from(1024);
-        }
+        pub static MAX_TFC: LazyLock<Integer> = LazyLock::new(||
+            Integer::from(1024)
+        );
     "#
 );
 

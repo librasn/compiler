@@ -19,7 +19,7 @@ macro_rules! e2e_pdu {
                     .unwrap()
                     .generated
                     .replace(|c: char| c.is_whitespace(), "")
-                    .replace("#[allow(non_camel_case_types,non_snake_case,non_upper_case_globals,unused,clippy::too_many_arguments)]pubmodtest_module{externcratealloc;usecore::borrow::Borrow;uselazy_static::lazy_static;userasn::prelude::*;", ""),
+                    .replace("#[allow(non_camel_case_types,non_snake_case,non_upper_case_globals,unused,clippy::too_many_arguments)]pubmodtest_module{externcratealloc;usecore::borrow::Borrow;userasn::prelude::*;usestd::sync::LazyLock;", ""),
                 format!("{}}}", $expected)
                     .to_string()
                     .replace(|c: char| c.is_whitespace(), ""),
@@ -37,7 +37,7 @@ macro_rules! e2e_pdu {
                     .unwrap()
                     .generated
                     .replace(|c: char| c.is_whitespace(), "")
-                    .replace("#[allow(non_camel_case_types,non_snake_case,non_upper_case_globals,unused,clippy::too_many_arguments)]pubmodtest_module{externcratealloc;usecore::borrow::Borrow;uselazy_static::lazy_static;userasn::prelude::*;", ""),
+                    .replace("#[allow(non_camel_case_types,non_snake_case,non_upper_case_globals,unused,clippy::too_many_arguments)]pubmodtest_module{externcratealloc;usecore::borrow::Borrow;userasn::prelude::*;usestd::sync::LazyLock;", ""),
                 format!("{}}}", $expected)
                     .to_string()
                     .replace(|c: char| c.is_whitespace(), ""),

@@ -198,8 +198,8 @@ impl Backend for Rasn {
                     extern crate alloc;
 
                     use core::borrow::Borrow;
+                    use std::sync::LazyLock;
                     use rasn::prelude::*;
-                    use lazy_static::lazy_static;
                     #(#custom_imports)*
                     #(#imports)*
 

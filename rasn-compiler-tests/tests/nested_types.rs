@@ -76,12 +76,12 @@ e2e_pdu!(
         #[rasn(delegate, identifier = "Wrapping-Int", value("0..=123"))]
         pub struct WrappingInt(pub TestInt);
 
-        lazy_static! {
-            pub static ref VALUE: TestSequence = TestSequence::new(
+        pub static VALUE: LazyLock<TestSequence> = LazyLock::new(|| {
+            TestSequence::new(
                 WrappingInt(TestInt(5)),
                 WrappingBoolean(TestBoolean(true))
-            );
-        }                                                                        "#
+            )
+        });                                                                        "#
 );
 
 e2e_pdu!(
