@@ -22,7 +22,7 @@ jobs:
         with:
             toolchain: stable
 
-      - name: Build
+      - name: Build lib
         uses: actions-rs/cargo@v1
         with:
           command: build
@@ -39,11 +39,12 @@ jobs:
             toolchain: stable
             target: wasm32-unknown-unknown
 
-      - name: Build
+      - name: Build WASM
         uses: actions-rs/cargo@v1
         with:
-          command: build
-          args: --target wasm32-unknown-unknown
+          command: rustc
+          target: wasm32-unknown-unknown
+          args: --manifest-path=rasn-compiler/Cargo.toml --crate-type=cdylib
 
       - name: Test
         uses: actions-rs/cargo@v1
