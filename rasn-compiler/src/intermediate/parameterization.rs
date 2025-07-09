@@ -1,6 +1,6 @@
 use super::ASN1Type;
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, Default, PartialEq)]
 pub struct Parameterization {
     pub parameters: Vec<ParameterizationArgument>,
 }

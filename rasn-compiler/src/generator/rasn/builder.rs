@@ -83,9 +83,10 @@ impl Rasn {
                 }
             }
             ToplevelDefinition::Value(v) => self.generate_value(v),
-            ToplevelDefinition::Information(i) => match i.value {
-                ASN1Information::ObjectSet(_) => self.generate_information_object_set(i),
-                _ => Ok(TokenStream::new()),
+            ToplevelDefinition::Class(_) => Ok(TokenStream::new()),
+            ToplevelDefinition::Object(o) => match o.value {
+                ASN1Information::ObjectSet(_) => self.generate_information_object_set(o),
+                ASN1Information::Object(_) => Ok(TokenStream::new()),
             },
             ToplevelDefinition::Macro(_) => Err(GeneratorError {
                 kind: GeneratorErrorType::NotYetInplemented,
@@ -842,8 +843,8 @@ impl Rasn {
         }
         if let ASN1Information::ObjectSet(o) = &tld.value {
             let class: &ObjectClassDefn = match tld.class {
-                Some(ClassLink::ByReference(ref c)) => c,
-                _ => {
+                ClassLink::ByReference(ref c) => c,
+                ClassLink::ByName(_) => {
                     return Err(GeneratorError::new(
                         None,
                         "Missing class link in Information Object Set",
@@ -862,7 +863,7 @@ impl Rasn {
                     )),
                     ObjectSetValue::Inline(InformationObjectFields::CustomSyntax(_)) => {
                         Err(GeneratorError::new(
-                            Some(ToplevelDefinition::Information(tld.clone())),
+                            Some(ToplevelDefinition::Object(tld.clone())),
                             "Unexpectedly encountered unresolved custom syntax!",
                             GeneratorErrorType::MissingClassKey,
                         ))
@@ -880,9 +881,7 @@ impl Rasn {
                         .get(index)
                         .map(|f| f.identifier.identifier())
                         .ok_or_else(|| GeneratorError {
-                            top_level_declaration: Some(ToplevelDefinition::Information(
-                                tld.clone(),
-                            )),
+                            top_level_declaration: Some(ToplevelDefinition::Object(tld.clone())),
                             details: "Could not find class field for index.".into(),
                             kind: GeneratorErrorType::SyntaxMismatch,
                         })?;
@@ -1062,7 +1061,7 @@ impl Rasn {
             Ok(quote!(#(#field_enums)*))
         } else {
             Err(GeneratorError::new(
-                Some(ToplevelDefinition::Information(tld)),
+                Some(ToplevelDefinition::Object(tld)),
                 "Expected Object Set top-level declaration",
                 GeneratorErrorType::Asn1TypeMismatch,
             ))

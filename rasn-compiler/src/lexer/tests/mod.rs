@@ -279,7 +279,7 @@ fn parses_object_set_value() {
             name: "CpmContainers".into(),
             index: None,
             parameterization: None,
-            class: Some(ClassLink::ByName("CPM-CONTAINER-ID-AND-TYPE".into())),
+            class: ClassLink::ByName("CPM-CONTAINER-ID-AND-TYPE".into()),
             value: ASN1Information::ObjectSet(ObjectSet {
                 values: vec![
                     ObjectSetValue::Inline(InformationObjectFields::CustomSyntax(vec![
@@ -344,7 +344,7 @@ fn parses_empty_extensible_object_set() {
             index: None,
             parameterization: None,
             name: "Reg-AdvisorySpeed".into(),
-            class: Some(ClassLink::ByName("REG-EXT-ID-AND-TYPE".into())),
+            class: ClassLink::ByName("REG-EXT-ID-AND-TYPE".into()),
             value: ASN1Information::ObjectSet(ObjectSet {
                 values: vec![],
                 extensible: Some(0)
@@ -356,7 +356,7 @@ fn parses_empty_extensible_object_set() {
 #[test]
 fn parses_class_declaration() {
     assert_eq!(
-        top_level_information_declaration(
+        object_class_assignement(
             r#"REG-EXT-ID-AND-TYPE ::= CLASS {
                   &id     RegionId UNIQUE,
                   &Type
@@ -365,13 +365,12 @@ fn parses_class_declaration() {
         )
         .unwrap()
         .1,
-        ToplevelInformationDefinition {
+        ObjectClassAssignment {
             comments: "".into(),
             name: "REG-EXT-ID-AND-TYPE".into(),
-            class: None,
             index: None,
-            parameterization: None,
-            value: ASN1Information::ObjectClass(ObjectClassDefn {
+            parameterization: Parameterization::default(),
+            definition: ObjectClassDefn {
                 fields: vec![
                     InformationObjectClassField {
                         identifier: ObjectFieldIdentifier::SingleValue("&id".into()),
@@ -402,7 +401,7 @@ fn parses_class_declaration() {
                         ))
                     ]
                 })
-            })
+            }
         }
     )
 }

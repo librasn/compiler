@@ -74,7 +74,8 @@ impl Display for GeneratorError {
         let name = match &self.top_level_declaration {
             Some(ToplevelDefinition::Type(t)) => &t.name,
             Some(ToplevelDefinition::Value(v)) => &v.name,
-            Some(ToplevelDefinition::Information(i)) => &i.name,
+            Some(ToplevelDefinition::Class(c)) => &c.name,
+            Some(ToplevelDefinition::Object(o)) => &o.name,
             Some(ToplevelDefinition::Macro(m)) => &m.name,
             None => "",
         };

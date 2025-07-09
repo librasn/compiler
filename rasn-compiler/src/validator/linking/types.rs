@@ -15,7 +15,8 @@ impl DeclarationElsewhere {
         ))? {
             ToplevelDefinition::Type(ToplevelTypeDefinition { ty: ASN1Type::ElsewhereDeclaredType(e), .. }) => e.root(tlds),
             ToplevelDefinition::Type(ToplevelTypeDefinition { ty, .. }) => Ok(ty),
-            ToplevelDefinition::Information(_) => Err(GrammarError::todo()),
+            ToplevelDefinition::Class(_) => Err(GrammarError::todo()),
+            ToplevelDefinition::Object(_) => Err(GrammarError::todo()),
             _ => Err(GrammarError::new(
                 &format!(
                     "Unexpectedly found a value definition resolving reference of ElsewhereDefined: {}",

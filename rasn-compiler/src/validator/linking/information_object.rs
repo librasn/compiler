@@ -9,13 +9,9 @@ use super::{
 
 impl ToplevelInformationDefinition {
     pub fn resolve_class_reference(mut self, tlds: &BTreeMap<String, ToplevelDefinition>) -> Self {
-        if let Some(ClassLink::ByName(name)) = &self.class {
-            if let Some(ToplevelDefinition::Information(ToplevelInformationDefinition {
-                value: ASN1Information::ObjectClass(c),
-                ..
-            })) = tlds.get(name)
-            {
-                self.class = Some(ClassLink::ByReference(c.clone()));
+        if let ClassLink::ByName(name) = &self.class {
+            if let Some(ToplevelDefinition::Class(c)) = tlds.get(name) {
+                self.class = ClassLink::ByReference(c.definition.clone());
             }
         }
         self
@@ -29,7 +25,7 @@ impl ToplevelInformationDefinition {
         tlds: &BTreeMap<String, ToplevelDefinition>,
     ) -> Result<(), GrammarError> {
         match (&mut self.value, &self.class) {
-            (ASN1Information::Object(ref mut o), Some(ClassLink::ByReference(class))) => {
+            (ASN1Information::Object(ref mut o), ClassLink::ByReference(class)) => {
                 match resolve_and_link(&mut o.fields, class, tlds)? {
                     Some(ToplevelInformationDefinition {
                         value: ASN1Information::Object(obj),
@@ -50,7 +46,7 @@ impl ToplevelInformationDefinition {
                 }
                 Ok(())
             }
-            (ASN1Information::ObjectSet(ref mut o), Some(ClassLink::ByReference(class))) => {
+            (ASN1Information::ObjectSet(ref mut o), ClassLink::ByReference(class)) => {
                 o.values.iter_mut().try_for_each(|value| match value {
                     ObjectSetValue::Reference(_) => Ok(()),
                     ObjectSetValue::Inline(ref mut fields) => {
@@ -79,7 +75,7 @@ fn resolve_and_link(
         ) => {
             if let InformationObjectFields::CustomSyntax(c) = &fields {
                 if let Some(id) = c.first().and_then(SyntaxApplication::as_str_or_none) {
-                    if let Some(ToplevelDefinition::Information(tld)) = tlds.get(id) {
+                    if let Some(ToplevelDefinition::Object(tld)) = tlds.get(id) {
                         let mut tld_clone = tld.clone().resolve_class_reference(tlds);
                         tld_clone.collect_supertypes(tlds)?;
                         return Ok(Some(tld_clone));
@@ -145,7 +141,6 @@ impl ASN1Information {
         match self {
             ASN1Information::ObjectSet(s) => s.link_object_set_reference(tlds),
             ASN1Information::Object(o) => o.link_object_set_reference(tlds),
-            ASN1Information::ObjectClass(_) => false,
         }
     }
 
@@ -153,7 +148,6 @@ impl ASN1Information {
         match self {
             ASN1Information::ObjectSet(s) => s.references_object_set_by_name(),
             ASN1Information::Object(o) => o.references_object_set_by_name(),
-            ASN1Information::ObjectClass(_) => false,
         }
     }
 }
@@ -220,14 +214,14 @@ impl ObjectSetValue {
     ) -> Option<Vec<ObjectSetValue>> {
         match self {
             ObjectSetValue::Reference(id) => match tlds.get(id) {
-                Some(ToplevelDefinition::Information(ToplevelInformationDefinition {
+                Some(ToplevelDefinition::Object(ToplevelInformationDefinition {
                     value: ASN1Information::Object(obj),
                     ..
                 })) => {
                     *self = ObjectSetValue::Inline(obj.fields.clone());
                     None
                 }
-                Some(ToplevelDefinition::Information(ToplevelInformationDefinition {
+                Some(ToplevelDefinition::Object(ToplevelInformationDefinition {
                     value: ASN1Information::ObjectSet(obj),
                     ..
                 })) => Some(obj.values.clone()),
@@ -288,7 +282,7 @@ impl ObjectSet {
         'resolving_references: for mut value in std::mem::take(&mut self.values) {
             if let ObjectSetValue::Reference(id) = value {
                 match tlds.get(&id) {
-                    Some(ToplevelDefinition::Information(ToplevelInformationDefinition {
+                    Some(ToplevelDefinition::Object(ToplevelInformationDefinition {
                         value: ASN1Information::ObjectSet(set),
                         ..
                     })) => {
@@ -298,7 +292,7 @@ impl ObjectSet {
                         needs_recursing = true;
                         continue 'resolving_references;
                     }
-                    Some(ToplevelDefinition::Information(ToplevelInformationDefinition {
+                    Some(ToplevelDefinition::Object(ToplevelInformationDefinition {
                         value: ASN1Information::Object(obj),
                         ..
                     })) => value = ObjectSetValue::Inline(obj.fields.clone()),
