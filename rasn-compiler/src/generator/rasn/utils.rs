@@ -256,7 +256,7 @@ impl Rasn {
             TokenStream::new()
         } else {
             let alphabet_ts: TokenStream = alphabet_unicode
-                .parse()                           // turn the text into *tokens*
+                .parse() // turn the text into *tokens*
                 .expect("internal error: cannot parse generated unicode list");
             quote!(from(#alphabet_ts))
         })
@@ -1278,7 +1278,7 @@ impl Rasn {
     pub(super) fn type_mismatch_error<T>(
         &self,
         tld: ToplevelTypeDefinition,
-        expected_type: &str
+        expected_type: &str,
     ) -> Result<T, GeneratorError> {
         Err(GeneratorError::new(
             Some(ToplevelDefinition::Type(tld)),

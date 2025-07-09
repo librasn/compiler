@@ -1,9 +1,6 @@
 use nom::{
-    bytes::complete::tag,
-    character::complete::char,
-    combinator::opt,
-    multi::many0,
-    sequence::{terminated},
+    bytes::complete::tag, character::complete::char, combinator::opt, multi::many0,
+    sequence::terminated,
 };
 
 use crate::intermediate::*;
@@ -40,7 +37,8 @@ pub fn set(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
             ),
         ),
         |m| ASN1Type::Set(m.into()),
-    ).parse(input)
+    )
+    .parse(input)
 }
 
 #[cfg(test)]

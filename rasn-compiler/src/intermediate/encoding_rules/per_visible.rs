@@ -99,13 +99,16 @@ impl PerVisibleAlphabetConstraints {
                             elems.push(set.base.clone());
                             match &*set.operant {
                                 ElementOrSetOperation::Element(e2) => elems.push(e2.clone()),
-                                ElementOrSetOperation::SetOperation(inner) => flatten_set(elems, inner),
+                                ElementOrSetOperation::SetOperation(inner) => {
+                                    flatten_set(elems, inner)
+                                }
                             }
                         }
                         let mut elems = Vec::new();
                         flatten_set(&mut elems, s);
                         for elem in elems {
-                            if let Some(mut p) = Self::from_subtype_elem(Some(&elem), string_type)? {
+                            if let Some(mut p) = Self::from_subtype_elem(Some(&elem), string_type)?
+                            {
                                 result += &mut p;
                             }
                         }
