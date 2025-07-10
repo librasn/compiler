@@ -6,6 +6,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.0](https://github.com/librasn/compiler/compare/rasn-compiler-v0.12.0...rasn-compiler-v0.13.0) - 2025-07-10
+
+### Added
+
+- RasnCompiler and TsCompiler type alias
+
+### Other
+
+- Move cli.rs into bin.rs
+- Do not specify crate-type for rasn-compiler
+- Add type_reference and module_reference parsers
+- Rename value_identifier parser to value_reference
+- Rename InformationObjectFieldReference to ObjectClassFieldType
+- Rename ModuleReference to ModuleHeader
+- Rename InformationObjectClass to ObjectClassDefn
+
 ## [0.12.0](https://github.com/librasn/compiler/compare/rasn-compiler-v0.11.0...rasn-compiler-v0.12.0) - 2025-06-30
 
 ### Other
