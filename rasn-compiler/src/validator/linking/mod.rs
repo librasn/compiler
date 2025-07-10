@@ -36,7 +36,8 @@ macro_rules! grammar_error {
 impl ToplevelDefinition {
     pub(crate) fn is_parameterized(&self) -> bool {
         match self {
-            ToplevelDefinition::Information(ToplevelInformationDefinition {
+            ToplevelDefinition::Class(class) => class.is_parameterized(),
+            ToplevelDefinition::Object(ToplevelInformationDefinition {
                 parameterization: Some(_),
                 ..
             })
@@ -106,10 +107,7 @@ impl ToplevelDefinition {
 
     pub fn is_class_with_name(&self, name: &String) -> Option<&ObjectClassDefn> {
         match self {
-            ToplevelDefinition::Information(info) => match &info.value {
-                ASN1Information::ObjectClass(class) => (&info.name == name).then_some(class),
-                _ => None,
-            },
+            ToplevelDefinition::Class(class) if &class.name == name => Some(&class.definition),
             _ => None,
         }
     }
@@ -209,9 +207,10 @@ impl ToplevelDefinition {
                 let _ = t.ty.mark_recursive(&t.name, tlds)?;
                 Ok(())
             }
-            ToplevelDefinition::Value(_v) => Ok(()), // TODO
-            ToplevelDefinition::Information(_i) => Ok(()), // TODO
-            ToplevelDefinition::Macro(_m) => Ok(()), // TODO
+            ToplevelDefinition::Value(_v) => Ok(()),  // TODO
+            ToplevelDefinition::Class(_c) => Ok(()),  // TODO
+            ToplevelDefinition::Object(_o) => Ok(()), // TODO
+            ToplevelDefinition::Macro(_m) => Ok(()),  // TODO
         }
     }
 
@@ -223,7 +222,8 @@ impl ToplevelDefinition {
         match self {
             ToplevelDefinition::Type(t) => t.ty.collect_supertypes(tlds),
             ToplevelDefinition::Value(v) => v.collect_supertypes(tlds),
-            ToplevelDefinition::Information(i) => i.collect_supertypes(tlds),
+            ToplevelDefinition::Class(_) => Ok(()),
+            ToplevelDefinition::Object(o) => o.collect_supertypes(tlds),
             ToplevelDefinition::Macro(_) => Ok(()),
         }
     }
@@ -448,13 +448,9 @@ impl ASN1Type {
                 }
             }
             ASN1Type::ObjectClassField(ocf) => {
-                if let Some(ToplevelDefinition::Information(ToplevelInformationDefinition {
-                    value: ASN1Information::ObjectClass(clazz),
-                    ..
-                })) = tlds.get(&ocf.class)
-                {
+                if let Some(ToplevelDefinition::Class(class)) = tlds.get(&ocf.class) {
                     if let Some(InformationObjectClassField { ty: Some(ty), .. }) =
-                        clazz.get_field(&ocf.field_path)
+                        class.definition.get_field(&ocf.field_path)
                     {
                         self_replacement = Some(ty.clone());
                     }
@@ -532,10 +528,8 @@ impl ASN1Type {
                                 c.as_str(),
                             ));
                             tld = tld.resolve_class_reference(tlds);
-                            impl_tlds.insert(
-                                dummy_reference.clone(),
-                                ToplevelDefinition::Information(tld),
-                            );
+                            impl_tlds
+                                .insert(dummy_reference.clone(), ToplevelDefinition::Object(tld));
                         }
                         _ => {
                             return Err(grammar_error!(
@@ -731,12 +725,8 @@ impl ASN1Type {
                 }
             }
             ASN1Type::ObjectClassField(ocf) => {
-                if let Some(ToplevelDefinition::Information(ToplevelInformationDefinition {
-                    value: ASN1Information::ObjectClass(c),
-                    ..
-                })) = tlds.get(&ocf.class)
-                {
-                    if let Some(field) = c.get_field(&ocf.field_path) {
+                if let Some(ToplevelDefinition::Class(c)) = tlds.get(&ocf.class) {
+                    if let Some(field) = c.definition.get_field(&ocf.field_path) {
                         if let Some(ref ty) = field.ty {
                             *self = ty.clone();
                         }
@@ -1481,7 +1471,7 @@ impl ASN1Value {
             let object = get_declaration![
                 tlds,
                 object_name,
-                Information,
+                Object,
                 ASN1Information::Object
             ]
             .ok_or_else(|| grammar_error!(LinkerError, "No information object found for identifier {object_name}, parent of {identifier}"))?;
@@ -1500,19 +1490,19 @@ impl ASN1Value {
                 }
                 InformationObjectFields::CustomSyntax(c) => {
                     let class_name = &object.class_name;
-                    let class = get_declaration![
-                        tlds,
-                        class_name,
-                        Information,
-                        ASN1Information::ObjectClass
-                    ]
-                    .ok_or_else(|| {
-                        grammar_error!(
+                    let Some(tld) = tlds.get(class_name) else {
+                        return Err(grammar_error!(
                             LinkerError,
-                            "No information object class found for identifier {class_name}"
-                        )
-                    })?;
-                    let syntax = class.syntax.as_ref().ok_or_else(|| {
+                            "No top level definition found for identifier {class_name}"
+                        ));
+                    };
+                    let ToplevelDefinition::Class(class) = tld else {
+                        return Err(grammar_error!(
+                            LinkerError,
+                            "Identifier {class_name} is not a CLASS definition"
+                        ));
+                    };
+                    let syntax = class.definition.syntax.as_ref().ok_or_else(|| {
                         grammar_error!(LinkerError, "No syntax info found for class {class_name}")
                     })?;
                     let tokens = syntax.flatten();

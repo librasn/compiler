@@ -9,9 +9,17 @@ use nom::{
 };
 
 use crate::{
-    input::Input,
-    intermediate::{information_object::*, types::ObjectIdentifier, *},
-    lexer::error::ErrorTree,
+    input::{context_boundary, Input},
+    intermediate::{
+        information_object::*, types::ObjectIdentifier, ASN1Type, DeclarationElsewhere, AMPERSAND,
+        CLASS, COMMA, DEFAULT, DOT, INSTANCE_OF, OPTIONAL, PIPE, TYPE_IDENTIFIER, UNION, UNIQUE,
+        WITH_SYNTAX,
+    },
+    lexer::{
+        common::{assignment, comment, skip_ws},
+        error::ErrorTree,
+        parameterization::parameterization,
+    },
 };
 
 use super::{
@@ -24,6 +32,35 @@ use super::{
     error::ParserResult,
     into_inner,
 };
+
+/// Parses an ObjectClassAssignment (X.681) or ParameterizedObjectClassAssignment (X.683).
+///
+/// # Syntax
+/// ```text
+/// ObjectClassAssignment ::=
+///     objectclassreference "::=" ObjectClass
+///
+/// ParameterizedObjectClassAssignment ::=
+///     objectclassreference ParameterList "::=" ObjectClass
+/// ```
+pub fn object_class_assignement(input: Input<'_>) -> ParserResult<'_, ObjectClassAssignment> {
+    map(
+        (
+            skip_ws(many0(comment)),
+            skip_ws(context_boundary(uppercase_identifier)),
+            skip_ws(opt(parameterization)),
+            preceded(assignment, alt((type_identifier, object_class_defn))),
+        ),
+        |v| ObjectClassAssignment {
+            comments: v.0.join("\n"),
+            name: v.1.into(),
+            parameterization: v.2.unwrap_or_default(),
+            definition: v.3,
+            index: None,
+        },
+    )
+    .parse(input)
+}
 
 /// Tries to parse an ASN1 TYPE-IDENTIFIER
 ///
@@ -314,7 +351,7 @@ fn syntax_literal(input: Input<'_>) -> ParserResult<'_, &str> {
 mod tests {
     use std::vec;
 
-    use crate::intermediate::types::*;
+    use crate::intermediate::{types::*, ASN1Value, ToplevelTypeDefinition};
 
     use crate::lexer::information_object_class::object_set;
     use crate::lexer::top_level_type_declaration;

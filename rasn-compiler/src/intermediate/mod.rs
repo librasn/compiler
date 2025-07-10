@@ -20,7 +20,9 @@ use std::{borrow::Cow, cell::RefCell, collections::BTreeMap, ops::Add, rc::Rc};
 use crate::common::INTERNAL_IO_FIELD_REF_TYPE_NAME_PREFIX;
 use constraints::Constraint;
 use error::{GrammarError, GrammarErrorType};
-use information_object::{ObjectClassFieldType, ToplevelInformationDefinition};
+use information_object::{
+    ObjectClassAssignment, ObjectClassFieldType, ToplevelInformationDefinition,
+};
 #[cfg(test)]
 use internal_macros::EnumDebug;
 use macros::ToplevelMacroDefinition;
@@ -524,8 +526,10 @@ pub enum ToplevelDefinition {
     Type(ToplevelTypeDefinition),
     /// Definition for a value using custom or built-in type.
     Value(ToplevelValueDefinition),
-    /// Definition for an abstraction concept introduced in ITU-T X.681.
-    Information(ToplevelInformationDefinition),
+    /// Definition for a object class as introduced in ITU-T X.681 9.
+    Class(ObjectClassAssignment),
+    /// Definition for an object or object set, as introduced in ITU-T X.681 11.
+    Object(ToplevelInformationDefinition),
     /// Definition for a macro.
     Macro(ToplevelMacroDefinition),
 }
@@ -555,8 +559,11 @@ impl ToplevelDefinition {
             ToplevelDefinition::Value(ref mut v) => {
                 v.index = Some((module_header, item_no));
             }
-            ToplevelDefinition::Information(ref mut i) => {
-                i.index = Some((module_header, item_no));
+            ToplevelDefinition::Class(ref mut c) => {
+                c.index = Some((module_header, item_no));
+            }
+            ToplevelDefinition::Object(ref mut o) => {
+                o.index = Some((module_header, item_no));
             }
             ToplevelDefinition::Macro(ref mut m) => {
                 m.index = Some((module_header, item_no));
@@ -568,7 +575,8 @@ impl ToplevelDefinition {
         match self {
             ToplevelDefinition::Type(ref t) => t.index.as_ref(),
             ToplevelDefinition::Value(ref v) => v.index.as_ref(),
-            ToplevelDefinition::Information(ref i) => i.index.as_ref(),
+            ToplevelDefinition::Class(ref c) => c.index.as_ref(),
+            ToplevelDefinition::Object(ref o) => o.index.as_ref(),
             ToplevelDefinition::Macro(ref m) => m.index.as_ref(),
         }
     }
@@ -577,7 +585,8 @@ impl ToplevelDefinition {
         match self {
             ToplevelDefinition::Type(ref t) => t.index.as_ref().map(|(m, _)| m.clone()),
             ToplevelDefinition::Value(ref v) => v.index.as_ref().map(|(m, _)| m.clone()),
-            ToplevelDefinition::Information(ref i) => i.index.as_ref().map(|(m, _)| m.clone()),
+            ToplevelDefinition::Class(ref c) => c.index.as_ref().map(|(m, _)| m.clone()),
+            ToplevelDefinition::Object(ref o) => o.index.as_ref().map(|(m, _)| m.clone()),
             ToplevelDefinition::Macro(ref m) => m.index.as_ref().map(|(m, _)| m.clone()),
         }
     }
@@ -632,7 +641,8 @@ impl ToplevelDefinition {
     /// ```
     pub fn name(&self) -> &String {
         match self {
-            ToplevelDefinition::Information(i) => &i.name,
+            ToplevelDefinition::Class(c) => &c.name,
+            ToplevelDefinition::Object(o) => &o.name,
             ToplevelDefinition::Type(t) => &t.name,
             ToplevelDefinition::Value(v) => &v.name,
             ToplevelDefinition::Macro(v) => &v.name,

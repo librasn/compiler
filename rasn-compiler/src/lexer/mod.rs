@@ -91,9 +91,10 @@ pub(crate) fn asn_module(
         module_header::module_header,
         terminated(
             many0(skip_ws(alt((
+                map(object_class_assignement, ToplevelDefinition::Class),
                 map(
                     top_level_information_declaration,
-                    ToplevelDefinition::Information,
+                    ToplevelDefinition::Object,
                 ),
                 map(top_level_type_declaration, ToplevelDefinition::Type),
                 map(top_level_value_declaration, ToplevelDefinition::Value),
@@ -140,7 +141,6 @@ pub fn top_level_information_declaration(
     skip_ws(alt((
         top_level_information_object_declaration,
         top_level_object_set_declaration,
-        top_level_object_class_declaration,
     )))
     .parse(input)
 }
@@ -270,18 +270,6 @@ fn top_level_object_set_declaration(
     .parse(input)
 }
 
-fn top_level_object_class_declaration(
-    input: Input<'_>,
-) -> ParserResult<'_, ToplevelInformationDefinition> {
-    into((
-        skip_ws(many0(comment)),
-        skip_ws(context_boundary(uppercase_identifier)),
-        skip_ws(opt(parameterization)),
-        preceded(assignment, alt((type_identifier, object_class_defn))),
-    ))
-    .parse(input)
-}
-
 #[test]
 fn eof_comments() {
     println!(
@@ -292,7 +280,7 @@ fn eof_comments() {
                 many0(skip_ws(alt((
                     map(
                         top_level_information_declaration,
-                        ToplevelDefinition::Information,
+                        ToplevelDefinition::Object,
                     ),
                     map(top_level_type_declaration, ToplevelDefinition::Type),
                     map(top_level_value_declaration, ToplevelDefinition::Value),

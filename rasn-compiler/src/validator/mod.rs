@@ -29,9 +29,7 @@ use crate::{
 
 use self::{
     error::{LinkerError, LinkerErrorType},
-    information_object::{
-        ASN1Information, InformationObjectClassField, ObjectClassDefn, ObjectSet,
-    },
+    information_object::{ASN1Information, InformationObjectClassField},
 };
 
 pub struct Validator {
@@ -65,17 +63,15 @@ impl Validator {
         while let Some(key) = keys.pop() {
             if matches![
                 self.tlds.get(&key),
-                Some(ToplevelDefinition::Information(
-                    ToplevelInformationDefinition {
-                        value: ASN1Information::ObjectSet(ObjectSet { .. }),
-                        ..
-                    }
-                ))
+                Some(ToplevelDefinition::Object(ToplevelInformationDefinition {
+                    value: ASN1Information::ObjectSet(_),
+                    ..
+                }))
             ] {
                 let mut item = self.tlds.remove_entry(&key);
                 if let Some((
                     _,
-                    ToplevelDefinition::Information(ToplevelInformationDefinition {
+                    ToplevelDefinition::Object(ToplevelInformationDefinition {
                         value: ASN1Information::ObjectSet(set),
                         ..
                     }),
@@ -96,9 +92,9 @@ impl Validator {
                         tld.ty = tld.ty.resolve_class_reference(&self.tlds);
                         self.tlds.insert(k, ToplevelDefinition::Type(tld));
                     }
-                    Some((k, ToplevelDefinition::Information(mut tld))) => {
+                    Some((k, ToplevelDefinition::Object(mut tld))) => {
                         tld = tld.resolve_class_reference(&self.tlds);
-                        self.tlds.insert(k, ToplevelDefinition::Information(tld));
+                        self.tlds.insert(k, ToplevelDefinition::Object(tld));
                     }
                     _ => (),
                 }
@@ -119,11 +115,10 @@ impl Validator {
                 }
             }
             if self.references_object_set_by_name(&key) {
-                if let Some((k, ToplevelDefinition::Information(mut tld))) =
-                    self.tlds.remove_entry(&key)
+                if let Some((k, ToplevelDefinition::Object(mut tld))) = self.tlds.remove_entry(&key)
                 {
                     tld.value.link_object_set_reference(&self.tlds);
-                    self.tlds.insert(k, ToplevelDefinition::Information(tld));
+                    self.tlds.insert(k, ToplevelDefinition::Object(tld));
                 }
             }
             if self.has_constraint_reference(&key) {
@@ -182,8 +177,8 @@ impl Validator {
             let module_header = tld.get_module_header().unwrap();
 
             let mut associated_type_imports = Vec::new();
-            if let ToplevelDefinition::Information(ToplevelInformationDefinition {
-                class: Some(ClassLink::ByReference(ref class_ref)),
+            if let ToplevelDefinition::Object(ToplevelInformationDefinition {
+                class: ClassLink::ByReference(ref class_ref),
                 ..
             }) = tld
             {
@@ -199,12 +194,10 @@ impl Validator {
                 for import in &import_modules.types {
                     if import.starts_with(|c: char| c.is_lowercase()) {
                         match self.tlds.get(import) {
-                            Some(ToplevelDefinition::Information(
-                                ToplevelInformationDefinition {
-                                    class: Some(ClassLink::ByReference(class_ref)),
-                                    ..
-                                },
-                            )) => {
+                            Some(ToplevelDefinition::Object(ToplevelInformationDefinition {
+                                class: ClassLink::ByReference(class_ref),
+                                ..
+                            })) => {
                                 for field in &class_ref.fields {
                                     self.associated_import_type_class_field(
                                         field,
@@ -296,12 +289,10 @@ impl Validator {
             ..
         })) = &field.ty
         {
-            if let Some(ToplevelDefinition::Information(ToplevelInformationDefinition {
-                value: ASN1Information::ObjectClass(ObjectClassDefn { fields, .. }),
-                ..
-            })) = self.tlds.get(class_id)
-            {
-                if let Some(field) = fields
+            if let Some(ToplevelDefinition::Class(class)) = self.tlds.get(class_id) {
+                if let Some(field) = class
+                    .definition
+                    .fields
                     .iter()
                     .find(|f| f.identifier.identifier() == identifier)
                 {
@@ -334,10 +325,10 @@ impl Validator {
             .get(key)
             .map(|t| match t {
                 ToplevelDefinition::Type(t) => t.ty.references_class_by_name(),
-                ToplevelDefinition::Information(i) => i.class.as_ref().is_some_and(|c| match c {
+                ToplevelDefinition::Object(i) => match i.class {
                     ClassLink::ByReference(_) => false,
                     ClassLink::ByName(_) => true,
-                }),
+                },
                 _ => false,
             })
             .unwrap_or(false)
@@ -347,9 +338,9 @@ impl Validator {
         self.tlds
             .get(key)
             .map(|t| match t {
-                ToplevelDefinition::Information(ToplevelInformationDefinition {
-                    value, ..
-                }) => value.references_object_set_by_name(),
+                ToplevelDefinition::Object(ToplevelInformationDefinition { value, .. }) => {
+                    value.references_object_set_by_name()
+                }
                 _ => false,
             })
             .unwrap_or(false)
@@ -408,7 +399,8 @@ impl Validate for ToplevelDefinition {
                 Ok(())
             }
             ToplevelDefinition::Value(_v) => Ok(()),
-            ToplevelDefinition::Information(_i) => Ok(()),
+            ToplevelDefinition::Class(_c) => Ok(()),
+            ToplevelDefinition::Object(_o) => Ok(()),
             ToplevelDefinition::Macro(_m) => Ok(()),
         }
     }

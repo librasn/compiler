@@ -2,12 +2,35 @@ use crate::lexer::asn1_value;
 
 use super::{constraints::*, *};
 
+/// This is either a X.681 ObjectClassAssignment or a X.683 ParameterizedObjectClassAssignment.
+///
+/// **X.681 9.1** _The construct "ObjectClassAssignment" is used to assign an information object
+/// class to a reference name ("objectclassreference"). This construct is one of the alternatives
+/// for "Assignment" in Rec. ITU-T X.680 | ISO/IEC 8824-1, clause 13._
+///
+/// **X.683 9.2** _Referencing parameterized definitions: ParameterizedObjectClassAssignment._
+#[derive(Debug, Clone, PartialEq)]
+pub struct ObjectClassAssignment {
+    pub comments: String,
+    /// A objectclassreference.
+    pub name: String,
+    pub parameterization: Parameterization,
+    pub definition: ObjectClassDefn,
+    pub index: Option<(Rc<RefCell<ModuleHeader>>, usize)>,
+}
+
+impl ObjectClassAssignment {
+    pub(crate) fn is_parameterized(&self) -> bool {
+        !self.parameterization.parameters.is_empty()
+    }
+}
+
 #[derive(Debug, Clone, PartialEq)]
 pub struct ToplevelInformationDefinition {
     pub comments: String,
     pub name: String,
     pub parameterization: Option<Parameterization>,
-    pub class: Option<ClassLink>,
+    pub class: ClassLink,
     pub value: ASN1Information,
     pub index: Option<(Rc<RefCell<ModuleHeader>>, usize)>,
 }
@@ -18,7 +41,7 @@ impl From<(&str, ASN1Information, &str)> for ToplevelInformationDefinition {
             comments: String::new(),
             name: value.0.to_owned(),
             parameterization: None,
-            class: Some(ClassLink::ByName(value.2.to_owned())),
+            class: ClassLink::ByName(value.2.to_owned()),
             value: value.1,
             index: None,
         }
@@ -60,7 +83,7 @@ impl
         Self {
             comments: value.0.join("\n"),
             name: value.1.into(),
-            class: Some(ClassLink::ByName(value.3.into())),
+            class: ClassLink::ByName(value.3.into()),
             parameterization: value.2,
             value: ASN1Information::Object(InformationObject {
                 class_name: value.3.into(),
@@ -79,23 +102,8 @@ impl From<(Vec<&str>, &str, Option<Parameterization>, &str, ObjectSet)>
             comments: value.0.join("\n"),
             name: value.1.into(),
             parameterization: value.2,
-            class: Some(ClassLink::ByName(value.3.into())),
+            class: ClassLink::ByName(value.3.into()),
             value: ASN1Information::ObjectSet(value.4),
-            index: None,
-        }
-    }
-}
-
-impl From<(Vec<&str>, &str, Option<Parameterization>, ObjectClassDefn)>
-    for ToplevelInformationDefinition
-{
-    fn from(value: (Vec<&str>, &str, Option<Parameterization>, ObjectClassDefn)) -> Self {
-        Self {
-            comments: value.0.join("\n"),
-            name: value.1.into(),
-            parameterization: value.2,
-            class: None,
-            value: ASN1Information::ObjectClass(value.3),
             index: None,
         }
     }
@@ -106,7 +114,6 @@ impl From<(Vec<&str>, &str, Option<Parameterization>, ObjectClassDefn)>
 #[cfg_attr(not(test), derive(Debug))]
 #[derive(Clone, PartialEq)]
 pub enum ASN1Information {
-    ObjectClass(ObjectClassDefn),
     ObjectSet(ObjectSet),
     Object(InformationObject),
 }
