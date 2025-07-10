@@ -33,10 +33,10 @@ pub fn lazy_static_value_template(
     value: TokenStream,
 ) -> TokenStream {
     quote! {
-        lazy_static! {
-            #comments
-            pub static ref #name: #vtype = #value;
-        }
+        #comments
+        pub static #name: LazyLock< #vtype > = LazyLock::new(||
+            #value
+        );
     }
 }
 
@@ -237,12 +237,12 @@ pub fn sequence_or_set_value_template(
     members: TokenStream,
 ) -> TokenStream {
     quote! {
-        lazy_static! {
-            #comments
-            pub static ref #name: #vtype = #vtype ::new(
+        #comments
+        pub static #name: LazyLock< #vtype > = LazyLock::new(||
+            #vtype ::new(
                 #members
-            );
-        }
+            )
+        );
     }
 }
 
@@ -302,10 +302,10 @@ pub fn choice_value_template(
     inner_decl: TokenStream,
 ) -> TokenStream {
     quote! {
-        lazy_static! {
-            #comments
-            pub static ref #name: #type_id = #type_id :: #choice_name (#inner_decl);
-        }
+        #comments
+        pub static #name: LazyLock< #type_id > = LazyLock::new(||
+            #type_id :: #choice_name (#inner_decl)
+        );
     }
 }
 

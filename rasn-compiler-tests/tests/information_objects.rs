@@ -173,14 +173,14 @@ e2e_pdu!(
             }
         }
     }
-    lazy_static! {
-        pub static ref ASN_VAL_SECURITY_FAILURE: ErrorCode = ErrorCode::local(Integer::from(1));
-    }
-    lazy_static! {
-        pub static ref ASN_VAL_UNKNOWN_BRANCH: ErrorCode = ErrorCode::local(Integer::from(2));
-    }
-    lazy_static! {
-        pub static ref ASN_VAL_UNKNOWN_ORDER: ErrorCode = ErrorCode::local(Integer::from(3));
-    }
+    pub static ASN_VAL_SECURITY_FAILURE: LazyLock<ErrorCode> = LazyLock::new(||
+        ErrorCode::local(Integer::from(1))
+    );
+    pub static ASN_VAL_UNKNOWN_BRANCH: LazyLock<ErrorCode> = LazyLock::new(||
+        ErrorCode::local(Integer::from(2))
+    );
+    pub static ASN_VAL_UNKNOWN_ORDER: LazyLock<ErrorCode> = LazyLock::new(||
+        ErrorCode::local(Integer::from(3))
+    );
           "#
 );
