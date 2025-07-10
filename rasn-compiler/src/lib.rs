@@ -9,9 +9,6 @@ mod lexer;
 mod tests;
 mod validator;
 
-#[cfg(feature = "cli")]
-pub mod cli;
-
 use std::{
     cell::RefCell,
     collections::BTreeMap,
@@ -27,6 +24,9 @@ use intermediate::ToplevelDefinition;
 use lexer::{asn_spec, error::LexerError};
 use prelude::{GeneratorError, GeneratorErrorType};
 use validator::Validator;
+
+pub type RasnCompiler<S> = Compiler<generator::rasn::Rasn, S>;
+pub type TsCompiler<S> = Compiler<generator::typescript::Typescript, S>;
 
 pub mod prelude {
     //! Convenience module that collects all necessary imports for
