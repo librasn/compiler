@@ -158,7 +158,7 @@ impl PerVisibleAlphabetConstraints {
                     _ => (0, char_set.len() - 1),
                 };
                 if lower > upper {
-                    return Err(GrammarError::new(&format!("Invalid range for permitted alphabet: Charset {:?}; Range: {lower}..={upper}", char_set), GrammarErrorType::UnpackingError
+                    return Err(GrammarError::new(&format!("Invalid range for permitted alphabet: Charset {char_set:?}; Range: {lower}..={upper}"), GrammarErrorType::UnpackingError
                     ));
                 }
                 Ok(Some(PerVisibleAlphabetConstraints {
@@ -235,7 +235,7 @@ fn find_char_index(char_set: &BTreeMap<usize, char>, as_char: char) -> Result<us
         .iter()
         .find_map(|(i, c)| (as_char == *c).then_some(*i))
         .ok_or(GrammarError::new(
-            &format!("Character {as_char} is not in char set: {:?}", char_set),
+            &format!("Character {as_char} is not in char set: {char_set:?}"),
             GrammarErrorType::UnpackingError,
         ))
 }
@@ -590,7 +590,7 @@ fn fold_constraint_set(
                     }
                 }
                 (v1, v2, _) => Err(GrammarError::new(
-                    &format!("Unsupported operation for ASN1Values {:?} and {:?}", v1, v2),
+                    &format!("Unsupported operation for ASN1Values {v1:?} and {v2:?}"),
                     GrammarErrorType::UnpackingError,
                 )),
             },
@@ -711,7 +711,7 @@ fn fold_constraint_set(
                     }))
                 }
                 _ => Err(GrammarError::new(
-                    &format!("Unsupported operation for ASN1Values {:?} and {:?}", v1, v2),
+                    &format!("Unsupported operation for ASN1Values {v1:?} and {v2:?}"),
                     GrammarErrorType::UnpackingError,
                 )),
             },
@@ -858,10 +858,7 @@ fn intersect_single_and_range(
             }))
         }
         _ => Err(GrammarError::new(
-            &format!(
-                "Unsupported operation for ASN1Values {:?} and {:?}..{:?}",
-                value, min, max
-            ),
+            &format!("Unsupported operation for ASN1Values {value:?} and {min:?}..{max:?}"),
             GrammarErrorType::UnpackingError,
         )),
     }
@@ -906,10 +903,7 @@ fn union_single_and_range(
             }))
         }
         _ => Err(GrammarError::new(
-            &format!(
-                "Unsupported operation for values {:?} and {:?}..{:?}",
-                v, min, max
-            ),
+            &format!("Unsupported operation for values {v:?} and {min:?}..{max:?}"),
             GrammarErrorType::UnpackingError,
         )),
     }

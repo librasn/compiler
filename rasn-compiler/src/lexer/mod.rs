@@ -171,7 +171,7 @@ pub fn asn1_type(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
             time,
             octet_string,
             character_string,
-            map(object_class_field_type, |i| ASN1Type::ObjectClassField(i)),
+            map(object_class_field_type, ASN1Type::ObjectClassField),
             elsewhere_declared_type,
         )),
     ))

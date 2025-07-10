@@ -329,7 +329,7 @@ impl Rasn {
     pub(crate) fn format_sequence_or_set_members(
         &self,
         sequence_or_set: &SequenceOrSet,
-        parent_name: &String,
+        parent_name: &str,
     ) -> Result<FormattedMembers, GeneratorError> {
         let first_extension_index = sequence_or_set.extensible;
 
@@ -379,7 +379,7 @@ impl Rasn {
     pub(crate) fn format_sequence_member(
         &self,
         member: &SequenceOrSetMember,
-        parent_name: &String,
+        parent_name: &str,
         extension_annotation: TokenStream,
     ) -> Result<(TokenStream, NameType), GeneratorError> {
         let name = self.to_rust_snake_case(&member.name);
@@ -423,7 +423,7 @@ impl Rasn {
     pub(crate) fn format_choice_options(
         &self,
         choice: &Choice,
-        parent_name: &String,
+        parent_name: &str,
     ) -> Result<FormattedOptions, GeneratorError> {
         let first_extension_index = choice.extensible;
         choice.options.iter().enumerate().try_fold(
@@ -471,7 +471,7 @@ impl Rasn {
         &self,
         name: Ident,
         member: &ChoiceOption,
-        parent_name: &String,
+        parent_name: &str,
         extension_annotation: TokenStream,
     ) -> Result<TokenStream, GeneratorError> {
         let FormattedMemberOrOption {
@@ -936,7 +936,7 @@ impl Rasn {
                     | CharacterStringType::UniversalString
                     | CharacterStringType::TeletexString => Err(GeneratorError::new(
                         None,
-                        &format!("{:?} values are currently unsupported!", string_type),
+                        &format!("{string_type:?} values are currently unsupported!"),
                         GeneratorErrorType::NotYetInplemented,
                     )),
                 }
@@ -1282,7 +1282,7 @@ impl Rasn {
     ) -> Result<T, GeneratorError> {
         Err(GeneratorError::new(
             Some(ToplevelDefinition::Type(tld)),
-            &format!("Expected {} top-level declaration", expected_type),
+            &format!("Expected {expected_type} top-level declaration"),
             GeneratorErrorType::Asn1TypeMismatch,
         ))
     }
@@ -1467,7 +1467,7 @@ mod tests {
                             }
                         ]
                     },
-                    &"Parent".into(),
+                    "Parent",
                 )
                 .unwrap()
                 .struct_body
@@ -1560,7 +1560,7 @@ is_recursive: false,
                         }
                     ]
                 },
-                &"Parent".into(),
+                "Parent",
             )
             .unwrap()
             .enum_body

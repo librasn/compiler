@@ -7,7 +7,7 @@ use crate::intermediate::{error::GrammarError, ToplevelDefinition};
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct GeneratorError {
-    pub top_level_declaration: Option<ToplevelDefinition>,
+    pub top_level_declaration: Option<Box<ToplevelDefinition>>,
     pub details: String,
     pub kind: GeneratorErrorType,
 }
@@ -15,7 +15,7 @@ pub struct GeneratorError {
 impl GeneratorError {
     pub fn new(tld: Option<ToplevelDefinition>, details: &str, kind: GeneratorErrorType) -> Self {
         GeneratorError {
-            top_level_declaration: tld,
+            top_level_declaration: tld.map(Box::new),
             details: details.into(),
             kind,
         }
@@ -71,7 +71,7 @@ impl From<LexError> for GeneratorError {
 
 impl Display for GeneratorError {
     fn fmt(&self, f: &mut Formatter) -> Result {
-        let name = match &self.top_level_declaration {
+        let name = match self.top_level_declaration.as_deref() {
             Some(ToplevelDefinition::Type(t)) => &t.name,
             Some(ToplevelDefinition::Value(v)) => &v.name,
             Some(ToplevelDefinition::Class(c)) => &c.name,

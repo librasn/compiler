@@ -88,10 +88,7 @@ impl Constraint {
             }
         }
         Err(GrammarError::new(
-            &format!(
-                "Failed to unpack constraint as value range. Constraint: {:?}",
-                self
-            ),
+            &format!("Failed to unpack constraint as value range. Constraint: {self:?}"),
             GrammarErrorType::UnpackingError,
         ))
     }
@@ -107,10 +104,7 @@ impl Constraint {
             }
         }
         Err(GrammarError::new(
-            &format!(
-                "Failed to unpack constraint as strict value. Constraint: {:?}",
-                self
-            ),
+            &format!("Failed to unpack constraint as strict value. Constraint: {self:?}"),
             GrammarErrorType::UnpackingError,
         ))
     }

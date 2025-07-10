@@ -694,7 +694,6 @@ pub struct UInt32(pub u32);
 /// This OID also designates the OID arc for KerberosV5-related OIDs.
 ///
 /// NOTE: RFC 1510 had an incorrect value (5) for "dod" in its OID.
-
 pub const ID_KRB5: &Oid = Oid::const_new(&[1, 3, 6, 1, 5, 2]);
 
 #[test]
