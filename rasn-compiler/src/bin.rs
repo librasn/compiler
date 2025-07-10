@@ -3,7 +3,7 @@ use std::process::ExitCode;
 
 use clap::{arg, command, Parser};
 use colored::Colorize;
-use rasn_compiler::prelude::*;
+use rasn_compiler::{RasnCompiler, TsCompiler};
 use walkdir::WalkDir;
 
 #[derive(clap::Parser, Debug)]
@@ -83,11 +83,11 @@ fn main() -> ExitCode {
     }
 
     let results = match args.backend {
-        BackendArg::Rasn => Compiler::<RasnBackend, _>::new()
+        BackendArg::Rasn => RasnCompiler::new()
             .add_asn_sources_by_path(modules.into_iter())
             .set_output_path(args.output_path)
             .compile(),
-        BackendArg::Typescript => Compiler::<TypescriptBackend, _>::new()
+        BackendArg::Typescript => TsCompiler::new()
             .add_asn_sources_by_path(modules.into_iter())
             .set_output_path(args.output_path)
             .compile(),

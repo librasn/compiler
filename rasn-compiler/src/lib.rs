@@ -25,6 +25,9 @@ use lexer::{asn_spec, error::LexerError};
 use prelude::{GeneratorError, GeneratorErrorType};
 use validator::Validator;
 
+pub type RasnCompiler<S> = Compiler<generator::rasn::Rasn, S>;
+pub type TsCompiler<S> = Compiler<generator::typescript::Typescript, S>;
+
 pub mod prelude {
     //! Convenience module that collects all necessary imports for
     //! using and customizing the compiler.
