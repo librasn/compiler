@@ -9,9 +9,6 @@ mod lexer;
 mod tests;
 mod validator;
 
-#[cfg(feature = "cli")]
-pub mod cli;
-
 use std::{
     cell::RefCell,
     collections::BTreeMap,
