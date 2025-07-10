@@ -200,7 +200,7 @@ impl<'a> Input<'a> {
         } else {
             let consumed = &self.inner[..consumed_len];
             let line_breaks = consumed.match_indices('\n');
-            let last_line_break = line_breaks.clone().last();
+            let last_line_break = line_breaks.clone().next_back();
             let column = if let Some(last) = last_line_break {
                 consumed_len - last.0 + 1 // because we're 1-indexing
             } else {

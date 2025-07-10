@@ -415,6 +415,7 @@ impl
 /// will subsequently try to resolve the `components_of` identifiers.
 #[cfg_attr(test, derive(EnumDebug))]
 #[cfg_attr(not(test), derive(Debug))]
+#[allow(clippy::large_enum_variant)]
 #[derive(Clone, PartialEq)]
 pub enum SequenceComponent {
     Member(SequenceOrSetMember),

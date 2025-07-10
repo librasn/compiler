@@ -256,7 +256,7 @@ impl<B: Backend> Compiler<B, CompilerMissingParams> {
 
     /// Set the output path for the generated rust representation.
     /// * `output_path` - path to an output file or directory, if path indicates
-    ///                   a directory, the output file is named `rasn_generated.rs`
+    ///   a directory, the output file is named `rasn_generated.rs`
     pub fn set_output_path(
         self,
         output_path: impl Into<PathBuf>,
@@ -371,8 +371,8 @@ impl<B: Backend> Compiler<B, CompilerSourcesSet> {
 
     /// Set the output path for the generated rust representation.
     /// * `output_path` - path to an output file or directory, if path points to
-    ///                   a directory, the compiler will generate a file for every ASN.1 module.
-    ///                   If the path points to a file, all modules will be written to that file.
+    ///   a directory, the compiler will generate a file for every ASN.1 module.
+    ///   If the path points to a file, all modules will be written to that file.
     pub fn set_output_path(self, output_path: impl Into<PathBuf>) -> Compiler<B, CompilerReady> {
         Compiler {
             state: CompilerReady {
@@ -528,19 +528,15 @@ impl<B: Backend> Compiler<B, CompilerReady> {
         }
         .internal_compile()?
         .fmt::<B>();
-        fs::write(
+
+        let output_file = if self.state.output_path.is_dir() {
             self.state
                 .output_path
-                .is_dir()
-                .then(|| {
-                    self.state
-                        .output_path
-                        .join(format!("generated{}", B::FILE_EXTENSION))
-                })
-                .unwrap_or(self.state.output_path),
-            result.generated,
-        )
-        .map_err(|e| GeneratorError {
+                .join(format!("generated{}", B::FILE_EXTENSION))
+        } else {
+            self.state.output_path
+        };
+        fs::write(output_file, result.generated).map_err(|e| GeneratorError {
             top_level_declaration: None,
             details: e.to_string(),
             kind: GeneratorErrorType::IO,
