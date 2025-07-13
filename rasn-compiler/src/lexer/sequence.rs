@@ -11,7 +11,7 @@ use crate::{
     intermediate::{types::*, *},
 };
 
-use super::{common::optional_comma, constraint::constraint, *};
+use super::{common::optional_comma, constraint::constraints, *};
 
 pub fn sequence_value(input: Input<'_>) -> ParserResult<'_, ASN1Value> {
     map(
@@ -60,7 +60,7 @@ pub fn sequence(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
                         optional_comma,
                     ))),
                 )),
-                opt(constraint),
+                opt(constraints),
             ),
         ),
         |m| ASN1Type::Sequence(m.into()),
@@ -131,7 +131,7 @@ pub fn sequence_or_set_member(input: Input<'_>) -> ParserResult<'_, SequenceOrSe
         skip_ws_and_comments(identifier),
         opt(asn_tag),
         skip_ws_and_comments(asn1_type),
-        opt(constraint),
+        opt(constraints),
         optional_marker,
         default,
     ))
@@ -226,7 +226,7 @@ is_recursive: false,
                     name: "clusterBoundingBoxShape".into(),
                     tag: None,
                     ty: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere { parent: None,
-                        identifier: "Shape".into(), constraints: vec![Constraint::SubtypeConstraint(ElementSet { set: ElementOrSetOperation::Element(SubtypeElement::MultipleTypeConstraints(InnerTypeConstraint { is_partial: true, constraints: vec![ConstrainedComponent { identifier: "elliptical".into(), constraints: vec![], presence: ComponentPresence::Absent },ConstrainedComponent { identifier: "radial".into(), constraints: vec![], presence: ComponentPresence::Absent },ConstrainedComponent { identifier: "radialShapes".into(), constraints: vec![], presence: ComponentPresence::Absent }] })), extensible: false })
+                        identifier: "Shape".into(), constraints: vec![Constraint::Subtype(ElementSetSpecs { set: ElementOrSetOperation::Element(SubtypeElements::MultipleTypeConstraints(InnerTypeConstraint { is_partial: true, constraints: vec![NamedConstraint { identifier: "elliptical".into(), constraints: vec![], presence: ComponentPresence::Absent },NamedConstraint { identifier: "radial".into(), constraints: vec![], presence: ComponentPresence::Absent },NamedConstraint { identifier: "radialShapes".into(), constraints: vec![], presence: ComponentPresence::Absent }] })), extensible: false })
                      ]}),
                     default_value: None,
                     is_optional: true,
@@ -444,8 +444,8 @@ is_recursive: false,
                         name: "unNumber".into(),
                         tag: None,
                         ty: ASN1Type::Integer(Integer {
-                            constraints: vec![Constraint::SubtypeConstraint(ElementSet {
-                                set: ElementOrSetOperation::Element(SubtypeElement::ValueRange {
+                            constraints: vec![Constraint::Subtype(ElementSetSpecs {
+                                set: ElementOrSetOperation::Element(SubtypeElements::ValueRange {
                                     min: Some(ASN1Value::Integer(0)),
                                     max: Some(ASN1Value::Integer(9999)),
                                     extensible: false
@@ -474,11 +474,11 @@ is_recursive: false,
                         name: "emergencyActionCode".into(),
                         tag: None,
                         ty: ASN1Type::OctetString(OctetString {
-                            constraints: vec![Constraint::SubtypeConstraint(ElementSet {
+                            constraints: vec![Constraint::Subtype(ElementSetSpecs {
                                 set: ElementOrSetOperation::Element(
-                                    SubtypeElement::SizeConstraint(Box::new(
+                                    SubtypeElements::SizeConstraint(Box::new(
                                         ElementOrSetOperation::Element(
-                                            SubtypeElement::ValueRange {
+                                            SubtypeElements::ValueRange {
                                                 min: Some(ASN1Value::Integer(1)),
                                                 max: Some(ASN1Value::Integer(24)),
                                                 extensible: false
@@ -574,12 +574,12 @@ is_recursive: false,
 
                                         tag: None,
                                         ty: ASN1Type::BitString(BitString {
-                                            constraints: vec![Constraint::SubtypeConstraint(
-                                                ElementSet {
+                                            constraints: vec![Constraint::Subtype(
+                                                ElementSetSpecs {
                                                     set: ElementOrSetOperation::Element(
-                                                        SubtypeElement::SizeConstraint(Box::new(
+                                                        SubtypeElements::SizeConstraint(Box::new(
                                                             ElementOrSetOperation::Element(
-                                                                SubtypeElement::SingleValue {
+                                                                SubtypeElements::SingleValue {
                                                                     value: ASN1Value::Integer(1),
                                                                     extensible: true
                                                                 }
@@ -659,8 +659,8 @@ is_recursive: false,
                         name: "item-code".into(),
                         tag: None,
                         ty: ASN1Type::Integer(Integer {
-                            constraints: vec![Constraint::SubtypeConstraint(ElementSet {
-                                set: ElementOrSetOperation::Element(SubtypeElement::ValueRange {
+                            constraints: vec![Constraint::Subtype(ElementSetSpecs {
+                                set: ElementOrSetOperation::Element(SubtypeElements::ValueRange {
                                     min: Some(ASN1Value::Integer(0)),
                                     max: Some(ASN1Value::Integer(254)),
                                     extensible: false
@@ -687,18 +687,16 @@ is_recursive: false,
                                     name: "alternate-item-code".into(),
                                     tag: None,
                                     ty: ASN1Type::Integer(Integer {
-                                        constraints: vec![Constraint::SubtypeConstraint(
-                                            ElementSet {
-                                                set: ElementOrSetOperation::Element(
-                                                    SubtypeElement::ValueRange {
-                                                        min: Some(ASN1Value::Integer(0)),
-                                                        max: Some(ASN1Value::Integer(254)),
-                                                        extensible: false
-                                                    }
-                                                ),
-                                                extensible: false
-                                            }
-                                        )],
+                                        constraints: vec![Constraint::Subtype(ElementSetSpecs {
+                                            set: ElementOrSetOperation::Element(
+                                                SubtypeElements::ValueRange {
+                                                    min: Some(ASN1Value::Integer(0)),
+                                                    max: Some(ASN1Value::Integer(254)),
+                                                    extensible: false
+                                                }
+                                            ),
+                                            extensible: false
+                                        })],
                                         distinguished_values: None,
                                     }),
                                     default_value: None,
@@ -857,8 +855,8 @@ integrityCheckValue     ICV OPTIONAL
                         element_tag: None,
                         constraints: vec![],
                         element_type: Box::new(ASN1Type::Integer(Integer {
-                            constraints: vec![Constraint::SubtypeConstraint(ElementSet {
-                                set: ElementOrSetOperation::Element(SubtypeElement::ValueRange {
+                            constraints: vec![Constraint::Subtype(ElementSetSpecs {
+                                set: ElementOrSetOperation::Element(SubtypeElements::ValueRange {
                                     min: Some(ASN1Value::Integer(1,),),
                                     max: Some(ASN1Value::Integer(5,),),
                                     extensible: false,

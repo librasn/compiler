@@ -17,7 +17,7 @@ use crate::{
 
 use super::{
     common::skip_ws_and_comments,
-    constraint::constraint,
+    constraint::constraints,
     error::{MiscError, ParserResult},
     into_inner,
 };
@@ -31,7 +31,7 @@ pub fn time_value(input: Input<'_>) -> ParserResult<'_, ASN1Value> {
 
 pub fn time(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
     map(
-        skip_ws_and_comments(preceded(tag(TIME), opt(constraint))),
+        skip_ws_and_comments(preceded(tag(TIME), opt(constraints))),
         |t| ASN1Type::Time(t.into()),
     )
     .parse(input)
@@ -39,7 +39,7 @@ pub fn time(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
 
 pub fn generalized_time(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
     map(
-        skip_ws_and_comments(preceded(tag(GENERALIZED_TIME), opt(constraint))),
+        skip_ws_and_comments(preceded(tag(GENERALIZED_TIME), opt(constraints))),
         |cnst| {
             ASN1Type::GeneralizedTime(GeneralizedTime {
                 constraints: cnst.unwrap_or_default(),
@@ -51,7 +51,7 @@ pub fn generalized_time(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
 
 pub fn utc_time(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
     map(
-        skip_ws_and_comments(preceded(tag(UTC_TIME), opt(constraint))),
+        skip_ws_and_comments(preceded(tag(UTC_TIME), opt(constraints))),
         |cnst| {
             ASN1Type::UTCTime(UTCTime {
                 constraints: cnst.unwrap_or_default(),

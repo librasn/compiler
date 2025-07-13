@@ -9,7 +9,7 @@ use nom::{
 use super::{
     asn1_type,
     common::{asn_tag, opt_parentheses, skip_ws_and_comments, value_reference},
-    constraint::constraint,
+    constraint::constraints,
     error::ParserResult,
 };
 
@@ -26,7 +26,7 @@ pub fn set_of(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
         pair(
             preceded(
                 skip_ws_and_comments(tag(SET)),
-                opt(opt_parentheses(constraint)),
+                opt(opt_parentheses(constraints)),
             ),
             preceded(
                 skip_ws_and_comments(pair(tag(OF), opt(skip_ws_and_comments(value_reference)))),
@@ -89,9 +89,9 @@ mod tests {
             ASN1Type::SetOf(SequenceOrSetOf {
                 element_tag: None,
                 is_recursive: false,
-                constraints: vec![Constraint::SubtypeConstraint(ElementSet {
-                    set: ElementOrSetOperation::Element(SubtypeElement::SizeConstraint(Box::new(
-                        ElementOrSetOperation::Element(SubtypeElement::ValueRange {
+                constraints: vec![Constraint::Subtype(ElementSetSpecs {
+                    set: ElementOrSetOperation::Element(SubtypeElements::SizeConstraint(Box::new(
+                        ElementOrSetOperation::Element(SubtypeElements::ValueRange {
                             min: Some(ASN1Value::Integer(1)),
                             max: Some(ASN1Value::Integer(13)),
                             extensible: true
@@ -117,9 +117,9 @@ mod tests {
             ASN1Type::SetOf(SequenceOrSetOf {
                 element_tag: None,
                 is_recursive: false,
-                constraints: vec![Constraint::SubtypeConstraint(ElementSet {
-                    set: ElementOrSetOperation::Element(SubtypeElement::SizeConstraint(Box::new(
-                        ElementOrSetOperation::Element(SubtypeElement::ValueRange {
+                constraints: vec![Constraint::Subtype(ElementSetSpecs {
+                    set: ElementOrSetOperation::Element(SubtypeElements::SizeConstraint(Box::new(
+                        ElementOrSetOperation::Element(SubtypeElements::ValueRange {
                             min: Some(ASN1Value::Integer(1)),
                             max: Some(ASN1Value::Integer(13)),
                             extensible: true
@@ -150,9 +150,9 @@ mod tests {
             ASN1Type::SetOf(SequenceOrSetOf {
                 element_tag: None,
                 is_recursive: false,
-                constraints: vec![Constraint::SubtypeConstraint(ElementSet {
-                    set: ElementOrSetOperation::Element(SubtypeElement::SizeConstraint(Box::new(
-                        ElementOrSetOperation::Element(SubtypeElement::ValueRange {
+                constraints: vec![Constraint::Subtype(ElementSetSpecs {
+                    set: ElementOrSetOperation::Element(SubtypeElements::SizeConstraint(Box::new(
+                        ElementOrSetOperation::Element(SubtypeElements::ValueRange {
                             min: Some(ASN1Value::Integer(1)),
                             max: Some(ASN1Value::Integer(13)),
                             extensible: true
@@ -161,8 +161,8 @@ mod tests {
                     extensible: false
                 })],
                 element_type: Box::new(ASN1Type::Integer(Integer {
-                    constraints: vec![Constraint::SubtypeConstraint(ElementSet {
-                        set: ElementOrSetOperation::Element(SubtypeElement::ValueRange {
+                    constraints: vec![Constraint::Subtype(ElementSetSpecs {
+                        set: ElementOrSetOperation::Element(SubtypeElements::ValueRange {
                             min: Some(ASN1Value::Integer(1)),
                             max: Some(ASN1Value::Integer(13)),
                             extensible: true
@@ -191,9 +191,9 @@ mod tests {
             ASN1Type::SetOf(SequenceOrSetOf {
                 element_tag: None,
                 is_recursive: false,
-                constraints: vec![Constraint::SubtypeConstraint(ElementSet {
-                    set: ElementOrSetOperation::Element(SubtypeElement::SizeConstraint(Box::new(
-                        ElementOrSetOperation::Element(SubtypeElement::ValueRange {
+                constraints: vec![Constraint::Subtype(ElementSetSpecs {
+                    set: ElementOrSetOperation::Element(SubtypeElements::SizeConstraint(Box::new(
+                        ElementOrSetOperation::Element(SubtypeElements::ValueRange {
                             min: Some(ASN1Value::Integer(1)),
                             max: Some(ASN1Value::Integer(4)),
                             extensible: false

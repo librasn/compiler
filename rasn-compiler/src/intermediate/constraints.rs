@@ -23,19 +23,24 @@ pub struct RangeSeperator();
 #[derive(Debug, Clone, PartialEq)]
 pub struct ExtensionMarker();
 
+/// X.680 49.6 Constraint specification.
+///
+/// _See X.682 (02/2021) 8_
 #[cfg_attr(test, derive(EnumDebug))]
 #[cfg_attr(not(test), derive(Debug))]
 #[derive(Clone, PartialEq)]
 pub enum Constraint {
-    SubtypeConstraint(ElementSet),
-    TableConstraint(TableConstraint),
+    Subtype(ElementSetSpecs),
+    /// A TableConstraint as specified in X.682 9.
+    Table(TableConstraint),
     Parameter(Vec<Parameter>),
-    ContentConstraint(ContentConstraint),
+    /// A ContentsConstraint as specified in X.682 11.
+    Content(ContentConstraint),
 }
 
 impl Constraint {
-    /// Returns the type of integer that should be used in a representation when applying the Constraint
-    /// ### Example
+    /// Returns the type of integer that should be used in a representation when applying the
+    /// GeneralConstraint.
     pub fn integer_constraints(&self) -> IntegerType {
         let (mut min, mut max, mut is_extensible) = (i128::MAX, i128::MIN, false);
         if let Ok((cmin, cmax, extensible)) = self.unpack_as_value_range() {
@@ -77,8 +82,8 @@ impl Constraint {
     pub fn unpack_as_value_range(
         &self,
     ) -> Result<(&Option<ASN1Value>, &Option<ASN1Value>, bool), GrammarError> {
-        if let Constraint::SubtypeConstraint(set) = self {
-            if let ElementOrSetOperation::Element(SubtypeElement::ValueRange {
+        if let Constraint::Subtype(set) = self {
+            if let ElementOrSetOperation::Element(SubtypeElements::ValueRange {
                 min,
                 max,
                 extensible,
@@ -97,8 +102,8 @@ impl Constraint {
     }
 
     pub fn unpack_as_strict_value(&self) -> Result<(&ASN1Value, bool), GrammarError> {
-        if let Constraint::SubtypeConstraint(set) = self {
-            if let ElementOrSetOperation::Element(SubtypeElement::SingleValue {
+        if let Constraint::Subtype(set) = self {
+            if let ElementOrSetOperation::Element(SubtypeElements::SingleValue {
                 value,
                 extensible,
             }) = &set.set
@@ -116,37 +121,29 @@ impl Constraint {
     }
 }
 
+/// A ContentConstraint.
+///
+/// _See: ITU-T X.682 (02/2021) 11_
 #[cfg_attr(test, derive(EnumDebug))]
 #[cfg_attr(not(test), derive(Debug))]
 #[derive(Clone, PartialEq)]
 pub enum ContentConstraint {
+    /// **X.682 11.4** _The abstract value of the octet string or bit string is the encoding of an
+    /// (any) abstract value of "Type" that is produced by the encoding rules that are applied to
+    /// the octet string or bit string._
     Containing(ASN1Type),
+    /// **X.682 11.5** _The procedures identified by the object identifier value "Value" shall be
+    /// used to produce and to interpret the contents of the bit string or octet string. If the bit
+    /// string or octet string is already constrained, it is a specification error if these
+    /// procedures do not produce encodings that satisfy the constraint._
     EncodedBy(ASN1Value),
+    /// **X.682 11.6** _The abstract value of the octet string or bit string is the encoding of an
+    /// (any) abstract value of "Type" that is produced by the encoding rules identified by the
+    /// object identifier value "Value"._
     ContainingEncodedBy {
         containing: ASN1Type,
         encoded_by: ASN1Value,
     },
-}
-
-impl From<ASN1Type> for ContentConstraint {
-    fn from(value: ASN1Type) -> Self {
-        ContentConstraint::Containing(value)
-    }
-}
-
-impl From<ASN1Value> for ContentConstraint {
-    fn from(value: ASN1Value) -> Self {
-        ContentConstraint::EncodedBy(value)
-    }
-}
-
-impl From<(ASN1Type, ASN1Value)> for ContentConstraint {
-    fn from(value: (ASN1Type, ASN1Value)) -> Self {
-        ContentConstraint::ContainingEncodedBy {
-            containing: value.0,
-            encoded_by: value.1,
-        }
-    }
 }
 
 #[cfg_attr(test, derive(EnumDebug))]
@@ -215,13 +212,13 @@ pub enum ComponentPresence {
 #[derive(Debug, Clone, PartialEq)]
 pub struct InnerTypeConstraint {
     pub is_partial: bool,
-    pub constraints: Vec<ConstrainedComponent>,
+    pub constraints: Vec<NamedConstraint>,
 }
 
 /// Representation of a single component within a component constraint
 /// in ASN1 specifications
 #[derive(Debug, Clone, PartialEq)]
-pub struct ConstrainedComponent {
+pub struct NamedConstraint {
     pub identifier: String,
     pub constraints: Vec<Constraint>,
     pub presence: ComponentPresence,
@@ -710,7 +707,7 @@ pub enum MidnightSettings {
 #[cfg_attr(test, derive(EnumDebug))]
 #[cfg_attr(not(test), derive(Debug))]
 #[derive(Clone, PartialEq)]
-pub enum SubtypeElement {
+pub enum SubtypeElements {
     SingleValue {
         value: ASN1Value,
         extensible: bool,
@@ -736,7 +733,7 @@ pub enum SubtypeElement {
                                         // RecurrenceRange
 }
 
-impl From<(ASN1Value, Option<ExtensionMarker>)> for SubtypeElement {
+impl From<(ASN1Value, Option<ExtensionMarker>)> for SubtypeElements {
     fn from(value: (ASN1Value, Option<ExtensionMarker>)) -> Self {
         Self::SingleValue {
             value: value.0,
@@ -745,49 +742,35 @@ impl From<(ASN1Value, Option<ExtensionMarker>)> for SubtypeElement {
     }
 }
 
-impl From<Constraint> for SubtypeElement {
+impl From<Constraint> for SubtypeElements {
     fn from(value: Constraint) -> Self {
         match value {
-            Constraint::SubtypeConstraint(set) => Self::SizeConstraint(Box::new(set.set)),
+            Constraint::Subtype(set) => Self::SizeConstraint(Box::new(set.set)),
             _ => unreachable!(),
         }
     }
 }
 
-impl
-    From<(
-        Option<ExtensionMarker>,
-        Vec<(&str, Option<Vec<Constraint>>, Option<ComponentPresence>)>,
-    )> for SubtypeElement
-{
-    fn from(
-        value: (
-            Option<ExtensionMarker>,
-            Vec<(&str, Option<Vec<Constraint>>, Option<ComponentPresence>)>,
-        ),
-    ) -> Self {
-        SubtypeElement::MultipleTypeConstraints(InnerTypeConstraint {
+impl From<(Option<ExtensionMarker>, Vec<NamedConstraint>)> for SubtypeElements {
+    fn from(value: (Option<ExtensionMarker>, Vec<NamedConstraint>)) -> Self {
+        SubtypeElements::MultipleTypeConstraints(InnerTypeConstraint {
             is_partial: value.0.is_some(),
-            constraints: value
-                .1
-                .into_iter()
-                .map(|(id, constraint, presence)| ConstrainedComponent {
-                    identifier: String::from(id),
-                    constraints: constraint.unwrap_or(vec![]),
-                    presence: presence.unwrap_or(ComponentPresence::Unspecified),
-                })
-                .collect(),
+            constraints: value.1,
         })
     }
 }
 
+/// X.680 50. Element set specification
+///
+/// *50.1* _In some notations a set of elements of some identified type or information object class
+/// (the governor) can be specified. In such cases, the notation "ElementSetSpec" is used._
 #[derive(Debug, Clone, PartialEq)]
-pub struct ElementSet {
+pub struct ElementSetSpecs {
     pub set: ElementOrSetOperation,
     pub extensible: bool,
 }
 
-impl From<(ElementOrSetOperation, Option<ExtensionMarker>)> for ElementSet {
+impl From<(ElementOrSetOperation, Option<ExtensionMarker>)> for ElementSetSpecs {
     fn from(value: (ElementOrSetOperation, Option<ExtensionMarker>)) -> Self {
         Self {
             set: value.0,
@@ -800,19 +783,19 @@ impl From<(ElementOrSetOperation, Option<ExtensionMarker>)> for ElementSet {
 #[cfg_attr(not(test), derive(Debug))]
 #[derive(Clone, PartialEq)]
 pub enum ElementOrSetOperation {
-    Element(SubtypeElement),
+    Element(SubtypeElements),
     SetOperation(SetOperation),
 }
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct SetOperation {
-    pub base: SubtypeElement, //TODO: Handle exclusions
+    pub base: SubtypeElements, //TODO: Handle exclusions
     pub operator: SetOperator,
     pub operant: Box<ElementOrSetOperation>,
 }
 
-impl From<(SubtypeElement, SetOperator, ElementOrSetOperation)> for SetOperation {
-    fn from(value: (SubtypeElement, SetOperator, ElementOrSetOperation)) -> Self {
+impl From<(SubtypeElements, SetOperator, ElementOrSetOperation)> for SetOperation {
+    fn from(value: (SubtypeElements, SetOperator, ElementOrSetOperation)) -> Self {
         Self {
             base: value.0,
             operator: value.1,

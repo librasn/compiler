@@ -11,7 +11,7 @@ use crate::{
     intermediate::{ASN1Type, ASN1Value, BOOLEAN, FALSE, TRUE},
 };
 
-use super::{common::skip_ws_and_comments, constraint::constraint, error::ParserResult};
+use super::{common::skip_ws_and_comments, constraint::constraints, error::ParserResult};
 
 pub fn boolean_value(input: Input<'_>) -> ParserResult<'_, ASN1Value> {
     alt((
@@ -33,7 +33,7 @@ pub fn boolean(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
     map(
         into(skip_ws_and_comments(preceded(
             tag(BOOLEAN),
-            skip_ws_and_comments(opt(constraint)),
+            skip_ws_and_comments(opt(constraints)),
         ))),
         ASN1Type::Boolean,
     )

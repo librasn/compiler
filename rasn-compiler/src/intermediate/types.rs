@@ -102,8 +102,8 @@ impl Integer {
 impl From<(i128, i128, bool)> for Integer {
     fn from(value: (i128, i128, bool)) -> Self {
         Self {
-            constraints: vec![Constraint::SubtypeConstraint(ElementSet {
-                set: ElementOrSetOperation::Element(SubtypeElement::ValueRange {
+            constraints: vec![Constraint::Subtype(ElementSetSpecs {
+                set: ElementOrSetOperation::Element(SubtypeElements::ValueRange {
                     min: Some(ASN1Value::Integer(value.0)),
                     max: Some(ASN1Value::Integer(value.1)),
                     extensible: value.2,
@@ -118,8 +118,8 @@ impl From<(i128, i128, bool)> for Integer {
 impl From<(Option<i128>, Option<i128>, bool)> for Integer {
     fn from(value: (Option<i128>, Option<i128>, bool)) -> Self {
         Self {
-            constraints: vec![Constraint::SubtypeConstraint(ElementSet {
-                set: ElementOrSetOperation::Element(SubtypeElement::ValueRange {
+            constraints: vec![Constraint::Subtype(ElementSetSpecs {
+                set: ElementOrSetOperation::Element(SubtypeElements::ValueRange {
                     min: value.0.map(ASN1Value::Integer),
                     max: value.1.map(ASN1Value::Integer),
                     extensible: value.2,
@@ -443,8 +443,8 @@ pub enum SequenceComponent {
 ///     }),
 ///     ty: ASN1Type::Integer(Integer {
 ///         constraints: vec![
-///             Constraint::SubtypeConstraint(ElementSet {
-///                 set: ElementOrSetOperation::Element(SubtypeElement::ValueRange {
+///             Constraint::Subtype(ElementSetSpecs {
+///                 set: ElementOrSetOperation::Element(SubtypeElements::ValueRange {
 ///                     min: Some(ASN1Value::Integer(0)),
 ///                     max: Some(ASN1Value::Integer(2)),
 ///                     extensible: false

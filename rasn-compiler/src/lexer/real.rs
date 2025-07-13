@@ -10,7 +10,7 @@ use nom::{
 
 use super::{
     common::{in_braces, skip_ws_and_comments},
-    constraint::constraint,
+    constraint::constraints,
     error::ParserResult,
 };
 
@@ -34,7 +34,7 @@ pub fn real(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
     map(
         preceded(
             skip_ws_and_comments(tag(REAL)),
-            opt(skip_ws_and_comments(constraint)),
+            opt(skip_ws_and_comments(constraints)),
         ),
         |m| ASN1Type::Real(m.into()),
     )
@@ -86,8 +86,8 @@ fn mbe_notation(input: Input<'_>) -> ParserResult<'_, f64> {
 mod tests {
     use crate::intermediate::{
         constraints::{
-            ComponentPresence, ConstrainedComponent, Constraint, ElementOrSetOperation, ElementSet,
-            InnerTypeConstraint, SubtypeElement,
+            ComponentPresence, Constraint, ElementOrSetOperation, ElementSetSpecs,
+            InnerTypeConstraint, NamedConstraint, SubtypeElements,
         },
         types::Real,
         ASN1Type, ASN1Value,
@@ -126,16 +126,16 @@ mod tests {
             .unwrap()
             .1,
             ASN1Type::Real(Real {
-                constraints: vec![Constraint::SubtypeConstraint(ElementSet {
-                    set: ElementOrSetOperation::Element(SubtypeElement::MultipleTypeConstraints(
+                constraints: vec![Constraint::Subtype(ElementSetSpecs {
+                    set: ElementOrSetOperation::Element(SubtypeElements::MultipleTypeConstraints(
                         InnerTypeConstraint {
                             is_partial: false,
                             constraints: vec![
-                                ConstrainedComponent {
+                                NamedConstraint {
                                     identifier: "mantissa".into(),
-                                    constraints: vec![Constraint::SubtypeConstraint(ElementSet {
+                                    constraints: vec![Constraint::Subtype(ElementSetSpecs {
                                         set: ElementOrSetOperation::Element(
-                                            SubtypeElement::ValueRange {
+                                            SubtypeElements::ValueRange {
                                                 min: Some(ASN1Value::Integer(-16777215)),
                                                 max: Some(ASN1Value::Integer(16777215)),
                                                 extensible: false
@@ -145,11 +145,11 @@ mod tests {
                                     })],
                                     presence: ComponentPresence::Unspecified
                                 },
-                                ConstrainedComponent {
+                                NamedConstraint {
                                     identifier: "base".into(),
-                                    constraints: vec![Constraint::SubtypeConstraint(ElementSet {
+                                    constraints: vec![Constraint::Subtype(ElementSetSpecs {
                                         set: ElementOrSetOperation::Element(
-                                            SubtypeElement::SingleValue {
+                                            SubtypeElements::SingleValue {
                                                 value: ASN1Value::Integer(2),
                                                 extensible: false
                                             }
@@ -158,11 +158,11 @@ mod tests {
                                     })],
                                     presence: ComponentPresence::Unspecified
                                 },
-                                ConstrainedComponent {
+                                NamedConstraint {
                                     identifier: "exponent".into(),
-                                    constraints: vec![Constraint::SubtypeConstraint(ElementSet {
+                                    constraints: vec![Constraint::Subtype(ElementSetSpecs {
                                         set: ElementOrSetOperation::Element(
-                                            SubtypeElement::ValueRange {
+                                            SubtypeElements::ValueRange {
                                                 min: Some(ASN1Value::Integer(-125)),
                                                 max: Some(ASN1Value::Integer(128)),
                                                 extensible: false

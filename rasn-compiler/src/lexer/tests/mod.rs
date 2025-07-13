@@ -32,8 +32,8 @@ fn parses_toplevel_simple_integer_declaration() {
         assert!(!int.constraints.is_empty());
         assert_eq!(
             *int.constraints.first().unwrap(),
-            Constraint::SubtypeConstraint(ElementSet {
-                set: ElementOrSetOperation::Element(SubtypeElement::ValueRange {
+            Constraint::Subtype(ElementSetSpecs {
+                set: ElementOrSetOperation::Element(SubtypeElements::ValueRange {
                     min: Some(ASN1Value::Integer(1)),
                     max: Some(ASN1Value::Integer(8)),
                     extensible: false
@@ -70,8 +70,8 @@ fn parses_toplevel_macro_integer_declaration() {
     if let ASN1Type::Integer(int) = tld.ty {
         assert_eq!(
             *int.constraints.first().unwrap(),
-            Constraint::SubtypeConstraint(ElementSet {
-                set: ElementOrSetOperation::Element(SubtypeElement::ValueRange {
+            Constraint::Subtype(ElementSetSpecs {
+                set: ElementOrSetOperation::Element(SubtypeElements::ValueRange {
                     min: Some(ASN1Value::Integer(0)),
                     max: Some(ASN1Value::Integer(161)),
                     extensible: true
@@ -173,33 +173,33 @@ fn parses_toplevel_crossrefering_declaration() {
             ty: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                 parent: None,
                 identifier: "EventHistory".into(),
-                constraints: vec![Constraint::SubtypeConstraint(ElementSet {
+                constraints: vec![Constraint::Subtype(ElementSetSpecs {
                     set: ElementOrSetOperation::SetOperation(SetOperation {
-                        base: SubtypeElement::SingleTypeConstraint(vec![
-                            Constraint::SubtypeConstraint(ElementSet {
+                        base: SubtypeElements::SingleTypeConstraint(vec![Constraint::Subtype(
+                            ElementSetSpecs {
                                 extensible: false,
                                 set: ElementOrSetOperation::Element(
-                                    SubtypeElement::MultipleTypeConstraints(InnerTypeConstraint {
+                                    SubtypeElements::MultipleTypeConstraints(InnerTypeConstraint {
                                         is_partial: true,
-                                        constraints: vec![ConstrainedComponent {
+                                        constraints: vec![NamedConstraint {
                                             identifier: "eventDeltaTime".into(),
                                             constraints: vec![],
                                             presence: ComponentPresence::Present
                                         }]
                                     })
                                 )
-                            })
-                        ]),
+                            }
+                        )]),
                         operator: SetOperator::Union,
                         operant: Box::new(ElementOrSetOperation::Element(
-                            SubtypeElement::SingleTypeConstraint(vec![
-                                Constraint::SubtypeConstraint(ElementSet {
+                            SubtypeElements::SingleTypeConstraint(vec![Constraint::Subtype(
+                                ElementSetSpecs {
                                     extensible: false,
                                     set: ElementOrSetOperation::Element(
-                                        SubtypeElement::MultipleTypeConstraints(
+                                        SubtypeElements::MultipleTypeConstraints(
                                             InnerTypeConstraint {
                                                 is_partial: true,
-                                                constraints: vec![ConstrainedComponent {
+                                                constraints: vec![NamedConstraint {
                                                     identifier: "eventDeltaTime".into(),
                                                     constraints: vec![],
                                                     presence: ComponentPresence::Absent
@@ -207,8 +207,8 @@ fn parses_toplevel_crossrefering_declaration() {
                                             }
                                         )
                                     )
-                                })
-                            ])
+                                }
+                            )])
                         ))
                     }),
                     extensible: false
@@ -238,9 +238,9 @@ fn parses_anonymous_sequence_of_declaration() {
             ty: ASN1Type::SequenceOf(SequenceOrSetOf {
                 element_tag: None,
                 is_recursive: false,
-                constraints: vec![Constraint::SubtypeConstraint(ElementSet {
-                    set: ElementOrSetOperation::Element(SubtypeElement::SizeConstraint(Box::new(
-                        ElementOrSetOperation::Element(SubtypeElement::ValueRange {
+                constraints: vec![Constraint::Subtype(ElementSetSpecs {
+                    set: ElementOrSetOperation::Element(SubtypeElements::SizeConstraint(Box::new(
+                        ElementOrSetOperation::Element(SubtypeElements::ValueRange {
                             min: Some(ASN1Value::Integer(1)),
                             max: Some(ASN1Value::Integer(16)),
                             extensible: false
@@ -434,7 +434,7 @@ fn parses_parameterized_declaration() {
                         ty: ASN1Type::ObjectClassField(ObjectClassFieldType {
                             class: "REG-EXT-ID-AND-TYPE".into(),
                             field_path: vec![ObjectFieldIdentifier::SingleValue("&id".into())],
-                            constraints: vec![Constraint::TableConstraint(TableConstraint {
+                            constraints: vec![Constraint::Table(TableConstraint {
                                 object_set: ObjectSet {
                                     values: vec![ObjectSetValue::Reference("Set".into())],
                                     extensible: None
@@ -453,7 +453,7 @@ fn parses_parameterized_declaration() {
                         ty: ASN1Type::ObjectClassField(ObjectClassFieldType {
                             class: "REG-EXT-ID-AND-TYPE".into(),
                             field_path: vec![ObjectFieldIdentifier::MultipleValue("&Type".into())],
-                            constraints: vec![Constraint::TableConstraint(TableConstraint {
+                            constraints: vec![Constraint::Table(TableConstraint {
                                 object_set: ObjectSet {
                                     values: vec![ObjectSetValue::Reference("Set".into())],
                                     extensible: None

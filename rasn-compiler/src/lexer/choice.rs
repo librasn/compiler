@@ -12,7 +12,7 @@ use crate::{
     intermediate::{types::*, *},
 };
 
-use super::{constraint::constraint, error::ParserResult, *};
+use super::{constraint::constraints, error::ParserResult, *};
 
 pub fn choice_value(input: Input<'_>) -> ParserResult<'_, ASN1Value> {
     map(
@@ -109,7 +109,7 @@ fn choice_option(input: Input<'_>) -> ParserResult<'_, ChoiceOption> {
         skip_ws_and_comments(identifier),
         opt(asn_tag),
         skip_ws_and_comments(asn1_type),
-        opt(skip_ws_and_comments(constraint)),
+        opt(skip_ws_and_comments(constraints)),
     ))
     .parse(input)
 }

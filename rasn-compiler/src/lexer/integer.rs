@@ -27,7 +27,7 @@ pub fn integer(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
         (
             into_inner(skip_ws_and_comments(tag(INTEGER))),
             opt(skip_ws_and_comments(distinguished_values)),
-            opt(skip_ws_and_comments(constraint)),
+            opt(skip_ws_and_comments(constraints)),
         ),
         |m| ASN1Type::Integer(m.into()),
     )
@@ -50,8 +50,8 @@ mod tests {
         assert_eq!(
             integer("INTEGER  (-9..-4, ...)".into()).unwrap().1,
             ASN1Type::Integer(Integer {
-                constraints: vec![Constraint::SubtypeConstraint(ElementSet {
-                    set: ElementOrSetOperation::Element(SubtypeElement::ValueRange {
+                constraints: vec![Constraint::Subtype(ElementSetSpecs {
+                    set: ElementOrSetOperation::Element(SubtypeElements::ValueRange {
                         min: Some(ASN1Value::Integer(-9)),
                         max: Some(ASN1Value::Integer(-4)),
                         extensible: true
@@ -64,8 +64,8 @@ mod tests {
         assert_eq!(
             integer("\r\nINTEGER(-9..-4)".into()).unwrap().1,
             ASN1Type::Integer(Integer {
-                constraints: vec![Constraint::SubtypeConstraint(ElementSet {
-                    set: ElementOrSetOperation::Element(SubtypeElement::ValueRange {
+                constraints: vec![Constraint::Subtype(ElementSetSpecs {
+                    set: ElementOrSetOperation::Element(SubtypeElements::ValueRange {
                         min: Some(ASN1Value::Integer(-9)),
                         max: Some(ASN1Value::Integer(-4)),
                         extensible: false

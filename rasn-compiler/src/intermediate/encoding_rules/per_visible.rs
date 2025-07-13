@@ -1,5 +1,5 @@
 use crate::intermediate::{
-    constraints::{Constraint, ElementOrSetOperation, SetOperation, SetOperator, SubtypeElement},
+    constraints::{Constraint, ElementOrSetOperation, SetOperation, SetOperator, SubtypeElements},
     error::{GrammarError, GrammarErrorType},
     types::{Choice, Enumerated},
     ASN1Type, ASN1Value, CharacterStringType,
@@ -69,7 +69,7 @@ impl PerVisibleAlphabetConstraints {
         string_type: CharacterStringType,
     ) -> Result<Option<Self>, GrammarError> {
         match constraint {
-            Constraint::SubtypeConstraint(c) => match &c.set {
+            Constraint::Subtype(c) => match &c.set {
                 ElementOrSetOperation::Element(e) => Self::from_subtype_elem(Some(e), string_type),
                 ElementOrSetOperation::SetOperation(s) => Self::from_subtype_elem(
                     fold_constraint_set(s, Some(&string_type.character_set()))?.as_ref(),
@@ -81,12 +81,12 @@ impl PerVisibleAlphabetConstraints {
     }
 
     fn from_subtype_elem(
-        element: Option<&SubtypeElement>,
+        element: Option<&SubtypeElements>,
         string_type: CharacterStringType,
     ) -> Result<Option<Self>, GrammarError> {
         match element {
             None => Ok(None),
-            Some(SubtypeElement::PermittedAlphabet(elem_or_set)) => {
+            Some(SubtypeElements::PermittedAlphabet(elem_or_set)) => {
                 let mut result = PerVisibleAlphabetConstraints::default_for(string_type);
                 match &**elem_or_set {
                     ElementOrSetOperation::Element(e) => {
@@ -95,7 +95,7 @@ impl PerVisibleAlphabetConstraints {
                         }
                     }
                     ElementOrSetOperation::SetOperation(s) => {
-                        fn flatten_set(elems: &mut Vec<SubtypeElement>, set: &SetOperation) {
+                        fn flatten_set(elems: &mut Vec<SubtypeElements>, set: &SetOperation) {
                             elems.push(set.base.clone());
                             match &*set.operant {
                                 ElementOrSetOperation::Element(e2) => elems.push(e2.clone()),
@@ -113,7 +113,7 @@ impl PerVisibleAlphabetConstraints {
                 }
                 Ok(Some(result))
             }
-            Some(SubtypeElement::SingleValue { value, extensible }) => match (value, extensible) {
+            Some(SubtypeElements::SingleValue { value, extensible }) => match (value, extensible) {
                 (ASN1Value::String(s), false) => {
                     let mut char_subset = s
                         .clone()
@@ -134,7 +134,7 @@ impl PerVisibleAlphabetConstraints {
                 }
                 _ => Ok(None),
             },
-            Some(SubtypeElement::ValueRange {
+            Some(SubtypeElements::ValueRange {
                 min,
                 max,
                 extensible,
@@ -172,7 +172,7 @@ impl PerVisibleAlphabetConstraints {
                     }],
                 }))
             }
-            Some(SubtypeElement::ContainedSubtype {
+            Some(SubtypeElements::ContainedSubtype {
                 subtype,
                 extensible: _,
             }) => {
@@ -321,7 +321,7 @@ impl TryFrom<&Constraint> for PerVisibleRangeConstraints {
 
     fn try_from(value: &Constraint) -> Result<PerVisibleRangeConstraints, Self::Error> {
         match value {
-            Constraint::SubtypeConstraint(c) => {
+            Constraint::Subtype(c) => {
                 let mut per_visible: PerVisibleRangeConstraints = match &c.set {
                     ElementOrSetOperation::Element(e) => Some(e).try_into(),
                     ElementOrSetOperation::SetOperation(s) => {
@@ -342,12 +342,14 @@ impl TryFrom<&Constraint> for PerVisibleRangeConstraints {
     }
 }
 
-impl TryFrom<Option<&SubtypeElement>> for PerVisibleRangeConstraints {
+impl TryFrom<Option<&SubtypeElements>> for PerVisibleRangeConstraints {
     type Error = GrammarError;
-    fn try_from(value: Option<&SubtypeElement>) -> Result<PerVisibleRangeConstraints, Self::Error> {
+    fn try_from(
+        value: Option<&SubtypeElements>,
+    ) -> Result<PerVisibleRangeConstraints, Self::Error> {
         match value {
-            Some(SubtypeElement::PermittedAlphabet(_)) | None => Ok(Self::default()),
-            Some(SubtypeElement::SingleValue { value, extensible }) => {
+            Some(SubtypeElements::PermittedAlphabet(_)) | None => Ok(Self::default()),
+            Some(SubtypeElements::SingleValue { value, extensible }) => {
                 let val = value.unwrap_as_integer().ok();
                 Ok(Self {
                     min: val,
@@ -356,7 +358,7 @@ impl TryFrom<Option<&SubtypeElement>> for PerVisibleRangeConstraints {
                     is_size_constraint: false,
                 })
             }
-            Some(SubtypeElement::ValueRange {
+            Some(SubtypeElements::ValueRange {
                 min,
                 max,
                 extensible,
@@ -366,8 +368,8 @@ impl TryFrom<Option<&SubtypeElement>> for PerVisibleRangeConstraints {
                 extensible: *extensible,
                 is_size_constraint: false,
             }),
-            Some(SubtypeElement::SizeConstraint(s)) => match &**s {
-                ElementOrSetOperation::Element(e) => <Option<&SubtypeElement> as TryInto<
+            Some(SubtypeElements::SizeConstraint(s)) => match &**s {
+                ElementOrSetOperation::Element(e) => <Option<&SubtypeElements> as TryInto<
                     PerVisibleRangeConstraints,
                 >>::try_into(Some(e))
                 .map(|mut c| {
@@ -375,7 +377,7 @@ impl TryFrom<Option<&SubtypeElement>> for PerVisibleRangeConstraints {
                     c
                 }),
                 ElementOrSetOperation::SetOperation(s) => {
-                    <Option<&SubtypeElement> as TryInto<PerVisibleRangeConstraints>>::try_into(
+                    <Option<&SubtypeElements> as TryInto<PerVisibleRangeConstraints>>::try_into(
                         fold_constraint_set(s, None)?.as_ref(),
                     )
                     .map(|mut c| {
@@ -384,7 +386,7 @@ impl TryFrom<Option<&SubtypeElement>> for PerVisibleRangeConstraints {
                     })
                 }
             },
-            Some(SubtypeElement::ContainedSubtype {
+            Some(SubtypeElements::ContainedSubtype {
                 subtype,
                 extensible: _,
             }) => per_visible_range_constraints(
@@ -402,7 +404,7 @@ impl TryFrom<Option<&SubtypeElement>> for PerVisibleRangeConstraints {
 impl PerVisible for Constraint {
     fn per_visible(&self) -> bool {
         match self {
-            Constraint::SubtypeConstraint(s) => s.set.per_visible(),
+            Constraint::Subtype(s) => s.set.per_visible(),
             _ => false,
         }
     }
@@ -419,26 +421,26 @@ impl PerVisible for ElementOrSetOperation {
     }
 }
 
-impl PerVisible for SubtypeElement {
+impl PerVisible for SubtypeElements {
     fn per_visible(&self) -> bool {
         match self {
-            SubtypeElement::SingleValue {
+            SubtypeElements::SingleValue {
                 value: _,
                 extensible: _,
             } => true,
-            SubtypeElement::ContainedSubtype {
+            SubtypeElements::ContainedSubtype {
                 subtype: s,
                 extensible: _,
             } => s
                 .constraints()
                 .is_some_and(|c| c.iter().any(|c| c.per_visible())),
-            SubtypeElement::ValueRange {
+            SubtypeElements::ValueRange {
                 min: _,
                 max: _,
                 extensible: _,
             } => true,
-            SubtypeElement::PermittedAlphabet(p) => p.per_visible(),
-            SubtypeElement::SizeConstraint(s) => s.per_visible(),
+            SubtypeElements::PermittedAlphabet(p) => p.per_visible(),
+            SubtypeElements::SizeConstraint(s) => s.per_visible(),
             _ => false,
         }
     }
@@ -469,16 +471,16 @@ pub fn per_visible_range_constraints(
 fn fold_constraint_set(
     set: &SetOperation,
     char_set: Option<&BTreeMap<usize, char>>,
-) -> Result<Option<SubtypeElement>, GrammarError> {
+) -> Result<Option<SubtypeElements>, GrammarError> {
     let folded_operant = match &*set.operant {
         ElementOrSetOperation::Element(e) => e.per_visible().then(|| e.clone()),
         ElementOrSetOperation::SetOperation(s) => fold_constraint_set(s, char_set)?,
     };
     match (&set.base, &folded_operant) {
-        (base, Some(SubtypeElement::PermittedAlphabet(elem_or_set)))
-        | (SubtypeElement::PermittedAlphabet(elem_or_set), Some(base))
-        | (base, Some(SubtypeElement::SizeConstraint(elem_or_set)))
-        | (SubtypeElement::SizeConstraint(elem_or_set), Some(base)) => {
+        (base, Some(SubtypeElements::PermittedAlphabet(elem_or_set)))
+        | (SubtypeElements::PermittedAlphabet(elem_or_set), Some(base))
+        | (base, Some(SubtypeElements::SizeConstraint(elem_or_set)))
+        | (SubtypeElements::SizeConstraint(elem_or_set), Some(base)) => {
             return fold_constraint_set(
                 &SetOperation {
                     base: base.clone(),
@@ -489,24 +491,24 @@ fn fold_constraint_set(
             )
         }
         (
-            SubtypeElement::ContainedSubtype {
+            SubtypeElements::ContainedSubtype {
                 subtype: _,
                 extensible: _,
             },
             None,
         )
         | (
-            SubtypeElement::ContainedSubtype {
+            SubtypeElements::ContainedSubtype {
                 subtype: _,
                 extensible: _,
             },
-            Some(SubtypeElement::ContainedSubtype {
+            Some(SubtypeElements::ContainedSubtype {
                 subtype: _,
                 extensible: _,
             }),
         ) => return Ok(None),
         (
-            SubtypeElement::ContainedSubtype {
+            SubtypeElements::ContainedSubtype {
                 subtype: _,
                 extensible: _,
             },
@@ -514,13 +516,13 @@ fn fold_constraint_set(
         )
         | (
             c,
-            Some(SubtypeElement::ContainedSubtype {
+            Some(SubtypeElements::ContainedSubtype {
                 subtype: _,
                 extensible: _,
             }),
         ) => return Ok(Some(c.clone())),
-        (SubtypeElement::PermittedAlphabet(elem_or_set), None)
-        | (SubtypeElement::SizeConstraint(elem_or_set), None) => {
+        (SubtypeElements::PermittedAlphabet(elem_or_set), None)
+        | (SubtypeElements::SizeConstraint(elem_or_set), None) => {
             return match &**elem_or_set {
                 ElementOrSetOperation::Element(e) => Ok(Some(e.clone())),
                 ElementOrSetOperation::SetOperation(s) => fold_constraint_set(s, char_set),
@@ -535,11 +537,11 @@ fn fold_constraint_set(
             (b, None) => Ok(Some(b.clone())),
             (b, Some(f)) if !f.per_visible() => Ok(Some(b.clone())),
             (
-                SubtypeElement::SingleValue {
+                SubtypeElements::SingleValue {
                     value: v1,
                     extensible: x1,
                 },
-                Some(SubtypeElement::SingleValue {
+                Some(SubtypeElements::SingleValue {
                     value: v2,
                     extensible: x2,
                 }),
@@ -559,7 +561,7 @@ fn fold_constraint_set(
                             GrammarErrorType::UnpackingError,
                         ))
                     } else {
-                        Ok(Some(SubtypeElement::SingleValue {
+                        Ok(Some(SubtypeElements::SingleValue {
                             value: ASN1Value::Integer(*i2),
                             extensible: *x1 || *x2,
                         }))
@@ -580,7 +582,7 @@ fn fold_constraint_set(
                                 GrammarErrorType::UnpackingError,
                             ));
                         }
-                        Ok(Some(SubtypeElement::SingleValue {
+                        Ok(Some(SubtypeElements::SingleValue {
                             value: ASN1Value::String(permitted),
                             extensible: false,
                         }))
@@ -592,44 +594,44 @@ fn fold_constraint_set(
                 )),
             },
             (
-                SubtypeElement::SingleValue {
+                SubtypeElements::SingleValue {
                     value,
                     extensible: x1,
                 },
-                Some(SubtypeElement::ValueRange {
+                Some(SubtypeElements::ValueRange {
                     min,
                     max,
                     extensible: x2,
                 }),
             ) => intersect_single_and_range(value, min.as_ref(), max.as_ref(), *x1, *x2, char_set),
             (
-                SubtypeElement::ValueRange {
+                SubtypeElements::ValueRange {
                     min,
                     max,
                     extensible: x2,
                 },
-                Some(SubtypeElement::SingleValue {
+                Some(SubtypeElements::SingleValue {
                     value,
                     extensible: x1,
                 }),
             ) => intersect_single_and_range(value, min.as_ref(), max.as_ref(), *x1, *x2, char_set),
             (
                 _,
-                Some(SubtypeElement::SingleValue {
+                Some(SubtypeElements::SingleValue {
                     value: v,
                     extensible: x,
                 }),
-            ) => Ok(Some(SubtypeElement::SingleValue {
+            ) => Ok(Some(SubtypeElements::SingleValue {
                 value: v.clone(),
                 extensible: *x,
             })),
             (
-                SubtypeElement::ValueRange {
+                SubtypeElements::ValueRange {
                     min: min1,
                     max: max1,
                     extensible: x1,
                 },
-                Some(SubtypeElement::ValueRange {
+                Some(SubtypeElements::ValueRange {
                     min: min2,
                     max: max2,
                     extensible: x2,
@@ -668,7 +670,7 @@ fn fold_constraint_set(
                 let max = compare_optional_asn1values(max1.as_ref(), max2.as_ref(), |m1, m2| {
                     m1.min(m2, char_set)
                 })?;
-                Ok(Some(SubtypeElement::ValueRange {
+                Ok(Some(SubtypeElements::ValueRange {
                     min,
                     max,
                     extensible: *x1 || *x2,
@@ -681,11 +683,11 @@ fn fold_constraint_set(
             (_, None) => Ok(None),
             (_, Some(f)) if !f.per_visible() => Ok(None),
             (
-                SubtypeElement::SingleValue {
+                SubtypeElements::SingleValue {
                     value: v1,
                     extensible: x1,
                 },
-                Some(SubtypeElement::SingleValue {
+                Some(SubtypeElements::SingleValue {
                     value: v2,
                     extensible: x2,
                 }),
@@ -693,7 +695,7 @@ fn fold_constraint_set(
                 (ASN1Value::String(_), ASN1Value::Integer(_))
                 | (ASN1Value::Integer(_), ASN1Value::String(_)) => Ok(None),
                 (ASN1Value::Integer(v1_int), ASN1Value::Integer(v2_int)) => {
-                    Ok(Some(SubtypeElement::ValueRange {
+                    Ok(Some(SubtypeElements::ValueRange {
                         min: Some(ASN1Value::Integer(*v2_int.min(v1_int))),
                         max: Some(ASN1Value::Integer(*v2_int.max(v1_int))),
                         extensible: *x1 || x2,
@@ -702,7 +704,7 @@ fn fold_constraint_set(
                 (ASN1Value::String(v1_str), ASN1Value::String(v2_str)) => {
                     let mut v2_clone = v2_str.clone();
                     v2_clone.extend(v1_str.chars().filter(|c| !v2_str.contains(*c)));
-                    Ok(Some(SubtypeElement::SingleValue {
+                    Ok(Some(SubtypeElements::SingleValue {
                         value: ASN1Value::String(v2_clone),
                         extensible: *x1 || x2,
                     }))
@@ -713,34 +715,34 @@ fn fold_constraint_set(
                 )),
             },
             (
-                SubtypeElement::ValueRange {
+                SubtypeElements::ValueRange {
                     min,
                     max,
                     extensible: x1,
                 },
-                Some(SubtypeElement::SingleValue {
+                Some(SubtypeElements::SingleValue {
                     value: v,
                     extensible: x2,
                 }),
             ) => union_single_and_range(&v, min.as_ref(), char_set, max.as_ref(), *x1, x2),
             (
-                SubtypeElement::SingleValue {
+                SubtypeElements::SingleValue {
                     value: v,
                     extensible: x1,
                 },
-                Some(SubtypeElement::ValueRange {
+                Some(SubtypeElements::ValueRange {
                     min,
                     max,
                     extensible: x2,
                 }),
             ) => union_single_and_range(v, min.as_ref(), char_set, max.as_ref(), *x1, x2),
             (
-                SubtypeElement::ValueRange {
+                SubtypeElements::ValueRange {
                     min: min1,
                     max: max1,
                     extensible: x1,
                 },
-                Some(SubtypeElement::ValueRange {
+                Some(SubtypeElements::ValueRange {
                     min: min2,
                     max: max2,
                     extensible: x2,
@@ -765,7 +767,7 @@ fn fold_constraint_set(
                 let max = compare_optional_asn1values(max1.as_ref(), max2.as_ref(), |m1, m2| {
                     m1.max(m2, char_set)
                 })?;
-                Ok(Some(SubtypeElement::ValueRange {
+                Ok(Some(SubtypeElements::ValueRange {
                     min,
                     max,
                     extensible: *x1 || x2,
@@ -790,14 +792,14 @@ fn intersect_single_and_range(
     x1: bool,
     x2: bool,
     char_set: Option<&BTreeMap<usize, char>>,
-) -> Result<Option<SubtypeElement>, GrammarError> {
+) -> Result<Option<SubtypeElements>, GrammarError> {
     match (value, min, max, x1 || x2, char_set) {
         (ASN1Value::Integer(_), _, Some(ASN1Value::String(_)), _, Some(_))
         | (ASN1Value::Integer(_), Some(ASN1Value::String(_)), _, _, Some(_)) => {
             if x2 {
                 Ok(None)
             } else {
-                Ok(Some(SubtypeElement::ValueRange {
+                Ok(Some(SubtypeElements::ValueRange {
                     min: min.cloned(),
                     max: max.cloned(),
                     extensible: false,
@@ -809,7 +811,7 @@ fn intersect_single_and_range(
             if x1 {
                 Ok(None)
             } else {
-                Ok(Some(SubtypeElement::SingleValue {
+                Ok(Some(SubtypeElements::SingleValue {
                     value: value.clone(),
                     extensible: false,
                 }))
@@ -817,20 +819,20 @@ fn intersect_single_and_range(
         }
         (ASN1Value::Integer(_), _, Some(ASN1Value::String(_)), _, None)
         | (ASN1Value::Integer(_), Some(ASN1Value::String(_)), _, _, None) => {
-            Ok(Some(SubtypeElement::SingleValue {
+            Ok(Some(SubtypeElements::SingleValue {
                 value: value.clone(),
                 extensible: x1,
             }))
         }
         (ASN1Value::String(_), Some(ASN1Value::Integer(_)), _, _, None)
         | (ASN1Value::String(_), _, Some(ASN1Value::Integer(_)), _, None) => {
-            Ok(Some(SubtypeElement::ValueRange {
+            Ok(Some(SubtypeElements::ValueRange {
                 min: min.cloned(),
                 max: max.cloned(),
                 extensible: x2,
             }))
         }
-        (ASN1Value::Integer(v), _, _, extensible, _) => Ok(Some(SubtypeElement::SingleValue {
+        (ASN1Value::Integer(v), _, _, extensible, _) => Ok(Some(SubtypeElements::SingleValue {
             value: ASN1Value::Integer(*v),
             extensible,
         })),
@@ -848,7 +850,7 @@ fn intersect_single_and_range(
                 .iter()
                 .max_by(|(_, a), (_, b)| a.cmp(b))
                 .map(|(c, _)| ASN1Value::String(format!("{c}")));
-            Ok(Some(SubtypeElement::ValueRange {
+            Ok(Some(SubtypeElements::ValueRange {
                 min: compare_optional_asn1values(s_min.as_ref(), min, |a, b| a.max(b, char_set))?,
                 max: compare_optional_asn1values(s_max.as_ref(), max, |a, b| a.min(b, char_set))?,
                 extensible: false,
@@ -871,13 +873,13 @@ fn union_single_and_range(
     max: Option<&ASN1Value>,
     x1: bool,
     x2: bool,
-) -> Result<Option<SubtypeElement>, GrammarError> {
+) -> Result<Option<SubtypeElements>, GrammarError> {
     match (v, min, max, x1 || x2, char_set) {
         (ASN1Value::Integer(_), _, Some(ASN1Value::String(_)), _, _)
         | (ASN1Value::Integer(_), Some(ASN1Value::String(_)), _, _, _)
         | (ASN1Value::String(_), Some(ASN1Value::Integer(_)), _, _, _)
         | (ASN1Value::String(_), _, Some(ASN1Value::Integer(_)), _, _) => Ok(None),
-        (ASN1Value::Integer(_), _, _, extensible, _) => Ok(Some(SubtypeElement::ValueRange {
+        (ASN1Value::Integer(_), _, _, extensible, _) => Ok(Some(SubtypeElements::ValueRange {
             min: compare_optional_asn1values(Some(v), min, |a, b| a.min(b, char_set))?,
             max: compare_optional_asn1values(Some(v), max, |a, b| a.max(b, char_set))?,
             extensible,
@@ -896,7 +898,7 @@ fn union_single_and_range(
                 .iter()
                 .max_by(|(_, a), (_, b)| a.cmp(b))
                 .map(|(c, _)| ASN1Value::String(format!("{c}")));
-            Ok(Some(SubtypeElement::ValueRange {
+            Ok(Some(SubtypeElements::ValueRange {
                 min: compare_optional_asn1values(s_min.as_ref(), min, |a, b| a.min(b, char_set))?,
                 max: compare_optional_asn1values(s_max.as_ref(), max, |a, b| a.max(b, char_set))?,
                 extensible: false,
@@ -935,9 +937,9 @@ mod tests {
     fn initializes_per_visible_alphabet_from_single_value() {
         assert_eq!(
             PerVisibleAlphabetConstraints::try_new(
-                &Constraint::SubtypeConstraint(ElementSet {
+                &Constraint::Subtype(ElementSetSpecs {
                     extensible: false,
-                    set: ElementOrSetOperation::Element(SubtypeElement::SingleValue {
+                    set: ElementOrSetOperation::Element(SubtypeElements::SingleValue {
                         value: ASN1Value::String("ABCDEF".to_owned()),
                         extensible: false
                     })
@@ -964,9 +966,9 @@ mod tests {
         );
         assert_eq!(
             PerVisibleAlphabetConstraints::try_new(
-                &Constraint::SubtypeConstraint(ElementSet {
+                &Constraint::Subtype(ElementSetSpecs {
                     extensible: false,
-                    set: ElementOrSetOperation::Element(SubtypeElement::SingleValue {
+                    set: ElementOrSetOperation::Element(SubtypeElements::SingleValue {
                         value: ASN1Value::String("132".to_owned()),
                         extensible: false
                     })
@@ -992,9 +994,9 @@ mod tests {
     fn initializes_per_visible_alphabet_from_range_value() {
         assert_eq!(
             PerVisibleAlphabetConstraints::try_new(
-                &Constraint::SubtypeConstraint(ElementSet {
+                &Constraint::Subtype(ElementSetSpecs {
                     extensible: false,
-                    set: ElementOrSetOperation::Element(SubtypeElement::ValueRange {
+                    set: ElementOrSetOperation::Element(SubtypeElements::ValueRange {
                         min: Some(ASN1Value::String("A".to_owned())),
                         max: Some(ASN1Value::String("F".to_owned())),
                         extensible: false
@@ -1018,9 +1020,9 @@ mod tests {
         );
         assert_eq!(
             PerVisibleAlphabetConstraints::try_new(
-                &Constraint::SubtypeConstraint(ElementSet {
+                &Constraint::Subtype(ElementSetSpecs {
                     extensible: false,
-                    set: ElementOrSetOperation::Element(SubtypeElement::ValueRange {
+                    set: ElementOrSetOperation::Element(SubtypeElements::ValueRange {
                         min: None,
                         max: Some(ASN1Value::String("3".to_owned())),
                         extensible: false
@@ -1049,13 +1051,13 @@ mod tests {
         assert_eq!(
             fold_constraint_set(
                 &SetOperation {
-                    base: SubtypeElement::SingleValue {
+                    base: SubtypeElements::SingleValue {
                         value: ASN1Value::String("ABC".into()),
                         extensible: false
                     },
                     operator: SetOperator::Intersection,
                     operant: Box::new(ElementOrSetOperation::Element(
-                        SubtypeElement::SingleValue {
+                        SubtypeElements::SingleValue {
                             value: ASN1Value::String("CDE".into()),
                             extensible: false
                         }
@@ -1065,7 +1067,7 @@ mod tests {
             )
             .unwrap()
             .unwrap(),
-            SubtypeElement::SingleValue {
+            SubtypeElements::SingleValue {
                 value: ASN1Value::String("C".into()),
                 extensible: false
             }
@@ -1073,13 +1075,13 @@ mod tests {
         assert_eq!(
             fold_constraint_set(
                 &SetOperation {
-                    base: SubtypeElement::SingleValue {
+                    base: SubtypeElements::SingleValue {
                         value: ASN1Value::String("ABC".into()),
                         extensible: false
                     },
                     operator: SetOperator::Union,
                     operant: Box::new(ElementOrSetOperation::Element(
-                        SubtypeElement::SingleValue {
+                        SubtypeElements::SingleValue {
                             value: ASN1Value::String("CDE".into()),
                             extensible: false
                         }
@@ -1089,7 +1091,7 @@ mod tests {
             )
             .unwrap()
             .unwrap(),
-            SubtypeElement::SingleValue {
+            SubtypeElements::SingleValue {
                 value: ASN1Value::String("CDEAB".into()),
                 extensible: false
             }
@@ -1101,14 +1103,14 @@ mod tests {
         assert_eq!(
             fold_constraint_set(
                 &SetOperation {
-                    base: SubtypeElement::ValueRange {
+                    base: SubtypeElements::ValueRange {
                         min: Some(ASN1Value::String("A".into())),
                         max: Some(ASN1Value::String("C".into())),
                         extensible: false
                     },
                     operator: SetOperator::Intersection,
                     operant: Box::new(ElementOrSetOperation::Element(
-                        SubtypeElement::SingleValue {
+                        SubtypeElements::SingleValue {
                             value: ASN1Value::String("CDE".into()),
                             extensible: false
                         }
@@ -1118,7 +1120,7 @@ mod tests {
             )
             .unwrap()
             .unwrap(),
-            SubtypeElement::ValueRange {
+            SubtypeElements::ValueRange {
                 min: Some(ASN1Value::String("C".into())),
                 max: Some(ASN1Value::String("C".into())),
                 extensible: false
@@ -1127,14 +1129,14 @@ mod tests {
         assert_eq!(
             fold_constraint_set(
                 &SetOperation {
-                    base: SubtypeElement::ValueRange {
+                    base: SubtypeElements::ValueRange {
                         min: Some(ASN1Value::String("A".into())),
                         max: Some(ASN1Value::String("C".into())),
                         extensible: false
                     },
                     operator: SetOperator::Union,
                     operant: Box::new(ElementOrSetOperation::Element(
-                        SubtypeElement::SingleValue {
+                        SubtypeElements::SingleValue {
                             value: ASN1Value::String("CDE".into()),
                             extensible: false
                         }
@@ -1144,7 +1146,7 @@ mod tests {
             )
             .unwrap()
             .unwrap(),
-            SubtypeElement::ValueRange {
+            SubtypeElements::ValueRange {
                 min: Some(ASN1Value::String("A".into())),
                 max: Some(ASN1Value::String("E".into())),
                 extensible: false
@@ -1157,23 +1159,25 @@ mod tests {
         assert_eq!(
             fold_constraint_set(
                 &SetOperation {
-                    base: SubtypeElement::ValueRange {
+                    base: SubtypeElements::ValueRange {
                         min: Some(ASN1Value::String("A".into())),
                         max: Some(ASN1Value::String("C".into())),
                         extensible: false
                     },
                     operator: SetOperator::Intersection,
-                    operant: Box::new(ElementOrSetOperation::Element(SubtypeElement::ValueRange {
-                        min: Some(ASN1Value::String("C".into())),
-                        max: Some(ASN1Value::String("E".into())),
-                        extensible: false
-                    }))
+                    operant: Box::new(ElementOrSetOperation::Element(
+                        SubtypeElements::ValueRange {
+                            min: Some(ASN1Value::String("C".into())),
+                            max: Some(ASN1Value::String("E".into())),
+                            extensible: false
+                        }
+                    ))
                 },
                 Some(&CharacterStringType::VisibleString.character_set())
             )
             .unwrap()
             .unwrap(),
-            SubtypeElement::ValueRange {
+            SubtypeElements::ValueRange {
                 min: Some(ASN1Value::String("C".into())),
                 max: Some(ASN1Value::String("C".into())),
                 extensible: false
@@ -1182,23 +1186,25 @@ mod tests {
         assert_eq!(
             fold_constraint_set(
                 &SetOperation {
-                    base: SubtypeElement::ValueRange {
+                    base: SubtypeElements::ValueRange {
                         min: Some(ASN1Value::String("A".into())),
                         max: Some(ASN1Value::String("C".into())),
                         extensible: false
                     },
                     operator: SetOperator::Union,
-                    operant: Box::new(ElementOrSetOperation::Element(SubtypeElement::ValueRange {
-                        min: Some(ASN1Value::String("C".into())),
-                        max: Some(ASN1Value::String("E".into())),
-                        extensible: false
-                    }))
+                    operant: Box::new(ElementOrSetOperation::Element(
+                        SubtypeElements::ValueRange {
+                            min: Some(ASN1Value::String("C".into())),
+                            max: Some(ASN1Value::String("E".into())),
+                            extensible: false
+                        }
+                    ))
                 },
                 Some(&CharacterStringType::PrintableString.character_set())
             )
             .unwrap()
             .unwrap(),
-            SubtypeElement::ValueRange {
+            SubtypeElements::ValueRange {
                 min: Some(ASN1Value::String("A".into())),
                 max: Some(ASN1Value::String("E".into())),
                 extensible: false
@@ -1211,13 +1217,13 @@ mod tests {
         assert_eq!(
             fold_constraint_set(
                 &SetOperation {
-                    base: SubtypeElement::SingleValue {
+                    base: SubtypeElements::SingleValue {
                         value: ASN1Value::Integer(4),
                         extensible: false
                     },
                     operator: SetOperator::Intersection,
                     operant: Box::new(ElementOrSetOperation::Element(
-                        SubtypeElement::SingleValue {
+                        SubtypeElements::SingleValue {
                             value: ASN1Value::Integer(4),
                             extensible: true
                         }
@@ -1227,7 +1233,7 @@ mod tests {
             )
             .unwrap()
             .unwrap(),
-            SubtypeElement::SingleValue {
+            SubtypeElements::SingleValue {
                 value: ASN1Value::Integer(4),
                 extensible: true
             }
@@ -1239,14 +1245,14 @@ mod tests {
         assert_eq!(
             fold_constraint_set(
                 &SetOperation {
-                    base: SubtypeElement::ValueRange {
+                    base: SubtypeElements::ValueRange {
                         min: Some(ASN1Value::Integer(-1)),
                         max: Some(ASN1Value::Integer(3)),
                         extensible: false
                     },
                     operator: SetOperator::Intersection,
                     operant: Box::new(ElementOrSetOperation::Element(
-                        SubtypeElement::SingleValue {
+                        SubtypeElements::SingleValue {
                             value: ASN1Value::Integer(2),
                             extensible: false
                         }
@@ -1256,7 +1262,7 @@ mod tests {
             )
             .unwrap()
             .unwrap(),
-            SubtypeElement::SingleValue {
+            SubtypeElements::SingleValue {
                 value: ASN1Value::Integer(2),
                 extensible: false
             }
@@ -1264,14 +1270,14 @@ mod tests {
         assert_eq!(
             fold_constraint_set(
                 &SetOperation {
-                    base: SubtypeElement::ValueRange {
+                    base: SubtypeElements::ValueRange {
                         min: Some(ASN1Value::Integer(-1)),
                         max: Some(ASN1Value::Integer(5)),
                         extensible: false
                     },
                     operator: SetOperator::Union,
                     operant: Box::new(ElementOrSetOperation::Element(
-                        SubtypeElement::SingleValue {
+                        SubtypeElements::SingleValue {
                             value: ASN1Value::Integer(-3),
                             extensible: false
                         }
@@ -1281,7 +1287,7 @@ mod tests {
             )
             .unwrap()
             .unwrap(),
-            SubtypeElement::ValueRange {
+            SubtypeElements::ValueRange {
                 min: Some(ASN1Value::Integer(-3)),
                 max: Some(ASN1Value::Integer(5)),
                 extensible: false
@@ -1294,23 +1300,25 @@ mod tests {
         assert_eq!(
             fold_constraint_set(
                 &SetOperation {
-                    base: SubtypeElement::ValueRange {
+                    base: SubtypeElements::ValueRange {
                         min: Some(ASN1Value::Integer(-2)),
                         max: Some(ASN1Value::Integer(3)),
                         extensible: false
                     },
                     operator: SetOperator::Intersection,
-                    operant: Box::new(ElementOrSetOperation::Element(SubtypeElement::ValueRange {
-                        min: Some(ASN1Value::Integer(-5)),
-                        max: Some(ASN1Value::Integer(1)),
-                        extensible: false
-                    }))
+                    operant: Box::new(ElementOrSetOperation::Element(
+                        SubtypeElements::ValueRange {
+                            min: Some(ASN1Value::Integer(-5)),
+                            max: Some(ASN1Value::Integer(1)),
+                            extensible: false
+                        }
+                    ))
                 },
                 None
             )
             .unwrap()
             .unwrap(),
-            SubtypeElement::ValueRange {
+            SubtypeElements::ValueRange {
                 min: Some(ASN1Value::Integer(-2)),
                 max: Some(ASN1Value::Integer(1)),
                 extensible: false
@@ -1319,23 +1327,25 @@ mod tests {
         assert_eq!(
             fold_constraint_set(
                 &SetOperation {
-                    base: SubtypeElement::ValueRange {
+                    base: SubtypeElements::ValueRange {
                         min: Some(ASN1Value::Integer(-2)),
                         max: Some(ASN1Value::Integer(3)),
                         extensible: false
                     },
                     operator: SetOperator::Union,
-                    operant: Box::new(ElementOrSetOperation::Element(SubtypeElement::ValueRange {
-                        min: Some(ASN1Value::Integer(-1)),
-                        max: Some(ASN1Value::Integer(5)),
-                        extensible: false
-                    }))
+                    operant: Box::new(ElementOrSetOperation::Element(
+                        SubtypeElements::ValueRange {
+                            min: Some(ASN1Value::Integer(-1)),
+                            max: Some(ASN1Value::Integer(5)),
+                            extensible: false
+                        }
+                    ))
                 },
                 None
             )
             .unwrap()
             .unwrap(),
-            SubtypeElement::ValueRange {
+            SubtypeElements::ValueRange {
                 min: Some(ASN1Value::Integer(-2)),
                 max: Some(ASN1Value::Integer(5)),
                 extensible: false
@@ -1346,13 +1356,13 @@ mod tests {
     #[test]
     fn folds_single_value_mixed_constraints() {
         let set_op = |op: SetOperator| SetOperation {
-            base: SubtypeElement::SingleValue {
+            base: SubtypeElements::SingleValue {
                 value: ASN1Value::Integer(4),
                 extensible: false,
             },
             operator: op,
             operant: Box::new(ElementOrSetOperation::Element(
-                SubtypeElement::SingleValue {
+                SubtypeElements::SingleValue {
                     value: ASN1Value::String("abc".into()),
                     extensible: false,
                 },
@@ -1362,7 +1372,7 @@ mod tests {
             fold_constraint_set(&set_op(SetOperator::Intersection), None)
                 .unwrap()
                 .unwrap(),
-            SubtypeElement::SingleValue {
+            SubtypeElements::SingleValue {
                 value: ASN1Value::Integer(4),
                 extensible: false
             }
@@ -1374,7 +1384,7 @@ mod tests {
             )
             .unwrap()
             .unwrap(),
-            SubtypeElement::SingleValue {
+            SubtypeElements::SingleValue {
                 value: ASN1Value::String("abc".into()),
                 extensible: false
             }
@@ -1396,14 +1406,14 @@ mod tests {
     #[test]
     fn folds_range_value_mixed_constraints() {
         let set_op = |op| SetOperation {
-            base: SubtypeElement::ValueRange {
+            base: SubtypeElements::ValueRange {
                 min: Some(ASN1Value::Integer(-1)),
                 max: Some(ASN1Value::Integer(3)),
                 extensible: false,
             },
             operator: op,
             operant: Box::new(ElementOrSetOperation::Element(
-                SubtypeElement::SingleValue {
+                SubtypeElements::SingleValue {
                     value: ASN1Value::String("ABC".into()),
                     extensible: false,
                 },
@@ -1416,7 +1426,7 @@ mod tests {
             )
             .unwrap()
             .unwrap(),
-            SubtypeElement::SingleValue {
+            SubtypeElements::SingleValue {
                 value: ASN1Value::String("ABC".into()),
                 extensible: false,
             }
@@ -1433,7 +1443,7 @@ mod tests {
             fold_constraint_set(&set_op(SetOperator::Intersection), None)
                 .unwrap()
                 .unwrap(),
-            SubtypeElement::ValueRange {
+            SubtypeElements::ValueRange {
                 min: Some(ASN1Value::Integer(-1)),
                 max: Some(ASN1Value::Integer(3)),
                 extensible: false,
@@ -1448,17 +1458,19 @@ mod tests {
     #[test]
     fn folds_range_values_mixed_constraints() {
         let set_op = |op| SetOperation {
-            base: SubtypeElement::ValueRange {
+            base: SubtypeElements::ValueRange {
                 min: Some(ASN1Value::Integer(-2)),
                 max: Some(ASN1Value::Integer(3)),
                 extensible: false,
             },
             operator: op,
-            operant: Box::new(ElementOrSetOperation::Element(SubtypeElement::ValueRange {
-                min: Some(ASN1Value::String("A".into())),
-                max: Some(ASN1Value::String("C".into())),
-                extensible: false,
-            })),
+            operant: Box::new(ElementOrSetOperation::Element(
+                SubtypeElements::ValueRange {
+                    min: Some(ASN1Value::String("A".into())),
+                    max: Some(ASN1Value::String("C".into())),
+                    extensible: false,
+                },
+            )),
         };
         assert_eq!(
             fold_constraint_set(
@@ -1467,7 +1479,7 @@ mod tests {
             )
             .unwrap()
             .unwrap(),
-            SubtypeElement::ValueRange {
+            SubtypeElements::ValueRange {
                 min: Some(ASN1Value::String("A".into())),
                 max: Some(ASN1Value::String("C".into())),
                 extensible: false,
@@ -1477,7 +1489,7 @@ mod tests {
             fold_constraint_set(&set_op(SetOperator::Intersection), None)
                 .unwrap()
                 .unwrap(),
-            SubtypeElement::ValueRange {
+            SubtypeElements::ValueRange {
                 min: Some(ASN1Value::Integer(-2)),
                 max: Some(ASN1Value::Integer(3)),
                 extensible: false,

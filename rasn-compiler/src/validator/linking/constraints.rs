@@ -9,43 +9,43 @@ impl Constraint {
         tlds: &BTreeMap<String, ToplevelDefinition>,
     ) -> Result<(), GrammarError> {
         match self {
-            Constraint::SubtypeConstraint(t) => t.set.link_cross_reference(identifier, tlds),
+            Constraint::Subtype(t) => t.set.link_cross_reference(identifier, tlds),
             _ => Ok(()),
         }
     }
 
     pub(super) fn has_cross_reference(&self) -> bool {
         match self {
-            Self::SubtypeConstraint(c) => c.set.has_cross_reference(),
+            Self::Subtype(c) => c.set.has_cross_reference(),
             Self::Parameter(_) => true,
             _ => false,
         }
     }
 }
 
-impl SubtypeElement {
+impl SubtypeElements {
     pub(super) fn link_cross_reference(
         &mut self,
         identifier: &String,
         tlds: &BTreeMap<String, ToplevelDefinition>,
     ) -> Result<(), GrammarError> {
         match self {
-            SubtypeElement::SingleValue {
+            SubtypeElements::SingleValue {
                 value,
                 extensible: _,
             } => {
                 value.link_elsewhere_declared(identifier, tlds)?;
             }
-            SubtypeElement::PermittedAlphabet(e) => {
+            SubtypeElements::PermittedAlphabet(e) => {
                 e.link_cross_reference(identifier, tlds)?;
             }
-            SubtypeElement::ContainedSubtype {
+            SubtypeElements::ContainedSubtype {
                 subtype,
                 extensible: _,
             } => {
                 subtype.link_subtype_constraint(tlds)?;
             }
-            SubtypeElement::ValueRange {
+            SubtypeElements::ValueRange {
                 min,
                 max,
                 extensible: _,
@@ -57,18 +57,18 @@ impl SubtypeElement {
                     .map(|m| m.link_elsewhere_declared(identifier, tlds))
                     .transpose()?;
             }
-            SubtypeElement::SizeConstraint(s) => {
+            SubtypeElements::SizeConstraint(s) => {
                 s.link_cross_reference(identifier, tlds)?;
             }
-            SubtypeElement::TypeConstraint(t) => {
+            SubtypeElements::TypeConstraint(t) => {
                 t.link_constraint_reference(identifier, tlds)?;
             }
-            SubtypeElement::SingleTypeConstraint(constraints) => {
+            SubtypeElements::SingleTypeConstraint(constraints) => {
                 for c in constraints {
                     c.link_cross_reference(identifier, tlds)?;
                 }
             }
-            SubtypeElement::MultipleTypeConstraints(s) => {
+            SubtypeElements::MultipleTypeConstraints(s) => {
                 for b in s.constraints.iter_mut().flat_map(|cc| &mut cc.constraints) {
                     b.link_cross_reference(identifier, tlds)?;
                 }
@@ -80,19 +80,19 @@ impl SubtypeElement {
 
     pub(super) fn has_cross_reference(&self) -> bool {
         match self {
-            SubtypeElement::SingleValue {
+            SubtypeElements::SingleValue {
                 value,
                 extensible: _,
             } => value.is_elsewhere_declared(),
-            SubtypeElement::PatternConstraint(_) => false,
-            SubtypeElement::UserDefinedConstraint(_) => false,
-            SubtypeElement::PropertySettings(_) => false,
-            SubtypeElement::PermittedAlphabet(e) => e.has_cross_reference(),
-            SubtypeElement::ContainedSubtype {
+            SubtypeElements::PatternConstraint(_) => false,
+            SubtypeElements::UserDefinedConstraint(_) => false,
+            SubtypeElements::PropertySettings(_) => false,
+            SubtypeElements::PermittedAlphabet(e) => e.has_cross_reference(),
+            SubtypeElements::ContainedSubtype {
                 subtype,
                 extensible: _,
             } => subtype.contains_constraint_reference(),
-            SubtypeElement::ValueRange {
+            SubtypeElements::ValueRange {
                 min,
                 max,
                 extensible: _,
@@ -100,12 +100,12 @@ impl SubtypeElement {
                 min.as_ref().is_some_and(|s| s.is_elsewhere_declared())
                     || max.as_ref().is_some_and(|s| s.is_elsewhere_declared())
             }
-            SubtypeElement::SizeConstraint(s) => s.has_cross_reference(),
-            SubtypeElement::TypeConstraint(t) => t.references_class_by_name(),
-            SubtypeElement::SingleTypeConstraint(c) => {
+            SubtypeElements::SizeConstraint(s) => s.has_cross_reference(),
+            SubtypeElements::TypeConstraint(t) => t.references_class_by_name(),
+            SubtypeElements::SingleTypeConstraint(c) => {
                 c.iter().any(|constraint| constraint.has_cross_reference())
             }
-            SubtypeElement::MultipleTypeConstraints(s) => s
+            SubtypeElements::MultipleTypeConstraints(s) => s
                 .constraints
                 .iter()
                 .any(|cc| cc.constraints.iter().any(|c| c.has_cross_reference())),
