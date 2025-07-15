@@ -52,7 +52,7 @@ jobs:
         working-directory: $HOME/compiler
         run: |
           cargo rustc --manifest-path=rasn-compiler/Cargo.toml --crate-type=cdylib --target=wasm32-unknown-unknown --release
-          cargo install -f wasm-bindgen-cli --version 0.2.92
+          cargo install -f wasm-bindgen-cli --version 0.2.100
           wasm-bindgen --out-dir $HOME/web/src/lib/compiler --target web ./target/wasm32-unknown-unknown/release/rasn_compiler.wasm
 
       - name: Install Page Dependencies
