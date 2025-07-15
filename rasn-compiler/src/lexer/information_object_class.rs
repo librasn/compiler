@@ -12,8 +12,7 @@ use crate::{
     input::{context_boundary, Input},
     intermediate::{
         information_object::*, types::ObjectIdentifier, ASN1Type, DeclarationElsewhere, AMPERSAND,
-        CLASS, COMMA, DEFAULT, DOT, INSTANCE_OF, OPTIONAL, PIPE, TYPE_IDENTIFIER, UNION, UNIQUE,
-        WITH_SYNTAX,
+        CLASS, COMMA, DEFAULT, DOT, INSTANCE_OF, OPTIONAL, TYPE_IDENTIFIER, UNIQUE, WITH_SYNTAX,
     },
     lexer::{
         common::{assignment, comment, skip_ws},
@@ -28,7 +27,7 @@ use super::{
         extension_marker, identifier, in_braces, in_brackets, optional_comma, skip_ws_and_comments,
         uppercase_identifier,
     },
-    constraint::constraint,
+    constraint::{constraints, union_mark},
     error::ParserResult,
     into_inner,
 };
@@ -115,7 +114,7 @@ pub fn instance_of(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
             tag(INSTANCE_OF),
             pair(
                 skip_ws_and_comments(uppercase_identifier),
-                skip_ws_and_comments(constraint),
+                skip_ws_and_comments(constraints),
             ),
         ),
         |(id, constraints)| {
@@ -172,7 +171,7 @@ pub fn object_class_field_type(input: Input<'_>) -> ParserResult<'_, ObjectClass
             char(DOT),
             skip_ws_and_comments(object_field_identifier),
         ))),
-        opt(constraint),
+        opt(constraints),
     ))
     .parse(input)
 }
@@ -188,7 +187,7 @@ pub fn information_object(input: Input<'_>) -> ParserResult<'_, InformationObjec
 pub fn object_set(input: Input<'_>) -> ParserResult<'_, ObjectSet> {
     into(in_braces((
         separated_list0(
-            skip_ws_and_comments(alt((tag(PIPE), tag(UNION)))),
+            skip_ws_and_comments(union_mark),
             skip_ws_and_comments(alt((
                 into(information_object),
                 into(skip_ws_and_comments(identifier)),
@@ -201,7 +200,7 @@ pub fn object_set(input: Input<'_>) -> ParserResult<'_, ObjectSet> {
         opt(skip_ws_and_comments(preceded(
             char(COMMA),
             separated_list1(
-                skip_ws_and_comments(alt((tag(PIPE), tag(UNION)))),
+                skip_ws_and_comments(union_mark),
                 skip_ws_and_comments(alt((
                     into(information_object),
                     into(skip_ws_and_comments(identifier)),

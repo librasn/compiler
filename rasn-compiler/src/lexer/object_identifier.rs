@@ -19,7 +19,7 @@ use nom::{
 
 use super::{
     common::{in_braces, in_parentheses, skip_ws, skip_ws_and_comments, value_reference},
-    constraint::constraint,
+    constraint::constraints,
     error::ParserResult,
     RELATIVE_OID,
 };
@@ -48,7 +48,7 @@ pub fn object_identifier(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
     map(
         into(preceded(
             skip_ws_and_comments(alt((tag(OBJECT_IDENTIFIER), tag(RELATIVE_OID)))),
-            opt(skip_ws_and_comments(constraint)),
+            opt(skip_ws_and_comments(constraints)),
         )),
         ASN1Type::ObjectIdentifier,
     )

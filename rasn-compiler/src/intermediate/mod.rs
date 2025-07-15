@@ -871,81 +871,71 @@ impl ASN1Type {
     pub fn builtin_or_elsewhere(
         parent: Option<&str>,
         identifier: &str,
-        constraints: Option<Vec<Constraint>>,
+        constraints: Vec<Constraint>,
     ) -> ASN1Type {
         match (parent, identifier) {
             (None, NULL) => ASN1Type::Null,
-            (None, BOOLEAN) => ASN1Type::Boolean(Boolean {
-                constraints: constraints.unwrap_or_default(),
-            }),
-            (None, REAL) => ASN1Type::Real(Real {
-                constraints: constraints.unwrap_or_default(),
-            }),
+            (None, BOOLEAN) => ASN1Type::Boolean(Boolean { constraints }),
+            (None, REAL) => ASN1Type::Real(Real { constraints }),
             (None, INTEGER) => ASN1Type::Integer(Integer {
-                constraints: constraints.unwrap_or_default(),
+                constraints,
                 distinguished_values: None,
             }),
             (None, BIT_STRING) => ASN1Type::BitString(BitString {
-                constraints: constraints.unwrap_or_default(),
+                constraints,
                 distinguished_values: None,
             }),
-            (None, OCTET_STRING) => ASN1Type::OctetString(OctetString {
-                constraints: constraints.unwrap_or_default(),
-            }),
-            (None, GENERALIZED_TIME) => ASN1Type::GeneralizedTime(GeneralizedTime {
-                constraints: constraints.unwrap_or_default(),
-            }),
-            (None, UTC_TIME) => ASN1Type::UTCTime(UTCTime {
-                constraints: constraints.unwrap_or_default(),
-            }),
-            (None, OBJECT_IDENTIFIER) => ASN1Type::ObjectIdentifier(ObjectIdentifier {
-                constraints: constraints.unwrap_or_default(),
-            }),
+            (None, OCTET_STRING) => ASN1Type::OctetString(OctetString { constraints }),
+            (None, GENERALIZED_TIME) => ASN1Type::GeneralizedTime(GeneralizedTime { constraints }),
+            (None, UTC_TIME) => ASN1Type::UTCTime(UTCTime { constraints }),
+            (None, OBJECT_IDENTIFIER) => {
+                ASN1Type::ObjectIdentifier(ObjectIdentifier { constraints })
+            }
             (None, BMP_STRING) => ASN1Type::CharacterString(CharacterString {
-                constraints: constraints.unwrap_or_default(),
+                constraints,
                 ty: CharacterStringType::BMPString,
             }),
             (None, UTF8_STRING) => ASN1Type::CharacterString(CharacterString {
-                constraints: constraints.unwrap_or_default(),
+                constraints,
                 ty: CharacterStringType::UTF8String,
             }),
             (None, PRINTABLE_STRING) => ASN1Type::CharacterString(CharacterString {
-                constraints: constraints.unwrap_or_default(),
+                constraints,
                 ty: CharacterStringType::PrintableString,
             }),
             (None, TELETEX_STRING) => ASN1Type::CharacterString(CharacterString {
-                constraints: constraints.unwrap_or_default(),
+                constraints,
                 ty: CharacterStringType::TeletexString,
             }),
             (None, IA5_STRING) => ASN1Type::CharacterString(CharacterString {
-                constraints: constraints.unwrap_or_default(),
+                constraints,
                 ty: CharacterStringType::IA5String,
             }),
             (None, UNIVERSAL_STRING) => ASN1Type::CharacterString(CharacterString {
-                constraints: constraints.unwrap_or_default(),
+                constraints,
                 ty: CharacterStringType::UniversalString,
             }),
             (None, VISIBLE_STRING) => ASN1Type::CharacterString(CharacterString {
-                constraints: constraints.unwrap_or_default(),
+                constraints,
                 ty: CharacterStringType::VisibleString,
             }),
             (None, GENERAL_STRING) => ASN1Type::CharacterString(CharacterString {
-                constraints: constraints.unwrap_or_default(),
+                constraints,
                 ty: CharacterStringType::GeneralString,
             }),
             (None, VIDEOTEX_STRING) => ASN1Type::CharacterString(CharacterString {
-                constraints: constraints.unwrap_or_default(),
+                constraints,
                 ty: CharacterStringType::VideotexString,
             }),
             (None, GRAPHIC_STRING) => ASN1Type::CharacterString(CharacterString {
-                constraints: constraints.unwrap_or_default(),
+                constraints,
                 ty: CharacterStringType::GraphicString,
             }),
             (None, NUMERIC_STRING) => ASN1Type::CharacterString(CharacterString {
-                constraints: constraints.unwrap_or_default(),
+                constraints,
                 ty: CharacterStringType::NumericString,
             }),
-            _ => ASN1Type::ElsewhereDeclaredType((parent, identifier, constraints).into()),
+            _ => ASN1Type::ElsewhereDeclaredType((parent, identifier, Some(constraints)).into()),
         }
     }
 

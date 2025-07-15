@@ -11,7 +11,7 @@ use crate::{input::Input, intermediate::*};
 
 use super::{
     common::*,
-    constraint::constraint,
+    constraint::constraints,
     error::{MiscError, ParserResult},
     util::take_until_and_not,
 };
@@ -126,7 +126,7 @@ pub fn character_string(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
                 tag(BMP_STRING),
                 tag(PRINTABLE_STRING),
             )))),
-            opt(constraint),
+            opt(constraints),
         ),
         |m| ASN1Type::CharacterString(m.into()),
     )
@@ -163,9 +163,9 @@ mod tests {
         assert_eq!(
             character_string(sample).unwrap().1,
             ASN1Type::CharacterString(CharacterString {
-                constraints: vec![Constraint::SubtypeConstraint(ElementSet {
-                    set: ElementOrSetOperation::Element(SubtypeElement::SizeConstraint(Box::new(
-                        ElementOrSetOperation::Element(SubtypeElement::SingleValue {
+                constraints: vec![Constraint::Subtype(ElementSetSpecs {
+                    set: ElementOrSetOperation::Element(SubtypeElements::SizeConstraint(Box::new(
+                        ElementOrSetOperation::Element(SubtypeElements::SingleValue {
                             value: ASN1Value::Integer(8),
                             extensible: false
                         })
@@ -183,9 +183,9 @@ mod tests {
         assert_eq!(
             character_string(sample).unwrap().1,
             ASN1Type::CharacterString(CharacterString {
-                constraints: vec![Constraint::SubtypeConstraint(ElementSet {
-                    set: ElementOrSetOperation::Element(SubtypeElement::SizeConstraint(Box::new(
-                        ElementOrSetOperation::Element(SubtypeElement::ValueRange {
+                constraints: vec![Constraint::Subtype(ElementSetSpecs {
+                    set: ElementOrSetOperation::Element(SubtypeElements::SizeConstraint(Box::new(
+                        ElementOrSetOperation::Element(SubtypeElements::ValueRange {
                             min: Some(ASN1Value::Integer(8)),
                             max: Some(ASN1Value::Integer(18)),
                             extensible: false
@@ -206,9 +206,9 @@ mod tests {
         assert_eq!(
             character_string(sample).unwrap().1,
             ASN1Type::CharacterString(CharacterString {
-                constraints: vec![Constraint::SubtypeConstraint(ElementSet {
-                    set: ElementOrSetOperation::Element(SubtypeElement::SizeConstraint(Box::new(
-                        ElementOrSetOperation::Element(SubtypeElement::SingleValue {
+                constraints: vec![Constraint::Subtype(ElementSetSpecs {
+                    set: ElementOrSetOperation::Element(SubtypeElements::SizeConstraint(Box::new(
+                        ElementOrSetOperation::Element(SubtypeElements::SingleValue {
                             value: ASN1Value::Integer(2),
                             extensible: true
                         })
@@ -226,9 +226,9 @@ mod tests {
         assert_eq!(
             character_string(sample).unwrap().1,
             ASN1Type::CharacterString(CharacterString {
-                constraints: vec![Constraint::SubtypeConstraint(ElementSet {
-                    set: ElementOrSetOperation::Element(SubtypeElement::SizeConstraint(Box::new(
-                        ElementOrSetOperation::Element(SubtypeElement::ValueRange {
+                constraints: vec![Constraint::Subtype(ElementSetSpecs {
+                    set: ElementOrSetOperation::Element(SubtypeElements::SizeConstraint(Box::new(
+                        ElementOrSetOperation::Element(SubtypeElements::ValueRange {
                             min: Some(ASN1Value::Integer(8)),
                             max: Some(ASN1Value::Integer(18)),
                             extensible: true

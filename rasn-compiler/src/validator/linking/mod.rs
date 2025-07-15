@@ -668,7 +668,7 @@ impl ASN1Type {
                 for m in &mut s.members {
                     if let Some(constraints) = m.ty.constraints_mut() {
                         for c in constraints {
-                            if let Constraint::TableConstraint(TableConstraint {
+                            if let Constraint::Table(TableConstraint {
                                 object_set: ObjectSet { values, .. },
                                 ..
                             }) = c

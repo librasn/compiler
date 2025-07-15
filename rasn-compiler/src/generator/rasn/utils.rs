@@ -1357,7 +1357,7 @@ mod tests {
     use quote::quote;
 
     use crate::intermediate::{
-        constraints::ElementSet,
+        constraints::ElementSetSpecs,
         types::{Boolean, Enumeral, Integer},
         AsnTag,
     };
@@ -1451,10 +1451,10 @@ mod tests {
                                 tag: None,
                                 ty: ASN1Type::Integer(Integer {
                                     distinguished_values: None,
-                                    constraints: vec![Constraint::SubtypeConstraint(ElementSet {
+                                    constraints: vec![Constraint::Subtype(ElementSetSpecs {
                             extensible: false,
                             set: crate::intermediate::constraints::ElementOrSetOperation::Element(
-                                crate::intermediate::constraints::SubtypeElement::SingleValue {
+                                crate::intermediate::constraints::SubtypeElements::SingleValue {
                                     value: ASN1Value::Integer(4),
                                     extensible: true
                                 }
@@ -1546,10 +1546,10 @@ is_recursive: false,
                             tag: None,
                             ty: ASN1Type::Integer(Integer {
                                 distinguished_values: None,
-                                constraints: vec![Constraint::SubtypeConstraint(ElementSet {
+                                constraints: vec![Constraint::Subtype(ElementSetSpecs {
                                     extensible: false,
                                     set: crate::intermediate::constraints::ElementOrSetOperation::Element(
-                                        crate::intermediate::constraints::SubtypeElement::SingleValue {
+                                        crate::intermediate::constraints::SubtypeElements::SingleValue {
                                             value: ASN1Value::Integer(4),
                                             extensible: true
                                         }
@@ -1656,11 +1656,11 @@ is_recursive: false,
     fn detects_fixed_octet_string() {
         assert_eq!(
             OctetString {
-                constraints: vec![Constraint::SubtypeConstraint(ElementSet {
+                constraints: vec![Constraint::Subtype(ElementSetSpecs {
                     set: constraints::ElementOrSetOperation::Element(
-                        constraints::SubtypeElement::SizeConstraint(Box::new(
+                        constraints::SubtypeElements::SizeConstraint(Box::new(
                             constraints::ElementOrSetOperation::Element(
-                                constraints::SubtypeElement::SingleValue {
+                                constraints::SubtypeElements::SingleValue {
                                     value: ASN1Value::Integer(4),
                                     extensible: false,
                                 },
@@ -1675,11 +1675,11 @@ is_recursive: false,
         );
         assert_eq!(
             OctetString {
-                constraints: vec![Constraint::SubtypeConstraint(ElementSet {
+                constraints: vec![Constraint::Subtype(ElementSetSpecs {
                     set: constraints::ElementOrSetOperation::Element(
-                        constraints::SubtypeElement::SizeConstraint(Box::new(
+                        constraints::SubtypeElements::SizeConstraint(Box::new(
                             constraints::ElementOrSetOperation::Element(
-                                constraints::SubtypeElement::ValueRange {
+                                constraints::SubtypeElements::ValueRange {
                                     min: Some(ASN1Value::Integer(1)),
                                     max: Some(ASN1Value::Integer(4)),
                                     extensible: false

@@ -446,8 +446,8 @@ impl Validate for CharacterString {
 
 impl Validate for Constraint {
     fn validate(&self) -> Result<(), LinkerError> {
-        if let Constraint::SubtypeConstraint(c) = self {
-            if let ElementOrSetOperation::Element(SubtypeElement::ValueRange {
+        if let Constraint::Subtype(c) = self {
+            if let ElementOrSetOperation::Element(SubtypeElements::ValueRange {
                 min,
                 max,
                 extensible: _,

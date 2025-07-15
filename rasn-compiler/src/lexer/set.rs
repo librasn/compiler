@@ -5,7 +5,7 @@ use nom::{
 
 use crate::intermediate::*;
 
-use super::{common::optional_comma, constraint::constraint, sequence::sequence_component, *};
+use super::{common::optional_comma, constraint::constraints, sequence::sequence_component, *};
 
 /// Tries to parse an ASN1 SET
 ///
@@ -33,7 +33,7 @@ pub fn set(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
                         optional_comma,
                     ))),
                 )),
-                opt(constraint),
+                opt(constraints),
             ),
         ),
         |m| ASN1Type::Set(m.into()),

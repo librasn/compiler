@@ -7,7 +7,7 @@ use nom::{
 
 use crate::{input::Input, intermediate::*};
 
-use super::{common::*, constraint::constraint, error::ParserResult};
+use super::{common::*, constraint::constraints, error::ParserResult};
 
 /// Tries to parse an ASN1 OCTET STRING
 ///
@@ -19,7 +19,7 @@ use super::{common::*, constraint::constraint, error::ParserResult};
 /// If the match fails, the lexer will not consume the input and will return an error.
 pub fn octet_string(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
     map(
-        preceded(skip_ws_and_comments(tag(OCTET_STRING)), opt(constraint)),
+        preceded(skip_ws_and_comments(tag(OCTET_STRING)), opt(constraints)),
         |m| ASN1Type::OctetString(m.into()),
     )
     .parse(input)
@@ -48,9 +48,9 @@ mod tests {
         assert_eq!(
             octet_string(sample).unwrap().1,
             ASN1Type::OctetString(OctetString {
-                constraints: vec![Constraint::SubtypeConstraint(ElementSet {
-                    set: ElementOrSetOperation::Element(SubtypeElement::SizeConstraint(Box::new(
-                        ElementOrSetOperation::Element(SubtypeElement::SingleValue {
+                constraints: vec![Constraint::Subtype(ElementSetSpecs {
+                    set: ElementOrSetOperation::Element(SubtypeElements::SizeConstraint(Box::new(
+                        ElementOrSetOperation::Element(SubtypeElements::SingleValue {
                             value: ASN1Value::Integer(8),
                             extensible: false
                         })
@@ -67,9 +67,9 @@ mod tests {
         assert_eq!(
             octet_string(sample).unwrap().1,
             ASN1Type::OctetString(OctetString {
-                constraints: vec![Constraint::SubtypeConstraint(ElementSet {
-                    set: ElementOrSetOperation::Element(SubtypeElement::SizeConstraint(Box::new(
-                        ElementOrSetOperation::Element(SubtypeElement::ValueRange {
+                constraints: vec![Constraint::Subtype(ElementSetSpecs {
+                    set: ElementOrSetOperation::Element(SubtypeElements::SizeConstraint(Box::new(
+                        ElementOrSetOperation::Element(SubtypeElements::ValueRange {
                             min: Some(ASN1Value::Integer(8)),
                             max: Some(ASN1Value::Integer(18)),
                             extensible: false
@@ -87,9 +87,9 @@ mod tests {
         assert_eq!(
             octet_string(sample).unwrap().1,
             ASN1Type::OctetString(OctetString {
-                constraints: vec![Constraint::SubtypeConstraint(ElementSet {
-                    set: ElementOrSetOperation::Element(SubtypeElement::SizeConstraint(Box::new(
-                        ElementOrSetOperation::Element(SubtypeElement::SingleValue {
+                constraints: vec![Constraint::Subtype(ElementSetSpecs {
+                    set: ElementOrSetOperation::Element(SubtypeElements::SizeConstraint(Box::new(
+                        ElementOrSetOperation::Element(SubtypeElements::SingleValue {
                             value: ASN1Value::Integer(2),
                             extensible: true
                         })
@@ -106,9 +106,9 @@ mod tests {
         assert_eq!(
             octet_string(sample).unwrap().1,
             ASN1Type::OctetString(OctetString {
-                constraints: vec![Constraint::SubtypeConstraint(ElementSet {
-                    set: ElementOrSetOperation::Element(SubtypeElement::SizeConstraint(Box::new(
-                        ElementOrSetOperation::Element(SubtypeElement::ValueRange {
+                constraints: vec![Constraint::Subtype(ElementSetSpecs {
+                    set: ElementOrSetOperation::Element(SubtypeElements::SizeConstraint(Box::new(
+                        ElementOrSetOperation::Element(SubtypeElements::ValueRange {
                             min: Some(ASN1Value::Integer(8)),
                             max: Some(ASN1Value::Integer(18)),
                             extensible: true

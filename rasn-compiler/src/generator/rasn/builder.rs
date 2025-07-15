@@ -716,7 +716,7 @@ impl Rasn {
                         .concat()
                         .iter()
                         .for_each(|c| {
-                            if let (Constraint::TableConstraint(t), ASN1Type::ObjectClassField(iofr)) = (c, &m.ty) {
+                            if let (Constraint::Table(t), ASN1Type::ObjectClassField(iofr)) = (c, &m.ty) {
                                 let decode_fn = format_ident!("decode_{}", self.to_rust_snake_case(&m.name));
                                 let open_field_name = self.to_rust_snake_case(&m.name);
                                 let identifier = t.linked_fields.iter().map(|l|
