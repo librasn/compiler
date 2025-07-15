@@ -91,7 +91,7 @@ impl Rasn {
             ToplevelDefinition::Macro(_) => Err(GeneratorError {
                 kind: GeneratorErrorType::NotYetInplemented,
                 details: "MACROs are currently unsupported!".to_string(),
-                top_level_declaration: Some(tld),
+                top_level_declaration: Some(Box::new(tld)),
             }),
         }
     }
@@ -430,7 +430,7 @@ impl Rasn {
                     | CharacterStringType::UniversalString => {
                         return Err(GeneratorError::new(
                             None,
-                            &format!("{:?} values are currently unsupported", cs_ty),
+                            &format!("{cs_ty:?} values are currently unsupported"),
                             GeneratorErrorType::NotYetInplemented,
                         ))
                     }
@@ -881,7 +881,9 @@ impl Rasn {
                         .get(index)
                         .map(|f| f.identifier.identifier())
                         .ok_or_else(|| GeneratorError {
-                            top_level_declaration: Some(ToplevelDefinition::Object(tld.clone())),
+                            top_level_declaration: Some(Box::new(ToplevelDefinition::Object(
+                                tld.clone(),
+                            ))),
                             details: "Could not find class field for index.".into(),
                             kind: GeneratorErrorType::SyntaxMismatch,
                         })?;
@@ -960,7 +962,7 @@ impl Rasn {
                         } => self.to_rust_title_case(ref_id),
                         _ => format_ident!("{field_enum_name}_{index}").to_token_stream(),
                     };
-                    if ty.constraints().map_or(true, |c| c.is_empty()) {
+                    if ty.constraints().is_none_or(|c| c.is_empty()) {
                         ids.push((variant_name, type_id, identifier_value));
                         inner_types.push(TokenStream::new());
                     } else {

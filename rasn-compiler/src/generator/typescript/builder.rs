@@ -171,7 +171,7 @@ impl Typescript {
                             to_jer_identifier(&en.name),
                             en.name,
                             en.description
-                                .map_or(String::default(), |d| format!("//{}", d)),
+                                .map_or(String::default(), |d| format!("//{d}")),
                         ));
                         acc
                     }),

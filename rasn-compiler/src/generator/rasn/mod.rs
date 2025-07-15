@@ -283,15 +283,9 @@ impl Rasn {
         match String::from_utf8(output) {
             Ok(bindings) => match status.code() {
                 Some(0) => Ok(bindings),
-                Some(2) => Err(Box::new(io::Error::new(
-                    io::ErrorKind::Other,
-                    "Rustfmt parsing errors.".to_string(),
-                ))),
+                Some(2) => Err(Box::new(io::Error::other("Rustfmt parsing errors."))),
                 Some(3) => Ok(bindings),
-                _ => Err(Box::new(io::Error::new(
-                    io::ErrorKind::Other,
-                    "Internal rustfmt error".to_string(),
-                ))),
+                _ => Err(Box::new(io::Error::other("Internal rustfmt error"))),
             },
             _ => Ok(bindings),
         }
