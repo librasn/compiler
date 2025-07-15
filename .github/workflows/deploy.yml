@@ -1,0 +1,73 @@
+name: deploy
+
+permissions:
+  pull-requests: write
+  contents: write
+
+on:
+  push:
+    tags:
+      - rasn-compiler-v*
+  workflow_dispatch:
+    inputs:
+      git_ref:
+        description: The branch, tag or SHA to checkout
+        type: string
+        default: "main"
+
+jobs:
+  release-rasn-compiler:
+    name: Release rasn compiler
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set Tag Variable
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+        
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ inputs.git_ref }}
+          path: $HOME/compiler
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchains: wasm32-unknown-unknown
+        
+      - name: Checkout Pages Src
+        uses: actions/checkout@v4
+        with:
+          repository: librasn/librasn.github.io
+          path: $HOME/web
+      
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: $HOME/web/package-lock.json
+
+      - name: Build for WASM
+        working-directory: $HOME/compiler
+        run: |
+          cargo rustc --manifest-path=rasn-compiler/Cargo.toml --crate-type=cdylib --target=wasm32-unknown-unknown --release
+          cargo install -f wasm-bindgen-cli --version 0.2.92
+          wasm-bindgen --out-dir $HOME/web/src/lib/compiler --target web ./target/wasm32-unknown-unknown/release/rasn_compiler.wasm
+
+      - name: Install Page Dependencies
+        working-directory: $HOME/web
+        run: npm install
+
+      - name: Build Page
+        working-directory: $HOME/web
+        run: npm run build
+
+      - name: Push WASM Updates
+        working-directory: $HOME/web
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add .
+          git commit -m "chore: release $RELEASE_VERSION"
+          git push
