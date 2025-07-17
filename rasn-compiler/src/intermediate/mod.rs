@@ -486,6 +486,43 @@ pub struct ObjectIdentifierArc {
     pub number: Option<u128>,
 }
 
+impl ObjectIdentifierArc {
+    const ITU_T: u128 = 0;
+    const ISO: u128 = 1;
+    const JOINT_ISO_ITU_T: u128 = 2;
+    const JOINT_ISO_CCITT: u128 = 2;
+    const RECOMMENDATION: u128 = 0;
+    const QUESTION: u128 = 1;
+    const ADMINISTRATION: u128 = 2;
+    const NETWORK_OPERATOR: u128 = 3;
+    const ITU_T_IDENTIFIED_ORGANIZATION: u128 = 4;
+    const R_RECOMMENDATION: u128 = 5;
+    const STANDARD: u128 = 0;
+    const REGISTRATION_AUTHORITY: u128 = 1;
+    const MEMBER_BODY: u128 = 2;
+    const ISO_IDENTIFIED_ORGANIZATION: u128 = 3;
+
+    pub(crate) fn well_known(name: Option<&String>, root: Option<u8>) -> Option<u128> {
+        match (root, name.map(|s| s.as_str())) {
+            (_, Some("itu-t")) => Some(Self::ITU_T),
+            (_, Some("iso")) => Some(Self::ISO),
+            (_, Some("joint-iso-itu-t")) => Some(Self::JOINT_ISO_ITU_T),
+            (_, Some("joint-iso-ccitt")) => Some(Self::JOINT_ISO_CCITT),
+            (Some(0), Some("recommendation")) => Some(Self::RECOMMENDATION),
+            (Some(0), Some("question")) => Some(Self::QUESTION),
+            (Some(0), Some("administration")) => Some(Self::ADMINISTRATION),
+            (Some(0), Some("network-operator")) => Some(Self::NETWORK_OPERATOR),
+            (Some(0), Some("identified-organization")) => Some(Self::ITU_T_IDENTIFIED_ORGANIZATION),
+            (Some(0), Some("r-recommendation")) => Some(Self::R_RECOMMENDATION),
+            (Some(1), Some("standard")) => Some(Self::STANDARD),
+            (Some(1), Some("registration-authority")) => Some(Self::REGISTRATION_AUTHORITY),
+            (Some(1), Some("member-body")) => Some(Self::MEMBER_BODY),
+            (Some(1), Some("identified-organization")) => Some(Self::ISO_IDENTIFIED_ORGANIZATION),
+            _ => None,
+        }
+    }
+}
+
 impl From<u128> for ObjectIdentifierArc {
     fn from(value: u128) -> Self {
         Self {

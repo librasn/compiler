@@ -862,3 +862,39 @@ e2e_pdu!(
         #[rasn(delegate, size("1..=255"), from("\u{2d}", "\u{2e}", "\u{30}..=\u{39}", "\u{41}..=\u{5a}", "\u{61}..=\u{7a}"))]
         pub struct FQDN(pub VisibleString);                             "#
 );
+
+e2e_pdu!(
+    oid_value,
+    r#"organizationRoot OBJECT IDENTIFIER ::= { iso(1) identified-organization(3) teletrust(36) gematik(15) organization(2) legal-entity(3) type(1) }"#,
+    r#"
+        pub static ORGANIZATION_ROOT: LazyLock<ObjectIdentifier> = LazyLock::new(||
+            Oid::const_new(&[1u32, 3u32, 36u32, 15u32, 2u32, 3u32, 1u32]).to_owned()
+        );
+    "#
+);
+
+e2e_pdu!(
+    oid_value_with_well_known_references,
+    r#"organizationRoot OBJECT IDENTIFIER ::= { iso identified-organization teletrust(36) gematik(15) organization(2) legal-entity(3) type(1) }"#,
+    r#"
+        pub static ORGANIZATION_ROOT: LazyLock<ObjectIdentifier> = LazyLock::new(||
+            Oid::const_new(&[1u32, 3u32, 36u32, 15u32, 2u32, 3u32, 1u32]).to_owned()
+        );
+    "#
+);
+
+e2e_pdu!(
+    oid_value_with_local_references,
+    r#"
+        organizationRoot OBJECT IDENTIFIER ::= { iso identified-organization teletrust(36) gematik(15) organization(2) legal-entity(3) type(1) }
+        oidMedicalPractice OBJECT IDENTIFIER ::= { organizationRoot medicalPractice(2) }
+    "#,
+    r#"
+        pub static OID_MEDICAL_PRACTICE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+            Oid::new(&[&***ORGANIZATION_ROOT, &[2u32]].concat()).unwrap().to_owned()
+        });
+        pub static ORGANIZATION_ROOT: LazyLock<ObjectIdentifier> = LazyLock::new(||
+            Oid::const_new(&[1u32, 3u32, 36u32, 15u32, 2u32, 3u32, 1u32]).to_owned()
+        );
+    "#
+);
