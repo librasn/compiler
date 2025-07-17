@@ -6,6 +6,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.14.0](https://github.com/librasn/compiler/compare/rasn-compiler-v0.13.0...rasn-compiler-v0.14.0) - 2025-07-17
+
+### Added
+
+- *(rasn-generator)* add support for OID composition
+
+### Other
+
+- Merge pull request #139 from Rawk/no-opt-vec
+- Document and renames to better follow specification
+
 ## [0.13.0](https://github.com/librasn/compiler/compare/rasn-compiler-v0.12.0...rasn-compiler-v0.13.0) - 2025-07-10
 
 ### Added
