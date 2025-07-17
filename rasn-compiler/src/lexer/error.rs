@@ -133,7 +133,7 @@ pub struct ReportData {
 impl From<ErrorTree<'_>> for ReportData {
     fn from(value: ErrorTree<'_>) -> Self {
         match value {
-            ErrorTree::Leaf { input, kind } => Self {
+            ErrorTree::Base { input, kind } => Self {
                 context_start_line: input.context_start_line(),
                 context_start_offset: input.context_start_offset(),
                 line: input.line(),
@@ -145,12 +145,10 @@ impl From<ErrorTree<'_>> for ReportData {
                     ErrorKind::External(e) => e,
                 },
             },
-            ErrorTree::Branch { tip, .. } => Self::from(*tip),
-            ErrorTree::Fork { mut branches } => Self::from(
-                branches
-                    .pop_front()
-                    .expect("Error Tree branch not to be empty."),
-            ),
+            ErrorTree::Stack { base, .. } => Self::from(*base),
+            ErrorTree::Alt(mut alts) => {
+                Self::from(alts.pop_front().expect("ErrorTree::Alt not to be empty."))
+            }
         }
     }
 }
@@ -171,17 +169,15 @@ impl Display for MiscError {
 /// `GenericErrorTree`.
 #[derive(Debug, Clone, PartialEq)]
 pub enum ErrorTree<'a> {
-    Leaf {
+    Base {
         input: Input<'a>,
         kind: ErrorKind,
     },
-    Branch {
-        tip: Box<Self>,
-        links: Vec<ErrorLink<'a>>,
+    Stack {
+        base: Box<Self>,
+        contexts: Vec<StackContext<'a>>,
     },
-    Fork {
-        branches: VecDeque<Self>,
-    },
+    Alt(VecDeque<Self>),
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -191,7 +187,7 @@ pub enum ErrorKind {
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct ErrorLink<'a> {
+pub struct StackContext<'a> {
     input: Input<'a>,
     context: Context,
 }
@@ -202,108 +198,97 @@ pub enum Context {
     ErrorKind(ErrorKind),
 }
 
-#[derive(Debug, Clone, PartialEq)]
-pub struct ErrorLeaf<'a> {
-    input: Input<'a>,
-    kind: ErrorKind,
-}
-
 impl<'a> ErrorTree<'a> {
     pub fn into_input(self) -> Input<'a> {
         match self {
-            ErrorTree::Leaf { input, .. } => input,
-            ErrorTree::Branch { mut links, .. } => {
-                links
+            ErrorTree::Base { input, .. } => input,
+            ErrorTree::Stack { mut contexts, .. } => {
+                contexts
                     .pop()
-                    .expect("error tree branch to have at least one link")
+                    .expect("ErrorTree::Stack to have at least one context")
                     .input
             }
-            ErrorTree::Fork { mut branches } => branches
+            ErrorTree::Alt(mut alts) => alts
                 .pop_back()
-                .expect("error tree branch to have at least one link")
+                .expect("ErrorTree:Alt to have at least one alternative")
                 .into_input(),
         }
     }
 
     pub fn is_eof_error(&self) -> bool {
         match self {
-            ErrorTree::Leaf { kind, .. } => kind == &ErrorKind::Nom(nom::error::ErrorKind::Eof),
-            ErrorTree::Branch { tip, .. } => tip.is_eof_error(),
-            ErrorTree::Fork { branches } => branches.back().is_some_and(|b| b.is_eof_error()),
+            ErrorTree::Base { kind, .. } => kind == &ErrorKind::Nom(nom::error::ErrorKind::Eof),
+            ErrorTree::Stack { base, .. } => base.is_eof_error(),
+            ErrorTree::Alt(alts) => alts.back().is_some_and(|b| b.is_eof_error()),
         }
     }
 }
 
 impl<'a> ParseError<Input<'a>> for ErrorTree<'a> {
     fn from_error_kind(input: Input<'a>, kind: nom::error::ErrorKind) -> Self {
-        ErrorTree::Leaf {
+        ErrorTree::Base {
             input,
             kind: ErrorKind::Nom(kind),
         }
     }
 
     fn append(input: Input<'a>, kind: nom::error::ErrorKind, other: Self) -> Self {
+        let context = StackContext {
+            input,
+            context: Context::ErrorKind(ErrorKind::Nom(kind)),
+        };
         match other {
-            fork @ ErrorTree::Fork { .. } if kind == nom::error::ErrorKind::Alt => fork,
-            ErrorTree::Branch { mut links, tip } => {
-                links.push(ErrorLink {
-                    input,
-                    context: Context::ErrorKind(ErrorKind::Nom(kind)),
-                });
-                ErrorTree::Branch { tip, links }
+            alt @ ErrorTree::Alt { .. } if kind == nom::error::ErrorKind::Alt => alt,
+            ErrorTree::Stack { mut contexts, base } => {
+                contexts.push(context);
+                ErrorTree::Stack { base, contexts }
             }
-            tip => ErrorTree::Branch {
-                tip: Box::new(tip),
-                links: vec![ErrorLink {
-                    input,
-                    context: Context::ErrorKind(ErrorKind::Nom(kind)),
-                }],
+            base => ErrorTree::Stack {
+                base: Box::new(base),
+                contexts: vec![context],
             },
         }
     }
 
     fn or(self, other: Self) -> Self {
-        let branches = match (self, other) {
-            (ErrorTree::Fork { branches: mut b_1 }, ErrorTree::Fork { branches: mut b_2 }) => {
-                match b_1.capacity() >= b_2.capacity() {
+        let alts = match (self, other) {
+            (ErrorTree::Alt(mut alt1), ErrorTree::Alt(mut alt2)) => {
+                match alt1.capacity() >= alt2.capacity() {
                     true => {
-                        b_1.extend(b_2);
-                        b_1
+                        alt1.extend(alt2);
+                        alt1
                     }
                     false => {
-                        b_2.extend(b_1);
-                        b_2
+                        alt2.extend(alt1);
+                        alt2
                     }
                 }
             }
-            (branch, ErrorTree::Fork { mut branches })
-            | (ErrorTree::Fork { mut branches }, branch) => {
-                branches.push_back(branch);
-                branches
+            (alt, ErrorTree::Alt(mut alts)) | (ErrorTree::Alt(mut alts), alt) => {
+                alts.push_back(alt);
+                alts
             }
-            (branch_1, branch_2) => vec![branch_1, branch_2].into(),
+            (alt1, alt2) => vec![alt1, alt2].into(),
         };
 
-        ErrorTree::Fork { branches }
+        ErrorTree::Alt(alts)
     }
 }
 
 impl<'a> ContextError<Input<'a>> for ErrorTree<'a> {
     fn add_context(input: Input<'a>, context: &'static str, other: Self) -> Self {
+        let context = StackContext {
+            input,
+            context: Context::Name(context),
+        };
         match other {
-            ErrorTree::Branch { tip, mut links } => {
-                links.push(ErrorLink {
-                    input,
-                    context: Context::Name(context),
-                });
-                ErrorTree::Branch { tip, links }
+            ErrorTree::Stack { base, mut contexts } => {
+                contexts.push(context);
+                ErrorTree::Stack { base, contexts }
             }
-            tip => ErrorTree::Branch {
-                tip: Box::new(tip),
-                links: vec![ErrorLink {
-                    input,
-                    context: Context::Name(context),
-                }],
+            base => ErrorTree::Stack {
+                base: Box::new(base),
+                contexts: vec![context],
             },
         }
     }
@@ -311,7 +296,7 @@ impl<'a> ContextError<Input<'a>> for ErrorTree<'a> {
 
 impl<'a, E: Error> FromExternalError<Input<'a>, E> for ErrorTree<'a> {
     fn from_external_error(input: Input<'a>, _: nom::error::ErrorKind, e: E) -> Self {
-        Self::Leaf {
+        Self::Base {
             input,
             kind: ErrorKind::External(e.to_string()),
         }
