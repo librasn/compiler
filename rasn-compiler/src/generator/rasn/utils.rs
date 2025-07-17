@@ -852,24 +852,7 @@ impl Rasn {
             | ASN1Value::ElsewhereDeclaredValue { identifier: e, .. } => {
                 Ok(self.to_rust_const_case(e).to_token_stream())
             }
-            ASN1Value::ObjectIdentifier(oid) => {
-                let arcs = oid
-                    .0
-                    .iter()
-                    .filter_map(|arc| {
-                        arc.number.map(|id| {
-                            u32::try_from(id)
-                                .map(|arc| arc.to_token_stream())
-                                .map_err(|_| GeneratorError {
-                                    top_level_declaration: None,
-                                    details: "OID arc out of u32 range".into(),
-                                    kind: GeneratorErrorType::Unsupported,
-                                })
-                        })
-                    })
-                    .collect::<Result<Vec<_>, _>>()?;
-                Ok(quote!(Oid::const_new(&[#(#arcs),*]).to_owned()))
-            }
+            ASN1Value::ObjectIdentifier(oid) => self.format_oid(oid),
             ASN1Value::Time(t) => match type_name {
                 Some(time_type) => Ok(quote!(#t.parse::<#time_type>().unwrap())),
                 None => Ok(quote!(#t.parse::<_>().unwrap())),
@@ -967,6 +950,71 @@ impl Rasn {
                     || element_tag.is_some()
             }
             _ => false,
+        }
+    }
+
+    pub(crate) fn format_oid(
+        &self,
+        oid: &ObjectIdentifierValue,
+    ) -> Result<TokenStream, GeneratorError> {
+        let arc_to_u32 = |id| {
+            u32::try_from(id)
+                .map(|arc| arc.to_token_stream())
+                .map_err(|_| GeneratorError {
+                    top_level_declaration: None,
+                    details: "OID arc out of u32 range".into(),
+                    kind: GeneratorErrorType::Unsupported,
+                })
+        };
+
+        let root = match oid.0.first().as_ref() {
+            Some(arc) if arc.name == Some("itu-t".into()) || arc.number == Some(0) => Some(0u8),
+            Some(arc) if arc.name == Some("iso".into()) || arc.number == Some(1) => Some(1u8),
+            _ => None,
+        };
+        let resolved_well_known_arcs = oid
+            .0
+            .clone()
+            .into_iter()
+            .map(|mut arc| {
+                if arc.number.is_none() {
+                    arc.number = ObjectIdentifierArc::well_known(arc.name.as_ref(), root);
+                }
+                arc
+            })
+            .collect::<Vec<_>>();
+        let contains_reference = resolved_well_known_arcs
+            .iter()
+            .any(|arc| arc.number.is_none());
+        if contains_reference {
+            let mut concatenated = Vec::new();
+            let mut arcs = Vec::new();
+            for arc in resolved_well_known_arcs.iter() {
+                match (&arc.name, arc.number) {
+                    (_, Some(n)) => arcs.push(arc_to_u32(n)?),
+                    (Some(n), None) => {
+                        if !arcs.is_empty() {
+                            concatenated.push(quote!(&[#(#arcs),*]));
+                        }
+                        arcs = Vec::new();
+                        let name = self.to_rust_const_case(n);
+                        concatenated.push(quote!(&***#name));
+                    }
+                    _ => unreachable!(
+                        "Lexer only parses OID arcs with at least a name or a numeral!"
+                    ),
+                }
+            }
+            if !arcs.is_empty() {
+                concatenated.push(quote!(&[#(#arcs),*]));
+            }
+            Ok(quote!(Oid::new(&[#(#concatenated),*].concat()).unwrap().to_owned()))
+        } else {
+            let arcs = resolved_well_known_arcs
+                .iter()
+                .filter_map(|arc| arc.number.map(arc_to_u32))
+                .collect::<Result<Vec<_>, _>>()?;
+            Ok(quote!(Oid::const_new(&[#(#arcs),*]).to_owned()))
         }
     }
 
@@ -1699,6 +1747,94 @@ is_recursive: false,
             }
             .fixed_size(),
             None
+        );
+    }
+
+    #[test]
+    fn formats_empty_oid() {
+        assert_eq!(
+            quote!(Oid::const_new(&[]).to_owned()).to_string(),
+            Rasn::default()
+                .format_oid(&ObjectIdentifierValue(vec![]))
+                .unwrap()
+                .to_string()
+        );
+    }
+
+    #[test]
+    fn formats_numeric_oid() {
+        assert_eq!(
+            quote!(Oid::const_new(&[42u32, 12u32]).to_owned()).to_string(),
+            Rasn::default()
+                .format_oid(&ObjectIdentifierValue(vec![
+                    ObjectIdentifierArc {
+                        name: Some("identifier".into()),
+                        number: Some(42)
+                    },
+                    ObjectIdentifierArc {
+                        name: None,
+                        number: Some(12)
+                    },
+                ]))
+                .unwrap()
+                .to_string()
+        );
+    }
+
+    #[test]
+    fn formats_oid_with_references() {
+        assert_eq!(
+            quote!(
+                Oid::new(&[&[42u32, 12u32], &***REFERENCE, &[42u32]].concat())
+                    .unwrap()
+                    .to_owned()
+            )
+            .to_string(),
+            Rasn::default()
+                .format_oid(&ObjectIdentifierValue(vec![
+                    ObjectIdentifierArc {
+                        name: Some("identifier".into()),
+                        number: Some(42)
+                    },
+                    ObjectIdentifierArc {
+                        name: None,
+                        number: Some(12)
+                    },
+                    ObjectIdentifierArc {
+                        name: Some("reference".into()),
+                        number: None
+                    },
+                    ObjectIdentifierArc {
+                        name: Some("identifier".into()),
+                        number: Some(42)
+                    },
+                ]))
+                .unwrap()
+                .to_string()
+        );
+    }
+
+    #[test]
+    fn formats_oid_with_well_known_references() {
+        assert_eq!(
+            quote!(Oid::const_new(&[1u32, 2u32, 42u32]).to_owned()).to_string(),
+            Rasn::default()
+                .format_oid(&ObjectIdentifierValue(vec![
+                    ObjectIdentifierArc {
+                        name: Some("iso".into()),
+                        number: None
+                    },
+                    ObjectIdentifierArc {
+                        name: Some("member-body".into()),
+                        number: None
+                    },
+                    ObjectIdentifierArc {
+                        name: Some("identifier".into()),
+                        number: Some(42)
+                    },
+                ]))
+                .unwrap()
+                .to_string()
         );
     }
 }
