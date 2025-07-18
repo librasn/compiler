@@ -1603,7 +1603,7 @@ mod tests {
             ToplevelTypeDefinition {
                 comments: String::new(),
                 tag: None,
-                index: None,
+                module_header: None,
                 name: $name.into(),
                 ty: $ty,
                 parameterization: None,
@@ -1667,7 +1667,7 @@ mod tests {
                 identifier: "BaseChoice".into(),
                 constraints: vec![],
             }),
-            index: None,
+            module_header: None,
             value: ASN1Value::Choice {
                 type_name: None,
                 variant_name: "first".into(),
@@ -1694,7 +1694,7 @@ mod tests {
                         value: Box::new(ASN1Value::Boolean(true))
                     })
                 },
-                index: None
+                module_header: None
             }
         )
     }

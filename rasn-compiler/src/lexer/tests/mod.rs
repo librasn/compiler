@@ -215,7 +215,7 @@ fn parses_toplevel_crossrefering_declaration() {
                 })]
             }),
             tag: None,
-            index: None
+            module_header: None
         }
     );
 }
@@ -255,7 +255,7 @@ fn parses_anonymous_sequence_of_declaration() {
                 }))
             }),
             tag: None,
-            index: None
+            module_header: None
         }
     );
 }
@@ -277,7 +277,7 @@ fn parses_object_set_value() {
         ToplevelInformationDefinition {
             comments: "comments".into(),
             name: "CpmContainers".into(),
-            index: None,
+            module_header: None,
             parameterization: None,
             class: ClassLink::ByName("CPM-CONTAINER-ID-AND-TYPE".into()),
             value: ASN1Information::ObjectSet(ObjectSet {
@@ -341,7 +341,7 @@ fn parses_empty_extensible_object_set() {
         .1,
         ToplevelInformationDefinition {
             comments: "".into(),
-            index: None,
+            module_header: None,
             parameterization: None,
             name: "Reg-AdvisorySpeed".into(),
             class: ClassLink::ByName("REG-EXT-ID-AND-TYPE".into()),
@@ -368,7 +368,7 @@ fn parses_class_declaration() {
         ObjectClassAssignment {
             comments: "".into(),
             name: "REG-EXT-ID-AND-TYPE".into(),
-            index: None,
+            module_header: None,
             parameterization: Parameterization::default(),
             definition: ObjectClassDefn {
                 fields: vec![
@@ -420,7 +420,7 @@ fn parses_parameterized_declaration() {
         .1,
         ToplevelTypeDefinition {
             comments: "".into(),
-            index: None,
+            module_header: None,
             name: "RegionalExtension".into(),
             ty: ASN1Type::Sequence(SequenceOrSet {
                 extensible: None,
@@ -496,7 +496,7 @@ fn parses_choice() {
         .1,
         ToplevelTypeDefinition {
             comments: "".into(),
-            index: None,
+            module_header: None,
             name: "Choice-example".into(),
             ty: ASN1Type::Choice(Choice {
                 extensible: Some(2),
@@ -552,7 +552,7 @@ fn parses_sequence_of_value() {
                 (None, Box::new(ASN1Value::Integer(2))),
                 (None, Box::new(ASN1Value::Integer(3)))
             ]),
-            index: None
+            module_header: None
         },
         top_level_value_declaration(r#"test-Sequence SEQUENCE OF INTEGER ::= { 1, 2, 3 }"#.into())
             .unwrap()

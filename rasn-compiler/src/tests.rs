@@ -151,9 +151,9 @@ fn validator_io(literal: &str) -> (String, String) {
         .into_iter()
         .flat_map(|(header, tlds)| {
             let header_ref = Rc::new(RefCell::new(header));
-            tlds.into_iter().enumerate().map(move |(index, mut tld)| {
+            tlds.into_iter().map(move |mut tld| {
                 tld.apply_tagging_environment(&header_ref.borrow().tagging_environment);
-                tld.set_index(header_ref.clone(), index);
+                tld.set_module_header(header_ref.clone());
                 tld
             })
         })

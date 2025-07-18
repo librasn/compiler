@@ -43,7 +43,7 @@ pub fn enumerated_value(input: Input<'_>) -> ParserResult<'_, ToplevelValueDefin
                 enumerated: p.as_str().into_owned(),
                 enumerable: e.to_string(),
             },
-            index: None,
+            module_header: None,
         },
     )
     .parse(input)
@@ -354,7 +354,7 @@ mod tests {
                     enumerated: String::from("Test-Enum"),
                     enumerable: String::from("enumeral")
                 },
-                index: None
+                module_header: None
             }
         )
     }

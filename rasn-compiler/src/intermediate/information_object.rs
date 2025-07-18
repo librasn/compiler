@@ -16,7 +16,7 @@ pub struct ObjectClassAssignment {
     pub name: String,
     pub parameterization: Parameterization,
     pub definition: ObjectClassDefn,
-    pub index: Option<(Rc<RefCell<ModuleHeader>>, usize)>,
+    pub module_header: Option<Rc<RefCell<ModuleHeader>>>,
 }
 
 impl ObjectClassAssignment {
@@ -32,7 +32,7 @@ pub struct ToplevelInformationDefinition {
     pub parameterization: Option<Parameterization>,
     pub class: ClassLink,
     pub value: ASN1Information,
-    pub index: Option<(Rc<RefCell<ModuleHeader>>, usize)>,
+    pub module_header: Option<Rc<RefCell<ModuleHeader>>>,
 }
 
 impl From<(&str, ASN1Information, &str)> for ToplevelInformationDefinition {
@@ -43,7 +43,7 @@ impl From<(&str, ASN1Information, &str)> for ToplevelInformationDefinition {
             parameterization: None,
             class: ClassLink::ByName(value.2.to_owned()),
             value: value.1,
-            index: None,
+            module_header: None,
         }
     }
 }
@@ -89,7 +89,7 @@ impl
                 class_name: value.3.into(),
                 fields: value.4,
             }),
-            index: None,
+            module_header: None,
         }
     }
 }
@@ -104,7 +104,7 @@ impl From<(Vec<&str>, &str, Option<Parameterization>, &str, ObjectSet)>
             parameterization: value.2,
             class: ClassLink::ByName(value.3.into()),
             value: ASN1Information::ObjectSet(value.4),
-            index: None,
+            module_header: None,
         }
     }
 }
