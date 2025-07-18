@@ -660,6 +660,7 @@ mod tests {
                                     local_value_reference: "vartype",
                                     ty: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                                         parent: None,
+                                        module: None,
                                         identifier: "ObjectName".to_string(),
                                         constraints: vec![]
                                     })
@@ -679,6 +680,7 @@ mod tests {
                                             ty: ASN1Type::ElsewhereDeclaredType(
                                                 DeclarationElsewhere {
                                                     parent: None,
+                                                    module: None,
                                                     identifier: "DisplayString".to_string(),
                                                     constraints: vec![]
                                                 }
@@ -702,6 +704,7 @@ mod tests {
                                             ty: ASN1Type::ElsewhereDeclaredType(
                                                 DeclarationElsewhere {
                                                     parent: None,
+                                                    module: None,
                                                     identifier: "DisplayString".to_string(),
                                                     constraints: vec![]
                                                 }

@@ -172,6 +172,7 @@ fn parses_toplevel_crossrefering_declaration() {
             name: "EventZone".into(),
             ty: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                 parent: None,
+                module: None,
                 identifier: "EventHistory".into(),
                 constraints: vec![Constraint::Subtype(ElementSetSpecs {
                     set: ElementOrSetOperation::SetOperation(SetOperation {
@@ -250,6 +251,7 @@ fn parses_anonymous_sequence_of_declaration() {
                 })],
                 element_type: Box::new(ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                     parent: None,
+                    module: None,
                     identifier: "InterferenceManagementZone".into(),
                     constraints: vec![]
                 }))
@@ -285,16 +287,19 @@ fn parses_object_set_value() {
                     ObjectSetValue::Inline(InformationObjectFields::CustomSyntax(vec![
                         SyntaxApplication::LiteralOrTypeReference(DeclarationElsewhere {
                             parent: None,
+                            module: None,
                             identifier: "OriginatingVehicleContainer".into(),
                             constraints: vec![]
                         }),
                         SyntaxApplication::LiteralOrTypeReference(DeclarationElsewhere {
                             parent: None,
+                            module: None,
                             identifier: "IDENTIFIED".into(),
                             constraints: vec![]
                         }),
                         SyntaxApplication::LiteralOrTypeReference(DeclarationElsewhere {
                             parent: None,
+                            module: None,
                             identifier: "BY".into(),
                             constraints: vec![]
                         }),
@@ -306,16 +311,19 @@ fn parses_object_set_value() {
                     ObjectSetValue::Inline(InformationObjectFields::CustomSyntax(vec![
                         SyntaxApplication::LiteralOrTypeReference(DeclarationElsewhere {
                             parent: None,
+                            module: None,
                             identifier: "PerceivedObjectContainer".into(),
                             constraints: vec![]
                         }),
                         SyntaxApplication::LiteralOrTypeReference(DeclarationElsewhere {
                             parent: None,
+                            module: None,
                             identifier: "IDENTIFIED".into(),
                             constraints: vec![]
                         }),
                         SyntaxApplication::LiteralOrTypeReference(DeclarationElsewhere {
                             parent: None,
+                            module: None,
                             identifier: "BY".into(),
                             constraints: vec![]
                         }),
@@ -376,6 +384,7 @@ fn parses_class_declaration() {
                         identifier: ObjectFieldIdentifier::SingleValue("&id".into()),
                         ty: Some(ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                             parent: None,
+                            module: None,
                             identifier: "RegionId".into(),
                             constraints: vec![]
                         })),

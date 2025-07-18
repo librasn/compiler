@@ -12,7 +12,7 @@ use error::ParserResult;
 use nom::{
     branch::alt,
     bytes::complete::{tag, take_until},
-    character::complete::multispace1,
+    character::complete::{char, multispace1},
     combinator::{into, map, opt, recognize},
     multi::{many0, many1},
     sequence::{delimited, pair, preceded, terminated},
@@ -220,12 +220,17 @@ pub fn elsewhere_declared_type(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
                 identifier,
                 tag(".&"),
             ))))),
+            opt(skip_ws_and_comments(terminated(
+                module_reference,
+                skip_ws_and_comments(char(DOT)),
+            ))),
             skip_ws_and_comments(type_reference),
             opt(skip_ws_and_comments(constraints)),
         ),
-        |(parent, id, constraints)| {
+        |(parent, module, id, constraints)| {
             ASN1Type::builtin_or_elsewhere(
                 parent.map(|p| p.into_inner()),
+                module,
                 id,
                 constraints.unwrap_or_default(),
             )
