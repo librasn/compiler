@@ -907,6 +907,7 @@ impl ASN1Type {
 
     pub fn builtin_or_elsewhere(
         parent: Option<&str>,
+        module: Option<&str>,
         identifier: &str,
         constraints: Vec<Constraint>,
     ) -> ASN1Type {
@@ -972,7 +973,12 @@ impl ASN1Type {
                 constraints,
                 ty: CharacterStringType::NumericString,
             }),
-            _ => ASN1Type::ElsewhereDeclaredType((parent, identifier, Some(constraints)).into()),
+            _ => ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+                parent: parent.map(str::to_string),
+                module: module.map(str::to_string),
+                identifier: identifier.to_string(),
+                constraints,
+            }),
         }
     }
 
@@ -1336,6 +1342,8 @@ impl ASN1Value {
 pub struct DeclarationElsewhere {
     /// Chain of parent declaration leading back to a basic ASN1 type
     pub parent: Option<String>,
+    /// Name of the module where the identifier should be found.
+    pub module: Option<String>,
     pub identifier: String,
     pub constraints: Vec<Constraint>,
 }
@@ -1344,6 +1352,7 @@ impl From<(Option<&str>, &str, Option<Vec<Constraint>>)> for DeclarationElsewher
     fn from(value: (Option<&str>, &str, Option<Vec<Constraint>>)) -> Self {
         DeclarationElsewhere {
             parent: value.0.map(ToString::to_string),
+            module: None,
             identifier: value.1.into(),
             constraints: value.2.unwrap_or_default(),
         }

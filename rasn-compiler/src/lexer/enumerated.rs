@@ -346,6 +346,7 @@ mod tests {
                 name: String::from("enumeral-alias"),
                 associated_type: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                     parent: None,
+                    module: None,
                     identifier: String::from("Test-Enum"),
                     constraints: vec![],
                 }),
