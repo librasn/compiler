@@ -344,7 +344,7 @@ impl Rasn {
                             name: self.inner_name(&m.name, parent_name).to_string(),
                             ty: m.ty.clone(),
                             tag: None,
-                            index: None,
+                            module_header: None,
                         })),
                     )
                     .transpose()
@@ -437,7 +437,7 @@ impl Rasn {
                             name: self.inner_name(&o.name, parent_name).to_string(),
                             ty: o.ty.clone(),
                             tag: None,
-                            index: None,
+                            module_header: None,
                         })),
                     )
                     .transpose()

@@ -55,7 +55,7 @@ pub fn object_class_assignement(input: Input<'_>) -> ParserResult<'_, ObjectClas
             name: v.1.into(),
             parameterization: v.2.unwrap_or_default(),
             definition: v.3,
-            index: None,
+            module_header: None,
         },
     )
     .parse(input)
@@ -582,7 +582,7 @@ mod tests {
                     constraints: vec![]
                 }),
                 parameterization: None,
-                index: None
+                module_header: None
             }
         )
     }
