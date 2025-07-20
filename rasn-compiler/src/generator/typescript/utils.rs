@@ -3,7 +3,7 @@ use num::pow::Pow;
 use crate::generator::error::GeneratorError;
 
 use super::{
-    types::{BitString, Choice, SequenceOrSet},
+    types::{BitString, Choice, Optionality, SequenceOrSet},
     ASN1Type, ASN1Value,
 };
 
@@ -67,7 +67,11 @@ pub fn format_sequence_or_set_members(se: &SequenceOrSet) -> String {
             .map(|m| format!(
                 r#"{}{}: {},"#,
                 to_jer_identifier(&m.name),
-                if m.is_optional { "?" } else { "" },
+                if m.optionality != Optionality::Required {
+                    "?"
+                } else {
+                    ""
+                },
                 type_to_tokens(&m.ty)
             ))
             .collect::<Vec<_>>()

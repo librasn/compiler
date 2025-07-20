@@ -442,8 +442,7 @@ fn parses_parameterized_declaration() {
                                 linked_fields: vec![]
                             })]
                         }),
-                        default_value: None,
-                        is_optional: false,
+                        optionality: Optionality::Required,
                         constraints: vec![]
                     },
                     SequenceOrSetMember {
@@ -464,8 +463,7 @@ fn parses_parameterized_declaration() {
                                 }]
                             })]
                         }),
-                        default_value: None,
-                        is_optional: false,
+                        optionality: Optionality::Required,
                         constraints: vec![]
                     }
                 ]

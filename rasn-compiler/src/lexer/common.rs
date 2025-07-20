@@ -17,7 +17,6 @@ use crate::{
 };
 
 use super::{
-    asn1_value,
     error::{MiscError, ParserResult},
     util::{map_into, opt_delimited, take_until_or, take_until_unbalanced},
 };
@@ -277,18 +276,6 @@ pub fn optional_comma(input: Input<'_>) -> ParserResult<'_, Option<char>> {
     skip_ws_and_comments(opt(char(COMMA))).parse(input)
 }
 
-pub fn optional_marker(input: Input<'_>) -> ParserResult<'_, Option<OptionalMarker>> {
-    opt(into(into_inner(skip_ws_and_comments(tag(OPTIONAL))))).parse(input)
-}
-
-pub fn default(input: Input<'_>) -> ParserResult<'_, Option<ASN1Value>> {
-    opt(preceded(
-        skip_ws_and_comments(tag(DEFAULT)),
-        skip_ws_and_comments(asn1_value),
-    ))
-    .parse(input)
-}
-
 pub fn uppercase_identifier(input: Input<'_>) -> ParserResult<'_, &str> {
     alt((
         into_inner(recognize(pair(
@@ -333,6 +320,8 @@ where
 
 #[cfg(test)]
 mod tests {
+
+    use crate::lexer::asn1_value;
 
     use super::*;
 

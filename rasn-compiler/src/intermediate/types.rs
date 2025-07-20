@@ -484,8 +484,7 @@ pub enum SequenceComponent {
 ///         ],
 ///         distinguished_values: None,
 ///     }),
-///     default_value: Some(ASN1Value::Integer(1)),
-///     is_optional: true,
+///     optionality: Optionality::Default(ASN1Value::Integer(1)),
 ///     constraints: vec![]
 /// }
 /// # ;
@@ -495,8 +494,7 @@ pub struct SequenceOrSetMember {
     pub name: String,
     pub tag: Option<AsnTag>,
     pub ty: ASN1Type,
-    pub default_value: Option<ASN1Value>,
-    pub is_optional: bool,
+    pub optionality: Optionality<ASN1Value>,
     pub is_recursive: bool,
     pub constraints: Vec<Constraint>,
 }
@@ -531,8 +529,7 @@ impl
         Option<AsnTag>,
         ASN1Type,
         Option<Vec<Constraint>>,
-        Option<OptionalMarker>,
-        Option<ASN1Value>,
+        Optionality<ASN1Value>,
     )> for SequenceOrSetMember
 {
     fn from(
@@ -541,16 +538,14 @@ impl
             Option<AsnTag>,
             ASN1Type,
             Option<Vec<Constraint>>,
-            Option<OptionalMarker>,
-            Option<ASN1Value>,
+            Optionality<ASN1Value>,
         ),
     ) -> Self {
         SequenceOrSetMember {
             name: value.0.into(),
             tag: value.1,
             ty: value.2,
-            is_optional: value.4.is_some() || value.5.is_some(),
-            default_value: value.5,
+            optionality: value.4,
             is_recursive: false,
             constraints: value.3.unwrap_or_default(),
         }

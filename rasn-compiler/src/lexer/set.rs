@@ -43,7 +43,9 @@ pub fn set(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
 
 #[cfg(test)]
 mod tests {
-    use set::types::{CharacterString, SequenceOrSet, SequenceOrSetMember, SequenceOrSetOf};
+    use set::types::{
+        CharacterString, Optionality, SequenceOrSet, SequenceOrSetMember, SequenceOrSetOf,
+    };
 
     use super::*;
 
@@ -70,8 +72,7 @@ mod tests {
                             constraints: vec![],
                             ty: CharacterStringType::VisibleString
                         }),
-                        default_value: None,
-                        is_optional: false,
+                        optionality: Optionality::Required,
                         constraints: vec![],
                     },
                     SequenceOrSetMember {
@@ -87,8 +88,7 @@ mod tests {
                                 ty: CharacterStringType::VisibleString
                             }))
                         }),
-                        default_value: Some(ASN1Value::SequenceOrSet(vec![])),
-                        is_optional: true,
+                        optionality: Optionality::Default(ASN1Value::SequenceOrSet(vec![])),
                         constraints: vec![]
                     }
                 ]
