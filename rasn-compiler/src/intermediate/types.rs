@@ -9,6 +9,35 @@ use crate::Backend;
 
 use super::{constraints::*, *};
 
+/// Defines the optionality of a field.
+#[derive(Debug, Clone, PartialEq)]
+pub enum Optionality<T> {
+    /// All definitions are required to specify this field.
+    Required,
+    /// The field can be left undefined.
+    Optional,
+    /// Default if the field is omitted.
+    Default(T),
+}
+
+impl<T> Optionality<T> {
+    /// Get a reference to the default `T`, or None if there is no default.
+    pub fn default(&self) -> Option<&T> {
+        match self {
+            Optionality::Required | Optionality::Optional => None,
+            Optionality::Default(d) => Some(d),
+        }
+    }
+
+    /// Get a mutable reference to the default `T`, or None if there is no default.
+    pub fn default_mut(&mut self) -> Option<&mut T> {
+        match self {
+            Optionality::Required | Optionality::Optional => None,
+            Optionality::Default(d) => Some(d),
+        }
+    }
+}
+
 /// Trait shared by ASN1 `SET`, `SEQUENCE`, AND `CHOICE` that allows iterating
 /// over their field types.
 pub trait IterNameTypes {

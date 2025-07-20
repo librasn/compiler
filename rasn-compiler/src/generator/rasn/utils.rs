@@ -2,7 +2,7 @@ use std::{ops::Not, str::FromStr};
 
 use proc_macro2::{Ident, Literal, Punct, Spacing, Span, TokenStream};
 use quote::{format_ident, quote, ToTokens, TokenStreamExt};
-use types::{BitString, OctetString};
+use types::{BitString, OctetString, Optionality};
 use utils::types::SequenceOrSetOf;
 
 use crate::{
@@ -12,7 +12,7 @@ use crate::{
         encoding_rules::per_visible::{
             per_visible_range_constraints, CharsetSubset, PerVisibleAlphabetConstraints,
         },
-        information_object::{InformationObjectField, ObjectClassDefn, Optionality},
+        information_object::{InformationObjectField, ObjectClassDefn},
         types::{Choice, ChoiceOption, Enumerated, SequenceOrSet, SequenceOrSetMember},
         ASN1Type, ASN1Value, AsnTag, CharacterStringType, IntegerType, TagClass,
         TaggingEnvironment, ToplevelDefinition, ToplevelTypeDefinition,

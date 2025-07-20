@@ -2,7 +2,7 @@ use nom::{
     branch::alt,
     bytes::complete::tag,
     character::complete::{alphanumeric1, char, one_of},
-    combinator::{cut, into, map, opt, recognize, success, value},
+    combinator::{into, map, opt, recognize, value},
     multi::{many0, many1, separated_list0, separated_list1},
     sequence::{pair, preceded, terminated},
     Parser,
@@ -11,12 +11,13 @@ use nom::{
 use crate::{
     input::{context_boundary, Input},
     intermediate::{
-        information_object::*, types::ObjectIdentifier, ASN1Type, DeclarationElsewhere, AMPERSAND,
-        CLASS, COMMA, DEFAULT, DOT, INSTANCE_OF, OPTIONAL, TYPE_IDENTIFIER, UNIQUE, WITH_SYNTAX,
+        information_object::*,
+        types::{ObjectIdentifier, Optionality},
+        ASN1Type, DeclarationElsewhere, AMPERSAND, CLASS, COMMA, DOT, INSTANCE_OF, TYPE_IDENTIFIER,
+        UNIQUE, WITH_SYNTAX,
     },
     lexer::{
-        common::{assignment, comment, skip_ws},
-        error::ErrorTree,
+        common::{assignment, comment, optionality, skip_ws},
         parameterization::parameterization,
     },
 };
@@ -287,31 +288,6 @@ fn multiple_value_field_id(input: Input<'_>) -> ParserResult<'_, ObjectFieldIden
         |m| ObjectFieldIdentifier::MultipleValue(String::from(m)),
     )
     .parse(input)
-}
-
-/// Parse the "optionality" of the class field.
-///
-/// When optionality is DEFAULT, the argument `f` is used to parse the value.
-///
-/// # Syntax
-/// ```text
-/// OptionalitySpec ::= OPTIONAL | DEFAULT <f> | empty
-/// ```
-fn optionality<'a, F>(
-    f: F,
-) -> impl Parser<Input<'a>, Output = Optionality<F::Output>, Error = F::Error>
-where
-    F: Parser<Input<'a>, Error = ErrorTree<'a>>,
-    F::Output: Clone,
-{
-    alt((
-        value(Optionality::Optional, tag(OPTIONAL)),
-        preceded(
-            tag(DEFAULT),
-            cut(skip_ws_and_comments(f.map(Optionality::Default))),
-        ),
-        success(Optionality::Required),
-    ))
 }
 
 fn syntax(input: Input<'_>) -> ParserResult<'_, Vec<SyntaxExpression>> {
