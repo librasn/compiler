@@ -777,6 +777,7 @@ impl Rasn {
                     self.join_annotations(annotations, false, true)?,
                     self.format_default_methods(&seq.members, &name.to_string())?,
                     self.format_new_impl(&name, formatted_members.name_types),
+                    self.format_default_impl(&tld.name, &seq.members),
                     class_fields,
                 ))
             }

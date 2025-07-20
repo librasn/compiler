@@ -136,6 +136,14 @@ e2e_pdu!(
                 Self { int, r_enum }
             }
         }
+        impl std::default::Default for Test {
+            fn default() -> Self {
+                Self {
+                    int: test_int_default(),
+                    r_enum: test_r_enum_default(),
+                }
+            }
+        }
         fn test_int_default() -> IntWithDefault {
             IntWithDefault(1)
         }
