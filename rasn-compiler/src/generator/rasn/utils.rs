@@ -1038,6 +1038,33 @@ impl Rasn {
         }
     }
 
+    pub(crate) fn format_default_impl(
+        &self,
+        name: &str,
+        members: &[SequenceOrSetMember],
+    ) -> TokenStream {
+        if !members.iter().all(|m| m.optionality.default().is_some()) {
+            // All members must have a DEFAULT.
+            return TokenStream::new();
+        };
+
+        let name_ident = self.to_rust_title_case(name);
+        let field_inits = members.iter().map(|m| {
+            let field_name = self.to_rust_snake_case(&m.name);
+            let def_method_name =
+                Ident::new(&self.default_method_name(name, &m.name), Span::call_site());
+            quote!( #field_name: #def_method_name() )
+        });
+
+        quote! {
+            impl std::default::Default for #name_ident {
+                fn default() -> Self {
+                    Self { #(#field_inits),* }
+                }
+            }
+        }
+    }
+
     pub(crate) fn format_sequence_or_set_of_item_type(
         &self,
         ty: &ASN1Type,

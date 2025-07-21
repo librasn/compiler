@@ -320,6 +320,12 @@ r#"
                     Self {} 
                 }
             }
+
+            impl std::default::Default for LocationMeasurementIndicationIEsNonCriticalExtension {
+                fn default() -> Self {
+                    Self {}
+                }
+            }
             
             #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
             #[rasn(automatic_tags, identifier = "LocationMeasurementIndication-IEs")]

@@ -256,6 +256,7 @@ pub fn sequence_or_set_template(
     annotations: TokenStream,
     default_methods: TokenStream,
     new_impl: TokenStream,
+    default_impl: TokenStream,
     class_fields: TokenStream,
 ) -> TokenStream {
     quote! {
@@ -268,6 +269,8 @@ pub fn sequence_or_set_template(
         }
 
         #new_impl
+
+        #default_impl
 
         #class_fields
 

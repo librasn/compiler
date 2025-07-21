@@ -255,6 +255,14 @@ e2e_pdu!(
                 Self { color }
             }
         }
+
+        impl std::default::Default for TestParameters {
+            fn default() -> Self {
+                Self {
+                    color: test_parameters_color_default(),
+                }
+            }
+        }
         
         fn test_parameters_color_default() -> Color {
             Color([false, true, false].into_iter().collect())
@@ -301,6 +309,14 @@ e2e_pdu!(
         impl TestParameters {
             pub fn new(color: Color) -> Self {
                 Self { color }
+            }
+        }
+
+        impl std::default::Default for TestParameters {
+            fn default() -> Self {
+                Self {
+                    color: test_parameters_color_default(),
+                }
             }
         }
         
