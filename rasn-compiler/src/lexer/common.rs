@@ -4,7 +4,7 @@ use nom::{
     character::complete::{
         alpha1, alphanumeric1, char, i128, multispace0, multispace1, one_of, u64,
     },
-    combinator::{into, map, map_res, opt, peek, recognize, rest, value},
+    combinator::{cut, into, map, map_res, opt, peek, recognize, rest, success, value},
     multi::{many0, many1},
     sequence::{delimited, pair, preceded, terminated},
     Parser,
@@ -17,7 +17,6 @@ use crate::{
 };
 
 use super::{
-    asn1_value,
     error::{MiscError, ParserResult},
     util::{map_into, opt_delimited, take_until_or, take_until_unbalanced},
 };
@@ -277,18 +276,6 @@ pub fn optional_comma(input: Input<'_>) -> ParserResult<'_, Option<char>> {
     skip_ws_and_comments(opt(char(COMMA))).parse(input)
 }
 
-pub fn optional_marker(input: Input<'_>) -> ParserResult<'_, Option<OptionalMarker>> {
-    opt(into(into_inner(skip_ws_and_comments(tag(OPTIONAL))))).parse(input)
-}
-
-pub fn default(input: Input<'_>) -> ParserResult<'_, Option<ASN1Value>> {
-    opt(preceded(
-        skip_ws_and_comments(tag(DEFAULT)),
-        skip_ws_and_comments(asn1_value),
-    ))
-    .parse(input)
-}
-
 pub fn uppercase_identifier(input: Input<'_>) -> ParserResult<'_, &str> {
     alt((
         into_inner(recognize(pair(
@@ -306,8 +293,35 @@ pub fn uppercase_identifier(input: Input<'_>) -> ParserResult<'_, &str> {
     .parse(input)
 }
 
+/// Parse the "optionality" of a field.
+///
+/// When optionality is DEFAULT, the argument `f` is used to parse the value.
+///
+/// # Syntax
+/// ```text
+/// OptionalitySpec ::= OPTIONAL | DEFAULT <f> | empty
+/// ```
+pub fn optionality<'a, F>(
+    f: F,
+) -> impl Parser<Input<'a>, Output = Optionality<F::Output>, Error = F::Error>
+where
+    F: Parser<Input<'a>, Error = ErrorTree<'a>>,
+    F::Output: Clone,
+{
+    alt((
+        value(Optionality::Optional, tag(OPTIONAL)),
+        preceded(
+            tag(DEFAULT),
+            cut(skip_ws_and_comments(f.map(Optionality::Default))),
+        ),
+        success(Optionality::Required),
+    ))
+}
+
 #[cfg(test)]
 mod tests {
+
+    use crate::lexer::asn1_value;
 
     use super::*;
 
@@ -538,5 +552,74 @@ and one */"#
             line_comment(r#"-- LdapSystemSchema"#.into()).unwrap().1,
             " LdapSystemSchema"
         )
+    }
+
+    #[test]
+    fn parses_default_int() {
+        assert_eq!(
+            optionality(asn1_value)
+                .parse("DEFAULT\t-1".into())
+                .unwrap()
+                .1,
+            Optionality::Default(ASN1Value::Integer(-1))
+        );
+    }
+
+    #[test]
+    fn parses_default_boolean() {
+        assert_eq!(
+            optionality(asn1_value)
+                .parse("DEFAULT   TRUE".into())
+                .unwrap()
+                .1,
+            Optionality::Default(ASN1Value::Boolean(true))
+        );
+    }
+
+    #[test]
+    fn parses_default_bitstring() {
+        assert_eq!(
+            optionality(asn1_value)
+                .parse("DEFAULT '001010011'B".into())
+                .unwrap()
+                .1,
+            Optionality::Default(ASN1Value::BitString(vec![
+                false, false, true, false, true, false, false, true, true
+            ]))
+        );
+        assert_eq!(
+            optionality(asn1_value)
+                .parse("DEFAULT 'F60E'H".into())
+                .unwrap()
+                .1,
+            Optionality::Default(ASN1Value::BitString(vec![
+                true, true, true, true, false, true, true, false, false, false, false, false, true,
+                true, true, false
+            ]))
+        );
+    }
+
+    #[test]
+    fn parses_default_enumeral() {
+        assert_eq!(
+            optionality(asn1_value)
+                .parse("DEFAULT enumeral1".into())
+                .unwrap()
+                .1,
+            Optionality::Default(ASN1Value::ElsewhereDeclaredValue {
+                identifier: "enumeral1".into(),
+                parent: None
+            })
+        );
+        assert_eq!(
+            optionality(asn1_value)
+                .parse("DEFAULT enumeral1".into())
+                .unwrap()
+                .1,
+            Optionality::Default(ASN1Value::ElsewhereDeclaredValue {
+                identifier: "enumeral1".into(),
+                parent: None
+            })
+        );
     }
 }

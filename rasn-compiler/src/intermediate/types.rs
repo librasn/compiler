@@ -9,6 +9,35 @@ use crate::Backend;
 
 use super::{constraints::*, *};
 
+/// Defines the optionality of a field.
+#[derive(Debug, Clone, PartialEq)]
+pub enum Optionality<T> {
+    /// All definitions are required to specify this field.
+    Required,
+    /// The field can be left undefined.
+    Optional,
+    /// Default if the field is omitted.
+    Default(T),
+}
+
+impl<T> Optionality<T> {
+    /// Get a reference to the default `T`, or None if there is no default.
+    pub fn default(&self) -> Option<&T> {
+        match self {
+            Optionality::Required | Optionality::Optional => None,
+            Optionality::Default(d) => Some(d),
+        }
+    }
+
+    /// Get a mutable reference to the default `T`, or None if there is no default.
+    pub fn default_mut(&mut self) -> Option<&mut T> {
+        match self {
+            Optionality::Required | Optionality::Optional => None,
+            Optionality::Default(d) => Some(d),
+        }
+    }
+}
+
 /// Trait shared by ASN1 `SET`, `SEQUENCE`, AND `CHOICE` that allows iterating
 /// over their field types.
 pub trait IterNameTypes {
@@ -455,8 +484,7 @@ pub enum SequenceComponent {
 ///         ],
 ///         distinguished_values: None,
 ///     }),
-///     default_value: Some(ASN1Value::Integer(1)),
-///     is_optional: true,
+///     optionality: Optionality::Default(ASN1Value::Integer(1)),
 ///     constraints: vec![]
 /// }
 /// # ;
@@ -466,8 +494,7 @@ pub struct SequenceOrSetMember {
     pub name: String,
     pub tag: Option<AsnTag>,
     pub ty: ASN1Type,
-    pub default_value: Option<ASN1Value>,
-    pub is_optional: bool,
+    pub optionality: Optionality<ASN1Value>,
     pub is_recursive: bool,
     pub constraints: Vec<Constraint>,
 }
@@ -502,8 +529,7 @@ impl
         Option<AsnTag>,
         ASN1Type,
         Option<Vec<Constraint>>,
-        Option<OptionalMarker>,
-        Option<ASN1Value>,
+        Optionality<ASN1Value>,
     )> for SequenceOrSetMember
 {
     fn from(
@@ -512,16 +538,14 @@ impl
             Option<AsnTag>,
             ASN1Type,
             Option<Vec<Constraint>>,
-            Option<OptionalMarker>,
-            Option<ASN1Value>,
+            Optionality<ASN1Value>,
         ),
     ) -> Self {
         SequenceOrSetMember {
             name: value.0.into(),
             tag: value.1,
             ty: value.2,
-            is_optional: value.4.is_some() || value.5.is_some(),
-            default_value: value.5,
+            optionality: value.4,
             is_recursive: false,
             constraints: value.3.unwrap_or_default(),
         }

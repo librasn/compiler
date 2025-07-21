@@ -2,7 +2,7 @@ use std::{ops::Not, str::FromStr};
 
 use proc_macro2::{Ident, Literal, Punct, Spacing, Span, TokenStream};
 use quote::{format_ident, quote, ToTokens, TokenStreamExt};
-use types::{BitString, OctetString};
+use types::{BitString, OctetString, Optionality};
 use utils::types::SequenceOrSetOf;
 
 use crate::{
@@ -12,7 +12,7 @@ use crate::{
         encoding_rules::per_visible::{
             per_visible_range_constraints, CharsetSubset, PerVisibleAlphabetConstraints,
         },
-        information_object::{InformationObjectField, ObjectClassDefn, Optionality},
+        information_object::{InformationObjectField, ObjectClassDefn},
         types::{Choice, ChoiceOption, Enumerated, SequenceOrSet, SequenceOrSetMember},
         ASN1Type, ASN1Value, AsnTag, CharacterStringType, IntegerType, TagClass,
         TaggingEnvironment, ToplevelDefinition, ToplevelTypeDefinition,
@@ -384,8 +384,8 @@ impl Rasn {
     ) -> Result<(TokenStream, NameType), GeneratorError> {
         let name = self.to_rust_snake_case(&member.name);
         let default_annotation = member
-            .default_value
-            .as_ref()
+            .optionality
+            .default()
             .map(|_| {
                 let default_fn = self.default_method_name(parent_name, &member.name);
                 quote!(default = #default_fn)
@@ -401,7 +401,7 @@ impl Rasn {
             extension_annotation,
             Some(default_annotation),
         )?;
-        if (member.is_optional && member.default_value.is_none())
+        if (member.optionality == Optionality::Optional)
             || member
                 .name
                 .starts_with(INTERNAL_EXTENSION_GROUP_NAME_PREFIX)
@@ -690,7 +690,7 @@ impl Rasn {
     ) -> Result<TokenStream, GeneratorError> {
         let mut output = TokenStream::new();
         for member in members {
-            if let Some(value) = member.default_value.as_ref() {
+            if let Some(value) = member.optionality.default() {
                 let val = self.value_to_tokens(
                     value,
                     Some(&self.to_rust_title_case(&self.type_to_tokens(&member.ty)?.to_string())),
@@ -1489,8 +1489,7 @@ mod tests {
                                 ty: ASN1Type::Boolean(Boolean {
                                     constraints: vec![]
                                 }),
-                                default_value: None,
-                                is_optional: true,
+                                optionality: Optionality::Optional,
                                 constraints: vec![]
                             },
                             SequenceOrSetMember {
@@ -1509,8 +1508,7 @@ mod tests {
                             )
                         })]
                                 }),
-                                default_value: Some(ASN1Value::Integer(4)),
-                                is_optional: true,
+                                optionality: Optionality::Default(ASN1Value::Integer(4)),
                                 constraints: vec![]
                             }
                         ]

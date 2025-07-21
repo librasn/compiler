@@ -8,6 +8,7 @@ use crate::intermediate::{
         ASN1Information, ClassLink, InformationObjectFields, ObjectClassDefn, ObjectSetValue,
         ToplevelInformationDefinition,
     },
+    types::Optionality,
     ASN1Type, ASN1Value, CharacterStringType, ToplevelDefinition, ToplevelTypeDefinition,
     ToplevelValueDefinition,
 };
@@ -732,7 +733,11 @@ impl Rasn {
                                     _ => todo!()
                                 };
                                 let field_enum_name = format_ident!("{obj_set_name}_{field_name}");
-                                let input = m.is_optional.then(|| quote!(self. #open_field_name .as_ref())).unwrap_or(quote!(Some(&self. #open_field_name)));
+                                let input = if m.optionality == Optionality::Required {
+                                    quote!(Some(&self. #open_field_name))
+                                } else {
+                                    quote!(self. #open_field_name .as_ref())
+                                };
                                 acc.append_all(quote! {
 
                                     impl #name {

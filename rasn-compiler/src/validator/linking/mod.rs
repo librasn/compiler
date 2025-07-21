@@ -267,8 +267,8 @@ impl ASN1Type {
             ASN1Type::Set(ref mut s) | ASN1Type::Sequence(ref mut s) => {
                 s.members.iter_mut().try_for_each(|m| {
                     m.ty.collect_supertypes(tlds)?;
-                    m.default_value
-                        .as_mut()
+                    m.optionality
+                        .default_mut()
                         .map(|d| d.link_with_type(tlds, &m.ty, Some(&m.ty.as_str().into_owned())))
                         .unwrap_or(Ok(()))
                 })
@@ -773,8 +773,8 @@ impl ASN1Type {
                 s.constraints.iter().any(|c| c.has_cross_reference())
                     || s.members.iter().any(|m| {
                         m.ty.contains_constraint_reference()
-                            || m.default_value
-                                .as_ref()
+                            || m.optionality
+                                .default()
                                 .is_some_and(|d| d.is_elsewhere_declared())
                             || m.constraints.iter().any(|c| c.has_cross_reference())
                     })
@@ -1418,8 +1418,8 @@ impl ASN1Value {
                             .then_some(StructLikeFieldValue::Explicit(value.clone()))
                     })
                     .or(member
-                        .default_value
-                        .as_ref()
+                        .optionality
+                        .default()
                         .map(|d| StructLikeFieldValue::Implicit(Box::new(d.clone()))))
                     .ok_or_else(|| {
                         grammar_error!(LinkerError, "No value for field {} found!", member.name)

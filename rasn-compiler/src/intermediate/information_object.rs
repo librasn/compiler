@@ -349,17 +349,6 @@ pub struct InformationObjectClassField {
     pub is_unique: bool,
 }
 
-/// Defines the optionality of a class field.
-#[derive(Debug, Clone, PartialEq)]
-pub enum Optionality<T> {
-    /// All definitions are required to specify this field.
-    Required,
-    /// The field can be left undefined.
-    Optional,
-    /// Default if the field is omitted.
-    Default(T),
-}
-
 impl
     From<(
         ObjectFieldIdentifier,
