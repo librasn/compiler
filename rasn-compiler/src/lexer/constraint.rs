@@ -1188,16 +1188,19 @@ mod tests {
                         ObjectSetValue::Inline(InformationObjectFields::CustomSyntax(vec![
                             SyntaxApplication::LiteralOrTypeReference(DeclarationElsewhere {
                                 parent: None,
+                                module: None,
                                 identifier: "ConnectionManeuverAssist-addGrpC".into(),
                                 constraints: vec![]
                             }),
                             SyntaxApplication::LiteralOrTypeReference(DeclarationElsewhere {
                                 parent: None,
+                                module: None,
                                 identifier: "IDENTIFIED".into(),
                                 constraints: vec![]
                             }),
                             SyntaxApplication::LiteralOrTypeReference(DeclarationElsewhere {
                                 parent: None,
+                                module: None,
                                 identifier: "BY".into(),
                                 constraints: vec![]
                             }),
@@ -1511,6 +1514,7 @@ mod tests {
                                     subtype: ASN1Type::ElsewhereDeclaredType(
                                         DeclarationElsewhere {
                                             parent: None,
+                                            module: None,
                                             identifier: "EtsiTs103097Certificate".into(),
                                             constraints: vec![],
                                         }
