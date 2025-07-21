@@ -43,7 +43,7 @@ impl Backend for Typescript {
         &mut self,
         tlds: Vec<ToplevelDefinition>,
     ) -> Result<GeneratedModule, GeneratorError> {
-        if let Some((module_ref, _)) = tlds.first().and_then(|tld| tld.get_index().cloned()) {
+        if let Some(module_ref) = tlds.first().and_then(|tld| tld.get_module_header()) {
             let module = module_ref.borrow();
             let namespace = to_jer_identifier(&module.name);
             let imports = module

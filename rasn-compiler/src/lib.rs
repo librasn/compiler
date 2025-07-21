@@ -405,9 +405,9 @@ impl<B: Backend> Compiler<B, CompilerSourcesSet> {
                     .into_iter()
                     .flat_map(|(header, tlds)| {
                         let header_ref = Rc::new(RefCell::new(header));
-                        tlds.into_iter().enumerate().map(move |(index, mut tld)| {
+                        tlds.into_iter().map(move |mut tld| {
                             tld.apply_tagging_environment(&header_ref.borrow().tagging_environment);
-                            tld.set_index(header_ref.clone(), index);
+                            tld.set_module_header(header_ref.clone());
                             tld
                         })
                     })
@@ -419,8 +419,8 @@ impl<B: Backend> Compiler<B, CompilerSourcesSet> {
             BTreeMap::<String, Vec<ToplevelDefinition>>::new(),
             |mut modules, tld| {
                 let key = tld
-                    .get_index()
-                    .map_or(<_>::default(), |(module, _)| module.borrow().name.clone());
+                    .get_module_header()
+                    .map_or(<_>::default(), |module| module.borrow().name.clone());
                 match modules.entry(key) {
                     std::collections::btree_map::Entry::Vacant(v) => {
                         v.insert(vec![tld]);

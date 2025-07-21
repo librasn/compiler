@@ -588,43 +588,33 @@ impl ToplevelDefinition {
         }
     }
 
-    pub(crate) fn set_index(&mut self, module_header: Rc<RefCell<ModuleHeader>>, item_no: usize) {
+    pub(crate) fn set_module_header(&mut self, module_header: Rc<RefCell<ModuleHeader>>) {
         match self {
             ToplevelDefinition::Type(ref mut t) => {
-                t.index = Some((module_header, item_no));
+                t.module_header = Some(module_header);
             }
             ToplevelDefinition::Value(ref mut v) => {
-                v.index = Some((module_header, item_no));
+                v.module_header = Some(module_header);
             }
             ToplevelDefinition::Class(ref mut c) => {
-                c.index = Some((module_header, item_no));
+                c.module_header = Some(module_header);
             }
             ToplevelDefinition::Object(ref mut o) => {
-                o.index = Some((module_header, item_no));
+                o.module_header = Some(module_header);
             }
             ToplevelDefinition::Macro(ref mut m) => {
-                m.index = Some((module_header, item_no));
+                m.module_header = Some(module_header);
             }
-        }
-    }
-
-    pub(crate) fn get_index(&self) -> Option<&(Rc<RefCell<ModuleHeader>>, usize)> {
-        match self {
-            ToplevelDefinition::Type(ref t) => t.index.as_ref(),
-            ToplevelDefinition::Value(ref v) => v.index.as_ref(),
-            ToplevelDefinition::Class(ref c) => c.index.as_ref(),
-            ToplevelDefinition::Object(ref o) => o.index.as_ref(),
-            ToplevelDefinition::Macro(ref m) => m.index.as_ref(),
         }
     }
 
     pub(crate) fn get_module_header(&self) -> Option<Rc<RefCell<ModuleHeader>>> {
         match self {
-            ToplevelDefinition::Type(ref t) => t.index.as_ref().map(|(m, _)| m.clone()),
-            ToplevelDefinition::Value(ref v) => v.index.as_ref().map(|(m, _)| m.clone()),
-            ToplevelDefinition::Class(ref c) => c.index.as_ref().map(|(m, _)| m.clone()),
-            ToplevelDefinition::Object(ref o) => o.index.as_ref().map(|(m, _)| m.clone()),
-            ToplevelDefinition::Macro(ref m) => m.index.as_ref().map(|(m, _)| m.clone()),
+            ToplevelDefinition::Type(ref t) => t.module_header.as_ref().cloned(),
+            ToplevelDefinition::Value(ref v) => v.module_header.as_ref().cloned(),
+            ToplevelDefinition::Class(ref c) => c.module_header.as_ref().cloned(),
+            ToplevelDefinition::Object(ref o) => o.module_header.as_ref().cloned(),
+            ToplevelDefinition::Macro(ref m) => m.module_header.as_ref().cloned(),
         }
     }
 
@@ -670,7 +660,7 @@ impl ToplevelDefinition {
     ///                 distinguished_values: None,
     ///             }),
     ///             value: ASN1Value::Integer(42),
-    ///             index: None,
+    ///             module_header: None,
     ///         }
     ///     ).name(),
     ///     &String::from("the-answer")
@@ -696,7 +686,7 @@ pub struct ToplevelValueDefinition {
     pub associated_type: ASN1Type,
     pub parameterization: Option<Parameterization>,
     pub value: ASN1Value,
-    pub index: Option<(Rc<RefCell<ModuleHeader>>, usize)>,
+    pub module_header: Option<Rc<RefCell<ModuleHeader>>>,
 }
 
 impl From<(&str, ASN1Value, ASN1Type)> for ToplevelValueDefinition {
@@ -707,7 +697,7 @@ impl From<(&str, ASN1Value, ASN1Type)> for ToplevelValueDefinition {
             associated_type: value.2.to_owned(),
             parameterization: None,
             value: value.1,
-            index: None,
+            module_header: None,
         }
     }
 }
@@ -736,7 +726,7 @@ impl
             parameterization: value.2,
             associated_type: value.3,
             value: value.4,
-            index: None,
+            module_header: None,
         }
     }
 }
@@ -748,7 +738,7 @@ pub struct ToplevelTypeDefinition {
     pub name: String,
     pub ty: ASN1Type,
     pub parameterization: Option<Parameterization>,
-    pub index: Option<(Rc<RefCell<ModuleHeader>>, usize)>,
+    pub module_header: Option<Rc<RefCell<ModuleHeader>>>,
 }
 
 impl ToplevelTypeDefinition {
@@ -765,7 +755,7 @@ impl From<(&str, ASN1Type)> for ToplevelTypeDefinition {
             name: value.0.to_owned(),
             ty: value.1,
             parameterization: None,
-            index: None,
+            module_header: None,
         }
     }
 }
@@ -792,7 +782,7 @@ impl
             parameterization: value.2,
             ty: value.3 .1,
             tag: value.3 .0,
-            index: None,
+            module_header: None,
         }
     }
 }

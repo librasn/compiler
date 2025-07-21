@@ -250,7 +250,7 @@ impl Validator {
         if let Some(ToplevelDefinition::Type(ToplevelTypeDefinition {
             name,
             parameterization,
-            index: Some((m_hdr, _)),
+            module_header: Some(m_hdr),
             ..
         })) = self.tlds.get(associated_type)
         {

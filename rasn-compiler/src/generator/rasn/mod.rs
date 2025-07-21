@@ -137,7 +137,7 @@ impl Backend for Rasn {
         &mut self,
         tlds: Vec<ToplevelDefinition>,
     ) -> Result<GeneratedModule, GeneratorError> {
-        if let Some((module_ref, _)) = tlds.first().and_then(|tld| tld.get_index().cloned()) {
+        if let Some(module_ref) = tlds.first().and_then(|tld| tld.get_module_header()) {
             let module = module_ref.borrow();
             self.tagging_environment = module.tagging_environment;
             self.extensibility_environment = module.extensibility_environment;
