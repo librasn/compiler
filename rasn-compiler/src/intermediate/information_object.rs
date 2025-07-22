@@ -35,13 +35,13 @@ pub struct ToplevelInformationDefinition<'a> {
     pub module_header: Option<Rc<RefCell<ModuleHeader<'a>>>>,
 }
 
-impl<'a> From<(&'a str, ASN1Information<'a>, &str)> for ToplevelInformationDefinition<'a> {
-    fn from(value: (&'a str, ASN1Information<'a>, &str)) -> Self {
+impl<'a> From<(&'a str, ASN1Information<'a>, &'a str)> for ToplevelInformationDefinition<'a> {
+    fn from(value: (&'a str, ASN1Information<'a>, &'a str)) -> Self {
         Self {
             comments: Cow::Borrowed(""),
             name: Cow::Borrowed(value.0),
             parameterization: None,
-            class: ClassLink::ByName(value.2.to_owned()),
+            class: ClassLink::ByName(Cow::Borrowed(value.2)),
             value: value.1,
             module_header: None,
         }
@@ -52,7 +52,7 @@ impl<'a> From<(&'a str, ASN1Information<'a>, &str)> for ToplevelInformationDefin
 #[cfg_attr(not(test), derive(Debug))]
 #[derive(Clone, PartialEq)]
 pub enum ClassLink<'a> {
-    ByName(String),
+    ByName(Cow<'a, str>),
     ByReference(ObjectClassDefn<'a>),
 }
 
@@ -94,15 +94,29 @@ impl<'a>
     }
 }
 
-impl<'a> From<(Vec<&str>, &'a str, Option<Parameterization<'a>>, &str, ObjectSet<'a>)>
-    for ToplevelInformationDefinition<'a>
+impl<'a>
+    From<(
+        Vec<&str>,
+        &'a str,
+        Option<Parameterization<'a>>,
+        &'a str,
+        ObjectSet<'a>,
+    )> for ToplevelInformationDefinition<'a>
 {
-    fn from(value: (Vec<&str>, &'a str, Option<Parameterization<'a>>, &str, ObjectSet<'a>)) -> Self {
+    fn from(
+        value: (
+            Vec<&str>,
+            &'a str,
+            Option<Parameterization<'a>>,
+            &'a str,
+            ObjectSet<'a>,
+        ),
+    ) -> Self {
         Self {
             comments: Cow::Owned(value.0.join("\n")),
             name: value.1.into(),
             parameterization: value.2,
-            class: ClassLink::ByName(value.3.into()),
+            class: ClassLink::ByName(Cow::Borrowed(value.3)),
             value: ASN1Information::ObjectSet(value.4),
             module_header: None,
         }
@@ -121,9 +135,9 @@ pub enum ASN1Information<'a> {
 #[cfg_attr(test, derive(EnumDebug))]
 #[cfg_attr(not(test), derive(Debug))]
 #[derive(Clone, PartialEq)]
-pub enum SyntaxExpression {
-    Required(SyntaxToken),
-    Optional(Vec<SyntaxExpression>),
+pub enum SyntaxExpression<'a> {
+    Required(SyntaxToken<'a>),
+    Optional(Vec<SyntaxExpression<'a>>),
 }
 
 #[cfg_attr(test, derive(EnumDebug))]
@@ -134,7 +148,7 @@ pub enum SyntaxApplication<'a> {
     ValueReference(ASN1Value<'a>),
     TypeReference(ASN1Type<'a>),
     Comma,
-    Literal(String),
+    Literal(Cow<'a, str>),
     LiteralOrTypeReference(DeclarationElsewhere<'a>),
 }
 
@@ -143,8 +157,8 @@ impl<'a> SyntaxApplication<'a> {
     /// considering the entire syntax (in form of a flattened SyntaxExpression Vec), in order to reliably match Literals
     pub fn matches(
         &self,
-        next_token: &SyntaxToken,
-        syntax: &[(bool, SyntaxToken)],
+        next_token: &SyntaxToken<'a>,
+        syntax: &[(bool, SyntaxToken<'a>)],
         current_index: usize,
     ) -> bool {
         match (next_token, self) {
@@ -153,7 +167,8 @@ impl<'a> SyntaxApplication<'a> {
             (
                 SyntaxToken::Literal(t),
                 SyntaxApplication::LiteralOrTypeReference(DeclarationElsewhere {
-                    identifier, ..
+                    identifier: DefinedType::TypeReference(identifier),
+                    ..
                 }),
             ) if t == identifier => true,
             (
@@ -167,7 +182,8 @@ impl<'a> SyntaxApplication<'a> {
             (
                 SyntaxToken::Field(ObjectFieldIdentifier::MultipleValue(_)),
                 SyntaxApplication::LiteralOrTypeReference(DeclarationElsewhere {
-                    identifier, ..
+                    identifier: DefinedType::TypeReference(identifier),
+                    ..
                 }),
             ) => {
                 for (required, token) in &syntax[current_index + 1..] {
@@ -186,22 +202,15 @@ impl<'a> SyntaxApplication<'a> {
             (
                 SyntaxToken::Field(ObjectFieldIdentifier::SingleValue(_)),
                 SyntaxApplication::LiteralOrTypeReference(DeclarationElsewhere {
-                    identifier: lit,
+                    identifier: DefinedType::TypeReference(lit),
                     ..
                 }),
-            ) => {
-                let val = asn1_value((&**lit).into());
-                match val {
-                    Ok((_, ASN1Value::ElsewhereDeclaredValue { .. })) => false,
-                    Ok((_, _)) => true,
-                    _ => false,
-                }
-            },
-            (
+            )
+            | (
                 SyntaxToken::Field(ObjectFieldIdentifier::SingleValue(_)),
                 SyntaxApplication::Literal(lit),
             ) => {
-                let val = asn1_value(lit.as_str().into());
+                let val = asn1_value((&**lit).into());
                 match val {
                     Ok((_, ASN1Value::ElsewhereDeclaredValue { .. })) => false,
                     Ok((_, _)) => true,
@@ -221,13 +230,13 @@ impl<'a> SyntaxApplication<'a> {
             }) => Some(&*&identifier),
             SyntaxApplication::LiteralOrTypeReference(DeclarationElsewhere {
                 parent: None,
-                identifier,
+                identifier: DefinedType::TypeReference(identifier),
                 ..
             })
             | SyntaxApplication::TypeReference(ASN1Type::ElsewhereDeclaredType(
                 DeclarationElsewhere {
                     parent: None,
-                    identifier,
+                    identifier: DefinedType::TypeReference(identifier),
                     ..
                 },
             )) => Some(identifier),
@@ -240,16 +249,16 @@ impl<'a> SyntaxApplication<'a> {
 #[cfg_attr(test, derive(EnumDebug))]
 #[cfg_attr(not(test), derive(Debug))]
 #[derive(Clone, PartialEq)]
-pub enum SyntaxToken {
-    Literal(String),
+pub enum SyntaxToken<'a> {
+    Literal(Cow<'a, str>),
     Comma,
-    Field(ObjectFieldIdentifier),
+    Field(ObjectFieldIdentifier<'a>),
 }
 
-impl SyntaxToken {
+impl<'a> SyntaxToken<'a> {
     pub fn as_str(&self) -> &str {
         match self {
-            SyntaxToken::Literal(s) => s.as_str(),
+            SyntaxToken::Literal(s) => &s,
             SyntaxToken::Comma => ",",
             SyntaxToken::Field(_) => self.name_or_empty(),
         }
@@ -258,44 +267,44 @@ impl SyntaxToken {
     pub fn name_or_empty(&self) -> &str {
         match self {
             SyntaxToken::Field(ObjectFieldIdentifier::SingleValue(v))
-            | SyntaxToken::Field(ObjectFieldIdentifier::MultipleValue(v)) => v.as_str(),
+            | SyntaxToken::Field(ObjectFieldIdentifier::MultipleValue(v)) => &v,
             _ => "",
         }
     }
 }
 
-impl From<ObjectFieldIdentifier> for SyntaxToken {
-    fn from(value: ObjectFieldIdentifier) -> Self {
+impl<'a> From<ObjectFieldIdentifier<'a>> for SyntaxToken<'a> {
+    fn from(value: ObjectFieldIdentifier<'a>) -> Self {
         Self::Field(value)
     }
 }
 
-impl From<&str> for SyntaxToken {
-    fn from(value: &str) -> Self {
+impl<'a> From<&'a str> for SyntaxToken<'a> {
+    fn from(value: &'a str) -> Self {
         if value == "," {
             Self::Comma
         } else {
-            Self::Literal(value.into())
+            Self::Literal(Cow::Borrowed(value))
         }
     }
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct InformationObjectSyntax {
-    pub expressions: Vec<SyntaxExpression>,
+pub struct InformationObjectSyntax<'a> {
+    pub expressions: Vec<SyntaxExpression<'a>>,
 }
 
-impl InformationObjectSyntax {
+impl<'a> InformationObjectSyntax<'a> {
     /// Information object syntax consists of mandatory and optional expressions.
     /// Optional expressions may be nested without limit.
     /// Declarations do not have this nested structure, but are always a sequence of
     /// tokens, so in order to check whether an expression follows a given syntax we need to
     /// flatten the nested structure into a sequence of tokens with a `required` marker.
     pub fn flatten(&self) -> Vec<(bool, SyntaxToken)> {
-        fn iter_expressions(
-            expressions: &[SyntaxExpression],
+        fn iter_expressions<'a>(
+            expressions: &'a [SyntaxExpression<'a>],
             optional_recursion: bool,
-        ) -> Vec<(bool, &SyntaxExpression)> {
+        ) -> Vec<(bool, &'a SyntaxExpression<'a>)> {
             expressions
                 .iter()
                 .flat_map(|x| match x {
@@ -324,19 +333,19 @@ pub struct ObjectClassDefn<'a> {
     /// Named field specifications, as defined in 9.4.
     pub fields: Vec<InformationObjectClassField<'a>>,
     /// An information object definition syntax ("SyntaxList"), as defined in 10.5.
-    pub syntax: Option<InformationObjectSyntax>,
+    pub syntax: Option<InformationObjectSyntax<'a>>,
 }
 
 impl<'a>
     From<(
         Vec<InformationObjectClassField<'a>>,
-        Option<Vec<SyntaxExpression>>,
+        Option<Vec<SyntaxExpression<'a>>>,
     )> for ObjectClassDefn<'a>
 {
     fn from(
         value: (
             Vec<InformationObjectClassField<'a>>,
-            Option<Vec<SyntaxExpression>>,
+            Option<Vec<SyntaxExpression<'a>>>,
         ),
     ) -> Self {
         Self {
@@ -350,7 +359,7 @@ impl<'a>
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct InformationObjectClassField<'a> {
-    pub identifier: ObjectFieldIdentifier,
+    pub identifier: ObjectFieldIdentifier<'a>,
     pub ty: Option<ASN1Type<'a>>,
     pub optionality: Optionality<ASN1Value<'a>>,
     pub is_unique: bool,
@@ -358,7 +367,7 @@ pub struct InformationObjectClassField<'a> {
 
 impl<'a>
     From<(
-        ObjectFieldIdentifier,
+        ObjectFieldIdentifier<'a>,
         Option<ASN1Type<'a>>,
         Option<&str>,
         Optionality<ASN1Value<'a>>,
@@ -366,7 +375,7 @@ impl<'a>
 {
     fn from(
         value: (
-            ObjectFieldIdentifier,
+            ObjectFieldIdentifier<'a>,
             Option<ASN1Type<'a>>,
             Option<&str>,
             Optionality<ASN1Value<'a>>,
@@ -384,23 +393,23 @@ impl<'a>
 #[cfg_attr(test, derive(EnumDebug))]
 #[cfg_attr(not(test), derive(Debug))]
 #[derive(Clone, PartialEq)]
-pub enum ObjectFieldIdentifier {
-    SingleValue(String),
-    MultipleValue(String),
+pub enum ObjectFieldIdentifier<'a> {
+    SingleValue(Cow<'a, str>),
+    MultipleValue(Cow<'a, str>),
 }
 
-impl ObjectFieldIdentifier {
-    pub fn identifier(&self) -> &String {
+impl<'a> ObjectFieldIdentifier<'a> {
+    pub fn identifier(&self) -> Cow<'a, str> {
         match self {
-            ObjectFieldIdentifier::SingleValue(s) => s,
-            ObjectFieldIdentifier::MultipleValue(s) => s,
+            ObjectFieldIdentifier::SingleValue(s) => s.clone(),
+            ObjectFieldIdentifier::MultipleValue(s) => s.clone(),
         }
     }
 }
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct InformationObject<'a> {
-    pub class_name: String,
+    pub class_name: Cow<'a, str>,
     pub fields: InformationObjectFields<'a>,
 }
 
@@ -472,7 +481,7 @@ pub enum InformationObjectField<'a> {
 
 impl<'a> InformationObjectField<'a> {
     /// Returns the identifier of an InformationObjectField
-    pub fn identifier(&self) -> &String {
+    pub fn identifier(&self) -> &str {
         match self {
             InformationObjectField::TypeField(f) => &f.identifier,
             InformationObjectField::FixedValueField(f) => &f.identifier,
@@ -483,14 +492,14 @@ impl<'a> InformationObjectField<'a> {
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct FixedValueField<'a> {
-    pub identifier: String,
+    pub identifier: Cow<'a, str>,
     pub value: ASN1Value<'a>,
 }
 
-impl<'a> From<(ObjectFieldIdentifier, ASN1Value<'a>)> for InformationObjectField<'a> {
-    fn from(value: (ObjectFieldIdentifier, ASN1Value<'a>)) -> Self {
+impl<'a> From<(ObjectFieldIdentifier<'a>, ASN1Value<'a>)> for InformationObjectField<'a> {
+    fn from(value: (ObjectFieldIdentifier<'a>, ASN1Value<'a>)) -> Self {
         Self::FixedValueField(FixedValueField {
-            identifier: value.0.identifier().clone(),
+            identifier: value.0.identifier(),
             value: value.1,
         })
     }
@@ -498,14 +507,14 @@ impl<'a> From<(ObjectFieldIdentifier, ASN1Value<'a>)> for InformationObjectField
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct TypeField<'a> {
-    pub identifier: String,
+    pub identifier: Cow<'a, str>,
     pub ty: ASN1Type<'a>,
 }
 
-impl<'a> From<(ObjectFieldIdentifier, ASN1Type<'a>)> for InformationObjectField<'a> {
-    fn from(value: (ObjectFieldIdentifier, ASN1Type<'a>)) -> Self {
+impl<'a> From<(ObjectFieldIdentifier<'a>, ASN1Type<'a>)> for InformationObjectField<'a> {
+    fn from(value: (ObjectFieldIdentifier<'a>, ASN1Type<'a>)) -> Self {
         Self::TypeField(TypeField {
-            identifier: value.0.identifier().clone(),
+            identifier: value.0.identifier(),
             ty: value.1,
         })
     }
@@ -513,14 +522,14 @@ impl<'a> From<(ObjectFieldIdentifier, ASN1Type<'a>)> for InformationObjectField<
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct ObjectSetField<'a> {
-    pub identifier: String,
+    pub identifier: Cow<'a, str>,
     pub value: ObjectSet<'a>,
 }
 
-impl<'a> From<(ObjectFieldIdentifier, ObjectSet<'a>)> for InformationObjectField<'a> {
-    fn from(value: (ObjectFieldIdentifier, ObjectSet<'a>)) -> Self {
+impl<'a> From<(ObjectFieldIdentifier<'a>, ObjectSet<'a>)> for InformationObjectField<'a> {
+    fn from(value: (ObjectFieldIdentifier<'a>, ObjectSet<'a>)) -> Self {
         Self::ObjectSetField(ObjectSetField {
-            identifier: value.0.identifier().clone(),
+            identifier: value.0.identifier(),
             value: value.1,
         })
     }
@@ -531,8 +540,8 @@ impl<'a> From<(ObjectFieldIdentifier, ObjectSet<'a>)> for InformationObjectField
 /// the different categories of field names, 14.2 to 14.5 specify the type that is referenced._
 #[derive(Debug, Clone, PartialEq)]
 pub struct ObjectClassFieldType<'a> {
-    pub class: String,
-    pub field_path: Vec<ObjectFieldIdentifier>,
+    pub class: Cow<'a, str>,
+    pub field_path: Vec<ObjectFieldIdentifier<'a>>,
     pub constraints: Vec<Constraint<'a>>,
 }
 
@@ -541,19 +550,33 @@ impl<'a> ObjectClassFieldType<'a> {
     /// The field path is stringified by joining
     /// the stringified `ObjectFieldIdentifier`s with
     /// the `$` character as a separator.
-    pub fn field_path_as_str(&self) -> String {
-        self.field_path
-            .iter()
-            .map(|o| o.identifier().clone())
-            .collect::<Vec<_>>()
-            .join("$")
+    pub fn field_path_as_str(&self) -> Cow<'a, str> {
+        Cow::Owned(
+            self.field_path
+                .iter()
+                .map(|o| o.identifier())
+                .collect::<Vec<_>>()
+                .join("$"),
+        )
     }
 }
 
-impl<'a> From<(&str, Vec<ObjectFieldIdentifier>, Option<Vec<Constraint<'a>>>)> for ObjectClassFieldType<'a> {
-    fn from(value: (&str, Vec<ObjectFieldIdentifier>, Option<Vec<Constraint<'a>>>)) -> Self {
+impl<'a>
+    From<(
+        &'a str,
+        Vec<ObjectFieldIdentifier<'a>>,
+        Option<Vec<Constraint<'a>>>,
+    )> for ObjectClassFieldType<'a>
+{
+    fn from(
+        value: (
+            &'a str,
+            Vec<ObjectFieldIdentifier<'a>>,
+            Option<Vec<Constraint<'a>>>,
+        ),
+    ) -> Self {
         Self {
-            class: value.0.into(),
+            class: Cow::Borrowed(value.0),
             field_path: value.1,
             constraints: value.2.unwrap_or_default(),
         }

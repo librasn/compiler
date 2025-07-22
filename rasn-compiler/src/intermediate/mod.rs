@@ -17,7 +17,7 @@ pub mod utils;
 
 use std::{borrow::Cow, cell::RefCell, collections::BTreeMap, ops::Add, rc::Rc};
 
-use crate::common::INTERNAL_IO_FIELD_REF_TYPE_NAME_PREFIX;
+use crate::{common::INTERNAL_IO_FIELD_REF_TYPE_NAME_PREFIX, prelude::ir::Parameter};
 use constraints::Constraint;
 use error::{GrammarError, GrammarErrorType};
 use information_object::{
@@ -813,7 +813,7 @@ pub enum ASN1Type<'a> {
     GeneralizedTime(GeneralizedTime<'a>),
     UTCTime(UTCTime<'a>),
     ElsewhereDeclaredType(DeclarationElsewhere<'a>),
-    ChoiceSelectionType(ChoiceSelectionType),
+    ChoiceSelectionType(ChoiceSelectionType<'a>),
     ObjectIdentifier(ObjectIdentifier<'a>),
     ObjectClassField(ObjectClassFieldType<'a>),
     EmbeddedPdv,
@@ -883,7 +883,11 @@ impl<'a> ASN1Type<'a> {
             ASN1Type::GeneralizedTime(_) => Cow::Borrowed(GENERALIZED_TIME),
             ASN1Type::UTCTime(_) => Cow::Borrowed(UTC_TIME),
             ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere { identifier, .. }) => {
-                Cow::Borrowed(identifier)
+                Cow::Borrowed(
+                    identifier
+                        .as_typereference()
+                        .expect("Casting defined types as str only works with typereferences!"),
+                )
             }
             ASN1Type::ChoiceSelectionType(_) => todo!(),
             ASN1Type::ObjectIdentifier(_) => Cow::Borrowed(OBJECT_IDENTIFIER),
@@ -899,76 +903,76 @@ impl<'a> ASN1Type<'a> {
 
     pub fn builtin_or_elsewhere(
         parent: Option<&str>,
-        module: Option<&str>,
-        identifier: &'a str,
+        identifier: DefinedType<'a>,
         constraints: Vec<Constraint<'a>>,
     ) -> ASN1Type<'a> {
-        match (parent, identifier) {
-            (None, NULL) => ASN1Type::Null,
-            (None, BOOLEAN) => ASN1Type::Boolean(Boolean { constraints }),
-            (None, REAL) => ASN1Type::Real(Real { constraints }),
-            (None, INTEGER) => ASN1Type::Integer(Integer {
+        match (parent, identifier.as_typereference()) {
+            (None, Some(NULL)) => ASN1Type::Null,
+            (None, Some(BOOLEAN)) => ASN1Type::Boolean(Boolean { constraints }),
+            (None, Some(REAL)) => ASN1Type::Real(Real { constraints }),
+            (None, Some(INTEGER)) => ASN1Type::Integer(Integer {
                 constraints,
                 distinguished_values: None,
             }),
-            (None, BIT_STRING) => ASN1Type::BitString(BitString {
+            (None, Some(BIT_STRING)) => ASN1Type::BitString(BitString {
                 constraints,
                 distinguished_values: None,
             }),
-            (None, OCTET_STRING) => ASN1Type::OctetString(OctetString { constraints }),
-            (None, GENERALIZED_TIME) => ASN1Type::GeneralizedTime(GeneralizedTime { constraints }),
-            (None, UTC_TIME) => ASN1Type::UTCTime(UTCTime { constraints }),
-            (None, OBJECT_IDENTIFIER) => {
+            (None, Some(OCTET_STRING)) => ASN1Type::OctetString(OctetString { constraints }),
+            (None, Some(GENERALIZED_TIME)) => {
+                ASN1Type::GeneralizedTime(GeneralizedTime { constraints })
+            }
+            (None, Some(UTC_TIME)) => ASN1Type::UTCTime(UTCTime { constraints }),
+            (None, Some(OBJECT_IDENTIFIER)) => {
                 ASN1Type::ObjectIdentifier(ObjectIdentifier { constraints })
             }
-            (None, BMP_STRING) => ASN1Type::CharacterString(CharacterString {
+            (None, Some(BMP_STRING)) => ASN1Type::CharacterString(CharacterString {
                 constraints,
                 ty: CharacterStringType::BMPString,
             }),
-            (None, UTF8_STRING) => ASN1Type::CharacterString(CharacterString {
+            (None, Some(UTF8_STRING)) => ASN1Type::CharacterString(CharacterString {
                 constraints,
                 ty: CharacterStringType::UTF8String,
             }),
-            (None, PRINTABLE_STRING) => ASN1Type::CharacterString(CharacterString {
+            (None, Some(PRINTABLE_STRING)) => ASN1Type::CharacterString(CharacterString {
                 constraints,
                 ty: CharacterStringType::PrintableString,
             }),
-            (None, TELETEX_STRING) => ASN1Type::CharacterString(CharacterString {
+            (None, Some(TELETEX_STRING)) => ASN1Type::CharacterString(CharacterString {
                 constraints,
                 ty: CharacterStringType::TeletexString,
             }),
-            (None, IA5_STRING) => ASN1Type::CharacterString(CharacterString {
+            (None, Some(IA5_STRING)) => ASN1Type::CharacterString(CharacterString {
                 constraints,
                 ty: CharacterStringType::IA5String,
             }),
-            (None, UNIVERSAL_STRING) => ASN1Type::CharacterString(CharacterString {
+            (None, Some(UNIVERSAL_STRING)) => ASN1Type::CharacterString(CharacterString {
                 constraints,
                 ty: CharacterStringType::UniversalString,
             }),
-            (None, VISIBLE_STRING) => ASN1Type::CharacterString(CharacterString {
+            (None, Some(VISIBLE_STRING)) => ASN1Type::CharacterString(CharacterString {
                 constraints,
                 ty: CharacterStringType::VisibleString,
             }),
-            (None, GENERAL_STRING) => ASN1Type::CharacterString(CharacterString {
+            (None, Some(GENERAL_STRING)) => ASN1Type::CharacterString(CharacterString {
                 constraints,
                 ty: CharacterStringType::GeneralString,
             }),
-            (None, VIDEOTEX_STRING) => ASN1Type::CharacterString(CharacterString {
+            (None, Some(VIDEOTEX_STRING)) => ASN1Type::CharacterString(CharacterString {
                 constraints,
                 ty: CharacterStringType::VideotexString,
             }),
-            (None, GRAPHIC_STRING) => ASN1Type::CharacterString(CharacterString {
+            (None, Some(GRAPHIC_STRING)) => ASN1Type::CharacterString(CharacterString {
                 constraints,
                 ty: CharacterStringType::GraphicString,
             }),
-            (None, NUMERIC_STRING) => ASN1Type::CharacterString(CharacterString {
+            (None, Some(NUMERIC_STRING)) => ASN1Type::CharacterString(CharacterString {
                 constraints,
                 ty: CharacterStringType::NumericString,
             }),
             _ => ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                 parent: parent.map(str::to_string),
-                module: module.map(str::to_string),
-                identifier: Cow::Borrowed(identifier),
+                identifier,
                 constraints,
             }),
         }
@@ -1334,24 +1338,54 @@ impl<'a> ASN1Value<'a> {
 pub struct DeclarationElsewhere<'a> {
     /// Chain of parent declaration leading back to a basic ASN1 type
     pub parent: Option<String>,
-    /// Name of the module where the identifier should be found.
-    pub module: Option<String>,
-    pub identifier: Cow<'a, str>,
+    pub identifier: DefinedType<'a>,
     pub constraints: Vec<Constraint<'a>>,
 }
 
-impl<'a> From<(Option<&str>, &'a str, Option<Vec<Constraint<'a>>>)> for DeclarationElsewhere<'a> {
-    fn from(value: (Option<&str>, &'a str, Option<Vec<Constraint<'a>>>)) -> Self {
+impl<'a> From<(Option<&str>, DefinedType<'a>, Option<Vec<Constraint<'a>>>)>
+    for DeclarationElsewhere<'a>
+{
+    fn from(value: (Option<&str>, DefinedType<'a>, Option<Vec<Constraint<'a>>>)) -> Self {
         DeclarationElsewhere {
             parent: value.0.map(ToString::to_string),
-            module: None,
-            identifier: Cow::Borrowed(value.1),
+            identifier: value.1,
             constraints: value.2.unwrap_or_default(),
         }
     }
 }
 
+/// Representation of a DefinedType as defined in X.680 §14
+/// `ParameterizedType` and `ParameterizedValueSetType` cannot be distinguished
+/// by the lexer and are grouped into a single variant
+#[cfg_attr(test, derive(EnumDebug))]
+#[cfg_attr(not(test), derive(Debug))]
+#[derive(Clone, PartialEq)]
+pub enum DefinedType<'a> {
+    ExternalTypeReference {
+        modulereference: Cow<'a, str>,
+        typereference: Cow<'a, str>,
+    },
+    TypeReference(Cow<'a, str>),
+    ParameterizedTypeOrValueSetType {
+        simple_defined_type: Box<DefinedType<'a>>,
+        actual_parameter_list: Vec<Parameter<'a>>,
+    },
+}
 
+impl<'a> DefinedType<'a> {
+    pub fn as_typereference(&self) -> Option<&str> {
+        match self {
+            Self::TypeReference(s) => Some(&s),
+            _ => None,
+        }
+    }
+}
+
+impl<'a> Into<DefinedType<'a>> for &'a str {
+    fn into(self) -> DefinedType<'a> {
+        DefinedType::TypeReference(Cow::Borrowed(self))
+    }
+}
 
 /// Tag classes
 #[derive(Debug, Clone, Copy, PartialEq)]

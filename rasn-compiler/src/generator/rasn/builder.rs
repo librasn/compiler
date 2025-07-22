@@ -1,6 +1,6 @@
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote, ToTokens, TokenStreamExt};
-use std::collections::BTreeMap;
+use std::{borrow::Cow, collections::BTreeMap};
 
 use crate::intermediate::{
     constraints::Constraint,
@@ -43,7 +43,7 @@ impl Rasn {
     pub(crate) fn generate_tld<'a>(
         &self,
         tld: ToplevelDefinition<'a>,
-    ) -> Result<TokenStream, GeneratorError<'a>> {
+    ) -> Result<TokenStream, GeneratorError> {
         match tld {
             ToplevelDefinition::Type(t) => {
                 if t.parameterization.is_some() {
@@ -89,22 +89,22 @@ impl Rasn {
                 ASN1Information::ObjectSet(_) => self.generate_information_object_set(o),
                 ASN1Information::Object(_) => Ok(TokenStream::new()),
             },
-            ToplevelDefinition::Macro(_) => Err(GeneratorError {
-                kind: GeneratorErrorType::NotYetInplemented,
-                details: "MACROs are currently unsupported!".to_string(),
-                top_level_declaration: Some(Box::new(tld)),
-            }),
+            ToplevelDefinition::Macro(_) => Err(GeneratorError::new(
+                Some(tld.name().to_string()),
+                "MACROs are currently unsupported!",
+                GeneratorErrorType::NotYetInplemented,
+            )),
         }
     }
 
     pub(crate) fn generate_typealias<'a>(
         &self,
         tld: ToplevelTypeDefinition<'a>,
-    ) -> Result<TokenStream, GeneratorError<'a>> {
+    ) -> Result<TokenStream, GeneratorError> {
         if let ASN1Type::ElsewhereDeclaredType(dec) = &tld.ty {
             let (name, mut annotations) = self.format_name_and_common_annotations(&tld)?;
             annotations.push(self.format_range_annotations(true, &dec.constraints)?);
-            let alias = self.to_rust_qualified_type(dec.module.as_deref(), &dec.identifier);
+            let alias = self.to_rust_qualified_type(&dec.identifier);
             Ok(typealias_template(
                 self.format_comments(&tld.comments)?,
                 name,
@@ -119,7 +119,7 @@ impl Rasn {
     pub(crate) fn generate_integer_value<'a>(
         &self,
         tld: ToplevelValueDefinition<'a>,
-    ) -> Result<TokenStream, GeneratorError<'a>> {
+    ) -> Result<TokenStream, GeneratorError> {
         if let ASN1Value::LinkedIntValue { integer_type, .. } = tld.value {
             let formatted_value = self.value_to_tokens(&tld.value, None)?;
             let (ty, val) = if tld.associated_type.is_builtin_type() {
@@ -145,7 +145,7 @@ impl Rasn {
             }
         } else {
             Err(GeneratorError::new(
-                Some(ToplevelDefinition::Value(tld)),
+                Some(tld.name.to_string()),
                 "Expected INTEGER value declaration",
                 GeneratorErrorType::Asn1TypeMismatch,
             ))
@@ -155,7 +155,7 @@ impl Rasn {
     pub(crate) fn generate_integer<'a>(
         &self,
         tld: ToplevelTypeDefinition<'a>,
-    ) -> Result<TokenStream, GeneratorError<'a>> {
+    ) -> Result<TokenStream, GeneratorError> {
         if let ASN1Type::Integer(ref int) = tld.ty {
             let (name, mut annotations) = self.format_name_and_common_annotations(&tld)?;
             annotations.push(self.format_range_annotations(true, &int.constraints)?);
@@ -173,7 +173,7 @@ impl Rasn {
     pub(crate) fn generate_bit_string<'a>(
         &self,
         tld: ToplevelTypeDefinition<'a>,
-    ) -> Result<TokenStream, GeneratorError<'a>> {
+    ) -> Result<TokenStream, GeneratorError> {
         if let ASN1Type::BitString(ref bitstr) = tld.ty {
             let (name, mut annotations) = self.format_name_and_common_annotations(&tld)?;
             if bitstr.fixed_size().is_none() {
@@ -201,7 +201,7 @@ impl Rasn {
     pub(crate) fn generate_octet_string<'a>(
         &self,
         tld: ToplevelTypeDefinition<'a>,
-    ) -> Result<TokenStream, GeneratorError<'a>> {
+    ) -> Result<TokenStream, GeneratorError> {
         if let ASN1Type::OctetString(ref oct_str) = tld.ty {
             let (name, mut annotations) = self.format_name_and_common_annotations(&tld)?;
             if oct_str.fixed_size().is_none() {
@@ -229,7 +229,7 @@ impl Rasn {
     pub(crate) fn generate_character_string<'a>(
         &self,
         tld: ToplevelTypeDefinition<'a>,
-    ) -> Result<TokenStream, GeneratorError<'a>> {
+    ) -> Result<TokenStream, GeneratorError> {
         if let ASN1Type::CharacterString(ref char_str) = tld.ty {
             let (name, mut annotations) = self.format_name_and_common_annotations(&tld)?;
             annotations.extend([
@@ -250,7 +250,7 @@ impl Rasn {
     pub(crate) fn generate_boolean<'a>(
         &self,
         tld: ToplevelTypeDefinition<'a>,
-    ) -> Result<TokenStream, GeneratorError<'a>> {
+    ) -> Result<TokenStream, GeneratorError> {
         // TODO: process boolean constraints
         let (name, annotations) = self.format_name_and_common_annotations(&tld)?;
         if let ASN1Type::Boolean(_) = tld.ty {
@@ -267,7 +267,7 @@ impl Rasn {
     pub(crate) fn generate_value<'a>(
         &self,
         tld: ToplevelValueDefinition<'a>,
-    ) -> Result<TokenStream, GeneratorError<'a>> {
+    ) -> Result<TokenStream, GeneratorError> {
         let ty = &tld.associated_type;
         match &tld.value {
             ASN1Value::Null if ty.is_builtin_type() => {
@@ -362,7 +362,7 @@ impl Rasn {
                     self.value_to_tokens(&tld.value, Some(&quote!(UtcTime)))?
                 ),
                 _ => Err(GeneratorError::new(
-                    Some(ToplevelDefinition::Value(tld)),
+                    Some(tld.name.to_string()),
                     "Time value does not match expected type",
                     GeneratorErrorType::Asn1TypeMismatch,
                 )),
@@ -452,7 +452,7 @@ impl Rasn {
                         ASN1Type::SetOf(set) => &set.element_type,
                         _ => {
                             return Err(GeneratorError::new(
-                                Some(ToplevelDefinition::Value(tld)),
+                                Some(tld.name.to_string()),
                                 "LinkedArrayLikeValue does not match SEQUENCE/SET OF type",
                                 GeneratorErrorType::Asn1TypeMismatch,
                             ))
@@ -488,7 +488,7 @@ impl Rasn {
     pub(crate) fn generate_any<'a>(
         &self,
         tld: ToplevelTypeDefinition<'a>,
-    ) -> Result<TokenStream, GeneratorError<'a>> {
+    ) -> Result<TokenStream, GeneratorError> {
         let name = self.to_rust_title_case(&tld.name);
         let mut annotations = vec![quote!(delegate), self.format_tag(tld.tag.as_ref(), false)];
         if name.to_string() != tld.name {
@@ -504,7 +504,7 @@ impl Rasn {
     pub(crate) fn generate_generalized_time<'a>(
         &self,
         tld: ToplevelTypeDefinition<'a>,
-    ) -> Result<TokenStream, GeneratorError<'a>> {
+    ) -> Result<TokenStream, GeneratorError> {
         if let ASN1Type::GeneralizedTime(_) = &tld.ty {
             let (name, annotations) = self.format_name_and_common_annotations(&tld)?;
             Ok(generalized_time_template(
@@ -520,7 +520,7 @@ impl Rasn {
     pub(crate) fn generate_utc_time<'a>(
         &self,
         tld: ToplevelTypeDefinition<'a>,
-    ) -> Result<TokenStream, GeneratorError<'a>> {
+    ) -> Result<TokenStream, GeneratorError> {
         if let ASN1Type::UTCTime(_) = &tld.ty {
             let (name, annotations) = self.format_name_and_common_annotations(&tld)?;
             Ok(utc_time_template(
@@ -536,7 +536,7 @@ impl Rasn {
     pub(crate) fn generate_oid<'a>(
         &self,
         tld: ToplevelTypeDefinition<'a>,
-    ) -> Result<TokenStream, GeneratorError<'a>> {
+    ) -> Result<TokenStream, GeneratorError> {
         if let ASN1Type::ObjectIdentifier(oid) = &tld.ty {
             let (name, mut annotations) = self.format_name_and_common_annotations(&tld)?;
             annotations.push(self.format_range_annotations(false, &oid.constraints)?);
@@ -553,7 +553,7 @@ impl Rasn {
     pub(crate) fn generate_null<'a>(
         &self,
         tld: ToplevelTypeDefinition<'a>,
-    ) -> Result<TokenStream, GeneratorError<'a>> {
+    ) -> Result<TokenStream, GeneratorError> {
         if let ASN1Type::Null = tld.ty {
             let (name, annotations) = self.format_name_and_common_annotations(&tld)?;
             Ok(null_template(
@@ -569,7 +569,7 @@ impl Rasn {
     pub(crate) fn generate_enumerated<'a>(
         &self,
         tld: ToplevelTypeDefinition<'a>,
-    ) -> Result<TokenStream, GeneratorError<'a>> {
+    ) -> Result<TokenStream, GeneratorError> {
         if let ASN1Type::Enumerated(ref enumerated) = tld.ty {
             let extensible = enumerated
                 .extensible
@@ -607,7 +607,7 @@ impl Rasn {
     pub(crate) fn generate_choice<'a>(
         &self,
         tld: ToplevelTypeDefinition<'a>,
-    ) -> Result<TokenStream, GeneratorError<'a>> {
+    ) -> Result<TokenStream, GeneratorError> {
         if let ASN1Type::Choice(ref choice) = tld.ty {
             let name = self.to_rust_title_case(&tld.name);
             let extensible = choice
@@ -685,7 +685,7 @@ impl Rasn {
     pub(crate) fn generate_sequence_or_set<'a>(
         &self,
         tld: ToplevelTypeDefinition<'a>,
-    ) -> Result<TokenStream, GeneratorError<'a>> {
+    ) -> Result<TokenStream, GeneratorError> {
         match tld.ty {
             ASN1Type::Sequence(ref seq) | ASN1Type::Set(ref seq) => {
                 let name = self.to_rust_title_case(&tld.name);
@@ -789,13 +789,13 @@ impl Rasn {
     pub(crate) fn generate_sequence_or_set_of<'a>(
         &self,
         tld: ToplevelTypeDefinition<'a>,
-    ) -> Result<TokenStream, GeneratorError<'a>> {
+    ) -> Result<TokenStream, GeneratorError> {
         let (is_set_of, seq_or_set_of) = match &tld.ty {
             ASN1Type::SetOf(se_of) => (true, se_of),
             ASN1Type::SequenceOf(se_of) => (false, se_of),
             _ => {
                 return Err(GeneratorError::new(
-                    Some(ToplevelDefinition::Type(tld)),
+                    Some(tld.name.to_string()),
                     "Expected SEQUENCE OF top-level declaration",
                     GeneratorErrorType::Asn1TypeMismatch,
                 ))
@@ -811,7 +811,7 @@ impl Rasn {
                         " Anonymous {} OF member ",
                         if is_set_of { "SET" } else { "SEQUENCE" }
                     )),
-                    name: String::from(INNER_ARRAY_LIKE_PREFIX) + &name.to_string(),
+                    name: Cow::Owned(String::from(INNER_ARRAY_LIKE_PREFIX) + &name.to_string()),
                     ty: n.clone(),
                     tag: None,
                     module_header: None,
@@ -820,9 +820,7 @@ impl Rasn {
         }
         .unwrap_or_default();
         let member_type = match seq_or_set_of.element_type.as_ref() {
-            ASN1Type::ElsewhereDeclaredType(d) => {
-                self.to_rust_qualified_type(d.module.as_deref(), &d.identifier)
-            }
+            ASN1Type::ElsewhereDeclaredType(d) => self.to_rust_qualified_type(&d.identifier),
             _ => format_ident!("Anonymous{}", &name.to_string()).to_token_stream(),
         };
         let mut annotations = vec![
@@ -846,7 +844,7 @@ impl Rasn {
     pub(crate) fn generate_information_object_set<'a>(
         &self,
         tld: ToplevelInformationDefinition<'a>,
-    ) -> Result<TokenStream, GeneratorError<'a>> {
+    ) -> Result<TokenStream, GeneratorError> {
         if self.config.opaque_open_types {
             return Ok(TokenStream::new());
         }
@@ -872,7 +870,7 @@ impl Rasn {
                     )),
                     ObjectSetValue::Inline(InformationObjectFields::CustomSyntax(_)) => {
                         Err(GeneratorError::new(
-                            Some(ToplevelDefinition::Object(tld.clone())),
+                            Some(tld.name.to_string()),
                             "Unexpectedly encountered unresolved custom syntax!",
                             GeneratorErrorType::MissingClassKey,
                         ))
@@ -882,21 +880,21 @@ impl Rasn {
                     }
                 })
                 .collect::<Result<Vec<(ASN1Value, Vec<(usize, ASN1Type)>)>, _>>()?;
-            let mut choices = BTreeMap::<String, Vec<(ASN1Value, ASN1Type)>>::new();
+            let mut choices = BTreeMap::<Cow<'a, str>, Vec<(ASN1Value, ASN1Type)>>::new();
             for (key, items) in keys_to_types.drain(..) {
                 for (index, item) in items {
                     let id = class
                         .fields
                         .get(index)
                         .map(|f| f.identifier.identifier())
-                        .ok_or_else(|| GeneratorError {
-                            top_level_declaration: Some(Box::new(ToplevelDefinition::Object(
-                                tld.clone(),
-                            ))),
-                            details: "Could not find class field for index.".into(),
-                            kind: GeneratorErrorType::SyntaxMismatch,
+                        .ok_or_else(|| {
+                            GeneratorError::new(
+                                Some(tld.name.to_string()),
+                                "Could not find class field for index.".into(),
+                                GeneratorErrorType::SyntaxMismatch,
+                            )
                         })?;
-                    match choices.get_mut(id) {
+                    match choices.get_mut(&*id) {
                         Some(entry) => entry.push((key.clone(), item)),
                         None => {
                             choices.insert(id.clone(), vec![(key.clone(), item)]);
@@ -907,7 +905,7 @@ impl Rasn {
 
             if choices.is_empty() {
                 for InformationObjectClassField { identifier, .. } in &class.fields {
-                    choices.insert(identifier.identifier().clone(), Vec::new());
+                    choices.insert(identifier.identifier(), Vec::new());
                 }
             }
 
@@ -1072,7 +1070,7 @@ impl Rasn {
             Ok(quote!(#(#field_enums)*))
         } else {
             Err(GeneratorError::new(
-                Some(ToplevelDefinition::Object(tld)),
+                Some(tld.name.to_string()),
                 "Expected Object Set top-level declaration",
                 GeneratorErrorType::Asn1TypeMismatch,
             ))

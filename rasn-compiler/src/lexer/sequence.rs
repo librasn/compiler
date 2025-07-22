@@ -26,7 +26,7 @@ pub fn sequence_value(input: Input<'_>) -> ParserResult<'_, ASN1Value> {
             ASN1Value::SequenceOrSet(
                 fields
                     .into_iter()
-                    .map(|(id, val)| (id.map(|str| str.to_owned()), Box::new(val)))
+                    .map(|(id, val)| (id.map(|str| Cow::Borrowed(str)), Box::new(val)))
                     .collect(),
             )
         },
@@ -91,8 +91,10 @@ fn extension_group(input: Input<'_>) -> ParserResult<'_, SequenceComponent> {
             }
             SequenceComponent::Member(SequenceOrSetMember {
                 is_recursive: false,
-                name: String::from(INTERNAL_EXTENSION_GROUP_NAME_PREFIX)
-                    + &members.first().unwrap().name,
+                name: Cow::Owned(
+                    String::from(INTERNAL_EXTENSION_GROUP_NAME_PREFIX)
+                        + &members.first().unwrap().name,
+                ),
                 tag: None,
                 ty: ASN1Type::Sequence(SequenceOrSet {
                     components_of,
@@ -165,7 +167,6 @@ is_recursive: false,
                     tag: None,
                     ty: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                         parent: None,
-                        module: None,
                         identifier: "Shape".into(),
                         constraints: vec![Constraint::Subtype(ElementSetSpecs { set: ElementOrSetOperation::Element(SubtypeElements::MultipleTypeConstraints(InnerTypeConstraint { is_partial: true, constraints: vec![NamedConstraint { identifier: "elliptical".into(), constraints: vec![], presence: ComponentPresence::Absent },NamedConstraint { identifier: "radial".into(), constraints: vec![], presence: ComponentPresence::Absent },NamedConstraint { identifier: "radialShapes".into(), constraints: vec![], presence: ComponentPresence::Absent }] })), extensible: false })
                      ]}),
@@ -200,7 +201,6 @@ is_recursive: false,
                         tag: None,
                         ty: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                             parent: None,
-                            module: None,
                             identifier: "AccelerationValue".into(),
                             constraints: vec![]
                         }),
@@ -214,7 +214,6 @@ is_recursive: false,
                         tag: None,
                         ty: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                             parent: None,
-                            module: None,
                             identifier: "AccelerationConfidence".into(),
                             constraints: vec![]
                         }),
@@ -252,7 +251,6 @@ is_recursive: false,
                         tag: None,
                         ty: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                             parent: None,
-                            module: None,
                             identifier: "CartesianCoordinateWithConfidence".into(),
                             constraints: vec![]
                         }),
@@ -265,7 +263,6 @@ is_recursive: false,
                         tag: None,
                         ty: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                             parent: None,
-                            module: None,
                             identifier: "CartesianCoordinateWithConfidence".into(),
                             constraints: vec![]
                         }),
@@ -278,7 +275,6 @@ is_recursive: false,
                         tag: None,
                         ty: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                             parent: None,
-                            module: None,
                             identifier: "CartesianCoordinateWithConfidence".into(),
                             constraints: vec![]
                         }),
@@ -316,7 +312,6 @@ is_recursive: false,
                         tag: None,
                         ty: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                             parent: None,
-                            module: None,
                             identifier: "PosConfidenceEllipse".into(),
                             constraints: vec![]
                         }),
@@ -329,7 +324,6 @@ is_recursive: false,
                         tag: None,
                         ty: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                             parent: None,
-                            module: None,
                             identifier: "DeltaAltitude".into(),
                             constraints: vec![]
                         }),
@@ -345,7 +339,6 @@ is_recursive: false,
                         tag: None,
                         ty: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                             parent: None,
-                            module: None,
                             identifier: "AltitudeConfidence".into(),
                             constraints: vec![]
                         }),
@@ -477,7 +470,6 @@ is_recursive: false,
                                 tag: None,
                                 ty: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                                     parent: None,
-                                    module: None,
                                     identifier: "Wow".into(),
                                     constraints: vec![]
                                 }),
@@ -678,7 +670,6 @@ is_recursive: false,
                     tag: None,
                     ty: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                         parent: None,
-                        module: None,
                         identifier: "TypeB".into(),
                         constraints: vec![]
                     }),
@@ -862,15 +853,17 @@ integrityCheckValue     ICV OPTIONAL
                 extensible: None,
                 constraints: vec![],
                 members: vec![SequenceOrSetMember {
-                    name: "name".to_string(),
+                    name: "name".into(),
                     tag: None,
                     ty: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                         parent: None,
-                        module: Some("ETSI-Common-Types".to_string()),
-                        identifier: "Name".into(),
+                        identifier: DefinedType::ExternalTypeReference {
+                            modulereference: "ETSI-Common-Types".into(),
+                            typereference: "Name".into()
+                        },
                         constraints: vec![],
                     }),
-                    optionality: Optionality::Required,
+                    optionality: Optionality::Optional,
                     is_recursive: false,
                     constraints: vec![],
                 }],

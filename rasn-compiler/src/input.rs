@@ -5,7 +5,10 @@
 //! This module owes a lot to fflorent's [`nom_locate`](https://github.com/fflorent/nom_locate).
 
 use std::{
-    borrow::Cow, fmt::Debug, slice::SliceIndex, str::{CharIndices, Chars, FromStr}
+    borrow::Cow,
+    fmt::Debug,
+    slice::SliceIndex,
+    str::{CharIndices, Chars, FromStr},
 };
 
 use nom::{AsBytes, Compare, ExtendInto, FindSubstring, FindToken, Offset, ParseTo, Parser};

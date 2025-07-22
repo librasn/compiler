@@ -1,4 +1,4 @@
-use std::{ops::Not, str::FromStr};
+use std::{borrow::Cow, ops::Not, str::FromStr};
 
 use proc_macro2::{Ident, Literal, Punct, Spacing, Span, TokenStream};
 use quote::{format_ident, quote, ToTokens, TokenStreamExt};
@@ -135,7 +135,7 @@ impl Rasn {
     pub(crate) fn format_comments<'a>(
         &self,
         comments: &str,
-    ) -> Result<TokenStream, GeneratorError<'a>> {
+    ) -> Result<TokenStream, GeneratorError> {
         if comments.is_empty() {
             Ok(TokenStream::new())
         } else {
@@ -165,7 +165,7 @@ impl Rasn {
         &self,
         signed: bool,
         constraints: &[Constraint],
-    ) -> Result<TokenStream, GeneratorError<'a>> {
+    ) -> Result<TokenStream, GeneratorError> {
         if constraints.is_empty() {
             return Ok(TokenStream::new());
         }
@@ -230,7 +230,7 @@ impl Rasn {
         &self,
         string_type: CharacterStringType,
         constraints: &Vec<Constraint>,
-    ) -> Result<TokenStream, GeneratorError<'a>> {
+    ) -> Result<TokenStream, GeneratorError> {
         if constraints.is_empty() {
             return Ok(TokenStream::new());
         }
@@ -268,7 +268,7 @@ impl Rasn {
     pub(crate) fn format_enum_members<'a>(
         &self,
         enumerated: &Enumerated,
-    ) -> Result<TokenStream, GeneratorError<'a>> {
+    ) -> Result<TokenStream, GeneratorError> {
         let first_extension_index = enumerated.extensible;
         let enumerals = enumerated
             .members
@@ -331,9 +331,9 @@ impl Rasn {
 
     pub(crate) fn format_sequence_or_set_members<'a>(
         &self,
-        sequence_or_set: &SequenceOrSet,
+        sequence_or_set: &SequenceOrSet<'a>,
         parent_name: &str,
-    ) -> Result<FormattedMembers, GeneratorError<'a>> {
+    ) -> Result<FormattedMembers, GeneratorError> {
         let first_extension_index = sequence_or_set.extensible;
 
         sequence_or_set.members.iter().enumerate().try_fold(
@@ -344,7 +344,7 @@ impl Rasn {
                         self.generate_tld(ToplevelDefinition::Type(ToplevelTypeDefinition {
                             parameterization: None,
                             comments: INNER_TYPE_COMMENT.into(),
-                            name: self.inner_name(&m.name, parent_name).to_string(),
+                            name: Cow::Owned(self.inner_name(&m.name, parent_name).to_string()),
                             ty: m.ty.clone(),
                             tag: None,
                             module_header: None,
@@ -381,10 +381,10 @@ impl Rasn {
 
     pub(crate) fn format_sequence_member<'a>(
         &self,
-        member: &SequenceOrSetMember,
+        member: &SequenceOrSetMember<'a>,
         parent_name: &str,
         extension_annotation: TokenStream,
-    ) -> Result<(TokenStream, NameType), GeneratorError<'a>> {
+    ) -> Result<(TokenStream, NameType), GeneratorError> {
         let name = self.to_rust_snake_case(&member.name);
         let default_annotation = member
             .optionality
@@ -425,9 +425,9 @@ impl Rasn {
 
     pub(crate) fn format_choice_options<'a>(
         &self,
-        choice: &Choice,
+        choice: &Choice<'a>,
         parent_name: &str,
-    ) -> Result<FormattedOptions, GeneratorError<'a>> {
+    ) -> Result<FormattedOptions, GeneratorError> {
         let first_extension_index = choice.extensible;
         choice.options.iter().enumerate().try_fold(
             FormattedOptions::default(),
@@ -437,7 +437,7 @@ impl Rasn {
                         self.generate_tld(ToplevelDefinition::Type(ToplevelTypeDefinition {
                             parameterization: None,
                             comments: INNER_TYPE_COMMENT.into(),
-                            name: self.inner_name(&o.name, parent_name).to_string(),
+                            name: Cow::Owned(self.inner_name(&o.name, parent_name).to_string()),
                             ty: o.ty.clone(),
                             tag: None,
                             module_header: None,
@@ -473,10 +473,10 @@ impl Rasn {
     pub(crate) fn format_choice_option<'a>(
         &self,
         name: Ident,
-        member: &ChoiceOption,
+        member: &ChoiceOption<'a>,
         parent_name: &str,
         extension_annotation: TokenStream,
-    ) -> Result<TokenStream, GeneratorError<'a>> {
+    ) -> Result<TokenStream, GeneratorError> {
         let FormattedMemberOrOption {
             formatted_type_name,
             annotations,
@@ -487,14 +487,14 @@ impl Rasn {
         })
     }
 
-    fn format_member_or_option<'a, M: MemberOrOption>(
+    fn format_member_or_option<'a, M: MemberOrOption<'a>>(
         &self,
         member: &M,
         parent_name: &str,
         name: &Ident,
         extension_annotation: TokenStream,
         default_annotation: Option<TokenStream>,
-    ) -> Result<FormattedMemberOrOption, GeneratorError<'a>> {
+    ) -> Result<FormattedMemberOrOption, GeneratorError> {
         let (mut all_constraints, mut formatted_type_name) = self.constraints_and_type_name(
             member.ty(),
             member.name(),
@@ -551,11 +551,11 @@ impl Rasn {
 
     pub(crate) fn constraints_and_type_name<'a>(
         &self,
-        ty: &ASN1Type,
+        ty: &ASN1Type<'a>,
         name: &str,
         parent_name: &str,
         is_recursive: bool,
-    ) -> Result<(Vec<Constraint>, TokenStream), GeneratorError<'a>> {
+    ) -> Result<(Vec<Constraint<'a>>, TokenStream), GeneratorError> {
         Ok(match ty {
             ASN1Type::Null => (vec![], quote!(())),
             ASN1Type::Boolean(b) => (b.constraints.clone(), quote!(bool)),
@@ -614,7 +614,7 @@ impl Rasn {
                 (s.constraints().clone(), quote!(SetOf<#inner_type>))
             }
             ASN1Type::ElsewhereDeclaredType(e) => {
-                let mut tokenized = self.to_rust_qualified_type(e.module.as_deref(), &e.identifier);
+                let mut tokenized = self.to_rust_qualified_type(&e.identifier);
                 if is_recursive {
                     tokenized = boxed_type(tokenized);
                 };
@@ -630,7 +630,7 @@ impl Rasn {
     pub(crate) fn string_type<'a>(
         &self,
         c_type: &CharacterStringType,
-    ) -> Result<TokenStream, GeneratorError<'a>> {
+    ) -> Result<TokenStream, GeneratorError> {
         match c_type {
             CharacterStringType::NumericString => Ok(quote!(NumericString)),
             CharacterStringType::VisibleString => Ok(quote!(VisibleString)),
@@ -659,7 +659,7 @@ impl Rasn {
         elements: Vec<TokenStream>,
         needs_copy: bool,
         is_type_annotation: bool,
-    ) -> Result<TokenStream, GeneratorError<'a>> {
+    ) -> Result<TokenStream, GeneratorError> {
         let mut not_empty_exprs = elements.into_iter().filter(|ts| !ts.is_empty());
         let custom_and_required = self.required_annotations(needs_copy)?;
         let annotations = if let Some(mut annotations) = not_empty_exprs.next() {
@@ -688,9 +688,9 @@ impl Rasn {
 
     pub(crate) fn format_default_methods<'a>(
         &self,
-        members: &Vec<SequenceOrSetMember>,
+        members: &'a [SequenceOrSetMember<'a>],
         parent_name: &str,
-    ) -> Result<TokenStream, GeneratorError<'a>> {
+    ) -> Result<TokenStream, GeneratorError> {
         let mut output = TokenStream::new();
         for member in members {
             if let Some(value) = member.optionality.default() {
@@ -713,8 +713,8 @@ impl Rasn {
 
     pub(crate) fn type_to_tokens<'a>(
         &self,
-        ty: &ASN1Type,
-    ) -> Result<TokenStream, GeneratorError<'a>> {
+        ty: &ASN1Type<'a>,
+    ) -> Result<TokenStream, GeneratorError> {
         match ty {
             ASN1Type::Null => Ok(quote!(())),
             ASN1Type::Boolean(_) => Ok(quote!(bool)),
@@ -747,9 +747,7 @@ impl Rasn {
                 NotYetInplemented,
                 "Set values are currently unsupported!"
             )),
-            ASN1Type::ElsewhereDeclaredType(e) => {
-                Ok(self.to_rust_qualified_type(e.module.as_deref(), &e.identifier))
-            }
+            ASN1Type::ElsewhereDeclaredType(e) => Ok(self.to_rust_qualified_type(&e.identifier)),
             ASN1Type::ObjectClassField(_) => Err(error!(
                 NotYetInplemented,
                 "Object class field types are currently unsupported!"
@@ -771,9 +769,9 @@ impl Rasn {
 
     pub(crate) fn value_to_tokens<'a>(
         &self,
-        value: &ASN1Value,
+        value: &ASN1Value<'a>,
         type_name: Option<&TokenStream>,
-    ) -> Result<TokenStream, GeneratorError<'a>> {
+    ) -> Result<TokenStream, GeneratorError> {
         match value {
             ASN1Value::All => Err(error!(
                 NotYetInplemented,
@@ -873,7 +871,11 @@ impl Rasn {
                 Ok(quote!(alloc::vec![#(#elems),*]))
             }
             ASN1Value::LinkedNestedValue { supertypes, value } => {
-                fn nester(generator: &Rasn, s: TokenStream, mut types: Vec<String>) -> TokenStream {
+                fn nester<'a>(
+                    generator: &Rasn,
+                    s: TokenStream,
+                    mut types: Vec<Cow<'a, str>>,
+                ) -> TokenStream {
                     match types.pop() {
                         Some(t) => {
                             let ident = generator.to_rust_title_case(&t);
@@ -964,7 +966,7 @@ impl Rasn {
     pub(crate) fn format_oid<'a>(
         &self,
         oid: &ObjectIdentifierValue,
-    ) -> Result<TokenStream, GeneratorError<'a>> {
+    ) -> Result<TokenStream, GeneratorError> {
         let arc_to_u32 = |id| {
             u32::try_from(id)
                 .map(|arc| arc.to_token_stream())
@@ -1077,7 +1079,7 @@ impl Rasn {
         &self,
         ty: &ASN1Type,
         first_item: Option<&ASN1Value>,
-    ) -> Result<TokenStream, GeneratorError<'a>> {
+    ) -> Result<TokenStream, GeneratorError> {
         if ty.is_builtin_type() {
             match ty {
                 ASN1Type::Null => Ok(quote!(())),
@@ -1122,9 +1124,9 @@ impl Rasn {
     /// Resolves the custom syntax declared in an information object class' WITH SYNTAX clause
     pub(crate) fn resolve_standard_syntax<'a>(
         &self,
-        class: &ObjectClassDefn,
-        application: &[InformationObjectField],
-    ) -> Result<(ASN1Value, Vec<(usize, ASN1Type)>), GeneratorError<'a>> {
+        class: &ObjectClassDefn<'a>,
+        application: &[InformationObjectField<'a>],
+    ) -> Result<(ASN1Value<'a>, Vec<(usize, ASN1Type<'a>)>), GeneratorError> {
         let mut key = None;
         let mut field_index_map = Vec::<(usize, ASN1Type)>::new();
 
@@ -1300,20 +1302,25 @@ impl Rasn {
     /// Module name is converted to snake case, and type name converted to title case.
     ///
     /// If qualified with a module, then path is `super::#module::#ty`, else it is just `#ty`.
-    pub(crate) fn to_rust_qualified_type(&self, module: Option<&str>, ty: &str) -> TokenStream {
-        let ty = self.to_rust_title_case(ty);
-        if let Some(module) = module {
-            let module = self.to_rust_snake_case(module).to_token_stream();
-            quote!(super::#module::#ty)
-        } else {
-            ty
+    pub(crate) fn to_rust_qualified_type<'a>(&self, defined_type: &DefinedType<'a>) -> TokenStream {
+        match defined_type {
+            DefinedType::TypeReference(ty) => self.to_rust_title_case(&**ty),
+            DefinedType::ExternalTypeReference {
+                modulereference,
+                typereference,
+            } => {
+                let ty = self.to_rust_title_case(&typereference);
+                let module = self.to_rust_snake_case(&modulereference).to_token_stream();
+                quote!(super::#module::#ty)
+            }
+            DefinedType::ParameterizedTypeOrValueSetType { .. } => unreachable!("ParameterizedTypes or ParameterizedValueSetTypes should already have been resolved at this point!")
         }
     }
 
     pub(super) fn format_name_and_common_annotations<'a>(
         &self,
         tld: &ToplevelTypeDefinition,
-    ) -> Result<(TokenStream, Vec<TokenStream>), GeneratorError<'a>> {
+    ) -> Result<(TokenStream, Vec<TokenStream>), GeneratorError> {
         let name = self.to_rust_title_case(&tld.name);
         let mut annotations = vec![quote!(delegate), self.format_tag(tld.tag.as_ref(), false)];
 
@@ -1327,7 +1334,7 @@ impl Rasn {
     fn required_annotations<'a>(
         &self,
         needs_copy: bool,
-    ) -> Result<Vec<TokenStream>, GeneratorError<'a>> {
+    ) -> Result<Vec<TokenStream>, GeneratorError> {
         let mut required_derives = Vec::new();
         for derive in Self::REQUIRED_DERIVES {
             if !self.derive_is_present(derive)? {
@@ -1361,7 +1368,7 @@ impl Rasn {
         Ok(custom_annotations)
     }
 
-    fn derive_is_present<'a>(&self, annotation: &str) -> Result<bool, GeneratorError<'a>> {
+    fn derive_is_present<'a>(&self, annotation: &str) -> Result<bool, GeneratorError> {
         let regex = regex::Regex::from_str(&format!(
             r#"#\[derive\([0-z \t,]*{annotation}[0-z \t,]*\)\]"#
         ))
@@ -1380,9 +1387,9 @@ impl Rasn {
         &self,
         tld: ToplevelTypeDefinition<'a>,
         expected_type: &str,
-    ) -> Result<T, GeneratorError<'a>> {
+    ) -> Result<T, GeneratorError> {
         Err(GeneratorError::new(
-            Some(ToplevelDefinition::Type(tld)),
+            Some(tld.name.to_string()),
             &format!("Expected {expected_type} top-level declaration"),
             GeneratorErrorType::Asn1TypeMismatch,
         ))
@@ -1393,7 +1400,7 @@ fn boxed_type(tokens: TokenStream) -> TokenStream {
     quote!(Box<#tokens>)
 }
 
-impl ASN1Value {
+impl ASN1Value<'_> {
     pub(crate) fn is_const_type(&self) -> bool {
         match self {
             ASN1Value::Null | ASN1Value::Boolean(_) | ASN1Value::EnumeratedValue { .. } => true,
@@ -1408,7 +1415,7 @@ impl ASN1Value {
     }
 }
 
-impl ASN1Type {
+impl ASN1Type<'_> {
     pub(crate) fn is_const_type(&self) -> bool {
         match self {
             ASN1Type::Null | ASN1Type::Enumerated(_) | ASN1Type::Boolean(_) => true,
@@ -1431,7 +1438,7 @@ impl ASN1Type {
     }
 }
 
-impl OctetString {
+impl OctetString<'_> {
     pub(crate) fn fixed_size(&self) -> Option<usize> {
         let constraints = per_visible_range_constraints(true, &self.constraints).ok()?;
         (constraints.is_size_constraint()
@@ -1442,7 +1449,7 @@ impl OctetString {
     }
 }
 
-impl BitString {
+impl BitString<'_> {
     pub(crate) fn fixed_size(&self) -> Option<usize> {
         let constraints = per_visible_range_constraints(true, &self.constraints).ok()?;
         (constraints.is_size_constraint()

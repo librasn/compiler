@@ -196,7 +196,6 @@ mod tests {
                         tag: None,
                         ty: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                             parent: None,
-                            module: None,
                             identifier: "GeographicLocationContainer".into(),
                             constraints: vec![],
                         },),
@@ -208,7 +207,6 @@ mod tests {
                         tag: None,
                         ty: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                             parent: None,
-                            module: None,
                             identifier: "AutomatedVehicleContainer".into(),
                             constraints: vec![],
                         },),
@@ -220,7 +218,6 @@ mod tests {
                         tag: None,
                         ty: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                             parent: None,
-                            module: None,
                             identifier: "RoadSurfaceContainer".into(),
                             constraints: vec![],
                         },),
@@ -232,7 +229,6 @@ mod tests {
                         tag: None,
                         ty: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                             parent: None,
-                            module: None,
                             identifier: "InfrastructureSupportContainer".into(),
                             constraints: vec![],
                         },),

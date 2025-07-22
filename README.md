@@ -101,14 +101,14 @@ impl Backend for CustomBackend {
     fn generate_module<'a>(
          &mut self,
          top_level_declarations: Vec<ToplevelDefinition<'a>>,
-    ) -> Result<GeneratedModule, GeneratorError<'a>> {
+    ) -> Result<GeneratedModule, GeneratorError> {
         Ok(GeneratedModule::empty())
     }
 
     fn generate<'a>(
         &self,
         tld: ToplevelDefinition<'a>
-    ) -> Result<String, GeneratorError<'a>> {
+    ) -> Result<String, GeneratorError> {
         Ok(String::new())
     }
 

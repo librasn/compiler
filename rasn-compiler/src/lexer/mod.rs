@@ -224,17 +224,12 @@ pub fn elsewhere_declared_type(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
                 identifier,
                 tag(".&"),
             ))))),
-            opt(skip_ws_and_comments(terminated(
-                module_reference,
-                skip_ws_and_comments(char(DOT)),
-            ))),
-            skip_ws_and_comments(type_reference),
+            skip_ws_and_comments(defined_type),
             opt(skip_ws_and_comments(constraints)),
         ),
-        |(parent, module, id, constraints)| {
+        |(parent, id, constraints)| {
             ASN1Type::builtin_or_elsewhere(
                 parent.map(|p| p.into_inner()),
-                module,
                 id,
                 constraints.unwrap_or_default(),
             )

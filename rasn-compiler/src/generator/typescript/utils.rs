@@ -1,6 +1,6 @@
 use num::pow::Pow;
 
-use crate::generator::error::GeneratorError;
+use crate::{generator::error::GeneratorError, intermediate::DefinedType};
 
 use super::{
     types::{BitString, Choice, Optionality, SequenceOrSet},
@@ -9,8 +9,19 @@ use super::{
 
 const JSON_NULL: &str = "null";
 
+pub fn to_jer_reference(identifier: &DefinedType) -> String {
+    match identifier {
+        DefinedType::ExternalTypeReference {
+            modulereference,
+            typereference,
+        } => (modulereference.to_string() + "." + &typereference).replace('-', "_"),
+        DefinedType::TypeReference(cow) => cow.to_string().replace('-', "_"),
+        DefinedType::ParameterizedTypeOrValueSetType { .. } => unreachable!("ParameterizedTypes or ParameterizedValueSetTypes should already have been resolved at this point!"),
+    }
+}
+
 pub fn to_jer_identifier(identifier: &str) -> String {
-    identifier.replace('-', "_")
+    identifier.to_string().replace('-', "_")
 }
 
 pub fn type_to_tokens(ty: &ASN1Type) -> String {
@@ -37,7 +48,7 @@ pub fn type_to_tokens(ty: &ASN1Type) -> String {
         ASN1Type::Choice(c) => format_choice_options(c),
         ASN1Type::Set(se) | ASN1Type::Sequence(se) => format_sequence_or_set_members(se),
         ASN1Type::SetOf(s) | ASN1Type::SequenceOf(s) => type_to_tokens(&s.element_type) + "[]",
-        ASN1Type::ElsewhereDeclaredType(e) => to_jer_identifier(&e.identifier),
+        ASN1Type::ElsewhereDeclaredType(e) => to_jer_reference(&e.identifier),
         _ => String::from("any"),
     }
 }
@@ -81,7 +92,7 @@ pub fn format_sequence_or_set_members(se: &SequenceOrSet) -> String {
     )
 }
 
-pub fn value_to_tokens<'a>(value: &'a ASN1Value<'a>) -> Result<String, GeneratorError<'a>> {
+pub fn value_to_tokens<'a>(value: &'a ASN1Value<'a>) -> Result<String, GeneratorError> {
     match value {
         ASN1Value::Null => Ok(JSON_NULL.to_owned()),
         ASN1Value::Choice {

@@ -31,12 +31,12 @@ pub trait Backend: Default {
     fn generate_module<'a>(
         &mut self,
         top_level_declarations: Vec<ToplevelDefinition<'a>>,
-    ) -> Result<GeneratedModule, GeneratorError<'a>>;
+    ) -> Result<GeneratedModule, GeneratorError>;
 
     /// generates bindings for a single ASN.1 item
     /// ### Params
     /// - `tld` [ToplevelDefinition] for which the bindings should be generated
-    fn generate<'a>(&self, tld: ToplevelDefinition<'a>) -> Result<String, GeneratorError<'a>>;
+    fn generate<'a>(&self, tld: ToplevelDefinition<'a>) -> Result<String, GeneratorError>;
 
     /// Formats the bindings using the language- or framework-specific linters.
     /// For example, the Rust backend uses rustfmt for formatting bindings.

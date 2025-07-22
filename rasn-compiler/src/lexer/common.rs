@@ -1,3 +1,5 @@
+use std::borrow::Cow;
+
 use nom::{
     branch::alt,
     bytes::complete::{is_not, tag},
@@ -6,14 +8,14 @@ use nom::{
     },
     combinator::{cut, into, map, map_res, opt, peek, recognize, rest, success, value},
     multi::{many0, many1},
-    sequence::{delimited, pair, preceded, terminated},
+    sequence::{delimited, pair, preceded, separated_pair, terminated},
     Parser,
 };
 
 use crate::{
     input::Input,
     intermediate::{constraints::*, types::*, *},
-    lexer::error::ErrorTree,
+    lexer::{error::ErrorTree, parameterization::parameters},
 };
 
 use super::{
@@ -132,6 +134,30 @@ pub fn value_reference(input: Input<'_>) -> ParserResult<'_, &'_ str> {
 /// is distinguished from a "typereference" by the context in which it appears._
 pub fn module_reference(input: Input<'_>) -> ParserResult<'_, &'_ str> {
     type_reference(input)
+}
+
+/// Parses a DefinedType lexical item.
+pub fn defined_type(input: Input<'_>) -> ParserResult<'_, DefinedType> {
+    skip_ws_and_comments(alt((
+        map(
+            pair(defined_type, parameters),
+            |(defined_type, actual_parameter_list)| DefinedType::ParameterizedTypeOrValueSetType {
+                simple_defined_type: Box::new(defined_type),
+                actual_parameter_list,
+            },
+        ),
+        map(
+            separated_pair(module_reference, char(DOT), type_reference),
+            |(module, typeref)| DefinedType::ExternalTypeReference {
+                modulereference: Cow::Borrowed(module),
+                typereference: Cow::Borrowed(typeref),
+            },
+        ),
+        map(type_reference, |id| {
+            DefinedType::TypeReference(Cow::Borrowed(id))
+        }),
+    )))
+    .parse(input)
 }
 
 pub fn into_inner<'a, F>(parser: F) -> impl Parser<Input<'a>, Output = &'a str, Error = F::Error>

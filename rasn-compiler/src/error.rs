@@ -50,7 +50,7 @@ impl From<LinkerError> for CompilerError {
     }
 }
 
-impl From<GeneratorError<'_>> for CompilerError {
+impl From<GeneratorError> for CompilerError {
     fn from(value: GeneratorError) -> Self {
         Self::Generator(value.to_string())
     }

@@ -342,7 +342,7 @@ fn macro_type(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
     // A localtypeference will be stored as ASN1Type::ElsewhereDeclaredType
     skip_ws_and_comments(map_res(asn1_type, |v| match v {
         ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere { ref identifier, .. })
-            if ADDITIONAL_KEYWORDS.contains(&&**identifier) =>
+            if ADDITIONAL_KEYWORDS.contains(&identifier.as_typereference().unwrap_or_default()) =>
         {
             Err(MiscError(
                 "Type reference can not be a keyword when used in ASN.1 MACRO.",
@@ -660,7 +660,6 @@ mod tests {
                                     local_value_reference: "vartype",
                                     ty: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                                         parent: None,
-                                        module: None,
                                         identifier: "ObjectName".into(),
                                         constraints: vec![]
                                     })
@@ -680,7 +679,6 @@ mod tests {
                                             ty: ASN1Type::ElsewhereDeclaredType(
                                                 DeclarationElsewhere {
                                                     parent: None,
-                                                    module: None,
                                                     identifier: "DisplayString".into(),
                                                     constraints: vec![]
                                                 }
@@ -704,7 +702,6 @@ mod tests {
                                             ty: ASN1Type::ElsewhereDeclaredType(
                                                 DeclarationElsewhere {
                                                     parent: None,
-                                                    module: None,
                                                     identifier: "DisplayString".into(),
                                                     constraints: vec![]
                                                 }

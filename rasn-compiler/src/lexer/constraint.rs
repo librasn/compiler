@@ -1,3 +1,5 @@
+use std::borrow::Cow;
+
 use crate::{
     input::Input,
     intermediate::{constraints::*, *},
@@ -507,7 +509,7 @@ fn named_constraint(input: Input<'_>) -> ParserResult<'_, NamedConstraint> {
             )))),
         )),
         |v| NamedConstraint {
-            identifier: v.0.to_string(),
+            identifier: Cow::Borrowed(v.0),
             constraints: v.1.unwrap_or_default(),
             presence: v.2.unwrap_or(ComponentPresence::Unspecified),
         },
@@ -1188,19 +1190,16 @@ mod tests {
                         ObjectSetValue::Inline(InformationObjectFields::CustomSyntax(vec![
                             SyntaxApplication::LiteralOrTypeReference(DeclarationElsewhere {
                                 parent: None,
-                                module: None,
                                 identifier: "ConnectionManeuverAssist-addGrpC".into(),
                                 constraints: vec![]
                             }),
                             SyntaxApplication::LiteralOrTypeReference(DeclarationElsewhere {
                                 parent: None,
-                                module: None,
                                 identifier: "IDENTIFIED".into(),
                                 constraints: vec![]
                             }),
                             SyntaxApplication::LiteralOrTypeReference(DeclarationElsewhere {
                                 parent: None,
-                                module: None,
                                 identifier: "BY".into(),
                                 constraints: vec![]
                             }),
@@ -1222,8 +1221,8 @@ mod tests {
         assert_eq!(
             value_range(r#""a".."z""#.into()).unwrap().1,
             SubtypeElements::ValueRange {
-                min: Some(ASN1Value::String("a".to_owned())),
-                max: Some(ASN1Value::String("z".to_owned())),
+                min: Some(ASN1Value::String("a".into())),
+                max: Some(ASN1Value::String("z".into())),
                 extensible: false
             }
         )
@@ -1240,28 +1239,28 @@ mod tests {
             SubtypeElements::PermittedAlphabet(Box::new(ElementOrSetOperation::SetOperation(
                 SetOperation {
                     base: SubtypeElements::ValueRange {
-                        min: Some(ASN1Value::String("a".to_owned())),
-                        max: Some(ASN1Value::String("z".to_owned())),
+                        min: Some(ASN1Value::String("a".into())),
+                        max: Some(ASN1Value::String("z".into())),
                         extensible: false
                     },
                     operator: SetOperator::Union,
                     operant: Box::new(ElementOrSetOperation::SetOperation(SetOperation {
                         base: SubtypeElements::ValueRange {
-                            min: Some(ASN1Value::String("A".to_owned())),
-                            max: Some(ASN1Value::String("Z".to_owned())),
+                            min: Some(ASN1Value::String("A".into())),
+                            max: Some(ASN1Value::String("Z".into())),
                             extensible: false
                         },
                         operator: SetOperator::Union,
                         operant: Box::new(ElementOrSetOperation::SetOperation(SetOperation {
                             base: SubtypeElements::ValueRange {
-                                min: Some(ASN1Value::String("0".to_owned())),
-                                max: Some(ASN1Value::String("9".to_owned())),
+                                min: Some(ASN1Value::String("0".into())),
+                                max: Some(ASN1Value::String("9".into())),
                                 extensible: false
                             },
                             operator: SetOperator::Union,
                             operant: Box::new(ElementOrSetOperation::Element(
                                 SubtypeElements::SingleValue {
-                                    value: ASN1Value::String(".-".to_owned()),
+                                    value: ASN1Value::String(".-".into()),
                                     extensible: false
                                 }
                             ))
@@ -1283,29 +1282,29 @@ mod tests {
                     set: ElementOrSetOperation::Element(SubtypeElements::PermittedAlphabet(
                         Box::new(ElementOrSetOperation::SetOperation(SetOperation {
                             base: SubtypeElements::ValueRange {
-                                min: Some(ASN1Value::String("a".to_owned())),
-                                max: Some(ASN1Value::String("z".to_owned())),
+                                min: Some(ASN1Value::String("a".into())),
+                                max: Some(ASN1Value::String("z".into())),
                                 extensible: false
                             },
                             operator: SetOperator::Union,
                             operant: Box::new(ElementOrSetOperation::SetOperation(SetOperation {
                                 base: SubtypeElements::ValueRange {
-                                    min: Some(ASN1Value::String("A".to_owned())),
-                                    max: Some(ASN1Value::String("Z".to_owned())),
+                                    min: Some(ASN1Value::String("A".into())),
+                                    max: Some(ASN1Value::String("Z".into())),
                                     extensible: false
                                 },
                                 operator: SetOperator::Union,
                                 operant: Box::new(ElementOrSetOperation::SetOperation(
                                     SetOperation {
                                         base: SubtypeElements::ValueRange {
-                                            min: Some(ASN1Value::String("0".to_owned())),
-                                            max: Some(ASN1Value::String("9".to_owned())),
+                                            min: Some(ASN1Value::String("0".into())),
+                                            max: Some(ASN1Value::String("9".into())),
                                             extensible: false
                                         },
                                         operator: SetOperator::Union,
                                         operant: Box::new(ElementOrSetOperation::Element(
                                             SubtypeElements::SingleValue {
-                                                value: ASN1Value::String(".-".to_owned()),
+                                                value: ASN1Value::String(".-".into()),
                                                 extensible: false
                                             }
                                         ))
@@ -1514,7 +1513,6 @@ mod tests {
                                     subtype: ASN1Type::ElsewhereDeclaredType(
                                         DeclarationElsewhere {
                                             parent: None,
-                                            module: None,
                                             identifier: "EtsiTs103097Certificate".into(),
                                             constraints: vec![],
                                         }

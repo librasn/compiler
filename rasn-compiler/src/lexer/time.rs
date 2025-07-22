@@ -1,3 +1,5 @@
+use std::borrow::Cow;
+
 use nom::{
     bytes::complete::tag,
     character::complete::{char, one_of},
@@ -24,7 +26,7 @@ use super::{
 
 pub fn time_value(input: Input<'_>) -> ParserResult<'_, ASN1Value> {
     map(skip_ws_and_comments(t_string), |t_string| {
-        ASN1Value::Time(t_string.to_owned())
+        ASN1Value::Time(Cow::Borrowed(t_string))
     })
     .parse(input)
 }

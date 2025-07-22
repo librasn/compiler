@@ -1,3 +1,5 @@
+use std::borrow::Cow;
+
 use nom::{
     branch::alt,
     bytes::complete::tag,
@@ -121,7 +123,6 @@ pub fn instance_of(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
         |(id, constraints)| {
             ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                 parent: None,
-                module: None,
                 identifier: id.into(),
                 constraints,
             })
@@ -274,7 +275,7 @@ fn single_value_field_id(input: Input<'_>) -> ParserResult<'_, ObjectFieldIdenti
             one_of("abcdefghijklmnopqrstuvwxyz"),
             many0(alt((preceded(char('-'), alphanumeric1), alphanumeric1))),
         ))),
-        |s| ObjectFieldIdentifier::SingleValue(String::from(s)),
+        |s| ObjectFieldIdentifier::SingleValue(Cow::Borrowed(s)),
     )
     .parse(input)
 }
@@ -286,7 +287,7 @@ fn multiple_value_field_id(input: Input<'_>) -> ParserResult<'_, ObjectFieldIden
             one_of("ABCDEFGHIJKLMNOPQRSTUVWXYZ"),
             many0(alt((preceded(char('-'), alphanumeric1), alphanumeric1))),
         ))),
-        |m| ObjectFieldIdentifier::MultipleValue(String::from(m)),
+        |m| ObjectFieldIdentifier::MultipleValue(Cow::Borrowed(m)),
     )
     .parse(input)
 }
@@ -398,7 +399,6 @@ mod tests {
                         identifier: ObjectFieldIdentifier::MultipleValue("&Errors".into()),
                         ty: Some(ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                             parent: None,
-                            module: None,
                             constraints: vec![],
                             identifier: "ERROR".into()
                         })),
@@ -452,7 +452,7 @@ mod tests {
                 values: vec![
                     ObjectSetValue::Inline(InformationObjectFields::DefaultSyntax(vec![
                         InformationObjectField::FixedValueField(FixedValueField {
-                            identifier: "&errorCode".to_string(),
+                            identifier: "&errorCode".into(),
                             value: ASN1Value::ElsewhereDeclaredValue {
                                 identifier: "asn-val-security-failure".into(),
                                 parent: None
@@ -499,7 +499,6 @@ mod tests {
                         identifier: ObjectFieldIdentifier::SingleValue("&itsaidCtxRef".into()),
                         ty: Some(ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                             parent: None,
-                            module: None,
                             identifier: "ItsAidCtxRef".into(),
                             constraints: vec![]
                         })),

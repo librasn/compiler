@@ -3,23 +3,19 @@ use std::error::Error;
 
 use proc_macro2::LexError;
 
-use crate::intermediate::{error::GrammarError, ToplevelDefinition};
+use crate::intermediate::error::GrammarError;
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct GeneratorError<'a> {
-    pub top_level_declaration: Option<Box<ToplevelDefinition<'a>>>,
+pub struct GeneratorError {
+    pub top_level_declaration: Option<String>,
     pub details: String,
     pub kind: GeneratorErrorType,
 }
 
-impl<'a> GeneratorError<'a> {
-    pub fn new(
-        tld: Option<ToplevelDefinition<'a>>,
-        details: &str,
-        kind: GeneratorErrorType,
-    ) -> Self {
+impl GeneratorError {
+    pub fn new(tld: Option<String>, details: &str, kind: GeneratorErrorType) -> Self {
         GeneratorError {
-            top_level_declaration: tld.map(Box::new),
+            top_level_declaration: tld,
             details: details.into(),
             kind,
         }
@@ -41,9 +37,9 @@ pub enum GeneratorErrorType {
     Unsupported,
 }
 
-impl<'a> Error for GeneratorError<'a> {}
+impl Error for GeneratorError {}
 
-impl<'a> Default for GeneratorError<'a> {
+impl Default for GeneratorError {
     fn default() -> Self {
         Self {
             top_level_declaration: Default::default(),
@@ -53,7 +49,7 @@ impl<'a> Default for GeneratorError<'a> {
     }
 }
 
-impl<'a> From<GrammarError> for GeneratorError<'a> {
+impl From<GrammarError> for GeneratorError {
     fn from(value: GrammarError) -> Self {
         Self {
             details: value.details,
@@ -63,7 +59,7 @@ impl<'a> From<GrammarError> for GeneratorError<'a> {
     }
 }
 
-impl<'a> From<LexError> for GeneratorError<'a> {
+impl From<LexError> for GeneratorError {
     fn from(value: LexError) -> Self {
         Self {
             details: value.to_string(),
@@ -73,20 +69,12 @@ impl<'a> From<LexError> for GeneratorError<'a> {
     }
 }
 
-impl<'a> Display for GeneratorError<'a> {
+impl Display for GeneratorError {
     fn fmt(&self, f: &mut Formatter) -> Result {
-        let name = match self.top_level_declaration.as_deref() {
-            Some(ToplevelDefinition::Type(t)) => &t.name,
-            Some(ToplevelDefinition::Value(v)) => &v.name,
-            Some(ToplevelDefinition::Class(c)) => &c.name,
-            Some(ToplevelDefinition::Object(o)) => &o.name,
-            Some(ToplevelDefinition::Macro(m)) => &m.name,
-            None => "",
-        };
-        write!(
-            f,
-            "{:?} generating bindings for {name}: {}",
-            self.kind, self.details
-        )
+        write!(f, "{:?} generating bindings", self.kind);
+        if let Some(tld) = &self.top_level_declaration {
+            write!(f, " for {tld}");
+        }
+        write!(f, ": {}", self.details)
     }
 }

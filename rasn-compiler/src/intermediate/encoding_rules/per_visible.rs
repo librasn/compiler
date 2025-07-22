@@ -4,7 +4,7 @@ use crate::intermediate::{
     types::{Choice, Enumerated},
     ASN1Type, ASN1Value, CharacterStringType,
 };
-use std::{collections::BTreeMap, ops::AddAssign};
+use std::{borrow::Cow, collections::BTreeMap, ops::AddAssign};
 
 pub fn to_per_visible(
     constraints: Vec<Constraint>,
@@ -95,7 +95,10 @@ impl PerVisibleAlphabetConstraints {
                         }
                     }
                     ElementOrSetOperation::SetOperation(s) => {
-                        fn flatten_set<'a>(elems: &mut Vec<SubtypeElements<'a>>, set: &SetOperation<'a>) {
+                        fn flatten_set<'a>(
+                            elems: &mut Vec<SubtypeElements<'a>>,
+                            set: &SetOperation<'a>,
+                        ) {
                             elems.push(set.base.clone());
                             match &*set.operant {
                                 ElementOrSetOperation::Element(e2) => elems.push(e2.clone()),
@@ -586,7 +589,7 @@ fn fold_constraint_set<'a>(
                             ));
                         }
                         Ok(Some(SubtypeElements::SingleValue {
-                            value: ASN1Value::String(permitted),
+                            value: ASN1Value::String(Cow::Owned(permitted)),
                             extensible: false,
                         }))
                     }
@@ -705,10 +708,10 @@ fn fold_constraint_set<'a>(
                     }))
                 }
                 (ASN1Value::String(v1_str), ASN1Value::String(v2_str)) => {
-                    let mut v2_clone = v2_str.clone();
+                    let mut v2_clone = (*v2_str).to_string();
                     v2_clone.extend(v1_str.chars().filter(|c| !v2_str.contains(*c)));
                     Ok(Some(SubtypeElements::SingleValue {
-                        value: ASN1Value::String(v2_clone),
+                        value: ASN1Value::String(Cow::Owned(v2_clone)),
                         extensible: *x1 || x2,
                     }))
                 }
@@ -848,11 +851,11 @@ fn intersect_single_and_range<'a>(
             let s_min = indices
                 .iter()
                 .min_by(|(_, a), (_, b)| a.cmp(b))
-                .map(|(c, _)| ASN1Value::String(format!("{c}")));
+                .map(|(c, _)| ASN1Value::String(Cow::Owned(c.to_string())));
             let s_max = indices
                 .iter()
                 .max_by(|(_, a), (_, b)| a.cmp(b))
-                .map(|(c, _)| ASN1Value::String(format!("{c}")));
+                .map(|(c, _)| ASN1Value::String(Cow::Owned(c.to_string())));
             Ok(Some(SubtypeElements::ValueRange {
                 min: compare_optional_asn1values(s_min.as_ref(), min, |a, b| a.max(b, char_set))?,
                 max: compare_optional_asn1values(s_max.as_ref(), max, |a, b| a.min(b, char_set))?,
@@ -893,11 +896,11 @@ fn union_single_and_range<'a>(
             let s_min = indices
                 .iter()
                 .min_by(|(_, a), (_, b)| a.cmp(b))
-                .map(|(c, _)| ASN1Value::String(format!("{c}")));
+                .map(|(c, _)| ASN1Value::String(Cow::Owned(c.to_string())));
             let s_max = indices
                 .iter()
                 .max_by(|(_, a), (_, b)| a.cmp(b))
-                .map(|(c, _)| ASN1Value::String(format!("{c}")));
+                .map(|(c, _)| ASN1Value::String(Cow::Owned(c.to_string())));
             Ok(Some(SubtypeElements::ValueRange {
                 min: compare_optional_asn1values(s_min.as_ref(), min, |a, b| a.min(b, char_set))?,
                 max: compare_optional_asn1values(s_max.as_ref(), max, |a, b| a.max(b, char_set))?,
@@ -937,7 +940,7 @@ mod tests {
                 &Constraint::Subtype(ElementSetSpecs {
                     extensible: false,
                     set: ElementOrSetOperation::Element(SubtypeElements::SingleValue {
-                        value: ASN1Value::String("ABCDEF".to_owned()),
+                        value: ASN1Value::String("ABCDEF".into()),
                         extensible: false
                     })
                 }),
@@ -966,7 +969,7 @@ mod tests {
                 &Constraint::Subtype(ElementSetSpecs {
                     extensible: false,
                     set: ElementOrSetOperation::Element(SubtypeElements::SingleValue {
-                        value: ASN1Value::String("132".to_owned()),
+                        value: ASN1Value::String("132".into()),
                         extensible: false
                     })
                 }),
@@ -994,8 +997,8 @@ mod tests {
                 &Constraint::Subtype(ElementSetSpecs {
                     extensible: false,
                     set: ElementOrSetOperation::Element(SubtypeElements::ValueRange {
-                        min: Some(ASN1Value::String("A".to_owned())),
-                        max: Some(ASN1Value::String("F".to_owned())),
+                        min: Some(ASN1Value::String("A".into())),
+                        max: Some(ASN1Value::String("F".into())),
                         extensible: false
                     })
                 }),
@@ -1021,7 +1024,7 @@ mod tests {
                     extensible: false,
                     set: ElementOrSetOperation::Element(SubtypeElements::ValueRange {
                         min: None,
-                        max: Some(ASN1Value::String("3".to_owned())),
+                        max: Some(ASN1Value::String("3".into())),
                         extensible: false
                     })
                 }),

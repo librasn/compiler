@@ -18,10 +18,10 @@ use crate::{
 use super::{common::*, error::ParserResult};
 
 type EnumeralInput<'s> = (&'s str, Option<i128>, Option<char>, Option<&'s str>);
-type EnumeralBody = (
-    Vec<Enumeral>,
+type EnumeralBody<'a> = (
+    Vec<Enumeral<'a>>,
     Option<ExtensionMarker>,
-    Option<Vec<Enumeral>>,
+    Option<Vec<Enumeral<'a>>>,
 );
 
 pub fn enumerated_value(input: Input<'_>) -> ParserResult<'_, ToplevelValueDefinition> {
@@ -79,14 +79,14 @@ fn enumeral(input: Input<'_>) -> ParserResult<'_, EnumeralInput<'_>> {
 
 fn enumerals<'a>(
     start_index: usize,
-) -> impl Parser<Input<'a>, Output = Vec<Enumeral>, Error = ErrorTree<'a>> {
+) -> impl Parser<Input<'a>, Output = Vec<Enumeral<'a>>, Error = ErrorTree<'a>> {
     fold_many0(
         enumeral,
         Vec::<Enumeral>::new,
         move |mut acc, (name, index, _, comments)| {
             acc.push(Enumeral {
-                name: name.into(),
-                description: comments.map(|c| c.into()),
+                name: Cow::Borrowed(name),
+                description: comments.map(|c| Cow::Borrowed(c)),
                 index: index.unwrap_or((acc.len() + start_index) as i128),
             });
             acc
@@ -350,8 +350,7 @@ mod tests {
                 name: Cow::from("enumeral-alias"),
                 associated_type: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                     parent: None,
-                    module: None,
-                    identifier: Cow::from("Test-Enum"),
+                    identifier: "Test-Enum".into(),
                     constraints: vec![],
                 }),
                 parameterization: None,

@@ -1,6 +1,6 @@
 #[cfg(test)]
 use internal_macros::EnumDebug;
-use std::error::Error;
+use std::{borrow::Cow, error::Error};
 
 use super::{
     error::{GrammarError, GrammarErrorType},
@@ -213,7 +213,7 @@ pub struct InnerTypeConstraint<'a> {
 /// in ASN1 specifications
 #[derive(Debug, Clone, PartialEq)]
 pub struct NamedConstraint<'a> {
-    pub identifier: String,
+    pub identifier: Cow<'a, str>,
     pub constraints: Vec<Constraint<'a>>,
     pub presence: ComponentPresence,
 }
@@ -257,8 +257,22 @@ impl<'a> From<(ASN1Value<'a>, ExtensionMarker)> for ValueConstraint<'a> {
     }
 }
 
-impl<'a> From<(ASN1Value<'a>, RangeSeperator, ASN1Value<'a>, ExtensionMarker)> for ValueConstraint<'a> {
-    fn from(value: (ASN1Value<'a>, RangeSeperator, ASN1Value<'a>, ExtensionMarker)) -> Self {
+impl<'a>
+    From<(
+        ASN1Value<'a>,
+        RangeSeperator,
+        ASN1Value<'a>,
+        ExtensionMarker,
+    )> for ValueConstraint<'a>
+{
+    fn from(
+        value: (
+            ASN1Value<'a>,
+            RangeSeperator,
+            ASN1Value<'a>,
+            ExtensionMarker,
+        ),
+    ) -> Self {
         Self {
             min_value: Some(value.0),
             max_value: Some(value.2),
@@ -273,11 +287,11 @@ impl<'a> From<(ASN1Value<'a>, RangeSeperator, ASN1Value<'a>, ExtensionMarker)> f
 #[derive(Debug, Clone, PartialEq)]
 pub struct TableConstraint<'a> {
     pub object_set: ObjectSet<'a>,
-    pub linked_fields: Vec<RelationalConstraint>,
+    pub linked_fields: Vec<RelationalConstraint<'a>>,
 }
 
-impl<'a> From<(ObjectSet<'a>, Option<Vec<RelationalConstraint>>)> for TableConstraint<'a> {
-    fn from(value: (ObjectSet<'a>, Option<Vec<RelationalConstraint>>)) -> Self {
+impl<'a> From<(ObjectSet<'a>, Option<Vec<RelationalConstraint<'a>>>)> for TableConstraint<'a> {
+    fn from(value: (ObjectSet<'a>, Option<Vec<RelationalConstraint<'a>>>)) -> Self {
         Self {
             object_set: value.0,
             linked_fields: value.1.unwrap_or_default(),
@@ -288,17 +302,17 @@ impl<'a> From<(ObjectSet<'a>, Option<Vec<RelationalConstraint>>)> for TableConst
 /// Representation of a table's relational constraint
 /// _See: ITU-T X.682 (02/2021) 10.7_
 #[derive(Debug, Clone, PartialEq)]
-pub struct RelationalConstraint {
-    pub field_name: String,
+pub struct RelationalConstraint<'a> {
+    pub field_name: Cow<'a, str>,
     /// The level is null if the field is in the outermost object set of the declaration.
     /// The level is 1-n counting from the innermost object set of the declaration
     pub level: usize,
 }
 
-impl From<(usize, &str)> for RelationalConstraint {
-    fn from(value: (usize, &str)) -> Self {
+impl<'a> From<(usize, &'a str)> for RelationalConstraint<'a> {
+    fn from(value: (usize, &'a str)) -> Self {
         Self {
-            field_name: value.1.into(),
+            field_name: Cow::Borrowed(value.1),
             level: value.0,
         }
     }
@@ -307,14 +321,14 @@ impl From<(usize, &str)> for RelationalConstraint {
 /// Representation of a pattern constraint
 /// _See: ITU-T X.680 (02/2021) 51.9_
 #[derive(Debug, Clone, PartialEq)]
-pub struct PatternConstraint {
-    pub pattern: String,
+pub struct PatternConstraint<'a> {
+    pub pattern: Cow<'a, str>,
 }
 
-impl From<&str> for PatternConstraint {
-    fn from(value: &str) -> Self {
+impl<'a> From<&'a str> for PatternConstraint<'a> {
+    fn from(value: &'a str) -> Self {
         Self {
-            pattern: value.into(),
+            pattern: Cow::Borrowed(value),
         }
     }
 }
@@ -322,14 +336,14 @@ impl From<&str> for PatternConstraint {
 /// Representation of a user-defined constraint
 /// _See: ITU-T X.682 (02/2021) 9_
 #[derive(Debug, Clone, PartialEq)]
-pub struct UserDefinedConstraint {
-    pub definition: String,
+pub struct UserDefinedConstraint<'a> {
+    pub definition: Cow<'a, str>,
 }
 
-impl From<&str> for UserDefinedConstraint {
-    fn from(value: &str) -> Self {
+impl<'a> From<&'a str> for UserDefinedConstraint<'a> {
+    fn from(value: &'a str) -> Self {
         Self {
-            definition: value.into(),
+            definition: Cow::Borrowed(value),
         }
     }
 }
@@ -720,8 +734,8 @@ pub enum SubtypeElements<'a> {
     TypeConstraint(ASN1Type<'a>),
     SingleTypeConstraint(Vec<Constraint<'a>>),
     MultipleTypeConstraints(InnerTypeConstraint<'a>),
-    PatternConstraint(PatternConstraint),
-    UserDefinedConstraint(UserDefinedConstraint),
+    PatternConstraint(PatternConstraint<'a>),
+    UserDefinedConstraint(UserDefinedConstraint<'a>),
     PropertySettings(PropertySettings), // DurationRange
                                         // TimePointRange
                                         // RecurrenceRange

@@ -45,11 +45,11 @@ pub trait IterNameTypes {
 }
 
 /// Convenience trait for processing members of constructed types (`SEQUENCE`, `SET`) and `CHOICE`s.
-pub trait MemberOrOption {
+pub trait MemberOrOption<'a> {
     const IS_CHOICE_OPTION: bool;
     fn name(&self) -> &str;
-    fn ty(&self) -> &ASN1Type;
-    fn constraints(&self) -> &[Constraint];
+    fn ty(&self) -> &ASN1Type<'a>;
+    fn constraints(&self) -> &[Constraint<'a>];
     fn is_recursive(&self) -> bool;
     fn tag(&self) -> Option<&AsnTag>;
 }
@@ -113,7 +113,7 @@ impl<'a> From<Option<Vec<Constraint<'a>>>> for Boolean<'a> {
 #[derive(Debug, Clone, PartialEq, Default)]
 pub struct Integer<'a> {
     pub constraints: Vec<Constraint<'a>>,
-    pub distinguished_values: Option<Vec<DistinguishedValue>>,
+    pub distinguished_values: Option<Vec<DistinguishedValue<'a>>>,
 }
 
 impl<'a> Integer<'a> {
@@ -163,14 +163,14 @@ impl<'a> From<(Option<i128>, Option<i128>, bool)> for Integer<'a> {
 impl<'a>
     From<(
         &str,
-        Option<Vec<DistinguishedValue>>,
+        Option<Vec<DistinguishedValue<'a>>>,
         Option<Vec<Constraint<'a>>>,
     )> for Integer<'a>
 {
     fn from(
         value: (
             &str,
-            Option<Vec<DistinguishedValue>>,
+            Option<Vec<DistinguishedValue<'a>>>,
             Option<Vec<Constraint<'a>>>,
         ),
     ) -> Self {
@@ -236,11 +236,21 @@ impl<'a> From<Option<Vec<Constraint<'a>>>> for OctetString<'a> {
 #[derive(Debug, Clone, PartialEq)]
 pub struct BitString<'a> {
     pub constraints: Vec<Constraint<'a>>,
-    pub distinguished_values: Option<Vec<DistinguishedValue>>,
+    pub distinguished_values: Option<Vec<DistinguishedValue<'a>>>,
 }
 
-impl<'a> From<(Option<Vec<DistinguishedValue>>, Option<Vec<Constraint<'a>>>)> for BitString<'a> {
-    fn from(value: (Option<Vec<DistinguishedValue>>, Option<Vec<Constraint<'a>>>)) -> Self {
+impl<'a>
+    From<(
+        Option<Vec<DistinguishedValue<'a>>>,
+        Option<Vec<Constraint<'a>>>,
+    )> for BitString<'a>
+{
+    fn from(
+        value: (
+            Option<Vec<DistinguishedValue<'a>>>,
+            Option<Vec<Constraint<'a>>>,
+        ),
+    ) -> Self {
         BitString {
             constraints: value.1.unwrap_or_default(),
             distinguished_values: value.0,
@@ -327,7 +337,9 @@ pub struct SequenceOrSetOf<'a> {
     pub is_recursive: bool,
 }
 
-impl<'a> From<(Option<Vec<Constraint<'a>>>, (Option<AsnTag>, ASN1Type<'a>))> for SequenceOrSetOf<'a> {
+impl<'a> From<(Option<Vec<Constraint<'a>>>, (Option<AsnTag>, ASN1Type<'a>))>
+    for SequenceOrSetOf<'a>
+{
     fn from(value: (Option<Vec<Constraint<'a>>>, (Option<AsnTag>, ASN1Type<'a>))) -> Self {
         Self {
             constraints: value.0.unwrap_or_default(),
@@ -355,7 +367,7 @@ pub struct SequenceOrSet<'a> {
 
 impl<'a> IterNameTypes for SequenceOrSet<'a> {
     fn iter_name_types(&self) -> impl Iterator<Item = (&str, &ASN1Type)> {
-        self.members.iter().map(|m| (m.name.as_str(), &m.ty))
+        self.members.iter().map(|m| (&*m.name, &m.ty))
     }
 }
 
@@ -465,7 +477,7 @@ pub enum SequenceComponent<'a> {
 /// # let test =
 /// SequenceOrSetMember {
 ///     is_recursive: false,
-///     name: String::from("int-member"),
+///     name: Cow::from("int-member"),
 ///     tag: Some(AsnTag {
 ///         environment: TaggingEnvironment::Automatic,
 ///         tag_class: TagClass::ContextSpecific,
@@ -491,7 +503,7 @@ pub enum SequenceComponent<'a> {
 /// ```
 #[derive(Debug, Clone, PartialEq)]
 pub struct SequenceOrSetMember<'a> {
-    pub name: String,
+    pub name: Cow<'a, str>,
     pub tag: Option<AsnTag>,
     pub ty: ASN1Type<'a>,
     pub optionality: Optionality<ASN1Value<'a>>,
@@ -499,16 +511,16 @@ pub struct SequenceOrSetMember<'a> {
     pub constraints: Vec<Constraint<'a>>,
 }
 
-impl<'a> MemberOrOption for SequenceOrSetMember<'a> {
+impl<'a> MemberOrOption<'a> for SequenceOrSetMember<'a> {
     fn name(&self) -> &str {
         &self.name
     }
 
-    fn ty(&self) -> &ASN1Type {
+    fn ty(&self) -> &ASN1Type<'a> {
         &self.ty
     }
 
-    fn constraints(&self) -> &[Constraint] {
+    fn constraints(&self) -> &[Constraint<'a>] {
         &self.constraints
     }
 
@@ -525,7 +537,7 @@ impl<'a> MemberOrOption for SequenceOrSetMember<'a> {
 
 impl<'a>
     From<(
-        &str,
+        &'a str,
         Option<AsnTag>,
         ASN1Type<'a>,
         Option<Vec<Constraint<'a>>>,
@@ -534,7 +546,7 @@ impl<'a>
 {
     fn from(
         value: (
-            &str,
+            &'a str,
             Option<AsnTag>,
             ASN1Type<'a>,
             Option<Vec<Constraint<'a>>>,
@@ -542,7 +554,7 @@ impl<'a>
         ),
     ) -> Self {
         SequenceOrSetMember {
-            name: value.0.into(),
+            name: Cow::Borrowed(value.0),
             tag: value.1,
             ty: value.2,
             optionality: value.4,
@@ -564,7 +576,7 @@ pub struct Choice<'a> {
 
 impl<'a> IterNameTypes for Choice<'a> {
     fn iter_name_types(&self) -> impl Iterator<Item = (&str, &ASN1Type)> {
-        self.options.iter().map(|o| (o.name.as_str(), &o.ty))
+        self.options.iter().map(|o| (&*o.name, &o.ty))
     }
 }
 
@@ -605,7 +617,7 @@ impl<'a>
 /// # use rasn_compiler::prelude::ir::*;
 /// # let test =
 /// ChoiceOption {
-///     name: String::from("boolean-option"),
+///     name: Cow::from("boolean-option"),
 ///     is_recursive: false,
 ///     tag: Some(AsnTag {
 ///         environment: TaggingEnvironment::Automatic,
@@ -621,23 +633,23 @@ impl<'a>
 /// ```
 #[derive(Debug, Clone, PartialEq)]
 pub struct ChoiceOption<'a> {
-    pub name: String,
+    pub name: Cow<'a, str>,
     pub tag: Option<AsnTag>,
     pub ty: ASN1Type<'a>,
     pub constraints: Vec<Constraint<'a>>,
     pub is_recursive: bool,
 }
 
-impl<'a> MemberOrOption for ChoiceOption<'a> {
+impl<'a> MemberOrOption<'a> for ChoiceOption<'a> {
     fn name(&self) -> &str {
         &self.name
     }
 
-    fn ty(&self) -> &ASN1Type {
+    fn ty(&self) -> &ASN1Type<'a> {
         &self.ty
     }
 
-    fn constraints(&self) -> &[Constraint] {
+    fn constraints(&self) -> &[Constraint<'a>] {
         &self.constraints
     }
 
@@ -652,8 +664,22 @@ impl<'a> MemberOrOption for ChoiceOption<'a> {
     const IS_CHOICE_OPTION: bool = true;
 }
 
-impl<'a> From<(&str, Option<AsnTag>, ASN1Type<'a>, Option<Vec<Constraint<'a>>>)> for ChoiceOption<'a> {
-    fn from(value: (&str, Option<AsnTag>, ASN1Type<'a>, Option<Vec<Constraint<'a>>>)) -> Self {
+impl<'a>
+    From<(
+        &'a str,
+        Option<AsnTag>,
+        ASN1Type<'a>,
+        Option<Vec<Constraint<'a>>>,
+    )> for ChoiceOption<'a>
+{
+    fn from(
+        value: (
+            &'a str,
+            Option<AsnTag>,
+            ASN1Type<'a>,
+            Option<Vec<Constraint<'a>>>,
+        ),
+    ) -> Self {
         ChoiceOption {
             name: value.0.into(),
             tag: value.1,
@@ -669,23 +695,23 @@ impl<'a> From<(&str, Option<AsnTag>, ASN1Type<'a>, Option<Vec<Constraint<'a>>>)>
 /// *As defined in Rec. ITU-T X.680 (02/2021) §20*
 #[derive(Debug, Clone, PartialEq)]
 pub struct Enumerated<'a> {
-    pub members: Vec<Enumeral>,
+    pub members: Vec<Enumeral<'a>>,
     pub extensible: Option<usize>,
     pub constraints: Vec<Constraint<'a>>,
 }
 
 impl<'a>
     From<(
-        Vec<Enumeral>,
+        Vec<Enumeral<'a>>,
         Option<ExtensionMarker>,
-        Option<Vec<Enumeral>>,
+        Option<Vec<Enumeral<'a>>>,
     )> for Enumerated<'a>
 {
     fn from(
         mut value: (
-            Vec<Enumeral>,
+            Vec<Enumeral<'a>>,
             Option<ExtensionMarker>,
-            Option<Vec<Enumeral>>,
+            Option<Vec<Enumeral<'a>>>,
         ),
     ) -> Self {
         let index_of_first_extension = value.0.len();
@@ -712,16 +738,16 @@ impl<'a>
 /// # use rasn_compiler::prelude::ir::*;
 /// # let test =
 /// Enumeral {
-///     name: String::from("first-item"),
-///     description: Some(String::from(" This is the first item of Test-Enum")),
+///     name: Cow::from("first-item"),
+///     description: Some(Cow::from(" This is the first item of Test-Enum")),
 ///     index: 7
 /// }
 /// # ;
 /// ```
 #[derive(Debug, Clone, PartialEq)]
-pub struct Enumeral {
-    pub name: String,
-    pub description: Option<String>,
+pub struct Enumeral<'a> {
+    pub name: Cow<'a, str>,
+    pub description: Option<Cow<'a, str>>,
     pub index: i128,
 }
 
@@ -729,15 +755,15 @@ pub struct Enumeral {
 /// as seen in some INTEGER and BIT STRING declarations
 /// *As defined in Rec. ITU-T X.680 (02/2021) §19.5 and §22.4*
 #[derive(Debug, Clone, PartialEq)]
-pub struct DistinguishedValue {
-    pub name: String,
+pub struct DistinguishedValue<'a> {
+    pub name: Cow<'a, str>,
     pub value: i128,
 }
 
-impl From<(&str, i128)> for DistinguishedValue {
-    fn from(value: (&str, i128)) -> Self {
+impl<'a> From<(&'a str, i128)> for DistinguishedValue<'a> {
+    fn from(value: (&'a str, i128)) -> Self {
         Self {
-            name: value.0.into(),
+            name: Cow::Borrowed(value.0),
             value: value.1,
         }
     }
@@ -746,16 +772,16 @@ impl From<(&str, i128)> for DistinguishedValue {
 /// Representation of a ASN1 selection type as used with ASN1 CHOICEs
 /// *As defined in Rec. ITU-T X.680 (02/2021) §30*
 #[derive(Debug, Clone, PartialEq)]
-pub struct ChoiceSelectionType {
-    pub choice_name: String,
-    pub selected_option: String,
+pub struct ChoiceSelectionType<'a> {
+    pub choice_name: Cow<'a, str>,
+    pub selected_option: Cow<'a, str>,
 }
 
-impl From<(&str, &str)> for ChoiceSelectionType {
-    fn from(value: (&str, &str)) -> Self {
+impl<'a> From<(&'a str, &'a str)> for ChoiceSelectionType<'a> {
+    fn from(value: (&'a str, &'a str)) -> Self {
         Self {
-            choice_name: value.1.into(),
-            selected_option: value.0.into(),
+            choice_name: Cow::Borrowed(value.1),
+            selected_option: Cow::Borrowed(value.0),
         }
     }
 }

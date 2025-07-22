@@ -42,7 +42,7 @@ impl Backend for Typescript {
     fn generate_module<'a>(
         &mut self,
         tlds: Vec<ToplevelDefinition<'a>>,
-    ) -> Result<GeneratedModule, GeneratorError<'a>> {
+    ) -> Result<GeneratedModule, GeneratorError> {
         if let Some(module_ref) = tlds.first().and_then(|tld| tld.get_module_header()) {
             let module = module_ref.borrow();
             let namespace = to_jer_identifier(&module.name);
@@ -103,7 +103,7 @@ impl Backend for Typescript {
         Ok(bindings.to_string())
     }
 
-    fn generate<'a>(&self, tld: ToplevelDefinition<'a>) -> Result<String, GeneratorError<'a>> {
+    fn generate<'a>(&self, tld: ToplevelDefinition<'a>) -> Result<String, GeneratorError> {
         match tld {
             ToplevelDefinition::Type(t) => {
                 if t.parameterization.is_some() {
@@ -143,7 +143,7 @@ impl Backend for Typescript {
             ToplevelDefinition::Macro(_) => Err(GeneratorError {
                 kind: GeneratorErrorType::NotYetInplemented,
                 details: "MACROs are currently unsupported!".to_string(),
-                top_level_declaration: Some(Box::new(tld)),
+                top_level_declaration: Some(tld.name().to_string()),
             }),
             _ => Ok(String::new()),
         }

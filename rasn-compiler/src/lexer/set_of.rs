@@ -73,7 +73,6 @@ mod tests {
                 constraints: vec![],
                 element_type: Box::new(ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                     parent: None,
-                    module: None,
                     identifier: "Things".into(),
                     constraints: vec![]
                 }))
@@ -102,7 +101,6 @@ mod tests {
                 })],
                 element_type: Box::new(ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                     parent: None,
-                    module: None,
                     identifier: "CorrelationCellValue".into(),
                     constraints: vec![]
                 }))
@@ -131,7 +129,6 @@ mod tests {
                 })],
                 element_type: Box::new(ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                     parent: None,
-                    module: None,
                     identifier: "CorrelationCellValue".into(),
                     constraints: vec![]
                 }))
@@ -206,7 +203,6 @@ mod tests {
                 })],
                 element_type: Box::new(ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                     parent: None,
-                    module: None,
                     identifier: "RegionalExtension".into(),
                     constraints: vec![Constraint::Parameter(vec![Parameter::ObjectSetParameter(
                         ObjectSet {

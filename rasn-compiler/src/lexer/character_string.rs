@@ -1,3 +1,5 @@
+use std::borrow::Cow;
+
 use nom::{
     branch::alt,
     bytes::complete::tag,
@@ -19,7 +21,7 @@ use super::{
 pub fn character_string_value(input: Input<'_>) -> ParserResult<'_, ASN1Value> {
     map(
         skip_ws_and_comments(alt((cstring, map(quadruple, |c| c.to_string())))),
-        |m: String| ASN1Value::String(m),
+        |m: String| ASN1Value::String(Cow::Owned(m)),
     )
     .parse(input)
 }
@@ -245,7 +247,7 @@ mod tests {
     fn parses_character_string_value() {
         assert_eq!(
             character_string_value("\"a\"".into()).unwrap().1,
-            ASN1Value::String("a".to_owned())
+            ASN1Value::String("a".into())
         )
     }
 
@@ -253,7 +255,7 @@ mod tests {
     fn parses_character_string_asn1_value() {
         assert_eq!(
             asn1_value("\"a\"".into()).unwrap().1,
-            ASN1Value::String("a".to_owned())
+            ASN1Value::String("a".into())
         )
     }
 
