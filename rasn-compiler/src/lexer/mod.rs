@@ -8,6 +8,8 @@
 //! of `common`, which contains lexers for the more
 //! generic elements of ASN1 syntax, and `util`, which
 //! contains helper lexers not specific to ASN1's notation.
+use std::borrow::Cow;
+
 use error::ParserResult;
 use nom::{
     branch::alt,
@@ -208,7 +210,7 @@ pub fn elsewhere_declared_value(input: Input<'_>) -> ParserResult<'_, ASN1Value>
             value_reference,
         ),
         |(p, id)| ASN1Value::ElsewhereDeclaredValue {
-            parent: p.map(|par| par.inner().to_string()),
+            parent: p.map(|par| Cow::Owned(par.inner().to_string())),
             identifier: id.into(),
         },
     )

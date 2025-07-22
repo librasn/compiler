@@ -5,9 +5,7 @@
 //! This module owes a lot to fflorent's [`nom_locate`](https://github.com/fflorent/nom_locate).
 
 use std::{
-    fmt::Debug,
-    slice::SliceIndex,
-    str::{CharIndices, Chars, FromStr},
+    borrow::Cow, fmt::Debug, slice::SliceIndex, str::{CharIndices, Chars, FromStr}
 };
 
 use nom::{AsBytes, Compare, ExtendInto, FindSubstring, FindToken, Offset, ParseTo, Parser};
@@ -332,6 +330,13 @@ impl Offset for Input<'_> {
 impl<R: FromStr> ParseTo<R> for Input<'_> {
     fn parse_to(&self) -> Option<R> {
         self.inner.parse_to()
+    }
+}
+
+impl<'a> From<&'a Cow<'a, str>> for Input<'a> {
+    fn from(value: &'a Cow<'a, str>) -> Self {
+        let s = &**value;
+        Self::from(s)
     }
 }
 

@@ -13,9 +13,9 @@ use super::{constraints::*, *};
 pub struct ObjectClassAssignment<'a> {
     pub comments: Cow<'a, str>,
     /// A objectclassreference.
-    pub name: String,
-    pub parameterization: Parameterization,
-    pub definition: ObjectClassDefn,
+    pub name: Cow<'a, str>,
+    pub parameterization: Parameterization<'a>,
+    pub definition: ObjectClassDefn<'a>,
     pub module_header: Option<Rc<RefCell<ModuleHeader<'a>>>>,
 }
 
@@ -28,18 +28,18 @@ impl<'a> ObjectClassAssignment<'a> {
 #[derive(Debug, Clone, PartialEq)]
 pub struct ToplevelInformationDefinition<'a> {
     pub comments: Cow<'a, str>,
-    pub name: String,
-    pub parameterization: Option<Parameterization>,
-    pub class: ClassLink,
-    pub value: ASN1Information,
+    pub name: Cow<'a, str>,
+    pub parameterization: Option<Parameterization<'a>>,
+    pub class: ClassLink<'a>,
+    pub value: ASN1Information<'a>,
     pub module_header: Option<Rc<RefCell<ModuleHeader<'a>>>>,
 }
 
-impl<'a> From<(&str, ASN1Information, &str)> for ToplevelInformationDefinition<'a> {
-    fn from(value: (&str, ASN1Information, &str)) -> Self {
+impl<'a> From<(&'a str, ASN1Information<'a>, &str)> for ToplevelInformationDefinition<'a> {
+    fn from(value: (&'a str, ASN1Information<'a>, &str)) -> Self {
         Self {
             comments: Cow::Borrowed(""),
-            name: value.0.to_owned(),
+            name: Cow::Borrowed(value.0),
             parameterization: None,
             class: ClassLink::ByName(value.2.to_owned()),
             value: value.1,
@@ -51,9 +51,9 @@ impl<'a> From<(&str, ASN1Information, &str)> for ToplevelInformationDefinition<'
 #[cfg_attr(test, derive(EnumDebug))]
 #[cfg_attr(not(test), derive(Debug))]
 #[derive(Clone, PartialEq)]
-pub enum ClassLink {
+pub enum ClassLink<'a> {
     ByName(String),
-    ByReference(ObjectClassDefn),
+    ByReference(ObjectClassDefn<'a>),
 }
 
 impl<'a> ToplevelInformationDefinition<'a> {
@@ -65,19 +65,19 @@ impl<'a> ToplevelInformationDefinition<'a> {
 impl<'a>
     From<(
         Vec<&str>,
-        &str,
-        Option<Parameterization>,
-        &str,
-        InformationObjectFields,
+        &'a str,
+        Option<Parameterization<'a>>,
+        &'a str,
+        InformationObjectFields<'a>,
     )> for ToplevelInformationDefinition<'a>
 {
     fn from(
         value: (
             Vec<&str>,
-            &str,
-            Option<Parameterization>,
-            &str,
-            InformationObjectFields,
+            &'a str,
+            Option<Parameterization<'a>>,
+            &'a str,
+            InformationObjectFields<'a>,
         ),
     ) -> Self {
         Self {
@@ -94,10 +94,10 @@ impl<'a>
     }
 }
 
-impl<'a> From<(Vec<&str>, &str, Option<Parameterization>, &str, ObjectSet)>
+impl<'a> From<(Vec<&str>, &'a str, Option<Parameterization<'a>>, &str, ObjectSet<'a>)>
     for ToplevelInformationDefinition<'a>
 {
-    fn from(value: (Vec<&str>, &str, Option<Parameterization>, &str, ObjectSet)) -> Self {
+    fn from(value: (Vec<&str>, &'a str, Option<Parameterization<'a>>, &str, ObjectSet<'a>)) -> Self {
         Self {
             comments: Cow::Owned(value.0.join("\n")),
             name: value.1.into(),
@@ -113,9 +113,9 @@ impl<'a> From<(Vec<&str>, &str, Option<Parameterization>, &str, ObjectSet)>
 #[cfg_attr(test, derive(EnumDebug))]
 #[cfg_attr(not(test), derive(Debug))]
 #[derive(Clone, PartialEq)]
-pub enum ASN1Information {
-    ObjectSet(ObjectSet),
-    Object(InformationObject),
+pub enum ASN1Information<'a> {
+    ObjectSet(ObjectSet<'a>),
+    Object(InformationObject<'a>),
 }
 
 #[cfg_attr(test, derive(EnumDebug))]
@@ -129,16 +129,16 @@ pub enum SyntaxExpression {
 #[cfg_attr(test, derive(EnumDebug))]
 #[cfg_attr(not(test), derive(Debug))]
 #[derive(Clone, PartialEq)]
-pub enum SyntaxApplication {
-    ObjectSetDeclaration(ObjectSet),
-    ValueReference(ASN1Value),
-    TypeReference(ASN1Type),
+pub enum SyntaxApplication<'a> {
+    ObjectSetDeclaration(ObjectSet<'a>),
+    ValueReference(ASN1Value<'a>),
+    TypeReference(ASN1Type<'a>),
     Comma,
     Literal(String),
-    LiteralOrTypeReference(DeclarationElsewhere),
+    LiteralOrTypeReference(DeclarationElsewhere<'a>),
 }
 
-impl SyntaxApplication {
+impl<'a> SyntaxApplication<'a> {
     /// Checks if a token of a syntactic expression matches a given syntax token,
     /// considering the entire syntax (in form of a flattened SyntaxExpression Vec), in order to reliably match Literals
     pub fn matches(
@@ -189,8 +189,15 @@ impl SyntaxApplication {
                     identifier: lit,
                     ..
                 }),
-            )
-            | (
+            ) => {
+                let val = asn1_value((&**lit).into());
+                match val {
+                    Ok((_, ASN1Value::ElsewhereDeclaredValue { .. })) => false,
+                    Ok((_, _)) => true,
+                    _ => false,
+                }
+            },
+            (
                 SyntaxToken::Field(ObjectFieldIdentifier::SingleValue(_)),
                 SyntaxApplication::Literal(lit),
             ) => {
@@ -205,14 +212,14 @@ impl SyntaxApplication {
         }
     }
 
-    pub(crate) fn as_str_or_none(&self) -> Option<&str> {
+    pub(crate) fn as_str_or_none(&'a self) -> Option<&'a str> {
         match self {
             SyntaxApplication::ObjectSetDeclaration(_) => None,
             SyntaxApplication::ValueReference(ASN1Value::ElsewhereDeclaredValue {
                 parent: None,
                 identifier,
-            })
-            | SyntaxApplication::LiteralOrTypeReference(DeclarationElsewhere {
+            }) => Some(&*&identifier),
+            SyntaxApplication::LiteralOrTypeReference(DeclarationElsewhere {
                 parent: None,
                 identifier,
                 ..
@@ -313,22 +320,22 @@ impl InformationObjectSyntax {
 /// Allows the definer to provide the field specifications, and optionally a syntax list. The
 /// definer may also specify semantics associated with the definition of the class.
 #[derive(Debug, Clone, PartialEq)]
-pub struct ObjectClassDefn {
+pub struct ObjectClassDefn<'a> {
     /// Named field specifications, as defined in 9.4.
-    pub fields: Vec<InformationObjectClassField>,
+    pub fields: Vec<InformationObjectClassField<'a>>,
     /// An information object definition syntax ("SyntaxList"), as defined in 10.5.
     pub syntax: Option<InformationObjectSyntax>,
 }
 
-impl
+impl<'a>
     From<(
-        Vec<InformationObjectClassField>,
+        Vec<InformationObjectClassField<'a>>,
         Option<Vec<SyntaxExpression>>,
-    )> for ObjectClassDefn
+    )> for ObjectClassDefn<'a>
 {
     fn from(
         value: (
-            Vec<InformationObjectClassField>,
+            Vec<InformationObjectClassField<'a>>,
             Option<Vec<SyntaxExpression>>,
         ),
     ) -> Self {
@@ -342,27 +349,27 @@ impl
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct InformationObjectClassField {
+pub struct InformationObjectClassField<'a> {
     pub identifier: ObjectFieldIdentifier,
-    pub ty: Option<ASN1Type>,
-    pub optionality: Optionality<ASN1Value>,
+    pub ty: Option<ASN1Type<'a>>,
+    pub optionality: Optionality<ASN1Value<'a>>,
     pub is_unique: bool,
 }
 
-impl
+impl<'a>
     From<(
         ObjectFieldIdentifier,
-        Option<ASN1Type>,
+        Option<ASN1Type<'a>>,
         Option<&str>,
-        Optionality<ASN1Value>,
-    )> for InformationObjectClassField
+        Optionality<ASN1Value<'a>>,
+    )> for InformationObjectClassField<'a>
 {
     fn from(
         value: (
             ObjectFieldIdentifier,
-            Option<ASN1Type>,
+            Option<ASN1Type<'a>>,
             Option<&str>,
-            Optionality<ASN1Value>,
+            Optionality<ASN1Value<'a>>,
         ),
     ) -> Self {
         Self {
@@ -392,57 +399,57 @@ impl ObjectFieldIdentifier {
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct InformationObject {
+pub struct InformationObject<'a> {
     pub class_name: String,
-    pub fields: InformationObjectFields,
+    pub fields: InformationObjectFields<'a>,
 }
 
 #[cfg_attr(test, derive(EnumDebug))]
 #[cfg_attr(not(test), derive(Debug))]
 #[derive(Clone, PartialEq)]
-pub enum InformationObjectFields {
-    DefaultSyntax(Vec<InformationObjectField>),
-    CustomSyntax(Vec<SyntaxApplication>),
+pub enum InformationObjectFields<'a> {
+    DefaultSyntax(Vec<InformationObjectField<'a>>),
+    CustomSyntax(Vec<SyntaxApplication<'a>>),
 }
 
 #[cfg_attr(test, derive(EnumDebug))]
 #[cfg_attr(not(test), derive(Debug))]
 #[derive(Clone, PartialEq)]
-pub enum ObjectSetValue {
-    Reference(String),
-    Inline(InformationObjectFields),
+pub enum ObjectSetValue<'a> {
+    Reference(Cow<'a, str>),
+    Inline(InformationObjectFields<'a>),
 }
 
-impl From<&str> for ObjectSetValue {
-    fn from(value: &str) -> Self {
-        Self::Reference(value.into())
+impl<'a> From<&'a str> for ObjectSetValue<'a> {
+    fn from(value: &'a str) -> Self {
+        Self::Reference(Cow::Borrowed(value))
     }
 }
 
-impl From<InformationObjectFields> for ObjectSetValue {
-    fn from(value: InformationObjectFields) -> Self {
+impl<'a> From<InformationObjectFields<'a>> for ObjectSetValue<'a> {
+    fn from(value: InformationObjectFields<'a>) -> Self {
         Self::Inline(value)
     }
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct ObjectSet {
-    pub values: Vec<ObjectSetValue>,
+pub struct ObjectSet<'a> {
+    pub values: Vec<ObjectSetValue<'a>>,
     pub extensible: Option<usize>,
 }
 
-impl
+impl<'a>
     From<(
-        Vec<ObjectSetValue>,
+        Vec<ObjectSetValue<'a>>,
         Option<ExtensionMarker>,
-        Option<Vec<ObjectSetValue>>,
-    )> for ObjectSet
+        Option<Vec<ObjectSetValue<'a>>>,
+    )> for ObjectSet<'a>
 {
     fn from(
         mut value: (
-            Vec<ObjectSetValue>,
+            Vec<ObjectSetValue<'a>>,
             Option<ExtensionMarker>,
-            Option<Vec<ObjectSetValue>>,
+            Option<Vec<ObjectSetValue<'a>>>,
         ),
     ) -> Self {
         let index_of_first_extension = value.0.len();
@@ -457,13 +464,13 @@ impl
 #[cfg_attr(test, derive(EnumDebug))]
 #[cfg_attr(not(test), derive(Debug))]
 #[derive(Clone, PartialEq)]
-pub enum InformationObjectField {
-    TypeField(TypeField),
-    FixedValueField(FixedValueField),
-    ObjectSetField(ObjectSetField),
+pub enum InformationObjectField<'a> {
+    TypeField(TypeField<'a>),
+    FixedValueField(FixedValueField<'a>),
+    ObjectSetField(ObjectSetField<'a>),
 }
 
-impl InformationObjectField {
+impl<'a> InformationObjectField<'a> {
     /// Returns the identifier of an InformationObjectField
     pub fn identifier(&self) -> &String {
         match self {
@@ -475,13 +482,13 @@ impl InformationObjectField {
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct FixedValueField {
+pub struct FixedValueField<'a> {
     pub identifier: String,
-    pub value: ASN1Value,
+    pub value: ASN1Value<'a>,
 }
 
-impl From<(ObjectFieldIdentifier, ASN1Value)> for InformationObjectField {
-    fn from(value: (ObjectFieldIdentifier, ASN1Value)) -> Self {
+impl<'a> From<(ObjectFieldIdentifier, ASN1Value<'a>)> for InformationObjectField<'a> {
+    fn from(value: (ObjectFieldIdentifier, ASN1Value<'a>)) -> Self {
         Self::FixedValueField(FixedValueField {
             identifier: value.0.identifier().clone(),
             value: value.1,
@@ -490,13 +497,13 @@ impl From<(ObjectFieldIdentifier, ASN1Value)> for InformationObjectField {
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct TypeField {
+pub struct TypeField<'a> {
     pub identifier: String,
-    pub ty: ASN1Type,
+    pub ty: ASN1Type<'a>,
 }
 
-impl From<(ObjectFieldIdentifier, ASN1Type)> for InformationObjectField {
-    fn from(value: (ObjectFieldIdentifier, ASN1Type)) -> Self {
+impl<'a> From<(ObjectFieldIdentifier, ASN1Type<'a>)> for InformationObjectField<'a> {
+    fn from(value: (ObjectFieldIdentifier, ASN1Type<'a>)) -> Self {
         Self::TypeField(TypeField {
             identifier: value.0.identifier().clone(),
             ty: value.1,
@@ -505,13 +512,13 @@ impl From<(ObjectFieldIdentifier, ASN1Type)> for InformationObjectField {
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct ObjectSetField {
+pub struct ObjectSetField<'a> {
     pub identifier: String,
-    pub value: ObjectSet,
+    pub value: ObjectSet<'a>,
 }
 
-impl From<(ObjectFieldIdentifier, ObjectSet)> for InformationObjectField {
-    fn from(value: (ObjectFieldIdentifier, ObjectSet)) -> Self {
+impl<'a> From<(ObjectFieldIdentifier, ObjectSet<'a>)> for InformationObjectField<'a> {
+    fn from(value: (ObjectFieldIdentifier, ObjectSet<'a>)) -> Self {
         Self::ObjectSetField(ObjectSetField {
             identifier: value.0.identifier().clone(),
             value: value.1,
@@ -523,13 +530,13 @@ impl From<(ObjectFieldIdentifier, ObjectSet)> for InformationObjectField {
 /// _The type that is referenced by this notation depends on the category of the field name. For
 /// the different categories of field names, 14.2 to 14.5 specify the type that is referenced._
 #[derive(Debug, Clone, PartialEq)]
-pub struct ObjectClassFieldType {
+pub struct ObjectClassFieldType<'a> {
     pub class: String,
     pub field_path: Vec<ObjectFieldIdentifier>,
-    pub constraints: Vec<Constraint>,
+    pub constraints: Vec<Constraint<'a>>,
 }
 
-impl ObjectClassFieldType {
+impl<'a> ObjectClassFieldType<'a> {
     /// Returns the field path as string.
     /// The field path is stringified by joining
     /// the stringified `ObjectFieldIdentifier`s with
@@ -543,8 +550,8 @@ impl ObjectClassFieldType {
     }
 }
 
-impl From<(&str, Vec<ObjectFieldIdentifier>, Option<Vec<Constraint>>)> for ObjectClassFieldType {
-    fn from(value: (&str, Vec<ObjectFieldIdentifier>, Option<Vec<Constraint>>)) -> Self {
+impl<'a> From<(&str, Vec<ObjectFieldIdentifier>, Option<Vec<Constraint<'a>>>)> for ObjectClassFieldType<'a> {
+    fn from(value: (&str, Vec<ObjectFieldIdentifier>, Option<Vec<Constraint<'a>>>)) -> Self {
         Self {
             class: value.0.into(),
             field_path: value.1,

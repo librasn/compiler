@@ -1,3 +1,5 @@
+use std::borrow::Cow;
+
 use nom::{
     branch::alt,
     bytes::complete::tag,
@@ -19,7 +21,7 @@ pub fn choice_value(input: Input<'_>) -> ParserResult<'_, ASN1Value> {
         skip_ws_and_comments(separated_pair(identifier, char(':'), asn1_value)),
         |(id, val)| ASN1Value::Choice {
             type_name: None,
-            variant_name: id.to_owned(),
+            variant_name: Cow::Borrowed(id),
             inner_value: Box::new(val),
         },
     )

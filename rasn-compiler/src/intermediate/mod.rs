@@ -243,11 +243,11 @@ macro_rules! grammar_error {
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct EncodingReferenceDefault(pub String);
+pub struct EncodingReferenceDefault<'a>(pub Cow<'a, str>);
 
-impl From<&str> for EncodingReferenceDefault {
-    fn from(value: &str) -> Self {
-        Self(value.into())
+impl<'a> From<&'a str> for EncodingReferenceDefault<'a> {
+    fn from(value: &'a str) -> Self {
+        Self(Cow::Borrowed(value))
     }
 }
 
@@ -296,9 +296,9 @@ pub enum With {
 /// Represents a global module reference as specified in
 /// Rec. ITU-T X.680 (02/2021)
 #[derive(Debug, Clone, PartialEq)]
-pub struct ExternalValueReference {
-    pub module_reference: String,
-    pub value_reference: String,
+pub struct ExternalValueReference<'a> {
+    pub module_reference: Cow<'a, str>,
+    pub value_reference: Cow<'a, str>,
 }
 
 /// Represents a global module reference as specified in
@@ -306,11 +306,11 @@ pub struct ExternalValueReference {
 #[derive(Debug, Clone, PartialEq)]
 pub struct GlobalModuleReference<'a> {
     pub module_reference: Cow<'a, str>,
-    pub assigned_identifier: AssignedIdentifier,
+    pub assigned_identifier: AssignedIdentifier<'a>,
 }
 
-impl<'a> From<(&'a str, AssignedIdentifier)> for GlobalModuleReference<'a> {
-    fn from(value: (&'a str, AssignedIdentifier)) -> Self {
+impl<'a> From<(&'a str, AssignedIdentifier<'a>)> for GlobalModuleReference<'a> {
+    fn from(value: (&'a str, AssignedIdentifier<'a>)) -> Self {
         Self {
             module_reference: Cow::Borrowed(value.0),
             assigned_identifier: value.1,
@@ -323,13 +323,13 @@ impl<'a> From<(&'a str, AssignedIdentifier)> for GlobalModuleReference<'a> {
 #[cfg_attr(test, derive(EnumDebug))]
 #[cfg_attr(not(test), derive(Debug))]
 #[derive(Clone, PartialEq)]
-pub enum AssignedIdentifier {
+pub enum AssignedIdentifier<'a> {
     ObjectIdentifierValue(ObjectIdentifierValue),
-    ExternalValueReference(ExternalValueReference),
-    ValueReference(String),
+    ExternalValueReference(ExternalValueReference<'a>),
+    ValueReference(Cow<'a, str>),
     ParameterizedValue {
-        value_reference: String,
-        actual_parameter_list: String,
+        value_reference: Cow<'a, str>,
+        actual_parameter_list: Cow<'a, str>,
     },
     Empty,
 }
@@ -364,14 +364,14 @@ impl<'a> From<(Vec<&'a str>, (GlobalModuleReference<'a>, Option<&str>))> for Imp
 #[cfg_attr(test, derive(EnumDebug))]
 #[cfg_attr(not(test), derive(Debug))]
 #[derive(Clone, PartialEq)]
-pub enum Exports {
-    Identifier(Vec<String>),
+pub enum Exports<'a> {
+    Identifier(Vec<Cow<'a, str>>),
     All,
 }
 
-impl From<Vec<&str>> for Exports {
-    fn from(value: Vec<&str>) -> Self {
-        Self::Identifier(value.iter().map(ToString::to_string).collect())
+impl<'a> From<Vec<&'a str>> for Exports<'a> {
+    fn from(value: Vec<&'a str>) -> Self {
+        Self::Identifier(value.into_iter().map(Cow::Borrowed).collect())
     }
 }
 
@@ -380,20 +380,20 @@ impl From<Vec<&str>> for Exports {
 #[cfg_attr(test, derive(EnumDebug))]
 #[cfg_attr(not(test), derive(Debug))]
 #[derive(Clone, PartialEq)]
-pub enum DefinitiveIdentifier {
+pub enum DefinitiveIdentifier<'a> {
     DefinitiveOID(ObjectIdentifierValue),
     DefinitiveOIDandIRI {
         oid: ObjectIdentifierValue,
-        iri: String,
+        iri: Cow<'a, str>,
     },
 }
 
-impl From<(ObjectIdentifierValue, Option<&str>)> for DefinitiveIdentifier {
-    fn from(value: (ObjectIdentifierValue, Option<&str>)) -> Self {
+impl<'a> From<(ObjectIdentifierValue, Option<&'a str>)> for DefinitiveIdentifier<'a> {
+    fn from(value: (ObjectIdentifierValue, Option<&'a str>)) -> Self {
         if let Some(iri_value) = value.1 {
             Self::DefinitiveOIDandIRI {
                 oid: value.0,
-                iri: iri_value.to_owned(),
+                iri: Cow::Borrowed(iri_value),
             }
         } else {
             Self::DefinitiveOID(value.0)
@@ -406,12 +406,12 @@ impl From<(ObjectIdentifierValue, Option<&str>)> for DefinitiveIdentifier {
 #[derive(Debug, Clone, PartialEq)]
 pub struct ModuleHeader<'a> {
     pub name: Cow<'a, str>,
-    pub module_identifier: Option<DefinitiveIdentifier>,
-    pub encoding_reference_default: Option<EncodingReferenceDefault>,
+    pub module_identifier: Option<DefinitiveIdentifier<'a>>,
+    pub encoding_reference_default: Option<EncodingReferenceDefault<'a>>,
     pub tagging_environment: TaggingEnvironment,
     pub extensibility_environment: ExtensibilityEnvironment,
     pub imports: Vec<Import<'a>>,
-    pub exports: Option<Exports>,
+    pub exports: Option<Exports<'a>>,
 }
 
 impl<'a> ModuleHeader<'a> {
@@ -427,26 +427,26 @@ impl<'a> ModuleHeader<'a> {
 impl<'a>
     From<(
         &'a str,
-        Option<DefinitiveIdentifier>,
+        Option<DefinitiveIdentifier<'a>>,
         Option<(
-            Option<EncodingReferenceDefault>,
+            Option<EncodingReferenceDefault<'a>>,
             TaggingEnvironment,
             ExtensibilityEnvironment,
         )>,
-        Option<Exports>,
+        Option<Exports<'a>>,
         Option<Vec<Import<'a>>>,
     )> for ModuleHeader<'a>
 {
     fn from(
         value: (
             &'a str,
-            Option<DefinitiveIdentifier>,
+            Option<DefinitiveIdentifier<'a>>,
             Option<(
-                Option<EncodingReferenceDefault>,
+                Option<EncodingReferenceDefault<'a>>,
                 TaggingEnvironment,
                 ExtensibilityEnvironment,
             )>,
-            Option<Exports>,
+            Option<Exports<'a>>,
             Option<Vec<Import<'a>>>,
         ),
     ) -> Self {
@@ -573,14 +573,14 @@ pub enum ToplevelDefinition<'a> {
 }
 
 impl<'a> ToplevelDefinition<'a> {
-    pub(crate) fn has_enum_value(&self, type_name: Option<&String>, identifier: &String) -> bool {
+    pub(crate) fn has_enum_value(&self, type_name: Option<&str>, identifier: &str) -> bool {
         if let ToplevelDefinition::Type(ToplevelTypeDefinition {
             name,
             ty: ASN1Type::Enumerated(e),
             ..
         }) = self
         {
-            if type_name.is_some() && Some(name) != type_name {
+            if type_name.is_some() && Some(&**name) != type_name {
                 return false;
             }
             e.members.iter().any(|m| &m.name == identifier)
@@ -684,18 +684,18 @@ impl<'a> ToplevelDefinition<'a> {
 #[derive(Debug, Clone, PartialEq)]
 pub struct ToplevelValueDefinition<'a> {
     pub comments: Cow<'a, str>,
-    pub name: String,
-    pub associated_type: ASN1Type,
-    pub parameterization: Option<Parameterization>,
-    pub value: ASN1Value,
+    pub name: Cow<'a, str>,
+    pub associated_type: ASN1Type<'a>,
+    pub parameterization: Option<Parameterization<'a>>,
+    pub value: ASN1Value<'a>,
     pub module_header: Option<Rc<RefCell<ModuleHeader<'a>>>>,
 }
 
-impl<'a> From<(&str, ASN1Value, ASN1Type)> for ToplevelValueDefinition<'a> {
-    fn from(value: (&str, ASN1Value, ASN1Type)) -> Self {
+impl<'a> From<(&'a str, ASN1Value<'a>, ASN1Type<'a>)> for ToplevelValueDefinition<'a> {
+    fn from(value: (&'a str, ASN1Value<'a>, ASN1Type<'a>)) -> Self {
         Self {
             comments: Cow::Borrowed(""),
-            name: value.0.to_owned(),
+            name: Cow::Borrowed(value.0),
             associated_type: value.2.to_owned(),
             parameterization: None,
             value: value.1,
@@ -707,24 +707,24 @@ impl<'a> From<(&str, ASN1Value, ASN1Type)> for ToplevelValueDefinition<'a> {
 impl<'a>
     From<(
         Vec<&str>,
-        &str,
-        Option<Parameterization>,
-        ASN1Type,
-        ASN1Value,
+        &'a str,
+        Option<Parameterization<'a>>,
+        ASN1Type<'a>,
+        ASN1Value<'a>,
     )> for ToplevelValueDefinition<'a>
 {
     fn from(
         value: (
             Vec<&str>,
-            &str,
-            Option<Parameterization>,
-            ASN1Type,
-            ASN1Value,
+            &'a str,
+            Option<Parameterization<'a>>,
+            ASN1Type<'a>,
+            ASN1Value<'a>,
         ),
     ) -> Self {
         Self {
             comments: Cow::Owned(value.0.join("\n")),
-            name: value.1.into(),
+            name: Cow::Borrowed(value.1),
             parameterization: value.2,
             associated_type: value.3,
             value: value.4,
@@ -737,24 +737,24 @@ impl<'a>
 pub struct ToplevelTypeDefinition<'a> {
     pub comments: Cow<'a, str>,
     pub tag: Option<AsnTag>,
-    pub name: String,
-    pub ty: ASN1Type,
-    pub parameterization: Option<Parameterization>,
+    pub name: Cow<'a, str>,
+    pub ty: ASN1Type<'a>,
+    pub parameterization: Option<Parameterization<'a>>,
     pub module_header: Option<Rc<RefCell<ModuleHeader<'a>>>>,
 }
 
 impl<'a> ToplevelTypeDefinition<'a> {
-    pub fn pdu(&self) -> &ASN1Type {
+    pub fn pdu(&self) -> &ASN1Type<'a> {
         &self.ty
     }
 }
 
-impl<'a> From<(&str, ASN1Type)> for ToplevelTypeDefinition<'a> {
-    fn from(value: (&str, ASN1Type)) -> Self {
+impl<'a> From<(&'a str, ASN1Type<'a>)> for ToplevelTypeDefinition<'a> {
+    fn from(value: (&'a str, ASN1Type<'a>)) -> Self {
         Self {
             comments: Cow::Borrowed(""),
             tag: None,
-            name: value.0.to_owned(),
+            name: Cow::Borrowed(value.0),
             ty: value.1,
             parameterization: None,
             module_header: None,
@@ -765,22 +765,22 @@ impl<'a> From<(&str, ASN1Type)> for ToplevelTypeDefinition<'a> {
 impl<'a>
     From<(
         Vec<&str>,
-        &str,
-        Option<Parameterization>,
-        (Option<AsnTag>, ASN1Type),
+        &'a str,
+        Option<Parameterization<'a>>,
+        (Option<AsnTag>, ASN1Type<'a>),
     )> for ToplevelTypeDefinition<'a>
 {
     fn from(
         value: (
             Vec<&str>,
-            &str,
-            Option<Parameterization>,
-            (Option<AsnTag>, ASN1Type),
+            &'a str,
+            Option<Parameterization<'a>>,
+            (Option<AsnTag>, ASN1Type<'a>),
         ),
     ) -> Self {
         Self {
             comments: Cow::Owned(value.0.join("\n")),
-            name: value.1.into(),
+            name: Cow::Borrowed(value.1),
             parameterization: value.2,
             ty: value.3 .1,
             tag: value.3 .0,
@@ -795,32 +795,32 @@ impl<'a>
 #[cfg_attr(test, derive(EnumDebug))]
 #[cfg_attr(not(test), derive(Debug))]
 #[derive(Clone, PartialEq)]
-pub enum ASN1Type {
+pub enum ASN1Type<'a> {
     Null,
-    Boolean(Boolean),
-    Integer(Integer),
-    Real(Real),
-    BitString(BitString),
-    OctetString(OctetString),
-    CharacterString(CharacterString),
-    Enumerated(Enumerated),
-    Choice(Choice),
-    Sequence(SequenceOrSet),
-    SequenceOf(SequenceOrSetOf),
-    Set(SequenceOrSet),
-    SetOf(SequenceOrSetOf),
-    Time(Time),
-    GeneralizedTime(GeneralizedTime),
-    UTCTime(UTCTime),
-    ElsewhereDeclaredType(DeclarationElsewhere),
+    Boolean(Boolean<'a>),
+    Integer(Integer<'a>),
+    Real(Real<'a>),
+    BitString(BitString<'a>),
+    OctetString(OctetString<'a>),
+    CharacterString(CharacterString<'a>),
+    Enumerated(Enumerated<'a>),
+    Choice(Choice<'a>),
+    Sequence(SequenceOrSet<'a>),
+    SequenceOf(SequenceOrSetOf<'a>),
+    Set(SequenceOrSet<'a>),
+    SetOf(SequenceOrSetOf<'a>),
+    Time(Time<'a>),
+    GeneralizedTime(GeneralizedTime<'a>),
+    UTCTime(UTCTime<'a>),
+    ElsewhereDeclaredType(DeclarationElsewhere<'a>),
     ChoiceSelectionType(ChoiceSelectionType),
-    ObjectIdentifier(ObjectIdentifier),
-    ObjectClassField(ObjectClassFieldType),
+    ObjectIdentifier(ObjectIdentifier<'a>),
+    ObjectClassField(ObjectClassFieldType<'a>),
     EmbeddedPdv,
     External,
 }
 
-impl ASN1Type {
+impl<'a> ASN1Type<'a> {
     pub fn as_str(&self) -> Cow<'_, str> {
         match self {
             ASN1Type::Null => Cow::Borrowed(NULL),
@@ -900,9 +900,9 @@ impl ASN1Type {
     pub fn builtin_or_elsewhere(
         parent: Option<&str>,
         module: Option<&str>,
-        identifier: &str,
-        constraints: Vec<Constraint>,
-    ) -> ASN1Type {
+        identifier: &'a str,
+        constraints: Vec<Constraint<'a>>,
+    ) -> ASN1Type<'a> {
         match (parent, identifier) {
             (None, NULL) => ASN1Type::Null,
             (None, BOOLEAN) => ASN1Type::Boolean(Boolean { constraints }),
@@ -968,7 +968,7 @@ impl ASN1Type {
             _ => ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                 parent: parent.map(str::to_string),
                 module: module.map(str::to_string),
-                identifier: identifier.to_string(),
+                identifier: Cow::Borrowed(identifier),
                 constraints,
             }),
         }
@@ -1002,7 +1002,7 @@ impl ASN1Type {
         }
     }
 
-    pub fn constraints_mut(&mut self) -> Option<&mut Vec<Constraint>> {
+    pub fn constraints_mut(&mut self) -> Option<&mut Vec<Constraint<'a>>> {
         match self {
             ASN1Type::Boolean(b) => Some(b.constraints_mut()),
             ASN1Type::Real(r) => Some(r.constraints_mut()),
@@ -1146,32 +1146,32 @@ impl IntegerType {
 #[cfg_attr(test, derive(EnumDebug))]
 #[cfg_attr(not(test), derive(Debug))]
 #[derive(Clone, PartialEq)]
-pub enum ASN1Value {
+pub enum ASN1Value<'a> {
     All,
     Null,
     Boolean(bool),
     Choice {
-        type_name: Option<String>,
-        variant_name: String,
-        inner_value: Box<ASN1Value>,
+        type_name: Option<Cow<'a, str>>,
+        variant_name: Cow<'a, str>,
+        inner_value: Box<ASN1Value<'a>>,
     },
     /// In ASN.1, value definitions are ambiguous between SEQUENCE, SET, SEQUENCE OF, and SET OF
     /// For example, `{ my-elem FALSE }` could be a value of all four types
-    SequenceOrSet(Vec<(Option<String>, Box<ASN1Value>)>),
+    SequenceOrSet(Vec<(Option<Cow<'a, str>>, Box<ASN1Value<'a>>)>),
     Integer(i128),
     Real(f64),
-    String(String),
+    String(Cow<'a, str>),
     BitString(Vec<bool>),
-    BitStringNamedBits(Vec<String>),
+    BitStringNamedBits(Vec<Cow<'a, str>>),
     OctetString(Vec<u8>),
     EnumeratedValue {
-        enumerated: String,
-        enumerable: String,
+        enumerated: Cow<'a, str>,
+        enumerable: Cow<'a, str>,
     },
-    Time(String),
+    Time(Cow<'a, str>),
     ElsewhereDeclaredValue {
-        parent: Option<String>,
-        identifier: String,
+        parent: Option<Cow<'a, str>>,
+        identifier: Cow<'a, str>,
     },
     ObjectIdentifier(ObjectIdentifierValue),
     /// In ASN1 value declarations, the value type is not straighforward to parse.
@@ -1188,8 +1188,8 @@ pub enum ASN1Value {
     /// However, in some representations, this relation is critical information.
     LinkedNestedValue {
         /// typereferences of supertypes
-        supertypes: Vec<String>,
-        value: Box<ASN1Value>,
+        supertypes: Vec<Cow<'a, str>>,
+        value: Box<ASN1Value<'a>>,
     },
     /// Integer values need type information that will not always be picked up by the lexer on first pass.
     LinkedIntValue {
@@ -1198,14 +1198,14 @@ pub enum ASN1Value {
     },
     /// Struct-like values such as SEQUENCE values need type information that will not always be picked up by the lexer on first pass.
     /// Contains a vector of the struct-like's fields, with the field name, the field type, and the field value as a tuple
-    LinkedStructLikeValue(Vec<(String, ASN1Type, StructLikeFieldValue)>),
+    LinkedStructLikeValue(Vec<(Cow<'a, str>, ASN1Type<'a>, StructLikeFieldValue<'a>)>),
     /// Array-like values such as SEQUENCE OF values need type information that will not always be picked up by the lexer on first pass.
-    LinkedArrayLikeValue(Vec<Box<ASN1Value>>),
+    LinkedArrayLikeValue(Vec<Box<ASN1Value<'a>>>),
     /// Character string values such as UTF8String values need type information that will not always be picked up by the lexer on first pass.
-    LinkedCharStringValue(CharacterStringType, String),
+    LinkedCharStringValue(CharacterStringType, Cow<'a, str>),
     LinkedElsewhereDefinedValue {
-        parent: Option<String>,
-        identifier: String,
+        parent: Option<Cow<'a, str>>,
+        identifier: Cow<'a, str>,
         can_be_const: bool,
     },
 }
@@ -1214,13 +1214,13 @@ pub enum ASN1Value {
 #[cfg_attr(test, derive(EnumDebug))]
 #[cfg_attr(not(test), derive(Debug))]
 #[derive(Clone, PartialEq)]
-pub enum StructLikeFieldValue {
-    Explicit(Box<ASN1Value>),
-    Implicit(Box<ASN1Value>),
+pub enum StructLikeFieldValue<'a> {
+    Explicit(Box<ASN1Value<'a>>),
+    Implicit(Box<ASN1Value<'a>>),
 }
 
-impl StructLikeFieldValue {
-    pub fn into_value(self) -> ASN1Value {
+impl<'a> StructLikeFieldValue<'a> {
+    pub fn into_value(self) -> ASN1Value<'a> {
         match self {
             StructLikeFieldValue::Explicit(v) | StructLikeFieldValue::Implicit(v) => *v,
         }
@@ -1232,7 +1232,7 @@ impl StructLikeFieldValue {
         }
     }
 
-    pub fn value_mut(&mut self) -> &mut ASN1Value {
+    pub fn value_mut(&mut self) -> &mut ASN1Value<'a> {
         match self {
             StructLikeFieldValue::Explicit(ref mut v)
             | StructLikeFieldValue::Implicit(ref mut v) => &mut *v,
@@ -1240,35 +1240,35 @@ impl StructLikeFieldValue {
     }
 }
 
-impl AsMut<ASN1Value> for ASN1Value {
-    fn as_mut(&mut self) -> &mut ASN1Value {
+impl<'a> AsMut<ASN1Value<'a>> for ASN1Value<'a> {
+    fn as_mut(&mut self) -> &mut ASN1Value<'a> {
         self
     }
 }
 
-impl ASN1Value {
+impl<'a> ASN1Value<'a> {
     pub fn max(
         &self,
-        other: &ASN1Value,
+        other: &ASN1Value<'a>,
         char_set: Option<&BTreeMap<usize, char>>,
-    ) -> Result<ASN1Value, GrammarError> {
+    ) -> Result<ASN1Value<'a>, GrammarError> {
         self.min_max(other, char_set, false)
     }
 
     pub fn min(
         &self,
-        other: &ASN1Value,
+        other: &ASN1Value<'a>,
         char_set: Option<&BTreeMap<usize, char>>,
-    ) -> Result<ASN1Value, GrammarError> {
+    ) -> Result<ASN1Value<'a>, GrammarError> {
         self.min_max(other, char_set, true)
     }
 
     fn min_max(
         &self,
-        other: &ASN1Value,
+        other: &ASN1Value<'a>,
         char_set: Option<&BTreeMap<usize, char>>,
         getting_mininum: bool,
-    ) -> Result<ASN1Value, GrammarError> {
+    ) -> Result<ASN1Value<'a>, GrammarError> {
         match (self, other, char_set) {
             (ASN1Value::Integer(s), ASN1Value::Integer(o), _) => {
                 if getting_mininum {
@@ -1331,25 +1331,27 @@ impl ASN1Value {
 /// some other part of the ASN1 specification that is
 /// being parsed or in one of its imports.
 #[derive(Debug, Clone, PartialEq)]
-pub struct DeclarationElsewhere {
+pub struct DeclarationElsewhere<'a> {
     /// Chain of parent declaration leading back to a basic ASN1 type
     pub parent: Option<String>,
     /// Name of the module where the identifier should be found.
     pub module: Option<String>,
-    pub identifier: String,
-    pub constraints: Vec<Constraint>,
+    pub identifier: Cow<'a, str>,
+    pub constraints: Vec<Constraint<'a>>,
 }
 
-impl From<(Option<&str>, &str, Option<Vec<Constraint>>)> for DeclarationElsewhere {
-    fn from(value: (Option<&str>, &str, Option<Vec<Constraint>>)) -> Self {
+impl<'a> From<(Option<&str>, &'a str, Option<Vec<Constraint<'a>>>)> for DeclarationElsewhere<'a> {
+    fn from(value: (Option<&str>, &'a str, Option<Vec<Constraint<'a>>>)) -> Self {
         DeclarationElsewhere {
             parent: value.0.map(ToString::to_string),
             module: None,
-            identifier: value.1.into(),
+            identifier: Cow::Borrowed(value.1),
             constraints: value.2.unwrap_or_default(),
         }
     }
 }
+
+
 
 /// Tag classes
 #[derive(Debug, Clone, Copy, PartialEq)]

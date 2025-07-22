@@ -219,13 +219,13 @@ pub enum SymbolDefn<'i> {
         local_type_reference: Option<&'i str>,
     },
     /// value(MacroType)
-    ValueMacroType(ASN1Type),
+    ValueMacroType(ASN1Type<'i>),
     /// value(VALUE MacroType)
-    ValueVALUEMacroType(ASN1Type),
+    ValueVALUEMacroType(ASN1Type<'i>),
     /// value(localvaluereference MacroType)
     ValueLocalvaluereferenceMacroType {
         local_value_reference: &'i str,
-        ty: ASN1Type,
+        ty: ASN1Type<'i>,
     },
 }
 
@@ -342,7 +342,7 @@ fn macro_type(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
     // A localtypeference will be stored as ASN1Type::ElsewhereDeclaredType
     skip_ws_and_comments(map_res(asn1_type, |v| match v {
         ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere { ref identifier, .. })
-            if ADDITIONAL_KEYWORDS.contains(&identifier.as_str()) =>
+            if ADDITIONAL_KEYWORDS.contains(&&**identifier) =>
         {
             Err(MiscError(
                 "Type reference can not be a keyword when used in ASN.1 MACRO.",
@@ -362,14 +362,14 @@ pub enum EmbeddedDefinition<'i> {
 #[derive(Debug, Clone, PartialEq)]
 pub struct LocalTypeassignment<'i> {
     name: &'i str,
-    ty: ASN1Type,
+    ty: ASN1Type<'i>,
 }
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct LocalValueassignment<'i> {
     name: &'i str,
-    ty: ASN1Type,
-    value: ASN1Value,
+    ty: ASN1Type<'i>,
+    value: ASN1Value<'i>,
 }
 
 /// Parse embedded definitions.
@@ -466,7 +466,7 @@ fn macro_value(input: Input<'_>) -> ParserResult<'_, ASN1Value> {
     // A localvaluereference will be stored as ASN1Value::ElsewhereDeclaredValue
     skip_ws_and_comments(map_res(asn1_value, |v| match v {
         ASN1Value::ElsewhereDeclaredValue { ref identifier, .. }
-            if ADDITIONAL_KEYWORDS.contains(&identifier.as_str()) =>
+            if ADDITIONAL_KEYWORDS.contains(&&**identifier) =>
         {
             Err(MiscError(
                 "Value reference can not be a keyword when used in ASN.1 MACRO.",
@@ -661,7 +661,7 @@ mod tests {
                                     ty: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                                         parent: None,
                                         module: None,
-                                        identifier: "ObjectName".to_string(),
+                                        identifier: "ObjectName".into(),
                                         constraints: vec![]
                                     })
                                 }
@@ -681,7 +681,7 @@ mod tests {
                                                 DeclarationElsewhere {
                                                     parent: None,
                                                     module: None,
-                                                    identifier: "DisplayString".to_string(),
+                                                    identifier: "DisplayString".into(),
                                                     constraints: vec![]
                                                 }
                                             )
@@ -705,7 +705,7 @@ mod tests {
                                                 DeclarationElsewhere {
                                                     parent: None,
                                                     module: None,
-                                                    identifier: "DisplayString".to_string(),
+                                                    identifier: "DisplayString".into(),
                                                     constraints: vec![]
                                                 }
                                             )

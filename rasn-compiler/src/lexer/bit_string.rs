@@ -1,3 +1,5 @@
+use std::borrow::Cow;
+
 use nom::{
     branch::alt,
     bytes::complete::tag,
@@ -43,7 +45,7 @@ pub fn bit_string_value(input: Input<'_>) -> ParserResult<'_, ASN1Value> {
                 char(RIGHT_BRACE),
             )),
             |named_bits| {
-                ASN1Value::BitStringNamedBits(named_bits.into_iter().map(String::from).collect())
+                ASN1Value::BitStringNamedBits(named_bits.into_iter().map(Cow::Borrowed).collect())
             },
         ),
     ))
@@ -71,6 +73,8 @@ pub fn bit_string(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
 
 #[cfg(test)]
 mod tests {
+    use std::borrow::Cow;
+
     use crate::{
         intermediate::{constraints::*, types::*, *},
         lexer::{bit_string, bit_string_value},
@@ -216,7 +220,7 @@ mod tests {
     #[test]
     fn parses_named_bits() {
         assert_eq!(
-            ASN1Value::BitStringNamedBits(vec![String::from("blue"), String::from("yellow")]),
+            ASN1Value::BitStringNamedBits(vec![Cow::from("blue"), Cow::from("yellow")]),
             bit_string_value(r#"{blue, yellow}"#.into()).unwrap().1
         )
     }

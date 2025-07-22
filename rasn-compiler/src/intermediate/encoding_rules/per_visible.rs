@@ -80,8 +80,8 @@ impl PerVisibleAlphabetConstraints {
         }
     }
 
-    fn from_subtype_elem(
-        element: Option<&SubtypeElements>,
+    fn from_subtype_elem<'a>(
+        element: Option<&SubtypeElements<'a>>,
         string_type: CharacterStringType,
     ) -> Result<Option<Self>, GrammarError> {
         match element {
@@ -95,7 +95,7 @@ impl PerVisibleAlphabetConstraints {
                         }
                     }
                     ElementOrSetOperation::SetOperation(s) => {
-                        fn flatten_set(elems: &mut Vec<SubtypeElements>, set: &SetOperation) {
+                        fn flatten_set<'a>(elems: &mut Vec<SubtypeElements<'a>>, set: &SetOperation<'a>) {
                             elems.push(set.base.clone());
                             match &*set.operant {
                                 ElementOrSetOperation::Element(e2) => elems.push(e2.clone()),
@@ -284,8 +284,8 @@ impl PerVisibleRangeConstraints {
     }
 }
 
-impl From<&Enumerated> for PerVisibleRangeConstraints {
-    fn from(value: &Enumerated) -> Self {
+impl<'a> From<&Enumerated<'a>> for PerVisibleRangeConstraints {
+    fn from(value: &Enumerated<'a>) -> Self {
         PerVisibleRangeConstraints {
             min: Some(0),
             max: Some(value.extensible.map_or(value.members.len() - 1, |i| i - 1) as i128),
@@ -295,8 +295,8 @@ impl From<&Enumerated> for PerVisibleRangeConstraints {
     }
 }
 
-impl From<&Choice> for PerVisibleRangeConstraints {
-    fn from(value: &Choice) -> Self {
+impl<'a> From<&Choice<'a>> for PerVisibleRangeConstraints {
+    fn from(value: &Choice<'a>) -> Self {
         PerVisibleRangeConstraints {
             min: Some(0),
             max: Some(value.extensible.map_or(value.options.len() - 1, |i| i - 1) as i128),
@@ -319,10 +319,10 @@ impl AddAssign<PerVisibleRangeConstraints> for PerVisibleRangeConstraints {
     }
 }
 
-impl TryFrom<&Constraint> for PerVisibleRangeConstraints {
+impl<'a> TryFrom<&Constraint<'a>> for PerVisibleRangeConstraints {
     type Error = GrammarError;
 
-    fn try_from(value: &Constraint) -> Result<PerVisibleRangeConstraints, Self::Error> {
+    fn try_from(value: &Constraint<'a>) -> Result<PerVisibleRangeConstraints, Self::Error> {
         match value {
             Constraint::Subtype(c) => {
                 let mut per_visible: PerVisibleRangeConstraints = match &c.set {
@@ -345,7 +345,7 @@ impl TryFrom<&Constraint> for PerVisibleRangeConstraints {
     }
 }
 
-impl TryFrom<Option<&SubtypeElements>> for PerVisibleRangeConstraints {
+impl<'a> TryFrom<Option<&SubtypeElements<'a>>> for PerVisibleRangeConstraints {
     type Error = GrammarError;
     fn try_from(
         value: Option<&SubtypeElements>,
@@ -404,7 +404,7 @@ impl TryFrom<Option<&SubtypeElements>> for PerVisibleRangeConstraints {
     }
 }
 
-impl PerVisible for Constraint {
+impl<'a> PerVisible for Constraint<'a> {
     fn per_visible(&self) -> bool {
         match self {
             Constraint::Subtype(s) => s.set.per_visible(),
@@ -413,7 +413,7 @@ impl PerVisible for Constraint {
     }
 }
 
-impl PerVisible for ElementOrSetOperation {
+impl<'a> PerVisible for ElementOrSetOperation<'a> {
     fn per_visible(&self) -> bool {
         match self {
             ElementOrSetOperation::Element(e) => e.per_visible(),
@@ -424,7 +424,7 @@ impl PerVisible for ElementOrSetOperation {
     }
 }
 
-impl PerVisible for SubtypeElements {
+impl<'a> PerVisible for SubtypeElements<'a> {
     fn per_visible(&self) -> bool {
         match self {
             SubtypeElements::SingleValue {
@@ -471,10 +471,10 @@ pub fn per_visible_range_constraints(
 /// then the resulting constraint is not PER-visible.
 /// If a constraint has an EXCEPT clause, the EXCEPT and the following value set is completely ignored,
 /// whether the value set following the EXCEPT is PER-visible or not.
-fn fold_constraint_set(
-    set: &SetOperation,
-    char_set: Option<&BTreeMap<usize, char>>,
-) -> Result<Option<SubtypeElements>, GrammarError> {
+fn fold_constraint_set<'a>(
+    set: &SetOperation<'a>,
+    char_set: Option<&'a BTreeMap<usize, char>>,
+) -> Result<Option<SubtypeElements<'a>>, GrammarError> {
     let folded_operant = match &*set.operant {
         ElementOrSetOperation::Element(e) => e.per_visible().then(|| e.clone()),
         ElementOrSetOperation::SetOperation(s) => fold_constraint_set(s, char_set)?,
@@ -788,14 +788,14 @@ fn fold_constraint_set(
     }
 }
 
-fn intersect_single_and_range(
-    value: &ASN1Value,
-    min: Option<&ASN1Value>,
-    max: Option<&ASN1Value>,
+fn intersect_single_and_range<'a>(
+    value: &ASN1Value<'a>,
+    min: Option<&ASN1Value<'a>>,
+    max: Option<&ASN1Value<'a>>,
     x1: bool,
     x2: bool,
     char_set: Option<&BTreeMap<usize, char>>,
-) -> Result<Option<SubtypeElements>, GrammarError> {
+) -> Result<Option<SubtypeElements<'a>>, GrammarError> {
     match (value, min, max, x1 || x2, char_set) {
         (ASN1Value::Integer(_), _, Some(ASN1Value::String(_)), _, Some(_))
         | (ASN1Value::Integer(_), Some(ASN1Value::String(_)), _, _, Some(_)) => {
@@ -866,14 +866,14 @@ fn intersect_single_and_range(
     }
 }
 
-fn union_single_and_range(
-    v: &ASN1Value,
-    min: Option<&ASN1Value>,
-    char_set: Option<&BTreeMap<usize, char>>,
-    max: Option<&ASN1Value>,
+fn union_single_and_range<'a>(
+    v: &ASN1Value<'a>,
+    min: Option<&ASN1Value<'a>>,
+    char_set: Option<&'a BTreeMap<usize, char>>,
+    max: Option<&ASN1Value<'a>>,
     x1: bool,
     x2: bool,
-) -> Result<Option<SubtypeElements>, GrammarError> {
+) -> Result<Option<SubtypeElements<'a>>, GrammarError> {
     match (v, min, max, x1 || x2, char_set) {
         (ASN1Value::Integer(_), _, Some(ASN1Value::String(_)), _, _)
         | (ASN1Value::Integer(_), Some(ASN1Value::String(_)), _, _, _)
@@ -911,11 +911,11 @@ fn union_single_and_range(
     }
 }
 
-fn compare_optional_asn1values(
-    first: Option<&ASN1Value>,
-    second: Option<&ASN1Value>,
-    predicate: impl Fn(&ASN1Value, &ASN1Value) -> Result<ASN1Value, GrammarError>,
-) -> Result<Option<ASN1Value>, GrammarError> {
+fn compare_optional_asn1values<'a>(
+    first: Option<&ASN1Value<'a>>,
+    second: Option<&ASN1Value<'a>>,
+    predicate: impl Fn(&ASN1Value<'a>, &ASN1Value<'a>) -> Result<ASN1Value<'a>, GrammarError>,
+) -> Result<Option<ASN1Value<'a>>, GrammarError> {
     match (first, second) {
         (Some(f), Some(s)) => Ok(Some(predicate(f, s)?)),
         (None, Some(s)) => Ok(Some(s.clone())),

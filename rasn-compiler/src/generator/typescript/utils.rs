@@ -81,7 +81,7 @@ pub fn format_sequence_or_set_members(se: &SequenceOrSet) -> String {
     )
 }
 
-pub fn value_to_tokens(value: &ASN1Value) -> Result<String, GeneratorError> {
+pub fn value_to_tokens<'a>(value: &'a ASN1Value<'a>) -> Result<String, GeneratorError<'a>> {
     match value {
         ASN1Value::Null => Ok(JSON_NULL.to_owned()),
         ASN1Value::Choice {
@@ -224,6 +224,8 @@ pub fn is_fixed_size(bit_str: &BitString) -> bool {
 
 #[cfg(test)]
 mod tests {
+    use std::borrow::Cow;
+
     use crate::intermediate::{
         types::Integer, ASN1Type, IntegerType, ObjectIdentifierArc, ObjectIdentifierValue,
         StructLikeFieldValue,
@@ -280,7 +282,7 @@ mod tests {
         assert_eq!(
             no_ws(
                 value_to_tokens(&ASN1Value::LinkedStructLikeValue(vec![(
-                    String::from("field"),
+                    Cow::Borrowed("field"),
                     ASN1Type::Integer(Integer::default()),
                     StructLikeFieldValue::Explicit(Box::new(ASN1Value::Integer(42)))
                 )]))

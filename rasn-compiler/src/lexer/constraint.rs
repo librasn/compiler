@@ -1107,7 +1107,7 @@ mod tests {
                 set: ElementOrSetOperation::SetOperation(SetOperation {
                     base: SubtypeElements::SingleValue {
                         value: ASN1Value::ElsewhereDeclaredValue {
-                            identifier: "unknown".to_string(),
+                            identifier: "unknown".into(),
                             parent: None
                         },
                         extensible: false
@@ -1116,11 +1116,11 @@ mod tests {
                     operant: Box::new(ElementOrSetOperation::SetOperation(SetOperation {
                         base: SubtypeElements::ValueRange {
                             min: Some(ASN1Value::ElsewhereDeclaredValue {
-                                identifier: "passengerCar".to_string(),
+                                identifier: "passengerCar".into(),
                                 parent: None
                             }),
                             max: Some(ASN1Value::ElsewhereDeclaredValue {
-                                identifier: "tram".to_string(),
+                                identifier: "tram".into(),
                                 parent: None
                             }),
                             extensible: false
@@ -1129,7 +1129,7 @@ mod tests {
                         operant: Box::new(ElementOrSetOperation::Element(
                             SubtypeElements::SingleValue {
                                 value: ASN1Value::ElsewhereDeclaredValue {
-                                    identifier: "agricultural".to_string(),
+                                    identifier: "agricultural".into(),
                                     parent: None
                                 },
                                 extensible: false

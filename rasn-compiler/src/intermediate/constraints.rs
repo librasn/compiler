@@ -29,16 +29,16 @@ pub struct ExtensionMarker();
 #[cfg_attr(test, derive(EnumDebug))]
 #[cfg_attr(not(test), derive(Debug))]
 #[derive(Clone, PartialEq)]
-pub enum Constraint {
-    Subtype(ElementSetSpecs),
+pub enum Constraint<'a> {
+    Subtype(ElementSetSpecs<'a>),
     /// A TableConstraint as specified in X.682 9.
-    Table(TableConstraint),
-    Parameter(Vec<Parameter>),
+    Table(TableConstraint<'a>),
+    Parameter(Vec<Parameter<'a>>),
     /// A ContentsConstraint as specified in X.682 11.
-    Content(ContentConstraint),
+    Content(ContentConstraint<'a>),
 }
 
-impl Constraint {
+impl<'a> Constraint<'a> {
     /// Returns the type of integer that should be used in a representation when applying the
     /// GeneralConstraint.
     pub fn integer_constraints(&self) -> IntegerType {
@@ -81,7 +81,7 @@ impl Constraint {
 
     pub fn unpack_as_value_range(
         &self,
-    ) -> Result<(&Option<ASN1Value>, &Option<ASN1Value>, bool), GrammarError> {
+    ) -> Result<(&Option<ASN1Value<'a>>, &Option<ASN1Value<'a>>, bool), GrammarError> {
         if let Constraint::Subtype(set) = self {
             if let ElementOrSetOperation::Element(SubtypeElements::ValueRange {
                 min,
@@ -98,7 +98,7 @@ impl Constraint {
         ))
     }
 
-    pub fn unpack_as_strict_value(&self) -> Result<(&ASN1Value, bool), GrammarError> {
+    pub fn unpack_as_strict_value(&self) -> Result<(&ASN1Value<'a>, bool), GrammarError> {
         if let Constraint::Subtype(set) = self {
             if let ElementOrSetOperation::Element(SubtypeElements::SingleValue {
                 value,
@@ -121,33 +121,33 @@ impl Constraint {
 #[cfg_attr(test, derive(EnumDebug))]
 #[cfg_attr(not(test), derive(Debug))]
 #[derive(Clone, PartialEq)]
-pub enum ContentConstraint {
+pub enum ContentConstraint<'a> {
     /// **X.682 11.4** _The abstract value of the octet string or bit string is the encoding of an
     /// (any) abstract value of "Type" that is produced by the encoding rules that are applied to
     /// the octet string or bit string._
-    Containing(ASN1Type),
+    Containing(ASN1Type<'a>),
     /// **X.682 11.5** _The procedures identified by the object identifier value "Value" shall be
     /// used to produce and to interpret the contents of the bit string or octet string. If the bit
     /// string or octet string is already constrained, it is a specification error if these
     /// procedures do not produce encodings that satisfy the constraint._
-    EncodedBy(ASN1Value),
+    EncodedBy(ASN1Value<'a>),
     /// **X.682 11.6** _The abstract value of the octet string or bit string is the encoding of an
     /// (any) abstract value of "Type" that is produced by the encoding rules identified by the
     /// object identifier value "Value"._
     ContainingEncodedBy {
-        containing: ASN1Type,
-        encoded_by: ASN1Value,
+        containing: ASN1Type<'a>,
+        encoded_by: ASN1Value<'a>,
     },
 }
 
 #[cfg_attr(test, derive(EnumDebug))]
 #[cfg_attr(not(test), derive(Debug))]
 #[derive(Clone, PartialEq)]
-pub enum Parameter {
-    ValueParameter(ASN1Value),
-    TypeParameter(ASN1Type),
-    InformationObjectParameter(InformationObjectFields),
-    ObjectSetParameter(ObjectSet),
+pub enum Parameter<'a> {
+    ValueParameter(ASN1Value<'a>),
+    TypeParameter(ASN1Type<'a>),
+    InformationObjectParameter(InformationObjectFields<'a>),
+    ObjectSetParameter(ObjectSet<'a>),
 }
 
 #[cfg_attr(test, derive(EnumDebug))]
@@ -160,23 +160,23 @@ pub enum SetOperator {
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct CompositeConstraint {
-    pub base_constraint: Box<Constraint>,
-    pub operation: Vec<(SetOperator, Box<Constraint>)>,
+pub struct CompositeConstraint<'a> {
+    pub base_constraint: Box<Constraint<'a>>,
+    pub operation: Vec<(SetOperator, Box<Constraint<'a>>)>,
     pub extensible: bool,
 }
 
-impl
+impl<'a>
     From<(
-        Constraint,
-        Vec<(SetOperator, Constraint)>,
+        Constraint<'a>,
+        Vec<(SetOperator, Constraint<'a>)>,
         Option<ExtensionMarker>,
-    )> for CompositeConstraint
+    )> for CompositeConstraint<'a>
 {
     fn from(
         value: (
-            Constraint,
-            Vec<(SetOperator, Constraint)>,
+            Constraint<'a>,
+            Vec<(SetOperator, Constraint<'a>)>,
             Option<ExtensionMarker>,
         ),
     ) -> Self {
@@ -204,31 +204,31 @@ pub enum ComponentPresence {
 /// Representation of a component constraint used for subtyping
 /// in ASN1 specifications
 #[derive(Debug, Clone, PartialEq)]
-pub struct InnerTypeConstraint {
+pub struct InnerTypeConstraint<'a> {
     pub is_partial: bool,
-    pub constraints: Vec<NamedConstraint>,
+    pub constraints: Vec<NamedConstraint<'a>>,
 }
 
 /// Representation of a single component within a component constraint
 /// in ASN1 specifications
 #[derive(Debug, Clone, PartialEq)]
-pub struct NamedConstraint {
+pub struct NamedConstraint<'a> {
     pub identifier: String,
-    pub constraints: Vec<Constraint>,
+    pub constraints: Vec<Constraint<'a>>,
     pub presence: ComponentPresence,
 }
 
 /// Representation of a range constraint used for subtyping
 /// in ASN1 specifications
 #[derive(Debug, Clone, PartialEq)]
-pub struct ValueConstraint {
-    pub min_value: Option<ASN1Value>,
-    pub max_value: Option<ASN1Value>,
+pub struct ValueConstraint<'a> {
+    pub min_value: Option<ASN1Value<'a>>,
+    pub max_value: Option<ASN1Value<'a>>,
     pub extensible: bool,
 }
 
-impl From<ASN1Value> for ValueConstraint {
-    fn from(value: ASN1Value) -> Self {
+impl<'a> From<ASN1Value<'a>> for ValueConstraint<'a> {
+    fn from(value: ASN1Value<'a>) -> Self {
         Self {
             min_value: Some(value.clone()),
             max_value: Some(value),
@@ -237,8 +237,8 @@ impl From<ASN1Value> for ValueConstraint {
     }
 }
 
-impl From<(ASN1Value, RangeSeperator, ASN1Value)> for ValueConstraint {
-    fn from(value: (ASN1Value, RangeSeperator, ASN1Value)) -> Self {
+impl<'a> From<(ASN1Value<'a>, RangeSeperator, ASN1Value<'a>)> for ValueConstraint<'a> {
+    fn from(value: (ASN1Value<'a>, RangeSeperator, ASN1Value<'a>)) -> Self {
         Self {
             min_value: Some(value.0),
             max_value: Some(value.2),
@@ -247,8 +247,8 @@ impl From<(ASN1Value, RangeSeperator, ASN1Value)> for ValueConstraint {
     }
 }
 
-impl From<(ASN1Value, ExtensionMarker)> for ValueConstraint {
-    fn from(value: (ASN1Value, ExtensionMarker)) -> Self {
+impl<'a> From<(ASN1Value<'a>, ExtensionMarker)> for ValueConstraint<'a> {
+    fn from(value: (ASN1Value<'a>, ExtensionMarker)) -> Self {
         Self {
             min_value: Some(value.0.clone()),
             max_value: Some(value.0),
@@ -257,8 +257,8 @@ impl From<(ASN1Value, ExtensionMarker)> for ValueConstraint {
     }
 }
 
-impl From<(ASN1Value, RangeSeperator, ASN1Value, ExtensionMarker)> for ValueConstraint {
-    fn from(value: (ASN1Value, RangeSeperator, ASN1Value, ExtensionMarker)) -> Self {
+impl<'a> From<(ASN1Value<'a>, RangeSeperator, ASN1Value<'a>, ExtensionMarker)> for ValueConstraint<'a> {
+    fn from(value: (ASN1Value<'a>, RangeSeperator, ASN1Value<'a>, ExtensionMarker)) -> Self {
         Self {
             min_value: Some(value.0),
             max_value: Some(value.2),
@@ -271,13 +271,13 @@ impl From<(ASN1Value, RangeSeperator, ASN1Value, ExtensionMarker)> for ValueCons
 /// in ASN1 specifications
 /// _See: ITU-T X.682 (02/2021) 10_
 #[derive(Debug, Clone, PartialEq)]
-pub struct TableConstraint {
-    pub object_set: ObjectSet,
+pub struct TableConstraint<'a> {
+    pub object_set: ObjectSet<'a>,
     pub linked_fields: Vec<RelationalConstraint>,
 }
 
-impl From<(ObjectSet, Option<Vec<RelationalConstraint>>)> for TableConstraint {
-    fn from(value: (ObjectSet, Option<Vec<RelationalConstraint>>)) -> Self {
+impl<'a> From<(ObjectSet<'a>, Option<Vec<RelationalConstraint>>)> for TableConstraint<'a> {
+    fn from(value: (ObjectSet<'a>, Option<Vec<RelationalConstraint>>)) -> Self {
         Self {
             object_set: value.0,
             linked_fields: value.1.unwrap_or_default(),
@@ -701,25 +701,25 @@ pub enum MidnightSettings {
 #[cfg_attr(test, derive(EnumDebug))]
 #[cfg_attr(not(test), derive(Debug))]
 #[derive(Clone, PartialEq)]
-pub enum SubtypeElements {
+pub enum SubtypeElements<'a> {
     SingleValue {
-        value: ASN1Value,
+        value: ASN1Value<'a>,
         extensible: bool,
     },
     ContainedSubtype {
-        subtype: ASN1Type,
+        subtype: ASN1Type<'a>,
         extensible: bool,
     },
     ValueRange {
-        min: Option<ASN1Value>,
-        max: Option<ASN1Value>,
+        min: Option<ASN1Value<'a>>,
+        max: Option<ASN1Value<'a>>,
         extensible: bool,
     },
-    PermittedAlphabet(Box<ElementOrSetOperation>),
-    SizeConstraint(Box<ElementOrSetOperation>),
-    TypeConstraint(ASN1Type),
-    SingleTypeConstraint(Vec<Constraint>),
-    MultipleTypeConstraints(InnerTypeConstraint),
+    PermittedAlphabet(Box<ElementOrSetOperation<'a>>),
+    SizeConstraint(Box<ElementOrSetOperation<'a>>),
+    TypeConstraint(ASN1Type<'a>),
+    SingleTypeConstraint(Vec<Constraint<'a>>),
+    MultipleTypeConstraints(InnerTypeConstraint<'a>),
     PatternConstraint(PatternConstraint),
     UserDefinedConstraint(UserDefinedConstraint),
     PropertySettings(PropertySettings), // DurationRange
@@ -727,8 +727,8 @@ pub enum SubtypeElements {
                                         // RecurrenceRange
 }
 
-impl From<(ASN1Value, Option<ExtensionMarker>)> for SubtypeElements {
-    fn from(value: (ASN1Value, Option<ExtensionMarker>)) -> Self {
+impl<'a> From<(ASN1Value<'a>, Option<ExtensionMarker>)> for SubtypeElements<'a> {
+    fn from(value: (ASN1Value<'a>, Option<ExtensionMarker>)) -> Self {
         Self::SingleValue {
             value: value.0,
             extensible: value.1.is_some(),
@@ -736,8 +736,8 @@ impl From<(ASN1Value, Option<ExtensionMarker>)> for SubtypeElements {
     }
 }
 
-impl From<Constraint> for SubtypeElements {
-    fn from(value: Constraint) -> Self {
+impl<'a> From<Constraint<'a>> for SubtypeElements<'a> {
+    fn from(value: Constraint<'a>) -> Self {
         match value {
             Constraint::Subtype(set) => Self::SizeConstraint(Box::new(set.set)),
             _ => unreachable!(),
@@ -745,8 +745,8 @@ impl From<Constraint> for SubtypeElements {
     }
 }
 
-impl From<(Option<ExtensionMarker>, Vec<NamedConstraint>)> for SubtypeElements {
-    fn from(value: (Option<ExtensionMarker>, Vec<NamedConstraint>)) -> Self {
+impl<'a> From<(Option<ExtensionMarker>, Vec<NamedConstraint<'a>>)> for SubtypeElements<'a> {
+    fn from(value: (Option<ExtensionMarker>, Vec<NamedConstraint<'a>>)) -> Self {
         SubtypeElements::MultipleTypeConstraints(InnerTypeConstraint {
             is_partial: value.0.is_some(),
             constraints: value.1,
@@ -759,13 +759,13 @@ impl From<(Option<ExtensionMarker>, Vec<NamedConstraint>)> for SubtypeElements {
 /// *50.1* _In some notations a set of elements of some identified type or information object class
 /// (the governor) can be specified. In such cases, the notation "ElementSetSpec" is used._
 #[derive(Debug, Clone, PartialEq)]
-pub struct ElementSetSpecs {
-    pub set: ElementOrSetOperation,
+pub struct ElementSetSpecs<'a> {
+    pub set: ElementOrSetOperation<'a>,
     pub extensible: bool,
 }
 
-impl From<(ElementOrSetOperation, Option<ExtensionMarker>)> for ElementSetSpecs {
-    fn from(value: (ElementOrSetOperation, Option<ExtensionMarker>)) -> Self {
+impl<'a> From<(ElementOrSetOperation<'a>, Option<ExtensionMarker>)> for ElementSetSpecs<'a> {
+    fn from(value: (ElementOrSetOperation<'a>, Option<ExtensionMarker>)) -> Self {
         Self {
             set: value.0,
             extensible: value.1.is_some(),
@@ -776,20 +776,20 @@ impl From<(ElementOrSetOperation, Option<ExtensionMarker>)> for ElementSetSpecs 
 #[cfg_attr(test, derive(EnumDebug))]
 #[cfg_attr(not(test), derive(Debug))]
 #[derive(Clone, PartialEq)]
-pub enum ElementOrSetOperation {
-    Element(SubtypeElements),
-    SetOperation(SetOperation),
+pub enum ElementOrSetOperation<'a> {
+    Element(SubtypeElements<'a>),
+    SetOperation(SetOperation<'a>),
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct SetOperation {
-    pub base: SubtypeElements, //TODO: Handle exclusions
+pub struct SetOperation<'a> {
+    pub base: SubtypeElements<'a>, //TODO: Handle exclusions
     pub operator: SetOperator,
-    pub operant: Box<ElementOrSetOperation>,
+    pub operant: Box<ElementOrSetOperation<'a>>,
 }
 
-impl From<(SubtypeElements, SetOperator, ElementOrSetOperation)> for SetOperation {
-    fn from(value: (SubtypeElements, SetOperator, ElementOrSetOperation)) -> Self {
+impl<'a> From<(SubtypeElements<'a>, SetOperator, ElementOrSetOperation<'a>)> for SetOperation<'a> {
+    fn from(value: (SubtypeElements<'a>, SetOperator, ElementOrSetOperation<'a>)) -> Self {
         Self {
             base: value.0,
             operator: value.1,

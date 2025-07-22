@@ -1,3 +1,5 @@
+use std::borrow::Cow;
+
 use crate::{
     input::{context_boundary, Input},
     intermediate::*,
@@ -94,8 +96,8 @@ fn global_module_reference(input: Input<'_>) -> ParserResult<'_, GlobalModuleRef
                 skip_ws_and_comments(separated_pair(identifier, char(DOT), value_reference)),
                 |(mod_ref, val_ref)| {
                     AssignedIdentifier::ExternalValueReference(ExternalValueReference {
-                        module_reference: mod_ref.to_owned(),
-                        value_reference: val_ref.to_owned(),
+                        module_reference: Cow::Borrowed(mod_ref),
+                        value_reference: Cow::Borrowed(val_ref),
                     })
                 },
             ),
@@ -105,8 +107,8 @@ fn global_module_reference(input: Input<'_>) -> ParserResult<'_, GlobalModuleRef
                     skip_ws(recognize(in_braces(take_until("}")))),
                 )),
                 |(v, p)| AssignedIdentifier::ParameterizedValue {
-                    value_reference: v.to_owned(),
-                    actual_parameter_list: p.inner().to_owned(),
+                    value_reference: Cow::Borrowed(v),
+                    actual_parameter_list: Cow::Owned(p.inner().to_owned()),
                 },
             ),
             map(
@@ -117,7 +119,7 @@ fn global_module_reference(input: Input<'_>) -> ParserResult<'_, GlobalModuleRef
                         peek(value((), char(COMMA))),
                     )))),
                 )),
-                |v| AssignedIdentifier::ValueReference(v.to_owned()),
+                |v| AssignedIdentifier::ValueReference(Cow::Borrowed(v)),
             ),
             value(
                 AssignedIdentifier::Empty,
@@ -393,7 +395,7 @@ mod tests {
                 .1,
             GlobalModuleReference {
                 module_reference: Cow::Borrowed("VALref-assigned-ID"),
-                assigned_identifier: AssignedIdentifier::ValueReference("valref".to_owned())
+                assigned_identifier: AssignedIdentifier::ValueReference(Cow::Borrowed("valref"))
             }
         )
     }
@@ -410,8 +412,8 @@ mod tests {
                 module_reference: Cow::Borrowed("ext-VALref-assigned-ID"),
                 assigned_identifier: AssignedIdentifier::ExternalValueReference(
                     ExternalValueReference {
-                        module_reference: "MODULE-ref".to_owned(),
-                        value_reference: "valref".to_owned()
+                        module_reference: Cow::Borrowed("MODULE-ref"),
+                        value_reference: Cow::Borrowed("valref")
                     }
                 )
             }

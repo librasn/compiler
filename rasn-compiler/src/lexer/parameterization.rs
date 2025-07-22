@@ -103,13 +103,13 @@ mod tests {
             Parameterization {
                 parameters: vec![
                     ParameterizationArgument {
-                        dummy_reference: "lower".to_owned(),
+                        dummy_reference: "lower".into(),
                         param_governor: ParameterGovernor::TypeOrClass(ASN1Type::Integer(
                             Integer::default()
                         ))
                     },
                     ParameterizationArgument {
-                        dummy_reference: "flag".to_owned(),
+                        dummy_reference: "flag".into(),
                         param_governor: ParameterGovernor::TypeOrClass(ASN1Type::Boolean(
                             Boolean::default()
                         ))

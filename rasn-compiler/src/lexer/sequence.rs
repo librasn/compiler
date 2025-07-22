@@ -867,7 +867,7 @@ integrityCheckValue     ICV OPTIONAL
                     ty: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                         parent: None,
                         module: Some("ETSI-Common-Types".to_string()),
-                        identifier: "Name".to_string(),
+                        identifier: "Name".into(),
                         constraints: vec![],
                     }),
                     optionality: Optionality::Required,

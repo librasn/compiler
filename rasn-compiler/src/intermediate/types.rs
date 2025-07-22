@@ -56,51 +56,51 @@ pub trait MemberOrOption {
 
 /// Trait shared by all ASN1 types that can be constrained a.k.a subtyped.
 /// *See also Rec. ITU-T X.680 (02/2021) §49 - §51*
-pub trait Constrainable {
+pub trait Constrainable<'a> {
     /// returns a reference to the type's constraints
-    fn constraints(&self) -> &Vec<Constraint>;
+    fn constraints(&self) -> &Vec<Constraint<'a>>;
     /// returns a mutable reference to the type's constraints
-    fn constraints_mut(&mut self) -> &mut Vec<Constraint>;
+    fn constraints_mut(&mut self) -> &mut Vec<Constraint<'a>>;
 }
 
 macro_rules! constrainable {
     ($typ:ty) => {
-        impl Constrainable for $typ {
-            fn constraints(&self) -> &Vec<Constraint> {
+        impl<'a> Constrainable<'a> for $typ {
+            fn constraints(&self) -> &Vec<Constraint<'a>> {
                 &self.constraints
             }
 
-            fn constraints_mut(&mut self) -> &mut Vec<Constraint> {
+            fn constraints_mut(&mut self) -> &mut Vec<Constraint<'a>> {
                 &mut self.constraints
             }
         }
     };
 }
 
-constrainable!(Boolean);
-constrainable!(Integer);
-constrainable!(BitString);
-constrainable!(OctetString);
-constrainable!(CharacterString);
-constrainable!(Real);
-constrainable!(SequenceOrSet);
-constrainable!(SequenceOrSetOf);
-constrainable!(Choice);
-constrainable!(Enumerated);
-constrainable!(DeclarationElsewhere);
-constrainable!(ObjectClassFieldType);
-constrainable!(Time);
+constrainable!(Boolean<'a>);
+constrainable!(Integer<'a>);
+constrainable!(BitString<'a>);
+constrainable!(OctetString<'a>);
+constrainable!(CharacterString<'a>);
+constrainable!(Real<'a>);
+constrainable!(SequenceOrSet<'a>);
+constrainable!(SequenceOrSetOf<'a>);
+constrainable!(Choice<'a>);
+constrainable!(Enumerated<'a>);
+constrainable!(DeclarationElsewhere<'a>);
+constrainable!(ObjectClassFieldType<'a>);
+constrainable!(Time<'a>);
 
 /// Representation of an ASN1 BOOLEAN data element
 /// with corresponding constraints.
 /// *As defined in Rec. ITU-T X.680 (02/2021) §18*
 #[derive(Debug, Clone, PartialEq, Default)]
-pub struct Boolean {
-    pub constraints: Vec<Constraint>,
+pub struct Boolean<'a> {
+    pub constraints: Vec<Constraint<'a>>,
 }
 
-impl From<Option<Vec<Constraint>>> for Boolean {
-    fn from(value: Option<Vec<Constraint>>) -> Self {
+impl<'a> From<Option<Vec<Constraint<'a>>>> for Boolean<'a> {
+    fn from(value: Option<Vec<Constraint<'a>>>) -> Self {
         Self {
             constraints: value.unwrap_or_default(),
         }
@@ -111,12 +111,12 @@ impl From<Option<Vec<Constraint>>> for Boolean {
 /// with corresponding constraints and distinguished values.
 /// *As defined in Rec. ITU-T X.680 (02/2021) §19*
 #[derive(Debug, Clone, PartialEq, Default)]
-pub struct Integer {
-    pub constraints: Vec<Constraint>,
+pub struct Integer<'a> {
+    pub constraints: Vec<Constraint<'a>>,
     pub distinguished_values: Option<Vec<DistinguishedValue>>,
 }
 
-impl Integer {
+impl<'a> Integer<'a> {
     /// Returns the [IntegerType] of `self`.
     /// The [IntegerType] describes the absolute range of an integer
     pub fn int_type(&self) -> IntegerType {
@@ -128,7 +128,7 @@ impl Integer {
     }
 }
 
-impl From<(i128, i128, bool)> for Integer {
+impl<'a> From<(i128, i128, bool)> for Integer<'a> {
     fn from(value: (i128, i128, bool)) -> Self {
         Self {
             constraints: vec![Constraint::Subtype(ElementSetSpecs {
@@ -144,7 +144,7 @@ impl From<(i128, i128, bool)> for Integer {
     }
 }
 
-impl From<(Option<i128>, Option<i128>, bool)> for Integer {
+impl<'a> From<(Option<i128>, Option<i128>, bool)> for Integer<'a> {
     fn from(value: (Option<i128>, Option<i128>, bool)) -> Self {
         Self {
             constraints: vec![Constraint::Subtype(ElementSetSpecs {
@@ -160,18 +160,18 @@ impl From<(Option<i128>, Option<i128>, bool)> for Integer {
     }
 }
 
-impl
+impl<'a>
     From<(
         &str,
         Option<Vec<DistinguishedValue>>,
-        Option<Vec<Constraint>>,
-    )> for Integer
+        Option<Vec<Constraint<'a>>>,
+    )> for Integer<'a>
 {
     fn from(
         value: (
             &str,
             Option<Vec<DistinguishedValue>>,
-            Option<Vec<Constraint>>,
+            Option<Vec<Constraint<'a>>>,
         ),
     ) -> Self {
         Self {
@@ -185,12 +185,12 @@ impl
 /// with corresponding constraints.
 /// *As defined in Rec. ITU-T X.680 (02/2021) §21*
 #[derive(Debug, Clone, PartialEq)]
-pub struct Real {
-    pub constraints: Vec<Constraint>,
+pub struct Real<'a> {
+    pub constraints: Vec<Constraint<'a>>,
 }
 
-impl From<Option<Vec<Constraint>>> for Real {
-    fn from(value: Option<Vec<Constraint>>) -> Self {
+impl<'a> From<Option<Vec<Constraint<'a>>>> for Real<'a> {
+    fn from(value: Option<Vec<Constraint<'a>>>) -> Self {
         Self {
             constraints: value.unwrap_or_default(),
         }
@@ -201,28 +201,28 @@ impl From<Option<Vec<Constraint>>> for Real {
 /// with corresponding constraints.
 /// *As defined in Rec. ITU-T X.680 (02/2021) §46*
 #[derive(Debug, Clone, PartialEq)]
-pub struct GeneralizedTime {
-    pub constraints: Vec<Constraint>,
+pub struct GeneralizedTime<'a> {
+    pub constraints: Vec<Constraint<'a>>,
 }
 
 /// Representation of an ASN1 Universal time (a.k.a UTCTime)
 /// data element with corresponding constraints.
 /// *As defined in Rec. ITU-T X.680 (02/2021) §47*
 #[derive(Debug, Clone, PartialEq)]
-pub struct UTCTime {
-    pub constraints: Vec<Constraint>,
+pub struct UTCTime<'a> {
+    pub constraints: Vec<Constraint<'a>>,
 }
 
 /// Representation of an ASN1 OCTET STRING data element
 /// with corresponding constraints.
 /// *As defined in Rec. ITU-T X.680 (02/2021) §23*
 #[derive(Debug, Clone, PartialEq)]
-pub struct OctetString {
-    pub constraints: Vec<Constraint>,
+pub struct OctetString<'a> {
+    pub constraints: Vec<Constraint<'a>>,
 }
 
-impl From<Option<Vec<Constraint>>> for OctetString {
-    fn from(value: Option<Vec<Constraint>>) -> Self {
+impl<'a> From<Option<Vec<Constraint<'a>>>> for OctetString<'a> {
+    fn from(value: Option<Vec<Constraint<'a>>>) -> Self {
         OctetString {
             constraints: value.unwrap_or_default(),
         }
@@ -234,13 +234,13 @@ impl From<Option<Vec<Constraint>>> for OctetString {
 /// defining the individual bits.
 /// *As defined in Rec. ITU-T X.680 (02/2021) §22*
 #[derive(Debug, Clone, PartialEq)]
-pub struct BitString {
-    pub constraints: Vec<Constraint>,
+pub struct BitString<'a> {
+    pub constraints: Vec<Constraint<'a>>,
     pub distinguished_values: Option<Vec<DistinguishedValue>>,
 }
 
-impl From<(Option<Vec<DistinguishedValue>>, Option<Vec<Constraint>>)> for BitString {
-    fn from(value: (Option<Vec<DistinguishedValue>>, Option<Vec<Constraint>>)) -> Self {
+impl<'a> From<(Option<Vec<DistinguishedValue>>, Option<Vec<Constraint<'a>>>)> for BitString<'a> {
+    fn from(value: (Option<Vec<DistinguishedValue>>, Option<Vec<Constraint<'a>>>)) -> Self {
         BitString {
             constraints: value.1.unwrap_or_default(),
             distinguished_values: value.0,
@@ -252,12 +252,12 @@ impl From<(Option<Vec<DistinguishedValue>>, Option<Vec<Constraint>>)> for BitStr
 /// with corresponding constraints.
 /// *As defined in Rec. ITU-T X.680 (02/2021) §32*
 #[derive(Debug, Clone, PartialEq)]
-pub struct ObjectIdentifier {
-    pub constraints: Vec<Constraint>,
+pub struct ObjectIdentifier<'a> {
+    pub constraints: Vec<Constraint<'a>>,
 }
 
-impl From<Option<Vec<Constraint>>> for ObjectIdentifier {
-    fn from(value: Option<Vec<Constraint>>) -> Self {
+impl<'a> From<Option<Vec<Constraint<'a>>>> for ObjectIdentifier<'a> {
+    fn from(value: Option<Vec<Constraint<'a>>>) -> Self {
         ObjectIdentifier {
             constraints: value.unwrap_or_default(),
         }
@@ -268,12 +268,12 @@ impl From<Option<Vec<Constraint>>> for ObjectIdentifier {
 /// with corresponding constraints.
 /// *As defined in Rec. ITU-T X.680 (02/2021) §38*
 #[derive(Debug, Clone, PartialEq)]
-pub struct Time {
-    pub constraints: Vec<Constraint>,
+pub struct Time<'a> {
+    pub constraints: Vec<Constraint<'a>>,
 }
 
-impl From<Option<Vec<Constraint>>> for Time {
-    fn from(value: Option<Vec<Constraint>>) -> Self {
+impl<'a> From<Option<Vec<Constraint<'a>>>> for Time<'a> {
+    fn from(value: Option<Vec<Constraint<'a>>>) -> Self {
         Time {
             constraints: value.unwrap_or_default(),
         }
@@ -285,13 +285,13 @@ impl From<Option<Vec<Constraint>>> for Time {
 /// include IA5String, UTF8String, VideotexString.
 /// *As defined in Rec. ITU-T X.680 (02/2021) §39-*§44
 #[derive(Debug, Clone, PartialEq)]
-pub struct CharacterString {
-    pub constraints: Vec<Constraint>,
+pub struct CharacterString<'a> {
+    pub constraints: Vec<Constraint<'a>>,
     pub ty: CharacterStringType,
 }
 
-impl From<(&str, Option<Vec<Constraint>>)> for CharacterString {
-    fn from(value: (&str, Option<Vec<Constraint>>)) -> Self {
+impl<'a> From<(&str, Option<Vec<Constraint<'a>>>)> for CharacterString<'a> {
+    fn from(value: (&str, Option<Vec<Constraint<'a>>>)) -> Self {
         CharacterString {
             constraints: value.1.unwrap_or_default(),
             ty: value.0.into(),
@@ -307,8 +307,8 @@ impl From<(&str, Option<Vec<Constraint>>)> for CharacterString {
 /// or `ASN1Type::SequenceOf(SequenceOrSetOf { .. })`).
 /// *As defined in Rec. ITU-T X.680 (02/2021) §26 and §28*
 #[derive(Debug, Clone, PartialEq)]
-pub struct SequenceOrSetOf {
-    pub constraints: Vec<Constraint>,
+pub struct SequenceOrSetOf<'a> {
+    pub constraints: Vec<Constraint<'a>>,
     /// [ASN.1 type](ASN1Type) of the individual elements of the collection
     /// ### Example
     /// The ASN.1 type
@@ -322,13 +322,13 @@ pub struct SequenceOrSetOf {
     /// Box::new(ASN1Type::Boolean(Boolean { constraints: vec![] } ))
     /// # ;
     /// ```
-    pub element_type: Box<ASN1Type>,
+    pub element_type: Box<ASN1Type<'a>>,
     pub element_tag: Option<AsnTag>,
     pub is_recursive: bool,
 }
 
-impl From<(Option<Vec<Constraint>>, (Option<AsnTag>, ASN1Type))> for SequenceOrSetOf {
-    fn from(value: (Option<Vec<Constraint>>, (Option<AsnTag>, ASN1Type))) -> Self {
+impl<'a> From<(Option<Vec<Constraint<'a>>>, (Option<AsnTag>, ASN1Type<'a>))> for SequenceOrSetOf<'a> {
+    fn from(value: (Option<Vec<Constraint<'a>>>, (Option<AsnTag>, ASN1Type<'a>))) -> Self {
         Self {
             constraints: value.0.unwrap_or_default(),
             element_type: Box::new(value.1 .1),
@@ -346,37 +346,37 @@ impl From<(Option<Vec<Constraint>>, (Option<AsnTag>, ASN1Type))> for SequenceOrS
 /// or `ASN1Type::Sequence(SequenceOrSet { .. })`).
 /// *As defined in Rec. ITU-T X.680 (02/2021) §25 and §27*
 #[derive(Debug, Clone, PartialEq)]
-pub struct SequenceOrSet {
+pub struct SequenceOrSet<'a> {
     pub components_of: Vec<String>,
     pub extensible: Option<usize>,
-    pub constraints: Vec<Constraint>,
-    pub members: Vec<SequenceOrSetMember>,
+    pub constraints: Vec<Constraint<'a>>,
+    pub members: Vec<SequenceOrSetMember<'a>>,
 }
 
-impl IterNameTypes for SequenceOrSet {
+impl<'a> IterNameTypes for SequenceOrSet<'a> {
     fn iter_name_types(&self) -> impl Iterator<Item = (&str, &ASN1Type)> {
         self.members.iter().map(|m| (m.name.as_str(), &m.ty))
     }
 }
 
-impl
+impl<'a>
     From<(
         (
-            Vec<SequenceComponent>,
+            Vec<SequenceComponent<'a>>,
             Option<ExtensionMarker>,
-            Option<Vec<SequenceComponent>>,
+            Option<Vec<SequenceComponent<'a>>>,
         ),
-        Option<Vec<Constraint>>,
-    )> for SequenceOrSet
+        Option<Vec<Constraint<'a>>>,
+    )> for SequenceOrSet<'a>
 {
     fn from(
         mut value: (
             (
-                Vec<SequenceComponent>,
+                Vec<SequenceComponent<'a>>,
                 Option<ExtensionMarker>,
-                Option<Vec<SequenceComponent>>,
+                Option<Vec<SequenceComponent<'a>>>,
             ),
-            Option<Vec<Constraint>>,
+            Option<Vec<Constraint<'a>>>,
         ),
     ) -> Self {
         let index_of_first_extension = value.0 .0.len();
@@ -398,24 +398,24 @@ impl
     }
 }
 
-impl
+impl<'a>
     From<(
         (
-            Vec<SequenceOrSetMember>,
+            Vec<SequenceOrSetMember<'a>>,
             Option<ExtensionMarker>,
-            Option<Vec<SequenceOrSetMember>>,
+            Option<Vec<SequenceOrSetMember<'a>>>,
         ),
-        Option<Vec<Constraint>>,
-    )> for SequenceOrSet
+        Option<Vec<Constraint<'a>>>,
+    )> for SequenceOrSet<'a>
 {
     fn from(
         mut value: (
             (
-                Vec<SequenceOrSetMember>,
+                Vec<SequenceOrSetMember<'a>>,
                 Option<ExtensionMarker>,
-                Option<Vec<SequenceOrSetMember>>,
+                Option<Vec<SequenceOrSetMember<'a>>>,
             ),
-            Option<Vec<Constraint>>,
+            Option<Vec<Constraint<'a>>>,
         ),
     ) -> Self {
         let index_of_first_extension = value.0 .0.len();
@@ -446,8 +446,8 @@ impl
 #[cfg_attr(not(test), derive(Debug))]
 #[allow(clippy::large_enum_variant)]
 #[derive(Clone, PartialEq)]
-pub enum SequenceComponent {
-    Member(SequenceOrSetMember),
+pub enum SequenceComponent<'a> {
+    Member(SequenceOrSetMember<'a>),
     ComponentsOf(String),
 }
 
@@ -490,16 +490,16 @@ pub enum SequenceComponent {
 /// # ;
 /// ```
 #[derive(Debug, Clone, PartialEq)]
-pub struct SequenceOrSetMember {
+pub struct SequenceOrSetMember<'a> {
     pub name: String,
     pub tag: Option<AsnTag>,
-    pub ty: ASN1Type,
-    pub optionality: Optionality<ASN1Value>,
+    pub ty: ASN1Type<'a>,
+    pub optionality: Optionality<ASN1Value<'a>>,
     pub is_recursive: bool,
-    pub constraints: Vec<Constraint>,
+    pub constraints: Vec<Constraint<'a>>,
 }
 
-impl MemberOrOption for SequenceOrSetMember {
+impl<'a> MemberOrOption for SequenceOrSetMember<'a> {
     fn name(&self) -> &str {
         &self.name
     }
@@ -523,22 +523,22 @@ impl MemberOrOption for SequenceOrSetMember {
     const IS_CHOICE_OPTION: bool = false;
 }
 
-impl
+impl<'a>
     From<(
         &str,
         Option<AsnTag>,
-        ASN1Type,
-        Option<Vec<Constraint>>,
-        Optionality<ASN1Value>,
-    )> for SequenceOrSetMember
+        ASN1Type<'a>,
+        Option<Vec<Constraint<'a>>>,
+        Optionality<ASN1Value<'a>>,
+    )> for SequenceOrSetMember<'a>
 {
     fn from(
         value: (
             &str,
             Option<AsnTag>,
-            ASN1Type,
-            Option<Vec<Constraint>>,
-            Optionality<ASN1Value>,
+            ASN1Type<'a>,
+            Option<Vec<Constraint<'a>>>,
+            Optionality<ASN1Value<'a>>,
         ),
     ) -> Self {
         SequenceOrSetMember {
@@ -556,30 +556,30 @@ impl
 /// with corresponding members and extension information.
 /// *As defined in Rec. ITU-T X.680 (02/2021) §29*
 #[derive(Debug, Clone, PartialEq)]
-pub struct Choice {
+pub struct Choice<'a> {
     pub extensible: Option<usize>,
-    pub options: Vec<ChoiceOption>,
-    pub constraints: Vec<Constraint>,
+    pub options: Vec<ChoiceOption<'a>>,
+    pub constraints: Vec<Constraint<'a>>,
 }
 
-impl IterNameTypes for Choice {
+impl<'a> IterNameTypes for Choice<'a> {
     fn iter_name_types(&self) -> impl Iterator<Item = (&str, &ASN1Type)> {
         self.options.iter().map(|o| (o.name.as_str(), &o.ty))
     }
 }
 
-impl
+impl<'a>
     From<(
-        Vec<ChoiceOption>,
+        Vec<ChoiceOption<'a>>,
         Option<ExtensionMarker>,
-        Option<Vec<ChoiceOption>>,
-    )> for Choice
+        Option<Vec<ChoiceOption<'a>>>,
+    )> for Choice<'a>
 {
     fn from(
         mut value: (
-            Vec<ChoiceOption>,
+            Vec<ChoiceOption<'a>>,
             Option<ExtensionMarker>,
-            Option<Vec<ChoiceOption>>,
+            Option<Vec<ChoiceOption<'a>>>,
         ),
     ) -> Self {
         let index_of_first_extension = value.0.len();
@@ -620,15 +620,15 @@ impl
 /// # ;
 /// ```
 #[derive(Debug, Clone, PartialEq)]
-pub struct ChoiceOption {
+pub struct ChoiceOption<'a> {
     pub name: String,
     pub tag: Option<AsnTag>,
-    pub ty: ASN1Type,
-    pub constraints: Vec<Constraint>,
+    pub ty: ASN1Type<'a>,
+    pub constraints: Vec<Constraint<'a>>,
     pub is_recursive: bool,
 }
 
-impl MemberOrOption for ChoiceOption {
+impl<'a> MemberOrOption for ChoiceOption<'a> {
     fn name(&self) -> &str {
         &self.name
     }
@@ -652,8 +652,8 @@ impl MemberOrOption for ChoiceOption {
     const IS_CHOICE_OPTION: bool = true;
 }
 
-impl From<(&str, Option<AsnTag>, ASN1Type, Option<Vec<Constraint>>)> for ChoiceOption {
-    fn from(value: (&str, Option<AsnTag>, ASN1Type, Option<Vec<Constraint>>)) -> Self {
+impl<'a> From<(&str, Option<AsnTag>, ASN1Type<'a>, Option<Vec<Constraint<'a>>>)> for ChoiceOption<'a> {
+    fn from(value: (&str, Option<AsnTag>, ASN1Type<'a>, Option<Vec<Constraint<'a>>>)) -> Self {
         ChoiceOption {
             name: value.0.into(),
             tag: value.1,
@@ -668,18 +668,18 @@ impl From<(&str, Option<AsnTag>, ASN1Type, Option<Vec<Constraint>>)> for ChoiceO
 /// with corresponding enumerals and extension information.
 /// *As defined in Rec. ITU-T X.680 (02/2021) §20*
 #[derive(Debug, Clone, PartialEq)]
-pub struct Enumerated {
+pub struct Enumerated<'a> {
     pub members: Vec<Enumeral>,
     pub extensible: Option<usize>,
-    pub constraints: Vec<Constraint>,
+    pub constraints: Vec<Constraint<'a>>,
 }
 
-impl
+impl<'a>
     From<(
         Vec<Enumeral>,
         Option<ExtensionMarker>,
         Option<Vec<Enumeral>>,
-    )> for Enumerated
+    )> for Enumerated<'a>
 {
     fn from(
         mut value: (

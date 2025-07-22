@@ -38,12 +38,12 @@ pub fn enumerated_value(input: Input<'_>) -> ParserResult<'_, ToplevelValueDefin
                 acc = acc + "\n" + s;
                 acc
             })),
-            name: n.to_string(),
+            name: n.into(),
             parameterization: params,
             associated_type: p.clone(),
             value: ASN1Value::EnumeratedValue {
-                enumerated: p.as_str().into_owned(),
-                enumerable: e.to_string(),
+                enumerated: Cow::Owned(p.as_str().to_string()),
+                enumerable: Cow::Borrowed(e),
             },
             module_header: None,
         },
@@ -347,17 +347,17 @@ mod tests {
             .1,
             ToplevelValueDefinition {
                 comments: Cow::Borrowed("\n Alias of another enumeral"),
-                name: String::from("enumeral-alias"),
+                name: Cow::from("enumeral-alias"),
                 associated_type: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                     parent: None,
                     module: None,
-                    identifier: String::from("Test-Enum"),
+                    identifier: Cow::from("Test-Enum"),
                     constraints: vec![],
                 }),
                 parameterization: None,
                 value: ASN1Value::EnumeratedValue {
-                    enumerated: String::from("Test-Enum"),
-                    enumerable: String::from("enumeral")
+                    enumerated: Cow::from("Test-Enum"),
+                    enumerable: Cow::from("enumeral")
                 },
                 module_header: None
             }

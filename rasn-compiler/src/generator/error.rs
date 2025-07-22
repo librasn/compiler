@@ -80,7 +80,7 @@ impl<'a> Display for GeneratorError<'a> {
             Some(ToplevelDefinition::Value(v)) => &v.name,
             Some(ToplevelDefinition::Class(c)) => &c.name,
             Some(ToplevelDefinition::Object(o)) => &o.name,
-            Some(ToplevelDefinition::Macro(m)) => &m.name.to_string(),
+            Some(ToplevelDefinition::Macro(m)) => &m.name,
             None => "",
         };
         write!(
