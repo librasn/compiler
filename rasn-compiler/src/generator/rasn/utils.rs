@@ -132,7 +132,7 @@ impl Rasn {
         }
     }
 
-    pub(crate) fn format_comments(&self, comments: &str) -> Result<TokenStream, GeneratorError> {
+    pub(crate) fn format_comments<'a>(&self, comments: &str) -> Result<TokenStream, GeneratorError<'a>> {
         if comments.is_empty() {
             Ok(TokenStream::new())
         } else {
@@ -158,11 +158,11 @@ impl Rasn {
         }
     }
 
-    pub(crate) fn format_range_annotations(
+    pub(crate) fn format_range_annotations<'a>(
         &self,
         signed: bool,
         constraints: &[Constraint],
-    ) -> Result<TokenStream, GeneratorError> {
+    ) -> Result<TokenStream, GeneratorError<'a>> {
         if constraints.is_empty() {
             return Ok(TokenStream::new());
         }
@@ -223,11 +223,11 @@ impl Rasn {
         )
     }
 
-    pub(crate) fn format_alphabet_annotations(
+    pub(crate) fn format_alphabet_annotations<'a>(
         &self,
         string_type: CharacterStringType,
         constraints: &Vec<Constraint>,
-    ) -> Result<TokenStream, GeneratorError> {
+    ) -> Result<TokenStream, GeneratorError<'a>> {
         if constraints.is_empty() {
             return Ok(TokenStream::new());
         }
@@ -262,10 +262,10 @@ impl Rasn {
         })
     }
 
-    pub(crate) fn format_enum_members(
+    pub(crate) fn format_enum_members<'a>(
         &self,
         enumerated: &Enumerated,
-    ) -> Result<TokenStream, GeneratorError> {
+    ) -> Result<TokenStream, GeneratorError<'a>> {
         let first_extension_index = enumerated.extensible;
         let enumerals = enumerated
             .members
@@ -326,11 +326,11 @@ impl Rasn {
         }
     }
 
-    pub(crate) fn format_sequence_or_set_members(
+    pub(crate) fn format_sequence_or_set_members<'a>(
         &self,
         sequence_or_set: &SequenceOrSet,
         parent_name: &str,
-    ) -> Result<FormattedMembers, GeneratorError> {
+    ) -> Result<FormattedMembers, GeneratorError<'a>> {
         let first_extension_index = sequence_or_set.extensible;
 
         sequence_or_set.members.iter().enumerate().try_fold(
@@ -376,12 +376,12 @@ impl Rasn {
         )
     }
 
-    pub(crate) fn format_sequence_member(
+    pub(crate) fn format_sequence_member<'a>(
         &self,
         member: &SequenceOrSetMember,
         parent_name: &str,
         extension_annotation: TokenStream,
-    ) -> Result<(TokenStream, NameType), GeneratorError> {
+    ) -> Result<(TokenStream, NameType), GeneratorError<'a>> {
         let name = self.to_rust_snake_case(&member.name);
         let default_annotation = member
             .optionality
@@ -420,11 +420,11 @@ impl Rasn {
         ))
     }
 
-    pub(crate) fn format_choice_options(
+    pub(crate) fn format_choice_options<'a>(
         &self,
         choice: &Choice,
         parent_name: &str,
-    ) -> Result<FormattedOptions, GeneratorError> {
+    ) -> Result<FormattedOptions, GeneratorError<'a>> {
         let first_extension_index = choice.extensible;
         choice.options.iter().enumerate().try_fold(
             FormattedOptions::default(),
@@ -467,13 +467,13 @@ impl Rasn {
         )
     }
 
-    pub(crate) fn format_choice_option(
+    pub(crate) fn format_choice_option<'a>(
         &self,
         name: Ident,
         member: &ChoiceOption,
         parent_name: &str,
         extension_annotation: TokenStream,
-    ) -> Result<TokenStream, GeneratorError> {
+    ) -> Result<TokenStream, GeneratorError<'a>> {
         let FormattedMemberOrOption {
             formatted_type_name,
             annotations,
@@ -484,14 +484,14 @@ impl Rasn {
         })
     }
 
-    fn format_member_or_option<M: MemberOrOption>(
+    fn format_member_or_option<'a, M: MemberOrOption>(
         &self,
         member: &M,
         parent_name: &str,
         name: &Ident,
         extension_annotation: TokenStream,
         default_annotation: Option<TokenStream>,
-    ) -> Result<FormattedMemberOrOption, GeneratorError> {
+    ) -> Result<FormattedMemberOrOption, GeneratorError<'a>> {
         let (mut all_constraints, mut formatted_type_name) = self.constraints_and_type_name(
             member.ty(),
             member.name(),
@@ -546,13 +546,13 @@ impl Rasn {
         })
     }
 
-    pub(crate) fn constraints_and_type_name(
+    pub(crate) fn constraints_and_type_name<'a>(
         &self,
         ty: &ASN1Type,
         name: &str,
         parent_name: &str,
         is_recursive: bool,
-    ) -> Result<(Vec<Constraint>, TokenStream), GeneratorError> {
+    ) -> Result<(Vec<Constraint>, TokenStream), GeneratorError<'a>> {
         Ok(match ty {
             ASN1Type::Null => (vec![], quote!(())),
             ASN1Type::Boolean(b) => (b.constraints.clone(), quote!(bool)),
@@ -624,10 +624,10 @@ impl Rasn {
         })
     }
 
-    pub(crate) fn string_type(
+    pub(crate) fn string_type<'a>(
         &self,
         c_type: &CharacterStringType,
-    ) -> Result<TokenStream, GeneratorError> {
+    ) -> Result<TokenStream, GeneratorError<'a>> {
         match c_type {
             CharacterStringType::NumericString => Ok(quote!(NumericString)),
             CharacterStringType::VisibleString => Ok(quote!(VisibleString)),
@@ -651,12 +651,12 @@ impl Rasn {
         }
     }
 
-    pub(crate) fn join_annotations(
+    pub(crate) fn join_annotations<'a>(
         &self,
         elements: Vec<TokenStream>,
         needs_copy: bool,
         is_type_annotation: bool,
-    ) -> Result<TokenStream, GeneratorError> {
+    ) -> Result<TokenStream, GeneratorError<'a>> {
         let mut not_empty_exprs = elements.into_iter().filter(|ts| !ts.is_empty());
         let custom_and_required = self.required_annotations(needs_copy)?;
         let annotations = if let Some(mut annotations) = not_empty_exprs.next() {
@@ -683,11 +683,11 @@ impl Rasn {
         )
     }
 
-    pub(crate) fn format_default_methods(
+    pub(crate) fn format_default_methods<'a>(
         &self,
         members: &Vec<SequenceOrSetMember>,
         parent_name: &str,
-    ) -> Result<TokenStream, GeneratorError> {
+    ) -> Result<TokenStream, GeneratorError<'a>> {
         let mut output = TokenStream::new();
         for member in members {
             if let Some(value) = member.optionality.default() {
@@ -708,7 +708,7 @@ impl Rasn {
         Ok(output)
     }
 
-    pub(crate) fn type_to_tokens(&self, ty: &ASN1Type) -> Result<TokenStream, GeneratorError> {
+    pub(crate) fn type_to_tokens<'a>(&self, ty: &ASN1Type) -> Result<TokenStream, GeneratorError<'a>> {
         match ty {
             ASN1Type::Null => Ok(quote!(())),
             ASN1Type::Boolean(_) => Ok(quote!(bool)),
@@ -763,11 +763,11 @@ impl Rasn {
         }
     }
 
-    pub(crate) fn value_to_tokens(
+    pub(crate) fn value_to_tokens<'a>(
         &self,
         value: &ASN1Value,
         type_name: Option<&TokenStream>,
-    ) -> Result<TokenStream, GeneratorError> {
+    ) -> Result<TokenStream, GeneratorError<'a>> {
         match value {
             ASN1Value::All => Err(error!(
                 NotYetInplemented,
@@ -955,10 +955,10 @@ impl Rasn {
         }
     }
 
-    pub(crate) fn format_oid(
+    pub(crate) fn format_oid<'a>(
         &self,
         oid: &ObjectIdentifierValue,
-    ) -> Result<TokenStream, GeneratorError> {
+    ) -> Result<TokenStream, GeneratorError<'a>> {
         let arc_to_u32 = |id| {
             u32::try_from(id)
                 .map(|arc| arc.to_token_stream())
@@ -1067,11 +1067,11 @@ impl Rasn {
         }
     }
 
-    pub(crate) fn format_sequence_or_set_of_item_type(
+    pub(crate) fn format_sequence_or_set_of_item_type<'a>(
         &self,
         ty: &ASN1Type,
         first_item: Option<&ASN1Value>,
-    ) -> Result<TokenStream, GeneratorError> {
+    ) -> Result<TokenStream, GeneratorError<'a>> {
         if ty.is_builtin_type() {
             match ty {
                 ASN1Type::Null => Ok(quote!(())),
@@ -1114,11 +1114,11 @@ impl Rasn {
     }
 
     /// Resolves the custom syntax declared in an information object class' WITH SYNTAX clause
-    pub(crate) fn resolve_standard_syntax(
+    pub(crate) fn resolve_standard_syntax<'a>(
         &self,
         class: &ObjectClassDefn,
         application: &[InformationObjectField],
-    ) -> Result<(ASN1Value, Vec<(usize, ASN1Type)>), GeneratorError> {
+    ) -> Result<(ASN1Value, Vec<(usize, ASN1Type)>), GeneratorError<'a>> {
         let mut key = None;
         let mut field_index_map = Vec::<(usize, ASN1Type)>::new();
 
@@ -1304,10 +1304,10 @@ impl Rasn {
         }
     }
 
-    pub(super) fn format_name_and_common_annotations(
+    pub(super) fn format_name_and_common_annotations<'a>(
         &self,
         tld: &ToplevelTypeDefinition,
-    ) -> Result<(TokenStream, Vec<TokenStream>), GeneratorError> {
+    ) -> Result<(TokenStream, Vec<TokenStream>), GeneratorError<'a>> {
         let name = self.to_rust_title_case(&tld.name);
         let mut annotations = vec![quote!(delegate), self.format_tag(tld.tag.as_ref(), false)];
 
@@ -1318,7 +1318,7 @@ impl Rasn {
         Ok((name, annotations))
     }
 
-    fn required_annotations(&self, needs_copy: bool) -> Result<Vec<TokenStream>, GeneratorError> {
+    fn required_annotations<'a>(&self, needs_copy: bool) -> Result<Vec<TokenStream>, GeneratorError<'a>> {
         let mut required_derives = Vec::new();
         for derive in Self::REQUIRED_DERIVES {
             if !self.derive_is_present(derive)? {
@@ -1352,7 +1352,7 @@ impl Rasn {
         Ok(custom_annotations)
     }
 
-    fn derive_is_present(&self, annotation: &str) -> Result<bool, GeneratorError> {
+    fn derive_is_present<'a>(&self, annotation: &str) -> Result<bool, GeneratorError<'a>> {
         let regex = regex::Regex::from_str(&format!(
             r#"#\[derive\([0-z \t,]*{annotation}[0-z \t,]*\)\]"#
         ))
@@ -1367,11 +1367,11 @@ impl Rasn {
             .any(|s| regex.is_match(s)))
     }
 
-    pub(super) fn type_mismatch_error<T>(
+    pub(super) fn type_mismatch_error<'a, T>(
         &self,
-        tld: ToplevelTypeDefinition,
+        tld: ToplevelTypeDefinition<'a>,
         expected_type: &str,
-    ) -> Result<T, GeneratorError> {
+    ) -> Result<T, GeneratorError<'a>> {
         Err(GeneratorError::new(
             Some(ToplevelDefinition::Type(tld)),
             &format!("Expected {expected_type} top-level declaration"),

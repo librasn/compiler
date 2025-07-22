@@ -98,17 +98,17 @@ impl Backend for CustomBackend {
 
     const FILE_EXTENSION: &'static str = ".ext";
 
-    fn generate_module(
+    fn generate_module<'a>(
          &mut self,
-         top_level_declarations: Vec<ToplevelDefinition>,
-    ) -> Result<GeneratedModule, GeneratorError> {
+         top_level_declarations: Vec<ToplevelDefinition<'a>>,
+    ) -> Result<GeneratedModule, GeneratorError<'a>> {
         Ok(GeneratedModule::empty())
     }
 
-    fn generate(
+    fn generate<'a>(
         &self,
-        tld: ToplevelDefinition
-    ) -> Result<String, GeneratorError> {
+        tld: ToplevelDefinition<'a>
+    ) -> Result<String, GeneratorError<'a>> {
         Ok(String::new())
     }
 

@@ -32,12 +32,12 @@ use self::{
     information_object::{ASN1Information, InformationObjectClassField},
 };
 
-pub struct Validator {
-    tlds: BTreeMap<String, ToplevelDefinition>,
+pub struct Validator<'a> {
+    tlds: BTreeMap<String, ToplevelDefinition<'a>>,
 }
 
-impl Validator {
-    pub fn new(tlds: Vec<ToplevelDefinition>) -> Validator {
+impl<'a> Validator<'a> {
+    pub fn new(tlds: Vec<ToplevelDefinition<'a>>) -> Validator<'a> {
         Self {
             tlds: tlds
                 .into_iter()
@@ -368,7 +368,7 @@ impl Validator {
 
     pub fn validate(
         mut self,
-    ) -> Result<(Vec<ToplevelDefinition>, Vec<CompilerError>), CompilerError> {
+    ) -> Result<(Vec<ToplevelDefinition<'a>>, Vec<CompilerError>), CompilerError> {
         let warnings: Vec<CompilerError>;
         (self, warnings) = self.link()?;
         Ok(self.tlds.into_iter().fold(
@@ -388,7 +388,7 @@ pub trait Validate {
     fn validate(&self) -> Result<(), LinkerError>;
 }
 
-impl Validate for ToplevelDefinition {
+impl<'a> Validate for ToplevelDefinition<'a> {
     fn validate(&self) -> Result<(), LinkerError> {
         match self {
             ToplevelDefinition::Type(t) => {

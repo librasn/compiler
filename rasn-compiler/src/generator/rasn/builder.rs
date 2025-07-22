@@ -40,10 +40,10 @@ macro_rules! assignment {
 }
 
 impl Rasn {
-    pub(crate) fn generate_tld(
+    pub(crate) fn generate_tld<'a>(
         &self,
-        tld: ToplevelDefinition,
-    ) -> Result<TokenStream, GeneratorError> {
+        tld: ToplevelDefinition<'a>,
+    ) -> Result<TokenStream, GeneratorError<'a>> {
         match tld {
             ToplevelDefinition::Type(t) => {
                 if t.parameterization.is_some() {
@@ -97,10 +97,10 @@ impl Rasn {
         }
     }
 
-    pub(crate) fn generate_typealias(
+    pub(crate) fn generate_typealias<'a>(
         &self,
-        tld: ToplevelTypeDefinition,
-    ) -> Result<TokenStream, GeneratorError> {
+        tld: ToplevelTypeDefinition<'a>,
+    ) -> Result<TokenStream, GeneratorError<'a>> {
         if let ASN1Type::ElsewhereDeclaredType(dec) = &tld.ty {
             let (name, mut annotations) = self.format_name_and_common_annotations(&tld)?;
             annotations.push(self.format_range_annotations(true, &dec.constraints)?);
@@ -116,10 +116,10 @@ impl Rasn {
         }
     }
 
-    pub(crate) fn generate_integer_value(
+    pub(crate) fn generate_integer_value<'a>(
         &self,
         tld: ToplevelValueDefinition,
-    ) -> Result<TokenStream, GeneratorError> {
+    ) -> Result<TokenStream, GeneratorError<'a>> {
         if let ASN1Value::LinkedIntValue { integer_type, .. } = tld.value {
             let formatted_value = self.value_to_tokens(&tld.value, None)?;
             let (ty, val) = if tld.associated_type.is_builtin_type() {
@@ -152,10 +152,10 @@ impl Rasn {
         }
     }
 
-    pub(crate) fn generate_integer(
+    pub(crate) fn generate_integer<'a>(
         &self,
-        tld: ToplevelTypeDefinition,
-    ) -> Result<TokenStream, GeneratorError> {
+        tld: ToplevelTypeDefinition<'a>,
+    ) -> Result<TokenStream, GeneratorError<'a>> {
         if let ASN1Type::Integer(ref int) = tld.ty {
             let (name, mut annotations) = self.format_name_and_common_annotations(&tld)?;
             annotations.push(self.format_range_annotations(true, &int.constraints)?);
@@ -170,10 +170,10 @@ impl Rasn {
         }
     }
 
-    pub(crate) fn generate_bit_string(
+    pub(crate) fn generate_bit_string<'a>(
         &self,
-        tld: ToplevelTypeDefinition,
-    ) -> Result<TokenStream, GeneratorError> {
+        tld: ToplevelTypeDefinition<'a>,
+    ) -> Result<TokenStream, GeneratorError<'a>> {
         if let ASN1Type::BitString(ref bitstr) = tld.ty {
             let (name, mut annotations) = self.format_name_and_common_annotations(&tld)?;
             if bitstr.fixed_size().is_none() {
@@ -198,10 +198,10 @@ impl Rasn {
         }
     }
 
-    pub(crate) fn generate_octet_string(
+    pub(crate) fn generate_octet_string<'a>(
         &self,
-        tld: ToplevelTypeDefinition,
-    ) -> Result<TokenStream, GeneratorError> {
+        tld: ToplevelTypeDefinition<'a>,
+    ) -> Result<TokenStream, GeneratorError<'a>> {
         if let ASN1Type::OctetString(ref oct_str) = tld.ty {
             let (name, mut annotations) = self.format_name_and_common_annotations(&tld)?;
             if oct_str.fixed_size().is_none() {
@@ -226,10 +226,10 @@ impl Rasn {
         }
     }
 
-    pub(crate) fn generate_character_string(
+    pub(crate) fn generate_character_string<'a>(
         &self,
-        tld: ToplevelTypeDefinition,
-    ) -> Result<TokenStream, GeneratorError> {
+        tld: ToplevelTypeDefinition<'a>,
+    ) -> Result<TokenStream, GeneratorError<'a>> {
         if let ASN1Type::CharacterString(ref char_str) = tld.ty {
             let (name, mut annotations) = self.format_name_and_common_annotations(&tld)?;
             annotations.extend([
@@ -247,10 +247,10 @@ impl Rasn {
         }
     }
 
-    pub(crate) fn generate_boolean(
+    pub(crate) fn generate_boolean<'a>(
         &self,
-        tld: ToplevelTypeDefinition,
-    ) -> Result<TokenStream, GeneratorError> {
+        tld: ToplevelTypeDefinition<'a>,
+    ) -> Result<TokenStream, GeneratorError<'a>> {
         // TODO: process boolean constraints
         let (name, annotations) = self.format_name_and_common_annotations(&tld)?;
         if let ASN1Type::Boolean(_) = tld.ty {
@@ -264,10 +264,10 @@ impl Rasn {
         }
     }
 
-    pub(crate) fn generate_value(
+    pub(crate) fn generate_value<'a>(
         &self,
         tld: ToplevelValueDefinition,
-    ) -> Result<TokenStream, GeneratorError> {
+    ) -> Result<TokenStream, GeneratorError<'a>> {
         let ty = &tld.associated_type;
         match &tld.value {
             ASN1Value::Null if ty.is_builtin_type() => {
@@ -485,10 +485,10 @@ impl Rasn {
         }
     }
 
-    pub(crate) fn generate_any(
+    pub(crate) fn generate_any<'a>(
         &self,
-        tld: ToplevelTypeDefinition,
-    ) -> Result<TokenStream, GeneratorError> {
+        tld: ToplevelTypeDefinition<'a>,
+    ) -> Result<TokenStream, GeneratorError<'a>> {
         let name = self.to_rust_title_case(&tld.name);
         let mut annotations = vec![quote!(delegate), self.format_tag(tld.tag.as_ref(), false)];
         if name.to_string() != tld.name {
@@ -501,10 +501,10 @@ impl Rasn {
         ))
     }
 
-    pub(crate) fn generate_generalized_time(
+    pub(crate) fn generate_generalized_time<'a>(
         &self,
-        tld: ToplevelTypeDefinition,
-    ) -> Result<TokenStream, GeneratorError> {
+        tld: ToplevelTypeDefinition<'a>,
+    ) -> Result<TokenStream, GeneratorError<'a>> {
         if let ASN1Type::GeneralizedTime(_) = &tld.ty {
             let (name, annotations) = self.format_name_and_common_annotations(&tld)?;
             Ok(generalized_time_template(
@@ -517,10 +517,10 @@ impl Rasn {
         }
     }
 
-    pub(crate) fn generate_utc_time(
+    pub(crate) fn generate_utc_time<'a>(
         &self,
-        tld: ToplevelTypeDefinition,
-    ) -> Result<TokenStream, GeneratorError> {
+        tld: ToplevelTypeDefinition<'a>,
+    ) -> Result<TokenStream, GeneratorError<'a>> {
         if let ASN1Type::UTCTime(_) = &tld.ty {
             let (name, annotations) = self.format_name_and_common_annotations(&tld)?;
             Ok(utc_time_template(
@@ -533,10 +533,10 @@ impl Rasn {
         }
     }
 
-    pub(crate) fn generate_oid(
+    pub(crate) fn generate_oid<'a>(
         &self,
-        tld: ToplevelTypeDefinition,
-    ) -> Result<TokenStream, GeneratorError> {
+        tld: ToplevelTypeDefinition<'a>,
+    ) -> Result<TokenStream, GeneratorError<'a>> {
         if let ASN1Type::ObjectIdentifier(oid) = &tld.ty {
             let (name, mut annotations) = self.format_name_and_common_annotations(&tld)?;
             annotations.push(self.format_range_annotations(false, &oid.constraints)?);
@@ -550,10 +550,10 @@ impl Rasn {
         }
     }
 
-    pub(crate) fn generate_null(
+    pub(crate) fn generate_null<'a>(
         &self,
-        tld: ToplevelTypeDefinition,
-    ) -> Result<TokenStream, GeneratorError> {
+        tld: ToplevelTypeDefinition<'a>,
+    ) -> Result<TokenStream, GeneratorError<'a>> {
         if let ASN1Type::Null = tld.ty {
             let (name, annotations) = self.format_name_and_common_annotations(&tld)?;
             Ok(null_template(
@@ -566,10 +566,10 @@ impl Rasn {
         }
     }
 
-    pub(crate) fn generate_enumerated(
+    pub(crate) fn generate_enumerated<'a>(
         &self,
-        tld: ToplevelTypeDefinition,
-    ) -> Result<TokenStream, GeneratorError> {
+        tld: ToplevelTypeDefinition<'a>,
+    ) -> Result<TokenStream, GeneratorError<'a>> {
         if let ASN1Type::Enumerated(ref enumerated) = tld.ty {
             let extensible = enumerated
                 .extensible
@@ -604,10 +604,10 @@ impl Rasn {
         }
     }
 
-    pub(crate) fn generate_choice(
+    pub(crate) fn generate_choice<'a>(
         &self,
-        tld: ToplevelTypeDefinition,
-    ) -> Result<TokenStream, GeneratorError> {
+        tld: ToplevelTypeDefinition<'a>,
+    ) -> Result<TokenStream, GeneratorError<'a>> {
         if let ASN1Type::Choice(ref choice) = tld.ty {
             let name = self.to_rust_title_case(&tld.name);
             let extensible = choice
@@ -682,10 +682,10 @@ impl Rasn {
         }
     }
 
-    pub(crate) fn generate_sequence_or_set(
+    pub(crate) fn generate_sequence_or_set<'a>(
         &self,
-        tld: ToplevelTypeDefinition,
-    ) -> Result<TokenStream, GeneratorError> {
+        tld: ToplevelTypeDefinition<'a>,
+    ) -> Result<TokenStream, GeneratorError<'a>> {
         match tld.ty {
             ASN1Type::Sequence(ref seq) | ASN1Type::Set(ref seq) => {
                 let name = self.to_rust_title_case(&tld.name);
@@ -786,10 +786,10 @@ impl Rasn {
         }
     }
 
-    pub(crate) fn generate_sequence_or_set_of(
+    pub(crate) fn generate_sequence_or_set_of<'a>(
         &self,
-        tld: ToplevelTypeDefinition,
-    ) -> Result<TokenStream, GeneratorError> {
+        tld: ToplevelTypeDefinition<'a>,
+    ) -> Result<TokenStream, GeneratorError<'a>> {
         let (is_set_of, seq_or_set_of) = match &tld.ty {
             ASN1Type::SetOf(se_of) => (true, se_of),
             ASN1Type::SequenceOf(se_of) => (false, se_of),
@@ -807,10 +807,10 @@ impl Rasn {
             n => Some(
                 self.generate_tld(ToplevelDefinition::Type(ToplevelTypeDefinition {
                     parameterization: None,
-                    comments: format!(
+                    comments: std::borrow::Cow::Owned(format!(
                         " Anonymous {} OF member ",
                         if is_set_of { "SET" } else { "SEQUENCE" }
-                    ),
+                    )),
                     name: String::from(INNER_ARRAY_LIKE_PREFIX) + &name.to_string(),
                     ty: n.clone(),
                     tag: None,
@@ -843,10 +843,10 @@ impl Rasn {
         ))
     }
 
-    pub(crate) fn generate_information_object_set(
+    pub(crate) fn generate_information_object_set<'a>(
         &self,
         tld: ToplevelInformationDefinition,
-    ) -> Result<TokenStream, GeneratorError> {
+    ) -> Result<TokenStream, GeneratorError<'a>> {
         if self.config.opaque_open_types {
             return Ok(TokenStream::new());
         }

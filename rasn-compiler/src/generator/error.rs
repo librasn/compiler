@@ -6,14 +6,14 @@ use proc_macro2::LexError;
 use crate::intermediate::{error::GrammarError, ToplevelDefinition};
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct GeneratorError {
-    pub top_level_declaration: Option<Box<ToplevelDefinition>>,
+pub struct GeneratorError<'a> {
+    pub top_level_declaration: Option<Box<ToplevelDefinition<'a>>>,
     pub details: String,
     pub kind: GeneratorErrorType,
 }
 
-impl GeneratorError {
-    pub fn new(tld: Option<ToplevelDefinition>, details: &str, kind: GeneratorErrorType) -> Self {
+impl<'a> GeneratorError<'a> {
+    pub fn new(tld: Option<ToplevelDefinition<'a>>, details: &str, kind: GeneratorErrorType) -> Self {
         GeneratorError {
             top_level_declaration: tld.map(Box::new),
             details: details.into(),
@@ -37,9 +37,9 @@ pub enum GeneratorErrorType {
     Unsupported,
 }
 
-impl Error for GeneratorError {}
+impl<'a> Error for GeneratorError<'a> {}
 
-impl Default for GeneratorError {
+impl<'a> Default for GeneratorError<'a> {
     fn default() -> Self {
         Self {
             top_level_declaration: Default::default(),
@@ -49,7 +49,7 @@ impl Default for GeneratorError {
     }
 }
 
-impl From<GrammarError> for GeneratorError {
+impl<'a> From<GrammarError> for GeneratorError<'a> {
     fn from(value: GrammarError) -> Self {
         Self {
             details: value.details,
@@ -59,7 +59,7 @@ impl From<GrammarError> for GeneratorError {
     }
 }
 
-impl From<LexError> for GeneratorError {
+impl<'a> From<LexError> for GeneratorError<'a> {
     fn from(value: LexError) -> Self {
         Self {
             details: value.to_string(),
@@ -69,7 +69,7 @@ impl From<LexError> for GeneratorError {
     }
 }
 
-impl Display for GeneratorError {
+impl<'a> Display for GeneratorError<'a> {
     fn fmt(&self, f: &mut Formatter) -> Result {
         let name = match self.top_level_declaration.as_deref() {
             Some(ToplevelDefinition::Type(t)) => &t.name,

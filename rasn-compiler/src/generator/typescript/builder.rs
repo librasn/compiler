@@ -6,10 +6,10 @@ use super::{template::*, utils::*, Typescript};
 use crate::generator::error::{GeneratorError, GeneratorErrorType};
 
 impl Typescript {
-    pub(crate) fn generate_typealias(
+    pub(crate) fn generate_typealias<'a>(
         &self,
-        tld: ToplevelTypeDefinition,
-    ) -> Result<String, GeneratorError> {
+        tld: ToplevelTypeDefinition<'a>,
+    ) -> Result<String, GeneratorError<'a>> {
         if let ASN1Type::ElsewhereDeclaredType(dec) = &tld.ty {
             Ok(typealias_template(
                 &format_comments(&tld.comments),
@@ -25,10 +25,10 @@ impl Typescript {
         }
     }
 
-    pub(crate) fn generate_number_like(
+    pub(crate) fn generate_number_like<'a>(
         &self,
-        tld: ToplevelTypeDefinition,
-    ) -> Result<String, GeneratorError> {
+        tld: ToplevelTypeDefinition<'a>,
+    ) -> Result<String, GeneratorError<'a>> {
         if let ASN1Type::Integer(_) = tld.ty {
             Ok(number_like_template(
                 &format_comments(&tld.comments),
@@ -43,10 +43,10 @@ impl Typescript {
         }
     }
 
-    pub(crate) fn generate_bit_string(
+    pub(crate) fn generate_bit_string<'a>(
         &self,
-        tld: ToplevelTypeDefinition,
-    ) -> Result<String, GeneratorError> {
+        tld: ToplevelTypeDefinition<'a>,
+    ) -> Result<String, GeneratorError<'a>> {
         if let ASN1Type::BitString(ref bit_str) = tld.ty {
             Ok(bit_string_template(
                 &format_comments(&tld.comments),
@@ -66,10 +66,10 @@ impl Typescript {
         }
     }
 
-    pub(crate) fn generate_octet_string(
+    pub(crate) fn generate_octet_string<'a>(
         &self,
-        tld: ToplevelTypeDefinition,
-    ) -> Result<String, GeneratorError> {
+        tld: ToplevelTypeDefinition<'a>,
+    ) -> Result<String, GeneratorError<'a>> {
         if let ASN1Type::OctetString(_) = tld.ty {
             Ok(octet_string_template(
                 &format_comments(&tld.comments),
@@ -84,10 +84,10 @@ impl Typescript {
         }
     }
 
-    pub(crate) fn generate_boolean(
+    pub(crate) fn generate_boolean<'a>(
         &self,
-        tld: ToplevelTypeDefinition,
-    ) -> Result<String, GeneratorError> {
+        tld: ToplevelTypeDefinition<'a>,
+    ) -> Result<String, GeneratorError<'a>> {
         if let ASN1Type::Boolean(_) = tld.ty {
             Ok(boolean_template(
                 &format_comments(&tld.comments),
@@ -102,43 +102,43 @@ impl Typescript {
         }
     }
 
-    pub(crate) fn generate_value(
+    pub(crate) fn generate_value<'a>(
         &self,
         tld: ToplevelValueDefinition,
-    ) -> Result<String, GeneratorError> {
+    ) -> String {//Result<String, GeneratorError<'a>> {
         value_to_tokens(&tld.value).map(|v| {
             value_template(
                 &format_comments(&tld.comments),
                 &to_jer_identifier(&tld.name),
                 &v,
             )
-        })
+        }).unwrap()// TODO: Do not unwrap
     }
 
-    pub(crate) fn generate_any(
+    pub(crate) fn generate_any<'a>(
         &self,
-        tld: ToplevelTypeDefinition,
-    ) -> Result<String, GeneratorError> {
+        tld: ToplevelTypeDefinition<'a>,
+    ) -> Result<String, GeneratorError<'a>> {
         Ok(any_template(
             &format_comments(&tld.comments),
             &to_jer_identifier(&tld.name),
         ))
     }
 
-    pub(crate) fn generate_string_like(
+    pub(crate) fn generate_string_like<'a>(
         &self,
-        tld: ToplevelTypeDefinition,
-    ) -> Result<String, GeneratorError> {
+        tld: ToplevelTypeDefinition<'a>,
+    ) -> Result<String, GeneratorError<'a>> {
         Ok(string_like_template(
             &format_comments(&tld.comments),
             &to_jer_identifier(&tld.name),
         ))
     }
 
-    pub(crate) fn generate_null(
+    pub(crate) fn generate_null<'a>(
         &self,
-        tld: ToplevelTypeDefinition,
-    ) -> Result<String, GeneratorError> {
+        tld: ToplevelTypeDefinition<'a>,
+    ) -> Result<String, GeneratorError<'a>> {
         if let ASN1Type::Null = tld.ty {
             Ok(null_template(
                 &format_comments(&tld.comments),
@@ -153,10 +153,10 @@ impl Typescript {
         }
     }
 
-    pub(crate) fn generate_enumerated(
+    pub(crate) fn generate_enumerated<'a>(
         &self,
-        tld: ToplevelTypeDefinition,
-    ) -> Result<String, GeneratorError> {
+        tld: ToplevelTypeDefinition<'a>,
+    ) -> Result<String, GeneratorError<'a>> {
         if let ASN1Type::Enumerated(enumerated) = tld.ty {
             Ok(enumerated_template(
                 &format_comments(&tld.comments),
@@ -185,10 +185,10 @@ impl Typescript {
         }
     }
 
-    pub(crate) fn generate_choice(
+    pub(crate) fn generate_choice<'a>(
         &self,
-        tld: ToplevelTypeDefinition,
-    ) -> Result<String, GeneratorError> {
+        tld: ToplevelTypeDefinition<'a>,
+    ) -> Result<String, GeneratorError<'a>> {
         if let ASN1Type::Choice(choice) = tld.ty {
             Ok(choice_template(
                 &format_comments(&tld.comments),
@@ -204,10 +204,10 @@ impl Typescript {
         }
     }
 
-    pub(crate) fn generate_sequence_or_set(
+    pub(crate) fn generate_sequence_or_set<'a>(
         &self,
-        tld: ToplevelTypeDefinition,
-    ) -> Result<String, GeneratorError> {
+        tld: ToplevelTypeDefinition<'a>,
+    ) -> Result<String, GeneratorError<'a>> {
         match tld.ty {
             ASN1Type::Sequence(ref seq) | ASN1Type::Set(ref seq) => Ok(sequence_or_set_template(
                 &format_comments(&tld.comments),
@@ -222,10 +222,10 @@ impl Typescript {
         }
     }
 
-    pub(crate) fn generate_sequence_or_set_of(
+    pub(crate) fn generate_sequence_or_set_of<'a>(
         &self,
-        tld: ToplevelTypeDefinition,
-    ) -> Result<String, GeneratorError> {
+        tld: ToplevelTypeDefinition<'a>,
+    ) -> Result<String, GeneratorError<'a>> {
         match tld.ty {
             ASN1Type::SetOf(se_of) | ASN1Type::SequenceOf(se_of) => {
                 Ok(sequence_or_set_of_template(

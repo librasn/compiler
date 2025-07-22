@@ -395,13 +395,13 @@ impl<B: Backend> Compiler<B, CompilerSourcesSet> {
         let mut generated_modules = vec![];
         let mut warnings = Vec::<CompilerError>::new();
         let mut modules: Vec<ToplevelDefinition> = vec![];
-        for src in &self.state.sources {
-            let stringified_src = match src {
-                AsnSource::Path(p) => read_to_string(p).map_err(LexerError::from)?,
-                AsnSource::Literal(l) => l.clone(),
-            };
+        let sources = std::mem::take(&mut self.state.sources).into_iter().map(|src| match src {
+                AsnSource::Path(p) => read_to_string(p).map_err(LexerError::from),
+                AsnSource::Literal(l) => Ok(l),
+            }).collect::<Result<Vec<_>, _>>()?;
+        for src in &sources {
             modules.append(
-                &mut asn_spec(&stringified_src)?
+                &mut asn_spec(&src)?
                     .into_iter()
                     .flat_map(|(header, tlds)| {
                         let header_ref = Rc::new(RefCell::new(header));

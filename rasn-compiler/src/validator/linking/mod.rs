@@ -33,7 +33,7 @@ macro_rules! grammar_error {
     };
 }
 
-impl ToplevelDefinition {
+impl<'a> ToplevelDefinition<'a> {
     pub(crate) fn is_parameterized(&self) -> bool {
         match self {
             ToplevelDefinition::Class(class) => class.is_parameterized(),
@@ -1601,7 +1601,7 @@ mod tests {
     macro_rules! tld {
         ($name:literal, $ty:expr) => {
             ToplevelTypeDefinition {
-                comments: String::new(),
+                comments: std::borrow::Cow::Borrowed(""),
                 tag: None,
                 module_header: None,
                 name: $name.into(),

@@ -133,10 +133,10 @@ impl Backend for Rasn {
         &self.config
     }
 
-    fn generate_module(
+    fn generate_module<'a>(
         &mut self,
-        tlds: Vec<ToplevelDefinition>,
-    ) -> Result<GeneratedModule, GeneratorError> {
+        tlds: Vec<ToplevelDefinition<'a>>,
+    ) -> Result<GeneratedModule, GeneratorError<'a>> {
         if let Some(module_ref) = tlds.first().and_then(|tld| tld.get_module_header()) {
             let module = module_ref.borrow();
             self.tagging_environment = module.tagging_environment;
@@ -222,7 +222,7 @@ impl Backend for Rasn {
         })
     }
 
-    fn generate(&self, tld: ToplevelDefinition) -> Result<String, GeneratorError> {
+    fn generate<'a>(&self, tld: ToplevelDefinition<'a>) -> Result<String, GeneratorError<'a>> {
         self.generate_tld(tld).map(|ts| ts.to_string())
     }
 }

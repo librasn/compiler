@@ -558,9 +558,9 @@ impl From<(&str, u128)> for ObjectIdentifierArc {
 #[cfg_attr(test, derive(EnumDebug))]
 #[cfg_attr(not(test), derive(Debug))]
 #[derive(Clone, PartialEq)]
-pub enum ToplevelDefinition {
+pub enum ToplevelDefinition<'a> {
     /// Definition for a custom type based on ASN.1's built-in type.
-    Type(ToplevelTypeDefinition),
+    Type(ToplevelTypeDefinition<'a>),
     /// Definition for a value using custom or built-in type.
     Value(ToplevelValueDefinition),
     /// Definition for a object class as introduced in ITU-T X.681 9.
@@ -571,7 +571,7 @@ pub enum ToplevelDefinition {
     Macro(ToplevelMacroDefinition),
 }
 
-impl ToplevelDefinition {
+impl<'a> ToplevelDefinition<'a> {
     pub(crate) fn has_enum_value(&self, type_name: Option<&String>, identifier: &String) -> bool {
         if let ToplevelDefinition::Type(ToplevelTypeDefinition {
             name,
@@ -732,8 +732,8 @@ impl
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct ToplevelTypeDefinition {
-    pub comments: String,
+pub struct ToplevelTypeDefinition<'a> {
+    pub comments: Cow<'a, str>,
     pub tag: Option<AsnTag>,
     pub name: String,
     pub ty: ASN1Type,
@@ -741,16 +741,16 @@ pub struct ToplevelTypeDefinition {
     pub module_header: Option<Rc<RefCell<ModuleHeader>>>,
 }
 
-impl ToplevelTypeDefinition {
+impl<'a> ToplevelTypeDefinition<'a> {
     pub fn pdu(&self) -> &ASN1Type {
         &self.ty
     }
 }
 
-impl From<(&str, ASN1Type)> for ToplevelTypeDefinition {
+impl<'a> From<(&str, ASN1Type)> for ToplevelTypeDefinition<'a> {
     fn from(value: (&str, ASN1Type)) -> Self {
         Self {
-            comments: String::new(),
+            comments: Cow::Borrowed(""),
             tag: None,
             name: value.0.to_owned(),
             ty: value.1,
@@ -760,13 +760,13 @@ impl From<(&str, ASN1Type)> for ToplevelTypeDefinition {
     }
 }
 
-impl
+impl<'a>
     From<(
         Vec<&str>,
         &str,
         Option<Parameterization>,
         (Option<AsnTag>, ASN1Type),
-    )> for ToplevelTypeDefinition
+    )> for ToplevelTypeDefinition<'a>
 {
     fn from(
         value: (
@@ -777,7 +777,7 @@ impl
         ),
     ) -> Self {
         Self {
-            comments: value.0.join("\n"),
+            comments: Cow::Owned(value.0.join("\n")),
             name: value.1.into(),
             parameterization: value.2,
             ty: value.3 .1,

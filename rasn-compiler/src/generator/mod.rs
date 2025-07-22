@@ -28,15 +28,15 @@ pub trait Backend: Default {
     /// generates bindings for an ASN.1 module
     /// ### Params
     /// - `top_level_declarations` vector of [ToplevelDefinition]s that are defined in the ASN.1 module
-    fn generate_module(
+    fn generate_module<'a>(
         &mut self,
-        top_level_declarations: Vec<ToplevelDefinition>,
-    ) -> Result<GeneratedModule, GeneratorError>;
+        top_level_declarations: Vec<ToplevelDefinition<'a>>,
+    ) -> Result<GeneratedModule, GeneratorError<'a>>;
 
     /// generates bindings for a single ASN.1 item
     /// ### Params
     /// - `tld` [ToplevelDefinition] for which the bindings should be generated
-    fn generate(&self, tld: ToplevelDefinition) -> Result<String, GeneratorError>;
+    fn generate<'a>(&self, tld: ToplevelDefinition<'a>) -> Result<String, GeneratorError<'a>>;
 
     /// Formats the bindings using the language- or framework-specific linters.
     /// For example, the Rust backend uses rustfmt for formatting bindings.

@@ -1,8 +1,8 @@
 extern crate quote;
 extern crate syn;
 
-use quote::{format_ident, quote};
-use syn::{Data, DataEnum, DeriveInput, Fields, FieldsNamed, FieldsUnnamed};
+use quote::{format_ident, quote, ToTokens};
+use syn::{Data, DataEnum, DeriveInput, Fields, FieldsNamed, FieldsUnnamed, GenericParam};
 
 /// Extension of the standard `Debug` derive macro.
 /// Prefixes the variant identifier with the enum identifier separated by `::`.
@@ -12,6 +12,7 @@ pub fn enum_debug_derive(input: proc_macro::TokenStream) -> proc_macro::TokenStr
     if let DeriveInput {
         ident,
         data: Data::Enum(DataEnum { variants, .. }),
+        generics,
         ..
     } = syn::parse_macro_input!(input as syn::DeriveInput)
     {
@@ -27,7 +28,7 @@ pub fn enum_debug_derive(input: proc_macro::TokenStream) -> proc_macro::TokenStr
                         quote!(.field(&#field_name))
                     });
                     quote! {
-                        #ident::#variant_name(#(#field_names),*) =>
+                        Self::#variant_name(#(#field_names),*) =>
                             f.debug_tuple(#variant_literal)#(#field_debugs)*.finish()
                     }
                 }
@@ -39,7 +40,7 @@ pub fn enum_debug_derive(input: proc_macro::TokenStream) -> proc_macro::TokenStr
                         quote!(.field(#field_literal, &#field_name))
                     });
                     quote! {
-                        #ident::#variant_name { #(#field_names),* } =>
+                        Self::#variant_name { #(#field_names),* } =>
                             f.debug_struct(#variant_literal)#(#field_debugs)*.finish()
                     }
                 }
@@ -47,7 +48,7 @@ pub fn enum_debug_derive(input: proc_macro::TokenStream) -> proc_macro::TokenStr
         });
         let ident_literal = format!("{ident}::");
         quote! {
-            impl std::fmt::Debug for #ident {
+            impl #generics std::fmt::Debug for #ident #generics {
                 fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
                     f.write_str(#ident_literal)?;
                     match self {

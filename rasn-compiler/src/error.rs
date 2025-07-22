@@ -12,14 +12,15 @@ pub enum CompilerError {
     Lexer(LexerError),
     Grammar(GrammarError),
     Linker(LinkerError),
-    Generator(GeneratorError),
+    Generator(String),
 }
 
 impl CompilerError {
     pub fn contextualize(&self, input: &str) -> String {
         match self {
             CompilerError::Lexer(lexer_error) => lexer_error.contextualize(input),
-            e => format!("{e}"),
+            CompilerError::Generator(e) => e.clone(),
+            e => e.to_string(),
         }
     }
 }
@@ -49,9 +50,9 @@ impl From<LinkerError> for CompilerError {
     }
 }
 
-impl From<GeneratorError> for CompilerError {
+impl From<GeneratorError<'_>> for CompilerError {
     fn from(value: GeneratorError) -> Self {
-        Self::Generator(value)
+        Self::Generator(value.to_string())
     }
 }
 
