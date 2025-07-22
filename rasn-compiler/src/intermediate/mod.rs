@@ -304,15 +304,15 @@ pub struct ExternalValueReference {
 /// Represents a global module reference as specified in
 /// Rec. ITU-T X.680 (02/2021)
 #[derive(Debug, Clone, PartialEq)]
-pub struct GlobalModuleReference {
-    pub module_reference: String,
+pub struct GlobalModuleReference<'a> {
+    pub module_reference: Cow<'a, str>,
     pub assigned_identifier: AssignedIdentifier,
 }
 
-impl From<(&str, AssignedIdentifier)> for GlobalModuleReference {
-    fn from(value: (&str, AssignedIdentifier)) -> Self {
+impl<'a> From<(&'a str, AssignedIdentifier)> for GlobalModuleReference<'a> {
+    fn from(value: (&'a str, AssignedIdentifier)) -> Self {
         Self {
-            module_reference: value.0.to_owned(),
+            module_reference: Cow::Borrowed(value.0),
             assigned_identifier: value.1,
         }
     }
@@ -337,16 +337,16 @@ pub enum AssignedIdentifier {
 /// Represents a module import as specified in
 /// Rec. ITU-T X.680 (02/2021) § 13.16
 #[derive(Debug, Clone, PartialEq)]
-pub struct Import {
-    pub types: Vec<String>,
-    pub global_module_reference: GlobalModuleReference,
+pub struct Import<'a> {
+    pub types: Vec<Cow<'a, str>>,
+    pub global_module_reference: GlobalModuleReference<'a>,
     pub with: Option<With>,
 }
 
-impl From<(Vec<&str>, (GlobalModuleReference, Option<&str>))> for Import {
-    fn from(value: (Vec<&str>, (GlobalModuleReference, Option<&str>))) -> Self {
+impl<'a> From<(Vec<&'a str>, (GlobalModuleReference<'a>, Option<&str>))> for Import<'a> {
+    fn from(value: (Vec<&'a str>, (GlobalModuleReference<'a>, Option<&str>))) -> Self {
         Self {
-            types: value.0.into_iter().map(String::from).collect(),
+            types: value.0.into_iter().map(Cow::Borrowed).collect(),
             global_module_reference: value.1 .0,
             with: value.1 .1.map(|with| {
                 if with == WITH_SUCCESSORS {
@@ -404,28 +404,29 @@ impl From<(ObjectIdentifierValue, Option<&str>)> for DefinitiveIdentifier {
 /// Represents a module header as specified in
 /// Rec. ITU-T X.680 (02/2021) § 13
 #[derive(Debug, Clone, PartialEq)]
-pub struct ModuleHeader {
-    pub name: String,
+pub struct ModuleHeader<'a> {
+    pub name: Cow<'a, str>,
     pub module_identifier: Option<DefinitiveIdentifier>,
     pub encoding_reference_default: Option<EncodingReferenceDefault>,
     pub tagging_environment: TaggingEnvironment,
     pub extensibility_environment: ExtensibilityEnvironment,
-    pub imports: Vec<Import>,
+    pub imports: Vec<Import<'a>>,
     pub exports: Option<Exports>,
 }
 
-impl ModuleHeader {
+impl<'a> ModuleHeader<'a> {
     /// Returns an import that matches a given identifier, if present.
-    pub fn find_import(&self, identifier: &str) -> Option<&String> {
+    pub fn find_import(&self, identifier: &str) -> Option<Cow<'a, str>> {
         self.imports
             .iter()
             .find_map(|i| i.types.iter().find(|id| *id == identifier))
+            .cloned()
     }
 }
 
-impl
+impl<'a>
     From<(
-        &str,
+        &'a str,
         Option<DefinitiveIdentifier>,
         Option<(
             Option<EncodingReferenceDefault>,
@@ -433,12 +434,12 @@ impl
             ExtensibilityEnvironment,
         )>,
         Option<Exports>,
-        Option<Vec<Import>>,
-    )> for ModuleHeader
+        Option<Vec<Import<'a>>>,
+    )> for ModuleHeader<'a>
 {
     fn from(
         value: (
-            &str,
+            &'a str,
             Option<DefinitiveIdentifier>,
             Option<(
                 Option<EncodingReferenceDefault>,
@@ -446,7 +447,7 @@ impl
                 ExtensibilityEnvironment,
             )>,
             Option<Exports>,
-            Option<Vec<Import>>,
+            Option<Vec<Import<'a>>>,
         ),
     ) -> Self {
         let (encoding_reference_default, tagging_environment, extensibility_environment) =
@@ -456,7 +457,7 @@ impl
                 ExtensibilityEnvironment::Explicit,
             ));
         Self {
-            name: value.0.into(),
+            name: Cow::Borrowed(value.0),
             module_identifier: value.1,
             encoding_reference_default,
             tagging_environment,
@@ -588,7 +589,7 @@ impl<'a> ToplevelDefinition<'a> {
         }
     }
 
-    pub(crate) fn set_module_header(&mut self, module_header: Rc<RefCell<ModuleHeader>>) {
+    pub(crate) fn set_module_header(&mut self, module_header: Rc<RefCell<ModuleHeader<'a>>>) {
         match self {
             ToplevelDefinition::Type(ref mut t) => {
                 t.module_header = Some(module_header);
@@ -608,7 +609,7 @@ impl<'a> ToplevelDefinition<'a> {
         }
     }
 
-    pub(crate) fn get_module_header(&self) -> Option<Rc<RefCell<ModuleHeader>>> {
+    pub(crate) fn get_module_header(&self) -> Option<Rc<RefCell<ModuleHeader<'a>>>> {
         match self {
             ToplevelDefinition::Type(ref t) => t.module_header.as_ref().cloned(),
             ToplevelDefinition::Value(ref v) => v.module_header.as_ref().cloned(),
@@ -687,7 +688,7 @@ pub struct ToplevelValueDefinition<'a> {
     pub associated_type: ASN1Type,
     pub parameterization: Option<Parameterization>,
     pub value: ASN1Value,
-    pub module_header: Option<Rc<RefCell<ModuleHeader>>>,
+    pub module_header: Option<Rc<RefCell<ModuleHeader<'a>>>>,
 }
 
 impl<'a> From<(&str, ASN1Value, ASN1Type)> for ToplevelValueDefinition<'a> {
@@ -739,7 +740,7 @@ pub struct ToplevelTypeDefinition<'a> {
     pub name: String,
     pub ty: ASN1Type,
     pub parameterization: Option<Parameterization>,
-    pub module_header: Option<Rc<RefCell<ModuleHeader>>>,
+    pub module_header: Option<Rc<RefCell<ModuleHeader<'a>>>>,
 }
 
 impl<'a> ToplevelTypeDefinition<'a> {

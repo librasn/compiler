@@ -190,7 +190,7 @@ fn environments(
 
 #[cfg(test)]
 mod tests {
-    use std::vec;
+    use std::{borrow::Cow, vec};
 
     use crate::lexer::module_header::*;
 
@@ -378,7 +378,7 @@ mod tests {
             (
                 Input::from(" next-module-import, ").with_line_column_and_offset(1, 19, 18),
                 GlobalModuleReference {
-                    module_reference: "EMPTY-assigned-ID".to_owned(),
+                    module_reference: Cow::Borrowed("EMPTY-assigned-ID"),
                     assigned_identifier: AssignedIdentifier::Empty
                 }
             )
@@ -392,7 +392,7 @@ mod tests {
                 .unwrap()
                 .1,
             GlobalModuleReference {
-                module_reference: "VALref-assigned-ID".to_owned(),
+                module_reference: Cow::Borrowed("VALref-assigned-ID"),
                 assigned_identifier: AssignedIdentifier::ValueReference("valref".to_owned())
             }
         )
@@ -407,7 +407,7 @@ mod tests {
             .unwrap()
             .1,
             GlobalModuleReference {
-                module_reference: "ext-VALref-assigned-ID".to_owned(),
+                module_reference: Cow::Borrowed("ext-VALref-assigned-ID"),
                 assigned_identifier: AssignedIdentifier::ExternalValueReference(
                     ExternalValueReference {
                         module_reference: "MODULE-ref".to_owned(),
@@ -442,26 +442,26 @@ mod tests {
             vec![
                 Import {
                     types: vec![
-                        "Criticality".to_owned(),
-                        "Presence".to_owned(),
-                        "PrivateIE-ID".to_owned(),
-                        "ProtocolExtensionID".to_owned(),
-                        "ProtocolIE-ID".to_owned(),
+                        Cow::Borrowed("Criticality"),
+                        Cow::Borrowed("Presence"),
+                        Cow::Borrowed("PrivateIE-ID"),
+                        Cow::Borrowed("ProtocolExtensionID"),
+                        Cow::Borrowed("ProtocolIE-ID"),
                     ],
                     global_module_reference: GlobalModuleReference {
-                        module_reference: "NGAP-CommonDataTypes".to_owned(),
+                        module_reference: Cow::Borrowed("NGAP-CommonDataTypes"),
                         assigned_identifier: AssignedIdentifier::Empty
                     },
                     with: None
                 },
                 Import {
                     types: vec![
-                        "maxPrivateIEs".to_owned(),
-                        "maxProtocolExtensions".to_owned(),
-                        "maxProtocolIEs".to_owned()
+                        Cow::Borrowed("maxPrivateIEs"),
+                        Cow::Borrowed("maxProtocolExtensions"),
+                        Cow::Borrowed("maxProtocolIEs")
                     ],
                     global_module_reference: GlobalModuleReference {
-                        module_reference: "NGAP-Constants".to_owned(),
+                        module_reference: Cow::Borrowed("NGAP-Constants"),
                         assigned_identifier: AssignedIdentifier::Empty
                     },
                     with: None

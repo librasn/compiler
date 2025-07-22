@@ -8,7 +8,7 @@ use crate::lexer::macros::MacroDefinition;
 #[derive(Debug, Clone, PartialEq)]
 pub struct ToplevelMacroDefinition<'a> {
     pub name: Cow<'a, str>,
-    pub module_header: Option<Rc<RefCell<ModuleHeader>>>,
+    pub module_header: Option<Rc<RefCell<ModuleHeader<'a>>>>,
 }
 
 impl<'a> From<MacroDefinition<'a>> for ToplevelMacroDefinition<'a> {

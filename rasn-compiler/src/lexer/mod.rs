@@ -64,7 +64,7 @@ mod tests;
 
 pub fn asn_spec<'a>(
     input: &'a str,
-) -> Result<Vec<(ModuleHeader, Vec<ToplevelDefinition<'a>>)>, LexerError> {
+) -> Result<Vec<(ModuleHeader<'a>, Vec<ToplevelDefinition<'a>>)>, LexerError> {
     let mut result = Vec::new();
     let mut remaining_input = Input::from(input);
     loop {

@@ -424,7 +424,7 @@ impl<B: Backend> Compiler<B, CompilerSourcesSet> {
                 let key = tld
                     .get_module_header()
                     .map_or(<_>::default(), |module| module.borrow().name.clone());
-                match modules.entry(key) {
+                match modules.entry(key.to_string()) {
                     std::collections::btree_map::Entry::Vacant(v) => {
                         v.insert(vec![tld]);
                     }

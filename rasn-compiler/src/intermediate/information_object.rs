@@ -16,7 +16,7 @@ pub struct ObjectClassAssignment<'a> {
     pub name: String,
     pub parameterization: Parameterization,
     pub definition: ObjectClassDefn,
-    pub module_header: Option<Rc<RefCell<ModuleHeader>>>,
+    pub module_header: Option<Rc<RefCell<ModuleHeader<'a>>>>,
 }
 
 impl<'a> ObjectClassAssignment<'a> {
@@ -32,7 +32,7 @@ pub struct ToplevelInformationDefinition<'a> {
     pub parameterization: Option<Parameterization>,
     pub class: ClassLink,
     pub value: ASN1Information,
-    pub module_header: Option<Rc<RefCell<ModuleHeader>>>,
+    pub module_header: Option<Rc<RefCell<ModuleHeader<'a>>>>,
 }
 
 impl<'a> From<(&str, ASN1Information, &str)> for ToplevelInformationDefinition<'a> {

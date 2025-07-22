@@ -11,6 +11,7 @@ mod linking;
 mod tests;
 
 use std::{
+    borrow::Cow,
     cell::RefCell,
     collections::{BTreeMap, HashSet},
     ops::Not,
@@ -59,7 +60,7 @@ impl<'a> Validator<'a> {
                     .then_some(k.clone())
             }))
             .collect::<Vec<String>>();
-        let mut visited_headers = HashSet::<String>::new();
+        let mut visited_headers = HashSet::<Cow<'a, str>>::new();
         while let Some(key) = keys.pop() {
             if matches![
                 self.tlds.get(&key),
@@ -158,7 +159,7 @@ impl<'a> Validator<'a> {
                 .tlds
                 .get(&key)
                 .and_then(ToplevelDefinition::get_module_header)
-                .is_some_and(|m| visited_headers.contains(&m.borrow().name).not())
+                .is_some_and(|m| visited_headers.contains(&*m.borrow().name).not())
             {
                 self.fill_in_associated_type_imports(key, &mut visited_headers);
             }
@@ -170,7 +171,7 @@ impl<'a> Validator<'a> {
     fn fill_in_associated_type_imports(
         &mut self,
         key: String,
-        visited_headers: &mut HashSet<String>,
+        visited_headers: &mut HashSet<Cow<'a, str>>,
     ) {
         let tld = self.tlds.remove(&key).unwrap();
         {
@@ -193,7 +194,7 @@ impl<'a> Validator<'a> {
             for import_modules in &module_header.borrow().imports {
                 for import in &import_modules.types {
                     if import.starts_with(|c: char| c.is_lowercase()) {
-                        match self.tlds.get(import) {
+                        match self.tlds.get(&**import) {
                             Some(ToplevelDefinition::Object(ToplevelInformationDefinition {
                                 class: ClassLink::ByReference(class_ref),
                                 ..
@@ -244,8 +245,8 @@ impl<'a> Validator<'a> {
     fn associated_import_type(
         &self,
         associated_type: &str,
-        module_header: Rc<RefCell<ModuleHeader>>,
-        associated_type_imports: &mut Vec<Import>,
+        module_header: Rc<RefCell<ModuleHeader<'a>>>,
+        associated_type_imports: &mut Vec<Import<'a>>,
     ) {
         if let Some(ToplevelDefinition::Type(ToplevelTypeDefinition {
             name,
@@ -260,7 +261,7 @@ impl<'a> Validator<'a> {
                 && module_header.borrow().find_import(&v_type_name).is_none()
             {
                 associated_type_imports.push(Import {
-                    types: vec![v_type_name],
+                    types: vec![Cow::Owned(v_type_name)],
                     global_module_reference: GlobalModuleReference {
                         module_reference: m_hdr.borrow().name.clone(),
                         assigned_identifier: match &m_hdr.borrow().module_identifier {
@@ -280,8 +281,8 @@ impl<'a> Validator<'a> {
     fn associated_import_type_class_field(
         &self,
         field: &InformationObjectClassField,
-        module_header: Rc<RefCell<ModuleHeader>>,
-        associated_type_imports: &mut Vec<Import>,
+        module_header: Rc<RefCell<ModuleHeader<'a>>>,
+        associated_type_imports: &mut Vec<Import<'a>>,
     ) {
         if let Some(ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
             parent: Some(class_id),
