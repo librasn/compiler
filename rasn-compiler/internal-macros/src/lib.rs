@@ -1,8 +1,8 @@
 extern crate quote;
 extern crate syn;
 
-use quote::{format_ident, quote, ToTokens};
-use syn::{Data, DataEnum, DeriveInput, Fields, FieldsNamed, FieldsUnnamed, GenericParam};
+use quote::{format_ident, quote};
+use syn::{Data, DataEnum, DeriveInput, Fields, FieldsNamed, FieldsUnnamed};
 
 /// Extension of the standard `Debug` derive macro.
 /// Prefixes the variant identifier with the enum identifier separated by `::`.

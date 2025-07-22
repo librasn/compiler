@@ -132,7 +132,10 @@ impl Rasn {
         }
     }
 
-    pub(crate) fn format_comments<'a>(&self, comments: &str) -> Result<TokenStream, GeneratorError<'a>> {
+    pub(crate) fn format_comments<'a>(
+        &self,
+        comments: &str,
+    ) -> Result<TokenStream, GeneratorError<'a>> {
         if comments.is_empty() {
             Ok(TokenStream::new())
         } else {
@@ -708,7 +711,10 @@ impl Rasn {
         Ok(output)
     }
 
-    pub(crate) fn type_to_tokens<'a>(&self, ty: &ASN1Type) -> Result<TokenStream, GeneratorError<'a>> {
+    pub(crate) fn type_to_tokens<'a>(
+        &self,
+        ty: &ASN1Type,
+    ) -> Result<TokenStream, GeneratorError<'a>> {
         match ty {
             ASN1Type::Null => Ok(quote!(())),
             ASN1Type::Boolean(_) => Ok(quote!(bool)),
@@ -1318,7 +1324,10 @@ impl Rasn {
         Ok((name, annotations))
     }
 
-    fn required_annotations<'a>(&self, needs_copy: bool) -> Result<Vec<TokenStream>, GeneratorError<'a>> {
+    fn required_annotations<'a>(
+        &self,
+        needs_copy: bool,
+    ) -> Result<Vec<TokenStream>, GeneratorError<'a>> {
         let mut required_derives = Vec::new();
         for derive in Self::REQUIRED_DERIVES {
             if !self.derive_is_present(derive)? {

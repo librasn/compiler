@@ -13,7 +13,11 @@ pub struct GeneratorError<'a> {
 }
 
 impl<'a> GeneratorError<'a> {
-    pub fn new(tld: Option<ToplevelDefinition<'a>>, details: &str, kind: GeneratorErrorType) -> Self {
+    pub fn new(
+        tld: Option<ToplevelDefinition<'a>>,
+        details: &str,
+        kind: GeneratorErrorType,
+    ) -> Self {
         GeneratorError {
             top_level_declaration: tld.map(Box::new),
             details: details.into(),
@@ -76,7 +80,7 @@ impl<'a> Display for GeneratorError<'a> {
             Some(ToplevelDefinition::Value(v)) => &v.name,
             Some(ToplevelDefinition::Class(c)) => &c.name,
             Some(ToplevelDefinition::Object(o)) => &o.name,
-            Some(ToplevelDefinition::Macro(m)) => &m.name,
+            Some(ToplevelDefinition::Macro(m)) => &m.name.to_string(),
             None => "",
         };
         write!(

@@ -1,3 +1,5 @@
+use std::borrow::Cow;
+
 use nom::{
     bytes::complete::tag,
     character::complete::{char, i128},
@@ -32,10 +34,10 @@ pub fn enumerated_value(input: Input<'_>) -> ParserResult<'_, ToplevelValueDefin
             preceded(assignment, skip_ws_and_comments(value_reference)),
         ),
         |(c, n, params, p, e)| ToplevelValueDefinition {
-            comments: c.into_iter().fold(String::new(), |mut acc, s| {
+            comments: Cow::Owned(c.into_iter().fold(String::new(), |mut acc, s| {
                 acc = acc + "\n" + s;
                 acc
-            }),
+            })),
             name: n.to_string(),
             parameterization: params,
             associated_type: p.clone(),
@@ -105,6 +107,8 @@ fn enumerated_body(input: Input<'_>) -> ParserResult<'_, EnumeralBody> {
 
 #[cfg(test)]
 mod tests {
+
+    use std::borrow::Cow;
 
     use super::*;
 
@@ -342,7 +346,7 @@ mod tests {
             .unwrap()
             .1,
             ToplevelValueDefinition {
-                comments: String::from("\n Alias of another enumeral"),
+                comments: Cow::Borrowed("\n Alias of another enumeral"),
                 name: String::from("enumeral-alias"),
                 associated_type: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                     parent: None,

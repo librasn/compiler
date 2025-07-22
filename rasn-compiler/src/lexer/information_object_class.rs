@@ -52,7 +52,7 @@ pub fn object_class_assignement(input: Input<'_>) -> ParserResult<'_, ObjectClas
             preceded(assignment, alt((type_identifier, object_class_defn))),
         ),
         |v| ObjectClassAssignment {
-            comments: v.0.join("\n"),
+            comments: std::borrow::Cow::Owned(v.0.join("\n")),
             name: v.1.into(),
             parameterization: v.2.unwrap_or_default(),
             definition: v.3,

@@ -7,7 +7,7 @@ use super::{
     GrammarError, GrammarErrorType,
 };
 
-impl ToplevelInformationDefinition {
+impl<'a> ToplevelInformationDefinition<'a> {
     pub fn resolve_class_reference(mut self, tlds: &BTreeMap<String, ToplevelDefinition>) -> Self {
         if let ClassLink::ByName(name) = &self.class {
             if let Some(ToplevelDefinition::Class(c)) = tlds.get(name) {
@@ -60,11 +60,11 @@ impl ToplevelInformationDefinition {
     }
 }
 
-fn resolve_and_link(
+fn resolve_and_link<'a>(
     fields: &mut InformationObjectFields,
     class: &ObjectClassDefn,
-    tlds: &BTreeMap<String, ToplevelDefinition>,
-) -> Result<Option<ToplevelInformationDefinition>, GrammarError> {
+    tlds: &BTreeMap<String, ToplevelDefinition<'a>>,
+) -> Result<Option<ToplevelInformationDefinition<'a>>, GrammarError> {
     match resolve_custom_syntax(fields, class) {
         Ok(()) => link_object_fields(fields, class, tlds).map(|_| None),
         Err(

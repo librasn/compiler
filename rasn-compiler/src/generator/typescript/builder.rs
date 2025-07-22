@@ -102,17 +102,17 @@ impl Typescript {
         }
     }
 
-    pub(crate) fn generate_value<'a>(
-        &self,
-        tld: ToplevelValueDefinition,
-    ) -> String {//Result<String, GeneratorError<'a>> {
-        value_to_tokens(&tld.value).map(|v| {
-            value_template(
-                &format_comments(&tld.comments),
-                &to_jer_identifier(&tld.name),
-                &v,
-            )
-        }).unwrap()// TODO: Do not unwrap
+    pub(crate) fn generate_value<'a>(&self, tld: ToplevelValueDefinition) -> String {
+        //Result<String, GeneratorError<'a>> {
+        value_to_tokens(&tld.value)
+            .map(|v| {
+                value_template(
+                    &format_comments(&tld.comments),
+                    &to_jer_identifier(&tld.name),
+                    &v,
+                )
+            })
+            .unwrap() // TODO: Do not unwrap
     }
 
     pub(crate) fn generate_any<'a>(

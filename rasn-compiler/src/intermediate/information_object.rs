@@ -10,8 +10,8 @@ use super::{constraints::*, *};
 ///
 /// **X.683 9.2** _Referencing parameterized definitions: ParameterizedObjectClassAssignment._
 #[derive(Debug, Clone, PartialEq)]
-pub struct ObjectClassAssignment {
-    pub comments: String,
+pub struct ObjectClassAssignment<'a> {
+    pub comments: Cow<'a, str>,
     /// A objectclassreference.
     pub name: String,
     pub parameterization: Parameterization,
@@ -19,15 +19,15 @@ pub struct ObjectClassAssignment {
     pub module_header: Option<Rc<RefCell<ModuleHeader>>>,
 }
 
-impl ObjectClassAssignment {
+impl<'a> ObjectClassAssignment<'a> {
     pub(crate) fn is_parameterized(&self) -> bool {
         !self.parameterization.parameters.is_empty()
     }
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct ToplevelInformationDefinition {
-    pub comments: String,
+pub struct ToplevelInformationDefinition<'a> {
+    pub comments: Cow<'a, str>,
     pub name: String,
     pub parameterization: Option<Parameterization>,
     pub class: ClassLink,
@@ -35,10 +35,10 @@ pub struct ToplevelInformationDefinition {
     pub module_header: Option<Rc<RefCell<ModuleHeader>>>,
 }
 
-impl From<(&str, ASN1Information, &str)> for ToplevelInformationDefinition {
+impl<'a> From<(&str, ASN1Information, &str)> for ToplevelInformationDefinition<'a> {
     fn from(value: (&str, ASN1Information, &str)) -> Self {
         Self {
-            comments: String::new(),
+            comments: Cow::Borrowed(""),
             name: value.0.to_owned(),
             parameterization: None,
             class: ClassLink::ByName(value.2.to_owned()),
@@ -56,20 +56,20 @@ pub enum ClassLink {
     ByReference(ObjectClassDefn),
 }
 
-impl ToplevelInformationDefinition {
+impl<'a> ToplevelInformationDefinition<'a> {
     pub fn pdu(&self) -> &ASN1Information {
         &self.value
     }
 }
 
-impl
+impl<'a>
     From<(
         Vec<&str>,
         &str,
         Option<Parameterization>,
         &str,
         InformationObjectFields,
-    )> for ToplevelInformationDefinition
+    )> for ToplevelInformationDefinition<'a>
 {
     fn from(
         value: (
@@ -81,7 +81,7 @@ impl
         ),
     ) -> Self {
         Self {
-            comments: value.0.join("\n"),
+            comments: Cow::Owned(value.0.join("\n")),
             name: value.1.into(),
             class: ClassLink::ByName(value.3.into()),
             parameterization: value.2,
@@ -94,12 +94,12 @@ impl
     }
 }
 
-impl From<(Vec<&str>, &str, Option<Parameterization>, &str, ObjectSet)>
-    for ToplevelInformationDefinition
+impl<'a> From<(Vec<&str>, &str, Option<Parameterization>, &str, ObjectSet)>
+    for ToplevelInformationDefinition<'a>
 {
     fn from(value: (Vec<&str>, &str, Option<Parameterization>, &str, ObjectSet)) -> Self {
         Self {
-            comments: value.0.join("\n"),
+            comments: Cow::Owned(value.0.join("\n")),
             name: value.1.into(),
             parameterization: value.2,
             class: ClassLink::ByName(value.3.into()),

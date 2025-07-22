@@ -229,7 +229,7 @@ impl<'a> ToplevelDefinition<'a> {
     }
 }
 
-impl ToplevelValueDefinition {
+impl<'a> ToplevelValueDefinition<'a> {
     /// Collects supertypes and implicit supertypes of an ASN1 value
     /// that are not straightforward to parse on first pass
     /// ### Example
@@ -1263,7 +1263,7 @@ impl ASN1Value {
                         .find(|(_, tld)| tld.has_enum_value(None, identifier))
                     {
                         *value = Box::new(ASN1Value::EnumeratedValue {
-                            enumerated: tld.name().clone(),
+                            enumerated: tld.name().to_string(),
                             enumerable: identifier.clone(),
                         });
                     }
@@ -1276,7 +1276,7 @@ impl ASN1Value {
                     .find(|(_, tld)| tld.has_enum_value(None, identifier))
                 {
                     *self = ASN1Value::EnumeratedValue {
-                        enumerated: tld.name().clone(),
+                        enumerated: tld.name().to_string(),
                         enumerable: identifier.clone(),
                     };
                 }
@@ -1594,7 +1594,7 @@ fn bit_string_value_from_named_bits(
 
 #[cfg(test)]
 mod tests {
-    use std::collections::BTreeMap;
+    use std::{borrow::Cow, collections::BTreeMap};
 
     use crate::intermediate::{types::*, *};
 
@@ -1661,7 +1661,7 @@ mod tests {
             map
         };
         let mut example_value = ToplevelValueDefinition {
-            comments: String::new(),
+            comments: Cow::Borrowed(""),
             name: "exampleValue".into(),
             parameterization: None,
             associated_type: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {

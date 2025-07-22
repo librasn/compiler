@@ -562,13 +562,13 @@ pub enum ToplevelDefinition<'a> {
     /// Definition for a custom type based on ASN.1's built-in type.
     Type(ToplevelTypeDefinition<'a>),
     /// Definition for a value using custom or built-in type.
-    Value(ToplevelValueDefinition),
+    Value(ToplevelValueDefinition<'a>),
     /// Definition for a object class as introduced in ITU-T X.681 9.
-    Class(ObjectClassAssignment),
+    Class(ObjectClassAssignment<'a>),
     /// Definition for an object or object set, as introduced in ITU-T X.681 11.
-    Object(ToplevelInformationDefinition),
+    Object(ToplevelInformationDefinition<'a>),
     /// Definition for a macro.
-    Macro(ToplevelMacroDefinition),
+    Macro(ToplevelMacroDefinition<'a>),
 }
 
 impl<'a> ToplevelDefinition<'a> {
@@ -649,10 +649,11 @@ impl<'a> ToplevelDefinition<'a> {
     /// ### Example
     /// ```
     /// # use rasn_compiler::prelude::ir::*;
+    /// # use std::borrow::Cow;
     /// assert_eq!(
     ///     ToplevelDefinition::Value(
     ///         ToplevelValueDefinition {
-    ///             comments: String::from("Comments from the ASN.1 spec"),
+    ///             comments: Cow::Borrowed("Comments from the ASN.1 spec"),
     ///             parameterization: None,
     ///             name: String::from("the-answer"),
     ///             associated_type: ASN1Type::Integer(Integer {
@@ -666,7 +667,7 @@ impl<'a> ToplevelDefinition<'a> {
     ///     &String::from("the-answer")
     /// );
     /// ```
-    pub fn name(&self) -> &String {
+    pub fn name(&self) -> &str {
         match self {
             ToplevelDefinition::Class(c) => &c.name,
             ToplevelDefinition::Object(o) => &o.name,
@@ -680,8 +681,8 @@ impl<'a> ToplevelDefinition<'a> {
 /// Represents a top-level definition of a value
 /// using a custom or built-in ASN.1 type.
 #[derive(Debug, Clone, PartialEq)]
-pub struct ToplevelValueDefinition {
-    pub comments: String,
+pub struct ToplevelValueDefinition<'a> {
+    pub comments: Cow<'a, str>,
     pub name: String,
     pub associated_type: ASN1Type,
     pub parameterization: Option<Parameterization>,
@@ -689,10 +690,10 @@ pub struct ToplevelValueDefinition {
     pub module_header: Option<Rc<RefCell<ModuleHeader>>>,
 }
 
-impl From<(&str, ASN1Value, ASN1Type)> for ToplevelValueDefinition {
+impl<'a> From<(&str, ASN1Value, ASN1Type)> for ToplevelValueDefinition<'a> {
     fn from(value: (&str, ASN1Value, ASN1Type)) -> Self {
         Self {
-            comments: String::new(),
+            comments: Cow::Borrowed(""),
             name: value.0.to_owned(),
             associated_type: value.2.to_owned(),
             parameterization: None,
@@ -702,14 +703,14 @@ impl From<(&str, ASN1Value, ASN1Type)> for ToplevelValueDefinition {
     }
 }
 
-impl
+impl<'a>
     From<(
         Vec<&str>,
         &str,
         Option<Parameterization>,
         ASN1Type,
         ASN1Value,
-    )> for ToplevelValueDefinition
+    )> for ToplevelValueDefinition<'a>
 {
     fn from(
         value: (
@@ -721,7 +722,7 @@ impl
         ),
     ) -> Self {
         Self {
-            comments: value.0.join("\n"),
+            comments: Cow::Owned(value.0.join("\n")),
             name: value.1.into(),
             parameterization: value.2,
             associated_type: value.3,

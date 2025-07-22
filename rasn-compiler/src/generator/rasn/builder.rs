@@ -118,7 +118,7 @@ impl Rasn {
 
     pub(crate) fn generate_integer_value<'a>(
         &self,
-        tld: ToplevelValueDefinition,
+        tld: ToplevelValueDefinition<'a>,
     ) -> Result<TokenStream, GeneratorError<'a>> {
         if let ASN1Value::LinkedIntValue { integer_type, .. } = tld.value {
             let formatted_value = self.value_to_tokens(&tld.value, None)?;
@@ -266,7 +266,7 @@ impl Rasn {
 
     pub(crate) fn generate_value<'a>(
         &self,
-        tld: ToplevelValueDefinition,
+        tld: ToplevelValueDefinition<'a>,
     ) -> Result<TokenStream, GeneratorError<'a>> {
         let ty = &tld.associated_type;
         match &tld.value {
@@ -845,7 +845,7 @@ impl Rasn {
 
     pub(crate) fn generate_information_object_set<'a>(
         &self,
-        tld: ToplevelInformationDefinition,
+        tld: ToplevelInformationDefinition<'a>,
     ) -> Result<TokenStream, GeneratorError<'a>> {
         if self.config.opaque_open_types {
             return Ok(TokenStream::new());

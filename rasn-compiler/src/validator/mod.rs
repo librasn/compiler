@@ -132,7 +132,7 @@ impl<'a> Validator<'a> {
                             e.contextualize(&key);
                             warnings.push(e.into());
                         }
-                        self.tlds.insert(tld.name().clone(), tld);
+                        self.tlds.insert(tld.name().to_string(), tld);
                     }
                     Err(mut e) => {
                         e.contextualize(&key);
