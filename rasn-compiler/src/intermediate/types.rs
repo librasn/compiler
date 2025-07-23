@@ -359,7 +359,7 @@ impl<'a> From<(Option<Vec<Constraint<'a>>>, (Option<AsnTag>, ASN1Type<'a>))>
 /// *As defined in Rec. ITU-T X.680 (02/2021) §25 and §27*
 #[derive(Debug, Clone, PartialEq)]
 pub struct SequenceOrSet<'a> {
-    pub components_of: Vec<String>,
+    pub components_of: Vec<Cow<'a, str>>,
     pub extensible: Option<usize>,
     pub constraints: Vec<Constraint<'a>>,
     pub members: Vec<SequenceOrSetMember<'a>>,
@@ -460,7 +460,7 @@ impl<'a>
 #[derive(Clone, PartialEq)]
 pub enum SequenceComponent<'a> {
     Member(SequenceOrSetMember<'a>),
-    ComponentsOf(String),
+    ComponentsOf(Cow<'a, str>),
 }
 
 /// Representation of an single ASN1 SEQUENCE or SET member.

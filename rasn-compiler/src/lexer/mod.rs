@@ -64,9 +64,7 @@ mod util;
 #[cfg(test)]
 mod tests;
 
-pub fn asn_spec<'a>(
-    input: &'a str,
-) -> Result<Vec<(ModuleHeader<'a>, Vec<ToplevelDefinition<'a>>)>, LexerError> {
+pub fn asn_spec<'a>(input: &'a str) -> Result<Vec<AsnModule<'a>>, LexerError> {
     let mut result = Vec::new();
     let mut remaining_input = Input::from(input);
     loop {
@@ -88,10 +86,8 @@ pub fn asn_spec<'a>(
     }
 }
 
-pub(crate) fn asn_module(
-    input: Input<'_>,
-) -> ParserResult<'_, (ModuleHeader, Vec<ToplevelDefinition>)> {
-    pair(
+pub(crate) fn asn_module<'a>(input: Input<'a>) -> ParserResult<'a, AsnModule<'a>> {
+    into(pair(
         module_header::module_header,
         terminated(
             many0(skip_ws(alt((
@@ -108,7 +104,7 @@ pub(crate) fn asn_module(
             )))),
             context_boundary(skip_ws_and_comments(alt((end, encoding_control)))),
         ),
-    )
+    ))
     .parse(input)
 }
 

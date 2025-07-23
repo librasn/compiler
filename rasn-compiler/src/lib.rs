@@ -5,6 +5,7 @@ mod generator;
 mod input;
 pub mod intermediate;
 mod lexer;
+mod linker;
 #[cfg(test)]
 mod tests;
 mod validator;
@@ -64,6 +65,8 @@ pub mod prelude {
 
 #[cfg(target_family = "wasm")]
 use wasm_bindgen::prelude::*;
+
+use crate::intermediate::AsnModule;
 
 #[cfg(target_family = "wasm")]
 #[wasm_bindgen(inspectable, getter_with_clone)]
@@ -406,14 +409,21 @@ impl<B: Backend> Compiler<B, CompilerSourcesSet> {
             modules.append(
                 &mut asn_spec(&src)?
                     .into_iter()
-                    .flat_map(|(header, tlds)| {
-                        let header_ref = Rc::new(RefCell::new(header));
-                        tlds.into_iter().map(move |mut tld| {
-                            tld.apply_tagging_environment(&header_ref.borrow().tagging_environment);
-                            tld.set_module_header(header_ref.clone());
-                            tld
-                        })
-                    })
+                    .flat_map(
+                        |AsnModule {
+                             module_header: header,
+                             top_level_definitions: tlds,
+                         }| {
+                            let header_ref = Rc::new(RefCell::new(header));
+                            tlds.into_iter().map(move |mut tld| {
+                                tld.apply_tagging_environment(
+                                    &header_ref.borrow().tagging_environment,
+                                );
+                                tld.set_module_header(header_ref.clone());
+                                tld
+                            })
+                        },
+                    )
                     .collect(),
             );
         }

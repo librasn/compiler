@@ -15,9 +15,9 @@ pub mod parameterization;
 pub mod types;
 pub mod utils;
 
-use std::{borrow::Cow, cell::RefCell, collections::BTreeMap, ops::Add, rc::Rc};
+use std::{borrow::Cow, cell::RefCell, collections::BTreeMap, marker::PhantomData, ops::Add, rc::Rc};
 
-use crate::{common::INTERNAL_IO_FIELD_REF_TYPE_NAME_PREFIX, prelude::ir::Parameter};
+use crate::{common::{Reference, INTERNAL_IO_FIELD_REF_TYPE_NAME_PREFIX}, prelude::ir::Parameter};
 use constraints::Constraint;
 use error::{GrammarError, GrammarErrorType};
 use information_object::{
@@ -551,6 +551,19 @@ impl From<(&str, u128)> for ObjectIdentifierArc {
     }
 }
 
+/// Represents an ASN.1 Module
+#[derive(Debug, Clone, PartialEq)]
+pub struct AsnModule<'a> {
+    pub module_header: ModuleHeader<'a>,
+    pub top_level_definitions: Vec<ToplevelDefinition<'a>>
+}
+
+impl<'a> From<(ModuleHeader<'a>, Vec<ToplevelDefinition<'a>>)> for AsnModule<'a> {
+    fn from(value: (ModuleHeader<'a>, Vec<ToplevelDefinition<'a>>)) -> Self {
+        AsnModule { module_header: value.0, top_level_definitions: value.1 }
+    }
+}
+
 /// Represents a top-level ASN.1 definition.
 /// The compiler distinguished three different variants of top-level definitions.
 ///
@@ -668,13 +681,13 @@ impl<'a> ToplevelDefinition<'a> {
     ///     &String::from("the-answer")
     /// );
     /// ```
-    pub fn name(&self) -> &str {
+    pub fn name(&self) -> Cow<'a, str> {
         match self {
-            ToplevelDefinition::Class(c) => &c.name,
-            ToplevelDefinition::Object(o) => &o.name,
-            ToplevelDefinition::Type(t) => &t.name,
-            ToplevelDefinition::Value(v) => &v.name,
-            ToplevelDefinition::Macro(v) => &v.name,
+            ToplevelDefinition::Class(c) => c.name.clone(),
+            ToplevelDefinition::Object(o) => o.name.clone(),
+            ToplevelDefinition::Type(t) => t.name.clone(),
+            ToplevelDefinition::Value(v) => v.name.clone(),
+            ToplevelDefinition::Macro(v) => v.name.clone(),
         }
     }
 }
@@ -902,7 +915,7 @@ impl<'a> ASN1Type<'a> {
     }
 
     pub fn builtin_or_elsewhere(
-        parent: Option<&str>,
+        parent: Option<&'a str>,
         identifier: DefinedType<'a>,
         constraints: Vec<Constraint<'a>>,
     ) -> ASN1Type<'a> {
@@ -971,7 +984,7 @@ impl<'a> ASN1Type<'a> {
                 ty: CharacterStringType::NumericString,
             }),
             _ => ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
-                parent: parent.map(str::to_string),
+                parent: parent.map(Cow::Borrowed),
                 identifier,
                 constraints,
             }),
@@ -1337,17 +1350,17 @@ impl<'a> ASN1Value<'a> {
 #[derive(Debug, Clone, PartialEq)]
 pub struct DeclarationElsewhere<'a> {
     /// Chain of parent declaration leading back to a basic ASN1 type
-    pub parent: Option<String>,
+    pub parent: Option<Cow<'a, str>>,
     pub identifier: DefinedType<'a>,
     pub constraints: Vec<Constraint<'a>>,
 }
 
-impl<'a> From<(Option<&str>, DefinedType<'a>, Option<Vec<Constraint<'a>>>)>
+impl<'a> From<(Option<&'a str>, DefinedType<'a>, Option<Vec<Constraint<'a>>>)>
     for DeclarationElsewhere<'a>
 {
-    fn from(value: (Option<&str>, DefinedType<'a>, Option<Vec<Constraint<'a>>>)) -> Self {
+    fn from(value: (Option<&'a str>, DefinedType<'a>, Option<Vec<Constraint<'a>>>)) -> Self {
         DeclarationElsewhere {
-            parent: value.0.map(ToString::to_string),
+            parent: value.0.map(Cow::Borrowed),
             identifier: value.1,
             constraints: value.2.unwrap_or_default(),
         }
@@ -1385,6 +1398,55 @@ impl<'a> Into<DefinedType<'a>> for &'a str {
     fn into(self) -> DefinedType<'a> {
         DefinedType::TypeReference(Cow::Borrowed(self))
     }
+}
+
+/// Intermediate placeholder for a value declared in
+/// some other part of the ASN1 specification that is
+/// being parsed or in one of its imports.
+#[derive(Debug, Clone, PartialEq)]
+pub struct ElsewhereDefinedValue<'a> {
+    /// Chain of parent declaration leading back to a basic ASN1 value
+    pub parent: Option<String>,
+    pub identifier: DefinedValue<'a>,
+}
+
+/// Representation of a DefinedValue as defined in X.680 §14
+#[cfg_attr(test, derive(EnumDebug))]
+#[cfg_attr(not(test), derive(Debug))]
+#[derive(Clone, PartialEq)]
+pub enum DefinedValue<'a> {
+    ExternalValueReference {
+        modulereference: Cow<'a, str>,
+        valuereference: Cow<'a, str>,
+    },
+    ValueReference(Cow<'a, str>),
+    ParameterizedValue {
+        simple_defined_type: Box<DefinedValue<'a>>,
+        actual_parameter_list: Vec<Parameter<'a>>,
+    },
+}
+
+impl<'a> DefinedValue<'a> {
+    pub fn as_valuereference(&self) -> Option<&str> {
+        match self {
+            Self::ValueReference(s) => Some(&s),
+            _ => None,
+        }
+    }
+}
+
+impl<'a> Into<DefinedValue<'a>> for &'a str {
+    fn into(self) -> DefinedValue<'a> {
+        DefinedValue::ValueReference(Cow::Borrowed(self))
+    }
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct Lexed;
+
+impl<'a> Reference<'a> for Lexed {
+    type DefinedType = DefinedType<'a>;
+    type DefinedValue = DefinedValue<'a>;
 }
 
 /// Tag classes

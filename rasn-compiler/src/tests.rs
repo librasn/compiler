@@ -2,7 +2,7 @@ use std::{cell::RefCell, io::Write, rc::Rc};
 
 use nom::FindSubstring;
 
-use crate::validator::Validator;
+use crate::{intermediate::AsnModule, validator::Validator};
 
 /// This function generates a stepwise-end-to-end test for a given ASN.1 module,
 /// i.e. it generates test functions with corresponding inputs and expected outputs for
@@ -149,14 +149,19 @@ fn validator_io(literal: &str) -> (String, String) {
     let input = crate::lexer::asn_spec(literal)
         .unwrap()
         .into_iter()
-        .flat_map(|(header, tlds)| {
-            let header_ref = Rc::new(RefCell::new(header));
-            tlds.into_iter().map(move |mut tld| {
-                tld.apply_tagging_environment(&header_ref.borrow().tagging_environment);
-                tld.set_module_header(header_ref.clone());
-                tld
-            })
-        })
+        .flat_map(
+            |AsnModule {
+                 module_header: header,
+                 top_level_definitions: tlds,
+             }| {
+                let header_ref = Rc::new(RefCell::new(header));
+                tlds.into_iter().map(move |mut tld| {
+                    tld.apply_tagging_environment(&header_ref.borrow().tagging_environment);
+                    tld.set_module_header(header_ref.clone());
+                    tld
+                })
+            },
+        )
         .collect::<Vec<_>>();
     let (expected_output, warnings) = Validator::new(input.clone()).validate().unwrap();
     assert!(warnings.is_empty());
