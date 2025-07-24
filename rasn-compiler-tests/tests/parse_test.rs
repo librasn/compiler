@@ -1,4 +1,4 @@
-use rasn_compiler::{prelude::RasnBackend, Compiler};
+use rasn_compiler::{prelude::RasnBackend, Compiler, OutputMode};
 
 #[test]
 #[ignore]
@@ -57,7 +57,7 @@ fn compile_etsi() {
             // .add_asn_by_path("../rasn-compiler/test_asn1/ngap_ies.asn")
             // .add_asn_by_path("../rasn-compiler/test_asn1/ngap_pdus.asn")
             .add_asn_by_path("../rasn-compiler/test_asn1/test.asn")
-            .set_output_path("./tests")
+            .set_output_mode(OutputMode::SingleFile("./tests".into()))
             .compile()
     );
 }
