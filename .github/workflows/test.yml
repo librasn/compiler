@@ -32,19 +32,14 @@ jobs:
         with:
           command: build
           args: --bin rasn_compiler_cli --features=cli
-
-      - name: Install WASM target
-        uses: actions-rs/toolchain@v1
+      
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
         with:
-            toolchain: stable
-            target: wasm32-unknown-unknown
+            targets: wasm32-unknown-unknown
 
       - name: Build WASM
-        uses: actions-rs/cargo@v1
-        with:
-          command: rustc
-          target: wasm32-unknown-unknown
-          args: --manifest-path=rasn-compiler/Cargo.toml --crate-type=cdylib
+        run: cargo rustc --manifest-path=rasn-compiler/Cargo.toml --crate-type=cdylib --target=wasm32-unknown-unknown
 
       - name: Test
         uses: actions-rs/cargo@v1
