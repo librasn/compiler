@@ -78,6 +78,8 @@ The `RasnBackend` configuration supports the following parameters:
     added to all generated rust types of the bindings. Each vector element will generate a new line of annotations. Note
     that the compiler will automatically add all pound-derives needed by `rasn` **except** `Eq` and `Hash`, which are
     needed only when working with `SET`s.
+-   **no_std_compliant_bindings**: `bool`: [Default: `false`] create bindings for a `no_std` environment. Requires
+    `lazy_static` dependency as a runtime dependency for the generated bindings.
 
 ### Creating a Custom Backend
 

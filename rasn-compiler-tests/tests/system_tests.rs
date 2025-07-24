@@ -135,3 +135,34 @@ fn custom_derives_without_some_required() {
     pub struct Hello(pub u8);"#
     ))
 }
+
+#[test]
+fn no_std_compliant_bindings() {
+    let bindings =
+        rasn_compiler::Compiler::<rasn_compiler::prelude::RasnBackend, _>::new_with_config(
+            RasnConfig {
+                no_std_compliant_bindings: true,
+                ..Default::default()
+            },
+        )
+        .add_asn_literal(
+            r#"
+                TestModuleA DEFINITIONS AUTOMATIC TAGS::= BEGIN
+                    Hello ::= INTEGER (4..8)
+                    World ::= SEQUENCE {
+                        hello Hello
+                    }
+                    hello-world World ::= { hello 5 }
+                END
+            "#,
+        )
+        .compile_to_string()
+        .unwrap()
+        .generated;
+    assert!(bindings.contains(r#"use lazy_static::lazy_static;"#));
+    assert!(bindings.contains(
+        r#"lazy_static! {
+        pub static ref HELLO_WORLD: World = World::new(Hello(5));
+    }"#
+    ));
+}
