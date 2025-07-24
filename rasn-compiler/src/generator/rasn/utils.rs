@@ -611,7 +611,7 @@ impl Rasn {
                 (s.constraints().clone(), quote!(SetOf<#inner_type>))
             }
             ASN1Type::ElsewhereDeclaredType(e) => {
-                let mut tokenized = self.to_rust_title_case(&e.identifier).to_token_stream();
+                let mut tokenized = self.to_rust_qualified_type(e.module.as_deref(), &e.identifier);
                 if is_recursive {
                     tokenized = boxed_type(tokenized);
                 };
@@ -741,7 +741,9 @@ impl Rasn {
                 NotYetInplemented,
                 "Set values are currently unsupported!"
             )),
-            ASN1Type::ElsewhereDeclaredType(e) => Ok(self.to_rust_title_case(&e.identifier)),
+            ASN1Type::ElsewhereDeclaredType(e) => {
+                Ok(self.to_rust_qualified_type(e.module.as_deref(), &e.identifier))
+            }
             ASN1Type::ObjectClassField(_) => Err(error!(
                 NotYetInplemented,
                 "Object class field types are currently unsupported!"
@@ -1285,6 +1287,21 @@ impl Rasn {
             input
         };
         TokenStream::from_str(&name).unwrap()
+    }
+
+    /// Generate a `TokenStream` containing a type identifier, optionally qualified by module.
+    ///
+    /// Module name is converted to snake case, and type name converted to title case.
+    ///
+    /// If qualified with a module, then path is `super::#module::#ty`, else it is just `#ty`.
+    pub(crate) fn to_rust_qualified_type(&self, module: Option<&str>, ty: &str) -> TokenStream {
+        let ty = self.to_rust_title_case(ty);
+        if let Some(module) = module {
+            let module = self.to_rust_snake_case(module).to_token_stream();
+            quote!(super::#module::#ty)
+        } else {
+            ty
+        }
     }
 
     pub(super) fn format_name_and_common_annotations(

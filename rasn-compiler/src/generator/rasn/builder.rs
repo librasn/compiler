@@ -104,10 +104,11 @@ impl Rasn {
         if let ASN1Type::ElsewhereDeclaredType(dec) = &tld.ty {
             let (name, mut annotations) = self.format_name_and_common_annotations(&tld)?;
             annotations.push(self.format_range_annotations(true, &dec.constraints)?);
+            let alias = self.to_rust_qualified_type(dec.module.as_deref(), &dec.identifier);
             Ok(typealias_template(
                 self.format_comments(&tld.comments)?,
                 name,
-                self.to_rust_title_case(&dec.identifier),
+                alias,
                 self.join_annotations(annotations, false, true)?,
             ))
         } else {
@@ -819,7 +820,9 @@ impl Rasn {
         }
         .unwrap_or_default();
         let member_type = match seq_or_set_of.element_type.as_ref() {
-            ASN1Type::ElsewhereDeclaredType(d) => self.to_rust_title_case(&d.identifier),
+            ASN1Type::ElsewhereDeclaredType(d) => {
+                self.to_rust_qualified_type(d.module.as_deref(), &d.identifier)
+            }
             _ => format_ident!("Anonymous{}", &name.to_string()).to_token_stream(),
         };
         let mut annotations = vec![

@@ -121,6 +121,7 @@ pub fn instance_of(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
         |(id, constraints)| {
             ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                 parent: None,
+                module: None,
                 identifier: id.into(),
                 constraints,
             })
@@ -397,6 +398,7 @@ mod tests {
                         identifier: ObjectFieldIdentifier::MultipleValue("&Errors".into()),
                         ty: Some(ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                             parent: None,
+                            module: None,
                             constraints: vec![],
                             identifier: "ERROR".into()
                         })),
@@ -497,6 +499,7 @@ mod tests {
                         identifier: ObjectFieldIdentifier::SingleValue("&itsaidCtxRef".into()),
                         ty: Some(ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                             parent: None,
+                            module: None,
                             identifier: "ItsAidCtxRef".into(),
                             constraints: vec![]
                         })),

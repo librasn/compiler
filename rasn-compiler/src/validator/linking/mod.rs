@@ -1630,6 +1630,7 @@ mod tests {
                     "IntermediateBool",
                     ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                         parent: None,
+                        module: None,
                         identifier: String::from("RootBool"),
                         constraints: vec![]
                     })
@@ -1649,6 +1650,7 @@ mod tests {
                             tag: None,
                             ty: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                                 parent: None,
+                                module: None,
                                 identifier: String::from("IntermediateBool"),
                                 constraints: vec![]
                             })
@@ -1664,6 +1666,7 @@ mod tests {
             parameterization: None,
             associated_type: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                 parent: None,
+                module: None,
                 identifier: "BaseChoice".into(),
                 constraints: vec![],
             }),
@@ -1682,6 +1685,7 @@ mod tests {
                 name: "exampleValue".into(),
                 associated_type: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                     parent: None,
+                    module: None,
                     identifier: "BaseChoice".into(),
                     constraints: vec![]
                 }),
