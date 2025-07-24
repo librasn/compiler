@@ -6,7 +6,7 @@ use std::fmt::Debug;
 
 use crate::{
     error::CompilerError,
-    intermediate::{ExtensibilityEnvironment, TaggingEnvironment, ToplevelDefinition},
+    intermediate::{Assignment, ExtensibilityEnvironment, TaggingEnvironment},
 };
 
 use self::error::GeneratorError;
@@ -30,13 +30,13 @@ pub trait Backend: Default {
     /// - `top_level_declarations` vector of [ToplevelDefinition]s that are defined in the ASN.1 module
     fn generate_module<'a>(
         &mut self,
-        top_level_declarations: Vec<ToplevelDefinition<'a>>,
+        top_level_declarations: Vec<Assignment<'a>>,
     ) -> Result<GeneratedModule, GeneratorError>;
 
     /// generates bindings for a single ASN.1 item
     /// ### Params
     /// - `tld` [ToplevelDefinition] for which the bindings should be generated
-    fn generate<'a>(&self, tld: ToplevelDefinition<'a>) -> Result<String, GeneratorError>;
+    fn generate<'a>(&self, tld: Assignment<'a>) -> Result<String, GeneratorError>;
 
     /// Formats the bindings using the language- or framework-specific linters.
     /// For example, the Rust backend uses rustfmt for formatting bindings.

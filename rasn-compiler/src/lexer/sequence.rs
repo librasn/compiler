@@ -132,7 +132,6 @@ pub fn sequence_or_set_member(input: Input<'_>) -> ParserResult<'_, SequenceOrSe
         skip_ws_and_comments(identifier),
         opt(asn_tag),
         skip_ws_and_comments(asn1_type),
-        opt(constraints),
         skip_ws_and_comments(optionality(asn1_value)),
     ))
     .parse(input)

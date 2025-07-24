@@ -1,16 +1,50 @@
-use std::{borrow::Cow, collections::HashMap};
+use std::{borrow::Cow, collections::HashMap, fmt::Display, ops::Add};
 
 use crate::{
-    intermediate::{macros::ToplevelMacroDefinition, AsnModule, ToplevelTypeDefinition, ToplevelValueDefinition}, linker::error::LinkerError, prelude::{ir::{ObjectClassAssignment, ToplevelInformationDefinition}, ToplevelDefinition}
+    intermediate::{macros::MacroDefinition, AsnModule, TypeAssignment, ValueAssignment},
+    linker::error::LinkerError,
+    prelude::{
+        ir::{ObjectClassAssignment, ObjectOrObjectSetAssignment},
+        Assignment,
+    },
 };
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-struct SymbolId<'a> {
-    module_reference: Cow<'a, str>,
-    type_reference: Cow<'a, str>,
+pub(super) struct SymbolId<'a> {
+    pub module_reference: Cow<'a, str>,
+    pub type_reference: Cow<'a, str>,
+    pub scope: Scope<'a>,
 }
 
-pub(super) struct SymbolTable<'a>(HashMap<SymbolId<'a>, ToplevelDefinition<'a>>);
+impl Display for SymbolId<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        if let Scope::Local(id) = &self.scope {
+            write!(f, "{}.{}.{id}", self.module_reference, self.type_reference)
+        } else {
+            write!(f, "{}.{}", self.module_reference, self.type_reference)
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub(super) enum Scope<'a> {
+    Module,
+    Local(Cow<'a, str>),
+}
+
+impl<'a> Add<Scope<'a>> for Scope<'a> {
+    type Output = Scope<'a>;
+
+    fn add(self, rhs: Scope<'a>) -> Self::Output {
+        match (self, rhs) {
+            (Self::Module, Self::Module) => Self::Module,
+            (Self::Local(p), Self::Module) | (Self::Module, Self::Local(p)) => Self::Local(p),
+            (Self::Local(p1), Self::Local(p2)) => Self::Local(Cow::Owned(format!("{p1}.{p2}"))),
+        }
+    }
+}
+
+pub(super) struct SymbolTable<'a>(HashMap<SymbolId<'a>, Assignment<'a>>);
 
 impl<'a> SymbolTable<'a> {
     pub(super) fn new(modules: Vec<AsnModule<'a>>) -> Result<Self, LinkerError> {
@@ -20,44 +54,39 @@ impl<'a> SymbolTable<'a> {
                 let symbol_id = SymbolId {
                     module_reference: module.module_header.name.clone(),
                     type_reference: tld.name(),
+                    scope: Scope::Module,
                 };
                 symbol_table.insert(symbol_id, tld);
             }
         }
         let mut slf = Self(symbol_table);
-        slf.resolve_references()?;
+        slf.unnest()?;
         Ok(slf)
     }
 
-    fn resolve_references(&mut self) -> Result<(), LinkerError> {
-        
+    fn unnest(&mut self) -> Result<(), LinkerError> {
+        Ok(())
     }
 
-    pub(super) fn as_top_level_type(
-        &self,
-        id: &SymbolId<'a>,
-    ) -> Option<&ToplevelTypeDefinition<'a>> {
+    pub(super) fn as_top_level_type(&self, id: &SymbolId<'a>) -> Option<&TypeAssignment<'a>> {
         self.0.get(id).and_then(|elem| match elem {
-            ToplevelDefinition::Type(t) => Some(t),
-            _ => None
+            Assignment::Type(t) => Some(t),
+            _ => None,
         })
     }
-    pub(super) fn as_top_level_value(
-        &self,
-        id: &SymbolId<'a>,
-    ) -> Option<&ToplevelValueDefinition<'a>> {
+    pub(super) fn as_top_level_value(&self, id: &SymbolId<'a>) -> Option<&ValueAssignment<'a>> {
         self.0.get(id).and_then(|elem| match elem {
-            ToplevelDefinition::Value(t) => Some(t),
-            _ => None
+            Assignment::Value(t) => Some(t),
+            _ => None,
         })
     }
     pub(super) fn as_top_level_object(
         &self,
         id: &SymbolId<'a>,
-    ) -> Option<&ToplevelInformationDefinition<'a>> {
+    ) -> Option<&ObjectOrObjectSetAssignment<'a>> {
         self.0.get(id).and_then(|elem| match elem {
-            ToplevelDefinition::Object(t) => Some(t),
-            _ => None
+            Assignment::Object(t) => Some(t),
+            _ => None,
         })
     }
     pub(super) fn as_top_level_class(
@@ -65,17 +94,14 @@ impl<'a> SymbolTable<'a> {
         id: &SymbolId<'a>,
     ) -> Option<&ObjectClassAssignment<'a>> {
         self.0.get(id).and_then(|elem| match elem {
-            ToplevelDefinition::Class(t) => Some(t),
-            _ => None
+            Assignment::Class(t) => Some(t),
+            _ => None,
         })
     }
-    pub(super) fn as_top_level_macro(
-        &self,
-        id: &SymbolId<'a>,
-    ) -> Option<&ToplevelMacroDefinition<'a>> {
+    pub(super) fn as_top_level_macro(&self, id: &SymbolId<'a>) -> Option<&MacroDefinition<'a>> {
         self.0.get(id).and_then(|elem| match elem {
-            ToplevelDefinition::Macro(t) => Some(t),
-            _ => None
+            Assignment::Macro(t) => Some(t),
+            _ => None,
         })
     }
 }

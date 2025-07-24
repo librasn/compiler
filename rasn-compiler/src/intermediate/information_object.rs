@@ -26,7 +26,7 @@ impl<'a> ObjectClassAssignment<'a> {
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct ToplevelInformationDefinition<'a> {
+pub struct ObjectOrObjectSetAssignment<'a> {
     pub comments: Cow<'a, str>,
     pub name: Cow<'a, str>,
     pub parameterization: Option<Parameterization<'a>>,
@@ -35,7 +35,7 @@ pub struct ToplevelInformationDefinition<'a> {
     pub module_header: Option<Rc<RefCell<ModuleHeader<'a>>>>,
 }
 
-impl<'a> From<(&'a str, ASN1Information<'a>, &'a str)> for ToplevelInformationDefinition<'a> {
+impl<'a> From<(&'a str, ASN1Information<'a>, &'a str)> for ObjectOrObjectSetAssignment<'a> {
     fn from(value: (&'a str, ASN1Information<'a>, &'a str)) -> Self {
         Self {
             comments: Cow::Borrowed(""),
@@ -56,7 +56,7 @@ pub enum ClassLink<'a> {
     ByReference(ObjectClassDefn<'a>),
 }
 
-impl<'a> ToplevelInformationDefinition<'a> {
+impl<'a> ObjectOrObjectSetAssignment<'a> {
     pub fn pdu(&self) -> &ASN1Information {
         &self.value
     }
@@ -69,7 +69,7 @@ impl<'a>
         Option<Parameterization<'a>>,
         &'a str,
         InformationObjectFields<'a>,
-    )> for ToplevelInformationDefinition<'a>
+    )> for ObjectOrObjectSetAssignment<'a>
 {
     fn from(
         value: (
@@ -101,7 +101,7 @@ impl<'a>
         Option<Parameterization<'a>>,
         &'a str,
         ObjectSet<'a>,
-    )> for ToplevelInformationDefinition<'a>
+    )> for ObjectOrObjectSetAssignment<'a>
 {
     fn from(
         value: (

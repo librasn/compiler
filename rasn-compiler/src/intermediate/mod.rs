@@ -15,17 +15,17 @@ pub mod parameterization;
 pub mod types;
 pub mod utils;
 
-use std::{borrow::Cow, cell::RefCell, collections::BTreeMap, marker::PhantomData, ops::Add, rc::Rc};
+use std::{borrow::Cow, cell::RefCell, collections::BTreeMap, ops::Add, rc::Rc};
 
-use crate::{common::{Reference, INTERNAL_IO_FIELD_REF_TYPE_NAME_PREFIX}, prelude::ir::Parameter};
+use crate::{common::INTERNAL_IO_FIELD_REF_TYPE_NAME_PREFIX, prelude::ir::Parameter};
 use constraints::Constraint;
 use error::{GrammarError, GrammarErrorType};
 use information_object::{
-    ObjectClassAssignment, ObjectClassFieldType, ToplevelInformationDefinition,
+    ObjectClassAssignment, ObjectClassFieldType, ObjectOrObjectSetAssignment,
 };
 #[cfg(test)]
 use internal_macros::EnumDebug;
-use macros::ToplevelMacroDefinition;
+use macros::MacroDefinition;
 use parameterization::Parameterization;
 use quote::{quote, ToTokens, TokenStreamExt};
 use types::*;
@@ -555,12 +555,15 @@ impl From<(&str, u128)> for ObjectIdentifierArc {
 #[derive(Debug, Clone, PartialEq)]
 pub struct AsnModule<'a> {
     pub module_header: ModuleHeader<'a>,
-    pub top_level_definitions: Vec<ToplevelDefinition<'a>>
+    pub top_level_definitions: Vec<Assignment<'a>>,
 }
 
-impl<'a> From<(ModuleHeader<'a>, Vec<ToplevelDefinition<'a>>)> for AsnModule<'a> {
-    fn from(value: (ModuleHeader<'a>, Vec<ToplevelDefinition<'a>>)) -> Self {
-        AsnModule { module_header: value.0, top_level_definitions: value.1 }
+impl<'a> From<(ModuleHeader<'a>, Vec<Assignment<'a>>)> for AsnModule<'a> {
+    fn from(value: (ModuleHeader<'a>, Vec<Assignment<'a>>)) -> Self {
+        AsnModule {
+            module_header: value.0,
+            top_level_definitions: value.1,
+        }
     }
 }
 
@@ -572,22 +575,22 @@ impl<'a> From<(ModuleHeader<'a>, Vec<ToplevelDefinition<'a>>)> for AsnModule<'a>
 #[cfg_attr(test, derive(EnumDebug))]
 #[cfg_attr(not(test), derive(Debug))]
 #[derive(Clone, PartialEq)]
-pub enum ToplevelDefinition<'a> {
+pub enum Assignment<'a> {
     /// Definition for a custom type based on ASN.1's built-in type.
-    Type(ToplevelTypeDefinition<'a>),
+    Type(TypeAssignment<'a>),
     /// Definition for a value using custom or built-in type.
-    Value(ToplevelValueDefinition<'a>),
+    Value(ValueAssignment<'a>),
     /// Definition for a object class as introduced in ITU-T X.681 9.
     Class(ObjectClassAssignment<'a>),
     /// Definition for an object or object set, as introduced in ITU-T X.681 11.
-    Object(ToplevelInformationDefinition<'a>),
+    Object(ObjectOrObjectSetAssignment<'a>),
     /// Definition for a macro.
-    Macro(ToplevelMacroDefinition<'a>),
+    Macro(MacroDefinition<'a>),
 }
 
-impl<'a> ToplevelDefinition<'a> {
+impl<'a> Assignment<'a> {
     pub(crate) fn has_enum_value(&self, type_name: Option<&str>, identifier: &str) -> bool {
-        if let ToplevelDefinition::Type(ToplevelTypeDefinition {
+        if let Assignment::Type(TypeAssignment {
             name,
             ty: ASN1Type::Enumerated(e),
             ..
@@ -604,19 +607,19 @@ impl<'a> ToplevelDefinition<'a> {
 
     pub(crate) fn set_module_header(&mut self, module_header: Rc<RefCell<ModuleHeader<'a>>>) {
         match self {
-            ToplevelDefinition::Type(ref mut t) => {
+            Assignment::Type(ref mut t) => {
                 t.module_header = Some(module_header);
             }
-            ToplevelDefinition::Value(ref mut v) => {
+            Assignment::Value(ref mut v) => {
                 v.module_header = Some(module_header);
             }
-            ToplevelDefinition::Class(ref mut c) => {
+            Assignment::Class(ref mut c) => {
                 c.module_header = Some(module_header);
             }
-            ToplevelDefinition::Object(ref mut o) => {
+            Assignment::Object(ref mut o) => {
                 o.module_header = Some(module_header);
             }
-            ToplevelDefinition::Macro(ref mut m) => {
+            Assignment::Macro(ref mut m) => {
                 m.module_header = Some(module_header);
             }
         }
@@ -624,16 +627,16 @@ impl<'a> ToplevelDefinition<'a> {
 
     pub(crate) fn get_module_header(&self) -> Option<Rc<RefCell<ModuleHeader<'a>>>> {
         match self {
-            ToplevelDefinition::Type(ref t) => t.module_header.as_ref().cloned(),
-            ToplevelDefinition::Value(ref v) => v.module_header.as_ref().cloned(),
-            ToplevelDefinition::Class(ref c) => c.module_header.as_ref().cloned(),
-            ToplevelDefinition::Object(ref o) => o.module_header.as_ref().cloned(),
-            ToplevelDefinition::Macro(ref m) => m.module_header.as_ref().cloned(),
+            Assignment::Type(ref t) => t.module_header.as_ref().cloned(),
+            Assignment::Value(ref v) => v.module_header.as_ref().cloned(),
+            Assignment::Class(ref c) => c.module_header.as_ref().cloned(),
+            Assignment::Object(ref o) => o.module_header.as_ref().cloned(),
+            Assignment::Macro(ref m) => m.module_header.as_ref().cloned(),
         }
     }
 
     pub(crate) fn apply_tagging_environment(&mut self, environment: &TaggingEnvironment) {
-        if let (env, ToplevelDefinition::Type(ty)) = (environment, self) {
+        if let (env, Assignment::Type(ty)) = (environment, self) {
             ty.tag = ty.tag.as_ref().map(|t| AsnTag {
                 environment: env + &t.environment,
                 tag_class: t.tag_class,
@@ -683,11 +686,11 @@ impl<'a> ToplevelDefinition<'a> {
     /// ```
     pub fn name(&self) -> Cow<'a, str> {
         match self {
-            ToplevelDefinition::Class(c) => c.name.clone(),
-            ToplevelDefinition::Object(o) => o.name.clone(),
-            ToplevelDefinition::Type(t) => t.name.clone(),
-            ToplevelDefinition::Value(v) => v.name.clone(),
-            ToplevelDefinition::Macro(v) => v.name.clone(),
+            Assignment::Class(c) => c.name.clone(),
+            Assignment::Object(o) => o.name.clone(),
+            Assignment::Type(t) => t.name.clone(),
+            Assignment::Value(v) => v.name.clone(),
+            Assignment::Macro(v) => v.name.clone(),
         }
     }
 }
@@ -695,7 +698,7 @@ impl<'a> ToplevelDefinition<'a> {
 /// Represents a top-level definition of a value
 /// using a custom or built-in ASN.1 type.
 #[derive(Debug, Clone, PartialEq)]
-pub struct ToplevelValueDefinition<'a> {
+pub struct ValueAssignment<'a> {
     pub comments: Cow<'a, str>,
     pub name: Cow<'a, str>,
     pub associated_type: ASN1Type<'a>,
@@ -704,7 +707,24 @@ pub struct ToplevelValueDefinition<'a> {
     pub module_header: Option<Rc<RefCell<ModuleHeader<'a>>>>,
 }
 
-impl<'a> From<(&'a str, ASN1Value<'a>, ASN1Type<'a>)> for ToplevelValueDefinition<'a> {
+impl<'a> ValueAssignment<'a> {
+    pub fn with_name_value_type(
+        name: Cow<'a, str>,
+        value: ASN1Value<'a>,
+        associated_type: ASN1Type<'a>,
+    ) -> Self {
+        Self {
+            comments: Cow::Borrowed(""),
+            name,
+            associated_type,
+            parameterization: None,
+            value,
+            module_header: None,
+        }
+    }
+}
+
+impl<'a> From<(&'a str, ASN1Value<'a>, ASN1Type<'a>)> for ValueAssignment<'a> {
     fn from(value: (&'a str, ASN1Value<'a>, ASN1Type<'a>)) -> Self {
         Self {
             comments: Cow::Borrowed(""),
@@ -724,7 +744,7 @@ impl<'a>
         Option<Parameterization<'a>>,
         ASN1Type<'a>,
         ASN1Value<'a>,
-    )> for ToplevelValueDefinition<'a>
+    )> for ValueAssignment<'a>
 {
     fn from(
         value: (
@@ -747,7 +767,7 @@ impl<'a>
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct ToplevelTypeDefinition<'a> {
+pub struct TypeAssignment<'a> {
     pub comments: Cow<'a, str>,
     pub tag: Option<AsnTag>,
     pub name: Cow<'a, str>,
@@ -756,13 +776,24 @@ pub struct ToplevelTypeDefinition<'a> {
     pub module_header: Option<Rc<RefCell<ModuleHeader<'a>>>>,
 }
 
-impl<'a> ToplevelTypeDefinition<'a> {
+impl<'a> TypeAssignment<'a> {
     pub fn pdu(&self) -> &ASN1Type<'a> {
         &self.ty
     }
+
+    pub fn with_name_and_type(name: Cow<'a, str>, ty: ASN1Type<'a>) -> Self {
+        Self {
+            comments: Cow::Borrowed(""),
+            tag: None,
+            name,
+            ty,
+            parameterization: None,
+            module_header: None,
+        }
+    }
 }
 
-impl<'a> From<(&'a str, ASN1Type<'a>)> for ToplevelTypeDefinition<'a> {
+impl<'a> From<(&'a str, ASN1Type<'a>)> for TypeAssignment<'a> {
     fn from(value: (&'a str, ASN1Type<'a>)) -> Self {
         Self {
             comments: Cow::Borrowed(""),
@@ -781,7 +812,7 @@ impl<'a>
         &'a str,
         Option<Parameterization<'a>>,
         (Option<AsnTag>, ASN1Type<'a>),
-    )> for ToplevelTypeDefinition<'a>
+    )> for TypeAssignment<'a>
 {
     fn from(
         value: (
@@ -998,6 +1029,21 @@ impl<'a> ASN1Type<'a> {
                 | ASN1Type::ChoiceSelectionType(_)
                 | ASN1Type::ObjectClassField(_)
         )
+    }
+
+    pub fn is_constrained_type(&self) -> bool {
+        self.constraints().map(|c| !c.is_empty()).unwrap_or(false)
+    }
+
+    pub fn is_constructed_type(&self) -> bool {
+        match self {
+            ASN1Type::Choice(_)
+            | ASN1Type::Sequence(_)
+            | ASN1Type::SequenceOf(_)
+            | ASN1Type::Set(_)
+            | ASN1Type::SetOf(_) => true,
+            _ => false,
+        }
     }
 
     pub fn constraints(&self) -> Option<&Vec<Constraint>> {
@@ -1227,6 +1273,18 @@ pub enum ASN1Value<'a> {
     },
 }
 
+impl<'a> ASN1Value<'a> {
+    pub fn is_constructed_value(&self) -> bool {
+        match self {
+            ASN1Value::Choice { .. }
+            | ASN1Value::LinkedArrayLikeValue(_)
+            | ASN1Value::LinkedStructLikeValue(_)
+            | ASN1Value::SequenceOrSet(_) => true,
+            _ => false,
+        }
+    }
+}
+
 /// Representation of a field value of a struct-like ASN1 value
 #[cfg_attr(test, derive(EnumDebug))]
 #[cfg_attr(not(test), derive(Debug))]
@@ -1355,10 +1413,20 @@ pub struct DeclarationElsewhere<'a> {
     pub constraints: Vec<Constraint<'a>>,
 }
 
-impl<'a> From<(Option<&'a str>, DefinedType<'a>, Option<Vec<Constraint<'a>>>)>
-    for DeclarationElsewhere<'a>
+impl<'a>
+    From<(
+        Option<&'a str>,
+        DefinedType<'a>,
+        Option<Vec<Constraint<'a>>>,
+    )> for DeclarationElsewhere<'a>
 {
-    fn from(value: (Option<&'a str>, DefinedType<'a>, Option<Vec<Constraint<'a>>>)) -> Self {
+    fn from(
+        value: (
+            Option<&'a str>,
+            DefinedType<'a>,
+            Option<Vec<Constraint<'a>>>,
+        ),
+    ) -> Self {
         DeclarationElsewhere {
             parent: value.0.map(Cow::Borrowed),
             identifier: value.1,
@@ -1439,14 +1507,6 @@ impl<'a> Into<DefinedValue<'a>> for &'a str {
     fn into(self) -> DefinedValue<'a> {
         DefinedValue::ValueReference(Cow::Borrowed(self))
     }
-}
-
-#[derive(Debug, Clone, PartialEq)]
-pub struct Lexed;
-
-impl<'a> Reference<'a> for Lexed {
-    type DefinedType = DefinedType<'a>;
-    type DefinedValue = DefinedValue<'a>;
 }
 
 /// Tag classes

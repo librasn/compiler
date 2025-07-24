@@ -166,7 +166,7 @@ fn parses_toplevel_crossrefering_declaration() {
     .1;
     assert_eq!(
         tld,
-        ToplevelTypeDefinition {
+        TypeAssignment {
             parameterization: None,
             comments: " Comments go here".into(),
             name: "EventZone".into(),
@@ -231,7 +231,7 @@ fn parses_anonymous_sequence_of_declaration() {
     .1;
     assert_eq!(
         tld,
-        ToplevelTypeDefinition {
+        TypeAssignment {
             parameterization: None,
             comments: "Comments".into(),
             name: "InterferenceManagementZones".into(),
@@ -274,7 +274,7 @@ fn parses_object_set_value() {
         )
         .unwrap()
         .1,
-        ToplevelInformationDefinition {
+        ObjectOrObjectSetAssignment {
             comments: "comments".into(),
             name: "CpmContainers".into(),
             module_header: None,
@@ -339,7 +339,7 @@ fn parses_empty_extensible_object_set() {
         )
         .unwrap()
         .1,
-        ToplevelInformationDefinition {
+        ObjectOrObjectSetAssignment {
             comments: "".into(),
             module_header: None,
             parameterization: None,
@@ -418,7 +418,7 @@ fn parses_parameterized_declaration() {
         )
         .unwrap()
         .1,
-        ToplevelTypeDefinition {
+        TypeAssignment {
             comments: "".into(),
             module_header: None,
             name: "RegionalExtension".into(),
@@ -492,7 +492,7 @@ fn parses_choice() {
         )
         .unwrap()
         .1,
-        ToplevelTypeDefinition {
+        TypeAssignment {
             comments: "".into(),
             module_header: None,
             name: "Choice-example".into(),
@@ -532,7 +532,7 @@ fn parses_choice() {
 #[test]
 fn parses_sequence_of_value() {
     assert_eq!(
-        ToplevelValueDefinition {
+        ValueAssignment {
             comments: "".into(),
             name: "test-Sequence".into(),
             associated_type: ASN1Type::SequenceOf(SequenceOrSetOf {

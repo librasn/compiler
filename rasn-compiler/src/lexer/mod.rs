@@ -21,7 +21,7 @@ use nom::{
     Parser,
 };
 
-use crate::intermediate::macros::ToplevelMacroDefinition;
+use crate::intermediate::macros::MacroDefinition;
 use crate::lexer::macros::macro_definition;
 use crate::{
     input::{context_boundary, Input},
@@ -91,15 +91,12 @@ pub(crate) fn asn_module<'a>(input: Input<'a>) -> ParserResult<'a, AsnModule<'a>
         module_header::module_header,
         terminated(
             many0(skip_ws(alt((
-                map(object_class_assignement, ToplevelDefinition::Class),
-                map(
-                    top_level_information_declaration,
-                    ToplevelDefinition::Object,
-                ),
-                map(top_level_type_declaration, ToplevelDefinition::Type),
-                map(top_level_value_declaration, ToplevelDefinition::Value),
+                map(object_class_assignement, Assignment::Class),
+                map(top_level_information_declaration, Assignment::Object),
+                map(top_level_type_declaration, Assignment::Type),
+                map(top_level_value_declaration, Assignment::Value),
                 map(macro_definition, |m| {
-                    ToplevelDefinition::Macro(ToplevelMacroDefinition::from(m))
+                    Assignment::Macro(MacroDefinition::from(m))
                 }),
             )))),
             context_boundary(skip_ws_and_comments(alt((end, encoding_control)))),
@@ -125,7 +122,7 @@ fn end(input: Input<'_>) -> ParserResult<'_, &str> {
     .parse(input)
 }
 
-pub fn top_level_type_declaration(input: Input<'_>) -> ParserResult<'_, ToplevelTypeDefinition> {
+pub fn top_level_type_declaration(input: Input<'_>) -> ParserResult<'_, TypeAssignment> {
     into((
         skip_ws(many0(comment)),
         skip_ws(type_reference),
@@ -137,7 +134,7 @@ pub fn top_level_type_declaration(input: Input<'_>) -> ParserResult<'_, Toplevel
 
 pub fn top_level_information_declaration(
     input: Input<'_>,
-) -> ParserResult<'_, ToplevelInformationDefinition> {
+) -> ParserResult<'_, ObjectOrObjectSetAssignment> {
     skip_ws(alt((
         top_level_information_object_declaration,
         top_level_object_set_declaration,
@@ -234,7 +231,7 @@ pub fn elsewhere_declared_type(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
     .parse(input)
 }
 
-fn top_level_value_declaration(input: Input<'_>) -> ParserResult<'_, ToplevelValueDefinition> {
+fn top_level_value_declaration(input: Input<'_>) -> ParserResult<'_, ValueAssignment> {
     alt((
         into((
             skip_ws(many0(comment)),
@@ -250,7 +247,7 @@ fn top_level_value_declaration(input: Input<'_>) -> ParserResult<'_, ToplevelVal
 
 fn top_level_information_object_declaration(
     input: Input<'_>,
-) -> ParserResult<'_, ToplevelInformationDefinition> {
+) -> ParserResult<'_, ObjectOrObjectSetAssignment> {
     into((
         skip_ws(many0(comment)),
         skip_ws(context_boundary(identifier)),
@@ -263,7 +260,7 @@ fn top_level_information_object_declaration(
 
 fn top_level_object_set_declaration(
     input: Input<'_>,
-) -> ParserResult<'_, ToplevelInformationDefinition> {
+) -> ParserResult<'_, ObjectOrObjectSetAssignment> {
     into((
         skip_ws(many0(comment)),
         skip_ws(context_boundary(identifier)),
@@ -282,12 +279,9 @@ fn eof_comments() {
             module_header::module_header,
             terminated(
                 many0(skip_ws(alt((
-                    map(
-                        top_level_information_declaration,
-                        ToplevelDefinition::Object,
-                    ),
-                    map(top_level_type_declaration, ToplevelDefinition::Type),
-                    map(top_level_value_declaration, ToplevelDefinition::Value),
+                    map(top_level_information_declaration, Assignment::Object,),
+                    map(top_level_type_declaration, Assignment::Type),
+                    map(top_level_value_declaration, Assignment::Value),
                 )))),
                 context_boundary(skip_ws_and_comments(into_inner(preceded(
                     tag(END),

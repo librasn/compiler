@@ -14,8 +14,8 @@ use crate::{
         },
         information_object::{InformationObjectField, ObjectClassDefn},
         types::{Choice, ChoiceOption, Enumerated, SequenceOrSet, SequenceOrSetMember},
-        ASN1Type, ASN1Value, AsnTag, CharacterStringType, IntegerType, TagClass,
-        TaggingEnvironment, ToplevelDefinition, ToplevelTypeDefinition,
+        ASN1Type, ASN1Value, AsnTag, Assignment, CharacterStringType, IntegerType, TagClass,
+        TaggingEnvironment, TypeAssignment,
     },
     prelude::ir::MemberOrOption,
 };
@@ -340,16 +340,14 @@ impl Rasn {
             FormattedMembers::default(),
             |mut acc, (i, m)| {
                 let nested = if Self::needs_unnesting(&m.ty) {
-                    Some(
-                        self.generate_tld(ToplevelDefinition::Type(ToplevelTypeDefinition {
-                            parameterization: None,
-                            comments: INNER_TYPE_COMMENT.into(),
-                            name: Cow::Owned(self.inner_name(&m.name, parent_name).to_string()),
-                            ty: m.ty.clone(),
-                            tag: None,
-                            module_header: None,
-                        })),
-                    )
+                    Some(self.generate_tld(Assignment::Type(TypeAssignment {
+                        parameterization: None,
+                        comments: INNER_TYPE_COMMENT.into(),
+                        name: Cow::Owned(self.inner_name(&m.name, parent_name).to_string()),
+                        ty: m.ty.clone(),
+                        tag: None,
+                        module_header: None,
+                    })))
                     .transpose()
                 } else {
                     Ok(None)
@@ -433,16 +431,14 @@ impl Rasn {
             FormattedOptions::default(),
             |mut acc, (i, o)| {
                 let nested = if Self::needs_unnesting(&o.ty) {
-                    Some(
-                        self.generate_tld(ToplevelDefinition::Type(ToplevelTypeDefinition {
-                            parameterization: None,
-                            comments: INNER_TYPE_COMMENT.into(),
-                            name: Cow::Owned(self.inner_name(&o.name, parent_name).to_string()),
-                            ty: o.ty.clone(),
-                            tag: None,
-                            module_header: None,
-                        })),
-                    )
+                    Some(self.generate_tld(Assignment::Type(TypeAssignment {
+                        parameterization: None,
+                        comments: INNER_TYPE_COMMENT.into(),
+                        name: Cow::Owned(self.inner_name(&o.name, parent_name).to_string()),
+                        ty: o.ty.clone(),
+                        tag: None,
+                        module_header: None,
+                    })))
                     .transpose()
                 } else {
                     Ok(None)
@@ -497,13 +493,13 @@ impl Rasn {
     ) -> Result<FormattedMemberOrOption, GeneratorError> {
         let (mut all_constraints, mut formatted_type_name) = self.constraints_and_type_name(
             member.ty(),
-            member.name(),
+            &member.name(),
             parent_name,
             member.is_recursive(),
         )?;
         if Self::needs_unnesting(member.ty()) {
             formatted_type_name = self
-                .inner_name(member.name(), parent_name)
+                .inner_name(&member.name(), parent_name)
                 .to_token_stream();
             if member.is_recursive() {
                 formatted_type_name = boxed_type(formatted_type_name);
@@ -531,13 +527,13 @@ impl Rasn {
         if let Some(default) = default_annotation {
             annotation_items.push(default);
         }
-        if name != member.name()
+        if name != &member.name()
             || member
                 .name()
                 .starts_with(INTERNAL_EXTENSION_GROUP_NAME_PREFIX)
         {
             annotation_items.push(self.format_identifier_annotation(
-                member.name(),
+                &member.name(),
                 "",
                 member.ty(),
             ));
@@ -1319,7 +1315,7 @@ impl Rasn {
 
     pub(super) fn format_name_and_common_annotations<'a>(
         &self,
-        tld: &ToplevelTypeDefinition,
+        tld: &TypeAssignment,
     ) -> Result<(TokenStream, Vec<TokenStream>), GeneratorError> {
         let name = self.to_rust_title_case(&tld.name);
         let mut annotations = vec![quote!(delegate), self.format_tag(tld.tag.as_ref(), false)];
@@ -1385,7 +1381,7 @@ impl Rasn {
 
     pub(super) fn type_mismatch_error<'a, T>(
         &self,
-        tld: ToplevelTypeDefinition<'a>,
+        tld: TypeAssignment<'a>,
         expected_type: &str,
     ) -> Result<T, GeneratorError> {
         Err(GeneratorError::new(

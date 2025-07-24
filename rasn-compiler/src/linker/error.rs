@@ -27,6 +27,7 @@ impl LinkerError {
 #[derive(Debug, Clone, PartialEq)]
 pub enum LinkerErrorType {
     MissingDependency,
+    RecursionLimitExceeded,
     InvalidConstraintsError,
     Unknown,
 }

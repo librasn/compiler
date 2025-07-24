@@ -3,8 +3,8 @@ use std::fmt::Display;
 
 use crate::{
     lexer::error::LexerError,
+    linker::error::LinkerError,
     prelude::{ir::GrammarError, GeneratorError},
-    validator::error::LinkerError,
 };
 
 #[derive(Debug, Clone, PartialEq)]

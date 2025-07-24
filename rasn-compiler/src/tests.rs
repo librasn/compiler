@@ -2,7 +2,7 @@ use std::{cell::RefCell, io::Write, rc::Rc};
 
 use nom::FindSubstring;
 
-use crate::{intermediate::AsnModule, validator::Validator};
+use crate::{intermediate::AsnModule, linker::Validator};
 
 /// This function generates a stepwise-end-to-end test for a given ASN.1 module,
 /// i.e. it generates test functions with corresponding inputs and expected outputs for

@@ -44,11 +44,22 @@ pub trait IterNameTypes {
     fn iter_name_types(&self) -> impl Iterator<Item = (&str, &ASN1Type)>;
 }
 
+pub trait IterMembers<'a> {
+    type Member: MemberOrOption<'a>;
+    fn iter_members<'b>(&'b self) -> impl Iterator<Item = &'b Self::Member>
+    where
+        'a: 'b;
+    fn iter_mut_members<'b>(&'b mut self) -> impl Iterator<Item = &'b mut Self::Member>
+    where
+        'a: 'b;
+}
+
 /// Convenience trait for processing members of constructed types (`SEQUENCE`, `SET`) and `CHOICE`s.
 pub trait MemberOrOption<'a> {
     const IS_CHOICE_OPTION: bool;
-    fn name(&self) -> &str;
+    fn name(&self) -> Cow<'a, str>;
     fn ty(&self) -> &ASN1Type<'a>;
+    fn ty_mut(&mut self) -> &mut ASN1Type<'a>;
     fn constraints(&self) -> &[Constraint<'a>];
     fn is_recursive(&self) -> bool;
     fn tag(&self) -> Option<&AsnTag>;
@@ -371,6 +382,22 @@ impl<'a> IterNameTypes for SequenceOrSet<'a> {
     }
 }
 
+impl<'a> IterMembers<'a> for SequenceOrSet<'a> {
+    type Member = SequenceOrSetMember<'a>;
+
+    fn iter_members<'b>(&'b self) -> impl Iterator<Item = &'b Self::Member>
+    where
+        'a: 'b {
+        self.members.iter()
+    }
+
+    fn iter_mut_members<'b>(&'b mut self) -> impl Iterator<Item = &'b mut Self::Member>
+    where
+        'a: 'b {
+        self.members.iter_mut()
+    }
+}
+
 impl<'a>
     From<(
         (
@@ -508,12 +535,13 @@ pub struct SequenceOrSetMember<'a> {
     pub ty: ASN1Type<'a>,
     pub optionality: Optionality<ASN1Value<'a>>,
     pub is_recursive: bool,
+    // TODO: Remove?
     pub constraints: Vec<Constraint<'a>>,
 }
 
 impl<'a> MemberOrOption<'a> for SequenceOrSetMember<'a> {
-    fn name(&self) -> &str {
-        &self.name
+    fn name(&self) -> Cow<'a, str> {
+        self.name.clone()
     }
 
     fn ty(&self) -> &ASN1Type<'a> {
@@ -533,6 +561,10 @@ impl<'a> MemberOrOption<'a> for SequenceOrSetMember<'a> {
     }
 
     const IS_CHOICE_OPTION: bool = false;
+    
+    fn ty_mut(&mut self) -> &mut ASN1Type<'a> {
+        &mut self.ty
+    }
 }
 
 impl<'a>
@@ -540,7 +572,6 @@ impl<'a>
         &'a str,
         Option<AsnTag>,
         ASN1Type<'a>,
-        Option<Vec<Constraint<'a>>>,
         Optionality<ASN1Value<'a>>,
     )> for SequenceOrSetMember<'a>
 {
@@ -549,7 +580,6 @@ impl<'a>
             &'a str,
             Option<AsnTag>,
             ASN1Type<'a>,
-            Option<Vec<Constraint<'a>>>,
             Optionality<ASN1Value<'a>>,
         ),
     ) -> Self {
@@ -557,9 +587,9 @@ impl<'a>
             name: Cow::Borrowed(value.0),
             tag: value.1,
             ty: value.2,
-            optionality: value.4,
+            optionality: value.3,
             is_recursive: false,
-            constraints: value.3.unwrap_or_default(),
+            constraints: Vec::new(),
         }
     }
 }
@@ -577,6 +607,22 @@ pub struct Choice<'a> {
 impl<'a> IterNameTypes for Choice<'a> {
     fn iter_name_types(&self) -> impl Iterator<Item = (&str, &ASN1Type)> {
         self.options.iter().map(|o| (&*o.name, &o.ty))
+    }
+}
+
+impl<'a> IterMembers<'a> for Choice<'a> {
+    type Member = ChoiceOption<'a>;
+
+    fn iter_members<'b>(&'b self) -> impl Iterator<Item = &'b Self::Member>
+    where
+        'a: 'b {
+        self.options.iter()
+    }
+
+    fn iter_mut_members<'b>(&'b mut self) -> impl Iterator<Item = &'b mut Self::Member>
+    where
+        'a: 'b {
+        self.options.iter_mut()
     }
 }
 
@@ -641,8 +687,8 @@ pub struct ChoiceOption<'a> {
 }
 
 impl<'a> MemberOrOption<'a> for ChoiceOption<'a> {
-    fn name(&self) -> &str {
-        &self.name
+    fn name(&self) -> Cow<'a, str> {
+        self.name.clone()
     }
 
     fn ty(&self) -> &ASN1Type<'a> {
@@ -662,6 +708,10 @@ impl<'a> MemberOrOption<'a> for ChoiceOption<'a> {
     }
 
     const IS_CHOICE_OPTION: bool = true;
+    
+    fn ty_mut(&mut self) -> &mut ASN1Type<'a> {
+        &mut self.ty
+    }
 }
 
 impl<'a>

@@ -24,7 +24,7 @@ type EnumeralBody<'a> = (
     Option<Vec<Enumeral<'a>>>,
 );
 
-pub fn enumerated_value(input: Input<'_>) -> ParserResult<'_, ToplevelValueDefinition> {
+pub fn enumerated_value(input: Input<'_>) -> ParserResult<'_, ValueAssignment> {
     map(
         (
             skip_ws(many0(comment)),
@@ -33,7 +33,7 @@ pub fn enumerated_value(input: Input<'_>) -> ParserResult<'_, ToplevelValueDefin
             skip_ws_and_comments(asn1_type),
             preceded(assignment, skip_ws_and_comments(value_reference)),
         ),
-        |(c, n, params, p, e)| ToplevelValueDefinition {
+        |(c, n, params, p, e)| ValueAssignment {
             comments: Cow::Owned(c.into_iter().fold(String::new(), |mut acc, s| {
                 acc = acc + "\n" + s;
                 acc
@@ -345,7 +345,7 @@ mod tests {
             )
             .unwrap()
             .1,
-            ToplevelValueDefinition {
+            ValueAssignment {
                 comments: Cow::Borrowed("\n Alias of another enumeral"),
                 name: Cow::from("enumeral-alias"),
                 associated_type: ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {

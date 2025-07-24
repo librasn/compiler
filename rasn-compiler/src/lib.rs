@@ -8,7 +8,7 @@ mod lexer;
 mod linker;
 #[cfg(test)]
 mod tests;
-mod validator;
+//mod validator;
 
 use std::{
     cell::RefCell,
@@ -21,10 +21,10 @@ use std::{
 
 use error::CompilerError;
 use generator::Backend;
-use intermediate::ToplevelDefinition;
+use intermediate::Assignment;
 use lexer::{asn_spec, error::LexerError};
+use linker::Validator;
 use prelude::{GeneratorError, GeneratorErrorType};
-use validator::Validator;
 
 pub type RasnCompiler<S> = Compiler<generator::rasn::Rasn, S>;
 pub type TsCompiler<S> = Compiler<generator::typescript::Typescript, S>;
@@ -43,12 +43,10 @@ pub mod prelude {
         Backend, GeneratedModule,
     };
 
-    pub use crate::intermediate::{
-        ExtensibilityEnvironment, TaggingEnvironment, ToplevelDefinition,
-    };
+    pub use crate::intermediate::{Assignment, ExtensibilityEnvironment, TaggingEnvironment};
 
     pub use crate::lexer::error::{LexerError, LexerErrorType, ReportData};
-    pub use crate::validator::error::{LinkerError, LinkerErrorType};
+    pub use crate::linker::error::{LinkerError, LinkerErrorType};
 
     pub mod ir {
         pub use crate::intermediate::{
@@ -397,7 +395,7 @@ impl<B: Backend> Compiler<B, CompilerSourcesSet> {
     fn internal_compile(&mut self) -> Result<CompileResult, CompilerError> {
         let mut generated_modules = vec![];
         let mut warnings = Vec::<CompilerError>::new();
-        let mut modules: Vec<ToplevelDefinition> = vec![];
+        let mut modules: Vec<Assignment> = vec![];
         let sources = std::mem::take(&mut self.state.sources)
             .into_iter()
             .map(|src| match src {
@@ -429,7 +427,7 @@ impl<B: Backend> Compiler<B, CompilerSourcesSet> {
         }
         let (valid_items, mut validator_errors) = Validator::new(modules).validate()?;
         let modules = valid_items.into_iter().fold(
-            BTreeMap::<String, Vec<ToplevelDefinition>>::new(),
+            BTreeMap::<String, Vec<Assignment>>::new(),
             |mut modules, tld| {
                 let key = tld
                     .get_module_header()

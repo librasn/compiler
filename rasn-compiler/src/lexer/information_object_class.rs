@@ -328,7 +328,7 @@ fn syntax_literal(input: Input<'_>) -> ParserResult<'_, &str> {
 mod tests {
     use std::vec;
 
-    use crate::intermediate::{types::*, ASN1Value, ToplevelTypeDefinition};
+    use crate::intermediate::{types::*, ASN1Value, TypeAssignment};
 
     use crate::lexer::information_object_class::object_set;
     use crate::lexer::top_level_type_declaration;
@@ -550,7 +550,7 @@ mod tests {
             top_level_type_declaration(r#"AttributeValue ::= OPEN.&Type"#.into())
                 .unwrap()
                 .1,
-            ToplevelTypeDefinition {
+            TypeAssignment {
                 comments: "".into(),
                 tag: None,
                 name: "AttributeValue".into(),

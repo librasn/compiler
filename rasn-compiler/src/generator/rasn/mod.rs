@@ -135,7 +135,7 @@ impl Backend for Rasn {
 
     fn generate_module<'a>(
         &mut self,
-        tlds: Vec<ToplevelDefinition<'a>>,
+        tlds: Vec<Assignment<'a>>,
     ) -> Result<GeneratedModule, GeneratorError> {
         if let Some(module_ref) = tlds.first().and_then(|tld| tld.get_module_header()) {
             let module = module_ref.borrow();
@@ -222,7 +222,7 @@ impl Backend for Rasn {
         })
     }
 
-    fn generate<'a>(&self, tld: ToplevelDefinition<'a>) -> Result<String, GeneratorError> {
+    fn generate<'a>(&self, tld: Assignment<'a>) -> Result<String, GeneratorError> {
         self.generate_tld(tld).map(|ts| ts.to_string())
     }
 }

@@ -1,4 +1,4 @@
-use crate::intermediate::{ASN1Type, ToplevelTypeDefinition, ToplevelValueDefinition};
+use crate::intermediate::{ASN1Type, TypeAssignment, ValueAssignment};
 
 use super::{template::*, utils::*, Typescript};
 use crate::generator::error::{GeneratorError, GeneratorErrorType};
@@ -6,7 +6,7 @@ use crate::generator::error::{GeneratorError, GeneratorErrorType};
 impl Typescript {
     pub(crate) fn generate_typealias<'a>(
         &self,
-        tld: ToplevelTypeDefinition<'a>,
+        tld: TypeAssignment<'a>,
     ) -> Result<String, GeneratorError> {
         if let ASN1Type::ElsewhereDeclaredType(dec) = &tld.ty {
             Ok(typealias_template(
@@ -25,7 +25,7 @@ impl Typescript {
 
     pub(crate) fn generate_number_like<'a>(
         &self,
-        tld: ToplevelTypeDefinition<'a>,
+        tld: TypeAssignment<'a>,
     ) -> Result<String, GeneratorError> {
         if let ASN1Type::Integer(_) = tld.ty {
             Ok(number_like_template(
@@ -43,7 +43,7 @@ impl Typescript {
 
     pub(crate) fn generate_bit_string<'a>(
         &self,
-        tld: ToplevelTypeDefinition<'a>,
+        tld: TypeAssignment<'a>,
     ) -> Result<String, GeneratorError> {
         if let ASN1Type::BitString(ref bit_str) = tld.ty {
             Ok(bit_string_template(
@@ -66,7 +66,7 @@ impl Typescript {
 
     pub(crate) fn generate_octet_string<'a>(
         &self,
-        tld: ToplevelTypeDefinition<'a>,
+        tld: TypeAssignment<'a>,
     ) -> Result<String, GeneratorError> {
         if let ASN1Type::OctetString(_) = tld.ty {
             Ok(octet_string_template(
@@ -84,7 +84,7 @@ impl Typescript {
 
     pub(crate) fn generate_boolean<'a>(
         &self,
-        tld: ToplevelTypeDefinition<'a>,
+        tld: TypeAssignment<'a>,
     ) -> Result<String, GeneratorError> {
         if let ASN1Type::Boolean(_) = tld.ty {
             Ok(boolean_template(
@@ -100,7 +100,7 @@ impl Typescript {
         }
     }
 
-    pub(crate) fn generate_value<'a>(&self, tld: ToplevelValueDefinition) -> String {
+    pub(crate) fn generate_value<'a>(&self, tld: ValueAssignment) -> String {
         //Result<String, GeneratorError> {
         value_to_tokens(&tld.value)
             .map(|v| {
@@ -115,7 +115,7 @@ impl Typescript {
 
     pub(crate) fn generate_any<'a>(
         &self,
-        tld: ToplevelTypeDefinition<'a>,
+        tld: TypeAssignment<'a>,
     ) -> Result<String, GeneratorError> {
         Ok(any_template(
             &format_comments(&tld.comments),
@@ -125,7 +125,7 @@ impl Typescript {
 
     pub(crate) fn generate_string_like<'a>(
         &self,
-        tld: ToplevelTypeDefinition<'a>,
+        tld: TypeAssignment<'a>,
     ) -> Result<String, GeneratorError> {
         Ok(string_like_template(
             &format_comments(&tld.comments),
@@ -135,7 +135,7 @@ impl Typescript {
 
     pub(crate) fn generate_null<'a>(
         &self,
-        tld: ToplevelTypeDefinition<'a>,
+        tld: TypeAssignment<'a>,
     ) -> Result<String, GeneratorError> {
         if let ASN1Type::Null = tld.ty {
             Ok(null_template(
@@ -153,7 +153,7 @@ impl Typescript {
 
     pub(crate) fn generate_enumerated<'a>(
         &self,
-        tld: ToplevelTypeDefinition<'a>,
+        tld: TypeAssignment<'a>,
     ) -> Result<String, GeneratorError> {
         if let ASN1Type::Enumerated(enumerated) = tld.ty {
             Ok(enumerated_template(
@@ -185,7 +185,7 @@ impl Typescript {
 
     pub(crate) fn generate_choice<'a>(
         &self,
-        tld: ToplevelTypeDefinition<'a>,
+        tld: TypeAssignment<'a>,
     ) -> Result<String, GeneratorError> {
         if let ASN1Type::Choice(choice) = tld.ty {
             Ok(choice_template(
@@ -204,7 +204,7 @@ impl Typescript {
 
     pub(crate) fn generate_sequence_or_set<'a>(
         &self,
-        tld: ToplevelTypeDefinition<'a>,
+        tld: TypeAssignment<'a>,
     ) -> Result<String, GeneratorError> {
         match tld.ty {
             ASN1Type::Sequence(ref seq) | ASN1Type::Set(ref seq) => Ok(sequence_or_set_template(
@@ -222,7 +222,7 @@ impl Typescript {
 
     pub(crate) fn generate_sequence_or_set_of<'a>(
         &self,
-        tld: ToplevelTypeDefinition<'a>,
+        tld: TypeAssignment<'a>,
     ) -> Result<String, GeneratorError> {
         match tld.ty {
             ASN1Type::SetOf(se_of) | ASN1Type::SequenceOf(se_of) => {
