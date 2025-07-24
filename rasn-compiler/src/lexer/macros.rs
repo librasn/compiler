@@ -9,7 +9,7 @@ use nom::Parser;
 use crate::input::{context_boundary, Input};
 use crate::intermediate::{
     ASN1Type, ASN1Value, DeclarationElsewhere, ASN1_KEYWORDS, ASSIGN, BEGIN, DOT, END,
-    GREATER_THAN, LESS_THAN, MACRO, PIPE,
+    GREATER_THAN, LEFT_PARENTHESIS, LESS_THAN, MACRO, PIPE, RIGHT_PARENTHESIS,
 };
 use crate::lexer::common::{
     in_parentheses, module_reference, skip_ws_and_comments, type_reference, uppercase_identifier,
@@ -301,21 +301,39 @@ fn symbol_defn(input: Input<'_>) -> ParserResult<'_, SymbolDefn<'_>> {
             },
         ),
         preceded(
-            tag("value"),
-            cut(in_parentheses(alt((
-                map(macro_type, SymbolDefn::ValueMacroType),
+            (tag("value"), skip_ws_and_comments(char(LEFT_PARENTHESIS))),
+            cut(alt((
                 map(
-                    preceded(tag("VALUE"), cut(skip_ws_and_comments(macro_type))),
+                    terminated(macro_type, skip_ws_and_comments(char(RIGHT_PARENTHESIS))),
+                    SymbolDefn::ValueMacroType,
+                ),
+                map(
+                    delimited(
+                        tag("VALUE"),
+                        skip_ws_and_comments(macro_type),
+                        skip_ws_and_comments(char(RIGHT_PARENTHESIS)),
+                    ),
                     SymbolDefn::ValueVALUEMacroType,
                 ),
                 map(
-                    pair(local_value_reference, skip_ws_and_comments(macro_type)),
+                    terminated(
+                        (
+                            alt((
+                                local_value_reference,
+                                // Type references are not allowed here, parse it anyway for
+                                // compatibility with for example SNMPv2-SMI.
+                                local_type_reference,
+                            )),
+                            skip_ws_and_comments(macro_type),
+                        ),
+                        skip_ws_and_comments(char(RIGHT_PARENTHESIS)),
+                    ),
                     |v| SymbolDefn::ValueLocalvaluereferenceMacroType {
                         local_value_reference: v.0,
                         ty: v.1,
                     },
                 ),
-            )))),
+            ))),
         ),
     )))
     .parse(input)
