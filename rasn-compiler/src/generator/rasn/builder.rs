@@ -134,6 +134,7 @@ impl Rasn {
                     self.to_rust_const_case(&tld.name),
                     ty,
                     val,
+                    self.config.no_std_compliant_bindings,
                 ))
             } else {
                 Ok(integer_value_template(
@@ -302,14 +303,16 @@ impl Rasn {
                 lazy_static_value_template,
                 tld,
                 quote!(BitString),
-                self.value_to_tokens(&tld.value, None)?
+                self.value_to_tokens(&tld.value, None)?,
+                self.config.no_std_compliant_bindings
             ),
             ASN1Value::OctetString(_) if ty.is_builtin_type() => call_template!(
                 self,
                 lazy_static_value_template,
                 tld,
                 quote!(OctetString),
-                self.value_to_tokens(&tld.value, None)?
+                self.value_to_tokens(&tld.value, None)?,
+                self.config.no_std_compliant_bindings
             ),
             ASN1Value::Choice {
                 variant_name,
@@ -332,7 +335,8 @@ impl Rasn {
                         tld,
                         self.to_rust_title_case(&ty.as_str()),
                         self.to_rust_enum_identifier(variant_name),
-                        self.value_to_tokens(inner_value, None)?
+                        self.value_to_tokens(inner_value, None)?,
+                        self.config.no_std_compliant_bindings
                     )
                 }
             }
@@ -352,14 +356,16 @@ impl Rasn {
                     lazy_static_value_template,
                     tld,
                     quote!(GeneralizedTime),
-                    self.value_to_tokens(&tld.value, Some(&quote!(GeneralizedTime)))?
+                    self.value_to_tokens(&tld.value, Some(&quote!(GeneralizedTime)))?,
+                    self.config.no_std_compliant_bindings
                 ),
                 ASN1Type::UTCTime(_) => call_template!(
                     self,
                     lazy_static_value_template,
                     tld,
                     quote!(UtcTime),
-                    self.value_to_tokens(&tld.value, Some(&quote!(UtcTime)))?
+                    self.value_to_tokens(&tld.value, Some(&quote!(UtcTime)))?,
+                    self.config.no_std_compliant_bindings
                 ),
                 _ => Err(GeneratorError::new(
                     Some(ToplevelDefinition::Value(tld)),
@@ -379,7 +385,8 @@ impl Rasn {
                     sequence_or_set_value_template,
                     tld,
                     self.to_rust_title_case(&ty.as_str()),
-                    quote!(#(#members),*)
+                    quote!(#(#members),*),
+                    self.config.no_std_compliant_bindings
                 )
             }
             ASN1Value::LinkedNestedValue { supertypes, value } => {
@@ -406,7 +413,8 @@ impl Rasn {
                             self,
                             &ty.as_str(),
                             self.value_to_tokens(&tld.value, parent.as_ref())?
-                        )
+                        ),
+                        self.config.no_std_compliant_bindings
                     )
                 }
             }
@@ -415,7 +423,8 @@ impl Rasn {
                 lazy_static_value_template,
                 tld,
                 quote!(ObjectIdentifier),
-                self.value_to_tokens(&tld.value, None)?
+                self.value_to_tokens(&tld.value, None)?,
+                self.config.no_std_compliant_bindings
             ),
             ASN1Value::LinkedCharStringValue(cs_ty, _) if ty.is_builtin_type() => {
                 let ty_ts = match cs_ty {
@@ -442,7 +451,8 @@ impl Rasn {
                     lazy_static_value_template,
                     tld,
                     ty_ts,
-                    self.value_to_tokens(&tld.value, None)?
+                    self.value_to_tokens(&tld.value, None)?,
+                    self.config.no_std_compliant_bindings
                 )
             }
             ASN1Value::LinkedArrayLikeValue(s) if ty.is_builtin_type() => {
@@ -465,7 +475,8 @@ impl Rasn {
                     lazy_static_value_template,
                     tld,
                     quote!(Vec<#item_type>),
-                    self.value_to_tokens(&tld.value, None)?
+                    self.value_to_tokens(&tld.value, None)?,
+                    self.config.no_std_compliant_bindings
                 )
             }
             ASN1Value::BitString(_)
@@ -479,7 +490,8 @@ impl Rasn {
                 lazy_static_value_template,
                 tld,
                 self.to_rust_title_case(&ty.as_str()),
-                assignment!(self, &ty.as_str(), self.value_to_tokens(&tld.value, None)?)
+                assignment!(self, &ty.as_str(), self.value_to_tokens(&tld.value, None)?),
+                self.config.no_std_compliant_bindings
             ),
             _ => Ok(TokenStream::new()),
         }

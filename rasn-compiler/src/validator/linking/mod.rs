@@ -1011,6 +1011,37 @@ impl ASN1Value {
                     Ok(())
                 }
             }
+            (ASN1Type::SetOf(_), ASN1Value::ObjectIdentifier(val))
+            | (ASN1Type::SequenceOf(_), ASN1Value::ObjectIdentifier(val))
+            | (ASN1Type::Set(_), ASN1Value::ObjectIdentifier(val))
+            | (ASN1Type::Sequence(_), ASN1Value::ObjectIdentifier(val)) => {
+                // Object identifier values and sequence-like values cannot be properly distinguished
+                let mut pseudo_arcs = std::mem::take(&mut val.0);
+                let struct_value = pseudo_arcs
+                    .chunks_mut(2)
+                    .map(|chunk| {
+                        let err = || GrammarError {
+                            pdu: None,
+                            details:
+                                "Failed to interpret object identifier value as sequence value!"
+                                    .into(),
+                            kind: GrammarErrorType::LinkerError,
+                        };
+                        if let [id, val] = chunk {
+                            val.number
+                                .and_then(|n| <u128 as TryInto<i128>>::try_into(n).ok())
+                                .ok_or_else(err)
+                                .map(|number| {
+                                    (id.name.take(), Box::new(ASN1Value::Integer(number)))
+                                })
+                        } else {
+                            Err(err())
+                        }
+                    })
+                    .collect::<Result<Vec<_>, _>>()?;
+                *self = ASN1Value::SequenceOrSet(struct_value);
+                self.link_with_type(tlds, ty, type_name)
+            }
             (ASN1Type::Set(s), ASN1Value::SequenceOrSet(val))
             | (ASN1Type::Sequence(s), ASN1Value::SequenceOrSet(val)) => {
                 *self = Self::link_struct_like(val, s, tlds, type_name)?;

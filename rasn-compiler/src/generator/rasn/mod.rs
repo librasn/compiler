@@ -67,6 +67,8 @@ pub struct Config {
     ///
     /// Default: `vec![String::from("#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]")]`
     pub type_annotations: Vec<String>,
+    /// Create bindings for a `no_std` environment
+    pub no_std_compliant_bindings: bool,
 }
 
 #[cfg(target_family = "wasm")]
@@ -76,6 +78,7 @@ impl Config {
     pub fn new(
         opaque_open_types: bool,
         default_wildcard_imports: bool,
+        no_std_compliant_bindings: bool,
         generate_from_impls: Option<bool>,
         custom_imports: Option<Box<[String]>>,
         type_annotations: Option<Box<[String]>>,
@@ -83,6 +86,7 @@ impl Config {
         Self {
             opaque_open_types,
             default_wildcard_imports,
+            no_std_compliant_bindings,
             generate_from_impls: generate_from_impls.unwrap_or(false),
             custom_imports: custom_imports.map_or(Vec::new(), |c| c.into_vec()),
             type_annotations: type_annotations
@@ -97,6 +101,7 @@ impl Default for Config {
             opaque_open_types: true,
             default_wildcard_imports: false,
             generate_from_impls: false,
+            no_std_compliant_bindings: false,
             custom_imports: Vec::default(),
             type_annotations: vec![String::from(
                 "#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]",
@@ -190,6 +195,11 @@ impl Backend for Rasn {
                         }
                     }
                 });
+            let lazy_const_import = if self.config.no_std_compliant_bindings {
+                quote!(lazy_static::lazy_static)
+            } else {
+                quote!(std::sync::LazyLock)
+            };
             Ok(GeneratedModule {
                 generated: Some(quote! {
                 #[allow(non_camel_case_types, non_snake_case, non_upper_case_globals, unused,
@@ -198,7 +208,7 @@ impl Backend for Rasn {
                     extern crate alloc;
 
                     use core::borrow::Borrow;
-                    use std::sync::LazyLock;
+                    use #lazy_const_import;
                     use rasn::prelude::*;
                     #(#custom_imports)*
                     #(#imports)*
