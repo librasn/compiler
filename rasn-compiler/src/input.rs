@@ -29,7 +29,7 @@ where
 /// for parsing ASN.1 sources with [nom](https://github.com/rust-bakery/nom).
 /// The `Input` type is a thin wrapper around a string slice, with additional
 /// data for debugging purposes.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Clone, PartialEq)]
 pub struct Input<'a> {
     inner: &'a str,
     /// current line position of parser, starts at 1
@@ -48,6 +48,20 @@ pub struct Input<'a> {
     column: usize,
     /// current offset of parser from start of initial input, starts at 0
     offset: usize,
+}
+
+// Specialize `fmt::Debug` so that `Input::inner` can be shortened.
+impl Debug for Input<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("Input")
+            .field("inner", &ShortenedDebugStr(self.inner()))
+            .field("line", &self.line)
+            .field("column", &self.column)
+            .field("offset", &self.offset)
+            .field("context_start_line", &self.context_start_line)
+            .field("context_start_offset", &self.context_start_offset)
+            .finish()
+    }
 }
 
 impl<'a> Input<'a> {
@@ -332,6 +346,30 @@ impl Offset for Input<'_> {
 impl<R: FromStr> ParseTo<R> for Input<'_> {
     fn parse_to(&self) -> Option<R> {
         self.inner.parse_to()
+    }
+}
+
+/// A wrapper that shortens the contained string when used in fmt::Debug.
+struct ShortenedDebugStr<'i>(&'i str);
+
+/// Default max chars to include in fmt::Debug.
+const SHORTEN_DEBUG_STR_LEN: usize = 200;
+
+impl Debug for ShortenedDebugStr<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut chars_iter = self.0.char_indices();
+        let last_char_index = chars_iter
+            .by_ref()
+            .take(SHORTEN_DEBUG_STR_LEN)
+            .last()
+            .map(|(i, _)| i)
+            .unwrap_or(0);
+        write!(f, "{:?}", &self.0[..last_char_index])?;
+        let chars_left = chars_iter.count();
+        if chars_left > 0 {
+            write!(f, " + {chars_left}")?;
+        }
+        Ok(())
     }
 }
 
