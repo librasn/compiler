@@ -35,6 +35,23 @@ pub struct ObjectOrObjectSetAssignment<'a> {
     pub module_header: Option<Rc<RefCell<ModuleHeader<'a>>>>,
 }
 
+impl<'a> ObjectOrObjectSetAssignment<'a> {
+    pub fn with_name_class_value(
+        name: Cow<'a, str>,
+        class: ClassLink<'a>,
+        value: ASN1Information<'a>,
+    ) -> Self {
+        Self {
+            comments: Cow::Borrowed(""),
+            name,
+            parameterization: None,
+            class,
+            value,
+            module_header: None,
+        }
+    }
+}
+
 impl<'a> From<(&'a str, ASN1Information<'a>, &'a str)> for ObjectOrObjectSetAssignment<'a> {
     fn from(value: (&'a str, ASN1Information<'a>, &'a str)) -> Self {
         Self {

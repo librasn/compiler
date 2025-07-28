@@ -387,13 +387,15 @@ impl<'a> IterMembers<'a> for SequenceOrSet<'a> {
 
     fn iter_members<'b>(&'b self) -> impl Iterator<Item = &'b Self::Member>
     where
-        'a: 'b {
+        'a: 'b,
+    {
         self.members.iter()
     }
 
     fn iter_mut_members<'b>(&'b mut self) -> impl Iterator<Item = &'b mut Self::Member>
     where
-        'a: 'b {
+        'a: 'b,
+    {
         self.members.iter_mut()
     }
 }
@@ -561,7 +563,7 @@ impl<'a> MemberOrOption<'a> for SequenceOrSetMember<'a> {
     }
 
     const IS_CHOICE_OPTION: bool = false;
-    
+
     fn ty_mut(&mut self) -> &mut ASN1Type<'a> {
         &mut self.ty
     }
@@ -615,13 +617,15 @@ impl<'a> IterMembers<'a> for Choice<'a> {
 
     fn iter_members<'b>(&'b self) -> impl Iterator<Item = &'b Self::Member>
     where
-        'a: 'b {
+        'a: 'b,
+    {
         self.options.iter()
     }
 
     fn iter_mut_members<'b>(&'b mut self) -> impl Iterator<Item = &'b mut Self::Member>
     where
-        'a: 'b {
+        'a: 'b,
+    {
         self.options.iter_mut()
     }
 }
@@ -708,7 +712,7 @@ impl<'a> MemberOrOption<'a> for ChoiceOption<'a> {
     }
 
     const IS_CHOICE_OPTION: bool = true;
-    
+
     fn ty_mut(&mut self) -> &mut ASN1Type<'a> {
         &mut self.ty
     }

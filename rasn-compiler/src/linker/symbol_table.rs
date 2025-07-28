@@ -2,7 +2,7 @@ use std::{borrow::Cow, collections::HashMap, fmt::Display, ops::Add};
 
 use crate::{
     intermediate::{macros::MacroDefinition, AsnModule, TypeAssignment, ValueAssignment},
-    linker::error::LinkerError,
+    linker::{error::LinkerError, unnest::{Unnest, Unnested}},
     prelude::{
         ir::{ObjectClassAssignment, ObjectOrObjectSetAssignment},
         Assignment,
@@ -14,6 +14,14 @@ pub(super) struct SymbolId<'a> {
     pub module_reference: Cow<'a, str>,
     pub type_reference: Cow<'a, str>,
     pub scope: Scope<'a>,
+}
+
+impl<'a> SymbolId<'a> {
+    pub(super) fn locally_scoped(&self, scope_id: Cow<'a, str>) -> Self {
+        let mut new_id = self.clone();
+        new_id.scope = new_id.scope + Scope::Local(scope_id);
+        new_id
+    }
 }
 
 impl Display for SymbolId<'_> {
@@ -65,6 +73,15 @@ impl<'a> SymbolTable<'a> {
     }
 
     fn unnest(&mut self) -> Result<(), LinkerError> {
+        let mut all_unnested = Vec::new();
+        for (id, symbol) in &mut self.0 {
+            if let Some(mut unnested) = symbol.unnest(id.clone(), ()) {
+                all_unnested.append(&mut unnested);
+            }
+        }
+        for Unnested { id, assignment } in all_unnested {
+            self.0.insert(id, assignment);
+        }
         Ok(())
     }
 
