@@ -1,0 +1,29 @@
+---
+source: rasn-compiler/src/linker/unnest.rs
+expression: test_set
+---
+Assignment::Type(
+    TypeAssignment {
+        comments: "",
+        tag: None,
+        name: "Test",
+        ty: ASN1Type::SetOf(
+            SequenceOrSetOf {
+                constraints: [],
+                element_type: ASN1Type::ElsewhereDeclaredType(
+                    DeclarationElsewhere {
+                        parent: None,
+                        identifier: DefinedType::TypeReference(
+                            "test-module.Test.item",
+                        ),
+                        constraints: [],
+                    },
+                ),
+                element_tag: None,
+                is_recursive: false,
+            },
+        ),
+        parameterization: None,
+        module_header: None,
+    },
+)

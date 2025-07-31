@@ -29,6 +29,7 @@ pub enum LinkerErrorType {
     MissingDependency,
     RecursionLimitExceeded,
     InvalidConstraintsError,
+    GrammarViolation,
     Unknown,
 }
 

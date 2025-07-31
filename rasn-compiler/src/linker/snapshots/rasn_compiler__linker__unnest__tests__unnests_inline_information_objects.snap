@@ -1,0 +1,204 @@
+---
+source: rasn-compiler/src/linker/unnest.rs
+expression: "test_obj.unnest(id, ())"
+---
+Some(
+    [
+        Unnested {
+            id: SymbolId {
+                module_reference: "test-module",
+                type_reference: "Test",
+                scope: Local(
+                    "0",
+                ),
+            },
+            assignment: Assignment::Object(
+                ObjectOrObjectSetAssignment {
+                    comments: "",
+                    name: "test-module.Test.0",
+                    parameterization: None,
+                    class: ClassLink::ByName(
+                        "TEST-CLASS",
+                    ),
+                    value: ASN1Information::Object(
+                        InformationObject {
+                            class_name: "TEST-CLASS",
+                            fields: InformationObjectFields::DefaultSyntax(
+                                [
+                                    InformationObjectField::TypeField(
+                                        TypeField {
+                                            identifier: "test-field",
+                                            ty: ASN1Type::Sequence(
+                                                SequenceOrSet {
+                                                    components_of: [],
+                                                    extensible: None,
+                                                    constraints: [],
+                                                    members: [
+                                                        SequenceOrSetMember {
+                                                            name: "m0",
+                                                            tag: None,
+                                                            ty: ASN1Type::ElsewhereDeclaredType(
+                                                                DeclarationElsewhere {
+                                                                    parent: None,
+                                                                    identifier: DefinedType::TypeReference(
+                                                                        "test-module.Test.0.m0",
+                                                                    ),
+                                                                    constraints: [],
+                                                                },
+                                                            ),
+                                                            optionality: Required,
+                                                            is_recursive: false,
+                                                            constraints: [],
+                                                        },
+                                                    ],
+                                                },
+                                            ),
+                                        },
+                                    ),
+                                    InformationObjectField::FixedValueField(
+                                        FixedValueField {
+                                            identifier: "test-value",
+                                            value: ASN1Value::SequenceOrSet(
+                                                [
+                                                    (
+                                                        Some(
+                                                            "m0",
+                                                        ),
+                                                        ASN1Value::Choice {
+                                                            type_name: None,
+                                                            variant_name: "o0",
+                                                            inner_value: ASN1Value::Integer(
+                                                                42,
+                                                            ),
+                                                        },
+                                                    ),
+                                                ],
+                                            ),
+                                        },
+                                    ),
+                                    InformationObjectField::ObjectSetField(
+                                        ObjectSetField {
+                                            identifier: "test-set",
+                                            value: ObjectSet {
+                                                values: [
+                                                    ObjectSetValue::Reference(
+                                                        "test-module.Test.0.0",
+                                                    ),
+                                                ],
+                                                extensible: None,
+                                            },
+                                        },
+                                    ),
+                                ],
+                            ),
+                        },
+                    ),
+                    module_header: None,
+                },
+            ),
+        },
+        Unnested {
+            id: SymbolId {
+                module_reference: "test-module",
+                type_reference: "Test",
+                scope: Local(
+                    "0.m0",
+                ),
+            },
+            assignment: Assignment::Type(
+                TypeAssignment {
+                    comments: "",
+                    tag: None,
+                    name: "test-module.Test.0.m0",
+                    ty: ASN1Type::Integer(
+                        Integer {
+                            constraints: [
+                                Constraint::Subtype(
+                                    ElementSetSpecs {
+                                        set: ElementOrSetOperation::Element(
+                                            SubtypeElements::ValueRange {
+                                                min: Some(
+                                                    ASN1Value::Integer(
+                                                        1,
+                                                    ),
+                                                ),
+                                                max: Some(
+                                                    ASN1Value::Integer(
+                                                        4,
+                                                    ),
+                                                ),
+                                                extensible: false,
+                                            },
+                                        ),
+                                        extensible: false,
+                                    },
+                                ),
+                            ],
+                            distinguished_values: None,
+                        },
+                    ),
+                    parameterization: None,
+                    module_header: None,
+                },
+            ),
+        },
+        Unnested {
+            id: SymbolId {
+                module_reference: "test-module",
+                type_reference: "Test",
+                scope: Local(
+                    "0.0",
+                ),
+            },
+            assignment: Assignment::Object(
+                ObjectOrObjectSetAssignment {
+                    comments: "",
+                    name: "test-module.Test.0.0",
+                    parameterization: None,
+                    class: ClassLink::ByName(
+                        "TEST-CLASS",
+                    ),
+                    value: ASN1Information::Object(
+                        InformationObject {
+                            class_name: "TEST-CLASS",
+                            fields: InformationObjectFields::DefaultSyntax(
+                                [
+                                    InformationObjectField::TypeField(
+                                        TypeField {
+                                            identifier: "test-field",
+                                            ty: ASN1Type::BitString(
+                                                BitString {
+                                                    constraints: [
+                                                        Constraint::Subtype(
+                                                            ElementSetSpecs {
+                                                                set: ElementOrSetOperation::Element(
+                                                                    SubtypeElements::SizeConstraint(
+                                                                        ElementOrSetOperation::Element(
+                                                                            SubtypeElements::SingleValue {
+                                                                                value: ASN1Value::Integer(
+                                                                                    1,
+                                                                                ),
+                                                                                extensible: true,
+                                                                            },
+                                                                        ),
+                                                                    ),
+                                                                ),
+                                                                extensible: false,
+                                                            },
+                                                        ),
+                                                    ],
+                                                    distinguished_values: None,
+                                                },
+                                            ),
+                                        },
+                                    ),
+                                ],
+                            ),
+                        },
+                    ),
+                    module_header: None,
+                },
+            ),
+        },
+    ],
+)

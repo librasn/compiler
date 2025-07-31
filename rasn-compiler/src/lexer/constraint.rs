@@ -22,9 +22,7 @@ use super::{
     },
     error::{MiscError, ParserResult},
     information_object_class::object_set,
-    into_inner,
-    parameterization::parameters,
-    skip_ws,
+    into_inner, skip_ws,
     util::{opt_delimited, take_until_and_not, take_until_unbalanced},
 };
 
@@ -38,7 +36,6 @@ pub fn constraints(input: Input<'_>) -> ParserResult<'_, Vec<Constraint>> {
                 extensible: false,
             })
         }),
-        map(parameters, Constraint::Parameter),
     ))))
     .parse(input)
 }

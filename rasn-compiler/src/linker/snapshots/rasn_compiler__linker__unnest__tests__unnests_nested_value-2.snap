@@ -1,0 +1,103 @@
+---
+source: rasn-compiler/src/linker/unnest.rs
+expression: test_val
+---
+Assignment::Value(
+    ValueAssignment {
+        comments: "",
+        name: "test",
+        associated_type: ASN1Type::Sequence(
+            SequenceOrSet {
+                components_of: [],
+                extensible: None,
+                constraints: [],
+                members: [
+                    SequenceOrSetMember {
+                        name: "m0",
+                        tag: None,
+                        ty: ASN1Type::Choice(
+                            Choice {
+                                extensible: None,
+                                options: [
+                                    ChoiceOption {
+                                        name: "o0",
+                                        tag: None,
+                                        ty: ASN1Type::Integer(
+                                            Integer {
+                                                constraints: [
+                                                    Constraint::Subtype(
+                                                        ElementSetSpecs {
+                                                            set: ElementOrSetOperation::Element(
+                                                                SubtypeElements::ValueRange {
+                                                                    min: Some(
+                                                                        ASN1Value::Integer(
+                                                                            1,
+                                                                        ),
+                                                                    ),
+                                                                    max: Some(
+                                                                        ASN1Value::Integer(
+                                                                            4,
+                                                                        ),
+                                                                    ),
+                                                                    extensible: false,
+                                                                },
+                                                            ),
+                                                            extensible: false,
+                                                        },
+                                                    ),
+                                                ],
+                                                distinguished_values: None,
+                                            },
+                                        ),
+                                        constraints: [],
+                                        is_recursive: false,
+                                    },
+                                    ChoiceOption {
+                                        name: "o1",
+                                        tag: None,
+                                        ty: ASN1Type::Null,
+                                        constraints: [],
+                                        is_recursive: false,
+                                    },
+                                ],
+                                constraints: [],
+                            },
+                        ),
+                        optionality: Required,
+                        is_recursive: false,
+                        constraints: [],
+                    },
+                    SequenceOrSetMember {
+                        name: "m1",
+                        tag: None,
+                        ty: ASN1Type::Null,
+                        optionality: Required,
+                        is_recursive: false,
+                        constraints: [],
+                    },
+                ],
+            },
+        ),
+        parameterization: None,
+        value: ASN1Value::SequenceOrSet(
+            [
+                (
+                    Some(
+                        "m0",
+                    ),
+                    ASN1Value::ElsewhereDeclaredValue {
+                        parent: None,
+                        identifier: "test-module.test.m0",
+                    },
+                ),
+                (
+                    Some(
+                        "m1",
+                    ),
+                    ASN1Value::Null,
+                ),
+            ],
+        ),
+        module_header: None,
+    },
+)

@@ -366,7 +366,6 @@ mod tests {
                                         constraints: vec![],
                                         distinguished_values: None,
                                     }),
-                                    constraints: vec![]
                                 },
                                 ChoiceOption {
                                     is_recursive: false,
@@ -375,7 +374,6 @@ mod tests {
                                     ty: ASN1Type::OctetString(OctetString {
                                         constraints: vec![],
                                     }),
-                                    constraints: vec![]
                                 }
                             ],
                             constraints: vec![]

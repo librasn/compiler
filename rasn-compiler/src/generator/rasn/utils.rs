@@ -506,8 +506,6 @@ impl Rasn {
             }
             // All constraints are applied on the delegate type
             all_constraints = Vec::new();
-        } else {
-            all_constraints.append(&mut member.constraints().to_owned());
         }
         let range_annotations = self.format_range_annotations(
             matches!(member.ty(), ASN1Type::Integer(_)),
@@ -1546,7 +1544,6 @@ mod tests {
                                     constraints: vec![]
                                 }),
                                 optionality: Optionality::Optional,
-                                constraints: vec![]
                             },
                             SequenceOrSetMember {
                                 is_recursive: false,
@@ -1565,7 +1562,6 @@ mod tests {
                         })]
                                 }),
                                 optionality: Optionality::Default(ASN1Value::Integer(4)),
-                                constraints: vec![]
                             }
                         ]
                     },
@@ -1640,7 +1636,6 @@ is_recursive: false,
                             ty: ASN1Type::Boolean(Boolean {
                                 constraints: vec![]
                             }),
-                            constraints: vec![]
                         },
                         ChoiceOption {
 is_recursive: false,
@@ -1658,7 +1653,6 @@ is_recursive: false,
                                     )
                                 })]
                             }),
-                            constraints: vec![]
                         }
                     ]
                 },

@@ -1,0 +1,335 @@
+---
+source: rasn-compiler/src/linker/unnest.rs
+expression: "test_set.unnest(id, ())"
+---
+Some(
+    [
+        Unnested {
+            id: SymbolId {
+                module_reference: "test-module",
+                type_reference: "Test",
+                scope: Local(
+                    "item",
+                ),
+            },
+            assignment: Assignment::Type(
+                TypeAssignment {
+                    comments: "",
+                    tag: None,
+                    name: "test-module.Test.item",
+                    ty: ASN1Type::SetOf(
+                        SequenceOrSetOf {
+                            constraints: [],
+                            element_type: ASN1Type::ElsewhereDeclaredType(
+                                DeclarationElsewhere {
+                                    parent: None,
+                                    identifier: DefinedType::TypeReference(
+                                        "test-module.Test.item.item",
+                                    ),
+                                    constraints: [],
+                                },
+                            ),
+                            element_tag: None,
+                            is_recursive: false,
+                        },
+                    ),
+                    parameterization: None,
+                    module_header: None,
+                },
+            ),
+        },
+        Unnested {
+            id: SymbolId {
+                module_reference: "test-module",
+                type_reference: "Test",
+                scope: Local(
+                    "item.item",
+                ),
+            },
+            assignment: Assignment::Type(
+                TypeAssignment {
+                    comments: "",
+                    tag: None,
+                    name: "test-module.Test.item.item",
+                    ty: ASN1Type::Choice(
+                        Choice {
+                            extensible: None,
+                            options: [
+                                ChoiceOption {
+                                    name: "o0",
+                                    tag: None,
+                                    ty: ASN1Type::Boolean(
+                                        Boolean {
+                                            constraints: [],
+                                        },
+                                    ),
+                                    constraints: [],
+                                    is_recursive: false,
+                                },
+                                ChoiceOption {
+                                    name: "o1",
+                                    tag: None,
+                                    ty: ASN1Type::ElsewhereDeclaredType(
+                                        DeclarationElsewhere {
+                                            parent: None,
+                                            identifier: DefinedType::TypeReference(
+                                                "test-module.Test.item.item.o1",
+                                            ),
+                                            constraints: [],
+                                        },
+                                    ),
+                                    constraints: [],
+                                    is_recursive: false,
+                                },
+                                ChoiceOption {
+                                    name: "o2",
+                                    tag: None,
+                                    ty: ASN1Type::ElsewhereDeclaredType(
+                                        DeclarationElsewhere {
+                                            parent: None,
+                                            identifier: DefinedType::TypeReference(
+                                                "test-module.Test.item.item.o2",
+                                            ),
+                                            constraints: [],
+                                        },
+                                    ),
+                                    constraints: [],
+                                    is_recursive: false,
+                                },
+                                ChoiceOption {
+                                    name: "o3",
+                                    tag: None,
+                                    ty: ASN1Type::ElsewhereDeclaredType(
+                                        DeclarationElsewhere {
+                                            parent: None,
+                                            identifier: DefinedType::TypeReference(
+                                                "test-module.Test.item.item.o3",
+                                            ),
+                                            constraints: [],
+                                        },
+                                    ),
+                                    constraints: [],
+                                    is_recursive: false,
+                                },
+                            ],
+                            constraints: [],
+                        },
+                    ),
+                    parameterization: None,
+                    module_header: None,
+                },
+            ),
+        },
+        Unnested {
+            id: SymbolId {
+                module_reference: "test-module",
+                type_reference: "Test",
+                scope: Local(
+                    "item.item.o1",
+                ),
+            },
+            assignment: Assignment::Type(
+                TypeAssignment {
+                    comments: "",
+                    tag: None,
+                    name: "test-module.Test.item.item.o1",
+                    ty: ASN1Type::Integer(
+                        Integer {
+                            constraints: [
+                                Constraint::Subtype(
+                                    ElementSetSpecs {
+                                        set: ElementOrSetOperation::Element(
+                                            SubtypeElements::ValueRange {
+                                                min: Some(
+                                                    ASN1Value::Integer(
+                                                        1,
+                                                    ),
+                                                ),
+                                                max: Some(
+                                                    ASN1Value::Integer(
+                                                        4,
+                                                    ),
+                                                ),
+                                                extensible: false,
+                                            },
+                                        ),
+                                        extensible: false,
+                                    },
+                                ),
+                            ],
+                            distinguished_values: None,
+                        },
+                    ),
+                    parameterization: None,
+                    module_header: None,
+                },
+            ),
+        },
+        Unnested {
+            id: SymbolId {
+                module_reference: "test-module",
+                type_reference: "Test",
+                scope: Local(
+                    "item.item.o2",
+                ),
+            },
+            assignment: Assignment::Type(
+                TypeAssignment {
+                    comments: "",
+                    tag: None,
+                    name: "test-module.Test.item.item.o2",
+                    ty: ASN1Type::SetOf(
+                        SequenceOrSetOf {
+                            constraints: [],
+                            element_type: ASN1Type::Null,
+                            element_tag: None,
+                            is_recursive: false,
+                        },
+                    ),
+                    parameterization: None,
+                    module_header: None,
+                },
+            ),
+        },
+        Unnested {
+            id: SymbolId {
+                module_reference: "test-module",
+                type_reference: "Test",
+                scope: Local(
+                    "item.item.o3",
+                ),
+            },
+            assignment: Assignment::Type(
+                TypeAssignment {
+                    comments: "",
+                    tag: None,
+                    name: "test-module.Test.item.item.o3",
+                    ty: ASN1Type::Sequence(
+                        SequenceOrSet {
+                            components_of: [],
+                            extensible: None,
+                            constraints: [],
+                            members: [
+                                SequenceOrSetMember {
+                                    name: "m0",
+                                    tag: None,
+                                    ty: ASN1Type::ElsewhereDeclaredType(
+                                        DeclarationElsewhere {
+                                            parent: None,
+                                            identifier: DefinedType::TypeReference(
+                                                "test-module.Test.item.item.o3.m0",
+                                            ),
+                                            constraints: [],
+                                        },
+                                    ),
+                                    optionality: Required,
+                                    is_recursive: false,
+                                    constraints: [],
+                                },
+                            ],
+                        },
+                    ),
+                    parameterization: None,
+                    module_header: None,
+                },
+            ),
+        },
+        Unnested {
+            id: SymbolId {
+                module_reference: "test-module",
+                type_reference: "Test",
+                scope: Local(
+                    "item.item.o3.m0",
+                ),
+            },
+            assignment: Assignment::Type(
+                TypeAssignment {
+                    comments: "",
+                    tag: None,
+                    name: "test-module.Test.item.item.o3.m0",
+                    ty: ASN1Type::Sequence(
+                        SequenceOrSet {
+                            components_of: [],
+                            extensible: None,
+                            constraints: [],
+                            members: [
+                                SequenceOrSetMember {
+                                    name: "m0",
+                                    tag: None,
+                                    ty: ASN1Type::Boolean(
+                                        Boolean {
+                                            constraints: [],
+                                        },
+                                    ),
+                                    optionality: Required,
+                                    is_recursive: false,
+                                    constraints: [],
+                                },
+                                SequenceOrSetMember {
+                                    name: "m1",
+                                    tag: None,
+                                    ty: ASN1Type::ElsewhereDeclaredType(
+                                        DeclarationElsewhere {
+                                            parent: None,
+                                            identifier: DefinedType::TypeReference(
+                                                "test-module.Test.item.item.o3.m0.m1",
+                                            ),
+                                            constraints: [],
+                                        },
+                                    ),
+                                    optionality: Required,
+                                    is_recursive: false,
+                                    constraints: [],
+                                },
+                            ],
+                        },
+                    ),
+                    parameterization: None,
+                    module_header: None,
+                },
+            ),
+        },
+        Unnested {
+            id: SymbolId {
+                module_reference: "test-module",
+                type_reference: "Test",
+                scope: Local(
+                    "item.item.o3.m0.m1",
+                ),
+            },
+            assignment: Assignment::Type(
+                TypeAssignment {
+                    comments: "",
+                    tag: None,
+                    name: "test-module.Test.item.item.o3.m0.m1",
+                    ty: ASN1Type::BitString(
+                        BitString {
+                            constraints: [
+                                Constraint::Subtype(
+                                    ElementSetSpecs {
+                                        set: ElementOrSetOperation::Element(
+                                            SubtypeElements::SizeConstraint(
+                                                ElementOrSetOperation::Element(
+                                                    SubtypeElements::SingleValue {
+                                                        value: ASN1Value::Integer(
+                                                            3,
+                                                        ),
+                                                        extensible: false,
+                                                    },
+                                                ),
+                                            ),
+                                        ),
+                                        extensible: false,
+                                    },
+                                ),
+                            ],
+                            distinguished_values: None,
+                        },
+                    ),
+                    parameterization: None,
+                    module_header: None,
+                },
+            ),
+        },
+    ],
+)

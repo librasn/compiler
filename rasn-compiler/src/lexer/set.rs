@@ -73,7 +73,6 @@ mod tests {
                             ty: CharacterStringType::VisibleString
                         }),
                         optionality: Optionality::Required,
-                        constraints: vec![],
                     },
                     SequenceOrSetMember {
                         is_recursive: false,
@@ -89,7 +88,6 @@ mod tests {
                             }))
                         }),
                         optionality: Optionality::Default(ASN1Value::SequenceOrSet(vec![])),
-                        constraints: vec![]
                     }
                 ]
             })

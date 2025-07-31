@@ -41,7 +41,7 @@ impl<'a> From<(&'a str, &'a str)> for ParameterizationArgument<'a> {
     fn from(value: (&'a str, &'a str)) -> Self {
         Self {
             dummy_reference: Cow::Borrowed(value.1),
-            param_governor: ParameterGovernor::Class(value.0.to_owned()),
+            param_governor: ParameterGovernor::Class(Cow::Borrowed(value.0)),
         }
     }
 }
@@ -51,5 +51,5 @@ pub enum ParameterGovernor<'a> {
     #[default]
     None,
     TypeOrClass(ASN1Type<'a>),
-    Class(String),
+    Class(Cow<'a, str>),
 }

@@ -711,7 +711,6 @@ impl Rasn {
                     TokenStream::new(),
                     |mut acc, m| {
                         [
-                            m.constraints.clone(),
                             m.ty.constraints().map_or(vec![], |c| c.to_vec())
                         ]
                         .concat()

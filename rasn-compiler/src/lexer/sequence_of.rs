@@ -184,7 +184,7 @@ mod tests {
         assert_eq!(
             sequence_of(
                 r#"SEQUENCE (SIZE(1..4)) OF
-      RegionalExtension {{Reg-MapData}} OPTIONAL,"#
+        RegionalExtension {{Reg-MapData}} OPTIONAL,"#
                     .into()
             )
             .unwrap()
@@ -204,13 +204,14 @@ mod tests {
                 })],
                 element_type: Box::new(ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
                     parent: None,
-                    identifier: "RegionalExtension".into(),
-                    constraints: vec![Constraint::Parameter(vec![Parameter::ObjectSetParameter(
-                        ObjectSet {
+                    constraints: Vec::new(),
+                    identifier: DefinedType::ParameterizedTypeOrValueSetType {
+                        simple_defined_type: Box::new("RegionalExtension".into()),
+                        actual_parameter_list: vec![Parameter::ObjectSetParameter(ObjectSet {
                             values: vec![ObjectSetValue::Reference("Reg-MapData".into())],
                             extensible: None
-                        }
-                    )])]
+                        })]
+                    }
                 }))
             })
         );

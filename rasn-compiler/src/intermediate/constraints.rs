@@ -1,6 +1,6 @@
 #[cfg(test)]
 use internal_macros::EnumDebug;
-use std::{borrow::Cow, error::Error};
+use std::{borrow::Cow, error::Error, ops::Range};
 
 use super::{
     error::{GrammarError, GrammarErrorType},
@@ -33,12 +33,61 @@ pub enum Constraint<'a> {
     Subtype(ElementSetSpecs<'a>),
     /// A TableConstraint as specified in X.682 9.
     Table(TableConstraint<'a>),
-    Parameter(Vec<Parameter<'a>>),
     /// A ContentsConstraint as specified in X.682 11.
     Content(ContentConstraint<'a>),
 }
 
 impl<'a> Constraint<'a> {
+    /// Convenience constructor for a simple value range
+    pub fn value_range(range: Range<i128>, extensible: bool) -> Constraint<'a> {
+        Constraint::Subtype(ElementSetSpecs {
+            set: ElementOrSetOperation::Element(SubtypeElements::ValueRange {
+                min: Some(ASN1Value::Integer(range.start)),
+                max: Some(ASN1Value::Integer(range.end)),
+                extensible,
+            }),
+            extensible: false,
+        })
+    }
+
+    /// Convenience constructor for a single value integer
+    pub fn single_value(value: i128, extensible: bool) -> Constraint<'a> {
+        Constraint::Subtype(ElementSetSpecs {
+            set: ElementOrSetOperation::Element(SubtypeElements::SingleValue {
+                value: ASN1Value::Integer(value),
+                extensible,
+            }),
+            extensible: false,
+        })
+    }
+
+    /// Convenience constructor for a size range
+    pub fn size_range(range: Range<i128>, extensible: bool) -> Constraint<'a> {
+        Constraint::Subtype(ElementSetSpecs {
+            set: ElementOrSetOperation::Element(SubtypeElements::SizeConstraint(Box::new(
+                ElementOrSetOperation::Element(SubtypeElements::ValueRange {
+                    min: Some(ASN1Value::Integer(range.start)),
+                    max: Some(ASN1Value::Integer(range.end)),
+                    extensible,
+                }),
+            ))),
+            extensible: false,
+        })
+    }
+
+    /// Convenience constructor for a fixed size
+    pub fn fixed_size(value: i128, extensible: bool) -> Constraint<'a> {
+        Constraint::Subtype(ElementSetSpecs {
+            set: ElementOrSetOperation::Element(SubtypeElements::SizeConstraint(Box::new(
+                ElementOrSetOperation::Element(SubtypeElements::SingleValue {
+                    value: ASN1Value::Integer(value),
+                    extensible,
+                }),
+            ))),
+            extensible: false,
+        })
+    }
+
     /// Returns the type of integer that should be used in a representation when applying the
     /// GeneralConstraint.
     pub fn integer_constraints(&self) -> IntegerType {

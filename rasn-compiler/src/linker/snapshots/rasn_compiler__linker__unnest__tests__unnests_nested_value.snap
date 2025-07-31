@@ -1,0 +1,80 @@
+---
+source: rasn-compiler/src/linker/unnest.rs
+expression: "test_val.unnest(id, ())"
+---
+Some(
+    [
+        Unnested {
+            id: SymbolId {
+                module_reference: "test-module",
+                type_reference: "test",
+                scope: Local(
+                    "m0",
+                ),
+            },
+            assignment: Assignment::Value(
+                ValueAssignment {
+                    comments: "",
+                    name: "test-module.test.m0",
+                    associated_type: ASN1Type::Choice(
+                        Choice {
+                            extensible: None,
+                            options: [
+                                ChoiceOption {
+                                    name: "o0",
+                                    tag: None,
+                                    ty: ASN1Type::Integer(
+                                        Integer {
+                                            constraints: [
+                                                Constraint::Subtype(
+                                                    ElementSetSpecs {
+                                                        set: ElementOrSetOperation::Element(
+                                                            SubtypeElements::ValueRange {
+                                                                min: Some(
+                                                                    ASN1Value::Integer(
+                                                                        1,
+                                                                    ),
+                                                                ),
+                                                                max: Some(
+                                                                    ASN1Value::Integer(
+                                                                        4,
+                                                                    ),
+                                                                ),
+                                                                extensible: false,
+                                                            },
+                                                        ),
+                                                        extensible: false,
+                                                    },
+                                                ),
+                                            ],
+                                            distinguished_values: None,
+                                        },
+                                    ),
+                                    constraints: [],
+                                    is_recursive: false,
+                                },
+                                ChoiceOption {
+                                    name: "o1",
+                                    tag: None,
+                                    ty: ASN1Type::Null,
+                                    constraints: [],
+                                    is_recursive: false,
+                                },
+                            ],
+                            constraints: [],
+                        },
+                    ),
+                    parameterization: None,
+                    value: ASN1Value::Choice {
+                        type_name: None,
+                        variant_name: "o0",
+                        inner_value: ASN1Value::Integer(
+                            42,
+                        ),
+                    },
+                    module_header: None,
+                },
+            ),
+        },
+    ],
+)

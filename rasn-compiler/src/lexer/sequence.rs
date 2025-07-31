@@ -103,7 +103,6 @@ fn extension_group(input: Input<'_>) -> ParserResult<'_, SequenceComponent> {
                     members,
                 }),
                 optionality: Optionality::Required,
-                constraints: vec![],
             })
         },
     )
@@ -170,7 +169,6 @@ is_recursive: false,
                         constraints: vec![Constraint::Subtype(ElementSetSpecs { set: ElementOrSetOperation::Element(SubtypeElements::MultipleTypeConstraints(InnerTypeConstraint { is_partial: true, constraints: vec![NamedConstraint { identifier: "elliptical".into(), constraints: vec![], presence: ComponentPresence::Absent },NamedConstraint { identifier: "radial".into(), constraints: vec![], presence: ComponentPresence::Absent },NamedConstraint { identifier: "radialShapes".into(), constraints: vec![], presence: ComponentPresence::Absent }] })), extensible: false })
                      ]}),
                     optionality: Optionality::Optional,
-                    constraints: vec![],
                 }
             ]
         })
@@ -204,7 +202,6 @@ is_recursive: false,
                             constraints: vec![]
                         }),
                         optionality: Optionality::Required,
-                        constraints: vec![]
                     },
                     SequenceOrSetMember {
                         is_recursive: false,
@@ -217,7 +214,6 @@ is_recursive: false,
                             constraints: vec![]
                         }),
                         optionality: Optionality::Required,
-                        constraints: vec![],
                     }
                 ]
             })
@@ -254,7 +250,6 @@ is_recursive: false,
                             constraints: vec![]
                         }),
                         optionality: Optionality::Required,
-                        constraints: vec![],
                     },
                     SequenceOrSetMember {
                         is_recursive: false,
@@ -266,7 +261,6 @@ is_recursive: false,
                             constraints: vec![]
                         }),
                         optionality: Optionality::Required,
-                        constraints: vec![],
                     },
                     SequenceOrSetMember {
                         is_recursive: false,
@@ -278,7 +272,6 @@ is_recursive: false,
                             constraints: vec![]
                         }),
                         optionality: Optionality::Optional,
-                        constraints: vec![],
                     }
                 ]
             })
@@ -315,7 +308,6 @@ is_recursive: false,
                             constraints: vec![]
                         }),
                         optionality: Optionality::Optional,
-                        constraints: vec![],
                     },
                     SequenceOrSetMember {
                         is_recursive: false,
@@ -330,7 +322,6 @@ is_recursive: false,
                             identifier: "unavailable".into(),
                             parent: None
                         }),
-                        constraints: vec![],
                     },
                     SequenceOrSetMember {
                         is_recursive: false,
@@ -345,7 +336,6 @@ is_recursive: false,
                             identifier: "unavailable".into(),
                             parent: None
                         }),
-                        constraints: vec![],
                     }
                 ]
             })
@@ -387,7 +377,6 @@ is_recursive: false,
                             distinguished_values: None,
                         }),
                         optionality: Optionality::Required,
-                        constraints: vec![],
                     },
                     SequenceOrSetMember {
                         is_recursive: false,
@@ -397,7 +386,6 @@ is_recursive: false,
                             constraints: vec![]
                         }),
                         optionality: Optionality::Default(ASN1Value::Boolean(false)),
-                        constraints: vec![],
                     },
                     SequenceOrSetMember {
                         is_recursive: false,
@@ -420,7 +408,6 @@ is_recursive: false,
                             })],
                         }),
                         optionality: Optionality::Optional,
-                        constraints: vec![],
                     }
                 ]
             })
@@ -473,7 +460,6 @@ is_recursive: false,
                                     constraints: vec![]
                                 }),
                                 optionality: Optionality::Required,
-                                constraints: vec![],
                             },
                             SequenceOrSetMember {
                                 is_recursive: false,
@@ -484,7 +470,6 @@ is_recursive: false,
                                     constraints: vec![]
                                 }),
                                 optionality: Optionality::Default(ASN1Value::Boolean(true)),
-                                constraints: vec![],
                             },
                             SequenceOrSetMember {
                                 is_recursive: false,
@@ -521,16 +506,13 @@ is_recursive: false,
                                         optionality: Optionality::Default(ASN1Value::BitString(
                                             vec![false]
                                         )),
-                                        constraints: vec![],
                                     }]
                                 }),
                                 optionality: Optionality::Optional,
-                                constraints: vec![],
                             }
                         ]
                     }),
                     optionality: Optionality::Required,
-                    constraints: vec![],
                 }]
             })
         )
@@ -596,7 +578,6 @@ is_recursive: false,
                             distinguished_values: None,
                         }),
                         optionality: Optionality::Required,
-                        constraints: vec![]
                     },
                     SequenceOrSetMember {
                         is_recursive: false,
@@ -625,7 +606,6 @@ is_recursive: false,
                                         distinguished_values: None,
                                     }),
                                     optionality: Optionality::Required,
-                                    constraints: vec![]
                                 },
                                 SequenceOrSetMember {
                                     is_recursive: false,
@@ -635,12 +615,10 @@ is_recursive: false,
                                         constraints: vec![]
                                     }),
                                     optionality: Optionality::Default(ASN1Value::Boolean(true)),
-                                    constraints: vec![]
                                 }
                             ]
                         }),
                         optionality: Optionality::Required,
-                        constraints: vec![]
                     }
                 ]
             })
@@ -673,7 +651,6 @@ is_recursive: false,
                         constraints: vec![]
                     }),
                     optionality: Optionality::Required,
-                    constraints: vec![]
                 }]
             })
         )
@@ -790,7 +767,6 @@ integrityCheckValue     ICV OPTIONAL
                     },),
                     optionality: Optionality::Required,
                     is_recursive: false,
-                    constraints: vec![],
                 }],
             },)
         )
@@ -832,7 +808,6 @@ integrityCheckValue     ICV OPTIONAL
                     },),
                     optionality: Optionality::Required,
                     is_recursive: false,
-                    constraints: vec![],
                 },],
             },)
         )
@@ -864,7 +839,6 @@ integrityCheckValue     ICV OPTIONAL
                     }),
                     optionality: Optionality::Optional,
                     is_recursive: false,
-                    constraints: vec![],
                 }],
             })
         )

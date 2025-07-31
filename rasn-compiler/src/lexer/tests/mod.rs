@@ -443,7 +443,6 @@ fn parses_parameterized_declaration() {
                             })]
                         }),
                         optionality: Optionality::Required,
-                        constraints: vec![]
                     },
                     SequenceOrSetMember {
                         is_recursive: false,
@@ -464,7 +463,6 @@ fn parses_parameterized_declaration() {
                             })]
                         }),
                         optionality: Optionality::Required,
-                        constraints: vec![]
                     }
                 ]
             }),
@@ -504,21 +502,18 @@ fn parses_choice() {
                         name: "normal".into(),
                         tag: None,
                         ty: ASN1Type::Null,
-                        constraints: vec![]
                     },
                     ChoiceOption {
                         is_recursive: false,
                         name: "high".into(),
                         tag: None,
                         ty: ASN1Type::Null,
-                        constraints: vec![]
                     },
                     ChoiceOption {
                         is_recursive: false,
                         name: "medium".into(),
                         tag: None,
                         ty: ASN1Type::Null,
-                        constraints: vec![]
                     }
                 ],
                 constraints: vec![]

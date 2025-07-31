@@ -60,7 +60,6 @@ pub trait MemberOrOption<'a> {
     fn name(&self) -> Cow<'a, str>;
     fn ty(&self) -> &ASN1Type<'a>;
     fn ty_mut(&mut self) -> &mut ASN1Type<'a>;
-    fn constraints(&self) -> &[Constraint<'a>];
     fn is_recursive(&self) -> bool;
     fn tag(&self) -> Option<&AsnTag>;
 }
@@ -537,8 +536,6 @@ pub struct SequenceOrSetMember<'a> {
     pub ty: ASN1Type<'a>,
     pub optionality: Optionality<ASN1Value<'a>>,
     pub is_recursive: bool,
-    // TODO: Remove?
-    pub constraints: Vec<Constraint<'a>>,
 }
 
 impl<'a> MemberOrOption<'a> for SequenceOrSetMember<'a> {
@@ -548,10 +545,6 @@ impl<'a> MemberOrOption<'a> for SequenceOrSetMember<'a> {
 
     fn ty(&self) -> &ASN1Type<'a> {
         &self.ty
-    }
-
-    fn constraints(&self) -> &[Constraint<'a>] {
-        &self.constraints
     }
 
     fn is_recursive(&self) -> bool {
@@ -591,7 +584,6 @@ impl<'a>
             ty: value.2,
             optionality: value.3,
             is_recursive: false,
-            constraints: Vec::new(),
         }
     }
 }
@@ -686,7 +678,6 @@ pub struct ChoiceOption<'a> {
     pub name: Cow<'a, str>,
     pub tag: Option<AsnTag>,
     pub ty: ASN1Type<'a>,
-    pub constraints: Vec<Constraint<'a>>,
     pub is_recursive: bool,
 }
 
@@ -697,10 +688,6 @@ impl<'a> MemberOrOption<'a> for ChoiceOption<'a> {
 
     fn ty(&self) -> &ASN1Type<'a> {
         &self.ty
-    }
-
-    fn constraints(&self) -> &[Constraint<'a>] {
-        &self.constraints
     }
 
     fn is_recursive(&self) -> bool {
@@ -718,27 +705,12 @@ impl<'a> MemberOrOption<'a> for ChoiceOption<'a> {
     }
 }
 
-impl<'a>
-    From<(
-        &'a str,
-        Option<AsnTag>,
-        ASN1Type<'a>,
-        Option<Vec<Constraint<'a>>>,
-    )> for ChoiceOption<'a>
-{
-    fn from(
-        value: (
-            &'a str,
-            Option<AsnTag>,
-            ASN1Type<'a>,
-            Option<Vec<Constraint<'a>>>,
-        ),
-    ) -> Self {
+impl<'a> From<(&'a str, Option<AsnTag>, ASN1Type<'a>)> for ChoiceOption<'a> {
+    fn from(value: (&'a str, Option<AsnTag>, ASN1Type<'a>)) -> Self {
         ChoiceOption {
             name: value.0.into(),
             tag: value.1,
             ty: value.2,
-            constraints: value.3.unwrap_or_default(),
             is_recursive: false,
         }
     }

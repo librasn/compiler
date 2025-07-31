@@ -111,7 +111,6 @@ fn choice_option(input: Input<'_>) -> ParserResult<'_, ChoiceOption> {
         skip_ws_and_comments(identifier),
         opt(asn_tag),
         skip_ws_and_comments(asn1_type),
-        opt(skip_ws_and_comments(constraints)),
     ))
     .parse(input)
 }
@@ -149,21 +148,18 @@ mod tests {
                         name: "normal".into(),
                         tag: None,
                         ty: ASN1Type::Null,
-                        constraints: vec![]
                     },
                     ChoiceOption {
                         is_recursive: false,
                         name: "high".into(),
                         tag: None,
                         ty: ASN1Type::Null,
-                        constraints: vec![]
                     },
                     ChoiceOption {
                         is_recursive: false,
                         name: "medium".into(),
                         tag: None,
                         ty: ASN1Type::Null,
-                        constraints: vec![]
                     }
                 ],
                 constraints: vec![]
@@ -199,7 +195,6 @@ mod tests {
                             identifier: "GeographicLocationContainer".into(),
                             constraints: vec![],
                         },),
-                        constraints: vec![],
                     },
                     ChoiceOption {
                         is_recursive: false,
@@ -210,7 +205,6 @@ mod tests {
                             identifier: "AutomatedVehicleContainer".into(),
                             constraints: vec![],
                         },),
-                        constraints: vec![],
                     },
                     ChoiceOption {
                         is_recursive: false,
@@ -221,7 +215,6 @@ mod tests {
                             identifier: "RoadSurfaceContainer".into(),
                             constraints: vec![],
                         },),
-                        constraints: vec![],
                     },
                     ChoiceOption {
                         is_recursive: false,
@@ -232,7 +225,6 @@ mod tests {
                             identifier: "InfrastructureSupportContainer".into(),
                             constraints: vec![],
                         },),
-                        constraints: vec![],
                     },
                 ],
                 constraints: vec![],

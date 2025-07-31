@@ -1,18 +1,22 @@
 //! The `linker` module links the individual symbols of an ASN.1 spec.
 //! It resolves references and enriches the internal representations with
 //! metadata that may be required by the generator module.
-use std::ops::AddAssign;
+use crate::{
+    linker::symbol_table::{SymbolTable, SymbolTableState},
+    prelude::LinkerError,
+};
 
-use crate::{linker::symbol_table::SymbolTable, prelude::LinkerError};
 pub(crate) mod error;
+mod resolve_constraint_references;
+mod resolve_parameters;
 mod symbol_table;
 #[cfg(test)]
 mod tests;
 mod types;
 mod unnest;
 
-pub struct Linker<'a> {
-    symbol_table: SymbolTable<'a>,
+pub struct Linker<'a, S: SymbolTableState> {
+    symbol_table: SymbolTable<'a, S>,
 }
 
 #[derive(Debug, PartialEq, Clone, Copy, Default)]
