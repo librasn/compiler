@@ -598,7 +598,7 @@ impl ASN1Type {
         &mut self,
         name: &str,
         tlds: &BTreeMap<String, ToplevelDefinition>,
-    ) -> Result<Vec<Cow<str>>, GrammarError> {
+    ) -> Result<Vec<Cow<'_, str>>, GrammarError> {
         match self {
             ASN1Type::Choice(choice) => {
                 let mut children = Vec::new();
