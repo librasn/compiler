@@ -13,6 +13,7 @@ use std::{
     cell::RefCell,
     collections::BTreeMap,
     fs::{self, read_to_string},
+    io::Write,
     path::PathBuf,
     rc::Rc,
     vec,
@@ -133,15 +134,15 @@ impl Default for CompilerMissingParams {
 /// Typestate representing compiler that is ready to compile
 pub struct CompilerReady {
     sources: Vec<AsnSource>,
-    output_path: PathBuf,
+    output_mode: OutputMode,
 }
 
-/// Typestate representing compiler that has the output path set, but is missing ASN1 sources
+/// Typestate representing compiler that has the output mode set, but is missing ASN1 sources
 pub struct CompilerOutputSet {
-    output_path: PathBuf,
+    output_mode: OutputMode,
 }
 
-/// Typestate representing compiler that knows about ASN1 sources, but doesn't have an output path set
+/// Typestate representing compiler that knows about ASN1 sources, but doesn't have an output mode set
 pub struct CompilerSourcesSet {
     sources: Vec<AsnSource>,
 }
@@ -254,19 +255,26 @@ impl<B: Backend> Compiler<B, CompilerMissingParams> {
         }
     }
 
-    /// Set the output path for the generated rust representation.
-    /// * `output_path` - path to an output file or directory, if path indicates
-    ///   a directory, the output file is named `rasn_generated.rs`
+    /// Set the output path for the generated bindings.
+    /// * `output_path` - path to an output file or directory, if path indicates a directory, the
+    ///   output file is named `generated` with the extension used by the Backend.
+    #[deprecated = "Use `Self::set_output_mode` instead"]
     pub fn set_output_path(
         self,
         output_path: impl Into<PathBuf>,
     ) -> Compiler<B, CompilerOutputSet> {
-        let mut path: PathBuf = output_path.into();
-        if path.is_dir() {
-            path.set_file_name("rasn_generated.rs");
-        }
         Compiler {
-            state: CompilerOutputSet { output_path: path },
+            state: CompilerOutputSet {
+                output_mode: OutputMode::SingleFile(output_path.into()),
+            },
+            backend: self.backend,
+        }
+    }
+
+    /// Set the output destination for the generated bindings.
+    pub fn set_output_mode(self, output_mode: OutputMode) -> Compiler<B, CompilerOutputSet> {
+        Compiler {
+            state: CompilerOutputSet { output_mode },
             backend: self.backend,
         }
     }
@@ -279,7 +287,7 @@ impl<B: Backend> Compiler<B, CompilerOutputSet> {
         Compiler {
             state: CompilerReady {
                 sources: vec![AsnSource::Path(path_to_source.into())],
-                output_path: self.state.output_path,
+                output_mode: self.state.output_mode,
             },
             backend: self.backend,
         }
@@ -296,7 +304,7 @@ impl<B: Backend> Compiler<B, CompilerOutputSet> {
                 sources: paths_to_sources
                     .map(|p| AsnSource::Path(p.into()))
                     .collect(),
-                output_path: self.state.output_path,
+                output_mode: self.state.output_mode,
             },
             backend: self.backend,
         }
@@ -315,7 +323,7 @@ impl<B: Backend> Compiler<B, CompilerOutputSet> {
         Compiler {
             state: CompilerReady {
                 sources: vec![AsnSource::Literal(literal.into())],
-                output_path: self.state.output_path,
+                output_mode: self.state.output_mode,
             },
             backend: self.backend,
         }
@@ -369,15 +377,89 @@ impl<B: Backend> Compiler<B, CompilerSourcesSet> {
         }
     }
 
-    /// Set the output path for the generated rust representation.
-    /// * `output_path` - path to an output file or directory, if path points to
-    ///   a directory, the compiler will generate a file for every ASN.1 module.
-    ///   If the path points to a file, all modules will be written to that file.
+    /// Set the output path for the generated bindings.
+    /// * `output_path` - path to an output file or directory, if path indicates a directory, the
+    ///   output file is named `generated` with the extension used by the Backend.
+    #[deprecated = "Use `Self::set_output_mode` instead"]
     pub fn set_output_path(self, output_path: impl Into<PathBuf>) -> Compiler<B, CompilerReady> {
         Compiler {
             state: CompilerReady {
                 sources: self.state.sources,
-                output_path: output_path.into(),
+                output_mode: OutputMode::SingleFile(output_path.into()),
+            },
+            backend: self.backend,
+        }
+    }
+
+    /// Set the output destination for the generated bindings.
+    pub fn set_output_mode(self, output_mode: OutputMode) -> Compiler<B, CompilerReady> {
+        Compiler {
+            state: CompilerReady {
+                sources: self.state.sources,
+                output_mode,
+            },
+            backend: self.backend,
+        }
+    }
+
+    /// Runs the rasn compiler command and returns stringified Rust.
+    /// Returns a Result wrapping a compilation result:
+    /// * _Ok_  - tuple containing the stringified bindings for the ASN1 spec as well as a vector of warnings raised during the compilation
+    /// * _Err_ - Unrecoverable error, no bindings were generated
+    pub fn compile_to_string(self) -> Result<CompileResult, CompilerError> {
+        self.set_output_mode(OutputMode::NoOutput)
+            .compile_to_string()
+    }
+}
+
+impl<B: Backend> Compiler<B, CompilerReady> {
+    /// Add an ASN1 source to the compile command by path
+    /// * `path_to_source` - path to ASN1 file to include
+    pub fn add_asn_by_path(self, path_to_source: impl Into<PathBuf>) -> Compiler<B, CompilerReady> {
+        let mut sources: Vec<AsnSource> = self.state.sources;
+        sources.push(AsnSource::Path(path_to_source.into()));
+        Compiler {
+            state: CompilerReady {
+                output_mode: self.state.output_mode,
+                sources,
+            },
+            backend: self.backend,
+        }
+    }
+
+    /// Add several ASN1 sources by path to the compile command
+    /// * `path_to_source` - iterator of paths to the ASN1 files to be included
+    pub fn add_asn_sources_by_path(
+        self,
+        paths_to_sources: impl Iterator<Item = impl Into<PathBuf>>,
+    ) -> Compiler<B, CompilerReady> {
+        let mut sources: Vec<AsnSource> = self.state.sources;
+        sources.extend(paths_to_sources.map(|p| AsnSource::Path(p.into())));
+        Compiler {
+            state: CompilerReady {
+                sources,
+                output_mode: self.state.output_mode,
+            },
+            backend: self.backend,
+        }
+    }
+
+    /// Add a literal ASN1 source to the compile command
+    /// * `literal` - literal ASN1 statement to include
+    /// ```rust
+    /// # use rasn_compiler::prelude::*;
+    /// Compiler::<RasnBackend, _>::new().add_asn_literal(format!(
+    ///     "TestModule DEFINITIONS AUTOMATIC TAGS::= BEGIN {} END",
+    ///     "My-test-integer ::= INTEGER (1..128)"
+    /// )).compile_to_string();
+    /// ```
+    pub fn add_asn_literal(self, literal: impl Into<String>) -> Compiler<B, CompilerReady> {
+        let mut sources: Vec<AsnSource> = self.state.sources;
+        sources.push(AsnSource::Literal(literal.into()));
+        Compiler {
+            state: CompilerReady {
+                output_mode: self.state.output_mode,
+                sources,
             },
             backend: self.backend,
         }
@@ -389,6 +471,18 @@ impl<B: Backend> Compiler<B, CompilerSourcesSet> {
     /// * _Err_ - Unrecoverable error, no bindings were generated
     pub fn compile_to_string(mut self) -> Result<CompileResult, CompilerError> {
         self.internal_compile().map(CompileResult::fmt::<B>)
+    }
+
+    /// Runs the rasn compiler command.
+    /// Returns a Result wrapping a compilation result:
+    /// * _Ok_  - Vector of warnings raised during the compilation
+    /// * _Err_ - Unrecoverable error, no bindings were generated
+    pub fn compile(mut self) -> Result<Vec<CompilerError>, CompilerError> {
+        let result = self.internal_compile()?.fmt::<B>();
+
+        self.output_generated(&result.generated)?;
+
+        Ok(result.warnings)
     }
 
     fn internal_compile(&mut self) -> Result<CompileResult, CompilerError> {
@@ -446,102 +540,50 @@ impl<B: Backend> Compiler<B, CompilerSourcesSet> {
             warnings,
         })
     }
+
+    fn output_generated(&self, generated: &str) -> Result<(), GeneratorError> {
+        match &self.state.output_mode {
+            OutputMode::SingleFile(path) => {
+                let path = if path.is_dir() {
+                    &path.join(format!("generated{}", B::FILE_EXTENSION))
+                } else {
+                    path
+                };
+                fs::write(path, generated).map_err(|e| {
+                    GeneratorError::new(
+                        None,
+                        &format!(
+                            "Failed to write generated bindings to {}: {e}",
+                            path.display()
+                        ),
+                        GeneratorErrorType::IO,
+                    )
+                })
+            }
+            OutputMode::Stdout => {
+                std::io::stdout()
+                    .write_all(generated.as_bytes())
+                    .map_err(|err| {
+                        GeneratorError::new(
+                            None,
+                            &format!("Failed to write generated bindings to stdout: {err}"),
+                            GeneratorErrorType::IO,
+                        )
+                    })
+            }
+            OutputMode::NoOutput => Ok(()),
+        }
+    }
 }
 
-impl<B: Backend> Compiler<B, CompilerReady> {
-    /// Add an ASN1 source to the compile command by path
-    /// * `path_to_source` - path to ASN1 file to include
-    pub fn add_asn_by_path(self, path_to_source: impl Into<PathBuf>) -> Compiler<B, CompilerReady> {
-        let mut sources: Vec<AsnSource> = self.state.sources;
-        sources.push(AsnSource::Path(path_to_source.into()));
-        Compiler {
-            state: CompilerReady {
-                output_path: self.state.output_path,
-                sources,
-            },
-            backend: self.backend,
-        }
-    }
-
-    /// Add several ASN1 sources by path to the compile command
-    /// * `path_to_source` - iterator of paths to the ASN1 files to be included
-    pub fn add_asn_sources_by_path(
-        self,
-        paths_to_sources: impl Iterator<Item = impl Into<PathBuf>>,
-    ) -> Compiler<B, CompilerReady> {
-        let mut sources: Vec<AsnSource> = self.state.sources;
-        sources.extend(paths_to_sources.map(|p| AsnSource::Path(p.into())));
-        Compiler {
-            state: CompilerReady {
-                sources,
-                output_path: self.state.output_path,
-            },
-            backend: self.backend,
-        }
-    }
-
-    /// Add a literal ASN1 source to the compile command
-    /// * `literal` - literal ASN1 statement to include
-    /// ```rust
-    /// # use rasn_compiler::prelude::*;
-    /// Compiler::<RasnBackend, _>::new().add_asn_literal(format!(
-    ///     "TestModule DEFINITIONS AUTOMATIC TAGS::= BEGIN {} END",
-    ///     "My-test-integer ::= INTEGER (1..128)"
-    /// )).compile_to_string();
-    /// ```
-    pub fn add_asn_literal(self, literal: impl Into<String>) -> Compiler<B, CompilerReady> {
-        let mut sources: Vec<AsnSource> = self.state.sources;
-        sources.push(AsnSource::Literal(literal.into()));
-        Compiler {
-            state: CompilerReady {
-                output_path: self.state.output_path,
-                sources,
-            },
-            backend: self.backend,
-        }
-    }
-
-    /// Runs the rasn compiler command and returns stringified Rust.
-    /// Returns a Result wrapping a compilation result:
-    /// * _Ok_  - tuple containing the stringified bindings for the ASN1 spec as well as a vector of warnings raised during the compilation
-    /// * _Err_ - Unrecoverable error, no bindings were generated
-    pub fn compile_to_string(self) -> Result<CompileResult, CompilerError> {
-        Compiler {
-            state: CompilerSourcesSet {
-                sources: self.state.sources,
-            },
-            backend: self.backend,
-        }
-        .compile_to_string()
-    }
-
-    /// Runs the rasn compiler command.
-    /// Returns a Result wrapping a compilation result:
-    /// * _Ok_  - Vector of warnings raised during the compilation
-    /// * _Err_ - Unrecoverable error, no bindings were generated
-    pub fn compile(self) -> Result<Vec<CompilerError>, CompilerError> {
-        let result = Compiler {
-            state: CompilerSourcesSet {
-                sources: self.state.sources,
-            },
-            backend: self.backend,
-        }
-        .internal_compile()?
-        .fmt::<B>();
-
-        let output_file = if self.state.output_path.is_dir() {
-            self.state
-                .output_path
-                .join(format!("generated{}", B::FILE_EXTENSION))
-        } else {
-            self.state.output_path
-        };
-        fs::write(output_file, result.generated).map_err(|e| GeneratorError {
-            top_level_declaration: None,
-            details: e.to_string(),
-            kind: GeneratorErrorType::IO,
-        })?;
-
-        Ok(result.warnings)
-    }
+/// Where the [Compiler] output should go.
+#[derive(Debug)]
+pub enum OutputMode {
+    /// Write all compiled modules to a single file. Uses a default filename if path is a
+    /// directory.
+    SingleFile(PathBuf),
+    /// Write all compiled modules to stdout.
+    Stdout,
+    /// Do not write anything, only check.
+    NoOutput,
 }
