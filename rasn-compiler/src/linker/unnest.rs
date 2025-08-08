@@ -564,7 +564,7 @@ mod tests {
         ]));
         let id = SymbolId {
             module_reference: "test-module".into(),
-            type_reference: "Test".into(),
+            pdu_reference: "Test".into(),
             scope: Scope::Module,
         };
         assert_debug_snapshot!(test_sequence.unnest(id, ()));
@@ -591,7 +591,7 @@ mod tests {
         ]))));
         let id = SymbolId {
             module_reference: "test-module".into(),
-            type_reference: "Test".into(),
+            pdu_reference: "Test".into(),
             scope: Scope::Module,
         };
         assert_debug_snapshot!(test_set.unnest(id, ()));
@@ -612,7 +612,7 @@ mod tests {
         );
         let id = SymbolId {
             module_reference: "test-module".into(),
-            type_reference: "test".into(),
+            pdu_reference: "test".into(),
             scope: Scope::Module,
         };
         assert_debug_snapshot!(test_val.unnest(id, ()));
@@ -636,7 +636,7 @@ mod tests {
         ])]));
         let id = SymbolId {
             module_reference: "test-module".into(),
-            type_reference: "Test".into(),
+            pdu_reference: "Test".into(),
             scope: Scope::Module,
         };
         assert_debug_snapshot!(test_obj.unnest(id, ()));

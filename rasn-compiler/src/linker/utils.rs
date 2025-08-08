@@ -1,5 +1,5 @@
 use crate::{
-    intermediate::{ASN1Type, DeclarationElsewhere},
+    intermediate::{ASN1Type, ASN1Value, DeclarationElsewhere},
     linker::symbol_table::GeneratedSymbols,
     prelude::{
         ir::{
@@ -13,25 +13,27 @@ use crate::{
 };
 
 impl<'a> ASN1Type<'a> {
-    pub(super) fn apply_resursively<F, E>(
+    pub(super) fn apply_recursively<F, E>(
         &mut self,
         f: &mut F,
+        extra: &E,
     ) -> Result<GeneratedSymbols<'a>, LinkerError>
     where
-        F: FnMut(&mut ASN1Type<'a>, E) -> Result<GeneratedSymbols<'a>, LinkerError>,
+        F: FnMut(&mut ASN1Type<'a>, &E) -> Result<GeneratedSymbols<'a>, LinkerError>,
     {
         fn apply_to_subtype_elem<'a, F, E>(
             e: &mut SubtypeElements<'a>,
             f: &mut F,
+            extra: &E,
         ) -> Result<GeneratedSymbols<'a>, LinkerError>
         where
-            F: FnMut(&mut ASN1Type<'a>, E) -> Result<GeneratedSymbols<'a>, LinkerError>,
+            F: FnMut(&mut ASN1Type<'a>, &E) -> Result<GeneratedSymbols<'a>, LinkerError>,
         {
             match e {
                 SubtypeElements::ContainedSubtype { subtype: ty, .. }
-                | SubtypeElements::TypeConstraint(ty) => ty.apply_resursively(f),
+                | SubtypeElements::TypeConstraint(ty) => ty.apply_recursively(f, extra),
                 SubtypeElements::PermittedAlphabet(elem)
-                | SubtypeElements::SizeConstraint(elem) => apply_to_elem_or_set_op(elem, f),
+                | SubtypeElements::SizeConstraint(elem) => apply_to_elem_or_set_op(elem, f, extra),
                 _ => Ok(GeneratedSymbols::empty()),
             }
         }
@@ -39,15 +41,16 @@ impl<'a> ASN1Type<'a> {
         fn apply_to_elem_or_set_op<'a, F, E>(
             e: &mut ElementOrSetOperation<'a>,
             f: &mut F,
+            extra: &E,
         ) -> Result<GeneratedSymbols<'a>, LinkerError>
         where
-            F: FnMut(&mut ASN1Type<'a>, E) -> Result<GeneratedSymbols<'a>, LinkerError>,
+            F: FnMut(&mut ASN1Type<'a>, &E) -> Result<GeneratedSymbols<'a>, LinkerError>,
         {
             match e {
-                ElementOrSetOperation::Element(elem) => apply_to_subtype_elem(elem, f),
+                ElementOrSetOperation::Element(elem) => apply_to_subtype_elem(elem, f, extra),
                 ElementOrSetOperation::SetOperation(set_operation) => {
-                    apply_to_subtype_elem(&mut set_operation.base, f)?;
-                    apply_to_elem_or_set_op(&mut set_operation.operant, f)
+                    apply_to_subtype_elem(&mut set_operation.base, f, extra)?;
+                    apply_to_elem_or_set_op(&mut set_operation.operant, f, extra)
                 }
             }
         }
@@ -55,15 +58,16 @@ impl<'a> ASN1Type<'a> {
         fn apply_to_constraints<'a, F, E>(
             constraints: &mut Vec<Constraint<'a>>,
             f: &mut F,
+            extra: &E,
         ) -> Result<GeneratedSymbols<'a>, LinkerError>
         where
-            F: FnMut(&mut ASN1Type<'a>, E) -> Result<GeneratedSymbols<'a>, LinkerError>,
+            F: FnMut(&mut ASN1Type<'a>, &E) -> Result<GeneratedSymbols<'a>, LinkerError>,
         {
             constraints
                 .iter_mut()
                 .map(|c| match c {
                     Constraint::Subtype(ElementSetSpecs { set, .. }) => {
-                        apply_to_elem_or_set_op(set, f)
+                        apply_to_elem_or_set_op(set, f, extra)
                     }
                     _ => Ok(GeneratedSymbols::empty()),
                 })
@@ -73,17 +77,18 @@ impl<'a> ASN1Type<'a> {
         fn apply_to_members<'a, I, F, E>(
             iter: &mut I,
             f: &mut F,
+            extra: &E,
         ) -> Result<GeneratedSymbols<'a>, LinkerError>
         where
             I: IterMembers<'a>,
-            F: FnMut(&mut ASN1Type<'a>, E) -> Result<GeneratedSymbols<'a>, LinkerError>,
+            F: FnMut(&mut ASN1Type<'a>, &E) -> Result<GeneratedSymbols<'a>, LinkerError>,
         {
             iter.iter_mut_members()
-                .map(|m| m.ty_mut().apply_resursively(f))
+                .map(|m| m.ty_mut().apply_recursively(f, extra))
                 .collect()
         }
 
-        match self {
+        let mut generated = match self {
             ASN1Type::ChoiceSelectionType(_) |
             ASN1Type::EmbeddedPdv |
             ASN1Type::External |
@@ -101,26 +106,49 @@ impl<'a> ASN1Type<'a> {
             | ASN1Type::CharacterString(CharacterString { constraints, .. })
             | ASN1Type::Enumerated(Enumerated { constraints, .. })
             | ASN1Type::BitString(BitString { constraints, .. }) => {
-                apply_to_constraints(constraints, f)
+                apply_to_constraints(constraints, f, extra)
             }
             ASN1Type::Choice(choice) => {
-                let mut generated = apply_to_constraints(&mut choice.constraints, f)?;
-                let gen_from_members = apply_to_members(choice, f)?;
+                let mut generated = apply_to_constraints(&mut choice.constraints, f, extra)?;
+                let gen_from_members = apply_to_members(choice, f, extra)?;
                 generated += gen_from_members;
                 Ok(generated)
             }
             ASN1Type::Sequence(sequence_or_set) | ASN1Type::Set(sequence_or_set) => {
-                let mut generated = apply_to_constraints(&mut sequence_or_set.constraints, f)?;
-                let gen_from_members = apply_to_members(sequence_or_set, f)?;
+                let mut generated = apply_to_constraints(&mut sequence_or_set.constraints, f, extra)?;
+                let gen_from_members = apply_to_members(sequence_or_set, f, extra)?;
                 generated += gen_from_members;
                 Ok(generated)
             }
             ASN1Type::SequenceOf(sequence_or_set_of) | ASN1Type::SetOf(sequence_or_set_of) => {
-                let mut generated = apply_to_constraints(&mut sequence_or_set_of.constraints, f)?;
-                let gen_from_items = sequence_or_set_of.element_type.apply_resursively(f)?;
+                let mut generated = apply_to_constraints(&mut sequence_or_set_of.constraints, f, extra)?;
+                let gen_from_items = sequence_or_set_of.element_type.apply_recursively(f, extra)?;
                 generated += gen_from_items;
                 Ok(generated)
             }
-        }
+        }?;
+        generated += f(self, extra)?;
+        Ok(generated)
+    }
+}
+
+impl<'a> ASN1Value<'a> {
+    pub(super) fn apply_recursively<F, E>(
+        &mut self,
+        f: &mut F,
+        extra: &E,
+    ) -> Result<GeneratedSymbols<'a>, LinkerError>
+    where
+        F: FnMut(&mut ASN1Value<'a>, &E) -> Result<GeneratedSymbols<'a>, LinkerError>,
+    {
+        let mut generated = match self {
+            ASN1Value::Choice { inner_value, .. } => inner_value.apply_recursively(f, extra),
+            ASN1Value::SequenceOrSet(items) => {
+                items.iter_mut().map(|(_, val)| val.apply_recursively(f, extra)).collect()
+            },
+            _ => Ok(GeneratedSymbols::empty())
+        }?;
+        generated += f(self, extra)?;
+        Ok(generated)
     }
 }

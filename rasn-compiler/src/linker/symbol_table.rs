@@ -15,7 +15,7 @@ use crate::{
     },
     linker::{
         error::LinkerError,
-        resolve_parameters::{self, SymbolTableExtraParams},
+        resolve_parameters::{self, ResolveParameters, SymbolTableExtraParams},
         unnest::Unnest,
     },
     prelude::{
@@ -112,7 +112,7 @@ impl<'a> GeneratedSymbols<'a> {
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub(super) struct SymbolId<'a> {
     pub module_reference: Cow<'a, str>,
-    pub type_reference: Cow<'a, str>,
+    pub pdu_reference: Cow<'a, str>,
     pub scope: Scope<'a>,
 }
 
@@ -127,9 +127,9 @@ impl<'a> SymbolId<'a> {
 impl Display for SymbolId<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         if let Scope::Local(id) = &self.scope {
-            write!(f, "{}.{}.{id}", self.module_reference, self.type_reference)
+            write!(f, "{}.{}.{id}", self.module_reference, self.pdu_reference)
         } else {
-            write!(f, "{}.{}", self.module_reference, self.type_reference)
+            write!(f, "{}.{}", self.module_reference, self.pdu_reference)
         }
     }
 }
@@ -174,7 +174,7 @@ impl<'a> SymbolTable<'a, LexedSymbols> {
             for tld in module.top_level_definitions {
                 let symbol_id = SymbolId {
                     module_reference: module.module_header.name.clone(),
-                    type_reference: tld.name(),
+                    pdu_reference: tld.name(),
                     scope: Scope::Module,
                 };
                 symbol_table.insert(symbol_id, tld);
@@ -199,14 +199,18 @@ impl<'a> SymbolTable<'a, UnnestedSymbols> {
     pub(super) fn resolve_parameters(
         mut self,
     ) -> Result<SymbolTable<'a, ResolvedParameters>, LinkerError> {
-        for (id, symbol) in &mut self.0 {
-            match symbol {
-                Assignment::Type(TypeAssignment { ty, .. }) => {
-                    ty.apply_resursively::<_, SymbolTableExtraParams>(&mut |ty, extra| {
-                        resolve_parameters::resolve_parameters(ty, extra)
-                    })?;
+        let keys: Vec<SymbolId<'_>> = self.0.keys().cloned().collect();
+        for id in keys {
+            if let Some(mut symbol) = self.0.remove(&id) {
+                match &mut symbol {
+                    Assignment::Type(TypeAssignment { ty, .. }) => {
+                        let generated = ty.apply_recursively::<_, SymbolTableExtraParams>(&mut |ty, extra| {
+                            ty.resolve_parameters(extra)
+                        }, &SymbolTableExtraParams { symbol_table: &self, current_context: id.clone() })?;
+                        self.insert(generated);
+                    }
+                    _ => todo!(),
                 }
-                _ => todo!(),
             }
         }
         Ok(SymbolTable(self.0, PhantomData))
@@ -238,18 +242,27 @@ impl<'a, S: SymbolTableState> SymbolTable<'a, S> {
             }
         })
     }
+
+    pub(super) fn insert(&mut self, symbols: GeneratedSymbols<'a>) {
+        for SymbolTableEntry { id, assignment } in symbols {
+            self.0.insert(id, assignment);
+        }
+    }
+
     pub(super) fn as_top_level_type(&self, id: &SymbolId<'a>) -> Option<&TypeAssignment<'a>> {
         self.0.get(id).and_then(|elem| match elem {
             Assignment::Type(t) => Some(t),
             _ => None,
         })
     }
+
     pub(super) fn as_top_level_value(&self, id: &SymbolId<'a>) -> Option<&ValueAssignment<'a>> {
         self.0.get(id).and_then(|elem| match elem {
             Assignment::Value(t) => Some(t),
             _ => None,
         })
     }
+
     pub(super) fn as_top_level_object(
         &self,
         id: &SymbolId<'a>,
@@ -259,6 +272,7 @@ impl<'a, S: SymbolTableState> SymbolTable<'a, S> {
             _ => None,
         })
     }
+
     pub(super) fn as_top_level_class(
         &self,
         id: &SymbolId<'a>,
@@ -268,6 +282,7 @@ impl<'a, S: SymbolTableState> SymbolTable<'a, S> {
             _ => None,
         })
     }
+
     pub(super) fn as_top_level_macro(&self, id: &SymbolId<'a>) -> Option<&MacroDefinition<'a>> {
         self.0.get(id).and_then(|elem| match elem {
             Assignment::Macro(t) => Some(t),

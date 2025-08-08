@@ -1489,7 +1489,7 @@ pub enum DefinedValue<'a> {
     },
     ValueReference(Cow<'a, str>),
     ParameterizedValue {
-        simple_defined_type: Box<DefinedValue<'a>>,
+        simple_defined_value: Box<DefinedValue<'a>>,
         actual_parameter_list: Vec<Parameter<'a>>,
     },
 }

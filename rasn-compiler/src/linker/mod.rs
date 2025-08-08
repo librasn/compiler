@@ -12,7 +12,7 @@ mod resolve_parameters;
 mod symbol_table;
 #[cfg(test)]
 mod tests;
-mod types;
+mod utils;
 mod unnest;
 
 pub struct Linker<'a, S: SymbolTableState> {
