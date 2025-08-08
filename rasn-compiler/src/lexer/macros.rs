@@ -57,7 +57,7 @@ pub struct Production<'i> {
 /// MacroDefinition ::=
 ///     macroreference MACRO "::=" MacroSubstance
 /// ```
-pub fn macro_definition(input: Input<'_>) -> ParserResult<'_, MacroDefinition> {
+pub fn macro_definition(input: Input<'_>) -> ParserResult<'_, MacroDefinition<'_>> {
     map(
         separated_pair(
             skip_ws_and_comments(macro_reference),
@@ -85,7 +85,7 @@ pub fn macro_definition(input: Input<'_>) -> ParserResult<'_, MacroDefinition> {
 ///     macroreference           |
 ///     Externalmacroreference
 /// ```
-fn macro_substance(input: Input<'_>) -> ParserResult<'_, MacroSubstance> {
+fn macro_substance(input: Input<'_>) -> ParserResult<'_, MacroSubstance<'_>> {
     skip_ws_and_comments(alt((
         map(
             delimited(tag(BEGIN), cut(macro_body), skip_ws_and_comments(tag(END))),
@@ -119,7 +119,7 @@ fn macro_substance(input: Input<'_>) -> ParserResult<'_, MacroSubstance> {
 ///     VALUE PRODUCTION "::=" MacroAlternativeList
 ///
 /// ```
-fn macro_body(input: Input<'_>) -> ParserResult<'_, MacroBody> {
+fn macro_body(input: Input<'_>) -> ParserResult<'_, MacroBody<'_>> {
     map(
         (
             preceded(
@@ -163,7 +163,7 @@ fn macro_body(input: Input<'_>) -> ParserResult<'_, MacroBody> {
 /// Production ::=
 ///     productionreference "::=" MacroAlternativeList
 /// ```
-fn supporting_productions(input: Input<'_>) -> ParserResult<'_, Vec<Production>> {
+fn supporting_productions(input: Input<'_>) -> ParserResult<'_, Vec<Production<'_>>> {
     many0(map(
         separated_pair(
             skip_ws_and_comments(production_reference),
@@ -240,7 +240,7 @@ pub enum SymbolDefn<'i> {
 ///
 /// MacroAlternative ::= SymbolList
 /// ```
-fn macro_alternative_list(input: Input<'_>) -> ParserResult<'_, Vec<Vec<SymbolElement>>> {
+fn macro_alternative_list(input: Input<'_>) -> ParserResult<'_, Vec<Vec<SymbolElement<'_>>>> {
     separated_list1(skip_ws_and_comments(tag(PIPE)), symbol_list).parse(input)
 }
 
@@ -257,7 +257,7 @@ fn macro_alternative_list(input: Input<'_>) -> ParserResult<'_, Vec<Vec<SymbolEl
 ///     SymbolDefn  |
 ///     EmbeddedDefinitions
 /// ```
-fn symbol_list(input: Input<'_>) -> ParserResult<'_, Vec<SymbolElement>> {
+fn symbol_list(input: Input<'_>) -> ParserResult<'_, Vec<SymbolElement<'_>>> {
     many1(terminated(
         skip_ws_and_comments(alt((
             map(symbol_defn, SymbolElement::SymbolDefn),
@@ -401,7 +401,7 @@ pub struct LocalValueassignment<'i> {
 ///     EmbeddedDefinition |
 ///     EmbeddedDefinitionList EmbeddedDefinition
 /// ```
-fn embedded_definitions(input: Input<'_>) -> ParserResult<'_, Vec<EmbeddedDefinition>> {
+fn embedded_definitions(input: Input<'_>) -> ParserResult<'_, Vec<EmbeddedDefinition<'_>>> {
     delimited(
         skip_ws_and_comments(char(LESS_THAN)),
         cut(many1(skip_ws_and_comments(embedded_definition))),
@@ -419,7 +419,7 @@ fn embedded_definitions(input: Input<'_>) -> ParserResult<'_, Vec<EmbeddedDefini
 ///     LocalTypeassignment |
 ///     LocalValueassignment
 /// ```
-fn embedded_definition(input: Input<'_>) -> ParserResult<'_, EmbeddedDefinition> {
+fn embedded_definition(input: Input<'_>) -> ParserResult<'_, EmbeddedDefinition<'_>> {
     alt((
         map(local_type_assignement, EmbeddedDefinition::Type),
         map(local_value_assignement, EmbeddedDefinition::Value),
@@ -435,7 +435,7 @@ fn embedded_definition(input: Input<'_>) -> ParserResult<'_, EmbeddedDefinition>
 /// LocalTypeReference ::=
 ///     localtypereference "::=" MacroType
 /// ```
-fn local_type_assignement(input: Input<'_>) -> ParserResult<'_, LocalTypeassignment> {
+fn local_type_assignement(input: Input<'_>) -> ParserResult<'_, LocalTypeassignment<'_>> {
     map(
         separated_pair(
             local_type_reference,
@@ -455,7 +455,7 @@ fn local_type_assignement(input: Input<'_>) -> ParserResult<'_, LocalTypeassignm
 /// LocalValueassignment ::=
 ///     localvaluereference MacroType "::=" MacroValue
 /// ```
-fn local_value_assignement(input: Input<'_>) -> ParserResult<'_, LocalValueassignment> {
+fn local_value_assignement(input: Input<'_>) -> ParserResult<'_, LocalValueassignment<'_>> {
     map(
         (
             skip_ws_and_comments(local_value_reference),
