@@ -3,7 +3,7 @@ use std::{cmp::min, fmt::Debug};
 use nom::{
     bytes::complete::tag,
     error::{Error, ErrorKind, ParseError},
-    Err, FindSubstring, IResult, Input as _, Parser,
+    Err, FindSubstring, IResult, Input as _, Offset, Parser,
 };
 
 use crate::input::Input;
@@ -11,14 +11,28 @@ use crate::input::Input;
 use super::error::{ErrorTree, ParserResult};
 
 #[allow(dead_code)]
-pub fn debug_result<'a, O, F>(mut parser: F) -> impl FnMut(Input<'a>) -> ParserResult<'a, O>
+pub fn debug_result<'a, F>(
+    mut parser: F,
+) -> impl Parser<Input<'a>, Output = F::Output, Error = F::Error>
 where
-    O: Debug,
-    F: FnMut(Input<'a>) -> ParserResult<'a, O>,
+    F: Parser<Input<'a>>,
+    F::Output: Debug,
+    F::Error: Debug,
 {
-    move |input| {
-        let result = parser(input);
-        println!("{result:#?}");
+    move |input: Input<'a>| {
+        let result = parser.parse(input.clone());
+        match &result {
+            Ok((rest, value)) => {
+                let bytes_matched = Offset::offset(&input, rest);
+                let matched = input.slice(..bytes_matched);
+                eprintln!("VALUE  : {value:#?}");
+                eprintln!("MATCHED: {:#?}", matched.inner());
+                eprintln!("REST   : {rest:?}");
+            }
+            Err(err) => {
+                eprintln!("ERROR  : {err:#?}");
+            }
+        }
         result
     }
 }
