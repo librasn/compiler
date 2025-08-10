@@ -10,11 +10,12 @@ mod tests;
 mod validator;
 
 use std::{
+    borrow::Cow,
     cell::RefCell,
     collections::BTreeMap,
     fs::{self, read_to_string},
     io::Write,
-    path::PathBuf,
+    path::{Path, PathBuf},
     rc::Rc,
     vec,
 };
@@ -490,12 +491,9 @@ impl<B: Backend> Compiler<B, CompilerReady> {
         let mut warnings = Vec::<CompilerError>::new();
         let mut modules: Vec<ToplevelDefinition> = vec![];
         for src in &self.state.sources {
-            let stringified_src = match src {
-                AsnSource::Path(p) => read_to_string(p).map_err(LexerError::from)?,
-                AsnSource::Literal(l) => l.clone(),
-            };
+            let src_unit = src.try_into()?;
             modules.append(
-                &mut asn_spec(&stringified_src)?
+                &mut asn_spec(src_unit)?
                     .into_iter()
                     .flat_map(|(header, tlds)| {
                         let header_ref = Rc::new(RefCell::new(header));
@@ -586,4 +584,35 @@ pub enum OutputMode {
     Stdout,
     /// Do not write anything, only check.
     NoOutput,
+}
+
+struct AsnSourceUnit<'a> {
+    path: Option<&'a Path>,
+    source: Cow<'a, str>,
+}
+
+impl<'a> From<&'a str> for AsnSourceUnit<'a> {
+    fn from(value: &'a str) -> Self {
+        Self {
+            path: None,
+            source: Cow::Borrowed(value),
+        }
+    }
+}
+
+impl<'a> TryFrom<&'a AsnSource> for AsnSourceUnit<'a> {
+    type Error = CompilerError;
+
+    fn try_from(value: &'a AsnSource) -> Result<Self, Self::Error> {
+        match value {
+            AsnSource::Path(path) => Ok(AsnSourceUnit {
+                path: Some(path),
+                source: Cow::Owned(read_to_string(path).map_err(LexerError::from)?),
+            }),
+            AsnSource::Literal(literal) => Ok(AsnSourceUnit {
+                path: None,
+                source: Cow::Borrowed(literal),
+            }),
+        }
+    }
 }

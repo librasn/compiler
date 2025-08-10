@@ -142,11 +142,11 @@ fn as_decl_string<I: std::fmt::Debug>(input: I) -> String {
 }
 
 fn expected_lexer_result(literal: &str) -> String {
-    as_decl_string(crate::lexer::asn_spec(literal).unwrap())
+    as_decl_string(crate::lexer::asn_spec(literal.into()).unwrap())
 }
 
 fn validator_io(literal: &str) -> (String, String) {
-    let input = crate::lexer::asn_spec(literal)
+    let input = crate::lexer::asn_spec(literal.into())
         .unwrap()
         .into_iter()
         .flat_map(|(header, tlds)| {

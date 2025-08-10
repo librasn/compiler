@@ -6,11 +6,14 @@
 
 use std::{
     fmt::Debug,
+    path::Path,
     slice::SliceIndex,
     str::{CharIndices, Chars, FromStr},
 };
 
 use nom::{AsBytes, Compare, ExtendInto, FindSubstring, FindToken, Offset, ParseTo, Parser};
+
+use crate::AsnSourceUnit;
 
 /// Informs `Input` of a context switch.
 pub fn context_boundary<'a, F>(
@@ -31,6 +34,7 @@ where
 /// data for debugging purposes.
 #[derive(Clone, PartialEq)]
 pub struct Input<'a> {
+    src_file: Option<&'a Path>,
     inner: &'a str,
     /// current line position of parser, starts at 1
     line: usize,
@@ -67,6 +71,10 @@ impl Debug for Input<'_> {
 impl<'a> Input<'a> {
     pub fn into_inner(self) -> &'a str {
         self.inner
+    }
+
+    pub fn src_file(&self) -> Option<String> {
+        self.src_file.map(|p| p.to_string_lossy().to_string())
     }
 }
 
@@ -111,6 +119,7 @@ impl Input<'_> {
     #[cfg(test)]
     pub fn with_line_column_and_offset(&self, line: usize, column: usize, offset: usize) -> Self {
         Self {
+            src_file: self.src_file,
             inner: self.inner,
             line,
             context_start_line: self.context_start_line,
@@ -121,9 +130,24 @@ impl Input<'_> {
     }
 }
 
+impl<'a> From<&'a AsnSourceUnit<'a>> for Input<'a> {
+    fn from(value: &'a AsnSourceUnit) -> Self {
+        Input {
+            src_file: value.path,
+            inner: &value.source,
+            line: 1,
+            context_start_line: 1,
+            context_start_offset: 0,
+            column: 1,
+            offset: 0,
+        }
+    }
+}
+
 impl<'a> From<&'a str> for Input<'a> {
     fn from(value: &'a str) -> Self {
         Self {
+            src_file: None,
             inner: value,
             line: 1,
             context_start_line: 1,
@@ -204,6 +228,7 @@ impl<'a> Input<'a> {
         let consumed_len = self.inner.offset(inner);
         if consumed_len == 0 {
             Input {
+                src_file: self.src_file,
                 line: self.line,
                 column: self.column,
                 offset: self.offset,
@@ -223,6 +248,7 @@ impl<'a> Input<'a> {
             let line = self.line + line_breaks.count();
 
             Input {
+                src_file: self.src_file,
                 line,
                 column,
                 context_start_line: self.context_start_line,
