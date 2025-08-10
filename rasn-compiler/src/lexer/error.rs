@@ -50,10 +50,16 @@ impl LexerError {
                         ln
                     });
 
+                let src_info = if let Some(file_name) = report_data.src_file.as_ref() {
+                    format!("Source file: {file_name}:{line}:{column}")
+                } else {
+                    format!("line {line}, column {column}")
+                };
+
                 format!(
                     r#"
 Error matching ASN syntax at while parsing:
-{indentation}   ╭─[line {line}, column {column}]
+{indentation}   ╭─[{src_info}]
 {indentation}   │
 {indentation}   │ {pdu}
 {indentation}   │
@@ -109,11 +115,23 @@ impl Display for LexerError {
                     " Need another {i} characters of input."
                 ))
             ),
-            LexerErrorType::MatchingError(report_data) => write!(
-                f,
-                "Error matching ASN syntax at while parsing line {} column {}.",
-                report_data.line, report_data.column
-            ),
+            LexerErrorType::MatchingError(report_data) => {
+                let src_info = if let Some(file_name) = report_data.src_file.as_ref() {
+                    format!(
+                        "source file {file_name}:{}:{}",
+                        report_data.line + 1,
+                        report_data.column
+                    )
+                } else {
+                    format!(
+                        "line {}, column {}",
+                        report_data.line + 1,
+                        report_data.column
+                    )
+                };
+
+                write!(f, "Error matching ASN syntax at while parsing {src_info}.",)
+            }
             LexerErrorType::IO(reason) => write!(f, "Failed to read ASN.1 source. {reason}"),
         }
     }
@@ -121,6 +139,7 @@ impl Display for LexerError {
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct ReportData {
+    pub src_file: Option<String>,
     pub context_start_line: usize,
     pub context_start_offset: usize,
     pub line: usize,
@@ -134,6 +153,7 @@ impl From<ErrorTree<'_>> for ReportData {
     fn from(value: ErrorTree<'_>) -> Self {
         match value {
             ErrorTree::Base { input, kind } => Self {
+                src_file: input.src_file(),
                 context_start_line: input.context_start_line(),
                 context_start_offset: input.context_start_offset(),
                 line: input.line(),
@@ -323,6 +343,7 @@ c-ctxRefNull CtxRef ::= 0
     END"#;
         let error = LexerError {
             kind: LexerErrorType::MatchingError(ReportData {
+                src_file: None,
                 context_start_line: 4,
                 context_start_offset: 123,
                 line: 6,

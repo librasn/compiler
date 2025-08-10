@@ -19,12 +19,12 @@ use nom::{
     Parser,
 };
 
-use crate::intermediate::macros::ToplevelMacroDefinition;
 use crate::lexer::macros::macro_definition;
 use crate::{
     input::{context_boundary, Input},
     intermediate::{information_object::*, *},
 };
+use crate::{intermediate::macros::ToplevelMacroDefinition, AsnSourceUnit};
 
 use self::{
     bit_string::*, boolean::*, character_string::*, choice::*, common::*, constraint::*,
@@ -62,9 +62,11 @@ mod util;
 #[cfg(test)]
 mod tests;
 
-pub fn asn_spec(input: &str) -> Result<Vec<(ModuleHeader, Vec<ToplevelDefinition>)>, LexerError> {
+pub fn asn_spec(
+    input: AsnSourceUnit,
+) -> Result<Vec<(ModuleHeader, Vec<ToplevelDefinition>)>, LexerError> {
     let mut result = Vec::new();
-    let mut remaining_input = Input::from(input);
+    let mut remaining_input = Input::from(&input);
     loop {
         match asn_module(remaining_input) {
             Ok((remaining, res)) => {
