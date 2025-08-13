@@ -58,6 +58,7 @@ pub struct Input<'a> {
 impl Debug for Input<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("Input")
+            .field("src_file", &self.src_file)
             .field("inner", &ShortenedDebugStr(self.inner()))
             .field("line", &self.line)
             .field("column", &self.column)
