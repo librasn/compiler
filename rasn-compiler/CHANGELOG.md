@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.14.2](https://github.com/librasn/compiler/compare/rasn-compiler-v0.14.1...rasn-compiler-v0.14.2) - 2025-08-13
+
+### Other
+
+- Include `src_file` in `Debug` for `Input`
+- Include file name in compiler errors
+
 ## [0.14.1](https://github.com/librasn/compiler/compare/rasn-compiler-v0.14.0...rasn-compiler-v0.14.1) - 2025-08-08
 
 ### Added
