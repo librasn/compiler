@@ -510,10 +510,24 @@ impl Rasn {
         } else {
             all_constraints.append(&mut member.constraints().to_owned());
         }
-        let range_annotations = self.format_range_annotations(
-            matches!(member.ty(), ASN1Type::Integer(_)),
-            &all_constraints,
-        )?;
+        let range_annotations = if let ASN1Type::CharacterString(c_string) = member.ty() {
+            // ITU-T X.691 clause 30.1, 30.6: Known-multiplier character strings types
+            match c_string.ty {
+                // 30.1: Known-multiplier character string types
+                CharacterStringType::NumericString | CharacterStringType::PrintableString |
+                CharacterStringType::VisibleString | CharacterStringType::IA5String |
+                CharacterStringType::BMPString | CharacterStringType::UniversalString => {
+                    self.format_range_annotations(false, &all_constraints)?
+                },
+                // 30.6: Non-known-multiplier character string types
+                _ => TokenStream::new(),
+            }
+        } else {
+            self.format_range_annotations(
+                matches!(member.ty(), ASN1Type::Integer(_)),
+                &all_constraints,
+            )?
+        };
         let alphabet_annotations = if let ASN1Type::CharacterString(c_string) = member.ty() {
             self.format_alphabet_annotations(c_string.ty, &all_constraints)?
         } else {

@@ -68,6 +68,15 @@ impl PerVisibleAlphabetConstraints {
         constraint: &Constraint,
         string_type: CharacterStringType,
     ) -> Result<Option<Self>, GrammarError> {
+        // ITU-T X.691 clause 30.1, 30.6: Known-multiplier character strings types
+        match string_type {
+            // 30.1: Known-multiplier character string types
+            CharacterStringType::NumericString | CharacterStringType::PrintableString |
+            CharacterStringType::VisibleString | CharacterStringType::IA5String |
+            CharacterStringType::BMPString | CharacterStringType::UniversalString => {},
+            // 30.6: Non-known-multiplier character string types
+            _ => return Ok(None),
+        }
         match constraint {
             Constraint::Subtype(c) => match &c.set {
                 ElementOrSetOperation::Element(e) => Self::from_subtype_elem(Some(e), string_type),
