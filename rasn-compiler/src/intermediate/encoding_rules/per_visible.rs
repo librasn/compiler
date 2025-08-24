@@ -81,7 +81,7 @@ impl PerVisibleAlphabetConstraints {
             Constraint::Subtype(c) => match &c.set {
                 ElementOrSetOperation::Element(e) => Self::from_subtype_elem(Some(e), string_type),
                 ElementOrSetOperation::SetOperation(s) => Self::from_subtype_elem(
-                    fold_constraint_set(s, Some(&string_type.character_set()))?.as_ref(),
+                    fold_constraint_set(s, Some(&string_type.character_set()), false)?.as_ref(),
                     string_type,
                 ),
             },
@@ -337,7 +337,12 @@ impl TryFrom<&Constraint> for PerVisibleRangeConstraints {
                 let mut per_visible: PerVisibleRangeConstraints = match &c.set {
                     ElementOrSetOperation::Element(e) => Some(e).try_into(),
                     ElementOrSetOperation::SetOperation(s) => {
-                        fold_constraint_set(s, None)?.as_ref().try_into()
+                        let mut v: PerVisibleRangeConstraints = fold_constraint_set(s, None, true)?.as_ref().try_into()?;
+                        if s.operator == SetOperator::Intersection && (matches!(s.base, SubtypeElements::SizeConstraint(_)) |
+                            matches!(*s.operant, ElementOrSetOperation::Element(SubtypeElements::SizeConstraint(_)))) {
+                            v.is_size_constraint = true;
+                        }
+                        Ok(v)
                     }
                 }?;
                 if let (PerVisibleRangeConstraints { min, max, .. }, true) =
@@ -390,7 +395,7 @@ impl TryFrom<Option<&SubtypeElements>> for PerVisibleRangeConstraints {
                 }),
                 ElementOrSetOperation::SetOperation(s) => {
                     <Option<&SubtypeElements> as TryInto<PerVisibleRangeConstraints>>::try_into(
-                        fold_constraint_set(s, None)?.as_ref(),
+                        fold_constraint_set(s, None, true)?.as_ref(),
                     )
                     .map(|mut c| {
                         c.is_size_constraint = true;
@@ -483,10 +488,11 @@ pub fn per_visible_range_constraints(
 fn fold_constraint_set(
     set: &SetOperation,
     char_set: Option<&BTreeMap<usize, char>>,
+    range_constraint: bool,
 ) -> Result<Option<SubtypeElements>, GrammarError> {
     let folded_operant = match &*set.operant {
         ElementOrSetOperation::Element(e) => e.per_visible().then(|| e.clone()),
-        ElementOrSetOperation::SetOperation(s) => fold_constraint_set(s, char_set)?,
+        ElementOrSetOperation::SetOperation(s) => fold_constraint_set(s, char_set, range_constraint)?,
     };
     match (&set.base, &folded_operant) {
         (base, Some(SubtypeElements::PermittedAlphabet(elem_or_set)))
@@ -500,6 +506,7 @@ fn fold_constraint_set(
                     operant: elem_or_set.clone(),
                 },
                 char_set,
+                range_constraint,
             )
         }
         (
@@ -537,7 +544,7 @@ fn fold_constraint_set(
         | (SubtypeElements::SizeConstraint(elem_or_set), None) => {
             return match &**elem_or_set {
                 ElementOrSetOperation::Element(e) => Ok(Some(e.clone())),
-                ElementOrSetOperation::SetOperation(s) => fold_constraint_set(s, char_set),
+                ElementOrSetOperation::SetOperation(s) => fold_constraint_set(s, char_set, range_constraint),
             }
         }
         _ => (),
@@ -615,7 +622,7 @@ fn fold_constraint_set(
                     max,
                     extensible: x2,
                 }),
-            ) => intersect_single_and_range(value, min.as_ref(), max.as_ref(), *x1, *x2, char_set),
+            ) => intersect_single_and_range(value, min.as_ref(), max.as_ref(), *x1, *x2, char_set, range_constraint),
             (
                 SubtypeElements::ValueRange {
                     min,
@@ -626,7 +633,7 @@ fn fold_constraint_set(
                     value,
                     extensible: x1,
                 }),
-            ) => intersect_single_and_range(value, min.as_ref(), max.as_ref(), *x1, *x2, char_set),
+            ) => intersect_single_and_range(value, min.as_ref(), max.as_ref(), *x1, *x2, char_set, range_constraint),
             (
                 _,
                 Some(SubtypeElements::SingleValue {
@@ -736,7 +743,7 @@ fn fold_constraint_set(
                     value: v,
                     extensible: x2,
                 }),
-            ) => union_single_and_range(&v, min.as_ref(), char_set, max.as_ref(), *x1, x2),
+            ) => union_single_and_range(&v, min.as_ref(), char_set, max.as_ref(), *x1, x2, range_constraint),
             (
                 SubtypeElements::SingleValue {
                     value: v,
@@ -747,7 +754,7 @@ fn fold_constraint_set(
                     max,
                     extensible: x2,
                 }),
-            ) => union_single_and_range(v, min.as_ref(), char_set, max.as_ref(), *x1, x2),
+            ) => union_single_and_range(v, min.as_ref(), char_set, max.as_ref(), *x1, x2, range_constraint),
             (
                 SubtypeElements::ValueRange {
                     min: min1,
@@ -804,10 +811,11 @@ fn intersect_single_and_range(
     x1: bool,
     x2: bool,
     char_set: Option<&BTreeMap<usize, char>>,
+    range_constraint: bool,
 ) -> Result<Option<SubtypeElements>, GrammarError> {
-    match (value, min, max, x1 || x2, char_set) {
-        (ASN1Value::Integer(_), _, Some(ASN1Value::String(_)), _, Some(_))
-        | (ASN1Value::Integer(_), Some(ASN1Value::String(_)), _, _, Some(_)) => {
+    match (value, min, max, x1 || x2, char_set, range_constraint) {
+        (ASN1Value::Integer(_), _, Some(ASN1Value::String(_)), _, Some(_), _)
+        | (ASN1Value::Integer(_), Some(ASN1Value::String(_)), _, _, Some(_), _) => {
             if x2 {
                 Ok(None)
             } else {
@@ -818,8 +826,8 @@ fn intersect_single_and_range(
                 }))
             }
         }
-        (ASN1Value::String(_), Some(ASN1Value::Integer(_)), _, _, Some(_))
-        | (ASN1Value::String(_), _, Some(ASN1Value::Integer(_)), _, Some(_)) => {
+        (ASN1Value::String(_), Some(ASN1Value::Integer(_)), _, _, Some(_), _)
+        | (ASN1Value::String(_), _, Some(ASN1Value::Integer(_)), _, Some(_), _) => {
             if x1 {
                 Ok(None)
             } else {
@@ -829,27 +837,27 @@ fn intersect_single_and_range(
                 }))
             }
         }
-        (ASN1Value::Integer(_), _, Some(ASN1Value::String(_)), _, None)
-        | (ASN1Value::Integer(_), Some(ASN1Value::String(_)), _, _, None) => {
+        (ASN1Value::Integer(_), _, Some(ASN1Value::String(_)), _, None, _)
+        | (ASN1Value::Integer(_), Some(ASN1Value::String(_)), _, _, None, _) => {
             Ok(Some(SubtypeElements::SingleValue {
                 value: value.clone(),
                 extensible: x1,
             }))
         }
-        (ASN1Value::String(_), Some(ASN1Value::Integer(_)), _, _, None)
-        | (ASN1Value::String(_), _, Some(ASN1Value::Integer(_)), _, None) => {
+        (ASN1Value::String(_), Some(ASN1Value::Integer(_)), _, _, None, _)
+        | (ASN1Value::String(_), _, Some(ASN1Value::Integer(_)), _, None, _) => {
             Ok(Some(SubtypeElements::ValueRange {
                 min: min.cloned(),
                 max: max.cloned(),
                 extensible: x2,
             }))
         }
-        (ASN1Value::Integer(v), _, _, extensible, _) => Ok(Some(SubtypeElements::SingleValue {
+        (ASN1Value::Integer(v), _, _, extensible, _, _) => Ok(Some(SubtypeElements::SingleValue {
             value: ASN1Value::Integer(*v),
             extensible,
         })),
-        (_, _, _, true, _) => Ok(None),
-        (ASN1Value::String(s1), _, _, _, Some(chars)) => {
+        (_, _, _, true, _, _) => Ok(None),
+        (ASN1Value::String(s1), _, _, _, Some(chars), _) => {
             let indices = s1
                 .chars()
                 .map(|c| find_char_index(chars, c).map(|i| (c, i)))
@@ -868,6 +876,7 @@ fn intersect_single_and_range(
                 extensible: false,
             }))
         }
+        (ASN1Value::String(_), _, _, _, None, true) => Ok(None),
         _ => Err(GrammarError::new(
             &format!("Unsupported operation for ASN1Values {value:?} and {min:?}..{max:?}"),
             GrammarErrorType::UnpackingError,
@@ -882,37 +891,60 @@ fn union_single_and_range(
     max: Option<&ASN1Value>,
     x1: bool,
     x2: bool,
+    range_constraint: bool,
 ) -> Result<Option<SubtypeElements>, GrammarError> {
-    match (v, min, max, x1 || x2, char_set) {
-        (ASN1Value::Integer(_), _, Some(ASN1Value::String(_)), _, _)
-        | (ASN1Value::Integer(_), Some(ASN1Value::String(_)), _, _, _)
-        | (ASN1Value::String(_), Some(ASN1Value::Integer(_)), _, _, _)
-        | (ASN1Value::String(_), _, Some(ASN1Value::Integer(_)), _, _) => Ok(None),
-        (ASN1Value::Integer(_), _, _, extensible, _) => Ok(Some(SubtypeElements::ValueRange {
+    match (v, min, max, x1 || x2, char_set, range_constraint) {
+        (ASN1Value::Integer(_), _, Some(ASN1Value::String(_)), _, _, _)
+        | (ASN1Value::Integer(_), Some(ASN1Value::String(_)), _, _, _, _)
+        | (ASN1Value::String(_), Some(ASN1Value::Integer(_)), _, _, _, _)
+        | (ASN1Value::String(_), _, Some(ASN1Value::Integer(_)), _, _, _) => Ok(None),
+        (ASN1Value::Integer(_), _, _, extensible, _, _) => Ok(Some(SubtypeElements::ValueRange {
             min: compare_optional_asn1values(Some(v), min, |a, b| a.min(b, char_set))?,
             max: compare_optional_asn1values(Some(v), max, |a, b| a.max(b, char_set))?,
             extensible,
         })),
-        (_, _, _, true, _) => Ok(None),
-        (ASN1Value::String(s1), _, _, _, Some(chars)) => {
-            let indices = s1
-                .chars()
-                .map(|c| find_char_index(chars, c).map(|i| (c, i)))
-                .collect::<Result<Vec<(char, usize)>, _>>()?;
-            let s_min = indices
-                .iter()
-                .min_by(|(_, a), (_, b)| a.cmp(b))
-                .map(|(c, _)| ASN1Value::String(format!("{c}")));
-            let s_max = indices
-                .iter()
-                .max_by(|(_, a), (_, b)| a.cmp(b))
-                .map(|(c, _)| ASN1Value::String(format!("{c}")));
-            Ok(Some(SubtypeElements::ValueRange {
-                min: compare_optional_asn1values(s_min.as_ref(), min, |a, b| a.min(b, char_set))?,
-                max: compare_optional_asn1values(s_max.as_ref(), max, |a, b| a.max(b, char_set))?,
-                extensible: false,
-            }))
-        }
+        (_, _, _, true, _, _) => Ok(None),
+        (ASN1Value::String(s1), Some(ASN1Value::String(min)), Some(ASN1Value::String(max)), _, Some(chars), _) => {
+            let min_i = find_string_index(min, chars)?;
+            let max_i = find_string_index(max, chars)?;
+            let mut indicies = std::collections::BTreeSet::new();
+            for c in s1.chars() {
+                indicies.insert(find_char_index(chars, c)?);
+            }
+            for i in min_i..max_i {
+                indicies.insert(i);
+            }
+            let mut indices = indicies.iter().collect::<Vec<_>>();
+            indices.sort();
+            let mut last = indices[0];
+            let mut contiguous = true;
+            for v in indices[1..].iter() {
+                if **v != last + 1 {
+                    contiguous = false;
+                    break;
+                }
+                last = *v;
+            }
+            if contiguous {
+                let min_i = indices[0];
+                let max_i = indices[indices.len() - 1];
+                Ok(Some(SubtypeElements::ValueRange {
+                    min: Some(ASN1Value::String(chars.get(&min_i).unwrap().to_string())),
+                    max: Some(ASN1Value::String(chars.get(&max_i).unwrap().to_string())),
+                    extensible: false,
+                }))
+            } else {
+                let mut c = s1.to_string();
+                for i in min_i..=max_i {
+                    c.push(*chars.get(&i).unwrap());
+                }
+                Ok(Some(SubtypeElements::SingleValue {
+                    value: ASN1Value::String(c),
+                    extensible: false,
+                }))
+            }
+        },
+        (ASN1Value::String(_), _, _, _, None, true) => Ok(None),
         _ => Err(GrammarError::new(
             &format!("Unsupported operation for values {v:?} and {min:?}..{max:?}"),
             GrammarErrorType::UnpackingError,
@@ -1069,7 +1101,8 @@ mod tests {
                         }
                     ))
                 },
-                Some(&CharacterStringType::IA5String.character_set())
+                Some(&CharacterStringType::IA5String.character_set()),
+                false
             )
             .unwrap()
             .unwrap(),
@@ -1093,7 +1126,8 @@ mod tests {
                         }
                     ))
                 },
-                Some(&CharacterStringType::IA5String.character_set())
+                Some(&CharacterStringType::IA5String.character_set()),
+                false
             )
             .unwrap()
             .unwrap(),
@@ -1122,7 +1156,8 @@ mod tests {
                         }
                     ))
                 },
-                Some(&CharacterStringType::PrintableString.character_set())
+                Some(&CharacterStringType::PrintableString.character_set()),
+                false,
             )
             .unwrap()
             .unwrap(),
@@ -1148,7 +1183,8 @@ mod tests {
                         }
                     ))
                 },
-                Some(&CharacterStringType::PrintableString.character_set())
+                Some(&CharacterStringType::PrintableString.character_set()),
+                false
             )
             .unwrap()
             .unwrap(),
@@ -1179,7 +1215,8 @@ mod tests {
                         }
                     ))
                 },
-                Some(&CharacterStringType::VisibleString.character_set())
+                Some(&CharacterStringType::VisibleString.character_set()),
+                false,
             )
             .unwrap()
             .unwrap(),
@@ -1206,7 +1243,8 @@ mod tests {
                         }
                     ))
                 },
-                Some(&CharacterStringType::PrintableString.character_set())
+                Some(&CharacterStringType::PrintableString.character_set()),
+                false
             )
             .unwrap()
             .unwrap(),
@@ -1235,7 +1273,8 @@ mod tests {
                         }
                     ))
                 },
-                None
+                None,
+                true
             )
             .unwrap()
             .unwrap(),
@@ -1264,7 +1303,8 @@ mod tests {
                         }
                     ))
                 },
-                None
+                None,
+                true
             )
             .unwrap()
             .unwrap(),
@@ -1289,7 +1329,8 @@ mod tests {
                         }
                     ))
                 },
-                None
+                None,
+                true,
             )
             .unwrap()
             .unwrap(),
@@ -1320,7 +1361,8 @@ mod tests {
                         }
                     ))
                 },
-                None
+                None,
+                true,
             )
             .unwrap()
             .unwrap(),
@@ -1347,7 +1389,8 @@ mod tests {
                         }
                     ))
                 },
-                None
+                None,
+                true
             )
             .unwrap()
             .unwrap(),
@@ -1375,7 +1418,7 @@ mod tests {
             )),
         };
         assert_eq!(
-            fold_constraint_set(&set_op(SetOperator::Intersection), None)
+            fold_constraint_set(&set_op(SetOperator::Intersection), None, true)
                 .unwrap()
                 .unwrap(),
             SubtypeElements::SingleValue {
@@ -1386,7 +1429,8 @@ mod tests {
         assert_eq!(
             fold_constraint_set(
                 &set_op(SetOperator::Intersection),
-                Some(&CharacterStringType::IA5String.character_set())
+                Some(&CharacterStringType::IA5String.character_set()),
+                false
             )
             .unwrap()
             .unwrap(),
@@ -1396,13 +1440,14 @@ mod tests {
             }
         );
         assert_eq!(
-            fold_constraint_set(&set_op(SetOperator::Union), None).unwrap(),
+            fold_constraint_set(&set_op(SetOperator::Union), None, true).unwrap(),
             None
         );
         assert_eq!(
             fold_constraint_set(
                 &set_op(SetOperator::Union),
-                Some(&CharacterStringType::IA5String.character_set())
+                Some(&CharacterStringType::IA5String.character_set()),
+                false
             )
             .unwrap(),
             None
@@ -1428,7 +1473,8 @@ mod tests {
         assert_eq!(
             fold_constraint_set(
                 &set_op(SetOperator::Intersection),
-                Some(&CharacterStringType::PrintableString.character_set())
+                Some(&CharacterStringType::PrintableString.character_set()),
+                false
             )
             .unwrap()
             .unwrap(),
@@ -1440,13 +1486,14 @@ mod tests {
         assert_eq!(
             fold_constraint_set(
                 &set_op(SetOperator::Union),
-                Some(&CharacterStringType::PrintableString.character_set())
+                Some(&CharacterStringType::PrintableString.character_set()),
+                false
             )
             .unwrap(),
             None
         );
         assert_eq!(
-            fold_constraint_set(&set_op(SetOperator::Intersection), None)
+            fold_constraint_set(&set_op(SetOperator::Intersection), None, true)
                 .unwrap()
                 .unwrap(),
             SubtypeElements::ValueRange {
@@ -1456,7 +1503,7 @@ mod tests {
             }
         );
         assert_eq!(
-            fold_constraint_set(&set_op(SetOperator::Union), None).unwrap(),
+            fold_constraint_set(&set_op(SetOperator::Union), None, true).unwrap(),
             None
         );
     }
@@ -1481,7 +1528,8 @@ mod tests {
         assert_eq!(
             fold_constraint_set(
                 &set_op(SetOperator::Intersection),
-                Some(&CharacterStringType::PrintableString.character_set())
+                Some(&CharacterStringType::PrintableString.character_set()),
+                true
             )
             .unwrap()
             .unwrap(),
@@ -1492,7 +1540,7 @@ mod tests {
             }
         );
         assert_eq!(
-            fold_constraint_set(&set_op(SetOperator::Intersection), None)
+            fold_constraint_set(&set_op(SetOperator::Intersection), None, true)
                 .unwrap()
                 .unwrap(),
             SubtypeElements::ValueRange {
@@ -1504,13 +1552,14 @@ mod tests {
         assert_eq!(
             fold_constraint_set(
                 &set_op(SetOperator::Union),
-                Some(&CharacterStringType::PrintableString.character_set())
+                Some(&CharacterStringType::PrintableString.character_set()),
+                true
             )
             .unwrap(),
             None
         );
         assert_eq!(
-            fold_constraint_set(&set_op(SetOperator::Union), None).unwrap(),
+            fold_constraint_set(&set_op(SetOperator::Union), None, true).unwrap(),
             None
         );
     }
