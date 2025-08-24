@@ -982,12 +982,12 @@ mod tests {
                         extensible: false
                     })
                 }),
-                CharacterStringType::UTF8String
+                CharacterStringType::IA5String,
             )
             .unwrap()
             .unwrap(),
             PerVisibleAlphabetConstraints {
-                string_type: CharacterStringType::UTF8String,
+                string_type: CharacterStringType::IA5String,
                 character_by_index: [(0, 'A'), (1, 'B'), (2, 'C'), (3, 'D'), (4, 'E'), (5, 'F')]
                     .into_iter()
                     .collect(),
@@ -1040,12 +1040,12 @@ mod tests {
                         extensible: false
                     })
                 }),
-                CharacterStringType::UTF8String
+                CharacterStringType::IA5String,
             )
             .unwrap()
             .unwrap(),
             PerVisibleAlphabetConstraints {
-                string_type: CharacterStringType::UTF8String,
+                string_type: CharacterStringType::IA5String,
                 character_by_index: [(0, 'A'), (1, 'B'), (2, 'C'), (3, 'D'), (4, 'E'), (5, 'F')]
                     .into_iter()
                     .collect(),
