@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.14.3](https://github.com/librasn/compiler/compare/rasn-compiler-v0.14.2...rasn-compiler-v0.14.3) - 2025-08-25
+
+### Fixed
+
+- fix tests
+
+### Other
+
+- Support more advanced constraints.
+- Correct handling of non-known-multiplier string types.
+
 ## [0.14.2](https://github.com/librasn/compiler/compare/rasn-compiler-v0.14.1...rasn-compiler-v0.14.2) - 2025-08-13
 
 ### Other
