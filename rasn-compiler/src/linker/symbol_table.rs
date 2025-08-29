@@ -6,8 +6,6 @@ use std::{
     ops::{Add, AddAssign},
 };
 
-use chrono::format::Item;
-
 use crate::{
     intermediate::{
         macros::MacroDefinition, ASN1Type, AsnModule, DeclarationElsewhere, DefinedType,
@@ -171,7 +169,7 @@ impl<'a> SymbolTable<'a, LexedSymbols> {
     pub(super) fn new(modules: Vec<AsnModule<'a>>) -> Result<Self, LinkerError> {
         let mut symbol_table = HashMap::new();
         for module in modules {
-            for tld in module.top_level_definitions {
+            for tld in module.assignments {
                 let symbol_id = SymbolId {
                     module_reference: module.module_header.name.clone(),
                     pdu_reference: tld.name(),
@@ -209,9 +207,22 @@ impl<'a> SymbolTable<'a, UnnestedSymbols> {
                         }, &SymbolTableExtraParams { symbol_table: &self, current_context: id.clone() })?;
                         self.insert(generated);
                     }
+                    Assignment::Value(ValueAssignment { associated_type, .. }) => todo!(),
                     _ => todo!(),
                 }
             }
+        }
+        Ok(SymbolTable(self.0, PhantomData))
+    }
+}
+
+impl<'a> SymbolTable<'a, ResolvedParameters> {
+    pub(super) fn resolve_contraint_references(
+        mut self,
+    ) -> Result<SymbolTable<'a, ResolvedConstraintReferences>, LinkerError> {
+        let keys: Vec<SymbolId<'_>> = self.0.keys().cloned().collect();
+        for id in keys {
+           
         }
         Ok(SymbolTable(self.0, PhantomData))
     }
@@ -288,5 +299,21 @@ impl<'a, S: SymbolTableState> SymbolTable<'a, S> {
             Assignment::Macro(t) => Some(t),
             _ => None,
         })
+    }
+
+    #[cfg(test)]
+    pub fn with_state(modules: Vec<AsnModule<'a>>) -> Result<Self, LinkerError> {
+        let mut symbol_table = HashMap::new();
+        for module in modules {
+            for tld in module.assignments {
+                let symbol_id = SymbolId {
+                    module_reference: module.module_header.name.clone(),
+                    pdu_reference: tld.name(),
+                    scope: Scope::Module,
+                };
+                symbol_table.insert(symbol_id, tld);
+            }
+        }
+        Ok(Self(symbol_table, PhantomData))
     }
 }

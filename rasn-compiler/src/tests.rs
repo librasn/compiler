@@ -152,7 +152,7 @@ fn validator_io(literal: &str) -> (String, String) {
         .flat_map(
             |AsnModule {
                  module_header: header,
-                 top_level_definitions: tlds,
+                 assignments: tlds,
              }| {
                 let header_ref = Rc::new(RefCell::new(header));
                 tlds.into_iter().map(move |mut tld| {

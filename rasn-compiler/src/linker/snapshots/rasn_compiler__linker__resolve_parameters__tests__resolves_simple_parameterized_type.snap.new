@@ -1,0 +1,88 @@
+---
+source: rasn-compiler/src/linker/resolve_parameters.rs
+assertion_line: 511
+expression: generated_symbols
+---
+GeneratedSymbols(
+    Some(
+        [
+            SymbolTableEntry {
+                id: SymbolId {
+                    module_reference: "test-module",
+                    pdu_reference: "test-module",
+                    scope: Local(
+                        "ToBeSigned",
+                    ),
+                },
+                assignment: Assignment::Type(
+                    TypeAssignment {
+                        comments: "",
+                        tag: None,
+                        name: "ToBeSigned",
+                        ty: ASN1Type::OctetString(
+                            OctetString {
+                                constraints: [],
+                            },
+                        ),
+                        parameterization: None,
+                        module_header: None,
+                    },
+                ),
+            },
+            SymbolTableEntry {
+                id: SymbolId {
+                    module_reference: "test-module",
+                    pdu_reference: "TestImplType",
+                    scope: Local(
+                        "impl",
+                    ),
+                },
+                assignment: Assignment::Type(
+                    TypeAssignment {
+                        comments: "",
+                        tag: None,
+                        name: "test-module.TestImplType.impl",
+                        ty: ASN1Type::Sequence(
+                            SequenceOrSet {
+                                components_of: [],
+                                extensible: None,
+                                constraints: [],
+                                members: [
+                                    SequenceOrSetMember {
+                                        name: "authenticated-data",
+                                        tag: None,
+                                        ty: ASN1Type::ElsewhereDeclaredType(
+                                            DeclarationElsewhere {
+                                                parent: None,
+                                                identifier: DefinedType::TypeReference(
+                                                    "ToBeSigned",
+                                                ),
+                                                constraints: [],
+                                            },
+                                        ),
+                                        optionality: Required,
+                                        is_recursive: false,
+                                    },
+                                    SequenceOrSetMember {
+                                        name: "authenticator",
+                                        tag: None,
+                                        ty: ASN1Type::BitString(
+                                            BitString {
+                                                constraints: [],
+                                                distinguished_values: None,
+                                            },
+                                        ),
+                                        optionality: Required,
+                                        is_recursive: false,
+                                    },
+                                ],
+                            },
+                        ),
+                        parameterization: None,
+                        module_header: None,
+                    },
+                ),
+            },
+        ],
+    ),
+)

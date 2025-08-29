@@ -555,14 +555,14 @@ impl From<(&str, u128)> for ObjectIdentifierArc {
 #[derive(Debug, Clone, PartialEq)]
 pub struct AsnModule<'a> {
     pub module_header: ModuleHeader<'a>,
-    pub top_level_definitions: Vec<Assignment<'a>>,
+    pub assignments: Vec<Assignment<'a>>,
 }
 
 impl<'a> From<(ModuleHeader<'a>, Vec<Assignment<'a>>)> for AsnModule<'a> {
     fn from(value: (ModuleHeader<'a>, Vec<Assignment<'a>>)) -> Self {
         AsnModule {
             module_header: value.0,
-            top_level_definitions: value.1,
+            assignments: value.1,
         }
     }
 }

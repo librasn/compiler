@@ -18,24 +18,7 @@ use crate::{
 ///   intercontinental SEQUENCE (SIZE(0..fifteen)) OF Intercontinental
 /// }
 /// ```
-/// The trait handles linking of multiple constraint references within a assignments.
-///
-/// ## Parameterization
-/// This linking step also resolves implementations of parameterized types.
-/// The compiler does not create representations of abstract parameterized types
-/// but only of actual implementations. For example, no rust output
-/// will be generated for
-/// ```ignore
-/// ParamType { INTEGER: lower, BOOLEAN: flag } ::= SEQUENCE {
-///     int-value INTEGER (lower..12),
-///     bool-value BOOLEAN DEFAULT flag
-/// }
-/// ```
-/// but an implementing type such as
-/// ```ignore
-/// ImplType ::= ParamType { 2, TRUE }
-/// ```
-/// will be represented in the generated rust bindings.
+/// The trait handles linking of constraint references within a assignments.
 pub(super) trait ResolveConstraitReferences<'a> {
     type ExtraArgs;
 
