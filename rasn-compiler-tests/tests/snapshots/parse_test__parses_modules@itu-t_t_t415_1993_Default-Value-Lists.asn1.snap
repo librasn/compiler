@@ -1,0 +1,2817 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_t_t415_1993_Default-Value-Lists.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod default_value_lists {
+    extern crate alloc;
+    use super::colour_attributes::{ColourExpression, ColourTable};
+    use super::identifiers_and_expressions::{CategoryName, StyleIdentifier};
+    use super::layout_descriptors::{
+        Border, Colour, ContentBackgroundColour, ContentForegroundColour, DimensionPair,
+        MeasurePair, MediumType, OneOfFourAngles, Sealed, Transparency,
+    };
+    use super::logical_descriptors::Protection;
+    use super::style_descriptors::PresentationAttributes;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum Attribute {
+        #[rasn(tag(context, 0))]
+        position(MeasurePair),
+        #[rasn(tag(context, 1))]
+        dimensions(DimensionPair),
+        #[rasn(tag(context, 2))]
+        transparency(Transparency),
+        #[rasn(tag(context, 3), identifier = "presentation-attributes")]
+        presentation_attributes(PresentationAttributes),
+        #[rasn(tag(context, 4), identifier = "layout-path")]
+        layout_path(OneOfFourAngles),
+        #[rasn(tag(context, 5), identifier = "page-position")]
+        page_position(MeasurePair),
+        #[rasn(tag(context, 6), identifier = "medium-type")]
+        medium_type(MediumType),
+        #[rasn(tag(context, 7), identifier = "permitted-categories")]
+        permitted_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 19), identifier = "layout-stream-categories")]
+        layout_stream_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 20), identifier = "layout-stream-sub-categories")]
+        layout_stream_sub_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 8))]
+        protection(Protection),
+        #[rasn(tag(context, 9), identifier = "presentation-style")]
+        presentation_style(StyleIdentifier),
+        #[rasn(tag(context, 10), identifier = "layout-style")]
+        layout_style(StyleIdentifier),
+        #[rasn(tag(context, 11))]
+        colour(Colour),
+        #[rasn(tag(context, 14), identifier = "colour-of-layout-object")]
+        colour_of_layout_object(ColourExpression),
+        #[rasn(tag(context, 15), identifier = "object-colour-table")]
+        object_colour_table(ColourTable),
+        #[rasn(tag(context, 16), identifier = "content-background-colour")]
+        content_background_colour(ContentBackgroundColour),
+        #[rasn(tag(context, 17), identifier = "content-foreground-colour")]
+        content_foreground_colour(ContentForegroundColour),
+        #[rasn(tag(context, 18), identifier = "content-colour-table")]
+        content_colour_table(ColourTable),
+        #[rasn(tag(context, 12))]
+        border(Border),
+        #[rasn(tag(context, 13))]
+        sealed(Sealed),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum BasicLogicalAttributesPresentationAttributes {
+        #[rasn(tag(context, 0))]
+        position(MeasurePair),
+        #[rasn(tag(context, 1))]
+        dimensions(DimensionPair),
+        #[rasn(tag(context, 2))]
+        transparency(Transparency),
+        #[rasn(tag(context, 3), identifier = "presentation-attributes")]
+        presentation_attributes(PresentationAttributes),
+        #[rasn(tag(context, 4), identifier = "layout-path")]
+        layout_path(OneOfFourAngles),
+        #[rasn(tag(context, 5), identifier = "page-position")]
+        page_position(MeasurePair),
+        #[rasn(tag(context, 6), identifier = "medium-type")]
+        medium_type(MediumType),
+        #[rasn(tag(context, 7), identifier = "permitted-categories")]
+        permitted_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 19), identifier = "layout-stream-categories")]
+        layout_stream_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 20), identifier = "layout-stream-sub-categories")]
+        layout_stream_sub_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 8))]
+        protection(Protection),
+        #[rasn(tag(context, 9), identifier = "presentation-style")]
+        presentation_style(StyleIdentifier),
+        #[rasn(tag(context, 10), identifier = "layout-style")]
+        layout_style(StyleIdentifier),
+        #[rasn(tag(context, 11))]
+        colour(Colour),
+        #[rasn(tag(context, 14), identifier = "colour-of-layout-object")]
+        colour_of_layout_object(ColourExpression),
+        #[rasn(tag(context, 15), identifier = "object-colour-table")]
+        object_colour_table(ColourTable),
+        #[rasn(tag(context, 16), identifier = "content-background-colour")]
+        content_background_colour(ContentBackgroundColour),
+        #[rasn(tag(context, 17), identifier = "content-foreground-colour")]
+        content_foreground_colour(ContentForegroundColour),
+        #[rasn(tag(context, 18), identifier = "content-colour-table")]
+        content_colour_table(ColourTable),
+        #[rasn(tag(context, 12))]
+        border(Border),
+        #[rasn(tag(context, 13))]
+        sealed(Sealed),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum BasicLogicalAttributesProtection {
+        #[rasn(tag(context, 0))]
+        position(MeasurePair),
+        #[rasn(tag(context, 1))]
+        dimensions(DimensionPair),
+        #[rasn(tag(context, 2))]
+        transparency(Transparency),
+        #[rasn(tag(context, 3), identifier = "presentation-attributes")]
+        presentation_attributes(PresentationAttributes),
+        #[rasn(tag(context, 4), identifier = "layout-path")]
+        layout_path(OneOfFourAngles),
+        #[rasn(tag(context, 5), identifier = "page-position")]
+        page_position(MeasurePair),
+        #[rasn(tag(context, 6), identifier = "medium-type")]
+        medium_type(MediumType),
+        #[rasn(tag(context, 7), identifier = "permitted-categories")]
+        permitted_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 19), identifier = "layout-stream-categories")]
+        layout_stream_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 20), identifier = "layout-stream-sub-categories")]
+        layout_stream_sub_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 8))]
+        protection(Protection),
+        #[rasn(tag(context, 9), identifier = "presentation-style")]
+        presentation_style(StyleIdentifier),
+        #[rasn(tag(context, 10), identifier = "layout-style")]
+        layout_style(StyleIdentifier),
+        #[rasn(tag(context, 11))]
+        colour(Colour),
+        #[rasn(tag(context, 14), identifier = "colour-of-layout-object")]
+        colour_of_layout_object(ColourExpression),
+        #[rasn(tag(context, 15), identifier = "object-colour-table")]
+        object_colour_table(ColourTable),
+        #[rasn(tag(context, 16), identifier = "content-background-colour")]
+        content_background_colour(ContentBackgroundColour),
+        #[rasn(tag(context, 17), identifier = "content-foreground-colour")]
+        content_foreground_colour(ContentForegroundColour),
+        #[rasn(tag(context, 18), identifier = "content-colour-table")]
+        content_colour_table(ColourTable),
+        #[rasn(tag(context, 12))]
+        border(Border),
+        #[rasn(tag(context, 13))]
+        sealed(Sealed),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum BasicLogicalAttributesPresentationStyle {
+        #[rasn(tag(context, 0))]
+        position(MeasurePair),
+        #[rasn(tag(context, 1))]
+        dimensions(DimensionPair),
+        #[rasn(tag(context, 2))]
+        transparency(Transparency),
+        #[rasn(tag(context, 3), identifier = "presentation-attributes")]
+        presentation_attributes(PresentationAttributes),
+        #[rasn(tag(context, 4), identifier = "layout-path")]
+        layout_path(OneOfFourAngles),
+        #[rasn(tag(context, 5), identifier = "page-position")]
+        page_position(MeasurePair),
+        #[rasn(tag(context, 6), identifier = "medium-type")]
+        medium_type(MediumType),
+        #[rasn(tag(context, 7), identifier = "permitted-categories")]
+        permitted_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 19), identifier = "layout-stream-categories")]
+        layout_stream_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 20), identifier = "layout-stream-sub-categories")]
+        layout_stream_sub_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 8))]
+        protection(Protection),
+        #[rasn(tag(context, 9), identifier = "presentation-style")]
+        presentation_style(StyleIdentifier),
+        #[rasn(tag(context, 10), identifier = "layout-style")]
+        layout_style(StyleIdentifier),
+        #[rasn(tag(context, 11))]
+        colour(Colour),
+        #[rasn(tag(context, 14), identifier = "colour-of-layout-object")]
+        colour_of_layout_object(ColourExpression),
+        #[rasn(tag(context, 15), identifier = "object-colour-table")]
+        object_colour_table(ColourTable),
+        #[rasn(tag(context, 16), identifier = "content-background-colour")]
+        content_background_colour(ContentBackgroundColour),
+        #[rasn(tag(context, 17), identifier = "content-foreground-colour")]
+        content_foreground_colour(ContentForegroundColour),
+        #[rasn(tag(context, 18), identifier = "content-colour-table")]
+        content_colour_table(ColourTable),
+        #[rasn(tag(context, 12))]
+        border(Border),
+        #[rasn(tag(context, 13))]
+        sealed(Sealed),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum BasicLogicalAttributesLayoutStyle {
+        #[rasn(tag(context, 0))]
+        position(MeasurePair),
+        #[rasn(tag(context, 1))]
+        dimensions(DimensionPair),
+        #[rasn(tag(context, 2))]
+        transparency(Transparency),
+        #[rasn(tag(context, 3), identifier = "presentation-attributes")]
+        presentation_attributes(PresentationAttributes),
+        #[rasn(tag(context, 4), identifier = "layout-path")]
+        layout_path(OneOfFourAngles),
+        #[rasn(tag(context, 5), identifier = "page-position")]
+        page_position(MeasurePair),
+        #[rasn(tag(context, 6), identifier = "medium-type")]
+        medium_type(MediumType),
+        #[rasn(tag(context, 7), identifier = "permitted-categories")]
+        permitted_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 19), identifier = "layout-stream-categories")]
+        layout_stream_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 20), identifier = "layout-stream-sub-categories")]
+        layout_stream_sub_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 8))]
+        protection(Protection),
+        #[rasn(tag(context, 9), identifier = "presentation-style")]
+        presentation_style(StyleIdentifier),
+        #[rasn(tag(context, 10), identifier = "layout-style")]
+        layout_style(StyleIdentifier),
+        #[rasn(tag(context, 11))]
+        colour(Colour),
+        #[rasn(tag(context, 14), identifier = "colour-of-layout-object")]
+        colour_of_layout_object(ColourExpression),
+        #[rasn(tag(context, 15), identifier = "object-colour-table")]
+        object_colour_table(ColourTable),
+        #[rasn(tag(context, 16), identifier = "content-background-colour")]
+        content_background_colour(ContentBackgroundColour),
+        #[rasn(tag(context, 17), identifier = "content-foreground-colour")]
+        content_foreground_colour(ContentForegroundColour),
+        #[rasn(tag(context, 18), identifier = "content-colour-table")]
+        content_colour_table(ColourTable),
+        #[rasn(tag(context, 12))]
+        border(Border),
+        #[rasn(tag(context, 13))]
+        sealed(Sealed),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum BasicLogicalAttributesSealed {
+        #[rasn(tag(context, 0))]
+        position(MeasurePair),
+        #[rasn(tag(context, 1))]
+        dimensions(DimensionPair),
+        #[rasn(tag(context, 2))]
+        transparency(Transparency),
+        #[rasn(tag(context, 3), identifier = "presentation-attributes")]
+        presentation_attributes(PresentationAttributes),
+        #[rasn(tag(context, 4), identifier = "layout-path")]
+        layout_path(OneOfFourAngles),
+        #[rasn(tag(context, 5), identifier = "page-position")]
+        page_position(MeasurePair),
+        #[rasn(tag(context, 6), identifier = "medium-type")]
+        medium_type(MediumType),
+        #[rasn(tag(context, 7), identifier = "permitted-categories")]
+        permitted_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 19), identifier = "layout-stream-categories")]
+        layout_stream_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 20), identifier = "layout-stream-sub-categories")]
+        layout_stream_sub_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 8))]
+        protection(Protection),
+        #[rasn(tag(context, 9), identifier = "presentation-style")]
+        presentation_style(StyleIdentifier),
+        #[rasn(tag(context, 10), identifier = "layout-style")]
+        layout_style(StyleIdentifier),
+        #[rasn(tag(context, 11))]
+        colour(Colour),
+        #[rasn(tag(context, 14), identifier = "colour-of-layout-object")]
+        colour_of_layout_object(ColourExpression),
+        #[rasn(tag(context, 15), identifier = "object-colour-table")]
+        object_colour_table(ColourTable),
+        #[rasn(tag(context, 16), identifier = "content-background-colour")]
+        content_background_colour(ContentBackgroundColour),
+        #[rasn(tag(context, 17), identifier = "content-foreground-colour")]
+        content_foreground_colour(ContentForegroundColour),
+        #[rasn(tag(context, 18), identifier = "content-colour-table")]
+        content_colour_table(ColourTable),
+        #[rasn(tag(context, 12))]
+        border(Border),
+        #[rasn(tag(context, 13))]
+        sealed(Sealed),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Basic-Logical-Attributes")]
+    pub struct BasicLogicalAttributes {
+        #[rasn(identifier = "presentation-attributes")]
+        pub presentation_attributes: Option<BasicLogicalAttributesPresentationAttributes>,
+        pub protection: Option<BasicLogicalAttributesProtection>,
+        #[rasn(identifier = "presentation-style")]
+        pub presentation_style: Option<BasicLogicalAttributesPresentationStyle>,
+        #[rasn(identifier = "layout-style")]
+        pub layout_style: Option<BasicLogicalAttributesLayoutStyle>,
+        pub sealed: Option<BasicLogicalAttributesSealed>,
+    }
+    impl BasicLogicalAttributes {
+        pub fn new(
+            presentation_attributes: Option<BasicLogicalAttributesPresentationAttributes>,
+            protection: Option<BasicLogicalAttributesProtection>,
+            presentation_style: Option<BasicLogicalAttributesPresentationStyle>,
+            layout_style: Option<BasicLogicalAttributesLayoutStyle>,
+            sealed: Option<BasicLogicalAttributesSealed>,
+        ) -> Self {
+            Self {
+                presentation_attributes,
+                protection,
+                presentation_style,
+                layout_style,
+                sealed,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum BlockAttributesPosition {
+        #[rasn(tag(context, 0))]
+        position(MeasurePair),
+        #[rasn(tag(context, 1))]
+        dimensions(DimensionPair),
+        #[rasn(tag(context, 2))]
+        transparency(Transparency),
+        #[rasn(tag(context, 3), identifier = "presentation-attributes")]
+        presentation_attributes(PresentationAttributes),
+        #[rasn(tag(context, 4), identifier = "layout-path")]
+        layout_path(OneOfFourAngles),
+        #[rasn(tag(context, 5), identifier = "page-position")]
+        page_position(MeasurePair),
+        #[rasn(tag(context, 6), identifier = "medium-type")]
+        medium_type(MediumType),
+        #[rasn(tag(context, 7), identifier = "permitted-categories")]
+        permitted_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 19), identifier = "layout-stream-categories")]
+        layout_stream_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 20), identifier = "layout-stream-sub-categories")]
+        layout_stream_sub_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 8))]
+        protection(Protection),
+        #[rasn(tag(context, 9), identifier = "presentation-style")]
+        presentation_style(StyleIdentifier),
+        #[rasn(tag(context, 10), identifier = "layout-style")]
+        layout_style(StyleIdentifier),
+        #[rasn(tag(context, 11))]
+        colour(Colour),
+        #[rasn(tag(context, 14), identifier = "colour-of-layout-object")]
+        colour_of_layout_object(ColourExpression),
+        #[rasn(tag(context, 15), identifier = "object-colour-table")]
+        object_colour_table(ColourTable),
+        #[rasn(tag(context, 16), identifier = "content-background-colour")]
+        content_background_colour(ContentBackgroundColour),
+        #[rasn(tag(context, 17), identifier = "content-foreground-colour")]
+        content_foreground_colour(ContentForegroundColour),
+        #[rasn(tag(context, 18), identifier = "content-colour-table")]
+        content_colour_table(ColourTable),
+        #[rasn(tag(context, 12))]
+        border(Border),
+        #[rasn(tag(context, 13))]
+        sealed(Sealed),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum BlockAttributesDimensions {
+        #[rasn(tag(context, 0))]
+        position(MeasurePair),
+        #[rasn(tag(context, 1))]
+        dimensions(DimensionPair),
+        #[rasn(tag(context, 2))]
+        transparency(Transparency),
+        #[rasn(tag(context, 3), identifier = "presentation-attributes")]
+        presentation_attributes(PresentationAttributes),
+        #[rasn(tag(context, 4), identifier = "layout-path")]
+        layout_path(OneOfFourAngles),
+        #[rasn(tag(context, 5), identifier = "page-position")]
+        page_position(MeasurePair),
+        #[rasn(tag(context, 6), identifier = "medium-type")]
+        medium_type(MediumType),
+        #[rasn(tag(context, 7), identifier = "permitted-categories")]
+        permitted_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 19), identifier = "layout-stream-categories")]
+        layout_stream_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 20), identifier = "layout-stream-sub-categories")]
+        layout_stream_sub_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 8))]
+        protection(Protection),
+        #[rasn(tag(context, 9), identifier = "presentation-style")]
+        presentation_style(StyleIdentifier),
+        #[rasn(tag(context, 10), identifier = "layout-style")]
+        layout_style(StyleIdentifier),
+        #[rasn(tag(context, 11))]
+        colour(Colour),
+        #[rasn(tag(context, 14), identifier = "colour-of-layout-object")]
+        colour_of_layout_object(ColourExpression),
+        #[rasn(tag(context, 15), identifier = "object-colour-table")]
+        object_colour_table(ColourTable),
+        #[rasn(tag(context, 16), identifier = "content-background-colour")]
+        content_background_colour(ContentBackgroundColour),
+        #[rasn(tag(context, 17), identifier = "content-foreground-colour")]
+        content_foreground_colour(ContentForegroundColour),
+        #[rasn(tag(context, 18), identifier = "content-colour-table")]
+        content_colour_table(ColourTable),
+        #[rasn(tag(context, 12))]
+        border(Border),
+        #[rasn(tag(context, 13))]
+        sealed(Sealed),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum BlockAttributesTransparency {
+        #[rasn(tag(context, 0))]
+        position(MeasurePair),
+        #[rasn(tag(context, 1))]
+        dimensions(DimensionPair),
+        #[rasn(tag(context, 2))]
+        transparency(Transparency),
+        #[rasn(tag(context, 3), identifier = "presentation-attributes")]
+        presentation_attributes(PresentationAttributes),
+        #[rasn(tag(context, 4), identifier = "layout-path")]
+        layout_path(OneOfFourAngles),
+        #[rasn(tag(context, 5), identifier = "page-position")]
+        page_position(MeasurePair),
+        #[rasn(tag(context, 6), identifier = "medium-type")]
+        medium_type(MediumType),
+        #[rasn(tag(context, 7), identifier = "permitted-categories")]
+        permitted_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 19), identifier = "layout-stream-categories")]
+        layout_stream_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 20), identifier = "layout-stream-sub-categories")]
+        layout_stream_sub_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 8))]
+        protection(Protection),
+        #[rasn(tag(context, 9), identifier = "presentation-style")]
+        presentation_style(StyleIdentifier),
+        #[rasn(tag(context, 10), identifier = "layout-style")]
+        layout_style(StyleIdentifier),
+        #[rasn(tag(context, 11))]
+        colour(Colour),
+        #[rasn(tag(context, 14), identifier = "colour-of-layout-object")]
+        colour_of_layout_object(ColourExpression),
+        #[rasn(tag(context, 15), identifier = "object-colour-table")]
+        object_colour_table(ColourTable),
+        #[rasn(tag(context, 16), identifier = "content-background-colour")]
+        content_background_colour(ContentBackgroundColour),
+        #[rasn(tag(context, 17), identifier = "content-foreground-colour")]
+        content_foreground_colour(ContentForegroundColour),
+        #[rasn(tag(context, 18), identifier = "content-colour-table")]
+        content_colour_table(ColourTable),
+        #[rasn(tag(context, 12))]
+        border(Border),
+        #[rasn(tag(context, 13))]
+        sealed(Sealed),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum BlockAttributesPresentationAttributes {
+        #[rasn(tag(context, 0))]
+        position(MeasurePair),
+        #[rasn(tag(context, 1))]
+        dimensions(DimensionPair),
+        #[rasn(tag(context, 2))]
+        transparency(Transparency),
+        #[rasn(tag(context, 3), identifier = "presentation-attributes")]
+        presentation_attributes(PresentationAttributes),
+        #[rasn(tag(context, 4), identifier = "layout-path")]
+        layout_path(OneOfFourAngles),
+        #[rasn(tag(context, 5), identifier = "page-position")]
+        page_position(MeasurePair),
+        #[rasn(tag(context, 6), identifier = "medium-type")]
+        medium_type(MediumType),
+        #[rasn(tag(context, 7), identifier = "permitted-categories")]
+        permitted_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 19), identifier = "layout-stream-categories")]
+        layout_stream_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 20), identifier = "layout-stream-sub-categories")]
+        layout_stream_sub_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 8))]
+        protection(Protection),
+        #[rasn(tag(context, 9), identifier = "presentation-style")]
+        presentation_style(StyleIdentifier),
+        #[rasn(tag(context, 10), identifier = "layout-style")]
+        layout_style(StyleIdentifier),
+        #[rasn(tag(context, 11))]
+        colour(Colour),
+        #[rasn(tag(context, 14), identifier = "colour-of-layout-object")]
+        colour_of_layout_object(ColourExpression),
+        #[rasn(tag(context, 15), identifier = "object-colour-table")]
+        object_colour_table(ColourTable),
+        #[rasn(tag(context, 16), identifier = "content-background-colour")]
+        content_background_colour(ContentBackgroundColour),
+        #[rasn(tag(context, 17), identifier = "content-foreground-colour")]
+        content_foreground_colour(ContentForegroundColour),
+        #[rasn(tag(context, 18), identifier = "content-colour-table")]
+        content_colour_table(ColourTable),
+        #[rasn(tag(context, 12))]
+        border(Border),
+        #[rasn(tag(context, 13))]
+        sealed(Sealed),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum BlockAttributesPresentationStyle {
+        #[rasn(tag(context, 0))]
+        position(MeasurePair),
+        #[rasn(tag(context, 1))]
+        dimensions(DimensionPair),
+        #[rasn(tag(context, 2))]
+        transparency(Transparency),
+        #[rasn(tag(context, 3), identifier = "presentation-attributes")]
+        presentation_attributes(PresentationAttributes),
+        #[rasn(tag(context, 4), identifier = "layout-path")]
+        layout_path(OneOfFourAngles),
+        #[rasn(tag(context, 5), identifier = "page-position")]
+        page_position(MeasurePair),
+        #[rasn(tag(context, 6), identifier = "medium-type")]
+        medium_type(MediumType),
+        #[rasn(tag(context, 7), identifier = "permitted-categories")]
+        permitted_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 19), identifier = "layout-stream-categories")]
+        layout_stream_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 20), identifier = "layout-stream-sub-categories")]
+        layout_stream_sub_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 8))]
+        protection(Protection),
+        #[rasn(tag(context, 9), identifier = "presentation-style")]
+        presentation_style(StyleIdentifier),
+        #[rasn(tag(context, 10), identifier = "layout-style")]
+        layout_style(StyleIdentifier),
+        #[rasn(tag(context, 11))]
+        colour(Colour),
+        #[rasn(tag(context, 14), identifier = "colour-of-layout-object")]
+        colour_of_layout_object(ColourExpression),
+        #[rasn(tag(context, 15), identifier = "object-colour-table")]
+        object_colour_table(ColourTable),
+        #[rasn(tag(context, 16), identifier = "content-background-colour")]
+        content_background_colour(ContentBackgroundColour),
+        #[rasn(tag(context, 17), identifier = "content-foreground-colour")]
+        content_foreground_colour(ContentForegroundColour),
+        #[rasn(tag(context, 18), identifier = "content-colour-table")]
+        content_colour_table(ColourTable),
+        #[rasn(tag(context, 12))]
+        border(Border),
+        #[rasn(tag(context, 13))]
+        sealed(Sealed),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum BlockAttributesLayoutStreamCategories {
+        #[rasn(tag(context, 0))]
+        position(MeasurePair),
+        #[rasn(tag(context, 1))]
+        dimensions(DimensionPair),
+        #[rasn(tag(context, 2))]
+        transparency(Transparency),
+        #[rasn(tag(context, 3), identifier = "presentation-attributes")]
+        presentation_attributes(PresentationAttributes),
+        #[rasn(tag(context, 4), identifier = "layout-path")]
+        layout_path(OneOfFourAngles),
+        #[rasn(tag(context, 5), identifier = "page-position")]
+        page_position(MeasurePair),
+        #[rasn(tag(context, 6), identifier = "medium-type")]
+        medium_type(MediumType),
+        #[rasn(tag(context, 7), identifier = "permitted-categories")]
+        permitted_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 19), identifier = "layout-stream-categories")]
+        layout_stream_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 20), identifier = "layout-stream-sub-categories")]
+        layout_stream_sub_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 8))]
+        protection(Protection),
+        #[rasn(tag(context, 9), identifier = "presentation-style")]
+        presentation_style(StyleIdentifier),
+        #[rasn(tag(context, 10), identifier = "layout-style")]
+        layout_style(StyleIdentifier),
+        #[rasn(tag(context, 11))]
+        colour(Colour),
+        #[rasn(tag(context, 14), identifier = "colour-of-layout-object")]
+        colour_of_layout_object(ColourExpression),
+        #[rasn(tag(context, 15), identifier = "object-colour-table")]
+        object_colour_table(ColourTable),
+        #[rasn(tag(context, 16), identifier = "content-background-colour")]
+        content_background_colour(ContentBackgroundColour),
+        #[rasn(tag(context, 17), identifier = "content-foreground-colour")]
+        content_foreground_colour(ContentForegroundColour),
+        #[rasn(tag(context, 18), identifier = "content-colour-table")]
+        content_colour_table(ColourTable),
+        #[rasn(tag(context, 12))]
+        border(Border),
+        #[rasn(tag(context, 13))]
+        sealed(Sealed),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum BlockAttributesLayoutStreamSubCategories {
+        #[rasn(tag(context, 0))]
+        position(MeasurePair),
+        #[rasn(tag(context, 1))]
+        dimensions(DimensionPair),
+        #[rasn(tag(context, 2))]
+        transparency(Transparency),
+        #[rasn(tag(context, 3), identifier = "presentation-attributes")]
+        presentation_attributes(PresentationAttributes),
+        #[rasn(tag(context, 4), identifier = "layout-path")]
+        layout_path(OneOfFourAngles),
+        #[rasn(tag(context, 5), identifier = "page-position")]
+        page_position(MeasurePair),
+        #[rasn(tag(context, 6), identifier = "medium-type")]
+        medium_type(MediumType),
+        #[rasn(tag(context, 7), identifier = "permitted-categories")]
+        permitted_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 19), identifier = "layout-stream-categories")]
+        layout_stream_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 20), identifier = "layout-stream-sub-categories")]
+        layout_stream_sub_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 8))]
+        protection(Protection),
+        #[rasn(tag(context, 9), identifier = "presentation-style")]
+        presentation_style(StyleIdentifier),
+        #[rasn(tag(context, 10), identifier = "layout-style")]
+        layout_style(StyleIdentifier),
+        #[rasn(tag(context, 11))]
+        colour(Colour),
+        #[rasn(tag(context, 14), identifier = "colour-of-layout-object")]
+        colour_of_layout_object(ColourExpression),
+        #[rasn(tag(context, 15), identifier = "object-colour-table")]
+        object_colour_table(ColourTable),
+        #[rasn(tag(context, 16), identifier = "content-background-colour")]
+        content_background_colour(ContentBackgroundColour),
+        #[rasn(tag(context, 17), identifier = "content-foreground-colour")]
+        content_foreground_colour(ContentForegroundColour),
+        #[rasn(tag(context, 18), identifier = "content-colour-table")]
+        content_colour_table(ColourTable),
+        #[rasn(tag(context, 12))]
+        border(Border),
+        #[rasn(tag(context, 13))]
+        sealed(Sealed),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum BlockAttributesColou {
+        #[rasn(tag(context, 0))]
+        position(MeasurePair),
+        #[rasn(tag(context, 1))]
+        dimensions(DimensionPair),
+        #[rasn(tag(context, 2))]
+        transparency(Transparency),
+        #[rasn(tag(context, 3), identifier = "presentation-attributes")]
+        presentation_attributes(PresentationAttributes),
+        #[rasn(tag(context, 4), identifier = "layout-path")]
+        layout_path(OneOfFourAngles),
+        #[rasn(tag(context, 5), identifier = "page-position")]
+        page_position(MeasurePair),
+        #[rasn(tag(context, 6), identifier = "medium-type")]
+        medium_type(MediumType),
+        #[rasn(tag(context, 7), identifier = "permitted-categories")]
+        permitted_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 19), identifier = "layout-stream-categories")]
+        layout_stream_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 20), identifier = "layout-stream-sub-categories")]
+        layout_stream_sub_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 8))]
+        protection(Protection),
+        #[rasn(tag(context, 9), identifier = "presentation-style")]
+        presentation_style(StyleIdentifier),
+        #[rasn(tag(context, 10), identifier = "layout-style")]
+        layout_style(StyleIdentifier),
+        #[rasn(tag(context, 11))]
+        colour(Colour),
+        #[rasn(tag(context, 14), identifier = "colour-of-layout-object")]
+        colour_of_layout_object(ColourExpression),
+        #[rasn(tag(context, 15), identifier = "object-colour-table")]
+        object_colour_table(ColourTable),
+        #[rasn(tag(context, 16), identifier = "content-background-colour")]
+        content_background_colour(ContentBackgroundColour),
+        #[rasn(tag(context, 17), identifier = "content-foreground-colour")]
+        content_foreground_colour(ContentForegroundColour),
+        #[rasn(tag(context, 18), identifier = "content-colour-table")]
+        content_colour_table(ColourTable),
+        #[rasn(tag(context, 12))]
+        border(Border),
+        #[rasn(tag(context, 13))]
+        sealed(Sealed),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum BlockAttributesColourOfLayoutObject {
+        #[rasn(tag(context, 0))]
+        position(MeasurePair),
+        #[rasn(tag(context, 1))]
+        dimensions(DimensionPair),
+        #[rasn(tag(context, 2))]
+        transparency(Transparency),
+        #[rasn(tag(context, 3), identifier = "presentation-attributes")]
+        presentation_attributes(PresentationAttributes),
+        #[rasn(tag(context, 4), identifier = "layout-path")]
+        layout_path(OneOfFourAngles),
+        #[rasn(tag(context, 5), identifier = "page-position")]
+        page_position(MeasurePair),
+        #[rasn(tag(context, 6), identifier = "medium-type")]
+        medium_type(MediumType),
+        #[rasn(tag(context, 7), identifier = "permitted-categories")]
+        permitted_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 19), identifier = "layout-stream-categories")]
+        layout_stream_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 20), identifier = "layout-stream-sub-categories")]
+        layout_stream_sub_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 8))]
+        protection(Protection),
+        #[rasn(tag(context, 9), identifier = "presentation-style")]
+        presentation_style(StyleIdentifier),
+        #[rasn(tag(context, 10), identifier = "layout-style")]
+        layout_style(StyleIdentifier),
+        #[rasn(tag(context, 11))]
+        colour(Colour),
+        #[rasn(tag(context, 14), identifier = "colour-of-layout-object")]
+        colour_of_layout_object(ColourExpression),
+        #[rasn(tag(context, 15), identifier = "object-colour-table")]
+        object_colour_table(ColourTable),
+        #[rasn(tag(context, 16), identifier = "content-background-colour")]
+        content_background_colour(ContentBackgroundColour),
+        #[rasn(tag(context, 17), identifier = "content-foreground-colour")]
+        content_foreground_colour(ContentForegroundColour),
+        #[rasn(tag(context, 18), identifier = "content-colour-table")]
+        content_colour_table(ColourTable),
+        #[rasn(tag(context, 12))]
+        border(Border),
+        #[rasn(tag(context, 13))]
+        sealed(Sealed),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum BlockAttributesObjectColourTable {
+        #[rasn(tag(context, 0))]
+        position(MeasurePair),
+        #[rasn(tag(context, 1))]
+        dimensions(DimensionPair),
+        #[rasn(tag(context, 2))]
+        transparency(Transparency),
+        #[rasn(tag(context, 3), identifier = "presentation-attributes")]
+        presentation_attributes(PresentationAttributes),
+        #[rasn(tag(context, 4), identifier = "layout-path")]
+        layout_path(OneOfFourAngles),
+        #[rasn(tag(context, 5), identifier = "page-position")]
+        page_position(MeasurePair),
+        #[rasn(tag(context, 6), identifier = "medium-type")]
+        medium_type(MediumType),
+        #[rasn(tag(context, 7), identifier = "permitted-categories")]
+        permitted_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 19), identifier = "layout-stream-categories")]
+        layout_stream_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 20), identifier = "layout-stream-sub-categories")]
+        layout_stream_sub_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 8))]
+        protection(Protection),
+        #[rasn(tag(context, 9), identifier = "presentation-style")]
+        presentation_style(StyleIdentifier),
+        #[rasn(tag(context, 10), identifier = "layout-style")]
+        layout_style(StyleIdentifier),
+        #[rasn(tag(context, 11))]
+        colour(Colour),
+        #[rasn(tag(context, 14), identifier = "colour-of-layout-object")]
+        colour_of_layout_object(ColourExpression),
+        #[rasn(tag(context, 15), identifier = "object-colour-table")]
+        object_colour_table(ColourTable),
+        #[rasn(tag(context, 16), identifier = "content-background-colour")]
+        content_background_colour(ContentBackgroundColour),
+        #[rasn(tag(context, 17), identifier = "content-foreground-colour")]
+        content_foreground_colour(ContentForegroundColour),
+        #[rasn(tag(context, 18), identifier = "content-colour-table")]
+        content_colour_table(ColourTable),
+        #[rasn(tag(context, 12))]
+        border(Border),
+        #[rasn(tag(context, 13))]
+        sealed(Sealed),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum BlockAttributesContentBackgroundColour {
+        #[rasn(tag(context, 0))]
+        position(MeasurePair),
+        #[rasn(tag(context, 1))]
+        dimensions(DimensionPair),
+        #[rasn(tag(context, 2))]
+        transparency(Transparency),
+        #[rasn(tag(context, 3), identifier = "presentation-attributes")]
+        presentation_attributes(PresentationAttributes),
+        #[rasn(tag(context, 4), identifier = "layout-path")]
+        layout_path(OneOfFourAngles),
+        #[rasn(tag(context, 5), identifier = "page-position")]
+        page_position(MeasurePair),
+        #[rasn(tag(context, 6), identifier = "medium-type")]
+        medium_type(MediumType),
+        #[rasn(tag(context, 7), identifier = "permitted-categories")]
+        permitted_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 19), identifier = "layout-stream-categories")]
+        layout_stream_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 20), identifier = "layout-stream-sub-categories")]
+        layout_stream_sub_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 8))]
+        protection(Protection),
+        #[rasn(tag(context, 9), identifier = "presentation-style")]
+        presentation_style(StyleIdentifier),
+        #[rasn(tag(context, 10), identifier = "layout-style")]
+        layout_style(StyleIdentifier),
+        #[rasn(tag(context, 11))]
+        colour(Colour),
+        #[rasn(tag(context, 14), identifier = "colour-of-layout-object")]
+        colour_of_layout_object(ColourExpression),
+        #[rasn(tag(context, 15), identifier = "object-colour-table")]
+        object_colour_table(ColourTable),
+        #[rasn(tag(context, 16), identifier = "content-background-colour")]
+        content_background_colour(ContentBackgroundColour),
+        #[rasn(tag(context, 17), identifier = "content-foreground-colour")]
+        content_foreground_colour(ContentForegroundColour),
+        #[rasn(tag(context, 18), identifier = "content-colour-table")]
+        content_colour_table(ColourTable),
+        #[rasn(tag(context, 12))]
+        border(Border),
+        #[rasn(tag(context, 13))]
+        sealed(Sealed),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum BlockAttributesContentForegroundColour {
+        #[rasn(tag(context, 0))]
+        position(MeasurePair),
+        #[rasn(tag(context, 1))]
+        dimensions(DimensionPair),
+        #[rasn(tag(context, 2))]
+        transparency(Transparency),
+        #[rasn(tag(context, 3), identifier = "presentation-attributes")]
+        presentation_attributes(PresentationAttributes),
+        #[rasn(tag(context, 4), identifier = "layout-path")]
+        layout_path(OneOfFourAngles),
+        #[rasn(tag(context, 5), identifier = "page-position")]
+        page_position(MeasurePair),
+        #[rasn(tag(context, 6), identifier = "medium-type")]
+        medium_type(MediumType),
+        #[rasn(tag(context, 7), identifier = "permitted-categories")]
+        permitted_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 19), identifier = "layout-stream-categories")]
+        layout_stream_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 20), identifier = "layout-stream-sub-categories")]
+        layout_stream_sub_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 8))]
+        protection(Protection),
+        #[rasn(tag(context, 9), identifier = "presentation-style")]
+        presentation_style(StyleIdentifier),
+        #[rasn(tag(context, 10), identifier = "layout-style")]
+        layout_style(StyleIdentifier),
+        #[rasn(tag(context, 11))]
+        colour(Colour),
+        #[rasn(tag(context, 14), identifier = "colour-of-layout-object")]
+        colour_of_layout_object(ColourExpression),
+        #[rasn(tag(context, 15), identifier = "object-colour-table")]
+        object_colour_table(ColourTable),
+        #[rasn(tag(context, 16), identifier = "content-background-colour")]
+        content_background_colour(ContentBackgroundColour),
+        #[rasn(tag(context, 17), identifier = "content-foreground-colour")]
+        content_foreground_colour(ContentForegroundColour),
+        #[rasn(tag(context, 18), identifier = "content-colour-table")]
+        content_colour_table(ColourTable),
+        #[rasn(tag(context, 12))]
+        border(Border),
+        #[rasn(tag(context, 13))]
+        sealed(Sealed),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum BlockAttributesContentColourTable {
+        #[rasn(tag(context, 0))]
+        position(MeasurePair),
+        #[rasn(tag(context, 1))]
+        dimensions(DimensionPair),
+        #[rasn(tag(context, 2))]
+        transparency(Transparency),
+        #[rasn(tag(context, 3), identifier = "presentation-attributes")]
+        presentation_attributes(PresentationAttributes),
+        #[rasn(tag(context, 4), identifier = "layout-path")]
+        layout_path(OneOfFourAngles),
+        #[rasn(tag(context, 5), identifier = "page-position")]
+        page_position(MeasurePair),
+        #[rasn(tag(context, 6), identifier = "medium-type")]
+        medium_type(MediumType),
+        #[rasn(tag(context, 7), identifier = "permitted-categories")]
+        permitted_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 19), identifier = "layout-stream-categories")]
+        layout_stream_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 20), identifier = "layout-stream-sub-categories")]
+        layout_stream_sub_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 8))]
+        protection(Protection),
+        #[rasn(tag(context, 9), identifier = "presentation-style")]
+        presentation_style(StyleIdentifier),
+        #[rasn(tag(context, 10), identifier = "layout-style")]
+        layout_style(StyleIdentifier),
+        #[rasn(tag(context, 11))]
+        colour(Colour),
+        #[rasn(tag(context, 14), identifier = "colour-of-layout-object")]
+        colour_of_layout_object(ColourExpression),
+        #[rasn(tag(context, 15), identifier = "object-colour-table")]
+        object_colour_table(ColourTable),
+        #[rasn(tag(context, 16), identifier = "content-background-colour")]
+        content_background_colour(ContentBackgroundColour),
+        #[rasn(tag(context, 17), identifier = "content-foreground-colour")]
+        content_foreground_colour(ContentForegroundColour),
+        #[rasn(tag(context, 18), identifier = "content-colour-table")]
+        content_colour_table(ColourTable),
+        #[rasn(tag(context, 12))]
+        border(Border),
+        #[rasn(tag(context, 13))]
+        sealed(Sealed),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum BlockAttributesBorder {
+        #[rasn(tag(context, 0))]
+        position(MeasurePair),
+        #[rasn(tag(context, 1))]
+        dimensions(DimensionPair),
+        #[rasn(tag(context, 2))]
+        transparency(Transparency),
+        #[rasn(tag(context, 3), identifier = "presentation-attributes")]
+        presentation_attributes(PresentationAttributes),
+        #[rasn(tag(context, 4), identifier = "layout-path")]
+        layout_path(OneOfFourAngles),
+        #[rasn(tag(context, 5), identifier = "page-position")]
+        page_position(MeasurePair),
+        #[rasn(tag(context, 6), identifier = "medium-type")]
+        medium_type(MediumType),
+        #[rasn(tag(context, 7), identifier = "permitted-categories")]
+        permitted_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 19), identifier = "layout-stream-categories")]
+        layout_stream_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 20), identifier = "layout-stream-sub-categories")]
+        layout_stream_sub_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 8))]
+        protection(Protection),
+        #[rasn(tag(context, 9), identifier = "presentation-style")]
+        presentation_style(StyleIdentifier),
+        #[rasn(tag(context, 10), identifier = "layout-style")]
+        layout_style(StyleIdentifier),
+        #[rasn(tag(context, 11))]
+        colour(Colour),
+        #[rasn(tag(context, 14), identifier = "colour-of-layout-object")]
+        colour_of_layout_object(ColourExpression),
+        #[rasn(tag(context, 15), identifier = "object-colour-table")]
+        object_colour_table(ColourTable),
+        #[rasn(tag(context, 16), identifier = "content-background-colour")]
+        content_background_colour(ContentBackgroundColour),
+        #[rasn(tag(context, 17), identifier = "content-foreground-colour")]
+        content_foreground_colour(ContentForegroundColour),
+        #[rasn(tag(context, 18), identifier = "content-colour-table")]
+        content_colour_table(ColourTable),
+        #[rasn(tag(context, 12))]
+        border(Border),
+        #[rasn(tag(context, 13))]
+        sealed(Sealed),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum BlockAttributesSealed {
+        #[rasn(tag(context, 0))]
+        position(MeasurePair),
+        #[rasn(tag(context, 1))]
+        dimensions(DimensionPair),
+        #[rasn(tag(context, 2))]
+        transparency(Transparency),
+        #[rasn(tag(context, 3), identifier = "presentation-attributes")]
+        presentation_attributes(PresentationAttributes),
+        #[rasn(tag(context, 4), identifier = "layout-path")]
+        layout_path(OneOfFourAngles),
+        #[rasn(tag(context, 5), identifier = "page-position")]
+        page_position(MeasurePair),
+        #[rasn(tag(context, 6), identifier = "medium-type")]
+        medium_type(MediumType),
+        #[rasn(tag(context, 7), identifier = "permitted-categories")]
+        permitted_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 19), identifier = "layout-stream-categories")]
+        layout_stream_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 20), identifier = "layout-stream-sub-categories")]
+        layout_stream_sub_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 8))]
+        protection(Protection),
+        #[rasn(tag(context, 9), identifier = "presentation-style")]
+        presentation_style(StyleIdentifier),
+        #[rasn(tag(context, 10), identifier = "layout-style")]
+        layout_style(StyleIdentifier),
+        #[rasn(tag(context, 11))]
+        colour(Colour),
+        #[rasn(tag(context, 14), identifier = "colour-of-layout-object")]
+        colour_of_layout_object(ColourExpression),
+        #[rasn(tag(context, 15), identifier = "object-colour-table")]
+        object_colour_table(ColourTable),
+        #[rasn(tag(context, 16), identifier = "content-background-colour")]
+        content_background_colour(ContentBackgroundColour),
+        #[rasn(tag(context, 17), identifier = "content-foreground-colour")]
+        content_foreground_colour(ContentForegroundColour),
+        #[rasn(tag(context, 18), identifier = "content-colour-table")]
+        content_colour_table(ColourTable),
+        #[rasn(tag(context, 12))]
+        border(Border),
+        #[rasn(tag(context, 13))]
+        sealed(Sealed),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Block-Attributes")]
+    pub struct BlockAttributes {
+        pub position: Option<BlockAttributesPosition>,
+        pub dimensions: Option<BlockAttributesDimensions>,
+        pub transparency: Option<BlockAttributesTransparency>,
+        #[rasn(identifier = "presentation-attributes")]
+        pub presentation_attributes: Option<BlockAttributesPresentationAttributes>,
+        #[rasn(identifier = "presentation-style")]
+        pub presentation_style: Option<BlockAttributesPresentationStyle>,
+        #[rasn(identifier = "layout-stream-categories")]
+        pub layout_stream_categories: Option<BlockAttributesLayoutStreamCategories>,
+        #[rasn(identifier = "layout-stream-sub-categories")]
+        pub layout_stream_sub_categories: Option<BlockAttributesLayoutStreamSubCategories>,
+        pub colou: Option<BlockAttributesColou>,
+        #[rasn(identifier = "colour-of-layout-object")]
+        pub colour_of_layout_object: Option<BlockAttributesColourOfLayoutObject>,
+        #[rasn(identifier = "object-colour-table")]
+        pub object_colour_table: Option<BlockAttributesObjectColourTable>,
+        #[rasn(identifier = "content-background-colour")]
+        pub content_background_colour: Option<BlockAttributesContentBackgroundColour>,
+        #[rasn(identifier = "content-foreground-colour")]
+        pub content_foreground_colour: Option<BlockAttributesContentForegroundColour>,
+        #[rasn(identifier = "content-colour-table")]
+        pub content_colour_table: Option<BlockAttributesContentColourTable>,
+        pub border: Option<BlockAttributesBorder>,
+        pub sealed: Option<BlockAttributesSealed>,
+    }
+    impl BlockAttributes {
+        pub fn new(
+            position: Option<BlockAttributesPosition>,
+            dimensions: Option<BlockAttributesDimensions>,
+            transparency: Option<BlockAttributesTransparency>,
+            presentation_attributes: Option<BlockAttributesPresentationAttributes>,
+            presentation_style: Option<BlockAttributesPresentationStyle>,
+            layout_stream_categories: Option<BlockAttributesLayoutStreamCategories>,
+            layout_stream_sub_categories: Option<BlockAttributesLayoutStreamSubCategories>,
+            colou: Option<BlockAttributesColou>,
+            colour_of_layout_object: Option<BlockAttributesColourOfLayoutObject>,
+            object_colour_table: Option<BlockAttributesObjectColourTable>,
+            content_background_colour: Option<BlockAttributesContentBackgroundColour>,
+            content_foreground_colour: Option<BlockAttributesContentForegroundColour>,
+            content_colour_table: Option<BlockAttributesContentColourTable>,
+            border: Option<BlockAttributesBorder>,
+            sealed: Option<BlockAttributesSealed>,
+        ) -> Self {
+            Self {
+                position,
+                dimensions,
+                transparency,
+                presentation_attributes,
+                presentation_style,
+                layout_stream_categories,
+                layout_stream_sub_categories,
+                colou,
+                colour_of_layout_object,
+                object_colour_table,
+                content_background_colour,
+                content_foreground_colour,
+                content_colour_table,
+                border,
+                sealed,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum CompositeLogicalAttributesProtection {
+        #[rasn(tag(context, 0))]
+        position(MeasurePair),
+        #[rasn(tag(context, 1))]
+        dimensions(DimensionPair),
+        #[rasn(tag(context, 2))]
+        transparency(Transparency),
+        #[rasn(tag(context, 3), identifier = "presentation-attributes")]
+        presentation_attributes(PresentationAttributes),
+        #[rasn(tag(context, 4), identifier = "layout-path")]
+        layout_path(OneOfFourAngles),
+        #[rasn(tag(context, 5), identifier = "page-position")]
+        page_position(MeasurePair),
+        #[rasn(tag(context, 6), identifier = "medium-type")]
+        medium_type(MediumType),
+        #[rasn(tag(context, 7), identifier = "permitted-categories")]
+        permitted_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 19), identifier = "layout-stream-categories")]
+        layout_stream_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 20), identifier = "layout-stream-sub-categories")]
+        layout_stream_sub_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 8))]
+        protection(Protection),
+        #[rasn(tag(context, 9), identifier = "presentation-style")]
+        presentation_style(StyleIdentifier),
+        #[rasn(tag(context, 10), identifier = "layout-style")]
+        layout_style(StyleIdentifier),
+        #[rasn(tag(context, 11))]
+        colour(Colour),
+        #[rasn(tag(context, 14), identifier = "colour-of-layout-object")]
+        colour_of_layout_object(ColourExpression),
+        #[rasn(tag(context, 15), identifier = "object-colour-table")]
+        object_colour_table(ColourTable),
+        #[rasn(tag(context, 16), identifier = "content-background-colour")]
+        content_background_colour(ContentBackgroundColour),
+        #[rasn(tag(context, 17), identifier = "content-foreground-colour")]
+        content_foreground_colour(ContentForegroundColour),
+        #[rasn(tag(context, 18), identifier = "content-colour-table")]
+        content_colour_table(ColourTable),
+        #[rasn(tag(context, 12))]
+        border(Border),
+        #[rasn(tag(context, 13))]
+        sealed(Sealed),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum CompositeLogicalAttributesLayoutStyle {
+        #[rasn(tag(context, 0))]
+        position(MeasurePair),
+        #[rasn(tag(context, 1))]
+        dimensions(DimensionPair),
+        #[rasn(tag(context, 2))]
+        transparency(Transparency),
+        #[rasn(tag(context, 3), identifier = "presentation-attributes")]
+        presentation_attributes(PresentationAttributes),
+        #[rasn(tag(context, 4), identifier = "layout-path")]
+        layout_path(OneOfFourAngles),
+        #[rasn(tag(context, 5), identifier = "page-position")]
+        page_position(MeasurePair),
+        #[rasn(tag(context, 6), identifier = "medium-type")]
+        medium_type(MediumType),
+        #[rasn(tag(context, 7), identifier = "permitted-categories")]
+        permitted_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 19), identifier = "layout-stream-categories")]
+        layout_stream_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 20), identifier = "layout-stream-sub-categories")]
+        layout_stream_sub_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 8))]
+        protection(Protection),
+        #[rasn(tag(context, 9), identifier = "presentation-style")]
+        presentation_style(StyleIdentifier),
+        #[rasn(tag(context, 10), identifier = "layout-style")]
+        layout_style(StyleIdentifier),
+        #[rasn(tag(context, 11))]
+        colour(Colour),
+        #[rasn(tag(context, 14), identifier = "colour-of-layout-object")]
+        colour_of_layout_object(ColourExpression),
+        #[rasn(tag(context, 15), identifier = "object-colour-table")]
+        object_colour_table(ColourTable),
+        #[rasn(tag(context, 16), identifier = "content-background-colour")]
+        content_background_colour(ContentBackgroundColour),
+        #[rasn(tag(context, 17), identifier = "content-foreground-colour")]
+        content_foreground_colour(ContentForegroundColour),
+        #[rasn(tag(context, 18), identifier = "content-colour-table")]
+        content_colour_table(ColourTable),
+        #[rasn(tag(context, 12))]
+        border(Border),
+        #[rasn(tag(context, 13))]
+        sealed(Sealed),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum CompositeLogicalAttributesSealed {
+        #[rasn(tag(context, 0))]
+        position(MeasurePair),
+        #[rasn(tag(context, 1))]
+        dimensions(DimensionPair),
+        #[rasn(tag(context, 2))]
+        transparency(Transparency),
+        #[rasn(tag(context, 3), identifier = "presentation-attributes")]
+        presentation_attributes(PresentationAttributes),
+        #[rasn(tag(context, 4), identifier = "layout-path")]
+        layout_path(OneOfFourAngles),
+        #[rasn(tag(context, 5), identifier = "page-position")]
+        page_position(MeasurePair),
+        #[rasn(tag(context, 6), identifier = "medium-type")]
+        medium_type(MediumType),
+        #[rasn(tag(context, 7), identifier = "permitted-categories")]
+        permitted_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 19), identifier = "layout-stream-categories")]
+        layout_stream_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 20), identifier = "layout-stream-sub-categories")]
+        layout_stream_sub_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 8))]
+        protection(Protection),
+        #[rasn(tag(context, 9), identifier = "presentation-style")]
+        presentation_style(StyleIdentifier),
+        #[rasn(tag(context, 10), identifier = "layout-style")]
+        layout_style(StyleIdentifier),
+        #[rasn(tag(context, 11))]
+        colour(Colour),
+        #[rasn(tag(context, 14), identifier = "colour-of-layout-object")]
+        colour_of_layout_object(ColourExpression),
+        #[rasn(tag(context, 15), identifier = "object-colour-table")]
+        object_colour_table(ColourTable),
+        #[rasn(tag(context, 16), identifier = "content-background-colour")]
+        content_background_colour(ContentBackgroundColour),
+        #[rasn(tag(context, 17), identifier = "content-foreground-colour")]
+        content_foreground_colour(ContentForegroundColour),
+        #[rasn(tag(context, 18), identifier = "content-colour-table")]
+        content_colour_table(ColourTable),
+        #[rasn(tag(context, 12))]
+        border(Border),
+        #[rasn(tag(context, 13))]
+        sealed(Sealed),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Composite-Logical-Attributes")]
+    pub struct CompositeLogicalAttributes {
+        pub protection: Option<CompositeLogicalAttributesProtection>,
+        #[rasn(identifier = "layout-style")]
+        pub layout_style: Option<CompositeLogicalAttributesLayoutStyle>,
+        pub sealed: Option<CompositeLogicalAttributesSealed>,
+    }
+    impl CompositeLogicalAttributes {
+        pub fn new(
+            protection: Option<CompositeLogicalAttributesProtection>,
+            layout_style: Option<CompositeLogicalAttributesLayoutStyle>,
+            sealed: Option<CompositeLogicalAttributesSealed>,
+        ) -> Self {
+            Self {
+                protection,
+                layout_style,
+                sealed,
+            }
+        }
+    }
+    #[doc = "  see 7.14"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Default-Value-Lists-Layout")]
+    pub struct DefaultValueListsLayout {
+        #[rasn(tag(context, 1), identifier = "page-set-attributes")]
+        pub page_set_attributes: Option<PageSetAttributes>,
+        #[rasn(tag(context, 2), identifier = "page-attributes")]
+        pub page_attributes: Option<PageAttributes>,
+        #[rasn(tag(context, 3), identifier = "frame-attributes")]
+        pub frame_attributes: Option<FrameAttributes>,
+        #[rasn(tag(context, 4), identifier = "block-attributes")]
+        pub block_attributes: Option<BlockAttributes>,
+    }
+    impl DefaultValueListsLayout {
+        pub fn new(
+            page_set_attributes: Option<PageSetAttributes>,
+            page_attributes: Option<PageAttributes>,
+            frame_attributes: Option<FrameAttributes>,
+            block_attributes: Option<BlockAttributes>,
+        ) -> Self {
+            Self {
+                page_set_attributes,
+                page_attributes,
+                frame_attributes,
+                block_attributes,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Default-Value-Lists-Logical")]
+    pub struct DefaultValueListsLogical {
+        #[rasn(tag(context, 5), identifier = "composite-logical-attributes")]
+        pub composite_logical_attributes: Option<CompositeLogicalAttributes>,
+        #[rasn(tag(context, 6), identifier = "basic-logical-attributes")]
+        pub basic_logical_attributes: Option<BasicLogicalAttributes>,
+    }
+    impl DefaultValueListsLogical {
+        pub fn new(
+            composite_logical_attributes: Option<CompositeLogicalAttributes>,
+            basic_logical_attributes: Option<BasicLogicalAttributes>,
+        ) -> Self {
+            Self {
+                composite_logical_attributes,
+                basic_logical_attributes,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum FrameAttributesPosition {
+        #[rasn(tag(context, 0))]
+        position(MeasurePair),
+        #[rasn(tag(context, 1))]
+        dimensions(DimensionPair),
+        #[rasn(tag(context, 2))]
+        transparency(Transparency),
+        #[rasn(tag(context, 3), identifier = "presentation-attributes")]
+        presentation_attributes(PresentationAttributes),
+        #[rasn(tag(context, 4), identifier = "layout-path")]
+        layout_path(OneOfFourAngles),
+        #[rasn(tag(context, 5), identifier = "page-position")]
+        page_position(MeasurePair),
+        #[rasn(tag(context, 6), identifier = "medium-type")]
+        medium_type(MediumType),
+        #[rasn(tag(context, 7), identifier = "permitted-categories")]
+        permitted_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 19), identifier = "layout-stream-categories")]
+        layout_stream_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 20), identifier = "layout-stream-sub-categories")]
+        layout_stream_sub_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 8))]
+        protection(Protection),
+        #[rasn(tag(context, 9), identifier = "presentation-style")]
+        presentation_style(StyleIdentifier),
+        #[rasn(tag(context, 10), identifier = "layout-style")]
+        layout_style(StyleIdentifier),
+        #[rasn(tag(context, 11))]
+        colour(Colour),
+        #[rasn(tag(context, 14), identifier = "colour-of-layout-object")]
+        colour_of_layout_object(ColourExpression),
+        #[rasn(tag(context, 15), identifier = "object-colour-table")]
+        object_colour_table(ColourTable),
+        #[rasn(tag(context, 16), identifier = "content-background-colour")]
+        content_background_colour(ContentBackgroundColour),
+        #[rasn(tag(context, 17), identifier = "content-foreground-colour")]
+        content_foreground_colour(ContentForegroundColour),
+        #[rasn(tag(context, 18), identifier = "content-colour-table")]
+        content_colour_table(ColourTable),
+        #[rasn(tag(context, 12))]
+        border(Border),
+        #[rasn(tag(context, 13))]
+        sealed(Sealed),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum FrameAttributesDimensions {
+        #[rasn(tag(context, 0))]
+        position(MeasurePair),
+        #[rasn(tag(context, 1))]
+        dimensions(DimensionPair),
+        #[rasn(tag(context, 2))]
+        transparency(Transparency),
+        #[rasn(tag(context, 3), identifier = "presentation-attributes")]
+        presentation_attributes(PresentationAttributes),
+        #[rasn(tag(context, 4), identifier = "layout-path")]
+        layout_path(OneOfFourAngles),
+        #[rasn(tag(context, 5), identifier = "page-position")]
+        page_position(MeasurePair),
+        #[rasn(tag(context, 6), identifier = "medium-type")]
+        medium_type(MediumType),
+        #[rasn(tag(context, 7), identifier = "permitted-categories")]
+        permitted_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 19), identifier = "layout-stream-categories")]
+        layout_stream_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 20), identifier = "layout-stream-sub-categories")]
+        layout_stream_sub_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 8))]
+        protection(Protection),
+        #[rasn(tag(context, 9), identifier = "presentation-style")]
+        presentation_style(StyleIdentifier),
+        #[rasn(tag(context, 10), identifier = "layout-style")]
+        layout_style(StyleIdentifier),
+        #[rasn(tag(context, 11))]
+        colour(Colour),
+        #[rasn(tag(context, 14), identifier = "colour-of-layout-object")]
+        colour_of_layout_object(ColourExpression),
+        #[rasn(tag(context, 15), identifier = "object-colour-table")]
+        object_colour_table(ColourTable),
+        #[rasn(tag(context, 16), identifier = "content-background-colour")]
+        content_background_colour(ContentBackgroundColour),
+        #[rasn(tag(context, 17), identifier = "content-foreground-colour")]
+        content_foreground_colour(ContentForegroundColour),
+        #[rasn(tag(context, 18), identifier = "content-colour-table")]
+        content_colour_table(ColourTable),
+        #[rasn(tag(context, 12))]
+        border(Border),
+        #[rasn(tag(context, 13))]
+        sealed(Sealed),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum FrameAttributesTransparency {
+        #[rasn(tag(context, 0))]
+        position(MeasurePair),
+        #[rasn(tag(context, 1))]
+        dimensions(DimensionPair),
+        #[rasn(tag(context, 2))]
+        transparency(Transparency),
+        #[rasn(tag(context, 3), identifier = "presentation-attributes")]
+        presentation_attributes(PresentationAttributes),
+        #[rasn(tag(context, 4), identifier = "layout-path")]
+        layout_path(OneOfFourAngles),
+        #[rasn(tag(context, 5), identifier = "page-position")]
+        page_position(MeasurePair),
+        #[rasn(tag(context, 6), identifier = "medium-type")]
+        medium_type(MediumType),
+        #[rasn(tag(context, 7), identifier = "permitted-categories")]
+        permitted_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 19), identifier = "layout-stream-categories")]
+        layout_stream_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 20), identifier = "layout-stream-sub-categories")]
+        layout_stream_sub_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 8))]
+        protection(Protection),
+        #[rasn(tag(context, 9), identifier = "presentation-style")]
+        presentation_style(StyleIdentifier),
+        #[rasn(tag(context, 10), identifier = "layout-style")]
+        layout_style(StyleIdentifier),
+        #[rasn(tag(context, 11))]
+        colour(Colour),
+        #[rasn(tag(context, 14), identifier = "colour-of-layout-object")]
+        colour_of_layout_object(ColourExpression),
+        #[rasn(tag(context, 15), identifier = "object-colour-table")]
+        object_colour_table(ColourTable),
+        #[rasn(tag(context, 16), identifier = "content-background-colour")]
+        content_background_colour(ContentBackgroundColour),
+        #[rasn(tag(context, 17), identifier = "content-foreground-colour")]
+        content_foreground_colour(ContentForegroundColour),
+        #[rasn(tag(context, 18), identifier = "content-colour-table")]
+        content_colour_table(ColourTable),
+        #[rasn(tag(context, 12))]
+        border(Border),
+        #[rasn(tag(context, 13))]
+        sealed(Sealed),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum FrameAttributesLayoutPath {
+        #[rasn(tag(context, 0))]
+        position(MeasurePair),
+        #[rasn(tag(context, 1))]
+        dimensions(DimensionPair),
+        #[rasn(tag(context, 2))]
+        transparency(Transparency),
+        #[rasn(tag(context, 3), identifier = "presentation-attributes")]
+        presentation_attributes(PresentationAttributes),
+        #[rasn(tag(context, 4), identifier = "layout-path")]
+        layout_path(OneOfFourAngles),
+        #[rasn(tag(context, 5), identifier = "page-position")]
+        page_position(MeasurePair),
+        #[rasn(tag(context, 6), identifier = "medium-type")]
+        medium_type(MediumType),
+        #[rasn(tag(context, 7), identifier = "permitted-categories")]
+        permitted_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 19), identifier = "layout-stream-categories")]
+        layout_stream_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 20), identifier = "layout-stream-sub-categories")]
+        layout_stream_sub_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 8))]
+        protection(Protection),
+        #[rasn(tag(context, 9), identifier = "presentation-style")]
+        presentation_style(StyleIdentifier),
+        #[rasn(tag(context, 10), identifier = "layout-style")]
+        layout_style(StyleIdentifier),
+        #[rasn(tag(context, 11))]
+        colour(Colour),
+        #[rasn(tag(context, 14), identifier = "colour-of-layout-object")]
+        colour_of_layout_object(ColourExpression),
+        #[rasn(tag(context, 15), identifier = "object-colour-table")]
+        object_colour_table(ColourTable),
+        #[rasn(tag(context, 16), identifier = "content-background-colour")]
+        content_background_colour(ContentBackgroundColour),
+        #[rasn(tag(context, 17), identifier = "content-foreground-colour")]
+        content_foreground_colour(ContentForegroundColour),
+        #[rasn(tag(context, 18), identifier = "content-colour-table")]
+        content_colour_table(ColourTable),
+        #[rasn(tag(context, 12))]
+        border(Border),
+        #[rasn(tag(context, 13))]
+        sealed(Sealed),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum FrameAttributesPermittedCategories {
+        #[rasn(tag(context, 0))]
+        position(MeasurePair),
+        #[rasn(tag(context, 1))]
+        dimensions(DimensionPair),
+        #[rasn(tag(context, 2))]
+        transparency(Transparency),
+        #[rasn(tag(context, 3), identifier = "presentation-attributes")]
+        presentation_attributes(PresentationAttributes),
+        #[rasn(tag(context, 4), identifier = "layout-path")]
+        layout_path(OneOfFourAngles),
+        #[rasn(tag(context, 5), identifier = "page-position")]
+        page_position(MeasurePair),
+        #[rasn(tag(context, 6), identifier = "medium-type")]
+        medium_type(MediumType),
+        #[rasn(tag(context, 7), identifier = "permitted-categories")]
+        permitted_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 19), identifier = "layout-stream-categories")]
+        layout_stream_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 20), identifier = "layout-stream-sub-categories")]
+        layout_stream_sub_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 8))]
+        protection(Protection),
+        #[rasn(tag(context, 9), identifier = "presentation-style")]
+        presentation_style(StyleIdentifier),
+        #[rasn(tag(context, 10), identifier = "layout-style")]
+        layout_style(StyleIdentifier),
+        #[rasn(tag(context, 11))]
+        colour(Colour),
+        #[rasn(tag(context, 14), identifier = "colour-of-layout-object")]
+        colour_of_layout_object(ColourExpression),
+        #[rasn(tag(context, 15), identifier = "object-colour-table")]
+        object_colour_table(ColourTable),
+        #[rasn(tag(context, 16), identifier = "content-background-colour")]
+        content_background_colour(ContentBackgroundColour),
+        #[rasn(tag(context, 17), identifier = "content-foreground-colour")]
+        content_foreground_colour(ContentForegroundColour),
+        #[rasn(tag(context, 18), identifier = "content-colour-table")]
+        content_colour_table(ColourTable),
+        #[rasn(tag(context, 12))]
+        border(Border),
+        #[rasn(tag(context, 13))]
+        sealed(Sealed),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum FrameAttributesLayoutStreamCategories {
+        #[rasn(tag(context, 0))]
+        position(MeasurePair),
+        #[rasn(tag(context, 1))]
+        dimensions(DimensionPair),
+        #[rasn(tag(context, 2))]
+        transparency(Transparency),
+        #[rasn(tag(context, 3), identifier = "presentation-attributes")]
+        presentation_attributes(PresentationAttributes),
+        #[rasn(tag(context, 4), identifier = "layout-path")]
+        layout_path(OneOfFourAngles),
+        #[rasn(tag(context, 5), identifier = "page-position")]
+        page_position(MeasurePair),
+        #[rasn(tag(context, 6), identifier = "medium-type")]
+        medium_type(MediumType),
+        #[rasn(tag(context, 7), identifier = "permitted-categories")]
+        permitted_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 19), identifier = "layout-stream-categories")]
+        layout_stream_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 20), identifier = "layout-stream-sub-categories")]
+        layout_stream_sub_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 8))]
+        protection(Protection),
+        #[rasn(tag(context, 9), identifier = "presentation-style")]
+        presentation_style(StyleIdentifier),
+        #[rasn(tag(context, 10), identifier = "layout-style")]
+        layout_style(StyleIdentifier),
+        #[rasn(tag(context, 11))]
+        colour(Colour),
+        #[rasn(tag(context, 14), identifier = "colour-of-layout-object")]
+        colour_of_layout_object(ColourExpression),
+        #[rasn(tag(context, 15), identifier = "object-colour-table")]
+        object_colour_table(ColourTable),
+        #[rasn(tag(context, 16), identifier = "content-background-colour")]
+        content_background_colour(ContentBackgroundColour),
+        #[rasn(tag(context, 17), identifier = "content-foreground-colour")]
+        content_foreground_colour(ContentForegroundColour),
+        #[rasn(tag(context, 18), identifier = "content-colour-table")]
+        content_colour_table(ColourTable),
+        #[rasn(tag(context, 12))]
+        border(Border),
+        #[rasn(tag(context, 13))]
+        sealed(Sealed),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum FrameAttributesLayoutStreamSubCategories {
+        #[rasn(tag(context, 0))]
+        position(MeasurePair),
+        #[rasn(tag(context, 1))]
+        dimensions(DimensionPair),
+        #[rasn(tag(context, 2))]
+        transparency(Transparency),
+        #[rasn(tag(context, 3), identifier = "presentation-attributes")]
+        presentation_attributes(PresentationAttributes),
+        #[rasn(tag(context, 4), identifier = "layout-path")]
+        layout_path(OneOfFourAngles),
+        #[rasn(tag(context, 5), identifier = "page-position")]
+        page_position(MeasurePair),
+        #[rasn(tag(context, 6), identifier = "medium-type")]
+        medium_type(MediumType),
+        #[rasn(tag(context, 7), identifier = "permitted-categories")]
+        permitted_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 19), identifier = "layout-stream-categories")]
+        layout_stream_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 20), identifier = "layout-stream-sub-categories")]
+        layout_stream_sub_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 8))]
+        protection(Protection),
+        #[rasn(tag(context, 9), identifier = "presentation-style")]
+        presentation_style(StyleIdentifier),
+        #[rasn(tag(context, 10), identifier = "layout-style")]
+        layout_style(StyleIdentifier),
+        #[rasn(tag(context, 11))]
+        colour(Colour),
+        #[rasn(tag(context, 14), identifier = "colour-of-layout-object")]
+        colour_of_layout_object(ColourExpression),
+        #[rasn(tag(context, 15), identifier = "object-colour-table")]
+        object_colour_table(ColourTable),
+        #[rasn(tag(context, 16), identifier = "content-background-colour")]
+        content_background_colour(ContentBackgroundColour),
+        #[rasn(tag(context, 17), identifier = "content-foreground-colour")]
+        content_foreground_colour(ContentForegroundColour),
+        #[rasn(tag(context, 18), identifier = "content-colour-table")]
+        content_colour_table(ColourTable),
+        #[rasn(tag(context, 12))]
+        border(Border),
+        #[rasn(tag(context, 13))]
+        sealed(Sealed),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum FrameAttributesColour {
+        #[rasn(tag(context, 0))]
+        position(MeasurePair),
+        #[rasn(tag(context, 1))]
+        dimensions(DimensionPair),
+        #[rasn(tag(context, 2))]
+        transparency(Transparency),
+        #[rasn(tag(context, 3), identifier = "presentation-attributes")]
+        presentation_attributes(PresentationAttributes),
+        #[rasn(tag(context, 4), identifier = "layout-path")]
+        layout_path(OneOfFourAngles),
+        #[rasn(tag(context, 5), identifier = "page-position")]
+        page_position(MeasurePair),
+        #[rasn(tag(context, 6), identifier = "medium-type")]
+        medium_type(MediumType),
+        #[rasn(tag(context, 7), identifier = "permitted-categories")]
+        permitted_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 19), identifier = "layout-stream-categories")]
+        layout_stream_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 20), identifier = "layout-stream-sub-categories")]
+        layout_stream_sub_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 8))]
+        protection(Protection),
+        #[rasn(tag(context, 9), identifier = "presentation-style")]
+        presentation_style(StyleIdentifier),
+        #[rasn(tag(context, 10), identifier = "layout-style")]
+        layout_style(StyleIdentifier),
+        #[rasn(tag(context, 11))]
+        colour(Colour),
+        #[rasn(tag(context, 14), identifier = "colour-of-layout-object")]
+        colour_of_layout_object(ColourExpression),
+        #[rasn(tag(context, 15), identifier = "object-colour-table")]
+        object_colour_table(ColourTable),
+        #[rasn(tag(context, 16), identifier = "content-background-colour")]
+        content_background_colour(ContentBackgroundColour),
+        #[rasn(tag(context, 17), identifier = "content-foreground-colour")]
+        content_foreground_colour(ContentForegroundColour),
+        #[rasn(tag(context, 18), identifier = "content-colour-table")]
+        content_colour_table(ColourTable),
+        #[rasn(tag(context, 12))]
+        border(Border),
+        #[rasn(tag(context, 13))]
+        sealed(Sealed),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum FrameAttributesColourOfLayoutObject {
+        #[rasn(tag(context, 0))]
+        position(MeasurePair),
+        #[rasn(tag(context, 1))]
+        dimensions(DimensionPair),
+        #[rasn(tag(context, 2))]
+        transparency(Transparency),
+        #[rasn(tag(context, 3), identifier = "presentation-attributes")]
+        presentation_attributes(PresentationAttributes),
+        #[rasn(tag(context, 4), identifier = "layout-path")]
+        layout_path(OneOfFourAngles),
+        #[rasn(tag(context, 5), identifier = "page-position")]
+        page_position(MeasurePair),
+        #[rasn(tag(context, 6), identifier = "medium-type")]
+        medium_type(MediumType),
+        #[rasn(tag(context, 7), identifier = "permitted-categories")]
+        permitted_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 19), identifier = "layout-stream-categories")]
+        layout_stream_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 20), identifier = "layout-stream-sub-categories")]
+        layout_stream_sub_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 8))]
+        protection(Protection),
+        #[rasn(tag(context, 9), identifier = "presentation-style")]
+        presentation_style(StyleIdentifier),
+        #[rasn(tag(context, 10), identifier = "layout-style")]
+        layout_style(StyleIdentifier),
+        #[rasn(tag(context, 11))]
+        colour(Colour),
+        #[rasn(tag(context, 14), identifier = "colour-of-layout-object")]
+        colour_of_layout_object(ColourExpression),
+        #[rasn(tag(context, 15), identifier = "object-colour-table")]
+        object_colour_table(ColourTable),
+        #[rasn(tag(context, 16), identifier = "content-background-colour")]
+        content_background_colour(ContentBackgroundColour),
+        #[rasn(tag(context, 17), identifier = "content-foreground-colour")]
+        content_foreground_colour(ContentForegroundColour),
+        #[rasn(tag(context, 18), identifier = "content-colour-table")]
+        content_colour_table(ColourTable),
+        #[rasn(tag(context, 12))]
+        border(Border),
+        #[rasn(tag(context, 13))]
+        sealed(Sealed),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum FrameAttributesObjectColourTable {
+        #[rasn(tag(context, 0))]
+        position(MeasurePair),
+        #[rasn(tag(context, 1))]
+        dimensions(DimensionPair),
+        #[rasn(tag(context, 2))]
+        transparency(Transparency),
+        #[rasn(tag(context, 3), identifier = "presentation-attributes")]
+        presentation_attributes(PresentationAttributes),
+        #[rasn(tag(context, 4), identifier = "layout-path")]
+        layout_path(OneOfFourAngles),
+        #[rasn(tag(context, 5), identifier = "page-position")]
+        page_position(MeasurePair),
+        #[rasn(tag(context, 6), identifier = "medium-type")]
+        medium_type(MediumType),
+        #[rasn(tag(context, 7), identifier = "permitted-categories")]
+        permitted_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 19), identifier = "layout-stream-categories")]
+        layout_stream_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 20), identifier = "layout-stream-sub-categories")]
+        layout_stream_sub_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 8))]
+        protection(Protection),
+        #[rasn(tag(context, 9), identifier = "presentation-style")]
+        presentation_style(StyleIdentifier),
+        #[rasn(tag(context, 10), identifier = "layout-style")]
+        layout_style(StyleIdentifier),
+        #[rasn(tag(context, 11))]
+        colour(Colour),
+        #[rasn(tag(context, 14), identifier = "colour-of-layout-object")]
+        colour_of_layout_object(ColourExpression),
+        #[rasn(tag(context, 15), identifier = "object-colour-table")]
+        object_colour_table(ColourTable),
+        #[rasn(tag(context, 16), identifier = "content-background-colour")]
+        content_background_colour(ContentBackgroundColour),
+        #[rasn(tag(context, 17), identifier = "content-foreground-colour")]
+        content_foreground_colour(ContentForegroundColour),
+        #[rasn(tag(context, 18), identifier = "content-colour-table")]
+        content_colour_table(ColourTable),
+        #[rasn(tag(context, 12))]
+        border(Border),
+        #[rasn(tag(context, 13))]
+        sealed(Sealed),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum FrameAttributesBorder {
+        #[rasn(tag(context, 0))]
+        position(MeasurePair),
+        #[rasn(tag(context, 1))]
+        dimensions(DimensionPair),
+        #[rasn(tag(context, 2))]
+        transparency(Transparency),
+        #[rasn(tag(context, 3), identifier = "presentation-attributes")]
+        presentation_attributes(PresentationAttributes),
+        #[rasn(tag(context, 4), identifier = "layout-path")]
+        layout_path(OneOfFourAngles),
+        #[rasn(tag(context, 5), identifier = "page-position")]
+        page_position(MeasurePair),
+        #[rasn(tag(context, 6), identifier = "medium-type")]
+        medium_type(MediumType),
+        #[rasn(tag(context, 7), identifier = "permitted-categories")]
+        permitted_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 19), identifier = "layout-stream-categories")]
+        layout_stream_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 20), identifier = "layout-stream-sub-categories")]
+        layout_stream_sub_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 8))]
+        protection(Protection),
+        #[rasn(tag(context, 9), identifier = "presentation-style")]
+        presentation_style(StyleIdentifier),
+        #[rasn(tag(context, 10), identifier = "layout-style")]
+        layout_style(StyleIdentifier),
+        #[rasn(tag(context, 11))]
+        colour(Colour),
+        #[rasn(tag(context, 14), identifier = "colour-of-layout-object")]
+        colour_of_layout_object(ColourExpression),
+        #[rasn(tag(context, 15), identifier = "object-colour-table")]
+        object_colour_table(ColourTable),
+        #[rasn(tag(context, 16), identifier = "content-background-colour")]
+        content_background_colour(ContentBackgroundColour),
+        #[rasn(tag(context, 17), identifier = "content-foreground-colour")]
+        content_foreground_colour(ContentForegroundColour),
+        #[rasn(tag(context, 18), identifier = "content-colour-table")]
+        content_colour_table(ColourTable),
+        #[rasn(tag(context, 12))]
+        border(Border),
+        #[rasn(tag(context, 13))]
+        sealed(Sealed),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum FrameAttributesSealed {
+        #[rasn(tag(context, 0))]
+        position(MeasurePair),
+        #[rasn(tag(context, 1))]
+        dimensions(DimensionPair),
+        #[rasn(tag(context, 2))]
+        transparency(Transparency),
+        #[rasn(tag(context, 3), identifier = "presentation-attributes")]
+        presentation_attributes(PresentationAttributes),
+        #[rasn(tag(context, 4), identifier = "layout-path")]
+        layout_path(OneOfFourAngles),
+        #[rasn(tag(context, 5), identifier = "page-position")]
+        page_position(MeasurePair),
+        #[rasn(tag(context, 6), identifier = "medium-type")]
+        medium_type(MediumType),
+        #[rasn(tag(context, 7), identifier = "permitted-categories")]
+        permitted_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 19), identifier = "layout-stream-categories")]
+        layout_stream_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 20), identifier = "layout-stream-sub-categories")]
+        layout_stream_sub_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 8))]
+        protection(Protection),
+        #[rasn(tag(context, 9), identifier = "presentation-style")]
+        presentation_style(StyleIdentifier),
+        #[rasn(tag(context, 10), identifier = "layout-style")]
+        layout_style(StyleIdentifier),
+        #[rasn(tag(context, 11))]
+        colour(Colour),
+        #[rasn(tag(context, 14), identifier = "colour-of-layout-object")]
+        colour_of_layout_object(ColourExpression),
+        #[rasn(tag(context, 15), identifier = "object-colour-table")]
+        object_colour_table(ColourTable),
+        #[rasn(tag(context, 16), identifier = "content-background-colour")]
+        content_background_colour(ContentBackgroundColour),
+        #[rasn(tag(context, 17), identifier = "content-foreground-colour")]
+        content_foreground_colour(ContentForegroundColour),
+        #[rasn(tag(context, 18), identifier = "content-colour-table")]
+        content_colour_table(ColourTable),
+        #[rasn(tag(context, 12))]
+        border(Border),
+        #[rasn(tag(context, 13))]
+        sealed(Sealed),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Frame-Attributes")]
+    pub struct FrameAttributes {
+        pub position: Option<FrameAttributesPosition>,
+        pub dimensions: Option<FrameAttributesDimensions>,
+        pub transparency: Option<FrameAttributesTransparency>,
+        #[rasn(identifier = "layout-path")]
+        pub layout_path: Option<FrameAttributesLayoutPath>,
+        #[rasn(identifier = "permitted-categories")]
+        pub permitted_categories: Option<FrameAttributesPermittedCategories>,
+        #[rasn(identifier = "layout-stream-categories")]
+        pub layout_stream_categories: Option<FrameAttributesLayoutStreamCategories>,
+        #[rasn(identifier = "layout-stream-sub-categories")]
+        pub layout_stream_sub_categories: Option<FrameAttributesLayoutStreamSubCategories>,
+        pub colour: Option<FrameAttributesColour>,
+        #[rasn(identifier = "colour-of-layout-object")]
+        pub colour_of_layout_object: Option<FrameAttributesColourOfLayoutObject>,
+        #[rasn(identifier = "object-colour-table")]
+        pub object_colour_table: Option<FrameAttributesObjectColourTable>,
+        pub border: Option<FrameAttributesBorder>,
+        pub sealed: Option<FrameAttributesSealed>,
+    }
+    impl FrameAttributes {
+        pub fn new(
+            position: Option<FrameAttributesPosition>,
+            dimensions: Option<FrameAttributesDimensions>,
+            transparency: Option<FrameAttributesTransparency>,
+            layout_path: Option<FrameAttributesLayoutPath>,
+            permitted_categories: Option<FrameAttributesPermittedCategories>,
+            layout_stream_categories: Option<FrameAttributesLayoutStreamCategories>,
+            layout_stream_sub_categories: Option<FrameAttributesLayoutStreamSubCategories>,
+            colour: Option<FrameAttributesColour>,
+            colour_of_layout_object: Option<FrameAttributesColourOfLayoutObject>,
+            object_colour_table: Option<FrameAttributesObjectColourTable>,
+            border: Option<FrameAttributesBorder>,
+            sealed: Option<FrameAttributesSealed>,
+        ) -> Self {
+            Self {
+                position,
+                dimensions,
+                transparency,
+                layout_path,
+                permitted_categories,
+                layout_stream_categories,
+                layout_stream_sub_categories,
+                colour,
+                colour_of_layout_object,
+                object_colour_table,
+                border,
+                sealed,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum PageAttributesDimensions {
+        #[rasn(tag(context, 0))]
+        position(MeasurePair),
+        #[rasn(tag(context, 1))]
+        dimensions(DimensionPair),
+        #[rasn(tag(context, 2))]
+        transparency(Transparency),
+        #[rasn(tag(context, 3), identifier = "presentation-attributes")]
+        presentation_attributes(PresentationAttributes),
+        #[rasn(tag(context, 4), identifier = "layout-path")]
+        layout_path(OneOfFourAngles),
+        #[rasn(tag(context, 5), identifier = "page-position")]
+        page_position(MeasurePair),
+        #[rasn(tag(context, 6), identifier = "medium-type")]
+        medium_type(MediumType),
+        #[rasn(tag(context, 7), identifier = "permitted-categories")]
+        permitted_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 19), identifier = "layout-stream-categories")]
+        layout_stream_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 20), identifier = "layout-stream-sub-categories")]
+        layout_stream_sub_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 8))]
+        protection(Protection),
+        #[rasn(tag(context, 9), identifier = "presentation-style")]
+        presentation_style(StyleIdentifier),
+        #[rasn(tag(context, 10), identifier = "layout-style")]
+        layout_style(StyleIdentifier),
+        #[rasn(tag(context, 11))]
+        colour(Colour),
+        #[rasn(tag(context, 14), identifier = "colour-of-layout-object")]
+        colour_of_layout_object(ColourExpression),
+        #[rasn(tag(context, 15), identifier = "object-colour-table")]
+        object_colour_table(ColourTable),
+        #[rasn(tag(context, 16), identifier = "content-background-colour")]
+        content_background_colour(ContentBackgroundColour),
+        #[rasn(tag(context, 17), identifier = "content-foreground-colour")]
+        content_foreground_colour(ContentForegroundColour),
+        #[rasn(tag(context, 18), identifier = "content-colour-table")]
+        content_colour_table(ColourTable),
+        #[rasn(tag(context, 12))]
+        border(Border),
+        #[rasn(tag(context, 13))]
+        sealed(Sealed),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum PageAttributesTransparency {
+        #[rasn(tag(context, 0))]
+        position(MeasurePair),
+        #[rasn(tag(context, 1))]
+        dimensions(DimensionPair),
+        #[rasn(tag(context, 2))]
+        transparency(Transparency),
+        #[rasn(tag(context, 3), identifier = "presentation-attributes")]
+        presentation_attributes(PresentationAttributes),
+        #[rasn(tag(context, 4), identifier = "layout-path")]
+        layout_path(OneOfFourAngles),
+        #[rasn(tag(context, 5), identifier = "page-position")]
+        page_position(MeasurePair),
+        #[rasn(tag(context, 6), identifier = "medium-type")]
+        medium_type(MediumType),
+        #[rasn(tag(context, 7), identifier = "permitted-categories")]
+        permitted_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 19), identifier = "layout-stream-categories")]
+        layout_stream_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 20), identifier = "layout-stream-sub-categories")]
+        layout_stream_sub_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 8))]
+        protection(Protection),
+        #[rasn(tag(context, 9), identifier = "presentation-style")]
+        presentation_style(StyleIdentifier),
+        #[rasn(tag(context, 10), identifier = "layout-style")]
+        layout_style(StyleIdentifier),
+        #[rasn(tag(context, 11))]
+        colour(Colour),
+        #[rasn(tag(context, 14), identifier = "colour-of-layout-object")]
+        colour_of_layout_object(ColourExpression),
+        #[rasn(tag(context, 15), identifier = "object-colour-table")]
+        object_colour_table(ColourTable),
+        #[rasn(tag(context, 16), identifier = "content-background-colour")]
+        content_background_colour(ContentBackgroundColour),
+        #[rasn(tag(context, 17), identifier = "content-foreground-colour")]
+        content_foreground_colour(ContentForegroundColour),
+        #[rasn(tag(context, 18), identifier = "content-colour-table")]
+        content_colour_table(ColourTable),
+        #[rasn(tag(context, 12))]
+        border(Border),
+        #[rasn(tag(context, 13))]
+        sealed(Sealed),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum PageAttributesPresentationAttributes {
+        #[rasn(tag(context, 0))]
+        position(MeasurePair),
+        #[rasn(tag(context, 1))]
+        dimensions(DimensionPair),
+        #[rasn(tag(context, 2))]
+        transparency(Transparency),
+        #[rasn(tag(context, 3), identifier = "presentation-attributes")]
+        presentation_attributes(PresentationAttributes),
+        #[rasn(tag(context, 4), identifier = "layout-path")]
+        layout_path(OneOfFourAngles),
+        #[rasn(tag(context, 5), identifier = "page-position")]
+        page_position(MeasurePair),
+        #[rasn(tag(context, 6), identifier = "medium-type")]
+        medium_type(MediumType),
+        #[rasn(tag(context, 7), identifier = "permitted-categories")]
+        permitted_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 19), identifier = "layout-stream-categories")]
+        layout_stream_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 20), identifier = "layout-stream-sub-categories")]
+        layout_stream_sub_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 8))]
+        protection(Protection),
+        #[rasn(tag(context, 9), identifier = "presentation-style")]
+        presentation_style(StyleIdentifier),
+        #[rasn(tag(context, 10), identifier = "layout-style")]
+        layout_style(StyleIdentifier),
+        #[rasn(tag(context, 11))]
+        colour(Colour),
+        #[rasn(tag(context, 14), identifier = "colour-of-layout-object")]
+        colour_of_layout_object(ColourExpression),
+        #[rasn(tag(context, 15), identifier = "object-colour-table")]
+        object_colour_table(ColourTable),
+        #[rasn(tag(context, 16), identifier = "content-background-colour")]
+        content_background_colour(ContentBackgroundColour),
+        #[rasn(tag(context, 17), identifier = "content-foreground-colour")]
+        content_foreground_colour(ContentForegroundColour),
+        #[rasn(tag(context, 18), identifier = "content-colour-table")]
+        content_colour_table(ColourTable),
+        #[rasn(tag(context, 12))]
+        border(Border),
+        #[rasn(tag(context, 13))]
+        sealed(Sealed),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum PageAttributesPagePosition {
+        #[rasn(tag(context, 0))]
+        position(MeasurePair),
+        #[rasn(tag(context, 1))]
+        dimensions(DimensionPair),
+        #[rasn(tag(context, 2))]
+        transparency(Transparency),
+        #[rasn(tag(context, 3), identifier = "presentation-attributes")]
+        presentation_attributes(PresentationAttributes),
+        #[rasn(tag(context, 4), identifier = "layout-path")]
+        layout_path(OneOfFourAngles),
+        #[rasn(tag(context, 5), identifier = "page-position")]
+        page_position(MeasurePair),
+        #[rasn(tag(context, 6), identifier = "medium-type")]
+        medium_type(MediumType),
+        #[rasn(tag(context, 7), identifier = "permitted-categories")]
+        permitted_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 19), identifier = "layout-stream-categories")]
+        layout_stream_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 20), identifier = "layout-stream-sub-categories")]
+        layout_stream_sub_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 8))]
+        protection(Protection),
+        #[rasn(tag(context, 9), identifier = "presentation-style")]
+        presentation_style(StyleIdentifier),
+        #[rasn(tag(context, 10), identifier = "layout-style")]
+        layout_style(StyleIdentifier),
+        #[rasn(tag(context, 11))]
+        colour(Colour),
+        #[rasn(tag(context, 14), identifier = "colour-of-layout-object")]
+        colour_of_layout_object(ColourExpression),
+        #[rasn(tag(context, 15), identifier = "object-colour-table")]
+        object_colour_table(ColourTable),
+        #[rasn(tag(context, 16), identifier = "content-background-colour")]
+        content_background_colour(ContentBackgroundColour),
+        #[rasn(tag(context, 17), identifier = "content-foreground-colour")]
+        content_foreground_colour(ContentForegroundColour),
+        #[rasn(tag(context, 18), identifier = "content-colour-table")]
+        content_colour_table(ColourTable),
+        #[rasn(tag(context, 12))]
+        border(Border),
+        #[rasn(tag(context, 13))]
+        sealed(Sealed),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum PageAttributesMediumType {
+        #[rasn(tag(context, 0))]
+        position(MeasurePair),
+        #[rasn(tag(context, 1))]
+        dimensions(DimensionPair),
+        #[rasn(tag(context, 2))]
+        transparency(Transparency),
+        #[rasn(tag(context, 3), identifier = "presentation-attributes")]
+        presentation_attributes(PresentationAttributes),
+        #[rasn(tag(context, 4), identifier = "layout-path")]
+        layout_path(OneOfFourAngles),
+        #[rasn(tag(context, 5), identifier = "page-position")]
+        page_position(MeasurePair),
+        #[rasn(tag(context, 6), identifier = "medium-type")]
+        medium_type(MediumType),
+        #[rasn(tag(context, 7), identifier = "permitted-categories")]
+        permitted_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 19), identifier = "layout-stream-categories")]
+        layout_stream_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 20), identifier = "layout-stream-sub-categories")]
+        layout_stream_sub_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 8))]
+        protection(Protection),
+        #[rasn(tag(context, 9), identifier = "presentation-style")]
+        presentation_style(StyleIdentifier),
+        #[rasn(tag(context, 10), identifier = "layout-style")]
+        layout_style(StyleIdentifier),
+        #[rasn(tag(context, 11))]
+        colour(Colour),
+        #[rasn(tag(context, 14), identifier = "colour-of-layout-object")]
+        colour_of_layout_object(ColourExpression),
+        #[rasn(tag(context, 15), identifier = "object-colour-table")]
+        object_colour_table(ColourTable),
+        #[rasn(tag(context, 16), identifier = "content-background-colour")]
+        content_background_colour(ContentBackgroundColour),
+        #[rasn(tag(context, 17), identifier = "content-foreground-colour")]
+        content_foreground_colour(ContentForegroundColour),
+        #[rasn(tag(context, 18), identifier = "content-colour-table")]
+        content_colour_table(ColourTable),
+        #[rasn(tag(context, 12))]
+        border(Border),
+        #[rasn(tag(context, 13))]
+        sealed(Sealed),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum PageAttributesPresentationStyle {
+        #[rasn(tag(context, 0))]
+        position(MeasurePair),
+        #[rasn(tag(context, 1))]
+        dimensions(DimensionPair),
+        #[rasn(tag(context, 2))]
+        transparency(Transparency),
+        #[rasn(tag(context, 3), identifier = "presentation-attributes")]
+        presentation_attributes(PresentationAttributes),
+        #[rasn(tag(context, 4), identifier = "layout-path")]
+        layout_path(OneOfFourAngles),
+        #[rasn(tag(context, 5), identifier = "page-position")]
+        page_position(MeasurePair),
+        #[rasn(tag(context, 6), identifier = "medium-type")]
+        medium_type(MediumType),
+        #[rasn(tag(context, 7), identifier = "permitted-categories")]
+        permitted_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 19), identifier = "layout-stream-categories")]
+        layout_stream_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 20), identifier = "layout-stream-sub-categories")]
+        layout_stream_sub_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 8))]
+        protection(Protection),
+        #[rasn(tag(context, 9), identifier = "presentation-style")]
+        presentation_style(StyleIdentifier),
+        #[rasn(tag(context, 10), identifier = "layout-style")]
+        layout_style(StyleIdentifier),
+        #[rasn(tag(context, 11))]
+        colour(Colour),
+        #[rasn(tag(context, 14), identifier = "colour-of-layout-object")]
+        colour_of_layout_object(ColourExpression),
+        #[rasn(tag(context, 15), identifier = "object-colour-table")]
+        object_colour_table(ColourTable),
+        #[rasn(tag(context, 16), identifier = "content-background-colour")]
+        content_background_colour(ContentBackgroundColour),
+        #[rasn(tag(context, 17), identifier = "content-foreground-colour")]
+        content_foreground_colour(ContentForegroundColour),
+        #[rasn(tag(context, 18), identifier = "content-colour-table")]
+        content_colour_table(ColourTable),
+        #[rasn(tag(context, 12))]
+        border(Border),
+        #[rasn(tag(context, 13))]
+        sealed(Sealed),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum PageAttributesLayoutStreamCategories {
+        #[rasn(tag(context, 0))]
+        position(MeasurePair),
+        #[rasn(tag(context, 1))]
+        dimensions(DimensionPair),
+        #[rasn(tag(context, 2))]
+        transparency(Transparency),
+        #[rasn(tag(context, 3), identifier = "presentation-attributes")]
+        presentation_attributes(PresentationAttributes),
+        #[rasn(tag(context, 4), identifier = "layout-path")]
+        layout_path(OneOfFourAngles),
+        #[rasn(tag(context, 5), identifier = "page-position")]
+        page_position(MeasurePair),
+        #[rasn(tag(context, 6), identifier = "medium-type")]
+        medium_type(MediumType),
+        #[rasn(tag(context, 7), identifier = "permitted-categories")]
+        permitted_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 19), identifier = "layout-stream-categories")]
+        layout_stream_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 20), identifier = "layout-stream-sub-categories")]
+        layout_stream_sub_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 8))]
+        protection(Protection),
+        #[rasn(tag(context, 9), identifier = "presentation-style")]
+        presentation_style(StyleIdentifier),
+        #[rasn(tag(context, 10), identifier = "layout-style")]
+        layout_style(StyleIdentifier),
+        #[rasn(tag(context, 11))]
+        colour(Colour),
+        #[rasn(tag(context, 14), identifier = "colour-of-layout-object")]
+        colour_of_layout_object(ColourExpression),
+        #[rasn(tag(context, 15), identifier = "object-colour-table")]
+        object_colour_table(ColourTable),
+        #[rasn(tag(context, 16), identifier = "content-background-colour")]
+        content_background_colour(ContentBackgroundColour),
+        #[rasn(tag(context, 17), identifier = "content-foreground-colour")]
+        content_foreground_colour(ContentForegroundColour),
+        #[rasn(tag(context, 18), identifier = "content-colour-table")]
+        content_colour_table(ColourTable),
+        #[rasn(tag(context, 12))]
+        border(Border),
+        #[rasn(tag(context, 13))]
+        sealed(Sealed),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum PageAttributesLayoutStreamSubCategories {
+        #[rasn(tag(context, 0))]
+        position(MeasurePair),
+        #[rasn(tag(context, 1))]
+        dimensions(DimensionPair),
+        #[rasn(tag(context, 2))]
+        transparency(Transparency),
+        #[rasn(tag(context, 3), identifier = "presentation-attributes")]
+        presentation_attributes(PresentationAttributes),
+        #[rasn(tag(context, 4), identifier = "layout-path")]
+        layout_path(OneOfFourAngles),
+        #[rasn(tag(context, 5), identifier = "page-position")]
+        page_position(MeasurePair),
+        #[rasn(tag(context, 6), identifier = "medium-type")]
+        medium_type(MediumType),
+        #[rasn(tag(context, 7), identifier = "permitted-categories")]
+        permitted_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 19), identifier = "layout-stream-categories")]
+        layout_stream_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 20), identifier = "layout-stream-sub-categories")]
+        layout_stream_sub_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 8))]
+        protection(Protection),
+        #[rasn(tag(context, 9), identifier = "presentation-style")]
+        presentation_style(StyleIdentifier),
+        #[rasn(tag(context, 10), identifier = "layout-style")]
+        layout_style(StyleIdentifier),
+        #[rasn(tag(context, 11))]
+        colour(Colour),
+        #[rasn(tag(context, 14), identifier = "colour-of-layout-object")]
+        colour_of_layout_object(ColourExpression),
+        #[rasn(tag(context, 15), identifier = "object-colour-table")]
+        object_colour_table(ColourTable),
+        #[rasn(tag(context, 16), identifier = "content-background-colour")]
+        content_background_colour(ContentBackgroundColour),
+        #[rasn(tag(context, 17), identifier = "content-foreground-colour")]
+        content_foreground_colour(ContentForegroundColour),
+        #[rasn(tag(context, 18), identifier = "content-colour-table")]
+        content_colour_table(ColourTable),
+        #[rasn(tag(context, 12))]
+        border(Border),
+        #[rasn(tag(context, 13))]
+        sealed(Sealed),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum PageAttributesColour {
+        #[rasn(tag(context, 0))]
+        position(MeasurePair),
+        #[rasn(tag(context, 1))]
+        dimensions(DimensionPair),
+        #[rasn(tag(context, 2))]
+        transparency(Transparency),
+        #[rasn(tag(context, 3), identifier = "presentation-attributes")]
+        presentation_attributes(PresentationAttributes),
+        #[rasn(tag(context, 4), identifier = "layout-path")]
+        layout_path(OneOfFourAngles),
+        #[rasn(tag(context, 5), identifier = "page-position")]
+        page_position(MeasurePair),
+        #[rasn(tag(context, 6), identifier = "medium-type")]
+        medium_type(MediumType),
+        #[rasn(tag(context, 7), identifier = "permitted-categories")]
+        permitted_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 19), identifier = "layout-stream-categories")]
+        layout_stream_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 20), identifier = "layout-stream-sub-categories")]
+        layout_stream_sub_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 8))]
+        protection(Protection),
+        #[rasn(tag(context, 9), identifier = "presentation-style")]
+        presentation_style(StyleIdentifier),
+        #[rasn(tag(context, 10), identifier = "layout-style")]
+        layout_style(StyleIdentifier),
+        #[rasn(tag(context, 11))]
+        colour(Colour),
+        #[rasn(tag(context, 14), identifier = "colour-of-layout-object")]
+        colour_of_layout_object(ColourExpression),
+        #[rasn(tag(context, 15), identifier = "object-colour-table")]
+        object_colour_table(ColourTable),
+        #[rasn(tag(context, 16), identifier = "content-background-colour")]
+        content_background_colour(ContentBackgroundColour),
+        #[rasn(tag(context, 17), identifier = "content-foreground-colour")]
+        content_foreground_colour(ContentForegroundColour),
+        #[rasn(tag(context, 18), identifier = "content-colour-table")]
+        content_colour_table(ColourTable),
+        #[rasn(tag(context, 12))]
+        border(Border),
+        #[rasn(tag(context, 13))]
+        sealed(Sealed),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum PageAttributesColourOfLayoutObject {
+        #[rasn(tag(context, 0))]
+        position(MeasurePair),
+        #[rasn(tag(context, 1))]
+        dimensions(DimensionPair),
+        #[rasn(tag(context, 2))]
+        transparency(Transparency),
+        #[rasn(tag(context, 3), identifier = "presentation-attributes")]
+        presentation_attributes(PresentationAttributes),
+        #[rasn(tag(context, 4), identifier = "layout-path")]
+        layout_path(OneOfFourAngles),
+        #[rasn(tag(context, 5), identifier = "page-position")]
+        page_position(MeasurePair),
+        #[rasn(tag(context, 6), identifier = "medium-type")]
+        medium_type(MediumType),
+        #[rasn(tag(context, 7), identifier = "permitted-categories")]
+        permitted_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 19), identifier = "layout-stream-categories")]
+        layout_stream_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 20), identifier = "layout-stream-sub-categories")]
+        layout_stream_sub_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 8))]
+        protection(Protection),
+        #[rasn(tag(context, 9), identifier = "presentation-style")]
+        presentation_style(StyleIdentifier),
+        #[rasn(tag(context, 10), identifier = "layout-style")]
+        layout_style(StyleIdentifier),
+        #[rasn(tag(context, 11))]
+        colour(Colour),
+        #[rasn(tag(context, 14), identifier = "colour-of-layout-object")]
+        colour_of_layout_object(ColourExpression),
+        #[rasn(tag(context, 15), identifier = "object-colour-table")]
+        object_colour_table(ColourTable),
+        #[rasn(tag(context, 16), identifier = "content-background-colour")]
+        content_background_colour(ContentBackgroundColour),
+        #[rasn(tag(context, 17), identifier = "content-foreground-colour")]
+        content_foreground_colour(ContentForegroundColour),
+        #[rasn(tag(context, 18), identifier = "content-colour-table")]
+        content_colour_table(ColourTable),
+        #[rasn(tag(context, 12))]
+        border(Border),
+        #[rasn(tag(context, 13))]
+        sealed(Sealed),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum PageAttributesObjectColourTable {
+        #[rasn(tag(context, 0))]
+        position(MeasurePair),
+        #[rasn(tag(context, 1))]
+        dimensions(DimensionPair),
+        #[rasn(tag(context, 2))]
+        transparency(Transparency),
+        #[rasn(tag(context, 3), identifier = "presentation-attributes")]
+        presentation_attributes(PresentationAttributes),
+        #[rasn(tag(context, 4), identifier = "layout-path")]
+        layout_path(OneOfFourAngles),
+        #[rasn(tag(context, 5), identifier = "page-position")]
+        page_position(MeasurePair),
+        #[rasn(tag(context, 6), identifier = "medium-type")]
+        medium_type(MediumType),
+        #[rasn(tag(context, 7), identifier = "permitted-categories")]
+        permitted_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 19), identifier = "layout-stream-categories")]
+        layout_stream_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 20), identifier = "layout-stream-sub-categories")]
+        layout_stream_sub_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 8))]
+        protection(Protection),
+        #[rasn(tag(context, 9), identifier = "presentation-style")]
+        presentation_style(StyleIdentifier),
+        #[rasn(tag(context, 10), identifier = "layout-style")]
+        layout_style(StyleIdentifier),
+        #[rasn(tag(context, 11))]
+        colour(Colour),
+        #[rasn(tag(context, 14), identifier = "colour-of-layout-object")]
+        colour_of_layout_object(ColourExpression),
+        #[rasn(tag(context, 15), identifier = "object-colour-table")]
+        object_colour_table(ColourTable),
+        #[rasn(tag(context, 16), identifier = "content-background-colour")]
+        content_background_colour(ContentBackgroundColour),
+        #[rasn(tag(context, 17), identifier = "content-foreground-colour")]
+        content_foreground_colour(ContentForegroundColour),
+        #[rasn(tag(context, 18), identifier = "content-colour-table")]
+        content_colour_table(ColourTable),
+        #[rasn(tag(context, 12))]
+        border(Border),
+        #[rasn(tag(context, 13))]
+        sealed(Sealed),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum PageAttributesContentBackgroundColour {
+        #[rasn(tag(context, 0))]
+        position(MeasurePair),
+        #[rasn(tag(context, 1))]
+        dimensions(DimensionPair),
+        #[rasn(tag(context, 2))]
+        transparency(Transparency),
+        #[rasn(tag(context, 3), identifier = "presentation-attributes")]
+        presentation_attributes(PresentationAttributes),
+        #[rasn(tag(context, 4), identifier = "layout-path")]
+        layout_path(OneOfFourAngles),
+        #[rasn(tag(context, 5), identifier = "page-position")]
+        page_position(MeasurePair),
+        #[rasn(tag(context, 6), identifier = "medium-type")]
+        medium_type(MediumType),
+        #[rasn(tag(context, 7), identifier = "permitted-categories")]
+        permitted_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 19), identifier = "layout-stream-categories")]
+        layout_stream_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 20), identifier = "layout-stream-sub-categories")]
+        layout_stream_sub_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 8))]
+        protection(Protection),
+        #[rasn(tag(context, 9), identifier = "presentation-style")]
+        presentation_style(StyleIdentifier),
+        #[rasn(tag(context, 10), identifier = "layout-style")]
+        layout_style(StyleIdentifier),
+        #[rasn(tag(context, 11))]
+        colour(Colour),
+        #[rasn(tag(context, 14), identifier = "colour-of-layout-object")]
+        colour_of_layout_object(ColourExpression),
+        #[rasn(tag(context, 15), identifier = "object-colour-table")]
+        object_colour_table(ColourTable),
+        #[rasn(tag(context, 16), identifier = "content-background-colour")]
+        content_background_colour(ContentBackgroundColour),
+        #[rasn(tag(context, 17), identifier = "content-foreground-colour")]
+        content_foreground_colour(ContentForegroundColour),
+        #[rasn(tag(context, 18), identifier = "content-colour-table")]
+        content_colour_table(ColourTable),
+        #[rasn(tag(context, 12))]
+        border(Border),
+        #[rasn(tag(context, 13))]
+        sealed(Sealed),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum PageAttributesContentForegroundColour {
+        #[rasn(tag(context, 0))]
+        position(MeasurePair),
+        #[rasn(tag(context, 1))]
+        dimensions(DimensionPair),
+        #[rasn(tag(context, 2))]
+        transparency(Transparency),
+        #[rasn(tag(context, 3), identifier = "presentation-attributes")]
+        presentation_attributes(PresentationAttributes),
+        #[rasn(tag(context, 4), identifier = "layout-path")]
+        layout_path(OneOfFourAngles),
+        #[rasn(tag(context, 5), identifier = "page-position")]
+        page_position(MeasurePair),
+        #[rasn(tag(context, 6), identifier = "medium-type")]
+        medium_type(MediumType),
+        #[rasn(tag(context, 7), identifier = "permitted-categories")]
+        permitted_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 19), identifier = "layout-stream-categories")]
+        layout_stream_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 20), identifier = "layout-stream-sub-categories")]
+        layout_stream_sub_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 8))]
+        protection(Protection),
+        #[rasn(tag(context, 9), identifier = "presentation-style")]
+        presentation_style(StyleIdentifier),
+        #[rasn(tag(context, 10), identifier = "layout-style")]
+        layout_style(StyleIdentifier),
+        #[rasn(tag(context, 11))]
+        colour(Colour),
+        #[rasn(tag(context, 14), identifier = "colour-of-layout-object")]
+        colour_of_layout_object(ColourExpression),
+        #[rasn(tag(context, 15), identifier = "object-colour-table")]
+        object_colour_table(ColourTable),
+        #[rasn(tag(context, 16), identifier = "content-background-colour")]
+        content_background_colour(ContentBackgroundColour),
+        #[rasn(tag(context, 17), identifier = "content-foreground-colour")]
+        content_foreground_colour(ContentForegroundColour),
+        #[rasn(tag(context, 18), identifier = "content-colour-table")]
+        content_colour_table(ColourTable),
+        #[rasn(tag(context, 12))]
+        border(Border),
+        #[rasn(tag(context, 13))]
+        sealed(Sealed),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum PageAttributesContentColourTable {
+        #[rasn(tag(context, 0))]
+        position(MeasurePair),
+        #[rasn(tag(context, 1))]
+        dimensions(DimensionPair),
+        #[rasn(tag(context, 2))]
+        transparency(Transparency),
+        #[rasn(tag(context, 3), identifier = "presentation-attributes")]
+        presentation_attributes(PresentationAttributes),
+        #[rasn(tag(context, 4), identifier = "layout-path")]
+        layout_path(OneOfFourAngles),
+        #[rasn(tag(context, 5), identifier = "page-position")]
+        page_position(MeasurePair),
+        #[rasn(tag(context, 6), identifier = "medium-type")]
+        medium_type(MediumType),
+        #[rasn(tag(context, 7), identifier = "permitted-categories")]
+        permitted_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 19), identifier = "layout-stream-categories")]
+        layout_stream_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 20), identifier = "layout-stream-sub-categories")]
+        layout_stream_sub_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 8))]
+        protection(Protection),
+        #[rasn(tag(context, 9), identifier = "presentation-style")]
+        presentation_style(StyleIdentifier),
+        #[rasn(tag(context, 10), identifier = "layout-style")]
+        layout_style(StyleIdentifier),
+        #[rasn(tag(context, 11))]
+        colour(Colour),
+        #[rasn(tag(context, 14), identifier = "colour-of-layout-object")]
+        colour_of_layout_object(ColourExpression),
+        #[rasn(tag(context, 15), identifier = "object-colour-table")]
+        object_colour_table(ColourTable),
+        #[rasn(tag(context, 16), identifier = "content-background-colour")]
+        content_background_colour(ContentBackgroundColour),
+        #[rasn(tag(context, 17), identifier = "content-foreground-colour")]
+        content_foreground_colour(ContentForegroundColour),
+        #[rasn(tag(context, 18), identifier = "content-colour-table")]
+        content_colour_table(ColourTable),
+        #[rasn(tag(context, 12))]
+        border(Border),
+        #[rasn(tag(context, 13))]
+        sealed(Sealed),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum PageAttributesSealed {
+        #[rasn(tag(context, 0))]
+        position(MeasurePair),
+        #[rasn(tag(context, 1))]
+        dimensions(DimensionPair),
+        #[rasn(tag(context, 2))]
+        transparency(Transparency),
+        #[rasn(tag(context, 3), identifier = "presentation-attributes")]
+        presentation_attributes(PresentationAttributes),
+        #[rasn(tag(context, 4), identifier = "layout-path")]
+        layout_path(OneOfFourAngles),
+        #[rasn(tag(context, 5), identifier = "page-position")]
+        page_position(MeasurePair),
+        #[rasn(tag(context, 6), identifier = "medium-type")]
+        medium_type(MediumType),
+        #[rasn(tag(context, 7), identifier = "permitted-categories")]
+        permitted_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 19), identifier = "layout-stream-categories")]
+        layout_stream_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 20), identifier = "layout-stream-sub-categories")]
+        layout_stream_sub_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 8))]
+        protection(Protection),
+        #[rasn(tag(context, 9), identifier = "presentation-style")]
+        presentation_style(StyleIdentifier),
+        #[rasn(tag(context, 10), identifier = "layout-style")]
+        layout_style(StyleIdentifier),
+        #[rasn(tag(context, 11))]
+        colour(Colour),
+        #[rasn(tag(context, 14), identifier = "colour-of-layout-object")]
+        colour_of_layout_object(ColourExpression),
+        #[rasn(tag(context, 15), identifier = "object-colour-table")]
+        object_colour_table(ColourTable),
+        #[rasn(tag(context, 16), identifier = "content-background-colour")]
+        content_background_colour(ContentBackgroundColour),
+        #[rasn(tag(context, 17), identifier = "content-foreground-colour")]
+        content_foreground_colour(ContentForegroundColour),
+        #[rasn(tag(context, 18), identifier = "content-colour-table")]
+        content_colour_table(ColourTable),
+        #[rasn(tag(context, 12))]
+        border(Border),
+        #[rasn(tag(context, 13))]
+        sealed(Sealed),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Page-Attributes")]
+    pub struct PageAttributes {
+        pub dimensions: Option<PageAttributesDimensions>,
+        pub transparency: Option<PageAttributesTransparency>,
+        #[rasn(identifier = "presentation-attributes")]
+        pub presentation_attributes: Option<PageAttributesPresentationAttributes>,
+        #[rasn(identifier = "page-position")]
+        pub page_position: Option<PageAttributesPagePosition>,
+        #[rasn(identifier = "medium-type")]
+        pub medium_type: Option<PageAttributesMediumType>,
+        #[rasn(identifier = "presentation-style")]
+        pub presentation_style: Option<PageAttributesPresentationStyle>,
+        #[rasn(identifier = "layout-stream-categories")]
+        pub layout_stream_categories: Option<PageAttributesLayoutStreamCategories>,
+        #[rasn(identifier = "layout-stream-sub-categories")]
+        pub layout_stream_sub_categories: Option<PageAttributesLayoutStreamSubCategories>,
+        pub colour: Option<PageAttributesColour>,
+        #[rasn(identifier = "colour-of-layout-object")]
+        pub colour_of_layout_object: Option<PageAttributesColourOfLayoutObject>,
+        #[rasn(identifier = "object-colour-table")]
+        pub object_colour_table: Option<PageAttributesObjectColourTable>,
+        #[rasn(identifier = "content-background-colour")]
+        pub content_background_colour: Option<PageAttributesContentBackgroundColour>,
+        #[rasn(identifier = "content-foreground-colour")]
+        pub content_foreground_colour: Option<PageAttributesContentForegroundColour>,
+        #[rasn(identifier = "content-colour-table")]
+        pub content_colour_table: Option<PageAttributesContentColourTable>,
+        pub sealed: Option<PageAttributesSealed>,
+    }
+    impl PageAttributes {
+        pub fn new(
+            dimensions: Option<PageAttributesDimensions>,
+            transparency: Option<PageAttributesTransparency>,
+            presentation_attributes: Option<PageAttributesPresentationAttributes>,
+            page_position: Option<PageAttributesPagePosition>,
+            medium_type: Option<PageAttributesMediumType>,
+            presentation_style: Option<PageAttributesPresentationStyle>,
+            layout_stream_categories: Option<PageAttributesLayoutStreamCategories>,
+            layout_stream_sub_categories: Option<PageAttributesLayoutStreamSubCategories>,
+            colour: Option<PageAttributesColour>,
+            colour_of_layout_object: Option<PageAttributesColourOfLayoutObject>,
+            object_colour_table: Option<PageAttributesObjectColourTable>,
+            content_background_colour: Option<PageAttributesContentBackgroundColour>,
+            content_foreground_colour: Option<PageAttributesContentForegroundColour>,
+            content_colour_table: Option<PageAttributesContentColourTable>,
+            sealed: Option<PageAttributesSealed>,
+        ) -> Self {
+            Self {
+                dimensions,
+                transparency,
+                presentation_attributes,
+                page_position,
+                medium_type,
+                presentation_style,
+                layout_stream_categories,
+                layout_stream_sub_categories,
+                colour,
+                colour_of_layout_object,
+                object_colour_table,
+                content_background_colour,
+                content_foreground_colour,
+                content_colour_table,
+                sealed,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum PageSetAttributesLayoutStreamCategories {
+        #[rasn(tag(context, 0))]
+        position(MeasurePair),
+        #[rasn(tag(context, 1))]
+        dimensions(DimensionPair),
+        #[rasn(tag(context, 2))]
+        transparency(Transparency),
+        #[rasn(tag(context, 3), identifier = "presentation-attributes")]
+        presentation_attributes(PresentationAttributes),
+        #[rasn(tag(context, 4), identifier = "layout-path")]
+        layout_path(OneOfFourAngles),
+        #[rasn(tag(context, 5), identifier = "page-position")]
+        page_position(MeasurePair),
+        #[rasn(tag(context, 6), identifier = "medium-type")]
+        medium_type(MediumType),
+        #[rasn(tag(context, 7), identifier = "permitted-categories")]
+        permitted_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 19), identifier = "layout-stream-categories")]
+        layout_stream_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 20), identifier = "layout-stream-sub-categories")]
+        layout_stream_sub_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 8))]
+        protection(Protection),
+        #[rasn(tag(context, 9), identifier = "presentation-style")]
+        presentation_style(StyleIdentifier),
+        #[rasn(tag(context, 10), identifier = "layout-style")]
+        layout_style(StyleIdentifier),
+        #[rasn(tag(context, 11))]
+        colour(Colour),
+        #[rasn(tag(context, 14), identifier = "colour-of-layout-object")]
+        colour_of_layout_object(ColourExpression),
+        #[rasn(tag(context, 15), identifier = "object-colour-table")]
+        object_colour_table(ColourTable),
+        #[rasn(tag(context, 16), identifier = "content-background-colour")]
+        content_background_colour(ContentBackgroundColour),
+        #[rasn(tag(context, 17), identifier = "content-foreground-colour")]
+        content_foreground_colour(ContentForegroundColour),
+        #[rasn(tag(context, 18), identifier = "content-colour-table")]
+        content_colour_table(ColourTable),
+        #[rasn(tag(context, 12))]
+        border(Border),
+        #[rasn(tag(context, 13))]
+        sealed(Sealed),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum PageSetAttributesLayoutStreamSubCategories {
+        #[rasn(tag(context, 0))]
+        position(MeasurePair),
+        #[rasn(tag(context, 1))]
+        dimensions(DimensionPair),
+        #[rasn(tag(context, 2))]
+        transparency(Transparency),
+        #[rasn(tag(context, 3), identifier = "presentation-attributes")]
+        presentation_attributes(PresentationAttributes),
+        #[rasn(tag(context, 4), identifier = "layout-path")]
+        layout_path(OneOfFourAngles),
+        #[rasn(tag(context, 5), identifier = "page-position")]
+        page_position(MeasurePair),
+        #[rasn(tag(context, 6), identifier = "medium-type")]
+        medium_type(MediumType),
+        #[rasn(tag(context, 7), identifier = "permitted-categories")]
+        permitted_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 19), identifier = "layout-stream-categories")]
+        layout_stream_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 20), identifier = "layout-stream-sub-categories")]
+        layout_stream_sub_categories(SetOf<CategoryName>),
+        #[rasn(tag(context, 8))]
+        protection(Protection),
+        #[rasn(tag(context, 9), identifier = "presentation-style")]
+        presentation_style(StyleIdentifier),
+        #[rasn(tag(context, 10), identifier = "layout-style")]
+        layout_style(StyleIdentifier),
+        #[rasn(tag(context, 11))]
+        colour(Colour),
+        #[rasn(tag(context, 14), identifier = "colour-of-layout-object")]
+        colour_of_layout_object(ColourExpression),
+        #[rasn(tag(context, 15), identifier = "object-colour-table")]
+        object_colour_table(ColourTable),
+        #[rasn(tag(context, 16), identifier = "content-background-colour")]
+        content_background_colour(ContentBackgroundColour),
+        #[rasn(tag(context, 17), identifier = "content-foreground-colour")]
+        content_foreground_colour(ContentForegroundColour),
+        #[rasn(tag(context, 18), identifier = "content-colour-table")]
+        content_colour_table(ColourTable),
+        #[rasn(tag(context, 12))]
+        border(Border),
+        #[rasn(tag(context, 13))]
+        sealed(Sealed),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Page-Set-Attributes")]
+    pub struct PageSetAttributes {
+        #[rasn(identifier = "layout-stream-categories")]
+        pub layout_stream_categories: Option<PageSetAttributesLayoutStreamCategories>,
+        #[rasn(identifier = "layout-stream-sub-categories")]
+        pub layout_stream_sub_categories: Option<PageSetAttributesLayoutStreamSubCategories>,
+    }
+    impl PageSetAttributes {
+        pub fn new(
+            layout_stream_categories: Option<PageSetAttributesLayoutStreamCategories>,
+            layout_stream_sub_categories: Option<PageSetAttributesLayoutStreamSubCategories>,
+        ) -> Self {
+            Self {
+                layout_stream_categories,
+                layout_stream_sub_categories,
+            }
+        }
+    }
+}

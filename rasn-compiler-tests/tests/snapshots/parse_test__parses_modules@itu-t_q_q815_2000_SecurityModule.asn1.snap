@@ -1,0 +1,314 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q815_2000_SecurityModule.asn1
+---
+Warnings:
+LinkerError in ASN grammar: Failed to resolve supertype SR-APDU of parameterized implementation.
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod security_module {
+    extern crate alloc;
+    use super::remote_operations_generic_ros_pdus::InvokeId;
+    use super::remote_operations_information_objects::*;
+    use super::secure_remote_operations_apdus::*;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " Useful Types"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AlgorithmIdentifier {
+        pub algorithm: ObjectIdentifier,
+        pub parameters: (),
+    }
+    impl AlgorithmIdentifier {
+        pub fn new(algorithm: ObjectIdentifier, parameters: ()) -> Self {
+            Self {
+                algorithm,
+                parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum Enhancements {
+        #[rasn(tag(explicit(context, 0)))]
+        withDigest(WithDigest),
+        #[rasn(tag(explicit(context, 1)))]
+        withDigSig(WithDigSig),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum HashedContent {
+        hashedContent1(GeneralString),
+        hashedContent2(Ia5String),
+    }
+    #[doc = " Hashed Message Syntax"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct HashedMessage {
+        #[rasn(
+            default = "hashed_message_hashed_version_default",
+            identifier = "hashedVersion"
+        )]
+        pub hashed_version: Version,
+        #[rasn(identifier = "hashAlgorithmIdentifier")]
+        pub hash_algorithm_identifier: AlgorithmIdentifier,
+        #[rasn(identifier = "hashedContent")]
+        pub hashed_content: HashedContent,
+        #[rasn(size("20"), identifier = "messageDigest")]
+        pub message_digest: OctetString,
+    }
+    impl HashedMessage {
+        pub fn new(
+            hashed_version: Version,
+            hash_algorithm_identifier: AlgorithmIdentifier,
+            hashed_content: HashedContent,
+            message_digest: OctetString,
+        ) -> Self {
+            Self {
+                hashed_version,
+                hash_algorithm_identifier,
+                hashed_content,
+                message_digest,
+            }
+        }
+    }
+    fn hashed_message_hashed_version_default() -> Version {
+        V1999
+    }
+    #[doc = " Receipt Message Syntax"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct IaReceiptMessage {
+        #[rasn(identifier = "uniqueIdentifier")]
+        pub unique_identifier: OctetString,
+        #[rasn(size("15"), identifier = "dateTimeStamp")]
+        pub date_time_stamp: PrintableString,
+        pub enhancements: Option<Enhancements>,
+    }
+    impl IaReceiptMessage {
+        pub fn new(
+            unique_identifier: OctetString,
+            date_time_stamp: PrintableString,
+            enhancements: Option<Enhancements>,
+        ) -> Self {
+            Self {
+                unique_identifier,
+                date_time_stamp,
+                enhancements,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum SignedContent {
+        signedContent1(GeneralString),
+        signedContent2(Ia5String),
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousAnonymousAnonymousSignedMessageSignerInfosIssuerAndSerialNumberIssuerCountry {
+        pub country: ObjectIdentifier,
+        #[rasn(identifier = "countryValue")]
+        pub country_value: PrintableString,
+    }
+    impl AnonymousAnonymousAnonymousSignedMessageSignerInfosIssuerAndSerialNumberIssuerCountry {
+        pub fn new(country: ObjectIdentifier, country_value: PrintableString) -> Self {
+            Self {
+                country,
+                country_value,
+            }
+        }
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "SET_OF")]
+    pub struct AnonymousAnonymousSignedMessageSignerInfosIssuerAndSerialNumberIssuerCountry(
+        pub  SetOf<
+            AnonymousAnonymousAnonymousSignedMessageSignerInfosIssuerAndSerialNumberIssuerCountry,
+        >,
+    );
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AnonymousSignedMessageSignerInfosIssuerAndSerialNumberIssuerCountry(
+        pub SequenceOf<AnonymousAnonymousSignedMessageSignerInfosIssuerAndSerialNumberIssuerCountry>,
+    );
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousAnonymousAnonymousSignedMessageSignerInfosIssuerAndSerialNumberIssuerOrg {
+        #[rasn(identifier = "organizationName")]
+        pub organization_name: ObjectIdentifier,
+        #[rasn(identifier = "organizationValue")]
+        pub organization_value: PrintableString,
+    }
+    impl AnonymousAnonymousAnonymousSignedMessageSignerInfosIssuerAndSerialNumberIssuerOrg {
+        pub fn new(
+            organization_name: ObjectIdentifier,
+            organization_value: PrintableString,
+        ) -> Self {
+            Self {
+                organization_name,
+                organization_value,
+            }
+        }
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "SET_OF")]
+    pub struct AnonymousAnonymousSignedMessageSignerInfosIssuerAndSerialNumberIssuerOrg(
+        pub SetOf<AnonymousAnonymousAnonymousSignedMessageSignerInfosIssuerAndSerialNumberIssuerOrg>,
+    );
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AnonymousSignedMessageSignerInfosIssuerAndSerialNumberIssuerOrg(
+        pub SequenceOf<AnonymousAnonymousSignedMessageSignerInfosIssuerAndSerialNumberIssuerOrg>,
+    );
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AnonymousSignedMessageSignerInfosIssuerAndSerialNumber {
+        #[rasn(identifier = "issuerCountry")]
+        pub issuer_country: AnonymousSignedMessageSignerInfosIssuerAndSerialNumberIssuerCountry,
+        #[rasn(identifier = "issuerOrg")]
+        pub issuer_org: AnonymousSignedMessageSignerInfosIssuerAndSerialNumberIssuerOrg,
+        #[rasn(identifier = "serialNumber")]
+        pub serial_number: Integer,
+    }
+    impl AnonymousSignedMessageSignerInfosIssuerAndSerialNumber {
+        pub fn new(
+            issuer_country: AnonymousSignedMessageSignerInfosIssuerAndSerialNumberIssuerCountry,
+            issuer_org: AnonymousSignedMessageSignerInfosIssuerAndSerialNumberIssuerOrg,
+            serial_number: Integer,
+        ) -> Self {
+            Self {
+                issuer_country,
+                issuer_org,
+                serial_number,
+            }
+        }
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousSignedMessageSignerInfos {
+        #[rasn(
+            default = "anonymous_signed_message_signer_infos_signer_version_default",
+            identifier = "signerVersion"
+        )]
+        pub signer_version: Version,
+        #[rasn(identifier = "issuerAndSerialNumber")]
+        pub issuer_and_serial_number: AnonymousSignedMessageSignerInfosIssuerAndSerialNumber,
+        #[rasn(identifier = "signedDigestAlgorithm")]
+        pub signed_digest_algorithm: AlgorithmIdentifier,
+        #[rasn(identifier = "digestEncryptionAlgorithm")]
+        pub digest_encryption_algorithm: AlgorithmIdentifier,
+        #[rasn(identifier = "encryptedDigest")]
+        pub encrypted_digest: OctetString,
+    }
+    impl AnonymousSignedMessageSignerInfos {
+        pub fn new(
+            signer_version: Version,
+            issuer_and_serial_number: AnonymousSignedMessageSignerInfosIssuerAndSerialNumber,
+            signed_digest_algorithm: AlgorithmIdentifier,
+            digest_encryption_algorithm: AlgorithmIdentifier,
+            encrypted_digest: OctetString,
+        ) -> Self {
+            Self {
+                signer_version,
+                issuer_and_serial_number,
+                signed_digest_algorithm,
+                digest_encryption_algorithm,
+                encrypted_digest,
+            }
+        }
+    }
+    fn anonymous_signed_message_signer_infos_signer_version_default() -> Version {
+        V1999
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SignedMessageSignerInfos(pub SetOf<AnonymousSignedMessageSignerInfos>);
+    #[doc = " Signed Message Syntax"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SignedMessage {
+        #[rasn(
+            default = "signed_message_signed_version_default",
+            identifier = "signedVersion"
+        )]
+        pub signed_version: Version,
+        #[rasn(identifier = "signedDigestAlgorithms")]
+        pub signed_digest_algorithms: SetOf<AlgorithmIdentifier>,
+        #[rasn(identifier = "signedContent")]
+        pub signed_content: SignedContent,
+        #[rasn(identifier = "signerInfos")]
+        pub signer_infos: SignedMessageSignerInfos,
+    }
+    impl SignedMessage {
+        pub fn new(
+            signed_version: Version,
+            signed_digest_algorithms: SetOf<AlgorithmIdentifier>,
+            signed_content: SignedContent,
+            signer_infos: SignedMessageSignerInfos,
+        ) -> Self {
+            Self {
+                signed_version,
+                signed_digest_algorithms,
+                signed_content,
+                signer_infos,
+            }
+        }
+    }
+    fn signed_message_signed_version_default() -> Version {
+        V1999
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Version(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct WithDigSig {
+        #[rasn(identifier = "receiptSignatureAlgorithm")]
+        pub receipt_signature_algorithm: ObjectIdentifier,
+        #[rasn(identifier = "receiptDigitalSignature")]
+        pub receipt_digital_signature: OctetString,
+    }
+    impl WithDigSig {
+        pub fn new(
+            receipt_signature_algorithm: ObjectIdentifier,
+            receipt_digital_signature: OctetString,
+        ) -> Self {
+            Self {
+                receipt_signature_algorithm,
+                receipt_digital_signature,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct WithDigest {
+        #[rasn(identifier = "receiptDigestAlgorithm")]
+        pub receipt_digest_algorithm: ObjectIdentifier,
+        #[rasn(identifier = "receiptMessageDigest")]
+        pub receipt_message_digest: OctetString,
+    }
+    impl WithDigest {
+        pub fn new(
+            receipt_digest_algorithm: ObjectIdentifier,
+            receipt_message_digest: OctetString,
+        ) -> Self {
+            Self {
+                receipt_digest_algorithm,
+                receipt_message_digest,
+            }
+        }
+    }
+    pub static V1999: LazyLock<Version> = LazyLock::new(|| Version(Integer::from(0)));
+}

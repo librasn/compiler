@@ -1,0 +1,889 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_g_g774.10_2001_SDHMSSPRASN1.asn1
+---
+Warnings:
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod sdhmssprasn1 {
+    extern crate alloc;
+    use super::asn1_defined_types_module::{NameType, PointerOrNull};
+    use super::attribute_asn1_module::{ManagementExtension, ProbableCause};
+    use super::cmip_1::{ObjectInstance, RDNSequence, RelativeDistinguishedName};
+    use super::sdhprot_asn1::{
+        AutoSwitchReason, FromAndToProtectionUnit, ProtectionGroupType, RequestSource,
+        SDHMSResourcePointer, SwitchStatus, BOOLEAN_TRUE_DEFAULT,
+    };
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = "supporting productions"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct BooleanType(pub bool);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum AnonymousChangeSPRConfigInfoTwoFiberToFourFiberSpanSwitchOption {
+        traditional(WaitToRestoreSpan),
+        enhanced(EnhancedWaitToRestoreSpan),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AnonymousChangeSPRConfigInfoTwoFiberToFourFiber {
+        #[rasn(identifier = "eastTPProtecting")]
+        pub east_tpprotecting: ObjectInstance,
+        #[rasn(identifier = "westTPProtecting")]
+        pub west_tpprotecting: ObjectInstance,
+        #[rasn(identifier = "spanSwitchOption")]
+        pub span_switch_option: AnonymousChangeSPRConfigInfoTwoFiberToFourFiberSpanSwitchOption,
+    }
+    impl AnonymousChangeSPRConfigInfoTwoFiberToFourFiber {
+        pub fn new(
+            east_tpprotecting: ObjectInstance,
+            west_tpprotecting: ObjectInstance,
+            span_switch_option: AnonymousChangeSPRConfigInfoTwoFiberToFourFiberSpanSwitchOption,
+        ) -> Self {
+            Self {
+                east_tpprotecting,
+                west_tpprotecting,
+                span_switch_option,
+            }
+        }
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "CHOICE")]
+    pub enum AnonymousChangeSPRConfigInfo {
+        twoFiberToFourFiber(AnonymousChangeSPRConfigInfoTwoFiberToFourFiber),
+        #[rasn(tag(context, 0))]
+        fourFiberToTwoFiber(()),
+        #[rasn(tag(context, 1))]
+        nutConfig(NutConfig),
+        #[rasn(tag(context, 2))]
+        ripConfig(RipConfig),
+        #[rasn(tag(context, 3))]
+        extraTrafficConfig(ExtraTrafficConfig),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ChangeSPRConfigInfo(pub SetOf<AnonymousChangeSPRConfigInfo>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum AnonymousCurrentSquelchingListAssociatedXC {
+        squelchedXC(RelativeDistinguishedName),
+        #[rasn(tag(context, 0))]
+        hardwired(()),
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousCurrentSquelchingList {
+        #[rasn(identifier = "squelchedTP")]
+        pub squelched_tp: ObjectInstance,
+        #[rasn(identifier = "associatedXC")]
+        pub associated_xc: AnonymousCurrentSquelchingListAssociatedXC,
+    }
+    impl AnonymousCurrentSquelchingList {
+        pub fn new(
+            squelched_tp: ObjectInstance,
+            associated_xc: AnonymousCurrentSquelchingListAssociatedXC,
+        ) -> Self {
+            Self {
+                squelched_tp,
+                associated_xc,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CurrentSquelchingList(pub SetOf<AnonymousCurrentSquelchingList>);
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousDirectionTable {
+        #[rasn(identifier = "westTP")]
+        pub west_tp: RDNSequence,
+        #[rasn(identifier = "eastTP")]
+        pub east_tp: RDNSequence,
+    }
+    impl AnonymousDirectionTable {
+        pub fn new(west_tp: RDNSequence, east_tp: RDNSequence) -> Self {
+            Self { west_tp, east_tp }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DirectionTable(pub SequenceOf<AnonymousDirectionTable>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct EnhancedWaitToRestoreSpan {
+        #[rasn(identifier = "wtrSpanEast")]
+        pub wtr_span_east: Integer,
+        #[rasn(identifier = "wtrSpanWest")]
+        pub wtr_span_west: Integer,
+    }
+    impl EnhancedWaitToRestoreSpan {
+        pub fn new(wtr_span_east: Integer, wtr_span_west: Integer) -> Self {
+            Self {
+                wtr_span_east,
+                wtr_span_west,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ExtraTrafficConfig {
+        noExtraTraffic = 0,
+        extraTraffic = 1,
+        extraTrafficWithRestoration = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct LinkInfo {
+        #[rasn(identifier = "localNEId")]
+        pub local_neid: ObjectInstance,
+        #[rasn(identifier = "localPortId")]
+        pub local_port_id: PointerOrNull,
+        #[rasn(identifier = "remoteNEId")]
+        pub remote_neid: ObjectInstance,
+        #[rasn(identifier = "remotePortId")]
+        pub remote_port_id: PointerOrNull,
+    }
+    impl LinkInfo {
+        pub fn new(
+            local_neid: ObjectInstance,
+            local_port_id: PointerOrNull,
+            remote_neid: ObjectInstance,
+            remote_port_id: PointerOrNull,
+        ) -> Self {
+            Self {
+                local_neid,
+                local_port_id,
+                remote_neid,
+                remote_port_id,
+            }
+        }
+    }
+    #[doc = " needed for two-node closed ring"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum MSSPRConfigurationError {
+        extraTrafficNotSupported = 0,
+        manualProvisioningNotSupported = 1,
+        nutNotSupported = 2,
+        ringTypeNotSupported = 3,
+        ripNotSupported = 4,
+        duplicatedUnreliable = 5,
+        ePdTPNotAvailable = 6,
+        ePgTPNotAvailable = 7,
+        wPdTPNotAvailable = 8,
+        wPgTPNotAvailable = 9,
+        invalidWTRTime = 10,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct MSSPRProtectionGroupConfigInfo {
+        #[rasn(identifier = "directionTable")]
+        pub direction_table: DirectionTable,
+        #[rasn(identifier = "extraTrafficConfig")]
+        pub extra_traffic_config: Option<ExtraTrafficConfig>,
+        #[rasn(identifier = "nodeNumber")]
+        pub node_number: NodeOrNull,
+        #[rasn(identifier = "nutConfig")]
+        pub nut_config: Option<NutConfig>,
+        #[rasn(identifier = "ringId")]
+        pub ring_id: RingId,
+        #[rasn(tag(context, 0), identifier = "ringMap")]
+        pub ring_map: Option<Map>,
+        #[rasn(tag(context, 1), identifier = "ringType")]
+        pub ring_type: RingType,
+        #[rasn(identifier = "ripConfig")]
+        pub rip_config: Option<RipConfig>,
+    }
+    impl MSSPRProtectionGroupConfigInfo {
+        pub fn new(
+            direction_table: DirectionTable,
+            extra_traffic_config: Option<ExtraTrafficConfig>,
+            node_number: NodeOrNull,
+            nut_config: Option<NutConfig>,
+            ring_id: RingId,
+            ring_map: Option<Map>,
+            ring_type: RingType,
+            rip_config: Option<RipConfig>,
+        ) -> Self {
+            Self {
+                direction_table,
+                extra_traffic_config,
+                node_number,
+                nut_config,
+                ring_id,
+                ring_map,
+                ring_type,
+                rip_config,
+            }
+        }
+    }
+    #[doc = "default/initial value definitions"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MSSPRProtectionGroupType(pub ProtectionGroupType);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AnonymousMSSPRProtectionStatusManualSwitch {
+        #[rasn(tag(context, 0), identifier = "requestSource")]
+        pub request_source: Option<RequestSource>,
+        #[rasn(tag(context, 1), identifier = "switchStatus")]
+        pub switch_status: SwitchStatus,
+        #[rasn(identifier = "relatedChannel")]
+        pub related_channel: Option<FromAndToProtectionUnit>,
+        #[rasn(tag(context, 2), identifier = "switchType")]
+        pub switch_type: RingOrSpan,
+    }
+    impl AnonymousMSSPRProtectionStatusManualSwitch {
+        pub fn new(
+            request_source: Option<RequestSource>,
+            switch_status: SwitchStatus,
+            related_channel: Option<FromAndToProtectionUnit>,
+            switch_type: RingOrSpan,
+        ) -> Self {
+            Self {
+                request_source,
+                switch_status,
+                related_channel,
+                switch_type,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AnonymousMSSPRProtectionStatusAutoSwitch {
+        #[rasn(tag(context, 0), identifier = "requestSource")]
+        pub request_source: Option<RequestSource>,
+        #[rasn(tag(context, 1), identifier = "switchStatus")]
+        pub switch_status: SwitchStatus,
+        #[rasn(identifier = "relatedChannel")]
+        pub related_channel: Option<FromAndToProtectionUnit>,
+        #[rasn(tag(context, 2), identifier = "autoSwitchReason")]
+        pub auto_switch_reason: AutoSwitchReason,
+        #[rasn(tag(context, 3), identifier = "switchType")]
+        pub switch_type: RingOrSpan,
+    }
+    impl AnonymousMSSPRProtectionStatusAutoSwitch {
+        pub fn new(
+            request_source: Option<RequestSource>,
+            switch_status: SwitchStatus,
+            related_channel: Option<FromAndToProtectionUnit>,
+            auto_switch_reason: AutoSwitchReason,
+            switch_type: RingOrSpan,
+        ) -> Self {
+            Self {
+                request_source,
+                switch_status,
+                related_channel,
+                auto_switch_reason,
+                switch_type,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AnonymousMSSPRProtectionStatusForcedSwitch {
+        #[rasn(tag(context, 0), identifier = "requestSource")]
+        pub request_source: Option<RequestSource>,
+        #[rasn(tag(context, 1), identifier = "switchStatus")]
+        pub switch_status: SwitchStatus,
+        #[rasn(identifier = "relatedChannel")]
+        pub related_channel: Option<FromAndToProtectionUnit>,
+        #[rasn(tag(context, 2), identifier = "switchType")]
+        pub switch_type: RingOrSpan,
+    }
+    impl AnonymousMSSPRProtectionStatusForcedSwitch {
+        pub fn new(
+            request_source: Option<RequestSource>,
+            switch_status: SwitchStatus,
+            related_channel: Option<FromAndToProtectionUnit>,
+            switch_type: RingOrSpan,
+        ) -> Self {
+            Self {
+                request_source,
+                switch_status,
+                related_channel,
+                switch_type,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AnonymousMSSPRProtectionStatusLockout {
+        #[rasn(tag(context, 0), identifier = "requestSource")]
+        pub request_source: Option<RequestSource>,
+        #[rasn(tag(context, 1), identifier = "switchStatus")]
+        pub switch_status: SwitchStatus,
+        #[rasn(tag(context, 2), identifier = "switchType")]
+        pub switch_type: RingOrSpan,
+    }
+    impl AnonymousMSSPRProtectionStatusLockout {
+        pub fn new(
+            request_source: Option<RequestSource>,
+            switch_status: SwitchStatus,
+            switch_type: RingOrSpan,
+        ) -> Self {
+            Self {
+                request_source,
+                switch_status,
+                switch_type,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousMSSPRProtectionStatusProtectionFailCond {
+        inconsistentApsCode = 0,
+        nodeIdMismatch = 1,
+        improperApsCode = 2,
+        defaultKBytes = 3,
+        signalDegradeProtect = 4,
+        signalFailProtect = 5,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousMSSPRProtectionStatusPassThrough {
+        full = 0,
+        kByte = 1,
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "CHOICE")]
+    pub enum AnonymousMSSPRProtectionStatus {
+        #[rasn(tag(context, 0))]
+        noRequest(()),
+        #[rasn(tag(context, 1))]
+        manualSwitch(AnonymousMSSPRProtectionStatusManualSwitch),
+        #[rasn(tag(context, 2))]
+        autoSwitch(AnonymousMSSPRProtectionStatusAutoSwitch),
+        #[rasn(tag(context, 3))]
+        forcedSwitch(AnonymousMSSPRProtectionStatusForcedSwitch),
+        #[rasn(tag(context, 4))]
+        lockout(AnonymousMSSPRProtectionStatusLockout),
+        #[rasn(tag(context, 6))]
+        releaseFailed(()),
+        #[rasn(tag(context, 7))]
+        protectionFailCond(AnonymousMSSPRProtectionStatusProtectionFailCond),
+        #[rasn(tag(context, 8))]
+        passThrough(AnonymousMSSPRProtectionStatusPassThrough),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MSSPRProtectionStatus(pub SetOf<AnonymousMSSPRProtectionStatus>);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousMSSPRProtectionStatusParameter {
+        #[rasn(identifier = "protectionUnit")]
+        pub protection_unit: ObjectInstance,
+        #[rasn(identifier = "oldProtectionStatus")]
+        pub old_protection_status: MSSPRProtectionStatus,
+        #[rasn(identifier = "newProtectionStatus")]
+        pub new_protection_status: MSSPRProtectionStatus,
+    }
+    impl AnonymousMSSPRProtectionStatusParameter {
+        pub fn new(
+            protection_unit: ObjectInstance,
+            old_protection_status: MSSPRProtectionStatus,
+            new_protection_status: MSSPRProtectionStatus,
+        ) -> Self {
+            Self {
+                protection_unit,
+                old_protection_status,
+                new_protection_status,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MSSPRProtectionStatusParameter(pub SetOf<AnonymousMSSPRProtectionStatusParameter>);
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousMap {
+        #[rasn(value("0..=15"), identifier = "nodeIdNumber")]
+        pub node_id_number: u8,
+        #[rasn(identifier = "linkInfo")]
+        pub link_info: Option<LinkInfo>,
+    }
+    impl AnonymousMap {
+        pub fn new(node_id_number: u8, link_info: Option<LinkInfo>) -> Self {
+            Self {
+                node_id_number,
+                link_info,
+            }
+        }
+    }
+    #[doc = " portId points to the service (preferred) msTTP; Null for Open Ring"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Map(pub SequenceOf<AnonymousMap>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=15"))]
+    pub struct NodeNumber(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum NodeOrNull {
+        nodeNumber(NodeNumber),
+        null(()),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousNutChannelListAffectedTraffic {
+        workingOnly = 0,
+        workingAndProtecting = 1,
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousNutChannelList {
+        pub channel: Integer,
+        #[rasn(identifier = "affectedTraffic")]
+        pub affected_traffic: AnonymousNutChannelListAffectedTraffic,
+        #[rasn(identifier = "ringSwitchUnavailable")]
+        pub ring_switch_unavailable: UnavailableSide,
+        #[rasn(identifier = "spanSwitchUnavailable")]
+        pub span_switch_unavailable: Option<UnavailableSide>,
+    }
+    impl AnonymousNutChannelList {
+        pub fn new(
+            channel: Integer,
+            affected_traffic: AnonymousNutChannelListAffectedTraffic,
+            ring_switch_unavailable: UnavailableSide,
+            span_switch_unavailable: Option<UnavailableSide>,
+        ) -> Self {
+            Self {
+                channel,
+                affected_traffic,
+                ring_switch_unavailable,
+                span_switch_unavailable,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NutChannelList(pub SetOf<AnonymousNutChannelList>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum NutConfig {
+        nutOff(()),
+        nutOn(NutChannelList),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RingId(pub PrintableString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum RingOrSpan {
+        ring = 0,
+        span = 1,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum RingTypeFibers {
+        twoFiber(()),
+        fourFiber(WaitToRestoreSpan),
+        enhancedFourFiber(EnhancedWaitToRestoreSpan),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct RingType {
+        pub application: SPRingApplication,
+        pub fibers: RingTypeFibers,
+    }
+    impl RingType {
+        pub fn new(application: SPRingApplication, fibers: RingTypeFibers) -> Self {
+            Self {
+                application,
+                fibers,
+            }
+        }
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousRipChannelList {
+        pub channel: Integer,
+        #[rasn(identifier = "ripInformation")]
+        pub rip_information: RipTableEntry,
+    }
+    impl AnonymousRipChannelList {
+        pub fn new(channel: Integer, rip_information: RipTableEntry) -> Self {
+            Self {
+                channel,
+                rip_information,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RipChannelList(pub SetOf<AnonymousRipChannelList>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum RipConfig {
+        ripOff(()),
+        ripOn(RipChannelList),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct RipInformation {
+        #[rasn(identifier = "primaryNode")]
+        pub primary_node: NodeOrNull,
+        #[rasn(identifier = "terminatingNode")]
+        pub terminating_node: NodeOrNull,
+    }
+    impl RipInformation {
+        pub fn new(primary_node: NodeOrNull, terminating_node: NodeOrNull) -> Self {
+            Self {
+                primary_node,
+                terminating_node,
+            }
+        }
+    }
+    #[doc = " node where the traffic is added/dropped"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct RipTableEntry {
+        #[rasn(identifier = "inEast")]
+        pub in_east: RipInformation,
+        #[rasn(identifier = "outEast")]
+        pub out_east: RipInformation,
+        #[rasn(identifier = "inWest")]
+        pub in_west: RipInformation,
+        #[rasn(identifier = "outWest")]
+        pub out_west: RipInformation,
+    }
+    impl RipTableEntry {
+        pub fn new(
+            in_east: RipInformation,
+            out_east: RipInformation,
+            in_west: RipInformation,
+            out_west: RipInformation,
+        ) -> Self {
+            Self {
+                in_east,
+                out_east,
+                in_west,
+                out_west,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum SPRingApplication {
+        classic = 1,
+        transoceanic = 2,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum SquelchTableChannelConcatenated {
+        firstChannel(Integer),
+        subsequentChannels(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SquelchTableChannel {
+        #[rasn(identifier = "aNode")]
+        pub a_node: NodeOrNull,
+        #[rasn(identifier = "zNode")]
+        pub z_node: NodeOrNull,
+        #[rasn(identifier = "loAccess")]
+        pub lo_access: bool,
+        pub concatenated: Option<SquelchTableChannelConcatenated>,
+    }
+    impl SquelchTableChannel {
+        pub fn new(
+            a_node: NodeOrNull,
+            z_node: NodeOrNull,
+            lo_access: bool,
+            concatenated: Option<SquelchTableChannelConcatenated>,
+        ) -> Self {
+            Self {
+                a_node,
+                z_node,
+                lo_access,
+                concatenated,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SquelchTableEntry {
+        #[rasn(identifier = "inEast")]
+        pub in_east: SquelchTableChannel,
+        #[rasn(identifier = "outEast")]
+        pub out_east: SquelchTableChannel,
+        #[rasn(identifier = "inWest")]
+        pub in_west: SquelchTableChannel,
+        #[rasn(identifier = "outWest")]
+        pub out_west: SquelchTableChannel,
+        #[rasn(identifier = "additionalInfo")]
+        pub additional_info: Option<SetOf<ManagementExtension>>,
+    }
+    impl SquelchTableEntry {
+        pub fn new(
+            in_east: SquelchTableChannel,
+            out_east: SquelchTableChannel,
+            in_west: SquelchTableChannel,
+            out_west: SquelchTableChannel,
+            additional_info: Option<SetOf<ManagementExtension>>,
+        ) -> Self {
+            Self {
+                in_east,
+                out_east,
+                in_west,
+                out_west,
+                additional_info,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct True(pub bool);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct UnavailableSide {
+        #[rasn(identifier = "switchUnavailableEast")]
+        pub switch_unavailable_east: bool,
+        #[rasn(identifier = "switchUnavailableWest")]
+        pub switch_unavailable_west: bool,
+    }
+    impl UnavailableSide {
+        pub fn new(switch_unavailable_east: bool, switch_unavailable_west: bool) -> Self {
+            Self {
+                switch_unavailable_east,
+                switch_unavailable_west,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum UpdateRIPFailed {
+        #[rasn(tag(context, 0))]
+        unknown(()),
+        #[rasn(value("0..=15"), tag(context, 1))]
+        nodeNotInRing(u8),
+        #[rasn(tag(context, 2))]
+        channelNotAvailableForRIP(()),
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousUpdateRIPTableInfo {
+        #[rasn(identifier = "auChannelNumber")]
+        pub au_channel_number: Integer,
+        #[rasn(identifier = "ripTableEntry")]
+        pub rip_table_entry: RipTableEntry,
+    }
+    impl AnonymousUpdateRIPTableInfo {
+        pub fn new(au_channel_number: Integer, rip_table_entry: RipTableEntry) -> Self {
+            Self {
+                au_channel_number,
+                rip_table_entry,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct UpdateRIPTableInfo(pub SequenceOf<AnonymousUpdateRIPTableInfo>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AnonymousUpdateRIPTableReplySuccess {
+        #[rasn(identifier = "oldRipTable")]
+        pub old_rip_table: RipTableEntry,
+        #[rasn(identifier = "newRipTable")]
+        pub new_rip_table: RipTableEntry,
+    }
+    impl AnonymousUpdateRIPTableReplySuccess {
+        pub fn new(old_rip_table: RipTableEntry, new_rip_table: RipTableEntry) -> Self {
+            Self {
+                old_rip_table,
+                new_rip_table,
+            }
+        }
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "CHOICE")]
+    pub enum AnonymousUpdateRIPTableReply {
+        failed(UpdateRIPFailed),
+        success(AnonymousUpdateRIPTableReplySuccess),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct UpdateRIPTableReply(pub SequenceOf<AnonymousUpdateRIPTableReply>);
+    #[doc = " the ith entry in the reply corresponds to the ith entry in the information syntax"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum UpdateSquelchFailed {
+        #[rasn(tag(context, 0))]
+        unknown(()),
+        #[rasn(value("0..=15"), tag(context, 1))]
+        nodeNotInRing(u8),
+        #[rasn(tag(context, 2))]
+        concatenatedChannel(Integer),
+        #[rasn(tag(context, 3))]
+        loAccessNotSupported(()),
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousUpdateSquelchTableInfo {
+        #[rasn(identifier = "auChannelNumber")]
+        pub au_channel_number: Integer,
+        #[rasn(identifier = "squelchTableEntry")]
+        pub squelch_table_entry: SquelchTableEntry,
+    }
+    impl AnonymousUpdateSquelchTableInfo {
+        pub fn new(au_channel_number: Integer, squelch_table_entry: SquelchTableEntry) -> Self {
+            Self {
+                au_channel_number,
+                squelch_table_entry,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct UpdateSquelchTableInfo(pub SequenceOf<AnonymousUpdateSquelchTableInfo>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AnonymousUpdateSquelchTableReplySuccess {
+        #[rasn(identifier = "oldSquelchTableEntry")]
+        pub old_squelch_table_entry: SquelchTableEntry,
+        #[rasn(identifier = "newSquelchTableEntry")]
+        pub new_squelch_table_entry: SquelchTableEntry,
+    }
+    impl AnonymousUpdateSquelchTableReplySuccess {
+        pub fn new(
+            old_squelch_table_entry: SquelchTableEntry,
+            new_squelch_table_entry: SquelchTableEntry,
+        ) -> Self {
+            Self {
+                old_squelch_table_entry,
+                new_squelch_table_entry,
+            }
+        }
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "CHOICE")]
+    pub enum AnonymousUpdateSquelchTableReply {
+        failed(UpdateSquelchFailed),
+        success(AnonymousUpdateSquelchTableReplySuccess),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct UpdateSquelchTableReply(pub SequenceOf<AnonymousUpdateSquelchTableReply>);
+    #[doc = "\tthe ith entry in the reply corresponds to the ith entry in the information syntax"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct WaitToRestoreSpan(pub Integer);
+    pub static G774_10_ACTION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SDH_MSSPR, &[9u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static G774_10_ATTRIBUTE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SDH_MSSPR, &[7u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static G774_10_MOBJECT_CLASS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SDH_MSSPR, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static G774_10_NAME_BINDING: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SDH_MSSPR, &[6u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static G774_10_PACKAGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SDH_MSSPR, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static G774_10_PARAMETER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SDH_MSSPR, &[5u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static G774_10_STANDARD_SPECIFIC_EXTENSION: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***SDH_MSSPR, &[0u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static MS_SPRAPS_CHANNEL_PROCESSING_FAILURE: LazyLock<ProbableCause> =
+        LazyLock::new(|| {
+            ProbableCause(ProbableCause(ProbableCause::globalValue(
+                Oid::new(&[&***MS_SPRPROBABLE_CAUSE, &[5u32]].concat())
+                    .unwrap()
+                    .to_owned(),
+            )))
+        });
+    pub static MS_SPRDEFAULT_KBYTES: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***MS_SPRPROBABLE_CAUSE, &[1u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub static MS_SPRIMPROPER_APSCODES: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***MS_SPRPROBABLE_CAUSE, &[4u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub static MS_SPRINCONSISTENT_APSCODES: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***MS_SPRPROBABLE_CAUSE, &[2u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub static MS_SPRNODE_ID_MISMATCH: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***MS_SPRPROBABLE_CAUSE, &[3u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub static MS_SPRPROBABLE_CAUSE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***G774_10_STANDARD_SPECIFIC_EXTENSION, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static MSSPR_EXCESSIVE_ERROR_CRITERIA: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***MSSPR_PROTECTION_CRITERIA, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = "\tThe following value assignments are for the Protection Criteria in the context of SDH."]
+    #[doc = "\tThese values shall always be assigned by this Recommendation in the context of SDH."]
+    pub static MSSPR_PROTECTION_CRITERIA: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***G774_10_STANDARD_SPECIFIC_EXTENSION, &[0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SDH_MSSPR: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::const_new(&[0u32, 0u32, 7u32, 774u32, 127u32, 10u32, 0u32]).to_owned()
+    });
+}

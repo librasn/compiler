@@ -1,0 +1,388 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q1238.6_2000_IN-CS3-SCF-SCF-datatypes.asn1
+---
+Warnings:
+NotYetInplemented in ASN grammar: Value references of path length > 2 are not yet supported! Found reference b6.&.maxAmount
+NotYetInplemented in ASN grammar: Value references of path length > 2 are not yet supported! Found reference b6.&.maxUnitsPerInterval
+NotYetInplemented in ASN grammar: Value references of path length > 2 are not yet supported! Found reference b6.&.maxUnitsPerInterval
+NotYetInplemented in ASN grammar: Value references of path length > 2 are not yet supported! Found reference b6.&.minScfAddress
+NotYetInplemented in ASN grammar: Value references of path length > 2 are not yet supported! Found reference b6.&.minSSIInfoLength
+NotYetInplemented in ASN grammar: Value references of path length > 2 are not yet supported! Found reference b6.&.minSSIInfoLength
+NotYetInplemented in ASN grammar: Value references of path length > 2 are not yet supported! Found reference b6.&.maxUnitsPerInterval
+LinkerError in ASN grammar: Failed to resolve supertype DestinationRoutingAddress of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve argument Cause of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve argument GenericNumber of parameterized implementation.
+NotYetInplemented in ASN grammar: Value references of path length > 2 are not yet supported! Found reference b6.&.maxAmount
+NotYetInplemented in ASN grammar: Value references of path length > 2 are not yet supported! Found reference b6.&.minReceivedInfo
+LinkerError in ASN grammar: Failed to resolve supertype CalledPartyNumber of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype Cause of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype DisplayInformation of parameterized implementation.
+NotYetInplemented in ASN grammar: Value references of path length > 2 are not yet supported! Found reference b6.&.maxFreeContainer
+LinkerError in ASN grammar: Failed to resolve supertype GenericNumber of parameterized implementation.
+NotYetInplemented in ASN grammar: Value references of path length > 2 are not yet supported! Found reference b6.&.maxAmount
+NotYetInplemented in ASN grammar: Value references of path length > 2 are not yet supported! Found reference b6.&.maxAmount
+NotYetInplemented in ASN grammar: Value references of path length > 2 are not yet supported! Found reference b6.&.maxUnitsPerInterval
+LinkerError in ASN grammar: Failed to resolve supertype CallingPartyNumber of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype Cause of parameterized implementation.
+NotYetInplemented in ASN grammar: Value references of path length > 2 are not yet supported! Found reference b6.&.maxUnitsPerInterval
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod in_cs3_scf_scf_datatypes {
+    extern crate alloc;
+    use super::in_cs3_common_classes::*;
+    use super::in_cs3_common_datatypes::Integer4;
+    use super::in_cs3_object_identifiers::{
+        COMMON_CLASSES, COMMON_DATATYPES, DS_USEFUL_DEFINITIONS, ERRORCODES, ERRORTYPES,
+        GULS_NOTATION, GULS_SECURITY_TRANSFORMATIONS, OPERATIONCODES, ROS_INFORMATION_OBJECTS,
+        SCF_SCF_CLASSES, SCF_SCF_PROTOCOL, SCF_SRF_DATATYPES, SPKM_GSS_TOKENS, SSF_SCF_CLASSES,
+        SSF_SCF_DATATYPES, SSF_SCF_OPERATIONS,
+    };
+    use super::in_cs3_scf_scf_classes::*;
+    use super::in_cs3_scf_srf_datatypes::Tone;
+    use super::in_cs3_ssf_scf_classes::*;
+    use super::in_cs3_ssf_scf_datatypes::{
+        CalledPartyNumber, CallingPartyNumber, Cause, DateAndTime, DestinationRoutingAddress,
+        DisplayInformation, Duration, GenericNumber,
+    };
+    use super::information_framework::DistinguishedName;
+    use super::remote_operations_information_objects::Code;
+    use super::selected_attribute_types::PresentationAddress;
+    use super::useful_definitions::{
+        BASIC_ACCESS_CONTROL, DIRECTORY_ABSTRACT_SERVICE, DISTRIBUTED_OPERATIONS,
+        ENHANCED_SECURITY, INFORMATION_FRAMEWORK, SELECTED_ATTRIBUTE_TYPES,
+    };
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " defined in this Recommendation Q.1238.6"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=151"))]
+    pub struct AccountNumber(pub NumericString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum Actions {
+        play = 0,
+        playandcollect = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AgreementFeatureIndicator(pub Code);
+    #[doc = "This AgreementFeatureIndicator indicates the service application for which the service data is to be provided."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AgreementID(pub ObjectIdentifier);
+    #[doc = " The following short-hand notation is used to refer to ASN.1 Information Object Classes"]
+    #[doc = " representing parameters bounds."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct B1(pub COMMONBOUNDS);
+    #[doc = " defined in Recommendation Q.1238.1"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct B2(pub SCFSSFBOUNDS);
+    #[doc = " defined in Recommendation Q.1238.2"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct B6(pub SCFSCFBOUNDS);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct BearerCapabilities(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CallIdentifier(pub Integer4);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ChargingSignallingInformation {
+        #[rasn(identifier = "partyToBeCharged")]
+        pub party_to_be_charged: PartyToBeCharged,
+        #[rasn(value("0..=100"))]
+        pub percentage: u8,
+    }
+    impl ChargingSignallingInformation {
+        pub fn new(party_to_be_charged: PartyToBeCharged, percentage: u8) -> Self {
+            Self {
+                party_to_be_charged,
+                percentage,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct CollectedDigits {
+        #[rasn(
+            value("1..=127"),
+            tag(context, 0),
+            default = "collected_digits_minimum_nb_of_digits_default",
+            identifier = "minimumNbOfDigits"
+        )]
+        pub minimum_nb_of_digits: u8,
+        #[rasn(value("1..=127"), tag(context, 1), identifier = "maximumNbOfDigits")]
+        pub maximum_nb_of_digits: u8,
+        #[rasn(size("1"), tag(context, 2), identifier = "endOfReplyDigit")]
+        pub end_of_reply_digit: Option<Ia5String>,
+        #[rasn(size("1"), tag(context, 3), identifier = "cancelDigit")]
+        pub cancel_digit: Option<Ia5String>,
+        #[rasn(size("1"), tag(context, 4), identifier = "startDigit")]
+        pub start_digit: Option<Ia5String>,
+        #[rasn(value("1..=127"), tag(context, 5), identifier = "firstDigitTimeOut")]
+        pub first_digit_time_out: Option<u8>,
+        #[rasn(value("1..=127"), tag(context, 6), identifier = "interDigitTimeOut")]
+        pub inter_digit_time_out: Option<u8>,
+        #[rasn(
+            tag(context, 7),
+            default = "collected_digits_error_treatment_default",
+            identifier = "errorTreatment"
+        )]
+        pub error_treatment: ErrorTreatment,
+        #[rasn(
+            tag(context, 8),
+            default = "collected_digits_interruptable_ann_ind_default",
+            identifier = "interruptableAnnInd"
+        )]
+        pub interruptable_ann_ind: bool,
+        #[rasn(
+            tag(context, 9),
+            default = "collected_digits_voice_information_default",
+            identifier = "voiceInformation"
+        )]
+        pub voice_information: bool,
+        #[rasn(
+            tag(context, 10),
+            default = "collected_digits_voice_back_default",
+            identifier = "voiceBack"
+        )]
+        pub voice_back: bool,
+    }
+    impl CollectedDigits {
+        pub fn new(
+            minimum_nb_of_digits: u8,
+            maximum_nb_of_digits: u8,
+            end_of_reply_digit: Option<Ia5String>,
+            cancel_digit: Option<Ia5String>,
+            start_digit: Option<Ia5String>,
+            first_digit_time_out: Option<u8>,
+            inter_digit_time_out: Option<u8>,
+            error_treatment: ErrorTreatment,
+            interruptable_ann_ind: bool,
+            voice_information: bool,
+            voice_back: bool,
+        ) -> Self {
+            Self {
+                minimum_nb_of_digits,
+                maximum_nb_of_digits,
+                end_of_reply_digit,
+                cancel_digit,
+                start_digit,
+                first_digit_time_out,
+                inter_digit_time_out,
+                error_treatment,
+                interruptable_ann_ind,
+                voice_information,
+                voice_back,
+            }
+        }
+    }
+    fn collected_digits_minimum_nb_of_digits_default() -> u8 {
+        1
+    }
+    fn collected_digits_error_treatment_default() -> ErrorTreatment {
+        ErrorTreatment::reportErrorToScf
+    }
+    fn collected_digits_interruptable_ann_ind_default() -> bool {
+        true
+    }
+    fn collected_digits_voice_information_default() -> bool {
+        false
+    }
+    fn collected_digits_voice_back_default() -> bool {
+        false
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum CollectedInfo {
+        #[rasn(tag(context, 0))]
+        collectedDigits(CollectedDigits),
+        #[rasn(tag(context, 1))]
+        iA5Information(bool),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ConsumedCreditAction {
+        disconnect = 0,
+        message = 1,
+        tone = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=65536"))]
+    pub struct CreditUnit(pub u32);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("3"))]
+    pub struct CurrencyID(pub PrintableString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ErrorTreatment {
+        reportErrorToScf = 0,
+        help = 1,
+        repeatPrompt = 2,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum EventEvent {
+        now = 0,
+        answer = 1,
+        #[rasn(identifier = "user-interaction")]
+        user_interaction = 2,
+        failure = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum Event {
+        #[rasn(value("0..=65536"), tag(context, 1))]
+        duration(u32),
+        #[rasn(tag(context, 2))]
+        event(EventEvent),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct HighLayerCompatibilities(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct InbandInfo {
+        #[rasn(tag(context, 0), identifier = "messageId")]
+        pub message_id: MessageID,
+        #[rasn(value("1..=127"), tag(context, 1), identifier = "numberOfRepetitions")]
+        pub number_of_repetitions: Option<u8>,
+        #[rasn(value("1..=32767"), tag(context, 2))]
+        pub duration: Option<u16>,
+        #[rasn(value("1..=32767"), tag(context, 3))]
+        pub interval: Option<u16>,
+    }
+    impl InbandInfo {
+        pub fn new(
+            message_id: MessageID,
+            number_of_repetitions: Option<u8>,
+            duration: Option<u16>,
+            interval: Option<u16>,
+        ) -> Self {
+            Self {
+                message_id,
+                number_of_repetitions,
+                duration,
+                interval,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum InfoType {
+        numericString = 0,
+        characterString = 1,
+        iA5String = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum InvokableService {
+        callingLineIdentificationRestriction = 1,
+        connectedLineIdentificationRestriction = 2,
+        callWaiting = 3,
+        callHold = 4,
+        reverseCharging = 5,
+        explicitCallTransfer = 6,
+        callCompletionOnBusySubscriber = 7,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MessageID(pub ObjectIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Meter {
+        #[rasn(value("0..=128"), tag(context, 1))]
+        pub meternum: Option<u8>,
+        #[rasn(tag(context, 2))]
+        pub metervalue: Integer,
+    }
+    impl Meter {
+        pub fn new(meternum: Option<u8>, metervalue: Integer) -> Self {
+            Self {
+                meternum,
+                metervalue,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Meters(pub SequenceOf<Meter>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum Notification {
+        userAbandon = 0,
+        callFailure = 1,
+        noReply = 2,
+        callRelease = 3,
+        ssInvocation = 4,
+        creditLimitReached = 5,
+        callDuration = 6,
+        calledNumber = 7,
+        answeredCall = 8,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum PartyToBeCharged {
+        orignating = 0,
+        terminating = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ProtocolInfo {
+        #[rasn(tag(context, 1))]
+        sdf(SDFProtocolInfo),
+        #[rasn(tag(context, 2))]
+        scf(SCFProtocolInfo),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=127"))]
+    pub struct RequestedType(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SCFProtocolInfo(pub AgreementID);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SDFProtocolInfo {
+        pub entryname: DistinguishedName,
+        pub attribute: ObjectIdentifier,
+    }
+    impl SDFProtocolInfo {
+        pub fn new(entryname: DistinguishedName, attribute: ObjectIdentifier) -> Self {
+            Self {
+                entryname,
+                attribute,
+            }
+        }
+    }
+    #[doc = " The STSIInformation contains the service information associated with the agreementFeatureIndicator."]
+    #[doc = " provided by the Service Logic of the invoking SCF to be transferred to the Service Logic"]
+    #[doc = " of the responding  SCF.s"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SupplementaryServices(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct UserInteractionModes(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum UserToConnect {
+        first = 0,
+        nofirst = 1,
+        newone = 2,
+        previous = 3,
+    }
+    pub static MAX_CREDIT_UNIT: LazyLock<Integer> = LazyLock::new(|| Integer::from(65536));
+    pub static MAX_PERIOD_TIME: LazyLock<Integer> = LazyLock::new(|| Integer::from(32767));
+    pub static MAX_TIME_INTERVAL: LazyLock<Integer> = LazyLock::new(|| Integer::from(65536));
+    pub static NBR_OF_METERS: LazyLock<Integer> = LazyLock::new(|| Integer::from(128));
+}

@@ -1,0 +1,817 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q824.1_1995_CAISDNModule.asn1
+---
+Warnings:
+Unidentified generating bindings for : A type name is needed to stringify sequence value LinkedStructLikeValue([("callControlTEItotal", Integer(Integer { constraints: [], distinguished_values: None }), Explicit(LinkedIntValue { integer_type: Unbounded, value: 64 })), ("callControlTEIsw", ElsewhereDeclaredType(DeclarationElsewhere { parent: None, module: None, identifier: "FlexType", constraints: [] }), Explicit(LinkedNestedValue { supertypes: [], value: Choice { type_name: Some("FlexType"), variant_name: "switchAssigned", inner_value: LinkedIntValue { integer_type: Unbounded, value: 63 } } })), ("packTEItotal", Integer(Integer { constraints: [], distinguished_values: None }), Explicit(LinkedIntValue { integer_type: Unbounded, value: 64 })), ("packTEIsw", ElsewhereDeclaredType(DeclarationElsewhere { parent: None, module: None, identifier: "FlexType", constraints: [] }), Explicit(LinkedNestedValue { supertypes: [], value: Choice { type_name: Some("FlexType"), variant_name: "switchAssigned", inner_value: LinkedIntValue { integer_type: Unbounded, value: 63 } } }))])
+LinkerError in ASN grammar: Failed to link value with 'Boolean'
+LinkerError in ASN grammar: Failed to link value with 'Boolean'
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod caisdnmodule {
+    extern crate alloc;
+    use super::asn1_defined_types_module::{
+        AlarmStatus, Boolean, ChannelNumber, NameType, ObjectList, Pointer, PointerOrNull,
+    };
+    use super::attribute_asn1_module::{OperationalState, UsageState};
+    use super::cacommon_module::{
+        DirectoryNumber, DirectoryNumberList, InterceptTreatmentTerm, NumberOfBChannels,
+    };
+    use super::cmip_1::{ObjectClass, ObjectInstance};
+    use super::dlm::{K, N1, N2, SEQUENCE_MODULUS, T1_TIMER, T2_TIMER, T3_TIMER, T4_TIMER};
+    use super::nlm::{
+        DEFAULT_PACKET_SIZES, DEFAULT_THROUGHPUT_CLASSES, DEFAULT_WINDOW_SIZES, D_BIT_MODIFICATION,
+        EXTENDED_PACKET_SEQUENCE_NUMBERING, FAST_SELECT_ACCEPTANCE,
+        FLOW_CONTROL_PARAMETER_NEGOTIATION, NON_STANDARD_DEFAULT_PACKET_SIZES,
+        NON_STANDARD_DEFAULT_WINDOW_SIZES, ONLINE_FACILITY_REGISTRATION, PACKET_RETRANSMISSION,
+        THROUGHPUT_CLASS_NEGOTIATION,
+    };
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AccessChannelPtrList(pub SetOf<ObjectInstance>);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousActiveTerminalList {
+        #[rasn(tag(context, 0))]
+        pub spid: ServiceProfileIdentifier,
+        #[rasn(tag(context, 1))]
+        pub tei: TerminalEndPointIdentifier,
+        #[rasn(tag(context, 2))]
+        pub usid: UserServiceId,
+    }
+    impl AnonymousActiveTerminalList {
+        pub fn new(
+            spid: ServiceProfileIdentifier,
+            tei: TerminalEndPointIdentifier,
+            usid: UserServiceId,
+        ) -> Self {
+            Self { spid, tei, usid }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ActiveTerminalList(pub SetOf<AnonymousActiveTerminalList>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AppearanceInfo {
+        #[rasn(identifier = "callAppearanceId")]
+        pub call_appearance_id: CallAppearanceIdentifier,
+        #[rasn(identifier = "defaultBearerService")]
+        pub default_bearer_service: BearerService,
+    }
+    impl AppearanceInfo {
+        pub fn new(
+            call_appearance_id: CallAppearanceIdentifier,
+            default_bearer_service: BearerService,
+        ) -> Self {
+            Self {
+                call_appearance_id,
+                default_bearer_service,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AssignmentOfTimeslots {
+        fixed = 0,
+        floating = 1,
+        flexible = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum BearerService {
+        speech = 0,
+        audio3D1 = 1,
+        audio7 = 2,
+        audioComb = 3,
+        cmd56 = 4,
+        cmd64 = 5,
+        cmdComb = 6,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct BearerServiceList(pub SetOf<BearerService>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum BitRateOfPrimaryRateInterface {
+        bitRate1544 = 0,
+        bitRate2048 = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CallAppearanceIdentifier(pub Integer);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousCallingPartyDefaultDirectoryNumberPerBearerService {
+        #[rasn(identifier = "directoryNumber")]
+        pub directory_number: DirectoryNumber,
+        #[rasn(identifier = "bearerService")]
+        pub bearer_service: BearerService,
+    }
+    impl AnonymousCallingPartyDefaultDirectoryNumberPerBearerService {
+        pub fn new(directory_number: DirectoryNumber, bearer_service: BearerService) -> Self {
+            Self {
+                directory_number,
+                bearer_service,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CallingPartyDefaultDirectoryNumberPerBearerService(
+        pub SetOf<AnonymousCallingPartyDefaultDirectoryNumberPerBearerService>,
+    );
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum CallingPartyDefaultDirectoryNumber {
+        noDefault(()),
+        directoryNumber(DirectoryNumber),
+        perBearerService(CallingPartyDefaultDirectoryNumberPerBearerService),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CallingPartyValidDirectoryNumberList(pub SetOf<DirectoryNumber>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ChangeDirectoryNumberRequest {
+        #[rasn(identifier = "oldDirectoryNumberName")]
+        pub old_directory_number_name: ObjectInstance,
+        #[rasn(identifier = "oldDirectoryNumberIntercept")]
+        pub old_directory_number_intercept: InterceptTreatmentTerm,
+        #[rasn(identifier = "newDirectoryNumberName")]
+        pub new_directory_number_name: ObjectInstance,
+    }
+    impl ChangeDirectoryNumberRequest {
+        pub fn new(
+            old_directory_number_name: ObjectInstance,
+            old_directory_number_intercept: InterceptTreatmentTerm,
+            new_directory_number_name: ObjectInstance,
+        ) -> Self {
+            Self {
+                old_directory_number_name,
+                old_directory_number_intercept,
+                new_directory_number_name,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ChannelSelection {
+        byNetwork = 0,
+        byUser = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct CopyISDNAccessCommandDescription {
+        #[rasn(identifier = "sourceAPPName")]
+        pub source_appname: ObjectInstance,
+        #[rasn(identifier = "tpNameList")]
+        pub tp_name_list: SetOf<ObjectInstance>,
+    }
+    impl CopyISDNAccessCommandDescription {
+        pub fn new(source_appname: ObjectInstance, tp_name_list: SetOf<ObjectInstance>) -> Self {
+            Self {
+                source_appname,
+                tp_name_list,
+            }
+        }
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousCopyISDNServiceCommandDescriptionResourceDescription {
+        #[rasn(identifier = "sourceDirectoryNumber")]
+        pub source_directory_number: ObjectInstance,
+        #[rasn(identifier = "newDirectoryNumber")]
+        pub new_directory_number: ObjectInstance,
+    }
+    impl AnonymousCopyISDNServiceCommandDescriptionResourceDescription {
+        pub fn new(
+            source_directory_number: ObjectInstance,
+            new_directory_number: ObjectInstance,
+        ) -> Self {
+            Self {
+                source_directory_number,
+                new_directory_number,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CopyISDNServiceCommandDescriptionResourceDescription(
+        pub SetOf<AnonymousCopyISDNServiceCommandDescriptionResourceDescription>,
+    );
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct CopyISDNServiceCommandDescription {
+        #[rasn(identifier = "sourceCustomerProfileName")]
+        pub source_customer_profile_name: ObjectInstance,
+        #[rasn(identifier = "accessPortName")]
+        pub access_port_name: ObjectInstance,
+        #[rasn(identifier = "resourceDescription")]
+        pub resource_description: CopyISDNServiceCommandDescriptionResourceDescription,
+    }
+    impl CopyISDNServiceCommandDescription {
+        pub fn new(
+            source_customer_profile_name: ObjectInstance,
+            access_port_name: ObjectInstance,
+            resource_description: CopyISDNServiceCommandDescriptionResourceDescription,
+        ) -> Self {
+            Self {
+                source_customer_profile_name,
+                access_port_name,
+                resource_description,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct CopyISDNTerminalCommandDescription {
+        #[rasn(identifier = "sourceTerminalName")]
+        pub source_terminal_name: ObjectInstance,
+        #[rasn(identifier = "aPPName")]
+        pub a_ppname: ObjectInstance,
+        #[rasn(size("1..=18"), identifier = "sPId")]
+        pub s_pid: Ia5String,
+    }
+    impl CopyISDNTerminalCommandDescription {
+        pub fn new(
+            source_terminal_name: ObjectInstance,
+            a_ppname: ObjectInstance,
+            s_pid: Ia5String,
+        ) -> Self {
+            Self {
+                source_terminal_name,
+                a_ppname,
+                s_pid,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CreatedInstancesName(pub SetOf<ObjectInstance>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DChannelT3xx(pub Integer);
+    #[doc = "  supporting productions"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum DTECompatibility {
+        dte80 = 0,
+        dte84 = 1,
+        dte88 = 2,
+        dte93 = 3,
+    }
+    #[doc = " number of seconds"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DeletedInstancesName(pub SetOf<ObjectInstance>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct DirectoryNumberAppearanceIdentifierList {
+        #[rasn(identifier = "directoryNumber")]
+        pub directory_number: DirectoryNumber,
+        #[rasn(identifier = "callAppearanceId")]
+        pub call_appearance_id: CallAppearanceIdentifier,
+        #[rasn(identifier = "defaultBearerService")]
+        pub default_bearer_service: BearerService,
+    }
+    impl DirectoryNumberAppearanceIdentifierList {
+        pub fn new(
+            directory_number: DirectoryNumber,
+            call_appearance_id: CallAppearanceIdentifier,
+            default_bearer_service: BearerService,
+        ) -> Self {
+            Self {
+                directory_number,
+                call_appearance_id,
+                default_bearer_service,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct DirectoryNumberReference {
+        #[rasn(value("1..=128"))]
+        pub dnr: u8,
+        pub dn: DirectoryNumber,
+        pub bs: BearerService,
+    }
+    impl DirectoryNumberReference {
+        pub fn new(dnr: u8, dn: DirectoryNumber, bs: BearerService) -> Self {
+            Self { dnr, dn, bs }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Dynamic {
+        #[rasn(identifier = "callControlTEItotal")]
+        pub call_control_teitotal: Integer,
+        #[rasn(identifier = "callControlTEIsw")]
+        pub call_control_teisw: FlexType,
+        #[rasn(identifier = "packTEItotal")]
+        pub pack_teitotal: Integer,
+        #[rasn(identifier = "packTEIsw")]
+        pub pack_teisw: FlexType,
+    }
+    impl Dynamic {
+        pub fn new(
+            call_control_teitotal: Integer,
+            call_control_teisw: FlexType,
+            pack_teitotal: Integer,
+            pack_teisw: FlexType,
+        ) -> Self {
+            Self {
+                call_control_teitotal,
+                call_control_teisw,
+                pack_teitotal,
+                pack_teisw,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum EstablishISDNAccessRequest {
+        #[rasn(tag(context, 0))]
+        servicePackageISDNAccess(ServicePackageISDNAccessDescription),
+        #[rasn(tag(context, 1))]
+        copyISDNAccessCommand(CopyISDNAccessCommandDescription),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum EstablishISDNServiceRequest {
+        #[rasn(tag(context, 0))]
+        servicePackageISDN(ServicePackageISDNDescription),
+        #[rasn(tag(context, 1))]
+        copyISDNServiceCommand(CopyISDNServiceCommandDescription),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum EstablishISDNTerminalRequest {
+        #[rasn(tag(context, 0))]
+        servicePackageISDNTerminal(ServicePackageISDNTerminalDescription),
+        #[rasn(tag(context, 1))]
+        copyISDNTerminalCommand(CopyISDNTerminalCommandDescription),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=16383"))]
+    pub struct FeatureActivatorValue(pub u16);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousFeatureActivatorsAllDirectoryNumber {
+        #[rasn(identifier = "featureActivatorValue")]
+        pub feature_activator_value: FeatureActivatorValue,
+        #[rasn(identifier = "masterFeatureList")]
+        pub master_feature_list: MasterFeatureList,
+    }
+    impl AnonymousFeatureActivatorsAllDirectoryNumber {
+        pub fn new(
+            feature_activator_value: FeatureActivatorValue,
+            master_feature_list: MasterFeatureList,
+        ) -> Self {
+            Self {
+                feature_activator_value,
+                master_feature_list,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct FeatureActivatorsAllDirectoryNumber(
+        pub SetOf<AnonymousFeatureActivatorsAllDirectoryNumber>,
+    );
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousFeatureActivatorsPerDirectoryNumber {
+        #[rasn(identifier = "featureActivatorValue")]
+        pub feature_activator_value: FeatureActivatorValue,
+        #[rasn(value("1..=128"), identifier = "directoryNumberReference")]
+        pub directory_number_reference: u8,
+        #[rasn(identifier = "masterFeatureList")]
+        pub master_feature_list: MasterFeatureList,
+    }
+    impl AnonymousFeatureActivatorsPerDirectoryNumber {
+        pub fn new(
+            feature_activator_value: FeatureActivatorValue,
+            directory_number_reference: u8,
+            master_feature_list: MasterFeatureList,
+        ) -> Self {
+            Self {
+                feature_activator_value,
+                directory_number_reference,
+                master_feature_list,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct FeatureActivatorsPerDirectoryNumber(
+        pub SetOf<AnonymousFeatureActivatorsPerDirectoryNumber>,
+    );
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousFeatureIndicatorsAllDirectoryNumber {
+        #[rasn(identifier = "featureActivatorValue")]
+        pub feature_activator_value: FeatureActivatorValue,
+        #[rasn(identifier = "masterFeatureList")]
+        pub master_feature_list: MasterFeatureList,
+    }
+    impl AnonymousFeatureIndicatorsAllDirectoryNumber {
+        pub fn new(
+            feature_activator_value: FeatureActivatorValue,
+            master_feature_list: MasterFeatureList,
+        ) -> Self {
+            Self {
+                feature_activator_value,
+                master_feature_list,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct FeatureIndicatorsAllDirectoryNumber(
+        pub SetOf<AnonymousFeatureIndicatorsAllDirectoryNumber>,
+    );
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousFeatureIndicatorsPerDirectoryNumber {
+        #[rasn(identifier = "featureActivatorValue")]
+        pub feature_activator_value: FeatureActivatorValue,
+        #[rasn(value("1..=128"), identifier = "directoryNumberReference")]
+        pub directory_number_reference: u8,
+        #[rasn(identifier = "masterFeatureList")]
+        pub master_feature_list: MasterFeatureList,
+    }
+    impl AnonymousFeatureIndicatorsPerDirectoryNumber {
+        pub fn new(
+            feature_activator_value: FeatureActivatorValue,
+            directory_number_reference: u8,
+            master_feature_list: MasterFeatureList,
+        ) -> Self {
+            Self {
+                feature_activator_value,
+                directory_number_reference,
+                master_feature_list,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct FeatureIndicatorsPerDirectoryNumber(
+        pub SetOf<AnonymousFeatureIndicatorsPerDirectoryNumber>,
+    );
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum FlexType {
+        switchAssigned(Integer),
+        uncontrolled(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum InterfaceType {
+        basic = 0,
+        primary = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum LinkOption {
+        fixed(()),
+        dynamic(Dynamic),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=7"))]
+    pub struct MasterFeatureList(pub GraphicString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MaxBitsPerInformationFrame(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum MaxCombinedThruput {
+        baud16000 = 0,
+        baud18000 = 1,
+        baud20000 = 2,
+        baud22000 = 3,
+        baud24000 = 4,
+        baud26000 = 5,
+        baud28000 = 6,
+        baud30000 = 7,
+        baud32000 = 8,
+        baud64000 = 9,
+        baud72000 = 10,
+        baud80000 = 11,
+        baud88000 = 12,
+        baud96000 = 13,
+        baud104000 = 14,
+        baud112000 = 15,
+        baud120000 = 16,
+        baud128000 = 17,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum MaxCombinedThruputClass {
+        maxCombinedThruput(MaxCombinedThruput),
+        null(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MaxNumberOfCallReference(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MaxTransmissionAttempts(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum NotificationClass {
+        noNotificationClass = 1,
+        conditionalNotificationClass = 2,
+        unconditionalNotificationClass = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("1..=256"))]
+    pub struct NumberOfDChannelLinks(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum PacketSize {
+        size16 = 0,
+        size32 = 1,
+        size64 = 2,
+        size128 = 3,
+        size256 = 4,
+        size512 = 5,
+        size1024 = 6,
+        size2048 = 7,
+        size4096 = 8,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PrimaryIC(pub Ia5String);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RemoveISDNAccessRequest(pub ObjectInstance);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct RemoveISDNServiceRequest {
+        #[rasn(identifier = "directoryNumberName")]
+        pub directory_number_name: ObjectInstance,
+        #[rasn(identifier = "bearerServiceName")]
+        pub bearer_service_name: ObjectInstance,
+    }
+    impl RemoveISDNServiceRequest {
+        pub fn new(
+            directory_number_name: ObjectInstance,
+            bearer_service_name: ObjectInstance,
+        ) -> Self {
+            Self {
+                directory_number_name,
+                bearer_service_name,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RemoveISDNTerminalRequest(pub ObjectInstance);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RetrieveCustomerServiceReply(pub SetOf<ObjectInstance>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct RetrieveCustomerServiceRequest {
+        #[rasn(tag(context, 0), identifier = "tpName")]
+        pub tp_name: Option<ObjectInstance>,
+        #[rasn(tag(context, 1), identifier = "directoryNumber")]
+        pub directory_number: Option<ObjectInstance>,
+    }
+    impl RetrieveCustomerServiceRequest {
+        pub fn new(
+            tp_name: Option<ObjectInstance>,
+            directory_number: Option<ObjectInstance>,
+        ) -> Self {
+            Self {
+                tp_name,
+                directory_number,
+            }
+        }
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousSemiPermAccessPacketHandlerDefaultDirectoryNumber {
+        #[rasn(identifier = "defaultDirectoryNumber")]
+        pub default_directory_number: DirectoryNumber,
+        #[rasn(identifier = "bChannel")]
+        pub b_channel: ChannelNumber,
+    }
+    impl AnonymousSemiPermAccessPacketHandlerDefaultDirectoryNumber {
+        pub fn new(default_directory_number: DirectoryNumber, b_channel: ChannelNumber) -> Self {
+            Self {
+                default_directory_number,
+                b_channel,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SemiPermAccessPacketHandlerDefaultDirectoryNumber(
+        pub SetOf<AnonymousSemiPermAccessPacketHandlerDefaultDirectoryNumber>,
+    );
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ServicePackageISDNAccessDescription {
+        #[rasn(identifier = "servicePackageName")]
+        pub service_package_name: ObjectInstance,
+        #[rasn(identifier = "accessPortName")]
+        pub access_port_name: ObjectInstance,
+    }
+    impl ServicePackageISDNAccessDescription {
+        pub fn new(service_package_name: ObjectInstance, access_port_name: ObjectInstance) -> Self {
+            Self {
+                service_package_name,
+                access_port_name,
+            }
+        }
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousServicePackageISDNDescriptionServiceDescription {
+        #[rasn(identifier = "templateDirectoryNumberName")]
+        pub template_directory_number_name: ObjectInstance,
+        #[rasn(identifier = "directoryNumberName")]
+        pub directory_number_name: ObjectInstance,
+        #[rasn(identifier = "serviceRequestInfo")]
+        pub service_request_info: Option<Any>,
+    }
+    impl AnonymousServicePackageISDNDescriptionServiceDescription {
+        pub fn new(
+            template_directory_number_name: ObjectInstance,
+            directory_number_name: ObjectInstance,
+            service_request_info: Option<Any>,
+        ) -> Self {
+            Self {
+                template_directory_number_name,
+                directory_number_name,
+                service_request_info,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ServicePackageISDNDescriptionServiceDescription(
+        pub SetOf<AnonymousServicePackageISDNDescriptionServiceDescription>,
+    );
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ServicePackageISDNDescription {
+        #[rasn(identifier = "servicePackageNamev")]
+        pub service_package_namev: ObjectIdentifier,
+        #[rasn(identifier = "accessPortName")]
+        pub access_port_name: ObjectInstance,
+        #[rasn(identifier = "serviceDescription")]
+        pub service_description: ServicePackageISDNDescriptionServiceDescription,
+    }
+    impl ServicePackageISDNDescription {
+        pub fn new(
+            service_package_namev: ObjectIdentifier,
+            access_port_name: ObjectInstance,
+            service_description: ServicePackageISDNDescriptionServiceDescription,
+        ) -> Self {
+            Self {
+                service_package_namev,
+                access_port_name,
+                service_description,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ServicePackageISDNTerminalDescription {
+        #[rasn(identifier = "servicePackageName")]
+        pub service_package_name: ObjectInstance,
+        #[rasn(identifier = "aPPName")]
+        pub a_ppname: ObjectInstance,
+        #[rasn(size("1..=18"), identifier = "sPId")]
+        pub s_pid: Ia5String,
+        #[rasn(identifier = "terminalConfigurationName")]
+        pub terminal_configuration_name: Option<ObjectInstance>,
+    }
+    impl ServicePackageISDNTerminalDescription {
+        pub fn new(
+            service_package_name: ObjectInstance,
+            a_ppname: ObjectInstance,
+            s_pid: Ia5String,
+            terminal_configuration_name: Option<ObjectInstance>,
+        ) -> Self {
+            Self {
+                service_package_name,
+                a_ppname,
+                s_pid,
+                terminal_configuration_name,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ServiceProfileIdentifier {
+        null(()),
+        #[rasn(size("3..=20"))]
+        spid(Ia5String),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=18"))]
+    pub struct TSPID(pub Ia5String);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum TerminalEndPointIdentifier {
+        auto(()),
+        #[rasn(value("0..=126"), identifier = "non-Auto")]
+        non_Auto(u8),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=62"))]
+    pub struct TerminalLimit(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TerminalServiceProfilePtrList(pub SetOf<ObjectInstance>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ThruputClass {
+        baud75 = 0,
+        baud150 = 1,
+        baud300 = 2,
+        baud600 = 3,
+        baud1200 = 4,
+        baud2400 = 5,
+        baud4800 = 6,
+        baud9600 = 7,
+        baud19200 = 8,
+        baud48000 = 9,
+        baud56000 = 10,
+        baud64000 = 11,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum UserServiceId {
+        null(()),
+        #[rasn(value("0..=126"))]
+        uid(u8),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum WindowSize {
+        #[rasn(value("1..=7"), tag(context, 0))]
+        lowRange(u8),
+        #[rasn(value("61..=167"), tag(context, 1))]
+        highRange(u8),
+    }
+    pub const BAUD9600: ThruputClass = ThruputClass::baud9600;
+    pub static C_AISDNACTION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q824_1_INFORMATION_MODEL, &[9u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static C_AISDNATTRIBUTE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q824_1_INFORMATION_MODEL, &[7u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static C_AISDNNAME_BINDING: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q824_1_INFORMATION_MODEL, &[6u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static C_AISDNOBJECT_CLASS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q824_1_INFORMATION_MODEL, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static C_AISDNPACKAGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q824_1_INFORMATION_MODEL, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static C_AISDNPARAMETER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q824_1_INFORMATION_MODEL, &[5u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub const DTE84: DTECompatibility = DTECompatibility::dte84;
+    pub static EMPTY_SET: LazyLock<AccessChannelPtrList> =
+        LazyLock::new(|| AccessChannelPtrList(alloc::vec![]));
+    #[doc = "  default value definitions"]
+    pub const R_FALSE: Boolean = Boolean(Boolean(false));
+    pub static MINUS_ONE: LazyLock<Integer> = LazyLock::new(|| Integer::from(-1));
+    pub const NULL: () = ();
+    pub static ONE: LazyLock<Integer> = LazyLock::new(|| Integer::from(1));
+    pub static Q824_1_INFORMATION_MODEL: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::const_new(&[0u32, 0u32, 17u32, 824u32, 127u32, 1u32, 0u32]).to_owned()
+    });
+    pub const SIZE128: PacketSize = PacketSize::size128;
+    pub const R_TRUE: Boolean = Boolean(Boolean(true));
+    pub static TWO: LazyLock<Integer> = LazyLock::new(|| Integer::from(2));
+}

@@ -1,0 +1,122 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_h_h450.3_1998_Call-Diversion-Operations.asn1
+---
+Warnings:
+LinkerError in ASN grammar: Failed to resolve supertype Extension of parameterized implementation.
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod call_diversion_operations {
+    extern crate alloc;
+    use super::addressing_data_elements::{
+        EndpointAddress, PartySubaddress, PresentationAllowedIndicator,
+    };
+    use super::h225_generic_parameters_definition::H225InformationElement;
+    use super::h323_messages::NonStandardParameter;
+    use super::h4501_general_error_list::{
+        BASIC_SERVICE_NOT_PROVIDED, INVALID_SERVED_USER_NUMBER, NOT_AVAILABLE,
+        RESOURCE_UNAVAILABLE, SUPPLEMENTARY_SERVICE_INTERACTION_NOT_ALLOWED, USER_NOT_SUBSCRIBED,
+    };
+    use super::manufacturer_specific_service_extension_definition::*;
+    use super::remote_operations_information_objects::*;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum BasicService {
+        allServices = 0,
+    }
+    #[doc = " This indicates that the diverted-to leg has been cleared during SS-CFNR execution."]
+    #[doc = " Definitions of general used data types:"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum DiversionReason {
+        unknown = 0,
+        cfu = 1,
+        cfb = 2,
+        cfnr = 3,
+    }
+    #[doc = " For multimedia calls the value \"allServices\" shall be used only."]
+    #[doc = " The usage of the other codepoints for multimedia calls is for further study."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ExtensionSeq(pub SequenceOf<Extension>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum IntResultExtension {
+        extensionSeq(ExtensionSeq),
+        nonStandardData(NonStandardParameter),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct IntResult {
+        #[rasn(identifier = "servedUserNr")]
+        pub served_user_nr: EndpointAddress,
+        #[rasn(identifier = "basicService")]
+        pub basic_service: BasicService,
+        pub procedure: Procedure,
+        #[rasn(identifier = "divertedToAddress")]
+        pub diverted_to_address: EndpointAddress,
+        #[rasn(
+            default = "int_result_remote_enabled_default",
+            identifier = "remoteEnabled"
+        )]
+        pub remote_enabled: bool,
+        pub extension: Option<IntResultExtension>,
+    }
+    impl IntResult {
+        pub fn new(
+            served_user_nr: EndpointAddress,
+            basic_service: BasicService,
+            procedure: Procedure,
+            diverted_to_address: EndpointAddress,
+            remote_enabled: bool,
+            extension: Option<IntResultExtension>,
+        ) -> Self {
+            Self {
+                served_user_nr,
+                basic_service,
+                procedure,
+                diverted_to_address,
+                remote_enabled,
+                extension,
+            }
+        }
+    }
+    fn int_result_remote_enabled_default() -> bool {
+        false
+    }
+    #[doc = " The value unknown is only used if received from another network when interworking."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=29"))]
+    pub struct IntResultList(pub SetOf<IntResult>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum Procedure {
+        cfu = 0,
+        cfb = 1,
+        cfnr = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum SubscriptionOption {
+        noNotification = 0,
+        notificationWithoutDivertedToNr = 1,
+        notificationWithDivertedToNr = 2,
+    }
+}

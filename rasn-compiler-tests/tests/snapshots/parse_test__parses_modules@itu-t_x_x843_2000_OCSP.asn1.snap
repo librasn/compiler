@@ -1,0 +1,364 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x843_2000_OCSP.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod ocsp {
+    extern crate alloc;
+    use super::authentication_framework::{
+        AlgorithmIdentifier, Certificate, CertificateSerialNumber, Extensions,
+    };
+    use super::certificate_extensions::{CRLReason, GeneralName};
+    use super::information_framework::Name;
+    use super::pkix1_explicit93::{ID_AD, ID_KP};
+    use super::pkix1_implicit93::AuthorityInfoAccessSyntax;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "OBJECT_IDENTIFIER")]
+    pub struct AnonymousAcceptableResponses(pub ObjectIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AcceptableResponses(pub SequenceOf<AnonymousAcceptableResponses>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ArchiveCutoff(pub GeneralizedTime);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct BasicOCSPResponse {
+        #[rasn(identifier = "tbsResponseData")]
+        pub tbs_response_data: ResponseData,
+        #[rasn(identifier = "signatureAlgorithm")]
+        pub signature_algorithm: AlgorithmIdentifier,
+        pub signature: BitString,
+        #[rasn(tag(explicit(context, 0)))]
+        pub certs: Option<SequenceOf<Certificate>>,
+    }
+    impl BasicOCSPResponse {
+        pub fn new(
+            tbs_response_data: ResponseData,
+            signature_algorithm: AlgorithmIdentifier,
+            signature: BitString,
+            certs: Option<SequenceOf<Certificate>>,
+        ) -> Self {
+            Self {
+                tbs_response_data,
+                signature_algorithm,
+                signature,
+                certs,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct CertID {
+        #[rasn(identifier = "hashAlgorithm")]
+        pub hash_algorithm: AlgorithmIdentifier,
+        #[rasn(identifier = "issuerNameHash")]
+        pub issuer_name_hash: OctetString,
+        #[rasn(identifier = "issuerKeyHash")]
+        pub issuer_key_hash: OctetString,
+        #[rasn(identifier = "serialNumber")]
+        pub serial_number: CertificateSerialNumber,
+    }
+    impl CertID {
+        pub fn new(
+            hash_algorithm: AlgorithmIdentifier,
+            issuer_name_hash: OctetString,
+            issuer_key_hash: OctetString,
+            serial_number: CertificateSerialNumber,
+        ) -> Self {
+            Self {
+                hash_algorithm,
+                issuer_name_hash,
+                issuer_key_hash,
+                serial_number,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum CertStatus {
+        #[rasn(tag(context, 0))]
+        good(()),
+        #[rasn(tag(context, 1))]
+        revoked(RevokedInfo),
+        #[rasn(tag(context, 2))]
+        unknown(UnknownInfo),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct KeyHash(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct OCSPRequest {
+        #[rasn(identifier = "tbsRequest")]
+        pub tbs_request: TBSRequest,
+        #[rasn(tag(explicit(context, 0)), identifier = "optionalSignature")]
+        pub optional_signature: Option<Signature>,
+    }
+    impl OCSPRequest {
+        pub fn new(tbs_request: TBSRequest, optional_signature: Option<Signature>) -> Self {
+            Self {
+                tbs_request,
+                optional_signature,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct OCSPResponse {
+        #[rasn(identifier = "responseStatus")]
+        pub response_status: OCSPResponseStatus,
+        #[rasn(tag(explicit(context, 0)), identifier = "responseBytes")]
+        pub response_bytes: Option<ResponseBytes>,
+    }
+    impl OCSPResponse {
+        pub fn new(
+            response_status: OCSPResponseStatus,
+            response_bytes: Option<ResponseBytes>,
+        ) -> Self {
+            Self {
+                response_status,
+                response_bytes,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum OCSPResponseStatus {
+        successful = 0,
+        malformedRequest = 1,
+        internalError = 2,
+        tryLater = 3,
+        sigRequired = 5,
+        unauthorized = 6,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Request {
+        #[rasn(identifier = "reqCert")]
+        pub req_cert: CertID,
+        #[rasn(tag(explicit(context, 0)), identifier = "singleRequestExtensions")]
+        pub single_request_extensions: Option<Extensions>,
+    }
+    impl Request {
+        pub fn new(req_cert: CertID, single_request_extensions: Option<Extensions>) -> Self {
+            Self {
+                req_cert,
+                single_request_extensions,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ResponderID {
+        #[rasn(tag(explicit(context, 1)))]
+        byName(Name),
+        #[rasn(tag(explicit(context, 2)))]
+        byKey(KeyHash),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ResponseBytes {
+        #[rasn(identifier = "responseType")]
+        pub response_type: ObjectIdentifier,
+        pub response: OctetString,
+    }
+    impl ResponseBytes {
+        pub fn new(response_type: ObjectIdentifier, response: OctetString) -> Self {
+            Self {
+                response_type,
+                response,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ResponseData {
+        #[rasn(tag(explicit(context, 0)), default = "response_data_version_default")]
+        pub version: Version,
+        #[rasn(identifier = "responderID")]
+        pub responder_id: ResponderID,
+        #[rasn(identifier = "producedAt")]
+        pub produced_at: GeneralizedTime,
+        pub responses: SequenceOf<SingleResponse>,
+        #[rasn(tag(explicit(context, 1)), identifier = "responseExtensions")]
+        pub response_extensions: Option<Extensions>,
+    }
+    impl ResponseData {
+        pub fn new(
+            version: Version,
+            responder_id: ResponderID,
+            produced_at: GeneralizedTime,
+            responses: SequenceOf<SingleResponse>,
+            response_extensions: Option<Extensions>,
+        ) -> Self {
+            Self {
+                version,
+                responder_id,
+                produced_at,
+                responses,
+                response_extensions,
+            }
+        }
+    }
+    fn response_data_version_default() -> Version {
+        Version(Integer::from(0))
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct RevokedInfo {
+        #[rasn(identifier = "revocationTime")]
+        pub revocation_time: GeneralizedTime,
+        #[rasn(tag(explicit(context, 0)), identifier = "revocationReason")]
+        pub revocation_reason: Option<CRLReason>,
+    }
+    impl RevokedInfo {
+        pub fn new(revocation_time: GeneralizedTime, revocation_reason: Option<CRLReason>) -> Self {
+            Self {
+                revocation_time,
+                revocation_reason,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ServiceLocator {
+        pub issuer: Name,
+        pub locator: AuthorityInfoAccessSyntax,
+    }
+    impl ServiceLocator {
+        pub fn new(issuer: Name, locator: AuthorityInfoAccessSyntax) -> Self {
+            Self { issuer, locator }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Signature {
+        #[rasn(identifier = "signatureAlgorithm")]
+        pub signature_algorithm: AlgorithmIdentifier,
+        pub signature: BitString,
+        #[rasn(tag(explicit(context, 0)))]
+        pub certs: Option<SequenceOf<Certificate>>,
+    }
+    impl Signature {
+        pub fn new(
+            signature_algorithm: AlgorithmIdentifier,
+            signature: BitString,
+            certs: Option<SequenceOf<Certificate>>,
+        ) -> Self {
+            Self {
+                signature_algorithm,
+                signature,
+                certs,
+            }
+        }
+    }
+    #[doc = "SHA-1 hash of TTP's public key"]
+    #[doc = "(excluding the tag and length fields)"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SingleResponse {
+        #[rasn(identifier = "certID")]
+        pub cert_id: CertID,
+        #[rasn(identifier = "certStatus")]
+        pub cert_status: CertStatus,
+        #[rasn(identifier = "thisUpdate")]
+        pub this_update: GeneralizedTime,
+        #[rasn(tag(explicit(context, 0)), identifier = "nextUpdate")]
+        pub next_update: Option<GeneralizedTime>,
+        #[rasn(tag(explicit(context, 1)), identifier = "singleExtensions")]
+        pub single_extensions: Option<Extensions>,
+    }
+    impl SingleResponse {
+        pub fn new(
+            cert_id: CertID,
+            cert_status: CertStatus,
+            this_update: GeneralizedTime,
+            next_update: Option<GeneralizedTime>,
+            single_extensions: Option<Extensions>,
+        ) -> Self {
+            Self {
+                cert_id,
+                cert_status,
+                this_update,
+                next_update,
+                single_extensions,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct TBSRequest {
+        #[rasn(tag(explicit(context, 0)), default = "tbsrequest_version_default")]
+        pub version: Version,
+        #[rasn(tag(explicit(context, 1)), identifier = "requestorName")]
+        pub requestor_name: Option<GeneralName>,
+        #[rasn(identifier = "requestList")]
+        pub request_list: SequenceOf<Request>,
+        #[rasn(tag(explicit(context, 2)), identifier = "requestExtensions")]
+        pub request_extensions: Option<Extensions>,
+    }
+    impl TBSRequest {
+        pub fn new(
+            version: Version,
+            requestor_name: Option<GeneralName>,
+            request_list: SequenceOf<Request>,
+            request_extensions: Option<Extensions>,
+        ) -> Self {
+            Self {
+                version,
+                requestor_name,
+                request_list,
+                request_extensions,
+            }
+        }
+    }
+    fn tbsrequest_version_default() -> Version {
+        Version(Integer::from(0))
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct UnknownInfo(pub ());
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Version(pub Integer);
+    #[doc = " Object Identifiers"]
+    pub static ID_KP_OCSPSIGNING: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_KP, &[9u32]].concat()).unwrap().to_owned());
+    pub static ID_PKIX_OCSP: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AD].concat()).unwrap().to_owned());
+    pub static ID_PKIX_OCSP_ARCHIVE_CUTOFF: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PKIX_OCSP, &[6u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PKIX_OCSP_BASIC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PKIX_OCSP, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PKIX_OCSP_CRL: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PKIX_OCSP, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PKIX_OCSP_NOCHECK: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PKIX_OCSP, &[5u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PKIX_OCSP_NONCE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PKIX_OCSP, &[2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PKIX_OCSP_RESPONSE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PKIX_OCSP, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PKIX_OCSP_SERVICE_LOCATOR: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PKIX_OCSP, &[7u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+}

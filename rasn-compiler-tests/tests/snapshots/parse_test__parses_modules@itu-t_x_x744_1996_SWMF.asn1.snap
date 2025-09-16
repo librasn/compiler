@@ -1,0 +1,447 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x744_1996_SWMF.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod swmf {
+    extern crate alloc;
+    use super::acse_1::AETitle;
+    use super::attribute_asn1_module::*;
+    use super::cmip_1::{Attribute, AttributeId, ObjectInstance};
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " supporting productions"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct AlarmEffectOnServiceParameter(pub bool);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AppliedPatches(pub SequenceOf<Patch>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AutoBackupReportInfo {
+        #[rasn(tag(context, 0), identifier = "backupResult")]
+        pub backup_result: BackupResult,
+        #[rasn(tag(context, 1), identifier = "additionalInfo")]
+        pub additional_info: Option<SetOf<ManagementExtension>>,
+    }
+    impl AutoBackupReportInfo {
+        pub fn new(
+            backup_result: BackupResult,
+            additional_info: Option<SetOf<ManagementExtension>>,
+        ) -> Self {
+            Self {
+                backup_result,
+                additional_info,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AutoRestoreReportInfo {
+        pub source: AutoRestoreSource,
+        pub success: bool,
+        #[rasn(identifier = "additionalInfo")]
+        pub additional_info: Option<SetOf<ManagementExtension>>,
+    }
+    impl AutoRestoreReportInfo {
+        pub fn new(
+            source: AutoRestoreSource,
+            success: bool,
+            additional_info: Option<SetOf<ManagementExtension>>,
+        ) -> Self {
+            Self {
+                source,
+                success,
+                additional_info,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum AutoRestoreSource {
+        localObject(ObjectInstance),
+        remoteSystem(GraphicString),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum BackupResultInLine {
+        success(BitString),
+        #[rasn(tag(context, 3), identifier = "fail-pduSizeLimitation")]
+        fail_pduSizeLimitation(()),
+        #[rasn(tag(context, 4), identifier = "fail-securityLicensing")]
+        fail_securityLicensing(()),
+        #[rasn(tag(context, 5), identifier = "fail-unknown")]
+        fail_unknown(()),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct BackupResultLocal {
+        pub destination: ObjectInstance,
+        pub success: bool,
+    }
+    impl BackupResultLocal {
+        pub fn new(destination: ObjectInstance, success: bool) -> Self {
+            Self {
+                destination,
+                success,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum BackupResultOffLineResult {
+        #[rasn(tag(context, 6))]
+        success(()),
+        #[rasn(tag(context, 7), identifier = "fail-securityLicensing")]
+        fail_securityLicensing(()),
+        #[rasn(tag(context, 8), identifier = "fail-unknown")]
+        fail_unknown(()),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct BackupResultOffLine {
+        pub destination: GraphicString,
+        pub result: BackupResultOffLineResult,
+    }
+    impl BackupResultOffLine {
+        pub fn new(destination: GraphicString, result: BackupResultOffLineResult) -> Self {
+            Self {
+                destination,
+                result,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum BackupResult {
+        #[rasn(tag(context, 0))]
+        inLine(BackupResultInLine),
+        #[rasn(tag(context, 1))]
+        local(BackupResultLocal),
+        #[rasn(tag(context, 2))]
+        offLine(BackupResultOffLine),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct Boolean(pub bool);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CheckSum(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum Date {
+        time(GeneralizedTime),
+        noSuchInformation(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum DeliverId {
+        globalValue(ObjectIdentifier),
+        localValue(Integer),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct DeliverInfo {
+        #[rasn(tag(context, 0), identifier = "deliverId")]
+        pub deliver_id: Option<DeliverId>,
+        #[rasn(identifier = "targetSoftware")]
+        pub target_software: SetOf<DistributedSoftware>,
+        #[rasn(tag(context, 1), identifier = "targetSystem")]
+        pub target_system: Option<Destination>,
+        #[rasn(tag(context, 2), identifier = "transferInfo")]
+        pub transfer_info: Option<TransferInfo>,
+        #[rasn(tag(context, 3), identifier = "additionalInfo")]
+        pub additional_info: Option<SetOf<ManagementExtension>>,
+    }
+    impl DeliverInfo {
+        pub fn new(
+            deliver_id: Option<DeliverId>,
+            target_software: SetOf<DistributedSoftware>,
+            target_system: Option<Destination>,
+            transfer_info: Option<TransferInfo>,
+            additional_info: Option<SetOf<ManagementExtension>>,
+        ) -> Self {
+            Self {
+                deliver_id,
+                target_software,
+                target_system,
+                transfer_info,
+                additional_info,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DeliverResult(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct DeliverResultInfo {
+        #[rasn(tag(context, 0), identifier = "deliverId")]
+        pub deliver_id: Option<DeliverId>,
+        #[rasn(tag(context, 1), identifier = "deliverResult")]
+        pub deliver_result: DeliverResult,
+        #[rasn(identifier = "additionalInfo")]
+        pub additional_info: Option<SetOf<ManagementExtension>>,
+    }
+    impl DeliverResultInfo {
+        pub fn new(
+            deliver_id: Option<DeliverId>,
+            deliver_result: DeliverResult,
+            additional_info: Option<SetOf<ManagementExtension>>,
+        ) -> Self {
+            Self {
+                deliver_id,
+                deliver_result,
+                additional_info,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum DistributedSoftware {
+        distibutedSoftwareId(GraphicString),
+        distributedSoftwarePointer(ObjectInstance),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ExecuteProgramInfo(pub SetOf<ManagementExtension>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ExecuteProgramReply {
+        #[rasn(identifier = "processId")]
+        pub process_id: Integer,
+        #[rasn(identifier = "processOwner")]
+        pub process_owner: Identity,
+        #[rasn(identifier = "startTime")]
+        pub start_time: GeneralizedTime,
+        #[rasn(identifier = "additionalInfo")]
+        pub additional_info: Option<SetOf<ManagementExtension>>,
+    }
+    impl ExecuteProgramReply {
+        pub fn new(
+            process_id: Integer,
+            process_owner: Identity,
+            start_time: GeneralizedTime,
+            additional_info: Option<SetOf<ManagementExtension>>,
+        ) -> Self {
+            Self {
+                process_id,
+                process_owner,
+                start_time,
+                additional_info,
+            }
+        }
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "GraphicString")]
+    pub struct AnonymousFileLocation(pub GraphicString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct FileLocation(pub SetOf<AnonymousFileLocation>);
+    #[doc = " Empty set means file is not installed"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct FileType(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct GlobalTime(pub GeneralizedTime);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Identity(pub GraphicString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum InformationSize {
+        #[rasn(tag(context, 0))]
+        numberOfBits(Integer),
+        #[rasn(tag(context, 1))]
+        numberOfBytes(Integer),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct InstallInfo {
+        #[rasn(identifier = "targetSoftware")]
+        pub target_software: SetOf<DistributedSoftware>,
+        #[rasn(identifier = "installInfo")]
+        pub install_info: SetOf<ManagementExtension>,
+    }
+    impl InstallInfo {
+        pub fn new(
+            target_software: SetOf<DistributedSoftware>,
+            install_info: SetOf<ManagementExtension>,
+        ) -> Self {
+            Self {
+                target_software,
+                install_info,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Integer(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum LastBackupDestination {
+        notBackedUp(()),
+        localObject(ObjectInstance),
+        managingSystem(AETitle),
+        remoteSystem(GraphicString),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum LastRestoreSource {
+        notRestored(()),
+        localObject(ObjectInstance),
+        managingSystem(AETitle),
+        remoteSystem(GraphicString),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NoteField(pub GraphicString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct Null(pub ());
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum Patch {
+        patchId(GraphicString),
+        patchPointer(ObjectInstance),
+    }
+    #[doc = " of Software Unit object class"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct RevertArgument {
+        #[rasn(tag(context, 0), identifier = "revertInfo")]
+        pub revert_info: RevertInfo,
+        #[rasn(tag(context, 1), identifier = "additionalInfo")]
+        pub additional_info: Option<SetOf<ManagementExtension>>,
+    }
+    impl RevertArgument {
+        pub fn new(
+            revert_info: RevertInfo,
+            additional_info: Option<SetOf<ManagementExtension>>,
+        ) -> Self {
+            Self {
+                revert_info,
+                additional_info,
+            }
+        }
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "CHOICE")]
+    pub enum AnonymousRevertInfo {
+        patchId(GraphicString),
+        patchPointer(ObjectInstance),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RevertInfo(pub SequenceOf<AnonymousRevertInfo>);
+    #[doc = " Executable Software object class"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct RevertReply {
+        #[rasn(tag(context, 0), identifier = "revertedPatches")]
+        pub reverted_patches: AppliedPatches,
+        #[rasn(tag(context, 1), identifier = "additionalInfo")]
+        pub additional_info: Option<SetOf<ManagementExtension>>,
+    }
+    impl RevertReply {
+        pub fn new(
+            reverted_patches: AppliedPatches,
+            additional_info: Option<SetOf<ManagementExtension>>,
+        ) -> Self {
+            Self {
+                reverted_patches,
+                additional_info,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "SWMF-TRANSFER")]
+    pub struct SWMFTRANSFER(pub DMITYPEIDENTIFIER);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SoftwareProcessingFailure(pub SetOf<Attribute>);
+    #[doc = " state attributes"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct TerminateValidationArgument {
+        #[rasn(tag(context, 0), identifier = "terminateValidationInfo")]
+        pub terminate_validation_info: TerminateValidationInfo,
+        #[rasn(tag(context, 1), identifier = "additionalInfo")]
+        pub additional_info: Option<SetOf<ManagementExtension>>,
+    }
+    impl TerminateValidationArgument {
+        pub fn new(
+            terminate_validation_info: TerminateValidationInfo,
+            additional_info: Option<SetOf<ManagementExtension>>,
+        ) -> Self {
+            Self {
+                terminate_validation_info,
+                additional_info,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum TerminateValidationInfo {
+        cancel = 0,
+        truncate = 1,
+    }
+    #[doc = " report the result of the partially completed audit"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum TerminateValidationReply {
+        #[rasn(tag(context, 0))]
+        noOutStandingValidation(()),
+        #[rasn(tag(context, 1))]
+        validationCancelled(()),
+        #[rasn(tag(context, 2))]
+        resultOfPartialValidation(ValidateReply),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct TransferInfo {
+        #[rasn(identifier = "transferProtocol")]
+        pub transfer_protocol: Any,
+        #[rasn(identifier = "protocolSpecificInfo")]
+        pub protocol_specific_info: Any,
+    }
+    impl TransferInfo {
+        pub fn new(transfer_protocol: Any, protocol_specific_info: Any) -> Self {
+            Self {
+                transfer_protocol,
+                protocol_specific_info,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ValidateInfo {
+        #[rasn(tag(context, 0))]
+        instanceDefaultValidationType(()),
+        #[rasn(tag(context, 1))]
+        registeredValidationType(ObjectIdentifier),
+        #[rasn(tag(context, 2))]
+        systemSpecificValidationType(SetOf<ManagementExtension>),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ValidateReply {
+        #[rasn(tag(context, 0))]
+        validationTerminated(()),
+        #[rasn(tag(context, 1))]
+        passValidation(()),
+        #[rasn(tag(context, 2))]
+        passValidationWithResult(SetOf<ManagementExtension>),
+        #[rasn(tag(context, 3))]
+        failValidation(()),
+        #[rasn(tag(context, 4))]
+        failValidationWithResult(SetOf<ManagementExtension>),
+    }
+    #[doc = " object identifier values"]
+    pub static SOFTWARE_MANAGEMENT: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 9u32, 2u32, 18u32]).to_owned());
+}

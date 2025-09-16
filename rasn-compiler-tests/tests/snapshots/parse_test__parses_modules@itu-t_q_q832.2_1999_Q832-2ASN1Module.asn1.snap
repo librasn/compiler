@@ -1,0 +1,125 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q832.2_1999_Q832-2ASN1Module.asn1
+---
+Warnings:
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod q832_2_asn1_module {
+    extern crate alloc;
+    use super::asn1_defined_types_module::NameType;
+    use super::atm_mibmod::VciValue;
+    use super::attribute_asn1_module::ProbableCause;
+    use super::cmip_1::ObjectInstance;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " other ASN.1 definitions in alphabetical order"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct Boolean(pub bool);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ConnectionIdentifierFlag(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ResetBbccNotificationResult {
+        pub resource: ObjectInstance,
+        pub result: ResetBbccResult,
+    }
+    impl ResetBbccNotificationResult {
+        pub fn new(resource: ObjectInstance, result: ResetBbccResult) -> Self {
+            Self { resource, result }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ResetBbccResult {
+        notSuccessful = 0,
+        successful = 1,
+    }
+    #[doc = " end of object identifier definitions"]
+    #[doc = " The value assignments for the"]
+    #[doc = " ProbableCause parameter of the"]
+    #[doc = " VB5.2 specific TMN communications alarm notification"]
+    #[doc = " are specified below"]
+    pub static BBCC_PROTOCOL_ERROR: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***VB52_PROBABLE_CAUSE, &[1u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub static BBCC_PROTOCOL_SYNTAX_ERROR: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***VB52_PROBABLE_CAUSE, &[2u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub static BBCC_PROTOCOL_TIME_OUT_ERROR: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***VB52_PROBABLE_CAUSE, &[3u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub static CONNECTION_IDENTIFIER_FLAG_DEFAULT: LazyLock<ConnectionIdentifierFlag> =
+        LazyLock::new(|| ConnectionIdentifierFlag(Integer::from(0)));
+    pub static Q832_2_ACTION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q832_2_INFORMATION_MODEL, &[9u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static Q832_2_ATTRIBUTE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q832_2_INFORMATION_MODEL, &[7u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " end of imports"]
+    #[doc = " start of object identifier definitions"]
+    pub static Q832_2_INFORMATION_MODEL: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::const_new(&[0u32, 0u32, 17u32, 832u32, 127u32, 2u32, 0u32]).to_owned()
+    });
+    pub static Q832_2_MANAGED_OBJECT_CLASS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q832_2_INFORMATION_MODEL, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static Q832_2_NAME_BINDING: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q832_2_INFORMATION_MODEL, &[6u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static Q832_2_NOTIFICATION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q832_2_INFORMATION_MODEL, &[10u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static Q832_2_PACKAGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q832_2_INFORMATION_MODEL, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static Q832_2_STANDARD_SPECIFIC_EXTENSION: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***Q832_2_INFORMATION_MODEL, &[0u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static VB52_PROBABLE_CAUSE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q832_2_STANDARD_SPECIFIC_EXTENSION, &[0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+}

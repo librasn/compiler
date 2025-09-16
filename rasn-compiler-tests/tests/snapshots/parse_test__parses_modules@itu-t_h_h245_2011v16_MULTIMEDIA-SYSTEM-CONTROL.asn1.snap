@@ -1,0 +1,63 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_h_h245_2011v16_MULTIMEDIA-SYSTEM-CONTROL.asn1
+---
+Error matching ASN syntax at while parsing:
+      ╭─[line 1362, column 2]
+      │
+      │ 
+ 1355 │  -- =============================================================================
+ 1356 │  -- Logical channel signalling definitions
+ 1357 │  -- =============================================================================
+ 1358 │  -- "Forward" is used to refer to transmission in the direction from the terminal
+ 1359 │  -- making the original request for a logical channel to the other terminal, and
+ 1360 │  -- "reverse" is used to refer to the opposite direction of transmission, in the
+ 1361 │  -- case of a bidirectional channel request.
+ 1362 │  OpenLogicalChannel ::= SEQUENCE { ◀▪▪▪▪▪▪▪▪▪▪ FAILED AT THIS LINE
+ 1363 │    forwardLogicalChannelNumber      LogicalChannelNumber,
+ 1364 │    forwardLogicalChannelParameters
+ 1365 │      SEQUENCE {portNumber                          INTEGER(0..65535) OPTIONAL,
+ 1366 │                dataType                            DataType,
+ 1367 │                multiplexParameters
+ 1368 │                  CHOICE {h222LogicalChannelParameters
+ 1369 │                            H222LogicalChannelParameters,
+ 1370 │                          h223LogicalChannelParameters
+ 1371 │                            H223LogicalChannelParameters,
+ 1372 │                          v76LogicalChannelParameters
+ 1373 │                            V76LogicalChannelParameters,
+ 1374 │                          ...,
+ 1375 │                          h2250LogicalChannelParameters
+ 1376 │                            H2250LogicalChannelParameters,
+ 1377 │                          none                           NULL},
+ 1378 │                -- for use with Separate Stack when multiplexParameters are not
+ 1379 │                -- required or appropriate
+ 1380 │                ...,
+ 1381 │                forwardLogicalChannelDependency     LogicalChannelNumber OPTIONAL,
+ 1382 │                -- also used to refer to the primary
+ 1383 │                -- logical channel when using video redundancy coding
+ 1384 │                replacementFor                      LogicalChannelNumber OPTIONAL
+ 1385 │    },
+ 1386 │    -- Used to specify the reverse channel for bidirectional open request
+ 1387 │    reverseLogicalChannelParameters
+ 1388 │      SEQUENCE {dataType                            DataType,
+ 1389 │                multiplexParameters
+ 1390 │                  CHOICE {-- ITU-TH.222 parameters are never present in reverse direction
+ 1391 │                          h223LogicalChannelParameters
+ 1392 │                            H223LogicalChannelParameters,
+ 1393 │                          v76LogicalChannelParameters
+ 1394 │                            V76LogicalChannelParameters,
+ 1395 │        LogicalChannelNumber OPTIONAL,
+ 1396 │                -- also used to refer to the primary logical channel when using
+ 1397 │                -- video redundancy coding
+ 1398 │                replacementFor                      LogicalChannelNumber OPTIONAL
+ 1399 │    } OPTIONAL, -- Not present for unidirectional channel request
+ 1400 │    ...,
+ 1401 │    separateStack                    NetworkAccessParameters OPTIONAL,
+ 1402 │    -- for Open responder to establish the stack
+ 1403 │    encryptionSync                   EncryptionSync OPTIONAL,
+ 1404 │    genericInformation               SEQUENCE OF GenericInformation OPTIONAL
+ 1405 │  }
+ 1407 │  -- generic information associated
+ 1408 │  -- with the message
+      │
+──────╯

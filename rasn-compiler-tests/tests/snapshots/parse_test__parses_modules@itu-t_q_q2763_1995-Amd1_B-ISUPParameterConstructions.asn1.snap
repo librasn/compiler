@@ -1,0 +1,178 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q2763_1995-Amd1_B-ISUPParameterConstructions.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod b_isupparameter_constructions {
+    extern crate alloc;
+    use super::b_isupparameter_elements::{
+        AALParametersField, AddressSignal, BinaryCode, BroadbandBearerCapabilityField,
+        BroadbandHighLayerInformationField, BroadbandLowLayerInformationField, CalledAddressSignal,
+        CalledPartySubaddressField, CallingAddressSignal, CallingPartySubaddressField, CellRateID,
+        ConnectedSubaddressField, ControlID, DelayValue, MLPPServiceDomain, NIdigit,
+        NarrowbandBearerCapabilityField, NarrowbandHighLayerCompaField,
+        NarrowbandLowLayerCompaField, OAMTrafficDescriptorField, ProgressIndicatorField,
+        RedirectionCounter, SignallingPointCode, UserToUserInformationField, VirtualChannelID,
+        VirtualPathConnectionID,
+    };
+    use super::b_isupparameter_indicators::{
+        AccessDeliveryIndicator, AddressPresentationIndicator, AutomaticCongestionLevelInd,
+        CCITTNetworkIdenPlanIndicator, CallDiversionMayOccurIndicator, CalledPartysCategoryInd,
+        CalledPartysStatusInd, CallingPartysCategoryIndicators, CellRateIdentifier,
+        ChargeIndicator, ClosedUserGroupCallIndicator, ConnectedLineIDRequestIndicator,
+        ISDNAccessIndicator, ISDNUserPartIndicator, ISDNUserPartPreferenceInd,
+        InBandInformationIndicator, IncomingHECDIndicator, IncomingHECDRequestIndicator,
+        InternalNetworkNumberIndicator, InterworkingIndicator, LookAheadForBusyIndicator,
+        MLPPUserIndicator, MoreDataIndicator, NationalInternationalCallIndicator,
+        NationalNetworkIdenPlanIndicator, NatureOfAddressIndicator, NetworkDiscardIndicator,
+        NotificationIndicators, NotificationSubscriptionOption, NumberIncompleteIndicator,
+        NumberingPlanIndicator, OriginalRedirectionReasonIndicator, OutgoingHECDIndicator,
+        OutgoingHECDRequestIndicator, PrecedenceLevelIndicator, Priority, RedirectingIndicator,
+        RedirectingReasonIndicator, RedirectionNumberRestrictionInd, RepeatIndicator,
+        ResourceIndicator, ScreeningIndicator, SimpleSegmentationIndicator, SuspendResumeIndicator,
+        Type, TypeOfNetworkIdentification, UserToUserServiceRequest, UserToUserServiceResponse,
+        VPCICheckResultIndicator,
+    };
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ATMCellRateField {
+        #[rasn(identifier = "cellRateIdentifier")]
+        pub cell_rate_identifier: CellRateIdentifier,
+        #[rasn(identifier = "cellRateID")]
+        pub cell_rate_id: CellRateID,
+    }
+    impl ATMCellRateField {
+        pub fn new(cell_rate_identifier: CellRateIdentifier, cell_rate_id: CellRateID) -> Self {
+            Self {
+                cell_rate_identifier,
+                cell_rate_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=16"))]
+    pub struct CalledPartyAddress(pub SequenceOf<CalledAddressSignal>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=16"))]
+    pub struct CallingPartyAddress(pub SequenceOf<CallingAddressSignal>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ClosedUserGroupInterlockCode {
+        #[rasn(identifier = "networkIdentity")]
+        pub network_identity: NetworkIdentity,
+        #[rasn(identifier = "binaryCode")]
+        pub binary_code: BinaryCode,
+    }
+    impl ClosedUserGroupInterlockCode {
+        pub fn new(network_identity: NetworkIdentity, binary_code: BinaryCode) -> Self {
+            Self {
+                network_identity,
+                binary_code,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=16"))]
+    pub struct ConnectedAddress(pub SequenceOf<CallingAddressSignal>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ConnectionElementID {
+        #[rasn(identifier = "virtualPathConnectionID")]
+        pub virtual_path_connection_id: VirtualPathConnectionID,
+        #[rasn(tag(context, 1), identifier = "virtualChannelID")]
+        pub virtual_channel_id: Option<VirtualChannelID>,
+    }
+    impl ConnectionElementID {
+        pub fn new(
+            virtual_path_connection_id: VirtualPathConnectionID,
+            virtual_channel_id: Option<VirtualChannelID>,
+        ) -> Self {
+            Self {
+                virtual_path_connection_id,
+                virtual_channel_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=16"))]
+    pub struct LocationAddress(pub SequenceOf<AddressSignal>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=16"))]
+    pub struct NetworkIdentification(pub SequenceOf<CalledAddressSignal>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum NetworkIdentificationPlan {
+        cCITTNetworkIdenPlanIndicator(CCITTNetworkIdenPlanIndicator),
+        nationalNetworkIdenPlanIndicator(NationalNetworkIdenPlanIndicator),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("4"))]
+    pub struct NetworkIdentity(pub SequenceOf<NIdigit>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ResourceValue {
+        controlID(ControlID),
+        connectionElementID(ConnectionElementID),
+        virtualPathConnectionID(VirtualPathConnectionID),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=16"))]
+    pub struct SubsequentAddress(pub SequenceOf<CalledAddressSignal>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum UserToUserIndicatorsParameter {
+        #[rasn(tag(context, 0))]
+        userToUserRequest(UserToUserRequest),
+        #[rasn(tag(context, 1))]
+        userToUserResponse(UserToUserResponse),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct UserToUserRequest {
+        pub service1: UserToUserServiceRequest,
+        pub service2: UserToUserServiceRequest,
+        pub service3: UserToUserServiceRequest,
+    }
+    impl UserToUserRequest {
+        pub fn new(
+            service1: UserToUserServiceRequest,
+            service2: UserToUserServiceRequest,
+            service3: UserToUserServiceRequest,
+        ) -> Self {
+            Self {
+                service1,
+                service2,
+                service3,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct UserToUserResponse {
+        pub service1: UserToUserServiceResponse,
+        pub service2: UserToUserServiceResponse,
+        pub service3: UserToUserServiceResponse,
+        #[rasn(identifier = "userToUserNetworkDiscardIndicator")]
+        pub user_to_user_network_discard_indicator: NetworkDiscardIndicator,
+    }
+    impl UserToUserResponse {
+        pub fn new(
+            service1: UserToUserServiceResponse,
+            service2: UserToUserServiceResponse,
+            service3: UserToUserServiceResponse,
+            user_to_user_network_discard_indicator: NetworkDiscardIndicator,
+        ) -> Self {
+            Self {
+                service1,
+                service2,
+                service3,
+                user_to_user_network_discard_indicator,
+            }
+        }
+    }
+}

@@ -1,0 +1,228 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q2984_1999_Prenegotiation-Operations-and-Errors.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod prenegotiation_operations_and_errors {
+    extern crate alloc;
+    use super::call_object_class_definitions::BearerId;
+    use super::cc_operations::CallSegmentId;
+    use super::remote_operations_information_objects::*;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct Accept {
+        pub accept: bool,
+        #[rasn(identifier = "alternativeNo")]
+        pub alternative_no: Option<Integer>,
+    }
+    impl Accept {
+        pub fn new(accept: bool, alternative_no: Option<Integer>) -> Self {
+            Self {
+                accept,
+                alternative_no,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct Alternative {
+        #[rasn(identifier = "alternativeProposal")]
+        pub alternative_proposal: SequenceOf<ProposedItem>,
+        #[rasn(value("1..=127"), identifier = "alternativeNo")]
+        pub alternative_no: u8,
+    }
+    impl Alternative {
+        pub fn new(alternative_proposal: SequenceOf<ProposedItem>, alternative_no: u8) -> Self {
+            Self {
+                alternative_proposal,
+                alternative_no,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum BearerEstDirection {
+        noSpecificRequirements = 0,
+        exclusiveByPrenegInvokingEntity = 1,
+        exclusiveByPrenegRemoteEntity = 2,
+        preferablyByPrenegRemoteEntity = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=3"))]
+    pub struct CallIdValue(pub OctetString);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum ConnectionErrorConnectionSubject {
+        unspecified = 0,
+        compatibleAndCurrentlyUnavailable = 1,
+        incompatible = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct ConnectionError {
+        #[rasn(identifier = "connectionSubject")]
+        pub connection_subject: ConnectionErrorConnectionSubject,
+        #[rasn(identifier = "connectionReference")]
+        pub connection_reference: ConnectionNumber,
+    }
+    impl ConnectionError {
+        pub fn new(
+            connection_subject: ConnectionErrorConnectionSubject,
+            connection_reference: ConnectionNumber,
+        ) -> Self {
+            Self {
+                connection_subject,
+                connection_reference,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("1..=127"))]
+    pub struct ConnectionNumber(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct ConnectionProposal {
+        #[rasn(identifier = "connectionSubject")]
+        pub connection_subject: ConnectionSubject,
+        #[rasn(identifier = "connectionReference")]
+        pub connection_reference: ConnectionNumber,
+        #[rasn(
+            default = "connection_proposal_connection_call_relation_default",
+            identifier = "connectionCallRelation"
+        )]
+        pub connection_call_relation: UserMandatory,
+        #[rasn(identifier = "bearerId")]
+        pub bearer_id: Option<BearerId>,
+    }
+    impl ConnectionProposal {
+        pub fn new(
+            connection_subject: ConnectionSubject,
+            connection_reference: ConnectionNumber,
+            connection_call_relation: UserMandatory,
+            bearer_id: Option<BearerId>,
+        ) -> Self {
+            Self {
+                connection_subject,
+                connection_reference,
+                connection_call_relation,
+                bearer_id,
+            }
+        }
+    }
+    fn connection_proposal_connection_call_relation_default() -> UserMandatory {
+        UserMandatory(false)
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum ConnectionSubject {
+        connectionProposal(Proposal),
+        connectionAccept(Accept),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("4..=4095"))]
+    pub struct InformationElement(pub OctetString);
+    #[doc = " alternativeNo reflects the priority of the alternatives"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MostPreferredProposal(pub SequenceOf<ProposedItem>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum PrenegotiateErrorItemizedParamCallAssociation {
+        callSegmentId(CallSegmentId),
+        callId(CallIdValue),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct PrenegotiateErrorItemizedParam {
+        #[rasn(identifier = "callAssociation")]
+        pub call_association: PrenegotiateErrorItemizedParamCallAssociation,
+        #[rasn(identifier = "listOfConnectionErrors")]
+        pub list_of_connection_errors: SequenceOf<ConnectionError>,
+    }
+    impl PrenegotiateErrorItemizedParam {
+        pub fn new(
+            call_association: PrenegotiateErrorItemizedParamCallAssociation,
+            list_of_connection_errors: SequenceOf<ConnectionError>,
+        ) -> Self {
+            Self {
+                call_association,
+                list_of_connection_errors,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PrenegotiationProposal(pub SequenceOf<ConnectionProposal>);
+    #[doc = " TRUE  if proposal is accepted and therefore no counterproposal necessary"]
+    #[doc = " FALSE if proposal is rejected and no counterproposal is possible for UserOptional Connection"]
+    #[doc = " alternativeNo specifies the accepted alternative"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct Proposal {
+        #[rasn(identifier = "bearerEstDirection")]
+        pub bearer_est_direction: BearerEstDirection,
+        #[rasn(identifier = "mostPreferredProposal")]
+        pub most_preferred_proposal: MostPreferredProposal,
+        pub alternatives: Option<SequenceOf<Alternative>>,
+    }
+    impl Proposal {
+        pub fn new(
+            bearer_est_direction: BearerEstDirection,
+            most_preferred_proposal: MostPreferredProposal,
+            alternatives: Option<SequenceOf<Alternative>>,
+        ) -> Self {
+            Self {
+                bearer_est_direction,
+                most_preferred_proposal,
+                alternatives,
+            }
+        }
+    }
+    #[doc = " specifies one connection with minimum proposal"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct ProposedItem {
+        pub item: InformationElement,
+        #[rasn(identifier = "modificationPossible")]
+        pub modification_possible: Option<bool>,
+    }
+    impl ProposedItem {
+        pub fn new(item: InformationElement, modification_possible: Option<bool>) -> Self {
+            Self {
+                item,
+                modification_possible,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct UserMandatory(pub bool);
+    pub static PRE_NEGOTIATION_OPERATIONS_DEFINITIONS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&[0u32, 0u32], &***Q, &[2984u32, 2u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    #[doc = " embedded DSS2 Information Elements"]
+    #[doc = " information elements are listed in 9.2.1.3"]
+    #[doc = " maximum value depends on information element"]
+    pub static PRE_NEGOTIATION_OPERATIONS_ERRORS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&[0u32, 0u32], &***Q, &[2984u32, 3u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+}

@@ -1,0 +1,122 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_m_m3100_1995_M3100ASN1TypeModule4.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod m3100_asn1_type_module4 {
+    extern crate alloc;
+    use super::attribute_asn1_module::EventTime;
+    use super::attribute_asn1_module::{
+        AdditionalInformation, AlarmStatus, PerceivedSeverity, ProbableCause,
+    };
+    use super::cmip_1::ObjectInstance;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct AlarmingResumed(pub bool);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ArcAffectedObjectList(pub SetOf<ObjectInstance>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ArcAlarmDetail {
+        pub problem: ProbableCause,
+        #[rasn(identifier = "alarmStatus")]
+        pub alarm_status: AlarmStatus,
+        #[rasn(identifier = "perceivedSeverity")]
+        pub perceived_severity: Option<PerceivedSeverity>,
+        #[rasn(identifier = "eventTime")]
+        pub event_time: Option<EventTime>,
+    }
+    impl ArcAlarmDetail {
+        pub fn new(
+            problem: ProbableCause,
+            alarm_status: AlarmStatus,
+            perceived_severity: Option<PerceivedSeverity>,
+            event_time: Option<EventTime>,
+        ) -> Self {
+            Self {
+                problem,
+                alarm_status,
+                perceived_severity,
+                event_time,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ArcAlarmDetailSet(pub SetOf<ArcAlarmDetail>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ArcControlRequest {
+        #[rasn(default = "arc_control_request_time_default")]
+        pub time: ArcTime,
+        #[rasn(identifier = "newState")]
+        pub new_state: ArcState,
+        #[rasn(identifier = "additionalInfo")]
+        pub additional_info: Option<AdditionalInformation>,
+    }
+    impl ArcControlRequest {
+        pub fn new(
+            time: ArcTime,
+            new_state: ArcState,
+            additional_info: Option<AdditionalInformation>,
+        ) -> Self {
+            Self {
+                time,
+                new_state,
+                additional_info,
+            }
+        }
+    }
+    fn arc_control_request_time_default() -> ArcTime {
+        ArcTime::noAdjustment(())
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ArcDefaultNALMCDInterval(pub ArcTime);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ArcDefaultNALMTIInterval(pub ArcTime);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=5940"))]
+    pub struct ArcInterval(pub u16);
+    #[doc = " minutes (max of 99 hours)"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ArcProbableCauseList(pub SetOf<ProbableCause>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ArcQIStatus {
+        notApplicable = 0,
+        nalmNotReported = 1,
+        nalmCountDown = 2,
+    }
+    #[doc = " empty set means all object probable causes"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ArcState {
+        alm = 0,
+        nalm = 1,
+        nalmQualifiedInhibit = 2,
+        nalmTimedInhibit = 4,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ArcTime {
+        #[rasn(tag(context, 0))]
+        noAdjustment(()),
+        #[rasn(tag(context, 1))]
+        time(ArcInterval),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NotSupportedProbableCause(pub SetOf<ProbableCause>);
+}

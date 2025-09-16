@@ -1,0 +1,44 @@
+---
+source: rasn-compiler-tests/tests/structured_types.rs
+description: "\n    Ticket ::= SEQUENCE {\n        ages\t\tSEQUENCE OF INTEGER (1..5),\t \n        passenger\tPassenger OPTIONAL\n    }\n\n    Passenger ::= ENUMERATED {\n        adult\t(0),\n        youth\t(1),\n        ...\n    }\n    "
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod test_module {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum Passenger {
+        adult = 0,
+        youth = 1,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "INTEGER", value("1..=5"))]
+    pub struct AnonymousTicketAges(pub u8);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TicketAges(pub SequenceOf<AnonymousTicketAges>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct Ticket {
+        pub ages: TicketAges,
+        pub passenger: Option<Passenger>,
+    }
+    impl Ticket {
+        pub fn new(ages: TicketAges, passenger: Option<Passenger>) -> Self {
+            Self { ages, passenger }
+        }
+    }
+}

@@ -1,0 +1,103 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q824.3_1995_CAISDNOUFModule.asn1
+---
+Warnings:
+LinkerError in ASN grammar: Failed to link value with 'Boolean'
+LinkerError in ASN grammar: Failed to link value with 'PointerOrNull'
+LinkerError in ASN grammar: Failed to link value with 'PointerOrNull'
+LinkerError in ASN grammar: Failed to link value with 'Boolean'
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod caisdnoufmodule {
+    extern crate alloc;
+    use super::asn1_defined_types_module::{
+        AlarmStatus, Boolean, NameType, ObjectList, Pointer, PointerOrNull,
+    };
+    use super::attribute_asn1_module::OperationalState;
+    use super::cacommon_module::DirectoryNumber;
+    use super::caisdnssmodule::{
+        CUGBarring, CUGDataNetworkIdentification, CUGIndex, CUGInterlockCode, InterCUGaccess,
+        PreferredCUGIndex,
+    };
+    use super::cmip_1::{ObjectClass, ObjectInstance};
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = "  TID has values between 00 and 62 inclusive"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SPID {
+        pub tspid: TSPID,
+        pub tid: TID,
+    }
+    impl SPID {
+        pub fn new(tspid: TSPID, tid: TID) -> Self {
+            Self { tspid, tid }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum TEIOrSPID {
+        #[rasn(tag(context, 0))]
+        tei(TerminalEndpointId),
+        #[rasn(tag(context, 1))]
+        spid(SPID),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("2"))]
+    pub struct TID(pub NumericString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=18"))]
+    pub struct TSPID(pub Ia5String);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=126"))]
+    pub struct TerminalEndpointId(pub u8);
+    pub static C_AISDNOUFACTION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q824_3_INFORMATION_MODEL, &[9u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static C_AISDNOUFATTRIBUTE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q824_3_INFORMATION_MODEL, &[7u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static C_AISDNOUFNAME_BINDING: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q824_3_INFORMATION_MODEL, &[6u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static C_AISDNOUFOBJECT_CLASS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q824_3_INFORMATION_MODEL, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static C_AISDNOUFPACKAGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q824_3_INFORMATION_MODEL, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub const EMPTY_SET: () = ();
+    #[doc = "  default value definitions"]
+    pub const R_FALSE: Boolean = Boolean(Boolean(false));
+    pub const LOCAL_CHANNEL_PTR_DEFAULT: PointerOrNull =
+        PointerOrNull(PointerOrNull(PointerOrNull::null(())));
+    pub static MINUS_ONE: LazyLock<Integer> = LazyLock::new(|| Integer::from(-1));
+    pub const NULL: () = ();
+    pub static ONE: LazyLock<Integer> = LazyLock::new(|| Integer::from(1));
+    pub static Q824_3_INFORMATION_MODEL: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::const_new(&[0u32, 0u32, 17u32, 824u32, 127u32, 3u32, 0u32]).to_owned()
+    });
+    pub const REMOTE_CHANNEL_PTR_DEFAULT: PointerOrNull =
+        PointerOrNull(PointerOrNull(PointerOrNull::null(())));
+    pub const R_TRUE: Boolean = Boolean(Boolean(true));
+    pub static ZERO: LazyLock<Integer> = LazyLock::new(|| Integer::from(0));
+}

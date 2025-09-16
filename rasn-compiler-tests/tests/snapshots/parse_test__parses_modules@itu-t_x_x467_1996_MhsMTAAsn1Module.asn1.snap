@@ -1,0 +1,331 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x467_1996_MhsMTAAsn1Module.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod mhs_mtaasn1_module {
+    extern crate alloc;
+    use super::authentication_framework::AlgorithmIdentifier;
+    use super::information_framework::{DistinguishedName, Name};
+    use super::mtsabstract_service::{
+        ContentIntegrityCheck, ContentLength, ContentType, Credentials, EncodedInformationTypes,
+        ExplicitConversion, GlobalDomainIdentifier, MTAName, MTSIdentifier,
+        MessageOriginAuthenticationCheck, MessageToken, ORAddress, ORName, Operations,
+        OriginatorCertificate, PSAPAddress, Password, Priority, ProbeOriginAuthenticationCheck,
+        ProofOfDelivery, ProofOfDeliveryRequest, RecipientCertificate,
+        ReportOriginAuthenticationCheck, ReportingMTACertificate, RequestedDeliveryMethod,
+        Restriction, SecurityContext, SecurityLabel, StrongCredentials, Time,
+    };
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = "\tSupporting productions"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ApplicationContext(pub ObjectIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ApplicationContexts(pub SetOf<ApplicationContext>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AssociationInitiator(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct BilateralDeferral(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct Colocated(pub bool);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ContentTypes(pub SetOf<ContentType>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DurationInSeconds(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum EMailAccessPointAddress {
+        #[rasn(tag(context, 0))]
+        psap(PSAPAddress),
+        #[rasn(tag(context, 1))]
+        genericAddress(GenericAddress),
+    }
+    #[doc = "\tThe genericAddress encoding may be used for non-standardised access point addresses. The description of"]
+    #[doc = "\tthe use of this generic type is beyond the scope of this Recommendation | International Standard."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct EMailContentType(pub ContentType);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum EMailConversionType {
+        #[rasn(tag(context, 0))]
+        x400Conversion(ExplicitConversion),
+        #[rasn(tag(context, 1))]
+        genericConversion(GenericConversion),
+    }
+    #[doc = "\tThe genericConversion type encoding may be used for the description of non-standardised conversion"]
+    #[doc = "\ttypes. The description of the use of this generic type is beyond the scope of this"]
+    #[doc = "\tRecommendation | International Standard."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum EMailCredentials {
+        simple(EMailSimpleCredentials),
+        strong(EMailStrongCredentials),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum EMailDirectoryName {
+        #[rasn(tag(context, 0))]
+        x500DirectoryName(Name),
+        #[rasn(tag(context, 1))]
+        genericNames(SetOf<GenericName>),
+    }
+    #[doc = "\tThe genericNames encoding may be used for the description of non X.500 directory access. The description of"]
+    #[doc = "\tthe use of this generic type is beyond the scope of this Recommendation | International Standard."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum EMailEits {
+        #[rasn(tag(context, 0))]
+        x400EIT(EncodedInformationTypes),
+        #[rasn(tag(context, 1))]
+        genericEITs(SequenceOf<ObjectIdentifier>),
+    }
+    #[doc = "\tThe genericEITs encoding may be used for the description of non-standardised EITs. The description of"]
+    #[doc = "\tthe use of this generic type is beyond the scope of this Recommendation | International Standard."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum EMailGlobalDomainId {
+        #[rasn(tag(context, 0))]
+        x400GlobalDomainId(GlobalDomainIdentifier),
+        #[rasn(tag(context, 1))]
+        genericGlobalDomainId(GenericName),
+    }
+    #[doc = "\tThe genericGlobalDomainId encoding may be used for the description of non-standardised global domain"]
+    #[doc = "\tidentifiers. The description of the use of this generic type is beyond the scope of this"]
+    #[doc = "\tRecommendation | International Standard."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum EMailMpduIdentifier {
+        #[rasn(tag(context, 0))]
+        x400MTSIdentifier(MTSIdentifier),
+        #[rasn(tag(context, 1))]
+        genericMpduIdentifier(GenericMessageId),
+    }
+    #[doc = "\tThe genericMpduIdentifier encoding may be used for the description of non-standardised MPDU identifier."]
+    #[doc = "\tThe description of the use of this generic type is beyond the scope of this"]
+    #[doc = "\tRecommendation | International Standard."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum EMailMtaName {
+        #[rasn(tag(context, 0))]
+        x400MTAName(MTAName),
+        #[rasn(tag(context, 1))]
+        genericMTAName(GenericName),
+    }
+    #[doc = "\tThe genericMTAName encoding may be used for the description of non-standardised MTA names."]
+    #[doc = "\tThe description of the use of this generic type is beyond the scope of this"]
+    #[doc = "\tRecommendation | International Standard."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum EMailMtsUserName {
+        #[rasn(tag(context, 0))]
+        x400ORName(ORName),
+        #[rasn(tag(context, 1))]
+        genericName(GenericName),
+    }
+    #[doc = "\tThe genericName encoding may be used for the description of non-standardised MTs User name. The description"]
+    #[doc = "\tof the use of this generic type is beyond the scope of this Recommendation | International Standard."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct EMailMtsUserNames(pub SetOf<EMailMtsUserName>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum EMailRedirectionsAddress {
+        none(()),
+        #[rasn(identifier = "email-addr")]
+        email_addr(EMailMtsUserName),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct EMailRedirections {
+        pub label: Label,
+        pub address: EMailRedirectionsAddress,
+    }
+    impl EMailRedirections {
+        pub fn new(label: Label, address: EMailRedirectionsAddress) -> Self {
+            Self { label, address }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct EMailSimpleCredentials(pub Password);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum EMailStrongCredentials {
+        #[rasn(tag(context, 0))]
+        x400StrongCredentials(StrongCredentials),
+        #[rasn(tag(context, 1))]
+        genericStrongCredentials(GenericStrongCredentials),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct EmailContentTypes(pub SetOf<EMailContentType>);
+    #[doc = "\tThe genericStrongCredentials encoding may be used for the description of non-standardised credentials."]
+    #[doc = "\tThe description of the use of this generic type is beyond the scope of this"]
+    #[doc = "\tRecommendation | International Standard."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct GenericAddress {
+        #[rasn(identifier = "displayFormat")]
+        pub display_format: Ia5String,
+        #[rasn(identifier = "typedFormat")]
+        pub typed_format: Any,
+    }
+    impl GenericAddress {
+        pub fn new(display_format: Ia5String, typed_format: Any) -> Self {
+            Self {
+                display_format,
+                typed_format,
+            }
+        }
+    }
+    #[doc = "\tThe allocation of the Object Identifier values related to the EXTERNAL type is beyond the scope of this"]
+    #[doc = "\t Recommendation | International Standard."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct GenericConversion(pub ObjectIdentifier);
+    #[doc = "\tThe allocation of the Object Identifier values related to the EXTERNAL type is beyond the scope of this"]
+    #[doc = "\tRecommendation | International Standard."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct GenericMessageId {
+        #[rasn(identifier = "displayFormat")]
+        pub display_format: Ia5String,
+        #[rasn(identifier = "typedFormat")]
+        pub typed_format: Any,
+    }
+    impl GenericMessageId {
+        pub fn new(display_format: Ia5String, typed_format: Any) -> Self {
+            Self {
+                display_format,
+                typed_format,
+            }
+        }
+    }
+    #[doc = "\tThe allocation of the Object Identifier values related to the EXTERNAL type is beyond the scope of this"]
+    #[doc = "\tRecommendation | International Standard."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct GenericName {
+        #[rasn(identifier = "displayFormat")]
+        pub display_format: Ia5String,
+        #[rasn(identifier = "typedFormat")]
+        pub typed_format: Any,
+    }
+    impl GenericName {
+        pub fn new(display_format: Ia5String, typed_format: Any) -> Self {
+            Self {
+                display_format,
+                typed_format,
+            }
+        }
+    }
+    #[doc = "\tThe allocation of the Object Identifier values related to the EXTERNAL type is beyond the scope of this"]
+    #[doc = "\tRecommendation | International Standard."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct GenericStrongCredentials(pub Any);
+    #[doc = "\tThe allocation of the Object Identifier values related to the EXTERNAL type is beyond the scope of this"]
+    #[doc = "\tRecommendation | International Standard."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct HeldByManager(pub bool);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct InformationLossSuspected(pub bool);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Label(pub Integer);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousMprInfo {
+        #[rasn(identifier = "mprId")]
+        pub mpr_id: EMailMpduIdentifier,
+        #[rasn(identifier = "arrivalTime")]
+        pub arrival_time: Time,
+        #[rasn(identifier = "processingState")]
+        pub processing_state: ProcessingState,
+    }
+    impl AnonymousMprInfo {
+        pub fn new(
+            mpr_id: EMailMpduIdentifier,
+            arrival_time: Time,
+            processing_state: ProcessingState,
+        ) -> Self {
+            Self {
+                mpr_id,
+                arrival_time,
+                processing_state,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MprInfo(pub SetOf<AnonymousMprInfo>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MtsUserType(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NumberOfAssociations(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ObjectIdOrDN {
+        distinguishedName(DistinguishedName),
+        oid(ObjectIdentifier),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=100"))]
+    pub struct Percent(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PriorityList(pub SetOf<Priority>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ProcessingState(pub Integer);
+    #[doc = "\tA processing state set to 'idle' indicates that the MPR is waiting to be processed. A processing state set to"]
+    #[doc = "\t'processed' indicates that the MPR was successfully processed. A processing state set to 'rejected' indicates that"]
+    #[doc = "\tthe MTS was not able to deliver the message or the report or affirm the probe. A processing state set to"]
+    #[doc = "\t'name-resolution', 'redirection', 'deferred-delivery', 'conversion' or 'securityContextCheck' indicates that the MPR"]
+    #[doc = "\tis currently performing the corresponding function on the MPR. The value 'unknownFunction' indicates that"]
+    #[doc = "\tthe MTA is currently performing a function on the MPR that is not name resolution, dl expansion, redirection,"]
+    #[doc = "\tdeferred-delivery, conversion or security Context Check."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ProcessingSummary(pub BitString);
+    #[doc = "\tat most one of idle, processed, and rejected bits shall be 'one':"]
+    #[doc = "\t-\tidle bit 'one' means the MPR is waiting to be processed;"]
+    #[doc = "\t-\tprocessed bit 'one' means the MPR was successfully processed;"]
+    #[doc = "\t-\trejected bit 'one' means that the MTS was not able to deliver the message or the report or affirm the probe;"]
+    #[doc = "\t-\tidle, processed, and rejected bits 'zero' mean the MPR is currently under process."]
+    #[doc = "\tA 'name-resolution', 'redirection', 'deferred-delivery', 'conversion' or 'securityContextCheck' bit one means the"]
+    #[doc = "\tcorresponding function was successfully performed on the MPR. If idle bit is set to 'one' (MPR idle),"]
+    #[doc = "\tdl-expansion, redirection, deferred-delivery and conversion bits shall be set to 'zero'."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Restrictions(pub SetOf<Restriction>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SecurityLabels(pub SetOf<SecurityLabel>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SizeInOctets(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TypeOfMpr(pub Integer);
+}

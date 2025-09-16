@@ -1,0 +1,387 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x952_1997_TraderDefinitions.asn1
+---
+Warnings:
+LinkerError in ASN grammar: Failed to resolve supertype DirectoryString of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype DirectoryString of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype DirectoryString of parameterized implementation.
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod trader_definitions {
+    extern crate alloc;
+    use super::authentication_framework::USER_PASSWORD;
+    use super::information_framework::*;
+    use super::selected_attribute_types::{
+        DirectoryString, BOOLEAN_MATCH, CASE_EXACT_MATCH, CASE_IGNORE_MATCH,
+        CASE_IGNORE_SUBSTRINGS_MATCH, COMMON_NAME, DESCRIPTION, DISTINGUISHED_NAME, INTEGER_MATCH,
+        OCTET_STRING_MATCH, PRESENTATION_ADDRESS,
+    };
+    use super::useful_definitions::{
+        AUTHENTICATION_FRAMEWORK, INFORMATION_FRAMEWORK, SELECTED_ATTRIBUTE_TYPES,
+    };
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct DynamicPropValue {
+        #[rasn(identifier = "propertyType")]
+        pub property_type: ObjectIdentifier,
+        #[rasn(identifier = "dynamicPropEvalIf")]
+        pub dynamic_prop_eval_if: DistinguishedName,
+        #[rasn(value("0.."), identifier = "extraInfo")]
+        pub extra_info: DirectoryString,
+    }
+    impl DynamicPropValue {
+        pub fn new(
+            property_type: ObjectIdentifier,
+            dynamic_prop_eval_if: DistinguishedName,
+            extra_info: DirectoryString,
+        ) -> Self {
+            Self {
+                property_type,
+                dynamic_prop_eval_if,
+                extra_info,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum FollowOption {
+        localOnly = 0,
+        ifNoLocal = 1,
+        always = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct InterfaceId(pub DirectoryString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct InterfaceTypeName(pub ObjectIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum PolicySpecification {
+        #[rasn(value("0.."), tag(context, 0))]
+        stringRule(DirectoryString),
+        #[rasn(tag(context, 1))]
+        policyObjectId(DistinguishedName),
+    }
+    #[doc = " Object Identifier Assignments"]
+    pub static ID_TRADER: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 100u32]).to_owned());
+    pub static ID_TRADER_AT: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_TRADER, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_TRADER_AT_COMMON_NAME: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_TRADER_AT, &[6u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_TRADER_AT_CONSTRAINT_RECIPE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_TRADER_AT, &[53u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_TRADER_AT_DEF_FOLLOW_POLICY: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_TRADER_AT, &[14u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_TRADER_AT_DEF_HOP_COUNT: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_TRADER_AT, &[12u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_TRADER_AT_DEF_MATCH_CARD: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_TRADER_AT, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_TRADER_AT_DEF_PASS_ON_FOLLOW_RULE: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_TRADER_AT, &[45u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_TRADER_AT_DEF_RETURN_CARD: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_TRADER_AT, &[10u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_TRADER_AT_DEF_SEARCH_CARD: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_TRADER_AT, &[2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_TRADER_AT_DSA_NAME: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_TRADER_AT, &[7u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_TRADER_AT_DYNAMIC_PROPS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_TRADER_AT, &[41u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_TRADER_AT_HAS_DYNAMIC_PROPERTIES: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_TRADER_AT, &[35u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_TRADER_AT_HAS_MODIFIABLE_PROPERTIES: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_TRADER_AT, &[40u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_TRADER_AT_IF_MATCH_ALL: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_TRADER_AT, &[55u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_TRADER_AT_INTERFACE_REFERENCE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_TRADER_AT, &[60u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_TRADER_AT_INTERFACE_TYPE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_TRADER_AT, &[61u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_TRADER_AT_LIMITING_FOLLOW_RULE: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_TRADER_AT, &[50u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_TRADER_AT_LINK_ID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_TRADER_AT, &[42u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_TRADER_AT_LINK_NAME: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_TRADER_AT, &[43u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_TRADER_AT_MAX_FOLLOW_POLICY: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_TRADER_AT, &[16u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_TRADER_AT_MAX_HOP_COUNT: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_TRADER_AT, &[13u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_TRADER_AT_MAX_LINK_FOLLOW_POLICY: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_TRADER_AT, &[15u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_TRADER_AT_MAX_LIST: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_TRADER_AT, &[23u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_TRADER_AT_MAX_MATCH_CARD: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_TRADER_AT, &[5u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_TRADER_AT_MAX_RETURN_CARD: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_TRADER_AT, &[11u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_TRADER_AT_MAX_SEARCH_CARD: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_TRADER_AT, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_TRADER_AT_OFFER_ACCEPTANCE_CONSTRAINT: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_TRADER_AT, &[31u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_TRADER_AT_PROXY_LOOK_UP_INTERFACE_ID: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_TRADER_AT, &[52u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_TRADER_AT_PROXY_OFFER_ID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_TRADER_AT, &[51u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_TRADER_AT_REQUEST_ID_STEM: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_TRADER_AT, &[24u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_TRADER_AT_S_OFFER_ID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_TRADER_AT, &[32u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_TRADER_AT_SEARCH_CONSTRAINT: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_TRADER_AT, &[30u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_TRADER_AT_SERVICE_INTERFACE_ID: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_TRADER_AT, &[34u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_TRADER_AT_SERVICE_TYPE_ID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_TRADER_AT, &[33u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_TRADER_AT_SUPPORTS_DYNAMIC_PROPERTIES: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_TRADER_AT, &[21u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_TRADER_AT_SUPPORTS_MODIFIABLE_PROPERTIES: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_TRADER_AT, &[20u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_TRADER_AT_SUPPORTS_PROXY_OFFERS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_TRADER_AT, &[22u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_TRADER_AT_TARGET_TRADER_INTERFACE_ID: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_TRADER_AT, &[44u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_TRADER_AT_TRADER_INTERFACE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_TRADER_AT, &[0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_TRADER_AT_TYPE_MANAGEMENT_CONSTRAINT: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_TRADER_AT, &[25u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_TRADER_AT_TYPE_REPOS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_TRADER_AT, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_TRADER_MR: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_TRADER, &[13u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_TRADER_MR_DYNAMIC_PROP_VALUE_MATCH: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_TRADER_MR, &[2u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_TRADER_MR_POLICY_SPECIFICATION_MATCH: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_TRADER_MR, &[1u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_TRADER_NF: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_TRADER, &[15u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_TRADER_NF_PROXY_OFFER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_TRADER_NF, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_TRADER_NF_SERVICE_OFFER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_TRADER_NF, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_TRADER_NF_TRADER_LINK: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_TRADER_NF, &[2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_TRADER_NF_TRADER_POLICY: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_TRADER_NF, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_TRADER_OC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_TRADER, &[6u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_TRADER_OC_INTERFACE_ENTRY: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_TRADER_OC, &[5u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_TRADER_OC_PROXY_OFFER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_TRADER_OC, &[2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_TRADER_OC_SERVICE_OFFER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_TRADER_OC, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_TRADER_OC_TRADER_ENTRY: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_TRADER_OC, &[0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_TRADER_OC_TRADER_LINK: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_TRADER_OC, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_TRADER_OC_TRADER_POLICY: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_TRADER_OC, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " Upperbounds"]
+    pub static UB_COMMON_NAME: LazyLock<Integer> = LazyLock::new(|| Integer::from(64));
+    pub static UB_CONSTRAINT_RECIPE: LazyLock<Integer> = LazyLock::new(|| Integer::from(1024));
+    pub static UB_DYNAMIC_VALUE_EXTRA_INFO: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(1024));
+    pub static UB_INTERFACE_ID: LazyLock<Integer> = LazyLock::new(|| Integer::from(1024));
+    pub static UB_LINK_ID: LazyLock<Integer> = LazyLock::new(|| Integer::from(64));
+    pub static UB_LINK_NAME: LazyLock<Integer> = LazyLock::new(|| Integer::from(64));
+    pub static UB_POLICY_STRING_RULE: LazyLock<Integer> = LazyLock::new(|| Integer::from(1024));
+    pub static UB_PROXY_OFFER_ID: LazyLock<Integer> = LazyLock::new(|| Integer::from(64));
+    pub static UB_REQUEST_ID_STEM: LazyLock<Integer> = LazyLock::new(|| Integer::from(1024));
+    pub static UB_S_OFFER_ID: LazyLock<Integer> = LazyLock::new(|| Integer::from(64));
+}

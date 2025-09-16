@@ -1,0 +1,170 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/iso_10589_2002_CommonMgt.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod common_mgt {
+    extern crate alloc;
+    use super::cmip_1::BaseManagedObjectId;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " other definitions"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ActionInfo(pub SetOf<Parameter>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ActionReply {
+        #[rasn(identifier = "responseCode")]
+        pub response_code: ObjectIdentifier,
+        #[rasn(identifier = "responseArgs")]
+        pub response_args: Option<SetOf<Parameter>>,
+    }
+    impl ActionReply {
+        pub fn new(
+            response_code: ObjectIdentifier,
+            response_args: Option<SetOf<Parameter>>,
+        ) -> Self {
+            Self {
+                response_code,
+                response_args,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CommunicationsEntityId(pub GraphicString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct CommunicationsInformation {
+        #[rasn(identifier = "informationType")]
+        pub information_type: InformationType,
+        #[rasn(identifier = "informationData")]
+        pub information_data: Option<InformationData>,
+    }
+    impl CommunicationsInformation {
+        pub fn new(
+            information_type: InformationType,
+            information_data: Option<InformationData>,
+        ) -> Self {
+            Self {
+                information_type,
+                information_data,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ConnectionId(pub GraphicString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct InformationData(pub SetOf<Parameter>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct InformationType(pub ObjectIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=18446744073709551615"))]
+    pub struct NonWrappingCounter(pub u64);
+    #[doc = " (0..2^64-1)"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NotificationInfo(pub SetOf<Parameter>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Parameter {
+        #[rasn(identifier = "paramId")]
+        pub param_id: ObjectIdentifier,
+        #[rasn(identifier = "paramInfo")]
+        pub param_info: Any,
+    }
+    impl Parameter {
+        pub fn new(param_id: ObjectIdentifier, param_info: Any) -> Self {
+            Self {
+                param_id,
+                param_info,
+            }
+        }
+    }
+    #[doc = " dynamically extensible object set"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ProtocolMachineId(pub GraphicString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ProviderObjects(pub SetOf<BaseManagedObjectId>);
+    #[doc = " value assignments for specific action response codes are registered"]
+    #[doc = " under this OID."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ResponseCode(pub ObjectIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Sap1Address(pub Integer);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "OCTET_STRING")]
+    pub struct AnonymousSap2Addresses(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Sap2Addresses(pub SetOf<AnonymousSap2Addresses>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SapId(pub GraphicString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SubsystemId(pub GraphicString);
+    #[doc = "Timer ::= SEQUENCE {"]
+    #[doc = "exponent [1] INTEGER(-62..63),"]
+    #[doc = "mantissa [2] INTEGER(0..65535)}"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct UserObjects(pub SetOf<BaseManagedObjectId>);
+    pub static ACOI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***CMOI, &[9u32]].concat()).unwrap().to_owned());
+    pub static AGOI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***CMOI, &[8u32]].concat()).unwrap().to_owned());
+    pub static AOI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***CMOI, &[7u32]].concat()).unwrap().to_owned());
+    #[doc = " \"infrastructure\" object identifier definitions"]
+    pub static CMOI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 13u32, 0u32, 0u32]).to_owned());
+    pub const COUNTER_INITIAL_VALUE: NonWrappingCounter = NonWrappingCounter(0);
+    pub static FAILURE_RESPONSE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***RESPONSE_CODE, &[1001u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static FUPOI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***CMOI, &[1u32]].concat()).unwrap().to_owned());
+    pub static INFORMATION_EVENT_REPORTS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***FUPOI, &[1000u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static MOI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***CMOI, &[3u32]].concat()).unwrap().to_owned());
+    pub static NOI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***CMOI, &[10u32]].concat()).unwrap().to_owned());
+    pub static POI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***CMOI, &[4u32]].concat()).unwrap().to_owned());
+    pub static PROI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***CMOI, &[5u32]].concat()).unwrap().to_owned());
+    #[doc = " only the localDistinguishedName form of ObjectInstance is used"]
+    pub static RESPONSE_CODE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***PROI, &[1001u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SSEOI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***CMOI, &[0u32]].concat()).unwrap().to_owned());
+    pub static SUCCESS_RESPONSE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***RESPONSE_CODE, &[1002u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+}

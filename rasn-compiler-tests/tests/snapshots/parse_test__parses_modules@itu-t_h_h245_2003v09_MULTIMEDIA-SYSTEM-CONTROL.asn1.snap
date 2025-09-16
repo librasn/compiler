@@ -1,0 +1,44 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_h_h245_2003v09_MULTIMEDIA-SYSTEM-CONTROL.asn1
+---
+Error matching ASN syntax at while parsing:
+     ╭─[line 330, column 2]
+     │
+     │ 
+ 330 │  H223Capability ::= SEQUENCE { ◀▪▪▪▪▪▪▪▪▪▪ FAILED AT THIS LINE
+ 331 │    transportWithI-frames                 BOOLEAN, -- I-frame transport of H.245
+ 332 │    videoWithAL1                          BOOLEAN,
+ 333 │    videoWithAL2                          BOOLEAN,
+ 334 │    videoWithAL3                          BOOLEAN,
+ 335 │    audioWithAL1                          BOOLEAN,
+ 336 │    audioWithAL2                          BOOLEAN,
+ 337 │    audioWithAL3                          BOOLE>(0..65535), -- units octets
+ 338 │    maximumAl3SDUSize                     INTEGER(0..65535), -- units octets
+ 339 │    maximumDelayJitter                    INTEGER(0..1023), -- units milliseconds
+ 340 │    h223MultiplexTableCapability
+ 341 │      CHOICE {basic     NULL,
+ 342 │              enhanced
+ 343 │                SEQUENCE {maximumNestingDepth        INTEGER(1..15),
+ 344 │                          maximumElementListSize     INTEGER(2..255),
+ 345 │                          maximumSubElementListSize  INTEGER(2..255),
+ 346 │                          ...}},
+ 347 │    ...,
+ 348 │    maxMUXPDUSizeCapability               BOOLEAN,
+ 349 │    nsrpSupport                           BOOLEAN,
+ 350 │    mobileOperationTransmitCapability
+ 351 │      SEQUENCE {modeChangeCapability  BOOLEAN,
+ 352 │                h223AnnexA            BOOLEAN,
+ 353 │                h223AnnexADoubleFlag  BOOLEAN,
+ 354 │                h223AnnexB            BOOLEAN,
+ 355 │                h223AnnexBwithHeader  BOOLEAN,
+ 356 │                ...} OPTIONAL,
+ 357 │    h223AnnexCCapability                  H223AnnexCCapability OPTIONAL,
+ 358 │    bitRate                               INTEGER(1..19200) OPTIONAL, -- units of 100 bit/s
+ 359 │    mobileMultilinkFrameCapability
+ 360 │      SEQUENCE {maximumSampleSize     INTEGER(1..255), -- units octets--
+ 361 │                maximumPayloadLength  INTEGER(1..65025), -- units octets--
+ 362 │                ...} OPTIONAL
+ 363 │  }
+     │
+─────╯

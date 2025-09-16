@@ -1,0 +1,226 @@
+---
+source: rasn-compiler-tests/tests/parameterization.rs
+description: "\n        NGAP-PROTOCOL-EXTENSION ::= CLASS {\n            &id\t\t\t\tINTEGER\t\t\tUNIQUE,\n            &criticality\tINTEGER,\n            &Extension,\n            &presence\t\tBOOLEAN\n        }\n        WITH SYNTAX {\n            ID\t\t\t\t&id\n            CRITICALITY\t\t&criticality\n            EXTENSION\t\t&Extension\n            PRESENCE\t\t&presence\n        }\n\n        ProtocolExtensionContainer {NGAP-PROTOCOL-EXTENSION : ExtensionSetParam} ::= \n            SEQUENCE (SIZE (1..maxProtocolExtensions)) OF\n            ProtocolExtensionField {{ExtensionSetParam}}\n\n        ProtocolExtensionField {NGAP-PROTOCOL-EXTENSION : ExtensionSetParam} ::= SEQUENCE {\n            id\t\t\t\t\tNGAP-PROTOCOL-EXTENSION.&id\t\t\t\t({ExtensionSetParam}),\n            criticality\t\t\tNGAP-PROTOCOL-EXTENSION.&criticality\t({ExtensionSetParam}{@id}),\n            extensionValue\t\tNGAP-PROTOCOL-EXTENSION.&Extension\t\t({ExtensionSetParam}{@id})\n        }\n\n        A2X-PC5-FlowBitRates ::= SEQUENCE {\n            a2X-GuaranteedFlowBitRate\t\tBOOLEAN,\n            iE-Extensions\t\tProtocolExtensionContainer { {A2X-PC5-FlowBitRates-ExtIEs} }\tOPTIONAL,\n            ...\n        }\n\n        A2X-PC5-FlowBitRates-ExtIEs NGAP-PROTOCOL-EXTENSION ::= {\n            ...\n        }\n    "
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod test_module {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    pub struct AnonymousA2XPC5FlowBitRatesIEExtensions {
+        pub id: Integer,
+        pub criticality: Integer,
+        #[rasn(identifier = "extensionValue")]
+        pub extension_value: Any,
+    }
+    impl AnonymousA2XPC5FlowBitRatesIEExtensions {
+        pub fn new(id: Integer, criticality: Integer, extension_value: Any) -> Self {
+            Self {
+                id,
+                criticality,
+                extension_value,
+            }
+        }
+    }
+    impl AnonymousA2XPC5FlowBitRatesIEExtensions {
+        pub fn decode_extension_value<D: Decoder>(
+            &self,
+            decoder: &mut D,
+        ) -> Result<A2XPC5FlowBitRatesExtIEs_Extension, D::Error> {
+            A2XPC5FlowBitRatesExtIEs_Extension::decode(
+                decoder,
+                Some(&self.extension_value),
+                &self.id,
+            )
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct A2XPC5FlowBitRatesIEExtensions(
+        pub SequenceOf<AnonymousA2XPC5FlowBitRatesIEExtensions>,
+    );
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "A2X-PC5-FlowBitRates")]
+    #[non_exhaustive]
+    pub struct A2XPC5FlowBitRates {
+        #[rasn(identifier = "a2X-GuaranteedFlowBitRate")]
+        pub a2_x_guaranteed_flow_bit_rate: bool,
+        #[rasn(identifier = "iE-Extensions")]
+        pub i_e_extensions: Option<A2XPC5FlowBitRatesIEExtensions>,
+    }
+    impl A2XPC5FlowBitRates {
+        pub fn new(
+            a2_x_guaranteed_flow_bit_rate: bool,
+            i_e_extensions: Option<A2XPC5FlowBitRatesIEExtensions>,
+        ) -> Self {
+            Self {
+                a2_x_guaranteed_flow_bit_rate,
+                i_e_extensions,
+            }
+        }
+    }
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum A2XPC5FlowBitRatesExtIEs_Extension {}
+    impl A2XPC5FlowBitRatesExtIEs_Extension {
+        pub fn decode<D: Decoder>(
+            decoder: &mut D,
+            open_type_payload: Option<&Any>,
+            identifier: &Integer,
+        ) -> Result<Self, D::Error> {
+            match identifier {
+                _ => Err(rasn::error::DecodeError::from_kind(
+                    rasn::error::DecodeErrorKind::Custom {
+                        msg: alloc::format!(
+                            "Unknown unique identifier for information object class instance."
+                        ),
+                    },
+                    decoder.codec(),
+                )
+                .into()),
+            }
+        }
+        pub fn encode<E: Encoder>(
+            &self,
+            encoder: &mut E,
+            identifier: &Integer,
+        ) -> Result<(), E::Error> {
+            match (self, identifier) {
+                _ => Err(rasn::error::EncodeError::from_kind(
+                    rasn::error::EncodeErrorKind::Custom {
+                        msg: alloc::format!(
+                            "Unknown unique identifier for information object class instance."
+                        ),
+                    },
+                    encoder.codec(),
+                )
+                .into()),
+            }
+        }
+    }
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum A2XPC5FlowBitRatesExtIEs_criticality {}
+    impl A2XPC5FlowBitRatesExtIEs_criticality {
+        pub fn decode<D: Decoder>(
+            decoder: &mut D,
+            open_type_payload: Option<&Any>,
+            identifier: &Integer,
+        ) -> Result<Self, D::Error> {
+            match identifier {
+                _ => Err(rasn::error::DecodeError::from_kind(
+                    rasn::error::DecodeErrorKind::Custom {
+                        msg: alloc::format!(
+                            "Unknown unique identifier for information object class instance."
+                        ),
+                    },
+                    decoder.codec(),
+                )
+                .into()),
+            }
+        }
+        pub fn encode<E: Encoder>(
+            &self,
+            encoder: &mut E,
+            identifier: &Integer,
+        ) -> Result<(), E::Error> {
+            match (self, identifier) {
+                _ => Err(rasn::error::EncodeError::from_kind(
+                    rasn::error::EncodeErrorKind::Custom {
+                        msg: alloc::format!(
+                            "Unknown unique identifier for information object class instance."
+                        ),
+                    },
+                    encoder.codec(),
+                )
+                .into()),
+            }
+        }
+    }
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum A2XPC5FlowBitRatesExtIEs_id {}
+    impl A2XPC5FlowBitRatesExtIEs_id {
+        pub fn decode<D: Decoder>(
+            decoder: &mut D,
+            open_type_payload: Option<&Any>,
+            identifier: &Integer,
+        ) -> Result<Self, D::Error> {
+            match identifier {
+                _ => Err(rasn::error::DecodeError::from_kind(
+                    rasn::error::DecodeErrorKind::Custom {
+                        msg: alloc::format!(
+                            "Unknown unique identifier for information object class instance."
+                        ),
+                    },
+                    decoder.codec(),
+                )
+                .into()),
+            }
+        }
+        pub fn encode<E: Encoder>(
+            &self,
+            encoder: &mut E,
+            identifier: &Integer,
+        ) -> Result<(), E::Error> {
+            match (self, identifier) {
+                _ => Err(rasn::error::EncodeError::from_kind(
+                    rasn::error::EncodeErrorKind::Custom {
+                        msg: alloc::format!(
+                            "Unknown unique identifier for information object class instance."
+                        ),
+                    },
+                    encoder.codec(),
+                )
+                .into()),
+            }
+        }
+    }
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum A2XPC5FlowBitRatesExtIEs_presence {}
+    impl A2XPC5FlowBitRatesExtIEs_presence {
+        pub fn decode<D: Decoder>(
+            decoder: &mut D,
+            open_type_payload: Option<&Any>,
+            identifier: &Integer,
+        ) -> Result<Self, D::Error> {
+            match identifier {
+                _ => Err(rasn::error::DecodeError::from_kind(
+                    rasn::error::DecodeErrorKind::Custom {
+                        msg: alloc::format!(
+                            "Unknown unique identifier for information object class instance."
+                        ),
+                    },
+                    decoder.codec(),
+                )
+                .into()),
+            }
+        }
+        pub fn encode<E: Encoder>(
+            &self,
+            encoder: &mut E,
+            identifier: &Integer,
+        ) -> Result<(), E::Error> {
+            match (self, identifier) {
+                _ => Err(rasn::error::EncodeError::from_kind(
+                    rasn::error::EncodeErrorKind::Custom {
+                        msg: alloc::format!(
+                            "Unknown unique identifier for information object class instance."
+                        ),
+                    },
+                    encoder.codec(),
+                )
+                .into()),
+            }
+        }
+    }
+}

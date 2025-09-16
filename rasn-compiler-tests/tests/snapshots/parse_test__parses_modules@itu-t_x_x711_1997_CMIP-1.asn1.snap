@@ -1,0 +1,1117 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x711_1997_CMIP-1.asn1
+---
+Warnings:
+LinkerError in ASN grammar: Failed to resolve supertype ROS of parameterized implementation.
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod cmip_1 {
+    extern crate alloc;
+    use super::remote_operations_generic_ros_pdus::*;
+    use super::remote_operations_information_objects::*;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " Supporting type definitions"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AccessControl(pub Any);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct ActionArgument {
+        #[rasn(tag(context, 5), identifier = "accessControl")]
+        pub access_control: Option<AccessControl>,
+        #[rasn(tag(context, 6), default = "action_argument_synchronization_default")]
+        pub synchronization: CMISSync,
+        #[rasn(tag(context, 7), default = "action_argument_scope_default")]
+        pub scope: Scope,
+        #[rasn(default = "action_argument_filter_default")]
+        pub filter: CMISFilter,
+        #[rasn(tag(context, 12), identifier = "actionInfo")]
+        pub action_info: ActionInfo,
+        #[rasn(identifier = "baseManagedObjectClass")]
+        pub base_managed_object_class: ObjectClass,
+        #[rasn(identifier = "baseManagedObjectInstance")]
+        pub base_managed_object_instance: ObjectInstance,
+    }
+    impl ActionArgument {
+        pub fn new(
+            access_control: Option<AccessControl>,
+            synchronization: CMISSync,
+            scope: Scope,
+            filter: CMISFilter,
+            action_info: ActionInfo,
+            base_managed_object_class: ObjectClass,
+            base_managed_object_instance: ObjectInstance,
+        ) -> Self {
+            Self {
+                access_control,
+                synchronization,
+                scope,
+                filter,
+                action_info,
+                base_managed_object_class,
+                base_managed_object_instance,
+            }
+        }
+    }
+    fn action_argument_synchronization_default() -> CMISSync {
+        CMISSync::bestEffort
+    }
+    fn action_argument_scope_default() -> Scope {
+        Scope::namedNumbers(Integer::from(0))
+    }
+    fn action_argument_filter_default() -> CMISFilter {
+        CMISFilter::and(alloc::vec![])
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct ActionError {
+        #[rasn(identifier = "managedObjectClass")]
+        pub managed_object_class: Option<ObjectClass>,
+        #[rasn(identifier = "managedObjectInstance")]
+        pub managed_object_instance: Option<ObjectInstance>,
+        #[rasn(tag(context, 5), identifier = "currentTime")]
+        pub current_time: Option<GeneralizedTime>,
+        #[rasn(tag(context, 6), identifier = "actionErrorInfo")]
+        pub action_error_info: ActionErrorInfo,
+    }
+    impl ActionError {
+        pub fn new(
+            managed_object_class: Option<ObjectClass>,
+            managed_object_instance: Option<ObjectInstance>,
+            current_time: Option<GeneralizedTime>,
+            action_error_info: ActionErrorInfo,
+        ) -> Self {
+            Self {
+                managed_object_class,
+                managed_object_instance,
+                current_time,
+                action_error_info,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum ActionErrorInfoErrorStatus {
+        accessDenied = 2,
+        noSuchAction = 9,
+        noSuchArgument = 14,
+        invalidArgumentValue = 15,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ActionErrorInfoErrorInfo {
+        actionType(ActionTypeId),
+        #[rasn(tag(context, 0))]
+        actionArgument(NoSuchArgument),
+        #[rasn(tag(context, 1))]
+        argumentValue(InvalidArgumentValue),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct ActionErrorInfo {
+        #[rasn(identifier = "errorStatus")]
+        pub error_status: ActionErrorInfoErrorStatus,
+        #[rasn(identifier = "errorInfo")]
+        pub error_info: ActionErrorInfoErrorInfo,
+    }
+    impl ActionErrorInfo {
+        pub fn new(
+            error_status: ActionErrorInfoErrorStatus,
+            error_info: ActionErrorInfoErrorInfo,
+        ) -> Self {
+            Self {
+                error_status,
+                error_info,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ActionInfo {
+        #[rasn(identifier = "actionType")]
+        pub action_type: ActionTypeId,
+        #[rasn(tag(context, 4), identifier = "actionInfoArg")]
+        pub action_info_arg: Option<Any>,
+    }
+    impl ActionInfo {
+        pub fn new(action_type: ActionTypeId, action_info_arg: Option<Any>) -> Self {
+            Self {
+                action_type,
+                action_info_arg,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ActionReply {
+        #[rasn(identifier = "actionType")]
+        pub action_type: ActionTypeId,
+        #[rasn(tag(context, 4), identifier = "actionReplyInfo")]
+        pub action_reply_info: Any,
+    }
+    impl ActionReply {
+        pub fn new(action_type: ActionTypeId, action_reply_info: Any) -> Self {
+            Self {
+                action_type,
+                action_reply_info,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct ActionResult {
+        #[rasn(identifier = "managedObjectClass")]
+        pub managed_object_class: Option<ObjectClass>,
+        #[rasn(identifier = "managedObjectInstance")]
+        pub managed_object_instance: Option<ObjectInstance>,
+        #[rasn(tag(context, 5), identifier = "currentTime")]
+        pub current_time: Option<GeneralizedTime>,
+        #[rasn(tag(context, 6), identifier = "actionReply")]
+        pub action_reply: Option<ActionReply>,
+    }
+    impl ActionResult {
+        pub fn new(
+            managed_object_class: Option<ObjectClass>,
+            managed_object_instance: Option<ObjectInstance>,
+            current_time: Option<GeneralizedTime>,
+            action_reply: Option<ActionReply>,
+        ) -> Self {
+            Self {
+                managed_object_class,
+                managed_object_instance,
+                current_time,
+                action_reply,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ActionTypeId {
+        #[rasn(tag(context, 2))]
+        globalForm(ObjectIdentifier),
+        #[rasn(tag(context, 3))]
+        localForm(Integer),
+    }
+    #[doc = " This Recommendation | International Standard does not allocate any values for localForm."]
+    #[doc = " Where this alternative is used, the permissible values for the integers and their meanings shall be defined"]
+    #[doc = " as part of the application context in which they are used"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Attribute {
+        pub id: AttributeId,
+        pub value: Any,
+    }
+    impl Attribute {
+        pub fn new(id: AttributeId, value: Any) -> Self {
+            Self { id, value }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum AttributeErrorErrorStatus {
+        accessDenied = 2,
+        noSuchAttribute = 5,
+        invalidAttributeValue = 6,
+        invalidOperation = 24,
+        invalidOperator = 25,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AttributeError {
+        #[rasn(identifier = "errorStatus")]
+        pub error_status: AttributeErrorErrorStatus,
+        #[rasn(tag(context, 2), identifier = "modifyOperator")]
+        pub modify_operator: Option<ModifyOperator>,
+        #[rasn(identifier = "attributeId")]
+        pub attribute_id: AttributeId,
+        #[rasn(identifier = "attributeValue")]
+        pub attribute_value: Option<Any>,
+    }
+    impl AttributeError {
+        pub fn new(
+            error_status: AttributeErrorErrorStatus,
+            modify_operator: Option<ModifyOperator>,
+            attribute_id: AttributeId,
+            attribute_value: Option<Any>,
+        ) -> Self {
+            Self {
+                error_status,
+                modify_operator,
+                attribute_id,
+                attribute_value,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum AttributeId {
+        #[rasn(tag(context, 0))]
+        globalForm(ObjectIdentifier),
+        #[rasn(tag(context, 1))]
+        localForm(Integer),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum AttributeIdErrorErrorStatus {
+        accessDenied = 2,
+        noSuchAttribute = 5,
+    }
+    #[doc = " This Recommendation | International Standard does not allocate any values for localForm."]
+    #[doc = " Where this alternative is used, the permissible values for the integers and their meanings shall be defined"]
+    #[doc = " as part of the application context in which they are used"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct AttributeIdError {
+        #[rasn(identifier = "errorStatus")]
+        pub error_status: AttributeIdErrorErrorStatus,
+        #[rasn(identifier = "attributeId")]
+        pub attribute_id: AttributeId,
+    }
+    impl AttributeIdError {
+        pub fn new(error_status: AttributeIdErrorErrorStatus, attribute_id: AttributeId) -> Self {
+            Self {
+                error_status,
+                attribute_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AttributeValueAssertion {
+        pub id: ObjectIdentifier,
+        pub value: Any,
+    }
+    impl AttributeValueAssertion {
+        pub fn new(id: ObjectIdentifier, value: Any) -> Self {
+            Self { id, value }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct BaseManagedObjectId {
+        #[rasn(identifier = "baseManagedObjectClass")]
+        pub base_managed_object_class: ObjectClass,
+        #[rasn(identifier = "baseManagedObjectInstance")]
+        pub base_managed_object_instance: ObjectInstance,
+    }
+    impl BaseManagedObjectId {
+        pub fn new(
+            base_managed_object_class: ObjectClass,
+            base_managed_object_instance: ObjectInstance,
+        ) -> Self {
+            Self {
+                base_managed_object_class,
+                base_managed_object_instance,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum CMISFilter {
+        #[rasn(tag(context, 8))]
+        item(FilterItem),
+        #[rasn(tag(context, 9))]
+        and(SetOf<CMISFilter>),
+        #[rasn(tag(context, 10))]
+        or(SetOf<CMISFilter>),
+        #[rasn(tag(context, 11))]
+        not(Box<CMISFilter>),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum CMISSync {
+        bestEffort = 0,
+        atomic = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    #[non_exhaustive]
+    pub struct ComplexityLimitation {
+        #[rasn(tag(context, 0))]
+        pub scope: Option<Scope>,
+        #[rasn(tag(context, 1))]
+        pub filter: Option<CMISFilter>,
+        #[rasn(tag(context, 2))]
+        pub sync: Option<CMISSync>,
+    }
+    impl ComplexityLimitation {
+        pub fn new(
+            scope: Option<Scope>,
+            filter: Option<CMISFilter>,
+            sync: Option<CMISSync>,
+        ) -> Self {
+            Self {
+                scope,
+                filter,
+                sync,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum CreateArgumentManagedOrSuperiorObjectInstance {
+        managedObjectInstance(ObjectInstance),
+        #[rasn(tag(context, 8))]
+        superiorObjectInstance(ObjectInstance),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct CreateArgument {
+        #[rasn(identifier = "managedObjectClass")]
+        pub managed_object_class: ObjectClass,
+        #[rasn(identifier = "managedOrSuperiorObjectInstance")]
+        pub managed_or_superior_object_instance:
+            Option<CreateArgumentManagedOrSuperiorObjectInstance>,
+        #[rasn(tag(context, 5), identifier = "accessControl")]
+        pub access_control: Option<AccessControl>,
+        #[rasn(tag(context, 6), identifier = "referenceObjectInstance")]
+        pub reference_object_instance: Option<ObjectInstance>,
+        #[rasn(tag(context, 7), identifier = "attributeList")]
+        pub attribute_list: Option<SetOf<Attribute>>,
+    }
+    impl CreateArgument {
+        pub fn new(
+            managed_object_class: ObjectClass,
+            managed_or_superior_object_instance: Option<
+                CreateArgumentManagedOrSuperiorObjectInstance,
+            >,
+            access_control: Option<AccessControl>,
+            reference_object_instance: Option<ObjectInstance>,
+            attribute_list: Option<SetOf<Attribute>>,
+        ) -> Self {
+            Self {
+                managed_object_class,
+                managed_or_superior_object_instance,
+                access_control,
+                reference_object_instance,
+                attribute_list,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct CreateResult {
+        #[rasn(identifier = "managedObjectClass")]
+        pub managed_object_class: Option<ObjectClass>,
+        #[rasn(identifier = "managedObjectInstance")]
+        pub managed_object_instance: Option<ObjectInstance>,
+        #[rasn(tag(context, 5), identifier = "currentTime")]
+        pub current_time: Option<GeneralizedTime>,
+        #[rasn(tag(context, 6), identifier = "attributeList")]
+        pub attribute_list: Option<SetOf<Attribute>>,
+    }
+    impl CreateResult {
+        pub fn new(
+            managed_object_class: Option<ObjectClass>,
+            managed_object_instance: Option<ObjectInstance>,
+            current_time: Option<GeneralizedTime>,
+            attribute_list: Option<SetOf<Attribute>>,
+        ) -> Self {
+            Self {
+                managed_object_class,
+                managed_object_instance,
+                current_time,
+                attribute_list,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct DeleteArgument {
+        #[rasn(tag(context, 5), identifier = "accessControl")]
+        pub access_control: Option<AccessControl>,
+        #[rasn(tag(context, 6), default = "delete_argument_synchronization_default")]
+        pub synchronization: CMISSync,
+        #[rasn(tag(context, 7), default = "delete_argument_scope_default")]
+        pub scope: Scope,
+        #[rasn(default = "delete_argument_filter_default")]
+        pub filter: CMISFilter,
+        #[rasn(identifier = "baseManagedObjectClass")]
+        pub base_managed_object_class: ObjectClass,
+        #[rasn(identifier = "baseManagedObjectInstance")]
+        pub base_managed_object_instance: ObjectInstance,
+    }
+    impl DeleteArgument {
+        pub fn new(
+            access_control: Option<AccessControl>,
+            synchronization: CMISSync,
+            scope: Scope,
+            filter: CMISFilter,
+            base_managed_object_class: ObjectClass,
+            base_managed_object_instance: ObjectInstance,
+        ) -> Self {
+            Self {
+                access_control,
+                synchronization,
+                scope,
+                filter,
+                base_managed_object_class,
+                base_managed_object_instance,
+            }
+        }
+    }
+    fn delete_argument_synchronization_default() -> CMISSync {
+        CMISSync::bestEffort
+    }
+    fn delete_argument_scope_default() -> Scope {
+        Scope::namedNumbers(Integer::from(0))
+    }
+    fn delete_argument_filter_default() -> CMISFilter {
+        CMISFilter::and(alloc::vec![])
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum DeleteErrorDeleteErrorInfo {
+        accessDenied = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct DeleteError {
+        #[rasn(identifier = "managedObjectClass")]
+        pub managed_object_class: Option<ObjectClass>,
+        #[rasn(identifier = "managedObjectInstance")]
+        pub managed_object_instance: Option<ObjectInstance>,
+        #[rasn(tag(context, 5), identifier = "currentTime")]
+        pub current_time: Option<GeneralizedTime>,
+        #[rasn(tag(context, 6), identifier = "deleteErrorInfo")]
+        pub delete_error_info: DeleteErrorDeleteErrorInfo,
+    }
+    impl DeleteError {
+        pub fn new(
+            managed_object_class: Option<ObjectClass>,
+            managed_object_instance: Option<ObjectInstance>,
+            current_time: Option<GeneralizedTime>,
+            delete_error_info: DeleteErrorDeleteErrorInfo,
+        ) -> Self {
+            Self {
+                managed_object_class,
+                managed_object_instance,
+                current_time,
+                delete_error_info,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct DeleteResult {
+        #[rasn(identifier = "managedObjectClass")]
+        pub managed_object_class: Option<ObjectClass>,
+        #[rasn(identifier = "managedObjectInstance")]
+        pub managed_object_instance: Option<ObjectInstance>,
+        #[rasn(tag(context, 5), identifier = "currentTime")]
+        pub current_time: Option<GeneralizedTime>,
+    }
+    impl DeleteResult {
+        pub fn new(
+            managed_object_class: Option<ObjectClass>,
+            managed_object_instance: Option<ObjectInstance>,
+            current_time: Option<GeneralizedTime>,
+        ) -> Self {
+            Self {
+                managed_object_class,
+                managed_object_instance,
+                current_time,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DistinguishedName(pub RDNSequence);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct EventReply {
+        #[rasn(identifier = "eventType")]
+        pub event_type: EventTypeId,
+        #[rasn(tag(context, 8), identifier = "eventReplyInfo")]
+        pub event_reply_info: Option<Any>,
+    }
+    impl EventReply {
+        pub fn new(event_type: EventTypeId, event_reply_info: Option<Any>) -> Self {
+            Self {
+                event_type,
+                event_reply_info,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct EventReportArgument {
+        #[rasn(identifier = "managedObjectClass")]
+        pub managed_object_class: ObjectClass,
+        #[rasn(identifier = "managedObjectInstance")]
+        pub managed_object_instance: ObjectInstance,
+        #[rasn(tag(context, 5), identifier = "eventTime")]
+        pub event_time: Option<GeneralizedTime>,
+        #[rasn(identifier = "eventType")]
+        pub event_type: EventTypeId,
+        #[rasn(tag(context, 8), identifier = "eventInfo")]
+        pub event_info: Option<Any>,
+    }
+    impl EventReportArgument {
+        pub fn new(
+            managed_object_class: ObjectClass,
+            managed_object_instance: ObjectInstance,
+            event_time: Option<GeneralizedTime>,
+            event_type: EventTypeId,
+            event_info: Option<Any>,
+        ) -> Self {
+            Self {
+                managed_object_class,
+                managed_object_instance,
+                event_time,
+                event_type,
+                event_info,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct EventReportResult {
+        #[rasn(identifier = "managedObjectClass")]
+        pub managed_object_class: Option<ObjectClass>,
+        #[rasn(identifier = "managedObjectInstance")]
+        pub managed_object_instance: Option<ObjectInstance>,
+        #[rasn(tag(context, 5), identifier = "currentTime")]
+        pub current_time: Option<GeneralizedTime>,
+        #[rasn(identifier = "eventReply")]
+        pub event_reply: Option<EventReply>,
+    }
+    impl EventReportResult {
+        pub fn new(
+            managed_object_class: Option<ObjectClass>,
+            managed_object_instance: Option<ObjectInstance>,
+            current_time: Option<GeneralizedTime>,
+            event_reply: Option<EventReply>,
+        ) -> Self {
+            Self {
+                managed_object_class,
+                managed_object_instance,
+                current_time,
+                event_reply,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum EventTypeId {
+        #[rasn(tag(context, 6))]
+        globalForm(ObjectIdentifier),
+        #[rasn(tag(context, 7))]
+        localForm(Integer),
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "CHOICE")]
+    pub enum AnonymousFilterItemSubstrings {
+        #[rasn(tag(context, 0))]
+        initialString(Attribute),
+        #[rasn(tag(context, 1))]
+        anyString(Attribute),
+        #[rasn(tag(context, 2))]
+        finalString(Attribute),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct FilterItemSubstrings(pub SequenceOf<AnonymousFilterItemSubstrings>);
+    #[doc = " This Recommendation | International Standard does not allocate any values for localForm."]
+    #[doc = " Where this alternative is used, the permissible values for the integers and their meanings shall be defined"]
+    #[doc = " as part of the application context in which they are used"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum FilterItem {
+        #[rasn(tag(context, 0))]
+        equality(Attribute),
+        #[rasn(tag(context, 1))]
+        substrings(FilterItemSubstrings),
+        #[rasn(tag(context, 2))]
+        greaterOrEqual(Attribute),
+        #[rasn(tag(context, 3))]
+        lessOrEqual(Attribute),
+        #[rasn(tag(context, 4))]
+        present(AttributeId),
+        #[rasn(tag(context, 5))]
+        subsetOf(Attribute),
+        #[rasn(tag(context, 6))]
+        supersetOf(Attribute),
+        #[rasn(tag(context, 7))]
+        nonNullSetIntersection(Attribute),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct GetArgument {
+        #[rasn(tag(context, 5), identifier = "accessControl")]
+        pub access_control: Option<AccessControl>,
+        #[rasn(tag(context, 6), default = "get_argument_synchronization_default")]
+        pub synchronization: CMISSync,
+        #[rasn(tag(context, 7), default = "get_argument_scope_default")]
+        pub scope: Scope,
+        #[rasn(default = "get_argument_filter_default")]
+        pub filter: CMISFilter,
+        #[rasn(tag(context, 12), identifier = "attributeIdList")]
+        pub attribute_id_list: Option<SetOf<AttributeId>>,
+        #[rasn(identifier = "baseManagedObjectClass")]
+        pub base_managed_object_class: ObjectClass,
+        #[rasn(identifier = "baseManagedObjectInstance")]
+        pub base_managed_object_instance: ObjectInstance,
+    }
+    impl GetArgument {
+        pub fn new(
+            access_control: Option<AccessControl>,
+            synchronization: CMISSync,
+            scope: Scope,
+            filter: CMISFilter,
+            attribute_id_list: Option<SetOf<AttributeId>>,
+            base_managed_object_class: ObjectClass,
+            base_managed_object_instance: ObjectInstance,
+        ) -> Self {
+            Self {
+                access_control,
+                synchronization,
+                scope,
+                filter,
+                attribute_id_list,
+                base_managed_object_class,
+                base_managed_object_instance,
+            }
+        }
+    }
+    fn get_argument_synchronization_default() -> CMISSync {
+        CMISSync::bestEffort
+    }
+    fn get_argument_scope_default() -> Scope {
+        Scope::namedNumbers(Integer::from(0))
+    }
+    fn get_argument_filter_default() -> CMISFilter {
+        CMISFilter::and(alloc::vec![])
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum GetInfoStatus {
+        #[rasn(tag(context, 0))]
+        attributeIdError(AttributeIdError),
+        #[rasn(tag(context, 1))]
+        attribute(Attribute),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct GetListError {
+        #[rasn(identifier = "managedObjectClass")]
+        pub managed_object_class: Option<ObjectClass>,
+        #[rasn(identifier = "managedObjectInstance")]
+        pub managed_object_instance: Option<ObjectInstance>,
+        #[rasn(tag(context, 5), identifier = "currentTime")]
+        pub current_time: Option<GeneralizedTime>,
+        #[rasn(tag(context, 6), identifier = "getInfoList")]
+        pub get_info_list: SetOf<GetInfoStatus>,
+    }
+    impl GetListError {
+        pub fn new(
+            managed_object_class: Option<ObjectClass>,
+            managed_object_instance: Option<ObjectInstance>,
+            current_time: Option<GeneralizedTime>,
+            get_info_list: SetOf<GetInfoStatus>,
+        ) -> Self {
+            Self {
+                managed_object_class,
+                managed_object_instance,
+                current_time,
+                get_info_list,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct GetResult {
+        #[rasn(identifier = "managedObjectClass")]
+        pub managed_object_class: Option<ObjectClass>,
+        #[rasn(identifier = "managedObjectInstance")]
+        pub managed_object_instance: Option<ObjectInstance>,
+        #[rasn(tag(context, 5), identifier = "currentTime")]
+        pub current_time: Option<GeneralizedTime>,
+        #[rasn(tag(context, 6), identifier = "attributeList")]
+        pub attribute_list: Option<SetOf<Attribute>>,
+    }
+    impl GetResult {
+        pub fn new(
+            managed_object_class: Option<ObjectClass>,
+            managed_object_instance: Option<ObjectInstance>,
+            current_time: Option<GeneralizedTime>,
+            attribute_list: Option<SetOf<Attribute>>,
+        ) -> Self {
+            Self {
+                managed_object_class,
+                managed_object_instance,
+                current_time,
+                attribute_list,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct InvalidArgumentValueEventValue {
+        #[rasn(identifier = "eventType")]
+        pub event_type: EventTypeId,
+        #[rasn(tag(context, 8), identifier = "eventInfo")]
+        pub event_info: Option<Any>,
+    }
+    impl InvalidArgumentValueEventValue {
+        pub fn new(event_type: EventTypeId, event_info: Option<Any>) -> Self {
+            Self {
+                event_type,
+                event_info,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum InvalidArgumentValue {
+        #[rasn(tag(context, 0))]
+        actionValue(ActionInfo),
+        #[rasn(tag(context, 1))]
+        eventValue(InvalidArgumentValueEventValue),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct InvokeIDType(pub InvokeId);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum LinkedReplyArgument {
+        #[rasn(tag(context, 0))]
+        getResult(GetResult),
+        #[rasn(tag(context, 1))]
+        getListError(GetListError),
+        #[rasn(tag(context, 2))]
+        setResult(SetResult),
+        #[rasn(tag(context, 3))]
+        setListError(SetListError),
+        #[rasn(tag(context, 4))]
+        actionResult(ActionResult),
+        #[rasn(tag(context, 5))]
+        processingFailure(ProcessingFailure),
+        #[rasn(tag(context, 6))]
+        deleteResult(DeleteResult),
+        #[rasn(tag(context, 7))]
+        actionError(ActionError),
+        #[rasn(tag(context, 8))]
+        deleteError(DeleteError),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ModifyOperator(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct NoSuchAction {
+        #[rasn(identifier = "managedObjectClass")]
+        pub managed_object_class: ObjectClass,
+        #[rasn(identifier = "actionType")]
+        pub action_type: ActionTypeId,
+    }
+    impl NoSuchAction {
+        pub fn new(managed_object_class: ObjectClass, action_type: ActionTypeId) -> Self {
+            Self {
+                managed_object_class,
+                action_type,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct NoSuchArgumentActionId {
+        #[rasn(identifier = "managedObjectClass")]
+        pub managed_object_class: Option<ObjectClass>,
+        #[rasn(identifier = "actionType")]
+        pub action_type: ActionTypeId,
+    }
+    impl NoSuchArgumentActionId {
+        pub fn new(managed_object_class: Option<ObjectClass>, action_type: ActionTypeId) -> Self {
+            Self {
+                managed_object_class,
+                action_type,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct NoSuchArgumentEventId {
+        #[rasn(identifier = "managedObjectClass")]
+        pub managed_object_class: Option<ObjectClass>,
+        #[rasn(identifier = "eventType")]
+        pub event_type: EventTypeId,
+    }
+    impl NoSuchArgumentEventId {
+        pub fn new(managed_object_class: Option<ObjectClass>, event_type: EventTypeId) -> Self {
+            Self {
+                managed_object_class,
+                event_type,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum NoSuchArgument {
+        #[rasn(tag(context, 0))]
+        actionId(NoSuchArgumentActionId),
+        #[rasn(tag(context, 1))]
+        eventId(NoSuchArgumentEventId),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct NoSuchEventType {
+        #[rasn(identifier = "managedObjectClass")]
+        pub managed_object_class: ObjectClass,
+        #[rasn(identifier = "eventType")]
+        pub event_type: EventTypeId,
+    }
+    impl NoSuchEventType {
+        pub fn new(managed_object_class: ObjectClass, event_type: EventTypeId) -> Self {
+            Self {
+                managed_object_class,
+                event_type,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ObjectClass {
+        #[rasn(tag(context, 0))]
+        globalForm(ObjectIdentifier),
+        #[rasn(tag(context, 1))]
+        localForm(Integer),
+    }
+    #[doc = " This Recommendation | International Standard does not allocate any values for localForm."]
+    #[doc = " Where this alternative is used, the permissible values for the integers and their meanings shall be defined"]
+    #[doc = " as part of the application context in which they are used"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ObjectInstance {
+        #[rasn(tag(context, 2))]
+        distinguishedName(DistinguishedName),
+        #[rasn(tag(context, 3))]
+        nonSpecificForm(OctetString),
+        #[rasn(tag(context, 4))]
+        localDistinguishedName(RDNSequence),
+    }
+    #[doc = " localDistinguishedName is that portion of the distinguished name that is necessary to unambiguously identify the"]
+    #[doc = " managed object within the context of communication between the open systems"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct ProcessingFailure {
+        #[rasn(identifier = "managedObjectClass")]
+        pub managed_object_class: ObjectClass,
+        #[rasn(identifier = "managedObjectInstance")]
+        pub managed_object_instance: Option<ObjectInstance>,
+        #[rasn(tag(context, 5), identifier = "specificErrorInfo")]
+        pub specific_error_info: SpecificErrorInfo,
+    }
+    impl ProcessingFailure {
+        pub fn new(
+            managed_object_class: ObjectClass,
+            managed_object_instance: Option<ObjectInstance>,
+            specific_error_info: SpecificErrorInfo,
+        ) -> Self {
+            Self {
+                managed_object_class,
+                managed_object_instance,
+                specific_error_info,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RDNSequence(pub SequenceOf<RelativeDistinguishedName>);
+    #[doc = " the following type specifies the constraints to be applied when using ROSE to support CMIP"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ROSEapdus(pub ROS);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RelativeDistinguishedName(pub SetOf<AttributeValueAssertion>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum Scope {
+        namedNumbers(Integer),
+        #[rasn(tag(context, 1))]
+        individualLevels(Integer),
+        #[rasn(tag(context, 2))]
+        baseToNthLevel(Integer),
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousSetArgumentModificationList {
+        #[rasn(
+            tag(context, 2),
+            default = "anonymous_set_argument_modification_list_modify_operator_default",
+            identifier = "modifyOperator"
+        )]
+        pub modify_operator: ModifyOperator,
+        #[rasn(identifier = "attributeId")]
+        pub attribute_id: AttributeId,
+        #[rasn(identifier = "attributeValue")]
+        pub attribute_value: Option<Any>,
+    }
+    impl AnonymousSetArgumentModificationList {
+        pub fn new(
+            modify_operator: ModifyOperator,
+            attribute_id: AttributeId,
+            attribute_value: Option<Any>,
+        ) -> Self {
+            Self {
+                modify_operator,
+                attribute_id,
+                attribute_value,
+            }
+        }
+    }
+    fn anonymous_set_argument_modification_list_modify_operator_default() -> ModifyOperator {
+        REPLACE
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SetArgumentModificationList(pub SetOf<AnonymousSetArgumentModificationList>);
+    #[doc = " POSITIVE integer N indicates that the range of levels"]
+    #[doc = " (0 - N) is to be selected"]
+    #[doc = " with individualLevels and baseToNthLevel, a value of 0 has the same semantics as baseObject"]
+    #[doc = " with individualLevels, a value of 1 has the same semantics as firstLevelOnly"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct SetArgument {
+        #[rasn(tag(context, 5), identifier = "accessControl")]
+        pub access_control: Option<AccessControl>,
+        #[rasn(tag(context, 6), default = "set_argument_synchronization_default")]
+        pub synchronization: CMISSync,
+        #[rasn(tag(context, 7), default = "set_argument_scope_default")]
+        pub scope: Scope,
+        #[rasn(default = "set_argument_filter_default")]
+        pub filter: CMISFilter,
+        #[rasn(tag(context, 12), identifier = "modificationList")]
+        pub modification_list: SetArgumentModificationList,
+        #[rasn(identifier = "baseManagedObjectClass")]
+        pub base_managed_object_class: ObjectClass,
+        #[rasn(identifier = "baseManagedObjectInstance")]
+        pub base_managed_object_instance: ObjectInstance,
+    }
+    impl SetArgument {
+        pub fn new(
+            access_control: Option<AccessControl>,
+            synchronization: CMISSync,
+            scope: Scope,
+            filter: CMISFilter,
+            modification_list: SetArgumentModificationList,
+            base_managed_object_class: ObjectClass,
+            base_managed_object_instance: ObjectInstance,
+        ) -> Self {
+            Self {
+                access_control,
+                synchronization,
+                scope,
+                filter,
+                modification_list,
+                base_managed_object_class,
+                base_managed_object_instance,
+            }
+        }
+    }
+    fn set_argument_synchronization_default() -> CMISSync {
+        CMISSync::bestEffort
+    }
+    fn set_argument_scope_default() -> Scope {
+        Scope::namedNumbers(Integer::from(0))
+    }
+    fn set_argument_filter_default() -> CMISFilter {
+        CMISFilter::and(alloc::vec![])
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum SetInfoStatus {
+        #[rasn(tag(context, 0))]
+        attributeError(AttributeError),
+        #[rasn(tag(context, 1))]
+        attribute(Attribute),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct SetListError {
+        #[rasn(identifier = "managedObjectClass")]
+        pub managed_object_class: Option<ObjectClass>,
+        #[rasn(identifier = "managedObjectInstance")]
+        pub managed_object_instance: Option<ObjectInstance>,
+        #[rasn(tag(context, 5), identifier = "currentTime")]
+        pub current_time: Option<GeneralizedTime>,
+        #[rasn(tag(context, 6), identifier = "setInfoList")]
+        pub set_info_list: SetOf<SetInfoStatus>,
+    }
+    impl SetListError {
+        pub fn new(
+            managed_object_class: Option<ObjectClass>,
+            managed_object_instance: Option<ObjectInstance>,
+            current_time: Option<GeneralizedTime>,
+            set_info_list: SetOf<SetInfoStatus>,
+        ) -> Self {
+            Self {
+                managed_object_class,
+                managed_object_instance,
+                current_time,
+                set_info_list,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct SetResult {
+        #[rasn(identifier = "managedObjectClass")]
+        pub managed_object_class: Option<ObjectClass>,
+        #[rasn(identifier = "managedObjectInstance")]
+        pub managed_object_instance: Option<ObjectInstance>,
+        #[rasn(tag(context, 5), identifier = "currentTime")]
+        pub current_time: Option<GeneralizedTime>,
+        #[rasn(tag(context, 6), identifier = "attributeList")]
+        pub attribute_list: Option<SetOf<Attribute>>,
+    }
+    impl SetResult {
+        pub fn new(
+            managed_object_class: Option<ObjectClass>,
+            managed_object_instance: Option<ObjectInstance>,
+            current_time: Option<GeneralizedTime>,
+            attribute_list: Option<SetOf<Attribute>>,
+        ) -> Self {
+            Self {
+                managed_object_class,
+                managed_object_instance,
+                current_time,
+                attribute_list,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SpecificErrorInfo {
+        #[rasn(identifier = "errorId")]
+        pub error_id: ObjectIdentifier,
+        #[rasn(identifier = "errorInfo")]
+        pub error_info: Any,
+    }
+    impl SpecificErrorInfo {
+        pub fn new(error_id: ObjectIdentifier, error_info: Any) -> Self {
+            Self {
+                error_id,
+                error_info,
+            }
+        }
+    }
+}

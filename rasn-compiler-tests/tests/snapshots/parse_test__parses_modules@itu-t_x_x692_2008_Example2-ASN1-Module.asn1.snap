@@ -1,0 +1,177 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x692_2008_Example2-ASN1-Module.asn1
+---
+Warnings:
+Unidentified generating bindings for : A type name is needed to stringify sequence value LinkedStructLikeValue([("a", Boolean(Boolean { constraints: [] }), Explicit(Boolean(true)))])
+Unidentified generating bindings for : Unexpectedly encountered unlinked struct-like ASN1 value!
+Unidentified generating bindings for : A type name is needed to stringify sequence value LinkedStructLikeValue([("choice", ElsewhereDeclaredType(DeclarationElsewhere { parent: None, module: None, identifier: "UnevenChoiceProbability", constraints: [] }), Explicit(LinkedNestedValue { supertypes: [], value: Choice { type_name: Some("UnevenChoiceProbability"), variant_name: "common2", inner_value: Boolean(false) } }))])
+Unidentified generating bindings for : A type name is needed to stringify sequence value LinkedStructLikeValue([("list", ElsewhereDeclaredType(DeclarationElsewhere { parent: None, module: None, identifier: "VariableLengthList", constraints: [] }), Explicit(LinkedNestedValue { supertypes: ["VariableLengthList"], value: LinkedArrayLikeValue([LinkedIntValue { integer_type: Uint8, value: 1 }, LinkedIntValue { integer_type: Uint8, value: 2 }, LinkedIntValue { integer_type: Uint8, value: 1 }]) }))])
+Unidentified generating bindings for : A type name is needed to stringify sequence value LinkedStructLikeValue([("list1", ElsewhereDeclaredType(DeclarationElsewhere { parent: None, module: None, identifier: "List1", constraints: [] }), Explicit(LinkedNestedValue { supertypes: ["List1"], value: LinkedArrayLikeValue([Boolean(true), Boolean(false), Boolean(true)]) })), ("list2", ElsewhereDeclaredType(DeclarationElsewhere { parent: None, module: None, identifier: "List2", constraints: [] }), Explicit(LinkedNestedValue { supertypes: ["List2"], value: LinkedArrayLikeValue([LinkedIntValue { integer_type: Uint8, value: 1 }, LinkedIntValue { integer_type: Uint8, value: 2 }, LinkedIntValue { integer_type: Uint8, value: 1 }]) }))])
+Unidentified generating bindings for : A type name is needed to stringify sequence value LinkedStructLikeValue([("ie-1", Boolean(Boolean { constraints: [] }), Explicit(Boolean(true))), ("ie-2", Integer(Integer { constraints: [Subtype(ElementSetSpecs { set: Element(ValueRange { min: Some(Integer(0)), max: Some(Integer(20)), extensible: false }), extensible: false })], distinguished_values: None }), Explicit(LinkedIntValue { integer_type: Uint8, value: 10 }))])
+LinkerError in ASN grammar: No value for field c found!
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod example2_asn1_module {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct ConditionalPresenceOnExternalCondition {
+        pub a: Option<bool>,
+    }
+    impl ConditionalPresenceOnExternalCondition {
+        pub fn new(a: Option<bool>) -> Self {
+            Self { a }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct ConditionalPresenceOnValue {
+        #[rasn(value("0..=4"))]
+        pub a: u8,
+        #[rasn(value("1..=10"))]
+        pub b: u8,
+        pub c: Option<bool>,
+        pub d: Option<bool>,
+    }
+    impl ConditionalPresenceOnValue {
+        pub fn new(a: u8, b: u8, c: Option<bool>, d: Option<bool>) -> Self {
+            Self { a, b, c, d }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct EnclosingStructureForChoice {
+        pub choice: UnevenChoiceProbability,
+    }
+    impl EnclosingStructureForChoice {
+        pub fn new(choice: UnevenChoiceProbability) -> Self {
+            Self { choice }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct EnclosingStructureForList {
+        pub list: VariableLengthList,
+    }
+    impl EnclosingStructureForList {
+        pub fn new(list: VariableLengthList) -> Self {
+            Self { list }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct EqualLengthLists {
+        pub list1: List1,
+        pub list2: List2,
+    }
+    impl EqualLengthLists {
+        pub fn new(list1: List1, list2: List2) -> Self {
+            Self { list1, list2 }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum ExampleMessages {
+        normallySmallValues1(NormallySmallValues1),
+        normallySmallValues2(NormallySmallValues2),
+        sparseEvenlyDistributedValueSet(SparseEvenlyDistributedValueSet),
+        sparseUnevenlyDistributedValueSet(SparseUnevenlyDistributedValueSet),
+        conditionalPresenceOnValue(ConditionalPresenceOnValue),
+        conditionalPresenceOnExternalCondition(ConditionalPresenceOnExternalCondition),
+        enclosingStructureForList(EnclosingStructureForList),
+        equalLengthLists(EqualLengthLists),
+        enclosingStructureForChoice(EnclosingStructureForChoice),
+        version1Message(Version1Message),
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate, identifier = "BOOLEAN")]
+    pub struct AnonymousList1(pub bool);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=1023"))]
+    pub struct List1(pub SequenceOf<AnonymousList1>);
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "INTEGER", value("1..=2"))]
+    pub struct AnonymousList2(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=1023"))]
+    pub struct List2(pub SequenceOf<AnonymousList2>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=1000"))]
+    pub struct NormallySmallValues1(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=1000"))]
+    pub struct NormallySmallValues2(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("2..=16"))]
+    pub struct SparseEvenlyDistributedValueSet(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=11"))]
+    pub struct SparseUnevenlyDistributedValueSet(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum UnevenChoiceProbability {
+        #[rasn(value("1..=2"))]
+        frequent1(u8),
+        frequent2(bool),
+        #[rasn(value("1..=2"))]
+        common1(u8),
+        common2(bool),
+        common3(bool),
+        rare1(bool),
+        #[rasn(value("1..=2"))]
+        rare2(u8),
+        #[rasn(value("1..=2"))]
+        rare3(u8),
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "INTEGER", value("1..=2"))]
+    pub struct AnonymousVariableLengthList(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=1023"))]
+    pub struct VariableLengthList(pub SequenceOf<AnonymousVariableLengthList>);
+    #[doc = " Second mapping: Map determinant indexes to bitstrings"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct Version1Message {
+        #[rasn(identifier = "ie-1")]
+        pub ie_1: bool,
+        #[rasn(value("0..=20"), identifier = "ie-2")]
+        pub ie_2: u8,
+    }
+    impl Version1Message {
+        pub fn new(ie_1: bool, ie_2: u8) -> Self {
+            Self { ie_1, ie_2 }
+        }
+    }
+    pub const NORMALLY_SMALL_VALUES1: ExampleMessages =
+        ExampleMessages::normallySmallValues1(NormallySmallValues1(30));
+    pub const NORMALLY_SMALL_VALUES2: ExampleMessages =
+        ExampleMessages::normallySmallValues2(NormallySmallValues2(100));
+    pub static SPARSE_EVENLY_DISTRIBUTED_VALUE_SET: LazyLock<ExampleMessages> =
+        LazyLock::new(|| {
+            ExampleMessages::sparseEvenlyDistributedValueSet(SparseEvenlyDistributedValueSet(
+                Integer::from(10),
+            ))
+        });
+    pub static SPARSE_UNEVENLY_DISTRIBUTED_VALUE_SET: LazyLock<ExampleMessages> =
+        LazyLock::new(|| {
+            ExampleMessages::sparseUnevenlyDistributedValueSet(SparseUnevenlyDistributedValueSet(
+                Integer::from(11),
+            ))
+        });
+}

@@ -1,0 +1,94 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x672_2010_RINF-module.asn1
+---
+Warnings:
+NotYetInplemented generating bindings for : rasn does not support TIME types yet!
+LinkerError in ASN grammar: Failed to resolve supertype AlgorithmIdentifier of parameterized implementation.
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod rinf_module {
+    extern crate alloc;
+    use super::authentication_framework::*;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct HTMLString(pub Utf8String);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct Information {
+        pub description: HTMLString,
+        #[rasn(identifier = "additionalInformation")]
+        pub additional_information: Option<HTMLString>,
+        #[rasn(identifier = "firstRegistration")]
+        pub first_registration: Option<RegistrationDetails>,
+        #[rasn(identifier = "currentRegistration")]
+        pub current_registration: Option<RegistrationDetails>,
+    }
+    impl Information {
+        pub fn new(
+            description: HTMLString,
+            additional_information: Option<HTMLString>,
+            first_registration: Option<RegistrationDetails>,
+            current_registration: Option<RegistrationDetails>,
+        ) -> Self {
+            Self {
+                description,
+                additional_information,
+                first_registration,
+                current_registration,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct RegistrantContactDetails {
+        #[rasn(identifier = "familyNameOrOrganization")]
+        pub family_name_or_organization: Option<Utf8String>,
+        #[rasn(identifier = "givenName")]
+        pub given_name: Option<Utf8String>,
+        #[rasn(identifier = "e-mailAddress")]
+        pub e_mail_address: Option<Utf8String>,
+        pub phone: Option<Ia5String>,
+        pub fax: Option<Ia5String>,
+        #[rasn(identifier = "postalAddress")]
+        pub postal_address: Option<SequenceOf<Utf8String>>,
+    }
+    impl RegistrantContactDetails {
+        pub fn new(
+            family_name_or_organization: Option<Utf8String>,
+            given_name: Option<Utf8String>,
+            e_mail_address: Option<Utf8String>,
+            phone: Option<Ia5String>,
+            fax: Option<Ia5String>,
+            postal_address: Option<SequenceOf<Utf8String>>,
+        ) -> Self {
+            Self {
+                family_name_or_organization,
+                given_name,
+                e_mail_address,
+                phone,
+                fax,
+                postal_address,
+            }
+        }
+    }
+    #[doc = " This is an importation of security types from Rec. ITU-T X.509 | ISO/IEC 9594-8"]
+    #[doc = "\tto provide the semantics and types used for encipherment "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum RegistrationInformation {
+        noDisclosure(()),
+        disclosure(Information),
+    }
+}

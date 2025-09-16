@@ -1,0 +1,490 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_m_m3100_1995_M3100ASN1TypeModule2.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod m3100_asn1_type_module2 {
+    extern crate alloc;
+    use super::asn1_defined_types_module::{
+        Bundle, CharacteristicInformation, Directionality, LogicalProblem, NameType, ObjectList,
+        PointerOrNull, ProblemCause, RelatedObjectInstance, ResourceProblem, UserLabel,
+    };
+    use super::attribute_asn1_module::{
+        AdditionalInformation, AdministrativeState, AvailabilityStatus, OperationalState,
+        PerceivedSeverity, ProbableCause,
+    };
+    use super::cmip_1::{DistinguishedName, ObjectInstance};
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AddCapacityToTopologicalLinkEndInformation(pub RequestedPointCapacity);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AddCapacityToTopologicalLinkEndResult {
+        #[rasn(identifier = "resultingCapacity")]
+        pub resulting_capacity: PointCapacity,
+        #[rasn(identifier = "resultingnetworkCTPs")]
+        pub resultingnetwork_ctps: NWTPList,
+        #[rasn(identifier = "resultingProvisionedLinkEndCapacity")]
+        pub resulting_provisioned_link_end_capacity: PointCapacity,
+    }
+    impl AddCapacityToTopologicalLinkEndResult {
+        pub fn new(
+            resulting_capacity: PointCapacity,
+            resultingnetwork_ctps: NWTPList,
+            resulting_provisioned_link_end_capacity: PointCapacity,
+        ) -> Self {
+            Self {
+                resulting_capacity,
+                resultingnetwork_ctps,
+                resulting_provisioned_link_end_capacity,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AddCapacityToTopologicalLinkInformation(pub RequestedCapacity);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AddCapacityToTopologicalLinkResult {
+        #[rasn(identifier = "resultingCapacity")]
+        pub resulting_capacity: Capacity,
+        #[rasn(identifier = "resultingLinkConnections")]
+        pub resulting_link_connections: LinkConnectionList,
+    }
+    impl AddCapacityToTopologicalLinkResult {
+        pub fn new(
+            resulting_capacity: Capacity,
+            resulting_link_connections: LinkConnectionList,
+        ) -> Self {
+            Self {
+                resulting_capacity,
+                resulting_link_connections,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AddNWTTPsToAccessGroupInformation {
+        #[rasn(identifier = "nwTTPs")]
+        pub nw_ttps: SetOf<ObjectInstance>,
+        #[rasn(identifier = "accessGroup")]
+        pub access_group: Option<ObjectInstance>,
+    }
+    impl AddNWTTPsToAccessGroupInformation {
+        pub fn new(nw_ttps: SetOf<ObjectInstance>, access_group: Option<ObjectInstance>) -> Self {
+            Self {
+                nw_ttps,
+                access_group,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AddNWTTPsToAccessGroupResult {
+        #[rasn(identifier = "accessGroup")]
+        pub access_group: ObjectInstance,
+        #[rasn(identifier = "addedNWTTPs")]
+        pub added_nwttps: SetOf<ObjectInstance>,
+    }
+    impl AddNWTTPsToAccessGroupResult {
+        pub fn new(access_group: ObjectInstance, added_nwttps: SetOf<ObjectInstance>) -> Self {
+            Self {
+                access_group,
+                added_nwttps,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AssignLinkConnectionOnLogicalLinkInformation {
+        #[rasn(identifier = "layerNetworkDomain")]
+        pub layer_network_domain: ObjectInstance,
+        #[rasn(identifier = "requestedLinkConnections")]
+        pub requested_link_connections: LinkConnectionList,
+    }
+    impl AssignLinkConnectionOnLogicalLinkInformation {
+        pub fn new(
+            layer_network_domain: ObjectInstance,
+            requested_link_connections: LinkConnectionList,
+        ) -> Self {
+            Self {
+                layer_network_domain,
+                requested_link_connections,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AssignLinkConnectionOnLogicalLinkResult(pub LinkConnectionList);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AssignNetworkCTPOnLogicalLinkEndInformation(pub CTPList);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AssignNetworkCTPOnLogicalLinkEndResult(pub CTPList);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AvailableSignalRateList(pub SetOf<SignalRate>);
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousBandwidth {
+        pub ingress: Integer,
+        pub egress: Integer,
+    }
+    impl AnonymousBandwidth {
+        pub fn new(ingress: Integer, egress: Integer) -> Self {
+            Self { ingress, egress }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Bandwidth(pub SequenceOf<AnonymousBandwidth>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct Boolean(pub bool);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CTPList(pub NWTPList);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Capacities {
+        #[rasn(identifier = "availableLinkCapacity")]
+        pub available_link_capacity: Capacity,
+        #[rasn(identifier = "maxProvisionableCapacity")]
+        pub max_provisionable_capacity: Capacity,
+        #[rasn(identifier = "potentialLinkCapacity")]
+        pub potential_link_capacity: Capacity,
+        #[rasn(identifier = "provisionedLinkCapacity")]
+        pub provisioned_link_capacity: Capacity,
+    }
+    impl Capacities {
+        pub fn new(
+            available_link_capacity: Capacity,
+            max_provisionable_capacity: Capacity,
+            potential_link_capacity: Capacity,
+            provisioned_link_capacity: Capacity,
+        ) -> Self {
+            Self {
+                available_link_capacity,
+                max_provisionable_capacity,
+                potential_link_capacity,
+                provisioned_link_capacity,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum Capacity {
+        #[rasn(tag(context, 0))]
+        numberOfLinkConnections(Integer),
+        #[rasn(tag(context, 1))]
+        bandwidth(Bandwidth),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Channel(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Channels(pub SetOf<Channel>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ComponentPointers(pub SetOf<ObjectInstance>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CompositePointer(pub RelatedObjectInstance);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ConfiguredConnectivity {
+        sourceConnect = 0,
+        sinkConnect = 1,
+        bidirectionalConnect = 2,
+        noConnect = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ConnectionList(pub SetOf<ObjectInstance>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ConnectivityEndPoint {
+        #[rasn(tag(context, 1))]
+        sncTp(ObjectInstance),
+        #[rasn(tag(context, 2))]
+        linkEnd(ObjectInstance),
+        #[rasn(tag(context, 3))]
+        accessGroup(ObjectInstance),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ConnectivityPointer(pub RelatedObjectInstance);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ControlActionType {
+        closeContinuously = 0,
+        openContinuously = 1,
+        closeMomentarily = 2,
+        openMomentarily = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ControlResult {
+        complete = 0,
+        alreadyInCondition = 1,
+        #[rasn(identifier = "fail-InvalidControlActionType")]
+        fail_InvalidControlActionType = 2,
+        #[rasn(identifier = "fail-ReasonUnknown")]
+        fail_ReasonUnknown = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ControlState {
+        closed = 0,
+        open = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Count(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DeassignLinkConnectionFromLogicalLinkInformation(pub LinkConnectionList);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DeassignNetworkCTPFromLogicalLinkEndInformation(pub CTPList);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ExternalPointMessage(pub GraphicString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct Implicit(pub bool);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Integer(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct LinkConnectionList(pub ConnectionList);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum LinkDirectionality {
+        unidirectional = 0,
+        bidirectional = 1,
+        undefined = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum LinkEnd {
+        #[rasn(tag(context, 0))]
+        subnetwork(ObjectInstance),
+        #[rasn(tag(context, 1))]
+        accessGroup(ObjectInstance),
+        #[rasn(tag(context, 2))]
+        linkEnd(ObjectInstance),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MappingList(pub SequenceOf<PayloadLevel>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NWTPList(pub SetOf<ObjectInstance>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum NeAssignmentPointer {
+        notAvailable(()),
+        relatedObject(ObjectInstance),
+        string(GraphicString),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct None(pub ());
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PayloadLevel(pub CharacteristicInformation);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum PointCapacity {
+        #[rasn(tag(context, 0))]
+        numberOfTPs(Integer),
+        #[rasn(tag(context, 1))]
+        bandwidth(Bandwidth),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum PointDirectionality {
+        sink = 1,
+        source = 2,
+        bidirectional = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct PortAssociation {
+        #[rasn(identifier = "portId")]
+        pub port_id: NameType,
+        #[rasn(identifier = "portTrail")]
+        pub port_trail: PointerOrNull,
+    }
+    impl PortAssociation {
+        pub fn new(port_id: NameType, port_trail: PointerOrNull) -> Self {
+            Self {
+                port_id,
+                port_trail,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PortAssociations(pub SetOf<PortAssociation>);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousPortSignalRateAndMappingList {
+        #[rasn(identifier = "portId")]
+        pub port_id: NameType,
+        #[rasn(identifier = "signalRate")]
+        pub signal_rate: SignalRate,
+        #[rasn(identifier = "mappingList")]
+        pub mapping_list: Option<MappingList>,
+    }
+    impl AnonymousPortSignalRateAndMappingList {
+        pub fn new(
+            port_id: NameType,
+            signal_rate: SignalRate,
+            mapping_list: Option<MappingList>,
+        ) -> Self {
+            Self {
+                port_id,
+                signal_rate,
+                mapping_list,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PortSignalRateAndMappingList(pub SetOf<AnonymousPortSignalRateAndMappingList>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct PtoPoint {
+        #[rasn(identifier = "aEnd")]
+        pub a_end: ConnectivityEndPoint,
+        #[rasn(identifier = "zEnd")]
+        pub z_end: ConnectivityEndPoint,
+    }
+    impl PtoPoint {
+        pub fn new(a_end: ConnectivityEndPoint, z_end: ConnectivityEndPoint) -> Self {
+            Self { a_end, z_end }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct QofConnectivityService(pub ObjectInstance);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RemoveCapacityFromTopLinkEndInformation(pub RequestedPointCapacity);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct RemoveCapacityFromTopLinkEndResult {
+        #[rasn(identifier = "resultingCapacity")]
+        pub resulting_capacity: PointCapacity,
+        #[rasn(identifier = "resultingLinkConnections")]
+        pub resulting_link_connections: LinkConnectionList,
+    }
+    impl RemoveCapacityFromTopLinkEndResult {
+        pub fn new(
+            resulting_capacity: PointCapacity,
+            resulting_link_connections: LinkConnectionList,
+        ) -> Self {
+            Self {
+                resulting_capacity,
+                resulting_link_connections,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RemoveCapacityFromTopologicalLinkInformation(pub RequestedCapacity);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RemoveCapacityFromTopologicalLinkResult(pub Capacity);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum RequestedCapacity {
+        #[rasn(tag(context, 1))]
+        specificChannels(SequenceOf<Channel>),
+        #[rasn(tag(context, 2))]
+        capacity(Capacity),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum RequestedPointCapacity {
+        #[rasn(tag(context, 1))]
+        specificTPs(NWTPList),
+        #[rasn(tag(context, 2))]
+        capacity(PointCapacity),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum ResetError {
+        resetFail = 0,
+        entityInService = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ResetLevel {
+        completeReset(()),
+        partialReset(Integer),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum ServiceAffectingErrorParameter {
+        affectingExistingService = 0,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum SignalId {
+        #[rasn(tag(context, 0))]
+        simple(CharacteristicInformation),
+        #[rasn(tag(context, 1))]
+        bundle(Bundle),
+        #[rasn(tag(context, 3))]
+        complex(SequenceOf<Bundle>),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum SignalRate {
+        #[rasn(tag(context, 0))]
+        objectClass(ObjectIdentifier),
+        #[rasn(tag(context, 1))]
+        characteristicInformation(CharacteristicInformation),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SubNetworkConnectionPointerList(pub SequenceOf<RelatedObjectInstance>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TPList(pub SetOf<ObjectInstance>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum TopologicalEndDirectionality {
+        undefined = 0,
+        sink = 1,
+        source = 2,
+        bidirectional = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TrafficDescriptor(pub ObjectInstance);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=255"))]
+    pub struct UsageCost(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct UserIdentifier(pub NameType);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ValidControlType {
+        momentaryOnly = 0,
+        continuousOnly = 1,
+        both = 2,
+    }
+}

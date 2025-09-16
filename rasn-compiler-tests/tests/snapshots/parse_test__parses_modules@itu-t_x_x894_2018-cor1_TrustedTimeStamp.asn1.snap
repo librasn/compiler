@@ -1,0 +1,680 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x894_2018-cor1_TrustedTimeStamp.asn1
+---
+Warnings:
+LinkerError in ASN grammar: Failed to resolve argument EXTENSION.&id of parameterized implementation.
+LinkerError in ASN grammar: No syntax definition for information object class found!
+LinkerError in ASN grammar: No syntax definition for information object class found!
+LinkerError in ASN grammar: Failed to resolve argument EXTENSION.&id of parameterized implementation.
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod trusted_time_stamp {
+    extern crate alloc;
+    use super::authentication_framework::*;
+    use super::certificate_extensions::GeneralName;
+    use super::cryptographic_message_syntax_2010::{
+        AuthenticatedData, DigestAlgorithmIdentifier, SignedData,
+    };
+    use super::transient_key::{TransientKeySignedTST, TRANSIENT_KEY_SIGNED_TST, TSP_REQ_TK};
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " Expect large values "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Accuracy {
+        pub seconds: Option<Integer>,
+        #[rasn(value("1..=999"), tag(context, 0))]
+        pub millis: Option<u16>,
+        #[rasn(value("1..=999"), tag(context, 1))]
+        pub micros: Option<u16>,
+    }
+    impl Accuracy {
+        pub fn new(seconds: Option<Integer>, millis: Option<u16>, micros: Option<u16>) -> Self {
+            Self {
+                seconds,
+                millis,
+                micros,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct BindingInfo {
+        pub version: Version,
+        #[rasn(identifier = "msgImprints")]
+        pub msg_imprints: MessageImprints,
+        #[rasn(tag(context, 0))]
+        pub aggregate: Option<Chains>,
+        pub links: Links,
+        #[rasn(tag(context, 1))]
+        pub publish: Option<Chains>,
+        #[rasn(tag(context, 2))]
+        pub extensions: Option<BindingInfoExtensions>,
+    }
+    impl BindingInfo {
+        pub fn new(
+            version: Version,
+            msg_imprints: MessageImprints,
+            aggregate: Option<Chains>,
+            links: Links,
+            publish: Option<Chains>,
+            extensions: Option<BindingInfoExtensions>,
+        ) -> Self {
+            Self {
+                version,
+                msg_imprints,
+                aggregate,
+                links,
+                publish,
+                extensions,
+            }
+        }
+    }
+    #[doc = " BindingInfo extensions "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct BindingInfoExtensions(pub SequenceOf<Extension>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Chain {
+        pub algorithm: ChainAlgorithmIdentifier,
+        pub links: Links,
+    }
+    impl Chain {
+        pub fn new(algorithm: ChainAlgorithmIdentifier, links: Links) -> Self {
+            Self { algorithm, links }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ChainAlgorithmIdentifier {
+        pub algorithm: ObjectIdentifier,
+        pub parameters: Option<Any>,
+    }
+    impl ChainAlgorithmIdentifier {
+        pub fn new(algorithm: ObjectIdentifier, parameters: Option<Any>) -> Self {
+            Self {
+                algorithm,
+                parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct Chains(pub SequenceOf<Chain>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DDVersion95(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Digest(pub OctetString);
+    #[doc = " Link token types \u{96}"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct DigestedData {
+        pub version: DDVersion95,
+        #[rasn(identifier = "digestAlgorithm")]
+        pub digest_algorithm: DigestAlgorithmIdentifier,
+        #[rasn(identifier = "encapContentInfo")]
+        pub encap_content_info: EncapsulatedContentInfo,
+        pub digest: Digest,
+    }
+    impl DigestedData {
+        pub fn new(
+            version: DDVersion95,
+            digest_algorithm: DigestAlgorithmIdentifier,
+            encap_content_info: EncapsulatedContentInfo,
+            digest: Digest,
+        ) -> Self {
+            Self {
+                version,
+                digest_algorithm,
+                encap_content_info,
+                digest,
+            }
+        }
+    }
+    #[doc = " TSTInfo encapsulation "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ETSTInfo(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct EncapsulatedContentInfo {
+        #[rasn(identifier = "eContentType")]
+        pub e_content_type: Any,
+        #[rasn(tag(explicit(context, 0)), identifier = "eContent")]
+        pub e_content: Any,
+    }
+    impl EncapsulatedContentInfo {
+        pub fn new(e_content_type: Any, e_content: Any) -> Self {
+            Self {
+                e_content_type,
+                e_content,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct EntityInfo {
+        #[rasn(identifier = "entityName")]
+        pub entity_name: Option<Utf8String>,
+        #[rasn(identifier = "entityID")]
+        pub entity_id: Option<ObjectIdentifier>,
+        #[rasn(identifier = "entityOption")]
+        pub entity_option: Option<OctetString>,
+    }
+    impl EntityInfo {
+        pub fn new(
+            entity_name: Option<Utf8String>,
+            entity_id: Option<ObjectIdentifier>,
+            entity_option: Option<OctetString>,
+        ) -> Self {
+            Self {
+                entity_name,
+                entity_id,
+                entity_option,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct ExtHash(pub SequenceOf<MessageImprint>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct ExtMethod(pub SequenceOf<Method>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ExtName(pub GeneralName);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct ExtPublication(pub SequenceOf<PublicationInfo>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ExtRenewal(pub TimeStampToken);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ExtTime(pub GeneralizedTime);
+    #[doc = " Extend operation on a time stamp token \u{96}"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ExtendReq {
+        pub version: Version,
+        pub tst: TimeStampToken,
+        #[rasn(tag(context, 0), identifier = "requestID")]
+        pub request_id: Option<OctetString>,
+    }
+    impl ExtendReq {
+        pub fn new(version: Version, tst: TimeStampToken, request_id: Option<OctetString>) -> Self {
+            Self {
+                version,
+                tst,
+                request_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ExtendResp {
+        pub version: Version,
+        pub status: PKIStatusInfo,
+        pub tst: TimeStampToken,
+        #[rasn(tag(context, 0), identifier = "requestID")]
+        pub request_id: Option<OctetString>,
+    }
+    impl ExtendResp {
+        pub fn new(
+            version: Version,
+            status: PKIStatusInfo,
+            tst: TimeStampToken,
+            request_id: Option<OctetString>,
+        ) -> Self {
+            Self {
+                version,
+                status,
+                tst,
+                request_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Extensions(pub SequenceOf<Extension>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct HashFunction(pub DigestAlgorithmIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Imprint(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct Imprints(pub SequenceOf<Imprint>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct LeapSecond {
+        #[rasn(identifier = "leapDay")]
+        pub leap_day: GeneralizedTime,
+        #[rasn(value("0..=1"))]
+        pub action: u8,
+    }
+    impl LeapSecond {
+        pub fn new(leap_day: GeneralizedTime, action: u8) -> Self {
+            Self { leap_day, action }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Link {
+        #[rasn(tag(context, 0))]
+        pub algorithm: Option<LinkAlgorithmIdentifier>,
+        #[rasn(tag(context, 1))]
+        pub identifier: Option<Integer>,
+        pub members: Nodes,
+    }
+    impl Link {
+        pub fn new(
+            algorithm: Option<LinkAlgorithmIdentifier>,
+            identifier: Option<Integer>,
+            members: Nodes,
+        ) -> Self {
+            Self {
+                algorithm,
+                identifier,
+                members,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct LinkAlgorithmIdentifier {
+        pub algorithm: ObjectIdentifier,
+        pub parameters: Option<Any>,
+    }
+    impl LinkAlgorithmIdentifier {
+        pub fn new(algorithm: ObjectIdentifier, parameters: Option<Any>) -> Self {
+            Self {
+                algorithm,
+                parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct Links(pub SequenceOf<Link>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct MerkleChainParms(pub SequenceOf<HashFunction>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct MessageImprint {
+        #[rasn(identifier = "hashAlgorithm")]
+        pub hash_algorithm: DigestAlgorithmIdentifier,
+        #[rasn(identifier = "hashedMessage")]
+        pub hashed_message: OctetString,
+    }
+    impl MessageImprint {
+        pub fn new(hash_algorithm: DigestAlgorithmIdentifier, hashed_message: OctetString) -> Self {
+            Self {
+                hash_algorithm,
+                hashed_message,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct MessageImprints(pub SequenceOf<MessageImprint>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Method(pub ObjectIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum Node {
+        #[rasn(tag(context, 0))]
+        imprints(Imprints),
+        #[rasn(tag(context, 1))]
+        reference(Integer),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct Nodes(pub SequenceOf<Node>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Nonce(pub Integer);
+    #[doc = " Supporting definitions "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct OID(pub ObjectIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PKIFailureInfo(pub BitString);
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "UTF8String")]
+    pub struct AnonymousPKIFreeText(pub Utf8String);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct PKIFreeText(pub SequenceOf<AnonymousPKIFreeText>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PKIStatus(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct PKIStatusInfo {
+        pub status: PKIStatus,
+        #[rasn(identifier = "statusString")]
+        pub status_string: Option<PKIFreeText>,
+        #[rasn(identifier = "failInfo")]
+        pub fail_info: Option<PKIFailureInfo>,
+    }
+    impl PKIStatusInfo {
+        pub fn new(
+            status: PKIStatus,
+            status_string: Option<PKIFreeText>,
+            fail_info: Option<PKIFailureInfo>,
+        ) -> Self {
+            Self {
+                status,
+                status_string,
+                fail_info,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct POLICY(pub OIDS);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct PublicationInfo {
+        #[rasn(identifier = "pubTime")]
+        pub pub_time: Option<GeneralizedTime>,
+        #[rasn(tag(context, 0), identifier = "pubId")]
+        pub pub_id: Option<GeneralName>,
+        #[rasn(tag(context, 1), identifier = "pubChains")]
+        pub pub_chains: Option<Chains>,
+        #[rasn(tag(context, 2), identifier = "sourceId")]
+        pub source_id: Option<GeneralName>,
+    }
+    impl PublicationInfo {
+        pub fn new(
+            pub_time: Option<GeneralizedTime>,
+            pub_id: Option<GeneralName>,
+            pub_chains: Option<Chains>,
+            source_id: Option<GeneralName>,
+        ) -> Self {
+            Self {
+                pub_time,
+                pub_id,
+                pub_chains,
+                source_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct RequestID(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SerialNumber(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TSAPolicyId(pub Any);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct TSTInfo {
+        pub version: Version,
+        pub policy: TSAPolicyId,
+        #[rasn(identifier = "messageImprint")]
+        pub message_imprint: MessageImprint,
+        #[rasn(identifier = "serialNumber")]
+        pub serial_number: SerialNumber,
+        #[rasn(identifier = "genTime")]
+        pub gen_time: GeneralizedTime,
+        pub accuracy: Option<Accuracy>,
+        #[rasn(default = "tstinfo_ordering_default")]
+        pub ordering: bool,
+        pub nonce: Option<Nonce>,
+        #[rasn(tag(explicit(context, 0)))]
+        pub tsa: Option<GeneralName>,
+        #[rasn(tag(context, 1))]
+        pub extensions: Option<Extensions>,
+    }
+    impl TSTInfo {
+        pub fn new(
+            version: Version,
+            policy: TSAPolicyId,
+            message_imprint: MessageImprint,
+            serial_number: SerialNumber,
+            gen_time: GeneralizedTime,
+            accuracy: Option<Accuracy>,
+            ordering: bool,
+            nonce: Option<Nonce>,
+            tsa: Option<GeneralName>,
+            extensions: Option<Extensions>,
+        ) -> Self {
+            Self {
+                version,
+                policy,
+                message_imprint,
+                serial_number,
+                gen_time,
+                accuracy,
+                ordering,
+                nonce,
+                tsa,
+                extensions,
+            }
+        }
+    }
+    fn tstinfo_ordering_default() -> bool {
+        false
+    }
+    #[doc = " Time calibration "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct TimeCalibrationReport {
+        pub version: Version,
+        #[rasn(identifier = "tseInfo")]
+        pub tse_info: EntityInfo,
+        #[rasn(identifier = "tsaInfo")]
+        pub tsa_info: EntityInfo,
+        #[rasn(tag(context, 0), identifier = "dutInfo")]
+        pub dut_info: Option<EntityInfo>,
+        #[rasn(identifier = "timingMetrics")]
+        pub timing_metrics: TimingMetrics,
+    }
+    impl TimeCalibrationReport {
+        pub fn new(
+            version: Version,
+            tse_info: EntityInfo,
+            tsa_info: EntityInfo,
+            dut_info: Option<EntityInfo>,
+            timing_metrics: TimingMetrics,
+        ) -> Self {
+            Self {
+                version,
+                tse_info,
+                tsa_info,
+                dut_info,
+                timing_metrics,
+            }
+        }
+    }
+    #[doc = " Time stamp Request "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct TimeStampReq {
+        pub version: Version,
+        #[rasn(identifier = "messageImprint")]
+        pub message_imprint: MessageImprint,
+        #[rasn(identifier = "reqPolicy")]
+        pub req_policy: Option<TSAPolicyId>,
+        pub nonce: Option<Nonce>,
+        #[rasn(default = "time_stamp_req_cert_req_default", identifier = "certReq")]
+        pub cert_req: bool,
+        #[rasn(tag(context, 0))]
+        pub extensions: Option<Extensions>,
+    }
+    impl TimeStampReq {
+        pub fn new(
+            version: Version,
+            message_imprint: MessageImprint,
+            req_policy: Option<TSAPolicyId>,
+            nonce: Option<Nonce>,
+            cert_req: bool,
+            extensions: Option<Extensions>,
+        ) -> Self {
+            Self {
+                version,
+                message_imprint,
+                req_policy,
+                nonce,
+                cert_req,
+                extensions,
+            }
+        }
+    }
+    fn time_stamp_req_cert_req_default() -> bool {
+        false
+    }
+    #[doc = " Time Stamp Response \u{96}"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct TimeStampResp {
+        pub status: PKIStatusInfo,
+        #[rasn(identifier = "timeStampToken")]
+        pub time_stamp_token: Option<TimeStampToken>,
+    }
+    impl TimeStampResp {
+        pub fn new(status: PKIStatusInfo, time_stamp_token: Option<TimeStampToken>) -> Self {
+            Self {
+                status,
+                time_stamp_token,
+            }
+        }
+    }
+    #[doc = " Time stamp token "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct TimeStampToken {
+        #[rasn(identifier = "contentType")]
+        pub content_type: Any,
+        #[rasn(tag(explicit(context, 0)))]
+        pub content: Any,
+    }
+    impl TimeStampToken {
+        pub fn new(content_type: Any, content: Any) -> Self {
+            Self {
+                content_type,
+                content,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct TimingMetrics {
+        #[rasn(identifier = "ntpTime")]
+        pub ntp_time: GeneralizedTime,
+        pub offset: Accuracy,
+        pub delay: Accuracy,
+        #[rasn(identifier = "leapSecond")]
+        pub leap_second: Option<LeapSecond>,
+    }
+    impl TimingMetrics {
+        pub fn new(
+            ntp_time: GeneralizedTime,
+            offset: Accuracy,
+            delay: Accuracy,
+            leap_second: Option<LeapSecond>,
+        ) -> Self {
+            Self {
+                ntp_time,
+                offset,
+                delay,
+                leap_second,
+            }
+        }
+    }
+    #[doc = " Verification of a time stamp token "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct VerifyReq {
+        pub version: Version,
+        pub tst: TimeStampToken,
+        #[rasn(identifier = "requestID")]
+        pub request_id: Option<RequestID>,
+    }
+    impl VerifyReq {
+        pub fn new(version: Version, tst: TimeStampToken, request_id: Option<RequestID>) -> Self {
+            Self {
+                version,
+                tst,
+                request_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct VerifyResp {
+        pub version: Version,
+        pub status: PKIStatusInfo,
+        pub tst: TimeStampToken,
+        #[rasn(identifier = "requestID")]
+        pub request_id: Option<RequestID>,
+    }
+    impl VerifyResp {
+        pub fn new(
+            version: Version,
+            status: PKIStatusInfo,
+            tst: TimeStampToken,
+            request_id: Option<RequestID>,
+        ) -> Self {
+            Self {
+                version,
+                status,
+                tst,
+                request_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Version(pub Integer);
+    pub static ID_CT_TSTINFO: LazyLock<OID> = LazyLock::new(|| {
+        OID(
+            Oid::const_new(&[1u32, 2u32, 840u32, 113549u32, 1u32, 9u32, 16u32, 1u32, 4u32])
+                .to_owned(),
+        )
+    });
+    pub static ID_CT_AUTH_DATA: LazyLock<OID> = LazyLock::new(|| {
+        OID(
+            Oid::const_new(&[1u32, 2u32, 840u32, 113549u32, 1u32, 9u32, 16u32, 1u32, 2u32])
+                .to_owned(),
+        )
+    });
+    pub static ID_DIGESTED_DATA: LazyLock<OID> = LazyLock::new(|| {
+        OID(Oid::const_new(&[1u32, 2u32, 840u32, 113549u32, 1u32, 7u32, 5u32]).to_owned())
+    });
+    #[doc = " Merkle chain algorithm object identifier  from Annex E "]
+    pub static ID_MERKLE_CHAIN: LazyLock<OID> = LazyLock::new(|| {
+        OID(
+            Oid::const_new(&[1u32, 3u32, 133u32, 16u32, 840u32, 9u32, 95u32, 1u32, 1u32])
+                .to_owned(),
+        )
+    });
+    pub static ID_SIGNED_DATA: LazyLock<OID> = LazyLock::new(|| {
+        OID(Oid::const_new(&[1u32, 2u32, 840u32, 113549u32, 1u32, 7u32, 2u32]).to_owned())
+    });
+    #[doc = " Linked token encapsulation object identifiers "]
+    pub static TSP_DIGESTED_DATA: LazyLock<OID> =
+        LazyLock::new(|| OID(Oid::const_new(&[1u32, 0u32, 18014u32, 3u32, 8u32]).to_owned()));
+    #[doc = " Information object identifiers"]
+    pub static TSP_EXT_HASH: LazyLock<OID> =
+        LazyLock::new(|| OID(Oid::const_new(&[1u32, 0u32, 18014u32, 1u32, 1u32]).to_owned()));
+    pub static TSP_EXT_METH: LazyLock<OID> =
+        LazyLock::new(|| OID(Oid::const_new(&[1u32, 0u32, 18014u32, 1u32, 2u32]).to_owned()));
+    pub static TSP_EXT_NAME: LazyLock<OID> =
+        LazyLock::new(|| OID(Oid::const_new(&[1u32, 0u32, 18014u32, 3u32, 5u32]).to_owned()));
+    pub static TSP_EXT_PUBLICATION: LazyLock<OID> =
+        LazyLock::new(|| OID(Oid::const_new(&[1u32, 0u32, 18014u32, 3u32, 7u32]).to_owned()));
+    pub static TSP_EXT_RENEWAL: LazyLock<OID> =
+        LazyLock::new(|| OID(Oid::const_new(&[1u32, 0u32, 18014u32, 1u32, 3u32]).to_owned()));
+    pub static TSP_EXT_TIME: LazyLock<OID> =
+        LazyLock::new(|| OID(Oid::const_new(&[1u32, 0u32, 18014u32, 3u32, 6u32]).to_owned()));
+    pub static TSP_ITM_DS: LazyLock<OID> =
+        LazyLock::new(|| OID(Oid::const_new(&[1u32, 0u32, 18014u32, 2u32, 1u32]).to_owned()));
+    pub static TSP_ITM_MAC: LazyLock<OID> =
+        LazyLock::new(|| OID(Oid::const_new(&[1u32, 0u32, 18014u32, 2u32, 2u32]).to_owned()));
+    pub static TSP_REQ_LINK: LazyLock<OID> =
+        LazyLock::new(|| OID(Oid::const_new(&[1u32, 0u32, 18014u32, 3u32, 1u32]).to_owned()));
+    pub static TSP_REQ_LINK_DS: LazyLock<OID> =
+        LazyLock::new(|| OID(Oid::const_new(&[1u32, 0u32, 18014u32, 3u32, 2u32]).to_owned()));
+    pub static TSP_SIGNED_DATA: LazyLock<OID> =
+        LazyLock::new(|| OID(Oid::const_new(&[1u32, 0u32, 18014u32, 3u32, 9u32]).to_owned()));
+}

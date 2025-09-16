@@ -1,0 +1,140 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x501_2019_UsefulDefinitions.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod useful_definitions {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " EXPORTS All"]
+    #[doc = ""]
+    #[doc = "The types and values defined in this module are exported for use in the other ASN.1"]
+    #[doc = "modules contained within these Directory Specifications, and for the use of other"]
+    #[doc = "applications which will use them to access Directory services. Other applications"]
+    #[doc = "may use them for their own purposes, but this will not constrain extensions and"]
+    #[doc = "modifications needed to maintain or improve the Directory service."]
+    #[doc = ""]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ID(pub ObjectIdentifier);
+    pub static COSINE: LazyLock<ID> =
+        LazyLock::new(
+            || ID(Oid::const_new(&[0u32, 9u32, 2342u32, 19200300u32, 100u32]).to_owned()),
+        );
+    pub static COSINE_ATTR: LazyLock<ID> = LazyLock::new(|| {
+        ID(Oid::new(&[&***COSINE, &[1u32]].concat())
+            .unwrap()
+            .to_owned())
+    });
+    pub static DS: LazyLock<ID> = LazyLock::new(|| ID(Oid::const_new(&[2u32, 5u32]).to_owned()));
+    #[doc = " The following definition is for ASN.1 definitions moved from"]
+    #[doc = " Rec. ITU-T X.660 | ISO/IEC 9834-1:"]
+    pub static ID: LazyLock<ID> =
+        LazyLock::new(|| ID(Oid::const_new(&[2u32, 17u32, 1u32, 2u32]).to_owned()));
+    pub static ID_AC: LazyLock<ID> = LazyLock::new(|| ID(APPLICATION_CONTEXT));
+    #[doc = " id-rosObject                          ID ::= rosObject"]
+    #[doc = " id-contract                           ID ::= contract"]
+    #[doc = " id-package                            ID ::= package"]
+    pub static ID_AC_SCHEME: LazyLock<ID> = LazyLock::new(|| ID(ACCESS_CONTROL_SCHEMES));
+    pub static ID_ACA: LazyLock<ID> = LazyLock::new(|| ID(ACCESS_CONTROL_ATTRIBUTE));
+    pub static ID_AR: LazyLock<ID> = LazyLock::new(|| ID(ADMINISTRATIVE_ROLES));
+    pub static ID_AS: LazyLock<ID> = LazyLock::new(|| ID(ABSTRACT_SYNTAX));
+    #[doc = "id-lc                                  ID ::= ldapControl"]
+    pub static ID_ASX: LazyLock<ID> = LazyLock::new(|| ID(ATTRIBUTE_SYNTAX));
+    pub static ID_AT: LazyLock<ID> = LazyLock::new(|| ID(ATTRIBUTE_TYPE));
+    pub static ID_ATS: LazyLock<ID> = LazyLock::new(|| ID(ATTRIBUTE_SYNTAX));
+    pub static ID_AVC: LazyLock<ID> = LazyLock::new(|| ID(ATTRIBUTE_VALUE_CONTEXT));
+    pub static ID_AVR: LazyLock<ID> = LazyLock::new(|| ID(AV_RESTRICTION));
+    pub static ID_CAT: LazyLock<ID> = LazyLock::new(|| ID(CONTROL_ATTRIBUTE_TYPE));
+    pub static ID_CE: LazyLock<ID> = LazyLock::new(|| ID(CERTIFICATE_EXTENSION));
+    pub static ID_CMSCT: LazyLock<ID> = LazyLock::new(|| ID(CMS_CONTENT_TYPE));
+    pub static ID_COAT: LazyLock<ID> = LazyLock::new(|| {
+        ID(Oid::new(&[&***COSINE, &[1u32]].concat())
+            .unwrap()
+            .to_owned())
+    });
+    pub static ID_DOA: LazyLock<ID> = LazyLock::new(|| ID(DSA_OPERATIONAL_ATTRIBUTE));
+    #[doc = " id-se                                 ID ::= securityExchange"]
+    pub static ID_IDM: LazyLock<ID> = LazyLock::new(|| ID(IDM_PROTOCOL));
+    pub static ID_KMR: LazyLock<ID> = LazyLock::new(|| ID(KNOWLEDGE_MATCHING_RULE));
+    pub static ID_KP: LazyLock<ID> = LazyLock::new(|| ID(KEY_PURPOSES));
+    pub static ID_LAT: LazyLock<ID> = LazyLock::new(|| ID(LDAP_ATTR));
+    pub static ID_LDX: LazyLock<ID> = LazyLock::new(|| {
+        ID(Oid::new(&[&***LDAP_DIR, &[15u32]].concat())
+            .unwrap()
+            .to_owned())
+    });
+    pub static ID_LMR: LazyLock<ID> = LazyLock::new(|| ID(LDAP_MATCH));
+    pub static ID_LSX: LazyLock<ID> = LazyLock::new(|| ID(LDAP_SYNTAX));
+    pub static ID_MGT: LazyLock<ID> = LazyLock::new(|| ID(MANAGEMENT_OBJECT));
+    pub static ID_MR: LazyLock<ID> = LazyLock::new(|| ID(MATCHING_RULE));
+    pub static ID_MRE: LazyLock<ID> = LazyLock::new(|| ID(MATCHING_RESTRICTION));
+    pub static ID_NF: LazyLock<ID> = LazyLock::new(|| ID(NAME_FORM));
+    pub static ID_NOT: LazyLock<ID> = LazyLock::new(|| ID(NOTIFICATION));
+    pub static ID_OA: LazyLock<ID> = LazyLock::new(|| ID(OPERATIONAL_ATTRIBUTE_TYPE));
+    pub static ID_OAT: LazyLock<ID> = LazyLock::new(|| {
+        ID(Oid::new(&[&***LDAP_OPEN_LDAP, &[3u32]].concat())
+            .unwrap()
+            .to_owned())
+    });
+    pub static ID_OB: LazyLock<ID> = LazyLock::new(|| ID(OPERATIONAL_BINDING));
+    #[doc = " synonyms"]
+    pub static ID_OC: LazyLock<ID> = LazyLock::new(|| ID(OBJECT_CLASS));
+    pub static ID_PQ: LazyLock<ID> = LazyLock::new(|| ID(PASSWORD_QUALITY));
+    pub static ID_PR: LazyLock<ID> = LazyLock::new(|| ID(PROBLEM));
+    pub static ID_SC: LazyLock<ID> = LazyLock::new(|| ID(SUBENTRY));
+    pub static ID_SOA: LazyLock<ID> = LazyLock::new(|| ID(SCHEMA_OPERATIONAL_ATTRIBUTE));
+    pub static ID_SOC: LazyLock<ID> = LazyLock::new(|| ID(SCHEMA_OBJECT_CLASS));
+    pub static INT_SECURITY: LazyLock<ID> = LazyLock::new(|| {
+        ID(Oid::new(&[&***INTERNET, &[5u32]].concat())
+            .unwrap()
+            .to_owned())
+    });
+    #[doc = " The following defition is for ASN.1 definitions of LDAP schema"]
+    pub static INTERNET: LazyLock<ID> =
+        LazyLock::new(|| ID(Oid::const_new(&[1u32, 3u32, 6u32, 1u32]).to_owned()));
+    pub static LDAP_DIR: LazyLock<ID> = LazyLock::new(|| {
+        ID(Oid::new(&[&***INTERNET, &[1u32]].concat())
+            .unwrap()
+            .to_owned())
+    });
+    pub static LDAP_ENTERPRISE: LazyLock<ID> = LazyLock::new(|| {
+        ID(Oid::new(&[&***INTERNET, &[4u32, 1u32]].concat())
+            .unwrap()
+            .to_owned())
+    });
+    pub static LDAP_OPEN_LDAP: LazyLock<ID> = LazyLock::new(|| {
+        ID(Oid::new(&[&***LDAP_ENTERPRISE, &[4203u32, 1u32]].concat())
+            .unwrap()
+            .to_owned())
+    });
+    pub static LDAP_WALL: LazyLock<ID> = LazyLock::new(|| {
+        ID(Oid::new(&[&***LDAP_ENTERPRISE, &[1466u32]].concat())
+            .unwrap()
+            .to_owned())
+    });
+    pub static LDAP_X509: LazyLock<ID> = LazyLock::new(|| {
+        ID(Oid::new(&[&***LDAP_DIR, &[15u32]].concat())
+            .unwrap()
+            .to_owned())
+    });
+    pub static OPEN_LDAP_ATTRIBUTES: LazyLock<ID> = LazyLock::new(|| {
+        ID(Oid::new(&[&***LDAP_OPEN_LDAP, &[3u32]].concat())
+            .unwrap()
+            .to_owned())
+    });
+    pub static OPEN_LDAP_CONTROLS: LazyLock<ID> = LazyLock::new(|| {
+        ID(Oid::new(&[&***LDAP_OPEN_LDAP, &[10u32]].concat())
+            .unwrap()
+            .to_owned())
+    });
+}

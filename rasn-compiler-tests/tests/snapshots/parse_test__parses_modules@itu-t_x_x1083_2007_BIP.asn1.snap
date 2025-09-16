@@ -1,0 +1,4119 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x1083_2007_BIP.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod bip {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "AddMaster-RequestParams")]
+    pub struct AddMasterRequestParams {
+        #[rasn(identifier = "bipVersion")]
+        pub bip_version: BioAPIVERSION,
+    }
+    impl AddMasterRequestParams {
+        pub fn new(bip_version: BioAPIVERSION) -> Self {
+            Self { bip_version }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "AddMaster-ResponseParams")]
+    pub struct AddMasterResponseParams {
+        #[rasn(identifier = "fwSchema")]
+        pub fw_schema: Option<BioAPIFRAMEWORKSCHEMA>,
+        #[rasn(size("0..=4294967295"), identifier = "bspSchemas")]
+        pub bsp_schemas: SequenceOf<BioAPIBSPSCHEMA>,
+        #[rasn(size("0..=4294967295"), identifier = "bfpSchemas")]
+        pub bfp_schemas: SequenceOf<BioAPIBFPSCHEMA>,
+    }
+    impl AddMasterResponseParams {
+        pub fn new(
+            fw_schema: Option<BioAPIFRAMEWORKSCHEMA>,
+            bsp_schemas: SequenceOf<BioAPIBSPSCHEMA>,
+            bfp_schemas: SequenceOf<BioAPIBFPSCHEMA>,
+        ) -> Self {
+            Self {
+                fw_schema,
+                bsp_schemas,
+                bfp_schemas,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct ApplicationOwnedMemoryBlock {
+        pub address: MemoryAddress,
+    }
+    impl ApplicationOwnedMemoryBlock {
+        pub fn new(address: MemoryAddress) -> Self {
+            Self { address }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ApplicationOwnedMemoryBlocks(pub SetOf<ApplicationOwnedMemoryBlock>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct AttachSessionLocalReference {
+        #[rasn(identifier = "hostingEndpointIRI")]
+        pub hosting_endpoint_iri: EndpointIRI,
+        #[rasn(identifier = "bspProductUuid")]
+        pub bsp_product_uuid: BioAPIUUID,
+        #[rasn(identifier = "useBSPAccessUuid")]
+        pub use_bspaccess_uuid: bool,
+        #[rasn(identifier = "originalBSPHandle")]
+        pub original_bsphandle: BioAPIHANDLE,
+        #[rasn(identifier = "localBSPHandle")]
+        pub local_bsphandle: BioAPIHANDLE,
+    }
+    impl AttachSessionLocalReference {
+        pub fn new(
+            hosting_endpoint_iri: EndpointIRI,
+            bsp_product_uuid: BioAPIUUID,
+            use_bspaccess_uuid: bool,
+            original_bsphandle: BioAPIHANDLE,
+            local_bsphandle: BioAPIHANDLE,
+        ) -> Self {
+            Self {
+                hosting_endpoint_iri,
+                bsp_product_uuid,
+                use_bspaccess_uuid,
+                original_bsphandle,
+                local_bsphandle,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AttachSessionLocalReferences(pub SetOf<AttachSessionLocalReference>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct AttachSessionRemoteReference {
+        #[rasn(identifier = "referrerEndpointIRI")]
+        pub referrer_endpoint_iri: EndpointIRI,
+        #[rasn(identifier = "bspProductUuid")]
+        pub bsp_product_uuid: BioAPIUUID,
+        #[rasn(identifier = "originalBSPHandle")]
+        pub original_bsphandle: BioAPIHANDLE,
+    }
+    impl AttachSessionRemoteReference {
+        pub fn new(
+            referrer_endpoint_iri: EndpointIRI,
+            bsp_product_uuid: BioAPIUUID,
+            original_bsphandle: BioAPIHANDLE,
+        ) -> Self {
+            Self {
+                referrer_endpoint_iri,
+                bsp_product_uuid,
+                original_bsphandle,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AttachSessionRemoteReferences(pub SetOf<AttachSessionRemoteReference>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "BFPRegistrationEvent-NotificationParams")]
+    pub struct BFPRegistrationEventNotificationParams {
+        #[rasn(identifier = "bfpSchema")]
+        pub bfp_schema: BioAPIBFPSCHEMA,
+        pub update: bool,
+    }
+    impl BFPRegistrationEventNotificationParams {
+        pub fn new(bfp_schema: BioAPIBFPSCHEMA, update: bool) -> Self {
+            Self { bfp_schema, update }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        automatic_tags,
+        identifier = "BFPUnregistrationEvent-NotificationParams"
+    )]
+    pub struct BFPUnregistrationEventNotificationParams {
+        #[rasn(identifier = "bfpProductUuid")]
+        pub bfp_product_uuid: BioAPIUUID,
+    }
+    impl BFPUnregistrationEventNotificationParams {
+        pub fn new(bfp_product_uuid: BioAPIUUID) -> Self {
+            Self { bfp_product_uuid }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum BIPAcknowledgementParams {
+        guiSelectEvent(GUISelectEventAcknowledgementParams),
+        guiStateEvent(GUIStateEventAcknowledgementParams),
+        guiProgressEvent(GUIProgressEventAcknowledgementParams),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct BIPAcknowledgement {
+        #[rasn(identifier = "masterEndpointIRI")]
+        pub master_endpoint_iri: EndpointIRI,
+        #[rasn(identifier = "slaveEndpointIRI")]
+        pub slave_endpoint_iri: EndpointIRI,
+        #[rasn(identifier = "linkNumber")]
+        pub link_number: UnsignedInt,
+        #[rasn(identifier = "notificationId")]
+        pub notification_id: UnsignedInt,
+        pub params: BIPAcknowledgementParams,
+        #[rasn(identifier = "returnValue")]
+        pub return_value: BioAPIRETURN,
+    }
+    impl BIPAcknowledgement {
+        pub fn new(
+            master_endpoint_iri: EndpointIRI,
+            slave_endpoint_iri: EndpointIRI,
+            link_number: UnsignedInt,
+            notification_id: UnsignedInt,
+            params: BIPAcknowledgementParams,
+            return_value: BioAPIRETURN,
+        ) -> Self {
+            Self {
+                master_endpoint_iri,
+                slave_endpoint_iri,
+                link_number,
+                notification_id,
+                params,
+                return_value,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum BIPMessageNature {
+        request(BIPRequest),
+        response(BIPResponse),
+        notification(BIPNotification),
+        acknowledgement(BIPAcknowledgement),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct BIPMessage {
+        pub nature: BIPMessageNature,
+    }
+    impl BIPMessage {
+        pub fn new(nature: BIPMessageNature) -> Self {
+            Self { nature }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum BIPNotificationParams {
+        masterDeletionEvent(MasterDeletionEventNotificationParams),
+        unitEvent(UnitEventNotificationParams),
+        guiSelectEvent(GUISelectEventNotificationParams),
+        guiStateEvent(GUIStateEventNotificationParams),
+        guiProgressEvent(GUIProgressEventNotificationParams),
+        bspRegistrationEvent(BSPRegistrationEventNotificationParams),
+        bspUnregistrationEvent(BSPUnregistrationEventNotificationParams),
+        bfpRegistrationEvent(BFPRegistrationEventNotificationParams),
+        bfpUnregistrationEvent(BFPUnregistrationEventNotificationParams),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct BIPNotification {
+        #[rasn(identifier = "masterEndpointIRI")]
+        pub master_endpoint_iri: EndpointIRI,
+        #[rasn(identifier = "slaveEndpointIRI")]
+        pub slave_endpoint_iri: EndpointIRI,
+        #[rasn(identifier = "linkNumber")]
+        pub link_number: UnsignedInt,
+        #[rasn(identifier = "notificationId")]
+        pub notification_id: UnsignedInt,
+        pub params: BIPNotificationParams,
+    }
+    impl BIPNotification {
+        pub fn new(
+            master_endpoint_iri: EndpointIRI,
+            slave_endpoint_iri: EndpointIRI,
+            link_number: UnsignedInt,
+            notification_id: UnsignedInt,
+            params: BIPNotificationParams,
+        ) -> Self {
+            Self {
+                master_endpoint_iri,
+                slave_endpoint_iri,
+                link_number,
+                notification_id,
+                params,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum BIPRequestParams {
+        addMaster(AddMasterRequestParams),
+        deleteMaster(DeleteMasterRequestParams),
+        bspLoad(BSPLoadRequestParams),
+        bspUnload(BSPUnloadRequestParams),
+        queryUnits(QueryUnitsRequestParams),
+        queryBFPs(QueryBFPsRequestParams),
+        bspAttach(BSPAttachRequestParams),
+        bspDetach(BSPDetachRequestParams),
+        enableUnitEvents(EnableUnitEventsRequestParams),
+        enableEventNotifications(EnableEventNotificationsRequestParams),
+        controlUnit(ControlUnitRequestParams),
+        control(ControlRequestParams),
+        freeBIRHandle(FreeBIRHandleRequestParams),
+        getBIRFromHandle(GetBIRFromHandleRequestParams),
+        getHeaderFromHandle(GetHeaderFromHandleRequestParams),
+        subscribeToGUIEvents(SubscribeToGUIEventsRequestParams),
+        unsubscribeFromGUIEvents(UnsubscribeFromGUIEventsRequestParams),
+        redirectGUIEvents(RedirectGUIEventsRequestParams),
+        unredirectGUIEvents(UnredirectGUIEventsRequestParams),
+        queryGUIEventSubscriptions(QueryGUIEventSubscriptionsRequestParams),
+        notifyGUISelectEvent(NotifyGUISelectEventRequestParams),
+        notifyGUIStateEvent(NotifyGUIStateEventRequestParams),
+        notifyGUIProgressEvent(NotifyGUIProgressEventRequestParams),
+        capture(CaptureRequestParams),
+        createTemplate(CreateTemplateRequestParams),
+        process(ProcessRequestParams),
+        processWithAuxBIR(ProcessWithAuxBIRRequestParams),
+        verifyMatch(VerifyMatchRequestParams),
+        identifyMatch(IdentifyMatchRequestParams),
+        enroll(EnrollRequestParams),
+        verify(VerifyRequestParams),
+        identify(IdentifyRequestParams),
+        import(ImportRequestParams),
+        presetIdentifyPopulation(PresetIdentifyPopulationRequestParams),
+        transform(TransformRequestParams),
+        dbOpen(DbOpenRequestParams),
+        dbClose(DbCloseRequestParams),
+        dbCreate(DbCreateRequestParams),
+        dbDelete(DbDeleteRequestParams),
+        dbSetMarker(DbSetMarkerRequestParams),
+        dbFreeMarker(DbFreeMarkerRequestParams),
+        dbStore(DbStoreBIRRequestParams),
+        dbGetBIR(DbGetBIRRequestParams),
+        dbGetNextBIR(DbGetNextBIRRequestParams),
+        dbDeleteBIR(DbDeleteBIRRequestParams),
+        calibrateSensor(CalibrateSensorRequestParams),
+        setPowerMode(SetPowerModeRequestParams),
+        setIndicatorStatus(SetIndicatorStatusRequestParams),
+        getIndicatorStatus(GetIndicatorStatusRequestParams),
+        cancel(CancelRequestParams),
+        registerBSP(RegisterBSPRequestParams),
+        unregisterBSP(UnregisterBSPRequestParams),
+        registerBFP(RegisterBFPRequestParams),
+        unregisterBFP(UnregisterBFPRequestParams),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct BIPRequest {
+        #[rasn(identifier = "slaveEndpointIRI")]
+        pub slave_endpoint_iri: EndpointIRI,
+        #[rasn(identifier = "masterEndpointIRI")]
+        pub master_endpoint_iri: EndpointIRI,
+        #[rasn(identifier = "linkNumber")]
+        pub link_number: UnsignedInt,
+        #[rasn(identifier = "requestId")]
+        pub request_id: UnsignedInt,
+        pub params: BIPRequestParams,
+    }
+    impl BIPRequest {
+        pub fn new(
+            slave_endpoint_iri: EndpointIRI,
+            master_endpoint_iri: EndpointIRI,
+            link_number: UnsignedInt,
+            request_id: UnsignedInt,
+            params: BIPRequestParams,
+        ) -> Self {
+            Self {
+                slave_endpoint_iri,
+                master_endpoint_iri,
+                link_number,
+                request_id,
+                params,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum BIPResponseParams {
+        addMaster(AddMasterResponseParams),
+        deleteMaster(DeleteMasterResponseParams),
+        bspLoad(BSPLoadResponseParams),
+        bspUnload(BSPUnloadResponseParams),
+        queryUnits(QueryUnitsResponseParams),
+        queryBFPs(QueryBFPsResponseParams),
+        bspAttach(BSPAttachResponseParams),
+        bspDetach(BSPDetachResponseParams),
+        enableUnitEvents(EnableUnitEventsResponseParams),
+        enableEventNotifications(EnableEventNotificationsResponseParams),
+        controlUnit(ControlUnitResponseParams),
+        control(ControlResponseParams),
+        freeBIRHandle(FreeBIRHandleResponseParams),
+        getBIRFromHandle(GetBIRFromHandleResponseParams),
+        getHeaderFromHandle(GetHeaderFromHandleResponseParams),
+        subscribeToGUIEvents(SubscribeToGUIEventsResponseParams),
+        unsubscribeFromGUIEvents(UnsubscribeFromGUIEventsResponseParams),
+        redirectGUIEvents(RedirectGUIEventsResponseParams),
+        unredirectGUIEvents(UnredirectGUIEventsResponseParams),
+        queryGUIEventSubscriptions(QueryGUIEventSubscriptionsResponseParams),
+        notifyGUISelectEvent(NotifyGUISelectEventResponseParams),
+        notifyGUIStateEvent(NotifyGUIStateEventResponseParams),
+        notifyGUIProgressEvent(NotifyGUIProgressEventResponseParams),
+        capture(CaptureResponseParams),
+        createTemplate(CreateTemplateResponseParams),
+        process(ProcessResponseParams),
+        processWithAuxBIR(ProcessWithAuxBIRResponseParams),
+        verifyMatch(VerifyMatchResponseParams),
+        identifyMatch(IdentifyMatchResponseParams),
+        enroll(EnrollResponseParams),
+        verify(VerifyResponseParams),
+        identify(IdentifyResponseParams),
+        import(ImportResponseParams),
+        presetIdentifyPopulation(PresetIdentifyPopulationResponseParams),
+        transform(TransformResponseParams),
+        dbOpen(DbOpenResponseParams),
+        dbClose(DbCloseResponseParams),
+        dbCreate(DbCreateResponseParams),
+        dbDelete(DbDeleteResponseParams),
+        dbSetMarker(DbSetMarkerResponseParams),
+        dbFreeMarker(DbFreeMarkerResponseParams),
+        dbStore(DbStoreBIRResponseParams),
+        dbGetBIR(DbGetBIRResponseParams),
+        dbGetNextBIR(DbGetNextBIRResponseParams),
+        dbDeleteBIR(DbDeleteBIRResponseParams),
+        calibrateSensor(CalibrateSensorResponseParams),
+        setPowerMode(SetPowerModeResponseParams),
+        setIndicatorStatus(SetIndicatorStatusResponseParams),
+        getIndicatorStatus(GetIndicatorStatusResponseParams),
+        cancel(CancelResponseParams),
+        registedBSP(RegisterBSPResponseParams),
+        unregisterBSP(UnregisterBSPResponseParams),
+        registerBFP(RegisterBFPResponseParams),
+        unregisterBFP(UnregisterBFPResponseParams),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct BIPResponse {
+        #[rasn(identifier = "slaveEndpointIRI")]
+        pub slave_endpoint_iri: EndpointIRI,
+        #[rasn(identifier = "masterEndpointIRI")]
+        pub master_endpoint_iri: EndpointIRI,
+        #[rasn(identifier = "linkNumber")]
+        pub link_number: UnsignedInt,
+        #[rasn(identifier = "requestId")]
+        pub request_id: UnsignedInt,
+        pub params: BIPResponseParams,
+        #[rasn(identifier = "returnValue")]
+        pub return_value: BioAPIRETURN,
+    }
+    impl BIPResponse {
+        pub fn new(
+            slave_endpoint_iri: EndpointIRI,
+            master_endpoint_iri: EndpointIRI,
+            link_number: UnsignedInt,
+            request_id: UnsignedInt,
+            params: BIPResponseParams,
+            return_value: BioAPIRETURN,
+        ) -> Self {
+            Self {
+                slave_endpoint_iri,
+                master_endpoint_iri,
+                link_number,
+                request_id,
+                params,
+                return_value,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "BSPAttach-RequestParams")]
+    pub struct BSPAttachRequestParams {
+        #[rasn(identifier = "bspProductUuid")]
+        pub bsp_product_uuid: BioAPIUUID,
+        pub version: BioAPIVERSION,
+        #[rasn(size("0..=4294967295"))]
+        pub units: SequenceOf<BioAPIUNITLISTELEMENT>,
+    }
+    impl BSPAttachRequestParams {
+        pub fn new(
+            bsp_product_uuid: BioAPIUUID,
+            version: BioAPIVERSION,
+            units: SequenceOf<BioAPIUNITLISTELEMENT>,
+        ) -> Self {
+            Self {
+                bsp_product_uuid,
+                version,
+                units,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "BSPAttach-ResponseParams")]
+    pub struct BSPAttachResponseParams {
+        #[rasn(identifier = "newOriginalBSPHandle")]
+        pub new_original_bsphandle: BioAPIHANDLE,
+    }
+    impl BSPAttachResponseParams {
+        pub fn new(new_original_bsphandle: BioAPIHANDLE) -> Self {
+            Self {
+                new_original_bsphandle,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct BSPAttachCallOutputParams {
+        #[rasn(identifier = "newBSPHandle")]
+        pub new_bsphandle: BioAPIHANDLE,
+    }
+    impl BSPAttachCallOutputParams {
+        pub fn new(new_bsphandle: BioAPIHANDLE) -> Self {
+            Self { new_bsphandle }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "BSPDetach-RequestParams")]
+    pub struct BSPDetachRequestParams {
+        #[rasn(identifier = "originalBSPHandle")]
+        pub original_bsphandle: BioAPIHANDLE,
+    }
+    impl BSPDetachRequestParams {
+        pub fn new(original_bsphandle: BioAPIHANDLE) -> Self {
+            Self { original_bsphandle }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate, identifier = "BSPDetach-ResponseParams")]
+    pub struct BSPDetachResponseParams(pub ());
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "BSPLoad-RequestParams")]
+    pub struct BSPLoadRequestParams {
+        #[rasn(identifier = "bspProductUuid")]
+        pub bsp_product_uuid: BioAPIUUID,
+        #[rasn(identifier = "unitEventSubscription")]
+        pub unit_event_subscription: bool,
+    }
+    impl BSPLoadRequestParams {
+        pub fn new(bsp_product_uuid: BioAPIUUID, unit_event_subscription: bool) -> Self {
+            Self {
+                bsp_product_uuid,
+                unit_event_subscription,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate, identifier = "BSPLoad-ResponseParams")]
+    pub struct BSPLoadResponseParams(pub ());
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct BSPLoadCallParams {
+        #[rasn(identifier = "bspUuid")]
+        pub bsp_uuid: BioAPIUUID,
+        #[rasn(identifier = "unitEventHandlerAddress")]
+        pub unit_event_handler_address: MemoryAddress,
+        #[rasn(identifier = "unitEventHandlerContext")]
+        pub unit_event_handler_context: MemoryAddress,
+    }
+    impl BSPLoadCallParams {
+        pub fn new(
+            bsp_uuid: BioAPIUUID,
+            unit_event_handler_address: MemoryAddress,
+            unit_event_handler_context: MemoryAddress,
+        ) -> Self {
+            Self {
+                bsp_uuid,
+                unit_event_handler_address,
+                unit_event_handler_context,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "BSPRegistrationEvent-NotificationParams")]
+    pub struct BSPRegistrationEventNotificationParams {
+        #[rasn(identifier = "bspSchema")]
+        pub bsp_schema: BioAPIBSPSCHEMA,
+        pub update: bool,
+    }
+    impl BSPRegistrationEventNotificationParams {
+        pub fn new(bsp_schema: BioAPIBSPSCHEMA, update: bool) -> Self {
+            Self { bsp_schema, update }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "BSPUnload-RequestParams")]
+    pub struct BSPUnloadRequestParams {
+        #[rasn(identifier = "bspProductUuid")]
+        pub bsp_product_uuid: BioAPIUUID,
+        #[rasn(identifier = "unitEventSubscription")]
+        pub unit_event_subscription: bool,
+    }
+    impl BSPUnloadRequestParams {
+        pub fn new(bsp_product_uuid: BioAPIUUID, unit_event_subscription: bool) -> Self {
+            Self {
+                bsp_product_uuid,
+                unit_event_subscription,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate, identifier = "BSPUnload-ResponseParams")]
+    pub struct BSPUnloadResponseParams(pub ());
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct BSPUnloadCallParams {
+        #[rasn(identifier = "bspUuid")]
+        pub bsp_uuid: BioAPIUUID,
+        #[rasn(identifier = "unitEventHandlerAddress")]
+        pub unit_event_handler_address: MemoryAddress,
+        #[rasn(identifier = "unitEventHandlerContext")]
+        pub unit_event_handler_context: MemoryAddress,
+    }
+    impl BSPUnloadCallParams {
+        pub fn new(
+            bsp_uuid: BioAPIUUID,
+            unit_event_handler_address: MemoryAddress,
+            unit_event_handler_context: MemoryAddress,
+        ) -> Self {
+            Self {
+                bsp_uuid,
+                unit_event_handler_address,
+                unit_event_handler_context,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        automatic_tags,
+        identifier = "BSPUnregistrationEvent-NotificationParams"
+    )]
+    pub struct BSPUnregistrationEventNotificationParams {
+        #[rasn(identifier = "bspProductUuid")]
+        pub bsp_product_uuid: BioAPIUUID,
+    }
+    impl BSPUnregistrationEventNotificationParams {
+        pub fn new(bsp_product_uuid: BioAPIUUID) -> Self {
+            Self { bsp_product_uuid }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "BioAPI-BFP-LIST-ELEMENT")]
+    pub struct BioAPIBFPLISTELEMENT {
+        pub category: BioAPICATEGORY,
+        #[rasn(identifier = "bfpProductUuid")]
+        pub bfp_product_uuid: BioAPIUUID,
+    }
+    impl BioAPIBFPLISTELEMENT {
+        pub fn new(category: BioAPICATEGORY, bfp_product_uuid: BioAPIUUID) -> Self {
+            Self {
+                category,
+                bfp_product_uuid,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "BioAPI-BFP-SCHEMA")]
+    pub struct BioAPIBFPSCHEMA {
+        #[rasn(identifier = "bfpProductUuid")]
+        pub bfp_product_uuid: BioAPIUUID,
+        pub category: BioAPICATEGORY,
+        pub description: BioAPISTRING,
+        pub path: Utf8String,
+        #[rasn(identifier = "specVersion")]
+        pub spec_version: BioAPIVERSION,
+        #[rasn(identifier = "productVersion")]
+        pub product_version: BioAPISTRING,
+        pub vendor: BioAPISTRING,
+        #[rasn(size("0..=4294967295"), identifier = "supportedFormats")]
+        pub supported_formats: SequenceOf<BioAPIBIRBIOMETRICDATAFORMAT>,
+        #[rasn(identifier = "factorsMask")]
+        pub factors_mask: BioAPIBIRBIOMETRICTYPE,
+        #[rasn(identifier = "propertyUuid")]
+        pub property_uuid: BioAPIUUID,
+        pub property: BioAPIDATA,
+        #[rasn(identifier = "hostingEndpointIRI")]
+        pub hosting_endpoint_iri: EndpointIRI,
+    }
+    impl BioAPIBFPSCHEMA {
+        pub fn new(
+            bfp_product_uuid: BioAPIUUID,
+            category: BioAPICATEGORY,
+            description: BioAPISTRING,
+            path: Utf8String,
+            spec_version: BioAPIVERSION,
+            product_version: BioAPISTRING,
+            vendor: BioAPISTRING,
+            supported_formats: SequenceOf<BioAPIBIRBIOMETRICDATAFORMAT>,
+            factors_mask: BioAPIBIRBIOMETRICTYPE,
+            property_uuid: BioAPIUUID,
+            property: BioAPIDATA,
+            hosting_endpoint_iri: EndpointIRI,
+        ) -> Self {
+            Self {
+                bfp_product_uuid,
+                category,
+                description,
+                path,
+                spec_version,
+                product_version,
+                vendor,
+                supported_formats,
+                factors_mask,
+                property_uuid,
+                property,
+                hosting_endpoint_iri,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "BioAPI-BIR")]
+    pub struct BioAPIBIR {
+        #[rasn(identifier = "patronFormatOwner")]
+        pub patron_format_owner: UnsignedShort,
+        #[rasn(identifier = "patronFormatType")]
+        pub patron_format_type: UnsignedShort,
+        #[rasn(identifier = "formattedBIR")]
+        pub formatted_bir: OctetString,
+    }
+    impl BioAPIBIR {
+        pub fn new(
+            patron_format_owner: UnsignedShort,
+            patron_format_type: UnsignedShort,
+            formatted_bir: OctetString,
+        ) -> Self {
+            Self {
+                patron_format_owner,
+                patron_format_type,
+                formatted_bir,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "BioAPI-BIR-ARRAY-POPULATION")]
+    pub struct BioAPIBIRARRAYPOPULATION {
+        #[rasn(size("0..=4294967295"))]
+        pub members: SequenceOf<BioAPIBIR>,
+    }
+    impl BioAPIBIRARRAYPOPULATION {
+        pub fn new(members: SequenceOf<BioAPIBIR>) -> Self {
+            Self { members }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "BioAPI-BIR-BIOMETRIC-DATA-FORMAT")]
+    pub struct BioAPIBIRBIOMETRICDATAFORMAT {
+        #[rasn(identifier = "formatOwner")]
+        pub format_owner: UnsignedShort,
+        #[rasn(identifier = "formatType")]
+        pub format_type: UnsignedShort,
+    }
+    impl BioAPIBIRBIOMETRICDATAFORMAT {
+        pub fn new(format_owner: UnsignedShort, format_type: UnsignedShort) -> Self {
+            Self {
+                format_owner,
+                format_type,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "BioAPI-BIR-BIOMETRIC-PRODUCT-ID")]
+    pub struct BioAPIBIRBIOMETRICPRODUCTID {
+        #[rasn(identifier = "productOwner")]
+        pub product_owner: UnsignedShort,
+        #[rasn(identifier = "productType")]
+        pub product_type: UnsignedShort,
+    }
+    impl BioAPIBIRBIOMETRICPRODUCTID {
+        pub fn new(product_owner: UnsignedShort, product_type: UnsignedShort) -> Self {
+            Self {
+                product_owner,
+                product_type,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "BioAPI-BIR-BIOMETRIC-TYPE")]
+    pub struct BioAPIBIRBIOMETRICTYPE(pub FixedBitString<32usize>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum BioAPIBIRDATATYPEProcessedLevel {
+        raw = 0,
+        intermediate = 1,
+        processed = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "BioAPI-BIR-DATA-TYPE")]
+    pub struct BioAPIBIRDATATYPE {
+        #[rasn(identifier = "processedLevel")]
+        pub processed_level: BioAPIBIRDATATYPEProcessedLevel,
+        #[rasn(size("4"))]
+        pub flags: BitString,
+    }
+    impl BioAPIBIRDATATYPE {
+        pub fn new(processed_level: BioAPIBIRDATATYPEProcessedLevel, flags: BitString) -> Self {
+            Self {
+                processed_level,
+                flags,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "BioAPI-BIR-HANDLE")]
+    pub struct BioAPIBIRHANDLE(pub SignedInt);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "BioAPI-BIR-HEADER")]
+    pub struct BioAPIBIRHEADER {
+        #[rasn(identifier = "patronFormatOwner")]
+        pub patron_format_owner: UnsignedShort,
+        #[rasn(identifier = "patronFormatType")]
+        pub patron_format_type: UnsignedShort,
+        #[rasn(identifier = "formattedBIR")]
+        pub formatted_bir: OctetString,
+    }
+    impl BioAPIBIRHEADER {
+        pub fn new(
+            patron_format_owner: UnsignedShort,
+            patron_format_type: UnsignedShort,
+            formatted_bir: OctetString,
+        ) -> Self {
+            Self {
+                patron_format_owner,
+                patron_format_type,
+                formatted_bir,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated, identifier = "BioAPI-BIR-PURPOSE")]
+    #[non_exhaustive]
+    pub enum BioAPIBIRPURPOSE {
+        verify = 0,
+        identify = 1,
+        enroll = 2,
+        enrollVerify = 3,
+        enrollIdentify = 4,
+        audit = 5,
+        any = 6,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "BioAPI-BIR-SECURITY-BLOCK-FORMAT")]
+    pub struct BioAPIBIRSECURITYBLOCKFORMAT {
+        #[rasn(identifier = "formatOwner")]
+        pub format_owner: UnsignedShort,
+        #[rasn(identifier = "formatType")]
+        pub format_type: UnsignedShort,
+    }
+    impl BioAPIBIRSECURITYBLOCKFORMAT {
+        pub fn new(format_owner: UnsignedShort, format_type: UnsignedShort) -> Self {
+            Self {
+                format_owner,
+                format_type,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags, identifier = "BioAPI-BIR-SUBTYPE")]
+    pub enum BioAPIBIRSUBTYPE {
+        #[rasn(size("7"))]
+        anySubtype(BitString),
+        #[rasn(size("7"), identifier = "vein-only-subtype")]
+        vein_only_subtype(BitString),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "BioAPI-BIR-SUBTYPE-MASK")]
+    pub struct BioAPIBIRSUBTYPEMASK(pub FixedBitString<32usize>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "BioAPI-BSP-SCHEMA")]
+    pub struct BioAPIBSPSCHEMA {
+        #[rasn(identifier = "bspProductUuid")]
+        pub bsp_product_uuid: BioAPIUUID,
+        pub description: BioAPISTRING,
+        pub path: Utf8String,
+        #[rasn(identifier = "specVersion")]
+        pub spec_version: BioAPIVERSION,
+        #[rasn(identifier = "productVersion")]
+        pub product_version: BioAPISTRING,
+        pub vendor: BioAPISTRING,
+        #[rasn(size("0..=4294967295"), identifier = "supportedFormats")]
+        pub supported_formats: SequenceOf<BioAPIBIRBIOMETRICDATAFORMAT>,
+        #[rasn(identifier = "factorsMask")]
+        pub factors_mask: BioAPIBIRBIOMETRICTYPE,
+        pub operations: BioAPIOPERATIONSMASK,
+        pub options: BioAPIOPTIONSMASK,
+        #[rasn(identifier = "payloadPolicy")]
+        pub payload_policy: BioAPIFMR,
+        #[rasn(identifier = "maxPayloadSize")]
+        pub max_payload_size: UnsignedInt,
+        #[rasn(identifier = "defaultVerifyTimeout")]
+        pub default_verify_timeout: SignedInt,
+        #[rasn(identifier = "defaultIdentifyTimeout")]
+        pub default_identify_timeout: SignedInt,
+        #[rasn(identifier = "defaultCaptureTimeout")]
+        pub default_capture_timeout: SignedInt,
+        #[rasn(identifier = "defaultEnrollTimeout")]
+        pub default_enroll_timeout: SignedInt,
+        #[rasn(identifier = "defaultCalibrateTimeout")]
+        pub default_calibrate_timeout: SignedInt,
+        #[rasn(identifier = "maxBSPDbSize")]
+        pub max_bspdb_size: UnsignedInt,
+        #[rasn(identifier = "maxIdentify")]
+        pub max_identify: UnsignedInt,
+        #[rasn(identifier = "hostingEndpointIRI")]
+        pub hosting_endpoint_iri: EndpointIRI,
+        #[rasn(identifier = "bspAccessUuid")]
+        pub bsp_access_uuid: BioAPIUUID,
+    }
+    impl BioAPIBSPSCHEMA {
+        pub fn new(
+            bsp_product_uuid: BioAPIUUID,
+            description: BioAPISTRING,
+            path: Utf8String,
+            spec_version: BioAPIVERSION,
+            product_version: BioAPISTRING,
+            vendor: BioAPISTRING,
+            supported_formats: SequenceOf<BioAPIBIRBIOMETRICDATAFORMAT>,
+            factors_mask: BioAPIBIRBIOMETRICTYPE,
+            operations: BioAPIOPERATIONSMASK,
+            options: BioAPIOPTIONSMASK,
+            payload_policy: BioAPIFMR,
+            max_payload_size: UnsignedInt,
+            default_verify_timeout: SignedInt,
+            default_identify_timeout: SignedInt,
+            default_capture_timeout: SignedInt,
+            default_enroll_timeout: SignedInt,
+            default_calibrate_timeout: SignedInt,
+            max_bspdb_size: UnsignedInt,
+            max_identify: UnsignedInt,
+            hosting_endpoint_iri: EndpointIRI,
+            bsp_access_uuid: BioAPIUUID,
+        ) -> Self {
+            Self {
+                bsp_product_uuid,
+                description,
+                path,
+                spec_version,
+                product_version,
+                vendor,
+                supported_formats,
+                factors_mask,
+                operations,
+                options,
+                payload_policy,
+                max_payload_size,
+                default_verify_timeout,
+                default_identify_timeout,
+                default_capture_timeout,
+                default_enroll_timeout,
+                default_calibrate_timeout,
+                max_bspdb_size,
+                max_identify,
+                hosting_endpoint_iri,
+                bsp_access_uuid,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum BioAPICANDIDATEBir {
+        birInDatabase(BioAPIUUID),
+        birInArray(UnsignedInt),
+        birInPresetArray(UnsignedInt),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "BioAPI-CANDIDATE")]
+    pub struct BioAPICANDIDATE {
+        pub bir: BioAPICANDIDATEBir,
+        #[rasn(identifier = "fmrAchieved")]
+        pub fmr_achieved: BioAPIFMR,
+    }
+    impl BioAPICANDIDATE {
+        pub fn new(bir: BioAPICANDIDATEBir, fmr_achieved: BioAPIFMR) -> Self {
+            Self { bir, fmr_achieved }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated, identifier = "BioAPI-CATEGORY")]
+    #[non_exhaustive]
+    pub enum BioAPICATEGORY {
+        archive = 0,
+        comparisonAlgorithm = 1,
+        processingAlgorithm = 2,
+        sensor = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "BioAPI-DATA", size("0..=4294967295"))]
+    pub struct BioAPIDATA(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "BioAPI-DATE")]
+    pub struct BioAPIDATE {
+        #[rasn(value("0..=9999"))]
+        pub year: u16,
+        #[rasn(value("0..=12"))]
+        pub month: u8,
+        #[rasn(value("0..=31"))]
+        pub day: u8,
+    }
+    impl BioAPIDATE {
+        pub fn new(year: u16, month: u8, day: u8) -> Self {
+            Self { year, month, day }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "BioAPI-DB-ACCESS-TYPE")]
+    pub struct BioAPIDBACCESSTYPE(pub FixedBitString<32usize>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "BioAPI-DB-HANDLE")]
+    pub struct BioAPIDBHANDLE(pub SignedInt);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "BioAPI-DB-MARKER-HANDLE")]
+    pub struct BioAPIDBMARKERHANDLE(pub UnsignedInt);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "BioAPI-DBBIR-ID")]
+    pub struct BioAPIDBBIRID {
+        #[rasn(identifier = "dbHandle")]
+        pub db_handle: BioAPIDBHANDLE,
+        #[rasn(identifier = "keyValue")]
+        pub key_value: BioAPIUUID,
+    }
+    impl BioAPIDBBIRID {
+        pub fn new(db_handle: BioAPIDBHANDLE, key_value: BioAPIUUID) -> Self {
+            Self {
+                db_handle,
+                key_value,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "BioAPI-DTG")]
+    pub struct BioAPIDTG {
+        pub date: BioAPIDATE,
+        pub time: BioAPITIME,
+    }
+    impl BioAPIDTG {
+        pub fn new(date: BioAPIDATE, time: BioAPITIME) -> Self {
+            Self { date, time }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "BioAPI-FMR")]
+    pub struct BioAPIFMR(pub SignedInt);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "BioAPI-FRAMEWORK-SCHEMA")]
+    pub struct BioAPIFRAMEWORKSCHEMA {
+        #[rasn(identifier = "fwProductUuid")]
+        pub fw_product_uuid: BioAPIUUID,
+        pub description: BioAPISTRING,
+        pub path: Utf8String,
+        #[rasn(identifier = "specVersion")]
+        pub spec_version: BioAPIVERSION,
+        #[rasn(identifier = "productVersion")]
+        pub product_version: BioAPISTRING,
+        pub vendor: BioAPISTRING,
+        #[rasn(identifier = "propertyUuid")]
+        pub property_uuid: BioAPIUUID,
+        pub property: BioAPIDATA,
+        #[rasn(identifier = "hostingEndpointIRI")]
+        pub hosting_endpoint_iri: EndpointIRI,
+    }
+    impl BioAPIFRAMEWORKSCHEMA {
+        pub fn new(
+            fw_product_uuid: BioAPIUUID,
+            description: BioAPISTRING,
+            path: Utf8String,
+            spec_version: BioAPIVERSION,
+            product_version: BioAPISTRING,
+            vendor: BioAPISTRING,
+            property_uuid: BioAPIUUID,
+            property: BioAPIDATA,
+            hosting_endpoint_iri: EndpointIRI,
+        ) -> Self {
+            Self {
+                fw_product_uuid,
+                description,
+                path,
+                spec_version,
+                product_version,
+                vendor,
+                property_uuid,
+                property,
+                hosting_endpoint_iri,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "BioAPI-GUI-BITMAP")]
+    pub struct BioAPIGUIBITMAP {
+        #[rasn(identifier = "subtypeMask")]
+        pub subtype_mask: BioAPIBIRSUBTYPEMASK,
+        pub width: UnsignedInt,
+        pub height: UnsignedInt,
+        pub bitmap: Option<BioAPIDATA>,
+    }
+    impl BioAPIGUIBITMAP {
+        pub fn new(
+            subtype_mask: BioAPIBIRSUBTYPEMASK,
+            width: UnsignedInt,
+            height: UnsignedInt,
+            bitmap: Option<BioAPIDATA>,
+        ) -> Self {
+            Self {
+                subtype_mask,
+                width,
+                height,
+                bitmap,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "BioAPI-GUI-BITMAP-ARRAY")]
+    pub struct BioAPIGUIBITMAPARRAY {
+        #[rasn(size("0..=4294967295"), identifier = "guiBitmaps")]
+        pub gui_bitmaps: SequenceOf<BioAPIGUIBITMAP>,
+    }
+    impl BioAPIGUIBITMAPARRAY {
+        pub fn new(gui_bitmaps: SequenceOf<BioAPIGUIBITMAP>) -> Self {
+            Self { gui_bitmaps }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "BioAPI-GUI-ENROLL-TYPE")]
+    pub struct BioAPIGUIENROLLTYPE(pub FixedBitString<32usize>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "BioAPI-GUI-EVENT-SUBSCRIPTION")]
+    pub struct BioAPIGUIEVENTSUBSCRIPTION {
+        #[rasn(identifier = "subscriberEndpointIRI")]
+        pub subscriber_endpoint_iri: EndpointIRI,
+        #[rasn(identifier = "guiEventSubscriptionUuid")]
+        pub gui_event_subscription_uuid: BioAPIUUID,
+        #[rasn(identifier = "guiSelectEventSubscribed")]
+        pub gui_select_event_subscribed: bool,
+        #[rasn(identifier = "guiStateEventSubscribed")]
+        pub gui_state_event_subscribed: bool,
+        #[rasn(identifier = "guiProgressEventSubscribed")]
+        pub gui_progress_event_subscribed: bool,
+    }
+    impl BioAPIGUIEVENTSUBSCRIPTION {
+        pub fn new(
+            subscriber_endpoint_iri: EndpointIRI,
+            gui_event_subscription_uuid: BioAPIUUID,
+            gui_select_event_subscribed: bool,
+            gui_state_event_subscribed: bool,
+            gui_progress_event_subscribed: bool,
+        ) -> Self {
+            Self {
+                subscriber_endpoint_iri,
+                gui_event_subscription_uuid,
+                gui_select_event_subscribed,
+                gui_state_event_subscribed,
+                gui_progress_event_subscribed,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated, identifier = "BioAPI-GUI-MOMENT")]
+    #[non_exhaustive]
+    pub enum BioAPIGUIMOMENT {
+        beforeStart = 0,
+        during = 1,
+        afterEnd = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated, identifier = "BioAPI-GUI-OPERATION")]
+    #[non_exhaustive]
+    pub enum BioAPIGUIOPERATION {
+        capture = 0,
+        process = 1,
+        createtemplate = 2,
+        verifymatch = 3,
+        identifymatch = 4,
+        verify = 5,
+        identify = 6,
+        enroll = 7,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated, identifier = "BioAPI-GUI-RESPONSE")]
+    #[non_exhaustive]
+    pub enum BioAPIGUIRESPONSE {
+        default = 0,
+        opComplete = 1,
+        opCancel = 2,
+        cycleStart = 3,
+        cycleRestart = 4,
+        subopStart = 5,
+        subopNext = 6,
+        progressContinue = 7,
+        progressCancel = 8,
+        recapture = 9,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated, identifier = "BioAPI-GUI-SUBOPERATION")]
+    #[non_exhaustive]
+    pub enum BioAPIGUISUBOPERATION {
+        capture = 0,
+        process = 1,
+        createtemplate = 2,
+        verifymatch = 3,
+        identifymatch = 4,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "BioAPI-HANDLE")]
+    pub struct BioAPIHANDLE(pub UnsignedInt);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum BioAPIIDENTIFYPOPULATIONBirs {
+        birDataBase(BioAPIDBHANDLE),
+        birArray(BioAPIBIRARRAYPOPULATION),
+        birPresetArray(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "BioAPI-IDENTIFY-POPULATION")]
+    pub struct BioAPIIDENTIFYPOPULATION {
+        pub birs: BioAPIIDENTIFYPOPULATIONBirs,
+    }
+    impl BioAPIIDENTIFYPOPULATION {
+        pub fn new(birs: BioAPIIDENTIFYPOPULATIONBirs) -> Self {
+            Self { birs }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated, identifier = "BioAPI-INDICATOR-STATUS")]
+    #[non_exhaustive]
+    pub enum BioAPIINDICATORSTATUS {
+        accept = 0,
+        reject = 1,
+        ready = 2,
+        busy = 3,
+        failure = 4,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum BioAPIINPUTBIRInputBIR {
+        birInDB(BioAPIDBBIRID),
+        birInBSP(BioAPIBIRHANDLE),
+        bir(BioAPIBIR),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "BioAPI-INPUT-BIR")]
+    pub struct BioAPIINPUTBIR {
+        #[rasn(identifier = "inputBIR")]
+        pub input_bir: BioAPIINPUTBIRInputBIR,
+    }
+    impl BioAPIINPUTBIR {
+        pub fn new(input_bir: BioAPIINPUTBIRInputBIR) -> Self {
+            Self { input_bir }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "BioAPI-OPERATIONS-MASK")]
+    pub struct BioAPIOPERATIONSMASK(pub FixedBitString<32usize>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "BioAPI-OPTIONS-MASK")]
+    pub struct BioAPIOPTIONSMASK(pub FixedBitString<32usize>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated, identifier = "BioAPI-POWER-MODE")]
+    #[non_exhaustive]
+    pub enum BioAPIPOWERMODE {
+        normal = 0,
+        detect = 1,
+        sleep = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "BioAPI-QUALITY", value("-2..=100"))]
+    pub struct BioAPIQUALITY(pub i8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "BioAPI-RETURN")]
+    pub struct BioAPIRETURN(pub UnsignedInt);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "BioAPI-STRING")]
+    pub struct BioAPISTRING(pub Utf8String);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "BioAPI-TIME")]
+    pub struct BioAPITIME {
+        #[rasn(value("0..=99"))]
+        pub hour: u8,
+        #[rasn(value("0..=99"))]
+        pub minute: u8,
+        #[rasn(value("0..=99"))]
+        pub second: u8,
+    }
+    impl BioAPITIME {
+        pub fn new(hour: u8, minute: u8, second: u8) -> Self {
+            Self {
+                hour,
+                minute,
+                second,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated, identifier = "BioAPI-UNIT-EVENT-TYPE")]
+    #[non_exhaustive]
+    pub enum BioAPIUNITEVENTTYPE {
+        insert = 0,
+        remove = 1,
+        fault = 2,
+        sourcePresent = 3,
+        sourceRemoved = 4,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "BioAPI-UNIT-EVENT-TYPE-MASK")]
+    pub struct BioAPIUNITEVENTTYPEMASK(pub FixedBitString<32usize>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "BioAPI-UNIT-ID")]
+    pub struct BioAPIUNITID(pub UnsignedInt);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "BioAPI-UNIT-LIST-ELEMENT")]
+    pub struct BioAPIUNITLISTELEMENT {
+        pub category: BioAPICATEGORY,
+        #[rasn(identifier = "unitID")]
+        pub unit_id: BioAPIUNITID,
+    }
+    impl BioAPIUNITLISTELEMENT {
+        pub fn new(category: BioAPICATEGORY, unit_id: BioAPIUNITID) -> Self {
+            Self { category, unit_id }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "BioAPI-UNIT-SCHEMA")]
+    pub struct BioAPIUNITSCHEMA {
+        #[rasn(identifier = "bspProductUuid")]
+        pub bsp_product_uuid: BioAPIUUID,
+        #[rasn(identifier = "unitManagerProductUuid")]
+        pub unit_manager_product_uuid: BioAPIUUID,
+        #[rasn(identifier = "unitId")]
+        pub unit_id: BioAPIUNITID,
+        pub category: BioAPICATEGORY,
+        #[rasn(identifier = "unitProperties")]
+        pub unit_properties: BioAPIUUID,
+        #[rasn(identifier = "vendorInformation")]
+        pub vendor_information: BioAPISTRING,
+        #[rasn(identifier = "supportedUnitEvents")]
+        pub supported_unit_events: BioAPIUNITEVENTTYPEMASK,
+        #[rasn(identifier = "propertyUuid")]
+        pub property_uuid: BioAPIUUID,
+        pub property: BioAPIDATA,
+        #[rasn(identifier = "hardwareVersion")]
+        pub hardware_version: BioAPISTRING,
+        #[rasn(identifier = "firmwareVersion")]
+        pub firmware_version: BioAPISTRING,
+        #[rasn(identifier = "softwareVersion")]
+        pub software_version: BioAPISTRING,
+        #[rasn(identifier = "hardwareSerialNumber")]
+        pub hardware_serial_number: BioAPISTRING,
+        #[rasn(identifier = "authenticatedHardware")]
+        pub authenticated_hardware: bool,
+        #[rasn(identifier = "maxBSPDbSize")]
+        pub max_bspdb_size: UnsignedInt,
+        #[rasn(identifier = "maxIdentify")]
+        pub max_identify: UnsignedInt,
+    }
+    impl BioAPIUNITSCHEMA {
+        pub fn new(
+            bsp_product_uuid: BioAPIUUID,
+            unit_manager_product_uuid: BioAPIUUID,
+            unit_id: BioAPIUNITID,
+            category: BioAPICATEGORY,
+            unit_properties: BioAPIUUID,
+            vendor_information: BioAPISTRING,
+            supported_unit_events: BioAPIUNITEVENTTYPEMASK,
+            property_uuid: BioAPIUUID,
+            property: BioAPIDATA,
+            hardware_version: BioAPISTRING,
+            firmware_version: BioAPISTRING,
+            software_version: BioAPISTRING,
+            hardware_serial_number: BioAPISTRING,
+            authenticated_hardware: bool,
+            max_bspdb_size: UnsignedInt,
+            max_identify: UnsignedInt,
+        ) -> Self {
+            Self {
+                bsp_product_uuid,
+                unit_manager_product_uuid,
+                unit_id,
+                category,
+                unit_properties,
+                vendor_information,
+                supported_unit_events,
+                property_uuid,
+                property,
+                hardware_version,
+                firmware_version,
+                software_version,
+                hardware_serial_number,
+                authenticated_hardware,
+                max_bspdb_size,
+                max_identify,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "BioAPI-UUID")]
+    pub struct BioAPIUUID(pub FixedOctetString<16usize>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "BioAPI-VERSION")]
+    pub struct BioAPIVERSION {
+        #[rasn(value("0..=15"))]
+        pub major: u8,
+        #[rasn(value("0..=15"))]
+        pub minor: u8,
+    }
+    impl BioAPIVERSION {
+        pub fn new(major: u8, minor: u8) -> Self {
+            Self { major, minor }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "CalibrateSensor-RequestParams")]
+    pub struct CalibrateSensorRequestParams {
+        #[rasn(identifier = "originalBSPHandle")]
+        pub original_bsphandle: BioAPIHANDLE,
+        pub timeout: SignedInt,
+    }
+    impl CalibrateSensorRequestParams {
+        pub fn new(original_bsphandle: BioAPIHANDLE, timeout: SignedInt) -> Self {
+            Self {
+                original_bsphandle,
+                timeout,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate, identifier = "CalibrateSensor-ResponseParams")]
+    pub struct CalibrateSensorResponseParams(pub ());
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "Cancel-RequestParams")]
+    pub struct CancelRequestParams {
+        #[rasn(identifier = "originalBSPHandle")]
+        pub original_bsphandle: BioAPIHANDLE,
+    }
+    impl CancelRequestParams {
+        pub fn new(original_bsphandle: BioAPIHANDLE) -> Self {
+            Self { original_bsphandle }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate, identifier = "Cancel-ResponseParams")]
+    pub struct CancelResponseParams(pub ());
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "Capture-RequestParams")]
+    pub struct CaptureRequestParams {
+        #[rasn(identifier = "originalBSPHandle")]
+        pub original_bsphandle: BioAPIHANDLE,
+        pub purpose: BioAPIBIRPURPOSE,
+        pub subtype: BioAPIBIRSUBTYPE,
+        #[rasn(identifier = "outputFormat")]
+        pub output_format: Option<BioAPIBIRBIOMETRICDATAFORMAT>,
+        pub timeout: SignedInt,
+        #[rasn(identifier = "no-auditData")]
+        pub no_audit_data: bool,
+    }
+    impl CaptureRequestParams {
+        pub fn new(
+            original_bsphandle: BioAPIHANDLE,
+            purpose: BioAPIBIRPURPOSE,
+            subtype: BioAPIBIRSUBTYPE,
+            output_format: Option<BioAPIBIRBIOMETRICDATAFORMAT>,
+            timeout: SignedInt,
+            no_audit_data: bool,
+        ) -> Self {
+            Self {
+                original_bsphandle,
+                purpose,
+                subtype,
+                output_format,
+                timeout,
+                no_audit_data,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "Capture-ResponseParams")]
+    pub struct CaptureResponseParams {
+        #[rasn(identifier = "capturedBIR")]
+        pub captured_bir: BioAPIBIRHANDLE,
+        #[rasn(identifier = "auditData")]
+        pub audit_data: Option<BioAPIBIRHANDLE>,
+    }
+    impl CaptureResponseParams {
+        pub fn new(captured_bir: BioAPIBIRHANDLE, audit_data: Option<BioAPIBIRHANDLE>) -> Self {
+            Self {
+                captured_bir,
+                audit_data,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "Control-RequestParams")]
+    pub struct ControlRequestParams {
+        #[rasn(identifier = "originalBSPHandle")]
+        pub original_bsphandle: BioAPIHANDLE,
+        #[rasn(identifier = "unitID")]
+        pub unit_id: BioAPIUNITID,
+        #[rasn(identifier = "controlCode")]
+        pub control_code: BioAPIUUID,
+        #[rasn(identifier = "inputData")]
+        pub input_data: BioAPIDATA,
+    }
+    impl ControlRequestParams {
+        pub fn new(
+            original_bsphandle: BioAPIHANDLE,
+            unit_id: BioAPIUNITID,
+            control_code: BioAPIUUID,
+            input_data: BioAPIDATA,
+        ) -> Self {
+            Self {
+                original_bsphandle,
+                unit_id,
+                control_code,
+                input_data,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "Control-ResponseParams")]
+    pub struct ControlResponseParams {
+        #[rasn(identifier = "outputData")]
+        pub output_data: BioAPIDATA,
+    }
+    impl ControlResponseParams {
+        pub fn new(output_data: BioAPIDATA) -> Self {
+            Self { output_data }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "ControlUnit-RequestParams")]
+    pub struct ControlUnitRequestParams {
+        #[rasn(identifier = "originalBSPHandle")]
+        pub original_bsphandle: BioAPIHANDLE,
+        #[rasn(identifier = "unitID")]
+        pub unit_id: BioAPIUNITID,
+        #[rasn(identifier = "controlCode")]
+        pub control_code: UnsignedInt,
+        #[rasn(identifier = "inputData")]
+        pub input_data: BioAPIDATA,
+    }
+    impl ControlUnitRequestParams {
+        pub fn new(
+            original_bsphandle: BioAPIHANDLE,
+            unit_id: BioAPIUNITID,
+            control_code: UnsignedInt,
+            input_data: BioAPIDATA,
+        ) -> Self {
+            Self {
+                original_bsphandle,
+                unit_id,
+                control_code,
+                input_data,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "ControlUnit-ResponseParams")]
+    pub struct ControlUnitResponseParams {
+        #[rasn(identifier = "outputData")]
+        pub output_data: BioAPIDATA,
+    }
+    impl ControlUnitResponseParams {
+        pub fn new(output_data: BioAPIDATA) -> Self {
+            Self { output_data }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "CreateTemplate-RequestParams")]
+    pub struct CreateTemplateRequestParams {
+        #[rasn(identifier = "originalBSPHandle")]
+        pub original_bsphandle: BioAPIHANDLE,
+        #[rasn(identifier = "capturedBIR")]
+        pub captured_bir: BioAPIINPUTBIR,
+        #[rasn(identifier = "referenceTemplate")]
+        pub reference_template: Option<BioAPIINPUTBIR>,
+        #[rasn(identifier = "outputFormat")]
+        pub output_format: Option<BioAPIBIRBIOMETRICDATAFORMAT>,
+        pub payload: Option<BioAPIDATA>,
+        #[rasn(identifier = "no-templateUuid")]
+        pub no_template_uuid: bool,
+    }
+    impl CreateTemplateRequestParams {
+        pub fn new(
+            original_bsphandle: BioAPIHANDLE,
+            captured_bir: BioAPIINPUTBIR,
+            reference_template: Option<BioAPIINPUTBIR>,
+            output_format: Option<BioAPIBIRBIOMETRICDATAFORMAT>,
+            payload: Option<BioAPIDATA>,
+            no_template_uuid: bool,
+        ) -> Self {
+            Self {
+                original_bsphandle,
+                captured_bir,
+                reference_template,
+                output_format,
+                payload,
+                no_template_uuid,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "CreateTemplate-ResponseParams")]
+    pub struct CreateTemplateResponseParams {
+        #[rasn(identifier = "newTemplate")]
+        pub new_template: BioAPIBIRHANDLE,
+        #[rasn(identifier = "templateUuid")]
+        pub template_uuid: Option<BioAPIUUID>,
+    }
+    impl CreateTemplateResponseParams {
+        pub fn new(new_template: BioAPIBIRHANDLE, template_uuid: Option<BioAPIUUID>) -> Self {
+            Self {
+                new_template,
+                template_uuid,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "DbClose-RequestParams")]
+    pub struct DbCloseRequestParams {
+        #[rasn(identifier = "originalBSPHandle")]
+        pub original_bsphandle: BioAPIHANDLE,
+        #[rasn(identifier = "dbHandle")]
+        pub db_handle: BioAPIDBHANDLE,
+    }
+    impl DbCloseRequestParams {
+        pub fn new(original_bsphandle: BioAPIHANDLE, db_handle: BioAPIDBHANDLE) -> Self {
+            Self {
+                original_bsphandle,
+                db_handle,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate, identifier = "DbClose-ResponseParams")]
+    pub struct DbCloseResponseParams(pub ());
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "DbCreate-RequestParams")]
+    pub struct DbCreateRequestParams {
+        #[rasn(identifier = "originalBSPHandle")]
+        pub original_bsphandle: BioAPIHANDLE,
+        #[rasn(identifier = "dbUuid")]
+        pub db_uuid: BioAPIUUID,
+        #[rasn(identifier = "numberOfRecords")]
+        pub number_of_records: UnsignedInt,
+        #[rasn(identifier = "accessRequest")]
+        pub access_request: BioAPIDBACCESSTYPE,
+    }
+    impl DbCreateRequestParams {
+        pub fn new(
+            original_bsphandle: BioAPIHANDLE,
+            db_uuid: BioAPIUUID,
+            number_of_records: UnsignedInt,
+            access_request: BioAPIDBACCESSTYPE,
+        ) -> Self {
+            Self {
+                original_bsphandle,
+                db_uuid,
+                number_of_records,
+                access_request,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "DbCreate-ResponseParams")]
+    pub struct DbCreateResponseParams {
+        #[rasn(identifier = "dbHandle")]
+        pub db_handle: BioAPIDBHANDLE,
+    }
+    impl DbCreateResponseParams {
+        pub fn new(db_handle: BioAPIDBHANDLE) -> Self {
+            Self { db_handle }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "DbDelete-RequestParams")]
+    pub struct DbDeleteRequestParams {
+        #[rasn(identifier = "originalBSPHandle")]
+        pub original_bsphandle: BioAPIHANDLE,
+        #[rasn(identifier = "dbUuid")]
+        pub db_uuid: BioAPIUUID,
+    }
+    impl DbDeleteRequestParams {
+        pub fn new(original_bsphandle: BioAPIHANDLE, db_uuid: BioAPIUUID) -> Self {
+            Self {
+                original_bsphandle,
+                db_uuid,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate, identifier = "DbDelete-ResponseParams")]
+    pub struct DbDeleteResponseParams(pub ());
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "DbDeleteBIR-RequestParams")]
+    pub struct DbDeleteBIRRequestParams {
+        #[rasn(identifier = "originalBSPHandle")]
+        pub original_bsphandle: BioAPIHANDLE,
+        #[rasn(identifier = "dbHandle")]
+        pub db_handle: BioAPIDBHANDLE,
+        #[rasn(identifier = "keyValue")]
+        pub key_value: BioAPIUUID,
+    }
+    impl DbDeleteBIRRequestParams {
+        pub fn new(
+            original_bsphandle: BioAPIHANDLE,
+            db_handle: BioAPIDBHANDLE,
+            key_value: BioAPIUUID,
+        ) -> Self {
+            Self {
+                original_bsphandle,
+                db_handle,
+                key_value,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate, identifier = "DbDeleteBIR-ResponseParams")]
+    pub struct DbDeleteBIRResponseParams(pub ());
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "DbFreeMarker-RequestParams")]
+    pub struct DbFreeMarkerRequestParams {
+        #[rasn(identifier = "originalBSPHandle")]
+        pub original_bsphandle: BioAPIHANDLE,
+        #[rasn(identifier = "markerHandle")]
+        pub marker_handle: BioAPIDBMARKERHANDLE,
+    }
+    impl DbFreeMarkerRequestParams {
+        pub fn new(original_bsphandle: BioAPIHANDLE, marker_handle: BioAPIDBMARKERHANDLE) -> Self {
+            Self {
+                original_bsphandle,
+                marker_handle,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate, identifier = "DbFreeMarker-ResponseParams")]
+    pub struct DbFreeMarkerResponseParams(pub ());
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "DbGetBIR-RequestParams")]
+    pub struct DbGetBIRRequestParams {
+        #[rasn(identifier = "originalBSPHandle")]
+        pub original_bsphandle: BioAPIHANDLE,
+        #[rasn(identifier = "dbHandle")]
+        pub db_handle: BioAPIDBHANDLE,
+        #[rasn(identifier = "keyValue")]
+        pub key_value: BioAPIUUID,
+    }
+    impl DbGetBIRRequestParams {
+        pub fn new(
+            original_bsphandle: BioAPIHANDLE,
+            db_handle: BioAPIDBHANDLE,
+            key_value: BioAPIUUID,
+        ) -> Self {
+            Self {
+                original_bsphandle,
+                db_handle,
+                key_value,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "DbGetBIR-ResponseParams")]
+    pub struct DbGetBIRResponseParams {
+        #[rasn(identifier = "retrievedBIR")]
+        pub retrieved_bir: BioAPIBIRHANDLE,
+        #[rasn(identifier = "markerHandle")]
+        pub marker_handle: BioAPIDBMARKERHANDLE,
+    }
+    impl DbGetBIRResponseParams {
+        pub fn new(retrieved_bir: BioAPIBIRHANDLE, marker_handle: BioAPIDBMARKERHANDLE) -> Self {
+            Self {
+                retrieved_bir,
+                marker_handle,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "DbGetNextBIR-RequestParams")]
+    pub struct DbGetNextBIRRequestParams {
+        #[rasn(identifier = "originalBSPHandle")]
+        pub original_bsphandle: BioAPIHANDLE,
+        #[rasn(identifier = "dbHandle")]
+        pub db_handle: BioAPIDBHANDLE,
+        #[rasn(identifier = "markerHandle")]
+        pub marker_handle: BioAPIDBMARKERHANDLE,
+    }
+    impl DbGetNextBIRRequestParams {
+        pub fn new(
+            original_bsphandle: BioAPIHANDLE,
+            db_handle: BioAPIDBHANDLE,
+            marker_handle: BioAPIDBMARKERHANDLE,
+        ) -> Self {
+            Self {
+                original_bsphandle,
+                db_handle,
+                marker_handle,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "DbGetNextBIR-ResponseParams")]
+    pub struct DbGetNextBIRResponseParams {
+        #[rasn(identifier = "retrievedBIR")]
+        pub retrieved_bir: BioAPIBIRHANDLE,
+        #[rasn(identifier = "birUuid")]
+        pub bir_uuid: BioAPIUUID,
+    }
+    impl DbGetNextBIRResponseParams {
+        pub fn new(retrieved_bir: BioAPIBIRHANDLE, bir_uuid: BioAPIUUID) -> Self {
+            Self {
+                retrieved_bir,
+                bir_uuid,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "DbOpen-RequestParams")]
+    pub struct DbOpenRequestParams {
+        #[rasn(identifier = "originalBSPHandle")]
+        pub original_bsphandle: BioAPIHANDLE,
+        #[rasn(identifier = "dbUuid")]
+        pub db_uuid: BioAPIUUID,
+        #[rasn(identifier = "accessRequest")]
+        pub access_request: BioAPIDBACCESSTYPE,
+    }
+    impl DbOpenRequestParams {
+        pub fn new(
+            original_bsphandle: BioAPIHANDLE,
+            db_uuid: BioAPIUUID,
+            access_request: BioAPIDBACCESSTYPE,
+        ) -> Self {
+            Self {
+                original_bsphandle,
+                db_uuid,
+                access_request,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "DbOpen-ResponseParams")]
+    pub struct DbOpenResponseParams {
+        #[rasn(identifier = "dbHandle")]
+        pub db_handle: BioAPIDBHANDLE,
+        #[rasn(identifier = "markerHandle")]
+        pub marker_handle: BioAPIDBMARKERHANDLE,
+    }
+    impl DbOpenResponseParams {
+        pub fn new(db_handle: BioAPIDBHANDLE, marker_handle: BioAPIDBMARKERHANDLE) -> Self {
+            Self {
+                db_handle,
+                marker_handle,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "DbSetMarker-RequestParams")]
+    pub struct DbSetMarkerRequestParams {
+        #[rasn(identifier = "originalBSPHandle")]
+        pub original_bsphandle: BioAPIHANDLE,
+        #[rasn(identifier = "dbHandle")]
+        pub db_handle: BioAPIDBHANDLE,
+        #[rasn(identifier = "keyValue")]
+        pub key_value: BioAPIUUID,
+        #[rasn(identifier = "markerHandle")]
+        pub marker_handle: BioAPIDBMARKERHANDLE,
+    }
+    impl DbSetMarkerRequestParams {
+        pub fn new(
+            original_bsphandle: BioAPIHANDLE,
+            db_handle: BioAPIDBHANDLE,
+            key_value: BioAPIUUID,
+            marker_handle: BioAPIDBMARKERHANDLE,
+        ) -> Self {
+            Self {
+                original_bsphandle,
+                db_handle,
+                key_value,
+                marker_handle,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate, identifier = "DbSetMarker-ResponseParams")]
+    pub struct DbSetMarkerResponseParams(pub ());
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "DbStoreBIR-RequestParams")]
+    pub struct DbStoreBIRRequestParams {
+        #[rasn(identifier = "originalBSPHandle")]
+        pub original_bsphandle: BioAPIHANDLE,
+        #[rasn(identifier = "birToStore")]
+        pub bir_to_store: BioAPIINPUTBIR,
+        #[rasn(identifier = "dbHandle")]
+        pub db_handle: BioAPIDBHANDLE,
+    }
+    impl DbStoreBIRRequestParams {
+        pub fn new(
+            original_bsphandle: BioAPIHANDLE,
+            bir_to_store: BioAPIINPUTBIR,
+            db_handle: BioAPIDBHANDLE,
+        ) -> Self {
+            Self {
+                original_bsphandle,
+                bir_to_store,
+                db_handle,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "DbStoreBIR-ResponseParams")]
+    pub struct DbStoreBIRResponseParams {
+        #[rasn(identifier = "birUuid")]
+        pub bir_uuid: BioAPIUUID,
+    }
+    impl DbStoreBIRResponseParams {
+        pub fn new(bir_uuid: BioAPIUUID) -> Self {
+            Self { bir_uuid }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate, identifier = "DeleteMaster-RequestParams")]
+    pub struct DeleteMasterRequestParams(pub ());
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate, identifier = "DeleteMaster-ResponseParams")]
+    pub struct DeleteMasterResponseParams(pub ());
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct EnableCallParams {
+        #[rasn(identifier = "bspUuid")]
+        pub bsp_uuid: BioAPIUUID,
+        #[rasn(identifier = "unitEventTypes")]
+        pub unit_event_types: BioAPIUNITEVENTTYPEMASK,
+    }
+    impl EnableCallParams {
+        pub fn new(bsp_uuid: BioAPIUUID, unit_event_types: BioAPIUNITEVENTTYPEMASK) -> Self {
+            Self {
+                bsp_uuid,
+                unit_event_types,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "EnableEventNotifications-RequestParams")]
+    pub struct EnableEventNotificationsRequestParams {
+        #[rasn(identifier = "bspProductUuid")]
+        pub bsp_product_uuid: BioAPIUUID,
+        #[rasn(identifier = "unitEventTypes")]
+        pub unit_event_types: BioAPIUNITEVENTTYPEMASK,
+    }
+    impl EnableEventNotificationsRequestParams {
+        pub fn new(
+            bsp_product_uuid: BioAPIUUID,
+            unit_event_types: BioAPIUNITEVENTTYPEMASK,
+        ) -> Self {
+            Self {
+                bsp_product_uuid,
+                unit_event_types,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate, identifier = "EnableEventNotifications-ResponseParams")]
+    pub struct EnableEventNotificationsResponseParams(pub ());
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "EnableUnitEvents-RequestParams")]
+    pub struct EnableUnitEventsRequestParams {
+        #[rasn(identifier = "originalBSPHandle")]
+        pub original_bsphandle: BioAPIHANDLE,
+        #[rasn(identifier = "unitEvents")]
+        pub unit_events: BioAPIUNITEVENTTYPEMASK,
+    }
+    impl EnableUnitEventsRequestParams {
+        pub fn new(original_bsphandle: BioAPIHANDLE, unit_events: BioAPIUNITEVENTTYPEMASK) -> Self {
+            Self {
+                original_bsphandle,
+                unit_events,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate, identifier = "EnableUnitEvents-ResponseParams")]
+    pub struct EnableUnitEventsResponseParams(pub ());
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct EndpointIRI(pub VisibleString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "Enroll-RequestParams")]
+    pub struct EnrollRequestParams {
+        #[rasn(identifier = "originalBSPHandle")]
+        pub original_bsphandle: BioAPIHANDLE,
+        pub purpose: BioAPIBIRPURPOSE,
+        pub subtype: BioAPIBIRSUBTYPE,
+        #[rasn(identifier = "outputFormat")]
+        pub output_format: Option<BioAPIBIRBIOMETRICDATAFORMAT>,
+        #[rasn(identifier = "referenceTemplate")]
+        pub reference_template: Option<BioAPIINPUTBIR>,
+        pub payload: Option<BioAPIDATA>,
+        pub timeout: SignedInt,
+        #[rasn(identifier = "no-auditData")]
+        pub no_audit_data: bool,
+        #[rasn(identifier = "no-templateUuid")]
+        pub no_template_uuid: bool,
+    }
+    impl EnrollRequestParams {
+        pub fn new(
+            original_bsphandle: BioAPIHANDLE,
+            purpose: BioAPIBIRPURPOSE,
+            subtype: BioAPIBIRSUBTYPE,
+            output_format: Option<BioAPIBIRBIOMETRICDATAFORMAT>,
+            reference_template: Option<BioAPIINPUTBIR>,
+            payload: Option<BioAPIDATA>,
+            timeout: SignedInt,
+            no_audit_data: bool,
+            no_template_uuid: bool,
+        ) -> Self {
+            Self {
+                original_bsphandle,
+                purpose,
+                subtype,
+                output_format,
+                reference_template,
+                payload,
+                timeout,
+                no_audit_data,
+                no_template_uuid,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "Enroll-ResponseParams")]
+    pub struct EnrollResponseParams {
+        #[rasn(identifier = "newTemplate")]
+        pub new_template: BioAPIBIRHANDLE,
+        #[rasn(identifier = "auditData")]
+        pub audit_data: Option<BioAPIBIRHANDLE>,
+        #[rasn(identifier = "templateUuid")]
+        pub template_uuid: Option<BioAPIUUID>,
+    }
+    impl EnrollResponseParams {
+        pub fn new(
+            new_template: BioAPIBIRHANDLE,
+            audit_data: Option<BioAPIBIRHANDLE>,
+            template_uuid: Option<BioAPIUUID>,
+        ) -> Self {
+            Self {
+                new_template,
+                audit_data,
+                template_uuid,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct EnumBFPsCallOutputParams(pub SequenceOf<BioAPIBFPSCHEMA>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct EnumBSPsCallOutputParams(pub SequenceOf<BioAPIBSPSCHEMA>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct EnumFrameworksCallOutputParams(pub SequenceOf<BioAPIFRAMEWORKSCHEMA>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "FreeBIRHandle-RequestParams")]
+    pub struct FreeBIRHandleRequestParams {
+        #[rasn(identifier = "originalBSPHandle")]
+        pub original_bsphandle: BioAPIHANDLE,
+        #[rasn(identifier = "birHandle")]
+        pub bir_handle: BioAPIBIRHANDLE,
+    }
+    impl FreeBIRHandleRequestParams {
+        pub fn new(original_bsphandle: BioAPIHANDLE, bir_handle: BioAPIBIRHANDLE) -> Self {
+            Self {
+                original_bsphandle,
+                bir_handle,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate, identifier = "FreeBIRHandle-ResponseParams")]
+    pub struct FreeBIRHandleResponseParams(pub ());
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct GUIEventLocalSubscription {
+        #[rasn(identifier = "guiEventSubscriptionUuid")]
+        pub gui_event_subscription_uuid: Option<BioAPIUUID>,
+        #[rasn(identifier = "hostingEndpointIRI")]
+        pub hosting_endpoint_iri: EndpointIRI,
+        #[rasn(identifier = "bspProductUuid")]
+        pub bsp_product_uuid: BioAPIUUID,
+        #[rasn(identifier = "useBSPAccessUuid")]
+        pub use_bspaccess_uuid: bool,
+        #[rasn(identifier = "originalBSPHandle")]
+        pub original_bsphandle: Option<BioAPIHANDLE>,
+        #[rasn(identifier = "guiSelectEventHandlerAddress")]
+        pub gui_select_event_handler_address: MemoryAddress,
+        #[rasn(identifier = "guiSelectEventHandlerContext")]
+        pub gui_select_event_handler_context: MemoryAddress,
+        #[rasn(identifier = "guiStateEventHandlerAddress")]
+        pub gui_state_event_handler_address: MemoryAddress,
+        #[rasn(identifier = "guiStateEventHandlerContext")]
+        pub gui_state_event_handler_context: MemoryAddress,
+        #[rasn(identifier = "guiProgressEventHandlerAddress")]
+        pub gui_progress_event_handler_address: MemoryAddress,
+        #[rasn(identifier = "guiProgressEventHandlerContext")]
+        pub gui_progress_event_handler_context: MemoryAddress,
+    }
+    impl GUIEventLocalSubscription {
+        pub fn new(
+            gui_event_subscription_uuid: Option<BioAPIUUID>,
+            hosting_endpoint_iri: EndpointIRI,
+            bsp_product_uuid: BioAPIUUID,
+            use_bspaccess_uuid: bool,
+            original_bsphandle: Option<BioAPIHANDLE>,
+            gui_select_event_handler_address: MemoryAddress,
+            gui_select_event_handler_context: MemoryAddress,
+            gui_state_event_handler_address: MemoryAddress,
+            gui_state_event_handler_context: MemoryAddress,
+            gui_progress_event_handler_address: MemoryAddress,
+            gui_progress_event_handler_context: MemoryAddress,
+        ) -> Self {
+            Self {
+                gui_event_subscription_uuid,
+                hosting_endpoint_iri,
+                bsp_product_uuid,
+                use_bspaccess_uuid,
+                original_bsphandle,
+                gui_select_event_handler_address,
+                gui_select_event_handler_context,
+                gui_state_event_handler_address,
+                gui_state_event_handler_context,
+                gui_progress_event_handler_address,
+                gui_progress_event_handler_context,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct GUIEventLocalSubscriptions(pub SetOf<GUIEventLocalSubscription>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct GUIEventRedirector {
+        #[rasn(identifier = "referrerEndpointIRI")]
+        pub referrer_endpoint_iri: EndpointIRI,
+        #[rasn(identifier = "bspProductUuid")]
+        pub bsp_product_uuid: BioAPIUUID,
+        #[rasn(identifier = "originalBSPHandle")]
+        pub original_bsphandle: BioAPIHANDLE,
+        #[rasn(identifier = "subscriberEndpointIRI")]
+        pub subscriber_endpoint_iri: EndpointIRI,
+        #[rasn(identifier = "guiEventSubscriptionUuid")]
+        pub gui_event_subscription_uuid: BioAPIUUID,
+        #[rasn(identifier = "guiSelectEventRedirected")]
+        pub gui_select_event_redirected: bool,
+        #[rasn(identifier = "guiStateEventRedirected")]
+        pub gui_state_event_redirected: bool,
+        #[rasn(identifier = "guiProgressEventRedirected")]
+        pub gui_progress_event_redirected: bool,
+    }
+    impl GUIEventRedirector {
+        pub fn new(
+            referrer_endpoint_iri: EndpointIRI,
+            bsp_product_uuid: BioAPIUUID,
+            original_bsphandle: BioAPIHANDLE,
+            subscriber_endpoint_iri: EndpointIRI,
+            gui_event_subscription_uuid: BioAPIUUID,
+            gui_select_event_redirected: bool,
+            gui_state_event_redirected: bool,
+            gui_progress_event_redirected: bool,
+        ) -> Self {
+            Self {
+                referrer_endpoint_iri,
+                bsp_product_uuid,
+                original_bsphandle,
+                subscriber_endpoint_iri,
+                gui_event_subscription_uuid,
+                gui_select_event_redirected,
+                gui_state_event_redirected,
+                gui_progress_event_redirected,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct GUIEventRedirectors(pub SetOf<GUIEventRedirector>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct GUIEventRemoteSubscription {
+        #[rasn(identifier = "subscriberEndpointIRI")]
+        pub subscriber_endpoint_iri: EndpointIRI,
+        #[rasn(identifier = "guiEventSubscriptionUuid")]
+        pub gui_event_subscription_uuid: Option<BioAPIUUID>,
+        #[rasn(identifier = "bspProductUuid")]
+        pub bsp_product_uuid: BioAPIUUID,
+        #[rasn(identifier = "originalBSPHandle")]
+        pub original_bsphandle: Option<BioAPIHANDLE>,
+        #[rasn(identifier = "guiSelectEventSubscribed")]
+        pub gui_select_event_subscribed: bool,
+        #[rasn(identifier = "guiStateEventSubscribed")]
+        pub gui_state_event_subscribed: bool,
+        #[rasn(identifier = "guiProgressEventSubscribed")]
+        pub gui_progress_event_subscribed: bool,
+    }
+    impl GUIEventRemoteSubscription {
+        pub fn new(
+            subscriber_endpoint_iri: EndpointIRI,
+            gui_event_subscription_uuid: Option<BioAPIUUID>,
+            bsp_product_uuid: BioAPIUUID,
+            original_bsphandle: Option<BioAPIHANDLE>,
+            gui_select_event_subscribed: bool,
+            gui_state_event_subscribed: bool,
+            gui_progress_event_subscribed: bool,
+        ) -> Self {
+            Self {
+                subscriber_endpoint_iri,
+                gui_event_subscription_uuid,
+                bsp_product_uuid,
+                original_bsphandle,
+                gui_select_event_subscribed,
+                gui_state_event_subscribed,
+                gui_progress_event_subscribed,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct GUIEventRemoteSubscriptions(pub SetOf<GUIEventRemoteSubscription>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "GUIProgressEvent-AcknowledgementParams")]
+    pub struct GUIProgressEventAcknowledgementParams {
+        pub response: BioAPIGUIRESPONSE,
+    }
+    impl GUIProgressEventAcknowledgementParams {
+        pub fn new(response: BioAPIGUIRESPONSE) -> Self {
+            Self { response }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "GUIProgressEvent-NotificationParams")]
+    pub struct GUIProgressEventNotificationParams {
+        #[rasn(identifier = "guiEventSubscriptionUuid")]
+        pub gui_event_subscription_uuid: Option<BioAPIUUID>,
+        #[rasn(identifier = "bspProductUuid")]
+        pub bsp_product_uuid: BioAPIUUID,
+        #[rasn(identifier = "unitID")]
+        pub unit_id: BioAPIUNITID,
+        #[rasn(identifier = "originalBSPHandle")]
+        pub original_bsphandle: Option<BioAPIHANDLE>,
+        pub operation: BioAPIGUIOPERATION,
+        pub suboperation: BioAPIGUISUBOPERATION,
+        pub purpose: BioAPIBIRPURPOSE,
+        pub moment: BioAPIGUIMOMENT,
+        #[rasn(identifier = "suboperationProgress")]
+        pub suboperation_progress: UnsignedByte,
+        pub bitmaps: Option<BioAPIGUIBITMAPARRAY>,
+        pub text: Option<Utf8String>,
+    }
+    impl GUIProgressEventNotificationParams {
+        pub fn new(
+            gui_event_subscription_uuid: Option<BioAPIUUID>,
+            bsp_product_uuid: BioAPIUUID,
+            unit_id: BioAPIUNITID,
+            original_bsphandle: Option<BioAPIHANDLE>,
+            operation: BioAPIGUIOPERATION,
+            suboperation: BioAPIGUISUBOPERATION,
+            purpose: BioAPIBIRPURPOSE,
+            moment: BioAPIGUIMOMENT,
+            suboperation_progress: UnsignedByte,
+            bitmaps: Option<BioAPIGUIBITMAPARRAY>,
+            text: Option<Utf8String>,
+        ) -> Self {
+            Self {
+                gui_event_subscription_uuid,
+                bsp_product_uuid,
+                unit_id,
+                original_bsphandle,
+                operation,
+                suboperation,
+                purpose,
+                moment,
+                suboperation_progress,
+                bitmaps,
+                text,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct GUIProgressEventHandlerCallbackParams {
+        #[rasn(identifier = "guiProgressEventHandlerAddress")]
+        pub gui_progress_event_handler_address: MemoryAddress,
+        #[rasn(identifier = "guiProgressEventHandlerContext")]
+        pub gui_progress_event_handler_context: MemoryAddress,
+        #[rasn(identifier = "bspUuid")]
+        pub bsp_uuid: BioAPIUUID,
+        #[rasn(identifier = "unitID")]
+        pub unit_id: BioAPIUNITID,
+        #[rasn(identifier = "bspHandle")]
+        pub bsp_handle: Option<BioAPIHANDLE>,
+        pub operation: BioAPIGUIOPERATION,
+        pub suboperation: BioAPIGUISUBOPERATION,
+        pub purpose: BioAPIBIRPURPOSE,
+        pub moment: BioAPIGUIMOMENT,
+        #[rasn(identifier = "suboperationProgress")]
+        pub suboperation_progress: UnsignedByte,
+        pub bitmaps: Option<BioAPIGUIBITMAPARRAY>,
+        pub text: Option<Utf8String>,
+    }
+    impl GUIProgressEventHandlerCallbackParams {
+        pub fn new(
+            gui_progress_event_handler_address: MemoryAddress,
+            gui_progress_event_handler_context: MemoryAddress,
+            bsp_uuid: BioAPIUUID,
+            unit_id: BioAPIUNITID,
+            bsp_handle: Option<BioAPIHANDLE>,
+            operation: BioAPIGUIOPERATION,
+            suboperation: BioAPIGUISUBOPERATION,
+            purpose: BioAPIBIRPURPOSE,
+            moment: BioAPIGUIMOMENT,
+            suboperation_progress: UnsignedByte,
+            bitmaps: Option<BioAPIGUIBITMAPARRAY>,
+            text: Option<Utf8String>,
+        ) -> Self {
+            Self {
+                gui_progress_event_handler_address,
+                gui_progress_event_handler_context,
+                bsp_uuid,
+                unit_id,
+                bsp_handle,
+                operation,
+                suboperation,
+                purpose,
+                moment,
+                suboperation_progress,
+                bitmaps,
+                text,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct GUIProgressEventInfo {
+        #[rasn(identifier = "subscriberEndpointIRI")]
+        pub subscriber_endpoint_iri: EndpointIRI,
+        #[rasn(identifier = "guiEventSubscriptionUuid")]
+        pub gui_event_subscription_uuid: Option<BioAPIUUID>,
+        #[rasn(identifier = "hostingEndpointIRI")]
+        pub hosting_endpoint_iri: EndpointIRI,
+        #[rasn(identifier = "bspProductUuid")]
+        pub bsp_product_uuid: BioAPIUUID,
+        #[rasn(identifier = "unitID")]
+        pub unit_id: BioAPIUNITID,
+        #[rasn(identifier = "originalBSPHandle")]
+        pub original_bsphandle: Option<BioAPIHANDLE>,
+        pub operation: BioAPIGUIOPERATION,
+        pub suboperation: BioAPIGUISUBOPERATION,
+        pub purpose: BioAPIBIRPURPOSE,
+        pub moment: BioAPIGUIMOMENT,
+        #[rasn(identifier = "suboperationProgress")]
+        pub suboperation_progress: UnsignedByte,
+        pub bitmaps: Option<BioAPIGUIBITMAPARRAY>,
+        pub text: Option<Utf8String>,
+    }
+    impl GUIProgressEventInfo {
+        pub fn new(
+            subscriber_endpoint_iri: EndpointIRI,
+            gui_event_subscription_uuid: Option<BioAPIUUID>,
+            hosting_endpoint_iri: EndpointIRI,
+            bsp_product_uuid: BioAPIUUID,
+            unit_id: BioAPIUNITID,
+            original_bsphandle: Option<BioAPIHANDLE>,
+            operation: BioAPIGUIOPERATION,
+            suboperation: BioAPIGUISUBOPERATION,
+            purpose: BioAPIBIRPURPOSE,
+            moment: BioAPIGUIMOMENT,
+            suboperation_progress: UnsignedByte,
+            bitmaps: Option<BioAPIGUIBITMAPARRAY>,
+            text: Option<Utf8String>,
+        ) -> Self {
+            Self {
+                subscriber_endpoint_iri,
+                gui_event_subscription_uuid,
+                hosting_endpoint_iri,
+                bsp_product_uuid,
+                unit_id,
+                original_bsphandle,
+                operation,
+                suboperation,
+                purpose,
+                moment,
+                suboperation_progress,
+                bitmaps,
+                text,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "GUISelectEvent-AcknowledgementParams")]
+    pub struct GUISelectEventAcknowledgementParams {
+        #[rasn(identifier = "selectedInstances")]
+        pub selected_instances: BioAPIBIRSUBTYPEMASK,
+        pub response: BioAPIGUIRESPONSE,
+    }
+    impl GUISelectEventAcknowledgementParams {
+        pub fn new(selected_instances: BioAPIBIRSUBTYPEMASK, response: BioAPIGUIRESPONSE) -> Self {
+            Self {
+                selected_instances,
+                response,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "GUISelectEvent-NotificationParams")]
+    pub struct GUISelectEventNotificationParams {
+        #[rasn(identifier = "guiEventSubscriptionUuid")]
+        pub gui_event_subscription_uuid: Option<BioAPIUUID>,
+        #[rasn(identifier = "bspProductUuid")]
+        pub bsp_product_uuid: BioAPIUUID,
+        #[rasn(identifier = "unitID")]
+        pub unit_id: BioAPIUNITID,
+        #[rasn(identifier = "originalBSPHandle")]
+        pub original_bsphandle: Option<BioAPIHANDLE>,
+        #[rasn(identifier = "enrollType")]
+        pub enroll_type: BioAPIGUIENROLLTYPE,
+        pub operation: BioAPIGUIOPERATION,
+        pub moment: BioAPIGUIMOMENT,
+        #[rasn(identifier = "resultCode")]
+        pub result_code: BioAPIRETURN,
+        #[rasn(identifier = "maxNumEnrollSamples")]
+        pub max_num_enroll_samples: UnsignedInt,
+        #[rasn(identifier = "selectableInstances")]
+        pub selectable_instances: BioAPIBIRSUBTYPEMASK,
+        #[rasn(identifier = "capturedInstances")]
+        pub captured_instances: BioAPIBIRSUBTYPEMASK,
+        pub text: Option<Utf8String>,
+    }
+    impl GUISelectEventNotificationParams {
+        pub fn new(
+            gui_event_subscription_uuid: Option<BioAPIUUID>,
+            bsp_product_uuid: BioAPIUUID,
+            unit_id: BioAPIUNITID,
+            original_bsphandle: Option<BioAPIHANDLE>,
+            enroll_type: BioAPIGUIENROLLTYPE,
+            operation: BioAPIGUIOPERATION,
+            moment: BioAPIGUIMOMENT,
+            result_code: BioAPIRETURN,
+            max_num_enroll_samples: UnsignedInt,
+            selectable_instances: BioAPIBIRSUBTYPEMASK,
+            captured_instances: BioAPIBIRSUBTYPEMASK,
+            text: Option<Utf8String>,
+        ) -> Self {
+            Self {
+                gui_event_subscription_uuid,
+                bsp_product_uuid,
+                unit_id,
+                original_bsphandle,
+                enroll_type,
+                operation,
+                moment,
+                result_code,
+                max_num_enroll_samples,
+                selectable_instances,
+                captured_instances,
+                text,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct GUISelectEventHandlerCallbackParams {
+        #[rasn(identifier = "guiSelectEventHandlerAddress")]
+        pub gui_select_event_handler_address: MemoryAddress,
+        #[rasn(identifier = "guiSelectEventHandlerContext")]
+        pub gui_select_event_handler_context: MemoryAddress,
+        #[rasn(identifier = "bspUuid")]
+        pub bsp_uuid: BioAPIUUID,
+        #[rasn(identifier = "unitID")]
+        pub unit_id: BioAPIUNITID,
+        #[rasn(identifier = "bspHandle")]
+        pub bsp_handle: Option<BioAPIHANDLE>,
+        #[rasn(identifier = "enrollType")]
+        pub enroll_type: BioAPIGUIENROLLTYPE,
+        pub operation: BioAPIGUIOPERATION,
+        pub moment: BioAPIGUIMOMENT,
+        #[rasn(identifier = "resultCode")]
+        pub result_code: BioAPIRETURN,
+        #[rasn(identifier = "maxNumEnrollSamples")]
+        pub max_num_enroll_samples: UnsignedInt,
+        #[rasn(identifier = "selectableInstances")]
+        pub selectable_instances: BioAPIBIRSUBTYPEMASK,
+        #[rasn(identifier = "capturedInstances")]
+        pub captured_instances: BioAPIBIRSUBTYPEMASK,
+        pub text: Option<Utf8String>,
+    }
+    impl GUISelectEventHandlerCallbackParams {
+        pub fn new(
+            gui_select_event_handler_address: MemoryAddress,
+            gui_select_event_handler_context: MemoryAddress,
+            bsp_uuid: BioAPIUUID,
+            unit_id: BioAPIUNITID,
+            bsp_handle: Option<BioAPIHANDLE>,
+            enroll_type: BioAPIGUIENROLLTYPE,
+            operation: BioAPIGUIOPERATION,
+            moment: BioAPIGUIMOMENT,
+            result_code: BioAPIRETURN,
+            max_num_enroll_samples: UnsignedInt,
+            selectable_instances: BioAPIBIRSUBTYPEMASK,
+            captured_instances: BioAPIBIRSUBTYPEMASK,
+            text: Option<Utf8String>,
+        ) -> Self {
+            Self {
+                gui_select_event_handler_address,
+                gui_select_event_handler_context,
+                bsp_uuid,
+                unit_id,
+                bsp_handle,
+                enroll_type,
+                operation,
+                moment,
+                result_code,
+                max_num_enroll_samples,
+                selectable_instances,
+                captured_instances,
+                text,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct GUISelectEventInfo {
+        #[rasn(identifier = "subscriberEndpointIRI")]
+        pub subscriber_endpoint_iri: EndpointIRI,
+        #[rasn(identifier = "guiEventSubscriptionUuid")]
+        pub gui_event_subscription_uuid: Option<BioAPIUUID>,
+        #[rasn(identifier = "hostingEndpointIRI")]
+        pub hosting_endpoint_iri: EndpointIRI,
+        #[rasn(identifier = "bspProductUuid")]
+        pub bsp_product_uuid: BioAPIUUID,
+        #[rasn(identifier = "unitID")]
+        pub unit_id: BioAPIUNITID,
+        #[rasn(identifier = "originalBSPHandle")]
+        pub original_bsphandle: Option<BioAPIHANDLE>,
+        #[rasn(identifier = "enrollType")]
+        pub enroll_type: BioAPIGUIENROLLTYPE,
+        pub operation: BioAPIGUIOPERATION,
+        pub moment: BioAPIGUIMOMENT,
+        #[rasn(identifier = "resultCode")]
+        pub result_code: BioAPIRETURN,
+        #[rasn(identifier = "maxNumEnrollSamples")]
+        pub max_num_enroll_samples: UnsignedInt,
+        #[rasn(identifier = "selectableInstances")]
+        pub selectable_instances: BioAPIBIRSUBTYPEMASK,
+        #[rasn(identifier = "capturedInstances")]
+        pub captured_instances: BioAPIBIRSUBTYPEMASK,
+        pub text: Option<Utf8String>,
+    }
+    impl GUISelectEventInfo {
+        pub fn new(
+            subscriber_endpoint_iri: EndpointIRI,
+            gui_event_subscription_uuid: Option<BioAPIUUID>,
+            hosting_endpoint_iri: EndpointIRI,
+            bsp_product_uuid: BioAPIUUID,
+            unit_id: BioAPIUNITID,
+            original_bsphandle: Option<BioAPIHANDLE>,
+            enroll_type: BioAPIGUIENROLLTYPE,
+            operation: BioAPIGUIOPERATION,
+            moment: BioAPIGUIMOMENT,
+            result_code: BioAPIRETURN,
+            max_num_enroll_samples: UnsignedInt,
+            selectable_instances: BioAPIBIRSUBTYPEMASK,
+            captured_instances: BioAPIBIRSUBTYPEMASK,
+            text: Option<Utf8String>,
+        ) -> Self {
+            Self {
+                subscriber_endpoint_iri,
+                gui_event_subscription_uuid,
+                hosting_endpoint_iri,
+                bsp_product_uuid,
+                unit_id,
+                original_bsphandle,
+                enroll_type,
+                operation,
+                moment,
+                result_code,
+                max_num_enroll_samples,
+                selectable_instances,
+                captured_instances,
+                text,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "GUIStateEvent-AcknowledgementParams")]
+    pub struct GUIStateEventAcknowledgementParams {
+        pub response: BioAPIGUIRESPONSE,
+        #[rasn(identifier = "enrollSampleIndexToRecapture")]
+        pub enroll_sample_index_to_recapture: SignedInt,
+    }
+    impl GUIStateEventAcknowledgementParams {
+        pub fn new(
+            response: BioAPIGUIRESPONSE,
+            enroll_sample_index_to_recapture: SignedInt,
+        ) -> Self {
+            Self {
+                response,
+                enroll_sample_index_to_recapture,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "GUIStateEvent-NotificationParams")]
+    pub struct GUIStateEventNotificationParams {
+        #[rasn(identifier = "guiEventSubscriptionUuid")]
+        pub gui_event_subscription_uuid: Option<BioAPIUUID>,
+        #[rasn(identifier = "bspProductUuid")]
+        pub bsp_product_uuid: BioAPIUUID,
+        #[rasn(identifier = "unitID")]
+        pub unit_id: BioAPIUNITID,
+        #[rasn(identifier = "originalBSPHandle")]
+        pub original_bsphandle: Option<BioAPIHANDLE>,
+        pub operation: BioAPIGUIOPERATION,
+        pub suboperation: BioAPIGUISUBOPERATION,
+        pub purpose: BioAPIBIRPURPOSE,
+        pub moment: BioAPIGUIMOMENT,
+        #[rasn(identifier = "resultCode")]
+        pub result_code: BioAPIRETURN,
+        #[rasn(identifier = "enrollSampleIndex")]
+        pub enroll_sample_index: SignedInt,
+        pub bitmaps: Option<BioAPIGUIBITMAPARRAY>,
+        pub text: Option<Utf8String>,
+    }
+    impl GUIStateEventNotificationParams {
+        pub fn new(
+            gui_event_subscription_uuid: Option<BioAPIUUID>,
+            bsp_product_uuid: BioAPIUUID,
+            unit_id: BioAPIUNITID,
+            original_bsphandle: Option<BioAPIHANDLE>,
+            operation: BioAPIGUIOPERATION,
+            suboperation: BioAPIGUISUBOPERATION,
+            purpose: BioAPIBIRPURPOSE,
+            moment: BioAPIGUIMOMENT,
+            result_code: BioAPIRETURN,
+            enroll_sample_index: SignedInt,
+            bitmaps: Option<BioAPIGUIBITMAPARRAY>,
+            text: Option<Utf8String>,
+        ) -> Self {
+            Self {
+                gui_event_subscription_uuid,
+                bsp_product_uuid,
+                unit_id,
+                original_bsphandle,
+                operation,
+                suboperation,
+                purpose,
+                moment,
+                result_code,
+                enroll_sample_index,
+                bitmaps,
+                text,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct GUIStateEventHandlerCallbackParams {
+        #[rasn(identifier = "guiStateEventHandlerAddress")]
+        pub gui_state_event_handler_address: MemoryAddress,
+        #[rasn(identifier = "guiStateEventHandlerContext")]
+        pub gui_state_event_handler_context: MemoryAddress,
+        #[rasn(identifier = "bspUuid")]
+        pub bsp_uuid: BioAPIUUID,
+        #[rasn(identifier = "unitID")]
+        pub unit_id: BioAPIUNITID,
+        #[rasn(identifier = "bspHandle")]
+        pub bsp_handle: Option<BioAPIHANDLE>,
+        pub operation: BioAPIGUIOPERATION,
+        pub suboperation: BioAPIGUISUBOPERATION,
+        pub purpose: BioAPIBIRPURPOSE,
+        pub moment: BioAPIGUIMOMENT,
+        #[rasn(identifier = "resultCode")]
+        pub result_code: BioAPIRETURN,
+        #[rasn(identifier = "enrollSampleIndex")]
+        pub enroll_sample_index: SignedInt,
+        pub bitmaps: Option<BioAPIGUIBITMAPARRAY>,
+        pub text: Option<Utf8String>,
+    }
+    impl GUIStateEventHandlerCallbackParams {
+        pub fn new(
+            gui_state_event_handler_address: MemoryAddress,
+            gui_state_event_handler_context: MemoryAddress,
+            bsp_uuid: BioAPIUUID,
+            unit_id: BioAPIUNITID,
+            bsp_handle: Option<BioAPIHANDLE>,
+            operation: BioAPIGUIOPERATION,
+            suboperation: BioAPIGUISUBOPERATION,
+            purpose: BioAPIBIRPURPOSE,
+            moment: BioAPIGUIMOMENT,
+            result_code: BioAPIRETURN,
+            enroll_sample_index: SignedInt,
+            bitmaps: Option<BioAPIGUIBITMAPARRAY>,
+            text: Option<Utf8String>,
+        ) -> Self {
+            Self {
+                gui_state_event_handler_address,
+                gui_state_event_handler_context,
+                bsp_uuid,
+                unit_id,
+                bsp_handle,
+                operation,
+                suboperation,
+                purpose,
+                moment,
+                result_code,
+                enroll_sample_index,
+                bitmaps,
+                text,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct GUIStateEventInfo {
+        #[rasn(identifier = "subscriberEndpointIRI")]
+        pub subscriber_endpoint_iri: EndpointIRI,
+        #[rasn(identifier = "guiEventSubscriptionUuid")]
+        pub gui_event_subscription_uuid: Option<BioAPIUUID>,
+        #[rasn(identifier = "hostingEndpointIRI")]
+        pub hosting_endpoint_iri: EndpointIRI,
+        #[rasn(identifier = "bspProductUuid")]
+        pub bsp_product_uuid: BioAPIUUID,
+        #[rasn(identifier = "unitID")]
+        pub unit_id: BioAPIUNITID,
+        #[rasn(identifier = "originalBSPHandle")]
+        pub original_bsphandle: Option<BioAPIHANDLE>,
+        pub operation: BioAPIGUIOPERATION,
+        pub suboperation: BioAPIGUISUBOPERATION,
+        pub purpose: BioAPIBIRPURPOSE,
+        pub moment: BioAPIGUIMOMENT,
+        #[rasn(identifier = "resultCode")]
+        pub result_code: BioAPIRETURN,
+        #[rasn(identifier = "enrollSampleIndex")]
+        pub enroll_sample_index: SignedInt,
+        pub bitmaps: Option<BioAPIGUIBITMAPARRAY>,
+        pub text: Option<Utf8String>,
+    }
+    impl GUIStateEventInfo {
+        pub fn new(
+            subscriber_endpoint_iri: EndpointIRI,
+            gui_event_subscription_uuid: Option<BioAPIUUID>,
+            hosting_endpoint_iri: EndpointIRI,
+            bsp_product_uuid: BioAPIUUID,
+            unit_id: BioAPIUNITID,
+            original_bsphandle: Option<BioAPIHANDLE>,
+            operation: BioAPIGUIOPERATION,
+            suboperation: BioAPIGUISUBOPERATION,
+            purpose: BioAPIBIRPURPOSE,
+            moment: BioAPIGUIMOMENT,
+            result_code: BioAPIRETURN,
+            enroll_sample_index: SignedInt,
+            bitmaps: Option<BioAPIGUIBITMAPARRAY>,
+            text: Option<Utf8String>,
+        ) -> Self {
+            Self {
+                subscriber_endpoint_iri,
+                gui_event_subscription_uuid,
+                hosting_endpoint_iri,
+                bsp_product_uuid,
+                unit_id,
+                original_bsphandle,
+                operation,
+                suboperation,
+                purpose,
+                moment,
+                result_code,
+                enroll_sample_index,
+                bitmaps,
+                text,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "GetBIRFromHandle-RequestParams")]
+    pub struct GetBIRFromHandleRequestParams {
+        #[rasn(identifier = "originalBSPHandle")]
+        pub original_bsphandle: BioAPIHANDLE,
+        #[rasn(identifier = "birHandle")]
+        pub bir_handle: BioAPIBIRHANDLE,
+    }
+    impl GetBIRFromHandleRequestParams {
+        pub fn new(original_bsphandle: BioAPIHANDLE, bir_handle: BioAPIBIRHANDLE) -> Self {
+            Self {
+                original_bsphandle,
+                bir_handle,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "GetBIRFromHandle-ResponseParams")]
+    pub struct GetBIRFromHandleResponseParams {
+        pub bir: BioAPIBIR,
+    }
+    impl GetBIRFromHandleResponseParams {
+        pub fn new(bir: BioAPIBIR) -> Self {
+            Self { bir }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "GetHeaderFromHandle-RequestParams")]
+    pub struct GetHeaderFromHandleRequestParams {
+        #[rasn(identifier = "originalBSPHandle")]
+        pub original_bsphandle: BioAPIHANDLE,
+        #[rasn(identifier = "birHandle")]
+        pub bir_handle: BioAPIBIRHANDLE,
+    }
+    impl GetHeaderFromHandleRequestParams {
+        pub fn new(original_bsphandle: BioAPIHANDLE, bir_handle: BioAPIBIRHANDLE) -> Self {
+            Self {
+                original_bsphandle,
+                bir_handle,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "GetHeaderFromHandle-ResponseParams")]
+    pub struct GetHeaderFromHandleResponseParams {
+        pub header: BioAPIBIRHEADER,
+    }
+    impl GetHeaderFromHandleResponseParams {
+        pub fn new(header: BioAPIBIRHEADER) -> Self {
+            Self { header }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "GetIndicatorStatus-RequestParams")]
+    pub struct GetIndicatorStatusRequestParams {
+        #[rasn(identifier = "originalBSPHandle")]
+        pub original_bsphandle: BioAPIHANDLE,
+        #[rasn(identifier = "unitID")]
+        pub unit_id: BioAPIUNITID,
+    }
+    impl GetIndicatorStatusRequestParams {
+        pub fn new(original_bsphandle: BioAPIHANDLE, unit_id: BioAPIUNITID) -> Self {
+            Self {
+                original_bsphandle,
+                unit_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "GetIndicatorStatus-ResponseParams")]
+    pub struct GetIndicatorStatusResponseParams {
+        #[rasn(identifier = "indicatorStatus")]
+        pub indicator_status: BioAPIINDICATORSTATUS,
+    }
+    impl GetIndicatorStatusResponseParams {
+        pub fn new(indicator_status: BioAPIINDICATORSTATUS) -> Self {
+            Self { indicator_status }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "Identify-RequestParams")]
+    pub struct IdentifyRequestParams {
+        #[rasn(identifier = "originalBSPHandle")]
+        pub original_bsphandle: BioAPIHANDLE,
+        #[rasn(identifier = "maxFMRRequested")]
+        pub max_fmrrequested: BioAPIFMR,
+        pub subtype: BioAPIBIRSUBTYPE,
+        pub population: BioAPIIDENTIFYPOPULATION,
+        #[rasn(identifier = "totalNumberOfTemplates")]
+        pub total_number_of_templates: UnsignedInt,
+        pub binning: bool,
+        #[rasn(identifier = "maxNumberOfResults")]
+        pub max_number_of_results: UnsignedInt,
+        pub timeout: SignedInt,
+        #[rasn(identifier = "no-auditData")]
+        pub no_audit_data: bool,
+    }
+    impl IdentifyRequestParams {
+        pub fn new(
+            original_bsphandle: BioAPIHANDLE,
+            max_fmrrequested: BioAPIFMR,
+            subtype: BioAPIBIRSUBTYPE,
+            population: BioAPIIDENTIFYPOPULATION,
+            total_number_of_templates: UnsignedInt,
+            binning: bool,
+            max_number_of_results: UnsignedInt,
+            timeout: SignedInt,
+            no_audit_data: bool,
+        ) -> Self {
+            Self {
+                original_bsphandle,
+                max_fmrrequested,
+                subtype,
+                population,
+                total_number_of_templates,
+                binning,
+                max_number_of_results,
+                timeout,
+                no_audit_data,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "Identify-ResponseParams")]
+    pub struct IdentifyResponseParams {
+        #[rasn(size("0..=4294967295"))]
+        pub candidates: SequenceOf<BioAPICANDIDATE>,
+        #[rasn(identifier = "auditData")]
+        pub audit_data: Option<BioAPIBIRHANDLE>,
+    }
+    impl IdentifyResponseParams {
+        pub fn new(
+            candidates: SequenceOf<BioAPICANDIDATE>,
+            audit_data: Option<BioAPIBIRHANDLE>,
+        ) -> Self {
+            Self {
+                candidates,
+                audit_data,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "IdentifyMatch-RequestParams")]
+    pub struct IdentifyMatchRequestParams {
+        #[rasn(identifier = "originalBSPHandle")]
+        pub original_bsphandle: BioAPIHANDLE,
+        #[rasn(identifier = "maxFMRRequested")]
+        pub max_fmrrequested: BioAPIFMR,
+        #[rasn(identifier = "processedBIR")]
+        pub processed_bir: BioAPIINPUTBIR,
+        pub population: BioAPIIDENTIFYPOPULATION,
+        #[rasn(identifier = "totalNumberOfTemplates")]
+        pub total_number_of_templates: UnsignedInt,
+        pub binning: bool,
+        #[rasn(identifier = "maxNumberOfResults")]
+        pub max_number_of_results: UnsignedInt,
+        pub timeout: SignedInt,
+    }
+    impl IdentifyMatchRequestParams {
+        pub fn new(
+            original_bsphandle: BioAPIHANDLE,
+            max_fmrrequested: BioAPIFMR,
+            processed_bir: BioAPIINPUTBIR,
+            population: BioAPIIDENTIFYPOPULATION,
+            total_number_of_templates: UnsignedInt,
+            binning: bool,
+            max_number_of_results: UnsignedInt,
+            timeout: SignedInt,
+        ) -> Self {
+            Self {
+                original_bsphandle,
+                max_fmrrequested,
+                processed_bir,
+                population,
+                total_number_of_templates,
+                binning,
+                max_number_of_results,
+                timeout,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "IdentifyMatch-ResponseParams")]
+    pub struct IdentifyMatchResponseParams {
+        #[rasn(size("0..=4294967295"))]
+        pub candidates: SequenceOf<BioAPICANDIDATE>,
+    }
+    impl IdentifyMatchResponseParams {
+        pub fn new(candidates: SequenceOf<BioAPICANDIDATE>) -> Self {
+            Self { candidates }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "Import-RequestParams")]
+    pub struct ImportRequestParams {
+        #[rasn(identifier = "originalBSPHandle")]
+        pub original_bsphandle: BioAPIHANDLE,
+        #[rasn(identifier = "inputData")]
+        pub input_data: BioAPIDATA,
+        #[rasn(identifier = "inputFormat")]
+        pub input_format: BioAPIBIRBIOMETRICDATAFORMAT,
+        #[rasn(identifier = "outputFormat")]
+        pub output_format: Option<BioAPIBIRBIOMETRICDATAFORMAT>,
+        pub purpose: BioAPIBIRPURPOSE,
+    }
+    impl ImportRequestParams {
+        pub fn new(
+            original_bsphandle: BioAPIHANDLE,
+            input_data: BioAPIDATA,
+            input_format: BioAPIBIRBIOMETRICDATAFORMAT,
+            output_format: Option<BioAPIBIRBIOMETRICDATAFORMAT>,
+            purpose: BioAPIBIRPURPOSE,
+        ) -> Self {
+            Self {
+                original_bsphandle,
+                input_data,
+                input_format,
+                output_format,
+                purpose,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "Import-ResponseParams")]
+    pub struct ImportResponseParams {
+        #[rasn(identifier = "constructedBIR")]
+        pub constructed_bir: BioAPIBIRHANDLE,
+    }
+    impl ImportResponseParams {
+        pub fn new(constructed_bir: BioAPIBIRHANDLE) -> Self {
+            Self { constructed_bir }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct LinkCallParams {
+        #[rasn(identifier = "slaveEndpointIRI")]
+        pub slave_endpoint_iri: EndpointIRI,
+    }
+    impl LinkCallParams {
+        pub fn new(slave_endpoint_iri: EndpointIRI) -> Self {
+            Self { slave_endpoint_iri }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate, identifier = "MasterDeletionEvent-NotificationParams")]
+    pub struct MasterDeletionEventNotificationParams(pub ());
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MemoryAddress(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "NotifyGUIProgressEvent-RequestParams")]
+    pub struct NotifyGUIProgressEventRequestParams {
+        #[rasn(identifier = "subscriberEndpointIRI")]
+        pub subscriber_endpoint_iri: EndpointIRI,
+        #[rasn(identifier = "guiEventSubscriptionUuid")]
+        pub gui_event_subscription_uuid: BioAPIUUID,
+        #[rasn(identifier = "bspProductUuid")]
+        pub bsp_product_uuid: BioAPIUUID,
+        #[rasn(identifier = "unitID")]
+        pub unit_id: BioAPIUNITID,
+        pub operation: BioAPIGUIOPERATION,
+        pub suboperation: BioAPIGUISUBOPERATION,
+        pub purpose: BioAPIBIRPURPOSE,
+        pub moment: BioAPIGUIMOMENT,
+        #[rasn(identifier = "suboperationProgress")]
+        pub suboperation_progress: UnsignedByte,
+        pub bitmaps: Option<BioAPIGUIBITMAPARRAY>,
+        pub text: Option<Utf8String>,
+    }
+    impl NotifyGUIProgressEventRequestParams {
+        pub fn new(
+            subscriber_endpoint_iri: EndpointIRI,
+            gui_event_subscription_uuid: BioAPIUUID,
+            bsp_product_uuid: BioAPIUUID,
+            unit_id: BioAPIUNITID,
+            operation: BioAPIGUIOPERATION,
+            suboperation: BioAPIGUISUBOPERATION,
+            purpose: BioAPIBIRPURPOSE,
+            moment: BioAPIGUIMOMENT,
+            suboperation_progress: UnsignedByte,
+            bitmaps: Option<BioAPIGUIBITMAPARRAY>,
+            text: Option<Utf8String>,
+        ) -> Self {
+            Self {
+                subscriber_endpoint_iri,
+                gui_event_subscription_uuid,
+                bsp_product_uuid,
+                unit_id,
+                operation,
+                suboperation,
+                purpose,
+                moment,
+                suboperation_progress,
+                bitmaps,
+                text,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "NotifyGUIProgressEvent-ResponseParams")]
+    pub struct NotifyGUIProgressEventResponseParams {
+        pub response: BioAPIGUIRESPONSE,
+    }
+    impl NotifyGUIProgressEventResponseParams {
+        pub fn new(response: BioAPIGUIRESPONSE) -> Self {
+            Self { response }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "NotifyGUISelectEvent-RequestParams")]
+    pub struct NotifyGUISelectEventRequestParams {
+        #[rasn(identifier = "subscriberEndpointIRI")]
+        pub subscriber_endpoint_iri: EndpointIRI,
+        #[rasn(identifier = "guiEventSubscriptionUuid")]
+        pub gui_event_subscription_uuid: BioAPIUUID,
+        #[rasn(identifier = "bspProductUuid")]
+        pub bsp_product_uuid: BioAPIUUID,
+        #[rasn(identifier = "unitID")]
+        pub unit_id: BioAPIUNITID,
+        #[rasn(identifier = "enrollType")]
+        pub enroll_type: BioAPIGUIENROLLTYPE,
+        pub operation: BioAPIGUIOPERATION,
+        pub moment: BioAPIGUIMOMENT,
+        #[rasn(identifier = "resultCode")]
+        pub result_code: BioAPIRETURN,
+        #[rasn(identifier = "maxNumEnrollSamples")]
+        pub max_num_enroll_samples: UnsignedInt,
+        #[rasn(identifier = "selectableInstances")]
+        pub selectable_instances: BioAPIBIRSUBTYPEMASK,
+        #[rasn(identifier = "capturedInstances")]
+        pub captured_instances: BioAPIBIRSUBTYPEMASK,
+        pub text: Option<Utf8String>,
+    }
+    impl NotifyGUISelectEventRequestParams {
+        pub fn new(
+            subscriber_endpoint_iri: EndpointIRI,
+            gui_event_subscription_uuid: BioAPIUUID,
+            bsp_product_uuid: BioAPIUUID,
+            unit_id: BioAPIUNITID,
+            enroll_type: BioAPIGUIENROLLTYPE,
+            operation: BioAPIGUIOPERATION,
+            moment: BioAPIGUIMOMENT,
+            result_code: BioAPIRETURN,
+            max_num_enroll_samples: UnsignedInt,
+            selectable_instances: BioAPIBIRSUBTYPEMASK,
+            captured_instances: BioAPIBIRSUBTYPEMASK,
+            text: Option<Utf8String>,
+        ) -> Self {
+            Self {
+                subscriber_endpoint_iri,
+                gui_event_subscription_uuid,
+                bsp_product_uuid,
+                unit_id,
+                enroll_type,
+                operation,
+                moment,
+                result_code,
+                max_num_enroll_samples,
+                selectable_instances,
+                captured_instances,
+                text,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "NotifyGUISelectEvent-ResponseParams")]
+    pub struct NotifyGUISelectEventResponseParams {
+        #[rasn(identifier = "selectedInstances")]
+        pub selected_instances: BioAPIBIRSUBTYPEMASK,
+        pub response: BioAPIGUIRESPONSE,
+    }
+    impl NotifyGUISelectEventResponseParams {
+        pub fn new(selected_instances: BioAPIBIRSUBTYPEMASK, response: BioAPIGUIRESPONSE) -> Self {
+            Self {
+                selected_instances,
+                response,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "NotifyGUIStateEvent-RequestParams")]
+    pub struct NotifyGUIStateEventRequestParams {
+        #[rasn(identifier = "subscriberEndpointIRI")]
+        pub subscriber_endpoint_iri: EndpointIRI,
+        #[rasn(identifier = "guiEventSubscriptionUuid")]
+        pub gui_event_subscription_uuid: BioAPIUUID,
+        #[rasn(identifier = "bspProductUuid")]
+        pub bsp_product_uuid: BioAPIUUID,
+        #[rasn(identifier = "unitID")]
+        pub unit_id: BioAPIUNITID,
+        pub operation: BioAPIGUIOPERATION,
+        pub suboperation: BioAPIGUISUBOPERATION,
+        pub purpose: BioAPIBIRPURPOSE,
+        pub moment: BioAPIGUIMOMENT,
+        #[rasn(identifier = "resultCode")]
+        pub result_code: BioAPIRETURN,
+        #[rasn(identifier = "enrollSampleIndex")]
+        pub enroll_sample_index: SignedInt,
+        pub bitmaps: Option<BioAPIGUIBITMAPARRAY>,
+        pub text: Option<Utf8String>,
+    }
+    impl NotifyGUIStateEventRequestParams {
+        pub fn new(
+            subscriber_endpoint_iri: EndpointIRI,
+            gui_event_subscription_uuid: BioAPIUUID,
+            bsp_product_uuid: BioAPIUUID,
+            unit_id: BioAPIUNITID,
+            operation: BioAPIGUIOPERATION,
+            suboperation: BioAPIGUISUBOPERATION,
+            purpose: BioAPIBIRPURPOSE,
+            moment: BioAPIGUIMOMENT,
+            result_code: BioAPIRETURN,
+            enroll_sample_index: SignedInt,
+            bitmaps: Option<BioAPIGUIBITMAPARRAY>,
+            text: Option<Utf8String>,
+        ) -> Self {
+            Self {
+                subscriber_endpoint_iri,
+                gui_event_subscription_uuid,
+                bsp_product_uuid,
+                unit_id,
+                operation,
+                suboperation,
+                purpose,
+                moment,
+                result_code,
+                enroll_sample_index,
+                bitmaps,
+                text,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "NotifyGUIStateEvent-ResponseParams")]
+    pub struct NotifyGUIStateEventResponseParams {
+        pub response: BioAPIGUIRESPONSE,
+        #[rasn(identifier = "enrollSampleIndexToRecapture")]
+        pub enroll_sample_index_to_recapture: SignedInt,
+    }
+    impl NotifyGUIStateEventResponseParams {
+        pub fn new(
+            response: BioAPIGUIRESPONSE,
+            enroll_sample_index_to_recapture: SignedInt,
+        ) -> Self {
+            Self {
+                response,
+                enroll_sample_index_to_recapture,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "PresetIdentifyPopulation-RequestParams")]
+    pub struct PresetIdentifyPopulationRequestParams {
+        #[rasn(identifier = "originalBSPHandle")]
+        pub original_bsphandle: BioAPIHANDLE,
+        pub population: BioAPIIDENTIFYPOPULATION,
+    }
+    impl PresetIdentifyPopulationRequestParams {
+        pub fn new(original_bsphandle: BioAPIHANDLE, population: BioAPIIDENTIFYPOPULATION) -> Self {
+            Self {
+                original_bsphandle,
+                population,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate, identifier = "PresetIdentifyPopulation-ResponseParams")]
+    pub struct PresetIdentifyPopulationResponseParams(pub ());
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "Process-RequestParams")]
+    pub struct ProcessRequestParams {
+        #[rasn(identifier = "originalBSPHandle")]
+        pub original_bsphandle: BioAPIHANDLE,
+        #[rasn(identifier = "capturedBIR")]
+        pub captured_bir: BioAPIINPUTBIR,
+        #[rasn(identifier = "outputFormat")]
+        pub output_format: Option<BioAPIBIRBIOMETRICDATAFORMAT>,
+    }
+    impl ProcessRequestParams {
+        pub fn new(
+            original_bsphandle: BioAPIHANDLE,
+            captured_bir: BioAPIINPUTBIR,
+            output_format: Option<BioAPIBIRBIOMETRICDATAFORMAT>,
+        ) -> Self {
+            Self {
+                original_bsphandle,
+                captured_bir,
+                output_format,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "Process-ResponseParams")]
+    pub struct ProcessResponseParams {
+        #[rasn(identifier = "processedBIR")]
+        pub processed_bir: BioAPIBIRHANDLE,
+    }
+    impl ProcessResponseParams {
+        pub fn new(processed_bir: BioAPIBIRHANDLE) -> Self {
+            Self { processed_bir }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "ProcessWithAuxBIR-RequestParams")]
+    pub struct ProcessWithAuxBIRRequestParams {
+        #[rasn(identifier = "originalBSPHandle")]
+        pub original_bsphandle: BioAPIHANDLE,
+        #[rasn(identifier = "capturedBIR")]
+        pub captured_bir: BioAPIINPUTBIR,
+        #[rasn(identifier = "auxiliaryData")]
+        pub auxiliary_data: BioAPIINPUTBIR,
+        #[rasn(identifier = "outputFormat")]
+        pub output_format: Option<BioAPIBIRBIOMETRICDATAFORMAT>,
+    }
+    impl ProcessWithAuxBIRRequestParams {
+        pub fn new(
+            original_bsphandle: BioAPIHANDLE,
+            captured_bir: BioAPIINPUTBIR,
+            auxiliary_data: BioAPIINPUTBIR,
+            output_format: Option<BioAPIBIRBIOMETRICDATAFORMAT>,
+        ) -> Self {
+            Self {
+                original_bsphandle,
+                captured_bir,
+                auxiliary_data,
+                output_format,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "ProcessWithAuxBIR-ResponseParams")]
+    pub struct ProcessWithAuxBIRResponseParams {
+        #[rasn(identifier = "processedBIR")]
+        pub processed_bir: BioAPIBIRHANDLE,
+    }
+    impl ProcessWithAuxBIRResponseParams {
+        pub fn new(processed_bir: BioAPIBIRHANDLE) -> Self {
+            Self { processed_bir }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "QueryBFPs-RequestParams")]
+    pub struct QueryBFPsRequestParams {
+        #[rasn(identifier = "bspProductUuid")]
+        pub bsp_product_uuid: BioAPIUUID,
+    }
+    impl QueryBFPsRequestParams {
+        pub fn new(bsp_product_uuid: BioAPIUUID) -> Self {
+            Self { bsp_product_uuid }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "QueryBFPs-ResponseParams")]
+    pub struct QueryBFPsResponseParams {
+        #[rasn(size("0..=4294967295"))]
+        pub bfps: SequenceOf<BioAPIBFPLISTELEMENT>,
+    }
+    impl QueryBFPsResponseParams {
+        pub fn new(bfps: SequenceOf<BioAPIBFPLISTELEMENT>) -> Self {
+            Self { bfps }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        automatic_tags,
+        identifier = "QueryGUIEventSubscriptions-RequestParams"
+    )]
+    pub struct QueryGUIEventSubscriptionsRequestParams {
+        #[rasn(identifier = "bspProductUuid")]
+        pub bsp_product_uuid: BioAPIUUID,
+    }
+    impl QueryGUIEventSubscriptionsRequestParams {
+        pub fn new(bsp_product_uuid: BioAPIUUID) -> Self {
+            Self { bsp_product_uuid }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        automatic_tags,
+        identifier = "QueryGUIEventSubscriptions-ResponseParams"
+    )]
+    pub struct QueryGUIEventSubscriptionsResponseParams {
+        #[rasn(size("0..=4294967295"), identifier = "guiEventSubscriptions")]
+        pub gui_event_subscriptions: SequenceOf<BioAPIGUIEVENTSUBSCRIPTION>,
+    }
+    impl QueryGUIEventSubscriptionsResponseParams {
+        pub fn new(gui_event_subscriptions: SequenceOf<BioAPIGUIEVENTSUBSCRIPTION>) -> Self {
+            Self {
+                gui_event_subscriptions,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "QueryUnits-RequestParams")]
+    pub struct QueryUnitsRequestParams {
+        #[rasn(identifier = "bspProductUuid")]
+        pub bsp_product_uuid: BioAPIUUID,
+    }
+    impl QueryUnitsRequestParams {
+        pub fn new(bsp_product_uuid: BioAPIUUID) -> Self {
+            Self { bsp_product_uuid }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "QueryUnits-ResponseParams")]
+    pub struct QueryUnitsResponseParams {
+        #[rasn(size("0..=4294967295"), identifier = "unitSchemas")]
+        pub unit_schemas: SequenceOf<BioAPIUNITSCHEMA>,
+    }
+    impl QueryUnitsResponseParams {
+        pub fn new(unit_schemas: SequenceOf<BioAPIUNITSCHEMA>) -> Self {
+            Self { unit_schemas }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "RedirectGUIEvents-RequestParams")]
+    pub struct RedirectGUIEventsRequestParams {
+        #[rasn(identifier = "subscriberEndpointIRI")]
+        pub subscriber_endpoint_iri: EndpointIRI,
+        #[rasn(identifier = "guiEventSubscriptionUuid")]
+        pub gui_event_subscription_uuid: BioAPIUUID,
+        #[rasn(identifier = "originalBSPHandle")]
+        pub original_bsphandle: BioAPIHANDLE,
+        #[rasn(identifier = "guiSelectEventRedirected")]
+        pub gui_select_event_redirected: bool,
+        #[rasn(identifier = "guiStateEventRedirected")]
+        pub gui_state_event_redirected: bool,
+        #[rasn(identifier = "guiProgressEventRedirected")]
+        pub gui_progress_event_redirected: bool,
+    }
+    impl RedirectGUIEventsRequestParams {
+        pub fn new(
+            subscriber_endpoint_iri: EndpointIRI,
+            gui_event_subscription_uuid: BioAPIUUID,
+            original_bsphandle: BioAPIHANDLE,
+            gui_select_event_redirected: bool,
+            gui_state_event_redirected: bool,
+            gui_progress_event_redirected: bool,
+        ) -> Self {
+            Self {
+                subscriber_endpoint_iri,
+                gui_event_subscription_uuid,
+                original_bsphandle,
+                gui_select_event_redirected,
+                gui_state_event_redirected,
+                gui_progress_event_redirected,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate, identifier = "RedirectGUIEvents-ResponseParams")]
+    pub struct RedirectGUIEventsResponseParams(pub ());
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "RegisterBFP-RequestParams")]
+    pub struct RegisterBFPRequestParams {
+        #[rasn(identifier = "bfpSchema")]
+        pub bfp_schema: BioAPIBFPSCHEMA,
+        pub update: bool,
+    }
+    impl RegisterBFPRequestParams {
+        pub fn new(bfp_schema: BioAPIBFPSCHEMA, update: bool) -> Self {
+            Self { bfp_schema, update }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate, identifier = "RegisterBFP-ResponseParams")]
+    pub struct RegisterBFPResponseParams(pub ());
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "RegisterBSP-RequestParams")]
+    pub struct RegisterBSPRequestParams {
+        #[rasn(identifier = "bspSchema")]
+        pub bsp_schema: BioAPIBSPSCHEMA,
+        pub update: bool,
+    }
+    impl RegisterBSPRequestParams {
+        pub fn new(bsp_schema: BioAPIBSPSCHEMA, update: bool) -> Self {
+            Self { bsp_schema, update }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate, identifier = "RegisterBSP-ResponseParams")]
+    pub struct RegisterBSPResponseParams(pub ());
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct RunningBSPLocalReference {
+        #[rasn(identifier = "hostingEndpointIRI")]
+        pub hosting_endpoint_iri: EndpointIRI,
+        #[rasn(identifier = "bspProductUuid")]
+        pub bsp_product_uuid: BioAPIUUID,
+        #[rasn(identifier = "useBSPAccessUuid")]
+        pub use_bspaccess_uuid: bool,
+        #[rasn(identifier = "unitEventHandlerAddress")]
+        pub unit_event_handler_address: MemoryAddress,
+        #[rasn(identifier = "unitEventHandlerContext")]
+        pub unit_event_handler_context: MemoryAddress,
+    }
+    impl RunningBSPLocalReference {
+        pub fn new(
+            hosting_endpoint_iri: EndpointIRI,
+            bsp_product_uuid: BioAPIUUID,
+            use_bspaccess_uuid: bool,
+            unit_event_handler_address: MemoryAddress,
+            unit_event_handler_context: MemoryAddress,
+        ) -> Self {
+            Self {
+                hosting_endpoint_iri,
+                bsp_product_uuid,
+                use_bspaccess_uuid,
+                unit_event_handler_address,
+                unit_event_handler_context,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RunningBSPLocalReferences(pub SetOf<RunningBSPLocalReference>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct RunningBSPRemoteReference {
+        #[rasn(identifier = "referrerEndpointIRI")]
+        pub referrer_endpoint_iri: EndpointIRI,
+        #[rasn(identifier = "bspProductUuid")]
+        pub bsp_product_uuid: BioAPIUUID,
+        #[rasn(identifier = "unitEventSubscription")]
+        pub unit_event_subscription: bool,
+    }
+    impl RunningBSPRemoteReference {
+        pub fn new(
+            referrer_endpoint_iri: EndpointIRI,
+            bsp_product_uuid: BioAPIUUID,
+            unit_event_subscription: bool,
+        ) -> Self {
+            Self {
+                referrer_endpoint_iri,
+                bsp_product_uuid,
+                unit_event_subscription,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RunningBSPRemoteReferences(pub SetOf<RunningBSPRemoteReference>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SetIndicatorStatus-RequestParams")]
+    pub struct SetIndicatorStatusRequestParams {
+        #[rasn(identifier = "originalBSPHandle")]
+        pub original_bsphandle: BioAPIHANDLE,
+        #[rasn(identifier = "unitID")]
+        pub unit_id: BioAPIUNITID,
+        #[rasn(identifier = "indicatorStatus")]
+        pub indicator_status: BioAPIINDICATORSTATUS,
+    }
+    impl SetIndicatorStatusRequestParams {
+        pub fn new(
+            original_bsphandle: BioAPIHANDLE,
+            unit_id: BioAPIUNITID,
+            indicator_status: BioAPIINDICATORSTATUS,
+        ) -> Self {
+            Self {
+                original_bsphandle,
+                unit_id,
+                indicator_status,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate, identifier = "SetIndicatorStatus-ResponseParams")]
+    pub struct SetIndicatorStatusResponseParams(pub ());
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SetPowerMode-RequestParams")]
+    pub struct SetPowerModeRequestParams {
+        #[rasn(identifier = "originalBSPHandle")]
+        pub original_bsphandle: BioAPIHANDLE,
+        #[rasn(identifier = "unitID")]
+        pub unit_id: BioAPIUNITID,
+        #[rasn(identifier = "powerMode")]
+        pub power_mode: BioAPIPOWERMODE,
+    }
+    impl SetPowerModeRequestParams {
+        pub fn new(
+            original_bsphandle: BioAPIHANDLE,
+            unit_id: BioAPIUNITID,
+            power_mode: BioAPIPOWERMODE,
+        ) -> Self {
+            Self {
+                original_bsphandle,
+                unit_id,
+                power_mode,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate, identifier = "SetPowerMode-ResponseParams")]
+    pub struct SetPowerModeResponseParams(pub ());
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("-2147483648..=2147483647"))]
+    pub struct SignedInt(pub i32);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SubscribeToGUIEvents-RequestParams")]
+    pub struct SubscribeToGUIEventsRequestParams {
+        #[rasn(identifier = "guiEventSubscriptionUuid")]
+        pub gui_event_subscription_uuid: Option<BioAPIUUID>,
+        #[rasn(identifier = "bspProductUuid")]
+        pub bsp_product_uuid: Option<BioAPIUUID>,
+        #[rasn(identifier = "originalBSPHandle")]
+        pub original_bsphandle: Option<BioAPIHANDLE>,
+        #[rasn(identifier = "guiSelectEventSubscribed")]
+        pub gui_select_event_subscribed: bool,
+        #[rasn(identifier = "guiStateEventSubscribed")]
+        pub gui_state_event_subscribed: bool,
+        #[rasn(identifier = "guiProgressEventSubscribed")]
+        pub gui_progress_event_subscribed: bool,
+    }
+    impl SubscribeToGUIEventsRequestParams {
+        pub fn new(
+            gui_event_subscription_uuid: Option<BioAPIUUID>,
+            bsp_product_uuid: Option<BioAPIUUID>,
+            original_bsphandle: Option<BioAPIHANDLE>,
+            gui_select_event_subscribed: bool,
+            gui_state_event_subscribed: bool,
+            gui_progress_event_subscribed: bool,
+        ) -> Self {
+            Self {
+                gui_event_subscription_uuid,
+                bsp_product_uuid,
+                original_bsphandle,
+                gui_select_event_subscribed,
+                gui_state_event_subscribed,
+                gui_progress_event_subscribed,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate, identifier = "SubscribeToGUIEvents-ResponseParams")]
+    pub struct SubscribeToGUIEventsResponseParams(pub ());
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct SubscribeToGUIEventsCallParams {
+        #[rasn(identifier = "guiEventSubscriptionUuid")]
+        pub gui_event_subscription_uuid: Option<BioAPIUUID>,
+        #[rasn(identifier = "bspUuid")]
+        pub bsp_uuid: Option<BioAPIUUID>,
+        #[rasn(identifier = "bspHandle")]
+        pub bsp_handle: Option<BioAPIHANDLE>,
+        #[rasn(identifier = "guiSelectEventHandlerAddress")]
+        pub gui_select_event_handler_address: MemoryAddress,
+        #[rasn(identifier = "guiSelectEventHandlerContext")]
+        pub gui_select_event_handler_context: MemoryAddress,
+        #[rasn(identifier = "guiStateEventHandlerAddress")]
+        pub gui_state_event_handler_address: MemoryAddress,
+        #[rasn(identifier = "guiStateEventHandlerContext")]
+        pub gui_state_event_handler_context: MemoryAddress,
+        #[rasn(identifier = "guiProgressEventHandlerAddress")]
+        pub gui_progress_event_handler_address: MemoryAddress,
+        #[rasn(identifier = "guiProgressEventHandlerContext")]
+        pub gui_progress_event_handler_context: MemoryAddress,
+    }
+    impl SubscribeToGUIEventsCallParams {
+        pub fn new(
+            gui_event_subscription_uuid: Option<BioAPIUUID>,
+            bsp_uuid: Option<BioAPIUUID>,
+            bsp_handle: Option<BioAPIHANDLE>,
+            gui_select_event_handler_address: MemoryAddress,
+            gui_select_event_handler_context: MemoryAddress,
+            gui_state_event_handler_address: MemoryAddress,
+            gui_state_event_handler_context: MemoryAddress,
+            gui_progress_event_handler_address: MemoryAddress,
+            gui_progress_event_handler_context: MemoryAddress,
+        ) -> Self {
+            Self {
+                gui_event_subscription_uuid,
+                bsp_uuid,
+                bsp_handle,
+                gui_select_event_handler_address,
+                gui_select_event_handler_context,
+                gui_state_event_handler_address,
+                gui_state_event_handler_context,
+                gui_progress_event_handler_address,
+                gui_progress_event_handler_context,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "Transform-RequestParams")]
+    pub struct TransformRequestParams {
+        #[rasn(identifier = "bspHandle")]
+        pub bsp_handle: BioAPIHANDLE,
+        #[rasn(identifier = "operationUuid")]
+        pub operation_uuid: BioAPIUUID,
+        #[rasn(size("0..=4294967295"), identifier = "inputBIRs")]
+        pub input_birs: SequenceOf<BioAPIINPUTBIR>,
+    }
+    impl TransformRequestParams {
+        pub fn new(
+            bsp_handle: BioAPIHANDLE,
+            operation_uuid: BioAPIUUID,
+            input_birs: SequenceOf<BioAPIINPUTBIR>,
+        ) -> Self {
+            Self {
+                bsp_handle,
+                operation_uuid,
+                input_birs,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "Transform-ResponseParams")]
+    pub struct TransformResponseParams {
+        #[rasn(size("0..=4294967295"), identifier = "outputBIRs")]
+        pub output_birs: SequenceOf<BioAPIBIRHANDLE>,
+    }
+    impl TransformResponseParams {
+        pub fn new(output_birs: SequenceOf<BioAPIBIRHANDLE>) -> Self {
+            Self { output_birs }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "UnitEvent-NotificationParams")]
+    pub struct UnitEventNotificationParams {
+        #[rasn(identifier = "bspProductUuid")]
+        pub bsp_product_uuid: BioAPIUUID,
+        #[rasn(identifier = "unitID")]
+        pub unit_id: BioAPIUNITID,
+        #[rasn(identifier = "unitSchema")]
+        pub unit_schema: Option<BioAPIUNITSCHEMA>,
+        #[rasn(identifier = "unitEventType")]
+        pub unit_event_type: BioAPIUNITEVENTTYPE,
+    }
+    impl UnitEventNotificationParams {
+        pub fn new(
+            bsp_product_uuid: BioAPIUUID,
+            unit_id: BioAPIUNITID,
+            unit_schema: Option<BioAPIUNITSCHEMA>,
+            unit_event_type: BioAPIUNITEVENTTYPE,
+        ) -> Self {
+            Self {
+                bsp_product_uuid,
+                unit_id,
+                unit_schema,
+                unit_event_type,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct UnitEventHandlerCallbackParams {
+        #[rasn(identifier = "unitEventHandlerAddress")]
+        pub unit_event_handler_address: MemoryAddress,
+        #[rasn(identifier = "unitEventHandlerContext")]
+        pub unit_event_handler_context: MemoryAddress,
+        #[rasn(identifier = "bspUuid")]
+        pub bsp_uuid: BioAPIUUID,
+        #[rasn(identifier = "unitID")]
+        pub unit_id: BioAPIUNITID,
+        #[rasn(identifier = "unitSchema")]
+        pub unit_schema: Option<BioAPIUNITSCHEMA>,
+        #[rasn(identifier = "unitEventType")]
+        pub unit_event_type: BioAPIUNITEVENTTYPE,
+    }
+    impl UnitEventHandlerCallbackParams {
+        pub fn new(
+            unit_event_handler_address: MemoryAddress,
+            unit_event_handler_context: MemoryAddress,
+            bsp_uuid: BioAPIUUID,
+            unit_id: BioAPIUNITID,
+            unit_schema: Option<BioAPIUNITSCHEMA>,
+            unit_event_type: BioAPIUNITEVENTTYPE,
+        ) -> Self {
+            Self {
+                unit_event_handler_address,
+                unit_event_handler_context,
+                bsp_uuid,
+                unit_id,
+                unit_schema,
+                unit_event_type,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct UnitEventInfo {
+        #[rasn(identifier = "hostingEndpointIRI")]
+        pub hosting_endpoint_iri: EndpointIRI,
+        #[rasn(identifier = "bspProductUuid")]
+        pub bsp_product_uuid: BioAPIUUID,
+        #[rasn(identifier = "unitID")]
+        pub unit_id: BioAPIUNITID,
+        #[rasn(identifier = "unitSchema")]
+        pub unit_schema: Option<BioAPIUNITSCHEMA>,
+        #[rasn(identifier = "unitEventType")]
+        pub unit_event_type: BioAPIUNITEVENTTYPE,
+    }
+    impl UnitEventInfo {
+        pub fn new(
+            hosting_endpoint_iri: EndpointIRI,
+            bsp_product_uuid: BioAPIUUID,
+            unit_id: BioAPIUNITID,
+            unit_schema: Option<BioAPIUNITSCHEMA>,
+            unit_event_type: BioAPIUNITEVENTTYPE,
+        ) -> Self {
+            Self {
+                hosting_endpoint_iri,
+                bsp_product_uuid,
+                unit_id,
+                unit_schema,
+                unit_event_type,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct UnitEventNotificationDisabler {
+        #[rasn(identifier = "referrerEndpointIRI")]
+        pub referrer_endpoint_iri: EndpointIRI,
+        #[rasn(identifier = "bspProductUuid")]
+        pub bsp_product_uuid: BioAPIUUID,
+        #[rasn(identifier = "unitEventTypes")]
+        pub unit_event_types: BioAPIUNITEVENTTYPEMASK,
+    }
+    impl UnitEventNotificationDisabler {
+        pub fn new(
+            referrer_endpoint_iri: EndpointIRI,
+            bsp_product_uuid: BioAPIUUID,
+            unit_event_types: BioAPIUNITEVENTTYPEMASK,
+        ) -> Self {
+            Self {
+                referrer_endpoint_iri,
+                bsp_product_uuid,
+                unit_event_types,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct UnitEventNotificationDisablers(pub SetOf<UnitEventNotificationDisabler>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct UnlinkCallParams {
+        #[rasn(identifier = "slaveEndpointIRI")]
+        pub slave_endpoint_iri: EndpointIRI,
+    }
+    impl UnlinkCallParams {
+        pub fn new(slave_endpoint_iri: EndpointIRI) -> Self {
+            Self { slave_endpoint_iri }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "UnredirectGUIEvents-RequestParams")]
+    pub struct UnredirectGUIEventsRequestParams {
+        #[rasn(identifier = "subscriberEndpointIRI")]
+        pub subscriber_endpoint_iri: EndpointIRI,
+        #[rasn(identifier = "guiEventSubscriptionUuid")]
+        pub gui_event_subscription_uuid: BioAPIUUID,
+        #[rasn(identifier = "originalBSPHandle")]
+        pub original_bsphandle: BioAPIHANDLE,
+        #[rasn(identifier = "guiSelectEventRedirected")]
+        pub gui_select_event_redirected: bool,
+        #[rasn(identifier = "guiStateEventRedirected")]
+        pub gui_state_event_redirected: bool,
+        #[rasn(identifier = "guiProgressEventRedirected")]
+        pub gui_progress_event_redirected: bool,
+    }
+    impl UnredirectGUIEventsRequestParams {
+        pub fn new(
+            subscriber_endpoint_iri: EndpointIRI,
+            gui_event_subscription_uuid: BioAPIUUID,
+            original_bsphandle: BioAPIHANDLE,
+            gui_select_event_redirected: bool,
+            gui_state_event_redirected: bool,
+            gui_progress_event_redirected: bool,
+        ) -> Self {
+            Self {
+                subscriber_endpoint_iri,
+                gui_event_subscription_uuid,
+                original_bsphandle,
+                gui_select_event_redirected,
+                gui_state_event_redirected,
+                gui_progress_event_redirected,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate, identifier = "UnredirectGUIEvents-ResponseParams")]
+    pub struct UnredirectGUIEventsResponseParams(pub ());
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "UnregisterBFP-RequestParams")]
+    pub struct UnregisterBFPRequestParams {
+        #[rasn(identifier = "bfpProductUuid")]
+        pub bfp_product_uuid: BioAPIUUID,
+    }
+    impl UnregisterBFPRequestParams {
+        pub fn new(bfp_product_uuid: BioAPIUUID) -> Self {
+            Self { bfp_product_uuid }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate, identifier = "UnregisterBFP-ResponseParams")]
+    pub struct UnregisterBFPResponseParams(pub ());
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "UnregisterBSP-RequestParams")]
+    pub struct UnregisterBSPRequestParams {
+        #[rasn(identifier = "bspProductUuid")]
+        pub bsp_product_uuid: BioAPIUUID,
+    }
+    impl UnregisterBSPRequestParams {
+        pub fn new(bsp_product_uuid: BioAPIUUID) -> Self {
+            Self { bsp_product_uuid }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate, identifier = "UnregisterBSP-ResponseParams")]
+    pub struct UnregisterBSPResponseParams(pub ());
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=255"))]
+    pub struct UnsignedByte(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=4294967295"))]
+    pub struct UnsignedInt(pub u32);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=65535"))]
+    pub struct UnsignedShort(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "UnsubscribeFromGUIEvents-RequestParams")]
+    pub struct UnsubscribeFromGUIEventsRequestParams {
+        #[rasn(identifier = "guiEventSubscriptionUuid")]
+        pub gui_event_subscription_uuid: Option<BioAPIUUID>,
+        #[rasn(identifier = "bspProductUuid")]
+        pub bsp_product_uuid: Option<BioAPIUUID>,
+        #[rasn(identifier = "originalBSPHandle")]
+        pub original_bsphandle: Option<BioAPIHANDLE>,
+        #[rasn(identifier = "guiSelectEventSubscribed")]
+        pub gui_select_event_subscribed: bool,
+        #[rasn(identifier = "guiStateEventSubscribed")]
+        pub gui_state_event_subscribed: bool,
+        #[rasn(identifier = "guiProgressEventSubscribed")]
+        pub gui_progress_event_subscribed: bool,
+    }
+    impl UnsubscribeFromGUIEventsRequestParams {
+        pub fn new(
+            gui_event_subscription_uuid: Option<BioAPIUUID>,
+            bsp_product_uuid: Option<BioAPIUUID>,
+            original_bsphandle: Option<BioAPIHANDLE>,
+            gui_select_event_subscribed: bool,
+            gui_state_event_subscribed: bool,
+            gui_progress_event_subscribed: bool,
+        ) -> Self {
+            Self {
+                gui_event_subscription_uuid,
+                bsp_product_uuid,
+                original_bsphandle,
+                gui_select_event_subscribed,
+                gui_state_event_subscribed,
+                gui_progress_event_subscribed,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate, identifier = "UnsubscribeFromGUIEvents-ResponseParams")]
+    pub struct UnsubscribeFromGUIEventsResponseParams(pub ());
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct UnsubscribeFromGUIEventsCallParams {
+        #[rasn(identifier = "guiEventSubscriptionUuid")]
+        pub gui_event_subscription_uuid: Option<BioAPIUUID>,
+        #[rasn(identifier = "bspUuid")]
+        pub bsp_uuid: Option<BioAPIUUID>,
+        #[rasn(identifier = "bspHandle")]
+        pub bsp_handle: Option<BioAPIHANDLE>,
+        #[rasn(identifier = "guiSelectEventHandlerAddress")]
+        pub gui_select_event_handler_address: MemoryAddress,
+        #[rasn(identifier = "guiSelectEventHandlerContext")]
+        pub gui_select_event_handler_context: MemoryAddress,
+        #[rasn(identifier = "guiStateEventHandlerAddress")]
+        pub gui_state_event_handler_address: MemoryAddress,
+        #[rasn(identifier = "guiStateEventHandlerContext")]
+        pub gui_state_event_handler_context: MemoryAddress,
+        #[rasn(identifier = "guiProgressEventHandlerAddress")]
+        pub gui_progress_event_handler_address: MemoryAddress,
+        #[rasn(identifier = "guiProgressEventHandlerContext")]
+        pub gui_progress_event_handler_context: MemoryAddress,
+    }
+    impl UnsubscribeFromGUIEventsCallParams {
+        pub fn new(
+            gui_event_subscription_uuid: Option<BioAPIUUID>,
+            bsp_uuid: Option<BioAPIUUID>,
+            bsp_handle: Option<BioAPIHANDLE>,
+            gui_select_event_handler_address: MemoryAddress,
+            gui_select_event_handler_context: MemoryAddress,
+            gui_state_event_handler_address: MemoryAddress,
+            gui_state_event_handler_context: MemoryAddress,
+            gui_progress_event_handler_address: MemoryAddress,
+            gui_progress_event_handler_context: MemoryAddress,
+        ) -> Self {
+            Self {
+                gui_event_subscription_uuid,
+                bsp_uuid,
+                bsp_handle,
+                gui_select_event_handler_address,
+                gui_select_event_handler_context,
+                gui_state_event_handler_address,
+                gui_state_event_handler_context,
+                gui_progress_event_handler_address,
+                gui_progress_event_handler_context,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "Verify-RequestParams")]
+    pub struct VerifyRequestParams {
+        #[rasn(identifier = "originalBSPHandle")]
+        pub original_bsphandle: BioAPIHANDLE,
+        #[rasn(identifier = "maxFMRRequested")]
+        pub max_fmrrequested: BioAPIFMR,
+        #[rasn(identifier = "referenceTemplate")]
+        pub reference_template: BioAPIINPUTBIR,
+        pub subtype: BioAPIBIRSUBTYPE,
+        pub timeout: SignedInt,
+        #[rasn(identifier = "no-adaptedBIR")]
+        pub no_adapted_bir: bool,
+        #[rasn(identifier = "no-fmrAchieved")]
+        pub no_fmr_achieved: bool,
+        #[rasn(identifier = "no-payload")]
+        pub no_payload: bool,
+        #[rasn(identifier = "no-auditData")]
+        pub no_audit_data: bool,
+    }
+    impl VerifyRequestParams {
+        pub fn new(
+            original_bsphandle: BioAPIHANDLE,
+            max_fmrrequested: BioAPIFMR,
+            reference_template: BioAPIINPUTBIR,
+            subtype: BioAPIBIRSUBTYPE,
+            timeout: SignedInt,
+            no_adapted_bir: bool,
+            no_fmr_achieved: bool,
+            no_payload: bool,
+            no_audit_data: bool,
+        ) -> Self {
+            Self {
+                original_bsphandle,
+                max_fmrrequested,
+                reference_template,
+                subtype,
+                timeout,
+                no_adapted_bir,
+                no_fmr_achieved,
+                no_payload,
+                no_audit_data,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "Verify-ResponseParams")]
+    pub struct VerifyResponseParams {
+        #[rasn(identifier = "adaptedBIR")]
+        pub adapted_bir: Option<BioAPIBIRHANDLE>,
+        pub result: bool,
+        #[rasn(identifier = "fmrAchieved")]
+        pub fmr_achieved: Option<BioAPIFMR>,
+        pub payload: Option<BioAPIDATA>,
+        #[rasn(identifier = "auditData")]
+        pub audit_data: Option<BioAPIBIRHANDLE>,
+    }
+    impl VerifyResponseParams {
+        pub fn new(
+            adapted_bir: Option<BioAPIBIRHANDLE>,
+            result: bool,
+            fmr_achieved: Option<BioAPIFMR>,
+            payload: Option<BioAPIDATA>,
+            audit_data: Option<BioAPIBIRHANDLE>,
+        ) -> Self {
+            Self {
+                adapted_bir,
+                result,
+                fmr_achieved,
+                payload,
+                audit_data,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "VerifyMatch-RequestParams")]
+    pub struct VerifyMatchRequestParams {
+        #[rasn(identifier = "originalBSPHandle")]
+        pub original_bsphandle: BioAPIHANDLE,
+        #[rasn(identifier = "maxFMRRequested")]
+        pub max_fmrrequested: BioAPIFMR,
+        #[rasn(identifier = "processedBIR")]
+        pub processed_bir: BioAPIINPUTBIR,
+        #[rasn(identifier = "referenceTemplate")]
+        pub reference_template: BioAPIINPUTBIR,
+        #[rasn(identifier = "no-adaptedBIR")]
+        pub no_adapted_bir: bool,
+        #[rasn(identifier = "no-fmrAchieved")]
+        pub no_fmr_achieved: bool,
+        #[rasn(identifier = "no-payload")]
+        pub no_payload: bool,
+    }
+    impl VerifyMatchRequestParams {
+        pub fn new(
+            original_bsphandle: BioAPIHANDLE,
+            max_fmrrequested: BioAPIFMR,
+            processed_bir: BioAPIINPUTBIR,
+            reference_template: BioAPIINPUTBIR,
+            no_adapted_bir: bool,
+            no_fmr_achieved: bool,
+            no_payload: bool,
+        ) -> Self {
+            Self {
+                original_bsphandle,
+                max_fmrrequested,
+                processed_bir,
+                reference_template,
+                no_adapted_bir,
+                no_fmr_achieved,
+                no_payload,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "VerifyMatch-ResponseParams")]
+    pub struct VerifyMatchResponseParams {
+        #[rasn(identifier = "adaptedBIR")]
+        pub adapted_bir: Option<BioAPIBIRHANDLE>,
+        pub result: bool,
+        #[rasn(identifier = "fmrAchieved")]
+        pub fmr_achieved: Option<BioAPIFMR>,
+        pub payload: Option<BioAPIDATA>,
+    }
+    impl VerifyMatchResponseParams {
+        pub fn new(
+            adapted_bir: Option<BioAPIBIRHANDLE>,
+            result: bool,
+            fmr_achieved: Option<BioAPIFMR>,
+            payload: Option<BioAPIDATA>,
+        ) -> Self {
+            Self {
+                adapted_bir,
+                result,
+                fmr_achieved,
+                payload,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct VisibleBFPRegistration(pub BioAPIBFPSCHEMA);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct VisibleBFPRegistrations(pub SetOf<VisibleBFPRegistration>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct VisibleBSPRegistration(pub BioAPIBSPSCHEMA);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct VisibleBSPRegistrations(pub SetOf<VisibleBSPRegistration>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct VisibleEndpoint(pub BioAPIFRAMEWORKSCHEMA);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct VisibleEndpoints(pub SetOf<VisibleEndpoint>);
+    pub static MAX_SIGNED_INT: LazyLock<Integer> = LazyLock::new(|| Integer::from(2147483647));
+    pub static MAX_UNSIGNED_BYTE: LazyLock<Integer> = LazyLock::new(|| Integer::from(255));
+    pub static MAX_UNSIGNED_INT: LazyLock<Integer> = LazyLock::new(|| Integer::from(4294967295));
+    pub static MAX_UNSIGNED_SHORT: LazyLock<Integer> = LazyLock::new(|| Integer::from(65535));
+    pub static MIN_SIGNED_INT: LazyLock<Integer> = LazyLock::new(|| Integer::from(-2147483648));
+}

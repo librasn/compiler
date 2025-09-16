@@ -1,0 +1,120 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_h_h460.21_2006_MESSAGE-BROADCAST.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod message_broadcast {
+    extern crate alloc;
+    use super::multimedia_system_control::{Capability, MulticastAddress, UnicastAddress};
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct CapabilityAdvertisement {
+        #[rasn(identifier = "receiveCapabilities")]
+        pub receive_capabilities: Option<ReceiveCapabilities>,
+        #[rasn(size("1..=256"), identifier = "transmitCapabilities")]
+        pub transmit_capabilities: Option<SequenceOf<TransmitCapabilities>>,
+    }
+    impl CapabilityAdvertisement {
+        pub fn new(
+            receive_capabilities: Option<ReceiveCapabilities>,
+            transmit_capabilities: Option<SequenceOf<TransmitCapabilities>>,
+        ) -> Self {
+            Self {
+                receive_capabilities,
+                transmit_capabilities,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct GloballyUniqueID(pub FixedOctetString<16usize>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct GroupAttributes {
+        #[rasn(value("0..=255"))]
+        pub priority: u8,
+        #[rasn(identifier = "groupIdentifer")]
+        pub group_identifer: Option<GloballyUniqueID>,
+        pub capability: Capability,
+        #[rasn(identifier = "groupAddress")]
+        pub group_address: MulticastAddress,
+        #[rasn(identifier = "sourceAddress")]
+        pub source_address: Option<UnicastAddress>,
+        #[rasn(identifier = "alertUser")]
+        pub alert_user: bool,
+    }
+    impl GroupAttributes {
+        pub fn new(
+            priority: u8,
+            group_identifer: Option<GloballyUniqueID>,
+            capability: Capability,
+            group_address: MulticastAddress,
+            source_address: Option<UnicastAddress>,
+            alert_user: bool,
+        ) -> Self {
+            Self {
+                priority,
+                group_identifer,
+                capability,
+                group_address,
+                source_address,
+                alert_user,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=256"))]
+    pub struct MessageBroadcastGroups(pub SequenceOf<GroupAttributes>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ReceiveCapabilities {
+        #[rasn(size("1..=256"))]
+        pub capabilities: SequenceOf<Capability>,
+        #[rasn(value("1..=65535"), identifier = "maxGroups")]
+        pub max_groups: u16,
+    }
+    impl ReceiveCapabilities {
+        pub fn new(capabilities: SequenceOf<Capability>, max_groups: u16) -> Self {
+            Self {
+                capabilities,
+                max_groups,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct TransmitCapabilities {
+        #[rasn(identifier = "groupIdentifer")]
+        pub group_identifer: GloballyUniqueID,
+        pub capability: Capability,
+        #[rasn(identifier = "sourceAddress")]
+        pub source_address: UnicastAddress,
+    }
+    impl TransmitCapabilities {
+        pub fn new(
+            group_identifer: GloballyUniqueID,
+            capability: Capability,
+            source_address: UnicastAddress,
+        ) -> Self {
+            Self {
+                group_identifer,
+                capability,
+                source_address,
+            }
+        }
+    }
+}

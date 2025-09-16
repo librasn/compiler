@@ -1,0 +1,236 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_t_t415_1993_Identifiers-and-Expressions.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod identifiers_and_expressions {
+    extern crate alloc;
+    use super::layout_descriptors::LayoutObjectType;
+    use super::logical_descriptors::LogicalObjectType;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "Atomic-String-Expression")]
+    pub enum AtomicStringExpression {
+        #[rasn(tag(context, 0), identifier = "string-literal")]
+        string_literal(OctetString),
+        #[rasn(tag(context, 2), identifier = "binding-reference")]
+        binding_reference(BindingReference),
+        #[rasn(tag(context, 3), identifier = "make-string-application")]
+        make_string_application(NumericExpression),
+        #[rasn(tag(context, 4), identifier = "upper-alpha-application")]
+        upper_alpha_application(NumericExpression),
+        #[rasn(tag(context, 5), identifier = "lower-alpha-application")]
+        lower_alpha_application(NumericExpression),
+        #[rasn(tag(context, 6), identifier = "upper-roman-application")]
+        upper_roman_application(NumericExpression),
+        #[rasn(tag(context, 7), identifier = "lower-roman-application")]
+        lower_roman_application(NumericExpression),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Binding-Name")]
+    pub struct BindingName(pub PrintableString);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum BindingReferenceObjectReference {
+        identifier(ObjectOrClassIdentifier),
+        expression(BindingSelectionFunction),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Binding-Reference")]
+    pub struct BindingReference {
+        #[rasn(identifier = "object-reference")]
+        pub object_reference: BindingReferenceObjectReference,
+        #[rasn(identifier = "binding-identifier")]
+        pub binding_identifier: BindingName,
+    }
+    impl BindingReference {
+        pub fn new(
+            object_reference: BindingReferenceObjectReference,
+            binding_identifier: BindingName,
+        ) -> Self {
+            Self {
+                object_reference,
+                binding_identifier,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "Binding-Selection-Function")]
+    pub enum BindingSelectionFunction {
+        #[rasn(tag(context, 0), identifier = "current-object-function")]
+        current_object_function(()),
+        #[rasn(tag(context, 1), identifier = "preceding-function")]
+        preceding_function(ObjectIdExpression),
+        #[rasn(tag(context, 3), identifier = "superior-function")]
+        superior_function(ObjectIdExpression),
+        #[rasn(tag(context, 4), identifier = "current-instance-function")]
+        current_instance_function(CurrentInstanceFunction),
+    }
+    #[doc = "  only digits and space are used in the present version"]
+    #[doc = "  of this Specification; other characters are reserved for extensions;"]
+    #[doc = "  a 'null' value is represented by an empty string"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Category-Name")]
+    pub struct CategoryName(pub PrintableString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "Construction-Expression")]
+    pub enum ConstructionExpression {
+        #[rasn(identifier = "construction-type")]
+        construction_type(ConstructionType),
+        #[rasn(tag(context, 3), identifier = "single-term-construction")]
+        single_term_construction(ConstructionTerm),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "Construction-Factor")]
+    pub enum ConstructionFactor {
+        #[rasn(identifier = "object-class-identifier")]
+        object_class_identifier(ObjectOrClassIdentifier),
+        #[rasn(identifier = "construction-type")]
+        construction_type(ConstructionType),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "Construction-Term")]
+    pub enum ConstructionTerm {
+        #[rasn(tag(context, 0), identifier = "required-construction-factor")]
+        required_construction_factor(ConstructionFactor),
+        #[rasn(tag(context, 1), identifier = "optional-construction-factor")]
+        optional_construction_factor(ConstructionFactor),
+        #[rasn(tag(context, 2), identifier = "repetitive-construction-factor")]
+        repetitive_construction_factor(ConstructionFactor),
+        #[rasn(tag(context, 3), identifier = "optional-repetitive-factor")]
+        optional_repetitive_factor(ConstructionFactor),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "Construction-Type")]
+    pub enum ConstructionType {
+        #[rasn(tag(context, 0), identifier = "sequence-construction")]
+        sequence_construction(TermSequence),
+        #[rasn(tag(context, 1), identifier = "aggregate-construction")]
+        aggregate_construction(TermSequence),
+        #[rasn(tag(context, 2), identifier = "choice-construction")]
+        choice_construction(TermSequence),
+    }
+    #[doc = " see 7.10"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        delegate,
+        tag(application, 0),
+        identifier = "Content-Portion-Identifier"
+    )]
+    pub struct ContentPortionIdentifier(pub PrintableString);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum CurrentInstanceFunctionFirstParameter {
+        #[rasn(tag(context, 0))]
+        identifier(ObjectOrClassIdentifier),
+        #[rasn(tag(context, 1), identifier = "layout-object-type")]
+        layout_object_type(LayoutObjectType),
+        #[rasn(tag(context, 2), identifier = "logical-object-type")]
+        logical_object_type(LogicalObjectType),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum CurrentInstanceFunctionSecondParameter {
+        identifier(ObjectOrClassIdentifier),
+        expression(ObjectIdExpression),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Current-Instance-Function")]
+    pub struct CurrentInstanceFunction {
+        #[rasn(identifier = "first-parameter")]
+        pub first_parameter: CurrentInstanceFunctionFirstParameter,
+        #[rasn(identifier = "second-parameter")]
+        pub second_parameter: CurrentInstanceFunctionSecondParameter,
+    }
+    impl CurrentInstanceFunction {
+        pub fn new(
+            first_parameter: CurrentInstanceFunctionFirstParameter,
+            second_parameter: CurrentInstanceFunctionSecondParameter,
+        ) -> Self {
+            Self {
+                first_parameter,
+                second_parameter,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum NumericExpressionOrdinalApplication {
+        identifier(ObjectOrClassIdentifier),
+        expression(ObjectIdExpression),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "Numeric-Expression")]
+    pub enum NumericExpression {
+        #[rasn(tag(context, 0), identifier = "numeric-literal")]
+        numeric_literal(Integer),
+        #[rasn(tag(context, 1), identifier = "increment-application")]
+        increment_application(Box<NumericExpression>),
+        #[rasn(tag(context, 2), identifier = "decrement-application")]
+        decrement_application(Box<NumericExpression>),
+        #[rasn(tag(context, 3), identifier = "ordinal-application")]
+        ordinal_application(NumericExpressionOrdinalApplication),
+        #[rasn(tag(context, 4), identifier = "binding-reference")]
+        binding_reference(BindingReference),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "Object-Id-Expression")]
+    pub enum ObjectIdExpression {
+        #[rasn(tag(context, 0), identifier = "current-object-function")]
+        current_object_function(()),
+        #[rasn(tag(context, 1), identifier = "preceding-object-function")]
+        preceding_object_function(Box<ObjectIdExpression>),
+        #[rasn(tag(context, 3), identifier = "superior-object-function")]
+        superior_object_function(Box<ObjectIdExpression>),
+        #[rasn(tag(context, 4), identifier = "current-instance-function")]
+        current_instance_function(Box<CurrentInstanceFunction>),
+    }
+    #[doc = "  only digits and space are used in the present version"]
+    #[doc = "  of this Specification; other characters are reserved for extensions"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        delegate,
+        tag(application, 1),
+        identifier = "Object-or-Class-Identifier"
+    )]
+    pub struct ObjectOrClassIdentifier(pub PrintableString);
+    #[doc = "  only digits and space are used in the present version"]
+    #[doc = "  of this Specification; other characters are reserved for extensions;"]
+    #[doc = "  a 'null' value is represented by an empty string"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        delegate,
+        tag(application, 7),
+        identifier = "Protected-Part-Identifier"
+    )]
+    pub struct ProtectedPartIdentifier(pub PrintableString);
+    #[doc = " a 'null' value is represented by an empty string"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Resource-Name")]
+    pub struct ResourceName(pub PrintableString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "String-Expression")]
+    pub struct StringExpression(pub SequenceOf<AtomicStringExpression>);
+    #[doc = "  only digits and space are used in the present version"]
+    #[doc = "  of this Specification; other characters are reserved for extensions;"]
+    #[doc = "  a 'null' value is represented by an empty string"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, tag(application, 5), identifier = "Style-Identifier")]
+    pub struct StyleIdentifier(pub PrintableString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Term-Sequence")]
+    pub struct TermSequence(pub SequenceOf<ConstructionTerm>);
+}

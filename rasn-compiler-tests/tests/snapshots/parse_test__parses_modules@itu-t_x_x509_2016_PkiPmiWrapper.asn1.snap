@@ -1,0 +1,278 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x509_2016_PkiPmiWrapper.asn1
+---
+Warnings:
+LinkerError in ASN grammar: Failed to resolve supertype AlgorithmIdentifier of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve reference of ElsewhereDefined: Version
+LinkerError in ASN grammar: Failed to resolve supertype Attribute of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype AlgorithmIdentifier of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype SIGNED of parameterized implementation.
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod pki_pmi_wrapper {
+    extern crate alloc;
+    use super::attribute_certificate_definitions::AttributeCertificate;
+    use super::authentication_framework::*;
+    use super::certificate_extensions::{CRLReason, SubjectKeyIdentifier};
+    use super::information_framework::*;
+    use super::selected_attribute_types::{OBJECT_IDENTIFIER_MATCH, OCTET_STRING_MATCH};
+    use super::useful_definitions::{
+        ATTRIBUTE_CERTIFICATE_DEFINITIONS, AUTHENTICATION_FRAMEWORK, CERTIFICATE_EXTENSIONS,
+        ID_CMSCT, INFORMATION_FRAMEWORK, SELECTED_ATTRIBUTE_TYPES,
+    };
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AttributeCertificateV2(pub AttributeCertificate);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct EncryptedInfo {
+        #[rasn(identifier = "keyAgreement")]
+        pub key_agreement: KeyAgreement,
+        #[rasn(identifier = "encryptedPduInfo")]
+        pub encrypted_pdu_info: EncryptedPduInfo,
+    }
+    impl EncryptedInfo {
+        pub fn new(key_agreement: KeyAgreement, encrypted_pdu_info: EncryptedPduInfo) -> Self {
+            Self {
+                key_agreement,
+                encrypted_pdu_info,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct EncryptedKey(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct EncryptedPdu(pub OctetString);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct EncryptedPduInfoPduEncryptionAlgorithm {
+        pub algorithm: Any,
+        pub parameter: Any,
+    }
+    impl EncryptedPduInfoPduEncryptionAlgorithm {
+        pub fn new(algorithm: Any, parameter: Any) -> Self {
+            Self {
+                algorithm,
+                parameter,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct EncryptedPduInfo {
+        #[rasn(identifier = "pduType")]
+        pub pdu_type: Any,
+        #[rasn(identifier = "encryptedKey")]
+        pub encrypted_key: Option<EncryptedKey>,
+        #[rasn(identifier = "pduEncryptionAlgorithm")]
+        pub pdu_encryption_algorithm: Option<EncryptedPduInfoPduEncryptionAlgorithm>,
+        #[rasn(tag(context, 0), identifier = "encryptedPdu")]
+        pub encrypted_pdu: EncryptedPdu,
+    }
+    impl EncryptedPduInfo {
+        pub fn new(
+            pdu_type: Any,
+            encrypted_key: Option<EncryptedKey>,
+            pdu_encryption_algorithm: Option<EncryptedPduInfoPduEncryptionAlgorithm>,
+            encrypted_pdu: EncryptedPdu,
+        ) -> Self {
+            Self {
+                pdu_type,
+                encrypted_key,
+                pdu_encryption_algorithm,
+                encrypted_pdu,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct KeyAgreementKeyEncryptionAlgorithm {
+        pub algorithm: Any,
+        pub parameters: Any,
+    }
+    impl KeyAgreementKeyEncryptionAlgorithm {
+        pub fn new(algorithm: Any, parameters: Any) -> Self {
+            Self {
+                algorithm,
+                parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct KeyAgreement {
+        #[rasn(tag(context, 0), identifier = "senderDhInfo")]
+        pub sender_dh_info: SenderDhInfo,
+        #[rasn(identifier = "keyEncryptionAlgorithm")]
+        pub key_encryption_algorithm: KeyAgreementKeyEncryptionAlgorithm,
+    }
+    impl KeyAgreement {
+        pub fn new(
+            sender_dh_info: SenderDhInfo,
+            key_encryption_algorithm: KeyAgreementKeyEncryptionAlgorithm,
+        ) -> Self {
+            Self {
+                sender_dh_info,
+                key_encryption_algorithm,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "PDU-wrapper")]
+    pub struct PDUWrapper(pub SIGNED);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum PkiWaError {
+        unsupportedWrapperVersion = 0,
+        unsupportedSignatureAlgorithm = 1,
+        incompleteCertPath = 2,
+        certificationPathFailure = 3,
+        invalidSignature = 4,
+        missingMandatoryAttributes = 5,
+        unwantedAttribute = 6,
+        unsupportedPduType = 7,
+        unexpectedPduType = 8,
+        invalidPduSyntax = 9,
+        unknownDHpkCetificate = 10,
+        invalidKeyingMaterial = 11,
+        dhAlgorithmMismatch = 12,
+        invalideDhPublickey = 13,
+        unsupportedKeyWrappingAlgorithm = 14,
+        keyEncAlgorithmParametersMissing = 15,
+        keyEncAlgorithmParametersNotAllowed = 16,
+        invalidParmsForSymEncryptAlgorithms = 17,
+        decryptionFailed = 18,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum SenderDhInfo {
+        #[rasn(tag(context, 0))]
+        senderStaticInfo(SenderStaticInfo),
+        #[rasn(tag(context, 1))]
+        senderDhPublicKey(SenderDhPublicKey),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct SenderDhPublicKey {
+        #[rasn(value("0.."))]
+        pub algorithm: AlgorithmIdentifier,
+        #[rasn(identifier = "publicKey")]
+        pub public_key: BitString,
+    }
+    impl SenderDhPublicKey {
+        pub fn new(algorithm: AlgorithmIdentifier, public_key: BitString) -> Self {
+            Self {
+                algorithm,
+                public_key,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct SenderStaticInfo {
+        pub issuer: Name,
+        #[rasn(identifier = "serialNumber")]
+        pub serial_number: CertificateSerialNumber,
+        #[rasn(identifier = "partyAinfo")]
+        pub party_ainfo: UserKeyingMaterial,
+    }
+    impl SenderStaticInfo {
+        pub fn new(
+            issuer: Name,
+            serial_number: CertificateSerialNumber,
+            party_ainfo: UserKeyingMaterial,
+        ) -> Self {
+            Self {
+                issuer,
+                serial_number,
+                party_ainfo,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct SignedAttributes(pub SetOf<Attribute>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum TBSPDUWrapperConf {
+        #[rasn(tag(context, 2))]
+        clear(WrappedPDUInfo),
+        #[rasn(tag(context, 3))]
+        protected(EncryptedInfo),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "TBSPDU-wrapper")]
+    #[non_exhaustive]
+    pub struct TBSPDUWrapper {
+        #[rasn(default = "tbspduwrapper_version_default")]
+        pub version: Version,
+        #[rasn(value("0.."), identifier = "signatureAlgorithm")]
+        pub signature_algorithm: AlgorithmIdentifier,
+        #[rasn(tag(context, 0), identifier = "certPath")]
+        pub cert_path: PkiPath,
+        #[rasn(tag(context, 1), identifier = "signedAttrs")]
+        pub signed_attrs: Option<SignedAttributes>,
+        pub conf: TBSPDUWrapperConf,
+    }
+    impl TBSPDUWrapper {
+        pub fn new(
+            version: Version,
+            signature_algorithm: AlgorithmIdentifier,
+            cert_path: PkiPath,
+            signed_attrs: Option<SignedAttributes>,
+            conf: TBSPDUWrapperConf,
+        ) -> Self {
+            Self {
+                version,
+                signature_algorithm,
+                cert_path,
+                signed_attrs,
+                conf,
+            }
+        }
+    }
+    fn tbspduwrapper_version_default() -> Version {
+        V1
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct UserKeyingMaterial(pub FixedOctetString<64usize>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct WrappedPDUInfo {
+        #[rasn(identifier = "pduType")]
+        pub pdu_type: Any,
+        #[rasn(identifier = "pduInfo")]
+        pub pdu_info: Any,
+    }
+    impl WrappedPDUInfo {
+        pub fn new(pdu_type: Any, pdu_info: Any) -> Self {
+            Self { pdu_type, pdu_info }
+        }
+    }
+    pub static ID_CONTENT_TYPE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::const_new(&[1u32, 2u32, 840u32, 113549u32, 1u32, 9u32, 3u32]).to_owned()
+    });
+    pub static ID_MESSAGE_DIGEST: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::const_new(&[1u32, 2u32, 840u32, 113549u32, 1u32, 9u32, 4u32]).to_owned()
+    });
+}

@@ -1,0 +1,102 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/ietf_rfc_rfc3852_AttributeCertificateVersion1.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod attribute_certificate_version1 {
+    extern crate alloc;
+    use super::pkix1_explicit88::{
+        AlgorithmIdentifier, Attribute, CertificateSerialNumber, Extensions, UniqueIdentifier,
+    };
+    use super::pkix1_implicit88::GeneralNames;
+    use super::pkixattribute_certificate::{AttCertValidityPeriod, IssuerSerial};
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AttCertVersionV1(pub Integer);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum AttributeCertificateInfoV1Subject {
+        #[rasn(tag(context, 0))]
+        baseCertificateID(IssuerSerial),
+        #[rasn(tag(context, 1))]
+        subjectName(GeneralNames),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AttributeCertificateInfoV1 {
+        #[rasn(default = "attribute_certificate_info_v1_version_default")]
+        pub version: AttCertVersionV1,
+        pub subject: AttributeCertificateInfoV1Subject,
+        pub issuer: GeneralNames,
+        pub signature: AlgorithmIdentifier,
+        #[rasn(identifier = "serialNumber")]
+        pub serial_number: CertificateSerialNumber,
+        #[rasn(identifier = "attCertValidityPeriod")]
+        pub att_cert_validity_period: AttCertValidityPeriod,
+        pub attributes: SequenceOf<Attribute>,
+        #[rasn(identifier = "issuerUniqueID")]
+        pub issuer_unique_id: Option<UniqueIdentifier>,
+        pub extensions: Option<Extensions>,
+    }
+    impl AttributeCertificateInfoV1 {
+        pub fn new(
+            version: AttCertVersionV1,
+            subject: AttributeCertificateInfoV1Subject,
+            issuer: GeneralNames,
+            signature: AlgorithmIdentifier,
+            serial_number: CertificateSerialNumber,
+            att_cert_validity_period: AttCertValidityPeriod,
+            attributes: SequenceOf<Attribute>,
+            issuer_unique_id: Option<UniqueIdentifier>,
+            extensions: Option<Extensions>,
+        ) -> Self {
+            Self {
+                version,
+                subject,
+                issuer,
+                signature,
+                serial_number,
+                att_cert_validity_period,
+                attributes,
+                issuer_unique_id,
+                extensions,
+            }
+        }
+    }
+    fn attribute_certificate_info_v1_version_default() -> AttCertVersionV1 {
+        AttCertVersionV1(Integer::from(0))
+    }
+    #[doc = " Definition extracted from X.509-1997 [X.509-97], but"]
+    #[doc = " different type names are used to avoid collisions."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AttributeCertificateV1 {
+        #[rasn(identifier = "acInfo")]
+        pub ac_info: AttributeCertificateInfoV1,
+        #[rasn(identifier = "signatureAlgorithm")]
+        pub signature_algorithm: AlgorithmIdentifier,
+        pub signature: BitString,
+    }
+    impl AttributeCertificateV1 {
+        pub fn new(
+            ac_info: AttributeCertificateInfoV1,
+            signature_algorithm: AlgorithmIdentifier,
+            signature: BitString,
+        ) -> Self {
+            Self {
+                ac_info,
+                signature_algorithm,
+                signature,
+            }
+        }
+    }
+}

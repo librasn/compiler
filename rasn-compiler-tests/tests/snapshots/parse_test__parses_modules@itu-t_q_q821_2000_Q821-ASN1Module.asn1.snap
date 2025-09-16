@@ -1,0 +1,523 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q821_2000_Q821-ASN1Module.asn1
+---
+Warnings:
+Unidentified generating bindings for : Unexpectedly encountered unlinked struct-like ASN1 value!
+LinkerError in ASN grammar: Failed to link value with 'CMISFilter'
+LinkerError in ASN grammar: Failed to link value with 'StopTime'
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod q821_asn1_module {
+    extern crate alloc;
+    use super::acse_1::AETitle;
+    use super::asn1_defined_types_module::{AlarmStatus, NameType};
+    use super::attribute_asn1_module::{
+        BackedUpStatus, CorrelatedNotifications, EventTime, ObservedValue, PerceivedSeverity,
+        ProbableCause, StartTime, StopTime, ThresholdInfo, TrendIndication,
+    };
+    use super::cmip_1::{
+        Attribute, AttributeId, CMISFilter, DistinguishedName, EventTypeId, InvokeIDType,
+        ObjectClass, ObjectInstance, Scope,
+    };
+    use super::notification_asn1_module::AlarmInfo;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AffectedObjectClass(pub ObjectIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AlarmStatusList(pub SetOf<AlarmStatus>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AlarmSummaryData(pub SequenceOf<ObjectAlarmSummary>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AlarmSummaryInfo {
+        #[rasn(tag(context, 0), identifier = "perceivedSeverity")]
+        pub perceived_severity: Option<PerceivedSeverity>,
+        #[rasn(tag(context, 1), identifier = "alarmStatus")]
+        pub alarm_status: Option<AlarmStatus>,
+        #[rasn(tag(context, 2), identifier = "probableCause")]
+        pub probable_cause: Option<ProbableCause>,
+    }
+    impl AlarmSummaryInfo {
+        pub fn new(
+            perceived_severity: Option<PerceivedSeverity>,
+            alarm_status: Option<AlarmStatus>,
+            probable_cause: Option<ProbableCause>,
+        ) -> Self {
+            Self {
+                perceived_severity,
+                alarm_status,
+                probable_cause,
+            }
+        }
+    }
+    #[doc = "  the following is the bit string to be used when specifying"]
+    #[doc = "  the functional units for alarm surveillance"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AlarmSurveillanceFunctionalUnits(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AlarmSynchronizationData {
+        #[rasn(identifier = "alarmManagedObjectClass")]
+        pub alarm_managed_object_class: ObjectClass,
+        #[rasn(identifier = "alarmManagedObjectInstance")]
+        pub alarm_managed_object_instance: ObjectInstance,
+        #[rasn(identifier = "eventTime")]
+        pub event_time: Option<EventTime>,
+        #[rasn(identifier = "eventType")]
+        pub event_type: EventTypeId,
+    }
+    impl AlarmSynchronizationData {
+        pub fn new(
+            alarm_managed_object_class: ObjectClass,
+            alarm_managed_object_instance: ObjectInstance,
+            event_time: Option<EventTime>,
+            event_type: EventTypeId,
+        ) -> Self {
+            Self {
+                alarm_managed_object_class,
+                alarm_managed_object_instance,
+                event_time,
+                event_type,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum AlarmSynchronizationInfo {
+        #[rasn(tag(context, 0))]
+        allObjectsRelativeToSuperior(()),
+        #[rasn(tag(context, 1))]
+        scopedCriteria(ScopedCriteria),
+        #[rasn(tag(context, 2))]
+        simpleObjectList(ObjectList),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CancelAlarmSynchronization(pub CancelledAlarmSynchronization);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CancelledAlarmSynchronization(pub InvokeIDType);
+    #[doc = " error response to action for Alarm Synchronization if cancelled prior to completion"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CorrelatedRecordName(pub ObjectInstance);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct CountInterval {
+        pub count: Integer,
+        #[rasn(identifier = "startTime")]
+        pub start_time: GeneralizedTime,
+        pub window: TimeInterval,
+    }
+    impl CountInterval {
+        pub fn new(count: Integer, start_time: GeneralizedTime, window: TimeInterval) -> Self {
+            Self {
+                count,
+                start_time,
+                window,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct CountWindow {
+        pub count: Integer,
+        pub window: TimeInterval,
+    }
+    impl CountWindow {
+        pub fn new(count: Integer, window: TimeInterval) -> Self {
+            Self { count, window }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum DestinationAddress {
+        singleAddress(AETitle),
+        groupAddress(GraphicString),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct GaugeParametersUp {
+        pub high: ObservedValue,
+        pub low: ObservedValue,
+    }
+    impl GaugeParametersUp {
+        pub fn new(high: ObservedValue, low: ObservedValue) -> Self {
+            Self { high, low }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct GaugeParametersDown {
+        pub high: ObservedValue,
+        pub low: ObservedValue,
+    }
+    impl GaugeParametersDown {
+        pub fn new(high: ObservedValue, low: ObservedValue) -> Self {
+            Self { high, low }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum GaugeParameters {
+        #[rasn(tag(context, 1))]
+        up(GaugeParametersUp),
+        #[rasn(tag(context, 2))]
+        down(GaugeParametersDown),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum Interval {
+        #[rasn(tag(context, 0))]
+        days(Integer),
+        #[rasn(tag(context, 1))]
+        hours(Integer),
+        #[rasn(tag(context, 2))]
+        minutes(Integer),
+        #[rasn(tag(context, 3))]
+        seconds(Integer),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct InvalidBaseManagedObjectError(pub ObjectInstance);
+    #[doc = " error response for an invalid Base Managed Object parameter"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct InvalidObjectInstanceError(pub ObjectInstance);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct LogRecordId(pub NumericName);
+    #[doc = " error response for an invalid Object List Object Instance parameter"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NoSuchInvokeIdError(pub InvokeIDType);
+    #[doc = " error response to Cancel Alarm Synchronization request"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NotificationId(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NumericName(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ObjectAlarmSummary {
+        #[rasn(identifier = "objectOfReference")]
+        pub object_of_reference: ObjectOfReference,
+        #[rasn(identifier = "summaryInfo")]
+        pub summary_info: SequenceOf<AlarmSummaryInfo>,
+    }
+    impl ObjectAlarmSummary {
+        pub fn new(
+            object_of_reference: ObjectOfReference,
+            summary_info: SequenceOf<AlarmSummaryInfo>,
+        ) -> Self {
+            Self {
+                object_of_reference,
+                summary_info,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ObjectList(pub SetOf<ObjectListChoice>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ObjectListChoice {
+        #[rasn(tag(context, 1))]
+        singleObject(ObjectInstance),
+        #[rasn(tag(context, 2))]
+        rangeOfObjects(RangeOfObjects),
+    }
+    #[doc = "  The rangeOfObjects may be used to specify a group"]
+    #[doc = "  of objects which are named in a contiguous manner"]
+    #[doc = "  without having to specify each instance explicitly."]
+    #[doc = "  This mechanism may only be used to specify object"]
+    #[doc = "  instances which use INTEGER as the final RDN of their DN."]
+    #[doc = "  To use this mechanism, the DN of the superior object and a range"]
+    #[doc = "  of INTEGERs is specified. Each INTEGER in the range can be concatenated"]
+    #[doc = "  with the DN of the superior object to form the DN of an indicated object."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ObjectOfReference(pub ObjectInstance);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PerceivedSeverityList(pub SetOf<PerceivedSeverity>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ProbableCauseList(pub SetOf<ProbableCause>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ProblemData {
+        #[rasn(tag(context, 0))]
+        pub identifier: ObjectIdentifier,
+        #[rasn(tag(context, 1), default = "problem_data_significance_default")]
+        pub significance: bool,
+        #[rasn(tag(context, 2))]
+        pub information: Any,
+    }
+    impl ProblemData {
+        pub fn new(identifier: ObjectIdentifier, significance: bool, information: Any) -> Self {
+            Self {
+                identifier,
+                significance,
+                information,
+            }
+        }
+    }
+    fn problem_data_significance_default() -> bool {
+        false
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct RangeOfObjects {
+        #[rasn(identifier = "superiorObjectName")]
+        pub superior_object_name: ObjectInstance,
+        #[rasn(identifier = "terminalRDNRange")]
+        pub terminal_rdnrange: TerminalRDNRange,
+    }
+    impl RangeOfObjects {
+        pub fn new(
+            superior_object_name: ObjectInstance,
+            terminal_rdnrange: TerminalRDNRange,
+        ) -> Self {
+            Self {
+                superior_object_name,
+                terminal_rdnrange,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SimpleObjectList(pub SetOf<ObjectInstance>);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousStatusChange {
+        #[rasn(identifier = "statusAttributeID")]
+        pub status_attribute_id: Any,
+        #[rasn(tag(context, 1), identifier = "oldStatusValue")]
+        pub old_status_value: Option<Any>,
+        #[rasn(tag(context, 2), identifier = "newStatusValue")]
+        pub new_status_value: Any,
+    }
+    impl AnonymousStatusChange {
+        pub fn new(
+            status_attribute_id: Any,
+            old_status_value: Option<Any>,
+            new_status_value: Any,
+        ) -> Self {
+            Self {
+                status_attribute_id,
+                old_status_value,
+                new_status_value,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct StatusChange(pub SetOf<AnonymousStatusChange>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SummaryContents(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SuspectObject {
+        #[rasn(identifier = "suspectObjectClass")]
+        pub suspect_object_class: ObjectIdentifier,
+        #[rasn(identifier = "suspectObjectInstance")]
+        pub suspect_object_instance: ObjectInstance,
+        #[rasn(value("0..=100"), identifier = "failureProbability")]
+        pub failure_probability: Option<u8>,
+    }
+    impl SuspectObject {
+        pub fn new(
+            suspect_object_class: ObjectIdentifier,
+            suspect_object_instance: ObjectInstance,
+            failure_probability: Option<u8>,
+        ) -> Self {
+            Self {
+                suspect_object_class,
+                suspect_object_instance,
+                failure_probability,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SuspectObjectList(pub SetOf<SuspectObject>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct TerminalRDNRange {
+        #[rasn(identifier = "attributeId")]
+        pub attribute_id: ObjectIdentifier,
+        #[rasn(identifier = "firstObjectInRange")]
+        pub first_object_in_range: Integer,
+        #[rasn(identifier = "lastObjectInRange")]
+        pub last_object_in_range: Integer,
+    }
+    impl TerminalRDNRange {
+        pub fn new(
+            attribute_id: ObjectIdentifier,
+            first_object_in_range: Integer,
+            last_object_in_range: Integer,
+        ) -> Self {
+            Self {
+                attribute_id,
+                first_object_in_range,
+                last_object_in_range,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum Threshold {
+        #[rasn(tag(context, 0))]
+        absoluteCount(Integer),
+        #[rasn(tag(context, 1))]
+        countOverFixedTimeInterval(CountInterval),
+        #[rasn(tag(context, 2))]
+        countOverSlidingWindow(CountWindow),
+        #[rasn(tag(context, 3))]
+        valueAndDuration(ValueDuration),
+        #[rasn(tag(context, 4))]
+        absoluteValue(f64),
+        #[rasn(tag(context, 5))]
+        gauge(GaugeParameters),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct TimeInterval {
+        #[rasn(
+            value("0..=31"),
+            tag(context, 0),
+            default = "time_interval_day_default"
+        )]
+        pub day: u8,
+        #[rasn(
+            value("0..=23"),
+            tag(context, 1),
+            default = "time_interval_hour_default"
+        )]
+        pub hour: u8,
+        #[rasn(
+            value("0..=59"),
+            tag(context, 2),
+            default = "time_interval_minute_default"
+        )]
+        pub minute: u8,
+        #[rasn(
+            value("0..=59"),
+            tag(context, 3),
+            default = "time_interval_second_default"
+        )]
+        pub second: u8,
+        #[rasn(
+            value("0..=999"),
+            tag(context, 4),
+            default = "time_interval_msec_default"
+        )]
+        pub msec: u16,
+    }
+    impl TimeInterval {
+        pub fn new(day: u8, hour: u8, minute: u8, second: u8, msec: u16) -> Self {
+            Self {
+                day,
+                hour,
+                minute,
+                second,
+                msec,
+            }
+        }
+    }
+    impl std::default::Default for TimeInterval {
+        fn default() -> Self {
+            Self {
+                day: time_interval_day_default(),
+                hour: time_interval_hour_default(),
+                minute: time_interval_minute_default(),
+                second: time_interval_second_default(),
+                msec: time_interval_msec_default(),
+            }
+        }
+    }
+    fn time_interval_day_default() -> u8 {
+        0
+    }
+    fn time_interval_hour_default() -> u8 {
+        0
+    }
+    fn time_interval_minute_default() -> u8 {
+        0
+    }
+    fn time_interval_second_default() -> u8 {
+        0
+    }
+    fn time_interval_msec_default() -> u16 {
+        0
+    }
+    #[doc = "  TimeInterval shall be non-zero"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ValueDuration {
+        pub value: f64,
+        pub duration: TimeInterval,
+    }
+    impl ValueDuration {
+        pub fn new(value: f64, duration: TimeInterval) -> Self {
+            Self { value, duration }
+        }
+    }
+    pub const MANAGEMENT_OPERATIONS_SCHEDULE_END_TIME_DEFAULT: StopTime =
+        StopTime(StopTime(StopTime::continual(())));
+    pub static Q821_ACTION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q821_INFORMATION_MODEL, &[9u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static Q821_ATTRIBUTE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q821_INFORMATION_MODEL, &[7u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static Q821_ATTRIBUTE_GROUP: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q821_INFORMATION_MODEL, &[8u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static Q821_INFORMATION_MODEL: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[0u32, 0u32, 17u32, 821u32, 0u32]).to_owned());
+    pub static Q821_NAME_BINDING: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q821_INFORMATION_MODEL, &[6u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static Q821_NOTIFICATION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q821_INFORMATION_MODEL, &[10u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static Q821_OBJECT_CLASS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q821_INFORMATION_MODEL, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static Q821_PACKAGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q821_INFORMATION_MODEL, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static Q821_PARAMETER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q821_INFORMATION_MODEL, &[5u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static Q821_STANDARD_SPECIFIC_EXTENSION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q821_INFORMATION_MODEL, &[0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+}

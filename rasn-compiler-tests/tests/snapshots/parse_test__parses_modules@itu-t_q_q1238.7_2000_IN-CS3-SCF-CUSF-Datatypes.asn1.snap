@@ -1,0 +1,93 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q1238.7_2000_IN-CS3-SCF-CUSF-Datatypes.asn1
+---
+Warnings:
+NotYetInplemented in ASN grammar: Value references of path length > 2 are not yet supported! Found reference b7.&.minCompReceivedInfoLen
+LinkerError in ASN grammar: Failed to resolve supertype CallingPartyNumber of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve reference of ElsewhereDefined: TerminalType
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod in_cs3_scf_cusf_datatypes {
+    extern crate alloc;
+    use super::in_cs3_common_classes::*;
+    use super::in_cs3_common_datatypes::Extensions;
+    use super::in_cs3_object_identifiers::{
+        COMMON_CLASSES, COMMON_DATATYPES, ROS_INFORMATION_OBJECTS, SCF_CUSF_CLASSES,
+        SSF_SCF_CLASSES, SSF_SCF_DATATYPES,
+    };
+    use super::in_cs3_scf_cusf_classes::*;
+    use super::in_cs3_ssf_scf_classes::*;
+    use super::in_cs3_ssf_scf_datatypes::{
+        BearerCapability, CalledPartyNumber, CallingPartyNumber, CallingPartySubaddress, Cause,
+        GenericNumbers, HighLayerCompatibility, LocationNumber, MonitorMode,
+        ServiceAddressInformation, TerminalType, USIInformation, USIServiceIndicator,
+    };
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " The following three definitions are local short-hand notation for convenience."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct B1(pub COMMONBOUNDS);
+    #[doc = "defined in Recommendation Q.1238.1"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct B2(pub SCFSSFBOUNDS);
+    #[doc = "defined in Recommendation Q.1238.2"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct B7(pub SCFCUSFBOUNDS);
+    #[doc = "defined in Recommendation Q.1238.7"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct BCUSMEvent {
+        #[rasn(tag(context, 0), identifier = "eventType")]
+        pub event_type: EventTypeBCUSM,
+        #[rasn(tag(context, 1), identifier = "monitorMode")]
+        pub monitor_mode: MonitorMode,
+    }
+    impl BCUSMEvent {
+        pub fn new(event_type: EventTypeBCUSM, monitor_mode: MonitorMode) -> Self {
+            Self {
+                event_type,
+                monitor_mode,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum CUApplicationInd {
+        #[rasn(tag(context, 0))]
+        localValue(Integer),
+        #[rasn(tag(context, 1))]
+        globalValue(ObjectIdentifier),
+    }
+    #[doc = " For the OCTET STRING type parameters (componentReceivedInfo and associationReleaseInfo),"]
+    #[doc = " its content is network operator specific. The internal coding of this parameter can be defined using ASN.1 and"]
+    #[doc = " the related Basic Encoding Rules (BER). In such a case the value of this parameter (after the first tag and length"]
+    #[doc = " information) is the BER encoding of the defined ASN.1 internal structure. The tag of this parameter as defined by"]
+    #[doc = " ITU-T is never replaced."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum EventTypeBCUSM {
+        componentReceived = 127,
+        associationReleaseRequested = 126,
+        activationReceivedAndAuthorized = 125,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum Message {
+        rELease = 77,
+        rELeaseCOMPlete = 90,
+        fACility = 98,
+    }
+}

@@ -1,0 +1,237 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_h_h450.7_1999_Message-Waiting-Indication-Operations.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod message_waiting_indication_operations {
+    extern crate alloc;
+    use super::addressing_data_elements::EndpointAddress;
+    use super::call_hold_operations::MixedExtension;
+    use super::h4501_general_error_list::{
+        BASIC_SERVICE_NOT_PROVIDED, INVALID_SERVED_USER_NUMBER, USER_NOT_SUBSCRIBED,
+    };
+    use super::manufacturer_specific_service_extension_definition::*;
+    use super::remote_operations_information_objects::*;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum BasicService {
+        allServices = 0,
+        speech = 1,
+        unrestrictedDigitalInformation = 2,
+        audio3100Hz = 3,
+        telephony = 32,
+        teletex = 33,
+        telefaxGroup4Class1 = 34,
+        videotexSyntaxBased = 35,
+        videotelephony = 36,
+        #[rasn(identifier = "telefaxGroup2-3")]
+        telefaxGroup2_3 = 37,
+        reservedNotUsed1 = 38,
+        reservedNotUsed2 = 39,
+        reservedNotUsed3 = 40,
+        reservedNotUsed4 = 41,
+        reservedNotUsed5 = 42,
+        email = 51,
+        video = 52,
+        fileTransfer = 53,
+        shortMessageService = 54,
+        speechAndVideo = 55,
+        speechAndFax = 56,
+        speechAndEmail = 57,
+        videoAndFax = 58,
+        videoAndEmail = 59,
+        faxAndEmail = 60,
+        speechVideoAndFax = 61,
+        speechVideoAndEmail = 62,
+        speechFaxAndEmail = 63,
+        videoFaxAndEmail = 64,
+        speechVideoFaxAndEmail = 65,
+        multimediaUnknown = 66,
+        serviceUnknown = 67,
+        futureReserve1 = 68,
+        futureReserve2 = 69,
+        futureReserve3 = 70,
+        futureReserve4 = 71,
+        futureReserve5 = 72,
+        futureReserve6 = 73,
+        futureReserve7 = 74,
+        futureReserve8 = 75,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=255"))]
+    pub struct DummyRes(pub SequenceOf<MixedExtension>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct MWIActivateArg {
+        #[rasn(identifier = "servedUserNr")]
+        pub served_user_nr: EndpointAddress,
+        #[rasn(identifier = "basicService")]
+        pub basic_service: BasicService,
+        #[rasn(identifier = "msgCentreId")]
+        pub msg_centre_id: Option<MsgCentreId>,
+        #[rasn(identifier = "nbOfMessages")]
+        pub nb_of_messages: Option<NbOfMessages>,
+        #[rasn(identifier = "originatingNr")]
+        pub originating_nr: Option<EndpointAddress>,
+        pub timestamp: Option<TimeStamp>,
+        #[rasn(value("0..=9"))]
+        pub priority: Option<u8>,
+        #[rasn(size("0..=255"), identifier = "extensionArg")]
+        pub extension_arg: Option<SequenceOf<MixedExtension>>,
+    }
+    impl MWIActivateArg {
+        pub fn new(
+            served_user_nr: EndpointAddress,
+            basic_service: BasicService,
+            msg_centre_id: Option<MsgCentreId>,
+            nb_of_messages: Option<NbOfMessages>,
+            originating_nr: Option<EndpointAddress>,
+            timestamp: Option<TimeStamp>,
+            priority: Option<u8>,
+            extension_arg: Option<SequenceOf<MixedExtension>>,
+        ) -> Self {
+            Self {
+                served_user_nr,
+                basic_service,
+                msg_centre_id,
+                nb_of_messages,
+                originating_nr,
+                timestamp,
+                priority,
+                extension_arg,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct MWIDeactivateArg {
+        #[rasn(identifier = "servedUserNr")]
+        pub served_user_nr: EndpointAddress,
+        #[rasn(identifier = "basicService")]
+        pub basic_service: BasicService,
+        #[rasn(identifier = "msgCentreId")]
+        pub msg_centre_id: Option<MsgCentreId>,
+        #[rasn(identifier = "callbackReq")]
+        pub callback_req: Option<bool>,
+        #[rasn(size("0..=255"), identifier = "extensionArg")]
+        pub extension_arg: Option<SequenceOf<MixedExtension>>,
+    }
+    impl MWIDeactivateArg {
+        pub fn new(
+            served_user_nr: EndpointAddress,
+            basic_service: BasicService,
+            msg_centre_id: Option<MsgCentreId>,
+            callback_req: Option<bool>,
+            extension_arg: Option<SequenceOf<MixedExtension>>,
+        ) -> Self {
+            Self {
+                served_user_nr,
+                basic_service,
+                msg_centre_id,
+                callback_req,
+                extension_arg,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct MWIInterrogateArg {
+        #[rasn(identifier = "servedUserNr")]
+        pub served_user_nr: EndpointAddress,
+        #[rasn(identifier = "basicService")]
+        pub basic_service: BasicService,
+        #[rasn(identifier = "msgCentreId")]
+        pub msg_centre_id: Option<MsgCentreId>,
+        #[rasn(identifier = "callbackReq")]
+        pub callback_req: Option<bool>,
+        #[rasn(size("0..=255"), identifier = "extensionArg")]
+        pub extension_arg: Option<SequenceOf<MixedExtension>>,
+    }
+    impl MWIInterrogateArg {
+        pub fn new(
+            served_user_nr: EndpointAddress,
+            basic_service: BasicService,
+            msg_centre_id: Option<MsgCentreId>,
+            callback_req: Option<bool>,
+            extension_arg: Option<SequenceOf<MixedExtension>>,
+        ) -> Self {
+            Self {
+                served_user_nr,
+                basic_service,
+                msg_centre_id,
+                callback_req,
+                extension_arg,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=64"))]
+    pub struct MWIInterrogateRes(pub SequenceOf<MWIInterrogateResElt>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct MWIInterrogateResElt {
+        #[rasn(identifier = "basicService")]
+        pub basic_service: BasicService,
+        #[rasn(identifier = "msgCentreId")]
+        pub msg_centre_id: Option<MsgCentreId>,
+        #[rasn(identifier = "nbOfMessages")]
+        pub nb_of_messages: Option<NbOfMessages>,
+        #[rasn(identifier = "originatingNr")]
+        pub originating_nr: Option<EndpointAddress>,
+        pub timestamp: Option<TimeStamp>,
+        #[rasn(value("0..=9"))]
+        pub priority: Option<u8>,
+        #[rasn(size("0..=255"), identifier = "extensionArg")]
+        pub extension_arg: Option<SequenceOf<MixedExtension>>,
+    }
+    impl MWIInterrogateResElt {
+        pub fn new(
+            basic_service: BasicService,
+            msg_centre_id: Option<MsgCentreId>,
+            nb_of_messages: Option<NbOfMessages>,
+            originating_nr: Option<EndpointAddress>,
+            timestamp: Option<TimeStamp>,
+            priority: Option<u8>,
+            extension_arg: Option<SequenceOf<MixedExtension>>,
+        ) -> Self {
+            Self {
+                basic_service,
+                msg_centre_id,
+                nb_of_messages,
+                originating_nr,
+                timestamp,
+                priority,
+                extension_arg,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum MsgCentreId {
+        #[rasn(value("0..=65535"))]
+        integer(u16),
+        partyNumber(EndpointAddress),
+        #[rasn(size("1..=10"))]
+        numericString(NumericString),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=65535"))]
+    pub struct NbOfMessages(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TimeStamp(pub GeneralizedTime);
+}

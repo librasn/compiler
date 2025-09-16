@@ -1,0 +1,150 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x739_1993_MetricModule.asn1
+---
+Warnings:
+LinkerError in ASN grammar: Failed to link value with 'SpecificIdentifier'
+LinkerError in ASN grammar: Failed to link value with 'SpecificIdentifier'
+LinkerError in ASN grammar: Failed to link value with 'SpecificIdentifier'
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod metric_module {
+    extern crate alloc;
+    use super::attribute_asn1_module::{
+        ObservedValue, PerceivedSeverity, SimpleNameType, SpecificIdentifier,
+    };
+    use super::cmip_1::{AttributeId, ObjectInstance};
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = "This identifier is allocated to indicate that the UWMA algorithm is used for data smoothing."]
+    #[doc = "The UWMA algorithm is defined in C.2."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AlgorithmIdentifier(pub ObjectIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct GlobalTime(pub GeneralizedTime);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Integer(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ObjectIdentifier(pub ObjectIdentifier);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousSeverityIndicatingGaugeThreshold {
+        #[rasn(identifier = "notifyLow")]
+        pub notify_low: SeverityIndicatingThreshold,
+        #[rasn(identifier = "notifyHigh")]
+        pub notify_high: SeverityIndicatingThreshold,
+    }
+    impl AnonymousSeverityIndicatingGaugeThreshold {
+        pub fn new(
+            notify_low: SeverityIndicatingThreshold,
+            notify_high: SeverityIndicatingThreshold,
+        ) -> Self {
+            Self {
+                notify_low,
+                notify_high,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SeverityIndicatingGaugeThreshold(
+        pub SetOf<AnonymousSeverityIndicatingGaugeThreshold>,
+    );
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SeverityIndicatingThreshold {
+        pub threshold: ObservedValue,
+        #[rasn(identifier = "notifyOnOff")]
+        pub notify_on_off: bool,
+        #[rasn(identifier = "severityIndication")]
+        pub severity_indication: Option<PerceivedSeverity>,
+    }
+    impl SeverityIndicatingThreshold {
+        pub fn new(
+            threshold: ObservedValue,
+            notify_on_off: bool,
+            severity_indication: Option<PerceivedSeverity>,
+        ) -> Self {
+            Self {
+                threshold,
+                notify_on_off,
+                severity_indication,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum TimePeriod {
+        #[rasn(tag(context, 0))]
+        days(Integer),
+        #[rasn(tag(context, 1))]
+        hours(Integer),
+        #[rasn(tag(context, 2))]
+        minutes(Integer),
+        #[rasn(tag(context, 3))]
+        seconds(Integer),
+        #[rasn(tag(context, 4))]
+        milliSeconds(Integer),
+        #[rasn(tag(context, 5))]
+        microSeconds(Integer),
+        #[rasn(tag(context, 6))]
+        nanoSeconds(Integer),
+        #[rasn(tag(context, 7))]
+        picoSeconds(Integer),
+    }
+    pub static EWMA_ALGORITHM: LazyLock<AlgorithmIdentifier> = LazyLock::new(|| {
+        AlgorithmIdentifier(
+            Oid::new(&[&***MOA_ALGORITHM_IDENTIFIERS, &[0u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )
+    });
+    pub static MOA_ALGORITHM_IDENTIFIERS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 9u32, 2u32, 11u32, 0u32, 1u32]).to_owned());
+    #[doc = "  Value assignments for the specific problems parameter"]
+    pub static MOA_SPECIFIC_PROBLEMS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 9u32, 2u32, 11u32, 0u32, 0u32]).to_owned());
+    pub static REJECTION_RATE: LazyLock<SpecificIdentifier> = LazyLock::new(|| {
+        SpecificIdentifier(SpecificIdentifier(SpecificIdentifier::oi(
+            Oid::new(&[&***MOA_SPECIFIC_PROBLEMS, &[3u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub static RESOURCE_REQUEST_RATE: LazyLock<SpecificIdentifier> = LazyLock::new(|| {
+        SpecificIdentifier(SpecificIdentifier(SpecificIdentifier::oi(
+            Oid::new(&[&***MOA_SPECIFIC_PROBLEMS, &[1u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub static RESOURCE_UTILIZATION: LazyLock<SpecificIdentifier> = LazyLock::new(|| {
+        SpecificIdentifier(SpecificIdentifier(SpecificIdentifier::oi(
+            Oid::new(&[&***MOA_SPECIFIC_PROBLEMS, &[2u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    #[doc = "This identifier is allocated to indicate that the EWMA algorithm is used for data smoothing."]
+    #[doc = "The EWMA algorithm is defined in B.2."]
+    pub static UWMA_ALGORITHM: LazyLock<AlgorithmIdentifier> = LazyLock::new(|| {
+        AlgorithmIdentifier(
+            Oid::new(&[&***MOA_ALGORITHM_IDENTIFIERS, &[1u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )
+    });
+}

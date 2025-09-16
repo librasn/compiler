@@ -1,0 +1,48 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x501_2019_ServiceAdministration.asn1
+---
+Error matching ASN syntax at while parsing:
+    ╭─[line 45, column 82]
+    │
+    │ 
+ 05 │  -- EXPORTS All
+ 06 │  /*
+ 07 │  The types and values defined in this module are exported for use in the other ASN.1
+ 08 │  modules contained within these Directory Specifications, and for the use of other
+ 09 │  applications which will use them to access Directory services. Other applications may
+ 10 │  use them for their own purposes, but this will not constrain extensions and
+ 11 │  modifications needed to maintain or improve the Directory service.
+ 12 │  */
+ 13 │  IMPORTS
+ 15 │    -- from Rec. ITU-T X.501 | ISO/IEC 9594-2
+ 17 │    ATTRIBUTE, AttributeType, CONTEXT, MATCHING-RULE, OBJECT-CLASS,
+ 18 │    SupportedAttributes, SupportedContexts
+ 19 │      FROM InformationFramework
+ 20 │        {joint-iso-itu-t ds(5) module(1) informationFramework(1) 9} WITH SUCCESSORS
+ 22 │    -- from Rec. ITU-T X.511 | ISO/IEC 9594-3
+ 24 │    FamilyGrouping, FamilyReturn, HierarchySelections, SearchControlOptions,
+ 25 │    ServiceControlOptions
+ 26 │      FROM DirectoryAbstractService
+ 27 │        {joint-iso-itu-t ds(5) module(1) directoryAbstractService(2) 9} WITH SUCCESSORS ;
+ 29 │  -- types
+ 31 │  SearchRule ::= SEQUENCE {
+ 32 │    COMPONENTS OF SearchRuleId,
+ 33 │    serviceType           [1]  OBJECT IDENTIFIER                          OPTIONAL,
+ 34 │    userClass             [2]  INTEGER                                    OPTIONAL,
+ 35 │    inputAttributeTypes   [3]  SEQUENCE SIZE (0..MAX) OF RequestAttribute OPTIONAL,
+ 36 │    attributeCombination  [4]  AttributeCombination                       DEFAULT and:{},
+ 37 │    outputAttributeTypes  [5]  SEQUENCE SIZE (1..MAX) OF ResultAttribute  OPTIONAL,
+ 38 │    defaultControls       [6]  ControlOptions                             OPTIONAL,
+ 39 │    mandatoryControls     [7]  ControlOptions                             OPTIONAL,
+ 40 │    searchRuleControls    [8]  ControlOptions                             OPTIONAL,
+ 41 │    familyGrouping        [9]  FamilyGrouping                             OPTIONAL,
+ 42 │    familyReturn          [10] FamilyReturn                               OPTIONAL,
+ 43 │    relaxation            [11] RelaxationPolicy                           OPTIONAL,
+ 44 │    additionalControl     [12] SEQUENCE SIZE (1..MAX) OF AttributeType    OPTIONAL,
+ 45 │    allowedSubset         [13] AllowedSubset                              DEFAULT ''111''B, ◀▪▪▪▪▪▪▪▪▪▪ FAILED AT THIS LINE
+ 46 │    imposedSubset         [14] ImposedSubset                              OPTIONAL,
+ 47 │    entryLimit            [15] EntryLimit                                 OPTIONAL,
+ 48 │    ... }
+    │
+────╯

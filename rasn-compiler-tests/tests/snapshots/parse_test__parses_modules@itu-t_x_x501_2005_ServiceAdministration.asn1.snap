@@ -1,0 +1,406 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x501_2005_ServiceAdministration.asn1
+---
+Warnings:
+Unidentified generating bindings for : Unexpectedly encountered unlinked struct-like ASN1 value!
+Unidentified generating bindings for : Unexpectedly encountered unlinked struct-like ASN1 value!
+LinkerError in ASN grammar: No value for field mapping found!
+LinkerError in ASN grammar: Failed to link value with 'ServiceControlOptions'
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod service_administration {
+    extern crate alloc;
+    use super::directory_abstract_service::{
+        FamilyGrouping, FamilyReturn, HierarchySelections, SearchControlOptions,
+        ServiceControlOptions,
+    };
+    use super::information_framework::*;
+    use super::useful_definitions::{DIRECTORY_ABSTRACT_SERVICE, INFORMATION_FRAMEWORK};
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AllowedSubset(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum AttributeCombination {
+        #[rasn(tag(context, 0))]
+        attribute(AttributeType),
+        #[rasn(tag(context, 1))]
+        and(SequenceOf<AttributeCombination>),
+        #[rasn(tag(context, 2))]
+        or(SequenceOf<AttributeCombination>),
+        #[rasn(tag(context, 3))]
+        not(Box<AttributeCombination>),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ContextCombination {
+        #[rasn(tag(context, 0))]
+        context(Any),
+        #[rasn(tag(context, 1))]
+        and(SequenceOf<ContextCombination>),
+        #[rasn(tag(context, 2))]
+        or(SequenceOf<ContextCombination>),
+        #[rasn(tag(context, 3))]
+        not(Box<ContextCombination>),
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "IOFR$CONTEXT$&Assertion")]
+    pub struct AnonymousContextProfileContextValue(pub Any);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct ContextProfileContextValue(pub SequenceOf<AnonymousContextProfileContextValue>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ContextProfile {
+        #[rasn(identifier = "contextType")]
+        pub context_type: Any,
+        #[rasn(identifier = "contextValue")]
+        pub context_value: Option<ContextProfileContextValue>,
+    }
+    impl ContextProfile {
+        pub fn new(context_type: Any, context_value: Option<ContextProfileContextValue>) -> Self {
+            Self {
+                context_type,
+                context_value,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct EntryLimit {
+        pub default: Integer,
+        pub max: Integer,
+    }
+    impl EntryLimit {
+        pub fn new(default: Integer, max: Integer) -> Self {
+            Self { default, max }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ImposedSubset {
+        baseObject = 0,
+        oneLevel = 1,
+        wholeSubtree = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct MRMapping {
+        #[rasn(size("1.."), tag(context, 0))]
+        pub mapping: Option<SequenceOf<Mapping>>,
+        #[rasn(size("1.."), tag(context, 1))]
+        pub substitution: Option<SequenceOf<MRSubstitution>>,
+    }
+    impl MRMapping {
+        pub fn new(
+            mapping: Option<SequenceOf<Mapping>>,
+            substitution: Option<SequenceOf<MRSubstitution>>,
+        ) -> Self {
+            Self {
+                mapping,
+                substitution,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct MRSubstitution {
+        pub attribute: AttributeType,
+        #[rasn(tag(context, 0), identifier = "oldMatchingRule")]
+        pub old_matching_rule: Option<Any>,
+        #[rasn(tag(context, 1), identifier = "newMatchingRule")]
+        pub new_matching_rule: Option<Any>,
+    }
+    impl MRSubstitution {
+        pub fn new(
+            attribute: AttributeType,
+            old_matching_rule: Option<Any>,
+            new_matching_rule: Option<Any>,
+        ) -> Self {
+            Self {
+                attribute,
+                old_matching_rule,
+                new_matching_rule,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Mapping {
+        #[rasn(value("0.."), identifier = "mappingFunction")]
+        pub mapping_function: ObjectIdentifier,
+        #[rasn(default = "mapping_level_default")]
+        pub level: Integer,
+    }
+    impl Mapping {
+        pub fn new(mapping_function: ObjectIdentifier, level: Integer) -> Self {
+            Self {
+                mapping_function,
+                level,
+            }
+        }
+    }
+    fn mapping_level_default() -> Integer {
+        Integer::from(0)
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct MatchingUse {
+        #[rasn(identifier = "restrictionType")]
+        pub restriction_type: ObjectIdentifier,
+        #[rasn(identifier = "restrictionValue")]
+        pub restriction_value: Any,
+    }
+    impl MatchingUse {
+        pub fn new(restriction_type: ObjectIdentifier, restriction_value: Any) -> Self {
+            Self {
+                restriction_type,
+                restriction_value,
+            }
+        }
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "IOFR$ATTRIBUTE$&Type")]
+    pub struct AnonymousRequestAttributeSelectedValues(pub Any);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RequestAttributeSelectedValues(
+        pub SequenceOf<AnonymousRequestAttributeSelectedValues>,
+    );
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "IOFR$ATTRIBUTE$&Type")]
+    pub struct AnonymousAnonymousRequestAttributeDefaultValuesValues(pub Any);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AnonymousRequestAttributeDefaultValuesValues(
+        pub SequenceOf<AnonymousAnonymousRequestAttributeDefaultValuesValues>,
+    );
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousRequestAttributeDefaultValues {
+        #[rasn(identifier = "entryType")]
+        pub entry_type: Option<Any>,
+        pub values: AnonymousRequestAttributeDefaultValuesValues,
+    }
+    impl AnonymousRequestAttributeDefaultValues {
+        pub fn new(
+            entry_type: Option<Any>,
+            values: AnonymousRequestAttributeDefaultValuesValues,
+        ) -> Self {
+            Self { entry_type, values }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RequestAttributeDefaultValues(
+        pub SequenceOf<AnonymousRequestAttributeDefaultValues>,
+    );
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct RequestAttribute {
+        #[rasn(identifier = "attributeType")]
+        pub attribute_type: Any,
+        #[rasn(
+            tag(context, 0),
+            default = "request_attribute_include_subtypes_default",
+            identifier = "includeSubtypes"
+        )]
+        pub include_subtypes: bool,
+        #[rasn(tag(context, 1), identifier = "selectedValues")]
+        pub selected_values: Option<RequestAttributeSelectedValues>,
+        #[rasn(tag(context, 2), identifier = "defaultValues")]
+        pub default_values: Option<RequestAttributeDefaultValues>,
+        #[rasn(tag(context, 3))]
+        pub contexts: Option<SequenceOf<ContextProfile>>,
+        #[rasn(
+            tag(context, 4),
+            default = "request_attribute_context_combination_default",
+            identifier = "contextCombination"
+        )]
+        pub context_combination: ContextCombination,
+        #[rasn(size("1.."), tag(context, 5), identifier = "matchingUse")]
+        pub matching_use: Option<SequenceOf<MatchingUse>>,
+    }
+    impl RequestAttribute {
+        pub fn new(
+            attribute_type: Any,
+            include_subtypes: bool,
+            selected_values: Option<RequestAttributeSelectedValues>,
+            default_values: Option<RequestAttributeDefaultValues>,
+            contexts: Option<SequenceOf<ContextProfile>>,
+            context_combination: ContextCombination,
+            matching_use: Option<SequenceOf<MatchingUse>>,
+        ) -> Self {
+            Self {
+                attribute_type,
+                include_subtypes,
+                selected_values,
+                default_values,
+                contexts,
+                context_combination,
+                matching_use,
+            }
+        }
+    }
+    fn request_attribute_include_subtypes_default() -> bool {
+        false
+    }
+    fn request_attribute_context_combination_default() -> ContextCombination {
+        ContextCombination::and(alloc::vec![])
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "IOFR$ATTRIBUTE$&Type")]
+    pub struct AnonymousResultAttributeOutputValuesSelectedValues(pub Any);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ResultAttributeOutputValuesSelectedValues(
+        pub SequenceOf<AnonymousResultAttributeOutputValuesSelectedValues>,
+    );
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ResultAttributeOutputValues {
+        selectedValues(ResultAttributeOutputValuesSelectedValues),
+        matchedValuesOnly(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ResultAttribute {
+        #[rasn(identifier = "attributeType")]
+        pub attribute_type: Any,
+        #[rasn(identifier = "outputValues")]
+        pub output_values: Option<ResultAttributeOutputValues>,
+        #[rasn(size("1.."), tag(context, 0))]
+        pub contexts: Option<SequenceOf<ContextProfile>>,
+    }
+    impl ResultAttribute {
+        pub fn new(
+            attribute_type: Any,
+            output_values: Option<ResultAttributeOutputValues>,
+            contexts: Option<SequenceOf<ContextProfile>>,
+        ) -> Self {
+            Self {
+                attribute_type,
+                output_values,
+                contexts,
+            }
+        }
+    }
+    #[doc = " types"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SearchRule {
+        #[rasn(tag(context, 1), identifier = "serviceType")]
+        pub service_type: Option<ObjectIdentifier>,
+        #[rasn(tag(context, 2), identifier = "userClass")]
+        pub user_class: Option<Integer>,
+        #[rasn(tag(context, 3), identifier = "inputAttributeTypes")]
+        pub input_attribute_types: Option<SequenceOf<RequestAttribute>>,
+        #[rasn(
+            tag(context, 4),
+            default = "search_rule_attribute_combination_default",
+            identifier = "attributeCombination"
+        )]
+        pub attribute_combination: AttributeCombination,
+        #[rasn(size("1.."), tag(context, 5), identifier = "outputAttributeTypes")]
+        pub output_attribute_types: Option<SequenceOf<ResultAttribute>>,
+        #[rasn(tag(context, 6), identifier = "defaultControls")]
+        pub default_controls: Option<ControlOptions>,
+        #[rasn(tag(context, 7), identifier = "mandatoryControls")]
+        pub mandatory_controls: Option<ControlOptions>,
+        #[rasn(tag(context, 8), identifier = "searchRuleControls")]
+        pub search_rule_controls: Option<ControlOptions>,
+        #[rasn(tag(context, 9), identifier = "familyGrouping")]
+        pub family_grouping: Option<FamilyGrouping>,
+        #[rasn(tag(context, 10), identifier = "familyReturn")]
+        pub family_return: Option<FamilyReturn>,
+        #[rasn(tag(context, 11))]
+        pub relaxation: Option<RelaxationPolicy>,
+        #[rasn(size("1.."), tag(context, 12), identifier = "additionalControl")]
+        pub additional_control: Option<SequenceOf<AttributeType>>,
+        #[rasn(
+            tag(context, 13),
+            default = "search_rule_allowed_subset_default",
+            identifier = "allowedSubset"
+        )]
+        pub allowed_subset: AllowedSubset,
+        #[rasn(tag(context, 14), identifier = "imposedSubset")]
+        pub imposed_subset: Option<ImposedSubset>,
+        #[rasn(tag(context, 15), identifier = "entryLimit")]
+        pub entry_limit: Option<EntryLimit>,
+        pub id: Integer,
+        #[rasn(tag(context, 0), identifier = "dmdId")]
+        pub dmd_id: ObjectIdentifier,
+    }
+    impl SearchRule {
+        pub fn new(
+            service_type: Option<ObjectIdentifier>,
+            user_class: Option<Integer>,
+            input_attribute_types: Option<SequenceOf<RequestAttribute>>,
+            attribute_combination: AttributeCombination,
+            output_attribute_types: Option<SequenceOf<ResultAttribute>>,
+            default_controls: Option<ControlOptions>,
+            mandatory_controls: Option<ControlOptions>,
+            search_rule_controls: Option<ControlOptions>,
+            family_grouping: Option<FamilyGrouping>,
+            family_return: Option<FamilyReturn>,
+            relaxation: Option<RelaxationPolicy>,
+            additional_control: Option<SequenceOf<AttributeType>>,
+            allowed_subset: AllowedSubset,
+            imposed_subset: Option<ImposedSubset>,
+            entry_limit: Option<EntryLimit>,
+            id: Integer,
+            dmd_id: ObjectIdentifier,
+        ) -> Self {
+            Self {
+                service_type,
+                user_class,
+                input_attribute_types,
+                attribute_combination,
+                output_attribute_types,
+                default_controls,
+                mandatory_controls,
+                search_rule_controls,
+                family_grouping,
+                family_return,
+                relaxation,
+                additional_control,
+                allowed_subset,
+                imposed_subset,
+                entry_limit,
+                id,
+                dmd_id,
+            }
+        }
+    }
+    fn search_rule_attribute_combination_default() -> AttributeCombination {
+        AttributeCombination::and(alloc::vec![])
+    }
+    fn search_rule_allowed_subset_default() -> AllowedSubset {
+        AllowedSubset([true, true, true].into_iter().collect())
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SearchRuleId {
+        pub id: Integer,
+        #[rasn(tag(context, 0), identifier = "dmdId")]
+        pub dmd_id: ObjectIdentifier,
+    }
+    impl SearchRuleId {
+        pub fn new(id: Integer, dmd_id: ObjectIdentifier) -> Self {
+            Self { id, dmd_id }
+        }
+    }
+}

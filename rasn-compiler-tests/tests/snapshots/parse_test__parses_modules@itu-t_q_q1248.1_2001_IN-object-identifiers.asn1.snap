@@ -1,0 +1,1234 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q1248.1_2001_IN-object-identifiers.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod in_object_identifiers {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    pub static COMMON_CLASSES: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***MODULES, &[5u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static COMMON_DATATYPES: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***MODULES, &[1u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " For IN-CS1 Modules"]
+    pub static CONTEXTS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&[0u32, 0u32], &***Q, &[1218u32, 0u32, 8u32, 1u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static DS_USEFUL_DEFINITIONS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 5u32, 1u32, 0u32, 3u32]).to_owned());
+    pub static ERRORCODES: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***MODULES, &[4u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ERRORTYPES: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***MODULES, &[2u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static GULS_DIRECTORY_PROTECTION_MAPPINGS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 20u32, 1u32, 4u32]).to_owned());
+    pub static GULS_NOTATION: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 20u32, 1u32, 1u32]).to_owned());
+    pub static GULS_SECURITY_TRANSFORMATIONS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 20u32, 1u32, 3u32]).to_owned());
+    #[doc = " For IN CS4 Modules"]
+    pub static ID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&[0u32, 0u32], &***Q, &[1248u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AC: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID, &[3u32]].concat()).unwrap().to_owned());
+    pub static ID_AC_DISTRIBUTED_SCFSYSTEM_AC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AC, &[22u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AC_DISTRIBUTED_SCFSYSTEM_WITH3SE_AC: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_AC, &[24u32, 0u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_AC_IN_EXTENDED_DIRECTORY_ACCESS_AC: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_AC, &[3u32, 0u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_AC_IN_EXTENDED_DIRECTORY_ACCESS_WITH3SE_AC: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_AC, &[27u32, 0u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_AC_IN_SHADOW_CONSUMER_INITIATED_AC: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_AC, &[17u32, 0u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_AC_IN_SHADOW_CONSUMER_INITIATED_WITH3SE_AC: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_AC, &[20u32, 0u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_AC_IN_SHADOW_SUPPLIER_INITIATED_AC: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_AC, &[16u32, 0u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_AC_IN_SHADOW_SUPPLIER_INITIATED_WITH3SE_AC: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_AC, &[19u32, 0u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    #[doc = "SCF-SDF - application contexts"]
+    pub static ID_AC_INDIRECTORY_ACCESS_AC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AC, &[1u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AC_INDIRECTORY_ACCESS_WITH3SE_AC: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_AC, &[2u32, 0u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    #[doc = "SDF-SDF Application Contexts"]
+    pub static ID_AC_INDIRECTORY_SYSTEM_AC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AC, &[15u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AC_INDIRECTORY_SYSTEM_WITH3SE_AC: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_AC, &[18u32, 0u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_AC_SCF_SSF_DPSPECIFIC_AC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AC, &[9u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AC_SCF_SSF_GENERIC_AC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AC, &[8u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AC_SCF_SSF_INTRAFFIC_MANAGEMENT_AC: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_AC, &[10u32, 0u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_AC_SCF_SSF_ROUTE_MONITORING_AC: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_AC, &[33u32, 0u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_AC_SCF_SSF_SERVICE_MANAGEMENT_AC: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_AC, &[11u32, 0u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_AC_SCF_SSF_STATUS_REPORTING_AC: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_AC, &[12u32, 0u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_AC_SCF_SSF_TRAFFIC_MANAGEMENT_AC: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_AC, &[35u32, 0u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_AC_SCF_SSF_TRIGGER_MANAGEMENT_AC: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_AC, &[13u32, 0u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    #[doc = " SCF/SCF Application Context"]
+    pub static ID_AC_SCFC_SCFS_OPERATIONS_AC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AC, &[21u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AC_SCFC_SCFS_OPERATIONS_WITH3SE_AC: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_AC, &[23u32, 0u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_AC_SCFS_SCFC_OPERATIONS_AC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AC, &[31u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AC_SCFS_SCFC_OPERATIONS_WITH3SE_AC: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_AC, &[32u32, 0u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    #[doc = " SRF/SCF Application Context"]
+    pub static ID_AC_SRF_SCF_AC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AC, &[14u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AC_SSF_SCF_ASSIST_HANDOFF_AC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AC, &[6u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AC_SSF_SCF_DPSPECIFIC_AC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AC, &[5u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " Application Context"]
+    #[doc = " SSF/SCF Application Context"]
+    pub static ID_AC_SSF_SCF_GENERIC_AC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AC, &[4u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AC_SSF_SCF_ROUTE_MONITORING_AC: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_AC, &[34u32, 0u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_AC_SSF_SCF_SERVICE_MANAGEMENT_AC: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_AC, &[7u32, 0u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_AC_TRAFFIC_FLOW_CONTROL_AC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AC, &[28u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ACA: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID, &[24u32]].concat()).unwrap().to_owned());
+    pub static ID_ACA_ENTRY_ACI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_ACA, &[5u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ACA_PRESCRIPTIVE_ACI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_ACA, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ACA_SUBENTRY_ACI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_ACA, &[6u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ACCUSFSCF_DPSPECIFIC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AC, &[26u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ACCUSFSCF_GENERIC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AC, &[30u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " CUSF/SCF Application Context"]
+    pub static ID_ACSCFCUSF_DPSPECIFIC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AC, &[25u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ACSCFCUSF_GENERIC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AC, &[29u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID, &[5u32]].concat()).unwrap().to_owned());
+    pub static ID_AS_ASSIST_HANDOFF_SSF_SCF_AS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AS, &[6u32]].concat()).unwrap().to_owned());
+    pub static ID_AS_BASIC_SCF_SRF: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AS, &[15u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " SRF/SCF Abstract Syntaxes"]
+    pub static ID_AS_BASIC_SRF_SCF: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AS, &[14u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AS_DISTRIBUTED_SCFSYSTEM_AS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AS, &[21u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AS_IN_EXTENDED_DIRECTORY_OPERATIONS_AS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AS, &[3u32]].concat()).unwrap().to_owned());
+    pub static ID_AS_IN_SESEAS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AS, &[25u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AS_INDIRECTORY_BINDING_AS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AS, &[2u32]].concat()).unwrap().to_owned());
+    pub static ID_AS_INDIRECTORY_DSABINDING_AS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AS, &[17u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " SCF-SDF - abstract syntaxes"]
+    pub static ID_AS_INDIRECTORY_OPERATIONS_AS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AS, &[1u32]].concat()).unwrap().to_owned());
+    pub static ID_AS_INDIRECTORY_SHADOW_AS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AS, &[18u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " SDF-SDF - abstract syntaxes"]
+    pub static ID_AS_INDIRECTORY_SYSTEM_AS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AS, &[16u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AS_INDSA_SHADOW_BINDING_AS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AS, &[19u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AS_SCF_SCF_BINDING_AS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AS, &[22u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AS_SCF_SSF_DP_SPECIFIC_AS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AS, &[8u32]].concat()).unwrap().to_owned());
+    pub static ID_AS_SCF_SSF_GENERIC_AS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AS, &[7u32]].concat()).unwrap().to_owned());
+    pub static ID_AS_SCF_SSF_INTRAFFIC_MANAGEMENT_AS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AS, &[9u32]].concat()).unwrap().to_owned());
+    pub static ID_AS_SCF_SSF_ROUTE_MONITORING_AS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_AS, &[31u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_AS_SCF_SSF_SERVICE_MANAGEMENT_AS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_AS, &[10u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_AS_SCF_SSF_STATUS_REPORTING_AS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_AS, &[12u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_AS_SCF_SSF_TRAFFIC_MANAGEMENT_AS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_AS, &[33u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_AS_SCF_SSF_TRIGGER_MANAGEMENT_AS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_AS, &[13u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    #[doc = " SCF/SCF Abstract Syntaxes"]
+    pub static ID_AS_SCFC_SCFS_OPERATIONS_AS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AS, &[20u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AS_SCFS_SCFC_OPERATIONS_AS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AS, &[30u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AS_SSF_SCF_DP_SPECIFIC_AS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AS, &[5u32]].concat()).unwrap().to_owned());
+    #[doc = " Abstract Syntaxes"]
+    #[doc = " SSF/SCF Abstract Syntaxes"]
+    pub static ID_AS_SSF_SCF_GENERIC_AS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AS, &[4u32]].concat()).unwrap().to_owned());
+    pub static ID_AS_SSF_SCF_ROUTE_MONITORING_AS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_AS, &[32u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_AS_SSF_SCF_SERVICE_MANAGEMENT_AS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_AS, &[11u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_AS_TFC_BINDING_AS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AS, &[27u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AS_TFC_OPERATIONS_AS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AS, &[26u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ASCUSFSCF_DPSPECIFIC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AS, &[24u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ASCUSFSCF_GENERIC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AS, &[29u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " CUSF/SCF Abstract Syntaxes"]
+    pub static ID_ASSCFCUSF_DPSPECIFIC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AS, &[23u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ASSCFCUSF_GENERIC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AS, &[28u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AT: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID, &[4u32]].concat()).unwrap().to_owned());
+    pub static ID_AT_BIND_LEVEL_IF_OK: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AT, &[4u32]].concat()).unwrap().to_owned());
+    pub static ID_AT_CHALLENGE_RESPONSE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[12u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AT_CURRENT_LIST: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AT, &[8u32]].concat()).unwrap().to_owned());
+    pub static ID_AT_FAILURE_COUNTER: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AT, &[6u32]].concat()).unwrap().to_owned());
+    pub static ID_AT_IDENTIFIER_LIST: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AT, &[3u32]].concat()).unwrap().to_owned());
+    pub static ID_AT_LOCK_SESSION: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AT, &[5u32]].concat()).unwrap().to_owned());
+    pub static ID_AT_MAX_ATTEMPTS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AT, &[7u32]].concat()).unwrap().to_owned());
+    pub static ID_AT_SECRET_KEY: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AT, &[2u32]].concat()).unwrap().to_owned());
+    #[doc = " Attributes"]
+    #[doc = " SCF/SDF attributes"]
+    pub static ID_AT_SECURITY_FACILITY_ID: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AT, &[1u32]].concat()).unwrap().to_owned());
+    pub static ID_AT_SIZE_OF_RESTOCKING: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[11u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AT_SOURCE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[10u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AT_STOCK_ID: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AT, &[9u32]].concat()).unwrap().to_owned());
+    pub static ID_AVC: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID, &[29u32]].concat()).unwrap().to_owned());
+    #[doc = " SDF Attribute Value Contexts"]
+    pub static ID_AVC_ASSIGNMENT: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AVC, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AVC_BASIC_SERVICE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AVC, &[2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AVC_LINE_IDENTITY: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AVC, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CONTRACT: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID, &[26u32]].concat()).unwrap().to_owned());
+    pub static ID_CONTRACT_CUSFSCF_DPSPECIFIC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CONTRACT, &[21u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CONTRACT_CUSFSCF_GENERIC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CONTRACT, &[24u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " SCF-SDF contracts"]
+    pub static ID_CONTRACT_DAP: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CONTRACT, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CONTRACT_DAP_EXECUTE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CONTRACT, &[2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CONTRACT_DSSP: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CONTRACT, &[19u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " SDF - SDF Contracts."]
+    pub static ID_CONTRACT_INDSP: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CONTRACT, &[14u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " SCF/SCF Contracts"]
+    pub static ID_CONTRACT_SCFC_SCFS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CONTRACT, &[18u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " CUSF/SCF Contracts"]
+    pub static ID_CONTRACT_SCFCUSF_DPSPECIFIC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CONTRACT, &[20u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CONTRACT_SCFCUSF_GENERIC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CONTRACT, &[23u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CONTRACT_SCFS_SCFC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CONTRACT, &[25u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CONTRACT_SHADOW_CONSUMER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CONTRACT, &[15u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CONTRACT_SHADOW_SUPPLIER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CONTRACT, &[17u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " SRF/SCF Contracts"]
+    pub static ID_CONTRACT_SRF_SCF: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CONTRACT, &[13u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CONTRACT_TFC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CONTRACT, &[22u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_IN_ASSIST_HANDOFF_SSF_TO_SCF: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CONTRACT, &[5u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_IN_SCF_TO_SSF_DP_SPECIFIC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CONTRACT, &[7u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_IN_SCF_TO_SSF_GENERIC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CONTRACT, &[6u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_IN_SCF_TO_SSF_INTRAFFIC_MANAGEMENT: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_CONTRACT, &[8u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_IN_SCF_TO_SSF_ROUTE_MONITORING: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_CONTRACT, &[26u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_IN_SCF_TO_SSF_SERVICE_MANAGEMENT: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_CONTRACT, &[9u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_IN_SCF_TO_SSF_STATUS_REPORTING: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_CONTRACT, &[11u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_IN_SCF_TO_SSF_TRAFFIC_MANAGEMENT: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_CONTRACT, &[28u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_IN_SCF_TO_SSF_TRIGGER_MANAGEMENT: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_CONTRACT, &[12u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_IN_SSF_TO_SCF_DP_SPECIFIC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CONTRACT, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " Contracts"]
+    #[doc = " SSF/SCF Contracts"]
+    pub static ID_IN_SSF_TO_SCF_GENERIC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CONTRACT, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_IN_SSF_TO_SCF_ROUTE_MONITORING: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_CONTRACT, &[27u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_IN_SSF_TO_SCF_SERVICE_MANAGEMENT: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_CONTRACT, &[10u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_MT: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID, &[7u32]].concat()).unwrap().to_owned());
+    pub static ID_MT_CONFORM_CREDENTIALS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_MT, &[2u32]].concat()).unwrap().to_owned());
+    pub static ID_MT_FILL_SECURITY_TOKENS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_MT, &[4u32]].concat()).unwrap().to_owned());
+    pub static ID_MT_PROVIDE_TOKENS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_MT, &[3u32]].concat()).unwrap().to_owned());
+    #[doc = " Methods"]
+    #[doc = " for SCF-SDF interface, Methods"]
+    pub static ID_MT_VERIFY_CREDENTIALS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_MT, &[1u32]].concat()).unwrap().to_owned());
+    pub static ID_OC: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID, &[6u32]].concat()).unwrap().to_owned());
+    #[doc = " Object Class"]
+    #[doc = " for SCF-SDF interface, Object Class"]
+    pub static ID_OC_SECURITY_USER_INFO: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_OC, &[1u32]].concat()).unwrap().to_owned());
+    pub static ID_OC_TOKENS_STOCK: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_OC, &[2u32]].concat()).unwrap().to_owned());
+    pub static ID_PACKAGE: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID, &[27u32]].concat()).unwrap().to_owned());
+    pub static ID_PACKAGE_ACTIVITY_TEST: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PACKAGE, &[34u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PACKAGE_ADVANCED_BCPDP: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PACKAGE, &[14u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PACKAGE_ASSIST_CONNECTION_ESTABLISHMENT: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_PACKAGE, &[16u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_PACKAGE_BASIC_BCPDP: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PACKAGE, &[12u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PACKAGE_BCSM_EVENT_HANDLING: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PACKAGE, &[21u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PACKAGE_BILLING: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PACKAGE, &[27u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PACKAGE_CALL_HANDLING: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PACKAGE, &[20u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PACKAGE_CALL_REPORT: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PACKAGE, &[32u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PACKAGE_CANCEL: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PACKAGE, &[36u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PACKAGE_CHAINED_EXECUTE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PACKAGE, &[50u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PACKAGE_CHAINED_SCFOPERATIONS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PACKAGE, &[59u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PACKAGE_CHARGING: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PACKAGE, &[28u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PACKAGE_CHARGING_EVENT_HANDLING: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_PACKAGE, &[23u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_PACKAGE_CHARGING_INFORMATION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PACKAGE, &[56u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PACKAGE_CONNECT: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PACKAGE, &[19u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PACKAGE_CPH_RESPONSE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PACKAGE, &[37u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PACKAGE_CUSF_COMPONENT_HANDLING: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_PACKAGE, &[69u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_PACKAGE_CUSF_CONNECT: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PACKAGE, &[72u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PACKAGE_CUSF_CONTINUE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PACKAGE, &[71u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PACKAGE_CUSF_DPSPECIFIC_EVENT_HANDLING: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_PACKAGE, &[67u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_PACKAGE_CUSF_GENERIC_EVENT_HANDLING: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_PACKAGE, &[68u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_PACKAGE_CUSF_RELEASE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PACKAGE, &[73u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PACKAGE_CUSF_SCFINITIATION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PACKAGE, &[70u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PACKAGE_CUSF_TDPGENERIC_INVOCATION: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_PACKAGE, &[62u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    #[doc = " CUSF/SCF Operation Packages"]
+    pub static ID_PACKAGE_CUSF_TDPSPECIFIC_INVOCATION: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_PACKAGE, &[61u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_PACKAGE_DAP_CONNECTION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PACKAGE, &[10u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PACKAGE_DISP_CONNECTION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PACKAGE, &[51u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PACKAGE_DP_SPECIFIC_EVENT_HANDLING: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_PACKAGE, &[22u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    #[doc = " SDF-SDF Packages."]
+    pub static ID_PACKAGE_DSP_CONNECTION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PACKAGE, &[47u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PACKAGE_DSSP_CONNECTION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PACKAGE, &[74u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " Operation Packages"]
+    pub static ID_PACKAGE_EMPTY_CONNECTION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PACKAGE, &[60u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PACKAGE_ENTITY_RELEASED: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PACKAGE, &[38u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PACKAGE_EXECUTE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PACKAGE, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PACKAGE_FACILITY_IEHANDLING: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PACKAGE, &[41u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PACKAGE_GENERIC_DISCONNECT_RESOURCE: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_PACKAGE, &[17u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_PACKAGE_HANDLING_INFORMATION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PACKAGE, &[54u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PACKAGE_I_NTRAFFIC_MANAGEMENT: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PACKAGE, &[29u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PACKAGE_INCHAINED_MODIFY: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PACKAGE, &[48u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PACKAGE_INCHAINED_SEARCH: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PACKAGE, &[49u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PACKAGE_INITIATE_CALL: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PACKAGE, &[76u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PACKAGE_MESSAGE_CONTROL: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PACKAGE, &[44u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PACKAGE_MODIFY: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PACKAGE, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PACKAGE_MONITOR_ROUTE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PACKAGE, &[77u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PACKAGE_NETWORK_CAPABILITY: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PACKAGE, &[58u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PACKAGE_NON_ASSISTED_CONNECTION_ESTABLISHMENT: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_PACKAGE, &[18u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_PACKAGE_NOTIFICATION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PACKAGE, &[55u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " SCF/SCF Operation Packages"]
+    pub static ID_PACKAGE_SCF_SCF_CONNECTION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PACKAGE, &[46u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " SSF/SCF Operation Packages"]
+    pub static ID_PACKAGE_SCF_ACTIVATION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PACKAGE, &[11u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PACKAGE_SCF_CALL_INITIATION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PACKAGE, &[25u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PACKAGE_SCRIPT_CONTROL: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PACKAGE, &[45u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " SCF-SDF packages"]
+    pub static ID_PACKAGE_SEARCH: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PACKAGE, &[2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PACKAGE_SERVICE_MANAGEMENT_ACTIVATE: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_PACKAGE, &[30u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_PACKAGE_SERVICE_MANAGEMENT_RESPONSE: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_PACKAGE, &[31u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_PACKAGE_SHADOW_CONSUMER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PACKAGE, &[52u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PACKAGE_SHADOW_SUPPLIER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PACKAGE, &[53u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PACKAGE_SIGNALLING_CONTROL: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PACKAGE, &[33u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " SRF/SCF Operation Packages"]
+    pub static ID_PACKAGE_SPECIALIZED_RESOURCE_CONTROL: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_PACKAGE, &[42u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_PACKAGE_SRF_SCF_ACTIVATION_OF_ASSIST: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_PACKAGE, &[15u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_PACKAGE_SRF_SCF_CANCEL: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PACKAGE, &[43u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PACKAGE_SRF_MANAGEMENT: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PACKAGE, &[66u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PACKAGE_SSF_CALL_PROCESSING: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PACKAGE, &[24u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PACKAGE_STATUS_REPORTING: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PACKAGE, &[35u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PACKAGE_TFC_CONNECTION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PACKAGE, &[65u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PACKAGE_TFC_OPERATIONS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PACKAGE, &[64u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PACKAGE_TIMER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PACKAGE, &[26u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PACKAGE_TRAFFIC_MANAGEMENT: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PACKAGE, &[78u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PACKAGE_TRANSFER_STSI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PACKAGE, &[75u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PACKAGE_TRIGGER_CALL_MANAGEMENT: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_PACKAGE, &[63u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_PACKAGE_TRIGGER_MANAGEMENT: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PACKAGE, &[39u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PACKAGE_U_SIHANDLING: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PACKAGE, &[40u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PACKAGE_USER_INFORMATION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PACKAGE, &[57u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ROS_OBJECT: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID, &[25u32]].concat()).unwrap().to_owned());
+    pub static ID_ROS_OBJECT_CUSF: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_ROS_OBJECT, &[5u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " for ac, as, rosObject, contract and package, the values are identical to Q1228"]
+    #[doc = " ROS Objects"]
+    pub static ID_ROS_OBJECT_SCF: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_ROS_OBJECT, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ROS_OBJECT_SDF: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_ROS_OBJECT, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ROS_OBJECT_SRF: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_ROS_OBJECT, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ROS_OBJECT_SSF: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_ROS_OBJECT, &[2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_SF: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID, &[11u32]].concat()).unwrap().to_owned());
+    pub static ID_SF_CHALLENGE_RESPONSE: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_SF, &[2u32]].concat()).unwrap().to_owned());
+    pub static ID_SF_ON_AIR_SUBSCRIPTION: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_SF, &[3u32]].concat()).unwrap().to_owned());
+    #[doc = " Security Facility"]
+    #[doc = " for SCF-SDF interface, Security Facility"]
+    pub static ID_SF_PWD: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_SF, &[1u32]].concat()).unwrap().to_owned());
+    pub static ID_SOA: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID, &[21u32]].concat()).unwrap().to_owned());
+    #[doc = " for SDF-SDF interface, SDF Attributes"]
+    pub static ID_SOA_METHOD_RULE_USE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_SOA, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static MODULES: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID, &[1u32]].concat()).unwrap().to_owned());
+    pub static OBJECT_IDENTIFIERS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***MODULES, &[0u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static OPERATIONCODES: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***MODULES, &[3u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ROS_INFORMATION_OBJECTS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 4u32, 5u32, 0u32]).to_owned());
+    pub static ROS_USEFUL_DEFINITIONS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 4u32, 7u32, 0u32]).to_owned());
+    pub static ROS_GENERIC_PDUS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 4u32, 6u32, 0u32]).to_owned());
+    pub static SCF_CUSF_OPERATIONS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***MODULES, &[26u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SCF_CUSF_PROTOCOL: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***MODULES, &[27u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SCF_CUSF_CLASSES: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***MODULES, &[25u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SCF_CUSF_DATATYPES: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***MODULES, &[24u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SCF_SCF_OPERATIONS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***MODULES, &[22u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SCF_SCF_PROTOCOL: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***MODULES, &[23u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SCF_SCF_CLASSES: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***MODULES, &[21u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SCF_SCF_DATATYPES: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***MODULES, &[20u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SCF_SDF_ADDITIONAL_DEFINITIONS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***MODULES, &[28u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SCF_SDF_OPERATIONS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***MODULES, &[16u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SCF_SDF_PROTOCOL: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***MODULES, &[17u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SCF_SDF_CLASSES: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***MODULES, &[15u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SCF_SDF_DATATYPES: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***MODULES, &[14u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SCF_SRF_OPERATIONS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***MODULES, &[12u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SCF_SRF_PROTOCOL: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***MODULES, &[13u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SCF_SRF_CLASSES: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***MODULES, &[11u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SCF_SRF_DATATYPES: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***MODULES, &[10u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SDF_SDF_OPERATIONS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***MODULES, &[18u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SDF_SDF_PROTOCOL: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***MODULES, &[19u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SESE_APDUS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 20u32, 1u32, 6u32]).to_owned());
+    pub static SPKM_GSS_TOKENS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::const_new(&[1u32, 3u32, 6u32, 1u32, 5u32, 5u32, 1u32, 10u32]).to_owned()
+    });
+    pub static SSF_SCF_OPERATIONS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***MODULES, &[8u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SSF_SCF_PROTOCOL: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***MODULES, &[9u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SSF_SCF_CLASSES: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***MODULES, &[7u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SSF_SCF_DATATYPES: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***MODULES, &[6u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " For Modules from TCAP, ROS,"]
+    pub static TC_MESSAGES: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&[0u32, 0u32], &***Q, &[773u32, 2u32, 1u32, 3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static TC_NOTATION_EXTENSIONS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&[0u32, 0u32], &***Q, &[775u32, 2u32, 4u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+}

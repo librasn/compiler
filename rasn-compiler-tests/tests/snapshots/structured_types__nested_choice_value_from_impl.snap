@@ -1,0 +1,48 @@
+---
+source: rasn-compiler-tests/tests/structured_types.rs
+description: "\n        NestedType ::= SEQUENCE {\n            choiceField CHOICE {\n                one INTEGER,\n                two BOOLEAN\n            }\n        }\n\n        nestedTypeVal NestedType ::= { choiceField one:4 }\n    "
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod test_module {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum NestedTypeChoiceField {
+        one(Integer),
+        two(bool),
+    }
+    impl From<Integer> for NestedTypeChoiceField {
+        fn from(value: Integer) -> Self {
+            Self::one(value)
+        }
+    }
+    impl From<bool> for NestedTypeChoiceField {
+        fn from(value: bool) -> Self {
+            Self::two(value)
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct NestedType {
+        #[rasn(identifier = "choiceField")]
+        pub choice_field: NestedTypeChoiceField,
+    }
+    impl NestedType {
+        pub fn new(choice_field: NestedTypeChoiceField) -> Self {
+            Self { choice_field }
+        }
+    }
+    pub static NESTED_TYPE_VAL: LazyLock<NestedType> =
+        LazyLock::new(|| NestedType::new(NestedTypeChoiceField::one(Integer::from(4))));
+}

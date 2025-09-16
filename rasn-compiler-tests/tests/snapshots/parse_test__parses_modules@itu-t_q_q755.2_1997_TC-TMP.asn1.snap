@@ -1,0 +1,125 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q755.2_1997_TC-TMP.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod tc_tmp {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct ActionInfo {
+        pub service: ServiceType,
+        #[rasn(
+            default = "action_info_dialogue_reference_default",
+            identifier = "dialogueReference"
+        )]
+        pub dialogue_reference: DialogueReference,
+        #[rasn(identifier = "to-be-echoed")]
+        pub to_be_echoed: Option<UserData>,
+    }
+    impl ActionInfo {
+        pub fn new(
+            service: ServiceType,
+            dialogue_reference: DialogueReference,
+            to_be_echoed: Option<UserData>,
+        ) -> Self {
+            Self {
+                service,
+                dialogue_reference,
+                to_be_echoed,
+            }
+        }
+    }
+    fn action_info_dialogue_reference_default() -> DialogueReference {
+        DialogueReference::unspecified(())
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=30"))]
+    pub struct CommandSequence(pub SequenceOf<TestCommand>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum DialogueReference {
+        unspecified(()),
+        #[rasn(value("0..=255"))]
+        dialogue(u8),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum ServiceType {
+        v1988uniReq = 10,
+        v1993uniReq = 11,
+        v1988beginReq = 12,
+        v1993beginReq = 13,
+        continueReq = 14,
+        basicEndReq = 15,
+        localEndReq = 16,
+        uAbortReq = 17,
+        class1invokeReq = 21,
+        class2invokeReq = 22,
+        class3invokeReq = 23,
+        class4invokeReq = 24,
+        linkedInvokeReq = 25,
+        resultNlReq = 26,
+        resultLReq = 27,
+        uErrorReq = 28,
+        uCancelReq = 29,
+        uRejectReq = 30,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "TMP-PDU")]
+    pub enum TMPPDU {
+        #[rasn(tag(context, 0))]
+        testInit(TestInit),
+        #[rasn(tag(context, 1))]
+        testContinue(CommandSequence),
+        #[rasn(tag(context, 2))]
+        testDataEcho(UserData),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum TestCommand {
+        #[rasn(tag(context, 0))]
+        wait(DialogueReference),
+        #[rasn(tag(context, 1))]
+        action(ActionInfo),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct TestInit {
+        #[rasn(value("1..=127"))]
+        pub timeout: Option<u8>,
+        pub commands: CommandSequence,
+    }
+    impl TestInit {
+        pub fn new(timeout: Option<u8>, commands: CommandSequence) -> Self {
+            Self { timeout, commands }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum UserData {
+        #[rasn(size("0..=2048"))]
+        simple(OctetString),
+        #[rasn(tag(context, 0))]
+        complex(Any),
+    }
+    pub static MAX_NB_OF_COMMANDS: LazyLock<Integer> = LazyLock::new(|| Integer::from(30));
+    pub static MAX_USER_DATA_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(2048));
+    #[doc = " abstract syntax name for TMP-PDUs"]
+    pub static TMP_PDUS_AS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&[0u32, 0u32], &***Q, &[755u32, 4u32, 1u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+}

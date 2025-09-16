@@ -1,0 +1,232 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_g_g774.8_2001_SDHRadioProtASN1.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod sdhradio_prot_asn1 {
+    extern crate alloc;
+    use super::asn1_defined_types_module::NameType;
+    use super::cmip_1::RelativeDistinguishedName;
+    use super::sdhprot_asn1::{
+        InvokeExerciseArg, ProtectionEntity, RequestSource, ResourcePointer,
+    };
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum AssociatedChannel {
+        #[rasn(tag(context, 0))]
+        itself(()),
+        #[rasn(tag(context, 1))]
+        fromPU(RelativeDistinguishedName),
+        #[rasn(tag(context, 2))]
+        toPU(RelativeDistinguishedName),
+    }
+    #[doc = " supporting productions"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct Boolean(pub bool);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ChannelASRequest {
+        noOne = 0,
+        waitToRestore = 1,
+        earlyWarning = 2,
+        lowBER = 3,
+        highBER = 4,
+        signalFail = 5,
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousChannelStatus {
+        #[rasn(identifier = "protUnitId")]
+        pub prot_unit_id: RelativeDistinguishedName,
+        #[rasn(identifier = "protUnitStatus")]
+        pub prot_unit_status: ProtUnitStatus,
+    }
+    impl AnonymousChannelStatus {
+        pub fn new(
+            prot_unit_id: RelativeDistinguishedName,
+            prot_unit_status: ProtUnitStatus,
+        ) -> Self {
+            Self {
+                prot_unit_id,
+                prot_unit_status,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ChannelStatus(pub SetOf<AnonymousChannelStatus>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Integer(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct InvokeRadioExerciseArg(pub InvokeExerciseArg);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousInvokeRadioExerciseReply {
+        #[rasn(identifier = "exercisedPU")]
+        pub exercised_pu: RelativeDistinguishedName,
+        #[rasn(identifier = "exerciseResult")]
+        pub exercise_result: SequenceOf<SingleExerciseResult>,
+    }
+    impl AnonymousInvokeRadioExerciseReply {
+        pub fn new(
+            exercised_pu: RelativeDistinguishedName,
+            exercise_result: SequenceOf<SingleExerciseResult>,
+        ) -> Self {
+            Self {
+                exercised_pu,
+                exercise_result,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct InvokeRadioExerciseReply(pub SetOf<AnonymousInvokeRadioExerciseReply>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum Privileged {
+        #[rasn(tag(context, 0))]
+        noBridge(()),
+        #[rasn(tag(context, 1))]
+        privilegedUnit(RelativeDistinguishedName),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ProtUnitStatus {
+        #[rasn(identifier = "channelASRequest")]
+        pub channel_asrequest: ChannelASRequest,
+        #[rasn(identifier = "radioSwitchStatus")]
+        pub radio_switch_status: RadioSwitchStatus,
+    }
+    impl ProtUnitStatus {
+        pub fn new(
+            channel_asrequest: ChannelASRequest,
+            radio_switch_status: RadioSwitchStatus,
+        ) -> Self {
+            Self {
+                channel_asrequest,
+                radio_switch_status,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ProtectingSectionStatus {
+        #[rasn(tag(context, 0))]
+        extraTraffic(()),
+        #[rasn(tag(context, 1))]
+        protectedUnit(RelativeDistinguishedName),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct RPSSummaryStatus {
+        #[rasn(identifier = "statusOfRxProtectionSwitches")]
+        pub status_of_rx_protection_switches: StatusOfRxProtectionSwitches,
+        #[rasn(identifier = "channelStatus")]
+        pub channel_status: ChannelStatus,
+    }
+    impl RPSSummaryStatus {
+        pub fn new(
+            status_of_rx_protection_switches: StatusOfRxProtectionSwitches,
+            channel_status: ChannelStatus,
+        ) -> Self {
+            Self {
+                status_of_rx_protection_switches,
+                channel_status,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct RadioProtectionStatus {
+        #[rasn(tag(context, 0), identifier = "protectionUnitStatus")]
+        pub protection_unit_status: ProtUnitStatus,
+        #[rasn(tag(context, 1), identifier = "associatedChannel")]
+        pub associated_channel: AssociatedChannel,
+        #[rasn(tag(context, 2), identifier = "requestSource")]
+        pub request_source: Option<RequestSource>,
+    }
+    impl RadioProtectionStatus {
+        pub fn new(
+            protection_unit_status: ProtUnitStatus,
+            associated_channel: AssociatedChannel,
+            request_source: Option<RequestSource>,
+        ) -> Self {
+            Self {
+                protection_unit_status,
+                associated_channel,
+                request_source,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RadioProtectionStatusParameter(pub RPSSummaryStatus);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum RadioSwitchStatus {
+        noRequest = 0,
+        manualSwitch = 1,
+        forcedSwitch = 2,
+        lockout = 3,
+        hwForcing = 4,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum Result {
+        success = 0,
+        denied = 1,
+        failed = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SDHRadioResourcePointer(pub ResourcePointer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SingleExerciseResult {
+        #[rasn(identifier = "protectionUnit")]
+        pub protection_unit: RelativeDistinguishedName,
+        pub result: Result,
+    }
+    impl SingleExerciseResult {
+        pub fn new(protection_unit: RelativeDistinguishedName, result: Result) -> Self {
+            Self {
+                protection_unit,
+                result,
+            }
+        }
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousStatusOfRxProtectionSwitches {
+        #[rasn(identifier = "protectingSectionId")]
+        pub protecting_section_id: RelativeDistinguishedName,
+        #[rasn(identifier = "protectingSectionStatus")]
+        pub protecting_section_status: ProtectingSectionStatus,
+    }
+    impl AnonymousStatusOfRxProtectionSwitches {
+        pub fn new(
+            protecting_section_id: RelativeDistinguishedName,
+            protecting_section_status: ProtectingSectionStatus,
+        ) -> Self {
+            Self {
+                protecting_section_id,
+                protecting_section_status,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct StatusOfRxProtectionSwitches(pub SetOf<AnonymousStatusOfRxProtectionSwitches>);
+}

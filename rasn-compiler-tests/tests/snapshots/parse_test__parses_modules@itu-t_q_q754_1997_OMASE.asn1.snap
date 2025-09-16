@@ -1,0 +1,356 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q754_1997_OMASE.asn1
+---
+Warnings:
+NotYetInplemented in ASN grammar: Linking object set fields is not yet supported!
+NotYetInplemented in ASN grammar: Linking object set fields is not yet supported!
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod omase {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AccessControl(pub Any);
+    #[doc = " The following gives the supporting type definitions:"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ActionArgument {
+        #[rasn(tag(explicit(context, 5)), identifier = "accessControl")]
+        pub access_control: Option<AccessControl>,
+        #[rasn(tag(context, 12), identifier = "actionInfo")]
+        pub action_info: ActionInfo,
+        #[rasn(identifier = "baseManagedObjectClass")]
+        pub base_managed_object_class: ObjectClass,
+        #[rasn(identifier = "baseManagedObjectInstance")]
+        pub base_managed_object_instance: ObjectInstance,
+    }
+    impl ActionArgument {
+        pub fn new(
+            access_control: Option<AccessControl>,
+            action_info: ActionInfo,
+            base_managed_object_class: ObjectClass,
+            base_managed_object_instance: ObjectInstance,
+        ) -> Self {
+            Self {
+                access_control,
+                action_info,
+                base_managed_object_class,
+                base_managed_object_instance,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ActionInfo {
+        #[rasn(tag(context, 3), identifier = "actionType")]
+        pub action_type: Integer,
+        #[rasn(tag(explicit(context, 4)), identifier = "actionInfoArg")]
+        pub action_info_arg: Option<Any>,
+    }
+    impl ActionInfo {
+        pub fn new(action_type: Integer, action_info_arg: Option<Any>) -> Self {
+            Self {
+                action_type,
+                action_info_arg,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ActionReply {
+        #[rasn(tag(context, 3), identifier = "actionType")]
+        pub action_type: Integer,
+        #[rasn(tag(explicit(context, 4)), identifier = "actionReplyInfo")]
+        pub action_reply_info: Any,
+    }
+    impl ActionReply {
+        pub fn new(action_type: Integer, action_reply_info: Any) -> Self {
+            Self {
+                action_type,
+                action_reply_info,
+            }
+        }
+    }
+    #[doc = " dynamically extensible"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ActionResult {
+        #[rasn(identifier = "managedObjectClass")]
+        pub managed_object_class: Option<ObjectClass>,
+        #[rasn(identifier = "managedObjectInstance")]
+        pub managed_object_instance: Option<ObjectInstance>,
+        #[rasn(tag(context, 5), identifier = "currentTime")]
+        pub current_time: Option<GeneralizedTime>,
+        #[rasn(tag(context, 6), identifier = "actionReply")]
+        pub action_reply: Option<ActionReply>,
+    }
+    impl ActionResult {
+        pub fn new(
+            managed_object_class: Option<ObjectClass>,
+            managed_object_instance: Option<ObjectInstance>,
+            current_time: Option<GeneralizedTime>,
+            action_reply: Option<ActionReply>,
+        ) -> Self {
+            Self {
+                managed_object_class,
+                managed_object_instance,
+                current_time,
+                action_reply,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum ActionTypeId {
+        #[rasn(tag(context, 3))]
+        localForm(Integer),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct BaseManagedObjectId {
+        #[rasn(identifier = "baseManagedObjectClass")]
+        pub base_managed_object_class: ObjectClass,
+        #[rasn(identifier = "baseManagedObjectInstance")]
+        pub base_managed_object_instance: ObjectInstance,
+    }
+    impl BaseManagedObjectId {
+        pub fn new(
+            base_managed_object_class: ObjectClass,
+            base_managed_object_instance: ObjectInstance,
+        ) -> Self {
+            Self {
+                base_managed_object_class,
+                base_managed_object_instance,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum Code {
+        localValue(Integer),
+        globalValue(ObjectIdentifier),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CopyData(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=255"))]
+    pub struct CurrentRouteIndicator(pub u8);
+    #[doc = " TC timer = T1 for MRVT, = T2 for SRVT, Class = 1"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CurrentRouteIndicatorList(pub SequenceOf<CurrentRouteIndicator>);
+    #[doc = " TC Timer = 0, Class = 4"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=255"))]
+    pub struct ErrorTag(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct EventReportArgument {
+        #[rasn(identifier = "managedObjectClass")]
+        pub managed_object_class: ObjectClass,
+        #[rasn(identifier = "managedObjectInstance")]
+        pub managed_object_instance: ObjectInstance,
+        #[rasn(tag(context, 5), identifier = "eventTime")]
+        pub event_time: Option<GeneralizedTime>,
+        #[rasn(tag(context, 7), identifier = "eventType")]
+        pub event_type: Integer,
+        #[rasn(tag(explicit(context, 8)), identifier = "eventInfo")]
+        pub event_info: Option<Any>,
+    }
+    impl EventReportArgument {
+        pub fn new(
+            managed_object_class: ObjectClass,
+            managed_object_instance: ObjectInstance,
+            event_time: Option<GeneralizedTime>,
+            event_type: Integer,
+            event_info: Option<Any>,
+        ) -> Self {
+            Self {
+                managed_object_class,
+                managed_object_instance,
+                event_time,
+                event_type,
+                event_info,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum EventTypeId {
+        #[rasn(tag(context, 7))]
+        localForm(Integer),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct FailureString(pub FixedBitString<32usize>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=1"))]
+    pub struct FormIndicator(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct GlobalTitle(pub OctetString);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct InvalidArgumentValueEventValue {
+        #[rasn(tag(context, 7), identifier = "eventType")]
+        pub event_type: Integer,
+        #[rasn(tag(context, 8), identifier = "eventInfo")]
+        pub event_info: Option<Any>,
+    }
+    impl InvalidArgumentValueEventValue {
+        pub fn new(event_type: Integer, event_info: Option<Any>) -> Self {
+            Self {
+                event_type,
+                event_info,
+            }
+        }
+    }
+    #[doc = " AccessControl syntax is to be compatible with that defined in CMIP coded X.209"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum InvalidArgumentValue {
+        #[rasn(tag(context, 0))]
+        actionValue(ActionInfo),
+        #[rasn(tag(context, 1))]
+        eventValue(InvalidArgumentValueEventValue),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct NoSuchAction {
+        #[rasn(identifier = "managedObjectClass")]
+        pub managed_object_class: ObjectClass,
+        #[rasn(identifier = "actionType")]
+        pub action_type: ActionTypeId,
+    }
+    impl NoSuchAction {
+        pub fn new(managed_object_class: ObjectClass, action_type: ActionTypeId) -> Self {
+            Self {
+                managed_object_class,
+                action_type,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct NoSuchArgumentActionId {
+        #[rasn(identifier = "managedObjectClass")]
+        pub managed_object_class: Option<ObjectClass>,
+        #[rasn(identifier = "actionType")]
+        pub action_type: ActionTypeId,
+    }
+    impl NoSuchArgumentActionId {
+        pub fn new(managed_object_class: Option<ObjectClass>, action_type: ActionTypeId) -> Self {
+            Self {
+                managed_object_class,
+                action_type,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct NoSuchArgumentEventId {
+        #[rasn(identifier = "managedObjectClass")]
+        pub managed_object_class: Option<ObjectClass>,
+        #[rasn(identifier = "eventTypeId")]
+        pub event_type_id: EventTypeId,
+    }
+    impl NoSuchArgumentEventId {
+        pub fn new(managed_object_class: Option<ObjectClass>, event_type_id: EventTypeId) -> Self {
+            Self {
+                managed_object_class,
+                event_type_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum NoSuchArgument {
+        #[rasn(tag(context, 0))]
+        actionId(NoSuchArgumentActionId),
+        #[rasn(tag(context, 1))]
+        eventId(NoSuchArgumentEventId),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum ObjectClass {
+        #[rasn(tag(context, 0))]
+        globalForm(ObjectIdentifier),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum ObjectInstance {
+        #[rasn(tag(context, 3))]
+        nonSpecificForm(OctetString),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PointCode(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PointCodeList(pub SequenceOf<PointCode>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=255"))]
+    pub struct Priority(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ProcessingFailure {
+        #[rasn(identifier = "managedObjectClass")]
+        pub managed_object_class: Option<ObjectClass>,
+        #[rasn(identifier = "managedObjectInstance")]
+        pub managed_object_instance: Option<ObjectInstance>,
+        #[rasn(tag(context, 5), identifier = "specificErrorInfo")]
+        pub specific_error_info: SpecificErrorInfo,
+    }
+    impl ProcessingFailure {
+        pub fn new(
+            managed_object_class: Option<ObjectClass>,
+            managed_object_instance: Option<ObjectInstance>,
+            specific_error_info: SpecificErrorInfo,
+        ) -> Self {
+            Self {
+                managed_object_class,
+                managed_object_instance,
+                specific_error_info,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RoutePriorityList(pub SequenceOf<Priority>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SpecificError(pub Integer);
+    #[doc = " defined by object class"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SpecificErrorInfo {
+        #[rasn(tag(context, 0), identifier = "errorType")]
+        pub error_type: Integer,
+        #[rasn(tag(explicit(context, 1)), identifier = "errorParm")]
+        pub error_parm: Option<Any>,
+    }
+    impl SpecificErrorInfo {
+        pub fn new(error_type: Integer, error_parm: Option<Any>) -> Self {
+            Self {
+                error_type,
+                error_parm,
+            }
+        }
+    }
+    #[doc = " the GlobalTitle here consists of the SCCP GTI + GT, the GTI should be encoded exactly as in"]
+    #[doc = " 3.4.1/Q.713, and the GT as in 3.4.2.1 to 3.4.2.4/Q.713 as appropriate."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SubsystemNumber(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Timer(pub Integer);
+}

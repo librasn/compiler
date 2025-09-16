@@ -1,0 +1,91 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x519_1997-TC2_DirectoryInformationShadowProtocol.asn1
+---
+Warnings:
+LinkerError in ASN grammar: Failed to resolve supertype Bind of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype ROS of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve reference in object set.
+LinkerError in ASN grammar: Failed to resolve supertype ROS of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve reference in object set.
+LinkerError in ASN grammar: Failed to link value with 'Code'
+LinkerError in ASN grammar: Failed to link value with 'Code'
+LinkerError in ASN grammar: Failed to link value with 'Code'
+LinkerError in ASN grammar: Failed to link value with 'Code'
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod directory_information_shadow_protocol {
+    extern crate alloc;
+    use super::directory_shadow_abstract_service::{
+        COORDINATE_SHADOW_UPDATE, D_SASHADOW_BIND, D_SASHADOW_UNBIND, REQUEST_SHADOW_UPDATE,
+        UPDATE_SHADOW,
+    };
+    use super::protocol_object_identifiers::{
+        ID_AC_RELIABLE_SHADOW_CONSUMER_INITIATED_AC, ID_AC_RELIABLE_SHADOW_SUPPLIER_INITIATED_AC,
+        ID_AC_SHADOW_CONSUMER_INITIATED_AC, ID_AC_SHADOW_CONSUMER_INITIATED_ASYNCHRONOUS_AC,
+        ID_AC_SHADOW_SUPPLIER_INITIATED_AC, ID_AC_SHADOW_SUPPLIER_INITIATED_ASYNCHRONOUS_AC,
+        ID_AS_DIRECTORY_RELIABLE_SHADOW_AS, ID_AS_DIRECTORY_SHADOW_AS,
+        ID_AS_RELIABLE_SHADOW_BINDING_AS, ID_CONTRACT_SHADOW_CONSUMER, ID_CONTRACT_SHADOW_SUPPLIER,
+        ID_PACKAGE_DISP_CONNECTION, ID_PACKAGE_SHADOW_CONSUMER, ID_PACKAGE_SHADOW_SUPPLIER,
+        ID_ROS_OBJECT_INITIATING_CONSUMER_DSA, ID_ROS_OBJECT_INITIATING_SUPPLIER_DSA,
+        ID_ROS_OBJECT_RESPONDING_CONSUMER_DSA, ID_ROS_OBJECT_RESPONDING_SUPPLIER_DSA,
+    };
+    use super::reliable_transfer_apdu::RTSEApdus;
+    use super::remote_operations_abstract_syntaxes::ACSE_ABSTRACT_SYNTAX;
+    use super::remote_operations_generic_ros_pdus::*;
+    use super::remote_operations_information_objects::*;
+    use super::remote_operations_information_objects_extensions::*;
+    use super::remote_operations_realizations::{
+        ACSE, ASSOCIATION_BY_RTSE, P_DATA, TRANSFER_BY_RTSE,
+    };
+    use super::useful_definitions::{
+        DIRECTORY_SHADOW_ABSTRACT_SERVICE, PROTOCOL_OBJECT_IDENTIFIERS,
+    };
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "DISP-InvokeIDSet")]
+    pub struct DISPInvokeIDSet(pub InvokeId);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "DISP-PDUs")]
+    pub enum DISPPDUs {
+        #[rasn(value("0.."))]
+        basicROS(ROS),
+        #[rasn(value("0.."))]
+        bind(Bind),
+        #[rasn(value("0.."))]
+        unbind(Unbind),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Reliable-DISP-PDUs")]
+    pub struct ReliableDISPPDUs(pub ROS);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "ReliableShadowBinding-PDUs")]
+    pub enum ReliableShadowBindingPDUs {
+        #[rasn(tag(context, 0))]
+        rTS(RTSEApdus),
+        #[rasn(value("0.."))]
+        bind(Bind),
+        #[rasn(value("0.."))]
+        unbind(Unbind),
+    }
+    #[doc = " remote error codes"]
+    pub static ID_ERRCODE_SHADOW_ERROR: LazyLock<Code> =
+        LazyLock::new(|| Code(Code(Code::local(1))));
+    pub static ID_OPCODE_COORDINATE_SHADOW_UPDATE: LazyLock<Code> =
+        LazyLock::new(|| Code(Code(Code::local(3))));
+    #[doc = "  remote operation codes"]
+    pub static ID_OPCODE_REQUEST_SHADOW_UPDATE: LazyLock<Code> =
+        LazyLock::new(|| Code(Code(Code::local(1))));
+    pub static ID_OPCODE_UPDATE_SHADOW: LazyLock<Code> =
+        LazyLock::new(|| Code(Code(Code::local(2))));
+}

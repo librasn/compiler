@@ -1,0 +1,430 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x1080.1_2018_E-health-common.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod e_health_common {
+    extern crate alloc;
+    use super::cms_telebiometric::*;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "E-setupError")]
+    #[non_exhaustive]
+    pub struct ESetupError {
+        #[rasn(identifier = "sessionType")]
+        pub session_type: SessionType,
+        #[rasn(identifier = "sessionId")]
+        pub session_id: SessionId,
+        pub error: SetupError,
+    }
+    impl ESetupError {
+        pub fn new(session_type: SessionType, session_id: SessionId, error: SetupError) -> Self {
+            Self {
+                session_type,
+                session_id,
+                error,
+            }
+        }
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "INTEGER", value("0.."))]
+    pub struct AnonymousESetupRequestOperations(pub Integer);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct ESetupRequestOperations(pub SetOf<AnonymousESetupRequestOperations>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "E-setupRequest")]
+    #[non_exhaustive]
+    pub struct ESetupRequest {
+        #[rasn(identifier = "sessionType")]
+        pub session_type: SessionType,
+        #[rasn(identifier = "sessionId")]
+        pub session_id: SessionId,
+        #[rasn(tag(context, 0), default = "esetup_request_requirement_default")]
+        pub requirement: Requirements,
+        #[rasn(tag(context, 1), identifier = "voiceOptions")]
+        pub voice_options: Option<VoiceOptions>,
+        #[rasn(tag(context, 2), identifier = "videoOptions")]
+        pub video_options: Option<VideoOptions>,
+        #[rasn(identifier = "returnMode")]
+        pub return_mode: ReturnMode,
+        #[rasn(identifier = "sensorId")]
+        pub sensor_id: Option<Utf8String>,
+        pub operations: ESetupRequestOperations,
+        #[rasn(value("0.."))]
+        pub first: Option<Integer>,
+    }
+    impl ESetupRequest {
+        pub fn new(
+            session_type: SessionType,
+            session_id: SessionId,
+            requirement: Requirements,
+            voice_options: Option<VoiceOptions>,
+            video_options: Option<VideoOptions>,
+            return_mode: ReturnMode,
+            sensor_id: Option<Utf8String>,
+            operations: ESetupRequestOperations,
+            first: Option<Integer>,
+        ) -> Self {
+            Self {
+                session_type,
+                session_id,
+                requirement,
+                voice_options,
+                video_options,
+                return_mode,
+                sensor_id,
+                operations,
+                first,
+            }
+        }
+    }
+    fn esetup_request_requirement_default() -> Requirements {
+        Requirements::none
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "E-setupResponse")]
+    #[non_exhaustive]
+    pub struct ESetupResponse {
+        #[rasn(identifier = "sessionType")]
+        pub session_type: SessionType,
+        #[rasn(identifier = "sessionId")]
+        pub session_id: SessionId,
+    }
+    impl ESetupResponse {
+        pub fn new(session_type: SessionType, session_id: SessionId) -> Self {
+            Self {
+                session_type,
+                session_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "E-terminateError")]
+    #[non_exhaustive]
+    pub struct ETerminateError {
+        #[rasn(identifier = "sessionType")]
+        pub session_type: SessionType,
+        #[rasn(identifier = "sessionId")]
+        pub session_id: SessionId,
+        pub error: TerminateError,
+    }
+    impl ETerminateError {
+        pub fn new(
+            session_type: SessionType,
+            session_id: SessionId,
+            error: TerminateError,
+        ) -> Self {
+            Self {
+                session_type,
+                session_id,
+                error,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "E-terminateRequest")]
+    #[non_exhaustive]
+    pub struct ETerminateRequest {
+        #[rasn(identifier = "sessionType")]
+        pub session_type: SessionType,
+        #[rasn(identifier = "sessionId")]
+        pub session_id: SessionId,
+    }
+    impl ETerminateRequest {
+        pub fn new(session_type: SessionType, session_id: SessionId) -> Self {
+            Self {
+                session_type,
+                session_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "E-terminateResponse")]
+    #[non_exhaustive]
+    pub struct ETerminateResponse {
+        #[rasn(identifier = "sessionType")]
+        pub session_type: SessionType,
+        #[rasn(identifier = "sessionId")]
+        pub session_id: SessionId,
+    }
+    impl ETerminateResponse {
+        pub fn new(session_type: SessionType, session_id: SessionId) -> Self {
+            Self {
+                session_type,
+                session_id,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct ErrorContentContent {
+        #[rasn(value("0.."), identifier = "invokId")]
+        pub invok_id: Option<Integer>,
+        #[rasn(identifier = "sessionType")]
+        pub session_type: SessionType,
+        #[rasn(value("0.."), identifier = "sessionId")]
+        pub session_id: Integer,
+        pub error: Any,
+    }
+    impl ErrorContentContent {
+        pub fn new(
+            invok_id: Option<Integer>,
+            session_type: SessionType,
+            session_id: Integer,
+            error: Any,
+        ) -> Self {
+            Self {
+                invok_id,
+                session_type,
+                session_id,
+                error,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct ErrorContent {
+        #[rasn(identifier = "contentType")]
+        pub content_type: Any,
+        pub content: ErrorContentContent,
+    }
+    impl ErrorContent {
+        pub fn new(content_type: Any, content: ErrorContentContent) -> Self {
+            Self {
+                content_type,
+                content,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum ExchangeMode {
+        sync = 0,
+        #[rasn(identifier = "async")]
+        R_async = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("1.."))]
+    pub struct InvokeId(pub Integer);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct RequestContentContent {
+        #[rasn(value("0.."), identifier = "invokId")]
+        pub invok_id: Option<Integer>,
+        #[rasn(identifier = "sessionType")]
+        pub session_type: SessionType,
+        #[rasn(value("0.."), identifier = "sessionId")]
+        pub session_id: Integer,
+        #[rasn(
+            tag(context, 0),
+            default = "request_content_content_requirement_default"
+        )]
+        pub requirement: Requirements,
+        #[rasn(tag(context, 1), identifier = "voice-options")]
+        pub voice_options: Option<Any>,
+        #[rasn(tag(context, 2), identifier = "video-options")]
+        pub video_options: Option<Any>,
+        #[rasn(tag(context, 3))]
+        pub request: Any,
+        #[rasn(
+            tag(context, 4),
+            default = "request_content_content_exchange_mode_default",
+            identifier = "exchangeMode"
+        )]
+        pub exchange_mode: ExchangeMode,
+    }
+    impl RequestContentContent {
+        pub fn new(
+            invok_id: Option<Integer>,
+            session_type: SessionType,
+            session_id: Integer,
+            requirement: Requirements,
+            voice_options: Option<Any>,
+            video_options: Option<Any>,
+            request: Any,
+            exchange_mode: ExchangeMode,
+        ) -> Self {
+            Self {
+                invok_id,
+                session_type,
+                session_id,
+                requirement,
+                voice_options,
+                video_options,
+                request,
+                exchange_mode,
+            }
+        }
+    }
+    fn request_content_content_requirement_default() -> Requirements {
+        Requirements::none
+    }
+    fn request_content_content_exchange_mode_default() -> ExchangeMode {
+        ExchangeMode::sync
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct RequestContent {
+        #[rasn(identifier = "contentType")]
+        pub content_type: Any,
+        pub content: RequestContentContent,
+    }
+    impl RequestContent {
+        pub fn new(content_type: Any, content: RequestContentContent) -> Self {
+            Self {
+                content_type,
+                content,
+            }
+        }
+    }
+    #[doc = " used by other modules"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum Requirements {
+        none = 0,
+        #[rasn(identifier = "with-2-way-voice")]
+        with_2_way_voice = 1,
+        #[rasn(identifier = "with-reverse-video-and-2-way-voice")]
+        with_reverse_video_and_2_way_voice = 2,
+        #[rasn(identifier = "with-2-way-video-and-voice")]
+        with_2_way_video_and_voice = 3,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct ResponseContentContent {
+        #[rasn(value("0.."), identifier = "invokId")]
+        pub invok_id: Option<Integer>,
+        #[rasn(identifier = "sessionType")]
+        pub session_type: SessionType,
+        #[rasn(value("0.."), identifier = "sessionId")]
+        pub session_id: Integer,
+        pub response: Any,
+    }
+    impl ResponseContentContent {
+        pub fn new(
+            invok_id: Option<Integer>,
+            session_type: SessionType,
+            session_id: Integer,
+            response: Any,
+        ) -> Self {
+            Self {
+                invok_id,
+                session_type,
+                session_id,
+                response,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct ResponseContent {
+        #[rasn(identifier = "contentType")]
+        pub content_type: Any,
+        pub content: ResponseContentContent,
+    }
+    impl ResponseContent {
+        pub fn new(content_type: Any, content: ResponseContentContent) -> Self {
+            Self {
+                content_type,
+                content,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum ReturnMode {
+        continuous = 0,
+        batch = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("1..=32767"))]
+    pub struct SessionId(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SessionType(pub ObjectIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum SetupError {
+        setupNotAllowed = 0,
+        facilityTemporarilyUnavailable = 1,
+        facilityPermanentlyUnavailable = 2,
+        unknownSessionType = 3,
+        sessionTypeNotSupported = 4,
+        batchModeNotSupported = 5,
+        continuousReturnNotSupported = 6,
+        sensorTemporarilyUnavailable = 7,
+        sensorPermanentlyUnavailable = 8,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum TerminateError {
+        terminationNotAllowed = 0,
+        invalidSessionType = 1,
+        invalidSessionId = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct VideoOptions(pub ObjectIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct VoiceOptions(pub ObjectIdentifier);
+    pub static ID_HEALTH_SETUP_ERR: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_X1080_1_CMS_CONTENT, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " CMS content types"]
+    pub static ID_HEALTH_SETUP_REQ: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_X1080_1_CMS_CONTENT, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_HEALTH_SETUP_RSP: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_X1080_1_CMS_CONTENT, &[2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_HEALTH_TERM_ERR: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_X1080_1_CMS_CONTENT, &[6u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_HEALTH_TERM_REQ: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_X1080_1_CMS_CONTENT, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_HEALTH_TERM_RSP: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_X1080_1_CMS_CONTENT, &[5u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " Object identifier allocation:"]
+    pub static ID_X1080_1: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 42u32, 0u32, 1u32]).to_owned());
+    pub static ID_X1080_1_CMS_CONTENT: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_X1080_1, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+}

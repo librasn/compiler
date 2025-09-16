@@ -1,0 +1,33 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_h_h245_2006v13_MULTIMEDIA-SYSTEM-CONTROL.asn1
+---
+Error matching ASN syntax at while parsing:
+     ╭─[line 713, column 2]
+     │
+     │ 
+ 713 │  H263VideoCapability ::= SEQUENCE { ◀▪▪▪▪▪▪▪▪▪▪ FAILED AT THIS LINE
+ 714 │    sqcifMPI  units 1/29.97 Hz
+ 715 │    cifMPI                             INTEGER(1..32) OPTIONAL, -- units 1/29.97 Hz
+ 716 │    cif4MPI                            INTEGER(1..32) OPTIONAL, -- units 1/29.97 Hz
+ 717 │    cif16MPI                           INTEGER(1..32) OPTIONAL, -- units 1/29.97 Hz
+ 718 │    maxBitRate                         INTEGER(1..192400), -- units 100 bit/s
+ 719 │    unrestrictedVector                 BOOLEAN,
+ 720 │    arithmeticCoding                   BOOLEAN,
+ 721 │    advancedPrediction                 BOOLEAN,
+ 722 │    pbFrames                           BOOLEAN,
+ 723 │    temporalSpatialTradeOffCapability  BOOLEAN,
+ 724 │    hrd-B                              INTEGER(0..524287) OPTIONAL, -- units 128 bits
+ 725 │    bppMaxKb                           INTEGER(0..65535) OPTIONAL, -- units 1024 bits
+ 726 │    ...,
+ 727 │    slowSqcifMPI                       INTEGER(1..3600) OPTIONAL, --  units seconds/frame
+ 728 │    slowQcifMPI                        INTEGER(1..3600) OPTIONAL, -- units seconds/frame
+ 729 │    slowCifMPI                         INTEGER(1..3600) OPTIONAL, -- units seconds/frame
+ 730 │    slowCif4MPI                        INTEGER(1..3600) OPTIONAL, -- units seconds/frame
+ 731 │    slowCif16MPI                       INTEGER(1..3600) OPTIONAL, -- units seconds/frame
+ 732 │    errorCompensation                  BOOLEAN,
+ 733 │    enhancementLayerInfo               EnhancementLayerInfo OPTIONAL,
+ 734 │    h263Options                        H263Options OPTIONAL
+ 735 │  }
+     │
+─────╯

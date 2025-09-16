@@ -1,0 +1,54 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x740_1992_SecurityAuditTrail-ASN1Module.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod security_audit_trail_asn1_module {
+    extern crate alloc;
+    use super::attribute_asn1_module::{
+        AdditionalInformation, AdditionalText, CorrelatedNotifications, NotificationIdentifier,
+    };
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SecurityAuditInfo {
+        #[rasn(identifier = "serviceReportCause")]
+        pub service_report_cause: Option<ServiceReportCause>,
+        #[rasn(identifier = "notificationIdentifier")]
+        pub notification_identifier: Option<NotificationIdentifier>,
+        #[rasn(tag(context, 1), identifier = "correlatedNotifications")]
+        pub correlated_notifications: Option<CorrelatedNotifications>,
+        #[rasn(identifier = "additionalText")]
+        pub additional_text: Option<AdditionalText>,
+        #[rasn(tag(context, 2), identifier = "additionalInformation")]
+        pub additional_information: Option<AdditionalInformation>,
+    }
+    impl SecurityAuditInfo {
+        pub fn new(
+            service_report_cause: Option<ServiceReportCause>,
+            notification_identifier: Option<NotificationIdentifier>,
+            correlated_notifications: Option<CorrelatedNotifications>,
+            additional_text: Option<AdditionalText>,
+            additional_information: Option<AdditionalInformation>,
+        ) -> Self {
+            Self {
+                service_report_cause,
+                notification_identifier,
+                correlated_notifications,
+                additional_text,
+                additional_information,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ServiceReportCause(pub ObjectIdentifier);
+}

@@ -1,0 +1,4005 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/iso_8571-4_1988_ISO8571-FTAM.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod iso8571_ftam {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " The exact definition and values used for AP-title"]
+    #[doc = " should be chosen taking into account the ongoing"]
+    #[doc = " work in areas of naming, the Directory, and the"]
+    #[doc = " Registration Authority procedures for AE titles,"]
+    #[doc = " AE titles, and AE qualifiers"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "AE-qualifier")]
+    pub struct AEQualifier(pub Any);
+    #[doc = " The exact definition and values used for AE-qualifier"]
+    #[doc = " should be chosen taking into account the ongoing"]
+    #[doc = " work in areas of naming, the Directory, and the"]
+    #[doc = " Registration Authority procedures for AE titles,"]
+    #[doc = " AE titles, and AE qualifiers"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "AE-title")]
+    pub struct AETitle {
+        pub ap: APTitle,
+        pub ae: AEQualifier,
+    }
+    impl AETitle {
+        pub fn new(ap: APTitle, ae: AEQualifier) -> Self {
+            Self { ap, ae }
+        }
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "CHOICE")]
+    pub enum AnonymousANDSet {
+        #[rasn(tag(context, 0), identifier = "pathname-Pattern")]
+        pathname_Pattern(PathnamePattern),
+        #[rasn(tag(context, 18), identifier = "object-type-Pattern")]
+        object_type_Pattern(IntegerPattern),
+        #[rasn(tag(context, 1), identifier = "permitted-actions-Pattern")]
+        permitted_actions_Pattern(BitstringPattern),
+        #[rasn(tag(context, 2), identifier = "contents-type-Pattern")]
+        contents_type_Pattern(ContentsTypePattern),
+        #[rasn(tag(context, 19), identifier = "linked-Object-Pattern")]
+        linked_Object_Pattern(PathnamePattern),
+        #[rasn(tag(context, 23), identifier = "child-objects-Pattern")]
+        child_objects_Pattern(PathnamePattern),
+        #[rasn(tag(context, 20), identifier = "primaty-pathname-Pattern")]
+        primaty_pathname_Pattern(PathnamePattern),
+        #[rasn(tag(context, 3), identifier = "storage-account-Pattern")]
+        storage_account_Pattern(StringPattern),
+        #[rasn(tag(context, 4), identifier = "date-and-time-of-creation-Pattern")]
+        date_and_time_of_creation_Pattern(DateAndTimePattern),
+        #[rasn(
+            tag(context, 5),
+            identifier = "date-and-time-of-last-modification-Pattern"
+        )]
+        date_and_time_of_last_modification_Pattern(DateAndTimePattern),
+        #[rasn(
+            tag(context, 6),
+            identifier = "date-and-time-of-last-read-access-Pattern"
+        )]
+        date_and_time_of_last_read_access_Pattern(DateAndTimePattern),
+        #[rasn(
+            tag(context, 7),
+            identifier = "date-and-time-of-last-attribute-modification-Pattern"
+        )]
+        date_and_time_of_last_attribute_modification_Pattern(DateAndTimePattern),
+        #[rasn(tag(context, 8), identifier = "identity-of-creator-Pattern")]
+        identity_of_creator_Pattern(UserIdentityPattern),
+        #[rasn(tag(context, 9), identifier = "identity-of-last-modifier-Pattern")]
+        identity_of_last_modifier_Pattern(UserIdentityPattern),
+        #[rasn(tag(context, 10), identifier = "identity-of-last-reader-Pattern")]
+        identity_of_last_reader_Pattern(UserIdentityPattern),
+        #[rasn(
+            tag(context, 11),
+            identifier = "identity-of-last-attribute-modifier-Pattern"
+        )]
+        identity_of_last_attribute_modifier_Pattern(UserIdentityPattern),
+        #[rasn(tag(context, 12), identifier = "object-availabiiity-Pattern")]
+        object_availabiiity_Pattern(BooleanPattern),
+        #[rasn(tag(context, 13), identifier = "object-size-Pattern")]
+        object_size_Pattern(IntegerPattern),
+        #[rasn(tag(context, 14), identifier = "future-object-size-Pattern")]
+        future_object_size_Pattern(IntegerPattern),
+        #[rasn(tag(context, 16), identifier = "legal-quailfication-Pattern")]
+        legal_quailfication_Pattern(StringPattern),
+        #[rasn(tag(context, 22), identifier = "attribute-extensions-pattern")]
+        attribute_extensions_pattern(AttributeExtensionsPattern),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "AND-Set")]
+    pub struct ANDSet(pub SequenceOf<AnonymousANDSet>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "AP-title")]
+    pub struct APTitle(pub Any);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, tag(application, 0), identifier = "Abstract-Syntax-Name")]
+    pub struct AbstractSyntaxName(pub ObjectIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 1), identifier = "Access-Context")]
+    pub struct AccessContext {
+        #[rasn(tag(context, 0), identifier = "access-context")]
+        pub access_context: Integer,
+        #[rasn(tag(context, 1), identifier = "level-number")]
+        pub level_number: Option<Integer>,
+    }
+    impl AccessContext {
+        pub fn new(access_context: Integer, level_number: Option<Integer>) -> Self {
+            Self {
+                access_context,
+                level_number,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "Access-Control-Attribute")]
+    pub enum AccessControlAttribute {
+        #[rasn(tag(context, 0), identifier = "no-value-available")]
+        no_value_available(()),
+        #[rasn(tag(context, 1), identifier = "actual-values")]
+        actual_values(SetOf<AccessControlElement>),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AccessControlChangeAttributeActualValues {
+        #[rasn(tag(context, 0), identifier = "insert-values")]
+        pub insert_values: Option<SetOf<AccessControlElement>>,
+        #[rasn(tag(context, 1), identifier = "delete-values")]
+        pub delete_values: Option<SetOf<AccessControlElement>>,
+    }
+    impl AccessControlChangeAttributeActualValues {
+        pub fn new(
+            insert_values: Option<SetOf<AccessControlElement>>,
+            delete_values: Option<SetOf<AccessControlElement>>,
+        ) -> Self {
+            Self {
+                insert_values,
+                delete_values,
+            }
+        }
+    }
+    #[doc = " The semantics of this attribute is described in ISO 8571-2."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "Access-Control-Change-Attribute")]
+    pub enum AccessControlChangeAttribute {
+        #[rasn(tag(context, 0), identifier = "no-value-available")]
+        no_value_available(()),
+        #[rasn(tag(context, 1), identifier = "actual-values")]
+        actual_values(AccessControlChangeAttributeActualValues),
+    }
+    #[doc = " This field is used by the Change attribute action to indicate"]
+    #[doc = " old values to be removed from the access control Object"]
+    #[doc = " attribute."]
+    #[doc = " The semantics of this attribute is described in ISO 8571-2."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Access-Control-Element")]
+    pub struct AccessControlElement {
+        #[rasn(tag(context, 0), identifier = "action-list")]
+        pub action_list: AccessRequest,
+        #[rasn(tag(context, 1), identifier = "concurrency-access")]
+        pub concurrency_access: Option<ConcurrencyAccess>,
+        #[rasn(tag(context, 2))]
+        pub identity: Option<UserIdentity>,
+        #[rasn(tag(context, 3))]
+        pub passwords: Option<AccessPasswords>,
+        #[rasn(tag(context, 4))]
+        pub location: Option<ApplicationEntityTitle>,
+    }
+    impl AccessControlElement {
+        pub fn new(
+            action_list: AccessRequest,
+            concurrency_access: Option<ConcurrencyAccess>,
+            identity: Option<UserIdentity>,
+            passwords: Option<AccessPasswords>,
+            location: Option<ApplicationEntityTitle>,
+        ) -> Self {
+            Self {
+                action_list,
+                concurrency_access,
+                identity,
+                passwords,
+                location,
+            }
+        }
+    }
+    #[doc = " Present if and only if flat-one-level-data-units"]
+    #[doc = " (access context FL) is selected."]
+    #[doc = " As defined in ISO 8571-2."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 2), identifier = "Access-Passwords")]
+    pub struct AccessPasswords {
+        #[rasn(tag(context, 0), identifier = "read-password")]
+        pub read_password: Password,
+        #[rasn(tag(context, 1), identifier = "insert-password")]
+        pub insert_password: Password,
+        #[rasn(tag(context, 2), identifier = "replace-password")]
+        pub replace_password: Password,
+        #[rasn(tag(context, 3), identifier = "extend-password")]
+        pub extend_password: Password,
+        #[rasn(tag(context, 4), identifier = "erase-password")]
+        pub erase_password: Password,
+        #[rasn(tag(context, 5), identifier = "read-attribute-password")]
+        pub read_attribute_password: Password,
+        #[rasn(tag(context, 6), identifier = "change-attribute-password")]
+        pub change_attribute_password: Password,
+        #[rasn(tag(context, 7), identifier = "delete-password")]
+        pub delete_password: Password,
+        #[rasn(tag(context, 8), identifier = "pass-passwords")]
+        pub pass_passwords: Option<PassPasswords>,
+        #[rasn(tag(context, 9), identifier = "link-password")]
+        pub link_password: Option<Password>,
+    }
+    impl AccessPasswords {
+        pub fn new(
+            read_password: Password,
+            insert_password: Password,
+            replace_password: Password,
+            extend_password: Password,
+            erase_password: Password,
+            read_attribute_password: Password,
+            change_attribute_password: Password,
+            delete_password: Password,
+            pass_passwords: Option<PassPasswords>,
+            link_password: Option<Password>,
+        ) -> Self {
+            Self {
+                read_password,
+                insert_password,
+                replace_password,
+                extend_password,
+                erase_password,
+                read_attribute_password,
+                change_attribute_password,
+                delete_password,
+                pass_passwords,
+                link_password,
+            }
+        }
+    }
+    #[doc = " The pass-passwords and the link-password must be included in the"]
+    #[doc = " access-passwords if and only if the limited-filestore-management"]
+    #[doc = " or the Object-manipulation or the group-manipulation functional"]
+    #[doc = " units are available."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, tag(application, 3), identifier = "Access-Request")]
+    pub struct AccessRequest(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, tag(application, 4))]
+    pub struct Account(pub GraphicString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "Account-Attribute")]
+    pub enum AccountAttribute {
+        #[rasn(tag(context, 0), identifier = "no-value-available")]
+        no_value_available(()),
+        #[rasn(identifier = "actual-values")]
+        actual_values(Account),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, tag(application, 5), identifier = "Action-Result")]
+    pub struct ActionResult(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, tag(application, 6), identifier = "Activity-Identifier")]
+    pub struct ActivityIdentifier(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, tag(application, 7), identifier = "Application-Entity-Title")]
+    pub struct ApplicationEntityTitle(pub AETitle);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Attribute-Extension-Names")]
+    pub struct AttributeExtensionNames(pub SequenceOf<AttributeExtensionSetName>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Attribute-Extension-Set")]
+    pub struct AttributeExtensionSet {
+        #[rasn(tag(context, 0), identifier = "extension-set-identifier")]
+        pub extension_set_identifier: ExtensionSetIdentifier,
+        #[rasn(tag(context, 1), identifier = "extension-set-attributes")]
+        pub extension_set_attributes: SequenceOf<ExtensionAttribute>,
+    }
+    impl AttributeExtensionSet {
+        pub fn new(
+            extension_set_identifier: ExtensionSetIdentifier,
+            extension_set_attributes: SequenceOf<ExtensionAttribute>,
+        ) -> Self {
+            Self {
+                extension_set_identifier,
+                extension_set_attributes,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Attribute-Extension-Set-Name")]
+    pub struct AttributeExtensionSetName {
+        #[rasn(tag(context, 0), identifier = "extension-set-identifier")]
+        pub extension_set_identifier: ExtensionSetIdentifier,
+        #[rasn(tag(context, 1), identifier = "extension-attribute-names")]
+        pub extension_attribute_names: SequenceOf<ExtensionAttributeIdentifier>,
+    }
+    impl AttributeExtensionSetName {
+        pub fn new(
+            extension_set_identifier: ExtensionSetIdentifier,
+            extension_attribute_names: SequenceOf<ExtensionAttributeIdentifier>,
+        ) -> Self {
+            Self {
+                extension_set_identifier,
+                extension_attribute_names,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Attribute-Extensions")]
+    pub struct AttributeExtensions(pub SequenceOf<AttributeExtensionSet>);
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousAnonymousAttributeExtensionsPatternExtensionSetAttributePatterns {
+        #[rasn(identifier = "extension-attribute-identifier")]
+        pub extension_attribute_identifier: Any,
+        #[rasn(identifier = "extension-attribute-Pattern")]
+        pub extension_attribute_pattern: Any,
+    }
+    impl AnonymousAnonymousAttributeExtensionsPatternExtensionSetAttributePatterns {
+        pub fn new(extension_attribute_identifier: Any, extension_attribute_pattern: Any) -> Self {
+            Self {
+                extension_attribute_identifier,
+                extension_attribute_pattern,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AnonymousAttributeExtensionsPatternExtensionSetAttributePatterns(
+        pub SequenceOf<AnonymousAnonymousAttributeExtensionsPatternExtensionSetAttributePatterns>,
+    );
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousAttributeExtensionsPattern {
+        #[rasn(tag(context, 0), identifier = "extension-set-identifier")]
+        pub extension_set_identifier: ExtensionSetIdentifier,
+        #[rasn(tag(context, 1), identifier = "extension-set-attribute-Patterns")]
+        pub extension_set_attribute_patterns:
+            AnonymousAttributeExtensionsPatternExtensionSetAttributePatterns,
+    }
+    impl AnonymousAttributeExtensionsPattern {
+        pub fn new(
+            extension_set_identifier: ExtensionSetIdentifier,
+            extension_set_attribute_patterns : AnonymousAttributeExtensionsPatternExtensionSetAttributePatterns,
+        ) -> Self {
+            Self {
+                extension_set_identifier,
+                extension_set_attribute_patterns,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Attribute-Extensions-Pattern")]
+    pub struct AttributeExtensionsPattern(pub SequenceOf<AnonymousAttributeExtensionsPattern>);
+    #[doc = " Values 2 to 14 are Chosen to align with numbering scheme used in ISO 8571-3."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, tag(context, 5), identifier = "Attribute-Groups")]
+    pub struct AttributeGroups(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Attribute-Names")]
+    pub struct AttributeNames(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        delegate,
+        tag(application, 26),
+        identifier = "Attribute-Value-Assertions"
+    )]
+    pub struct AttributeValueAssertions(pub ORSet);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Bitstring-Pattern")]
+    pub struct BitstringPattern {
+        #[rasn(tag(context, 0), identifier = "equality-comparision")]
+        pub equality_comparision: EqualityComparision,
+        #[rasn(tag(context, 1), identifier = "match-bitstring")]
+        pub match_bitstring: BitString,
+        #[rasn(tag(context, 2), identifier = "significance-bitstring")]
+        pub significance_bitstring: BitString,
+    }
+    impl BitstringPattern {
+        pub fn new(
+            equality_comparision: EqualityComparision,
+            match_bitstring: BitString,
+            significance_bitstring: BitString,
+        ) -> Self {
+            Self {
+                equality_comparision,
+                match_bitstring,
+                significance_bitstring,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Boolean-Pattern")]
+    pub struct BooleanPattern {
+        #[rasn(tag(context, 0), identifier = "equality-comparision")]
+        pub equality_comparision: EqualityComparision,
+        #[rasn(tag(context, 1), identifier = "boolean-value")]
+        pub boolean_value: bool,
+    }
+    impl BooleanPattern {
+        pub fn new(equality_comparision: EqualityComparision, boolean_value: bool) -> Self {
+            Self {
+                equality_comparision,
+                boolean_value,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "Bulk-Data-PDU")]
+    pub enum BulkDataPDU {
+        #[rasn(tag(context, 32), identifier = "f-read-request")]
+        f_read_request(FREADRequest),
+        #[rasn(tag(context, 33), identifier = "f-write-request")]
+        f_write_request(FWRITERequest),
+        #[rasn(tag(context, 34), identifier = "f-data-end-request")]
+        f_data_end_request(FDATAENDRequest),
+        #[rasn(tag(context, 35), identifier = "f-transfer-end-request")]
+        f_transfer_end_request(FTRANSFERENDRequest),
+        #[rasn(tag(context, 36), identifier = "f-transfer-end-response")]
+        f_transfer_end_response(FTRANSFERENDResponse),
+        #[rasn(tag(context, 37), identifier = "f-cancel-request")]
+        f_cancel_request(FCANCELRequest),
+        #[rasn(tag(context, 38), identifier = "f-cancel-response")]
+        f_cancel_response(FCANCELResponse),
+        #[rasn(tag(context, 39), identifier = "f-restart-request")]
+        f_restart_request(FRESTARTRequest),
+        #[rasn(tag(context, 40), identifier = "f-restart-response")]
+        f_restart_response(FRESTARTResponse),
+    }
+    #[doc = " As defined in ISO 8650."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 8), identifier = "Change-Attributes")]
+    pub struct ChangeAttributes {
+        pub pathname: Option<PathnameAttribute>,
+        #[rasn(tag(context, 3), identifier = "storage-account")]
+        pub storage_account: Option<AccountAttribute>,
+        #[rasn(tag(context, 12), identifier = "object-availability")]
+        pub object_availability: Option<ObjectAvailabilityAttribute>,
+        #[rasn(tag(context, 14), identifier = "future-Object-size")]
+        pub future_object_size: Option<ObjectSizeAttribute>,
+        #[rasn(tag(context, 15), identifier = "access-control")]
+        pub access_control: Option<AccessControlChangeAttribute>,
+        #[rasn(tag(context, 21), identifier = "path-access-control")]
+        pub path_access_control: Option<AccessControlChangeAttribute>,
+        #[rasn(tag(context, 16), identifier = "legal-qualification")]
+        pub legal_qualification: Option<LegalQualificationAttribute>,
+        #[rasn(tag(context, 17), identifier = "private-use")]
+        pub private_use: Option<PrivateUseAttribute>,
+        #[rasn(tag(context, 22), identifier = "attribute-extensions")]
+        pub attribute_extensions: Option<AttributeExtensions>,
+    }
+    impl ChangeAttributes {
+        pub fn new(
+            pathname: Option<PathnameAttribute>,
+            storage_account: Option<AccountAttribute>,
+            object_availability: Option<ObjectAvailabilityAttribute>,
+            future_object_size: Option<ObjectSizeAttribute>,
+            access_control: Option<AccessControlChangeAttribute>,
+            path_access_control: Option<AccessControlChangeAttribute>,
+            legal_qualification: Option<LegalQualificationAttribute>,
+            private_use: Option<PrivateUseAttribute>,
+            attribute_extensions: Option<AttributeExtensions>,
+        ) -> Self {
+            Self {
+                pathname,
+                storage_account,
+                object_availability,
+                future_object_size,
+                access_control,
+                path_access_control,
+                legal_qualification,
+                private_use,
+                attribute_extensions,
+            }
+        }
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousCharging {
+        #[rasn(tag(context, 0), identifier = "resource-identifier")]
+        pub resource_identifier: GraphicString,
+        #[rasn(tag(context, 1), identifier = "charging-unit")]
+        pub charging_unit: GraphicString,
+        #[rasn(tag(context, 2), identifier = "charging-value")]
+        pub charging_value: Integer,
+    }
+    impl AnonymousCharging {
+        pub fn new(
+            resource_identifier: GraphicString,
+            charging_unit: GraphicString,
+            charging_value: Integer,
+        ) -> Self {
+            Self {
+                resource_identifier,
+                charging_unit,
+                charging_value,
+            }
+        }
+    }
+    #[doc = " This Parameter tan only be sent when the"]
+    #[doc = " enhanced-filestore-management functional unit is available."]
+    #[doc = " Atleast one attribute shall be present in the Change-Attributes"]
+    #[doc = " Parameter on the request PDU."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, tag(application, 9))]
+    pub struct Charging(pub SequenceOf<AnonymousCharging>);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "GraphicString")]
+    pub struct AnonymousChildObjectsAttribute(pub GraphicString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Child-Objects-Attribute")]
+    pub struct ChildObjectsAttribute(pub SetOf<AnonymousChildObjectsAttribute>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Concurrency-Access")]
+    pub struct ConcurrencyAccess {
+        #[rasn(tag(context, 0))]
+        pub read: ConcurrencyKey,
+        #[rasn(tag(context, 1))]
+        pub insert: ConcurrencyKey,
+        #[rasn(tag(context, 2))]
+        pub replace: ConcurrencyKey,
+        #[rasn(tag(context, 3))]
+        pub extend: ConcurrencyKey,
+        #[rasn(tag(context, 4))]
+        pub erase: ConcurrencyKey,
+        #[rasn(tag(context, 5), identifier = "read-attribute")]
+        pub read_attribute: ConcurrencyKey,
+        #[rasn(tag(context, 6), identifier = "change-attribute")]
+        pub change_attribute: ConcurrencyKey,
+        #[rasn(tag(context, 7), identifier = "delete-Object")]
+        pub delete_object: ConcurrencyKey,
+    }
+    impl ConcurrencyAccess {
+        pub fn new(
+            read: ConcurrencyKey,
+            insert: ConcurrencyKey,
+            replace: ConcurrencyKey,
+            extend: ConcurrencyKey,
+            erase: ConcurrencyKey,
+            read_attribute: ConcurrencyKey,
+            change_attribute: ConcurrencyKey,
+            delete_object: ConcurrencyKey,
+        ) -> Self {
+            Self {
+                read,
+                insert,
+                replace,
+                extend,
+                erase,
+                read_attribute,
+                change_attribute,
+                delete_object,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 10), identifier = "Concurrency-Control")]
+    pub struct ConcurrencyControl {
+        #[rasn(tag(context, 0))]
+        pub read: Lock,
+        #[rasn(tag(context, 1))]
+        pub insert: Lock,
+        #[rasn(tag(context, 2))]
+        pub replace: Lock,
+        #[rasn(tag(context, 3))]
+        pub extend: Lock,
+        #[rasn(tag(context, 4))]
+        pub erase: Lock,
+        #[rasn(tag(context, 5), identifier = "read-attribute")]
+        pub read_attribute: Lock,
+        #[rasn(tag(context, 6), identifier = "change-attribute")]
+        pub change_attribute: Lock,
+        #[rasn(tag(context, 7), identifier = "delete-Object")]
+        pub delete_object: Lock,
+    }
+    impl ConcurrencyControl {
+        pub fn new(
+            read: Lock,
+            insert: Lock,
+            replace: Lock,
+            extend: Lock,
+            erase: Lock,
+            read_attribute: Lock,
+            change_attribute: Lock,
+            delete_object: Lock,
+        ) -> Self {
+            Self {
+                read,
+                insert,
+                replace,
+                extend,
+                erase,
+                read_attribute,
+                change_attribute,
+                delete_object,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Concurrency-Key")]
+    pub struct ConcurrencyKey(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, tag(application, 11), identifier = "Constraint-Set-Name")]
+    pub struct ConstraintSetName(pub ObjectIdentifier);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ContentsTypeAttributeDocumentType {
+        #[rasn(identifier = "document-type-name")]
+        pub document_type_name: DocumentTypeName,
+        #[rasn(tag(context, 0))]
+        pub parameter: Option<Any>,
+    }
+    impl ContentsTypeAttributeDocumentType {
+        pub fn new(document_type_name: DocumentTypeName, parameter: Option<Any>) -> Self {
+            Self {
+                document_type_name,
+                parameter,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ContentsTypeAttributeConstraintSetAndAbstractSyntax {
+        #[rasn(identifier = "constraint-set-name")]
+        pub constraint_set_name: ConstraintSetName,
+        #[rasn(identifier = "abstract-Syntax-name")]
+        pub abstract_syntax_name: AbstractSyntaxName,
+    }
+    impl ContentsTypeAttributeConstraintSetAndAbstractSyntax {
+        pub fn new(
+            constraint_set_name: ConstraintSetName,
+            abstract_syntax_name: AbstractSyntaxName,
+        ) -> Self {
+            Self {
+                constraint_set_name,
+                abstract_syntax_name,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "Contents-Type-Attribute")]
+    pub enum ContentsTypeAttribute {
+        #[rasn(tag(context, 0), identifier = "document-type")]
+        document_type(ContentsTypeAttributeDocumentType),
+        #[rasn(tag(context, 1), identifier = "constraint-set-and-abstract-Syntax")]
+        constraint_set_and_abstract_Syntax(ContentsTypeAttributeConstraintSetAndAbstractSyntax),
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "CHOICE")]
+    pub enum AnonymousContentsTypeList {
+        #[rasn(identifier = "document-type-name")]
+        document_type_name(DocumentTypeName),
+        #[rasn(identifier = "abstract-Syntax-name")]
+        abstract_Syntax_name(AbstractSyntaxName),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, tag(context, 7), identifier = "Contents-Type-List")]
+    pub struct ContentsTypeList(pub SequenceOf<AnonymousContentsTypeList>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ContentsTypePatternConstraintSetAbstractSyntaxPattern {
+        #[rasn(tag(context, 2), identifier = "constraint-Set-Pattern")]
+        pub constraint_set_pattern: Option<ObjectIdentifierPattern>,
+        #[rasn(tag(context, 3), identifier = "abstract-Syntax-Pattern")]
+        pub abstract_syntax_pattern: Option<ObjectIdentifierPattern>,
+    }
+    impl ContentsTypePatternConstraintSetAbstractSyntaxPattern {
+        pub fn new(
+            constraint_set_pattern: Option<ObjectIdentifierPattern>,
+            abstract_syntax_pattern: Option<ObjectIdentifierPattern>,
+        ) -> Self {
+            Self {
+                constraint_set_pattern,
+                abstract_syntax_pattern,
+            }
+        }
+    }
+    #[doc = " Matches against \u{93}No Value Available\u{94}."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "Contents-Type-Pattern")]
+    pub enum ContentsTypePattern {
+        #[rasn(tag(context, 0), identifier = "document-type-Pattern")]
+        document_type_Pattern(ObjectIdentifierPattern),
+        #[rasn(tag(context, 1), identifier = "constraint-set-abstract-Syntax-Pattern")]
+        constraint_set_abstract_Syntax_Pattern(
+            ContentsTypePatternConstraintSetAbstractSyntaxPattern,
+        ),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 12), identifier = "Create-Attributes")]
+    pub struct CreateAttributes {
+        pub pathname: PathnameAttribute,
+        #[rasn(
+            tag(context, 18),
+            default = "create_attributes_object_type_default",
+            identifier = "object-type"
+        )]
+        pub object_type: ObjectTypeAttribute,
+        #[rasn(tag(context, 1), identifier = "permitted-actions")]
+        pub permitted_actions: PermittedActionsAttribute,
+        #[rasn(tag(context, 2), identifier = "contents-type")]
+        pub contents_type: ContentsTypeAttribute,
+        #[rasn(tag(context, 3), identifier = "storage-account")]
+        pub storage_account: Option<AccountAttribute>,
+        #[rasn(tag(context, 12), identifier = "object-availability")]
+        pub object_availability: Option<ObjectAvailabilityAttribute>,
+        #[rasn(tag(context, 14), identifier = "future-Object-size")]
+        pub future_object_size: Option<ObjectSizeAttribute>,
+        #[rasn(tag(context, 15), identifier = "access-control")]
+        pub access_control: Option<AccessControlAttribute>,
+        #[rasn(tag(context, 21), identifier = "path-access-control")]
+        pub path_access_control: Option<AccessControlAttribute>,
+        #[rasn(tag(context, 16), identifier = "legal-qualification")]
+        pub legal_qualification: Option<LegalQualificationAttribute>,
+        #[rasn(tag(context, 17), identifier = "private-use")]
+        pub private_use: Option<PrivateUseAttribute>,
+        #[rasn(tag(context, 22), identifier = "attribute-extensions")]
+        pub attribute_extensions: Option<AttributeExtensions>,
+    }
+    impl CreateAttributes {
+        pub fn new(
+            pathname: PathnameAttribute,
+            object_type: ObjectTypeAttribute,
+            permitted_actions: PermittedActionsAttribute,
+            contents_type: ContentsTypeAttribute,
+            storage_account: Option<AccountAttribute>,
+            object_availability: Option<ObjectAvailabilityAttribute>,
+            future_object_size: Option<ObjectSizeAttribute>,
+            access_control: Option<AccessControlAttribute>,
+            path_access_control: Option<AccessControlAttribute>,
+            legal_qualification: Option<LegalQualificationAttribute>,
+            private_use: Option<PrivateUseAttribute>,
+            attribute_extensions: Option<AttributeExtensions>,
+        ) -> Self {
+            Self {
+                pathname,
+                object_type,
+                permitted_actions,
+                contents_type,
+                storage_account,
+                object_availability,
+                future_object_size,
+                access_control,
+                path_access_control,
+                legal_qualification,
+                private_use,
+                attribute_extensions,
+            }
+        }
+    }
+    fn create_attributes_object_type_default() -> ObjectTypeAttribute {
+        ObjectTypeAttribute(Integer::from(0))
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "Date-and-Time-Attribute")]
+    pub enum DateAndTimeAttribute {
+        #[rasn(tag(context, 0), identifier = "no-value-available")]
+        no_value_available(()),
+        #[rasn(tag(context, 1), identifier = "actual-values")]
+        actual_values(GeneralizedTime),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Date-and-Time-Pattern")]
+    pub struct DateAndTimePattern {
+        #[rasn(tag(context, 0), identifier = "relational-camparision")]
+        pub relational_camparision: EqualityComparision,
+        #[rasn(tag(context, 1), identifier = "time-and-date-value")]
+        pub time_and_date_value: GeneralizedTime,
+    }
+    impl DateAndTimePattern {
+        pub fn new(
+            relational_camparision: EqualityComparision,
+            time_and_date_value: GeneralizedTime,
+        ) -> Self {
+            Self {
+                relational_camparision,
+                time_and_date_value,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, tag(application, 30), identifier = "Degree-Of-Overlap")]
+    pub struct DegreeOfOverlap(pub Integer);
+    #[doc = " dynamically extensible information object set"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        delegate,
+        tag(application, 24),
+        identifier = "Destination-File-Directory"
+    )]
+    pub struct DestinationFileDirectory(pub PathnameAttribute);
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousDiagnostic {
+        #[rasn(tag(context, 0), identifier = "diagnostic-type")]
+        pub diagnostic_type: Integer,
+        #[rasn(tag(context, 1), identifier = "error-identifier")]
+        pub error_identifier: Integer,
+        #[rasn(tag(context, 2), identifier = "error-observer")]
+        pub error_observer: EntityReference,
+        #[rasn(tag(context, 3), identifier = "error-Source")]
+        pub error_source: EntityReference,
+        #[rasn(tag(context, 4), identifier = "suggested-delay")]
+        pub suggested_delay: Option<Integer>,
+        #[rasn(tag(context, 5), identifier = "further-details")]
+        pub further_details: Option<GraphicString>,
+    }
+    impl AnonymousDiagnostic {
+        pub fn new(
+            diagnostic_type: Integer,
+            error_identifier: Integer,
+            error_observer: EntityReference,
+            error_source: EntityReference,
+            suggested_delay: Option<Integer>,
+            further_details: Option<GraphicString>,
+        ) -> Self {
+            Self {
+                diagnostic_type,
+                error_identifier,
+                error_observer,
+                error_source,
+                suggested_delay,
+                further_details,
+            }
+        }
+    }
+    #[doc = " This Parameter tan only be sent when the"]
+    #[doc = " limited-filestore-management functional unit is available."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, tag(application, 13))]
+    pub struct Diagnostic(pub SequenceOf<AnonymousDiagnostic>);
+    #[doc = "NOTE"]
+    #[doc = " 1. The values 0 and 3 are only valid as values in error-source."]
+    #[doc = " 2. The value 5 corresponds to the virtual filestore."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, tag(application, 14), identifier = "Document-Type-Name")]
+    pub struct DocumentTypeName(pub ObjectIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Entity-Reference")]
+    pub struct EntityReference(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Equality-Comparision")]
+    pub struct EqualityComparision(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Error-Action")]
+    pub struct ErrorAction(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Extension-Attribute")]
+    pub struct ExtensionAttribute {
+        #[rasn(identifier = "extension-attribute-identifier")]
+        pub extension_attribute_identifier: Any,
+        #[rasn(identifier = "extension-attribute")]
+        pub extension_attribute: Any,
+    }
+    impl ExtensionAttribute {
+        pub fn new(extension_attribute_identifier: Any, extension_attribute: Any) -> Self {
+            Self {
+                extension_attribute_identifier,
+                extension_attribute,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Extension-Attribute-identifier")]
+    pub struct ExtensionAttributeIdentifier(pub ObjectIdentifier);
+    #[doc = " dynamically extensible"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Extension-Set-Identifier")]
+    pub struct ExtensionSetIdentifier(pub ObjectIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-BEGIN-GROUP-request")]
+    pub struct FBEGINGROUPRequest {
+        #[rasn(tag(context, 0))]
+        pub threshold: Integer,
+    }
+    impl FBEGINGROUPRequest {
+        pub fn new(threshold: Integer) -> Self {
+            Self { threshold }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-BEGIN-GROUP-response")]
+    pub struct FBEGINGROUPResponse {}
+    impl FBEGINGROUPResponse {
+        pub fn new() -> Self {
+            Self {}
+        }
+    }
+    impl std::default::Default for FBEGINGROUPResponse {
+        fn default() -> Self {
+            Self {}
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-CANCEL-request")]
+    pub struct FCANCELRequest {
+        #[rasn(
+            default = "fcancelrequest_action_result_default",
+            identifier = "action-result"
+        )]
+        pub action_result: ActionResult,
+        #[rasn(identifier = "shared-ASE-information")]
+        pub shared_ase_information: Option<SharedASEInformation>,
+        pub diagnostic: Option<Diagnostic>,
+        #[rasn(identifier = "request-type")]
+        pub request_type: RequestType,
+        #[rasn(tag(context, 0), identifier = "transfer-number")]
+        pub transfer_number: Option<Integer>,
+        #[rasn(tag(context, 1), identifier = "last-transfer-end-read-request")]
+        pub last_transfer_end_read_request: Option<Integer>,
+        #[rasn(tag(context, 2), identifier = "last-transfer-end-read-response")]
+        pub last_transfer_end_read_response: Option<Integer>,
+        #[rasn(tag(context, 3), identifier = "last-transfer-end-write-request")]
+        pub last_transfer_end_write_request: Option<Integer>,
+        #[rasn(tag(context, 4), identifier = "last-transfer-end-write-response")]
+        pub last_transfer_end_write_response: Option<Integer>,
+    }
+    impl FCANCELRequest {
+        pub fn new(
+            action_result: ActionResult,
+            shared_ase_information: Option<SharedASEInformation>,
+            diagnostic: Option<Diagnostic>,
+            request_type: RequestType,
+            transfer_number: Option<Integer>,
+            last_transfer_end_read_request: Option<Integer>,
+            last_transfer_end_read_response: Option<Integer>,
+            last_transfer_end_write_request: Option<Integer>,
+            last_transfer_end_write_response: Option<Integer>,
+        ) -> Self {
+            Self {
+                action_result,
+                shared_ase_information,
+                diagnostic,
+                request_type,
+                transfer_number,
+                last_transfer_end_read_request,
+                last_transfer_end_read_response,
+                last_transfer_end_write_request,
+                last_transfer_end_write_response,
+            }
+        }
+    }
+    fn fcancelrequest_action_result_default() -> ActionResult {
+        ActionResult(Integer::from(0))
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-CANCEL-response")]
+    pub struct FCANCELResponse {
+        #[rasn(
+            default = "fcancelresponse_action_result_default",
+            identifier = "action-result"
+        )]
+        pub action_result: ActionResult,
+        #[rasn(identifier = "shared-ASE-information")]
+        pub shared_ase_information: Option<SharedASEInformation>,
+        pub diagnostic: Option<Diagnostic>,
+        #[rasn(identifier = "request-type")]
+        pub request_type: Option<RequestType>,
+        #[rasn(tag(context, 0), identifier = "transfer-number")]
+        pub transfer_number: Option<Integer>,
+        #[rasn(tag(context, 1), identifier = "last-transfer-end-read-request")]
+        pub last_transfer_end_read_request: Option<Integer>,
+        #[rasn(tag(context, 2), identifier = "last-transfer-end-read-response")]
+        pub last_transfer_end_read_response: Option<Integer>,
+        #[rasn(tag(context, 3), identifier = "last-transfer-end-write-request")]
+        pub last_transfer_end_write_request: Option<Integer>,
+        #[rasn(tag(context, 4), identifier = "last-transfer-end-write-response")]
+        pub last_transfer_end_write_response: Option<Integer>,
+    }
+    impl FCANCELResponse {
+        pub fn new(
+            action_result: ActionResult,
+            shared_ase_information: Option<SharedASEInformation>,
+            diagnostic: Option<Diagnostic>,
+            request_type: Option<RequestType>,
+            transfer_number: Option<Integer>,
+            last_transfer_end_read_request: Option<Integer>,
+            last_transfer_end_read_response: Option<Integer>,
+            last_transfer_end_write_request: Option<Integer>,
+            last_transfer_end_write_response: Option<Integer>,
+        ) -> Self {
+            Self {
+                action_result,
+                shared_ase_information,
+                diagnostic,
+                request_type,
+                transfer_number,
+                last_transfer_end_read_request,
+                last_transfer_end_read_response,
+                last_transfer_end_write_request,
+                last_transfer_end_write_response,
+            }
+        }
+    }
+    fn fcancelresponse_action_result_default() -> ActionResult {
+        ActionResult(Integer::from(0))
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-CHANGE-ATTRIB-request")]
+    pub struct FCHANGEATTRIBRequest {
+        pub attributes: ChangeAttributes,
+    }
+    impl FCHANGEATTRIBRequest {
+        pub fn new(attributes: ChangeAttributes) -> Self {
+            Self { attributes }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-CHANGE-ATTRIB-response")]
+    pub struct FCHANGEATTRIBResponse {
+        #[rasn(
+            default = "fchangeattribresponse_action_result_default",
+            identifier = "action-result"
+        )]
+        pub action_result: ActionResult,
+        pub attributes: Option<ChangeAttributes>,
+        pub diagnostic: Option<Diagnostic>,
+    }
+    impl FCHANGEATTRIBResponse {
+        pub fn new(
+            action_result: ActionResult,
+            attributes: Option<ChangeAttributes>,
+            diagnostic: Option<Diagnostic>,
+        ) -> Self {
+            Self {
+                action_result,
+                attributes,
+                diagnostic,
+            }
+        }
+    }
+    fn fchangeattribresponse_action_result_default() -> ActionResult {
+        ActionResult(Integer::from(0))
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-CHANGE-LINK-ATTRIB-request")]
+    pub struct FCHANGELINKATTRIBRequest {
+        pub attributes: ChangeAttributes,
+    }
+    impl FCHANGELINKATTRIBRequest {
+        pub fn new(attributes: ChangeAttributes) -> Self {
+            Self { attributes }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-CHANGE-LINK-ATTRIB-response")]
+    pub struct FCHANGELINKATTRIBResponse {
+        #[rasn(
+            default = "fchangelinkattribresponse_action_result_default",
+            identifier = "action-result"
+        )]
+        pub action_result: ActionResult,
+        pub attributes: Option<ChangeAttributes>,
+        pub diagnostic: Option<Diagnostic>,
+    }
+    impl FCHANGELINKATTRIBResponse {
+        pub fn new(
+            action_result: ActionResult,
+            attributes: Option<ChangeAttributes>,
+            diagnostic: Option<Diagnostic>,
+        ) -> Self {
+            Self {
+                action_result,
+                attributes,
+                diagnostic,
+            }
+        }
+    }
+    fn fchangelinkattribresponse_action_result_default() -> ActionResult {
+        ActionResult(Integer::from(0))
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-CHANGE-PREFIX-request")]
+    pub struct FCHANGEPREFIXRequest {
+        #[rasn(tag(context, 0), default = "fchangeprefixrequest_reset_default")]
+        pub reset: bool,
+        #[rasn(identifier = "destination-file-directory")]
+        pub destination_file_directory: DestinationFileDirectory,
+        #[rasn(identifier = "access-passwords")]
+        pub access_passwords: Option<AccessPasswords>,
+        #[rasn(identifier = "path-access-passwords")]
+        pub path_access_passwords: Option<PathAccessPasswords>,
+    }
+    impl FCHANGEPREFIXRequest {
+        pub fn new(
+            reset: bool,
+            destination_file_directory: DestinationFileDirectory,
+            access_passwords: Option<AccessPasswords>,
+            path_access_passwords: Option<PathAccessPasswords>,
+        ) -> Self {
+            Self {
+                reset,
+                destination_file_directory,
+                access_passwords,
+                path_access_passwords,
+            }
+        }
+    }
+    fn fchangeprefixrequest_reset_default() -> bool {
+        false
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-CHANGE-PREFIX-response")]
+    pub struct FCHANGEPREFIXResponse {
+        #[rasn(
+            default = "fchangeprefixresponse_action_result_default",
+            identifier = "action-result"
+        )]
+        pub action_result: ActionResult,
+        #[rasn(identifier = "destination-file-directory")]
+        pub destination_file_directory: Option<DestinationFileDirectory>,
+        pub diagnostic: Option<Diagnostic>,
+    }
+    impl FCHANGEPREFIXResponse {
+        pub fn new(
+            action_result: ActionResult,
+            destination_file_directory: Option<DestinationFileDirectory>,
+            diagnostic: Option<Diagnostic>,
+        ) -> Self {
+            Self {
+                action_result,
+                destination_file_directory,
+                diagnostic,
+            }
+        }
+    }
+    fn fchangeprefixresponse_action_result_default() -> ActionResult {
+        ActionResult(Integer::from(0))
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-CHECK-request")]
+    pub struct FCHECKRequest {
+        #[rasn(tag(context, 0), identifier = "checkpoint-identifier")]
+        pub checkpoint_identifier: Integer,
+        #[rasn(tag(context, 1), identifier = "transfer-number")]
+        pub transfer_number: Integer,
+    }
+    impl FCHECKRequest {
+        pub fn new(checkpoint_identifier: Integer, transfer_number: Integer) -> Self {
+            Self {
+                checkpoint_identifier,
+                transfer_number,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-CHECK-response")]
+    pub struct FCHECKResponse {
+        #[rasn(tag(context, 0), identifier = "checkpoint-identifier")]
+        pub checkpoint_identifier: Integer,
+        #[rasn(tag(context, 1), identifier = "transfer-number")]
+        pub transfer_number: Integer,
+    }
+    impl FCHECKResponse {
+        pub fn new(checkpoint_identifier: Integer, transfer_number: Integer) -> Self {
+            Self {
+                checkpoint_identifier,
+                transfer_number,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-CLOSE-request")]
+    pub struct FCLOSERequest {
+        #[rasn(
+            default = "fcloserequest_action_result_default",
+            identifier = "action-result"
+        )]
+        pub action_result: ActionResult,
+        #[rasn(identifier = "shared-ASE-information")]
+        pub shared_ase_information: Option<SharedASEInformation>,
+        pub diagnostic: Option<Diagnostic>,
+    }
+    impl FCLOSERequest {
+        pub fn new(
+            action_result: ActionResult,
+            shared_ase_information: Option<SharedASEInformation>,
+            diagnostic: Option<Diagnostic>,
+        ) -> Self {
+            Self {
+                action_result,
+                shared_ase_information,
+                diagnostic,
+            }
+        }
+    }
+    fn fcloserequest_action_result_default() -> ActionResult {
+        ActionResult(Integer::from(0))
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-CLOSE-response")]
+    pub struct FCLOSEResponse {
+        #[rasn(
+            default = "fcloseresponse_action_result_default",
+            identifier = "action-result"
+        )]
+        pub action_result: ActionResult,
+        #[rasn(identifier = "shared-ASE-information")]
+        pub shared_ase_information: Option<SharedASEInformation>,
+        pub diagnostic: Option<Diagnostic>,
+    }
+    impl FCLOSEResponse {
+        pub fn new(
+            action_result: ActionResult,
+            shared_ase_information: Option<SharedASEInformation>,
+            diagnostic: Option<Diagnostic>,
+        ) -> Self {
+            Self {
+                action_result,
+                shared_ase_information,
+                diagnostic,
+            }
+        }
+    }
+    fn fcloseresponse_action_result_default() -> ActionResult {
+        ActionResult(Integer::from(0))
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-COPY-request")]
+    pub struct FCOPYRequest {
+        #[rasn(identifier = "destination-file-directory")]
+        pub destination_file_directory: DestinationFileDirectory,
+        #[rasn(
+            tag(context, 0),
+            default = "fcopyrequest_r_override_default",
+            identifier = "override"
+        )]
+        pub r_override: Override,
+        #[rasn(identifier = "create-password")]
+        pub create_password: Option<Password>,
+        #[rasn(identifier = "access-passwords")]
+        pub access_passwords: Option<AccessPasswords>,
+        #[rasn(identifier = "path-access-passwords")]
+        pub path_access_passwords: Option<PathAccessPasswords>,
+        pub attributes: Option<ChangeAttributes>,
+    }
+    impl FCOPYRequest {
+        pub fn new(
+            destination_file_directory: DestinationFileDirectory,
+            r_override: Override,
+            create_password: Option<Password>,
+            access_passwords: Option<AccessPasswords>,
+            path_access_passwords: Option<PathAccessPasswords>,
+            attributes: Option<ChangeAttributes>,
+        ) -> Self {
+            Self {
+                destination_file_directory,
+                r_override,
+                create_password,
+                access_passwords,
+                path_access_passwords,
+                attributes,
+            }
+        }
+    }
+    fn fcopyrequest_r_override_default() -> Override {
+        Override(Integer::from(0))
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-COPY-response")]
+    pub struct FCOPYResponse {
+        #[rasn(
+            default = "fcopyresponse_action_result_default",
+            identifier = "action-result"
+        )]
+        pub action_result: ActionResult,
+        #[rasn(identifier = "destination-file-directory")]
+        pub destination_file_directory: Option<DestinationFileDirectory>,
+        pub attributes: Option<ChangeAttributes>,
+        pub diagnostic: Option<Diagnostic>,
+    }
+    impl FCOPYResponse {
+        pub fn new(
+            action_result: ActionResult,
+            destination_file_directory: Option<DestinationFileDirectory>,
+            attributes: Option<ChangeAttributes>,
+            diagnostic: Option<Diagnostic>,
+        ) -> Self {
+            Self {
+                action_result,
+                destination_file_directory,
+                attributes,
+                diagnostic,
+            }
+        }
+    }
+    fn fcopyresponse_action_result_default() -> ActionResult {
+        ActionResult(Integer::from(0))
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-CREATE-DIRECTORY-request")]
+    pub struct FCREATEDIRECTORYRequest {
+        #[rasn(identifier = "initial-attributes")]
+        pub initial_attributes: CreateAttributes,
+        #[rasn(identifier = "create-password")]
+        pub create_password: Option<Password>,
+        #[rasn(identifier = "requested-access")]
+        pub requested_access: AccessRequest,
+        #[rasn(identifier = "shared-ASE-infonnation")]
+        pub shared_ase_infonnation: Option<SharedASEInformation>,
+        pub account: Option<Account>,
+    }
+    impl FCREATEDIRECTORYRequest {
+        pub fn new(
+            initial_attributes: CreateAttributes,
+            create_password: Option<Password>,
+            requested_access: AccessRequest,
+            shared_ase_infonnation: Option<SharedASEInformation>,
+            account: Option<Account>,
+        ) -> Self {
+            Self {
+                initial_attributes,
+                create_password,
+                requested_access,
+                shared_ase_infonnation,
+                account,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-CREATE-DIRECTORY-response")]
+    pub struct FCREATEDIRECTORYResponse {
+        #[rasn(
+            default = "fcreatedirectoryresponse_state_result_default",
+            identifier = "state-result"
+        )]
+        pub state_result: StateResult,
+        #[rasn(
+            default = "fcreatedirectoryresponse_action_result_default",
+            identifier = "action-result"
+        )]
+        pub action_result: ActionResult,
+        #[rasn(identifier = "initial-attributes")]
+        pub initial_attributes: CreateAttributes,
+        #[rasn(identifier = "shared-ASE-information")]
+        pub shared_ase_information: Option<SharedASEInformation>,
+        pub diagnostic: Option<Diagnostic>,
+    }
+    impl FCREATEDIRECTORYResponse {
+        pub fn new(
+            state_result: StateResult,
+            action_result: ActionResult,
+            initial_attributes: CreateAttributes,
+            shared_ase_information: Option<SharedASEInformation>,
+            diagnostic: Option<Diagnostic>,
+        ) -> Self {
+            Self {
+                state_result,
+                action_result,
+                initial_attributes,
+                shared_ase_information,
+                diagnostic,
+            }
+        }
+    }
+    fn fcreatedirectoryresponse_state_result_default() -> StateResult {
+        StateResult(Integer::from(0))
+    }
+    fn fcreatedirectoryresponse_action_result_default() -> ActionResult {
+        ActionResult(Integer::from(0))
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-CREATE-request")]
+    pub struct FCREATERequest {
+        #[rasn(
+            tag(context, 0),
+            default = "fcreaterequest_r_override_default",
+            identifier = "override"
+        )]
+        pub r_override: Override,
+        #[rasn(identifier = "initial-attributes")]
+        pub initial_attributes: CreateAttributes,
+        #[rasn(identifier = "create-password")]
+        pub create_password: Option<Password>,
+        #[rasn(identifier = "requested-access")]
+        pub requested_access: AccessRequest,
+        #[rasn(identifier = "access-passwords")]
+        pub access_passwords: Option<AccessPasswords>,
+        #[rasn(identifier = "path-access-passwords")]
+        pub path_access_passwords: Option<PathAccessPasswords>,
+        #[rasn(identifier = "concurrency-control")]
+        pub concurrency_control: Option<ConcurrencyControl>,
+        #[rasn(identifier = "shared-ASE-information")]
+        pub shared_ase_information: Option<SharedASEInformation>,
+        pub account: Option<Account>,
+    }
+    impl FCREATERequest {
+        pub fn new(
+            r_override: Override,
+            initial_attributes: CreateAttributes,
+            create_password: Option<Password>,
+            requested_access: AccessRequest,
+            access_passwords: Option<AccessPasswords>,
+            path_access_passwords: Option<PathAccessPasswords>,
+            concurrency_control: Option<ConcurrencyControl>,
+            shared_ase_information: Option<SharedASEInformation>,
+            account: Option<Account>,
+        ) -> Self {
+            Self {
+                r_override,
+                initial_attributes,
+                create_password,
+                requested_access,
+                access_passwords,
+                path_access_passwords,
+                concurrency_control,
+                shared_ase_information,
+                account,
+            }
+        }
+    }
+    fn fcreaterequest_r_override_default() -> Override {
+        Override(Integer::from(0))
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-CREATE-response")]
+    pub struct FCREATEResponse {
+        #[rasn(
+            default = "fcreateresponse_state_result_default",
+            identifier = "state-result"
+        )]
+        pub state_result: StateResult,
+        #[rasn(
+            default = "fcreateresponse_action_result_default",
+            identifier = "action-result"
+        )]
+        pub action_result: ActionResult,
+        #[rasn(identifier = "initial-attributes")]
+        pub initial_attributes: CreateAttributes,
+        #[rasn(identifier = "shared-ASE-information")]
+        pub shared_ase_information: Option<SharedASEInformation>,
+        pub diagnostic: Option<Diagnostic>,
+    }
+    impl FCREATEResponse {
+        pub fn new(
+            state_result: StateResult,
+            action_result: ActionResult,
+            initial_attributes: CreateAttributes,
+            shared_ase_information: Option<SharedASEInformation>,
+            diagnostic: Option<Diagnostic>,
+        ) -> Self {
+            Self {
+                state_result,
+                action_result,
+                initial_attributes,
+                shared_ase_information,
+                diagnostic,
+            }
+        }
+    }
+    fn fcreateresponse_state_result_default() -> StateResult {
+        StateResult(Integer::from(0))
+    }
+    fn fcreateresponse_action_result_default() -> ActionResult {
+        ActionResult(Integer::from(0))
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-DATA-END-request")]
+    pub struct FDATAENDRequest {
+        #[rasn(
+            default = "fdataendrequest_action_result_default",
+            identifier = "action-result"
+        )]
+        pub action_result: ActionResult,
+        pub diagnostic: Option<Diagnostic>,
+    }
+    impl FDATAENDRequest {
+        pub fn new(action_result: ActionResult, diagnostic: Option<Diagnostic>) -> Self {
+            Self {
+                action_result,
+                diagnostic,
+            }
+        }
+    }
+    fn fdataendrequest_action_result_default() -> ActionResult {
+        ActionResult(Integer::from(0))
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-DELETE-request")]
+    pub struct FDELETERequest {
+        #[rasn(identifier = "shared-ASE-information")]
+        pub shared_ase_information: Option<SharedASEInformation>,
+    }
+    impl FDELETERequest {
+        pub fn new(shared_ase_information: Option<SharedASEInformation>) -> Self {
+            Self {
+                shared_ase_information,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-DELETE-response")]
+    pub struct FDELETEResponse {
+        #[rasn(
+            default = "fdeleteresponse_action_result_default",
+            identifier = "action-result"
+        )]
+        pub action_result: ActionResult,
+        #[rasn(identifier = "shared-ASE-information")]
+        pub shared_ase_information: Option<SharedASEInformation>,
+        pub charging: Option<Charging>,
+        pub diagnostic: Option<Diagnostic>,
+    }
+    impl FDELETEResponse {
+        pub fn new(
+            action_result: ActionResult,
+            shared_ase_information: Option<SharedASEInformation>,
+            charging: Option<Charging>,
+            diagnostic: Option<Diagnostic>,
+        ) -> Self {
+            Self {
+                action_result,
+                shared_ase_information,
+                charging,
+                diagnostic,
+            }
+        }
+    }
+    fn fdeleteresponse_action_result_default() -> ActionResult {
+        ActionResult(Integer::from(0))
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-DESELECT-request")]
+    pub struct FDESELECTRequest {
+        #[rasn(identifier = "shared-ASE-information")]
+        pub shared_ase_information: Option<SharedASEInformation>,
+    }
+    impl FDESELECTRequest {
+        pub fn new(shared_ase_information: Option<SharedASEInformation>) -> Self {
+            Self {
+                shared_ase_information,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-DESELECT-response")]
+    pub struct FDESELECTResponse {
+        #[rasn(
+            default = "fdeselectresponse_action_result_default",
+            identifier = "action-result"
+        )]
+        pub action_result: ActionResult,
+        pub charging: Option<Charging>,
+        #[rasn(identifier = "shared-ASE-information")]
+        pub shared_ase_information: Option<SharedASEInformation>,
+        pub diagnostic: Option<Diagnostic>,
+    }
+    impl FDESELECTResponse {
+        pub fn new(
+            action_result: ActionResult,
+            charging: Option<Charging>,
+            shared_ase_information: Option<SharedASEInformation>,
+            diagnostic: Option<Diagnostic>,
+        ) -> Self {
+            Self {
+                action_result,
+                charging,
+                shared_ase_information,
+                diagnostic,
+            }
+        }
+    }
+    fn fdeselectresponse_action_result_default() -> ActionResult {
+        ActionResult(Integer::from(0))
+    }
+    #[doc = " No elements defined, shall be empty."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-END-GROUP-request")]
+    pub struct FENDGROUPRequest {}
+    impl FENDGROUPRequest {
+        pub fn new() -> Self {
+            Self {}
+        }
+    }
+    impl std::default::Default for FENDGROUPRequest {
+        fn default() -> Self {
+            Self {}
+        }
+    }
+    #[doc = " No elements defined, shall be empty."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-END-GROUP-response")]
+    pub struct FENDGROUPResponse {}
+    impl FENDGROUPResponse {
+        pub fn new() -> Self {
+            Self {}
+        }
+    }
+    impl std::default::Default for FENDGROUPResponse {
+        fn default() -> Self {
+            Self {}
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-ERASE-request")]
+    pub struct FERASERequest {
+        #[rasn(identifier = "file-access-data-unit-identity")]
+        pub file_access_data_unit_identity: FADUIdentity,
+    }
+    impl FERASERequest {
+        pub fn new(file_access_data_unit_identity: FADUIdentity) -> Self {
+            Self {
+                file_access_data_unit_identity,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-ERASE-response")]
+    pub struct FERASEResponse {
+        #[rasn(
+            default = "feraseresponse_action_result_default",
+            identifier = "action-result"
+        )]
+        pub action_result: ActionResult,
+        pub diagnostic: Option<Diagnostic>,
+    }
+    impl FERASEResponse {
+        pub fn new(action_result: ActionResult, diagnostic: Option<Diagnostic>) -> Self {
+            Self {
+                action_result,
+                diagnostic,
+            }
+        }
+    }
+    fn feraseresponse_action_result_default() -> ActionResult {
+        ActionResult(Integer::from(0))
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-GROUP-CHANGE-ATTRIB-request")]
+    pub struct FGROUPCHANGEATTRIBRequest {
+        pub attributes: ChangeAttributes,
+        #[rasn(tag(context, 1), identifier = "error-action")]
+        pub error_action: ErrorAction,
+        #[rasn(identifier = "request-Operation-result")]
+        pub request_operation_result: Option<RequestOperationResult>,
+        #[rasn(identifier = "shared-ASE-information")]
+        pub shared_ase_information: Option<SharedASEInformation>,
+    }
+    impl FGROUPCHANGEATTRIBRequest {
+        pub fn new(
+            attributes: ChangeAttributes,
+            error_action: ErrorAction,
+            request_operation_result: Option<RequestOperationResult>,
+            shared_ase_information: Option<SharedASEInformation>,
+        ) -> Self {
+            Self {
+                attributes,
+                error_action,
+                request_operation_result,
+                shared_ase_information,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-GROUP-CHANGE-ATTRIB-response")]
+    pub struct FGROUPCHANGEATTRIBResponse {
+        #[rasn(
+            default = "fgroupchangeattribresponse_action_result_default",
+            identifier = "action-result"
+        )]
+        pub action_result: ActionResult,
+        #[rasn(identifier = "operation-result")]
+        pub operation_result: Option<OperationResult>,
+        #[rasn(identifier = "shared-ASE-information")]
+        pub shared_ase_information: Option<SharedASEInformation>,
+        pub diagnostic: Option<Diagnostic>,
+    }
+    impl FGROUPCHANGEATTRIBResponse {
+        pub fn new(
+            action_result: ActionResult,
+            operation_result: Option<OperationResult>,
+            shared_ase_information: Option<SharedASEInformation>,
+            diagnostic: Option<Diagnostic>,
+        ) -> Self {
+            Self {
+                action_result,
+                operation_result,
+                shared_ase_information,
+                diagnostic,
+            }
+        }
+    }
+    fn fgroupchangeattribresponse_action_result_default() -> ActionResult {
+        ActionResult(Integer::from(0))
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-GROUP-COPY-request")]
+    pub struct FGROUPCOPYRequest {
+        #[rasn(identifier = "destination-file-directory")]
+        pub destination_file_directory: DestinationFileDirectory,
+        #[rasn(
+            tag(context, 0),
+            default = "fgroupcopyrequest_r_override_default",
+            identifier = "override"
+        )]
+        pub r_override: Override,
+        #[rasn(tag(context, 1), identifier = "error-action")]
+        pub error_action: ErrorAction,
+        #[rasn(identifier = "create-password")]
+        pub create_password: Option<Password>,
+        #[rasn(identifier = "access-passwords")]
+        pub access_passwords: Option<AccessPasswords>,
+        #[rasn(identifier = "path-access-passwords")]
+        pub path_access_passwords: Option<PathAccessPasswords>,
+        #[rasn(identifier = "request-Operation-result")]
+        pub request_operation_result: Option<RequestOperationResult>,
+        pub attributes: Option<ChangeAttributes>,
+    }
+    impl FGROUPCOPYRequest {
+        pub fn new(
+            destination_file_directory: DestinationFileDirectory,
+            r_override: Override,
+            error_action: ErrorAction,
+            create_password: Option<Password>,
+            access_passwords: Option<AccessPasswords>,
+            path_access_passwords: Option<PathAccessPasswords>,
+            request_operation_result: Option<RequestOperationResult>,
+            attributes: Option<ChangeAttributes>,
+        ) -> Self {
+            Self {
+                destination_file_directory,
+                r_override,
+                error_action,
+                create_password,
+                access_passwords,
+                path_access_passwords,
+                request_operation_result,
+                attributes,
+            }
+        }
+    }
+    fn fgroupcopyrequest_r_override_default() -> Override {
+        Override(Integer::from(0))
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-GROUP-COPY-response")]
+    pub struct FGROUPCOPYResponse {
+        #[rasn(
+            default = "fgroupcopyresponse_action_result_default",
+            identifier = "action-result"
+        )]
+        pub action_result: ActionResult,
+        #[rasn(identifier = "destination-file-directory")]
+        pub destination_file_directory: Option<DestinationFileDirectory>,
+        #[rasn(identifier = "operation-result")]
+        pub operation_result: Option<OperationResult>,
+        pub diagnostic: Option<Diagnostic>,
+    }
+    impl FGROUPCOPYResponse {
+        pub fn new(
+            action_result: ActionResult,
+            destination_file_directory: Option<DestinationFileDirectory>,
+            operation_result: Option<OperationResult>,
+            diagnostic: Option<Diagnostic>,
+        ) -> Self {
+            Self {
+                action_result,
+                destination_file_directory,
+                operation_result,
+                diagnostic,
+            }
+        }
+    }
+    fn fgroupcopyresponse_action_result_default() -> ActionResult {
+        ActionResult(Integer::from(0))
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-GROUP-DELETE-request")]
+    pub struct FGROUPDELETERequest {
+        #[rasn(identifier = "request-Operation-result")]
+        pub request_operation_result: Option<RequestOperationResult>,
+        #[rasn(identifier = "shared-ASE-information")]
+        pub shared_ase_information: Option<SharedASEInformation>,
+    }
+    impl FGROUPDELETERequest {
+        pub fn new(
+            request_operation_result: Option<RequestOperationResult>,
+            shared_ase_information: Option<SharedASEInformation>,
+        ) -> Self {
+            Self {
+                request_operation_result,
+                shared_ase_information,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-GROUP-DELETE-response")]
+    pub struct FGROUPDELETEResponse {
+        #[rasn(
+            default = "fgroupdeleteresponse_action_result_default",
+            identifier = "action-result"
+        )]
+        pub action_result: ActionResult,
+        pub charging: Option<Charging>,
+        #[rasn(identifier = "operation-result")]
+        pub operation_result: Option<OperationResult>,
+        #[rasn(identifier = "shared-ASE-information")]
+        pub shared_ase_information: Option<SharedASEInformation>,
+        pub diagnostic: Option<Diagnostic>,
+    }
+    impl FGROUPDELETEResponse {
+        pub fn new(
+            action_result: ActionResult,
+            charging: Option<Charging>,
+            operation_result: Option<OperationResult>,
+            shared_ase_information: Option<SharedASEInformation>,
+            diagnostic: Option<Diagnostic>,
+        ) -> Self {
+            Self {
+                action_result,
+                charging,
+                operation_result,
+                shared_ase_information,
+                diagnostic,
+            }
+        }
+    }
+    fn fgroupdeleteresponse_action_result_default() -> ActionResult {
+        ActionResult(Integer::from(0))
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-GROUP-LIST-request")]
+    pub struct FGROUPLISTRequest {
+        #[rasn(tag(context, 0), identifier = "attribute-names")]
+        pub attribute_names: AttributeNames,
+        #[rasn(tag(context, 2), identifier = "attribute-extension-names")]
+        pub attribute_extension_names: Option<AttributeExtensionNames>,
+    }
+    impl FGROUPLISTRequest {
+        pub fn new(
+            attribute_names: AttributeNames,
+            attribute_extension_names: Option<AttributeExtensionNames>,
+        ) -> Self {
+            Self {
+                attribute_names,
+                attribute_extension_names,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-GROUP-LIST-response")]
+    pub struct FGROUPLISTResponse {
+        #[rasn(
+            default = "fgrouplistresponse_action_result_default",
+            identifier = "action-result"
+        )]
+        pub action_result: ActionResult,
+        #[rasn(identifier = "objects-attributes-list")]
+        pub objects_attributes_list: Option<ObjectsAttributesList>,
+        pub diagnostic: Option<Diagnostic>,
+    }
+    impl FGROUPLISTResponse {
+        pub fn new(
+            action_result: ActionResult,
+            objects_attributes_list: Option<ObjectsAttributesList>,
+            diagnostic: Option<Diagnostic>,
+        ) -> Self {
+            Self {
+                action_result,
+                objects_attributes_list,
+                diagnostic,
+            }
+        }
+    }
+    fn fgrouplistresponse_action_result_default() -> ActionResult {
+        ActionResult(Integer::from(0))
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-GROUP-MOVE-request")]
+    pub struct FGROUPMOVERequest {
+        #[rasn(identifier = "destination-file-directory")]
+        pub destination_file_directory: DestinationFileDirectory,
+        #[rasn(
+            tag(context, 0),
+            default = "fgroupmoverequest_r_override_default",
+            identifier = "override"
+        )]
+        pub r_override: Override,
+        #[rasn(tag(context, 11), identifier = "error-action")]
+        pub error_action: ErrorAction,
+        #[rasn(identifier = "create-password")]
+        pub create_password: Option<Password>,
+        #[rasn(identifier = "access-passwords")]
+        pub access_passwords: Option<AccessPasswords>,
+        #[rasn(identifier = "path-access-passwords")]
+        pub path_access_passwords: Option<PathAccessPasswords>,
+        #[rasn(identifier = "request-Operation-result")]
+        pub request_operation_result: Option<RequestOperationResult>,
+        pub attributes: Option<ChangeAttributes>,
+    }
+    impl FGROUPMOVERequest {
+        pub fn new(
+            destination_file_directory: DestinationFileDirectory,
+            r_override: Override,
+            error_action: ErrorAction,
+            create_password: Option<Password>,
+            access_passwords: Option<AccessPasswords>,
+            path_access_passwords: Option<PathAccessPasswords>,
+            request_operation_result: Option<RequestOperationResult>,
+            attributes: Option<ChangeAttributes>,
+        ) -> Self {
+            Self {
+                destination_file_directory,
+                r_override,
+                error_action,
+                create_password,
+                access_passwords,
+                path_access_passwords,
+                request_operation_result,
+                attributes,
+            }
+        }
+    }
+    fn fgroupmoverequest_r_override_default() -> Override {
+        Override(Integer::from(0))
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-GROUP-MOVE-response")]
+    pub struct FGROUPMOVEResponse {
+        #[rasn(
+            default = "fgroupmoveresponse_action_result_default",
+            identifier = "action-result"
+        )]
+        pub action_result: ActionResult,
+        #[rasn(identifier = "destination-file-directory")]
+        pub destination_file_directory: Option<DestinationFileDirectory>,
+        #[rasn(identifier = "operation-result")]
+        pub operation_result: Option<OperationResult>,
+        pub diagnostic: Option<Diagnostic>,
+    }
+    impl FGROUPMOVEResponse {
+        pub fn new(
+            action_result: ActionResult,
+            destination_file_directory: Option<DestinationFileDirectory>,
+            operation_result: Option<OperationResult>,
+            diagnostic: Option<Diagnostic>,
+        ) -> Self {
+            Self {
+                action_result,
+                destination_file_directory,
+                operation_result,
+                diagnostic,
+            }
+        }
+    }
+    fn fgroupmoveresponse_action_result_default() -> ActionResult {
+        ActionResult(Integer::from(0))
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-GROUP-SELECT-request")]
+    pub struct FGROUPSELECTRequest {
+        #[rasn(identifier = "attribute-value-assertions")]
+        pub attribute_value_assertions: AttributeValueAssertions,
+        #[rasn(identifier = "requested-access")]
+        pub requested_access: AccessRequest,
+        #[rasn(identifier = "access-passwords")]
+        pub access_passwords: Option<AccessPasswords>,
+        #[rasn(identifier = "path-access-passwords")]
+        pub path_access_passwords: Option<PathAccessPasswords>,
+        #[rasn(identifier = "concurrency-control")]
+        pub concurrency_control: Option<ConcurrencyControl>,
+        #[rasn(
+            tag(context, 0),
+            default = "fgroupselectrequest_maximum_set_size_default",
+            identifier = "maximum-set-size"
+        )]
+        pub maximum_set_size: Integer,
+        pub scope: Scope,
+        pub account: Option<Account>,
+        #[rasn(identifier = "shared-ASE-information")]
+        pub shared_ase_information: Option<SharedASEInformation>,
+    }
+    impl FGROUPSELECTRequest {
+        pub fn new(
+            attribute_value_assertions: AttributeValueAssertions,
+            requested_access: AccessRequest,
+            access_passwords: Option<AccessPasswords>,
+            path_access_passwords: Option<PathAccessPasswords>,
+            concurrency_control: Option<ConcurrencyControl>,
+            maximum_set_size: Integer,
+            scope: Scope,
+            account: Option<Account>,
+            shared_ase_information: Option<SharedASEInformation>,
+        ) -> Self {
+            Self {
+                attribute_value_assertions,
+                requested_access,
+                access_passwords,
+                path_access_passwords,
+                concurrency_control,
+                maximum_set_size,
+                scope,
+                account,
+                shared_ase_information,
+            }
+        }
+    }
+    fn fgroupselectrequest_maximum_set_size_default() -> Integer {
+        Integer::from(0)
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-GROUP-SELECT-response")]
+    pub struct FGROUPSELECTResponse {
+        #[rasn(
+            default = "fgroupselectresponse_action_result_default",
+            identifier = "action-result"
+        )]
+        pub action_result: ActionResult,
+        #[rasn(identifier = "shared-ASE-information")]
+        pub shared_ase_information: Option<SharedASEInformation>,
+        pub diagnostic: Option<Diagnostic>,
+    }
+    impl FGROUPSELECTResponse {
+        pub fn new(
+            action_result: ActionResult,
+            shared_ase_information: Option<SharedASEInformation>,
+            diagnostic: Option<Diagnostic>,
+        ) -> Self {
+            Self {
+                action_result,
+                shared_ase_information,
+                diagnostic,
+            }
+        }
+    }
+    fn fgroupselectresponse_action_result_default() -> ActionResult {
+        ActionResult(Integer::from(0))
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-INITIALIZE-request")]
+    pub struct FINITIALIZERequest {
+        #[rasn(
+            default = "finitializerequest_protocol_version_default",
+            identifier = "protocol-Version"
+        )]
+        pub protocol_version: ProtocolVersion,
+        #[rasn(identifier = "implementation-information")]
+        pub implementation_information: Option<ImplementationInformation>,
+        #[rasn(
+            tag(context, 2),
+            default = "finitializerequest_presentation_tontext_management_default",
+            identifier = "presentation-tontext-management"
+        )]
+        pub presentation_tontext_management: bool,
+        #[rasn(
+            default = "finitializerequest_service_class_default",
+            identifier = "service-class"
+        )]
+        pub service_class: ServiceClass,
+        #[rasn(identifier = "functional-units")]
+        pub functional_units: FunctionalUnits,
+        #[rasn(
+            default = "finitializerequest_attribute_groups_default",
+            identifier = "attribute-groups"
+        )]
+        pub attribute_groups: AttributeGroups,
+        #[rasn(identifier = "shared-ASE-information")]
+        pub shared_ase_information: Option<SharedASEInformation>,
+        #[rasn(identifier = "ftam-quality-of-Service")]
+        pub ftam_quality_of_service: FTAMQualityOfService,
+        #[rasn(identifier = "contents-type-list")]
+        pub contents_type_list: Option<ContentsTypeList>,
+        #[rasn(identifier = "initiator-identity")]
+        pub initiator_identity: Option<UserIdentity>,
+        pub account: Option<Account>,
+        #[rasn(identifier = "filestore-password")]
+        pub filestore_password: Option<Password>,
+        #[rasn(
+            tag(context, 8),
+            default = "finitializerequest_checkpoint_window_default",
+            identifier = "checkpoint-window"
+        )]
+        pub checkpoint_window: Integer,
+    }
+    impl FINITIALIZERequest {
+        pub fn new(
+            protocol_version: ProtocolVersion,
+            implementation_information: Option<ImplementationInformation>,
+            presentation_tontext_management: bool,
+            service_class: ServiceClass,
+            functional_units: FunctionalUnits,
+            attribute_groups: AttributeGroups,
+            shared_ase_information: Option<SharedASEInformation>,
+            ftam_quality_of_service: FTAMQualityOfService,
+            contents_type_list: Option<ContentsTypeList>,
+            initiator_identity: Option<UserIdentity>,
+            account: Option<Account>,
+            filestore_password: Option<Password>,
+            checkpoint_window: Integer,
+        ) -> Self {
+            Self {
+                protocol_version,
+                implementation_information,
+                presentation_tontext_management,
+                service_class,
+                functional_units,
+                attribute_groups,
+                shared_ase_information,
+                ftam_quality_of_service,
+                contents_type_list,
+                initiator_identity,
+                account,
+                filestore_password,
+                checkpoint_window,
+            }
+        }
+    }
+    fn finitializerequest_protocol_version_default() -> ProtocolVersion {
+        ProtocolVersion([true, false].into_iter().collect())
+    }
+    fn finitializerequest_presentation_tontext_management_default() -> bool {
+        false
+    }
+    fn finitializerequest_service_class_default() -> ServiceClass {
+        ServiceClass([false, false, true, false, false].into_iter().collect())
+    }
+    fn finitializerequest_attribute_groups_default() -> AttributeGroups {
+        AttributeGroups([false, false, false, false].into_iter().collect())
+    }
+    fn finitializerequest_checkpoint_window_default() -> Integer {
+        Integer::from(1)
+    }
+    #[doc = " lf the recovery or restart data transfer functional units are"]
+    #[doc = " not available, the Checkpoint-window Parameter shall not be sent."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-INITIALIZE-response")]
+    pub struct FINITIALIZEResponse {
+        #[rasn(
+            default = "finitializeresponse_state_result_default",
+            identifier = "state-result"
+        )]
+        pub state_result: StateResult,
+        #[rasn(
+            default = "finitializeresponse_action_result_default",
+            identifier = "action-result"
+        )]
+        pub action_result: ActionResult,
+        #[rasn(
+            default = "finitializeresponse_protocol_version_default",
+            identifier = "protocol-Version"
+        )]
+        pub protocol_version: ProtocolVersion,
+        #[rasn(identifier = "implementation-information")]
+        pub implementation_information: Option<ImplementationInformation>,
+        #[rasn(
+            tag(context, 2),
+            default = "finitializeresponse_presentation_tontext_management_default",
+            identifier = "presentation-tontext-management"
+        )]
+        pub presentation_tontext_management: bool,
+        #[rasn(
+            default = "finitializeresponse_service_class_default",
+            identifier = "service-class"
+        )]
+        pub service_class: ServiceClass,
+        #[rasn(identifier = "functional-units")]
+        pub functional_units: FunctionalUnits,
+        #[rasn(
+            default = "finitializeresponse_attribute_groups_default",
+            identifier = "attribute-groups"
+        )]
+        pub attribute_groups: AttributeGroups,
+        #[rasn(identifier = "shared-ASE-information")]
+        pub shared_ase_information: Option<SharedASEInformation>,
+        #[rasn(identifier = "ftam-quality-of-Service")]
+        pub ftam_quality_of_service: FTAMQualityOfService,
+        #[rasn(identifier = "contents-type-list")]
+        pub contents_type_list: Option<ContentsTypeList>,
+        pub diagnostic: Option<Diagnostic>,
+        #[rasn(
+            tag(context, 8),
+            default = "finitializeresponse_checkpoint_window_default",
+            identifier = "checkpoint-window"
+        )]
+        pub checkpoint_window: Integer,
+    }
+    impl FINITIALIZEResponse {
+        pub fn new(
+            state_result: StateResult,
+            action_result: ActionResult,
+            protocol_version: ProtocolVersion,
+            implementation_information: Option<ImplementationInformation>,
+            presentation_tontext_management: bool,
+            service_class: ServiceClass,
+            functional_units: FunctionalUnits,
+            attribute_groups: AttributeGroups,
+            shared_ase_information: Option<SharedASEInformation>,
+            ftam_quality_of_service: FTAMQualityOfService,
+            contents_type_list: Option<ContentsTypeList>,
+            diagnostic: Option<Diagnostic>,
+            checkpoint_window: Integer,
+        ) -> Self {
+            Self {
+                state_result,
+                action_result,
+                protocol_version,
+                implementation_information,
+                presentation_tontext_management,
+                service_class,
+                functional_units,
+                attribute_groups,
+                shared_ase_information,
+                ftam_quality_of_service,
+                contents_type_list,
+                diagnostic,
+                checkpoint_window,
+            }
+        }
+    }
+    fn finitializeresponse_state_result_default() -> StateResult {
+        StateResult(Integer::from(0))
+    }
+    fn finitializeresponse_action_result_default() -> ActionResult {
+        ActionResult(Integer::from(0))
+    }
+    fn finitializeresponse_protocol_version_default() -> ProtocolVersion {
+        ProtocolVersion([true, false].into_iter().collect())
+    }
+    fn finitializeresponse_presentation_tontext_management_default() -> bool {
+        false
+    }
+    fn finitializeresponse_service_class_default() -> ServiceClass {
+        ServiceClass([false, false, true, false, false].into_iter().collect())
+    }
+    fn finitializeresponse_attribute_groups_default() -> AttributeGroups {
+        AttributeGroups([false, false, false, false].into_iter().collect())
+    }
+    fn finitializeresponse_checkpoint_window_default() -> Integer {
+        Integer::from(1)
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-LINK-request")]
+    pub struct FLINKRequest {
+        #[rasn(identifier = "initial-attributes")]
+        pub initial_attributes: CreateAttributes,
+        #[rasn(identifier = "target-object")]
+        pub target_object: PathnameAttribute,
+        #[rasn(identifier = "create-password")]
+        pub create_password: Option<Password>,
+        #[rasn(identifier = "requested-access")]
+        pub requested_access: AccessRequest,
+        #[rasn(identifier = "access-passwords")]
+        pub access_passwords: Option<AccessPasswords>,
+        #[rasn(identifier = "path-access-passwords")]
+        pub path_access_passwords: Option<PathAccessPasswords>,
+        #[rasn(identifier = "concurrency-control")]
+        pub concurrency_control: Option<ConcurrencyControl>,
+        #[rasn(identifier = "shared-ASE-information")]
+        pub shared_ase_information: Option<SharedASEInformation>,
+        pub account: Option<Account>,
+    }
+    impl FLINKRequest {
+        pub fn new(
+            initial_attributes: CreateAttributes,
+            target_object: PathnameAttribute,
+            create_password: Option<Password>,
+            requested_access: AccessRequest,
+            access_passwords: Option<AccessPasswords>,
+            path_access_passwords: Option<PathAccessPasswords>,
+            concurrency_control: Option<ConcurrencyControl>,
+            shared_ase_information: Option<SharedASEInformation>,
+            account: Option<Account>,
+        ) -> Self {
+            Self {
+                initial_attributes,
+                target_object,
+                create_password,
+                requested_access,
+                access_passwords,
+                path_access_passwords,
+                concurrency_control,
+                shared_ase_information,
+                account,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-LINK-response")]
+    pub struct FLINKResponse {
+        #[rasn(
+            default = "flinkresponse_state_result_default",
+            identifier = "state-result"
+        )]
+        pub state_result: StateResult,
+        #[rasn(
+            default = "flinkresponse_action_result_default",
+            identifier = "action-result"
+        )]
+        pub action_result: ActionResult,
+        #[rasn(identifier = "initial-attributes")]
+        pub initial_attributes: CreateAttributes,
+        #[rasn(identifier = "target-Object")]
+        pub target_object: PathnameAttribute,
+        #[rasn(identifier = "shared-ASE-information")]
+        pub shared_ase_information: Option<SharedASEInformation>,
+        pub diagnostic: Option<Diagnostic>,
+    }
+    impl FLINKResponse {
+        pub fn new(
+            state_result: StateResult,
+            action_result: ActionResult,
+            initial_attributes: CreateAttributes,
+            target_object: PathnameAttribute,
+            shared_ase_information: Option<SharedASEInformation>,
+            diagnostic: Option<Diagnostic>,
+        ) -> Self {
+            Self {
+                state_result,
+                action_result,
+                initial_attributes,
+                target_object,
+                shared_ase_information,
+                diagnostic,
+            }
+        }
+    }
+    fn flinkresponse_state_result_default() -> StateResult {
+        StateResult(Integer::from(0))
+    }
+    fn flinkresponse_action_result_default() -> ActionResult {
+        ActionResult(Integer::from(0))
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-LIST-request")]
+    pub struct FLISTRequest {
+        #[rasn(identifier = "attribute-value-asset-tions")]
+        pub attribute_value_asset_tions: AttributeValueAssertions,
+        pub scope: Scope,
+        #[rasn(identifier = "access-passwords")]
+        pub access_passwords: Option<AccessPasswords>,
+        #[rasn(identifier = "path-access-passwords")]
+        pub path_access_passwords: Option<PathAccessPasswords>,
+        #[rasn(tag(context, 0), identifier = "attribute-names")]
+        pub attribute_names: AttributeNames,
+        #[rasn(tag(context, 1), identifier = "attribute-extension-names")]
+        pub attribute_extension_names: Option<AttributeExtensionNames>,
+    }
+    impl FLISTRequest {
+        pub fn new(
+            attribute_value_asset_tions: AttributeValueAssertions,
+            scope: Scope,
+            access_passwords: Option<AccessPasswords>,
+            path_access_passwords: Option<PathAccessPasswords>,
+            attribute_names: AttributeNames,
+            attribute_extension_names: Option<AttributeExtensionNames>,
+        ) -> Self {
+            Self {
+                attribute_value_asset_tions,
+                scope,
+                access_passwords,
+                path_access_passwords,
+                attribute_names,
+                attribute_extension_names,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-LIST-response")]
+    pub struct FLISTResponse {
+        #[rasn(
+            default = "flistresponse_action_result_default",
+            identifier = "action-result"
+        )]
+        pub action_result: ActionResult,
+        #[rasn(identifier = "objects-attributes-list")]
+        pub objects_attributes_list: Option<ObjectsAttributesList>,
+        pub diagnostic: Option<Diagnostic>,
+    }
+    impl FLISTResponse {
+        pub fn new(
+            action_result: ActionResult,
+            objects_attributes_list: Option<ObjectsAttributesList>,
+            diagnostic: Option<Diagnostic>,
+        ) -> Self {
+            Self {
+                action_result,
+                objects_attributes_list,
+                diagnostic,
+            }
+        }
+    }
+    fn flistresponse_action_result_default() -> ActionResult {
+        ActionResult(Integer::from(0))
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-LOCATE-request")]
+    pub struct FLOCATERequest {
+        #[rasn(identifier = "file-access-data-unit-identity")]
+        pub file_access_data_unit_identity: FADUIdentity,
+        #[rasn(identifier = "fadu-lock")]
+        pub fadu_lock: Option<FADULock>,
+    }
+    impl FLOCATERequest {
+        pub fn new(
+            file_access_data_unit_identity: FADUIdentity,
+            fadu_lock: Option<FADULock>,
+        ) -> Self {
+            Self {
+                file_access_data_unit_identity,
+                fadu_lock,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-LOCATE-response")]
+    pub struct FLOCATEResponse {
+        #[rasn(
+            default = "flocateresponse_action_result_default",
+            identifier = "action-result"
+        )]
+        pub action_result: ActionResult,
+        #[rasn(identifier = "file-access-data-unit-identity")]
+        pub file_access_data_unit_identity: Option<FADUIdentity>,
+        pub diagnostic: Option<Diagnostic>,
+    }
+    impl FLOCATEResponse {
+        pub fn new(
+            action_result: ActionResult,
+            file_access_data_unit_identity: Option<FADUIdentity>,
+            diagnostic: Option<Diagnostic>,
+        ) -> Self {
+            Self {
+                action_result,
+                file_access_data_unit_identity,
+                diagnostic,
+            }
+        }
+    }
+    fn flocateresponse_action_result_default() -> ActionResult {
+        ActionResult(Integer::from(0))
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-MOVE-request")]
+    pub struct FMOVERequest {
+        #[rasn(identifier = "destination-file-directory")]
+        pub destination_file_directory: DestinationFileDirectory,
+        #[rasn(
+            tag(context, 0),
+            default = "fmoverequest_r_override_default",
+            identifier = "override"
+        )]
+        pub r_override: Override,
+        #[rasn(identifier = "create-password")]
+        pub create_password: Option<Password>,
+        #[rasn(identifier = "access-passwords")]
+        pub access_passwords: Option<AccessPasswords>,
+        #[rasn(identifier = "path-access-passwords")]
+        pub path_access_passwords: Option<PathAccessPasswords>,
+        pub attributes: Option<ChangeAttributes>,
+    }
+    impl FMOVERequest {
+        pub fn new(
+            destination_file_directory: DestinationFileDirectory,
+            r_override: Override,
+            create_password: Option<Password>,
+            access_passwords: Option<AccessPasswords>,
+            path_access_passwords: Option<PathAccessPasswords>,
+            attributes: Option<ChangeAttributes>,
+        ) -> Self {
+            Self {
+                destination_file_directory,
+                r_override,
+                create_password,
+                access_passwords,
+                path_access_passwords,
+                attributes,
+            }
+        }
+    }
+    fn fmoverequest_r_override_default() -> Override {
+        Override(Integer::from(0))
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-MOVE-response")]
+    pub struct FMOVEResponse {
+        #[rasn(
+            default = "fmoveresponse_action_result_default",
+            identifier = "action-result"
+        )]
+        pub action_result: ActionResult,
+        #[rasn(identifier = "destination-file-directory")]
+        pub destination_file_directory: Option<DestinationFileDirectory>,
+        pub attributes: Option<ChangeAttributes>,
+        pub diagnostic: Option<Diagnostic>,
+    }
+    impl FMOVEResponse {
+        pub fn new(
+            action_result: ActionResult,
+            destination_file_directory: Option<DestinationFileDirectory>,
+            attributes: Option<ChangeAttributes>,
+            diagnostic: Option<Diagnostic>,
+        ) -> Self {
+            Self {
+                action_result,
+                destination_file_directory,
+                attributes,
+                diagnostic,
+            }
+        }
+    }
+    fn fmoveresponse_action_result_default() -> ActionResult {
+        ActionResult(Integer::from(0))
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum FOPENRequestContentsType {
+        #[rasn(tag(context, 0))]
+        unknown(()),
+        #[rasn(tag(context, 1))]
+        proposed(ContentsTypeAttribute),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-OPEN-request")]
+    pub struct FOPENRequest {
+        #[rasn(
+            tag(context, 0),
+            default = "fopenrequest_processing_mode_default",
+            identifier = "processing-mode"
+        )]
+        pub processing_mode: BitString,
+        #[rasn(tag(context, 1), identifier = "contents-type")]
+        pub contents_type: FOPENRequestContentsType,
+        #[rasn(identifier = "concurrency-control")]
+        pub concurrency_control: Option<ConcurrencyControl>,
+        #[rasn(identifier = "shared-ASE-information")]
+        pub shared_ase_information: Option<SharedASEInformation>,
+        #[rasn(
+            tag(context, 2),
+            default = "fopenrequest_enable_fadu_locking_default",
+            identifier = "enable-fadu-locking"
+        )]
+        pub enable_fadu_locking: bool,
+        #[rasn(identifier = "activity-identifier")]
+        pub activity_identifier: Option<ActivityIdentifier>,
+        #[rasn(
+            tag(context, 3),
+            default = "fopenrequest_recovery_mode_default",
+            identifier = "recovery-mode"
+        )]
+        pub recovery_mode: Integer,
+        #[rasn(tag(context, 4), identifier = "remove-contexts")]
+        pub remove_contexts: Option<SetOf<AbstractSyntaxName>>,
+        #[rasn(tag(context, 5), identifier = "define-contexts")]
+        pub define_contexts: Option<SetOf<AbstractSyntaxName>>,
+        #[rasn(identifier = "degree-of-overlap")]
+        pub degree_of_overlap: Option<DegreeOfOverlap>,
+        #[rasn(tag(context, 7), identifier = "transfer-window")]
+        pub transfer_window: Option<Integer>,
+    }
+    impl FOPENRequest {
+        pub fn new(
+            processing_mode: BitString,
+            contents_type: FOPENRequestContentsType,
+            concurrency_control: Option<ConcurrencyControl>,
+            shared_ase_information: Option<SharedASEInformation>,
+            enable_fadu_locking: bool,
+            activity_identifier: Option<ActivityIdentifier>,
+            recovery_mode: Integer,
+            remove_contexts: Option<SetOf<AbstractSyntaxName>>,
+            define_contexts: Option<SetOf<AbstractSyntaxName>>,
+            degree_of_overlap: Option<DegreeOfOverlap>,
+            transfer_window: Option<Integer>,
+        ) -> Self {
+            Self {
+                processing_mode,
+                contents_type,
+                concurrency_control,
+                shared_ase_information,
+                enable_fadu_locking,
+                activity_identifier,
+                recovery_mode,
+                remove_contexts,
+                define_contexts,
+                degree_of_overlap,
+                transfer_window,
+            }
+        }
+    }
+    fn fopenrequest_processing_mode_default() -> BitString {
+        [true, false, false, false, false].into_iter().collect()
+    }
+    fn fopenrequest_enable_fadu_locking_default() -> bool {
+        false
+    }
+    fn fopenrequest_recovery_mode_default() -> Integer {
+        Integer::from(0)
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-OPEN-response")]
+    pub struct FOPENResponse {
+        #[rasn(
+            default = "fopenresponse_state_result_default",
+            identifier = "state-result"
+        )]
+        pub state_result: StateResult,
+        #[rasn(
+            default = "fopenresponse_action_result_default",
+            identifier = "action-result"
+        )]
+        pub action_result: ActionResult,
+        #[rasn(tag(context, 1), identifier = "contents-type")]
+        pub contents_type: ContentsTypeAttribute,
+        #[rasn(identifier = "concurrency-control")]
+        pub concurrency_control: Option<ConcurrencyControl>,
+        #[rasn(identifier = "shared-ASE-information")]
+        pub shared_ase_information: Option<SharedASEInformation>,
+        pub diagnostic: Option<Diagnostic>,
+        #[rasn(
+            tag(context, 3),
+            default = "fopenresponse_recovery_mode_default",
+            identifier = "recovery-mode"
+        )]
+        pub recovery_mode: Integer,
+        #[rasn(
+            tag(context, 6),
+            default = "fopenresponse_presentation_action_default",
+            identifier = "presentation-action"
+        )]
+        pub presentation_action: bool,
+        #[rasn(identifier = "degree-of-overlap")]
+        pub degree_of_overlap: Option<DegreeOfOverlap>,
+        #[rasn(tag(context, 7), identifier = "transfer-window")]
+        pub transfer_window: Option<Integer>,
+    }
+    impl FOPENResponse {
+        pub fn new(
+            state_result: StateResult,
+            action_result: ActionResult,
+            contents_type: ContentsTypeAttribute,
+            concurrency_control: Option<ConcurrencyControl>,
+            shared_ase_information: Option<SharedASEInformation>,
+            diagnostic: Option<Diagnostic>,
+            recovery_mode: Integer,
+            presentation_action: bool,
+            degree_of_overlap: Option<DegreeOfOverlap>,
+            transfer_window: Option<Integer>,
+        ) -> Self {
+            Self {
+                state_result,
+                action_result,
+                contents_type,
+                concurrency_control,
+                shared_ase_information,
+                diagnostic,
+                recovery_mode,
+                presentation_action,
+                degree_of_overlap,
+                transfer_window,
+            }
+        }
+    }
+    fn fopenresponse_state_result_default() -> StateResult {
+        StateResult(Integer::from(0))
+    }
+    fn fopenresponse_action_result_default() -> ActionResult {
+        ActionResult(Integer::from(0))
+    }
+    fn fopenresponse_recovery_mode_default() -> Integer {
+        Integer::from(0)
+    }
+    fn fopenresponse_presentation_action_default() -> bool {
+        false
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-P-ABORT-request")]
+    pub struct FPABORTRequest {
+        #[rasn(
+            default = "fpabortrequest_action_result_default",
+            identifier = "action-result"
+        )]
+        pub action_result: ActionResult,
+        pub diagnostic: Option<Diagnostic>,
+    }
+    impl FPABORTRequest {
+        pub fn new(action_result: ActionResult, diagnostic: Option<Diagnostic>) -> Self {
+            Self {
+                action_result,
+                diagnostic,
+            }
+        }
+    }
+    fn fpabortrequest_action_result_default() -> ActionResult {
+        ActionResult(Integer::from(0))
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-READ-ATTRIB-request")]
+    pub struct FREADATTRIBRequest {
+        #[rasn(tag(context, 0), identifier = "attribute-names")]
+        pub attribute_names: AttributeNames,
+        #[rasn(tag(context, 1), identifier = "attribute-extension-names")]
+        pub attribute_extension_names: Option<AttributeExtensionNames>,
+    }
+    impl FREADATTRIBRequest {
+        pub fn new(
+            attribute_names: AttributeNames,
+            attribute_extension_names: Option<AttributeExtensionNames>,
+        ) -> Self {
+            Self {
+                attribute_names,
+                attribute_extension_names,
+            }
+        }
+    }
+    #[doc = " This Parameter tan only be sent when the"]
+    #[doc = " limited-filestore-management functional unit is available."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-READ-ATTRIB-response")]
+    pub struct FREADATTRIBResponse {
+        #[rasn(
+            default = "freadattribresponse_action_result_default",
+            identifier = "action-result"
+        )]
+        pub action_result: ActionResult,
+        pub attributes: Option<ReadAttributes>,
+        pub diagnostic: Option<Diagnostic>,
+    }
+    impl FREADATTRIBResponse {
+        pub fn new(
+            action_result: ActionResult,
+            attributes: Option<ReadAttributes>,
+            diagnostic: Option<Diagnostic>,
+        ) -> Self {
+            Self {
+                action_result,
+                attributes,
+                diagnostic,
+            }
+        }
+    }
+    fn freadattribresponse_action_result_default() -> ActionResult {
+        ActionResult(Integer::from(0))
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-READ-LINK-ATTRIB-request")]
+    pub struct FREADLINKATTRIBRequest {
+        #[rasn(tag(context, 0), identifier = "attribute-names")]
+        pub attribute_names: AttributeNames,
+        #[rasn(tag(context, 1), identifier = "attribute-extension-names")]
+        pub attribute_extension_names: Option<AttributeExtensionNames>,
+    }
+    impl FREADLINKATTRIBRequest {
+        pub fn new(
+            attribute_names: AttributeNames,
+            attribute_extension_names: Option<AttributeExtensionNames>,
+        ) -> Self {
+            Self {
+                attribute_names,
+                attribute_extension_names,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-READ-LINK-ATTRIB-response")]
+    pub struct FREADLINKATTRIBResponse {
+        #[rasn(
+            default = "freadlinkattribresponse_action_result_default",
+            identifier = "action-result"
+        )]
+        pub action_result: ActionResult,
+        pub attributes: Option<ReadAttributes>,
+        pub diagnostic: Option<Diagnostic>,
+    }
+    impl FREADLINKATTRIBResponse {
+        pub fn new(
+            action_result: ActionResult,
+            attributes: Option<ReadAttributes>,
+            diagnostic: Option<Diagnostic>,
+        ) -> Self {
+            Self {
+                action_result,
+                attributes,
+                diagnostic,
+            }
+        }
+    }
+    fn freadlinkattribresponse_action_result_default() -> ActionResult {
+        ActionResult(Integer::from(0))
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-READ-request")]
+    pub struct FREADRequest {
+        #[rasn(identifier = "file-access-data-unit-identity")]
+        pub file_access_data_unit_identity: FADUIdentity,
+        #[rasn(identifier = "access-context")]
+        pub access_context: AccessContext,
+        #[rasn(identifier = "fadu-lock")]
+        pub fadu_lock: Option<FADULock>,
+        #[rasn(tag(context, 0), identifier = "transfer-number")]
+        pub transfer_number: Option<Integer>,
+    }
+    impl FREADRequest {
+        pub fn new(
+            file_access_data_unit_identity: FADUIdentity,
+            access_context: AccessContext,
+            fadu_lock: Option<FADULock>,
+            transfer_number: Option<Integer>,
+        ) -> Self {
+            Self {
+                file_access_data_unit_identity,
+                access_context,
+                fadu_lock,
+                transfer_number,
+            }
+        }
+    }
+    #[doc = " No elements defined, shall be empty."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-RECOVER-request")]
+    pub struct FRECOVERRequest {
+        #[rasn(identifier = "activity-identifier")]
+        pub activity_identifier: ActivityIdentifier,
+        #[rasn(tag(context, 0), identifier = "bulk-transfer-number")]
+        pub bulk_transfer_number: Integer,
+        #[rasn(identifier = "requested-access")]
+        pub requested_access: AccessRequest,
+        #[rasn(identifier = "access-passwords")]
+        pub access_passwords: Option<AccessPasswords>,
+        #[rasn(
+            tag(context, 2),
+            default = "frecoverrequest_recovefy_point_default",
+            identifier = "recovefy-Point"
+        )]
+        pub recovefy_point: Integer,
+        #[rasn(tag(context, 3), identifier = "remove-contexts")]
+        pub remove_contexts: Option<SetOf<AbstractSyntaxName>>,
+        #[rasn(tag(context, 4), identifier = "define-contexts")]
+        pub define_contexts: Option<SetOf<AbstractSyntaxName>>,
+        #[rasn(tag(context, 7), identifier = "concurrent-bulk-transfer-number")]
+        pub concurrent_bulk_transfer_number: Option<Integer>,
+        #[rasn(tag(context, 8), identifier = "concurrent-recovery-point")]
+        pub concurrent_recovery_point: Option<Integer>,
+        #[rasn(tag(context, 9), identifier = "last-transfer-end-read-response")]
+        pub last_transfer_end_read_response: Option<Integer>,
+        #[rasn(tag(context, 10), identifier = "last-transfer-end-write-response")]
+        pub last_transfer_end_write_response: Option<Integer>,
+    }
+    impl FRECOVERRequest {
+        pub fn new(
+            activity_identifier: ActivityIdentifier,
+            bulk_transfer_number: Integer,
+            requested_access: AccessRequest,
+            access_passwords: Option<AccessPasswords>,
+            recovefy_point: Integer,
+            remove_contexts: Option<SetOf<AbstractSyntaxName>>,
+            define_contexts: Option<SetOf<AbstractSyntaxName>>,
+            concurrent_bulk_transfer_number: Option<Integer>,
+            concurrent_recovery_point: Option<Integer>,
+            last_transfer_end_read_response: Option<Integer>,
+            last_transfer_end_write_response: Option<Integer>,
+        ) -> Self {
+            Self {
+                activity_identifier,
+                bulk_transfer_number,
+                requested_access,
+                access_passwords,
+                recovefy_point,
+                remove_contexts,
+                define_contexts,
+                concurrent_bulk_transfer_number,
+                concurrent_recovery_point,
+                last_transfer_end_read_response,
+                last_transfer_end_write_response,
+            }
+        }
+    }
+    fn frecoverrequest_recovefy_point_default() -> Integer {
+        Integer::from(0)
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-RECOVER-response")]
+    pub struct FRECOVERResponse {
+        #[rasn(
+            default = "frecoverresponse_state_result_default",
+            identifier = "state-result"
+        )]
+        pub state_result: StateResult,
+        #[rasn(
+            default = "frecoverresponse_action_result_default",
+            identifier = "action-result"
+        )]
+        pub action_result: ActionResult,
+        #[rasn(tag(context, 1), identifier = "contents-type")]
+        pub contents_type: ContentsTypeAttribute,
+        #[rasn(
+            tag(context, 2),
+            default = "frecoverresponse_recovety_point_default",
+            identifier = "recovety-Point"
+        )]
+        pub recovety_point: Integer,
+        pub diagnostic: Option<Diagnostic>,
+        #[rasn(
+            tag(context, 6),
+            default = "frecoverresponse_presentation_action_default",
+            identifier = "presentation-action"
+        )]
+        pub presentation_action: bool,
+        #[rasn(tag(context, 8), identifier = "concurrent-recovery-point")]
+        pub concurrent_recovery_point: Option<Integer>,
+        #[rasn(tag(context, 9), identifier = "last-transfer-end-read-request")]
+        pub last_transfer_end_read_request: Option<Integer>,
+        #[rasn(tag(context, 10), identifier = "last-transfer-end-write-request")]
+        pub last_transfer_end_write_request: Option<Integer>,
+    }
+    impl FRECOVERResponse {
+        pub fn new(
+            state_result: StateResult,
+            action_result: ActionResult,
+            contents_type: ContentsTypeAttribute,
+            recovety_point: Integer,
+            diagnostic: Option<Diagnostic>,
+            presentation_action: bool,
+            concurrent_recovery_point: Option<Integer>,
+            last_transfer_end_read_request: Option<Integer>,
+            last_transfer_end_write_request: Option<Integer>,
+        ) -> Self {
+            Self {
+                state_result,
+                action_result,
+                contents_type,
+                recovety_point,
+                diagnostic,
+                presentation_action,
+                concurrent_recovery_point,
+                last_transfer_end_read_request,
+                last_transfer_end_write_request,
+            }
+        }
+    }
+    fn frecoverresponse_state_result_default() -> StateResult {
+        StateResult(Integer::from(0))
+    }
+    fn frecoverresponse_action_result_default() -> ActionResult {
+        ActionResult(Integer::from(0))
+    }
+    fn frecoverresponse_recovety_point_default() -> Integer {
+        Integer::from(0)
+    }
+    fn frecoverresponse_presentation_action_default() -> bool {
+        false
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-RESTART-request")]
+    pub struct FRESTARTRequest {
+        #[rasn(tag(context, 0), identifier = "checkpoint-identifier")]
+        pub checkpoint_identifier: Integer,
+        #[rasn(identifier = "request-type")]
+        pub request_type: Option<RequestType>,
+        #[rasn(tag(context, 1), identifier = "transfer-number")]
+        pub transfer_number: Integer,
+        #[rasn(tag(context, 2), identifier = "last-transfer-end-read-request")]
+        pub last_transfer_end_read_request: Option<Integer>,
+        #[rasn(tag(context, 3), identifier = "last-transfer-end-read-response")]
+        pub last_transfer_end_read_response: Option<Integer>,
+        #[rasn(tag(context, 4), identifier = "last-transfer-end-write-request")]
+        pub last_transfer_end_write_request: Option<Integer>,
+        #[rasn(tag(context, 5), identifier = "last-transfer-end-write-response")]
+        pub last_transfer_end_write_response: Option<Integer>,
+    }
+    impl FRESTARTRequest {
+        pub fn new(
+            checkpoint_identifier: Integer,
+            request_type: Option<RequestType>,
+            transfer_number: Integer,
+            last_transfer_end_read_request: Option<Integer>,
+            last_transfer_end_read_response: Option<Integer>,
+            last_transfer_end_write_request: Option<Integer>,
+            last_transfer_end_write_response: Option<Integer>,
+        ) -> Self {
+            Self {
+                checkpoint_identifier,
+                request_type,
+                transfer_number,
+                last_transfer_end_read_request,
+                last_transfer_end_read_response,
+                last_transfer_end_write_request,
+                last_transfer_end_write_response,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-RESTART-response")]
+    pub struct FRESTARTResponse {
+        #[rasn(tag(context, 0), identifier = "checkpoint-identifier")]
+        pub checkpoint_identifier: Integer,
+        #[rasn(identifier = "request-type")]
+        pub request_type: Option<RequestType>,
+        #[rasn(tag(context, 1), identifier = "transfer-number")]
+        pub transfer_number: Integer,
+        #[rasn(tag(context, 2), identifier = "last-transfer-end-read-request")]
+        pub last_transfer_end_read_request: Option<Integer>,
+        #[rasn(tag(context, 3), identifier = "last-transfer-end-read-response")]
+        pub last_transfer_end_read_response: Option<Integer>,
+        #[rasn(tag(context, 4), identifier = "last-transfer-end-write-request")]
+        pub last_transfer_end_write_request: Option<Integer>,
+        #[rasn(tag(context, 5), identifier = "last-transfer-end-write-response")]
+        pub last_transfer_end_write_response: Option<Integer>,
+    }
+    impl FRESTARTResponse {
+        pub fn new(
+            checkpoint_identifier: Integer,
+            request_type: Option<RequestType>,
+            transfer_number: Integer,
+            last_transfer_end_read_request: Option<Integer>,
+            last_transfer_end_read_response: Option<Integer>,
+            last_transfer_end_write_request: Option<Integer>,
+            last_transfer_end_write_response: Option<Integer>,
+        ) -> Self {
+            Self {
+                checkpoint_identifier,
+                request_type,
+                transfer_number,
+                last_transfer_end_read_request,
+                last_transfer_end_read_response,
+                last_transfer_end_write_request,
+                last_transfer_end_write_response,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-SELECT-ANOTHER-request")]
+    pub struct FSELECTANOTHERRequest {
+        #[rasn(identifier = "shared-ASE-information")]
+        pub shared_ase_information: Option<SharedASEInformation>,
+    }
+    impl FSELECTANOTHERRequest {
+        pub fn new(shared_ase_information: Option<SharedASEInformation>) -> Self {
+            Self {
+                shared_ase_information,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-SELECT-ANOTHER-response")]
+    pub struct FSELECTANOTHERResponse {
+        #[rasn(
+            default = "fselectanotherresponse_state_result_default",
+            identifier = "state-result"
+        )]
+        pub state_result: StateResult,
+        #[rasn(
+            default = "fselectanotherresponse_action_result_default",
+            identifier = "action-result"
+        )]
+        pub action_result: ActionResult,
+        #[rasn(
+            tag(context, 0),
+            default = "fselectanotherresponse_last_member_indicator_default",
+            identifier = "last-member-indicator"
+        )]
+        pub last_member_indicator: bool,
+        #[rasn(identifier = "referent-indicator")]
+        pub referent_indicator: Option<ReferentIndicator>,
+        #[rasn(identifier = "shared-ASE-information")]
+        pub shared_ase_information: Option<SharedASEInformation>,
+        pub diagnostic: Option<Diagnostic>,
+    }
+    impl FSELECTANOTHERResponse {
+        pub fn new(
+            state_result: StateResult,
+            action_result: ActionResult,
+            last_member_indicator: bool,
+            referent_indicator: Option<ReferentIndicator>,
+            shared_ase_information: Option<SharedASEInformation>,
+            diagnostic: Option<Diagnostic>,
+        ) -> Self {
+            Self {
+                state_result,
+                action_result,
+                last_member_indicator,
+                referent_indicator,
+                shared_ase_information,
+                diagnostic,
+            }
+        }
+    }
+    fn fselectanotherresponse_state_result_default() -> StateResult {
+        StateResult(Integer::from(0))
+    }
+    fn fselectanotherresponse_action_result_default() -> ActionResult {
+        ActionResult(Integer::from(0))
+    }
+    fn fselectanotherresponse_last_member_indicator_default() -> bool {
+        false
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-SELECT-request")]
+    pub struct FSELECTRequest {
+        pub attributes: SelectAttributes,
+        #[rasn(identifier = "requested-access")]
+        pub requested_access: AccessRequest,
+        #[rasn(identifier = "access-passwords")]
+        pub access_passwords: Option<AccessPasswords>,
+        #[rasn(identifier = "path-access-passwords")]
+        pub path_access_passwords: Option<PathAccessPasswords>,
+        #[rasn(identifier = "concurrency-control")]
+        pub concurrency_control: Option<ConcurrencyControl>,
+        #[rasn(identifier = "shared-ASE-information")]
+        pub shared_ase_information: Option<SharedASEInformation>,
+        pub account: Option<Account>,
+    }
+    impl FSELECTRequest {
+        pub fn new(
+            attributes: SelectAttributes,
+            requested_access: AccessRequest,
+            access_passwords: Option<AccessPasswords>,
+            path_access_passwords: Option<PathAccessPasswords>,
+            concurrency_control: Option<ConcurrencyControl>,
+            shared_ase_information: Option<SharedASEInformation>,
+            account: Option<Account>,
+        ) -> Self {
+            Self {
+                attributes,
+                requested_access,
+                access_passwords,
+                path_access_passwords,
+                concurrency_control,
+                shared_ase_information,
+                account,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-SELECT-response")]
+    pub struct FSELECTResponse {
+        #[rasn(
+            default = "fselectresponse_state_result_default",
+            identifier = "state-result"
+        )]
+        pub state_result: StateResult,
+        #[rasn(
+            default = "fselectresponse_action_result_default",
+            identifier = "action-result"
+        )]
+        pub action_result: ActionResult,
+        pub attributes: SelectAttributes,
+        #[rasn(identifier = "referent-indicator")]
+        pub referent_indicator: Option<ReferentIndicator>,
+        #[rasn(identifier = "shared-ASE-information")]
+        pub shared_ase_information: Option<SharedASEInformation>,
+        pub diagnostic: Option<Diagnostic>,
+    }
+    impl FSELECTResponse {
+        pub fn new(
+            state_result: StateResult,
+            action_result: ActionResult,
+            attributes: SelectAttributes,
+            referent_indicator: Option<ReferentIndicator>,
+            shared_ase_information: Option<SharedASEInformation>,
+            diagnostic: Option<Diagnostic>,
+        ) -> Self {
+            Self {
+                state_result,
+                action_result,
+                attributes,
+                referent_indicator,
+                shared_ase_information,
+                diagnostic,
+            }
+        }
+    }
+    fn fselectresponse_state_result_default() -> StateResult {
+        StateResult(Integer::from(0))
+    }
+    fn fselectresponse_action_result_default() -> ActionResult {
+        ActionResult(Integer::from(0))
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-TERMINATE-request")]
+    pub struct FTERMINATERequest {
+        #[rasn(identifier = "shared-ASE-information")]
+        pub shared_ase_information: Option<SharedASEInformation>,
+    }
+    impl FTERMINATERequest {
+        pub fn new(shared_ase_information: Option<SharedASEInformation>) -> Self {
+            Self {
+                shared_ase_information,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-TERMINATE-response")]
+    pub struct FTERMINATEResponse {
+        #[rasn(identifier = "shared-ASE-information")]
+        pub shared_ase_information: Option<SharedASEInformation>,
+        pub charging: Option<Charging>,
+    }
+    impl FTERMINATEResponse {
+        pub fn new(
+            shared_ase_information: Option<SharedASEInformation>,
+            charging: Option<Charging>,
+        ) -> Self {
+            Self {
+                shared_ase_information,
+                charging,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-TRANSFER-END-request")]
+    pub struct FTRANSFERENDRequest {
+        #[rasn(identifier = "shared-ASE-information")]
+        pub shared_ase_information: Option<SharedASEInformation>,
+        #[rasn(identifier = "request-type")]
+        pub request_type: Option<RequestType>,
+        #[rasn(tag(context, 0), identifier = "transfer-number")]
+        pub transfer_number: Option<Integer>,
+        #[rasn(tag(context, 1), identifier = "last-transfer-end-read-response")]
+        pub last_transfer_end_read_response: Option<Integer>,
+        #[rasn(tag(context, 2), identifier = "last-transfer-end-write-response")]
+        pub last_transfer_end_write_response: Option<Integer>,
+    }
+    impl FTRANSFERENDRequest {
+        pub fn new(
+            shared_ase_information: Option<SharedASEInformation>,
+            request_type: Option<RequestType>,
+            transfer_number: Option<Integer>,
+            last_transfer_end_read_response: Option<Integer>,
+            last_transfer_end_write_response: Option<Integer>,
+        ) -> Self {
+            Self {
+                shared_ase_information,
+                request_type,
+                transfer_number,
+                last_transfer_end_read_response,
+                last_transfer_end_write_response,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-TRANSFER-END-response")]
+    pub struct FTRANSFERENDResponse {
+        #[rasn(
+            default = "ftransferendresponse_action_result_default",
+            identifier = "action-result"
+        )]
+        pub action_result: ActionResult,
+        #[rasn(identifier = "shared-ASE-information")]
+        pub shared_ase_information: Option<SharedASEInformation>,
+        pub diagnostic: Option<Diagnostic>,
+        #[rasn(identifier = "request-type")]
+        pub request_type: Option<RequestType>,
+        #[rasn(tag(context, 0), identifier = "transfer-number")]
+        pub transfer_number: Option<Integer>,
+    }
+    impl FTRANSFERENDResponse {
+        pub fn new(
+            action_result: ActionResult,
+            shared_ase_information: Option<SharedASEInformation>,
+            diagnostic: Option<Diagnostic>,
+            request_type: Option<RequestType>,
+            transfer_number: Option<Integer>,
+        ) -> Self {
+            Self {
+                action_result,
+                shared_ase_information,
+                diagnostic,
+                request_type,
+                transfer_number,
+            }
+        }
+    }
+    fn ftransferendresponse_action_result_default() -> ActionResult {
+        ActionResult(Integer::from(0))
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-U-ABORT-request")]
+    pub struct FUABORTRequest {
+        #[rasn(
+            default = "fuabortrequest_action_result_default",
+            identifier = "action-result"
+        )]
+        pub action_result: ActionResult,
+        pub diagnostic: Option<Diagnostic>,
+    }
+    impl FUABORTRequest {
+        pub fn new(action_result: ActionResult, diagnostic: Option<Diagnostic>) -> Self {
+            Self {
+                action_result,
+                diagnostic,
+            }
+        }
+    }
+    fn fuabortrequest_action_result_default() -> ActionResult {
+        ActionResult(Integer::from(0))
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-UNLINK-request")]
+    pub struct FUNLINKRequest {
+        #[rasn(identifier = "shared-ASE-information")]
+        pub shared_ase_information: Option<SharedASEInformation>,
+    }
+    impl FUNLINKRequest {
+        pub fn new(shared_ase_information: Option<SharedASEInformation>) -> Self {
+            Self {
+                shared_ase_information,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-UNLINK-response")]
+    pub struct FUNLINKResponse {
+        #[rasn(
+            default = "funlinkresponse_action_result_default",
+            identifier = "action-result"
+        )]
+        pub action_result: ActionResult,
+        #[rasn(identifier = "shared-ASE-information")]
+        pub shared_ase_information: Option<SharedASEInformation>,
+        pub charging: Option<Charging>,
+        pub diagnostic: Option<Diagnostic>,
+    }
+    impl FUNLINKResponse {
+        pub fn new(
+            action_result: ActionResult,
+            shared_ase_information: Option<SharedASEInformation>,
+            charging: Option<Charging>,
+            diagnostic: Option<Diagnostic>,
+        ) -> Self {
+            Self {
+                action_result,
+                shared_ase_information,
+                charging,
+                diagnostic,
+            }
+        }
+    }
+    fn funlinkresponse_action_result_default() -> ActionResult {
+        ActionResult(Integer::from(0))
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "F-WRITE-request")]
+    pub struct FWRITERequest {
+        #[rasn(tag(context, 0), identifier = "file-access-data-unit-Operation")]
+        pub file_access_data_unit_operation: Integer,
+        #[rasn(identifier = "file-access-data-unit-identity")]
+        pub file_access_data_unit_identity: FADUIdentity,
+        #[rasn(identifier = "fadu-lock")]
+        pub fadu_lock: Option<FADULock>,
+        #[rasn(tag(context, 1), identifier = "transfer-number")]
+        pub transfer_number: Option<Integer>,
+    }
+    impl FWRITERequest {
+        pub fn new(
+            file_access_data_unit_operation: Integer,
+            file_access_data_unit_identity: FADUIdentity,
+            fadu_lock: Option<FADULock>,
+            transfer_number: Option<Integer>,
+        ) -> Self {
+            Self {
+                file_access_data_unit_operation,
+                file_access_data_unit_identity,
+                fadu_lock,
+                transfer_number,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, tag(application, 15), identifier = "FADU-Identity")]
+    pub enum FADUIdentity {
+        #[rasn(tag(context, 0), identifier = "first-last")]
+        first_last(Integer),
+        #[rasn(tag(context, 1))]
+        relative(Integer),
+        #[rasn(tag(context, 2), identifier = "begin-end")]
+        begin_end(Integer),
+        #[rasn(tag(context, 3), identifier = "single-name")]
+        single_name(NodeName),
+        #[rasn(tag(context, 4), identifier = "name-list")]
+        name_list(SequenceOf<NodeName>),
+        #[rasn(tag(context, 5), identifier = "fadu-number")]
+        fadu_number(Integer),
+    }
+    #[doc = " The type to be used for Node-Name is defined in IS08571-FADU."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, tag(application, 16), identifier = "FADU-Lock")]
+    pub struct FADULock(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "FSM-PDU")]
+    pub enum FSMPDU {
+        #[rasn(tag(context, 41), identifier = "f-Change-prefix-request")]
+        f_Change_prefix_request(FCHANGEPREFIXRequest),
+        #[rasn(tag(context, 42), identifier = "f-Change-prefix-response")]
+        f_Change_prefix_response(FCHANGEPREFIXResponse),
+        #[rasn(tag(context, 43), identifier = "f-list-request")]
+        f_list_request(FLISTRequest),
+        #[rasn(tag(context, 44), identifier = "f-list-response")]
+        f_list_response(FLISTResponse),
+        #[rasn(tag(context, 45), identifier = "f-group-select-request")]
+        f_group_select_request(FGROUPSELECTRequest),
+        #[rasn(tag(context, 46), identifier = "f-group-select-response")]
+        f_group_select_response(FGROUPSELECTResponse),
+        #[rasn(tag(context, 47), identifier = "f-group-delete-request")]
+        f_group_delete_request(FGROUPDELETERequest),
+        #[rasn(tag(context, 48), identifier = "f-group-delete-response")]
+        f_group_delete_response(FGROUPDELETEResponse),
+        #[rasn(tag(context, 49), identifier = "f-group-move-request")]
+        f_group_move_request(FGROUPMOVERequest),
+        #[rasn(tag(context, 50), identifier = "f-group-move-response")]
+        f_group_move_response(FGROUPMOVEResponse),
+        #[rasn(tag(context, 51), identifier = "f-group-copy-request")]
+        f_group_copy_request(FGROUPCOPYRequest),
+        #[rasn(tag(context, 52), identifier = "f-group-copy-response")]
+        f_group_copy_response(FGROUPCOPYResponse),
+        #[rasn(tag(context, 53), identifier = "f-group-list-request")]
+        f_group_list_request(FGROUPLISTRequest),
+        #[rasn(tag(context, 54), identifier = "f-group-list-response")]
+        f_group_list_response(FGROUPLISTResponse),
+        #[rasn(tag(context, 55), identifier = "f-group-Change-attrib-request")]
+        f_group_Change_attrib_request(FGROUPCHANGEATTRIBRequest),
+        #[rasn(tag(context, 56), identifier = "f-group-Change-attrib-response")]
+        f_group_Change_attrib_response(FGROUPCHANGEATTRIBResponse),
+        #[rasn(tag(context, 57), identifier = "f-select-another-request")]
+        f_select_another_request(FSELECTANOTHERRequest),
+        #[rasn(tag(context, 58), identifier = "f-select-another-response")]
+        f_select_another_response(FSELECTANOTHERResponse),
+        #[rasn(tag(context, 59), identifier = "f-create-directory-request")]
+        f_create_directory_request(FCREATEDIRECTORYRequest),
+        #[rasn(tag(context, 60), identifier = "f-create-directory-response")]
+        f_create_directory_response(FCREATEDIRECTORYResponse),
+        #[rasn(tag(context, 61), identifier = "f-link-request")]
+        f_link_request(FLINKRequest),
+        #[rasn(tag(context, 62), identifier = "f-link-response")]
+        f_link_response(FLINKResponse),
+        #[rasn(tag(context, 63), identifier = "f-unlink-request")]
+        f_unlink_request(FUNLINKRequest),
+        #[rasn(tag(context, 64), identifier = "f-unlink-response")]
+        f_unlink_response(FUNLINKResponse),
+        #[rasn(tag(context, 65), identifier = "f-read-link-attrib-request")]
+        f_read_link_attrib_request(FREADLINKATTRIBRequest),
+        #[rasn(tag(context, 66), identifier = "f-read-link-attrib-response")]
+        f_read_link_attrib_response(FREADLINKATTRIBResponse),
+        #[rasn(tag(context, 67), identifier = "f-Change-link-attrib-request")]
+        f_Change_link_attrib_request(FCHANGELINKATTRIBRequest),
+        #[rasn(tag(context, 68), identifier = "f-Change-Iink-attrib-response")]
+        f_Change_Iink_attrib_response(FCHANGELINKATTRIBResponse),
+        #[rasn(tag(context, 69), identifier = "f-move-request")]
+        f_move_request(FMOVERequest),
+        #[rasn(tag(context, 70), identifier = "f-move-response")]
+        f_move_response(FMOVEResponse),
+        #[rasn(tag(context, 71), identifier = "f-copy-request")]
+        f_copy_request(FCOPYRequest),
+        #[rasn(tag(context, 72), identifier = "f-copy-response")]
+        f_copy_response(FCOPYResponse),
+    }
+    #[doc = " The extension bit is defined if and only if the limited-filestore-management"]
+    #[doc = " or the group-manipulation functional units are available."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, tag(context, 6), identifier = "FTAM-Quality-of-Service")]
+    pub struct FTAMQualityOfService(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "FTAM-Regime-PDU")]
+    pub enum FTAMRegimePDU {
+        #[rasn(tag(context, 0), identifier = "f-initialize-request")]
+        f_initialize_request(FINITIALIZERequest),
+        #[rasn(tag(context, 1), identifier = "f-initialize-response")]
+        f_initialize_response(FINITIALIZEResponse),
+        #[rasn(tag(context, 2), identifier = "f-terminate-request")]
+        f_terminate_request(FTERMINATERequest),
+        #[rasn(tag(context, 3), identifier = "f-terminate-response")]
+        f_terminate_response(FTERMINATEResponse),
+        #[rasn(tag(context, 4), identifier = "f-u-abort-request")]
+        f_u_abort_request(FUABORTRequest),
+        #[rasn(tag(context, 5), identifier = "f-p-abort-request")]
+        f_p_abort_request(FPABORTRequest),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "File-PDU")]
+    pub enum FilePDU {
+        #[rasn(tag(context, 6), identifier = "f-select-request")]
+        f_select_request(FSELECTRequest),
+        #[rasn(tag(context, 7), identifier = "f-select-response")]
+        f_select_response(FSELECTResponse),
+        #[rasn(tag(context, 8), identifier = "f-deselect-request")]
+        f_deselect_request(FDESELECTRequest),
+        #[rasn(tag(context, 9), identifier = "f-deselect-response")]
+        f_deselect_response(FDESELECTResponse),
+        #[rasn(tag(context, 10), identifier = "f-create-request")]
+        f_create_request(FCREATERequest),
+        #[rasn(tag(context, 11), identifier = "f-create-response")]
+        f_create_response(FCREATEResponse),
+        #[rasn(tag(context, 12), identifier = "f-delete-request")]
+        f_delete_request(FDELETERequest),
+        #[rasn(tag(context, 13), identifier = "f-delete-response")]
+        f_delete_response(FDELETEResponse),
+        #[rasn(tag(context, 14), identifier = "f-read-attrib-request")]
+        f_read_attrib_request(FREADATTRIBRequest),
+        #[rasn(tag(context, 15), identifier = "f-read-attrib-response")]
+        f_read_attrib_response(FREADATTRIBResponse),
+        #[rasn(tag(context, 16), identifier = "f-Change-attrib-reques")]
+        f_Change_attrib_reques(FCHANGEATTRIBRequest),
+        #[rasn(tag(context, 17), identifier = "f-Change-attrib-respon")]
+        f_Change_attrib_respon(FCHANGEATTRIBResponse),
+        #[rasn(tag(context, 18), identifier = "f-open-request")]
+        f_open_request(FOPENRequest),
+        #[rasn(tag(context, 19), identifier = "f-open-response")]
+        f_open_response(FOPENResponse),
+        #[rasn(tag(context, 20), identifier = "f-close-request")]
+        f_close_request(FCLOSERequest),
+        #[rasn(tag(context, 21), identifier = "f-close-response")]
+        f_close_response(FCLOSEResponse),
+        #[rasn(tag(context, 22), identifier = "f-begin-group-request")]
+        f_begin_group_request(FBEGINGROUPRequest),
+        #[rasn(tag(context, 23), identifier = "f-begin-group-response")]
+        f_begin_group_response(FBEGINGROUPResponse),
+        #[rasn(tag(context, 24), identifier = "f-end-group-request")]
+        f_end_group_request(FENDGROUPRequest),
+        #[rasn(tag(context, 25), identifier = "f-end-group-response")]
+        f_end_group_response(FENDGROUPResponse),
+        #[rasn(tag(context, 26), identifier = "f-recover-request")]
+        f_recover_request(FRECOVERRequest),
+        #[rasn(tag(context, 27), identifier = "f-recover-response")]
+        f_recover_response(FRECOVERResponse),
+        #[rasn(tag(context, 28), identifier = "f-locate-request")]
+        f_locate_request(FLOCATERequest),
+        #[rasn(tag(context, 29), identifier = "f-locate-response")]
+        f_locate_response(FLOCATEResponse),
+        #[rasn(tag(context, 30), identifier = "f-erase-request")]
+        f_erase_request(FERASERequest),
+        #[rasn(tag(context, 31), identifier = "f-erase-response")]
+        f_erase_response(FERASEResponse),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, tag(context, 4), identifier = "Functional-Units")]
+    pub struct FunctionalUnits(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, tag(context, 1), identifier = "Implementation-Information")]
+    pub struct ImplementationInformation(pub GraphicString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Integer-Pattern")]
+    pub struct IntegerPattern {
+        #[rasn(tag(context, 0), identifier = "relational-comparision")]
+        pub relational_comparision: RelationalComparision,
+        #[rasn(tag(context, 1), identifier = "integer-value")]
+        pub integer_value: Integer,
+    }
+    impl IntegerPattern {
+        pub fn new(relational_comparision: RelationalComparision, integer_value: Integer) -> Self {
+            Self {
+                relational_comparision,
+                integer_value,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "Legal-Qualification-Attribute")]
+    pub enum LegalQualificationAttribute {
+        #[rasn(tag(context, 0), identifier = "no-value-available")]
+        no_value_available(()),
+        #[rasn(tag(context, 1), identifier = "actual-values")]
+        actual_values(GraphicString),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Lock(pub Integer);
+    #[doc = " As defined in ISO 8571-2."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Node-Name")]
+    pub struct NodeName(pub Any);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "OR-Set")]
+    pub struct ORSet(pub SequenceOf<ANDSet>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "Object-Availability-Attribute")]
+    pub enum ObjectAvailabilityAttribute {
+        #[rasn(tag(context, 0), identifier = "no-value-available")]
+        no_value_available(()),
+        #[rasn(tag(context, 1), identifier = "actual-values")]
+        actual_values(Integer),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Object-Identifier-Pattern")]
+    pub struct ObjectIdentifierPattern {
+        #[rasn(tag(context, 0), identifier = "equality-comparision")]
+        pub equality_comparision: EqualityComparision,
+        #[rasn(tag(context, 1), identifier = "object-identifier-value")]
+        pub object_identifier_value: ObjectIdentifier,
+    }
+    impl ObjectIdentifierPattern {
+        pub fn new(
+            equality_comparision: EqualityComparision,
+            object_identifier_value: ObjectIdentifier,
+        ) -> Self {
+            Self {
+                equality_comparision,
+                object_identifier_value,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "Object-Size-Attribute")]
+    pub enum ObjectSizeAttribute {
+        #[rasn(tag(context, 0), identifier = "no-value-available")]
+        no_value_available(()),
+        #[rasn(tag(context, 1), identifier = "actual-values")]
+        actual_values(Integer),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Object-Type-Attribute")]
+    pub struct ObjectTypeAttribute(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, tag(application, 25), identifier = "Objects-Attributes-List")]
+    pub struct ObjectsAttributesList(pub SequenceOf<ReadAttributes>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, tag(application, 30), identifier = "Operation-Result")]
+    pub enum OperationResult {
+        #[rasn(tag(context, 0), identifier = "success-Object-count")]
+        success_Object_count(Integer),
+        #[rasn(tag(context, 1), identifier = "success-Object-names")]
+        success_Object_names(SequenceOf<Pathname>),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Other-Pattern")]
+    pub struct OtherPattern(pub EqualityComparision);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Override(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum PDU {
+        #[rasn(identifier = "fTAM-Regime-PDU")]
+        fTAM_Regime_PDU(FTAMRegimePDU),
+        #[rasn(identifier = "file-PDU")]
+        file_PDU(FilePDU),
+        #[rasn(identifier = "bulk-Data-PDU")]
+        bulk_Data_PDU(BulkDataPDU),
+        #[rasn(identifier = "fSM-PDU")]
+        fSM_PDU(FSMPDU),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Pass-Passwords")]
+    pub struct PassPasswords(pub SequenceOf<Password>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, tag(application, 17))]
+    pub enum Password {
+        graphicString(GraphicString),
+        octetString(OctetString),
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousPathAccessPasswords {
+        #[rasn(tag(context, 0), identifier = "read-password")]
+        pub read_password: Password,
+        #[rasn(tag(context, 1), identifier = "insert-password")]
+        pub insert_password: Password,
+        #[rasn(tag(context, 2), identifier = "replace-password")]
+        pub replace_password: Password,
+        #[rasn(tag(context, 3), identifier = "extend-password")]
+        pub extend_password: Password,
+        #[rasn(tag(context, 4), identifier = "erase-password")]
+        pub erase_password: Password,
+        #[rasn(tag(context, 5), identifier = "read-attribute-password")]
+        pub read_attribute_password: Password,
+        #[rasn(tag(context, 6), identifier = "change-attribute-password")]
+        pub change_attribute_password: Password,
+        #[rasn(tag(context, 7), identifier = "delete-password")]
+        pub delete_password: Password,
+        #[rasn(tag(context, 8), identifier = "pass-passwords")]
+        pub pass_passwords: PassPasswords,
+        #[rasn(tag(context, 9), identifier = "link-password")]
+        pub link_password: Password,
+    }
+    impl AnonymousPathAccessPasswords {
+        pub fn new(
+            read_password: Password,
+            insert_password: Password,
+            replace_password: Password,
+            extend_password: Password,
+            erase_password: Password,
+            read_attribute_password: Password,
+            change_attribute_password: Password,
+            delete_password: Password,
+            pass_passwords: PassPasswords,
+            link_password: Password,
+        ) -> Self {
+            Self {
+                read_password,
+                insert_password,
+                replace_password,
+                extend_password,
+                erase_password,
+                read_attribute_password,
+                change_attribute_password,
+                delete_password,
+                pass_passwords,
+                link_password,
+            }
+        }
+    }
+    #[doc = " There is a one-to-one correspondence between the elements of"]
+    #[doc = " Pass-Passwords and the non-terminal elements of the specified"]
+    #[doc = " Pathname."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, tag(application, 27), identifier = "Path-Access-Passwords")]
+    pub struct PathAccessPasswords(pub SequenceOf<AnonymousPathAccessPasswords>);
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "GraphicString")]
+    pub struct AnonymousPathname(pub GraphicString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Pathname(pub SequenceOf<AnonymousPathname>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "Pathname-Attribute")]
+    pub enum PathnameAttribute {
+        #[rasn(tag(context, 0), identifier = "incomplete-pathname")]
+        incomplete_pathname(Pathname),
+        #[rasn(tag(application, 23), identifier = "complete-pathname")]
+        complete_pathname(Pathname),
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "CHOICE")]
+    pub enum AnonymousPathnamePatternPathnameValue {
+        #[rasn(tag(context, 2), identifier = "string-match")]
+        string_match(StringPattern),
+        #[rasn(tag(context, 3), identifier = "any-match")]
+        any_match(()),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PathnamePatternPathnameValue(pub SequenceOf<AnonymousPathnamePatternPathnameValue>);
+    #[doc = " Bits 1 through 3 shall not all have the Same value."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Pathname-Pattern")]
+    pub struct PathnamePattern {
+        #[rasn(tag(context, 0), identifier = "equality-comparision")]
+        pub equality_comparision: EqualityComparision,
+        #[rasn(tag(context, 1), identifier = "pathname-value")]
+        pub pathname_value: PathnamePatternPathnameValue,
+    }
+    impl PathnamePattern {
+        pub fn new(
+            equality_comparision: EqualityComparision,
+            pathname_value: PathnamePatternPathnameValue,
+        ) -> Self {
+            Self {
+                equality_comparision,
+                pathname_value,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Permitted-Actions-Attribute")]
+    pub struct PermittedActionsAttribute(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "Private-Use-Attribute")]
+    pub enum PrivateUseAttribute {
+        #[rasn(tag(context, 0), identifier = "no-value-available")]
+        no_value_available(()),
+        #[rasn(tag(context, 1), identifier = "abstract-Syntax-not-supported")]
+        abstract_Syntax_not_supported(()),
+        #[rasn(tag(context, 2), identifier = "actual-values")]
+        actual_values(Any),
+    }
+    #[doc = " If the recovery or restart data transfer functional units are"]
+    #[doc = " not available, the Checkpoint-window Parameter shall not be sent."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, tag(context, 0), identifier = "Protocol-Version")]
+    pub struct ProtocolVersion(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 18), identifier = "Read-Attributes")]
+    pub struct ReadAttributes {
+        pub pathname: Option<PathnameAttribute>,
+        #[rasn(tag(context, 18), identifier = "object-type")]
+        pub object_type: Option<ObjectTypeAttribute>,
+        #[rasn(tag(context, 1), identifier = "permitted-actions")]
+        pub permitted_actions: Option<PermittedActionsAttribute>,
+        #[rasn(tag(context, 2), identifier = "contents-type")]
+        pub contents_type: Option<ContentsTypeAttribute>,
+        #[rasn(tag(context, 19), identifier = "linked-Object")]
+        pub linked_object: Option<PathnameAttribute>,
+        #[rasn(tag(context, 23), identifier = "child-objects")]
+        pub child_objects: Option<ChildObjectsAttribute>,
+        #[rasn(tag(context, 20), identifier = "primaty-pathname")]
+        pub primaty_pathname: Option<PathnameAttribute>,
+        #[rasn(tag(context, 3), identifier = "storage-account")]
+        pub storage_account: Option<AccountAttribute>,
+        #[rasn(tag(context, 4), identifier = "date-and-time-of-creation")]
+        pub date_and_time_of_creation: Option<DateAndTimeAttribute>,
+        #[rasn(tag(context, 5), identifier = "date-and-time-of-last-modification")]
+        pub date_and_time_of_last_modification: Option<DateAndTimeAttribute>,
+        #[rasn(tag(context, 6), identifier = "date-and-time-of-last-read-access")]
+        pub date_and_time_of_last_read_access: Option<DateAndTimeAttribute>,
+        #[rasn(
+            tag(context, 7),
+            identifier = "date-and-time-of-last-attribute-modification"
+        )]
+        pub date_and_time_of_last_attribute_modification: Option<DateAndTimeAttribute>,
+        #[rasn(tag(context, 8), identifier = "identity-of-creator")]
+        pub identity_of_creator: Option<UserIdentityAttribute>,
+        #[rasn(tag(context, 9), identifier = "identity-of-last-modifier")]
+        pub identity_of_last_modifier: Option<UserIdentityAttribute>,
+        #[rasn(tag(context, 10), identifier = "identity-of-last-reader")]
+        pub identity_of_last_reader: Option<UserIdentityAttribute>,
+        #[rasn(tag(context, 11), identifier = "identity-last-attribute-modifier")]
+        pub identity_last_attribute_modifier: Option<UserIdentityAttribute>,
+        #[rasn(tag(context, 12), identifier = "object-availability")]
+        pub object_availability: Option<ObjectAvailabilityAttribute>,
+        #[rasn(tag(context, 13), identifier = "object-size")]
+        pub object_size: Option<ObjectSizeAttribute>,
+        #[rasn(tag(context, 14), identifier = "future-Object-size")]
+        pub future_object_size: Option<ObjectSizeAttribute>,
+        #[rasn(tag(context, 15), identifier = "access-control")]
+        pub access_control: Option<AccessControlAttribute>,
+        #[rasn(tag(context, 21), identifier = "path-access-control")]
+        pub path_access_control: Option<AccessControlAttribute>,
+        #[rasn(tag(context, 16), identifier = "legal-qualification")]
+        pub legal_qualification: Option<LegalQualificationAttribute>,
+        #[rasn(tag(context, 17), identifier = "private-use")]
+        pub private_use: Option<PrivateUseAttribute>,
+        #[rasn(tag(context, 22), identifier = "attribute-extensions")]
+        pub attribute_extensions: Option<AttributeExtensions>,
+    }
+    impl ReadAttributes {
+        pub fn new(
+            pathname: Option<PathnameAttribute>,
+            object_type: Option<ObjectTypeAttribute>,
+            permitted_actions: Option<PermittedActionsAttribute>,
+            contents_type: Option<ContentsTypeAttribute>,
+            linked_object: Option<PathnameAttribute>,
+            child_objects: Option<ChildObjectsAttribute>,
+            primaty_pathname: Option<PathnameAttribute>,
+            storage_account: Option<AccountAttribute>,
+            date_and_time_of_creation: Option<DateAndTimeAttribute>,
+            date_and_time_of_last_modification: Option<DateAndTimeAttribute>,
+            date_and_time_of_last_read_access: Option<DateAndTimeAttribute>,
+            date_and_time_of_last_attribute_modification: Option<DateAndTimeAttribute>,
+            identity_of_creator: Option<UserIdentityAttribute>,
+            identity_of_last_modifier: Option<UserIdentityAttribute>,
+            identity_of_last_reader: Option<UserIdentityAttribute>,
+            identity_last_attribute_modifier: Option<UserIdentityAttribute>,
+            object_availability: Option<ObjectAvailabilityAttribute>,
+            object_size: Option<ObjectSizeAttribute>,
+            future_object_size: Option<ObjectSizeAttribute>,
+            access_control: Option<AccessControlAttribute>,
+            path_access_control: Option<AccessControlAttribute>,
+            legal_qualification: Option<LegalQualificationAttribute>,
+            private_use: Option<PrivateUseAttribute>,
+            attribute_extensions: Option<AttributeExtensions>,
+        ) -> Self {
+            Self {
+                pathname,
+                object_type,
+                permitted_actions,
+                contents_type,
+                linked_object,
+                child_objects,
+                primaty_pathname,
+                storage_account,
+                date_and_time_of_creation,
+                date_and_time_of_last_modification,
+                date_and_time_of_last_read_access,
+                date_and_time_of_last_attribute_modification,
+                identity_of_creator,
+                identity_of_last_modifier,
+                identity_of_last_reader,
+                identity_last_attribute_modifier,
+                object_availability,
+                object_size,
+                future_object_size,
+                access_control,
+                path_access_control,
+                legal_qualification,
+                private_use,
+                attribute_extensions,
+            }
+        }
+    }
+    #[doc = " Bits 19 through 23 arc defined if and only if the limited-fil8Store-manag8m8nt"]
+    #[doc = " or group-manipulation functionat units are available."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate, tag(application, 29), identifier = "Referent-Indicator")]
+    pub struct ReferentIndicator(pub bool);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Relational-Comparision")]
+    pub struct RelationalComparision(pub BitString);
+    #[doc = " There is a one-to-one correspondence between the elements of"]
+    #[doc = " Path-Access-Passwords and the non-terminal elements sf the"]
+    #[doc = " specified Pathname."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        delegate,
+        tag(application, 31),
+        identifier = "Request-Operation-Result"
+    )]
+    pub struct RequestOperationResult(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, tag(application, 31), identifier = "Request-Type")]
+    pub struct RequestType(pub Integer);
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousScope {
+        #[rasn(tag(context, 0), identifier = "root-directory")]
+        pub root_directory: Option<PathnameAttribute>,
+        #[rasn(tag(context, 1), identifier = "retrieval-scope")]
+        pub retrieval_scope: Integer,
+    }
+    impl AnonymousScope {
+        pub fn new(root_directory: Option<PathnameAttribute>, retrieval_scope: Integer) -> Self {
+            Self {
+                root_directory,
+                retrieval_scope,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, tag(application, 28))]
+    pub struct Scope(pub SequenceOf<AnonymousScope>);
+    #[doc = " This Parameter tan be sent if and only if"]
+    #[doc = " the limited-filestore-management functional unit is available."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 19), identifier = "Select-Attributes")]
+    pub struct SelectAttributes {
+        pub pathname: PathnameAttribute,
+    }
+    impl SelectAttributes {
+        pub fn new(pathname: PathnameAttribute) -> Self {
+            Self { pathname }
+        }
+    }
+    #[doc = " This Parameter is provided solely for the convenience of implementors"]
+    #[doc = " needing to distinguish between implernentations of a specific version number"]
+    #[doc = " of different equipment, it shall not be the subject of conformance test."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, tag(context, 3), identifier = "Service-Class")]
+    pub struct ServiceClass(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, tag(application, 20), identifier = "Shared-ASE-Information")]
+    pub struct SharedASEInformation(pub Any);
+    #[doc = " This field may be used to convey commitment control as described"]
+    #[doc = " in ISO 8571-3."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, tag(application, 21), identifier = "State-Result")]
+    pub struct StateResult(pub Integer);
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "CHOICE")]
+    pub enum AnonymousStringPatternStringValue {
+        #[rasn(tag(context, 2), identifier = "substring-match")]
+        substring_match(GraphicString),
+        #[rasn(tag(context, 3), identifier = "any-match")]
+        any_match(()),
+        #[rasn(tag(context, 4), identifier = "number-of-characters-match")]
+        number_of_characters_match(Integer),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct StringPatternStringValue(pub SequenceOf<AnonymousStringPatternStringValue>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "String-Pattern")]
+    pub struct StringPattern {
+        #[rasn(tag(context, 0), identifier = "equality-comparision")]
+        pub equality_comparision: EqualityComparision,
+        #[rasn(tag(context, 1), identifier = "string-value")]
+        pub string_value: StringPatternStringValue,
+    }
+    impl StringPattern {
+        pub fn new(
+            equality_comparision: EqualityComparision,
+            string_value: StringPatternStringValue,
+        ) -> Self {
+            Self {
+                equality_comparision,
+                string_value,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, tag(application, 22), identifier = "User-Identity")]
+    pub struct UserIdentity(pub GraphicString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "User-Identity-Attribute")]
+    pub enum UserIdentityAttribute {
+        #[rasn(tag(context, 0), identifier = "no-value-available")]
+        no_value_available(()),
+        #[rasn(identifier = "actual-values")]
+        actual_values(UserIdentity),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "User-Identity-Pattern")]
+    pub struct UserIdentityPattern(pub StringPattern);
+}

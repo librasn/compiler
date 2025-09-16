@@ -1,0 +1,375 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x420_1999_IPMSAutoActionTypes.asn1
+---
+Warnings:
+LinkerError in ASN grammar: Failed to resolve supertype ExtensionField of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype ExtensionField of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype IPMSExtension of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve reference in object set.
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod ipmsauto_action_types {
+    extern crate alloc;
+    use super::ipmsinformation_objects::{
+        AdviceNotifications, AutoForwardComment, BodyPart, Heading, IA5TextBodyPart, IPMSExtension,
+        SupplReceiptInfoField,
+    };
+    use super::ipmsobject_identifiers::{
+        ID_AAE_AUTO_DISCARD_ERROR, ID_AAE_AUTO_FORWARDING_LOOP, ID_AAE_DUPLICATE_IPN,
+        ID_AA_IPM_AUTO_ACKNOWLEDGEMENT, ID_AA_IPM_AUTO_ADVISE, ID_AA_IPM_AUTO_CORRELATE,
+        ID_AA_IPM_AUTO_DISCARD,
+    };
+    use super::ipmsupper_bounds::UB_IPM_IDENTIFIER_SUFFIX;
+    use super::msabstract_service::*;
+    use super::msobject_identifiers::ID_ACT_IPM_AUTO_FORWARD;
+    use super::mtsabstract_service::{
+        ContentIdentifier, DeferredDeliveryTime, ExplicitConversion, ExtensionField,
+        MessageSubmissionEnvelope, OriginatorName, OriginatorReportRequest, PerMessageIndicators,
+        PerMessageSubmissionExtensions, PerRecipientMessageSubmissionExtensions, Priority,
+        RecipientName, ELEMENT_OF_SERVICE_NOT_SUBSCRIBED, INCONSISTENT_REQUEST, ORIGINATOR_INVALID,
+        RECIPIENT_IMPROPERLY_SPECIFIED, REMOTE_BIND_ERROR, SECURITY_ERROR,
+        SUBMISSION_CONTROL_VIOLATED, UNSUPPORTED_CRITICAL_FUNCTION,
+    };
+    use super::mtsupper_bounds::UB_RECIPIENTS;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AutoDiscardProblem(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct AutoForwardArguments {
+        #[rasn(size("1.."), tag(context, 1), identifier = "per-recipient-fields")]
+        pub per_recipient_fields: SequenceOf<PerRecipientAutoForwardFields>,
+    }
+    impl AutoForwardArguments {
+        pub fn new(per_recipient_fields: SequenceOf<PerRecipientAutoForwardFields>) -> Self {
+            Self {
+                per_recipient_fields,
+            }
+        }
+    }
+    #[doc = " delete-delivered-object 'one', no deletion 'zero'"]
+    #[doc = " Auto-forward 1988"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct AutoForwardRegistrationParameter88 {
+        #[rasn(tag(explicit(context, 0)))]
+        pub filter: Option<Filter>,
+        #[rasn(tag(explicit(context, 1)), identifier = "auto-forward-arguments")]
+        pub auto_forward_arguments: AutoForwardArguments,
+        #[rasn(
+            tag(explicit(context, 2)),
+            default = "auto_forward_registration_parameter88_delete_after_auto_forwarding_default",
+            identifier = "delete-after-auto-forwarding"
+        )]
+        pub delete_after_auto_forwarding: bool,
+        #[rasn(tag(explicit(context, 3)), identifier = "forwarding-information")]
+        pub forwarding_information: EncodedForwardingInformation,
+    }
+    impl AutoForwardRegistrationParameter88 {
+        pub fn new(
+            filter: Option<Filter>,
+            auto_forward_arguments: AutoForwardArguments,
+            delete_after_auto_forwarding: bool,
+            forwarding_information: EncodedForwardingInformation,
+        ) -> Self {
+            Self {
+                filter,
+                auto_forward_arguments,
+                delete_after_auto_forwarding,
+                forwarding_information,
+            }
+        }
+    }
+    fn auto_forward_registration_parameter88_delete_after_auto_forwarding_default() -> bool {
+        false
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct EncodedForwardingInformation(pub OctetString);
+    #[doc = " contains ForwardingInformation1988"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct ForwardingInformation1988 {
+        #[rasn(tag(context, 0), identifier = "auto-forwarding-comment")]
+        pub auto_forwarding_comment: Option<AutoForwardComment>,
+        #[rasn(tag(context, 1), identifier = "ia5-cover-note")]
+        pub ia5_cover_note: Option<IA5TextBodyPart>,
+        #[rasn(size("1.."), tag(context, 2), identifier = "this-ipm-prefix")]
+        pub this_ipm_prefix: Option<PrintableString>,
+    }
+    impl ForwardingInformation1988 {
+        pub fn new(
+            auto_forwarding_comment: Option<AutoForwardComment>,
+            ia5_cover_note: Option<IA5TextBodyPart>,
+            this_ipm_prefix: Option<PrintableString>,
+        ) -> Self {
+            Self {
+                auto_forwarding_comment,
+                ia5_cover_note,
+                this_ipm_prefix,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct IPMAutoAcknowledgementRegistrationParameter {
+        #[rasn(
+            tag(explicit(context, 0)),
+            identifier = "auto-acknowledge-suppl-receipt-info"
+        )]
+        pub auto_acknowledge_suppl_receipt_info: Option<SupplReceiptInfoField>,
+        #[rasn(tag(explicit(context, 1)), identifier = "submission-options")]
+        pub submission_options: Option<MSSubmissionOptions>,
+    }
+    impl IPMAutoAcknowledgementRegistrationParameter {
+        pub fn new(
+            auto_acknowledge_suppl_receipt_info: Option<SupplReceiptInfoField>,
+            submission_options: Option<MSSubmissionOptions>,
+        ) -> Self {
+            Self {
+                auto_acknowledge_suppl_receipt_info,
+                submission_options,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct IPMAutoAdviseRegistrationParameterAdviceNotifications(pub SetOf<IPMSExtension>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct IPMAutoAdviseRegistrationParameter {
+        #[rasn(
+            tag(explicit(context, 0)),
+            default = "ipmauto_advise_registration_parameter_enabled_default"
+        )]
+        pub enabled: bool,
+        #[rasn(tag(explicit(context, 1)))]
+        pub filter: Option<Filter>,
+        #[rasn(tag(explicit(context, 2)), identifier = "advice-notifications")]
+        pub advice_notifications: IPMAutoAdviseRegistrationParameterAdviceNotifications,
+        #[rasn(
+            tag(explicit(context, 3)),
+            default = "ipmauto_advise_registration_parameter_suppress_subsequent_notifications_default",
+            identifier = "suppress-subsequent-notifications"
+        )]
+        pub suppress_subsequent_notifications: bool,
+        #[rasn(
+            tag(explicit(context, 4)),
+            default = "ipmauto_advise_registration_parameter_use_ipm_if_an_not_supported_default",
+            identifier = "use-ipm-if-an-not-supported"
+        )]
+        pub use_ipm_if_an_not_supported: bool,
+        #[rasn(tag(explicit(context, 5)), identifier = "submission-options")]
+        pub submission_options: Option<MSSubmissionOptions>,
+    }
+    impl IPMAutoAdviseRegistrationParameter {
+        pub fn new(
+            enabled: bool,
+            filter: Option<Filter>,
+            advice_notifications: IPMAutoAdviseRegistrationParameterAdviceNotifications,
+            suppress_subsequent_notifications: bool,
+            use_ipm_if_an_not_supported: bool,
+            submission_options: Option<MSSubmissionOptions>,
+        ) -> Self {
+            Self {
+                enabled,
+                filter,
+                advice_notifications,
+                suppress_subsequent_notifications,
+                use_ipm_if_an_not_supported,
+                submission_options,
+            }
+        }
+    }
+    fn ipmauto_advise_registration_parameter_enabled_default() -> bool {
+        true
+    }
+    fn ipmauto_advise_registration_parameter_suppress_subsequent_notifications_default() -> bool {
+        true
+    }
+    fn ipmauto_advise_registration_parameter_use_ipm_if_an_not_supported_default() -> bool {
+        false
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct IPMAutoDiscardRegistrationParameter {
+        #[rasn(tag(explicit(context, 0)))]
+        pub filter: Option<Filter>,
+        #[rasn(tag(explicit(context, 1)), identifier = "submission-options")]
+        pub submission_options: Option<MSSubmissionOptions>,
+        #[rasn(tag(explicit(context, 2)), identifier = "auto-discard-expired-ipms")]
+        pub auto_discard_expired_ipms: bool,
+        #[rasn(tag(explicit(context, 3)), identifier = "auto-discard-obsoleted-ipms")]
+        pub auto_discard_obsoleted_ipms: bool,
+        #[rasn(
+            tag(explicit(context, 4)),
+            identifier = "restrict-obsoleting-to-originator"
+        )]
+        pub restrict_obsoleting_to_originator: bool,
+    }
+    impl IPMAutoDiscardRegistrationParameter {
+        pub fn new(
+            filter: Option<Filter>,
+            submission_options: Option<MSSubmissionOptions>,
+            auto_discard_expired_ipms: bool,
+            auto_discard_obsoleted_ipms: bool,
+            restrict_obsoleting_to_originator: bool,
+        ) -> Self {
+            Self {
+                filter,
+                submission_options,
+                auto_discard_expired_ipms,
+                auto_discard_obsoleted_ipms,
+                restrict_obsoleting_to_originator,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct IPMAutoForwardOptions(pub BitString);
+    #[doc = " Auto-forward 1994"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct IPMAutoForwardRegistrationParameter {
+        #[rasn(tag(explicit(context, 0)))]
+        pub filter: Option<Filter>,
+        #[rasn(tag(explicit(context, 1)), identifier = "forwarding-envelope")]
+        pub forwarding_envelope: MessageSubmissionEnvelope,
+        #[rasn(tag(explicit(context, 2)), identifier = "forwarding-heading")]
+        pub forwarding_heading: Heading,
+        #[rasn(tag(explicit(context, 3)), identifier = "forwarding-cover-note")]
+        pub forwarding_cover_note: Option<BodyPart>,
+        #[rasn(tag(explicit(context, 4)), identifier = "submission-options")]
+        pub submission_options: Option<MSSubmissionOptions>,
+        #[rasn(tag(explicit(context, 5)), identifier = "nrn-comment")]
+        pub nrn_comment: Option<AutoForwardComment>,
+        #[rasn(
+            tag(explicit(context, 6)),
+            default = "ipmauto_forward_registration_parameter_ipm_auto_forward_options_default",
+            identifier = "ipm-auto-forward-options"
+        )]
+        pub ipm_auto_forward_options: IPMAutoForwardOptions,
+    }
+    impl IPMAutoForwardRegistrationParameter {
+        pub fn new(
+            filter: Option<Filter>,
+            forwarding_envelope: MessageSubmissionEnvelope,
+            forwarding_heading: Heading,
+            forwarding_cover_note: Option<BodyPart>,
+            submission_options: Option<MSSubmissionOptions>,
+            nrn_comment: Option<AutoForwardComment>,
+            ipm_auto_forward_options: IPMAutoForwardOptions,
+        ) -> Self {
+            Self {
+                filter,
+                forwarding_envelope,
+                forwarding_heading,
+                forwarding_cover_note,
+                submission_options,
+                nrn_comment,
+                ipm_auto_forward_options,
+            }
+        }
+    }
+    fn ipmauto_forward_registration_parameter_ipm_auto_forward_options_default(
+    ) -> IPMAutoForwardOptions {
+        IPMAutoForwardOptions(
+            [false, false, false, false, false, false]
+                .into_iter()
+                .collect(),
+        )
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PerMessageAutoForwardFieldsExtensions(pub SetOf<ExtensionField>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct PerMessageAutoForwardFields {
+        #[rasn(identifier = "originator-name")]
+        pub originator_name: OriginatorName,
+        #[rasn(identifier = "content-identifier")]
+        pub content_identifier: Option<ContentIdentifier>,
+        pub priority: Option<Priority>,
+        #[rasn(identifier = "per-message-indicators")]
+        pub per_message_indicators: Option<PerMessageIndicators>,
+        #[rasn(tag(context, 0), identifier = "deferred-delivery-time")]
+        pub deferred_delivery_time: Option<DeferredDeliveryTime>,
+        #[rasn(
+            tag(context, 2),
+            default = "per_message_auto_forward_fields_extensions_default"
+        )]
+        pub extensions: PerMessageAutoForwardFieldsExtensions,
+    }
+    impl PerMessageAutoForwardFields {
+        pub fn new(
+            originator_name: OriginatorName,
+            content_identifier: Option<ContentIdentifier>,
+            priority: Option<Priority>,
+            per_message_indicators: Option<PerMessageIndicators>,
+            deferred_delivery_time: Option<DeferredDeliveryTime>,
+            extensions: PerMessageAutoForwardFieldsExtensions,
+        ) -> Self {
+            Self {
+                originator_name,
+                content_identifier,
+                priority,
+                per_message_indicators,
+                deferred_delivery_time,
+                extensions,
+            }
+        }
+    }
+    fn per_message_auto_forward_fields_extensions_default() -> SequenceOf<ExtensionField> {
+        alloc::vec![]
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PerRecipientAutoForwardFieldsExtensions(pub SetOf<ExtensionField>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct PerRecipientAutoForwardFields {
+        #[rasn(identifier = "recipient-name")]
+        pub recipient_name: RecipientName,
+        #[rasn(tag(context, 0), identifier = "originator-report-request")]
+        pub originator_report_request: OriginatorReportRequest,
+        #[rasn(tag(context, 1), identifier = "explicit-conversion")]
+        pub explicit_conversion: Option<ExplicitConversion>,
+        #[rasn(
+            tag(context, 2),
+            default = "per_recipient_auto_forward_fields_extensions_default"
+        )]
+        pub extensions: PerRecipientAutoForwardFieldsExtensions,
+    }
+    impl PerRecipientAutoForwardFields {
+        pub fn new(
+            recipient_name: RecipientName,
+            originator_report_request: OriginatorReportRequest,
+            explicit_conversion: Option<ExplicitConversion>,
+            extensions: PerRecipientAutoForwardFieldsExtensions,
+        ) -> Self {
+            Self {
+                recipient_name,
+                originator_report_request,
+                explicit_conversion,
+                extensions,
+            }
+        }
+    }
+    fn per_recipient_auto_forward_fields_extensions_default() -> SequenceOf<ExtensionField> {
+        alloc::vec![]
+    }
+}

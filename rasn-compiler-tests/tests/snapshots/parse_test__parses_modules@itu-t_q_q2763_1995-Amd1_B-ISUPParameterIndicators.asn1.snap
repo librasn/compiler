@@ -1,0 +1,382 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q2763_1995-Amd1_B-ISUPParameterIndicators.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod b_isupparameter_indicators {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AccessDeliveryIndicator {
+        setUpMessageGenerated = 0,
+        noSetUpMessageGenerated = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AddressPresentationIndicator {
+        presentationAllowed = 0,
+        presentationRestricted = 1,
+        addressNotAvailable = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AutomaticCongestionLevelInd {
+        congestionLevel1exceeded = 1,
+        congestionLevel2exceeded = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum CCITTNetworkIdenPlanIndicator {
+        unknown = 0,
+        publicDataNetworkIdentificationCodeX121 = 1,
+        publicLandMobileNetworkIdentificationCodeE212 = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum CallDiversionMayOccurIndicator {
+        noIndication = 0,
+        callDiversionMayOccur = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum CalledPartysCategoryInd {
+        noIndication = 0,
+        ordinarySubscriber = 1,
+        payphone = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum CalledPartysStatusInd {
+        noIndication = 0,
+        alerting = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum CallingPartysCategoryIndicators {
+        callingPartysCategoryUnknownAtThisMoment = 0,
+        operatorLanguageFrench = 1,
+        operatorLanguageEnglish = 2,
+        operatorLanguageGerman = 3,
+        operatorLanguageRussian = 4,
+        operatorLanguageSpanish = 5,
+        nationalOperator = 9,
+        ordinaryCallingSubscriber = 10,
+        callingSubscriberWithPriority = 11,
+        dataCall = 12,
+        testCall = 13,
+        iEPScallmarkingforpreferentialcallsetup = 14,
+        payphone = 15,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum CellRateIdentifier {
+        forwardPeakCellRateForCellLossPriority0 = 2,
+        backwardPeakCellRateForCellLossPriority0 = 3,
+        forwardPeakCellRateForCellLossPriority0and1 = 4,
+        backwardPeakCellRateForCellLossPriority0and1 = 5,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ChargeIndicator {
+        noCharge = 0,
+        charge = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ClosedUserGroupCallIndicator {
+        cUGcallOutgoingAccessAllowed = 0,
+        cUGcallOutgoingAccessNotAllowed = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ConnectedLineIDRequestIndicator {
+        notRequested = 0,
+        requested = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ISDNAccessIndicator {
+        originatingOrTerminatingAccessNonISDN = 0,
+        originatingOrTerminatingAccessISDN = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ISDNUserPartIndicator {
+        iSDNUserPartNotUsedAllTheWay = 0,
+        iSDNUserPartUsedAllTheWay = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ISDNUserPartPreferenceInd {
+        iSDNUserPartPreferredAllTheWay = 0,
+        iSDNUserPartNotRequiredAllTheWay = 1,
+        iSDNUserPartRequiredAllTheWay = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum InBandInformationIndicator {
+        noIndication = 0,
+        inBandInfoOrPatternAvailable = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum IncomingHECDIndicator {
+        noInformation = 0,
+        incomingHECDNotIncluded = 1,
+        incomingHECDIncluded = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum IncomingHECDRequestIndicator {
+        noInformation = 0,
+        incomingHECDActivationRequest = 1,
+        incomingHECDDeactivationRequest = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum InternalNetworkNumberIndicator {
+        routingToInternalNetworkNumberAllowed = 0,
+        routingToInternalNetworkNumberNotAllowed = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum InterworkingIndicator {
+        noInterworkingEncountered = 0,
+        interworkingEncountered = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum LookAheadForBusyIndicator {
+        lookAheadForBusyAllowed = 0,
+        pathReserved = 1,
+        lookAheadForBusyNotAllowed = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum MLPPUserIndicator {
+        noIndication = 0,
+        mLPPUser = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum MoreDataIndicator {
+        noMoreData = 0,
+        moreData = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum NationalInternationalCallIndicator {
+        callToBeTreatedAsNationalCall = 0,
+        callToBeTreatedAsInternationalCall = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum NationalNetworkIdenPlanIndicator {
+        item = 0,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum NatureOfAddressIndicator {
+        subscriberNumber = 1,
+        unknown = 2,
+        nationalSignificantNumber = 3,
+        internationalNumber = 4,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum NetworkDiscardIndicator {
+        noInformation = 0,
+        userToUserInformationDiscardedByTheNetwork = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum NotificationIndicators {
+        userSuspended = 0,
+        userResumed = 1,
+        bearerServiceChanged = 2,
+        discriminatorForExtensionToASN1 = 3,
+        callCompletionDelay = 4,
+        conferenceEstablished = 66,
+        conferenceDisconnected = 67,
+        otherPartyAdded = 68,
+        isolated = 69,
+        reattached = 70,
+        otherPartyIsolated = 71,
+        otherPartyReattached = 72,
+        otherPartySplit = 73,
+        otherPartyDisconnected = 74,
+        conferenceFloating = 75,
+        callIsAWaitingCall = 96,
+        diversionActivated = 104,
+        callTransferAlerting = 105,
+        callTransferActive = 106,
+        remoteHold = 121,
+        remoteRetrieval = 122,
+        callIsDiverting = 123,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum NotificationSubscriptionOption {
+        unknown = 0,
+        presentationNotAllowed = 1,
+        presentationAllowedWithRedirectionNumber = 2,
+        presentationAllowedWithoutRedirectionNumber = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum NumberIncompleteIndicator {
+        complete = 0,
+        incomplete = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum NumberingPlanIndicator {
+        iSDNTelephonyNumberingPlanE164 = 1,
+        dataNumberingPlanX121 = 3,
+        privateNumberingPlan = 5,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum OriginalRedirectionReasonIndicator {
+        unknownNotAvailable = 0,
+        userBusy = 1,
+        noReply = 2,
+        unconditional = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum OutgoingHECDIndicator {
+        noInformation = 0,
+        outgoingHECDNotIncluded = 1,
+        outgoingHECDIncluded = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum OutgoingHECDRequestIndicator {
+        noInformation = 0,
+        outgoingHECDActivationRequest = 1,
+        outgoingHECDDeactivationRequest = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum PrecedenceLevelIndicator {
+        flashOverride = 0,
+        flash = 1,
+        immediate = 2,
+        priority = 3,
+        routine = 4,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum Priority {
+        noPrioritizedOrder = 0,
+        prioritizedListInAscendingOrder = 1,
+        prioritizedListInDecendingOrder = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum RedirectingIndicator {
+        noRedirection = 0,
+        callRerouted = 1,
+        callReroutedAllRedirectionInfoPresentationRestricted = 2,
+        callDiversion = 3,
+        callDiversionAllRedirectionInfoPresentationRestricted = 4,
+        callReroutedRedirectionNumberPresentationRestricted = 5,
+        callDiversionRedirectionNumberPresentationRestricted = 6,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum RedirectingReasonIndicator {
+        unknownnotAvailable = 0,
+        userBusy = 1,
+        noReply = 2,
+        unconditional = 3,
+        deflectionDuringAlerting = 4,
+        deflectionImmediateResponse = 5,
+        mobileSubscriberNotReachable = 6,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum RedirectionNumberRestrictionInd {
+        presentationAllowed = 0,
+        presentationRestricted = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum RepeatIndicator {
+        informationElementNotRepeated = 0,
+        informationElementRepeated = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ResourceIndicator {
+        localSignallingID = 0,
+        remoteSignallingID = 1,
+        connectionElementIDVPCIVCI = 2,
+        connectionElementIDVPCI = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ScreeningIndicator {
+        userProvidedNotVerified = 0,
+        userProvidedVerifiedAndPassed = 1,
+        userProvidedVerifiedAndFailed = 2,
+        networkProvided = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum SimpleSegmentationIndicator {
+        noAdditionalInformationWillBeSent = 0,
+        additionalInformationWillBeSentInSegmentationMessage = 1,
+    }
+    #[doc = "\tfor national use"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum SuspendResumeIndicator {
+        iSDNSubscriberInitiated = 0,
+        networkInitiated = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum Type {
+        request = 0,
+        response = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum TypeOfNetworkIdentification {
+        cCITTstandardizedIdentification = 0,
+        nationalNetworkIdentification = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum UserToUserServiceRequest {
+        noInformation = 0,
+        requestNotEssential = 2,
+    }
+    #[doc = "\tvalue 3 is reserved"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum UserToUserServiceResponse {
+        noInformation = 0,
+        notProvided = 1,
+        provided = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum VPCICheckResultIndicator {
+        virtualPathConnectionIdentifierCheckNotSuccessful = 0,
+        virtualPathConnectionIdentifierCheckSuccessful = 1,
+        virtualPathConnectionIdentifierCheckNotPerformed = 2,
+    }
+}

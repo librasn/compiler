@@ -1,0 +1,25 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q1248.6_2001_IN-SCF-SCF-pkgs-contracts-acs.asn1
+---
+Error matching ASN syntax at while parsing:
+     ╭─[line 158, column 2]
+     │
+     │ 
+ 155 │  -- trafficFlowControlAC  APPLICATION-CONTEXT
+ 156 │  -- defined in Recommendation Q.1248.4
+ 157 │  -- Contracts
+ 158 │  scfc-scfsContract CONTRACT ::= { ◀▪▪▪▪▪▪▪▪▪▪ FAILED AT THIS LINE
+ 159 │    CONNECTION             scf-scfConnectionPackage {nsb6}
+ 160 │    INITIATOR CONSUMER OF
+ 161 │      {activityTestPackage | handlingInformationPackage{nsb1, nsb2, nsb6} |
+ 162 │        transferStsiPackage{nsb1, nsb6}}
+ 163 │    RESPONDER CONSUMER OF
+ 164 │      {activityTestPackage | chargingInformationPackage{nsb1, nsb2, nsb6} |
+ 165 │        networkCapabilityPackage{nsb1} | notificationPackage{nsb1, nsb2} |
+ 166 │        transferStsiPackage{nsb1, nsb6} |
+ 167 │        userInformationPackage{nsb1, nsb2, nsb6}}
+ 168 │    ID                     id-contract-scfc-scfs
+ 169 │  }
+     │
+─────╯

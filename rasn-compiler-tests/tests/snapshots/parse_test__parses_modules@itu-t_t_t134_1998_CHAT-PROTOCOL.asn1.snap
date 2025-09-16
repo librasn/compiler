@@ -1,0 +1,90 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_t_t134_1998_CHAT-PROTOCOL.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod chat_protocol {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ChatNonStandardPDU {
+        #[rasn(identifier = "nonStandardTransaction")]
+        pub non_standard_transaction: NonStandardParameter,
+    }
+    impl ChatNonStandardPDU {
+        pub fn new(non_standard_transaction: NonStandardParameter) -> Self {
+            Self {
+                non_standard_transaction,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum ChatPDU {
+        chatentryPDU(ChatentryPDU),
+        chatNonStandardPDU(ChatNonStandardPDU),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=255"))]
+    pub struct ChatString(pub GeneralString);
+    #[doc = " Chat Protocol String"]
+    #[doc = ""]
+    #[doc = "                          Begin CHATPDU Definitions"]
+    #[doc = ""]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ChatentryPDU {
+        #[rasn(identifier = "chatString")]
+        pub chat_string: ChatString,
+    }
+    impl ChatentryPDU {
+        pub fn new(chat_string: ChatString) -> Self {
+            Self { chat_string }
+        }
+    }
+    #[doc = " NOTE: ==============================================================="]
+    #[doc = " NOTE: All abstract types defined shall be exported"]
+    #[doc = " NOTE: ==============================================================="]
+    #[doc = "  H221NonStandardIdentifer"]
+    #[doc = "  Used to specify non-standard objects using H.221 numbering."]
+    #[doc = "  The first four octets shall designate country code and"]
+    #[doc = "  manufacturer code, assigned as specified in"]
+    #[doc = "  Annex A/H.221 for NS-cap and NS-comm."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("4..=255"))]
+    pub struct H221NonStandardIdentifier(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum Key {
+        object(ObjectIdentifier),
+        h221NonStandard(H221NonStandardIdentifier),
+    }
+    #[doc = "  NonStandardParameter"]
+    #[doc = "  Used to specify non-standard parameters.  This includes a"]
+    #[doc = "  data field which may be used to fill in parameter values"]
+    #[doc = "  of the type indicated by the NonStandardIdentifier"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct NonStandardParameter {
+        pub key: Key,
+        pub value: Option<OctetString>,
+    }
+    impl NonStandardParameter {
+        pub fn new(key: Key, value: Option<OctetString>) -> Self {
+            Self { key, value }
+        }
+    }
+}

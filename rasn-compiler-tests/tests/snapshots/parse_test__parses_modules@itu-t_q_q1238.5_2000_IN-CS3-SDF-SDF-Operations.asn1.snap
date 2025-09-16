@@ -1,0 +1,32 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q1238.5_2000_IN-CS3-SDF-SDF-Operations.asn1
+---
+Error matching ASN syntax at while parsing:
+     ╭─[line 351, column 2]
+     │
+     │ 
+ 342 │  -- An IN-DSABind operation is used to begin of a period of cooperation between two DSAs providing
+ 343 │  -- the Directory service.
+ 344 │  -- A DSA, having received an operation from a DUA, may elect to construct a chained form of that
+ 345 │  -- operation to propagate to another DSA. For IN CS-3 a DSA, having received a chained form of an
+ 346 │  -- operation, must either process the operation or if the originating DSA is in another network, chain it
+ 347 │  -- to another DSA within the same network as the receiving DSA. The DSA invoking a chained form of
+ 348 │  -- an operation may optionally sign the argument of the operation; the DSA performing the operation,
+ 349 │  --if so requested, may sign the result of the operation.
+ 350 │  -- The chained form of an operation is specified using the parameterized type IN-chained {}.
+ 351 │  in-Chained{OPERATION:operation} OPERATION ::= { ◀▪▪▪▪▪▪▪▪▪▪ FAILED AT THIS LINE
+ 352 │    ARGUMENT OPTIONALLY-PROTECTED
+ 353 │      {SET {in-chainedArgument  IN-ChainingArguments,
+ 354 │            argument            [0]  operation.&ArgumentType},
+ 355 │       dirqop.&dspChainedOp-QOP}
+ 356 │    RESULT OPTIONALLY-PROTECTED
+ 357 │      {SET {in-chainedResult  IN-ChainingResults,
+ 358 │            result            [0]  operation.&ResultType},
+ 359 │       dirqop.&dspChainedOp-QOP}
+ 360 │    ERRORS
+ 361 │      {operation.&Errors EXCEPT (referral | in-DSAReferral)}
+ 362 │    CODE                           operation.&operationCode
+ 364 │   --??? EDITOR: This field cannot be extracted because it is OPTIONAL in the OPERATION class--}
+     │
+─────╯

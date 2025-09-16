@@ -1,0 +1,149 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q824.7_2000_Q824-7Asn1Module.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod q824_7_asn1_module {
+    extern crate alloc;
+    use super::asn1_defined_types_module::{NameType, PointerOrNull};
+    use super::atm_mibmod::VciValue;
+    use super::cmip_1::ObjectInstance;
+    use super::q824_6_asn1_defined_types_module::{DirectoryNumber, VpciValue};
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " end of object identifier definitions"]
+    #[doc = " other ASN1 definitions in alphabetical order"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum CalledPartySelectionType {
+        anyValue = 0,
+        requiredValue = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct EgressBandwidth(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct IngressBandwidth(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=3600"))]
+    pub struct RetryInterval(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RetryLimit(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SoftPvcCause {
+        #[rasn(tag(context, 0), identifier = "softPvcCauseIndication")]
+        pub soft_pvc_cause_indication: SoftPvcCauseIndication,
+        #[rasn(tag(context, 1), identifier = "softPvcCauseValue")]
+        pub soft_pvc_cause_value: SoftPvcCauseValue,
+    }
+    impl SoftPvcCause {
+        pub fn new(
+            soft_pvc_cause_indication: SoftPvcCauseIndication,
+            soft_pvc_cause_value: SoftPvcCauseValue,
+        ) -> Self {
+            Self {
+                soft_pvc_cause_indication,
+                soft_pvc_cause_value,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum SoftPvcCauseIndication {
+        noCause = 0,
+        firstCause = 1,
+        lastCause = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=127"))]
+    pub struct SoftPvcCauseValue(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SwitchingModes {
+        #[rasn(identifier = "channelSwitching")]
+        pub channel_switching: bool,
+        #[rasn(identifier = "pathSwitching")]
+        pub path_switching: bool,
+    }
+    impl SwitchingModes {
+        pub fn new(channel_switching: bool, path_switching: bool) -> Self {
+            Self {
+                channel_switching,
+                path_switching,
+            }
+        }
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousVpPoolAndVpciPtrList {
+        #[rasn(identifier = "vpPool")]
+        pub vp_pool: ObjectInstance,
+        #[rasn(identifier = "lowerVpciLimit")]
+        pub lower_vpci_limit: VpciValue,
+    }
+    impl AnonymousVpPoolAndVpciPtrList {
+        pub fn new(vp_pool: ObjectInstance, lower_vpci_limit: VpciValue) -> Self {
+            Self {
+                vp_pool,
+                lower_vpci_limit,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct VpPoolAndVpciPtrList(pub SetOf<AnonymousVpPoolAndVpciPtrList>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct VpiRange {
+        #[rasn(identifier = "lowerLimit")]
+        pub lower_limit: Integer,
+        #[rasn(identifier = "upperLimit")]
+        pub upper_limit: Integer,
+    }
+    impl VpiRange {
+        pub fn new(lower_limit: Integer, upper_limit: Integer) -> Self {
+            Self {
+                lower_limit,
+                upper_limit,
+            }
+        }
+    }
+    pub static Q824_7_ACTION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::const_new(&[0u32, 0u32, 17u32, 824u32, 127u32, 7u32, 0u32, 9u32]).to_owned()
+    });
+    pub static Q824_7_ATTRIBUTE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::const_new(&[0u32, 0u32, 17u32, 824u32, 127u32, 7u32, 0u32, 7u32]).to_owned()
+    });
+    #[doc = " end of imports"]
+    #[doc = " start of object identifier definitions"]
+    pub static Q824_7_INFORMATION_MODEL: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::const_new(&[0u32, 0u32, 17u32, 824u32, 127u32, 7u32, 0u32]).to_owned()
+    });
+    pub static Q824_7_MANAGED_OBJECT_CLASS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::const_new(&[0u32, 0u32, 17u32, 824u32, 127u32, 7u32, 0u32, 3u32]).to_owned()
+    });
+    pub static Q824_7_NAME_BINDING: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::const_new(&[0u32, 0u32, 17u32, 824u32, 127u32, 7u32, 0u32, 6u32]).to_owned()
+    });
+    pub static Q824_7_NOTIFICATION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::const_new(&[0u32, 0u32, 17u32, 824u32, 127u32, 7u32, 0u32, 10u32]).to_owned()
+    });
+    pub static Q824_7_PACKAGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::const_new(&[0u32, 0u32, 17u32, 824u32, 127u32, 7u32, 0u32, 4u32]).to_owned()
+    });
+    pub static Q824_7_STANDARD_SPECIFIC_EXTENSION: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::const_new(&[0u32, 0u32, 17u32, 824u32, 127u32, 7u32, 0u32, 0u32]).to_owned()
+        });
+    pub static SWITCHING_MODES_DEFAULT: LazyLock<SwitchingModes> =
+        LazyLock::new(|| SwitchingModes::new(true, false));
+}

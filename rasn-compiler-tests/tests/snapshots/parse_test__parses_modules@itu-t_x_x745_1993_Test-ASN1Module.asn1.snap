@@ -1,0 +1,695 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x745_1993_Test-ASN1Module.asn1
+---
+Warnings:
+Unidentified generating bindings for : Unexpectedly encountered unlinked struct-like ASN1 value!
+LinkerError in ASN grammar: Failed to link value with 'Scope'
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod test_asn1_module {
+    extern crate alloc;
+    use super::attribute_asn1_module::*;
+    use super::cmip_1::{
+        Attribute, AttributeId, CMISFilter, DistinguishedName, ObjectInstance, Scope,
+    };
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ActualStartTime {
+        unknown(()),
+        actualStart(GeneralizedTime),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ActualStopTime {
+        unknown(()),
+        actualStop(GeneralizedTime),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AssociatedObjectNotAvailable(pub SetOf<ObjectInstance>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AnonymousAssociatedObjectsAssociatedObjectInfo {
+        #[rasn(identifier = "associatedObjectInfoId")]
+        pub associated_object_info_id: Any,
+        #[rasn(identifier = "associatedObjectInform")]
+        pub associated_object_inform: Option<Any>,
+    }
+    impl AnonymousAssociatedObjectsAssociatedObjectInfo {
+        pub fn new(associated_object_info_id: Any, associated_object_inform: Option<Any>) -> Self {
+            Self {
+                associated_object_info_id,
+                associated_object_inform,
+            }
+        }
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousAssociatedObjects {
+        #[rasn(identifier = "associatedObject")]
+        pub associated_object: ObjectInstance,
+        #[rasn(identifier = "associatedObjectInfo")]
+        pub associated_object_info: AnonymousAssociatedObjectsAssociatedObjectInfo,
+    }
+    impl AnonymousAssociatedObjects {
+        pub fn new(
+            associated_object: ObjectInstance,
+            associated_object_info: AnonymousAssociatedObjectsAssociatedObjectInfo,
+        ) -> Self {
+            Self {
+                associated_object,
+                associated_object_info,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AssociatedObjects(pub SetOf<AnonymousAssociatedObjects>);
+    #[doc = " initialAttributeList overrides any referenceTOInstance attribute values"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ControlledTestRequestType {
+        independent = 0,
+        related = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum EndTime {
+        specific(GeneralizedTime),
+        relative(Timespec),
+        continual(()),
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "CHOICE")]
+    pub enum AnonymousIndependentTestInvocationError {
+        #[rasn(tag(context, 0))]
+        testInstanceCreated(IndependentTestResponse),
+        tONotCreated(TONotCreated),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct IndependentTestInvocationError(
+        pub SequenceOf<AnonymousIndependentTestInvocationError>,
+    );
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct IndependentTestResponse {
+        #[rasn(identifier = "testInvocationId")]
+        pub test_invocation_id: TestInvocationId,
+        #[rasn(identifier = "tOName")]
+        pub t_oname: Option<TOName>,
+        #[rasn(identifier = "tOAttributeList")]
+        pub t_oattribute_list: Option<AttributeList>,
+    }
+    impl IndependentTestResponse {
+        pub fn new(
+            test_invocation_id: TestInvocationId,
+            t_oname: Option<TOName>,
+            t_oattribute_list: Option<AttributeList>,
+        ) -> Self {
+            Self {
+                test_invocation_id,
+                t_oname,
+                t_oattribute_list,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum IndicatedTests {
+        #[rasn(tag(context, 0))]
+        testSessionId(TestSessionId),
+        #[rasn(tag(context, 1))]
+        testInvocationId(SetOf<TestInvocationId>),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum InitializingTime {
+        actualTime(GeneralizedTime),
+        relativeTime(Timespec),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct InvalidTestOperation(pub ObjectIdentifier);
+    #[doc = " Timespec value forever [0] means NOW"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct InvocationId {
+        #[rasn(identifier = "tARRName")]
+        pub t_arrname: DistinguishedName,
+        #[rasn(identifier = "testId")]
+        pub test_id: Integer,
+    }
+    impl InvocationId {
+        pub fn new(t_arrname: DistinguishedName, test_id: Integer) -> Self {
+            Self { t_arrname, test_id }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MORTNotAvailable(pub SetOf<ObjectInstance>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MORTs(pub SetOf<ObjectInstance>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MistypedTestCategoryInformation(pub ObjectIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NoSuchAssociatedObject(pub SetOf<ObjectInstance>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NoSuchMORT(pub SetOf<ObjectInstance>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NoSuchTestInvocationId(pub TestInvocationId);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NoSuchTestSessionId(pub TestSessionId);
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "CHOICE")]
+    pub enum AnonymousRelatedTOError {
+        ableToCreateTO(()),
+        unableToCreateTO(TONotCreated),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RelatedTOError(pub SequenceOf<AnonymousRelatedTOError>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct RelatedTestResponse {
+        #[rasn(identifier = "testInvocationId")]
+        pub test_invocation_id: TestInvocationId,
+        #[rasn(identifier = "testObjectResponseList")]
+        pub test_object_response_list: SequenceOf<TestObjectResponse>,
+    }
+    impl RelatedTestResponse {
+        pub fn new(
+            test_invocation_id: TestInvocationId,
+            test_object_response_list: SequenceOf<TestObjectResponse>,
+        ) -> Self {
+            Self {
+                test_invocation_id,
+                test_object_response_list,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SchedulingConflictInfo {
+        #[rasn(identifier = "testInvocationId")]
+        pub test_invocation_id: TestInvocationId,
+        #[rasn(tag(context, 1), identifier = "testSessionId")]
+        pub test_session_id: Option<TestSessionId>,
+        #[rasn(identifier = "startTime")]
+        pub start_time: StartTime,
+        #[rasn(identifier = "endTime")]
+        pub end_time: EndTime,
+        #[rasn(identifier = "actualStartTime")]
+        pub actual_start_time: ActualStartTime,
+        #[rasn(identifier = "actualStopTime")]
+        pub actual_stop_time: ActualStopTime,
+        #[rasn(tag(context, 6), identifier = "additionalText")]
+        pub additional_text: Option<AdditionalText>,
+        #[rasn(tag(context, 7), identifier = "additionalInformation")]
+        pub additional_information: Option<AdditionalInformation>,
+    }
+    impl SchedulingConflictInfo {
+        pub fn new(
+            test_invocation_id: TestInvocationId,
+            test_session_id: Option<TestSessionId>,
+            start_time: StartTime,
+            end_time: EndTime,
+            actual_start_time: ActualStartTime,
+            actual_stop_time: ActualStopTime,
+            additional_text: Option<AdditionalText>,
+            additional_information: Option<AdditionalInformation>,
+        ) -> Self {
+            Self {
+                test_invocation_id,
+                test_session_id,
+                start_time,
+                end_time,
+                actual_start_time,
+                actual_stop_time,
+                additional_text,
+                additional_information,
+            }
+        }
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "OBJECT_IDENTIFIER")]
+    pub struct AnonymousSupportedTOClasses(pub ObjectIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SupportedTOClasses(pub SetOf<AnonymousSupportedTOClasses>);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "OBJECT_IDENTIFIER")]
+    pub struct AnonymousSupportedUncontrolledTests(pub ObjectIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SupportedUncontrolledTests(pub SetOf<AnonymousSupportedUncontrolledTests>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum SuspendResumeChoice {
+        suspend = 0,
+        resume = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "TMF-OBJECT")]
+    pub struct TMFOBJECT(pub DMITYPEIDENTIFIER);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum TOName {
+        conductorProvidedName(()),
+        performerProvidedName(ObjectInstance),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum TONotCreatedReason {
+        invalidTOclass = 0,
+        duplicateTOInstance = 1,
+        invalidMORTClass = 2,
+        invalidAssociatedObjectClass = 3,
+        mORTNotAvailable = 4,
+        associatedObjectNotAvailable = 5,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum TONotCreated {
+        reason(TONotCreatedReason),
+        inappropriateAttributeValue(AttributeList),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct TOsState {
+        #[rasn(identifier = "tOInstance")]
+        pub t_oinstance: Option<ObjectInstance>,
+        #[rasn(identifier = "testState")]
+        pub test_state: TestState,
+    }
+    impl TOsState {
+        pub fn new(t_oinstance: Option<ObjectInstance>, test_state: TestState) -> Self {
+            Self {
+                t_oinstance,
+                test_state,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TestActionPerformerId(pub SimpleNameType);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TestCategoryInformation(pub AdditionalInformation);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum TestInvocationId {
+        #[rasn(tag(context, 0))]
+        tOName(ObjectInstance),
+        #[rasn(tag(context, 1))]
+        invocationId(InvocationId),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TestObjectId(pub Integer);
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousTestObjectList {
+        #[rasn(identifier = "tOClass")]
+        pub t_oclass: ObjectIdentifier,
+        #[rasn(tag(context, 1), identifier = "tOInstance")]
+        pub t_oinstance: Option<ObjectInstance>,
+        #[rasn(tag(context, 2), identifier = "referenceTOInstance")]
+        pub reference_toinstance: Option<ObjectInstance>,
+        #[rasn(tag(context, 3), identifier = "initialAttributeList")]
+        pub initial_attribute_list: Option<AttributeList>,
+    }
+    impl AnonymousTestObjectList {
+        pub fn new(
+            t_oclass: ObjectIdentifier,
+            t_oinstance: Option<ObjectInstance>,
+            reference_toinstance: Option<ObjectInstance>,
+            initial_attribute_list: Option<AttributeList>,
+        ) -> Self {
+            Self {
+                t_oclass,
+                t_oinstance,
+                reference_toinstance,
+                initial_attribute_list,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TestObjectList(pub SequenceOf<AnonymousTestObjectList>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct TestObjectResponse {
+        #[rasn(identifier = "tOName")]
+        pub t_oname: TOName,
+        #[rasn(identifier = "tOAttributeList")]
+        pub t_oattribute_list: Option<AttributeList>,
+    }
+    impl TestObjectResponse {
+        pub fn new(t_oname: TOName, t_oattribute_list: Option<AttributeList>) -> Self {
+            Self {
+                t_oname,
+                t_oattribute_list,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TestOutcome(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct TestRequestControlledInfo {
+        #[rasn(tag(context, 1), identifier = "controlledTestRequestType")]
+        pub controlled_test_request_type: ControlledTestRequestType,
+        #[rasn(tag(context, 2), identifier = "testCategoryInformation")]
+        pub test_category_information: Option<TestCategoryInformation>,
+        #[rasn(tag(context, 3), identifier = "testSessionId")]
+        pub test_session_id: Option<TestSessionId>,
+        #[rasn(identifier = "toBeTestedMORTs")]
+        pub to_be_tested_morts: Option<ToBeTestedMORTs>,
+        #[rasn(tag(context, 5), identifier = "associatedObjects")]
+        pub associated_objects: Option<AssociatedObjects>,
+        #[rasn(identifier = "timeoutPeriod")]
+        pub timeout_period: Option<TimeoutPeriod>,
+        #[rasn(tag(context, 7), identifier = "testObjectList")]
+        pub test_object_list: TestObjectList,
+    }
+    impl TestRequestControlledInfo {
+        pub fn new(
+            controlled_test_request_type: ControlledTestRequestType,
+            test_category_information: Option<TestCategoryInformation>,
+            test_session_id: Option<TestSessionId>,
+            to_be_tested_morts: Option<ToBeTestedMORTs>,
+            associated_objects: Option<AssociatedObjects>,
+            timeout_period: Option<TimeoutPeriod>,
+            test_object_list: TestObjectList,
+        ) -> Self {
+            Self {
+                controlled_test_request_type,
+                test_category_information,
+                test_session_id,
+                to_be_tested_morts,
+                associated_objects,
+                timeout_period,
+                test_object_list,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum TestRequestControlledResponse {
+        #[rasn(tag(context, 0))]
+        independentTestResponseList(SequenceOf<IndependentTestResponse>),
+        #[rasn(tag(context, 1))]
+        relatedTestResponse(RelatedTestResponse),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct TestRequestUncontrolledInfo {
+        #[rasn(tag(context, 1), identifier = "testCategoryInformation")]
+        pub test_category_information: TestCategoryInformation,
+        #[rasn(tag(context, 2), identifier = "testSessionId")]
+        pub test_session_id: Option<TestSessionId>,
+        #[rasn(identifier = "timeoutPeriod")]
+        pub timeout_period: Option<TimeoutPeriod>,
+        #[rasn(tag(context, 4), identifier = "associatedObjects")]
+        pub associated_objects: Option<AssociatedObjects>,
+        #[rasn(identifier = "toBeTestedMORTs")]
+        pub to_be_tested_morts: Option<ToBeTestedMORTs>,
+    }
+    impl TestRequestUncontrolledInfo {
+        pub fn new(
+            test_category_information: TestCategoryInformation,
+            test_session_id: Option<TestSessionId>,
+            timeout_period: Option<TimeoutPeriod>,
+            associated_objects: Option<AssociatedObjects>,
+            to_be_tested_morts: Option<ToBeTestedMORTs>,
+        ) -> Self {
+            Self {
+                test_category_information,
+                test_session_id,
+                timeout_period,
+                associated_objects,
+                to_be_tested_morts,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct TestRequestUncontrolledResult {
+        #[rasn(tag(context, 0), identifier = "testOutcome")]
+        pub test_outcome: Option<TestOutcome>,
+        #[rasn(tag(context, 1), identifier = "mORTs")]
+        pub m_orts: Option<SetOf<ObjectInstance>>,
+        #[rasn(tag(context, 2), identifier = "proposedRepairActions")]
+        pub proposed_repair_actions: Option<ProposedRepairActions>,
+        #[rasn(tag(context, 3), identifier = "additionalText")]
+        pub additional_text: Option<AdditionalText>,
+        #[rasn(tag(context, 4), identifier = "additionalInformation")]
+        pub additional_information: Option<AdditionalInformation>,
+    }
+    impl TestRequestUncontrolledResult {
+        pub fn new(
+            test_outcome: Option<TestOutcome>,
+            m_orts: Option<SetOf<ObjectInstance>>,
+            proposed_repair_actions: Option<ProposedRepairActions>,
+            additional_text: Option<AdditionalText>,
+            additional_information: Option<AdditionalInformation>,
+        ) -> Self {
+            Self {
+                test_outcome,
+                m_orts,
+                proposed_repair_actions,
+                additional_text,
+                additional_information,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct TestResultInfo {
+        #[rasn(tag(context, 0), identifier = "testInvocationId")]
+        pub test_invocation_id: Option<TestInvocationId>,
+        #[rasn(tag(context, 1), identifier = "testSessionId")]
+        pub test_session_id: Option<TestSessionId>,
+        #[rasn(tag(context, 2), identifier = "testOutcome")]
+        pub test_outcome: Option<TestOutcome>,
+        #[rasn(tag(context, 3), identifier = "mORTs")]
+        pub m_orts: Option<MORTs>,
+        #[rasn(tag(context, 4), identifier = "associatedObjects")]
+        pub associated_objects: Option<AssociatedObjects>,
+        #[rasn(tag(context, 5), identifier = "monitoredAttributes")]
+        pub monitored_attributes: Option<MonitoredAttributes>,
+        #[rasn(tag(context, 6), identifier = "proposedRepairActions")]
+        pub proposed_repair_actions: Option<ProposedRepairActions>,
+        #[rasn(tag(context, 7), identifier = "additionalText")]
+        pub additional_text: Option<AdditionalText>,
+        #[rasn(tag(context, 8), identifier = "additionalInformation")]
+        pub additional_information: Option<AdditionalInformation>,
+        #[rasn(tag(context, 9), identifier = "notificationIdentifier")]
+        pub notification_identifier: Option<NotificationIdentifier>,
+        #[rasn(tag(context, 10), identifier = "correlatedNotifications")]
+        pub correlated_notifications: Option<CorrelatedNotifications>,
+    }
+    impl TestResultInfo {
+        pub fn new(
+            test_invocation_id: Option<TestInvocationId>,
+            test_session_id: Option<TestSessionId>,
+            test_outcome: Option<TestOutcome>,
+            m_orts: Option<MORTs>,
+            associated_objects: Option<AssociatedObjects>,
+            monitored_attributes: Option<MonitoredAttributes>,
+            proposed_repair_actions: Option<ProposedRepairActions>,
+            additional_text: Option<AdditionalText>,
+            additional_information: Option<AdditionalInformation>,
+            notification_identifier: Option<NotificationIdentifier>,
+            correlated_notifications: Option<CorrelatedNotifications>,
+        ) -> Self {
+            Self {
+                test_invocation_id,
+                test_session_id,
+                test_outcome,
+                m_orts,
+                associated_objects,
+                monitored_attributes,
+                proposed_repair_actions,
+                additional_text,
+                additional_information,
+                notification_identifier,
+                correlated_notifications,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum TestSessionIdGlobalRef {
+        dnGlobRef(DistinguishedName),
+        oidGlobRef(ObjectIdentifier),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct TestSessionId {
+        #[rasn(identifier = "localId")]
+        pub local_id: Integer,
+        #[rasn(tag(context, 1), identifier = "globalRef")]
+        pub global_ref: Option<TestSessionIdGlobalRef>,
+    }
+    impl TestSessionId {
+        pub fn new(local_id: Integer, global_ref: Option<TestSessionIdGlobalRef>) -> Self {
+            Self {
+                local_id,
+                global_ref,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct TestState {
+        #[rasn(identifier = "operationalState")]
+        pub operational_state: OperationalState,
+        #[rasn(identifier = "proceduralStatus")]
+        pub procedural_status: ProceduralStatus,
+        #[rasn(tag(context, 2), identifier = "controlStatus")]
+        pub control_status: Option<ControlStatus>,
+        #[rasn(tag(context, 3), identifier = "availabilityStatus")]
+        pub availability_status: Option<AvailabilityStatus>,
+    }
+    impl TestState {
+        pub fn new(
+            operational_state: OperationalState,
+            procedural_status: ProceduralStatus,
+            control_status: Option<ControlStatus>,
+            availability_status: Option<AvailabilityStatus>,
+        ) -> Self {
+            Self {
+                operational_state,
+                procedural_status,
+                control_status,
+                availability_status,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TestStep(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TestStepQualifier(pub GraphicString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct TestSuspendResumeElement {
+        #[rasn(tag(context, 0), identifier = "testInvocationId")]
+        pub test_invocation_id: TestInvocationId,
+        #[rasn(tag(context, 1), identifier = "tOsStates")]
+        pub t_os_states: SetOf<TOsState>,
+    }
+    impl TestSuspendResumeElement {
+        pub fn new(test_invocation_id: TestInvocationId, t_os_states: SetOf<TOsState>) -> Self {
+            Self {
+                test_invocation_id,
+                t_os_states,
+            }
+        }
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "CHOICE")]
+    pub enum AnonymousTestSuspendResumeError {
+        #[rasn(tag(context, 0))]
+        testSuspendResumeSuccess(TestSuspendResumeElement),
+        #[rasn(tag(context, 1))]
+        testSuspendResumeFailure(TestSuspendResumeElement),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TestSuspendResumeError(pub SetOf<AnonymousTestSuspendResumeError>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct TestSuspendResumeInfo {
+        #[rasn(identifier = "indicatedTests")]
+        pub indicated_tests: IndicatedTests,
+        #[rasn(identifier = "suspendResumeChoice")]
+        pub suspend_resume_choice: SuspendResumeChoice,
+    }
+    impl TestSuspendResumeInfo {
+        pub fn new(
+            indicated_tests: IndicatedTests,
+            suspend_resume_choice: SuspendResumeChoice,
+        ) -> Self {
+            Self {
+                indicated_tests,
+                suspend_resume_choice,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TestSuspendResumeResult(pub SetOf<TestSuspendResumeElement>);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "CHOICE")]
+    pub enum AnonymousTestTerminateError {
+        #[rasn(tag(context, 0))]
+        testTerminateSuccess(TestInvocationId),
+        #[rasn(tag(context, 1))]
+        testTerminateFailure(TestInvocationId),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TestTerminateError(pub SetOf<AnonymousTestTerminateError>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TestTerminateInfo(pub IndicatedTests);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TestTerminateResult(pub SetOf<TestInvocationId>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TimeoutPeriod(pub Timespec);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum Timespec {
+        #[rasn(tag(context, 22))]
+        forever(()),
+        #[rasn(tag(context, 23))]
+        hours(Integer),
+        #[rasn(tag(context, 24))]
+        minutes(Integer),
+        #[rasn(tag(context, 25))]
+        seconds(Integer),
+        #[rasn(tag(context, 26))]
+        millisecs(Integer),
+        #[rasn(tag(context, 27))]
+        microsecs(Integer),
+        #[rasn(tag(context, 28))]
+        nanosecs(Integer),
+    }
+    pub const DEFAULT_ACTUAL_START_TIME: ActualStartTime = ActualStartTime::unknown(());
+    pub const DEFAULT_ACTUAL_STOP_TIME: ActualStopTime = ActualStopTime::unknown(());
+    #[doc = " The Actual start time remains unknown until the test performer has a real knowledge of the actual or expected time."]
+    pub const DEFAULT_END_TIME: EndTime = EndTime::continual(());
+    pub static PART12_ACTION: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 9u32, 2u32, 12u32, 9u32]).to_owned());
+    pub static PART12_ATTRIBUTE_ID: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 9u32, 2u32, 12u32, 7u32]).to_owned());
+    pub static PART12_MOBJECT_CLASS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 9u32, 2u32, 12u32, 3u32]).to_owned());
+    pub static PART12_NOTIFICATION: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 9u32, 2u32, 12u32, 10u32]).to_owned());
+    pub static PART12_PACKAGE: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 9u32, 2u32, 12u32, 4u32]).to_owned());
+    pub static PART12_PARAMETER: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 9u32, 2u32, 12u32, 5u32]).to_owned());
+}

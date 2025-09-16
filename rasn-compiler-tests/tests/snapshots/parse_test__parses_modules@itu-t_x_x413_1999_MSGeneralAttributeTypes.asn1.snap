@@ -1,0 +1,278 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x413_1999_MSGeneralAttributeTypes.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod msgeneral_attribute_types {
+    extern crate alloc;
+    use super::authentication_framework::AlgorithmIdentifier;
+    use super::information_framework::OBJECT_IDENTIFIER_MATCH;
+    use super::msabstract_service::*;
+    use super::msmatching_rules::{
+        BIT_STRING_MATCH, CONTENT_CORRELATOR_MATCH, CONTENT_IDENTIFIER_MATCH,
+        M_SSINGLE_SUBSTRING_LIST_ELEMENTS_MATCH, M_SSINGLE_SUBSTRING_LIST_MATCH,
+        M_SSINGLE_SUBSTRING_MATCH, M_SSTRING_CASE_SENSITIVE_MATCH, M_SSTRING_LIST_ELEMENTS_MATCH,
+        M_SSTRING_LIST_MATCH, M_SSTRING_MATCH, M_SSTRING_ORDERING_MATCH, M_SSUBSTRINGS_MATCH,
+        M_TSIDENTIFIER_MATCH, O_RADDRESS_ELEMENTS_MATCH, O_RADDRESS_MATCH,
+        O_RADDRESS_SUBSTRING_ELEMENTS_MATCH, O_RNAME_ELEMENTS_MATCH, O_RNAME_MATCH,
+        O_RNAME_SINGLE_ELEMENT_MATCH, O_RNAME_SUBSTRING_ELEMENTS_MATCH,
+        REDIRECTION_OR_DLEXPANSION_ELEMENTS_MATCH, REDIRECTION_OR_DLEXPANSION_MATCH,
+        REDIRECTION_OR_DLEXPANSION_SINGLE_ELEMENT_MATCH,
+        REDIRECTION_OR_DLEXPANSION_SUBSTRING_ELEMENTS_MATCH, REDIRECTION_REASON_MATCH,
+        VALUE_COUNT_MATCH,
+    };
+    use super::msobject_identifiers::{
+        ID_ATT_AC_CORRELATED_REPORT_LIST, ID_ATT_AC_REPORT_SUBJECT_ENTRY, ID_ATT_AC_REPORT_SUMMARY,
+        ID_ATT_AC_UNCORRELATED_REPORT_LIST, ID_ATT_AUTO_ACTION_ERROR,
+        ID_ATT_AUTO_ACTION_REGISTRATION_IDENTIFIER, ID_ATT_AUTO_ACTION_SUBJECT_ENTRY,
+        ID_ATT_AUTO_ACTION_TYPE, ID_ATT_CERTIFICATE_SELECTORS, ID_ATT_CHILD_SEQUENCE_NUMBERS,
+        ID_ATT_CONTENT, ID_ATT_CONTENT_CONFIDENTIALITY_ALGORITHM_IDENTIFIER,
+        ID_ATT_CONTENT_CORRELATOR, ID_ATT_CONTENT_IDENTIFIER, ID_ATT_CONTENT_INTEGRITY_CHECK,
+        ID_ATT_CONTENT_LENGTH, ID_ATT_CONTENT_RETURNED, ID_ATT_CONTENT_TYPE,
+        ID_ATT_CONVERSION_WITH_LOSS_PROHIBITED, ID_ATT_CONVERTED_EITS, ID_ATT_CREATION_TIME,
+        ID_ATT_DEFERRED_DELIVERY_CANCELLATION_TIME, ID_ATT_DEFERRED_DELIVERY_TIME,
+        ID_ATT_DELETION_TIME, ID_ATT_DELIVERED_EITS, ID_ATT_DELIVERY_FLAGS,
+        ID_ATT_DL_EXEMPTED_RECIPIENTS, ID_ATT_DL_EXPANSION_HISTORY, ID_ATT_DL_EXPANSION_PROHIBITED,
+        ID_ATT_ENTRY_TYPE, ID_ATT_INTERNAL_TRACE_INFORMATION, ID_ATT_LATEST_DELIVERY_TIME,
+        ID_ATT_LOCALLY_ORIGINATED, ID_ATT_MARKED_FOR_DELETION, ID_ATT_MESSAGE_DELIVERY_ENVELOPE,
+        ID_ATT_MESSAGE_DELIVERY_TIME, ID_ATT_MESSAGE_GROUP_NAME, ID_ATT_MESSAGE_IDENTIFIER,
+        ID_ATT_MESSAGE_NOTES, ID_ATT_MESSAGE_ORIGIN_AUTHENTICATION_CHECK,
+        ID_ATT_MESSAGE_SECURITY_LABEL, ID_ATT_MESSAGE_SUBMISSION_ENVELOPE,
+        ID_ATT_MESSAGE_SUBMISSION_TIME, ID_ATT_MESSAGE_TOKEN, ID_ATT_MS_ORIGINATED,
+        ID_ATT_MS_SUBMISSION_ERROR, ID_ATT_MULTIPLE_ORIGINATOR_CERTIFICATES,
+        ID_ATT_ORIGINALLY_INTENDED_RECIPIENT_NAME, ID_ATT_ORIGINAL_EITS,
+        ID_ATT_ORIGINATING_MTA_CERTIFICATE, ID_ATT_ORIGINATOR_CERTIFICATE, ID_ATT_ORIGINATOR_NAME,
+        ID_ATT_ORIGINATOR_REPORT_REQUEST, ID_ATT_ORIGINATOR_RETURN_ADDRESS,
+        ID_ATT_OTHER_RECIPIENT_NAMES, ID_ATT_PARENT_SEQUENCE_NUMBER, ID_ATT_PER_MESSAGE_INDICATORS,
+        ID_ATT_PER_RECIPIENT_MESSAGE_SUBMISSION_FIELDS,
+        ID_ATT_PER_RECIPIENT_PROBE_SUBMISSION_FIELDS, ID_ATT_PER_RECIPIENT_REPORT_DELIVERY_FIELDS,
+        ID_ATT_PRIORITY, ID_ATT_PROBE_ORIGIN_AUTHENTICATION_CHECK,
+        ID_ATT_PROBE_SUBMISSION_ENVELOPE, ID_ATT_PROOF_OF_DELIVERY_REQUEST,
+        ID_ATT_PROOF_OF_SUBMISSION, ID_ATT_RECIPIENT_CERTIFICATE, ID_ATT_RECIPIENT_NAMES,
+        ID_ATT_RECIPIENT_REASSIGNMENT_PROHIBITED, ID_ATT_REDIRECTION_HISTORY,
+        ID_ATT_REPORTING_DL_NAME, ID_ATT_REPORTING_MTA_CERTIFICATE,
+        ID_ATT_REPORT_DELIVERY_ENVELOPE, ID_ATT_REPORT_ORIGIN_AUTHENTICATION_CHECK,
+        ID_ATT_RETRIEVAL_STATUS, ID_ATT_SECURITY_CLASSIFICATION, ID_ATT_SEQUENCE_NUMBER,
+        ID_ATT_SIGNATURE_VERIFICATION_STATUS, ID_ATT_STORAGE_PERIOD, ID_ATT_STORAGE_TIME,
+        ID_ATT_SUBJECT_SUBMISSION_IDENTIFIER, ID_ATT_THIS_RECIPIENT_NAME, ID_ATT_TRACE_INFORMATION,
+    };
+    use super::msupper_bounds::{UB_ENTRY_TYPES, UB_MESSAGE_NOTES_LENGTH};
+    use super::mtaabstract_service::{InternalTraceInformationElement, TraceInformationElement};
+    use super::mtsabstract_service::{
+        CertificateSelectors, Content, ContentCorrelator, ContentIdentifier, ContentIntegrityCheck,
+        ContentLength, ConversionWithLossProhibited, DLExpansion, DLExpansionProhibited,
+        DeferredDeliveryTime, DeliveryFlags, ExtendedCertificates, ImproperlySpecifiedRecipients,
+        LatestDeliveryTime, MTSIdentifier, MessageDeliveryEnvelope, MessageDeliveryTime,
+        MessageOriginAuthenticationCheck, MessageSecurityLabel, MessageSubmissionEnvelope,
+        MessageSubmissionTime, MessageToken, ORName, OriginatingMTACertificate,
+        OriginatorCertificate, OriginatorReportRequest, OriginatorReturnAddress,
+        PerMessageIndicators, PerRecipientMessageSubmissionFields,
+        PerRecipientProbeSubmissionFields, PerRecipientReportDeliveryFields, Priority,
+        ProbeOriginAuthenticationCheck, ProbeSubmissionEnvelope, ProofOfDeliveryRequest,
+        ProofOfSubmission, RecipientReassignmentProhibited, Redirection, ReportDeliveryEnvelope,
+        ReportOriginAuthenticationCheck, ReportingDLName, ReportingMTACertificate,
+        SecurityClassification, SecurityProblem, SubjectSubmissionIdentifier,
+    };
+    use super::mtsupper_bounds::UB_RECIPIENTS;
+    use super::selected_attribute_types::{
+        BOOLEAN_MATCH, INTEGER_MATCH, INTEGER_ORDERING_MATCH, U_TCTIME_MATCH,
+        U_TCTIME_ORDERING_MATCH,
+    };
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DeferredDeliveryCancellationTime(pub UtcTime);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DeletionTime(pub UtcTime);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct PerRecipientReport {
+        #[rasn(tag(context, 0), identifier = "report-entry")]
+        pub report_entry: SequenceNumber,
+        #[rasn(
+            value("1.."),
+            tag(context, 1),
+            default = "per_recipient_report_position_default"
+        )]
+        pub position: Integer,
+    }
+    impl PerRecipientReport {
+        pub fn new(report_entry: SequenceNumber, position: Integer) -> Self {
+            Self {
+                report_entry,
+                position,
+            }
+        }
+    }
+    fn per_recipient_report_position_default() -> Integer {
+        Integer::from(1)
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ReportLocation {
+        #[rasn(tag(context, 0), identifier = "no-correlated-reports")]
+        no_correlated_reports(()),
+        #[rasn(tag(context, 1))]
+        location(SequenceOf<PerRecipientReport>),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ReportSummary {
+        #[rasn(identifier = "no-report-requested")]
+        no_report_requested = 0,
+        #[rasn(identifier = "no-report-received")]
+        no_report_received = 1,
+        #[rasn(identifier = "report-outstanding")]
+        report_outstanding = 2,
+        #[rasn(identifier = "delivery-cancelled")]
+        delivery_cancelled = 3,
+        #[rasn(identifier = "delivery-report-from-another-recipient")]
+        delivery_report_from_another_recipient = 4,
+        #[rasn(identifier = "non-delivery-report-from-another-recipient")]
+        non_delivery_report_from_another_recipient = 5,
+        #[rasn(identifier = "delivery-report-from-intended-recipient")]
+        delivery_report_from_intended_recipient = 6,
+        #[rasn(identifier = "non-delivery-report-from-intended-recipient")]
+        non_delivery_report_from_intended_recipient = 7,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SignatureStatus(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct SignatureVerificationStatus {
+        #[rasn(
+            tag(context, 0),
+            default = "signature_verification_status_content_integrity_check_default",
+            identifier = "content-integrity-check"
+        )]
+        pub content_integrity_check: SignatureStatus,
+        #[rasn(
+            tag(context, 1),
+            default = "signature_verification_status_message_origin_authentication_check_default",
+            identifier = "message-origin-authentication-check"
+        )]
+        pub message_origin_authentication_check: SignatureStatus,
+        #[rasn(
+            tag(context, 2),
+            default = "signature_verification_status_message_token_default",
+            identifier = "message-token"
+        )]
+        pub message_token: SignatureStatus,
+        #[rasn(
+            tag(context, 3),
+            default = "signature_verification_status_report_origin_authentication_check_default",
+            identifier = "report-origin-authentication-check"
+        )]
+        pub report_origin_authentication_check: SignatureStatus,
+        #[rasn(
+            tag(context, 4),
+            default = "signature_verification_status_proof_of_delivery_default",
+            identifier = "proof-of-delivery"
+        )]
+        pub proof_of_delivery: SignatureStatus,
+        #[rasn(
+            tag(context, 5),
+            default = "signature_verification_status_proof_of_submission_default",
+            identifier = "proof-of-submission"
+        )]
+        pub proof_of_submission: SignatureStatus,
+    }
+    impl SignatureVerificationStatus {
+        pub fn new(
+            content_integrity_check: SignatureStatus,
+            message_origin_authentication_check: SignatureStatus,
+            message_token: SignatureStatus,
+            report_origin_authentication_check: SignatureStatus,
+            proof_of_delivery: SignatureStatus,
+            proof_of_submission: SignatureStatus,
+        ) -> Self {
+            Self {
+                content_integrity_check,
+                message_origin_authentication_check,
+                message_token,
+                report_origin_authentication_check,
+                proof_of_delivery,
+                proof_of_submission,
+            }
+        }
+    }
+    impl std::default::Default for SignatureVerificationStatus {
+        fn default() -> Self {
+            Self {
+                content_integrity_check:
+                    signature_verification_status_content_integrity_check_default(),
+                message_origin_authentication_check:
+                    signature_verification_status_message_origin_authentication_check_default(),
+                message_token: signature_verification_status_message_token_default(),
+                report_origin_authentication_check:
+                    signature_verification_status_report_origin_authentication_check_default(),
+                proof_of_delivery: signature_verification_status_proof_of_delivery_default(),
+                proof_of_submission: signature_verification_status_proof_of_submission_default(),
+            }
+        }
+    }
+    fn signature_verification_status_content_integrity_check_default() -> SignatureStatus {
+        SignatureStatus(Integer::from(0))
+    }
+    fn signature_verification_status_message_origin_authentication_check_default() -> SignatureStatus
+    {
+        SignatureStatus(Integer::from(0))
+    }
+    fn signature_verification_status_message_token_default() -> SignatureStatus {
+        SignatureStatus(Integer::from(0))
+    }
+    fn signature_verification_status_report_origin_authentication_check_default() -> SignatureStatus
+    {
+        SignatureStatus(Integer::from(0))
+    }
+    fn signature_verification_status_proof_of_delivery_default() -> SignatureStatus {
+        SignatureStatus(Integer::from(0))
+    }
+    fn signature_verification_status_proof_of_submission_default() -> SignatureStatus {
+        SignatureStatus(Integer::from(0))
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct StoragePeriod(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct StorageTime(pub UtcTime);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum SubmissionError {
+        #[rasn(tag(context, 1), identifier = "submission-control-violated")]
+        submission_control_violated(()),
+        #[rasn(tag(context, 2), identifier = "originator-invalid")]
+        originator_invalid(()),
+        #[rasn(tag(context, 3), identifier = "recipient-improperly-specified")]
+        recipient_improperly_specified(ImproperlySpecifiedRecipients),
+        #[rasn(tag(context, 4), identifier = "element-of-service-not-subscribed")]
+        element_of_service_not_subscribed(()),
+        #[rasn(tag(context, 11), identifier = "inconsistent-request")]
+        inconsistent_request(()),
+        #[rasn(tag(context, 12), identifier = "security-error")]
+        security_error(SecurityProblem),
+        #[rasn(tag(context, 13), identifier = "unsupported-critical-function")]
+        unsupported_critical_function(()),
+        #[rasn(tag(context, 15), identifier = "remote-bind-error")]
+        remote_bind_error(()),
+        #[rasn(tag(context, 27), identifier = "service-error")]
+        service_error(ServiceErrorParameter),
+        #[rasn(tag(context, 30), identifier = "message-group-error")]
+        message_group_error(MessageGroupErrorParameter),
+        #[rasn(tag(context, 31), identifier = "ms-extension-error")]
+        ms_extension_error(MSExtensionErrorParameter),
+        #[rasn(tag(context, 34), identifier = "entry-class-error")]
+        entry_class_error(EntryClassErrorParameter),
+    }
+}

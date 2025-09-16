@@ -1,0 +1,314 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q751.4_1998_SccpAccountingDefinedTypesModule.asn1
+---
+Warnings:
+Unidentified generating bindings for : Unexpectedly encountered unlinked struct-like ASN1 value!
+LinkerError in ASN grammar: Failed to link value with 'SelectionGroupSet'
+LinkerError in ASN grammar: Failed to link value with 'Ss7SpecificErrorInformation'
+LinkerError in ASN grammar: Failed to link value with 'Ss7SpecificErrorInformation'
+LinkerError in ASN grammar: Failed to link value with 'Ss7SpecificErrorInformation'
+LinkerError in ASN grammar: Failed to link value with 'Ss7SpecificErrorInformation'
+LinkerError in ASN grammar: Failed to link value with 'Ss7SpecificErrorInformation'
+LinkerError in ASN grammar: Failed to link value with 'Ss7SpecificErrorInformation'
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod sccp_accounting_defined_types_module {
+    extern crate alloc;
+    use super::accounting_defined_types_module::{
+        DataProblem, EndOfMeasurementTime, SelectionGroup, SelectionGroupSet, ACCOUNTING_ACTION,
+        ACCOUNTING_ATTRIBUTE, ACCOUNTING_ATTRIBUTE_GROUP, ACCOUNTING_NAME_BINDING,
+        ACCOUNTING_NOTIFICATION, ACCOUNTING_OBJECT_CLASS, ACCOUNTING_PACKAGE, ACCOUNTING_PARAMETER,
+    };
+    use super::attribute_asn1_module::{ObjectInstance, SimpleNameType};
+    use super::q2751_defined_types_module::Ss7SpecificErrorInformation;
+    use super::sccpdefined_types_module::{GtNatureOfAddress, GtNumberingPlan, GtTranslationType};
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct GtNatureOfAddressSet(pub SetOf<GtNatureOfAddress>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct GtNumberingPlanSet(pub SetOf<GtNumberingPlan>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct GtTranslationTypeSet(pub SetOf<GtTranslationType>);
+    #[doc = " ASN.1 TYPE DEFINITIONS"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=10"))]
+    pub struct RuleSet(pub SetOf<ObjectInstance>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SccpAccCounterData {
+        #[rasn(tag(context, 0))]
+        pub gts: Integer,
+        #[rasn(tag(context, 1))]
+        pub octets: Integer,
+        #[rasn(tag(context, 2), identifier = "dataProblem")]
+        pub data_problem: DataProblem,
+        #[rasn(tag(context, 3), identifier = "ruleSet")]
+        pub rule_set: Option<RuleSet>,
+    }
+    impl SccpAccCounterData {
+        pub fn new(
+            gts: Integer,
+            octets: Integer,
+            data_problem: DataProblem,
+            rule_set: Option<RuleSet>,
+        ) -> Self {
+            Self {
+                gts,
+                octets,
+                data_problem,
+                rule_set,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=10"))]
+    pub struct SccpAccCounterDataSequence(pub SequenceOf<SccpAccCounterData>);
+    #[doc = " maximum size = q"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SccpAccountingNotificationData {
+        #[rasn(identifier = "endOfMeasurementTime")]
+        pub end_of_measurement_time: EndOfMeasurementTime,
+        #[rasn(identifier = "sccpLinkageSet")]
+        pub sccp_linkage_set: SccpLinkageSet,
+        #[rasn(identifier = "sccpAccCounterDataSequence")]
+        pub sccp_acc_counter_data_sequence: SccpAccCounterDataSequence,
+    }
+    impl SccpAccountingNotificationData {
+        pub fn new(
+            end_of_measurement_time: EndOfMeasurementTime,
+            sccp_linkage_set: SccpLinkageSet,
+            sccp_acc_counter_data_sequence: SccpAccCounterDataSequence,
+        ) -> Self {
+            Self {
+                end_of_measurement_time,
+                sccp_linkage_set,
+                sccp_acc_counter_data_sequence,
+            }
+        }
+    }
+    #[doc = " this number is only for compilability"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=10"))]
+    pub struct SccpLinkageSet(pub SetOf<ObjectInstance>);
+    pub static GT_NATURE_OF_ADDRESS_SET_AOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ACCOUNTING_ATTRIBUTE, &[18u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static GT_NUMBERING_PLAN_SET_AOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ACCOUNTING_ATTRIBUTE, &[19u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " the following values of Ss7SpecificErrorInformation defined in Q.2751.1 are used:"]
+    pub static GT_RULE_ALREADY_USED_BY_ANOTHER_TAC: LazyLock<Ss7SpecificErrorInformation> =
+        LazyLock::new(|| Ss7SpecificErrorInformation(Ss7SpecificErrorInformation(4000)));
+    pub static GT_TRANSLATION_TYPE_SET_AOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ACCOUNTING_ATTRIBUTE, &[20u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " One of the gtRules specified in attribute ruleSet is already"]
+    #[doc = " used by another terminatingAccountClassForAccounting."]
+    pub static INVALID_TACFOR_ACCOUNTING_REFERENCE: LazyLock<Ss7SpecificErrorInformation> =
+        LazyLock::new(|| Ss7SpecificErrorInformation(Ss7SpecificErrorInformation(4001)));
+    #[doc = " at least one of the references in selectionGroupSetForAccounting is not"]
+    #[doc = " referring to a terminatingAccountClassForAccounting"]
+    pub static INVALID_TACFOR_VERIFICATION_REFERENCE: LazyLock<Ss7SpecificErrorInformation> =
+        LazyLock::new(|| Ss7SpecificErrorInformation(Ss7SpecificErrorInformation(4002)));
+    pub static MAX_NUMBER_REFERENCES_IN_RULE_SET: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(10));
+    #[doc = " this number is only for compilability"]
+    pub static MAX_NUMBER_REFERENCES_IN_SCCP_LINKAGE_SET: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(10));
+    #[doc = " this number is only for compilability"]
+    pub static MAX_NUMBER_REFERENCES_IN_SCCP_SELECTION_GROUP_SET: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(10));
+    #[doc = " at least one of the references in selectionGroupSetForVerification is not"]
+    #[doc = " referring to a terminatingAccountClassForVerification contained in the"]
+    #[doc = " same sccpAccount."]
+    pub static RULE_OVERLAP_ERROR: LazyLock<Ss7SpecificErrorInformation> =
+        LazyLock::new(|| Ss7SpecificErrorInformation(Ss7SpecificErrorInformation(4003)));
+    #[doc = " the manipulated selectionGroupSetForAccounting/Verification would"]
+    #[doc = " not allow an unambigous identification of a the counter to be"]
+    #[doc = " incremented"]
+    #[doc = " ASN.1 OBJECT IDENTIFIER definitions"]
+    pub static RULE_SET_AOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ACCOUNTING_ATTRIBUTE, &[22u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SCCP_ACC_COUNTER_DATA_SEQUENCE_AOI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ACCOUNTING_ATTRIBUTE, &[26u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static SCCP_ACCOUNT_OOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ACCOUNTING_OBJECT_CLASS, &[11u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SCCP_ACCOUNT_SCRC_NBOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ACCOUNTING_NAME_BINDING, &[6u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SCCP_ACCOUNT_ID_AOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ACCOUNTING_ATTRIBUTE, &[23u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SCCP_ACCOUNT_PACKAGE_POI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ACCOUNTING_PACKAGE, &[12u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SCCP_ACCOUNTING_NOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ACCOUNTING_NOTIFICATION, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SCCP_ACCOUNTING_LOG_RECORD_OOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ACCOUNTING_OBJECT_CLASS, &[7u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SCCP_ACCOUNTING_LOG_RECORD_PACKAGE_POI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ACCOUNTING_PACKAGE, &[13u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static SCCP_ACCOUNTING_NOTIFICATIONS_PACKAGE_POI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ACCOUNTING_PACKAGE, &[11u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static SCCP_ACCOUNTING_VERIFICATION_NOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ACCOUNTING_NOTIFICATION, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " the ruleSet of the-terminatingAccountClassForAccounting/Verification"]
+    #[doc = " is not disjunct ! No unambiguous identification of a"]
+    #[doc = " terminatingAccountClass would be possible."]
+    pub static SCCP_LINKAGE_ALREADY_IN_OTHER_ACCOUNT: LazyLock<Ss7SpecificErrorInformation> =
+        LazyLock::new(|| Ss7SpecificErrorInformation(Ss7SpecificErrorInformation(4004)));
+    pub static SCCP_LINKAGE_SET_AOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ACCOUNTING_ATTRIBUTE, &[24u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " at least one of the sccpLinkages refered to by the sccpLinkageSet is"]
+    #[doc = " already -referred to by another sccpLinkageSet in another sccpAccount"]
+    #[doc = " instance"]
+    pub static SELECTION_GROUP_OVERLAP_ERROR: LazyLock<Ss7SpecificErrorInformation> =
+        LazyLock::new(|| Ss7SpecificErrorInformation(Ss7SpecificErrorInformation(4005)));
+    pub static TERMINATING_ACCOUNT_CLASS_FOR_ACCOUNTING_OOI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ACCOUNTING_OBJECT_CLASS, &[6u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static TERMINATING_ACCOUNT_CLASS_FOR_ACCOUNTING_SCRC_NBOI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ACCOUNTING_NAME_BINDING, &[8u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static TERMINATING_ACCOUNT_CLASS_FOR_ACCOUNTING_ID_AOI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ACCOUNTING_ATTRIBUTE, &[25u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static TERMINATING_ACCOUNT_CLASS_FOR_ACCOUNTING_PACKAGE_POI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ACCOUNTING_PACKAGE, &[7u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static TERMINATING_ACCOUNT_CLASS_FOR_VERIFICATION_OOI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ACCOUNTING_OBJECT_CLASS, &[9u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static TERMINATING_ACCOUNT_CLASS_FOR_VERIFICATION_SCCP_ACCOUNT_NBOI: LazyLock<
+        ObjectIdentifier,
+    > = LazyLock::new(|| {
+        Oid::new(&[&***ACCOUNTING_NAME_BINDING, &[7u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static TERMINATING_ACCOUNT_CLASS_FOR_VERIFICATION_ID_AOI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ACCOUNTING_ATTRIBUTE, &[21u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static TERMINATING_ACCOUNT_CLASS_FOR_VERIFICATION_PACKAGE_POI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ACCOUNTING_PACKAGE, &[10u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static VERIFICATION_RULE_OOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ACCOUNTING_OBJECT_CLASS, &[10u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static VERIFICATION_RULE_VERIFICATION_TRANSLATOR_NBOI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ACCOUNTING_NAME_BINDING, &[10u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static VERIFICATION_RULE_ID_AOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ACCOUNTING_ATTRIBUTE, &[17u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static VERIFICATION_RULE_PACKAGE_POI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ACCOUNTING_PACKAGE, &[8u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static VERIFICATION_TRANSLATOR_OOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ACCOUNTING_OBJECT_CLASS, &[8u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static VERIFICATION_TRANSLATOR_SCCP_ACCOUNT_NBOI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ACCOUNTING_NAME_BINDING, &[9u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static VERIFICATION_TRANSLATOR_ID_AOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ACCOUNTING_ATTRIBUTE, &[16u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static VERIFICATION_TRANSLATOR_PACKAGE_POI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ACCOUNTING_PACKAGE, &[9u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+}

@@ -1,0 +1,285 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_v_v150.1_2003_V150MOIP-CAPABILITY.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod v150_moip_capability {
+    extern crate alloc;
+    use super::multimedia_system_control::NonStandardParameter;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum V150MoIPCapabilityModemRelayType {
+        #[rasn(identifier = "v-mr")]
+        v_mr(()),
+        #[rasn(identifier = "u-mr")]
+        u_mr(()),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum V150MoIPCapabilityGatewayTypeDtcx {
+        single(()),
+        double(()),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum V150MoIPCapabilityGatewayType {
+        ntcx(()),
+        stcx(()),
+        dtcx(V150MoIPCapabilityGatewayTypeDtcx),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum V150MoIPCapabilityCallDiscriminationMode {
+        audio(()),
+        #[rasn(identifier = "g2-choice")]
+        g2_choice(()),
+        combination(()),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct V150MoIPCapabilitySprtParameters {
+        #[rasn(value("140..=256"), identifier = "maxPayloadSizeChannel0")]
+        pub max_payload_size_channel0: Option<u16>,
+        #[rasn(value("132..=256"), identifier = "maxPayloadSizeChannel1")]
+        pub max_payload_size_channel1: Option<u16>,
+        #[rasn(value("32..=96"), identifier = "maxWindowSizeChannel1")]
+        pub max_window_size_channel1: Option<u8>,
+        #[rasn(value("132..=256"), identifier = "maxPayloadSizeChannel2")]
+        pub max_payload_size_channel2: Option<u16>,
+        #[rasn(value("8..=32"), identifier = "maxWindowSizeChannel2")]
+        pub max_window_size_channel2: Option<u8>,
+        #[rasn(value("140..=256"), identifier = "maxPayloadSizeChannel3")]
+        pub max_payload_size_channel3: Option<u16>,
+    }
+    impl V150MoIPCapabilitySprtParameters {
+        pub fn new(
+            max_payload_size_channel0: Option<u16>,
+            max_payload_size_channel1: Option<u16>,
+            max_window_size_channel1: Option<u8>,
+            max_payload_size_channel2: Option<u16>,
+            max_window_size_channel2: Option<u8>,
+            max_payload_size_channel3: Option<u16>,
+        ) -> Self {
+            Self {
+                max_payload_size_channel0,
+                max_payload_size_channel1,
+                max_window_size_channel1,
+                max_payload_size_channel2,
+                max_window_size_channel2,
+                max_payload_size_channel3,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct V150MoIPCapabilityModulationSupport {
+        #[rasn(identifier = "v34FullDuplex")]
+        pub v34_full_duplex: Option<()>,
+        #[rasn(identifier = "v34HalfDuplex")]
+        pub v34_half_duplex: Option<()>,
+        #[rasn(identifier = "v32bis-v32")]
+        pub v32bis_v32: Option<()>,
+        #[rasn(identifier = "v22bis-v22")]
+        pub v22bis_v22: Option<()>,
+        pub v17: Option<()>,
+        #[rasn(identifier = "v29HalfDuplex")]
+        pub v29_half_duplex: Option<()>,
+        pub v27ter: Option<()>,
+        pub v26ter: Option<()>,
+        pub v26bis: Option<()>,
+        #[rasn(identifier = "v23FullDuplex")]
+        pub v23_full_duplex: Option<()>,
+        #[rasn(identifier = "v23HalfDuplex")]
+        pub v23_half_duplex: Option<()>,
+        pub v21: Option<()>,
+        #[rasn(identifier = "v90Analog")]
+        pub v90_analog: Option<()>,
+        #[rasn(identifier = "v90Digital")]
+        pub v90_digital: Option<()>,
+        #[rasn(identifier = "v92Analog")]
+        pub v92_analog: Option<()>,
+        #[rasn(identifier = "v92Digital")]
+        pub v92_digital: Option<()>,
+        pub v91: Option<()>,
+    }
+    impl V150MoIPCapabilityModulationSupport {
+        pub fn new(
+            v34_full_duplex: Option<()>,
+            v34_half_duplex: Option<()>,
+            v32bis_v32: Option<()>,
+            v22bis_v22: Option<()>,
+            v17: Option<()>,
+            v29_half_duplex: Option<()>,
+            v27ter: Option<()>,
+            v26ter: Option<()>,
+            v26bis: Option<()>,
+            v23_full_duplex: Option<()>,
+            v23_half_duplex: Option<()>,
+            v21: Option<()>,
+            v90_analog: Option<()>,
+            v90_digital: Option<()>,
+            v92_analog: Option<()>,
+            v92_digital: Option<()>,
+            v91: Option<()>,
+        ) -> Self {
+            Self {
+                v34_full_duplex,
+                v34_half_duplex,
+                v32bis_v32,
+                v22bis_v22,
+                v17,
+                v29_half_duplex,
+                v27ter,
+                v26ter,
+                v26bis,
+                v23_full_duplex,
+                v23_half_duplex,
+                v21,
+                v90_analog,
+                v90_digital,
+                v92_analog,
+                v92_digital,
+                v91,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct V150MoIPCapabilityCompressionModeV44 {
+        #[rasn(value("256..=65535"), identifier = "numTxCodewords")]
+        pub num_tx_codewords: u16,
+        #[rasn(value("256..=65535"), identifier = "numRxCodewords")]
+        pub num_rx_codewords: u16,
+        #[rasn(value("32..=255"), identifier = "maxTxStringLength")]
+        pub max_tx_string_length: u8,
+        #[rasn(value("32..=255"), identifier = "maxRxStringLength")]
+        pub max_rx_string_length: u8,
+        #[rasn(value("512..=65535"), identifier = "lenTxHistory")]
+        pub len_tx_history: u16,
+        #[rasn(value("512..=65535"), identifier = "lenRxHistory")]
+        pub len_rx_history: u16,
+    }
+    impl V150MoIPCapabilityCompressionModeV44 {
+        pub fn new(
+            num_tx_codewords: u16,
+            num_rx_codewords: u16,
+            max_tx_string_length: u8,
+            max_rx_string_length: u8,
+            len_tx_history: u16,
+            len_rx_history: u16,
+        ) -> Self {
+            Self {
+                num_tx_codewords,
+                num_rx_codewords,
+                max_tx_string_length,
+                max_rx_string_length,
+                len_tx_history,
+                len_rx_history,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct V150MoIPCapabilityCompressionModeV42bis {
+        #[rasn(value("512..=65535"), identifier = "numCodewords")]
+        pub num_codewords: Option<u16>,
+        #[rasn(value("6..=250"), identifier = "maxStringLength")]
+        pub max_string_length: Option<u8>,
+    }
+    impl V150MoIPCapabilityCompressionModeV42bis {
+        pub fn new(num_codewords: Option<u16>, max_string_length: Option<u8>) -> Self {
+            Self {
+                num_codewords,
+                max_string_length,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct V150MoIPCapabilityCompressionMode {
+        pub mnp5: Option<()>,
+        pub v44: Option<V150MoIPCapabilityCompressionModeV44>,
+        pub v42bis: Option<V150MoIPCapabilityCompressionModeV42bis>,
+    }
+    impl V150MoIPCapabilityCompressionMode {
+        pub fn new(
+            mnp5: Option<()>,
+            v44: Option<V150MoIPCapabilityCompressionModeV44>,
+            v42bis: Option<V150MoIPCapabilityCompressionModeV42bis>,
+        ) -> Self {
+            Self { mnp5, v44, v42bis }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct V150MoIPCapability {
+        #[rasn(identifier = "nonStandard")]
+        pub non_standard: Option<SequenceOf<NonStandardParameter>>,
+        #[rasn(identifier = "modemRelayType")]
+        pub modem_relay_type: V150MoIPCapabilityModemRelayType,
+        #[rasn(identifier = "gatewayType")]
+        pub gateway_type: V150MoIPCapabilityGatewayType,
+        #[rasn(identifier = "callDiscriminationMode")]
+        pub call_discrimination_mode: V150MoIPCapabilityCallDiscriminationMode,
+        #[rasn(identifier = "sprtParameters")]
+        pub sprt_parameters: Option<V150MoIPCapabilitySprtParameters>,
+        #[rasn(identifier = "modulationSupport")]
+        pub modulation_support: V150MoIPCapabilityModulationSupport,
+        #[rasn(identifier = "compressionMode")]
+        pub compression_mode: Option<V150MoIPCapabilityCompressionMode>,
+        #[rasn(identifier = "delayedJMEnabled")]
+        pub delayed_jmenabled: bool,
+    }
+    impl V150MoIPCapability {
+        pub fn new(
+            non_standard: Option<SequenceOf<NonStandardParameter>>,
+            modem_relay_type: V150MoIPCapabilityModemRelayType,
+            gateway_type: V150MoIPCapabilityGatewayType,
+            call_discrimination_mode: V150MoIPCapabilityCallDiscriminationMode,
+            sprt_parameters: Option<V150MoIPCapabilitySprtParameters>,
+            modulation_support: V150MoIPCapabilityModulationSupport,
+            compression_mode: Option<V150MoIPCapabilityCompressionMode>,
+            delayed_jmenabled: bool,
+        ) -> Self {
+            Self {
+                non_standard,
+                modem_relay_type,
+                gateway_type,
+                call_discrimination_mode,
+                sprt_parameters,
+                modulation_support,
+                compression_mode,
+                delayed_jmenabled,
+            }
+        }
+    }
+}

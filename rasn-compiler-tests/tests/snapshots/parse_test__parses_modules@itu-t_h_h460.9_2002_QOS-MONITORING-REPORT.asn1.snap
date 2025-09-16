@@ -1,0 +1,271 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_h_h460.9_2002_QOS-MONITORING-REPORT.asn1
+---
+Warnings:
+LinkerError in ASN grammar: Failed to link value with 'GenericIdentifier'
+LinkerError in ASN grammar: Failed to link value with 'GenericIdentifier'
+LinkerError in ASN grammar: Failed to link value with 'GenericIdentifier'
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod qos_monitoring_report {
+    extern crate alloc;
+    use super::h323_messages::{
+        BandWidth, CallIdentifier, CallReferenceValue, ConferenceIdentifier, GenericIdentifier,
+        NonStandardParameter, TransportChannelInfo,
+    };
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " middle 32 bits of 64 bit NTP timestamp"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=4294967295"))]
+    pub struct CalculatedJitter(pub u32);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=4294967295"))]
+    pub struct EstimatedEnd2EndDelay(pub u32);
+    #[doc = " measured in timestamp units"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct Extension {
+        #[rasn(identifier = "extensionId")]
+        pub extension_id: GenericIdentifier,
+        #[rasn(identifier = "extensionContent")]
+        pub extension_content: Option<OctetString>,
+    }
+    impl Extension {
+        pub fn new(
+            extension_id: GenericIdentifier,
+            extension_content: Option<OctetString>,
+        ) -> Self {
+            Self {
+                extension_id,
+                extension_content,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct FinalQosMonReport {
+        #[rasn(identifier = "mediaInfo")]
+        pub media_info: SequenceOf<RTCPMeasures>,
+        #[rasn(identifier = "nonStandardData")]
+        pub non_standard_data: Option<NonStandardParameter>,
+        pub extensions: Option<SequenceOf<Extension>>,
+    }
+    impl FinalQosMonReport {
+        pub fn new(
+            media_info: SequenceOf<RTCPMeasures>,
+            non_standard_data: Option<NonStandardParameter>,
+            extensions: Option<SequenceOf<Extension>>,
+        ) -> Self {
+            Self {
+                media_info,
+                non_standard_data,
+                extensions,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct InterGKQosMonReport {
+        #[rasn(identifier = "mediaInfo")]
+        pub media_info: SequenceOf<RTCPMeasures>,
+        #[rasn(identifier = "nonStandardData")]
+        pub non_standard_data: Option<NonStandardParameter>,
+        pub extensions: Option<SequenceOf<Extension>>,
+    }
+    impl InterGKQosMonReport {
+        pub fn new(
+            media_info: SequenceOf<RTCPMeasures>,
+            non_standard_data: Option<NonStandardParameter>,
+            extensions: Option<SequenceOf<Extension>>,
+        ) -> Self {
+            Self {
+                media_info,
+                non_standard_data,
+                extensions,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct PerCallQoSReport {
+        #[rasn(identifier = "nonStandardData")]
+        pub non_standard_data: Option<NonStandardParameter>,
+        #[rasn(identifier = "callReferenceValue")]
+        pub call_reference_value: CallReferenceValue,
+        #[rasn(identifier = "conferenceID")]
+        pub conference_id: ConferenceIdentifier,
+        #[rasn(identifier = "callIdentifier")]
+        pub call_identifier: CallIdentifier,
+        #[rasn(identifier = "mediaChannelsQoS")]
+        pub media_channels_qo_s: Option<SequenceOf<RTCPMeasures>>,
+        pub extensions: Option<SequenceOf<Extension>>,
+    }
+    impl PerCallQoSReport {
+        pub fn new(
+            non_standard_data: Option<NonStandardParameter>,
+            call_reference_value: CallReferenceValue,
+            conference_id: ConferenceIdentifier,
+            call_identifier: CallIdentifier,
+            media_channels_qo_s: Option<SequenceOf<RTCPMeasures>>,
+            extensions: Option<SequenceOf<Extension>>,
+        ) -> Self {
+            Self {
+                non_standard_data,
+                call_reference_value,
+                conference_id,
+                call_identifier,
+                media_channels_qo_s,
+                extensions,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct PeriodicQoSMonReport {
+        #[rasn(identifier = "perCallInfo")]
+        pub per_call_info: SequenceOf<PerCallQoSReport>,
+        pub extensions: Option<SequenceOf<Extension>>,
+    }
+    impl PeriodicQoSMonReport {
+        pub fn new(
+            per_call_info: SequenceOf<PerCallQoSReport>,
+            extensions: Option<SequenceOf<Extension>>,
+        ) -> Self {
+            Self {
+                per_call_info,
+                extensions,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum QosMonitoringReportData {
+        periodic(PeriodicQoSMonReport),
+        #[rasn(identifier = "final")]
+        R_final(FinalQosMonReport),
+        interGK(InterGKQosMonReport),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct RTCPMeasuresMediaSenderMeasures {
+        #[rasn(identifier = "worstEstimatedEnd2EndDelay")]
+        pub worst_estimated_end2_end_delay: Option<EstimatedEnd2EndDelay>,
+        #[rasn(identifier = "meanEstimatedEnd2EndDelay")]
+        pub mean_estimated_end2_end_delay: Option<EstimatedEnd2EndDelay>,
+    }
+    impl RTCPMeasuresMediaSenderMeasures {
+        pub fn new(
+            worst_estimated_end2_end_delay: Option<EstimatedEnd2EndDelay>,
+            mean_estimated_end2_end_delay: Option<EstimatedEnd2EndDelay>,
+        ) -> Self {
+            Self {
+                worst_estimated_end2_end_delay,
+                mean_estimated_end2_end_delay,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct RTCPMeasuresMediaReceiverMeasures {
+        #[rasn(value("0..=4294967295"), identifier = "cumulativeNumberOfPacketsLost")]
+        pub cumulative_number_of_packets_lost: Option<u32>,
+        #[rasn(value("0..=65535"), identifier = "packetLostRate")]
+        pub packet_lost_rate: Option<u16>,
+        #[rasn(identifier = "worstJitter")]
+        pub worst_jitter: Option<CalculatedJitter>,
+        #[rasn(identifier = "estimatedThroughput")]
+        pub estimated_throughput: Option<BandWidth>,
+        #[rasn(value("0..=65535"), identifier = "fractionLostRate")]
+        pub fraction_lost_rate: Option<u16>,
+        #[rasn(identifier = "meanJitter")]
+        pub mean_jitter: Option<CalculatedJitter>,
+    }
+    impl RTCPMeasuresMediaReceiverMeasures {
+        pub fn new(
+            cumulative_number_of_packets_lost: Option<u32>,
+            packet_lost_rate: Option<u16>,
+            worst_jitter: Option<CalculatedJitter>,
+            estimated_throughput: Option<BandWidth>,
+            fraction_lost_rate: Option<u16>,
+            mean_jitter: Option<CalculatedJitter>,
+        ) -> Self {
+            Self {
+                cumulative_number_of_packets_lost,
+                packet_lost_rate,
+                worst_jitter,
+                estimated_throughput,
+                fraction_lost_rate,
+                mean_jitter,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct RTCPMeasures {
+        #[rasn(identifier = "rtpAddress")]
+        pub rtp_address: TransportChannelInfo,
+        #[rasn(identifier = "rtcpAddress")]
+        pub rtcp_address: TransportChannelInfo,
+        #[rasn(value("1..=255"), identifier = "sessionId")]
+        pub session_id: u8,
+        #[rasn(identifier = "nonStandardData")]
+        pub non_standard_data: Option<NonStandardParameter>,
+        #[rasn(identifier = "mediaSenderMeasures")]
+        pub media_sender_measures: Option<RTCPMeasuresMediaSenderMeasures>,
+        #[rasn(identifier = "mediaReceiverMeasures")]
+        pub media_receiver_measures: Option<RTCPMeasuresMediaReceiverMeasures>,
+        pub extensions: Option<SequenceOf<Extension>>,
+    }
+    impl RTCPMeasures {
+        pub fn new(
+            rtp_address: TransportChannelInfo,
+            rtcp_address: TransportChannelInfo,
+            session_id: u8,
+            non_standard_data: Option<NonStandardParameter>,
+            media_sender_measures: Option<RTCPMeasuresMediaSenderMeasures>,
+            media_receiver_measures: Option<RTCPMeasuresMediaReceiverMeasures>,
+            extensions: Option<SequenceOf<Extension>>,
+        ) -> Self {
+            Self {
+                rtp_address,
+                rtcp_address,
+                session_id,
+                non_standard_data,
+                media_sender_measures,
+                media_receiver_measures,
+                extensions,
+            }
+        }
+    }
+    pub static QOS_MONITORING_FINAL_ONLY: LazyLock<GenericIdentifier> =
+        LazyLock::new(|| GenericIdentifier(GenericIdentifier(GenericIdentifier::standard(0))));
+    pub static QOS_MONITORING_REPORT_DATA: LazyLock<GenericIdentifier> =
+        LazyLock::new(|| GenericIdentifier(GenericIdentifier(GenericIdentifier::standard(1))));
+    #[doc = ""]
+    #[doc = " H.460.9 Identifiers:"]
+    #[doc = ""]
+    pub static QOS_MONITORING_REPORT_ID: LazyLock<GenericIdentifier> =
+        LazyLock::new(|| GenericIdentifier(GenericIdentifier(GenericIdentifier::standard(9))));
+}

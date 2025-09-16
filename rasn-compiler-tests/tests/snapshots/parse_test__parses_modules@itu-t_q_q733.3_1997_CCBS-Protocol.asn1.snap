@@ -1,0 +1,65 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q733.3_1997_CCBS-Protocol.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod ccbs_protocol {
+    extern crate alloc;
+    use super::remote_operations_information_objects::*;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " the USICode is coded as described in itu-t recommendation q763"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=255"))]
+    pub struct AccessTransport(pub OctetString);
+    #[doc = " the ATP is used to carry HLC, LLC, Calling Party SUB and"]
+    #[doc = " Called Party SUB as described in itu-t recommendation q931"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=11"))]
+    pub struct AdditionalCalledPartyNumber(pub OctetString);
+    #[doc = "constants and data type definitions"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=10"))]
+    pub struct CalledPartyNumber(pub OctetString);
+    #[doc = " the calling party number is coded as described"]
+    #[doc = " in itu-t recommendation q763"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=10"))]
+    pub struct CallingPartyNumber(pub OctetString);
+    #[doc = " the calling party number is coded as described"]
+    #[doc = " in itu-t recommendation q763"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum CauseCode {
+        #[rasn(identifier = "cCBS-T3-Timeout")]
+        cCBS_T3_Timeout = 1,
+        #[rasn(identifier = "cCBS-T4-Timeout")]
+        cCBS_T4_Timeout = 2,
+        #[rasn(identifier = "cCBS-T7-Timeout")]
+        cCBS_T7_Timeout = 3,
+        #[rasn(identifier = "cCBS-T9-Timeout")]
+        cCBS_T9_Timeout = 4,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=11"))]
+    pub struct USICode(pub OctetString);
+    #[doc = " object identifier path"]
+    pub static CCBS_OID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&[0u32, 0u32], &***Q, &[733u32, 3u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " the AdditionalCalledPartyNumber is coded as the Generic Number parameter"]
+    #[doc = " (with Number qualifier indicator set to \"additional called number\")"]
+    #[doc = " described in itu-t recommendation q763"]
+    pub static MAX_ACCESS_TRANSPORT_LENGTH: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(255));
+}

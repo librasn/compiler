@@ -1,0 +1,581 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_t_t434_1999_BFT-FORMAT.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod bft_format {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum AnonymousBINARYDATAMessageDataFileContent {
+        external(Any),
+        any(OctetString),
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousBINARYDATAMessage {
+        #[rasn(tag(context, 28), identifier = "protocol-version")]
+        pub protocol_version: ProtocolVersion,
+        #[rasn(tag(context, 0))]
+        pub filename: Option<FilenameAttribute>,
+        #[rasn(tag(context, 1), identifier = "permitted-actions")]
+        pub permitted_actions: Option<PermittedActionsAttribute>,
+        #[rasn(tag(context, 2), identifier = "contents-type")]
+        pub contents_type: Option<ContentsTypeAttribute>,
+        #[rasn(tag(context, 3), identifier = "storage-account")]
+        pub storage_account: Option<Utf8String>,
+        #[rasn(tag(context, 4), identifier = "date-and-time-of-creation")]
+        pub date_and_time_of_creation: Option<GeneralizedTime>,
+        #[rasn(tag(context, 5), identifier = "date-and-time-of-last-modification")]
+        pub date_and_time_of_last_modification: Option<GeneralizedTime>,
+        #[rasn(tag(context, 6), identifier = "date-and-time-of-last-read-access")]
+        pub date_and_time_of_last_read_access: Option<GeneralizedTime>,
+        #[rasn(tag(context, 8), identifier = "identity-of-creator")]
+        pub identity_of_creator: Option<Utf8String>,
+        #[rasn(tag(context, 9), identifier = "identity-of-last-modifier")]
+        pub identity_of_last_modifier: Option<Utf8String>,
+        #[rasn(tag(context, 10), identifier = "identity-of-last-reader")]
+        pub identity_of_last_reader: Option<Utf8String>,
+        #[rasn(tag(context, 13))]
+        pub filesize: Option<Integer>,
+        #[rasn(tag(context, 14), identifier = "future-filesize")]
+        pub future_filesize: Option<Integer>,
+        #[rasn(tag(context, 16), identifier = "legal-qualifications")]
+        pub legal_qualifications: Option<Utf8String>,
+        #[rasn(tag(context, 17), identifier = "private-use")]
+        pub private_use: Option<PrivateUseAttribute>,
+        #[rasn(tag(context, 18))]
+        pub structure: Option<ObjectIdentifier>,
+        #[rasn(tag(context, 19), identifier = "application-reference")]
+        pub application_reference: Option<GeneralIdentifier>,
+        #[rasn(tag(context, 20))]
+        pub machine: Option<SequenceOf<Utf8String>>,
+        #[rasn(tag(context, 21), identifier = "operating-system")]
+        pub operating_system: Option<ObjectIdentifier>,
+        #[rasn(tag(context, 22))]
+        pub recipient: Option<SequenceOf<Utf8String>>,
+        #[rasn(tag(context, 23), identifier = "character-set")]
+        pub character_set: Option<ObjectIdentifier>,
+        #[rasn(tag(context, 24))]
+        pub compression: Option<GeneralIdentifier>,
+        #[rasn(tag(context, 25))]
+        pub environment: Option<SequenceOf<Utf8String>>,
+        #[rasn(tag(context, 26))]
+        pub pathname: Option<SequenceOf<Utf8String>>,
+        #[rasn(tag(context, 29), identifier = "user-visible-string")]
+        pub user_visible_string: Option<SequenceOf<Utf8String>>,
+        #[rasn(tag(context, 30), identifier = "data-file-content")]
+        pub data_file_content: Option<AnonymousBINARYDATAMessageDataFileContent>,
+    }
+    impl AnonymousBINARYDATAMessage {
+        pub fn new(
+            protocol_version: ProtocolVersion,
+            filename: Option<FilenameAttribute>,
+            permitted_actions: Option<PermittedActionsAttribute>,
+            contents_type: Option<ContentsTypeAttribute>,
+            storage_account: Option<Utf8String>,
+            date_and_time_of_creation: Option<GeneralizedTime>,
+            date_and_time_of_last_modification: Option<GeneralizedTime>,
+            date_and_time_of_last_read_access: Option<GeneralizedTime>,
+            identity_of_creator: Option<Utf8String>,
+            identity_of_last_modifier: Option<Utf8String>,
+            identity_of_last_reader: Option<Utf8String>,
+            filesize: Option<Integer>,
+            future_filesize: Option<Integer>,
+            legal_qualifications: Option<Utf8String>,
+            private_use: Option<PrivateUseAttribute>,
+            structure: Option<ObjectIdentifier>,
+            application_reference: Option<GeneralIdentifier>,
+            machine: Option<SequenceOf<Utf8String>>,
+            operating_system: Option<ObjectIdentifier>,
+            recipient: Option<SequenceOf<Utf8String>>,
+            character_set: Option<ObjectIdentifier>,
+            compression: Option<GeneralIdentifier>,
+            environment: Option<SequenceOf<Utf8String>>,
+            pathname: Option<SequenceOf<Utf8String>>,
+            user_visible_string: Option<SequenceOf<Utf8String>>,
+            data_file_content: Option<AnonymousBINARYDATAMessageDataFileContent>,
+        ) -> Self {
+            Self {
+                protocol_version,
+                filename,
+                permitted_actions,
+                contents_type,
+                storage_account,
+                date_and_time_of_creation,
+                date_and_time_of_last_modification,
+                date_and_time_of_last_read_access,
+                identity_of_creator,
+                identity_of_last_modifier,
+                identity_of_last_reader,
+                filesize,
+                future_filesize,
+                legal_qualifications,
+                private_use,
+                structure,
+                application_reference,
+                machine,
+                operating_system,
+                recipient,
+                character_set,
+                compression,
+                environment,
+                pathname,
+                user_visible_string,
+                data_file_content,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, tag(application, 23), identifier = "BINARY-DATA-Message")]
+    pub struct BINARYDATAMessage(pub SequenceOf<AnonymousBINARYDATAMessage>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Communication {
+        #[rasn(
+            tag(context, 0),
+            default = "communication_general_priority_default",
+            identifier = "general-priority"
+        )]
+        pub general_priority: Priority,
+        #[rasn(tag(context, 1), identifier = "originator-name")]
+        pub originator_name: Option<Utf8String>,
+        #[rasn(tag(context, 2), identifier = "originator-T30-ID")]
+        pub originator_t30_id: Option<T30Identity>,
+        #[rasn(tag(context, 3), identifier = "originator-fax-number")]
+        pub originator_fax_number: Option<NumberOfFax>,
+        #[rasn(tag(context, 4), identifier = "originator-sub-address")]
+        pub originator_sub_address: Option<SubAddress>,
+        #[rasn(tag(context, 5), identifier = "submission-date")]
+        pub submission_date: Option<GeneralizedTime>,
+        #[rasn(tag(context, 6), identifier = "pages-number")]
+        pub pages_number: Option<Integer>,
+        #[rasn(tag(context, 7), identifier = "document-recovery")]
+        pub document_recovery: Option<Utf8String>,
+        #[rasn(tag(context, 8))]
+        pub password: Option<Utf8String>,
+        #[rasn(tag(context, 9), identifier = "receiving-fax")]
+        pub receiving_fax: Option<SequenceOf<ReceivingFax>>,
+        #[rasn(tag(context, 10), identifier = "communication-private")]
+        pub communication_private: Option<PrivateUseAttribute>,
+    }
+    impl Communication {
+        pub fn new(
+            general_priority: Priority,
+            originator_name: Option<Utf8String>,
+            originator_t30_id: Option<T30Identity>,
+            originator_fax_number: Option<NumberOfFax>,
+            originator_sub_address: Option<SubAddress>,
+            submission_date: Option<GeneralizedTime>,
+            pages_number: Option<Integer>,
+            document_recovery: Option<Utf8String>,
+            password: Option<Utf8String>,
+            receiving_fax: Option<SequenceOf<ReceivingFax>>,
+            communication_private: Option<PrivateUseAttribute>,
+        ) -> Self {
+            Self {
+                general_priority,
+                originator_name,
+                originator_t30_id,
+                originator_fax_number,
+                originator_sub_address,
+                submission_date,
+                pages_number,
+                document_recovery,
+                password,
+                receiving_fax,
+                communication_private,
+            }
+        }
+    }
+    fn communication_general_priority_default() -> Priority {
+        Priority::normal
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Contents-Type-Attribute")]
+    pub struct ContentsTypeAttribute {
+        #[rasn(tag(context, 1), identifier = "document-type-name")]
+        pub document_type_name: ObjectIdentifier,
+        #[rasn(tag(context, 0))]
+        pub parameter: Option<Any>,
+    }
+    impl ContentsTypeAttribute {
+        pub fn new(document_type_name: ObjectIdentifier, parameter: Option<Any>) -> Self {
+            Self {
+                document_type_name,
+                parameter,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum Copy {
+        principal = 0,
+        copy = 1,
+        #[rasn(identifier = "blind-copy")]
+        blind_copy = 2,
+        forward = 3,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousDeliveryInformation {
+        #[rasn(tag(context, 0), identifier = "date-and-time-of-sending")]
+        pub date_and_time_of_sending: Option<GeneralizedTime>,
+        #[rasn(tag(context, 1), identifier = "originator-fax-number")]
+        pub originator_fax_number: Option<Utf8String>,
+        #[rasn(tag(context, 2), identifier = "file-number")]
+        pub file_number: Option<Integer>,
+        #[rasn(tag(context, 3), identifier = "whole-number")]
+        pub whole_number: Option<Integer>,
+        #[rasn(tag(context, 4), identifier = "last-file-indication")]
+        pub last_file_indication: Option<Utf8String>,
+        #[rasn(tag(context, 5), identifier = "delivery-re-try-indication")]
+        pub delivery_re_try_indication: Option<Utf8String>,
+        #[rasn(tag(context, 6), identifier = "charge-address")]
+        pub charge_address: Option<Utf8String>,
+        #[rasn(tag(context, 7), identifier = "information-fee")]
+        pub information_fee: Option<Utf8String>,
+        #[rasn(tag(context, 8), identifier = "original-file-format")]
+        pub original_file_format: Option<GeneralIdentifier>,
+        #[rasn(tag(context, 9), identifier = "terminal-file-format")]
+        pub terminal_file_format: Option<GeneralIdentifier>,
+        #[rasn(tag(context, 10), identifier = "delivery-time-designate-indication")]
+        pub delivery_time_designate_indication: Option<Utf8String>,
+        #[rasn(tag(context, 11))]
+        pub addressee: Option<Utf8String>,
+    }
+    impl AnonymousDeliveryInformation {
+        pub fn new(
+            date_and_time_of_sending: Option<GeneralizedTime>,
+            originator_fax_number: Option<Utf8String>,
+            file_number: Option<Integer>,
+            whole_number: Option<Integer>,
+            last_file_indication: Option<Utf8String>,
+            delivery_re_try_indication: Option<Utf8String>,
+            charge_address: Option<Utf8String>,
+            information_fee: Option<Utf8String>,
+            original_file_format: Option<GeneralIdentifier>,
+            terminal_file_format: Option<GeneralIdentifier>,
+            delivery_time_designate_indication: Option<Utf8String>,
+            addressee: Option<Utf8String>,
+        ) -> Self {
+            Self {
+                date_and_time_of_sending,
+                originator_fax_number,
+                file_number,
+                whole_number,
+                last_file_indication,
+                delivery_re_try_indication,
+                charge_address,
+                information_fee,
+                original_file_format,
+                terminal_file_format,
+                delivery_time_designate_indication,
+                addressee,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Delivery-Information")]
+    pub struct DeliveryInformation(pub SequenceOf<AnonymousDeliveryInformation>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Doc-Characteristics")]
+    pub struct DocCharacteristics {
+        #[rasn(tag(context, 0), identifier = "document-name")]
+        pub document_name: Option<Utf8String>,
+        #[rasn(tag(context, 1))]
+        pub version: Option<Utf8String>,
+        #[rasn(tag(context, 2), identifier = "document-type")]
+        pub document_type: Option<Utf8String>,
+        #[rasn(tag(context, 3))]
+        pub edition: Option<Utf8String>,
+        #[rasn(tag(context, 4))]
+        pub reference: Option<Utf8String>,
+        #[rasn(tag(context, 5))]
+        pub subject: Option<Utf8String>,
+        #[rasn(tag(context, 6))]
+        pub format: Option<Utf8String>,
+        #[rasn(tag(context, 7))]
+        pub copyrights: Option<Utf8String>,
+        #[rasn(tag(context, 8))]
+        pub keywords: Option<Utf8String>,
+        #[rasn(tag(context, 9), identifier = "abstract")]
+        pub r_abstract: Option<Utf8String>,
+        #[rasn(tag(context, 10))]
+        pub language: Option<Utf8String>,
+        #[rasn(tag(context, 11))]
+        pub private: Option<PrivateUseAttribute>,
+    }
+    impl DocCharacteristics {
+        pub fn new(
+            document_name: Option<Utf8String>,
+            version: Option<Utf8String>,
+            document_type: Option<Utf8String>,
+            edition: Option<Utf8String>,
+            reference: Option<Utf8String>,
+            subject: Option<Utf8String>,
+            format: Option<Utf8String>,
+            copyrights: Option<Utf8String>,
+            keywords: Option<Utf8String>,
+            r_abstract: Option<Utf8String>,
+            language: Option<Utf8String>,
+            private: Option<PrivateUseAttribute>,
+        ) -> Self {
+            Self {
+                document_name,
+                version,
+                document_type,
+                edition,
+                reference,
+                subject,
+                format,
+                copyrights,
+                keywords,
+                r_abstract,
+                language,
+                private,
+            }
+        }
+    }
+    #[doc = "  The actual types to be used for values of the parameter"]
+    #[doc = "  field are defined in the document-type-name."]
+    #[doc = "  They may consist of an object identifier assigned to the document type, or be"]
+    #[doc = "  UNSTRUCTURED TEXT."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Entity-Reference")]
+    pub struct EntityReference(pub Integer);
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "UTF8String")]
+    pub struct AnonymousFilenameAttribute(pub Utf8String);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Filename-Attribute")]
+    pub struct FilenameAttribute(pub SequenceOf<AnonymousFilenameAttribute>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "General-Identifier")]
+    pub enum GeneralIdentifier {
+        entityID(ObjectIdentifier),
+        entityTextID(SequenceOf<Utf8String>),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(explicit(context, 32)), identifier = "Mime-Media-Type-Attribute")]
+    pub struct MimeMediaTypeAttribute {
+        #[rasn(identifier = "media-type")]
+        pub media_type: Ia5String,
+        pub parameter: Option<SequenceOf<Ia5String>>,
+    }
+    impl MimeMediaTypeAttribute {
+        pub fn new(media_type: Ia5String, parameter: Option<SequenceOf<Ia5String>>) -> Self {
+            Self {
+                media_type,
+                parameter,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Number-of-Fax")]
+    pub struct NumberOfFax(pub Utf8String);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum Password {
+        textualPwd(Utf8String),
+        binaryPwd(OctetString),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Permitted-Actions-Attribute")]
+    pub struct PermittedActionsAttribute(pub FixedBitString<5usize>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum Priority {
+        normal = 0,
+        nonurgent = 1,
+        urgent = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Private-Use-Attribute")]
+    pub struct PrivateUseAttribute {
+        #[rasn(tag(context, 0), identifier = "manufacturer-values")]
+        pub manufacturer_values: Option<Any>,
+    }
+    impl PrivateUseAttribute {
+        pub fn new(manufacturer_values: Option<Any>) -> Self {
+            Self {
+                manufacturer_values,
+            }
+        }
+    }
+    #[doc = " For most cases, a type of Octetstring is a reasonable choice in place of the ANY syntax"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Protocol-Version")]
+    pub struct ProtocolVersion(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Receiving-Fax")]
+    pub struct ReceivingFax {
+        #[rasn(tag(context, 0), identifier = "fax-number")]
+        pub fax_number: NumberOfFax,
+        #[rasn(tag(context, 1))]
+        pub recipient: Option<SequenceOf<RecipientInformation>>,
+    }
+    impl ReceivingFax {
+        pub fn new(
+            fax_number: NumberOfFax,
+            recipient: Option<SequenceOf<RecipientInformation>>,
+        ) -> Self {
+            Self {
+                fax_number,
+                recipient,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Recipient-Information")]
+    pub struct RecipientInformation {
+        #[rasn(tag(context, 0))]
+        pub name: Utf8String,
+        #[rasn(
+            tag(context, 1),
+            default = "recipient_information_r_type_default",
+            identifier = "type"
+        )]
+        pub r_type: Copy,
+        #[rasn(
+            tag(context, 2),
+            default = "recipient_information_priority_of_copy_default",
+            identifier = "priority-of-copy"
+        )]
+        pub priority_of_copy: Priority,
+        #[rasn(tag(context, 3), identifier = "latest-delivery-time")]
+        pub latest_delivery_time: Option<GeneralizedTime>,
+        #[rasn(tag(context, 4), identifier = "deferred-delivery-time")]
+        pub deferred_delivery_time: Option<GeneralizedTime>,
+        #[rasn(tag(context, 5), identifier = "sub-addressing-copy")]
+        pub sub_addressing_copy: Option<SubAddressCopy>,
+        #[rasn(
+            tag(context, 6),
+            default = "recipient_information_report_request_default",
+            identifier = "report-request"
+        )]
+        pub report_request: Report,
+        #[rasn(tag(context, 7))]
+        pub compliment: Option<PrivateUseAttribute>,
+    }
+    impl RecipientInformation {
+        pub fn new(
+            name: Utf8String,
+            r_type: Copy,
+            priority_of_copy: Priority,
+            latest_delivery_time: Option<GeneralizedTime>,
+            deferred_delivery_time: Option<GeneralizedTime>,
+            sub_addressing_copy: Option<SubAddressCopy>,
+            report_request: Report,
+            compliment: Option<PrivateUseAttribute>,
+        ) -> Self {
+            Self {
+                name,
+                r_type,
+                priority_of_copy,
+                latest_delivery_time,
+                deferred_delivery_time,
+                sub_addressing_copy,
+                report_request,
+                compliment,
+            }
+        }
+    }
+    fn recipient_information_r_type_default() -> Copy {
+        Copy::principal
+    }
+    fn recipient_information_priority_of_copy_default() -> Priority {
+        Priority::normal
+    }
+    fn recipient_information_report_request_default() -> Report {
+        Report::no_report
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum Report {
+        #[rasn(identifier = "no-report")]
+        no_report = 0,
+        #[rasn(identifier = "no-delivery-report")]
+        no_delivery_report = 1,
+        #[rasn(identifier = "report-requested")]
+        report_requested = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Store-And-Forward-Attribute")]
+    pub struct StoreAndForwardAttribute {
+        #[rasn(tag(context, 0), identifier = "store-and-forward-request")]
+        pub store_and_forward_request: Option<StoreAndForwardRequest>,
+        #[rasn(tag(context, 1), identifier = "delivery-information")]
+        pub delivery_information: Option<DeliveryInformation>,
+    }
+    impl StoreAndForwardAttribute {
+        pub fn new(
+            store_and_forward_request: Option<StoreAndForwardRequest>,
+            delivery_information: Option<DeliveryInformation>,
+        ) -> Self {
+            Self {
+                store_and_forward_request,
+                delivery_information,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Store-And-Forward-Request")]
+    pub struct StoreAndForwardRequest {
+        #[rasn(tag(context, 0), identifier = "document-characteristics")]
+        pub document_characteristics: Option<DocCharacteristics>,
+        #[rasn(tag(context, 1))]
+        pub communication: Option<Communication>,
+    }
+    impl StoreAndForwardRequest {
+        pub fn new(
+            document_characteristics: Option<DocCharacteristics>,
+            communication: Option<Communication>,
+        ) -> Self {
+            Self {
+                document_characteristics,
+                communication,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Sub-Address")]
+    pub struct SubAddress(pub Utf8String);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "Sub-Address-Copy")]
+    pub enum SubAddressCopy {
+        #[rasn(tag(context, 0))]
+        name(Utf8String),
+        #[rasn(tag(context, 1))]
+        number(NumberOfFax),
+        #[rasn(tag(context, 2), identifier = "t30-ID")]
+        t30_ID(T30Identity),
+        #[rasn(tag(context, 3), identifier = "sub-address")]
+        sub_address(SubAddress),
+        #[rasn(tag(context, 4))]
+        list(Utf8String),
+        #[rasn(tag(context, 5), identifier = "short-number")]
+        short_number(Utf8String),
+        #[rasn(tag(context, 6), identifier = "reference-number")]
+        reference_number(Utf8String),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "T30-Identity")]
+    pub struct T30Identity(pub Utf8String);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "User-Identity")]
+    pub struct UserIdentity(pub Utf8String);
+}

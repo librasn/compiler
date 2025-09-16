@@ -1,0 +1,106 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x723_1993_GMI-AttributeModule.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod gmi_attribute_module {
+    extern crate alloc;
+    use super::attribute_asn1_module::{GroupObjects, ManagementExtension};
+    use super::cmip_1::RelativeDistinguishedName;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " End of IMPORTS"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ActionInfo(pub SetOf<ManagementExtension>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ActionReply(pub SetOf<ManagementExtension>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ApplicationProcessId(pub GraphicString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ApplicationProcessTitle {
+        #[rasn(tag(context, 0))]
+        directory(SequenceOf<RelativeDistinguishedName>),
+        #[rasn(tag(context, 1))]
+        oid(ObjectIdentifier),
+        notKnown(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CommunicationsEntityId(pub GraphicString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct CommunicationsInformation {
+        #[rasn(identifier = "informationType")]
+        pub information_type: InformationType,
+        #[rasn(identifier = "informationData")]
+        pub information_data: Option<InformationData>,
+    }
+    impl CommunicationsInformation {
+        pub fn new(
+            information_type: InformationType,
+            information_data: Option<InformationData>,
+        ) -> Self {
+            Self {
+                information_type,
+                information_data,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ConnectionId(pub GraphicString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=18446744073709551615"))]
+    pub struct Generic64BitCounter(pub u64);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct GenericCounter(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct InformationData(pub SetOf<ManagementExtension>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct InformationType(pub ObjectIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ProtocolMachineId(pub GraphicString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Sap1Address(pub Integer);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "OCTET_STRING")]
+    pub struct AnonymousSap2Address(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Sap2Address(pub SetOf<AnonymousSap2Address>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SapId(pub GraphicString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SubsystemId(pub GraphicString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Timer {
+        #[rasn(value("-62..=63"), tag(context, 1))]
+        pub exponent: i8,
+        #[rasn(value("0..=65535"), tag(context, 2))]
+        pub mantissa: u16,
+    }
+    impl Timer {
+        pub fn new(exponent: i8, mantissa: u16) -> Self {
+            Self { exponent, mantissa }
+        }
+    }
+}

@@ -1,0 +1,130 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x413_1999_MSGeneralAutoActionTypes.asn1
+---
+Warnings:
+LinkerError in ASN grammar: Failed to resolve reference in object set.
+LinkerError in ASN grammar: Failed to resolve reference of ElsewhereDefined: EntryClass
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod msgeneral_auto_action_types {
+    extern crate alloc;
+    use super::msabstract_service::*;
+    use super::msobject_identifiers::{
+        ID_AAE_AUTO_ALERT_ERROR, ID_ACT_AUTO_ALERT, ID_ACT_AUTO_CORRELATE_REPORTS,
+        ID_ACT_AUTO_DELETE, ID_ACT_AUTO_MODIFY,
+    };
+    use super::msupper_bounds::{
+        UB_ALERT_ADDRESSES, UB_MODIFICATIONS, UB_SUPPLEMENTARY_INFO_LENGTH,
+    };
+    use super::mtsabstract_service::SECURITY_ERROR;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AlertDestination {
+        #[rasn(identifier = "alert-address")]
+        pub alert_address: Any,
+        #[rasn(identifier = "alert-qualifier")]
+        pub alert_qualifier: Option<OctetString>,
+    }
+    impl AlertDestination {
+        pub fn new(alert_address: Any, alert_qualifier: Option<OctetString>) -> Self {
+            Self {
+                alert_address,
+                alert_qualifier,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct AutoAlertErrorIndication {
+        #[rasn(tag(context, 0), identifier = "failing-alert-destination")]
+        pub failing_alert_destination: Option<AlertDestination>,
+        #[rasn(tag(context, 1), identifier = "supplementary-information")]
+        pub supplementary_information: Option<GeneralString>,
+    }
+    impl AutoAlertErrorIndication {
+        pub fn new(
+            failing_alert_destination: Option<AlertDestination>,
+            supplementary_information: Option<GeneralString>,
+        ) -> Self {
+            Self {
+                failing_alert_destination,
+                supplementary_information,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct AutoAlertRegistrationParameter {
+        #[rasn(tag(context, 0))]
+        pub filter: Option<Filter>,
+        #[rasn(size("1.."), tag(context, 1), identifier = "alert-destinations")]
+        pub alert_destinations: Option<SequenceOf<AlertDestination>>,
+        #[rasn(tag(context, 2), identifier = "requested-attributes")]
+        pub requested_attributes: Option<EntryInformationSelection>,
+        #[rasn(
+            tag(context, 3),
+            default = "auto_alert_registration_parameter_suppress_alert_destinations_default",
+            identifier = "suppress-alert-destinations"
+        )]
+        pub suppress_alert_destinations: bool,
+    }
+    impl AutoAlertRegistrationParameter {
+        pub fn new(
+            filter: Option<Filter>,
+            alert_destinations: Option<SequenceOf<AlertDestination>>,
+            requested_attributes: Option<EntryInformationSelection>,
+            suppress_alert_destinations: bool,
+        ) -> Self {
+            Self {
+                filter,
+                alert_destinations,
+                requested_attributes,
+                suppress_alert_destinations,
+            }
+        }
+    }
+    fn auto_alert_registration_parameter_suppress_alert_destinations_default() -> bool {
+        true
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct AutoModifyRegistrationParameter {
+        #[rasn(
+            tag(context, 0),
+            default = "auto_modify_registration_parameter_entry_class_default",
+            identifier = "entry-class"
+        )]
+        pub entry_class: EntryClass,
+        #[rasn(tag(context, 1))]
+        pub filter: Option<Filter>,
+        #[rasn(size("1.."), tag(context, 2))]
+        pub modifications: SequenceOf<EntryModification>,
+    }
+    impl AutoModifyRegistrationParameter {
+        pub fn new(
+            entry_class: EntryClass,
+            filter: Option<Filter>,
+            modifications: SequenceOf<EntryModification>,
+        ) -> Self {
+            Self {
+                entry_class,
+                filter,
+                modifications,
+            }
+        }
+    }
+    fn auto_modify_registration_parameter_entry_class_default() -> EntryClass {
+        DELIVERY
+    }
+}

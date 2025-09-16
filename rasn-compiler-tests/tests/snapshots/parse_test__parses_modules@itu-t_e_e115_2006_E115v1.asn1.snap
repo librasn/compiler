@@ -1,0 +1,299 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_e_e115_2006_E115v1.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod e115v1 {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum DirectoryMessage {
+        #[rasn(tag(context, 0))]
+        telephone(Telephone),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct E115String(pub Ia5String);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=256"))]
+    pub struct E115StringUb256(pub E115String);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Inquiry {
+        #[rasn(identifier = "inquiryPart1")]
+        pub inquiry_part1: InquiryPart1,
+        #[rasn(identifier = "inquiryPart2")]
+        pub inquiry_part2: InquiryPart2,
+    }
+    impl Inquiry {
+        pub fn new(inquiry_part1: InquiryPart1, inquiry_part2: InquiryPart2) -> Self {
+            Self {
+                inquiry_part1,
+                inquiry_part2,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, tag(application, 0))]
+    pub struct InquiryPart1 {
+        #[rasn(size("4"), tag(context, 0), identifier = "messageIndicators")]
+        pub message_indicators: E115String,
+        #[rasn(size("8"), tag(context, 1), identifier = "internationalIndicator")]
+        pub international_indicator: NumericString,
+        #[rasn(size("8"), tag(context, 2), identifier = "originatingTerminalCode")]
+        pub originating_terminal_code: E115String,
+        #[rasn(size("12"), tag(context, 3), identifier = "dateAndTime")]
+        pub date_and_time: Option<NumericString>,
+        #[rasn(size("4"), tag(context, 4), identifier = "messageNumber")]
+        pub message_number: Option<E115String>,
+    }
+    impl InquiryPart1 {
+        pub fn new(
+            message_indicators: E115String,
+            international_indicator: NumericString,
+            originating_terminal_code: E115String,
+            date_and_time: Option<NumericString>,
+            message_number: Option<E115String>,
+        ) -> Self {
+            Self {
+                message_indicators,
+                international_indicator,
+                originating_terminal_code,
+                date_and_time,
+                message_number,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, tag(application, 1))]
+    pub struct InquiryPart2 {
+        #[rasn(tag(context, 0))]
+        pub locality: Option<E115StringUb256>,
+        #[rasn(tag(context, 1), identifier = "subscriberName")]
+        pub subscriber_name: Option<E115StringUb256>,
+        #[rasn(tag(context, 2), identifier = "streetName")]
+        pub street_name: Option<E115StringUb256>,
+        #[rasn(tag(context, 3), identifier = "houseNumber")]
+        pub house_number: Option<E115StringUb256>,
+        #[rasn(tag(context, 4))]
+        pub forename: Option<E115StringUb256>,
+        #[rasn(tag(context, 5), identifier = "headingInTheGuide")]
+        pub heading_in_the_guide: Option<E115StringUb256>,
+        #[rasn(tag(context, 6), identifier = "professionCode")]
+        pub profession_code: Option<E115StringUb256>,
+        #[rasn(
+            tag(context, 7),
+            identifier = "additionalInformationForASelectiveSearch"
+        )]
+        pub additional_information_for_aselective_search: Option<E115StringUb256>,
+        #[rasn(tag(context, 8), identifier = "countyStateOrProvince")]
+        pub county_state_or_province: Option<E115StringUb256>,
+        #[rasn(tag(context, 9))]
+        pub category: Option<E115StringUb256>,
+        #[rasn(size("1"), tag(context, 10), identifier = "sequenceNumber")]
+        pub sequence_number: Option<NumericString>,
+    }
+    impl InquiryPart2 {
+        pub fn new(
+            locality: Option<E115StringUb256>,
+            subscriber_name: Option<E115StringUb256>,
+            street_name: Option<E115StringUb256>,
+            house_number: Option<E115StringUb256>,
+            forename: Option<E115StringUb256>,
+            heading_in_the_guide: Option<E115StringUb256>,
+            profession_code: Option<E115StringUb256>,
+            additional_information_for_aselective_search: Option<E115StringUb256>,
+            county_state_or_province: Option<E115StringUb256>,
+            category: Option<E115StringUb256>,
+            sequence_number: Option<NumericString>,
+        ) -> Self {
+            Self {
+                locality,
+                subscriber_name,
+                street_name,
+                house_number,
+                forename,
+                heading_in_the_guide,
+                profession_code,
+                additional_information_for_aselective_search,
+                county_state_or_province,
+                category,
+                sequence_number,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Reply {
+        #[rasn(identifier = "replyPart1")]
+        pub reply_part1: ReplyPart1,
+        #[rasn(identifier = "replyPart2")]
+        pub reply_part2: ReplyPart2,
+        #[rasn(identifier = "replyPart3")]
+        pub reply_part3: Option<ReplyPart3>,
+    }
+    impl Reply {
+        pub fn new(
+            reply_part1: ReplyPart1,
+            reply_part2: ReplyPart2,
+            reply_part3: Option<ReplyPart3>,
+        ) -> Self {
+            Self {
+                reply_part1,
+                reply_part2,
+                reply_part3,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, tag(application, 3))]
+    pub struct ReplyPart1 {
+        #[rasn(size("4"), tag(context, 0), identifier = "messageIndicators")]
+        pub message_indicators: E115String,
+        #[rasn(size("8"), tag(context, 1), identifier = "internationalIndicators")]
+        pub international_indicators: NumericString,
+        #[rasn(size("8"), tag(context, 2), identifier = "originatingTerminalCode")]
+        pub originating_terminal_code: E115String,
+        #[rasn(size("12"), tag(context, 3), identifier = "dateAndTime")]
+        pub date_and_time: Option<NumericString>,
+        #[rasn(size("4"), tag(context, 4), identifier = "messageNumber")]
+        pub message_number: Option<E115String>,
+    }
+    impl ReplyPart1 {
+        pub fn new(
+            message_indicators: E115String,
+            international_indicators: NumericString,
+            originating_terminal_code: E115String,
+            date_and_time: Option<NumericString>,
+            message_number: Option<E115String>,
+        ) -> Self {
+            Self {
+                message_indicators,
+                international_indicators,
+                originating_terminal_code,
+                date_and_time,
+                message_number,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, tag(application, 4))]
+    pub struct ReplyPart2 {
+        #[rasn(size("2"), tag(context, 0), identifier = "messageCode")]
+        pub message_code: E115String,
+        #[rasn(size("4"), tag(context, 1), identifier = "countryCode")]
+        pub country_code: E115String,
+        #[rasn(tag(context, 2))]
+        pub message: Option<E115StringUb256>,
+        #[rasn(size("1..=10"), tag(context, 3), identifier = "dbSelectionCount")]
+        pub db_selection_count: Option<E115String>,
+    }
+    impl ReplyPart2 {
+        pub fn new(
+            message_code: E115String,
+            country_code: E115String,
+            message: Option<E115StringUb256>,
+            db_selection_count: Option<E115String>,
+        ) -> Self {
+            Self {
+                message_code,
+                country_code,
+                message,
+                db_selection_count,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, tag(application, 5))]
+    pub struct ReplyPart3(pub SetOf<Selection>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct Selection {
+        #[rasn(tag(context, 0), identifier = "nationalDestinationCode")]
+        pub national_destination_code: Option<E115StringUb256>,
+        #[rasn(tag(context, 1), identifier = "subscriberNumber")]
+        pub subscriber_number: Option<E115StringUb256>,
+        #[rasn(tag(context, 2))]
+        pub locality: Option<E115StringUb256>,
+        #[rasn(tag(context, 3), identifier = "subscriberName")]
+        pub subscriber_name: Option<E115StringUb256>,
+        #[rasn(tag(context, 4))]
+        pub forename: Option<E115StringUb256>,
+        #[rasn(tag(context, 5), identifier = "streetName")]
+        pub street_name: Option<E115StringUb256>,
+        #[rasn(tag(context, 6), identifier = "houseNumber")]
+        pub house_number: Option<E115StringUb256>,
+        #[rasn(tag(context, 7), identifier = "supplementaryData")]
+        pub supplementary_data: Option<E115StringUb256>,
+        #[rasn(tag(context, 8), identifier = "subscriberMessage")]
+        pub subscriber_message: Option<E115StringUb256>,
+        #[rasn(tag(context, 9), identifier = "headingInTheGuide")]
+        pub heading_in_the_guide: Option<E115StringUb256>,
+        #[rasn(tag(context, 10), identifier = "professionCode")]
+        pub profession_code: Option<E115StringUb256>,
+        #[rasn(
+            tag(context, 11),
+            identifier = "additionalInformationForASelectiveSearch"
+        )]
+        pub additional_information_for_aselective_search: Option<E115StringUb256>,
+        #[rasn(tag(context, 12), identifier = "countyStateOrProvince")]
+        pub county_state_or_province: Option<E115StringUb256>,
+        #[rasn(tag(context, 13))]
+        pub category: Option<E115StringUb256>,
+        #[rasn(tag(context, 14), identifier = "subscriberDescription")]
+        pub subscriber_description: Option<E115StringUb256>,
+    }
+    impl Selection {
+        pub fn new(
+            national_destination_code: Option<E115StringUb256>,
+            subscriber_number: Option<E115StringUb256>,
+            locality: Option<E115StringUb256>,
+            subscriber_name: Option<E115StringUb256>,
+            forename: Option<E115StringUb256>,
+            street_name: Option<E115StringUb256>,
+            house_number: Option<E115StringUb256>,
+            supplementary_data: Option<E115StringUb256>,
+            subscriber_message: Option<E115StringUb256>,
+            heading_in_the_guide: Option<E115StringUb256>,
+            profession_code: Option<E115StringUb256>,
+            additional_information_for_aselective_search: Option<E115StringUb256>,
+            county_state_or_province: Option<E115StringUb256>,
+            category: Option<E115StringUb256>,
+            subscriber_description: Option<E115StringUb256>,
+        ) -> Self {
+            Self {
+                national_destination_code,
+                subscriber_number,
+                locality,
+                subscriber_name,
+                forename,
+                street_name,
+                house_number,
+                supplementary_data,
+                subscriber_message,
+                heading_in_the_guide,
+                profession_code,
+                additional_information_for_aselective_search,
+                county_state_or_province,
+                category,
+                subscriber_description,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum Telephone {
+        #[rasn(tag(context, 0))]
+        inquiry(Inquiry),
+        #[rasn(tag(context, 1))]
+        reply(Reply),
+    }
+}

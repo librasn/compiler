@@ -1,0 +1,23 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x509_2016_AttributeCertificateDefinitions.asn1
+---
+Error matching ASN syntax at while parsing:
+    ╭─[line 42, column 2]
+    │
+    │ 
+ 42 │  TBSAttributeCertificate ::= SEQUENCE { ◀▪▪▪▪▪▪▪▪▪▪ FAILED AT THIS LINE
+ 43 │    version                 AttCertVersion, -- version is v2
+ 44 │    holder                  Holder,
+ 45 │    issuer                  AttCertIssuer,
+ 46 │    signature               AlgorithmIdentifier{{SupportedAlgorithms}},
+ 47 │    serialNumber            CertificateSerialNumber,
+ 48 │    attrCertValidityPeriod  AttCertValidityPeriod,
+ 49 │    attributes              SEQUENCE OF Attribute{{SupportedAttributes}},
+ 50 │    issuerUniqueID          UniqueIdentifier OPTIONAL,
+ 51 │    ...,
+ 52 │    ...,
+ 53 │    extensions              Extensions OPTIONAL
+ 54 │   }  (CONSTRAINED BY { -- shall be DER encoded -- } )
+    │
+────╯

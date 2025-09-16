@@ -1,0 +1,116 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_h_h460.14_2004_MLPP.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod mlpp {
+    extern crate alloc;
+    use super::h323_messages::{AliasAddress, CallIdentifier};
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct AlternateParty {
+        #[rasn(identifier = "altID")]
+        pub alt_id: AliasAddress,
+        #[rasn(value("0..=255"), identifier = "altTimer")]
+        pub alt_timer: Option<u8>,
+    }
+    impl AlternateParty {
+        pub fn new(alt_id: AliasAddress, alt_timer: Option<u8>) -> Self {
+            Self { alt_id, alt_timer }
+        }
+    }
+    #[doc = " defined in H.225.0, Annex H"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct MLPPInfo {
+        pub precedence: Option<MlppPrecedence>,
+        #[rasn(identifier = "mlppReason")]
+        pub mlpp_reason: Option<MlppReason>,
+        #[rasn(identifier = "mlppNotification")]
+        pub mlpp_notification: Option<MlppNotification>,
+        #[rasn(identifier = "alternateParty")]
+        pub alternate_party: Option<AlternateParty>,
+        #[rasn(identifier = "releaseCall")]
+        pub release_call: Option<ReleaseCall>,
+    }
+    impl MLPPInfo {
+        pub fn new(
+            precedence: Option<MlppPrecedence>,
+            mlpp_reason: Option<MlppReason>,
+            mlpp_notification: Option<MlppNotification>,
+            alternate_party: Option<AlternateParty>,
+            release_call: Option<ReleaseCall>,
+        ) -> Self {
+            Self {
+                precedence,
+                mlpp_reason,
+                mlpp_notification,
+                alternate_party,
+                release_call,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum MlppNotification {
+        preemptionPending(()),
+        preemptionInProgress(()),
+        preemptionEnd(()),
+        preemptionComplete(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum MlppPrecedence {
+        flashOveride = 0,
+        flash = 1,
+        immediate = 2,
+        priority = 3,
+        routine = 4,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum MlppReason {
+        preemptionNoReservation = 8,
+        preemptionReservation = 9,
+        callBlocked = 46,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ReleaseCall {
+        #[rasn(identifier = "preemptCallID")]
+        pub preempt_call_id: CallIdentifier,
+        #[rasn(identifier = "releaseReason")]
+        pub release_reason: MlppReason,
+        #[rasn(value("0..=255"), identifier = "releaseDelay")]
+        pub release_delay: Option<u8>,
+    }
+    impl ReleaseCall {
+        pub fn new(
+            preempt_call_id: CallIdentifier,
+            release_reason: MlppReason,
+            release_delay: Option<u8>,
+        ) -> Self {
+            Self {
+                preempt_call_id,
+                release_reason,
+                release_delay,
+            }
+        }
+    }
+}

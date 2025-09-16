@@ -1,0 +1,69 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_h_h460.4_2002_CALL-PRIORITY.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod call_priority {
+    extern crate alloc;
+    use super::h235_security_messages::{ClearToken, CryptoToken};
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum CallPriorityInfoPriorityValue {
+        emergencyAuthorized(()),
+        emergencyPublic(()),
+        high(()),
+        normal(()),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum CallPriorityInfoRejectReason {
+        priorityUnavailable(()),
+        priorityUnauthorized(()),
+        priorityValueUnknown(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct CallPriorityInfo {
+        #[rasn(identifier = "priorityValue")]
+        pub priority_value: CallPriorityInfoPriorityValue,
+        #[rasn(value("0..=255"), identifier = "priorityExtension")]
+        pub priority_extension: Option<u8>,
+        pub tokens: Option<SequenceOf<ClearToken>>,
+        #[rasn(identifier = "cryptoTokens")]
+        pub crypto_tokens: Option<SequenceOf<CryptoToken>>,
+        #[rasn(identifier = "rejectReason")]
+        pub reject_reason: Option<CallPriorityInfoRejectReason>,
+    }
+    impl CallPriorityInfo {
+        pub fn new(
+            priority_value: CallPriorityInfoPriorityValue,
+            priority_extension: Option<u8>,
+            tokens: Option<SequenceOf<ClearToken>>,
+            crypto_tokens: Option<SequenceOf<CryptoToken>>,
+            reject_reason: Option<CallPriorityInfoRejectReason>,
+        ) -> Self {
+            Self {
+                priority_value,
+                priority_extension,
+                tokens,
+                crypto_tokens,
+                reject_reason,
+            }
+        }
+    }
+}

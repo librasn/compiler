@@ -1,0 +1,174 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/iso_19785-3_2007_CBEFF-SMARTCARD-BIDO.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod cbeff_smartcard_bido {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " CBEFF_BIR_creator"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct BCDDate(pub FixedOctetString<4usize>);
+    #[doc = " BCD encoded date with format 'YYYYMMDD'"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct BCDDatePeriod(pub FixedOctetString<8usize>);
+    #[doc = " CBEFF_BDB_biometric_subtype"]
+    #[doc = " The encoding of the abstract values in the value part of the"]
+    #[doc = " TLV shall be the Recommended Encodings specified in Table 11.6."]
+    #[doc = " Note that this is different from the encoding of this type in"]
+    #[doc = " Table A.2 and in other patron formats specified in this part of"]
+    #[doc = " ISO/IEC 19785."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct BCDTime(pub FixedOctetString<7usize>);
+    #[doc = " CBEFF_BDB_format_type"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct BIRIndex(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct BiometricHeaderTemplate {
+        #[rasn(
+            tag(context, 0),
+            default = "biometric_header_template_patron_header_version_default",
+            identifier = "patronHeaderVersion"
+        )]
+        pub patron_header_version: PatronHeaderVersion,
+        #[rasn(tag(context, 1), identifier = "bdbBiometricType")]
+        pub bdb_biometric_type: Option<BiometricType>,
+        #[rasn(tag(context, 2), identifier = "bdbBiometricSubType")]
+        pub bdb_biometric_sub_type: Option<BiometricSubType>,
+        #[rasn(tag(context, 3), identifier = "bdbCreationDate")]
+        pub bdb_creation_date: Option<BCDTime>,
+        #[rasn(tag(context, 4), identifier = "birCreator")]
+        pub bir_creator: Option<Creator>,
+        #[rasn(tag(context, 5), identifier = "bdbValidityPeriod")]
+        pub bdb_validity_period: Option<BCDDatePeriod>,
+        #[rasn(tag(context, 6), identifier = "bdbPID")]
+        pub bdb_pid: Option<ProductID>,
+        #[rasn(tag(context, 7), identifier = "bdbFormatOwner")]
+        pub bdb_format_owner: FormatOwner,
+        #[rasn(tag(context, 8), identifier = "bdbFormatType")]
+        pub bdb_format_type: FormatType,
+        #[rasn(tag(context, 16), identifier = "birIndex")]
+        pub bir_index: Option<BIRIndex>,
+        #[rasn(tag(context, 17), identifier = "matchingAlgParameters")]
+        pub matching_alg_parameters: Option<OctetString>,
+    }
+    impl BiometricHeaderTemplate {
+        pub fn new(
+            patron_header_version: PatronHeaderVersion,
+            bdb_biometric_type: Option<BiometricType>,
+            bdb_biometric_sub_type: Option<BiometricSubType>,
+            bdb_creation_date: Option<BCDTime>,
+            bir_creator: Option<Creator>,
+            bdb_validity_period: Option<BCDDatePeriod>,
+            bdb_pid: Option<ProductID>,
+            bdb_format_owner: FormatOwner,
+            bdb_format_type: FormatType,
+            bir_index: Option<BIRIndex>,
+            matching_alg_parameters: Option<OctetString>,
+        ) -> Self {
+            Self {
+                patron_header_version,
+                bdb_biometric_type,
+                bdb_biometric_sub_type,
+                bdb_creation_date,
+                bir_creator,
+                bdb_validity_period,
+                bdb_pid,
+                bdb_format_owner,
+                bdb_format_type,
+                bir_index,
+                matching_alg_parameters,
+            }
+        }
+    }
+    fn biometric_header_template_patron_header_version_default() -> PatronHeaderVersion {
+        PatronHeaderVersion(<OctetString as From<&'static [u8]>>::from(&[1, 1]))
+    }
+    #[doc = " CBEFF_BIR_index"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, tag(application, 96))]
+    pub struct BiometricInformationTemplate {
+        #[rasn(size("1"), tag(context, 0), identifier = "algorithmReference")]
+        pub algorithm_reference: Option<OctetString>,
+        #[rasn(size("1"), tag(context, 3), identifier = "referenceDataQualifier")]
+        pub reference_data_qualifier: Option<OctetString>,
+        #[rasn(tag(context, 1), identifier = "biometricHeaderTemplate")]
+        pub biometric_header_template: BiometricHeaderTemplate,
+        #[rasn(tag(application, 46), identifier = "bdbReferenceData")]
+        pub bdb_reference_data: Option<Any>,
+        #[rasn(tag(application, 19), identifier = "birPayLoad")]
+        pub bir_pay_load: Option<OctetString>,
+    }
+    impl BiometricInformationTemplate {
+        pub fn new(
+            algorithm_reference: Option<OctetString>,
+            reference_data_qualifier: Option<OctetString>,
+            biometric_header_template: BiometricHeaderTemplate,
+            bdb_reference_data: Option<Any>,
+            bir_pay_load: Option<OctetString>,
+        ) -> Self {
+            Self {
+                algorithm_reference,
+                reference_data_qualifier,
+                biometric_header_template,
+                bdb_reference_data,
+                bir_pay_load,
+            }
+        }
+    }
+    #[doc = " CBEFF_BDB_biometric_type"]
+    #[doc = " The encoding of the abstract values in the value part of the"]
+    #[doc = " TLV shall be the Recommended Encodings specified in Table 11.5."]
+    #[doc = " Note that this is different from the encoding of this type in"]
+    #[doc = " clause 29.10 and in other patron formats specified in this part of"]
+    #[doc = " ISO/IEC 19785."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct BiometricSubType(pub FixedOctetString<1usize>);
+    #[doc = " CBEFF_patron_header_version"]
+    #[doc = " The first octet encodes the major version number"]
+    #[doc = " The second octet encodes the minor version number"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=3"))]
+    pub struct BiometricType(pub OctetString);
+    #[doc = " BCD encoded timestamp with format ' YYYYMMDDHHMMSS'"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Creator(pub Utf8String);
+    #[doc = " CBEFF_BDB_product_owner in the first two octets"]
+    #[doc = " CBEFF_BDB_product_type in the last two octets"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct FormatOwner(pub FixedOctetString<2usize>);
+    #[doc = " CBEFF_BDB_format_owner"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct FormatType(pub FixedOctetString<2usize>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, tag(application, 97))]
+    pub struct GroupBIT(pub SetOf<BiometricInformationTemplate>);
+    #[doc = " In all cases, omission of an optional component that represents a"]
+    #[doc = " CBEFF data element is the encoding of the NO VALUE AVAILABLE for"]
+    #[doc = " that data element."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PatronHeaderVersion(pub FixedOctetString<2usize>);
+    #[doc = " Two concatenated BCD encoded dates with format YYYYMMDDYYYYMMDD"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ProductID(pub FixedOctetString<4usize>);
+}

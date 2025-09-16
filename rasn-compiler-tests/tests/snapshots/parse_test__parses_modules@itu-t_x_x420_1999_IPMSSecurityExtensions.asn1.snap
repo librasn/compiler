@@ -1,0 +1,208 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x420_1999_IPMSSecurityExtensions.asn1
+---
+Warnings:
+LinkerError in ASN grammar: Failed to resolve supertype ENCRYPTED of parameterized implementation.
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod ipmssecurity_extensions {
+    extern crate alloc;
+    use super::authentication_framework::*;
+    use super::certificate_extensions::CertificateAssertion;
+    use super::ipmsheading_extensions::BodyPartNumber;
+    use super::ipmsinformation_objects::*;
+    use super::ipmsobject_identifiers::{
+        ID_SEC_IPM_SECURITY_REQUEST, ID_SEC_SECURITY_COMMON_FIELDS,
+    };
+    use super::mtsabstract_service::*;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum AnonymousBodyPartTokensBodyPartChoice {
+        #[rasn(identifier = "encryption-token")]
+        encryption_token(EncryptionToken),
+        #[rasn(tag(context, 0), identifier = "message-or-content-body-part")]
+        message_or_content_body_part(BodyPartTokens),
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "SET")]
+    pub struct AnonymousBodyPartTokens {
+        #[rasn(identifier = "body-part-number")]
+        pub body_part_number: BodyPartNumber,
+        #[rasn(identifier = "body-part-choice")]
+        pub body_part_choice: AnonymousBodyPartTokensBodyPartChoice,
+    }
+    impl AnonymousBodyPartTokens {
+        pub fn new(
+            body_part_number: BodyPartNumber,
+            body_part_choice: AnonymousBodyPartTokensBodyPartChoice,
+        ) -> Self {
+            Self {
+                body_part_number,
+                body_part_choice,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct BodyPartTokens(pub SetOf<AnonymousBodyPartTokens>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    #[non_exhaustive]
+    pub struct EncryptionToken {
+        #[rasn(identifier = "encryption-algorithm-identifier")]
+        pub encryption_algorithm_identifier: AlgorithmIdentifier,
+        #[rasn(value("0.."), identifier = "encrypted-key")]
+        pub encrypted_key: ENCRYPTED,
+        #[rasn(tag(context, 0), identifier = "recipient-certificate-selector")]
+        pub recipient_certificate_selector: Option<CertificateAssertion>,
+        #[rasn(tag(context, 1), identifier = "recipient-certificate")]
+        pub recipient_certificate: Option<Certificates>,
+        #[rasn(tag(context, 2), identifier = "originator-certificate-selector")]
+        pub originator_certificate_selector: Option<CertificateAssertion>,
+        #[rasn(tag(context, 3), identifier = "originator-certificates")]
+        pub originator_certificates: Option<ExtendedCertificates>,
+    }
+    impl EncryptionToken {
+        pub fn new(
+            encryption_algorithm_identifier: AlgorithmIdentifier,
+            encrypted_key: ENCRYPTED,
+            recipient_certificate_selector: Option<CertificateAssertion>,
+            recipient_certificate: Option<Certificates>,
+            originator_certificate_selector: Option<CertificateAssertion>,
+            originator_certificates: Option<ExtendedCertificates>,
+        ) -> Self {
+            Self {
+                encryption_algorithm_identifier,
+                encrypted_key,
+                recipient_certificate_selector,
+                recipient_certificate,
+                originator_certificate_selector,
+                originator_certificates,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum AnonymousForwardedContentTokenBodyPartChoice {
+        #[rasn(identifier = "forwarding-token")]
+        forwarding_token(MessageToken),
+        #[rasn(identifier = "message-or-content-body-part")]
+        message_or_content_body_part(ForwardedContentToken),
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "SET")]
+    pub struct AnonymousForwardedContentToken {
+        #[rasn(identifier = "body-part-number")]
+        pub body_part_number: BodyPartNumber,
+        #[rasn(identifier = "body-part-choice")]
+        pub body_part_choice: AnonymousForwardedContentTokenBodyPartChoice,
+    }
+    impl AnonymousForwardedContentToken {
+        pub fn new(
+            body_part_number: BodyPartNumber,
+            body_part_choice: AnonymousForwardedContentTokenBodyPartChoice,
+        ) -> Self {
+            Self {
+                body_part_number,
+                body_part_choice,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ForwardedContentToken(pub SetOf<AnonymousForwardedContentToken>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct IpnSecurityResponseContentOrArgumentsOriginalSecurityArguments {
+        #[rasn(tag(context, 0), identifier = "original-content-integrity-check")]
+        pub original_content_integrity_check: Option<OriginalContentIntegrityCheck>,
+        #[rasn(
+            tag(context, 1),
+            identifier = "original-message-origin-authentication-check"
+        )]
+        pub original_message_origin_authentication_check:
+            Option<OriginalMessageOriginAuthenticationCheck>,
+        #[rasn(tag(context, 2), identifier = "original-message-token")]
+        pub original_message_token: Option<OriginalMessageToken>,
+    }
+    impl IpnSecurityResponseContentOrArgumentsOriginalSecurityArguments {
+        pub fn new(
+            original_content_integrity_check: Option<OriginalContentIntegrityCheck>,
+            original_message_origin_authentication_check: Option<
+                OriginalMessageOriginAuthenticationCheck,
+            >,
+            original_message_token: Option<OriginalMessageToken>,
+        ) -> Self {
+            Self {
+                original_content_integrity_check,
+                original_message_origin_authentication_check,
+                original_message_token,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum IpnSecurityResponseContentOrArguments {
+        #[rasn(identifier = "original-content")]
+        original_content(OriginalContent),
+        #[rasn(identifier = "original-security-arguments")]
+        original_security_arguments(IpnSecurityResponseContentOrArgumentsOriginalSecurityArguments),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct IpnSecurityResponse {
+        #[rasn(identifier = "content-or-arguments")]
+        pub content_or_arguments: IpnSecurityResponseContentOrArguments,
+        #[rasn(identifier = "security-diagnostic-code")]
+        pub security_diagnostic_code: Option<SecurityDiagnosticCode>,
+    }
+    impl IpnSecurityResponse {
+        pub fn new(
+            content_or_arguments: IpnSecurityResponseContentOrArguments,
+            security_diagnostic_code: Option<SecurityDiagnosticCode>,
+        ) -> Self {
+            Self {
+                content_or_arguments,
+                security_diagnostic_code,
+            }
+        }
+    }
+    #[doc = " MTS security fields"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct OriginalContent(pub Content);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct OriginalContentIntegrityCheck(pub ContentIntegrityCheck);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct OriginalMessageOriginAuthenticationCheck(pub MessageOriginAuthenticationCheck);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct OriginalMessageToken(pub MessageToken);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RecipientSecurityRequest(pub BitString);
+    #[doc = " Security Diagnostic Codes"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SecurityDiagnosticCode(pub Integer);
+}

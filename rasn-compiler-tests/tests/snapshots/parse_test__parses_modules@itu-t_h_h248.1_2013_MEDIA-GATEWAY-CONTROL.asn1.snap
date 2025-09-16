@@ -1,0 +1,2184 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_h_h248.1_2013_MEDIA-GATEWAY-CONTROL.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod media_gateway_control {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct ActionReply {
+        #[rasn(identifier = "contextId")]
+        pub context_id: ContextID,
+        #[rasn(identifier = "errorDescriptor")]
+        pub error_descriptor: Option<ErrorDescriptor>,
+        #[rasn(identifier = "contextReply")]
+        pub context_reply: Option<ContextRequest>,
+        #[rasn(identifier = "commandReply")]
+        pub command_reply: SequenceOf<CommandReply>,
+    }
+    impl ActionReply {
+        pub fn new(
+            context_id: ContextID,
+            error_descriptor: Option<ErrorDescriptor>,
+            context_reply: Option<ContextRequest>,
+            command_reply: SequenceOf<CommandReply>,
+        ) -> Self {
+            Self {
+                context_id,
+                error_descriptor,
+                context_reply,
+                command_reply,
+            }
+        }
+    }
+    #[doc = " Context NULL Value: 0"]
+    #[doc = " Context CHOOSE Value: 4294967294 (0xFFFFFFFE)"]
+    #[doc = " Context ALL Value: 4294967295 (0xFFFFFFFF)"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct ActionRequest {
+        #[rasn(identifier = "contextId")]
+        pub context_id: ContextID,
+        #[rasn(identifier = "contextRequest")]
+        pub context_request: Option<ContextRequest>,
+        #[rasn(identifier = "contextAttrAuditReq")]
+        pub context_attr_audit_req: Option<ContextAttrAuditRequest>,
+        #[rasn(identifier = "commandRequests")]
+        pub command_requests: SequenceOf<CommandRequest>,
+    }
+    impl ActionRequest {
+        pub fn new(
+            context_id: ContextID,
+            context_request: Option<ContextRequest>,
+            context_attr_audit_req: Option<ContextAttrAuditRequest>,
+            command_requests: SequenceOf<CommandRequest>,
+        ) -> Self {
+            Self {
+                context_id,
+                context_request,
+                context_attr_audit_req,
+                command_requests,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum AmmDescriptor {
+        mediaDescriptor(MediaDescriptor),
+        modemDescriptor(ModemDescriptor),
+        muxDescriptor(MuxDescriptor),
+        eventsDescriptor(EventsDescriptor),
+        eventBufferDescriptor(EventBufferDescriptor),
+        signalsDescriptor(SignalsDescriptor),
+        digitMapDescriptor(DigitMapDescriptor),
+        auditDescriptor(AuditDescriptor),
+        #[rasn(extension_addition)]
+        statisticsDescriptor(StatisticsDescriptor),
+    }
+    #[doc = " if present, topologyDirectionExtension takes precedence over"]
+    #[doc = " topologyDirection"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct AmmRequest {
+        #[rasn(identifier = "terminationID")]
+        pub termination_id: TerminationIDList,
+        pub descriptors: SequenceOf<AmmDescriptor>,
+    }
+    impl AmmRequest {
+        pub fn new(
+            termination_id: TerminationIDList,
+            descriptors: SequenceOf<AmmDescriptor>,
+        ) -> Self {
+            Self {
+                termination_id,
+                descriptors,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct AmmsReply {
+        #[rasn(identifier = "terminationID")]
+        pub termination_id: TerminationIDList,
+        #[rasn(identifier = "terminationAudit")]
+        pub termination_audit: Option<TerminationAudit>,
+    }
+    impl AmmsReply {
+        pub fn new(
+            termination_id: TerminationIDList,
+            termination_audit: Option<TerminationAudit>,
+        ) -> Self {
+            Self {
+                termination_id,
+                termination_audit,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct AuditDescriptor {
+        #[rasn(identifier = "auditToken")]
+        pub audit_token: Option<BitString>,
+        #[rasn(extension_addition, identifier = "auditPropertyToken")]
+        pub audit_property_token: Option<SequenceOf<IndAuditParameter>>,
+    }
+    impl AuditDescriptor {
+        pub fn new(
+            audit_token: Option<BitString>,
+            audit_property_token: Option<SequenceOf<IndAuditParameter>>,
+        ) -> Self {
+            Self {
+                audit_token,
+                audit_property_token,
+            }
+        }
+    }
+    #[doc = " terminationID shall contain the first termination in the"]
+    #[doc = " list when using the terminationIDList construct in AuditRequest"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum AuditReply {
+        contextAuditResult(TerminationIDList),
+        error(ErrorDescriptor),
+        auditResult(AuditResult),
+        #[rasn(extension_addition)]
+        auditResultTermList(TermListAuditResult),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct AuditRequest {
+        #[rasn(identifier = "terminationID")]
+        pub termination_id: TerminationID,
+        #[rasn(identifier = "auditDescriptor")]
+        pub audit_descriptor: AuditDescriptor,
+        #[rasn(extension_addition, identifier = "terminationIDList")]
+        pub termination_idlist: Option<TerminationIDList>,
+    }
+    impl AuditRequest {
+        pub fn new(
+            termination_id: TerminationID,
+            audit_descriptor: AuditDescriptor,
+            termination_idlist: Option<TerminationIDList>,
+        ) -> Self {
+            Self {
+                termination_id,
+                audit_descriptor,
+                termination_idlist,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct AuditResult {
+        #[rasn(identifier = "terminationID")]
+        pub termination_id: TerminationID,
+        #[rasn(identifier = "terminationAuditResult")]
+        pub termination_audit_result: TerminationAudit,
+    }
+    impl AuditResult {
+        pub fn new(
+            termination_id: TerminationID,
+            termination_audit_result: TerminationAudit,
+        ) -> Self {
+            Self {
+                termination_id,
+                termination_audit_result,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum AuditReturnParameter {
+        errorDescriptor(ErrorDescriptor),
+        mediaDescriptor(MediaDescriptor),
+        modemDescriptor(ModemDescriptor),
+        muxDescriptor(MuxDescriptor),
+        eventsDescriptor(EventsDescriptor),
+        eventBufferDescriptor(EventBufferDescriptor),
+        signalsDescriptor(SignalsDescriptor),
+        digitMapDescriptor(DigitMapDescriptor),
+        observedEventsDescriptor(ObservedEventsDescriptor),
+        statisticsDescriptor(StatisticsDescriptor),
+        packagesDescriptor(PackagesDescriptor),
+        emptyDescriptors(AuditDescriptor),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("12..=32"))]
+    pub struct AuthData(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct AuthenticationHeader {
+        #[rasn(identifier = "secParmIndex")]
+        pub sec_parm_index: SecurityParmIndex,
+        #[rasn(identifier = "seqNum")]
+        pub seq_num: SequenceNum,
+        pub ad: AuthData,
+    }
+    impl AuthenticationHeader {
+        pub fn new(sec_parm_index: SecurityParmIndex, seq_num: SequenceNum, ad: AuthData) -> Self {
+            Self {
+                sec_parm_index,
+                seq_num,
+                ad,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum Command {
+        addReq(AmmRequest),
+        moveReq(AmmRequest),
+        modReq(AmmRequest),
+        subtractReq(SubtractRequest),
+        auditCapRequest(AuditRequest),
+        auditValueRequest(AuditRequest),
+        notifyReq(NotifyRequest),
+        serviceChangeReq(ServiceChangeRequest),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum CommandReply {
+        addReply(AmmsReply),
+        moveReply(AmmsReply),
+        modReply(AmmsReply),
+        subtractReply(AmmsReply),
+        auditCapReply(AuditReply),
+        auditValueReply(AuditReply),
+        notifyReply(NotifyReply),
+        serviceChangeReply(ServiceChangeReply),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct CommandRequest {
+        pub command: Command,
+        pub optional: Option<()>,
+        #[rasn(identifier = "wildcardReturn")]
+        pub wildcard_return: Option<()>,
+    }
+    impl CommandRequest {
+        pub fn new(command: Command, optional: Option<()>, wildcard_return: Option<()>) -> Self {
+            Self {
+                command,
+                optional,
+                wildcard_return,
+            }
+        }
+    }
+    #[doc = " When returning a contextList, the contextId in the ActionReply construct will"]
+    #[doc = " return the contextId from the associated ActionRequest."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ContextAttrAuditRequest {
+        pub topology: Option<()>,
+        pub emergency: Option<()>,
+        pub priority: Option<()>,
+        #[rasn(extension_addition)]
+        pub iepscallind: Option<()>,
+        #[rasn(extension_addition, identifier = "contextPropAud")]
+        pub context_prop_aud: Option<SequenceOf<IndAudPropertyParm>>,
+        #[rasn(extension_addition, value("0..=15"))]
+        pub selectpriority: Option<u8>,
+        #[rasn(extension_addition)]
+        pub selectemergency: Option<bool>,
+        #[rasn(extension_addition)]
+        pub selectiepscallind: Option<bool>,
+        #[rasn(extension_addition, identifier = "selectLogic")]
+        pub select_logic: Option<SelectLogic>,
+    }
+    impl ContextAttrAuditRequest {
+        pub fn new(
+            topology: Option<()>,
+            emergency: Option<()>,
+            priority: Option<()>,
+            iepscallind: Option<()>,
+            context_prop_aud: Option<SequenceOf<IndAudPropertyParm>>,
+            selectpriority: Option<u8>,
+            selectemergency: Option<bool>,
+            selectiepscallind: Option<bool>,
+            select_logic: Option<SelectLogic>,
+        ) -> Self {
+            Self {
+                topology,
+                emergency,
+                priority,
+                iepscallind,
+                context_prop_aud,
+                selectpriority,
+                selectemergency,
+                selectiepscallind,
+                select_logic,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=4294967295"))]
+    pub struct ContextID(pub u32);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ContextRequest {
+        #[rasn(value("0..=15"))]
+        pub priority: Option<u8>,
+        pub emergency: Option<bool>,
+        #[rasn(identifier = "topologyReq")]
+        pub topology_req: Option<SequenceOf<TopologyRequest>>,
+        #[rasn(extension_addition)]
+        pub iepscallind: Option<bool>,
+        #[rasn(extension_addition, identifier = "contextProp")]
+        pub context_prop: Option<SequenceOf<PropertyParm>>,
+        #[rasn(extension_addition, identifier = "contextList")]
+        pub context_list: Option<SequenceOf<ContextID>>,
+    }
+    impl ContextRequest {
+        pub fn new(
+            priority: Option<u8>,
+            emergency: Option<bool>,
+            topology_req: Option<SequenceOf<TopologyRequest>>,
+            iepscallind: Option<bool>,
+            context_prop: Option<SequenceOf<PropertyParm>>,
+            context_list: Option<SequenceOf<ContextID>>,
+        ) -> Self {
+            Self {
+                priority,
+                emergency,
+                topology_req,
+                iepscallind,
+                context_prop,
+                context_list,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct DigitMapDescriptor {
+        #[rasn(identifier = "digitMapName")]
+        pub digit_map_name: Option<DigitMapName>,
+        #[rasn(identifier = "digitMapValue")]
+        pub digit_map_value: Option<DigitMapValue>,
+    }
+    impl DigitMapDescriptor {
+        pub fn new(
+            digit_map_name: Option<DigitMapName>,
+            digit_map_value: Option<DigitMapValue>,
+        ) -> Self {
+            Self {
+                digit_map_name,
+                digit_map_value,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DigitMapName(pub Name);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct DigitMapValue {
+        #[rasn(value("0..=99"), identifier = "startTimer")]
+        pub start_timer: Option<u8>,
+        #[rasn(value("0..=99"), identifier = "shortTimer")]
+        pub short_timer: Option<u8>,
+        #[rasn(value("0..=99"), identifier = "longTimer")]
+        pub long_timer: Option<u8>,
+        #[rasn(identifier = "digitMapBody")]
+        pub digit_map_body: Ia5String,
+        #[rasn(extension_addition, value("0..=99"), identifier = "durationTimer")]
+        pub duration_timer: Option<u8>,
+    }
+    impl DigitMapValue {
+        pub fn new(
+            start_timer: Option<u8>,
+            short_timer: Option<u8>,
+            long_timer: Option<u8>,
+            digit_map_body: Ia5String,
+            duration_timer: Option<u8>,
+        ) -> Self {
+            Self {
+                start_timer,
+                short_timer,
+                long_timer,
+                digit_map_body,
+                duration_timer,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct DomainName {
+        pub name: Ia5String,
+        #[rasn(value("0..=65535"), identifier = "portNumber")]
+        pub port_number: Option<u16>,
+    }
+    impl DomainName {
+        pub fn new(name: Ia5String, port_number: Option<u16>) -> Self {
+            Self { name, port_number }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=65535"))]
+    pub struct ErrorCode(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct ErrorDescriptor {
+        #[rasn(identifier = "errorCode")]
+        pub error_code: ErrorCode,
+        #[rasn(identifier = "errorText")]
+        pub error_text: Option<ErrorText>,
+    }
+    impl ErrorDescriptor {
+        pub fn new(error_code: ErrorCode, error_text: Option<ErrorText>) -> Self {
+            Self {
+                error_code,
+                error_text,
+            }
+        }
+    }
+    #[doc = " See clause 14 for IANA considerations with respect to error codes"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ErrorText(pub Ia5String);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum EventBufferControl {
+        off = 0,
+        lockStep = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct EventBufferDescriptor(pub SequenceOf<EventSpec>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum EventDM {
+        digitMapName(DigitMapName),
+        digitMapValue(DigitMapValue),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct EventName(pub PkgdName);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum EventParameterExtraInfo {
+        relation(Relation),
+        range(bool),
+        sublist(bool),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct EventParameter {
+        #[rasn(identifier = "eventParameterName")]
+        pub event_parameter_name: Name,
+        pub value: Value,
+        #[rasn(identifier = "extraInfo")]
+        pub extra_info: Option<EventParameterExtraInfo>,
+    }
+    impl EventParameter {
+        pub fn new(
+            event_parameter_name: Name,
+            value: Value,
+            extra_info: Option<EventParameterExtraInfo>,
+        ) -> Self {
+            Self {
+                event_parameter_name,
+                value,
+                extra_info,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct EventSpec {
+        #[rasn(identifier = "eventName")]
+        pub event_name: EventName,
+        #[rasn(identifier = "streamID")]
+        pub stream_id: Option<StreamID>,
+        #[rasn(identifier = "eventParList")]
+        pub event_par_list: SequenceOf<EventParameter>,
+    }
+    impl EventSpec {
+        pub fn new(
+            event_name: EventName,
+            stream_id: Option<StreamID>,
+            event_par_list: SequenceOf<EventParameter>,
+        ) -> Self {
+            Self {
+                event_name,
+                stream_id,
+                event_par_list,
+            }
+        }
+    }
+    #[doc = " 16-bit unsigned integer"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct EventsDescriptor {
+        #[rasn(identifier = "requestID")]
+        pub request_id: Option<RequestID>,
+        #[rasn(identifier = "eventList")]
+        pub event_list: SequenceOf<RequestedEvent>,
+    }
+    impl EventsDescriptor {
+        pub fn new(request_id: Option<RequestID>, event_list: SequenceOf<RequestedEvent>) -> Self {
+            Self {
+                request_id,
+                event_list,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct H221NonStandard {
+        #[rasn(value("0..=255"), identifier = "t35CountryCode1")]
+        pub t35_country_code1: u8,
+        #[rasn(value("0..=255"), identifier = "t35CountryCode2")]
+        pub t35_country_code2: u8,
+        #[rasn(value("0..=255"), identifier = "t35Extension")]
+        pub t35_extension: u8,
+        #[rasn(value("0..=65535"), identifier = "manufacturerCode")]
+        pub manufacturer_code: u16,
+    }
+    impl H221NonStandard {
+        pub fn new(
+            t35_country_code1: u8,
+            t35_country_code2: u8,
+            t35_extension: u8,
+            manufacturer_code: u16,
+        ) -> Self {
+            Self {
+                t35_country_code1,
+                t35_country_code2,
+                t35_extension,
+                manufacturer_code,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct IP4Address {
+        #[rasn(size("4"))]
+        pub address: OctetString,
+        #[rasn(value("0..=65535"), identifier = "portNumber")]
+        pub port_number: Option<u16>,
+    }
+    impl IP4Address {
+        pub fn new(address: OctetString, port_number: Option<u16>) -> Self {
+            Self {
+                address,
+                port_number,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct IP6Address {
+        #[rasn(size("16"))]
+        pub address: OctetString,
+        #[rasn(value("0..=65535"), identifier = "portNumber")]
+        pub port_number: Option<u16>,
+    }
+    impl IP6Address {
+        pub fn new(address: OctetString, port_number: Option<u16>) -> Self {
+            Self {
+                address,
+                port_number,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct IndAudDigitMapDescriptor {
+        #[rasn(identifier = "digitMapName")]
+        pub digit_map_name: Option<DigitMapName>,
+    }
+    impl IndAudDigitMapDescriptor {
+        pub fn new(digit_map_name: Option<DigitMapName>) -> Self {
+            Self { digit_map_name }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct IndAudEventBufferDescriptor {
+        #[rasn(identifier = "eventName")]
+        pub event_name: PkgdName,
+        #[rasn(identifier = "streamID")]
+        pub stream_id: Option<StreamID>,
+    }
+    impl IndAudEventBufferDescriptor {
+        pub fn new(event_name: PkgdName, stream_id: Option<StreamID>) -> Self {
+            Self {
+                event_name,
+                stream_id,
+            }
+        }
+    }
+    #[doc = " must not have both serviceState and serviceStateSel"]
+    #[doc = " if both are present only serviceStateSel shall be honoured"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct IndAudEventsDescriptor {
+        #[rasn(identifier = "requestID")]
+        pub request_id: Option<RequestID>,
+        #[rasn(identifier = "pkgdName")]
+        pub pkgd_name: PkgdName,
+        #[rasn(identifier = "streamID")]
+        pub stream_id: Option<StreamID>,
+    }
+    impl IndAudEventsDescriptor {
+        pub fn new(
+            request_id: Option<RequestID>,
+            pkgd_name: PkgdName,
+            stream_id: Option<StreamID>,
+        ) -> Self {
+            Self {
+                request_id,
+                pkgd_name,
+                stream_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct IndAudLocalControlDescriptor {
+        #[rasn(identifier = "streamMode")]
+        pub stream_mode: Option<()>,
+        #[rasn(identifier = "reserveValue")]
+        pub reserve_value: Option<()>,
+        #[rasn(identifier = "reserveGroup")]
+        pub reserve_group: Option<()>,
+        #[rasn(identifier = "propertyParms")]
+        pub property_parms: Option<SequenceOf<IndAudPropertyParm>>,
+        #[rasn(extension_addition, identifier = "streamModeSel")]
+        pub stream_mode_sel: Option<StreamMode>,
+    }
+    impl IndAudLocalControlDescriptor {
+        pub fn new(
+            stream_mode: Option<()>,
+            reserve_value: Option<()>,
+            reserve_group: Option<()>,
+            property_parms: Option<SequenceOf<IndAudPropertyParm>>,
+            stream_mode_sel: Option<StreamMode>,
+        ) -> Self {
+            Self {
+                stream_mode,
+                reserve_value,
+                reserve_group,
+                property_parms,
+                stream_mode_sel,
+            }
+        }
+    }
+    #[doc = "  to select based on property values"]
+    #[doc = "  AND/OR selection logic is specified at context level"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct IndAudLocalRemoteDescriptor {
+        #[rasn(value("0..=65535"), identifier = "propGroupID")]
+        pub prop_group_id: Option<u16>,
+        #[rasn(identifier = "propGrps")]
+        pub prop_grps: IndAudPropertyGroup,
+    }
+    impl IndAudLocalRemoteDescriptor {
+        pub fn new(prop_group_id: Option<u16>, prop_grps: IndAudPropertyGroup) -> Self {
+            Self {
+                prop_group_id,
+                prop_grps,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum IndAudMediaDescriptorStreams {
+        oneStream(IndAudStreamParms),
+        multiStream(SequenceOf<IndAudStreamDescriptor>),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct IndAudMediaDescriptor {
+        #[rasn(identifier = "termStateDescr")]
+        pub term_state_descr: Option<IndAudTerminationStateDescriptor>,
+        pub streams: Option<IndAudMediaDescriptorStreams>,
+    }
+    impl IndAudMediaDescriptor {
+        pub fn new(
+            term_state_descr: Option<IndAudTerminationStateDescriptor>,
+            streams: Option<IndAudMediaDescriptorStreams>,
+        ) -> Self {
+            Self {
+                term_state_descr,
+                streams,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct IndAudPackagesDescriptor {
+        #[rasn(identifier = "packageName")]
+        pub package_name: Name,
+        #[rasn(value("0..=99"), identifier = "packageVersion")]
+        pub package_version: u8,
+    }
+    impl IndAudPackagesDescriptor {
+        pub fn new(package_name: Name, package_version: u8) -> Self {
+            Self {
+                package_name,
+                package_version,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct IndAudPropertyGroup(pub SequenceOf<IndAudPropertyParm>);
+    #[doc = " must not have both streamMode and streamModeSel"]
+    #[doc = " if both are present only streamModeSel shall be honoured"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct IndAudPropertyParm {
+        pub name: PkgdName,
+        #[rasn(extension_addition, identifier = "propertyParms")]
+        pub property_parms: Option<PropertyParm>,
+    }
+    impl IndAudPropertyParm {
+        pub fn new(name: PkgdName, property_parms: Option<PropertyParm>) -> Self {
+            Self {
+                name,
+                property_parms,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct IndAudSeqSigList {
+        #[rasn(value("0..=65535"))]
+        pub id: u16,
+        #[rasn(identifier = "signalList")]
+        pub signal_list: Option<IndAudSignal>,
+    }
+    impl IndAudSeqSigList {
+        pub fn new(id: u16, signal_list: Option<IndAudSignal>) -> Self {
+            Self { id, signal_list }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct IndAudSignal {
+        #[rasn(identifier = "signalName")]
+        pub signal_name: PkgdName,
+        #[rasn(identifier = "streamID")]
+        pub stream_id: Option<StreamID>,
+        #[rasn(extension_addition, identifier = "signalRequestID")]
+        pub signal_request_id: Option<RequestID>,
+    }
+    impl IndAudSignal {
+        pub fn new(
+            signal_name: PkgdName,
+            stream_id: Option<StreamID>,
+            signal_request_id: Option<RequestID>,
+        ) -> Self {
+            Self {
+                signal_name,
+                stream_id,
+                signal_request_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum IndAudSignalsDescriptor {
+        signal(IndAudSignal),
+        seqSigList(IndAudSeqSigList),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct IndAudStatisticsDescriptor {
+        #[rasn(identifier = "statName")]
+        pub stat_name: PkgdName,
+    }
+    impl IndAudStatisticsDescriptor {
+        pub fn new(stat_name: PkgdName) -> Self {
+            Self { stat_name }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct IndAudStreamDescriptor {
+        #[rasn(identifier = "streamID")]
+        pub stream_id: StreamID,
+        #[rasn(identifier = "streamParms")]
+        pub stream_parms: IndAudStreamParms,
+    }
+    impl IndAudStreamDescriptor {
+        pub fn new(stream_id: StreamID, stream_parms: IndAudStreamParms) -> Self {
+            Self {
+                stream_id,
+                stream_parms,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct IndAudStreamParms {
+        #[rasn(identifier = "localControlDescriptor")]
+        pub local_control_descriptor: Option<IndAudLocalControlDescriptor>,
+        #[rasn(identifier = "localDescriptor")]
+        pub local_descriptor: Option<IndAudLocalRemoteDescriptor>,
+        #[rasn(identifier = "remoteDescriptor")]
+        pub remote_descriptor: Option<IndAudLocalRemoteDescriptor>,
+        #[rasn(extension_addition, identifier = "statisticsDescriptor")]
+        pub statistics_descriptor: Option<IndAudStatisticsDescriptor>,
+    }
+    impl IndAudStreamParms {
+        pub fn new(
+            local_control_descriptor: Option<IndAudLocalControlDescriptor>,
+            local_descriptor: Option<IndAudLocalRemoteDescriptor>,
+            remote_descriptor: Option<IndAudLocalRemoteDescriptor>,
+            statistics_descriptor: Option<IndAudStatisticsDescriptor>,
+        ) -> Self {
+            Self {
+                local_control_descriptor,
+                local_descriptor,
+                remote_descriptor,
+                statistics_descriptor,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct IndAudTerminationStateDescriptor {
+        #[rasn(identifier = "propertyParms")]
+        pub property_parms: SequenceOf<IndAudPropertyParm>,
+        #[rasn(identifier = "eventBufferControl")]
+        pub event_buffer_control: Option<()>,
+        #[rasn(identifier = "serviceState")]
+        pub service_state: Option<()>,
+        #[rasn(extension_addition, identifier = "serviceStateSel")]
+        pub service_state_sel: Option<ServiceState>,
+    }
+    impl IndAudTerminationStateDescriptor {
+        pub fn new(
+            property_parms: SequenceOf<IndAudPropertyParm>,
+            event_buffer_control: Option<()>,
+            service_state: Option<()>,
+            service_state_sel: Option<ServiceState>,
+        ) -> Self {
+            Self {
+                property_parms,
+                event_buffer_control,
+                service_state,
+                service_state_sel,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum IndAuditParameter {
+        indaudmediaDescriptor(IndAudMediaDescriptor),
+        indaudeventsDescriptor(IndAudEventsDescriptor),
+        indaudeventBufferDescriptor(IndAudEventBufferDescriptor),
+        indaudsignalsDescriptor(IndAudSignalsDescriptor),
+        indauddigitMapDescriptor(IndAudDigitMapDescriptor),
+        indaudstatisticsDescriptor(IndAudStatisticsDescriptor),
+        indaudpackagesDescriptor(IndAudPackagesDescriptor),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct LocalControlDescriptor {
+        #[rasn(identifier = "streamMode")]
+        pub stream_mode: Option<StreamMode>,
+        #[rasn(identifier = "reserveValue")]
+        pub reserve_value: Option<bool>,
+        #[rasn(identifier = "reserveGroup")]
+        pub reserve_group: Option<bool>,
+        #[rasn(identifier = "propertyParms")]
+        pub property_parms: SequenceOf<PropertyParm>,
+    }
+    impl LocalControlDescriptor {
+        pub fn new(
+            stream_mode: Option<StreamMode>,
+            reserve_value: Option<bool>,
+            reserve_group: Option<bool>,
+            property_parms: SequenceOf<PropertyParm>,
+        ) -> Self {
+            Self {
+                stream_mode,
+                reserve_value,
+                reserve_group,
+                property_parms,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct LocalRemoteDescriptor {
+        #[rasn(identifier = "propGrps")]
+        pub prop_grps: SequenceOf<PropertyGroup>,
+    }
+    impl LocalRemoteDescriptor {
+        pub fn new(prop_grps: SequenceOf<PropertyGroup>) -> Self {
+            Self { prop_grps }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum MediaDescriptorStreams {
+        oneStream(StreamParms),
+        multiStream(SequenceOf<StreamDescriptor>),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct MediaDescriptor {
+        #[rasn(identifier = "termStateDescr")]
+        pub term_state_descr: Option<TerminationStateDescriptor>,
+        pub streams: Option<MediaDescriptorStreams>,
+    }
+    impl MediaDescriptor {
+        pub fn new(
+            term_state_descr: Option<TerminationStateDescriptor>,
+            streams: Option<MediaDescriptorStreams>,
+        ) -> Self {
+            Self {
+                term_state_descr,
+                streams,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct MegacoMessage {
+        #[rasn(identifier = "authHeader")]
+        pub auth_header: Option<AuthenticationHeader>,
+        pub mess: Message,
+    }
+    impl MegacoMessage {
+        pub fn new(auth_header: Option<AuthenticationHeader>, mess: Message) -> Self {
+            Self { auth_header, mess }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum MessageMessageBody {
+        messageError(ErrorDescriptor),
+        transactions(SequenceOf<Transaction>),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct Message {
+        #[rasn(value("0..=99"))]
+        pub version: u8,
+        #[rasn(identifier = "mId")]
+        pub m_id: Mid,
+        #[rasn(identifier = "messageBody")]
+        pub message_body: MessageMessageBody,
+    }
+    impl Message {
+        pub fn new(version: u8, m_id: Mid, message_body: MessageMessageBody) -> Self {
+            Self {
+                version,
+                m_id,
+                message_body,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum Mid {
+        ip4Address(IP4Address),
+        ip6Address(IP6Address),
+        domainName(DomainName),
+        deviceName(PathName),
+        #[rasn(size("2..=4"))]
+        mtpAddress(OctetString),
+    }
+    #[doc = " 32-bit unsigned integer"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct ModemDescriptor {
+        pub mtl: SequenceOf<ModemType>,
+        pub mpl: SequenceOf<PropertyParm>,
+        #[rasn(identifier = "nonStandardData")]
+        pub non_standard_data: Option<NonStandardData>,
+    }
+    impl ModemDescriptor {
+        pub fn new(
+            mtl: SequenceOf<ModemType>,
+            mpl: SequenceOf<PropertyParm>,
+            non_standard_data: Option<NonStandardData>,
+        ) -> Self {
+            Self {
+                mtl,
+                mpl,
+                non_standard_data,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum ModemType {
+        v18 = 0,
+        v22 = 1,
+        v22bis = 2,
+        v32 = 3,
+        v32bis = 4,
+        v34 = 5,
+        v90 = 6,
+        v91 = 7,
+        synchISDN = 8,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct MuxDescriptor {
+        #[rasn(identifier = "muxType")]
+        pub mux_type: MuxType,
+        #[rasn(identifier = "termList")]
+        pub term_list: SequenceOf<TerminationID>,
+        #[rasn(identifier = "nonStandardData")]
+        pub non_standard_data: Option<NonStandardData>,
+    }
+    impl MuxDescriptor {
+        pub fn new(
+            mux_type: MuxType,
+            term_list: SequenceOf<TerminationID>,
+            non_standard_data: Option<NonStandardData>,
+        ) -> Self {
+            Self {
+                mux_type,
+                term_list,
+                non_standard_data,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum MuxType {
+        h221 = 0,
+        h223 = 1,
+        h226 = 2,
+        v76 = 3,
+        #[rasn(extension_addition)]
+        nx64k = 4,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Name(pub FixedOctetString<2usize>);
+    #[doc = " If statistic consists of a sub-lists there will be more than"]
+    #[doc = " one octetstring in statValue."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct NonStandardData {
+        #[rasn(identifier = "nonStandardIdentifier")]
+        pub non_standard_identifier: NonStandardIdentifier,
+        pub data: OctetString,
+    }
+    impl NonStandardData {
+        pub fn new(non_standard_identifier: NonStandardIdentifier, data: OctetString) -> Self {
+            Self {
+                non_standard_identifier,
+                data,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum NonStandardIdentifier {
+        object(ObjectIdentifier),
+        h221NonStandard(H221NonStandard),
+        #[rasn(size("8"))]
+        experimental(Ia5String),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum NotifyBehaviour {
+        notifyImmediate(()),
+        notifyRegulated(RegulatedEmbeddedDescriptor),
+        neverNotify(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NotifyCompletion(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct NotifyReply {
+        #[rasn(identifier = "terminationID")]
+        pub termination_id: TerminationIDList,
+        #[rasn(identifier = "errorDescriptor")]
+        pub error_descriptor: Option<ErrorDescriptor>,
+    }
+    impl NotifyReply {
+        pub fn new(
+            termination_id: TerminationIDList,
+            error_descriptor: Option<ErrorDescriptor>,
+        ) -> Self {
+            Self {
+                termination_id,
+                error_descriptor,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct NotifyRequest {
+        #[rasn(identifier = "terminationID")]
+        pub termination_id: TerminationIDList,
+        #[rasn(identifier = "observedEventsDescriptor")]
+        pub observed_events_descriptor: ObservedEventsDescriptor,
+        #[rasn(identifier = "errorDescriptor")]
+        pub error_descriptor: Option<ErrorDescriptor>,
+    }
+    impl NotifyRequest {
+        pub fn new(
+            termination_id: TerminationIDList,
+            observed_events_descriptor: ObservedEventsDescriptor,
+            error_descriptor: Option<ErrorDescriptor>,
+        ) -> Self {
+            Self {
+                termination_id,
+                observed_events_descriptor,
+                error_descriptor,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ObservedEvent {
+        #[rasn(identifier = "eventName")]
+        pub event_name: EventName,
+        #[rasn(identifier = "streamID")]
+        pub stream_id: Option<StreamID>,
+        #[rasn(identifier = "eventParList")]
+        pub event_par_list: SequenceOf<EventParameter>,
+        #[rasn(identifier = "timeNotation")]
+        pub time_notation: Option<TimeNotation>,
+    }
+    impl ObservedEvent {
+        pub fn new(
+            event_name: EventName,
+            stream_id: Option<StreamID>,
+            event_par_list: SequenceOf<EventParameter>,
+            time_notation: Option<TimeNotation>,
+        ) -> Self {
+            Self {
+                event_name,
+                stream_id,
+                event_par_list,
+                time_notation,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct ObservedEventsDescriptor {
+        #[rasn(identifier = "requestId")]
+        pub request_id: RequestID,
+        #[rasn(identifier = "observedEventLst")]
+        pub observed_event_lst: SequenceOf<ObservedEvent>,
+    }
+    impl ObservedEventsDescriptor {
+        pub fn new(request_id: RequestID, observed_event_lst: SequenceOf<ObservedEvent>) -> Self {
+            Self {
+                request_id,
+                observed_event_lst,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PackagesDescriptor(pub SequenceOf<PackagesItem>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct PackagesItem {
+        #[rasn(identifier = "packageName")]
+        pub package_name: Name,
+        #[rasn(value("0..=99"), identifier = "packageVersion")]
+        pub package_version: u8,
+    }
+    impl PackagesItem {
+        pub fn new(package_name: Name, package_version: u8) -> Self {
+            Self {
+                package_name,
+                package_version,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=64"))]
+    pub struct PathName(pub Ia5String);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PkgdName(pub FixedOctetString<4usize>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PropertyGroup(pub SequenceOf<PropertyParm>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum PropertyParmExtraInfo {
+        relation(Relation),
+        range(bool),
+        sublist(bool),
+    }
+    #[doc = " In PropertyParm, value is a SEQUENCE OF octet string. When sent"]
+    #[doc = " by an MGC the interpretation is as follows:"]
+    #[doc = " empty sequence means CHOOSE"]
+    #[doc = " one element sequence specifies value"]
+    #[doc = " If the sublist field is not selected, a longer sequence means"]
+    #[doc = " \"choose one of the values\" (i.e., value1 or value2 etc., from a"]
+    #[doc = " collection of values."]
+    #[doc = " If the sublist field is selected,"]
+    #[doc = " a sequence with more than one element encodes the value of a"]
+    #[doc = " list-valued property (i.e., a collection of values, value1 and value2"]
+    #[doc = " and ...)"]
+    #[doc = " Note that when encoding a sub-list of length one, the sublist field"]
+    #[doc = " may be left unselected."]
+    #[doc = " The relation field may only be selected if the value sequence"]
+    #[doc = " has length 1.  It indicates that the MG has to choose a value"]
+    #[doc = " for the property. E.g., x > 3 (using the greaterThan"]
+    #[doc = " value for relation) instructs the MG to choose any value larger"]
+    #[doc = " than 3 for property x."]
+    #[doc = " The range field may only be selected if the value sequence"]
+    #[doc = " has length 2.  It indicates that the MG has to choose a value"]
+    #[doc = " in the range between the first octet in the value sequence and"]
+    #[doc = " the trailing octet in the value sequence, including the"]
+    #[doc = " boundary values."]
+    #[doc = " When sent by the MG, only responses to an AuditCapability request"]
+    #[doc = " may contain multiple values, a range, or a relation field."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct PropertyParm {
+        pub name: PkgdName,
+        pub value: SequenceOf<OctetString>,
+        #[rasn(identifier = "extraInfo")]
+        pub extra_info: Option<PropertyParmExtraInfo>,
+    }
+    impl PropertyParm {
+        pub fn new(
+            name: PkgdName,
+            value: SequenceOf<OctetString>,
+            extra_info: Option<PropertyParmExtraInfo>,
+        ) -> Self {
+            Self {
+                name,
+                value,
+                extra_info,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct RegulatedEmbeddedDescriptor {
+        #[rasn(identifier = "secondEvent")]
+        pub second_event: Option<SecondEventsDescriptor>,
+        #[rasn(identifier = "signalsDescriptor")]
+        pub signals_descriptor: Option<SignalsDescriptor>,
+    }
+    impl RegulatedEmbeddedDescriptor {
+        pub fn new(
+            second_event: Option<SecondEventsDescriptor>,
+            signals_descriptor: Option<SignalsDescriptor>,
+        ) -> Self {
+            Self {
+                second_event,
+                signals_descriptor,
+            }
+        }
+    }
+    #[doc = " represents Package Name (2 octets) plus property, event,"]
+    #[doc = " signal names or StatisticsID. (2 octets)"]
+    #[doc = " To wildcard a package use 0xFFFF for first two octets, CHOOSE"]
+    #[doc = " is not allowed. To reference native property tag specified in"]
+    #[doc = " Annex C, use 0x0000 as first two octets."]
+    #[doc = " To wildcard a PropertyID, EventID, SignalID, or StatisticsID, use"]
+    #[doc = " 0xFFFF for last two octets, CHOOSE is not allowed."]
+    #[doc = " Wildcarding of Package Name is permitted only if PropertyID,"]
+    #[doc = " EventID, SignalID, or StatisticsID are also wildcarded."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum Relation {
+        greaterThan = 0,
+        smallerThan = 1,
+        unequalTo = 2,
+    }
+    #[doc = " For an AuditCapReply with all events, the RequestID shall be ALL."]
+    #[doc = " ALL is represented by 0xffffffff."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=4294967295"))]
+    pub struct RequestID(pub u32);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct RequestedActions {
+        #[rasn(identifier = "keepActive")]
+        pub keep_active: Option<bool>,
+        #[rasn(identifier = "eventDM")]
+        pub event_dm: Option<EventDM>,
+        #[rasn(identifier = "secondEvent")]
+        pub second_event: Option<SecondEventsDescriptor>,
+        #[rasn(identifier = "signalsDescriptor")]
+        pub signals_descriptor: Option<SignalsDescriptor>,
+        #[rasn(extension_addition, identifier = "notifyBehaviour")]
+        pub notify_behaviour: Option<NotifyBehaviour>,
+        #[rasn(extension_addition, identifier = "resetEventsDescriptor")]
+        pub reset_events_descriptor: Option<()>,
+    }
+    impl RequestedActions {
+        pub fn new(
+            keep_active: Option<bool>,
+            event_dm: Option<EventDM>,
+            second_event: Option<SecondEventsDescriptor>,
+            signals_descriptor: Option<SignalsDescriptor>,
+            notify_behaviour: Option<NotifyBehaviour>,
+            reset_events_descriptor: Option<()>,
+        ) -> Self {
+            Self {
+                keep_active,
+                event_dm,
+                second_event,
+                signals_descriptor,
+                notify_behaviour,
+                reset_events_descriptor,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct RequestedEvent {
+        #[rasn(identifier = "pkgdName")]
+        pub pkgd_name: PkgdName,
+        #[rasn(identifier = "streamID")]
+        pub stream_id: Option<StreamID>,
+        #[rasn(identifier = "eventAction")]
+        pub event_action: Option<RequestedActions>,
+        #[rasn(identifier = "evParList")]
+        pub ev_par_list: SequenceOf<EventParameter>,
+    }
+    impl RequestedEvent {
+        pub fn new(
+            pkgd_name: PkgdName,
+            stream_id: Option<StreamID>,
+            event_action: Option<RequestedActions>,
+            ev_par_list: SequenceOf<EventParameter>,
+        ) -> Self {
+            Self {
+                pkgd_name,
+                stream_id,
+                event_action,
+                ev_par_list,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct SecondEventsDescriptor {
+        #[rasn(identifier = "requestID")]
+        pub request_id: Option<RequestID>,
+        #[rasn(identifier = "eventList")]
+        pub event_list: SequenceOf<SecondRequestedEvent>,
+    }
+    impl SecondEventsDescriptor {
+        pub fn new(
+            request_id: Option<RequestID>,
+            event_list: SequenceOf<SecondRequestedEvent>,
+        ) -> Self {
+            Self {
+                request_id,
+                event_list,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct SecondRequestedActions {
+        #[rasn(identifier = "keepActive")]
+        pub keep_active: Option<bool>,
+        #[rasn(identifier = "eventDM")]
+        pub event_dm: Option<EventDM>,
+        #[rasn(identifier = "signalsDescriptor")]
+        pub signals_descriptor: Option<SignalsDescriptor>,
+        #[rasn(extension_addition, identifier = "notifyBehaviour")]
+        pub notify_behaviour: Option<NotifyBehaviour>,
+        #[rasn(extension_addition, identifier = "resetEventsDescriptor")]
+        pub reset_events_descriptor: Option<()>,
+    }
+    impl SecondRequestedActions {
+        pub fn new(
+            keep_active: Option<bool>,
+            event_dm: Option<EventDM>,
+            signals_descriptor: Option<SignalsDescriptor>,
+            notify_behaviour: Option<NotifyBehaviour>,
+            reset_events_descriptor: Option<()>,
+        ) -> Self {
+            Self {
+                keep_active,
+                event_dm,
+                signals_descriptor,
+                notify_behaviour,
+                reset_events_descriptor,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct SecondRequestedEvent {
+        #[rasn(identifier = "pkgdName")]
+        pub pkgd_name: PkgdName,
+        #[rasn(identifier = "streamID")]
+        pub stream_id: Option<StreamID>,
+        #[rasn(identifier = "eventAction")]
+        pub event_action: Option<SecondRequestedActions>,
+        #[rasn(identifier = "evParList")]
+        pub ev_par_list: SequenceOf<EventParameter>,
+    }
+    impl SecondRequestedEvent {
+        pub fn new(
+            pkgd_name: PkgdName,
+            stream_id: Option<StreamID>,
+            event_action: Option<SecondRequestedActions>,
+            ev_par_list: SequenceOf<EventParameter>,
+        ) -> Self {
+            Self {
+                pkgd_name,
+                stream_id,
+                event_action,
+                ev_par_list,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SecurityParmIndex(pub FixedOctetString<4usize>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=65535"))]
+    pub struct SegmentNumber(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct SegmentReply {
+        #[rasn(identifier = "transactionId")]
+        pub transaction_id: TransactionId,
+        #[rasn(identifier = "segmentNumber")]
+        pub segment_number: SegmentNumber,
+        #[rasn(identifier = "segmentationComplete")]
+        pub segmentation_complete: Option<()>,
+    }
+    impl SegmentReply {
+        pub fn new(
+            transaction_id: TransactionId,
+            segment_number: SegmentNumber,
+            segmentation_complete: Option<()>,
+        ) -> Self {
+            Self {
+                transaction_id,
+                segment_number,
+                segmentation_complete,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum SelectLogic {
+        andAUDITSelect(()),
+        orAUDITSelect(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct SeqSigList {
+        #[rasn(value("0..=65535"))]
+        pub id: u16,
+        #[rasn(identifier = "signalList")]
+        pub signal_list: SequenceOf<Signal>,
+    }
+    impl SeqSigList {
+        pub fn new(id: u16, signal_list: SequenceOf<Signal>) -> Self {
+            Self { id, signal_list }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SequenceNum(pub FixedOctetString<4usize>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum ServiceChangeAddress {
+        #[rasn(value("0..=65535"))]
+        portNumber(u16),
+        ip4Address(IP4Address),
+        ip6Address(IP6Address),
+        domainName(DomainName),
+        deviceName(PathName),
+        #[rasn(size("2..=4"))]
+        mtpAddress(OctetString),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum ServiceChangeMethod {
+        failover = 0,
+        forced = 1,
+        graceful = 2,
+        restart = 3,
+        disconnected = 4,
+        handOff = 5,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ServiceChangeParm {
+        #[rasn(identifier = "serviceChangeMethod")]
+        pub service_change_method: ServiceChangeMethod,
+        #[rasn(identifier = "serviceChangeAddress")]
+        pub service_change_address: Option<ServiceChangeAddress>,
+        #[rasn(value("0..=99"), identifier = "serviceChangeVersion")]
+        pub service_change_version: Option<u8>,
+        #[rasn(identifier = "serviceChangeProfile")]
+        pub service_change_profile: Option<ServiceChangeProfile>,
+        #[rasn(identifier = "serviceChangeReason")]
+        pub service_change_reason: Value,
+        #[rasn(value("0..=4294967295"), identifier = "serviceChangeDelay")]
+        pub service_change_delay: Option<u32>,
+        #[rasn(identifier = "serviceChangeMgcId")]
+        pub service_change_mgc_id: Option<Mid>,
+        #[rasn(identifier = "timeStamp")]
+        pub time_stamp: Option<TimeNotation>,
+        #[rasn(identifier = "nonStandardData")]
+        pub non_standard_data: Option<NonStandardData>,
+        #[rasn(extension_addition, identifier = "serviceChangeInfo")]
+        pub service_change_info: Option<AuditDescriptor>,
+        #[rasn(extension_addition, identifier = "serviceChangeIncompleteFlag")]
+        pub service_change_incomplete_flag: Option<()>,
+    }
+    impl ServiceChangeParm {
+        pub fn new(
+            service_change_method: ServiceChangeMethod,
+            service_change_address: Option<ServiceChangeAddress>,
+            service_change_version: Option<u8>,
+            service_change_profile: Option<ServiceChangeProfile>,
+            service_change_reason: Value,
+            service_change_delay: Option<u32>,
+            service_change_mgc_id: Option<Mid>,
+            time_stamp: Option<TimeNotation>,
+            non_standard_data: Option<NonStandardData>,
+            service_change_info: Option<AuditDescriptor>,
+            service_change_incomplete_flag: Option<()>,
+        ) -> Self {
+            Self {
+                service_change_method,
+                service_change_address,
+                service_change_version,
+                service_change_profile,
+                service_change_reason,
+                service_change_delay,
+                service_change_mgc_id,
+                time_stamp,
+                non_standard_data,
+                service_change_info,
+                service_change_incomplete_flag,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct ServiceChangeProfile {
+        #[rasn(size("1..=67"), identifier = "profileName")]
+        pub profile_name: Ia5String,
+    }
+    impl ServiceChangeProfile {
+        pub fn new(profile_name: Ia5String) -> Self {
+            Self { profile_name }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ServiceChangeReply {
+        #[rasn(identifier = "terminationID")]
+        pub termination_id: TerminationIDList,
+        #[rasn(identifier = "serviceChangeResult")]
+        pub service_change_result: ServiceChangeResult,
+    }
+    impl ServiceChangeReply {
+        pub fn new(
+            termination_id: TerminationIDList,
+            service_change_result: ServiceChangeResult,
+        ) -> Self {
+            Self {
+                termination_id,
+                service_change_result,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ServiceChangeRequest {
+        #[rasn(identifier = "terminationID")]
+        pub termination_id: TerminationIDList,
+        #[rasn(identifier = "serviceChangeParms")]
+        pub service_change_parms: ServiceChangeParm,
+    }
+    impl ServiceChangeRequest {
+        pub fn new(
+            termination_id: TerminationIDList,
+            service_change_parms: ServiceChangeParm,
+        ) -> Self {
+            Self {
+                termination_id,
+                service_change_parms,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ServiceChangeResParm {
+        #[rasn(identifier = "serviceChangeMgcId")]
+        pub service_change_mgc_id: Option<Mid>,
+        #[rasn(identifier = "serviceChangeAddress")]
+        pub service_change_address: Option<ServiceChangeAddress>,
+        #[rasn(value("0..=99"), identifier = "serviceChangeVersion")]
+        pub service_change_version: Option<u8>,
+        #[rasn(identifier = "serviceChangeProfile")]
+        pub service_change_profile: Option<ServiceChangeProfile>,
+        pub timestamp: Option<TimeNotation>,
+    }
+    impl ServiceChangeResParm {
+        pub fn new(
+            service_change_mgc_id: Option<Mid>,
+            service_change_address: Option<ServiceChangeAddress>,
+            service_change_version: Option<u8>,
+            service_change_profile: Option<ServiceChangeProfile>,
+            timestamp: Option<TimeNotation>,
+        ) -> Self {
+            Self {
+                service_change_mgc_id,
+                service_change_address,
+                service_change_version,
+                service_change_profile,
+                timestamp,
+            }
+        }
+    }
+    #[doc = " For ServiceChangeResult, no parameters are mandatory. Hence the"]
+    #[doc = " distinction between ServiceChangeParm and ServiceChangeResParm."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum ServiceChangeResult {
+        errorDescriptor(ErrorDescriptor),
+        serviceChangeResParms(ServiceChangeResParm),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum ServiceState {
+        test = 0,
+        outOfSvc = 1,
+        inSvc = 2,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum SigParameterExtraInfo {
+        relation(Relation),
+        range(bool),
+        sublist(bool),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct SigParameter {
+        #[rasn(identifier = "sigParameterName")]
+        pub sig_parameter_name: Name,
+        pub value: Value,
+        #[rasn(identifier = "extraInfo")]
+        pub extra_info: Option<SigParameterExtraInfo>,
+    }
+    impl SigParameter {
+        pub fn new(
+            sig_parameter_name: Name,
+            value: Value,
+            extra_info: Option<SigParameterExtraInfo>,
+        ) -> Self {
+            Self {
+                sig_parameter_name,
+                value,
+                extra_info,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct Signal {
+        #[rasn(identifier = "signalName")]
+        pub signal_name: SignalName,
+        #[rasn(identifier = "streamID")]
+        pub stream_id: Option<StreamID>,
+        #[rasn(identifier = "sigType")]
+        pub sig_type: Option<SignalType>,
+        #[rasn(value("0..=65535"))]
+        pub duration: Option<u16>,
+        #[rasn(identifier = "notifyCompletion")]
+        pub notify_completion: Option<NotifyCompletion>,
+        #[rasn(identifier = "keepActive")]
+        pub keep_active: Option<bool>,
+        #[rasn(identifier = "sigParList")]
+        pub sig_par_list: SequenceOf<SigParameter>,
+        #[rasn(extension_addition)]
+        pub direction: Option<SignalDirection>,
+        #[rasn(extension_addition, identifier = "requestID")]
+        pub request_id: Option<RequestID>,
+        #[rasn(extension_addition, value("0..=65535"), identifier = "intersigDelay")]
+        pub intersig_delay: Option<u16>,
+    }
+    impl Signal {
+        pub fn new(
+            signal_name: SignalName,
+            stream_id: Option<StreamID>,
+            sig_type: Option<SignalType>,
+            duration: Option<u16>,
+            notify_completion: Option<NotifyCompletion>,
+            keep_active: Option<bool>,
+            sig_par_list: SequenceOf<SigParameter>,
+            direction: Option<SignalDirection>,
+            request_id: Option<RequestID>,
+            intersig_delay: Option<u16>,
+        ) -> Self {
+            Self {
+                signal_name,
+                stream_id,
+                sig_type,
+                duration,
+                notify_completion,
+                keep_active,
+                sig_par_list,
+                direction,
+                request_id,
+                intersig_delay,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum SignalDirection {
+        internal = 0,
+        external = 1,
+        both = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SignalName(pub PkgdName);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum SignalRequest {
+        signal(Signal),
+        seqSigList(SeqSigList),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum SignalType {
+        brief = 0,
+        onOff = 1,
+        timeOut = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SignalsDescriptor(pub SequenceOf<SignalRequest>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct StatisticsDescriptor(pub SequenceOf<StatisticsParameter>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct StatisticsParameter {
+        #[rasn(identifier = "statName")]
+        pub stat_name: PkgdName,
+        #[rasn(identifier = "statValue")]
+        pub stat_value: Option<Value>,
+    }
+    impl StatisticsParameter {
+        pub fn new(stat_name: PkgdName, stat_value: Option<Value>) -> Self {
+            Self {
+                stat_name,
+                stat_value,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct StreamDescriptor {
+        #[rasn(identifier = "streamID")]
+        pub stream_id: StreamID,
+        #[rasn(identifier = "streamParms")]
+        pub stream_parms: StreamParms,
+    }
+    impl StreamDescriptor {
+        pub fn new(stream_id: StreamID, stream_parms: StreamParms) -> Self {
+            Self {
+                stream_id,
+                stream_parms,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=65535"))]
+    pub struct StreamID(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum StreamMode {
+        sendOnly = 0,
+        recvOnly = 1,
+        sendRecv = 2,
+        inactive = 3,
+        loopBack = 4,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct StreamParms {
+        #[rasn(identifier = "localControlDescriptor")]
+        pub local_control_descriptor: Option<LocalControlDescriptor>,
+        #[rasn(identifier = "localDescriptor")]
+        pub local_descriptor: Option<LocalRemoteDescriptor>,
+        #[rasn(identifier = "remoteDescriptor")]
+        pub remote_descriptor: Option<LocalRemoteDescriptor>,
+        #[rasn(extension_addition, identifier = "statisticsDescriptor")]
+        pub statistics_descriptor: Option<StatisticsDescriptor>,
+    }
+    impl StreamParms {
+        pub fn new(
+            local_control_descriptor: Option<LocalControlDescriptor>,
+            local_descriptor: Option<LocalRemoteDescriptor>,
+            remote_descriptor: Option<LocalRemoteDescriptor>,
+            statistics_descriptor: Option<StatisticsDescriptor>,
+        ) -> Self {
+            Self {
+                local_control_descriptor,
+                local_descriptor,
+                remote_descriptor,
+                statistics_descriptor,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct SubtractRequest {
+        #[rasn(identifier = "terminationID")]
+        pub termination_id: TerminationIDList,
+        #[rasn(identifier = "auditDescriptor")]
+        pub audit_descriptor: Option<AuditDescriptor>,
+    }
+    impl SubtractRequest {
+        pub fn new(
+            termination_id: TerminationIDList,
+            audit_descriptor: Option<AuditDescriptor>,
+        ) -> Self {
+            Self {
+                termination_id,
+                audit_descriptor,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct TermListAuditResult {
+        #[rasn(identifier = "terminationIDList")]
+        pub termination_idlist: TerminationIDList,
+        #[rasn(identifier = "terminationAuditResult")]
+        pub termination_audit_result: TerminationAudit,
+    }
+    impl TermListAuditResult {
+        pub fn new(
+            termination_idlist: TerminationIDList,
+            termination_audit_result: TerminationAudit,
+        ) -> Self {
+            Self {
+                termination_idlist,
+                termination_audit_result,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TerminationAudit(pub SequenceOf<AuditReturnParameter>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct TerminationID {
+        pub wildcard: SequenceOf<WildcardField>,
+        #[rasn(size("1..=8"))]
+        pub id: OctetString,
+    }
+    impl TerminationID {
+        pub fn new(wildcard: SequenceOf<WildcardField>, id: OctetString) -> Self {
+            Self { wildcard, id }
+        }
+    }
+    #[doc = " See A.1 for explanation of wildcarding mechanism."]
+    #[doc = " TerminationID 0xFFFFFFFFFFFFFFFF indicates the Root Termination."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TerminationIDList(pub SequenceOf<TerminationID>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct TerminationStateDescriptor {
+        #[rasn(identifier = "propertyParms")]
+        pub property_parms: SequenceOf<PropertyParm>,
+        #[rasn(identifier = "eventBufferControl")]
+        pub event_buffer_control: Option<EventBufferControl>,
+        #[rasn(identifier = "serviceState")]
+        pub service_state: Option<ServiceState>,
+    }
+    impl TerminationStateDescriptor {
+        pub fn new(
+            property_parms: SequenceOf<PropertyParm>,
+            event_buffer_control: Option<EventBufferControl>,
+            service_state: Option<ServiceState>,
+        ) -> Self {
+            Self {
+                property_parms,
+                event_buffer_control,
+                service_state,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct TimeNotation {
+        #[rasn(size("8"))]
+        pub date: Ia5String,
+        #[rasn(size("8"))]
+        pub time: Ia5String,
+    }
+    impl TimeNotation {
+        pub fn new(date: Ia5String, time: Ia5String) -> Self {
+            Self { date, time }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum TopologyRequestTopologyDirection {
+        bothway = 0,
+        isolate = 1,
+        oneway = 2,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum TopologyRequestTopologyDirectionExtension {
+        onewayexternal = 0,
+        onewayboth = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct TopologyRequest {
+        #[rasn(identifier = "terminationFrom")]
+        pub termination_from: TerminationID,
+        #[rasn(identifier = "terminationTo")]
+        pub termination_to: TerminationID,
+        #[rasn(identifier = "topologyDirection")]
+        pub topology_direction: TopologyRequestTopologyDirection,
+        #[rasn(extension_addition, identifier = "streamID")]
+        pub stream_id: Option<StreamID>,
+        #[rasn(extension_addition, identifier = "topologyDirectionExtension")]
+        pub topology_direction_extension: Option<TopologyRequestTopologyDirectionExtension>,
+    }
+    impl TopologyRequest {
+        pub fn new(
+            termination_from: TerminationID,
+            termination_to: TerminationID,
+            topology_direction: TopologyRequestTopologyDirection,
+            stream_id: Option<StreamID>,
+            topology_direction_extension: Option<TopologyRequestTopologyDirectionExtension>,
+        ) -> Self {
+            Self {
+                termination_from,
+                termination_to,
+                topology_direction,
+                stream_id,
+                topology_direction_extension,
+            }
+        }
+    }
+    #[doc = " See A.3"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum Transaction {
+        transactionRequest(TransactionRequest),
+        transactionPending(TransactionPending),
+        transactionReply(TransactionReply),
+        transactionResponseAck(TransactionResponseAck),
+        #[rasn(extension_addition)]
+        segmentReply(SegmentReply),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct TransactionAck {
+        #[rasn(identifier = "firstAck")]
+        pub first_ack: TransactionId,
+        #[rasn(identifier = "lastAck")]
+        pub last_ack: Option<TransactionId>,
+    }
+    impl TransactionAck {
+        pub fn new(first_ack: TransactionId, last_ack: Option<TransactionId>) -> Self {
+            Self {
+                first_ack,
+                last_ack,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=4294967295"))]
+    pub struct TransactionId(pub u32);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct TransactionPending {
+        #[rasn(identifier = "transactionId")]
+        pub transaction_id: TransactionId,
+    }
+    impl TransactionPending {
+        pub fn new(transaction_id: TransactionId) -> Self {
+            Self { transaction_id }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum TransactionReplyTransactionResult {
+        transactionError(ErrorDescriptor),
+        actionReplies(SequenceOf<ActionReply>),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct TransactionReply {
+        #[rasn(identifier = "transactionId")]
+        pub transaction_id: TransactionId,
+        #[rasn(identifier = "immAckRequired")]
+        pub imm_ack_required: Option<()>,
+        #[rasn(identifier = "transactionResult")]
+        pub transaction_result: TransactionReplyTransactionResult,
+        #[rasn(extension_addition, identifier = "segmentNumber")]
+        pub segment_number: Option<SegmentNumber>,
+        #[rasn(extension_addition, identifier = "segmentationComplete")]
+        pub segmentation_complete: Option<()>,
+    }
+    impl TransactionReply {
+        pub fn new(
+            transaction_id: TransactionId,
+            imm_ack_required: Option<()>,
+            transaction_result: TransactionReplyTransactionResult,
+            segment_number: Option<SegmentNumber>,
+            segmentation_complete: Option<()>,
+        ) -> Self {
+            Self {
+                transaction_id,
+                imm_ack_required,
+                transaction_result,
+                segment_number,
+                segmentation_complete,
+            }
+        }
+    }
+    #[doc = " 32-bit unsigned integer"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct TransactionRequest {
+        #[rasn(identifier = "transactionId")]
+        pub transaction_id: TransactionId,
+        pub actions: SequenceOf<ActionRequest>,
+    }
+    impl TransactionRequest {
+        pub fn new(transaction_id: TransactionId, actions: SequenceOf<ActionRequest>) -> Self {
+            Self {
+                transaction_id,
+                actions,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TransactionResponseAck(pub SequenceOf<TransactionAck>);
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "OCTET_STRING")]
+    pub struct AnonymousValue(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Value(pub SequenceOf<AnonymousValue>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct WildcardField(pub FixedOctetString<1usize>);
+}

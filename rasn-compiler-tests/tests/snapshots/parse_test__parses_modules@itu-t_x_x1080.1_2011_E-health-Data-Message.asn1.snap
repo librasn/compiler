@@ -1,0 +1,19 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x1080.1_2011_E-health-Data-Message.asn1
+---
+Error matching ASN syntax at while parsing:
+    ╭─[line 24, column 2]
+    │
+    │ 
+ 24 │  DataMessage{QUANTITY:Quantities} ::= SEQUENCE { ◀▪▪▪▪▪▪▪▪▪▪ FAILED AT THIS LINE
+ 25 │    quantity      QUANTITY.&id({Quantities}),
+ 26 │    unit          UNIT.&id({Quantities.&Units}) OPTIONAL,
+ 27 │    symbol        SYMBOLS.&id({Quantities.&Units.&symbols}) OPTIONAL,
+ 28 │    method        OBJECT IDENTIFIER,
+ 29 │    value         REAL,
+ 30 │    normalValues  NormalValues OPTIONAL,
+ 31 │    ...
+ 32 │  }
+    │
+────╯
