@@ -75,6 +75,7 @@ impl Rasn {
                     }
                     ASN1Type::GeneralizedTime(_) => self.generate_generalized_time(t),
                     ASN1Type::UTCTime(_) => self.generate_utc_time(t),
+                    ASN1Type::Any => self.generate_any(t),
                     ASN1Type::ChoiceSelectionType(_) => Err(GeneratorError {
                         kind: GeneratorErrorType::Asn1TypeMismatch,
                         details: "Choice selection type should have been resolved at this point!"

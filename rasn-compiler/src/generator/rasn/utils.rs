@@ -631,9 +631,10 @@ impl Rasn {
                 };
                 (e.constraints.clone(), tokenized)
             }
-            ASN1Type::ObjectClassField(_) | ASN1Type::EmbeddedPdv | ASN1Type::External => {
-                (vec![], quote!(Any))
-            }
+            ASN1Type::Any
+            | ASN1Type::ObjectClassField(_)
+            | ASN1Type::EmbeddedPdv
+            | ASN1Type::External => (vec![], quote!(Any)),
             ASN1Type::ChoiceSelectionType(_) => unreachable!(),
         })
     }
@@ -768,7 +769,7 @@ impl Rasn {
             )),
             ASN1Type::GeneralizedTime(_) => Ok(quote!(GeneralizedTime)),
             ASN1Type::UTCTime(_) => Ok(quote!(UtcTime)),
-            ASN1Type::EmbeddedPdv | ASN1Type::External => Ok(quote!(Any)),
+            ASN1Type::Any | ASN1Type::EmbeddedPdv | ASN1Type::External => Ok(quote!(Any)),
             ASN1Type::ChoiceSelectionType(c) => {
                 let choice = self.to_rust_title_case(&c.choice_name);
                 let option = self.to_rust_enum_identifier(&c.selected_option);

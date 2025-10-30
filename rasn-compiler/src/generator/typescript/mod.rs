@@ -119,6 +119,7 @@ impl Backend for Typescript {
                     ASN1Type::SequenceOf(_) | ASN1Type::SetOf(_) => {
                         self.generate_sequence_or_set_of(t)
                     }
+                    ASN1Type::Any => self.generate_any(t),
                     ASN1Type::ElsewhereDeclaredType(_) => self.generate_typealias(t),
                     ASN1Type::Choice(_) => self.generate_choice(t),
                     ASN1Type::Time(_) => unimplemented!("rasn does not support TIME types yet!"),

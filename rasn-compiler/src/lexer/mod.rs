@@ -27,12 +27,13 @@ use crate::{
 use crate::{intermediate::macros::ToplevelMacroDefinition, AsnSourceUnit};
 
 use self::{
-    bit_string::*, boolean::*, character_string::*, choice::*, common::*, constraint::*,
-    embedded_pdv::*, enumerated::*, error::LexerError, external::*, information_object_class::*,
-    integer::*, null::*, object_identifier::*, octet_string::*, parameterization::*, real::*,
-    sequence::*, sequence_of::*, set::*, set_of::*, time::*,
+    any_type::any_type, bit_string::*, boolean::*, character_string::*, choice::*, common::*,
+    constraint::*, embedded_pdv::*, enumerated::*, error::LexerError, external::*,
+    information_object_class::*, integer::*, null::*, object_identifier::*, octet_string::*,
+    parameterization::*, real::*, sequence::*, sequence_of::*, set::*, set_of::*, time::*,
 };
 
+mod any_type;
 mod bit_string;
 mod boolean;
 mod character_string;
@@ -151,6 +152,7 @@ pub fn asn1_type(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
     alt((
         alt((
             null,
+            any_type,
             selection_type_choice,
             object_identifier,
             sequence_of,
