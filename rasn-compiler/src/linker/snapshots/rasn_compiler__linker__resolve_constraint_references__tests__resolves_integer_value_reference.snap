@@ -1,0 +1,82 @@
+---
+source: rasn-compiler/src/linker/resolve_constraint_references.rs
+expression: departures_type
+---
+ASN1Type::Sequence(
+    SequenceOrSet {
+        components_of: [],
+        extensible: None,
+        constraints: [],
+        members: [
+            SequenceOrSetMember {
+                name: "intercontinental",
+                tag: None,
+                ty: ASN1Type::SequenceOf(
+                    SequenceOrSetOf {
+                        constraints: [
+                            Constraint::Subtype(
+                                ElementSetSpecs {
+                                    set: ElementOrSetOperation::Element(
+                                        SubtypeElements::SizeConstraint(
+                                            ElementOrSetOperation::Element(
+                                                SubtypeElements::ValueRange {
+                                                    min: Some(
+                                                        ASN1Value::Integer(
+                                                            0,
+                                                        ),
+                                                    ),
+                                                    max: Some(
+                                                        ASN1Value::Integer(
+                                                            15,
+                                                        ),
+                                                    ),
+                                                    extensible: false,
+                                                },
+                                            ),
+                                        ),
+                                    ),
+                                    extensible: false,
+                                },
+                            ),
+                        ],
+                        element_type: ASN1Type::CharacterString(
+                            CharacterString {
+                                constraints: [
+                                    Constraint::Subtype(
+                                        ElementSetSpecs {
+                                            set: ElementOrSetOperation::Element(
+                                                SubtypeElements::SizeConstraint(
+                                                    ElementOrSetOperation::Element(
+                                                        SubtypeElements::ValueRange {
+                                                            min: Some(
+                                                                ASN1Value::Integer(
+                                                                    15,
+                                                                ),
+                                                            ),
+                                                            max: Some(
+                                                                ASN1Value::Integer(
+                                                                    30,
+                                                                ),
+                                                            ),
+                                                            extensible: false,
+                                                        },
+                                                    ),
+                                                ),
+                                            ),
+                                            extensible: false,
+                                        },
+                                    ),
+                                ],
+                                ty: CharacterStringType::UTF8String,
+                            },
+                        ),
+                        element_tag: None,
+                        is_recursive: false,
+                    },
+                ),
+                optionality: Required,
+                is_recursive: false,
+            },
+        ],
+    },
+)

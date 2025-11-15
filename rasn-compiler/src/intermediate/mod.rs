@@ -15,7 +15,7 @@ pub mod parameterization;
 pub mod types;
 pub mod utils;
 
-use std::{borrow::Cow, cell::RefCell, collections::BTreeMap, ops::Add, rc::Rc};
+use std::{borrow::Cow, cell::RefCell, collections::BTreeMap, ops::Add, rc::Rc, usize};
 
 use crate::{common::INTERNAL_IO_FIELD_REF_TYPE_NAME_PREFIX, prelude::ir::Parameter};
 use constraints::Constraint;
@@ -1228,7 +1228,7 @@ pub enum ASN1Value<'a> {
     BitStringNamedBits(Vec<Cow<'a, str>>),
     OctetString(Vec<u8>),
     EnumeratedValue {
-        enumerated: Cow<'a, str>,
+        enumerated: Cow<'a, str>, // TODO: replace with DefinedType
         enumerable: Cow<'a, str>,
     },
     Time(Cow<'a, str>),

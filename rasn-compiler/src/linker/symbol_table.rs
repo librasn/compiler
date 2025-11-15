@@ -13,7 +13,8 @@ use crate::{
     },
     linker::{
         error::LinkerError,
-        resolve_parameters::{self, ResolveParameters, SymbolTableExtraParams},
+        resolve_constraint_references::{NameValueMappingExtraArgs, ResolveConstraintAndDefaultReferences},
+        resolve_parameters::{ResolveParameters, SymbolTableExtraParams},
         unnest::Unnest,
     },
     prelude::{
@@ -202,12 +203,18 @@ impl<'a> SymbolTable<'a, UnnestedSymbols> {
             if let Some(mut symbol) = self.0.remove(&id) {
                 match &mut symbol {
                     Assignment::Type(TypeAssignment { ty, .. }) => {
-                        let generated = ty.apply_recursively::<_, SymbolTableExtraParams>(&mut |ty, extra| {
-                            ty.resolve_parameters(extra)
-                        }, &SymbolTableExtraParams { symbol_table: &self, current_context: id.clone() })?;
+                        let generated = ty.apply_recursively::<_, SymbolTableExtraParams>(
+                            &mut |ty, extra| ty.resolve_parameters(extra),
+                            &SymbolTableExtraParams {
+                                symbol_table: &self,
+                                current_context: id.clone(),
+                            },
+                        )?;
                         self.insert(generated);
                     }
-                    Assignment::Value(ValueAssignment { associated_type, .. }) => todo!(),
+                    Assignment::Value(ValueAssignment {
+                        associated_type, ..
+                    }) => todo!(),
                     _ => todo!(),
                 }
             }
@@ -222,7 +229,29 @@ impl<'a> SymbolTable<'a, ResolvedParameters> {
     ) -> Result<SymbolTable<'a, ResolvedConstraintReferences>, LinkerError> {
         let keys: Vec<SymbolId<'_>> = self.0.keys().cloned().collect();
         for id in keys {
-           
+            if let Some(mut symbol) = self.0.remove(&id) {
+                match &mut symbol {
+                    Assignment::Type(TypeAssignment { ty, name, .. }) => {
+                        let extra_args = NameValueMappingExtraArgs {
+                            type_name: name.clone(),
+                            module_name: id.module_reference.clone(),
+                            mapping: None,
+                        };
+                        let table = ty.resolve_constraint_and_default_references(
+                            SymbolTable(self.0.clone(), PhantomData),
+                            &extra_args,
+                        )?;
+                        self.0 = table.0;
+                        self.0.insert(id, symbol);
+                    }
+                    Assignment::Value(_) => {
+                        self.0.insert(id, symbol);
+                    }
+                    _ => {
+                        self.0.insert(id, symbol);
+                    }
+                }
+            }
         }
         Ok(SymbolTable(self.0, PhantomData))
     }
@@ -231,6 +260,10 @@ impl<'a> SymbolTable<'a, ResolvedParameters> {
 impl<'a, S: SymbolTableState> SymbolTable<'a, S> {
     pub(super) fn get(&self, id: &SymbolId<'a>) -> Option<&Assignment<'a>> {
         self.0.get(id)
+    }
+
+    pub(super) fn iter(&self) -> impl Iterator<Item = (&SymbolId<'a>, &Assignment<'a>)> {
+        self.0.iter()
     }
     /// Traverses a dependency graph and returns the leaf type.
     /// Caution: The returned type is a reference to the leaf type

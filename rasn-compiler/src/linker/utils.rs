@@ -1,3 +1,5 @@
+use std::{borrow::Cow, collections::HashMap};
+
 use crate::{
     intermediate::{ASN1Type, ASN1Value, DeclarationElsewhere},
     linker::symbol_table::GeneratedSymbols,
@@ -89,10 +91,10 @@ impl<'a> ASN1Type<'a> {
         }
 
         let mut generated = match self {
-            ASN1Type::ChoiceSelectionType(_) |
-            ASN1Type::EmbeddedPdv |
-            ASN1Type::External |
-            ASN1Type::Null => Ok(GeneratedSymbols::empty()),
+            ASN1Type::ChoiceSelectionType(_)
+            | ASN1Type::EmbeddedPdv
+            | ASN1Type::External
+            | ASN1Type::Null => Ok(GeneratedSymbols::empty()),
             ASN1Type::Boolean(Boolean { constraints })
             | ASN1Type::Integer(Integer { constraints, .. })
             | ASN1Type::Time(Time { constraints, .. })
@@ -115,14 +117,18 @@ impl<'a> ASN1Type<'a> {
                 Ok(generated)
             }
             ASN1Type::Sequence(sequence_or_set) | ASN1Type::Set(sequence_or_set) => {
-                let mut generated = apply_to_constraints(&mut sequence_or_set.constraints, f, extra)?;
+                let mut generated =
+                    apply_to_constraints(&mut sequence_or_set.constraints, f, extra)?;
                 let gen_from_members = apply_to_members(sequence_or_set, f, extra)?;
                 generated += gen_from_members;
                 Ok(generated)
             }
             ASN1Type::SequenceOf(sequence_or_set_of) | ASN1Type::SetOf(sequence_or_set_of) => {
-                let mut generated = apply_to_constraints(&mut sequence_or_set_of.constraints, f, extra)?;
-                let gen_from_items = sequence_or_set_of.element_type.apply_recursively(f, extra)?;
+                let mut generated =
+                    apply_to_constraints(&mut sequence_or_set_of.constraints, f, extra)?;
+                let gen_from_items = sequence_or_set_of
+                    .element_type
+                    .apply_recursively(f, extra)?;
                 generated += gen_from_items;
                 Ok(generated)
             }
@@ -143,10 +149,11 @@ impl<'a> ASN1Value<'a> {
     {
         let mut generated = match self {
             ASN1Value::Choice { inner_value, .. } => inner_value.apply_recursively(f, extra),
-            ASN1Value::SequenceOrSet(items) => {
-                items.iter_mut().map(|(_, val)| val.apply_recursively(f, extra)).collect()
-            },
-            _ => Ok(GeneratedSymbols::empty())
+            ASN1Value::SequenceOrSet(items) => items
+                .iter_mut()
+                .map(|(_, val)| val.apply_recursively(f, extra))
+                .collect(),
+            _ => Ok(GeneratedSymbols::empty()),
         }?;
         generated += f(self, extra)?;
         Ok(generated)

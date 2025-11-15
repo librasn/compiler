@@ -1,0 +1,34 @@
+---
+source: rasn-compiler/src/linker/resolve_constraint_references.rs
+expression: up_to_five_type
+---
+ASN1Type::ElsewhereDeclaredType(
+    DeclarationElsewhere {
+        parent: None,
+        identifier: DefinedType::TypeReference(
+            "Int",
+        ),
+        constraints: [
+            Constraint::Subtype(
+                ElementSetSpecs {
+                    set: ElementOrSetOperation::Element(
+                        SubtypeElements::ValueRange {
+                            min: Some(
+                                ASN1Value::Integer(
+                                    0,
+                                ),
+                            ),
+                            max: Some(
+                                ASN1Value::Integer(
+                                    5,
+                                ),
+                            ),
+                            extensible: false,
+                        },
+                    ),
+                    extensible: false,
+                },
+            ),
+        ],
+    },
+)
