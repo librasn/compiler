@@ -1198,12 +1198,7 @@ mod tests {
                                 identifier: "IDENTIFIED".into(),
                                 constraints: vec![]
                             }),
-                            SyntaxApplication::LiteralOrTypeReference(DeclarationElsewhere {
-                                parent: None,
-                                module: None,
-                                identifier: "BY".into(),
-                                constraints: vec![]
-                            }),
+                            SyntaxApplication::Literal("BY".into()),
                             SyntaxApplication::ValueReference(ASN1Value::ElsewhereDeclaredValue {
                                 identifier: "addGrpC".into(),
                                 parent: None

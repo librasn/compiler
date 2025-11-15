@@ -172,7 +172,7 @@ pub const TIME_OF_DAY: &str = "TIME-OF-DAY";
 pub const TYPE_IDENTIFIER: &str = "TYPE-IDENTIFIER";
 pub const ENCODING_CONTROL: &str = "ENCODING-CONTROL";
 
-pub const ASN1_KEYWORDS: [&str; 65] = [
+pub const ASN1_KEYWORDS: [&str; 67] = [
     ABSTRACT_SYNTAX,
     BIT,
     CHARACTER,
@@ -238,6 +238,8 @@ pub const ASN1_KEYWORDS: [&str; 65] = [
     TAGS,
     MACRO,
     ANY,
+    BY,
+    DEFINED,
 ];
 
 macro_rules! grammar_error {
