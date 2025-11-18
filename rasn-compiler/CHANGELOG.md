@@ -48,6 +48,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.14.4](https://github.com/librasn/compiler/compare/rasn-compiler-v0.14.3...rasn-compiler-v0.14.4) - 2025-11-18
+
+### Other
+
+- Add `BY` and `DEFINED` to reserved words
+- Parse `ANY [DEFINED BY identifier]`
+
 ## [0.14.0](https://github.com/librasn/compiler/compare/rasn-compiler-v0.13.0...rasn-compiler-v0.14.0) - 2025-07-17
 
 ### Added
