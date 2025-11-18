@@ -1,0 +1,37 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x511_1997-TC1_DirectoryAbstractService.asn1
+---
+Error matching ASN syntax at while parsing:
+     ╭─[line 202, column 2]
+     │
+     │ 
+ 202 │  FilterItem ::= CHOICE { ◀▪▪▪▪▪▪▪▪▪▪ FAILED AT THIS LINE
+ 203 │    equality          [0]  AttributeValueAssertion,
+ 204 │    substrings
+ 205 │      [1]  SEQUENCE {type     ATTRIBUTE.&id({SupportedAttributes}),
+ 206 │                     strings
+ 207 │                       SEQUENCE OF
+ 208 │                         CHOICE {initial
+ 209 │                                   [0]  ATTRIBUTE.&Type
+ 210 │                                          ({SupportedAttributes}
+ 211 │                                             {@substrings.type}),
+ 212 │                                 any
+ 213 │                                   [1]  ATTRIBUTE.&Type
+ 214 │                                          ({SupportedAttributes}
+ 215 │                                             {@substrings.type}),
+ 216 │                                 final
+ 217 │                                   [2]  ATTRIBUTE.&Type
+ 218 │                                          ({SupportedAttributes}
+ 219 │                                             {@substrings.type}),
+ 220 │                                 control  Attribute -- Used to specify interpretation of following items
+ 221 │                         }},
+ 222 │    greaterOrEqual    [2]  AttributeValueAssertion,
+ 223 │    lessOrEqual       [3]  AttributeValueAssertion,
+ 224 │    present           [4]  AttributeType,
+ 225 │    approximateMatch  [5]  AttributeValueAssertion,
+ 226 │    extensibleMatch   [6]  MatchingRuleAssertion,
+ 227 │    contextPresent    [7]  AttributeTypeAssertion
+ 228 │  }
+     │
+─────╯

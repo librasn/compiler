@@ -1,0 +1,438 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q824.5_1997-TC1_ASN1CMLETypeModule.asn1
+---
+Warnings:
+LinkerError in ASN grammar: Failed to link value with 'PointerOrNull'
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod asn1_cmletype_module {
+    extern crate alloc;
+    use super::asn1_defined_types_module::{Failed, NameType, PointerOrNull, UserLabel};
+    use super::cmip_1::{AttributeId, ObjectClass, ObjectInstance};
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum ActingRole {
+        balanced = 0,
+        master = 1,
+        slave = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AssocInstances(pub SetOf<ObjectInstance>);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "OCTET_STRING")]
+    pub struct AnonymousBcReserved(pub FixedOctetString<2usize>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct BcReserved(pub SetOf<AnonymousBcReserved>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum BlockStatus {
+        none = 0,
+        local = 1,
+        remote = 2,
+        both = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated, identifier = "D-ChannelActivation")]
+    #[non_exhaustive]
+    pub enum DChannelActivation {
+        deact = 0,
+        act1 = 1,
+        act2 = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum DataType {
+        dsType = 0,
+        pType = 1,
+        fType = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=8191"))]
+    pub struct EnvelopeFunctionAddress(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=65535"))]
+    pub struct Layer3PortAddress(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct LineSignalling(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct LinkId(pub FixedOctetString<1usize>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum LinkIdCheckResult {
+        linkIdOk = 0,
+        linkIdNotOk = 1,
+        linkIdRejected = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NoOf(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ObjectPointer {
+        #[rasn(tag(context, 0), identifier = "objectClass")]
+        pub object_class: ObjectClass,
+        #[rasn(tag(context, 1), identifier = "objectInstance")]
+        pub object_instance: ObjectInstance,
+    }
+    impl ObjectPointer {
+        pub fn new(object_class: ObjectClass, object_instance: ObjectInstance) -> Self {
+            Self {
+                object_class,
+                object_instance,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum Origin {
+        localResource = 0,
+        remoteResource = 1,
+        manual = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct OriginalPointer(pub Pointer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct OriginalPointerInfo {
+        #[rasn(identifier = "originalPointer1")]
+        pub original_pointer1: OriginalPointer,
+        #[rasn(identifier = "originalPointer2")]
+        pub original_pointer2: OriginalPointer,
+    }
+    impl OriginalPointerInfo {
+        pub fn new(original_pointer1: OriginalPointer, original_pointer2: OriginalPointer) -> Self {
+            Self {
+                original_pointer1,
+                original_pointer2,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Pointer(pub PointerOrNull);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ProvVariant(pub FixedBitString<7usize>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ReciprocalPointersInfo {
+        #[rasn(identifier = "objectClass1")]
+        pub object_class1: ObjectClass,
+        #[rasn(identifier = "objectInstance1")]
+        pub object_instance1: ObjectInstance,
+        pub attribute1: AttributeId,
+        #[rasn(identifier = "objectClass2")]
+        pub object_class2: ObjectClass,
+        #[rasn(identifier = "objectInstance2")]
+        pub object_instance2: ObjectInstance,
+        pub attribute2: AttributeId,
+    }
+    impl ReciprocalPointersInfo {
+        pub fn new(
+            object_class1: ObjectClass,
+            object_instance1: ObjectInstance,
+            attribute1: AttributeId,
+            object_class2: ObjectClass,
+            object_instance2: ObjectInstance,
+            attribute2: AttributeId,
+        ) -> Self {
+            Self {
+                object_class1,
+                object_instance1,
+                attribute1,
+                object_class2,
+                object_instance2,
+                attribute2,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct RejectedProvVariant {
+        #[rasn(tag(context, 0), identifier = "provVariant")]
+        pub prov_variant: ProvVariant,
+        #[rasn(tag(context, 1), identifier = "rejectionCause")]
+        pub rejection_cause: RejectionCause,
+    }
+    impl RejectedProvVariant {
+        pub fn new(prov_variant: ProvVariant, rejection_cause: RejectionCause) -> Self {
+            Self {
+                prov_variant,
+                rejection_cause,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum RejectionCause {
+        variantUnknown = 0,
+        variantKnownNotReady = 1,
+        reprovisioningInProgress = 2,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ReleaseReciprocalPointersResultResult {
+        #[rasn(tag(context, 0))]
+        failed(Failed),
+        #[rasn(tag(context, 1))]
+        released(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ReleaseReciprocalPointersResult {
+        #[rasn(identifier = "originalPointerInfo")]
+        pub original_pointer_info: OriginalPointerInfo,
+        pub result: ReleaseReciprocalPointersResultResult,
+    }
+    impl ReleaseReciprocalPointersResult {
+        pub fn new(
+            original_pointer_info: OriginalPointerInfo,
+            result: ReleaseReciprocalPointersResultResult,
+        ) -> Self {
+            Self {
+                original_pointer_info,
+                result,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct RequestRemoteProvVariantResult {
+        #[rasn(tag(context, 1), identifier = "remoteProvVariant")]
+        pub remote_prov_variant: ProvVariant,
+        #[rasn(size("3"), tag(context, 2), identifier = "remoteInterfaceId")]
+        pub remote_interface_id: OctetString,
+    }
+    impl RequestRemoteProvVariantResult {
+        pub fn new(remote_prov_variant: ProvVariant, remote_interface_id: OctetString) -> Self {
+            Self {
+                remote_prov_variant,
+                remote_interface_id,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum SetReciprocalPointersResultResult {
+        #[rasn(tag(context, 0))]
+        failed(Failed),
+        #[rasn(tag(context, 1))]
+        set(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SetReciprocalPointersResult {
+        #[rasn(identifier = "originalPointerInfo")]
+        pub original_pointer_info: OriginalPointerInfo,
+        pub result: SetReciprocalPointersResultResult,
+    }
+    impl SetReciprocalPointersResult {
+        pub fn new(
+            original_pointer_info: OriginalPointerInfo,
+            result: SetReciprocalPointersResultResult,
+        ) -> Self {
+            Self {
+                original_pointer_info,
+                result,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum Success {
+        successful = 0,
+        unsuccessful = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum SwitchOverToNewVariantResult {
+        #[rasn(tag(context, 0))]
+        reprovisioningStarted(ProvVariant),
+        #[rasn(tag(context, 1))]
+        cannotReprovision(RejectedProvVariant),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum SwitchType {
+        manual = 0,
+        forced = 1,
+        automatic = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum V5ChannelType {
+        bearerChannel = 0,
+        commChannel = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct V5Identification(pub FixedOctetString<3usize>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum V5ProtectionFailedSwitchInfo {
+        noStandByCChannelsAvailable = 0,
+        targetCChannelNotOperational = 1,
+        targetCChannelNotProvisioned = 2,
+        protectionSwitchImpossible = 3,
+        protectionGroupMismatch = 4,
+        requestedAllocationExisting = 5,
+        targetCChannelActive = 6,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum V5ProtectionGroupNumber {
+        group1 = 0,
+        group2 = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum V5ProtectionGroupType {
+        plus = 0,
+        colon = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct V5ProtectionNoSwitchInfo {
+        #[rasn(tag(context, 0), identifier = "failedSwitchInfo")]
+        pub failed_switch_info: V5ProtectionFailedSwitchInfo,
+        #[rasn(tag(context, 1), identifier = "v5ProtectionSwitchInfo")]
+        pub v5_protection_switch_info: V5ProtectionSwitchInfo,
+    }
+    impl V5ProtectionNoSwitchInfo {
+        pub fn new(
+            failed_switch_info: V5ProtectionFailedSwitchInfo,
+            v5_protection_switch_info: V5ProtectionSwitchInfo,
+        ) -> Self {
+            Self {
+                failed_switch_info,
+                v5_protection_switch_info,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct V5ProtectionSwitchInfo {
+        pub origin: Origin,
+        #[rasn(identifier = "switchType")]
+        pub switch_type: SwitchType,
+        #[rasn(identifier = "switchFrom")]
+        pub switch_from: ObjectInstance,
+        #[rasn(identifier = "switchTo")]
+        pub switch_to: ObjectInstance,
+    }
+    impl V5ProtectionSwitchInfo {
+        pub fn new(
+            origin: Origin,
+            switch_type: SwitchType,
+            switch_from: ObjectInstance,
+            switch_to: ObjectInstance,
+        ) -> Self {
+            Self {
+                origin,
+                switch_type,
+                switch_from,
+                switch_to,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum V5ProtectionSwitchReportingInfo {
+        #[rasn(tag(context, 0))]
+        switched(V5ProtectionSwitchInfo),
+        #[rasn(tag(context, 1))]
+        failed(V5ProtectionNoSwitchInfo),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum V5SupportedProtocolVersion {
+        v5dot1 = 1,
+        v5dot2 = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum V5UserPortAddress {
+        #[rasn(tag(context, 0))]
+        single(Layer3PortAddress),
+        #[rasn(tag(context, 1))]
+        multiple(EnvelopeFunctionAddress),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct VerifyRemoteProvVariantInfo(pub ProvVariant);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum VerifyRemoteProvVariantResult {
+        #[rasn(tag(context, 0))]
+        readyForReprovisioning(ProvVariant),
+        #[rasn(tag(context, 1))]
+        notReadyForReprovisioning(RejectedProvVariant),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct YesNo(pub bool);
+    pub static ACTION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***INFORMATION_MODEL, &[9u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ATTRIBUTE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***INFORMATION_MODEL, &[7u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static INFORMATION_MODEL: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::const_new(&[0u32, 0u32, 17u32, 824u32, 127u32, 5u32, 0u32]).to_owned()
+    });
+    pub const INITIAL_POINTER: Pointer = Pointer(PointerOrNull(PointerOrNull::null(())));
+    pub static INITIAL_POINTER_S: LazyLock<Vec<Pointer>> = LazyLock::new(|| alloc::vec![]);
+    pub static MANAGED_OBJECT_CLASS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***INFORMATION_MODEL, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static NAME_BINDING: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***INFORMATION_MODEL, &[6u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static NOTIFICATION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***INFORMATION_MODEL, &[10u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static PACKAGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***INFORMATION_MODEL, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static STANDARD_SPECIFIC_EXTENSION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***INFORMATION_MODEL, &[0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+}

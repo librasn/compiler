@@ -1,0 +1,535 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q751.2_1997_SCCPDefinedTypesModule.asn1
+---
+Warnings:
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod sccpdefined_types_module {
+    extern crate alloc;
+    use super::asn1_defined_types_module::{Pointer, PointerOrNull};
+    use super::attribute_asn1_module::{ProbableCause, SimpleNameType};
+    use super::mtpdefined_types_module::AdditionalName;
+    use super::omase::{ActionArgument, EventReportArgument};
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=15"))]
+    pub struct AddressElement(pub u8);
+    #[doc = "milliseconds"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AddressInfoConversionRule(pub SequenceOf<Operation>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AttackTimerValue(pub Integer);
+    #[doc = "milliseconds"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CLS(pub Integer);
+    #[doc = " flow control connection oriented"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CongestionLevel(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CongestionTimerValue(pub Integer);
+    #[doc = " The choice for INTEGER type arbitrary. Recommendation Q.715 does not restrict the type,"]
+    #[doc = " all types are allowed in network implementations."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DSRVT(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DecayTimerValue(pub Integer);
+    #[doc = " milliseconds"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("2"))]
+    pub struct EntitySetSapPointer(pub SetOf<SAPPointer>);
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "BIT_STRING")]
+    pub struct AnonymousGtAddressInformation(pub BitString);
+    #[doc = " see behaviour description for sccpEntitySet managed object class."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct GtAddressInformation(pub SequenceOf<AnonymousGtAddressInformation>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum GtEncodingSchemeGtES {
+        unknown = 0,
+        bCDODD = 1,
+        bCDEVEN = 2,
+        nationalSpecific = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum GtEncodingScheme {
+        notUsedOrNoOverwrite(()),
+        gtES(GtEncodingSchemeGtES),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum GtIndicator {
+        noGlobalTitle = 0,
+        nOAonly = 1,
+        tTonly = 2,
+        #[rasn(identifier = "tT-NP-ES")]
+        tT_NP_ES = 3,
+        #[rasn(identifier = "tT-NP-ES-NOA")]
+        tT_NP_ES_NOA = 4,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum GtNatureOfAddressGtNoA {
+        unknown = 0,
+        subscriber = 1,
+        national = 3,
+        international = 4,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum GtNatureOfAddress {
+        notUsedOrNoOverwrite(()),
+        gtNoA(GtNatureOfAddressGtNoA),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum GtNumberingPlanGtNP {
+        unknown = 0,
+        iSDNTNP = 1,
+        genericNumberingPlan = 2,
+        dNP = 3,
+        tNP = 4,
+        mMNP = 5,
+        lMNP = 6,
+        iSDNMNP = 7,
+        privateNumberingPlan = 14,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum GtNumberingPlan {
+        notUsedOrNoOverwrite(()),
+        gtNP(GtNumberingPlanGtNP),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum GtTranslationTypeGtTT {
+        unknown = 0,
+        iTCC = 1,
+        genericNumberingPlan = 14,
+        iEESS = 17,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum GtTranslationType {
+        notUsedOrNoOverwrite(()),
+        gtTT(GtTranslationTypeGtTT),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ImportanceLevel {
+        #[rasn(identifier = "defaultImportance")]
+        pub default_importance: Integer,
+        #[rasn(identifier = "maxImportance")]
+        pub max_importance: Integer,
+    }
+    impl ImportanceLevel {
+        pub fn new(default_importance: Integer, max_importance: Integer) -> Self {
+            Self {
+                default_importance,
+                max_importance,
+            }
+        }
+    }
+    #[doc = " For recommended values, see 2.6.2/Q.714."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct InitialValueReassTimer(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct LUDTandLUDTSSupported(pub bool);
+    #[doc = " milliseconds"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct LowerLimitForSegmentation(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MaxStatInfoTimer(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NSRVT(pub Integer);
+    #[doc = " seconds, recommended value 600 .. 1200, see 5.3.4.2/Q.714."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NrOfAddressElements(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NrOfRestrictionLevels(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NrOfSubLevels(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum Operation {
+        #[rasn(tag(context, 0))]
+        insert(AddressElement),
+        #[rasn(tag(context, 1))]
+        replace(AddressElement),
+        #[rasn(tag(context, 2))]
+        passTransparently(NrOfAddressElements),
+        #[rasn(tag(context, 3))]
+        delete(NrOfAddressElements),
+        #[rasn(tag(context, 4))]
+        stop(()),
+        #[rasn(tag(context, 5))]
+        copyRemain(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct P(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum PrimaryOrBackup {
+        equal = 0,
+        primary = 1,
+        backup = 2,
+    }
+    #[doc = " The maximum size is implementation-dependent."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RLM(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RSLM(pub Integer);
+    #[doc = " see behaviour description for sccpEntitySet managed object class."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RemoteSCCPList(pub SetOf<Pointer>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SAPPointer {
+        #[rasn(identifier = "primaryOrBackup")]
+        pub primary_or_backup: PrimaryOrBackup,
+        pub sap: Pointer,
+    }
+    impl SAPPointer {
+        pub fn new(primary_or_backup: PrimaryOrBackup, sap: Pointer) -> Self {
+            Self {
+                primary_or_backup,
+                sap,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=255"))]
+    pub struct SSN(pub u8);
+    #[doc = " see behaviour description for sccpEntitySet managed object class."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SccpSyntaxErrorList(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SccpVersion(pub PrintableString);
+    #[doc = " localSCCPUnavailabilityDuration ATTRIBUTE."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Seconds(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum SharingMode {
+        solitary = 0,
+        dupliDominant = 1,
+        dupliReplacement = 2,
+        dupliLoadShared = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct SsAvailableAfterSpRestart(pub bool);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TcoordChg(pub Integer);
+    #[doc = " seconds, recommended value 60 .. 120, see 5.3.5.2/Q.714."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TignoreSST(pub Integer);
+    #[doc = " seconds, see 5.3.5.2/Q.714."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct UpperLimitForSegmentation(pub Integer);
+    pub static C_LSDEFAULT: LazyLock<CLS> = LazyLock::new(|| CLS(Integer::from(8)));
+    #[doc = "milliseconds"]
+    #[doc = ""]
+    #[doc = " Probable Causes used in combination with communicationsAlarm"]
+    #[doc = " for on occurrence measurements."]
+    pub static HOP_COUNTER_VIOLATION: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***SCCP_SPECIFIC_EXTENSIONS, &[1u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub static LOCAL_SCCP_UN_AVAILABLE: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***SCCP_SPECIFIC_EXTENSIONS, &[3u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub static LOCAL_SUBSYSTEM_PROHIBITED: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***SCCP_SPECIFIC_EXTENSIONS, &[2u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub static NO_REASSEMBLY_SPACE: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***SCCP_SPECIFIC_EXTENSIONS, &[4u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub static NO_RULE_FOR_ADDRESS: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***SCCP_SPECIFIC_EXTENSIONS, &[5u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub static NO_SEGMENTATION_SUPPORT: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***SCCP_SPECIFIC_EXTENSIONS, &[6u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub static NO_TRANSLATOR_FOR_ADDRESS: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***SCCP_SPECIFIC_EXTENSIONS, &[7u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub static NR_OF_RESTRICTION_LEVELS_DEFAULT: LazyLock<NrOfRestrictionLevels> =
+        LazyLock::new(|| NrOfRestrictionLevels(Integer::from(8)));
+    pub static NR_OF_SUB_LEVELS_DEFAULT: LazyLock<NrOfSubLevels> =
+        LazyLock::new(|| NrOfSubLevels(Integer::from(4)));
+    #[doc = " See congestion handling 5.2.7/Q.714."]
+    pub static P_DEFAULT: LazyLock<P> = LazyLock::new(|| P(Integer::from(8)));
+    pub static POINT_CODE_CONGESTED: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***SCCP_SPECIFIC_EXTENSIONS, &[8u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub static POINT_CODE_NOT_AVAILABLE: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***SCCP_SPECIFIC_EXTENSIONS, &[9u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub static REASSEMBLY_FAILURE: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***SCCP_SPECIFIC_EXTENSIONS, &[10u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub static REASSEMBLY_TIME_OUT: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***SCCP_SPECIFIC_EXTENSIONS, &[11u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub static ROUTING_FAILURE_NO_REASON_OR_UNQUALIFIED: LazyLock<ProbableCause> =
+        LazyLock::new(|| {
+            ProbableCause(ProbableCause(ProbableCause::globalValue(
+                Oid::new(&[&***SCCP_SPECIFIC_EXTENSIONS, &[12u32]].concat())
+                    .unwrap()
+                    .to_owned(),
+            )))
+        });
+    pub static SCCP_ACTION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SCCP_INFORMATION_MODEL, &[9u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SCCP_ATTRIBUTE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SCCP_INFORMATION_MODEL, &[7u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SCCP_CONGESTED: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***SCCP_SPECIFIC_EXTENSIONS, &[13u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    #[doc = "EXPORTS EVERYTHING"]
+    pub static SCCP_INFORMATION_MODEL: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[0u32, 0u32, 17u32, 751u32, 2u32, 0u32]).to_owned());
+    pub static SCCP_NAME_BINDING: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SCCP_INFORMATION_MODEL, &[6u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SCCP_NOTIFICATION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SCCP_INFORMATION_MODEL, &[10u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SCCP_OBJECT_CLASS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SCCP_INFORMATION_MODEL, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SCCP_PACKAGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SCCP_INFORMATION_MODEL, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SCCP_PARAMETER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SCCP_INFORMATION_MODEL, &[5u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SCCP_PROTOCOL_CLASS0: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SCCP_SPECIFIC_EXTENSIONS, &[24u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " basic connectionless"]
+    pub static SCCP_PROTOCOL_CLASS1: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SCCP_SPECIFIC_EXTENSIONS, &[25u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " sequenced connectionless"]
+    pub static SCCP_PROTOCOL_CLASS2: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SCCP_SPECIFIC_EXTENSIONS, &[26u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " basic connection-oriented"]
+    pub static SCCP_PROTOCOL_CLASS3: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SCCP_SPECIFIC_EXTENSIONS, &[27u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SCCP_SPECIFIC_EXTENSIONS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SCCP_INFORMATION_MODEL, &[0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SEGMENT_OUT_OF_ORDER: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***SCCP_SPECIFIC_EXTENSIONS, &[15u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub static SEGMENTATION_FAILURE: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***SCCP_SPECIFIC_EXTENSIONS, &[14u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub const SS_AVAILABLE_AFTER_SP_RESTART_DEFAULT: SsAvailableAfterSpRestart =
+        SsAvailableAfterSpRestart(true);
+    pub static SUBSYSTEM_CONGESTED: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***SCCP_SPECIFIC_EXTENSIONS, &[16u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub static SUBSYSTEM_OO_SDENIED: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***SCCP_SPECIFIC_EXTENSIONS, &[17u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub static SUBSYSTEM_OO_SGRANTED: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***SCCP_SPECIFIC_EXTENSIONS, &[18u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub static SUBSYSTEM_PROHIBITED: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***SCCP_SPECIFIC_EXTENSIONS, &[19u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub static SUBSYSTEM_UNAVAILABLE: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***SCCP_SPECIFIC_EXTENSIONS, &[20u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub static SYNTAX_ERROR_DETECTED: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***SCCP_SPECIFIC_EXTENSIONS, &[21u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub static TOO_LARGE_FOR_SEGMENTATION: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***SCCP_SPECIFIC_EXTENSIONS, &[22u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub static UNEQUIPPED_SUBSYSTEM: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***SCCP_SPECIFIC_EXTENSIONS, &[23u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+}

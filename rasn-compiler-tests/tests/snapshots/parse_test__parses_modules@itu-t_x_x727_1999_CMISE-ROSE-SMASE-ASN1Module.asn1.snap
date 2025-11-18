@@ -1,0 +1,83 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x727_1999_CMISE-ROSE-SMASE-ASN1Module.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod cmise_rose_smase_asn1_module {
+    extern crate alloc;
+    use super::cmip_1::ObjectInstance;
+    use super::cmip_a_associate_information::{FunctionalUnits, ProtocolVersion};
+    use super::smase_a_associate_information::FunctionalUnitPackage;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = "Type References"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CmipPduReceivingSupport(pub CmipPduType);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CmipPduSendingSupport(pub CmipPduType);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CmipPduType(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CmiseFunctionalUnitsSelected(pub FunctionalUnits);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CmiseFunctionalUnitsSupported(pub FunctionalUnits);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "INTEGER")]
+    pub struct AnonymousInvokeIdsPerforming(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct InvokeIdsPerforming(pub SetOf<AnonymousInvokeIdsPerforming>);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "INTEGER")]
+    pub struct AnonymousInvokeldsOutstanding(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct InvokeldsOutstanding(pub SetOf<AnonymousInvokeldsOutstanding>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0.."))]
+    pub struct MaxEncodedCmipPduReceiveSize(pub Integer);
+    #[doc = " in bytes"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ProtocolVersionSupported(pub ProtocolVersion);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum SmUserInfoReceived {
+        nothingReceived(()),
+        informationReceived(GraphicString),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum SmUserInfoSent {
+        nothingSent(()),
+        informationSent(GraphicString),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SmaseFunctionalUnits(pub SetOf<FunctionalUnitPackage>);
+    pub static CRS_ATTRIBUTE: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 9u32, 3u32, 9u32, 7u32]).to_owned());
+    pub static CRS_MNAME_BINDING: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 9u32, 3u32, 9u32, 6u32]).to_owned());
+    #[doc = " End of IMPORTS"]
+    #[doc = "Value References"]
+    pub static CRS_MOBJECT_CLASS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 9u32, 3u32, 9u32, 3u32]).to_owned());
+    pub static CRS_MPACKAGE: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 9u32, 3u32, 9u32, 4u32]).to_owned());
+}

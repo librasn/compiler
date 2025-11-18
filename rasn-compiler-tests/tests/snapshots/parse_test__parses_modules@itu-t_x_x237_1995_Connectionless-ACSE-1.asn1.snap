@@ -1,0 +1,33 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x237_1995_Connectionless-ACSE-1.asn1
+---
+Error matching ASN syntax at while parsing:
+    ╭─[line 25, column 2]
+    │
+    │ 
+ 24 │  --  The data types AP-title and AE-qualifier are imported from ITU-T Rec. X.227 | ISO/IEC 8650-1
+ 25 │  AUDT-apdu ::= [APPLICATION 0] IMPLICIT SEQUENCE { ◀▪▪▪▪▪▪▪▪▪▪ FAILED AT THIS LINE
+ 26 │    protocol-version
+ 27 │      [0] IMPLICIT BIT STRING {version1(0)} DEFAULT {version1},
+ 28 │    application-context-name      [1]  Application-context-name,
+ 29 │    called-AP-title               [2]  AP-title OPTIONAL,
+ 30 │    called-AE-qualifier           [3]  AE-qualifier OPTIONAL,
+ 31 │    called-AP-invocation-id       [4]  AP-invocation-id OPTIONAL,
+ 32 │    called-AE-invocation-id       [5]  AE-invocation-id OPTIONAL,
+ 33 │    calling-AP-title              [6]  AP-title OPTIONAL,
+ 34 │    calling-AE-qualifier          [7]  AE-qualifier OPTIONAL,
+ 35 │    calling-AP-invocation-id      [8]  AP-invocation-id OPTIONAL,
+ 36 │    calling-AE-invocation-id      [9]  AE-invocation-id OPTIONAL,
+ 37 │    --  the following field shall only be present if the Authentication functional unit is selected
+ 38 │    mechanism-name                [11] IMPLICIT Mechanism-name OPTIONAL,
+ 39 │    --  the following field shall only be present if the Authentication functional unit is selected
+ 40 │    calling-authentication-value  [12] EXPLICIT Authentication-value OPTIONAL,
+ 41 │    implementation-information    [29] IMPLICIT GraphicString OPTIONAL,
+ 42 │    ...,
+ 43 │    ...,
+ 44 │    user-information
+ 45 │      [30] IMPLICIT SEQUENCE SIZE (1, ..., 0 | 2..MAX) OF EXTERNAL
+ 46 │  }
+    │
+────╯

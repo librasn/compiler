@@ -1,0 +1,146 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x402_1999_MHSDirectoryObjectsAndAttributes.asn1
+---
+Warnings:
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+Unidentified generating bindings for : Unexpectedly encountered unlinked struct-like ASN1 value!
+LinkerError in ASN grammar: Failed to link value with 'ORName'
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod mhsdirectory_objects_and_attributes {
+    extern crate alloc;
+    use super::authentication_framework::AlgorithmIdentifier;
+    use super::certificate_extensions::*;
+    use super::information_framework::*;
+    use super::mhsobject_identifiers::{
+        ID_AT_MHS_ACCEPTABLE_EITS, ID_AT_MHS_DELIVERABLE_CLASSES,
+        ID_AT_MHS_DELIVERABLE_CONTENT_TYPES, ID_AT_MHS_DL_ARCHIVE_SERVICE, ID_AT_MHS_DL_MEMBERS,
+        ID_AT_MHS_DL_POLICY, ID_AT_MHS_DL_RELATED_LISTS, ID_AT_MHS_DL_SUBMIT_PERMISSIONS,
+        ID_AT_MHS_DL_SUBSCRIPTION_SERVICE, ID_AT_MHS_EXCLUSIVELY_ACCEPTABLE_EITS,
+        ID_AT_MHS_MAXIMUM_CONTENT_LENGTH, ID_AT_MHS_MESSAGE_STORE_DN, ID_AT_MHS_OR_ADDRESSES,
+        ID_AT_MHS_OR_ADDRESSES_WITH_CAPABILITIES, ID_AT_MHS_SUPPORTED_ATTRIBUTES,
+        ID_AT_MHS_SUPPORTED_AUTOMATIC_ACTIONS, ID_AT_MHS_SUPPORTED_CONTENT_TYPES,
+        ID_AT_MHS_SUPPORTED_MATCHING_RULES, ID_AT_MHS_UNACCEPTABLE_EITS,
+        ID_CON_DL_ADMINISTRATOR_ANNOTATION, ID_CON_DL_NESTED_DL, ID_CON_DL_RESET_ORIGINATOR,
+        ID_MR_ADDRESS_CAPABILITIES_MATCH, ID_MR_CAPABILITY_MATCH, ID_MR_ORNAME_EXACT_MATCH,
+        ID_OC_MHS_DISTRIBUTION_LIST, ID_OC_MHS_MESSAGE_STORE, ID_OC_MHS_MESSAGE_TRANSFER_AGENT,
+        ID_OC_MHS_USER, ID_OC_MHS_USER_AGENT, ID_SAN_MTA_NAME,
+    };
+    use super::msabstract_service::*;
+    use super::msgeneral_attribute_types::{AttributeTable, X413ATTRIBUTE};
+    use super::msgeneral_auto_action_types::AutoActionTable;
+    use super::msmatching_rules::{
+        MatchingRuleTable, O_RADDRESS_ELEMENTS_MATCH, O_RADDRESS_MATCH,
+        O_RADDRESS_SUBSTRING_ELEMENTS_MATCH, O_RNAME_ELEMENTS_MATCH, O_RNAME_MATCH,
+        O_RNAME_SINGLE_ELEMENT_MATCH, O_RNAME_SUBSTRING_ELEMENTS_MATCH,
+    };
+    use super::mtsabstract_service::{
+        ContentLength, EncodedInformationTypesConstraints, ExtendedContentType,
+        ExtendedEncodedInformationType, GlobalDomainIdentifier, MTAName, ORAddress, ORName,
+        RequestedDeliveryMethod, SecurityContext,
+    };
+    use super::selected_attribute_types::{
+        COMMON_NAME, DESCRIPTION, DISTINGUISHED_NAME, INTEGER_MATCH, ORGANIZATIONAL_UNIT_NAME,
+        ORGANIZATION_NAME, OWNER, PROTOCOL_INFORMATION, SEE_ALSO,
+    };
+    use super::selected_object_classes::APPLICATION_ENTITY;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " OR-Address with Capabilities"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AddressCapabilities {
+        pub description: Option<GeneralString>,
+        pub address: ORAddress,
+        pub capabilities: SetOf<Capability>,
+    }
+    impl AddressCapabilities {
+        pub fn new(
+            description: Option<GeneralString>,
+            address: ORAddress,
+            capabilities: SetOf<Capability>,
+        ) -> Self {
+            Self {
+                description,
+                address,
+                capabilities,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AlgorithmInformation {
+        #[rasn(tag(context, 0), identifier = "algorithm-identifier")]
+        pub algorithm_identifier: AlgorithmIdentifier,
+        #[rasn(tag(context, 1), identifier = "originator-certificate-selector")]
+        pub originator_certificate_selector: Option<CertificateAssertion>,
+        #[rasn(tag(context, 2), identifier = "recipient-certificate-selector")]
+        pub recipient_certificate_selector: Option<CertificateAssertion>,
+    }
+    impl AlgorithmInformation {
+        pub fn new(
+            algorithm_identifier: AlgorithmIdentifier,
+            originator_certificate_selector: Option<CertificateAssertion>,
+            recipient_certificate_selector: Option<CertificateAssertion>,
+        ) -> Self {
+            Self {
+                algorithm_identifier,
+                originator_certificate_selector,
+                recipient_certificate_selector,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    #[non_exhaustive]
+    pub struct Capability {
+        #[rasn(tag(context, 0), identifier = "content-types")]
+        pub content_types: Option<SetOf<ExtendedContentType>>,
+        #[rasn(tag(context, 1), identifier = "maximum-content-length")]
+        pub maximum_content_length: Option<ContentLength>,
+        #[rasn(tag(context, 2), identifier = "encoded-information-types-constraints")]
+        pub encoded_information_types_constraints: Option<EncodedInformationTypesConstraints>,
+        #[rasn(tag(context, 3), identifier = "security-labels")]
+        pub security_labels: Option<SecurityContext>,
+    }
+    impl Capability {
+        pub fn new(
+            content_types: Option<SetOf<ExtendedContentType>>,
+            maximum_content_length: Option<ContentLength>,
+            encoded_information_types_constraints: Option<EncodedInformationTypesConstraints>,
+            security_labels: Option<SecurityContext>,
+        ) -> Self {
+            Self {
+                content_types,
+                maximum_content_length,
+                encoded_information_types_constraints,
+                security_labels,
+            }
+        }
+    }
+    #[doc = " ATTRIBUTE SYNTAXES"]
+    #[doc = " DL Submit Permission"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum DLSubmitPermission {
+        #[rasn(tag(context, 0))]
+        individual(ORName),
+        #[rasn(tag(context, 1), identifier = "member-of-dl")]
+        member_of_dl(ORName),
+        #[rasn(tag(context, 2), identifier = "pattern-match")]
+        pattern_match(ORNamePattern),
+        #[rasn(tag(context, 3), identifier = "member-of-group")]
+        member_of_group(Name),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ORNamePattern(pub ORName);
+}

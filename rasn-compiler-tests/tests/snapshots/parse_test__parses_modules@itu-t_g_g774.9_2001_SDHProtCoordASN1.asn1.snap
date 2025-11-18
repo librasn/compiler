@@ -1,0 +1,250 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_g_g774.9_2001_SDHProtCoordASN1.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod sdhprot_coord_asn1 {
+    extern crate alloc;
+    use super::asn1_defined_types_module::NameType;
+    use super::attribute_asn1_module::{AdditionalInformation, AdministrativeState};
+    use super::cmip_1::ObjectInstance;
+    use super::sdhprot_asn1::{
+        ProtectionGroupType, ProtectionSwitchMode, ResourcePointer, SDHMSPriority,
+    };
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AddedProtectionUnits(pub ProtectionUnits);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DismissProtectionInfo(pub DismissedProtectionGroup);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DismissedProtectionGroup(pub ObjectInstance);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct EstablishProtectionInfo {
+        #[rasn(identifier = "protectionUnits")]
+        pub protection_units: ProtectionUnits,
+        #[rasn(identifier = "protectionGroupType")]
+        pub protection_group_type: Option<ProtectionGroupType>,
+        #[rasn(identifier = "revertiveInformation")]
+        pub revertive_information: Option<RevertiveInformation>,
+        #[rasn(identifier = "specificPGConfiguration")]
+        pub specific_pgconfiguration: Option<AdditionalInformation>,
+    }
+    impl EstablishProtectionInfo {
+        pub fn new(
+            protection_units: ProtectionUnits,
+            protection_group_type: Option<ProtectionGroupType>,
+            revertive_information: Option<RevertiveInformation>,
+            specific_pgconfiguration: Option<AdditionalInformation>,
+        ) -> Self {
+            Self {
+                protection_units,
+                protection_group_type,
+                revertive_information,
+                specific_pgconfiguration,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum IncompatibleWithNEConfig {
+        #[rasn(tag(context, 0))]
+        alreadyProtected(ObjectInstance),
+        #[rasn(tag(context, 1))]
+        otherIncompatibility(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum InconsistentData {
+        exceedingProtectingUnits = 0,
+        exceedingUnitsFor1Plus1 = 1,
+        duplicateUnreliable = 2,
+        nonRevertiveIncompatibleWith1ToN = 3,
+        incompletePriorityAssignment = 4,
+        otherError = 5,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum MSPConfigurationError {
+        protectionSwitchModeNotSupported = 0,
+        aPSProtocolNotSupported = 1,
+        invalidChannelNumber = 2,
+        notSupportedSDHPriority = 3,
+        extraTrafficControlNotSupported = 4,
+        otherError = 5,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct MSPGroupConfigurationParameter {
+        #[rasn(identifier = "protectionSwitchMode")]
+        pub protection_switch_mode: ProtectionSwitchMode,
+        #[rasn(identifier = "aPSProtocolPresent")]
+        pub a_psprotocol_present: bool,
+    }
+    impl MSPGroupConfigurationParameter {
+        pub fn new(
+            protection_switch_mode: ProtectionSwitchMode,
+            a_psprotocol_present: bool,
+        ) -> Self {
+            Self {
+                protection_switch_mode,
+                a_psprotocol_present,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct MSPUnitConfigurationParameter {
+        #[rasn(identifier = "channelNumber")]
+        pub channel_number: Integer,
+        #[rasn(identifier = "sdhPriority")]
+        pub sdh_priority: Option<SDHMSPriority>,
+        #[rasn(identifier = "extraTrafficControl")]
+        pub extra_traffic_control: Option<AdministrativeState>,
+    }
+    impl MSPUnitConfigurationParameter {
+        pub fn new(
+            channel_number: Integer,
+            sdh_priority: Option<SDHMSPriority>,
+            extra_traffic_control: Option<AdministrativeState>,
+        ) -> Self {
+            Self {
+                channel_number,
+                sdh_priority,
+                extra_traffic_control,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ModifiedProtectionGroup(pub ObjectInstance);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ModifyProtectionInfo {
+        #[rasn(identifier = "modifiedProtectionGroup")]
+        pub modified_protection_group: ModifiedProtectionGroup,
+        #[rasn(tag(context, 0), identifier = "addedProtectionUnits")]
+        pub added_protection_units: Option<AddedProtectionUnits>,
+        #[rasn(tag(context, 1), identifier = "removedProtectionUnits")]
+        pub removed_protection_units: Option<RemovedProtectionUnits>,
+    }
+    impl ModifyProtectionInfo {
+        pub fn new(
+            modified_protection_group: ModifiedProtectionGroup,
+            added_protection_units: Option<AddedProtectionUnits>,
+            removed_protection_units: Option<RemovedProtectionUnits>,
+        ) -> Self {
+            Self {
+                modified_protection_group,
+                added_protection_units,
+                removed_protection_units,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct OperatorCommandPresent(pub SetOf<ResourcePointer>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ProtectionConfigurationError {
+        #[rasn(tag(context, 0))]
+        inconsistentData(InconsistentData),
+        #[rasn(tag(context, 1))]
+        unsupportedProtConfiguration(UnsupportedProtConfiguration),
+        #[rasn(tag(context, 2))]
+        incompatibleWithNEConfig(IncompatibleWithNEConfig),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ProtectionResource {
+        #[rasn(identifier = "unreliableObjects")]
+        pub unreliable_objects: ResourcePointer,
+        pub protecting: bool,
+        pub priority: Option<Integer>,
+        #[rasn(identifier = "specificPUConfiguration")]
+        pub specific_puconfiguration: Option<AdditionalInformation>,
+    }
+    impl ProtectionResource {
+        pub fn new(
+            unreliable_objects: ResourcePointer,
+            protecting: bool,
+            priority: Option<Integer>,
+            specific_puconfiguration: Option<AdditionalInformation>,
+        ) -> Self {
+            Self {
+                unreliable_objects,
+                protecting,
+                priority,
+                specific_puconfiguration,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ProtectionUnits(pub SetOf<ProtectionResource>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RemoveProtectionError(pub OperatorCommandPresent);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RemovedProtectionUnits(pub SetOf<ObjectInstance>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct RevertiveInformation {
+        pub revertive: bool,
+        #[rasn(identifier = "waitToRestoreTime")]
+        pub wait_to_restore_time: Option<Integer>,
+    }
+    impl RevertiveInformation {
+        pub fn new(revertive: bool, wait_to_restore_time: Option<Integer>) -> Self {
+            Self {
+                revertive,
+                wait_to_restore_time,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum UnsupportedProtConfiguration {
+        notSupportedProtConfig = 0,
+        notSupportedPGType = 1,
+        notSupportedRevertiveMode = 2,
+        invalidWTRTime = 3,
+        invalidPriority = 4,
+        otherError = 5,
+    }
+    pub static G774_09_ACTION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SDH_PROT_COORD, &[9u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static G774_09_ATTRIBUTE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SDH_PROT_COORD, &[7u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static G774_09_MOBJECT_CLASS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SDH_PROT_COORD, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static G774_09_NAME_BINDING: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SDH_PROT_COORD, &[6u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static G774_09_PARAMETER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SDH_PROT_COORD, &[5u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SDH_PROT_COORD: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::const_new(&[0u32, 0u32, 7u32, 774u32, 127u32, 9u32, 0u32]).to_owned()
+    });
+}

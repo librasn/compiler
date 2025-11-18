@@ -1,0 +1,460 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q956.2_1995_Advice-of-Charge-Operations.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod advice_of_charge_operations {
+    extern crate alloc;
+    use super::addressing_data_elements::PartyNumber;
+    use super::general_error_list::{
+        INVALID_CALL_STATE, NOT_AVAILABLE, SUPPLEMENTARY_SERVICE_INTERACTION_NOT_ALLOWED,
+        USER_NOT_SUBSCRIBED,
+    };
+    use super::remote_operations_information_objects::*;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AOCDBillingId {
+        normalCharging = 0,
+        reverseCharging = 1,
+        creditCardCharging = 2,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AOCDChargingUnitInfoSpecificChargingUnits {
+        #[rasn(tag(context, 1), identifier = "recordedUnitsList")]
+        pub recorded_units_list: RecordedUnitsList,
+        #[rasn(tag(context, 2), identifier = "typeOfChargingInfo")]
+        pub type_of_charging_info: TypeOfChargingInfo,
+        #[rasn(tag(context, 3), identifier = "aOCDBillingId")]
+        pub a_ocdbilling_id: Option<AOCDBillingId>,
+    }
+    impl AOCDChargingUnitInfoSpecificChargingUnits {
+        pub fn new(
+            recorded_units_list: RecordedUnitsList,
+            type_of_charging_info: TypeOfChargingInfo,
+            a_ocdbilling_id: Option<AOCDBillingId>,
+        ) -> Self {
+            Self {
+                recorded_units_list,
+                type_of_charging_info,
+                a_ocdbilling_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum AOCDChargingUnitInfo {
+        specificChargingUnits(AOCDChargingUnitInfoSpecificChargingUnits),
+        #[rasn(tag(context, 1))]
+        freeOfCharge(()),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AOCDCurrencyInfoSpecificCurrency {
+        #[rasn(tag(context, 1), identifier = "recordedCurrency")]
+        pub recorded_currency: RecordedCurrency,
+        #[rasn(tag(context, 2), identifier = "typeOfChargingInfo")]
+        pub type_of_charging_info: TypeOfChargingInfo,
+        #[rasn(tag(context, 3), identifier = "aOCDBillingId")]
+        pub a_ocdbilling_id: Option<AOCDBillingId>,
+    }
+    impl AOCDCurrencyInfoSpecificCurrency {
+        pub fn new(
+            recorded_currency: RecordedCurrency,
+            type_of_charging_info: TypeOfChargingInfo,
+            a_ocdbilling_id: Option<AOCDBillingId>,
+        ) -> Self {
+            Self {
+                recorded_currency,
+                type_of_charging_info,
+                a_ocdbilling_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum AOCDCurrencyInfo {
+        specificCurrency(AOCDCurrencyInfoSpecificCurrency),
+        #[rasn(tag(context, 1))]
+        freeOfCharge(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AOCEBillingId {
+        normalCharging = 0,
+        reverseCharging = 1,
+        creditCardCharging = 2,
+        callForwardingUnconditional = 3,
+        callForwardingBusy = 4,
+        callForwardingNoReply = 5,
+        callDeflection = 6,
+        callTransfer = 7,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AOCEChargingUnitInfoUnitInfoSpecificChargingUnits {
+        #[rasn(tag(context, 1), identifier = "recordedUnitsList")]
+        pub recorded_units_list: RecordedUnitsList,
+        #[rasn(tag(context, 2), identifier = "aOCEBillingId")]
+        pub a_ocebilling_id: Option<AOCEBillingId>,
+    }
+    impl AOCEChargingUnitInfoUnitInfoSpecificChargingUnits {
+        pub fn new(
+            recorded_units_list: RecordedUnitsList,
+            a_ocebilling_id: Option<AOCEBillingId>,
+        ) -> Self {
+            Self {
+                recorded_units_list,
+                a_ocebilling_id,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum AOCEChargingUnitInfoUnitInfo {
+        specificChargingUnits(AOCEChargingUnitInfoUnitInfoSpecificChargingUnits),
+        #[rasn(tag(context, 1))]
+        freeOfCharge(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AOCEChargingUnitInfo {
+        #[rasn(identifier = "unitInfo")]
+        pub unit_info: AOCEChargingUnitInfoUnitInfo,
+        #[rasn(identifier = "chargingAssociation")]
+        pub charging_association: Option<ChargingAssociation>,
+    }
+    impl AOCEChargingUnitInfo {
+        pub fn new(
+            unit_info: AOCEChargingUnitInfoUnitInfo,
+            charging_association: Option<ChargingAssociation>,
+        ) -> Self {
+            Self {
+                unit_info,
+                charging_association,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AOCECurrencyInfoCurrencyInfoSpecificCurrency {
+        #[rasn(tag(context, 1), identifier = "recordedCurrency")]
+        pub recorded_currency: RecordedCurrency,
+        #[rasn(tag(context, 2), identifier = "aOCEBillingId")]
+        pub a_ocebilling_id: Option<AOCEBillingId>,
+    }
+    impl AOCECurrencyInfoCurrencyInfoSpecificCurrency {
+        pub fn new(
+            recorded_currency: RecordedCurrency,
+            a_ocebilling_id: Option<AOCEBillingId>,
+        ) -> Self {
+            Self {
+                recorded_currency,
+                a_ocebilling_id,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum AOCECurrencyInfoCurrencyInfo {
+        specificCurrency(AOCECurrencyInfoCurrencyInfoSpecificCurrency),
+        #[rasn(tag(context, 1))]
+        freeOfCharge(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AOCECurrencyInfo {
+        #[rasn(identifier = "currencyInfo")]
+        pub currency_info: AOCECurrencyInfoCurrencyInfo,
+        #[rasn(identifier = "chargingAssociation")]
+        pub charging_association: Option<ChargingAssociation>,
+    }
+    impl AOCECurrencyInfo {
+        pub fn new(
+            currency_info: AOCECurrencyInfoCurrencyInfo,
+            charging_association: Option<ChargingAssociation>,
+        ) -> Self {
+            Self {
+                currency_info,
+                charging_association,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum AOCSCurrencyInfoAOCSCurrencyInfoSpecificCurrency {
+        #[rasn(tag(context, 1))]
+        durationCurrency(DurationCurrency),
+        #[rasn(tag(context, 2))]
+        flatRateCurrency(FlatRateCurrency),
+        #[rasn(tag(context, 3))]
+        volumeRateCurrency(VolumeRateCurrency),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum AOCSCurrencyInfoAOCSCurrencyInfo {
+        specificCurrency(AOCSCurrencyInfoAOCSCurrencyInfoSpecificCurrency),
+        specialChargingCode(SpecialChargingCode),
+        #[rasn(tag(context, 4))]
+        freeOfCharge(()),
+        #[rasn(tag(context, 5))]
+        currencyInfoNotAvailable(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AOCSCurrencyInfo {
+        #[rasn(identifier = "chargedItem")]
+        pub charged_item: ChargedItem,
+        #[rasn(identifier = "aOCSCurrencyInfo")]
+        pub a_ocscurrency_info: AOCSCurrencyInfoAOCSCurrencyInfo,
+    }
+    impl AOCSCurrencyInfo {
+        pub fn new(
+            charged_item: ChargedItem,
+            a_ocscurrency_info: AOCSCurrencyInfoAOCSCurrencyInfo,
+        ) -> Self {
+            Self {
+                charged_item,
+                a_ocscurrency_info,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=10"))]
+    pub struct AOCSCurrencyInfoList(pub SequenceOf<AOCSCurrencyInfo>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("1..=10"))]
+    pub struct AOCSSpecialArrInfo(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Amount {
+        #[rasn(tag(context, 1), identifier = "currencyAmount")]
+        pub currency_amount: CurrencyAmount,
+        #[rasn(tag(context, 2))]
+        pub multiplier: Multiplier,
+    }
+    impl Amount {
+        pub fn new(currency_amount: CurrencyAmount, multiplier: Multiplier) -> Self {
+            Self {
+                currency_amount,
+                multiplier,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=16777215"))]
+    pub struct ChargeIdentifier(pub u32);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ChargedItem {
+        basicCommunication = 0,
+        callAttempt = 1,
+        callSetup = 2,
+        userToUserInfo = 3,
+        operationOfSupplementaryServ = 4,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ChargingAssociation {
+        #[rasn(tag(explicit(context, 0)))]
+        chargedNumber(PartyNumber),
+        chargeIdentifier(ChargeIdentifier),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ChargingCase {
+        chargingInformationAtCallSetup = 0,
+        chargingDuringACall = 1,
+        chargingAtTheEndOfACall = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ChargingType {
+        continuousCharging = 0,
+        stepFunction = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=10"))]
+    pub struct Currency(pub Ia5String);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=16777215"))]
+    pub struct CurrencyAmount(pub u32);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct DurationCurrency {
+        #[rasn(tag(context, 1), identifier = "dCurrency")]
+        pub d_currency: Currency,
+        #[rasn(tag(context, 2), identifier = "dAmount")]
+        pub d_amount: Amount,
+        #[rasn(tag(context, 3), identifier = "dChargingType")]
+        pub d_charging_type: ChargingType,
+        #[rasn(tag(context, 4), identifier = "dTime")]
+        pub d_time: Time,
+        #[rasn(tag(context, 5), identifier = "dGranularity")]
+        pub d_granularity: Option<Time>,
+    }
+    impl DurationCurrency {
+        pub fn new(
+            d_currency: Currency,
+            d_amount: Amount,
+            d_charging_type: ChargingType,
+            d_time: Time,
+            d_granularity: Option<Time>,
+        ) -> Self {
+            Self {
+                d_currency,
+                d_amount,
+                d_charging_type,
+                d_time,
+                d_granularity,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct FlatRateCurrency {
+        #[rasn(tag(context, 1), identifier = "fRCurrency")]
+        pub f_rcurrency: Currency,
+        #[rasn(tag(context, 2), identifier = "fRAmount")]
+        pub f_ramount: Amount,
+    }
+    impl FlatRateCurrency {
+        pub fn new(f_rcurrency: Currency, f_ramount: Amount) -> Self {
+            Self {
+                f_rcurrency,
+                f_ramount,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=16777215"))]
+    pub struct LengthOfTimeUnit(pub u32);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum Multiplier {
+        oneThousandth = 0,
+        oneHundredth = 1,
+        oneTenth = 2,
+        one = 3,
+        ten = 4,
+        hundred = 5,
+        thousand = 6,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=16777215"))]
+    pub struct NumberOfUnits(pub u32);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct RecordedCurrency {
+        #[rasn(tag(context, 1), identifier = "rCurrency")]
+        pub r_currency: Currency,
+        #[rasn(tag(context, 2), identifier = "rAmount")]
+        pub r_amount: Amount,
+    }
+    impl RecordedCurrency {
+        pub fn new(r_currency: Currency, r_amount: Amount) -> Self {
+            Self {
+                r_currency,
+                r_amount,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum RecordedUnitsRecordedUnits {
+        recordedNumberOfUnits(NumberOfUnits),
+        notAvailable(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct RecordedUnits {
+        #[rasn(identifier = "recordedUnits")]
+        pub recorded_units: RecordedUnitsRecordedUnits,
+        #[rasn(identifier = "recordedTypeOfUnits")]
+        pub recorded_type_of_units: Option<TypeOfUnit>,
+    }
+    impl RecordedUnits {
+        pub fn new(
+            recorded_units: RecordedUnitsRecordedUnits,
+            recorded_type_of_units: Option<TypeOfUnit>,
+        ) -> Self {
+            Self {
+                recorded_units,
+                recorded_type_of_units,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=32"))]
+    pub struct RecordedUnitsList(pub SequenceOf<RecordedUnits>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum Scale {
+        oneHundrethSecond = 0,
+        oneTenthSecond = 1,
+        oneSecond = 2,
+        tenSeconds = 3,
+        oneMinute = 4,
+        oneHour = 5,
+        twentyFourHours = 6,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("1..=10"))]
+    pub struct SpecialChargingCode(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Time {
+        #[rasn(tag(context, 1), identifier = "lengthOfTimeUnit")]
+        pub length_of_time_unit: LengthOfTimeUnit,
+        #[rasn(tag(context, 2))]
+        pub scale: Scale,
+    }
+    impl Time {
+        pub fn new(length_of_time_unit: LengthOfTimeUnit, scale: Scale) -> Self {
+            Self {
+                length_of_time_unit,
+                scale,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum TypeOfChargingInfo {
+        subTotal = 0,
+        total = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("1..=16"))]
+    pub struct TypeOfUnit(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct VolumeRateCurrency {
+        #[rasn(tag(context, 1), identifier = "vRCurrency")]
+        pub v_rcurrency: Currency,
+        #[rasn(tag(context, 2), identifier = "vRAmount")]
+        pub v_ramount: Amount,
+        #[rasn(tag(context, 3), identifier = "vRVolumeUnit")]
+        pub v_rvolume_unit: VolumeUnit,
+    }
+    impl VolumeRateCurrency {
+        pub fn new(v_rcurrency: Currency, v_ramount: Amount, v_rvolume_unit: VolumeUnit) -> Self {
+            Self {
+                v_rcurrency,
+                v_ramount,
+                v_rvolume_unit,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum VolumeUnit {
+        octet = 0,
+        segment = 1,
+        message = 2,
+    }
+}

@@ -1,0 +1,190 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x419_1999_MSAccessProtocol.asn1
+---
+Warnings:
+LinkerError in ASN grammar: Failed to resolve supertype ROS-SingleAS of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype ROS-SingleAS of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype ROS-SingleAS of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype Bind of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype Bind of parameterized implementation.
+LinkerError in ASN grammar: Failed to link value with 'Code'
+LinkerError in ASN grammar: Failed to link value with 'Code'
+LinkerError in ASN grammar: Failed to link value with 'Code'
+LinkerError in ASN grammar: Failed to link value with 'Code'
+LinkerError in ASN grammar: Failed to link value with 'Code'
+LinkerError in ASN grammar: Failed to link value with 'Code'
+LinkerError in ASN grammar: Failed to link value with 'Code'
+LinkerError in ASN grammar: Failed to link value with 'Code'
+LinkerError in ASN grammar: Failed to link value with 'Code'
+LinkerError in ASN grammar: Failed to link value with 'Code'
+LinkerError in ASN grammar: Failed to link value with 'Code'
+LinkerError in ASN grammar: Failed to link value with 'Code'
+LinkerError in ASN grammar: Failed to link value with 'Code'
+LinkerError in ASN grammar: Failed to link value with 'Code'
+LinkerError in ASN grammar: Failed to link value with 'Code'
+LinkerError in ASN grammar: Failed to link value with 'Code'
+LinkerError in ASN grammar: Failed to link value with 'Code'
+LinkerError in ASN grammar: Failed to link value with 'Code'
+LinkerError in ASN grammar: Failed to link value with 'Code'
+LinkerError in ASN grammar: Failed to link value with 'Code'
+LinkerError in ASN grammar: Failed to link value with 'Code'
+LinkerError in ASN grammar: Failed to link value with 'Code'
+LinkerError in ASN grammar: Failed to link value with 'Code'
+LinkerError in ASN grammar: Failed to link value with 'Code'
+LinkerError in ASN grammar: Failed to link value with 'Code'
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod msaccess_protocol {
+    extern crate alloc;
+    use super::mhsprotocol_object_identifiers::{
+        ID_AC_MS_ACCESS_88, ID_AC_MS_ACCESS_94, ID_AC_MS_RELIABLE_ACCESS_88,
+        ID_AC_MS_RELIABLE_ACCESS_94, ID_AS_MASE_88, ID_AS_MASE_94, ID_AS_MDSE_88, ID_AS_MDSE_94,
+        ID_AS_MRSE_88, ID_AS_MRSE_94, ID_AS_MSSE, ID_AS_MS_88, ID_AS_MS_94, ID_AS_MS_MSSE,
+        ID_AS_MS_RTSE,
+    };
+    use super::msabstract_service::{
+        MS_ACCESS_CONTRACT_88, MS_ACCESS_CONTRACT_94, MS_SUBMISSION, RETRIEVAL, RETRIEVAL_88,
+    };
+    use super::mtsaccess_protocol::{
+        MESSAGE_ADMINISTRATION_ABSTRACT_SYNTAX_88, MESSAGE_ADMINISTRATION_ABSTRACT_SYNTAX_94,
+        MESSAGE_SUBMISSION_ABSTRACT_SYNTAX,
+    };
+    use super::reliable_transfer_apdu::{RTOACapdu, RTORJapdu, RTORQapdu};
+    use super::remote_operations_abstract_syntaxes::ACSE_ABSTRACT_SYNTAX;
+    use super::remote_operations_generic_ros_pdus::{Bind, InvokeId, Unbind};
+    use super::remote_operations_information_objects::Code;
+    use super::remote_operations_information_objects_extensions::*;
+    use super::remote_operations_realizations::{
+        ACSE, ASSOCIATION_BY_RTSE, P_DATA, TRANSFER_BY_RTSE,
+    };
+    use super::remote_operations_useful_definitions::ROSSingleAS;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AbortReason(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum MSBindUnbindPDUs88 {
+        #[rasn(value("0.."))]
+        bind(Bind),
+        #[rasn(value("0.."))]
+        unbind(Unbind),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum MSBindUnbindPDUs94 {
+        #[rasn(value("0.."))]
+        bind(Bind),
+        #[rasn(value("0.."))]
+        unbind(Unbind),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MSInvokeIds(pub InvokeId);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MSMessageSubmissionPDUs(pub ROSSingleAS);
+    #[doc = "\tAbstract Syntax for Message Retrieval Service Element 1988"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MessageRetrievalPDUs(pub ROSSingleAS);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MessageRetrievalPDUs88(pub ROSSingleAS);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct RTABapdu {
+        #[rasn(tag(context, 0), identifier = "abortReason")]
+        pub abort_reason: Option<AbortReason>,
+        #[rasn(tag(context, 1), identifier = "reflectedParameter")]
+        pub reflected_parameter: Option<BitString>,
+        #[rasn(tag(context, 2), identifier = "userdataAB")]
+        pub userdata_ab: Option<Any>,
+    }
+    impl RTABapdu {
+        pub fn new(
+            abort_reason: Option<AbortReason>,
+            reflected_parameter: Option<BitString>,
+            userdata_ab: Option<Any>,
+        ) -> Self {
+            Self {
+                abort_reason,
+                reflected_parameter,
+                userdata_ab,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "RTSE-apdus")]
+    pub enum RTSEApdus {
+        #[rasn(tag(context, 16), identifier = "rtorq-apdu")]
+        rtorq_apdu(RTORQapdu),
+        #[rasn(tag(context, 17), identifier = "rtoac-apdu")]
+        rtoac_apdu(RTOACapdu),
+        #[rasn(tag(context, 18), identifier = "rtorj-apdu")]
+        rtorj_apdu(RTORJapdu),
+        #[rasn(identifier = "rttp-apdu")]
+        rttp_apdu(RTTPapdu),
+        #[rasn(identifier = "rttr-apdu")]
+        rttr_apdu(RTTRapdu),
+        #[rasn(tag(context, 22), identifier = "rtab-apdu")]
+        rtab_apdu(RTABapdu),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RTTPapdu(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RTTRapdu(pub OctetString);
+    #[doc = "\tRemote Errors"]
+    pub static ERR_ATTRIBUTE_ERROR: LazyLock<Code> = LazyLock::new(|| Code(Code(Code::local(21))));
+    pub static ERR_AUTO_ACTION_REQUEST_ERROR: LazyLock<Code> =
+        LazyLock::new(|| Code(Code(Code::local(22))));
+    pub static ERR_DELETE_ERROR: LazyLock<Code> = LazyLock::new(|| Code(Code(Code::local(23))));
+    pub static ERR_ENTRY_CLASS_ERROR: LazyLock<Code> =
+        LazyLock::new(|| Code(Code(Code::local(34))));
+    pub static ERR_FETCH_RESTRICTION_ERROR: LazyLock<Code> =
+        LazyLock::new(|| Code(Code(Code::local(24))));
+    pub static ERR_INVALID_PARAMETERS_ERROR: LazyLock<Code> =
+        LazyLock::new(|| Code(Code(Code::local(29))));
+    pub static ERR_MESSAGE_GROUP_ERROR: LazyLock<Code> =
+        LazyLock::new(|| Code(Code(Code::local(30))));
+    pub static ERR_MODIFY_ERROR: LazyLock<Code> = LazyLock::new(|| Code(Code(Code::local(33))));
+    pub static ERR_MS_EXTENSION_ERROR: LazyLock<Code> =
+        LazyLock::new(|| Code(Code(Code::local(31))));
+    pub static ERR_RANGE_ERROR: LazyLock<Code> = LazyLock::new(|| Code(Code(Code::local(25))));
+    pub static ERR_REGISTER_MS_ERROR: LazyLock<Code> =
+        LazyLock::new(|| Code(Code(Code::local(32))));
+    #[doc = " 1988 Application Contexts only"]
+    pub static ERR_SECURITY_ERROR: LazyLock<Code> = LazyLock::new(|| Code(Code(Code::local(26))));
+    pub static ERR_SEQUENCE_NUMBER_ERROR: LazyLock<Code> =
+        LazyLock::new(|| Code(Code(Code::local(28))));
+    pub static ERR_SERVICE_ERROR: LazyLock<Code> = LazyLock::new(|| Code(Code(Code::local(27))));
+    pub static OP_ALERT: LazyLock<Code> = LazyLock::new(|| Code(Code(Code::local(25))));
+    pub static OP_DELETE: LazyLock<Code> = LazyLock::new(|| Code(Code(Code::local(23))));
+    pub static OP_FETCH: LazyLock<Code> = LazyLock::new(|| Code(Code(Code::local(22))));
+    pub static OP_LIST: LazyLock<Code> = LazyLock::new(|| Code(Code(Code::local(21))));
+    pub static OP_MODIFY: LazyLock<Code> = LazyLock::new(|| Code(Code(Code::local(26))));
+    pub static OP_MS_CANCEL_DEFERRED_DELIVERY: LazyLock<Code> =
+        LazyLock::new(|| Code(Code(Code::local(7))));
+    pub static OP_MS_MESSAGE_SUBMISSION: LazyLock<Code> =
+        LazyLock::new(|| Code(Code(Code::local(3))));
+    pub static OP_MS_PROBE_SUBMISSION: LazyLock<Code> =
+        LazyLock::new(|| Code(Code(Code::local(4))));
+    #[doc = "\tRemote Operations"]
+    pub static OP_MS_SUBMISSION_CONTROL: LazyLock<Code> =
+        LazyLock::new(|| Code(Code(Code::local(2))));
+    pub static OP_REGISTER_MS: LazyLock<Code> = LazyLock::new(|| Code(Code(Code::local(24))));
+    pub static OP_SUMMARIZE: LazyLock<Code> = LazyLock::new(|| Code(Code(Code::local(20))));
+}

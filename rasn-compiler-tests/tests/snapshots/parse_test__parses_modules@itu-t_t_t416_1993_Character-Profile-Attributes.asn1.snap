@@ -1,0 +1,81 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_t_t416_1993_Character-Profile-Attributes.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod character_profile_attributes {
+    extern crate alloc;
+    use super::character_presentation_attributes::{
+        Alignment, CharacterAttributes, CharacterFonts, FormattingIndicator, GraphicRendition,
+        Itemization, KerningOffset, LayoutTable, MeasurePair, OneOfFourAngles, OneOfTwoAngles,
+        PairwiseKerning, ProportionalLineSpacing,
+    };
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate, identifier = "Character-Coding-Attribute")]
+    pub struct CharacterCodingAttribute(pub ());
+    #[doc = "\tno character coding attributes"]
+    #[doc = "\tare defined in this part of"]
+    #[doc = "\tITU-T Rec. T.410-Series | ISO/IEC 8613"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Character-Content-Defaults")]
+    pub struct CharacterContentDefaults(pub CharacterAttributes);
+    #[doc = "\tsee 11.2"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "Character-Presentation-Feature")]
+    pub enum CharacterPresentationFeature {
+        #[rasn(tag(context, 0), identifier = "character-path")]
+        character_path(OneOfFourAngles),
+        #[rasn(tag(context, 1), identifier = "line-progression")]
+        line_progression(OneOfTwoAngles),
+        #[rasn(tag(context, 2), identifier = "character-orientation")]
+        character_orientation(OneOfFourAngles),
+        #[rasn(tag(context, 3), identifier = "initial-offset")]
+        initial_offset(MeasurePair),
+        #[rasn(tag(context, 6), identifier = "character-spacing")]
+        character_spacing(Integer),
+        #[rasn(tag(context, 7), identifier = "line-spacing")]
+        line_spacing(Integer),
+        #[rasn(tag(context, 8))]
+        alignment(Alignment),
+        #[rasn(tag(context, 9), identifier = "line-layout-table")]
+        line_layout_table(LayoutTable),
+        #[rasn(tag(context, 10), identifier = "graphic-rendition")]
+        graphic_rendition(GraphicRendition),
+        #[rasn(tag(context, 11), identifier = "formatting-indicator")]
+        formatting_indicator(FormattingIndicator),
+        #[rasn(tag(context, 12), identifier = "character-fonts")]
+        character_fonts(CharacterFonts),
+        #[rasn(tag(context, 13), identifier = "graphic-char-subrepertoire")]
+        graphic_char_subrepertoire(Integer),
+        #[rasn(tag(context, 14))]
+        itemization(Itemization),
+        #[rasn(tag(context, 15), identifier = "widow-size")]
+        widow_size(Integer),
+        #[rasn(tag(context, 16), identifier = "orphan-size")]
+        orphan_size(Integer),
+        #[rasn(tag(context, 17), identifier = "graphic-character-sets")]
+        graphic_character_sets(OctetString),
+        #[rasn(tag(context, 19))]
+        indentation(Integer),
+        #[rasn(tag(context, 20), identifier = "kerning-offset")]
+        kerning_offset(KerningOffset),
+        #[rasn(tag(context, 21), identifier = "proportional-line-spacing")]
+        proportional_line_spacing(ProportionalLineSpacing),
+        #[rasn(tag(context, 22), identifier = "pairwise-kerning")]
+        pairwise_kerning(PairwiseKerning),
+        #[rasn(tag(context, 23), identifier = "first-line-offset")]
+        first_line_offset(Integer),
+        #[rasn(tag(context, 24), identifier = "code-extension-announcers")]
+        code_extension_announcers(OctetString),
+    }
+}

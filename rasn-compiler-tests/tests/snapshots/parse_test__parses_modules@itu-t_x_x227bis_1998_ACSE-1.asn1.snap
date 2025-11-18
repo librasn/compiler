@@ -1,0 +1,41 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x227bis_1998_ACSE-1.asn1
+---
+Error matching ASN syntax at while parsing:
+    ╭─[line 44, column 2]
+    │
+    │ 
+ 44 │  AARQ-apdu ::= [APPLICATION 0] IMPLICIT SEQUENCE { ◀▪▪▪▪▪▪▪▪▪▪ FAILED AT THIS LINE
+ 45 │    protocol-version
+ 46 │      [0] IMPLICIT BIT STRING {version1(0)} DEFAULT {version1},
+ 47 │    aSO-context-name                  [1]  ASO-context-name,
+ 48 │    called-AP-title                   [2]  AP-title OPTIONAL,
+ 49 │    called-AE-qualifier               [3]  AE-qualifier OPTIONAL,
+ 50 │    called-AP-invocation-identifier   [4]  AP-invocation-identifier OPTIONAL,
+ 51 │    called-AE-invocation-identifier   [5]  AE-invocation-identifier OPTIONAL,
+ 52 │    calling-AP-title                  [6]  AP-title OPTIONAL,
+ 53 │    calling-AE-qualifier              [7]  AE-qualifier OPTIONAL,
+ 54 │    calling-AP-invocation-identifier  [8]  AP-invocation-identifier OPTIONAL,
+ 55 │    calling-AE-invocation-identifier  [9]  AE-invocation-identifier OPTIONAL,
+ 56 │    --  The following field shall not be present if only the Kernel is used.
+ 57 │    sender-acse-requirements          [10] IMPLICIT ACSE-requirements OPTIONAL,
+ 58 │    --  The following field shall only be present if the Authentication functional unit is selected.
+ 59 │    mechanism-name                    [11] IMPLICIT Mechanism-name OPTIONAL,
+ 60 │    --  The following field shall only be present if the Authentication functional unit is selected.
+ 61 │    calling-authentication-value      [12] EXPLICIT Authentication-value OPTIONAL,
+ 62 │    aSO-context-name-list
+ 63 │      [13] IMPLICIT ASO-context-name-list OPTIONAL,
+ 64 │    --  The above field shall only be present if the Application Context Negotiation functional unit is selected.
+ 65 │    implementation-information        [29] IMPLICIT Implementation-data OPTIONAL,
+ 66 │    ...,
+ 67 │    --  Extensions for higher level association FU
+ 68 │    p-context-definition-list         [14]  Syntactic-context-list OPTIONAL,
+ 69 │    called-asoi-tag                   [15] IMPLICIT ASOI-tag OPTIONAL,
+ 70 │    calling-asoi-tag                  [16] IMPLICIT ASOI-tag OPTIONAL,
+ 71 │    --  End of extensions for higher level association FU
+ 72 │    ...,
+ 73 │    user-information                  [30] IMPLICIT Association-data OPTIONAL
+ 74 │  }
+    │
+────╯

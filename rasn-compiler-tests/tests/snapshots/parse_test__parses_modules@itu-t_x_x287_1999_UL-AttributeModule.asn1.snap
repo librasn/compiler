@@ -1,0 +1,437 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x287_1999_UL-AttributeModule.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod ul_attribute_module {
+    extern crate alloc;
+    use super::acse_1::{
+        ACSERequirements, AEInvocationIdentifier, AEQualifier, AETitle, APInvocationIdentifier,
+        APTitle, ApplicationContextName,
+    };
+    use super::cmip_1::ObjectInstance;
+    use super::information_framework::RelativeDistinguishedName;
+    use super::iso8823_presentation::{
+        AbstractSyntaxName, ContextList, PresentationRequirements, PresentationSelector,
+        TransferSyntaxName,
+    };
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " This should be compatible syntax with AeInvocationId"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ASOId(pub GraphicString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ASOInvocationId(pub GraphicString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ASOQualifier(pub RelativeDistinguishedName);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ASOTitle {
+        #[rasn(identifier = "ap-title")]
+        pub ap_title: APTitle,
+        #[rasn(identifier = "aso-name")]
+        pub aso_name: SequenceOf<ASOQualifier>,
+    }
+    impl ASOTitle {
+        pub fn new(ap_title: APTitle, aso_name: SequenceOf<ASOQualifier>) -> Self {
+            Self { ap_title, aso_name }
+        }
+    }
+    #[doc = "Type references"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AbstrSyntaxSupport(pub SetOf<AbstractSyntaxName>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AcseEditionsSupported(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AcseFUs(pub ACSERequirements);
+    #[doc = " from amendment 1 to acse protocol"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AeInvocationId(pub AEInvocationIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ApInvocation(pub APInvocationIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ApInvocationId(pub APInvocationIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ApplContextInUse(pub ApplicationContextName);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ApplContextNameSupport(pub SetOf<ApplicationContextName>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AsoInvocId(pub Integer);
+    #[doc = "of ASO"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CallAEtitle(pub AETitle);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct LocalAEqualifier(pub AEQualifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MaxTSDUsize(pub Integer);
+    #[doc = " four octets maximum length"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ParentASOinvoc(pub ObjectInstance);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PresContextInUse(pub ContextList);
+    #[doc = " only one transfer syntax used for each abstract syntax"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PresFUs(pub PresentationRequirements);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PresSelectorValue(pub PresentationSelector);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SessFUs(pub BitString);
+    #[doc = " 16 octets max"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SessOptSupport(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SessProtVer(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SessionSelectorValue(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SupportingServices(pub SetOf<ObjectInstance>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TransfSyntaxSupport(pub SetOf<TransferSyntaxName>);
+    pub static ABSTR_SYNTAX_SUPPORT_AID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***UL_ATTRIBUTE_ID, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ACSE_ASSOCIATION_MOCID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***UL_MOBJECT_CLASS, &[2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ACSE_EDITIONS_SUPPORTED_AID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***UL_ATTRIBUTE_ID, &[2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ACSE_FUIN_USE_AID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***UL_ATTRIBUTE_ID, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ACSE_FUINITIATOR_AID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***UL_ATTRIBUTE_ID, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ACSE_FURESPONDER_AID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***UL_ATTRIBUTE_ID, &[5u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ACSE_MOCID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***UL_MOBJECT_CLASS, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static AE_INVOCATION_ID_AID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***UL_ATTRIBUTE_ID, &[6u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static AP_APPLICATION_SUBSYSTEM_NBID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***UL_NAME_BINDING, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static AP_INVOCATION_APPLICATION_SUBSYSTEM_NBID: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***UL_NAME_BINDING, &[2u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static AP_INVOCATION_ID_AID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***UL_ATTRIBUTE_ID, &[8u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static AP_INVOCATION_MOCID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***UL_MOBJECT_CLASS, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static APPL_CONTEXT_IN_USE_AID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***UL_ATTRIBUTE_ID, &[9u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static APPL_CONTEXT_NAME_SUPPORT_AID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***UL_ATTRIBUTE_ID, &[10u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static APPLICATION_ENTITY_INVOCATION_MOCID: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***UL_MOBJECT_CLASS, &[5u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static APPLICATION_ENTITY_MOCID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***UL_MOBJECT_CLASS, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static APPLICATION_SUBSYSTEM_MOCID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***UL_MOBJECT_CLASS, &[6u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ASO_ASO_ENTITY_NBID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***UL_NAME_BINDING, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ASO_ASO_NBID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***UL_NAME_BINDING, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ASO_ENTITY_APPLICATION_PROCESS_NBID: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***UL_NAME_BINDING, &[5u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ASO_ENTITY_MOCID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***UL_MOBJECT_CLASS, &[8u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ASO_INVOCATION_AP_INVOCATION_NBID: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***UL_NAME_BINDING, &[6u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ASO_INVOCATION_ASO_INVOCATION_NBID: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***UL_NAME_BINDING, &[7u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ASO_INVOCATION_MOCID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***UL_MOBJECT_CLASS, &[9u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ASO_MOCID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***UL_MOBJECT_CLASS, &[7u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ASO_QUALIFIER_AID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***UL_ATTRIBUTE_ID, &[11u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ASO_TITLE_AID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***UL_ATTRIBUTE_ID, &[12u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static CALLED_AETITLE_AID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***UL_ATTRIBUTE_ID, &[13u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static CALLED_AETITLE_PID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***UL_MO_PACKAGE, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static CALLING_AETITLE_AID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***UL_ATTRIBUTE_ID, &[14u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static INVOCATION_OF_POINTER_AID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***UL_ATTRIBUTE_ID, &[15u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static MAX_TSDUSIZE_AID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***UL_ATTRIBUTE_ID, &[16u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static MAX_TSDUSIZE_PID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***UL_MO_PACKAGE, &[2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static MONO_ULCONNECTION_MOCID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***UL_MOBJECT_CLASS, &[10u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static MONO_ULENTITY_MOCID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***UL_MOBJECT_CLASS, &[11u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static MONOLITHIC_UPPER_LAYER_SUBSYSTEM_MOCID: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***UL_MOBJECT_CLASS, &[12u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static P_SAP_MOCID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***UL_MOBJECT_CLASS, &[13u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static PARENT_ASOINVOC_AID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***UL_ATTRIBUTE_ID, &[17u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static PRES_CONTEXT_IN_USE_AID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***UL_ATTRIBUTE_ID, &[18u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static PRES_FUIN_USE_AID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***UL_ATTRIBUTE_ID, &[19u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static PRES_FUSUPPORT_AID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***UL_ATTRIBUTE_ID, &[20u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static PRES_SELECTOR_VALUE_AID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***UL_ATTRIBUTE_ID, &[21u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static PRESENTATION_CONNECTION_MOCID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***UL_MOBJECT_CLASS, &[14u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static PRESENTATION_COPM_MOCID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***UL_MOBJECT_CLASS, &[15u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static PRESENTATION_ENTITY_MOCID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***UL_MOBJECT_CLASS, &[16u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static PRESENTATION_SUBSYSTEM_MOCID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***UL_MOBJECT_CLASS, &[17u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static S_SAP_MOCID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***UL_MOBJECT_CLASS, &[18u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SESS_FUIN_USE_AID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***UL_ATTRIBUTE_ID, &[22u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SESS_FUSUPPORT_AID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***UL_ATTRIBUTE_ID, &[23u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SESS_OPT_SUPPORT_AID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***UL_ATTRIBUTE_ID, &[24u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SESS_PROT_IN_USE_AID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***UL_ATTRIBUTE_ID, &[25u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SESS_PROT_VER_SUPPORT_AID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***UL_ATTRIBUTE_ID, &[26u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SESSION_CONNECTION_MOCID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***UL_MOBJECT_CLASS, &[19u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SESSION_COPM_MOCID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***UL_MOBJECT_CLASS, &[20u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SESSION_ENTITY_MOCID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***UL_MOBJECT_CLASS, &[21u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SESSION_SELECTOR_VALUE_AID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***UL_ATTRIBUTE_ID, &[27u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SESSION_SUBSYSTEM_MOCID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***UL_MOBJECT_CLASS, &[22u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SUPPORTING_SERVICES_AID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***UL_ATTRIBUTE_ID, &[28u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static TRANSF_SYNTAX_SUPPORT_AID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***UL_ATTRIBUTE_ID, &[29u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static UL_ATTRIBUTE_ID: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 9u32, 3u32, 8u32, 7u32]).to_owned());
+    pub static UL_ATTRIBUTE_IDAID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***UL_ATTRIBUTE_ID, &[7u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = "value references"]
+    pub static UL_MOBJECT_CLASS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 9u32, 3u32, 8u32, 3u32]).to_owned());
+    pub static UL_MO_PACKAGE: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 9u32, 3u32, 8u32, 4u32]).to_owned());
+    pub static UL_NAME_BINDING: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 9u32, 3u32, 8u32, 6u32]).to_owned());
+}

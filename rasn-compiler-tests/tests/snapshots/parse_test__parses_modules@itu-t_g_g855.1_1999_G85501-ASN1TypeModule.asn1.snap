@@ -1,0 +1,461 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_g_g855.1_1999_G85501-ASN1TypeModule.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod g85501_asn1_type_module {
+    extern crate alloc;
+    use super::asn1_defined_types_module::{
+        Directionality, Failed, ObjectList, ProblemCause, UserLabel,
+    };
+    use super::attribute_asn1_module::{
+        AdditionalInformation, AdministrativeState, AvailabilityStatus, OperationalState,
+        PerceivedSeverity, ProbableCause,
+    };
+    use super::cmip_1::{DistinguishedName, ObjectInstance};
+    use super::m3100_asn1_type_module2::{
+        CTPList, Capacities, Capacity, ConnectivityEndPoint, Count, LinkConnectionList,
+        LinkDirectionality, LinkEnd, None, SignalId, TPList, UserIdentifier,
+    };
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct AssociateNetworkTTPWithTopologicalLinkEndInformation {
+        #[rasn(identifier = "linkEnd")]
+        pub link_end: ObjectInstance,
+        #[rasn(identifier = "networkTTP")]
+        pub network_ttp: ObjectInstance,
+    }
+    impl AssociateNetworkTTPWithTopologicalLinkEndInformation {
+        pub fn new(link_end: ObjectInstance, network_ttp: ObjectInstance) -> Self {
+            Self {
+                link_end,
+                network_ttp,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct AssociateNetworkTTPWithTopologicalLinkEndResult {
+        #[rasn(identifier = "potentialCapacity")]
+        pub potential_capacity: Capacity,
+        #[rasn(identifier = "networkCTPs")]
+        pub network_ctps: CTPList,
+    }
+    impl AssociateNetworkTTPWithTopologicalLinkEndResult {
+        pub fn new(potential_capacity: Capacity, network_ctps: CTPList) -> Self {
+            Self {
+                potential_capacity,
+                network_ctps,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct AssociateTrailWithTopologicalLinkInformation {
+        pub link: ObjectInstance,
+        pub trail: ObjectInstance,
+    }
+    impl AssociateTrailWithTopologicalLinkInformation {
+        pub fn new(link: ObjectInstance, trail: ObjectInstance) -> Self {
+            Self { link, trail }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct AssociateTrailWithTopologicalLinkResult {
+        #[rasn(identifier = "potentialCapacity")]
+        pub potential_capacity: Capacity,
+        #[rasn(identifier = "resultingLinkConnections")]
+        pub resulting_link_connections: LinkConnectionList,
+    }
+    impl AssociateTrailWithTopologicalLinkResult {
+        pub fn new(
+            potential_capacity: Capacity,
+            resulting_link_connections: LinkConnectionList,
+        ) -> Self {
+            Self {
+                potential_capacity,
+                resulting_link_connections,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct DisassociateNWTTPFromTopLinkEndInformation {
+        #[rasn(tag(context, 1), identifier = "linkEnd")]
+        pub link_end: ObjectInstance,
+        #[rasn(tag(context, 2), identifier = "networkTTP")]
+        pub network_ttp: Option<ObjectInstance>,
+    }
+    impl DisassociateNWTTPFromTopLinkEndInformation {
+        pub fn new(link_end: ObjectInstance, network_ttp: Option<ObjectInstance>) -> Self {
+            Self {
+                link_end,
+                network_ttp,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct DisassociateTrailFromTopLinkInformation {
+        #[rasn(tag(context, 1))]
+        pub link: ObjectInstance,
+        #[rasn(tag(context, 2))]
+        pub trail: Option<ObjectInstance>,
+    }
+    impl DisassociateTrailFromTopLinkInformation {
+        pub fn new(link: ObjectInstance, trail: Option<ObjectInstance>) -> Self {
+            Self { link, trail }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct EstablishLogicalLinkAndEndsResult {
+        pub link: ObjectInstance,
+        #[rasn(identifier = "aEnd")]
+        pub a_end: ObjectInstance,
+        #[rasn(identifier = "zEnd")]
+        pub z_end: ObjectInstance,
+    }
+    impl EstablishLogicalLinkAndEndsResult {
+        pub fn new(link: ObjectInstance, a_end: ObjectInstance, z_end: ObjectInstance) -> Self {
+            Self { link, a_end, z_end }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct EstablishLogicalLinkInformation {
+        #[rasn(identifier = "layerNetworkDomain")]
+        pub layer_network_domain: ObjectInstance,
+        #[rasn(identifier = "aEnd")]
+        pub a_end: LinkEnd,
+        #[rasn(identifier = "zEnd")]
+        pub z_end: LinkEnd,
+        #[rasn(tag(context, 1), identifier = "suppliedUserIdentifier")]
+        pub supplied_user_identifier: Option<UserIdentifier>,
+        #[rasn(tag(context, 2), identifier = "suppliedUserLabel")]
+        pub supplied_user_label: Option<GraphicString>,
+        #[rasn(tag(context, 3), identifier = "suppliedDirection")]
+        pub supplied_direction: Option<LinkDirectionality>,
+    }
+    impl EstablishLogicalLinkInformation {
+        pub fn new(
+            layer_network_domain: ObjectInstance,
+            a_end: LinkEnd,
+            z_end: LinkEnd,
+            supplied_user_identifier: Option<UserIdentifier>,
+            supplied_user_label: Option<GraphicString>,
+            supplied_direction: Option<LinkDirectionality>,
+        ) -> Self {
+            Self {
+                layer_network_domain,
+                a_end,
+                z_end,
+                supplied_user_identifier,
+                supplied_user_label,
+                supplied_direction,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct EstablishLogicalLinkResult {
+        pub link: ObjectInstance,
+    }
+    impl EstablishLogicalLinkResult {
+        pub fn new(link: ObjectInstance) -> Self {
+            Self { link }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct EstablishTopologicalLinkAndEndsResult {
+        pub link: ObjectInstance,
+        #[rasn(identifier = "aEnd")]
+        pub a_end: ObjectInstance,
+        #[rasn(identifier = "zEnd")]
+        pub z_end: ObjectInstance,
+    }
+    impl EstablishTopologicalLinkAndEndsResult {
+        pub fn new(link: ObjectInstance, a_end: ObjectInstance, z_end: ObjectInstance) -> Self {
+            Self { link, a_end, z_end }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct EstablishTopologicalLinkInformation {
+        #[rasn(identifier = "layerNetworkDomain")]
+        pub layer_network_domain: ObjectInstance,
+        #[rasn(identifier = "aEnd")]
+        pub a_end: LinkEnd,
+        #[rasn(identifier = "zEnd")]
+        pub z_end: LinkEnd,
+        #[rasn(tag(context, 1), identifier = "suppliedUserIdentifier")]
+        pub supplied_user_identifier: Option<UserIdentifier>,
+        #[rasn(tag(context, 2), identifier = "suppliedUserLabel")]
+        pub supplied_user_label: Option<GraphicString>,
+        #[rasn(tag(context, 3), identifier = "suppliedDirection")]
+        pub supplied_direction: Option<Directionality>,
+    }
+    impl EstablishTopologicalLinkInformation {
+        pub fn new(
+            layer_network_domain: ObjectInstance,
+            a_end: LinkEnd,
+            z_end: LinkEnd,
+            supplied_user_identifier: Option<UserIdentifier>,
+            supplied_user_label: Option<GraphicString>,
+            supplied_direction: Option<Directionality>,
+        ) -> Self {
+            Self {
+                layer_network_domain,
+                a_end,
+                z_end,
+                supplied_user_identifier,
+                supplied_user_label,
+                supplied_direction,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct EstablishTopologicalLinkResult {
+        pub link: ObjectInstance,
+    }
+    impl EstablishTopologicalLinkResult {
+        pub fn new(link: ObjectInstance) -> Self {
+            Self { link }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct Implicit(pub bool);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct QofConnectivityService(pub ObjectInstance);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct ReleaseSncInformation {
+        pub snc: ObjectInstance,
+        #[rasn(identifier = "userId")]
+        pub user_id: Option<UserIdentifier>,
+    }
+    impl ReleaseSncInformation {
+        pub fn new(snc: ObjectInstance, user_id: Option<UserIdentifier>) -> Self {
+            Self { snc, user_id }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct ReleaseTrailInformation {
+        #[rasn(identifier = "trailId")]
+        pub trail_id: ObjectInstance,
+        #[rasn(identifier = "userId")]
+        pub user_id: Option<UserIdentifier>,
+    }
+    impl ReleaseTrailInformation {
+        pub fn new(trail_id: ObjectInstance, user_id: Option<UserIdentifier>) -> Self {
+            Self { trail_id, user_id }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct RemoveLogicalLinkInformation {
+        pub link: ObjectInstance,
+    }
+    impl RemoveLogicalLinkInformation {
+        pub fn new(link: ObjectInstance) -> Self {
+            Self { link }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct RemoveTopLinkAndEndsInformation {
+        pub link: ObjectInstance,
+    }
+    impl RemoveTopLinkAndEndsInformation {
+        pub fn new(link: ObjectInstance) -> Self {
+            Self { link }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct RemoveTopologicalLinkInformation {
+        pub link: ObjectInstance,
+    }
+    impl RemoveTopologicalLinkInformation {
+        pub fn new(link: ObjectInstance) -> Self {
+            Self { link }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct SetupSncInformation {
+        #[rasn(identifier = "aEnd")]
+        pub a_end: SetOf<ConnectivityEndPoint>,
+        #[rasn(identifier = "zEnd")]
+        pub z_end: SetOf<ConnectivityEndPoint>,
+        pub directionality: Directionality,
+        #[rasn(tag(context, 1))]
+        pub signalid: Option<SignalId>,
+        #[rasn(tag(context, 2), identifier = "qofConnectivityService")]
+        pub qof_connectivity_service: Option<QofConnectivityService>,
+        #[rasn(tag(context, 8), identifier = "implicitTPCreation")]
+        pub implicit_tpcreation: Option<Implicit>,
+    }
+    impl SetupSncInformation {
+        pub fn new(
+            a_end: SetOf<ConnectivityEndPoint>,
+            z_end: SetOf<ConnectivityEndPoint>,
+            directionality: Directionality,
+            signalid: Option<SignalId>,
+            qof_connectivity_service: Option<QofConnectivityService>,
+            implicit_tpcreation: Option<Implicit>,
+        ) -> Self {
+            Self {
+                a_end,
+                z_end,
+                directionality,
+                signalid,
+                qof_connectivity_service,
+                implicit_tpcreation,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct SetupSncResult {
+        pub connection: ObjectInstance,
+        #[rasn(identifier = "aEnd")]
+        pub a_end: ObjectInstance,
+        #[rasn(identifier = "zEnd")]
+        pub z_end: ObjectInstance,
+        #[rasn(identifier = "userId")]
+        pub user_id: Option<UserIdentifier>,
+    }
+    impl SetupSncResult {
+        pub fn new(
+            connection: ObjectInstance,
+            a_end: ObjectInstance,
+            z_end: ObjectInstance,
+            user_id: Option<UserIdentifier>,
+        ) -> Self {
+            Self {
+                connection,
+                a_end,
+                z_end,
+                user_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct SetupTrailInformation {
+        #[rasn(identifier = "aEnd")]
+        pub a_end: SetOf<ConnectivityEndPoint>,
+        #[rasn(identifier = "zEnd")]
+        pub z_end: SetOf<ConnectivityEndPoint>,
+        pub directionality: Directionality,
+        #[rasn(tag(context, 2), identifier = "additionalInformation")]
+        pub additional_information: Option<AdditionalInformation>,
+        #[rasn(tag(context, 3), identifier = "qofConnectivityService")]
+        pub qof_connectivity_service: Option<QofConnectivityService>,
+        #[rasn(tag(context, 0), identifier = "userId")]
+        pub user_id: Option<UserIdentifier>,
+        #[rasn(tag(context, 1), identifier = "userLabel")]
+        pub user_label: Option<UserLabel>,
+    }
+    impl SetupTrailInformation {
+        pub fn new(
+            a_end: SetOf<ConnectivityEndPoint>,
+            z_end: SetOf<ConnectivityEndPoint>,
+            directionality: Directionality,
+            additional_information: Option<AdditionalInformation>,
+            qof_connectivity_service: Option<QofConnectivityService>,
+            user_id: Option<UserIdentifier>,
+            user_label: Option<UserLabel>,
+        ) -> Self {
+            Self {
+                a_end,
+                z_end,
+                directionality,
+                additional_information,
+                qof_connectivity_service,
+                user_id,
+                user_label,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct SetupTrailResult {
+        #[rasn(identifier = "trailId")]
+        pub trail_id: ObjectInstance,
+        #[rasn(identifier = "aEnds")]
+        pub a_ends: SetOf<ObjectInstance>,
+        #[rasn(identifier = "zEnds")]
+        pub z_ends: SetOf<ObjectInstance>,
+    }
+    impl SetupTrailResult {
+        pub fn new(
+            trail_id: ObjectInstance,
+            a_ends: SetOf<ObjectInstance>,
+            z_ends: SetOf<ObjectInstance>,
+        ) -> Self {
+            Self {
+                trail_id,
+                a_ends,
+                z_ends,
+            }
+        }
+    }
+    pub static G85501_ACTION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***G85501_CLASS_LIBRARY, &[9u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static G85501_ATTRIBUTE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***G85501_CLASS_LIBRARY, &[7u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static G85501_CLASS_LIBRARY: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&[0u32, 0u32], &***G, &[85501u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static G85501_MOBJECT_CLASS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***G85501_CLASS_LIBRARY, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static G85501_NAME_BINDING: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***G85501_CLASS_LIBRARY, &[6u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static G85501_NOTIFICATION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***G85501_CLASS_LIBRARY, &[10u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static G85501_PACKAGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***G85501_CLASS_LIBRARY, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static G85501_SPECIFIC_ERROR: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***G85501_CLASS_LIBRARY, &[12u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+}

@@ -1,0 +1,50 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_h_h460.18_2013_SIGNALLING-TRAVERSAL.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod signalling_traversal {
+    extern crate alloc;
+    use super::h323_messages::{CallIdentifier, TimeToLive, TransportAddress};
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct IncomingCallIndication {
+        #[rasn(identifier = "callSignallingAddress")]
+        pub call_signalling_address: TransportAddress,
+        #[rasn(identifier = "callID")]
+        pub call_id: CallIdentifier,
+    }
+    impl IncomingCallIndication {
+        pub fn new(call_signalling_address: TransportAddress, call_id: CallIdentifier) -> Self {
+            Self {
+                call_signalling_address,
+                call_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct LRQKeepAliveData {
+        #[rasn(identifier = "lrqKeepAliveInterval")]
+        pub lrq_keep_alive_interval: TimeToLive,
+    }
+    impl LRQKeepAliveData {
+        pub fn new(lrq_keep_alive_interval: TimeToLive) -> Self {
+            Self {
+                lrq_keep_alive_interval,
+            }
+        }
+    }
+}

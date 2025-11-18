@@ -1,0 +1,102 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_t_t415_1993_Protected-Part-Descriptors.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod protected_part_descriptors {
+    extern crate alloc;
+    use super::identifiers_and_expressions::ProtectedPartIdentifier;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Document-Profile-Attribute-Names")]
+    pub struct DocumentProfileAttributeNames(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Enciphered-Doc-Prof-Descriptor")]
+    pub struct EncipheredDocProfDescriptor {
+        #[rasn(identifier = "enciphered-doc-prof-identifier")]
+        pub enciphered_doc_prof_identifier: ProtectedPartIdentifier,
+        #[rasn(identifier = "enciphered-doc-prof-information")]
+        pub enciphered_doc_prof_information: EncipheredInformation,
+    }
+    impl EncipheredDocProfDescriptor {
+        pub fn new(
+            enciphered_doc_prof_identifier: ProtectedPartIdentifier,
+            enciphered_doc_prof_information: EncipheredInformation,
+        ) -> Self {
+            Self {
+                enciphered_doc_prof_identifier,
+                enciphered_doc_prof_information,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Enciphered-Information")]
+    pub struct EncipheredInformation(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Postenciphered-Bodypart-Descriptor")]
+    pub struct PostencipheredBodypartDescriptor {
+        #[rasn(identifier = "postenciphered-bodypart-identifier")]
+        pub postenciphered_bodypart_identifier: ProtectedPartIdentifier,
+        #[rasn(identifier = "postenciphered-bodypart-info")]
+        pub postenciphered_bodypart_info: EncipheredInformation,
+    }
+    impl PostencipheredBodypartDescriptor {
+        pub fn new(
+            postenciphered_bodypart_identifier: ProtectedPartIdentifier,
+            postenciphered_bodypart_info: EncipheredInformation,
+        ) -> Self {
+            Self {
+                postenciphered_bodypart_identifier,
+                postenciphered_bodypart_info,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Preenciphered-Bodypart-Descriptor")]
+    pub struct PreencipheredBodypartDescriptor {
+        #[rasn(identifier = "preenciphered-bodypart-identifier")]
+        pub preenciphered_bodypart_identifier: ProtectedPartIdentifier,
+        #[rasn(identifier = "preenciphered-bodypart-info")]
+        pub preenciphered_bodypart_info: EncipheredInformation,
+    }
+    impl PreencipheredBodypartDescriptor {
+        pub fn new(
+            preenciphered_bodypart_identifier: ProtectedPartIdentifier,
+            preenciphered_bodypart_info: EncipheredInformation,
+        ) -> Self {
+            Self {
+                preenciphered_bodypart_identifier,
+                preenciphered_bodypart_info,
+            }
+        }
+    }
+    #[doc = "  see 7.8"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Sealed-Doc-Prof-Descriptor")]
+    pub struct SealedDocProfDescriptor {
+        #[rasn(identifier = "sealed-doc-prof-identifier")]
+        pub sealed_doc_prof_identifier: ProtectedPartIdentifier,
+        #[rasn(identifier = "sealed-doc-prof-information")]
+        pub sealed_doc_prof_information: DocumentProfileAttributeNames,
+    }
+    impl SealedDocProfDescriptor {
+        pub fn new(
+            sealed_doc_prof_identifier: ProtectedPartIdentifier,
+            sealed_doc_prof_information: DocumentProfileAttributeNames,
+        ) -> Self {
+            Self {
+                sealed_doc_prof_identifier,
+                sealed_doc_prof_information,
+            }
+        }
+    }
+}

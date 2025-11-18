@@ -1,0 +1,21 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q1248.2_2001_IN-SSF-SCF-ops-args.asn1
+---
+Error matching ASN syntax at while parsing:
+     ╭─[line 373, column 2]
+     │
+     │ 
+ 371 │  -- Direction: SCF ->  SSF, Timer: Tcf
+ 372 │  -- This operation is used to allow the SCF to influence basic call gapping procedures based in the CCF by sending information from the SCF to the SSF. The SSF relays the received information transparently to the CCF. This way, the SCF can influence the rate at which call attempts are allowed through. The operation thus influences the filtering of calls, as opposed to service requests as is done by the Callgap operation.
+ 373 │  CallFilteringArg{B1:b1, B2:b2} ::= SEQUENCE { ◀▪▪▪▪▪▪▪▪▪▪ FAILED AT THIS LINE
+ 374 │    destinationIndex       [0]  DestinationIndex{b2},
+ 375 │    gapIndicators          [1]  GapIndicators,
+ 376 │    registratorIdentifier  [2]  RegistratorIdentifier OPTIONAL,
+ 377 │    ...,
+ 378 │    ...,
+ 379 │    extensions             [3]  Extensions{b1} OPTIONAL
+ 380 │  }
+ 382 │  -- OPTIONAL denotes network operator optional.
+     │
+─────╯

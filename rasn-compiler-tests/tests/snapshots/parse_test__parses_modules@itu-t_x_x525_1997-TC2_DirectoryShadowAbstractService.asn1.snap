@@ -1,0 +1,36 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x525_1997-TC2_DirectoryShadowAbstractService.asn1
+---
+Error matching ASN syntax at while parsing:
+    ╭─[line 65, column 2]
+    │
+    │ 
+ 64 │  -- shadow operational binding
+ 65 │  shadowOperationalBinding OPERATIONAL-BINDING ::= { ◀▪▪▪▪▪▪▪▪▪▪ FAILED AT THIS LINE
+ 66 │    AGREEMENT             ShadowingAgreementInfo
+ 67 │    APPLICATION CONTEXTS
+ 68 │      {{shadowSupplierInitiatedAC
+ 69 │        APPLIES TO  {All-operations-supplier-initiated}} |
+ 70 │        {shadowConsumerInitiatedAC
+ 71 │         APPLIES TO  {All-operations-consumer-initiated}} |
+ 72 │        {reliableShadowSupplierInitiatedAC
+ 73 │         APPLIES TO  {All-operations-supplier-initiated}} |
+ 74 │        {reliableShadowConsumerInitiatedAC
+ 75 │         APPLIES TO  {All-operations-consumer-initiated}}}
+ 76 │    ASYMMETRIC ROLE-A
+ 77 │      { -- shadow supplier roleESTABLISHMENT-INITIATOR  TRUE
+ 78 │                               ESTABLISHMENT-PARAMETER  NULL
+ 79 │                               MODIFICATION-INITIATOR   TRUE
+ 80 │                               TERMINATION-INITIATOR    TRUE}
+ 81 │    ROLE-B
+ 82 │      { -- shadow consumer roleESTABLISHMENT-INITIATOR  TRUE
+ 83 │                               ESTABLISHMENT-PARAMETER  NULL
+ 84 │                               MODIFICATION-INITIATOR   TRUE
+ 85 │                               MODIFICATION-PARAMETER   ModificationParameter
+ 86 │                               TERMINATION-INITIATOR    TRUE}
+ 87 │    ID                    id-op-binding-shadow
+ 88 │  }
+ 90 │  -- types
+    │
+────╯

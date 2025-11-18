@@ -1,0 +1,530 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_v_v140_1998_HDISPATCH.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod hdispatch {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct CapabilityIsdnIs13871 {
+        #[rasn(identifier = "withIsdnCapability")]
+        pub with_isdn_capability: IsdnCapability,
+    }
+    impl CapabilityIsdnIs13871 {
+        pub fn new(with_isdn_capability: IsdnCapability) -> Self {
+            Self {
+                with_isdn_capability,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct CapabilityIsdnH244 {
+        #[rasn(identifier = "withIsdnCapability")]
+        pub with_isdn_capability: IsdnCapability,
+    }
+    impl CapabilityIsdnH244 {
+        pub fn new(with_isdn_capability: IsdnCapability) -> Self {
+            Self {
+                with_isdn_capability,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum CapabilityIsdn {
+        isdnCapability(IsdnCapability),
+        multilinkAdditionalConnection(()),
+        is13871(CapabilityIsdnIs13871),
+        h244(CapabilityIsdnH244),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum Capability {
+        nonStandard(NonStandardParameter),
+        isdn(CapabilityIsdn),
+    }
+    #[doc = " Export all symbols"]
+    #[doc = " ==================================================================================="]
+    #[doc = " Top level PDUs"]
+    #[doc = " ==================================================================================="]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum HDispatchPDU {
+        nonStandard(NonStandardMessage),
+        roleAndCapability(RoleAndCapabilityMessage),
+        modeSelect(Mode),
+        youChoose(()),
+        modeSelectAcknowledge(()),
+        terminate(TerminateMessage),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct IsdnCapabilityG711aLaw {}
+    impl IsdnCapabilityG711aLaw {
+        pub fn new() -> Self {
+            Self {}
+        }
+    }
+    impl std::default::Default for IsdnCapabilityG711aLaw {
+        fn default() -> Self {
+            Self {}
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct IsdnCapabilityG711uLaw {}
+    impl IsdnCapabilityG711uLaw {
+        pub fn new() -> Self {
+            Self {}
+        }
+    }
+    impl std::default::Default for IsdnCapabilityG711uLaw {
+        fn default() -> Self {
+            Self {}
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct IsdnCapabilityH320 {}
+    impl IsdnCapabilityH320 {
+        pub fn new() -> Self {
+            Self {}
+        }
+    }
+    impl std::default::Default for IsdnCapabilityH320 {
+        fn default() -> Self {
+            Self {}
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct IsdnCapabilityH324AnnexD {}
+    impl IsdnCapabilityH324AnnexD {
+        pub fn new() -> Self {
+            Self {}
+        }
+    }
+    impl std::default::Default for IsdnCapabilityH324AnnexD {
+        fn default() -> Self {
+            Self {}
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct IsdnCapabilityH324Multilink {}
+    impl IsdnCapabilityH324Multilink {
+        pub fn new() -> Self {
+            Self {}
+        }
+    }
+    impl std::default::Default for IsdnCapabilityH324Multilink {
+        fn default() -> Self {
+            Self {}
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct IsdnCapabilityGroup4Fax {}
+    impl IsdnCapabilityGroup4Fax {
+        pub fn new() -> Self {
+            Self {}
+        }
+    }
+    impl std::default::Default for IsdnCapabilityGroup4Fax {
+        fn default() -> Self {
+            Self {}
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct IsdnCapabilityT120 {}
+    impl IsdnCapabilityT120 {
+        pub fn new() -> Self {
+            Self {}
+        }
+    }
+    impl std::default::Default for IsdnCapabilityT120 {
+        fn default() -> Self {
+            Self {}
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct IsdnCapabilityT140 {}
+    impl IsdnCapabilityT140 {
+        pub fn new() -> Self {
+            Self {}
+        }
+    }
+    impl std::default::Default for IsdnCapabilityT140 {
+        fn default() -> Self {
+            Self {}
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct IsdnCapabilityV110 {}
+    impl IsdnCapabilityV110 {
+        pub fn new() -> Self {
+            Self {}
+        }
+    }
+    impl std::default::Default for IsdnCapabilityV110 {
+        fn default() -> Self {
+            Self {}
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct IsdnCapabilityV120 {}
+    impl IsdnCapabilityV120 {
+        pub fn new() -> Self {
+            Self {}
+        }
+    }
+    impl std::default::Default for IsdnCapabilityV120 {
+        fn default() -> Self {
+            Self {}
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct IsdnCapabilityRfc1661 {
+        #[rasn(identifier = "withH323")]
+        pub with_h323: bool,
+    }
+    impl IsdnCapabilityRfc1661 {
+        pub fn new(with_h323: bool) -> Self {
+            Self { with_h323 }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum IsdnCapability {
+        g711aLaw(IsdnCapabilityG711aLaw),
+        g711uLaw(IsdnCapabilityG711uLaw),
+        h320(IsdnCapabilityH320),
+        h324AnnexD(IsdnCapabilityH324AnnexD),
+        h324Multilink(IsdnCapabilityH324Multilink),
+        group4Fax(IsdnCapabilityGroup4Fax),
+        t120(IsdnCapabilityT120),
+        t140(IsdnCapabilityT140),
+        v110(IsdnCapabilityV110),
+        v120(IsdnCapabilityV120),
+        rfc1661(IsdnCapabilityRfc1661),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct IsdnModeG711aLaw {}
+    impl IsdnModeG711aLaw {
+        pub fn new() -> Self {
+            Self {}
+        }
+    }
+    impl std::default::Default for IsdnModeG711aLaw {
+        fn default() -> Self {
+            Self {}
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct IsdnModeG711uLaw {}
+    impl IsdnModeG711uLaw {
+        pub fn new() -> Self {
+            Self {}
+        }
+    }
+    impl std::default::Default for IsdnModeG711uLaw {
+        fn default() -> Self {
+            Self {}
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct IsdnModeH320 {}
+    impl IsdnModeH320 {
+        pub fn new() -> Self {
+            Self {}
+        }
+    }
+    impl std::default::Default for IsdnModeH320 {
+        fn default() -> Self {
+            Self {}
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct IsdnModeH324AnnexD {}
+    impl IsdnModeH324AnnexD {
+        pub fn new() -> Self {
+            Self {}
+        }
+    }
+    impl std::default::Default for IsdnModeH324AnnexD {
+        fn default() -> Self {
+            Self {}
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct IsdnModeH324Multilink {}
+    impl IsdnModeH324Multilink {
+        pub fn new() -> Self {
+            Self {}
+        }
+    }
+    impl std::default::Default for IsdnModeH324Multilink {
+        fn default() -> Self {
+            Self {}
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct IsdnModeGroup4Fax {}
+    impl IsdnModeGroup4Fax {
+        pub fn new() -> Self {
+            Self {}
+        }
+    }
+    impl std::default::Default for IsdnModeGroup4Fax {
+        fn default() -> Self {
+            Self {}
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct IsdnModeT120 {}
+    impl IsdnModeT120 {
+        pub fn new() -> Self {
+            Self {}
+        }
+    }
+    impl std::default::Default for IsdnModeT120 {
+        fn default() -> Self {
+            Self {}
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct IsdnModeRfc1661 {}
+    impl IsdnModeRfc1661 {
+        pub fn new() -> Self {
+            Self {}
+        }
+    }
+    impl std::default::Default for IsdnModeRfc1661 {
+        fn default() -> Self {
+            Self {}
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum IsdnMode {
+        nonStandard(NonStandardParameter),
+        g711aLaw(IsdnModeG711aLaw),
+        g711uLaw(IsdnModeG711uLaw),
+        h320(IsdnModeH320),
+        h324AnnexD(IsdnModeH324AnnexD),
+        h324Multilink(IsdnModeH324Multilink),
+        group4Fax(IsdnModeGroup4Fax),
+        t120(IsdnModeT120),
+        rfc1661(IsdnModeRfc1661),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ModeMultilinkAdditionalConnection {
+        #[rasn(value("0..=4294967295"), identifier = "callAssociationNumber")]
+        pub call_association_number: u32,
+    }
+    impl ModeMultilinkAdditionalConnection {
+        pub fn new(call_association_number: u32) -> Self {
+            Self {
+                call_association_number,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum Mode {
+        nonStandard(NonStandardParameter),
+        plainIsdnMode(IsdnMode),
+        h244(IsdnMode),
+        is13871(IsdnMode),
+        multilinkAdditionalConnection(ModeMultilinkAdditionalConnection),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct NonStandardIdentifierH221NonStandard {
+        #[rasn(value("0..=255"), identifier = "t35CountryCode")]
+        pub t35_country_code: u8,
+        #[rasn(value("0..=255"), identifier = "t35Extension")]
+        pub t35_extension: u8,
+        #[rasn(value("0..=65535"), identifier = "manufacturerCode")]
+        pub manufacturer_code: u16,
+    }
+    impl NonStandardIdentifierH221NonStandard {
+        pub fn new(t35_country_code: u8, t35_extension: u8, manufacturer_code: u16) -> Self {
+            Self {
+                t35_country_code,
+                t35_extension,
+                manufacturer_code,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum NonStandardIdentifier {
+        object(ObjectIdentifier),
+        h221NonStandard(NonStandardIdentifierH221NonStandard),
+    }
+    #[doc = " ==================================================================================="]
+    #[doc = " Non standard Message definitions"]
+    #[doc = " ==================================================================================="]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct NonStandardMessage {
+        #[rasn(identifier = "nonStandardData")]
+        pub non_standard_data: NonStandardParameter,
+    }
+    impl NonStandardMessage {
+        pub fn new(non_standard_data: NonStandardParameter) -> Self {
+            Self { non_standard_data }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct NonStandardParameter {
+        #[rasn(identifier = "nonStandardIdentifier")]
+        pub non_standard_identifier: NonStandardIdentifier,
+        pub data: OctetString,
+    }
+    impl NonStandardParameter {
+        pub fn new(non_standard_identifier: NonStandardIdentifier, data: OctetString) -> Self {
+            Self {
+                non_standard_identifier,
+                data,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum RoleAndCapabilityMessageRole {
+        originate(()),
+        unknown(()),
+        answer(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct RoleAndCapabilityMessage {
+        pub role: RoleAndCapabilityMessageRole,
+        #[rasn(value("0..=4294967295"), identifier = "arbitrationField")]
+        pub arbitration_field: u32,
+        #[rasn(size("1..=65535"), identifier = "capabilitySet")]
+        pub capability_set: SequenceOf<Capability>,
+    }
+    impl RoleAndCapabilityMessage {
+        pub fn new(
+            role: RoleAndCapabilityMessageRole,
+            arbitration_field: u32,
+            capability_set: SequenceOf<Capability>,
+        ) -> Self {
+            Self {
+                role,
+                arbitration_field,
+                capability_set,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum TerminateMessageCause {
+        nonStandard(NonStandardParameter),
+        timerExpiration(()),
+        roleCollision(()),
+        noSuitableModes(()),
+        invalidModeSelected(()),
+        protocolViolation(()),
+        modeNotAvailable(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct TerminateMessage {
+        pub cause: TerminateMessageCause,
+    }
+    impl TerminateMessage {
+        pub fn new(cause: TerminateMessageCause) -> Self {
+            Self { cause }
+        }
+    }
+}

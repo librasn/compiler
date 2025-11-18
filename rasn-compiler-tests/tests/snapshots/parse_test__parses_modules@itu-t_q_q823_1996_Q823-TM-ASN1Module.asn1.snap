@@ -1,0 +1,464 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q823_1996_Q823-TM-ASN1Module.asn1
+---
+Warnings:
+Unidentified generating bindings for : Unsupported operation for ASN1Values ElsewhereDeclaredValue { parent: None, identifier: "locked" } and ElsewhereDeclaredValue { parent: None, identifier: "unlocked" }
+LinkerError in ASN grammar: Failed to link value with 'ObservedValue'
+LinkerError in ASN grammar: Failed to link value with 'Count'
+LinkerError in ASN grammar: No value for field callingPartyCategory found!
+LinkerError in ASN grammar: Failed to resolve reference of ElsewhereDefined: AdministrativeState
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod q823_tm_asn1_module {
+    extern crate alloc;
+    use super::asn1_defined_types_module::NameType;
+    use super::attribute_asn1_module::{AdministrativeState, Count, ObservedValue};
+    use super::cmip_1::{Attribute, ObjectInstance};
+    use super::q822_pm_asn1_module::HistoryRetention;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = "supporting productions"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ActivationThresholds {
+        #[rasn(tag(context, 0))]
+        pub level1: ThresholdLevel,
+        #[rasn(tag(context, 1))]
+        pub level2: Option<ThresholdLevel>,
+    }
+    impl ActivationThresholds {
+        pub fn new(level1: ThresholdLevel, level2: Option<ThresholdLevel>) -> Self {
+            Self { level1, level2 }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AdcTriggerType {
+        centralized = 0,
+        decentralized = 1,
+        both = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AdcType {
+        centralized = 0,
+        decentralized = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AssocAccAffectedTraffic(pub ObjectInstance);
+    #[doc = " points to a accAffectedTraffic"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AssocOwnerDccGroup(pub ObjectInstance);
+    #[doc = " points to dccGroup object instance"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AssocScrAffectedTraffic(pub ObjectInstance);
+    #[doc = " points to scrAffectedTraffic"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Category(pub FixedBitString<8usize>);
+    #[doc = " value according to Recommendation Q.763"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum CongestionLevel {
+        mcl0 = 0,
+        mcl1 = 1,
+        mcl2 = 2,
+        mcl3 = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ContinuousTimer {
+        #[rasn(tag(context, 0))]
+        pub calls: Integer,
+        #[rasn(tag(context, 1), identifier = "perTimeUnit")]
+        pub per_time_unit: Timer,
+    }
+    impl ContinuousTimer {
+        pub fn new(calls: Integer, per_time_unit: Timer) -> Self {
+            Self {
+                calls,
+                per_time_unit,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum CreatorIdentity {
+        sourceCls(SourceClass),
+        sourceName(GraphicString),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum DefinedDestinationAspect {
+        null = 0,
+        htr = 1,
+        nhtr = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum DefinedOrigin {
+        originated = 0,
+        transit = 1,
+        inboundTerminating = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum DestType {
+        international = 0,
+        national = 1,
+        local = 2,
+        other = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum DestinationAspect {
+        definedDestinationAspect(DefinedDestinationAspect),
+        destinationExtension(ObjectIdentifier),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DestinationCode(pub GraphicString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum DestinationType {
+        #[rasn(tag(context, 0))]
+        natureOfAddress(NatureOfAddress),
+        #[rasn(tag(context, 1))]
+        desttype(DestType),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum DispositionOfCall {
+        skip(()),
+        treatment(Treatment),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum InstancePointerOrName {
+        #[rasn(tag(context, 0))]
+        objectInstance(ObjectInstance),
+        #[rasn(tag(context, 1))]
+        symbolic(NameType),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0.."))]
+    pub struct Integer(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=100"))]
+    pub struct IntegerValue(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct LeakyBucket {
+        #[rasn(tag(context, 0), identifier = "bucketSize")]
+        pub bucket_size: Option<Integer>,
+        #[rasn(tag(context, 1))]
+        pub calls: Integer,
+        #[rasn(value("0.."), tag(context, 2), identifier = "perTimeUnit")]
+        pub per_time_unit: Timer,
+    }
+    impl LeakyBucket {
+        pub fn new(bucket_size: Option<Integer>, calls: Integer, per_time_unit: Timer) -> Self {
+            Self {
+                bucket_size,
+                calls,
+                per_time_unit,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NatureOfAddress(pub FixedBitString<7usize>);
+    #[doc = " value according to Recommendation Q.763"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NewTmCircuitEndPointSubgroups(pub SequenceOf<InstancePointerOrName>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum Origin {
+        #[rasn(tag(context, 0))]
+        definedOrigin(DefinedOrigin),
+        #[rasn(tag(context, 1))]
+        namedOrigin(InstancePointerOrName),
+        #[rasn(tag(context, 2))]
+        originExtension(ObjectIdentifier),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct OriginationAspect {
+        #[rasn(tag(context, 0), identifier = "callingPartyCategory")]
+        pub calling_party_category: Option<Category>,
+        #[rasn(tag(context, 1))]
+        pub origin: Option<Origin>,
+    }
+    impl OriginationAspect {
+        pub fn new(calling_party_category: Option<Category>, origin: Option<Origin>) -> Self {
+            Self {
+                calling_party_category,
+                origin,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum PercentageGranularity12p5 {
+        perc0 = 0,
+        perc12p5 = 2,
+        perc25 = 4,
+        perc37p5 = 6,
+        perc50 = 8,
+        perc62p5 = 10,
+        perc75 = 12,
+        perc87p5 = 13,
+        perc100 = 15,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum PercentageGranularity10 {
+        perc0 = 0,
+        perc10 = 1,
+        perc20 = 2,
+        perc30 = 3,
+        perc40 = 4,
+        perc50 = 5,
+        perc60 = 6,
+        perc70 = 7,
+        perc80 = 8,
+        perc90 = 9,
+        perc100 = 10,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum Percentage {
+        #[rasn(tag(context, 0))]
+        granularity12p5(PercentageGranularity12p5),
+        #[rasn(tag(context, 1))]
+        granularity10(PercentageGranularity10),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("1"))]
+    pub struct PermittedHistoryRetention(pub HistoryRetention);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PermittedTarFromReturnAction(pub ReturnAction);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousResponseCategories {
+        #[rasn(tag(context, 0), identifier = "originationAspect")]
+        pub origination_aspect: OriginationAspect,
+        #[rasn(tag(context, 1), identifier = "destinationAspect")]
+        pub destination_aspect: DestinationAspect,
+        #[rasn(tag(context, 2), identifier = "routingAspect")]
+        pub routing_aspect: RoutingAspect,
+        #[rasn(tag(context, 3), identifier = "additionalCriteria")]
+        pub additional_criteria: Option<ObjectIdentifier>,
+        #[rasn(tag(context, 4))]
+        pub percentage: Percentage,
+    }
+    impl AnonymousResponseCategories {
+        pub fn new(
+            origination_aspect: OriginationAspect,
+            destination_aspect: DestinationAspect,
+            routing_aspect: RoutingAspect,
+            additional_criteria: Option<ObjectIdentifier>,
+            percentage: Percentage,
+        ) -> Self {
+            Self {
+                origination_aspect,
+                destination_aspect,
+                routing_aspect,
+                additional_criteria,
+                percentage,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ResponseCategories(pub SetOf<AnonymousResponseCategories>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ReturnAction {
+        #[rasn(tag(context, 0), identifier = "return")]
+        R_return(()),
+        #[rasn(tag(context, 1))]
+        skip(()),
+        #[rasn(tag(context, 2))]
+        cancelTreatment(Treatment),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum RoutingAspect {
+        directRoutedTraffic = 0,
+        alternateRoutedTraffic = 1,
+        null = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum SourceClass {
+        tnmos = 0,
+        otherNE = 1,
+        thisNE = 2,
+        other = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct StateIndicatorBitMap(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ThresholdLevel {
+        #[rasn(value("0..=100"), tag(context, 0))]
+        percentageOfCircuits(u8),
+        #[rasn(tag(context, 1))]
+        noOfCircuits(Integer),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum TimerScale1 {
+        sec0 = 0,
+        sec0p1 = 1,
+        sec0p25 = 2,
+        sec0p5 = 3,
+        sec1 = 4,
+        sec2 = 5,
+        sec5 = 6,
+        sec10 = 7,
+        sec15 = 8,
+        sec30 = 9,
+        sec60 = 10,
+        sec120 = 11,
+        sec300 = 12,
+        sec600 = 13,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum Timer {
+        #[rasn(tag(context, 0))]
+        blockAllCalls(()),
+        #[rasn(tag(context, 1))]
+        scale1(TimerScale1),
+        #[rasn(value("0..=600000"), tag(context, 2))]
+        scale2(u32),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TmCircuitEndPointSubgroupList(pub SetOf<InstancePointerOrName>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum Treatment {
+        #[rasn(tag(context, 0))]
+        other(ObjectIdentifier),
+        #[rasn(tag(context, 1))]
+        announcementNumber(Integer),
+        #[rasn(tag(context, 2))]
+        congestionTone(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct TrueFalse(pub bool);
+    #[doc = " default value definition"]
+    pub static DEFAULT_ADMINISTRATIVE_STATE: LazyLock<AdministrativeState> =
+        LazyLock::new(|| AdministrativeState(UNLOCKED));
+    pub static DEFAULT_ALL_DESTINATION_CODES: LazyLock<DestinationCode> =
+        LazyLock::new(|| DestinationCode(GraphicString::try_from(String::from("")).unwrap()));
+    pub static DEFAULT_ALL_TM_CIRCUIT_END_POINT_SUBGROUPS: LazyLock<TmCircuitEndPointSubgroupList> =
+        LazyLock::new(|| TmCircuitEndPointSubgroupList(alloc::vec![]));
+    pub const DEFAULT_DESTINATION_ASPECT: DestinationAspect =
+        DestinationAspect::definedDestinationAspect(DefinedDestinationAspect::null);
+    pub const DEFAULT_ROUTING_ASPECTS: DefinedDestinationAspect = DefinedDestinationAspect::null;
+    #[doc = "value assignment for destination aspect extension"]
+    pub static EXTEND_DESTINATION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q823_INFORMATION_MODEL, &[0u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = "value assignments for origin aspect extension"]
+    pub static EXTEND_ORIGIN: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q823_INFORMATION_MODEL, &[0u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static HARD_TO_REACH: LazyLock<DestinationAspect> = LazyLock::new(|| {
+        DestinationAspect::destinationExtension(
+            Oid::new(&[&***EXTEND_DESTINATION, &[1u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )
+    });
+    pub static INBOUND_TERMINATING: LazyLock<Origin> = LazyLock::new(|| {
+        Origin::originExtension(
+            Oid::new(&[&***EXTEND_ORIGIN, &[3u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )
+    });
+    #[doc = "initial value definitions"]
+    pub static INITIAL_COUNT: LazyLock<Count> = LazyLock::new(|| Count(Count(0)));
+    pub static INITIAL_GAUGE: LazyLock<ObservedValue> =
+        LazyLock::new(|| ObservedValue(ObservedValue(ObservedValue::integer(0))));
+    pub static INITIAL_INTEGER: LazyLock<Integer> = LazyLock::new(|| Integer::from(0));
+    pub static NON_HARD_TO_REACH: LazyLock<DestinationAspect> = LazyLock::new(|| {
+        DestinationAspect::destinationExtension(
+            Oid::new(&[&***EXTEND_DESTINATION, &[2u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )
+    });
+    pub static ORIGINATED: LazyLock<Origin> = LazyLock::new(|| {
+        Origin::originExtension(
+            Oid::new(&[&***EXTEND_ORIGIN, &[1u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )
+    });
+    pub static Q823_INFORMATION_MODEL: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[0u32, 0u32, 17u32, 823u32, 0u32]).to_owned());
+    pub static Q823_ACTION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q823_INFORMATION_MODEL, &[7u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static Q823_ATTRIBUTE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q823_INFORMATION_MODEL, &[6u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static Q823_NAME_BINDING: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q823_INFORMATION_MODEL, &[5u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static Q823_NOTIFICATION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q823_INFORMATION_MODEL, &[8u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static Q823_OBJECT_CLASS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q823_INFORMATION_MODEL, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static Q823_PACKAGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q823_INFORMATION_MODEL, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static TRANSIT: LazyLock<Origin> = LazyLock::new(|| {
+        Origin::originExtension(
+            Oid::new(&[&***EXTEND_ORIGIN, &[2u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )
+    });
+}

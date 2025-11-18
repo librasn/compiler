@@ -1,0 +1,576 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x509_2019_PkiPmiExternalDataTypes.asn1
+---
+Warnings:
+NotYetInplemented generating bindings for : UniversalString is currently unsupported!
+NotYetInplemented generating bindings for : UniversalString is currently unsupported!
+NotYetInplemented generating bindings for : UniversalString is currently unsupported!
+NotYetInplemented generating bindings for : UniversalString is currently unsupported!
+NotYetInplemented generating bindings for : UniversalString is currently unsupported!
+NotYetInplemented generating bindings for : UniversalString is currently unsupported!
+NotYetInplemented generating bindings for : UniversalString is currently unsupported!
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod pki_pmi_external_data_types {
+    extern crate alloc;
+    use super::authentication_framework::*;
+    use super::certificate_extensions::GeneralName;
+    use super::selected_attribute_types::PresentationAddress;
+    use super::useful_definitions::INT_SECURITY;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AccessDescription {
+        #[rasn(identifier = "accessMethod")]
+        pub access_method: ObjectIdentifier,
+        #[rasn(identifier = "accessLocation")]
+        pub access_location: GeneralName,
+    }
+    impl AccessDescription {
+        pub fn new(access_method: ObjectIdentifier, access_location: GeneralName) -> Self {
+            Self {
+                access_method,
+                access_location,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, tag(application, 2))]
+    pub enum AdministrationDomainName {
+        #[rasn(size("0..=16"))]
+        numeric(NumericString),
+        #[rasn(size("0..=16"))]
+        printable(PrintableString),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct AuthorityInfoAccessSyntax(pub SequenceOf<AccessDescription>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct BuiltInDomainDefinedAttribute {
+        #[rasn(size("1..=8"), identifier = "type")]
+        pub r_type: PrintableString,
+        #[rasn(size("1..=128"))]
+        pub value: PrintableString,
+    }
+    impl BuiltInDomainDefinedAttribute {
+        pub fn new(r_type: PrintableString, value: PrintableString) -> Self {
+            Self { r_type, value }
+        }
+    }
+    #[doc = "\tBuilt-in Domain-defined Attributes"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=4"))]
+    pub struct BuiltInDomainDefinedAttributes(pub SequenceOf<BuiltInDomainDefinedAttribute>);
+    #[doc = "\tThe OR-address is semantically absent from the OR-name if the built-in-standard-attribute"]
+    #[doc = "\tsequence is empty and the built-in-domain-defined-attributes and extension-attributes are both omitted."]
+    #[doc = "\tBuilt-in Standard Attributes"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct BuiltInStandardAttributes {
+        #[rasn(identifier = "country-name")]
+        pub country_name: Option<CountryName>,
+        #[rasn(identifier = "administration-domain-name")]
+        pub administration_domain_name: Option<AdministrationDomainName>,
+        #[rasn(tag(context, 0), identifier = "network-address")]
+        pub network_address: Option<NetworkAddress>,
+        #[rasn(tag(context, 1), identifier = "terminal-identifier")]
+        pub terminal_identifier: Option<TerminalIdentifier>,
+        #[rasn(tag(context, 2), identifier = "private-domain-name")]
+        pub private_domain_name: Option<PrivateDomainName>,
+        #[rasn(tag(context, 3), identifier = "organization-name")]
+        pub organization_name: Option<OrganizationName>,
+        #[rasn(tag(context, 4), identifier = "numeric-user-identifier")]
+        pub numeric_user_identifier: Option<NumericUserIdentifier>,
+        #[rasn(tag(context, 5), identifier = "personal-name")]
+        pub personal_name: Option<PersonalName>,
+        #[rasn(tag(context, 6), identifier = "organizational-unit-names")]
+        pub organizational_unit_names: Option<OrganizationalUnitNames>,
+    }
+    impl BuiltInStandardAttributes {
+        pub fn new(
+            country_name: Option<CountryName>,
+            administration_domain_name: Option<AdministrationDomainName>,
+            network_address: Option<NetworkAddress>,
+            terminal_identifier: Option<TerminalIdentifier>,
+            private_domain_name: Option<PrivateDomainName>,
+            organization_name: Option<OrganizationName>,
+            numeric_user_identifier: Option<NumericUserIdentifier>,
+            personal_name: Option<PersonalName>,
+            organizational_unit_names: Option<OrganizationalUnitNames>,
+        ) -> Self {
+            Self {
+                country_name,
+                administration_domain_name,
+                network_address,
+                terminal_identifier,
+                private_domain_name,
+                organization_name,
+                numeric_user_identifier,
+                personal_name,
+                organizational_unit_names,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=64"))]
+    pub struct CommonName(pub PrintableString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, tag(application, 1))]
+    pub enum CountryName {
+        #[rasn(size("3"), identifier = "x121-dcc-code")]
+        x121_dcc_code(NumericString),
+        #[rasn(size("2"), identifier = "iso-3166-alpha2-code")]
+        iso_3166_alpha2_code(PrintableString),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum DisplayText {
+        #[rasn(size("1..=200"))]
+        visibleString(VisibleString),
+        #[rasn(size("1..=200"))]
+        bmpString(BmpString),
+        utf8String(Utf8String),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ExtendedNetworkAddressE1634Address {
+        #[rasn(size("1..=15"), tag(context, 0))]
+        pub number: NumericString,
+        #[rasn(size("1..=40"), tag(context, 1), identifier = "sub-address")]
+        pub sub_address: Option<NumericString>,
+    }
+    impl ExtendedNetworkAddressE1634Address {
+        pub fn new(number: NumericString, sub_address: Option<NumericString>) -> Self {
+            Self {
+                number,
+                sub_address,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ExtendedNetworkAddress {
+        #[rasn(identifier = "e163-4-address")]
+        e163_4_address(ExtendedNetworkAddressE1634Address),
+        #[rasn(tag(context, 0), identifier = "psap-address")]
+        psap_address(PresentationAddress),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ExtensionAttribute {
+        #[rasn(
+            value("0..=256"),
+            tag(context, 0),
+            identifier = "extension-attribute-type"
+        )]
+        pub extension_attribute_type: u16,
+        #[rasn(tag(context, 1), identifier = "extension-attribute-value")]
+        pub extension_attribute_value: Any,
+    }
+    impl ExtensionAttribute {
+        pub fn new(extension_attribute_type: u16, extension_attribute_value: Any) -> Self {
+            Self {
+                extension_attribute_type,
+                extension_attribute_value,
+            }
+        }
+    }
+    #[doc = "\tExtension Attributes"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=256"))]
+    pub struct ExtensionAttributes(pub SetOf<ExtensionAttribute>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ExtensionORAddressComponents(pub PDSParameter);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ExtensionPhysicalDeliveryAddressComponents(pub PDSParameter);
+    #[doc = " The following is an abstract of the MTSAbstractService module specified by"]
+    #[doc = "Rec. ITU-T Rec. X.411 | ISO/IEC 10021-4."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct G3FacsimileNonBasicParameters(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct LocalPostalAttributes(pub PDSParameter);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NetworkAddress(pub X121Address);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct NoticeReference {
+        pub organization: DisplayText,
+        #[rasn(identifier = "noticeNumbers")]
+        pub notice_numbers: SequenceOf<Integer>,
+    }
+    impl NoticeReference {
+        pub fn new(organization: DisplayText, notice_numbers: SequenceOf<Integer>) -> Self {
+            Self {
+                organization,
+                notice_numbers,
+            }
+        }
+    }
+    #[doc = " see also teletex-organization-name"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=32"))]
+    pub struct NumericUserIdentifier(pub NumericString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ORAddress {
+        #[rasn(identifier = "built-in-standard-attributes")]
+        pub built_in_standard_attributes: BuiltInStandardAttributes,
+        #[rasn(identifier = "built-in-domain-defined-attributes")]
+        pub built_in_domain_defined_attributes: Option<BuiltInDomainDefinedAttributes>,
+        #[rasn(identifier = "extension-attributes")]
+        pub extension_attributes: Option<ExtensionAttributes>,
+    }
+    impl ORAddress {
+        pub fn new(
+            built_in_standard_attributes: BuiltInStandardAttributes,
+            built_in_domain_defined_attributes: Option<BuiltInDomainDefinedAttributes>,
+            extension_attributes: Option<ExtensionAttributes>,
+        ) -> Self {
+            Self {
+                built_in_standard_attributes,
+                built_in_domain_defined_attributes,
+                extension_attributes,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=64"))]
+    pub struct OrganizationName(pub PrintableString);
+    #[doc = " see also teletex-organizational-unit-names"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=32"))]
+    pub struct OrganizationalUnitName(pub PrintableString);
+    #[doc = " see also teletex-personal-name"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=4"))]
+    pub struct OrganizationalUnitNames(pub SequenceOf<OrganizationalUnitName>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=16"))]
+    pub struct PDSName(pub PrintableString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct PDSParameter {
+        #[rasn(size("1..=30"), identifier = "printable-string")]
+        pub printable_string: Option<PrintableString>,
+        #[rasn(identifier = "teletex-string")]
+        pub teletex_string: Option<TeletexString>,
+    }
+    impl PDSParameter {
+        pub fn new(
+            printable_string: Option<PrintableString>,
+            teletex_string: Option<TeletexString>,
+        ) -> Self {
+            Self {
+                printable_string,
+                teletex_string,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct PersonalName {
+        #[rasn(size("1..=40"), tag(context, 0))]
+        pub surname: PrintableString,
+        #[rasn(size("1..=16"), tag(context, 1), identifier = "given-name")]
+        pub given_name: Option<PrintableString>,
+        #[rasn(size("1..=5"), tag(context, 2))]
+        pub initials: Option<PrintableString>,
+        #[rasn(size("1..=3"), tag(context, 3), identifier = "generation-qualifier")]
+        pub generation_qualifier: Option<PrintableString>,
+    }
+    impl PersonalName {
+        pub fn new(
+            surname: PrintableString,
+            given_name: Option<PrintableString>,
+            initials: Option<PrintableString>,
+            generation_qualifier: Option<PrintableString>,
+        ) -> Self {
+            Self {
+                surname,
+                given_name,
+                initials,
+                generation_qualifier,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum PhysicalDeliveryCountryName {
+        #[rasn(size("3"), identifier = "x121-dcc-code")]
+        x121_dcc_code(NumericString),
+        #[rasn(size("2"), identifier = "iso-3166-alpha2-code")]
+        iso_3166_alpha2_code(PrintableString),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PhysicalDeliveryOfficeName(pub PDSParameter);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PhysicalDeliveryOfficeNumber(pub PDSParameter);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PhysicalDeliveryOrganizationName(pub PDSParameter);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PhysicalDeliveryPersonalName(pub PDSParameter);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PostOfficeBoxAddress(pub PDSParameter);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum PostalCode {
+        #[rasn(size("1..=16"), identifier = "numeric-code")]
+        numeric_code(NumericString),
+        #[rasn(size("1..=16"), identifier = "printable-code")]
+        printable_code(PrintableString),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PosteRestanteAddress(pub PDSParameter);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum PrivateDomainName {
+        #[rasn(size("1..=16"))]
+        numeric(NumericString),
+        #[rasn(size("1..=16"))]
+        printable(PrintableString),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct StreetAddress(pub PDSParameter);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct SubjectInfoAccessSyntax(pub SequenceOf<AccessDescription>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=64"))]
+    pub struct TeletexCommonName(pub TeletexString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct TeletexDomainDefinedAttribute {
+        #[rasn(identifier = "type")]
+        pub r_type: TeletexString,
+        pub value: TeletexString,
+    }
+    impl TeletexDomainDefinedAttribute {
+        pub fn new(r_type: TeletexString, value: TeletexString) -> Self {
+            Self { r_type, value }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=4"))]
+    pub struct TeletexDomainDefinedAttributes(pub SequenceOf<TeletexDomainDefinedAttribute>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=64"))]
+    pub struct TeletexOrganizationName(pub TeletexString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=32"))]
+    pub struct TeletexOrganizationalUnitName(pub TeletexString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=4"))]
+    pub struct TeletexOrganizationalUnitNames(pub SequenceOf<TeletexOrganizationalUnitName>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct TeletexPersonalName {
+        #[rasn(tag(context, 0))]
+        pub surname: TeletexString,
+        #[rasn(tag(context, 1), identifier = "given-name")]
+        pub given_name: Option<TeletexString>,
+        #[rasn(tag(context, 2))]
+        pub initials: Option<TeletexString>,
+        #[rasn(tag(context, 3), identifier = "generation-qualifier")]
+        pub generation_qualifier: Option<TeletexString>,
+    }
+    impl TeletexPersonalName {
+        pub fn new(
+            surname: TeletexString,
+            given_name: Option<TeletexString>,
+            initials: Option<TeletexString>,
+            generation_qualifier: Option<TeletexString>,
+        ) -> Self {
+            Self {
+                surname,
+                given_name,
+                initials,
+                generation_qualifier,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=24"))]
+    pub struct TerminalIdentifier(pub PrintableString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=256"))]
+    pub struct TerminalType(pub u16);
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "PrintableString", size("1..=30"))]
+    pub struct AnonymousUnformattedPostalAddressPrintableAddress(pub PrintableString);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=6"))]
+    pub struct UnformattedPostalAddressPrintableAddress(
+        pub SequenceOf<AnonymousUnformattedPostalAddressPrintableAddress>,
+    );
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct UnformattedPostalAddress {
+        #[rasn(identifier = "printable-address")]
+        pub printable_address: Option<UnformattedPostalAddressPrintableAddress>,
+        #[rasn(identifier = "teletex-string")]
+        pub teletex_string: Option<TeletexString>,
+    }
+    impl UnformattedPostalAddress {
+        pub fn new(
+            printable_address: Option<UnformattedPostalAddressPrintableAddress>,
+            teletex_string: Option<TeletexString>,
+        ) -> Self {
+            Self {
+                printable_address,
+                teletex_string,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct UniquePostalName(pub PDSParameter);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=4"))]
+    pub struct UniversalDomainDefinedAttributes(pub SequenceOf<UniversalDomainDefinedAttribute>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct UniversalExtensionORAddressComponents(pub UniversalPDSParameter);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct UniversalExtensionPhysicalDeliveryAddressComponents(pub UniversalPDSParameter);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct UniversalLocalPostalAttributes(pub UniversalPDSParameter);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=4"))]
+    pub struct UniversalOrganizationalUnitNames(pub SequenceOf<UniversalOrganizationalUnitName>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct UniversalPhysicalDeliveryOfficeName(pub UniversalPDSParameter);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct UniversalPhysicalDeliveryOfficeNumber(pub UniversalPDSParameter);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct UniversalPhysicalDeliveryOrganizationName(pub UniversalPDSParameter);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct UniversalPhysicalDeliveryPersonalName(pub UniversalPDSParameter);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct UniversalPostOfficeBoxAddress(pub UniversalPDSParameter);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct UniversalPosteRestanteAddress(pub UniversalPDSParameter);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct UniversalStreetAddress(pub UniversalPDSParameter);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct UniversalUniquePostalName(pub UniversalPDSParameter);
+    #[doc = " The UserNotice data type is referenced by the userNotice extension. It is copied from IETF RFC 5280 "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct UserNotice {
+        #[rasn(identifier = "noticeRef")]
+        pub notice_ref: Option<NoticeReference>,
+        #[rasn(identifier = "explicitText")]
+        pub explicit_text: Option<DisplayText>,
+    }
+    impl UserNotice {
+        pub fn new(
+            notice_ref: Option<NoticeReference>,
+            explicit_text: Option<DisplayText>,
+        ) -> Self {
+            Self {
+                notice_ref,
+                explicit_text,
+            }
+        }
+    }
+    #[doc = " see also extended-network-address"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=16"))]
+    pub struct X121Address(pub NumericString);
+    pub static ID_AD: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PKIX, &[48u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AD_CA_ISSUERS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AD, &[2u32]].concat()).unwrap().to_owned());
+    pub static ID_AD_OCSP: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AD, &[1u32]].concat()).unwrap().to_owned());
+    pub static ID_PE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PKIX, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PE_AUTHORITY_INFO_ACCESS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_PE, &[1u32]].concat()).unwrap().to_owned());
+    pub static ID_PE_SUBJECT_INFO_ACCESS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PE, &[11u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " IETF RFC 5280 (PKIX) object identifier allocation"]
+    pub static ID_PKIX: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***INT_SECURITY, &[5u32, 7u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static UB_COMMON_NAME_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(64));
+    pub static UB_COUNTRY_NAME_ALPHA_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(2));
+    pub static UB_COUNTRY_NAME_NUMERIC_LENGTH: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(3));
+    pub static UB_DOMAIN_DEFINED_ATTRIBUTE_TYPE_LENGTH: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(8));
+    pub static UB_DOMAIN_DEFINED_ATTRIBUTE_VALUE_LENGTH: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(128));
+    pub static UB_DOMAIN_DEFINED_ATTRIBUTES: LazyLock<Integer> = LazyLock::new(|| Integer::from(4));
+    pub static UB_DOMAIN_NAME_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(16));
+    pub static UB_E163_4_NUMBER_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(15));
+    pub static UB_E163_4_SUB_ADDRESS_LENGTH: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(40));
+    pub static UB_EXTENSION_ATTRIBUTES: LazyLock<Integer> = LazyLock::new(|| Integer::from(256));
+    pub static UB_GENERATION_QUALIFIER_LENGTH: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(3));
+    pub static UB_GIVEN_NAME_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(16));
+    pub static UB_INITIALS_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(5));
+    pub static UB_INTEGER_OPTIONS: LazyLock<Integer> = LazyLock::new(|| Integer::from(256));
+    pub static UB_NUMERIC_USER_ID_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(32));
+    pub static UB_ORGANIZATION_NAME_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(64));
+    pub static UB_ORGANIZATIONAL_UNIT_NAME_LENGTH: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(32));
+    pub static UB_ORGANIZATIONAL_UNITS: LazyLock<Integer> = LazyLock::new(|| Integer::from(4));
+    pub static UB_PDS_NAME_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(16));
+    pub static UB_PDS_PARAMETER_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(30));
+    pub static UB_PDS_PHYSICAL_ADDRESS_LINES: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(6));
+    pub static UB_POSTAL_CODE_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(16));
+    pub static UB_SURNAME_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(40));
+    pub static UB_TERMINAL_ID_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(24));
+    pub static UB_UNFORMATTED_ADDRESS_LENGTH: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(180));
+    pub static UB_UNIVERSAL_GENERATION_QUALIFIER_LENGTH: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(16));
+    pub static UB_UNIVERSAL_GIVEN_NAME_LENGTH: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(40));
+    pub static UB_UNIVERSAL_INITIALS_LENGTH: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(16));
+    pub static UB_UNIVERSAL_SURNAME_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(64));
+    pub static UB_X121_ADDRESS_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(16));
+}

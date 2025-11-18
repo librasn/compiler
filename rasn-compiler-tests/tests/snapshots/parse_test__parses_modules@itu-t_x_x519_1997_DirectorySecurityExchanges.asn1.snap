@@ -1,0 +1,60 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x519_1997_DirectorySecurityExchanges.asn1
+---
+Warnings:
+LinkerError in ASN grammar: Failed to resolve supertype SIGNED of parameterized implementation.
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod directory_security_exchanges {
+    extern crate alloc;
+    use super::authentication_framework::*;
+    use super::directory_abstract_service::SecurityProblem;
+    use super::enhanced_security::DIRQOP;
+    use super::guls_security_exchanges::DIR_AUTHENTICATION_TWO_WAY;
+    use super::information_framework::DistinguishedName;
+    use super::notation::*;
+    use super::protocol_object_identifiers::{
+        ID_AS_2OR3SE, ID_SE_SPKMTHREEWAYSE, ID_SE_THREEWAYSE,
+    };
+    use super::remote_operations_information_objects_extensions::*;
+    use super::sese_apdus::{NoInvocationId, SESEapdus};
+    use super::spkm_gss_tokens::*;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct ThreeWayCredentials {
+        #[rasn(tag(context, 0), identifier = "certification-path")]
+        pub certification_path: Option<CertificationPath>,
+        #[rasn(tag(context, 1))]
+        pub token: ThreeWayToken,
+        #[rasn(tag(context, 2))]
+        pub name: Option<DistinguishedName>,
+    }
+    impl ThreeWayCredentials {
+        pub fn new(
+            certification_path: Option<CertificationPath>,
+            token: ThreeWayToken,
+            name: Option<DistinguishedName>,
+        ) -> Self {
+            Self {
+                certification_path,
+                token,
+                name,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ThreeWayToken(pub SIGNED);
+}

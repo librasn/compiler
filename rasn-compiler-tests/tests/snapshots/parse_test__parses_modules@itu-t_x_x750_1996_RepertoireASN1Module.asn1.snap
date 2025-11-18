@@ -1,0 +1,86 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x750_1996_RepertoireASN1Module.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod repertoire_asn1_module {
+    extern crate alloc;
+    use super::attribute_asn1_module::*;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct GdmoObjectClass(pub ObjectIdentifier);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousImplementedValues {
+        #[rasn(identifier = "attributeId")]
+        pub attribute_id: Any,
+        #[rasn(tag(explicit(context, 1)), identifier = "defaultValue")]
+        pub default_value: Option<Any>,
+        #[rasn(tag(explicit(context, 2)), identifier = "initialValue")]
+        pub initial_value: Option<Any>,
+        #[rasn(tag(explicit(context, 3)), identifier = "minValue")]
+        pub min_value: Option<Any>,
+        #[rasn(tag(explicit(context, 4)), identifier = "maxValue")]
+        pub max_value: Option<Any>,
+    }
+    impl AnonymousImplementedValues {
+        pub fn new(
+            attribute_id: Any,
+            default_value: Option<Any>,
+            initial_value: Option<Any>,
+            min_value: Option<Any>,
+            max_value: Option<Any>,
+        ) -> Self {
+            Self {
+                attribute_id,
+                default_value,
+                initial_value,
+                min_value,
+                max_value,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ImplementedValues(pub SetOf<AnonymousImplementedValues>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "MKMF-VALUES")]
+    pub struct MKMFVALUES(pub DMITYPEIDENTIFIER);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ManagedObjectClassRepertoireId(pub GdmoObjectClass);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RepertoireId(pub GraphicString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SupportedCmipProfiles(pub BitString);
+    #[doc = " the managed system supports ISP 11183-2"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SupportedConditionalPackageList(pub Packages);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SupportedManagedObjectClassList(pub SetOf<GdmoObjectClass>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SupportedNameBindingList(pub SetOf<NameBinding>);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "OBJECT_IDENTIFIER")]
+    pub struct AnonymousSupportedRelationshipClassList(pub ObjectIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SupportedRelationshipClassList(pub SetOf<AnonymousSupportedRelationshipClassList>);
+}

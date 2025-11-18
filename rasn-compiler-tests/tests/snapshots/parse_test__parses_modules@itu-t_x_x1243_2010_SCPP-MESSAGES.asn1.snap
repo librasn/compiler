@@ -1,0 +1,305 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x1243_2010_SCPP-MESSAGES.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod scpp_messages {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " Countering Spam Data Exchange Message definition"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct DataExchangeDEF {
+        #[rasn(identifier = "csData")]
+        pub cs_data: SetOf<SpamFilterData>,
+    }
+    impl DataExchangeDEF {
+        pub fn new(cs_data: SetOf<SpamFilterData>) -> Self {
+            Self { cs_data }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum GFUpdatesGateType {
+        sgf = 0,
+        rgf = 1,
+    }
+    #[doc = " RGF/SGF status update infomation"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "GF-Updates")]
+    pub struct GFUpdates {
+        #[rasn(identifier = "gateType")]
+        pub gate_type: GFUpdatesGateType,
+        #[rasn(identifier = "gateAdd")]
+        pub gate_add: IGCSAddress,
+        #[rasn(identifier = "gateRemove")]
+        pub gate_remove: IGCSAddress,
+    }
+    impl GFUpdates {
+        pub fn new(
+            gate_type: GFUpdatesGateType,
+            gate_add: IGCSAddress,
+            gate_remove: IGCSAddress,
+        ) -> Self {
+            Self {
+                gate_type,
+                gate_add,
+                gate_remove,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct IGCSAddressIpAddress {
+        #[rasn(size("4"))]
+        pub ip: OctetString,
+        #[rasn(value("0..=65535"))]
+        pub port: u16,
+    }
+    impl IGCSAddressIpAddress {
+        pub fn new(ip: OctetString, port: u16) -> Self {
+            Self { ip, port }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct IGCSAddressIp6Address {
+        #[rasn(size("16"))]
+        pub ip: OctetString,
+        #[rasn(value("0..=65535"))]
+        pub port: u16,
+    }
+    impl IGCSAddressIp6Address {
+        pub fn new(ip: OctetString, port: u16) -> Self {
+            Self { ip, port }
+        }
+    }
+    #[doc = " IGCS supported addresses, include IGCS,SGF,RGF address definition"]
+    #[doc = " Support IP address, Email ID and other types of address"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags, identifier = "IGCS-Address")]
+    #[non_exhaustive]
+    pub enum IGCSAddress {
+        ipAddress(IGCSAddressIpAddress),
+        ip6Address(IGCSAddressIp6Address),
+        #[rasn(size("1..=512"))]
+        emailAddress(Ia5String),
+        nonStandardAddress(OctetString),
+    }
+    #[doc = " Signature data for authentication"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "IGCS-Signature")]
+    #[non_exhaustive]
+    pub struct IGCSSignature {
+        #[rasn(value("0..=65535"), identifier = "igcsID")]
+        pub igcs_id: u16,
+        #[rasn(identifier = "signatureData")]
+        pub signature_data: OctetString,
+    }
+    impl IGCSSignature {
+        pub fn new(igcs_id: u16, signature_data: OctetString) -> Self {
+            Self {
+                igcs_id,
+                signature_data,
+            }
+        }
+    }
+    #[doc = " PeerDiscovery Message definition"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct PeerDiscoveryDEF {
+        #[rasn(identifier = "setupRequest")]
+        pub setup_request: bool,
+        #[rasn(identifier = "igcsSignature")]
+        pub igcs_signature: IGCSSignature,
+    }
+    impl PeerDiscoveryDEF {
+        pub fn new(setup_request: bool, igcs_signature: IGCSSignature) -> Self {
+            Self {
+                setup_request,
+                igcs_signature,
+            }
+        }
+    }
+    #[doc = " Peer Keep Alive Message definition"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct PeerKeepAliveDEF {
+        #[rasn(identifier = "sgfUpdates")]
+        pub sgf_updates: GFUpdates,
+        #[rasn(identifier = "rgfUpdates")]
+        pub rgf_updates: GFUpdates,
+        #[rasn(identifier = "filtersUpdates")]
+        pub filters_updates: SupportedSpamFilters,
+    }
+    impl PeerKeepAliveDEF {
+        pub fn new(
+            sgf_updates: GFUpdates,
+            rgf_updates: GFUpdates,
+            filters_updates: SupportedSpamFilters,
+        ) -> Self {
+            Self {
+                sgf_updates,
+                rgf_updates,
+                filters_updates,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum PeerReleaseDEFPeerRelease {
+        request = 0,
+        confirm = 1,
+    }
+    #[doc = " Peer Release Message definition"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct PeerReleaseDEF {
+        #[rasn(identifier = "peerRelease")]
+        pub peer_release: PeerReleaseDEFPeerRelease,
+        #[rasn(identifier = "nonStandardData")]
+        pub non_standard_data: Option<OctetString>,
+    }
+    impl PeerReleaseDEF {
+        pub fn new(
+            peer_release: PeerReleaseDEFPeerRelease,
+            non_standard_data: Option<OctetString>,
+        ) -> Self {
+            Self {
+                peer_release,
+                non_standard_data,
+            }
+        }
+    }
+    #[doc = " PeerSetup Message definition"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct PeerSetupDEF {
+        #[rasn(identifier = "setupResponse")]
+        pub setup_response: bool,
+        #[rasn(identifier = "sgfList")]
+        pub sgf_list: SequenceOf<IGCSAddress>,
+        #[rasn(identifier = "rgfList")]
+        pub rgf_list: SequenceOf<IGCSAddress>,
+        #[rasn(identifier = "supportedFilters")]
+        pub supported_filters: SupportedSpamFilters,
+        #[rasn(identifier = "igcsSignature")]
+        pub igcs_signature: IGCSSignature,
+    }
+    impl PeerSetupDEF {
+        pub fn new(
+            setup_response: bool,
+            sgf_list: SequenceOf<IGCSAddress>,
+            rgf_list: SequenceOf<IGCSAddress>,
+            supported_filters: SupportedSpamFilters,
+            igcs_signature: IGCSSignature,
+        ) -> Self {
+            Self {
+                setup_response,
+                sgf_list,
+                rgf_list,
+                supported_filters,
+                igcs_signature,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum SCPPPDUIgcsMessageBody {
+        peerDiscovery(PeerDiscoveryDEF),
+        peerSetup(PeerSetupDEF),
+        dataExchange(DataExchangeDEF),
+        peerKeepAlive(PeerKeepAliveDEF),
+        peerRelease(PeerReleaseDEF),
+    }
+    #[doc = " SCPP Message body definition"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SCPP-PDU")]
+    #[non_exhaustive]
+    pub struct SCPPPDU {
+        #[rasn(identifier = "sourceAddress")]
+        pub source_address: IGCSAddress,
+        #[rasn(identifier = "destAddress")]
+        pub dest_address: IGCSAddress,
+        #[rasn(identifier = "igcs-message-body")]
+        pub igcs_message_body: SCPPPDUIgcsMessageBody,
+        #[rasn(identifier = "nonStandardData")]
+        pub non_standard_data: Option<OctetString>,
+    }
+    impl SCPPPDU {
+        pub fn new(
+            source_address: IGCSAddress,
+            dest_address: IGCSAddress,
+            igcs_message_body: SCPPPDUIgcsMessageBody,
+            non_standard_data: Option<OctetString>,
+        ) -> Self {
+            Self {
+                source_address,
+                dest_address,
+                igcs_message_body,
+                non_standard_data,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct SpamFilterData {
+        #[rasn(value("0..=128"), identifier = "filterID")]
+        pub filter_id: u8,
+        #[rasn(identifier = "filterData")]
+        pub filter_data: OctetString,
+    }
+    impl SpamFilterData {
+        pub fn new(filter_id: u8, filter_data: OctetString) -> Self {
+            Self {
+                filter_id,
+                filter_data,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct SpamFilters {
+        #[rasn(value("0..=128"), identifier = "filterID")]
+        pub filter_id: u8,
+        #[rasn(size("1..=512"), identifier = "filterName")]
+        pub filter_name: Ia5String,
+    }
+    impl SpamFilters {
+        pub fn new(filter_id: u8, filter_name: Ia5String) -> Self {
+            Self {
+                filter_id,
+                filter_name,
+            }
+        }
+    }
+    #[doc = " IGCS Supported Spam filters and related data"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct SupportedSpamFilters {
+        #[rasn(identifier = "supportedFilter")]
+        pub supported_filter: SequenceOf<SpamFilters>,
+    }
+    impl SupportedSpamFilters {
+        pub fn new(supported_filter: SequenceOf<SpamFilters>) -> Self {
+            Self { supported_filter }
+        }
+    }
+}

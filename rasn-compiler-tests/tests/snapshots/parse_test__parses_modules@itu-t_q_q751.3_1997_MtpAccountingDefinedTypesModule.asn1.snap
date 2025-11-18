@@ -1,0 +1,302 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q751.3_1997_MtpAccountingDefinedTypesModule.asn1
+---
+Warnings:
+LinkerError in ASN grammar: Failed to link value with 'Ss7SpecificErrorInformation'
+LinkerError in ASN grammar: Failed to link value with 'Ss7SpecificErrorInformation'
+LinkerError in ASN grammar: Failed to link value with 'Ss7SpecificErrorInformation'
+LinkerError in ASN grammar: Failed to link value with 'Ss7SpecificErrorInformation'
+LinkerError in ASN grammar: Failed to link value with 'Ss7SpecificErrorInformation'
+LinkerError in ASN grammar: Failed to link value with 'Ss7SpecificErrorInformation'
+LinkerError in ASN grammar: Failed to link value with 'Ss7SpecificErrorInformation'
+LinkerError in ASN grammar: Failed to link value with 'Ss7SpecificErrorInformation'
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod mtp_accounting_defined_types_module {
+    extern crate alloc;
+    use super::accounting_defined_types_module::{
+        DataProblem, ACCOUNTING_ACTION, ACCOUNTING_ATTRIBUTE, ACCOUNTING_ATTRIBUTE_GROUP,
+        ACCOUNTING_NAME_BINDING, ACCOUNTING_NOTIFICATION, ACCOUNTING_OBJECT_CLASS,
+        ACCOUNTING_PACKAGE, ACCOUNTING_PARAMETER, SS7_ACCOUNTING_INFORMATION_MODEL,
+    };
+    use super::attribute_asn1_module::{ObjectInstance, SimpleNameType};
+    use super::mtpdefined_types_module::{NetworkIndicator, PointCode, SIOType};
+    use super::q2751_defined_types_module::Ss7SpecificErrorInformation;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " m  this number is only for compilability"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct MtpAccCounterData {
+        #[rasn(tag(context, 0))]
+        pub msus: Integer,
+        #[rasn(tag(context, 1))]
+        pub octetts: Integer,
+        #[rasn(tag(context, 2), identifier = "dataProblem")]
+        pub data_problem: DataProblem,
+        #[rasn(tag(context, 3), identifier = "pointCodeSet")]
+        pub point_code_set: Option<PointCodeSet>,
+        #[rasn(tag(context, 5), identifier = "optionalSiSet")]
+        pub optional_si_set: Option<SiSet>,
+    }
+    impl MtpAccCounterData {
+        pub fn new(
+            msus: Integer,
+            octetts: Integer,
+            data_problem: DataProblem,
+            point_code_set: Option<PointCodeSet>,
+            optional_si_set: Option<SiSet>,
+        ) -> Self {
+            Self {
+                msus,
+                octetts,
+                data_problem,
+                point_code_set,
+                optional_si_set,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=2"))]
+    pub struct MtpAccCounterDataSequence(pub SequenceOf<MtpAccCounterData>);
+    #[doc = " maximum size = p"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct MtpAccountingNotificationData {
+        #[rasn(identifier = "endOfMeasurementTime")]
+        pub end_of_measurement_time: GeneralizedTime,
+        #[rasn(identifier = "networkIndicator")]
+        pub network_indicator: Option<NetworkIndicator>,
+        #[rasn(identifier = "signLinkSetTpIdSet")]
+        pub sign_link_set_tp_id_set: Option<SignLinkSetTpIdSet>,
+        #[rasn(identifier = "mtpAccCounterDataSequence")]
+        pub mtp_acc_counter_data_sequence: MtpAccCounterDataSequence,
+    }
+    impl MtpAccountingNotificationData {
+        pub fn new(
+            end_of_measurement_time: GeneralizedTime,
+            network_indicator: Option<NetworkIndicator>,
+            sign_link_set_tp_id_set: Option<SignLinkSetTpIdSet>,
+            mtp_acc_counter_data_sequence: MtpAccCounterDataSequence,
+        ) -> Self {
+            Self {
+                end_of_measurement_time,
+                network_indicator,
+                sign_link_set_tp_id_set,
+                mtp_acc_counter_data_sequence,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1"))]
+    pub struct PointCodeSet(pub SetOf<PointCode>);
+    #[doc = " The selectionGroups within the selectionGroupSequence would"]
+    #[doc = " not allow an unambiguous identification of the counter to be incremented."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ReactionType(pub FixedBitString<2usize>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=2"))]
+    pub struct ReactionTypeList(pub SetOf<ReactionType>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=16"))]
+    pub struct SiSet(pub SetOf<SIOType>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=3"))]
+    pub struct SignLinkSetTpIdSet(pub SetOf<SimpleNameType>);
+    #[doc = " maximum size = m"]
+    #[doc = " Only the integer type of the CHOICE within NameType shall be used."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=3"))]
+    pub struct SignLinkSetTpSet(pub SetOf<ObjectInstance>);
+    pub static DPC_GROUP_OOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ACCOUNTING_OBJECT_CLASS, &[2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static DPC_GROUP_MTP_SIGN_POINT_NBOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ACCOUNTING_NAME_BINDING, &[2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static DPC_GROUP_ID_AOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ACCOUNTING_ATTRIBUTE, &[13u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " the following values of Ss7SpecificErrorInformation defined in Rec. Q.2751.1 are used additionally:"]
+    pub static DPC_GROUP_NOT_EXISTING_IN_SAME_MTP_SIGN_POINT_ERROR: LazyLock<
+        Ss7SpecificErrorInformation,
+    > = LazyLock::new(|| Ss7SpecificErrorInformation(Ss7SpecificErrorInformation(3000)));
+    pub static DPC_GROUP_PACKAGE_POI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ACCOUNTING_PACKAGE, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " At least one of the dpcGroup instances to be referenced is not"]
+    #[doc = " existing in the same mtpSignPoint as the mtpAccount."]
+    pub static LINKSET_ALREADY_IN_OTHER_MTP_ACCOUNT_ERROR: LazyLock<Ss7SpecificErrorInformation> =
+        LazyLock::new(|| Ss7SpecificErrorInformation(Ss7SpecificErrorInformation(3001)));
+    #[doc = " At least one of the signLinkSetTp instances to be referenced is"]
+    #[doc = " already referenced by another mtpAccount instance."]
+    pub static LINKSET_NOT_EXISTING_IN_SAME_MTP_SIGN_POINT_ERROR: LazyLock<
+        Ss7SpecificErrorInformation,
+    > = LazyLock::new(|| Ss7SpecificErrorInformation(Ss7SpecificErrorInformation(3002)));
+    #[doc = " ASN.1 type definitions"]
+    pub static MAX_NUMBER_POINT_CODES_IN_POINT_CODE_SET: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(1));
+    #[doc = "n  this number is only for compilability"]
+    pub static MAX_NUMBER_REFERENCES_IN_MTP_SELECTION_GROUP_SET: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(2));
+    #[doc = " p  this number is only for compilability"]
+    pub static MAX_NUMBER_REFERENCES_IN_SIGN_LINK_SET_TP_SET: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(3));
+    pub static MTP_ACC_COUNTER_DATA_SEQUENCE_AOI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ACCOUNTING_ATTRIBUTE, &[13u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static MTP_ACCOUNT_OOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ACCOUNTING_OBJECT_CLASS, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static MTP_ACCOUNT_MTP_SIGN_POINT_NBOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ACCOUNTING_NAME_BINDING, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static MTP_ACCOUNT_ID_AOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ACCOUNTING_ATTRIBUTE, &[14u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static MTP_ACCOUNT_PACKAGE_POI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ACCOUNTING_PACKAGE, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static MTP_ACCOUNTING_NOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ACCOUNTING_NOTIFICATION, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static MTP_ACCOUNTING_LOG_RECORD_OOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ACCOUNTING_OBJECT_CLASS, &[5u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static MTP_ACCOUNTING_LOG_RECORD_PACKAGE_POI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ACCOUNTING_PACKAGE, &[6u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static MTP_ACCOUNTING_VERIFICATION_NOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ACCOUNTING_NOTIFICATION, &[2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static NETWORK_INDICATOR_PACKAGE_POI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ACCOUNTING_PACKAGE, &[7u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " At least one of the signLinkSetTp instances to be referenced is"]
+    #[doc = " not existing in the same mtpSignPoint as the mtpAccount."]
+    pub static POINT_CODE_NOT_EXISTING_IN_SAME_MTP_SIGN_POINT_ERROR: LazyLock<
+        Ss7SpecificErrorInformation,
+    > = LazyLock::new(|| Ss7SpecificErrorInformation(Ss7SpecificErrorInformation(3003)));
+    pub static POINT_CODE_SET_AOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ACCOUNTING_ATTRIBUTE, &[8u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " At least one of the point codes is not used by any signRouteSetNePart"]
+    #[doc = " instance contained in the same mtpSignPoint as the mtpAccount."]
+    pub static POINT_CODE_USED_BY_MTP_SIGN_POINT_ERROR: LazyLock<Ss7SpecificErrorInformation> =
+        LazyLock::new(|| Ss7SpecificErrorInformation(Ss7SpecificErrorInformation(3004)));
+    #[doc = " ASN.1 OBJECT IDENTIFIER definitions"]
+    pub static REACTION_TYPE_LIST_AOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ACCOUNTING_ATTRIBUTE, &[27u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static REACTION_TYPE_LIST_MAPPING_ERROR_OID: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ACCOUNTING_PARAMETER, &[1u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    #[doc = " At least one of the point codes is used as point code by the mtpSignPoint"]
+    #[doc = " containing the mtpAccount."]
+    pub static REFERENCED_DPC_GROUP_NOT_EXISTING_ERROR: LazyLock<Ss7SpecificErrorInformation> =
+        LazyLock::new(|| Ss7SpecificErrorInformation(Ss7SpecificErrorInformation(3005)));
+    #[doc = " At least one of the dpcGroup instances to be referenced is not existing."]
+    pub static REFERENCED_SI_GROUP_NOT_EXISTING_ERROR: LazyLock<Ss7SpecificErrorInformation> =
+        LazyLock::new(|| Ss7SpecificErrorInformation(Ss7SpecificErrorInformation(3006)));
+    pub static SCREENING_PACKAGE_POI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ACCOUNTING_PACKAGE, &[14u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " At least one of the siGroup instances to be referenced is not existing."]
+    pub static SELECTION_GROUP_OVERLAP_ERROR: LazyLock<Ss7SpecificErrorInformation> =
+        LazyLock::new(|| Ss7SpecificErrorInformation(Ss7SpecificErrorInformation(3007)));
+    pub static SI_GROUP_OOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ACCOUNTING_OBJECT_CLASS, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SI_GROUP_MANAGED_ELEMENT_NBOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ACCOUNTING_NAME_BINDING, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SI_GROUP_MANAGED_SWITCHING_ELEMENT_NBOI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ACCOUNTING_NAME_BINDING, &[5u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static SI_GROUP_ID_AOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ACCOUNTING_ATTRIBUTE, &[10u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SI_GROUP_PACKAGE_POI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ACCOUNTING_PACKAGE, &[5u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SI_SET_AOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ACCOUNTING_ATTRIBUTE, &[11u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SIGN_LINK_SET_TP_ID_SET_AOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ACCOUNTING_ATTRIBUTE, &[12u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SIGN_LINK_SET_TP_ID_SET_PACKAGE_POI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ACCOUNTING_PACKAGE, &[8u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static SIGN_LINK_SET_TP_SET_AOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ACCOUNTING_ATTRIBUTE, &[9u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+}

@@ -1,0 +1,65 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_h_h460.3_2002_CIRCUIT-STATUS-MAP.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod circuit_status_map {
+    extern crate alloc;
+    use super::h323_messages::CircuitIdentifier;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct CircuitStatus {
+        #[rasn(identifier = "circuitStatusMap")]
+        pub circuit_status_map: Option<SequenceOf<CircuitStatusMap>>,
+    }
+    impl CircuitStatus {
+        pub fn new(circuit_status_map: Option<SequenceOf<CircuitStatusMap>>) -> Self {
+            Self { circuit_status_map }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct CircuitStatusMap {
+        #[rasn(identifier = "statusType")]
+        pub status_type: CircuitStatusType,
+        #[rasn(identifier = "baseCircuitID")]
+        pub base_circuit_id: CircuitIdentifier,
+        #[rasn(value("0..=4095"))]
+        pub range: u16,
+        pub status: OctetString,
+    }
+    impl CircuitStatusMap {
+        pub fn new(
+            status_type: CircuitStatusType,
+            base_circuit_id: CircuitIdentifier,
+            range: u16,
+            status: OctetString,
+        ) -> Self {
+            Self {
+                status_type,
+                base_circuit_id,
+                range,
+                status,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum CircuitStatusType {
+        serviceStatus(()),
+        busyStatus(()),
+    }
+}

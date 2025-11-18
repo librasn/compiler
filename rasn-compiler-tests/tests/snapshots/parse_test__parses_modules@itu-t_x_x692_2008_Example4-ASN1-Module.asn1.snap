@@ -1,0 +1,54 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x692_2008_Example4-ASN1-Module.asn1
+---
+Warnings:
+Unidentified generating bindings for : A type name is needed to stringify sequence value LinkedStructLikeValue([("more-bit", Boolean(Boolean { constraints: [] }), Explicit(Boolean(false))), ("reserved", BitString(BitString { constraints: [Subtype(ElementSetSpecs { set: Element(SizeConstraint(Element(SingleValue { value: Integer(2), extensible: false }))), extensible: false })], distinguished_values: None }), Explicit(BitString([false, false]))), ("protocol-Profile-ID", Integer(Integer { constraints: [Subtype(ElementSetSpecs { set: Element(ValueRange { min: Some(Integer(0)), max: Some(Integer(31)), extensible: false }), extensible: false })], distinguished_values: None }), Explicit(LinkedIntValue { integer_type: Uint8, value: 0 }))])
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod example4_asn1_module {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    pub struct AnonymousProfileIndication {
+        #[rasn(identifier = "more-bit")]
+        pub more_bit: bool,
+        #[rasn(size("2"))]
+        pub reserved: BitString,
+        #[rasn(value("0..=31"), identifier = "protocol-Profile-ID")]
+        pub protocol_profile_id: u8,
+    }
+    impl AnonymousProfileIndication {
+        pub fn new(more_bit: bool, reserved: BitString, protocol_profile_id: u8) -> Self {
+            Self {
+                more_bit,
+                reserved,
+                protocol_profile_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ProfileIndication(pub SequenceOf<AnonymousProfileIndication>);
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "INTEGER", value("0..=31"))]
+    pub struct AnonymousProfileIndication2(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ProfileIndication2(pub SequenceOf<AnonymousProfileIndication2>);
+    pub static PROFILE_INDICATION2: LazyLock<ProfileIndication2> =
+        LazyLock::new(|| ProfileIndication2(alloc::vec![0, 1]));
+}

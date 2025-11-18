@@ -1,0 +1,453 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x743_1998-TC1_TimeMF.asn1
+---
+Warnings:
+NotYetInplemented generating bindings for : Real types are currently unsupported!
+NotYetInplemented generating bindings for : Real types are currently unsupported!
+NotYetInplemented generating bindings for : Real types are currently unsupported!
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod time_mf {
+    extern crate alloc;
+    use super::attribute_asn1_module::SimpleNameType;
+    use super::cmip_1::{Attribute, ObjectInstance};
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " type references"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AdjustmentInterval(pub TimeInterval);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ClockAddressIp {
+        #[rasn(size("4"))]
+        pub host: OctetString,
+        #[rasn(value("0..=65536"))]
+        pub port: u32,
+    }
+    impl ClockAddressIp {
+        pub fn new(host: OctetString, port: u32) -> Self {
+            Self { host, port }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ClockAddress {
+        #[rasn(size("0..=20"), tag(context, 1))]
+        isoNsap(OctetString),
+        #[rasn(tag(context, 2))]
+        ip(ClockAddressIp),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ClockEstimatedError(pub TimeInterval);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ClockEventCode(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=255"))]
+    pub struct ClockEventCounter(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ClockEventTime(pub GlobalTime);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ClockID(pub SimpleNameType);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ClockMaximumError(pub TimeInterval);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ClockResetInfo(pub ClockValue);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ClockValue(pub GlobalTime);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=255"))]
+    pub struct CumLeapSeconds(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum CurrSynchSourceAddress {
+        #[rasn(tag(context, 0))]
+        refPeerAssoc(ClockAddress),
+        #[rasn(tag(context, 1))]
+        refClockID(ReferenceClockType),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DateOfLeap(pub GeneralizedTime);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Dispersion(pub TimeInterval);
+    #[doc = " This field represents the dispersion (positive values only)."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=32"))]
+    pub struct FilterSize(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct GlobalTime(pub FixedOctetString<8usize>);
+    #[doc = " See 8.1."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum LeapIndication {
+        noWarning = 0,
+        minuteHas61Seconds = 1,
+        minuteHas59Seconds = 2,
+        alarmCondition = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct LeapSecondInfo {
+        #[rasn(identifier = "leapIndication")]
+        pub leap_indication: LeapIndication,
+        #[rasn(identifier = "dateOfLeap")]
+        pub date_of_leap: DateOfLeap,
+    }
+    impl LeapSecondInfo {
+        pub fn new(leap_indication: LeapIndication, date_of_leap: DateOfLeap) -> Self {
+            Self {
+                leap_indication,
+                date_of_leap,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MaxAperature(pub TimeInterval);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MaxClockAge(pub TimeInterval);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MaxDistance(pub TimeInterval);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MaxSkew(pub TimeInterval);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PeerClockAddresses(pub SetOf<SinglePeerClock>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0.."))]
+    pub struct PollInterval(pub Integer);
+    #[doc = " This field represents the polling interval in seconds and can only contain positive values."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Precision(pub TimeInterval);
+    #[doc = " This field represents precision and can only contain positive values."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ProtocolResetInfo(pub SetOf<Attribute>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=32"))]
+    pub struct ReachRegSize(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ReferenceClockType(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=255"))]
+    pub struct SelectClock(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SinglePeerClock {
+        #[rasn(tag(context, 0), identifier = "assocNum")]
+        pub assoc_num: Integer,
+        #[rasn(tag(context, 1), identifier = "assocClock")]
+        pub assoc_clock: ClockAddress,
+    }
+    impl SinglePeerClock {
+        pub fn new(assoc_num: Integer, assoc_clock: ClockAddress) -> Self {
+            Self {
+                assoc_num,
+                assoc_clock,
+            }
+        }
+    }
+    #[doc = " A value of zero means that the stratum is not specified."]
+    #[doc = " A value of one indicates a primary reference."]
+    #[doc = " Values from 2 to 255 indicate secondary references of increasing"]
+    #[doc = " distance from the root of the synchronization subnet ."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Status(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=255"))]
+    pub struct Stratum(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SynchronizationProtocolID(pub SimpleNameType);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SynchronizationProtocolType(pub ObjectIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SynchronizedClock(pub ObjectInstance);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SynchronizingClocks(pub SetOf<ObjectInstance>);
+    #[doc = " See 8.1."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TSelect(pub FixedOctetString<4usize>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TimeInterval(pub FixedOctetString<8usize>);
+    pub static CLOCK_ADJUSTMENT_INTERVAL_OID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***TIME_MANAGEMENT, &[7u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static CLOCK_DRIFT_OID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***TIME_MANAGEMENT, &[7u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static CLOCK_ESTIMATED_ERROR_OID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***TIME_MANAGEMENT, &[7u32, 2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static CLOCK_EVENT_CODE_OID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***TIME_MANAGEMENT, &[7u32, 3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static CLOCK_EVENT_COUNTER_OID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***TIME_MANAGEMENT, &[7u32, 4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static CLOCK_EVENT_TIME_OID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***TIME_MANAGEMENT, &[7u32, 5u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static CLOCK_IDOID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***TIME_MANAGEMENT, &[7u32, 6u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static CLOCK_MAXIMUM_ERROR_OID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***TIME_MANAGEMENT, &[7u32, 7u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static CLOCK_PRECISION_OID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***TIME_MANAGEMENT, &[7u32, 8u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static CLOCK_RESET_ACTION_OID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***TIME_MANAGEMENT, &[9u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static CLOCK_SOURCE_SYSTEM_OID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***TIME_MANAGEMENT, &[6u32, 2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static CLOCK_SOURCE_DETAIL_PKG_OID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***TIME_MANAGEMENT, &[4u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static CLOCK_SOURCE_OID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***TIME_MANAGEMENT, &[3u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static CLOCK_STATUS_OID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***TIME_MANAGEMENT, &[7u32, 9u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static CLOCK_STRATUM_OID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***TIME_MANAGEMENT, &[7u32, 10u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static CLOCK_VALUE_OID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***TIME_MANAGEMENT, &[7u32, 11u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static FILTER_SIZE_OID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***TIME_MANAGEMENT, &[7u32, 12u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static FILTER_WEIGHT_OID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***TIME_MANAGEMENT, &[7u32, 13u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static LEAP_SECOND_ACTION_OID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***TIME_MANAGEMENT, &[9u32, 2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static LEAP_SECOND_COUNT_OID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***TIME_MANAGEMENT, &[7u32, 14u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static LEAP_SECOND_INDICATION_OID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***TIME_MANAGEMENT, &[7u32, 15u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static LEAP_SECOND_PKG_OID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***TIME_MANAGEMENT, &[4u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static LOCAL_CLOCK_ADDRESS_OID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***TIME_MANAGEMENT, &[7u32, 16u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static LOCAL_CLOCK_OID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***TIME_MANAGEMENT, &[3u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static MAXIMUM_CLOCK_AGE_OID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***TIME_MANAGEMENT, &[7u32, 17u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static MAXIMUM_DISPERSION_OID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***TIME_MANAGEMENT, &[7u32, 18u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static MAXIMUM_DISTANCE_OID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***TIME_MANAGEMENT, &[7u32, 19u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static MAXIMUM_POLL_INTERVAL_OID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***TIME_MANAGEMENT, &[7u32, 20u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static MAXIMUM_SELECT_CLOCK_OID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***TIME_MANAGEMENT, &[7u32, 21u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static MAXIMUM_SKEW_OID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***TIME_MANAGEMENT, &[7u32, 22u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static MAXIMUM_STRATUM_OID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***TIME_MANAGEMENT, &[7u32, 23u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static MINIMUM_DISPERSION_OID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***TIME_MANAGEMENT, &[7u32, 24u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static MINIMUM_POLL_INTERVAL_OID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***TIME_MANAGEMENT, &[7u32, 25u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static MINIMUM_SELECT_CLOCK_OID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***TIME_MANAGEMENT, &[7u32, 26u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static NTP: LazyLock<SynchronizationProtocolType> = LazyLock::new(|| {
+        SynchronizationProtocolType(
+            Oid::const_new(&[2u32, 9u32, 2u32, 20u32, 20u32, 1u32]).to_owned(),
+        )
+    });
+    pub static NTP_PROTOCOL_OID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***TIME_MANAGEMENT, &[3u32, 4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static PEER_CLOCK_ADDRESSES_OID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***TIME_MANAGEMENT, &[7u32, 27u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static PROTOCOL_RESET_ACTION_OID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***TIME_MANAGEMENT, &[9u32, 3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static REACHABILITY_REGISTER_SIZE_OID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***TIME_MANAGEMENT, &[7u32, 28u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static REFERENCE_CLOCK_OID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***TIME_MANAGEMENT, &[3u32, 2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static REFERENCE_CLOCK_TYPE_OID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***TIME_MANAGEMENT, &[7u32, 29u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SELECT_WEIGHT_OID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***TIME_MANAGEMENT, &[7u32, 30u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SYNCHRONIZATION_PROTOCOL_SYSTEM_OID: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***TIME_MANAGEMENT, &[6u32, 1u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static SYNCHRONIZATION_PROTOCOL_IDOID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***TIME_MANAGEMENT, &[7u32, 31u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SYNCHRONIZATION_PROTOCOL_OID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***TIME_MANAGEMENT, &[3u32, 3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SYNCHRONIZATION_PROTOCOL_TYPE_OID: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***TIME_MANAGEMENT, &[7u32, 32u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static SYNCHRONIZATION_SOURCE_ADDRESS_OID: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***TIME_MANAGEMENT, &[7u32, 33u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static SYNCHRONIZED_CLOCK_OID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***TIME_MANAGEMENT, &[7u32, 34u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SYNCHRONIZING_CLOCKS_OID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***TIME_MANAGEMENT, &[7u32, 35u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " object identifier values"]
+    pub static TIME_MANAGEMENT: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 9u32, 2u32, 20u32]).to_owned());
+}

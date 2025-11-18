@@ -1,0 +1,234 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_t_t417_1993_Raster-Gr-Presentation-Attributes.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod raster_gr_presentation_attributes {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Clipping {
+        #[rasn(tag(context, 0), identifier = "first-coordinate-pair")]
+        pub first_coordinate_pair: Option<CoordinatePair>,
+        #[rasn(tag(context, 1), identifier = "second-coordinate-pair")]
+        pub second_coordinate_pair: Option<CoordinatePair>,
+    }
+    impl Clipping {
+        pub fn new(
+            first_coordinate_pair: Option<CoordinatePair>,
+            second_coordinate_pair: Option<CoordinatePair>,
+        ) -> Self {
+            Self {
+                first_coordinate_pair,
+                second_coordinate_pair,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Coordinate-Pair")]
+    pub struct CoordinatePair {
+        #[rasn(identifier = "x-coordinate")]
+        pub x_coordinate: Integer,
+        #[rasn(identifier = "y-coordinate")]
+        pub y_coordinate: Integer,
+    }
+    impl CoordinatePair {
+        pub fn new(x_coordinate: Integer, y_coordinate: Integer) -> Self {
+            Self {
+                x_coordinate,
+                y_coordinate,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ImageDimensionsWidthControlled {
+        #[rasn(tag(context, 0), identifier = "minimum-width")]
+        pub minimum_width: Integer,
+        #[rasn(tag(context, 0), identifier = "preferred-width")]
+        pub preferred_width: Integer,
+    }
+    impl ImageDimensionsWidthControlled {
+        pub fn new(minimum_width: Integer, preferred_width: Integer) -> Self {
+            Self {
+                minimum_width,
+                preferred_width,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ImageDimensionsHeightControlled {
+        #[rasn(identifier = "minimum-height")]
+        pub minimum_height: Integer,
+        #[rasn(identifier = "preferred-height")]
+        pub preferred_height: Integer,
+    }
+    impl ImageDimensionsHeightControlled {
+        pub fn new(minimum_height: Integer, preferred_height: Integer) -> Self {
+            Self {
+                minimum_height,
+                preferred_height,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ImageDimensionsAreaControlled {
+        #[rasn(identifier = "minimum-width")]
+        pub minimum_width: Integer,
+        #[rasn(identifier = "preferred-width")]
+        pub preferred_width: Integer,
+        #[rasn(identifier = "minimum-height")]
+        pub minimum_height: Integer,
+        #[rasn(identifier = "preferred-height")]
+        pub preferred_height: Integer,
+        #[rasn(identifier = "aspect-ratio-flag")]
+        pub aspect_ratio_flag: Integer,
+    }
+    impl ImageDimensionsAreaControlled {
+        pub fn new(
+            minimum_width: Integer,
+            preferred_width: Integer,
+            minimum_height: Integer,
+            preferred_height: Integer,
+            aspect_ratio_flag: Integer,
+        ) -> Self {
+            Self {
+                minimum_width,
+                preferred_width,
+                minimum_height,
+                preferred_height,
+                aspect_ratio_flag,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "Image-Dimensions")]
+    pub enum ImageDimensions {
+        #[rasn(tag(context, 0), identifier = "width-controlled")]
+        width_controlled(ImageDimensionsWidthControlled),
+        #[rasn(tag(context, 1), identifier = "height-controlled")]
+        height_controlled(ImageDimensionsHeightControlled),
+        #[rasn(tag(context, 2), identifier = "area-controlled")]
+        area_controlled(ImageDimensionsAreaControlled),
+        #[rasn(tag(context, 3))]
+        automatic(()),
+    }
+    #[doc = " 6 BMU (200 pels/25.4 mm)"]
+    #[doc = " default and basic value is p6 (1)"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Measure-Pair")]
+    pub struct MeasurePair {
+        #[rasn(tag(context, 0))]
+        pub horizontal: Integer,
+        #[rasn(tag(context, 0))]
+        pub vertical: Integer,
+    }
+    impl MeasurePair {
+        pub fn new(horizontal: Integer, vertical: Integer) -> Self {
+            Self {
+                horizontal,
+                vertical,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "One-Of-Four-Angles")]
+    pub struct OneOfFourAngles(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "One-Of-Two-Angles")]
+    pub struct OneOfTwoAngles(pub Integer);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct PelSpacingSpacing {
+        #[rasn(tag(context, 0))]
+        pub length: Integer,
+        #[rasn(tag(context, 0), identifier = "pel-spaces")]
+        pub pel_spaces: Integer,
+    }
+    impl PelSpacingSpacing {
+        pub fn new(length: Integer, pel_spaces: Integer) -> Self {
+            Self { length, pel_spaces }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "Pel-Spacing")]
+    pub enum PelSpacing {
+        #[rasn(tag(context, 0))]
+        spacing(PelSpacingSpacing),
+        #[rasn(tag(context, 1))]
+        null(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Pel-Transmission-Density")]
+    pub struct PelTransmissionDensity(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Raster-Graphics-Attributes")]
+    pub struct RasterGraphicsAttributes {
+        #[rasn(tag(context, 0), identifier = "pel-path")]
+        pub pel_path: Option<OneOfFourAngles>,
+        #[rasn(tag(context, 1), identifier = "line-progression")]
+        pub line_progression: Option<OneOfTwoAngles>,
+        #[rasn(tag(context, 2), identifier = "pel-transmission-density")]
+        pub pel_transmission_density: Option<PelTransmissionDensity>,
+        #[rasn(tag(context, 3), identifier = "initial-offset")]
+        pub initial_offset: Option<MeasurePair>,
+        #[rasn(tag(context, 4))]
+        pub clipping: Option<Clipping>,
+        #[rasn(tag(context, 5), identifier = "pel-spacing")]
+        pub pel_spacing: Option<PelSpacing>,
+        #[rasn(tag(context, 6), identifier = "spacing-ratio")]
+        pub spacing_ratio: Option<SpacingRatio>,
+        #[rasn(tag(context, 7), identifier = "image-dimensions")]
+        pub image_dimensions: Option<ImageDimensions>,
+    }
+    impl RasterGraphicsAttributes {
+        pub fn new(
+            pel_path: Option<OneOfFourAngles>,
+            line_progression: Option<OneOfTwoAngles>,
+            pel_transmission_density: Option<PelTransmissionDensity>,
+            initial_offset: Option<MeasurePair>,
+            clipping: Option<Clipping>,
+            pel_spacing: Option<PelSpacing>,
+            spacing_ratio: Option<SpacingRatio>,
+            image_dimensions: Option<ImageDimensions>,
+        ) -> Self {
+            Self {
+                pel_path,
+                line_progression,
+                pel_transmission_density,
+                initial_offset,
+                clipping,
+                pel_spacing,
+                spacing_ratio,
+                image_dimensions,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Spacing-Ratio")]
+    pub struct SpacingRatio {
+        #[rasn(identifier = "line-spacing-value")]
+        pub line_spacing_value: Integer,
+        #[rasn(identifier = "pel-spacing-value")]
+        pub pel_spacing_value: Integer,
+    }
+    impl SpacingRatio {
+        pub fn new(line_spacing_value: Integer, pel_spacing_value: Integer) -> Self {
+            Self {
+                line_spacing_value,
+                pel_spacing_value,
+            }
+        }
+    }
+}

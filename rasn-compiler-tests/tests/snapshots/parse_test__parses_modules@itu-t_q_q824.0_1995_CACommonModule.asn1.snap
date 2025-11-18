@@ -1,0 +1,355 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q824.0_1995_CACommonModule.asn1
+---
+Warnings:
+LinkerError in ASN grammar: Failed to link value with 'Boolean'
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod cacommon_module {
+    extern crate alloc;
+    use super::asn1_defined_types_module::{
+        AlarmStatus, Boolean, NameType, ObjectList, Pointer, PointerOrNull,
+    };
+    use super::attribute_asn1_module::{OperationalState, UsageState};
+    use super::cmip_1::{ObjectClass, ObjectInstance};
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = "  supporting productions"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AccessChannelPtrList(pub SetOf<NameType>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AccessPortInterfaceIdPtr {
+        #[rasn(identifier = "accessPortPtr")]
+        pub access_port_ptr: AccessPortPtr,
+        #[rasn(value("1.."), identifier = "interfaceIdentifier")]
+        pub interface_identifier: Integer,
+    }
+    impl AccessPortInterfaceIdPtr {
+        pub fn new(access_port_ptr: AccessPortPtr, interface_identifier: Integer) -> Self {
+            Self {
+                access_port_ptr,
+                interface_identifier,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AccessPortPtr(pub ObjectInstance);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct CircuitSubgroup {
+        #[rasn(identifier = "circuitEndPointSubgroupName")]
+        pub circuit_end_point_subgroup_name: ObjectInstance,
+        pub delete: Integer,
+        pub prefix: Ia5String,
+    }
+    impl CircuitSubgroup {
+        pub fn new(
+            circuit_end_point_subgroup_name: ObjectInstance,
+            delete: Integer,
+            prefix: Ia5String,
+        ) -> Self {
+            Self {
+                circuit_end_point_subgroup_name,
+                delete,
+                prefix,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CircuitSubgroupChannelPtrList(pub SequenceOf<ObjectInstance>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CircuitSubgroupPtrList(pub SequenceOf<CircuitSubgroup>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum DirectoryNumber {
+        #[rasn(tag(context, 0))]
+        e164DN(E164DN),
+        #[rasn(tag(context, 1))]
+        x121DN(X121DN),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DirectoryNumberList(pub SetOf<DirectoryNumber>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct E164DNNationalSignificantNumber {
+        #[rasn(
+            size("1..=6"),
+            tag(context, 0),
+            identifier = "nationalDestinationNumber"
+        )]
+        pub national_destination_number: Option<NumericString>,
+        #[rasn(size("1..=8"), tag(context, 1), identifier = "subscriberNumber")]
+        pub subscriber_number: NumericString,
+    }
+    impl E164DNNationalSignificantNumber {
+        pub fn new(
+            national_destination_number: Option<NumericString>,
+            subscriber_number: NumericString,
+        ) -> Self {
+            Self {
+                national_destination_number,
+                subscriber_number,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct E164DN {
+        #[rasn(size("1..=4"), tag(context, 0), identifier = "countryCode")]
+        pub country_code: Option<NumericString>,
+        #[rasn(tag(context, 1), identifier = "nationalSignificantNumber")]
+        pub national_significant_number: E164DNNationalSignificantNumber,
+    }
+    impl E164DN {
+        pub fn new(
+            country_code: Option<NumericString>,
+            national_significant_number: E164DNNationalSignificantNumber,
+        ) -> Self {
+            Self {
+                country_code,
+                national_significant_number,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum Insert {
+        firstElement(()),
+        after(ObjectInstance),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct InsertCSGChannels {
+        #[rasn(identifier = "insertAfter")]
+        pub insert_after: Insert,
+        #[rasn(identifier = "newMembers")]
+        pub new_members: SetOf<ObjectInstance>,
+    }
+    impl InsertCSGChannels {
+        pub fn new(insert_after: Insert, new_members: SetOf<ObjectInstance>) -> Self {
+            Self {
+                insert_after,
+                new_members,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct InsertCircuitSubgroups {
+        #[rasn(identifier = "insertAfterCircuitSubgroup")]
+        pub insert_after_circuit_subgroup: Insert,
+        #[rasn(identifier = "newCircuitSubgroups")]
+        pub new_circuit_subgroups: SetOf<CircuitSubgroup>,
+    }
+    impl InsertCircuitSubgroups {
+        pub fn new(
+            insert_after_circuit_subgroup: Insert,
+            new_circuit_subgroups: SetOf<CircuitSubgroup>,
+        ) -> Self {
+            Self {
+                insert_after_circuit_subgroup,
+                new_circuit_subgroups,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum InterceptTreatmentOrigin {
+        #[rasn(size("1..=5"))]
+        customized(NumericString),
+        generic(InterceptTreatmentOriginTypes),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum InterceptTreatmentOriginTypes {
+        siteTranslations = 0,
+        noDialTone = 1,
+        localAnnouncement = 2,
+        businessGroupSpecialAnnouncement = 3,
+        softDTEmergencyServiceBusinessOffice = 4,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum InterceptTreatmentTerm {
+        #[rasn(size("1..=5"))]
+        customized(NumericString),
+        generic(InterceptTreatmentTermTypes),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum InterceptTreatmentTermTypes {
+        siteTranslations = 0,
+        troubleOrSuspendServiceAnnouncement = 1,
+        operatorIntercept = 2,
+        dNChangeOrDisconnectAnnouncement = 3,
+        announceAndOperator = 4,
+        externalAutomaticInterceptSystem = 5,
+        businessGroupAnnouncementForDisconnectedOrTermRestrictedLines = 6,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Layer4InfoEntityType(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Layer5InfoEntityType(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Layer6InfoEntityType(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Layer7InfoEntityType(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ModifyCircuitSubgroup {
+        #[rasn(identifier = "circuitEndPointSubgroupName")]
+        pub circuit_end_point_subgroup_name: ObjectInstance,
+        #[rasn(identifier = "newDelete")]
+        pub new_delete: Option<Integer>,
+        #[rasn(identifier = "newPrefix")]
+        pub new_prefix: Option<Ia5String>,
+    }
+    impl ModifyCircuitSubgroup {
+        pub fn new(
+            circuit_end_point_subgroup_name: ObjectInstance,
+            new_delete: Option<Integer>,
+            new_prefix: Option<Ia5String>,
+        ) -> Self {
+            Self {
+                circuit_end_point_subgroup_name,
+                new_delete,
+                new_prefix,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NumberOfBChannels(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RemoveCSGChannels(pub SetOf<ObjectInstance>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RemoveCircuitSubgroups(pub SetOf<ObjectInstance>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SetOfInstances(pub SetOf<ObjectInstance>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SetOfStringNames(pub SetOf<StringName>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct StringName(pub GraphicString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum SupportedByAccessPortPtr {
+        accessPortPtr(AccessPortPtr),
+        accessPortInterfaceIdPtr(AccessPortInterfaceIdPtr),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SupportedByAccessPortPtrList(pub SetOf<SupportedByAccessPortPtr>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct X121DNInternationalDataNumber {
+        #[rasn(size("4"), tag(context, 0), identifier = "dNIC")]
+        pub d_nic: Option<NumericString>,
+        #[rasn(size("1..=10"), tag(context, 1), identifier = "networkTerminalNumber")]
+        pub network_terminal_number: NumericString,
+    }
+    impl X121DNInternationalDataNumber {
+        pub fn new(d_nic: Option<NumericString>, network_terminal_number: NumericString) -> Self {
+            Self {
+                d_nic,
+                network_terminal_number,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct X121DNInternationalDataNumberIntegrated {
+        #[rasn(size("3"), tag(context, 0), identifier = "dCC")]
+        pub d_cc: Option<NumericString>,
+        #[rasn(size("1..=11"), tag(context, 1), identifier = "nationalNumber")]
+        pub national_number: NumericString,
+    }
+    impl X121DNInternationalDataNumberIntegrated {
+        pub fn new(d_cc: Option<NumericString>, national_number: NumericString) -> Self {
+            Self {
+                d_cc,
+                national_number,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct X121DNInternationalTelexNumber {
+        #[rasn(size("3"), tag(context, 0), identifier = "tDC")]
+        pub t_dc: Option<NumericString>,
+        #[rasn(size("1..=11"), tag(context, 1), identifier = "nationalTelexNumber")]
+        pub national_telex_number: NumericString,
+    }
+    impl X121DNInternationalTelexNumber {
+        pub fn new(t_dc: Option<NumericString>, national_telex_number: NumericString) -> Self {
+            Self {
+                t_dc,
+                national_telex_number,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum X121DN {
+        #[rasn(tag(context, 0))]
+        internationalDataNumber(X121DNInternationalDataNumber),
+        #[rasn(tag(context, 1))]
+        internationalDataNumberIntegrated(X121DNInternationalDataNumberIntegrated),
+        #[rasn(tag(context, 2))]
+        internationalTelexNumber(X121DNInternationalTelexNumber),
+    }
+    pub static C_ACOMMON_ACTION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q824_0_INFORMATION_MODEL, &[9u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static C_ACOMMON_ATTRIBUTE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q824_0_INFORMATION_MODEL, &[7u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static C_ACOMMON_NAME_BINDING: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q824_0_INFORMATION_MODEL, &[6u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static C_ACOMMON_OBJECT_CLASS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q824_0_INFORMATION_MODEL, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static C_ACOMMON_PACKAGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q824_0_INFORMATION_MODEL, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static EMPTY_SET: LazyLock<SetOfInstances> =
+        LazyLock::new(|| SetOfInstances(alloc::vec![]));
+    #[doc = "  default value definitions"]
+    pub const R_FALSE: Boolean = Boolean(Boolean(false));
+    pub const INTERCEPT_TREATMENT_ORIGIN: InterceptTreatmentOrigin =
+        InterceptTreatmentOrigin::generic(InterceptTreatmentOriginTypes::siteTranslations);
+    pub const INTERCEPT_TREATMENT_TERM: InterceptTreatmentTerm =
+        InterceptTreatmentTerm::generic(InterceptTreatmentTermTypes::siteTranslations);
+    pub static Q824_0_INFORMATION_MODEL: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::const_new(&[0u32, 0u32, 17u32, 824u32, 127u32, 0u32, 0u32]).to_owned()
+    });
+}

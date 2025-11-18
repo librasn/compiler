@@ -1,0 +1,171 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q813_1998_STASE-A-ASSOCIATE-Information.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod stase_a_associate_information {
+    extern crate alloc;
+    use super::secure_remote_operations_apdus::{
+        EncryptedAuthenticatedSymmetricKey, EncryptionCertificate, KeyId, PublicKeyCertificate,
+        ReceiverId, SenderId, Signature, SignatureCertificate,
+    };
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousEncryptionParametersSelectionPublicKeys {
+        pub modulus: Integer,
+        pub exponent: Integer,
+    }
+    impl AnonymousEncryptionParametersSelectionPublicKeys {
+        pub fn new(modulus: Integer, exponent: Integer) -> Self {
+            Self { modulus, exponent }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct EncryptionParametersSelectionPublicKeys(
+        pub SetOf<AnonymousEncryptionParametersSelectionPublicKeys>,
+    );
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    #[non_exhaustive]
+    pub struct EncryptionParametersSelection {
+        #[rasn(tag(context, 0), identifier = "symmetricKeyIds")]
+        pub symmetric_key_ids: Option<SetOf<KeyId>>,
+        #[rasn(tag(context, 1), identifier = "publicKeyIds")]
+        pub public_key_ids: Option<SetOf<KeyId>>,
+        #[rasn(tag(context, 2), identifier = "sealKeyIds")]
+        pub seal_key_ids: Option<SetOf<KeyId>>,
+        #[rasn(tag(context, 3), identifier = "signatureKeyIds")]
+        pub signature_key_ids: Option<SetOf<KeyId>>,
+        #[rasn(tag(context, 4), identifier = "passwordIds")]
+        pub password_ids: Option<SetOf<KeyId>>,
+        #[rasn(size("8"), tag(context, 5), identifier = "initializationVector")]
+        pub initialization_vector: Option<OctetString>,
+        #[rasn(value("1..=63"), tag(context, 6), identifier = "feedBackBits")]
+        pub feed_back_bits: Option<u8>,
+        #[rasn(tag(context, 7), identifier = "symmetricAlgorithms")]
+        pub symmetric_algorithms: Option<SetOf<ObjectIdentifier>>,
+        #[rasn(tag(context, 8), identifier = "publicKeyAlgorithms")]
+        pub public_key_algorithms: Option<SetOf<ObjectIdentifier>>,
+        #[rasn(tag(context, 9), identifier = "signatureAlgorithms")]
+        pub signature_algorithms: Option<SetOf<ObjectIdentifier>>,
+        #[rasn(tag(context, 10), identifier = "sealAlgorithms")]
+        pub seal_algorithms: Option<SetOf<ObjectIdentifier>>,
+        #[rasn(tag(context, 11), identifier = "hashAlgorithms")]
+        pub hash_algorithms: Option<SetOf<ObjectIdentifier>>,
+        #[rasn(size("8..=64"), tag(context, 12), identifier = "keyDigest")]
+        pub key_digest: Option<OctetString>,
+        #[rasn(tag(context, 13), identifier = "blockSize")]
+        pub block_size: Option<Integer>,
+        #[rasn(tag(context, 14), identifier = "keySizes")]
+        pub key_sizes: Option<SetOf<Integer>>,
+        #[rasn(tag(context, 15), identifier = "publicKeys")]
+        pub public_keys: Option<EncryptionParametersSelectionPublicKeys>,
+        #[rasn(tag(context, 16), identifier = "sequenceNumber")]
+        pub sequence_number: Option<Integer>,
+        #[rasn(tag(context, 17), identifier = "timeStamp")]
+        pub time_stamp: Option<GeneralizedTime>,
+        #[rasn(size("64..=128"), tag(context, 18), identifier = "encryptedKey")]
+        pub encrypted_key: Option<OctetString>,
+        #[rasn(tag(context, 19), identifier = "encryptedSymmetricKey")]
+        pub encrypted_symmetric_key: Option<Integer>,
+        #[rasn(size("1..=3"), tag(context, 20), identifier = "keyEncryptionKey")]
+        pub key_encryption_key: Option<SequenceOf<KeyId>>,
+        #[rasn(tag(context, 21), identifier = "keyListIds")]
+        pub key_list_ids: Option<SetOf<KeyListId>>,
+        #[rasn(tag(context, 22), identifier = "encryptionCertificate")]
+        pub encryption_certificate: Option<SetOf<EncryptionCertificate>>,
+        #[rasn(tag(context, 23), identifier = "signatureCertificate")]
+        pub signature_certificate: Option<SetOf<SignatureCertificate>>,
+        #[rasn(tag(context, 24), identifier = "encryptedAuthenticatedSymmetricKeys")]
+        pub encrypted_authenticated_symmetric_keys:
+            Option<SetOf<EncryptedAuthenticatedSymmetricKey>>,
+        #[rasn(tag(context, 25), identifier = "macAlgorithms")]
+        pub mac_algorithms: Option<SetOf<ObjectIdentifier>>,
+        #[rasn(tag(context, 26), identifier = "publicKeyCertificate")]
+        pub public_key_certificate: Option<SetOf<PublicKeyCertificate>>,
+    }
+    impl EncryptionParametersSelection {
+        pub fn new(
+            symmetric_key_ids: Option<SetOf<KeyId>>,
+            public_key_ids: Option<SetOf<KeyId>>,
+            seal_key_ids: Option<SetOf<KeyId>>,
+            signature_key_ids: Option<SetOf<KeyId>>,
+            password_ids: Option<SetOf<KeyId>>,
+            initialization_vector: Option<OctetString>,
+            feed_back_bits: Option<u8>,
+            symmetric_algorithms: Option<SetOf<ObjectIdentifier>>,
+            public_key_algorithms: Option<SetOf<ObjectIdentifier>>,
+            signature_algorithms: Option<SetOf<ObjectIdentifier>>,
+            seal_algorithms: Option<SetOf<ObjectIdentifier>>,
+            hash_algorithms: Option<SetOf<ObjectIdentifier>>,
+            key_digest: Option<OctetString>,
+            block_size: Option<Integer>,
+            key_sizes: Option<SetOf<Integer>>,
+            public_keys: Option<EncryptionParametersSelectionPublicKeys>,
+            sequence_number: Option<Integer>,
+            time_stamp: Option<GeneralizedTime>,
+            encrypted_key: Option<OctetString>,
+            encrypted_symmetric_key: Option<Integer>,
+            key_encryption_key: Option<SequenceOf<KeyId>>,
+            key_list_ids: Option<SetOf<KeyListId>>,
+            encryption_certificate: Option<SetOf<EncryptionCertificate>>,
+            signature_certificate: Option<SetOf<SignatureCertificate>>,
+            encrypted_authenticated_symmetric_keys: Option<
+                SetOf<EncryptedAuthenticatedSymmetricKey>,
+            >,
+            mac_algorithms: Option<SetOf<ObjectIdentifier>>,
+            public_key_certificate: Option<SetOf<PublicKeyCertificate>>,
+        ) -> Self {
+            Self {
+                symmetric_key_ids,
+                public_key_ids,
+                seal_key_ids,
+                signature_key_ids,
+                password_ids,
+                initialization_vector,
+                feed_back_bits,
+                symmetric_algorithms,
+                public_key_algorithms,
+                signature_algorithms,
+                seal_algorithms,
+                hash_algorithms,
+                key_digest,
+                block_size,
+                key_sizes,
+                public_keys,
+                sequence_number,
+                time_stamp,
+                encrypted_key,
+                encrypted_symmetric_key,
+                key_encryption_key,
+                key_list_ids,
+                encryption_certificate,
+                signature_certificate,
+                encrypted_authenticated_symmetric_keys,
+                mac_algorithms,
+                public_key_certificate,
+            }
+        }
+    }
+    #[doc = " EncryptionParametersSelection is optionally used during association setup to negotiate which algorithms and other parameters will be supported during the association. It is not used in STASE-ROSE PDUs."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum KeyListId {
+        identifier(ObjectIdentifier),
+        name(GraphicString),
+        number(Integer),
+    }
+}

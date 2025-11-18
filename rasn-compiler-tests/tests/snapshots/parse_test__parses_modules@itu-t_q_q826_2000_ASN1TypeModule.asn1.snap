@@ -1,0 +1,640 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q826_2000_ASN1TypeModule.asn1
+---
+Warnings:
+Unidentified generating bindings for : Unsupported operation for ASN1Values ElsewhereDeclaredValue { parent: None, identifier: "locked" } and ElsewhereDeclaredValue { parent: None, identifier: "unlocked" }
+LinkerError in ASN grammar: Failed to link value with 'GeneralErrorCause'
+LinkerError in ASN grammar: Failed to link value with 'GeneralErrorCause'
+LinkerError in ASN grammar: Failed to resolve reference of ElsewhereDefined: UsageState
+LinkerError in ASN grammar: Failed to resolve reference of ElsewhereDefined: AdministrativeState
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod asn1_type_module {
+    extern crate alloc;
+    use super::asn1_defined_types_module::{GeneralErrorCause, NameType};
+    use super::attribute_asn1_module::{AdministrativeState, UsageState};
+    use super::cmip_1::{Attribute, ObjectClass, ObjectInstance};
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " ASN.1 Types"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ActiveDestination {
+        #[rasn(tag(context, 0))]
+        destination(ObjectInstance),
+        #[rasn(tag(context, 1))]
+        destinationGroup(DestinationGroup),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct BoundaryCrossing(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CalledNumberingPlan(pub FixedBitString<4usize>);
+    #[doc = " Value according ITU-T Recommendation Q.763"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum CallingPartyCategory {
+        #[rasn(tag(context, 0))]
+        anyCategory(()),
+        #[rasn(size("8"), tag(context, 1))]
+        definedCategory(BitString),
+        #[rasn(tag(context, 2))]
+        extendedCategory(ObjectIdentifier),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{30}..=\u{39}", "\u{41}..=\u{46}"))]
+    pub struct CarrierCode(pub Ia5String);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct CarrierCodePresent(pub ());
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum CarrierList {
+        #[rasn(tag(context, 0))]
+        noList(()),
+        #[rasn(tag(context, 1))]
+        listOfCarriers(ObjectInstance),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum CarrierType {
+        objectIdentifier(ObjectIdentifier),
+        name(NameType),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Cic(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CircuitNumber(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{30}..=\u{39}", "\u{41}..=\u{46}"))]
+    pub struct DestinationCode(pub Ia5String);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct DestinationGroup {
+        #[rasn(tag(context, 0), identifier = "objectClass")]
+        pub object_class: Option<ObjectClass>,
+        #[rasn(tag(context, 1))]
+        pub label: NameType,
+    }
+    impl DestinationGroup {
+        pub fn new(object_class: Option<ObjectClass>, label: NameType) -> Self {
+            Self {
+                object_class,
+                label,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DestinationType(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{30}..=\u{39}", "\u{41}..=\u{46}"))]
+    pub struct DigitComb(pub Ia5String);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousDigitCombInsert {
+        #[rasn(tag(context, 0), identifier = "startPosition")]
+        pub start_position: Integer,
+        #[rasn(tag(context, 1))]
+        pub combination: DigitComb,
+    }
+    impl AnonymousDigitCombInsert {
+        pub fn new(start_position: Integer, combination: DigitComb) -> Self {
+            Self {
+                start_position,
+                combination,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DigitCombInsert(pub SetOf<AnonymousDigitCombInsert>);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousDigitCombReplace {
+        #[rasn(tag(context, 0), identifier = "startPosition")]
+        pub start_position: Integer,
+        #[rasn(tag(context, 1), identifier = "endPosition")]
+        pub end_position: Integer,
+        #[rasn(tag(context, 2))]
+        pub combination: DigitComb,
+    }
+    impl AnonymousDigitCombReplace {
+        pub fn new(start_position: Integer, end_position: Integer, combination: DigitComb) -> Self {
+            Self {
+                start_position,
+                end_position,
+                combination,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DigitCombReplace(pub SetOf<AnonymousDigitCombReplace>);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousDigitSuppress {
+        #[rasn(tag(context, 0), identifier = "startPosition")]
+        pub start_position: Integer,
+        #[rasn(tag(context, 1), identifier = "endPosition")]
+        pub end_position: Integer,
+    }
+    impl AnonymousDigitSuppress {
+        pub fn new(start_position: Integer, end_position: Integer) -> Self {
+            Self {
+                start_position,
+                end_position,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DigitSuppress(pub SetOf<AnonymousDigitSuppress>);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        delegate,
+        identifier = "IA5String",
+        from("\u{30}..=\u{39}", "\u{41}..=\u{46}")
+    )]
+    pub struct AnonymousExcludedSubscriberCodes(pub Ia5String);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ExcludedSubscriberCodes(pub SetOf<AnonymousExcludedSubscriberCodes>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum AnonymousExtSchedulingAttributeObjectOrGroup {
+        #[rasn(tag(context, 0))]
+        destination(ObjectInstance),
+        #[rasn(tag(context, 1))]
+        destinationGroup(DestinationGroup),
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousExtSchedulingAttribute {
+        #[rasn(tag(context, 0), identifier = "objectOrGroup")]
+        pub object_or_group: AnonymousExtSchedulingAttributeObjectOrGroup,
+        #[rasn(tag(context, 1))]
+        pub index: Integer,
+    }
+    impl AnonymousExtSchedulingAttribute {
+        pub fn new(
+            object_or_group: AnonymousExtSchedulingAttributeObjectOrGroup,
+            index: Integer,
+        ) -> Self {
+            Self {
+                object_or_group,
+                index,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ExtSchedulingAttribute(pub SetOf<AnonymousExtSchedulingAttribute>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct IncCepsg(pub ObjectInstance);
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        delegate,
+        identifier = "IA5String",
+        from("\u{30}..=\u{39}", "\u{41}..=\u{46}")
+    )]
+    pub struct AnonymousInitialSubscriberCodes(pub Ia5String);
+    #[doc = " instances of OC cepsg for one-way incoming or two-way direction"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct InitialSubscriberCodes(pub SequenceOf<AnonymousInitialSubscriberCodes>);
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousInputCriteriaDataForAlgorithmOut {
+        #[rasn(identifier = "outCepsgs")]
+        pub out_cepsgs: SetOf<OutCepsg>,
+        #[rasn(identifier = "userLabel")]
+        pub user_label: Option<GraphicString>,
+    }
+    impl AnonymousInputCriteriaDataForAlgorithmOut {
+        pub fn new(out_cepsgs: SetOf<OutCepsg>, user_label: Option<GraphicString>) -> Self {
+            Self {
+                out_cepsgs,
+                user_label,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct InputCriteriaDataForAlgorithmOut(
+        pub SequenceOf<AnonymousInputCriteriaDataForAlgorithmOut>,
+    );
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousInputCriteriaDataForAlgorithmPerc {
+        #[rasn(value("0..=100"))]
+        pub percentage: u8,
+        #[rasn(identifier = "userLabel")]
+        pub user_label: Option<GraphicString>,
+    }
+    impl AnonymousInputCriteriaDataForAlgorithmPerc {
+        pub fn new(percentage: u8, user_label: Option<GraphicString>) -> Self {
+            Self {
+                percentage,
+                user_label,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct InputCriteriaDataForAlgorithmPerc(
+        pub SequenceOf<AnonymousInputCriteriaDataForAlgorithmPerc>,
+    );
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AnonymousInputCriteriaDataForAlgorithmIncIncCarriedCallsQuota {
+        #[rasn(identifier = "incCepsgs")]
+        pub inc_cepsgs: SetOf<IncCepsg>,
+        #[rasn(value("0..=100"))]
+        pub percentage: u8,
+    }
+    impl AnonymousInputCriteriaDataForAlgorithmIncIncCarriedCallsQuota {
+        pub fn new(inc_cepsgs: SetOf<IncCepsg>, percentage: u8) -> Self {
+            Self {
+                inc_cepsgs,
+                percentage,
+            }
+        }
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousInputCriteriaDataForAlgorithmInc {
+        #[rasn(identifier = "incCarriedCallsQuota")]
+        pub inc_carried_calls_quota: AnonymousInputCriteriaDataForAlgorithmIncIncCarriedCallsQuota,
+        #[rasn(identifier = "userLabel")]
+        pub user_label: Option<GraphicString>,
+    }
+    impl AnonymousInputCriteriaDataForAlgorithmInc {
+        pub fn new(
+            inc_carried_calls_quota: AnonymousInputCriteriaDataForAlgorithmIncIncCarriedCallsQuota,
+            user_label: Option<GraphicString>,
+        ) -> Self {
+            Self {
+                inc_carried_calls_quota,
+                user_label,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct InputCriteriaDataForAlgorithmInc(
+        pub SequenceOf<AnonymousInputCriteriaDataForAlgorithmInc>,
+    );
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum InputCriteriaDataForAlgorithm {
+        #[rasn(tag(context, 0))]
+        out(InputCriteriaDataForAlgorithmOut),
+        #[rasn(tag(context, 1))]
+        perc(InputCriteriaDataForAlgorithmPerc),
+        #[rasn(tag(context, 2))]
+        inc(InputCriteriaDataForAlgorithmInc),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum InstanceOrName {
+        #[rasn(tag(context, 0))]
+        objectInstance(ObjectInstance),
+        #[rasn(tag(context, 1))]
+        symbolic(NameType),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=15"))]
+    pub struct LanguageDigit(pub u8);
+    #[doc = " the number of the language corresponds to the language numbers in the calling party's"]
+    #[doc = " category field in ITU-T Recommendation Q.763"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ListOfCarriers(pub SetOf<CarrierCode>);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "CHOICE")]
+    pub enum AnonymousMatchesIf {
+        #[rasn(tag(context, 0))]
+        criteria(ObjectClass),
+        #[rasn(tag(context, 1))]
+        cause(BitString),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MatchesIf(pub SetOf<AnonymousMatchesIf>);
+    #[doc = " causes as defined in ITU-T Recommendation Q.850"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ModifyNumberingSchemeInfo {
+        #[rasn(tag(context, 0), identifier = "newNationalDestInstance")]
+        pub new_national_dest_instance: Option<ObjectInstance>,
+        #[rasn(tag(context, 1), identifier = "newInitialSubscriberCodes")]
+        pub new_initial_subscriber_codes: Option<InitialSubscriberCodes>,
+    }
+    impl ModifyNumberingSchemeInfo {
+        pub fn new(
+            new_national_dest_instance: Option<ObjectInstance>,
+            new_initial_subscriber_codes: Option<InitialSubscriberCodes>,
+        ) -> Self {
+            Self {
+                new_national_dest_instance,
+                new_initial_subscriber_codes,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ModifyNumberingSchemeReply(pub SetOf<Attribute>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{30}..=\u{39}"))]
+    pub struct NationalDestinationCode(pub Ia5String);
+    #[doc = " size is limited as in ITU-T Recommendation E.164 [2] or any successor document"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NatureOfAddress(pub FixedBitString<7usize>);
+    #[doc = " Value according ITU-T Recommendation Q.763"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NumberOfDigits(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NumberOfSatLinks(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ObjectInstanceOrNull {
+        #[rasn(tag(context, 0))]
+        objectInstance(ObjectInstance),
+        #[rasn(tag(context, 1))]
+        null(()),
+    }
+    #[doc = " Definition similar to PointerOrNull from ITU-T Recommendation M.3100 [4]"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ObjectInstances(pub SetOf<ObjectInstance>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum OfficeEquipment {
+        #[rasn(tag(context, 0))]
+        string(PrintableString),
+        #[rasn(tag(context, 1))]
+        inst(ObjectInstance),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum Origin {
+        #[rasn(tag(context, 0))]
+        anyOrigin(()),
+        #[rasn(tag(context, 1))]
+        namedOrigin(NameType),
+        #[rasn(tag(context, 2))]
+        extendedOrigin(ObjectIdentifier),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct OutCepsg(pub ObjectInstance);
+    #[doc = " instance of OC cepsg for out/bothway direction"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct OwnCac(pub bool);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PrefTrafficDirect(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        delegate,
+        from("\u{23}", "\u{2a}", "\u{30}..=\u{39}", "\u{41}..=\u{46}")
+    )]
+    pub struct PrefixCode(pub Ia5String);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{30}..=\u{39}", "\u{41}..=\u{46}"))]
+    pub struct PrefixDigits(pub Ia5String);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ReqBearerCapability(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ReqSignCapability(pub Integer);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousSchedulingAttribute {
+        #[rasn(tag(context, 0))]
+        pub object: ObjectInstance,
+        #[rasn(tag(context, 1))]
+        pub index: Integer,
+    }
+    impl AnonymousSchedulingAttribute {
+        pub fn new(object: ObjectInstance, index: Integer) -> Self {
+            Self { object, index }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SchedulingAttribute(pub SetOf<AnonymousSchedulingAttribute>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SearchMethod(pub Integer);
+    #[doc = " random idle circuit"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum SelectedCarrierType {
+        #[rasn(tag(context, 0))]
+        networkProviderSelectionMechanism(()),
+        #[rasn(tag(context, 1))]
+        selectedCarrierType(CarrierType),
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "CHOICE")]
+    pub enum AnonymousSelectedInstances {
+        #[rasn(tag(context, 0))]
+        routingPossibilitiesInstance(ObjectInstance),
+        #[rasn(tag(context, 1))]
+        postAnalysisEvaluationGroup(DestinationGroup),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SelectedInstances(pub SequenceOf<AnonymousSelectedInstances>);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousSelectionForAlgorithmProportional {
+        #[rasn(value("0..=100"), tag(context, 0))]
+        pub percentage: u8,
+        #[rasn(tag(context, 1))]
+        pub list: SequenceOf<ObjectInstance>,
+    }
+    impl AnonymousSelectionForAlgorithmProportional {
+        pub fn new(percentage: u8, list: SequenceOf<ObjectInstance>) -> Self {
+            Self { percentage, list }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SelectionForAlgorithmProportional(
+        pub SetOf<AnonymousSelectionForAlgorithmProportional>,
+    );
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum SelectionForAlgorithm {
+        #[rasn(tag(context, 0))]
+        ordered(SequenceOf<ObjectInstance>),
+        #[rasn(tag(context, 1))]
+        proportional(SelectionForAlgorithmProportional),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SkipGroup(pub ObjectInstances);
+    #[doc = " list of instances of OCs localDestination, routingPossData, cepsgComb, cepsg,"]
+    #[doc = " routingPossibilities."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct SuppressCac(pub bool);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum Term {
+        #[rasn(tag(context, 0))]
+        anyTerm(()),
+        #[rasn(tag(context, 1))]
+        namedTerm(NameType),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TrafficCategory(pub Integer);
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousTrafficDistributionData {
+        #[rasn(value("0..=100"), tag(context, 0))]
+        pub percentage: u8,
+        #[rasn(tag(context, 1), identifier = "userLabel")]
+        pub user_label: Option<GraphicString>,
+    }
+    impl AnonymousTrafficDistributionData {
+        pub fn new(percentage: u8, user_label: Option<GraphicString>) -> Self {
+            Self {
+                percentage,
+                user_label,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TrafficDistributionData(pub SequenceOf<AnonymousTrafficDistributionData>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct UsedAlgorithm(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct YesNo(pub bool);
+    pub static ACTION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***INFORMATION_MODEL, &[9u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ATTRIBUTE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***INFORMATION_MODEL, &[7u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " default values"]
+    pub const DEFAULT_ANALYSIS_ORIGIN: Origin = Origin::anyOrigin(());
+    pub const DEFAULT_ASSOC_SIGN_ROUTE_SET_NE_PART: ObjectInstanceOrNull =
+        ObjectInstanceOrNull::null(());
+    pub static DEFAULT_BOUNDARY_CROSSING: LazyLock<BoundaryCrossing> =
+        LazyLock::new(|| BoundaryCrossing(Integer::from(0)));
+    pub const DEFAULT_CALLING_PARTY_CATEGORY: CallingPartyCategory =
+        CallingPartyCategory::anyCategory(());
+    pub static DEFAULT_CRANKBACK_ADMIN_STATE: LazyLock<AdministrativeState> =
+        LazyLock::new(|| AdministrativeState(UNLOCKED));
+    pub const DEFAULT_LANGUAGE_DIGIT_PROC: YesNo = YesNo(false);
+    pub static DEFAULT_PREFIX_DIGITS: LazyLock<PrefixDigits> =
+        LazyLock::new(|| PrefixDigits(Ia5String::try_from("").unwrap()));
+    pub const DEFAULT_PREPARATION_ORIGIN: Origin = Origin::anyOrigin(());
+    pub const DEFAULT_PREPARATION_TERM: Term = Term::anyTerm(());
+    pub const DEFAULT_REBUILDING_ORIGIN: Origin = Origin::anyOrigin(());
+    pub const DEFAULT_ROUTING_ORIGIN: Origin = Origin::anyOrigin(());
+    pub static DEFAULT_TRAFFIC_CATEGORY: LazyLock<TrafficCategory> =
+        LazyLock::new(|| TrafficCategory(Integer::from(0)));
+    pub static INFORMATION_MODEL: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&[0u32, 0u32], &***Q, &[826u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " initial values"]
+    pub const INITIAL_CARRIER_CODE_PRESENT: CarrierCodePresent = CarrierCodePresent(());
+    pub static INITIAL_VALUE_IDLE: LazyLock<UsageState> = LazyLock::new(|| UsageState(IDLE));
+    pub const INITIAL_VALUE_ORIGIN: Origin = Origin::anyOrigin(());
+    pub static MANAGED_OBJECT_CLASS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***INFORMATION_MODEL, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static NAME_BINDING: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***INFORMATION_MODEL, &[6u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static NOTIFICATION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***INFORMATION_MODEL, &[10u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static PACKAGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***INFORMATION_MODEL, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ROUTING_ADMIN_ERROR: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***STANDARD_SPECIFIC_EXTENSION, &[0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static STANDARD_SPECIFIC_EXTENSION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***INFORMATION_MODEL, &[0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " routing administrative errors"]
+    pub static STILL_BEING_REFERERENCED: LazyLock<GeneralErrorCause> = LazyLock::new(|| {
+        GeneralErrorCause(GeneralErrorCause(GeneralErrorCause::globalValue(
+            Oid::new(&[&***ROUTING_ADMIN_ERROR, &[1u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub static UNIQUENESS_CONSTRAINT_VIOLATION: LazyLock<GeneralErrorCause> = LazyLock::new(|| {
+        GeneralErrorCause(GeneralErrorCause(GeneralErrorCause::globalValue(
+            Oid::new(&[&***ROUTING_ADMIN_ERROR, &[2u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+}

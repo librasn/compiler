@@ -1,0 +1,441 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x841_2000_SIOsAccessControl-MODULE.asn1
+---
+Warnings:
+Unidentified generating bindings for : Unsupported operation for ASN1Values ElsewhereDeclaredValue { parent: None, identifier: "decrypt" } and ElsewhereDeclaredValue { parent: None, identifier: "both" }
+Unidentified generating bindings for : Unsupported operation for ASN1Values ElsewhereDeclaredValue { parent: None, identifier: "oneOrMore" } and ElsewhereDeclaredValue { parent: None, identifier: "all" }
+LinkerError in ASN grammar: Failed to resolve supertype DirectoryString of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype DirectoryString of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype DirectoryString of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype DirectoryString of parameterized implementation.
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod sios_access_control_module {
+    extern crate alloc;
+    use super::authentication_framework::Extensions;
+    use super::enhanced_security::ID_AT_CLEARANCE;
+    use super::information_framework::*;
+    use super::selected_attribute_types::DirectoryString;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct CategoryGroup(pub SequenceOf<OptionalCategoryData>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ClassList(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ClassificationName(pub DirectoryString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Clearance {
+        #[rasn(tag(context, 0), identifier = "policyId")]
+        pub policy_id: ObjectIdentifier,
+        #[rasn(
+            tag(context, 1),
+            default = "clearance_class_list_default",
+            identifier = "classList"
+        )]
+        pub class_list: ClassList,
+        #[rasn(tag(context, 2), identifier = "securityCategories")]
+        pub security_categories: Option<SecurityCategories>,
+    }
+    impl Clearance {
+        pub fn new(
+            policy_id: ObjectIdentifier,
+            class_list: ClassList,
+            security_categories: Option<SecurityCategories>,
+        ) -> Self {
+            Self {
+                policy_id,
+                class_list,
+                security_categories,
+            }
+        }
+    }
+    fn clearance_class_list_default() -> ClassList {
+        ClassList(
+            [false, true, false, false, false, false]
+                .into_iter()
+                .collect(),
+        )
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct ConfidentialityLabel {
+        #[rasn(identifier = "security-policy-identifier")]
+        pub security_policy_identifier: Option<SecurityPolicyIdentifier>,
+        #[rasn(value("0.."), identifier = "security-classification")]
+        pub security_classification: Option<Integer>,
+        #[rasn(identifier = "privacy-mark")]
+        pub privacy_mark: Option<PrivacyMark>,
+        #[rasn(identifier = "security-categories")]
+        pub security_categories: Option<SecurityCategories>,
+    }
+    impl ConfidentialityLabel {
+        pub fn new(
+            security_policy_identifier: Option<SecurityPolicyIdentifier>,
+            security_classification: Option<Integer>,
+            privacy_mark: Option<PrivacyMark>,
+            security_categories: Option<SecurityCategories>,
+        ) -> Self {
+            Self {
+                security_policy_identifier,
+                security_classification,
+                privacy_mark,
+                security_categories,
+            }
+        }
+    }
+    #[doc = " Type EncodedSPIF is an open type constrained to be a value"]
+    #[doc = " of type SPIF. This open type representation is an opaque"]
+    #[doc = " string of hexadecimal characters suitable for signature"]
+    #[doc = " and signature verification operations."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct EncodedSPIF(pub Any);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct EquivalentClassification {
+        #[rasn(identifier = "securityPolicyId")]
+        pub security_policy_id: ObjectIdentifier,
+        #[rasn(identifier = "labelAndCertValue")]
+        pub label_and_cert_value: LabelAndCertValue,
+        pub applied: Applied,
+    }
+    impl EquivalentClassification {
+        pub fn new(
+            security_policy_id: ObjectIdentifier,
+            label_and_cert_value: LabelAndCertValue,
+            applied: Applied,
+        ) -> Self {
+            Self {
+                security_policy_id,
+                label_and_cert_value,
+                applied,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct EquivalentClassifications(pub SequenceOf<EquivalentClassification>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct EquivalentPolicies(pub SequenceOf<EquivalentPolicy>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct EquivalentPolicy {
+        #[rasn(identifier = "securityPolicyId")]
+        pub security_policy_id: ObjectIdentifier,
+        #[rasn(identifier = "securityPolicyName")]
+        pub security_policy_name: Option<SecurityPolicyName>,
+    }
+    impl EquivalentPolicy {
+        pub fn new(
+            security_policy_id: ObjectIdentifier,
+            security_policy_name: Option<SecurityPolicyName>,
+        ) -> Self {
+            Self {
+                security_policy_id,
+                security_policy_name,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0.."))]
+    pub struct LabelAndCertValue(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MarkingCode(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct MarkingCodes(pub SequenceOf<MarkingCode>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct MarkingData {
+        #[rasn(identifier = "markingPhrase")]
+        pub marking_phrase: Option<MarkingPhrase>,
+        #[rasn(identifier = "markingCodes")]
+        pub marking_codes: Option<MarkingCodes>,
+    }
+    impl MarkingData {
+        pub fn new(
+            marking_phrase: Option<MarkingPhrase>,
+            marking_codes: Option<MarkingCodes>,
+        ) -> Self {
+            Self {
+                marking_phrase,
+                marking_codes,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct MarkingDataInfo(pub SequenceOf<MarkingData>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MarkingPhrase(pub DirectoryString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ObjectIdData {
+        #[rasn(identifier = "objectId")]
+        pub object_id: ObjectIdentifier,
+        #[rasn(identifier = "objectIdName")]
+        pub object_id_name: ObjectIdName,
+    }
+    impl ObjectIdData {
+        pub fn new(object_id: ObjectIdentifier, object_id_name: ObjectIdName) -> Self {
+            Self {
+                object_id,
+                object_id_name,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ObjectIdName(pub DirectoryString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct OptionalCategoryData {
+        #[rasn(identifier = "optCatDataId")]
+        pub opt_cat_data_id: Any,
+        pub categorydata: Any,
+    }
+    impl OptionalCategoryData {
+        pub fn new(opt_cat_data_id: Any, categorydata: Any) -> Self {
+            Self {
+                opt_cat_data_id,
+                categorydata,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct OptionalCategoryGroup {
+        pub operation: Operation,
+        #[rasn(identifier = "categoryGroup")]
+        pub category_group: CategoryGroup,
+    }
+    impl OptionalCategoryGroup {
+        pub fn new(operation: Operation, category_group: CategoryGroup) -> Self {
+            Self {
+                operation,
+                category_group,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct OptionalCategoryGroups(pub SequenceOf<OptionalCategoryGroup>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum PrivacyMark {
+        #[rasn(size("1..=128"))]
+        pString(PrintableString),
+        utf8String(Utf8String),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SPIF {
+        #[rasn(
+            default = "spif_version_information_default",
+            identifier = "versionInformation"
+        )]
+        pub version_information: VersionInformationData,
+        #[rasn(identifier = "updateInformation")]
+        pub update_information: UpdateInformationData,
+        #[rasn(identifier = "securityPolicyIdData")]
+        pub security_policy_id_data: ObjectIdData,
+        #[rasn(identifier = "privilegeId")]
+        pub privilege_id: ObjectIdentifier,
+        #[rasn(identifier = "rbacId")]
+        pub rbac_id: ObjectIdentifier,
+        #[rasn(tag(context, 0), identifier = "securityClassifications")]
+        pub security_classifications: Option<SecurityClassifications>,
+        #[rasn(tag(context, 1), identifier = "securityCategories")]
+        pub security_categories: Option<SPIFSecurityCategories>,
+        #[rasn(tag(context, 2), identifier = "equivalentPolicies")]
+        pub equivalent_policies: Option<EquivalentPolicies>,
+        #[rasn(tag(context, 3), identifier = "defaultSecurityPolicyIdData")]
+        pub default_security_policy_id_data: Option<ObjectIdData>,
+        #[rasn(tag(context, 4))]
+        pub extensions: Option<Extensions>,
+    }
+    impl SPIF {
+        pub fn new(
+            version_information: VersionInformationData,
+            update_information: UpdateInformationData,
+            security_policy_id_data: ObjectIdData,
+            privilege_id: ObjectIdentifier,
+            rbac_id: ObjectIdentifier,
+            security_classifications: Option<SecurityClassifications>,
+            security_categories: Option<SPIFSecurityCategories>,
+            equivalent_policies: Option<EquivalentPolicies>,
+            default_security_policy_id_data: Option<ObjectIdData>,
+            extensions: Option<Extensions>,
+        ) -> Self {
+            Self {
+                version_information,
+                update_information,
+                security_policy_id_data,
+                privilege_id,
+                rbac_id,
+                security_classifications,
+                security_categories,
+                equivalent_policies,
+                default_security_policy_id_data,
+                extensions,
+            }
+        }
+    }
+    fn spif_version_information_default() -> VersionInformationData {
+        VersionInformationData(Integer::from(0))
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "SPIF-SecurityCategories")]
+    pub struct SPIFSecurityCategories(pub SequenceOf<SecurityCategory>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0.."))]
+    pub struct SPIFVersionNumber(pub Integer);
+    #[doc = " as defined in X.411"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct SecurityCategories(pub SetOf<SecurityCategory>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SecurityCategory {
+        #[rasn(tag(context, 0), identifier = "type")]
+        pub r_type: Any,
+        #[rasn(tag(explicit(context, 1)))]
+        pub value: Any,
+    }
+    impl SecurityCategory {
+        pub fn new(r_type: Any, value: Any) -> Self {
+            Self { r_type, value }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SecurityClassification {
+        #[rasn(identifier = "labelAndCertValue")]
+        pub label_and_cert_value: LabelAndCertValue,
+        #[rasn(identifier = "classificationName")]
+        pub classification_name: ClassificationName,
+        #[rasn(tag(context, 0), identifier = "equivalentClassifications")]
+        pub equivalent_classifications: Option<EquivalentClassifications>,
+        #[rasn(identifier = "hierarchyValue")]
+        pub hierarchy_value: Integer,
+        #[rasn(tag(context, 1), identifier = "markingData")]
+        pub marking_data: Option<MarkingDataInfo>,
+        #[rasn(tag(context, 2), identifier = "requiredCategory")]
+        pub required_category: Option<OptionalCategoryGroups>,
+        #[rasn(default = "security_classification_obsolete_default")]
+        pub obsolete: bool,
+    }
+    impl SecurityClassification {
+        pub fn new(
+            label_and_cert_value: LabelAndCertValue,
+            classification_name: ClassificationName,
+            equivalent_classifications: Option<EquivalentClassifications>,
+            hierarchy_value: Integer,
+            marking_data: Option<MarkingDataInfo>,
+            required_category: Option<OptionalCategoryGroups>,
+            obsolete: bool,
+        ) -> Self {
+            Self {
+                label_and_cert_value,
+                classification_name,
+                equivalent_classifications,
+                hierarchy_value,
+                marking_data,
+                required_category,
+                obsolete,
+            }
+        }
+    }
+    fn security_classification_obsolete_default() -> bool {
+        false
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SecurityClassifications(pub SequenceOf<SecurityClassification>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SecurityPolicyIdentifier(pub ObjectIdentifier);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SecurityPolicyInformationFileAlgorithm {
+        pub algorithm: ObjectIdentifier,
+        pub parameters: Option<Any>,
+    }
+    impl SecurityPolicyInformationFileAlgorithm {
+        pub fn new(algorithm: ObjectIdentifier, parameters: Option<Any>) -> Self {
+            Self {
+                algorithm,
+                parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SecurityPolicyInformationFile {
+        #[rasn(identifier = "toBeSigned")]
+        pub to_be_signed: EncodedSPIF,
+        pub algorithm: SecurityPolicyInformationFileAlgorithm,
+        pub signature: BitString,
+    }
+    impl SecurityPolicyInformationFile {
+        pub fn new(
+            to_be_signed: EncodedSPIF,
+            algorithm: SecurityPolicyInformationFileAlgorithm,
+            signature: BitString,
+        ) -> Self {
+            Self {
+                to_be_signed,
+                algorithm,
+                signature,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SecurityPolicyName(pub DirectoryString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct UpdateInformationData {
+        #[rasn(identifier = "sPIFVersionNumber")]
+        pub s_pifversion_number: SPIFVersionNumber,
+        #[rasn(identifier = "creationDate")]
+        pub creation_date: GeneralizedTime,
+        #[rasn(identifier = "originatorDistinguishedName")]
+        pub originator_distinguished_name: Name,
+        #[rasn(identifier = "keyIdentifier")]
+        pub key_identifier: Option<OctetString>,
+    }
+    impl UpdateInformationData {
+        pub fn new(
+            s_pifversion_number: SPIFVersionNumber,
+            creation_date: GeneralizedTime,
+            originator_distinguished_name: Name,
+            key_identifier: Option<OctetString>,
+        ) -> Self {
+            Self {
+                s_pifversion_number,
+                creation_date,
+                originator_distinguished_name,
+                key_identifier,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0.."))]
+    pub struct VersionInformationData(pub Integer);
+    #[doc = " ITU-T Rec. X.520 | ISO/IEC 9594-6"]
+    pub static ID_CONFIDENTIALITY_LABEL: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 24u32, 0u32, 1u32, 0u32]).to_owned());
+    pub static UB_PRIVACY_MARK_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(128));
+    pub static UB_CLASSIFICATION_NAME_LENGTH: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(256));
+    pub static UB_MARKING_PHRASE_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(256));
+    #[doc = " upper bound values"]
+    pub static UB_OBJECT_ID_NAME_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(256));
+}

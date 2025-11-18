@@ -1,0 +1,593 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_t_t415_1993_Colour-Attributes.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod colour_attributes {
+    extern crate alloc;
+    use super::document_profile_descriptor::CharacterData;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "CIE-Calibration")]
+    pub struct CIECalibration {
+        #[rasn(tag(context, 0), identifier = "reference-white")]
+        pub reference_white: CIERef,
+    }
+    impl CIECalibration {
+        pub fn new(reference_white: CIERef) -> Self {
+            Self { reference_white }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "CIE-Colour")]
+    pub struct CIEColour {
+        #[rasn(tag(context, 0), identifier = "x-value")]
+        pub x_value: RealOrInt,
+        #[rasn(tag(context, 1), identifier = "y-value")]
+        pub y_value: RealOrInt,
+        #[rasn(tag(context, 2), identifier = "z-value")]
+        pub z_value: RealOrInt,
+    }
+    impl CIEColour {
+        pub fn new(x_value: RealOrInt, y_value: RealOrInt, z_value: RealOrInt) -> Self {
+            Self {
+                x_value,
+                y_value,
+                z_value,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "CIE-Ref")]
+    pub struct CIERef {
+        #[rasn(tag(context, 0), identifier = "xn-value")]
+        pub xn_value: RealOrInt,
+        #[rasn(tag(context, 1), identifier = "yn-value")]
+        pub yn_value: RealOrInt,
+        #[rasn(tag(context, 2), identifier = "zn-value")]
+        pub zn_value: RealOrInt,
+    }
+    impl CIERef {
+        pub fn new(xn_value: RealOrInt, yn_value: RealOrInt, zn_value: RealOrInt) -> Self {
+            Self {
+                xn_value,
+                yn_value,
+                zn_value,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "CMY-K-Calibration")]
+    pub struct CMYKCalibration {
+        #[rasn(tag(context, 0), identifier = "reference-white")]
+        pub reference_white: CIERef,
+        #[rasn(tag(context, 1))]
+        pub comment: Option<CharacterData>,
+        #[rasn(tag(context, 2), identifier = "cmyk-lut")]
+        pub cmyk_lut: GridSpecification,
+    }
+    impl CMYKCalibration {
+        pub fn new(
+            reference_white: CIERef,
+            comment: Option<CharacterData>,
+            cmyk_lut: GridSpecification,
+        ) -> Self {
+            Self {
+                reference_white,
+                comment,
+                cmyk_lut,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "CMYK-Colour")]
+    pub struct CMYKColour {
+        #[rasn(tag(context, 0), identifier = "c-value")]
+        pub c_value: RealOrInt,
+        #[rasn(tag(context, 1), identifier = "m-value")]
+        pub m_value: RealOrInt,
+        #[rasn(tag(context, 2), identifier = "y-value")]
+        pub y_value: RealOrInt,
+        #[rasn(tag(context, 3), identifier = "k-value")]
+        pub k_value: Option<RealOrInt>,
+    }
+    impl CMYKColour {
+        pub fn new(
+            c_value: RealOrInt,
+            m_value: RealOrInt,
+            y_value: RealOrInt,
+            k_value: Option<RealOrInt>,
+        ) -> Self {
+            Self {
+                c_value,
+                m_value,
+                y_value,
+                k_value,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "Calibration-Data")]
+    pub enum CalibrationData {
+        #[rasn(tag(context, 0))]
+        rgb(RGBCalibration),
+        #[rasn(tag(context, 1))]
+        cmyk(CMYKCalibration),
+        #[rasn(tag(context, 2))]
+        cmy(CMYKCalibration),
+        #[rasn(tag(context, 3))]
+        cieluv(CIECalibration),
+        #[rasn(tag(context, 4))]
+        cielab(CIECalibration),
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "SET")]
+    pub struct AnonymousColourCharacteristicsColourSpacesPresent {
+        #[rasn(tag(context, 0), identifier = "colour-space-type")]
+        pub colour_space_type: ColourSpaceType,
+        #[rasn(tag(context, 1), identifier = "colour-calibration-type")]
+        pub colour_calibration_type: ColourSpaceCalibrationType,
+    }
+    impl AnonymousColourCharacteristicsColourSpacesPresent {
+        pub fn new(
+            colour_space_type: ColourSpaceType,
+            colour_calibration_type: ColourSpaceCalibrationType,
+        ) -> Self {
+            Self {
+                colour_space_type,
+                colour_calibration_type,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ColourCharacteristicsColourSpacesPresent(
+        pub SequenceOf<AnonymousColourCharacteristicsColourSpacesPresent>,
+    );
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Colour-Characteristics")]
+    pub struct ColourCharacteristics {
+        #[rasn(tag(context, 0), identifier = "colour-spaces-present")]
+        pub colour_spaces_present: ColourCharacteristicsColourSpacesPresent,
+        #[rasn(tag(context, 1), identifier = "colour-modes-present")]
+        pub colour_modes_present: ColourModesPresent,
+        #[rasn(tag(context, 2), identifier = "minimum-colour-tolerance")]
+        pub minimum_colour_tolerance: Option<ColourTolerance>,
+        #[rasn(tag(context, 3), identifier = "maximum-colour-table-length")]
+        pub maximum_colour_table_length: Option<Integer>,
+        #[rasn(tag(context, 4), identifier = "maximum-rgb-lut-length")]
+        pub maximum_rgb_lut_length: Option<Integer>,
+        #[rasn(tag(context, 5), identifier = "maximum-cmy-k-grid-size")]
+        pub maximum_cmy_k_grid_size: Option<Integer>,
+    }
+    impl ColourCharacteristics {
+        pub fn new(
+            colour_spaces_present: ColourCharacteristicsColourSpacesPresent,
+            colour_modes_present: ColourModesPresent,
+            minimum_colour_tolerance: Option<ColourTolerance>,
+            maximum_colour_table_length: Option<Integer>,
+            maximum_rgb_lut_length: Option<Integer>,
+            maximum_cmy_k_grid_size: Option<Integer>,
+        ) -> Self {
+            Self {
+                colour_spaces_present,
+                colour_modes_present,
+                minimum_colour_tolerance,
+                maximum_colour_table_length,
+                maximum_rgb_lut_length,
+                maximum_cmy_k_grid_size,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Colour-Data-Scaling")]
+    pub struct ColourDataScaling {
+        #[rasn(tag(context, 0), identifier = "first-component")]
+        pub first_component: ScaleAndOffset,
+        #[rasn(tag(context, 1), identifier = "second-component")]
+        pub second_component: ScaleAndOffset,
+        #[rasn(tag(context, 2), identifier = "third-component")]
+        pub third_component: ScaleAndOffset,
+        #[rasn(tag(context, 3), identifier = "fourth-component")]
+        pub fourth_component: Option<ScaleAndOffset>,
+    }
+    impl ColourDataScaling {
+        pub fn new(
+            first_component: ScaleAndOffset,
+            second_component: ScaleAndOffset,
+            third_component: ScaleAndOffset,
+            fourth_component: Option<ScaleAndOffset>,
+        ) -> Self {
+            Self {
+                first_component,
+                second_component,
+                third_component,
+                fourth_component,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ColourExpressionA {
+        #[rasn(tag(context, 0), identifier = "direct-colour")]
+        direct_colour(DirectColour),
+        #[rasn(tag(context, 1), identifier = "indexed-colour")]
+        indexed_colour(IndexedColour),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Colour-Expression")]
+    pub struct ColourExpression {
+        #[rasn(tag(context, 0), identifier = "colour-access-mode")]
+        pub colour_access_mode: Integer,
+        #[rasn(tag(context, 1))]
+        pub a: ColourExpressionA,
+    }
+    impl ColourExpression {
+        pub fn new(colour_access_mode: Integer, a: ColourExpressionA) -> Self {
+            Self {
+                colour_access_mode,
+                a,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Colour-Lookup-Table")]
+    pub struct ColourLookupTable {
+        #[rasn(tag(context, 0), identifier = "number-of-entries")]
+        pub number_of_entries: Integer,
+        #[rasn(tag(context, 1))]
+        pub m: Integer,
+        #[rasn(tag(context, 2))]
+        pub n: Integer,
+        #[rasn(tag(context, 3), identifier = "colour-table")]
+        pub colour_table: SetOf<ColourTableEntry>,
+    }
+    impl ColourLookupTable {
+        pub fn new(
+            number_of_entries: Integer,
+            m: Integer,
+            n: Integer,
+            colour_table: SetOf<ColourTableEntry>,
+        ) -> Self {
+            Self {
+                number_of_entries,
+                m,
+                n,
+                colour_table,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Colour-Modes-Present")]
+    pub struct ColourModesPresent(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Colour-Space")]
+    pub struct ColourSpace {
+        #[rasn(tag(context, 0), identifier = "colour-space-id")]
+        pub colour_space_id: Integer,
+        #[rasn(tag(context, 1), identifier = "colour-space-type")]
+        pub colour_space_type: ColourSpaceType,
+        #[rasn(tag(context, 2), identifier = "colour-space-name")]
+        pub colour_space_name: Option<CharacterData>,
+        #[rasn(tag(context, 3), identifier = "colour-data-scaling")]
+        pub colour_data_scaling: Option<ColourDataScaling>,
+        #[rasn(tag(context, 4), identifier = "calibration-data")]
+        pub calibration_data: Option<CalibrationData>,
+    }
+    impl ColourSpace {
+        pub fn new(
+            colour_space_id: Integer,
+            colour_space_type: ColourSpaceType,
+            colour_space_name: Option<CharacterData>,
+            colour_data_scaling: Option<ColourDataScaling>,
+            calibration_data: Option<CalibrationData>,
+        ) -> Self {
+            Self {
+                colour_space_id,
+                colour_space_type,
+                colour_space_name,
+                colour_data_scaling,
+                calibration_data,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Colour-Space-Calibration-Type")]
+    pub struct ColourSpaceCalibrationType(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Colour-Space-Type")]
+    pub struct ColourSpaceType(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Colour-Spaces-List")]
+    pub struct ColourSpacesList(pub SetOf<ColourSpace>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "Colour-Specification")]
+    pub enum ColourSpecification {
+        #[rasn(tag(context, 0), identifier = "cmyk-colour")]
+        cmyk_colour(CMYKColour),
+        #[rasn(tag(context, 1), identifier = "rgb-colour")]
+        rgb_colour(RGBColour),
+        #[rasn(tag(context, 2), identifier = "cie-colour")]
+        cie_colour(CIEColour),
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "SET")]
+    pub struct AnonymousColourTableColourTableEntries {
+        #[rasn(tag(context, 0))]
+        pub index: Integer,
+        #[rasn(tag(context, 1), identifier = "colour-coordinates")]
+        pub colour_coordinates: ColourSpecification,
+        #[rasn(tag(context, 2), identifier = "colour-tolerance")]
+        pub colour_tolerance: Option<ColourTolerance>,
+    }
+    impl AnonymousColourTableColourTableEntries {
+        pub fn new(
+            index: Integer,
+            colour_coordinates: ColourSpecification,
+            colour_tolerance: Option<ColourTolerance>,
+        ) -> Self {
+            Self {
+                index,
+                colour_coordinates,
+                colour_tolerance,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ColourTableColourTableEntries(pub SetOf<AnonymousColourTableColourTableEntries>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Colour-Table")]
+    pub struct ColourTable {
+        #[rasn(tag(context, 0), identifier = "colour-space-id")]
+        pub colour_space_id: Integer,
+        #[rasn(tag(context, 1), identifier = "colour-table-entries")]
+        pub colour_table_entries: ColourTableColourTableEntries,
+    }
+    impl ColourTable {
+        pub fn new(
+            colour_space_id: Integer,
+            colour_table_entries: ColourTableColourTableEntries,
+        ) -> Self {
+            Self {
+                colour_space_id,
+                colour_table_entries,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Colour-Table-Entry")]
+    pub struct ColourTableEntry {
+        #[rasn(tag(context, 3))]
+        pub index: Integer,
+        #[rasn(tag(context, 0))]
+        pub r: RealOrInt,
+        #[rasn(tag(context, 1))]
+        pub g: RealOrInt,
+        #[rasn(tag(context, 2))]
+        pub b: RealOrInt,
+    }
+    impl ColourTableEntry {
+        pub fn new(index: Integer, r: RealOrInt, g: RealOrInt, b: RealOrInt) -> Self {
+            Self { index, r, g, b }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "Colour-Tolerance")]
+    pub enum ColourTolerance {
+        #[rasn(tag(context, 0), identifier = "unspecified-tolerance")]
+        unspecified_tolerance(()),
+        #[rasn(tag(context, 1), identifier = "specified-tolerance")]
+        specified_tolerance(SpecifiedTolerance),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Direct-Colour")]
+    pub struct DirectColour {
+        #[rasn(tag(context, 0), identifier = "colour-space-id")]
+        pub colour_space_id: Option<Integer>,
+        #[rasn(tag(context, 1), identifier = "colour-specification")]
+        pub colour_specification: Option<ColourSpecification>,
+        #[rasn(tag(context, 2), identifier = "colour-tolerance")]
+        pub colour_tolerance: Option<ColourTolerance>,
+    }
+    impl DirectColour {
+        pub fn new(
+            colour_space_id: Option<Integer>,
+            colour_specification: Option<ColourSpecification>,
+            colour_tolerance: Option<ColourTolerance>,
+        ) -> Self {
+            Self {
+                colour_space_id,
+                colour_specification,
+                colour_tolerance,
+            }
+        }
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "SET")]
+    pub struct AnonymousGridSpecification {
+        #[rasn(tag(context, 0), identifier = "grid-location")]
+        pub grid_location: CMYKColour,
+        #[rasn(tag(context, 1), identifier = "grid-value")]
+        pub grid_value: GridValue,
+    }
+    impl AnonymousGridSpecification {
+        pub fn new(grid_location: CMYKColour, grid_value: GridValue) -> Self {
+            Self {
+                grid_location,
+                grid_value,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Grid-Specification")]
+    pub struct GridSpecification(pub SetOf<AnonymousGridSpecification>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Grid-Value")]
+    pub struct GridValue {
+        #[rasn(tag(context, 0), identifier = "x-value")]
+        pub x_value: f64,
+        #[rasn(tag(context, 1), identifier = "y-value")]
+        pub y_value: f64,
+        #[rasn(tag(context, 2), identifier = "z-value")]
+        pub z_value: f64,
+    }
+    impl GridValue {
+        pub fn new(x_value: f64, y_value: f64, z_value: f64) -> Self {
+            Self {
+                x_value,
+                y_value,
+                z_value,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Indexed-Colour")]
+    pub struct IndexedColour {
+        #[rasn(tag(context, 0))]
+        pub index: Option<Integer>,
+    }
+    impl IndexedColour {
+        pub fn new(index: Option<Integer>) -> Self {
+            Self { index }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "RGB-Calibration")]
+    pub struct RGBCalibration {
+        #[rasn(tag(context, 0), identifier = "reference-white")]
+        pub reference_white: CIERef,
+        #[rasn(tag(context, 1))]
+        pub matrix1: Option<ThreeByThreeMatrix>,
+        #[rasn(tag(context, 3), identifier = "lookup-table")]
+        pub lookup_table: Option<ColourLookupTable>,
+        #[rasn(tag(context, 2))]
+        pub matrix2: Option<ThreeByThreeMatrix>,
+    }
+    impl RGBCalibration {
+        pub fn new(
+            reference_white: CIERef,
+            matrix1: Option<ThreeByThreeMatrix>,
+            lookup_table: Option<ColourLookupTable>,
+            matrix2: Option<ThreeByThreeMatrix>,
+        ) -> Self {
+            Self {
+                reference_white,
+                matrix1,
+                lookup_table,
+                matrix2,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "RGB-Colour")]
+    pub struct RGBColour {
+        #[rasn(tag(context, 0), identifier = "r-value")]
+        pub r_value: RealOrInt,
+        #[rasn(tag(context, 1), identifier = "g-value")]
+        pub g_value: RealOrInt,
+        #[rasn(tag(context, 2), identifier = "b-value")]
+        pub b_value: RealOrInt,
+    }
+    impl RGBColour {
+        pub fn new(r_value: RealOrInt, g_value: RealOrInt, b_value: RealOrInt) -> Self {
+            Self {
+                r_value,
+                g_value,
+                b_value,
+            }
+        }
+    }
+    #[doc = "  see 7.7"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "Real-Or-Int")]
+    pub enum RealOrInt {
+        a(f64),
+        b(Integer),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Scale-And-Offset")]
+    pub struct ScaleAndOffset {
+        #[rasn(tag(context, 0), identifier = "colour-scale")]
+        pub colour_scale: RealOrInt,
+        #[rasn(tag(context, 1), identifier = "colour-offset")]
+        pub colour_offset: RealOrInt,
+    }
+    impl ScaleAndOffset {
+        pub fn new(colour_scale: RealOrInt, colour_offset: RealOrInt) -> Self {
+            Self {
+                colour_scale,
+                colour_offset,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Specified-Tolerance")]
+    pub struct SpecifiedTolerance {
+        #[rasn(tag(context, 0), identifier = "tolerance-value")]
+        pub tolerance_value: RealOrInt,
+        #[rasn(tag(context, 1), identifier = "tolerance-space")]
+        pub tolerance_space: Integer,
+    }
+    impl SpecifiedTolerance {
+        pub fn new(tolerance_value: RealOrInt, tolerance_space: Integer) -> Self {
+            Self {
+                tolerance_value,
+                tolerance_space,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Three-Nums")]
+    pub struct ThreeNums {
+        #[rasn(identifier = "column-1")]
+        pub column_1: RealOrInt,
+        #[rasn(identifier = "column-2")]
+        pub column_2: RealOrInt,
+        #[rasn(identifier = "column-3")]
+        pub column_3: RealOrInt,
+    }
+    impl ThreeNums {
+        pub fn new(column_1: RealOrInt, column_2: RealOrInt, column_3: RealOrInt) -> Self {
+            Self {
+                column_1,
+                column_2,
+                column_3,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Three-by-Three-Matrix")]
+    pub struct ThreeByThreeMatrix {
+        #[rasn(identifier = "row-1")]
+        pub row_1: ThreeNums,
+        #[rasn(identifier = "row-2")]
+        pub row_2: ThreeNums,
+        #[rasn(identifier = "row-3")]
+        pub row_3: ThreeNums,
+    }
+    impl ThreeByThreeMatrix {
+        pub fn new(row_1: ThreeNums, row_2: ThreeNums, row_3: ThreeNums) -> Self {
+            Self {
+                row_1,
+                row_2,
+                row_3,
+            }
+        }
+    }
+}

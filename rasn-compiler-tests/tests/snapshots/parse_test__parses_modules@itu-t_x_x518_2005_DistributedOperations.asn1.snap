@@ -1,0 +1,23 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x518_2005_DistributedOperations.asn1
+---
+Error matching ASN syntax at while parsing:
+    ╭─[line 50, column 2]
+    │
+    │ 
+ 49 │  -- parameterized type for deriving chained operations
+ 50 │  chained{OPERATION:operation} OPERATION ::= { ◀▪▪▪▪▪▪▪▪▪▪ FAILED AT THIS LINE
+ 51 │    ARGUMENT OPTIONALLY-PROTECTED
+ 52 │      {SET {chainedArgument  ChainingArguments,
+ 53 │            argument         [0]  operation.&ArgumentType}}
+ 54 │    RESULT OPTIONALLY-PROTECTED
+ 55 │      {SET {chainedResult  ChainingResults,
+ 56 │            result         [0]  operation.&ResultType}}
+ 57 │    ERRORS
+ 58 │      {operation.&Errors EXCEPT referral | dsaReferral}
+ 59 │    CODE                           operation.&operationCode
+ 60 │  }
+ 62 │  --  bind and unbind operations
+    │
+────╯

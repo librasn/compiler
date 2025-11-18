@@ -1,0 +1,346 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_t_t123_1999_CNP-PROTOCOL.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod cnp_protocol {
+    extern crate alloc;
+    use super::h323_messages::{AliasAddress, NonStandardParameter, TransportAddress};
+    use super::map_protocol::Priority;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum CNPControlPDU {
+        connectRequest(ConnectRequestPDU),
+        connectConfirm(ConnectConfirmPDU),
+        disconnectRequest(DisconnectRequestPDU),
+        error(ErrorPDU),
+        nonStandardCNPPDU(NonStandardPDU),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ConnectConfirmPDU {
+        #[rasn(identifier = "protocolIdentifier")]
+        pub protocol_identifier: ProtocolIdentifier,
+        #[rasn(identifier = "reliableTransportProtocol")]
+        pub reliable_transport_protocol: Option<ReliableTransportProtocol>,
+        #[rasn(identifier = "reliableSecurityProtocol")]
+        pub reliable_security_protocol: Option<ReliableSecurityProtocol>,
+        #[rasn(identifier = "unreliableTransportProtocol")]
+        pub unreliable_transport_protocol: Option<UnreliableTransportProtocol>,
+        #[rasn(identifier = "unreliableSecurityProtocol")]
+        pub unreliable_security_protocol: Option<UnreliableSecurityProtocol>,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl ConnectConfirmPDU {
+        pub fn new(
+            protocol_identifier: ProtocolIdentifier,
+            reliable_transport_protocol: Option<ReliableTransportProtocol>,
+            reliable_security_protocol: Option<ReliableSecurityProtocol>,
+            unreliable_transport_protocol: Option<UnreliableTransportProtocol>,
+            unreliable_security_protocol: Option<UnreliableSecurityProtocol>,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                protocol_identifier,
+                reliable_transport_protocol,
+                reliable_security_protocol,
+                unreliable_transport_protocol,
+                unreliable_security_protocol,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[doc = ""]
+    #[doc = "  CNP Control PDU Types"]
+    #[doc = ""]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ConnectRequestPDU {
+        #[rasn(identifier = "protocolIdentifier")]
+        pub protocol_identifier: ProtocolIdentifier,
+        #[rasn(identifier = "reconnectRequested")]
+        pub reconnect_requested: bool,
+        pub priority: Option<Priority>,
+        #[rasn(identifier = "reliableTransportProtocols")]
+        pub reliable_transport_protocols: Option<SequenceOf<ReliableTransportProtocol>>,
+        #[rasn(identifier = "reliableSecurityProtocols")]
+        pub reliable_security_protocols: Option<SequenceOf<ReliableSecurityProtocol>>,
+        #[rasn(identifier = "unreliableTransportProtocols")]
+        pub unreliable_transport_protocols: Option<SequenceOf<UnreliableTransportProtocol>>,
+        #[rasn(identifier = "unreliableSecurityProtocols")]
+        pub unreliable_security_protocols: Option<SequenceOf<UnreliableSecurityProtocol>>,
+        #[rasn(identifier = "destinationAddress")]
+        pub destination_address: Option<SequenceOf<AliasAddress>>,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl ConnectRequestPDU {
+        pub fn new(
+            protocol_identifier: ProtocolIdentifier,
+            reconnect_requested: bool,
+            priority: Option<Priority>,
+            reliable_transport_protocols: Option<SequenceOf<ReliableTransportProtocol>>,
+            reliable_security_protocols: Option<SequenceOf<ReliableSecurityProtocol>>,
+            unreliable_transport_protocols: Option<SequenceOf<UnreliableTransportProtocol>>,
+            unreliable_security_protocols: Option<SequenceOf<UnreliableSecurityProtocol>>,
+            destination_address: Option<SequenceOf<AliasAddress>>,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                protocol_identifier,
+                reconnect_requested,
+                priority,
+                reliable_transport_protocols,
+                reliable_security_protocols,
+                unreliable_transport_protocols,
+                unreliable_security_protocols,
+                destination_address,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum DisconnectReason {
+        unacceptableVersion(()),
+        incompatibleParameters(()),
+        securityDenied(()),
+        destinationUnreachable(()),
+        userRejected(()),
+        userInitiated(()),
+        protocolError(()),
+        unspecifiedFailure(()),
+        routeToAlternate(()),
+        nonStandardDisconnectReason(NonStandardParameter),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct DisconnectRequestPDU {
+        #[rasn(identifier = "disconnectReason")]
+        pub disconnect_reason: DisconnectReason,
+        #[rasn(identifier = "reliableTransportProtocol")]
+        pub reliable_transport_protocol: Option<ReliableTransportProtocol>,
+        #[rasn(identifier = "reliableSecurityProtocol")]
+        pub reliable_security_protocol: Option<ReliableSecurityProtocol>,
+        #[rasn(identifier = "unreliableTransportProtocol")]
+        pub unreliable_transport_protocol: Option<UnreliableTransportProtocol>,
+        #[rasn(identifier = "unreliableSecurityProtocol")]
+        pub unreliable_security_protocol: Option<UnreliableSecurityProtocol>,
+        #[rasn(identifier = "destinationAddress")]
+        pub destination_address: Option<SequenceOf<AliasAddress>>,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl DisconnectRequestPDU {
+        pub fn new(
+            disconnect_reason: DisconnectReason,
+            reliable_transport_protocol: Option<ReliableTransportProtocol>,
+            reliable_security_protocol: Option<ReliableSecurityProtocol>,
+            unreliable_transport_protocol: Option<UnreliableTransportProtocol>,
+            unreliable_security_protocol: Option<UnreliableSecurityProtocol>,
+            destination_address: Option<SequenceOf<AliasAddress>>,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                disconnect_reason,
+                reliable_transport_protocol,
+                reliable_security_protocol,
+                unreliable_transport_protocol,
+                unreliable_security_protocol,
+                destination_address,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ErrorPDU {
+        #[rasn(identifier = "rejectCause")]
+        pub reject_cause: RejectCause,
+        #[rasn(identifier = "rejectedPDU")]
+        pub rejected_pdu: OctetString,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl ErrorPDU {
+        pub fn new(
+            reject_cause: RejectCause,
+            rejected_pdu: OctetString,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                reject_cause,
+                rejected_pdu,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct NonStandardPDU {
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl NonStandardPDU {
+        pub fn new(non_standard_parameters: Option<SequenceOf<NonStandardParameter>>) -> Self {
+            Self {
+                non_standard_parameters,
+            }
+        }
+    }
+    #[doc = " T.125 Annex A Version 1"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ProtocolIdentifier(pub ObjectIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum RejectCause {
+        unrecognizedPDU(()),
+        invalidParameter(()),
+        causeUnspecified(()),
+        nonStandardRejectCause(NonStandardParameter),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum ReliableSecurityProtocol {
+        none(()),
+        tls(()),
+        ssl(()),
+        ipsecIKEKeyManagement(()),
+        ipsecManualKeyManagement(()),
+        x274WithoutSAID(()),
+        x274WithSAID(X274WithSAIDInfo),
+        gssApi(()),
+        physical(()),
+        nonStandardSecurityProtocol(NonStandardParameter),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ReliableTransportProtocol {
+        #[rasn(identifier = "type")]
+        pub r_type: ReliableTransportProtocolType,
+        #[rasn(identifier = "maxTPDUSize")]
+        pub max_tpdusize: TPDUSize,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl ReliableTransportProtocol {
+        pub fn new(
+            r_type: ReliableTransportProtocolType,
+            max_tpdusize: TPDUSize,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                r_type,
+                max_tpdusize,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum ReliableTransportProtocolType {
+        cnp(()),
+        x224(()),
+        map(()),
+        nonStandardTransportProtocol(NonStandardParameter),
+    }
+    #[doc = " shall be set to"]
+    #[doc = " {itu-t (0) recommendation (0) t (20) 123 annexb (2) 1}"]
+    #[doc = ""]
+    #[doc = "  Service Negotiation Types"]
+    #[doc = ""]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("128..=65535"))]
+    pub struct TPDUSize(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum UnreliableSecurityProtocol {
+        none(()),
+        ipsecIKEKeyManagement(()),
+        ipsecManualKeyManagement(()),
+        x274WithoutSAID(()),
+        x274WithSAID(X274WithSAIDInfo),
+        physical(()),
+        nonStandardSecurityProtocol(NonStandardParameter),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct UnreliableTransportProtocol {
+        #[rasn(identifier = "type")]
+        pub r_type: UnreliableTransportProtocolType,
+        #[rasn(identifier = "maxTPDUSize")]
+        pub max_tpdusize: TPDUSize,
+        #[rasn(identifier = "sourceAddress")]
+        pub source_address: TransportAddress,
+        #[rasn(identifier = "sourceTSAP")]
+        pub source_tsap: Option<OctetString>,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl UnreliableTransportProtocol {
+        pub fn new(
+            r_type: UnreliableTransportProtocolType,
+            max_tpdusize: TPDUSize,
+            source_address: TransportAddress,
+            source_tsap: Option<OctetString>,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                r_type,
+                max_tpdusize,
+                source_address,
+                source_tsap,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum UnreliableTransportProtocolType {
+        x234(()),
+        nonStandardTransportProtocol(NonStandardParameter),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct X274WithSAIDInfo {
+        #[rasn(identifier = "localSAID")]
+        pub local_said: OctetString,
+        #[rasn(identifier = "peerSAID")]
+        pub peer_said: OctetString,
+    }
+    impl X274WithSAIDInfo {
+        pub fn new(local_said: OctetString, peer_said: OctetString) -> Self {
+            Self {
+                local_said,
+                peer_said,
+            }
+        }
+    }
+}

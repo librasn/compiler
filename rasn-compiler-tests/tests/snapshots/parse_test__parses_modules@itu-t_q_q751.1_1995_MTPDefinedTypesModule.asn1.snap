@@ -1,0 +1,1008 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q751.1_1995_MTPDefinedTypesModule.asn1
+---
+Warnings:
+Unidentified generating bindings for : Unexpectedly encountered unlinked struct-like ASN1 value!
+Unidentified generating bindings for : Unexpectedly encountered unlinked struct-like ASN1 value!
+Unidentified generating bindings for : Unexpectedly encountered unlinked struct-like ASN1 value!
+Unidentified generating bindings for : Unexpectedly encountered unlinked struct-like ASN1 value!
+Unidentified generating bindings for : Unexpectedly encountered unlinked struct-like ASN1 value!
+Unidentified generating bindings for : Unexpectedly encountered unlinked struct-like ASN1 value!
+Unidentified generating bindings for : Unexpectedly encountered unlinked struct-like ASN1 value!
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+LinkerError in ASN grammar: Failed to link value with 'SpecificProblems'
+LinkerError in ASN grammar: Failed to link value with 'SpecificProblems'
+LinkerError in ASN grammar: Failed to link value with 'SpecificProblems'
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+LinkerError in ASN grammar: Failed to link value with 'SpecificProblems'
+LinkerError in ASN grammar: Failed to link value with 'SpecificProblems'
+LinkerError in ASN grammar: Failed to link value with 'SpecificProblems'
+LinkerError in ASN grammar: Failed to resolve reference of ElsewhereDefined: AdministrativeState
+LinkerError in ASN grammar: Failed to link value with 'SpecificProblems'
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod mtpdefined_types_module {
+    extern crate alloc;
+    use super::asn1_defined_types_module::{NameType, ObjectList, Pointer, PointerOrNull};
+    use super::attribute_asn1_module::{
+        AdditionalInformation, AdditionalText, AdministrativeState, CorrelatedNotifications,
+        NotificationIdentifier, PerceivedSeverity, ProbableCause, SimpleNameType, SpecificProblems,
+    };
+    use super::cmip_1::ObjectInstance;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AdditionalName(pub Ia5String);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=15"))]
+    pub struct AlternativeSlCodeList(pub SequenceOf<SlCode>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=128000"))]
+    pub struct CapacityLS(pub u32);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=8000"))]
+    pub struct CapacityLink(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ChangeInLsToAdjSpInfo {
+        #[rasn(identifier = "oldSignLinkSetTp")]
+        pub old_sign_link_set_tp: NameType,
+        #[rasn(identifier = "newSignLinkSetTp")]
+        pub new_sign_link_set_tp: NameType,
+    }
+    impl ChangeInLsToAdjSpInfo {
+        pub fn new(old_sign_link_set_tp: NameType, new_sign_link_set_tp: NameType) -> Self {
+            Self {
+                old_sign_link_set_tp,
+                new_sign_link_set_tp,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=4095"))]
+    pub struct Cic(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum CongestedState {
+        notCongested = 0,
+        congested = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum CongestionControlMethod {
+        unknown = 0,
+        ccmQ704International = 1,
+        ccmQ704NationalWithPrio = 2,
+        ccmQ704NationalNoPrioBufferMechanism = 3,
+        ccmQ704NationalNoPrioTimerMechanism = 4,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum CongestionCounting {
+        octet = 0,
+        message = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum CongestionLevel {
+        none = 0,
+        congestionLevel1 = 1,
+        congestionLevel2 = 2,
+        congestionLevel3 = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum CongestionReportingBaseObject {
+        routeSet = 0,
+        linkSetOfCongestedRouteSet = 1,
+        linkOfCongestedRouteSet = 2,
+        congestedLinkOfCongestedRoute = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=255"))]
+    pub struct CurrentRouteIndicator(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CurrentRouteIndicatorList(pub SequenceOf<CurrentRouteIndicator>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct DpcComponentDpcRange {
+        #[rasn(identifier = "firstDPC")]
+        pub first_dpc: PointCode,
+        #[rasn(identifier = "lastDPC")]
+        pub last_dpc: PointCode,
+    }
+    impl DpcComponentDpcRange {
+        pub fn new(first_dpc: PointCode, last_dpc: PointCode) -> Self {
+            Self {
+                first_dpc,
+                last_dpc,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum DpcComponent {
+        #[rasn(tag(context, 0))]
+        dpc(PointCode),
+        #[rasn(tag(context, 1))]
+        dpcRange(DpcComponentDpcRange),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ErrorCorrectionMethod {
+        basicRetr = 0,
+        prevCyclRetr = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct EventsCongestionLevel {
+        pub events: Integer,
+        pub conglevel: CongestionLevel,
+    }
+    impl EventsCongestionLevel {
+        pub fn new(events: Integer, conglevel: CongestionLevel) -> Self {
+            Self { events, conglevel }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct EventsUP {
+        pub events: Integer,
+        pub userpart: UserPart,
+    }
+    impl EventsUP {
+        pub fn new(events: Integer, userpart: UserPart) -> Self {
+            Self { events, userpart }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct FixedPriority(pub Priority);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct FlexiblePriority(pub Priority);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct InClsLoadsharingAlgorithm(pub SetOf<SlsLinkPriorityList>);
+    #[doc = " This equals the value s from B.1.2.9.2"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct InLsLoadShareAlgorithm(pub ObjectIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct InaccessibleSpInfo {
+        #[rasn(identifier = "networkIndicator")]
+        pub network_indicator: NetworkIndicator,
+        #[rasn(identifier = "pointCode")]
+        pub point_code: PointCode,
+    }
+    impl InaccessibleSpInfo {
+        pub fn new(network_indicator: NetworkIndicator, point_code: PointCode) -> Self {
+            Self {
+                network_indicator,
+                point_code,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct InfoRequest(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("1..=3"))]
+    pub struct InitialLevelIfCongested(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("13000..=600000"))]
+    pub struct L2TimerT1(pub u32);
+    #[doc = " time, in milliseconds"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("5000..=150000"))]
+    pub struct L2TimerT2(pub u32);
+    #[doc = " time, in milliseconds"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("1000..=14000"))]
+    pub struct L2TimerT3(pub u16);
+    #[doc = " time, in milliseconds"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("400..=8000"))]
+    pub struct L2TimerT4E(pub u16);
+    #[doc = " time, in milliseconds"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("7500..=120000"))]
+    pub struct L2TimerT4N(pub u32);
+    #[doc = " time, in milliseconds"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("80..=120"))]
+    pub struct L2TimerT5(pub u8);
+    #[doc = " time, in milliseconds"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("3000..=12000"))]
+    pub struct L2TimerT6(pub u16);
+    #[doc = " time, in milliseconds"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("500..=6000"))]
+    pub struct L2TimerT7(pub u16);
+    #[doc = " time, in milliseconds"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct LinkSetPriorityListSntx(pub SequenceOf<NameType>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct LinkTPStatus(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct LoadsharingInformationRouteNePart(pub Ia5String);
+    #[doc = " the size of this string is implementation dependent"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct LoadsharingInformationRouteSetNePart(pub Ia5String);
+    #[doc = " the size of this string is implementation dependent"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct LocalUpUnavailable(pub UserPart);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct LoopDelay(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum MRVTActionResult {
+        #[rasn(tag(context, 0))]
+        resultOfMRTVT(ResultOfMRVT),
+        #[rasn(tag(context, 1))]
+        reasonForRejection(ReasonForRejection),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MRVTFailureString(pub FixedBitString<32usize>);
+    #[doc = " time, in milliseconds"]
+    #[doc = "ManagementExtension ::= SEQUENCE {"]
+    #[doc = "\tidentifier\tOBJECT IDENTIFIER,"]
+    #[doc = "\tsignificance\t[1]\tBOOLEAN DEFAULT FALSE,"]
+    #[doc = "\tinformation\t[2]\tANY DEFINED BY identifier }"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ManagementExtension {
+        pub identifier: Any,
+        #[rasn(tag(context, 1), default = "management_extension_significance_default")]
+        pub significance: bool,
+        #[rasn(tag(context, 2))]
+        pub information: Any,
+    }
+    impl ManagementExtension {
+        pub fn new(identifier: Any, significance: bool, information: Any) -> Self {
+            Self {
+                identifier,
+                significance,
+                information,
+            }
+        }
+    }
+    fn management_extension_significance_default() -> bool {
+        false
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=127"))]
+    pub struct MaxMSUsRetransN1(pub u8);
+    #[doc = " lower range is implementation dependent"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MaxMSUsRetransN2(pub Integer);
+    #[doc = " This value is suggested by clause 8/Q.705. It is likely that this value is too low for international networks"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MaxNumOfTests(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MaxOctRetransN2(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MtpRestarting(pub PointCode);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct MtpRouteVerifTestResultSntx {
+        #[rasn(identifier = "testedDestination")]
+        pub tested_destination: PointCode,
+        #[rasn(identifier = "routeTestResult")]
+        pub route_test_result: ResultOfMRVT,
+        #[rasn(tag(context, 1), identifier = "failureType")]
+        pub failure_type: Option<MRVTFailureString>,
+        #[rasn(tag(context, 2), identifier = "routeTrace")]
+        pub route_trace: Option<RouteTrace>,
+        #[rasn(tag(context, 3), identifier = "pointCodeInfo")]
+        pub point_code_info: Option<PointCode>,
+        #[rasn(tag(context, 4), identifier = "pointCodeListInfo")]
+        pub point_code_list_info: Option<PointCodeList>,
+        #[rasn(tag(context, 5), identifier = "routePriorityListInfo")]
+        pub route_priority_list_info: Option<RoutePriorityListInfo>,
+        #[rasn(tag(context, 6), identifier = "copyData")]
+        pub copy_data: Option<OctetString>,
+        #[rasn(tag(context, 7), identifier = "currentRouteIndicatorList")]
+        pub current_route_indicator_list: Option<CurrentRouteIndicatorList>,
+    }
+    impl MtpRouteVerifTestResultSntx {
+        pub fn new(
+            tested_destination: PointCode,
+            route_test_result: ResultOfMRVT,
+            failure_type: Option<MRVTFailureString>,
+            route_trace: Option<RouteTrace>,
+            point_code_info: Option<PointCode>,
+            point_code_list_info: Option<PointCodeList>,
+            route_priority_list_info: Option<RoutePriorityListInfo>,
+            copy_data: Option<OctetString>,
+            current_route_indicator_list: Option<CurrentRouteIndicatorList>,
+        ) -> Self {
+            Self {
+                tested_destination,
+                route_test_result,
+                failure_type,
+                route_trace,
+                point_code_info,
+                point_code_list_info,
+                route_priority_list_info,
+                copy_data,
+                current_route_indicator_list,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum NetworkIndicator {
+        internationalNetwork1 = 0,
+        internationalNetwork2 = 1,
+        nationalNetwork1 = 2,
+        nationalNetwork2 = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=3"))]
+    pub struct NumCongStates(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=16"))]
+    pub struct NumberOfNormallyActiveSignLinksTps(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("2..=3"))]
+    pub struct NumberOfThresholdLevels(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum PeriodicLinkTestFlag {
+        on = 0,
+        off = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PointCode(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PointCodeList(pub SequenceOf<PointCode>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PointerList(pub SetOf<Pointer>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Priority(pub Integer);
+    #[doc = " maximum value is implementation dependent"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=255"))]
+    pub struct PriorityInfo(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum PriorityMode {
+        insert = 0,
+        equal = 1,
+        exchangeSingle = 2,
+        exchangeGroup = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ReasonForRejection {
+        routeTestInstanceLocked = 10,
+        routeTestInstanceDisabled = 11,
+        routeTestInstanceBusy = 12,
+        routeTestAlreadyInProgress = 13,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ReceiveCongestionThresholdAbatement(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ReceiveCongestionThresholdOnset(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=15"))]
+    pub struct RelatedLinkGroupNumber(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RemoteExchangeLabel(pub Ia5String);
+    #[doc = " the size of this string is implementation dependent"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct RemoteUpUnavailable {
+        #[rasn(tag(context, 0), identifier = "pointCode")]
+        pub point_code: PointCode,
+        #[rasn(tag(context, 1), identifier = "userPart")]
+        pub user_part: UserPart,
+    }
+    impl RemoteUpUnavailable {
+        pub fn new(point_code: PointCode, user_part: UserPart) -> Self {
+            Self {
+                point_code,
+                user_part,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct ResultMtpRouteTest {
+        #[rasn(identifier = "testedDestination")]
+        pub tested_destination: PointCode,
+        #[rasn(identifier = "routeTestActionResult")]
+        pub route_test_action_result: MRVTActionResult,
+        #[rasn(tag(context, 1), identifier = "failureType")]
+        pub failure_type: Option<MRVTFailureString>,
+    }
+    impl ResultMtpRouteTest {
+        pub fn new(
+            tested_destination: PointCode,
+            route_test_action_result: MRVTActionResult,
+            failure_type: Option<MRVTFailureString>,
+        ) -> Self {
+            Self {
+                tested_destination,
+                route_test_action_result,
+                failure_type,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum ResultOfAction {
+        success = 0,
+        unsuccessful = 1,
+        notPerformed = 2,
+        linkAlreadyInhibited = 3,
+        linkNotInhibited = 4,
+        wrongClassReferenced = 5,
+        signTermNonExisting = 6,
+        signTermAlreadyReferenced = 7,
+        wrongSignLinkTPStatus = 8,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ResultOfMRVT {
+        success = 0,
+        partialSuccess = 1,
+        failure = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ReturnUnknownParams(pub FixedBitString<32usize>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RoutePriorityListInfo(pub SequenceOf<PriorityInfo>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RouteSetUnavailable(pub ObjectIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum RouteTrace {
+        #[rasn(tag(context, 0))]
+        success(PointCodeList),
+        #[rasn(tag(context, 1))]
+        detectedLoop(PointCodeList),
+        #[rasn(tag(context, 2))]
+        excessiveLengthRoute(PointCodeList),
+        #[rasn(tag(context, 3))]
+        unknownDestination(()),
+        #[rasn(tag(context, 4))]
+        routeInaccessible(PointCodeList),
+        #[rasn(tag(context, 5))]
+        processingFailure(()),
+        #[rasn(tag(context, 6))]
+        unknownInitiatingSP(PointCode),
+        #[rasn(tag(context, 7))]
+        timerExpired(PointCodeList),
+        #[rasn(tag(context, 8))]
+        spNotAnSTP(PointCodeList),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum SIOTypeService {
+        signallingNetworkManagement = 0,
+        signallingNetworkTesting = 1,
+        sccp = 3,
+        tup = 4,
+        isup = 5,
+        dup = 6,
+        mt = 8,
+        #[rasn(identifier = "b-isup")]
+        b_isup = 9,
+        siup = 10,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum SIOTypeSubService {
+        internationalNetwork = 0,
+        nationalNetwork = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SIOType {
+        pub service: SIOTypeService,
+        #[rasn(identifier = "subService")]
+        pub sub_service: SIOTypeSubService,
+    }
+    impl SIOType {
+        pub fn new(service: SIOTypeService, sub_service: SIOTypeSubService) -> Self {
+            Self {
+                service,
+                sub_service,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SLSCodeCurrentList(pub SlsCodeList);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SS7OnOccEventInfo {
+        #[rasn(identifier = "probableCause")]
+        pub probable_cause: ProbableCause,
+        #[rasn(tag(context, 1), identifier = "specificProblems")]
+        pub specific_problems: Option<SpecificProblems>,
+        #[rasn(identifier = "perceivedSeverity")]
+        pub perceived_severity: PerceivedSeverity,
+        #[rasn(tag(context, 5), identifier = "notificationIdentifier")]
+        pub notification_identifier: Option<NotificationIdentifier>,
+        #[rasn(tag(context, 6), identifier = "correlatedNotifications")]
+        pub correlated_notifications: Option<CorrelatedNotifications>,
+        #[rasn(identifier = "additionalText")]
+        pub additional_text: Option<AdditionalText>,
+        #[rasn(tag(context, 10), identifier = "additionalInformation")]
+        pub additional_information: Option<AdditionalInformation>,
+    }
+    impl SS7OnOccEventInfo {
+        pub fn new(
+            probable_cause: ProbableCause,
+            specific_problems: Option<SpecificProblems>,
+            perceived_severity: PerceivedSeverity,
+            notification_identifier: Option<NotificationIdentifier>,
+            correlated_notifications: Option<CorrelatedNotifications>,
+            additional_text: Option<AdditionalText>,
+            additional_information: Option<AdditionalInformation>,
+        ) -> Self {
+            Self {
+                probable_cause,
+                specific_problems,
+                perceived_severity,
+                notification_identifier,
+                correlated_notifications,
+                additional_text,
+                additional_information,
+            }
+        }
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousScreenedOpcsOrLinkSetsList {
+        #[rasn(identifier = "screenedOpcOrLinkset")]
+        pub screened_opc_or_linkset: StpScreeningTableLineId,
+        #[rasn(identifier = "messageTreatment")]
+        pub message_treatment: TreatmentOf,
+    }
+    impl AnonymousScreenedOpcsOrLinkSetsList {
+        pub fn new(
+            screened_opc_or_linkset: StpScreeningTableLineId,
+            message_treatment: TreatmentOf,
+        ) -> Self {
+            Self {
+                screened_opc_or_linkset,
+                message_treatment,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=128"))]
+    pub struct ScreenedOpcsOrLinkSetsList(pub SetOf<AnonymousScreenedOpcsOrLinkSetsList>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ScreeningByLinkSetOrByOpc {
+        byOpc = 0,
+        byIncomingLinkset = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Seconds(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SignLinkSetTpId(pub NameType);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SignRouteSetNePartName(pub Ia5String);
+    #[doc = " the size of this string is implementation dependent"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=15"))]
+    pub struct SlCode(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=15"))]
+    pub struct Sls(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=16"))]
+    pub struct SlsCodeList(pub SetOf<Sls>);
+    #[doc = " Each Sls value can occur at most once in a given SET"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SlsCodeNormalList(pub SlsCodeList);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SlsLinkPriorityList {
+        #[rasn(tag(context, 0), identifier = "slsCode")]
+        pub sls_code: Sls,
+        #[rasn(tag(context, 1), identifier = "normalSlcCode")]
+        pub normal_slc_code: SlCode,
+        #[rasn(tag(context, 2), identifier = "alternativeSlCodeList")]
+        pub alternative_sl_code_list: AlternativeSlCodeList,
+    }
+    impl SlsLinkPriorityList {
+        pub fn new(
+            sls_code: Sls,
+            normal_slc_code: SlCode,
+            alternative_sl_code_list: AlternativeSlCodeList,
+        ) -> Self {
+            Self {
+                sls_code,
+                normal_slc_code,
+                alternative_sl_code_list,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum SpType {
+        sep = 0,
+        step = 1,
+        stp = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SpecificDpc(pub PointCode);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct StartMtpRouteTest {
+        #[rasn(identifier = "testDestination")]
+        pub test_destination: PointCode,
+        #[rasn(identifier = "traceRequested")]
+        pub trace_requested: bool,
+        pub threshold: ThresholdN,
+        #[rasn(tag(context, 0), identifier = "infoRequest")]
+        pub info_request: Option<InfoRequest>,
+        #[rasn(tag(context, 1), identifier = "returnUnknownParams")]
+        pub return_unknown_params: Option<ReturnUnknownParams>,
+        #[rasn(tag(context, 2), identifier = "directRouteCheck")]
+        pub direct_route_check: Option<bool>,
+    }
+    impl StartMtpRouteTest {
+        pub fn new(
+            test_destination: PointCode,
+            trace_requested: bool,
+            threshold: ThresholdN,
+            info_request: Option<InfoRequest>,
+            return_unknown_params: Option<ReturnUnknownParams>,
+            direct_route_check: Option<bool>,
+        ) -> Self {
+            Self {
+                test_destination,
+                trace_requested,
+                threshold,
+                info_request,
+                return_unknown_params,
+                direct_route_check,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("1..=31"))]
+    pub struct StmChannel(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct StpScreeningElement {
+        #[rasn(identifier = "designatedDPC")]
+        pub designated_dpc: DpcComponent,
+        #[rasn(identifier = "messageTreatment")]
+        pub message_treatment: TreatmentOf,
+    }
+    impl StpScreeningElement {
+        pub fn new(designated_dpc: DpcComponent, message_treatment: TreatmentOf) -> Self {
+            Self {
+                designated_dpc,
+                message_treatment,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=128"))]
+    pub struct StpScreeningTableLineContent(pub SetOf<StpScreeningElement>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum StpScreeningTableLineId {
+        #[rasn(tag(context, 0))]
+        designatedLinkSet(SignLinkSetTpId),
+        #[rasn(tag(context, 1))]
+        designatedOPC(PointCode),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct StpScreeningTableListMode(pub bool);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=256"))]
+    pub struct SuermNSU(pub u16);
+    #[doc = " lower range is implementation dependent"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("32..=64"))]
+    pub struct SuermThresh(pub Integer);
+    #[doc = " (minSuermThresh or maxSuermThres)"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TestResult(pub FixedBitString<32usize>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ThresholdN(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TimeD(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=360000"))]
+    pub struct TimerValue(pub u32);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TransmissionCongestionThresholdAbatementLevel1(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TransmissionCongestionThresholdAbatementLevel2(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TransmissionCongestionThresholdAbatementLevel3(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TransmissionCongestionThresholdDiscardLevel1(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TransmissionCongestionThresholdDiscardLevel2(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TransmissionCongestionThresholdDiscardLevel3(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TransmissionCongestionThresholdOnsetLevel1(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TransmissionCongestionThresholdOnsetLevel2(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TransmissionCongestionThresholdOnsetLevel3(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum TransmissionRate {
+        kbits4point8 = 0,
+        kbits56 = 1,
+        kbits64 = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum TreatmentOf {
+        normal = 0,
+        discard = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum UserPart {
+        isup = 5,
+        sccp = 3,
+        tup = 4,
+        dup = 6,
+        mt = 8,
+        #[rasn(identifier = "b-isup")]
+        b_isup = 9,
+        siup = 10,
+    }
+    #[doc = " the size of this string is implementation dependent"]
+    pub static ADMINISTRATIVE_STATE_LOCKED: LazyLock<AdministrativeState> =
+        LazyLock::new(|| AdministrativeState(LOCKED));
+    pub static LOCAL_USER_PART_UNAVAILABLE: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***MTP_SPECIFIC_EXTENSIONS, &[1u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub static MAX_LINKS_IN_LS: LazyLock<Integer> = LazyLock::new(|| Integer::from(16));
+    pub static MAX_NO_OF_SCREENED_DPCS: LazyLock<Integer> = LazyLock::new(|| Integer::from(128));
+    #[doc = " This value is suggested by clause 8/Q.705. It is likely that this value is too low for international networks"]
+    pub static MAX_NO_OF_SCREENED_OPCS: LazyLock<Integer> = LazyLock::new(|| Integer::from(128));
+    pub static MAX_OCTETS_PER_SECOND_LS: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(128000));
+    pub static MAX_OCTETS_PER_SECOND_LINK: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(8000));
+    pub static MTP_ACTION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***MTP_INFORMATION_MODEL, &[9u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static MTP_ATTRIBUTE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***MTP_INFORMATION_MODEL, &[7u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static MTP_INFORMATION_MODEL: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[0u32, 0u32, 17u32, 751u32, 1u32, 0u32]).to_owned());
+    pub static MTP_NAME_BINDING: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***MTP_INFORMATION_MODEL, &[6u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static MTP_NOTIFICATION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***MTP_INFORMATION_MODEL, &[10u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static MTP_OBJECT_CLASS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***MTP_INFORMATION_MODEL, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static MTP_PACKAGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***MTP_INFORMATION_MODEL, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static MTP_PARAMETER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***MTP_INFORMATION_MODEL, &[5u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static MTP_SPECIFIC_EXTENSIONS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***MTP_INFORMATION_MODEL, &[0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub const PERIODIC_TEST_FLAG_DEFAULT: PeriodicLinkTestFlag = PeriodicLinkTestFlag::off;
+    pub const PRIORITY_MODE_DEFAULT: PriorityMode = PriorityMode::insert;
+    pub static Q752_ITEM1P02: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***MTP_SPECIFIC_EXTENSIONS, &[102u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub static Q752_ITEM1P10: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***MTP_SPECIFIC_EXTENSIONS, &[110u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub static Q752_ITEM2P10: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***MTP_SPECIFIC_EXTENSIONS, &[210u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub static Q752_ITEM2P16: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***MTP_SPECIFIC_EXTENSIONS, &[216u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub static Q752_ITEM2P18: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***MTP_SPECIFIC_EXTENSIONS, &[218u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub static Q752_ITEM3P06: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***MTP_SPECIFIC_EXTENSIONS, &[306u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub static Q752_ITEM3P11: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***MTP_SPECIFIC_EXTENSIONS, &[311u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub static Q752_ITEM4P03: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***MTP_SPECIFIC_EXTENSIONS, &[403u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub static Q752_ITEM4P05: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***MTP_SPECIFIC_EXTENSIONS, &[405u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub static Q752_ITEM4P11: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***MTP_SPECIFIC_EXTENSIONS, &[411u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub static Q752_ITEM4P13: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***MTP_SPECIFIC_EXTENSIONS, &[413u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub static Q752_ITEM5P01: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***MTP_SPECIFIC_EXTENSIONS, &[501u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub static Q752_ITEM5P05: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***MTP_SPECIFIC_EXTENSIONS, &[505u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub static Q752_ITEM5P06: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***MTP_SPECIFIC_EXTENSIONS, &[506u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub static Q752_ITEM5P07: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***MTP_SPECIFIC_EXTENSIONS, &[507u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub static Q752_ITEM5P08: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***MTP_SPECIFIC_EXTENSIONS, &[508u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub static REMOTE_USER_PART_UNAVAILABLE: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***MTP_SPECIFIC_EXTENSIONS, &[2u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+}

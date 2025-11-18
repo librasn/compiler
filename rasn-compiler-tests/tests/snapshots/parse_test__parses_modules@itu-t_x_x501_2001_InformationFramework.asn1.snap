@@ -1,0 +1,654 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x501_2001_InformationFramework.asn1
+---
+Warnings:
+NotYetInplemented in ASN grammar: Not yet implemented!
+NotYetInplemented in ASN grammar: Not yet implemented!
+SyntaxMismatch in ASN grammar: Syntax mismatch while resolving information object.
+SyntaxMismatch in ASN grammar: Syntax mismatch while resolving information object.
+NotYetInplemented in ASN grammar: Not yet implemented!
+NotYetInplemented in ASN grammar: Not yet implemented!
+NotYetInplemented in ASN grammar: Not yet implemented!
+NotYetInplemented in ASN grammar: Not yet implemented!
+NotYetInplemented in ASN grammar: Not yet implemented!
+NotYetInplemented in ASN grammar: Not yet implemented!
+NotYetInplemented in ASN grammar: Not yet implemented!
+NotYetInplemented in ASN grammar: Not yet implemented!
+NotYetInplemented in ASN grammar: Not yet implemented!
+NotYetInplemented in ASN grammar: Not yet implemented!
+NotYetInplemented in ASN grammar: Not yet implemented!
+NotYetInplemented in ASN grammar: Not yet implemented!
+NotYetInplemented in ASN grammar: Not yet implemented!
+NotYetInplemented in ASN grammar: Not yet implemented!
+NotYetInplemented in ASN grammar: Not yet implemented!
+NotYetInplemented in ASN grammar: Not yet implemented!
+SyntaxMismatch in ASN grammar: Syntax mismatch while resolving information object.
+NotYetInplemented in ASN grammar: Not yet implemented!
+NotYetInplemented in ASN grammar: Not yet implemented!
+NotYetInplemented in ASN grammar: Not yet implemented!
+LinkerError in ASN grammar: Failed to resolve supertype DirectoryString of parameterized implementation.
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod information_framework {
+    extern crate alloc;
+    use super::directory_abstract_service::TypeAndContextAssertion;
+    use super::selected_attribute_types::{
+        DirectoryString, BOOLEAN_MATCH, COMMON_NAME, GENERALIZED_TIME_MATCH,
+        GENERALIZED_TIME_ORDERING_MATCH, INTEGER_FIRST_COMPONENT_MATCH, INTEGER_MATCH,
+        INTEGER_ORDERING_MATCH, OBJECT_IDENTIFIER_FIRST_COMPONENT_MATCH,
+    };
+    use super::service_administration::SearchRule;
+    use super::upper_bounds::UB_SEARCH;
+    use super::useful_definitions::{
+        DIRECTORY_ABSTRACT_SERVICE, ID_AR, ID_AT, ID_MR, ID_NF, ID_OA, ID_OC, ID_SC,
+        SELECTED_ATTRIBUTE_TYPES, SERVICE_ADMINISTRATION, UPPER_BOUNDS,
+    };
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "IOFR$ATTRIBUTE$&Type")]
+    pub struct AnonymousAttributeValues(pub Any);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AttributeValues(pub SetOf<AnonymousAttributeValues>);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousAttributeValuesWithContext {
+        pub value: Any,
+        #[rasn(size("1.."), identifier = "contextList")]
+        pub context_list: SetOf<Context>,
+    }
+    impl AnonymousAttributeValuesWithContext {
+        pub fn new(value: Any, context_list: SetOf<Context>) -> Self {
+            Self {
+                value,
+                context_list,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct AttributeValuesWithContext(pub SetOf<AnonymousAttributeValuesWithContext>);
+    #[doc = " attribute data types"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Attribute {
+        #[rasn(identifier = "type")]
+        pub r_type: ObjectIdentifier,
+        pub values: AttributeValues,
+        #[rasn(identifier = "valuesWithContext")]
+        pub values_with_context: Option<AttributeValuesWithContext>,
+    }
+    impl Attribute {
+        pub fn new(
+            r_type: ObjectIdentifier,
+            values: AttributeValues,
+            values_with_context: Option<AttributeValuesWithContext>,
+        ) -> Self {
+            Self {
+                r_type,
+                values,
+                values_with_context,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AttributeType(pub ObjectIdentifier);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousAttributeTypeAndDistinguishedValueValuesWithContext {
+        #[rasn(tag(context, 0), identifier = "distingAttrValue")]
+        pub disting_attr_value: Option<Any>,
+        #[rasn(size("1.."), identifier = "contextList")]
+        pub context_list: SetOf<Context>,
+    }
+    impl AnonymousAttributeTypeAndDistinguishedValueValuesWithContext {
+        pub fn new(disting_attr_value: Option<Any>, context_list: SetOf<Context>) -> Self {
+            Self {
+                disting_attr_value,
+                context_list,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct AttributeTypeAndDistinguishedValueValuesWithContext(
+        pub SetOf<AnonymousAttributeTypeAndDistinguishedValueValuesWithContext>,
+    );
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AttributeTypeAndDistinguishedValue {
+        #[rasn(identifier = "type")]
+        pub r_type: ObjectIdentifier,
+        pub value: Any,
+        #[rasn(
+            default = "attribute_type_and_distinguished_value_primary_distinguished_default",
+            identifier = "primaryDistinguished"
+        )]
+        pub primary_distinguished: bool,
+        #[rasn(identifier = "valuesWithContext")]
+        pub values_with_context: Option<AttributeTypeAndDistinguishedValueValuesWithContext>,
+    }
+    impl AttributeTypeAndDistinguishedValue {
+        pub fn new(
+            r_type: ObjectIdentifier,
+            value: Any,
+            primary_distinguished: bool,
+            values_with_context: Option<AttributeTypeAndDistinguishedValueValuesWithContext>,
+        ) -> Self {
+            Self {
+                r_type,
+                value,
+                primary_distinguished,
+                values_with_context,
+            }
+        }
+    }
+    fn attribute_type_and_distinguished_value_primary_distinguished_default() -> bool {
+        true
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AttributeTypeAssertion {
+        #[rasn(identifier = "type")]
+        pub r_type: ObjectIdentifier,
+        #[rasn(size("1.."), identifier = "assertedContexts")]
+        pub asserted_contexts: Option<SequenceOf<ContextAssertion>>,
+    }
+    impl AttributeTypeAssertion {
+        pub fn new(
+            r_type: ObjectIdentifier,
+            asserted_contexts: Option<SequenceOf<ContextAssertion>>,
+        ) -> Self {
+            Self {
+                r_type,
+                asserted_contexts,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AttributeUsage {
+        userApplications = 0,
+        directoryOperation = 1,
+        distributedOperation = 2,
+        dSAOperation = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AttributeValue(pub Any);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum AttributeValueAssertionAssertedContexts {
+        #[rasn(tag(context, 0))]
+        allContexts(()),
+        #[rasn(size("1.."), tag(context, 1))]
+        selectedContexts(SetOf<ContextAssertion>),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AttributeValueAssertion {
+        #[rasn(identifier = "type")]
+        pub r_type: ObjectIdentifier,
+        pub assertion: Any,
+        #[rasn(identifier = "assertedContexts")]
+        pub asserted_contexts: Option<AttributeValueAssertionAssertedContexts>,
+    }
+    impl AttributeValueAssertion {
+        pub fn new(
+            r_type: ObjectIdentifier,
+            assertion: Any,
+            asserted_contexts: Option<AttributeValueAssertionAssertedContexts>,
+        ) -> Self {
+            Self {
+                r_type,
+                assertion,
+                asserted_contexts,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0.."))]
+    pub struct BaseDistance(pub Integer);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "CHOICE")]
+    pub enum AnonymousChopSpecificationSpecificExclusions {
+        #[rasn(tag(context, 0))]
+        chopBefore(LocalName),
+        #[rasn(tag(context, 1))]
+        chopAfter(LocalName),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct ChopSpecificationSpecificExclusions(
+        pub SetOf<AnonymousChopSpecificationSpecificExclusions>,
+    );
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ChopSpecification {
+        #[rasn(tag(context, 1), identifier = "specificExclusions")]
+        pub specific_exclusions: Option<ChopSpecificationSpecificExclusions>,
+        #[rasn(tag(context, 2), default = "chop_specification_minimum_default")]
+        pub minimum: BaseDistance,
+        #[rasn(tag(context, 3))]
+        pub maximum: Option<BaseDistance>,
+    }
+    impl ChopSpecification {
+        pub fn new(
+            specific_exclusions: Option<ChopSpecificationSpecificExclusions>,
+            minimum: BaseDistance,
+            maximum: Option<BaseDistance>,
+        ) -> Self {
+            Self {
+                specific_exclusions,
+                minimum,
+                maximum,
+            }
+        }
+    }
+    fn chop_specification_minimum_default() -> BaseDistance {
+        BaseDistance(Integer::from(0))
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "IOFR$CONTEXT$&Type")]
+    pub struct AnonymousContextContextValues(pub Any);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct ContextContextValues(pub SetOf<AnonymousContextContextValues>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Context {
+        #[rasn(identifier = "contextType")]
+        pub context_type: ObjectIdentifier,
+        #[rasn(identifier = "contextValues")]
+        pub context_values: ContextContextValues,
+        #[rasn(default = "context_fallback_default")]
+        pub fallback: bool,
+    }
+    impl Context {
+        pub fn new(
+            context_type: ObjectIdentifier,
+            context_values: ContextContextValues,
+            fallback: bool,
+        ) -> Self {
+            Self {
+                context_type,
+                context_values,
+                fallback,
+            }
+        }
+    }
+    fn context_fallback_default() -> bool {
+        false
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "IOFR$CONTEXT$&Assertion")]
+    pub struct AnonymousContextAssertionContextValues(pub Any);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct ContextAssertionContextValues(pub SetOf<AnonymousContextAssertionContextValues>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ContextAssertion {
+        #[rasn(identifier = "contextType")]
+        pub context_type: ObjectIdentifier,
+        #[rasn(identifier = "contextValues")]
+        pub context_values: ContextAssertionContextValues,
+    }
+    impl ContextAssertion {
+        pub fn new(
+            context_type: ObjectIdentifier,
+            context_values: ContextAssertionContextValues,
+        ) -> Self {
+            Self {
+                context_type,
+                context_values,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct DITContentRule {
+        #[rasn(identifier = "structuralObjectClass")]
+        pub structural_object_class: ObjectIdentifier,
+        #[rasn(size("1.."))]
+        pub auxiliaries: Option<SetOf<Any>>,
+        #[rasn(size("1.."), tag(context, 1))]
+        pub mandatory: Option<SetOf<Any>>,
+        #[rasn(size("1.."), tag(context, 2))]
+        pub optional: Option<SetOf<Any>>,
+        #[rasn(size("1.."), tag(context, 3))]
+        pub precluded: Option<SetOf<Any>>,
+    }
+    impl DITContentRule {
+        pub fn new(
+            structural_object_class: ObjectIdentifier,
+            auxiliaries: Option<SetOf<Any>>,
+            mandatory: Option<SetOf<Any>>,
+            optional: Option<SetOf<Any>>,
+            precluded: Option<SetOf<Any>>,
+        ) -> Self {
+            Self {
+                structural_object_class,
+                auxiliaries,
+                mandatory,
+                optional,
+                precluded,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct DITContextUse {
+        #[rasn(identifier = "attributeType")]
+        pub attribute_type: ObjectIdentifier,
+        #[rasn(size("1.."), tag(context, 1), identifier = "mandatoryContexts")]
+        pub mandatory_contexts: Option<SetOf<Any>>,
+        #[rasn(size("1.."), tag(context, 2), identifier = "optionalContexts")]
+        pub optional_contexts: Option<SetOf<Any>>,
+    }
+    impl DITContextUse {
+        pub fn new(
+            attribute_type: ObjectIdentifier,
+            mandatory_contexts: Option<SetOf<Any>>,
+            optional_contexts: Option<SetOf<Any>>,
+        ) -> Self {
+            Self {
+                attribute_type,
+                mandatory_contexts,
+                optional_contexts,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct DITStructureRule {
+        #[rasn(identifier = "ruleIdentifier")]
+        pub rule_identifier: RuleIdentifier,
+        #[rasn(identifier = "nameForm")]
+        pub name_form: ObjectIdentifier,
+        #[rasn(size("1.."), identifier = "superiorStructureRules")]
+        pub superior_structure_rules: Option<SetOf<RuleIdentifier>>,
+    }
+    impl DITStructureRule {
+        pub fn new(
+            rule_identifier: RuleIdentifier,
+            name_form: ObjectIdentifier,
+            superior_structure_rules: Option<SetOf<RuleIdentifier>>,
+        ) -> Self {
+            Self {
+                rule_identifier,
+                name_form,
+                superior_structure_rules,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DistinguishedName(pub RDNSequence);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct HierarchyBelow(pub bool);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct HierarchyLevel(pub Integer);
+    #[doc = " empty sequence specifies whole administrative area"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct LocalName(pub RDNSequence);
+    #[doc = " naming data types"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum Name {
+        rdnSequence(RDNSequence),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ObjectClassKind {
+        #[rasn(identifier = "abstract")]
+        R_abstract = 0,
+        structural = 1,
+        auxiliary = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RDNSequence(pub SequenceOf<RelativeDistinguishedName>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum Refinement {
+        #[rasn(tag(context, 0))]
+        item(ObjectIdentifier),
+        #[rasn(tag(context, 1))]
+        and(SetOf<Refinement>),
+        #[rasn(tag(context, 2))]
+        or(SetOf<Refinement>),
+        #[rasn(tag(context, 3))]
+        not(Box<Refinement>),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct RelativeDistinguishedName(pub SetOf<AttributeTypeAndDistinguishedValue>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RuleIdentifier(pub Integer);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct SearchRuleDescriptionName(pub SetOf<DirectoryString>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SearchRuleDescription {
+        #[rasn(tag(context, 28))]
+        pub name: Option<SearchRuleDescriptionName>,
+        #[rasn(value("0.."), tag(context, 29))]
+        pub description: Option<DirectoryString>,
+    }
+    impl SearchRuleDescription {
+        pub fn new(
+            name: Option<SearchRuleDescriptionName>,
+            description: Option<DirectoryString>,
+        ) -> Self {
+            Self { name, description }
+        }
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "CHOICE")]
+    pub enum AnonymousSubtreeSpecificationSpecificExclusions {
+        #[rasn(tag(context, 0))]
+        chopBefore(LocalName),
+        #[rasn(tag(context, 1))]
+        chopAfter(LocalName),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct SubtreeSpecificationSpecificExclusions(
+        pub SetOf<AnonymousSubtreeSpecificationSpecificExclusions>,
+    );
+    #[doc = " subtree data types"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SubtreeSpecification {
+        #[rasn(tag(context, 0), default = "subtree_specification_base_default")]
+        pub base: LocalName,
+        #[rasn(tag(context, 4), identifier = "specificationFilter")]
+        pub specification_filter: Option<Refinement>,
+        #[rasn(tag(context, 1), identifier = "specificExclusions")]
+        pub specific_exclusions: Option<SubtreeSpecificationSpecificExclusions>,
+        #[rasn(tag(context, 2), default = "subtree_specification_minimum_default")]
+        pub minimum: BaseDistance,
+        #[rasn(tag(context, 3))]
+        pub maximum: Option<BaseDistance>,
+    }
+    impl SubtreeSpecification {
+        pub fn new(
+            base: LocalName,
+            specification_filter: Option<Refinement>,
+            specific_exclusions: Option<SubtreeSpecificationSpecificExclusions>,
+            minimum: BaseDistance,
+            maximum: Option<BaseDistance>,
+        ) -> Self {
+            Self {
+                base,
+                specification_filter,
+                specific_exclusions,
+                minimum,
+                maximum,
+            }
+        }
+    }
+    fn subtree_specification_base_default() -> LocalName {
+        LocalName(RDNSequence(alloc::vec![]))
+    }
+    fn subtree_specification_minimum_default() -> BaseDistance {
+        BaseDistance(Integer::from(0))
+    }
+    pub static ID_AR_ACCESS_CONTROL_INNER_AREA: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AR, &[3u32]].concat()).unwrap().to_owned());
+    pub static ID_AR_ACCESS_CONTROL_SPECIFIC_AREA: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AR, &[2u32]].concat()).unwrap().to_owned());
+    #[doc = " administrative roles"]
+    pub static ID_AR_AUTONOMOUS_AREA: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AR, &[1u32]].concat()).unwrap().to_owned());
+    pub static ID_AR_COLLECTIVE_ATTRIBUTE_INNER_AREA: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AR, &[6u32]].concat()).unwrap().to_owned());
+    pub static ID_AR_COLLECTIVE_ATTRIBUTE_SPECIFIC_AREA: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AR, &[5u32]].concat()).unwrap().to_owned());
+    pub static ID_AR_CONTEXT_DEFAULT_SPECIFIC_AREA: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AR, &[7u32]].concat()).unwrap().to_owned());
+    pub static ID_AR_SERVICE_SPECIFIC_AREA: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AR, &[8u32]].concat()).unwrap().to_owned());
+    pub static ID_AR_SUBSCHEMA_ADMIN_SPECIFIC_AREA: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AR, &[4u32]].concat()).unwrap().to_owned());
+    pub static ID_AT_ALIASED_ENTRY_NAME: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AT, &[1u32]].concat()).unwrap().to_owned());
+    #[doc = " attributes"]
+    pub static ID_AT_OBJECT_CLASS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AT, &[0u32]].concat()).unwrap().to_owned());
+    pub static ID_MR_DISTINGUISHED_NAME_MATCH: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_MR, &[1u32]].concat()).unwrap().to_owned());
+    #[doc = " matching rules"]
+    pub static ID_MR_OBJECT_IDENTIFIER_MATCH: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_MR, &[0u32]].concat()).unwrap().to_owned());
+    #[doc = "  Name forms"]
+    pub static ID_NF_SUBENTRY_NAME_FORM: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_NF, &[16u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_OA_ACCESS_CONTROL_SUBENTRY_LIST: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_OA, &[11u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_OA_ADMINISTRATIVE_ROLE: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_OA, &[5u32]].concat()).unwrap().to_owned());
+    pub static ID_OA_COLLECTIVE_ATTRIBUTE_SUBENTRY_LIST: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_OA, &[12u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_OA_COLLECTIVE_EXCLUSIONS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_OA, &[7u32]].concat()).unwrap().to_owned());
+    pub static ID_OA_CONTEXT_ASSERTION_DEFAULT: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_OA, &[14u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_OA_CONTEXT_DEFAULT_SUBENTRY_LIST: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_OA, &[13u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_OA_CREATE_TIMESTAMP: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_OA, &[1u32]].concat()).unwrap().to_owned());
+    pub static ID_OA_CREATORS_NAME: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_OA, &[3u32]].concat()).unwrap().to_owned());
+    #[doc = " operational attributes"]
+    pub static ID_OA_EXCLUDE_ALL_COLLECTIVE_ATTRIBUTES: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_OA, &[0u32]].concat()).unwrap().to_owned());
+    pub static ID_OA_HAS_SUBORDINATES: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_OA, &[9u32]].concat()).unwrap().to_owned());
+    pub static ID_OA_HIERARCHY_BELOW: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_OA, &[18u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_OA_HIERARCHY_LEVEL: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_OA, &[17u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_OA_HIERARCHY_PARENT: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_OA, &[19u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_OA_MODIFIERS_NAME: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_OA, &[4u32]].concat()).unwrap().to_owned());
+    pub static ID_OA_MODIFY_TIMESTAMP: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_OA, &[2u32]].concat()).unwrap().to_owned());
+    pub static ID_OA_SEARCH_RULES: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_OA, &[16u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_OA_SERVICE_ADMIN_SUBENTRY_LIST: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_OA, &[15u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_OA_SUBSCHEMA_SUBENTRY_LIST: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_OA, &[10u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_OA_SUBSCHEMA_TIMESTAMP: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_OA, &[8u32]].concat()).unwrap().to_owned());
+    pub static ID_OA_SUBTREE_SPECIFICATION: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_OA, &[6u32]].concat()).unwrap().to_owned());
+    pub static ID_OC_ALIAS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_OC, &[1u32]].concat()).unwrap().to_owned());
+    pub static ID_OC_CHILD: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_OC, &[29u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_OC_PARENT: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_OC, &[28u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " object identifier assignments"]
+    #[doc = " object classes"]
+    pub static ID_OC_TOP: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_OC, &[0u32]].concat()).unwrap().to_owned());
+    pub static ID_SC_ACCESS_CONTROL_SUBENTRY: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_SC, &[1u32]].concat()).unwrap().to_owned());
+    pub static ID_SC_COLLECTIVE_ATTRIBUTE_SUBENTRY: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_SC, &[2u32]].concat()).unwrap().to_owned());
+    pub static ID_SC_CONTEXT_ASSERTION_SUBENTRY: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_SC, &[3u32]].concat()).unwrap().to_owned());
+    pub static ID_SC_SERVICE_ADMIN_SUBENTRY: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_SC, &[4u32]].concat()).unwrap().to_owned());
+    #[doc = " subentry classes"]
+    pub static ID_SC_SUBENTRY: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_SC, &[0u32]].concat()).unwrap().to_owned());
+}

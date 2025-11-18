@@ -1,0 +1,292 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x753_1997_CSModule.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod csmodule {
+    extern crate alloc;
+    use super::acse_1::AETitle;
+    use super::attribute_asn1_module::SimpleNameType;
+    use super::cmip_1::{
+        Attribute, BaseManagedObjectId, CMISFilter, CMISSync, ModifyOperator, ObjectInstance, Scope,
+    };
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AvailableScriptList(pub SetOf<ScriptList>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CommandSequencerId(pub ObjectInstance);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "INTEGER")]
+    pub struct AnonymousErrorCode(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ErrorCode(pub SetOf<AnonymousErrorCode>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ExecutionParameter {
+        #[rasn(identifier = "scriptId")]
+        pub script_id: ScriptId,
+        #[rasn(identifier = "scriptParameters")]
+        pub script_parameters: SequenceOf<Attribute>,
+    }
+    impl ExecutionParameter {
+        pub fn new(script_id: ScriptId, script_parameters: SequenceOf<Attribute>) -> Self {
+            Self {
+                script_id,
+                script_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ExecutionParameterList {
+        executionParameter(ExecutionParameter),
+        #[rasn(tag(context, 1))]
+        sequentialExecutionList(SequenceOf<ExecutionParameter>),
+        parallelExecutionList(SetOf<ExecutionParameter>),
+    }
+    #[doc = " size in octets"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ExecutionResultInfo {
+        #[rasn(identifier = "triggerId")]
+        pub trigger_id: TriggerId,
+        #[rasn(identifier = "scriptId")]
+        pub script_id: ScriptId,
+        #[rasn(identifier = "threadId")]
+        pub thread_id: ThreadId,
+        #[rasn(identifier = "errorCode")]
+        pub error_code: ErrorCode,
+        #[rasn(identifier = "executionResultType")]
+        pub execution_result_type: ExecutionResultType,
+        #[rasn(identifier = "executionResult")]
+        pub execution_result: SetOf<Attribute>,
+    }
+    impl ExecutionResultInfo {
+        pub fn new(
+            trigger_id: TriggerId,
+            script_id: ScriptId,
+            thread_id: ThreadId,
+            error_code: ErrorCode,
+            execution_result_type: ExecutionResultType,
+            execution_result: SetOf<Attribute>,
+        ) -> Self {
+            Self {
+                trigger_id,
+                script_id,
+                thread_id,
+                error_code,
+                execution_result_type,
+                execution_result,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ExecutionResultType(pub ObjectIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ExecutionType {
+        singleExecution(ScriptThreadSet),
+        parallelExecution(SetOf<ScriptThreadSet>),
+        #[rasn(tag(context, 1))]
+        sequentialExecution(SequenceOf<ScriptThreadSet>),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct LaunchPadId(pub ObjectInstance);
+    #[doc = " Counter size constraint"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MaxCounterSize(pub Integer);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousModificationList {
+        #[rasn(
+            tag(context, 2),
+            default = "anonymous_modification_list_modify_operator_default",
+            identifier = "modifyOperator"
+        )]
+        pub modify_operator: ModifyOperator,
+        #[rasn(identifier = "attributeId")]
+        pub attribute_id: Any,
+        #[rasn(identifier = "attributeValue")]
+        pub attribute_value: Option<Any>,
+    }
+    impl AnonymousModificationList {
+        pub fn new(
+            modify_operator: ModifyOperator,
+            attribute_id: Any,
+            attribute_value: Option<Any>,
+        ) -> Self {
+            Self {
+                modify_operator,
+                attribute_id,
+                attribute_value,
+            }
+        }
+    }
+    fn anonymous_modification_list_modify_operator_default() -> ModifyOperator {
+        REPLACE
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ModificationList(pub SetOf<AnonymousModificationList>);
+    #[doc = " Range Constraints used for relationship class definitions"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("1"))]
+    pub struct RangeFromOneToOne(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0.."))]
+    pub struct RangeFromZeroToMax(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ResultInfoFromThread {
+        #[rasn(identifier = "executionType")]
+        pub execution_type: ExecutionType,
+        #[rasn(identifier = "errorCode")]
+        pub error_code: ErrorCode,
+        #[rasn(identifier = "executionResultType")]
+        pub execution_result_type: ExecutionResultType,
+        #[rasn(identifier = "executionResult")]
+        pub execution_result: SetOf<Attribute>,
+    }
+    impl ResultInfoFromThread {
+        pub fn new(
+            execution_type: ExecutionType,
+            error_code: ErrorCode,
+            execution_result_type: ExecutionResultType,
+            execution_result: SetOf<Attribute>,
+        ) -> Self {
+            Self {
+                execution_type,
+                error_code,
+                execution_result_type,
+                execution_result,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ScriptContent(pub GeneralString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ScriptId(pub ObjectInstance);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ScriptLanguageName(pub ObjectIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ScriptList {
+        scriptId(ScriptId),
+        sequentialScriptList(SequenceOf<ScriptId>),
+        parallelScriptList(SetOf<ScriptId>),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ScriptThreadSet {
+        #[rasn(identifier = "scriptId")]
+        pub script_id: ScriptId,
+        #[rasn(identifier = "threadId")]
+        pub thread_id: ThreadId,
+    }
+    impl ScriptThreadSet {
+        pub fn new(script_id: ScriptId, thread_id: ThreadId) -> Self {
+            Self {
+                script_id,
+                thread_id,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum SpawnerObjectIdObjectType {
+        threadId(ThreadId),
+        launchPadId(LaunchPadId),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SpawnerObjectId {
+        #[rasn(identifier = "triggerId")]
+        pub trigger_id: TriggerId,
+        #[rasn(identifier = "objectType")]
+        pub object_type: SpawnerObjectIdObjectType,
+    }
+    impl SpawnerObjectId {
+        pub fn new(trigger_id: TriggerId, object_type: SpawnerObjectIdObjectType) -> Self {
+            Self {
+                trigger_id,
+                object_type,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ThreadId(pub ObjectInstance);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TriggerId(pub ObjectInstance);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct TriggerParameters {
+        #[rasn(identifier = "triggerId")]
+        pub trigger_id: TriggerId,
+        #[rasn(identifier = "executionParameterList")]
+        pub execution_parameter_list: ExecutionParameterList,
+    }
+    impl TriggerParameters {
+        pub fn new(
+            trigger_id: TriggerId,
+            execution_parameter_list: ExecutionParameterList,
+        ) -> Self {
+            Self {
+                trigger_id,
+                execution_parameter_list,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum TriggerResultInfoResultType {
+        singleTriggerResult(ResultInfoFromThread),
+        #[rasn(tag(context, 1))]
+        sequentialTriggerResult(SequenceOf<ResultInfoFromThread>),
+        parallelTriggerResult(SetOf<ResultInfoFromThread>),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct TriggerResultInfo {
+        #[rasn(identifier = "triggerId")]
+        pub trigger_id: TriggerId,
+        #[rasn(identifier = "resultType")]
+        pub result_type: TriggerResultInfoResultType,
+    }
+    impl TriggerResultInfo {
+        pub fn new(trigger_id: TriggerId, result_type: TriggerResultInfoResultType) -> Self {
+            Self {
+                trigger_id,
+                result_type,
+            }
+        }
+    }
+    pub static CMD_SEQ_RELATIONSHIP_CLASSES: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 9u32, 2u32, 21u32, 11u32]).to_owned());
+    pub static CMD_SEQ_RELATIONSHIP_MAPPINGS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 9u32, 2u32, 21u32, 12u32]).to_owned());
+    pub static CMD_SEQ_RELATIONSHIP_ROLES: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 9u32, 2u32, 21u32, 13u32]).to_owned());
+    pub static EMPTY_EXECUTION_PARAMETER_LIST: LazyLock<ExecutionParameterList> =
+        LazyLock::new(|| ExecutionParameterList::sequentialExecutionList(alloc::vec![]));
+    pub static EMPTY_PARAMETER_LIST: LazyLock<ExecutionParameterList> =
+        LazyLock::new(|| ExecutionParameterList::sequentialExecutionList(alloc::vec![]));
+    pub static EMPTY_SCRIPT_LIST: LazyLock<AvailableScriptList> =
+        LazyLock::new(|| AvailableScriptList(alloc::vec![]));
+}

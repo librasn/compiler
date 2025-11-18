@@ -1,0 +1,812 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/iso_24761_2009_AuthenticationContextForBiometrics.asn1
+---
+Warnings:
+LinkerError in ASN grammar: Failed to resolve argument CMSVersion of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve argument CMSVersion of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve argument CMSVersion of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve argument CMSVersion of parameterized implementation.
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod authentication_context_for_biometrics {
+    extern crate alloc;
+    use super::attribute_certificate::AttributeCertificate;
+    use super::authentication_framework::{
+        AlgorithmIdentifier, Certificate, CertificateSerialNumber,
+    };
+    use super::cbeff_data_elements::{
+        BDBFormat, BDBValidityPeriod, BIRIndex, BiometricSubtype, BiometricType, CBEFFVersion,
+        EncryptionOptions, IntegrityOptions, PatronFormat, Quality,
+    };
+    use super::certificate_extensions::CertificateList;
+    use super::cryptographic_message_syntax2004::*;
+    use super::information_framework::Name;
+    use super::selected_attribute_types::UniqueIdentifier;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(context, 14))]
+    pub struct ACBioContentInformation {
+        #[rasn(default = "acbio_content_information_version_default")]
+        pub version: Version,
+        #[rasn(identifier = "bpuInformation")]
+        pub bpu_information: BPUInformation,
+        #[rasn(size("16"), identifier = "controlValue")]
+        pub control_value: OctetString,
+        #[rasn(identifier = "biometricProcess")]
+        pub biometric_process: BiometricProcess,
+        #[rasn(identifier = "brtCertificateInformation")]
+        pub brt_certificate_information: Option<BRTCertificateInformation>,
+    }
+    impl ACBioContentInformation {
+        pub fn new(
+            version: Version,
+            bpu_information: BPUInformation,
+            control_value: OctetString,
+            biometric_process: BiometricProcess,
+            brt_certificate_information: Option<BRTCertificateInformation>,
+        ) -> Self {
+            Self {
+                version,
+                bpu_information,
+                control_value,
+                biometric_process,
+                brt_certificate_information,
+            }
+        }
+    }
+    fn acbio_content_information_version_default() -> Version {
+        Version(Integer::from(0))
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ACBioInstance {
+        #[rasn(identifier = "contentType")]
+        pub content_type: Any,
+        #[rasn(tag(explicit(context, 0)))]
+        pub content: Any,
+    }
+    impl ACBioInstance {
+        pub fn new(content_type: Any, content: Any) -> Self {
+            Self {
+                content_type,
+                content,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AttributeCertificateV2(pub AttributeCertificate);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AuthenticatedDataACBio(pub AUTHENTICATEDDATA);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct BDBForBRTC {
+        #[rasn(default = "bdbfor_brtc_version_default")]
+        pub version: Version,
+        #[rasn(identifier = "originalBDBHashList")]
+        pub original_bdbhash_list: HashList,
+        #[rasn(identifier = "originalBIRReferrer")]
+        pub original_birreferrer: Option<URI>,
+        #[rasn(identifier = "originalBIRPatronFormat")]
+        pub original_birpatron_format: PatronFormat,
+        #[rasn(identifier = "originalBDBPosition")]
+        pub original_bdbposition: Integer,
+        #[rasn(identifier = "userInformation")]
+        pub user_information: Option<UserInformation>,
+        #[rasn(identifier = "pkiCertificateInformation")]
+        pub pki_certificate_information: Option<PKICertificateInformation>,
+        #[rasn(identifier = "enrolmentACBioInstances")]
+        pub enrolment_acbio_instances: Option<SequenceOfACBioInstances>,
+    }
+    impl BDBForBRTC {
+        pub fn new(
+            version: Version,
+            original_bdbhash_list: HashList,
+            original_birreferrer: Option<URI>,
+            original_birpatron_format: PatronFormat,
+            original_bdbposition: Integer,
+            user_information: Option<UserInformation>,
+            pki_certificate_information: Option<PKICertificateInformation>,
+            enrolment_acbio_instances: Option<SequenceOfACBioInstances>,
+        ) -> Self {
+            Self {
+                version,
+                original_bdbhash_list,
+                original_birreferrer,
+                original_birpatron_format,
+                original_bdbposition,
+                user_information,
+                pki_certificate_information,
+                enrolment_acbio_instances,
+            }
+        }
+    }
+    fn bdbfor_brtc_version_default() -> Version {
+        Version(Integer::from(0))
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct BPUCertificateReferrerInformation {
+        #[rasn(identifier = "bpuCertificateReferrer")]
+        pub bpu_certificate_referrer: URI,
+        #[rasn(identifier = "crlsReferrer")]
+        pub crls_referrer: Option<URI>,
+    }
+    impl BPUCertificateReferrerInformation {
+        pub fn new(bpu_certificate_referrer: URI, crls_referrer: Option<URI>) -> Self {
+            Self {
+                bpu_certificate_referrer,
+                crls_referrer,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct BPUFunctionReport {
+        #[rasn(identifier = "bpuSubprocessInformationList")]
+        pub bpu_subprocess_information_list: BPUSubprocessInformationList,
+        #[rasn(identifier = "bpuInputStaticInformationList")]
+        pub bpu_input_static_information_list: Option<BPUIOStaticInformationList>,
+        #[rasn(identifier = "bpuOutputStaticInformationList")]
+        pub bpu_output_static_information_list: Option<BPUIOStaticInformationList>,
+    }
+    impl BPUFunctionReport {
+        pub fn new(
+            bpu_subprocess_information_list: BPUSubprocessInformationList,
+            bpu_input_static_information_list: Option<BPUIOStaticInformationList>,
+            bpu_output_static_information_list: Option<BPUIOStaticInformationList>,
+        ) -> Self {
+            Self {
+                bpu_subprocess_information_list,
+                bpu_input_static_information_list,
+                bpu_output_static_information_list,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct BPUIOExecutionInformation {
+        #[rasn(identifier = "dataType")]
+        pub data_type: DataType,
+        #[rasn(identifier = "bpuIOIndex")]
+        pub bpu_ioindex: IOIndex,
+        #[rasn(identifier = "subprocessIOIndex")]
+        pub subprocess_ioindex: IOIndex,
+        pub hash: Hash,
+    }
+    impl BPUIOExecutionInformation {
+        pub fn new(
+            data_type: DataType,
+            bpu_ioindex: IOIndex,
+            subprocess_ioindex: IOIndex,
+            hash: Hash,
+        ) -> Self {
+            Self {
+                data_type,
+                bpu_ioindex,
+                subprocess_ioindex,
+                hash,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct BPUIOExecutionInformationList(pub SequenceOf<BPUIOExecutionInformation>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct BPUIOStaticInformation {
+        #[rasn(identifier = "biometricType")]
+        pub biometric_type: Option<BiometricType>,
+        #[rasn(identifier = "biometricSubtype")]
+        pub biometric_subtype: Option<BiometricSubtype>,
+        #[rasn(identifier = "dataType")]
+        pub data_type: DataType,
+        #[rasn(identifier = "subprocessIOIndex")]
+        pub subprocess_ioindex: IOIndex,
+    }
+    impl BPUIOStaticInformation {
+        pub fn new(
+            biometric_type: Option<BiometricType>,
+            biometric_subtype: Option<BiometricSubtype>,
+            data_type: DataType,
+            subprocess_ioindex: IOIndex,
+        ) -> Self {
+            Self {
+                biometric_type,
+                biometric_subtype,
+                data_type,
+                subprocess_ioindex,
+            }
+        }
+    }
+    #[doc = " For extension"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct BPUIOStaticInformationList(pub SequenceOf<BPUIOStaticInformation>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct BPUInformation {
+        #[rasn(identifier = "bpuCertificateReferrerInformation")]
+        pub bpu_certificate_referrer_information: Option<BPUCertificateReferrerInformation>,
+        #[rasn(identifier = "bpuReportInformation")]
+        pub bpu_report_information: BPUReportInformation,
+    }
+    impl BPUInformation {
+        pub fn new(
+            bpu_certificate_referrer_information: Option<BPUCertificateReferrerInformation>,
+            bpu_report_information: BPUReportInformation,
+        ) -> Self {
+            Self {
+                bpu_certificate_referrer_information,
+                bpu_report_information,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct BPUReport {
+        #[rasn(identifier = "contentType")]
+        pub content_type: Any,
+        #[rasn(tag(explicit(context, 0)))]
+        pub content: Any,
+    }
+    impl BPUReport {
+        pub fn new(content_type: Any, content: Any) -> Self {
+            Self {
+                content_type,
+                content,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct BPUReportContentInformation {
+        #[rasn(identifier = "bpuFunctionReport")]
+        pub bpu_function_report: BPUFunctionReport,
+        #[rasn(identifier = "bpuSecurityReport")]
+        pub bpu_security_report: BPUSecurityReport,
+    }
+    impl BPUReportContentInformation {
+        pub fn new(
+            bpu_function_report: BPUFunctionReport,
+            bpu_security_report: BPUSecurityReport,
+        ) -> Self {
+            Self {
+                bpu_function_report,
+                bpu_security_report,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum BPUReportInformation {
+        bpuReport(BPUReport),
+        bpuReportReferrer(URI),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct BPUSecurityReport {
+        #[rasn(identifier = "cryptoModuleSecurityInformation")]
+        pub crypto_module_security_information: Option<CryptoModuleSecurityInformation>,
+        #[rasn(identifier = "biometricProcessSecurityInformation")]
+        pub biometric_process_security_information: Option<BiometricProcessSecurityInformation>,
+        #[rasn(identifier = "securityEvaluationExtensionInformation")]
+        pub security_evaluation_extension_information:
+            Option<SecurityEvaluationExtensionInformation>,
+    }
+    impl BPUSecurityReport {
+        pub fn new(
+            crypto_module_security_information: Option<CryptoModuleSecurityInformation>,
+            biometric_process_security_information: Option<BiometricProcessSecurityInformation>,
+            security_evaluation_extension_information: Option<
+                SecurityEvaluationExtensionInformation,
+            >,
+        ) -> Self {
+            Self {
+                crypto_module_security_information,
+                biometric_process_security_information,
+                security_evaluation_extension_information,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct BPUSubprocessInformation {
+        #[rasn(identifier = "functionDefinition")]
+        pub function_definition: FunctionDefinition,
+        #[rasn(identifier = "qualityEvaluation")]
+        pub quality_evaluation: Option<QualityEvaluation>,
+    }
+    impl BPUSubprocessInformation {
+        pub fn new(
+            function_definition: FunctionDefinition,
+            quality_evaluation: Option<QualityEvaluation>,
+        ) -> Self {
+            Self {
+                function_definition,
+                quality_evaluation,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct BPUSubprocessInformationList(pub SequenceOf<BPUSubprocessInformation>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct BRTCContentInformation {
+        #[rasn(identifier = "sbhForBRTC")]
+        pub sbh_for_brtc: SBHForBRTC,
+        #[rasn(identifier = "bdbForBRTC")]
+        pub bdb_for_brtc: BDBForBRTC,
+    }
+    impl BRTCContentInformation {
+        pub fn new(sbh_for_brtc: SBHForBRTC, bdb_for_brtc: BDBForBRTC) -> Self {
+            Self {
+                sbh_for_brtc,
+                bdb_for_brtc,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct BRTCertificate {
+        #[rasn(identifier = "contentType")]
+        pub content_type: Any,
+        #[rasn(tag(context, 0))]
+        pub content: Any,
+    }
+    impl BRTCertificate {
+        pub fn new(content_type: Any, content: Any) -> Self {
+            Self {
+                content_type,
+                content,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum BRTCertificateInformation {
+        brtCertificateList(BRTCertificateList),
+        brtCertificateReferrerList(BRTCertificateReferrerList),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct BRTCertificateList(pub SequenceOf<BRTCertificate>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct BRTCertificateReferrerList(pub SequenceOf<URI>);
+    #[doc = " For extension"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct BiometricProcess {
+        #[rasn(identifier = "subprocessIndexList")]
+        pub subprocess_index_list: SubprocessIndexList,
+        #[rasn(identifier = "bpuInputExecutionInformationList")]
+        pub bpu_input_execution_information_list: Option<BPUIOExecutionInformationList>,
+        #[rasn(identifier = "bpuOuputExecutionInformationList")]
+        pub bpu_ouput_execution_information_list: Option<BPUIOExecutionInformationList>,
+    }
+    impl BiometricProcess {
+        pub fn new(
+            subprocess_index_list: SubprocessIndexList,
+            bpu_input_execution_information_list: Option<BPUIOExecutionInformationList>,
+            bpu_ouput_execution_information_list: Option<BPUIOExecutionInformationList>,
+        ) -> Self {
+            Self {
+                subprocess_index_list,
+                bpu_input_execution_information_list,
+                bpu_ouput_execution_information_list,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct BiometricProcessQuality(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum BiometricProcessQualityInformation {
+        biometricProcessQuality(BiometricProcessQuality),
+        biometricProcessQualityReferrer(URI),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct BiometricProcessSecurity(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum BiometricProcessSecurityInformation {
+        biometricProcessSecurity(BiometricProcessSecurity),
+        biometricProcessSecurityReferrer(URI),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum CertificateChoices {
+        certificate(Certificate),
+        #[rasn(tag(context, 2))]
+        v2AttrCert(AttributeCertificateV2),
+        #[rasn(tag(context, 3))]
+        other(OtherCertificateFormat),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CertificateSet(pub SetOf<CertificateChoices>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ContentBPUReport(pub SIGNEDDATA);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ContentBRTCertificate(pub SIGNEDDATA);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct CryptoModuleSecurity(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum CryptoModuleSecurityInformation {
+        cryptoModuleSecurity(CryptoModuleSecurity),
+        cryptoModuleSecurityReferrer(URI),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct DataType {
+        #[rasn(identifier = "processedLevel")]
+        pub processed_level: ProcessedLevel,
+        pub purpose: Option<Purpose>,
+    }
+    impl DataType {
+        pub fn new(processed_level: ProcessedLevel, purpose: Option<Purpose>) -> Self {
+            Self {
+                processed_level,
+                purpose,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct EncapsulatedContentInfoACBio {
+        #[rasn(identifier = "eContentType")]
+        pub e_content_type: Any,
+        #[rasn(tag(explicit(context, 0)), identifier = "eContent")]
+        pub e_content: Any,
+    }
+    impl EncapsulatedContentInfoACBio {
+        pub fn new(e_content_type: Any, e_content: Any) -> Self {
+            Self {
+                e_content_type,
+                e_content,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct EncapsulatedContentInfoBPUReport {
+        #[rasn(identifier = "eContentType")]
+        pub e_content_type: Any,
+        #[rasn(tag(context, 0), identifier = "eContent")]
+        pub e_content: Any,
+    }
+    impl EncapsulatedContentInfoBPUReport {
+        pub fn new(e_content_type: Any, e_content: Any) -> Self {
+            Self {
+                e_content_type,
+                e_content,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct EncapsulatedContentInfoBRTCertificate {
+        #[rasn(identifier = "eContentType")]
+        pub e_content_type: Any,
+        #[rasn(tag(context, 0), identifier = "eContent")]
+        pub e_content: Any,
+    }
+    impl EncapsulatedContentInfoBRTCertificate {
+        pub fn new(e_content_type: Any, e_content: Any) -> Self {
+            Self {
+                e_content_type,
+                e_content,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct FunctionDefinition {
+        #[rasn(identifier = "subprocessName")]
+        pub subprocess_name: SubprocessName,
+        #[rasn(identifier = "subprocessIndex")]
+        pub subprocess_index: SubprocessIndex,
+        #[rasn(identifier = "inputIndex1")]
+        pub input_index1: Option<IOIndex>,
+        #[rasn(identifier = "inputIndex2")]
+        pub input_index2: Option<IOIndex>,
+        #[rasn(identifier = "outputIndex")]
+        pub output_index: IOIndex,
+        #[rasn(size("1.."), identifier = "functionDescription")]
+        pub function_description: Option<OctetString>,
+    }
+    impl FunctionDefinition {
+        pub fn new(
+            subprocess_name: SubprocessName,
+            subprocess_index: SubprocessIndex,
+            input_index1: Option<IOIndex>,
+            input_index2: Option<IOIndex>,
+            output_index: IOIndex,
+            function_description: Option<OctetString>,
+        ) -> Self {
+            Self {
+                subprocess_name,
+                subprocess_index,
+                input_index1,
+                input_index2,
+                output_index,
+                function_description,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct Hash {
+        #[rasn(identifier = "algorithmIdentifier")]
+        pub algorithm_identifier: AlgorithmIdentifier,
+        #[rasn(identifier = "hashValue")]
+        pub hash_value: OctetString,
+    }
+    impl Hash {
+        pub fn new(algorithm_identifier: AlgorithmIdentifier, hash_value: OctetString) -> Self {
+            Self {
+                algorithm_identifier,
+                hash_value,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct HashList(pub SequenceOf<Hash>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=65535"))]
+    pub struct IOIndex(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct OtherCertificateFormat {
+        #[rasn(identifier = "otherFormat")]
+        pub other_format: Any,
+        #[rasn(identifier = "otherCert")]
+        pub other_cert: Any,
+    }
+    impl OtherCertificateFormat {
+        pub fn new(other_format: Any, other_cert: Any) -> Self {
+            Self {
+                other_format,
+                other_cert,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct OtherRevocationInfoFormat {
+        #[rasn(identifier = "otherRevInfoFormat")]
+        pub other_rev_info_format: Any,
+        #[rasn(identifier = "otherRevInfo")]
+        pub other_rev_info: Any,
+    }
+    impl OtherRevocationInfoFormat {
+        pub fn new(other_rev_info_format: Any, other_rev_info: Any) -> Self {
+            Self {
+                other_rev_info_format,
+                other_rev_info,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct PKICertificateInformation {
+        #[rasn(identifier = "pkiCertificateSerialNumber")]
+        pub pki_certificate_serial_number: CertificateSerialNumber,
+        #[rasn(identifier = "pkiCertificateIssuerName")]
+        pub pki_certificate_issuer_name: Name,
+        #[rasn(identifier = "pkiCertificateIssuerUniqueIdentifier")]
+        pub pki_certificate_issuer_unique_identifier: Option<UniqueIdentifier>,
+    }
+    impl PKICertificateInformation {
+        pub fn new(
+            pki_certificate_serial_number: CertificateSerialNumber,
+            pki_certificate_issuer_name: Name,
+            pki_certificate_issuer_unique_identifier: Option<UniqueIdentifier>,
+        ) -> Self {
+            Self {
+                pki_certificate_serial_number,
+                pki_certificate_issuer_name,
+                pki_certificate_issuer_unique_identifier,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum ProcessedLevel {
+        #[rasn(identifier = "raw-data")]
+        raw_data = 1,
+        #[rasn(identifier = "intermediate-data")]
+        intermediate_data = 2,
+        #[rasn(identifier = "processed-data")]
+        processed_data = 3,
+        #[rasn(identifier = "comparison-score")]
+        comparison_score = 4,
+        #[rasn(identifier = "comparison-decision")]
+        comparison_decision = 5,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum Purpose {
+        reference = 1,
+        sample = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct QualityEvaluation {
+        #[rasn(identifier = "biometricProcessQualityInformation")]
+        pub biometric_process_quality_information: Option<BiometricProcessQualityInformation>,
+        #[rasn(identifier = "qualityEvaluationExtensionInformation")]
+        pub quality_evaluation_extension_information: Option<QualityEvaluationExtensionInformation>,
+    }
+    impl QualityEvaluation {
+        pub fn new(
+            biometric_process_quality_information: Option<BiometricProcessQualityInformation>,
+            quality_evaluation_extension_information: Option<QualityEvaluationExtensionInformation>,
+        ) -> Self {
+            Self {
+                biometric_process_quality_information,
+                quality_evaluation_extension_information,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct QualityEvaluationExtension(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum QualityEvaluationExtensionInformation {
+        qualityEvaluationExtension(QualityEvaluationExtension),
+        qualityEvaluationExtensionReferrer(URI),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum RevocationInfoChoice {
+        crl(CertificateList),
+        #[rasn(tag(context, 1))]
+        other(OtherRevocationInfoFormat),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RevocationInfoChoices(pub SetOf<RevocationInfoChoice>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct SBHForBRTC {
+        pub version: CBEFFVersion,
+        #[rasn(identifier = "brtcIndex")]
+        pub brtc_index: BIRIndex,
+        #[rasn(identifier = "brtcValidityPeriod")]
+        pub brtc_validity_period: BDBValidityPeriod,
+        #[rasn(identifier = "brtQuality")]
+        pub brt_quality: Quality,
+        #[rasn(value("0.."), identifier = "bdbEncryptionOptions")]
+        pub bdb_encryption_options: EncryptionOptions,
+        #[rasn(value("0.."), identifier = "bdbIntegrityOptions")]
+        pub bdb_integrity_options: IntegrityOptions,
+        #[rasn(identifier = "bdbFormatForBRTC")]
+        pub bdb_format_for_brtc: BDBFormat,
+    }
+    impl SBHForBRTC {
+        pub fn new(
+            version: CBEFFVersion,
+            brtc_index: BIRIndex,
+            brtc_validity_period: BDBValidityPeriod,
+            brt_quality: Quality,
+            bdb_encryption_options: EncryptionOptions,
+            bdb_integrity_options: IntegrityOptions,
+            bdb_format_for_brtc: BDBFormat,
+        ) -> Self {
+            Self {
+                version,
+                brtc_index,
+                brtc_validity_period,
+                brt_quality,
+                bdb_encryption_options,
+                bdb_integrity_options,
+                bdb_format_for_brtc,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct SecurityEvaluationExtension(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum SecurityEvaluationExtensionInformation {
+        securityEvaluationExtension(SecurityEvaluationExtension),
+        securityEvaluationExtensionReferrer(URI),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SequenceOfACBioInstances(pub SequenceOf<ACBioInstance>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SignedDataACBio(pub SIGNEDDATA);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=65535"))]
+    pub struct SubprocessIndex(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SubprocessIndexList(pub SequenceOf<SubprocessIndex>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum SubprocessName {
+        #[rasn(identifier = "data-capture")]
+        data_capture = 1,
+        #[rasn(identifier = "intermediate-signal-processing")]
+        intermediate_signal_processing = 2,
+        #[rasn(identifier = "final-signal-processing")]
+        final_signal_processing = 3,
+        storage = 4,
+        comparison = 5,
+        decision = 6,
+        #[rasn(identifier = "sample-fusion")]
+        sample_fusion = 7,
+        #[rasn(identifier = "feature-fusion")]
+        feature_fusion = 8,
+        #[rasn(identifier = "score-fusion")]
+        score_fusion = 9,
+        #[rasn(identifier = "decision-fusion")]
+        decision_fusion = 10,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct URI(pub VisibleString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct UserInformation {
+        #[rasn(identifier = "userIdentifier")]
+        pub user_identifier: OctetString,
+        #[rasn(identifier = "userName")]
+        pub user_name: Name,
+        #[rasn(identifier = "userUniqueIdentifier")]
+        pub user_unique_identifier: Option<UniqueIdentifier>,
+    }
+    impl UserInformation {
+        pub fn new(
+            user_identifier: OctetString,
+            user_name: Name,
+            user_unique_identifier: Option<UniqueIdentifier>,
+        ) -> Self {
+            Self {
+                user_identifier,
+                user_name,
+                user_unique_identifier,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Version(pub Integer);
+    pub static ID_ACBIO_CONTENT_INFORMATION: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[1u32, 0u32, 24761u32, 2u32, 3u32]).to_owned());
+    pub static ID_AUTHENTICATED_DATA_ACBIO: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[1u32, 0u32, 24761u32, 2u32, 2u32]).to_owned());
+    pub static ID_BPU_REPORT: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[1u32, 0u32, 24761u32, 2u32, 4u32]).to_owned());
+    pub static ID_BPU_REPORT_CONTENT_INFORMATION: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[1u32, 0u32, 24761u32, 2u32, 5u32]).to_owned());
+    pub static ID_BRT_CERTIFICATE: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[1u32, 0u32, 24761u32, 2u32, 6u32]).to_owned());
+    pub static ID_BRTC_CONTENT_INFORMATION: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[1u32, 0u32, 24761u32, 2u32, 7u32]).to_owned());
+    #[doc = " contentType object identifiers"]
+    pub static ID_SIGNED_DATA_ACBIO: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[1u32, 0u32, 24761u32, 2u32, 1u32]).to_owned());
+}

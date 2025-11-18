@@ -1,0 +1,39 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_t_t135_2007_URST-PROTOCOL.asn1
+---
+Error matching ASN syntax at while parsing:
+     ╭─[line 250, column 2]
+     │
+     │ 
+ 250 │  Profile ::= CHOICE { ◀▪▪▪▪▪▪▪▪▪▪ FAILED AT THIS LINE
+ 251 │    simpleProfile
+ 252 │      CHOICE {-- Basic transfer modes :
+ 253 │              speech             NULL, -- Simple telephony--
+ 254 │              telephony-3kHz     NULL, -- G.711 on ISDN or CSDN--
+ 255 │              telephony-7kHz     NULL, -- G.722 on ISDN or CSDN--
+ 256 │              voice-band         NULL, -- Modems--
+ 257 │              frameRelay         NULL,
+ 258 │              -- T.120-only data profiles (T.123):
+ 259 │              t123-pstn-basic    NULL,
+ 260 │              t123-psdn-basic    NULL,
+ 261 │              t123-b-isdn-basic  NULL},
+ 262 │    multimediaProfile
+ 263 │      SEQUENCE {profile
+ 264 │                  CHOICE {h310   NULL,
+ 265 │                          h320   NULL,
+ 266 │                          h321   NULL,
+ 267 │                          h322   NULL,
+ 268 │                          h323   NULL,
+ 269 │                          h324   NULL,
+ 270 │                          h324m  NULL,
+ 271 │                          v61    NULL, -- ASVD--
+ 272 │                          v70    NULL -- DSVD},
+ 273 │                t120Indicator  BOOLEAN -- indicates if T.120 protocols are operated for data
+ 274 │    },
+ 275 │    dsmccDownloadProfile  NULL,
+ 276 │    nonStandard           NonStandardParameter,
+ 277 │    ...
+ 278 │  }
+     │
+─────╯

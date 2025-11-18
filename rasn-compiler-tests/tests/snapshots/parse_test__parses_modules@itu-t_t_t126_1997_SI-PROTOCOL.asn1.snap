@@ -1,0 +1,2952 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_t_t126_1997_SI-PROTOCOL.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod si_protocol {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = "  Begin SIPDU Definitions"]
+    #[doc = "  ArchiveAcknowledgePDU"]
+    #[doc = "  The ArchiveAcknowledgePDU is used to acknowledge that an archive"]
+    #[doc = "  has been successfully opened."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ArchiveAcknowledgePDU {
+        #[rasn(identifier = "archiveHandle")]
+        pub archive_handle: Handle,
+        pub result: ArchiveOpenResult,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+    }
+    impl ArchiveAcknowledgePDU {
+        pub fn new(
+            archive_handle: Handle,
+            result: ArchiveOpenResult,
+            non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                archive_handle,
+                result,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[doc = "  ArchiveClosePDU"]
+    #[doc = "  The ArchiveClosePDU is used to close an archive that was"]
+    #[doc = "  previously opened during an SI session."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ArchiveClosePDU {
+        #[rasn(identifier = "archiveHandle")]
+        pub archive_handle: Handle,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+    }
+    impl ArchiveClosePDU {
+        pub fn new(
+            archive_handle: Handle,
+            non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                archive_handle,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[doc = "  NOTE: All abstract types defined shall be exported."]
+    #[doc = "  ArchiveEntryName"]
+    #[doc = "  Name used to reference an archive entry."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=256"))]
+    pub struct ArchiveEntryName(pub BmpString);
+    #[doc = "  ArchiveError"]
+    #[doc = "  Specifies the cause of an error at a remote terminal during"]
+    #[doc = "  a workspace archive operation."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum ArchiveError {
+        entryNotFound(()),
+        entryExists(()),
+        storageExceeded(()),
+        archiveNoLongerAvailable(()),
+        unspecifiedError(()),
+        nonStandardError(NonStandardIdentifier),
+    }
+    #[doc = "  ArchiveErrorPDU"]
+    #[doc = "  The ArchiveErrorPDU is used by a terminal receiving an"]
+    #[doc = "  archive PDU to signal error conditions to the sender."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ArchiveErrorPDU {
+        #[rasn(identifier = "archiveHandle")]
+        pub archive_handle: Handle,
+        #[rasn(identifier = "entryName")]
+        pub entry_name: Option<ArchiveEntryName>,
+        #[rasn(identifier = "errorCode")]
+        pub error_code: ArchiveError,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+    }
+    impl ArchiveErrorPDU {
+        pub fn new(
+            archive_handle: Handle,
+            entry_name: Option<ArchiveEntryName>,
+            error_code: ArchiveError,
+            non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                archive_handle,
+                entry_name,
+                error_code,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[doc = "  ArchiveHeader"]
+    #[doc = "  This type specifies the parameters used to address archives"]
+    #[doc = "  stored at remote terminals."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ArchiveHeader {
+        #[rasn(identifier = "archiveName")]
+        pub archive_name: ArchiveName,
+        #[rasn(identifier = "archiveCreationTime")]
+        pub archive_creation_time: GeneralizedTime,
+        #[rasn(identifier = "archiveModificationTime")]
+        pub archive_modification_time: GeneralizedTime,
+    }
+    impl ArchiveHeader {
+        pub fn new(
+            archive_name: ArchiveName,
+            archive_creation_time: GeneralizedTime,
+            archive_modification_time: GeneralizedTime,
+        ) -> Self {
+            Self {
+                archive_name,
+                archive_creation_time,
+                archive_modification_time,
+            }
+        }
+    }
+    #[doc = "  ArchiveMode"]
+    #[doc = "  One of the following sets of access modes must be indicated"]
+    #[doc = "  when an archive is opened."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ArchiveMode {
+        pub create: bool,
+        pub read: bool,
+        pub write: bool,
+    }
+    impl ArchiveMode {
+        pub fn new(create: bool, read: bool, write: bool) -> Self {
+            Self {
+                create,
+                read,
+                write,
+            }
+        }
+    }
+    #[doc = "  ArchiveName"]
+    #[doc = "  Name used to reference an archive."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=256"))]
+    pub struct ArchiveName(pub BmpString);
+    #[doc = "  ArchiveOpenPDU"]
+    #[doc = "  The ArchiveOpenPDU is used to open an archive at a"]
+    #[doc = "  remote terminal that supports this capability."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ArchiveOpenPDU {
+        #[rasn(identifier = "archiveHandle")]
+        pub archive_handle: Handle,
+        pub mode: ArchiveMode,
+        pub header: ArchiveHeader,
+        #[rasn(value("1..=65535"), identifier = "maxEntries")]
+        pub max_entries: Option<u16>,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+    }
+    impl ArchiveOpenPDU {
+        pub fn new(
+            archive_handle: Handle,
+            mode: ArchiveMode,
+            header: ArchiveHeader,
+            max_entries: Option<u16>,
+            non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                archive_handle,
+                mode,
+                header,
+                max_entries,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[doc = "  ArchiveOpenResult"]
+    #[doc = "  Specifies the result of an archive open request."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum ArchiveOpenResult {
+        archiveOpenSuccessful(()),
+        archiveNotFound(()),
+        archiveTimeIncorrect(ArchiveHeader),
+        archiveExists(()),
+        archiveOpenForWriting(()),
+        storageExceeded(()),
+        unspecifiedError(()),
+        nonStandardResult(NonStandardIdentifier),
+    }
+    #[doc = "  BitmapAbortPDU"]
+    #[doc = "  This PDU is used by both the transmitting SICE to signal that a"]
+    #[doc = "  bitmap exchange is being aborted and by an SICE requesting that"]
+    #[doc = "  a bitmap exchange in progress be aborted."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct BitmapAbortPDU {
+        #[rasn(identifier = "bitmapHandle")]
+        pub bitmap_handle: Handle,
+        #[rasn(identifier = "userID")]
+        pub user_id: Option<MCSUserID>,
+        pub reason: Option<BitmapAbortReason>,
+        #[rasn(size("1..=256"))]
+        pub message: Option<BmpString>,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+    }
+    impl BitmapAbortPDU {
+        pub fn new(
+            bitmap_handle: Handle,
+            user_id: Option<MCSUserID>,
+            reason: Option<BitmapAbortReason>,
+            message: Option<BmpString>,
+            non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                bitmap_handle,
+                user_id,
+                reason,
+                message,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[doc = "  BitmapAbortReason"]
+    #[doc = "  These values represent the possible reason codes"]
+    #[doc = "  for the BitmapAbortPDU."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum BitmapAbortReason {
+        unspecified(()),
+        noResources(()),
+        outOfPaper(()),
+        nonStandardReason(NonStandardParameter),
+    }
+    #[doc = "  BitmapAttribute"]
+    #[doc = "  This CHOICE represents the list of possible bitmap attributes."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum BitmapAttribute {
+        viewState(ViewState),
+        zOrder(ZOrder),
+        nonStandardAttribute(NonStandardParameter),
+        #[rasn(extension_addition)]
+        transparencyMask(TransparencyMask),
+    }
+    #[doc = "  BitmapCheckpointPDU"]
+    #[doc = "  This PDU is used by a terminal that is transmitting a bitmap"]
+    #[doc = "  when it wants to notify receiving terminals that they should"]
+    #[doc = "  display previously received data."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct BitmapCheckpointPDU {
+        #[rasn(identifier = "bitmapHandle")]
+        pub bitmap_handle: Handle,
+        #[rasn(size("1..=100"), identifier = "passedCheckpoints")]
+        pub passed_checkpoints: SetOf<TokenID>,
+        #[rasn(value("1..=100"), identifier = "percentComplete")]
+        pub percent_complete: u8,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+    }
+    impl BitmapCheckpointPDU {
+        pub fn new(
+            bitmap_handle: Handle,
+            passed_checkpoints: SetOf<TokenID>,
+            percent_complete: u8,
+            non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                bitmap_handle,
+                passed_checkpoints,
+                percent_complete,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[doc = "  BitmapCreateContinuePDU"]
+    #[doc = "  This PDU is used by the transmitting SICE to continue"]
+    #[doc = "  a bitmap transmission begun by a BitmapCreatePDU"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct BitmapCreateContinuePDU {
+        #[rasn(identifier = "bitmapHandle")]
+        pub bitmap_handle: Handle,
+        #[rasn(identifier = "bitmapData")]
+        pub bitmap_data: BitmapData,
+        #[rasn(identifier = "moreToFollow")]
+        pub more_to_follow: bool,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+    }
+    impl BitmapCreateContinuePDU {
+        pub fn new(
+            bitmap_handle: Handle,
+            bitmap_data: BitmapData,
+            more_to_follow: bool,
+            non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                bitmap_handle,
+                bitmap_data,
+                more_to_follow,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum BitmapCreatePDUBitmapFormatHeader {
+        bitmapHeaderUncompressed(BitmapHeaderUncompressed),
+        bitmapHeaderT4(BitmapHeaderT4),
+        bitmapHeaderT6(BitmapHeaderT6),
+        bitmapHeaderT81(BitmapHeaderT81),
+        bitmapHeaderT82(BitmapHeaderT82),
+        bitmapHeaderNonStandard(NonStandardParameter),
+    }
+    #[doc = "  BitmapCreatePDU"]
+    #[doc = "  This PDU is used to initiate a bitmap transmission."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct BitmapCreatePDU {
+        #[rasn(identifier = "bitmapHandle")]
+        pub bitmap_handle: Handle,
+        #[rasn(identifier = "destinationAddress")]
+        pub destination_address: BitmapDestinationAddress,
+        pub attributes: Option<SetOf<BitmapAttribute>>,
+        #[rasn(identifier = "anchorPoint")]
+        pub anchor_point: Option<WorkspacePoint>,
+        #[rasn(identifier = "bitmapSize")]
+        pub bitmap_size: BitmapSize,
+        #[rasn(identifier = "bitmapRegionOfInterest")]
+        pub bitmap_region_of_interest: Option<BitmapRegion>,
+        #[rasn(identifier = "pixelAspectRatio")]
+        pub pixel_aspect_ratio: PixelAspectRatio,
+        pub scaling: Option<PointDiff16>,
+        #[rasn(size("1..=100"))]
+        pub checkpoints: Option<SequenceOf<TokenID>>,
+        #[rasn(identifier = "bitmapFormatHeader")]
+        pub bitmap_format_header: BitmapCreatePDUBitmapFormatHeader,
+        #[rasn(identifier = "bitmapData")]
+        pub bitmap_data: Option<BitmapData>,
+        #[rasn(identifier = "moreToFollow")]
+        pub more_to_follow: bool,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+    }
+    impl BitmapCreatePDU {
+        pub fn new(
+            bitmap_handle: Handle,
+            destination_address: BitmapDestinationAddress,
+            attributes: Option<SetOf<BitmapAttribute>>,
+            anchor_point: Option<WorkspacePoint>,
+            bitmap_size: BitmapSize,
+            bitmap_region_of_interest: Option<BitmapRegion>,
+            pixel_aspect_ratio: PixelAspectRatio,
+            scaling: Option<PointDiff16>,
+            checkpoints: Option<SequenceOf<TokenID>>,
+            bitmap_format_header: BitmapCreatePDUBitmapFormatHeader,
+            bitmap_data: Option<BitmapData>,
+            more_to_follow: bool,
+            non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                bitmap_handle,
+                destination_address,
+                attributes,
+                anchor_point,
+                bitmap_size,
+                bitmap_region_of_interest,
+                pixel_aspect_ratio,
+                scaling,
+                checkpoints,
+                bitmap_format_header,
+                bitmap_data,
+                more_to_follow,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[doc = "  BitmapData"]
+    #[doc = "  All or part of a bitmap bitstream."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct BitmapData {
+        #[rasn(size("1..=100"), identifier = "dataCheckpoint")]
+        pub data_checkpoint: Option<SequenceOf<TokenID>>,
+        #[rasn(value("1..=256"), identifier = "padBits")]
+        pub pad_bits: Option<u16>,
+        #[rasn(size("1..=8192"))]
+        pub data: OctetString,
+    }
+    impl BitmapData {
+        pub fn new(
+            data_checkpoint: Option<SequenceOf<TokenID>>,
+            pad_bits: Option<u16>,
+            data: OctetString,
+        ) -> Self {
+            Self {
+                data_checkpoint,
+                pad_bits,
+                data,
+            }
+        }
+    }
+    #[doc = "  BitmapDeletePDU"]
+    #[doc = "  This PDU is used to delete bitmaps."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct BitmapDeletePDU {
+        #[rasn(identifier = "bitmapHandle")]
+        pub bitmap_handle: Handle,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+    }
+    impl BitmapDeletePDU {
+        pub fn new(
+            bitmap_handle: Handle,
+            non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                bitmap_handle,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[doc = "  BitmapDestinationAddress"]
+    #[doc = "  Destination address for bitmap exchanges."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum BitmapDestinationAddress {
+        hardCopyDevice(()),
+        softCopyImagePlane(SoftCopyDataPlaneAddress),
+        softCopyAnnotationPlane(SoftCopyDataPlaneAddress),
+        softCopyPointerPlane(SoftCopyPointerPlaneAddress),
+        #[rasn(extension_addition)]
+        nonStandardDestination(NonStandardParameter),
+    }
+    #[doc = "  BitmapEditPDU"]
+    #[doc = "  This PDU is used to change bitmap attributes."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct BitmapEditPDU {
+        #[rasn(identifier = "bitmapHandle")]
+        pub bitmap_handle: Handle,
+        #[rasn(identifier = "attributeEdits")]
+        pub attribute_edits: Option<SetOf<BitmapAttribute>>,
+        #[rasn(identifier = "anchorPointEdit")]
+        pub anchor_point_edit: Option<WorkspacePoint>,
+        #[rasn(identifier = "bitmapRegionOfInterestEdit")]
+        pub bitmap_region_of_interest_edit: Option<BitmapRegion>,
+        #[rasn(identifier = "scalingEdit")]
+        pub scaling_edit: Option<PointDiff16>,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+    }
+    impl BitmapEditPDU {
+        pub fn new(
+            bitmap_handle: Handle,
+            attribute_edits: Option<SetOf<BitmapAttribute>>,
+            anchor_point_edit: Option<WorkspacePoint>,
+            bitmap_region_of_interest_edit: Option<BitmapRegion>,
+            scaling_edit: Option<PointDiff16>,
+            non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                bitmap_handle,
+                attribute_edits,
+                anchor_point_edit,
+                bitmap_region_of_interest_edit,
+                scaling_edit,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[doc = "  BitmapHeaderT4"]
+    #[doc = "  Bitmap header for T.4 (G3) encoding"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct BitmapHeaderT4 {
+        #[rasn(identifier = "twoDimensionalEncoding")]
+        pub two_dimensional_encoding: bool,
+    }
+    impl BitmapHeaderT4 {
+        pub fn new(two_dimensional_encoding: bool) -> Self {
+            Self {
+                two_dimensional_encoding,
+            }
+        }
+    }
+    #[doc = "  BitmapHeaderT6"]
+    #[doc = "  Bitmap header for T.6 (G4) encoding"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct BitmapHeaderT6 {}
+    impl BitmapHeaderT6 {
+        pub fn new() -> Self {
+            Self {}
+        }
+    }
+    impl std::default::Default for BitmapHeaderT6 {
+        fn default() -> Self {
+            Self {}
+        }
+    }
+    #[doc = "  BitmapHeaderT81"]
+    #[doc = "  This type is used to specify the parameters necessary to"]
+    #[doc = "  decode and display a T.81 (JPEG) image that are not specified"]
+    #[doc = "  within the T.81 bitstream."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct BitmapHeaderT81 {
+        #[rasn(identifier = "colorSpace")]
+        pub color_space: ColorSpaceSpecifier,
+        #[rasn(identifier = "resolutionMode")]
+        pub resolution_mode: ColorResolutionModeSpecifier,
+        #[rasn(extension_addition, identifier = "colorPalette")]
+        pub color_palette: Option<ColorPalette>,
+    }
+    impl BitmapHeaderT81 {
+        pub fn new(
+            color_space: ColorSpaceSpecifier,
+            resolution_mode: ColorResolutionModeSpecifier,
+            color_palette: Option<ColorPalette>,
+        ) -> Self {
+            Self {
+                color_space,
+                resolution_mode,
+                color_palette,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum BitmapHeaderT82ColorMappingModePaletteMapProgressiveMode {
+        #[rasn(size("1..=8"))]
+        progressivePalettes(SequenceOf<ColorIndexTable>),
+        selfProgressive(()),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct BitmapHeaderT82ColorMappingModePaletteMap {
+        #[rasn(identifier = "bitmapPalette")]
+        pub bitmap_palette: ColorPalette,
+        #[rasn(identifier = "progressiveMode")]
+        pub progressive_mode: Option<BitmapHeaderT82ColorMappingModePaletteMapProgressiveMode>,
+    }
+    impl BitmapHeaderT82ColorMappingModePaletteMap {
+        pub fn new(
+            bitmap_palette: ColorPalette,
+            progressive_mode: Option<BitmapHeaderT82ColorMappingModePaletteMapProgressiveMode>,
+        ) -> Self {
+            Self {
+                bitmap_palette,
+                progressive_mode,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum BitmapHeaderT82ColorMappingMode {
+        directMap(ColorSpaceSpecifier),
+        paletteMap(BitmapHeaderT82ColorMappingModePaletteMap),
+    }
+    #[doc = "  BitmapHeaderT82"]
+    #[doc = "  This type is used to specify the parameters necessary to"]
+    #[doc = "  decode and display a T.82 (JBIG) image that are not specified"]
+    #[doc = "  within the T.82 bitstream."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct BitmapHeaderT82 {
+        #[rasn(identifier = "colorMappingMode")]
+        pub color_mapping_mode: BitmapHeaderT82ColorMappingMode,
+    }
+    impl BitmapHeaderT82 {
+        pub fn new(color_mapping_mode: BitmapHeaderT82ColorMappingMode) -> Self {
+            Self { color_mapping_mode }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct BitmapHeaderUncompressedColorMappingModeDirectMap {
+        #[rasn(identifier = "colorSpace")]
+        pub color_space: ColorSpaceSpecifier,
+        #[rasn(identifier = "resolutionMode")]
+        pub resolution_mode: ColorResolutionModeSpecifier,
+    }
+    impl BitmapHeaderUncompressedColorMappingModeDirectMap {
+        pub fn new(
+            color_space: ColorSpaceSpecifier,
+            resolution_mode: ColorResolutionModeSpecifier,
+        ) -> Self {
+            Self {
+                color_space,
+                resolution_mode,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct BitmapHeaderUncompressedColorMappingModePaletteMap {
+        #[rasn(identifier = "colorPalette")]
+        pub color_palette: ColorPalette,
+        #[rasn(value("1..=8"), identifier = "bitsPerPixel")]
+        pub bits_per_pixel: u8,
+    }
+    impl BitmapHeaderUncompressedColorMappingModePaletteMap {
+        pub fn new(color_palette: ColorPalette, bits_per_pixel: u8) -> Self {
+            Self {
+                color_palette,
+                bits_per_pixel,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum BitmapHeaderUncompressedColorMappingMode {
+        directMap(BitmapHeaderUncompressedColorMappingModeDirectMap),
+        paletteMap(BitmapHeaderUncompressedColorMappingModePaletteMap),
+    }
+    #[doc = "  BitmapHeaderUncompressed"]
+    #[doc = "  This type specifies the parameters of uncompressed bitmap"]
+    #[doc = "  bitstreams."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct BitmapHeaderUncompressed {
+        #[rasn(identifier = "colorMappingMode")]
+        pub color_mapping_mode: BitmapHeaderUncompressedColorMappingMode,
+    }
+    impl BitmapHeaderUncompressed {
+        pub fn new(color_mapping_mode: BitmapHeaderUncompressedColorMappingMode) -> Self {
+            Self { color_mapping_mode }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct BitmapRegionUpperLeft {
+        #[rasn(value("0..=65535"), identifier = "xCoordinate")]
+        pub x_coordinate: u16,
+        #[rasn(value("0..=65535"), identifier = "yCoordinate")]
+        pub y_coordinate: u16,
+    }
+    impl BitmapRegionUpperLeft {
+        pub fn new(x_coordinate: u16, y_coordinate: u16) -> Self {
+            Self {
+                x_coordinate,
+                y_coordinate,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct BitmapRegionLowerRight {
+        #[rasn(value("0..=65535"), identifier = "xCoordinate")]
+        pub x_coordinate: u16,
+        #[rasn(value("0..=65535"), identifier = "yCoordinate")]
+        pub y_coordinate: u16,
+    }
+    impl BitmapRegionLowerRight {
+        pub fn new(x_coordinate: u16, y_coordinate: u16) -> Self {
+            Self {
+                x_coordinate,
+                y_coordinate,
+            }
+        }
+    }
+    #[doc = "  BitmapRegion"]
+    #[doc = "  This type specifies a rectangular subregion within a bitmap."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct BitmapRegion {
+        #[rasn(identifier = "upperLeft")]
+        pub upper_left: BitmapRegionUpperLeft,
+        #[rasn(identifier = "lowerRight")]
+        pub lower_right: BitmapRegionLowerRight,
+    }
+    impl BitmapRegion {
+        pub fn new(upper_left: BitmapRegionUpperLeft, lower_right: BitmapRegionLowerRight) -> Self {
+            Self {
+                upper_left,
+                lower_right,
+            }
+        }
+    }
+    #[doc = "  BitmapSize"]
+    #[doc = "  The size of a bitmap in pixels."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct BitmapSize {
+        #[rasn(value("1..=65536"))]
+        pub width: u32,
+        #[rasn(value("1..=65536"))]
+        pub height: u32,
+    }
+    impl BitmapSize {
+        pub fn new(width: u32, height: u32) -> Self {
+            Self { width, height }
+        }
+    }
+    #[doc = "  ButtonEvent"]
+    #[doc = "  Describes pointing device button events."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum ButtonEvent {
+        buttonUp(()),
+        buttonDown(()),
+        buttonDoubleClick(()),
+        buttonTripleClick(()),
+        buttonQuadClick(()),
+        nonStandardButtonEvent(NonStandardIdentifier),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum ColorAccuracyEnhancementCIELabPredefinedCIELabSpace {
+        nonStandardCIELabSpace(NonStandardParameter),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct ColorAccuracyEnhancementCIELabGeneralCIELabParametersGamut {
+        #[rasn(value("-32768..=32767"), identifier = "lSpan")]
+        pub l_span: i16,
+        #[rasn(value("-32768..=32767"), identifier = "lOffset")]
+        pub l_offset: i16,
+        #[rasn(value("-32768..=32767"), identifier = "aSpan")]
+        pub a_span: i16,
+        #[rasn(value("-32768..=32767"), identifier = "aOffset")]
+        pub a_offset: i16,
+        #[rasn(value("-32768..=32767"), identifier = "bSpan")]
+        pub b_span: i16,
+        #[rasn(value("-32768..=32767"), identifier = "bOffset")]
+        pub b_offset: i16,
+    }
+    impl ColorAccuracyEnhancementCIELabGeneralCIELabParametersGamut {
+        pub fn new(
+            l_span: i16,
+            l_offset: i16,
+            a_span: i16,
+            a_offset: i16,
+            b_span: i16,
+            b_offset: i16,
+        ) -> Self {
+            Self {
+                l_span,
+                l_offset,
+                a_span,
+                a_offset,
+                b_span,
+                b_offset,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ColorAccuracyEnhancementCIELabGeneralCIELabParameters {
+        #[rasn(value("0.."), identifier = "colorTemperature")]
+        pub color_temperature: Option<Integer>,
+        pub gamut: Option<ColorAccuracyEnhancementCIELabGeneralCIELabParametersGamut>,
+    }
+    impl ColorAccuracyEnhancementCIELabGeneralCIELabParameters {
+        pub fn new(
+            color_temperature: Option<Integer>,
+            gamut: Option<ColorAccuracyEnhancementCIELabGeneralCIELabParametersGamut>,
+        ) -> Self {
+            Self {
+                color_temperature,
+                gamut,
+            }
+        }
+    }
+    #[doc = "  ColorAccuracyEnhancementCIELab"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum ColorAccuracyEnhancementCIELab {
+        predefinedCIELabSpace(ColorAccuracyEnhancementCIELabPredefinedCIELabSpace),
+        generalCIELabParameters(ColorAccuracyEnhancementCIELabGeneralCIELabParameters),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum ColorAccuracyEnhancementGreyscalePredefinedGreyscaleSpace {
+        nonStandardGreyscaleSpace(NonStandardParameter),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ColorAccuracyEnhancementGreyscaleGeneralGreyscaleParameters {
+        pub gamma: Option<f64>,
+    }
+    impl ColorAccuracyEnhancementGreyscaleGeneralGreyscaleParameters {
+        pub fn new(gamma: Option<f64>) -> Self {
+            Self { gamma }
+        }
+    }
+    #[doc = "  ColorAccuracyEnhancementGreyscale"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum ColorAccuracyEnhancementGreyscale {
+        predefinedGreyscaleSpace(ColorAccuracyEnhancementGreyscalePredefinedGreyscaleSpace),
+        generalGreyscaleParameters(ColorAccuracyEnhancementGreyscaleGeneralGreyscaleParameters),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum ColorAccuracyEnhancementRGBPredefinedRGBSpace {
+        nonStandardRGBSpace(NonStandardParameter),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct ColorAccuracyEnhancementRGBGeneralRGBParametersPrimaries {
+        pub red: ColorCIExyChromaticity,
+        pub green: ColorCIExyChromaticity,
+        pub blue: ColorCIExyChromaticity,
+    }
+    impl ColorAccuracyEnhancementRGBGeneralRGBParametersPrimaries {
+        pub fn new(
+            red: ColorCIExyChromaticity,
+            green: ColorCIExyChromaticity,
+            blue: ColorCIExyChromaticity,
+        ) -> Self {
+            Self { red, green, blue }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ColorAccuracyEnhancementRGBGeneralRGBParameters {
+        pub gamma: Option<f64>,
+        #[rasn(value("0.."), identifier = "colorTemperature")]
+        pub color_temperature: Option<Integer>,
+        pub primaries: Option<ColorAccuracyEnhancementRGBGeneralRGBParametersPrimaries>,
+    }
+    impl ColorAccuracyEnhancementRGBGeneralRGBParameters {
+        pub fn new(
+            gamma: Option<f64>,
+            color_temperature: Option<Integer>,
+            primaries: Option<ColorAccuracyEnhancementRGBGeneralRGBParametersPrimaries>,
+        ) -> Self {
+            Self {
+                gamma,
+                color_temperature,
+                primaries,
+            }
+        }
+    }
+    #[doc = "  ColorAccuracyEnhancementRGB"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum ColorAccuracyEnhancementRGB {
+        predefinedRGBSpace(ColorAccuracyEnhancementRGBPredefinedRGBSpace),
+        generalRGBParameters(ColorAccuracyEnhancementRGBGeneralRGBParameters),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum ColorAccuracyEnhancementYCbCrPredefinedYCbCrSpace {
+        cCIR709(()),
+        nonStandardRGBSpace(NonStandardParameter),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct ColorAccuracyEnhancementYCbCrGeneralYCbCrParametersPrimaries {
+        pub red: ColorCIExyChromaticity,
+        pub green: ColorCIExyChromaticity,
+        pub blue: ColorCIExyChromaticity,
+    }
+    impl ColorAccuracyEnhancementYCbCrGeneralYCbCrParametersPrimaries {
+        pub fn new(
+            red: ColorCIExyChromaticity,
+            green: ColorCIExyChromaticity,
+            blue: ColorCIExyChromaticity,
+        ) -> Self {
+            Self { red, green, blue }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ColorAccuracyEnhancementYCbCrGeneralYCbCrParameters {
+        pub gamma: Option<f64>,
+        #[rasn(value("0.."), identifier = "colorTemperature")]
+        pub color_temperature: Option<Integer>,
+        pub primaries: Option<ColorAccuracyEnhancementYCbCrGeneralYCbCrParametersPrimaries>,
+    }
+    impl ColorAccuracyEnhancementYCbCrGeneralYCbCrParameters {
+        pub fn new(
+            gamma: Option<f64>,
+            color_temperature: Option<Integer>,
+            primaries: Option<ColorAccuracyEnhancementYCbCrGeneralYCbCrParametersPrimaries>,
+        ) -> Self {
+            Self {
+                gamma,
+                color_temperature,
+                primaries,
+            }
+        }
+    }
+    #[doc = "  ColorAccuracyEnhancementYCbCr"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum ColorAccuracyEnhancementYCbCr {
+        predefinedYCbCrSpace(ColorAccuracyEnhancementYCbCrPredefinedYCbCrSpace),
+        generalYCbCrParameters(ColorAccuracyEnhancementYCbCrGeneralYCbCrParameters),
+    }
+    #[doc = "  ColorCIELab"]
+    #[doc = "  Definition of a CIELab color."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct ColorCIELab {
+        #[rasn(value("0..=255"))]
+        pub l: u8,
+        #[rasn(value("0..=255"))]
+        pub a: u8,
+        #[rasn(value("0..=255"))]
+        pub b: u8,
+    }
+    impl ColorCIELab {
+        pub fn new(l: u8, a: u8, b: u8) -> Self {
+            Self { l, a, b }
+        }
+    }
+    #[doc = "  ColorCIExyChromaticity"]
+    #[doc = "  Definition of a CIE normalized chromaticity value."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct ColorCIExyChromaticity {
+        pub x: f64,
+        pub y: f64,
+    }
+    impl ColorCIExyChromaticity {
+        pub fn new(x: f64, y: f64) -> Self {
+            Self { x, y }
+        }
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "INTEGER", value("0..=255"))]
+    pub struct AnonymousColorIndexTable(pub u8);
+    #[doc = "  ColorIndexTable"]
+    #[doc = "  This type is used to specify collections of color"]
+    #[doc = "  values.  All entries are references to absolute"]
+    #[doc = "  color palette data."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=256"))]
+    pub struct ColorIndexTable(pub SequenceOf<AnonymousColorIndexTable>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ColorPaletteColorLookUpTablePaletteRGB {
+        #[rasn(size("2..=256"))]
+        pub palette: SequenceOf<ColorRGB>,
+        pub enhancement: Option<ColorAccuracyEnhancementRGB>,
+    }
+    impl ColorPaletteColorLookUpTablePaletteRGB {
+        pub fn new(
+            palette: SequenceOf<ColorRGB>,
+            enhancement: Option<ColorAccuracyEnhancementRGB>,
+        ) -> Self {
+            Self {
+                palette,
+                enhancement,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ColorPaletteColorLookUpTablePaletteCIELab {
+        #[rasn(size("2..=256"))]
+        pub palette: SequenceOf<ColorCIELab>,
+        pub enhancement: Option<ColorAccuracyEnhancementCIELab>,
+    }
+    impl ColorPaletteColorLookUpTablePaletteCIELab {
+        pub fn new(
+            palette: SequenceOf<ColorCIELab>,
+            enhancement: Option<ColorAccuracyEnhancementCIELab>,
+        ) -> Self {
+            Self {
+                palette,
+                enhancement,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ColorPaletteColorLookUpTablePaletteYCbCr {
+        #[rasn(size("2..=256"))]
+        pub palette: SequenceOf<ColorYCbCr>,
+        pub enhancement: Option<ColorAccuracyEnhancementYCbCr>,
+    }
+    impl ColorPaletteColorLookUpTablePaletteYCbCr {
+        pub fn new(
+            palette: SequenceOf<ColorYCbCr>,
+            enhancement: Option<ColorAccuracyEnhancementYCbCr>,
+        ) -> Self {
+            Self {
+                palette,
+                enhancement,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum ColorPaletteColorLookUpTable {
+        paletteRGB(ColorPaletteColorLookUpTablePaletteRGB),
+        paletteCIELab(ColorPaletteColorLookUpTablePaletteCIELab),
+        paletteYCbCr(ColorPaletteColorLookUpTablePaletteYCbCr),
+        nonStandardPalette(NonStandardParameter),
+    }
+    #[doc = "  ColorPalette"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ColorPalette {
+        #[rasn(identifier = "colorLookUpTable")]
+        pub color_look_up_table: ColorPaletteColorLookUpTable,
+        #[rasn(value("0..=255"), identifier = "transparentEntry")]
+        pub transparent_entry: Option<u8>,
+    }
+    impl ColorPalette {
+        pub fn new(
+            color_look_up_table: ColorPaletteColorLookUpTable,
+            transparent_entry: Option<u8>,
+        ) -> Self {
+            Self {
+                color_look_up_table,
+                transparent_entry,
+            }
+        }
+    }
+    #[doc = "  ColorRGB"]
+    #[doc = "  Definition of an RGB color."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct ColorRGB {
+        #[rasn(value("0..=255"))]
+        pub r: u8,
+        #[rasn(value("0..=255"))]
+        pub g: u8,
+        #[rasn(value("0..=255"))]
+        pub b: u8,
+    }
+    impl ColorRGB {
+        pub fn new(r: u8, g: u8, b: u8) -> Self {
+            Self { r, g, b }
+        }
+    }
+    #[doc = "  ColorResolutionModeSpecifier"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum ColorResolutionModeSpecifier {
+        #[rasn(identifier = "resolution4-4-4")]
+        resolution4_4_4(()),
+        #[rasn(identifier = "resolution-4-2-2")]
+        resolution_4_2_2(()),
+        #[rasn(identifier = "resolution-4-2-0")]
+        resolution_4_2_0(()),
+        nonStandardResolutionMode(NonStandardIdentifier),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct ColorSpaceSpecifierGreyscale {
+        #[rasn(identifier = "accuracyEnhancement")]
+        pub accuracy_enhancement: Option<ColorAccuracyEnhancementGreyscale>,
+    }
+    impl ColorSpaceSpecifierGreyscale {
+        pub fn new(accuracy_enhancement: Option<ColorAccuracyEnhancementGreyscale>) -> Self {
+            Self {
+                accuracy_enhancement,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct ColorSpaceSpecifierYCbCr {
+        #[rasn(identifier = "accuracyEnhancement")]
+        pub accuracy_enhancement: Option<ColorAccuracyEnhancementYCbCr>,
+    }
+    impl ColorSpaceSpecifierYCbCr {
+        pub fn new(accuracy_enhancement: Option<ColorAccuracyEnhancementYCbCr>) -> Self {
+            Self {
+                accuracy_enhancement,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct ColorSpaceSpecifierRgb {
+        #[rasn(identifier = "accuracyEnhancement")]
+        pub accuracy_enhancement: Option<ColorAccuracyEnhancementRGB>,
+    }
+    impl ColorSpaceSpecifierRgb {
+        pub fn new(accuracy_enhancement: Option<ColorAccuracyEnhancementRGB>) -> Self {
+            Self {
+                accuracy_enhancement,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct ColorSpaceSpecifierCieLab {
+        #[rasn(identifier = "accuracyEnhancement")]
+        pub accuracy_enhancement: Option<ColorAccuracyEnhancementCIELab>,
+    }
+    impl ColorSpaceSpecifierCieLab {
+        pub fn new(accuracy_enhancement: Option<ColorAccuracyEnhancementCIELab>) -> Self {
+            Self {
+                accuracy_enhancement,
+            }
+        }
+    }
+    #[doc = "  ColorSpaceSpecifier"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum ColorSpaceSpecifier {
+        greyscale(ColorSpaceSpecifierGreyscale),
+        yCbCr(ColorSpaceSpecifierYCbCr),
+        rgb(ColorSpaceSpecifierRgb),
+        cieLab(ColorSpaceSpecifierCieLab),
+        nonStandardColorSpace(NonStandardIdentifier),
+    }
+    #[doc = "  ColorYCbCr"]
+    #[doc = "  Definition of a YCbCr color."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct ColorYCbCr {
+        #[rasn(value("0..=255"))]
+        pub y: u8,
+        #[rasn(value("0..=255"))]
+        pub cb: u8,
+        #[rasn(value("0..=255"))]
+        pub cr: u8,
+    }
+    impl ColorYCbCr {
+        pub fn new(y: u8, cb: u8, cr: u8) -> Self {
+            Self { y, cb, cr }
+        }
+    }
+    #[doc = "  ConductorPrivilege"]
+    #[doc = "  List of privileges that are awarded by the SICE at the conducting"]
+    #[doc = "  node to other SICEs in the session."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum ConductorPrivilege {
+        workspacePrivilege(()),
+        annotationPrivilege(()),
+        imagePrivilege(()),
+        pointingPrivilege(()),
+        remoteKeyEventPrivilege(()),
+        remotePointingEventPrivilege(()),
+        remotePrintingPrivilege(()),
+        archiveCreateWritePrivilege(()),
+        nonStandardPrivilege(NonStandardIdentifier),
+    }
+    #[doc = "  ConductorPrivilegeGrantPDU"]
+    #[doc = "  This PDU is used by the conductor to grant or revoke privileges"]
+    #[doc = "  when the session is in conducted mode."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ConductorPrivilegeGrantPDU {
+        #[rasn(identifier = "destinationUserID")]
+        pub destination_user_id: MCSUserID,
+        #[rasn(identifier = "privilegeList")]
+        pub privilege_list: SetOf<ConductorPrivilege>,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+    }
+    impl ConductorPrivilegeGrantPDU {
+        pub fn new(
+            destination_user_id: MCSUserID,
+            privilege_list: SetOf<ConductorPrivilege>,
+            non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                destination_user_id,
+                privilege_list,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[doc = "  ConductorPrivilegeRequestPDU"]
+    #[doc = "  This PDU is used to request privileges from the conductor"]
+    #[doc = "  when the session is in conducted mode."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ConductorPrivilegeRequestPDU {
+        #[rasn(identifier = "privilegeList")]
+        pub privilege_list: SetOf<ConductorPrivilege>,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+    }
+    impl ConductorPrivilegeRequestPDU {
+        pub fn new(
+            privilege_list: SetOf<ConductorPrivilege>,
+            non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                privilege_list,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct DSMCCTap {
+        #[rasn(value("0..=65535"), identifier = "use")]
+        pub r_use: u16,
+        #[rasn(value("0..=65535"))]
+        pub id: u16,
+        #[rasn(value("0..=65535"), identifier = "associationTag")]
+        pub association_tag: u16,
+        #[rasn(size("1..=256"))]
+        pub selector: Option<OctetString>,
+    }
+    impl DSMCCTap {
+        pub fn new(
+            r_use: u16,
+            id: u16,
+            association_tag: u16,
+            selector: Option<OctetString>,
+        ) -> Self {
+            Self {
+                r_use,
+                id,
+                association_tag,
+                selector,
+            }
+        }
+    }
+    #[doc = "  DataPlaneID"]
+    #[doc = "  This is the identifier of a data plane within a workspace."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=255"))]
+    pub struct DataPlaneID(pub u8);
+    #[doc = "  DrawingAttribute"]
+    #[doc = "  The following drawingAttributes are used to specify visual and"]
+    #[doc = "  behavioral properties of a drawing."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum DrawingAttribute {
+        penColor(WorkspaceColor),
+        fillColor(WorkspaceColor),
+        penThickness(PenThickness),
+        penNib(PenNib),
+        lineStyle(LineStyle),
+        highlight(bool),
+        viewState(ViewState),
+        zOrder(ZOrder),
+        nonStandardAttribute(NonStandardParameter),
+    }
+    #[doc = "  DrawingCreatePDU"]
+    #[doc = "  A drawingCreate PDU is used to deposit one or more"]
+    #[doc = "  drawing elements to a workspace plane."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct DrawingCreatePDU {
+        #[rasn(identifier = "drawingHandle")]
+        pub drawing_handle: Option<Handle>,
+        #[rasn(identifier = "destinationAddress")]
+        pub destination_address: DrawingDestinationAddress,
+        #[rasn(identifier = "drawingType")]
+        pub drawing_type: DrawingType,
+        pub attributes: Option<SetOf<DrawingAttribute>>,
+        #[rasn(identifier = "anchorPoint")]
+        pub anchor_point: WorkspacePoint,
+        pub rotation: Option<RotationSpecifier>,
+        #[rasn(value("1..=255"), identifier = "sampleRate")]
+        pub sample_rate: Option<u8>,
+        #[rasn(identifier = "pointList")]
+        pub point_list: PointList,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+    }
+    impl DrawingCreatePDU {
+        pub fn new(
+            drawing_handle: Option<Handle>,
+            destination_address: DrawingDestinationAddress,
+            drawing_type: DrawingType,
+            attributes: Option<SetOf<DrawingAttribute>>,
+            anchor_point: WorkspacePoint,
+            rotation: Option<RotationSpecifier>,
+            sample_rate: Option<u8>,
+            point_list: PointList,
+            non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                drawing_handle,
+                destination_address,
+                drawing_type,
+                attributes,
+                anchor_point,
+                rotation,
+                sample_rate,
+                point_list,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[doc = "  DrawingDeletePDU"]
+    #[doc = "  A DrawingDeletePDU is used to delete one"]
+    #[doc = "  graphical element from a workspace plane."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct DrawingDeletePDU {
+        #[rasn(identifier = "drawingHandle")]
+        pub drawing_handle: Handle,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+    }
+    impl DrawingDeletePDU {
+        pub fn new(
+            drawing_handle: Handle,
+            non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                drawing_handle,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[doc = "  DrawingDestinationAddress"]
+    #[doc = "  A DrawingDestinationAddress specifies the destination of drawing"]
+    #[doc = "  elements."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum DrawingDestinationAddress {
+        softCopyAnnotationPlane(SoftCopyDataPlaneAddress),
+        #[rasn(extension_addition)]
+        nonStandardDestination(NonStandardParameter),
+    }
+    #[doc = "  DrawingEditPDU"]
+    #[doc = "  A DrawingEditPDU is used to alter one or more of"]
+    #[doc = "  a drawing element's attributes or parameters."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct DrawingEditPDU {
+        #[rasn(identifier = "drawingHandle")]
+        pub drawing_handle: Handle,
+        #[rasn(identifier = "attributeEdits")]
+        pub attribute_edits: Option<SetOf<DrawingAttribute>>,
+        #[rasn(identifier = "anchorPointEdit")]
+        pub anchor_point_edit: Option<WorkspacePoint>,
+        #[rasn(identifier = "rotationEdit")]
+        pub rotation_edit: Option<RotationSpecifier>,
+        #[rasn(identifier = "pointListEdits")]
+        pub point_list_edits: Option<PointListEdits>,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+    }
+    impl DrawingEditPDU {
+        pub fn new(
+            drawing_handle: Handle,
+            attribute_edits: Option<SetOf<DrawingAttribute>>,
+            anchor_point_edit: Option<WorkspacePoint>,
+            rotation_edit: Option<RotationSpecifier>,
+            point_list_edits: Option<PointListEdits>,
+            non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                drawing_handle,
+                attribute_edits,
+                anchor_point_edit,
+                rotation_edit,
+                point_list_edits,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[doc = "  DrawingType"]
+    #[doc = "  A DrawingType specifies the shape of a drawn element."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum DrawingType {
+        point(()),
+        openPolyLine(()),
+        closedPolyLine(()),
+        rectangle(()),
+        ellipse(()),
+        nonStandardDrawingType(NonStandardIdentifier),
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    pub struct AnonymousEditablePlaneCopyDescriptorObjectList {
+        #[rasn(identifier = "sourceObjectHandle")]
+        pub source_object_handle: Handle,
+        #[rasn(identifier = "destinationObjectHandle")]
+        pub destination_object_handle: Handle,
+    }
+    impl AnonymousEditablePlaneCopyDescriptorObjectList {
+        pub fn new(source_object_handle: Handle, destination_object_handle: Handle) -> Self {
+            Self {
+                source_object_handle,
+                destination_object_handle,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=65536"))]
+    pub struct EditablePlaneCopyDescriptorObjectList(
+        pub SequenceOf<AnonymousEditablePlaneCopyDescriptorObjectList>,
+    );
+    #[doc = "  EditablePlaneCopyDescriptor"]
+    #[doc = "  Paired list of handles for source objects and their copies."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct EditablePlaneCopyDescriptor {
+        #[rasn(identifier = "objectList")]
+        pub object_list: EditablePlaneCopyDescriptorObjectList,
+        #[rasn(identifier = "destinationOffset")]
+        pub destination_offset: Option<WorkspacePoint>,
+        #[rasn(identifier = "planeClearFlag")]
+        pub plane_clear_flag: bool,
+    }
+    impl EditablePlaneCopyDescriptor {
+        pub fn new(
+            object_list: EditablePlaneCopyDescriptorObjectList,
+            destination_offset: Option<WorkspacePoint>,
+            plane_clear_flag: bool,
+        ) -> Self {
+            Self {
+                object_list,
+                destination_offset,
+                plane_clear_flag,
+            }
+        }
+    }
+    #[doc = "  FontPDU"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct FontPDU {
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+    }
+    impl FontPDU {
+        pub fn new(non_standard_parameters: Option<SetOf<NonStandardParameter>>) -> Self {
+            Self {
+                non_standard_parameters,
+            }
+        }
+    }
+    #[doc = "  H221NonStandardIdentifier"]
+    #[doc = "  Used to specify non-standard objects using H.221 numbering."]
+    #[doc = "  The first four octets shall designate country code and"]
+    #[doc = "  manufacturer code, assigned as specified in"]
+    #[doc = "  Annex A/H.221, for NS-cap and NS-comm."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("4..=255"))]
+    pub struct H221NonStandardIdentifier(pub OctetString);
+    #[doc = "  Handle"]
+    #[doc = "  Unique identifier that is used to address objects to allow edit"]
+    #[doc = "  and/or delete operations. These are obtained from GCC via the"]
+    #[doc = "  GCC-Registry-Allocate-Handle request/confirm primitives."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=4294967295"))]
+    pub struct Handle(pub u32);
+    #[doc = "  KeyCode"]
+    #[doc = "  Character code that is contained in a RemoteKeyboardEventPDU."]
+    #[doc = "  This is either a two-octet value that uses the UNICODE character"]
+    #[doc = "  representation or special key specifier."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum KeyCode {
+        #[rasn(size("1"))]
+        character(BmpString),
+        #[rasn(value("1..=32"))]
+        fkey(u8),
+        upArrow(()),
+        downArrow(()),
+        leftArrow(()),
+        rightArrow(()),
+        pageUp(()),
+        pageDown(()),
+        home(()),
+        end(()),
+        insert(()),
+        delete(()),
+        nonStandardKey(NonStandardIdentifier),
+    }
+    #[doc = "  KeyModifier"]
+    #[doc = "  Collection of keyboard modifiers."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum KeyModifier {
+        leftAlt(()),
+        rightAlt(()),
+        leftShift(()),
+        rightShift(()),
+        leftControl(()),
+        rightControl(()),
+        leftSpecial(()),
+        rightSpecial(()),
+        numberPad(()),
+        scrollLock(()),
+        nonStandardModifier(NonStandardIdentifier),
+    }
+    #[doc = "  KeyPressState"]
+    #[doc = "  Set of events for a key, used as part of"]
+    #[doc = "  a RemoteKeyboardEventPDU"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum KeyPressState {
+        none(()),
+        keyPress(()),
+        keyDown(()),
+        keyUp(()),
+        nonStandardKeyPressState(NonStandardIdentifier),
+    }
+    #[doc = "  LineStyle"]
+    #[doc = "  The LineStyle attribute is used during a line draw procedure. It"]
+    #[doc = "  specifies the type of line drawn."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum LineStyle {
+        solid(()),
+        dashed(()),
+        dotted(()),
+        #[rasn(identifier = "dash-dot")]
+        dash_dot(()),
+        #[rasn(identifier = "dash-dot-dot")]
+        dash_dot_dot(()),
+        #[rasn(identifier = "two-tone")]
+        two_tone(()),
+        nonStandardStyle(NonStandardIdentifier),
+    }
+    #[doc = "  MCSUserID"]
+    #[doc = "  This type is used to specify MCS User IDs."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("1001..=65535"))]
+    pub struct MCSUserID(pub u16);
+    #[doc = "  NonStandardIdentifier"]
+    #[doc = "  Unique identifier used to specify non-standard capabilities and"]
+    #[doc = "  parameters either as an ASN.1 OBJECT IDENTIFIER or as an H.221"]
+    #[doc = "  non-standard object."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum NonStandardIdentifier {
+        object(ObjectIdentifier),
+        h221nonStandard(H221NonStandardIdentifier),
+    }
+    #[doc = "  NonStandardParameter"]
+    #[doc = "  Used to specify non-standard parameters.  This includes a"]
+    #[doc = "  data field which may be used to fill in parameter values"]
+    #[doc = "  of the type indicated by the NonStandardIdentifier."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct NonStandardParameter {
+        #[rasn(identifier = "nonStandardIdentifier")]
+        pub non_standard_identifier: NonStandardIdentifier,
+        pub data: OctetString,
+    }
+    impl NonStandardParameter {
+        pub fn new(non_standard_identifier: NonStandardIdentifier, data: OctetString) -> Self {
+            Self {
+                non_standard_identifier,
+                data,
+            }
+        }
+    }
+    #[doc = "  PenNib"]
+    #[doc = "  This type specifies the shape of the nib of the pen that is"]
+    #[doc = "  used to draw graphical elements."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum PenNib {
+        circular(()),
+        square(()),
+        nonStandardNib(NonStandardIdentifier),
+    }
+    #[doc = "  PenThickness"]
+    #[doc = "  This type specifies the thickness of the pen that is used to"]
+    #[doc = "  draw graphical elements."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("1..=255"))]
+    pub struct PenThickness(pub u8);
+    #[doc = "  PermanentPlaneCopyDescriptor"]
+    #[doc = "  Describes source and destination regions within the corresponding"]
+    #[doc = "  planes to be copied from and to. This is only to be used when the"]
+    #[doc = "  source and destination planes are permanent."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct PermanentPlaneCopyDescriptor {
+        #[rasn(identifier = "sourceRegion")]
+        pub source_region: WorkspaceRegion,
+        #[rasn(identifier = "destinationRegion")]
+        pub destination_region: WorkspaceRegion,
+    }
+    impl PermanentPlaneCopyDescriptor {
+        pub fn new(source_region: WorkspaceRegion, destination_region: WorkspaceRegion) -> Self {
+            Self {
+                source_region,
+                destination_region,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct PixelAspectRatioGeneral {
+        #[rasn(value("1..=65535"))]
+        pub numerator: u16,
+        #[rasn(value("1..=65535"))]
+        pub denominator: u16,
+    }
+    impl PixelAspectRatioGeneral {
+        pub fn new(numerator: u16, denominator: u16) -> Self {
+            Self {
+                numerator,
+                denominator,
+            }
+        }
+    }
+    #[doc = "  PixelAspectRatio"]
+    #[doc = "  This type specifies that horizontal to vertical ratio of"]
+    #[doc = "  the size of a pixel."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum PixelAspectRatio {
+        square(()),
+        cif(()),
+        fax1(()),
+        fax2(()),
+        general(PixelAspectRatioGeneral),
+        nonStandardAspectRatio(NonStandardIdentifier),
+    }
+    #[doc = "  PlaneAttribute"]
+    #[doc = "  Plane attributes are editable characteristics of workspace planes."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum PlaneAttribute {
+        protection(PlaneProtection),
+        nonStandardAttribute(NonStandardParameter),
+    }
+    #[doc = "  PlaneProtection"]
+    #[doc = "  This enumeration identifies the possible access restrictions"]
+    #[doc = "  that can be imposed on a workspace plane."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct PlaneProtection {
+        pub protected: bool,
+    }
+    impl PlaneProtection {
+        pub fn new(protected: bool) -> Self {
+            Self { protected }
+        }
+    }
+    #[doc = "  PlaneUsage"]
+    #[doc = "  This type specifies the usage of a single plane in a workspace."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum PlaneUsage {
+        annotation(()),
+        image(()),
+        nonStandardPlaneUsage(NonStandardIdentifier),
+    }
+    #[doc = "  PointDiff16"]
+    #[doc = "  A point specified differentially relative to an anchor point"]
+    #[doc = "  with a range from -32768 to +32767."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct PointDiff16 {
+        #[rasn(value("-32768..=32767"), identifier = "xCoordinate")]
+        pub x_coordinate: i16,
+        #[rasn(value("-32768..=32767"), identifier = "yCoordinate")]
+        pub y_coordinate: i16,
+    }
+    impl PointDiff16 {
+        pub fn new(x_coordinate: i16, y_coordinate: i16) -> Self {
+            Self {
+                x_coordinate,
+                y_coordinate,
+            }
+        }
+    }
+    #[doc = "  PointDiff4"]
+    #[doc = "  A point specified differentially relative to an anchor point"]
+    #[doc = "  with a range from -8 to +7."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct PointDiff4 {
+        #[rasn(value("-8..=7"), identifier = "xCoordinate")]
+        pub x_coordinate: i8,
+        #[rasn(value("-8..=7"), identifier = "yCoordinate")]
+        pub y_coordinate: i8,
+    }
+    impl PointDiff4 {
+        pub fn new(x_coordinate: i8, y_coordinate: i8) -> Self {
+            Self {
+                x_coordinate,
+                y_coordinate,
+            }
+        }
+    }
+    #[doc = "  PointDiff8"]
+    #[doc = "  A point specified differentially relative to an anchor point"]
+    #[doc = "  with a range from -128 to +127."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct PointDiff8 {
+        #[rasn(value("-128..=127"), identifier = "xCoordinate")]
+        pub x_coordinate: i8,
+        #[rasn(value("-128..=127"), identifier = "yCoordinate")]
+        pub y_coordinate: i8,
+    }
+    impl PointDiff8 {
+        pub fn new(x_coordinate: i8, y_coordinate: i8) -> Self {
+            Self {
+                x_coordinate,
+                y_coordinate,
+            }
+        }
+    }
+    #[doc = "  PointList"]
+    #[doc = "  A list of points to define a drawing object using one of"]
+    #[doc = "  three possible encodings depending on how far any point"]
+    #[doc = "  in the list strays from the anchor point."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum PointList {
+        #[rasn(size("0..=255"))]
+        pointsDiff4(SequenceOf<PointDiff4>),
+        #[rasn(size("0..=255"))]
+        pointsDiff8(SequenceOf<PointDiff8>),
+        #[rasn(size("0..=255"))]
+        pointsDiff16(SequenceOf<PointDiff16>),
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    #[non_exhaustive]
+    pub struct AnonymousPointListEdits {
+        #[rasn(value("0..=65534"), identifier = "initialIndex")]
+        pub initial_index: u16,
+        #[rasn(identifier = "initialPointEdit")]
+        pub initial_point_edit: PointDiff16,
+        #[rasn(identifier = "subsequentPointEdits")]
+        pub subsequent_point_edits: Option<PointList>,
+    }
+    impl AnonymousPointListEdits {
+        pub fn new(
+            initial_index: u16,
+            initial_point_edit: PointDiff16,
+            subsequent_point_edits: Option<PointList>,
+        ) -> Self {
+            Self {
+                initial_index,
+                initial_point_edit,
+                subsequent_point_edits,
+            }
+        }
+    }
+    #[doc = "  PointListEdits"]
+    #[doc = "  A list of points to edit a drawing object using one of"]
+    #[doc = "  three possible encodings depending on how far any point"]
+    #[doc = "  in the list strays from the anchor point."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=255"))]
+    pub struct PointListEdits(pub SequenceOf<AnonymousPointListEdits>);
+    #[doc = "  RemoteEventDestinationAddress"]
+    #[doc = "  A RemoteEventDestinationAddress specifies the destination of"]
+    #[doc = "  a remote event."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum RemoteEventDestinationAddress {
+        softCopyWorkspace(Handle),
+        #[rasn(extension_addition)]
+        nonStandardDestination(NonStandardParameter),
+    }
+    #[doc = "  RemoteEventPermission"]
+    #[doc = "  Choice of remote events that can be issued to a workspace."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum RemoteEventPermission {
+        keyboardEvent(()),
+        pointingDeviceEvent(()),
+        nonStandardEvent(NonStandardIdentifier),
+    }
+    #[doc = "  RemoteEventPermissionGrantPDU"]
+    #[doc = "  This PDU is used to grant permission to issue remote"]
+    #[doc = "  events."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct RemoteEventPermissionGrantPDU {
+        #[rasn(identifier = "destinationAddress")]
+        pub destination_address: RemoteEventDestinationAddress,
+        #[rasn(identifier = "destinationUserID")]
+        pub destination_user_id: MCSUserID,
+        #[rasn(identifier = "remoteEventPermissionList")]
+        pub remote_event_permission_list: SetOf<RemoteEventPermission>,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+    }
+    impl RemoteEventPermissionGrantPDU {
+        pub fn new(
+            destination_address: RemoteEventDestinationAddress,
+            destination_user_id: MCSUserID,
+            remote_event_permission_list: SetOf<RemoteEventPermission>,
+            non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                destination_address,
+                destination_user_id,
+                remote_event_permission_list,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[doc = "  RemoteEventPermissionRequestPDU"]
+    #[doc = "  This PDU is used to request permission to issue remote"]
+    #[doc = "  events from the workspace creator."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct RemoteEventPermissionRequestPDU {
+        #[rasn(identifier = "destinationAddress")]
+        pub destination_address: RemoteEventDestinationAddress,
+        #[rasn(identifier = "remoteEventPermissionList")]
+        pub remote_event_permission_list: SetOf<RemoteEventPermission>,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+    }
+    impl RemoteEventPermissionRequestPDU {
+        pub fn new(
+            destination_address: RemoteEventDestinationAddress,
+            remote_event_permission_list: SetOf<RemoteEventPermission>,
+            non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                destination_address,
+                remote_event_permission_list,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[doc = "  RemoteKeyboardEventPDU"]
+    #[doc = "  This PDU signals keyboard event."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct RemoteKeyboardEventPDU {
+        #[rasn(identifier = "destinationAddress")]
+        pub destination_address: RemoteEventDestinationAddress,
+        #[rasn(identifier = "keyModifierStates")]
+        pub key_modifier_states: Option<SetOf<KeyModifier>>,
+        #[rasn(identifier = "keyPressState")]
+        pub key_press_state: KeyPressState,
+        #[rasn(identifier = "keyCode")]
+        pub key_code: KeyCode,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+    }
+    impl RemoteKeyboardEventPDU {
+        pub fn new(
+            destination_address: RemoteEventDestinationAddress,
+            key_modifier_states: Option<SetOf<KeyModifier>>,
+            key_press_state: KeyPressState,
+            key_code: KeyCode,
+            non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                destination_address,
+                key_modifier_states,
+                key_press_state,
+                key_code,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[doc = "  RemotePointingDeviceEventPDU"]
+    #[doc = "  This PDU is used to signal pointing device events."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct RemotePointingDeviceEventPDU {
+        #[rasn(identifier = "destinationAddress")]
+        pub destination_address: RemoteEventDestinationAddress,
+        #[rasn(identifier = "leftButtonState")]
+        pub left_button_state: ButtonEvent,
+        #[rasn(identifier = "middleButtonState")]
+        pub middle_button_state: ButtonEvent,
+        #[rasn(identifier = "rightButtonState")]
+        pub right_button_state: ButtonEvent,
+        #[rasn(identifier = "initialPoint")]
+        pub initial_point: WorkspacePoint,
+        #[rasn(value("1..=255"), identifier = "sampleRate")]
+        pub sample_rate: Option<u8>,
+        #[rasn(identifier = "pointList")]
+        pub point_list: Option<PointList>,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+    }
+    impl RemotePointingDeviceEventPDU {
+        pub fn new(
+            destination_address: RemoteEventDestinationAddress,
+            left_button_state: ButtonEvent,
+            middle_button_state: ButtonEvent,
+            right_button_state: ButtonEvent,
+            initial_point: WorkspacePoint,
+            sample_rate: Option<u8>,
+            point_list: Option<PointList>,
+            non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                destination_address,
+                left_button_state,
+                middle_button_state,
+                right_button_state,
+                initial_point,
+                sample_rate,
+                point_list,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[doc = "  RemotePrintPDU"]
+    #[doc = "  This PDU is used to instruct a remote terminal to print"]
+    #[doc = "  the specified workspace."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct RemotePrintPDU {
+        #[rasn(identifier = "destinationAddress")]
+        pub destination_address: RemoteEventDestinationAddress,
+        #[rasn(value("1..=65536"), identifier = "numberOfCopies")]
+        pub number_of_copies: Option<u32>,
+        pub portrait: Option<bool>,
+        #[rasn(identifier = "regionOfInterest")]
+        pub region_of_interest: Option<WorkspaceRegion>,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+    }
+    impl RemotePrintPDU {
+        pub fn new(
+            destination_address: RemoteEventDestinationAddress,
+            number_of_copies: Option<u32>,
+            portrait: Option<bool>,
+            region_of_interest: Option<WorkspaceRegion>,
+            non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                destination_address,
+                number_of_copies,
+                portrait,
+                region_of_interest,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[doc = "  RotationSpecifier"]
+    #[doc = "  Specifies a rotation angle and an axis of revolution"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct RotationSpecifier {
+        #[rasn(value("0..=21599"), identifier = "rotationAngle")]
+        pub rotation_angle: u16,
+        #[rasn(identifier = "rotationAxis")]
+        pub rotation_axis: PointDiff16,
+    }
+    impl RotationSpecifier {
+        pub fn new(rotation_angle: u16, rotation_axis: PointDiff16) -> Self {
+            Self {
+                rotation_angle,
+                rotation_axis,
+            }
+        }
+    }
+    #[doc = "  SINonStandardPDU"]
+    #[doc = "  This PDU allows any non-standard information to be transmitted."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct SINonStandardPDU {
+        #[rasn(identifier = "nonStandardTransaction")]
+        pub non_standard_transaction: NonStandardParameter,
+    }
+    impl SINonStandardPDU {
+        pub fn new(non_standard_transaction: NonStandardParameter) -> Self {
+            Self {
+                non_standard_transaction,
+            }
+        }
+    }
+    #[doc = "  SIPDU"]
+    #[doc = "  The set of all SIPDUs."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum SIPDU {
+        archiveAcknowledgePDU(ArchiveAcknowledgePDU),
+        archiveClosePDU(ArchiveClosePDU),
+        archiveErrorPDU(ArchiveErrorPDU),
+        archiveOpenPDU(ArchiveOpenPDU),
+        bitmapAbortPDU(BitmapAbortPDU),
+        bitmapCheckpointPDU(BitmapCheckpointPDU),
+        bitmapCreatePDU(BitmapCreatePDU),
+        bitmapCreateContinuePDU(BitmapCreateContinuePDU),
+        bitmapDeletePDU(BitmapDeletePDU),
+        bitmapEditPDU(BitmapEditPDU),
+        conductorPrivilegeGrantPDU(ConductorPrivilegeGrantPDU),
+        conductorPrivilegeRequestPDU(ConductorPrivilegeRequestPDU),
+        drawingCreatePDU(DrawingCreatePDU),
+        drawingDeletePDU(DrawingDeletePDU),
+        drawingEditPDU(DrawingEditPDU),
+        remoteEventPermissionGrantPDU(RemoteEventPermissionGrantPDU),
+        remoteEventPermissionRequestPDU(RemoteEventPermissionRequestPDU),
+        remoteKeyboardEventPDU(RemoteKeyboardEventPDU),
+        remotePointingDeviceEventPDU(RemotePointingDeviceEventPDU),
+        remotePrintPDU(RemotePrintPDU),
+        siNonStandardPDU(SINonStandardPDU),
+        workspaceCreatePDU(WorkspaceCreatePDU),
+        workspaceCreateAcknowledgePDU(WorkspaceCreateAcknowledgePDU),
+        workspaceDeletePDU(WorkspaceDeletePDU),
+        workspaceEditPDU(WorkspaceEditPDU),
+        workspacePlaneCopyPDU(WorkspacePlaneCopyPDU),
+        workspaceReadyPDU(WorkspaceReadyPDU),
+        workspaceRefreshStatusPDU(WorkspaceRefreshStatusPDU),
+        #[rasn(extension_addition)]
+        fontPDU(FontPDU),
+        #[rasn(extension_addition)]
+        textCreatePDU(TextCreatePDU),
+        #[rasn(extension_addition)]
+        textDeletePDU(TextDeletePDU),
+        #[rasn(extension_addition)]
+        textEditPDU(TextEditPDU),
+        #[rasn(extension_addition)]
+        videoWindowCreatePDU(VideoWindowCreatePDU),
+        #[rasn(extension_addition)]
+        videoWindowDeleatePDU(VideoWindowDeletePDU),
+        #[rasn(extension_addition)]
+        videoWindowEditPDU(VideoWindowEditPDU),
+    }
+    #[doc = "  SoftCopyDataPlaneAddress"]
+    #[doc = "  Address of a workspace data plane."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct SoftCopyDataPlaneAddress {
+        #[rasn(identifier = "workspaceHandle")]
+        pub workspace_handle: Handle,
+        pub plane: DataPlaneID,
+    }
+    impl SoftCopyDataPlaneAddress {
+        pub fn new(workspace_handle: Handle, plane: DataPlaneID) -> Self {
+            Self {
+                workspace_handle,
+                plane,
+            }
+        }
+    }
+    #[doc = "  SoftCopyPointerPlaneAddress"]
+    #[doc = "  Address of a workspace pointer plane."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct SoftCopyPointerPlaneAddress {
+        #[rasn(identifier = "workspaceHandle")]
+        pub workspace_handle: Handle,
+    }
+    impl SoftCopyPointerPlaneAddress {
+        pub fn new(workspace_handle: Handle) -> Self {
+            Self { workspace_handle }
+        }
+    }
+    #[doc = "  SourceDisplayIndicator"]
+    #[doc = "  Indicator of the size and location of a workspace view within"]
+    #[doc = "  the display device of the sourcing terminal."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct SourceDisplayIndicator {
+        #[rasn(identifier = "displayAspectRatio")]
+        pub display_aspect_ratio: f64,
+        #[rasn(identifier = "horizontalSizeRatio")]
+        pub horizontal_size_ratio: f64,
+        #[rasn(identifier = "horizontalPosition")]
+        pub horizontal_position: f64,
+        #[rasn(identifier = "verticalPosition")]
+        pub vertical_position: f64,
+    }
+    impl SourceDisplayIndicator {
+        pub fn new(
+            display_aspect_ratio: f64,
+            horizontal_size_ratio: f64,
+            horizontal_position: f64,
+            vertical_position: f64,
+        ) -> Self {
+            Self {
+                display_aspect_ratio,
+                horizontal_size_ratio,
+                horizontal_position,
+                vertical_position,
+            }
+        }
+    }
+    #[doc = "  TextCreatePDU"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct TextCreatePDU {
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+    }
+    impl TextCreatePDU {
+        pub fn new(non_standard_parameters: Option<SetOf<NonStandardParameter>>) -> Self {
+            Self {
+                non_standard_parameters,
+            }
+        }
+    }
+    #[doc = "  TextDeletePDU"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct TextDeletePDU {
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+    }
+    impl TextDeletePDU {
+        pub fn new(non_standard_parameters: Option<SetOf<NonStandardParameter>>) -> Self {
+            Self {
+                non_standard_parameters,
+            }
+        }
+    }
+    #[doc = "  TextEditPDU"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct TextEditPDU {
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+    }
+    impl TextEditPDU {
+        pub fn new(non_standard_parameters: Option<SetOf<NonStandardParameter>>) -> Self {
+            Self {
+                non_standard_parameters,
+            }
+        }
+    }
+    #[doc = "  TokenID"]
+    #[doc = "  MCS Token ID."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("1..=65535"))]
+    pub struct TokenID(pub u16);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum TransparencyMaskBitMask {
+        uncompressed(OctetString),
+        jbigCompressed(OctetString),
+        nonStandardFormat(NonStandardParameter),
+    }
+    #[doc = "  TransparencyMask"]
+    #[doc = "  A binary bitmap that indicates which pixels in a bitmap shall be"]
+    #[doc = "  treated as transparent."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct TransparencyMask {
+        #[rasn(identifier = "bitMask")]
+        pub bit_mask: TransparencyMaskBitMask,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+    }
+    impl TransparencyMask {
+        pub fn new(
+            bit_mask: TransparencyMaskBitMask,
+            non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                bit_mask,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[doc = "  VideoSourceIdentifier"]
+    #[doc = "  Used to reference an out-of-band video source."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum VideoSourceIdentifier {
+        default(()),
+        #[rasn(size("2"))]
+        h243SourceIdentifier(OctetString),
+        #[rasn(value("0..=65535"))]
+        h245SourceIdentifier(u16),
+        dSMCCConnBinder(SequenceOf<DSMCCTap>),
+        #[rasn(size("1..=256"))]
+        videoIdentifier(OctetString),
+        nonStandardSourceIdentifier(NonStandardParameter),
+    }
+    #[doc = "  VideoWindowAttribute"]
+    #[doc = "  Attributes of video windows."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum VideoWindowAttribute {
+        transparencyMask(TransparencyMask),
+        nonStandardAttribute(NonStandardParameter),
+    }
+    #[doc = "  VideoWindowCreatePDU"]
+    #[doc = "  This PDU allows video windows encapsulating out-of-band video"]
+    #[doc = "  streams to be created."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct VideoWindowCreatePDU {
+        #[rasn(identifier = "videoWindowHandle")]
+        pub video_window_handle: Handle,
+        #[rasn(identifier = "destinationAddress")]
+        pub destination_address: VideoWindowDestinationAddress,
+        #[rasn(identifier = "videoSourceIdentifier")]
+        pub video_source_identifier: VideoSourceIdentifier,
+        pub attributes: Option<SetOf<VideoWindowAttribute>>,
+        #[rasn(identifier = "videoWindowRegionOfInterest")]
+        pub video_window_region_of_interest: Option<BitmapRegion>,
+        #[rasn(identifier = "anchorPoint")]
+        pub anchor_point: Option<WorkspacePoint>,
+        pub extent: Option<PointDiff16>,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+    }
+    impl VideoWindowCreatePDU {
+        pub fn new(
+            video_window_handle: Handle,
+            destination_address: VideoWindowDestinationAddress,
+            video_source_identifier: VideoSourceIdentifier,
+            attributes: Option<SetOf<VideoWindowAttribute>>,
+            video_window_region_of_interest: Option<BitmapRegion>,
+            anchor_point: Option<WorkspacePoint>,
+            extent: Option<PointDiff16>,
+            non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                video_window_handle,
+                destination_address,
+                video_source_identifier,
+                attributes,
+                video_window_region_of_interest,
+                anchor_point,
+                extent,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[doc = "  VideoWindowDeletePDU"]
+    #[doc = "  This PDU deletes video windows."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct VideoWindowDeletePDU {
+        #[rasn(identifier = "videoWindowHandle")]
+        pub video_window_handle: Handle,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+    }
+    impl VideoWindowDeletePDU {
+        pub fn new(
+            video_window_handle: Handle,
+            non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                video_window_handle,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[doc = "  VideoWindowDestinationAddress"]
+    #[doc = "  A VideoWindowDestinationAddress specifies the destination of video windows."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum VideoWindowDestinationAddress {
+        softCopyImagePlane(SoftCopyDataPlaneAddress),
+        nonStandardDestination(NonStandardParameter),
+    }
+    #[doc = "  VideoWindowEditPDU"]
+    #[doc = "  A VideoWindowEditPDU is used to alter one or more of"]
+    #[doc = "  a video window element's attributes or parameters."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct VideoWindowEditPDU {
+        #[rasn(identifier = "videoWindowHandle")]
+        pub video_window_handle: Handle,
+        #[rasn(identifier = "videoSourceIdentifier")]
+        pub video_source_identifier: Option<VideoSourceIdentifier>,
+        #[rasn(identifier = "attributeEdits")]
+        pub attribute_edits: Option<SetOf<VideoWindowAttribute>>,
+        #[rasn(identifier = "anchorPointEdit")]
+        pub anchor_point_edit: Option<WorkspacePoint>,
+        pub extent: Option<PointDiff16>,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+    }
+    impl VideoWindowEditPDU {
+        pub fn new(
+            video_window_handle: Handle,
+            video_source_identifier: Option<VideoSourceIdentifier>,
+            attribute_edits: Option<SetOf<VideoWindowAttribute>>,
+            anchor_point_edit: Option<WorkspacePoint>,
+            extent: Option<PointDiff16>,
+            non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                video_window_handle,
+                video_source_identifier,
+                attribute_edits,
+                anchor_point_edit,
+                extent,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[doc = "  ViewState"]
+    #[doc = "  Controls the visibility state of an object."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum ViewState {
+        unselected(()),
+        selected(()),
+        hidden(()),
+        nonStandardViewState(NonStandardIdentifier),
+    }
+    #[doc = "  WorkspaceAttribute"]
+    #[doc = "  Workspace attributes are editable characteristics of workspace."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum WorkspaceAttribute {
+        backgroundColor(WorkspaceColor),
+        preserve(bool),
+        nonStandardAttribute(NonStandardParameter),
+    }
+    #[doc = "  WorkspaceColor"]
+    #[doc = "  The following defines a generic type for a color, used where a"]
+    #[doc = "  color is required for drawing or workspace backgrounds."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum WorkspaceColor {
+        #[rasn(value("0..=255"))]
+        workspacePaletteIndex(u8),
+        rgbTrueColor(ColorRGB),
+        transparent(()),
+    }
+    #[doc = "  WorkspaceCoordinate"]
+    #[doc = "  A WorkspaceCoordinate is the value of a single axis of"]
+    #[doc = "  a point in a workspace."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("-21845..=43690"))]
+    pub struct WorkspaceCoordinate(pub i32);
+    #[doc = "  WorkspaceCreateAcknowledgePDU"]
+    #[doc = "  This PDU acknowledges the reception of a WorkspaceCreatePDU in"]
+    #[doc = "  the case of unsynchronized workspace."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct WorkspaceCreateAcknowledgePDU {
+        #[rasn(identifier = "workspaceIdentifier")]
+        pub workspace_identifier: WorkspaceIdentifier,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+    }
+    impl WorkspaceCreateAcknowledgePDU {
+        pub fn new(
+            workspace_identifier: WorkspaceIdentifier,
+            non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                workspace_identifier,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    #[non_exhaustive]
+    pub struct AnonymousWorkspaceCreatePDUPlaneParameters {
+        pub editable: bool,
+        #[rasn(size("1.."))]
+        pub usage: SetOf<PlaneUsage>,
+        #[rasn(identifier = "planeAttributes")]
+        pub plane_attributes: Option<SetOf<PlaneAttribute>>,
+    }
+    impl AnonymousWorkspaceCreatePDUPlaneParameters {
+        pub fn new(
+            editable: bool,
+            usage: SetOf<PlaneUsage>,
+            plane_attributes: Option<SetOf<PlaneAttribute>>,
+        ) -> Self {
+            Self {
+                editable,
+                usage,
+                plane_attributes,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=256"))]
+    pub struct WorkspaceCreatePDUPlaneParameters(
+        pub SequenceOf<AnonymousWorkspaceCreatePDUPlaneParameters>,
+    );
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    #[non_exhaustive]
+    pub struct AnonymousWorkspaceCreatePDUViewParameters {
+        #[rasn(identifier = "viewHandle")]
+        pub view_handle: Handle,
+        #[rasn(identifier = "viewAttributes")]
+        pub view_attributes: Option<SetOf<WorkspaceViewAttribute>>,
+    }
+    impl AnonymousWorkspaceCreatePDUViewParameters {
+        pub fn new(
+            view_handle: Handle,
+            view_attributes: Option<SetOf<WorkspaceViewAttribute>>,
+        ) -> Self {
+            Self {
+                view_handle,
+                view_attributes,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=256"))]
+    pub struct WorkspaceCreatePDUViewParameters(
+        pub SetOf<AnonymousWorkspaceCreatePDUViewParameters>,
+    );
+    #[doc = "  WorkspaceCreatePDU"]
+    #[doc = "  This PDU causes a workspace to be created and its"]
+    #[doc = "  attributes to be set."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct WorkspaceCreatePDU {
+        #[rasn(identifier = "workspaceIdentifier")]
+        pub workspace_identifier: WorkspaceIdentifier,
+        #[rasn(value("0..=65535"), identifier = "appRosterInstance")]
+        pub app_roster_instance: u16,
+        pub synchronized: bool,
+        #[rasn(identifier = "acceptKeyboardEvents")]
+        pub accept_keyboard_events: bool,
+        #[rasn(identifier = "acceptPointingDeviceEvents")]
+        pub accept_pointing_device_events: bool,
+        #[rasn(size("1..=65536"), identifier = "protectedPlaneAccessList")]
+        pub protected_plane_access_list: Option<SetOf<MCSUserID>>,
+        #[rasn(identifier = "workspaceSize")]
+        pub workspace_size: WorkspaceSize,
+        #[rasn(identifier = "workspaceAttributes")]
+        pub workspace_attributes: Option<SetOf<WorkspaceAttribute>>,
+        #[rasn(identifier = "planeParameters")]
+        pub plane_parameters: WorkspaceCreatePDUPlaneParameters,
+        #[rasn(identifier = "viewParameters")]
+        pub view_parameters: Option<WorkspaceCreatePDUViewParameters>,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+    }
+    impl WorkspaceCreatePDU {
+        pub fn new(
+            workspace_identifier: WorkspaceIdentifier,
+            app_roster_instance: u16,
+            synchronized: bool,
+            accept_keyboard_events: bool,
+            accept_pointing_device_events: bool,
+            protected_plane_access_list: Option<SetOf<MCSUserID>>,
+            workspace_size: WorkspaceSize,
+            workspace_attributes: Option<SetOf<WorkspaceAttribute>>,
+            plane_parameters: WorkspaceCreatePDUPlaneParameters,
+            view_parameters: Option<WorkspaceCreatePDUViewParameters>,
+            non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                workspace_identifier,
+                app_roster_instance,
+                synchronized,
+                accept_keyboard_events,
+                accept_pointing_device_events,
+                protected_plane_access_list,
+                workspace_size,
+                workspace_attributes,
+                plane_parameters,
+                view_parameters,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[doc = "  WorkspaceDeletePDU"]
+    #[doc = "  This PDU causes a workspace to be destroyed."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct WorkspaceDeletePDU {
+        #[rasn(identifier = "workspaceIdentifier")]
+        pub workspace_identifier: WorkspaceIdentifier,
+        pub reason: WorkspaceDeleteReason,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+    }
+    impl WorkspaceDeletePDU {
+        pub fn new(
+            workspace_identifier: WorkspaceIdentifier,
+            reason: WorkspaceDeleteReason,
+            non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                workspace_identifier,
+                reason,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[doc = "  WorkspaceDeleteReason"]
+    #[doc = "  This value represents the reason codes for the"]
+    #[doc = "  WorkspaceDeletePDU."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum WorkspaceDeleteReason {
+        userInitiated(()),
+        insufficientStorage(()),
+        nonStandardReason(NonStandardParameter),
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    #[non_exhaustive]
+    pub struct AnonymousWorkspaceEditPDUPlaneEdits {
+        pub plane: DataPlaneID,
+        #[rasn(identifier = "planeAttributes")]
+        pub plane_attributes: SetOf<PlaneAttribute>,
+    }
+    impl AnonymousWorkspaceEditPDUPlaneEdits {
+        pub fn new(plane: DataPlaneID, plane_attributes: SetOf<PlaneAttribute>) -> Self {
+            Self {
+                plane,
+                plane_attributes,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=256"))]
+    pub struct WorkspaceEditPDUPlaneEdits(pub SetOf<AnonymousWorkspaceEditPDUPlaneEdits>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum AnonymousWorkspaceEditPDUViewEditsAction {
+        createNewView(SetOf<WorkspaceViewAttribute>),
+        editView(SetOf<WorkspaceViewAttribute>),
+        deleteView(()),
+        nonStandardAction(NonStandardParameter),
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    #[non_exhaustive]
+    pub struct AnonymousWorkspaceEditPDUViewEdits {
+        #[rasn(identifier = "viewHandle")]
+        pub view_handle: Handle,
+        pub action: AnonymousWorkspaceEditPDUViewEditsAction,
+    }
+    impl AnonymousWorkspaceEditPDUViewEdits {
+        pub fn new(view_handle: Handle, action: AnonymousWorkspaceEditPDUViewEditsAction) -> Self {
+            Self {
+                view_handle,
+                action,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=256"))]
+    pub struct WorkspaceEditPDUViewEdits(pub SetOf<AnonymousWorkspaceEditPDUViewEdits>);
+    #[doc = "  WorkspaceEditPDU"]
+    #[doc = "  This PDU allows workspace attributes to be edited."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct WorkspaceEditPDU {
+        #[rasn(identifier = "workspaceIdentifier")]
+        pub workspace_identifier: WorkspaceIdentifier,
+        #[rasn(identifier = "attributeEdits")]
+        pub attribute_edits: Option<SetOf<WorkspaceAttribute>>,
+        #[rasn(identifier = "planeEdits")]
+        pub plane_edits: Option<WorkspaceEditPDUPlaneEdits>,
+        #[rasn(identifier = "viewEdits")]
+        pub view_edits: Option<WorkspaceEditPDUViewEdits>,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+    }
+    impl WorkspaceEditPDU {
+        pub fn new(
+            workspace_identifier: WorkspaceIdentifier,
+            attribute_edits: Option<SetOf<WorkspaceAttribute>>,
+            plane_edits: Option<WorkspaceEditPDUPlaneEdits>,
+            view_edits: Option<WorkspaceEditPDUViewEdits>,
+            non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                workspace_identifier,
+                attribute_edits,
+                plane_edits,
+                view_edits,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct WorkspaceIdentifierArchiveWorkspace {
+        #[rasn(identifier = "archiveHandle")]
+        pub archive_handle: Handle,
+        #[rasn(identifier = "entryName")]
+        pub entry_name: ArchiveEntryName,
+        #[rasn(identifier = "modificationTime")]
+        pub modification_time: Option<GeneralizedTime>,
+    }
+    impl WorkspaceIdentifierArchiveWorkspace {
+        pub fn new(
+            archive_handle: Handle,
+            entry_name: ArchiveEntryName,
+            modification_time: Option<GeneralizedTime>,
+        ) -> Self {
+            Self {
+                archive_handle,
+                entry_name,
+                modification_time,
+            }
+        }
+    }
+    #[doc = "  WorkspaceIdentifier"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum WorkspaceIdentifier {
+        activeWorkspace(Handle),
+        archiveWorkspace(WorkspaceIdentifierArchiveWorkspace),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum WorkspacePlaneCopyPDUCopyDescriptor {
+        permanentPlaneCopyDescriptor(PermanentPlaneCopyDescriptor),
+        editablePlaneCopyDescriptor(EditablePlaneCopyDescriptor),
+    }
+    #[doc = "  WorkspacePlaneCopyPDU"]
+    #[doc = "  This PDU causes a portion of a plane to be copied"]
+    #[doc = "  to another plane (either intra- or inter-workspace)."]
+    #[doc = "   The source and destinations must either both be"]
+    #[doc = "  permanent or both be editable, and they must have the same"]
+    #[doc = "  usage designator; otherwise copy for that plane will"]
+    #[doc = "  not take place."]
+    #[doc = "  If the planes are editable, objects with any of their control"]
+    #[doc = "  points falling totally within the source rectangle are copied."]
+    #[doc = "  If the Scaling capability has been negotiated in the case of a"]
+    #[doc = "  softcopy workspace then it is not necessary for the source and"]
+    #[doc = "  destination rectangles to be the same size."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct WorkspacePlaneCopyPDU {
+        #[rasn(identifier = "sourceWorkspaceIdentifier")]
+        pub source_workspace_identifier: WorkspaceIdentifier,
+        #[rasn(identifier = "sourcePlane")]
+        pub source_plane: DataPlaneID,
+        #[rasn(identifier = "destinationWorkspaceIdentifier")]
+        pub destination_workspace_identifier: WorkspaceIdentifier,
+        #[rasn(identifier = "destinationPlane")]
+        pub destination_plane: DataPlaneID,
+        #[rasn(identifier = "copyDescriptor")]
+        pub copy_descriptor: WorkspacePlaneCopyPDUCopyDescriptor,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+    }
+    impl WorkspacePlaneCopyPDU {
+        pub fn new(
+            source_workspace_identifier: WorkspaceIdentifier,
+            source_plane: DataPlaneID,
+            destination_workspace_identifier: WorkspaceIdentifier,
+            destination_plane: DataPlaneID,
+            copy_descriptor: WorkspacePlaneCopyPDUCopyDescriptor,
+            non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                source_workspace_identifier,
+                source_plane,
+                destination_workspace_identifier,
+                destination_plane,
+                copy_descriptor,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[doc = "  WorkspacePoint"]
+    #[doc = "  A WorkspacePoint is a two-dimensional address of a location in a"]
+    #[doc = "  workspace plane including points in the invisible border areas."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct WorkspacePoint {
+        #[rasn(identifier = "xCoordinate")]
+        pub x_coordinate: WorkspaceCoordinate,
+        #[rasn(identifier = "yCoordinate")]
+        pub y_coordinate: WorkspaceCoordinate,
+    }
+    impl WorkspacePoint {
+        pub fn new(x_coordinate: WorkspaceCoordinate, y_coordinate: WorkspaceCoordinate) -> Self {
+            Self {
+                x_coordinate,
+                y_coordinate,
+            }
+        }
+    }
+    #[doc = " WorkspaceReadyPDU"]
+    #[doc = "  This PDU signals that a workspace create is complete (for"]
+    #[doc = "  unsynchronized workspaces)."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct WorkspaceReadyPDU {
+        #[rasn(identifier = "workspaceIdentifier")]
+        pub workspace_identifier: WorkspaceIdentifier,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+    }
+    impl WorkspaceReadyPDU {
+        pub fn new(
+            workspace_identifier: WorkspaceIdentifier,
+            non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                workspace_identifier,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[doc = "  WorkspaceRefreshStatusPDU"]
+    #[doc = "  This PDU is used by an SICE to announce or remit its status as"]
+    #[doc = "  the session refresh SICE for SICEs that join late."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct WorkspaceRefreshStatusPDU {
+        #[rasn(identifier = "refreshStatus")]
+        pub refresh_status: bool,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+    }
+    impl WorkspaceRefreshStatusPDU {
+        pub fn new(
+            refresh_status: bool,
+            non_standard_parameters: Option<SetOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                refresh_status,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[doc = "  WorkspaceRegion"]
+    #[doc = "  This type can be used to describe both the size and"]
+    #[doc = "  position of a rectangular region within a workspace."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct WorkspaceRegion {
+        #[rasn(identifier = "upperLeft")]
+        pub upper_left: WorkspacePoint,
+        #[rasn(identifier = "lowerRight")]
+        pub lower_right: WorkspacePoint,
+    }
+    impl WorkspaceRegion {
+        pub fn new(upper_left: WorkspacePoint, lower_right: WorkspacePoint) -> Self {
+            Self {
+                upper_left,
+                lower_right,
+            }
+        }
+    }
+    #[doc = "  WorkspaceSize"]
+    #[doc = "  The size of a workspace in pixels."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct WorkspaceSize {
+        #[rasn(value("1..=21845"))]
+        pub width: u16,
+        #[rasn(value("1..=21845"))]
+        pub height: u16,
+    }
+    impl WorkspaceSize {
+        pub fn new(width: u16, height: u16) -> Self {
+            Self { width, height }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum WorkspaceViewAttributeViewRegion {
+        fullWorkspace(()),
+        partialWorkspace(WorkspaceRegion),
+    }
+    #[doc = "  WorkspaceViewAttribute"]
+    #[doc = "  View attributes are editable characteristics of workspace views."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum WorkspaceViewAttribute {
+        viewRegion(WorkspaceViewAttributeViewRegion),
+        viewState(WorkspaceViewState),
+        updatesEnabled(bool),
+        sourceDisplayIndicator(SourceDisplayIndicator),
+        nonStandardAttribute(NonStandardParameter),
+    }
+    #[doc = "  WorkspaceViewState"]
+    #[doc = "  A view's state indicates how the local terminal should"]
+    #[doc = "  display the view."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum WorkspaceViewState {
+        hidden(()),
+        background(()),
+        foreground(()),
+        focus(()),
+        nonStandardState(NonStandardIdentifier),
+    }
+    #[doc = "  ZOrder"]
+    #[doc = "  This enumerated type is used to specify a transition to front"]
+    #[doc = "  or back of an object within an addressable plane."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum ZOrder {
+        front = 0,
+        back = 1,
+    }
+}

@@ -1,0 +1,132 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_m_m3100_2005_M3100ASN1TypeModule7.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod m3100_asn1_type_module7 {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " EXPORTS everything"]
+    #[doc = " IMPORTS nothing"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AttributeChoiceInteger {
+        #[rasn(identifier = "attributeName")]
+        pub attribute_name: GraphicString,
+        #[rasn(identifier = "minimumValue")]
+        pub minimum_value: Integer,
+        #[rasn(identifier = "maximumValue")]
+        pub maximum_value: Integer,
+        pub granularity: Integer,
+    }
+    impl AttributeChoiceInteger {
+        pub fn new(
+            attribute_name: GraphicString,
+            minimum_value: Integer,
+            maximum_value: Integer,
+            granularity: Integer,
+        ) -> Self {
+            Self {
+                attribute_name,
+                minimum_value,
+                maximum_value,
+                granularity,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AttributeChoiceReal {
+        #[rasn(identifier = "attributeName")]
+        pub attribute_name: GraphicString,
+        #[rasn(identifier = "minimumValue")]
+        pub minimum_value: f64,
+        #[rasn(identifier = "maximumValue")]
+        pub maximum_value: f64,
+    }
+    impl AttributeChoiceReal {
+        pub fn new(attribute_name: GraphicString, minimum_value: f64, maximum_value: f64) -> Self {
+            Self {
+                attribute_name,
+                minimum_value,
+                maximum_value,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Kind(pub GraphicString);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "CHOICE")]
+    pub enum AnonymousManagedElementType {
+        meTypeString(GraphicString),
+        meTypeOID(ObjectIdentifier),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ManagedElementType(pub SetOf<AnonymousManagedElementType>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ModelCode(pub GraphicString);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "GraphicString")]
+    pub struct AnonymousNeAliases(pub GraphicString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NeAliases(pub SetOf<AnonymousNeAliases>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct PortIDType {
+        #[rasn(tag(context, 0), identifier = "managedElement")]
+        pub managed_element: GraphicString,
+        #[rasn(tag(context, 1))]
+        pub bay: Option<GraphicString>,
+        #[rasn(tag(context, 2))]
+        pub shelf: Option<GraphicString>,
+        #[rasn(tag(context, 3))]
+        pub drawer: Option<GraphicString>,
+        #[rasn(tag(context, 4))]
+        pub slot: Option<GraphicString>,
+        #[rasn(tag(context, 5))]
+        pub port: GraphicString,
+    }
+    impl PortIDType {
+        pub fn new(
+            managed_element: GraphicString,
+            bay: Option<GraphicString>,
+            shelf: Option<GraphicString>,
+            drawer: Option<GraphicString>,
+            slot: Option<GraphicString>,
+            port: GraphicString,
+        ) -> Self {
+            Self {
+                managed_element,
+                bay,
+                shelf,
+                drawer,
+                slot,
+                port,
+            }
+        }
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "CHOICE")]
+    pub enum AnonymousRanges {
+        #[rasn(tag(context, 0))]
+        integerRange(AttributeChoiceInteger),
+        #[rasn(tag(context, 1))]
+        realRange(AttributeChoiceReal),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Ranges(pub SetOf<AnonymousRanges>);
+}

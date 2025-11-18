@@ -1,0 +1,79 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x519_2008_DirectoryIDMProtocols.asn1
+---
+Warnings:
+LinkerError in ASN grammar: Failed to resolve supertype IDM-PDU of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype IDM-PDU of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype IDM-PDU of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype IDM-PDU of parameterized implementation.
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod directory_idmprotocols {
+    extern crate alloc;
+    use super::directory_abstract_service::{
+        ABANDON, ADD_ENTRY, COMPARE, DIRECTORY_BIND, LIST, MODIFY_DN, MODIFY_ENTRY, READ,
+        REMOVE_ENTRY, SEARCH,
+    };
+    use super::directory_shadow_abstract_service::{
+        COORDINATE_SHADOW_UPDATE, D_SASHADOW_BIND, REQUEST_SHADOW_UPDATE, UPDATE_SHADOW,
+    };
+    use super::distributed_operations::{
+        CHAINED_ABANDON, CHAINED_ADD_ENTRY, CHAINED_COMPARE, CHAINED_LIST, CHAINED_MODIFY_DN,
+        CHAINED_MODIFY_ENTRY, CHAINED_READ, CHAINED_REMOVE_ENTRY, CHAINED_SEARCH, D_SABIND,
+    };
+    use super::idmprotocol_specification::*;
+    use super::operational_binding_management::{
+        D_SAOPERATIONAL_BINDING_MANAGEMENT_BIND, ESTABLISH_OPERATIONAL_BINDING,
+        MODIFY_OPERATIONAL_BINDING, TERMINATE_OPERATIONAL_BINDING,
+    };
+    use super::useful_definitions::{
+        DIRECTORY_ABSTRACT_SERVICE, DIRECTORY_SHADOW_ABSTRACT_SERVICE, DISTRIBUTED_OPERATIONS,
+        ID_IDM, I_DMPROTOCOL_SPECIFICATION, OP_BINDING_MANAGEMENT,
+    };
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " IDM protocols"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "DAP-IDM-PDUs")]
+    pub struct DAPIDMPDUs(pub IDMPDU);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "DISP-IDM-PDUs")]
+    pub struct DISPIDMPDUs(pub IDMPDU);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "DOP-IDM-PDUs")]
+    pub struct DOPIDMPDUs(pub IDMPDU);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "DSP-IDM-PDUs")]
+    pub struct DSPIDMPDUs(pub IDMPDU);
+    #[doc = " protocol object identifiers"]
+    pub static ID_IDM_DAP: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_IDM, &[0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_IDM_DISP: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_IDM, &[2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_IDM_DOP: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_IDM, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_IDM_DSP: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_IDM, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+}

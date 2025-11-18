@@ -1,0 +1,213 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x792_1999_AuditASN1Module.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod audit_asn1_module {
+    extern crate alloc;
+    use super::asn1_defined_types_module::NameType;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum AuditInitiateInformationClassesInclude {
+        all(()),
+        subset(SetOf<ObjectIdentifier>),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum AuditInitiateInformationClassesExclude {
+        none(()),
+        subset(SetOf<ObjectIdentifier>),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AuditInitiateInformationClasses {
+        pub include: AuditInitiateInformationClassesInclude,
+        pub exclude: AuditInitiateInformationClassesExclude,
+    }
+    impl AuditInitiateInformationClasses {
+        pub fn new(
+            include: AuditInitiateInformationClassesInclude,
+            exclude: AuditInitiateInformationClassesExclude,
+        ) -> Self {
+            Self { include, exclude }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum AuditInitiateInformationAttributesInclude {
+        all(()),
+        subset(SetOf<ObjectIdentifier>),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum AuditInitiateInformationAttributesExclude {
+        none(()),
+        subset(SetOf<ObjectIdentifier>),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AuditInitiateInformationAttributes {
+        pub include: AuditInitiateInformationAttributesInclude,
+        pub exclude: AuditInitiateInformationAttributesExclude,
+    }
+    impl AuditInitiateInformationAttributes {
+        pub fn new(
+            include: AuditInitiateInformationAttributesInclude,
+            exclude: AuditInitiateInformationAttributesExclude,
+        ) -> Self {
+            Self { include, exclude }
+        }
+    }
+    #[doc = " Reserved arcs below configAuditSup are (8) for attribute groups"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AuditInitiateInformation {
+        pub classes: AuditInitiateInformationClasses,
+        pub attributes: AuditInitiateInformationAttributes,
+    }
+    impl AuditInitiateInformation {
+        pub fn new(
+            classes: AuditInitiateInformationClasses,
+            attributes: AuditInitiateInformationAttributes,
+        ) -> Self {
+            Self {
+                classes,
+                attributes,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AuditInitiateResult {
+        started = 0,
+        auditAlreadyRunning = 1,
+        resourceLimit = 2,
+        notStartedOther = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AuditReportInformation {
+        pub result: AuditResult,
+        #[rasn(identifier = "outputResult")]
+        pub output_result: Option<OutputResult>,
+    }
+    impl AuditReportInformation {
+        pub fn new(result: AuditResult, output_result: Option<OutputResult>) -> Self {
+            Self {
+                result,
+                output_result,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AuditResult {
+        succeeded = 0,
+        partialSuccess = 1,
+        terminatedExternally = 2,
+        terminatedInternally = 3,
+        terminatedNoFileSpace = 4,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AuditTerminateResult {
+        terminated = 0,
+        noAuditRunning = 1,
+        couldNotTerminate = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct Boolean(pub bool);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct FileSuspect(pub bool);
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousOutputResult {
+        pub filename: GraphicString,
+        #[rasn(
+            default = "anonymous_output_result_file_suspect_default",
+            identifier = "fileSuspect"
+        )]
+        pub file_suspect: FileSuspect,
+    }
+    impl AnonymousOutputResult {
+        pub fn new(filename: GraphicString, file_suspect: FileSuspect) -> Self {
+            Self {
+                filename,
+                file_suspect,
+            }
+        }
+    }
+    fn anonymous_output_result_file_suspect_default() -> FileSuspect {
+        false
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct OutputResult(pub SequenceOf<AnonymousOutputResult>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum TimeStamp {
+        neverRun(()),
+        run(GeneralizedTime),
+    }
+    pub static CONFIG_AUDIT_SUP: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&[0u32, 0u32], &***X, &[792u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static CONFIG_AUDIT_SUP_ACTION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***CONFIG_AUDIT_SUP, &[9u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static CONFIG_AUDIT_SUP_ATTRIBUTE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***CONFIG_AUDIT_SUP, &[7u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static CONFIG_AUDIT_SUP_MOBJECT_CLASS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***CONFIG_AUDIT_SUP, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static CONFIG_AUDIT_SUP_NAME_BINDING: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***CONFIG_AUDIT_SUP, &[6u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static CONFIG_AUDIT_SUP_NOTIFICATION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***CONFIG_AUDIT_SUP, &[10u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static CONFIG_AUDIT_SUP_PACKAGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***CONFIG_AUDIT_SUP, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static CONFIG_AUDIT_SUP_PARAMETER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***CONFIG_AUDIT_SUP, &[5u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static CONFIG_AUDIT_SUPSTANDARD_SPECIFIC_EXTENSION: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***CONFIG_AUDIT_SUP, &[0u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+}

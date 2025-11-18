@@ -1,0 +1,128 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x749_1997_MdmpmfASN1Module.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod mdmpmf_asn1_module {
+    extern crate alloc;
+    use super::attribute_asn1_module::SimpleNameType;
+    use super::cmip_1::{ActionArgument, CMISFilter, GetArgument, ObjectInstance, SetArgument};
+    use super::schedulerev1_asn1_module::{CommonError, OperationResult};
+    use super::time_representation::TimeStamp;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ApplyOperationToMembershipReply(pub SequenceOf<OperationResult>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ApplyOperationToMembershipRequest {
+        #[rasn(tag(context, 0))]
+        set(SetArgument),
+        #[rasn(tag(context, 1))]
+        action(ActionArgument),
+        #[rasn(tag(context, 2))]
+        get(GetArgument),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum Completeness {
+        completenessUnknown = 0,
+        knownComplete = 1,
+        knownNotComplete = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum DetermineViolationStatusReply {
+        unknown = 1,
+        #[rasn(identifier = "no-violation")]
+        no_violation = 2,
+        #[rasn(identifier = "violation-detected")]
+        violation_detected = 3,
+        #[rasn(identifier = "non-member")]
+        non_member = 4,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DetermineViolationStatusRequest(pub ObjectInstance);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct InformationString(pub GeneralString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ListMembershipReply {
+        pub completeness: Completeness,
+        pub membership: Membership,
+    }
+    impl ListMembershipReply {
+        pub fn new(completeness: Completeness, membership: Membership) -> Self {
+            Self {
+                completeness,
+                membership,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Membership(pub SetOf<ObjectInstance>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum MembershipStatus {
+        unknown = 1,
+        member = 2,
+        #[rasn(identifier = "non-member")]
+        non_member = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct Nothing(pub ());
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct PolicyViolation {
+        #[rasn(identifier = "violatorName")]
+        pub violator_name: ObjectInstance,
+        #[rasn(identifier = "violatedPolicy")]
+        pub violated_policy: ObjectInstance,
+    }
+    impl PolicyViolation {
+        pub fn new(violator_name: ObjectInstance, violated_policy: ObjectInstance) -> Self {
+            Self {
+                violator_name,
+                violated_policy,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct VerifyMembershipStatusReply {
+        #[rasn(identifier = "objectName")]
+        pub object_name: ObjectInstance,
+        #[rasn(identifier = "membershipStatus")]
+        pub membership_status: MembershipStatus,
+    }
+    impl VerifyMembershipStatusReply {
+        pub fn new(object_name: ObjectInstance, membership_status: MembershipStatus) -> Self {
+            Self {
+                object_name,
+                membership_status,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct VerifyMembershipStatusRequest(pub ObjectInstance);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ViolationStatus {
+        unknown = 1,
+        #[rasn(identifier = "no-violation")]
+        no_violation = 2,
+        #[rasn(identifier = "violation-detected")]
+        violation_detected = 3,
+    }
+}

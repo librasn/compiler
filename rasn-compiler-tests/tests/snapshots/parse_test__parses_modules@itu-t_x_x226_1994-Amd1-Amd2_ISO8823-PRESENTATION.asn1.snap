@@ -1,0 +1,57 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x226_1994-Amd1-Amd2_ISO8823-PRESENTATION.asn1
+---
+Error matching ASN syntax at while parsing:
+    ╭─[line 27, column 2]
+    │
+    │ 
+ 26 │  --
+ 27 │  CP-type ::= SET { ◀▪▪▪▪▪▪▪▪▪▪ FAILED AT THIS LINE
+ 28 │    mode-selector           [0] IMPLICIT Mode-selector,
+ 29 │    x410-mode-parameters
+ 30 │      [1] IMPLICIT SET {COMPONENTS OF Reliable-Transfer-APDU.RTORQapdu} OPTIONAL--  This OPTIONAL element shall be absent for a
+ 31 │    --  nested presentation connection.
+ 32 │    --  Shall be used for X.410 mode only. Shall be bitwise
+ 33 │    --  compatible with CCITT Recommendation X.410-1984.
+ 34 │    --  This shall be the User data parameter of the CP PPDU1) --,
+ 35 │    normal-mode-parameters
+ 36 │      [2] IMPLICIT SEQUENCE {protocol-version
+ 37 │                               [0] IMPLICIT Protocol-version DEFAULT {version-1},
+ 38 │                             calling-presentation-selector
+ 39 │                               [1] IMPLICIT Calling-presentation-selector
+ 40 │                                 OPTIONAL,
+ 41 │                             called-presentation-selector
+ 42 │                               [2] IMPLICIT Called-presentation-selector OPTIONAL,
+ 43 │                             presentation-context-definition-list
+ 44 │                               [4] IMPLICIT Presentation-context-definition-list
+ 45 │                                 OPTIONAL,
+ 46 │                             default-context-name
+ 47 │                               [6] IMPLICIT Default-context-name OPTIONAL,
+ 48 │                             presentation-requirements
+ 49 │                               [8] IMPLICIT Presentation-requirements OPTIONAL,
+ 50 │                             user-session-requirements
+ 51 │                               [9] IMPLICIT User-session-requirements OPTIONAL-- shall not be present if equal to the Revised session
+ 52 │                             -- requirements parameter --,
+ 53 │                             protocol-options
+ 54 │                               [11]  Protocol-options DEFAULT {},
+ 55 │                             --  shall be absent if no options are offered
+ 56 │                             initiators-nominated-context
+ 57 │                               [12]  Presentation-context-identifier OPTIONAL,
+ 58 │                             --  shall only be present if nominated-context is
+ 59 │                             --  offered in protocol-options
+ 60 │                             extensions
+ 61 │                               [14]  SEQUENCE {...} OPTIONAL,
+ 62 │                             --  to allow for future extensions
+ 63 │                             user-data
+ 64 │                               User-data OPTIONAL} OPTIONAL
+ 65 │    -- Shall be used for normal mode only.
+ 66 │    -- Shall be the parameters of the CP PPDU.
+ 67 │  }
+ 69 │  --
+ 70 │  --  As an initiator's option, the presentation data values contained in a CP PPDU may be
+ 71 │  --  encoded more than once, using CPC-type values, to allow the transfer of the same
+ 72 │  --  presentation data values using a number of different transfer syntaxes.
+ 73 │  --
+    │
+────╯

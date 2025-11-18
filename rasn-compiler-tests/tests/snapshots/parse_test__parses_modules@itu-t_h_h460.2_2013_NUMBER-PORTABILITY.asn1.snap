@@ -1,0 +1,126 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_h_h460.2_2013_NUMBER-PORTABILITY.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod number_portability {
+    extern crate alloc;
+    use super::h323_messages::{AliasAddress, PrivateTypeOfNumber, PublicTypeOfNumber};
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct NumberPortabilityInfoNUMBERPORTABILITYDATA {
+        #[rasn(identifier = "addressTranslated")]
+        pub address_translated: Option<()>,
+        #[rasn(identifier = "portedAddress")]
+        pub ported_address: Option<PortabilityAddress>,
+        #[rasn(identifier = "routingAddress")]
+        pub routing_address: Option<PortabilityAddress>,
+        #[rasn(identifier = "regionalParams")]
+        pub regional_params: Option<RegionalParameters>,
+    }
+    impl NumberPortabilityInfoNUMBERPORTABILITYDATA {
+        pub fn new(
+            address_translated: Option<()>,
+            ported_address: Option<PortabilityAddress>,
+            routing_address: Option<PortabilityAddress>,
+            regional_params: Option<RegionalParameters>,
+        ) -> Self {
+            Self {
+                address_translated,
+                ported_address,
+                routing_address,
+                regional_params,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum NumberPortabilityInfo {
+        numberPortabilityRejectReason(NumberPortabilityRejectReason),
+        nUMBERPORTABILITYDATA(NumberPortabilityInfoNUMBERPORTABILITYDATA),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum NumberPortabilityRejectReason {
+        unspecified(()),
+        qorPortedNumber(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum NumberPortabilityTypeOfNumber {
+        publicTypeOfNumber(PublicTypeOfNumber),
+        privateTypeOfNumber(PrivateTypeOfNumber),
+        portabilityTypeOfNumber(PortabilityTypeOfNumber),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct PortabilityAddress {
+        #[rasn(identifier = "aliasAddress")]
+        pub alias_address: AliasAddress,
+        #[rasn(identifier = "typeOfAddress")]
+        pub type_of_address: Option<NumberPortabilityTypeOfNumber>,
+    }
+    impl PortabilityAddress {
+        pub fn new(
+            alias_address: AliasAddress,
+            type_of_address: Option<NumberPortabilityTypeOfNumber>,
+        ) -> Self {
+            Self {
+                alias_address,
+                type_of_address,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum PortabilityTypeOfNumber {
+        portedNumber(()),
+        routingNumber(()),
+        concatenatedNumber(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct RegionalParameters {
+        #[rasn(value("0..=255"), identifier = "t35CountryCode")]
+        pub t35_country_code: u8,
+        #[rasn(value("0..=255"), identifier = "t35Extension")]
+        pub t35_extension: u8,
+        #[rasn(value("1..=255"), identifier = "variantIdentifier")]
+        pub variant_identifier: Option<u8>,
+        #[rasn(identifier = "regionalData")]
+        pub regional_data: OctetString,
+    }
+    impl RegionalParameters {
+        pub fn new(
+            t35_country_code: u8,
+            t35_extension: u8,
+            variant_identifier: Option<u8>,
+            regional_data: OctetString,
+        ) -> Self {
+            Self {
+                t35_country_code,
+                t35_extension,
+                variant_identifier,
+                regional_data,
+            }
+        }
+    }
+}

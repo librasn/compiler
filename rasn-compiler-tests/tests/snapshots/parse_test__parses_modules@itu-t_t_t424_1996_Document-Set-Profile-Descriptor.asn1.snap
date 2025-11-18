@@ -1,0 +1,129 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_t_t424_1996_Document-Set-Profile-Descriptor.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod document_set_profile_descriptor {
+    extern crate alloc;
+    use super::document_profile_descriptor::{
+        DatesAndTimes, DocumentDescription, ExternalReferences, LocalFileReferences, ODAVersion,
+        Originators, OtherUserInformation, SealedDocBodyparts, SecurityInformation,
+    };
+    use super::external_references::{ExternalReferencesList, ReferenceName};
+    use super::link_descriptors::LinkOrLinkClassIdentifier;
+    use super::location_expressions::LocationExpression;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = "  see 8.11.3"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Document-Set-Profile-Descriptor")]
+    pub struct DocumentSetProfileDescriptor {
+        #[rasn(tag(context, 99), identifier = "entry-point")]
+        pub entry_point: EntryPoint,
+        #[rasn(tag(context, 0), identifier = "external-references-list")]
+        pub external_references_list: Option<ExternalReferencesList>,
+        #[rasn(tag(context, 1), identifier = "interchange-format-class")]
+        pub interchange_format_class: Integer,
+        #[rasn(tag(context, 2), identifier = "oda-version")]
+        pub oda_version: ODAVersion,
+        #[rasn(tag(context, 3), identifier = "profile-character-sets")]
+        pub profile_character_sets: Option<OctetString>,
+        #[rasn(tag(context, 4), identifier = "document-description")]
+        pub document_description: Option<DocumentDescription>,
+        #[rasn(tag(context, 5), identifier = "dates-and-times")]
+        pub dates_and_times: Option<DatesAndTimes>,
+        #[rasn(tag(context, 6))]
+        pub originators: Option<Originators>,
+        #[rasn(tag(context, 7), identifier = "other-user-information")]
+        pub other_user_information: Option<OtherUserInformation>,
+        #[rasn(tag(context, 8), identifier = "external-references")]
+        pub external_references: Option<ExternalReferences>,
+        #[rasn(tag(context, 9), identifier = "local-file-references")]
+        pub local_file_references: Option<LocalFileReferences>,
+        #[rasn(tag(context, 10), identifier = "security-information")]
+        pub security_information: Option<SecurityInformation>,
+        #[rasn(tag(context, 11))]
+        pub links: Option<NumericString>,
+        #[rasn(tag(context, 12), identifier = "link-classes")]
+        pub link_classes: Option<NumericString>,
+        #[rasn(tag(context, 13), identifier = "enciphered-links")]
+        pub enciphered_links: Option<NumericString>,
+        #[rasn(tag(context, 14), identifier = "sealed-links")]
+        pub sealed_links: Option<SealedDocBodyparts>,
+    }
+    impl DocumentSetProfileDescriptor {
+        pub fn new(
+            entry_point: EntryPoint,
+            external_references_list: Option<ExternalReferencesList>,
+            interchange_format_class: Integer,
+            oda_version: ODAVersion,
+            profile_character_sets: Option<OctetString>,
+            document_description: Option<DocumentDescription>,
+            dates_and_times: Option<DatesAndTimes>,
+            originators: Option<Originators>,
+            other_user_information: Option<OtherUserInformation>,
+            external_references: Option<ExternalReferences>,
+            local_file_references: Option<LocalFileReferences>,
+            security_information: Option<SecurityInformation>,
+            links: Option<NumericString>,
+            link_classes: Option<NumericString>,
+            enciphered_links: Option<NumericString>,
+            sealed_links: Option<SealedDocBodyparts>,
+        ) -> Self {
+            Self {
+                entry_point,
+                external_references_list,
+                interchange_format_class,
+                oda_version,
+                profile_character_sets,
+                document_description,
+                dates_and_times,
+                originators,
+                other_user_information,
+                external_references,
+                local_file_references,
+                security_information,
+                links,
+                link_classes,
+                enciphered_links,
+                sealed_links,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct EntryPointReference {
+        #[rasn(tag(context, 0), identifier = "reference-name")]
+        pub reference_name: Option<ReferenceName>,
+        #[rasn(tag(context, 1), identifier = "reference-qualifier")]
+        pub reference_qualifier: Option<LocationExpression>,
+    }
+    impl EntryPointReference {
+        pub fn new(
+            reference_name: Option<ReferenceName>,
+            reference_qualifier: Option<LocationExpression>,
+        ) -> Self {
+            Self {
+                reference_name,
+                reference_qualifier,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "Entry-Point")]
+    pub enum EntryPoint {
+        #[rasn(identifier = "link-id")]
+        link_id(LinkOrLinkClassIdentifier),
+        #[rasn(tag(context, 1))]
+        reference(EntryPointReference),
+    }
+}

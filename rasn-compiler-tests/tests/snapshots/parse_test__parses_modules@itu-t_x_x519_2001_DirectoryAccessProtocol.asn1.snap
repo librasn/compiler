@@ -1,0 +1,99 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x519_2001_DirectoryAccessProtocol.asn1
+---
+Warnings:
+LinkerError in ASN grammar: Failed to resolve reference in object set.
+LinkerError in ASN grammar: Failed to resolve supertype ROS of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve reference in object set.
+LinkerError in ASN grammar: Failed to link value with 'Code'
+LinkerError in ASN grammar: Failed to link value with 'Code'
+LinkerError in ASN grammar: Failed to link value with 'Code'
+LinkerError in ASN grammar: Failed to link value with 'Code'
+LinkerError in ASN grammar: Failed to link value with 'Code'
+LinkerError in ASN grammar: Failed to link value with 'Code'
+LinkerError in ASN grammar: Failed to link value with 'Code'
+LinkerError in ASN grammar: Failed to link value with 'Code'
+LinkerError in ASN grammar: Failed to link value with 'Code'
+LinkerError in ASN grammar: Failed to link value with 'Code'
+LinkerError in ASN grammar: Failed to link value with 'Code'
+LinkerError in ASN grammar: Failed to link value with 'Code'
+LinkerError in ASN grammar: Failed to link value with 'Code'
+LinkerError in ASN grammar: Failed to link value with 'Code'
+LinkerError in ASN grammar: Failed to link value with 'Code'
+LinkerError in ASN grammar: Failed to link value with 'Code'
+LinkerError in ASN grammar: Failed to link value with 'Code'
+LinkerError in ASN grammar: Failed to link value with 'Code'
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod directory_access_protocol {
+    extern crate alloc;
+    use super::directory_abstract_service::{
+        ABANDON, ADD_ENTRY, COMPARE, DIRECTORY_BIND, DIRECTORY_UNBIND, LIST, MODIFY_DN,
+        MODIFY_ENTRY, READ, REMOVE_ENTRY, SEARCH,
+    };
+    use super::protocol_object_identifiers::{
+        ID_AC_DIRECTORY_ACCESS_AC, ID_AS_DIRECTORY_ACCESS_AS, ID_CONTRACT_DAP,
+        ID_PACKAGE_DAP_CONNECTION, ID_PACKAGE_MODIFY, ID_PACKAGE_READ, ID_PACKAGE_SEARCH,
+        ID_ROS_OBJECT_DAP_DSA, ID_ROS_OBJECT_DIRECTORY, ID_ROS_OBJECT_DUA,
+    };
+    use super::remote_operations_abstract_syntaxes::ACSE_ABSTRACT_SYNTAX;
+    use super::remote_operations_generic_ros_pdus::*;
+    use super::remote_operations_information_objects::*;
+    use super::remote_operations_information_objects_extensions::*;
+    use super::remote_operations_realizations::{ACSE, P_DATA};
+    use super::useful_definitions::{DIRECTORY_ABSTRACT_SERVICE, PROTOCOL_OBJECT_IDENTIFIERS};
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "DAP-InvokeIDSet")]
+    pub struct DAPInvokeIDSet(pub InvokeId);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "DAP-PDUs")]
+    pub enum DAPPDUs {
+        #[rasn(value("0.."))]
+        basicRos(ROS),
+        #[rasn(value("0.."))]
+        bind(Bind),
+        #[rasn(value("0.."))]
+        unbind(Unbind),
+    }
+    pub static ID_ERRCODE_ABANDON_FAILED: LazyLock<Code> =
+        LazyLock::new(|| Code(Code(Code::local(7))));
+    pub static ID_ERRCODE_ABANDONED: LazyLock<Code> = LazyLock::new(|| Code(Code(Code::local(5))));
+    #[doc = " remote error codes"]
+    pub static ID_ERRCODE_ATTRIBUTE_ERROR: LazyLock<Code> =
+        LazyLock::new(|| Code(Code(Code::local(1))));
+    #[doc = " remote error code for DSP"]
+    pub static ID_ERRCODE_DSA_REFERRAL: LazyLock<Code> =
+        LazyLock::new(|| Code(Code(Code::local(9))));
+    pub static ID_ERRCODE_NAME_ERROR: LazyLock<Code> = LazyLock::new(|| Code(Code(Code::local(2))));
+    pub static ID_ERRCODE_REFERRAL: LazyLock<Code> = LazyLock::new(|| Code(Code(Code::local(4))));
+    pub static ID_ERRCODE_SECURITY_ERROR: LazyLock<Code> =
+        LazyLock::new(|| Code(Code(Code::local(6))));
+    pub static ID_ERRCODE_SERVICE_ERROR: LazyLock<Code> =
+        LazyLock::new(|| Code(Code(Code::local(3))));
+    pub static ID_ERRCODE_UPDATE_ERROR: LazyLock<Code> =
+        LazyLock::new(|| Code(Code(Code::local(8))));
+    pub static ID_OPCODE_ABANDON: LazyLock<Code> = LazyLock::new(|| Code(Code(Code::local(3))));
+    pub static ID_OPCODE_ADD_ENTRY: LazyLock<Code> = LazyLock::new(|| Code(Code(Code::local(6))));
+    pub static ID_OPCODE_COMPARE: LazyLock<Code> = LazyLock::new(|| Code(Code(Code::local(2))));
+    pub static ID_OPCODE_LIST: LazyLock<Code> = LazyLock::new(|| Code(Code(Code::local(4))));
+    pub static ID_OPCODE_MODIFY_DN: LazyLock<Code> = LazyLock::new(|| Code(Code(Code::local(9))));
+    pub static ID_OPCODE_MODIFY_ENTRY: LazyLock<Code> =
+        LazyLock::new(|| Code(Code(Code::local(8))));
+    #[doc = "  remote operation codes"]
+    pub static ID_OPCODE_READ: LazyLock<Code> = LazyLock::new(|| Code(Code(Code::local(1))));
+    pub static ID_OPCODE_REMOVE_ENTRY: LazyLock<Code> =
+        LazyLock::new(|| Code(Code(Code::local(7))));
+    pub static ID_OPCODE_SEARCH: LazyLock<Code> = LazyLock::new(|| Code(Code(Code::local(5))));
+}

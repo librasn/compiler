@@ -1,0 +1,302 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_h_h450.2_1998_Call-Transfer-Operations.asn1
+---
+Warnings:
+LinkerError in ASN grammar: Failed to resolve supertype Extension of parameterized implementation.
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod call_transfer_operations {
+    extern crate alloc;
+    use super::addressing_data_elements::{EndpointAddress, PartySubaddress};
+    use super::h225_generic_parameters_definition::H225InformationElement;
+    use super::h323_messages::NonStandardParameter;
+    use super::h4501_general_error_list::{
+        INVALID_CALL_STATE, NOT_AVAILABLE, SUPPLEMENTARY_SERVICE_INTERACTION_NOT_ALLOWED,
+    };
+    use super::manufacturer_specific_service_extension_definition::*;
+    use super::remote_operations_information_objects::*;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum CTActiveArgArgumentExtension {
+        extensionSeq(ExtensionSeq),
+        nonStandardData(NonStandardParameter),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct CTActiveArg {
+        #[rasn(identifier = "connectedAddress")]
+        pub connected_address: EndpointAddress,
+        #[rasn(identifier = "basicCallInfoElements")]
+        pub basic_call_info_elements: Option<H225InformationElement>,
+        #[rasn(size("1..=128"), identifier = "connectedInfo")]
+        pub connected_info: Option<BmpString>,
+        #[rasn(identifier = "argumentExtension")]
+        pub argument_extension: Option<CTActiveArgArgumentExtension>,
+    }
+    impl CTActiveArg {
+        pub fn new(
+            connected_address: EndpointAddress,
+            basic_call_info_elements: Option<H225InformationElement>,
+            connected_info: Option<BmpString>,
+            argument_extension: Option<CTActiveArgArgumentExtension>,
+        ) -> Self {
+            Self {
+                connected_address,
+                basic_call_info_elements,
+                connected_info,
+                argument_extension,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum CTCompleteArgArgumentExtension {
+        extensionSeq(ExtensionSeq),
+        nonStandardData(NonStandardParameter),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct CTCompleteArg {
+        #[rasn(identifier = "endDesignation")]
+        pub end_designation: EndDesignation,
+        #[rasn(identifier = "redirectionNumber")]
+        pub redirection_number: EndpointAddress,
+        #[rasn(identifier = "basicCallInfoElements")]
+        pub basic_call_info_elements: Option<H225InformationElement>,
+        #[rasn(size("1..=128"), identifier = "redirectionInfo")]
+        pub redirection_info: Option<BmpString>,
+        #[rasn(
+            default = "ctcomplete_arg_call_status_default",
+            identifier = "callStatus"
+        )]
+        pub call_status: CallStatus,
+        #[rasn(identifier = "argumentExtension")]
+        pub argument_extension: Option<CTCompleteArgArgumentExtension>,
+    }
+    impl CTCompleteArg {
+        pub fn new(
+            end_designation: EndDesignation,
+            redirection_number: EndpointAddress,
+            basic_call_info_elements: Option<H225InformationElement>,
+            redirection_info: Option<BmpString>,
+            call_status: CallStatus,
+            argument_extension: Option<CTCompleteArgArgumentExtension>,
+        ) -> Self {
+            Self {
+                end_designation,
+                redirection_number,
+                basic_call_info_elements,
+                redirection_info,
+                call_status,
+                argument_extension,
+            }
+        }
+    }
+    fn ctcomplete_arg_call_status_default() -> CallStatus {
+        CallStatus::answered
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum CTIdentifyResResultExtension {
+        extensionSeq(ExtensionSeq),
+        nonStandardData(NonStandardParameter),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct CTIdentifyRes {
+        #[rasn(identifier = "callIdentity")]
+        pub call_identity: CallIdentity,
+        #[rasn(identifier = "reroutingNumber")]
+        pub rerouting_number: EndpointAddress,
+        #[rasn(identifier = "resultExtension")]
+        pub result_extension: Option<CTIdentifyResResultExtension>,
+    }
+    impl CTIdentifyRes {
+        pub fn new(
+            call_identity: CallIdentity,
+            rerouting_number: EndpointAddress,
+            result_extension: Option<CTIdentifyResResultExtension>,
+        ) -> Self {
+            Self {
+                call_identity,
+                rerouting_number,
+                result_extension,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum CTInitiateArgArgumentExtension {
+        extensionSeq(ExtensionSeq),
+        nonStandardData(NonStandardParameter),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct CTInitiateArg {
+        #[rasn(identifier = "callIdentity")]
+        pub call_identity: CallIdentity,
+        #[rasn(identifier = "reroutingNumber")]
+        pub rerouting_number: EndpointAddress,
+        #[rasn(identifier = "argumentExtension")]
+        pub argument_extension: Option<CTInitiateArgArgumentExtension>,
+    }
+    impl CTInitiateArg {
+        pub fn new(
+            call_identity: CallIdentity,
+            rerouting_number: EndpointAddress,
+            argument_extension: Option<CTInitiateArgArgumentExtension>,
+        ) -> Self {
+            Self {
+                call_identity,
+                rerouting_number,
+                argument_extension,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum CTSetupArgArgumentExtension {
+        extensionSeq(ExtensionSeq),
+        nonStandardData(NonStandardParameter),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct CTSetupArg {
+        #[rasn(identifier = "callIdentity")]
+        pub call_identity: CallIdentity,
+        #[rasn(identifier = "transferringNumber")]
+        pub transferring_number: Option<EndpointAddress>,
+        #[rasn(identifier = "argumentExtension")]
+        pub argument_extension: Option<CTSetupArgArgumentExtension>,
+    }
+    impl CTSetupArg {
+        pub fn new(
+            call_identity: CallIdentity,
+            transferring_number: Option<EndpointAddress>,
+            argument_extension: Option<CTSetupArgArgumentExtension>,
+        ) -> Self {
+            Self {
+                call_identity,
+                transferring_number,
+                argument_extension,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum CTUpdateArgArgumentExtension {
+        extensionSeq(ExtensionSeq),
+        nonStandardData(NonStandardParameter),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct CTUpdateArg {
+        #[rasn(identifier = "redirectionNumber")]
+        pub redirection_number: EndpointAddress,
+        #[rasn(size("1..=128"), identifier = "redirectionInfo")]
+        pub redirection_info: Option<BmpString>,
+        #[rasn(identifier = "basicCallInfoElements")]
+        pub basic_call_info_elements: Option<H225InformationElement>,
+        #[rasn(identifier = "argumentExtension")]
+        pub argument_extension: Option<CTUpdateArgArgumentExtension>,
+    }
+    impl CTUpdateArg {
+        pub fn new(
+            redirection_number: EndpointAddress,
+            redirection_info: Option<BmpString>,
+            basic_call_info_elements: Option<H225InformationElement>,
+            argument_extension: Option<CTUpdateArgArgumentExtension>,
+        ) -> Self {
+            Self {
+                redirection_number,
+                redirection_info,
+                basic_call_info_elements,
+                argument_extension,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=4"))]
+    pub struct CallIdentity(pub NumericString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum CallStatus {
+        answered = 0,
+        alerting = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum DummyArg {
+        extensionSeq(ExtensionSeq),
+        nonStandardData(NonStandardParameter),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum DummyRes {
+        extensionSeq(ExtensionSeq),
+        nonStandardData(NonStandardParameter),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum EndDesignation {
+        primaryEnd = 0,
+        secondaryEnd = 1,
+    }
+    #[doc = " size 0 means 'empty'"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ExtensionSeq(pub SequenceOf<Extension>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum SubaddressTransferArgArgumentExtension {
+        extensionSeq(ExtensionSeq),
+        nonStandardData(NonStandardParameter),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct SubaddressTransferArg {
+        #[rasn(identifier = "redirectionSubaddress")]
+        pub redirection_subaddress: PartySubaddress,
+        #[rasn(identifier = "argumentExtension")]
+        pub argument_extension: Option<SubaddressTransferArgArgumentExtension>,
+    }
+    impl SubaddressTransferArg {
+        pub fn new(
+            redirection_subaddress: PartySubaddress,
+            argument_extension: Option<SubaddressTransferArgArgumentExtension>,
+        ) -> Self {
+            Self {
+                redirection_subaddress,
+                argument_extension,
+            }
+        }
+    }
+}

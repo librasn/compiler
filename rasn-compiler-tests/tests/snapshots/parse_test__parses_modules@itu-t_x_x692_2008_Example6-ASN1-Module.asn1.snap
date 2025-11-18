@@ -1,0 +1,30 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x692_2008_Example6-ASN1-Module.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod example6_asn1_module {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "My-Special-1", value("-1..=10"))]
+    pub struct MySpecial1(pub i8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "My-Special-2", value("-10..=10"))]
+    pub struct MySpecial2(pub i8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "My-Special-3", value("0..=1000"))]
+    pub struct MySpecial3(pub u16);
+    pub const MY_SPECIAL_1: MySpecial1 = MySpecial1(0);
+    pub const MY_SPECIAL_2: MySpecial2 = MySpecial2(1);
+    pub const MY_SPECIAL_3: MySpecial3 = MySpecial3(1000);
+}

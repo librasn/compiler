@@ -1,0 +1,31 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x830_1995_GULSProtectionMappings.asn1
+---
+Error matching ASN syntax at while parsing:
+    ╭─[line 56, column 2]
+    │
+    │ 
+ 48 │  -- ******************************
+ 49 │  -- GULS signed Protection Mapping
+ 50 │  -- ******************************
+ 51 │  -- This protection mapping causes the notation
+ 52 │  -- PROTECTED {BaseType, signed}
+ 53 │  -- to map to the gulsSignedTransformation.
+ 54 │  -- Security Service:  data origin authentication, data integrity and
+ 55 │  -- (in certain situations) non-repudiation.
+ 56 │  signed PROTECTION-MAPPING ::= { ◀▪▪▪▪▪▪▪▪▪▪ FAILED AT THIS LINE
+ 57 │    SECURITY-TRANSFORMATION
+ 58 │      {gulsSignedTransformation
+ 59 │         {{symmetricKeyInformation | asymmetricKeyInformation}}}
+ 60 │  }
+ 62 │  -- *********************************
+ 63 │  -- GULS signature Protection Mapping
+ 64 │  -- *********************************
+ 65 │  -- This protection mapping causes the notation
+ 66 │  -- PROTECTED {BaseType, signature}
+ 67 │  -- to map to the gulsSignatureTransformation.
+ 68 │  -- Security Service:  data origin authentication, data integrity and
+ 69 │  -- (in certain situations) non-repudiation.
+    │
+────╯

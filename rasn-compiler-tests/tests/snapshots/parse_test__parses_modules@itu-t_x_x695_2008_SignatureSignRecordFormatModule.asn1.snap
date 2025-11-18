@@ -1,0 +1,21 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x695_2008_SignatureSignRecordFormatModule.asn1
+---
+Error matching ASN syntax at while parsing:
+    ╭─[line 25, column 2]
+    │
+    │ 
+ 25 │  Header ::= SEQUENCE { ◀▪▪▪▪▪▪▪▪▪▪ FAILED AT THIS LINE
+ 26 │    formatId [NULL]
+ 27 │        -- This specifies that the IA5String is to
+ 28 │        -- be followed by a zero(NULL) octet in
+ 29 │        -- the encoding.
+ 30 │                           IA5String("SDI"),
+ 31 │    standardVersion      [NULL] -- As above.
+ 32 │                           IA5String(SIZE (3))-- " 10" (space-one-zero) for this version --,
+ 33 │    channelInclusions    ChannelInclusions,
+ 34 │    channelDescriptions  ChannelDescriptions
+ 35 │  }
+    │
+────╯

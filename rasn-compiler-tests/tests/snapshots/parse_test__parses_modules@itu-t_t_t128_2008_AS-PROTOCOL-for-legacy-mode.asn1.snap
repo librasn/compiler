@@ -1,0 +1,2882 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_t_t128_2008_AS-PROTOCOL-for-legacy-mode.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod as_protocol_for_legacy_mode {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " T.50 String"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=255"))]
+    pub struct ASString(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct ActivationCapabilitySet {
+        #[rasn(value("7"), identifier = "capabilitySetType")]
+        pub capability_set_type: CapabilitySetType,
+        #[rasn(identifier = "lengthCapability")]
+        pub length_capability: Integer16,
+        #[rasn(identifier = "helpKeyFlag")]
+        pub help_key_flag: Boolean16,
+        #[rasn(identifier = "helpIndexKeyFlag")]
+        pub help_index_key_flag: Boolean16,
+        #[rasn(identifier = "helpExtendedKeyFlag")]
+        pub help_extended_key_flag: Boolean16,
+        #[rasn(identifier = "windowActivateFlag")]
+        pub window_activate_flag: Boolean16,
+    }
+    impl ActivationCapabilitySet {
+        pub fn new(
+            capability_set_type: CapabilitySetType,
+            length_capability: Integer16,
+            help_key_flag: Boolean16,
+            help_index_key_flag: Boolean16,
+            help_extended_key_flag: Boolean16,
+            window_activate_flag: Boolean16,
+        ) -> Self {
+            Self {
+                capability_set_type,
+                length_capability,
+                help_key_flag,
+                help_index_key_flag,
+                help_extended_key_flag,
+                window_activate_flag,
+            }
+        }
+    }
+    #[doc = " General Types"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=65535"))]
+    pub struct ApplicationAction(pub u16);
+    #[doc = "|||||||||||||||||||||||||||||||||||||||||||||||||||||||||"]
+    #[doc = ""]
+    #[doc = "              Begin AS PDU Definitions"]
+    #[doc = ""]
+    #[doc = "||||||||||||||||||||||||||||||||||||||||||||||||||||||||"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct ApplicationPDU {
+        #[rasn(identifier = "shareDataHeader")]
+        pub share_data_header: ShareDataHeader,
+        pub action: ApplicationAction,
+        #[rasn(identifier = "numberApplications")]
+        pub number_applications: Integer16,
+        #[rasn(identifier = "windowID")]
+        pub window_id: WindowID,
+    }
+    impl ApplicationPDU {
+        pub fn new(
+            share_data_header: ShareDataHeader,
+            action: ApplicationAction,
+            number_applications: Integer16,
+            window_id: WindowID,
+        ) -> Self {
+            Self {
+                share_data_header,
+                action,
+                number_applications,
+                window_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=65535"))]
+    pub struct BackgroundMixMode(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=15"))]
+    pub struct BitString16(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=31"))]
+    pub struct BitString32(pub BitString);
+    #[doc = " Base Types"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=7"))]
+    pub struct BitString8(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct BitmapCacheCapabilitySet {
+        #[rasn(value("4"), identifier = "capabilitySetType")]
+        pub capability_set_type: CapabilitySetType,
+        #[rasn(identifier = "lengthCapability")]
+        pub length_capability: Integer16,
+        #[rasn(value("0"), identifier = "pad4octetsA")]
+        pub pad4octets_a: Integer32,
+        #[rasn(value("0"), identifier = "pad4octetsB")]
+        pub pad4octets_b: Integer32,
+        #[rasn(value("0"), identifier = "pad4octetsC")]
+        pub pad4octets_c: Integer32,
+        #[rasn(value("0"), identifier = "pad4octetsD")]
+        pub pad4octets_d: Integer32,
+        #[rasn(value("0"), identifier = "pad4octetsE")]
+        pub pad4octets_e: Integer32,
+        #[rasn(value("0"), identifier = "pad4octetsF")]
+        pub pad4octets_f: Integer32,
+        #[rasn(identifier = "cache1Entries")]
+        pub cache1_entries: Integer16,
+        #[rasn(value("256..=16384"), identifier = "cache1MaximumCellSize")]
+        pub cache1_maximum_cell_size: Integer16,
+        #[rasn(identifier = "cache2Entries")]
+        pub cache2_entries: Integer16,
+        #[rasn(value("256..=16384"), identifier = "cache2MaximumCellSize")]
+        pub cache2_maximum_cell_size: Integer16,
+        #[rasn(identifier = "cache3Entries")]
+        pub cache3_entries: Integer16,
+        #[rasn(value("256..=16384"), identifier = "cache3MaximumCellSize")]
+        pub cache3_maximum_cell_size: Integer16,
+    }
+    impl BitmapCacheCapabilitySet {
+        pub fn new(
+            capability_set_type: CapabilitySetType,
+            length_capability: Integer16,
+            pad4octets_a: Integer32,
+            pad4octets_b: Integer32,
+            pad4octets_c: Integer32,
+            pad4octets_d: Integer32,
+            pad4octets_e: Integer32,
+            pad4octets_f: Integer32,
+            cache1_entries: Integer16,
+            cache1_maximum_cell_size: Integer16,
+            cache2_entries: Integer16,
+            cache2_maximum_cell_size: Integer16,
+            cache3_entries: Integer16,
+            cache3_maximum_cell_size: Integer16,
+        ) -> Self {
+            Self {
+                capability_set_type,
+                length_capability,
+                pad4octets_a,
+                pad4octets_b,
+                pad4octets_c,
+                pad4octets_d,
+                pad4octets_e,
+                pad4octets_f,
+                cache1_entries,
+                cache1_maximum_cell_size,
+                cache2_entries,
+                cache2_maximum_cell_size,
+                cache3_entries,
+                cache3_maximum_cell_size,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct BitmapCapabilitySet {
+        #[rasn(value("2"), identifier = "capabilitySetType")]
+        pub capability_set_type: CapabilitySetType,
+        #[rasn(identifier = "lengthCapability")]
+        pub length_capability: Integer16,
+        #[rasn(value("1..=8"), identifier = "preferredBitsPerPixel")]
+        pub preferred_bits_per_pixel: Integer16,
+        #[rasn(identifier = "receive1BitPerPixelFlag")]
+        pub receive1_bit_per_pixel_flag: Boolean16,
+        #[rasn(identifier = "receive4BitsPerPixelFlag")]
+        pub receive4_bits_per_pixel_flag: Boolean16,
+        #[rasn(identifier = "receive8BitsPerPixelFlag")]
+        pub receive8_bits_per_pixel_flag: Boolean16,
+        #[rasn(identifier = "desktopWidth")]
+        pub desktop_width: Integer16,
+        #[rasn(identifier = "desktopHeight")]
+        pub desktop_height: Integer16,
+        #[rasn(identifier = "pad2octetsA")]
+        pub pad2octets_a: Integer16,
+        #[rasn(identifier = "desktopResizeFlag")]
+        pub desktop_resize_flag: Boolean16,
+        #[rasn(identifier = "bitmapCompressionType")]
+        pub bitmap_compression_type: BitmapCompressionCapabilityFlags,
+        #[rasn(identifier = "pad2octetsC")]
+        pub pad2octets_c: Integer16,
+    }
+    impl BitmapCapabilitySet {
+        pub fn new(
+            capability_set_type: CapabilitySetType,
+            length_capability: Integer16,
+            preferred_bits_per_pixel: Integer16,
+            receive1_bit_per_pixel_flag: Boolean16,
+            receive4_bits_per_pixel_flag: Boolean16,
+            receive8_bits_per_pixel_flag: Boolean16,
+            desktop_width: Integer16,
+            desktop_height: Integer16,
+            pad2octets_a: Integer16,
+            desktop_resize_flag: Boolean16,
+            bitmap_compression_type: BitmapCompressionCapabilityFlags,
+            pad2octets_c: Integer16,
+        ) -> Self {
+            Self {
+                capability_set_type,
+                length_capability,
+                preferred_bits_per_pixel,
+                receive1_bit_per_pixel_flag,
+                receive4_bits_per_pixel_flag,
+                receive8_bits_per_pixel_flag,
+                desktop_width,
+                desktop_height,
+                pad2octets_a,
+                desktop_resize_flag,
+                bitmap_compression_type,
+                pad2octets_c,
+            }
+        }
+    }
+    #[doc = " AS Protocol CodePage String"]
+    #[doc = " Bit Flag Types"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=15"))]
+    pub struct BitmapCompressionCapabilityFlags(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum BitmapData {
+        uncompressedBitmapData(OctetString),
+        compressedBitmapData(CompressedBitmapData),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=65535"))]
+    pub struct Boolean16(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=7"))]
+    pub struct BoundsOrderFlags(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct Brush {
+        #[rasn(identifier = "originX")]
+        pub origin_x: Option<Integer8>,
+        #[rasn(identifier = "originY")]
+        pub origin_y: Option<Integer8>,
+        pub style: Option<BrushStyle>,
+        pub hatch: Option<BrushHatch>,
+        #[rasn(size("7"))]
+        pub pattern: Option<OctetString>,
+    }
+    impl Brush {
+        pub fn new(
+            origin_x: Option<Integer8>,
+            origin_y: Option<Integer8>,
+            style: Option<BrushStyle>,
+            hatch: Option<BrushHatch>,
+            pattern: Option<OctetString>,
+        ) -> Self {
+            Self {
+                origin_x,
+                origin_y,
+                style,
+                hatch,
+                pattern,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum BrushHatch {
+        style(HatchStyle),
+        patternZero(Integer8),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=255"))]
+    pub struct BrushStyle(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct CacheBitmapOrder {
+        pub header: SecondaryOrderHeader,
+        #[rasn(value("0..=2"), identifier = "cacheId")]
+        pub cache_id: Integer8,
+        #[rasn(value("0"))]
+        pub pad1octet: Integer8,
+        #[rasn(identifier = "bitmapWidth")]
+        pub bitmap_width: Integer8,
+        #[rasn(identifier = "bitmapHeight")]
+        pub bitmap_height: Integer8,
+        #[rasn(value("1..=8"), identifier = "bitmapBitsPerPel")]
+        pub bitmap_bits_per_pel: Integer8,
+        #[rasn(identifier = "bitmapLength")]
+        pub bitmap_length: Integer16,
+        #[rasn(identifier = "cacheIndex")]
+        pub cache_index: Integer16,
+        #[rasn(identifier = "bitmapData")]
+        pub bitmap_data: BitmapData,
+    }
+    impl CacheBitmapOrder {
+        pub fn new(
+            header: SecondaryOrderHeader,
+            cache_id: Integer8,
+            pad1octet: Integer8,
+            bitmap_width: Integer8,
+            bitmap_height: Integer8,
+            bitmap_bits_per_pel: Integer8,
+            bitmap_length: Integer16,
+            cache_index: Integer16,
+            bitmap_data: BitmapData,
+        ) -> Self {
+            Self {
+                header,
+                cache_id,
+                pad1octet,
+                bitmap_width,
+                bitmap_height,
+                bitmap_bits_per_pel,
+                bitmap_length,
+                cache_index,
+                bitmap_data,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct CacheColorTableOrder {
+        pub header: SecondaryOrderHeader,
+        #[rasn(identifier = "cacheIndex")]
+        pub cache_index: Integer8,
+        #[rasn(value("16..=256"), identifier = "numberColors")]
+        pub number_colors: Integer16,
+        #[rasn(size("16..=256"), identifier = "colorTable")]
+        pub color_table: SequenceOf<ColorQuad>,
+    }
+    impl CacheColorTableOrder {
+        pub fn new(
+            header: SecondaryOrderHeader,
+            cache_index: Integer8,
+            number_colors: Integer16,
+            color_table: SequenceOf<ColorQuad>,
+        ) -> Self {
+            Self {
+                header,
+                cache_index,
+                number_colors,
+                color_table,
+            }
+        }
+    }
+    #[doc = " Capability Types"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=65535"))]
+    pub struct CapabilitySetType(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct Color {
+        pub red: Integer8,
+        pub green: Integer8,
+        pub blue: Integer8,
+    }
+    impl Color {
+        pub fn new(red: Integer8, green: Integer8, blue: Integer8) -> Self {
+            Self { red, green, blue }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct ColorCacheCapabilitySet {
+        #[rasn(value("10"), identifier = "capabilitySetType")]
+        pub capability_set_type: CapabilitySetType,
+        #[rasn(identifier = "lengthCapability")]
+        pub length_capability: Integer16,
+        #[rasn(value("1..=255"), identifier = "colorTablecacheSize")]
+        pub color_tablecache_size: Integer16,
+        #[rasn(identifier = "pad2octetsA")]
+        pub pad2octets_a: Integer16,
+    }
+    impl ColorCacheCapabilitySet {
+        pub fn new(
+            capability_set_type: CapabilitySetType,
+            length_capability: Integer16,
+            color_tablecache_size: Integer16,
+            pad2octets_a: Integer16,
+        ) -> Self {
+            Self {
+                capability_set_type,
+                length_capability,
+                color_tablecache_size,
+                pad2octets_a,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct ColorPointerAttribute {
+        #[rasn(identifier = "cacheIndex")]
+        pub cache_index: Integer16,
+        #[rasn(identifier = "hotSpot")]
+        pub hot_spot: Point16,
+        pub width: Integer16,
+        pub height: Integer16,
+        #[rasn(identifier = "lengthANDMAsk")]
+        pub length_andmask: Integer16,
+        #[rasn(identifier = "lengthXORMAsk")]
+        pub length_xormask: Integer16,
+        #[rasn(identifier = "colorPointerData")]
+        pub color_pointer_data: OctetString,
+    }
+    impl ColorPointerAttribute {
+        pub fn new(
+            cache_index: Integer16,
+            hot_spot: Point16,
+            width: Integer16,
+            height: Integer16,
+            length_andmask: Integer16,
+            length_xormask: Integer16,
+            color_pointer_data: OctetString,
+        ) -> Self {
+            Self {
+                cache_index,
+                hot_spot,
+                width,
+                height,
+                length_andmask,
+                length_xormask,
+                color_pointer_data,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct ColorQuad {
+        pub blue: Integer8,
+        pub green: Integer8,
+        pub red: Integer8,
+        pub pad1octet: Integer8,
+    }
+    impl ColorQuad {
+        pub fn new(blue: Integer8, green: Integer8, red: Integer8, pad1octet: Integer8) -> Self {
+            Self {
+                blue,
+                green,
+                red,
+                pad1octet,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, automatic_tags)]
+    pub struct CombinedCapabilitiesCombinedCapabilities {
+        #[rasn(identifier = "generalCapabilitySet")]
+        pub general_capability_set: GeneralCapabilitySet,
+        #[rasn(identifier = "bitmapCapabilitySet")]
+        pub bitmap_capability_set: BitmapCapabilitySet,
+        #[rasn(identifier = "orderCapabilitySet")]
+        pub order_capability_set: OrderCapabilitySet,
+        #[rasn(identifier = "bitmapCacheCapabilitySet")]
+        pub bitmap_cache_capability_set: BitmapCacheCapabilitySet,
+        #[rasn(identifier = "colorCacheCapabilitySet")]
+        pub color_cache_capability_set: ColorCacheCapabilitySet,
+        #[rasn(identifier = "activationCapabilitySet")]
+        pub activation_capability_set: ActivationCapabilitySet,
+        #[rasn(identifier = "controlCapabilitySet")]
+        pub control_capability_set: ControlCapabilitySet,
+        #[rasn(identifier = "pointerCapabilitySet")]
+        pub pointer_capability_set: PointerCapabilitySet,
+        #[rasn(identifier = "shareCapabilitySet")]
+        pub share_capability_set: ShareCapabilitySet,
+        #[rasn(identifier = "nonStandardCapabilitySet")]
+        pub non_standard_capability_set: Option<NonStandardCapabilitySet>,
+    }
+    impl CombinedCapabilitiesCombinedCapabilities {
+        pub fn new(
+            general_capability_set: GeneralCapabilitySet,
+            bitmap_capability_set: BitmapCapabilitySet,
+            order_capability_set: OrderCapabilitySet,
+            bitmap_cache_capability_set: BitmapCacheCapabilitySet,
+            color_cache_capability_set: ColorCacheCapabilitySet,
+            activation_capability_set: ActivationCapabilitySet,
+            control_capability_set: ControlCapabilitySet,
+            pointer_capability_set: PointerCapabilitySet,
+            share_capability_set: ShareCapabilitySet,
+            non_standard_capability_set: Option<NonStandardCapabilitySet>,
+        ) -> Self {
+            Self {
+                general_capability_set,
+                bitmap_capability_set,
+                order_capability_set,
+                bitmap_cache_capability_set,
+                color_cache_capability_set,
+                activation_capability_set,
+                control_capability_set,
+                pointer_capability_set,
+                share_capability_set,
+                non_standard_capability_set,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct CombinedCapabilities {
+        #[rasn(identifier = "numberCapabilities")]
+        pub number_capabilities: Integer16,
+        #[rasn(value("0"))]
+        pub pad2octets: Integer16,
+        #[rasn(identifier = "combinedCapabilities")]
+        pub combined_capabilities: CombinedCapabilitiesCombinedCapabilities,
+    }
+    impl CombinedCapabilities {
+        pub fn new(
+            number_capabilities: Integer16,
+            pad2octets: Integer16,
+            combined_capabilities: CombinedCapabilitiesCombinedCapabilities,
+        ) -> Self {
+            Self {
+                number_capabilities,
+                pad2octets,
+                combined_capabilities,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct CompressedBitmapData {
+        #[rasn(value("0"))]
+        pub pad2octets: Integer16,
+        #[rasn(identifier = "mainBodySize")]
+        pub main_body_size: Integer16,
+        #[rasn(identifier = "rowSize")]
+        pub row_size: Integer16,
+        #[rasn(identifier = "uncompressedSize")]
+        pub uncompressed_size: Integer16,
+        #[rasn(identifier = "compressedBitmap")]
+        pub compressed_bitmap: OctetString,
+    }
+    impl CompressedBitmapData {
+        pub fn new(
+            pad2octets: Integer16,
+            main_body_size: Integer16,
+            row_size: Integer16,
+            uncompressed_size: Integer16,
+            compressed_bitmap: OctetString,
+        ) -> Self {
+            Self {
+                pad2octets,
+                main_body_size,
+                row_size,
+                uncompressed_size,
+                compressed_bitmap,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct ConfirmActivePDU {
+        #[rasn(identifier = "shareControlHeader")]
+        pub share_control_header: ShareControlHeader,
+        #[rasn(identifier = "shareID")]
+        pub share_id: ShareID,
+        #[rasn(identifier = "originatorID")]
+        pub originator_id: UserID,
+        #[rasn(value("1..=48"), identifier = "lengthSourceDescriptor")]
+        pub length_source_descriptor: Integer16,
+        #[rasn(identifier = "lengthCombinedCapabilities")]
+        pub length_combined_capabilities: Integer16,
+        #[rasn(size("1..=48"), identifier = "sourceDescriptor")]
+        pub source_descriptor: T50String,
+        #[rasn(identifier = "combinedCapabilities")]
+        pub combined_capabilities: CombinedCapabilities,
+    }
+    impl ConfirmActivePDU {
+        pub fn new(
+            share_control_header: ShareControlHeader,
+            share_id: ShareID,
+            originator_id: UserID,
+            length_source_descriptor: Integer16,
+            length_combined_capabilities: Integer16,
+            source_descriptor: T50String,
+            combined_capabilities: CombinedCapabilities,
+        ) -> Self {
+            Self {
+                share_control_header,
+                share_id,
+                originator_id,
+                length_source_descriptor,
+                length_combined_capabilities,
+                source_descriptor,
+                combined_capabilities,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=65535"))]
+    pub struct ControlAction(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=15"))]
+    pub struct ControlCapabilityFlags(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct ControlCapabilitySet {
+        #[rasn(value("5"), identifier = "capabilitySetType")]
+        pub capability_set_type: CapabilitySetType,
+        #[rasn(identifier = "lengthCapability")]
+        pub length_capability: Integer16,
+        #[rasn(identifier = "controlFlags")]
+        pub control_flags: ControlCapabilityFlags,
+        #[rasn(identifier = "remoteDetachFlag")]
+        pub remote_detach_flag: Boolean16,
+        #[rasn(identifier = "controlInterest")]
+        pub control_interest: ControlPriority,
+        #[rasn(identifier = "detachInterest")]
+        pub detach_interest: ControlPriority,
+    }
+    impl ControlCapabilitySet {
+        pub fn new(
+            capability_set_type: CapabilitySetType,
+            length_capability: Integer16,
+            control_flags: ControlCapabilityFlags,
+            remote_detach_flag: Boolean16,
+            control_interest: ControlPriority,
+            detach_interest: ControlPriority,
+        ) -> Self {
+            Self {
+                capability_set_type,
+                length_capability,
+                control_flags,
+                remote_detach_flag,
+                control_interest,
+                detach_interest,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=7"))]
+    pub struct ControlOrderFlags(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct ControlPDU {
+        #[rasn(identifier = "shareDataHeader")]
+        pub share_data_header: ShareDataHeader,
+        pub action: ControlAction,
+        #[rasn(identifier = "grantID")]
+        pub grant_id: UserID,
+        #[rasn(value("0..=2147483647"), identifier = "controlID")]
+        pub control_id: Integer32,
+    }
+    impl ControlPDU {
+        pub fn new(
+            share_data_header: ShareDataHeader,
+            action: ControlAction,
+            grant_id: UserID,
+            control_id: Integer32,
+        ) -> Self {
+            Self {
+                share_data_header,
+                action,
+                grant_id,
+                control_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=65535"))]
+    pub struct ControlPriority(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum Coordinate {
+        absolute(Coordinate16),
+        delta(Coordinate8),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("32767..=32768"))]
+    pub struct Coordinate16(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("127..=128"))]
+    pub struct Coordinate8(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct DeactivateAllPDU {
+        #[rasn(identifier = "shareControlHeader")]
+        pub share_control_header: ShareControlHeader,
+        #[rasn(identifier = "shareID")]
+        pub share_id: ShareID,
+        #[rasn(value("1..=48"), identifier = "lengthSourceDescriptor")]
+        pub length_source_descriptor: Integer16,
+        #[rasn(size("1..=48"), identifier = "sourceDescriptor")]
+        pub source_descriptor: T50String,
+    }
+    impl DeactivateAllPDU {
+        pub fn new(
+            share_control_header: ShareControlHeader,
+            share_id: ShareID,
+            length_source_descriptor: Integer16,
+            source_descriptor: T50String,
+        ) -> Self {
+            Self {
+                share_control_header,
+                share_id,
+                length_source_descriptor,
+                source_descriptor,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct DeactivateOtherPDU {
+        #[rasn(identifier = "shareControlHeader")]
+        pub share_control_header: ShareControlHeader,
+        #[rasn(identifier = "shareID")]
+        pub share_id: ShareID,
+        #[rasn(identifier = "deactivateID")]
+        pub deactivate_id: UserID,
+        #[rasn(value("1..=48"), identifier = "lengthSourceDescriptor")]
+        pub length_source_descriptor: Integer16,
+        #[rasn(size("1..=48"), identifier = "sourceDescriptor")]
+        pub source_descriptor: T50String,
+    }
+    impl DeactivateOtherPDU {
+        pub fn new(
+            share_control_header: ShareControlHeader,
+            share_id: ShareID,
+            deactivate_id: UserID,
+            length_source_descriptor: Integer16,
+            source_descriptor: T50String,
+        ) -> Self {
+            Self {
+                share_control_header,
+                share_id,
+                deactivate_id,
+                length_source_descriptor,
+                source_descriptor,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct DeactivateSelfPDU {
+        #[rasn(identifier = "shareControlHeader")]
+        pub share_control_header: ShareControlHeader,
+        #[rasn(identifier = "shareID")]
+        pub share_id: ShareID,
+    }
+    impl DeactivateSelfPDU {
+        pub fn new(share_control_header: ShareControlHeader, share_id: ShareID) -> Self {
+            Self {
+                share_control_header,
+                share_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct DemandActivePDU {
+        #[rasn(identifier = "shareControlHeader")]
+        pub share_control_header: ShareControlHeader,
+        #[rasn(identifier = "shareID")]
+        pub share_id: ShareID,
+        #[rasn(value("1..=48"), identifier = "lengthSourceDescriptor")]
+        pub length_source_descriptor: Integer16,
+        #[rasn(identifier = "lengthCombinedCapabilities")]
+        pub length_combined_capabilities: Integer16,
+        #[rasn(size("1..=48"), identifier = "sourceDescriptor")]
+        pub source_descriptor: T50String,
+        #[rasn(identifier = "combinedCapabilities")]
+        pub combined_capabilities: CombinedCapabilities,
+    }
+    impl DemandActivePDU {
+        pub fn new(
+            share_control_header: ShareControlHeader,
+            share_id: ShareID,
+            length_source_descriptor: Integer16,
+            length_combined_capabilities: Integer16,
+            source_descriptor: T50String,
+            combined_capabilities: CombinedCapabilities,
+        ) -> Self {
+            Self {
+                share_control_header,
+                share_id,
+                length_source_descriptor,
+                length_combined_capabilities,
+                source_descriptor,
+                combined_capabilities,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct DesktopOriginOrder {
+        pub header: PrimaryOrderHeader,
+        #[rasn(identifier = "desktopLeft")]
+        pub desktop_left: Option<Coordinate>,
+        #[rasn(identifier = "desktopTop")]
+        pub desktop_top: Option<Coordinate>,
+    }
+    impl DesktopOriginOrder {
+        pub fn new(
+            header: PrimaryOrderHeader,
+            desktop_left: Option<Coordinate>,
+            desktop_top: Option<Coordinate>,
+        ) -> Self {
+            Self {
+                header,
+                desktop_left,
+                desktop_top,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=255"))]
+    pub struct DesktopSaveAction(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct DesktopSaveOrder {
+        pub header: PrimaryOrderHeader,
+        #[rasn(identifier = "saveOffset")]
+        pub save_offset: Option<Integer32>,
+        #[rasn(identifier = "destLeft")]
+        pub dest_left: Option<Coordinate>,
+        #[rasn(identifier = "destTop")]
+        pub dest_top: Option<Coordinate>,
+        #[rasn(identifier = "destWidth")]
+        pub dest_width: Option<Coordinate>,
+        #[rasn(identifier = "destHeight")]
+        pub dest_height: Option<Coordinate>,
+        pub action: Option<DesktopSaveAction>,
+    }
+    impl DesktopSaveOrder {
+        pub fn new(
+            header: PrimaryOrderHeader,
+            save_offset: Option<Integer32>,
+            dest_left: Option<Coordinate>,
+            dest_top: Option<Coordinate>,
+            dest_width: Option<Coordinate>,
+            dest_height: Option<Coordinate>,
+            action: Option<DesktopSaveAction>,
+        ) -> Self {
+            Self {
+                header,
+                save_offset,
+                dest_left,
+                dest_top,
+                dest_width,
+                dest_height,
+                action,
+            }
+        }
+    }
+    #[doc = " Order Types"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct DestinationBltOrder {
+        pub header: PrimaryOrderHeader,
+        #[rasn(identifier = "destLeft")]
+        pub dest_left: Option<Coordinate>,
+        #[rasn(identifier = "destTop")]
+        pub dest_top: Option<Coordinate>,
+        #[rasn(identifier = "destWidth")]
+        pub dest_width: Option<Coordinate>,
+        #[rasn(identifier = "destHeight")]
+        pub dest_height: Option<Coordinate>,
+        pub rop3: Option<ROP3>,
+    }
+    impl DestinationBltOrder {
+        pub fn new(
+            header: PrimaryOrderHeader,
+            dest_left: Option<Coordinate>,
+            dest_top: Option<Coordinate>,
+            dest_width: Option<Coordinate>,
+            dest_height: Option<Coordinate>,
+            rop3: Option<ROP3>,
+        ) -> Self {
+            Self {
+                header,
+                dest_left,
+                dest_top,
+                dest_width,
+                dest_height,
+                rop3,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct ExtendedTextOrder {
+        pub header: PrimaryOrderHeader,
+        #[rasn(identifier = "backMixMode")]
+        pub back_mix_mode: Option<BackgroundMixMode>,
+        #[rasn(identifier = "startX")]
+        pub start_x: Option<Coordinate>,
+        #[rasn(identifier = "startY")]
+        pub start_y: Option<Coordinate>,
+        #[rasn(identifier = "backgroundColor")]
+        pub background_color: Option<Color>,
+        #[rasn(identifier = "foregroundColor")]
+        pub foreground_color: Option<Color>,
+        #[rasn(identifier = "extraSpacing")]
+        pub extra_spacing: Option<Integer16>,
+        #[rasn(identifier = "totalBreakSpacing")]
+        pub total_break_spacing: Option<Integer16>,
+        #[rasn(identifier = "breakCount")]
+        pub break_count: Option<Integer16>,
+        #[rasn(identifier = "fontHeight")]
+        pub font_height: Option<Integer16>,
+        #[rasn(identifier = "fontWidth")]
+        pub font_width: Option<Integer16>,
+        #[rasn(identifier = "fontWeight")]
+        pub font_weight: Option<Integer16>,
+        #[rasn(identifier = "textFlags1")]
+        pub text_flags1: Option<TextAttributeFlags>,
+        #[rasn(identifier = "fontID")]
+        pub font_id: Option<Integer16>,
+        #[rasn(identifier = "textFlags2")]
+        pub text_flags2: Option<ExtraTextFlags>,
+        #[rasn(identifier = "clipLeft")]
+        pub clip_left: Option<Coordinate>,
+        #[rasn(identifier = "clipTop")]
+        pub clip_top: Option<Coordinate>,
+        #[rasn(identifier = "clipRight")]
+        pub clip_right: Option<Coordinate>,
+        #[rasn(identifier = "clipBottom")]
+        pub clip_bottom: Option<Coordinate>,
+        #[rasn(value("1..=255"), identifier = "numberCodePoints")]
+        pub number_code_points: Option<Integer8>,
+        #[rasn(size("1..=255"), identifier = "codePointList")]
+        pub code_point_list: Option<ASString>,
+        #[rasn(value("1..=127"), identifier = "numberDeltaX")]
+        pub number_delta_x: Option<Integer8>,
+        #[rasn(size("1..=127"), identifier = "deltaXList")]
+        pub delta_xlist: Option<SequenceOf<Coordinate>>,
+    }
+    impl ExtendedTextOrder {
+        pub fn new(
+            header: PrimaryOrderHeader,
+            back_mix_mode: Option<BackgroundMixMode>,
+            start_x: Option<Coordinate>,
+            start_y: Option<Coordinate>,
+            background_color: Option<Color>,
+            foreground_color: Option<Color>,
+            extra_spacing: Option<Integer16>,
+            total_break_spacing: Option<Integer16>,
+            break_count: Option<Integer16>,
+            font_height: Option<Integer16>,
+            font_width: Option<Integer16>,
+            font_weight: Option<Integer16>,
+            text_flags1: Option<TextAttributeFlags>,
+            font_id: Option<Integer16>,
+            text_flags2: Option<ExtraTextFlags>,
+            clip_left: Option<Coordinate>,
+            clip_top: Option<Coordinate>,
+            clip_right: Option<Coordinate>,
+            clip_bottom: Option<Coordinate>,
+            number_code_points: Option<Integer8>,
+            code_point_list: Option<ASString>,
+            number_delta_x: Option<Integer8>,
+            delta_xlist: Option<SequenceOf<Coordinate>>,
+        ) -> Self {
+            Self {
+                header,
+                back_mix_mode,
+                start_x,
+                start_y,
+                background_color,
+                foreground_color,
+                extra_spacing,
+                total_break_spacing,
+                break_count,
+                font_height,
+                font_width,
+                font_weight,
+                text_flags1,
+                font_id,
+                text_flags2,
+                clip_left,
+                clip_top,
+                clip_right,
+                clip_bottom,
+                number_code_points,
+                code_point_list,
+                number_delta_x,
+                delta_xlist,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=15"))]
+    pub struct ExtraOrderFlags(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=15"))]
+    pub struct ExtraTextFlags(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct FlowPDU {
+        #[rasn(value("32768"), identifier = "flowMarker")]
+        pub flow_marker: Integer16,
+        #[rasn(value("0"))]
+        pub pad8bits: Integer8,
+        #[rasn(value("65..=67"), identifier = "pduTypeFlow")]
+        pub pdu_type_flow: PDUTypeFlow,
+        #[rasn(value("0..=127"), identifier = "flowIdentifier")]
+        pub flow_identifier: Integer8,
+        #[rasn(identifier = "flowNumber")]
+        pub flow_number: Integer8,
+        #[rasn(identifier = "pduSource")]
+        pub pdu_source: UserID,
+    }
+    impl FlowPDU {
+        pub fn new(
+            flow_marker: Integer16,
+            pad8bits: Integer8,
+            pdu_type_flow: PDUTypeFlow,
+            flow_identifier: Integer8,
+            flow_number: Integer8,
+            pdu_source: UserID,
+        ) -> Self {
+            Self {
+                flow_marker,
+                pad8bits,
+                pdu_type_flow,
+                flow_identifier,
+                flow_number,
+                pdu_source,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct FontAttribute {
+        #[rasn(size("1..=32"), identifier = "faceName")]
+        pub face_name: T50String,
+        #[rasn(identifier = "fontFlags")]
+        pub font_flags: FontAttributeFlags,
+        #[rasn(identifier = "averageWidth")]
+        pub average_width: Integer16,
+        pub height: Integer16,
+        #[rasn(identifier = "aspectX")]
+        pub aspect_x: Integer16,
+        #[rasn(identifier = "aspectY")]
+        pub aspect_y: Integer16,
+        pub signature1: Integer8,
+        pub signature2: Integer8,
+        pub signature3: Integer16,
+        #[rasn(identifier = "codePage")]
+        pub code_page: FontCodePage,
+        pub ascent: Integer16,
+    }
+    impl FontAttribute {
+        pub fn new(
+            face_name: T50String,
+            font_flags: FontAttributeFlags,
+            average_width: Integer16,
+            height: Integer16,
+            aspect_x: Integer16,
+            aspect_y: Integer16,
+            signature1: Integer8,
+            signature2: Integer8,
+            signature3: Integer16,
+            code_page: FontCodePage,
+            ascent: Integer16,
+        ) -> Self {
+            Self {
+                face_name,
+                font_flags,
+                average_width,
+                height,
+                aspect_x,
+                aspect_y,
+                signature1,
+                signature2,
+                signature3,
+                code_page,
+                ascent,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=15"))]
+    pub struct FontAttributeFlags(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=65535"))]
+    pub struct FontCodePage(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct FontPDU {
+        #[rasn(identifier = "shareDataHeader")]
+        pub share_data_header: ShareDataHeader,
+        #[rasn(value("1..=700"), identifier = "numberFonts")]
+        pub number_fonts: Integer16,
+        #[rasn(identifier = "entrySize")]
+        pub entry_size: Integer16,
+        #[rasn(size("1..=700"), identifier = "fontList")]
+        pub font_list: SequenceOf<FontAttribute>,
+    }
+    impl FontPDU {
+        pub fn new(
+            share_data_header: ShareDataHeader,
+            number_fonts: Integer16,
+            entry_size: Integer16,
+            font_list: SequenceOf<FontAttribute>,
+        ) -> Self {
+            Self {
+                share_data_header,
+                number_fonts,
+                entry_size,
+                font_list,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct FrameOrder {
+        pub header: PrimaryOrderHeader,
+        #[rasn(identifier = "destLeft")]
+        pub dest_left: Option<Coordinate>,
+        #[rasn(identifier = "destTop")]
+        pub dest_top: Option<Coordinate>,
+        #[rasn(identifier = "destWidth")]
+        pub dest_width: Option<Coordinate>,
+        #[rasn(identifier = "destHeight")]
+        pub dest_height: Option<Coordinate>,
+        pub rop3: Option<ROP3>,
+        #[rasn(identifier = "backgroundColor")]
+        pub background_color: Option<Color>,
+        #[rasn(identifier = "foregroundColor")]
+        pub foreground_color: Option<Color>,
+        pub brush: Option<Brush>,
+    }
+    impl FrameOrder {
+        pub fn new(
+            header: PrimaryOrderHeader,
+            dest_left: Option<Coordinate>,
+            dest_top: Option<Coordinate>,
+            dest_width: Option<Coordinate>,
+            dest_height: Option<Coordinate>,
+            rop3: Option<ROP3>,
+            background_color: Option<Color>,
+            foreground_color: Option<Color>,
+            brush: Option<Brush>,
+        ) -> Self {
+            Self {
+                header,
+                dest_left,
+                dest_top,
+                dest_width,
+                dest_height,
+                rop3,
+                background_color,
+                foreground_color,
+                brush,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct GeneralCapabilitySet {
+        #[rasn(value("1"), identifier = "capabilitySetType")]
+        pub capability_set_type: CapabilitySetType,
+        #[rasn(identifier = "lengthCapability")]
+        pub length_capability: Integer16,
+        #[rasn(identifier = "osMajorType")]
+        pub os_major_type: OSMajorType,
+        #[rasn(identifier = "osMinorType")]
+        pub os_minor_type: OSMinorType,
+        #[rasn(value("512"), identifier = "protocolVersion")]
+        pub protocol_version: Integer16,
+        #[rasn(identifier = "pad2octetsA")]
+        pub pad2octets_a: Integer16,
+        #[rasn(identifier = "generalCompressionTypes")]
+        pub general_compression_types: Integer16,
+        #[rasn(identifier = "pad2octetsB")]
+        pub pad2octets_b: Integer16,
+        #[rasn(identifier = "updatecapabilityFlag")]
+        pub updatecapability_flag: Boolean16,
+        #[rasn(identifier = "remoteUnshareFlag")]
+        pub remote_unshare_flag: Boolean16,
+        #[rasn(identifier = "generalCompressionLevel")]
+        pub general_compression_level: Integer16,
+        #[rasn(identifier = "pad2octetsC")]
+        pub pad2octets_c: Integer16,
+    }
+    impl GeneralCapabilitySet {
+        pub fn new(
+            capability_set_type: CapabilitySetType,
+            length_capability: Integer16,
+            os_major_type: OSMajorType,
+            os_minor_type: OSMinorType,
+            protocol_version: Integer16,
+            pad2octets_a: Integer16,
+            general_compression_types: Integer16,
+            pad2octets_b: Integer16,
+            updatecapability_flag: Boolean16,
+            remote_unshare_flag: Boolean16,
+            general_compression_level: Integer16,
+            pad2octets_c: Integer16,
+        ) -> Self {
+            Self {
+                capability_set_type,
+                length_capability,
+                os_major_type,
+                os_minor_type,
+                protocol_version,
+                pad2octets_a,
+                general_compression_types,
+                pad2octets_b,
+                updatecapability_flag,
+                remote_unshare_flag,
+                general_compression_level,
+                pad2octets_c,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=255"))]
+    pub struct HatchStyle(pub u8);
+    #[doc = " Input Types"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum InputEvent {
+        pointingDeviceEvent(PointingDeviceEvent),
+        keyboardEvent(KeyboardEvent),
+        synchronizeEvent(SynchronizeEvent),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=65535"))]
+    pub struct InputMessageType(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct InputPDU {
+        #[rasn(identifier = "shareDataHeader")]
+        pub share_data_header: ShareDataHeader,
+        #[rasn(identifier = "numberEvents")]
+        pub number_events: Integer16,
+        #[rasn(value("0"))]
+        pub pad2octets: Integer16,
+        #[rasn(size("1..=50"), identifier = "eventList")]
+        pub event_list: SequenceOf<InputEvent>,
+    }
+    impl InputPDU {
+        pub fn new(
+            share_data_header: ShareDataHeader,
+            number_events: Integer16,
+            pad2octets: Integer16,
+            event_list: SequenceOf<InputEvent>,
+        ) -> Self {
+            Self {
+                share_data_header,
+                number_events,
+                pad2octets,
+                event_list,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=4095"))]
+    pub struct Integer12(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=65535"))]
+    pub struct Integer16(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=4294967295"))]
+    pub struct Integer32(pub u32);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=15"))]
+    pub struct Integer4(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=255"))]
+    pub struct Integer8(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct KeyboardEvent {
+        #[rasn(identifier = "eventTime")]
+        pub event_time: Integer32,
+        #[rasn(value("1..=2"), identifier = "messageType")]
+        pub message_type: InputMessageType,
+        #[rasn(identifier = "keyboardFlags")]
+        pub keyboard_flags: KeyboardFlags,
+        #[rasn(identifier = "keyCode")]
+        pub key_code: Integer16,
+    }
+    impl KeyboardEvent {
+        pub fn new(
+            event_time: Integer32,
+            message_type: InputMessageType,
+            keyboard_flags: KeyboardFlags,
+            key_code: Integer16,
+        ) -> Self {
+            Self {
+                event_time,
+                message_type,
+                keyboard_flags,
+                key_code,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=15"))]
+    pub struct KeyboardFlags(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct LineOrder {
+        pub header: PrimaryOrderHeader,
+        #[rasn(identifier = "backMixMode")]
+        pub back_mix_mode: Option<BackgroundMixMode>,
+        #[rasn(identifier = "startX")]
+        pub start_x: Option<Coordinate>,
+        #[rasn(identifier = "startY")]
+        pub start_y: Option<Coordinate>,
+        #[rasn(identifier = "endX")]
+        pub end_x: Option<Coordinate>,
+        #[rasn(identifier = "endY")]
+        pub end_y: Option<Coordinate>,
+        #[rasn(identifier = "backgroundColor")]
+        pub background_color: Option<Color>,
+        pub rop2: Option<ROP2>,
+        pub pen: Option<Pen>,
+    }
+    impl LineOrder {
+        pub fn new(
+            header: PrimaryOrderHeader,
+            back_mix_mode: Option<BackgroundMixMode>,
+            start_x: Option<Coordinate>,
+            start_y: Option<Coordinate>,
+            end_x: Option<Coordinate>,
+            end_y: Option<Coordinate>,
+            background_color: Option<Color>,
+            rop2: Option<ROP2>,
+            pen: Option<Pen>,
+        ) -> Self {
+            Self {
+                header,
+                back_mix_mode,
+                start_x,
+                start_y,
+                end_x,
+                end_y,
+                background_color,
+                rop2,
+                pen,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=65535"))]
+    pub struct MediatedControlAction(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct MediatedControlPDU {
+        #[rasn(identifier = "shareDataHeader")]
+        pub share_data_header: ShareDataHeader,
+        pub action: MediatedControlAction,
+        #[rasn(identifier = "passControlFlag")]
+        pub pass_control_flag: Boolean16,
+        #[rasn(identifier = "sendingReference")]
+        pub sending_reference: Integer16,
+        #[rasn(identifier = "originatorReference")]
+        pub originator_reference: Integer16,
+        #[rasn(identifier = "originatorID")]
+        pub originator_id: UserID,
+    }
+    impl MediatedControlPDU {
+        pub fn new(
+            share_data_header: ShareDataHeader,
+            action: MediatedControlAction,
+            pass_control_flag: Boolean16,
+            sending_reference: Integer16,
+            originator_reference: Integer16,
+            originator_id: UserID,
+        ) -> Self {
+            Self {
+                share_data_header,
+                action,
+                pass_control_flag,
+                sending_reference,
+                originator_reference,
+                originator_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct MemoryBltOrder {
+        pub header: PrimaryOrderHeader,
+        #[rasn(identifier = "colorTableCacheIndex")]
+        pub color_table_cache_index: Option<Integer8>,
+        #[rasn(identifier = "bitmapCacheID")]
+        pub bitmap_cache_id: Option<Integer8>,
+        #[rasn(identifier = "destLeft")]
+        pub dest_left: Option<Coordinate>,
+        #[rasn(identifier = "destTop")]
+        pub dest_top: Option<Coordinate>,
+        #[rasn(identifier = "destWidth")]
+        pub dest_width: Option<Coordinate>,
+        #[rasn(identifier = "destHeight")]
+        pub dest_height: Option<Coordinate>,
+        pub rop3: Option<ROP3>,
+        #[rasn(identifier = "sourceX")]
+        pub source_x: Option<Coordinate>,
+        #[rasn(identifier = "sourceY")]
+        pub source_y: Option<Coordinate>,
+        #[rasn(identifier = "bitmapCacheIndex")]
+        pub bitmap_cache_index: Option<Integer16>,
+    }
+    impl MemoryBltOrder {
+        pub fn new(
+            header: PrimaryOrderHeader,
+            color_table_cache_index: Option<Integer8>,
+            bitmap_cache_id: Option<Integer8>,
+            dest_left: Option<Coordinate>,
+            dest_top: Option<Coordinate>,
+            dest_width: Option<Coordinate>,
+            dest_height: Option<Coordinate>,
+            rop3: Option<ROP3>,
+            source_x: Option<Coordinate>,
+            source_y: Option<Coordinate>,
+            bitmap_cache_index: Option<Integer16>,
+        ) -> Self {
+            Self {
+                header,
+                color_table_cache_index,
+                bitmap_cache_id,
+                dest_left,
+                dest_top,
+                dest_width,
+                dest_height,
+                rop3,
+                source_x,
+                source_y,
+                bitmap_cache_index,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct MemoryThreeWayBltOrder {
+        pub header: PrimaryOrderHeader,
+        #[rasn(identifier = "colorTableCacheIndex")]
+        pub color_table_cache_index: Option<Integer8>,
+        #[rasn(identifier = "bitmapCacheID")]
+        pub bitmap_cache_id: Option<Integer8>,
+        #[rasn(identifier = "destLeft")]
+        pub dest_left: Option<Coordinate>,
+        #[rasn(identifier = "destTop")]
+        pub dest_top: Option<Coordinate>,
+        #[rasn(identifier = "destWidth")]
+        pub dest_width: Option<Coordinate>,
+        #[rasn(identifier = "destHeight")]
+        pub dest_height: Option<Coordinate>,
+        pub rop3: Option<ROP3>,
+        #[rasn(identifier = "sourceX")]
+        pub source_x: Option<Coordinate>,
+        #[rasn(identifier = "sourceY")]
+        pub source_y: Option<Coordinate>,
+        #[rasn(identifier = "backgroundColor")]
+        pub background_color: Option<Color>,
+        #[rasn(identifier = "foregroundColor")]
+        pub foreground_color: Option<Color>,
+        pub brush: Option<Brush>,
+        #[rasn(identifier = "bitmapCacheIndex")]
+        pub bitmap_cache_index: Option<Integer16>,
+    }
+    impl MemoryThreeWayBltOrder {
+        pub fn new(
+            header: PrimaryOrderHeader,
+            color_table_cache_index: Option<Integer8>,
+            bitmap_cache_id: Option<Integer8>,
+            dest_left: Option<Coordinate>,
+            dest_top: Option<Coordinate>,
+            dest_width: Option<Coordinate>,
+            dest_height: Option<Coordinate>,
+            rop3: Option<ROP3>,
+            source_x: Option<Coordinate>,
+            source_y: Option<Coordinate>,
+            background_color: Option<Color>,
+            foreground_color: Option<Color>,
+            brush: Option<Brush>,
+            bitmap_cache_index: Option<Integer16>,
+        ) -> Self {
+            Self {
+                header,
+                color_table_cache_index,
+                bitmap_cache_id,
+                dest_left,
+                dest_top,
+                dest_width,
+                dest_height,
+                rop3,
+                source_x,
+                source_y,
+                background_color,
+                foreground_color,
+                brush,
+                bitmap_cache_index,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct MonoPointerAttribute {
+        #[rasn(identifier = "hotSpot")]
+        pub hot_spot: Point16,
+        pub width: Integer16,
+        pub height: Integer16,
+        #[rasn(identifier = "lengthPointerData")]
+        pub length_pointer_data: Integer16,
+        #[rasn(identifier = "monoPointerData")]
+        pub mono_pointer_data: OctetString,
+    }
+    impl MonoPointerAttribute {
+        pub fn new(
+            hot_spot: Point16,
+            width: Integer16,
+            height: Integer16,
+            length_pointer_data: Integer16,
+            mono_pointer_data: OctetString,
+        ) -> Self {
+            Self {
+                hot_spot,
+                width,
+                height,
+                length_pointer_data,
+                mono_pointer_data,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct NonStandardCapabilitySet {
+        #[rasn(identifier = "capabilitySetType")]
+        pub capability_set_type: Integer16,
+        #[rasn(identifier = "lengthCapability")]
+        pub length_capability: Integer16,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: OctetString,
+    }
+    impl NonStandardCapabilitySet {
+        pub fn new(
+            capability_set_type: Integer16,
+            length_capability: Integer16,
+            non_standard_parameters: OctetString,
+        ) -> Self {
+            Self {
+                capability_set_type,
+                length_capability,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=65535"))]
+    pub struct OSMajorType(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=65535"))]
+    pub struct OSMinorType(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct OpaqueRectangleOrder {
+        pub header: PrimaryOrderHeader,
+        #[rasn(identifier = "destLeft")]
+        pub dest_left: Option<Coordinate>,
+        #[rasn(identifier = "destTop")]
+        pub dest_top: Option<Coordinate>,
+        #[rasn(identifier = "destWidth")]
+        pub dest_width: Option<Coordinate>,
+        #[rasn(identifier = "destHeight")]
+        pub dest_height: Option<Coordinate>,
+        pub color: Option<Color>,
+    }
+    impl OpaqueRectangleOrder {
+        pub fn new(
+            header: PrimaryOrderHeader,
+            dest_left: Option<Coordinate>,
+            dest_top: Option<Coordinate>,
+            dest_width: Option<Coordinate>,
+            dest_height: Option<Coordinate>,
+            color: Option<Color>,
+        ) -> Self {
+            Self {
+                header,
+                dest_left,
+                dest_top,
+                dest_width,
+                dest_height,
+                color,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=15"))]
+    pub struct OrderCapabilityFlags(pub BitString);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct OrderCapabilitySetOrderSupport {
+        #[rasn(identifier = "destinationBltSupport")]
+        pub destination_blt_support: Integer8,
+        #[rasn(identifier = "patternBltSupport")]
+        pub pattern_blt_support: Integer8,
+        #[rasn(identifier = "screenBltSupport")]
+        pub screen_blt_support: Integer8,
+        #[rasn(identifier = "memoryBltSupport")]
+        pub memory_blt_support: Integer8,
+        #[rasn(identifier = "memoryThreeWayBltSupport")]
+        pub memory_three_way_blt_support: Integer8,
+        #[rasn(identifier = "textSupport")]
+        pub text_support: Integer8,
+        #[rasn(identifier = "extendedTextSupport")]
+        pub extended_text_support: Integer8,
+        #[rasn(identifier = "rectangleSupport")]
+        pub rectangle_support: Integer8,
+        #[rasn(identifier = "lineSupport")]
+        pub line_support: Integer8,
+        #[rasn(identifier = "frameSupport")]
+        pub frame_support: Integer8,
+        #[rasn(identifier = "opaqueRectangleSupport")]
+        pub opaque_rectangle_support: Integer8,
+        #[rasn(identifier = "desktopSaveSupport")]
+        pub desktop_save_support: Integer8,
+        #[rasn(value("0"), identifier = "undefinedOrder12")]
+        pub undefined_order12: Integer8,
+        #[rasn(value("0"), identifier = "undefinedOrder13")]
+        pub undefined_order13: Integer8,
+        #[rasn(value("0"), identifier = "undefinedOrder14")]
+        pub undefined_order14: Integer8,
+        #[rasn(value("0"), identifier = "undefinedOrder15")]
+        pub undefined_order15: Integer8,
+        #[rasn(value("0"), identifier = "undefinedOrder16")]
+        pub undefined_order16: Integer8,
+        #[rasn(value("0"), identifier = "undefinedOrder17")]
+        pub undefined_order17: Integer8,
+        #[rasn(value("0"), identifier = "undefinedOrder18")]
+        pub undefined_order18: Integer8,
+        #[rasn(value("0"), identifier = "undefinedOrder19")]
+        pub undefined_order19: Integer8,
+        #[rasn(value("0"), identifier = "undefinedOrder20")]
+        pub undefined_order20: Integer8,
+        #[rasn(value("0"), identifier = "undefinedOrder21")]
+        pub undefined_order21: Integer8,
+        #[rasn(value("0"), identifier = "undefinedOrder22")]
+        pub undefined_order22: Integer8,
+        #[rasn(value("0"), identifier = "undefinedOrder23")]
+        pub undefined_order23: Integer8,
+        #[rasn(value("0"), identifier = "undefinedOrder24")]
+        pub undefined_order24: Integer8,
+        #[rasn(value("0"), identifier = "undefinedOrder25")]
+        pub undefined_order25: Integer8,
+        #[rasn(value("0"), identifier = "undefinedOrder26")]
+        pub undefined_order26: Integer8,
+        #[rasn(value("0"), identifier = "undefinedOrder27")]
+        pub undefined_order27: Integer8,
+        #[rasn(value("0"), identifier = "undefinedOrder28")]
+        pub undefined_order28: Integer8,
+        #[rasn(value("0"), identifier = "undefinedOrder29")]
+        pub undefined_order29: Integer8,
+        #[rasn(value("0"), identifier = "undefinedOrder30")]
+        pub undefined_order30: Integer8,
+        #[rasn(value("0"), identifier = "undefinedOrder31")]
+        pub undefined_order31: Integer8,
+    }
+    impl OrderCapabilitySetOrderSupport {
+        pub fn new(
+            destination_blt_support: Integer8,
+            pattern_blt_support: Integer8,
+            screen_blt_support: Integer8,
+            memory_blt_support: Integer8,
+            memory_three_way_blt_support: Integer8,
+            text_support: Integer8,
+            extended_text_support: Integer8,
+            rectangle_support: Integer8,
+            line_support: Integer8,
+            frame_support: Integer8,
+            opaque_rectangle_support: Integer8,
+            desktop_save_support: Integer8,
+            undefined_order12: Integer8,
+            undefined_order13: Integer8,
+            undefined_order14: Integer8,
+            undefined_order15: Integer8,
+            undefined_order16: Integer8,
+            undefined_order17: Integer8,
+            undefined_order18: Integer8,
+            undefined_order19: Integer8,
+            undefined_order20: Integer8,
+            undefined_order21: Integer8,
+            undefined_order22: Integer8,
+            undefined_order23: Integer8,
+            undefined_order24: Integer8,
+            undefined_order25: Integer8,
+            undefined_order26: Integer8,
+            undefined_order27: Integer8,
+            undefined_order28: Integer8,
+            undefined_order29: Integer8,
+            undefined_order30: Integer8,
+            undefined_order31: Integer8,
+        ) -> Self {
+            Self {
+                destination_blt_support,
+                pattern_blt_support,
+                screen_blt_support,
+                memory_blt_support,
+                memory_three_way_blt_support,
+                text_support,
+                extended_text_support,
+                rectangle_support,
+                line_support,
+                frame_support,
+                opaque_rectangle_support,
+                desktop_save_support,
+                undefined_order12,
+                undefined_order13,
+                undefined_order14,
+                undefined_order15,
+                undefined_order16,
+                undefined_order17,
+                undefined_order18,
+                undefined_order19,
+                undefined_order20,
+                undefined_order21,
+                undefined_order22,
+                undefined_order23,
+                undefined_order24,
+                undefined_order25,
+                undefined_order26,
+                undefined_order27,
+                undefined_order28,
+                undefined_order29,
+                undefined_order30,
+                undefined_order31,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct OrderCapabilitySet {
+        #[rasn(value("3"), identifier = "capabilitySetType")]
+        pub capability_set_type: CapabilitySetType,
+        #[rasn(identifier = "lengthCapability")]
+        pub length_capability: Integer16,
+        #[rasn(size("1..=16"), identifier = "terminalDescriptor")]
+        pub terminal_descriptor: T50String,
+        #[rasn(value("0"), identifier = "pad4octetsA")]
+        pub pad4octets_a: Integer32,
+        #[rasn(identifier = "desktopXGranularity")]
+        pub desktop_xgranularity: Integer16,
+        #[rasn(identifier = "desktopYGranularity")]
+        pub desktop_ygranularity: Integer16,
+        #[rasn(value("0"), identifier = "pad2octetsA")]
+        pub pad2octets_a: Integer16,
+        #[rasn(identifier = "maximumOrderLevel")]
+        pub maximum_order_level: Integer16,
+        #[rasn(value("1..=700"), identifier = "numberFonts")]
+        pub number_fonts: Integer16,
+        #[rasn(identifier = "orderFlags")]
+        pub order_flags: OrderCapabilityFlags,
+        #[rasn(identifier = "orderSupport")]
+        pub order_support: OrderCapabilitySetOrderSupport,
+        #[rasn(identifier = "textFlags")]
+        pub text_flags: TextCapabilityFlags,
+        #[rasn(value("0"), identifier = "pad2octetsB")]
+        pub pad2octets_b: Integer16,
+        #[rasn(value("0"), identifier = "pad4octetsB")]
+        pub pad4octets_b: Integer32,
+        #[rasn(identifier = "desktopSaveSize")]
+        pub desktop_save_size: Integer32,
+        #[rasn(value("0"), identifier = "pad4octetsC")]
+        pub pad4octets_c: Integer32,
+    }
+    impl OrderCapabilitySet {
+        pub fn new(
+            capability_set_type: CapabilitySetType,
+            length_capability: Integer16,
+            terminal_descriptor: T50String,
+            pad4octets_a: Integer32,
+            desktop_xgranularity: Integer16,
+            desktop_ygranularity: Integer16,
+            pad2octets_a: Integer16,
+            maximum_order_level: Integer16,
+            number_fonts: Integer16,
+            order_flags: OrderCapabilityFlags,
+            order_support: OrderCapabilitySetOrderSupport,
+            text_flags: TextCapabilityFlags,
+            pad2octets_b: Integer16,
+            pad4octets_b: Integer32,
+            desktop_save_size: Integer32,
+            pad4octets_c: Integer32,
+        ) -> Self {
+            Self {
+                capability_set_type,
+                length_capability,
+                terminal_descriptor,
+                pad4octets_a,
+                desktop_xgranularity,
+                desktop_ygranularity,
+                pad2octets_a,
+                maximum_order_level,
+                number_fonts,
+                order_flags,
+                order_support,
+                text_flags,
+                pad2octets_b,
+                pad4octets_b,
+                desktop_save_size,
+                pad4octets_c,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=15"))]
+    pub struct PDUType(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=255"))]
+    pub struct PDUType2(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=255"))]
+    pub struct PDUTypeFlow(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct PatternBltOrder {
+        pub header: PrimaryOrderHeader,
+        #[rasn(identifier = "destLeft")]
+        pub dest_left: Option<Coordinate>,
+        #[rasn(identifier = "destTop")]
+        pub dest_top: Option<Coordinate>,
+        #[rasn(identifier = "destWidth")]
+        pub dest_width: Option<Coordinate>,
+        #[rasn(identifier = "destHeight")]
+        pub dest_height: Option<Coordinate>,
+        pub rop3: Option<ROP3>,
+        #[rasn(identifier = "backgroundColor")]
+        pub background_color: Option<Color>,
+        #[rasn(identifier = "foregroundColor")]
+        pub foreground_color: Option<Color>,
+        pub brush: Option<Brush>,
+    }
+    impl PatternBltOrder {
+        pub fn new(
+            header: PrimaryOrderHeader,
+            dest_left: Option<Coordinate>,
+            dest_top: Option<Coordinate>,
+            dest_width: Option<Coordinate>,
+            dest_height: Option<Coordinate>,
+            rop3: Option<ROP3>,
+            background_color: Option<Color>,
+            foreground_color: Option<Color>,
+            brush: Option<Brush>,
+        ) -> Self {
+            Self {
+                header,
+                dest_left,
+                dest_top,
+                dest_width,
+                dest_height,
+                rop3,
+                background_color,
+                foreground_color,
+                brush,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct Pen {
+        pub style: Option<PenStyle>,
+        #[rasn(value("1"))]
+        pub width: Option<Integer8>,
+        pub color: Option<Color>,
+    }
+    impl Pen {
+        pub fn new(style: Option<PenStyle>, width: Option<Integer8>, color: Option<Color>) -> Self {
+            Self {
+                style,
+                width,
+                color,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum PenStyle {
+        solid = 0,
+        dashed = 1,
+        dotted = 2,
+        #[rasn(identifier = "dash-dot")]
+        dash_dot = 3,
+        #[rasn(identifier = "dash-dot-dot")]
+        dash_dot_dot = 4,
+        null = 5,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct Point16 {
+        pub x: Coordinate16,
+        pub y: Coordinate16,
+    }
+    impl Point16 {
+        pub fn new(x: Coordinate16, y: Coordinate16) -> Self {
+            Self { x, y }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct PointerCapabilitySet {
+        #[rasn(value("8"), identifier = "capabilitySetType")]
+        pub capability_set_type: CapabilitySetType,
+        #[rasn(identifier = "lengthCapability")]
+        pub length_capability: Integer16,
+        #[rasn(identifier = "colorPointerFlag")]
+        pub color_pointer_flag: Boolean16,
+        #[rasn(value("1..=500"), identifier = "pointerCacheSize")]
+        pub pointer_cache_size: Integer16,
+    }
+    impl PointerCapabilitySet {
+        pub fn new(
+            capability_set_type: CapabilitySetType,
+            length_capability: Integer16,
+            color_pointer_flag: Boolean16,
+            pointer_cache_size: Integer16,
+        ) -> Self {
+            Self {
+                capability_set_type,
+                length_capability,
+                color_pointer_flag,
+                pointer_cache_size,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=65535"))]
+    pub struct PointerMessageType(pub u16);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum PointerPDUPointerData {
+        systemPointerType(SystemPointerType),
+        monoPointerAttribute(MonoPointerAttribute),
+        colorPointerAttribute(ColorPointerAttribute),
+        cachedPointerIndex(Integer16),
+        pointerPosition(Point16),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct PointerPDU {
+        #[rasn(identifier = "shareDataHeader")]
+        pub share_data_header: ShareDataHeader,
+        #[rasn(identifier = "messageType")]
+        pub message_type: PointerMessageType,
+        #[rasn(value("0"))]
+        pub pad2octets: Integer16,
+        #[rasn(identifier = "pointerData")]
+        pub pointer_data: PointerPDUPointerData,
+    }
+    impl PointerPDU {
+        pub fn new(
+            share_data_header: ShareDataHeader,
+            message_type: PointerMessageType,
+            pad2octets: Integer16,
+            pointer_data: PointerPDUPointerData,
+        ) -> Self {
+            Self {
+                share_data_header,
+                message_type,
+                pad2octets,
+                pointer_data,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct PointingDeviceEvent {
+        #[rasn(identifier = "eventTime")]
+        pub event_time: Integer32,
+        #[rasn(value("32769"), identifier = "messageType")]
+        pub message_type: InputMessageType,
+        #[rasn(identifier = "pointingDeviceFlags")]
+        pub pointing_device_flags: PointingDeviceFlags,
+        #[rasn(identifier = "pointingDeviceX")]
+        pub pointing_device_x: Coordinate16,
+        #[rasn(identifier = "pointingDeviceY")]
+        pub pointing_device_y: Coordinate16,
+    }
+    impl PointingDeviceEvent {
+        pub fn new(
+            event_time: Integer32,
+            message_type: InputMessageType,
+            pointing_device_flags: PointingDeviceFlags,
+            pointing_device_x: Coordinate16,
+            pointing_device_y: Coordinate16,
+        ) -> Self {
+            Self {
+                event_time,
+                message_type,
+                pointing_device_flags,
+                pointing_device_x,
+                pointing_device_y,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=15"))]
+    pub struct PointingDeviceFlags(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum PrimaryOrder {
+        destinationBlt(DestinationBltOrder),
+        patternBlt(PatternBltOrder),
+        screenBlt(ScreenBltOrder),
+        memoryBlt(MemoryBltOrder),
+        memoryThreeWayBlt(MemoryThreeWayBltOrder),
+        text(TextOrder),
+        extendedText(ExtendedTextOrder),
+        frame(FrameOrder),
+        rectangle(RectangleOrder),
+        line(LineOrder),
+        opaqueRectangle(OpaqueRectangleOrder),
+        desktopSave(DesktopSaveOrder),
+        desktopOrigin(DesktopOriginOrder),
+    }
+    #[doc = " Common Header Types"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct PrimaryOrderHeader {
+        #[rasn(identifier = "controlFlags")]
+        pub control_flags: ControlOrderFlags,
+        #[rasn(identifier = "orderType")]
+        pub order_type: Option<PrimaryOrderType>,
+        #[rasn(size("1..=3"), identifier = "encodingFlags")]
+        pub encoding_flags: SequenceOf<BitString8>,
+        #[rasn(identifier = "boundsFlags")]
+        pub bounds_flags: Option<BoundsOrderFlags>,
+        #[rasn(identifier = "boundsLeft")]
+        pub bounds_left: Option<Coordinate>,
+        #[rasn(identifier = "boundsTop")]
+        pub bounds_top: Option<Coordinate>,
+        #[rasn(identifier = "boundsRight")]
+        pub bounds_right: Option<Coordinate>,
+        #[rasn(identifier = "boundsBottom")]
+        pub bounds_bottom: Option<Coordinate>,
+    }
+    impl PrimaryOrderHeader {
+        pub fn new(
+            control_flags: ControlOrderFlags,
+            order_type: Option<PrimaryOrderType>,
+            encoding_flags: SequenceOf<BitString8>,
+            bounds_flags: Option<BoundsOrderFlags>,
+            bounds_left: Option<Coordinate>,
+            bounds_top: Option<Coordinate>,
+            bounds_right: Option<Coordinate>,
+            bounds_bottom: Option<Coordinate>,
+        ) -> Self {
+            Self {
+                control_flags,
+                order_type,
+                encoding_flags,
+                bounds_flags,
+                bounds_left,
+                bounds_top,
+                bounds_right,
+                bounds_bottom,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=255"))]
+    pub struct PrimaryOrderType(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=255"))]
+    pub struct ROP2(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=255"))]
+    pub struct ROP3(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct Rectangle16 {
+        pub left: Coordinate16,
+        pub top: Coordinate16,
+        pub right: Coordinate16,
+        pub bottom: Coordinate16,
+    }
+    impl Rectangle16 {
+        pub fn new(
+            left: Coordinate16,
+            top: Coordinate16,
+            right: Coordinate16,
+            bottom: Coordinate16,
+        ) -> Self {
+            Self {
+                left,
+                top,
+                right,
+                bottom,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct RectangleOrder {
+        pub header: PrimaryOrderHeader,
+        #[rasn(identifier = "backMixMode")]
+        pub back_mix_mode: Option<BackgroundMixMode>,
+        #[rasn(identifier = "destLeft")]
+        pub dest_left: Option<Coordinate>,
+        #[rasn(identifier = "destTop")]
+        pub dest_top: Option<Coordinate>,
+        #[rasn(identifier = "destRight")]
+        pub dest_right: Option<Coordinate>,
+        #[rasn(identifier = "destBottom")]
+        pub dest_bottom: Option<Coordinate>,
+        #[rasn(identifier = "backgroundColor")]
+        pub background_color: Option<Color>,
+        #[rasn(identifier = "foregroundColor")]
+        pub foreground_color: Option<Color>,
+        pub brush: Option<Brush>,
+        pub rop2: Option<ROP2>,
+        pub pen: Option<Pen>,
+    }
+    impl RectangleOrder {
+        pub fn new(
+            header: PrimaryOrderHeader,
+            back_mix_mode: Option<BackgroundMixMode>,
+            dest_left: Option<Coordinate>,
+            dest_top: Option<Coordinate>,
+            dest_right: Option<Coordinate>,
+            dest_bottom: Option<Coordinate>,
+            background_color: Option<Color>,
+            foreground_color: Option<Color>,
+            brush: Option<Brush>,
+            rop2: Option<ROP2>,
+            pen: Option<Pen>,
+        ) -> Self {
+            Self {
+                header,
+                back_mix_mode,
+                dest_left,
+                dest_top,
+                dest_right,
+                dest_bottom,
+                background_color,
+                foreground_color,
+                brush,
+                rop2,
+                pen,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=65535"))]
+    pub struct RemoteShareAction(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=65535"))]
+    pub struct RemoteShareDenial(pub u16);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum RemoteSharePDUAdditionalData {
+        requestingID(UserID),
+        #[rasn(value("0"))]
+        pad2octets(Integer16),
+        denialCode(RemoteShareDenial),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct RemoteSharePDU {
+        #[rasn(identifier = "shareDataHeader")]
+        pub share_data_header: ShareDataHeader,
+        pub action: RemoteShareAction,
+        #[rasn(identifier = "additionalData")]
+        pub additional_data: RemoteSharePDUAdditionalData,
+        #[rasn(size("1..=9"), identifier = "encryptedPassword")]
+        pub encrypted_password: OctetString,
+    }
+    impl RemoteSharePDU {
+        pub fn new(
+            share_data_header: ShareDataHeader,
+            action: RemoteShareAction,
+            additional_data: RemoteSharePDUAdditionalData,
+            encrypted_password: OctetString,
+        ) -> Self {
+            Self {
+                share_data_header,
+                action,
+                additional_data,
+                encrypted_password,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct RequestActivePDU {
+        #[rasn(identifier = "shareControlHeader")]
+        pub share_control_header: ShareControlHeader,
+        #[rasn(value("1..=48"), identifier = "lengthSourceDescriptor")]
+        pub length_source_descriptor: Integer16,
+        #[rasn(identifier = "lengthCombinedCapabilities")]
+        pub length_combined_capabilities: Integer16,
+        #[rasn(size("1..=48"), identifier = "sourceDescriptor")]
+        pub source_descriptor: T50String,
+        #[rasn(identifier = "combinedCapabilities")]
+        pub combined_capabilities: CombinedCapabilities,
+    }
+    impl RequestActivePDU {
+        pub fn new(
+            share_control_header: ShareControlHeader,
+            length_source_descriptor: Integer16,
+            length_combined_capabilities: Integer16,
+            source_descriptor: T50String,
+            combined_capabilities: CombinedCapabilities,
+        ) -> Self {
+            Self {
+                share_control_header,
+                length_source_descriptor,
+                length_combined_capabilities,
+                source_descriptor,
+                combined_capabilities,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct ScreenBltOrder {
+        pub header: PrimaryOrderHeader,
+        #[rasn(identifier = "destLeft")]
+        pub dest_left: Option<Coordinate>,
+        #[rasn(identifier = "destTop")]
+        pub dest_top: Option<Coordinate>,
+        #[rasn(identifier = "destWidth")]
+        pub dest_width: Option<Coordinate>,
+        #[rasn(identifier = "destHeight")]
+        pub dest_height: Option<Coordinate>,
+        pub rop3: Option<ROP3>,
+        #[rasn(identifier = "sourceX")]
+        pub source_x: Option<Coordinate>,
+        #[rasn(identifier = "sourceY")]
+        pub source_y: Option<Coordinate>,
+    }
+    impl ScreenBltOrder {
+        pub fn new(
+            header: PrimaryOrderHeader,
+            dest_left: Option<Coordinate>,
+            dest_top: Option<Coordinate>,
+            dest_width: Option<Coordinate>,
+            dest_height: Option<Coordinate>,
+            rop3: Option<ROP3>,
+            source_x: Option<Coordinate>,
+            source_y: Option<Coordinate>,
+        ) -> Self {
+            Self {
+                header,
+                dest_left,
+                dest_top,
+                dest_width,
+                dest_height,
+                rop3,
+                source_x,
+                source_y,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum SecondaryOrder {
+        cacheBitmap(CacheBitmapOrder),
+        cacheColorTable(CacheColorTableOrder),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct SecondaryOrderHeader {
+        #[rasn(identifier = "controlFlags")]
+        pub control_flags: ControlOrderFlags,
+        #[rasn(identifier = "orderLength")]
+        pub order_length: Integer16,
+        #[rasn(identifier = "extraFlags")]
+        pub extra_flags: ExtraOrderFlags,
+        #[rasn(identifier = "orderType")]
+        pub order_type: SecondaryOrderType,
+    }
+    impl SecondaryOrderHeader {
+        pub fn new(
+            control_flags: ControlOrderFlags,
+            order_length: Integer16,
+            extra_flags: ExtraOrderFlags,
+            order_type: SecondaryOrderType,
+        ) -> Self {
+            Self {
+                control_flags,
+                order_length,
+                extra_flags,
+                order_type,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=255"))]
+    pub struct SecondaryOrderType(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct ShareCapabilitySet {
+        #[rasn(value("9"), identifier = "capabilitySetType")]
+        pub capability_set_type: CapabilitySetType,
+        #[rasn(identifier = "lengthCapability")]
+        pub length_capability: Integer16,
+        #[rasn(identifier = "nodeID")]
+        pub node_id: Integer32,
+    }
+    impl ShareCapabilitySet {
+        pub fn new(
+            capability_set_type: CapabilitySetType,
+            length_capability: Integer16,
+            node_id: Integer32,
+        ) -> Self {
+            Self {
+                capability_set_type,
+                length_capability,
+                node_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct ShareControlHeader {
+        #[rasn(value("0..=32767"), identifier = "totalLength")]
+        pub total_length: Integer16,
+        #[rasn(value("1"), identifier = "protocolVersion")]
+        pub protocol_version: Integer4,
+        #[rasn(identifier = "pduType")]
+        pub pdu_type: PDUType,
+        #[rasn(value("0"))]
+        pub pad1octet: Integer8,
+        #[rasn(identifier = "pduSource")]
+        pub pdu_source: UserID,
+    }
+    impl ShareControlHeader {
+        pub fn new(
+            total_length: Integer16,
+            protocol_version: Integer4,
+            pdu_type: PDUType,
+            pad1octet: Integer8,
+            pdu_source: UserID,
+        ) -> Self {
+            Self {
+                total_length,
+                protocol_version,
+                pdu_type,
+                pad1octet,
+                pdu_source,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct ShareDataHeader {
+        #[rasn(identifier = "shareControlHeader")]
+        pub share_control_header: ShareControlHeader,
+        #[rasn(identifier = "shareID")]
+        pub share_id: ShareID,
+        #[rasn(value("0"))]
+        pub pad1octet: Integer8,
+        #[rasn(identifier = "streamID")]
+        pub stream_id: StreamID,
+        #[rasn(identifier = "uncompressedLength")]
+        pub uncompressed_length: Integer16,
+        #[rasn(identifier = "pduType2")]
+        pub pdu_type2: PDUType2,
+        #[rasn(identifier = "generalCompressedType")]
+        pub general_compressed_type: Integer8,
+        #[rasn(identifier = "generalCompressedLength")]
+        pub general_compressed_length: Integer16,
+    }
+    impl ShareDataHeader {
+        pub fn new(
+            share_control_header: ShareControlHeader,
+            share_id: ShareID,
+            pad1octet: Integer8,
+            stream_id: StreamID,
+            uncompressed_length: Integer16,
+            pdu_type2: PDUType2,
+            general_compressed_type: Integer8,
+            general_compressed_length: Integer16,
+        ) -> Self {
+            Self {
+                share_control_header,
+                share_id,
+                pad1octet,
+                stream_id,
+                uncompressed_length,
+                pdu_type2,
+                general_compressed_type,
+                general_compressed_length,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ShareID(pub Integer32);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum SharePDU {
+        applicationPDU(ApplicationPDU),
+        confirmActivePDU(ConfirmActivePDU),
+        controlPDU(ControlPDU),
+        deactivateAllPDU(DeactivateAllPDU),
+        deactivateOtherPDU(DeactivateOtherPDU),
+        deactivateSelfPDU(DeactivateSelfPDU),
+        demandActivePDU(DemandActivePDU),
+        flowPDU(FlowPDU),
+        fontPDU(FontPDU),
+        inputPDU(InputPDU),
+        mediatedControlPDU(MediatedControlPDU),
+        pointerPDU(PointerPDU),
+        remoteSharePDU(RemoteSharePDU),
+        requestActivePDU(RequestActivePDU),
+        synchronizePDU(SynchronizePDU),
+        updateCapabilityPDU(UpdateCapabilityPDU),
+        updateBitmapPDU(UpdateBitmapPDU),
+        updateOrdersPDU(UpdateOrdersPDU),
+        updateSynchronizePDU(UpdateSynchronizePDU),
+        updatePalettePDU(UpdatePalettePDU),
+        windowActivationPDU(WindowActivationPDU),
+        windowListPDU(WindowListPDU),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=255"))]
+    pub struct StreamID(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct SynchronizeEvent {
+        #[rasn(identifier = "eventTime")]
+        pub event_time: Integer32,
+        #[rasn(value("0"), identifier = "messageType")]
+        pub message_type: InputMessageType,
+    }
+    impl SynchronizeEvent {
+        pub fn new(event_time: Integer32, message_type: InputMessageType) -> Self {
+            Self {
+                event_time,
+                message_type,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=65535"))]
+    pub struct SynchronizeMessageType(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct SynchronizePDU {
+        #[rasn(identifier = "shareDataHeader")]
+        pub share_data_header: ShareDataHeader,
+        #[rasn(identifier = "messageType")]
+        pub message_type: SynchronizeMessageType,
+        #[rasn(identifier = "targetUser")]
+        pub target_user: UserID,
+    }
+    impl SynchronizePDU {
+        pub fn new(
+            share_data_header: ShareDataHeader,
+            message_type: SynchronizeMessageType,
+            target_user: UserID,
+        ) -> Self {
+            Self {
+                share_data_header,
+                message_type,
+                target_user,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=4294967295"))]
+    pub struct SystemPointerType(pub u32);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=255"))]
+    pub struct T50String(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=15"))]
+    pub struct TextAttributeFlags(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=15"))]
+    pub struct TextCapabilityFlags(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct TextOrder {
+        pub header: PrimaryOrderHeader,
+        #[rasn(identifier = "backMixMode")]
+        pub back_mix_mode: Option<BackgroundMixMode>,
+        #[rasn(identifier = "startX")]
+        pub start_x: Option<Coordinate>,
+        #[rasn(identifier = "startY")]
+        pub start_y: Option<Coordinate>,
+        #[rasn(identifier = "backgroundColor")]
+        pub background_color: Option<Color>,
+        #[rasn(identifier = "foregroundColor")]
+        pub foreground_color: Option<Color>,
+        #[rasn(identifier = "extraSpacing")]
+        pub extra_spacing: Option<Integer16>,
+        #[rasn(identifier = "totalBreakSpacing")]
+        pub total_break_spacing: Option<Integer16>,
+        #[rasn(identifier = "breakCount")]
+        pub break_count: Option<Integer16>,
+        #[rasn(identifier = "fontHeight")]
+        pub font_height: Option<Integer16>,
+        #[rasn(identifier = "fontWidth")]
+        pub font_width: Option<Integer16>,
+        #[rasn(identifier = "fontWeight")]
+        pub font_weight: Option<Integer16>,
+        #[rasn(identifier = "textFlags")]
+        pub text_flags: Option<TextAttributeFlags>,
+        #[rasn(identifier = "fontID")]
+        pub font_id: Option<Integer16>,
+        #[rasn(value("1..=255"), identifier = "numberCodePoints")]
+        pub number_code_points: Option<Integer8>,
+        #[rasn(size("1..=255"), identifier = "codePointList")]
+        pub code_point_list: Option<ASString>,
+    }
+    impl TextOrder {
+        pub fn new(
+            header: PrimaryOrderHeader,
+            back_mix_mode: Option<BackgroundMixMode>,
+            start_x: Option<Coordinate>,
+            start_y: Option<Coordinate>,
+            background_color: Option<Color>,
+            foreground_color: Option<Color>,
+            extra_spacing: Option<Integer16>,
+            total_break_spacing: Option<Integer16>,
+            break_count: Option<Integer16>,
+            font_height: Option<Integer16>,
+            font_width: Option<Integer16>,
+            font_weight: Option<Integer16>,
+            text_flags: Option<TextAttributeFlags>,
+            font_id: Option<Integer16>,
+            number_code_points: Option<Integer8>,
+            code_point_list: Option<ASString>,
+        ) -> Self {
+            Self {
+                header,
+                back_mix_mode,
+                start_x,
+                start_y,
+                background_color,
+                foreground_color,
+                extra_spacing,
+                total_break_spacing,
+                break_count,
+                font_height,
+                font_width,
+                font_weight,
+                text_flags,
+                font_id,
+                number_code_points,
+                code_point_list,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct UpdateBitmapPDU {
+        #[rasn(identifier = "shareDataHeader")]
+        pub share_data_header: ShareDataHeader,
+        #[rasn(value("1"), identifier = "updateType")]
+        pub update_type: UpdateType,
+        #[rasn(value("0"))]
+        pub pad2octets: Integer16,
+        #[rasn(identifier = "destLeft")]
+        pub dest_left: Coordinate16,
+        #[rasn(identifier = "destTop")]
+        pub dest_top: Coordinate16,
+        #[rasn(identifier = "destRight")]
+        pub dest_right: Coordinate16,
+        #[rasn(identifier = "destBottom")]
+        pub dest_bottom: Coordinate16,
+        pub width: Integer16,
+        pub height: Integer16,
+        #[rasn(value("1..=8"), identifier = "bitsPerPixel")]
+        pub bits_per_pixel: Integer16,
+        #[rasn(identifier = "compressedFlag")]
+        pub compressed_flag: Boolean16,
+        #[rasn(identifier = "bitmapLength")]
+        pub bitmap_length: Integer16,
+        #[rasn(identifier = "bitmapData")]
+        pub bitmap_data: BitmapData,
+    }
+    impl UpdateBitmapPDU {
+        pub fn new(
+            share_data_header: ShareDataHeader,
+            update_type: UpdateType,
+            pad2octets: Integer16,
+            dest_left: Coordinate16,
+            dest_top: Coordinate16,
+            dest_right: Coordinate16,
+            dest_bottom: Coordinate16,
+            width: Integer16,
+            height: Integer16,
+            bits_per_pixel: Integer16,
+            compressed_flag: Boolean16,
+            bitmap_length: Integer16,
+            bitmap_data: BitmapData,
+        ) -> Self {
+            Self {
+                share_data_header,
+                update_type,
+                pad2octets,
+                dest_left,
+                dest_top,
+                dest_right,
+                dest_bottom,
+                width,
+                height,
+                bits_per_pixel,
+                compressed_flag,
+                bitmap_length,
+                bitmap_data,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct UpdateCapabilityPDU {
+        #[rasn(identifier = "shareDataHeader")]
+        pub share_data_header: ShareDataHeader,
+        #[rasn(identifier = "updateCapabilitySet")]
+        pub update_capability_set: UpdateCapabilitySet,
+    }
+    impl UpdateCapabilityPDU {
+        pub fn new(
+            share_data_header: ShareDataHeader,
+            update_capability_set: UpdateCapabilitySet,
+        ) -> Self {
+            Self {
+                share_data_header,
+                update_capability_set,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum UpdateCapabilitySet {
+        bitmapCapabilitySet(BitmapCapabilitySet),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum UpdateOrder {
+        primaryOrder(PrimaryOrder),
+        secondaryOrder(SecondaryOrder),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct UpdateOrdersPDU {
+        #[rasn(identifier = "shareDataHeader")]
+        pub share_data_header: ShareDataHeader,
+        #[rasn(value("0"), identifier = "updateType")]
+        pub update_type: UpdateType,
+        #[rasn(value("0"), identifier = "pad2octetsA")]
+        pub pad2octets_a: Integer16,
+        #[rasn(identifier = "numberOrders")]
+        pub number_orders: Integer16,
+        #[rasn(value("0"), identifier = "pad2octetsB")]
+        pub pad2octets_b: Integer16,
+        #[rasn(identifier = "orderList")]
+        pub order_list: SequenceOf<UpdateOrder>,
+    }
+    impl UpdateOrdersPDU {
+        pub fn new(
+            share_data_header: ShareDataHeader,
+            update_type: UpdateType,
+            pad2octets_a: Integer16,
+            number_orders: Integer16,
+            pad2octets_b: Integer16,
+            order_list: SequenceOf<UpdateOrder>,
+        ) -> Self {
+            Self {
+                share_data_header,
+                update_type,
+                pad2octets_a,
+                number_orders,
+                pad2octets_b,
+                order_list,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct UpdatePalettePDU {
+        #[rasn(identifier = "shareDataHeader")]
+        pub share_data_header: ShareDataHeader,
+        #[rasn(value("2"), identifier = "updateType")]
+        pub update_type: UpdateType,
+        #[rasn(value("0"))]
+        pub pad2octets: Integer16,
+        #[rasn(value("16..=256"), identifier = "numberColors")]
+        pub number_colors: Integer32,
+        #[rasn(size("16..=256"))]
+        pub palette: SequenceOf<Color>,
+    }
+    impl UpdatePalettePDU {
+        pub fn new(
+            share_data_header: ShareDataHeader,
+            update_type: UpdateType,
+            pad2octets: Integer16,
+            number_colors: Integer32,
+            palette: SequenceOf<Color>,
+        ) -> Self {
+            Self {
+                share_data_header,
+                update_type,
+                pad2octets,
+                number_colors,
+                palette,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct UpdateSynchronizePDU {
+        #[rasn(identifier = "shareDataHeader")]
+        pub share_data_header: ShareDataHeader,
+        #[rasn(value("3"), identifier = "updateType")]
+        pub update_type: UpdateType,
+        #[rasn(value("0"))]
+        pub pad2octets: Integer16,
+    }
+    impl UpdateSynchronizePDU {
+        pub fn new(
+            share_data_header: ShareDataHeader,
+            update_type: UpdateType,
+            pad2octets: Integer16,
+        ) -> Self {
+            Self {
+                share_data_header,
+                update_type,
+                pad2octets,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=65535"))]
+    pub struct UpdateType(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct UserID(pub Integer16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=65535"))]
+    pub struct WindowActivationAction(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct WindowActivationPDU {
+        #[rasn(identifier = "shareDataHeader")]
+        pub share_data_header: ShareDataHeader,
+        pub action: WindowActivationAction,
+        #[rasn(identifier = "activationID")]
+        pub activation_id: Integer16,
+        #[rasn(identifier = "activationWindow")]
+        pub activation_window: WindowID,
+        #[rasn(identifier = "activationPoint")]
+        pub activation_point: Point16,
+    }
+    impl WindowActivationPDU {
+        pub fn new(
+            share_data_header: ShareDataHeader,
+            action: WindowActivationAction,
+            activation_id: Integer16,
+            activation_window: WindowID,
+            activation_point: Point16,
+        ) -> Self {
+            Self {
+                share_data_header,
+                action,
+                activation_id,
+                activation_window,
+                activation_point,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct WindowAttribute {
+        #[rasn(identifier = "windowID")]
+        pub window_id: WindowID,
+        #[rasn(identifier = "windowExtra")]
+        pub window_extra: Integer32,
+        #[rasn(identifier = "windowOwner")]
+        pub window_owner: WindowID,
+        #[rasn(identifier = "windowFlags")]
+        pub window_flags: WindowAttributeFlags,
+        #[rasn(identifier = "windowRectangle")]
+        pub window_rectangle: Rectangle16,
+    }
+    impl WindowAttribute {
+        pub fn new(
+            window_id: WindowID,
+            window_extra: Integer32,
+            window_owner: WindowID,
+            window_flags: WindowAttributeFlags,
+            window_rectangle: Rectangle16,
+        ) -> Self {
+            Self {
+                window_id,
+                window_extra,
+                window_owner,
+                window_flags,
+                window_rectangle,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=31"))]
+    pub struct WindowAttributeFlags(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct WindowID(pub Integer32);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=65535"))]
+    pub struct WindowListMessageType(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct WindowListPDU {
+        #[rasn(identifier = "shareDataHeader")]
+        pub share_data_header: ShareDataHeader,
+        #[rasn(identifier = "messageType")]
+        pub message_type: WindowListMessageType,
+        #[rasn(identifier = "pad2octetsA")]
+        pub pad2octets_a: Integer16,
+        #[rasn(identifier = "numberWindows")]
+        pub number_windows: Integer16,
+        #[rasn(identifier = "listTime")]
+        pub list_time: Integer16,
+        #[rasn(identifier = "listID")]
+        pub list_id: Integer16,
+        #[rasn(identifier = "pad2octetsB")]
+        pub pad2octets_b: Integer16,
+        #[rasn(identifier = "windowAttributeList")]
+        pub window_attribute_list: SequenceOf<WindowAttribute>,
+        #[rasn(identifier = "windowTitleList")]
+        pub window_title_list: SequenceOf<WindowTitle>,
+    }
+    impl WindowListPDU {
+        pub fn new(
+            share_data_header: ShareDataHeader,
+            message_type: WindowListMessageType,
+            pad2octets_a: Integer16,
+            number_windows: Integer16,
+            list_time: Integer16,
+            list_id: Integer16,
+            pad2octets_b: Integer16,
+            window_attribute_list: SequenceOf<WindowAttribute>,
+            window_title_list: SequenceOf<WindowTitle>,
+        ) -> Self {
+            Self {
+                share_data_header,
+                message_type,
+                pad2octets_a,
+                number_windows,
+                list_time,
+                list_id,
+                pad2octets_b,
+                window_attribute_list,
+                window_title_list,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum WindowTitle {
+        #[rasn(value("255"))]
+        noTitle(Integer8),
+        #[rasn(size("1..=50"))]
+        titleString(T50String),
+    }
+    pub static MAX_FACE_NAME: LazyLock<Integer> = LazyLock::new(|| Integer::from(32));
+    pub static MAX_FONTS: LazyLock<Integer> = LazyLock::new(|| Integer::from(700));
+    pub static MAX_INPUT_EVENTS: LazyLock<Integer> = LazyLock::new(|| Integer::from(50));
+    pub static MAX_PASSWORD: LazyLock<Integer> = LazyLock::new(|| Integer::from(9));
+    #[doc = " NOTE \u{96} ====================================================="]
+    #[doc = " NOTE \u{96} All abstract types defined shall be exported"]
+    #[doc = " NOTE \u{96} ====================================================="]
+    #[doc = " Constants"]
+    pub static MAX_SOURCE_DESCRIPTOR: LazyLock<Integer> = LazyLock::new(|| Integer::from(48));
+    pub static MAX_TERMINAL_DESCRIPTOR: LazyLock<Integer> = LazyLock::new(|| Integer::from(16));
+    pub static MAX_TITLE_STRING: LazyLock<Integer> = LazyLock::new(|| Integer::from(50));
+}

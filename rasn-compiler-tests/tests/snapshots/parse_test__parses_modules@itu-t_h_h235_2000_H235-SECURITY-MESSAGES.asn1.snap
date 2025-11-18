@@ -1,0 +1,42 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_h_h235_2000_H235-SECURITY-MESSAGES.asn1
+---
+Error matching ASN syntax at while parsing:
+     ╭─[line 208, column 2]
+     │
+     │ 
+ 208 │  CryptoToken ::= CHOICE { ◀▪▪▪▪▪▪▪▪▪▪ FAILED AT THIS LINE
+ 209 │    cryptoEncryptedToken
+ 210 │      SEQUENCE -- General purpose/application specific token-- {tokenOID
+ 211 │                                                                  OBJECT
+ 212 │                                                                    IDENTIFIER,
+ 213 │                                                                token
+ 214 │                                                                  ENCRYPTED
+ 215 │                                                                    {EncodedGeneralToken}
+ 216 │    },
+ 217 │    cryptoSignedToken
+ 218 │      SEQUENCE -- General purpose/application specific token-- {tokenOID
+ 219 │                                                                  OBJECT
+ 220 │                                                                    IDENTIFIER,
+ 221 │                                                                token
+ 222 │                                                                  SIGNED
+ 223 │                                                                    {EncodedGeneralToken}
+ 224 │    },
+ 225 │    cryptoHashedToken
+ 226 │      SEQUENCE -- General purpose/application specific token-- {tokenOID
+ 227 │                                                                  OBJECT
+ 228 │                                                                    IDENTIFIER,
+ 229 │                                                                hashedVals
+ 230 │                                                                  ClearToken,
+ 231 │                                                                token
+ 232 │                                                                  HASHED
+ 233 │                                                                    {EncodedGeneralToken}
+ 234 │    },
+ 235 │    cryptoPwdEncr         ENCRYPTED{EncodedPwdCertToken},
+ 236 │    ...
+ 237 │  }
+ 239 │  -- These allow the passing of session keys within the H.245 OLC structure.
+ 240 │  -- They are encoded as standalone ASN.1 and based as an OCTET STRING within H.245
+     │
+─────╯

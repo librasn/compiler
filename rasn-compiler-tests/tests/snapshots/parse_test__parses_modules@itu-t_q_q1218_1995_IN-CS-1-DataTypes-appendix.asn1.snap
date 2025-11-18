@@ -1,0 +1,185 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q1218_1995_IN-CS-1-DataTypes-appendix.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod in_cs_1_data_types_appendix {
+    extern crate alloc;
+    use super::in_cs_1_datatypes::{CorrelationID, LegID};
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = "  TYPE DEFINITION FOR ADDITIONAL\tIN CS-1\tDATA TYPES"]
+    #[doc = "  Argument Data Types"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AddPartyArg {
+        #[rasn(tag(context, 0), identifier = "originalCallID")]
+        pub original_call_id: Option<CallID>,
+        #[rasn(tag(context, 1), identifier = "destinationCallID")]
+        pub destination_call_id: Option<CallID>,
+    }
+    impl AddPartyArg {
+        pub fn new(original_call_id: Option<CallID>, destination_call_id: Option<CallID>) -> Self {
+            Self {
+                original_call_id,
+                destination_call_id,
+            }
+        }
+    }
+    #[doc = "  OPTIONAL denotes network operator specific use."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AttachArg {
+        #[rasn(tag(context, 0), identifier = "newLegID")]
+        pub new_leg_id: Option<LegID>,
+        #[rasn(tag(context, 1))]
+        pub correlationidentifier: Option<CorrelationID>,
+    }
+    impl AttachArg {
+        pub fn new(
+            new_leg_id: Option<LegID>,
+            correlationidentifier: Option<CorrelationID>,
+        ) -> Self {
+            Self {
+                new_leg_id,
+                correlationidentifier,
+            }
+        }
+    }
+    #[doc = "  OPTIONAL denotes network operator specific use. Common Data Types"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CallID(pub Integer);
+    #[doc = "  OPTIONAL denotes network operator specific use."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CallPartyHandlingResultsArg(pub SequenceOf<LegInformation>);
+    #[doc = "  Indicates an identifier to reference an instance of a Call accessible to the SCF. Refer to"]
+    #[doc = "  4.2.2.1/Q.1214 for a description of Call Segment."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Cause(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ChangePartiesArg {
+        #[rasn(tag(context, 0), identifier = "callID")]
+        pub call_id: Option<CallID>,
+        #[rasn(tag(context, 1), identifier = "targetCallID")]
+        pub target_call_id: CallID,
+        #[rasn(tag(context, 2), identifier = "legToBeConnectedID")]
+        pub leg_to_be_connected_id: LegID,
+    }
+    impl ChangePartiesArg {
+        pub fn new(
+            call_id: Option<CallID>,
+            target_call_id: CallID,
+            leg_to_be_connected_id: LegID,
+        ) -> Self {
+            Self {
+                call_id,
+                target_call_id,
+                leg_to_be_connected_id,
+            }
+        }
+    }
+    #[doc = "  OPTIONAL denotes network operator specific use."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct DetachArg {
+        #[rasn(tag(context, 0), identifier = "legToBeDetached")]
+        pub leg_to_be_detached: Option<LegID>,
+        #[rasn(tag(context, 1))]
+        pub correlationidentifier: Option<CorrelationID>,
+    }
+    impl DetachArg {
+        pub fn new(
+            leg_to_be_detached: Option<LegID>,
+            correlationidentifier: Option<CorrelationID>,
+        ) -> Self {
+            Self {
+                leg_to_be_detached,
+                correlationidentifier,
+            }
+        }
+    }
+    #[doc = "  OPTIONAL denotes network operator specific use."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct HoldCallPartyConnectionArg {
+        #[rasn(tag(context, 0), identifier = "callID")]
+        pub call_id: Option<CallID>,
+        #[rasn(tag(context, 1), identifier = "legID")]
+        pub leg_id: LegID,
+    }
+    impl HoldCallPartyConnectionArg {
+        pub fn new(call_id: Option<CallID>, leg_id: LegID) -> Self {
+            Self { call_id, leg_id }
+        }
+    }
+    #[doc = "  Indicates the cause for interface related information. Refer to the Q.763 Cause parameter"]
+    #[doc = "  for encoding."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct LegInformation {
+        #[rasn(tag(context, 0), identifier = "legID")]
+        pub leg_id: LegID,
+        #[rasn(tag(context, 1), identifier = "legStatus")]
+        pub leg_status: LegStatus,
+    }
+    impl LegInformation {
+        pub fn new(leg_id: LegID, leg_status: LegStatus) -> Self {
+            Self { leg_id, leg_status }
+        }
+    }
+    #[doc = "  Indicates call party information, as defined by a Leg object. This includes a LegID to reference"]
+    #[doc = "  each call party, and a LegStatus to indicate whether the call party is connected or not."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum LegStatus {
+        connected = 0,
+        unconnected = 1,
+        pending = 2,
+        interacting = 3,
+    }
+    #[doc = "  OPTIONAL denotes network operator specific use."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ReconnectArg {
+        #[rasn(tag(context, 0), identifier = "callID")]
+        pub call_id: Option<CallID>,
+        #[rasn(tag(context, 1), identifier = "heldLegID")]
+        pub held_leg_id: LegID,
+    }
+    impl ReconnectArg {
+        pub fn new(call_id: Option<CallID>, held_leg_id: LegID) -> Self {
+            Self {
+                call_id,
+                held_leg_id,
+            }
+        }
+    }
+    #[doc = "  OPTIONAL denotes network operator specific use."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ReleaseCallPartyConnectionArg {
+        #[rasn(tag(context, 0), identifier = "legToBeReleased")]
+        pub leg_to_be_released: LegID,
+        #[rasn(tag(context, 1), identifier = "callID")]
+        pub call_id: Option<CallID>,
+        #[rasn(tag(context, 2), identifier = "releaseCause")]
+        pub release_cause: Option<Cause>,
+    }
+    impl ReleaseCallPartyConnectionArg {
+        pub fn new(
+            leg_to_be_released: LegID,
+            call_id: Option<CallID>,
+            release_cause: Option<Cause>,
+        ) -> Self {
+            Self {
+                leg_to_be_released,
+                call_id,
+                release_cause,
+            }
+        }
+    }
+}

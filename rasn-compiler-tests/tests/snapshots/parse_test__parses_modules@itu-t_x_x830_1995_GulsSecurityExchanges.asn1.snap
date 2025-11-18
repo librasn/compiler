@@ -1,0 +1,28 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x830_1995_GulsSecurityExchanges.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod guls_security_exchanges {
+    extern crate alloc;
+    use super::directory_abstract_service::{Credentials, SecurityProblem};
+    use super::notation::*;
+    use super::object_identifiers::{NOTATION, SECURITY_EXCHANGES};
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "OBJECT_IDENTIFIER")]
+    pub struct AnonymousNegotiationSEI(pub ObjectIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Negotiation-SEI")]
+    pub struct NegotiationSEI(pub SequenceOf<AnonymousNegotiationSEI>);
+}

@@ -1,0 +1,1373 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q835_1999-TC1_ASN1LLCTTypeModule.asn1
+---
+Warnings:
+Unidentified generating bindings for : A type name is needed to stringify choice value Choice { type_name: None, variant_name: "minutes", inner_value: Integer(5) }
+Unidentified generating bindings for : Unexpectedly encountered unlinked struct-like ASN1 value!
+LinkerError in ASN grammar: Failed to link value with 'TestConditions'
+LinkerError in ASN grammar: Failed to link value with 'Timespec'
+LinkerError in ASN grammar: Failed to link value with 'Timespec'
+LinkerError in ASN grammar: Failed to link value with 'EndTime'
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod asn1_llcttype_module {
+    extern crate alloc;
+    use super::asn1_cmletype_module::{EnvelopeFunctionAddress, Layer3PortAddress};
+    use super::asn1_defined_types_module::NameType;
+    use super::cacommon_module::E164DN;
+    use super::cmip_1::ObjectInstance;
+    use super::test_asn1_module::{
+        ActualStartTime, ActualStopTime, EndTime, TestOutcome, TestRequestControlledInfo,
+        TestRequestUncontrolledInfo, TestRequestUncontrolledResult, TestResultInfo, Timespec,
+    };
+    use super::test_categories_asn1_module::{
+        ErrorRatioReportType, LoopbackTestResult, TestConditions, TestPattern,
+    };
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=250000"))]
+    pub struct AcVoltage(pub u32);
+    #[doc = " milli Volt"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AcVoltageThreshold {
+        #[rasn(tag(context, 1), identifier = "acaEarth")]
+        pub aca_earth: Option<AcVoltage>,
+        #[rasn(tag(context, 2), identifier = "acbEarth")]
+        pub acb_earth: Option<AcVoltage>,
+        #[rasn(tag(context, 3))]
+        pub acab: Option<AcVoltage>,
+    }
+    impl AcVoltageThreshold {
+        pub fn new(
+            aca_earth: Option<AcVoltage>,
+            acb_earth: Option<AcVoltage>,
+            acab: Option<AcVoltage>,
+        ) -> Self {
+            Self {
+                aca_earth,
+                acb_earth,
+                acab,
+            }
+        }
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousAccessResult {
+        #[rasn(tag(context, 0), identifier = "mORT")]
+        pub m_ort: MORT,
+        #[rasn(tag(context, 1), identifier = "realStartTime")]
+        pub real_start_time: Option<ActualStartTime>,
+        #[rasn(tag(context, 2), identifier = "realStopTime")]
+        pub real_stop_time: Option<ActualStopTime>,
+        #[rasn(tag(context, 3), identifier = "accessTestResult")]
+        pub access_test_result: AccessTestResult,
+    }
+    impl AnonymousAccessResult {
+        pub fn new(
+            m_ort: MORT,
+            real_start_time: Option<ActualStartTime>,
+            real_stop_time: Option<ActualStopTime>,
+            access_test_result: AccessTestResult,
+        ) -> Self {
+            Self {
+                m_ort,
+                real_start_time,
+                real_stop_time,
+                access_test_result,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AccessResult(pub SetOf<AnonymousAccessResult>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AccessTestResult {
+        connectionEstablished = 0,
+        accessFailed = 1,
+        busyAccessAborted = 2,
+        dangerousVoltage = 3,
+        testMechanismBusy = 4,
+        customerOverrideAborted = 5,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AnRingTest(pub SetOf<UserPort>);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousBetween {
+        pub between: BetweenType,
+        pub threshold: Option<Threshold>,
+    }
+    impl AnonymousBetween {
+        pub fn new(between: BetweenType, threshold: Option<Threshold>) -> Self {
+            Self { between, threshold }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Between(pub SetOf<AnonymousBetween>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum BetweenType {
+        aTob = 0,
+        aToEarth = 1,
+        bToEarth = 2,
+        aToBattery = 3,
+        bToBattery = 4,
+        aTobReverse = 5,
+        aToEarthReverse = 6,
+        bToEarthReverse = 7,
+        aToBatteryReverse = 8,
+        bToBatteryReverse = 9,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=10000"))]
+    pub struct Capacitance(pub u16);
+    #[doc = " nano Farad"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct CapacitanceThreshold {
+        #[rasn(tag(context, 1), identifier = "caEarth")]
+        pub ca_earth: Option<Capacitance>,
+        #[rasn(tag(context, 2), identifier = "cbEarth")]
+        pub cb_earth: Option<Capacitance>,
+        #[rasn(tag(context, 3), identifier = "cabUpperLimit")]
+        pub cab_upper_limit: Option<Capacitance>,
+        #[rasn(tag(context, 4), identifier = "cabLowerLimit")]
+        pub cab_lower_limit: Option<Capacitance>,
+    }
+    impl CapacitanceThreshold {
+        pub fn new(
+            ca_earth: Option<Capacitance>,
+            cb_earth: Option<Capacitance>,
+            cab_upper_limit: Option<Capacitance>,
+            cab_lower_limit: Option<Capacitance>,
+        ) -> Self {
+            Self {
+                ca_earth,
+                cb_earth,
+                cab_upper_limit,
+                cab_lower_limit,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=150000"))]
+    pub struct DcVoltage(pub u32);
+    #[doc = " milli Volt"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct DcVoltageThreshold {
+        #[rasn(tag(context, 1), identifier = "dcaEarth")]
+        pub dca_earth: Option<DcVoltage>,
+        #[rasn(tag(context, 2), identifier = "dcbEarth")]
+        pub dcb_earth: Option<DcVoltage>,
+        #[rasn(tag(context, 3))]
+        pub dcab: Option<DcVoltage>,
+    }
+    impl DcVoltageThreshold {
+        pub fn new(
+            dca_earth: Option<DcVoltage>,
+            dcb_earth: Option<DcVoltage>,
+            dcab: Option<DcVoltage>,
+        ) -> Self {
+            Self {
+                dca_earth,
+                dcb_earth,
+                dcab,
+            }
+        }
+    }
+    #[doc = " waitTime has importance only if TestConditions are set to waitIfBusy."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=255"))]
+    pub struct DialSpeed(pub u8);
+    #[doc = " x 0.1 Hz"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct DialSpeedThreshold {
+        #[rasn(tag(context, 1), identifier = "dialSpeedUpperLimit")]
+        pub dial_speed_upper_limit: Option<DialSpeed>,
+        #[rasn(tag(context, 2), identifier = "dialSpeedLowerLimit")]
+        pub dial_speed_lower_limit: Option<DialSpeed>,
+    }
+    impl DialSpeedThreshold {
+        pub fn new(
+            dial_speed_upper_limit: Option<DialSpeed>,
+            dial_speed_lower_limit: Option<DialSpeed>,
+        ) -> Self {
+            Self {
+                dial_speed_upper_limit,
+                dial_speed_lower_limit,
+            }
+        }
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousDialToneTestResult {
+        #[rasn(tag(context, 0), identifier = "mORT")]
+        pub m_ort: MORT,
+        #[rasn(tag(context, 1), identifier = "realStartTime")]
+        pub real_start_time: Option<ActualStartTime>,
+        #[rasn(tag(context, 2), identifier = "realStopTime")]
+        pub real_stop_time: Option<ActualStopTime>,
+        #[rasn(tag(context, 3))]
+        pub result: Result,
+    }
+    impl AnonymousDialToneTestResult {
+        pub fn new(
+            m_ort: MORT,
+            real_start_time: Option<ActualStartTime>,
+            real_stop_time: Option<ActualStopTime>,
+            result: Result,
+        ) -> Self {
+            Self {
+                m_ort,
+                real_start_time,
+                real_stop_time,
+                result,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DialToneTestResult(pub SetOf<AnonymousDialToneTestResult>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct DialToneTestUncontrolledRequestType {
+        #[rasn(tag(context, 0), identifier = "offHookSimulation")]
+        pub off_hook_simulation: OffHookSimulation,
+        #[rasn(tag(context, 1), identifier = "requestedResultType")]
+        pub requested_result_type: RequestedResultType,
+        #[rasn(tag(context, 2))]
+        pub iterations: Iterations,
+        #[rasn(tag(context, 3), identifier = "testConditions")]
+        pub test_conditions: Option<TestConditions>,
+        #[rasn(tag(context, 4), identifier = "waitTime")]
+        pub wait_time: Option<Integer>,
+    }
+    impl DialToneTestUncontrolledRequestType {
+        pub fn new(
+            off_hook_simulation: OffHookSimulation,
+            requested_result_type: RequestedResultType,
+            iterations: Iterations,
+            test_conditions: Option<TestConditions>,
+            wait_time: Option<Integer>,
+        ) -> Self {
+            Self {
+                off_hook_simulation,
+                requested_result_type,
+                iterations,
+                test_conditions,
+                wait_time,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DialledDigitTestResult(pub SequenceOf<ReceivedDigit>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct DialledDigitTestUncontrolledRequestType {
+        #[rasn(tag(context, 1), identifier = "numberOfDigits")]
+        pub number_of_digits: NumberOfDigits,
+        #[rasn(tag(context, 2), identifier = "testConditions")]
+        pub test_conditions: Option<TestConditions>,
+        #[rasn(tag(context, 3), identifier = "waitTime")]
+        pub wait_time: Option<Integer>,
+    }
+    impl DialledDigitTestUncontrolledRequestType {
+        pub fn new(
+            number_of_digits: NumberOfDigits,
+            test_conditions: Option<TestConditions>,
+            wait_time: Option<Integer>,
+        ) -> Self {
+            Self {
+                number_of_digits,
+                test_conditions,
+                wait_time,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        delegate,
+        from(
+            "\u{23}", "\u{2a}", "\u{30}", "\u{31}", "\u{32}", "\u{33}", "\u{34}", "\u{35}",
+            "\u{36}", "\u{37}", "\u{38}", "\u{39}"
+        )
+    )]
+    pub struct DialledDigits(pub Ia5String);
+    #[doc = " waitTime has importance only if TestConditions are set to waitIfBusy."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        delegate,
+        from(
+            "\u{30}", "\u{31}", "\u{32}", "\u{33}", "\u{34}", "\u{35}", "\u{36}", "\u{37}",
+            "\u{38}", "\u{39}", "\u{41}", "\u{42}", "\u{43}", "\u{44}", "\u{45}", "\u{46}"
+        )
+    )]
+    pub struct DigitComb(pub Ia5String);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousElectricalMeasurementTestResult {
+        #[rasn(tag(context, 0), identifier = "mORT")]
+        pub m_ort: MORT,
+        #[rasn(tag(context, 1), identifier = "realStartTime")]
+        pub real_start_time: Option<ActualStartTime>,
+        #[rasn(tag(context, 2), identifier = "realStopTime")]
+        pub real_stop_time: Option<ActualStopTime>,
+        #[rasn(tag(context, 3), identifier = "foreignAcVoltage")]
+        pub foreign_ac_voltage: Option<Reading>,
+        #[rasn(tag(context, 4), identifier = "foreignDcVoltage")]
+        pub foreign_dc_voltage: Option<Reading>,
+        #[rasn(tag(context, 5), identifier = "foreignACCurrent")]
+        pub foreign_accurrent: Option<Reading>,
+        #[rasn(tag(context, 6), identifier = "foreignDCCurrent")]
+        pub foreign_dccurrent: Option<Reading>,
+        #[rasn(tag(context, 7), identifier = "resistanceInsulation")]
+        pub resistance_insulation: Option<Reading>,
+        #[rasn(tag(context, 8), identifier = "resistanceLoop")]
+        pub resistance_loop: Option<Reading>,
+        #[rasn(tag(context, 9))]
+        pub capacitance: Option<Reading>,
+        #[rasn(tag(context, 10))]
+        pub termination: Option<Termination>,
+        #[rasn(tag(context, 11), identifier = "feedingVoltage")]
+        pub feeding_voltage: Option<Reading>,
+        #[rasn(tag(context, 12), identifier = "feedingCurrent")]
+        pub feeding_current: Option<Reading>,
+        #[rasn(tag(context, 13), identifier = "testOutcome")]
+        pub test_outcome: Option<TestOutcome>,
+    }
+    impl AnonymousElectricalMeasurementTestResult {
+        pub fn new(
+            m_ort: MORT,
+            real_start_time: Option<ActualStartTime>,
+            real_stop_time: Option<ActualStopTime>,
+            foreign_ac_voltage: Option<Reading>,
+            foreign_dc_voltage: Option<Reading>,
+            foreign_accurrent: Option<Reading>,
+            foreign_dccurrent: Option<Reading>,
+            resistance_insulation: Option<Reading>,
+            resistance_loop: Option<Reading>,
+            capacitance: Option<Reading>,
+            termination: Option<Termination>,
+            feeding_voltage: Option<Reading>,
+            feeding_current: Option<Reading>,
+            test_outcome: Option<TestOutcome>,
+        ) -> Self {
+            Self {
+                m_ort,
+                real_start_time,
+                real_stop_time,
+                foreign_ac_voltage,
+                foreign_dc_voltage,
+                foreign_accurrent,
+                foreign_dccurrent,
+                resistance_insulation,
+                resistance_loop,
+                capacitance,
+                termination,
+                feeding_voltage,
+                feeding_current,
+                test_outcome,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ElectricalMeasurementTestResult(pub SetOf<AnonymousElectricalMeasurementTestResult>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ElectricalMeasurementTestToBePerformed {
+        full(()),
+        electricalMeasurementTests(ElectricalMeasurementTests),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ElectricalMeasurementTestUncontrolledRequestType {
+        #[rasn(tag(context, 0), identifier = "electrMeasToBePerformed")]
+        pub electr_meas_to_be_performed: ElectricalMeasurementTestToBePerformed,
+        #[rasn(tag(context, 1), identifier = "requestedResultType")]
+        pub requested_result_type: RequestedResultType,
+        #[rasn(tag(context, 2), identifier = "testConditions")]
+        pub test_conditions: Option<TestConditions>,
+        #[rasn(tag(context, 3), identifier = "waitTime")]
+        pub wait_time: Option<Integer>,
+    }
+    impl ElectricalMeasurementTestUncontrolledRequestType {
+        pub fn new(
+            electr_meas_to_be_performed: ElectricalMeasurementTestToBePerformed,
+            requested_result_type: RequestedResultType,
+            test_conditions: Option<TestConditions>,
+            wait_time: Option<Integer>,
+        ) -> Self {
+            Self {
+                electr_meas_to_be_performed,
+                requested_result_type,
+                test_conditions,
+                wait_time,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ElectricalMeasurementTests {
+        #[rasn(tag(context, 0), identifier = "foreignAcVoltage")]
+        pub foreign_ac_voltage: Option<Between>,
+        #[rasn(tag(context, 1), identifier = "foreignDcVoltage")]
+        pub foreign_dc_voltage: Option<Between>,
+        #[rasn(tag(context, 2), identifier = "foreignACCurrent")]
+        pub foreign_accurrent: Option<Between>,
+        #[rasn(tag(context, 3), identifier = "foreignDCCurrent")]
+        pub foreign_dccurrent: Option<Between>,
+        #[rasn(tag(context, 4))]
+        pub capacitance: Option<Between>,
+        #[rasn(tag(context, 5))]
+        pub resistance: Option<ResistanceBetween>,
+        #[rasn(tag(context, 6))]
+        pub termination: Option<()>,
+        #[rasn(tag(context, 7), identifier = "feedingVoltage")]
+        pub feeding_voltage: Option<Between>,
+        #[rasn(tag(context, 8), identifier = "feedingCurrent")]
+        pub feeding_current: Option<Between>,
+        #[rasn(tag(context, 9))]
+        pub ring: Option<Between>,
+    }
+    impl ElectricalMeasurementTests {
+        pub fn new(
+            foreign_ac_voltage: Option<Between>,
+            foreign_dc_voltage: Option<Between>,
+            foreign_accurrent: Option<Between>,
+            foreign_dccurrent: Option<Between>,
+            capacitance: Option<Between>,
+            resistance: Option<ResistanceBetween>,
+            termination: Option<()>,
+            feeding_voltage: Option<Between>,
+            feeding_current: Option<Between>,
+            ring: Option<Between>,
+        ) -> Self {
+            Self {
+                foreign_ac_voltage,
+                foreign_dc_voltage,
+                foreign_accurrent,
+                foreign_dccurrent,
+                capacitance,
+                resistance,
+                termination,
+                feeding_voltage,
+                feeding_current,
+                ring,
+            }
+        }
+    }
+    #[doc = " waitTime has importance only if TestConditions are set to waitIfBusy."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum FunctionTestResult {
+        noFailure = 0,
+        activationLayer1Failure = 1,
+        ntLoopFailure = 2,
+        leLoopFailure = 3,
+        dtrLoopFailure = 4,
+        shortCircuit = 5,
+        neError = 6,
+        alarmCheckFailure = 7,
+        leLoopAndPowerFeedingFailure = 8,
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousGenericTestResult {
+        #[rasn(tag(context, 0), identifier = "mORT")]
+        pub m_ort: MORT,
+        #[rasn(tag(context, 1), identifier = "realStartTime")]
+        pub real_start_time: Option<ActualStartTime>,
+        #[rasn(tag(context, 2), identifier = "realStopTime")]
+        pub real_stop_time: Option<ActualStopTime>,
+        #[rasn(tag(context, 3), identifier = "testOutcome")]
+        pub test_outcome: TestOutcome,
+    }
+    impl AnonymousGenericTestResult {
+        pub fn new(
+            m_ort: MORT,
+            real_start_time: Option<ActualStartTime>,
+            real_stop_time: Option<ActualStopTime>,
+            test_outcome: TestOutcome,
+        ) -> Self {
+            Self {
+                m_ort,
+                real_start_time,
+                real_stop_time,
+                test_outcome,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct GenericTestResult(pub SetOf<AnonymousGenericTestResult>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct GenericUncontrolledRequestType {
+        #[rasn(tag(context, 1), identifier = "testConditions")]
+        pub test_conditions: Option<TestConditions>,
+        #[rasn(tag(context, 2), identifier = "waitTime")]
+        pub wait_time: Option<Integer>,
+    }
+    impl GenericUncontrolledRequestType {
+        pub fn new(test_conditions: Option<TestConditions>, wait_time: Option<Integer>) -> Self {
+            Self {
+                test_conditions,
+                wait_time,
+            }
+        }
+    }
+    #[doc = " waitTime has importance only if TestConditions are set to waitIfBusy."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum InvalidLoopbackRequest {
+        loopExists = 0,
+        loopNotSupported = 1,
+        loopTimeTooLarge = 2,
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousIsdnQuickTestResult {
+        #[rasn(tag(context, 0), identifier = "mORT")]
+        pub m_ort: MORT,
+        #[rasn(tag(context, 1), identifier = "realStartTime")]
+        pub real_start_time: Option<ActualStartTime>,
+        #[rasn(tag(context, 2), identifier = "realStopTime")]
+        pub real_stop_time: Option<ActualStopTime>,
+        #[rasn(tag(context, 3), identifier = "layer1Activation")]
+        pub layer1_activation: Option<Layer1ActivationResult>,
+        #[rasn(tag(context, 4), identifier = "loopbackTest")]
+        pub loopback_test: Option<LoopbackQuickTestResult>,
+        #[rasn(tag(context, 5), identifier = "powerFeedingTest")]
+        pub power_feeding_test: Option<PowerFeedingTestResult>,
+        #[rasn(tag(context, 6), identifier = "functionTest")]
+        pub function_test: Option<FunctionTestResult>,
+        #[rasn(tag(context, 7), identifier = "testOutcome")]
+        pub test_outcome: Option<TestOutcome>,
+    }
+    impl AnonymousIsdnQuickTestResult {
+        pub fn new(
+            m_ort: MORT,
+            real_start_time: Option<ActualStartTime>,
+            real_stop_time: Option<ActualStopTime>,
+            layer1_activation: Option<Layer1ActivationResult>,
+            loopback_test: Option<LoopbackQuickTestResult>,
+            power_feeding_test: Option<PowerFeedingTestResult>,
+            function_test: Option<FunctionTestResult>,
+            test_outcome: Option<TestOutcome>,
+        ) -> Self {
+            Self {
+                m_ort,
+                real_start_time,
+                real_stop_time,
+                layer1_activation,
+                loopback_test,
+                power_feeding_test,
+                function_test,
+                test_outcome,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct IsdnQuickTestResult(pub SetOf<AnonymousIsdnQuickTestResult>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum IsdnQuickTestToBePerformed {
+        layer1Activation = 0,
+        loopbackTest = 1,
+        powerFeedingTest = 2,
+        functionTest = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct IsdnQuickTestUncontrolledRequestType {
+        #[rasn(tag(context, 1), identifier = "isdnQuickTestToBePerformed")]
+        pub isdn_quick_test_to_be_performed: IsdnQuickTestToBePerformed,
+        #[rasn(tag(context, 2), identifier = "requestedResultType")]
+        pub requested_result_type: RequestedResultType,
+        #[rasn(tag(context, 3), identifier = "testConditions")]
+        pub test_conditions: Option<TestConditions>,
+        #[rasn(tag(context, 4), identifier = "waitTime")]
+        pub wait_time: Option<Integer>,
+    }
+    impl IsdnQuickTestUncontrolledRequestType {
+        pub fn new(
+            isdn_quick_test_to_be_performed: IsdnQuickTestToBePerformed,
+            requested_result_type: RequestedResultType,
+            test_conditions: Option<TestConditions>,
+            wait_time: Option<Integer>,
+        ) -> Self {
+            Self {
+                isdn_quick_test_to_be_performed,
+                requested_result_type,
+                test_conditions,
+                wait_time,
+            }
+        }
+    }
+    #[doc = " waitTime has importance only if TestConditions are set to waitIfBusy."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Iterations(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum Layer1ActivationResult {
+        noFailure = 0,
+        activationLayer1Failure = 1,
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousLoopTestResult {
+        #[rasn(tag(context, 0), identifier = "mORT")]
+        pub m_ort: MORT,
+        #[rasn(tag(context, 1), identifier = "realStartTime")]
+        pub real_start_time: Option<ActualStartTime>,
+        #[rasn(tag(context, 2), identifier = "realStopTime")]
+        pub real_stop_time: Option<ActualStopTime>,
+        #[rasn(tag(context, 3), identifier = "testOutcome")]
+        pub test_outcome: TestOutcome,
+        #[rasn(tag(context, 4), identifier = "loopbackResult")]
+        pub loopback_result: Option<LoopbackResult>,
+    }
+    impl AnonymousLoopTestResult {
+        pub fn new(
+            m_ort: MORT,
+            real_start_time: Option<ActualStartTime>,
+            real_stop_time: Option<ActualStopTime>,
+            test_outcome: TestOutcome,
+            loopback_result: Option<LoopbackResult>,
+        ) -> Self {
+            Self {
+                m_ort,
+                real_start_time,
+                real_stop_time,
+                test_outcome,
+                loopback_result,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct LoopTestResult(pub SetOf<AnonymousLoopTestResult>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum LoopbackChannel {
+        b1 = 0,
+        b2 = 1,
+        b1b2d = 2,
+        pra = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct LoopbackDuration(pub Timespec);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum LoopbackPosition {
+        noLoopback = 0,
+        ltNetwork = 1,
+        nt1Network = 2,
+        repNetwork = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum LoopbackQuickTestResult {
+        noFailure = 0,
+        ntLoopFailure = 1,
+        leLoopFailure = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum LoopbackResult {
+        #[rasn(identifier = "override")]
+        R_override = 0,
+    }
+    #[doc = " Further values for this syntax are for further study."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct LoopbackSelectRequestInfo {
+        #[rasn(identifier = "loopbackPosition")]
+        pub loopback_position: LoopbackPosition,
+        #[rasn(identifier = "loopbackTime")]
+        pub loopback_time: LoopbackDuration,
+        #[rasn(identifier = "loopbackChannel")]
+        pub loopback_channel: Option<LoopbackChannel>,
+    }
+    impl LoopbackSelectRequestInfo {
+        pub fn new(
+            loopback_position: LoopbackPosition,
+            loopback_time: LoopbackDuration,
+            loopback_channel: Option<LoopbackChannel>,
+        ) -> Self {
+            Self {
+                loopback_position,
+                loopback_time,
+                loopback_channel,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum LoopbackSelectRequestResult {
+        loopbackSet = 1,
+        loopNotSupported = 2,
+        loopbackTimeTooLarge = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct LoopbackTestUncontrolledRequestType {
+        #[rasn(tag(context, 1), identifier = "loopbackDuration")]
+        pub loopback_duration: LoopbackDuration,
+        #[rasn(tag(context, 2), identifier = "loopbackPosition")]
+        pub loopback_position: LoopbackPosition,
+        #[rasn(tag(context, 3), identifier = "loopbackChannel")]
+        pub loopback_channel: LoopbackChannel,
+        #[rasn(tag(context, 4), identifier = "testPattern")]
+        pub test_pattern: Option<TestPattern>,
+        #[rasn(tag(context, 5), identifier = "errorRatioReport")]
+        pub error_ratio_report: Option<ErrorRatioReportType>,
+        #[rasn(tag(context, 6), identifier = "testConditions")]
+        pub test_conditions: Option<TestConditions>,
+        #[rasn(tag(context, 7), identifier = "waitTime")]
+        pub wait_time: Option<Integer>,
+    }
+    impl LoopbackTestUncontrolledRequestType {
+        pub fn new(
+            loopback_duration: LoopbackDuration,
+            loopback_position: LoopbackPosition,
+            loopback_channel: LoopbackChannel,
+            test_pattern: Option<TestPattern>,
+            error_ratio_report: Option<ErrorRatioReportType>,
+            test_conditions: Option<TestConditions>,
+            wait_time: Option<Integer>,
+        ) -> Self {
+            Self {
+                loopback_duration,
+                loopback_position,
+                loopback_channel,
+                test_pattern,
+                error_ratio_report,
+                test_conditions,
+                wait_time,
+            }
+        }
+    }
+    #[doc = " waitTime has importance only if TestConditions are set to waitIfBusy."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct LoopbackTestUncontrolledResult(pub LoopbackTestResult);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MORT(pub ObjectInstance);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum MonitorSpeak {
+        monitorWithMark = 0,
+        speakAndMonitor = 1,
+        monitorWithOutMark = 2,
+        existingConnection = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum MtaMsg {
+        error = 0,
+        analogueFree = 1,
+        analogueOccupied = 2,
+        analogueOccupiedNotUsed = 3,
+        analogueBlocked = 4,
+        testing = 5,
+        mTAoccupied = 6,
+        #[rasn(identifier = "noAccess-noSub")]
+        noAccess_noSub = 7,
+        #[rasn(identifier = "noAccess-hdh")]
+        noAccess_hdh = 8,
+        #[rasn(identifier = "noAccess-aconc")]
+        noAccess_aconc = 9,
+        notAccessible = 10,
+        #[rasn(identifier = "noAccess-nuc")]
+        noAccess_nuc = 11,
+        isdnAccess = 12,
+        #[rasn(identifier = "noAccess-any")]
+        noAccess_any = 13,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MtaTimeoutPeriod(pub Timespec);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum NotDigit {
+        recallButton = 0,
+        onhook = 1,
+        wrongSignal = 2,
+        offhook = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct Null(pub ());
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NumberOfDigits(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NumberOfMTA(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct OffHook {
+        #[rasn(tag(context, 0))]
+        pub port: UserPort,
+        #[rasn(tag(context, 1), identifier = "serviceNumber")]
+        pub service_number: DigitComb,
+    }
+    impl OffHook {
+        pub fn new(port: UserPort, service_number: DigitComb) -> Self {
+            Self {
+                port,
+                service_number,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum OffHookSimulation {
+        loopCalling = 0,
+        earthCalling = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct OnHook {
+        #[rasn(tag(context, 0))]
+        pub port: UserPort,
+        #[rasn(tag(context, 1), identifier = "dtmfResult")]
+        pub dtmf_result: Option<TestOutcome>,
+    }
+    impl OnHook {
+        pub fn new(port: UserPort, dtmf_result: Option<TestOutcome>) -> Self {
+            Self { port, dtmf_result }
+        }
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousPatternTestResult {
+        #[rasn(tag(context, 0), identifier = "mORT")]
+        pub m_ort: MORT,
+        #[rasn(tag(context, 1), identifier = "realStartTime")]
+        pub real_start_time: Option<ActualStartTime>,
+        #[rasn(tag(context, 2), identifier = "realStopTime")]
+        pub real_stop_time: Option<ActualStopTime>,
+        #[rasn(tag(context, 3), identifier = "testOutcome")]
+        pub test_outcome: TestOutcome,
+        #[rasn(tag(context, 4), identifier = "loopbackTestResult")]
+        pub loopback_test_result: Option<LoopbackTestResult>,
+    }
+    impl AnonymousPatternTestResult {
+        pub fn new(
+            m_ort: MORT,
+            real_start_time: Option<ActualStartTime>,
+            real_stop_time: Option<ActualStopTime>,
+            test_outcome: TestOutcome,
+            loopback_test_result: Option<LoopbackTestResult>,
+        ) -> Self {
+            Self {
+                m_ort,
+                real_start_time,
+                real_stop_time,
+                test_outcome,
+                loopback_test_result,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PatternTestResult(pub SetOf<AnonymousPatternTestResult>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum PowerFeedingTestResult {
+        noFailure = 0,
+        shortCircuit = 1,
+        neError = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct PulseNoPulseRatio {
+        #[rasn(tag(context, 1), identifier = "pulseNoPulseRatioUpperLimit")]
+        pub pulse_no_pulse_ratio_upper_limit: Option<Ratio>,
+        #[rasn(tag(context, 2), identifier = "pulseNoPulseRatioLowerLimit")]
+        pub pulse_no_pulse_ratio_lower_limit: Option<Ratio>,
+    }
+    impl PulseNoPulseRatio {
+        pub fn new(
+            pulse_no_pulse_ratio_upper_limit: Option<Ratio>,
+            pulse_no_pulse_ratio_lower_limit: Option<Ratio>,
+        ) -> Self {
+            Self {
+                pulse_no_pulse_ratio_upper_limit,
+                pulse_no_pulse_ratio_lower_limit,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Range(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=100"))]
+    pub struct Ratio(pub u8);
+    #[doc = " percentage"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Reading {
+        #[rasn(tag(context, 0), identifier = "aTob")]
+        pub a_tob: Option<Result>,
+        #[rasn(tag(context, 1), identifier = "aToEarth")]
+        pub a_to_earth: Option<Result>,
+        #[rasn(tag(context, 2), identifier = "bToEarth")]
+        pub b_to_earth: Option<Result>,
+        #[rasn(tag(context, 3), identifier = "aToBattery")]
+        pub a_to_battery: Option<Result>,
+        #[rasn(tag(context, 4), identifier = "bToBattery")]
+        pub b_to_battery: Option<Result>,
+        #[rasn(tag(context, 5), identifier = "bToEarthReverse")]
+        pub b_to_earth_reverse: Option<Result>,
+        #[rasn(tag(context, 6), identifier = "aToEarthReverse")]
+        pub a_to_earth_reverse: Option<Result>,
+        #[rasn(tag(context, 7), identifier = "bToa")]
+        pub b_toa: Option<Result>,
+        #[rasn(tag(context, 8), identifier = "aToBatteryReverse")]
+        pub a_to_battery_reverse: Option<Result>,
+        #[rasn(tag(context, 9), identifier = "bToBatteryReverse")]
+        pub b_to_battery_reverse: Option<Result>,
+    }
+    impl Reading {
+        pub fn new(
+            a_tob: Option<Result>,
+            a_to_earth: Option<Result>,
+            b_to_earth: Option<Result>,
+            a_to_battery: Option<Result>,
+            b_to_battery: Option<Result>,
+            b_to_earth_reverse: Option<Result>,
+            a_to_earth_reverse: Option<Result>,
+            b_toa: Option<Result>,
+            a_to_battery_reverse: Option<Result>,
+            b_to_battery_reverse: Option<Result>,
+        ) -> Self {
+            Self {
+                a_tob,
+                a_to_earth,
+                b_to_earth,
+                a_to_battery,
+                b_to_battery,
+                b_to_earth_reverse,
+                a_to_earth_reverse,
+                b_toa,
+                a_to_battery_reverse,
+                b_to_battery_reverse,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ReceivedDigitDigit {
+        #[rasn(tag(context, 0))]
+        normalDigits(DialledDigits),
+        #[rasn(tag(context, 8))]
+        notDigit(NotDigit),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ReceivedDigit {
+        #[rasn(tag(context, 0))]
+        pub digit: ReceivedDigitDigit,
+        #[rasn(tag(context, 1), identifier = "lowLevel")]
+        pub low_level: Option<f64>,
+        #[rasn(tag(context, 2), identifier = "highLevel")]
+        pub high_level: Option<f64>,
+        #[rasn(tag(context, 3), identifier = "lowFrequency")]
+        pub low_frequency: Option<f64>,
+        #[rasn(tag(context, 4), identifier = "highFrequency")]
+        pub high_frequency: Option<f64>,
+        #[rasn(tag(context, 5), identifier = "pulseLength")]
+        pub pulse_length: Option<f64>,
+        #[rasn(tag(context, 6), identifier = "makeDuration")]
+        pub make_duration: Option<f64>,
+        #[rasn(tag(context, 7), identifier = "breakDuration")]
+        pub break_duration: Option<f64>,
+    }
+    impl ReceivedDigit {
+        pub fn new(
+            digit: ReceivedDigitDigit,
+            low_level: Option<f64>,
+            high_level: Option<f64>,
+            low_frequency: Option<f64>,
+            high_frequency: Option<f64>,
+            pulse_length: Option<f64>,
+            make_duration: Option<f64>,
+            break_duration: Option<f64>,
+        ) -> Self {
+            Self {
+                digit,
+                low_level,
+                high_level,
+                low_frequency,
+                high_frequency,
+                pulse_length,
+                make_duration,
+                break_duration,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct RequestedResultType {
+        pub passed: bool,
+        #[rasn(identifier = "notPassed")]
+        pub not_passed: bool,
+        pub value: bool,
+    }
+    impl RequestedResultType {
+        pub fn new(passed: bool, not_passed: bool, value: bool) -> Self {
+            Self {
+                passed,
+                not_passed,
+                value,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum Resistance {
+        #[rasn(value("0..=100000"), tag(context, 0))]
+        milliOhm(u32),
+        #[rasn(value("0..=100000"), tag(context, 1))]
+        ohm(u32),
+        #[rasn(value("0..=100000"), tag(context, 2))]
+        kiloOhm(u32),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ResistanceBetween {
+        #[rasn(tag(context, 0))]
+        insulation(Between),
+        #[rasn(tag(context, 1), identifier = "loop")]
+        R_loop(Between),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ResistanceThreshold {
+        #[rasn(tag(context, 1), identifier = "raEarth")]
+        pub ra_earth: Option<Resistance>,
+        #[rasn(tag(context, 2), identifier = "rbEarth")]
+        pub rb_earth: Option<Resistance>,
+        #[rasn(tag(context, 3), identifier = "rabUpperLimit")]
+        pub rab_upper_limit: Option<Resistance>,
+        #[rasn(tag(context, 4), identifier = "rabLowerLimit")]
+        pub rab_lower_limit: Option<Resistance>,
+        #[rasn(tag(context, 5), identifier = "rLoop")]
+        pub r_loop: Option<Resistance>,
+        #[rasn(tag(context, 6), identifier = "rEarth")]
+        pub r_earth: Option<Resistance>,
+    }
+    impl ResistanceThreshold {
+        pub fn new(
+            ra_earth: Option<Resistance>,
+            rb_earth: Option<Resistance>,
+            rab_upper_limit: Option<Resistance>,
+            rab_lower_limit: Option<Resistance>,
+            r_loop: Option<Resistance>,
+            r_earth: Option<Resistance>,
+        ) -> Self {
+            Self {
+                ra_earth,
+                rb_earth,
+                rab_upper_limit,
+                rab_lower_limit,
+                r_loop,
+                r_earth,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Result {
+        #[rasn(identifier = "testOutcome")]
+        pub test_outcome: Option<TestOutcome>,
+        pub value: Option<f64>,
+    }
+    impl Result {
+        pub fn new(test_outcome: Option<TestOutcome>, value: Option<f64>) -> Self {
+            Self {
+                test_outcome,
+                value,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ResultOfTestToLineCircuit {
+        #[rasn(tag(context, 0), identifier = "feedingVoltage")]
+        pub feeding_voltage: Option<Result>,
+        #[rasn(tag(context, 1), identifier = "feedingCurrent")]
+        pub feeding_current: Option<Result>,
+        #[rasn(tag(context, 2), identifier = "loopRingTripDetection")]
+        pub loop_ring_trip_detection: Option<Result>,
+        #[rasn(tag(context, 3), identifier = "ringingCurrent")]
+        pub ringing_current: Option<Result>,
+        #[rasn(tag(context, 4), identifier = "privateMeterPulses")]
+        pub private_meter_pulses: Option<Result>,
+        #[rasn(tag(context, 5), identifier = "codecTesting")]
+        pub codec_testing: Option<Result>,
+        #[rasn(tag(context, 6), identifier = "digitReception")]
+        pub digit_reception: Option<Result>,
+    }
+    impl ResultOfTestToLineCircuit {
+        pub fn new(
+            feeding_voltage: Option<Result>,
+            feeding_current: Option<Result>,
+            loop_ring_trip_detection: Option<Result>,
+            ringing_current: Option<Result>,
+            private_meter_pulses: Option<Result>,
+            codec_testing: Option<Result>,
+            digit_reception: Option<Result>,
+        ) -> Self {
+            Self {
+                feeding_voltage,
+                feeding_current,
+                loop_ring_trip_detection,
+                ringing_current,
+                private_meter_pulses,
+                codec_testing,
+                digit_reception,
+            }
+        }
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousResults {
+        #[rasn(tag(context, 0))]
+        pub port: UserPort,
+        #[rasn(tag(context, 1))]
+        pub result: TestOutcome,
+    }
+    impl AnonymousResults {
+        pub fn new(port: UserPort, result: TestOutcome) -> Self {
+            Self { port, result }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Results(pub SetOf<AnonymousResults>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum Ring {
+        #[rasn(tag(context, 0))]
+        timedRing(Integer),
+        #[rasn(tag(context, 1))]
+        continuousRing(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RingBackNo(pub E164DN);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=99"))]
+    pub struct SpmPulses(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SpmPulsesTestUncontrolledRequestType {
+        #[rasn(tag(context, 1), identifier = "numberOfPulses")]
+        pub number_of_pulses: SpmPulses,
+        #[rasn(tag(context, 2), identifier = "testConditions")]
+        pub test_conditions: Option<TestConditions>,
+        #[rasn(tag(context, 3), identifier = "waitTime")]
+        pub wait_time: Option<Integer>,
+    }
+    impl SpmPulsesTestUncontrolledRequestType {
+        pub fn new(
+            number_of_pulses: SpmPulses,
+            test_conditions: Option<TestConditions>,
+            wait_time: Option<Integer>,
+        ) -> Self {
+            Self {
+                number_of_pulses,
+                test_conditions,
+                wait_time,
+            }
+        }
+    }
+    #[doc = " waitTime has importance only if TestConditions are set to waitIfBusy."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum Termination {
+        nTEAndCPE = 0,
+        nTE = 1,
+        leakageCurrent = 2,
+        noTermination = 3,
+        offHook = 4,
+        nonStandardTermination = 5,
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousTestToLineCircuitResult {
+        #[rasn(tag(context, 0), identifier = "mORT")]
+        pub m_ort: MORT,
+        #[rasn(tag(context, 1), identifier = "realStartTime")]
+        pub real_start_time: Option<ActualStartTime>,
+        #[rasn(tag(context, 2), identifier = "realStopTime")]
+        pub real_stop_time: Option<ActualStopTime>,
+        #[rasn(tag(context, 3), identifier = "testOutcome")]
+        pub test_outcome: TestOutcome,
+        #[rasn(tag(context, 4), identifier = "resultOfTestToLineCircuit")]
+        pub result_of_test_to_line_circuit: Option<ResultOfTestToLineCircuit>,
+    }
+    impl AnonymousTestToLineCircuitResult {
+        pub fn new(
+            m_ort: MORT,
+            real_start_time: Option<ActualStartTime>,
+            real_stop_time: Option<ActualStopTime>,
+            test_outcome: TestOutcome,
+            result_of_test_to_line_circuit: Option<ResultOfTestToLineCircuit>,
+        ) -> Self {
+            Self {
+                m_ort,
+                real_start_time,
+                real_stop_time,
+                test_outcome,
+                result_of_test_to_line_circuit,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TestToLineCircuitResult(pub SetOf<AnonymousTestToLineCircuitResult>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum TestsPassed {
+        timesTaken = 0,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Threshold {
+        #[rasn(tag(context, 0))]
+        pub min: Option<f64>,
+        #[rasn(tag(context, 1))]
+        pub max: Option<f64>,
+    }
+    impl Threshold {
+        pub fn new(min: Option<f64>, max: Option<f64>) -> Self {
+            Self { min, max }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum TypeOfLine {
+        inbound = 0,
+        outbound = 1,
+        bridged = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum UserPort {
+        #[rasn(tag(context, 0))]
+        pstn(Layer3PortAddress),
+        #[rasn(tag(context, 1))]
+        isdn(EnvelopeFunctionAddress),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum VoiceAccessTestResult {
+        connectionEstablished = 0,
+        ringbackFailed = 3,
+        noExistingConnection = 6,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct WaitTime(pub EndTime);
+    pub static DEFAULT_AC_VOLTAGE_THRESHOLD: LazyLock<AcVoltageThreshold> = LazyLock::new(|| {
+        AcVoltageThreshold::new(AcVoltage(250000), AcVoltage(250000), AcVoltage(250000))
+    });
+    pub static DEFAULT_CAPACITANCE_THRESHOLD: LazyLock<CapacitanceThreshold> =
+        LazyLock::new(|| {
+            CapacitanceThreshold::new(
+                Capacitance(0),
+                Capacitance(0),
+                Capacitance(10000),
+                Capacitance(0),
+            )
+        });
+    pub static DEFAULT_DC_VOLTAGE_THRESHOLD: LazyLock<DcVoltageThreshold> = LazyLock::new(|| {
+        DcVoltageThreshold::new(DcVoltage(150000), DcVoltage(150000), DcVoltage(150000))
+    });
+    pub static DEFAULT_DIAL_SPEED_THRESHOLD: LazyLock<DialSpeedThreshold> =
+        LazyLock::new(|| DialSpeedThreshold::new(DialSpeed(255), DialSpeed(0)));
+    pub const DEFAULT_ELECTRICAL_MEASUREMENT_TEST_TO_BE_PERFORMED:
+        ElectricalMeasurementTestToBePerformed = ElectricalMeasurementTestToBePerformed::full(());
+    pub const DEFAULT_ISDN_QUICK_TEST_TO_BE_PERFORMED: IsdnQuickTestToBePerformed =
+        IsdnQuickTestToBePerformed::functionTest;
+    pub static DEFAULT_ITERATIONS: LazyLock<Iterations> =
+        LazyLock::new(|| Iterations(Integer::from(1)));
+    pub const DEFAULT_LOOPBACK_CHANNEL: LoopbackChannel = LoopbackChannel::b1b2d;
+    pub static DEFAULT_LOOPBACK_DURATION: LazyLock<LoopbackDuration> =
+        LazyLock::new(|| LoopbackDuration(Timespec(Timespec::seconds(500))));
+    pub const DEFAULT_LOOPBACK_POSITION: LoopbackPosition = LoopbackPosition::noLoopback;
+    pub const DEFAULT_MONITOR_SPEAK: MonitorSpeak = MonitorSpeak::monitorWithMark;
+    pub static DEFAULT_MTA_TIMEOUT_PERIOD: LazyLock<MtaTimeoutPeriod> =
+        LazyLock::new(|| MtaTimeoutPeriod(Timespec(Timespec::minutes(5))));
+    pub static DEFAULT_NUMBER_OF_DIGITS: LazyLock<NumberOfDigits> =
+        LazyLock::new(|| NumberOfDigits(Integer::from(1)));
+    pub static DEFAULT_PULSE_NO_PULSE_RATIO: LazyLock<PulseNoPulseRatio> =
+        LazyLock::new(|| PulseNoPulseRatio::new(Ratio(100), Ratio(0)));
+    pub static DEFAULT_REQUESTED_RESULT_TYPE: LazyLock<RequestedResultType> =
+        LazyLock::new(|| RequestedResultType::new(false, true, false));
+    pub static DEFAULT_RESISTANCE_THRESHOLD: LazyLock<ResistanceThreshold> = LazyLock::new(|| {
+        ResistanceThreshold::new(
+            Resistance::milliOhm(0),
+            Resistance::milliOhm(0),
+            Resistance::kiloOhm(100000),
+            Resistance::milliOhm(0),
+            Resistance::milliOhm(0),
+            Resistance::milliOhm(0),
+        )
+    });
+    pub static DEFAULT_RING: LazyLock<Ring> = LazyLock::new(|| Ring::timedRing(Integer::from(3)));
+    pub const DEFAULT_SPM_PULSES: SpmPulses = SpmPulses(1);
+    pub static Q835_ACTION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q835_INFORMATION_MODEL, &[9u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static Q835_ATTRIBUTE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q835_INFORMATION_MODEL, &[7u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static Q835_INFORMATION_MODEL: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[0u32, 0u32, 17u32, 835u32, 0u32]).to_owned());
+    pub static Q835_MANAGED_OBJECT_CLASS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q835_INFORMATION_MODEL, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static Q835_NAME_BINDING: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q835_INFORMATION_MODEL, &[6u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static Q835_NOTIFICATION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q835_INFORMATION_MODEL, &[10u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static Q835_PACKAGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q835_INFORMATION_MODEL, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static Q835_PARAMETER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q835_INFORMATION_MODEL, &[5u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+}

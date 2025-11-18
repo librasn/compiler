@@ -1,0 +1,418 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q1238.4_2000_IN-CS3-SCF-SDF-datatypes.asn1
+---
+Warnings:
+LinkerError in ASN grammar: Failed to resolve reference in object set.
+LinkerError in ASN grammar: Failed to resolve supertype DirectoryString of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype Digits of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype DirectoryString of parameterized implementation.
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod in_cs3_scf_sdf_datatypes {
+    extern crate alloc;
+    use super::authentication_framework::AlgorithmIdentifier;
+    use super::basic_access_control::AttributeTypeAndValue;
+    use super::basic_access_control::{
+        AuthenticationLevel, MaxValueCount, Precedence, RestrictedValue,
+    };
+    use super::directory_abstract_service::Filter;
+    use super::in_cs3_object_identifiers::{
+        DS_USEFUL_DEFINITIONS, ID_ACA_ENTRY_ACI, ID_ACA_PRESCRIPTIVE_ACI, ID_ACA_SUBENTRY_ACI,
+        ID_AT_BIND_LEVEL_IF_OK, ID_AT_CHALLENGE_RESPONSE, ID_AT_CURRENT_LIST,
+        ID_AT_FAILURE_COUNTER, ID_AT_IDENTIFIER_LIST, ID_AT_LOCK_SESSION, ID_AT_MAX_ATTEMPTS,
+        ID_AT_SECRET_KEY, ID_AT_SECURITY_FACILITY_ID, ID_AT_SIZE_OF_RESTOCKING, ID_AT_SOURCE,
+        ID_AT_STOCK_ID, ID_AVC_ASSIGNMENT, ID_AVC_BASIC_SERVICE, ID_AVC_LINE_IDENTITY,
+        ID_SOA_METHOD_RULE_USE, SCF_SCF_DATATYPES, SCF_SDF_CLASSES, SSF_SCF_CLASSES,
+        SSF_SCF_DATATYPES,
+    };
+    use super::in_cs3_scf_scf_datatypes::AgreementID;
+    use super::in_cs3_scf_sdf_classes::*;
+    use super::in_cs3_ssf_scf_classes::*;
+    use super::in_cs3_ssf_scf_datatypes::Digits;
+    use super::information_framework::*;
+    use super::selected_attribute_types::{
+        DirectoryString, NameAndOptionalUID, BIT_STRING_MATCH,
+        DIRECTORY_STRING_FIRST_COMPONENT_MATCH, INTEGER_ORDERING_MATCH,
+        OBJECT_IDENTIFIER_FIRST_COMPONENT_MATCH, OBJECT_IDENTIFIER_MATCH,
+    };
+    use super::upper_bounds::{UB_SCHEMA, UB_TAG};
+    use super::useful_definitions::{
+        AUTHENTICATION_FRAMEWORK, BASIC_ACCESS_CONTROL, DIRECTORY_ABSTRACT_SERVICE,
+        INFORMATION_FRAMEWORK, SELECTED_ATTRIBUTE_TYPES, UPPER_BOUNDS,
+    };
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ACIItemItemOrUserFirstItemFirst {
+        #[rasn(identifier = "protectedItems")]
+        pub protected_items: ProtectedItems,
+        #[rasn(identifier = "itemPermissions")]
+        pub item_permissions: SetOf<ItemPermission>,
+    }
+    impl ACIItemItemOrUserFirstItemFirst {
+        pub fn new(
+            protected_items: ProtectedItems,
+            item_permissions: SetOf<ItemPermission>,
+        ) -> Self {
+            Self {
+                protected_items,
+                item_permissions,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ACIItemItemOrUserFirstUserFirst {
+        #[rasn(identifier = "userClasses")]
+        pub user_classes: UserClasses,
+        #[rasn(identifier = "userPermissions")]
+        pub user_permissions: SetOf<UserPermission>,
+    }
+    impl ACIItemItemOrUserFirstUserFirst {
+        pub fn new(user_classes: UserClasses, user_permissions: SetOf<UserPermission>) -> Self {
+            Self {
+                user_classes,
+                user_permissions,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ACIItemItemOrUserFirst {
+        #[rasn(tag(context, 0))]
+        itemFirst(ACIItemItemOrUserFirstItemFirst),
+        #[rasn(tag(context, 1))]
+        userFirst(ACIItemItemOrUserFirstUserFirst),
+    }
+    #[doc = " Enhancement data types for Basic Access Control"]
+    #[doc = " The following enhancements to the third edition X.500 specification of Access Control Information are required to support IN requirements on the SCF/SDF interface."]
+    #[doc = "  The remaining elements apply as described in the third edition X.500-Series of Recommendations."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ACIItem {
+        #[rasn(value("0.."), identifier = "identificationTag")]
+        pub identification_tag: DirectoryString,
+        pub precedence: Precedence,
+        #[rasn(identifier = "authenticationLevel")]
+        pub authentication_level: AuthenticationLevel,
+        #[rasn(identifier = "itemOrUserFirst")]
+        pub item_or_user_first: ACIItemItemOrUserFirst,
+    }
+    impl ACIItem {
+        pub fn new(
+            identification_tag: DirectoryString,
+            precedence: Precedence,
+            authentication_level: AuthenticationLevel,
+            item_or_user_first: ACIItemItemOrUserFirst,
+        ) -> Self {
+            Self {
+                identification_tag,
+                precedence,
+                authentication_level,
+                item_or_user_first,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct BasicService(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "DT-Code")]
+    pub struct DTCode(pub ObjectIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct GrantsAndDenials(pub BitString);
+    #[doc = " grantExecuteMethod means that the user can perform the specific Methods for the Entry."]
+    #[doc = " NOTE - It is a matter for network operators as to whether the grantExecuteMethod"]
+    #[doc = " permission bypasses the normal access control mechanisms for Entries and Attributes."]
+    #[doc = " denyExecuteMethod means that the user cannot perform the specific Methods for the Entry"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ItemPermission {
+        pub precedence: Option<Precedence>,
+        #[rasn(identifier = "userClasses")]
+        pub user_classes: UserClasses,
+        #[rasn(identifier = "grantsAndDenials")]
+        pub grants_and_denials: GrantsAndDenials,
+    }
+    impl ItemPermission {
+        pub fn new(
+            precedence: Option<Precedence>,
+            user_classes: UserClasses,
+            grants_and_denials: GrantsAndDenials,
+        ) -> Self {
+            Self {
+                precedence,
+                user_classes,
+                grants_and_denials,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct LockSession {
+        #[rasn(tag(context, 0), identifier = "entryName")]
+        pub entry_name: DistinguishedName,
+        #[rasn(tag(context, 1))]
+        pub atribute: ObjectIdentifier,
+    }
+    impl LockSession {
+        pub fn new(entry_name: DistinguishedName, atribute: ObjectIdentifier) -> Self {
+            Self {
+                entry_name,
+                atribute,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MethodIDs(pub Any);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "IOFR$METHOD$&InputAttributes$&id")]
+    pub struct AnonymousMethodIdentifierInputAttributes(pub Any);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MethodIdentifierInputAttributes(pub SetOf<AnonymousMethodIdentifierInputAttributes>);
+    #[doc = " identifierList is an attribute that could contain four identifiers:"]
+    #[doc = " conformMethodIdentifier identifies the method used to verify that some parts of the input message"]
+    #[doc = "  are conformed to some criteria as size, value matching with an attribute, greater than a counter,"]
+    #[doc = " included in a time window,"]
+    #[doc = " fillMethodIdentifier identifies the method used to fill the input message (first part of a"]
+    #[doc = " twoPartMessage or ThreePartMessage or FivePartMessage)."]
+    #[doc = " oneToOneAlgorithm (resp. oneToTwoAlgorithm) identifies the cryptographic algorithm with one"]
+    #[doc = " output (resp. two output). if KS is the secret key, IN is the input and OUT the output, it would be"]
+    #[doc = " OUT=output1of (A12(RS_size_in_bits first bits of IN,A11(RAND_size_in_bits last bits of IN,KS)))"]
+    #[doc = " (resp. (OUT1,OUT2)= (A12(RS_size_in_bits first bits of IN,A11(RAND_size_in_bits last bits of"]
+    #[doc = " IN,KS)) )"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct MethodIdentifier {
+        pub methodid: Any,
+        #[rasn(identifier = "inputAttributes")]
+        pub input_attributes: Option<MethodIdentifierInputAttributes>,
+        #[rasn(tag(context, 0), identifier = "specific-Input")]
+        pub specific_input: Option<Any>,
+    }
+    impl MethodIdentifier {
+        pub fn new(
+            methodid: Any,
+            input_attributes: Option<MethodIdentifierInputAttributes>,
+            specific_input: Option<Any>,
+        ) -> Self {
+            Self {
+                methodid,
+                input_attributes,
+                specific_input,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MethodUseDescriptionName(pub SetOf<DirectoryString>);
+    #[doc = " The methodUse operational attribute is used to indicate the methods which shall be used with an"]
+    #[doc = " object-class and all of its subclasses."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct MethodUseDescription {
+        pub identifier: Any,
+        pub name: Option<MethodUseDescriptionName>,
+        #[rasn(value("0.."))]
+        pub description: Option<DirectoryString>,
+        #[rasn(default = "method_use_description_obsolete_default")]
+        pub obsolete: bool,
+        #[rasn(tag(context, 0))]
+        pub information: SetOf<Any>,
+    }
+    impl MethodUseDescription {
+        pub fn new(
+            identifier: Any,
+            name: Option<MethodUseDescriptionName>,
+            description: Option<DirectoryString>,
+            obsolete: bool,
+            information: SetOf<Any>,
+        ) -> Self {
+            Self {
+                identifier,
+                name,
+                description,
+                obsolete,
+                information,
+            }
+        }
+    }
+    fn method_use_description_obsolete_default() -> bool {
+        false
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ProtectedItems {
+        #[rasn(tag(context, 0))]
+        pub entry: Option<()>,
+        #[rasn(tag(context, 1), identifier = "allUserAttributeTypes")]
+        pub all_user_attribute_types: Option<()>,
+        #[rasn(tag(context, 2), identifier = "attributeType")]
+        pub attribute_type: Option<SetOf<AttributeType>>,
+        #[rasn(tag(context, 3), identifier = "allAttributeValues")]
+        pub all_attribute_values: Option<SetOf<AttributeType>>,
+        #[rasn(tag(context, 4), identifier = "allUserAttributeTypesAndValues")]
+        pub all_user_attribute_types_and_values: Option<()>,
+        #[rasn(tag(context, 5), identifier = "attributeValue")]
+        pub attribute_value: Option<SetOf<AttributeTypeAndValue>>,
+        #[rasn(tag(context, 6), identifier = "selfValue")]
+        pub self_value: Option<SetOf<AttributeType>>,
+        #[rasn(tag(context, 7), identifier = "rangeOfValues")]
+        pub range_of_values: Option<Filter>,
+        #[rasn(tag(context, 8), identifier = "maxValueCount")]
+        pub max_value_count: Option<SetOf<MaxValueCount>>,
+        #[rasn(tag(context, 9), identifier = "maxImmSub")]
+        pub max_imm_sub: Option<Integer>,
+        #[rasn(tag(context, 10), identifier = "restrictedBy")]
+        pub restricted_by: Option<SetOf<RestrictedValue>>,
+        #[rasn(tag(context, 11))]
+        pub contexts: Option<SetOf<ContextAssertion>>,
+        #[rasn(tag(context, 30), identifier = "entryMethods")]
+        pub entry_methods: Option<SetOf<MethodIDs>>,
+    }
+    impl ProtectedItems {
+        pub fn new(
+            entry: Option<()>,
+            all_user_attribute_types: Option<()>,
+            attribute_type: Option<SetOf<AttributeType>>,
+            all_attribute_values: Option<SetOf<AttributeType>>,
+            all_user_attribute_types_and_values: Option<()>,
+            attribute_value: Option<SetOf<AttributeTypeAndValue>>,
+            self_value: Option<SetOf<AttributeType>>,
+            range_of_values: Option<Filter>,
+            max_value_count: Option<SetOf<MaxValueCount>>,
+            max_imm_sub: Option<Integer>,
+            restricted_by: Option<SetOf<RestrictedValue>>,
+            contexts: Option<SetOf<ContextAssertion>>,
+            entry_methods: Option<SetOf<MethodIDs>>,
+        ) -> Self {
+            Self {
+                entry,
+                all_user_attribute_types,
+                attribute_type,
+                all_attribute_values,
+                all_user_attribute_types_and_values,
+                attribute_value,
+                self_value,
+                range_of_values,
+                max_value_count,
+                max_imm_sub,
+                restricted_by,
+                contexts,
+                entry_methods,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct SCFCriteria {
+        #[rasn(tag(context, 0))]
+        pub agreement: AgreementID,
+    }
+    impl SCFCriteria {
+        pub fn new(agreement: AgreementID) -> Self {
+            Self { agreement }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct SDFCriteria {
+        #[rasn(tag(context, 0))]
+        pub object: DistinguishedName,
+    }
+    impl SDFCriteria {
+        pub fn new(object: DistinguishedName) -> Self {
+            Self { object }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "SF-CODE")]
+    pub struct SFCODE(pub ObjectIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SourceType(pub DistinguishedName);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum TFCcriteria {
+        #[rasn(tag(context, 0))]
+        sdf(SDFCriteria),
+        #[rasn(tag(context, 1))]
+        scf(SCFCriteria),
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "BIT_STRING")]
+    pub struct AnonymousTwoPartMessage(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("2"))]
+    pub struct TwoPartMessage(pub SequenceOf<AnonymousTwoPartMessage>);
+    #[doc = " entryMethods identifies the specified Methods for which the level of protection is to be applied."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct UserClasses {
+        #[rasn(tag(context, 0), identifier = "allUsers")]
+        pub all_users: Option<()>,
+        #[rasn(tag(context, 1), identifier = "thisEntry")]
+        pub this_entry: Option<()>,
+        #[rasn(tag(context, 2))]
+        pub name: Option<SetOf<NameAndOptionalUID>>,
+        #[rasn(tag(context, 3), identifier = "userGroup")]
+        pub user_group: Option<SetOf<NameAndOptionalUID>>,
+        #[rasn(tag(context, 4))]
+        pub subtree: Option<SetOf<SubtreeSpecification>>,
+    }
+    impl UserClasses {
+        pub fn new(
+            all_users: Option<()>,
+            this_entry: Option<()>,
+            name: Option<SetOf<NameAndOptionalUID>>,
+            user_group: Option<SetOf<NameAndOptionalUID>>,
+            subtree: Option<SetOf<SubtreeSpecification>>,
+        ) -> Self {
+            Self {
+                all_users,
+                this_entry,
+                name,
+                user_group,
+                subtree,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct UserPermission {
+        pub precedence: Option<Precedence>,
+        #[rasn(identifier = "protectedItems")]
+        pub protected_items: ProtectedItems,
+        #[rasn(identifier = "grantsAndDenials")]
+        pub grants_and_denials: GrantsAndDenials,
+    }
+    impl UserPermission {
+        pub fn new(
+            precedence: Option<Precedence>,
+            protected_items: ProtectedItems,
+            grants_and_denials: GrantsAndDenials,
+        ) -> Self {
+            Self {
+                precedence,
+                protected_items,
+                grants_and_denials,
+            }
+        }
+    }
+    #[doc = " secretKey is an attribute which contains the secret key (to be used by the cryptographic algorithm)"]
+    #[doc = " of the user"]
+    pub static LB_SECRET_KEY: LazyLock<Integer> = LazyLock::new(|| Integer::from(32));
+    pub static UB_SECRET_KEY: LazyLock<Integer> = LazyLock::new(|| Integer::from(128));
+}

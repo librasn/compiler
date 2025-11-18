@@ -3,45 +3,36 @@ use rasn_compiler::{prelude::RasnBackend, Compiler, OutputMode};
 #[test]
 #[ignore]
 fn parses_modules() {
-    let read_dir = std::fs::read_dir("./tests/modules").unwrap();
-    let mut errors = String::new();
-    let mut succeeded = 0;
-    let mut failed = 0;
-    for entry in read_dir.flatten() {
-        let path = entry.path();
-        println!("{:?}", &path);
-        if let Err(e) = Compiler::<RasnBackend, _>::new()
-            .add_asn_by_path(path.clone())
-            .compile_to_string()
-        {
-            failed += 1;
-            errors.push_str(&format!(
-                r#"
-----------------------------------------------------------------------------
-{path:?}
-----------------------------------------------------------------------------
-{}
+    insta::glob!("modules/*", |path| {
+        let input = std::fs::read_to_string(path).unwrap();
+        let result = Compiler::<RasnBackend, _>::new()
+            .add_asn_literal(&input)
+            .compile_to_string();
 
-                    "#,
-                e.contextualize(&std::fs::read_to_string(path.clone()).unwrap())
-            ))
-        } else {
-            succeeded += 1;
-        }
-    }
-    let success_rate = 100 * succeeded / (succeeded + failed);
-    std::fs::write(
-        "./parse_test_results.txt",
-        format!(
-            r#"
-Success rate of {success_rate}%.
-Parsed {succeeded} ASN1 modules without running into unrecoverable errors.
-Failed to parse {failed} modules with the following errors:
+        let output = match result {
+            Ok(result) => {
+                let mut output = String::new();
+                if !result.warnings.is_empty() {
+                    output.push_str("Warnings:\n");
+                    for warning in &result.warnings {
+                        output.push_str(&warning.contextualize(&input));
+                        output.push('\n');
+                    }
+                    output.push_str("\n\n");
+                }
+                output.push_str("Generated:\n");
+                output.push_str(result.generated.trim());
+                output.push('\n');
+                output
+            }
+            Err(err) => err.contextualize(&input),
+        };
 
-    "#
-        ) + &errors,
-    )
-    .unwrap();
+        insta::with_settings!(
+            { omit_expression => true, },
+            { insta::assert_snapshot!(output); }
+        );
+    });
 }
 
 #[test]

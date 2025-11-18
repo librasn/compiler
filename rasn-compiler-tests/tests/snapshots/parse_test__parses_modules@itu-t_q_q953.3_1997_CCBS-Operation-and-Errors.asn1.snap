@@ -1,0 +1,83 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q953.3_1997_CCBS-Operation-and-Errors.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod ccbs_operation_and_errors {
+    extern crate alloc;
+    use super::addressing_data_elements::{Address, PartyNumber, PartySubaddress};
+    use super::embedded_q931_types::Q931InformationElement;
+    use super::general_error_list::{
+        BASIC_SERVICE_NOT_PROVIDED, SUPPLEMENTARY_SERVICE_INTERACTION_NOT_ALLOWED,
+        USER_NOT_SUBSCRIBED,
+    };
+    use super::remote_operations_information_objects::*;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum CCBSEraseReason {
+        #[rasn(identifier = "normal-unspecified")]
+        normal_unspecified = 0,
+        #[rasn(identifier = "t-CCBS2-timeout")]
+        t_CCBS2_timeout = 1,
+        #[rasn(identifier = "t-CCBS3-timeout")]
+        t_CCBS3_timeout = 2,
+        #[rasn(identifier = "basic-call-failure")]
+        basic_call_failure = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=127"))]
+    pub struct CCBSReference(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=5"))]
+    pub struct CallDetails(pub SequenceOf<CallInformation>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct CallInformation {
+        #[rasn(identifier = "addressOfB")]
+        pub address_of_b: Address,
+        #[rasn(identifier = "q931InfoElement")]
+        pub q931_info_element: Q931InformationElement,
+        #[rasn(identifier = "cCBSReference")]
+        pub c_cbsreference: Option<CCBSReference>,
+        #[rasn(identifier = "subAddressOfA")]
+        pub sub_address_of_a: Option<PartySubaddress>,
+    }
+    impl CallInformation {
+        pub fn new(
+            address_of_b: Address,
+            q931_info_element: Q931InformationElement,
+            c_cbsreference: Option<CCBSReference>,
+            sub_address_of_a: Option<PartySubaddress>,
+        ) -> Self {
+            Self {
+                address_of_b,
+                q931_info_element,
+                c_cbsreference,
+                sub_address_of_a,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=127"))]
+    pub struct CallLinkageID(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum RecallMode {
+        globalRecall = 0,
+        specificRecall = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct ResultcCBStatusRequest(pub bool);
+    pub const BUSY: ResultcCBStatusRequest = ResultcCBStatusRequest(false);
+    pub const FREE: ResultcCBStatusRequest = ResultcCBStatusRequest(true);
+}

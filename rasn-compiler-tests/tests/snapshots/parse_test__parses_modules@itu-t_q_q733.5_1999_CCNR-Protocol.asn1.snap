@@ -1,0 +1,51 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q733.5_1999_CCNR-Protocol.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod ccnr_protocol {
+    extern crate alloc;
+    use super::ccbs_protocol::{
+        AccessTransport, CauseCode, USICode, CCBS_CANCEL, CCBS_RESUME, CCBS_SUSPEND,
+        LONG_TERM_DENIAL, MAX_ACCESS_TRANSPORT_LENGTH, REMOTE_USER_FREE, SHORT_TERM_DENIAL,
+    };
+    use super::remote_operations_information_objects::*;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " constants and data type definitions"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("3..=255"))]
+    pub struct CalledPartyNumber(pub OctetString);
+    #[doc = " the called party number is coded as described in"]
+    #[doc = " Recommendation Q.763 [10], Called Party Number parameter."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("3..=255"))]
+    pub struct CallingPartyNumber(pub OctetString);
+    #[doc = " the calling party number is coded as described in"]
+    #[doc = " Recommendation Q.763 [10], Calling Party Number parameter."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("3..=255"))]
+    pub struct GenericNumber(pub OctetString);
+    #[doc = " object identifier path"]
+    pub static CCNR_OID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&[0u32, 0u32], &***Q, &[733u32, 5u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " numbers of the GenericNumber type are coded as described in"]
+    #[doc = " Recommendation Q.763 [10], Generic Number parameter,"]
+    #[doc = " without the Number Qualifier indicator."]
+    pub static MAX_CALLED_PARTY_NUMBER_LENGTH: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(255));
+    pub static MAX_CALLING_PARTY_NUMBER_LENGTH: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(255));
+    pub static MAX_GENERIC_NUMBER_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(255));
+}

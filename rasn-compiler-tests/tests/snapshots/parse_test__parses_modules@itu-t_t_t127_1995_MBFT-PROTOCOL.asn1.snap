@@ -1,0 +1,959 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_t_t127_1995_MBFT-PROTOCOL.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod mbft_protocol {
+    extern crate alloc;
+    use super::gcc_protocol::{
+        ChannelID, DynamicChannelID, DynamicTokenID, H221NonStandardIdentifier, Key,
+        NonStandardParameter, StaticChannelID, StaticTokenID, TextString, TokenID, UserID,
+    };
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "Access-Control-Attribute")]
+    pub enum AccessControlAttribute {
+        #[rasn(tag(context, 0), identifier = "simple-password")]
+        simple_password(OctetString),
+        #[rasn(tag(context, 1), identifier = "actual-values")]
+        actual_values(SetOf<AccessControlElement>),
+    }
+    #[doc = " The semantics of this attribute are described in ISO 8571-2"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Access-Control-Element")]
+    #[non_exhaustive]
+    pub struct AccessControlElement {
+        #[rasn(tag(context, 0), identifier = "action-list")]
+        pub action_list: AccessRequest,
+        #[rasn(tag(context, 1), identifier = "concurrency-access")]
+        pub concurrency_access: Option<ConcurrencyAccess>,
+        #[rasn(tag(context, 2))]
+        pub identity: Option<UserIdentity>,
+        #[rasn(tag(context, 3))]
+        pub passwords: Option<AccessPasswords>,
+    }
+    impl AccessControlElement {
+        pub fn new(
+            action_list: AccessRequest,
+            concurrency_access: Option<ConcurrencyAccess>,
+            identity: Option<UserIdentity>,
+            passwords: Option<AccessPasswords>,
+        ) -> Self {
+            Self {
+                action_list,
+                concurrency_access,
+                identity,
+                passwords,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Access-Passwords")]
+    pub struct AccessPasswords {
+        #[rasn(tag(context, 0), identifier = "read-password")]
+        pub read_password: Password,
+        #[rasn(tag(context, 1), identifier = "insert-password")]
+        pub insert_password: Password,
+        #[rasn(tag(context, 2), identifier = "replace-password")]
+        pub replace_password: Password,
+        #[rasn(tag(context, 3), identifier = "extend-password")]
+        pub extend_password: Password,
+        #[rasn(tag(context, 4), identifier = "erase-password")]
+        pub erase_password: Password,
+        #[rasn(tag(context, 5), identifier = "read-attribute-password")]
+        pub read_attribute_password: Password,
+        #[rasn(tag(context, 6), identifier = "change-attribute-password")]
+        pub change_attribute_password: Password,
+        #[rasn(tag(context, 7), identifier = "delete-password")]
+        pub delete_password: Password,
+    }
+    impl AccessPasswords {
+        pub fn new(
+            read_password: Password,
+            insert_password: Password,
+            replace_password: Password,
+            extend_password: Password,
+            erase_password: Password,
+            read_attribute_password: Password,
+            change_attribute_password: Password,
+            delete_password: Password,
+        ) -> Self {
+            Self {
+                read_password,
+                insert_password,
+                replace_password,
+                extend_password,
+                erase_password,
+                read_attribute_password,
+                change_attribute_password,
+                delete_password,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Access-Request")]
+    pub struct AccessRequest(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum CompressionSpecifier {
+        #[rasn(identifier = "v42bis-parameters")]
+        v42bis_parameters(V42bisParameterList),
+        #[rasn(identifier = "nonstandard-compression-parameters")]
+        nonstandard_compression_parameters(SetOf<NonStandardParameter>),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Concurrency-Access")]
+    pub struct ConcurrencyAccess {
+        #[rasn(tag(context, 0))]
+        pub read: ConcurrencyKey,
+        #[rasn(tag(context, 1))]
+        pub insert: ConcurrencyKey,
+        #[rasn(tag(context, 2))]
+        pub replace: ConcurrencyKey,
+        #[rasn(tag(context, 3))]
+        pub extend: ConcurrencyKey,
+        #[rasn(tag(context, 4))]
+        pub erase: ConcurrencyKey,
+        #[rasn(tag(context, 5), identifier = "read-attribute")]
+        pub read_attribute: ConcurrencyKey,
+        #[rasn(tag(context, 6), identifier = "change-attribute")]
+        pub change_attribute: ConcurrencyKey,
+        #[rasn(tag(context, 7), identifier = "delete-file")]
+        pub delete_file: ConcurrencyKey,
+    }
+    impl ConcurrencyAccess {
+        pub fn new(
+            read: ConcurrencyKey,
+            insert: ConcurrencyKey,
+            replace: ConcurrencyKey,
+            extend: ConcurrencyKey,
+            erase: ConcurrencyKey,
+            read_attribute: ConcurrencyKey,
+            change_attribute: ConcurrencyKey,
+            delete_file: ConcurrencyKey,
+        ) -> Self {
+            Self {
+                read,
+                insert,
+                replace,
+                extend,
+                erase,
+                read_attribute,
+                change_attribute,
+                delete_file,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Concurrency-Key")]
+    pub struct ConcurrencyKey(pub BitString);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ContentsTypeAttributeDocumentType {
+        #[rasn(tag(context, 1), identifier = "document-type-name")]
+        pub document_type_name: DocumentTypeName,
+        #[rasn(tag(context, 0))]
+        pub parameter: Option<ISO85712Parameters>,
+    }
+    impl ContentsTypeAttributeDocumentType {
+        pub fn new(
+            document_type_name: DocumentTypeName,
+            parameter: Option<ISO85712Parameters>,
+        ) -> Self {
+            Self {
+                document_type_name,
+                parameter,
+            }
+        }
+    }
+    #[doc = " 16-bit value"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "Contents-Type-Attribute")]
+    pub enum ContentsTypeAttribute {
+        #[rasn(tag(context, 0), identifier = "document-type")]
+        document_type(ContentsTypeAttributeDocumentType),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "Directory-RequestPDU")]
+    #[non_exhaustive]
+    pub struct DirectoryRequestPDU {
+        pub pathname: Option<SequenceOf<GraphicString>>,
+    }
+    impl DirectoryRequestPDU {
+        pub fn new(pathname: Option<SequenceOf<GraphicString>>) -> Self {
+            Self { pathname }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum DirectoryResponsePDUResult {
+        unspecified = 0,
+        #[rasn(identifier = "permission-denied")]
+        permission_denied = 1,
+        #[rasn(identifier = "function-not-supported")]
+        function_not_supported = 2,
+        successful = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "Directory-ResponsePDU")]
+    #[non_exhaustive]
+    pub struct DirectoryResponsePDU {
+        pub result: DirectoryResponsePDUResult,
+        pub pathname: Option<SequenceOf<GraphicString>>,
+        #[rasn(identifier = "directory-list")]
+        pub directory_list: SequenceOf<DirectoryEntry>,
+    }
+    impl DirectoryResponsePDU {
+        pub fn new(
+            result: DirectoryResponsePDUResult,
+            pathname: Option<SequenceOf<GraphicString>>,
+            directory_list: SequenceOf<DirectoryEntry>,
+        ) -> Self {
+            Self {
+                result,
+                pathname,
+                directory_list,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct DirectoryEntry {
+        #[rasn(identifier = "subdirectory-flag")]
+        pub subdirectory_flag: bool,
+        pub attributes: FileHeader,
+    }
+    impl DirectoryEntry {
+        pub fn new(subdirectory_flag: bool, attributes: FileHeader) -> Self {
+            Self {
+                subdirectory_flag,
+                attributes,
+            }
+        }
+    }
+    #[doc = " The actual types to be used for values of the parameter"]
+    #[doc = " field are defined in the document-type-name."]
+    #[doc = " Currently, only UNSTRUCTURED TEXT and UNSTRUCTURED BINARY"]
+    #[doc = " are supported."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Document-Type-Name")]
+    pub struct DocumentTypeName(pub ObjectIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Entity-Reference")]
+    pub struct EntityReference(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ErrorID(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum ErrorType {
+        informative = 0,
+        #[rasn(identifier = "transient-error")]
+        transient_error = 1,
+        #[rasn(identifier = "permanent-error")]
+        permanent_error = 2,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum FileAbortPDUReason {
+        unspecified = 0,
+        #[rasn(identifier = "bandwidth-required")]
+        bandwidth_required = 1,
+        #[rasn(identifier = "tokens-required")]
+        tokens_required = 2,
+        #[rasn(identifier = "channels-required")]
+        channels_required = 3,
+        #[rasn(identifier = "priority-required")]
+        priority_required = 4,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "File-AbortPDU")]
+    #[non_exhaustive]
+    pub struct FileAbortPDU {
+        pub reason: FileAbortPDUReason,
+        #[rasn(identifier = "data-channel-id")]
+        pub data_channel_id: Option<ChannelID>,
+        #[rasn(identifier = "transmitter-user-id")]
+        pub transmitter_user_id: Option<UserID>,
+        #[rasn(identifier = "file-handle")]
+        pub file_handle: Option<Handle>,
+    }
+    impl FileAbortPDU {
+        pub fn new(
+            reason: FileAbortPDUReason,
+            data_channel_id: Option<ChannelID>,
+            transmitter_user_id: Option<UserID>,
+            file_handle: Option<Handle>,
+        ) -> Self {
+            Self {
+                reason,
+                data_channel_id,
+                transmitter_user_id,
+                file_handle,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "File-AcceptPDU")]
+    #[non_exhaustive]
+    pub struct FileAcceptPDU {
+        #[rasn(identifier = "file-handle")]
+        pub file_handle: Handle,
+    }
+    impl FileAcceptPDU {
+        pub fn new(file_handle: Handle) -> Self {
+            Self { file_handle }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "File-DataPDU")]
+    #[non_exhaustive]
+    pub struct FileDataPDU {
+        #[rasn(identifier = "file-handle")]
+        pub file_handle: Handle,
+        #[rasn(identifier = "eof-flag")]
+        pub eof_flag: bool,
+        #[rasn(identifier = "abort-flag")]
+        pub abort_flag: bool,
+        #[rasn(size("0..=65535"))]
+        pub data: OctetString,
+        #[rasn(value("0..=4294967295"), identifier = "crc-check")]
+        pub crc_check: Option<u32>,
+    }
+    impl FileDataPDU {
+        pub fn new(
+            file_handle: Handle,
+            eof_flag: bool,
+            abort_flag: bool,
+            data: OctetString,
+            crc_check: Option<u32>,
+        ) -> Self {
+            Self {
+                file_handle,
+                eof_flag,
+                abort_flag,
+                data,
+                crc_check,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum FileDenyPDUReason {
+        unspecified = 0,
+        #[rasn(identifier = "file-not-present")]
+        file_not_present = 1,
+        #[rasn(identifier = "insufficient-privilege")]
+        insufficient_privilege = 2,
+        #[rasn(identifier = "file-already-offered")]
+        file_already_offered = 3,
+        ambiguous = 4,
+        #[rasn(identifier = "no-channel")]
+        no_channel = 5,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "File-DenyPDU")]
+    #[non_exhaustive]
+    pub struct FileDenyPDU {
+        #[rasn(identifier = "request-handle")]
+        pub request_handle: Handle,
+        pub reason: FileDenyPDUReason,
+    }
+    impl FileDenyPDU {
+        pub fn new(request_handle: Handle, reason: FileDenyPDUReason) -> Self {
+            Self {
+                request_handle,
+                reason,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "File-ErrorPDU")]
+    #[non_exhaustive]
+    pub struct FileErrorPDU {
+        #[rasn(identifier = "file-handle")]
+        pub file_handle: Option<Handle>,
+        #[rasn(identifier = "error-type")]
+        pub error_type: ErrorType,
+        #[rasn(identifier = "error-id")]
+        pub error_id: ErrorID,
+        #[rasn(identifier = "error-text")]
+        pub error_text: Option<TextString>,
+    }
+    impl FileErrorPDU {
+        pub fn new(
+            file_handle: Option<Handle>,
+            error_type: ErrorType,
+            error_id: ErrorID,
+            error_text: Option<TextString>,
+        ) -> Self {
+            Self {
+                file_handle,
+                error_type,
+                error_id,
+                error_text,
+            }
+        }
+    }
+    #[doc = " Part 2: PDU Messages"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "File-OfferPDU")]
+    #[non_exhaustive]
+    pub struct FileOfferPDU {
+        #[rasn(identifier = "file-header")]
+        pub file_header: FileHeader,
+        #[rasn(identifier = "data-channel-id")]
+        pub data_channel_id: ChannelID,
+        #[rasn(identifier = "file-handle")]
+        pub file_handle: Handle,
+        #[rasn(value("0..=65535"), identifier = "roster-instance")]
+        pub roster_instance: Option<u16>,
+        #[rasn(identifier = "file-transmit-token")]
+        pub file_transmit_token: Option<TokenID>,
+        #[rasn(identifier = "file-request-token")]
+        pub file_request_token: Option<TokenID>,
+        #[rasn(identifier = "compression-specifier")]
+        pub compression_specifier: Option<CompressionSpecifier>,
+        #[rasn(identifier = "compressed-filesize")]
+        pub compressed_filesize: Option<Integer>,
+        #[rasn(identifier = "ack-flag")]
+        pub ack_flag: bool,
+    }
+    impl FileOfferPDU {
+        pub fn new(
+            file_header: FileHeader,
+            data_channel_id: ChannelID,
+            file_handle: Handle,
+            roster_instance: Option<u16>,
+            file_transmit_token: Option<TokenID>,
+            file_request_token: Option<TokenID>,
+            compression_specifier: Option<CompressionSpecifier>,
+            compressed_filesize: Option<Integer>,
+            ack_flag: bool,
+        ) -> Self {
+            Self {
+                file_header,
+                data_channel_id,
+                file_handle,
+                roster_instance,
+                file_transmit_token,
+                file_request_token,
+                compression_specifier,
+                compressed_filesize,
+                ack_flag,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum FileRejectPDUReason {
+        unspecified = 0,
+        #[rasn(identifier = "file-exists")]
+        file_exists = 1,
+        #[rasn(identifier = "file-not-required")]
+        file_not_required = 2,
+        #[rasn(identifier = "insufficient-resources")]
+        insufficient_resources = 3,
+        #[rasn(identifier = "transfer-limit")]
+        transfer_limit = 4,
+        #[rasn(identifier = "compression-unsupported")]
+        compression_unsupported = 5,
+        #[rasn(identifier = "unable-to-join-channel")]
+        unable_to_join_channel = 6,
+        #[rasn(identifier = "parameter-not-supported")]
+        parameter_not_supported = 7,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "File-RejectPDU")]
+    #[non_exhaustive]
+    pub struct FileRejectPDU {
+        #[rasn(identifier = "file-handle")]
+        pub file_handle: Handle,
+        pub reason: FileRejectPDUReason,
+    }
+    impl FileRejectPDU {
+        pub fn new(file_handle: Handle, reason: FileRejectPDUReason) -> Self {
+            Self {
+                file_handle,
+                reason,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "File-RequestPDU")]
+    #[non_exhaustive]
+    pub struct FileRequestPDU {
+        #[rasn(identifier = "file-header")]
+        pub file_header: FileHeader,
+        #[rasn(identifier = "data-channel-id")]
+        pub data_channel_id: ChannelID,
+        #[rasn(identifier = "request-handle")]
+        pub request_handle: Handle,
+        #[rasn(value("0..=65535"), identifier = "roster-instance")]
+        pub roster_instance: u16,
+        #[rasn(identifier = "file-transmit-token")]
+        pub file_transmit_token: TokenID,
+        #[rasn(identifier = "file-request-token")]
+        pub file_request_token: Option<TokenID>,
+        #[rasn(identifier = "data-offset")]
+        pub data_offset: Integer,
+    }
+    impl FileRequestPDU {
+        pub fn new(
+            file_header: FileHeader,
+            data_channel_id: ChannelID,
+            request_handle: Handle,
+            roster_instance: u16,
+            file_transmit_token: TokenID,
+            file_request_token: Option<TokenID>,
+            data_offset: Integer,
+        ) -> Self {
+            Self {
+                file_header,
+                data_channel_id,
+                request_handle,
+                roster_instance,
+                file_transmit_token,
+                file_request_token,
+                data_offset,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "File-StartPDU")]
+    #[non_exhaustive]
+    pub struct FileStartPDU {
+        #[rasn(identifier = "file-header")]
+        pub file_header: FileHeader,
+        #[rasn(identifier = "file-handle")]
+        pub file_handle: Handle,
+        #[rasn(identifier = "eof-flag")]
+        pub eof_flag: bool,
+        #[rasn(identifier = "crc-flag")]
+        pub crc_flag: bool,
+        #[rasn(identifier = "compression-specifier")]
+        pub compression_specifier: Option<CompressionSpecifier>,
+        #[rasn(identifier = "comp-filesize")]
+        pub comp_filesize: Option<Integer>,
+        #[rasn(identifier = "data-offset")]
+        pub data_offset: Integer,
+        #[rasn(size("0..=65535"))]
+        pub data: OctetString,
+        #[rasn(value("0..=4294967295"), identifier = "crc-check")]
+        pub crc_check: Option<u32>,
+    }
+    impl FileStartPDU {
+        pub fn new(
+            file_header: FileHeader,
+            file_handle: Handle,
+            eof_flag: bool,
+            crc_flag: bool,
+            compression_specifier: Option<CompressionSpecifier>,
+            comp_filesize: Option<Integer>,
+            data_offset: Integer,
+            data: OctetString,
+            crc_check: Option<u32>,
+        ) -> Self {
+            Self {
+                file_header,
+                file_handle,
+                eof_flag,
+                crc_flag,
+                compression_specifier,
+                comp_filesize,
+                data_offset,
+                data,
+                crc_check,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct FileHeader {
+        #[rasn(
+            tag(context, 28),
+            default = "file_header_protocol_version_default",
+            identifier = "protocol-version"
+        )]
+        pub protocol_version: ProtocolVersion,
+        #[rasn(tag(context, 0))]
+        pub filename: Option<FilenameAttribute>,
+        #[rasn(tag(context, 1), identifier = "permitted-actions")]
+        pub permitted_actions: Option<PermittedActionsAttribute>,
+        #[rasn(tag(context, 2), identifier = "contents-type")]
+        pub contents_type: Option<ContentsTypeAttribute>,
+        #[rasn(tag(context, 3), identifier = "storage-account")]
+        pub storage_account: Option<GraphicString>,
+        #[rasn(tag(context, 4), identifier = "date-and-time-of-creation")]
+        pub date_and_time_of_creation: Option<GeneralizedTime>,
+        #[rasn(tag(context, 5), identifier = "date-and-time-of-last-modification")]
+        pub date_and_time_of_last_modification: Option<GeneralizedTime>,
+        #[rasn(tag(context, 6), identifier = "date-and-time-of-last-read-access")]
+        pub date_and_time_of_last_read_access: Option<GeneralizedTime>,
+        #[rasn(tag(context, 8), identifier = "identity-of-creator")]
+        pub identity_of_creator: Option<GraphicString>,
+        #[rasn(tag(context, 9), identifier = "identity-of-last-modifier")]
+        pub identity_of_last_modifier: Option<GraphicString>,
+        #[rasn(tag(context, 10), identifier = "identity-of-last-reader")]
+        pub identity_of_last_reader: Option<GraphicString>,
+        #[rasn(tag(context, 13))]
+        pub filesize: Option<Integer>,
+        #[rasn(tag(context, 14), identifier = "future-filesize")]
+        pub future_filesize: Option<Integer>,
+        #[rasn(tag(context, 15), identifier = "access-control")]
+        pub access_control: Option<AccessControlAttribute>,
+        #[rasn(tag(context, 16), identifier = "legal-qualifications")]
+        pub legal_qualifications: Option<GraphicString>,
+        #[rasn(tag(context, 17), identifier = "private-use")]
+        pub private_use: Option<PrivateUseAttribute>,
+        #[rasn(tag(context, 18))]
+        pub structure: Option<ObjectIdentifier>,
+        #[rasn(tag(context, 19), identifier = "application-reference")]
+        pub application_reference: Option<SequenceOf<GraphicString>>,
+        #[rasn(tag(context, 20))]
+        pub machine: Option<SequenceOf<GraphicString>>,
+        #[rasn(tag(context, 21), identifier = "operating-system")]
+        pub operating_system: Option<ObjectIdentifier>,
+        #[rasn(tag(context, 22))]
+        pub recipient: Option<SequenceOf<GraphicString>>,
+        #[rasn(tag(context, 23), identifier = "character-set")]
+        pub character_set: Option<ObjectIdentifier>,
+        #[rasn(tag(context, 24))]
+        pub compression: Option<SequenceOf<GraphicString>>,
+        #[rasn(tag(context, 25))]
+        pub environment: Option<SequenceOf<GraphicString>>,
+        #[rasn(tag(context, 26))]
+        pub pathname: Option<SequenceOf<GraphicString>>,
+        #[rasn(tag(context, 29), identifier = "user-visible-string")]
+        pub user_visible_string: Option<SequenceOf<GraphicString>>,
+    }
+    impl FileHeader {
+        pub fn new(
+            protocol_version: ProtocolVersion,
+            filename: Option<FilenameAttribute>,
+            permitted_actions: Option<PermittedActionsAttribute>,
+            contents_type: Option<ContentsTypeAttribute>,
+            storage_account: Option<GraphicString>,
+            date_and_time_of_creation: Option<GeneralizedTime>,
+            date_and_time_of_last_modification: Option<GeneralizedTime>,
+            date_and_time_of_last_read_access: Option<GeneralizedTime>,
+            identity_of_creator: Option<GraphicString>,
+            identity_of_last_modifier: Option<GraphicString>,
+            identity_of_last_reader: Option<GraphicString>,
+            filesize: Option<Integer>,
+            future_filesize: Option<Integer>,
+            access_control: Option<AccessControlAttribute>,
+            legal_qualifications: Option<GraphicString>,
+            private_use: Option<PrivateUseAttribute>,
+            structure: Option<ObjectIdentifier>,
+            application_reference: Option<SequenceOf<GraphicString>>,
+            machine: Option<SequenceOf<GraphicString>>,
+            operating_system: Option<ObjectIdentifier>,
+            recipient: Option<SequenceOf<GraphicString>>,
+            character_set: Option<ObjectIdentifier>,
+            compression: Option<SequenceOf<GraphicString>>,
+            environment: Option<SequenceOf<GraphicString>>,
+            pathname: Option<SequenceOf<GraphicString>>,
+            user_visible_string: Option<SequenceOf<GraphicString>>,
+        ) -> Self {
+            Self {
+                protocol_version,
+                filename,
+                permitted_actions,
+                contents_type,
+                storage_account,
+                date_and_time_of_creation,
+                date_and_time_of_last_modification,
+                date_and_time_of_last_read_access,
+                identity_of_creator,
+                identity_of_last_modifier,
+                identity_of_last_reader,
+                filesize,
+                future_filesize,
+                access_control,
+                legal_qualifications,
+                private_use,
+                structure,
+                application_reference,
+                machine,
+                operating_system,
+                recipient,
+                character_set,
+                compression,
+                environment,
+                pathname,
+                user_visible_string,
+            }
+        }
+    }
+    fn file_header_protocol_version_default() -> ProtocolVersion {
+        ProtocolVersion([true].into_iter().collect())
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "GraphicString")]
+    pub struct AnonymousFilenameAttribute(pub GraphicString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Filename-Attribute")]
+    pub struct FilenameAttribute(pub SequenceOf<AnonymousFilenameAttribute>);
+    #[doc = " Export all symbols"]
+    #[doc = " Part 1: Message Components"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=65535"))]
+    pub struct Handle(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "ISO-8571-2-Parameters")]
+    pub struct ISO85712Parameters {
+        #[rasn(tag(context, 0), identifier = "universal-class-number")]
+        pub universal_class_number: Option<Integer>,
+        #[rasn(tag(context, 1), identifier = "maximum-string-length")]
+        pub maximum_string_length: Option<Integer>,
+        #[rasn(tag(context, 2), identifier = "string-significance")]
+        pub string_significance: Option<Integer>,
+    }
+    impl ISO85712Parameters {
+        pub fn new(
+            universal_class_number: Option<Integer>,
+            maximum_string_length: Option<Integer>,
+            string_significance: Option<Integer>,
+        ) -> Self {
+            Self {
+                universal_class_number,
+                maximum_string_length,
+                string_significance,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "MBFT-NonStandardPDU")]
+    #[non_exhaustive]
+    pub struct MBFTNonStandardPDU {
+        pub data: NonStandardParameter,
+    }
+    impl MBFTNonStandardPDU {
+        pub fn new(data: NonStandardParameter) -> Self {
+            Self { data }
+        }
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    #[non_exhaustive]
+    pub struct AnonymousMBFTPrivilegeAssignPDUPrivilegeList {
+        #[rasn(identifier = "mbftID")]
+        pub mbft_id: UserID,
+        #[rasn(identifier = "mbft-privilege")]
+        pub mbft_privilege: SetOf<MBFTPrivilege>,
+    }
+    impl AnonymousMBFTPrivilegeAssignPDUPrivilegeList {
+        pub fn new(mbft_id: UserID, mbft_privilege: SetOf<MBFTPrivilege>) -> Self {
+            Self {
+                mbft_id,
+                mbft_privilege,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MBFTPrivilegeAssignPDUPrivilegeList(
+        pub SetOf<AnonymousMBFTPrivilegeAssignPDUPrivilegeList>,
+    );
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "MBFT-Privilege-AssignPDU")]
+    #[non_exhaustive]
+    pub struct MBFTPrivilegeAssignPDU {
+        #[rasn(identifier = "privilege-list")]
+        pub privilege_list: MBFTPrivilegeAssignPDUPrivilegeList,
+    }
+    impl MBFTPrivilegeAssignPDU {
+        pub fn new(privilege_list: MBFTPrivilegeAssignPDUPrivilegeList) -> Self {
+            Self { privilege_list }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "MBFT-Privilege-RequestPDU")]
+    #[non_exhaustive]
+    pub struct MBFTPrivilegeRequestPDU {
+        #[rasn(identifier = "mbft-privilege")]
+        pub mbft_privilege: SetOf<MBFTPrivilege>,
+    }
+    impl MBFTPrivilegeRequestPDU {
+        pub fn new(mbft_privilege: SetOf<MBFTPrivilege>) -> Self {
+            Self { mbft_privilege }
+        }
+    }
+    #[doc = " Part 3: Messages sent using MCS-Send-Data or MCS-Uniform-Send-Data"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum MBFTPDU {
+        #[rasn(identifier = "file-OfferPDU")]
+        file_OfferPDU(FileOfferPDU),
+        #[rasn(identifier = "file-AcceptPDU")]
+        file_AcceptPDU(FileAcceptPDU),
+        #[rasn(identifier = "file-RejectPDU")]
+        file_RejectPDU(FileRejectPDU),
+        #[rasn(identifier = "file-RequestPDU")]
+        file_RequestPDU(FileRequestPDU),
+        #[rasn(identifier = "file-DenyPDU")]
+        file_DenyPDU(FileDenyPDU),
+        #[rasn(identifier = "file-ErrorPDU")]
+        file_ErrorPDU(FileErrorPDU),
+        #[rasn(identifier = "file-AbortPDU")]
+        file_AbortPDU(FileAbortPDU),
+        #[rasn(identifier = "file-StartPDU")]
+        file_StartPDU(FileStartPDU),
+        #[rasn(identifier = "file-DataPDU")]
+        file_DataPDU(FileDataPDU),
+        #[rasn(identifier = "directory-RequestPDU")]
+        directory_RequestPDU(DirectoryRequestPDU),
+        #[rasn(identifier = "directory-ResponsePDU")]
+        directory_ResponsePDU(DirectoryResponsePDU),
+        #[rasn(identifier = "mbft-Privilege-RequestPDU")]
+        mbft_Privilege_RequestPDU(MBFTPrivilegeRequestPDU),
+        #[rasn(identifier = "mbft-Privilege-AssignPDU")]
+        mbft_Privilege_AssignPDU(MBFTPrivilegeAssignPDU),
+        #[rasn(identifier = "mbft-NonStandardPDU")]
+        mbft_NonStandardPDU(MBFTNonStandardPDU),
+        #[rasn(identifier = "private-Channel-Join-InvitePDU")]
+        private_Channel_Join_InvitePDU(PrivateChannelJoinInvitePDU),
+        #[rasn(identifier = "private-Channel-Join-ResponsePDU")]
+        private_Channel_Join_ResponsePDU(PrivateChannelJoinResponsePDU),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum MBFTPrivilege {
+        #[rasn(identifier = "file-transmit-privilege")]
+        file_transmit_privilege = 0,
+        #[rasn(identifier = "file-request-privilege")]
+        file_request_privilege = 1,
+        #[rasn(identifier = "create-private-privilege")]
+        create_private_privilege = 2,
+        #[rasn(identifier = "medium-priority-privilege")]
+        medium_priority_privilege = 3,
+        #[rasn(identifier = "abort-privilege")]
+        abort_privilege = 4,
+        #[rasn(identifier = "nonstandard-privilege")]
+        nonstandard_privilege = 5,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum Password {
+        #[rasn(identifier = "graphic-string")]
+        graphic_string(GraphicString),
+        #[rasn(identifier = "octet-string")]
+        octet_string(OctetString),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Permitted-Actions-Attribute")]
+    pub struct PermittedActionsAttribute(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "Private-Channel-Join-InvitePDU")]
+    #[non_exhaustive]
+    pub struct PrivateChannelJoinInvitePDU {
+        #[rasn(identifier = "control-channel-id")]
+        pub control_channel_id: DynamicChannelID,
+        #[rasn(identifier = "data-channel-id")]
+        pub data_channel_id: DynamicChannelID,
+        pub mode: bool,
+    }
+    impl PrivateChannelJoinInvitePDU {
+        pub fn new(
+            control_channel_id: DynamicChannelID,
+            data_channel_id: DynamicChannelID,
+            mode: bool,
+        ) -> Self {
+            Self {
+                control_channel_id,
+                data_channel_id,
+                mode,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum PrivateChannelJoinResponsePDUResult {
+        unspecified = 0,
+        #[rasn(identifier = "unable-to-join-channel")]
+        unable_to_join_channel = 1,
+        #[rasn(identifier = "invitation-rejected")]
+        invitation_rejected = 2,
+        successful = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "Private-Channel-Join-ResponsePDU")]
+    #[non_exhaustive]
+    pub struct PrivateChannelJoinResponsePDU {
+        #[rasn(identifier = "control-channel-id")]
+        pub control_channel_id: DynamicChannelID,
+        pub result: PrivateChannelJoinResponsePDUResult,
+    }
+    impl PrivateChannelJoinResponsePDU {
+        pub fn new(
+            control_channel_id: DynamicChannelID,
+            result: PrivateChannelJoinResponsePDUResult,
+        ) -> Self {
+            Self {
+                control_channel_id,
+                result,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Private-Use-Attribute")]
+    pub struct PrivateUseAttribute {
+        #[rasn(tag(context, 0), identifier = "manufacturer-values")]
+        pub manufacturer_values: Option<Any>,
+    }
+    impl PrivateUseAttribute {
+        pub fn new(manufacturer_values: Option<Any>) -> Self {
+            Self {
+                manufacturer_values,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Protocol-Version")]
+    pub struct ProtocolVersion(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "User-Identity")]
+    pub struct UserIdentity(pub GraphicString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "V42bis-Parameter-List")]
+    #[non_exhaustive]
+    pub struct V42bisParameterList {
+        #[rasn(value("512..=65535"))]
+        pub p1: u16,
+        #[rasn(value("6..=250"))]
+        pub p2: u8,
+    }
+    impl V42bisParameterList {
+        pub fn new(p1: u16, p2: u8) -> Self {
+            Self { p1, p2 }
+        }
+    }
+}

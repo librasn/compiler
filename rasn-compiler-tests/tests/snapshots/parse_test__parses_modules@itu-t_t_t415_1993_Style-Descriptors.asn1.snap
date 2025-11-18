@@ -1,0 +1,508 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_t_t415_1993_Style-Descriptors.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod style_descriptors {
+    extern crate alloc;
+    use super::character_presentation_attributes::CharacterAttributes;
+    use super::colour_attributes::{ColourExpression, ColourTable};
+    use super::geo_gr_presentation_attributes::GeometricGraphicsAttributes;
+    use super::identifiers_and_expressions::{
+        CategoryName, ObjectIdExpression, ObjectOrClassIdentifier, StyleIdentifier,
+    };
+    use super::layout_descriptors::{
+        Border, Colour, CommentString, ContentBackgroundColour, ContentForegroundColour,
+        LayoutObjectType, Sealed, Transparency,
+    };
+    use super::raster_gr_presentation_attributes::RasterGraphicsAttributes;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Block-Alignment")]
+    pub struct BlockAlignment(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Concatenation(pub Integer);
+    #[doc = "  The integer representation for content architecture class,"]
+    #[doc = "  Content-Type, is only to be used if the value of the document"]
+    #[doc = "  profile attribute \"document application profile\" is an integer."]
+    #[doc = "  The value 'formatted-raster-graphics' represents the formatted raster"]
+    #[doc = "  graphics content architecture as defined in ITU-T Rec. T.417 | ISO/IEC 8613-7."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Content-Architecture-Class")]
+    pub struct ContentArchitectureClass(pub ObjectIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, tag(application, 2), identifier = "Content-Type")]
+    pub struct ContentType(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Fill-Order")]
+    pub struct FillOrder(pub Integer);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum FloatabilityRangeForwardLimitLogicalObject {
+        #[rasn(tag(context, 2))]
+        a(ObjectOrClassIdentifier),
+        #[rasn(tag(context, 3))]
+        b(ObjectIdExpression),
+        #[rasn(tag(context, 4))]
+        c(()),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum FloatabilityRangeForwardLimitLayoutObject {
+        #[rasn(tag(context, 5), identifier = "to-layout-object-class")]
+        to_layout_object_class(ObjectOrClassIdentifier),
+        #[rasn(tag(context, 6), identifier = "to-stream-root-category")]
+        to_stream_root_category(CategoryName),
+        #[rasn(tag(context, 7), identifier = "to-stream-sub-category")]
+        to_stream_sub_category(CategoryName),
+        #[rasn(tag(context, 8), identifier = "to-layout-category")]
+        to_layout_category(CategoryName),
+        #[rasn(tag(context, 9), identifier = "to-layout-object-type")]
+        to_layout_object_type(LayoutObjectType),
+        #[rasn(tag(context, 10))]
+        d(()),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct FloatabilityRangeForwardLimit {
+        #[rasn(identifier = "logical-object")]
+        pub logical_object: FloatabilityRangeForwardLimitLogicalObject,
+        #[rasn(identifier = "layout-object")]
+        pub layout_object: Option<FloatabilityRangeForwardLimitLayoutObject>,
+    }
+    impl FloatabilityRangeForwardLimit {
+        pub fn new(
+            logical_object: FloatabilityRangeForwardLimitLogicalObject,
+            layout_object: Option<FloatabilityRangeForwardLimitLayoutObject>,
+        ) -> Self {
+            Self {
+                logical_object,
+                layout_object,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum FloatabilityRangeBackwardLimitLogicalObject {
+        #[rasn(tag(context, 2))]
+        e(ObjectOrClassIdentifier),
+        #[rasn(tag(context, 3))]
+        f(ObjectIdExpression),
+        #[rasn(tag(context, 4))]
+        g(()),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum FloatabilityRangeBackwardLimitLayoutObject {
+        #[rasn(tag(context, 5), identifier = "to-layout-object-class")]
+        to_layout_object_class(ObjectOrClassIdentifier),
+        #[rasn(tag(context, 6), identifier = "to-stream-root-category")]
+        to_stream_root_category(CategoryName),
+        #[rasn(tag(context, 7), identifier = "to-stream-sub-category")]
+        to_stream_sub_category(CategoryName),
+        #[rasn(tag(context, 8), identifier = "to-layout-category")]
+        to_layout_category(CategoryName),
+        #[rasn(tag(context, 9), identifier = "to-layout-object-type")]
+        to_layout_object_type(LayoutObjectType),
+        #[rasn(tag(context, 10))]
+        h(()),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct FloatabilityRangeBackwardLimit {
+        #[rasn(identifier = "logical-object")]
+        pub logical_object: FloatabilityRangeBackwardLimitLogicalObject,
+        #[rasn(identifier = "layout-object")]
+        pub layout_object: Option<FloatabilityRangeBackwardLimitLayoutObject>,
+    }
+    impl FloatabilityRangeBackwardLimit {
+        pub fn new(
+            logical_object: FloatabilityRangeBackwardLimitLogicalObject,
+            layout_object: Option<FloatabilityRangeBackwardLimitLayoutObject>,
+        ) -> Self {
+            Self {
+                logical_object,
+                layout_object,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Floatability-Range")]
+    pub struct FloatabilityRange {
+        #[rasn(tag(context, 0), identifier = "forward-limit")]
+        pub forward_limit: Option<FloatabilityRangeForwardLimit>,
+        #[rasn(tag(context, 1), identifier = "backward-limit")]
+        pub backward_limit: Option<FloatabilityRangeBackwardLimit>,
+    }
+    impl FloatabilityRange {
+        pub fn new(
+            forward_limit: Option<FloatabilityRangeForwardLimit>,
+            backward_limit: Option<FloatabilityRangeBackwardLimit>,
+        ) -> Self {
+            Self {
+                forward_limit,
+                backward_limit,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum LayoutDirectivesIndivisibility {
+        #[rasn(tag(context, 0), identifier = "to-layout-object-class")]
+        to_layout_object_class(ObjectOrClassIdentifier),
+        #[rasn(tag(context, 1), identifier = "to-layout-category")]
+        to_layout_category(CategoryName),
+        #[rasn(tag(context, 2), identifier = "to-layout-object-type")]
+        to_layout_object_type(LayoutObjectType),
+        #[rasn(tag(context, 15))]
+        null(()),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum LayoutDirectivesNewLayoutObject {
+        #[rasn(tag(context, 7), identifier = "to-layout-object-class")]
+        to_layout_object_class(ObjectOrClassIdentifier),
+        #[rasn(tag(context, 8), identifier = "to-layout-category")]
+        to_layout_category(CategoryName),
+        #[rasn(tag(context, 9), identifier = "to-layout-object-type")]
+        to_layout_object_type(LayoutObjectType),
+        #[rasn(tag(context, 16))]
+        null(()),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum LayoutDirectivesSynchronization {
+        #[rasn(tag(context, 13))]
+        a(ObjectOrClassIdentifier),
+        #[rasn(tag(context, 17))]
+        b(ObjectIdExpression),
+        #[rasn(tag(context, 18))]
+        c(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Layout-Directives")]
+    pub struct LayoutDirectives {
+        pub indivisibility: Option<LayoutDirectivesIndivisibility>,
+        #[rasn(tag(context, 3))]
+        pub separation: Option<Separation>,
+        #[rasn(tag(context, 4))]
+        pub offset: Option<Offset>,
+        #[rasn(tag(context, 5), identifier = "fill-order")]
+        pub fill_order: Option<FillOrder>,
+        #[rasn(tag(context, 6))]
+        pub concatenation: Option<Concatenation>,
+        #[rasn(identifier = "new-layout-object")]
+        pub new_layout_object: Option<LayoutDirectivesNewLayoutObject>,
+        #[rasn(tag(context, 10), identifier = "same-layout-object")]
+        pub same_layout_object: Option<SameLayoutObject>,
+        #[rasn(tag(context, 11), identifier = "layout-object-class")]
+        pub layout_object_class: Option<ObjectOrClassIdentifier>,
+        #[rasn(tag(context, 19), identifier = "logical-stream-category")]
+        pub logical_stream_category: Option<CategoryName>,
+        #[rasn(tag(context, 20), identifier = "logical-stream-sub-category")]
+        pub logical_stream_sub_category: Option<CategoryName>,
+        #[rasn(tag(context, 12), identifier = "layout-category")]
+        pub layout_category: Option<CategoryName>,
+        pub synchronization: Option<LayoutDirectivesSynchronization>,
+        #[rasn(tag(context, 14), identifier = "block-alignment")]
+        pub block_alignment: Option<BlockAlignment>,
+        #[rasn(tag(context, 24), identifier = "floatability-range")]
+        pub floatability_range: Option<FloatabilityRange>,
+    }
+    impl LayoutDirectives {
+        pub fn new(
+            indivisibility: Option<LayoutDirectivesIndivisibility>,
+            separation: Option<Separation>,
+            offset: Option<Offset>,
+            fill_order: Option<FillOrder>,
+            concatenation: Option<Concatenation>,
+            new_layout_object: Option<LayoutDirectivesNewLayoutObject>,
+            same_layout_object: Option<SameLayoutObject>,
+            layout_object_class: Option<ObjectOrClassIdentifier>,
+            logical_stream_category: Option<CategoryName>,
+            logical_stream_sub_category: Option<CategoryName>,
+            layout_category: Option<CategoryName>,
+            synchronization: Option<LayoutDirectivesSynchronization>,
+            block_alignment: Option<BlockAlignment>,
+            floatability_range: Option<FloatabilityRange>,
+        ) -> Self {
+            Self {
+                indivisibility,
+                separation,
+                offset,
+                fill_order,
+                concatenation,
+                new_layout_object,
+                same_layout_object,
+                layout_object_class,
+                logical_stream_category,
+                logical_stream_sub_category,
+                layout_category,
+                synchronization,
+                block_alignment,
+                floatability_range,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Layout-Style-Descriptor")]
+    pub struct LayoutStyleDescriptor {
+        #[rasn(identifier = "style-identifier")]
+        pub style_identifier: StyleIdentifier,
+        #[rasn(tag(context, 0), identifier = "user-readable-comments")]
+        pub user_readable_comments: Option<CommentString>,
+        #[rasn(tag(context, 1), identifier = "user-visible-name")]
+        pub user_visible_name: Option<CommentString>,
+        #[rasn(tag(context, 25), identifier = "application-comments")]
+        pub application_comments: Option<OctetString>,
+        #[rasn(tag(context, 4), identifier = "layout-directives")]
+        pub layout_directives: Option<LayoutDirectives>,
+        #[rasn(tag(context, 6))]
+        pub sealed: Option<Sealed>,
+        #[rasn(tag(context, 7), identifier = "derived-from")]
+        pub derived_from: Option<StyleIdentifier>,
+    }
+    impl LayoutStyleDescriptor {
+        pub fn new(
+            style_identifier: StyleIdentifier,
+            user_readable_comments: Option<CommentString>,
+            user_visible_name: Option<CommentString>,
+            application_comments: Option<OctetString>,
+            layout_directives: Option<LayoutDirectives>,
+            sealed: Option<Sealed>,
+            derived_from: Option<StyleIdentifier>,
+        ) -> Self {
+            Self {
+                style_identifier,
+                user_readable_comments,
+                user_visible_name,
+                application_comments,
+                layout_directives,
+                sealed,
+                derived_from,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct Offset {
+        #[rasn(tag(context, 3))]
+        pub leading: Option<Integer>,
+        #[rasn(tag(context, 2))]
+        pub trailing: Option<Integer>,
+        #[rasn(tag(context, 1), identifier = "left-hand")]
+        pub left_hand: Option<Integer>,
+        #[rasn(tag(context, 0), identifier = "right-hand")]
+        pub right_hand: Option<Integer>,
+    }
+    impl Offset {
+        pub fn new(
+            leading: Option<Integer>,
+            trailing: Option<Integer>,
+            left_hand: Option<Integer>,
+            right_hand: Option<Integer>,
+        ) -> Self {
+            Self {
+                leading,
+                trailing,
+                left_hand,
+                right_hand,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum PresentationAttributesContentArchitectureClass {
+        a(ContentArchitectureClass),
+        b(ContentType),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Presentation-Attributes")]
+    pub struct PresentationAttributes {
+        #[rasn(identifier = "content-architecture-class")]
+        pub content_architecture_class: Option<PresentationAttributesContentArchitectureClass>,
+        #[rasn(tag(context, 0), identifier = "character-attributes")]
+        pub character_attributes: Option<CharacterAttributes>,
+        #[rasn(tag(context, 1), identifier = "raster-graphics-attributes")]
+        pub raster_graphics_attributes: Option<RasterGraphicsAttributes>,
+        #[rasn(tag(context, 2), identifier = "geometric-graphics-attributes")]
+        pub geometric_graphics_attributes: Option<GeometricGraphicsAttributes>,
+        #[rasn(tag(context, 6), identifier = "ext-cont-arch-pres-attributes")]
+        pub ext_cont_arch_pres_attributes: Option<SequenceOf<Any>>,
+    }
+    impl PresentationAttributes {
+        pub fn new(
+            content_architecture_class: Option<PresentationAttributesContentArchitectureClass>,
+            character_attributes: Option<CharacterAttributes>,
+            raster_graphics_attributes: Option<RasterGraphicsAttributes>,
+            geometric_graphics_attributes: Option<GeometricGraphicsAttributes>,
+            ext_cont_arch_pres_attributes: Option<SequenceOf<Any>>,
+        ) -> Self {
+            Self {
+                content_architecture_class,
+                character_attributes,
+                raster_graphics_attributes,
+                geometric_graphics_attributes,
+                ext_cont_arch_pres_attributes,
+            }
+        }
+    }
+    #[doc = "  see ITU-T Rec. T.418 | ISO/IEC 8613-8"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Presentation-Style-Descriptor")]
+    pub struct PresentationStyleDescriptor {
+        #[rasn(identifier = "style-identifier")]
+        pub style_identifier: StyleIdentifier,
+        #[rasn(tag(context, 0), identifier = "user-readable-comments")]
+        pub user_readable_comments: Option<CommentString>,
+        #[rasn(tag(context, 1), identifier = "user-visible-name")]
+        pub user_visible_name: Option<CommentString>,
+        #[rasn(tag(context, 25), identifier = "application-comments")]
+        pub application_comments: Option<OctetString>,
+        #[rasn(tag(context, 2))]
+        pub transparency: Option<Transparency>,
+        #[rasn(tag(context, 3), identifier = "presentation-attributes")]
+        pub presentation_attributes: Option<PresentationAttributes>,
+        #[rasn(tag(context, 4))]
+        pub colour: Option<Colour>,
+        #[rasn(tag(context, 29), identifier = "colour-of-layout-object")]
+        pub colour_of_layout_object: Option<ColourExpression>,
+        #[rasn(tag(context, 30), identifier = "object-colour-table")]
+        pub object_colour_table: Option<ColourTable>,
+        #[rasn(tag(context, 31), identifier = "content-background-colour")]
+        pub content_background_colour: Option<ContentBackgroundColour>,
+        #[rasn(tag(context, 32), identifier = "content-foreground-colour")]
+        pub content_foreground_colour: Option<ContentForegroundColour>,
+        #[rasn(tag(context, 33), identifier = "content-colour-table")]
+        pub content_colour_table: Option<ColourTable>,
+        #[rasn(tag(context, 5))]
+        pub border: Option<Border>,
+        #[rasn(tag(context, 6))]
+        pub sealed: Option<Sealed>,
+        #[rasn(tag(context, 7), identifier = "derived-from")]
+        pub derived_from: Option<StyleIdentifier>,
+    }
+    impl PresentationStyleDescriptor {
+        pub fn new(
+            style_identifier: StyleIdentifier,
+            user_readable_comments: Option<CommentString>,
+            user_visible_name: Option<CommentString>,
+            application_comments: Option<OctetString>,
+            transparency: Option<Transparency>,
+            presentation_attributes: Option<PresentationAttributes>,
+            colour: Option<Colour>,
+            colour_of_layout_object: Option<ColourExpression>,
+            object_colour_table: Option<ColourTable>,
+            content_background_colour: Option<ContentBackgroundColour>,
+            content_foreground_colour: Option<ContentForegroundColour>,
+            content_colour_table: Option<ColourTable>,
+            border: Option<Border>,
+            sealed: Option<Sealed>,
+            derived_from: Option<StyleIdentifier>,
+        ) -> Self {
+            Self {
+                style_identifier,
+                user_readable_comments,
+                user_visible_name,
+                application_comments,
+                transparency,
+                presentation_attributes,
+                colour,
+                colour_of_layout_object,
+                object_colour_table,
+                content_background_colour,
+                content_foreground_colour,
+                content_colour_table,
+                border,
+                sealed,
+                derived_from,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum SameLayoutObjectLogicalObject {
+        #[rasn(tag(context, 0))]
+        a(ObjectOrClassIdentifier),
+        #[rasn(tag(context, 4))]
+        b(ObjectIdExpression),
+        #[rasn(tag(context, 5))]
+        c(()),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum SameLayoutObjectLayoutObject {
+        #[rasn(tag(context, 1))]
+        d(ObjectOrClassIdentifier),
+        #[rasn(tag(context, 6), identifier = "to-stream-root-category")]
+        to_stream_root_category(CategoryName),
+        #[rasn(tag(context, 7), identifier = "to-stream-sub-category")]
+        to_stream_sub_category(CategoryName),
+        #[rasn(tag(context, 2), identifier = "to-layout-category")]
+        to_layout_category(CategoryName),
+        #[rasn(tag(context, 3))]
+        e(LayoutObjectType),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Same-Layout-Object")]
+    pub struct SameLayoutObject {
+        #[rasn(identifier = "logical-object")]
+        pub logical_object: SameLayoutObjectLogicalObject,
+        #[rasn(identifier = "layout-object")]
+        pub layout_object: Option<SameLayoutObjectLayoutObject>,
+    }
+    impl SameLayoutObject {
+        pub fn new(
+            logical_object: SameLayoutObjectLogicalObject,
+            layout_object: Option<SameLayoutObjectLayoutObject>,
+        ) -> Self {
+            Self {
+                logical_object,
+                layout_object,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct Separation {
+        #[rasn(tag(context, 0))]
+        pub leading: Option<Integer>,
+        #[rasn(tag(context, 1))]
+        pub trailing: Option<Integer>,
+        #[rasn(tag(context, 2))]
+        pub centre: Option<Integer>,
+    }
+    impl Separation {
+        pub fn new(
+            leading: Option<Integer>,
+            trailing: Option<Integer>,
+            centre: Option<Integer>,
+        ) -> Self {
+            Self {
+                leading,
+                trailing,
+                centre,
+            }
+        }
+    }
+}

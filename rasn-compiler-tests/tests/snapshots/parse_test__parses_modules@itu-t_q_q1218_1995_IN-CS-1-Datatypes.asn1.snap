@@ -1,0 +1,1669 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q1218_1995_IN-CS-1-Datatypes.asn1
+---
+Warnings:
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod in_cs_1_datatypes {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = "  An access code from a business group dialling plan attendant access codes, access codes to escape"]
+    #[doc = "  to the public network, access code to access a private facility/network, and feature access codes."]
+    #[doc = "  Uses the LocationNumber format which is based on the Q.763 Location Number format."]
+    #[doc = "  The Nature of Address indicator field shall be set to \"Spare\" (value 00000000)."]
+    #[doc = "  The Numbering Plan Indicator field shall be set to \"Spare\" (value 000)."]
+    #[doc = "  Of local significance."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=1"))]
+    pub struct AChBillingChargingCharacteristics(pub OctetString);
+    #[doc = " The Definition of Common Data Types"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AccessCode(pub LocationNumber);
+    #[doc = "  The AChBillingChargingCharacteristics parameter specifies the charging related information"]
+    #[doc = "  to be provided by the SSF and the conditions on which this information has to be reported"]
+    #[doc = "  back to the SCF with the ApplyChargingReport operation."]
+    #[doc = "  Examples of charging related information to be provided by the SSF may be: bulk counter"]
+    #[doc = "  values, costs, tariff change and time of charge, time stamps, durations, etc."]
+    #[doc = "  Examples of conditions on which the charging related information are to be reported may be:"]
+    #[doc = "  threshold value reached, timer expiration, tariff change, end of connection configuration, etc."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AdditionalCallingPartyNumber(pub Digits);
+    #[doc = "  Indicates the Additional Calling Party Number. Refer to Recommendation Q.763 for encoding."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AlertingPattern(pub FixedOctetString<3usize>);
+    #[doc = "  Indicates a specific pattern that is used to alert a subscriber (e.g. distinctive ringing, tones, etc.)."]
+    #[doc = "  Only applies if SSF is the terminating local exchange for the subscriber. Refer to the Q.931"]
+    #[doc = "  Signal parameter for encoding."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=2047"))]
+    pub struct ApplicationTimer(pub u16);
+    #[doc = "  The partyToCharge parameter indicates the party in the call to which the ApplyCharging operation"]
+    #[doc = "  should be applied. If it is not present, then it is applied to the A-party."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ApplyChargingReportArg(pub CallResult);
+    #[doc = "  Used by the SCF to set a timer in the SSF. The timer is in seconds."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AssistingSSPIPRoutingAddress(pub Digits);
+    #[doc = "  Indicates the destination address of the SRF for the assist procedure."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct BCSMEvent {
+        #[rasn(tag(context, 0), identifier = "eventTypeBCSM")]
+        pub event_type_bcsm: EventTypeBCSM,
+        #[rasn(tag(context, 1), identifier = "monitorMode")]
+        pub monitor_mode: MonitorMode,
+        #[rasn(tag(context, 2), identifier = "legID")]
+        pub leg_id: Option<LegID>,
+        #[rasn(tag(context, 30), identifier = "dpSpecificCriteria")]
+        pub dp_specific_criteria: Option<DpSpecificCriteria>,
+    }
+    impl BCSMEvent {
+        pub fn new(
+            event_type_bcsm: EventTypeBCSM,
+            monitor_mode: MonitorMode,
+            leg_id: Option<LegID>,
+            dp_specific_criteria: Option<DpSpecificCriteria>,
+        ) -> Self {
+            Self {
+                event_type_bcsm,
+                monitor_mode,
+                leg_id,
+                dp_specific_criteria,
+            }
+        }
+    }
+    #[doc = "  Indicates the BCSM Event information for monitoring."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum BearerCapability {
+        #[rasn(size("2"), tag(context, 0))]
+        bearerCap(OctetString),
+        #[rasn(size("1"), tag(context, 1))]
+        tmr(OctetString),
+    }
+    #[doc = "  Indicates the cause for interface related information. Refer to the Q.763 Cause parameter for"]
+    #[doc = "  encoding."]
+    #[doc = "  For the use of cause and location values refer to Recommendation Q.850."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum CGEncountered {
+        noCGencountered = 0,
+        manualCGencountered = 1,
+        scpOverload = 2,
+    }
+    #[doc = "  Indicates the type of calling party (e.g. operator, payphone, ordinary subscriber)."]
+    #[doc = "  Refer to Recommendation Q.763 for encoding."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=1"))]
+    pub struct CallResult(pub OctetString);
+    #[doc = "  Indicates the type of bearer capability connection to the user. For bearerCapability, either"]
+    #[doc = "  DSS 1 (Q.931) or the ISUP User Service Information (Q.763) encoding can be used. Refer"]
+    #[doc = "  to the Q.763 Transmission Medium Requirement parameter for tmr encoding."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CalledPartyBusinessGroupID(pub OctetString);
+    #[doc = "  Indicates the business group of the called party. The value of this octet string is network"]
+    #[doc = "  operator specific."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=1"))]
+    pub struct CalledPartyNumber(pub OctetString);
+    #[doc = "  Indicates the Called Party Number. Refer to Recommendation Q.763 for encoding."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CalledPartySubaddress(pub OctetString);
+    #[doc = "  Indicates the Called Party Subaddress. Refer to Recommendation Q.931 for encoding."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CallingPartyBusinessGroupID(pub OctetString);
+    #[doc = "  Indicates the business group of the calling party. The value of this octet string is network"]
+    #[doc = "  operator specific."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=1"))]
+    pub struct CallingPartyNumber(pub OctetString);
+    #[doc = "  Indicates the Calling Party Number. Refer to Recommendation Q.763 for encoding."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CallingPartySubaddress(pub OctetString);
+    #[doc = " Indicates the Calling Party Subaddress. Refer to Recommendation Q.931 for encoding."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CallingPartysCategory(pub FixedOctetString<1usize>);
+    #[doc = "  OPTIONAL denotes network operator optional."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum CancelArg {
+        #[rasn(tag(context, 0))]
+        invokeID(InvokeID),
+        #[rasn(tag(context, 1))]
+        allRequests(()),
+    }
+    #[doc = "  This parameter provides the SCF with the charging related information previously requested"]
+    #[doc = "  using the ApplyCharging operation. This shall include the partyToCharge parameter as"]
+    #[doc = "  received in the related ApplyCharging operation to correlate the result to the request."]
+    #[doc = "  The remaining content is network operator specific."]
+    #[doc = "  Examples of charging related information to be provided by the SSF may be: bulk counter values,"]
+    #[doc = "  costs, tariff change and time of change, time stamps, durations, etc."]
+    #[doc = "  Examples of conditions on which the charging related information are to be reported may be:"]
+    #[doc = "  threshold value reached, timer expiration, tariff change, end of connection configuration, etc."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Carrier(pub OctetString);
+    #[doc = "  Contains the carrier selection and carrier ID fields."]
+    #[doc = "  Carrier selection is one octet and is encoded as:"]
+    #[doc = "  00000000\tNo indication"]
+    #[doc = "  00000001\tSelected carrier code pre subscribed and not input by calling party"]
+    #[doc = "  00000010\tSelected carrier identification code pre subscribed and input by calling party"]
+    #[doc = "  00000011\tSelected carrier identification code pre subscribed, no indication of whether input by calling party"]
+    #[doc = "  00000100\tSelected carrier identification code not pre subscribed and input by calling party"]
+    #[doc = "  00000101"]
+    #[doc = "\tto\tSpare"]
+    #[doc = "  11111110"]
+    #[doc = "  11111111\tReserved"]
+    #[doc = ""]
+    #[doc = "  Carrier ID has a one octet field indicating the number of digits followed by the digits encoded using BCD."]
+    #[doc = "  Detailed coding is for further study. It is of local significance and carrying it through the ISUP is for further"]
+    #[doc = "  study."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Cause(pub FixedOctetString<2usize>);
+    #[doc = " Indicates the type of automatic call gapping encountered, if any."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ChargeNumber(pub LocationNumber);
+    #[doc = "  Information sent in either direction indicating the chargeable number for the call and consisting"]
+    #[doc = "  of the odd/even indicator, nature of address indicator, numbering plan indicator, and address signals."]
+    #[doc = "  Uses the LocationNumber format which is based on the Q.763 Location Number format."]
+    #[doc = "  For example, the ChargeNumber may be a third party number to which a call is billed for the 3rd party"]
+    #[doc = "  billing service. In this case, the calling party may request operator assistance to charge the call to,"]
+    #[doc = "  for example, their home number."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ChargingEvent {
+        #[rasn(tag(context, 0), identifier = "eventTypeCharging")]
+        pub event_type_charging: EventTypeCharging,
+        #[rasn(tag(context, 1), identifier = "monitorMode")]
+        pub monitor_mode: MonitorMode,
+        #[rasn(tag(context, 2), identifier = "legID")]
+        pub leg_id: Option<LegID>,
+    }
+    impl ChargingEvent {
+        pub fn new(
+            event_type_charging: EventTypeCharging,
+            monitor_mode: MonitorMode,
+            leg_id: Option<LegID>,
+        ) -> Self {
+            Self {
+                event_type_charging,
+                monitor_mode,
+                leg_id,
+            }
+        }
+    }
+    #[doc = "  This parameter indicates the charging event type and corresponding"]
+    #[doc = "  monitor mode and LedID."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct CollectedDigits {
+        #[rasn(
+            value("1..=127"),
+            tag(context, 0),
+            default = "collected_digits_minimum_nb_of_digits_default",
+            identifier = "minimumNbOfDigits"
+        )]
+        pub minimum_nb_of_digits: u8,
+        #[rasn(value("1..=127"), tag(context, 1), identifier = "maximumNbOfDigits")]
+        pub maximum_nb_of_digits: u8,
+        #[rasn(size("1..=2"), tag(context, 2), identifier = "endOfReplyDigit")]
+        pub end_of_reply_digit: Option<OctetString>,
+        #[rasn(size("1..=2"), tag(context, 3), identifier = "cancelDigit")]
+        pub cancel_digit: Option<OctetString>,
+        #[rasn(size("1..=2"), tag(context, 4), identifier = "startDigit")]
+        pub start_digit: Option<OctetString>,
+        #[rasn(value("1..=127"), tag(context, 5), identifier = "firstDigitTimeOut")]
+        pub first_digit_time_out: Option<u8>,
+        #[rasn(value("1..=127"), tag(context, 6), identifier = "interDigitTimeOut")]
+        pub inter_digit_time_out: Option<u8>,
+        #[rasn(
+            tag(context, 7),
+            default = "collected_digits_error_treatment_default",
+            identifier = "errorTreatment"
+        )]
+        pub error_treatment: ErrorTreatment,
+        #[rasn(
+            tag(context, 8),
+            default = "collected_digits_interruptable_ann_ind_default",
+            identifier = "interruptableAnnInd"
+        )]
+        pub interruptable_ann_ind: bool,
+        #[rasn(
+            tag(context, 9),
+            default = "collected_digits_voice_information_default",
+            identifier = "voiceInformation"
+        )]
+        pub voice_information: bool,
+        #[rasn(
+            tag(context, 10),
+            default = "collected_digits_voice_back_default",
+            identifier = "voiceBack"
+        )]
+        pub voice_back: bool,
+    }
+    impl CollectedDigits {
+        pub fn new(
+            minimum_nb_of_digits: u8,
+            maximum_nb_of_digits: u8,
+            end_of_reply_digit: Option<OctetString>,
+            cancel_digit: Option<OctetString>,
+            start_digit: Option<OctetString>,
+            first_digit_time_out: Option<u8>,
+            inter_digit_time_out: Option<u8>,
+            error_treatment: ErrorTreatment,
+            interruptable_ann_ind: bool,
+            voice_information: bool,
+            voice_back: bool,
+        ) -> Self {
+            Self {
+                minimum_nb_of_digits,
+                maximum_nb_of_digits,
+                end_of_reply_digit,
+                cancel_digit,
+                start_digit,
+                first_digit_time_out,
+                inter_digit_time_out,
+                error_treatment,
+                interruptable_ann_ind,
+                voice_information,
+                voice_back,
+            }
+        }
+    }
+    fn collected_digits_minimum_nb_of_digits_default() -> u8 {
+        1
+    }
+    fn collected_digits_error_treatment_default() -> ErrorTreatment {
+        ErrorTreatment::reportErrorToScf
+    }
+    fn collected_digits_interruptable_ann_ind_default() -> bool {
+        true
+    }
+    fn collected_digits_voice_information_default() -> bool {
+        false
+    }
+    fn collected_digits_voice_back_default() -> bool {
+        false
+    }
+    #[doc = "  The use of voiceBack is network operator specific."]
+    #[doc = "  The endOfReplyDigit, cancelDigit, and startDigit parameters have been designated as OCTET STRING,"]
+    #[doc = "  and are to be encoded as BCD, one digit per octet only, contained"]
+    #[doc = "  in the four least significant bits of each OCTET. The usage is service dependent."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum CollectedInfo {
+        #[rasn(tag(context, 0))]
+        collectedDigits(CollectedDigits),
+        #[rasn(tag(context, 1))]
+        iA5Information(bool),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ControlType {
+        sCPOverloaded = 0,
+        manuallyInitiated = 1,
+        destinationOverload = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CorrelationID(pub Digits);
+    #[doc = "  used by SCF for correlation with a previous operation. Refer to clause 3 for a description of the"]
+    #[doc = "  procedures associated with this parameter."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct CounterAndValue {
+        #[rasn(tag(context, 0), identifier = "counterID")]
+        pub counter_id: CounterID,
+        #[rasn(tag(context, 1), identifier = "counterValue")]
+        pub counter_value: Integer4,
+    }
+    impl CounterAndValue {
+        pub fn new(counter_id: CounterID, counter_value: Integer4) -> Self {
+            Self {
+                counter_id,
+                counter_value,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=99"))]
+    pub struct CounterID(pub u8);
+    #[doc = "  Indicates the counters to be incremented."]
+    #[doc = "  The counterIDs can be addressed by using the last digits of the dialled number."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=100"))]
+    pub struct CountersValue(pub SequenceOf<CounterAndValue>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum Criticality {
+        ignored = 0,
+        abort = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=22"))]
+    pub struct CutAndPaste(pub u8);
+    #[doc = "  Indicates the number of digits to be deleted. Refer to 6.4.2.16/Q.1214 for additional information."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DateAndTime(pub FixedOctetString<6usize>);
+    #[doc = "  Indicates, amongst others, the start time for activate service filtering. Coded as YYMMDDHHMMSS"]
+    #[doc = "  with each digit coded BCD."]
+    #[doc = "  The first octet contains YY and the remaining items are sequenced following."]
+    #[doc = "  For example, 1993 September 30th, 12:15:01 would be encoded as:"]
+    #[doc = "  Bits \tHGFE\tDCBA"]
+    #[doc = "  leading octet\t3\t9"]
+    #[doc = "\t9\t0"]
+    #[doc = "\t0\t3"]
+    #[doc = "\t2\t1"]
+    #[doc = "\t5\t1"]
+    #[doc = "\t1\t0"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=3"))]
+    pub struct DestinationRoutingAddress(pub SequenceOf<CalledPartyNumber>);
+    #[doc = "  Indicates the list of Called Party Numbers (primary and alternates)."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=1"))]
+    pub struct Digits(pub OctetString);
+    #[doc = "  Indicates the address signalling digits. Refer to the Q.763 Generic Number and Generic Digits parameters"]
+    #[doc = "  for encoding. The coding of the subfields 'NumberQualifier' in Generic Number and 'TypeOfDigits' in"]
+    #[doc = "  Generic Digits are irrelevant to the INAP, the ASN.1 tags are sufficient to identify the parameter."]
+    #[doc = "  The ISUP format does not allow to exclude these subfields, therefore the value is network operator specific."]
+    #[doc = "  The following parameters should use Generic Number:"]
+    #[doc = "  CorrelationID for AssistRequestInstructions, AssistingSSPIPRoutingAddress for"]
+    #[doc = "  EstablishTemporaryConnection, calledAddressValue for all occurrences, callingAddressValue for all"]
+    #[doc = "  occurrences. The following parameters should use Generic Digits: prefix, all"]
+    #[doc = "  other CorrelationID occurrences, dialledNumber filtering criteria, callingLineID filtering criteria, lineID"]
+    #[doc = "  for ResourceID type, digitResponse for ReceivedInformationArg."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=1"))]
+    pub struct DisplayInformation(pub Ia5String);
+    #[doc = "  Indicates the display information."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum DpSpecificCriteria {
+        #[rasn(tag(context, 0))]
+        numberOfDigits(NumberOfDigits),
+        #[rasn(tag(context, 1))]
+        applicationTimer(ApplicationTimer),
+    }
+    #[doc = "  The SCF may specify the number of digits to be collected by the SSF for the CollectedInfo event."]
+    #[doc = "  When all digits are collected, the SSF reports the event to the SCF."]
+    #[doc = "  The SCF may set a timer in the SSF for the No Answer event. If the user does not answer the call"]
+    #[doc = "  within the allotted time, the SSF reports the event to the SCF."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("-2..=86400"))]
+    pub struct Duration(pub i32);
+    #[doc = "  Values are seconds."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ErrorTreatment {
+        reportErrorToScf = 0,
+        help = 1,
+        repeatPrompt = 2,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct EventSpecificInformationBCSMCollectedInfoSpecificInfo {
+        #[rasn(tag(context, 0), identifier = "calledPartynumber")]
+        pub called_partynumber: CalledPartyNumber,
+    }
+    impl EventSpecificInformationBCSMCollectedInfoSpecificInfo {
+        pub fn new(called_partynumber: CalledPartyNumber) -> Self {
+            Self { called_partynumber }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct EventSpecificInformationBCSMAnalyzedInfoSpecificInfo {
+        #[rasn(tag(context, 0), identifier = "calledPartynumber")]
+        pub called_partynumber: CalledPartyNumber,
+    }
+    impl EventSpecificInformationBCSMAnalyzedInfoSpecificInfo {
+        pub fn new(called_partynumber: CalledPartyNumber) -> Self {
+            Self { called_partynumber }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct EventSpecificInformationBCSMRouteSelectFailureSpecificInfo {
+        #[rasn(tag(context, 0), identifier = "failureCause")]
+        pub failure_cause: Option<Cause>,
+    }
+    impl EventSpecificInformationBCSMRouteSelectFailureSpecificInfo {
+        pub fn new(failure_cause: Option<Cause>) -> Self {
+            Self { failure_cause }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct EventSpecificInformationBCSMOCalledPartyBusySpecificInfo {
+        #[rasn(tag(context, 0), identifier = "busyCause")]
+        pub busy_cause: Option<Cause>,
+    }
+    impl EventSpecificInformationBCSMOCalledPartyBusySpecificInfo {
+        pub fn new(busy_cause: Option<Cause>) -> Self {
+            Self { busy_cause }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct EventSpecificInformationBCSMONoAnswerSpecificInfo {}
+    impl EventSpecificInformationBCSMONoAnswerSpecificInfo {
+        pub fn new() -> Self {
+            Self {}
+        }
+    }
+    impl std::default::Default for EventSpecificInformationBCSMONoAnswerSpecificInfo {
+        fn default() -> Self {
+            Self {}
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct EventSpecificInformationBCSMOAnswerSpecificInfo {}
+    impl EventSpecificInformationBCSMOAnswerSpecificInfo {
+        pub fn new() -> Self {
+            Self {}
+        }
+    }
+    impl std::default::Default for EventSpecificInformationBCSMOAnswerSpecificInfo {
+        fn default() -> Self {
+            Self {}
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct EventSpecificInformationBCSMOMidCallSpecificInfo {
+        #[rasn(tag(context, 0), identifier = "connectTime")]
+        pub connect_time: Option<Integer4>,
+    }
+    impl EventSpecificInformationBCSMOMidCallSpecificInfo {
+        pub fn new(connect_time: Option<Integer4>) -> Self {
+            Self { connect_time }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct EventSpecificInformationBCSMODisconnectSpecificInfo {
+        #[rasn(tag(context, 0), identifier = "releaseCause")]
+        pub release_cause: Option<Cause>,
+        #[rasn(tag(context, 1), identifier = "connectTime")]
+        pub connect_time: Option<Integer4>,
+    }
+    impl EventSpecificInformationBCSMODisconnectSpecificInfo {
+        pub fn new(release_cause: Option<Cause>, connect_time: Option<Integer4>) -> Self {
+            Self {
+                release_cause,
+                connect_time,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct EventSpecificInformationBCSMTBusySpecificInfo {
+        #[rasn(tag(context, 0), identifier = "busyCause")]
+        pub busy_cause: Option<Cause>,
+    }
+    impl EventSpecificInformationBCSMTBusySpecificInfo {
+        pub fn new(busy_cause: Option<Cause>) -> Self {
+            Self { busy_cause }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct EventSpecificInformationBCSMTNoAnswerSpecificInfo {}
+    impl EventSpecificInformationBCSMTNoAnswerSpecificInfo {
+        pub fn new() -> Self {
+            Self {}
+        }
+    }
+    impl std::default::Default for EventSpecificInformationBCSMTNoAnswerSpecificInfo {
+        fn default() -> Self {
+            Self {}
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct EventSpecificInformationBCSMTAnswerSpecificInfo {}
+    impl EventSpecificInformationBCSMTAnswerSpecificInfo {
+        pub fn new() -> Self {
+            Self {}
+        }
+    }
+    impl std::default::Default for EventSpecificInformationBCSMTAnswerSpecificInfo {
+        fn default() -> Self {
+            Self {}
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct EventSpecificInformationBCSMTMidCallSpecificInfo {
+        #[rasn(tag(context, 0), identifier = "connectTime")]
+        pub connect_time: Option<Integer4>,
+    }
+    impl EventSpecificInformationBCSMTMidCallSpecificInfo {
+        pub fn new(connect_time: Option<Integer4>) -> Self {
+            Self { connect_time }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct EventSpecificInformationBCSMTDisconnectSpecificInfo {
+        #[rasn(tag(context, 0), identifier = "releaseCause")]
+        pub release_cause: Option<Cause>,
+        #[rasn(tag(context, 1), identifier = "connectTime")]
+        pub connect_time: Option<Integer4>,
+    }
+    impl EventSpecificInformationBCSMTDisconnectSpecificInfo {
+        pub fn new(release_cause: Option<Cause>, connect_time: Option<Integer4>) -> Self {
+            Self {
+                release_cause,
+                connect_time,
+            }
+        }
+    }
+    #[doc = "  reportErrorToScf means returning the \"ImproperCallerResponse\" error in the event of an error"]
+    #[doc = "  condition during collection of user info."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum EventSpecificInformationBCSM {
+        #[rasn(tag(context, 0))]
+        collectedInfoSpecificInfo(EventSpecificInformationBCSMCollectedInfoSpecificInfo),
+        #[rasn(tag(context, 1))]
+        analyzedInfoSpecificInfo(EventSpecificInformationBCSMAnalyzedInfoSpecificInfo),
+        #[rasn(tag(context, 2))]
+        routeSelectFailureSpecificInfo(EventSpecificInformationBCSMRouteSelectFailureSpecificInfo),
+        #[rasn(tag(context, 3))]
+        oCalledPartyBusySpecificInfo(EventSpecificInformationBCSMOCalledPartyBusySpecificInfo),
+        #[rasn(tag(context, 4))]
+        oNoAnswerSpecificInfo(EventSpecificInformationBCSMONoAnswerSpecificInfo),
+        #[rasn(tag(context, 5))]
+        oAnswerSpecificInfo(EventSpecificInformationBCSMOAnswerSpecificInfo),
+        #[rasn(tag(context, 6))]
+        oMidCallSpecificInfo(EventSpecificInformationBCSMOMidCallSpecificInfo),
+        #[rasn(tag(context, 7))]
+        oDisconnectSpecificInfo(EventSpecificInformationBCSMODisconnectSpecificInfo),
+        #[rasn(tag(context, 8))]
+        tBusySpecificInfo(EventSpecificInformationBCSMTBusySpecificInfo),
+        #[rasn(tag(context, 9))]
+        tNoAnswerSpecificInfo(EventSpecificInformationBCSMTNoAnswerSpecificInfo),
+        #[rasn(tag(context, 10))]
+        tAnswerSpecificInfo(EventSpecificInformationBCSMTAnswerSpecificInfo),
+        #[rasn(tag(context, 11))]
+        tMidCallSpecificInfo(EventSpecificInformationBCSMTMidCallSpecificInfo),
+        #[rasn(tag(context, 12))]
+        tDisconnectSpecificInfo(EventSpecificInformationBCSMTDisconnectSpecificInfo),
+    }
+    #[doc = "  Indicates the call related information specific to the event."]
+    #[doc = "  The connectTime indicates the duration between the received answer indication from the called party side"]
+    #[doc = "  and the release of the connection for ODisconnect, OException, TDisconnect, or TException events."]
+    #[doc = "  The unit for the connectTime is 100 milliseconds."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=1"))]
+    pub struct EventSpecificInformationCharging(pub OctetString);
+    #[doc = "  defined by network operator."]
+    #[doc = "  Indicates the charging related information specific to the event."]
+    #[doc = "  An example data type definition for this parameter is given below:"]
+    #[doc = "\tchargePulses\t[0]\tInteger4,"]
+    #[doc = "\tchargeMessages\t[1]\tOCTET STRING (SIZE (min..max))"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum EventTypeBCSM {
+        origAttemptAuthorized = 1,
+        collectedInfo = 2,
+        analysedInformation = 3,
+        routeSelectFailure = 4,
+        oCalledPartyBusy = 5,
+        oNoAnswer = 6,
+        oAnswer = 7,
+        oMidCall = 8,
+        oDisconnect = 9,
+        oAbandon = 10,
+        termAttemptAuthorized = 12,
+        tBusy = 13,
+        tNoAnswer = 14,
+        tAnswer = 15,
+        tMidCall = 16,
+        tDisconnect = 17,
+        tAbandon = 18,
+    }
+    #[doc = "  Indicates the BCSM detection point event. Refer to 4.2.2.2/Q.1214 for additional information on the"]
+    #[doc = "  events. Values origAttemptAuthorized and termAttemptAuthorized can only be used for TDPs."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=1"))]
+    pub struct EventTypeCharging(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0.."))]
+    pub struct ExtensionType(pub Integer);
+    #[doc = "  Indicates the specific member of a trunk group or multi-line hunt group."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=1"))]
+    pub struct FCIBillingChargingCharacteristics(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum FacilityGroup {
+        #[rasn(tag(context, 0))]
+        trunkGroupID(Integer),
+        #[rasn(tag(context, 1))]
+        privateFacilityID(Integer),
+        #[rasn(tag(context, 2))]
+        huntGroup(OctetString),
+        #[rasn(tag(context, 3))]
+        routeIndex(OctetString),
+    }
+    #[doc = "  Indicates the particular group of facilities to route the call. huntGroup and routeIndex are encoded as"]
+    #[doc = "  network operator specific."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct FacilityGroupMember(pub Integer);
+    #[doc = "  This parameter indicates the billing and/or charging characteristics. Its content is network operator"]
+    #[doc = "  specific. An example datatype definition for this parameter is given below:"]
+    #[doc = "  FCIBillingChargingCharacteristics ::= CHOICE {"]
+    #[doc = " \tcompleteChargingrecord\t[0]\tOCTET STRING (SIZE (min..max)),"]
+    #[doc = "\tcorrelationID\t[1]\tCorrelationID,"]
+    #[doc = "\tscenario2Dot3\t[2]\tSEQUENCE {"]
+    #[doc = "\t\tchargeParty\t[0]\tLegID \tOPTIONAL,"]
+    #[doc = "\t\tchargeLevel\t[1]\tOCTET STRING (SIZE (min..max))"]
+    #[doc = "\t\tOPTIONAL,"]
+    #[doc = "\t\tchargeItems\t[2]\tSET OF Attribute\tOPTIONAL"]
+    #[doc = "\t\t}"]
+    #[doc = "\t}"]
+    #[doc = "  Depending on the applied charging scenario, the following information elements can be included"]
+    #[doc = "  (refer to Q.1214 Appendix II):"]
+    #[doc = "  complete charging record (scenario 2.2)"]
+    #[doc = "  charge party (scenario 2.3)"]
+    #[doc = "  charge level (scenario 2.3)"]
+    #[doc = "  charge items (scenario 2.3)"]
+    #[doc = "  correlationID (scenario 2.4)"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct FeatureCode(pub LocationNumber);
+    #[doc = "  The two-digit feature code preceded by \"*\" or \"11\"."]
+    #[doc = "  Uses the LocationNumber format which is based on the Q.763 Location Number format."]
+    #[doc = "  The Nature of Address indicator field shall be set to \"Spare\" (value 00000000)."]
+    #[doc = "  The Numbering Plan Indicator field shall be set to \"Spare\" (value 000)."]
+    #[doc = "  Used for stimulus signalling (Q.932)."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum FeatureRequestIndicator {
+        hold = 0,
+        retrieve = 1,
+        featureActivation = 2,
+        spare1 = 3,
+        sparen = 127,
+    }
+    #[doc = "  Indicates the feature activated (e.g. a switch-hook flash, feature activation). Spare values reserved"]
+    #[doc = "  for future use."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct FilteredCallTreatment {
+        #[rasn(tag(context, 0), identifier = "sFBillingChargingCharacteristics")]
+        pub s_fbilling_charging_characteristics: SFBillingChargingCharacteristics,
+        #[rasn(tag(context, 1), identifier = "informationToSend")]
+        pub information_to_send: Option<InformationToSend>,
+        #[rasn(tag(context, 2), identifier = "maximumNumberOfCounters")]
+        pub maximum_number_of_counters: Option<MaximumNumberOfCounters>,
+        #[rasn(tag(context, 3), identifier = "releaseCause")]
+        pub release_cause: Option<Cause>,
+    }
+    impl FilteredCallTreatment {
+        pub fn new(
+            s_fbilling_charging_characteristics: SFBillingChargingCharacteristics,
+            information_to_send: Option<InformationToSend>,
+            maximum_number_of_counters: Option<MaximumNumberOfCounters>,
+            release_cause: Option<Cause>,
+        ) -> Self {
+            Self {
+                s_fbilling_charging_characteristics,
+                information_to_send,
+                maximum_number_of_counters,
+                release_cause,
+            }
+        }
+    }
+    #[doc = "  If releaseCause is not present, the default value is the same as the ISUP cause value decimal 31."]
+    #[doc = "  If informationToSend is present, the call will be released after the end of the announcement"]
+    #[doc = "  with the indicated or default releaseCause."]
+    #[doc = "  If maximumNumberOfCounters is not present, ServiceFilteringResponse will be sent with"]
+    #[doc = "  CountersValue::= SEQUENCE SIZE (0) OF CountersAndValue."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum FilteringCharacteristics {
+        #[rasn(value("-1..=32000"), tag(context, 0))]
+        interval(i16),
+        #[rasn(tag(context, 1))]
+        numberOfCalls(Integer4),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct FilteringCriteriaAddressAndService {
+        #[rasn(tag(context, 0), identifier = "calledAddressValue")]
+        pub called_address_value: Digits,
+        #[rasn(tag(context, 1), identifier = "serviceKey")]
+        pub service_key: ServiceKey,
+        #[rasn(tag(context, 2), identifier = "callingAddressValue")]
+        pub calling_address_value: Option<Digits>,
+        #[rasn(tag(context, 3), identifier = "locationNumber")]
+        pub location_number: Option<LocationNumber>,
+    }
+    impl FilteringCriteriaAddressAndService {
+        pub fn new(
+            called_address_value: Digits,
+            service_key: ServiceKey,
+            calling_address_value: Option<Digits>,
+            location_number: Option<LocationNumber>,
+        ) -> Self {
+            Self {
+                called_address_value,
+                service_key,
+                calling_address_value,
+                location_number,
+            }
+        }
+    }
+    #[doc = "  Indicates the severity of the filtering and the point in time when the ServiceFilteringResponse is to be sent."]
+    #[doc = "  If = interval, every interval of time the next call leads to an InitialDP and a ServiceFilteringResponse is"]
+    #[doc = "  sent to the SCF. The interval is specified in seconds."]
+    #[doc = "  If = NumberOfCalls, every N calls the Nth call leads to an InitialDP and a ServiceFilteringResponse"]
+    #[doc = "  is sent to the SCF."]
+    #[doc = "  If ActivateServiceFiltering implies several counters - filtering on several dialled numbers -,"]
+    #[doc = "  the numberOfCalls would include calls to all the dialled numbers."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum FilteringCriteria {
+        #[rasn(tag(context, 0))]
+        dialledNumber(Digits),
+        #[rasn(tag(context, 1))]
+        callingLineID(Digits),
+        #[rasn(tag(context, 2))]
+        serviceKey(ServiceKey),
+        #[rasn(tag(context, 30))]
+        addressAndService(FilteringCriteriaAddressAndService),
+    }
+    #[doc = "  In case calledAddressValue is specified, the numbers to be filtered are from calledAddressValue"]
+    #[doc = "  up to and including calledAddressValue + maximumNumberOfCounters-1."]
+    #[doc = "  The last two digits of calledAddressvalue can not exceed 100-maximumNumberOfCounters."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum FilteringTimeOut {
+        #[rasn(tag(context, 0))]
+        duration(Duration),
+        #[rasn(tag(context, 1))]
+        stopTime(DateAndTime),
+    }
+    #[doc = "  Indicates the maximum duration of the filtering. When the timer expires, a ServiceFilteringResponse"]
+    #[doc = "  is sent to the SCF."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ForwardCallIndicators(pub FixedOctetString<2usize>);
+    #[doc = " Indicates the Forward Call Indicators. Refer to Recommendation Q.763 for encoding."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ForwardingCondition {
+        busy = 0,
+        noanswer = 1,
+        any = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct FurnishChargingInformationArg(pub FCIBillingChargingCharacteristics);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct GapCriteriaCalledAddressAndService {
+        #[rasn(tag(context, 0), identifier = "calledAddressValue")]
+        pub called_address_value: Digits,
+        #[rasn(tag(context, 1), identifier = "serviceKey")]
+        pub service_key: ServiceKey,
+    }
+    impl GapCriteriaCalledAddressAndService {
+        pub fn new(called_address_value: Digits, service_key: ServiceKey) -> Self {
+            Self {
+                called_address_value,
+                service_key,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct GapCriteriaCallingAddressAndService {
+        #[rasn(tag(context, 0), identifier = "callingAddressValue")]
+        pub calling_address_value: Digits,
+        #[rasn(tag(context, 1), identifier = "serviceKey")]
+        pub service_key: ServiceKey,
+        #[rasn(tag(context, 2), identifier = "locationNumber")]
+        pub location_number: Option<LocationNumber>,
+    }
+    impl GapCriteriaCallingAddressAndService {
+        pub fn new(
+            calling_address_value: Digits,
+            service_key: ServiceKey,
+            location_number: Option<LocationNumber>,
+        ) -> Self {
+            Self {
+                calling_address_value,
+                service_key,
+                location_number,
+            }
+        }
+    }
+    #[doc = " Indicates the condition that must be met to complete the connect."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum GapCriteria {
+        #[rasn(tag(context, 0))]
+        calledAddressValue(Digits),
+        #[rasn(tag(context, 2))]
+        gapOnService(GapOnService),
+        #[rasn(tag(context, 29))]
+        calledAddressAndService(GapCriteriaCalledAddressAndService),
+        #[rasn(tag(context, 30))]
+        callingAddressAndService(GapCriteriaCallingAddressAndService),
+    }
+    #[doc = "Recommendation Q.1218     (10/95)"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct GapIndicators {
+        #[rasn(tag(context, 0))]
+        pub duration: Duration,
+        #[rasn(tag(context, 1), identifier = "gapInterval")]
+        pub gap_interval: Interval,
+    }
+    impl GapIndicators {
+        pub fn new(duration: Duration, gap_interval: Interval) -> Self {
+            Self {
+                duration,
+                gap_interval,
+            }
+        }
+    }
+    #[doc = "  Both calledAddressValue and callingAddressValue can be"]
+    #[doc = "  incomplete numbers, in the sense that a limited amount of digits can be given."]
+    #[doc = ""]
+    #[doc = "  For the handling of numbers starting with the same digit string, refer to the detailed procedure"]
+    #[doc = "  of the CallGap operation in 3.3."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct GapOnService {
+        #[rasn(tag(context, 0), identifier = "serviceKey")]
+        pub service_key: ServiceKey,
+        #[rasn(tag(context, 1), identifier = "dpCriteria")]
+        pub dp_criteria: Option<EventTypeBCSM>,
+    }
+    impl GapOnService {
+        pub fn new(service_key: ServiceKey, dp_criteria: Option<EventTypeBCSM>) -> Self {
+            Self {
+                service_key,
+                dp_criteria,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct GapTreatmentBoth {
+        #[rasn(tag(context, 0), identifier = "informationToSend")]
+        pub information_to_send: InformationToSend,
+        #[rasn(tag(context, 1), identifier = "releaseCause")]
+        pub release_cause: Cause,
+    }
+    impl GapTreatmentBoth {
+        pub fn new(information_to_send: InformationToSend, release_cause: Cause) -> Self {
+            Self {
+                information_to_send,
+                release_cause,
+            }
+        }
+    }
+    #[doc = "  Indicates the gapping characteristics. No gapping when gapInterval equals 0, and gap all calls when"]
+    #[doc = "  gapInterval equals 1."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum GapTreatment {
+        #[rasn(tag(context, 0))]
+        informationToSend(InformationToSend),
+        #[rasn(tag(context, 1))]
+        releaseCause(Cause),
+        #[rasn(tag(context, 2))]
+        both(GapTreatmentBoth),
+    }
+    #[doc = "  The default value for Cause is the same as in ISUP."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct HighLayerCompatibility(pub FixedOctetString<2usize>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum HoldCallInNetworkArg {
+        #[rasn(tag(context, 0))]
+        holdcause(HoldCause),
+        #[rasn(tag(context, 1))]
+        empty(()),
+    }
+    #[doc = "  Indicates the teleservice. For encoding, DSS 1 (Q.931) is used."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct HoldCause(pub OctetString);
+    #[doc = "  Operation invoke identifier."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=1"))]
+    pub struct IPAvailable(pub OctetString);
+    #[doc = "  defined by network operator."]
+    #[doc = "  Indicates that the resource is available."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct IPRoutingAddress(pub CalledPartyNumber);
+    #[doc = "  Indicates the routing address for the IP."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=1"))]
+    pub struct IPSSPCapabilities(pub OctetString);
+    #[doc = "  defined by network operator."]
+    #[doc = "  Indicates the SRF resources available at the SSP."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ISDNAccessRelatedInformation(pub OctetString);
+    #[doc = " defined by network operator."]
+    #[doc = "  Indicates the cause for holding the call."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct InbandInfo {
+        #[rasn(tag(context, 0), identifier = "messageID")]
+        pub message_id: MessageID,
+        #[rasn(value("1..=127"), tag(context, 1), identifier = "numberOfRepetitions")]
+        pub number_of_repetitions: Option<u8>,
+        #[rasn(value("0..=32767"), tag(context, 2))]
+        pub duration: Option<u16>,
+        #[rasn(value("0..=32767"), tag(context, 3))]
+        pub interval: Option<u16>,
+    }
+    impl InbandInfo {
+        pub fn new(
+            message_id: MessageID,
+            number_of_repetitions: Option<u8>,
+            duration: Option<u16>,
+            interval: Option<u16>,
+        ) -> Self {
+            Self {
+                message_id,
+                number_of_repetitions,
+                duration,
+                interval,
+            }
+        }
+    }
+    #[doc = "  Interval is the time in seconds between each repeated announcement. Duration is the total"]
+    #[doc = "  amount of time in seconds, including repetitions and intervals."]
+    #[doc = "  The end of announcement is either the end of duration or numberOfRepetitions, whatever comes first."]
+    #[doc = "  Duration with value 0 indicates infinite duration."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum InformationToSend {
+        #[rasn(tag(context, 0))]
+        inbandInfo(InbandInfo),
+        #[rasn(tag(context, 1))]
+        tone(Tone),
+        #[rasn(tag(context, 2))]
+        displayInformation(DisplayInformation),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=2147483647"))]
+    pub struct Integer4(pub u32);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("-1..=60000"))]
+    pub struct Interval(pub i32);
+    #[doc = "  Units are milliseconds. A -1 value denotes infinite."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct InvokeID(pub InvokeIdType);
+    #[doc = "  TYPE DEFINITIONS FOR  IN CS-1  DATA TYPES FOLLOWS"]
+    #[doc = "  Argument data types"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("-128..=127"))]
+    pub struct InvokeIdType(pub i8);
+    #[doc = " Indicates the destination user network interface related information. Refer to the Q.763 Access"]
+    #[doc = " Transport parameter for encoding."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum LegID {
+        #[rasn(tag(context, 0))]
+        sendingSideID(LegType),
+        #[rasn(tag(context, 1))]
+        receivingSideID(LegType),
+    }
+    #[doc = " Indicates a reference to a specific party in a call. OPTIONAL denotes network operator specific use"]
+    #[doc = " with a choice of unilateral ID assignment or bilateral ID assignment."]
+    #[doc = " OPTIONAL for LegID also denotes the following:"]
+    #[doc = " -\twhen only one party exists in the call, this parameter is not needed (as no ambiguity exists);"]
+    #[doc = " -\twhen more than one party exists in the call, one of the following alternatives applies:"]
+    #[doc = "\t1.\tLegID is present and indicates which party is concerned."]
+    #[doc = "\t2.\tLegID is not present and a default value is assumed (e.g. calling party in the case of the"]
+    #[doc = "\t\tApplyCharging operation)."]
+    #[doc = " Choice between these two alternatives is kept a network operator option."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct LegType(pub FixedOctetString<1usize>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=1"))]
+    pub struct LocationNumber(pub OctetString);
+    #[doc = " Indicates the Location Number for the calling party. Refer to Recommendation Q.763 (White book) for encoding."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("1..=100"))]
+    pub struct MaximumNumberOfCounters(pub u8);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct MessageIDText {
+        #[rasn(size("0..=1"), tag(context, 0), identifier = "messageContent")]
+        pub message_content: Ia5String,
+        #[rasn(size("0..=1"), tag(context, 1))]
+        pub attributes: Option<OctetString>,
+    }
+    impl MessageIDText {
+        pub fn new(message_content: Ia5String, attributes: Option<OctetString>) -> Self {
+            Self {
+                message_content,
+                attributes,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct MessageIDVariableMessage {
+        #[rasn(tag(context, 0), identifier = "elementaryMessageID")]
+        pub elementary_message_id: Integer4,
+        #[rasn(size("1..=5"), tag(context, 1), identifier = "variableParts")]
+        pub variable_parts: SequenceOf<VariablePart>,
+    }
+    impl MessageIDVariableMessage {
+        pub fn new(
+            elementary_message_id: Integer4,
+            variable_parts: SequenceOf<VariablePart>,
+        ) -> Self {
+            Self {
+                elementary_message_id,
+                variable_parts,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum MessageID {
+        #[rasn(tag(context, 0))]
+        elementaryMessageID(Integer4),
+        #[rasn(tag(context, 1))]
+        text(MessageIDText),
+        #[rasn(size("1"), tag(context, 29))]
+        elementaryMessageIDs(SequenceOf<Integer4>),
+        #[rasn(tag(context, 30))]
+        variableMessage(MessageIDVariableMessage),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum MiscCallInfoMessageType {
+        request = 0,
+        notification = 1,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum MiscCallInfoDpAssignment {
+        individualLine = 0,
+        groupBased = 1,
+        officeBased = 2,
+    }
+    #[doc = " OPTIONAL denotes network operator specific use."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct MiscCallInfo {
+        #[rasn(tag(context, 0), identifier = "messageType")]
+        pub message_type: MiscCallInfoMessageType,
+        #[rasn(tag(context, 1), identifier = "dpAssignment")]
+        pub dp_assignment: Option<MiscCallInfoDpAssignment>,
+    }
+    impl MiscCallInfo {
+        pub fn new(
+            message_type: MiscCallInfoMessageType,
+            dp_assignment: Option<MiscCallInfoDpAssignment>,
+        ) -> Self {
+            Self {
+                message_type,
+                dp_assignment,
+            }
+        }
+    }
+    #[doc = " Indicates detection point related information."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum MonitorMode {
+        interrupted = 0,
+        notifyAndContinue = 1,
+        transparent = 2,
+    }
+    #[doc = " Indicates the numbering plan for collecting the user information. Refer to the Q.763 Numbering Plan."]
+    #[doc = " Indicator field for encoding."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("1..=255"))]
+    pub struct NumberOfDigits(pub u8);
+    #[doc = " Indicates the event is relayed and/or processed by the SSP."]
+    #[doc = " If this parameter is used in the context of charging events, the following definitions apply for the"]
+    #[doc = " handling of charging events:"]
+    #[doc = " Interrupted means that the SSF notifies the SCF of the charging event using"]
+    #[doc = " EventNotificationCharging, does not process the event but discard it."]
+    #[doc = " NotifyAndContinue means that SSF notifies the SCF of the charging event using"]
+    #[doc = " EventNotificationCharging, and continues processing the event or signal without waiting for SCF"]
+    #[doc = " instructions. Transparent means that the SSF does not notify the SCF of the event. This value is used to"]
+    #[doc = " end the monitoring of a previously requested charging event. Previously requested charging events are"]
+    #[doc = " monitored until ended by a transparent monitor mode, or until the end of the connection configuration."]
+    #[doc = " For the use of this parameter in the context of BCSM events refer to 3.3.39."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NumberingPlan(pub FixedOctetString<1usize>);
+    #[doc = " Indicates the number of digits to be collected"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=1"))]
+    pub struct OriginalCalledPartyID(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ReceivedInformationArg {
+        #[rasn(tag(context, 0))]
+        digitsResponse(Digits),
+        #[rasn(tag(context, 1))]
+        iA5Response(Ia5String),
+    }
+    #[doc = " Indicates the original called number. Refer to the Q.763 Original Called Number for encoding."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=1"))]
+    pub struct RedirectingPartyID(pub OctetString);
+    #[doc = " Indicates redirecting number. Refer to the Q.763 Redirecting number for encoding."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RedirectionInformation(pub FixedOctetString<2usize>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ReleaseCallArg(pub Cause);
+    #[doc = " Indicates redirection information. Refer to the Q.763 Redirection Information for encoding."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ReportCondition {
+        statusReport = 0,
+        timerExpired = 1,
+        canceled = 2,
+    }
+    #[doc = "  A default value of decimal 31 (normal unspecified) should be coded appropriately."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RequestCurrentStatusReportArg(pub ResourceID);
+    #[doc = "  For correlationID OPTIONAL denotes network operator optional."]
+    #[doc = "  monitorDuration is required if outside the context of a call. It is not expected if we are in the context"]
+    #[doc = "  of a call, because in that case the end of the call implicitly means the end of the monitoring."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1"))]
+    pub struct RequestNotificationChargingEventArg(pub SequenceOf<ChargingEvent>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct RequestedInformation {
+        #[rasn(tag(context, 0), identifier = "requestedInformationType")]
+        pub requested_information_type: RequestedInformationType,
+        #[rasn(tag(context, 1), identifier = "requestedInformationValue")]
+        pub requested_information_value: RequestedInformationValue,
+    }
+    impl RequestedInformation {
+        pub fn new(
+            requested_information_type: RequestedInformationType,
+            requested_information_value: RequestedInformationValue,
+        ) -> Self {
+            Self {
+                requested_information_type,
+                requested_information_value,
+            }
+        }
+    }
+    #[doc = " ReportCondition specifies the cause of sending \"StatusReport\" operation to the SCF."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=5"))]
+    pub struct RequestedInformationList(pub SequenceOf<RequestedInformation>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum RequestedInformationType {
+        callAttemptElapsedTime = 0,
+        callStopTime = 1,
+        callConnectedElapsedTime = 2,
+        calledAddress = 3,
+        releaseCause = 30,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=5"))]
+    pub struct RequestedInformationTypeList(pub SequenceOf<RequestedInformationType>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum RequestedInformationValue {
+        #[rasn(value("0..=255"), tag(context, 0))]
+        callAttemptElapsedTimeValue(u8),
+        #[rasn(tag(context, 1))]
+        callStopTimeValue(DateAndTime),
+        #[rasn(tag(context, 2))]
+        callConnectedElapsedTimeValue(Integer4),
+        #[rasn(tag(context, 3))]
+        calledAddressValue(Digits),
+        #[rasn(tag(context, 30))]
+        releaseCauseValue(Cause),
+    }
+    #[doc = " The callAttemptElapsedTimeValue is specified in seconds. The unit for the"]
+    #[doc = " callConnectedElapsedTimeValue is 100 milliseconds."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ResourceID {
+        #[rasn(tag(context, 0))]
+        lineID(Digits),
+        #[rasn(tag(context, 1))]
+        facilityGroupID(FacilityGroup),
+        #[rasn(tag(context, 2))]
+        facilityGroupMemberID(Integer),
+        #[rasn(tag(context, 3))]
+        trunkGroupID(Integer),
+    }
+    #[doc = " Indicates a logical identifier for the physical termination resource."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ResourceStatus {
+        busy = 0,
+        idle = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ResponseCondition {
+        intermediateResponse = 0,
+        lastResponse = 1,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "OCTET_STRING", size("0..=1"))]
+    pub struct AnonymousRouteList(pub OctetString);
+    #[doc = " ResponseCondition is used to identify the reason why ServiceFilteringResponse operation is sent."]
+    #[doc = " intermediateresponse identifies that service filtering is running and the interval time is expired and"]
+    #[doc = " a call is received, or that service filtering is running and the threshold value is reached."]
+    #[doc = " lastResponse identifies that the duration time is expired and service filtering has been finished or"]
+    #[doc = " that the stop time is met and service filtering has been finished."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=3"))]
+    pub struct RouteList(pub SequenceOf<AnonymousRouteList>);
+    #[doc = " defined by network operator."]
+    #[doc = " Indicates the SCF identifier."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=1"))]
+    pub struct SCIBillingChargingCharacteristics(pub OctetString);
+    #[doc = " Identifies the local serving area where a network provider operates. Uses the LocationNumber"]
+    #[doc = " format which is based on the Q.763 Location Number format."]
+    #[doc = " The Nature of Address indicator field shall be set to \"Spare\" (value 00000000)."]
+    #[doc = " The Numbering Plan Indicator field shall be set to \"Spare\" (value 000)."]
+    #[doc = " Defined by the network operator."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=1"))]
+    pub struct SFBillingChargingCharacteristics(pub OctetString);
+    #[doc = " Indicates a list of trunk groups or a route index. See Recommendation Q.1214 for additional information on this item."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=1"))]
+    pub struct ScfID(pub OctetString);
+    #[doc = " This parameter indicates the billing and/or charging characteristics. Its content is network operator"]
+    #[doc = " specific. An example datatype definition for this parameter is given below:"]
+    #[doc = " SCIBillingChargingCharacteristics  ::= CHOICE {"]
+    #[doc = " \tchargeLevel\t[0] OCTET STRING (SIZE (min..max),"]
+    #[doc = " \tchargePulses\t[1] Integer4,"]
+    #[doc = " \tchargeMessages\t[2] OCTET STRING (SIZE (min..max)"]
+    #[doc = "\t}"]
+    #[doc = " Depending on the applied charging scenario the following information elements"]
+    #[doc = " can be included (refer to Appendix II/Q.1214):"]
+    #[doc = " chargeLevel (scenario 3.2)"]
+    #[doc = " chargePulses (scenario 3.2)"]
+    #[doc = " chargeMessages (scenario 3.2)"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ServiceAddressInformation {
+        #[rasn(tag(context, 0), identifier = "serviceKey")]
+        pub service_key: Option<ServiceKey>,
+        #[rasn(tag(context, 1), identifier = "miscCallInfo")]
+        pub misc_call_info: MiscCallInfo,
+        #[rasn(tag(context, 2), identifier = "triggerType")]
+        pub trigger_type: Option<TriggerType>,
+    }
+    impl ServiceAddressInformation {
+        pub fn new(
+            service_key: Option<ServiceKey>,
+            misc_call_info: MiscCallInfo,
+            trigger_type: Option<TriggerType>,
+        ) -> Self {
+            Self {
+                service_key,
+                misc_call_info,
+                trigger_type,
+            }
+        }
+    }
+    #[doc = " Information that represents the result of trigger analysis and allows the SCF to choose the appropriate"]
+    #[doc = " service logic."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=1"))]
+    pub struct ServiceInteractionIndicators(pub OctetString);
+    #[doc = " Indicators which are exchanged between SSP and SCP to resolve interactions between IN based services"]
+    #[doc = " and network based services, respectively between different IN based services."]
+    #[doc = " The contents are network specific and identified as a subject for further study with respect to INAP."]
+    #[doc = " The following example is listed to illustrate the use of this parameter:"]
+    #[doc = "\tCallToBeDiverted\tAllowed/NotAllowed Indicator"]
+    #[doc = " If the CallToBeDiverted indicator is set to NotAllowed, the destination exchange shall not allow any"]
+    #[doc = " divertion on the subjected call. By this, each service can pass the applicable indicators to inform the"]
+    #[doc = " destination exchange of how specific services are to be handled."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ServiceKey(pub Integer4);
+    #[doc = " Information that allows the SCF to choose the appropriate service logic."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ServiceProfileIdentifier(pub OctetString);
+    #[doc = " Indicates a particular ISDN terminal. Refer to Recommendation Q.932 for encoding."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ServingAreaID(pub LocationNumber);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct SpecializedResourceReportArg(pub ());
+    #[doc = " This parameter indicates the billing and/or charging characteristics for filtered calls."]
+    #[doc = " Its content is network operator specific."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum TerminalType {
+        unknown = 0,
+        dialPulse = 1,
+        dtmf = 2,
+        isdn = 3,
+        isdnNoDtmf = 4,
+        spare = 16,
+    }
+    #[doc = " Identifies the terminal type so that the SCF can specify, to the SRF, the appropriate type of capability"]
+    #[doc = " (voice recognition, DTMF, display capability, etc.). Since present signalling systems do not convey"]
+    #[doc = " terminal type, this parameter applies only at originating or terminating local exchanges."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum TimerID {
+        tssf = 0,
+    }
+    #[doc = " Indicates the timer to be reset."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TimerValue(pub Integer4);
+    #[doc = " Indicates the timer value (in seconds)."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Tone {
+        #[rasn(tag(context, 0), identifier = "toneID")]
+        pub tone_id: Integer4,
+        #[rasn(tag(context, 1))]
+        pub duration: Option<Integer4>,
+    }
+    impl Tone {
+        pub fn new(tone_id: Integer4, duration: Option<Integer4>) -> Self {
+            Self { tone_id, duration }
+        }
+    }
+    #[doc = " The duration specifies the length of the tone in seconds, value 0 indicates infinite duration."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TravellingClassMark(pub LocationNumber);
+    #[doc = " Indicates travelling class mark information."]
+    #[doc = " Uses the LocationNumber format which is based on the Q.763 Location Number format."]
+    #[doc = " The Nature of Address indicator field shall be set to \"Spare\" (value 00000000)."]
+    #[doc = " The Numbering Plan Indicator field shall be set to \"Spare\" (value 000)."]
+    #[doc = " Maximum 2 digits."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum TriggerType {
+        featureActivation = 0,
+        verticalServiceCode = 1,
+        customizedAccess = 2,
+        customizedIntercom = 3,
+        emergencyService = 12,
+        aFR = 13,
+        sharedIOTrunk = 14,
+        offHookDelay = 17,
+        channelSetupPRI = 18,
+        tNoAnswer = 25,
+        tBusy = 26,
+        oCalledPartyBusy = 27,
+        oNoAnswer = 29,
+        originationAttemptAuthorized = 30,
+        oAnswer = 31,
+        oDisconnect = 32,
+        termAttemptAuthorized = 33,
+        tAnswer = 34,
+        tDisconnect = 35,
+    }
+    #[doc = " The type of trigger which caused call suspension"]
+    #[doc = " 4-11: Reserved; 15,16: Reserved; 19-24: Reserved"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum UnavailableNetworkResource {
+        unavailableResources = 0,
+        componentFailure = 1,
+        basicCallProcessingException = 2,
+        resourceStatusFailure = 3,
+        endUserFailure = 4,
+    }
+    #[doc = " Indicates the network resource that failed."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum VariablePart {
+        #[rasn(tag(context, 0))]
+        integer(Integer4),
+        #[rasn(tag(context, 1))]
+        number(Digits),
+        #[rasn(size("2"), tag(context, 2))]
+        time(OctetString),
+        #[rasn(size("3"), tag(context, 3))]
+        date(OctetString),
+        #[rasn(size("4"), tag(context, 4))]
+        price(OctetString),
+    }
+    #[doc = " Indicates the variable part of the message."]
+    #[doc = " BCD coded variable parts are encoded as described in the examples below."]
+    #[doc = " For example, time = 12:15 would be encoded as:"]
+    #[doc = "\tBits\tHGFE\tDCBA"]
+    #[doc = "\tleading octet\t2\t1"]
+    #[doc = "\t\t5\t1"]
+    #[doc = " date = 1993 September 30th would be encoded as:"]
+    #[doc = "\tBits\tHGFE\tDCBA"]
+    #[doc = "\tleading octet\t3\t9"]
+    #[doc = "\t\t9\t0"]
+    #[doc = "\t\t0\t3"]
+    #[doc = " The Definition of range of constants Follows"]
+    pub static HIGH_LAYER_COMPATIBILITY_LENGTH: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(2));
+    pub static LEG1: LazyLock<LegType> =
+        LazyLock::new(|| LegType(<OctetString as From<&'static [u8]>>::from(&[1])));
+    pub static LEG2: LazyLock<LegType> =
+        LazyLock::new(|| LegType(<OctetString as From<&'static [u8]>>::from(&[2])));
+    #[doc = " network specific"]
+    pub static MAX_ACH_BILLING_CHARGING_LENGTH: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(1));
+    #[doc = " network specific"]
+    pub static MAX_ATTRIBUTES_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(1));
+    #[doc = " network specific"]
+    pub static MAX_BEARER_CAPABILITY_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(2));
+    #[doc = " network specific"]
+    pub static MAX_CALL_RESULT_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(1));
+    #[doc = " network specific"]
+    pub static MAX_CALLED_PARTY_NUMBER_LENGTH: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(1));
+    #[doc = " network specific"]
+    pub static MAX_CALLING_PARTY_NUMBER_LENGTH: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(1));
+    pub static MAX_CAUSE_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(2));
+    #[doc = " network specific"]
+    pub static MAX_DIGITS_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(1));
+    #[doc = " network specific"]
+    pub static MAX_DISPLAY_INFORMATION_LENGTH: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(1));
+    #[doc = " network specific"]
+    pub static MAX_EVENT_SPECIFIC_INFORMATION_CHARGING_LENGTH: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(1));
+    #[doc = " network specific"]
+    pub static MAX_EVENT_TYPE_CHARGING_LENGTH: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(1));
+    #[doc = " network specific"]
+    pub static MAX_FCIBILLING_CHARGING_LENGTH: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(1));
+    #[doc = " network specific"]
+    pub static MAX_IPAVAILABLE_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(1));
+    #[doc = " network specific"]
+    pub static MAX_IPSSPCAPABILITIES_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(1));
+    #[doc = " network specific"]
+    pub static MAX_LOCATION_NUMBER_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(1));
+    #[doc = " network specific"]
+    pub static MAX_MESSAGE_CONTENT_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(1));
+    #[doc = " network specific"]
+    pub static MAX_ORIGINAL_CALLED_PARTY_IDLENGTH: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(1));
+    #[doc = " network specific"]
+    pub static MAX_REDIRECTING_PARTY_IDLENGTH: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(1));
+    #[doc = " network specific"]
+    pub static MAX_ROUTE_LIST_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(1));
+    #[doc = " network specific"]
+    pub static MAX_SCIBILLING_CHARGING_LENGTH: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(1));
+    #[doc = " network specific"]
+    pub static MAX_SFBILLING_CHARGING_LENGTH: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(1));
+    #[doc = " network specific"]
+    pub static MAX_SCF_IDLENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(1));
+    #[doc = " network specific"]
+    pub static MAX_SERVICE_INTERACTION_INDICATORS_LENGTH: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(1));
+    pub static MIN_ACH_BILLING_CHARGING_LENGTH: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(0));
+    #[doc = " network specific"]
+    pub static MIN_ATTRIBUTES_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(0));
+    #[doc = " network specific"]
+    pub static MIN_CALL_RESULT_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(0));
+    #[doc = " network specific"]
+    pub static MIN_CALLED_PARTY_NUMBER_LENGTH: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(0));
+    #[doc = " network specific"]
+    pub static MIN_CALLING_PARTY_NUMBER_LENGTH: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(0));
+    #[doc = " network specific"]
+    pub static MIN_CAUSE_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(2));
+    #[doc = " network specific"]
+    pub static MIN_DIGITS_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(0));
+    #[doc = " network specific"]
+    pub static MIN_DISPLAY_INFORMATION_LENGTH: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(0));
+    #[doc = " network specific"]
+    pub static MIN_EVENT_SPECIFIC_INFORMATION_CHARGING_LENGTH: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(0));
+    #[doc = " network specific"]
+    pub static MIN_EVENT_TYPE_CHARGING_LENGTH: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(0));
+    #[doc = " network specific"]
+    pub static MIN_FCIBILLING_CHARGING_LENGTH: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(0));
+    #[doc = " network specific"]
+    pub static MIN_IPAVAILABLE_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(0));
+    #[doc = " network specific"]
+    pub static MIN_IPSSPCAPABILITIES_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(0));
+    #[doc = " network specific"]
+    pub static MIN_LOCATION_NUMBER_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(0));
+    #[doc = " network specific"]
+    pub static MIN_MESSAGE_CONTENT_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(0));
+    #[doc = " network specific"]
+    pub static MIN_ORIGINAL_CALLED_PARTY_IDLENGTH: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(0));
+    #[doc = " network specific"]
+    pub static MIN_REDIRECTING_PARTY_IDLENGTH: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(0));
+    #[doc = " network specific"]
+    pub static MIN_ROUTE_LIST_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(0));
+    #[doc = " network specific"]
+    pub static MIN_SCIBILLING_CHARGING_LENGTH: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(0));
+    #[doc = " network specific"]
+    pub static MIN_SFBILLING_CHARGING_LENGTH: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(0));
+    #[doc = " network specific"]
+    pub static MIN_SCF_IDLENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(0));
+    #[doc = " network specific"]
+    pub static MIN_SERVICE_INTERACTION_INDICATORS_LENGTH: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(0));
+    #[doc = " network specific"]
+    pub static NUM_OF_BCSMEVENTS: LazyLock<Integer> = LazyLock::new(|| Integer::from(1));
+    #[doc = " network specific"]
+    pub static NUM_OF_CHARGING_EVENTS: LazyLock<Integer> = LazyLock::new(|| Integer::from(1));
+    #[doc = " network specific"]
+    pub static NUM_OF_COUNTERS: LazyLock<Integer> = LazyLock::new(|| Integer::from(100));
+    pub static NUM_OF_EXTENSIONS: LazyLock<Integer> = LazyLock::new(|| Integer::from(1));
+    #[doc = " network specific"]
+    pub static NUM_OF_INFO_ITEMS: LazyLock<Integer> = LazyLock::new(|| Integer::from(5));
+    pub static NUM_OF_MESSAGE_IDS: LazyLock<Integer> = LazyLock::new(|| Integer::from(1));
+}

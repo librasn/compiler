@@ -1,0 +1,52 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_t_t424_1996_Document-Set-Descriptor.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod document_set_descriptor {
+    extern crate alloc;
+    use super::document_set_profile_descriptor::DocumentSetProfileDescriptor;
+    use super::interchange_data_elements::InterchangeDataElement;
+    use super::link_descriptors::{EncipheredLinkDescriptor, LinkClassDescriptor, LinkDescriptor};
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = "  see 8.11.3"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Document-Set")]
+    pub struct DocumentSet {
+        pub profile: DocumentSetProfileDescriptor,
+        #[rasn(tag(context, 0), identifier = "link-classes")]
+        pub link_classes: Option<SetOf<LinkClassDescriptor>>,
+        #[rasn(tag(context, 1))]
+        pub links: Option<SetOf<LinkDescriptor>>,
+        #[rasn(tag(context, 2))]
+        pub nodes: Option<SetOf<InterchangeDataElement>>,
+        #[rasn(tag(context, 3), identifier = "enciphered-links")]
+        pub enciphered_links: Option<SetOf<EncipheredLinkDescriptor>>,
+    }
+    impl DocumentSet {
+        pub fn new(
+            profile: DocumentSetProfileDescriptor,
+            link_classes: Option<SetOf<LinkClassDescriptor>>,
+            links: Option<SetOf<LinkDescriptor>>,
+            nodes: Option<SetOf<InterchangeDataElement>>,
+            enciphered_links: Option<SetOf<EncipheredLinkDescriptor>>,
+        ) -> Self {
+            Self {
+                profile,
+                link_classes,
+                links,
+                nodes,
+                enciphered_links,
+            }
+        }
+    }
+}

@@ -1,0 +1,236 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x420_1999_IPMSHeadingExtensions.asn1
+---
+Warnings:
+LinkerError in ASN grammar: Failed to resolve supertype UniversalOrBMPString of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype UniversalOrBMPString of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype UniversalOrBMPString of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype UniversalOrBMPString of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype SIGNED of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype SIGNATURE of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype UniversalOrBMPString of parameterized implementation.
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod ipmsheading_extensions {
+    extern crate alloc;
+    use super::authentication_framework::*;
+    use super::certificate_extensions::CertificateAssertion;
+    use super::ipmsinformation_objects::*;
+    use super::ipmsobject_identifiers::{
+        ID_HEX_AUTHORIZATION_TIME, ID_HEX_AUTO_SUBMITTED, ID_HEX_BODY_PART_SIGNATURES,
+        ID_HEX_CIRCULATION_LIST_RECIPIENTS, ID_HEX_DISTRIBUTION_CODES, ID_HEX_EXTENDED_SUBJECT,
+        ID_HEX_INCOMPLETE_COPY, ID_HEX_INFORMATION_CATEGORY, ID_HEX_IPM_SECURITY_LABEL,
+        ID_HEX_LANGUAGES, ID_HEX_MANUAL_HANDLING_INSTRUCTIONS, ID_HEX_ORIGINATORS_REFERENCE,
+        ID_HEX_PRECEDENCE_POLICY_ID, ID_REX_CIRCULATION_LIST_INDICATOR, ID_REX_PRECEDENCE,
+    };
+    use super::ipmsupper_bounds::{
+        UB_ALPHA_CODE_LENGTH, UB_CIRCULATION_LIST_MEMBERS, UB_DISTRIBUTION_CODES,
+        UB_EXTENDED_SUBJECT_LENGTH, UB_INFORMATION_CATEGORIES, UB_INFORMATION_CATEGORY_LENGTH,
+        UB_MANUAL_HANDLING_INSTRUCTIONS, UB_MANUAL_HANDLING_INSTRUCTION_LENGTH,
+        UB_ORIGINATORS_REFERENCE_LENGTH, UB_PRECEDENCE,
+    };
+    use super::mtsabstract_service::{ExtendedCertificates, SecurityLabel, UniversalOrBMPString};
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AlphaCode(pub UniversalOrBMPString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AuthorizationTime(pub GeneralizedTime);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AutoSubmitted {
+        #[rasn(identifier = "not-auto-submitted")]
+        not_auto_submitted = 0,
+        #[rasn(identifier = "auto-generated")]
+        auto_generated = 1,
+        #[rasn(identifier = "auto-replied")]
+        auto_replied = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("1.."))]
+    pub struct BodyPartNumber(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum BodyPartSecurityLabel {
+        #[rasn(tag(context, 0), identifier = "body-part-unlabelled")]
+        body_part_unlabelled(()),
+        #[rasn(tag(context, 1), identifier = "body-part-security-label")]
+        body_part_security_label(SecurityLabel),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct BodyPartSignature(pub SIGNATURE);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "SET")]
+    #[non_exhaustive]
+    pub struct AnonymousBodyPartSignatures {
+        #[rasn(identifier = "body-part-number")]
+        pub body_part_number: BodyPartNumber,
+        #[rasn(identifier = "body-part-signature")]
+        pub body_part_signature: BodyPartSignature,
+        #[rasn(tag(context, 1), identifier = "originator-certificate-selector")]
+        pub originator_certificate_selector: Option<CertificateAssertion>,
+        #[rasn(tag(context, 0), identifier = "originator-certificates")]
+        pub originator_certificates: Option<ExtendedCertificates>,
+    }
+    impl AnonymousBodyPartSignatures {
+        pub fn new(
+            body_part_number: BodyPartNumber,
+            body_part_signature: BodyPartSignature,
+            originator_certificate_selector: Option<CertificateAssertion>,
+            originator_certificates: Option<ExtendedCertificates>,
+        ) -> Self {
+            Self {
+                body_part_number,
+                body_part_signature,
+                originator_certificate_selector,
+                originator_certificates,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct BodyPartSignatures(pub SetOf<AnonymousBodyPartSignatures>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum Checkmark {
+        simple(()),
+        timestamped(CirculationTime),
+        signed(CirculationSignature),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("2.."))]
+    pub struct CirculationList(pub SequenceOf<CirculationMember>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct CirculationMember {
+        #[rasn(value("0.."), identifier = "circulation-recipient")]
+        pub circulation_recipient: RecipientSpecifier,
+        pub checked: Option<Checkmark>,
+    }
+    impl CirculationMember {
+        pub fn new(circulation_recipient: RecipientSpecifier, checked: Option<Checkmark>) -> Self {
+            Self {
+                circulation_recipient,
+                checked,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CirculationSignature(pub SIGNED);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CirculationSignatureAlgorithmIdentifier(pub AlgorithmIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CirculationTime(pub GeneralizedTime);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DescriptionString(pub UniversalOrBMPString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct DistributionCode {
+        #[rasn(identifier = "oid-code")]
+        pub oid_code: Option<ObjectIdentifier>,
+        #[rasn(identifier = "alphanumeric-code")]
+        pub alphanumeric_code: Option<AlphaCode>,
+        #[rasn(tag(context, 0), identifier = "or-descriptor")]
+        pub or_descriptor: Option<ORDescriptor>,
+    }
+    impl DistributionCode {
+        pub fn new(
+            oid_code: Option<ObjectIdentifier>,
+            alphanumeric_code: Option<AlphaCode>,
+            or_descriptor: Option<ORDescriptor>,
+        ) -> Self {
+            Self {
+                oid_code,
+                alphanumeric_code,
+                or_descriptor,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct DistributionCodes(pub SequenceOf<DistributionCode>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ExtendedSubject(pub UniversalOrBMPString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct IPMSecurityLabel {
+        #[rasn(tag(context, 0), identifier = "content-security-label")]
+        pub content_security_label: SecurityLabel,
+        #[rasn(tag(context, 1), identifier = "heading-security-label")]
+        pub heading_security_label: Option<SecurityLabel>,
+        #[rasn(tag(context, 2), identifier = "body-part-security-labels")]
+        pub body_part_security_labels: Option<SequenceOf<BodyPartSecurityLabel>>,
+    }
+    impl IPMSecurityLabel {
+        pub fn new(
+            content_security_label: SecurityLabel,
+            heading_security_label: Option<SecurityLabel>,
+            body_part_security_labels: Option<SequenceOf<BodyPartSecurityLabel>>,
+        ) -> Self {
+            Self {
+                content_security_label,
+                heading_security_label,
+                body_part_security_labels,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct IncompleteCopy(pub ());
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct InformationCategories(pub SequenceOf<InformationCategory>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct InformationCategory {
+        #[rasn(tag(context, 0))]
+        pub reference: Option<ObjectIdentifier>,
+        #[rasn(tag(context, 1))]
+        pub description: Option<DescriptionString>,
+    }
+    impl InformationCategory {
+        pub fn new(
+            reference: Option<ObjectIdentifier>,
+            description: Option<DescriptionString>,
+        ) -> Self {
+            Self {
+                reference,
+                description,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("2..=5"))]
+    pub struct Language(pub PrintableString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ManualHandlingInstruction(pub UniversalOrBMPString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct ManualHandlingInstructions(pub SequenceOf<ManualHandlingInstruction>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct OriginatorsReference(pub UniversalOrBMPString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0.."))]
+    pub struct Precedence(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PrecedencePolicyIdentifier(pub ObjectIdentifier);
+}

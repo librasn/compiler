@@ -1,0 +1,441 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_j_j1003_2014_CASS-CAM-MESSAGE-FORMAT.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod cass_cam_message_format {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct CAMClientInfo {
+        #[rasn(size("1"), identifier = "clientType")]
+        pub client_type: OctetString,
+        #[rasn(size("1"), identifier = "clientPriority")]
+        pub client_priority: OctetString,
+        #[rasn(size("2"), identifier = "clientVendor")]
+        pub client_vendor: OctetString,
+        #[rasn(size("2"), identifier = "clientVersion")]
+        pub client_version: OctetString,
+    }
+    impl CAMClientInfo {
+        pub fn new(
+            client_type: OctetString,
+            client_priority: OctetString,
+            client_vendor: OctetString,
+            client_version: OctetString,
+        ) -> Self {
+            Self {
+                client_type,
+                client_priority,
+                client_vendor,
+                client_version,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct CAMClientVersion {
+        #[rasn(size("4"), identifier = "hWVersion")]
+        pub h_wversion: OctetString,
+        #[rasn(size("4"), identifier = "sWversion")]
+        pub s_wversion: OctetString,
+        #[rasn(identifier = "cAMClientInfo")]
+        pub c_amclient_info: SequenceOf<CAMClientInfo>,
+    }
+    impl CAMClientVersion {
+        pub fn new(
+            h_wversion: OctetString,
+            s_wversion: OctetString,
+            c_amclient_info: SequenceOf<CAMClientInfo>,
+        ) -> Self {
+            Self {
+                h_wversion,
+                s_wversion,
+                c_amclient_info,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct CASSInfo {
+        #[rasn(size("4"), identifier = "cASSUniqueID")]
+        pub c_assunique_id: OctetString,
+        #[rasn(size("1"), identifier = "cASSIPAddrType")]
+        pub c_assipaddr_type: OctetString,
+        #[rasn(size("50"), identifier = "cASSIPAddr")]
+        pub c_assipaddr: OctetString,
+        #[rasn(size("1"), identifier = "cASSConnectionType")]
+        pub c_assconnection_type: OctetString,
+        #[rasn(size("4"), identifier = "cASSListeningPort")]
+        pub c_asslistening_port: OctetString,
+    }
+    impl CASSInfo {
+        pub fn new(
+            c_assunique_id: OctetString,
+            c_assipaddr_type: OctetString,
+            c_assipaddr: OctetString,
+            c_assconnection_type: OctetString,
+            c_asslistening_port: OctetString,
+        ) -> Self {
+            Self {
+                c_assunique_id,
+                c_assipaddr_type,
+                c_assipaddr,
+                c_assconnection_type,
+                c_asslistening_port,
+            }
+        }
+    }
+    #[doc = " ============================================================"]
+    #[doc = " CAMRegConfirmMessage"]
+    #[doc = " ============================================================"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct CamRegCnfMsgContent {
+        #[rasn(size("10"), identifier = "sessionID")]
+        pub session_id: OctetString,
+        #[rasn(size("16"), identifier = "mEK-IV")]
+        pub m_ek_iv: OctetString,
+        #[rasn(size("16"), identifier = "iCCIEK-IV")]
+        pub i_cciek_iv: OctetString,
+        #[rasn(size("16"), identifier = "cCCIEK-IV")]
+        pub c_cciek_iv: OctetString,
+        #[rasn(size("16"), identifier = "cCCIEK")]
+        pub c_cciek: OctetString,
+    }
+    impl CamRegCnfMsgContent {
+        pub fn new(
+            session_id: OctetString,
+            m_ek_iv: OctetString,
+            i_cciek_iv: OctetString,
+            c_cciek_iv: OctetString,
+            c_cciek: OctetString,
+        ) -> Self {
+            Self {
+                session_id,
+                m_ek_iv,
+                i_cciek_iv,
+                c_cciek_iv,
+                c_cciek,
+            }
+        }
+    }
+    #[doc = " ============================================================"]
+    #[doc = " CAMRegMessage"]
+    #[doc = " ============================================================"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct CamRegMsgContent {
+        #[rasn(size("10"), identifier = "sessionID")]
+        pub session_id: OctetString,
+        #[rasn(size("16"), identifier = "nONCE-CAM")]
+        pub n_once_cam: OctetString,
+        #[rasn(size("40"), identifier = "cAMID")]
+        pub c_amid: OctetString,
+        #[rasn(size("4"), identifier = "hWVersion")]
+        pub h_wversion: OctetString,
+        #[rasn(size("4"), identifier = "sWversion")]
+        pub s_wversion: OctetString,
+        #[rasn(size("20"), identifier = "hashed-MEK-ICCIEK")]
+        pub hashed_mek_icciek: OctetString,
+    }
+    impl CamRegMsgContent {
+        pub fn new(
+            session_id: OctetString,
+            n_once_cam: OctetString,
+            c_amid: OctetString,
+            h_wversion: OctetString,
+            s_wversion: OctetString,
+            hashed_mek_icciek: OctetString,
+        ) -> Self {
+            Self {
+                session_id,
+                n_once_cam,
+                c_amid,
+                h_wversion,
+                s_wversion,
+                hashed_mek_icciek,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct ImageInfo {
+        #[rasn(size("16"), identifier = "dSIP")]
+        pub d_sip: Option<OctetString>,
+        #[rasn(size("1"))]
+        pub tm: OctetString,
+        #[rasn(identifier = "fn")]
+        pub r_fn: Option<PrintableString>,
+    }
+    impl ImageInfo {
+        pub fn new(
+            d_sip: Option<OctetString>,
+            tm: OctetString,
+            r_fn: Option<PrintableString>,
+        ) -> Self {
+            Self { d_sip, tm, r_fn }
+        }
+    }
+    #[doc = " ============================================================"]
+    #[doc = " KeyRequestMessage"]
+    #[doc = " ============================================================"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct KeyReqMsgContent {
+        #[rasn(size("10"), identifier = "sessionID")]
+        pub session_id: OctetString,
+        #[rasn(size("48"), identifier = "keyParingID")]
+        pub key_paring_id: OctetString,
+        #[rasn(identifier = "cAMCertificate")]
+        pub c_amcertificate: BitString,
+    }
+    impl KeyReqMsgContent {
+        pub fn new(
+            session_id: OctetString,
+            key_paring_id: OctetString,
+            c_amcertificate: BitString,
+        ) -> Self {
+            Self {
+                session_id,
+                key_paring_id,
+                c_amcertificate,
+            }
+        }
+    }
+    #[doc = " ============================================================"]
+    #[doc = " KeyResponseMessage"]
+    #[doc = " ============================================================"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct KeyRspMsgContent {
+        #[rasn(size("10"), identifier = "sessionID")]
+        pub session_id: OctetString,
+        #[rasn(identifier = "cASSCertificate")]
+        pub c_asscertificate: BitString,
+        #[rasn(identifier = "rSAEncryptedContent")]
+        pub r_saencrypted_content: RSAEncryptedContent,
+        #[rasn(size("128"), identifier = "sIGN-kpk")]
+        pub s_ign_kpk: OctetString,
+    }
+    impl KeyRspMsgContent {
+        pub fn new(
+            session_id: OctetString,
+            c_asscertificate: BitString,
+            r_saencrypted_content: RSAEncryptedContent,
+            s_ign_kpk: OctetString,
+        ) -> Self {
+            Self {
+                session_id,
+                c_asscertificate,
+                r_saencrypted_content,
+                s_ign_kpk,
+            }
+        }
+    }
+    #[doc = " ============================================================"]
+    #[doc = " LogResponseMessage"]
+    #[doc = " ============================================================"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct LogRcAMessageContent {
+        #[rasn(size("10"), identifier = "sessionID")]
+        pub session_id: OctetString,
+        #[rasn(identifier = "logResponseInfo")]
+        pub log_response_info: Option<OctetString>,
+    }
+    impl LogRcAMessageContent {
+        pub fn new(session_id: OctetString, log_response_info: Option<OctetString>) -> Self {
+            Self {
+                session_id,
+                log_response_info,
+            }
+        }
+    }
+    #[doc = " ============================================================"]
+    #[doc = " LogRequestMessage"]
+    #[doc = " ============================================================"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct LogRqtMsgContent {
+        #[rasn(size("10"), identifier = "sessionID")]
+        pub session_id: OctetString,
+        #[rasn(value("0.."), identifier = "logRequest-Req")]
+        pub log_request_req: bool,
+    }
+    impl LogRqtMsgContent {
+        pub fn new(session_id: OctetString, log_request_req: bool) -> Self {
+            Self {
+                session_id,
+                log_request_req,
+            }
+        }
+    }
+    #[doc = " ============================================================"]
+    #[doc = " PurchaseReportMessage"]
+    #[doc = " ============================================================"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct PrchsRptMsgContent {
+        #[rasn(size("10"), identifier = "sessionID")]
+        pub session_id: OctetString,
+        #[rasn(identifier = "purchaseInfo")]
+        pub purchase_info: OctetString,
+    }
+    impl PrchsRptMsgContent {
+        pub fn new(session_id: OctetString, purchase_info: OctetString) -> Self {
+            Self {
+                session_id,
+                purchase_info,
+            }
+        }
+    }
+    #[doc = " ============================================================"]
+    #[doc = " RCASRenewalMessage"]
+    #[doc = " ============================================================"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct RCASRnMsgContent {
+        #[rasn(size("12"), identifier = "downloadSchedule")]
+        pub download_schedule: OctetString,
+        #[rasn(value("0.."), identifier = "keyRequest-Req")]
+        pub key_request_req: Option<bool>,
+        #[rasn(value("0.."), identifier = "purchaseReport-Req")]
+        pub purchase_report_req: Option<bool>,
+    }
+    impl RCASRnMsgContent {
+        pub fn new(
+            download_schedule: OctetString,
+            key_request_req: Option<bool>,
+            purchase_report_req: Option<bool>,
+        ) -> Self {
+            Self {
+                download_schedule,
+                key_request_req,
+                purchase_report_req,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RSAEncryptedContent(pub BitString);
+    #[doc = " ============================================================"]
+    #[doc = " RCASAnnounceMessage"]
+    #[doc = " ============================================================"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct RcasAncMsgContent {
+        #[rasn(size("1"), identifier = "protocolTypeFlag")]
+        pub protocol_type_flag: OctetString,
+        #[rasn(identifier = "cAMClientVersion")]
+        pub c_amclient_version: SequenceOf<CAMClientVersion>,
+        #[rasn(identifier = "cASSInfo")]
+        pub c_assinfo: CASSInfo,
+    }
+    impl RcasAncMsgContent {
+        pub fn new(
+            protocol_type_flag: OctetString,
+            c_amclient_version: SequenceOf<CAMClientVersion>,
+            c_assinfo: CASSInfo,
+        ) -> Self {
+            Self {
+                protocol_type_flag,
+                c_amclient_version,
+                c_assinfo,
+            }
+        }
+    }
+    #[doc = " ============================================================"]
+    #[doc = " RenewConfirmMessage"]
+    #[doc = " ============================================================"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct RenewCnfMsgContent {
+        #[rasn(size("10"), identifier = "sessionID")]
+        pub session_id: OctetString,
+        #[rasn(identifier = "downloadStatus")]
+        pub download_status: bool,
+    }
+    impl RenewCnfMsgContent {
+        pub fn new(session_id: OctetString, download_status: bool) -> Self {
+            Self {
+                session_id,
+                download_status,
+            }
+        }
+    }
+    #[doc = " ============================================================"]
+    #[doc = " RenewInfoMessage"]
+    #[doc = " ============================================================"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct RenewInfoMsgContent {
+        #[rasn(size("10"), identifier = "sessionID")]
+        pub session_id: OctetString,
+        #[rasn(size("1"), identifier = "clientType")]
+        pub client_type: OctetString,
+        #[rasn(size("1"), identifier = "imageFlag")]
+        pub image_flag: OctetString,
+        #[rasn(identifier = "imageInfo")]
+        pub image_info: SequenceOf<ImageInfo>,
+        #[rasn(value("0.."), identifier = "purchaseReport-Req")]
+        pub purchase_report_req: Option<bool>,
+        #[rasn(size("20"), identifier = "hashed-CCCI")]
+        pub hashed_ccci: OctetString,
+        #[rasn(size("20"), identifier = "hashed-ICCI")]
+        pub hashed_icci: OctetString,
+        pub directives: Option<OctetString>,
+    }
+    impl RenewInfoMsgContent {
+        pub fn new(
+            session_id: OctetString,
+            client_type: OctetString,
+            image_flag: OctetString,
+            image_info: SequenceOf<ImageInfo>,
+            purchase_report_req: Option<bool>,
+            hashed_ccci: OctetString,
+            hashed_icci: OctetString,
+            directives: Option<OctetString>,
+        ) -> Self {
+            Self {
+                session_id,
+                client_type,
+                image_flag,
+                image_info,
+                purchase_report_req,
+                hashed_ccci,
+                hashed_icci,
+                directives,
+            }
+        }
+    }
+    #[doc = " ============================================================"]
+    #[doc = " StatucAMessage"]
+    #[doc = " ============================================================"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct StcAMsgContent {
+        #[rasn(size("10"), identifier = "sessionID")]
+        pub session_id: OctetString,
+        #[rasn(size("1"), identifier = "statusInfo")]
+        pub status_info: OctetString,
+    }
+    impl StcAMsgContent {
+        pub fn new(session_id: OctetString, status_info: OctetString) -> Self {
+            Self {
+                session_id,
+                status_info,
+            }
+        }
+    }
+}

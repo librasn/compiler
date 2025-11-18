@@ -1,0 +1,778 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/ietf_rfc_rfc4511_Lightweight-Directory-Access-Protocol-V3.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod lightweight_directory_access_protocol_v3 {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, tag(application, 16))]
+    pub struct AbandonRequest(pub MessageID);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 8))]
+    #[non_exhaustive]
+    pub struct AddRequest {
+        pub entry: LDAPDN,
+        pub attributes: AttributeList,
+    }
+    impl AddRequest {
+        pub fn new(entry: LDAPDN, attributes: AttributeList) -> Self {
+            Self { entry, attributes }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, tag(application, 9))]
+    pub struct AddResponse(pub LDAPResult);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AssertionValue(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Attribute(pub PartialAttribute);
+    #[doc = " Constrained to <name-component>"]
+    #[doc = " [RFC4514]"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AttributeDescription(pub LDAPString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AttributeList(pub SequenceOf<Attribute>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AttributeSelection(pub SequenceOf<LDAPString>);
+    #[doc = " Constrained to <attributedescription>"]
+    #[doc = " [RFC4512]"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AttributeValue(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct AttributeValueAssertion {
+        #[rasn(identifier = "attributeDesc")]
+        pub attribute_desc: AttributeDescription,
+        #[rasn(identifier = "assertionValue")]
+        pub assertion_value: AssertionValue,
+    }
+    impl AttributeValueAssertion {
+        pub fn new(attribute_desc: AttributeDescription, assertion_value: AssertionValue) -> Self {
+            Self {
+                attribute_desc,
+                assertion_value,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum AuthenticationChoice {
+        #[rasn(tag(context, 0))]
+        simple(OctetString),
+        #[rasn(tag(context, 3))]
+        sasl(SaslCredentials),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 0))]
+    #[non_exhaustive]
+    pub struct BindRequest {
+        #[rasn(value("1..=127"))]
+        pub version: u8,
+        pub name: LDAPDN,
+        pub authentication: AuthenticationChoice,
+    }
+    impl BindRequest {
+        pub fn new(version: u8, name: LDAPDN, authentication: AuthenticationChoice) -> Self {
+            Self {
+                version,
+                name,
+                authentication,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum BindResponseResultCode {
+        success = 0,
+        operationsError = 1,
+        protocolError = 2,
+        timeLimitExceeded = 3,
+        sizeLimitExceeded = 4,
+        compareFalse = 5,
+        compareTrue = 6,
+        authMethodNotSupported = 7,
+        strongerAuthRequired = 8,
+        referral = 10,
+        adminLimitExceeded = 11,
+        unavailableCriticalExtension = 12,
+        confidentialityRequired = 13,
+        saslBindInProgress = 14,
+        noSuchAttribute = 16,
+        undefinedAttributeType = 17,
+        inappropriateMatching = 18,
+        constraintViolation = 19,
+        attributeOrValueExists = 20,
+        invalidAttributeSyntax = 21,
+        noSuchObject = 32,
+        aliasProblem = 33,
+        invalidDNSyntax = 34,
+        aliasDereferencingProblem = 36,
+        inappropriateAuthentication = 48,
+        invalidCredentials = 49,
+        insufficientAccessRights = 50,
+        busy = 51,
+        unavailable = 52,
+        unwillingToPerform = 53,
+        loopDetect = 54,
+        namingViolation = 64,
+        objectClassViolation = 65,
+        notAllowedOnNonLeaf = 66,
+        notAllowedOnRDN = 67,
+        entryAlreadyExists = 68,
+        objectClassModsProhibited = 69,
+        affectsMultipleDSAs = 71,
+        other = 80,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 1))]
+    #[non_exhaustive]
+    pub struct BindResponse {
+        #[rasn(tag(context, 7), identifier = "serverSaslCreds")]
+        pub server_sasl_creds: Option<OctetString>,
+        #[rasn(identifier = "resultCode")]
+        pub result_code: BindResponseResultCode,
+        #[rasn(identifier = "matchedDN")]
+        pub matched_dn: LDAPDN,
+        #[rasn(identifier = "diagnosticMessage")]
+        pub diagnostic_message: LDAPString,
+        #[rasn(tag(context, 3))]
+        pub referral: Option<Referral>,
+    }
+    impl BindResponse {
+        pub fn new(
+            server_sasl_creds: Option<OctetString>,
+            result_code: BindResponseResultCode,
+            matched_dn: LDAPDN,
+            diagnostic_message: LDAPString,
+            referral: Option<Referral>,
+        ) -> Self {
+            Self {
+                server_sasl_creds,
+                result_code,
+                matched_dn,
+                diagnostic_message,
+                referral,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 14))]
+    #[non_exhaustive]
+    pub struct CompareRequest {
+        pub entry: LDAPDN,
+        pub ava: AttributeValueAssertion,
+    }
+    impl CompareRequest {
+        pub fn new(entry: LDAPDN, ava: AttributeValueAssertion) -> Self {
+            Self { entry, ava }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, tag(application, 15))]
+    pub struct CompareResponse(pub LDAPResult);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct Control {
+        #[rasn(identifier = "controlType")]
+        pub control_type: LDAPOID,
+        #[rasn(default = "control_criticality_default")]
+        pub criticality: bool,
+        #[rasn(identifier = "controlValue")]
+        pub control_value: Option<OctetString>,
+    }
+    impl Control {
+        pub fn new(
+            control_type: LDAPOID,
+            criticality: bool,
+            control_value: Option<OctetString>,
+        ) -> Self {
+            Self {
+                control_type,
+                criticality,
+                control_value,
+            }
+        }
+    }
+    fn control_criticality_default() -> bool {
+        false
+    }
+    #[doc = " limited to characters permitted in"]
+    #[doc = " URIs"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Controls(pub SequenceOf<Control>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, tag(application, 10))]
+    pub struct DelRequest(pub LDAPDN);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, tag(application, 11))]
+    pub struct DelResponse(pub LDAPResult);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 23))]
+    #[non_exhaustive]
+    pub struct ExtendedRequest {
+        #[rasn(tag(context, 0), identifier = "requestName")]
+        pub request_name: LDAPOID,
+        #[rasn(tag(context, 1), identifier = "requestValue")]
+        pub request_value: Option<OctetString>,
+    }
+    impl ExtendedRequest {
+        pub fn new(request_name: LDAPOID, request_value: Option<OctetString>) -> Self {
+            Self {
+                request_name,
+                request_value,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum ExtendedResponseResultCode {
+        success = 0,
+        operationsError = 1,
+        protocolError = 2,
+        timeLimitExceeded = 3,
+        sizeLimitExceeded = 4,
+        compareFalse = 5,
+        compareTrue = 6,
+        authMethodNotSupported = 7,
+        strongerAuthRequired = 8,
+        referral = 10,
+        adminLimitExceeded = 11,
+        unavailableCriticalExtension = 12,
+        confidentialityRequired = 13,
+        saslBindInProgress = 14,
+        noSuchAttribute = 16,
+        undefinedAttributeType = 17,
+        inappropriateMatching = 18,
+        constraintViolation = 19,
+        attributeOrValueExists = 20,
+        invalidAttributeSyntax = 21,
+        noSuchObject = 32,
+        aliasProblem = 33,
+        invalidDNSyntax = 34,
+        aliasDereferencingProblem = 36,
+        inappropriateAuthentication = 48,
+        invalidCredentials = 49,
+        insufficientAccessRights = 50,
+        busy = 51,
+        unavailable = 52,
+        unwillingToPerform = 53,
+        loopDetect = 54,
+        namingViolation = 64,
+        objectClassViolation = 65,
+        notAllowedOnNonLeaf = 66,
+        notAllowedOnRDN = 67,
+        entryAlreadyExists = 68,
+        objectClassModsProhibited = 69,
+        affectsMultipleDSAs = 71,
+        other = 80,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 24))]
+    #[non_exhaustive]
+    pub struct ExtendedResponse {
+        #[rasn(tag(context, 10), identifier = "responseName")]
+        pub response_name: Option<LDAPOID>,
+        #[rasn(tag(context, 11), identifier = "responseValue")]
+        pub response_value: Option<OctetString>,
+        #[rasn(identifier = "resultCode")]
+        pub result_code: ExtendedResponseResultCode,
+        #[rasn(identifier = "matchedDN")]
+        pub matched_dn: LDAPDN,
+        #[rasn(identifier = "diagnosticMessage")]
+        pub diagnostic_message: LDAPString,
+        #[rasn(tag(context, 3))]
+        pub referral: Option<Referral>,
+    }
+    impl ExtendedResponse {
+        pub fn new(
+            response_name: Option<LDAPOID>,
+            response_value: Option<OctetString>,
+            result_code: ExtendedResponseResultCode,
+            matched_dn: LDAPDN,
+            diagnostic_message: LDAPString,
+            referral: Option<Referral>,
+        ) -> Self {
+            Self {
+                response_name,
+                response_value,
+                result_code,
+                matched_dn,
+                diagnostic_message,
+                referral,
+            }
+        }
+    }
+    #[doc = " The LDAPString is constrained to"]
+    #[doc = " <attributeSelector> in Section 4.5.1.8"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum Filter {
+        #[rasn(size("1.."), tag(context, 0))]
+        and(SetOf<Filter>),
+        #[rasn(size("1.."), tag(context, 1))]
+        or(SetOf<Filter>),
+        #[rasn(tag(context, 2))]
+        not(Box<Filter>),
+        #[rasn(tag(context, 3))]
+        equalityMatch(AttributeValueAssertion),
+        #[rasn(tag(context, 4))]
+        substrings(SubstringFilter),
+        #[rasn(tag(context, 5))]
+        greaterOrEqual(AttributeValueAssertion),
+        #[rasn(tag(context, 6))]
+        lessOrEqual(AttributeValueAssertion),
+        #[rasn(tag(context, 7))]
+        present(AttributeDescription),
+        #[rasn(tag(context, 8))]
+        approxMatch(AttributeValueAssertion),
+        #[rasn(tag(context, 9))]
+        extensibleMatch(MatchingRuleAssertion),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 25))]
+    #[non_exhaustive]
+    pub struct IntermediateResponse {
+        #[rasn(tag(context, 0), identifier = "responseName")]
+        pub response_name: Option<LDAPOID>,
+        #[rasn(tag(context, 1), identifier = "responseValue")]
+        pub response_value: Option<OctetString>,
+    }
+    impl IntermediateResponse {
+        pub fn new(response_name: Option<LDAPOID>, response_value: Option<OctetString>) -> Self {
+            Self {
+                response_name,
+                response_value,
+            }
+        }
+    }
+    #[doc = " Constrained to <numericoid>"]
+    #[doc = " [RFC4512]"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct LDAPDN(pub LDAPString);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum LDAPMessageProtocolOp {
+        bindRequest(BindRequest),
+        bindResponse(BindResponse),
+        unbindRequest(UnbindRequest),
+        searchRequest(SearchRequest),
+        searchResEntry(SearchResultEntry),
+        searchResDone(SearchResultDone),
+        searchResRef(SearchResultReference),
+        modifyRequest(ModifyRequest),
+        modifyResponse(ModifyResponse),
+        addRequest(AddRequest),
+        addResponse(AddResponse),
+        delRequest(DelRequest),
+        delResponse(DelResponse),
+        modDNRequest(ModifyDNRequest),
+        modDNResponse(ModifyDNResponse),
+        compareRequest(CompareRequest),
+        compareResponse(CompareResponse),
+        abandonRequest(AbandonRequest),
+        extendedReq(ExtendedRequest),
+        extendedResp(ExtendedResponse),
+        #[rasn(extension_addition)]
+        intermediateResponse(IntermediateResponse),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct LDAPMessage {
+        #[rasn(identifier = "messageID")]
+        pub message_id: MessageID,
+        #[rasn(identifier = "protocolOp")]
+        pub protocol_op: LDAPMessageProtocolOp,
+        #[rasn(tag(context, 0))]
+        pub controls: Option<Controls>,
+    }
+    impl LDAPMessage {
+        pub fn new(
+            message_id: MessageID,
+            protocol_op: LDAPMessageProtocolOp,
+            controls: Option<Controls>,
+        ) -> Self {
+            Self {
+                message_id,
+                protocol_op,
+                controls,
+            }
+        }
+    }
+    #[doc = " UTF-8 encoded,"]
+    #[doc = " [ISO10646] characters"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct LDAPOID(pub OctetString);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum LDAPResultResultCode {
+        success = 0,
+        operationsError = 1,
+        protocolError = 2,
+        timeLimitExceeded = 3,
+        sizeLimitExceeded = 4,
+        compareFalse = 5,
+        compareTrue = 6,
+        authMethodNotSupported = 7,
+        strongerAuthRequired = 8,
+        referral = 10,
+        adminLimitExceeded = 11,
+        unavailableCriticalExtension = 12,
+        confidentialityRequired = 13,
+        saslBindInProgress = 14,
+        noSuchAttribute = 16,
+        undefinedAttributeType = 17,
+        inappropriateMatching = 18,
+        constraintViolation = 19,
+        attributeOrValueExists = 20,
+        invalidAttributeSyntax = 21,
+        noSuchObject = 32,
+        aliasProblem = 33,
+        invalidDNSyntax = 34,
+        aliasDereferencingProblem = 36,
+        inappropriateAuthentication = 48,
+        invalidCredentials = 49,
+        insufficientAccessRights = 50,
+        busy = 51,
+        unavailable = 52,
+        unwillingToPerform = 53,
+        loopDetect = 54,
+        namingViolation = 64,
+        objectClassViolation = 65,
+        notAllowedOnNonLeaf = 66,
+        notAllowedOnRDN = 67,
+        entryAlreadyExists = 68,
+        objectClassModsProhibited = 69,
+        affectsMultipleDSAs = 71,
+        other = 80,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct LDAPResult {
+        #[rasn(identifier = "resultCode")]
+        pub result_code: LDAPResultResultCode,
+        #[rasn(identifier = "matchedDN")]
+        pub matched_dn: LDAPDN,
+        #[rasn(identifier = "diagnosticMessage")]
+        pub diagnostic_message: LDAPString,
+        #[rasn(tag(context, 3))]
+        pub referral: Option<Referral>,
+    }
+    impl LDAPResult {
+        pub fn new(
+            result_code: LDAPResultResultCode,
+            matched_dn: LDAPDN,
+            diagnostic_message: LDAPString,
+            referral: Option<Referral>,
+        ) -> Self {
+            Self {
+                result_code,
+                matched_dn,
+                diagnostic_message,
+                referral,
+            }
+        }
+    }
+    #[doc = " (2^^31 - 1)"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct LDAPString(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct MatchingRuleAssertion {
+        #[rasn(tag(context, 1), identifier = "matchingRule")]
+        pub matching_rule: Option<MatchingRuleId>,
+        #[rasn(tag(context, 2), identifier = "type")]
+        pub r_type: Option<AttributeDescription>,
+        #[rasn(tag(context, 3), identifier = "matchValue")]
+        pub match_value: AssertionValue,
+        #[rasn(
+            tag(context, 4),
+            default = "matching_rule_assertion_dn_attributes_default",
+            identifier = "dnAttributes"
+        )]
+        pub dn_attributes: bool,
+    }
+    impl MatchingRuleAssertion {
+        pub fn new(
+            matching_rule: Option<MatchingRuleId>,
+            r_type: Option<AttributeDescription>,
+            match_value: AssertionValue,
+            dn_attributes: bool,
+        ) -> Self {
+            Self {
+                matching_rule,
+                r_type,
+                match_value,
+                dn_attributes,
+            }
+        }
+    }
+    fn matching_rule_assertion_dn_attributes_default() -> bool {
+        false
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MatchingRuleId(pub LDAPString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=2147483647"))]
+    pub struct MessageID(pub u32);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 12))]
+    #[non_exhaustive]
+    pub struct ModifyDNRequest {
+        pub entry: LDAPDN,
+        pub newrdn: RelativeLDAPDN,
+        pub deleteoldrdn: bool,
+        #[rasn(tag(context, 0), identifier = "newSuperior")]
+        pub new_superior: Option<LDAPDN>,
+    }
+    impl ModifyDNRequest {
+        pub fn new(
+            entry: LDAPDN,
+            newrdn: RelativeLDAPDN,
+            deleteoldrdn: bool,
+            new_superior: Option<LDAPDN>,
+        ) -> Self {
+            Self {
+                entry,
+                newrdn,
+                deleteoldrdn,
+                new_superior,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, tag(application, 13))]
+    pub struct ModifyDNResponse(pub LDAPResult);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum AnonymousModifyRequestChangesOperation {
+        add = 0,
+        delete = 1,
+        replace = 2,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    #[non_exhaustive]
+    pub struct AnonymousModifyRequestChanges {
+        pub operation: AnonymousModifyRequestChangesOperation,
+        pub modification: PartialAttribute,
+    }
+    impl AnonymousModifyRequestChanges {
+        pub fn new(
+            operation: AnonymousModifyRequestChangesOperation,
+            modification: PartialAttribute,
+        ) -> Self {
+            Self {
+                operation,
+                modification,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ModifyRequestChanges(pub SequenceOf<AnonymousModifyRequestChanges>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 6))]
+    #[non_exhaustive]
+    pub struct ModifyRequest {
+        pub object: LDAPDN,
+        pub changes: ModifyRequestChanges,
+    }
+    impl ModifyRequest {
+        pub fn new(object: LDAPDN, changes: ModifyRequestChanges) -> Self {
+            Self { object, changes }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, tag(application, 7))]
+    pub struct ModifyResponse(pub LDAPResult);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct PartialAttribute {
+        #[rasn(identifier = "type")]
+        pub r_type: AttributeDescription,
+        pub vals: SetOf<AttributeValue>,
+    }
+    impl PartialAttribute {
+        pub fn new(r_type: AttributeDescription, vals: SetOf<AttributeValue>) -> Self {
+            Self { r_type, vals }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PartialAttributeList(pub SequenceOf<PartialAttribute>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct Referral(pub SequenceOf<URI>);
+    #[doc = " Constrained to <distinguishedName>"]
+    #[doc = " [RFC4514]"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RelativeLDAPDN(pub LDAPString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct SaslCredentials {
+        pub mechanism: LDAPString,
+        pub credentials: Option<OctetString>,
+    }
+    impl SaslCredentials {
+        pub fn new(mechanism: LDAPString, credentials: Option<OctetString>) -> Self {
+            Self {
+                mechanism,
+                credentials,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum SearchRequestScope {
+        baseObject = 0,
+        singleLevel = 1,
+        wholeSubtree = 2,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum SearchRequestDerefAliases {
+        neverDerefAliases = 0,
+        derefInSearching = 1,
+        derefFindingBaseObj = 2,
+        derefAlways = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 3))]
+    #[non_exhaustive]
+    pub struct SearchRequest {
+        #[rasn(identifier = "baseObject")]
+        pub base_object: LDAPDN,
+        pub scope: SearchRequestScope,
+        #[rasn(identifier = "derefAliases")]
+        pub deref_aliases: SearchRequestDerefAliases,
+        #[rasn(value("0..=2147483647"), identifier = "sizeLimit")]
+        pub size_limit: u32,
+        #[rasn(value("0..=2147483647"), identifier = "timeLimit")]
+        pub time_limit: u32,
+        #[rasn(identifier = "typesOnly")]
+        pub types_only: bool,
+        pub filter: Filter,
+        pub attributes: AttributeSelection,
+    }
+    impl SearchRequest {
+        pub fn new(
+            base_object: LDAPDN,
+            scope: SearchRequestScope,
+            deref_aliases: SearchRequestDerefAliases,
+            size_limit: u32,
+            time_limit: u32,
+            types_only: bool,
+            filter: Filter,
+            attributes: AttributeSelection,
+        ) -> Self {
+            Self {
+                base_object,
+                scope,
+                deref_aliases,
+                size_limit,
+                time_limit,
+                types_only,
+                filter,
+                attributes,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, tag(application, 5))]
+    pub struct SearchResultDone(pub LDAPResult);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 4))]
+    #[non_exhaustive]
+    pub struct SearchResultEntry {
+        #[rasn(identifier = "objectName")]
+        pub object_name: LDAPDN,
+        pub attributes: PartialAttributeList,
+    }
+    impl SearchResultEntry {
+        pub fn new(object_name: LDAPDN, attributes: PartialAttributeList) -> Self {
+            Self {
+                object_name,
+                attributes,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."), tag(application, 19))]
+    pub struct SearchResultReference(pub SequenceOf<URI>);
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "CHOICE")]
+    #[non_exhaustive]
+    pub enum AnonymousSubstringFilterSubstrings {
+        #[rasn(tag(context, 0))]
+        initial(AssertionValue),
+        #[rasn(tag(context, 1))]
+        any(AssertionValue),
+        #[rasn(tag(context, 2), identifier = "final")]
+        R_final(AssertionValue),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct SubstringFilterSubstrings(pub SequenceOf<AnonymousSubstringFilterSubstrings>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct SubstringFilter {
+        #[rasn(identifier = "type")]
+        pub r_type: AttributeDescription,
+        pub substrings: SubstringFilterSubstrings,
+    }
+    impl SubstringFilter {
+        pub fn new(r_type: AttributeDescription, substrings: SubstringFilterSubstrings) -> Self {
+            Self { r_type, substrings }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct URI(pub LDAPString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate, tag(application, 2))]
+    pub struct UnbindRequest(pub ());
+    pub static MAX_INT: LazyLock<Integer> = LazyLock::new(|| Integer::from(2147483647));
+}

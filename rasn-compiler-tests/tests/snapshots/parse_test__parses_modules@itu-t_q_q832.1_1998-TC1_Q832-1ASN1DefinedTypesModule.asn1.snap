@@ -1,0 +1,200 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q832.1_1998-TC1_Q832-1ASN1DefinedTypesModule.asn1
+---
+Warnings:
+Unidentified generating bindings for : Unexpectedly encountered unlinked struct-like ASN1 value!
+Unidentified generating bindings for : Unexpectedly encountered unlinked struct-like ASN1 value!
+Unidentified generating bindings for : Unexpectedly encountered unlinked struct-like ASN1 value!
+Unidentified generating bindings for : Unexpectedly encountered unlinked struct-like ASN1 value!
+Unidentified generating bindings for : Unexpectedly encountered unlinked struct-like ASN1 value!
+Unidentified generating bindings for : Unexpectedly encountered unlinked struct-like ASN1 value!
+Unidentified generating bindings for : Unexpectedly encountered unlinked struct-like ASN1 value!
+Unidentified generating bindings for : Unexpectedly encountered unlinked struct-like ASN1 value!
+LinkerError in ASN grammar: Failed to link value with 'SpecificProblems'
+LinkerError in ASN grammar: Failed to link value with 'SpecificProblems'
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+LinkerError in ASN grammar: Failed to link value with 'SpecificProblems'
+LinkerError in ASN grammar: Failed to link value with 'SpecificProblems'
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+LinkerError in ASN grammar: Failed to link value with 'SpecificProblems'
+LinkerError in ASN grammar: Failed to link value with 'SpecificProblems'
+LinkerError in ASN grammar: Failed to link value with 'SpecificProblems'
+LinkerError in ASN grammar: Failed to link value with 'SpecificProblems'
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod q832_1_asn1_defined_types_module {
+    extern crate alloc;
+    use super::asn1_defined_types_module::{NameType, PointerOrNull};
+    use super::attribute_asn1_module::{ProbableCause, SpecificProblems};
+    use super::cmip_1::ObjectInstance;
+    use super::q824_6_asn1_defined_types_module::{TpAndVpciPtrList, VpciValue};
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " MsgNotCompatWithProtState RTMCProtErrCause 7"]
+    #[doc = " other ASN1 definitions in alphabetical order"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AdministrativeReason(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct CheckLspIdentificationResult(pub bool);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=65535"))]
+    pub struct CheckVpciConsistencyInformation(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum CheckVpciConsistencyResult {
+        localReason(()),
+        remoteReason(RemoteReason),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ErrorReason(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Integer(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct LspActivationState(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum PartialAdministrativeState {
+        partialLocked = 0,
+        partialUnlocked = 1,
+        partialShuttingDown = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct RemoteBlockingReasonVb5 {
+        #[rasn(identifier = "errorReason")]
+        pub error_reason: ErrorReason,
+        #[rasn(identifier = "administrativeReason")]
+        pub administrative_reason: AdministrativeReason,
+    }
+    impl RemoteBlockingReasonVb5 {
+        pub fn new(error_reason: ErrorReason, administrative_reason: AdministrativeReason) -> Self {
+            Self {
+                error_reason,
+                administrative_reason,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RemoteBlockingVb5(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RemoteReason(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ResetRtmcResult(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct StartupLspResult(pub Integer);
+    pub static LSP_ACTIVATION_INITIAL: LazyLock<LspActivationState> =
+        LazyLock::new(|| LspActivationState(Integer::from(0)));
+    pub static NON_RECOVERABLE_SSCOPERROR: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***VB51_PROBABLE_CAUSE, &[4u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub static Q832_1_ACTION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q832_1_INFORMATION_MODEL, &[9u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static Q832_1_ATTRIBUTE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q832_1_INFORMATION_MODEL, &[7u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " end of imports"]
+    #[doc = " start of object identifier definitions"]
+    pub static Q832_1_INFORMATION_MODEL: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::const_new(&[0u32, 0u32, 17u32, 832u32, 127u32, 1u32, 0u32]).to_owned()
+    });
+    pub static Q832_1_MANAGED_OBJECT_CLASS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q832_1_INFORMATION_MODEL, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static Q832_1_NAME_BINDING: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q832_1_INFORMATION_MODEL, &[6u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static Q832_1_NOTIFICATION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q832_1_INFORMATION_MODEL, &[10u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static Q832_1_PACKAGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q832_1_INFORMATION_MODEL, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static Q832_1_STANDARD_SPECIFIC_EXTENSION: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***Q832_1_INFORMATION_MODEL, &[0u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static REMOTE_BLOCKING_REASON_VB5_INITIAL_VALUE: LazyLock<RemoteBlockingReasonVb5> =
+        LazyLock::new(|| {
+            RemoteBlockingReasonVb5::new(
+                ErrorReason(Integer::from(0)),
+                AdministrativeReason(Integer::from(2)),
+            )
+        });
+    pub static REMOTE_BLOCKING_VB5_INITIAL_VALUE: LazyLock<RemoteBlockingVb5> =
+        LazyLock::new(|| RemoteBlockingVb5(Integer::from(0)));
+    #[doc = " end of object identifier definitions"]
+    #[doc = " The value assignments for the"]
+    #[doc = " ProbableCause parameter of the"]
+    #[doc = " VB5.1 specific TMN communications alarm notification"]
+    #[doc = " are specified below"]
+    pub static RTMC_PROTOCOL_ERROR: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***VB51_PROBABLE_CAUSE, &[1u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub static RTMC_PROTOCOL_SYNTAX_ERROR: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***VB51_PROBABLE_CAUSE, &[2u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub static RTMC_PROTOCOL_TIME_OUT_ERROR: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***VB51_PROBABLE_CAUSE, &[3u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub static VB51_PROBABLE_CAUSE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q832_1_STANDARD_SPECIFIC_EXTENSION, &[0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static VB51_SPECIFIC_PROBLEMS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q832_1_STANDARD_SPECIFIC_EXTENSION, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+}

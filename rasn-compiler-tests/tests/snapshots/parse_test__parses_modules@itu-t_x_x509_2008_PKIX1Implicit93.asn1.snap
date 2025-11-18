@@ -1,0 +1,59 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x509_2008_PKIX1Implicit93.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod pkix1_implicit93 {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum DisplayText {
+        #[rasn(size("1..=200"))]
+        visibleString(VisibleString),
+        #[rasn(size("1..=200"))]
+        bmpString(BmpString),
+        utf8String(Utf8String),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct NoticeReference {
+        pub organization: DisplayText,
+        #[rasn(identifier = "noticeNumbers")]
+        pub notice_numbers: SequenceOf<Integer>,
+    }
+    impl NoticeReference {
+        pub fn new(organization: DisplayText, notice_numbers: SequenceOf<Integer>) -> Self {
+            Self {
+                organization,
+                notice_numbers,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct UserNotice {
+        #[rasn(identifier = "noticeRef")]
+        pub notice_ref: Option<NoticeReference>,
+        #[rasn(identifier = "explicitText")]
+        pub explicit_text: Option<DisplayText>,
+    }
+    impl UserNotice {
+        pub fn new(
+            notice_ref: Option<NoticeReference>,
+            explicit_text: Option<DisplayText>,
+        ) -> Self {
+            Self {
+                notice_ref,
+                explicit_text,
+            }
+        }
+    }
+}

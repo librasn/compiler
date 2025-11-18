@@ -1,0 +1,1541 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q2763_1995-Amd1_B-ISUPMessages.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod b_isupmessages {
+    extern crate alloc;
+    use super::b_isupinformation_element_headers::{
+        MessageInstructionIndicators, ParameterInstructionIndicators,
+    };
+    use super::b_isupparameters::{
+        AALParameters, ATMCellRate, AccessDeliveryInformation, AdditionalCallingPartyNumber,
+        AdditionalConnectedNumber, AutomaticCongestionLevel, BackwardNarrowbandIWInd,
+        BroadbandBearerCapability, BroadbandHighLayerInfo, BroadbandLowLayerInfo,
+        CallDiversionInformation, CallDiversionMayOccur, CallHistoryInformation, CalledPartyNumber,
+        CalledPartySubaddress, CalledPartysIndicators, CallingPartyNumber, CallingPartySubaddress,
+        CallingPartysCategory, CauseIndicators, ChargeInd, ClosedUserGroupInformation,
+        ConnectedLineIDRequest, ConnectedNumber, ConnectedSubaddress, ConnectionElementIdentifier,
+        ConsistencyCheckResultInfo, DestinationSignallingID, EchoControlInformation,
+        ForwardNarrowbandIWInd, InBandInformationInd, LocationNumber, MLPPPrecedence,
+        MLPPUserInformation, MaxEndToEndTransitDelay, NarrowbandBearerCapability,
+        NarrowbandHighLayerCompa, NarrowbandLowLayerCompa, NationalInternationalCallInd,
+        Notification, OAMTrafficDescriptor, OriginalCalledNumber, OriginationISCPointCode,
+        OriginationSignallingID, ProgressIndicator, PropagationDelayCounter, RedirectingNumber,
+        RedirectionInformation, RedirectionNumber, RedirectionNumberRestriction, ResourceID,
+        SegmentationIndicator, SubsequentNumber, SuspendResumeIndicators, TransitNetworkSelection,
+        UserToUserIndicators, UserToUserInformation,
+    };
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ACM {
+        #[rasn(identifier = "messageInstructionIndicators")]
+        pub message_instruction_indicators: MessageInstructionIndicators,
+        #[rasn(identifier = "aCM-MessageContent")]
+        pub a_cm_message_content: ACMMessageContent,
+    }
+    impl ACM {
+        pub fn new(
+            message_instruction_indicators: MessageInstructionIndicators,
+            a_cm_message_content: ACMMessageContent,
+        ) -> Self {
+            Self {
+                message_instruction_indicators,
+                a_cm_message_content,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "ACM-MessageContent")]
+    pub struct ACMMessageContent {
+        #[rasn(tag(context, 46), identifier = "accessDeliveryInformation")]
+        pub access_delivery_information: Option<AccessDeliveryInformation>,
+        #[rasn(tag(context, 20), identifier = "backwardNarrowbandIWInd")]
+        pub backward_narrowband_iwind: Option<BackwardNarrowbandIWInd>,
+        #[rasn(tag(context, 54), identifier = "callDiversionInformation")]
+        pub call_diversion_information: Option<CallDiversionInformation>,
+        #[rasn(tag(context, 38), identifier = "callDiversionMayOccur")]
+        pub call_diversion_may_occur: Option<CallDiversionMayOccur>,
+        #[rasn(tag(context, 23), identifier = "calledPartysIndicators")]
+        pub called_partys_indicators: Option<CalledPartysIndicators>,
+        #[rasn(tag(context, 18), identifier = "causeIndicators")]
+        pub cause_indicators: Option<CauseIndicators>,
+        #[rasn(tag(context, 25), identifier = "chargeInd")]
+        pub charge_ind: Option<ChargeInd>,
+        #[rasn(tag(context, 3), identifier = "destinationSignallingID")]
+        pub destination_signalling_id: Option<DestinationSignallingID>,
+        #[rasn(tag(context, 55), identifier = "echoControlInformation")]
+        pub echo_control_information: Option<EchoControlInformation>,
+        #[rasn(tag(context, 31), identifier = "inBandInformationInd")]
+        pub in_band_information_ind: Option<InBandInformationInd>,
+        #[rasn(tag(context, 73), identifier = "mLPPUserInformation")]
+        pub m_lppuser_information: Option<MLPPUserInformation>,
+        #[rasn(tag(context, 29), identifier = "narrowbandBearerCapability")]
+        pub narrowband_bearer_capability: Option<NarrowbandBearerCapability>,
+        #[rasn(tag(context, 52), identifier = "narrowbandHighLayerCompa")]
+        pub narrowband_high_layer_compa: Option<NarrowbandHighLayerCompa>,
+        #[rasn(tag(context, 44))]
+        pub notification: Option<SequenceOf<Notification>>,
+        #[rasn(tag(context, 53), identifier = "progressIndicator")]
+        pub progress_indicator: Option<ProgressIndicator>,
+        #[rasn(tag(context, 12), identifier = "redirectionNumber")]
+        pub redirection_number: Option<RedirectionNumber>,
+        #[rasn(tag(context, 64), identifier = "redirectionNumberRestriction")]
+        pub redirection_number_restriction: Option<RedirectionNumberRestriction>,
+        #[rasn(tag(context, 58), identifier = "segmentationIndicator")]
+        pub segmentation_indicator: Option<SegmentationIndicator>,
+        #[rasn(tag(context, 42), identifier = "userToUserIndicators")]
+        pub user_to_user_indicators: Option<UserToUserIndicators>,
+        #[rasn(tag(context, 32), identifier = "userToUserInformation")]
+        pub user_to_user_information: Option<UserToUserInformation>,
+    }
+    impl ACMMessageContent {
+        pub fn new(
+            access_delivery_information: Option<AccessDeliveryInformation>,
+            backward_narrowband_iwind: Option<BackwardNarrowbandIWInd>,
+            call_diversion_information: Option<CallDiversionInformation>,
+            call_diversion_may_occur: Option<CallDiversionMayOccur>,
+            called_partys_indicators: Option<CalledPartysIndicators>,
+            cause_indicators: Option<CauseIndicators>,
+            charge_ind: Option<ChargeInd>,
+            destination_signalling_id: Option<DestinationSignallingID>,
+            echo_control_information: Option<EchoControlInformation>,
+            in_band_information_ind: Option<InBandInformationInd>,
+            m_lppuser_information: Option<MLPPUserInformation>,
+            narrowband_bearer_capability: Option<NarrowbandBearerCapability>,
+            narrowband_high_layer_compa: Option<NarrowbandHighLayerCompa>,
+            notification: Option<SequenceOf<Notification>>,
+            progress_indicator: Option<ProgressIndicator>,
+            redirection_number: Option<RedirectionNumber>,
+            redirection_number_restriction: Option<RedirectionNumberRestriction>,
+            segmentation_indicator: Option<SegmentationIndicator>,
+            user_to_user_indicators: Option<UserToUserIndicators>,
+            user_to_user_information: Option<UserToUserInformation>,
+        ) -> Self {
+            Self {
+                access_delivery_information,
+                backward_narrowband_iwind,
+                call_diversion_information,
+                call_diversion_may_occur,
+                called_partys_indicators,
+                cause_indicators,
+                charge_ind,
+                destination_signalling_id,
+                echo_control_information,
+                in_band_information_ind,
+                m_lppuser_information,
+                narrowband_bearer_capability,
+                narrowband_high_layer_compa,
+                notification,
+                progress_indicator,
+                redirection_number,
+                redirection_number_restriction,
+                segmentation_indicator,
+                user_to_user_indicators,
+                user_to_user_information,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ANM {
+        #[rasn(identifier = "messageInstructionIndicators")]
+        pub message_instruction_indicators: MessageInstructionIndicators,
+        #[rasn(identifier = "aNM-MessageContent")]
+        pub a_nm_message_content: ANMMessageContent,
+    }
+    impl ANM {
+        pub fn new(
+            message_instruction_indicators: MessageInstructionIndicators,
+            a_nm_message_content: ANMMessageContent,
+        ) -> Self {
+            Self {
+                message_instruction_indicators,
+                a_nm_message_content,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "ANM-MessageContent")]
+    pub struct ANMMessageContent {
+        #[rasn(tag(context, 71), identifier = "aALParameters")]
+        pub a_alparameters: Option<AALParameters>,
+        #[rasn(tag(context, 46), identifier = "accessDeliveryInformation")]
+        pub access_delivery_information: Option<AccessDeliveryInformation>,
+        #[rasn(tag(context, 17), identifier = "additionalConnectedNumber")]
+        pub additional_connected_number: Option<AdditionalConnectedNumber>,
+        #[rasn(tag(context, 20), identifier = "backwardNarrowbandIWInd")]
+        pub backward_narrowband_iwind: Option<BackwardNarrowbandIWInd>,
+        #[rasn(tag(context, 68), identifier = "broadbandLowLayerInfo")]
+        pub broadband_low_layer_info: Option<BroadbandLowLayerInfo>,
+        #[rasn(tag(context, 45), identifier = "callHistoryInformation")]
+        pub call_history_information: Option<CallHistoryInformation>,
+        #[rasn(tag(context, 25), identifier = "chargeInd")]
+        pub charge_ind: Option<ChargeInd>,
+        #[rasn(tag(context, 33), identifier = "connectedNumber")]
+        pub connected_number: Option<ConnectedNumber>,
+        #[rasn(tag(context, 36), identifier = "connectedSubaddress")]
+        pub connected_subaddress: Option<ConnectedSubaddress>,
+        #[rasn(tag(context, 3), identifier = "destinationSignallingID")]
+        pub destination_signalling_id: Option<DestinationSignallingID>,
+        #[rasn(tag(context, 55), identifier = "echoControlInformation")]
+        pub echo_control_information: Option<EchoControlInformation>,
+        #[rasn(tag(context, 31), identifier = "inBandInformationInd")]
+        pub in_band_information_ind: Option<InBandInformationInd>,
+        #[rasn(tag(context, 29), identifier = "narrowbandBearerCapability")]
+        pub narrowband_bearer_capability: Option<NarrowbandBearerCapability>,
+        #[rasn(tag(context, 52), identifier = "narrowbandHighLayerCompa")]
+        pub narrowband_high_layer_compa: Option<NarrowbandHighLayerCompa>,
+        #[rasn(tag(context, 37), identifier = "narrowbandLowLayerCompa")]
+        pub narrowband_low_layer_compa: Option<NarrowbandLowLayerCompa>,
+        #[rasn(tag(context, 44))]
+        pub notification: Option<SequenceOf<Notification>>,
+        #[rasn(tag(context, 72), identifier = "oAMTrafficDescriptor")]
+        pub o_amtraffic_descriptor: Option<OAMTrafficDescriptor>,
+        #[rasn(tag(context, 53), identifier = "progressIndicator")]
+        pub progress_indicator: Option<ProgressIndicator>,
+        #[rasn(tag(context, 64), identifier = "redirectionNumberRestriction")]
+        pub redirection_number_restriction: Option<RedirectionNumberRestriction>,
+        #[rasn(tag(context, 58), identifier = "segmentationIndicator")]
+        pub segmentation_indicator: Option<SegmentationIndicator>,
+        #[rasn(tag(context, 42), identifier = "userToUserIndicators")]
+        pub user_to_user_indicators: Option<UserToUserIndicators>,
+        #[rasn(tag(context, 32), identifier = "userToUserInformation")]
+        pub user_to_user_information: Option<UserToUserInformation>,
+    }
+    impl ANMMessageContent {
+        pub fn new(
+            a_alparameters: Option<AALParameters>,
+            access_delivery_information: Option<AccessDeliveryInformation>,
+            additional_connected_number: Option<AdditionalConnectedNumber>,
+            backward_narrowband_iwind: Option<BackwardNarrowbandIWInd>,
+            broadband_low_layer_info: Option<BroadbandLowLayerInfo>,
+            call_history_information: Option<CallHistoryInformation>,
+            charge_ind: Option<ChargeInd>,
+            connected_number: Option<ConnectedNumber>,
+            connected_subaddress: Option<ConnectedSubaddress>,
+            destination_signalling_id: Option<DestinationSignallingID>,
+            echo_control_information: Option<EchoControlInformation>,
+            in_band_information_ind: Option<InBandInformationInd>,
+            narrowband_bearer_capability: Option<NarrowbandBearerCapability>,
+            narrowband_high_layer_compa: Option<NarrowbandHighLayerCompa>,
+            narrowband_low_layer_compa: Option<NarrowbandLowLayerCompa>,
+            notification: Option<SequenceOf<Notification>>,
+            o_amtraffic_descriptor: Option<OAMTrafficDescriptor>,
+            progress_indicator: Option<ProgressIndicator>,
+            redirection_number_restriction: Option<RedirectionNumberRestriction>,
+            segmentation_indicator: Option<SegmentationIndicator>,
+            user_to_user_indicators: Option<UserToUserIndicators>,
+            user_to_user_information: Option<UserToUserInformation>,
+        ) -> Self {
+            Self {
+                a_alparameters,
+                access_delivery_information,
+                additional_connected_number,
+                backward_narrowband_iwind,
+                broadband_low_layer_info,
+                call_history_information,
+                charge_ind,
+                connected_number,
+                connected_subaddress,
+                destination_signalling_id,
+                echo_control_information,
+                in_band_information_ind,
+                narrowband_bearer_capability,
+                narrowband_high_layer_compa,
+                narrowband_low_layer_compa,
+                notification,
+                o_amtraffic_descriptor,
+                progress_indicator,
+                redirection_number_restriction,
+                segmentation_indicator,
+                user_to_user_indicators,
+                user_to_user_information,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "B-ISUPMessage")]
+    pub enum BISUPMessage {
+        #[rasn(tag(context, 6))]
+        acm(ACM),
+        #[rasn(tag(context, 9))]
+        anm(ANM),
+        #[rasn(tag(context, 21))]
+        bla(BLA),
+        #[rasn(tag(context, 19))]
+        blo(BLO),
+        #[rasn(tag(context, 23))]
+        cce(CCE),
+        #[rasn(tag(context, 24))]
+        ccea(CCEA),
+        #[rasn(tag(context, 5))]
+        ccr(CCR),
+        #[rasn(tag(context, 17))]
+        ccra(CCRA),
+        #[rasn(tag(context, 47))]
+        cfn(CFN),
+        #[rasn(tag(context, 44))]
+        cpg(CPG),
+        #[rasn(tag(context, 8))]
+        fot(FOT),
+        #[rasn(tag(context, 10))]
+        iaa(IAA),
+        #[rasn(tag(context, 1))]
+        iam(IAM),
+        #[rasn(tag(context, 11))]
+        iar(IAR),
+        #[rasn(tag(context, 50))]
+        nrm(NRM),
+        #[rasn(tag(context, 15))]
+        ram(RAM),
+        #[rasn(tag(context, 12))]
+        rel(REL),
+        #[rasn(tag(context, 14))]
+        res(RES),
+        #[rasn(tag(context, 16))]
+        rlc(RLC),
+        #[rasn(tag(context, 18))]
+        rsm(RSM),
+        #[rasn(tag(context, 2))]
+        sam(SAM),
+        #[rasn(tag(context, 56))]
+        sgm(SGM),
+        #[rasn(tag(context, 13))]
+        sus(SUS),
+        #[rasn(tag(context, 22))]
+        uba(UBA),
+        #[rasn(tag(context, 20))]
+        ubl(UBL),
+        #[rasn(tag(context, 53))]
+        upa(UPA),
+        #[rasn(tag(context, 52))]
+        upt(UPT),
+        #[rasn(tag(context, 45))]
+        usr(USR),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct BLA {
+        #[rasn(identifier = "messageInstructionIndicators")]
+        pub message_instruction_indicators: MessageInstructionIndicators,
+        #[rasn(identifier = "bLA-MessageContent")]
+        pub b_la_message_content: BLAMessageContent,
+    }
+    impl BLA {
+        pub fn new(
+            message_instruction_indicators: MessageInstructionIndicators,
+            b_la_message_content: BLAMessageContent,
+        ) -> Self {
+            Self {
+                message_instruction_indicators,
+                b_la_message_content,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "BLA-MessageContent")]
+    pub struct BLAMessageContent {
+        #[rasn(tag(context, 3), identifier = "destinationSignallingID")]
+        pub destination_signalling_id: Option<DestinationSignallingID>,
+    }
+    impl BLAMessageContent {
+        pub fn new(destination_signalling_id: Option<DestinationSignallingID>) -> Self {
+            Self {
+                destination_signalling_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct BLO {
+        #[rasn(identifier = "messageInstructionIndicators")]
+        pub message_instruction_indicators: MessageInstructionIndicators,
+        #[rasn(identifier = "bLO-MessageContent")]
+        pub b_lo_message_content: BLOMessageContent,
+    }
+    impl BLO {
+        pub fn new(
+            message_instruction_indicators: MessageInstructionIndicators,
+            b_lo_message_content: BLOMessageContent,
+        ) -> Self {
+            Self {
+                message_instruction_indicators,
+                b_lo_message_content,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "BLO-MessageContent")]
+    pub struct BLOMessageContent {
+        #[rasn(tag(context, 2), identifier = "originationSignallingID")]
+        pub origination_signalling_id: Option<OriginationSignallingID>,
+        #[rasn(tag(context, 49), identifier = "resourceID")]
+        pub resource_id: Option<ResourceID>,
+    }
+    impl BLOMessageContent {
+        pub fn new(
+            origination_signalling_id: Option<OriginationSignallingID>,
+            resource_id: Option<ResourceID>,
+        ) -> Self {
+            Self {
+                origination_signalling_id,
+                resource_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct CCE {
+        #[rasn(identifier = "messageInstructionIndicators")]
+        pub message_instruction_indicators: MessageInstructionIndicators,
+        #[rasn(identifier = "cCE-MessageContent")]
+        pub c_ce_message_content: CCEMessageContent,
+    }
+    impl CCE {
+        pub fn new(
+            message_instruction_indicators: MessageInstructionIndicators,
+            c_ce_message_content: CCEMessageContent,
+        ) -> Self {
+            Self {
+                message_instruction_indicators,
+                c_ce_message_content,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "CCE-MessageContent")]
+    pub struct CCEMessageContent {
+        #[rasn(tag(context, 3), identifier = "destinationSignallingID")]
+        pub destination_signalling_id: Option<DestinationSignallingID>,
+    }
+    impl CCEMessageContent {
+        pub fn new(destination_signalling_id: Option<DestinationSignallingID>) -> Self {
+            Self {
+                destination_signalling_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct CCEA {
+        #[rasn(identifier = "messageInstructionIndicators")]
+        pub message_instruction_indicators: MessageInstructionIndicators,
+        #[rasn(identifier = "cCEA-MessageContent")]
+        pub c_cea_message_content: CCEAMessageContent,
+    }
+    impl CCEA {
+        pub fn new(
+            message_instruction_indicators: MessageInstructionIndicators,
+            c_cea_message_content: CCEAMessageContent,
+        ) -> Self {
+            Self {
+                message_instruction_indicators,
+                c_cea_message_content,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "CCEA-MessageContent")]
+    pub struct CCEAMessageContent {
+        #[rasn(tag(context, 3), identifier = "destinationSignallingID")]
+        pub destination_signalling_id: Option<DestinationSignallingID>,
+        #[rasn(tag(context, 74), identifier = "consistencyCheckResultInfo")]
+        pub consistency_check_result_info: Option<ConsistencyCheckResultInfo>,
+    }
+    impl CCEAMessageContent {
+        pub fn new(
+            destination_signalling_id: Option<DestinationSignallingID>,
+            consistency_check_result_info: Option<ConsistencyCheckResultInfo>,
+        ) -> Self {
+            Self {
+                destination_signalling_id,
+                consistency_check_result_info,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct CCR {
+        #[rasn(identifier = "messageInstructionIndicators")]
+        pub message_instruction_indicators: MessageInstructionIndicators,
+        #[rasn(identifier = "cCR-MessageContent")]
+        pub c_cr_message_content: CCRMessageContent,
+    }
+    impl CCR {
+        pub fn new(
+            message_instruction_indicators: MessageInstructionIndicators,
+            c_cr_message_content: CCRMessageContent,
+        ) -> Self {
+            Self {
+                message_instruction_indicators,
+                c_cr_message_content,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "CCR-MessageContent")]
+    pub struct CCRMessageContent {
+        #[rasn(tag(context, 2), identifier = "originationSignallingID")]
+        pub origination_signalling_id: Option<OriginationSignallingID>,
+        #[rasn(tag(context, 49), identifier = "resourceID")]
+        pub resource_id: Option<ResourceID>,
+    }
+    impl CCRMessageContent {
+        pub fn new(
+            origination_signalling_id: Option<OriginationSignallingID>,
+            resource_id: Option<ResourceID>,
+        ) -> Self {
+            Self {
+                origination_signalling_id,
+                resource_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct CCRA {
+        #[rasn(identifier = "messageInstructionIndicators")]
+        pub message_instruction_indicators: MessageInstructionIndicators,
+        #[rasn(identifier = "cCRA-MessageContent")]
+        pub c_cra_message_content: CCRAMessageContent,
+    }
+    impl CCRA {
+        pub fn new(
+            message_instruction_indicators: MessageInstructionIndicators,
+            c_cra_message_content: CCRAMessageContent,
+        ) -> Self {
+            Self {
+                message_instruction_indicators,
+                c_cra_message_content,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "CCRA-MessageContent")]
+    pub struct CCRAMessageContent {
+        #[rasn(tag(context, 3), identifier = "destinationSignallingID")]
+        pub destination_signalling_id: Option<DestinationSignallingID>,
+        #[rasn(tag(context, 2), identifier = "originationSignallingID")]
+        pub origination_signalling_id: Option<OriginationSignallingID>,
+    }
+    impl CCRAMessageContent {
+        pub fn new(
+            destination_signalling_id: Option<DestinationSignallingID>,
+            origination_signalling_id: Option<OriginationSignallingID>,
+        ) -> Self {
+            Self {
+                destination_signalling_id,
+                origination_signalling_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct CFN {
+        #[rasn(identifier = "messageInstructionIndicators")]
+        pub message_instruction_indicators: MessageInstructionIndicators,
+        #[rasn(identifier = "cFN-MessageContent")]
+        pub c_fn_message_content: CFNMessageContent,
+    }
+    impl CFN {
+        pub fn new(
+            message_instruction_indicators: MessageInstructionIndicators,
+            c_fn_message_content: CFNMessageContent,
+        ) -> Self {
+            Self {
+                message_instruction_indicators,
+                c_fn_message_content,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "CFN-MessageContent")]
+    pub struct CFNMessageContent {
+        #[rasn(tag(context, 18), identifier = "causeIndicators")]
+        pub cause_indicators: Option<CauseIndicators>,
+        #[rasn(tag(context, 3), identifier = "destinationSignallingID")]
+        pub destination_signalling_id: Option<DestinationSignallingID>,
+    }
+    impl CFNMessageContent {
+        pub fn new(
+            cause_indicators: Option<CauseIndicators>,
+            destination_signalling_id: Option<DestinationSignallingID>,
+        ) -> Self {
+            Self {
+                cause_indicators,
+                destination_signalling_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct CPG {
+        #[rasn(identifier = "messageInstructionIndicators")]
+        pub message_instruction_indicators: MessageInstructionIndicators,
+        #[rasn(identifier = "cPG-MessageContent")]
+        pub c_pg_message_content: CPGMessageContent,
+    }
+    impl CPG {
+        pub fn new(
+            message_instruction_indicators: MessageInstructionIndicators,
+            c_pg_message_content: CPGMessageContent,
+        ) -> Self {
+            Self {
+                message_instruction_indicators,
+                c_pg_message_content,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "CPG-MessageContent")]
+    pub struct CPGMessageContent {
+        #[rasn(tag(context, 46), identifier = "accessDeliveryInformation")]
+        pub access_delivery_information: Option<AccessDeliveryInformation>,
+        #[rasn(tag(context, 20), identifier = "backwardNarrowbandIWInd")]
+        pub backward_narrowband_iwind: Option<BackwardNarrowbandIWInd>,
+        #[rasn(tag(context, 54), identifier = "callDiversionInformation")]
+        pub call_diversion_information: Option<CallDiversionInformation>,
+        #[rasn(tag(context, 38), identifier = "callDiversionMayOccur")]
+        pub call_diversion_may_occur: Option<CallDiversionMayOccur>,
+        #[rasn(tag(context, 23), identifier = "calledPartysIndicators")]
+        pub called_partys_indicators: Option<CalledPartysIndicators>,
+        #[rasn(tag(context, 18), identifier = "causeIndicators")]
+        pub cause_indicators: Option<CauseIndicators>,
+        #[rasn(tag(context, 25), identifier = "chargeInd")]
+        pub charge_ind: Option<ChargeInd>,
+        #[rasn(tag(context, 3), identifier = "destinationSignallingID")]
+        pub destination_signalling_id: Option<DestinationSignallingID>,
+        #[rasn(tag(context, 31), identifier = "inBandInformationInd")]
+        pub in_band_information_ind: Option<InBandInformationInd>,
+        #[rasn(tag(context, 29), identifier = "narrowbandBearerCapability")]
+        pub narrowband_bearer_capability: Option<NarrowbandBearerCapability>,
+        #[rasn(tag(context, 52), identifier = "narrowbandHighLayerCompa")]
+        pub narrowband_high_layer_compa: Option<NarrowbandHighLayerCompa>,
+        #[rasn(tag(context, 44))]
+        pub notification: Option<SequenceOf<Notification>>,
+        #[rasn(tag(context, 53), identifier = "progressIndicator")]
+        pub progress_indicator: Option<ProgressIndicator>,
+        #[rasn(tag(context, 12), identifier = "redirectionNumber")]
+        pub redirection_number: Option<RedirectionNumber>,
+        #[rasn(tag(context, 64), identifier = "redirectionNumberRestriction")]
+        pub redirection_number_restriction: Option<RedirectionNumberRestriction>,
+        #[rasn(tag(context, 58), identifier = "segmentationIndicator")]
+        pub segmentation_indicator: Option<SegmentationIndicator>,
+        #[rasn(tag(context, 42), identifier = "userToUserIndicators")]
+        pub user_to_user_indicators: Option<UserToUserIndicators>,
+        #[rasn(tag(context, 32), identifier = "userToUserInformation")]
+        pub user_to_user_information: Option<UserToUserInformation>,
+    }
+    impl CPGMessageContent {
+        pub fn new(
+            access_delivery_information: Option<AccessDeliveryInformation>,
+            backward_narrowband_iwind: Option<BackwardNarrowbandIWInd>,
+            call_diversion_information: Option<CallDiversionInformation>,
+            call_diversion_may_occur: Option<CallDiversionMayOccur>,
+            called_partys_indicators: Option<CalledPartysIndicators>,
+            cause_indicators: Option<CauseIndicators>,
+            charge_ind: Option<ChargeInd>,
+            destination_signalling_id: Option<DestinationSignallingID>,
+            in_band_information_ind: Option<InBandInformationInd>,
+            narrowband_bearer_capability: Option<NarrowbandBearerCapability>,
+            narrowband_high_layer_compa: Option<NarrowbandHighLayerCompa>,
+            notification: Option<SequenceOf<Notification>>,
+            progress_indicator: Option<ProgressIndicator>,
+            redirection_number: Option<RedirectionNumber>,
+            redirection_number_restriction: Option<RedirectionNumberRestriction>,
+            segmentation_indicator: Option<SegmentationIndicator>,
+            user_to_user_indicators: Option<UserToUserIndicators>,
+            user_to_user_information: Option<UserToUserInformation>,
+        ) -> Self {
+            Self {
+                access_delivery_information,
+                backward_narrowband_iwind,
+                call_diversion_information,
+                call_diversion_may_occur,
+                called_partys_indicators,
+                cause_indicators,
+                charge_ind,
+                destination_signalling_id,
+                in_band_information_ind,
+                narrowband_bearer_capability,
+                narrowband_high_layer_compa,
+                notification,
+                progress_indicator,
+                redirection_number,
+                redirection_number_restriction,
+                segmentation_indicator,
+                user_to_user_indicators,
+                user_to_user_information,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct FOT {
+        #[rasn(identifier = "messageInstructionIndicators")]
+        pub message_instruction_indicators: MessageInstructionIndicators,
+        #[rasn(identifier = "fOT-MessageContent")]
+        pub f_ot_message_content: FOTMessageContent,
+    }
+    impl FOT {
+        pub fn new(
+            message_instruction_indicators: MessageInstructionIndicators,
+            f_ot_message_content: FOTMessageContent,
+        ) -> Self {
+            Self {
+                message_instruction_indicators,
+                f_ot_message_content,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "FOT-MessageContent")]
+    pub struct FOTMessageContent {
+        #[rasn(tag(context, 3), identifier = "destinationSignallingID")]
+        pub destination_signalling_id: Option<DestinationSignallingID>,
+    }
+    impl FOTMessageContent {
+        pub fn new(destination_signalling_id: Option<DestinationSignallingID>) -> Self {
+            Self {
+                destination_signalling_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct IAA {
+        #[rasn(identifier = "messageInstructionIndicators")]
+        pub message_instruction_indicators: MessageInstructionIndicators,
+        #[rasn(identifier = "iAA-MessageContent")]
+        pub i_aa_message_content: IAAMessageContent,
+    }
+    impl IAA {
+        pub fn new(
+            message_instruction_indicators: MessageInstructionIndicators,
+            i_aa_message_content: IAAMessageContent,
+        ) -> Self {
+            Self {
+                message_instruction_indicators,
+                i_aa_message_content,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "IAA-MessageContent")]
+    pub struct IAAMessageContent {
+        #[rasn(tag(context, 6), identifier = "connectionElementIdentifier")]
+        pub connection_element_identifier: Option<ConnectionElementIdentifier>,
+        #[rasn(tag(context, 3), identifier = "destinationSignallingID")]
+        pub destination_signalling_id: Option<DestinationSignallingID>,
+        #[rasn(tag(context, 2), identifier = "originationSignallingID")]
+        pub origination_signalling_id: Option<OriginationSignallingID>,
+    }
+    impl IAAMessageContent {
+        pub fn new(
+            connection_element_identifier: Option<ConnectionElementIdentifier>,
+            destination_signalling_id: Option<DestinationSignallingID>,
+            origination_signalling_id: Option<OriginationSignallingID>,
+        ) -> Self {
+            Self {
+                connection_element_identifier,
+                destination_signalling_id,
+                origination_signalling_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct IAM {
+        #[rasn(identifier = "messageInstructionIndicators")]
+        pub message_instruction_indicators: MessageInstructionIndicators,
+        #[rasn(identifier = "iAM-MessageContent")]
+        pub i_am_message_content: IAMMessageContent,
+    }
+    impl IAM {
+        pub fn new(
+            message_instruction_indicators: MessageInstructionIndicators,
+            i_am_message_content: IAMMessageContent,
+        ) -> Self {
+            Self {
+                message_instruction_indicators,
+                i_am_message_content,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "IAM-MessageContent")]
+    pub struct IAMMessageContent {
+        #[rasn(tag(context, 71), identifier = "aALParameters")]
+        pub a_alparameters: Option<AALParameters>,
+        #[rasn(tag(context, 16), identifier = "additionalCallingPartyNumber")]
+        pub additional_calling_party_number: Option<AdditionalCallingPartyNumber>,
+        #[rasn(tag(context, 8), identifier = "aTMCellRate")]
+        pub a_tmcell_rate: Option<ATMCellRate>,
+        #[rasn(tag(context, 67), identifier = "broadbandBearerCapability")]
+        pub broadband_bearer_capability: Option<BroadbandBearerCapability>,
+        #[rasn(tag(context, 72), identifier = "broadbandHighLayerInfo")]
+        pub broadband_high_layer_info: Option<BroadbandHighLayerInfo>,
+        #[rasn(tag(context, 68), identifier = "broadbandLowLayerInfo")]
+        pub broadband_low_layer_info: Option<BroadbandLowLayerInfo>,
+        #[rasn(tag(context, 4), identifier = "calledPartyNumber")]
+        pub called_party_number: Option<CalledPartyNumber>,
+        #[rasn(tag(context, 21), identifier = "calledPartySubaddress")]
+        pub called_party_subaddress: Option<CalledPartySubaddress>,
+        #[rasn(tag(context, 10), identifier = "callingPartyNumber")]
+        pub calling_party_number: Option<CallingPartyNumber>,
+        #[rasn(tag(context, 22), identifier = "callingPartySubaddress")]
+        pub calling_party_subaddress: Option<CallingPartySubaddress>,
+        #[rasn(tag(context, 9), identifier = "callingPartysCategory")]
+        pub calling_partys_category: Option<CallingPartysCategory>,
+        #[rasn(tag(context, 26), identifier = "closedUserGroupInformation")]
+        pub closed_user_group_information: Option<ClosedUserGroupInformation>,
+        #[rasn(tag(context, 27), identifier = "connectedLineIDRequest")]
+        pub connected_line_idrequest: Option<ConnectedLineIDRequest>,
+        #[rasn(tag(context, 6), identifier = "connectionElementIdentifier")]
+        pub connection_element_identifier: Option<ConnectionElementIdentifier>,
+        #[rasn(tag(context, 55), identifier = "echoControlInformation")]
+        pub echo_control_information: Option<EchoControlInformation>,
+        #[rasn(tag(context, 28), identifier = "forwardNarrowbandIWInd")]
+        pub forward_narrowband_iwind: Option<ForwardNarrowbandIWInd>,
+        #[rasn(tag(context, 63), identifier = "locationNumber")]
+        pub location_number: Option<LocationNumber>,
+        #[rasn(tag(context, 7), identifier = "maxEndToEndTransitDelay")]
+        pub max_end_to_end_transit_delay: Option<MaxEndToEndTransitDelay>,
+        #[rasn(tag(context, 48), identifier = "mLPPPrecedence")]
+        pub m_lppprecedence: Option<MLPPPrecedence>,
+        #[rasn(tag(context, 29), identifier = "narrowbandBearerCapability")]
+        pub narrowband_bearer_capability: Option<NarrowbandBearerCapability>,
+        #[rasn(tag(context, 52), identifier = "narrowbandHighLayerCompa")]
+        pub narrowband_high_layer_compa: Option<NarrowbandHighLayerCompa>,
+        #[rasn(tag(context, 22), identifier = "narrowbandLowLayerCompa")]
+        pub narrowband_low_layer_compa: Option<NarrowbandLowLayerCompa>,
+        #[rasn(tag(context, 41), identifier = "nationalInternationalCallInd")]
+        pub national_international_call_ind: Option<NationalInternationalCallInd>,
+        #[rasn(tag(context, 44))]
+        pub notification: Option<SequenceOf<Notification>>,
+        #[rasn(tag(context, 72), identifier = "oAMTrafficDescriptor")]
+        pub o_amtraffic_descriptor: Option<OAMTrafficDescriptor>,
+        #[rasn(tag(context, 40), identifier = "originalCalledNumber")]
+        pub original_called_number: Option<OriginalCalledNumber>,
+        #[rasn(tag(context, 43), identifier = "originationISCPointCode")]
+        pub origination_iscpoint_code: Option<OriginationISCPointCode>,
+        #[rasn(tag(context, 2), identifier = "originationSignallingID")]
+        pub origination_signalling_id: Option<OriginationSignallingID>,
+        #[rasn(tag(context, 53), identifier = "progressIndicator")]
+        pub progress_indicator: Option<ProgressIndicator>,
+        #[rasn(tag(context, 46), identifier = "propagationDelayCounter")]
+        pub propagation_delay_counter: Option<PropagationDelayCounter>,
+        #[rasn(tag(context, 31), identifier = "redirectingNumber")]
+        pub redirecting_number: Option<RedirectingNumber>,
+        #[rasn(tag(context, 19), identifier = "redirectionInformation")]
+        pub redirection_information: Option<RedirectionInformation>,
+        #[rasn(tag(context, 58), identifier = "segmentationIndicator")]
+        pub segmentation_indicator: Option<SegmentationIndicator>,
+        #[rasn(tag(context, 35), identifier = "transitNetworkSelection")]
+        pub transit_network_selection: Option<TransitNetworkSelection>,
+        #[rasn(tag(context, 42), identifier = "userToUserIndicators")]
+        pub user_to_user_indicators: Option<UserToUserIndicators>,
+        #[rasn(tag(context, 32), identifier = "userToUserInformation")]
+        pub user_to_user_information: Option<UserToUserInformation>,
+    }
+    impl IAMMessageContent {
+        pub fn new(
+            a_alparameters: Option<AALParameters>,
+            additional_calling_party_number: Option<AdditionalCallingPartyNumber>,
+            a_tmcell_rate: Option<ATMCellRate>,
+            broadband_bearer_capability: Option<BroadbandBearerCapability>,
+            broadband_high_layer_info: Option<BroadbandHighLayerInfo>,
+            broadband_low_layer_info: Option<BroadbandLowLayerInfo>,
+            called_party_number: Option<CalledPartyNumber>,
+            called_party_subaddress: Option<CalledPartySubaddress>,
+            calling_party_number: Option<CallingPartyNumber>,
+            calling_party_subaddress: Option<CallingPartySubaddress>,
+            calling_partys_category: Option<CallingPartysCategory>,
+            closed_user_group_information: Option<ClosedUserGroupInformation>,
+            connected_line_idrequest: Option<ConnectedLineIDRequest>,
+            connection_element_identifier: Option<ConnectionElementIdentifier>,
+            echo_control_information: Option<EchoControlInformation>,
+            forward_narrowband_iwind: Option<ForwardNarrowbandIWInd>,
+            location_number: Option<LocationNumber>,
+            max_end_to_end_transit_delay: Option<MaxEndToEndTransitDelay>,
+            m_lppprecedence: Option<MLPPPrecedence>,
+            narrowband_bearer_capability: Option<NarrowbandBearerCapability>,
+            narrowband_high_layer_compa: Option<NarrowbandHighLayerCompa>,
+            narrowband_low_layer_compa: Option<NarrowbandLowLayerCompa>,
+            national_international_call_ind: Option<NationalInternationalCallInd>,
+            notification: Option<SequenceOf<Notification>>,
+            o_amtraffic_descriptor: Option<OAMTrafficDescriptor>,
+            original_called_number: Option<OriginalCalledNumber>,
+            origination_iscpoint_code: Option<OriginationISCPointCode>,
+            origination_signalling_id: Option<OriginationSignallingID>,
+            progress_indicator: Option<ProgressIndicator>,
+            propagation_delay_counter: Option<PropagationDelayCounter>,
+            redirecting_number: Option<RedirectingNumber>,
+            redirection_information: Option<RedirectionInformation>,
+            segmentation_indicator: Option<SegmentationIndicator>,
+            transit_network_selection: Option<TransitNetworkSelection>,
+            user_to_user_indicators: Option<UserToUserIndicators>,
+            user_to_user_information: Option<UserToUserInformation>,
+        ) -> Self {
+            Self {
+                a_alparameters,
+                additional_calling_party_number,
+                a_tmcell_rate,
+                broadband_bearer_capability,
+                broadband_high_layer_info,
+                broadband_low_layer_info,
+                called_party_number,
+                called_party_subaddress,
+                calling_party_number,
+                calling_party_subaddress,
+                calling_partys_category,
+                closed_user_group_information,
+                connected_line_idrequest,
+                connection_element_identifier,
+                echo_control_information,
+                forward_narrowband_iwind,
+                location_number,
+                max_end_to_end_transit_delay,
+                m_lppprecedence,
+                narrowband_bearer_capability,
+                narrowband_high_layer_compa,
+                narrowband_low_layer_compa,
+                national_international_call_ind,
+                notification,
+                o_amtraffic_descriptor,
+                original_called_number,
+                origination_iscpoint_code,
+                origination_signalling_id,
+                progress_indicator,
+                propagation_delay_counter,
+                redirecting_number,
+                redirection_information,
+                segmentation_indicator,
+                transit_network_selection,
+                user_to_user_indicators,
+                user_to_user_information,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct IAR {
+        #[rasn(identifier = "messageInstructionIndicators")]
+        pub message_instruction_indicators: MessageInstructionIndicators,
+        #[rasn(identifier = "iAR-MessageContent")]
+        pub i_ar_message_content: IARMessageContent,
+    }
+    impl IAR {
+        pub fn new(
+            message_instruction_indicators: MessageInstructionIndicators,
+            i_ar_message_content: IARMessageContent,
+        ) -> Self {
+            Self {
+                message_instruction_indicators,
+                i_ar_message_content,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "IAR-MessageContent")]
+    pub struct IARMessageContent {
+        #[rasn(tag(context, 39), identifier = "automaticCongestionLevel")]
+        pub automatic_congestion_level: Option<AutomaticCongestionLevel>,
+        #[rasn(tag(context, 18), identifier = "causeIndicators")]
+        pub cause_indicators: Option<CauseIndicators>,
+        #[rasn(tag(context, 3), identifier = "destinationSignallingID")]
+        pub destination_signalling_id: Option<DestinationSignallingID>,
+    }
+    impl IARMessageContent {
+        pub fn new(
+            automatic_congestion_level: Option<AutomaticCongestionLevel>,
+            cause_indicators: Option<CauseIndicators>,
+            destination_signalling_id: Option<DestinationSignallingID>,
+        ) -> Self {
+            Self {
+                automatic_congestion_level,
+                cause_indicators,
+                destination_signalling_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct NRM {
+        #[rasn(identifier = "messageInstructionIndicators")]
+        pub message_instruction_indicators: MessageInstructionIndicators,
+        #[rasn(identifier = "nRM-MessageContent")]
+        pub n_rm_message_content: NRMMessageContent,
+    }
+    impl NRM {
+        pub fn new(
+            message_instruction_indicators: MessageInstructionIndicators,
+            n_rm_message_content: NRMMessageContent,
+        ) -> Self {
+            Self {
+                message_instruction_indicators,
+                n_rm_message_content,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "NRM-MessageContent")]
+    pub struct NRMMessageContent {
+        #[rasn(tag(context, 3), identifier = "destinationSignallingID")]
+        pub destination_signalling_id: Option<DestinationSignallingID>,
+        #[rasn(tag(context, 55), identifier = "echoControlInformation")]
+        pub echo_control_information: Option<EchoControlInformation>,
+    }
+    impl NRMMessageContent {
+        pub fn new(
+            destination_signalling_id: Option<DestinationSignallingID>,
+            echo_control_information: Option<EchoControlInformation>,
+        ) -> Self {
+            Self {
+                destination_signalling_id,
+                echo_control_information,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct RAM {
+        #[rasn(identifier = "messageInstructionIndicators")]
+        pub message_instruction_indicators: MessageInstructionIndicators,
+        #[rasn(identifier = "rAM-MessageContent")]
+        pub r_am_message_content: RAMMessageContent,
+    }
+    impl RAM {
+        pub fn new(
+            message_instruction_indicators: MessageInstructionIndicators,
+            r_am_message_content: RAMMessageContent,
+        ) -> Self {
+            Self {
+                message_instruction_indicators,
+                r_am_message_content,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "RAM-MessageContent")]
+    pub struct RAMMessageContent {
+        #[rasn(tag(context, 3), identifier = "destinationSignallingID")]
+        pub destination_signalling_id: Option<DestinationSignallingID>,
+    }
+    impl RAMMessageContent {
+        pub fn new(destination_signalling_id: Option<DestinationSignallingID>) -> Self {
+            Self {
+                destination_signalling_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct REL {
+        #[rasn(identifier = "messageInstructionIndicators")]
+        pub message_instruction_indicators: MessageInstructionIndicators,
+        #[rasn(identifier = "rEL-MessageContent")]
+        pub r_el_message_content: RELMessageContent,
+    }
+    impl REL {
+        pub fn new(
+            message_instruction_indicators: MessageInstructionIndicators,
+            r_el_message_content: RELMessageContent,
+        ) -> Self {
+            Self {
+                message_instruction_indicators,
+                r_el_message_content,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "REL-MessageContent")]
+    pub struct RELMessageContent {
+        #[rasn(tag(context, 46), identifier = "accessDeliveryInformation")]
+        pub access_delivery_information: Option<AccessDeliveryInformation>,
+        #[rasn(tag(context, 39), identifier = "automaticCongestionLevel")]
+        pub automatic_congestion_level: Option<AutomaticCongestionLevel>,
+        #[rasn(tag(context, 18), identifier = "causeIndicators")]
+        pub cause_indicators: Option<CauseIndicators>,
+        #[rasn(tag(context, 3), identifier = "destinationSignallingID")]
+        pub destination_signalling_id: Option<DestinationSignallingID>,
+        #[rasn(tag(context, 44))]
+        pub notification: Option<SequenceOf<Notification>>,
+        #[rasn(tag(context, 53), identifier = "progressIndicator")]
+        pub progress_indicator: Option<ProgressIndicator>,
+        #[rasn(tag(context, 19), identifier = "redirectionInformation")]
+        pub redirection_information: Option<RedirectionInformation>,
+        #[rasn(tag(context, 12), identifier = "redirectionNumber")]
+        pub redirection_number: Option<RedirectionNumber>,
+        #[rasn(tag(context, 64), identifier = "redirectionNumberRestriction")]
+        pub redirection_number_restriction: Option<RedirectionNumberRestriction>,
+        #[rasn(tag(context, 58), identifier = "segmentationIndicator")]
+        pub segmentation_indicator: Option<SegmentationIndicator>,
+        #[rasn(tag(context, 42), identifier = "userToUserIndicators")]
+        pub user_to_user_indicators: Option<UserToUserIndicators>,
+        #[rasn(tag(context, 32), identifier = "userToUserInformation")]
+        pub user_to_user_information: Option<UserToUserInformation>,
+    }
+    impl RELMessageContent {
+        pub fn new(
+            access_delivery_information: Option<AccessDeliveryInformation>,
+            automatic_congestion_level: Option<AutomaticCongestionLevel>,
+            cause_indicators: Option<CauseIndicators>,
+            destination_signalling_id: Option<DestinationSignallingID>,
+            notification: Option<SequenceOf<Notification>>,
+            progress_indicator: Option<ProgressIndicator>,
+            redirection_information: Option<RedirectionInformation>,
+            redirection_number: Option<RedirectionNumber>,
+            redirection_number_restriction: Option<RedirectionNumberRestriction>,
+            segmentation_indicator: Option<SegmentationIndicator>,
+            user_to_user_indicators: Option<UserToUserIndicators>,
+            user_to_user_information: Option<UserToUserInformation>,
+        ) -> Self {
+            Self {
+                access_delivery_information,
+                automatic_congestion_level,
+                cause_indicators,
+                destination_signalling_id,
+                notification,
+                progress_indicator,
+                redirection_information,
+                redirection_number,
+                redirection_number_restriction,
+                segmentation_indicator,
+                user_to_user_indicators,
+                user_to_user_information,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct RES {
+        #[rasn(identifier = "messageInstructionIndicators")]
+        pub message_instruction_indicators: MessageInstructionIndicators,
+        #[rasn(identifier = "rES-MessageContent")]
+        pub r_es_message_content: RESMessageContent,
+    }
+    impl RES {
+        pub fn new(
+            message_instruction_indicators: MessageInstructionIndicators,
+            r_es_message_content: RESMessageContent,
+        ) -> Self {
+            Self {
+                message_instruction_indicators,
+                r_es_message_content,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "RES-MessageContent")]
+    pub struct RESMessageContent {
+        #[rasn(tag(context, 3), identifier = "destinationSignallingID")]
+        pub destination_signalling_id: Option<DestinationSignallingID>,
+        #[rasn(tag(context, 34), identifier = "suspendResumeIndicators")]
+        pub suspend_resume_indicators: Option<SuspendResumeIndicators>,
+    }
+    impl RESMessageContent {
+        pub fn new(
+            destination_signalling_id: Option<DestinationSignallingID>,
+            suspend_resume_indicators: Option<SuspendResumeIndicators>,
+        ) -> Self {
+            Self {
+                destination_signalling_id,
+                suspend_resume_indicators,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct RLC {
+        #[rasn(identifier = "messageInstructionIndicators")]
+        pub message_instruction_indicators: MessageInstructionIndicators,
+        #[rasn(identifier = "rLC-MessageContent")]
+        pub r_lc_message_content: RLCMessageContent,
+    }
+    impl RLC {
+        pub fn new(
+            message_instruction_indicators: MessageInstructionIndicators,
+            r_lc_message_content: RLCMessageContent,
+        ) -> Self {
+            Self {
+                message_instruction_indicators,
+                r_lc_message_content,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "RLC-MessageContent")]
+    pub struct RLCMessageContent {
+        #[rasn(tag(context, 18), identifier = "causeIndicators")]
+        pub cause_indicators: Option<CauseIndicators>,
+        #[rasn(tag(context, 3), identifier = "destinationSignallingID")]
+        pub destination_signalling_id: Option<DestinationSignallingID>,
+    }
+    impl RLCMessageContent {
+        pub fn new(
+            cause_indicators: Option<CauseIndicators>,
+            destination_signalling_id: Option<DestinationSignallingID>,
+        ) -> Self {
+            Self {
+                cause_indicators,
+                destination_signalling_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct RSM {
+        #[rasn(identifier = "messageInstructionIndicators")]
+        pub message_instruction_indicators: MessageInstructionIndicators,
+        #[rasn(identifier = "rSM-MessageContent")]
+        pub r_sm_message_content: RSMMessageContent,
+    }
+    impl RSM {
+        pub fn new(
+            message_instruction_indicators: MessageInstructionIndicators,
+            r_sm_message_content: RSMMessageContent,
+        ) -> Self {
+            Self {
+                message_instruction_indicators,
+                r_sm_message_content,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "RSM-MessageContent")]
+    pub struct RSMMessageContent {
+        #[rasn(tag(context, 2), identifier = "originationSignallingID")]
+        pub origination_signalling_id: Option<OriginationSignallingID>,
+        #[rasn(tag(context, 49), identifier = "resourceID")]
+        pub resource_id: Option<ResourceID>,
+    }
+    impl RSMMessageContent {
+        pub fn new(
+            origination_signalling_id: Option<OriginationSignallingID>,
+            resource_id: Option<ResourceID>,
+        ) -> Self {
+            Self {
+                origination_signalling_id,
+                resource_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SAM {
+        #[rasn(identifier = "messageInstructionIndicators")]
+        pub message_instruction_indicators: MessageInstructionIndicators,
+        #[rasn(identifier = "sAM-MessageContent")]
+        pub s_am_message_content: SAMMessageContent,
+    }
+    impl SAM {
+        pub fn new(
+            message_instruction_indicators: MessageInstructionIndicators,
+            s_am_message_content: SAMMessageContent,
+        ) -> Self {
+            Self {
+                message_instruction_indicators,
+                s_am_message_content,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "SAM-MessageContent")]
+    pub struct SAMMessageContent {
+        #[rasn(tag(context, 3), identifier = "destinationSignallingID")]
+        pub destination_signalling_id: Option<DestinationSignallingID>,
+        #[rasn(tag(context, 5), identifier = "subsequentNumber")]
+        pub subsequent_number: Option<SubsequentNumber>,
+    }
+    impl SAMMessageContent {
+        pub fn new(
+            destination_signalling_id: Option<DestinationSignallingID>,
+            subsequent_number: Option<SubsequentNumber>,
+        ) -> Self {
+            Self {
+                destination_signalling_id,
+                subsequent_number,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SGM {
+        #[rasn(identifier = "messageInstructionIndicators")]
+        pub message_instruction_indicators: MessageInstructionIndicators,
+        #[rasn(identifier = "sGM-MessageContent")]
+        pub s_gm_message_content: SGMMessageContent,
+    }
+    impl SGM {
+        pub fn new(
+            message_instruction_indicators: MessageInstructionIndicators,
+            s_gm_message_content: SGMMessageContent,
+        ) -> Self {
+            Self {
+                message_instruction_indicators,
+                s_gm_message_content,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "SGM-MessageContent")]
+    pub struct SGMMessageContent {
+        #[rasn(tag(context, 16), identifier = "additionalCallingPartyNumber")]
+        pub additional_calling_party_number: Option<AdditionalCallingPartyNumber>,
+        #[rasn(tag(context, 17), identifier = "additionalConnectedNumber")]
+        pub additional_connected_number: Option<AdditionalConnectedNumber>,
+        #[rasn(tag(context, 72), identifier = "broadbandHighLayerInfo")]
+        pub broadband_high_layer_info: Option<BroadbandHighLayerInfo>,
+        #[rasn(tag(context, 68), identifier = "broadbandLowLayerInfo")]
+        pub broadband_low_layer_info: Option<BroadbandLowLayerInfo>,
+        #[rasn(tag(context, 21), identifier = "calledPartySubaddress")]
+        pub called_party_subaddress: Option<CalledPartySubaddress>,
+        #[rasn(tag(context, 22), identifier = "callingPartySubaddress")]
+        pub calling_party_subaddress: Option<CallingPartySubaddress>,
+        #[rasn(tag(context, 36), identifier = "connectedSubaddress")]
+        pub connected_subaddress: Option<ConnectedSubaddress>,
+        #[rasn(tag(context, 3), identifier = "destinationSignallingID")]
+        pub destination_signalling_id: Option<DestinationSignallingID>,
+        #[rasn(tag(context, 52), identifier = "narrowbandHighLayerCompa")]
+        pub narrowband_high_layer_compa: Option<NarrowbandHighLayerCompa>,
+        #[rasn(tag(context, 10), identifier = "narrowbandLowLayerCompa")]
+        pub narrowband_low_layer_compa: Option<NarrowbandLowLayerCompa>,
+        #[rasn(tag(context, 44))]
+        pub notification: Option<SequenceOf<Notification>>,
+        #[rasn(tag(context, 53), identifier = "progressIndicator")]
+        pub progress_indicator: Option<ProgressIndicator>,
+        #[rasn(tag(context, 32), identifier = "userToUserInformation")]
+        pub user_to_user_information: Option<UserToUserInformation>,
+    }
+    impl SGMMessageContent {
+        pub fn new(
+            additional_calling_party_number: Option<AdditionalCallingPartyNumber>,
+            additional_connected_number: Option<AdditionalConnectedNumber>,
+            broadband_high_layer_info: Option<BroadbandHighLayerInfo>,
+            broadband_low_layer_info: Option<BroadbandLowLayerInfo>,
+            called_party_subaddress: Option<CalledPartySubaddress>,
+            calling_party_subaddress: Option<CallingPartySubaddress>,
+            connected_subaddress: Option<ConnectedSubaddress>,
+            destination_signalling_id: Option<DestinationSignallingID>,
+            narrowband_high_layer_compa: Option<NarrowbandHighLayerCompa>,
+            narrowband_low_layer_compa: Option<NarrowbandLowLayerCompa>,
+            notification: Option<SequenceOf<Notification>>,
+            progress_indicator: Option<ProgressIndicator>,
+            user_to_user_information: Option<UserToUserInformation>,
+        ) -> Self {
+            Self {
+                additional_calling_party_number,
+                additional_connected_number,
+                broadband_high_layer_info,
+                broadband_low_layer_info,
+                called_party_subaddress,
+                calling_party_subaddress,
+                connected_subaddress,
+                destination_signalling_id,
+                narrowband_high_layer_compa,
+                narrowband_low_layer_compa,
+                notification,
+                progress_indicator,
+                user_to_user_information,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SUS {
+        #[rasn(identifier = "messageInstructionIndicators")]
+        pub message_instruction_indicators: MessageInstructionIndicators,
+        #[rasn(identifier = "sUS-MessageContent")]
+        pub s_us_message_content: SUSMessageContent,
+    }
+    impl SUS {
+        pub fn new(
+            message_instruction_indicators: MessageInstructionIndicators,
+            s_us_message_content: SUSMessageContent,
+        ) -> Self {
+            Self {
+                message_instruction_indicators,
+                s_us_message_content,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "SUS-MessageContent")]
+    pub struct SUSMessageContent {
+        #[rasn(tag(context, 3), identifier = "destinationSignallingID")]
+        pub destination_signalling_id: Option<DestinationSignallingID>,
+        #[rasn(tag(context, 34), identifier = "suspendResumeIndicators")]
+        pub suspend_resume_indicators: Option<SuspendResumeIndicators>,
+    }
+    impl SUSMessageContent {
+        pub fn new(
+            destination_signalling_id: Option<DestinationSignallingID>,
+            suspend_resume_indicators: Option<SuspendResumeIndicators>,
+        ) -> Self {
+            Self {
+                destination_signalling_id,
+                suspend_resume_indicators,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct UBA {
+        #[rasn(identifier = "messageInstructionIndicators")]
+        pub message_instruction_indicators: MessageInstructionIndicators,
+        #[rasn(identifier = "uBA-MessageContent")]
+        pub u_ba_message_content: UBAMessageContent,
+    }
+    impl UBA {
+        pub fn new(
+            message_instruction_indicators: MessageInstructionIndicators,
+            u_ba_message_content: UBAMessageContent,
+        ) -> Self {
+            Self {
+                message_instruction_indicators,
+                u_ba_message_content,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "UBA-MessageContent")]
+    pub struct UBAMessageContent {
+        #[rasn(tag(context, 3), identifier = "destinationSignallingID")]
+        pub destination_signalling_id: Option<DestinationSignallingID>,
+    }
+    impl UBAMessageContent {
+        pub fn new(destination_signalling_id: Option<DestinationSignallingID>) -> Self {
+            Self {
+                destination_signalling_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct UBL {
+        #[rasn(identifier = "messageInstructionIndicators")]
+        pub message_instruction_indicators: MessageInstructionIndicators,
+        #[rasn(identifier = "uBL-MessageContent")]
+        pub u_bl_message_content: UBLMessageContent,
+    }
+    impl UBL {
+        pub fn new(
+            message_instruction_indicators: MessageInstructionIndicators,
+            u_bl_message_content: UBLMessageContent,
+        ) -> Self {
+            Self {
+                message_instruction_indicators,
+                u_bl_message_content,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "UBL-MessageContent")]
+    pub struct UBLMessageContent {
+        #[rasn(tag(context, 2), identifier = "originationSignallingID")]
+        pub origination_signalling_id: Option<OriginationSignallingID>,
+        #[rasn(tag(context, 49), identifier = "resourceID")]
+        pub resource_id: Option<ResourceID>,
+    }
+    impl UBLMessageContent {
+        pub fn new(
+            origination_signalling_id: Option<OriginationSignallingID>,
+            resource_id: Option<ResourceID>,
+        ) -> Self {
+            Self {
+                origination_signalling_id,
+                resource_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct UPA {
+        #[rasn(identifier = "messageInstructionIndicators")]
+        pub message_instruction_indicators: MessageInstructionIndicators,
+        #[rasn(identifier = "uPA-MessageContent")]
+        pub u_pa_message_content: UPAMessageContent,
+    }
+    impl UPA {
+        pub fn new(
+            message_instruction_indicators: MessageInstructionIndicators,
+            u_pa_message_content: UPAMessageContent,
+        ) -> Self {
+            Self {
+                message_instruction_indicators,
+                u_pa_message_content,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "UPA-MessageContent")]
+    pub struct UPAMessageContent {
+        #[rasn(tag(context, 3), identifier = "destinationSignallingID")]
+        pub destination_signalling_id: Option<DestinationSignallingID>,
+    }
+    impl UPAMessageContent {
+        pub fn new(destination_signalling_id: Option<DestinationSignallingID>) -> Self {
+            Self {
+                destination_signalling_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct UPT {
+        #[rasn(identifier = "messageInstructionIndicators")]
+        pub message_instruction_indicators: MessageInstructionIndicators,
+        #[rasn(identifier = "uPT-MessageContent")]
+        pub u_pt_message_content: UPTMessageContent,
+    }
+    impl UPT {
+        pub fn new(
+            message_instruction_indicators: MessageInstructionIndicators,
+            u_pt_message_content: UPTMessageContent,
+        ) -> Self {
+            Self {
+                message_instruction_indicators,
+                u_pt_message_content,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "UPT-MessageContent")]
+    pub struct UPTMessageContent {
+        #[rasn(tag(context, 2), identifier = "originationSignallingID")]
+        pub origination_signalling_id: Option<OriginationSignallingID>,
+    }
+    impl UPTMessageContent {
+        pub fn new(origination_signalling_id: Option<OriginationSignallingID>) -> Self {
+            Self {
+                origination_signalling_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct USR {
+        #[rasn(identifier = "messageInstructionIndicators")]
+        pub message_instruction_indicators: MessageInstructionIndicators,
+        #[rasn(identifier = "uSR-MessageContent")]
+        pub u_sr_message_content: USRMessageContent,
+    }
+    impl USR {
+        pub fn new(
+            message_instruction_indicators: MessageInstructionIndicators,
+            u_sr_message_content: USRMessageContent,
+        ) -> Self {
+            Self {
+                message_instruction_indicators,
+                u_sr_message_content,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "USR-MessageContent")]
+    pub struct USRMessageContent {
+        #[rasn(tag(context, 3), identifier = "destinationSignallingID")]
+        pub destination_signalling_id: Option<DestinationSignallingID>,
+        #[rasn(tag(context, 42), identifier = "userToUserIndicators")]
+        pub user_to_user_indicators: Option<UserToUserIndicators>,
+        #[rasn(tag(context, 32), identifier = "userToUserInformation")]
+        pub user_to_user_information: Option<UserToUserInformation>,
+    }
+    impl USRMessageContent {
+        pub fn new(
+            destination_signalling_id: Option<DestinationSignallingID>,
+            user_to_user_indicators: Option<UserToUserIndicators>,
+            user_to_user_information: Option<UserToUserInformation>,
+        ) -> Self {
+            Self {
+                destination_signalling_id,
+                user_to_user_indicators,
+                user_to_user_information,
+            }
+        }
+    }
+}

@@ -1,0 +1,246 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x894_2018-cor1_TransientKey.asn1
+---
+Warnings:
+LinkerError in ASN grammar: Failed to link value with 'OID'
+LinkerError in ASN grammar: Failed to link value with 'OID'
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod transient_key {
+    extern crate alloc;
+    use super::authentication_framework::Certificate;
+    use super::cryptographic_message_syntax_2010::{
+        Digest, DigestAlgorithmIdentifier, SignatureAlgorithmIdentifier,
+    };
+    use super::trusted_time_stamp::*;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ArchiveTree {
+        pub archive: Uri,
+        pub children: Option<ArchiveTreeList>,
+    }
+    impl ArchiveTree {
+        pub fn new(archive: Uri, children: Option<ArchiveTreeList>) -> Self {
+            Self { archive, children }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct ArchiveTreeList(pub SequenceOf<ArchiveTree>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ChainSpec {
+        #[rasn(identifier = "serverId")]
+        pub server_id: Uri,
+        #[rasn(identifier = "chainStart")]
+        pub chain_start: GeneralizedTime,
+        #[rasn(identifier = "digestAlgorithm")]
+        pub digest_algorithm: DigestAlgorithmIdentifier,
+        #[rasn(identifier = "signatureAlgorithm")]
+        pub signature_algorithm: SignatureAlgorithmIdentifier,
+        #[rasn(identifier = "publicVerificationServer")]
+        pub public_verification_server: Option<Uri>,
+    }
+    impl ChainSpec {
+        pub fn new(
+            server_id: Uri,
+            chain_start: GeneralizedTime,
+            digest_algorithm: DigestAlgorithmIdentifier,
+            signature_algorithm: SignatureAlgorithmIdentifier,
+            public_verification_server: Option<Uri>,
+        ) -> Self {
+            Self {
+                server_id,
+                chain_start,
+                digest_algorithm,
+                signature_algorithm,
+                public_verification_server,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct EncodedCertificate(pub Any);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("1", extensible))]
+    pub struct IIVersion(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct IdentitySignature {
+        #[rasn(identifier = "signatureAlgorithm")]
+        pub signature_algorithm: SignatureAlgorithmIdentifier,
+        pub signature: Signature,
+        pub certificate: Option<EncodedCertificate>,
+    }
+    impl IdentitySignature {
+        pub fn new(
+            signature_algorithm: SignatureAlgorithmIdentifier,
+            signature: Signature,
+            certificate: Option<EncodedCertificate>,
+        ) -> Self {
+            Self {
+                signature_algorithm,
+                signature,
+                certificate,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct IntervalInfo {
+        pub version: IIVersion,
+        #[rasn(identifier = "signedIntervalSpec")]
+        pub signed_interval_spec: SignedIntervalSpec,
+        #[rasn(identifier = "archiveTree")]
+        pub archive_tree: ArchiveTree,
+        #[rasn(identifier = "certifierList")]
+        pub certifier_list: Option<UriList>,
+    }
+    impl IntervalInfo {
+        pub fn new(
+            version: IIVersion,
+            signed_interval_spec: SignedIntervalSpec,
+            archive_tree: ArchiveTree,
+            certifier_list: Option<UriList>,
+        ) -> Self {
+            Self {
+                version,
+                signed_interval_spec,
+                archive_tree,
+                certifier_list,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct IntervalSpec {
+        #[rasn(identifier = "chainSpec")]
+        pub chain_spec: ChainSpec,
+        #[rasn(identifier = "intervalStart")]
+        pub interval_start: GeneralizedTime,
+        #[rasn(identifier = "intervalStop")]
+        pub interval_stop: GeneralizedTime,
+        #[rasn(identifier = "publicKey")]
+        pub public_key: PublicKey,
+        #[rasn(tag(context, 0), identifier = "previousPublicKey")]
+        pub previous_public_key: Option<PublicKey>,
+        #[rasn(tag(context, 1), identifier = "previousMetaDigest")]
+        pub previous_meta_digest: Option<OctetString>,
+    }
+    impl IntervalSpec {
+        pub fn new(
+            chain_spec: ChainSpec,
+            interval_start: GeneralizedTime,
+            interval_stop: GeneralizedTime,
+            public_key: PublicKey,
+            previous_public_key: Option<PublicKey>,
+            previous_meta_digest: Option<OctetString>,
+        ) -> Self {
+            Self {
+                chain_spec,
+                interval_start,
+                interval_stop,
+                public_key,
+                previous_public_key,
+                previous_meta_digest,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PublicKey(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Signature(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SignedIntervalSpec {
+        #[rasn(identifier = "intervalSpec")]
+        pub interval_spec: IntervalSpec,
+        pub signature: Signature,
+        #[rasn(identifier = "identitySignature")]
+        pub identity_signature: IdentitySignature,
+    }
+    impl SignedIntervalSpec {
+        pub fn new(
+            interval_spec: IntervalSpec,
+            signature: Signature,
+            identity_signature: IdentitySignature,
+        ) -> Self {
+            Self {
+                interval_spec,
+                signature,
+                identity_signature,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("1", extensible))]
+    pub struct TKSVersion(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct TSTAndInterval {
+        #[rasn(identifier = "tstInfo")]
+        pub tst_info: TSTInfo,
+        #[rasn(identifier = "intervalInfo")]
+        pub interval_info: IntervalInfo,
+    }
+    impl TSTAndInterval {
+        pub fn new(tst_info: TSTInfo, interval_info: IntervalInfo) -> Self {
+            Self {
+                tst_info,
+                interval_info,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct TransientKeySignedTST {
+        pub version: TKSVersion,
+        #[rasn(identifier = "tstAndInterval")]
+        pub tst_and_interval: TSTAndInterval,
+        pub digest: Digest,
+        #[rasn(tag(context, 0), identifier = "previousDigest")]
+        pub previous_digest: Option<Digest>,
+        pub signature: Signature,
+    }
+    impl TransientKeySignedTST {
+        pub fn new(
+            version: TKSVersion,
+            tst_and_interval: TSTAndInterval,
+            digest: Digest,
+            previous_digest: Option<Digest>,
+            signature: Signature,
+        ) -> Self {
+            Self {
+                version,
+                tst_and_interval,
+                digest,
+                previous_digest,
+                signature,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Uri(pub Ia5String);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct UriList(pub SequenceOf<Uri>);
+    pub static TRANSIENT_KEY_SIGNED_TST: LazyLock<OID> = LazyLock::new(|| {
+        OID(OID(Oid::const_new(&[
+            1u32, 3u32, 133u32, 16u32, 840u32, 9u32, 95u32, 0u32, 2u32, 1u32,
+        ])
+        .to_owned()))
+    });
+    pub static TSP_REQ_TK: LazyLock<OID> = LazyLock::new(|| {
+        OID(OID(Oid::const_new(&[
+            1u32, 3u32, 133u32, 16u32, 840u32, 9u32, 95u32, 0u32, 2u32, 2u32,
+        ])
+        .to_owned()))
+    });
+}

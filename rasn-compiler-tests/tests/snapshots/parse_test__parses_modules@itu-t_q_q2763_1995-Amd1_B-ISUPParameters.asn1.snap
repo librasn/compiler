@@ -1,0 +1,1494 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q2763_1995-Amd1_B-ISUPParameters.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod b_isupparameters {
+    extern crate alloc;
+    use super::b_isupinformation_element_headers::{
+        MessageInstructionIndicators, ParameterInstructionIndicators,
+    };
+    use super::b_isupparameter_constructions::{
+        ATMCellRateField, CalledPartyAddress, CallingPartyAddress, ClosedUserGroupInterlockCode,
+        ConnectedAddress, ConnectionElementID, LocationAddress, NetworkIdentification,
+        NetworkIdentificationPlan, NetworkIdentity, ResourceValue, SubsequentAddress,
+        UserToUserIndicatorsParameter,
+    };
+    use super::b_isupparameter_elements::{
+        AALParametersField, AddressSignal, BinaryCode, BroadbandBearerCapabilityField,
+        BroadbandHighLayerInformationField, BroadbandLowLayerInformationField, CalledAddressSignal,
+        CalledPartySubaddressField, CallingAddressSignal, CallingPartySubaddressField, CellRateID,
+        ConnectedSubaddressField, ControlID, DelayValue, MLPPServiceDomain, NIdigit,
+        NarrowbandBearerCapabilityField, NarrowbandHighLayerCompaField,
+        NarrowbandLowLayerCompaField, OAMTrafficDescriptorField, ProgressIndicatorField,
+        RedirectionCounter, SignallingPointCode, UserToUserInformationField, VirtualChannelID,
+        VirtualPathConnectionID,
+    };
+    use super::b_isupparameter_indicators::{
+        AccessDeliveryIndicator, AddressPresentationIndicator, AutomaticCongestionLevelInd,
+        CCITTNetworkIdenPlanIndicator, CallDiversionMayOccurIndicator, CalledPartysCategoryInd,
+        CalledPartysStatusInd, CallingPartysCategoryIndicators, CellRateIdentifier,
+        ChargeIndicator, ClosedUserGroupCallIndicator, ConnectedLineIDRequestIndicator,
+        ISDNAccessIndicator, ISDNUserPartIndicator, ISDNUserPartPreferenceInd,
+        InBandInformationIndicator, IncomingHECDIndicator, IncomingHECDRequestIndicator,
+        InternalNetworkNumberIndicator, InterworkingIndicator, LookAheadForBusyIndicator,
+        MLPPUserIndicator, MoreDataIndicator, NationalInternationalCallIndicator,
+        NationalNetworkIdenPlanIndicator, NatureOfAddressIndicator, NetworkDiscardIndicator,
+        NotificationIndicators, NotificationSubscriptionOption, NumberIncompleteIndicator,
+        NumberingPlanIndicator, OriginalRedirectionReasonIndicator, OutgoingHECDIndicator,
+        OutgoingHECDRequestIndicator, PrecedenceLevelIndicator, Priority, RedirectingIndicator,
+        RedirectingReasonIndicator, RedirectionNumberRestrictionInd, RepeatIndicator,
+        ResourceIndicator, ScreeningIndicator, SimpleSegmentationIndicator, SuspendResumeIndicator,
+        Type, TypeOfNetworkIdentification, UserToUserServiceRequest, UserToUserServiceResponse,
+        VPCICheckResultIndicator,
+    };
+    use super::bouchon::{CauseValue, CodingStandard, Diagnostics, Location};
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AALParameters {
+        #[rasn(identifier = "parameterInstructionIndicators")]
+        pub parameter_instruction_indicators: ParameterInstructionIndicators,
+        #[rasn(identifier = "codingStandard")]
+        pub coding_standard: CodingStandard,
+        #[rasn(identifier = "aALParametersField")]
+        pub a_alparameters_field: AALParametersField,
+    }
+    impl AALParameters {
+        pub fn new(
+            parameter_instruction_indicators: ParameterInstructionIndicators,
+            coding_standard: CodingStandard,
+            a_alparameters_field: AALParametersField,
+        ) -> Self {
+            Self {
+                parameter_instruction_indicators,
+                coding_standard,
+                a_alparameters_field,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ATMCellRate {
+        #[rasn(identifier = "parameterInstructionIndicators")]
+        pub parameter_instruction_indicators: ParameterInstructionIndicators,
+        #[rasn(tag(context, 1), identifier = "aTMCellRateField")]
+        pub a_tmcell_rate_field: Option<ATMCellRateField>,
+    }
+    impl ATMCellRate {
+        pub fn new(
+            parameter_instruction_indicators: ParameterInstructionIndicators,
+            a_tmcell_rate_field: Option<ATMCellRateField>,
+        ) -> Self {
+            Self {
+                parameter_instruction_indicators,
+                a_tmcell_rate_field,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AccessDeliveryInformation {
+        #[rasn(identifier = "parameterInstructionIndicators")]
+        pub parameter_instruction_indicators: ParameterInstructionIndicators,
+        #[rasn(identifier = "accessDeliveryIndicator")]
+        pub access_delivery_indicator: AccessDeliveryIndicator,
+    }
+    impl AccessDeliveryInformation {
+        pub fn new(
+            parameter_instruction_indicators: ParameterInstructionIndicators,
+            access_delivery_indicator: AccessDeliveryIndicator,
+        ) -> Self {
+            Self {
+                parameter_instruction_indicators,
+                access_delivery_indicator,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AdditionalCallingPartyNumber {
+        #[rasn(identifier = "parameterInstructionIndicators")]
+        pub parameter_instruction_indicators: ParameterInstructionIndicators,
+        #[rasn(identifier = "natureOfAddressIndicator")]
+        pub nature_of_address_indicator: NatureOfAddressIndicator,
+        #[rasn(identifier = "screeningIndicator")]
+        pub screening_indicator: ScreeningIndicator,
+        #[rasn(identifier = "addressPresentationIndicator")]
+        pub address_presentation_indicator: AddressPresentationIndicator,
+        #[rasn(identifier = "numberingPlanIndicator")]
+        pub numbering_plan_indicator: NumberingPlanIndicator,
+        #[rasn(tag(context, 1), identifier = "callingPartyAddress")]
+        pub calling_party_address: Option<CallingPartyAddress>,
+    }
+    impl AdditionalCallingPartyNumber {
+        pub fn new(
+            parameter_instruction_indicators: ParameterInstructionIndicators,
+            nature_of_address_indicator: NatureOfAddressIndicator,
+            screening_indicator: ScreeningIndicator,
+            address_presentation_indicator: AddressPresentationIndicator,
+            numbering_plan_indicator: NumberingPlanIndicator,
+            calling_party_address: Option<CallingPartyAddress>,
+        ) -> Self {
+            Self {
+                parameter_instruction_indicators,
+                nature_of_address_indicator,
+                screening_indicator,
+                address_presentation_indicator,
+                numbering_plan_indicator,
+                calling_party_address,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AdditionalConnectedNumber {
+        #[rasn(identifier = "parameterInstructionIndicators")]
+        pub parameter_instruction_indicators: ParameterInstructionIndicators,
+        #[rasn(identifier = "natureOfAddressIndicator")]
+        pub nature_of_address_indicator: NatureOfAddressIndicator,
+        #[rasn(identifier = "screeningIndicator")]
+        pub screening_indicator: ScreeningIndicator,
+        #[rasn(identifier = "addressPresentationIndicator")]
+        pub address_presentation_indicator: AddressPresentationIndicator,
+        #[rasn(identifier = "numberingPlanIndicator")]
+        pub numbering_plan_indicator: NumberingPlanIndicator,
+        #[rasn(tag(context, 1), identifier = "connectedAddress")]
+        pub connected_address: Option<ConnectedAddress>,
+    }
+    impl AdditionalConnectedNumber {
+        pub fn new(
+            parameter_instruction_indicators: ParameterInstructionIndicators,
+            nature_of_address_indicator: NatureOfAddressIndicator,
+            screening_indicator: ScreeningIndicator,
+            address_presentation_indicator: AddressPresentationIndicator,
+            numbering_plan_indicator: NumberingPlanIndicator,
+            connected_address: Option<ConnectedAddress>,
+        ) -> Self {
+            Self {
+                parameter_instruction_indicators,
+                nature_of_address_indicator,
+                screening_indicator,
+                address_presentation_indicator,
+                numbering_plan_indicator,
+                connected_address,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AutomaticCongestionLevel {
+        #[rasn(identifier = "parameterInstructionIndicators")]
+        pub parameter_instruction_indicators: ParameterInstructionIndicators,
+        #[rasn(identifier = "automaticCongestionLevelInd")]
+        pub automatic_congestion_level_ind: AutomaticCongestionLevelInd,
+    }
+    impl AutomaticCongestionLevel {
+        pub fn new(
+            parameter_instruction_indicators: ParameterInstructionIndicators,
+            automatic_congestion_level_ind: AutomaticCongestionLevelInd,
+        ) -> Self {
+            Self {
+                parameter_instruction_indicators,
+                automatic_congestion_level_ind,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct BackwardNarrowbandIWInd {
+        #[rasn(identifier = "parameterInstructionIndicators")]
+        pub parameter_instruction_indicators: ParameterInstructionIndicators,
+        #[rasn(identifier = "interworkingIndicator")]
+        pub interworking_indicator: InterworkingIndicator,
+        #[rasn(identifier = "iSDNUserPartIndicator")]
+        pub i_sdnuser_part_indicator: ISDNUserPartIndicator,
+        #[rasn(identifier = "iSDNAccessIndicator")]
+        pub i_sdnaccess_indicator: ISDNAccessIndicator,
+    }
+    impl BackwardNarrowbandIWInd {
+        pub fn new(
+            parameter_instruction_indicators: ParameterInstructionIndicators,
+            interworking_indicator: InterworkingIndicator,
+            i_sdnuser_part_indicator: ISDNUserPartIndicator,
+            i_sdnaccess_indicator: ISDNAccessIndicator,
+        ) -> Self {
+            Self {
+                parameter_instruction_indicators,
+                interworking_indicator,
+                i_sdnuser_part_indicator,
+                i_sdnaccess_indicator,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct BroadbandBearerCapability {
+        #[rasn(identifier = "parameterInstructionIndicators")]
+        pub parameter_instruction_indicators: ParameterInstructionIndicators,
+        #[rasn(identifier = "codingStandard")]
+        pub coding_standard: CodingStandard,
+        #[rasn(identifier = "broadbandBearerCapabilityField")]
+        pub broadband_bearer_capability_field: BroadbandBearerCapabilityField,
+    }
+    impl BroadbandBearerCapability {
+        pub fn new(
+            parameter_instruction_indicators: ParameterInstructionIndicators,
+            coding_standard: CodingStandard,
+            broadband_bearer_capability_field: BroadbandBearerCapabilityField,
+        ) -> Self {
+            Self {
+                parameter_instruction_indicators,
+                coding_standard,
+                broadband_bearer_capability_field,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct BroadbandHighLayerInfo {
+        #[rasn(identifier = "parameterInstructionIndicators")]
+        pub parameter_instruction_indicators: ParameterInstructionIndicators,
+        #[rasn(identifier = "codingStandard")]
+        pub coding_standard: CodingStandard,
+        #[rasn(identifier = "broadbandHighLayerInformationField")]
+        pub broadband_high_layer_information_field: BroadbandHighLayerInformationField,
+    }
+    impl BroadbandHighLayerInfo {
+        pub fn new(
+            parameter_instruction_indicators: ParameterInstructionIndicators,
+            coding_standard: CodingStandard,
+            broadband_high_layer_information_field: BroadbandHighLayerInformationField,
+        ) -> Self {
+            Self {
+                parameter_instruction_indicators,
+                coding_standard,
+                broadband_high_layer_information_field,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct BroadbandLowLayerInfo {
+        #[rasn(identifier = "parameterInstructionIndicators")]
+        pub parameter_instruction_indicators: ParameterInstructionIndicators,
+        pub priority: Priority,
+        #[rasn(identifier = "repeatIndicator")]
+        pub repeat_indicator: RepeatIndicator,
+        #[rasn(identifier = "broadbandLowLayerInformationField")]
+        pub broadband_low_layer_information_field: SequenceOf<BroadbandLowLayerInformationField>,
+    }
+    impl BroadbandLowLayerInfo {
+        pub fn new(
+            parameter_instruction_indicators: ParameterInstructionIndicators,
+            priority: Priority,
+            repeat_indicator: RepeatIndicator,
+            broadband_low_layer_information_field: SequenceOf<BroadbandLowLayerInformationField>,
+        ) -> Self {
+            Self {
+                parameter_instruction_indicators,
+                priority,
+                repeat_indicator,
+                broadband_low_layer_information_field,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct CallDiversionInformation {
+        #[rasn(identifier = "parameterInstructionIndicators")]
+        pub parameter_instruction_indicators: ParameterInstructionIndicators,
+        #[rasn(identifier = "notificationSubscriptionOption")]
+        pub notification_subscription_option: NotificationSubscriptionOption,
+        #[rasn(identifier = "redirectionReasonIndicator")]
+        pub redirection_reason_indicator: RedirectingReasonIndicator,
+    }
+    impl CallDiversionInformation {
+        pub fn new(
+            parameter_instruction_indicators: ParameterInstructionIndicators,
+            notification_subscription_option: NotificationSubscriptionOption,
+            redirection_reason_indicator: RedirectingReasonIndicator,
+        ) -> Self {
+            Self {
+                parameter_instruction_indicators,
+                notification_subscription_option,
+                redirection_reason_indicator,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct CallDiversionMayOccur {
+        #[rasn(identifier = "parameterInstructionIndicators")]
+        pub parameter_instruction_indicators: ParameterInstructionIndicators,
+        #[rasn(identifier = "callDiversionMayOccurIndicator")]
+        pub call_diversion_may_occur_indicator: CallDiversionMayOccurIndicator,
+    }
+    impl CallDiversionMayOccur {
+        pub fn new(
+            parameter_instruction_indicators: ParameterInstructionIndicators,
+            call_diversion_may_occur_indicator: CallDiversionMayOccurIndicator,
+        ) -> Self {
+            Self {
+                parameter_instruction_indicators,
+                call_diversion_may_occur_indicator,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct CallHistoryInformation {
+        #[rasn(identifier = "parameterInstructionIndicators")]
+        pub parameter_instruction_indicators: ParameterInstructionIndicators,
+        #[rasn(identifier = "delayValue")]
+        pub delay_value: DelayValue,
+    }
+    impl CallHistoryInformation {
+        pub fn new(
+            parameter_instruction_indicators: ParameterInstructionIndicators,
+            delay_value: DelayValue,
+        ) -> Self {
+            Self {
+                parameter_instruction_indicators,
+                delay_value,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct CalledPartyNumber {
+        #[rasn(identifier = "parameterInstructionIndicators")]
+        pub parameter_instruction_indicators: ParameterInstructionIndicators,
+        #[rasn(identifier = "natureOfAddressIndicator")]
+        pub nature_of_address_indicator: NatureOfAddressIndicator,
+        #[rasn(identifier = "numberingPlanIndicator")]
+        pub numbering_plan_indicator: NumberingPlanIndicator,
+        #[rasn(identifier = "internalNetworkNumberIndicator")]
+        pub internal_network_number_indicator: InternalNetworkNumberIndicator,
+        #[rasn(identifier = "calledPartyAddress")]
+        pub called_party_address: CalledPartyAddress,
+    }
+    impl CalledPartyNumber {
+        pub fn new(
+            parameter_instruction_indicators: ParameterInstructionIndicators,
+            nature_of_address_indicator: NatureOfAddressIndicator,
+            numbering_plan_indicator: NumberingPlanIndicator,
+            internal_network_number_indicator: InternalNetworkNumberIndicator,
+            called_party_address: CalledPartyAddress,
+        ) -> Self {
+            Self {
+                parameter_instruction_indicators,
+                nature_of_address_indicator,
+                numbering_plan_indicator,
+                internal_network_number_indicator,
+                called_party_address,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct CalledPartySubaddress {
+        #[rasn(identifier = "parameterInstructionIndicators")]
+        pub parameter_instruction_indicators: ParameterInstructionIndicators,
+        #[rasn(identifier = "codingStandard")]
+        pub coding_standard: CodingStandard,
+        #[rasn(identifier = "calledPartySubaddressField")]
+        pub called_party_subaddress_field: CalledPartySubaddressField,
+    }
+    impl CalledPartySubaddress {
+        pub fn new(
+            parameter_instruction_indicators: ParameterInstructionIndicators,
+            coding_standard: CodingStandard,
+            called_party_subaddress_field: CalledPartySubaddressField,
+        ) -> Self {
+            Self {
+                parameter_instruction_indicators,
+                coding_standard,
+                called_party_subaddress_field,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct CalledPartysIndicators {
+        #[rasn(identifier = "parameterInstructionIndicators")]
+        pub parameter_instruction_indicators: ParameterInstructionIndicators,
+        #[rasn(identifier = "calledPartysStatusInd")]
+        pub called_partys_status_ind: CalledPartysStatusInd,
+        #[rasn(identifier = "calledPartysCategoryInd")]
+        pub called_partys_category_ind: CalledPartysCategoryInd,
+    }
+    impl CalledPartysIndicators {
+        pub fn new(
+            parameter_instruction_indicators: ParameterInstructionIndicators,
+            called_partys_status_ind: CalledPartysStatusInd,
+            called_partys_category_ind: CalledPartysCategoryInd,
+        ) -> Self {
+            Self {
+                parameter_instruction_indicators,
+                called_partys_status_ind,
+                called_partys_category_ind,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct CallingPartyNumber {
+        #[rasn(identifier = "parameterInstructionIndicators")]
+        pub parameter_instruction_indicators: ParameterInstructionIndicators,
+        #[rasn(identifier = "natureOfAddressIndicator")]
+        pub nature_of_address_indicator: NatureOfAddressIndicator,
+        #[rasn(identifier = "screeningIndicator")]
+        pub screening_indicator: ScreeningIndicator,
+        #[rasn(identifier = "addressPresentationIndicator")]
+        pub address_presentation_indicator: AddressPresentationIndicator,
+        #[rasn(identifier = "numberingPlanIndicator")]
+        pub numbering_plan_indicator: NumberingPlanIndicator,
+        #[rasn(identifier = "numberIncompleteIndicator")]
+        pub number_incomplete_indicator: NumberIncompleteIndicator,
+        #[rasn(tag(context, 1), identifier = "callingPartyAddress")]
+        pub calling_party_address: Option<CallingPartyAddress>,
+    }
+    impl CallingPartyNumber {
+        pub fn new(
+            parameter_instruction_indicators: ParameterInstructionIndicators,
+            nature_of_address_indicator: NatureOfAddressIndicator,
+            screening_indicator: ScreeningIndicator,
+            address_presentation_indicator: AddressPresentationIndicator,
+            numbering_plan_indicator: NumberingPlanIndicator,
+            number_incomplete_indicator: NumberIncompleteIndicator,
+            calling_party_address: Option<CallingPartyAddress>,
+        ) -> Self {
+            Self {
+                parameter_instruction_indicators,
+                nature_of_address_indicator,
+                screening_indicator,
+                address_presentation_indicator,
+                numbering_plan_indicator,
+                number_incomplete_indicator,
+                calling_party_address,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct CallingPartySubaddress {
+        #[rasn(identifier = "parameterInstructionIndicators")]
+        pub parameter_instruction_indicators: ParameterInstructionIndicators,
+        #[rasn(identifier = "codingStandard")]
+        pub coding_standard: CodingStandard,
+        #[rasn(identifier = "callingPartySubaddressField")]
+        pub calling_party_subaddress_field: CallingPartySubaddressField,
+    }
+    impl CallingPartySubaddress {
+        pub fn new(
+            parameter_instruction_indicators: ParameterInstructionIndicators,
+            coding_standard: CodingStandard,
+            calling_party_subaddress_field: CallingPartySubaddressField,
+        ) -> Self {
+            Self {
+                parameter_instruction_indicators,
+                coding_standard,
+                calling_party_subaddress_field,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct CallingPartysCategory {
+        #[rasn(identifier = "parameterInstructionIndicators")]
+        pub parameter_instruction_indicators: ParameterInstructionIndicators,
+        #[rasn(identifier = "callingPartysCategoryIndicators")]
+        pub calling_partys_category_indicators: CallingPartysCategoryIndicators,
+    }
+    impl CallingPartysCategory {
+        pub fn new(
+            parameter_instruction_indicators: ParameterInstructionIndicators,
+            calling_partys_category_indicators: CallingPartysCategoryIndicators,
+        ) -> Self {
+            Self {
+                parameter_instruction_indicators,
+                calling_partys_category_indicators,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct CauseIndicators {
+        #[rasn(identifier = "parameterInstructionIndicators")]
+        pub parameter_instruction_indicators: ParameterInstructionIndicators,
+        pub location: Location,
+        #[rasn(identifier = "codingStandard")]
+        pub coding_standard: CodingStandard,
+        #[rasn(identifier = "causeValue")]
+        pub cause_value: CauseValue,
+        #[rasn(tag(context, 1))]
+        pub diagnostics: Option<Diagnostics>,
+    }
+    impl CauseIndicators {
+        pub fn new(
+            parameter_instruction_indicators: ParameterInstructionIndicators,
+            location: Location,
+            coding_standard: CodingStandard,
+            cause_value: CauseValue,
+            diagnostics: Option<Diagnostics>,
+        ) -> Self {
+            Self {
+                parameter_instruction_indicators,
+                location,
+                coding_standard,
+                cause_value,
+                diagnostics,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ChargeInd {
+        #[rasn(identifier = "parameterInstructionIndicators")]
+        pub parameter_instruction_indicators: ParameterInstructionIndicators,
+        #[rasn(identifier = "chargeIndicator")]
+        pub charge_indicator: ChargeIndicator,
+    }
+    impl ChargeInd {
+        pub fn new(
+            parameter_instruction_indicators: ParameterInstructionIndicators,
+            charge_indicator: ChargeIndicator,
+        ) -> Self {
+            Self {
+                parameter_instruction_indicators,
+                charge_indicator,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ClosedUserGroupInformation {
+        #[rasn(identifier = "parameterInstructionIndicators")]
+        pub parameter_instruction_indicators: ParameterInstructionIndicators,
+        #[rasn(identifier = "closedUserGroupCallIndicator")]
+        pub closed_user_group_call_indicator: ClosedUserGroupCallIndicator,
+        #[rasn(identifier = "closedUserGroupInterlockCode")]
+        pub closed_user_group_interlock_code: ClosedUserGroupInterlockCode,
+    }
+    impl ClosedUserGroupInformation {
+        pub fn new(
+            parameter_instruction_indicators: ParameterInstructionIndicators,
+            closed_user_group_call_indicator: ClosedUserGroupCallIndicator,
+            closed_user_group_interlock_code: ClosedUserGroupInterlockCode,
+        ) -> Self {
+            Self {
+                parameter_instruction_indicators,
+                closed_user_group_call_indicator,
+                closed_user_group_interlock_code,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ConnectedLineIDRequest {
+        #[rasn(identifier = "parameterInstructionIndicators")]
+        pub parameter_instruction_indicators: ParameterInstructionIndicators,
+        #[rasn(identifier = "connectedLineIDRequestIndicator")]
+        pub connected_line_idrequest_indicator: ConnectedLineIDRequestIndicator,
+    }
+    impl ConnectedLineIDRequest {
+        pub fn new(
+            parameter_instruction_indicators: ParameterInstructionIndicators,
+            connected_line_idrequest_indicator: ConnectedLineIDRequestIndicator,
+        ) -> Self {
+            Self {
+                parameter_instruction_indicators,
+                connected_line_idrequest_indicator,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ConnectedNumber {
+        #[rasn(identifier = "parameterInstructionIndicators")]
+        pub parameter_instruction_indicators: ParameterInstructionIndicators,
+        #[rasn(identifier = "natureOfAddressIndicator")]
+        pub nature_of_address_indicator: NatureOfAddressIndicator,
+        #[rasn(identifier = "screeningIndicator")]
+        pub screening_indicator: ScreeningIndicator,
+        #[rasn(identifier = "addressPresentationIndicator")]
+        pub address_presentation_indicator: AddressPresentationIndicator,
+        #[rasn(identifier = "numberingPlanIndicator")]
+        pub numbering_plan_indicator: NumberingPlanIndicator,
+        #[rasn(tag(context, 1), identifier = "connectedAddress")]
+        pub connected_address: Option<ConnectedAddress>,
+    }
+    impl ConnectedNumber {
+        pub fn new(
+            parameter_instruction_indicators: ParameterInstructionIndicators,
+            nature_of_address_indicator: NatureOfAddressIndicator,
+            screening_indicator: ScreeningIndicator,
+            address_presentation_indicator: AddressPresentationIndicator,
+            numbering_plan_indicator: NumberingPlanIndicator,
+            connected_address: Option<ConnectedAddress>,
+        ) -> Self {
+            Self {
+                parameter_instruction_indicators,
+                nature_of_address_indicator,
+                screening_indicator,
+                address_presentation_indicator,
+                numbering_plan_indicator,
+                connected_address,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ConnectedSubaddress {
+        #[rasn(identifier = "parameterInstructionIndicators")]
+        pub parameter_instruction_indicators: ParameterInstructionIndicators,
+        #[rasn(identifier = "codingStandard")]
+        pub coding_standard: CodingStandard,
+        #[rasn(identifier = "connectedSubaddressField")]
+        pub connected_subaddress_field: ConnectedSubaddressField,
+    }
+    impl ConnectedSubaddress {
+        pub fn new(
+            parameter_instruction_indicators: ParameterInstructionIndicators,
+            coding_standard: CodingStandard,
+            connected_subaddress_field: ConnectedSubaddressField,
+        ) -> Self {
+            Self {
+                parameter_instruction_indicators,
+                coding_standard,
+                connected_subaddress_field,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ConnectionElementIdentifier {
+        #[rasn(identifier = "parameterInstructionIndicators")]
+        pub parameter_instruction_indicators: ParameterInstructionIndicators,
+        #[rasn(identifier = "connectionElementID")]
+        pub connection_element_id: ConnectionElementID,
+    }
+    impl ConnectionElementIdentifier {
+        pub fn new(
+            parameter_instruction_indicators: ParameterInstructionIndicators,
+            connection_element_id: ConnectionElementID,
+        ) -> Self {
+            Self {
+                parameter_instruction_indicators,
+                connection_element_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ConsistencyCheckResultInfo {
+        #[rasn(identifier = "parameterInstructionIndicators")]
+        pub parameter_instruction_indicators: ParameterInstructionIndicators,
+        #[rasn(identifier = "vPCICheckResultIndicator")]
+        pub v_pcicheck_result_indicator: VPCICheckResultIndicator,
+    }
+    impl ConsistencyCheckResultInfo {
+        pub fn new(
+            parameter_instruction_indicators: ParameterInstructionIndicators,
+            v_pcicheck_result_indicator: VPCICheckResultIndicator,
+        ) -> Self {
+            Self {
+                parameter_instruction_indicators,
+                v_pcicheck_result_indicator,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct DestinationSignallingID {
+        #[rasn(identifier = "parameterInstructionIndicators")]
+        pub parameter_instruction_indicators: ParameterInstructionIndicators,
+        #[rasn(identifier = "controlID")]
+        pub control_id: ControlID,
+    }
+    impl DestinationSignallingID {
+        pub fn new(
+            parameter_instruction_indicators: ParameterInstructionIndicators,
+            control_id: ControlID,
+        ) -> Self {
+            Self {
+                parameter_instruction_indicators,
+                control_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct EchoControlInformation {
+        #[rasn(identifier = "parameterInstructionIndicators")]
+        pub parameter_instruction_indicators: ParameterInstructionIndicators,
+        #[rasn(identifier = "outgoingHECDIndicator")]
+        pub outgoing_hecdindicator: OutgoingHECDIndicator,
+        #[rasn(identifier = "incomingHECDIndicator")]
+        pub incoming_hecdindicator: IncomingHECDIndicator,
+        #[rasn(identifier = "outgoingHECDRequestIndicator")]
+        pub outgoing_hecdrequest_indicator: OutgoingHECDRequestIndicator,
+        #[rasn(identifier = "incomingHECDRequestIndicator")]
+        pub incoming_hecdrequest_indicator: IncomingHECDRequestIndicator,
+    }
+    impl EchoControlInformation {
+        pub fn new(
+            parameter_instruction_indicators: ParameterInstructionIndicators,
+            outgoing_hecdindicator: OutgoingHECDIndicator,
+            incoming_hecdindicator: IncomingHECDIndicator,
+            outgoing_hecdrequest_indicator: OutgoingHECDRequestIndicator,
+            incoming_hecdrequest_indicator: IncomingHECDRequestIndicator,
+        ) -> Self {
+            Self {
+                parameter_instruction_indicators,
+                outgoing_hecdindicator,
+                incoming_hecdindicator,
+                outgoing_hecdrequest_indicator,
+                incoming_hecdrequest_indicator,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ForwardNarrowbandIWInd {
+        #[rasn(identifier = "parameterInstructionIndicators")]
+        pub parameter_instruction_indicators: ParameterInstructionIndicators,
+        #[rasn(identifier = "interworkingIndicator")]
+        pub interworking_indicator: InterworkingIndicator,
+        #[rasn(identifier = "iSDNUserPartIndicator")]
+        pub i_sdnuser_part_indicator: ISDNUserPartIndicator,
+        #[rasn(identifier = "iSDNUserPartPreferenceInd")]
+        pub i_sdnuser_part_preference_ind: ISDNUserPartPreferenceInd,
+        #[rasn(identifier = "iSDNAccessIndicator")]
+        pub i_sdnaccess_indicator: ISDNAccessIndicator,
+    }
+    impl ForwardNarrowbandIWInd {
+        pub fn new(
+            parameter_instruction_indicators: ParameterInstructionIndicators,
+            interworking_indicator: InterworkingIndicator,
+            i_sdnuser_part_indicator: ISDNUserPartIndicator,
+            i_sdnuser_part_preference_ind: ISDNUserPartPreferenceInd,
+            i_sdnaccess_indicator: ISDNAccessIndicator,
+        ) -> Self {
+            Self {
+                parameter_instruction_indicators,
+                interworking_indicator,
+                i_sdnuser_part_indicator,
+                i_sdnuser_part_preference_ind,
+                i_sdnaccess_indicator,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct InBandInformationInd {
+        #[rasn(identifier = "parameterInstructionIndicators")]
+        pub parameter_instruction_indicators: ParameterInstructionIndicators,
+        #[rasn(identifier = "inBandInformationIndicator")]
+        pub in_band_information_indicator: InBandInformationIndicator,
+    }
+    impl InBandInformationInd {
+        pub fn new(
+            parameter_instruction_indicators: ParameterInstructionIndicators,
+            in_band_information_indicator: InBandInformationIndicator,
+        ) -> Self {
+            Self {
+                parameter_instruction_indicators,
+                in_band_information_indicator,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct LocationNumber {
+        #[rasn(identifier = "parameterInstructionIndicators")]
+        pub parameter_instruction_indicators: ParameterInstructionIndicators,
+        #[rasn(identifier = "natureOfAddressIndicator")]
+        pub nature_of_address_indicator: NatureOfAddressIndicator,
+        #[rasn(identifier = "screeningIndicator")]
+        pub screening_indicator: ScreeningIndicator,
+        #[rasn(identifier = "addressPresentationIndicator")]
+        pub address_presentation_indicator: AddressPresentationIndicator,
+        #[rasn(identifier = "numberingPlanIndicator")]
+        pub numbering_plan_indicator: NumberingPlanIndicator,
+        #[rasn(identifier = "internalNetworkNumberIndicator")]
+        pub internal_network_number_indicator: InternalNetworkNumberIndicator,
+        #[rasn(tag(context, 1), identifier = "locationAddress")]
+        pub location_address: Option<LocationAddress>,
+    }
+    impl LocationNumber {
+        pub fn new(
+            parameter_instruction_indicators: ParameterInstructionIndicators,
+            nature_of_address_indicator: NatureOfAddressIndicator,
+            screening_indicator: ScreeningIndicator,
+            address_presentation_indicator: AddressPresentationIndicator,
+            numbering_plan_indicator: NumberingPlanIndicator,
+            internal_network_number_indicator: InternalNetworkNumberIndicator,
+            location_address: Option<LocationAddress>,
+        ) -> Self {
+            Self {
+                parameter_instruction_indicators,
+                nature_of_address_indicator,
+                screening_indicator,
+                address_presentation_indicator,
+                numbering_plan_indicator,
+                internal_network_number_indicator,
+                location_address,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct MLPPPrecedence {
+        #[rasn(identifier = "parameterInstructionIndicators")]
+        pub parameter_instruction_indicators: ParameterInstructionIndicators,
+        #[rasn(identifier = "precedenceLevelIndicator")]
+        pub precedence_level_indicator: PrecedenceLevelIndicator,
+        #[rasn(identifier = "lookAheadForBusyIndicator")]
+        pub look_ahead_for_busy_indicator: LookAheadForBusyIndicator,
+        #[rasn(identifier = "networkIdentity")]
+        pub network_identity: NetworkIdentity,
+        #[rasn(identifier = "mLPPServiceDomain")]
+        pub m_lppservice_domain: MLPPServiceDomain,
+    }
+    impl MLPPPrecedence {
+        pub fn new(
+            parameter_instruction_indicators: ParameterInstructionIndicators,
+            precedence_level_indicator: PrecedenceLevelIndicator,
+            look_ahead_for_busy_indicator: LookAheadForBusyIndicator,
+            network_identity: NetworkIdentity,
+            m_lppservice_domain: MLPPServiceDomain,
+        ) -> Self {
+            Self {
+                parameter_instruction_indicators,
+                precedence_level_indicator,
+                look_ahead_for_busy_indicator,
+                network_identity,
+                m_lppservice_domain,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct MLPPUserInformation {
+        #[rasn(identifier = "parameterInstructionIndicators")]
+        pub parameter_instruction_indicators: ParameterInstructionIndicators,
+        #[rasn(identifier = "mLPPUserIndicator")]
+        pub m_lppuser_indicator: MLPPUserIndicator,
+    }
+    impl MLPPUserInformation {
+        pub fn new(
+            parameter_instruction_indicators: ParameterInstructionIndicators,
+            m_lppuser_indicator: MLPPUserIndicator,
+        ) -> Self {
+            Self {
+                parameter_instruction_indicators,
+                m_lppuser_indicator,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct MaxEndToEndTransitDelay {
+        #[rasn(identifier = "parameterInstructionIndicators")]
+        pub parameter_instruction_indicators: ParameterInstructionIndicators,
+        #[rasn(identifier = "delayValue")]
+        pub delay_value: DelayValue,
+    }
+    impl MaxEndToEndTransitDelay {
+        pub fn new(
+            parameter_instruction_indicators: ParameterInstructionIndicators,
+            delay_value: DelayValue,
+        ) -> Self {
+            Self {
+                parameter_instruction_indicators,
+                delay_value,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct NarrowbandBearerCapability {
+        #[rasn(identifier = "parameterInstructionIndicators")]
+        pub parameter_instruction_indicators: ParameterInstructionIndicators,
+        pub priority: Priority,
+        #[rasn(identifier = "repeatIndicator")]
+        pub repeat_indicator: RepeatIndicator,
+        #[rasn(identifier = "narrowbandBearerCapabilityField")]
+        pub narrowband_bearer_capability_field: SequenceOf<NarrowbandBearerCapabilityField>,
+    }
+    impl NarrowbandBearerCapability {
+        pub fn new(
+            parameter_instruction_indicators: ParameterInstructionIndicators,
+            priority: Priority,
+            repeat_indicator: RepeatIndicator,
+            narrowband_bearer_capability_field: SequenceOf<NarrowbandBearerCapabilityField>,
+        ) -> Self {
+            Self {
+                parameter_instruction_indicators,
+                priority,
+                repeat_indicator,
+                narrowband_bearer_capability_field,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct NarrowbandHighLayerCompa {
+        #[rasn(identifier = "parameterInstructionIndicators")]
+        pub parameter_instruction_indicators: ParameterInstructionIndicators,
+        pub priority: Priority,
+        #[rasn(identifier = "repeatIndicator")]
+        pub repeat_indicator: RepeatIndicator,
+        #[rasn(identifier = "narrowbandHighLayerCompaField")]
+        pub narrowband_high_layer_compa_field: SequenceOf<NarrowbandHighLayerCompaField>,
+    }
+    impl NarrowbandHighLayerCompa {
+        pub fn new(
+            parameter_instruction_indicators: ParameterInstructionIndicators,
+            priority: Priority,
+            repeat_indicator: RepeatIndicator,
+            narrowband_high_layer_compa_field: SequenceOf<NarrowbandHighLayerCompaField>,
+        ) -> Self {
+            Self {
+                parameter_instruction_indicators,
+                priority,
+                repeat_indicator,
+                narrowband_high_layer_compa_field,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct NarrowbandLowLayerCompa {
+        #[rasn(identifier = "parameterInstructionIndicators")]
+        pub parameter_instruction_indicators: ParameterInstructionIndicators,
+        pub priority: Priority,
+        #[rasn(identifier = "repeatIndicator")]
+        pub repeat_indicator: RepeatIndicator,
+        #[rasn(identifier = "narrowbandLowLayerCompaField")]
+        pub narrowband_low_layer_compa_field: SequenceOf<NarrowbandLowLayerCompaField>,
+    }
+    impl NarrowbandLowLayerCompa {
+        pub fn new(
+            parameter_instruction_indicators: ParameterInstructionIndicators,
+            priority: Priority,
+            repeat_indicator: RepeatIndicator,
+            narrowband_low_layer_compa_field: SequenceOf<NarrowbandLowLayerCompaField>,
+        ) -> Self {
+            Self {
+                parameter_instruction_indicators,
+                priority,
+                repeat_indicator,
+                narrowband_low_layer_compa_field,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct NationalInternationalCallInd {
+        #[rasn(identifier = "parameterInstructionIndicators")]
+        pub parameter_instruction_indicators: ParameterInstructionIndicators,
+        #[rasn(identifier = "nationalInternationalCallIndicator")]
+        pub national_international_call_indicator: NationalInternationalCallIndicator,
+    }
+    impl NationalInternationalCallInd {
+        pub fn new(
+            parameter_instruction_indicators: ParameterInstructionIndicators,
+            national_international_call_indicator: NationalInternationalCallIndicator,
+        ) -> Self {
+            Self {
+                parameter_instruction_indicators,
+                national_international_call_indicator,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Notification {
+        #[rasn(identifier = "parameterInstructionIndicators")]
+        pub parameter_instruction_indicators: ParameterInstructionIndicators,
+        #[rasn(identifier = "notificationIndicators")]
+        pub notification_indicators: NotificationIndicators,
+    }
+    impl Notification {
+        pub fn new(
+            parameter_instruction_indicators: ParameterInstructionIndicators,
+            notification_indicators: NotificationIndicators,
+        ) -> Self {
+            Self {
+                parameter_instruction_indicators,
+                notification_indicators,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct OAMTrafficDescriptor {
+        #[rasn(identifier = "parameterInstructionIndicators")]
+        pub parameter_instruction_indicators: ParameterInstructionIndicators,
+        #[rasn(identifier = "codingStandard")]
+        pub coding_standard: CodingStandard,
+        #[rasn(identifier = "oAMTrafficDescriptorField")]
+        pub o_amtraffic_descriptor_field: OAMTrafficDescriptorField,
+    }
+    impl OAMTrafficDescriptor {
+        pub fn new(
+            parameter_instruction_indicators: ParameterInstructionIndicators,
+            coding_standard: CodingStandard,
+            o_amtraffic_descriptor_field: OAMTrafficDescriptorField,
+        ) -> Self {
+            Self {
+                parameter_instruction_indicators,
+                coding_standard,
+                o_amtraffic_descriptor_field,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct OriginalCalledNumber {
+        #[rasn(identifier = "parameterInstructionIndicators")]
+        pub parameter_instruction_indicators: ParameterInstructionIndicators,
+        #[rasn(identifier = "natureOfAddressIndicator")]
+        pub nature_of_address_indicator: NatureOfAddressIndicator,
+        #[rasn(identifier = "addressPresentationIndicator")]
+        pub address_presentation_indicator: AddressPresentationIndicator,
+        #[rasn(identifier = "numberingPlanIndicator")]
+        pub numbering_plan_indicator: NumberingPlanIndicator,
+        #[rasn(tag(context, 1), identifier = "callingPartyAddress")]
+        pub calling_party_address: Option<CallingPartyAddress>,
+    }
+    impl OriginalCalledNumber {
+        pub fn new(
+            parameter_instruction_indicators: ParameterInstructionIndicators,
+            nature_of_address_indicator: NatureOfAddressIndicator,
+            address_presentation_indicator: AddressPresentationIndicator,
+            numbering_plan_indicator: NumberingPlanIndicator,
+            calling_party_address: Option<CallingPartyAddress>,
+        ) -> Self {
+            Self {
+                parameter_instruction_indicators,
+                nature_of_address_indicator,
+                address_presentation_indicator,
+                numbering_plan_indicator,
+                calling_party_address,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct OriginationISCPointCode {
+        #[rasn(identifier = "parameterInstructionIndicators")]
+        pub parameter_instruction_indicators: ParameterInstructionIndicators,
+        #[rasn(identifier = "signallingPointCode")]
+        pub signalling_point_code: SignallingPointCode,
+    }
+    impl OriginationISCPointCode {
+        pub fn new(
+            parameter_instruction_indicators: ParameterInstructionIndicators,
+            signalling_point_code: SignallingPointCode,
+        ) -> Self {
+            Self {
+                parameter_instruction_indicators,
+                signalling_point_code,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct OriginationSignallingID {
+        #[rasn(identifier = "parameterInstructionIndicators")]
+        pub parameter_instruction_indicators: ParameterInstructionIndicators,
+        #[rasn(identifier = "controlID")]
+        pub control_id: ControlID,
+    }
+    impl OriginationSignallingID {
+        pub fn new(
+            parameter_instruction_indicators: ParameterInstructionIndicators,
+            control_id: ControlID,
+        ) -> Self {
+            Self {
+                parameter_instruction_indicators,
+                control_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ParameterType {
+        #[rasn(tag(context, 71))]
+        aALParameters(AALParameters),
+        #[rasn(tag(context, 46))]
+        accessDeliveryInformation(AccessDeliveryInformation),
+        #[rasn(tag(context, 16))]
+        additionalCallingPartyNumber(AdditionalCallingPartyNumber),
+        #[rasn(tag(context, 17))]
+        additionalConnectedNumber(AdditionalConnectedNumber),
+        #[rasn(tag(context, 8))]
+        aTMCellRate(ATMCellRate),
+        #[rasn(tag(context, 39))]
+        automaticCongestionLevel(AutomaticCongestionLevel),
+        #[rasn(tag(context, 20))]
+        backwardNarrowbandIWInd(BackwardNarrowbandIWInd),
+        #[rasn(tag(context, 80))]
+        broadbandBearerCapability(BroadbandBearerCapability),
+        #[rasn(tag(context, 72))]
+        broadbandHighLayerInfo(BroadbandHighLayerInfo),
+        #[rasn(tag(context, 79))]
+        broadbandLowLayerInfo(BroadbandLowLayerInfo),
+        #[rasn(tag(context, 54))]
+        callDiversionInformation(CallDiversionInformation),
+        #[rasn(tag(context, 38))]
+        callDiversionMayOccur(CallDiversionMayOccur),
+        #[rasn(tag(context, 4))]
+        calledPartyNumber(CalledPartyNumber),
+        #[rasn(tag(context, 23))]
+        calledPartysIndicators(CalledPartysIndicators),
+        #[rasn(tag(context, 21))]
+        calledPartySubaddress(CalledPartySubaddress),
+        #[rasn(tag(context, 45))]
+        callHistoryInformation(CallHistoryInformation),
+        #[rasn(tag(context, 10))]
+        callingPartyNumber(CallingPartyNumber),
+        #[rasn(tag(context, 9))]
+        callingPartysCategory(CallingPartysCategory),
+        #[rasn(tag(context, 22))]
+        callingPartySubaddress(CallingPartySubaddress),
+        #[rasn(tag(context, 18))]
+        causeIndicators(CauseIndicators),
+        #[rasn(tag(context, 25))]
+        chargeInd(ChargeInd),
+        #[rasn(tag(context, 26))]
+        closedUserGroupInformation(ClosedUserGroupInformation),
+        #[rasn(tag(context, 27))]
+        connectedLineIDRequest(ConnectedLineIDRequest),
+        #[rasn(tag(context, 33))]
+        connectedNumber(ConnectedNumber),
+        #[rasn(tag(context, 36))]
+        connectedSubaddress(ConnectedSubaddress),
+        #[rasn(tag(context, 6))]
+        connectionElementIdentifier(ConnectionElementIdentifier),
+        #[rasn(tag(context, 74))]
+        consistencyCheckResultInfo(ConsistencyCheckResultInfo),
+        #[rasn(tag(context, 3))]
+        destinationSignallingID(DestinationSignallingID),
+        #[rasn(tag(context, 55))]
+        echoControlInformation(EchoControlInformation),
+        #[rasn(tag(context, 28))]
+        forwardNarrowbandIWInd(ForwardNarrowbandIWInd),
+        #[rasn(tag(context, 31))]
+        inBandInformationInd(InBandInformationInd),
+        #[rasn(tag(context, 63))]
+        locationNumber(LocationNumber),
+        #[rasn(tag(context, 7))]
+        maxEndToEndTransitDelay(MaxEndToEndTransitDelay),
+        #[rasn(tag(context, 48))]
+        mLPPPrecedence(MLPPPrecedence),
+        #[rasn(tag(context, 73))]
+        mLPPUserInformation(MLPPUserInformation),
+        #[rasn(tag(context, 29))]
+        narrowbandBearerCapability(NarrowbandBearerCapability),
+        #[rasn(tag(context, 52))]
+        narrowbandHighLayerCompa(NarrowbandHighLayerCompa),
+        #[rasn(tag(context, 37))]
+        narrowbandLowLayerCompa(NarrowbandLowLayerCompa),
+        #[rasn(tag(context, 41))]
+        nationalInternationalCallInd(NationalInternationalCallInd),
+        #[rasn(tag(context, 44))]
+        notification(Notification),
+        #[rasn(tag(context, 72))]
+        oAMTrafficDescriptor(OAMTrafficDescriptor),
+        #[rasn(tag(context, 40))]
+        originalCalledNumber(OriginalCalledNumber),
+        #[rasn(tag(context, 43))]
+        originationISCPointCode(OriginationISCPointCode),
+        #[rasn(tag(context, 2))]
+        originationSignallingID(OriginationSignallingID),
+        #[rasn(tag(context, 53))]
+        progressIndicator(ProgressIndicator),
+        #[rasn(tag(context, 46))]
+        propagationDelayCounter(PropagationDelayCounter),
+        #[rasn(tag(context, 11))]
+        redirectingNumber(RedirectingNumber),
+        #[rasn(tag(context, 19))]
+        redirectionInformation(RedirectionInformation),
+        #[rasn(tag(context, 12))]
+        redirectionNumber(RedirectionNumber),
+        #[rasn(tag(context, 64))]
+        redirectionNumberRestriction(RedirectionNumberRestriction),
+        #[rasn(tag(context, 49))]
+        resourceID(ResourceID),
+        #[rasn(tag(context, 58))]
+        segmentationIndicator(SegmentationIndicator),
+        #[rasn(tag(context, 5))]
+        subsequentNumber(SubsequentNumber),
+        #[rasn(tag(context, 34))]
+        suspendResumeIndicators(SuspendResumeIndicators),
+        #[rasn(tag(context, 35))]
+        transitNetworkSelection(TransitNetworkSelection),
+        #[rasn(tag(context, 42))]
+        userToUserIndicators(UserToUserIndicators),
+        #[rasn(tag(context, 32))]
+        userToUserInformation(UserToUserInformation),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ProgressIndicator {
+        #[rasn(identifier = "parameterInstructionIndicators")]
+        pub parameter_instruction_indicators: ParameterInstructionIndicators,
+        pub priority: Priority,
+        #[rasn(identifier = "repeatIndicator")]
+        pub repeat_indicator: RepeatIndicator,
+        #[rasn(identifier = "progressIndicatorField")]
+        pub progress_indicator_field: SequenceOf<ProgressIndicatorField>,
+    }
+    impl ProgressIndicator {
+        pub fn new(
+            parameter_instruction_indicators: ParameterInstructionIndicators,
+            priority: Priority,
+            repeat_indicator: RepeatIndicator,
+            progress_indicator_field: SequenceOf<ProgressIndicatorField>,
+        ) -> Self {
+            Self {
+                parameter_instruction_indicators,
+                priority,
+                repeat_indicator,
+                progress_indicator_field,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct PropagationDelayCounter {
+        #[rasn(identifier = "parameterInstructionIndicators")]
+        pub parameter_instruction_indicators: ParameterInstructionIndicators,
+        #[rasn(identifier = "delayValue")]
+        pub delay_value: DelayValue,
+    }
+    impl PropagationDelayCounter {
+        pub fn new(
+            parameter_instruction_indicators: ParameterInstructionIndicators,
+            delay_value: DelayValue,
+        ) -> Self {
+            Self {
+                parameter_instruction_indicators,
+                delay_value,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct RedirectingNumber {
+        #[rasn(identifier = "parameterInstructionIndicators")]
+        pub parameter_instruction_indicators: ParameterInstructionIndicators,
+        #[rasn(identifier = "natureOfAddressIndicator")]
+        pub nature_of_address_indicator: NatureOfAddressIndicator,
+        #[rasn(identifier = "addressPresentationIndicator")]
+        pub address_presentation_indicator: AddressPresentationIndicator,
+        #[rasn(identifier = "numberingPlanIndicator")]
+        pub numbering_plan_indicator: NumberingPlanIndicator,
+        #[rasn(tag(context, 1), identifier = "callingPartyAddress")]
+        pub calling_party_address: Option<CallingPartyAddress>,
+    }
+    impl RedirectingNumber {
+        pub fn new(
+            parameter_instruction_indicators: ParameterInstructionIndicators,
+            nature_of_address_indicator: NatureOfAddressIndicator,
+            address_presentation_indicator: AddressPresentationIndicator,
+            numbering_plan_indicator: NumberingPlanIndicator,
+            calling_party_address: Option<CallingPartyAddress>,
+        ) -> Self {
+            Self {
+                parameter_instruction_indicators,
+                nature_of_address_indicator,
+                address_presentation_indicator,
+                numbering_plan_indicator,
+                calling_party_address,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct RedirectionInformation {
+        #[rasn(identifier = "parameterInstructionIndicators")]
+        pub parameter_instruction_indicators: ParameterInstructionIndicators,
+        #[rasn(identifier = "redirectingIndicator")]
+        pub redirecting_indicator: RedirectingIndicator,
+        #[rasn(identifier = "originalRedirectionReasonIndicator")]
+        pub original_redirection_reason_indicator: OriginalRedirectionReasonIndicator,
+        #[rasn(identifier = "redirectionCounter")]
+        pub redirection_counter: RedirectionCounter,
+        #[rasn(identifier = "redirectingReasonIndicator")]
+        pub redirecting_reason_indicator: RedirectingReasonIndicator,
+    }
+    impl RedirectionInformation {
+        pub fn new(
+            parameter_instruction_indicators: ParameterInstructionIndicators,
+            redirecting_indicator: RedirectingIndicator,
+            original_redirection_reason_indicator: OriginalRedirectionReasonIndicator,
+            redirection_counter: RedirectionCounter,
+            redirecting_reason_indicator: RedirectingReasonIndicator,
+        ) -> Self {
+            Self {
+                parameter_instruction_indicators,
+                redirecting_indicator,
+                original_redirection_reason_indicator,
+                redirection_counter,
+                redirecting_reason_indicator,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct RedirectionNumber {
+        #[rasn(identifier = "parameterInstructionIndicators")]
+        pub parameter_instruction_indicators: ParameterInstructionIndicators,
+        #[rasn(identifier = "natureOfAddressIndicator")]
+        pub nature_of_address_indicator: NatureOfAddressIndicator,
+        #[rasn(identifier = "numberingPlanIndicator")]
+        pub numbering_plan_indicator: NumberingPlanIndicator,
+        #[rasn(identifier = "internalNetworkNumberIndicator")]
+        pub internal_network_number_indicator: InternalNetworkNumberIndicator,
+        #[rasn(tag(context, 1), identifier = "callingPartyAddress")]
+        pub calling_party_address: Option<CallingPartyAddress>,
+    }
+    impl RedirectionNumber {
+        pub fn new(
+            parameter_instruction_indicators: ParameterInstructionIndicators,
+            nature_of_address_indicator: NatureOfAddressIndicator,
+            numbering_plan_indicator: NumberingPlanIndicator,
+            internal_network_number_indicator: InternalNetworkNumberIndicator,
+            calling_party_address: Option<CallingPartyAddress>,
+        ) -> Self {
+            Self {
+                parameter_instruction_indicators,
+                nature_of_address_indicator,
+                numbering_plan_indicator,
+                internal_network_number_indicator,
+                calling_party_address,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct RedirectionNumberRestriction {
+        #[rasn(identifier = "parameterInstructionIndicators")]
+        pub parameter_instruction_indicators: ParameterInstructionIndicators,
+        #[rasn(identifier = "redirectionNumberRestrictionInd")]
+        pub redirection_number_restriction_ind: RedirectionNumberRestrictionInd,
+    }
+    impl RedirectionNumberRestriction {
+        pub fn new(
+            parameter_instruction_indicators: ParameterInstructionIndicators,
+            redirection_number_restriction_ind: RedirectionNumberRestrictionInd,
+        ) -> Self {
+            Self {
+                parameter_instruction_indicators,
+                redirection_number_restriction_ind,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ResourceID {
+        #[rasn(identifier = "parameterInstructionIndicators")]
+        pub parameter_instruction_indicators: ParameterInstructionIndicators,
+        #[rasn(identifier = "resourceIndicator")]
+        pub resource_indicator: ResourceIndicator,
+        #[rasn(identifier = "resourceValue")]
+        pub resource_value: ResourceValue,
+    }
+    impl ResourceID {
+        pub fn new(
+            parameter_instruction_indicators: ParameterInstructionIndicators,
+            resource_indicator: ResourceIndicator,
+            resource_value: ResourceValue,
+        ) -> Self {
+            Self {
+                parameter_instruction_indicators,
+                resource_indicator,
+                resource_value,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SegmentationIndicator {
+        #[rasn(identifier = "parameterInstructionIndicators")]
+        pub parameter_instruction_indicators: ParameterInstructionIndicators,
+        #[rasn(identifier = "simpleSegmentationIndicator")]
+        pub simple_segmentation_indicator: SimpleSegmentationIndicator,
+    }
+    impl SegmentationIndicator {
+        pub fn new(
+            parameter_instruction_indicators: ParameterInstructionIndicators,
+            simple_segmentation_indicator: SimpleSegmentationIndicator,
+        ) -> Self {
+            Self {
+                parameter_instruction_indicators,
+                simple_segmentation_indicator,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SubsequentNumber {
+        #[rasn(identifier = "parameterInstructionIndicators")]
+        pub parameter_instruction_indicators: ParameterInstructionIndicators,
+        #[rasn(identifier = "subsequentAddress")]
+        pub subsequent_address: SubsequentAddress,
+    }
+    impl SubsequentNumber {
+        pub fn new(
+            parameter_instruction_indicators: ParameterInstructionIndicators,
+            subsequent_address: SubsequentAddress,
+        ) -> Self {
+            Self {
+                parameter_instruction_indicators,
+                subsequent_address,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SuspendResumeIndicators {
+        #[rasn(identifier = "parameterInstructionIndicators")]
+        pub parameter_instruction_indicators: ParameterInstructionIndicators,
+        #[rasn(identifier = "suspendResumeIndicator")]
+        pub suspend_resume_indicator: SuspendResumeIndicator,
+    }
+    impl SuspendResumeIndicators {
+        pub fn new(
+            parameter_instruction_indicators: ParameterInstructionIndicators,
+            suspend_resume_indicator: SuspendResumeIndicator,
+        ) -> Self {
+            Self {
+                parameter_instruction_indicators,
+                suspend_resume_indicator,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct TransitNetworkSelection {
+        #[rasn(identifier = "parameterInstructionIndicators")]
+        pub parameter_instruction_indicators: ParameterInstructionIndicators,
+        #[rasn(identifier = "networkIdentificationPlan")]
+        pub network_identification_plan: NetworkIdentificationPlan,
+        #[rasn(identifier = "typeOfNetworkIdentification")]
+        pub type_of_network_identification: TypeOfNetworkIdentification,
+        #[rasn(identifier = "networkIdentification")]
+        pub network_identification: NetworkIdentification,
+    }
+    impl TransitNetworkSelection {
+        pub fn new(
+            parameter_instruction_indicators: ParameterInstructionIndicators,
+            network_identification_plan: NetworkIdentificationPlan,
+            type_of_network_identification: TypeOfNetworkIdentification,
+            network_identification: NetworkIdentification,
+        ) -> Self {
+            Self {
+                parameter_instruction_indicators,
+                network_identification_plan,
+                type_of_network_identification,
+                network_identification,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct UserToUserIndicators {
+        #[rasn(identifier = "parameterInstructionIndicators")]
+        pub parameter_instruction_indicators: ParameterInstructionIndicators,
+        #[rasn(identifier = "userToUserIndicatorsParameter")]
+        pub user_to_user_indicators_parameter: UserToUserIndicatorsParameter,
+    }
+    impl UserToUserIndicators {
+        pub fn new(
+            parameter_instruction_indicators: ParameterInstructionIndicators,
+            user_to_user_indicators_parameter: UserToUserIndicatorsParameter,
+        ) -> Self {
+            Self {
+                parameter_instruction_indicators,
+                user_to_user_indicators_parameter,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct UserToUserInformation {
+        #[rasn(identifier = "parameterInstructionIndicators")]
+        pub parameter_instruction_indicators: ParameterInstructionIndicators,
+        #[rasn(identifier = "moreDataIndicator")]
+        pub more_data_indicator: MoreDataIndicator,
+        #[rasn(identifier = "userToUserInformationField")]
+        pub user_to_user_information_field: UserToUserInformationField,
+    }
+    impl UserToUserInformation {
+        pub fn new(
+            parameter_instruction_indicators: ParameterInstructionIndicators,
+            more_data_indicator: MoreDataIndicator,
+            user_to_user_information_field: UserToUserInformationField,
+        ) -> Self {
+            Self {
+                parameter_instruction_indicators,
+                more_data_indicator,
+                user_to_user_information_field,
+            }
+        }
+    }
+}

@@ -1,0 +1,440 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_m_m3650_1997_ASN1TypeModule.asn1
+---
+Warnings:
+LinkerError in ASN grammar: Failed to link value with 'None'
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod asn1_type_module {
+    extern crate alloc;
+    use super::asn1_defined_types_module::NameType;
+    use super::caisdnmodule::DirectoryNumber;
+    use super::metric_module::TimePeriod;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum InformationTransferCapability {
+        speech = 0,
+        unrestrictedDigitalInformation = 1,
+        restrictedDigitalInformation = 2,
+        threeDotOneKHzAudio = 3,
+        sevenKHzAudio = 4,
+        video = 5,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum InformationTransferMode {
+        circuitMode = 0,
+        packetMode = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum InformationTransferRate {
+        packetMode = 0,
+        kBits64 = 1,
+        kBits2x64 = 2,
+        kBits384 = 3,
+        kBits1536 = 4,
+        kBits1920 = 5,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Layer1AccessDelay {
+        #[rasn(identifier = "layer1FE1")]
+        pub layer1_fe1: TimeStamp,
+        #[rasn(identifier = "layer1FE2")]
+        pub layer1_fe2: TimeStamp,
+        #[rasn(identifier = "layer1FE3")]
+        pub layer1_fe3: TimeStamp,
+        #[rasn(identifier = "layer1FE4")]
+        pub layer1_fe4: TimeStamp,
+    }
+    impl Layer1AccessDelay {
+        pub fn new(
+            layer1_fe1: TimeStamp,
+            layer1_fe2: TimeStamp,
+            layer1_fe3: TimeStamp,
+            layer1_fe4: TimeStamp,
+        ) -> Self {
+            Self {
+                layer1_fe1,
+                layer1_fe2,
+                layer1_fe3,
+                layer1_fe4,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum Layer1AccessDependability {
+        successfulLayer1AccessDependability = 0,
+        layer1Failure = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum Layer1InformationTransferDependability {
+        successfulInformationTransfer = 0,
+        layer1Failure = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Layer1PerformanceRecorded {
+        #[rasn(identifier = "typeOfCall")]
+        pub type_of_call: TypeOfCall,
+        #[rasn(identifier = "layer1AccessDelay")]
+        pub layer1_access_delay: Layer1AccessDelay,
+        #[rasn(identifier = "layer1AccessDependability")]
+        pub layer1_access_dependability: Layer1AccessDependability,
+        #[rasn(identifier = "layer1InformationTransferDependability")]
+        pub layer1_information_transfer_dependability: Layer1InformationTransferDependability,
+    }
+    impl Layer1PerformanceRecorded {
+        pub fn new(
+            type_of_call: TypeOfCall,
+            layer1_access_delay: Layer1AccessDelay,
+            layer1_access_dependability: Layer1AccessDependability,
+            layer1_information_transfer_dependability: Layer1InformationTransferDependability,
+        ) -> Self {
+            Self {
+                type_of_call,
+                layer1_access_delay,
+                layer1_access_dependability,
+                layer1_information_transfer_dependability,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Layer2AccessDelay {
+        #[rasn(identifier = "layer2SABME")]
+        pub layer2_sabme: TimeStamp,
+        #[rasn(identifier = "layer2UA")]
+        pub layer2_ua: TimeStamp,
+    }
+    impl Layer2AccessDelay {
+        pub fn new(layer2_sabme: TimeStamp, layer2_ua: TimeStamp) -> Self {
+            Self {
+                layer2_sabme,
+                layer2_ua,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum Layer2AccessDependability {
+        successfulLayer2AccessDependability = 0,
+        layer2Failure = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Layer2PerformanceRecorded {
+        #[rasn(identifier = "typeOfCall")]
+        pub type_of_call: TypeOfCall,
+        #[rasn(identifier = "layer2AccessDelay")]
+        pub layer2_access_delay: Layer2AccessDelay,
+        #[rasn(identifier = "layer2AccessDependability")]
+        pub layer2_access_dependability: Layer2AccessDependability,
+    }
+    impl Layer2PerformanceRecorded {
+        pub fn new(
+            type_of_call: TypeOfCall,
+            layer2_access_delay: Layer2AccessDelay,
+            layer2_access_dependability: Layer2AccessDependability,
+        ) -> Self {
+            Self {
+                type_of_call,
+                layer2_access_delay,
+                layer2_access_dependability,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Layer3AccessDelay {
+        #[rasn(tag(context, 0), identifier = "layer3SETUP")]
+        pub layer3_setup: TimeStamp,
+        #[rasn(tag(context, 1), identifier = "layer3SETACK")]
+        pub layer3_setack: Option<TimeStamp>,
+        #[rasn(tag(context, 2), identifier = "layer3INF")]
+        pub layer3_inf: Option<TimeStamp>,
+        #[rasn(tag(context, 3), identifier = "layer3ALERT")]
+        pub layer3_alert: Option<TimeStamp>,
+        #[rasn(tag(context, 4), identifier = "layer3CONNECT")]
+        pub layer3_connect: Option<TimeStamp>,
+    }
+    impl Layer3AccessDelay {
+        pub fn new(
+            layer3_setup: TimeStamp,
+            layer3_setack: Option<TimeStamp>,
+            layer3_inf: Option<TimeStamp>,
+            layer3_alert: Option<TimeStamp>,
+            layer3_connect: Option<TimeStamp>,
+        ) -> Self {
+            Self {
+                layer3_setup,
+                layer3_setack,
+                layer3_inf,
+                layer3_alert,
+                layer3_connect,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum Layer3AccessDependability {
+        successfulLayer3AccessDependability = 0,
+        bearerCapabilityNotAvailable = 1,
+        noResponseSETUPorINF = 2,
+        networkOutOfOrder = 3,
+        temporaryFailure = 4,
+        iSUPT7Expired = 5,
+        iSUPT8Expired = 6,
+        switchingEquipmentCongestion = 7,
+        iSUPMessageError = 8,
+        iSUPParameterError = 9,
+        otherUnsuccessful = 10,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Layer3DisengagementDelay {
+        #[rasn(identifier = "layer3DISCONNECT")]
+        pub layer3_disconnect: TimeStamp,
+        #[rasn(identifier = "layer3RELEASE")]
+        pub layer3_release: TimeStamp,
+        #[rasn(identifier = "layer3RELCOMP")]
+        pub layer3_relcomp: TimeStamp,
+        #[rasn(identifier = "bChannelFree")]
+        pub b_channel_free: TimeStamp,
+    }
+    impl Layer3DisengagementDelay {
+        pub fn new(
+            layer3_disconnect: TimeStamp,
+            layer3_release: TimeStamp,
+            layer3_relcomp: TimeStamp,
+            b_channel_free: TimeStamp,
+        ) -> Self {
+            Self {
+                layer3_disconnect,
+                layer3_release,
+                layer3_relcomp,
+                b_channel_free,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum Layer3DisengagementDependability {
+        successfulDisengagement = 0,
+        noRELEASE = 1,
+        noRELCOMP = 2,
+        otherUnsuccessful = 3,
+        notApplicable = 4,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum Layer3InformationTransferDependability {
+        successfulInformationTransfer = 0,
+        destinationOutOfOrder = 1,
+        t318Expired = 2,
+        temporaryFailure = 3,
+        networkOutOfOrder = 4,
+        otherUnsuccessful = 5,
+        notApplicable = 6,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Layer3InformationTransferTime {
+        #[rasn(identifier = "numberOfSatelliteHops")]
+        pub number_of_satellite_hops: Option<Integer>,
+        #[rasn(identifier = "propagationDelay")]
+        pub propagation_delay: Option<TimePeriod>,
+    }
+    impl Layer3InformationTransferTime {
+        pub fn new(
+            number_of_satellite_hops: Option<Integer>,
+            propagation_delay: Option<TimePeriod>,
+        ) -> Self {
+            Self {
+                number_of_satellite_hops,
+                propagation_delay,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Layer3PerformanceRecorded {
+        #[rasn(identifier = "typeOfCall")]
+        pub type_of_call: TypeOfCall,
+        #[rasn(identifier = "callingNumber")]
+        pub calling_number: DirectoryNumber,
+        #[rasn(identifier = "calledNumber")]
+        pub called_number: DirectoryNumber,
+        #[rasn(identifier = "callingSubaddress")]
+        pub calling_subaddress: Subaddress,
+        #[rasn(identifier = "calledSubaddress")]
+        pub called_subaddress: Subaddress,
+        #[rasn(identifier = "informationTransferCapability")]
+        pub information_transfer_capability: InformationTransferCapability,
+        #[rasn(identifier = "informationTransferMode")]
+        pub information_transfer_mode: InformationTransferMode,
+        #[rasn(identifier = "informationTransferRate")]
+        pub information_transfer_rate: InformationTransferRate,
+        #[rasn(identifier = "layer3AccessDelay")]
+        pub layer3_access_delay: Layer3AccessDelay,
+        #[rasn(identifier = "layer3AccessDependability")]
+        pub layer3_access_dependability: Layer3AccessDependability,
+        #[rasn(identifier = "layer3InformationTransferTime")]
+        pub layer3_information_transfer_time: Layer3InformationTransferTime,
+        #[rasn(identifier = "layer3InformationTransferDependability")]
+        pub layer3_information_transfer_dependability: Layer3InformationTransferDependability,
+        #[rasn(identifier = "layer3DisengagementDelay")]
+        pub layer3_disengagement_delay: Layer3DisengagementDelay,
+        #[rasn(identifier = "layer3DisengagementDependability")]
+        pub layer3_disengagement_dependability: Layer3DisengagementDependability,
+    }
+    impl Layer3PerformanceRecorded {
+        pub fn new(
+            type_of_call: TypeOfCall,
+            calling_number: DirectoryNumber,
+            called_number: DirectoryNumber,
+            calling_subaddress: Subaddress,
+            called_subaddress: Subaddress,
+            information_transfer_capability: InformationTransferCapability,
+            information_transfer_mode: InformationTransferMode,
+            information_transfer_rate: InformationTransferRate,
+            layer3_access_delay: Layer3AccessDelay,
+            layer3_access_dependability: Layer3AccessDependability,
+            layer3_information_transfer_time: Layer3InformationTransferTime,
+            layer3_information_transfer_dependability: Layer3InformationTransferDependability,
+            layer3_disengagement_delay: Layer3DisengagementDelay,
+            layer3_disengagement_dependability: Layer3DisengagementDependability,
+        ) -> Self {
+            Self {
+                type_of_call,
+                calling_number,
+                called_number,
+                calling_subaddress,
+                called_subaddress,
+                information_transfer_capability,
+                information_transfer_mode,
+                information_transfer_rate,
+                layer3_access_delay,
+                layer3_access_dependability,
+                layer3_information_transfer_time,
+                layer3_information_transfer_dependability,
+                layer3_disengagement_delay,
+                layer3_disengagement_dependability,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MonitoringTimeStamp(pub GeneralizedTime);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Subaddress(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct TimeStamp {
+        pub hours: Integer,
+        pub minutes: Integer,
+        pub seconds: Integer,
+        pub milliseconds: Integer,
+    }
+    impl TimeStamp {
+        pub fn new(
+            hours: Integer,
+            minutes: Integer,
+            seconds: Integer,
+            milliseconds: Integer,
+        ) -> Self {
+            Self {
+                hours,
+                minutes,
+                seconds,
+                milliseconds,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum TypeOfCall {
+        outgoing = 0,
+        incoming = 1,
+    }
+    #[doc = " -1 to 999"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct TypesMonitoring {
+        #[rasn(identifier = "outgoingLayer1")]
+        pub outgoing_layer1: bool,
+        #[rasn(identifier = "incomingLayer1")]
+        pub incoming_layer1: bool,
+        #[rasn(identifier = "outgoingLayer2")]
+        pub outgoing_layer2: bool,
+        #[rasn(identifier = "incomingLayer2")]
+        pub incoming_layer2: bool,
+        #[rasn(identifier = "outgoingLayer3")]
+        pub outgoing_layer3: bool,
+        #[rasn(identifier = "incomingLayer3")]
+        pub incoming_layer3: bool,
+    }
+    impl TypesMonitoring {
+        pub fn new(
+            outgoing_layer1: bool,
+            incoming_layer1: bool,
+            outgoing_layer2: bool,
+            incoming_layer2: bool,
+            outgoing_layer3: bool,
+            incoming_layer3: bool,
+        ) -> Self {
+            Self {
+                outgoing_layer1,
+                incoming_layer1,
+                outgoing_layer2,
+                incoming_layer2,
+                outgoing_layer3,
+                incoming_layer3,
+            }
+        }
+    }
+    pub static M3650_ACTION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***M3650_INFORMATION_MODEL, &[9u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static M3650_ATTRIBUTE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***M3650_INFORMATION_MODEL, &[7u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static M3650_INFORMATION_MODEL: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[0u32, 0u32, 13u32, 3650u32, 0u32]).to_owned());
+    pub static M3650_MANAGED_OBJECT_CLASS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***M3650_INFORMATION_MODEL, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static M3650_NAME_BINDING: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***M3650_INFORMATION_MODEL, &[6u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static M3650_NOTIFICATION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***M3650_INFORMATION_MODEL, &[10u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static M3650_PACKAGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***M3650_INFORMATION_MODEL, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static M3650_STANDARD_SPECIFIC_EXTENSION: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***M3650_INFORMATION_MODEL, &[0u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+}

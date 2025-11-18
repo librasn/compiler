@@ -1,0 +1,769 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x737_1995_TestCategories-ASN1Module.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod test_categories_asn1_module {
+    extern crate alloc;
+    use super::attribute_asn1_module::*;
+    use super::cmip_1::*;
+    use super::test_asn1_module::{AssociatedObjects, MORTs, TestOutcome, TimeoutPeriod, Timespec};
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "CDTC-SIGNAL-TYPE")]
+    pub struct CDTCSIGNALTYPE(pub DMITYPEIDENTIFIER);
+    #[doc = " abnormal condition, a correct response cannot be sent"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "CDTC-TEST-RESULTS")]
+    pub struct CDTCTESTRESULTS(pub DMITYPEIDENTIFIER);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ConnectionTestInfo {
+        #[rasn(tag(explicit(context, 0)), identifier = "testPattern")]
+        pub test_pattern: Option<TestPattern>,
+        #[rasn(tag(context, 1), identifier = "testDirection")]
+        pub test_direction: Option<TestDirection>,
+        #[rasn(tag(explicit(context, 2)), identifier = "testDuration")]
+        pub test_duration: Option<TestDuration>,
+        #[rasn(tag(context, 3), identifier = "reportingInterval")]
+        pub reporting_interval: Option<Timespec>,
+    }
+    impl ConnectionTestInfo {
+        pub fn new(
+            test_pattern: Option<TestPattern>,
+            test_direction: Option<TestDirection>,
+            test_duration: Option<TestDuration>,
+            reporting_interval: Option<Timespec>,
+        ) -> Self {
+            Self {
+                test_pattern,
+                test_direction,
+                test_duration,
+                reporting_interval,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ConnectionTestResults {
+        #[rasn(tag(explicit(context, 0)), identifier = "receivedTestPattern")]
+        pub received_test_pattern: Option<TestPattern>,
+        #[rasn(tag(context, 1), identifier = "errorRatio")]
+        pub error_ratio: Option<f64>,
+        #[rasn(tag(context, 2), identifier = "testDirection")]
+        pub test_direction: Option<TestDirection>,
+        #[rasn(tag(context, 3), identifier = "testDurationMade")]
+        pub test_duration_made: Option<Timespec>,
+    }
+    impl ConnectionTestResults {
+        pub fn new(
+            received_test_pattern: Option<TestPattern>,
+            error_ratio: Option<f64>,
+            test_direction: Option<TestDirection>,
+            test_duration_made: Option<Timespec>,
+        ) -> Self {
+            Self {
+                received_test_pattern,
+                error_ratio,
+                test_direction,
+                test_duration_made,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ConnectivityTestInfoTimeoutPeriod {
+        timeUnits(Timespec),
+        attributeId(AttributeId),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ConnectivityTestInfo {
+        #[rasn(tag(explicit(context, 0)), identifier = "timeoutPeriod")]
+        pub timeout_period: ConnectivityTestInfoTimeoutPeriod,
+        #[rasn(tag(context, 1), identifier = "effectiveTime")]
+        pub effective_time: Timespec,
+    }
+    impl ConnectivityTestInfo {
+        pub fn new(
+            timeout_period: ConnectivityTestInfoTimeoutPeriod,
+            effective_time: Timespec,
+        ) -> Self {
+            Self {
+                timeout_period,
+                effective_time,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ConnectivityTestResults {
+        #[rasn(tag(context, 0))]
+        establishmentTime(Timespec),
+        #[rasn(tag(context, 1))]
+        timeoutPeriod(TimeoutPeriod),
+        #[rasn(tag(explicit(context, 2)))]
+        testThreshold(TestThreshold),
+        #[rasn(tag(context, 3))]
+        specificError(ObjectIdentifier),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ConnectivityThresholdTime {
+        #[rasn(identifier = "unitsType")]
+        pub units_type: UnitsType,
+        #[rasn(identifier = "unitsTotal")]
+        pub units_total: UnitsTotal,
+    }
+    impl ConnectivityThresholdTime {
+        pub fn new(units_type: UnitsType, units_total: UnitsTotal) -> Self {
+            Self {
+                units_type,
+                units_total,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ConnectivityThreshold {
+        #[rasn(tag(context, 0))]
+        time(ConnectivityThresholdTime),
+        #[rasn(tag(context, 1))]
+        rawData(RawData),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ContCond {
+        intervalTime(Timespec),
+        pDUReception(PDUReception),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DataCategory(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DataIntegrityTestInfo(pub SequenceOf<DataUnits>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct DataIntegrityTestResultsTestResult {
+        #[rasn(tag(context, 1), identifier = "establishmentTime")]
+        pub establishment_time: Option<EstablishmentTime>,
+        #[rasn(tag(context, 2), identifier = "originalData")]
+        pub original_data: DataUnits,
+        #[rasn(tag(context, 3), identifier = "corruptedData")]
+        pub corrupted_data: Option<DataUnits>,
+    }
+    impl DataIntegrityTestResultsTestResult {
+        pub fn new(
+            establishment_time: Option<EstablishmentTime>,
+            original_data: DataUnits,
+            corrupted_data: Option<DataUnits>,
+        ) -> Self {
+            Self {
+                establishment_time,
+                original_data,
+                corrupted_data,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum DataIntegrityTestResults {
+        #[rasn(tag(context, 0))]
+        testResult(DataIntegrityTestResultsTestResult),
+        #[rasn(tag(context, 4))]
+        timeoutPeriod(TimeoutPeriod),
+        #[rasn(tag(explicit(context, 5)))]
+        testThreshold(TestThreshold),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum DataRate {
+        real(f64),
+        oi(ObjectIdentifier),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DataSize(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum DataType {
+        integerDataType(IntegerDataType),
+        objectIdentifierDataType(ObjectIdentifier),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct DataUnits {
+        #[rasn(tag(explicit(context, 0)), identifier = "dataType")]
+        pub data_type: DataType,
+        #[rasn(tag(context, 1), identifier = "dataCategory")]
+        pub data_category: Option<DataCategory>,
+        #[rasn(tag(context, 2), identifier = "dataSize")]
+        pub data_size: Option<DataSize>,
+        #[rasn(tag(context, 3), identifier = "dataNumber")]
+        pub data_number: Option<UnitsTotal>,
+        #[rasn(tag(explicit(context, 4)), identifier = "dataRate")]
+        pub data_rate: Option<DataRate>,
+    }
+    impl DataUnits {
+        pub fn new(
+            data_type: DataType,
+            data_category: Option<DataCategory>,
+            data_size: Option<DataSize>,
+            data_number: Option<UnitsTotal>,
+            data_rate: Option<DataRate>,
+        ) -> Self {
+            Self {
+                data_type,
+                data_category,
+                data_size,
+                data_number,
+                data_rate,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct EndConnectionTestResults(pub ConnectionTestResults);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ErrorRatioReportType {
+        errorBitNumber = 0,
+        percentErrorSecond = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ErrorUnitThreshold {
+        #[rasn(tag(context, 0), identifier = "unitType")]
+        pub unit_type: UnitsType,
+        #[rasn(tag(context, 1), identifier = "unitsTotal")]
+        pub units_total: UnitsTotal,
+    }
+    impl ErrorUnitThreshold {
+        pub fn new(unit_type: UnitsType, units_total: UnitsTotal) -> Self {
+            Self {
+                unit_type,
+                units_total,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct EstablishmentTime(pub Timespec);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum FailedCase {
+        lineDisconnected = 0,
+        counterOverflow = 1,
+    }
+    #[doc = " error counter overflow"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct IntegerDataType(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum IntermediateResourceBoundaryTestOutcome {
+        passed = 0,
+        unexpected = 1,
+        wrongSignalReceived = 2,
+        waitDurationTimerExpired = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum IntermediateResponse {
+        inProgress = 0,
+        delayedMeasurement = 1,
+        interruptedMeasurement = 2,
+        repeatLater = 3,
+        noAcknowledgement = 4,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct InternalResourceTestResults {
+        #[rasn(identifier = "functionTested")]
+        pub function_tested: Any,
+        #[rasn(identifier = "testResult")]
+        pub test_result: Any,
+    }
+    impl InternalResourceTestResults {
+        pub fn new(function_tested: Any, test_result: Any) -> Self {
+            Self {
+                function_tested,
+                test_result,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum LoopbackError {
+        errorBitNo(Integer),
+        percent(f64),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct LoopbackFailInfo(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct LoopbackTestInfo {
+        #[rasn(identifier = "loopbackData")]
+        pub loopback_data: Option<TestPatternSequence>,
+        #[rasn(identifier = "testStartTime")]
+        pub test_start_time: Option<GeneralizedTime>,
+        #[rasn(tag(context, 1), identifier = "testIntervalTime")]
+        pub test_interval_time: Option<Timespec>,
+        #[rasn(tag(context, 2), identifier = "reportingIntervalTime")]
+        pub reporting_interval_time: Option<Timespec>,
+        #[rasn(identifier = "loopbackType")]
+        pub loopback_type: Option<ObjectIdentifier>,
+        #[rasn(tag(context, 3), identifier = "loopbackTimeout")]
+        pub loopback_timeout: Option<Timespec>,
+        #[rasn(identifier = "loopbackErrorThreshold")]
+        pub loopback_error_threshold: Option<LoopbackError>,
+    }
+    impl LoopbackTestInfo {
+        pub fn new(
+            loopback_data: Option<TestPatternSequence>,
+            test_start_time: Option<GeneralizedTime>,
+            test_interval_time: Option<Timespec>,
+            reporting_interval_time: Option<Timespec>,
+            loopback_type: Option<ObjectIdentifier>,
+            loopback_timeout: Option<Timespec>,
+            loopback_error_threshold: Option<LoopbackError>,
+        ) -> Self {
+            Self {
+                loopback_data,
+                test_start_time,
+                test_interval_time,
+                reporting_interval_time,
+                loopback_type,
+                loopback_timeout,
+                loopback_error_threshold,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct LoopbackTestResultPassed {
+        #[rasn(identifier = "loopbackDataReceived")]
+        pub loopback_data_received: TestPatternSequence,
+        #[rasn(identifier = "loopbackErrorReceived")]
+        pub loopback_error_received: LoopbackError,
+    }
+    impl LoopbackTestResultPassed {
+        pub fn new(
+            loopback_data_received: TestPatternSequence,
+            loopback_error_received: LoopbackError,
+        ) -> Self {
+            Self {
+                loopback_data_received,
+                loopback_error_received,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct LoopbackTestResult {
+        pub passed: LoopbackTestResultPassed,
+        pub fail: LoopbackFailInfo,
+        #[rasn(tag(context, 1))]
+        pub timeout: (),
+        #[rasn(tag(context, 2), identifier = "prematureTermination")]
+        pub premature_termination: (),
+        #[rasn(tag(context, 3))]
+        pub inconclusive: (),
+    }
+    impl LoopbackTestResult {
+        pub fn new(
+            passed: LoopbackTestResultPassed,
+            fail: LoopbackFailInfo,
+            timeout: (),
+            premature_termination: (),
+            inconclusive: (),
+        ) -> Self {
+            Self {
+                passed,
+                fail,
+                timeout,
+                premature_termination,
+                inconclusive,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct LoopbackTxDelayInfo(pub ());
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct LoopbackType(pub ObjectIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct PDUReception {
+        #[rasn(identifier = "pDUType")]
+        pub p_dutype: PDUType,
+        pub parameter: Parameter,
+        #[rasn(identifier = "responseTimeout")]
+        pub response_timeout: Option<ResponseTimeout>,
+    }
+    impl PDUReception {
+        pub fn new(
+            p_dutype: PDUType,
+            parameter: Parameter,
+            response_timeout: Option<ResponseTimeout>,
+        ) -> Self {
+            Self {
+                p_dutype,
+                parameter,
+                response_timeout,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct PDUSequence {
+        #[rasn(identifier = "pDUType")]
+        pub p_dutype: PDUType,
+        pub parameter: Parameter,
+        #[rasn(identifier = "contCond")]
+        pub cont_cond: ContCond,
+        #[rasn(identifier = "waitDuration")]
+        pub wait_duration: Option<WaitDuration>,
+    }
+    impl PDUSequence {
+        pub fn new(
+            p_dutype: PDUType,
+            parameter: Parameter,
+            cont_cond: ContCond,
+            wait_duration: Option<WaitDuration>,
+        ) -> Self {
+            Self {
+                p_dutype,
+                parameter,
+                cont_cond,
+                wait_duration,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PDUType(pub ObjectIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Parameter {
+        #[rasn(identifier = "attributeType")]
+        pub attribute_type: Any,
+        pub value: Any,
+    }
+    impl Parameter {
+        pub fn new(attribute_type: Any, value: Any) -> Self {
+            Self {
+                attribute_type,
+                value,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PatternType(pub DataType);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ProtocolIntegrityTestInfo {
+        #[rasn(tag(context, 0), identifier = "pDUSequence")]
+        pub p_dusequence: PDUSequence,
+        #[rasn(tag(context, 1), identifier = "pDUReception")]
+        pub p_dureception: Option<PDUReception>,
+        #[rasn(tag(context, 2), identifier = "waitingInterval")]
+        pub waiting_interval: Option<WaitingInterval>,
+        #[rasn(tag(context, 3), identifier = "startTime")]
+        pub start_time: Option<StartTime>,
+        #[rasn(tag(context, 4), identifier = "stopTime")]
+        pub stop_time: Option<StopTime>,
+    }
+    impl ProtocolIntegrityTestInfo {
+        pub fn new(
+            p_dusequence: PDUSequence,
+            p_dureception: Option<PDUReception>,
+            waiting_interval: Option<WaitingInterval>,
+            start_time: Option<StartTime>,
+            stop_time: Option<StopTime>,
+        ) -> Self {
+            Self {
+                p_dusequence,
+                p_dureception,
+                waiting_interval,
+                start_time,
+                stop_time,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ProtocolIntegrityTestResults(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RawData(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ResourceBoundaryTestInfo {
+        #[rasn(tag(context, 0), identifier = "resultReportIndicator")]
+        pub result_report_indicator: Option<ResultReportIndicator>,
+        #[rasn(tag(context, 1), identifier = "sequenceOfEvents")]
+        pub sequence_of_events: Option<SequenceOfEvents>,
+    }
+    impl ResourceBoundaryTestInfo {
+        pub fn new(
+            result_report_indicator: Option<ResultReportIndicator>,
+            sequence_of_events: Option<SequenceOfEvents>,
+        ) -> Self {
+            Self {
+                result_report_indicator,
+                sequence_of_events,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ResourceBoundaryTestResults {
+        #[rasn(tag(context, 0), identifier = "signalReceived")]
+        pub signal_received: Option<SignalReceived>,
+        #[rasn(
+            tag(context, 1),
+            identifier = "intermediateResourceBoundaryTestOutcome"
+        )]
+        pub intermediate_resource_boundary_test_outcome:
+            Option<IntermediateResourceBoundaryTestOutcome>,
+        #[rasn(tag(context, 2), identifier = "eventId")]
+        pub event_id: Option<Integer>,
+    }
+    impl ResourceBoundaryTestResults {
+        pub fn new(
+            signal_received: Option<SignalReceived>,
+            intermediate_resource_boundary_test_outcome: Option<
+                IntermediateResourceBoundaryTestOutcome,
+            >,
+            event_id: Option<Integer>,
+        ) -> Self {
+            Self {
+                signal_received,
+                intermediate_resource_boundary_test_outcome,
+                event_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ResourceSelfTestInfo {
+        #[rasn(tag(context, 0), identifier = "diagnosticType")]
+        pub diagnostic_type: Option<Integer>,
+        pub phases: SetOf<Integer>,
+        #[rasn(tag(context, 1))]
+        pub iteration: Integer,
+        #[rasn(tag(context, 2), identifier = "timeoutPeriod")]
+        pub timeout_period: TimeoutPeriod,
+    }
+    impl ResourceSelfTestInfo {
+        pub fn new(
+            diagnostic_type: Option<Integer>,
+            phases: SetOf<Integer>,
+            iteration: Integer,
+            timeout_period: TimeoutPeriod,
+        ) -> Self {
+            Self {
+                diagnostic_type,
+                phases,
+                iteration,
+                timeout_period,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ResourceSelfTestResultsNonIntermediate {
+        pub phases: SetOf<Integer>,
+        #[rasn(tag(context, 0))]
+        pub iteration: Integer,
+        #[rasn(tag(context, 1), identifier = "timeoutPeriod")]
+        pub timeout_period: TimeoutPeriod,
+        #[rasn(identifier = "finalResponse")]
+        pub final_response: Option<PrintableString>,
+    }
+    impl ResourceSelfTestResultsNonIntermediate {
+        pub fn new(
+            phases: SetOf<Integer>,
+            iteration: Integer,
+            timeout_period: TimeoutPeriod,
+            final_response: Option<PrintableString>,
+        ) -> Self {
+            Self {
+                phases,
+                iteration,
+                timeout_period,
+                final_response,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ResourceSelfTestResults {
+        intermediateResponse(IntermediateResponse),
+        nonIntermediate(ResourceSelfTestResultsNonIntermediate),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ResponseTimeout(pub TimeoutPeriod);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ResultInterval(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ResultReportIndicator {
+        resultReportForPassedSequences = 0,
+        noResultReportForPassedSequences = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SequenceOfEvents {
+        #[rasn(identifier = "eventId")]
+        pub event_id: Integer,
+        #[rasn(identifier = "signalType")]
+        pub signal_type: Any,
+        #[rasn(identifier = "signalValue")]
+        pub signal_value: Any,
+        #[rasn(identifier = "signalDirection")]
+        pub signal_direction: SignalDirection,
+        #[rasn(identifier = "mORTs")]
+        pub m_orts: MORTs,
+        #[rasn(identifier = "associatedObjects")]
+        pub associated_objects: AssociatedObjects,
+        #[rasn(identifier = "waitDuration")]
+        pub wait_duration: WaitDuration,
+    }
+    impl SequenceOfEvents {
+        pub fn new(
+            event_id: Integer,
+            signal_type: Any,
+            signal_value: Any,
+            signal_direction: SignalDirection,
+            m_orts: MORTs,
+            associated_objects: AssociatedObjects,
+            wait_duration: WaitDuration,
+        ) -> Self {
+            Self {
+                event_id,
+                signal_type,
+                signal_value,
+                signal_direction,
+                m_orts,
+                associated_objects,
+                wait_duration,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum SignalDirection {
+        send = 0,
+        receive = 1,
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousSignalReceived {
+        #[rasn(identifier = "signalType")]
+        pub signal_type: Any,
+        #[rasn(identifier = "signalValue")]
+        pub signal_value: Any,
+        #[rasn(identifier = "mORTs")]
+        pub m_orts: MORTs,
+        #[rasn(identifier = "associatedObjects")]
+        pub associated_objects: AssociatedObjects,
+    }
+    impl AnonymousSignalReceived {
+        pub fn new(
+            signal_type: Any,
+            signal_value: Any,
+            m_orts: MORTs,
+            associated_objects: AssociatedObjects,
+        ) -> Self {
+            Self {
+                signal_type,
+                signal_value,
+                m_orts,
+                associated_objects,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SignalReceived(pub SetOf<AnonymousSignalReceived>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct StateTransitionTimeInterval(pub Timespec);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TerminationReason(pub ObjectIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct TestConditions {
+        pub first: Integer,
+        pub second: Option<Integer>,
+    }
+    impl TestConditions {
+        pub fn new(first: Integer, second: Option<Integer>) -> Self {
+            Self { first, second }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TestDirection(pub Integer);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct TestDurationSignalLength {
+        pub size: Integer,
+        #[rasn(identifier = "dataRate")]
+        pub data_rate: Option<DataRate>,
+    }
+    impl TestDurationSignalLength {
+        pub fn new(size: Integer, data_rate: Option<DataRate>) -> Self {
+            Self { size, data_rate }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum TestDuration {
+        signalDuration(Timespec),
+        signalLength(TestDurationSignalLength),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct TestInfrastructureTestResults(pub ());
+    #[doc = "  There should be some size limitation here"]
+    #[doc = "  if test signal pattern is to fit in one pdu!!!!!"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum TestPattern {
+        rawData(OctetString),
+        standardType(DataType),
+        undefinedType(ManagementExtension),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TestPatternSequence(pub SequenceOf<TestPattern>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum TestThreshold {
+        #[rasn(tag(context, 0))]
+        bitErrorThreshold(Integer),
+        #[rasn(tag(context, 1))]
+        percentageErrorThreshold(f64),
+        #[rasn(tag(context, 2))]
+        errorUnitThreshold(ErrorUnitThreshold),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Type(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct UnitsTotal(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct UnitsType(pub ObjectIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct WaitDuration(pub Timespec);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct WaitingInterval(pub Timespec);
+}

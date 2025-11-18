@@ -1,0 +1,56 @@
+---
+source: rasn-compiler-tests/tests/edge_cases.rs
+description: "\n        Filter ::= CHOICE {\n            and             [0] SET SIZE (1..MAX) OF filter Filter,\n            or              [1] SET SIZE (1..MAX) OF filter Filter,\n            not             [2] Filter,\n            equalityMatch   [3] AttributeValueAssertion,\n            ...\n        }\n\n        AttributeValueAssertion ::= SEQUENCE {\n            attributeDesc   AttributeDescription,\n            assertionValue  AssertionValue }\n\n        AssertionValue ::= OCTET STRING\n\n        AttributeDescription ::= LDAPString\n\n        LDAPString ::= [UNIVERSAL 4] IMPLICIT UTF8String\n    "
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod test_module {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AssertionValue(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AttributeDescription(pub LDAPString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct AttributeValueAssertion {
+        #[rasn(identifier = "attributeDesc")]
+        pub attribute_desc: AttributeDescription,
+        #[rasn(identifier = "assertionValue")]
+        pub assertion_value: AssertionValue,
+    }
+    impl AttributeValueAssertion {
+        pub fn new(attribute_desc: AttributeDescription, assertion_value: AssertionValue) -> Self {
+            Self {
+                attribute_desc,
+                assertion_value,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum Filter {
+        #[rasn(size("1.."), tag(context, 0))]
+        and(SetOf<Filter>),
+        #[rasn(size("1.."), tag(context, 1))]
+        or(SetOf<Filter>),
+        #[rasn(tag(context, 2))]
+        not(Box<Filter>),
+        #[rasn(tag(context, 3))]
+        equalityMatch(AttributeValueAssertion),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, tag(universal, 4))]
+    pub struct LDAPString(pub Utf8String);
+}

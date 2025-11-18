@@ -1,0 +1,33 @@
+---
+source: rasn-compiler-tests/tests/edge_cases.rs
+description: "\n        TestChoice ::= CHOICE {\n            restricted Distinguished (second|fourth..sixth|eighth),\n            ...\n        }\n        Distinguished ::= INTEGER {\n            first(1),\n            second(2),\n            third(3),\n            fourth(4),\n            fifth(5),\n            sixth(6),\n            seventh(7),\n            eighth(8),\n            ninth(9),\n            tenth(10),\n        } (1..10)"
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod test_module {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("1..=10"))]
+    pub struct Distinguished(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum TestChoice {
+        #[rasn(value("2..=8"))]
+        restricted(Distinguished),
+    }
+    impl From<Distinguished> for TestChoice {
+        fn from(value: Distinguished) -> Self {
+            Self::restricted(value)
+        }
+    }
+}

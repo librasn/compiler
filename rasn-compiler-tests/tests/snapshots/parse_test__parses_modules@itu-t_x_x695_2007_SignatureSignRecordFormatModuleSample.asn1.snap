@@ -1,0 +1,368 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x695_2007_SignatureSignRecordFormatModuleSample.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod signature_sign_record_format_module {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct Body {
+        #[rasn(size("0..=16777215"), identifier = "samplePoints")]
+        pub sample_points: SequenceOf<SamplePoint>,
+        #[rasn(identifier = "extendedData")]
+        pub extended_data: Option<OctetString>,
+    }
+    impl Body {
+        pub fn new(
+            sample_points: SequenceOf<SamplePoint>,
+            extended_data: Option<OctetString>,
+        ) -> Self {
+            Self {
+                sample_points,
+                extended_data,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct ChannelDescriptions {
+        pub x: Option<SignedChannelDescr>,
+        pub y: Option<SignedChannelDescr>,
+        pub z: Option<UnsignedChannelDescr>,
+        #[rasn(identifier = "vX")]
+        pub v_x: Option<SignedChannelDescr>,
+        #[rasn(identifier = "vY")]
+        pub v_y: Option<SignedChannelDescr>,
+        #[rasn(identifier = "aX")]
+        pub a_x: Option<SignedChannelDescr>,
+        #[rasn(identifier = "aY")]
+        pub a_y: Option<SignedChannelDescr>,
+        pub t: Option<UnsignedChannelDescr>,
+        pub dt: Option<UnsignedChannelDescr>,
+        pub f: Option<UnsignedChannelDescr>,
+        pub s: Option<UnsignedChannelDescr>,
+        #[rasn(identifier = "tX")]
+        pub t_x: Option<SignedChannelDescr>,
+        #[rasn(identifier = "tY")]
+        pub t_y: Option<SignedChannelDescr>,
+        pub az: Option<UnsignedChannelDescr>,
+        pub el: Option<UnsignedChannelDescr>,
+        pub r: Option<UnsignedChannelDescr>,
+    }
+    impl ChannelDescriptions {
+        pub fn new(
+            x: Option<SignedChannelDescr>,
+            y: Option<SignedChannelDescr>,
+            z: Option<UnsignedChannelDescr>,
+            v_x: Option<SignedChannelDescr>,
+            v_y: Option<SignedChannelDescr>,
+            a_x: Option<SignedChannelDescr>,
+            a_y: Option<SignedChannelDescr>,
+            t: Option<UnsignedChannelDescr>,
+            dt: Option<UnsignedChannelDescr>,
+            f: Option<UnsignedChannelDescr>,
+            s: Option<UnsignedChannelDescr>,
+            t_x: Option<SignedChannelDescr>,
+            t_y: Option<SignedChannelDescr>,
+            az: Option<UnsignedChannelDescr>,
+            el: Option<UnsignedChannelDescr>,
+            r: Option<UnsignedChannelDescr>,
+        ) -> Self {
+            Self {
+                x,
+                y,
+                z,
+                v_x,
+                v_y,
+                a_x,
+                a_y,
+                t,
+                dt,
+                f,
+                s,
+                t_x,
+                t_y,
+                az,
+                el,
+                r,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct ChannelInclusions {
+        #[rasn(identifier = "x-included")]
+        pub x_included: bool,
+        #[rasn(identifier = "y-included")]
+        pub y_included: bool,
+        #[rasn(identifier = "z-included")]
+        pub z_included: bool,
+        #[rasn(identifier = "vX-included")]
+        pub v_x_included: bool,
+        #[rasn(identifier = "vY-included")]
+        pub v_y_included: bool,
+        #[rasn(identifier = "aX-included")]
+        pub a_x_included: bool,
+        #[rasn(identifier = "aY-included")]
+        pub a_y_included: bool,
+        #[rasn(identifier = "t-included")]
+        pub t_included: bool,
+        #[rasn(identifier = "dt-included")]
+        pub dt_included: bool,
+        #[rasn(identifier = "f-included")]
+        pub f_included: bool,
+        #[rasn(identifier = "s-included")]
+        pub s_included: bool,
+        #[rasn(identifier = "tX-included")]
+        pub t_x_included: bool,
+        #[rasn(identifier = "tY-included")]
+        pub t_y_included: bool,
+        #[rasn(identifier = "az-included")]
+        pub az_included: bool,
+        #[rasn(identifier = "el-included")]
+        pub el_included: bool,
+        #[rasn(identifier = "r-included")]
+        pub r_included: bool,
+    }
+    impl ChannelInclusions {
+        pub fn new(
+            x_included: bool,
+            y_included: bool,
+            z_included: bool,
+            v_x_included: bool,
+            v_y_included: bool,
+            a_x_included: bool,
+            a_y_included: bool,
+            t_included: bool,
+            dt_included: bool,
+            f_included: bool,
+            s_included: bool,
+            t_x_included: bool,
+            t_y_included: bool,
+            az_included: bool,
+            el_included: bool,
+            r_included: bool,
+        ) -> Self {
+            Self {
+                x_included,
+                y_included,
+                z_included,
+                v_x_included,
+                v_y_included,
+                a_x_included,
+                a_y_included,
+                t_included,
+                dt_included,
+                f_included,
+                s_included,
+                t_x_included,
+                t_y_included,
+                az_included,
+                el_included,
+                r_included,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct Header {
+        #[rasn(
+            value("0.."),
+            from("\u{44}", "\u{49}", "\u{53}"),
+            identifier = "formatId"
+        )]
+        pub format_id: Ia5String,
+        #[rasn(size("3"), identifier = "standardVersion")]
+        pub standard_version: Ia5String,
+        #[rasn(identifier = "channelInclusions")]
+        pub channel_inclusions: ChannelInclusions,
+        #[rasn(identifier = "channelDescriptions")]
+        pub channel_descriptions: ChannelDescriptions,
+    }
+    impl Header {
+        pub fn new(
+            format_id: Ia5String,
+            standard_version: Ia5String,
+            channel_inclusions: ChannelInclusions,
+            channel_descriptions: ChannelDescriptions,
+        ) -> Self {
+            Self {
+                format_id,
+                standard_version,
+                channel_inclusions,
+                channel_descriptions,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct SamplePoint {
+        pub x: Option<SignedInt16>,
+        pub y: Option<SignedInt16>,
+        pub z: Option<UnsignedInt16>,
+        #[rasn(identifier = "vX")]
+        pub v_x: Option<SignedInt16>,
+        #[rasn(identifier = "vY")]
+        pub v_y: Option<SignedInt16>,
+        #[rasn(identifier = "aX")]
+        pub a_x: Option<SignedInt16>,
+        #[rasn(identifier = "aY")]
+        pub a_y: Option<SignedInt16>,
+        pub t: Option<UnsignedInt16>,
+        pub dt: Option<UnsignedInt16>,
+        pub f: Option<UnsignedInt16>,
+        pub s: Option<UnsignedInt8>,
+        #[rasn(identifier = "tX")]
+        pub t_x: Option<SignedInt16>,
+        #[rasn(identifier = "tY")]
+        pub t_y: Option<SignedInt16>,
+        pub az: Option<UnsignedInt16>,
+        pub el: Option<UnsignedInt16>,
+        pub r: Option<UnsignedInt16>,
+    }
+    impl SamplePoint {
+        pub fn new(
+            x: Option<SignedInt16>,
+            y: Option<SignedInt16>,
+            z: Option<UnsignedInt16>,
+            v_x: Option<SignedInt16>,
+            v_y: Option<SignedInt16>,
+            a_x: Option<SignedInt16>,
+            a_y: Option<SignedInt16>,
+            t: Option<UnsignedInt16>,
+            dt: Option<UnsignedInt16>,
+            f: Option<UnsignedInt16>,
+            s: Option<UnsignedInt8>,
+            t_x: Option<SignedInt16>,
+            t_y: Option<SignedInt16>,
+            az: Option<UnsignedInt16>,
+            el: Option<UnsignedInt16>,
+            r: Option<UnsignedInt16>,
+        ) -> Self {
+            Self {
+                x,
+                y,
+                z,
+                v_x,
+                v_y,
+                a_x,
+                a_y,
+                t,
+                dt,
+                f,
+                s,
+                t_x,
+                t_y,
+                az,
+                el,
+                r,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct ScalingValue {
+        #[rasn(value("-16..=15"))]
+        pub exponent: i8,
+        #[rasn(value("0..=2047"))]
+        pub fraction: u16,
+    }
+    impl ScalingValue {
+        pub fn new(exponent: i8, fraction: u16) -> Self {
+            Self { exponent, fraction }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct SignatureSignBlock {
+        pub header: Header,
+        pub body: Body,
+    }
+    impl SignatureSignBlock {
+        pub fn new(header: Header, body: Body) -> Self {
+            Self { header, body }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct SignedChannelDescr {
+        #[rasn(value("0..=8"))]
+        pub reserved: u8,
+        #[rasn(identifier = "scalingValue")]
+        pub scaling_value: Option<ScalingValue>,
+        pub min: Option<SignedInt16>,
+        pub max: Option<SignedInt16>,
+        pub mean: Option<SignedInt16>,
+        pub std: Option<UnsignedInt16>,
+    }
+    impl SignedChannelDescr {
+        pub fn new(
+            reserved: u8,
+            scaling_value: Option<ScalingValue>,
+            min: Option<SignedInt16>,
+            max: Option<SignedInt16>,
+            mean: Option<SignedInt16>,
+            std: Option<UnsignedInt16>,
+        ) -> Self {
+            Self {
+                reserved,
+                scaling_value,
+                min,
+                max,
+                mean,
+                std,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("-32768..=32767"))]
+    pub struct SignedInt16(pub i16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct UnsignedChannelDescr {
+        #[rasn(value("0..=8"))]
+        pub reserved: u8,
+        #[rasn(identifier = "scalingValue")]
+        pub scaling_value: Option<ScalingValue>,
+        pub min: Option<UnsignedInt16>,
+        pub max: Option<UnsignedInt16>,
+        pub mean: Option<UnsignedInt16>,
+        pub std: Option<UnsignedInt16>,
+    }
+    impl UnsignedChannelDescr {
+        pub fn new(
+            reserved: u8,
+            scaling_value: Option<ScalingValue>,
+            min: Option<UnsignedInt16>,
+            max: Option<UnsignedInt16>,
+            mean: Option<UnsignedInt16>,
+            std: Option<UnsignedInt16>,
+        ) -> Self {
+            Self {
+                reserved,
+                scaling_value,
+                min,
+                max,
+                mean,
+                std,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=65535"))]
+    pub struct UnsignedInt16(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=255"))]
+    pub struct UnsignedInt8(pub u8);
+}

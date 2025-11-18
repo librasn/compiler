@@ -1,0 +1,293 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_m_m3641_1994_ASN1TypeModule.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod asn1_type_module {
+    extern crate alloc;
+    use super::asn1_defined_types_module::NameType;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CallReferenceFlag(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CallReferenceValue(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CauseType(pub OctetString);
+    #[doc = "  The causeType contains the octets three to five as defined in Recommendation Q.931."]
+    #[doc = "  This includes the cause value, location and the diagnostic field."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum DataLinkState {
+        awaitingEstablishment = 1,
+        awaitingRelease = 2,
+        multipleFrameEstablishedMode = 3,
+        multipleFrameTimeRecoveryMode = 4,
+        tEIAssigned = 5,
+        tEIUnassigned = 6,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DefaultZero(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ErrorFrames {
+        #[rasn(identifier = "tEIValue")]
+        pub t_eivalue: TEIValue,
+        #[rasn(identifier = "typeOfErrorFrame")]
+        pub type_of_error_frame: TypeOfErrorFrame,
+    }
+    impl ErrorFrames {
+        pub fn new(t_eivalue: TEIValue, type_of_error_frame: TypeOfErrorFrame) -> Self {
+            Self {
+                t_eivalue,
+                type_of_error_frame,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum FrameType {
+        dISC = 1,
+        dM = 2,
+        fRMR = 3,
+        i = 4,
+        rEJ = 5,
+        rNR = 6,
+        rR = 7,
+        sABME = 8,
+        uA = 9,
+        uI = 10,
+        xID = 11,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct InvalidFrames(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct MessageCallRefError {
+        #[rasn(identifier = "messageType")]
+        pub message_type: MessageType,
+        #[rasn(identifier = "relatingToActiveCall")]
+        pub relating_to_active_call: RelatingToActiveCall,
+        #[rasn(identifier = "callReferenceFlag")]
+        pub call_reference_flag: CallReferenceFlag,
+        #[rasn(identifier = "callReferenceValue")]
+        pub call_reference_value: CallReferenceValue,
+        #[rasn(identifier = "tEIValue")]
+        pub t_eivalue: TEIValue,
+    }
+    impl MessageCallRefError {
+        pub fn new(
+            message_type: MessageType,
+            relating_to_active_call: RelatingToActiveCall,
+            call_reference_flag: CallReferenceFlag,
+            call_reference_value: CallReferenceValue,
+            t_eivalue: TEIValue,
+        ) -> Self {
+            Self {
+                message_type,
+                relating_to_active_call,
+                call_reference_flag,
+                call_reference_value,
+                t_eivalue,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum MessageType {
+        aLERTING = 1,
+        cALLpROCEEDING = 2,
+        cONGESTIONcONTROL = 3,
+        cONNECT = 4,
+        cONNECTaCKNOWLEDGE = 5,
+        dISCONNECT = 6,
+        fACILITY = 7,
+        iNFORMATION = 8,
+        nOTIFY = 9,
+        pROGRESS = 10,
+        rELEASE = 11,
+        rELEASEcOMPLETE = 12,
+        rESTART = 13,
+        rESUME = 14,
+        rESUMEaCKNOWLEDGE = 15,
+        rESUMErEJECT = 16,
+        sETUP = 17,
+        sETUPaCKNOWLEDGE = 18,
+        sTATUS = 19,
+        sTATUSeNQUIRY = 20,
+        sUSPEND = 21,
+        sUSPENDaCKNOWLEDGE = 22,
+        sUSPENDrEJECT = 23,
+        uSERiNFORMATION = 24,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct OldestRecordAge(pub GeneralizedTime);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct OldestRecordLessThanLimit(pub bool);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct OtherSpecialMessage {
+        #[rasn(identifier = "messageType")]
+        pub message_type: MessageType,
+        pub received: Received,
+        #[rasn(identifier = "tEIValue")]
+        pub t_eivalue: TEIValue,
+        #[rasn(identifier = "causeValue")]
+        pub cause_value: Option<CauseType>,
+    }
+    impl OtherSpecialMessage {
+        pub fn new(
+            message_type: MessageType,
+            received: Received,
+            t_eivalue: TEIValue,
+            cause_value: Option<CauseType>,
+        ) -> Self {
+            Self {
+                message_type,
+                received,
+                t_eivalue,
+                cause_value,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct Received(pub bool);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct RelatingToActiveCall(pub bool);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SpecialMessageType {
+        #[rasn(identifier = "messageType")]
+        pub message_type: MessageType,
+        pub received: Received,
+        #[rasn(identifier = "tEIValue")]
+        pub t_eivalue: TEIValue,
+        #[rasn(identifier = "causeValue")]
+        pub cause_value: CauseType,
+    }
+    impl SpecialMessageType {
+        pub fn new(
+            message_type: MessageType,
+            received: Received,
+            t_eivalue: TEIValue,
+            cause_value: CauseType,
+        ) -> Self {
+            Self {
+                message_type,
+                received,
+                t_eivalue,
+                cause_value,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TEIValue(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct TimerExpiryNetwork {
+        #[rasn(identifier = "tEIValue")]
+        pub t_eivalue: TEIValue,
+        #[rasn(identifier = "typeOfTimer")]
+        pub type_of_timer: TypeOfTimer,
+    }
+    impl TimerExpiryNetwork {
+        pub fn new(t_eivalue: TEIValue, type_of_timer: TypeOfTimer) -> Self {
+            Self {
+                t_eivalue,
+                type_of_timer,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum TypeOfErrorFrame {
+        framesWithBadInfoField = 1,
+        framesWithBadControlField = 2,
+        supervisoryFramesWithBadLength = 3,
+        unnumberedFramesBadLength = 4,
+        framesWithInvalidReceiveSeqNumber = 5,
+        framesWithInfoFieldTooLong = 6,
+        fRMRReceived = 7,
+        dMFramesSentInResponseToSABME = 8,
+        notProperResponseAfterN200SABMEs = 9,
+        dMFramesReceivedInResponseToSABME = 10,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum TypeOfTimer {
+        t308 = 0,
+        t309 = 1,
+        t316 = 2,
+        t317 = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct UnexpectedFrames {
+        #[rasn(identifier = "frameType")]
+        pub frame_type: FrameType,
+        #[rasn(identifier = "dataLinkState")]
+        pub data_link_state: DataLinkState,
+        #[rasn(identifier = "tEIValue")]
+        pub t_eivalue: TEIValue,
+    }
+    impl UnexpectedFrames {
+        pub fn new(
+            frame_type: FrameType,
+            data_link_state: DataLinkState,
+            t_eivalue: TEIValue,
+        ) -> Self {
+            Self {
+                frame_type,
+                data_link_state,
+                t_eivalue,
+            }
+        }
+    }
+    pub static DEFAULT_ZERO: LazyLock<DefaultZero> =
+        LazyLock::new(|| DefaultZero(Integer::from(0)));
+    pub static M3641_ATTRIBUTE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***M3641_INFORMATION_MODEL, &[7u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static M3641_INFORMATION_MODEL: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[0u32, 0u32, 13u32, 3641u32, 0u32]).to_owned());
+    pub static M3641_MANAGED_OBJECT_CLASS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***M3641_INFORMATION_MODEL, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static M3641_NAME_BINDING: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***M3641_INFORMATION_MODEL, &[6u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static M3641_NOTIFICATION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***M3641_INFORMATION_MODEL, &[10u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static M3641_PACKAGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***M3641_INFORMATION_MODEL, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static M3641_STANDARD_SPECIFIC_EXTENSION: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***M3641_INFORMATION_MODEL, &[0u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+}

@@ -1,0 +1,320 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/iso_10031-2_1991_DOR-definition.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod dor_definition {
+    extern crate alloc;
+    use super::information_framework::DistinguishedName;
+    use super::selected_attribute_types::PresentationAddress;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "AE-Identifier")]
+    pub struct AEIdentifier {
+        #[rasn(tag(context, 0), identifier = "locational-identifier")]
+        pub locational_identifier: Option<LocationalIdentifier>,
+        #[rasn(tag(context, 1), identifier = "direct-logical-identifier")]
+        pub direct_logical_identifier: Option<DistinguishedName>,
+        #[rasn(tag(context, 2), identifier = "indirect-logical-identifier")]
+        pub indirect_logical_identifier: Option<DistinguishedName>,
+    }
+    impl AEIdentifier {
+        pub fn new(
+            locational_identifier: Option<LocationalIdentifier>,
+            direct_logical_identifier: Option<DistinguishedName>,
+            indirect_logical_identifier: Option<DistinguishedName>,
+        ) -> Self {
+            Self {
+                locational_identifier,
+                direct_logical_identifier,
+                indirect_logical_identifier,
+            }
+        }
+    }
+    #[doc = " The exact definition and values used for AP-title"]
+    #[doc = " should be chosen taking into account the ongoing"]
+    #[doc = " work in areas of naming, the Directory, and the"]
+    #[doc = " Registration Authority procedures for AE titles,"]
+    #[doc = " AE titles, and AE qualifiers"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "AE-qualifier")]
+    pub struct AEQualifier(pub Any);
+    #[doc = " The exact definition and values used for AE-qualifier"]
+    #[doc = " should be chosen taking into account the ongoing"]
+    #[doc = " work in areas of naming, the Directory, and the"]
+    #[doc = " Registration Authority procedures for AE titles,"]
+    #[doc = " AE titles, and AE qualifiers"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "AE-title")]
+    pub struct AETitle {
+        pub ap: APTitle,
+        pub ae: AEQualifier,
+    }
+    impl AETitle {
+        pub fn new(ap: APTitle, ae: AEQualifier) -> Self {
+            Self { ap, ae }
+        }
+    }
+    #[doc = " dw: definition of AE-title, as defined in ISO 8650:1988/Cor.1:1990"]
+    #[doc = " dw: defined in-line here so we don't need to import it, original comments"]
+    #[doc = " dw: are as they appear in the 8650:1988 Annex E"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "AP-title")]
+    pub struct APTitle(pub Any);
+    #[doc = " Data types for requesting / indicating value alteration in produce-operation"]
+    #[doc = " or access-operation"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated, identifier = "Altered-value")]
+    pub enum AlteredValue {
+        #[rasn(identifier = "value-not-altered")]
+        value_not_altered = 1,
+        #[rasn(identifier = "value-altered")]
+        value_altered = 2,
+        undefined = 3,
+    }
+    #[doc = " Definition of DOR type"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct DOR {
+        #[rasn(tag(context, 0), identifier = "ae-identifier")]
+        pub ae_identifier: Option<AEIdentifier>,
+        #[rasn(tag(context, 1), identifier = "local-reference")]
+        pub local_reference: LocalReference,
+        #[rasn(identifier = "data-object-type")]
+        pub data_object_type: ObjectIdentifier,
+        #[rasn(
+            tag(context, 2),
+            default = "dor_quality_of_service_default",
+            identifier = "quality-of-service"
+        )]
+        pub quality_of_service: QualityOfService,
+        #[rasn(tag(context, 3))]
+        pub token: Option<Token>,
+    }
+    impl DOR {
+        pub fn new(
+            ae_identifier: Option<AEIdentifier>,
+            local_reference: LocalReference,
+            data_object_type: ObjectIdentifier,
+            quality_of_service: QualityOfService,
+            token: Option<Token>,
+        ) -> Self {
+            Self {
+                ae_identifier,
+                local_reference,
+                data_object_type,
+                quality_of_service,
+                token,
+            }
+        }
+    }
+    fn dor_quality_of_service_default() -> QualityOfService {
+        QualityOfService(QualityOfService::new(
+            QoSLevel::level_1(()),
+            SingleUseOfReference(true),
+        ))
+    }
+    #[doc = " Data types for extending a specific QoS"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Extend-QoS")]
+    pub struct ExtendQoS {
+        #[rasn(tag(context, 0), identifier = "qoS-level")]
+        pub qo_s_level: Option<RequestedQoSLevel>,
+        #[rasn(identifier = "usage-of-reference")]
+        pub usage_of_reference: Option<SingleUseOfReference>,
+    }
+    impl ExtendQoS {
+        pub fn new(
+            qo_s_level: Option<RequestedQoSLevel>,
+            usage_of_reference: Option<SingleUseOfReference>,
+        ) -> Self {
+            Self {
+                qo_s_level,
+                usage_of_reference,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Local-reference")]
+    pub struct LocalReference {
+        #[rasn(tag(context, 0))]
+        pub application: Option<OctetString>,
+        #[rasn(tag(context, 1), identifier = "specific-reference")]
+        pub specific_reference: OctetString,
+    }
+    impl LocalReference {
+        pub fn new(application: Option<OctetString>, specific_reference: OctetString) -> Self {
+            Self {
+                application,
+                specific_reference,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Locational-identifier")]
+    pub struct LocationalIdentifier {
+        #[rasn(tag(context, 0), identifier = "presentation-address")]
+        pub presentation_address: PresentationAddress,
+        #[rasn(tag(context, 1), identifier = "ae-title")]
+        pub ae_title: Option<AETitle>,
+        #[rasn(identifier = "application-contexts")]
+        pub application_contexts: SetOf<ObjectIdentifier>,
+    }
+    impl LocationalIdentifier {
+        pub fn new(
+            presentation_address: PresentationAddress,
+            ae_title: Option<AETitle>,
+            application_contexts: SetOf<ObjectIdentifier>,
+        ) -> Self {
+            Self {
+                presentation_address,
+                ae_title,
+                application_contexts,
+            }
+        }
+    }
+    #[doc = " Data types for produce-operations"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Produce-QoS")]
+    pub struct ProduceQoS {
+        #[rasn(
+            tag(context, 0),
+            default = "produce_qo_s_qo_s_level_default",
+            identifier = "qoS-level"
+        )]
+        pub qo_s_level: RequestedQoSLevel,
+        #[rasn(
+            default = "produce_qo_s_usage_of_reference_default",
+            identifier = "usage-of-reference"
+        )]
+        pub usage_of_reference: SingleUseOfReference,
+    }
+    impl ProduceQoS {
+        pub fn new(
+            qo_s_level: RequestedQoSLevel,
+            usage_of_reference: SingleUseOfReference,
+        ) -> Self {
+            Self {
+                qo_s_level,
+                usage_of_reference,
+            }
+        }
+    }
+    impl std::default::Default for ProduceQoS {
+        fn default() -> Self {
+            Self {
+                qo_s_level: produce_qo_s_qo_s_level_default(),
+                usage_of_reference: produce_qo_s_usage_of_reference_default(),
+            }
+        }
+    }
+    fn produce_qo_s_qo_s_level_default() -> RequestedQoSLevel {
+        RequestedQoSLevel::level_1(())
+    }
+    fn produce_qo_s_usage_of_reference_default() -> SingleUseOfReference {
+        SingleUseOfReference(true)
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct QoSLevelLevel3 {
+        #[rasn(identifier = "produce-time")]
+        pub produce_time: GeneralizedTime,
+        #[rasn(identifier = "fidelity-time")]
+        pub fidelity_time: GeneralizedTime,
+    }
+    impl QoSLevelLevel3 {
+        pub fn new(produce_time: GeneralizedTime, fidelity_time: GeneralizedTime) -> Self {
+            Self {
+                produce_time,
+                fidelity_time,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "QoS-level")]
+    pub enum QoSLevel {
+        #[rasn(tag(context, 1), identifier = "level-1")]
+        level_1(()),
+        #[rasn(tag(context, 2), identifier = "level-2")]
+        level_2(GeneralizedTime),
+        #[rasn(tag(context, 3), identifier = "level-3")]
+        level_3(QoSLevelLevel3),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Quality-of-Service")]
+    pub struct QualityOfService {
+        #[rasn(
+            tag(context, 0),
+            default = "quality_of_service_qo_s_level_default",
+            identifier = "qoS-level"
+        )]
+        pub qo_s_level: QoSLevel,
+        #[rasn(
+            default = "quality_of_service_usage_of_reference_default",
+            identifier = "usage-of-reference"
+        )]
+        pub usage_of_reference: SingleUseOfReference,
+    }
+    impl QualityOfService {
+        pub fn new(qo_s_level: QoSLevel, usage_of_reference: SingleUseOfReference) -> Self {
+            Self {
+                qo_s_level,
+                usage_of_reference,
+            }
+        }
+    }
+    impl std::default::Default for QualityOfService {
+        fn default() -> Self {
+            Self {
+                qo_s_level: quality_of_service_qo_s_level_default(),
+                usage_of_reference: quality_of_service_usage_of_reference_default(),
+            }
+        }
+    }
+    fn quality_of_service_qo_s_level_default() -> QoSLevel {
+        QoSLevel::level_1(())
+    }
+    fn quality_of_service_usage_of_reference_default() -> SingleUseOfReference {
+        SingleUseOfReference(true)
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "Requested-QoS-level")]
+    pub enum RequestedQoSLevel {
+        #[rasn(tag(context, 1), identifier = "level-1")]
+        level_1(()),
+        #[rasn(tag(context, 2), identifier = "level-2")]
+        level_2(()),
+        #[rasn(tag(context, 3), identifier = "level-3")]
+        level_3(GeneralizedTime),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate, identifier = "Single-use-of-reference")]
+    pub struct SingleUseOfReference(pub bool);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum Token {
+        simpletoken(OctetString),
+        externaltoken(Any),
+    }
+    #[doc = " Object identifier for abstract syntax of DOR"]
+    pub static DOR_ABSTRACT_SYNTAX: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***DORX, &[1u32]].concat()).unwrap().to_owned());
+    #[doc = " Object identifier for abstract syntax of DOR with basic ASN.1 encodings in"]
+    #[doc = " EXTERNAL"]
+    pub static DOR_SYNTAX_ASN1: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***DORX, &[2u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " Defined Object Identifiers"]
+    pub static DORX: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 11u32]).to_owned());
+}

@@ -1,0 +1,92 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_t_t418_1993_Geo-Gr-Profile-Attributes.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod geo_gr_profile_attributes {
+    extern crate alloc;
+    use super::geo_gr_presentation_attributes::{
+        ASFType, ColourRepresentations, EdgeRendition, FilledAreaRendition, LineRendition,
+        MarkerRendition, OneOfFourAngles, PictureDimensions, PictureOrientation,
+        RegionOfInterestSpecification, TextRendition, TransformationSpecification,
+        TransparencySpecification, VDCPair,
+    };
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate, identifier = "Geo-Gr-Coding-Attribute")]
+    pub struct GeoGrCodingAttribute(pub ());
+    #[doc = " no non-basic values are defined for the"]
+    #[doc = " geometric graphics coding attributes in this Specification"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Geo-Gr-Content-Defaults")]
+    pub struct GeoGrContentDefaults {
+        #[rasn(tag(context, 1), identifier = "line-rendition")]
+        pub line_rendition: Option<LineRendition>,
+        #[rasn(tag(context, 2), identifier = "marker-rendition")]
+        pub marker_rendition: Option<MarkerRendition>,
+        #[rasn(tag(context, 3), identifier = "text-rendition")]
+        pub text_rendition: Option<TextRendition>,
+        #[rasn(tag(context, 4), identifier = "filled-area-rendition")]
+        pub filled_area_rendition: Option<FilledAreaRendition>,
+        #[rasn(tag(context, 5), identifier = "edge-rendition")]
+        pub edge_rendition: Option<EdgeRendition>,
+        #[rasn(tag(context, 6), identifier = "colour-representations")]
+        pub colour_representations: Option<ColourRepresentations>,
+        #[rasn(tag(context, 7), identifier = "transparency-specification")]
+        pub transparency_specification: Option<TransparencySpecification>,
+        #[rasn(tag(context, 8), identifier = "transformation-specification")]
+        pub transformation_specification: Option<TransformationSpecification>,
+        #[rasn(tag(context, 9), identifier = "region-of-interest-specification")]
+        pub region_of_interest_specification: Option<RegionOfInterestSpecification>,
+        #[rasn(tag(context, 10), identifier = "picture-orientation")]
+        pub picture_orientation: Option<PictureOrientation>,
+        #[rasn(tag(context, 11), identifier = "picture-dimensions")]
+        pub picture_dimensions: Option<PictureDimensions>,
+    }
+    impl GeoGrContentDefaults {
+        pub fn new(
+            line_rendition: Option<LineRendition>,
+            marker_rendition: Option<MarkerRendition>,
+            text_rendition: Option<TextRendition>,
+            filled_area_rendition: Option<FilledAreaRendition>,
+            edge_rendition: Option<EdgeRendition>,
+            colour_representations: Option<ColourRepresentations>,
+            transparency_specification: Option<TransparencySpecification>,
+            transformation_specification: Option<TransformationSpecification>,
+            region_of_interest_specification: Option<RegionOfInterestSpecification>,
+            picture_orientation: Option<PictureOrientation>,
+            picture_dimensions: Option<PictureDimensions>,
+        ) -> Self {
+            Self {
+                line_rendition,
+                marker_rendition,
+                text_rendition,
+                filled_area_rendition,
+                edge_rendition,
+                colour_representations,
+                transparency_specification,
+                transformation_specification,
+                region_of_interest_specification,
+                picture_orientation,
+                picture_dimensions,
+            }
+        }
+    }
+    #[doc = " see 10.2"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "Geo-Gr-Presentation-Feature")]
+    pub enum GeoGrPresentationFeature {
+        null(()),
+        #[rasn(tag(context, 3), identifier = "text-rendition")]
+        text_rendition(TextRendition),
+    }
+}

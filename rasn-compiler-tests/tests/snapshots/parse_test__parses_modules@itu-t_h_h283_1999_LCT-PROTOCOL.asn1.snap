@@ -1,0 +1,185 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_h_h283_1999_LCT-PROTOCOL.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod lct_protocol {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct H221NonStandard {
+        #[rasn(value("0..=255"), identifier = "t35CountryCode")]
+        pub t35_country_code: u8,
+        #[rasn(value("0..=255"), identifier = "t35Extension")]
+        pub t35_extension: u8,
+        #[rasn(value("0..=65535"), identifier = "manufacturerCode")]
+        pub manufacturer_code: u16,
+    }
+    impl H221NonStandard {
+        pub fn new(t35_country_code: u8, t35_extension: u8, manufacturer_code: u16) -> Self {
+            Self {
+                t35_country_code,
+                t35_extension,
+                manufacturer_code,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum LCTIndication {
+        deviceChange(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum LCTMessage {
+        lctRequest(LCTRequest),
+        lctResponse(LCTResponse),
+        lctIndication(LCTIndication),
+        nonStandardMessage(NonStandardMessage),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum LCTPDUPduType {
+        ack(()),
+        rdcData(RDCData),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct LCTPDU {
+        #[rasn(identifier = "srcAddr")]
+        pub src_addr: MTAddress,
+        #[rasn(identifier = "dstAddr")]
+        pub dst_addr: MTAddress,
+        #[rasn(value("0..=4294967295"))]
+        pub timestamp: u32,
+        #[rasn(value("0..=65535"), identifier = "seqNumber")]
+        pub seq_number: u16,
+        #[rasn(identifier = "pduType")]
+        pub pdu_type: LCTPDUPduType,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl LCTPDU {
+        pub fn new(
+            src_addr: MTAddress,
+            dst_addr: MTAddress,
+            timestamp: u32,
+            seq_number: u16,
+            pdu_type: LCTPDUPduType,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                src_addr,
+                dst_addr,
+                timestamp,
+                seq_number,
+                pdu_type,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum LCTRequest {
+        announceReq(()),
+        deviceListReq(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum LCTResponse {
+        announceResp(()),
+        deviceListResp(OctetString),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct MTAddress {
+        #[rasn(value("0..=65535"), identifier = "mAddress")]
+        pub m_address: u16,
+        #[rasn(value("0..=65535"), identifier = "tAddress")]
+        pub t_address: u16,
+    }
+    impl MTAddress {
+        pub fn new(m_address: u16, t_address: u16) -> Self {
+            Self {
+                m_address,
+                t_address,
+            }
+        }
+    }
+    #[doc = " assigned nationally"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum NonStandardIdentifier {
+        object(ObjectIdentifier),
+        h221NonStandard(H221NonStandard),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct NonStandardMessage {
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl NonStandardMessage {
+        pub fn new(non_standard_parameters: Option<SequenceOf<NonStandardParameter>>) -> Self {
+            Self {
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct NonStandardParameter {
+        #[rasn(identifier = "nonStandardIdentifier")]
+        pub non_standard_identifier: NonStandardIdentifier,
+        pub data: OctetString,
+    }
+    impl NonStandardParameter {
+        pub fn new(non_standard_identifier: NonStandardIdentifier, data: OctetString) -> Self {
+            Self {
+                non_standard_identifier,
+                data,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum RDCDataDataType {
+        lctMessage(LCTMessage),
+        rdcPDU(OctetString),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct RDCData {
+        pub reliable: bool,
+        #[rasn(identifier = "dataType")]
+        pub data_type: RDCDataDataType,
+    }
+    impl RDCData {
+        pub fn new(reliable: bool, data_type: RDCDataDataType) -> Self {
+            Self {
+                reliable,
+                data_type,
+            }
+        }
+    }
+}

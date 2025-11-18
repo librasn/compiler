@@ -1,0 +1,563 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x501_2001_SchemaAdministration.asn1
+---
+Warnings:
+LinkerError in ASN grammar: Failed to resolve reference of ElsewhereDefined: ObjectClassKind
+LinkerError in ASN grammar: Failed to resolve supertype DirectoryString of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype DirectoryString of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype DirectoryString of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype DirectoryString of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype DirectoryString of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype DirectoryString of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype DirectoryString of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype DirectoryString of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype DirectoryString of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype DirectoryString of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve reference of ElsewhereDefined: AttributeUsage
+LinkerError in ASN grammar: Failed to resolve supertype DirectoryString of parameterized implementation.
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod schema_administration {
+    extern crate alloc;
+    use super::information_framework::*;
+    use super::selected_attribute_types::{
+        DirectoryString, INTEGER_FIRST_COMPONENT_MATCH, INTEGER_MATCH,
+        OBJECT_IDENTIFIER_FIRST_COMPONENT_MATCH,
+    };
+    use super::upper_bounds::UB_SCHEMA;
+    use super::useful_definitions::{
+        ID_SOA, ID_SOC, INFORMATION_FRAMEWORK, SELECTED_ATTRIBUTE_TYPES, UPPER_BOUNDS,
+    };
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct AttributeTypeDescriptionName(pub SetOf<DirectoryString>);
+    #[doc = " describes the ASN.1 syntax"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AttributeTypeDescription {
+        pub identifier: Any,
+        pub name: Option<AttributeTypeDescriptionName>,
+        #[rasn(value("0.."))]
+        pub description: Option<DirectoryString>,
+        #[rasn(default = "attribute_type_description_obsolete_default")]
+        pub obsolete: bool,
+        #[rasn(tag(context, 0))]
+        pub information: AttributeTypeInformation,
+    }
+    impl AttributeTypeDescription {
+        pub fn new(
+            identifier: Any,
+            name: Option<AttributeTypeDescriptionName>,
+            description: Option<DirectoryString>,
+            obsolete: bool,
+            information: AttributeTypeInformation,
+        ) -> Self {
+            Self {
+                identifier,
+                name,
+                description,
+                obsolete,
+                information,
+            }
+        }
+    }
+    fn attribute_type_description_obsolete_default() -> bool {
+        false
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AttributeTypeInformation {
+        #[rasn(tag(context, 0))]
+        pub derivation: Option<Any>,
+        #[rasn(tag(context, 1), identifier = "equalityMatch")]
+        pub equality_match: Option<Any>,
+        #[rasn(tag(context, 2), identifier = "orderingMatch")]
+        pub ordering_match: Option<Any>,
+        #[rasn(tag(context, 3), identifier = "substringsMatch")]
+        pub substrings_match: Option<Any>,
+        #[rasn(value("0.."), tag(context, 4), identifier = "attributeSyntax")]
+        pub attribute_syntax: Option<DirectoryString>,
+        #[rasn(
+            tag(context, 5),
+            default = "attribute_type_information_multi_valued_default",
+            identifier = "multi-valued"
+        )]
+        pub multi_valued: bool,
+        #[rasn(
+            tag(context, 6),
+            default = "attribute_type_information_collective_default"
+        )]
+        pub collective: bool,
+        #[rasn(
+            tag(context, 7),
+            default = "attribute_type_information_user_modifiable_default",
+            identifier = "userModifiable"
+        )]
+        pub user_modifiable: bool,
+        #[rasn(default = "attribute_type_information_application_default")]
+        pub application: AttributeUsage,
+    }
+    impl AttributeTypeInformation {
+        pub fn new(
+            derivation: Option<Any>,
+            equality_match: Option<Any>,
+            ordering_match: Option<Any>,
+            substrings_match: Option<Any>,
+            attribute_syntax: Option<DirectoryString>,
+            multi_valued: bool,
+            collective: bool,
+            user_modifiable: bool,
+            application: AttributeUsage,
+        ) -> Self {
+            Self {
+                derivation,
+                equality_match,
+                ordering_match,
+                substrings_match,
+                attribute_syntax,
+                multi_valued,
+                collective,
+                user_modifiable,
+                application,
+            }
+        }
+    }
+    fn attribute_type_information_multi_valued_default() -> bool {
+        true
+    }
+    fn attribute_type_information_collective_default() -> bool {
+        false
+    }
+    fn attribute_type_information_user_modifiable_default() -> bool {
+        true
+    }
+    fn attribute_type_information_application_default() -> AttributeUsage {
+        USER_APPLICATIONS
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct ContextDescriptionName(pub SetOf<DirectoryString>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ContextDescription {
+        pub identifier: Any,
+        pub name: Option<ContextDescriptionName>,
+        #[rasn(value("0.."))]
+        pub description: Option<DirectoryString>,
+        #[rasn(default = "context_description_obsolete_default")]
+        pub obsolete: bool,
+        #[rasn(tag(context, 0))]
+        pub information: ContextInformation,
+    }
+    impl ContextDescription {
+        pub fn new(
+            identifier: Any,
+            name: Option<ContextDescriptionName>,
+            description: Option<DirectoryString>,
+            obsolete: bool,
+            information: ContextInformation,
+        ) -> Self {
+            Self {
+                identifier,
+                name,
+                description,
+                obsolete,
+                information,
+            }
+        }
+    }
+    fn context_description_obsolete_default() -> bool {
+        false
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ContextInformation {
+        #[rasn(value("0.."))]
+        pub syntax: DirectoryString,
+        #[rasn(value("0.."), identifier = "assertionSyntax")]
+        pub assertion_syntax: Option<DirectoryString>,
+    }
+    impl ContextInformation {
+        pub fn new(syntax: DirectoryString, assertion_syntax: Option<DirectoryString>) -> Self {
+            Self {
+                syntax,
+                assertion_syntax,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct DITContentRuleDescriptionName(pub SetOf<DirectoryString>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct DITContentRuleDescription {
+        #[rasn(tag(context, 4))]
+        pub name: Option<DITContentRuleDescriptionName>,
+        #[rasn(value("0.."))]
+        pub description: Option<DirectoryString>,
+        #[rasn(default = "ditcontent_rule_description_obsolete_default")]
+        pub obsolete: bool,
+    }
+    impl DITContentRuleDescription {
+        pub fn new(
+            name: Option<DITContentRuleDescriptionName>,
+            description: Option<DirectoryString>,
+            obsolete: bool,
+        ) -> Self {
+            Self {
+                name,
+                description,
+                obsolete,
+            }
+        }
+    }
+    fn ditcontent_rule_description_obsolete_default() -> bool {
+        false
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct DITContextUseDescriptionName(pub SetOf<DirectoryString>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct DITContextUseDescription {
+        pub identifier: Any,
+        pub name: Option<DITContextUseDescriptionName>,
+        #[rasn(value("0.."))]
+        pub description: Option<DirectoryString>,
+        #[rasn(default = "ditcontext_use_description_obsolete_default")]
+        pub obsolete: bool,
+        #[rasn(tag(context, 0))]
+        pub information: DITContextUseInformation,
+    }
+    impl DITContextUseDescription {
+        pub fn new(
+            identifier: Any,
+            name: Option<DITContextUseDescriptionName>,
+            description: Option<DirectoryString>,
+            obsolete: bool,
+            information: DITContextUseInformation,
+        ) -> Self {
+            Self {
+                identifier,
+                name,
+                description,
+                obsolete,
+                information,
+            }
+        }
+    }
+    fn ditcontext_use_description_obsolete_default() -> bool {
+        false
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct DITContextUseInformation {
+        #[rasn(size("1.."), tag(context, 1), identifier = "mandatoryContexts")]
+        pub mandatory_contexts: Option<SetOf<Any>>,
+        #[rasn(size("1.."), tag(context, 2), identifier = "optionalContexts")]
+        pub optional_contexts: Option<SetOf<Any>>,
+    }
+    impl DITContextUseInformation {
+        pub fn new(
+            mandatory_contexts: Option<SetOf<Any>>,
+            optional_contexts: Option<SetOf<Any>>,
+        ) -> Self {
+            Self {
+                mandatory_contexts,
+                optional_contexts,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct DITStructureRuleDescriptionName(pub SetOf<DirectoryString>);
+    #[doc = " types"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct DITStructureRuleDescription {
+        #[rasn(tag(context, 1))]
+        pub name: Option<DITStructureRuleDescriptionName>,
+        #[rasn(value("0.."))]
+        pub description: Option<DirectoryString>,
+        #[rasn(default = "ditstructure_rule_description_obsolete_default")]
+        pub obsolete: bool,
+    }
+    impl DITStructureRuleDescription {
+        pub fn new(
+            name: Option<DITStructureRuleDescriptionName>,
+            description: Option<DirectoryString>,
+            obsolete: bool,
+        ) -> Self {
+            Self {
+                name,
+                description,
+                obsolete,
+            }
+        }
+    }
+    fn ditstructure_rule_description_obsolete_default() -> bool {
+        false
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct MatchingRuleDescriptionName(pub SetOf<DirectoryString>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct MatchingRuleDescription {
+        pub identifier: Any,
+        pub name: Option<MatchingRuleDescriptionName>,
+        #[rasn(value("0.."))]
+        pub description: Option<DirectoryString>,
+        #[rasn(default = "matching_rule_description_obsolete_default")]
+        pub obsolete: bool,
+        #[rasn(value("0.."), tag(context, 0))]
+        pub information: Option<DirectoryString>,
+    }
+    impl MatchingRuleDescription {
+        pub fn new(
+            identifier: Any,
+            name: Option<MatchingRuleDescriptionName>,
+            description: Option<DirectoryString>,
+            obsolete: bool,
+            information: Option<DirectoryString>,
+        ) -> Self {
+            Self {
+                identifier,
+                name,
+                description,
+                obsolete,
+                information,
+            }
+        }
+    }
+    fn matching_rule_description_obsolete_default() -> bool {
+        false
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct MatchingRuleUseDescriptionName(pub SetOf<DirectoryString>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct MatchingRuleUseDescription {
+        pub identifier: Any,
+        pub name: Option<MatchingRuleUseDescriptionName>,
+        #[rasn(value("0.."))]
+        pub description: Option<DirectoryString>,
+        #[rasn(default = "matching_rule_use_description_obsolete_default")]
+        pub obsolete: bool,
+        #[rasn(tag(context, 0))]
+        pub information: SetOf<Any>,
+    }
+    impl MatchingRuleUseDescription {
+        pub fn new(
+            identifier: Any,
+            name: Option<MatchingRuleUseDescriptionName>,
+            description: Option<DirectoryString>,
+            obsolete: bool,
+            information: SetOf<Any>,
+        ) -> Self {
+            Self {
+                identifier,
+                name,
+                description,
+                obsolete,
+                information,
+            }
+        }
+    }
+    fn matching_rule_use_description_obsolete_default() -> bool {
+        false
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct NameFormDescriptionName(pub SetOf<DirectoryString>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct NameFormDescription {
+        pub identifier: Any,
+        pub name: Option<NameFormDescriptionName>,
+        #[rasn(value("0.."))]
+        pub description: Option<DirectoryString>,
+        #[rasn(default = "name_form_description_obsolete_default")]
+        pub obsolete: bool,
+        #[rasn(tag(context, 0))]
+        pub information: NameFormInformation,
+    }
+    impl NameFormDescription {
+        pub fn new(
+            identifier: Any,
+            name: Option<NameFormDescriptionName>,
+            description: Option<DirectoryString>,
+            obsolete: bool,
+            information: NameFormInformation,
+        ) -> Self {
+            Self {
+                identifier,
+                name,
+                description,
+                obsolete,
+                information,
+            }
+        }
+    }
+    fn name_form_description_obsolete_default() -> bool {
+        false
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct NameFormInformation {
+        pub subordinate: Any,
+        #[rasn(identifier = "namingMandatories")]
+        pub naming_mandatories: SetOf<Any>,
+        #[rasn(size("1.."), identifier = "namingOptionals")]
+        pub naming_optionals: Option<SetOf<Any>>,
+    }
+    impl NameFormInformation {
+        pub fn new(
+            subordinate: Any,
+            naming_mandatories: SetOf<Any>,
+            naming_optionals: Option<SetOf<Any>>,
+        ) -> Self {
+            Self {
+                subordinate,
+                naming_mandatories,
+                naming_optionals,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct ObjectClassDescriptionName(pub SetOf<DirectoryString>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ObjectClassDescription {
+        pub identifier: Any,
+        pub name: Option<ObjectClassDescriptionName>,
+        #[rasn(value("0.."))]
+        pub description: Option<DirectoryString>,
+        #[rasn(default = "object_class_description_obsolete_default")]
+        pub obsolete: bool,
+        #[rasn(tag(context, 0))]
+        pub information: ObjectClassInformation,
+    }
+    impl ObjectClassDescription {
+        pub fn new(
+            identifier: Any,
+            name: Option<ObjectClassDescriptionName>,
+            description: Option<DirectoryString>,
+            obsolete: bool,
+            information: ObjectClassInformation,
+        ) -> Self {
+            Self {
+                identifier,
+                name,
+                description,
+                obsolete,
+                information,
+            }
+        }
+    }
+    fn object_class_description_obsolete_default() -> bool {
+        false
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ObjectClassInformation {
+        #[rasn(size("1.."), identifier = "subclassOf")]
+        pub subclass_of: Option<SetOf<Any>>,
+        #[rasn(default = "object_class_information_kind_default")]
+        pub kind: ObjectClassKind,
+        #[rasn(size("1.."), tag(context, 3))]
+        pub mandatories: Option<SetOf<Any>>,
+        #[rasn(size("1.."), tag(context, 4))]
+        pub optionals: Option<SetOf<Any>>,
+    }
+    impl ObjectClassInformation {
+        pub fn new(
+            subclass_of: Option<SetOf<Any>>,
+            kind: ObjectClassKind,
+            mandatories: Option<SetOf<Any>>,
+            optionals: Option<SetOf<Any>>,
+        ) -> Self {
+            Self {
+                subclass_of,
+                kind,
+                mandatories,
+                optionals,
+            }
+        }
+    }
+    fn object_class_information_kind_default() -> ObjectClassKind {
+        STRUCTURAL
+    }
+    pub static ID_SOA_ATTRIBUTE_TYPES: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_SOA, &[5u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_SOA_CONTEXT_TYPES: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_SOA, &[11u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_SOA_D_ITCONTENT_RULES: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_SOA, &[2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_SOA_D_ITCONTEXT_USE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_SOA, &[12u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " schema operational attributes"]
+    pub static ID_SOA_D_ITSTRUCTURE_RULE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_SOA, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_SOA_GOVERNING_STRUCTURE_RULE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_SOA, &[10u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_SOA_MATCHING_RULE_USE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_SOA, &[8u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_SOA_MATCHING_RULES: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_SOA, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_SOA_NAME_FORMS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_SOA, &[7u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_SOA_OBJECT_CLASSES: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_SOA, &[6u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_SOA_STRUCTURAL_OBJECT_CLASS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_SOA, &[9u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " object identifier assignments"]
+    #[doc = " schema object classes"]
+    pub static ID_SOC_SUBSCHEMA: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_SOC, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+}

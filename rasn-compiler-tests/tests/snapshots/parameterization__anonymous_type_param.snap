@@ -1,0 +1,72 @@
+---
+source: rasn-compiler-tests/tests/parameterization.rs
+description: "\n            SetupRelease { ElementTypeParam } ::= CHOICE { \n                release         NULL,\n                setup           ElementTypeParam \n            }\n\n            LocationMeasurementInfo ::= SEQUENCE {\n                test BOOLEAN\n            }\n\n            LocationMeasurementIndication-IEs ::=       SEQUENCE { \n                measurementIndication      SetupRelease { LocationMeasurementInfo }, \n                lateNonCriticalExtension   OCTET STRING OPTIONAL,\n                nonCriticalExtension       SEQUENCE{} OPTIONAL \n            }\n        "
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod test_module {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum LocationMeasurementIndicationIEsMeasurementIndication {
+        release(()),
+        setup(LocationMeasurementInfo),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct LocationMeasurementIndicationIEsNonCriticalExtension {}
+    impl LocationMeasurementIndicationIEsNonCriticalExtension {
+        pub fn new() -> Self {
+            Self {}
+        }
+    }
+    impl std::default::Default for LocationMeasurementIndicationIEsNonCriticalExtension {
+        fn default() -> Self {
+            Self {}
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "LocationMeasurementIndication-IEs")]
+    pub struct LocationMeasurementIndicationIEs {
+        #[rasn(identifier = "measurementIndication")]
+        pub measurement_indication: LocationMeasurementIndicationIEsMeasurementIndication,
+        #[rasn(identifier = "lateNonCriticalExtension")]
+        pub late_non_critical_extension: Option<OctetString>,
+        #[rasn(identifier = "nonCriticalExtension")]
+        pub non_critical_extension: Option<LocationMeasurementIndicationIEsNonCriticalExtension>,
+    }
+    impl LocationMeasurementIndicationIEs {
+        pub fn new(
+            measurement_indication: LocationMeasurementIndicationIEsMeasurementIndication,
+            late_non_critical_extension: Option<OctetString>,
+            non_critical_extension: Option<LocationMeasurementIndicationIEsNonCriticalExtension>,
+        ) -> Self {
+            Self {
+                measurement_indication,
+                late_non_critical_extension,
+                non_critical_extension,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct LocationMeasurementInfo {
+        pub test: bool,
+    }
+    impl LocationMeasurementInfo {
+        pub fn new(test: bool) -> Self {
+            Self { test }
+        }
+    }
+}

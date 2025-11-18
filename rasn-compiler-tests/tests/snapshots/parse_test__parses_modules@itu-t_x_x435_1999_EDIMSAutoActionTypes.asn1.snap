@@ -1,0 +1,184 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x435_1999_EDIMSAutoActionTypes.asn1
+---
+Warnings:
+LinkerError in ASN grammar: Failed to link value with 'ActionRequestField'
+LinkerError in ASN grammar: Failed to resolve reference in object set.
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod edimsauto_action_types {
+    extern crate alloc;
+    use super::edimsinformation_objects::{
+        ActionRequestField, EDINotificationRequestsField, EDISupplementaryInformation,
+        RecipientField, ResponsibilityPassingAllowedField,
+    };
+    use super::edimsobject_identifiers::{
+        ID_AAE_DUPLICATE_EDIN, ID_AAE_EDI_AUTO_FORWARDING_LOOP, ID_ACT_EDI_AUTO_ACKNOWLEDGEMENT,
+        ID_ACT_EDI_AUTO_CORRELATE, ID_ACT_EDI_AUTO_FORWARD_V2, ID_FOR_ACTION,
+    };
+    use super::msabstract_service::*;
+    use super::mtsabstract_service::{
+        ExtensionField, MessageSubmissionEnvelope, ELEMENT_OF_SERVICE_NOT_SUBSCRIBED,
+        INCONSISTENT_REQUEST, ORIGINATOR_INVALID, RECIPIENT_IMPROPERLY_SPECIFIED,
+        REMOTE_BIND_ERROR, SECURITY_ERROR, SUBMISSION_CONTROL_VIOLATED,
+        UNSUPPORTED_CRITICAL_FUNCTION,
+    };
+    use super::mtsupper_bounds::UB_RECIPIENTS;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct EDIAutoAcknowledgementRegistrationParameter {
+        #[rasn(tag(context, 0), identifier = "auto-acknowledge-suppl-receipt-info")]
+        pub auto_acknowledge_suppl_receipt_info: Option<EDISupplementaryInformation>,
+        #[rasn(tag(context, 1), identifier = "submission-options")]
+        pub submission_options: Option<MSSubmissionOptions>,
+    }
+    impl EDIAutoAcknowledgementRegistrationParameter {
+        pub fn new(
+            auto_acknowledge_suppl_receipt_info: Option<EDISupplementaryInformation>,
+            submission_options: Option<MSSubmissionOptions>,
+        ) -> Self {
+            Self {
+                auto_acknowledge_suppl_receipt_info,
+                submission_options,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum EDIAutoForwardRegistrationParameterEdiForwardingMode {
+        #[rasn(
+            tag(context, 3),
+            identifier = "forwarding-with-responsibility-not-accepted"
+        )]
+        forwarding_with_responsibility_not_accepted(NewRecipient),
+        #[rasn(
+            tag(context, 4),
+            identifier = "forwarding-with-responsibility-accepted"
+        )]
+        forwarding_with_responsibility_accepted(ForwardWithRespAccepted),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct EDIAutoForwardRegistrationParameter {
+        #[rasn(tag(context, 0))]
+        pub filter: Option<Filter>,
+        #[rasn(tag(context, 1), identifier = "edi-supplementary-info")]
+        pub edi_supplementary_info: Option<EDISupplementaryInformation>,
+        #[rasn(
+            tag(context, 2),
+            default = "ediauto_forward_registration_parameter_delete_after_forwarding_default",
+            identifier = "delete-after-forwarding"
+        )]
+        pub delete_after_forwarding: bool,
+        #[rasn(identifier = "edi-forwarding-mode")]
+        pub edi_forwarding_mode: EDIAutoForwardRegistrationParameterEdiForwardingMode,
+        #[rasn(tag(context, 5), identifier = "forwarding-envelope")]
+        pub forwarding_envelope: MessageSubmissionEnvelope,
+        #[rasn(tag(context, 6), identifier = "submission-options")]
+        pub submission_options: Option<MSSubmissionOptions>,
+    }
+    impl EDIAutoForwardRegistrationParameter {
+        pub fn new(
+            filter: Option<Filter>,
+            edi_supplementary_info: Option<EDISupplementaryInformation>,
+            delete_after_forwarding: bool,
+            edi_forwarding_mode: EDIAutoForwardRegistrationParameterEdiForwardingMode,
+            forwarding_envelope: MessageSubmissionEnvelope,
+            submission_options: Option<MSSubmissionOptions>,
+        ) -> Self {
+            Self {
+                filter,
+                edi_supplementary_info,
+                delete_after_forwarding,
+                edi_forwarding_mode,
+                forwarding_envelope,
+                submission_options,
+            }
+        }
+    }
+    fn ediauto_forward_registration_parameter_delete_after_forwarding_default() -> bool {
+        false
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct ForwardWithRespAccepted {
+        #[rasn(tag(context, 0), identifier = "new-edin-receiver-name")]
+        pub new_edin_receiver_name: Option<RecipientField>,
+        #[rasn(
+            size("1.."),
+            tag(context, 1),
+            identifier = "per-recipient-heading-field"
+        )]
+        pub per_recipient_heading_field: SequenceOf<NextRecipientFields>,
+    }
+    impl ForwardWithRespAccepted {
+        pub fn new(
+            new_edin_receiver_name: Option<RecipientField>,
+            per_recipient_heading_field: SequenceOf<NextRecipientFields>,
+        ) -> Self {
+            Self {
+                new_edin_receiver_name,
+                per_recipient_heading_field,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NewRecipient(pub RecipientField);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct NextRecipientFields {
+        #[rasn(tag(context, 1), identifier = "next-recipient")]
+        pub next_recipient: RecipientField,
+        #[rasn(
+            tag(context, 2),
+            default = "next_recipient_fields_next_recipient_action_request_default",
+            identifier = "next-recipient-action-request"
+        )]
+        pub next_recipient_action_request: ActionRequestField,
+        #[rasn(
+            tag(context, 3),
+            identifier = "next-recipient-edi-notification-requests-field"
+        )]
+        pub next_recipient_edi_notification_requests_field: Option<EDINotificationRequestsField>,
+        #[rasn(
+            tag(context, 4),
+            default = "next_recipient_fields_next_responsibility_passing_allowed_default",
+            identifier = "next-responsibility-passing-allowed"
+        )]
+        pub next_responsibility_passing_allowed: ResponsibilityPassingAllowedField,
+    }
+    impl NextRecipientFields {
+        pub fn new(
+            next_recipient: RecipientField,
+            next_recipient_action_request: ActionRequestField,
+            next_recipient_edi_notification_requests_field: Option<EDINotificationRequestsField>,
+            next_responsibility_passing_allowed: ResponsibilityPassingAllowedField,
+        ) -> Self {
+            Self {
+                next_recipient,
+                next_recipient_action_request,
+                next_recipient_edi_notification_requests_field,
+                next_responsibility_passing_allowed,
+            }
+        }
+    }
+    fn next_recipient_fields_next_recipient_action_request_default() -> ActionRequestField {
+        ActionRequestField(Oid::new(&[&***ID_FOR_ACTION].concat()).unwrap().to_owned())
+    }
+    fn next_recipient_fields_next_responsibility_passing_allowed_default(
+    ) -> ResponsibilityPassingAllowedField {
+        false
+    }
+}

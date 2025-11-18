@@ -1,0 +1,216 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q1248.3_2001_IN-SCF-SRF-datatypes.asn1
+---
+Warnings:
+LinkerError in ASN grammar: Failed to resolve supertype Digits of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype Digits of parameterized implementation.
+NotYetInplemented in ASN grammar: Value references of path length > 2 are not yet supported! Found reference b3.&.minMessageContentLength
+NotYetInplemented in ASN grammar: Value references of path length > 2 are not yet supported! Found reference b3.&.minMailBoxIDLength
+NotYetInplemented in ASN grammar: Value references of path length > 2 are not yet supported! Found reference b3.&.minMessageContentLength
+NotYetInplemented in ASN grammar: Value references of path length > 2 are not yet supported! Found reference b3.&.maxRecordingTime
+LinkerError in ASN grammar: Failed to resolve argument Integer4 of parameterized implementation.
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod in_scf_srf_datatypes {
+    extern crate alloc;
+    use super::in_common_classes::*;
+    use super::in_common_datatypes::Integer4;
+    use super::in_object_identifiers::{
+        COMMON_CLASSES, COMMON_DATATYPES, ROS_INFORMATION_OBJECTS, SCF_SRF_CLASSES,
+        SSF_SCF_CLASSES, SSF_SCF_DATATYPES, TC_MESSAGES,
+    };
+    use super::in_scf_srf_classes::*;
+    use super::in_ssf_scf_classes::*;
+    use super::in_ssf_scf_datatypes::{Digits, DisplayInformation, SDSSinformation};
+    use super::remote_operations_information_objects::Code;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " The following three definitions are local short-hand notation for convenience."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct B1(pub COMMONBOUNDS);
+    #[doc = " defined in Q.1248.1 (Part 1 of Recommendation Q.1248)"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct B2(pub SCFSSFBOUNDS);
+    #[doc = " defined in Q.1248.2 (Part 2 of Recommendation Q.1248)"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct B3(pub SCFSRFBOUNDS);
+    #[doc = " defined in this Recommendation (Q.1248.3)"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct CollectedDigits {
+        #[rasn(
+            value("1..=127"),
+            tag(context, 0),
+            default = "collected_digits_minimum_nb_of_digits_default",
+            identifier = "minimumNbOfDigits"
+        )]
+        pub minimum_nb_of_digits: u8,
+        #[rasn(value("1..=127"), tag(context, 1), identifier = "maximumNbOfDigits")]
+        pub maximum_nb_of_digits: u8,
+        #[rasn(size("1..=2"), tag(context, 2), identifier = "endOfReplyDigit")]
+        pub end_of_reply_digit: Option<OctetString>,
+        #[rasn(size("1..=2"), tag(context, 3), identifier = "cancelDigit")]
+        pub cancel_digit: Option<OctetString>,
+        #[rasn(size("1..=2"), tag(context, 4), identifier = "startDigit")]
+        pub start_digit: Option<OctetString>,
+        #[rasn(value("1..=127"), tag(context, 5), identifier = "firstDigitTimeOut")]
+        pub first_digit_time_out: Option<u8>,
+        #[rasn(value("1..=127"), tag(context, 6), identifier = "interDigitTimeOut")]
+        pub inter_digit_time_out: Option<u8>,
+        #[rasn(
+            tag(context, 7),
+            default = "collected_digits_error_treatment_default",
+            identifier = "errorTreatment"
+        )]
+        pub error_treatment: ErrorTreatment,
+        #[rasn(
+            tag(context, 8),
+            default = "collected_digits_interruptable_ann_ind_default",
+            identifier = "interruptableAnnInd"
+        )]
+        pub interruptable_ann_ind: bool,
+        #[rasn(
+            tag(context, 9),
+            default = "collected_digits_voice_information_default",
+            identifier = "voiceInformation"
+        )]
+        pub voice_information: bool,
+        #[rasn(
+            tag(context, 10),
+            default = "collected_digits_voice_back_default",
+            identifier = "voiceBack"
+        )]
+        pub voice_back: bool,
+        #[rasn(
+            tag(context, 11),
+            default = "collected_digits_detect_modem_default",
+            identifier = "detectModem"
+        )]
+        pub detect_modem: bool,
+    }
+    impl CollectedDigits {
+        pub fn new(
+            minimum_nb_of_digits: u8,
+            maximum_nb_of_digits: u8,
+            end_of_reply_digit: Option<OctetString>,
+            cancel_digit: Option<OctetString>,
+            start_digit: Option<OctetString>,
+            first_digit_time_out: Option<u8>,
+            inter_digit_time_out: Option<u8>,
+            error_treatment: ErrorTreatment,
+            interruptable_ann_ind: bool,
+            voice_information: bool,
+            voice_back: bool,
+            detect_modem: bool,
+        ) -> Self {
+            Self {
+                minimum_nb_of_digits,
+                maximum_nb_of_digits,
+                end_of_reply_digit,
+                cancel_digit,
+                start_digit,
+                first_digit_time_out,
+                inter_digit_time_out,
+                error_treatment,
+                interruptable_ann_ind,
+                voice_information,
+                voice_back,
+                detect_modem,
+            }
+        }
+    }
+    fn collected_digits_minimum_nb_of_digits_default() -> u8 {
+        1
+    }
+    fn collected_digits_error_treatment_default() -> ErrorTreatment {
+        ErrorTreatment::reportErrorToScf
+    }
+    fn collected_digits_interruptable_ann_ind_default() -> bool {
+        true
+    }
+    fn collected_digits_voice_information_default() -> bool {
+        false
+    }
+    fn collected_digits_voice_back_default() -> bool {
+        false
+    }
+    fn collected_digits_detect_modem_default() -> bool {
+        false
+    }
+    #[doc = " The use of voiceBack is network operator specific."]
+    #[doc = " The endOfReplyDigit, cancelDigit, and startDigit parameters have been designated as OCTET STRING,"]
+    #[doc = " and are to be encoded as BCD, one digit per octet only, contained"]
+    #[doc = " in the four least significant bits of each OCTET. The usage is service dependent."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum CollectedInfo {
+        #[rasn(tag(context, 0))]
+        collectedDigits(CollectedDigits),
+        #[rasn(tag(context, 1))]
+        iA5Information(bool),
+        #[rasn(tag(context, 2))]
+        detectModem(bool),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ElementaryMessageID(pub Integer4);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ErrorTreatment {
+        reportErrorToScf = 0,
+        help = 1,
+        repeatPrompt = 2,
+    }
+    #[doc = " reportErrorToScf means returning the \"ImproperCallerResponse\" error in the event of an error"]
+    #[doc = " condition during collection of user info."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct GapOnResource(pub Code);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("3"))]
+    pub struct Language(pub PrintableString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum Media {
+        voiceMail = 0,
+        faxGroup3 = 1,
+        faxGroup4 = 2,
+    }
+    #[doc = " OPTIONAL denotes network operator specific use."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ReceivedStatus {
+        messageComplete = 0,
+        messageInterrupted = 1,
+        messageTimeOut = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RecordedMessageID(pub Integer4);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct Tone {
+        #[rasn(tag(context, 0), identifier = "toneID")]
+        pub tone_id: Integer4,
+        #[rasn(tag(context, 1))]
+        pub duration: Option<Integer4>,
+    }
+    impl Tone {
+        pub fn new(tone_id: Integer4, duration: Option<Integer4>) -> Self {
+            Self { tone_id, duration }
+        }
+    }
+}

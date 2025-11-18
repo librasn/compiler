@@ -1,0 +1,95 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x894_2018-cor1_AttributeCertificateVersion1-2009.asn1
+---
+Warnings:
+LinkerError in ASN grammar: Failed to resolve supertype SIGNED of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype AlgorithmIdentifier of parameterized implementation.
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod attribute_certificate_version1_2009 {
+    extern crate alloc;
+    use super::algorithm_information_2009::*;
+    use super::pkix1_explicit_2009::*;
+    use super::pkix1_implicit_2009::GeneralNames;
+    use super::pkix_common_types_2009::*;
+    use super::pkixattribute_certificate_2009::{AttCertValidityPeriod, IssuerSerial};
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AttCertVersionV1(pub Integer);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum AttributeCertificateInfoV1Subject {
+        #[rasn(tag(context, 0))]
+        baseCertificateID(IssuerSerial),
+        #[rasn(tag(context, 1))]
+        subjectName(GeneralNames),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AttributeCertificateInfoV1Attributes(pub SequenceOf<AttributeSet>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AttributeCertificateInfoV1 {
+        #[rasn(default = "attribute_certificate_info_v1_version_default")]
+        pub version: AttCertVersionV1,
+        pub subject: AttributeCertificateInfoV1Subject,
+        pub issuer: GeneralNames,
+        #[rasn(value("0.."))]
+        pub signature: AlgorithmIdentifier,
+        #[rasn(identifier = "serialNumber")]
+        pub serial_number: CertificateSerialNumber,
+        #[rasn(identifier = "attCertValidityPeriod")]
+        pub att_cert_validity_period: AttCertValidityPeriod,
+        pub attributes: AttributeCertificateInfoV1Attributes,
+        #[rasn(identifier = "issuerUniqueID")]
+        pub issuer_unique_id: Option<UniqueIdentifier>,
+        #[rasn(value("0.."))]
+        pub extensions: Option<Extensions>,
+    }
+    impl AttributeCertificateInfoV1 {
+        pub fn new(
+            version: AttCertVersionV1,
+            subject: AttributeCertificateInfoV1Subject,
+            issuer: GeneralNames,
+            signature: AlgorithmIdentifier,
+            serial_number: CertificateSerialNumber,
+            att_cert_validity_period: AttCertValidityPeriod,
+            attributes: AttributeCertificateInfoV1Attributes,
+            issuer_unique_id: Option<UniqueIdentifier>,
+            extensions: Option<Extensions>,
+        ) -> Self {
+            Self {
+                version,
+                subject,
+                issuer,
+                signature,
+                serial_number,
+                att_cert_validity_period,
+                attributes,
+                issuer_unique_id,
+                extensions,
+            }
+        }
+    }
+    fn attribute_certificate_info_v1_version_default() -> AttCertVersionV1 {
+        AttCertVersionV1(Integer::from(0))
+    }
+    #[doc = " Definition extracted from X.509-1997 [X.509-97], but"]
+    #[doc = " different type names are used to avoid collisions."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AttributeCertificateV1(pub SIGNED);
+}

@@ -1,0 +1,520 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x894_2018-cor1_ANSI-X9-62.asn1
+---
+Warnings:
+LinkerError in ASN grammar: Failed to resolve argument FIELD-ID.&id of parameterized implementation.
+LinkerError in ASN grammar: No syntax definition for information object class found!
+LinkerError in ASN grammar: No syntax definition for information object class found!
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod ansi_x9_62 {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " Parameters for a binary field"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Characteristic-two")]
+    pub struct CharacteristicTwo {
+        pub m: Integer,
+        pub basis: Any,
+        pub parameters: Any,
+    }
+    impl CharacteristicTwo {
+        pub fn new(m: Integer, basis: Any, parameters: Any) -> Self {
+            Self {
+                m,
+                basis,
+                parameters,
+            }
+        }
+    }
+    #[doc = " ============================================"]
+    #[doc = " Elliptic Curve Domain Parameters (see  E.7)"]
+    #[doc = " ============================================"]
+    #[doc = " Identifying an elliptic curve by its coefficients (and optional seed)"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Curve {
+        pub a: FieldElement,
+        pub b: FieldElement,
+        pub seed: Option<BitString>,
+    }
+    impl Curve {
+        pub fn new(a: FieldElement, b: FieldElement, seed: Option<BitString>) -> Self {
+            Self { a, b, seed }
+        }
+    }
+    #[doc = " A type identifying an ECC algorithm"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ECCAlgorithm {
+        pub algorithm: ObjectIdentifier,
+        pub parameters: Option<Any>,
+    }
+    impl ECCAlgorithm {
+        pub fn new(algorithm: ObjectIdentifier, parameters: Option<Any>) -> Self {
+            Self {
+                algorithm,
+                parameters,
+            }
+        }
+    }
+    #[doc = " A type identifying one or more ECC algorithms with possible preference"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ECCAlgorithms(pub SequenceOf<ECCAlgorithm>);
+    #[doc = " ============================================"]
+    #[doc = " Elliptic Curve Digital Signatures (see  E.8)"]
+    #[doc = " ============================================"]
+    #[doc = " Format for an actual signature"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "ECDSA-Sig-Value")]
+    pub struct ECDSASigValue {
+        pub r: Integer,
+        pub s: Integer,
+    }
+    impl ECDSASigValue {
+        pub fn new(r: Integer, s: Integer) -> Self {
+            Self { r, s }
+        }
+    }
+    #[doc = " Type for identifying elliptic curve domain parameters"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ECDomainParameters {
+        specified(SpecifiedECDomain),
+        named(ObjectIdentifier),
+        implicitCA(()),
+    }
+    #[doc = " An instantiation of Alg. Id."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ECPKAlgorithm {
+        pub algorithm: ObjectIdentifier,
+        pub parameters: Option<Any>,
+    }
+    impl ECPKAlgorithm {
+        pub fn new(algorithm: ObjectIdentifier, parameters: Option<Any>) -> Self {
+            Self {
+                algorithm,
+                parameters,
+            }
+        }
+    }
+    #[doc = " Type identified by id-ecPublicKeyRestricted"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ECPKRestrictions {
+        #[rasn(identifier = "ecDomain")]
+        pub ec_domain: ECDomainParameters,
+        #[rasn(identifier = "eccAlgorithms")]
+        pub ecc_algorithms: ECCAlgorithms,
+    }
+    impl ECPKRestrictions {
+        pub fn new(ec_domain: ECDomainParameters, ecc_algorithms: ECCAlgorithms) -> Self {
+            Self {
+                ec_domain,
+                ecc_algorithms,
+            }
+        }
+    }
+    #[doc = " ============================================"]
+    #[doc = " Elliptic Curve Points (see  E.6)"]
+    #[doc = " ============================================"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ECPoint(pub OctetString);
+    #[doc = " ============================================"]
+    #[doc = " Finite Field Identification (see  E.5)"]
+    #[doc = " ============================================"]
+    #[doc = " Finite field element"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct FieldElement(pub OctetString);
+    #[doc = " Type (parameterized) to indicate the hash function with"]
+    #[doc = " the OID ecdsa-with-Specified"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct HashAlgorithm {
+        pub algorithm: ObjectIdentifier,
+        pub parameters: Option<Any>,
+    }
+    impl HashAlgorithm {
+        pub fn new(algorithm: ObjectIdentifier, parameters: Option<Any>) -> Self {
+            Self {
+                algorithm,
+                parameters,
+            }
+        }
+    }
+    #[doc = " Pentanomial basis representation of F2^m"]
+    #[doc = " reduction polynomial integers k1, k2, k3"]
+    #[doc = " f(x) = x^m + x^k3 + x^k2 + x^k1 + 1"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Pentanomial {
+        pub k1: Integer,
+        pub k2: Integer,
+        pub k3: Integer,
+    }
+    impl Pentanomial {
+        pub fn new(k1: Integer, k2: Integer, k3: Integer) -> Self {
+            Self { k1, k2, k3 }
+        }
+    }
+    #[doc = " Parameters for prime field"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Prime-p")]
+    pub struct PrimeP(pub Integer);
+    #[doc = " Identifying elliptic curve domain parameters explicitly with this type"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct SpecifiedECDomain {
+        #[rasn(value("1..=3"))]
+        pub version: SpecifiedECDomainVersion,
+        #[rasn(value("0.."), identifier = "fieldID")]
+        pub field_id: FieldID,
+        pub curve: Curve,
+        pub base: ECPoint,
+        pub order: Integer,
+        pub cofactor: Option<Integer>,
+        pub hash: Option<HashAlgorithm>,
+    }
+    impl SpecifiedECDomain {
+        pub fn new(
+            version: SpecifiedECDomainVersion,
+            field_id: FieldID,
+            curve: Curve,
+            base: ECPoint,
+            order: Integer,
+            cofactor: Option<Integer>,
+            hash: Option<HashAlgorithm>,
+        ) -> Self {
+            Self {
+                version,
+                field_id,
+                curve,
+                base,
+                order,
+                cofactor,
+                hash,
+            }
+        }
+    }
+    #[doc = " Type used to control version of EC domain parameters"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SpecifiedECDomainVersion(pub Integer);
+    #[doc = " X9.62 profile of an X.509 (ASN.1) field contained"]
+    #[doc = " in X.509 and PKIX certificates"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SubjectPublicKeyInfo {
+        pub algorithm: ECPKAlgorithm,
+        #[rasn(identifier = "subjectPublicKey")]
+        pub subject_public_key: BitString,
+    }
+    impl SubjectPublicKeyInfo {
+        pub fn new(algorithm: ECPKAlgorithm, subject_public_key: BitString) -> Self {
+            Self {
+                algorithm,
+                subject_public_key,
+            }
+        }
+    }
+    #[doc = " Trinomial basis representation of F2^m"]
+    #[doc = " Integer k for reduction polynomial x^m + x^k + 1"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Trinomial(pub Integer);
+    #[doc = " EXPORTS All;"]
+    #[doc = " IMPORTS None;"]
+    #[doc = " ============================================"]
+    #[doc = " Notes"]
+    #[doc = " ============================================"]
+    #[doc = " 1. Definitions in this module are arranged to minimize forward references,"]
+    #[doc = " Reading backwards gives a top-down approach more like X9.62-1998."]
+    #[doc = " 2. Most comments briefly explain subsequent definition."]
+    #[doc = " ============================================"]
+    #[doc = " Common Object Identifier (see  E.2)"]
+    #[doc = " ============================================"]
+    #[doc = " The root OID for this module."]
+    pub static ANSI_X9_62: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[1u32, 2u32, 840u32, 10045u32]).to_owned());
+    pub static ANSIX9P160K1: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SECG_CURVE, &[9u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ANSIX9P160R1: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SECG_CURVE, &[8u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ANSIX9P160R2: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SECG_CURVE, &[30u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ANSIX9P192K1: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SECG_CURVE, &[31u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ANSIX9P192R1: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***PRIME_CURVE, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ANSIX9P224K1: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SECG_CURVE, &[32u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ANSIX9P224R1: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SECG_CURVE, &[33u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ANSIX9P256K1: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SECG_CURVE, &[10u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ANSIX9P256R1: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***PRIME_CURVE, &[7u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ANSIX9P384R1: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SECG_CURVE, &[34u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ANSIX9P521R1: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SECG_CURVE, &[35u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " Named EC domain parameters in X9.62"]
+    pub static ANSIX9T163K1: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SECG_CURVE, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ANSIX9T163R1: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SECG_CURVE, &[2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ANSIX9T163R2: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SECG_CURVE, &[15u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ANSIX9T193R1: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SECG_CURVE, &[24u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ANSIX9T193R2: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SECG_CURVE, &[25u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ANSIX9T233K1: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SECG_CURVE, &[26u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ANSIX9T233R1: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SECG_CURVE, &[27u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ANSIX9T239K1: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SECG_CURVE, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ANSIX9T283K1: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SECG_CURVE, &[16u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ANSIX9T283R1: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SECG_CURVE, &[17u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ANSIX9T409K1: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SECG_CURVE, &[36u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ANSIX9T409R1: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SECG_CURVE, &[37u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ANSIX9T571K1: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SECG_CURVE, &[38u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ANSIX9T571R1: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SECG_CURVE, &[39u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " Finite field F(p), where p is an odd prime"]
+    #[doc = " OID for identifying binary field"]
+    pub static CHARACTERISTIC_TWO_FIELD: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_FIELD_TYPE, &[2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " New OID indicating the message digest to be the natural size hash"]
+    #[doc = " Note: the natural size hash is strongly recommended"]
+    pub static ECDSA_WITH_RECOMMENDED: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_EC_SIG_TYPE, &[2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " Original X9.62-1998 OID for ECDSA"]
+    pub static ECDSA_WITH_SHA1: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_EC_SIG_TYPE, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " New OIDs that indicates the message digest directly"]
+    pub static ECDSA_WITH_SHA224: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ECDSA_WITH_SPECIFIED, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ECDSA_WITH_SHA256: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ECDSA_WITH_SPECIFIED, &[2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ECDSA_WITH_SHA384: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ECDSA_WITH_SPECIFIED, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ECDSA_WITH_SHA512: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ECDSA_WITH_SPECIFIED, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " New OID that indicates the message digest to be specified by the parameters"]
+    pub static ECDSA_WITH_SPECIFIED: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_EC_SIG_TYPE, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " Arc in X9.62 for naming EC domain parameters that are not named elsewhere"]
+    pub static ELLIPTIC_CURVE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ANSI_X9_62, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " OID to identify a Gaussian normal basis."]
+    pub static GN_BASIS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CHARACTERISTIC_TWO_BASIS, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " New OID for SHA224"]
+    pub static ID_SHA224: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::const_new(&[2u32, 16u32, 840u32, 1u32, 101u32, 3u32, 4u32, 2u32, 4u32]).to_owned()
+    });
+    #[doc = " Inherited OID for SHA256"]
+    pub static ID_SHA256: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::const_new(&[2u32, 16u32, 840u32, 1u32, 101u32, 3u32, 4u32, 2u32, 1u32]).to_owned()
+    });
+    #[doc = " Inherited OID for SHA384"]
+    pub static ID_SHA384: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::const_new(&[2u32, 16u32, 840u32, 1u32, 101u32, 3u32, 4u32, 2u32, 2u32]).to_owned()
+    });
+    #[doc = " Inherited OID for SHA512"]
+    pub static ID_SHA512: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::const_new(&[2u32, 16u32, 840u32, 1u32, 101u32, 3u32, 4u32, 2u32, 3u32]).to_owned()
+    });
+    #[doc = " Root OID for identifying binary field basis types"]
+    pub static ID_CHARACTERISTIC_TWO_BASIS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***CHARACTERISTIC_TWO_FIELD, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " Original X9.62-1998 OID for identifying unrestricted EC public key"]
+    pub static ID_EC_PUBLIC_KEY: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PUBLIC_KEY_TYPE, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " New OID for identifying EC public key with algorithm restrictions"]
+    pub static ID_EC_PUBLIC_KEY_RESTRICTED: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PUBLIC_KEY_TYPE, &[2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " Root OID to identify types of signatures"]
+    pub static ID_EC_SIG_TYPE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ANSI_X9_62, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " Root OID for identifying field types"]
+    pub static ID_FIELD_TYPE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ANSI_X9_62, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " ============================================"]
+    #[doc = " Elliptic Curve Public Keys (see  E.9)"]
+    #[doc = " ============================================"]
+    #[doc = " Root OID for identifying types of public keys for X9.62"]
+    pub static ID_PUBLIC_KEY_TYPE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ANSI_X9_62, &[2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " OID to identify a pentanomial basis."]
+    pub static PP_BASIS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CHARACTERISTIC_TWO_BASIS, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " OID identifying prime field types"]
+    pub static PRIME_FIELD: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_FIELD_TYPE, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " Arc in X9.62 for identifying prime order elliptic curve domain parameters"]
+    pub static PRIME_CURVE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ELLIPTIC_CURVE, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " Arc from SEC2 that names EC domain parameters and is used again in X9.62"]
+    pub static SECG_CURVE: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[1u32, 3u32, 132u32, 0u32]).to_owned());
+    #[doc = " ============================================"]
+    #[doc = " Hash Functions (see  E.4)"]
+    #[doc = " ============================================"]
+    #[doc = " Inherited OID for SHA1"]
+    pub static SHA_1: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[1u32, 3u32, 14u32, 3u32, 2u32, 26u32]).to_owned());
+    #[doc = " OID to identify a trinomial basis."]
+    pub static TP_BASIS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CHARACTERISTIC_TWO_BASIS, &[2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+}

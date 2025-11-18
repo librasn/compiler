@@ -1,0 +1,89 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q1218_1995_SDFProtocolObjectIdentifiers.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod sdfprotocol_object_identifiers {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    pub static ID_AC: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***IN_DS, &[3u32]].concat()).unwrap().to_owned());
+    #[doc = "  application contexts"]
+    pub static ID_AC_DIRECTORY_ACCESS_AC: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AC, &[1u32]].concat()).unwrap().to_owned());
+    pub static ID_AS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***IN_DS, &[5u32]].concat()).unwrap().to_owned());
+    pub static ID_AS_DIRECTORY_BINDING_AS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AS, &[2u32]].concat()).unwrap().to_owned());
+    #[doc = "  abstract syntaxes"]
+    pub static ID_AS_DIRECTORY_OPERATIONS_AS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AS, &[1u32]].concat()).unwrap().to_owned());
+    pub static ID_CONTRACT: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***IN_DS, &[26u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = "  contracts"]
+    pub static ID_CONTRACT_DAP: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CONTRACT, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PACKAGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***IN_DS, &[27u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PACKAGE_DAP_CONNECTION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PACKAGE, &[10u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PACKAGE_MODIFY: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PACKAGE, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = "  packages"]
+    pub static ID_PACKAGE_SEARCH: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PACKAGE, &[2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ROS_OBJECT: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***IN_DS, &[25u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ROS_OBJECT_DAP_DSA: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_ROS_OBJECT, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ROS_OBJECT_DIRECTORY: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_ROS_OBJECT, &[2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = "  ROS Objects"]
+    pub static ID_ROS_OBJECT_DUA: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_ROS_OBJECT, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = "  useful definitions"]
+    pub static IN_DS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&[0u32, 0u32], &***Q, &[1218u32, 10u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+}

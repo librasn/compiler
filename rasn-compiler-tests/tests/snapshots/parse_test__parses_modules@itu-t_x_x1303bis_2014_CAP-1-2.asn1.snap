@@ -1,0 +1,417 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x1303bis_2014_CAP-1-2.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod cap_1_2 {
+    extern crate alloc;
+    use super::xsd::{AnyURI, DateTime, Decimal, Language, String};
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AlertStatus {
+        actual = 0,
+        draft = 1,
+        exercise = 2,
+        system = 3,
+        test = 4,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AlertMsgType {
+        ack = 0,
+        alert = 1,
+        cancel = 2,
+        error = 3,
+        update = 4,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AlertScope {
+        private = 0,
+        public = 1,
+        restricted = 2,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated, identifier = "ENUMERATED")]
+    pub enum AnonymousAnonymousAlertInfoListCategoryList {
+        cBRNE = 0,
+        env = 1,
+        fire = 2,
+        geo = 3,
+        health = 4,
+        infra = 5,
+        met = 6,
+        other = 7,
+        rescue = 8,
+        safety = 9,
+        security = 10,
+        transport = 11,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct AnonymousAlertInfoListCategoryList(
+        pub SequenceOf<AnonymousAnonymousAlertInfoListCategoryList>,
+    );
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated, identifier = "ENUMERATED")]
+    pub enum AnonymousAnonymousAlertInfoListResponseTypeList {
+        allClear = 0,
+        assess = 1,
+        avoid = 2,
+        evacuate = 3,
+        execute = 4,
+        monitor = 5,
+        none = 6,
+        prepare = 7,
+        shelter = 8,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AnonymousAlertInfoListResponseTypeList(
+        pub SequenceOf<AnonymousAnonymousAlertInfoListResponseTypeList>,
+    );
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousAlertInfoListUrgency {
+        expected = 0,
+        future = 1,
+        immediate = 2,
+        past = 3,
+        unknown = 4,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousAlertInfoListSeverity {
+        extreme = 0,
+        minor = 1,
+        moderate = 2,
+        severe = 3,
+        unknown = 4,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousAlertInfoListCertainty {
+        likely = 0,
+        observed = 1,
+        possible = 2,
+        unknown = 3,
+        unlikely = 4,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    pub struct AnonymousAnonymousAlertInfoListEventCodeList {
+        #[rasn(identifier = "valueName")]
+        pub value_name: ValueName,
+        pub value: Value,
+    }
+    impl AnonymousAnonymousAlertInfoListEventCodeList {
+        pub fn new(value_name: ValueName, value: Value) -> Self {
+            Self { value_name, value }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AnonymousAlertInfoListEventCodeList(
+        pub SequenceOf<AnonymousAnonymousAlertInfoListEventCodeList>,
+    );
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    pub struct AnonymousAnonymousAlertInfoListParameterList {
+        #[rasn(identifier = "valueName")]
+        pub value_name: ValueName,
+        pub value: Value,
+    }
+    impl AnonymousAnonymousAlertInfoListParameterList {
+        pub fn new(value_name: ValueName, value: Value) -> Self {
+            Self { value_name, value }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AnonymousAlertInfoListParameterList(
+        pub SequenceOf<AnonymousAnonymousAlertInfoListParameterList>,
+    );
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    pub struct AnonymousAnonymousAlertInfoListResourceList {
+        #[rasn(identifier = "resourceDesc")]
+        pub resource_desc: super::xsd::String,
+        #[rasn(identifier = "mimeType")]
+        pub mime_type: super::xsd::String,
+        pub size: Option<Integer>,
+        pub uri: Option<super::xsd::AnyURI>,
+        #[rasn(identifier = "derefUri")]
+        pub deref_uri: Option<super::xsd::String>,
+        pub digest: Option<super::xsd::String>,
+    }
+    impl AnonymousAnonymousAlertInfoListResourceList {
+        pub fn new(
+            resource_desc: super::xsd::String,
+            mime_type: super::xsd::String,
+            size: Option<Integer>,
+            uri: Option<super::xsd::AnyURI>,
+            deref_uri: Option<super::xsd::String>,
+            digest: Option<super::xsd::String>,
+        ) -> Self {
+            Self {
+                resource_desc,
+                mime_type,
+                size,
+                uri,
+                deref_uri,
+                digest,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AnonymousAlertInfoListResourceList(
+        pub SequenceOf<AnonymousAnonymousAlertInfoListResourceList>,
+    );
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    pub struct AnonymousAnonymousAnonymousAlertInfoListAreaListGeocodeList {
+        #[rasn(identifier = "valueName")]
+        pub value_name: ValueName,
+        pub value: Value,
+    }
+    impl AnonymousAnonymousAnonymousAlertInfoListAreaListGeocodeList {
+        pub fn new(value_name: ValueName, value: Value) -> Self {
+            Self { value_name, value }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AnonymousAnonymousAlertInfoListAreaListGeocodeList(
+        pub SequenceOf<AnonymousAnonymousAnonymousAlertInfoListAreaListGeocodeList>,
+    );
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    pub struct AnonymousAnonymousAlertInfoListAreaList {
+        #[rasn(identifier = "areaDesc")]
+        pub area_desc: super::xsd::String,
+        #[rasn(identifier = "polygon-list")]
+        pub polygon_list: SequenceOf<super::xsd::String>,
+        #[rasn(identifier = "circle-list")]
+        pub circle_list: SequenceOf<super::xsd::String>,
+        #[rasn(identifier = "geocode-list")]
+        pub geocode_list: AnonymousAnonymousAlertInfoListAreaListGeocodeList,
+        pub altitude: Option<super::xsd::Decimal>,
+        pub ceiling: Option<super::xsd::Decimal>,
+    }
+    impl AnonymousAnonymousAlertInfoListAreaList {
+        pub fn new(
+            area_desc: super::xsd::String,
+            polygon_list: SequenceOf<super::xsd::String>,
+            circle_list: SequenceOf<super::xsd::String>,
+            geocode_list: AnonymousAnonymousAlertInfoListAreaListGeocodeList,
+            altitude: Option<super::xsd::Decimal>,
+            ceiling: Option<super::xsd::Decimal>,
+        ) -> Self {
+            Self {
+                area_desc,
+                polygon_list,
+                circle_list,
+                geocode_list,
+                altitude,
+                ceiling,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AnonymousAlertInfoListAreaList(
+        pub SequenceOf<AnonymousAnonymousAlertInfoListAreaList>,
+    );
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    pub struct AnonymousAlertInfoList {
+        pub language: Option<super::xsd::Language>,
+        #[rasn(identifier = "category-list")]
+        pub category_list: AnonymousAlertInfoListCategoryList,
+        pub event: super::xsd::String,
+        #[rasn(identifier = "responseType-list")]
+        pub response_type_list: AnonymousAlertInfoListResponseTypeList,
+        pub urgency: AnonymousAlertInfoListUrgency,
+        pub severity: AnonymousAlertInfoListSeverity,
+        pub certainty: AnonymousAlertInfoListCertainty,
+        pub audience: Option<super::xsd::String>,
+        #[rasn(identifier = "eventCode-list")]
+        pub event_code_list: AnonymousAlertInfoListEventCodeList,
+        #[rasn(value("0.."))]
+        pub effective: Option<super::xsd::DateTime>,
+        #[rasn(value("0.."))]
+        pub onset: Option<super::xsd::DateTime>,
+        #[rasn(value("0.."))]
+        pub expires: Option<super::xsd::DateTime>,
+        #[rasn(identifier = "senderName")]
+        pub sender_name: Option<super::xsd::String>,
+        pub headline: Option<super::xsd::String>,
+        pub description: Option<super::xsd::String>,
+        pub instruction: Option<super::xsd::String>,
+        pub web: Option<super::xsd::AnyURI>,
+        pub contact: Option<super::xsd::String>,
+        #[rasn(identifier = "parameter-list")]
+        pub parameter_list: AnonymousAlertInfoListParameterList,
+        #[rasn(identifier = "resource-list")]
+        pub resource_list: AnonymousAlertInfoListResourceList,
+        #[rasn(identifier = "area-list")]
+        pub area_list: AnonymousAlertInfoListAreaList,
+    }
+    impl AnonymousAlertInfoList {
+        pub fn new(
+            language: Option<super::xsd::Language>,
+            category_list: AnonymousAlertInfoListCategoryList,
+            event: super::xsd::String,
+            response_type_list: AnonymousAlertInfoListResponseTypeList,
+            urgency: AnonymousAlertInfoListUrgency,
+            severity: AnonymousAlertInfoListSeverity,
+            certainty: AnonymousAlertInfoListCertainty,
+            audience: Option<super::xsd::String>,
+            event_code_list: AnonymousAlertInfoListEventCodeList,
+            effective: Option<super::xsd::DateTime>,
+            onset: Option<super::xsd::DateTime>,
+            expires: Option<super::xsd::DateTime>,
+            sender_name: Option<super::xsd::String>,
+            headline: Option<super::xsd::String>,
+            description: Option<super::xsd::String>,
+            instruction: Option<super::xsd::String>,
+            web: Option<super::xsd::AnyURI>,
+            contact: Option<super::xsd::String>,
+            parameter_list: AnonymousAlertInfoListParameterList,
+            resource_list: AnonymousAlertInfoListResourceList,
+            area_list: AnonymousAlertInfoListAreaList,
+        ) -> Self {
+            Self {
+                language,
+                category_list,
+                event,
+                response_type_list,
+                urgency,
+                severity,
+                certainty,
+                audience,
+                event_code_list,
+                effective,
+                onset,
+                expires,
+                sender_name,
+                headline,
+                description,
+                instruction,
+                web,
+                contact,
+                parameter_list,
+                resource_list,
+                area_list,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AlertInfoList(pub SequenceOf<AnonymousAlertInfoList>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AlertElemList(pub SequenceOf<super::xsd::String>);
+    #[doc = " CAP Alert Message (version 1.2) "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct Alert {
+        pub identifier: super::xsd::String,
+        pub sender: super::xsd::String,
+        #[rasn(value("0.."))]
+        pub sent: super::xsd::DateTime,
+        pub status: AlertStatus,
+        #[rasn(identifier = "msgType")]
+        pub msg_type: AlertMsgType,
+        pub source: Option<super::xsd::String>,
+        pub scope: AlertScope,
+        pub restriction: Option<super::xsd::String>,
+        pub addresses: Option<super::xsd::String>,
+        #[rasn(identifier = "code-list")]
+        pub code_list: SequenceOf<super::xsd::String>,
+        pub note: Option<super::xsd::String>,
+        pub references: Option<super::xsd::String>,
+        pub incidents: Option<super::xsd::String>,
+        #[rasn(identifier = "info-list")]
+        pub info_list: AlertInfoList,
+        #[rasn(identifier = "elem-list")]
+        pub elem_list: AlertElemList,
+    }
+    impl Alert {
+        pub fn new(
+            identifier: super::xsd::String,
+            sender: super::xsd::String,
+            sent: super::xsd::DateTime,
+            status: AlertStatus,
+            msg_type: AlertMsgType,
+            source: Option<super::xsd::String>,
+            scope: AlertScope,
+            restriction: Option<super::xsd::String>,
+            addresses: Option<super::xsd::String>,
+            code_list: SequenceOf<super::xsd::String>,
+            note: Option<super::xsd::String>,
+            references: Option<super::xsd::String>,
+            incidents: Option<super::xsd::String>,
+            info_list: AlertInfoList,
+            elem_list: AlertElemList,
+        ) -> Self {
+            Self {
+                identifier,
+                sender,
+                sent,
+                status,
+                msg_type,
+                source,
+                scope,
+                restriction,
+                addresses,
+                code_list,
+                note,
+                references,
+                incidents,
+                info_list,
+                elem_list,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Value(pub super::xsd::String);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ValueName(pub super::xsd::String);
+}

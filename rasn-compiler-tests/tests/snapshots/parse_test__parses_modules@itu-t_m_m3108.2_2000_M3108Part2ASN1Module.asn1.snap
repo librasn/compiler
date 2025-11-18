@@ -1,0 +1,212 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_m_m3108.2_2000_M3108Part2ASN1Module.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod m3108_part2_asn1_module {
+    extern crate alloc;
+    use super::cmip_1::ObjectInstance;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " End Registration Values"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum CreateCmLeasedCircuitServiceError {
+        contractViolation = 0,
+        dedicatedResourceUnavailable = 1,
+        incompatibleSLCs = 2,
+        invalidSchedule = 3,
+        invalidServiceTerminationDate = 4,
+        invalidValue = 5,
+        nonExistentSAP = 6,
+        quantitySpecifiedOutOfRange = 7,
+        requestedBandwidthNotAvailable = 8,
+        requiredParameterNotAvailable = 9,
+        sharedResourcesUnavailable = 10,
+        specifiedLCSAlreadyExists = 11,
+        unknownServiceDescription = 12,
+        unknownServiceType = 13,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum DedicatedOrShared {
+        dedicated = 1,
+        shared = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum DeleteCmLeasedCircuitServiceError {
+        alreadyDeleted = 0,
+        contractViolation = 1,
+        invalidCircuitNumber = 2,
+        unlockedAdministrativeState = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum IdentifyLockedLCSError {
+        administrativeStateUnlocked = 0,
+        nonExistentSAP = 1,
+        unknownServiceType = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum InitiateLoopbackError {
+        unavailableLCS = 1,
+        offDutyLCS = 2,
+        loopbackNotSupported = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct LeasedCircuitServicePtrList(pub SequenceOf<ObjectInstance>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct LinkEndCharacteristics {
+        #[rasn(tag(context, 0), identifier = "endID")]
+        pub end_id: GraphicString,
+        #[rasn(tag(context, 1), identifier = "loopbackSupported")]
+        pub loopback_supported: bool,
+    }
+    impl LinkEndCharacteristics {
+        pub fn new(end_id: GraphicString, loopback_supported: bool) -> Self {
+            Self {
+                end_id,
+                loopback_supported,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ListOfSLCsUsed(pub SequenceOf<ObjectInstance>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum LoopbackControlStatus {
+        noLoopback = 0,
+        endALoopedBack = 1,
+        endBLoopedBack = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct LoopbackControl {
+        #[rasn(tag(context, 0))]
+        pub status: LoopbackControlStatus,
+        #[rasn(tag(context, 1), identifier = "terminationTime")]
+        pub termination_time: UtcTime,
+    }
+    impl LoopbackControl {
+        pub fn new(status: LoopbackControlStatus, termination_time: UtcTime) -> Self {
+            Self {
+                status,
+                termination_time,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum ModifyLCSError {
+        contractViolation = 0,
+        invalidAliasName = 1,
+        invalidCircuitNumber = 2,
+        invalidCPEType = 3,
+        invalidSchedule = 4,
+        invalidServiceTerminationDate = 5,
+        invalidValue = 6,
+        requestedBandwidthNotAvailable = 7,
+        resourceUnavailable = 8,
+        scheduleConflicts = 9,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum RestrictionsOnSLCRestrictionId {
+        noRestrictions = 1,
+        protectedSLCsOnly = 2,
+        protectedDedicatedSLCsOnly = 3,
+        dedicatedSLCsOnlyWithProtectedSLCsPreferred = 4,
+        dedicatedSLCsPreferredProtectedSLCsRequired = 5,
+        dedicatedProtectedSLCsPreferred = 6,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct RestrictionsOnSLC {
+        #[rasn(tag(context, 0), identifier = "restrictionId")]
+        pub restriction_id: RestrictionsOnSLCRestrictionId,
+        #[rasn(tag(context, 1), identifier = "restrictionText")]
+        pub restriction_text: Option<GraphicString>,
+    }
+    impl RestrictionsOnSLC {
+        pub fn new(
+            restriction_id: RestrictionsOnSLCRestrictionId,
+            restriction_text: Option<GraphicString>,
+        ) -> Self {
+            Self {
+                restriction_id,
+                restriction_text,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("1..=10"))]
+    pub struct SelectionPriority(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SlcEnds {
+        #[rasn(tag(context, 0), identifier = "endA")]
+        pub end_a: LinkEndCharacteristics,
+        #[rasn(tag(context, 1), identifier = "endB")]
+        pub end_b: LinkEndCharacteristics,
+    }
+    impl SlcEnds {
+        pub fn new(end_a: LinkEndCharacteristics, end_b: LinkEndCharacteristics) -> Self {
+            Self { end_a, end_b }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum TerminateLoopbackError {
+        loopbackNotSet = 0,
+        loopbackNotSupported = 1,
+    }
+    pub static M3108_PART2_ATTRIBUTE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***M3108_PART2_IDENTIFIER, &[6u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " IMPORTS End"]
+    #[doc = " Begin Registration Values"]
+    pub static M3108_PART2_IDENTIFIER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&[0u32, 0u32], &***M, &[3108u32, 2u32, 0u32, 2u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static M3108_PART2_NAME_BINDING: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***M3108_PART2_IDENTIFIER, &[5u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static M3108_PART2_OBJECT_CLASS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***M3108_PART2_IDENTIFIER, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static M3108_PART2_PARAMETER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***M3108_PART2_IDENTIFIER, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+}

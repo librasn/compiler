@@ -1,0 +1,744 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/ietf_rfc_rfc2630_CryptographicMessageSyntax.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod cryptographic_message_syntax {
+    extern crate alloc;
+    use super::authentication_framework::{
+        AlgorithmIdentifier, AttributeCertificate, Certificate, CertificateList,
+        CertificateSerialNumber,
+    };
+    use super::information_framework::Name;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Attribute {
+        #[rasn(identifier = "attrType")]
+        pub attr_type: ObjectIdentifier,
+        #[rasn(identifier = "attrValues")]
+        pub attr_values: SetOf<AttributeValue>,
+    }
+    impl Attribute {
+        pub fn new(attr_type: ObjectIdentifier, attr_values: SetOf<AttributeValue>) -> Self {
+            Self {
+                attr_type,
+                attr_values,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AttributeValue(pub Any);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct AuthAttributes(pub SetOf<Attribute>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AuthenticatedData {
+        pub version: CMSVersion,
+        #[rasn(tag(context, 0), identifier = "originatorInfo")]
+        pub originator_info: Option<OriginatorInfo>,
+        #[rasn(identifier = "recipientInfos")]
+        pub recipient_infos: RecipientInfos,
+        #[rasn(identifier = "macAlgorithm")]
+        pub mac_algorithm: MessageAuthenticationCodeAlgorithm,
+        #[rasn(tag(context, 1), identifier = "digestAlgorithm")]
+        pub digest_algorithm: Option<DigestAlgorithmIdentifier>,
+        #[rasn(identifier = "encapContentInfo")]
+        pub encap_content_info: EncapsulatedContentInfo,
+        #[rasn(tag(context, 2), identifier = "authenticatedAttributes")]
+        pub authenticated_attributes: Option<AuthAttributes>,
+        pub mac: MessageAuthenticationCode,
+        #[rasn(tag(context, 3), identifier = "unauthenticatedAttributes")]
+        pub unauthenticated_attributes: Option<UnauthAttributes>,
+    }
+    impl AuthenticatedData {
+        pub fn new(
+            version: CMSVersion,
+            originator_info: Option<OriginatorInfo>,
+            recipient_infos: RecipientInfos,
+            mac_algorithm: MessageAuthenticationCodeAlgorithm,
+            digest_algorithm: Option<DigestAlgorithmIdentifier>,
+            encap_content_info: EncapsulatedContentInfo,
+            authenticated_attributes: Option<AuthAttributes>,
+            mac: MessageAuthenticationCode,
+            unauthenticated_attributes: Option<UnauthAttributes>,
+        ) -> Self {
+            Self {
+                version,
+                originator_info,
+                recipient_infos,
+                mac_algorithm,
+                digest_algorithm,
+                encap_content_info,
+                authenticated_attributes,
+                mac,
+                unauthenticated_attributes,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CBCParameter(pub IV);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CMSVersion(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum CertificateChoices {
+        certificate(Certificate),
+        #[rasn(tag(context, 0))]
+        extendedCertificate(ExtendedCertificate),
+        #[rasn(tag(context, 1))]
+        attrCert(AttributeCertificate),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CertificateRevocationLists(pub SetOf<CertificateList>);
+    #[doc = " See X.509 & X9.57"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CertificateSet(pub SetOf<CertificateChoices>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ContentEncryptionAlgorithmIdentifier(pub AlgorithmIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ContentInfo {
+        #[rasn(identifier = "content-type")]
+        pub content_type: Any,
+        #[rasn(tag(context, 0), identifier = "pkcs7-content")]
+        pub pkcs7_content: Any,
+    }
+    impl ContentInfo {
+        pub fn new(content_type: Any, pkcs7_content: Any) -> Self {
+            Self {
+                content_type,
+                pkcs7_content,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ContentType(pub ObjectIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Countersignature(pub SignerInfo);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Digest(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DigestAlgorithmIdentifier(pub AlgorithmIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DigestAlgorithmIdentifiers(pub SetOf<DigestAlgorithmIdentifier>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct DigestedData {
+        pub version: CMSVersion,
+        #[rasn(identifier = "digestAlgorithm")]
+        pub digest_algorithm: DigestAlgorithmIdentifier,
+        #[rasn(identifier = "encapContentInfo")]
+        pub encap_content_info: EncapsulatedContentInfo,
+        pub digest: Digest,
+    }
+    impl DigestedData {
+        pub fn new(
+            version: CMSVersion,
+            digest_algorithm: DigestAlgorithmIdentifier,
+            encap_content_info: EncapsulatedContentInfo,
+            digest: Digest,
+        ) -> Self {
+            Self {
+                version,
+                digest_algorithm,
+                encap_content_info,
+                digest,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct EncapsulatedContentInfo {
+        #[rasn(identifier = "eContentType")]
+        pub e_content_type: ContentType,
+        #[rasn(tag(explicit(context, 0)), identifier = "eContent")]
+        pub e_content: Option<OctetString>,
+    }
+    impl EncapsulatedContentInfo {
+        pub fn new(e_content_type: ContentType, e_content: Option<OctetString>) -> Self {
+            Self {
+                e_content_type,
+                e_content,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct EncryptedContent(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct EncryptedContentInfo {
+        #[rasn(identifier = "contentType")]
+        pub content_type: ContentType,
+        #[rasn(identifier = "contentEncryptionAlgorithm")]
+        pub content_encryption_algorithm: ContentEncryptionAlgorithmIdentifier,
+        #[rasn(tag(context, 0), identifier = "encryptedContent")]
+        pub encrypted_content: Option<EncryptedContent>,
+    }
+    impl EncryptedContentInfo {
+        pub fn new(
+            content_type: ContentType,
+            content_encryption_algorithm: ContentEncryptionAlgorithmIdentifier,
+            encrypted_content: Option<EncryptedContent>,
+        ) -> Self {
+            Self {
+                content_type,
+                content_encryption_algorithm,
+                encrypted_content,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct EncryptedData {
+        pub version: CMSVersion,
+        #[rasn(identifier = "encryptedContentInfo")]
+        pub encrypted_content_info: EncryptedContentInfo,
+        #[rasn(tag(context, 1), identifier = "unprotectedAttrs")]
+        pub unprotected_attrs: Option<UnprotectedAttributes>,
+    }
+    impl EncryptedData {
+        pub fn new(
+            version: CMSVersion,
+            encrypted_content_info: EncryptedContentInfo,
+            unprotected_attrs: Option<UnprotectedAttributes>,
+        ) -> Self {
+            Self {
+                version,
+                encrypted_content_info,
+                unprotected_attrs,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct EncryptedKey(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct EnvelopedData {
+        pub version: CMSVersion,
+        #[rasn(tag(context, 0), identifier = "originatorInfo")]
+        pub originator_info: Option<OriginatorInfo>,
+        #[rasn(identifier = "recipientInfos")]
+        pub recipient_infos: RecipientInfos,
+        #[rasn(identifier = "encryptedContentInfo")]
+        pub encrypted_content_info: EncryptedContentInfo,
+        #[rasn(tag(context, 1), identifier = "unprotectedAttrs")]
+        pub unprotected_attrs: Option<UnprotectedAttributes>,
+    }
+    impl EnvelopedData {
+        pub fn new(
+            version: CMSVersion,
+            originator_info: Option<OriginatorInfo>,
+            recipient_infos: RecipientInfos,
+            encrypted_content_info: EncryptedContentInfo,
+            unprotected_attrs: Option<UnprotectedAttributes>,
+        ) -> Self {
+            Self {
+                version,
+                originator_info,
+                recipient_infos,
+                encrypted_content_info,
+                unprotected_attrs,
+            }
+        }
+    }
+    #[doc = " Obsolete Extended Certificate syntax from PKCS#6"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ExtendedCertificate {
+        #[rasn(identifier = "extendedCertificateInfo")]
+        pub extended_certificate_info: ExtendedCertificateInfo,
+        #[rasn(identifier = "signatureAlgorithm")]
+        pub signature_algorithm: SignatureAlgorithmIdentifier,
+        pub signature: Signature,
+    }
+    impl ExtendedCertificate {
+        pub fn new(
+            extended_certificate_info: ExtendedCertificateInfo,
+            signature_algorithm: SignatureAlgorithmIdentifier,
+            signature: Signature,
+        ) -> Self {
+            Self {
+                extended_certificate_info,
+                signature_algorithm,
+                signature,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ExtendedCertificateInfo {
+        pub version: CMSVersion,
+        pub certificate: Certificate,
+        pub attributes: UnauthAttributes,
+    }
+    impl ExtendedCertificateInfo {
+        pub fn new(
+            version: CMSVersion,
+            certificate: Certificate,
+            attributes: UnauthAttributes,
+        ) -> Self {
+            Self {
+                version,
+                certificate,
+                attributes,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct IV(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct IssuerAndSerialNumber {
+        pub issuer: Name,
+        #[rasn(identifier = "serialNumber")]
+        pub serial_number: CertificateSerialNumber,
+    }
+    impl IssuerAndSerialNumber {
+        pub fn new(issuer: Name, serial_number: CertificateSerialNumber) -> Self {
+            Self {
+                issuer,
+                serial_number,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct KEKIdentifier {
+        #[rasn(identifier = "keyIdentifier")]
+        pub key_identifier: OctetString,
+        pub date: Option<GeneralizedTime>,
+        pub other: Option<OtherKeyAttribute>,
+    }
+    impl KEKIdentifier {
+        pub fn new(
+            key_identifier: OctetString,
+            date: Option<GeneralizedTime>,
+            other: Option<OtherKeyAttribute>,
+        ) -> Self {
+            Self {
+                key_identifier,
+                date,
+                other,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct KEKRecipientInfo {
+        pub version: CMSVersion,
+        pub kekid: KEKIdentifier,
+        #[rasn(identifier = "keyEncryptionAlgorithm")]
+        pub key_encryption_algorithm: KeyEncryptionAlgorithmIdentifier,
+        #[rasn(identifier = "encryptedKey")]
+        pub encrypted_key: EncryptedKey,
+    }
+    impl KEKRecipientInfo {
+        pub fn new(
+            version: CMSVersion,
+            kekid: KEKIdentifier,
+            key_encryption_algorithm: KeyEncryptionAlgorithmIdentifier,
+            encrypted_key: EncryptedKey,
+        ) -> Self {
+            Self {
+                version,
+                kekid,
+                key_encryption_algorithm,
+                encrypted_key,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum KeyAgreeRecipientIdentifier {
+        issuerAndSerialNumber(IssuerAndSerialNumber),
+        #[rasn(tag(context, 0))]
+        rKeyId(RecipientKeyIdentifier),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct KeyAgreeRecipientInfo {
+        pub version: CMSVersion,
+        #[rasn(tag(explicit(context, 0)))]
+        pub originator: OriginatorIdentifierOrKey,
+        #[rasn(tag(explicit(context, 1)))]
+        pub ukm: Option<UserKeyingMaterial>,
+        #[rasn(identifier = "keyEncryptionAlgorithm")]
+        pub key_encryption_algorithm: KeyEncryptionAlgorithmIdentifier,
+        #[rasn(identifier = "recipientEncryptedKeys")]
+        pub recipient_encrypted_keys: RecipientEncryptedKeys,
+    }
+    impl KeyAgreeRecipientInfo {
+        pub fn new(
+            version: CMSVersion,
+            originator: OriginatorIdentifierOrKey,
+            ukm: Option<UserKeyingMaterial>,
+            key_encryption_algorithm: KeyEncryptionAlgorithmIdentifier,
+            recipient_encrypted_keys: RecipientEncryptedKeys,
+        ) -> Self {
+            Self {
+                version,
+                originator,
+                ukm,
+                key_encryption_algorithm,
+                recipient_encrypted_keys,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct KeyEncryptionAlgorithmIdentifier(pub AlgorithmIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct KeyTransRecipientInfo {
+        pub version: CMSVersion,
+        pub rid: RecipientIdentifier,
+        #[rasn(identifier = "keyEncryptionAlgorithm")]
+        pub key_encryption_algorithm: KeyEncryptionAlgorithmIdentifier,
+        #[rasn(identifier = "encryptedKey")]
+        pub encrypted_key: EncryptedKey,
+    }
+    impl KeyTransRecipientInfo {
+        pub fn new(
+            version: CMSVersion,
+            rid: RecipientIdentifier,
+            key_encryption_algorithm: KeyEncryptionAlgorithmIdentifier,
+            encrypted_key: EncryptedKey,
+        ) -> Self {
+            Self {
+                version,
+                rid,
+                key_encryption_algorithm,
+                encrypted_key,
+            }
+        }
+    }
+    #[doc = " Algorithm Parameters"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct KeyWrapAlgorithm(pub AlgorithmIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MessageAuthenticationCode(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MessageAuthenticationCodeAlgorithm(pub AlgorithmIdentifier);
+    #[doc = " CMS Attributes"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MessageDigest(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum OriginatorIdentifierOrKey {
+        issuerAndSerialNumber(IssuerAndSerialNumber),
+        #[rasn(tag(context, 0))]
+        subjectKeyIdentifier(SubjectKeyIdentifier),
+        #[rasn(tag(context, 1))]
+        originatorKey(OriginatorPublicKey),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct OriginatorInfo {
+        #[rasn(tag(context, 0))]
+        pub certs: Option<CertificateSet>,
+        #[rasn(tag(context, 1))]
+        pub crls: Option<CertificateRevocationLists>,
+    }
+    impl OriginatorInfo {
+        pub fn new(
+            certs: Option<CertificateSet>,
+            crls: Option<CertificateRevocationLists>,
+        ) -> Self {
+            Self { certs, crls }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct OriginatorPublicKey {
+        pub algorithm: AlgorithmIdentifier,
+        #[rasn(identifier = "publicKey")]
+        pub public_key: BitString,
+    }
+    impl OriginatorPublicKey {
+        pub fn new(algorithm: AlgorithmIdentifier, public_key: BitString) -> Self {
+            Self {
+                algorithm,
+                public_key,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct OtherKeyAttribute {
+        #[rasn(identifier = "keyAttributeIdentifier")]
+        pub key_attribute_identifier: Any,
+        #[rasn(identifier = "keyAttribute")]
+        pub key_attribute: Option<Any>,
+    }
+    impl OtherKeyAttribute {
+        pub fn new(key_attribute_identifier: Any, key_attribute: Option<Any>) -> Self {
+            Self {
+                key_attribute_identifier,
+                key_attribute,
+            }
+        }
+    }
+    #[doc = " exactly 8 octets"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct RC2CBCParameter {
+        #[rasn(identifier = "rc2ParameterVersion")]
+        pub rc2_parameter_version: Integer,
+        pub iv: OctetString,
+    }
+    impl RC2CBCParameter {
+        pub fn new(rc2_parameter_version: Integer, iv: OctetString) -> Self {
+            Self {
+                rc2_parameter_version,
+                iv,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RC2ParameterVersion(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RC2wrapParameter(pub RC2ParameterVersion);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct RecipientEncryptedKey {
+        pub rid: KeyAgreeRecipientIdentifier,
+        #[rasn(identifier = "encryptedKey")]
+        pub encrypted_key: EncryptedKey,
+    }
+    impl RecipientEncryptedKey {
+        pub fn new(rid: KeyAgreeRecipientIdentifier, encrypted_key: EncryptedKey) -> Self {
+            Self { rid, encrypted_key }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RecipientEncryptedKeys(pub SequenceOf<RecipientEncryptedKey>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum RecipientIdentifier {
+        issuerAndSerialNumber(IssuerAndSerialNumber),
+        #[rasn(tag(context, 0))]
+        subjectKeyIdentifier(SubjectKeyIdentifier),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum RecipientInfo {
+        ktri(KeyTransRecipientInfo),
+        #[rasn(tag(context, 1))]
+        kari(KeyAgreeRecipientInfo),
+        #[rasn(tag(context, 2))]
+        kekri(KEKRecipientInfo),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RecipientInfos(pub SetOf<RecipientInfo>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct RecipientKeyIdentifier {
+        #[rasn(identifier = "subjectKeyIdentifier")]
+        pub subject_key_identifier: SubjectKeyIdentifier,
+        pub date: Option<GeneralizedTime>,
+        pub other: Option<OtherKeyAttribute>,
+    }
+    impl RecipientKeyIdentifier {
+        pub fn new(
+            subject_key_identifier: SubjectKeyIdentifier,
+            date: Option<GeneralizedTime>,
+            other: Option<OtherKeyAttribute>,
+        ) -> Self {
+            Self {
+                subject_key_identifier,
+                date,
+                other,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Signature(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SignatureAlgorithmIdentifier(pub AlgorithmIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SignatureValue(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct SignedAttributes(pub SetOf<Attribute>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SignedData {
+        pub version: CMSVersion,
+        #[rasn(identifier = "digestAlgorithms")]
+        pub digest_algorithms: DigestAlgorithmIdentifiers,
+        #[rasn(identifier = "encapContentInfo")]
+        pub encap_content_info: EncapsulatedContentInfo,
+        #[rasn(tag(context, 0))]
+        pub certificates: Option<CertificateSet>,
+        #[rasn(tag(context, 1))]
+        pub crls: Option<CertificateRevocationLists>,
+        #[rasn(identifier = "signerInfos")]
+        pub signer_infos: SignerInfos,
+    }
+    impl SignedData {
+        pub fn new(
+            version: CMSVersion,
+            digest_algorithms: DigestAlgorithmIdentifiers,
+            encap_content_info: EncapsulatedContentInfo,
+            certificates: Option<CertificateSet>,
+            crls: Option<CertificateRevocationLists>,
+            signer_infos: SignerInfos,
+        ) -> Self {
+            Self {
+                version,
+                digest_algorithms,
+                encap_content_info,
+                certificates,
+                crls,
+                signer_infos,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum SignerIdentifier {
+        issuerAndSerialNumber(IssuerAndSerialNumber),
+        #[rasn(tag(context, 0))]
+        subjectKeyIdentifier(SubjectKeyIdentifier),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SignerInfo {
+        pub version: CMSVersion,
+        pub sid: SignerIdentifier,
+        #[rasn(identifier = "digestAlgorithm")]
+        pub digest_algorithm: DigestAlgorithmIdentifier,
+        #[rasn(tag(context, 0), identifier = "signedAttrs")]
+        pub signed_attrs: Option<SignedAttributes>,
+        #[rasn(identifier = "signatureAlgorithm")]
+        pub signature_algorithm: SignatureAlgorithmIdentifier,
+        pub signature: SignatureValue,
+        #[rasn(tag(context, 1), identifier = "unsignedAttrs")]
+        pub unsigned_attrs: Option<UnsignedAttributes>,
+    }
+    impl SignerInfo {
+        pub fn new(
+            version: CMSVersion,
+            sid: SignerIdentifier,
+            digest_algorithm: DigestAlgorithmIdentifier,
+            signed_attrs: Option<SignedAttributes>,
+            signature_algorithm: SignatureAlgorithmIdentifier,
+            signature: SignatureValue,
+            unsigned_attrs: Option<UnsignedAttributes>,
+        ) -> Self {
+            Self {
+                version,
+                sid,
+                digest_algorithm,
+                signed_attrs,
+                signature_algorithm,
+                signature,
+                unsigned_attrs,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SignerInfos(pub SetOf<SignerInfo>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SigningTime(pub Time);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SubjectKeyIdentifier(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum Time {
+        utcTime(UtcTime),
+        generalTime(GeneralizedTime),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct UnauthAttributes(pub SetOf<Attribute>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct UnprotectedAttributes(pub SetOf<Attribute>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct UnsignedAttributes(pub SetOf<Attribute>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct UserKeyingMaterial(pub OctetString);
+    pub static DES_EDE3_CBC: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[1u32, 2u32, 840u32, 113549u32, 3u32, 7u32]).to_owned());
+    pub static DH_PUBLIC_NUMBER: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[1u32, 2u32, 840u32, 10046u32, 2u32, 1u32]).to_owned());
+    pub static H_MAC_SHA1: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::const_new(&[1u32, 3u32, 6u32, 1u32, 5u32, 5u32, 8u32, 1u32, 2u32]).to_owned()
+    });
+    pub static ID_ALG_CMS3_DESWRAP: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::const_new(&[1u32, 2u32, 840u32, 113549u32, 1u32, 9u32, 16u32, 3u32, 6u32]).to_owned()
+    });
+    pub static ID_ALG_CMSRC2WRAP: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::const_new(&[1u32, 2u32, 840u32, 113549u32, 1u32, 9u32, 16u32, 3u32, 7u32]).to_owned()
+    });
+    pub static ID_ALG_ESDH: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::const_new(&[1u32, 2u32, 840u32, 113549u32, 1u32, 9u32, 16u32, 3u32, 5u32]).to_owned()
+    });
+    #[doc = " Attribute Object Identifiers"]
+    pub static ID_CONTENT_TYPE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::const_new(&[1u32, 2u32, 840u32, 113549u32, 1u32, 9u32, 3u32]).to_owned()
+    });
+    pub static ID_COUNTERSIGNATURE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::const_new(&[1u32, 2u32, 840u32, 113549u32, 1u32, 9u32, 6u32]).to_owned()
+    });
+    pub static ID_CT_AUTH_DATA: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::const_new(&[1u32, 2u32, 840u32, 113549u32, 1u32, 9u32, 16u32, 1u32, 2u32]).to_owned()
+    });
+    #[doc = " exactly 8 octets"]
+    #[doc = " Content Type Object Identifiers"]
+    pub static ID_CT_CONTENT_INFO: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::const_new(&[1u32, 2u32, 840u32, 113549u32, 1u32, 9u32, 16u32, 1u32, 6u32]).to_owned()
+    });
+    pub static ID_DATA: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::const_new(&[1u32, 2u32, 840u32, 113549u32, 1u32, 7u32, 1u32]).to_owned()
+    });
+    pub static ID_DIGESTED_DATA: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::const_new(&[1u32, 2u32, 840u32, 113549u32, 1u32, 7u32, 5u32]).to_owned()
+    });
+    pub static ID_DSA_WITH_SHA1: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[1u32, 2u32, 840u32, 10040u32, 4u32, 3u32]).to_owned());
+    pub static ID_ENCRYPTED_DATA: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::const_new(&[1u32, 2u32, 840u32, 113549u32, 1u32, 7u32, 6u32]).to_owned()
+    });
+    pub static ID_ENVELOPED_DATA: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::const_new(&[1u32, 2u32, 840u32, 113549u32, 1u32, 7u32, 3u32]).to_owned()
+    });
+    pub static ID_MESSAGE_DIGEST: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::const_new(&[1u32, 2u32, 840u32, 113549u32, 1u32, 9u32, 4u32]).to_owned()
+    });
+    pub static ID_SIGNED_DATA: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::const_new(&[1u32, 2u32, 840u32, 113549u32, 1u32, 7u32, 2u32]).to_owned()
+    });
+    pub static ID_SIGNING_TIME: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::const_new(&[1u32, 2u32, 840u32, 113549u32, 1u32, 9u32, 5u32]).to_owned()
+    });
+    pub static MD5: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[1u32, 2u32, 840u32, 113549u32, 2u32, 5u32]).to_owned());
+    pub static RC2_CBC: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[1u32, 2u32, 840u32, 113549u32, 3u32, 2u32]).to_owned());
+    pub static RSA_ENCRYPTION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::const_new(&[1u32, 2u32, 840u32, 113549u32, 1u32, 1u32, 1u32]).to_owned()
+    });
+    #[doc = " Algorithm Identifiers"]
+    pub static SHA_1: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[1u32, 3u32, 14u32, 3u32, 2u32, 26u32]).to_owned());
+}

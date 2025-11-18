@@ -1,0 +1,1114 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q832.3_2001_Q832-3ASN1DefinedTypesModule.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod q832_3_asn1_defined_types_module {
+    extern crate alloc;
+    use super::asn1_defined_types_module::NameType;
+    use super::atm_mibmod::{VciValue, VpiValue};
+    use super::cmip_1::ObjectInstance;
+    use super::q824_6_asn1_defined_types_module::VpciValue;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " end of object identifier definitions"]
+    #[doc = " other ASN.1 definitions in alphabetical order - all these are new"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AddAnLoopRequestInfo {
+        #[rasn(tag(context, 0), identifier = "logicalServicePortNumber")]
+        pub logical_service_port_number: Integer,
+        #[rasn(tag(context, 1), identifier = "logicalUserPortNumber")]
+        pub logical_user_port_number: Option<Integer>,
+        #[rasn(tag(context, 2), identifier = "vpciValue")]
+        pub vpci_value: VpciValue,
+        #[rasn(tag(context, 3), identifier = "vciValue")]
+        pub vci_value: Option<VciValue>,
+    }
+    impl AddAnLoopRequestInfo {
+        pub fn new(
+            logical_service_port_number: Integer,
+            logical_user_port_number: Option<Integer>,
+            vpci_value: VpciValue,
+            vci_value: Option<VciValue>,
+        ) -> Self {
+            Self {
+                logical_service_port_number,
+                logical_user_port_number,
+                vpci_value,
+                vci_value,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum AddAnLoopRequestResult {
+        #[rasn(tag(context, 0))]
+        loopAdded(()),
+        #[rasn(tag(context, 1))]
+        loopNotAdded(LoopNotAddedInfo),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AddLupsIndicationInfo(pub AddLupsRequestInfo);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AddLupsRequestInfo {
+        #[rasn(tag(context, 0), identifier = "logicalServicePortNumber")]
+        pub logical_service_port_number: Integer,
+        #[rasn(tag(context, 1), identifier = "logicalUserPortNumber")]
+        pub logical_user_port_number: SequenceOf<Integer>,
+    }
+    impl AddLupsRequestInfo {
+        pub fn new(
+            logical_service_port_number: Integer,
+            logical_user_port_number: SequenceOf<Integer>,
+        ) -> Self {
+            Self {
+                logical_service_port_number,
+                logical_user_port_number,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AddLupsRequestResult(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AddVb5ConnectionIndicationInfo(pub AddVb5ConnectionRequestInfo);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AddVb5ConnectionRequestInfo {
+        #[rasn(tag(context, 0), identifier = "egressPeakCellRateCLP0Plus1")]
+        pub egress_peak_cell_rate_clp0_plus1: Integer,
+        #[rasn(tag(context, 1), identifier = "egressPeakCellRateCLP0")]
+        pub egress_peak_cell_rate_clp0: Integer,
+        #[rasn(tag(context, 2), identifier = "ingressPeakCellRateCLP0Plus1")]
+        pub ingress_peak_cell_rate_clp0_plus1: Integer,
+        #[rasn(tag(context, 3), identifier = "ingressPeakCellRateCLP0")]
+        pub ingress_peak_cell_rate_clp0: Integer,
+        #[rasn(tag(context, 4), identifier = "egressSustainableCellRateCLP0Plus1")]
+        pub egress_sustainable_cell_rate_clp0_plus1: Integer,
+        #[rasn(tag(context, 5), identifier = "egressSustainableCellRateCLP0")]
+        pub egress_sustainable_cell_rate_clp0: Integer,
+        #[rasn(tag(context, 6), identifier = "ingressSustainableCellRateCLP0Plus1")]
+        pub ingress_sustainable_cell_rate_clp0_plus1: Integer,
+        #[rasn(tag(context, 7), identifier = "ingressSustainableCellRateCLP0")]
+        pub ingress_sustainable_cell_rate_clp0: Integer,
+        #[rasn(tag(context, 8), identifier = "egressCDVToleranceCLP0Plus1")]
+        pub egress_cdvtolerance_clp0_plus1: Integer,
+        #[rasn(tag(context, 9), identifier = "egressCDVToleranceCLP0")]
+        pub egress_cdvtolerance_clp0: Integer,
+        #[rasn(tag(context, 10), identifier = "ingressCDVToleranceCLP0Plus1")]
+        pub ingress_cdvtolerance_clp0_plus1: Integer,
+        #[rasn(tag(context, 11), identifier = "ingressCDVToleranceCLP0")]
+        pub ingress_cdvtolerance_clp0: Integer,
+        #[rasn(tag(context, 12), identifier = "egressMaxBurstSizeCLP0Plus1")]
+        pub egress_max_burst_size_clp0_plus1: Integer,
+        #[rasn(tag(context, 13), identifier = "egressMaxBurstSizeCLP0")]
+        pub egress_max_burst_size_clp0: Integer,
+        #[rasn(tag(context, 14), identifier = "ingressMaxBurstSizeCLP0Plus1")]
+        pub ingress_max_burst_size_clp0_plus1: Integer,
+        #[rasn(tag(context, 15), identifier = "ingressMaxBurstSizeCLP0")]
+        pub ingress_max_burst_size_clp0: Integer,
+        #[rasn(tag(context, 16), identifier = "egressQosClass")]
+        pub egress_qos_class: Integer,
+        #[rasn(tag(context, 17), identifier = "ingressQosClass")]
+        pub ingress_qos_class: Integer,
+        #[rasn(tag(context, 18), identifier = "vciValueA")]
+        pub vci_value_a: Option<Integer>,
+        #[rasn(tag(context, 19), identifier = "vciValueB")]
+        pub vci_value_b: Option<Integer>,
+        #[rasn(tag(context, 20), identifier = "physicalPortA")]
+        pub physical_port_a: Integer,
+        #[rasn(tag(context, 21), identifier = "vpiValueA")]
+        pub vpi_value_a: Integer,
+        #[rasn(tag(context, 22), identifier = "logicalServicePortA")]
+        pub logical_service_port_a: Option<Integer>,
+        #[rasn(tag(context, 23), identifier = "vpciValueA")]
+        pub vpci_value_a: Option<Integer>,
+        #[rasn(tag(context, 24), identifier = "physicalPortB")]
+        pub physical_port_b: Integer,
+        #[rasn(tag(context, 25), identifier = "vpiValueB")]
+        pub vpi_value_b: Integer,
+        #[rasn(tag(context, 26), identifier = "logicalServicePortB")]
+        pub logical_service_port_b: Option<Integer>,
+        #[rasn(tag(context, 27), identifier = "vpciValueB")]
+        pub vpci_value_b: Option<Integer>,
+    }
+    impl AddVb5ConnectionRequestInfo {
+        pub fn new(
+            egress_peak_cell_rate_clp0_plus1: Integer,
+            egress_peak_cell_rate_clp0: Integer,
+            ingress_peak_cell_rate_clp0_plus1: Integer,
+            ingress_peak_cell_rate_clp0: Integer,
+            egress_sustainable_cell_rate_clp0_plus1: Integer,
+            egress_sustainable_cell_rate_clp0: Integer,
+            ingress_sustainable_cell_rate_clp0_plus1: Integer,
+            ingress_sustainable_cell_rate_clp0: Integer,
+            egress_cdvtolerance_clp0_plus1: Integer,
+            egress_cdvtolerance_clp0: Integer,
+            ingress_cdvtolerance_clp0_plus1: Integer,
+            ingress_cdvtolerance_clp0: Integer,
+            egress_max_burst_size_clp0_plus1: Integer,
+            egress_max_burst_size_clp0: Integer,
+            ingress_max_burst_size_clp0_plus1: Integer,
+            ingress_max_burst_size_clp0: Integer,
+            egress_qos_class: Integer,
+            ingress_qos_class: Integer,
+            vci_value_a: Option<Integer>,
+            vci_value_b: Option<Integer>,
+            physical_port_a: Integer,
+            vpi_value_a: Integer,
+            logical_service_port_a: Option<Integer>,
+            vpci_value_a: Option<Integer>,
+            physical_port_b: Integer,
+            vpi_value_b: Integer,
+            logical_service_port_b: Option<Integer>,
+            vpci_value_b: Option<Integer>,
+        ) -> Self {
+            Self {
+                egress_peak_cell_rate_clp0_plus1,
+                egress_peak_cell_rate_clp0,
+                ingress_peak_cell_rate_clp0_plus1,
+                ingress_peak_cell_rate_clp0,
+                egress_sustainable_cell_rate_clp0_plus1,
+                egress_sustainable_cell_rate_clp0,
+                ingress_sustainable_cell_rate_clp0_plus1,
+                ingress_sustainable_cell_rate_clp0,
+                egress_cdvtolerance_clp0_plus1,
+                egress_cdvtolerance_clp0,
+                ingress_cdvtolerance_clp0_plus1,
+                ingress_cdvtolerance_clp0,
+                egress_max_burst_size_clp0_plus1,
+                egress_max_burst_size_clp0,
+                ingress_max_burst_size_clp0_plus1,
+                ingress_max_burst_size_clp0,
+                egress_qos_class,
+                ingress_qos_class,
+                vci_value_a,
+                vci_value_b,
+                physical_port_a,
+                vpi_value_a,
+                logical_service_port_a,
+                vpci_value_a,
+                physical_port_b,
+                vpi_value_b,
+                logical_service_port_b,
+                vpci_value_b,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AddVb5ConnectionRequestResult(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AddVb5InterfaceIndicationInfo(pub AddVb5InterfaceRequestInfo);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AddVb5InterfaceRequestInfo(pub Integer);
+    #[doc = " Logical service port number"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AddVb5InterfaceRequestResult(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AddVb5ProtocolIndicationInfo(pub AddVb5ProtocolRequestInfo);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AddVb5ProtocolRequestInfo {
+        #[rasn(tag(context, 0), identifier = "logicalServicePortNumber")]
+        pub logical_service_port_number: Integer,
+        #[rasn(tag(context, 1), identifier = "vpciValue")]
+        pub vpci_value: VpciValue,
+        #[rasn(tag(context, 2), identifier = "maxNumVciBitsNearEnd")]
+        pub max_num_vci_bits_near_end: Option<Integer>,
+        #[rasn(tag(context, 3), identifier = "maxNumVciBitsSupported")]
+        pub max_num_vci_bits_supported: Option<Integer>,
+        #[rasn(tag(context, 4), identifier = "maxNumActiveVccsAllowed")]
+        pub max_num_active_vccs_allowed: Option<Integer>,
+        #[rasn(tag(context, 5), identifier = "maxNumActiveVccsNearEnd")]
+        pub max_num_active_vccs_near_end: Option<Integer>,
+    }
+    impl AddVb5ProtocolRequestInfo {
+        pub fn new(
+            logical_service_port_number: Integer,
+            vpci_value: VpciValue,
+            max_num_vci_bits_near_end: Option<Integer>,
+            max_num_vci_bits_supported: Option<Integer>,
+            max_num_active_vccs_allowed: Option<Integer>,
+            max_num_active_vccs_near_end: Option<Integer>,
+        ) -> Self {
+            Self {
+                logical_service_port_number,
+                vpci_value,
+                max_num_vci_bits_near_end,
+                max_num_vci_bits_supported,
+                max_num_active_vccs_allowed,
+                max_num_active_vccs_near_end,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AddVb5ProtocolRequestResult(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AddVb5ProtocolVpIndicationInfo(pub AddVb5ProtocolVpRequestInfo);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AddVb5ProtocolVpRequestInfo {
+        #[rasn(tag(context, 0), identifier = "logicalServicePortNumber")]
+        pub logical_service_port_number: Integer,
+        #[rasn(tag(context, 1), identifier = "vpciValue")]
+        pub vpci_value: VpciValue,
+        #[rasn(tag(context, 2), identifier = "vpProfile")]
+        pub vp_profile: Option<VpProfile>,
+    }
+    impl AddVb5ProtocolVpRequestInfo {
+        pub fn new(
+            logical_service_port_number: Integer,
+            vpci_value: VpciValue,
+            vp_profile: Option<VpProfile>,
+        ) -> Self {
+            Self {
+                logical_service_port_number,
+                vpci_value,
+                vp_profile,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AddVb5ProtocolVpRequestResult(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AddVb5VcsIndicationInfo(pub AddVb5VcsRequestInfo);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AddVb5VcsRequestInfo {
+        #[rasn(tag(context, 0), identifier = "logicalServicePortNumber")]
+        pub logical_service_port_number: Integer,
+        #[rasn(tag(context, 1), identifier = "logicalServiceSubport")]
+        pub logical_service_subport: Option<Integer>,
+        #[rasn(tag(context, 2), identifier = "vpciValue")]
+        pub vpci_value: VpciValue,
+        #[rasn(tag(context, 3), identifier = "vciValue")]
+        pub vci_value: VciValue,
+    }
+    impl AddVb5VcsRequestInfo {
+        pub fn new(
+            logical_service_port_number: Integer,
+            logical_service_subport: Option<Integer>,
+            vpci_value: VpciValue,
+            vci_value: VciValue,
+        ) -> Self {
+            Self {
+                logical_service_port_number,
+                logical_service_subport,
+                vpci_value,
+                vci_value,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AddVb5VcsRequestResult(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AddVb5VpsIndicationInfo(pub AddVb5VpsRequestInfo);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AddVb5VpsRequestInfo {
+        #[rasn(tag(context, 0), identifier = "logicalServicePortNumber")]
+        pub logical_service_port_number: Integer,
+        #[rasn(tag(context, 1), identifier = "logicalServiceSubport")]
+        pub logical_service_subport: Option<Integer>,
+        #[rasn(tag(context, 2), identifier = "addVpInfo")]
+        pub add_vp_info: AddVpInfo,
+    }
+    impl AddVb5VpsRequestInfo {
+        pub fn new(
+            logical_service_port_number: Integer,
+            logical_service_subport: Option<Integer>,
+            add_vp_info: AddVpInfo,
+        ) -> Self {
+            Self {
+                logical_service_port_number,
+                logical_service_subport,
+                add_vp_info,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AddVb5VpsRequestResult(pub Integer);
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousAddVpInfo {
+        #[rasn(tag(context, 0), identifier = "physicalPort")]
+        pub physical_port: Integer,
+        #[rasn(tag(context, 1), identifier = "vpiValue")]
+        pub vpi_value: VpiValue,
+        #[rasn(tag(context, 2), identifier = "vpciValue")]
+        pub vpci_value: VpciValue,
+        #[rasn(tag(context, 3), identifier = "vpProfile")]
+        pub vp_profile: Option<VpProfile>,
+    }
+    impl AnonymousAddVpInfo {
+        pub fn new(
+            physical_port: Integer,
+            vpi_value: VpiValue,
+            vpci_value: VpciValue,
+            vp_profile: Option<VpProfile>,
+        ) -> Self {
+            Self {
+                physical_port,
+                vpi_value,
+                vpci_value,
+                vp_profile,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AddVpInfo(pub SequenceOf<AnonymousAddVpInfo>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AnServiceLabelInquiryResult(pub Integer);
+    #[doc = " OPTIONAL"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AuditVb5ConnectionRequestInfo {
+        #[rasn(tag(context, 0), identifier = "logicalServicePortNumber")]
+        pub logical_service_port_number: Integer,
+        #[rasn(tag(context, 1), identifier = "specifiedVpOrVc")]
+        pub specified_vp_or_vc: SpecifiedVpOrVc,
+    }
+    impl AuditVb5ConnectionRequestInfo {
+        pub fn new(
+            logical_service_port_number: Integer,
+            specified_vp_or_vc: SpecifiedVpOrVc,
+        ) -> Self {
+            Self {
+                logical_service_port_number,
+                specified_vp_or_vc,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum AuditVb5ConnectionRequestResult {
+        #[rasn(tag(context, 0))]
+        connectionAudited(SpecifiedVpOrVc),
+        #[rasn(tag(context, 1))]
+        connectionNotAudited(ConnectionNotAuditedInfo),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AuditVb5VpciRequestInfo {
+        #[rasn(tag(context, 0), identifier = "logicalServicePortNumber")]
+        pub logical_service_port_number: Integer,
+        #[rasn(tag(context, 1), identifier = "specifiedNniVpciOrRemoteVp")]
+        pub specified_nni_vpci_or_remote_vp: SpecifiedNniVpciOrRemoteVp,
+    }
+    impl AuditVb5VpciRequestInfo {
+        pub fn new(
+            logical_service_port_number: Integer,
+            specified_nni_vpci_or_remote_vp: SpecifiedNniVpciOrRemoteVp,
+        ) -> Self {
+            Self {
+                logical_service_port_number,
+                specified_nni_vpci_or_remote_vp,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum AuditVb5VpciRequestResult {
+        #[rasn(tag(context, 0))]
+        vpciAudited(SpecifiedNniVpciOrRemoteVp),
+        #[rasn(tag(context, 1))]
+        vpciNotAudited(VpciNotAuditedInfo),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ConnectionNotAuditedInfo(pub Integer);
+    #[doc = " Logical service port number"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ListLupsFailureInfo(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ListLupsRequestInfo(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ListLupsRequestResult {
+        #[rasn(tag(context, 0))]
+        success(Integer),
+        #[rasn(tag(context, 1))]
+        failure(ListLupsFailureInfo),
+    }
+    #[doc = " Tout remplacer par des minuscules"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ListVb5InterfacesRequestInfo(pub SequenceOf<ObjectInstance>);
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "INTEGER")]
+    pub struct AnonymousListVb5InterfacesRequestResult(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ListVb5InterfacesRequestResult(
+        pub SequenceOf<AnonymousListVb5InterfacesRequestResult>,
+    );
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ListVb5ProtocolDetailsFailureInfo(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ListVb5ProtocolDetailsRequestInfo(pub Integer);
+    #[doc = " Logical service port number"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ListVb5ProtocolDetailsRequestResult {
+        #[rasn(tag(context, 0))]
+        success(ListVb5ProtocolDetailsSuccessInfo),
+        #[rasn(tag(context, 1))]
+        failure(ListVb5ProtocolDetailsFailureInfo),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ListVb5ProtocolDetailsSuccessInfo(pub SequenceOf<Vb5ProtocolDetails>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ListVb5VcsRequestInfo {
+        #[rasn(tag(context, 0), identifier = "logicalServicePortNumber")]
+        pub logical_service_port_number: Integer,
+        #[rasn(tag(context, 1), identifier = "logicalUserPortNumber")]
+        pub logical_user_port_number: Option<Integer>,
+        #[rasn(tag(context, 2), identifier = "vpciValue")]
+        pub vpci_value: Option<VpciValue>,
+    }
+    impl ListVb5VcsRequestInfo {
+        pub fn new(
+            logical_service_port_number: Integer,
+            logical_user_port_number: Option<Integer>,
+            vpci_value: Option<VpciValue>,
+        ) -> Self {
+            Self {
+                logical_service_port_number,
+                logical_user_port_number,
+                vpci_value,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ListVb5VcsRequestResult {
+        #[rasn(tag(context, 0))]
+        success(ListVcsSuccessInfo),
+        #[rasn(tag(context, 1))]
+        failure(ListVcsFailureInfo),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ListVb5VpFailureInfo(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ListVb5VpsRequestInfo {
+        #[rasn(tag(context, 0), identifier = "logicalServicePortNumber")]
+        pub logical_service_port_number: Integer,
+        #[rasn(tag(context, 1), identifier = "logicalUserPortNumber")]
+        pub logical_user_port_number: Option<Integer>,
+    }
+    impl ListVb5VpsRequestInfo {
+        pub fn new(
+            logical_service_port_number: Integer,
+            logical_user_port_number: Option<Integer>,
+        ) -> Self {
+            Self {
+                logical_service_port_number,
+                logical_user_port_number,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ListVb5VpsRequestResult {
+        #[rasn(tag(context, 0))]
+        success(ListVb5VpsSuccessInfo),
+        #[rasn(tag(context, 1))]
+        failure(ListVb5VpFailureInfo),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ListVb5VpsSuccessInfo(pub SequenceOf<Vb5VpDetails>);
+    #[doc = " Logical service port number"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ListVcsFailureInfo(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ListVcsSuccessInfo {
+        #[rasn(tag(context, 0), identifier = "logicalUserPortNumber")]
+        pub logical_user_port_number: Option<Integer>,
+        #[rasn(tag(context, 1), identifier = "vpciValue")]
+        pub vpci_value: VpciValue,
+        #[rasn(tag(context, 2), identifier = "vciValue")]
+        pub vci_value: VciValue,
+    }
+    impl ListVcsSuccessInfo {
+        pub fn new(
+            logical_user_port_number: Option<Integer>,
+            vpci_value: VpciValue,
+            vci_value: VciValue,
+        ) -> Self {
+            Self {
+                logical_user_port_number,
+                vpci_value,
+                vci_value,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct LoopNotAddedInfo(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct LoopNotRemovedInfo(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ProtocolType(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RemoveAnLoopRequestInfo(pub AddAnLoopRequestInfo);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum RemoveAnLoopRequestResult {
+        #[rasn(tag(context, 0))]
+        loopRemoved(()),
+        #[rasn(tag(context, 1))]
+        loopNotRemoved(LoopNotRemovedInfo),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RemoveLupsIndicationInfo(pub RemoveLupsRequestInfo);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RemoveLupsRequestInfo(pub AddLupsRequestInfo);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RemoveLupsRequestResult(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RemoveVb5ConnectionIndicationInfo(pub RemoveVb5ConnectionRequestInfo);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct RemoveVb5ConnectionRequestInfo {
+        #[rasn(tag(context, 0), identifier = "vciValueA")]
+        pub vci_value_a: Option<Integer>,
+        #[rasn(tag(context, 1), identifier = "vciValueB")]
+        pub vci_value_b: Option<Integer>,
+        #[rasn(tag(context, 2), identifier = "physicalPortA")]
+        pub physical_port_a: Integer,
+        #[rasn(tag(context, 3), identifier = "vpiValueA")]
+        pub vpi_value_a: Integer,
+        #[rasn(tag(context, 4), identifier = "logicalServicePortA")]
+        pub logical_service_port_a: Option<Integer>,
+        #[rasn(tag(context, 5), identifier = "vpciValueA")]
+        pub vpci_value_a: Option<Integer>,
+        #[rasn(tag(context, 6), identifier = "physicalPortB")]
+        pub physical_port_b: Integer,
+        #[rasn(tag(context, 7), identifier = "vpiValueB")]
+        pub vpi_value_b: Integer,
+        #[rasn(tag(context, 8), identifier = "logicalServicePortB")]
+        pub logical_service_port_b: Option<Integer>,
+        #[rasn(tag(context, 9), identifier = "vpciValueB")]
+        pub vpci_value_b: Option<Integer>,
+    }
+    impl RemoveVb5ConnectionRequestInfo {
+        pub fn new(
+            vci_value_a: Option<Integer>,
+            vci_value_b: Option<Integer>,
+            physical_port_a: Integer,
+            vpi_value_a: Integer,
+            logical_service_port_a: Option<Integer>,
+            vpci_value_a: Option<Integer>,
+            physical_port_b: Integer,
+            vpi_value_b: Integer,
+            logical_service_port_b: Option<Integer>,
+            vpci_value_b: Option<Integer>,
+        ) -> Self {
+            Self {
+                vci_value_a,
+                vci_value_b,
+                physical_port_a,
+                vpi_value_a,
+                logical_service_port_a,
+                vpci_value_a,
+                physical_port_b,
+                vpi_value_b,
+                logical_service_port_b,
+                vpci_value_b,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RemoveVb5ConnectionRequestResult(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RemoveVb5InterfaceIndicationInfo(pub RemoveVb5InterfaceRequestInfo);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RemoveVb5InterfaceRequestInfo(pub AddVb5InterfaceRequestInfo);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RemoveVb5InterfaceRequestResult(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RemoveVb5ProtocolIndicationInfo(pub RemoveVb5ProtocolRequestInfo);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct RemoveVb5ProtocolRequestInfo {
+        #[rasn(tag(context, 0), identifier = "logicalServicePortNumber")]
+        pub logical_service_port_number: Integer,
+        #[rasn(tag(context, 1), identifier = "vb5ProtocolType")]
+        pub vb5_protocol_type: Vb5ProtocolType,
+    }
+    impl RemoveVb5ProtocolRequestInfo {
+        pub fn new(
+            logical_service_port_number: Integer,
+            vb5_protocol_type: Vb5ProtocolType,
+        ) -> Self {
+            Self {
+                logical_service_port_number,
+                vb5_protocol_type,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RemoveVb5ProtocolRequestResult(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RemoveVb5ProtocolVpIndicationInfo(pub RemoveVb5ProtocolVpRequestInfo);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct RemoveVb5ProtocolVpRequestInfo {
+        #[rasn(tag(context, 0), identifier = "logicalServicePortNumber")]
+        pub logical_service_port_number: Integer,
+        #[rasn(tag(context, 1), identifier = "vpciValue")]
+        pub vpci_value: VpciValue,
+    }
+    impl RemoveVb5ProtocolVpRequestInfo {
+        pub fn new(logical_service_port_number: Integer, vpci_value: VpciValue) -> Self {
+            Self {
+                logical_service_port_number,
+                vpci_value,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RemoveVb5ProtocolVpRequestResult(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RemoveVb5VcsIndicationInfo(pub RemoveVb5VcsRequestInfo);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RemoveVb5VcsRequestInfo(pub AddVb5VcsRequestInfo);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RemoveVb5VcsRequestResult(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RemoveVb5VpsIndicationInfo(pub RemoveVb5VpsRequestInfo);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct RemoveVb5VpsRequestInfo {
+        #[rasn(tag(context, 0), identifier = "logicalServicePortNumber")]
+        pub logical_service_port_number: Integer,
+        #[rasn(tag(context, 1), identifier = "logicalServiceSubport")]
+        pub logical_service_subport: Option<Integer>,
+        #[rasn(tag(context, 2), identifier = "removeVpInfo")]
+        pub remove_vp_info: RemoveVpInfo,
+    }
+    impl RemoveVb5VpsRequestInfo {
+        pub fn new(
+            logical_service_port_number: Integer,
+            logical_service_subport: Option<Integer>,
+            remove_vp_info: RemoveVpInfo,
+        ) -> Self {
+            Self {
+                logical_service_port_number,
+                logical_service_subport,
+                remove_vp_info,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RemoveVb5VpsRequestResult(pub Integer);
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousRemoveVpInfo {
+        #[rasn(tag(context, 0), identifier = "physicalPort")]
+        pub physical_port: Integer,
+        #[rasn(tag(context, 1), identifier = "vpiValue")]
+        pub vpi_value: VpiValue,
+        #[rasn(tag(context, 2), identifier = "vpciValue")]
+        pub vpci_value: VpciValue,
+    }
+    impl AnonymousRemoveVpInfo {
+        pub fn new(physical_port: Integer, vpi_value: VpiValue, vpci_value: VpciValue) -> Self {
+            Self {
+                physical_port,
+                vpi_value,
+                vpci_value,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RemoveVpInfo(pub SequenceOf<AnonymousRemoveVpInfo>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ResourceStatus(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ResourceStatusIndicationInfo {
+        #[rasn(tag(context, 0), identifier = "logicalServicePortNumber")]
+        pub logical_service_port_number: Integer,
+        #[rasn(tag(context, 1), identifier = "logicalUserPortNumber")]
+        pub logical_user_port_number: Option<Integer>,
+        #[rasn(tag(context, 2), identifier = "vpciValue")]
+        pub vpci_value: VpciValue,
+        #[rasn(tag(context, 3), identifier = "resourceStatus")]
+        pub resource_status: ResourceStatus,
+    }
+    impl ResourceStatusIndicationInfo {
+        pub fn new(
+            logical_service_port_number: Integer,
+            logical_user_port_number: Option<Integer>,
+            vpci_value: VpciValue,
+            resource_status: ResourceStatus,
+        ) -> Self {
+            Self {
+                logical_service_port_number,
+                logical_user_port_number,
+                vpci_value,
+                resource_status,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SnAccessLabelsInquiryResult {
+        #[rasn(tag(context, 0), identifier = "snLabel")]
+        pub sn_label: Option<Integer>,
+        #[rasn(tag(context, 1), identifier = "interfaceLabel")]
+        pub interface_label: Option<Integer>,
+    }
+    impl SnAccessLabelsInquiryResult {
+        pub fn new(sn_label: Option<Integer>, interface_label: Option<Integer>) -> Self {
+            Self {
+                sn_label,
+                interface_label,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SpecifiedNniVpci {
+        #[rasn(tag(context, 0), identifier = "logicalUserPortNumber")]
+        pub logical_user_port_number: Option<Integer>,
+        #[rasn(tag(context, 1), identifier = "vpciValue")]
+        pub vpci_value: VpciValue,
+    }
+    impl SpecifiedNniVpci {
+        pub fn new(logical_user_port_number: Option<Integer>, vpci_value: VpciValue) -> Self {
+            Self {
+                logical_user_port_number,
+                vpci_value,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum SpecifiedNniVpciOrRemoteVp {
+        #[rasn(tag(context, 0))]
+        specifiedNniVpci(SpecifiedNniVpci),
+        #[rasn(tag(context, 1))]
+        specifiedRemoteVp(SpecifiedVp),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SpecifiedVc {
+        #[rasn(tag(context, 0), identifier = "physicalPort")]
+        pub physical_port: Integer,
+        #[rasn(tag(context, 1), identifier = "vpiValue")]
+        pub vpi_value: VpiValue,
+        #[rasn(tag(context, 2), identifier = "vciValue")]
+        pub vci_value: VciValue,
+    }
+    impl SpecifiedVc {
+        pub fn new(physical_port: Integer, vpi_value: VpiValue, vci_value: VciValue) -> Self {
+            Self {
+                physical_port,
+                vpi_value,
+                vci_value,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SpecifiedVp {
+        #[rasn(tag(context, 0), identifier = "physicalPort")]
+        pub physical_port: Integer,
+        #[rasn(tag(context, 1), identifier = "vpiValue")]
+        pub vpi_value: VpiValue,
+    }
+    impl SpecifiedVp {
+        pub fn new(physical_port: Integer, vpi_value: VpiValue) -> Self {
+            Self {
+                physical_port,
+                vpi_value,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum SpecifiedVpOrVc {
+        #[rasn(tag(context, 0))]
+        specifiedVp(SpecifiedVp),
+        #[rasn(tag(context, 1))]
+        specifiedVc(SpecifiedVc),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Vb5ProtocolDetails {
+        #[rasn(tag(context, 0), identifier = "protocolType")]
+        pub protocol_type: ProtocolType,
+        #[rasn(tag(context, 1), identifier = "vpciValue")]
+        pub vpci_value: VpciValue,
+        #[rasn(tag(context, 2), identifier = "vciValue")]
+        pub vci_value: VciValue,
+        #[rasn(tag(context, 3), identifier = "egressPeakCellRateCLP0Plus1")]
+        pub egress_peak_cell_rate_clp0_plus1: Integer,
+        #[rasn(tag(context, 4), identifier = "egressPeakCellRateCLP0")]
+        pub egress_peak_cell_rate_clp0: Integer,
+        #[rasn(tag(context, 5), identifier = "ingressPeakCellRateCLP0Plus1")]
+        pub ingress_peak_cell_rate_clp0_plus1: Integer,
+        #[rasn(tag(context, 6), identifier = "ingressPeakCellRateCLP0")]
+        pub ingress_peak_cell_rate_clp0: Integer,
+        #[rasn(tag(context, 7), identifier = "egressSustainableCellRateCLP0Plus1")]
+        pub egress_sustainable_cell_rate_clp0_plus1: Integer,
+        #[rasn(tag(context, 8), identifier = "egressSustainableCellRateCLP0")]
+        pub egress_sustainable_cell_rate_clp0: Integer,
+        #[rasn(tag(context, 9), identifier = "ingressSustainableCellRateCLP0Plus1")]
+        pub ingress_sustainable_cell_rate_clp0_plus1: Integer,
+        #[rasn(tag(context, 10), identifier = "ingressSustainableCellRateCLP0")]
+        pub ingress_sustainable_cell_rate_clp0: Integer,
+        #[rasn(tag(context, 11), identifier = "egressCDVToleranceCLP0Plus1")]
+        pub egress_cdvtolerance_clp0_plus1: Integer,
+        #[rasn(tag(context, 12), identifier = "egressCDVToleranceCLP0")]
+        pub egress_cdvtolerance_clp0: Integer,
+        #[rasn(tag(context, 13), identifier = "ingressCDVToleranceCLP0Plus1")]
+        pub ingress_cdvtolerance_clp0_plus1: Integer,
+        #[rasn(tag(context, 14), identifier = "ingressCDVToleranceCLP0")]
+        pub ingress_cdvtolerance_clp0: Integer,
+        #[rasn(tag(context, 15), identifier = "egressMaxBurstSizeCLP0Plus1")]
+        pub egress_max_burst_size_clp0_plus1: Integer,
+        #[rasn(tag(context, 16), identifier = "egressMaxBurstSizeCLP0")]
+        pub egress_max_burst_size_clp0: Integer,
+        #[rasn(tag(context, 17), identifier = "ingressMaxBurstSizeCLP0Plus1")]
+        pub ingress_max_burst_size_clp0_plus1: Integer,
+        #[rasn(tag(context, 18), identifier = "ingressMaxBurstSizeCLP0")]
+        pub ingress_max_burst_size_clp0: Integer,
+        #[rasn(tag(context, 19), identifier = "bufferRelease")]
+        pub buffer_release: bool,
+        #[rasn(tag(context, 20), identifier = "maxCc")]
+        pub max_cc: Integer,
+        #[rasn(tag(context, 21), identifier = "maxInformationFieldLength")]
+        pub max_information_field_length: Integer,
+        #[rasn(tag(context, 22), identifier = "maxLengthSscopUuField")]
+        pub max_length_sscop_uu_field: Integer,
+        #[rasn(tag(context, 23), identifier = "maxPd")]
+        pub max_pd: Integer,
+        #[rasn(tag(context, 24), identifier = "maxSscopCreditToPeer")]
+        pub max_sscop_credit_to_peer: Integer,
+        #[rasn(tag(context, 25), identifier = "maxStat")]
+        pub max_stat: Integer,
+        #[rasn(tag(context, 26), identifier = "sscopTimerCc")]
+        pub sscop_timer_cc: Integer,
+        #[rasn(tag(context, 27), identifier = "sscopTimerIdle")]
+        pub sscop_timer_idle: Integer,
+        #[rasn(tag(context, 28), identifier = "sscopTimerKeepAlive")]
+        pub sscop_timer_keep_alive: Integer,
+        #[rasn(tag(context, 29), identifier = "sscopTimerNoResponse")]
+        pub sscop_timer_no_response: Integer,
+        #[rasn(tag(context, 30), identifier = "sscopTimerPoll")]
+        pub sscop_timer_poll: Integer,
+    }
+    impl Vb5ProtocolDetails {
+        pub fn new(
+            protocol_type: ProtocolType,
+            vpci_value: VpciValue,
+            vci_value: VciValue,
+            egress_peak_cell_rate_clp0_plus1: Integer,
+            egress_peak_cell_rate_clp0: Integer,
+            ingress_peak_cell_rate_clp0_plus1: Integer,
+            ingress_peak_cell_rate_clp0: Integer,
+            egress_sustainable_cell_rate_clp0_plus1: Integer,
+            egress_sustainable_cell_rate_clp0: Integer,
+            ingress_sustainable_cell_rate_clp0_plus1: Integer,
+            ingress_sustainable_cell_rate_clp0: Integer,
+            egress_cdvtolerance_clp0_plus1: Integer,
+            egress_cdvtolerance_clp0: Integer,
+            ingress_cdvtolerance_clp0_plus1: Integer,
+            ingress_cdvtolerance_clp0: Integer,
+            egress_max_burst_size_clp0_plus1: Integer,
+            egress_max_burst_size_clp0: Integer,
+            ingress_max_burst_size_clp0_plus1: Integer,
+            ingress_max_burst_size_clp0: Integer,
+            buffer_release: bool,
+            max_cc: Integer,
+            max_information_field_length: Integer,
+            max_length_sscop_uu_field: Integer,
+            max_pd: Integer,
+            max_sscop_credit_to_peer: Integer,
+            max_stat: Integer,
+            sscop_timer_cc: Integer,
+            sscop_timer_idle: Integer,
+            sscop_timer_keep_alive: Integer,
+            sscop_timer_no_response: Integer,
+            sscop_timer_poll: Integer,
+        ) -> Self {
+            Self {
+                protocol_type,
+                vpci_value,
+                vci_value,
+                egress_peak_cell_rate_clp0_plus1,
+                egress_peak_cell_rate_clp0,
+                ingress_peak_cell_rate_clp0_plus1,
+                ingress_peak_cell_rate_clp0,
+                egress_sustainable_cell_rate_clp0_plus1,
+                egress_sustainable_cell_rate_clp0,
+                ingress_sustainable_cell_rate_clp0_plus1,
+                ingress_sustainable_cell_rate_clp0,
+                egress_cdvtolerance_clp0_plus1,
+                egress_cdvtolerance_clp0,
+                ingress_cdvtolerance_clp0_plus1,
+                ingress_cdvtolerance_clp0,
+                egress_max_burst_size_clp0_plus1,
+                egress_max_burst_size_clp0,
+                ingress_max_burst_size_clp0_plus1,
+                ingress_max_burst_size_clp0,
+                buffer_release,
+                max_cc,
+                max_information_field_length,
+                max_length_sscop_uu_field,
+                max_pd,
+                max_sscop_credit_to_peer,
+                max_stat,
+                sscop_timer_cc,
+                sscop_timer_idle,
+                sscop_timer_keep_alive,
+                sscop_timer_no_response,
+                sscop_timer_poll,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Vb5ProtocolType(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Vb5VpDetails {
+        #[rasn(tag(context, 0), identifier = "logicalUserPortNumber")]
+        pub logical_user_port_number: Option<Integer>,
+        #[rasn(tag(context, 1), identifier = "physicalPort")]
+        pub physical_port: Integer,
+        #[rasn(tag(context, 2), identifier = "vpiValue")]
+        pub vpi_value: Integer,
+        #[rasn(tag(context, 3), identifier = "vpciValue")]
+        pub vpci_value: Option<Integer>,
+        #[rasn(tag(context, 4), identifier = "maxNumVciBitsNearEnd")]
+        pub max_num_vci_bits_near_end: Option<Integer>,
+        #[rasn(tag(context, 5), identifier = "maxNumVciBitsSupported")]
+        pub max_num_vci_bits_supported: Option<Integer>,
+        #[rasn(tag(context, 6), identifier = "maxNumActiveVccsAllowed")]
+        pub max_num_active_vccs_allowed: Option<Integer>,
+        #[rasn(tag(context, 7), identifier = "maxNumActiveVccsNearEnd")]
+        pub max_num_active_vccs_near_end: Option<Integer>,
+    }
+    impl Vb5VpDetails {
+        pub fn new(
+            logical_user_port_number: Option<Integer>,
+            physical_port: Integer,
+            vpi_value: Integer,
+            vpci_value: Option<Integer>,
+            max_num_vci_bits_near_end: Option<Integer>,
+            max_num_vci_bits_supported: Option<Integer>,
+            max_num_active_vccs_allowed: Option<Integer>,
+            max_num_active_vccs_near_end: Option<Integer>,
+        ) -> Self {
+            Self {
+                logical_user_port_number,
+                physical_port,
+                vpi_value,
+                vpci_value,
+                max_num_vci_bits_near_end,
+                max_num_vci_bits_supported,
+                max_num_active_vccs_allowed,
+                max_num_active_vccs_near_end,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct VpProfile {
+        #[rasn(tag(context, 0), identifier = "maxNumVciBitsNearEnd")]
+        pub max_num_vci_bits_near_end: Integer,
+        #[rasn(tag(context, 1), identifier = "maxNumVciBitsSupported")]
+        pub max_num_vci_bits_supported: Integer,
+        #[rasn(tag(context, 2), identifier = "maxNumActiveVccsAllowed")]
+        pub max_num_active_vccs_allowed: Integer,
+        #[rasn(tag(context, 3), identifier = "maxNumActiveVccsNearEnd")]
+        pub max_num_active_vccs_near_end: Integer,
+    }
+    impl VpProfile {
+        pub fn new(
+            max_num_vci_bits_near_end: Integer,
+            max_num_vci_bits_supported: Integer,
+            max_num_active_vccs_allowed: Integer,
+            max_num_active_vccs_near_end: Integer,
+        ) -> Self {
+            Self {
+                max_num_vci_bits_near_end,
+                max_num_vci_bits_supported,
+                max_num_active_vccs_allowed,
+                max_num_active_vccs_near_end,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct VpciNotAuditedInfo(pub Integer);
+    pub static Q832_3_ACTION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::const_new(&[0u32, 0u32, 17u32, 832u32, 127u32, 3u32, 0u32, 9u32]).to_owned()
+    });
+    pub static Q832_3_ATTRIBUTE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::const_new(&[0u32, 0u32, 17u32, 832u32, 127u32, 3u32, 0u32, 7u32]).to_owned()
+    });
+    #[doc = " end of imports"]
+    #[doc = " start of object identifier definitions"]
+    pub static Q832_3_INFORMATION_MODEL: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::const_new(&[0u32, 0u32, 17u32, 832u32, 127u32, 3u32, 0u32]).to_owned()
+    });
+    pub static Q832_3_MANAGED_OBJECT_CLASS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::const_new(&[0u32, 0u32, 17u32, 832u32, 127u32, 3u32, 0u32, 3u32]).to_owned()
+    });
+    pub static Q832_3_NAME_BINDING: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::const_new(&[0u32, 0u32, 17u32, 832u32, 127u32, 3u32, 0u32, 6u32]).to_owned()
+    });
+    pub static Q832_3_NOTIFICATION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::const_new(&[0u32, 0u32, 17u32, 832u32, 127u32, 3u32, 0u32, 10u32]).to_owned()
+    });
+    pub static Q832_3_PACKAGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::const_new(&[0u32, 0u32, 17u32, 832u32, 127u32, 3u32, 0u32, 4u32]).to_owned()
+    });
+    pub static Q832_3_STANDARD_SPECIFIC_EXTENSION: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::const_new(&[0u32, 0u32, 17u32, 832u32, 127u32, 3u32, 0u32, 0u32]).to_owned()
+        });
+}

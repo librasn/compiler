@@ -1,0 +1,517 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x738_1993_SummarizationASN1Productions.asn1
+---
+Warnings:
+Unidentified generating bindings for : Unexpectedly encountered unlinked struct-like ASN1 value!
+LinkerError in ASN grammar: Failed to link value with 'CMISFilter'
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod summarization_asn1_productions {
+    extern crate alloc;
+    use super::attribute_asn1_module::{
+        AdditionalInformation, AdditionalText, ObservedValue, Packages, SimpleNameType,
+    };
+    use super::cmip_1::*;
+    use super::metric_module::TimePeriod;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousAlgorithmOutputBuffer {
+        #[rasn(identifier = "attributeId")]
+        pub attribute_id: AttributeId,
+        #[rasn(identifier = "algorithmOutput")]
+        pub algorithm_output: SequenceOf<ObservedValue>,
+    }
+    impl AnonymousAlgorithmOutputBuffer {
+        pub fn new(attribute_id: AttributeId, algorithm_output: SequenceOf<ObservedValue>) -> Self {
+            Self {
+                attribute_id,
+                algorithm_output,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AlgorithmOutputBuffer(pub SetOf<AnonymousAlgorithmOutputBuffer>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AlgorithmParameters(pub SequenceOf<ObservedValue>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AttributeMeasure {
+        #[rasn(identifier = "attributeId")]
+        pub attribute_id: Any,
+        #[rasn(identifier = "attributeValue")]
+        pub attribute_value: Option<Any>,
+        #[rasn(tag(context, 3), identifier = "timeStamp")]
+        pub time_stamp: Option<TimePeriod>,
+        #[rasn(
+            default = "attribute_measure_suspect_flag_default",
+            identifier = "suspectFlag"
+        )]
+        pub suspect_flag: bool,
+    }
+    impl AttributeMeasure {
+        pub fn new(
+            attribute_id: Any,
+            attribute_value: Option<Any>,
+            time_stamp: Option<TimePeriod>,
+            suspect_flag: bool,
+        ) -> Self {
+            Self {
+                attribute_id,
+                attribute_value,
+                time_stamp,
+                suspect_flag,
+            }
+        }
+    }
+    fn attribute_measure_suspect_flag_default() -> bool {
+        false
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct BufferedObservationId {
+        #[rasn(identifier = "observedObject")]
+        pub observed_object: ObjectInstance,
+        #[rasn(tag(context, 0), identifier = "scanAttributeIdList")]
+        pub scan_attribute_id_list: Option<SetOf<AttributeId>>,
+        #[rasn(tag(context, 1), identifier = "numericAttributeIdArray")]
+        pub numeric_attribute_id_array: Option<NumericAttributeIdArray>,
+        #[rasn(tag(context, 2), identifier = "reportTimeAttributeIdList")]
+        pub report_time_attribute_id_list: Option<ReportTimeAttributeIdList>,
+    }
+    impl BufferedObservationId {
+        pub fn new(
+            observed_object: ObjectInstance,
+            scan_attribute_id_list: Option<SetOf<AttributeId>>,
+            numeric_attribute_id_array: Option<NumericAttributeIdArray>,
+            report_time_attribute_id_list: Option<ReportTimeAttributeIdList>,
+        ) -> Self {
+            Self {
+                observed_object,
+                scan_attribute_id_list,
+                numeric_attribute_id_array,
+                report_time_attribute_id_list,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct BufferedObservationIdList(pub SetOf<BufferedObservationId>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct BufferedObservationList(pub SetOf<BufferedObservationScan>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct BufferedObservationScan {
+        #[rasn(identifier = "objectInstance")]
+        pub object_instance: Option<ObjectInstance>,
+        #[rasn(tag(context, 0), identifier = "reportTimeAttributeList")]
+        pub report_time_attribute_list: Option<SetOf<AttributeMeasure>>,
+        #[rasn(tag(context, 1), identifier = "attributesBuffer")]
+        pub attributes_buffer: Option<SetOf<SequenceOf<AttributeMeasure>>>,
+        #[rasn(tag(context, 5), identifier = "numericAttributesBuff")]
+        pub numeric_attributes_buff: Option<SequenceOf<SequenceOf<NumericMeasure>>>,
+    }
+    impl BufferedObservationScan {
+        pub fn new(
+            object_instance: Option<ObjectInstance>,
+            report_time_attribute_list: Option<SetOf<AttributeMeasure>>,
+            attributes_buffer: Option<SetOf<SequenceOf<AttributeMeasure>>>,
+            numeric_attributes_buff: Option<SequenceOf<SequenceOf<NumericMeasure>>>,
+        ) -> Self {
+            Self {
+                object_instance,
+                report_time_attribute_list,
+                attributes_buffer,
+                numeric_attributes_buff,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct BufferedScanReportInformation {
+        #[rasn(identifier = "granularityPeriod")]
+        pub granularity_period: TimePeriod,
+        #[rasn(tag(context, 1), identifier = "firstScanInitiationTime")]
+        pub first_scan_initiation_time: Option<GeneralizedTime>,
+        #[rasn(
+            tag(context, 4),
+            default = "buffered_scan_report_information_suspect_intervals_default",
+            identifier = "suspectIntervals"
+        )]
+        pub suspect_intervals: SuspectIntervals,
+        #[rasn(tag(context, 6), identifier = "bufferedObservationList")]
+        pub buffered_observation_list: BufferedObservationList,
+        #[rasn(tag(context, 7), identifier = "incompleteScan")]
+        pub incomplete_scan: Option<IncompleteScan>,
+        #[rasn(tag(context, 8), identifier = "additionalText")]
+        pub additional_text: Option<AdditionalText>,
+        #[rasn(tag(context, 9), identifier = "additionalInformation")]
+        pub additional_information: Option<AdditionalInformation>,
+    }
+    impl BufferedScanReportInformation {
+        pub fn new(
+            granularity_period: TimePeriod,
+            first_scan_initiation_time: Option<GeneralizedTime>,
+            suspect_intervals: SuspectIntervals,
+            buffered_observation_list: BufferedObservationList,
+            incomplete_scan: Option<IncompleteScan>,
+            additional_text: Option<AdditionalText>,
+            additional_information: Option<AdditionalInformation>,
+        ) -> Self {
+            Self {
+                granularity_period,
+                first_scan_initiation_time,
+                suspect_intervals,
+                buffered_observation_list,
+                incomplete_scan,
+                additional_text,
+                additional_information,
+            }
+        }
+    }
+    fn buffered_scan_report_information_suspect_intervals_default() -> SuspectIntervals {
+        SuspectIntervals(Integer::from(0))
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct DynamicSimpleScanArgumentScopeOrListChoiceScopedSelection {
+        #[rasn(identifier = "baseManagedObject")]
+        pub base_managed_object: ObjectInstance,
+        pub scope: Scope,
+        #[rasn(identifier = "scanningFilter")]
+        pub scanning_filter: CMISFilter,
+    }
+    impl DynamicSimpleScanArgumentScopeOrListChoiceScopedSelection {
+        pub fn new(
+            base_managed_object: ObjectInstance,
+            scope: Scope,
+            scanning_filter: CMISFilter,
+        ) -> Self {
+            Self {
+                base_managed_object,
+                scope,
+                scanning_filter,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum DynamicSimpleScanArgumentScopeOrListChoice {
+        #[rasn(tag(context, 2))]
+        scopedSelection(DynamicSimpleScanArgumentScopeOrListChoiceScopedSelection),
+        #[rasn(tag(context, 3))]
+        objectList(ObjectList),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct DynamicSimpleScanArgument {
+        #[rasn(tag(context, 0), identifier = "scanAttributeIdList")]
+        pub scan_attribute_id_list: Option<ScanAttributeIdList>,
+        #[rasn(tag(context, 1), identifier = "numericAttributeIdArray")]
+        pub numeric_attribute_id_array: Option<NumericAttributeIdArray>,
+        #[rasn(identifier = "scopeOrListChoice")]
+        pub scope_or_list_choice: DynamicSimpleScanArgumentScopeOrListChoice,
+        #[rasn(identifier = "suppressObjectInstance")]
+        pub suppress_object_instance: Option<SuppressObjectInstance>,
+        #[rasn(identifier = "onceReportAttributeIdList")]
+        pub once_report_attribute_id_list: Option<OnceReportAttributeIdList>,
+        #[rasn(identifier = "timeStampReportMode")]
+        pub time_stamp_report_mode: Option<TimeStampReportMode>,
+    }
+    impl DynamicSimpleScanArgument {
+        pub fn new(
+            scan_attribute_id_list: Option<ScanAttributeIdList>,
+            numeric_attribute_id_array: Option<NumericAttributeIdArray>,
+            scope_or_list_choice: DynamicSimpleScanArgumentScopeOrListChoice,
+            suppress_object_instance: Option<SuppressObjectInstance>,
+            once_report_attribute_id_list: Option<OnceReportAttributeIdList>,
+            time_stamp_report_mode: Option<TimeStampReportMode>,
+        ) -> Self {
+            Self {
+                scan_attribute_id_list,
+                numeric_attribute_id_array,
+                scope_or_list_choice,
+                suppress_object_instance,
+                once_report_attribute_id_list,
+                time_stamp_report_mode,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct FirstScanInitiationTime(pub GlobalTime);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct GlobalTime(pub GeneralizedTime);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct IncompleteScan(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NonStatisticalReportInformation(pub SetOf<NonStatisticalScan>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct NonStatisticalScan {
+        #[rasn(identifier = "objectInstance")]
+        pub object_instance: Option<ObjectInstance>,
+        #[rasn(identifier = "attributeValues")]
+        pub attribute_values: Option<SetOf<AttributeMeasure>>,
+    }
+    impl NonStatisticalScan {
+        pub fn new(
+            object_instance: Option<ObjectInstance>,
+            attribute_values: Option<SetOf<AttributeMeasure>>,
+        ) -> Self {
+            Self {
+                object_instance,
+                attribute_values,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NumericAttributeIdArray(pub SequenceOf<AttributeId>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NumericAttributeIdList(pub SetOf<AttributeId>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct NumericMeasureQualifiedValue {
+        pub value: ObservedValue,
+        #[rasn(identifier = "timeStamp")]
+        pub time_stamp: Option<TimePeriod>,
+        #[rasn(
+            default = "numeric_measure_qualified_value_suspect_flag_default",
+            identifier = "suspectFlag"
+        )]
+        pub suspect_flag: bool,
+    }
+    impl NumericMeasureQualifiedValue {
+        pub fn new(
+            value: ObservedValue,
+            time_stamp: Option<TimePeriod>,
+            suspect_flag: bool,
+        ) -> Self {
+            Self {
+                value,
+                time_stamp,
+                suspect_flag,
+            }
+        }
+    }
+    fn numeric_measure_qualified_value_suspect_flag_default() -> bool {
+        false
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum NumericMeasure {
+        missingData(()),
+        valueOnly(ObservedValue),
+        qualifiedValue(NumericMeasureQualifiedValue),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ObjectList(pub SetOf<ObjectInstance>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ObservationId {
+        #[rasn(identifier = "observedObject")]
+        pub observed_object: ObjectInstance,
+        #[rasn(identifier = "scanAttributeIdList")]
+        pub scan_attribute_id_list: Option<ScanAttributeIdList>,
+        #[rasn(identifier = "numericAttributeIdArray")]
+        pub numeric_attribute_id_array: Option<NumericAttributeIdArray>,
+    }
+    impl ObservationId {
+        pub fn new(
+            observed_object: ObjectInstance,
+            scan_attribute_id_list: Option<ScanAttributeIdList>,
+            numeric_attribute_id_array: Option<NumericAttributeIdArray>,
+        ) -> Self {
+            Self {
+                observed_object,
+                scan_attribute_id_list,
+                numeric_attribute_id_array,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ObservationIdList(pub SetOf<ObservationId>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ObservationScan {
+        #[rasn(identifier = "observedObjectInstance")]
+        pub observed_object_instance: Option<ObjectInstance>,
+        #[rasn(tag(context, 0), identifier = "attributeMeasureList")]
+        pub attribute_measure_list: Option<SetOf<AttributeMeasure>>,
+        #[rasn(tag(context, 1), identifier = "numericValueArray")]
+        pub numeric_value_array: Option<SequenceOf<NumericMeasure>>,
+    }
+    impl ObservationScan {
+        pub fn new(
+            observed_object_instance: Option<ObjectInstance>,
+            attribute_measure_list: Option<SetOf<AttributeMeasure>>,
+            numeric_value_array: Option<SequenceOf<NumericMeasure>>,
+        ) -> Self {
+            Self {
+                observed_object_instance,
+                attribute_measure_list,
+                numeric_value_array,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ObservationScanList(pub SetOf<ObservationScan>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct OnceReportAttributeIdList(pub SetOf<AttributeId>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct OnceReportAttributeList(pub SetOf<Attribute>);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "CHOICE")]
+    pub enum AnonymousPackageConflict {
+        #[rasn(tag(context, 0))]
+        conflictingPackagesPresent(Packages),
+        #[rasn(tag(context, 1))]
+        packagesMissing(Packages),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PackageConflict(pub SetOf<AnonymousPackageConflict>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("1.."))]
+    pub struct ReportPeriod(pub Integer);
+    #[doc = " number of granularity periods in a report period"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ReportTimeAttributeIdList(pub SetOf<AttributeId>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ScanAttributeIdList(pub SetOf<AttributeId>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ScanInitiationTime(pub GlobalTime);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ScanReportInformation {
+        #[rasn(identifier = "scanInitiationTime")]
+        pub scan_initiation_time: Option<GeneralizedTime>,
+        #[rasn(tag(context, 1), identifier = "onceReportAttributeList")]
+        pub once_report_attribute_list: Option<OnceReportAttributeList>,
+        #[rasn(identifier = "observationScanList")]
+        pub observation_scan_list: ObservationScanList,
+        #[rasn(tag(context, 7), identifier = "incompleteScan")]
+        pub incomplete_scan: Option<IncompleteScan>,
+        #[rasn(tag(context, 8), identifier = "additionalText")]
+        pub additional_text: Option<AdditionalText>,
+        #[rasn(tag(context, 9), identifier = "additionalInformation")]
+        pub additional_information: Option<AdditionalInformation>,
+    }
+    impl ScanReportInformation {
+        pub fn new(
+            scan_initiation_time: Option<GeneralizedTime>,
+            once_report_attribute_list: Option<OnceReportAttributeList>,
+            observation_scan_list: ObservationScanList,
+            incomplete_scan: Option<IncompleteScan>,
+            additional_text: Option<AdditionalText>,
+            additional_information: Option<AdditionalInformation>,
+        ) -> Self {
+            Self {
+                scan_initiation_time,
+                once_report_attribute_list,
+                observation_scan_list,
+                incomplete_scan,
+                additional_text,
+                additional_information,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ScannerActionError {
+        unspecified = 0,
+        administrativeStateLocked = 1,
+        administrativeStateShuttingDown = 2,
+        scanTerminated = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct StatisticalScanReportInformation {
+        #[rasn(identifier = "scanInitiationTime")]
+        pub scan_initiation_time: Option<GeneralizedTime>,
+        #[rasn(tag(context, 6), identifier = "observationReportList")]
+        pub observation_report_list: Option<NonStatisticalReportInformation>,
+        #[rasn(tag(context, 7), identifier = "algorithmOutputs")]
+        pub algorithm_outputs: AlgorithmOutputBuffer,
+        #[rasn(tag(context, 8), identifier = "algorithmParameters")]
+        pub algorithm_parameters: Option<AlgorithmParameters>,
+        #[rasn(tag(context, 9), identifier = "incompleteScan")]
+        pub incomplete_scan: Option<IncompleteScan>,
+        #[rasn(tag(context, 10), identifier = "additionalText")]
+        pub additional_text: Option<AdditionalText>,
+        #[rasn(tag(context, 11), identifier = "additionalInformation")]
+        pub additional_information: Option<AdditionalInformation>,
+    }
+    impl StatisticalScanReportInformation {
+        pub fn new(
+            scan_initiation_time: Option<GeneralizedTime>,
+            observation_report_list: Option<NonStatisticalReportInformation>,
+            algorithm_outputs: AlgorithmOutputBuffer,
+            algorithm_parameters: Option<AlgorithmParameters>,
+            incomplete_scan: Option<IncompleteScan>,
+            additional_text: Option<AdditionalText>,
+            additional_information: Option<AdditionalInformation>,
+        ) -> Self {
+            Self {
+                scan_initiation_time,
+                observation_report_list,
+                algorithm_outputs,
+                algorithm_parameters,
+                incomplete_scan,
+                additional_text,
+                additional_information,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct SuppressObjectInstance(pub bool);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SuspectIntervals(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TimeAttributeIdentifier(pub AttributeId);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum TimeStampReportMode {
+        timeStampingOff = 0,
+        globalTimeStampOnly = 1,
+        individualTimeStamping = 2,
+    }
+    pub static SUMMARIZATION_ACTION: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 9u32, 2u32, 13u32, 9u32]).to_owned());
+    pub static SUMMARIZATION_ATTRIBUTE: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 9u32, 2u32, 13u32, 7u32]).to_owned());
+    pub static SUMMARIZATION_MANAGED_OBJECT_CLASS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 9u32, 2u32, 13u32, 3u32]).to_owned());
+    pub static SUMMARIZATION_NAME_BINDING: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 9u32, 2u32, 13u32, 6u32]).to_owned());
+    pub static SUMMARIZATION_NOTIFICATION: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 9u32, 2u32, 13u32, 10u32]).to_owned());
+    pub static SUMMARIZATION_PACKAGE: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 9u32, 2u32, 13u32, 4u32]).to_owned());
+    pub static SUMMARIZATION_PARAMETER: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 9u32, 2u32, 13u32, 5u32]).to_owned());
+    pub const TIME_STAMPING_DEFAULT: TimeStampReportMode = TimeStampReportMode::timeStampingOff;
+}

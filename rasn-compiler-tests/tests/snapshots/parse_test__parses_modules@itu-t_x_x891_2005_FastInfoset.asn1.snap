@@ -1,0 +1,499 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x891_2005_FastInfoset.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod fast_infoset {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct Attribute {
+        #[rasn(identifier = "qualified-name")]
+        pub qualified_name: QualifiedNameOrIndex,
+        #[rasn(identifier = "normalized-value")]
+        pub normalized_value: NonIdentifyingStringOrIndex,
+    }
+    impl Attribute {
+        pub fn new(
+            qualified_name: QualifiedNameOrIndex,
+            normalized_value: NonIdentifyingStringOrIndex,
+        ) -> Self {
+            Self {
+                qualified_name,
+                normalized_value,
+            }
+        }
+    }
+    #[doc = " OTHER URI category"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct CharacterChunk {
+        #[rasn(identifier = "character-codes")]
+        pub character_codes: NonIdentifyingStringOrIndex,
+    }
+    impl CharacterChunk {
+        pub fn new(character_codes: NonIdentifyingStringOrIndex) -> Self {
+            Self { character_codes }
+        }
+    }
+    #[doc = " CONTENT CHARACTER CHUNK category"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct Comment {
+        pub content: NonIdentifyingStringOrIndex,
+    }
+    impl Comment {
+        pub fn new(content: NonIdentifyingStringOrIndex) -> Self {
+            Self { content }
+        }
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    pub struct AnonymousDocumentAdditionalData {
+        pub id: URI,
+        pub data: NonEmptyOctetString,
+    }
+    impl AnonymousDocumentAdditionalData {
+        pub fn new(id: URI, data: NonEmptyOctetString) -> Self {
+            Self { id, data }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=1048576"))]
+    pub struct DocumentAdditionalData(pub SequenceOf<AnonymousDocumentAdditionalData>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct DocumentInitialVocabulary {
+        #[rasn(identifier = "external-vocabulary")]
+        pub external_vocabulary: Option<URI>,
+        #[rasn(size("1..=256"), identifier = "restricted-alphabets")]
+        pub restricted_alphabets: Option<SequenceOf<NonEmptyOctetString>>,
+        #[rasn(size("1..=256"), identifier = "encoding-algorithms")]
+        pub encoding_algorithms: Option<SequenceOf<NonEmptyOctetString>>,
+        #[rasn(size("1..=1048576"))]
+        pub prefixes: Option<SequenceOf<NonEmptyOctetString>>,
+        #[rasn(size("1..=1048576"), identifier = "namespace-names")]
+        pub namespace_names: Option<SequenceOf<NonEmptyOctetString>>,
+        #[rasn(size("1..=1048576"), identifier = "local-names")]
+        pub local_names: Option<SequenceOf<NonEmptyOctetString>>,
+        #[rasn(size("1..=1048576"), identifier = "other-ncnames")]
+        pub other_ncnames: Option<SequenceOf<NonEmptyOctetString>>,
+        #[rasn(size("1..=1048576"), identifier = "other-uris")]
+        pub other_uris: Option<SequenceOf<NonEmptyOctetString>>,
+        #[rasn(size("1..=1048576"), identifier = "attribute-values")]
+        pub attribute_values: Option<SequenceOf<EncodedCharacterString>>,
+        #[rasn(size("1..=1048576"), identifier = "content-character-chunks")]
+        pub content_character_chunks: Option<SequenceOf<EncodedCharacterString>>,
+        #[rasn(size("1..=1048576"), identifier = "other-strings")]
+        pub other_strings: Option<SequenceOf<EncodedCharacterString>>,
+        #[rasn(size("1..=1048576"), identifier = "element-name-surrogates")]
+        pub element_name_surrogates: Option<SequenceOf<NameSurrogate>>,
+        #[rasn(size("1..=1048576"), identifier = "attribute-name-surrogates")]
+        pub attribute_name_surrogates: Option<SequenceOf<NameSurrogate>>,
+    }
+    impl DocumentInitialVocabulary {
+        pub fn new(
+            external_vocabulary: Option<URI>,
+            restricted_alphabets: Option<SequenceOf<NonEmptyOctetString>>,
+            encoding_algorithms: Option<SequenceOf<NonEmptyOctetString>>,
+            prefixes: Option<SequenceOf<NonEmptyOctetString>>,
+            namespace_names: Option<SequenceOf<NonEmptyOctetString>>,
+            local_names: Option<SequenceOf<NonEmptyOctetString>>,
+            other_ncnames: Option<SequenceOf<NonEmptyOctetString>>,
+            other_uris: Option<SequenceOf<NonEmptyOctetString>>,
+            attribute_values: Option<SequenceOf<EncodedCharacterString>>,
+            content_character_chunks: Option<SequenceOf<EncodedCharacterString>>,
+            other_strings: Option<SequenceOf<EncodedCharacterString>>,
+            element_name_surrogates: Option<SequenceOf<NameSurrogate>>,
+            attribute_name_surrogates: Option<SequenceOf<NameSurrogate>>,
+        ) -> Self {
+            Self {
+                external_vocabulary,
+                restricted_alphabets,
+                encoding_algorithms,
+                prefixes,
+                namespace_names,
+                local_names,
+                other_ncnames,
+                other_uris,
+                attribute_values,
+                content_character_chunks,
+                other_strings,
+                element_name_surrogates,
+                attribute_name_surrogates,
+            }
+        }
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags, identifier = "CHOICE")]
+    pub enum AnonymousDocumentChildren {
+        element(Element),
+        #[rasn(identifier = "processing-instruction")]
+        processing_instruction(ProcessingInstruction),
+        comment(Comment),
+        #[rasn(identifier = "document-type-declaration")]
+        document_type_declaration(DocumentTypeDeclaration),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DocumentChildren(pub SequenceOf<AnonymousDocumentChildren>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct Document {
+        #[rasn(identifier = "additional-data")]
+        pub additional_data: Option<DocumentAdditionalData>,
+        #[rasn(identifier = "initial-vocabulary")]
+        pub initial_vocabulary: Option<DocumentInitialVocabulary>,
+        #[rasn(size("1.."))]
+        pub notations: Option<SequenceOf<Notation>>,
+        #[rasn(size("1.."), identifier = "unparsed-entities")]
+        pub unparsed_entities: Option<SequenceOf<UnparsedEntity>>,
+        #[rasn(identifier = "character-encoding-scheme")]
+        pub character_encoding_scheme: Option<NonEmptyOctetString>,
+        pub standalone: Option<bool>,
+        pub version: Option<NonIdentifyingStringOrIndex>,
+        pub children: DocumentChildren,
+    }
+    impl Document {
+        pub fn new(
+            additional_data: Option<DocumentAdditionalData>,
+            initial_vocabulary: Option<DocumentInitialVocabulary>,
+            notations: Option<SequenceOf<Notation>>,
+            unparsed_entities: Option<SequenceOf<UnparsedEntity>>,
+            character_encoding_scheme: Option<NonEmptyOctetString>,
+            standalone: Option<bool>,
+            version: Option<NonIdentifyingStringOrIndex>,
+            children: DocumentChildren,
+        ) -> Self {
+            Self {
+                additional_data,
+                initial_vocabulary,
+                notations,
+                unparsed_entities,
+                character_encoding_scheme,
+                standalone,
+                version,
+                children,
+            }
+        }
+    }
+    #[doc = " OTHER STRING category"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct DocumentTypeDeclaration {
+        #[rasn(identifier = "system-identifier")]
+        pub system_identifier: Option<IdentifyingStringOrIndex>,
+        #[rasn(identifier = "public-identifier")]
+        pub public_identifier: Option<IdentifyingStringOrIndex>,
+        pub children: SequenceOf<ProcessingInstruction>,
+    }
+    impl DocumentTypeDeclaration {
+        pub fn new(
+            system_identifier: Option<IdentifyingStringOrIndex>,
+            public_identifier: Option<IdentifyingStringOrIndex>,
+            children: SequenceOf<ProcessingInstruction>,
+        ) -> Self {
+            Self {
+                system_identifier,
+                public_identifier,
+                children,
+            }
+        }
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags, identifier = "CHOICE")]
+    pub enum AnonymousElementChildren {
+        element(Element),
+        #[rasn(identifier = "processing-instruction")]
+        processing_instruction(ProcessingInstruction),
+        #[rasn(identifier = "unexpanded-entity-reference")]
+        unexpanded_entity_reference(UnexpandedEntityReference),
+        #[rasn(identifier = "character-chunk")]
+        character_chunk(CharacterChunk),
+        comment(Comment),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ElementChildren(pub SequenceOf<AnonymousElementChildren>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct Element {
+        #[rasn(size("1.."), identifier = "namespace-attributes")]
+        pub namespace_attributes: Option<SequenceOf<NamespaceAttribute>>,
+        #[rasn(identifier = "qualified-name")]
+        pub qualified_name: QualifiedNameOrIndex,
+        #[rasn(size("1.."))]
+        pub attributes: Option<SequenceOf<Attribute>>,
+        pub children: ElementChildren,
+    }
+    impl Element {
+        pub fn new(
+            namespace_attributes: Option<SequenceOf<NamespaceAttribute>>,
+            qualified_name: QualifiedNameOrIndex,
+            attributes: Option<SequenceOf<Attribute>>,
+            children: ElementChildren,
+        ) -> Self {
+            Self {
+                namespace_attributes,
+                qualified_name,
+                attributes,
+                children,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum EncodedCharacterStringEncodingFormat {
+        #[rasn(identifier = "utf-8")]
+        utf_8(()),
+        #[rasn(identifier = "utf-16")]
+        utf_16(()),
+        #[rasn(value("1..=256"), identifier = "restricted-alphabet")]
+        restricted_alphabet(u16),
+        #[rasn(value("1..=256"), identifier = "encoding-algorithm")]
+        encoding_algorithm(u16),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct EncodedCharacterString {
+        #[rasn(identifier = "encoding-format")]
+        pub encoding_format: EncodedCharacterStringEncodingFormat,
+        pub octets: NonEmptyOctetString,
+    }
+    impl EncodedCharacterString {
+        pub fn new(
+            encoding_format: EncodedCharacterStringEncodingFormat,
+            octets: NonEmptyOctetString,
+        ) -> Self {
+            Self {
+                encoding_format,
+                octets,
+            }
+        }
+    }
+    #[doc = " NAMESPACE NAME category"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum IdentifyingStringOrIndex {
+        #[rasn(identifier = "literal-character-string")]
+        literal_character_string(NonEmptyOctetString),
+        #[rasn(value("1..=1048576"), identifier = "string-index")]
+        string_index(u32),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct NameSurrogate {
+        #[rasn(value("1..=1048576"), identifier = "prefix-string-index")]
+        pub prefix_string_index: Option<u32>,
+        #[rasn(value("1..=1048576"), identifier = "namespace-name-string-index")]
+        pub namespace_name_string_index: Option<u32>,
+        #[rasn(value("1..=1048576"), identifier = "local-name-string-index")]
+        pub local_name_string_index: u32,
+    }
+    impl NameSurrogate {
+        pub fn new(
+            prefix_string_index: Option<u32>,
+            namespace_name_string_index: Option<u32>,
+            local_name_string_index: u32,
+        ) -> Self {
+            Self {
+                prefix_string_index,
+                namespace_name_string_index,
+                local_name_string_index,
+            }
+        }
+    }
+    #[doc = " OTHER URI category"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct NamespaceAttribute {
+        pub prefix: Option<IdentifyingStringOrIndex>,
+        #[rasn(identifier = "namespace-name")]
+        pub namespace_name: Option<IdentifyingStringOrIndex>,
+    }
+    impl NamespaceAttribute {
+        pub fn new(
+            prefix: Option<IdentifyingStringOrIndex>,
+            namespace_name: Option<IdentifyingStringOrIndex>,
+        ) -> Self {
+            Self {
+                prefix,
+                namespace_name,
+            }
+        }
+    }
+    #[doc = " Two to the power 32"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=4294967296"))]
+    pub struct NonEmptyOctetString(pub OctetString);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct NonIdentifyingStringOrIndexLiteralCharacterString {
+        #[rasn(identifier = "add-to-table")]
+        pub add_to_table: bool,
+        #[rasn(identifier = "character-string")]
+        pub character_string: EncodedCharacterString,
+    }
+    impl NonIdentifyingStringOrIndexLiteralCharacterString {
+        pub fn new(add_to_table: bool, character_string: EncodedCharacterString) -> Self {
+            Self {
+                add_to_table,
+                character_string,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum NonIdentifyingStringOrIndex {
+        #[rasn(identifier = "literal-character-string")]
+        literal_character_string(NonIdentifyingStringOrIndexLiteralCharacterString),
+        #[rasn(value("0..=1048576"), identifier = "string-index")]
+        string_index(u32),
+    }
+    #[doc = " OTHER NCNAME category"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct Notation {
+        pub name: IdentifyingStringOrIndex,
+        #[rasn(identifier = "system-identifier")]
+        pub system_identifier: Option<IdentifyingStringOrIndex>,
+        #[rasn(identifier = "public-identifier")]
+        pub public_identifier: Option<IdentifyingStringOrIndex>,
+    }
+    impl Notation {
+        pub fn new(
+            name: IdentifyingStringOrIndex,
+            system_identifier: Option<IdentifyingStringOrIndex>,
+            public_identifier: Option<IdentifyingStringOrIndex>,
+        ) -> Self {
+            Self {
+                name,
+                system_identifier,
+                public_identifier,
+            }
+        }
+    }
+    #[doc = " ATTRIBUTE VALUE category"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct ProcessingInstruction {
+        pub target: IdentifyingStringOrIndex,
+        pub content: NonIdentifyingStringOrIndex,
+    }
+    impl ProcessingInstruction {
+        pub fn new(target: IdentifyingStringOrIndex, content: NonIdentifyingStringOrIndex) -> Self {
+            Self { target, content }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct QualifiedNameOrIndexLiteralQualifiedName {
+        pub prefix: Option<IdentifyingStringOrIndex>,
+        #[rasn(identifier = "namespace-name")]
+        pub namespace_name: Option<IdentifyingStringOrIndex>,
+        #[rasn(identifier = "local-name")]
+        pub local_name: IdentifyingStringOrIndex,
+    }
+    impl QualifiedNameOrIndexLiteralQualifiedName {
+        pub fn new(
+            prefix: Option<IdentifyingStringOrIndex>,
+            namespace_name: Option<IdentifyingStringOrIndex>,
+            local_name: IdentifyingStringOrIndex,
+        ) -> Self {
+            Self {
+                prefix,
+                namespace_name,
+                local_name,
+            }
+        }
+    }
+    #[doc = " prefix-string-index shall only be present if"]
+    #[doc = " namespace-name-string-index is present"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum QualifiedNameOrIndex {
+        #[rasn(identifier = "literal-qualified-name")]
+        literal_qualified_name(QualifiedNameOrIndexLiteralQualifiedName),
+        #[rasn(value("1..=1048576"), identifier = "name-surrogate-index")]
+        name_surrogate_index(u32),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct URI(pub NonEmptyOctetString);
+    #[doc = " OTHER STRING category"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct UnexpandedEntityReference {
+        pub name: IdentifyingStringOrIndex,
+        #[rasn(identifier = "system-identifier")]
+        pub system_identifier: Option<IdentifyingStringOrIndex>,
+        #[rasn(identifier = "public-identifier")]
+        pub public_identifier: Option<IdentifyingStringOrIndex>,
+    }
+    impl UnexpandedEntityReference {
+        pub fn new(
+            name: IdentifyingStringOrIndex,
+            system_identifier: Option<IdentifyingStringOrIndex>,
+            public_identifier: Option<IdentifyingStringOrIndex>,
+        ) -> Self {
+            Self {
+                name,
+                system_identifier,
+                public_identifier,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct UnparsedEntity {
+        pub name: IdentifyingStringOrIndex,
+        #[rasn(identifier = "system-identifier")]
+        pub system_identifier: IdentifyingStringOrIndex,
+        #[rasn(identifier = "public-identifier")]
+        pub public_identifier: Option<IdentifyingStringOrIndex>,
+        #[rasn(identifier = "notation-name")]
+        pub notation_name: IdentifyingStringOrIndex,
+    }
+    impl UnparsedEntity {
+        pub fn new(
+            name: IdentifyingStringOrIndex,
+            system_identifier: IdentifyingStringOrIndex,
+            public_identifier: Option<IdentifyingStringOrIndex>,
+            notation_name: IdentifyingStringOrIndex,
+        ) -> Self {
+            Self {
+                name,
+                system_identifier,
+                public_identifier,
+                notation_name,
+            }
+        }
+    }
+    pub static FINF_DOC_NO_DECL: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 1u32, 10u32, 0u32, 1u32, 1u32]).to_owned());
+    pub static FINF_DOC_OPT_DECL: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 1u32, 10u32, 0u32, 1u32, 0u32]).to_owned());
+    #[doc = " Two to the power 20"]
+    pub static FOUR_GIG: LazyLock<Integer> = LazyLock::new(|| Integer::from(4294967296));
+    pub static ONE_MEG: LazyLock<Integer> = LazyLock::new(|| Integer::from(1048576));
+}

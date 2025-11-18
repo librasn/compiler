@@ -1,0 +1,370 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x501_2005_OperationalBindingManagement.asn1
+---
+Warnings:
+NotYetInplemented generating bindings for : Choice values are currently unsupported!
+NotYetInplemented generating bindings for : Choice values are currently unsupported!
+LinkerError in ASN grammar: Failed to resolve supertype OPTIONALLY-PROTECTED-SEQ of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype OPTIONALLY-PROTECTED-SEQ of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve reference in object set.
+LinkerError in ASN grammar: Failed to resolve supertype OPTIONALLY-PROTECTED-SEQ of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype OPTIONALLY-PROTECTED-SEQ of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype OPTIONALLY-PROTECTED-SEQ of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype OPTIONALLY-PROTECTED-SEQ of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve reference of ElsewhereDefined: OPERATION
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod operational_binding_management {
+    extern crate alloc;
+    use super::common_protocol_specification::*;
+    use super::directory_abstract_service::{CommonResultsSeq, SecurityParameters, SECURITY_ERROR};
+    use super::directory_osiprotocols::*;
+    use super::directory_shadow_abstract_service::SHADOW_OPERATIONAL_BINDING;
+    use super::distributed_operations::{AccessPoint, D_SABIND};
+    use super::enhanced_security::*;
+    use super::hierarchical_operational_bindings::{
+        HIERARCHICAL_OPERATIONAL_BINDING, NON_SPECIFIC_HIERARCHICAL_OPERATIONAL_BINDING,
+    };
+    use super::useful_definitions::{
+        COMMON_PROTOCOL_SPECIFICATION, DIRECTORY_ABSTRACT_SERVICE, DIRECTORY_OSIPROTOCOLS,
+        DIRECTORY_SHADOW_ABSTRACT_SERVICE, DISTRIBUTED_OPERATIONS, ENHANCED_SECURITY,
+        HIERARCHICAL_OPERATIONAL_BINDINGS,
+    };
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct EstablishOperationalBindingArgument(pub OPTIONALLYPROTECTEDSEQ);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum EstablishOperationalBindingArgumentDataInitiator {
+        #[rasn(tag(context, 3))]
+        symmetric(Any),
+        #[rasn(tag(context, 4), identifier = "roleA-initiates")]
+        roleA_initiates(Any),
+        #[rasn(tag(context, 5), identifier = "roleB-initiates")]
+        roleB_initiates(Any),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct EstablishOperationalBindingArgumentData {
+        #[rasn(tag(context, 0), identifier = "bindingType")]
+        pub binding_type: ObjectIdentifier,
+        #[rasn(tag(context, 1), identifier = "bindingID")]
+        pub binding_id: Option<OperationalBindingID>,
+        #[rasn(tag(context, 2), identifier = "accessPoint")]
+        pub access_point: AccessPoint,
+        pub initiator: EstablishOperationalBindingArgumentDataInitiator,
+        #[rasn(tag(context, 6))]
+        pub agreement: Any,
+        #[rasn(
+            tag(context, 7),
+            default = "establish_operational_binding_argument_data_valid_default"
+        )]
+        pub valid: Validity,
+        #[rasn(tag(context, 8), identifier = "securityParameters")]
+        pub security_parameters: Option<SecurityParameters>,
+    }
+    impl EstablishOperationalBindingArgumentData {
+        pub fn new(
+            binding_type: ObjectIdentifier,
+            binding_id: Option<OperationalBindingID>,
+            access_point: AccessPoint,
+            initiator: EstablishOperationalBindingArgumentDataInitiator,
+            agreement: Any,
+            valid: Validity,
+            security_parameters: Option<SecurityParameters>,
+        ) -> Self {
+            Self {
+                binding_type,
+                binding_id,
+                access_point,
+                initiator,
+                agreement,
+                valid,
+                security_parameters,
+            }
+        }
+    }
+    fn establish_operational_binding_argument_data_valid_default() -> Validity {
+        Validity(Validity::new(
+            CHOICE::now(()),
+            CHOICE::explicitTermination(()),
+        ))
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct EstablishOperationalBindingResult(pub OPTIONALLYPROTECTEDSEQ);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum EstablishOperationalBindingResultDataInitiator {
+        #[rasn(tag(context, 3))]
+        symmetric(Any),
+        #[rasn(tag(context, 4), identifier = "roleA-replies")]
+        roleA_replies(Any),
+        #[rasn(tag(context, 5), identifier = "roleB-replies")]
+        roleB_replies(Any),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct EstablishOperationalBindingResultData {
+        #[rasn(tag(context, 0), identifier = "bindingType")]
+        pub binding_type: ObjectIdentifier,
+        #[rasn(tag(context, 1), identifier = "bindingID")]
+        pub binding_id: Option<OperationalBindingID>,
+        #[rasn(tag(context, 2), identifier = "accessPoint")]
+        pub access_point: AccessPoint,
+        pub initiator: Option<EstablishOperationalBindingResultDataInitiator>,
+    }
+    impl EstablishOperationalBindingResultData {
+        pub fn new(
+            binding_type: ObjectIdentifier,
+            binding_id: Option<OperationalBindingID>,
+            access_point: AccessPoint,
+            initiator: Option<EstablishOperationalBindingResultDataInitiator>,
+        ) -> Self {
+            Self {
+                binding_type,
+                binding_id,
+                access_point,
+                initiator,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ModifyOperationalBindingArgument(pub OPTIONALLYPROTECTEDSEQ);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ModifyOperationalBindingArgumentDataInitiator {
+        #[rasn(tag(context, 3))]
+        symmetric(Any),
+        #[rasn(tag(context, 4), identifier = "roleA-initiates")]
+        roleA_initiates(Any),
+        #[rasn(tag(context, 5), identifier = "roleB-initiates")]
+        roleB_initiates(Any),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ModifyOperationalBindingArgumentData {
+        #[rasn(tag(context, 0), identifier = "bindingType")]
+        pub binding_type: ObjectIdentifier,
+        #[rasn(tag(context, 1), identifier = "bindingID")]
+        pub binding_id: OperationalBindingID,
+        #[rasn(tag(context, 2), identifier = "accessPoint")]
+        pub access_point: Option<AccessPoint>,
+        pub initiator: Option<ModifyOperationalBindingArgumentDataInitiator>,
+        #[rasn(tag(context, 6), identifier = "newBindingID")]
+        pub new_binding_id: OperationalBindingID,
+        #[rasn(tag(context, 7), identifier = "newAgreement")]
+        pub new_agreement: Option<Any>,
+        #[rasn(tag(context, 8))]
+        pub valid: Option<ModifiedValidity>,
+        #[rasn(tag(context, 9), identifier = "securityParameters")]
+        pub security_parameters: Option<SecurityParameters>,
+    }
+    impl ModifyOperationalBindingArgumentData {
+        pub fn new(
+            binding_type: ObjectIdentifier,
+            binding_id: OperationalBindingID,
+            access_point: Option<AccessPoint>,
+            initiator: Option<ModifyOperationalBindingArgumentDataInitiator>,
+            new_binding_id: OperationalBindingID,
+            new_agreement: Option<Any>,
+            valid: Option<ModifiedValidity>,
+            security_parameters: Option<SecurityParameters>,
+        ) -> Self {
+            Self {
+                binding_type,
+                binding_id,
+                access_point,
+                initiator,
+                new_binding_id,
+                new_agreement,
+                valid,
+                security_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ModifyOperationalBindingResult {
+        null(()),
+        #[rasn(value("0.."), tag(context, 1))]
+        protected(OPTIONALLYPROTECTEDSEQ),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ModifyOperationalBindingResultData {
+        #[rasn(identifier = "newBindingID")]
+        pub new_binding_id: OperationalBindingID,
+        #[rasn(identifier = "bindingType")]
+        pub binding_type: ObjectIdentifier,
+        #[rasn(identifier = "newAgreement")]
+        pub new_agreement: Any,
+        pub valid: Option<Validity>,
+    }
+    impl ModifyOperationalBindingResultData {
+        pub fn new(
+            new_binding_id: OperationalBindingID,
+            binding_type: ObjectIdentifier,
+            new_agreement: Any,
+            valid: Option<Validity>,
+        ) -> Self {
+            Self {
+                new_binding_id,
+                binding_type,
+                new_agreement,
+                valid,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum OpBindingErrorParamProblem {
+        invalidID = 0,
+        duplicateID = 1,
+        unsupportedBindingType = 2,
+        notAllowedForRole = 3,
+        parametersMissing = 4,
+        roleAssignment = 5,
+        invalidStartTime = 6,
+        invalidEndTime = 7,
+        invalidAgreement = 8,
+        currentlyNotDecidable = 9,
+        modificationNotAllowed = 10,
+        invalidBindingType = 11,
+        invalidNewID = 12,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct OpBindingErrorParam {
+        #[rasn(tag(context, 0))]
+        pub problem: OpBindingErrorParamProblem,
+        #[rasn(tag(context, 1), identifier = "bindingType")]
+        pub binding_type: Option<ObjectIdentifier>,
+        #[rasn(tag(context, 2), identifier = "agreementProposal")]
+        pub agreement_proposal: Option<Any>,
+        #[rasn(tag(context, 3), identifier = "retryAt")]
+        pub retry_at: Option<Time>,
+    }
+    impl OpBindingErrorParam {
+        pub fn new(
+            problem: OpBindingErrorParamProblem,
+            binding_type: Option<ObjectIdentifier>,
+            agreement_proposal: Option<Any>,
+            retry_at: Option<Time>,
+        ) -> Self {
+            Self {
+                problem,
+                binding_type,
+                agreement_proposal,
+                retry_at,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct OperationalBindingID {
+        pub identifier: Integer,
+        pub version: Integer,
+    }
+    impl OperationalBindingID {
+        pub fn new(identifier: Integer, version: Integer) -> Self {
+            Self {
+                identifier,
+                version,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TerminateOperationalBindingArgument(pub OPTIONALLYPROTECTEDSEQ);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum TerminateOperationalBindingArgumentDataInitiator {
+        #[rasn(tag(context, 2))]
+        symmetric(Any),
+        #[rasn(tag(context, 3), identifier = "roleA-initiates")]
+        roleA_initiates(Any),
+        #[rasn(tag(context, 4), identifier = "roleB-initiates")]
+        roleB_initiates(Any),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct TerminateOperationalBindingArgumentData {
+        #[rasn(tag(context, 0), identifier = "bindingType")]
+        pub binding_type: ObjectIdentifier,
+        #[rasn(tag(context, 1), identifier = "bindingID")]
+        pub binding_id: OperationalBindingID,
+        pub initiator: Option<TerminateOperationalBindingArgumentDataInitiator>,
+        #[rasn(tag(context, 5), identifier = "terminateAt")]
+        pub terminate_at: Option<Time>,
+        #[rasn(tag(context, 6), identifier = "securityParameters")]
+        pub security_parameters: Option<SecurityParameters>,
+    }
+    impl TerminateOperationalBindingArgumentData {
+        pub fn new(
+            binding_type: ObjectIdentifier,
+            binding_id: OperationalBindingID,
+            initiator: Option<TerminateOperationalBindingArgumentDataInitiator>,
+            terminate_at: Option<Time>,
+            security_parameters: Option<SecurityParameters>,
+        ) -> Self {
+            Self {
+                binding_type,
+                binding_id,
+                initiator,
+                terminate_at,
+                security_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum TerminateOperationalBindingResult {
+        #[rasn(tag(context, 0))]
+        null(()),
+        #[rasn(value("0.."), tag(context, 1))]
+        protected(OPTIONALLYPROTECTEDSEQ),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct TerminateOperationalBindingResultData {
+        #[rasn(identifier = "bindingID")]
+        pub binding_id: OperationalBindingID,
+        #[rasn(identifier = "bindingType")]
+        pub binding_type: ObjectIdentifier,
+        #[rasn(identifier = "terminateAt")]
+        pub terminate_at: Option<GeneralizedTime>,
+    }
+    impl TerminateOperationalBindingResultData {
+        pub fn new(
+            binding_id: OperationalBindingID,
+            binding_type: ObjectIdentifier,
+            terminate_at: Option<GeneralizedTime>,
+        ) -> Self {
+            Self {
+                binding_id,
+                binding_type,
+                terminate_at,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum Time {
+        utcTime(UtcTime),
+        generalizedTime(GeneralizedTime),
+    }
+    #[doc = " bind and unbind"]
+    pub static D_SAOPERATIONAL_BINDING_MANAGEMENT_BIND: LazyLock<OPERATION> =
+        LazyLock::new(|| OPERATION(D_SABIND));
+}

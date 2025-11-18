@@ -1,0 +1,777 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_t_t415_1993_Layout-Descriptors.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod layout_descriptors {
+    extern crate alloc;
+    use super::colour_attributes::{ColourExpression, ColourTable};
+    use super::default_value_lists::DefaultValueListsLayout;
+    use super::identifiers_and_expressions::{
+        BindingName, CategoryName, ConstructionExpression, NumericExpression, ObjectIdExpression,
+        ObjectOrClassIdentifier, ProtectedPartIdentifier, ResourceName, StringExpression,
+        StyleIdentifier,
+    };
+    use super::style_descriptors::PresentationAttributes;
+    use super::temporal_relationships::PresentationTime;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum BindingPairBindingValue {
+        #[rasn(tag(context, 1))]
+        a(ObjectIdExpression),
+        #[rasn(tag(context, 2))]
+        b(NumericExpression),
+        #[rasn(tag(context, 3))]
+        c(StringExpression),
+        #[rasn(tag(context, 4))]
+        d(ObjectOrClassIdentifier),
+        #[rasn(tag(context, 5))]
+        e(Integer),
+        #[rasn(tag(context, 6))]
+        f(OctetString),
+    }
+    #[doc = "  string of characters from the sets designated by"]
+    #[doc = "  the document profile attribute \"comments character sets\","]
+    #[doc = "  plus code extension control functions,"]
+    #[doc = "  space, carriage return and line feed"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Binding-Pair")]
+    pub struct BindingPair {
+        #[rasn(tag(context, 0), identifier = "binding-identifier")]
+        pub binding_identifier: BindingName,
+        #[rasn(identifier = "binding-value")]
+        pub binding_value: BindingPairBindingValue,
+    }
+    impl BindingPair {
+        pub fn new(
+            binding_identifier: BindingName,
+            binding_value: BindingPairBindingValue,
+        ) -> Self {
+            Self {
+                binding_identifier,
+                binding_value,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct Border {
+        #[rasn(tag(context, 0), identifier = "left-hand-edge")]
+        pub left_hand_edge: Option<BorderEdge>,
+        #[rasn(tag(context, 1), identifier = "right-hand-edge")]
+        pub right_hand_edge: Option<BorderEdge>,
+        #[rasn(tag(context, 2), identifier = "trailing-edge")]
+        pub trailing_edge: Option<BorderEdge>,
+        #[rasn(tag(context, 3), identifier = "leading-edge")]
+        pub leading_edge: Option<BorderEdge>,
+    }
+    impl Border {
+        pub fn new(
+            left_hand_edge: Option<BorderEdge>,
+            right_hand_edge: Option<BorderEdge>,
+            trailing_edge: Option<BorderEdge>,
+            leading_edge: Option<BorderEdge>,
+        ) -> Self {
+            Self {
+                left_hand_edge,
+                right_hand_edge,
+                trailing_edge,
+                leading_edge,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Border-Edge")]
+    pub struct BorderEdge {
+        #[rasn(tag(context, 0), identifier = "line-width")]
+        pub line_width: Option<Integer>,
+        #[rasn(tag(context, 1), identifier = "line-type")]
+        pub line_type: Option<Integer>,
+        #[rasn(tag(context, 2), identifier = "freespace-width")]
+        pub freespace_width: Option<Integer>,
+        #[rasn(tag(context, 3), identifier = "border-line-colour")]
+        pub border_line_colour: Option<BorderLineColour>,
+    }
+    impl BorderEdge {
+        pub fn new(
+            line_width: Option<Integer>,
+            line_type: Option<Integer>,
+            freespace_width: Option<Integer>,
+            border_line_colour: Option<BorderLineColour>,
+        ) -> Self {
+            Self {
+                line_width,
+                line_type,
+                freespace_width,
+                border_line_colour,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "Border-Line-Colour")]
+    pub enum BorderLineColour {
+        #[rasn(tag(context, 3), identifier = "implementation-defined")]
+        implementation_defined(()),
+        #[rasn(identifier = "colour-expression")]
+        colour_expression(ColourExpression),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Colour(pub Integer);
+    #[doc = "  a 'null' border edge is represented by an empty set"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "Colour-Of-Medium")]
+    pub enum ColourOfMedium {
+        #[rasn(tag(context, 3), identifier = "unspecified-colour")]
+        unspecified_colour(()),
+        #[rasn(identifier = "specified-colour")]
+        specified_colour(ColourExpression),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Comment-String")]
+    pub struct CommentString(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "Content-Background-Colour")]
+    pub enum ContentBackgroundColour {
+        #[rasn(tag(context, 2), identifier = "content-background-transparency")]
+        content_background_transparency(()),
+        #[rasn(identifier = "colour-expression")]
+        colour_expression(ColourExpression),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "Content-Foreground-Colour")]
+    pub enum ContentForegroundColour {
+        #[rasn(tag(context, 3), identifier = "implementation-defined")]
+        implementation_defined(()),
+        #[rasn(tag(context, 2), identifier = "content-foreground-transparency")]
+        content_foreground_transparency(()),
+        #[rasn(identifier = "colour-expression")]
+        colour_expression(ColourExpression),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct DimensionRuleA {
+        #[rasn(tag(context, 0))]
+        pub minimum: Option<Integer>,
+        #[rasn(tag(context, 1))]
+        pub maximum: Option<Integer>,
+    }
+    impl DimensionRuleA {
+        pub fn new(minimum: Option<Integer>, maximum: Option<Integer>) -> Self {
+            Self { minimum, maximum }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct DimensionRuleB {
+        #[rasn(tag(context, 0))]
+        pub minimum: Option<Integer>,
+        #[rasn(tag(context, 1))]
+        pub maximum: Option<Integer>,
+    }
+    impl DimensionRuleB {
+        pub fn new(minimum: Option<Integer>, maximum: Option<Integer>) -> Self {
+            Self { minimum, maximum }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum Dimension {
+        #[rasn(tag(context, 0))]
+        fixed(Integer),
+        #[rasn(tag(context, 1), identifier = "rule-a")]
+        rule_a(DimensionRuleA),
+        #[rasn(tag(context, 2), identifier = "rule-b")]
+        rule_b(DimensionRuleB),
+        #[rasn(tag(context, 3), identifier = "maximum-size")]
+        maximum_size(()),
+        #[rasn(tag(context, 4), identifier = "not-present")]
+        not_present(()),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum DimensionPairHorizontal {
+        #[rasn(tag(context, 0))]
+        fixed(Integer),
+        #[rasn(tag(context, 4), identifier = "not-present")]
+        not_present(()),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum DimensionPairVertical {
+        #[rasn(tag(context, 0))]
+        fixed(Integer),
+        #[rasn(tag(context, 1))]
+        variable(Integer),
+        #[rasn(tag(context, 4), identifier = "not-present")]
+        not_present(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Dimension-Pair")]
+    pub struct DimensionPair {
+        pub horizontal: DimensionPairHorizontal,
+        pub vertical: DimensionPairVertical,
+    }
+    impl DimensionPair {
+        pub fn new(horizontal: DimensionPairHorizontal, vertical: DimensionPairVertical) -> Self {
+            Self {
+                horizontal,
+                vertical,
+            }
+        }
+    }
+    #[doc = "  the choice 'not-present' indicates that the parameter is not present"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Dimension-Spec")]
+    pub struct DimensionSpec {
+        pub horizontal: Dimension,
+        pub vertical: Dimension,
+    }
+    impl DimensionSpec {
+        pub fn new(horizontal: Dimension, vertical: Dimension) -> Self {
+            Self {
+                horizontal,
+                vertical,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum EncipheredEncipheredSubordinates {
+        #[rasn(tag(context, 0), identifier = "none-all")]
+        none_all(Integer),
+        #[rasn(tag(context, 1))]
+        partial(SequenceOf<NumericString>),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Enciphered {
+        #[rasn(identifier = "enciphered-subordinates")]
+        pub enciphered_subordinates: EncipheredEncipheredSubordinates,
+        #[rasn(tag(context, 2), identifier = "protected-part-id")]
+        pub protected_part_id: Option<ProtectedPartIdentifier>,
+    }
+    impl Enciphered {
+        pub fn new(
+            enciphered_subordinates: EncipheredEncipheredSubordinates,
+            protected_part_id: Option<ProtectedPartIdentifier>,
+        ) -> Self {
+            Self {
+                enciphered_subordinates,
+                protected_part_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Layout-Class-Descriptor")]
+    pub struct LayoutClassDescriptor {
+        #[rasn(identifier = "object-type")]
+        pub object_type: LayoutObjectType,
+        #[rasn(identifier = "descriptor-body")]
+        pub descriptor_body: LayoutClassDescriptorBody,
+    }
+    impl LayoutClassDescriptor {
+        pub fn new(
+            object_type: LayoutObjectType,
+            descriptor_body: LayoutClassDescriptorBody,
+        ) -> Self {
+            Self {
+                object_type,
+                descriptor_body,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum LayoutClassDescriptorBodyPosition {
+        #[rasn(tag(context, 3), identifier = "fixed-position")]
+        fixed_position(MeasurePair),
+        #[rasn(tag(context, 26), identifier = "variable-position")]
+        variable_position(PositionSpec),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Layout-Class-Descriptor-Body")]
+    pub struct LayoutClassDescriptorBody {
+        #[rasn(identifier = "object-class-identifier")]
+        pub object_class_identifier: ObjectOrClassIdentifier,
+        #[rasn(tag(context, 0), identifier = "generator-for-subordinates")]
+        pub generator_for_subordinates: Option<ConstructionExpression>,
+        #[rasn(tag(context, 1), identifier = "content-portions")]
+        pub content_portions: Option<SequenceOf<NumericString>>,
+        pub position: Option<LayoutClassDescriptorBodyPosition>,
+        #[rasn(tag(context, 4))]
+        pub dimensions: Option<DimensionSpec>,
+        #[rasn(tag(context, 5))]
+        pub transparency: Option<Transparency>,
+        #[rasn(tag(context, 6), identifier = "presentation-attributes")]
+        pub presentation_attributes: Option<PresentationAttributes>,
+        #[rasn(tag(context, 7), identifier = "default-value-lists")]
+        pub default_value_lists: Option<DefaultValueListsLayout>,
+        #[rasn(tag(context, 8), identifier = "user-readable-comments")]
+        pub user_readable_comments: Option<CommentString>,
+        #[rasn(tag(context, 9))]
+        pub bindings: Option<SetOf<BindingPair>>,
+        #[rasn(tag(context, 10), identifier = "content-generator")]
+        pub content_generator: Option<StringExpression>,
+        #[rasn(tag(context, 11), identifier = "layout-path")]
+        pub layout_path: Option<OneOfFourAngles>,
+        #[rasn(tag(context, 36), identifier = "layout-stream-categories")]
+        pub layout_stream_categories: Option<SetOf<CategoryName>>,
+        #[rasn(tag(context, 37), identifier = "layout-stream-sub-categories")]
+        pub layout_stream_sub_categories: Option<SetOf<CategoryName>>,
+        #[rasn(tag(context, 13), identifier = "permitted-categories")]
+        pub permitted_categories: Option<SetOf<CategoryName>>,
+        #[rasn(tag(context, 14), identifier = "user-visible-name")]
+        pub user_visible_name: Option<CommentString>,
+        #[rasn(tag(context, 15), identifier = "page-position")]
+        pub page_position: Option<MeasurePair>,
+        #[rasn(tag(context, 16), identifier = "medium-type")]
+        pub medium_type: Option<MediumType>,
+        #[rasn(tag(context, 17), identifier = "presentation-style")]
+        pub presentation_style: Option<StyleIdentifier>,
+        #[rasn(tag(context, 18), identifier = "logical-source")]
+        pub logical_source: Option<ObjectOrClassIdentifier>,
+        #[rasn(tag(context, 21))]
+        pub balance: Option<SequenceOf<ObjectOrClassIdentifier>>,
+        #[rasn(tag(context, 22))]
+        pub colour: Option<Colour>,
+        #[rasn(tag(context, 29), identifier = "colour-of-layout-object")]
+        pub colour_of_layout_object: Option<ColourExpression>,
+        #[rasn(tag(context, 30), identifier = "object-colour-table")]
+        pub object_colour_table: Option<ColourTable>,
+        #[rasn(tag(context, 31), identifier = "content-background-colour")]
+        pub content_background_colour: Option<ContentBackgroundColour>,
+        #[rasn(tag(context, 32), identifier = "content-foreground-colour")]
+        pub content_foreground_colour: Option<ContentForegroundColour>,
+        #[rasn(tag(context, 33), identifier = "content-colour-table")]
+        pub content_colour_table: Option<ColourTable>,
+        #[rasn(tag(context, 23))]
+        pub border: Option<Border>,
+        #[rasn(tag(context, 24))]
+        pub resource: Option<ResourceName>,
+        #[rasn(tag(context, 25), identifier = "application-comments")]
+        pub application_comments: Option<OctetString>,
+        #[rasn(tag(context, 34))]
+        pub enciphered: Option<Enciphered>,
+        #[rasn(tag(context, 35))]
+        pub sealed: Option<Sealed>,
+        #[rasn(tag(context, 52), identifier = "presentation-time")]
+        pub presentation_time: Option<PresentationTime>,
+    }
+    impl LayoutClassDescriptorBody {
+        pub fn new(
+            object_class_identifier: ObjectOrClassIdentifier,
+            generator_for_subordinates: Option<ConstructionExpression>,
+            content_portions: Option<SequenceOf<NumericString>>,
+            position: Option<LayoutClassDescriptorBodyPosition>,
+            dimensions: Option<DimensionSpec>,
+            transparency: Option<Transparency>,
+            presentation_attributes: Option<PresentationAttributes>,
+            default_value_lists: Option<DefaultValueListsLayout>,
+            user_readable_comments: Option<CommentString>,
+            bindings: Option<SetOf<BindingPair>>,
+            content_generator: Option<StringExpression>,
+            layout_path: Option<OneOfFourAngles>,
+            layout_stream_categories: Option<SetOf<CategoryName>>,
+            layout_stream_sub_categories: Option<SetOf<CategoryName>>,
+            permitted_categories: Option<SetOf<CategoryName>>,
+            user_visible_name: Option<CommentString>,
+            page_position: Option<MeasurePair>,
+            medium_type: Option<MediumType>,
+            presentation_style: Option<StyleIdentifier>,
+            logical_source: Option<ObjectOrClassIdentifier>,
+            balance: Option<SequenceOf<ObjectOrClassIdentifier>>,
+            colour: Option<Colour>,
+            colour_of_layout_object: Option<ColourExpression>,
+            object_colour_table: Option<ColourTable>,
+            content_background_colour: Option<ContentBackgroundColour>,
+            content_foreground_colour: Option<ContentForegroundColour>,
+            content_colour_table: Option<ColourTable>,
+            border: Option<Border>,
+            resource: Option<ResourceName>,
+            application_comments: Option<OctetString>,
+            enciphered: Option<Enciphered>,
+            sealed: Option<Sealed>,
+            presentation_time: Option<PresentationTime>,
+        ) -> Self {
+            Self {
+                object_class_identifier,
+                generator_for_subordinates,
+                content_portions,
+                position,
+                dimensions,
+                transparency,
+                presentation_attributes,
+                default_value_lists,
+                user_readable_comments,
+                bindings,
+                content_generator,
+                layout_path,
+                layout_stream_categories,
+                layout_stream_sub_categories,
+                permitted_categories,
+                user_visible_name,
+                page_position,
+                medium_type,
+                presentation_style,
+                logical_source,
+                balance,
+                colour,
+                colour_of_layout_object,
+                object_colour_table,
+                content_background_colour,
+                content_foreground_colour,
+                content_colour_table,
+                border,
+                resource,
+                application_comments,
+                enciphered,
+                sealed,
+                presentation_time,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Layout-Object-Descriptor")]
+    pub struct LayoutObjectDescriptor {
+        #[rasn(identifier = "object-type")]
+        pub object_type: Option<LayoutObjectType>,
+        #[rasn(identifier = "descriptor-body")]
+        pub descriptor_body: Option<LayoutObjectDescriptorBody>,
+    }
+    impl LayoutObjectDescriptor {
+        pub fn new(
+            object_type: Option<LayoutObjectType>,
+            descriptor_body: Option<LayoutObjectDescriptorBody>,
+        ) -> Self {
+            Self {
+                object_type,
+                descriptor_body,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Layout-Object-Descriptor-Body")]
+    pub struct LayoutObjectDescriptorBody {
+        #[rasn(identifier = "object-identifier")]
+        pub object_identifier: Option<ObjectOrClassIdentifier>,
+        #[rasn(tag(context, 0))]
+        pub subordinates: Option<SequenceOf<NumericString>>,
+        #[rasn(tag(context, 1), identifier = "content-portions")]
+        pub content_portions: Option<SequenceOf<NumericString>>,
+        #[rasn(tag(context, 2), identifier = "object-class")]
+        pub object_class: Option<ObjectOrClassIdentifier>,
+        #[rasn(tag(context, 3))]
+        pub position: Option<MeasurePair>,
+        #[rasn(tag(context, 4))]
+        pub dimensions: Option<DimensionPair>,
+        #[rasn(tag(context, 5))]
+        pub transparency: Option<Transparency>,
+        #[rasn(tag(context, 6), identifier = "presentation-attributes")]
+        pub presentation_attributes: Option<PresentationAttributes>,
+        #[rasn(tag(context, 7), identifier = "default-value-lists")]
+        pub default_value_lists: Option<DefaultValueListsLayout>,
+        #[rasn(tag(context, 8), identifier = "user-readable-comments")]
+        pub user_readable_comments: Option<CommentString>,
+        #[rasn(tag(context, 9))]
+        pub bindings: Option<SetOf<BindingPair>>,
+        #[rasn(tag(context, 11), identifier = "layout-path")]
+        pub layout_path: Option<OneOfFourAngles>,
+        #[rasn(tag(context, 12), identifier = "imaging-order")]
+        pub imaging_order: Option<SequenceOf<NumericString>>,
+        #[rasn(tag(context, 36), identifier = "layout-stream-categories")]
+        pub layout_stream_categories: Option<SetOf<CategoryName>>,
+        #[rasn(tag(context, 37), identifier = "layout-stream-sub-categories")]
+        pub layout_stream_sub_categories: Option<SetOf<CategoryName>>,
+        #[rasn(tag(context, 13), identifier = "permitted-categories")]
+        pub permitted_categories: Option<SetOf<CategoryName>>,
+        #[rasn(tag(context, 14), identifier = "user-visible-name")]
+        pub user_visible_name: Option<CommentString>,
+        #[rasn(tag(context, 15), identifier = "page-position")]
+        pub page_position: Option<MeasurePair>,
+        #[rasn(tag(context, 16), identifier = "medium-type")]
+        pub medium_type: Option<MediumType>,
+        #[rasn(tag(context, 17), identifier = "presentation-style")]
+        pub presentation_style: Option<StyleIdentifier>,
+        #[rasn(tag(context, 21))]
+        pub balance: Option<SequenceOf<ObjectOrClassIdentifier>>,
+        #[rasn(tag(context, 22))]
+        pub colour: Option<Colour>,
+        #[rasn(tag(context, 29), identifier = "colour-of-layout-object")]
+        pub colour_of_layout_object: Option<ColourExpression>,
+        #[rasn(tag(context, 30), identifier = "object-colour-table")]
+        pub object_colour_table: Option<ColourTable>,
+        #[rasn(tag(context, 31), identifier = "content-background-colour")]
+        pub content_background_colour: Option<ContentBackgroundColour>,
+        #[rasn(tag(context, 32), identifier = "content-foreground-colour")]
+        pub content_foreground_colour: Option<ContentForegroundColour>,
+        #[rasn(tag(context, 33), identifier = "content-colour-table")]
+        pub content_colour_table: Option<ColourTable>,
+        #[rasn(tag(context, 23))]
+        pub border: Option<Border>,
+        #[rasn(tag(context, 25), identifier = "application-comments")]
+        pub application_comments: Option<OctetString>,
+        #[rasn(tag(context, 27))]
+        pub primary: Option<ObjectOrClassIdentifier>,
+        #[rasn(tag(context, 28))]
+        pub alternative: Option<ObjectOrClassIdentifier>,
+        #[rasn(tag(context, 34))]
+        pub enciphered: Option<Enciphered>,
+        #[rasn(tag(context, 35))]
+        pub sealed: Option<Sealed>,
+        #[rasn(tag(context, 52), identifier = "presentation-time")]
+        pub presentation_time: Option<PresentationTime>,
+    }
+    impl LayoutObjectDescriptorBody {
+        pub fn new(
+            object_identifier: Option<ObjectOrClassIdentifier>,
+            subordinates: Option<SequenceOf<NumericString>>,
+            content_portions: Option<SequenceOf<NumericString>>,
+            object_class: Option<ObjectOrClassIdentifier>,
+            position: Option<MeasurePair>,
+            dimensions: Option<DimensionPair>,
+            transparency: Option<Transparency>,
+            presentation_attributes: Option<PresentationAttributes>,
+            default_value_lists: Option<DefaultValueListsLayout>,
+            user_readable_comments: Option<CommentString>,
+            bindings: Option<SetOf<BindingPair>>,
+            layout_path: Option<OneOfFourAngles>,
+            imaging_order: Option<SequenceOf<NumericString>>,
+            layout_stream_categories: Option<SetOf<CategoryName>>,
+            layout_stream_sub_categories: Option<SetOf<CategoryName>>,
+            permitted_categories: Option<SetOf<CategoryName>>,
+            user_visible_name: Option<CommentString>,
+            page_position: Option<MeasurePair>,
+            medium_type: Option<MediumType>,
+            presentation_style: Option<StyleIdentifier>,
+            balance: Option<SequenceOf<ObjectOrClassIdentifier>>,
+            colour: Option<Colour>,
+            colour_of_layout_object: Option<ColourExpression>,
+            object_colour_table: Option<ColourTable>,
+            content_background_colour: Option<ContentBackgroundColour>,
+            content_foreground_colour: Option<ContentForegroundColour>,
+            content_colour_table: Option<ColourTable>,
+            border: Option<Border>,
+            application_comments: Option<OctetString>,
+            primary: Option<ObjectOrClassIdentifier>,
+            alternative: Option<ObjectOrClassIdentifier>,
+            enciphered: Option<Enciphered>,
+            sealed: Option<Sealed>,
+            presentation_time: Option<PresentationTime>,
+        ) -> Self {
+            Self {
+                object_identifier,
+                subordinates,
+                content_portions,
+                object_class,
+                position,
+                dimensions,
+                transparency,
+                presentation_attributes,
+                default_value_lists,
+                user_readable_comments,
+                bindings,
+                layout_path,
+                imaging_order,
+                layout_stream_categories,
+                layout_stream_sub_categories,
+                permitted_categories,
+                user_visible_name,
+                page_position,
+                medium_type,
+                presentation_style,
+                balance,
+                colour,
+                colour_of_layout_object,
+                object_colour_table,
+                content_background_colour,
+                content_foreground_colour,
+                content_colour_table,
+                border,
+                application_comments,
+                primary,
+                alternative,
+                enciphered,
+                sealed,
+                presentation_time,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Layout-Object-Type")]
+    pub struct LayoutObjectType(pub Integer);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum MeasurePairHorizontal {
+        #[rasn(tag(context, 0))]
+        fixed(Integer),
+        #[rasn(tag(context, 4), identifier = "not-present")]
+        not_present(()),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum MeasurePairVertical {
+        #[rasn(tag(context, 0))]
+        fixed(Integer),
+        #[rasn(tag(context, 4), identifier = "not-present")]
+        not_present(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Measure-Pair")]
+    pub struct MeasurePair {
+        pub horizontal: MeasurePairHorizontal,
+        pub vertical: MeasurePairVertical,
+    }
+    impl MeasurePair {
+        pub fn new(horizontal: MeasurePairHorizontal, vertical: MeasurePairVertical) -> Self {
+            Self {
+                horizontal,
+                vertical,
+            }
+        }
+    }
+    #[doc = "  the choice 'not-present' indicates that the parameter is not present"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Medium-Type")]
+    pub struct MediumType {
+        #[rasn(identifier = "nominal-page-size")]
+        pub nominal_page_size: Option<MeasurePair>,
+        #[rasn(identifier = "side-of-sheet")]
+        pub side_of_sheet: Option<Integer>,
+        #[rasn(tag(context, 3), identifier = "colour-of-medium")]
+        pub colour_of_medium: Option<ColourOfMedium>,
+    }
+    impl MediumType {
+        pub fn new(
+            nominal_page_size: Option<MeasurePair>,
+            side_of_sheet: Option<Integer>,
+            colour_of_medium: Option<ColourOfMedium>,
+        ) -> Self {
+            Self {
+                nominal_page_size,
+                side_of_sheet,
+                colour_of_medium,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "One-Of-Four-Angles")]
+    pub struct OneOfFourAngles(pub Integer);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct PositionSpecOffset {
+        #[rasn(tag(context, 0))]
+        pub leading: Option<Integer>,
+        #[rasn(tag(context, 1))]
+        pub trailing: Option<Integer>,
+        #[rasn(tag(context, 2), identifier = "left-hand")]
+        pub left_hand: Option<Integer>,
+        #[rasn(tag(context, 3), identifier = "right-hand")]
+        pub right_hand: Option<Integer>,
+    }
+    impl PositionSpecOffset {
+        pub fn new(
+            leading: Option<Integer>,
+            trailing: Option<Integer>,
+            left_hand: Option<Integer>,
+            right_hand: Option<Integer>,
+        ) -> Self {
+            Self {
+                leading,
+                trailing,
+                left_hand,
+                right_hand,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct PositionSpecSeparation {
+        #[rasn(tag(context, 0))]
+        pub leading: Option<Integer>,
+        #[rasn(tag(context, 1))]
+        pub trailing: Option<Integer>,
+        #[rasn(tag(context, 2))]
+        pub centre: Option<Integer>,
+    }
+    impl PositionSpecSeparation {
+        pub fn new(
+            leading: Option<Integer>,
+            trailing: Option<Integer>,
+            centre: Option<Integer>,
+        ) -> Self {
+            Self {
+                leading,
+                trailing,
+                centre,
+            }
+        }
+    }
+    #[doc = "  See ITU-T Rec. T.424 | ISO/IEC 8613-14"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Position-Spec")]
+    pub struct PositionSpec {
+        #[rasn(tag(context, 0))]
+        pub offset: Option<PositionSpecOffset>,
+        #[rasn(tag(context, 1))]
+        pub separation: Option<PositionSpecSeparation>,
+        #[rasn(tag(context, 2))]
+        pub alignment: Option<Integer>,
+        #[rasn(tag(context, 3), identifier = "fill-order")]
+        pub fill_order: Option<Integer>,
+    }
+    impl PositionSpec {
+        pub fn new(
+            offset: Option<PositionSpecOffset>,
+            separation: Option<PositionSpecSeparation>,
+            alignment: Option<Integer>,
+            fill_order: Option<Integer>,
+        ) -> Self {
+            Self {
+                offset,
+                separation,
+                alignment,
+                fill_order,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Sealed {
+        #[rasn(tag(context, 0), identifier = "sealed-status")]
+        pub sealed_status: Integer,
+        #[rasn(tag(context, 1), identifier = "seal-ids")]
+        pub seal_ids: Option<SetOf<Integer>>,
+    }
+    impl Sealed {
+        pub fn new(sealed_status: Integer, seal_ids: Option<SetOf<Integer>>) -> Self {
+            Self {
+                sealed_status,
+                seal_ids,
+            }
+        }
+    }
+    #[doc = "  the choice 'not-present' indicates that the parameter is not present"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Transparency(pub Integer);
+}

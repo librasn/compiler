@@ -1,0 +1,21 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q1248.3_2001_IN-SCF-SRF-ops-args.asn1
+---
+Error matching ASN syntax at while parsing:
+     ╭─[line 278, column 2]
+     │
+     │ 
+ 275 │  -- Direction: SRF -> SCF, Timer: Tcg
+ 276 │  -- This operation is used to request the SCF to reduce the rate at which specific service requests are sent to
+ 277 │  -- the SRF.
+ 278 │  SRFCallGapArg{B1:b1, B2:b2} ::= SEQUENCE { ◀▪▪▪▪▪▪▪▪▪▪ FAILED AT THIS LINE
+ 279 │    sRFgapCriteria  [0]  SRFGapCriteria{b2},
+ 280 │    gapIndicators   [1]  GapIndicators,
+ 281 │    controlType     [2]  ControlType OPTIONAL,
+ 282 │    ...,
+ 283 │    ...,
+ 284 │    extensions      [30]  Extensions{b1} OPTIONAL
+ 285 │  }
+     │
+─────╯

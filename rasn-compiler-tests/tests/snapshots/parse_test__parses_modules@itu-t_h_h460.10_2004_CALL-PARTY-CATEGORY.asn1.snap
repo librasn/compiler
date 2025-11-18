@@ -1,0 +1,44 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_h_h460.10_2004_CALL-PARTY-CATEGORY.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod call_party_category {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=255"))]
+    pub struct CallPartyCategory(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct CallPartyCategoryInfo {
+        #[rasn(identifier = "callPartyCategory")]
+        pub call_party_category: Option<CallPartyCategory>,
+        #[rasn(identifier = "originatingLineInfo")]
+        pub originating_line_info: Option<OriginatingLineInfo>,
+    }
+    impl CallPartyCategoryInfo {
+        pub fn new(
+            call_party_category: Option<CallPartyCategory>,
+            originating_line_info: Option<OriginatingLineInfo>,
+        ) -> Self {
+            Self {
+                call_party_category,
+                originating_line_info,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=255"))]
+    pub struct OriginatingLineInfo(pub u8);
+}

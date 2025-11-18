@@ -1,0 +1,2964 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_t_t128_2008_AS-PROTOCOL-for-PER-encoding.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod as_protocol_for_per_encoding {
+    extern crate alloc;
+    use super::gcc_protocol::{H221NonStandardIdentifier, Key, NonStandardParameter, UserID};
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ASNonStandardPDU {
+        #[rasn(identifier = "nonStandardParameter")]
+        pub non_standard_parameter: NonStandardParameter,
+    }
+    impl ASNonStandardPDU {
+        pub fn new(non_standard_parameter: NonStandardParameter) -> Self {
+            Self {
+                non_standard_parameter,
+            }
+        }
+    }
+    #[doc = " T.50 String"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=255"))]
+    pub struct ASString(pub OctetString);
+    #[doc = " General Types"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ActivateWindowRequest {
+        #[rasn(identifier = "activationWindow")]
+        pub activation_window: WindowID,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl ActivateWindowRequest {
+        pub fn new(
+            activation_window: WindowID,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                activation_window,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ActivationHelpExtendedKeyRequest {
+        #[rasn(identifier = "activationWindow")]
+        pub activation_window: WindowID,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl ActivationHelpExtendedKeyRequest {
+        pub fn new(
+            activation_window: WindowID,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                activation_window,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ActivationHelpIndexKeyRequest {
+        #[rasn(identifier = "activationWindow")]
+        pub activation_window: WindowID,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl ActivationHelpIndexKeyRequest {
+        pub fn new(
+            activation_window: WindowID,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                activation_window,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ActivationHelpKeyRequest {
+        #[rasn(identifier = "activationWindow")]
+        pub activation_window: WindowID,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl ActivationHelpKeyRequest {
+        pub fn new(
+            activation_window: WindowID,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                activation_window,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum ApplicationPDUAction {
+        #[rasn(tag(context, 1))]
+        notifyHostedApplications(NotifyHostedApplications),
+        #[rasn(tag(context, 2))]
+        unhostApplication(UnhostApplication),
+        nonStandardAction(NonStandardParameter),
+    }
+    #[doc = "||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||"]
+    #[doc = ""]
+    #[doc = "           Begin AS PDU Definitions"]
+    #[doc = ""]
+    #[doc = "||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ApplicationPDU {
+        #[rasn(identifier = "shareDataHeader")]
+        pub share_data_header: ShareDataHeader,
+        pub action: ApplicationPDUAction,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl ApplicationPDU {
+        pub fn new(
+            share_data_header: ShareDataHeader,
+            action: ApplicationPDUAction,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                share_data_header,
+                action,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum BackgroundMixMode {
+        #[rasn(tag(context, 1))]
+        transparent(()),
+        #[rasn(tag(context, 2))]
+        opaque(()),
+        nonStandardBackgroundMixMode(NonStandardParameter),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum BitmapData {
+        #[rasn(tag(context, 0))]
+        uncompressedBitmapData(OctetString),
+        #[rasn(tag(context, 2))]
+        compressedBitmapData(CompressedBitmapData),
+        nonStandardBitmapData(NonStandardParameter),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct Brush {
+        #[rasn(identifier = "originX")]
+        pub origin_x: Option<Integer8>,
+        #[rasn(identifier = "originY")]
+        pub origin_y: Option<Integer8>,
+        pub style: Option<BrushStyle>,
+        pub hatch: Option<BrushHatch>,
+        #[rasn(size("7"))]
+        pub pattern: Option<OctetString>,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl Brush {
+        pub fn new(
+            origin_x: Option<Integer8>,
+            origin_y: Option<Integer8>,
+            style: Option<BrushStyle>,
+            hatch: Option<BrushHatch>,
+            pattern: Option<OctetString>,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                origin_x,
+                origin_y,
+                style,
+                hatch,
+                pattern,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum BrushHatch {
+        style(HatchStyle),
+        patternZero(Integer8),
+        nonStandardBrushHatch(NonStandardParameter),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum BrushStyle {
+        #[rasn(tag(context, 0))]
+        solid(()),
+        #[rasn(tag(context, 1))]
+        null(()),
+        #[rasn(tag(context, 2))]
+        hatched(()),
+        #[rasn(tag(context, 3))]
+        pattern(()),
+        nonStandardBrushStyle(NonStandardParameter),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct CacheBitmapOrder {
+        #[rasn(value("0..=2"), identifier = "cacheId")]
+        pub cache_id: u8,
+        #[rasn(identifier = "bitmapWidth")]
+        pub bitmap_width: Integer8,
+        #[rasn(identifier = "bitmapHeight")]
+        pub bitmap_height: Integer8,
+        #[rasn(value("1..=8"), identifier = "bitmapBitsPerPel")]
+        pub bitmap_bits_per_pel: u8,
+        #[rasn(identifier = "cacheIndex")]
+        pub cache_index: Integer16,
+        #[rasn(identifier = "bitmapData")]
+        pub bitmap_data: BitmapData,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl CacheBitmapOrder {
+        pub fn new(
+            cache_id: u8,
+            bitmap_width: Integer8,
+            bitmap_height: Integer8,
+            bitmap_bits_per_pel: u8,
+            cache_index: Integer16,
+            bitmap_data: BitmapData,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                cache_id,
+                bitmap_width,
+                bitmap_height,
+                bitmap_bits_per_pel,
+                cache_index,
+                bitmap_data,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct CacheColorTableOrder {
+        #[rasn(identifier = "cacheIndex")]
+        pub cache_index: Integer8,
+        #[rasn(identifier = "colorTable")]
+        pub color_table: ColorPalette,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl CacheColorTableOrder {
+        pub fn new(
+            cache_index: Integer8,
+            color_table: ColorPalette,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                cache_index,
+                color_table,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct CloseWindowRequest {
+        #[rasn(identifier = "activationWindow")]
+        pub activation_window: WindowID,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl CloseWindowRequest {
+        pub fn new(
+            activation_window: WindowID,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                activation_window,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct CodePointEvent {
+        #[rasn(identifier = "eventTime")]
+        pub event_time: Integer32,
+        #[rasn(identifier = "keyboardFlags")]
+        pub keyboard_flags: KeyboardFlags,
+        #[rasn(identifier = "codePoint")]
+        pub code_point: Integer16,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl CodePointEvent {
+        pub fn new(
+            event_time: Integer32,
+            keyboard_flags: KeyboardFlags,
+            code_point: Integer16,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                event_time,
+                keyboard_flags,
+                code_point,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct Color {
+        pub c1: Integer8,
+        pub c2: Integer8,
+        pub c3: Integer8,
+    }
+    impl Color {
+        pub fn new(c1: Integer8, c2: Integer8, c3: Integer8) -> Self {
+            Self { c1, c2, c3 }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum ColorAccuracyEnhancementRGBPredefinedRGBSpace {
+        nonStandardRGBSpace(NonStandardParameter),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct ColorAccuracyEnhancementRGBGeneralRGBParametersPrimaries {
+        pub red: ColorCIExyChromaticity,
+        pub green: ColorCIExyChromaticity,
+        pub blue: ColorCIExyChromaticity,
+    }
+    impl ColorAccuracyEnhancementRGBGeneralRGBParametersPrimaries {
+        pub fn new(
+            red: ColorCIExyChromaticity,
+            green: ColorCIExyChromaticity,
+            blue: ColorCIExyChromaticity,
+        ) -> Self {
+            Self { red, green, blue }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ColorAccuracyEnhancementRGBGeneralRGBParameters {
+        pub gamma: Option<f64>,
+        #[rasn(value("0.."), identifier = "colorTemperature")]
+        pub color_temperature: Option<Integer>,
+        pub primaries: Option<ColorAccuracyEnhancementRGBGeneralRGBParametersPrimaries>,
+    }
+    impl ColorAccuracyEnhancementRGBGeneralRGBParameters {
+        pub fn new(
+            gamma: Option<f64>,
+            color_temperature: Option<Integer>,
+            primaries: Option<ColorAccuracyEnhancementRGBGeneralRGBParametersPrimaries>,
+        ) -> Self {
+            Self {
+                gamma,
+                color_temperature,
+                primaries,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum ColorAccuracyEnhancementRGB {
+        predefinedRGBSpace(ColorAccuracyEnhancementRGBPredefinedRGBSpace),
+        generalRGBParameters(ColorAccuracyEnhancementRGBGeneralRGBParameters),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct ColorCIExyChromaticity {
+        pub x: f64,
+        pub y: f64,
+    }
+    impl ColorCIExyChromaticity {
+        pub fn new(x: f64, y: f64) -> Self {
+            Self { x, y }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ColorPalettePaletteRGB {
+        #[rasn(size("16..=256"))]
+        pub palette: SequenceOf<ColorRGB>,
+        pub enhancement: Option<ColorAccuracyEnhancementRGB>,
+    }
+    impl ColorPalettePaletteRGB {
+        pub fn new(
+            palette: SequenceOf<ColorRGB>,
+            enhancement: Option<ColorAccuracyEnhancementRGB>,
+        ) -> Self {
+            Self {
+                palette,
+                enhancement,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum ColorPalette {
+        paletteRGB(ColorPalettePaletteRGB),
+        nonStandardPalette(NonStandardParameter),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ColorPointerAttribute {
+        #[rasn(identifier = "cacheIndex")]
+        pub cache_index: Integer16,
+        #[rasn(identifier = "hotSpot")]
+        pub hot_spot: Point16,
+        pub width: Integer16,
+        pub height: Integer16,
+        #[rasn(identifier = "colorPointerData")]
+        pub color_pointer_data: OctetString,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl ColorPointerAttribute {
+        pub fn new(
+            cache_index: Integer16,
+            hot_spot: Point16,
+            width: Integer16,
+            height: Integer16,
+            color_pointer_data: OctetString,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                cache_index,
+                hot_spot,
+                width,
+                height,
+                color_pointer_data,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct ColorRGB {
+        pub red: Integer8,
+        pub green: Integer8,
+        pub blue: Integer8,
+    }
+    impl ColorRGB {
+        pub fn new(red: Integer8, green: Integer8, blue: Integer8) -> Self {
+            Self { red, green, blue }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ColorSpaceOrder {
+        #[rasn(identifier = "colorSpace")]
+        pub color_space: ColorSpaceSpecifier,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl ColorSpaceOrder {
+        pub fn new(
+            color_space: ColorSpaceSpecifier,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                color_space,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum ColorSpaceSpecifier {
+        colorSpaceDefault(()),
+        colorSpaceRGB(ColorAccuracyEnhancementRGB),
+        nonStandardColorSpace(NonStandardParameter),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct CompressedBitmapData {
+        #[rasn(identifier = "mainBodySize")]
+        pub main_body_size: Integer16,
+        #[rasn(identifier = "rowSize")]
+        pub row_size: Integer16,
+        #[rasn(identifier = "uncompressedSize")]
+        pub uncompressed_size: Integer16,
+        #[rasn(identifier = "compressedBitmap")]
+        pub compressed_bitmap: OctetString,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl CompressedBitmapData {
+        pub fn new(
+            main_body_size: Integer16,
+            row_size: Integer16,
+            uncompressed_size: Integer16,
+            compressed_bitmap: OctetString,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                main_body_size,
+                row_size,
+                uncompressed_size,
+                compressed_bitmap,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ConfirmDetachResponse {
+        #[rasn(identifier = "passControlFlag")]
+        pub pass_control_flag: bool,
+        #[rasn(identifier = "sendingReference")]
+        pub sending_reference: Integer16,
+        #[rasn(identifier = "originatorReference")]
+        pub originator_reference: Integer16,
+        #[rasn(identifier = "originatorID")]
+        pub originator_id: UserID,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl ConfirmDetachResponse {
+        pub fn new(
+            pass_control_flag: bool,
+            sending_reference: Integer16,
+            originator_reference: Integer16,
+            originator_id: UserID,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                pass_control_flag,
+                sending_reference,
+                originator_reference,
+                originator_id,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ConfirmRemoteShare {
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl ConfirmRemoteShare {
+        pub fn new(non_standard_parameters: Option<SequenceOf<NonStandardParameter>>) -> Self {
+            Self {
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ConfirmTakeResponse {
+        #[rasn(identifier = "passControlFlag")]
+        pub pass_control_flag: bool,
+        #[rasn(identifier = "sendingReference")]
+        pub sending_reference: Integer16,
+        #[rasn(identifier = "originatorReference")]
+        pub originator_reference: Integer16,
+        #[rasn(identifier = "originatorID")]
+        pub originator_id: UserID,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl ConfirmTakeResponse {
+        pub fn new(
+            pass_control_flag: bool,
+            sending_reference: Integer16,
+            originator_reference: Integer16,
+            originator_id: UserID,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                pass_control_flag,
+                sending_reference,
+                originator_reference,
+                originator_id,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum ControlPDUAction {
+        #[rasn(tag(context, 1))]
+        requestControl(RequestControl),
+        #[rasn(tag(context, 2))]
+        grantControl(GrantControl),
+        #[rasn(tag(context, 3))]
+        detach(Detach),
+        #[rasn(tag(context, 4))]
+        cooperate(Cooperate),
+        nonStandardAction(NonStandardParameter),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ControlPDU {
+        #[rasn(identifier = "shareDataHeader")]
+        pub share_data_header: ShareDataHeader,
+        pub action: ControlPDUAction,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl ControlPDU {
+        pub fn new(
+            share_data_header: ShareDataHeader,
+            action: ControlPDUAction,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                share_data_header,
+                action,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum ControlPriority {
+        #[rasn(tag(context, 1))]
+        always(()),
+        #[rasn(tag(context, 2))]
+        never(()),
+        #[rasn(tag(context, 3))]
+        confirm(()),
+        nonStandardControlPriority(NonStandardParameter),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct Cooperate {
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl Cooperate {
+        pub fn new(non_standard_parameters: Option<SequenceOf<NonStandardParameter>>) -> Self {
+            Self {
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum Coordinate {
+        absolute(Coordinate16),
+        delta(Coordinate8),
+        nonStandardCoordinate(NonStandardParameter),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("-32768..=32767"))]
+    pub struct Coordinate16(pub i16);
+    #[doc = " NOTE: ====================================================="]
+    #[doc = " NOTE: All abstract types defined shall be exported"]
+    #[doc = " NOTE: ====================================================="]
+    #[doc = " Base Types"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("-128..=127"))]
+    pub struct Coordinate8(pub i8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct DenyDetachResponse {
+        #[rasn(identifier = "passControlFlag")]
+        pub pass_control_flag: bool,
+        #[rasn(identifier = "sendingReference")]
+        pub sending_reference: Integer16,
+        #[rasn(identifier = "originatorReference")]
+        pub originator_reference: Integer16,
+        #[rasn(identifier = "originatorID")]
+        pub originator_id: UserID,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl DenyDetachResponse {
+        pub fn new(
+            pass_control_flag: bool,
+            sending_reference: Integer16,
+            originator_reference: Integer16,
+            originator_id: UserID,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                pass_control_flag,
+                sending_reference,
+                originator_reference,
+                originator_id,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct DenyPassResponse {
+        #[rasn(identifier = "passControlFlag")]
+        pub pass_control_flag: bool,
+        #[rasn(identifier = "sendingReference")]
+        pub sending_reference: Integer16,
+        #[rasn(identifier = "originatorReference")]
+        pub originator_reference: Integer16,
+        #[rasn(identifier = "originatorID")]
+        pub originator_id: UserID,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl DenyPassResponse {
+        pub fn new(
+            pass_control_flag: bool,
+            sending_reference: Integer16,
+            originator_reference: Integer16,
+            originator_id: UserID,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                pass_control_flag,
+                sending_reference,
+                originator_reference,
+                originator_id,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct DenyRemoteDetachResponse {
+        #[rasn(identifier = "passControlFlag")]
+        pub pass_control_flag: bool,
+        #[rasn(identifier = "sendingReference")]
+        pub sending_reference: Integer16,
+        #[rasn(identifier = "originatorReference")]
+        pub originator_reference: Integer16,
+        #[rasn(identifier = "originatorID")]
+        pub originator_id: UserID,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl DenyRemoteDetachResponse {
+        pub fn new(
+            pass_control_flag: bool,
+            sending_reference: Integer16,
+            originator_reference: Integer16,
+            originator_id: UserID,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                pass_control_flag,
+                sending_reference,
+                originator_reference,
+                originator_id,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum DenyRemoteShare {
+        remoteShareDenial(RemoteShareDenial),
+        nonStandardDenial(NonStandardParameter),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct DenyTakeResponse {
+        #[rasn(identifier = "passControlFlag")]
+        pub pass_control_flag: bool,
+        #[rasn(identifier = "sendingReference")]
+        pub sending_reference: Integer16,
+        #[rasn(identifier = "originatorReference")]
+        pub originator_reference: Integer16,
+        #[rasn(identifier = "originatorID")]
+        pub originator_id: UserID,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl DenyTakeResponse {
+        pub fn new(
+            pass_control_flag: bool,
+            sending_reference: Integer16,
+            originator_reference: Integer16,
+            originator_id: UserID,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                pass_control_flag,
+                sending_reference,
+                originator_reference,
+                originator_id,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct DesktopOriginOrder {
+        pub header: PrimaryOrderHeader,
+        #[rasn(identifier = "desktopLeft")]
+        pub desktop_left: Option<Coordinate>,
+        #[rasn(identifier = "desktopTop")]
+        pub desktop_top: Option<Coordinate>,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl DesktopOriginOrder {
+        pub fn new(
+            header: PrimaryOrderHeader,
+            desktop_left: Option<Coordinate>,
+            desktop_top: Option<Coordinate>,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                header,
+                desktop_left,
+                desktop_top,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum DesktopSaveAction {
+        #[rasn(tag(context, 0))]
+        desktopSave(()),
+        #[rasn(tag(context, 1))]
+        desktopRestore(()),
+        nonStandardDesktopSaveAction(NonStandardParameter),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct DesktopSaveOrder {
+        pub header: PrimaryOrderHeader,
+        #[rasn(identifier = "saveOffset")]
+        pub save_offset: Option<Integer32>,
+        #[rasn(identifier = "destLeft")]
+        pub dest_left: Option<Coordinate>,
+        #[rasn(identifier = "destTop")]
+        pub dest_top: Option<Coordinate>,
+        #[rasn(identifier = "destWidth")]
+        pub dest_width: Option<Coordinate>,
+        #[rasn(identifier = "destHeight")]
+        pub dest_height: Option<Coordinate>,
+        pub action: Option<DesktopSaveAction>,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl DesktopSaveOrder {
+        pub fn new(
+            header: PrimaryOrderHeader,
+            save_offset: Option<Integer32>,
+            dest_left: Option<Coordinate>,
+            dest_top: Option<Coordinate>,
+            dest_width: Option<Coordinate>,
+            dest_height: Option<Coordinate>,
+            action: Option<DesktopSaveAction>,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                header,
+                save_offset,
+                dest_left,
+                dest_top,
+                dest_width,
+                dest_height,
+                action,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[doc = " Order Types"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct DestinationBltOrder {
+        pub header: PrimaryOrderHeader,
+        #[rasn(identifier = "destLeft")]
+        pub dest_left: Option<Coordinate>,
+        #[rasn(identifier = "destTop")]
+        pub dest_top: Option<Coordinate>,
+        #[rasn(identifier = "destWidth")]
+        pub dest_width: Option<Coordinate>,
+        #[rasn(identifier = "destHeight")]
+        pub dest_height: Option<Coordinate>,
+        pub rop3: Option<ROP3>,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl DestinationBltOrder {
+        pub fn new(
+            header: PrimaryOrderHeader,
+            dest_left: Option<Coordinate>,
+            dest_top: Option<Coordinate>,
+            dest_width: Option<Coordinate>,
+            dest_height: Option<Coordinate>,
+            rop3: Option<ROP3>,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                header,
+                dest_left,
+                dest_top,
+                dest_width,
+                dest_height,
+                rop3,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct Detach {
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl Detach {
+        pub fn new(non_standard_parameters: Option<SequenceOf<NonStandardParameter>>) -> Self {
+            Self {
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct DetachRequest {
+        #[rasn(identifier = "passControlFlag")]
+        pub pass_control_flag: bool,
+        #[rasn(identifier = "sendingReference")]
+        pub sending_reference: Integer16,
+        #[rasn(identifier = "originatorID")]
+        pub originator_id: UserID,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl DetachRequest {
+        pub fn new(
+            pass_control_flag: bool,
+            sending_reference: Integer16,
+            originator_id: UserID,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                pass_control_flag,
+                sending_reference,
+                originator_id,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ExtendedTextOrder {
+        pub header: PrimaryOrderHeader,
+        #[rasn(identifier = "backMixMode")]
+        pub back_mix_mode: Option<BackgroundMixMode>,
+        #[rasn(identifier = "startX")]
+        pub start_x: Option<Coordinate>,
+        #[rasn(identifier = "startY")]
+        pub start_y: Option<Coordinate>,
+        #[rasn(identifier = "backgroundColor")]
+        pub background_color: Option<Color>,
+        #[rasn(identifier = "foregroundColor")]
+        pub foreground_color: Option<Color>,
+        #[rasn(identifier = "extraSpacing")]
+        pub extra_spacing: Option<Integer16>,
+        #[rasn(identifier = "totalBreakSpacing")]
+        pub total_break_spacing: Option<Integer16>,
+        #[rasn(identifier = "breakCount")]
+        pub break_count: Option<Integer16>,
+        #[rasn(identifier = "fontHeight")]
+        pub font_height: Option<Integer16>,
+        #[rasn(identifier = "fontWidth")]
+        pub font_width: Option<Integer16>,
+        #[rasn(identifier = "fontWeight")]
+        pub font_weight: Option<Integer16>,
+        #[rasn(identifier = "textFlags1")]
+        pub text_flags1: Option<TextAttributeFlags>,
+        #[rasn(identifier = "fontID")]
+        pub font_id: Option<Integer16>,
+        #[rasn(identifier = "textFlags2")]
+        pub text_flags2: Option<ExtraTextFlags>,
+        #[rasn(identifier = "clipLeft")]
+        pub clip_left: Option<Coordinate>,
+        #[rasn(identifier = "clipTop")]
+        pub clip_top: Option<Coordinate>,
+        #[rasn(identifier = "clipRight")]
+        pub clip_right: Option<Coordinate>,
+        #[rasn(identifier = "clipBottom")]
+        pub clip_bottom: Option<Coordinate>,
+        #[rasn(size("1..=255"), identifier = "codePointList")]
+        pub code_point_list: Option<ASString>,
+        #[rasn(size("1..=127"), identifier = "deltaXList")]
+        pub delta_xlist: Option<SequenceOf<Coordinate>>,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl ExtendedTextOrder {
+        pub fn new(
+            header: PrimaryOrderHeader,
+            back_mix_mode: Option<BackgroundMixMode>,
+            start_x: Option<Coordinate>,
+            start_y: Option<Coordinate>,
+            background_color: Option<Color>,
+            foreground_color: Option<Color>,
+            extra_spacing: Option<Integer16>,
+            total_break_spacing: Option<Integer16>,
+            break_count: Option<Integer16>,
+            font_height: Option<Integer16>,
+            font_width: Option<Integer16>,
+            font_weight: Option<Integer16>,
+            text_flags1: Option<TextAttributeFlags>,
+            font_id: Option<Integer16>,
+            text_flags2: Option<ExtraTextFlags>,
+            clip_left: Option<Coordinate>,
+            clip_top: Option<Coordinate>,
+            clip_right: Option<Coordinate>,
+            clip_bottom: Option<Coordinate>,
+            code_point_list: Option<ASString>,
+            delta_xlist: Option<SequenceOf<Coordinate>>,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                header,
+                back_mix_mode,
+                start_x,
+                start_y,
+                background_color,
+                foreground_color,
+                extra_spacing,
+                total_break_spacing,
+                break_count,
+                font_height,
+                font_width,
+                font_weight,
+                text_flags1,
+                font_id,
+                text_flags2,
+                clip_left,
+                clip_top,
+                clip_right,
+                clip_bottom,
+                code_point_list,
+                delta_xlist,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[doc = " AS Protocol CodePage String"]
+    #[doc = " Bit Flag Types"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ExtraTextFlags(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct FlowResponsePDU {
+        #[rasn(value("0..=127"), identifier = "flowIdentifier")]
+        pub flow_identifier: u8,
+        #[rasn(identifier = "flowNumber")]
+        pub flow_number: Integer8,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl FlowResponsePDU {
+        pub fn new(
+            flow_identifier: u8,
+            flow_number: Integer8,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                flow_identifier,
+                flow_number,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct FlowStopPDU {
+        #[rasn(value("0..=127"), identifier = "flowIdentifier")]
+        pub flow_identifier: u8,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl FlowStopPDU {
+        pub fn new(
+            flow_identifier: u8,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                flow_identifier,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct FlowTestPDU {
+        #[rasn(value("0..=127"), identifier = "flowIdentifier")]
+        pub flow_identifier: u8,
+        #[rasn(identifier = "flowNumber")]
+        pub flow_number: Integer8,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl FlowTestPDU {
+        pub fn new(
+            flow_identifier: u8,
+            flow_number: Integer8,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                flow_identifier,
+                flow_number,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct FontAttribute {
+        #[rasn(identifier = "faceName")]
+        pub face_name: T50String,
+        #[rasn(identifier = "fontFlags")]
+        pub font_flags: FontAttributeFlags,
+        #[rasn(identifier = "averageWidth")]
+        pub average_width: Integer16,
+        pub height: Integer16,
+        #[rasn(identifier = "aspectX")]
+        pub aspect_x: Integer16,
+        #[rasn(identifier = "aspectY")]
+        pub aspect_y: Integer16,
+        pub signature1: Integer8,
+        pub signature2: Integer8,
+        pub signature3: Integer16,
+        #[rasn(identifier = "codePage")]
+        pub code_page: FontCodePage,
+        pub ascent: Integer16,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl FontAttribute {
+        pub fn new(
+            face_name: T50String,
+            font_flags: FontAttributeFlags,
+            average_width: Integer16,
+            height: Integer16,
+            aspect_x: Integer16,
+            aspect_y: Integer16,
+            signature1: Integer8,
+            signature2: Integer8,
+            signature3: Integer16,
+            code_page: FontCodePage,
+            ascent: Integer16,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                face_name,
+                font_flags,
+                average_width,
+                height,
+                aspect_x,
+                aspect_y,
+                signature1,
+                signature2,
+                signature3,
+                code_page,
+                ascent,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct FontAttributeFlags(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum FontCodePage {
+        #[rasn(tag(context, 0))]
+        allCodePoints(()),
+        #[rasn(tag(context, 255))]
+        coreCodePoints(()),
+        nonStandardFontCodePage(NonStandardParameter),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct FontPDU {
+        #[rasn(identifier = "shareDataHeader")]
+        pub share_data_header: ShareDataHeader,
+        #[rasn(identifier = "fontList")]
+        pub font_list: SequenceOf<FontAttribute>,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl FontPDU {
+        pub fn new(
+            share_data_header: ShareDataHeader,
+            font_list: SequenceOf<FontAttribute>,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                share_data_header,
+                font_list,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct FrameOrder {
+        pub header: PrimaryOrderHeader,
+        #[rasn(identifier = "destLeft")]
+        pub dest_left: Option<Coordinate>,
+        #[rasn(identifier = "destTop")]
+        pub dest_top: Option<Coordinate>,
+        #[rasn(identifier = "destWidth")]
+        pub dest_width: Option<Coordinate>,
+        #[rasn(identifier = "destHeight")]
+        pub dest_height: Option<Coordinate>,
+        pub rop3: Option<ROP3>,
+        #[rasn(identifier = "backgroundColor")]
+        pub background_color: Option<Color>,
+        #[rasn(identifier = "foregroundColor")]
+        pub foreground_color: Option<Color>,
+        pub brush: Option<Brush>,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl FrameOrder {
+        pub fn new(
+            header: PrimaryOrderHeader,
+            dest_left: Option<Coordinate>,
+            dest_top: Option<Coordinate>,
+            dest_width: Option<Coordinate>,
+            dest_height: Option<Coordinate>,
+            rop3: Option<ROP3>,
+            background_color: Option<Color>,
+            foreground_color: Option<Color>,
+            brush: Option<Brush>,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                header,
+                dest_left,
+                dest_top,
+                dest_width,
+                dest_height,
+                rop3,
+                background_color,
+                foreground_color,
+                brush,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum GeneralCompressionSpecifier {
+        v42bisCompression(V42bisCompression),
+        nonStandardCompression(NonStandardParameter),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct GrantControl {
+        #[rasn(identifier = "grantID")]
+        pub grant_id: UserID,
+        #[rasn(value("0..=2147483647"), identifier = "controlID")]
+        pub control_id: u32,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl GrantControl {
+        pub fn new(
+            grant_id: UserID,
+            control_id: u32,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                grant_id,
+                control_id,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum HatchStyle {
+        #[rasn(tag(context, 0))]
+        horizontal(()),
+        #[rasn(tag(context, 1))]
+        vertical(()),
+        #[rasn(tag(context, 2))]
+        forward(()),
+        #[rasn(tag(context, 3))]
+        backward(()),
+        #[rasn(tag(context, 4))]
+        cross(()),
+        #[rasn(tag(context, 5))]
+        diagonal(()),
+        nonStandardHatchStyle(NonStandardParameter),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct HostedWindowActiveIndication {
+        #[rasn(identifier = "activationID")]
+        pub activation_id: Integer16,
+        #[rasn(identifier = "activationWindow")]
+        pub activation_window: WindowID,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl HostedWindowActiveIndication {
+        pub fn new(
+            activation_id: Integer16,
+            activation_window: WindowID,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                activation_id,
+                activation_window,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct HostedWindowInvisibleIndication {
+        #[rasn(identifier = "activationID")]
+        pub activation_id: Integer16,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl HostedWindowInvisibleIndication {
+        pub fn new(
+            activation_id: Integer16,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                activation_id,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[doc = " Input Types"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum InputEvent {
+        #[rasn(tag(context, 12769))]
+        pointingDeviceEvent(PointingDeviceEvent),
+        #[rasn(tag(context, 1))]
+        codePointEvent(CodePointEvent),
+        #[rasn(tag(context, 2))]
+        virtualKeyEvent(VirtualKeyEvent),
+        #[rasn(tag(context, 0))]
+        synchronizeEvent(SynchronizeEvent),
+        nonStandardInputEvent(NonStandardParameter),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct InputPDU {
+        #[rasn(identifier = "shareDataHeader")]
+        pub share_data_header: ShareDataHeader,
+        #[rasn(identifier = "eventList")]
+        pub event_list: SequenceOf<InputEvent>,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl InputPDU {
+        pub fn new(
+            share_data_header: ShareDataHeader,
+            event_list: SequenceOf<InputEvent>,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                share_data_header,
+                event_list,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=4095"))]
+    pub struct Integer12(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=65535"))]
+    pub struct Integer16(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=4294967295"))]
+    pub struct Integer32(pub u32);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=255"))]
+    pub struct Integer8(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct KeyboardFlags(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct LineOrder {
+        pub header: PrimaryOrderHeader,
+        #[rasn(identifier = "backMixMode")]
+        pub back_mix_mode: Option<BackgroundMixMode>,
+        #[rasn(identifier = "startX")]
+        pub start_x: Option<Coordinate>,
+        #[rasn(identifier = "startY")]
+        pub start_y: Option<Coordinate>,
+        #[rasn(identifier = "endX")]
+        pub end_x: Option<Coordinate>,
+        #[rasn(identifier = "endY")]
+        pub end_y: Option<Coordinate>,
+        #[rasn(identifier = "backgroundColor")]
+        pub background_color: Option<Color>,
+        pub rop2: Option<ROP2>,
+        pub pen: Option<Pen>,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl LineOrder {
+        pub fn new(
+            header: PrimaryOrderHeader,
+            back_mix_mode: Option<BackgroundMixMode>,
+            start_x: Option<Coordinate>,
+            start_y: Option<Coordinate>,
+            end_x: Option<Coordinate>,
+            end_y: Option<Coordinate>,
+            background_color: Option<Color>,
+            rop2: Option<ROP2>,
+            pen: Option<Pen>,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                header,
+                back_mix_mode,
+                start_x,
+                start_y,
+                end_x,
+                end_y,
+                background_color,
+                rop2,
+                pen,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct LocalWindowActiveIndication {
+        #[rasn(identifier = "activationID")]
+        pub activation_id: Integer16,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl LocalWindowActiveIndication {
+        pub fn new(
+            activation_id: Integer16,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                activation_id,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum MediatedControlPDUAction {
+        #[rasn(tag(context, 1))]
+        takeControlRequest(TakeControlRequest),
+        #[rasn(tag(context, 2))]
+        passControlRequest(PassControlRequest),
+        #[rasn(tag(context, 3))]
+        detachRequest(DetachRequest),
+        #[rasn(tag(context, 5))]
+        confirmTakeResponse(ConfirmTakeResponse),
+        #[rasn(tag(context, 6))]
+        denyTakeResponse(DenyTakeResponse),
+        #[rasn(tag(context, 7))]
+        confirmDetachResponse(ConfirmDetachResponse),
+        #[rasn(tag(context, 8))]
+        denyDetachResponse(DenyDetachResponse),
+        #[rasn(tag(context, 9))]
+        denyPassResponse(DenyPassResponse),
+        #[rasn(tag(context, 10))]
+        remoteDetachRequest(RemoteDetachRequest),
+        #[rasn(tag(context, 11))]
+        denyRemoteDetachResponse(DenyRemoteDetachResponse),
+        nonStandardAction(NonStandardParameter),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct MediatedControlPDU {
+        #[rasn(identifier = "shareDataHeader")]
+        pub share_data_header: ShareDataHeader,
+        pub action: MediatedControlPDUAction,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl MediatedControlPDU {
+        pub fn new(
+            share_data_header: ShareDataHeader,
+            action: MediatedControlPDUAction,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                share_data_header,
+                action,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct MemoryBltOrder {
+        pub header: PrimaryOrderHeader,
+        #[rasn(identifier = "colorTableCacheIndex")]
+        pub color_table_cache_index: Option<Integer8>,
+        #[rasn(identifier = "bitmapCacheID")]
+        pub bitmap_cache_id: Option<Integer8>,
+        #[rasn(identifier = "destLeft")]
+        pub dest_left: Option<Coordinate>,
+        #[rasn(identifier = "destTop")]
+        pub dest_top: Option<Coordinate>,
+        #[rasn(identifier = "destWidth")]
+        pub dest_width: Option<Coordinate>,
+        #[rasn(identifier = "destHeight")]
+        pub dest_height: Option<Coordinate>,
+        pub rop3: Option<ROP3>,
+        #[rasn(identifier = "sourceX")]
+        pub source_x: Option<Coordinate>,
+        #[rasn(identifier = "sourceY")]
+        pub source_y: Option<Coordinate>,
+        #[rasn(identifier = "bitmapCacheIndex")]
+        pub bitmap_cache_index: Option<Integer16>,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl MemoryBltOrder {
+        pub fn new(
+            header: PrimaryOrderHeader,
+            color_table_cache_index: Option<Integer8>,
+            bitmap_cache_id: Option<Integer8>,
+            dest_left: Option<Coordinate>,
+            dest_top: Option<Coordinate>,
+            dest_width: Option<Coordinate>,
+            dest_height: Option<Coordinate>,
+            rop3: Option<ROP3>,
+            source_x: Option<Coordinate>,
+            source_y: Option<Coordinate>,
+            bitmap_cache_index: Option<Integer16>,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                header,
+                color_table_cache_index,
+                bitmap_cache_id,
+                dest_left,
+                dest_top,
+                dest_width,
+                dest_height,
+                rop3,
+                source_x,
+                source_y,
+                bitmap_cache_index,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct MemoryThreeWayBltOrder {
+        pub header: PrimaryOrderHeader,
+        #[rasn(identifier = "colorTableCacheIndex")]
+        pub color_table_cache_index: Option<Integer8>,
+        #[rasn(identifier = "bitmapCacheID")]
+        pub bitmap_cache_id: Option<Integer8>,
+        #[rasn(identifier = "destLeft")]
+        pub dest_left: Option<Coordinate>,
+        #[rasn(identifier = "destTop")]
+        pub dest_top: Option<Coordinate>,
+        #[rasn(identifier = "destWidth")]
+        pub dest_width: Option<Coordinate>,
+        #[rasn(identifier = "destHeight")]
+        pub dest_height: Option<Coordinate>,
+        pub rop3: Option<ROP3>,
+        #[rasn(identifier = "sourceX")]
+        pub source_x: Option<Coordinate>,
+        #[rasn(identifier = "sourceY")]
+        pub source_y: Option<Coordinate>,
+        #[rasn(identifier = "backgroundColor")]
+        pub background_color: Option<Color>,
+        #[rasn(identifier = "foregroundColor")]
+        pub foreground_color: Option<Color>,
+        pub brush: Option<Brush>,
+        #[rasn(identifier = "bitmapCacheIndex")]
+        pub bitmap_cache_index: Option<Integer16>,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl MemoryThreeWayBltOrder {
+        pub fn new(
+            header: PrimaryOrderHeader,
+            color_table_cache_index: Option<Integer8>,
+            bitmap_cache_id: Option<Integer8>,
+            dest_left: Option<Coordinate>,
+            dest_top: Option<Coordinate>,
+            dest_width: Option<Coordinate>,
+            dest_height: Option<Coordinate>,
+            rop3: Option<ROP3>,
+            source_x: Option<Coordinate>,
+            source_y: Option<Coordinate>,
+            background_color: Option<Color>,
+            foreground_color: Option<Color>,
+            brush: Option<Brush>,
+            bitmap_cache_index: Option<Integer16>,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                header,
+                color_table_cache_index,
+                bitmap_cache_id,
+                dest_left,
+                dest_top,
+                dest_width,
+                dest_height,
+                rop3,
+                source_x,
+                source_y,
+                background_color,
+                foreground_color,
+                brush,
+                bitmap_cache_index,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct MonoPointerAttribute {
+        #[rasn(identifier = "hotSpot")]
+        pub hot_spot: Point16,
+        pub width: Integer16,
+        pub height: Integer16,
+        #[rasn(identifier = "monoPointerData")]
+        pub mono_pointer_data: OctetString,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl MonoPointerAttribute {
+        pub fn new(
+            hot_spot: Point16,
+            width: Integer16,
+            height: Integer16,
+            mono_pointer_data: OctetString,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                hot_spot,
+                width,
+                height,
+                mono_pointer_data,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct NotifyHostedApplications {
+        #[rasn(identifier = "numberApplications")]
+        pub number_applications: Integer16,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl NotifyHostedApplications {
+        pub fn new(
+            number_applications: Integer16,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                number_applications,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct OpaqueRectangleOrder {
+        pub header: PrimaryOrderHeader,
+        #[rasn(identifier = "destLeft")]
+        pub dest_left: Option<Coordinate>,
+        #[rasn(identifier = "destTop")]
+        pub dest_top: Option<Coordinate>,
+        #[rasn(identifier = "destWidth")]
+        pub dest_width: Option<Coordinate>,
+        #[rasn(identifier = "destHeight")]
+        pub dest_height: Option<Coordinate>,
+        pub color: Option<Color>,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl OpaqueRectangleOrder {
+        pub fn new(
+            header: PrimaryOrderHeader,
+            dest_left: Option<Coordinate>,
+            dest_top: Option<Coordinate>,
+            dest_width: Option<Coordinate>,
+            dest_height: Option<Coordinate>,
+            color: Option<Color>,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                header,
+                dest_left,
+                dest_top,
+                dest_width,
+                dest_height,
+                color,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct PassControlRequest {
+        #[rasn(identifier = "passControlFlag")]
+        pub pass_control_flag: bool,
+        #[rasn(identifier = "sendingReference")]
+        pub sending_reference: Integer16,
+        #[rasn(identifier = "originatorID")]
+        pub originator_id: UserID,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl PassControlRequest {
+        pub fn new(
+            pass_control_flag: bool,
+            sending_reference: Integer16,
+            originator_id: UserID,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                pass_control_flag,
+                sending_reference,
+                originator_id,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct PatternBltOrder {
+        pub header: PrimaryOrderHeader,
+        #[rasn(identifier = "destLeft")]
+        pub dest_left: Option<Coordinate>,
+        #[rasn(identifier = "destTop")]
+        pub dest_top: Option<Coordinate>,
+        #[rasn(identifier = "destWidth")]
+        pub dest_width: Option<Coordinate>,
+        #[rasn(identifier = "destHeight")]
+        pub dest_height: Option<Coordinate>,
+        pub rop3: Option<ROP3>,
+        #[rasn(identifier = "backgroundColor")]
+        pub background_color: Option<Color>,
+        #[rasn(identifier = "foregroundColor")]
+        pub foreground_color: Option<Color>,
+        pub brush: Option<Brush>,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl PatternBltOrder {
+        pub fn new(
+            header: PrimaryOrderHeader,
+            dest_left: Option<Coordinate>,
+            dest_top: Option<Coordinate>,
+            dest_width: Option<Coordinate>,
+            dest_height: Option<Coordinate>,
+            rop3: Option<ROP3>,
+            background_color: Option<Color>,
+            foreground_color: Option<Color>,
+            brush: Option<Brush>,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                header,
+                dest_left,
+                dest_top,
+                dest_width,
+                dest_height,
+                rop3,
+                background_color,
+                foreground_color,
+                brush,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct Pen {
+        pub style: Option<PenStyle>,
+        #[rasn(value("1"))]
+        pub width: Option<Integer8>,
+        pub color: Option<Color>,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl Pen {
+        pub fn new(
+            style: Option<PenStyle>,
+            width: Option<Integer8>,
+            color: Option<Color>,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                style,
+                width,
+                color,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum PenStyle {
+        #[rasn(tag(context, 0))]
+        solid(()),
+        #[rasn(tag(context, 1))]
+        dashed(()),
+        #[rasn(tag(context, 2))]
+        dotted(()),
+        #[rasn(tag(context, 3), identifier = "dash-dot")]
+        dash_dot(()),
+        #[rasn(tag(context, 4), identifier = "dash-dot-dot")]
+        dash_dot_dot(()),
+        #[rasn(tag(context, 5))]
+        null(()),
+        nonStandardPenStyle(NonStandardParameter),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct Point16 {
+        pub x: Coordinate16,
+        pub y: Coordinate16,
+    }
+    impl Point16 {
+        pub fn new(x: Coordinate16, y: Coordinate16) -> Self {
+            Self { x, y }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct PointerDeviceCaptureIndication {
+        #[rasn(identifier = "activationID")]
+        pub activation_id: Integer16,
+        #[rasn(identifier = "activationWindow")]
+        pub activation_window: WindowID,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl PointerDeviceCaptureIndication {
+        pub fn new(
+            activation_id: Integer16,
+            activation_window: WindowID,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                activation_id,
+                activation_window,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum PointerPDUPointerData {
+        #[rasn(tag(context, 1))]
+        systemPointerType(SystemPointerType),
+        #[rasn(tag(context, 2))]
+        monoPointerAttribute(MonoPointerAttribute),
+        #[rasn(tag(context, 6))]
+        colorPointerAttribute(ColorPointerAttribute),
+        #[rasn(tag(context, 7))]
+        cachedPointerIndex(Integer16),
+        #[rasn(tag(context, 3))]
+        pointerPosition(Point16),
+        nonStandardPointer(NonStandardParameter),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct PointerPDU {
+        #[rasn(identifier = "shareDataHeader")]
+        pub share_data_header: ShareDataHeader,
+        #[rasn(identifier = "pointerData")]
+        pub pointer_data: PointerPDUPointerData,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl PointerPDU {
+        pub fn new(
+            share_data_header: ShareDataHeader,
+            pointer_data: PointerPDUPointerData,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                share_data_header,
+                pointer_data,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct PointingDeviceEvent {
+        #[rasn(identifier = "eventTime")]
+        pub event_time: Integer32,
+        #[rasn(identifier = "pointingDeviceFlags")]
+        pub pointing_device_flags: PointingDeviceFlags,
+        #[rasn(identifier = "pointingDeviceX")]
+        pub pointing_device_x: Coordinate16,
+        #[rasn(identifier = "pointingDeviceY")]
+        pub pointing_device_y: Coordinate16,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl PointingDeviceEvent {
+        pub fn new(
+            event_time: Integer32,
+            pointing_device_flags: PointingDeviceFlags,
+            pointing_device_x: Coordinate16,
+            pointing_device_y: Coordinate16,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                event_time,
+                pointing_device_flags,
+                pointing_device_x,
+                pointing_device_y,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PointingDeviceFlags(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum PrimaryOrder {
+        #[rasn(tag(context, 0))]
+        destinationBlt(DestinationBltOrder),
+        #[rasn(tag(context, 1))]
+        patternBlt(PatternBltOrder),
+        #[rasn(tag(context, 2))]
+        screenBlt(ScreenBltOrder),
+        #[rasn(tag(context, 13))]
+        memoryBlt(MemoryBltOrder),
+        #[rasn(tag(context, 14))]
+        memoryThreeWayBlt(MemoryThreeWayBltOrder),
+        #[rasn(tag(context, 5))]
+        text(TextOrder),
+        #[rasn(tag(context, 6))]
+        extendedText(ExtendedTextOrder),
+        #[rasn(tag(context, 9))]
+        frame(FrameOrder),
+        #[rasn(tag(context, 7))]
+        rectangle(RectangleOrder),
+        #[rasn(tag(context, 8))]
+        line(LineOrder),
+        #[rasn(tag(context, 10))]
+        opaqueRectangle(OpaqueRectangleOrder),
+        #[rasn(tag(context, 11))]
+        desktopSave(DesktopSaveOrder),
+        #[rasn(tag(context, 32))]
+        desktopOrigin(DesktopOriginOrder),
+        nonStandardPrimaryOrder(NonStandardParameter),
+    }
+    #[doc = " Common Header Types"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct PrimaryOrderHeader {
+        #[rasn(identifier = "boundsLeft")]
+        pub bounds_left: Option<Coordinate>,
+        #[rasn(identifier = "boundsTop")]
+        pub bounds_top: Option<Coordinate>,
+        #[rasn(identifier = "boundsRight")]
+        pub bounds_right: Option<Coordinate>,
+        #[rasn(identifier = "boundsBottom")]
+        pub bounds_bottom: Option<Coordinate>,
+    }
+    impl PrimaryOrderHeader {
+        pub fn new(
+            bounds_left: Option<Coordinate>,
+            bounds_top: Option<Coordinate>,
+            bounds_right: Option<Coordinate>,
+            bounds_bottom: Option<Coordinate>,
+        ) -> Self {
+            Self {
+                bounds_left,
+                bounds_top,
+                bounds_right,
+                bounds_bottom,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=255"))]
+    pub struct ROP2(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=255"))]
+    pub struct ROP3(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct Rectangle16 {
+        pub left: Coordinate16,
+        pub top: Coordinate16,
+        pub right: Coordinate16,
+        pub bottom: Coordinate16,
+    }
+    impl Rectangle16 {
+        pub fn new(
+            left: Coordinate16,
+            top: Coordinate16,
+            right: Coordinate16,
+            bottom: Coordinate16,
+        ) -> Self {
+            Self {
+                left,
+                top,
+                right,
+                bottom,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct RectangleOrder {
+        pub header: PrimaryOrderHeader,
+        #[rasn(identifier = "backMixMode")]
+        pub back_mix_mode: Option<BackgroundMixMode>,
+        #[rasn(identifier = "destLeft")]
+        pub dest_left: Option<Coordinate>,
+        #[rasn(identifier = "destTop")]
+        pub dest_top: Option<Coordinate>,
+        #[rasn(identifier = "destRight")]
+        pub dest_right: Option<Coordinate>,
+        #[rasn(identifier = "destBottom")]
+        pub dest_bottom: Option<Coordinate>,
+        #[rasn(identifier = "backgroundColor")]
+        pub background_color: Option<Color>,
+        #[rasn(identifier = "foregroundColor")]
+        pub foreground_color: Option<Color>,
+        pub brush: Option<Brush>,
+        pub rop2: Option<ROP2>,
+        pub pen: Option<Pen>,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl RectangleOrder {
+        pub fn new(
+            header: PrimaryOrderHeader,
+            back_mix_mode: Option<BackgroundMixMode>,
+            dest_left: Option<Coordinate>,
+            dest_top: Option<Coordinate>,
+            dest_right: Option<Coordinate>,
+            dest_bottom: Option<Coordinate>,
+            background_color: Option<Color>,
+            foreground_color: Option<Color>,
+            brush: Option<Brush>,
+            rop2: Option<ROP2>,
+            pen: Option<Pen>,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                header,
+                back_mix_mode,
+                dest_left,
+                dest_top,
+                dest_right,
+                dest_bottom,
+                background_color,
+                foreground_color,
+                brush,
+                rop2,
+                pen,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct RemoteDetachRequest {
+        #[rasn(identifier = "passControlFlag")]
+        pub pass_control_flag: bool,
+        #[rasn(identifier = "sendingReference")]
+        pub sending_reference: Integer16,
+        #[rasn(identifier = "originatorID")]
+        pub originator_id: UserID,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl RemoteDetachRequest {
+        pub fn new(
+            pass_control_flag: bool,
+            sending_reference: Integer16,
+            originator_id: UserID,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                pass_control_flag,
+                sending_reference,
+                originator_id,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum RemoteShareDenial {
+        #[rasn(tag(context, 1))]
+        incorrectPassword(()),
+        #[rasn(tag(context, 2))]
+        remoteShareNotEnabled(()),
+        #[rasn(tag(context, 3))]
+        remoteShareInOperationIncoming(()),
+        #[rasn(tag(context, 4))]
+        remoteShareInOperationOutgoing(()),
+        nonStandardRemoteShareDenial(NonStandardParameter),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum RemoteSharePDUAction {
+        #[rasn(tag(context, 1))]
+        requestRemoteShare(RequestRemoteShare),
+        #[rasn(tag(context, 2))]
+        confirmRemoteShare(ConfirmRemoteShare),
+        #[rasn(tag(context, 3))]
+        denyRemoteShare(DenyRemoteShare),
+        nonStandardAction(NonStandardParameter),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct RemoteSharePDU {
+        #[rasn(identifier = "shareDataHeader")]
+        pub share_data_header: ShareDataHeader,
+        pub action: RemoteSharePDUAction,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl RemoteSharePDU {
+        pub fn new(
+            share_data_header: ShareDataHeader,
+            action: RemoteSharePDUAction,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                share_data_header,
+                action,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct RequestControl {
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl RequestControl {
+        pub fn new(non_standard_parameters: Option<SequenceOf<NonStandardParameter>>) -> Self {
+            Self {
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct RequestRemoteShare {
+        #[rasn(identifier = "requestingID")]
+        pub requesting_id: UserID,
+        #[rasn(identifier = "encryptedPassword")]
+        pub encrypted_password: OctetString,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl RequestRemoteShare {
+        pub fn new(
+            requesting_id: UserID,
+            encrypted_password: OctetString,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                requesting_id,
+                encrypted_password,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct RestoreWindowRequest {
+        #[rasn(identifier = "activationWindow")]
+        pub activation_window: WindowID,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl RestoreWindowRequest {
+        pub fn new(
+            activation_window: WindowID,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                activation_window,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ScreenBltOrder {
+        pub header: PrimaryOrderHeader,
+        #[rasn(identifier = "destLeft")]
+        pub dest_left: Option<Coordinate>,
+        #[rasn(identifier = "destTop")]
+        pub dest_top: Option<Coordinate>,
+        #[rasn(identifier = "destWidth")]
+        pub dest_width: Option<Coordinate>,
+        #[rasn(identifier = "destHeight")]
+        pub dest_height: Option<Coordinate>,
+        pub rop3: Option<ROP3>,
+        #[rasn(identifier = "sourceX")]
+        pub source_x: Option<Coordinate>,
+        #[rasn(identifier = "sourceY")]
+        pub source_y: Option<Coordinate>,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl ScreenBltOrder {
+        pub fn new(
+            header: PrimaryOrderHeader,
+            dest_left: Option<Coordinate>,
+            dest_top: Option<Coordinate>,
+            dest_width: Option<Coordinate>,
+            dest_height: Option<Coordinate>,
+            rop3: Option<ROP3>,
+            source_x: Option<Coordinate>,
+            source_y: Option<Coordinate>,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                header,
+                dest_left,
+                dest_top,
+                dest_width,
+                dest_height,
+                rop3,
+                source_x,
+                source_y,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum SecondaryOrder {
+        #[rasn(tag(context, 0))]
+        cacheBitmap(CacheBitmapOrder),
+        #[rasn(tag(context, 1))]
+        cacheColorTable(CacheColorTableOrder),
+        #[rasn(tag(context, 2))]
+        colorSpaceOrder(ColorSpaceOrder),
+        #[rasn(tag(context, 3))]
+        nonStandardSecondaryOrder(NonStandardParameter),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ShareDataHeader {
+        #[rasn(identifier = "shareID")]
+        pub share_id: ShareID,
+        #[rasn(identifier = "generalCompressionSpecifier")]
+        pub general_compression_specifier: Option<GeneralCompressionSpecifier>,
+    }
+    impl ShareDataHeader {
+        pub fn new(
+            share_id: ShareID,
+            general_compression_specifier: Option<GeneralCompressionSpecifier>,
+        ) -> Self {
+            Self {
+                share_id,
+                general_compression_specifier,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ShareID(pub Integer32);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum SharePDU {
+        #[rasn(tag(context, 25))]
+        applicationPDU(ApplicationPDU),
+        #[rasn(tag(context, 20))]
+        controlPDU(ControlPDU),
+        #[rasn(tag(context, 66))]
+        flowResponsePDU(FlowResponsePDU),
+        #[rasn(tag(context, 67))]
+        flowStopPDU(FlowStopPDU),
+        #[rasn(tag(context, 65))]
+        flowTestPDU(FlowTestPDU),
+        #[rasn(tag(context, 11))]
+        fontPDU(FontPDU),
+        #[rasn(tag(context, 28))]
+        inputPDU(InputPDU),
+        #[rasn(tag(context, 29))]
+        mediatedControlPDU(MediatedControlPDU),
+        #[rasn(tag(context, 27))]
+        pointerPDU(PointerPDU),
+        #[rasn(tag(context, 30))]
+        remoteSharePDU(RemoteSharePDU),
+        #[rasn(tag(context, 31))]
+        synchronizePDU(SynchronizePDU),
+        #[rasn(tag(context, 1))]
+        updateBitmapPDU(UpdateBitmapPDU),
+        #[rasn(tag(context, 0))]
+        updateOrdersPDU(UpdateOrdersPDU),
+        #[rasn(tag(context, 3))]
+        updateSynchronizePDU(UpdateSynchronizePDU),
+        #[rasn(tag(context, 2))]
+        updatePalettePDU(UpdatePalettePDU),
+        #[rasn(tag(context, 23))]
+        windowActivationPDU(WindowActivationPDU),
+        #[rasn(tag(context, 24))]
+        windowListPDU(WindowListPDU),
+        asNonStandardPDU(ASNonStandardPDU),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("-32768..=32767"))]
+    pub struct Signed16(pub i16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct SynchronizeEvent {
+        #[rasn(identifier = "eventTime")]
+        pub event_time: Integer32,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl SynchronizeEvent {
+        pub fn new(
+            event_time: Integer32,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                event_time,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct SynchronizePDU {
+        #[rasn(identifier = "shareDataHeader")]
+        pub share_data_header: ShareDataHeader,
+        #[rasn(identifier = "targetUser")]
+        pub target_user: UserID,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl SynchronizePDU {
+        pub fn new(
+            share_data_header: ShareDataHeader,
+            target_user: UserID,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                share_data_header,
+                target_user,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum SystemPointerType {
+        #[rasn(tag(context, 0))]
+        null(()),
+        #[rasn(tag(context, 12512))]
+        default(()),
+        nonStandardSystemPointerValue(NonStandardParameter),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=255"))]
+    pub struct T50String(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct TakeControlRequest {
+        #[rasn(identifier = "passControlFlag")]
+        pub pass_control_flag: bool,
+        #[rasn(identifier = "sendingReference")]
+        pub sending_reference: Integer16,
+        #[rasn(identifier = "originatorReference")]
+        pub originator_reference: Integer16,
+        #[rasn(identifier = "originatorID")]
+        pub originator_id: UserID,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl TakeControlRequest {
+        pub fn new(
+            pass_control_flag: bool,
+            sending_reference: Integer16,
+            originator_reference: Integer16,
+            originator_id: UserID,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                pass_control_flag,
+                sending_reference,
+                originator_reference,
+                originator_id,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TextAttributeFlags(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct TextOrder {
+        pub header: PrimaryOrderHeader,
+        #[rasn(identifier = "backMixMode")]
+        pub back_mix_mode: Option<BackgroundMixMode>,
+        #[rasn(identifier = "startX")]
+        pub start_x: Option<Coordinate>,
+        #[rasn(identifier = "startY")]
+        pub start_y: Option<Coordinate>,
+        #[rasn(identifier = "backgroundColor")]
+        pub background_color: Option<Color>,
+        #[rasn(identifier = "foregroundColor")]
+        pub foreground_color: Option<Color>,
+        #[rasn(identifier = "extraSpacing")]
+        pub extra_spacing: Option<Integer16>,
+        #[rasn(identifier = "totalBreakSpacing")]
+        pub total_break_spacing: Option<Integer16>,
+        #[rasn(identifier = "breakCount")]
+        pub break_count: Option<Integer16>,
+        #[rasn(identifier = "fontHeight")]
+        pub font_height: Option<Integer16>,
+        #[rasn(identifier = "fontWidth")]
+        pub font_width: Option<Integer16>,
+        #[rasn(identifier = "fontWeight")]
+        pub font_weight: Option<Integer16>,
+        #[rasn(identifier = "textFlags")]
+        pub text_flags: Option<TextAttributeFlags>,
+        #[rasn(identifier = "fontID")]
+        pub font_id: Option<Integer16>,
+        #[rasn(size("1..=255"), identifier = "codePointList")]
+        pub code_point_list: Option<ASString>,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl TextOrder {
+        pub fn new(
+            header: PrimaryOrderHeader,
+            back_mix_mode: Option<BackgroundMixMode>,
+            start_x: Option<Coordinate>,
+            start_y: Option<Coordinate>,
+            background_color: Option<Color>,
+            foreground_color: Option<Color>,
+            extra_spacing: Option<Integer16>,
+            total_break_spacing: Option<Integer16>,
+            break_count: Option<Integer16>,
+            font_height: Option<Integer16>,
+            font_width: Option<Integer16>,
+            font_weight: Option<Integer16>,
+            text_flags: Option<TextAttributeFlags>,
+            font_id: Option<Integer16>,
+            code_point_list: Option<ASString>,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                header,
+                back_mix_mode,
+                start_x,
+                start_y,
+                background_color,
+                foreground_color,
+                extra_spacing,
+                total_break_spacing,
+                break_count,
+                font_height,
+                font_width,
+                font_weight,
+                text_flags,
+                font_id,
+                code_point_list,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct UnhostApplication {
+        #[rasn(identifier = "windowID")]
+        pub window_id: WindowID,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl UnhostApplication {
+        pub fn new(
+            window_id: WindowID,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                window_id,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct UpdateBitmapPDU {
+        #[rasn(identifier = "shareDataHeader")]
+        pub share_data_header: ShareDataHeader,
+        #[rasn(identifier = "destLeft")]
+        pub dest_left: Coordinate16,
+        #[rasn(identifier = "destTop")]
+        pub dest_top: Coordinate16,
+        #[rasn(identifier = "destRight")]
+        pub dest_right: Coordinate16,
+        #[rasn(identifier = "destBottom")]
+        pub dest_bottom: Coordinate16,
+        pub width: Integer16,
+        pub height: Integer16,
+        #[rasn(value("1..=8"), identifier = "bitsPerPixel")]
+        pub bits_per_pixel: u8,
+        #[rasn(identifier = "compressedFlag")]
+        pub compressed_flag: bool,
+        #[rasn(identifier = "bitmapData")]
+        pub bitmap_data: BitmapData,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl UpdateBitmapPDU {
+        pub fn new(
+            share_data_header: ShareDataHeader,
+            dest_left: Coordinate16,
+            dest_top: Coordinate16,
+            dest_right: Coordinate16,
+            dest_bottom: Coordinate16,
+            width: Integer16,
+            height: Integer16,
+            bits_per_pixel: u8,
+            compressed_flag: bool,
+            bitmap_data: BitmapData,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                share_data_header,
+                dest_left,
+                dest_top,
+                dest_right,
+                dest_bottom,
+                width,
+                height,
+                bits_per_pixel,
+                compressed_flag,
+                bitmap_data,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum UpdateOrder {
+        primaryOrder(PrimaryOrder),
+        secondaryOrder(SecondaryOrder),
+        nonStandardOrder(NonStandardParameter),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct UpdateOrdersPDU {
+        #[rasn(identifier = "shareDataHeader")]
+        pub share_data_header: ShareDataHeader,
+        #[rasn(identifier = "orderList")]
+        pub order_list: SequenceOf<UpdateOrder>,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl UpdateOrdersPDU {
+        pub fn new(
+            share_data_header: ShareDataHeader,
+            order_list: SequenceOf<UpdateOrder>,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                share_data_header,
+                order_list,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct UpdatePalettePDU {
+        #[rasn(identifier = "shareDataHeader")]
+        pub share_data_header: ShareDataHeader,
+        pub palette: ColorPalette,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl UpdatePalettePDU {
+        pub fn new(
+            share_data_header: ShareDataHeader,
+            palette: ColorPalette,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                share_data_header,
+                palette,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct UpdateSynchronizePDU {
+        #[rasn(identifier = "shareDataHeader")]
+        pub share_data_header: ShareDataHeader,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl UpdateSynchronizePDU {
+        pub fn new(
+            share_data_header: ShareDataHeader,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                share_data_header,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct V42bisCompression {
+        #[rasn(value("512..=65535"))]
+        pub p1: Option<u16>,
+        #[rasn(value("6..=250"))]
+        pub p2: Option<u8>,
+    }
+    impl V42bisCompression {
+        pub fn new(p1: Option<u16>, p2: Option<u8>) -> Self {
+            Self { p1, p2 }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct VirtualKeyEvent {
+        #[rasn(identifier = "eventTime")]
+        pub event_time: Integer32,
+        #[rasn(identifier = "keyboardFlags")]
+        pub keyboard_flags: KeyboardFlags,
+        #[rasn(identifier = "virtualKey")]
+        pub virtual_key: Integer16,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl VirtualKeyEvent {
+        pub fn new(
+            event_time: Integer32,
+            keyboard_flags: KeyboardFlags,
+            virtual_key: Integer16,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                event_time,
+                keyboard_flags,
+                virtual_key,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum WindowActivationPDUAction {
+        #[rasn(tag(context, 1))]
+        localWindowActive(LocalWindowActiveIndication),
+        #[rasn(tag(context, 2))]
+        hostedWindowActive(HostedWindowActiveIndication),
+        #[rasn(tag(context, 3))]
+        hostedWindowInvisible(HostedWindowInvisibleIndication),
+        #[rasn(tag(context, 4))]
+        pointerDeviceCapture(PointerDeviceCaptureIndication),
+        #[rasn(tag(context, 12769))]
+        activateWindow(ActivateWindowRequest),
+        #[rasn(tag(context, 12770))]
+        closeWindow(CloseWindowRequest),
+        #[rasn(tag(context, 12771))]
+        restoreWindow(RestoreWindowRequest),
+        #[rasn(tag(context, 12772))]
+        windowManagerMenu(WindowManagerMenuRequest),
+        #[rasn(tag(context, 12785))]
+        activationHelpKey(ActivationHelpKeyRequest),
+        #[rasn(tag(context, 12786))]
+        activationHelpIndexKey(ActivationHelpIndexKeyRequest),
+        #[rasn(tag(context, 12787))]
+        activationHelpExtendedKey(ActivationHelpExtendedKeyRequest),
+        nonStandardAction(NonStandardParameter),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct WindowActivationPDU {
+        #[rasn(identifier = "shareDataHeader")]
+        pub share_data_header: ShareDataHeader,
+        pub action: WindowActivationPDUAction,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl WindowActivationPDU {
+        pub fn new(
+            share_data_header: ShareDataHeader,
+            action: WindowActivationPDUAction,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                share_data_header,
+                action,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct WindowAttribute {
+        #[rasn(identifier = "windowID")]
+        pub window_id: WindowID,
+        #[rasn(identifier = "windowExtra")]
+        pub window_extra: Integer32,
+        #[rasn(identifier = "windowOwner")]
+        pub window_owner: WindowID,
+        #[rasn(identifier = "windowFlags")]
+        pub window_flags: WindowAttributeFlags,
+        #[rasn(identifier = "windowRectangle")]
+        pub window_rectangle: Rectangle16,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl WindowAttribute {
+        pub fn new(
+            window_id: WindowID,
+            window_extra: Integer32,
+            window_owner: WindowID,
+            window_flags: WindowAttributeFlags,
+            window_rectangle: Rectangle16,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                window_id,
+                window_extra,
+                window_owner,
+                window_flags,
+                window_rectangle,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct WindowAttributeFlags(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct WindowID(pub Integer32);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct WindowListPDU {
+        #[rasn(identifier = "shareDataHeader")]
+        pub share_data_header: ShareDataHeader,
+        #[rasn(identifier = "listTime")]
+        pub list_time: Integer16,
+        #[rasn(identifier = "listID")]
+        pub list_id: Integer16,
+        #[rasn(identifier = "windowAttributeList")]
+        pub window_attribute_list: SequenceOf<WindowAttribute>,
+        #[rasn(identifier = "windowTitleList")]
+        pub window_title_list: SequenceOf<WindowTitle>,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl WindowListPDU {
+        pub fn new(
+            share_data_header: ShareDataHeader,
+            list_time: Integer16,
+            list_id: Integer16,
+            window_attribute_list: SequenceOf<WindowAttribute>,
+            window_title_list: SequenceOf<WindowTitle>,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                share_data_header,
+                list_time,
+                list_id,
+                window_attribute_list,
+                window_title_list,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct WindowManagerMenuRequest {
+        #[rasn(identifier = "activationWindow")]
+        pub activation_window: WindowID,
+        #[rasn(identifier = "activationPoint")]
+        pub activation_point: Point16,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl WindowManagerMenuRequest {
+        pub fn new(
+            activation_window: WindowID,
+            activation_point: Point16,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                activation_window,
+                activation_point,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum WindowTitle {
+        #[rasn(value("255"))]
+        noTitle(Integer8),
+        titleString(T50String),
+        nonStandardWindowTitle(NonStandardParameter),
+    }
+}

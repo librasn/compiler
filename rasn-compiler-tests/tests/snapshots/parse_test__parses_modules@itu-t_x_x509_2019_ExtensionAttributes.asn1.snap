@@ -1,0 +1,687 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x509_2019_ExtensionAttributes.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod extension_attributes {
+    extern crate alloc;
+    use super::attribute_certificate_definitions::{
+        ACCEPTABLE_CERT_POLICIES, ACCEPTABLE_PRIVILEGE_POLICIES, ALLOWED_ATTRIBUTE_ASSIGNMENTS,
+        ATTRIBUTE_DESCRIPTOR, ATTRIBUTE_MAPPINGS, AUTHORITY_ATTRIBUTE_IDENTIFIER,
+        BASIC_ATT_CONSTRAINTS, DELEGATED_NAME_CONSTRAINTS, GROUP_AC, HOLDER_NAME_CONSTRAINTS,
+        ISSUED_ON_BEHALF_OF, NO_ASSERTION, NO_REV_AVAIL, ROLE_SPEC_CERT_IDENTIFIER, SINGLE_USE,
+        S_OAIDENTIFIER, TARGETING_INFORMATION, TIME_SPECIFICATION, USER_NOTICE,
+    };
+    use super::authentication_framework::*;
+    use super::certificate_extensions::{
+        ALT_SIGNATURE_ALGORITHM, ALT_SIGNATURE_VALUE, AUTHORITY_KEY_IDENTIFIER,
+        AUTHORIZATION_VALIDATION, A_AISSUING_DISTRIBUTION_POINT, BASE_UPDATE_TIME,
+        BASIC_CONSTRAINTS, CERTIFICATE_ISSUER, CERTIFICATE_POLICIES, C_RLDISTRIBUTION_POINTS,
+        C_RLNUMBER, C_RLSTREAM_IDENTIFIER, DELTA_CRLINDICATOR, DELTA_INFO, EXPIRED_CERTS_ON_CRL,
+        EXT_KEY_USAGE, FRESHEST_CRL, HOLD_INSTRUCTION_CODE, INVALIDITY_DATE, ISSUER_ALT_NAME,
+        ISSUING_DISTRIBUTION_POINT, KEY_USAGE, NAME_CONSTRAINTS, ORDERED_LIST, POLICY_CONSTRAINTS,
+        POLICY_MAPPINGS, PRIVATE_KEY_USAGE_PERIOD, REASON_CODE, REVOKED_GROUPS, STATUS_REFERRALS,
+        SUBJECT_ALT_NAME, SUBJECT_ALT_PUBLIC_KEY_INFO, SUBJECT_DIRECTORY_ATTRIBUTES,
+        SUBJECT_KEY_IDENTIFIER, TO_BE_REVOKED,
+    };
+    use super::information_framework::*;
+    use super::useful_definitions::ID_CE;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    #[non_exhaustive]
+    pub struct AnonymousExtensionAttributeValue {
+        #[rasn(
+            tag(context, 0),
+            default = "anonymous_extension_attribute_value_mandatory_default"
+        )]
+        pub mandatory: bool,
+        #[rasn(
+            tag(context, 1),
+            default = "anonymous_extension_attribute_value_critical_default"
+        )]
+        pub critical: bool,
+        #[rasn(tag(context, 2))]
+        pub ext: Any,
+    }
+    impl AnonymousExtensionAttributeValue {
+        pub fn new(mandatory: bool, critical: bool, ext: Any) -> Self {
+            Self {
+                mandatory,
+                critical,
+                ext,
+            }
+        }
+    }
+    fn anonymous_extension_attribute_value_mandatory_default() -> bool {
+        false
+    }
+    fn anonymous_extension_attribute_value_critical_default() -> bool {
+        false
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=1"))]
+    pub struct ExtensionAttributeValue(pub SetOf<AnonymousExtensionAttributeValue>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct ExtensionAttribute {
+        #[rasn(identifier = "type")]
+        pub r_type: Any,
+        pub value: ExtensionAttributeValue,
+    }
+    impl ExtensionAttribute {
+        pub fn new(r_type: Any, value: ExtensionAttributeValue) -> Self {
+            Self { r_type, value }
+        }
+    }
+    pub static ID_ASX_A_AISSUING_DISTRIBUTION_POINT: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_CE, &[63u32, 2u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_ASX_ACCEPTABLE_CERT_POLICIES: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[52u32, 2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ASX_ACCEPTABLE_PRIVILEGE_POLICIES: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_CE, &[57u32, 2u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_ASX_ALLOWED_ATTRIBUTE_ASSIGNMENTS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_CE, &[67u32, 2u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_ASX_ALT_SIGNATURE_ALGORITHM: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[73u32, 2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ASX_ALT_SIGNATURE_VALUE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[74u32, 2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ASX_ATTRIBUTE_DESCRIPTOR: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[48u32, 2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ASX_ATTRIBUTE_MAPPINGS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[68u32, 2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ASX_AUTHORITY_ATTRIBUTE_IDENTIFIER: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_CE, &[38u32, 2u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_ASX_AUTHORITY_KEY_IDENTIFIER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[35u32, 2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ASX_AUTHORIZATION_VALIDATION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[70u32, 2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ASX_BASE_UPDATE_TIME: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[51u32, 2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ASX_BASIC_ATT_CONSTRAINTS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[41u32, 2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ASX_BASIC_CONSTRAINTS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[19u32, 2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ASX_C_RLDISTRIBUTION_POINTS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[31u32, 2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ASX_C_RLNUMBER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[20u32, 2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ASX_C_RLSCOPE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[44u32, 2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ASX_C_RLSTREAM_IDENTIFIER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[40u32, 2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ASX_CERTIFICATE_ISSUER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[29u32, 2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ASX_CERTIFICATE_POLICIES: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[32u32, 2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ASX_DELEGATED_NAME_CONSTRAINTS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_CE, &[42u32, 2u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_ASX_DELTA_CRLINDICATOR: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[27u32, 2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ASX_DELTA_INFO: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[53u32, 2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ASX_EXPIRED_CERTS_ON_CRL: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[60u32, 2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ASX_EXT_KEY_USAGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[37u32, 2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ASX_FRESHEST_CRL: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[46u32, 2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ASX_GROUP_AC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[66u32, 2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ASX_HOLD_INSTRUCTION_CODE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[23u32, 2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ASX_HOLDER_NAME_CONSTRAINTS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[69u32, 2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ASX_INDIRECT_ISSUER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[61u32, 2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ASX_INHIBIT_ANY_POLICY: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[54u32, 2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ASX_INVALIDITY_DATE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[24u32, 2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ASX_ISSUED_ON_BEHALF_OF: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[64u32, 2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ASX_ISSUER_ALT_NAME: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[18u32, 2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ASX_ISSUING_DISTRIBUTION_POINT: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_CE, &[28u32, 2u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_ASX_KEY_USAGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[15u32, 2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ASX_NAME_CONSTRAINTS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[30u32, 2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ASX_NO_ASSERTION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[62u32, 2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ASX_NO_REV_AVAIL: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[56u32, 2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ASX_ORDERED_LIST: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[47u32, 2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ASX_POLICY_CONSTRAINTS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[36u32, 2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ASX_POLICY_MAPPINGS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[33u32, 2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ASX_PRIVATE_KEY_USAGE_PERIOD: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[16u32, 2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ASX_PROT_RESTRICT: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[71u32, 2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ASX_REASON_CODE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[21u32, 2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ASX_REVOKED_GROUPS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[59u32, 2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ASX_ROLE_SPEC_CERT_IDENTIFIER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[39u32, 2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ASX_S_OAIDENTIFIER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[50u32, 2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ASX_SINGLE_USE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[65u32, 2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ASX_STATUS_REFERRALS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[45u32, 2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ASX_SUBJECT_ALT_NAME: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[17u32, 2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ASX_SUBJECT_ALT_PUBLIC_KEY_INFO: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_CE, &[72u32, 2u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    #[doc = " The list of object identifiers for LDAP syntaxes"]
+    pub static ID_ASX_SUBJECT_DIRECTORY_ATTRIBUTES: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_CE, &[9u32, 2u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_ASX_SUBJECT_KEY_IDENTIFIER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[14u32, 2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ASX_TARGETING_INFORMATION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[55u32, 2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ASX_TIME_SPECIFICATION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[43u32, 2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ASX_TO_BE_REVOKED: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[58u32, 2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ASX_USER_NOTICE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[49u32, 2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_A_A_AISSUING_DISTRIBUTION_POINT: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_CE, &[63u32, 1u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_CE_A_ACCEPTABLE_CERT_POLICIES: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[52u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_A_ACCEPTABLE_PRIVILEGE_POLICIES: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_CE, &[57u32, 1u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_CE_A_ALLOWED_ATTRIBUTE_ASSIGNMENTS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_CE, &[67u32, 1u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_CE_A_ALT_SIGNATURE_ALGORITHM: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[73u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_A_ALT_SIGNATURE_VALUE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[74u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_A_ATTRIBUTE_DESCRIPTOR: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[48u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_A_ATTRIBUTE_MAPPINGS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[68u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_A_AUTHORITY_ATTRIBUTE_IDENTIFIER: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_CE, &[38u32, 1u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_CE_A_AUTHORITY_KEY_IDENTIFIER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[35u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_A_AUTHORIZATION_VALIDATION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[70u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_A_BASE_UPDATE_TIME: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[51u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_A_BASIC_ATT_CONSTRAINTS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[41u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_A_BASIC_CONSTRAINTS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[19u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_A_C_RLDISTRIBUTION_POINTS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[31u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_A_C_RLNUMBER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[20u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_A_C_RLSCOPE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[44u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_A_C_RLSTREAM_IDENTIFIER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[40u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_A_CERTIFICATE_ISSUER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[29u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_A_CERTIFICATE_POLICIES: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[32u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_A_DELEGATED_NAME_CONSTRAINTS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_CE, &[42u32, 1u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_CE_A_DELTA_CRLINDICATOR: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[27u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_A_DELTA_INFO: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[53u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_A_EXPIRED_CERTS_ON_CRL: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[60u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_A_EXT_KEY_USAGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[37u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_A_FRESHEST_CRL: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[46u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_A_GROUP_AC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[66u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_A_HOLD_INSTRUCTION_CODE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[23u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_A_HOLDER_NAME_CONSTRAINTS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[69u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_A_INDIRECT_ISSUER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[61u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_A_INHIBIT_ANY_POLICY: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[54u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_A_INVALIDITY_DATE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[24u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_A_ISSUED_ON_BEHALF_OF: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[64u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_A_ISSUER_ALT_NAME: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[18u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_A_ISSUING_DISTRIBUTION_POINT: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_CE, &[28u32, 1u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_CE_A_KEY_USAGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[15u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_A_NAME_CONSTRAINTS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[30u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_A_NO_ASSERTION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[62u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_A_NO_REV_AVAIL: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[56u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_A_ORDERED_LIST: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[47u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_A_POLICY_CONSTRAINTS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[36u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_A_POLICY_MAPPINGS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[33u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_A_PRIVATE_KEY_USAGE_PERIOD: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[16u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_A_PROT_RESTRICT: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[71u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_A_REASON_CODE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[21u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_A_REVOKED_GROUPS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[59u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_A_ROLE_SPEC_CERT_IDENTIFIER: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_CE, &[39u32, 1u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_CE_A_S_OAIDENTIFIER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[50u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_A_SINGLE_USE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[65u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_A_STATUS_REFERRALS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[45u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_A_SUBJECT_ALT_NAME: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[17u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_A_SUBJECT_ALT_PUBLIC_KEY_INFO: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_CE, &[72u32, 1u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    #[doc = " Object identifier for attribute types"]
+    pub static ID_CE_A_SUBJECT_DIRECTORY_ATTRIBUTES: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_CE, &[9u32, 1u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_CE_A_SUBJECT_KEY_IDENTIFIER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[14u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_A_TARGETING_INFORMATION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[55u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_A_TIME_SPECIFICATION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[43u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_A_TO_BE_REVOKED: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[58u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_A_USER_NOTICE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[49u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+}

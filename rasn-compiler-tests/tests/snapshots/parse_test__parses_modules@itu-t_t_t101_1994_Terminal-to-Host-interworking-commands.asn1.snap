@@ -1,0 +1,297 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_t_t101_1994_Terminal-to-Host-interworking-commands.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod terminal_to_host_interworking_commands {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AppliConnectReport {
+        #[rasn(tag(context, 0), identifier = "applicationConnectionId")]
+        pub application_connection_id: OctetString,
+    }
+    impl AppliConnectReport {
+        pub fn new(application_connection_id: OctetString) -> Self {
+            Self {
+                application_connection_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AppliDisconnectReport {
+        #[rasn(tag(context, 0), identifier = "applicationDisconnectionId")]
+        pub application_disconnection_id: OctetString,
+        #[rasn(
+            tag(context, 1),
+            default = "appli_disconnect_report_applicable_tariff_default",
+            identifier = "applicableTariff"
+        )]
+        pub applicable_tariff: bool,
+    }
+    impl AppliDisconnectReport {
+        pub fn new(application_disconnection_id: OctetString, applicable_tariff: bool) -> Self {
+            Self {
+                application_disconnection_id,
+                applicable_tariff,
+            }
+        }
+    }
+    fn appli_disconnect_report_applicable_tariff_default() -> bool {
+        true
+    }
+    #[doc = " vTX\t\t\t\t[30]  reserved for Syntax-Based-Videotex"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ChargingModifyRequest {
+        #[rasn(tag(context, 0))]
+        predefinedTariff(Integer),
+        #[rasn(tag(context, 1))]
+        nonpredefinedTariff(NonpredefinedTariff),
+        #[rasn(tag(context, 3))]
+        startAtConnectReport(bool),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct ChargingModifyResponse(pub bool);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct CostLimitInformationRequest {
+        #[rasn(tag(context, 0), identifier = "itemCostLimit")]
+        pub item_cost_limit: Option<RealNumber>,
+        #[rasn(tag(context, 1), identifier = "sessionCostLimit")]
+        pub session_cost_limit: Option<RealNumber>,
+        #[rasn(tag(context, 2), identifier = "tBCPriceLimit")]
+        pub t_bcprice_limit: Option<TBCPrice>,
+    }
+    impl CostLimitInformationRequest {
+        pub fn new(
+            item_cost_limit: Option<RealNumber>,
+            session_cost_limit: Option<RealNumber>,
+            t_bcprice_limit: Option<TBCPrice>,
+        ) -> Self {
+            Self {
+                item_cost_limit,
+                session_cost_limit,
+                t_bcprice_limit,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct CostLimitInformationResponse(pub bool);
+    #[doc = " value as defined in ISO 639 Annex B, alphabetical list of"]
+    #[doc = " letter symbols for languages. For example, Dutch language is"]
+    #[doc = " represented by \"NL\"."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum DataSyntaxRequest {
+        #[rasn(tag(context, 1))]
+        dataSyntaxISwitching(OctetString),
+        #[rasn(tag(context, 2))]
+        dataSyntaxIISwitching(OctetString),
+        #[rasn(tag(context, 3))]
+        dataSyntaxIIISwitching(OctetString),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ErrorMessage(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Identification {
+        #[rasn(tag(context, 0), identifier = "identificationCode")]
+        pub identification_code: IdentificationCode,
+        #[rasn(tag(context, 1), identifier = "identificationContents")]
+        pub identification_contents: OctetString,
+    }
+    impl Identification {
+        pub fn new(
+            identification_code: IdentificationCode,
+            identification_contents: OctetString,
+        ) -> Self {
+            Self {
+                identification_code,
+                identification_contents,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct IdentificationCode(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct IdentificationRequest {
+        #[rasn(tag(context, 0), identifier = "identificationCode")]
+        pub identification_code: IdentificationCode,
+    }
+    impl IdentificationRequest {
+        pub fn new(identification_code: IdentificationCode) -> Self {
+            Self {
+                identification_code,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct IdentificationResponse(pub SequenceOf<Identification>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ItemOverLimit {
+        #[rasn(tag(context, 0), identifier = "framePrice")]
+        pub frame_price: Option<RealNumber>,
+        #[rasn(tag(context, 1), identifier = "transactionPrice")]
+        pub transaction_price: Option<RealNumber>,
+        #[rasn(tag(context, 2), identifier = "proposedTBCPrice")]
+        pub proposed_tbcprice: Option<TBCPrice>,
+    }
+    impl ItemOverLimit {
+        pub fn new(
+            frame_price: Option<RealNumber>,
+            transaction_price: Option<RealNumber>,
+            proposed_tbcprice: Option<TBCPrice>,
+        ) -> Self {
+            Self {
+                frame_price,
+                transaction_price,
+                proposed_tbcprice,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct ItemOverLimitResponse(pub bool);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Language(pub OctetString);
+    #[doc = "\tdefault is FALSE"]
+    #[doc = "\tTRUE means wait for receipt of Application-Connection-Report"]
+    #[doc = "\tFALSE means start on receipt of Application-Connection-Report"]
+    #[doc = "\tor any data packet with Q = 0"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct NonpredefinedTariff {
+        #[rasn(tag(context, 0), identifier = "tBCPrice")]
+        pub t_bcprice: Option<TBCPrice>,
+        #[rasn(tag(context, 1), identifier = "framePrice")]
+        pub frame_price: Option<RealNumber>,
+        #[rasn(tag(context, 2), identifier = "transactionPrice")]
+        pub transaction_price: Option<RealNumber>,
+        #[rasn(tag(context, 3), identifier = "volumePrice")]
+        pub volume_price: Option<VolumePrice>,
+    }
+    impl NonpredefinedTariff {
+        pub fn new(
+            t_bcprice: Option<TBCPrice>,
+            frame_price: Option<RealNumber>,
+            transaction_price: Option<RealNumber>,
+            volume_price: Option<VolumePrice>,
+        ) -> Self {
+            Self {
+                t_bcprice,
+                frame_price,
+                transaction_price,
+                volume_price,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct RealNumber {
+        #[rasn(
+            tag(context, 0),
+            default = "real_number_integer_part_default",
+            identifier = "integerPart"
+        )]
+        pub integer_part: Integer,
+        #[rasn(
+            tag(context, 1),
+            default = "real_number_decimal_exponent_default",
+            identifier = "decimalExponent"
+        )]
+        pub decimal_exponent: Integer,
+    }
+    impl RealNumber {
+        pub fn new(integer_part: Integer, decimal_exponent: Integer) -> Self {
+            Self {
+                integer_part,
+                decimal_exponent,
+            }
+        }
+    }
+    impl std::default::Default for RealNumber {
+        fn default() -> Self {
+            Self {
+                integer_part: real_number_integer_part_default(),
+                decimal_exponent: real_number_decimal_exponent_default(),
+            }
+        }
+    }
+    fn real_number_integer_part_default() -> Integer {
+        Integer::from(0)
+    }
+    fn real_number_decimal_exponent_default() -> Integer {
+        Integer::from(2)
+    }
+    #[doc = " at least one of the types should appear"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct TBCPrice {
+        #[rasn(tag(context, 0))]
+        pub period: Integer,
+        #[rasn(tag(context, 1))]
+        pub price: RealNumber,
+    }
+    impl TBCPrice {
+        pub fn new(period: Integer, price: RealNumber) -> Self {
+            Self { period, price }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum TerminalToHostCommand {
+        #[rasn(tag(context, 0))]
+        chargingModifyRequest(ChargingModifyRequest),
+        #[rasn(tag(context, 1))]
+        chargingModifyResponse(ChargingModifyResponse),
+        #[rasn(tag(context, 2))]
+        appliConnectReport(AppliConnectReport),
+        #[rasn(tag(context, 3))]
+        appliDisconnectReport(AppliDisconnectReport),
+        #[rasn(tag(context, 4))]
+        costLimitInformationRequest(CostLimitInformationRequest),
+        #[rasn(tag(context, 5))]
+        costLimitInformationResponse(CostLimitInformationResponse),
+        #[rasn(tag(context, 6))]
+        itemOverLimit(ItemOverLimit),
+        #[rasn(tag(context, 7))]
+        itemOverLimitResponse(ItemOverLimitResponse),
+        #[rasn(tag(context, 8))]
+        identificationRequest(IdentificationRequest),
+        #[rasn(tag(context, 9))]
+        identificationResponse(IdentificationResponse),
+        #[rasn(tag(context, 10))]
+        errorMessage(ErrorMessage),
+        #[rasn(tag(context, 11))]
+        languagetoUseRequest(SequenceOf<Language>),
+        #[rasn(tag(context, 12))]
+        languagetoUseResponse(Language),
+        #[rasn(tag(context, 13))]
+        dataSyntaxSwitchingRequest(DataSyntaxRequest),
+        #[rasn(tag(context, 14))]
+        dataSyntaxSwitchingResponse(Integer),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct VolumePrice {
+        #[rasn(tag(context, 0))]
+        pub volume: Integer,
+        #[rasn(tag(context, 1))]
+        pub price: RealNumber,
+    }
+    impl VolumePrice {
+        pub fn new(volume: Integer, price: RealNumber) -> Self {
+            Self { volume, price }
+        }
+    }
+}

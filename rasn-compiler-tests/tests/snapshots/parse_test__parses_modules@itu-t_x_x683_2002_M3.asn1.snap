@@ -1,0 +1,30 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x683_2002_M3.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod m3 {
+    extern crate alloc;
+    use super::m1::T1;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct T5 {
+        pub a: Integer,
+        pub b: T1,
+    }
+    impl T5 {
+        pub fn new(a: Integer, b: T1) -> Self {
+            Self { a, b }
+        }
+    }
+}

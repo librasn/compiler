@@ -1,0 +1,1429 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x509_2019_CertificateExtensions.asn1
+---
+Warnings:
+LinkerError in ASN grammar: Failed to resolve supertype AlgorithmIdentifier of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype Attribute of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype AlgorithmIdentifier of parameterized implementation.
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod certificate_extensions {
+    extern crate alloc;
+    use super::authentication_framework::*;
+    use super::information_framework::*;
+    use super::pki_pmi_external_data_types::ORAddress;
+    use super::selected_attribute_types::UnboundedDirectoryString;
+    use super::useful_definitions::{ID_AT, ID_CE, ID_LDX, ID_MR};
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct AAIssuingDistPointSyntax {
+        #[rasn(tag(context, 0), identifier = "distributionPoint")]
+        pub distribution_point: Option<DistributionPointName>,
+        #[rasn(tag(context, 1), identifier = "onlySomeReasons")]
+        pub only_some_reasons: Option<ReasonFlags>,
+        #[rasn(
+            tag(context, 2),
+            default = "aaissuing_dist_point_syntax_indirect_crl_default",
+            identifier = "indirectCRL"
+        )]
+        pub indirect_crl: bool,
+        #[rasn(
+            tag(context, 3),
+            default = "aaissuing_dist_point_syntax_contains_user_attribute_certs_default",
+            identifier = "containsUserAttributeCerts"
+        )]
+        pub contains_user_attribute_certs: bool,
+        #[rasn(
+            tag(context, 4),
+            default = "aaissuing_dist_point_syntax_contains_aacerts_default",
+            identifier = "containsAACerts"
+        )]
+        pub contains_aacerts: bool,
+        #[rasn(
+            tag(context, 5),
+            default = "aaissuing_dist_point_syntax_contains_soapublic_key_certs_default",
+            identifier = "containsSOAPublicKeyCerts"
+        )]
+        pub contains_soapublic_key_certs: bool,
+    }
+    impl AAIssuingDistPointSyntax {
+        pub fn new(
+            distribution_point: Option<DistributionPointName>,
+            only_some_reasons: Option<ReasonFlags>,
+            indirect_crl: bool,
+            contains_user_attribute_certs: bool,
+            contains_aacerts: bool,
+            contains_soapublic_key_certs: bool,
+        ) -> Self {
+            Self {
+                distribution_point,
+                only_some_reasons,
+                indirect_crl,
+                contains_user_attribute_certs,
+                contains_aacerts,
+                contains_soapublic_key_certs,
+            }
+        }
+    }
+    fn aaissuing_dist_point_syntax_indirect_crl_default() -> bool {
+        false
+    }
+    fn aaissuing_dist_point_syntax_contains_user_attribute_certs_default() -> bool {
+        true
+    }
+    fn aaissuing_dist_point_syntax_contains_aacerts_default() -> bool {
+        true
+    }
+    fn aaissuing_dist_point_syntax_contains_soapublic_key_certs_default() -> bool {
+        true
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AltName {
+        #[rasn(identifier = "altnameType")]
+        pub altname_type: AltNameType,
+        #[rasn(identifier = "altNameValue")]
+        pub alt_name_value: Option<GeneralName>,
+    }
+    impl AltName {
+        pub fn new(altname_type: AltNameType, alt_name_value: Option<GeneralName>) -> Self {
+            Self {
+                altname_type,
+                alt_name_value,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum AltNameTypeBuiltinNameForm {
+        rfc822Name = 1,
+        dNSName = 2,
+        x400Address = 3,
+        directoryName = 4,
+        ediPartyName = 5,
+        uniformResourceIdentifier = 6,
+        iPAddress = 7,
+        registeredId = 8,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum AltNameType {
+        builtinNameForm(AltNameTypeBuiltinNameForm),
+        otherNameForm(ObjectIdentifier),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AltSignatureAlgorithm(pub AlgorithmIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AltSignatureValue(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct AttributesSyntax(pub SequenceOf<Attribute>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct AuthorityKeyIdentifier {
+        #[rasn(tag(context, 0), identifier = "keyIdentifier")]
+        pub key_identifier: Option<KeyIdentifier>,
+        #[rasn(tag(context, 1), identifier = "authorityCertIssuer")]
+        pub authority_cert_issuer: Option<GeneralNames>,
+        #[rasn(tag(context, 2), identifier = "authorityCertSerialNumber")]
+        pub authority_cert_serial_number: Option<CertificateSerialNumber>,
+    }
+    impl AuthorityKeyIdentifier {
+        pub fn new(
+            key_identifier: Option<KeyIdentifier>,
+            authority_cert_issuer: Option<GeneralNames>,
+            authority_cert_serial_number: Option<CertificateSerialNumber>,
+        ) -> Self {
+            Self {
+                key_identifier,
+                authority_cert_issuer,
+                authority_cert_serial_number,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct AvlId {
+        pub issuer: Name,
+        #[rasn(identifier = "serialNumber")]
+        pub serial_number: Option<AvlSerialNumber>,
+    }
+    impl AvlId {
+        pub fn new(issuer: Name, serial_number: Option<AvlSerialNumber>) -> Self {
+            Self {
+                issuer,
+                serial_number,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct BaseCRLNumber(pub CRLNumber);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0.."))]
+    pub struct BaseDistance(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct BaseRevocationInfo {
+        #[rasn(tag(context, 0), identifier = "cRLStreamIdentifier")]
+        pub c_rlstream_identifier: Option<CRLStreamIdentifier>,
+        #[rasn(tag(context, 1), identifier = "cRLNumber")]
+        pub c_rlnumber: CRLNumber,
+        #[rasn(tag(context, 2), identifier = "baseThisUpdate")]
+        pub base_this_update: GeneralizedTime,
+    }
+    impl BaseRevocationInfo {
+        pub fn new(
+            c_rlstream_identifier: Option<CRLStreamIdentifier>,
+            c_rlnumber: CRLNumber,
+            base_this_update: GeneralizedTime,
+        ) -> Self {
+            Self {
+                c_rlstream_identifier,
+                c_rlnumber,
+                base_this_update,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct BasicConstraintsSyntax {
+        #[rasn(default = "basic_constraints_syntax_c_a_default", identifier = "cA")]
+        pub c_a: bool,
+        #[rasn(value("0.."), identifier = "pathLenConstraint")]
+        pub path_len_constraint: Option<Integer>,
+    }
+    impl BasicConstraintsSyntax {
+        pub fn new(c_a: bool, path_len_constraint: Option<Integer>) -> Self {
+            Self {
+                c_a,
+                path_len_constraint,
+            }
+        }
+    }
+    fn basic_constraints_syntax_c_a_default() -> bool {
+        false
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct CRLDistPointsSyntax(pub SequenceOf<DistributionPoint>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0.."))]
+    pub struct CRLNumber(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum CRLReason {
+        unspecified = 0,
+        keyCompromise = 1,
+        cACompromise = 2,
+        affiliationChanged = 3,
+        superseded = 4,
+        cessationOfOperation = 5,
+        certificateHold = 6,
+        removeFromCRL = 8,
+        privilegeWithdrawn = 9,
+        aACompromise = 10,
+        #[rasn(extension_addition)]
+        weakAlgorithmOrKey = 11,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct CRLReferral {
+        #[rasn(tag(context, 0))]
+        pub issuer: Option<GeneralName>,
+        #[rasn(tag(context, 1))]
+        pub location: Option<GeneralName>,
+        #[rasn(tag(context, 2), identifier = "deltaRefInfo")]
+        pub delta_ref_info: Option<DeltaRefInfo>,
+        #[rasn(identifier = "cRLScope")]
+        pub c_rlscope: CRLScopeSyntax,
+        #[rasn(tag(context, 3), identifier = "lastUpdate")]
+        pub last_update: Option<GeneralizedTime>,
+        #[rasn(tag(context, 4), identifier = "lastChangedCRL")]
+        pub last_changed_crl: Option<GeneralizedTime>,
+    }
+    impl CRLReferral {
+        pub fn new(
+            issuer: Option<GeneralName>,
+            location: Option<GeneralName>,
+            delta_ref_info: Option<DeltaRefInfo>,
+            c_rlscope: CRLScopeSyntax,
+            last_update: Option<GeneralizedTime>,
+            last_changed_crl: Option<GeneralizedTime>,
+        ) -> Self {
+            Self {
+                issuer,
+                location,
+                delta_ref_info,
+                c_rlscope,
+                last_update,
+                last_changed_crl,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct CRLScopeSyntax(pub SequenceOf<PerAuthorityScope>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0.."))]
+    pub struct CRLStreamIdentifier(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CertPolicyId(pub ObjectIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct CertPolicySet(pub SequenceOf<CertPolicyId>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct CertificateAssertion {
+        #[rasn(tag(context, 0), identifier = "serialNumber")]
+        pub serial_number: Option<CertificateSerialNumber>,
+        #[rasn(tag(context, 1))]
+        pub issuer: Option<Name>,
+        #[rasn(tag(context, 2), identifier = "subjectKeyIdentifier")]
+        pub subject_key_identifier: Option<SubjectKeyIdentifier>,
+        #[rasn(tag(context, 3), identifier = "authorityKeyIdentifier")]
+        pub authority_key_identifier: Option<AuthorityKeyIdentifier>,
+        #[rasn(tag(context, 4), identifier = "certificateValid")]
+        pub certificate_valid: Option<Time>,
+        #[rasn(tag(context, 5), identifier = "privateKeyValid")]
+        pub private_key_valid: Option<GeneralizedTime>,
+        #[rasn(tag(context, 6), identifier = "subjectPublicKeyAlgID")]
+        pub subject_public_key_alg_id: Option<ObjectIdentifier>,
+        #[rasn(tag(context, 7), identifier = "keyUsage")]
+        pub key_usage: Option<KeyUsage>,
+        #[rasn(tag(context, 8), identifier = "subjectAltName")]
+        pub subject_alt_name: Option<AltNameType>,
+        #[rasn(tag(context, 9))]
+        pub policy: Option<CertPolicySet>,
+        #[rasn(tag(context, 10), identifier = "pathToName")]
+        pub path_to_name: Option<Name>,
+        #[rasn(tag(context, 11))]
+        pub subject: Option<Name>,
+        #[rasn(tag(context, 12), identifier = "nameConstraints")]
+        pub name_constraints: Option<NameConstraintsSyntax>,
+    }
+    impl CertificateAssertion {
+        pub fn new(
+            serial_number: Option<CertificateSerialNumber>,
+            issuer: Option<Name>,
+            subject_key_identifier: Option<SubjectKeyIdentifier>,
+            authority_key_identifier: Option<AuthorityKeyIdentifier>,
+            certificate_valid: Option<Time>,
+            private_key_valid: Option<GeneralizedTime>,
+            subject_public_key_alg_id: Option<ObjectIdentifier>,
+            key_usage: Option<KeyUsage>,
+            subject_alt_name: Option<AltNameType>,
+            policy: Option<CertPolicySet>,
+            path_to_name: Option<Name>,
+            subject: Option<Name>,
+            name_constraints: Option<NameConstraintsSyntax>,
+        ) -> Self {
+            Self {
+                serial_number,
+                issuer,
+                subject_key_identifier,
+                authority_key_identifier,
+                certificate_valid,
+                private_key_valid,
+                subject_public_key_alg_id,
+                key_usage,
+                subject_alt_name,
+                policy,
+                path_to_name,
+                subject,
+                name_constraints,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct CertificateExactAssertion {
+        #[rasn(identifier = "serialNumber")]
+        pub serial_number: CertificateSerialNumber,
+        pub issuer: Name,
+    }
+    impl CertificateExactAssertion {
+        pub fn new(serial_number: CertificateSerialNumber, issuer: Name) -> Self {
+            Self {
+                serial_number,
+                issuer,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum CertificateGroup {
+        #[rasn(tag(context, 0))]
+        serialNumbers(CertificateSerialNumbers),
+        #[rasn(tag(context, 1))]
+        serialNumberRange(CertificateGroupNumberRange),
+        #[rasn(tag(context, 2))]
+        nameSubtree(GeneralName),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct CertificateGroupNumberRange {
+        #[rasn(tag(context, 0), identifier = "startingNumber")]
+        pub starting_number: Integer,
+        #[rasn(tag(context, 1), identifier = "endingNumber")]
+        pub ending_number: Integer,
+    }
+    impl CertificateGroupNumberRange {
+        pub fn new(starting_number: Integer, ending_number: Integer) -> Self {
+            Self {
+                starting_number,
+                ending_number,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct CertificateListAssertion {
+        pub issuer: Option<Name>,
+        #[rasn(tag(context, 0), identifier = "minCRLNumber")]
+        pub min_crlnumber: Option<CRLNumber>,
+        #[rasn(tag(context, 1), identifier = "maxCRLNumber")]
+        pub max_crlnumber: Option<CRLNumber>,
+        #[rasn(identifier = "reasonFlags")]
+        pub reason_flags: Option<ReasonFlags>,
+        #[rasn(identifier = "dateAndTime")]
+        pub date_and_time: Option<Time>,
+        #[rasn(tag(context, 2), identifier = "distributionPoint")]
+        pub distribution_point: Option<DistributionPointName>,
+        #[rasn(tag(context, 3), identifier = "authorityKeyIdentifier")]
+        pub authority_key_identifier: Option<AuthorityKeyIdentifier>,
+    }
+    impl CertificateListAssertion {
+        pub fn new(
+            issuer: Option<Name>,
+            min_crlnumber: Option<CRLNumber>,
+            max_crlnumber: Option<CRLNumber>,
+            reason_flags: Option<ReasonFlags>,
+            date_and_time: Option<Time>,
+            distribution_point: Option<DistributionPointName>,
+            authority_key_identifier: Option<AuthorityKeyIdentifier>,
+        ) -> Self {
+            Self {
+                issuer,
+                min_crlnumber,
+                max_crlnumber,
+                reason_flags,
+                date_and_time,
+                distribution_point,
+                authority_key_identifier,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct CertificateListExactAssertion {
+        pub issuer: Name,
+        #[rasn(identifier = "thisUpdate")]
+        pub this_update: Time,
+        #[rasn(identifier = "distributionPoint")]
+        pub distribution_point: Option<DistributionPointName>,
+    }
+    impl CertificateListExactAssertion {
+        pub fn new(
+            issuer: Name,
+            this_update: Time,
+            distribution_point: Option<DistributionPointName>,
+        ) -> Self {
+            Self {
+                issuer,
+                this_update,
+                distribution_point,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct CertificatePairAssertion {
+        #[rasn(tag(context, 0), identifier = "issuedToThisCAAssertion")]
+        pub issued_to_this_caassertion: Option<CertificateAssertion>,
+        #[rasn(tag(context, 1), identifier = "issuedByThisCAAssertion")]
+        pub issued_by_this_caassertion: Option<CertificateAssertion>,
+    }
+    impl CertificatePairAssertion {
+        pub fn new(
+            issued_to_this_caassertion: Option<CertificateAssertion>,
+            issued_by_this_caassertion: Option<CertificateAssertion>,
+        ) -> Self {
+            Self {
+                issued_to_this_caassertion,
+                issued_by_this_caassertion,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct CertificatePairExactAssertion {
+        #[rasn(tag(context, 0), identifier = "issuedToThisCAAssertion")]
+        pub issued_to_this_caassertion: Option<CertificateExactAssertion>,
+        #[rasn(tag(context, 1), identifier = "issuedByThisCAAssertion")]
+        pub issued_by_this_caassertion: Option<CertificateExactAssertion>,
+    }
+    impl CertificatePairExactAssertion {
+        pub fn new(
+            issued_to_this_caassertion: Option<CertificateExactAssertion>,
+            issued_by_this_caassertion: Option<CertificateExactAssertion>,
+        ) -> Self {
+            Self {
+                issued_to_this_caassertion,
+                issued_by_this_caassertion,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct CertificatePoliciesSyntax(pub SequenceOf<PolicyInformation>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct CertificateSerialNumbers(pub SequenceOf<CertificateSerialNumber>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct DeltaInformation {
+        #[rasn(identifier = "deltaLocation")]
+        pub delta_location: GeneralName,
+        #[rasn(identifier = "nextDelta")]
+        pub next_delta: Option<GeneralizedTime>,
+    }
+    impl DeltaInformation {
+        pub fn new(delta_location: GeneralName, next_delta: Option<GeneralizedTime>) -> Self {
+            Self {
+                delta_location,
+                next_delta,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct DeltaRefInfo {
+        #[rasn(identifier = "deltaLocation")]
+        pub delta_location: GeneralName,
+        #[rasn(identifier = "lastDelta")]
+        pub last_delta: Option<GeneralizedTime>,
+    }
+    impl DeltaRefInfo {
+        pub fn new(delta_location: GeneralName, last_delta: Option<GeneralizedTime>) -> Self {
+            Self {
+                delta_location,
+                last_delta,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct DistributionPoint {
+        #[rasn(tag(context, 0), identifier = "distributionPoint")]
+        pub distribution_point: Option<DistributionPointName>,
+        #[rasn(tag(context, 1))]
+        pub reasons: Option<ReasonFlags>,
+        #[rasn(tag(context, 2), identifier = "cRLIssuer")]
+        pub c_rlissuer: Option<GeneralNames>,
+    }
+    impl DistributionPoint {
+        pub fn new(
+            distribution_point: Option<DistributionPointName>,
+            reasons: Option<ReasonFlags>,
+            c_rlissuer: Option<GeneralNames>,
+        ) -> Self {
+            Self {
+                distribution_point,
+                reasons,
+                c_rlissuer,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum DistributionPointName {
+        #[rasn(tag(context, 0))]
+        fullName(GeneralNames),
+        #[rasn(tag(context, 1))]
+        nameRelativeToCRLIssuer(RelativeDistinguishedName),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct EDIPartyName {
+        #[rasn(tag(context, 0), identifier = "nameAssigner")]
+        pub name_assigner: Option<UnboundedDirectoryString>,
+        #[rasn(tag(context, 1), identifier = "partyName")]
+        pub party_name: UnboundedDirectoryString,
+    }
+    impl EDIPartyName {
+        pub fn new(
+            name_assigner: Option<UnboundedDirectoryString>,
+            party_name: UnboundedDirectoryString,
+        ) -> Self {
+            Self {
+                name_assigner,
+                party_name,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct EnhancedCertificateAssertion {
+        #[rasn(tag(context, 0), identifier = "serialNumber")]
+        pub serial_number: Option<CertificateSerialNumber>,
+        #[rasn(tag(context, 1))]
+        pub issuer: Option<Name>,
+        #[rasn(tag(context, 2), identifier = "subjectKeyIdentifier")]
+        pub subject_key_identifier: Option<SubjectKeyIdentifier>,
+        #[rasn(tag(context, 3), identifier = "authorityKeyIdentifier")]
+        pub authority_key_identifier: Option<AuthorityKeyIdentifier>,
+        #[rasn(tag(context, 4), identifier = "certificateValid")]
+        pub certificate_valid: Option<Time>,
+        #[rasn(tag(context, 5), identifier = "privateKeyValid")]
+        pub private_key_valid: Option<GeneralizedTime>,
+        #[rasn(tag(context, 6), identifier = "subjectPublicKeyAlgID")]
+        pub subject_public_key_alg_id: Option<ObjectIdentifier>,
+        #[rasn(tag(context, 7), identifier = "keyUsage")]
+        pub key_usage: Option<KeyUsage>,
+        #[rasn(tag(context, 8), identifier = "subjectAltName")]
+        pub subject_alt_name: Option<AltName>,
+        #[rasn(tag(context, 9))]
+        pub policy: Option<CertPolicySet>,
+        #[rasn(tag(context, 10), identifier = "pathToName")]
+        pub path_to_name: Option<GeneralNames>,
+        #[rasn(tag(context, 11))]
+        pub subject: Option<Name>,
+        #[rasn(tag(context, 12), identifier = "nameConstraints")]
+        pub name_constraints: Option<NameConstraintsSyntax>,
+    }
+    impl EnhancedCertificateAssertion {
+        pub fn new(
+            serial_number: Option<CertificateSerialNumber>,
+            issuer: Option<Name>,
+            subject_key_identifier: Option<SubjectKeyIdentifier>,
+            authority_key_identifier: Option<AuthorityKeyIdentifier>,
+            certificate_valid: Option<Time>,
+            private_key_valid: Option<GeneralizedTime>,
+            subject_public_key_alg_id: Option<ObjectIdentifier>,
+            key_usage: Option<KeyUsage>,
+            subject_alt_name: Option<AltName>,
+            policy: Option<CertPolicySet>,
+            path_to_name: Option<GeneralNames>,
+            subject: Option<Name>,
+            name_constraints: Option<NameConstraintsSyntax>,
+        ) -> Self {
+            Self {
+                serial_number,
+                issuer,
+                subject_key_identifier,
+                authority_key_identifier,
+                certificate_valid,
+                private_key_valid,
+                subject_public_key_alg_id,
+                key_usage,
+                subject_alt_name,
+                policy,
+                path_to_name,
+                subject,
+                name_constraints,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ExpiredCertsOnCRL(pub GeneralizedTime);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum GeneralName {
+        #[rasn(tag(context, 0))]
+        otherName(INSTANCE),
+        OF(OTHERNAME),
+        #[rasn(tag(context, 1))]
+        rfc822Name(Ia5String),
+        #[rasn(tag(context, 2))]
+        dNSName(Ia5String),
+        #[rasn(tag(context, 3))]
+        x400Address(ORAddress),
+        #[rasn(tag(context, 4))]
+        directoryName(Name),
+        #[rasn(tag(context, 5))]
+        ediPartyName(EDIPartyName),
+        #[rasn(tag(context, 6))]
+        uniformResourceIdentifier(Ia5String),
+        #[rasn(tag(context, 7))]
+        iPAddress(OctetString),
+        #[rasn(tag(context, 8))]
+        registeredID(ObjectIdentifier),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct GeneralNames(pub SequenceOf<GeneralName>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct GeneralSubtree {
+        pub base: GeneralName,
+        #[rasn(tag(context, 0), default = "general_subtree_minimum_default")]
+        pub minimum: BaseDistance,
+        #[rasn(tag(context, 1))]
+        pub maximum: Option<BaseDistance>,
+    }
+    impl GeneralSubtree {
+        pub fn new(
+            base: GeneralName,
+            minimum: BaseDistance,
+            maximum: Option<BaseDistance>,
+        ) -> Self {
+            Self {
+                base,
+                minimum,
+                maximum,
+            }
+        }
+    }
+    fn general_subtree_minimum_default() -> BaseDistance {
+        BaseDistance(Integer::from(0))
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct GeneralSubtrees(pub SequenceOf<GeneralSubtree>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct HoldInstruction(pub ObjectIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct IssuingDistPointSyntax {
+        #[rasn(tag(context, 0), identifier = "distributionPoint")]
+        pub distribution_point: Option<DistributionPointName>,
+        #[rasn(
+            tag(context, 1),
+            default = "issuing_dist_point_syntax_only_contains_user_public_key_certs_default",
+            identifier = "onlyContainsUserPublicKeyCerts"
+        )]
+        pub only_contains_user_public_key_certs: bool,
+        #[rasn(
+            tag(context, 2),
+            default = "issuing_dist_point_syntax_only_contains_cacerts_default",
+            identifier = "onlyContainsCACerts"
+        )]
+        pub only_contains_cacerts: bool,
+        #[rasn(tag(context, 3), identifier = "onlySomeReasons")]
+        pub only_some_reasons: Option<ReasonFlags>,
+        #[rasn(
+            tag(context, 4),
+            default = "issuing_dist_point_syntax_indirect_crl_default",
+            identifier = "indirectCRL"
+        )]
+        pub indirect_crl: bool,
+        #[rasn(tag(context, 5), identifier = "onlyContainsAttributeCerts")]
+        pub only_contains_attribute_certs: Option<bool>,
+    }
+    impl IssuingDistPointSyntax {
+        pub fn new(
+            distribution_point: Option<DistributionPointName>,
+            only_contains_user_public_key_certs: bool,
+            only_contains_cacerts: bool,
+            only_some_reasons: Option<ReasonFlags>,
+            indirect_crl: bool,
+            only_contains_attribute_certs: Option<bool>,
+        ) -> Self {
+            Self {
+                distribution_point,
+                only_contains_user_public_key_certs,
+                only_contains_cacerts,
+                only_some_reasons,
+                indirect_crl,
+                only_contains_attribute_certs,
+            }
+        }
+    }
+    fn issuing_dist_point_syntax_only_contains_user_public_key_certs_default() -> bool {
+        false
+    }
+    fn issuing_dist_point_syntax_only_contains_cacerts_default() -> bool {
+        false
+    }
+    fn issuing_dist_point_syntax_indirect_crl_default() -> bool {
+        false
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct KeyIdentifier(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct KeyPurposeId(pub ObjectIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct KeyUsage(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct NameConstraintsSyntax {
+        #[rasn(tag(context, 0), identifier = "permittedSubtrees")]
+        pub permitted_subtrees: Option<GeneralSubtrees>,
+        #[rasn(tag(context, 1), identifier = "excludedSubtrees")]
+        pub excluded_subtrees: Option<GeneralSubtrees>,
+    }
+    impl NameConstraintsSyntax {
+        pub fn new(
+            permitted_subtrees: Option<GeneralSubtrees>,
+            excluded_subtrees: Option<GeneralSubtrees>,
+        ) -> Self {
+            Self {
+                permitted_subtrees,
+                excluded_subtrees,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct NumberRange {
+        #[rasn(tag(context, 0), identifier = "startingNumber")]
+        pub starting_number: Option<Integer>,
+        #[rasn(tag(context, 1), identifier = "endingNumber")]
+        pub ending_number: Option<Integer>,
+        pub modulus: Option<Integer>,
+    }
+    impl NumberRange {
+        pub fn new(
+            starting_number: Option<Integer>,
+            ending_number: Option<Integer>,
+            modulus: Option<Integer>,
+        ) -> Self {
+            Self {
+                starting_number,
+                ending_number,
+                modulus,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct OnlyCertificateTypes(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum OrderedListSyntax {
+        ascSerialNum = 0,
+        ascRevDate = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct PerAuthorityScope {
+        #[rasn(tag(context, 0), identifier = "authorityName")]
+        pub authority_name: Option<GeneralName>,
+        #[rasn(tag(context, 1), identifier = "distributionPoint")]
+        pub distribution_point: Option<DistributionPointName>,
+        #[rasn(tag(context, 2), identifier = "onlyContains")]
+        pub only_contains: Option<OnlyCertificateTypes>,
+        #[rasn(tag(context, 4), identifier = "onlySomeReasons")]
+        pub only_some_reasons: Option<ReasonFlags>,
+        #[rasn(tag(context, 5), identifier = "serialNumberRange")]
+        pub serial_number_range: Option<NumberRange>,
+        #[rasn(tag(context, 6), identifier = "subjectKeyIdRange")]
+        pub subject_key_id_range: Option<NumberRange>,
+        #[rasn(tag(context, 7), identifier = "nameSubtrees")]
+        pub name_subtrees: Option<GeneralNames>,
+        #[rasn(tag(context, 9), identifier = "baseRevocationInfo")]
+        pub base_revocation_info: Option<BaseRevocationInfo>,
+    }
+    impl PerAuthorityScope {
+        pub fn new(
+            authority_name: Option<GeneralName>,
+            distribution_point: Option<DistributionPointName>,
+            only_contains: Option<OnlyCertificateTypes>,
+            only_some_reasons: Option<ReasonFlags>,
+            serial_number_range: Option<NumberRange>,
+            subject_key_id_range: Option<NumberRange>,
+            name_subtrees: Option<GeneralNames>,
+            base_revocation_info: Option<BaseRevocationInfo>,
+        ) -> Self {
+            Self {
+                authority_name,
+                distribution_point,
+                only_contains,
+                only_some_reasons,
+                serial_number_range,
+                subject_key_id_range,
+                name_subtrees,
+                base_revocation_info,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct PkiPathMatchSyntax {
+        #[rasn(identifier = "firstIssuer")]
+        pub first_issuer: Name,
+        #[rasn(identifier = "lastSubject")]
+        pub last_subject: Name,
+    }
+    impl PkiPathMatchSyntax {
+        pub fn new(first_issuer: Name, last_subject: Name) -> Self {
+            Self {
+                first_issuer,
+                last_subject,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct PolicyConstraintsSyntax {
+        #[rasn(tag(context, 0), identifier = "requireExplicitPolicy")]
+        pub require_explicit_policy: Option<SkipCerts>,
+        #[rasn(tag(context, 1), identifier = "inhibitPolicyMapping")]
+        pub inhibit_policy_mapping: Option<SkipCerts>,
+    }
+    impl PolicyConstraintsSyntax {
+        pub fn new(
+            require_explicit_policy: Option<SkipCerts>,
+            inhibit_policy_mapping: Option<SkipCerts>,
+        ) -> Self {
+            Self {
+                require_explicit_policy,
+                inhibit_policy_mapping,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct PolicyInformation {
+        #[rasn(identifier = "policyIdentifier")]
+        pub policy_identifier: CertPolicyId,
+        #[rasn(size("1.."), identifier = "policyQualifiers")]
+        pub policy_qualifiers: Option<SequenceOf<PolicyQualifierInfo>>,
+    }
+    impl PolicyInformation {
+        pub fn new(
+            policy_identifier: CertPolicyId,
+            policy_qualifiers: Option<SequenceOf<PolicyQualifierInfo>>,
+        ) -> Self {
+            Self {
+                policy_identifier,
+                policy_qualifiers,
+            }
+        }
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    #[non_exhaustive]
+    pub struct AnonymousPolicyMappingsSyntax {
+        #[rasn(identifier = "issuerDomainPolicy")]
+        pub issuer_domain_policy: CertPolicyId,
+        #[rasn(identifier = "subjectDomainPolicy")]
+        pub subject_domain_policy: CertPolicyId,
+    }
+    impl AnonymousPolicyMappingsSyntax {
+        pub fn new(
+            issuer_domain_policy: CertPolicyId,
+            subject_domain_policy: CertPolicyId,
+        ) -> Self {
+            Self {
+                issuer_domain_policy,
+                subject_domain_policy,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct PolicyMappingsSyntax(pub SequenceOf<AnonymousPolicyMappingsSyntax>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct PolicyQualifierInfo {
+        #[rasn(identifier = "policyQualifierId")]
+        pub policy_qualifier_id: ObjectIdentifier,
+        pub qualifier: Option<Any>,
+    }
+    impl PolicyQualifierInfo {
+        pub fn new(policy_qualifier_id: ObjectIdentifier, qualifier: Option<Any>) -> Self {
+            Self {
+                policy_qualifier_id,
+                qualifier,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct PrivateKeyUsagePeriod {
+        #[rasn(tag(context, 0), identifier = "notBefore")]
+        pub not_before: Option<GeneralizedTime>,
+        #[rasn(tag(context, 1), identifier = "notAfter")]
+        pub not_after: Option<GeneralizedTime>,
+    }
+    impl PrivateKeyUsagePeriod {
+        pub fn new(
+            not_before: Option<GeneralizedTime>,
+            not_after: Option<GeneralizedTime>,
+        ) -> Self {
+            Self {
+                not_before,
+                not_after,
+            }
+        }
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "OBJECT_IDENTIFIER")]
+    pub struct AnonymousProtRestriction(pub ObjectIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct ProtRestriction(pub SequenceOf<AnonymousProtRestriction>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ReasonFlags(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct ReasonInfo {
+        #[rasn(identifier = "reasonCode")]
+        pub reason_code: CRLReason,
+        #[rasn(identifier = "holdInstructionCode")]
+        pub hold_instruction_code: Option<HoldInstruction>,
+    }
+    impl ReasonInfo {
+        pub fn new(reason_code: CRLReason, hold_instruction_code: Option<HoldInstruction>) -> Self {
+            Self {
+                reason_code,
+                hold_instruction_code,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum RevokedCertificateGroup {
+        serialNumberRange(NumberRange),
+        nameSubtree(GeneralName),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct RevokedGroup {
+        #[rasn(tag(context, 0), identifier = "certificateIssuer")]
+        pub certificate_issuer: Option<GeneralName>,
+        #[rasn(tag(context, 1), identifier = "reasonInfo")]
+        pub reason_info: Option<ReasonInfo>,
+        #[rasn(tag(context, 2), identifier = "invalidityDate")]
+        pub invalidity_date: Option<GeneralizedTime>,
+        #[rasn(tag(context, 3), identifier = "revokedcertificateGroup")]
+        pub revokedcertificate_group: RevokedCertificateGroup,
+    }
+    impl RevokedGroup {
+        pub fn new(
+            certificate_issuer: Option<GeneralName>,
+            reason_info: Option<ReasonInfo>,
+            invalidity_date: Option<GeneralizedTime>,
+            revokedcertificate_group: RevokedCertificateGroup,
+        ) -> Self {
+            Self {
+                certificate_issuer,
+                reason_info,
+                invalidity_date,
+                revokedcertificate_group,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct RevokedGroupsSyntax(pub SequenceOf<RevokedGroup>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0.."))]
+    pub struct SkipCerts(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum StatusReferral {
+        #[rasn(tag(context, 0))]
+        cRLReferral(CRLReferral),
+        #[rasn(tag(context, 1))]
+        otherReferral(INSTANCE),
+        OF(OTHERREFERRAL),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct StatusReferrals(pub SequenceOf<StatusReferral>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SubjectAltPublicKeyInfo {
+        #[rasn(value("0.."))]
+        pub algorithm: AlgorithmIdentifier,
+        #[rasn(identifier = "subjectAltPublicKey")]
+        pub subject_alt_public_key: BitString,
+    }
+    impl SubjectAltPublicKeyInfo {
+        pub fn new(algorithm: AlgorithmIdentifier, subject_alt_public_key: BitString) -> Self {
+            Self {
+                algorithm,
+                subject_alt_public_key,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SubjectKeyIdentifier(pub KeyIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct ToBeRevokedGroup {
+        #[rasn(tag(context, 0), identifier = "certificateIssuer")]
+        pub certificate_issuer: Option<GeneralName>,
+        #[rasn(tag(context, 1), identifier = "reasonInfo")]
+        pub reason_info: Option<ReasonInfo>,
+        #[rasn(identifier = "revocationTime")]
+        pub revocation_time: GeneralizedTime,
+        #[rasn(identifier = "certificateGroup")]
+        pub certificate_group: CertificateGroup,
+    }
+    impl ToBeRevokedGroup {
+        pub fn new(
+            certificate_issuer: Option<GeneralName>,
+            reason_info: Option<ReasonInfo>,
+            revocation_time: GeneralizedTime,
+            certificate_group: CertificateGroup,
+        ) -> Self {
+            Self {
+                certificate_issuer,
+                reason_info,
+                revocation_time,
+                certificate_group,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct ToBeRevokedSyntax(pub SequenceOf<ToBeRevokedGroup>);
+    pub static ANY_POLICY: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE_CERTIFICATE_POLICIES, &[0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-ce-indirectIssuer                  OBJECT IDENTIFIER ::= {id-ce 61}"]
+    #[doc = " id-ce-noAssertion                     OBJECT IDENTIFIER ::= {id-ce 62}"]
+    pub static ID_CE_A_AISSUING_DISTRIBUTION_POINT: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_CE, &[63u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_CE_ALT_SIGNATURE_ALGORITHM: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[73u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_ALT_SIGNATURE_VALUE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[74u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_ASSOCIATED_INFORMATION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[75u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " deprecated                            OBJECT IDENTIFIER ::= {id-ce 34}"]
+    pub static ID_CE_AUTHORITY_KEY_IDENTIFIER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[35u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-ce-issuedOnBehalfOf                OBJECT IDENTIFIER ::= {id-ce 64}"]
+    #[doc = " id-ce-singleUse                       OBJECT IDENTIFIER ::= {id-ce 65}"]
+    #[doc = " id-ce-groupAC                         OBJECT IDENTIFIER ::= {id-ce 66}"]
+    #[doc = " id-ce-allowedAttAss                   OBJECT IDENTIFIER ::= {id-ce 67}"]
+    #[doc = " id-ce-attributeMappings               OBJECT IDENTIFIER ::= {id-ce 68}"]
+    #[doc = " id-ce-holderNameConstraints           OBJECT IDENTIFIER ::= {id-ce 69}"]
+    pub static ID_CE_AUTHORIZATION_VALIDATION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[70u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-ce-attributeDescriptor             OBJECT IDENTIFIER ::= {id-ce 48}"]
+    #[doc = " id-ce-userNotice                      OBJECT IDENTIFIER ::= {id-ce 49}"]
+    #[doc = " id-ce-sOAIdentifier                   OBJECT IDENTIFIER ::= {id-ce 50}"]
+    pub static ID_CE_BASE_UPDATE_TIME: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[51u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_BASIC_CONSTRAINTS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[19u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_C_RLDISTRIBUTION_POINTS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[31u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_C_RLNUMBER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[20u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-ce-basicAttConstraints             OBJECT IDENTIFIER ::= {id-ce 41}"]
+    #[doc = " id-ce-delegatedNameConstraints        OBJECT IDENTIFIER ::= {id-ce 42}"]
+    #[doc = " id-ce-timeSpecification               OBJECT IDENTIFIER ::= {id-ce 43}"]
+    pub static ID_CE_C_RLSCOPE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[44u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-ce-authorityAttributeIdentifier    OBJECT IDENTIFIER ::= {id-ce 38}"]
+    #[doc = " id-ce-roleSpecCertIdentifier          OBJECT IDENTIFIER ::= {id-ce 39}"]
+    pub static ID_CE_C_RLSTREAM_IDENTIFIER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[40u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_CERTIFICATE_ISSUER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[29u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_CERTIFICATE_POLICIES: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[32u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " {id-ce 25} not used"]
+    #[doc = " {id-ce 26} not used"]
+    pub static ID_CE_DELTA_CRLINDICATOR: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[27u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-ce-acceptableCertPolicies          OBJECT IDENTIFIER ::= {id-ce 52}"]
+    pub static ID_CE_DELTA_INFO: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[53u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_EXPIRED_CERTS_ON_CRL: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[60u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_EXT_KEY_USAGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[37u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_FRESHEST_CRL: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[46u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " {id-ce 22} not used"]
+    pub static ID_CE_HOLD_INSTRUCTION_CODE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[23u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_INHIBIT_ANY_POLICY: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[54u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_INVALIDITY_DATE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[24u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_ISSUER_ALT_NAME: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[18u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_ISSUING_DISTRIBUTION_POINT: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[28u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_KEY_USAGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[15u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_NAME_CONSTRAINTS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[30u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_ORDERED_LIST: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[47u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_POLICY_CONSTRAINTS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[36u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_POLICY_MAPPINGS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[33u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_PRIVATE_KEY_USAGE_PERIOD: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[16u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_PROT_RESTRICT: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[71u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_REASON_CODE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[21u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_REVOKED_GROUPS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[59u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_STATUS_REFERRALS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[45u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_SUBJECT_ALT_NAME: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[17u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_SUBJECT_ALT_PUBLIC_KEY_INFO: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_CE, &[72u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    #[doc = " Object identifier assignments"]
+    #[doc = " {id-ce 2} not used"]
+    #[doc = " {id-ce 3} not used"]
+    #[doc = " {id-ce 4} not used"]
+    #[doc = " {id-ce 5} not used"]
+    #[doc = " {id-ce 6} not used"]
+    #[doc = " {id-ce 7} not used"]
+    #[doc = " {id-ce 8} not used"]
+    pub static ID_CE_SUBJECT_DIRECTORY_ATTRIBUTES: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_CE, &[9u32]].concat()).unwrap().to_owned());
+    #[doc = " {id-ce 10} not used"]
+    #[doc = " {id-ce 11} not used"]
+    #[doc = " {id-ce 12} not used"]
+    #[doc = " {id-ce 13} not used"]
+    pub static ID_CE_SUBJECT_KEY_IDENTIFIER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[14u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-ce-targetingInformation            OBJECT IDENTIFIER ::= {id-ce 55}"]
+    #[doc = " id-ce-noRevAvail                      OBJECT IDENTIFIER ::= {id-ce 56}"]
+    #[doc = " id-ce-acceptablePrivilegePolicies     OBJECT IDENTIFIER ::= {id-ce 57}"]
+    pub static ID_CE_TO_BE_REVOKED: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[58u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_LDX_ALGORITHM_IDENTIFIER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_LDX, &[7u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_LDX_CERT_ASSERTION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_LDX, &[2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " Object identifiers for LDAP X.509 assertion syntaxes"]
+    pub static ID_LDX_CERT_EXACT_ASSERTION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_LDX, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_LDX_CERT_LIST_ASSERTION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_LDX, &[6u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_LDX_CERT_LIST_EXACT_ASSERTION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_LDX, &[5u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_LDX_CERT_PAIR_ASSERTION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_LDX, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_LDX_CERT_PAIR_EXACT_ASSERTION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_LDX, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MR_ALGORITHM_IDENTIFIER_MATCH: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MR, &[40u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " matching rule OIDs"]
+    pub static ID_MR_CERTIFICATE_EXACT_MATCH: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MR, &[34u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MR_CERTIFICATE_LIST_EXACT_MATCH: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_MR, &[38u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_MR_CERTIFICATE_LIST_MATCH: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MR, &[39u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MR_CERTIFICATE_MATCH: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MR, &[35u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MR_CERTIFICATE_PAIR_EXACT_MATCH: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_MR, &[36u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_MR_CERTIFICATE_PAIR_MATCH: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MR, &[37u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MR_ENHANCED_CERTIFICATE_MATCH: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MR, &[65u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MR_PKI_PATH_MATCH: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MR, &[62u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MR_POLICY_MATCH: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MR, &[60u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+}

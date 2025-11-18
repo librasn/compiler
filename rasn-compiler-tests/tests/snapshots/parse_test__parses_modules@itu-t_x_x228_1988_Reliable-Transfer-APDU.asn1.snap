@@ -1,0 +1,240 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x228_1988_Reliable-Transfer-APDU.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod reliable_transfer_apdu {
+    extern crate alloc;
+    use super::remote_operations_information_objects::*;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AbortReason(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AdditionalReferenceInformation(pub T61String);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum CallingSSuserReference {
+        t61String(T61String),
+        octetString(OctetString),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CommonReference(pub UtcTime);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ConnectionData {
+        #[rasn(tag(context, 0))]
+        open(Any),
+        #[rasn(tag(context, 1))]
+        recover(SessionConnectionIdentifier),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct RTABapdu {
+        #[rasn(tag(context, 0), identifier = "abortReason")]
+        pub abort_reason: Option<AbortReason>,
+        #[rasn(tag(context, 1), identifier = "reflectedParameter")]
+        pub reflected_parameter: Option<BitString>,
+        #[rasn(tag(context, 2), identifier = "userdataAB")]
+        pub userdata_ab: Option<Any>,
+    }
+    impl RTABapdu {
+        pub fn new(
+            abort_reason: Option<AbortReason>,
+            reflected_parameter: Option<BitString>,
+            userdata_ab: Option<Any>,
+        ) -> Self {
+            Self {
+                abort_reason,
+                reflected_parameter,
+                userdata_ab,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct RTOACapdu {
+        #[rasn(
+            tag(context, 0),
+            default = "rtoacapdu_checkpoint_size_default",
+            identifier = "checkpointSize"
+        )]
+        pub checkpoint_size: Integer,
+        #[rasn(
+            tag(context, 1),
+            default = "rtoacapdu_window_size_default",
+            identifier = "windowSize"
+        )]
+        pub window_size: Integer,
+        #[rasn(tag(context, 2), identifier = "connectionDataAC")]
+        pub connection_data_ac: ConnectionData,
+    }
+    impl RTOACapdu {
+        pub fn new(
+            checkpoint_size: Integer,
+            window_size: Integer,
+            connection_data_ac: ConnectionData,
+        ) -> Self {
+            Self {
+                checkpoint_size,
+                window_size,
+                connection_data_ac,
+            }
+        }
+    }
+    fn rtoacapdu_checkpoint_size_default() -> Integer {
+        Integer::from(0)
+    }
+    fn rtoacapdu_window_size_default() -> Integer {
+        Integer::from(3)
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct RTORJapdu {
+        #[rasn(tag(context, 0), identifier = "refuseReason")]
+        pub refuse_reason: Option<RefuseReason>,
+        #[rasn(tag(context, 1), identifier = "userDataRJ")]
+        pub user_data_rj: Option<Any>,
+    }
+    impl RTORJapdu {
+        pub fn new(refuse_reason: Option<RefuseReason>, user_data_rj: Option<Any>) -> Self {
+            Self {
+                refuse_reason,
+                user_data_rj,
+            }
+        }
+    }
+    #[doc = " Tags [19], [20], [21] are used by the values of the UNBIND macro of the RO-notation of"]
+    #[doc = " Recommendation X.219. Tags [0] to [15] inclusive are reserved for the"]
+    #[doc = " use by the APDUs of ROSE (Recommendation X229). Any occurrence of"]
+    #[doc = " ANY in this module shall be replaced by a single ASN. 1 type (if any) in an RTSE-user"]
+    #[doc = " protocol specification. In addition any RTSE-user protocol sharing a single named"]
+    #[doc = " abstract syntax with the RTSE protocol shall use distinct tags for the single"]
+    #[doc = " presentation data values in the user data parameters of the RT-CLOSE (if any) and"]
+    #[doc = " RT- TRANSFER services. These tags shall be distinct from the tag values [16], [17],"]
+    #[doc = " [18] and [22] and from the ASN. 1 types INTEGER and OCTET STRING."]
+    #[doc = " Note - The above conditions are ensured, if the RTSE-user protocol specification uses the"]
+    #[doc = " RO-notation of Recommendation X229."]
+    #[doc = " In X.410-1984 mode only the components of RTORQapdu, RTOACapdu, RTORJapdu"]
+    #[doc = " and RTABapdu are used by the presentation layer. This has the effect that the following"]
+    #[doc = " APDU types appear in the protocol in X.410-1984 mode instead of the alternative types"]
+    #[doc = " of the RTSE-apdus type:"]
+    #[doc = " \t\t\tRTORQapdu"]
+    #[doc = " \t\t\tRTOACapdu"]
+    #[doc = " \t\t\tRTORJapdu"]
+    #[doc = " \t\t\tRTTPapdu"]
+    #[doc = " \t\t\tRTTRapdu"]
+    #[doc = " \t\t\tRTABapdu"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct RTORQapdu {
+        #[rasn(
+            tag(context, 0),
+            default = "rtorqapdu_checkpoint_size_default",
+            identifier = "checkpointSize"
+        )]
+        pub checkpoint_size: Integer,
+        #[rasn(
+            tag(context, 1),
+            default = "rtorqapdu_window_size_default",
+            identifier = "windowSize"
+        )]
+        pub window_size: Integer,
+        #[rasn(
+            tag(context, 2),
+            default = "rtorqapdu_dialogue_mode_default",
+            identifier = "dialogueMode"
+        )]
+        pub dialogue_mode: Integer,
+        #[rasn(tag(context, 3), identifier = "connectionDataRQ")]
+        pub connection_data_rq: ConnectionData,
+        #[rasn(tag(context, 4), identifier = "applicationProtocol")]
+        pub application_protocol: Option<Integer>,
+    }
+    impl RTORQapdu {
+        pub fn new(
+            checkpoint_size: Integer,
+            window_size: Integer,
+            dialogue_mode: Integer,
+            connection_data_rq: ConnectionData,
+            application_protocol: Option<Integer>,
+        ) -> Self {
+            Self {
+                checkpoint_size,
+                window_size,
+                dialogue_mode,
+                connection_data_rq,
+                application_protocol,
+            }
+        }
+    }
+    fn rtorqapdu_checkpoint_size_default() -> Integer {
+        Integer::from(0)
+    }
+    fn rtorqapdu_window_size_default() -> Integer {
+        Integer::from(3)
+    }
+    fn rtorqapdu_dialogue_mode_default() -> Integer {
+        Integer::from(0)
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "RTSE-apdus")]
+    pub enum RTSEApdus {
+        #[rasn(tag(context, 16), identifier = "rtorq-apdu")]
+        rtorq_apdu(RTORQapdu),
+        #[rasn(tag(context, 17), identifier = "rtoac-apdu")]
+        rtoac_apdu(RTOACapdu),
+        #[rasn(tag(context, 18), identifier = "rtorj-apdu")]
+        rtorj_apdu(RTORJapdu),
+        #[rasn(identifier = "rttp-apdu")]
+        rttp_apdu(RTTPapdu),
+        #[rasn(identifier = "rttr-apdu")]
+        rttr_apdu(RTTRapdu),
+        #[rasn(tag(context, 22), identifier = "rtab-apdu")]
+        rtab_apdu(RTABapdu),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RTTPapdu(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RTTRapdu(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RefuseReason(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SessionConnectionIdentifier {
+        #[rasn(identifier = "callingSSuserReference")]
+        pub calling_ssuser_reference: CallingSSuserReference,
+        #[rasn(identifier = "commonReference")]
+        pub common_reference: CommonReference,
+        #[rasn(tag(context, 0), identifier = "additionalReferenceInformation")]
+        pub additional_reference_information: Option<AdditionalReferenceInformation>,
+    }
+    impl SessionConnectionIdentifier {
+        pub fn new(
+            calling_ssuser_reference: CallingSSuserReference,
+            common_reference: CommonReference,
+            additional_reference_information: Option<AdditionalReferenceInformation>,
+        ) -> Self {
+            Self {
+                calling_ssuser_reference,
+                common_reference,
+                additional_reference_information,
+            }
+        }
+    }
+    pub static R_TSE_ABSTRACT_SYNTAX: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 3u32, 2u32]).to_owned());
+}

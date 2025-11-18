@@ -1,0 +1,517 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q2751.1_1997_Q2751DefinedTypesModule.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod q2751_defined_types_module {
+    extern crate alloc;
+    use super::asn1_defined_types_module::{NameType, Pointer};
+    use super::mtpdefined_types_module::AdditionalName;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " ASN.1 type definitions"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct BufferRelease(pub bool);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct EgressTransmissionRateInterval(pub TransmissionRateInterval);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct LongMessageSupported(pub bool);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MaxCc(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MaxInformationFieldLength(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MaxLengthSscopUuField(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MaxNrp(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MaxPd(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MaxSscopCreditToPeer(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MaxStat(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct N1(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum NniLayerManagementProvingState {
+        normal = 0,
+        emergency = 1,
+        neutral = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NniLayerManagementTimerNoCredit(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NniLayerManagementTimerRepeatSrec(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NniTimerT1(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NniTimerT2(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NniTimerT3(pub Integer);
+    #[doc = " there is a derivation rule for the default value"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct PollAfterRetransmission(pub bool);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=65535"))]
+    pub struct Ss7SpecificErrorInformation(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SscopTimerCc(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SscopTimerIdle(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SscopTimerKeepAlive(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SscopTimerNoResponse(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SscopTimerPoll(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("64..=4096"))]
+    pub struct TXRateLimit(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct TransSaalCongThreshold {
+        pub messages: Integer,
+        pub octets: Integer,
+    }
+    impl TransSaalCongThreshold {
+        pub fn new(messages: Integer, octets: Integer) -> Self {
+            Self { messages, octets }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct TransmissionRateInterval {
+        #[rasn(identifier = "lowerTXRateLimit")]
+        pub lower_txrate_limit: TXRateLimit,
+        #[rasn(identifier = "upperTXRateLimit")]
+        pub upper_txrate_limit: TXRateLimit,
+    }
+    impl TransmissionRateInterval {
+        pub fn new(lower_txrate_limit: TXRateLimit, upper_txrate_limit: TXRateLimit) -> Self {
+            Self {
+                lower_txrate_limit,
+                upper_txrate_limit,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct VcTTpPointer(pub Pointer);
+    pub static ADJ_PC_PACKAGE_POI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q2751_PACKAGE, &[13u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static BROADBAND_SPECIFIC_PACKAGE_POI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q2751_PACKAGE, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static BUFFER_RELEASE_AOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q2751_ATTRIBUTE, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static EGRESS_TRANSMISSION_RATE_INTERVAL_AOI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***Q2751_ATTRIBUTE, &[2u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static EGRESS_TRANSMISSION_RATE_INTERVAL_PACKAGE_POI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***Q2751_PACKAGE, &[2u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static LONG_MESSAGE_SUPPORTED_AOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q2751_ATTRIBUTE, &[36u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static LONG_MESSAGE_SUPPORTED_PACKAGE_POI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***Q2751_PACKAGE, &[14u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static MAX_CC_AOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q2751_ATTRIBUTE, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static MAX_CC_DEFAULT_FOR_NNI: LazyLock<MaxCc> = LazyLock::new(|| MaxCc(Integer::from(4)));
+    pub static MAX_INFORMATION_FIELD_LENGTH_AOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q2751_ATTRIBUTE, &[8u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static MAX_INFORMATION_FIELD_LENGTH_DEFAULT_FOR_NNI: LazyLock<MaxInformationFieldLength> =
+        LazyLock::new(|| MaxInformationFieldLength(Integer::from(4096)));
+    pub static MAX_LENGTH_SSCOP_UU_FIELD_AOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q2751_ATTRIBUTE, &[9u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static MAX_LENGTH_SSCOP_UU_FIELD_DEFAULT_FOR_NNI: LazyLock<MaxLengthSscopUuField> =
+        LazyLock::new(|| MaxLengthSscopUuField(Integer::from(4)));
+    pub static MAX_NRP_AOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q2751_ATTRIBUTE, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static MAX_PD_AOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q2751_ATTRIBUTE, &[5u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static MAX_PD_DEFAULT_FOR_NNI: LazyLock<MaxPd> =
+        LazyLock::new(|| MaxPd(Integer::from(500)));
+    pub static MAX_SSCOP_CREDIT_TO_PEER_AOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q2751_ATTRIBUTE, &[6u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static MAX_STAT_AOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q2751_ATTRIBUTE, &[7u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static MAX_STAT_DEFAULT: LazyLock<MaxStat> = LazyLock::new(|| MaxStat(Integer::from(67)));
+    pub static MAX_TX_RATE: LazyLock<Integer> = LazyLock::new(|| Integer::from(4096));
+    pub static MIN_TX_RATE: LazyLock<Integer> = LazyLock::new(|| Integer::from(64));
+    pub static MTP_ACCESS_POINT_OOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q2751_OBJECT_CLASS, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static MTP_ACCESS_POINT_MTP_SIGN_POINT_NBOI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***Q2751_NAME_BINDING, &[3u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static N1_AOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q2751_ATTRIBUTE, &[11u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static N1_DEFAULT: LazyLock<N1> = LazyLock::new(|| N1(Integer::from(1000)));
+    pub static NARROWBAND_SPECIFIC_PACKAGE_POI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q2751_PACKAGE, &[5u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static NNI_LAYER_MANAGEMENT_PROVING_STATE_AOI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***Q2751_ATTRIBUTE, &[12u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static NNI_LAYER_MANAGEMENT_TIMER_NO_CREDIT_AOI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***Q2751_ATTRIBUTE, &[13u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static NNI_LAYER_MANAGEMENT_TIMER_REPEAT_SREC_AOI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***Q2751_ATTRIBUTE, &[14u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static NNI_TIMER_T1_AOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q2751_ATTRIBUTE, &[15u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static NNI_TIMER_T1_DEFAULT: LazyLock<NniTimerT1> =
+        LazyLock::new(|| NniTimerT1(Integer::from(5000)));
+    pub static NNI_TIMER_T2_AOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q2751_ATTRIBUTE, &[16u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static NNI_TIMER_T2_DEFAULT: LazyLock<NniTimerT2> =
+        LazyLock::new(|| NniTimerT2(Integer::from(30000)));
+    pub static NNI_TIMER_T3_AOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q2751_ATTRIBUTE, &[17u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static POLL_AFTER_RETRANSMISSION_AOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q2751_ATTRIBUTE, &[18u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static POLL_AFTER_RETRANSMISSION_PACKAGE_POI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***Q2751_PACKAGE, &[6u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static Q2751_ACTION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q2751_INFORMATION_MODEL, &[9u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static Q2751_ATTRIBUTE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q2751_INFORMATION_MODEL, &[7u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " ASN.1 OBJECT IDENTIFIER definitions"]
+    pub static Q2751_INFORMATION_MODEL: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[0u32, 0u32, 17u32, 2751u32, 1u32, 0u32]).to_owned());
+    pub static Q2751_NAME_BINDING: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q2751_INFORMATION_MODEL, &[6u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static Q2751_NOTIFICATION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q2751_INFORMATION_MODEL, &[10u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static Q2751_OBJECT_CLASS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q2751_INFORMATION_MODEL, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static Q2751_PACKAGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q2751_INFORMATION_MODEL, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static Q2751_PARAMETER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q2751_INFORMATION_MODEL, &[5u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static Q2751_SPECIFIC_EXTENSIONS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q2751_INFORMATION_MODEL, &[0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SAAL_NNI_PROTOCOL_PROFILE_OOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q2751_OBJECT_CLASS, &[2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SAAL_NNI_PROTOCOL_PROFILE_MANAGED_ELEMENT_NBOI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***Q2751_NAME_BINDING, &[1u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static SAAL_NNI_PROTOCOL_PROFILE_MANAGED_SWITCHING_ELEMENT_NBOI: LazyLock<
+        ObjectIdentifier,
+    > = LazyLock::new(|| {
+        Oid::new(&[&***Q2751_NAME_BINDING, &[2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SAAL_NNI_PROTOCOL_PROFILE_ID_AOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q2751_ATTRIBUTE, &[19u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SAAL_NNI_PROTOCOL_PROFILE_NAME_AOI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***Q2751_ATTRIBUTE, &[20u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static SAAL_NNI_PROTOCOL_PROFILE_NAME_PACKAGE_POI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***Q2751_PACKAGE, &[7u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static SAAL_NNI_PROTOCOL_PROFILE_PACKAGE_POI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***Q2751_PACKAGE, &[8u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static SIGN_DATA_LINK_TP_OOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q2751_OBJECT_CLASS, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SIGN_DATA_LINK_TP_MTP_SIGN_POINT_NBOI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***Q2751_NAME_BINDING, &[4u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static SIGN_DATA_LINK_TP_PACKAGE_POI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q2751_PACKAGE, &[9u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SIGN_LINK_TP_OOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q2751_OBJECT_CLASS, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SIGN_LINK_TP_SIGN_LINK_SET_TP_NBOI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***Q2751_NAME_BINDING, &[5u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static SIGN_LINK_TP_PACKAGE_POI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q2751_PACKAGE, &[10u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " ASN.1 OBJECT IDENTIFIER definitions for context specific errors"]
+    pub static SS7_SPECIFIC_ERROR_OID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q2751_PARAMETER, &[0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SSCOP_TIMER_CC_AOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q2751_ATTRIBUTE, &[21u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SSCOP_TIMER_CC_DEFAULT_FOR_NNI: LazyLock<SscopTimerCc> =
+        LazyLock::new(|| SscopTimerCc(Integer::from(200)));
+    pub static SSCOP_TIMER_IDLE_AOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q2751_ATTRIBUTE, &[22u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SSCOP_TIMER_IDLE_DEFAULT_FOR_NNI: LazyLock<SscopTimerIdle> =
+        LazyLock::new(|| SscopTimerIdle(Integer::from(100)));
+    pub static SSCOP_TIMER_KEEP_ALIVE_AOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q2751_ATTRIBUTE, &[23u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SSCOP_TIMER_KEEP_ALIVE_DEFAULT_FOR_NNI: LazyLock<SscopTimerKeepAlive> =
+        LazyLock::new(|| SscopTimerKeepAlive(Integer::from(100)));
+    pub static SSCOP_TIMER_NO_RESPONSE_AOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q2751_ATTRIBUTE, &[24u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SSCOP_TIMER_NO_RESPONSE_DEFAULT_FOR_NNI: LazyLock<SscopTimerNoResponse> =
+        LazyLock::new(|| SscopTimerNoResponse(Integer::from(1500)));
+    pub static SSCOP_TIMER_POLL_AOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q2751_ATTRIBUTE, &[25u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SSCOP_TIMER_POLL_DEFAULT_FOR_NNI: LazyLock<SscopTimerPoll> =
+        LazyLock::new(|| SscopTimerPoll(Integer::from(100)));
+    pub static THRESHOLDS_FOR_MULT_CONG_LEVELS_PACKAGE_POI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***Q2751_PACKAGE, &[11u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static THRESHOLDS_FOR_MULT_CONG_LEVELS_WITH_PRIO_PACKAGE_POI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***Q2751_PACKAGE, &[12u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static TRANS_SAAL_CONG_THRESHOLD_ABATEMENT_L1_AOI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***Q2751_ATTRIBUTE, &[27u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static TRANS_SAAL_CONG_THRESHOLD_ABATEMENT_L2_AOI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***Q2751_ATTRIBUTE, &[28u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static TRANS_SAAL_CONG_THRESHOLD_ABATEMENT_L3_AOI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***Q2751_ATTRIBUTE, &[29u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static TRANS_SAAL_CONG_THRESHOLD_DISCARD_L1_AOI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***Q2751_ATTRIBUTE, &[30u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static TRANS_SAAL_CONG_THRESHOLD_DISCARD_L2_AOI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***Q2751_ATTRIBUTE, &[31u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static TRANS_SAAL_CONG_THRESHOLD_DISCARD_L3_AOI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***Q2751_ATTRIBUTE, &[32u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static TRANS_SAAL_CONG_THRESHOLD_ONSET_L1_AOI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***Q2751_ATTRIBUTE, &[33u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static TRANS_SAAL_CONG_THRESHOLD_ONSET_L2_AOI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***Q2751_ATTRIBUTE, &[34u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static TRANS_SAAL_CONG_THRESHOLD_ONSET_L3_AOI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***Q2751_ATTRIBUTE, &[35u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static TRANSMISSION_RATE_INTERVAL_AOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q2751_ATTRIBUTE, &[26u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static TRANSMISSION_RATE_INTERVAL_DEFAULT: LazyLock<TransmissionRateInterval> =
+        LazyLock::new(|| TransmissionRateInterval::new(TXRateLimit(129), TXRateLimit(256)));
+    pub static VC_TTP_POINTER_AOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q2751_ATTRIBUTE, &[36u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+}

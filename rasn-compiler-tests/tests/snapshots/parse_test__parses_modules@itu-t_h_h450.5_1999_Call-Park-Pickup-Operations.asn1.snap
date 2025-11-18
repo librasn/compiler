@@ -1,0 +1,426 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_h_h450.5_1999_Call-Park-Pickup-Operations.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod call_park_pickup_operations {
+    extern crate alloc;
+    use super::addressing_data_elements::EndpointAddress;
+    use super::call_hold_operations::MixedExtension;
+    use super::h323_messages::{CallIdentifier, NonStandardParameter};
+    use super::h4501_general_error_list::{
+        INVALID_CALL_STATE, NOT_AVAILABLE, RESOURCE_UNAVAILABLE,
+        SUPPLEMENTARY_SERVICE_INTERACTION_NOT_ALLOWED,
+    };
+    use super::manufacturer_specific_service_extension_definition::*;
+    use super::remote_operations_information_objects::*;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum CallType {
+        parkedCall = 0,
+        alertingCall = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct CpNotifyArg {
+        #[rasn(identifier = "parkingNumber")]
+        pub parking_number: Option<EndpointAddress>,
+        #[rasn(size("0..=255"), identifier = "extensionArg")]
+        pub extension_arg: Option<SequenceOf<MixedExtension>>,
+    }
+    impl CpNotifyArg {
+        pub fn new(
+            parking_number: Option<EndpointAddress>,
+            extension_arg: Option<SequenceOf<MixedExtension>>,
+        ) -> Self {
+            Self {
+                parking_number,
+                extension_arg,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct CpRequestArg {
+        #[rasn(identifier = "parkingNumber")]
+        pub parking_number: EndpointAddress,
+        #[rasn(identifier = "parkedNumber")]
+        pub parked_number: EndpointAddress,
+        #[rasn(identifier = "parkedToNumber")]
+        pub parked_to_number: EndpointAddress,
+        #[rasn(identifier = "parkedToPosition")]
+        pub parked_to_position: Option<ParkedToPosition>,
+        #[rasn(size("0..=255"), identifier = "extensionArg")]
+        pub extension_arg: Option<SequenceOf<MixedExtension>>,
+    }
+    impl CpRequestArg {
+        pub fn new(
+            parking_number: EndpointAddress,
+            parked_number: EndpointAddress,
+            parked_to_number: EndpointAddress,
+            parked_to_position: Option<ParkedToPosition>,
+            extension_arg: Option<SequenceOf<MixedExtension>>,
+        ) -> Self {
+            Self {
+                parking_number,
+                parked_number,
+                parked_to_number,
+                parked_to_position,
+                extension_arg,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct CpRequestRes {
+        #[rasn(identifier = "parkedToNumber")]
+        pub parked_to_number: EndpointAddress,
+        #[rasn(identifier = "parkedToPosition")]
+        pub parked_to_position: Option<ParkedToPosition>,
+        #[rasn(identifier = "parkCondition")]
+        pub park_condition: ParkCondition,
+        #[rasn(size("0..=255"), identifier = "extensionRes")]
+        pub extension_res: Option<SequenceOf<MixedExtension>>,
+    }
+    impl CpRequestRes {
+        pub fn new(
+            parked_to_number: EndpointAddress,
+            parked_to_position: Option<ParkedToPosition>,
+            park_condition: ParkCondition,
+            extension_res: Option<SequenceOf<MixedExtension>>,
+        ) -> Self {
+            Self {
+                parked_to_number,
+                parked_to_position,
+                park_condition,
+                extension_res,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct CpSetupArg {
+        #[rasn(identifier = "parkingNumber")]
+        pub parking_number: EndpointAddress,
+        #[rasn(identifier = "parkedNumber")]
+        pub parked_number: EndpointAddress,
+        #[rasn(identifier = "parkedToNumber")]
+        pub parked_to_number: EndpointAddress,
+        #[rasn(identifier = "parkedToPosition")]
+        pub parked_to_position: Option<ParkedToPosition>,
+        #[rasn(size("0..=255"), identifier = "extensionArg")]
+        pub extension_arg: Option<SequenceOf<MixedExtension>>,
+    }
+    impl CpSetupArg {
+        pub fn new(
+            parking_number: EndpointAddress,
+            parked_number: EndpointAddress,
+            parked_to_number: EndpointAddress,
+            parked_to_position: Option<ParkedToPosition>,
+            extension_arg: Option<SequenceOf<MixedExtension>>,
+        ) -> Self {
+            Self {
+                parking_number,
+                parked_number,
+                parked_to_number,
+                parked_to_position,
+                extension_arg,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct CpSetupRes {
+        #[rasn(identifier = "parkedToNumber")]
+        pub parked_to_number: EndpointAddress,
+        #[rasn(identifier = "parkedToPosition")]
+        pub parked_to_position: Option<ParkedToPosition>,
+        #[rasn(identifier = "parkCondition")]
+        pub park_condition: ParkCondition,
+        #[rasn(size("0..=255"), identifier = "extensionRes")]
+        pub extension_res: Option<SequenceOf<MixedExtension>>,
+    }
+    impl CpSetupRes {
+        pub fn new(
+            parked_to_number: EndpointAddress,
+            parked_to_position: Option<ParkedToPosition>,
+            park_condition: ParkCondition,
+            extension_res: Option<SequenceOf<MixedExtension>>,
+        ) -> Self {
+            Self {
+                parked_to_number,
+                parked_to_position,
+                park_condition,
+                extension_res,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct CpickupNotifyArg {
+        #[rasn(identifier = "picking-upNumber")]
+        pub picking_up_number: Option<EndpointAddress>,
+        #[rasn(size("0..=255"), identifier = "extensionArg")]
+        pub extension_arg: Option<SequenceOf<MixedExtension>>,
+    }
+    impl CpickupNotifyArg {
+        pub fn new(
+            picking_up_number: Option<EndpointAddress>,
+            extension_arg: Option<SequenceOf<MixedExtension>>,
+        ) -> Self {
+            Self {
+                picking_up_number,
+                extension_arg,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct GroupIndicationOffArg {
+        #[rasn(identifier = "callPickupId")]
+        pub call_pickup_id: CallIdentifier,
+        #[rasn(identifier = "groupMemberUserNr")]
+        pub group_member_user_nr: EndpointAddress,
+        #[rasn(size("0..=255"), identifier = "extensionArg")]
+        pub extension_arg: Option<SequenceOf<MixedExtension>>,
+    }
+    impl GroupIndicationOffArg {
+        pub fn new(
+            call_pickup_id: CallIdentifier,
+            group_member_user_nr: EndpointAddress,
+            extension_arg: Option<SequenceOf<MixedExtension>>,
+        ) -> Self {
+            Self {
+                call_pickup_id,
+                group_member_user_nr,
+                extension_arg,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct GroupIndicationOffRes {
+        #[rasn(size("0..=255"), identifier = "extensionRes")]
+        pub extension_res: Option<SequenceOf<MixedExtension>>,
+    }
+    impl GroupIndicationOffRes {
+        pub fn new(extension_res: Option<SequenceOf<MixedExtension>>) -> Self {
+            Self { extension_res }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct GroupIndicationOnArg {
+        #[rasn(identifier = "callPickupId")]
+        pub call_pickup_id: CallIdentifier,
+        #[rasn(identifier = "groupMemberUserNr")]
+        pub group_member_user_nr: EndpointAddress,
+        #[rasn(identifier = "retrieveCallType")]
+        pub retrieve_call_type: CallType,
+        #[rasn(identifier = "partyToRetrieve")]
+        pub party_to_retrieve: EndpointAddress,
+        #[rasn(identifier = "retrieveAddress")]
+        pub retrieve_address: EndpointAddress,
+        #[rasn(identifier = "parkPosition")]
+        pub park_position: Option<ParkedToPosition>,
+        #[rasn(size("0..=255"), identifier = "extensionArg")]
+        pub extension_arg: Option<SequenceOf<MixedExtension>>,
+    }
+    impl GroupIndicationOnArg {
+        pub fn new(
+            call_pickup_id: CallIdentifier,
+            group_member_user_nr: EndpointAddress,
+            retrieve_call_type: CallType,
+            party_to_retrieve: EndpointAddress,
+            retrieve_address: EndpointAddress,
+            park_position: Option<ParkedToPosition>,
+            extension_arg: Option<SequenceOf<MixedExtension>>,
+        ) -> Self {
+            Self {
+                call_pickup_id,
+                group_member_user_nr,
+                retrieve_call_type,
+                party_to_retrieve,
+                retrieve_address,
+                park_position,
+                extension_arg,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct GroupIndicationOnRes {
+        #[rasn(size("0..=255"), identifier = "extensionRes")]
+        pub extension_res: Option<SequenceOf<MixedExtension>>,
+    }
+    impl GroupIndicationOnRes {
+        pub fn new(extension_res: Option<SequenceOf<MixedExtension>>) -> Self {
+            Self { extension_res }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum ParkCondition {
+        unspecified = 0,
+        parkedToUserIdle = 1,
+        parkedToUserBusy = 2,
+        parkedToGroup = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=65535"))]
+    pub struct ParkedToPosition(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct PickExeArg {
+        #[rasn(identifier = "callPickupId")]
+        pub call_pickup_id: CallIdentifier,
+        #[rasn(identifier = "picking-upNumber")]
+        pub picking_up_number: EndpointAddress,
+        #[rasn(identifier = "partyToRetrieve")]
+        pub party_to_retrieve: EndpointAddress,
+        #[rasn(size("0..=255"), identifier = "extensionArg")]
+        pub extension_arg: Option<SequenceOf<MixedExtension>>,
+    }
+    impl PickExeArg {
+        pub fn new(
+            call_pickup_id: CallIdentifier,
+            picking_up_number: EndpointAddress,
+            party_to_retrieve: EndpointAddress,
+            extension_arg: Option<SequenceOf<MixedExtension>>,
+        ) -> Self {
+            Self {
+                call_pickup_id,
+                picking_up_number,
+                party_to_retrieve,
+                extension_arg,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct PickExeRes {
+        #[rasn(size("0..=255"), identifier = "extensionRes")]
+        pub extension_res: Option<SequenceOf<MixedExtension>>,
+    }
+    impl PickExeRes {
+        pub fn new(extension_res: Option<SequenceOf<MixedExtension>>) -> Self {
+            Self { extension_res }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct PickrequArg {
+        #[rasn(identifier = "picking-upNumber")]
+        pub picking_up_number: EndpointAddress,
+        #[rasn(identifier = "callPickupId")]
+        pub call_pickup_id: Option<CallIdentifier>,
+        #[rasn(identifier = "partyToRetrieve")]
+        pub party_to_retrieve: Option<EndpointAddress>,
+        #[rasn(identifier = "retrieveAddress")]
+        pub retrieve_address: EndpointAddress,
+        #[rasn(identifier = "parkPosition")]
+        pub park_position: Option<ParkedToPosition>,
+        #[rasn(size("0..=255"), identifier = "extensionArg")]
+        pub extension_arg: Option<SequenceOf<MixedExtension>>,
+    }
+    impl PickrequArg {
+        pub fn new(
+            picking_up_number: EndpointAddress,
+            call_pickup_id: Option<CallIdentifier>,
+            party_to_retrieve: Option<EndpointAddress>,
+            retrieve_address: EndpointAddress,
+            park_position: Option<ParkedToPosition>,
+            extension_arg: Option<SequenceOf<MixedExtension>>,
+        ) -> Self {
+            Self {
+                picking_up_number,
+                call_pickup_id,
+                party_to_retrieve,
+                retrieve_address,
+                park_position,
+                extension_arg,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct PickrequRes {
+        #[rasn(identifier = "callPickupId")]
+        pub call_pickup_id: CallIdentifier,
+        #[rasn(size("0..=255"), identifier = "extensionRes")]
+        pub extension_res: Option<SequenceOf<MixedExtension>>,
+    }
+    impl PickrequRes {
+        pub fn new(
+            call_pickup_id: CallIdentifier,
+            extension_res: Option<SequenceOf<MixedExtension>>,
+        ) -> Self {
+            Self {
+                call_pickup_id,
+                extension_res,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct PickupArg {
+        #[rasn(identifier = "callPickupId")]
+        pub call_pickup_id: CallIdentifier,
+        #[rasn(identifier = "picking-upNumber")]
+        pub picking_up_number: EndpointAddress,
+        #[rasn(size("0..=255"), identifier = "extensionArg")]
+        pub extension_arg: Option<SequenceOf<MixedExtension>>,
+    }
+    impl PickupArg {
+        pub fn new(
+            call_pickup_id: CallIdentifier,
+            picking_up_number: EndpointAddress,
+            extension_arg: Option<SequenceOf<MixedExtension>>,
+        ) -> Self {
+            Self {
+                call_pickup_id,
+                picking_up_number,
+                extension_arg,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct PickupRes {
+        #[rasn(size("0..=255"), identifier = "extensionRes")]
+        pub extension_res: Option<SequenceOf<MixedExtension>>,
+    }
+    impl PickupRes {
+        pub fn new(extension_res: Option<SequenceOf<MixedExtension>>) -> Self {
+            Self { extension_res }
+        }
+    }
+}

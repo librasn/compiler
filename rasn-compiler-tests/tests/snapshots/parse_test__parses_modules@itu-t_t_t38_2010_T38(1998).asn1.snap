@@ -1,0 +1,203 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_t_t38_2010_T38(1998).asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod t38 {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousDataFieldFieldType {
+        #[rasn(identifier = "hdlc-data")]
+        hdlc_data = 0,
+        #[rasn(identifier = "hdlc-sig-end")]
+        hdlc_sig_end = 1,
+        #[rasn(identifier = "hdlc-fcs-OK")]
+        hdlc_fcs_OK = 2,
+        #[rasn(identifier = "hdlc-fcs-BAD")]
+        hdlc_fcs_BAD = 3,
+        #[rasn(identifier = "hdlc-fcs-OK-sig-end")]
+        hdlc_fcs_OK_sig_end = 4,
+        #[rasn(identifier = "hdlc-fcs-BAD-sig-end")]
+        hdlc_fcs_BAD_sig_end = 5,
+        #[rasn(identifier = "t4-non-ecm-data")]
+        t4_non_ecm_data = 6,
+        #[rasn(identifier = "t4-non-ecm-sig-end")]
+        t4_non_ecm_sig_end = 7,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    pub struct AnonymousDataField {
+        #[rasn(identifier = "field-type")]
+        pub field_type: AnonymousDataFieldFieldType,
+        #[rasn(size("1..=65535"), identifier = "field-data")]
+        pub field_data: Option<OctetString>,
+    }
+    impl AnonymousDataField {
+        pub fn new(
+            field_type: AnonymousDataFieldFieldType,
+            field_data: Option<OctetString>,
+        ) -> Self {
+            Self {
+                field_type,
+                field_data,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Data-Field")]
+    pub struct DataField(pub SequenceOf<AnonymousDataField>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct IFPPacket {
+        #[rasn(identifier = "type-of-msg")]
+        pub type_of_msg: TypeOfMsg,
+        #[rasn(identifier = "data-field")]
+        pub data_field: Option<DataField>,
+    }
+    impl IFPPacket {
+        pub fn new(type_of_msg: TypeOfMsg, data_field: Option<DataField>) -> Self {
+            Self {
+                type_of_msg,
+                data_field,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum TypeOfMsgT30Indicator {
+        #[rasn(identifier = "no-signal")]
+        no_signal = 0,
+        cng = 1,
+        ced = 2,
+        #[rasn(identifier = "v21-preamble")]
+        v21_preamble = 3,
+        #[rasn(identifier = "v27-2400-training")]
+        v27_2400_training = 4,
+        #[rasn(identifier = "v27-4800-training")]
+        v27_4800_training = 5,
+        #[rasn(identifier = "v29-7200-training")]
+        v29_7200_training = 6,
+        #[rasn(identifier = "v29-9600-training")]
+        v29_9600_training = 7,
+        #[rasn(identifier = "v17-7200-short-training")]
+        v17_7200_short_training = 8,
+        #[rasn(identifier = "v17-7200-long-training")]
+        v17_7200_long_training = 9,
+        #[rasn(identifier = "v17-9600-short-training")]
+        v17_9600_short_training = 10,
+        #[rasn(identifier = "v17-9600-long-training")]
+        v17_9600_long_training = 11,
+        #[rasn(identifier = "v17-12000-short-training")]
+        v17_12000_short_training = 12,
+        #[rasn(identifier = "v17-12000-long-training")]
+        v17_12000_long_training = 13,
+        #[rasn(identifier = "v17-14400-short-training")]
+        v17_14400_short_training = 14,
+        #[rasn(identifier = "v17-14400-long-training")]
+        v17_14400_long_training = 15,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum TypeOfMsgData {
+        v21 = 0,
+        #[rasn(identifier = "v27-2400")]
+        v27_2400 = 1,
+        #[rasn(identifier = "v27-4800")]
+        v27_4800 = 2,
+        #[rasn(identifier = "v29-7200")]
+        v29_7200 = 3,
+        #[rasn(identifier = "v29-9600")]
+        v29_9600 = 4,
+        #[rasn(identifier = "v17-7200")]
+        v17_7200 = 5,
+        #[rasn(identifier = "v17-9600")]
+        v17_9600 = 6,
+        #[rasn(identifier = "v17-12000")]
+        v17_12000 = 7,
+        #[rasn(identifier = "v17-14400")]
+        v17_14400 = 8,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags, identifier = "Type-of-msg")]
+    pub enum TypeOfMsg {
+        #[rasn(identifier = "t30-indicator")]
+        t30_indicator(TypeOfMsgT30Indicator),
+        data(TypeOfMsgData),
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "IOFR$TYPE-IDENTIFIER$&Type")]
+    pub struct AnonymousUDPTLPacketErrorRecoverySecondaryIfpPackets(pub Any);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct UDPTLPacketErrorRecoverySecondaryIfpPackets(
+        pub SequenceOf<AnonymousUDPTLPacketErrorRecoverySecondaryIfpPackets>,
+    );
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct UDPTLPacketErrorRecoveryFecInfo {
+        #[rasn(identifier = "fec-npackets")]
+        pub fec_npackets: Integer,
+        #[rasn(identifier = "fec-data")]
+        pub fec_data: SequenceOf<OctetString>,
+    }
+    impl UDPTLPacketErrorRecoveryFecInfo {
+        pub fn new(fec_npackets: Integer, fec_data: SequenceOf<OctetString>) -> Self {
+            Self {
+                fec_npackets,
+                fec_data,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum UDPTLPacketErrorRecovery {
+        #[rasn(identifier = "secondary-ifp-packets")]
+        secondary_ifp_packets(UDPTLPacketErrorRecoverySecondaryIfpPackets),
+        #[rasn(identifier = "fec-info")]
+        fec_info(UDPTLPacketErrorRecoveryFecInfo),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct UDPTLPacket {
+        #[rasn(value("0..=65535"), identifier = "sE-NUMBER")]
+        pub s_e_number: u16,
+        #[rasn(identifier = "primary-ifp-packet")]
+        pub primary_ifp_packet: Any,
+        #[rasn(identifier = "error-recovery")]
+        pub error_recovery: UDPTLPacketErrorRecovery,
+    }
+    impl UDPTLPacket {
+        pub fn new(
+            s_e_number: u16,
+            primary_ifp_packet: Any,
+            error_recovery: UDPTLPacketErrorRecovery,
+        ) -> Self {
+            Self {
+                s_e_number,
+                primary_ifp_packet,
+                error_recovery,
+            }
+        }
+    }
+}

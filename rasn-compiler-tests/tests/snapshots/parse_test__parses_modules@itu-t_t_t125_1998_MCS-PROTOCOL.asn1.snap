@@ -1,0 +1,1279 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_t_t125_1998_MCS-PROTOCOL.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod mcs_protocol {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = "  created by Channel-Convene"]
+    #[doc = "  deleted by Channel-Disband"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AssignedChannelId(pub DynamicChannelId);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 11))]
+    pub struct AttachUserConfirm {
+        pub result: Result,
+        pub initiator: Option<UserId>,
+    }
+    impl AttachUserConfirm {
+        pub fn new(result: Result, initiator: Option<UserId>) -> Self {
+            Self { result, initiator }
+        }
+    }
+    #[doc = "  Part 5: Attach/Detach user"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 10))]
+    pub struct AttachUserRequest {}
+    impl AttachUserRequest {
+        pub fn new() -> Self {
+            Self {}
+        }
+    }
+    impl std::default::Default for AttachUserRequest {
+        fn default() -> Self {
+            Self {}
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 22))]
+    pub struct ChannelAdmitIndication {
+        pub initiator: UserId,
+        #[rasn(identifier = "channelId")]
+        pub channel_id: PrivateChannelId,
+        #[rasn(identifier = "userIds")]
+        pub user_ids: SetOf<UserId>,
+    }
+    impl ChannelAdmitIndication {
+        pub fn new(
+            initiator: UserId,
+            channel_id: PrivateChannelId,
+            user_ids: SetOf<UserId>,
+        ) -> Self {
+            Self {
+                initiator,
+                channel_id,
+                user_ids,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 21))]
+    pub struct ChannelAdmitRequest {
+        pub initiator: UserId,
+        #[rasn(identifier = "channelId")]
+        pub channel_id: PrivateChannelId,
+        #[rasn(identifier = "userIds")]
+        pub user_ids: SetOf<UserId>,
+    }
+    impl ChannelAdmitRequest {
+        pub fn new(
+            initiator: UserId,
+            channel_id: PrivateChannelId,
+            user_ids: SetOf<UserId>,
+        ) -> Self {
+            Self {
+                initiator,
+                channel_id,
+                user_ids,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ChannelAttributesStatic {
+        #[rasn(identifier = "channelId")]
+        pub channel_id: StaticChannelId,
+    }
+    impl ChannelAttributesStatic {
+        pub fn new(channel_id: StaticChannelId) -> Self {
+            Self { channel_id }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ChannelAttributesUserId {
+        pub joined: bool,
+        #[rasn(identifier = "userId")]
+        pub user_id: UserId,
+    }
+    impl ChannelAttributesUserId {
+        pub fn new(joined: bool, user_id: UserId) -> Self {
+            Self { joined, user_id }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ChannelAttributesPrivate {
+        pub joined: bool,
+        #[rasn(identifier = "channelId")]
+        pub channel_id: PrivateChannelId,
+        pub manager: UserId,
+        pub admitted: SetOf<UserId>,
+    }
+    impl ChannelAttributesPrivate {
+        pub fn new(
+            joined: bool,
+            channel_id: PrivateChannelId,
+            manager: UserId,
+            admitted: SetOf<UserId>,
+        ) -> Self {
+            Self {
+                joined,
+                channel_id,
+                manager,
+                admitted,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ChannelAttributesAssigned {
+        #[rasn(identifier = "channelId")]
+        pub channel_id: AssignedChannelId,
+    }
+    impl ChannelAttributesAssigned {
+        pub fn new(channel_id: AssignedChannelId) -> Self {
+            Self { channel_id }
+        }
+    }
+    #[doc = "  its throughput enforcement interval in milliseconds"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ChannelAttributes {
+        #[rasn(tag(context, 0), identifier = "static")]
+        R_static(ChannelAttributesStatic),
+        #[rasn(tag(context, 1))]
+        userId(ChannelAttributesUserId),
+        #[rasn(tag(context, 2))]
+        private(ChannelAttributesPrivate),
+        #[rasn(tag(context, 3))]
+        assigned(ChannelAttributesAssigned),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 18))]
+    pub struct ChannelConveneConfirm {
+        pub result: Result,
+        pub initiator: UserId,
+        #[rasn(identifier = "channelId")]
+        pub channel_id: Option<PrivateChannelId>,
+    }
+    impl ChannelConveneConfirm {
+        pub fn new(
+            result: Result,
+            initiator: UserId,
+            channel_id: Option<PrivateChannelId>,
+        ) -> Self {
+            Self {
+                result,
+                initiator,
+                channel_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 17))]
+    pub struct ChannelConveneRequest {
+        pub initiator: UserId,
+    }
+    impl ChannelConveneRequest {
+        pub fn new(initiator: UserId) -> Self {
+            Self { initiator }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 20))]
+    pub struct ChannelDisbandIndication {
+        #[rasn(identifier = "channelId")]
+        pub channel_id: PrivateChannelId,
+    }
+    impl ChannelDisbandIndication {
+        pub fn new(channel_id: PrivateChannelId) -> Self {
+            Self { channel_id }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 19))]
+    pub struct ChannelDisbandRequest {
+        pub initiator: UserId,
+        #[rasn(identifier = "channelId")]
+        pub channel_id: PrivateChannelId,
+    }
+    impl ChannelDisbandRequest {
+        pub fn new(initiator: UserId, channel_id: PrivateChannelId) -> Self {
+            Self {
+                initiator,
+                channel_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 24))]
+    pub struct ChannelExpelIndication {
+        #[rasn(identifier = "channelId")]
+        pub channel_id: PrivateChannelId,
+        #[rasn(identifier = "userIds")]
+        pub user_ids: SetOf<UserId>,
+    }
+    impl ChannelExpelIndication {
+        pub fn new(channel_id: PrivateChannelId, user_ids: SetOf<UserId>) -> Self {
+            Self {
+                channel_id,
+                user_ids,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 23))]
+    pub struct ChannelExpelRequest {
+        pub initiator: UserId,
+        #[rasn(identifier = "channelId")]
+        pub channel_id: PrivateChannelId,
+        #[rasn(identifier = "userIds")]
+        pub user_ids: SetOf<UserId>,
+    }
+    impl ChannelExpelRequest {
+        pub fn new(
+            initiator: UserId,
+            channel_id: PrivateChannelId,
+            user_ids: SetOf<UserId>,
+        ) -> Self {
+            Self {
+                initiator,
+                channel_id,
+                user_ids,
+            }
+        }
+    }
+    #[doc = "  Part 1: Fundamental MCS types"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=65535"))]
+    pub struct ChannelId(pub u16);
+    #[doc = "  may be zero"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 15))]
+    pub struct ChannelJoinConfirm {
+        pub result: Result,
+        pub initiator: UserId,
+        pub requested: ChannelId,
+        #[rasn(identifier = "channelId")]
+        pub channel_id: Option<ChannelId>,
+    }
+    impl ChannelJoinConfirm {
+        pub fn new(
+            result: Result,
+            initiator: UserId,
+            requested: ChannelId,
+            channel_id: Option<ChannelId>,
+        ) -> Self {
+            Self {
+                result,
+                initiator,
+                requested,
+                channel_id,
+            }
+        }
+    }
+    #[doc = "  Part 6: Channel management"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 14))]
+    pub struct ChannelJoinRequest {
+        pub initiator: UserId,
+        #[rasn(identifier = "channelId")]
+        pub channel_id: ChannelId,
+    }
+    impl ChannelJoinRequest {
+        pub fn new(initiator: UserId, channel_id: ChannelId) -> Self {
+            Self {
+                initiator,
+                channel_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 16))]
+    pub struct ChannelLeaveRequest {
+        #[rasn(identifier = "channelIds")]
+        pub channel_ids: SetOf<ChannelId>,
+    }
+    impl ChannelLeaveRequest {
+        pub fn new(channel_ids: SetOf<ChannelId>) -> Self {
+            Self { channel_ids }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 103), identifier = "Connect-Additional")]
+    pub struct ConnectAdditional {
+        #[rasn(value("0.."), identifier = "calledConnectId")]
+        pub called_connect_id: Integer,
+        #[rasn(identifier = "dataPriority")]
+        pub data_priority: DataPriority,
+    }
+    impl ConnectAdditional {
+        pub fn new(called_connect_id: Integer, data_priority: DataPriority) -> Self {
+            Self {
+                called_connect_id,
+                data_priority,
+            }
+        }
+    }
+    #[doc = "  Part 2: Connect provider"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 101), identifier = "Connect-Initial")]
+    pub struct ConnectInitial {
+        #[rasn(identifier = "callingDomainSelector")]
+        pub calling_domain_selector: OctetString,
+        #[rasn(identifier = "calledDomainSelector")]
+        pub called_domain_selector: OctetString,
+        #[rasn(identifier = "upwardFlag")]
+        pub upward_flag: bool,
+        #[rasn(identifier = "targetParameters")]
+        pub target_parameters: DomainParameters,
+        #[rasn(identifier = "minimumParameters")]
+        pub minimum_parameters: DomainParameters,
+        #[rasn(identifier = "maximumParameters")]
+        pub maximum_parameters: DomainParameters,
+        #[rasn(identifier = "userData")]
+        pub user_data: OctetString,
+    }
+    impl ConnectInitial {
+        pub fn new(
+            calling_domain_selector: OctetString,
+            called_domain_selector: OctetString,
+            upward_flag: bool,
+            target_parameters: DomainParameters,
+            minimum_parameters: DomainParameters,
+            maximum_parameters: DomainParameters,
+            user_data: OctetString,
+        ) -> Self {
+            Self {
+                calling_domain_selector,
+                called_domain_selector,
+                upward_flag,
+                target_parameters,
+                minimum_parameters,
+                maximum_parameters,
+                user_data,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 102), identifier = "Connect-Response")]
+    pub struct ConnectResponse {
+        pub result: Result,
+        #[rasn(value("0.."), identifier = "calledConnectId")]
+        pub called_connect_id: Integer,
+        #[rasn(identifier = "domainParameters")]
+        pub domain_parameters: DomainParameters,
+        #[rasn(identifier = "userData")]
+        pub user_data: OctetString,
+    }
+    impl ConnectResponse {
+        pub fn new(
+            result: Result,
+            called_connect_id: Integer,
+            domain_parameters: DomainParameters,
+            user_data: OctetString,
+        ) -> Self {
+            Self {
+                result,
+                called_connect_id,
+                domain_parameters,
+                user_data,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 104), identifier = "Connect-Result")]
+    pub struct ConnectResult {
+        pub result: Result,
+    }
+    impl ConnectResult {
+        pub fn new(result: Result) -> Self {
+            Self { result }
+        }
+    }
+    #[doc = "  Part 10: MCSPDU repertoire"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ConnectMCSPDU {
+        #[rasn(identifier = "connect-initial")]
+        connect_initial(ConnectInitial),
+        #[rasn(identifier = "connect-response")]
+        connect_response(ConnectResponse),
+        #[rasn(identifier = "connect-additional")]
+        connect_additional(ConnectAdditional),
+        #[rasn(identifier = "connect-result")]
+        connect_result(ConnectResult),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum DataPriority {
+        top = 0,
+        high = 1,
+        medium = 2,
+        low = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 13))]
+    pub struct DetachUserIndication {
+        pub reason: Reason,
+        #[rasn(identifier = "userIds")]
+        pub user_ids: SetOf<UserId>,
+    }
+    impl DetachUserIndication {
+        pub fn new(reason: Reason, user_ids: SetOf<UserId>) -> Self {
+            Self { reason, user_ids }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 12))]
+    pub struct DetachUserRequest {
+        pub reason: Reason,
+        #[rasn(identifier = "userIds")]
+        pub user_ids: SetOf<UserId>,
+    }
+    impl DetachUserRequest {
+        pub fn new(reason: Reason, user_ids: SetOf<UserId>) -> Self {
+            Self { reason, user_ids }
+        }
+    }
+    #[doc = "  in RejectMCSPDUUltimatum"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum Diagnostic {
+        #[rasn(identifier = "dc-inconsistent-merge")]
+        dc_inconsistent_merge = 0,
+        #[rasn(identifier = "dc-forbidden-PDU-downward")]
+        dc_forbidden_PDU_downward = 1,
+        #[rasn(identifier = "dc-forbidden-PDU-upward")]
+        dc_forbidden_PDU_upward = 2,
+        #[rasn(identifier = "dc-invalid-BER-encoding")]
+        dc_invalid_BER_encoding = 3,
+        #[rasn(identifier = "dc-invalid-PER-encoding")]
+        dc_invalid_PER_encoding = 4,
+        #[rasn(identifier = "dc-misrouted-user")]
+        dc_misrouted_user = 5,
+        #[rasn(identifier = "dc-unrequested-confirm")]
+        dc_unrequested_confirm = 6,
+        #[rasn(identifier = "dc-wrong-transport-priority")]
+        dc_wrong_transport_priority = 7,
+        #[rasn(identifier = "dc-channel-id-conflict")]
+        dc_channel_id_conflict = 8,
+        #[rasn(identifier = "dc-token-id-conflict")]
+        dc_token_id_conflict = 9,
+        #[rasn(identifier = "dc-not-user-id-channel")]
+        dc_not_user_id_channel = 10,
+        #[rasn(identifier = "dc-too-many-channels")]
+        dc_too_many_channels = 11,
+        #[rasn(identifier = "dc-too-many-tokens")]
+        dc_too_many_tokens = 12,
+        #[rasn(identifier = "dc-too-many-users")]
+        dc_too_many_users = 13,
+    }
+    #[doc = "  Part 4: Disconnect provider"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 8))]
+    pub struct DisconnectProviderUltimatum {
+        pub reason: Reason,
+    }
+    impl DisconnectProviderUltimatum {
+        pub fn new(reason: Reason) -> Self {
+            Self { reason }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum DomainMCSPDU {
+        plumbDomainIndication(PlumbDomainIndication),
+        erectDomainRequest(ErectDomainRequest),
+        mergeChannelsRequest(MergeChannelsRequest),
+        mergeChannelsConfirm(MergeChannelsConfirm),
+        purgeChannelsIndication(PurgeChannelsIndication),
+        mergeTokensRequest(MergeTokensRequest),
+        mergeTokensConfirm(MergeTokensConfirm),
+        purgeTokensIndication(PurgeTokensIndication),
+        disconnectProviderUltimatum(DisconnectProviderUltimatum),
+        rejectMCSPDUUltimatum(RejectMCSPDUUltimatum),
+        attachUserRequest(AttachUserRequest),
+        attachUserConfirm(AttachUserConfirm),
+        detachUserRequest(DetachUserRequest),
+        detachUserIndication(DetachUserIndication),
+        channelJoinRequest(ChannelJoinRequest),
+        channelJoinConfirm(ChannelJoinConfirm),
+        channelLeaveRequest(ChannelLeaveRequest),
+        channelConveneRequest(ChannelConveneRequest),
+        channelConveneConfirm(ChannelConveneConfirm),
+        channelDisbandRequest(ChannelDisbandRequest),
+        channelDisbandIndication(ChannelDisbandIndication),
+        channelAdmitRequest(ChannelAdmitRequest),
+        channelAdmitIndication(ChannelAdmitIndication),
+        channelExpelRequest(ChannelExpelRequest),
+        channelExpelIndication(ChannelExpelIndication),
+        sendDataRequest(SendDataRequest),
+        sendDataIndication(SendDataIndication),
+        uniformSendDataRequest(UniformSendDataRequest),
+        uniformSendDataIndication(UniformSendDataIndication),
+        tokenGrabRequest(TokenGrabRequest),
+        tokenGrabConfirm(TokenGrabConfirm),
+        tokenInhibitRequest(TokenInhibitRequest),
+        tokenInhibitConfirm(TokenInhibitConfirm),
+        tokenGiveRequest(TokenGiveRequest),
+        tokenGiveIndication(TokenGiveIndication),
+        tokenGiveResponse(TokenGiveResponse),
+        tokenGiveConfirm(TokenGiveConfirm),
+        tokenPleaseRequest(TokenPleaseRequest),
+        tokenPleaseIndication(TokenPleaseIndication),
+        tokenReleaseRequest(TokenReleaseRequest),
+        tokenReleaseConfirm(TokenReleaseConfirm),
+        tokenTestRequest(TokenTestRequest),
+        tokenTestConfirm(TokenTestConfirm),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct DomainParameters {
+        #[rasn(value("0.."), identifier = "maxChannelIds")]
+        pub max_channel_ids: Integer,
+        #[rasn(value("0.."), identifier = "maxUserIds")]
+        pub max_user_ids: Integer,
+        #[rasn(value("0.."), identifier = "maxTokenIds")]
+        pub max_token_ids: Integer,
+        #[rasn(value("0.."), identifier = "numPriorities")]
+        pub num_priorities: Integer,
+        #[rasn(value("0.."), identifier = "minThroughput")]
+        pub min_throughput: Integer,
+        #[rasn(value("0.."), identifier = "maxHeight")]
+        pub max_height: Integer,
+        #[rasn(value("0.."), identifier = "maxMCSPDUsize")]
+        pub max_mcspdusize: Integer,
+        #[rasn(value("0.."), identifier = "protocolVersion")]
+        pub protocol_version: Integer,
+    }
+    impl DomainParameters {
+        pub fn new(
+            max_channel_ids: Integer,
+            max_user_ids: Integer,
+            max_token_ids: Integer,
+            num_priorities: Integer,
+            min_throughput: Integer,
+            max_height: Integer,
+            max_mcspdusize: Integer,
+            protocol_version: Integer,
+        ) -> Self {
+            Self {
+                max_channel_ids,
+                max_user_ids,
+                max_token_ids,
+                num_priorities,
+                min_throughput,
+                max_height,
+                max_mcspdusize,
+                protocol_version,
+            }
+        }
+    }
+    #[doc = "  those known permanently"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("1001..=65535"))]
+    pub struct DynamicChannelId(pub ChannelId);
+    #[doc = "  a restriction on the MCSPDU receiver"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 1))]
+    pub struct ErectDomainRequest {
+        #[rasn(value("0.."), identifier = "subHeight")]
+        pub sub_height: Integer,
+        #[rasn(value("0.."), identifier = "subInterval")]
+        pub sub_interval: Integer,
+    }
+    impl ErectDomainRequest {
+        pub fn new(sub_height: Integer, sub_interval: Integer) -> Self {
+            Self {
+                sub_height,
+                sub_interval,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 3))]
+    pub struct MergeChannelsConfirm {
+        #[rasn(identifier = "mergeChannels")]
+        pub merge_channels: SetOf<ChannelAttributes>,
+        #[rasn(identifier = "purgeChannelIds")]
+        pub purge_channel_ids: SetOf<ChannelId>,
+    }
+    impl MergeChannelsConfirm {
+        pub fn new(
+            merge_channels: SetOf<ChannelAttributes>,
+            purge_channel_ids: SetOf<ChannelId>,
+        ) -> Self {
+            Self {
+                merge_channels,
+                purge_channel_ids,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 2))]
+    pub struct MergeChannelsRequest {
+        #[rasn(identifier = "mergeChannels")]
+        pub merge_channels: SetOf<ChannelAttributes>,
+        #[rasn(identifier = "purgeChannelIds")]
+        pub purge_channel_ids: SetOf<ChannelId>,
+    }
+    impl MergeChannelsRequest {
+        pub fn new(
+            merge_channels: SetOf<ChannelAttributes>,
+            purge_channel_ids: SetOf<ChannelId>,
+        ) -> Self {
+            Self {
+                merge_channels,
+                purge_channel_ids,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 6))]
+    pub struct MergeTokensConfirm {
+        #[rasn(identifier = "mergeTokens")]
+        pub merge_tokens: SetOf<TokenAttributes>,
+        #[rasn(identifier = "purgeTokenIds")]
+        pub purge_token_ids: SetOf<TokenId>,
+    }
+    impl MergeTokensConfirm {
+        pub fn new(merge_tokens: SetOf<TokenAttributes>, purge_token_ids: SetOf<TokenId>) -> Self {
+            Self {
+                merge_tokens,
+                purge_token_ids,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 5))]
+    pub struct MergeTokensRequest {
+        #[rasn(identifier = "mergeTokens")]
+        pub merge_tokens: SetOf<TokenAttributes>,
+        #[rasn(identifier = "purgeTokenIds")]
+        pub purge_token_ids: SetOf<TokenId>,
+    }
+    impl MergeTokensRequest {
+        pub fn new(merge_tokens: SetOf<TokenAttributes>, purge_token_ids: SetOf<TokenId>) -> Self {
+            Self {
+                merge_tokens,
+                purge_token_ids,
+            }
+        }
+    }
+    #[doc = "  Part 3: Merge domain"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 0))]
+    pub struct PlumbDomainIndication {
+        #[rasn(value("0.."), identifier = "heightLimit")]
+        pub height_limit: Integer,
+    }
+    impl PlumbDomainIndication {
+        pub fn new(height_limit: Integer) -> Self {
+            Self { height_limit }
+        }
+    }
+    #[doc = "  created by Attach-User"]
+    #[doc = "  deleted by Detach-User"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PrivateChannelId(pub DynamicChannelId);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 4))]
+    pub struct PurgeChannelsIndication {
+        #[rasn(identifier = "detachUserIds")]
+        pub detach_user_ids: SetOf<UserId>,
+        #[rasn(identifier = "purgeChannelIds")]
+        pub purge_channel_ids: SetOf<ChannelId>,
+    }
+    impl PurgeChannelsIndication {
+        pub fn new(detach_user_ids: SetOf<UserId>, purge_channel_ids: SetOf<ChannelId>) -> Self {
+            Self {
+                detach_user_ids,
+                purge_channel_ids,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 7))]
+    pub struct PurgeTokensIndication {
+        #[rasn(identifier = "purgeTokenIds")]
+        pub purge_token_ids: SetOf<TokenId>,
+    }
+    impl PurgeTokensIndication {
+        pub fn new(purge_token_ids: SetOf<TokenId>) -> Self {
+            Self { purge_token_ids }
+        }
+    }
+    #[doc = "  Part 9: Status codes"]
+    #[doc = "  in DisconnectProviderUltimatum, DetachUserRequest, DetachUserIndication"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum Reason {
+        #[rasn(identifier = "rn-domain-disconnected")]
+        rn_domain_disconnected = 0,
+        #[rasn(identifier = "rn-provider-initiated")]
+        rn_provider_initiated = 1,
+        #[rasn(identifier = "rn-token-purged")]
+        rn_token_purged = 2,
+        #[rasn(identifier = "rn-user-requested")]
+        rn_user_requested = 3,
+        #[rasn(identifier = "rn-channel-purged")]
+        rn_channel_purged = 4,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 9))]
+    pub struct RejectMCSPDUUltimatum {
+        pub diagnostic: Diagnostic,
+        #[rasn(identifier = "initialOctets")]
+        pub initial_octets: OctetString,
+    }
+    impl RejectMCSPDUUltimatum {
+        pub fn new(diagnostic: Diagnostic, initial_octets: OctetString) -> Self {
+            Self {
+                diagnostic,
+                initial_octets,
+            }
+        }
+    }
+    #[doc = "  in Connect, response, confirm"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum Result {
+        #[rasn(identifier = "rt-successful")]
+        rt_successful = 0,
+        #[rasn(identifier = "rt-domain-merging")]
+        rt_domain_merging = 1,
+        #[rasn(identifier = "rt-domain-not-hierarchical")]
+        rt_domain_not_hierarchical = 2,
+        #[rasn(identifier = "rt-no-such-channel")]
+        rt_no_such_channel = 3,
+        #[rasn(identifier = "rt-no-such-domain")]
+        rt_no_such_domain = 4,
+        #[rasn(identifier = "rt-no-such-user")]
+        rt_no_such_user = 5,
+        #[rasn(identifier = "rt-not-admitted")]
+        rt_not_admitted = 6,
+        #[rasn(identifier = "rt-other-user-id")]
+        rt_other_user_id = 7,
+        #[rasn(identifier = "rt-parameters-unacceptable")]
+        rt_parameters_unacceptable = 8,
+        #[rasn(identifier = "rt-token-not-available")]
+        rt_token_not_available = 9,
+        #[rasn(identifier = "rt-token-not-possessed")]
+        rt_token_not_possessed = 10,
+        #[rasn(identifier = "rt-too-many-channels")]
+        rt_too_many_channels = 11,
+        #[rasn(identifier = "rt-too-many-tokens")]
+        rt_too_many_tokens = 12,
+        #[rasn(identifier = "rt-too-many-users")]
+        rt_too_many_users = 13,
+        #[rasn(identifier = "rt-unspecified-failure")]
+        rt_unspecified_failure = 14,
+        #[rasn(identifier = "rt-user-rejected")]
+        rt_user_rejected = 15,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Segmentation(pub FixedBitString<2usize>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 26))]
+    pub struct SendDataIndication {
+        pub initiator: UserId,
+        #[rasn(identifier = "channelId")]
+        pub channel_id: ChannelId,
+        #[rasn(identifier = "dataPriority")]
+        pub data_priority: DataPriority,
+        pub segmentation: Segmentation,
+        #[rasn(identifier = "userData")]
+        pub user_data: OctetString,
+    }
+    impl SendDataIndication {
+        pub fn new(
+            initiator: UserId,
+            channel_id: ChannelId,
+            data_priority: DataPriority,
+            segmentation: Segmentation,
+            user_data: OctetString,
+        ) -> Self {
+            Self {
+                initiator,
+                channel_id,
+                data_priority,
+                segmentation,
+                user_data,
+            }
+        }
+    }
+    #[doc = "  Part 7: Data transfer"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 25))]
+    pub struct SendDataRequest {
+        pub initiator: UserId,
+        #[rasn(identifier = "channelId")]
+        pub channel_id: ChannelId,
+        #[rasn(identifier = "dataPriority")]
+        pub data_priority: DataPriority,
+        pub segmentation: Segmentation,
+        #[rasn(identifier = "userData")]
+        pub user_data: OctetString,
+    }
+    impl SendDataRequest {
+        pub fn new(
+            initiator: UserId,
+            channel_id: ChannelId,
+            data_priority: DataPriority,
+            segmentation: Segmentation,
+            user_data: OctetString,
+        ) -> Self {
+            Self {
+                initiator,
+                channel_id,
+                data_priority,
+                segmentation,
+                user_data,
+            }
+        }
+    }
+    #[doc = "  range is 16 bits"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("1..=1000"))]
+    pub struct StaticChannelId(pub ChannelId);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct TokenAttributesGrabbed {
+        #[rasn(identifier = "tokenId")]
+        pub token_id: TokenId,
+        pub grabber: UserId,
+    }
+    impl TokenAttributesGrabbed {
+        pub fn new(token_id: TokenId, grabber: UserId) -> Self {
+            Self { token_id, grabber }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct TokenAttributesInhibited {
+        #[rasn(identifier = "tokenId")]
+        pub token_id: TokenId,
+        pub inhibitors: SetOf<UserId>,
+    }
+    impl TokenAttributesInhibited {
+        pub fn new(token_id: TokenId, inhibitors: SetOf<UserId>) -> Self {
+            Self {
+                token_id,
+                inhibitors,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct TokenAttributesGiving {
+        #[rasn(identifier = "tokenId")]
+        pub token_id: TokenId,
+        pub grabber: UserId,
+        pub recipient: UserId,
+    }
+    impl TokenAttributesGiving {
+        pub fn new(token_id: TokenId, grabber: UserId, recipient: UserId) -> Self {
+            Self {
+                token_id,
+                grabber,
+                recipient,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct TokenAttributesUngivable {
+        #[rasn(identifier = "tokenId")]
+        pub token_id: TokenId,
+        pub grabber: UserId,
+    }
+    impl TokenAttributesUngivable {
+        pub fn new(token_id: TokenId, grabber: UserId) -> Self {
+            Self { token_id, grabber }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct TokenAttributesGiven {
+        #[rasn(identifier = "tokenId")]
+        pub token_id: TokenId,
+        pub recipient: UserId,
+    }
+    impl TokenAttributesGiven {
+        pub fn new(token_id: TokenId, recipient: UserId) -> Self {
+            Self {
+                token_id,
+                recipient,
+            }
+        }
+    }
+    #[doc = "  purge other channels"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum TokenAttributes {
+        #[rasn(tag(context, 0))]
+        grabbed(TokenAttributesGrabbed),
+        #[rasn(tag(context, 1))]
+        inhibited(TokenAttributesInhibited),
+        #[rasn(tag(context, 2))]
+        giving(TokenAttributesGiving),
+        #[rasn(tag(context, 3))]
+        ungivable(TokenAttributesUngivable),
+        #[rasn(tag(context, 4))]
+        given(TokenAttributesGiven),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 36))]
+    pub struct TokenGiveConfirm {
+        pub result: Result,
+        pub initiator: UserId,
+        #[rasn(identifier = "tokenId")]
+        pub token_id: TokenId,
+        #[rasn(identifier = "tokenStatus")]
+        pub token_status: TokenStatus,
+    }
+    impl TokenGiveConfirm {
+        pub fn new(
+            result: Result,
+            initiator: UserId,
+            token_id: TokenId,
+            token_status: TokenStatus,
+        ) -> Self {
+            Self {
+                result,
+                initiator,
+                token_id,
+                token_status,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 34))]
+    pub struct TokenGiveIndication {
+        pub initiator: UserId,
+        #[rasn(identifier = "tokenId")]
+        pub token_id: TokenId,
+        pub recipient: UserId,
+    }
+    impl TokenGiveIndication {
+        pub fn new(initiator: UserId, token_id: TokenId, recipient: UserId) -> Self {
+            Self {
+                initiator,
+                token_id,
+                recipient,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 33))]
+    pub struct TokenGiveRequest {
+        pub initiator: UserId,
+        #[rasn(identifier = "tokenId")]
+        pub token_id: TokenId,
+        pub recipient: UserId,
+    }
+    impl TokenGiveRequest {
+        pub fn new(initiator: UserId, token_id: TokenId, recipient: UserId) -> Self {
+            Self {
+                initiator,
+                token_id,
+                recipient,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 35))]
+    pub struct TokenGiveResponse {
+        pub result: Result,
+        pub recipient: UserId,
+        #[rasn(identifier = "tokenId")]
+        pub token_id: TokenId,
+    }
+    impl TokenGiveResponse {
+        pub fn new(result: Result, recipient: UserId, token_id: TokenId) -> Self {
+            Self {
+                result,
+                recipient,
+                token_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 30))]
+    pub struct TokenGrabConfirm {
+        pub result: Result,
+        pub initiator: UserId,
+        #[rasn(identifier = "tokenId")]
+        pub token_id: TokenId,
+        #[rasn(identifier = "tokenStatus")]
+        pub token_status: TokenStatus,
+    }
+    impl TokenGrabConfirm {
+        pub fn new(
+            result: Result,
+            initiator: UserId,
+            token_id: TokenId,
+            token_status: TokenStatus,
+        ) -> Self {
+            Self {
+                result,
+                initiator,
+                token_id,
+                token_status,
+            }
+        }
+    }
+    #[doc = "  Part 8: Token management"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 29))]
+    pub struct TokenGrabRequest {
+        pub initiator: UserId,
+        #[rasn(identifier = "tokenId")]
+        pub token_id: TokenId,
+    }
+    impl TokenGrabRequest {
+        pub fn new(initiator: UserId, token_id: TokenId) -> Self {
+            Self {
+                initiator,
+                token_id,
+            }
+        }
+    }
+    #[doc = "  created by Channel-Join zero"]
+    #[doc = "  deleted by last Channel-Leave"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("1..=65535"))]
+    pub struct TokenId(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 32))]
+    pub struct TokenInhibitConfirm {
+        pub result: Result,
+        pub initiator: UserId,
+        #[rasn(identifier = "tokenId")]
+        pub token_id: TokenId,
+        #[rasn(identifier = "tokenStatus")]
+        pub token_status: TokenStatus,
+    }
+    impl TokenInhibitConfirm {
+        pub fn new(
+            result: Result,
+            initiator: UserId,
+            token_id: TokenId,
+            token_status: TokenStatus,
+        ) -> Self {
+            Self {
+                result,
+                initiator,
+                token_id,
+                token_status,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 31))]
+    pub struct TokenInhibitRequest {
+        pub initiator: UserId,
+        #[rasn(identifier = "tokenId")]
+        pub token_id: TokenId,
+    }
+    impl TokenInhibitRequest {
+        pub fn new(initiator: UserId, token_id: TokenId) -> Self {
+            Self {
+                initiator,
+                token_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 38))]
+    pub struct TokenPleaseIndication {
+        pub initiator: UserId,
+        #[rasn(identifier = "tokenId")]
+        pub token_id: TokenId,
+    }
+    impl TokenPleaseIndication {
+        pub fn new(initiator: UserId, token_id: TokenId) -> Self {
+            Self {
+                initiator,
+                token_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 37))]
+    pub struct TokenPleaseRequest {
+        pub initiator: UserId,
+        #[rasn(identifier = "tokenId")]
+        pub token_id: TokenId,
+    }
+    impl TokenPleaseRequest {
+        pub fn new(initiator: UserId, token_id: TokenId) -> Self {
+            Self {
+                initiator,
+                token_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 40))]
+    pub struct TokenReleaseConfirm {
+        pub result: Result,
+        pub initiator: UserId,
+        #[rasn(identifier = "tokenId")]
+        pub token_id: TokenId,
+        #[rasn(identifier = "tokenStatus")]
+        pub token_status: TokenStatus,
+    }
+    impl TokenReleaseConfirm {
+        pub fn new(
+            result: Result,
+            initiator: UserId,
+            token_id: TokenId,
+            token_status: TokenStatus,
+        ) -> Self {
+            Self {
+                result,
+                initiator,
+                token_id,
+                token_status,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 39))]
+    pub struct TokenReleaseRequest {
+        pub initiator: UserId,
+        #[rasn(identifier = "tokenId")]
+        pub token_id: TokenId,
+    }
+    impl TokenReleaseRequest {
+        pub fn new(initiator: UserId, token_id: TokenId) -> Self {
+            Self {
+                initiator,
+                token_id,
+            }
+        }
+    }
+    #[doc = "  all are known permanently"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum TokenStatus {
+        notInUse = 0,
+        selfGrabbed = 1,
+        otherGrabbed = 2,
+        selfInhibited = 3,
+        otherInhibited = 4,
+        selfRecipient = 5,
+        selfGiving = 6,
+        otherGiving = 7,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 42))]
+    pub struct TokenTestConfirm {
+        pub initiator: UserId,
+        #[rasn(identifier = "tokenId")]
+        pub token_id: TokenId,
+        #[rasn(identifier = "tokenStatus")]
+        pub token_status: TokenStatus,
+    }
+    impl TokenTestConfirm {
+        pub fn new(initiator: UserId, token_id: TokenId, token_status: TokenStatus) -> Self {
+            Self {
+                initiator,
+                token_id,
+                token_status,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 41))]
+    pub struct TokenTestRequest {
+        pub initiator: UserId,
+        #[rasn(identifier = "tokenId")]
+        pub token_id: TokenId,
+    }
+    impl TokenTestRequest {
+        pub fn new(initiator: UserId, token_id: TokenId) -> Self {
+            Self {
+                initiator,
+                token_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 28))]
+    pub struct UniformSendDataIndication {
+        pub initiator: UserId,
+        #[rasn(identifier = "channelId")]
+        pub channel_id: ChannelId,
+        #[rasn(identifier = "dataPriority")]
+        pub data_priority: DataPriority,
+        pub segmentation: Segmentation,
+        #[rasn(identifier = "userData")]
+        pub user_data: OctetString,
+    }
+    impl UniformSendDataIndication {
+        pub fn new(
+            initiator: UserId,
+            channel_id: ChannelId,
+            data_priority: DataPriority,
+            segmentation: Segmentation,
+            user_data: OctetString,
+        ) -> Self {
+            Self {
+                initiator,
+                channel_id,
+                data_priority,
+                segmentation,
+                user_data,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 27))]
+    pub struct UniformSendDataRequest {
+        pub initiator: UserId,
+        #[rasn(identifier = "channelId")]
+        pub channel_id: ChannelId,
+        #[rasn(identifier = "dataPriority")]
+        pub data_priority: DataPriority,
+        pub segmentation: Segmentation,
+        #[rasn(identifier = "userData")]
+        pub user_data: OctetString,
+    }
+    impl UniformSendDataRequest {
+        pub fn new(
+            initiator: UserId,
+            channel_id: ChannelId,
+            data_priority: DataPriority,
+            segmentation: Segmentation,
+            user_data: OctetString,
+        ) -> Self {
+            Self {
+                initiator,
+                channel_id,
+                data_priority,
+                segmentation,
+                user_data,
+            }
+        }
+    }
+    #[doc = "  those created and deleted"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct UserId(pub DynamicChannelId);
+}

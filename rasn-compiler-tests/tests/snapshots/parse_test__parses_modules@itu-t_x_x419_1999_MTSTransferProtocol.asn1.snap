@@ -1,0 +1,88 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x419_1999_MTSTransferProtocol.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod mtstransfer_protocol {
+    extern crate alloc;
+    use super::mhsprotocol_object_identifiers::{ID_AC_MTS_TRANSFER, ID_AS_MTA_RTSE, ID_AS_MTSE};
+    use super::mtaabstract_service::{Message, Probe, Report, MTA_TRANSFER};
+    use super::reliable_transfer_apdu::{RTOACapdu, RTORJapdu, RTORQapdu};
+    use super::remote_operations_abstract_syntaxes::ACSE_ABSTRACT_SYNTAX;
+    use super::remote_operations_generic_ros_pdus::{Bind, Unbind};
+    use super::remote_operations_information_objects_extensions::*;
+    use super::remote_operations_realizations::{ASSOCIATION_BY_RTSE, TRANSFER_BY_RTSE};
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AbortReason(pub Integer);
+    #[doc = "\tMTS Application Protocol Data Units"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "MTS-APDU")]
+    pub enum MTSAPDU {
+        #[rasn(tag(context, 0))]
+        message(Message),
+        #[rasn(tag(context, 2))]
+        probe(Probe),
+        #[rasn(tag(context, 1))]
+        report(Report),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct RTABapdu {
+        #[rasn(tag(context, 0), identifier = "abortReason")]
+        pub abort_reason: Option<AbortReason>,
+        #[rasn(tag(context, 1), identifier = "reflectedParameter")]
+        pub reflected_parameter: Option<BitString>,
+        #[rasn(tag(context, 2), identifier = "userdataAB")]
+        pub userdata_ab: Option<Any>,
+    }
+    impl RTABapdu {
+        pub fn new(
+            abort_reason: Option<AbortReason>,
+            reflected_parameter: Option<BitString>,
+            userdata_ab: Option<Any>,
+        ) -> Self {
+            Self {
+                abort_reason,
+                reflected_parameter,
+                userdata_ab,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "RTSE-apdus")]
+    pub enum RTSEApdus {
+        #[rasn(tag(context, 16), identifier = "rtorq-apdu")]
+        rtorq_apdu(RTORQapdu),
+        #[rasn(tag(context, 17), identifier = "rtoac-apdu")]
+        rtoac_apdu(RTOACapdu),
+        #[rasn(tag(context, 18), identifier = "rtorj-apdu")]
+        rtorj_apdu(RTORJapdu),
+        #[rasn(identifier = "rttp-apdu")]
+        rttp_apdu(RTTPapdu),
+        #[rasn(identifier = "rttr-apdu")]
+        rttr_apdu(RTTRapdu),
+        #[rasn(tag(context, 22), identifier = "rtab-apdu")]
+        rtab_apdu(RTABapdu),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RTTPapdu(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RTTRapdu(pub OctetString);
+    #[doc = "\tApplication Context including RTSE in X.410-1984 mode"]
+    pub static MTS_TRANSFER_PROTOCOL: LazyLock<Integer> = LazyLock::new(|| Integer::from(12));
+    #[doc = "\tApplication Context for Interworking with 1984 P1"]
+    pub static MTS_TRANSFER_PROTOCOL_1984: LazyLock<Integer> = LazyLock::new(|| Integer::from(1));
+}

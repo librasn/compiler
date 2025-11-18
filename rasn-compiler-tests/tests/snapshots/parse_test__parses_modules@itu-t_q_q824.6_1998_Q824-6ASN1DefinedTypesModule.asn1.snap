@@ -1,0 +1,836 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q824.6_1998_Q824-6ASN1DefinedTypesModule.asn1
+---
+Warnings:
+LinkerError in ASN grammar: Failed to link value with 'PointerOrNull'
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod q824_6_asn1_defined_types_module {
+    extern crate alloc;
+    use super::asn1_defined_types_module::{NameType, ObjectList, PointerOrNull, ProblemCause};
+    use super::atm_mibmod::INTEGER_ZERO;
+    use super::attribute_asn1_module::ProbableCause;
+    use super::cmip_1::ObjectInstance;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AalMode {
+        messageAssured = 0,
+        messageUnassured = 1,
+        streamingAssured = 2,
+        streamingUnassured = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AalType {
+        aal1 = 0,
+        aal2 = 1,
+        aal34 = 2,
+        aal5 = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AbstractDestinationPtr(pub ObjectInstance);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ActiveListOfRouteTpsPtr(pub ObjectInstance);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ActiveTargetPtr {
+        pointer(ObjectInstance),
+        carrierRequired(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AddTerminationPointInfo {
+        #[rasn(identifier = "newTPs")]
+        pub new_tps: NewTPs,
+        #[rasn(identifier = "interworkingVcTtpBidirectionalInstance")]
+        pub interworking_vc_ttp_bidirectional_instance: ObjectInstance,
+    }
+    impl AddTerminationPointInfo {
+        pub fn new(
+            new_tps: NewTPs,
+            interworking_vc_ttp_bidirectional_instance: ObjectInstance,
+        ) -> Self {
+            Self {
+                new_tps,
+                interworking_vc_ttp_bidirectional_instance,
+            }
+        }
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousAddTerminationPointReply {
+        #[rasn(identifier = "tpAdded")]
+        pub tp_added: ObjectInstance,
+        #[rasn(identifier = "tpNotAdded")]
+        pub tp_not_added: Option<ProblemCause>,
+    }
+    impl AnonymousAddTerminationPointReply {
+        pub fn new(tp_added: ObjectInstance, tp_not_added: Option<ProblemCause>) -> Self {
+            Self {
+                tp_added,
+                tp_not_added,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AddTerminationPointReply(pub SequenceOf<AnonymousAddTerminationPointReply>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AssignNonAssign(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct BearerCapab(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct BlockedForMaintenance(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct Boolean(pub bool);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct BufferRelease(pub bool);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CIPRequired(pub Boolean);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CSPRequired(pub Boolean);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum CallingPartyCategory {
+        unused(()),
+        category(Category),
+    }
+    #[doc = " acc. Rec. Q.2763"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CarrierCode(pub NetworkIdentification);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CarrierDataPtr(pub ObjectInstance);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Category(pub FixedBitString<8usize>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CdpnRepresentationType(pub Integer);
+    #[doc = " Replace i with I"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ChannelAssociatedSignalling(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=65335"))]
+    pub struct Cic(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ClockRecoveryType {
+        synchronous = 0,
+        srts = 1,
+        adaptive = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Code(pub SetOf<DigitString4>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ConnLineIdRestrictionOptions {
+        pub mode: Integer,
+        pub default: Option<Integer>,
+    }
+    impl ConnLineIdRestrictionOptions {
+        pub fn new(mode: Integer, default: Option<Integer>) -> Self {
+            Self { mode, default }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ConnectionIdOffering(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CugBarring(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("4"))]
+    pub struct CugDataNetworkIdentification(pub NumericString);
+    #[doc = " Rec. Q.2763"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=65535"))]
+    pub struct CugIndex(pub u16);
+    #[doc = " Rec. Q.2955"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=65535"))]
+    pub struct CugInterlockCode(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum DefaultDirectoryNumber {
+        noDefault(()),
+        directoryNumber(DirectoryNumber),
+    }
+    #[doc = " Rec. Q.2763"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DestinationCode(pub DigitString15);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DestinationType(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DigitComb(pub SequenceOf<DigitElement>);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousDigitCombInsert {
+        #[rasn(tag(context, 0), identifier = "startPosition")]
+        pub start_position: Integer,
+        #[rasn(tag(context, 1))]
+        pub combination: DigitComb,
+    }
+    impl AnonymousDigitCombInsert {
+        pub fn new(start_position: Integer, combination: DigitComb) -> Self {
+            Self {
+                start_position,
+                combination,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DigitCombInsert(pub SetOf<AnonymousDigitCombInsert>);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousDigitCombReplace {
+        #[rasn(tag(context, 0), identifier = "startPosition")]
+        pub start_position: Integer,
+        #[rasn(tag(context, 1), identifier = "endPosition")]
+        pub end_position: Integer,
+        #[rasn(tag(context, 2))]
+        pub combination: DigitComb,
+    }
+    impl AnonymousDigitCombReplace {
+        pub fn new(start_position: Integer, end_position: Integer, combination: DigitComb) -> Self {
+            Self {
+                start_position,
+                end_position,
+                combination,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DigitCombReplace(pub SetOf<AnonymousDigitCombReplace>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        delegate,
+        size("1"),
+        from(
+            "\u{30}", "\u{31}", "\u{32}", "\u{33}", "\u{34}", "\u{35}", "\u{36}", "\u{37}",
+            "\u{38}", "\u{39}", "\u{41}", "\u{42}", "\u{43}", "\u{44}", "\u{45}", "\u{46}"
+        )
+    )]
+    pub struct DigitElement(pub PrintableString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DigitManipPtr(pub ObjectInstance);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        delegate,
+        size("1..=15"),
+        from(
+            "\u{30}", "\u{31}", "\u{32}", "\u{33}", "\u{34}", "\u{35}", "\u{36}", "\u{37}",
+            "\u{38}", "\u{39}", "\u{41}", "\u{42}", "\u{43}", "\u{44}", "\u{45}", "\u{46}"
+        )
+    )]
+    pub struct DigitString15(pub PrintableString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        delegate,
+        size("1..=4"),
+        from(
+            "\u{30}", "\u{31}", "\u{32}", "\u{33}", "\u{34}", "\u{35}", "\u{36}", "\u{37}",
+            "\u{38}", "\u{39}", "\u{41}", "\u{42}", "\u{43}", "\u{44}", "\u{45}", "\u{46}"
+        )
+    )]
+    pub struct DigitString4(pub PrintableString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        delegate,
+        size("1..=8"),
+        from(
+            "\u{30}", "\u{31}", "\u{32}", "\u{33}", "\u{34}", "\u{35}", "\u{36}", "\u{37}",
+            "\u{38}", "\u{39}", "\u{41}", "\u{42}", "\u{43}", "\u{44}", "\u{45}", "\u{46}"
+        )
+    )]
+    pub struct DigitString8(pub PrintableString);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousDigitSuppress {
+        #[rasn(tag(context, 0), identifier = "startPosition")]
+        pub start_position: Integer,
+        #[rasn(tag(context, 1), identifier = "endPosition")]
+        pub end_position: Integer,
+    }
+    impl AnonymousDigitSuppress {
+        pub fn new(start_position: Integer, end_position: Integer) -> Self {
+            Self {
+                start_position,
+                end_position,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DigitSuppress(pub SetOf<AnonymousDigitSuppress>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DirectoryNumber(pub E164DN);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct E164DNNationalSignificantNumber {
+        #[rasn(
+            size("1..=6"),
+            tag(context, 0),
+            identifier = "nationalDestinationNumber"
+        )]
+        pub national_destination_number: Option<NumericString>,
+        #[rasn(size("1..=8"), tag(context, 1), identifier = "subscriberNumber")]
+        pub subscriber_number: NumericString,
+    }
+    impl E164DNNationalSignificantNumber {
+        pub fn new(
+            national_destination_number: Option<NumericString>,
+            subscriber_number: NumericString,
+        ) -> Self {
+            Self {
+                national_destination_number,
+                subscriber_number,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct E164DN {
+        #[rasn(size("1..=4"), tag(context, 0), identifier = "countryCode")]
+        pub country_code: Option<NumericString>,
+        #[rasn(tag(context, 1), identifier = "nationalSignificantNumber")]
+        pub national_significant_number: E164DNNationalSignificantNumber,
+    }
+    impl E164DN {
+        pub fn new(
+            country_code: Option<NumericString>,
+            national_significant_number: E164DNNationalSignificantNumber,
+        ) -> Self {
+            Self {
+                country_code,
+                national_significant_number,
+            }
+        }
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        delegate,
+        identifier = "PrintableString",
+        from(
+            "\u{30}", "\u{31}", "\u{32}", "\u{33}", "\u{34}", "\u{35}", "\u{36}", "\u{37}",
+            "\u{38}", "\u{39}", "\u{41}", "\u{42}", "\u{43}", "\u{44}", "\u{45}", "\u{46}"
+        )
+    )]
+    pub struct AnonymousExcludedSubscriberCodes(pub PrintableString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ExcludedSubscriberCodes(pub SetOf<AnonymousExcludedSubscriberCodes>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ExistingTPs(pub SequenceOf<ObjectInstance>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum FecMethod {
+        noFEC = 0,
+        lossSensitiveSignalFEC = 1,
+        delaySensitiveSignalFEC = 2,
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        delegate,
+        identifier = "PrintableString",
+        from(
+            "\u{30}", "\u{31}", "\u{32}", "\u{33}", "\u{34}", "\u{35}", "\u{36}", "\u{37}",
+            "\u{38}", "\u{39}", "\u{41}", "\u{42}", "\u{43}", "\u{44}", "\u{45}", "\u{46}"
+        )
+    )]
+    pub struct AnonymousInitialSubscriberCodes(pub PrintableString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct InitialSubscriberCodes(pub SetOf<AnonymousInitialSubscriberCodes>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Integer(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct InterCugAccess(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Itu-tNetworkPlanIndicator")]
+    pub struct ItuTNetworkPlanIndicator(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct LinkType(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ListOfLinkGroupsPtrList(pub SequenceOf<ObjectInstance>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ListOfRoutesPtrList(pub SequenceOf<ObjectInstance>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        delegate,
+        from(
+            "\u{30}", "\u{31}", "\u{32}", "\u{33}", "\u{34}", "\u{35}", "\u{36}", "\u{37}",
+            "\u{38}", "\u{39}"
+        )
+    )]
+    pub struct LocalAreaCode(pub NumericString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct MaintenanceSignallingRunning(pub bool);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MaxCc(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct MaxCpcsPduSize {
+        #[rasn(value("1..=65535"), tag(context, 0))]
+        pub forward: Option<u16>,
+        #[rasn(value("1..=65535"), tag(context, 1))]
+        pub backward: Option<u16>,
+    }
+    impl MaxCpcsPduSize {
+        pub fn new(forward: Option<u16>, backward: Option<u16>) -> Self {
+            Self { forward, backward }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MaxDigits(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MaxInformationFieldLength(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MaxLengthSscopUuField(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MaxPd(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MaxSscopCreditToPeer(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MaxStat(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct MidRange {
+        #[rasn(value("1..=66536"), tag(context, 0))]
+        pub lowvalue: u32,
+        #[rasn(value("1..=66536"), tag(context, 1))]
+        pub highvalue: u32,
+    }
+    impl MidRange {
+        pub fn new(lowvalue: u32, highvalue: u32) -> Self {
+            Self {
+                lowvalue,
+                highvalue,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MinDigits(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NationalNetworkIdenPlanIndicator(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NatureOfAddress(pub DestinationType);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NbTransferCapability(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NbTransferCapabilitySet(pub SetOf<NbTransferCapability>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NetworkBorder(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NetworkIdentification(pub DigitString8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum NetworkIdentificationPlan {
+        #[rasn(tag(context, 0), identifier = "itu-tNetworkPlanIndicator")]
+        itu_tNetworkPlanIndicator(ItuTNetworkPlanIndicator),
+        #[rasn(tag(context, 1))]
+        nationalNetworkIdenPlanIndicator(NationalNetworkIdenPlanIndicator),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NetworkType(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NewTPs(pub SequenceOf<ObjectInstance>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct Null(pub ());
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum Origin {
+        unused(()),
+        origin(Integer),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        delegate,
+        from(
+            "\u{30}", "\u{31}", "\u{32}", "\u{33}", "\u{34}", "\u{35}", "\u{36}", "\u{37}",
+            "\u{38}", "\u{39}"
+        )
+    )]
+    pub struct OwnInternationalCode(pub NumericString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct PollAfterRetransmission(pub bool);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct PreferredCarrier {
+        #[rasn(identifier = "networkIdentificationPlan")]
+        pub network_identification_plan: NetworkIdentificationPlan,
+        #[rasn(identifier = "typesOfNetworkIdentification")]
+        pub types_of_network_identification: TypesOfNetworkIdentification,
+        #[rasn(identifier = "networkIdentification")]
+        pub network_identification: NetworkIdentification,
+    }
+    impl PreferredCarrier {
+        pub fn new(
+            network_identification_plan: NetworkIdentificationPlan,
+            types_of_network_identification: TypesOfNetworkIdentification,
+            network_identification: NetworkIdentification,
+        ) -> Self {
+            Self {
+                network_identification_plan,
+                types_of_network_identification,
+                network_identification,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum PreferredCugIndex {
+        #[rasn(tag(context, 0))]
+        notDefined(()),
+        #[rasn(tag(context, 1))]
+        defined(CugIndex),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PropagationDelay(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RemoteBlocking(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RemoteBlockingReason(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct RemoveTerminationPointInfo {
+        #[rasn(identifier = "existingTPs")]
+        pub existing_tps: ExistingTPs,
+        #[rasn(identifier = "interworkingVcTtpBidirectionalInstance")]
+        pub interworking_vc_ttp_bidirectional_instance: ObjectInstance,
+    }
+    impl RemoveTerminationPointInfo {
+        pub fn new(
+            existing_tps: ExistingTPs,
+            interworking_vc_ttp_bidirectional_instance: ObjectInstance,
+        ) -> Self {
+            Self {
+                existing_tps,
+                interworking_vc_ttp_bidirectional_instance,
+            }
+        }
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousRemoveTerminationPointReply {
+        #[rasn(identifier = "tpInstance")]
+        pub tp_instance: ObjectInstance,
+        #[rasn(identifier = "tpRemovalProblem")]
+        pub tp_removal_problem: Option<ProblemCause>,
+    }
+    impl AnonymousRemoveTerminationPointReply {
+        pub fn new(tp_instance: ObjectInstance, tp_removal_problem: Option<ProblemCause>) -> Self {
+            Self {
+                tp_instance,
+                tp_removal_problem,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RemoveTerminationPointReply(pub SequenceOf<AnonymousRemoveTerminationPointReply>);
+    #[doc = " absent if tpInstance is removed"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ReqBandwidthEgress {
+        #[rasn(identifier = "lowerLimit")]
+        pub lower_limit: Integer,
+        #[rasn(identifier = "upperLimit")]
+        pub upper_limit: Integer,
+    }
+    impl ReqBandwidthEgress {
+        pub fn new(lower_limit: Integer, upper_limit: Integer) -> Self {
+            Self {
+                lower_limit,
+                upper_limit,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ReqBandwidthIngress {
+        #[rasn(identifier = "lowerLimit")]
+        pub lower_limit: Integer,
+        #[rasn(identifier = "upperLimit")]
+        pub upper_limit: Integer,
+    }
+    impl ReqBandwidthIngress {
+        pub fn new(lower_limit: Integer, upper_limit: Integer) -> Self {
+            Self {
+                lower_limit,
+                upper_limit,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ReqBearerCapab(pub SetOf<BearerCapab>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ReqNbTransferCapability {
+        withoutNbCapab(()),
+        withNbCapab(NbTransferCapabilitySet),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RingTimeLimit(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SearchMethod(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct SendTns(pub bool);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SetOfInstances(pub SetOf<ObjectInstance>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SignallingProtocol(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SignallingStandard(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SignallingType(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SscopTimerCc(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SscopTimerIdle(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SscopTimerKeepAlive(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SscopTimerNoResponse(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SscopTimerPoll(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SscsType(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SubType(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=255"))]
+    pub struct SubscriberCategory(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TimingRelation(pub Integer);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousTpAndVpciPtrList {
+        pub tp: ObjectInstance,
+        pub vpci: VpciValue,
+    }
+    impl AnonymousTpAndVpciPtrList {
+        pub fn new(tp: ObjectInstance, vpci: VpciValue) -> Self {
+            Self { tp, vpci }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TpAndVpciPtrList(pub SetOf<AnonymousTpAndVpciPtrList>);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousTpAndVpciSigPtrList {
+        pub tp: ObjectInstance,
+        pub vpci: VpciValue,
+        #[rasn(identifier = "sigChannel")]
+        pub sig_channel: Option<ObjectInstance>,
+    }
+    impl AnonymousTpAndVpciSigPtrList {
+        pub fn new(
+            tp: ObjectInstance,
+            vpci: VpciValue,
+            sig_channel: Option<ObjectInstance>,
+        ) -> Self {
+            Self {
+                tp,
+                vpci,
+                sig_channel,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TpAndVpciSigPtrList(pub SetOf<AnonymousTpAndVpciSigPtrList>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct TransitDelayLimit {
+        #[rasn(identifier = "lowerLimit")]
+        pub lower_limit: Integer,
+        #[rasn(identifier = "upperLimit")]
+        pub upper_limit: UpLimit,
+    }
+    impl TransitDelayLimit {
+        pub fn new(lower_limit: Integer, upper_limit: UpLimit) -> Self {
+            Self {
+                lower_limit,
+                upper_limit,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TypesOfNetworkIdentification(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum UpLimit {
+        noLimit(()),
+        limit(Integer),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct UsedAlgorithm(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct VpType(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=65535"))]
+    pub struct VpciValue(pub u16);
+    pub static ACTION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***INFORMATION_MODEL, &[9u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ATM_SWITCH_PROBABLE_CAUSE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***STANDARD_SPECIFIC_EXTENSION, &[0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ATTRIBUTE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***INFORMATION_MODEL, &[7u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub const BUFFER_RELEASE_DEFAULT: BufferRelease = BufferRelease(true);
+    #[doc = " additional value definitions to probableCause production"]
+    pub static CELL_STARVATION: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***ATM_SWITCH_PROBABLE_CAUSE, &[1u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub static CONNECTION_ID_OFFERING_DEFAULT: LazyLock<ConnectionIdOffering> =
+        LazyLock::new(|| ConnectionIdOffering(Integer::from(0)));
+    pub static DEFAULT_BLOCKED_FOR_MAINTENANCE: LazyLock<BlockedForMaintenance> =
+        LazyLock::new(|| BlockedForMaintenance(Integer::from(0)));
+    pub const DEFAULT_NULL: PointerOrNull = PointerOrNull(PointerOrNull(PointerOrNull::null(())));
+    pub const DEFAULT_SCREEN_NUMBER: Boolean = Boolean(true);
+    pub static DEFAULT_SIGNALLING_TYPE: LazyLock<SignallingType> =
+        LazyLock::new(|| SignallingType(Integer::from(0)));
+    pub const DEFAULT_TWO_CALLING_PARTY_NUMBER_DELIVERY: Boolean = Boolean(true);
+    pub static EMPTY_SET: LazyLock<SetOfInstances> =
+        LazyLock::new(|| SetOfInstances(alloc::vec![]));
+    pub static INFORMATION_MODEL: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::const_new(&[0u32, 0u32, 17u32, 824u32, 127u32, 6u32, 0u32, 2u32, 0u32]).to_owned()
+    });
+    pub static MANAGED_OBJECT_CLASS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***INFORMATION_MODEL, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static MAX_CC_DEFAULT: LazyLock<MaxCc> = LazyLock::new(|| MaxCc(Integer::from(4)));
+    pub static MAX_INFORMATION_FIELD_LENGTH_DEFAULT: LazyLock<MaxInformationFieldLength> =
+        LazyLock::new(|| MaxInformationFieldLength(Integer::from(4096)));
+    pub static MAX_LENGTH_SSCOP_UU_FIELD_DEFAULT: LazyLock<MaxLengthSscopUuField> =
+        LazyLock::new(|| MaxLengthSscopUuField(Integer::from(4096)));
+    pub static MAX_PD_DEFAULT: LazyLock<MaxPd> = LazyLock::new(|| MaxPd(Integer::from(25)));
+    pub static MAX_SSCOP_CREDIT_TO_PEER_DEFAULT: LazyLock<MaxSscopCreditToPeer> =
+        LazyLock::new(|| MaxSscopCreditToPeer(Integer::from(16)));
+    pub static MAX_STAT_DEFAULT: LazyLock<MaxStat> = LazyLock::new(|| MaxStat(Integer::from(67)));
+    pub static NAME_BINDING: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***INFORMATION_MODEL, &[6u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static NOTIFICATION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***INFORMATION_MODEL, &[10u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static PACKAGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***INFORMATION_MODEL, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SSCOP_TIMER_CC_DEFAULT: LazyLock<SscopTimerCc> =
+        LazyLock::new(|| SscopTimerCc(Integer::from(1000)));
+    pub static SSCOP_TIMER_IDLE_DEFAULT: LazyLock<SscopTimerIdle> =
+        LazyLock::new(|| SscopTimerIdle(Integer::from(15000)));
+    pub static SSCOP_TIMER_KEEP_ALIVE_DEFAULT: LazyLock<SscopTimerKeepAlive> =
+        LazyLock::new(|| SscopTimerKeepAlive(Integer::from(2000)));
+    pub static SSCOP_TIMER_NO_RESPONSE_DEFAULT: LazyLock<SscopTimerNoResponse> =
+        LazyLock::new(|| SscopTimerNoResponse(Integer::from(7000)));
+    pub static SSCOP_TIMER_POLL_DEFAULT: LazyLock<SscopTimerPoll> =
+        LazyLock::new(|| SscopTimerPoll(Integer::from(750)));
+    pub static STANDARD_SPECIFIC_EXTENSION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***INFORMATION_MODEL, &[0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub const SUBSCRIBER_CATEGORY_DEFAULT: SubscriberCategory = SubscriberCategory(10);
+}

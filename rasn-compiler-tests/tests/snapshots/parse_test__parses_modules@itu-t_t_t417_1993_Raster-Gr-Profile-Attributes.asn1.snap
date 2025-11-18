@@ -1,0 +1,110 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_t_t417_1993_Raster-Gr-Profile-Attributes.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod raster_gr_profile_attributes {
+    extern crate alloc;
+    use super::raster_gr_coding_attributes::{
+        BitsPerColourComponent, Compression, Subsampling, TileType,
+    };
+    use super::raster_gr_presentation_attributes::{
+        Clipping, CoordinatePair, ImageDimensions, MeasurePair, OneOfFourAngles, OneOfTwoAngles,
+        PelSpacing, PelTransmissionDensity, RasterGraphicsAttributes, SpacingRatio,
+    };
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "Ra-Gr-Coding-Attribute")]
+    pub enum RaGrCodingAttribute {
+        #[rasn(tag(context, 0))]
+        compression(Compression),
+        #[rasn(tag(context, 4), identifier = "bits-per-colour-component")]
+        bits_per_colour_component(BitsPerColourComponent),
+        #[rasn(tag(context, 5), identifier = "interleaving-format")]
+        interleaving_format(Integer),
+        #[rasn(tag(context, 6), identifier = "number-of-pels-per-tile-line")]
+        number_of_pels_per_tile_line(Integer),
+        #[rasn(tag(context, 7), identifier = "number-of-lines-per-tile")]
+        number_of_lines_per_tile(Integer),
+        #[rasn(tag(context, 8), identifier = "tiling-offset")]
+        tiling_offset(CoordinatePair),
+        #[rasn(tag(context, 9), identifier = "tiling-types")]
+        tiling_types(TileType),
+        #[rasn(tag(context, 10))]
+        subsampling(Subsampling),
+        #[rasn(tag(context, 11), identifier = "jpeg-coding-mode")]
+        jpeg_coding_mode(Integer),
+        #[rasn(tag(context, 12), identifier = "jpeg-quantization-table")]
+        jpeg_quantization_table(Integer),
+        #[rasn(tag(context, 13), identifier = "jpeg-huffman-table")]
+        jpeg_huffman_table(Integer),
+        #[rasn(tag(context, 14), identifier = "jbig-tp-for-base-layer")]
+        jbig_tp_for_base_layer(Integer),
+        #[rasn(tag(context, 15), identifier = "jbig-differential-layer")]
+        jbig_differential_layer(Integer),
+        #[rasn(tag(context, 16), identifier = "number-of-lines-per-stripe")]
+        number_of_lines_per_stripe(Integer),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "Ra-Gr-Presentation-Feature")]
+    pub enum RaGrPresentationFeature {
+        #[rasn(tag(context, 3), identifier = "initial-offset")]
+        initial_offset(MeasurePair),
+        #[rasn(tag(context, 4))]
+        clipping(Clipping),
+        #[rasn(tag(context, 5), identifier = "pel-spacing")]
+        pel_spacing(PelSpacing),
+        #[rasn(tag(context, 6), identifier = "spacing-ratio")]
+        spacing_ratio(SpacingRatio),
+        #[rasn(tag(context, 7), identifier = "image-dimensions")]
+        image_dimensions(ImageDimensions),
+        #[rasn(tag(context, 9), identifier = "pel-path")]
+        pel_path(OneOfFourAngles),
+        #[rasn(tag(context, 10), identifier = "line-progression")]
+        line_progression(OneOfTwoAngles),
+        #[rasn(tag(context, 11), identifier = "pel-transmission-density")]
+        pel_transmission_density(PelTransmissionDensity),
+    }
+    #[doc = " The tag values used above preserve compatibility"]
+    #[doc = " with Group 4 Class I facsimile data streams."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Raster-Gr-Content-Defaults")]
+    pub struct RasterGrContentDefaults {
+        #[rasn(tag(context, 8))]
+        pub compression: Option<Compression>,
+        #[rasn(tag(context, 11), identifier = "number-of-pels-per-tile-line")]
+        pub number_of_pels_per_tile_line: Option<Integer>,
+        #[rasn(tag(context, 12), identifier = "number-of-lines-per-tile")]
+        pub number_of_lines_per_tile: Option<Integer>,
+        #[rasn(tag(context, 13), identifier = "tiling-offset")]
+        pub tiling_offset: Option<CoordinatePair>,
+        #[rasn(tag(context, 14), identifier = "tiling-type")]
+        pub tiling_type: Option<TileType>,
+    }
+    impl RasterGrContentDefaults {
+        pub fn new(
+            compression: Option<Compression>,
+            number_of_pels_per_tile_line: Option<Integer>,
+            number_of_lines_per_tile: Option<Integer>,
+            tiling_offset: Option<CoordinatePair>,
+            tiling_type: Option<TileType>,
+        ) -> Self {
+            Self {
+                compression,
+                number_of_pels_per_tile_line,
+                number_of_lines_per_tile,
+                tiling_offset,
+                tiling_type,
+            }
+        }
+    }
+}

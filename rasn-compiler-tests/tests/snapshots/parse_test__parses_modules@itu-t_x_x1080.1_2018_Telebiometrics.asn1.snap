@@ -1,0 +1,195 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x1080.1_2018_Telebiometrics.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod telebiometrics {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    pub static ID_AUDIO: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MODALITIES, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_BIOLOGY: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_FIELDS_OF_STUDY, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CALOR: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MODALITIES, &[6u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CHEMISTRY: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_FIELDS_OF_STUDY, &[2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CHEMO: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MODALITIES, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CONDITIONS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MEASURES, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CULTUROLOGY: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_FIELDS_OF_STUDY, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ELECTRO: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MODALITIES, &[7u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_FIELDS_OF_STUDY: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_TMM, &[2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_HUM_PHYS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_TELEBIO, &[2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MEASURES: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_TMM, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_METHODS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MEASURES, &[5u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_METHODS_BIOLOGY: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_METHODS, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_METHODS_CHEMISTRY: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_METHODS, &[2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_METHODS_CULTUROLOGY: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_METHODS, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " OIDs for methods"]
+    pub static ID_METHODS_PHYSICS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_METHODS, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_METHODS_PSYCHOLOGY: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_METHODS, &[5u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MODALITIES: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_TMM, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_OBJ_CAT: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_TELEBIO, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " OIDs for fields of study"]
+    pub static ID_PHYSICS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_FIELDS_OF_STUDY, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PSYCHOLOGY: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_FIELDS_OF_STUDY, &[5u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " OIDs for measures"]
+    pub static ID_QUANTITIES: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MEASURES, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_QUANTITIES_BIOLOGY: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_QUANTITIES, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_QUANTITIES_CHEMISTRY: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_QUANTITIES, &[2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_QUANTITIES_CULTUROLOGY: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_QUANTITIES, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " OIDs for quantities"]
+    pub static ID_QUANTITIES_PHYSICS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_QUANTITIES, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_QUANTITIES_PSYCHOLOGY: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_QUANTITIES, &[5u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_RADIO: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MODALITIES, &[5u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_SYMBOLS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MEASURES, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " OIDs for modalities"]
+    pub static ID_TANGO: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MODALITIES, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_TELEBIO: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 42u32]).to_owned());
+    pub static ID_THPROT: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_TELEBIO, &[0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_TMM: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_TELEBIO, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_UNITS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MEASURES, &[2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_VIDEO: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MODALITIES, &[2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+}

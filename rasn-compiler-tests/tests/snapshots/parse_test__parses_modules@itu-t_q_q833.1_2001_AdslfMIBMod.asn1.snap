@@ -1,0 +1,253 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q833.1_2001_AdslfMIBMod.asn1
+---
+Warnings:
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+LinkerError in ASN grammar: Failed to link value with 'Boolean'
+LinkerError in ASN grammar: Failed to link value with 'Boolean'
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod adslf_mibmod {
+    extern crate alloc;
+    use super::asn1_defined_types_module::{Boolean, NameType, PointerOrNull, ProblemCause};
+    use super::attribute_asn1_module::{
+        AdministrativeState, AttributeList, NotificationIdentifier, ProbableCause, SimpleNameType,
+    };
+    use super::cmip_1::{DistinguishedName, RelativeDistinguishedName};
+    use super::cmip_1::{EventTypeId, ObjectInstance};
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " Supporting productions"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AdslAvailabilityStatus(pub SetOf<AdslLineCondition>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AdslChannelOptions {
+        noChannels = 0,
+        fastOnly = 1,
+        interleavedOnly = 2,
+        fastOrInterleaved = 3,
+        fastAndInterleaved = 4,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AdslChannelType {
+        fast = 0,
+        interleaved = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AdslInitFailedInfo {
+        #[rasn(identifier = "probableCause")]
+        pub probable_cause: ProbableCause,
+        #[rasn(identifier = "notificationIdentifier")]
+        pub notification_identifier: Option<NotificationIdentifier>,
+    }
+    impl AdslInitFailedInfo {
+        pub fn new(
+            probable_cause: ProbableCause,
+            notification_identifier: Option<NotificationIdentifier>,
+        ) -> Self {
+            Self {
+                probable_cause,
+                notification_identifier,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AdslLineCoding {
+        other = 0,
+        dmt = 1,
+        cap = 2,
+        qam = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AdslLineCondition {
+        lossOfFraming = 0,
+        lossOfSignal = 1,
+        lossOfPower = 2,
+        lossOfLink = 3,
+        lossOfSignalQuality = 4,
+        dataInitFailure = 5,
+        configInitFailure = 6,
+        protocolInitFailure = 8,
+        noPeerAtuPresent = 9,
+        lowPowerMode = 10,
+    }
+    #[doc = " ADSL modem Operational Mode"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AdslOperationalMode {
+        ansi = 0,
+        etsi = 1,
+        potsNonOverlapped = 2,
+        potsOverlapped = 3,
+        isdnNonOverlapped = 4,
+        isdnOverlapped = 5,
+        isdnTcm = 6,
+        potsNonOverlappedLite = 7,
+        potsOverlappedLite = 8,
+        isdnTcmLite = 9,
+    }
+    #[doc = " ITU G.992.2 with TCM-ISDN"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AdslOperationalModes(pub SetOf<AdslOperationalMode>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AdslRateChangeInfo {
+        #[rasn(identifier = "oldRate")]
+        pub old_rate: Integer,
+        #[rasn(identifier = "newRate")]
+        pub new_rate: Integer,
+        #[rasn(identifier = "notificationIdentifier")]
+        pub notification_identifier: Option<NotificationIdentifier>,
+    }
+    impl AdslRateChangeInfo {
+        pub fn new(
+            old_rate: Integer,
+            new_rate: Integer,
+            notification_identifier: Option<NotificationIdentifier>,
+        ) -> Self {
+            Self {
+                old_rate,
+                new_rate,
+                notification_identifier,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AdslRateMode {
+        fixed = 0,
+        adaptAtStartup = 1,
+        adaptAtRuntime = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Integer(pub Integer);
+    pub static ADSLF_NMACTION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ADSLF_NMINFORMATION_MODEL, &[7u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ADSLF_NMATTRIBUTE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ADSLF_NMINFORMATION_MODEL, &[5u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " Additional eventTypes Definitions"]
+    pub static ADSLF_NMEVENT_TYPES: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ADSLF_NMSTANDARD_SPECIFIC_EXTENSION, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ADSLF_NMINFORMATION_MODEL: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::const_new(&[
+            1u32, 3u32, 6u32, 1u32, 4u32, 1u32, 3561u32, 1u32, 1u32, 0u32,
+        ])
+        .to_owned()
+    });
+    pub static ADSLF_NMNAME_BINDING: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ADSLF_NMINFORMATION_MODEL, &[6u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ADSLF_NMNOTIFICATION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ADSLF_NMINFORMATION_MODEL, &[8u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ADSLF_NMOBJECT_CLASS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ADSLF_NMINFORMATION_MODEL, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ADSLF_NMPACKAGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ADSLF_NMINFORMATION_MODEL, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " Additional probableCause Definitions"]
+    pub static ADSLF_NMPROBABLE_CAUSE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ADSLF_NMSTANDARD_SPECIFIC_EXTENSION, &[0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ADSLF_NMSTANDARD_SPECIFIC_EXTENSION: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ADSLF_NMINFORMATION_MODEL, &[0u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    #[doc = " default value definitions"]
+    pub const BOOLEAN_FALSE_DEFAULT: Boolean = Boolean(Boolean(false));
+    pub const BOOLEAN_TRUE_DEFAULT: Boolean = Boolean(Boolean(true));
+    pub static CONFIG_INIT_FAILURE: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***ADSLF_NMPROBABLE_CAUSE, &[5u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub static DATA_INIT_FAILURE: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***ADSLF_NMPROBABLE_CAUSE, &[4u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub static INTEGER_ZERO: LazyLock<Integer> = LazyLock::new(|| Integer::from(0));
+    pub static LOSS_OF_LINK: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***ADSLF_NMPROBABLE_CAUSE, &[2u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub static LOSS_OF_POWER: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***ADSLF_NMPROBABLE_CAUSE, &[1u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub static LOSS_OF_SIGNAL_QUALITY: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***ADSLF_NMPROBABLE_CAUSE, &[3u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub static NO_PEER_ATU_PRESENT: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***ADSLF_NMPROBABLE_CAUSE, &[7u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub static PROTOCOL_INIT_FAILURE: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***ADSLF_NMPROBABLE_CAUSE, &[6u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+}

@@ -1,0 +1,28 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q1238.2_2000_IN-CS3-SSF-SCF-ops-args.asn1
+---
+Error matching ASN syntax at while parsing:
+     ╭─[line 737, column 2]
+     │
+     │ 
+ 732 │  -- Direction: SCF  ->  SSF,  Class 1, Timer: Tcrt
+ 733 │  --  This trigger management operation is used by the SCF outside the context of  a call  to create  a new
+ 734 │  -- trigger detection point in the CCF/SSF by downloading trigger data
+ 735 │  -- (e.g. triggering criteria, ServiceKey, SCF address,....)
+ 736 │  -- or to remove an existing trigger.
+ 737 │  CreateOrRemoveTriggerDataArg{B1:b1, B2:b2, B3:b3} ::= SEQUENCE { ◀▪▪▪▪▪▪▪▪▪▪ FAILED AT THIS LINE
+ 738 │    createOrRemove        [0]  CreateOrRemoveIndicator DEFAULT create,
+ 739 │    dPName                [1]  EventTypeBCSM OPTIONAL,
+ 740 │    triggerDPType         [2]  TriggerDPType DEFAULT tdp-r,
+ 741 │    serviceKey            [3]  ServiceKey OPTIONAL,
+ 742 │    profile               [4]  ProfileIdentifier{b2} OPTIONAL,
+ 743 │    triggerData           [5]  TriggerData OPTIONAL,
+ 744 │    defaultFaultHandling  [6]  DefaultFaultHandling{b2, b3} OPTIONAL,
+ 745 │    tDPIdentifier         [7]  TDPIdentifier{b2} OPTIONAL,
+ 746 │    ...,
+ 747 │    ...,
+ 748 │    extensions            [30]  Extensions{b1} OPTIONAL
+ 749 │  }
+     │
+─────╯

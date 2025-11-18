@@ -1,0 +1,158 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x748_1999_RTMModule.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod rtmmodule {
+    extern crate alloc;
+    use super::attribute_asn1_module::{
+        AdditionalInformation, AdditionalText, CorrelatedNotifications, GroupObjects,
+        NotificationIdentifier, SimpleNameType,
+    };
+    use super::cmip_1::{AttributeId, ObjectInstance};
+    use super::metric_module::{Integer, TimePeriod};
+    use super::remote_operations_generic_ros_pdus::InvokeId;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " supporting productions"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("1"))]
+    pub struct RangeOneToOne(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0.."))]
+    pub struct RangeZeroToMax(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum RequestIdentifier {
+        #[rasn(tag(context, 0))]
+        number(Integer),
+        #[rasn(tag(context, 1))]
+        invokeID(InvokeId),
+        identifier(Any),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ResponseConfirmationInfo {
+        #[rasn(identifier = "responseMonitor")]
+        pub response_monitor: ObjectInstance,
+        #[rasn(identifier = "responseRequester")]
+        pub response_requester: ObjectInstance,
+        #[rasn(identifier = "responseConfirmationObject")]
+        pub response_confirmation_object: ObjectInstance,
+        #[rasn(identifier = "routeList")]
+        pub route_list: GroupObjects,
+        #[rasn(identifier = "requestIdentifier")]
+        pub request_identifier: RequestIdentifier,
+        #[rasn(tag(context, 1), identifier = "notificationIdentifier")]
+        pub notification_identifier: Option<NotificationIdentifier>,
+        #[rasn(tag(context, 2), identifier = "correlatedNotifications")]
+        pub correlated_notifications: Option<CorrelatedNotifications>,
+        #[rasn(tag(context, 3), identifier = "responseTime")]
+        pub response_time: ResponseTime,
+        #[rasn(tag(context, 4), identifier = "maximumResponseTimeError")]
+        pub maximum_response_time_error: Option<ResponseTime>,
+        #[rasn(tag(context, 5), identifier = "responseRequestLength")]
+        pub response_request_length: Option<Integer>,
+        #[rasn(tag(context, 6), identifier = "responseLength")]
+        pub response_length: Option<Integer>,
+        #[rasn(identifier = "responseSync")]
+        pub response_sync: ResponseSync,
+        #[rasn(tag(context, 7), identifier = "responseDelayTime")]
+        pub response_delay_time: Option<TimePeriod>,
+        #[rasn(tag(context, 8), identifier = "responseTimeout")]
+        pub response_timeout: Option<TimePeriod>,
+        #[rasn(tag(context, 9), identifier = "additionalText")]
+        pub additional_text: Option<AdditionalText>,
+        #[rasn(tag(context, 10), identifier = "additionalInformation")]
+        pub additional_information: Option<AdditionalInformation>,
+    }
+    impl ResponseConfirmationInfo {
+        pub fn new(
+            response_monitor: ObjectInstance,
+            response_requester: ObjectInstance,
+            response_confirmation_object: ObjectInstance,
+            route_list: GroupObjects,
+            request_identifier: RequestIdentifier,
+            notification_identifier: Option<NotificationIdentifier>,
+            correlated_notifications: Option<CorrelatedNotifications>,
+            response_time: ResponseTime,
+            maximum_response_time_error: Option<ResponseTime>,
+            response_request_length: Option<Integer>,
+            response_length: Option<Integer>,
+            response_sync: ResponseSync,
+            response_delay_time: Option<TimePeriod>,
+            response_timeout: Option<TimePeriod>,
+            additional_text: Option<AdditionalText>,
+            additional_information: Option<AdditionalInformation>,
+        ) -> Self {
+            Self {
+                response_monitor,
+                response_requester,
+                response_confirmation_object,
+                route_list,
+                request_identifier,
+                notification_identifier,
+                correlated_notifications,
+                response_time,
+                maximum_response_time_error,
+                response_request_length,
+                response_length,
+                response_sync,
+                response_delay_time,
+                response_timeout,
+                additional_text,
+                additional_information,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ResponseSync {
+        singleCast = -1,
+        bestEffort = 0,
+        atomic = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ResponseTime {
+        #[rasn(tag(context, 3))]
+        seconds(Integer),
+        #[rasn(tag(context, 4))]
+        milliSeconds(Integer),
+        #[rasn(tag(context, 5))]
+        microSeconds(Integer),
+        #[rasn(tag(context, 6))]
+        nanoSeconds(Integer),
+        #[rasn(tag(context, 7))]
+        picoSeconds(Integer),
+        #[rasn(tag(context, 8))]
+        secondsPerBit(f64),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ResponseTimeSummarizationMode {
+        rawResponseTime = 0,
+        responseTimePerBit = 1,
+    }
+    #[doc = " default value definitions"]
+    pub const DEFAULT_RESPONSE_SYNC: ResponseSync = ResponseSync::singleCast;
+    pub static NO_ESTIMATE_ON_RESPONSE_TIME_ERROR: LazyLock<ResponseTime> =
+        LazyLock::new(|| ResponseTime::seconds(Integer::from(-1)));
+    pub static NOT_YET_RESPONDED: LazyLock<ResponseTime> =
+        LazyLock::new(|| ResponseTime::seconds(Integer::from(-1)));
+    pub static R_TM_ATTRIBUTE: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 9u32, 2u32, 22u32, 7u32]).to_owned());
+    pub static R_TM_MANAGED_OBJECT_CLASS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 9u32, 2u32, 22u32, 3u32]).to_owned());
+    pub static R_TM_NOTIFICATION: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 9u32, 2u32, 22u32, 10u32]).to_owned());
+    pub static R_TM_PACKAGE: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 9u32, 2u32, 22u32, 4u32]).to_owned());
+}

@@ -1,0 +1,82 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q813_1998_STASE-ROSE-Authentication-value.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod stase_rose_authentication_value {
+    extern crate alloc;
+    use super::secure_remote_operations_apdus::{
+        ReceiverId, SenderId, Signature, SignatureCertificate,
+    };
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "Authentication-value")]
+    #[non_exhaustive]
+    pub enum AuthenticationValue {
+        #[rasn(tag(context, 0))]
+        explicit(ExplicitAuthenticator),
+        #[rasn(tag(context, 1))]
+        gssAuthenticator(GssAuthenticator),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ExplicitAuthenticator {
+        #[rasn(tag(context, 0), identifier = "senderId")]
+        pub sender_id: SenderId,
+        #[rasn(tag(context, 1), identifier = "receiverId")]
+        pub receiver_id: ReceiverId,
+        #[rasn(tag(context, 3))]
+        pub time: GeneralizedTime,
+        #[rasn(tag(context, 4), identifier = "encryptedSymmetricKey")]
+        pub encrypted_symmetric_key: Option<Integer>,
+        #[rasn(tag(context, 5))]
+        pub signature: Signature,
+        #[rasn(tag(context, 6))]
+        pub certificate: Option<SignatureCertificate>,
+    }
+    impl ExplicitAuthenticator {
+        pub fn new(
+            sender_id: SenderId,
+            receiver_id: ReceiverId,
+            time: GeneralizedTime,
+            encrypted_symmetric_key: Option<Integer>,
+            signature: Signature,
+            certificate: Option<SignatureCertificate>,
+        ) -> Self {
+            Self {
+                sender_id,
+                receiver_id,
+                time,
+                encrypted_symmetric_key,
+                signature,
+                certificate,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct GssAuthenticator {
+        #[rasn(tag(context, 0), identifier = "gssMechanism")]
+        pub gss_mechanism: Option<ObjectIdentifier>,
+        #[rasn(tag(context, 1), identifier = "gssInitialContextToken")]
+        pub gss_initial_context_token: OctetString,
+    }
+    impl GssAuthenticator {
+        pub fn new(
+            gss_mechanism: Option<ObjectIdentifier>,
+            gss_initial_context_token: OctetString,
+        ) -> Self {
+            Self {
+                gss_mechanism,
+                gss_initial_context_token,
+            }
+        }
+    }
+}

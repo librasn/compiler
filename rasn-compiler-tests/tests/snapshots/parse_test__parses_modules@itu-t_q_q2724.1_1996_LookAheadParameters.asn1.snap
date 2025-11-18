@@ -1,0 +1,374 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q2724.1_1996_LookAheadParameters.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod look_ahead_parameters {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AALParameters {
+        #[rasn(identifier = "codingStandard")]
+        pub coding_standard: CodingStandard,
+        #[rasn(identifier = "aALParametersField")]
+        pub a_alparameters_field: AALParametersField,
+    }
+    impl AALParameters {
+        pub fn new(
+            coding_standard: CodingStandard,
+            a_alparameters_field: AALParametersField,
+        ) -> Self {
+            Self {
+                coding_standard,
+                a_alparameters_field,
+            }
+        }
+    }
+    #[doc = " Parameters content"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=17"))]
+    pub struct AALParametersField(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AESAForCalledParty {
+        #[rasn(identifier = "codingStandard")]
+        pub coding_standard: CodingStandard,
+        #[rasn(identifier = "aESAForCalledPartyField")]
+        pub a_esafor_called_party_field: AESAForCalledPartyField,
+    }
+    impl AESAForCalledParty {
+        pub fn new(
+            coding_standard: CodingStandard,
+            a_esafor_called_party_field: AESAForCalledPartyField,
+        ) -> Self {
+            Self {
+                coding_standard,
+                a_esafor_called_party_field,
+            }
+        }
+    }
+    #[doc = " No valid definition has been found"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct AESAForCalledPartyField(pub ());
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ATMCellRate(pub SetOf<ATMCellRateField>);
+    #[doc = "\tcoding as AAL parameters info element Recommendation Q.2931 starting with octet 5"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ATMCellRateField {
+        #[rasn(identifier = "cellRateIdentifier")]
+        pub cell_rate_identifier: CellRateIdentifier,
+        #[rasn(identifier = "cellRateID")]
+        pub cell_rate_id: CellRateID,
+    }
+    impl ATMCellRateField {
+        pub fn new(cell_rate_identifier: CellRateIdentifier, cell_rate_id: CellRateID) -> Self {
+            Self {
+                cell_rate_identifier,
+                cell_rate_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AdditionalATMCellRateparameterfield(pub SetOf<ATMCellRateField>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct BroadbandBearerCapability {
+        #[rasn(identifier = "codingStandard")]
+        pub coding_standard: CodingStandard,
+        #[rasn(identifier = "broadbandBearerCapabilityField")]
+        pub broadband_bearer_capability_field: BroadbandBearerCapabilityField,
+    }
+    impl BroadbandBearerCapability {
+        pub fn new(
+            coding_standard: CodingStandard,
+            broadband_bearer_capability_field: BroadbandBearerCapabilityField,
+        ) -> Self {
+            Self {
+                coding_standard,
+                broadband_bearer_capability_field,
+            }
+        }
+    }
+    #[doc = "\tmaximum value 224 - 1"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("2..=3"))]
+    pub struct BroadbandBearerCapabilityField(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct BroadbandHighLayerInfo {
+        #[rasn(identifier = "codingStandard")]
+        pub coding_standard: CodingStandard,
+        #[rasn(identifier = "broadbandHighLayerInformationField")]
+        pub broadband_high_layer_information_field: BroadbandHighLayerInformationField,
+    }
+    impl BroadbandHighLayerInfo {
+        pub fn new(
+            coding_standard: CodingStandard,
+            broadband_high_layer_information_field: BroadbandHighLayerInformationField,
+        ) -> Self {
+            Self {
+                coding_standard,
+                broadband_high_layer_information_field,
+            }
+        }
+    }
+    #[doc = "\tcoding as Broadband BC info element in Recommendation Q.2931 starting with octet 5"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=9"))]
+    pub struct BroadbandHighLayerInformationField(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct BroadbandLowLayerInfo {
+        pub priority: Priority,
+        #[rasn(identifier = "repeatIndicator")]
+        pub repeat_indicator: RepeatIndicator,
+        #[rasn(identifier = "broadbandLowLayerInformationField")]
+        pub broadband_low_layer_information_field: SequenceOf<BroadbandLowLayerInformationField>,
+    }
+    impl BroadbandLowLayerInfo {
+        pub fn new(
+            priority: Priority,
+            repeat_indicator: RepeatIndicator,
+            broadband_low_layer_information_field: SequenceOf<BroadbandLowLayerInformationField>,
+        ) -> Self {
+            Self {
+                priority,
+                repeat_indicator,
+                broadband_low_layer_information_field,
+            }
+        }
+    }
+    #[doc = "\tcoding as Broadband HLC info element in Recommendation Q.2931 starting with octet 5"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("4..=17"))]
+    pub struct BroadbandLowLayerInformationField(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("2..=21"))]
+    pub struct CalledATMEndSystemAddressField(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum CalledAddressSignal {
+        digit0 = 0,
+        digit1 = 1,
+        digit2 = 2,
+        digit3 = 3,
+        digit4 = 4,
+        digit5 = 5,
+        digit6 = 6,
+        digit7 = 7,
+        digit8 = 8,
+        digit9 = 9,
+        code11 = 11,
+        code12 = 12,
+        sTsignal = 15,
+    }
+    #[doc = "\tcoding as Broadband LLC info element in Recommendation Q.2931 including the header"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=16"))]
+    pub struct CalledPartyAddress(pub SequenceOf<CalledAddressSignal>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct CalledPartyNumber {
+        #[rasn(identifier = "natureOfAddressIndicator")]
+        pub nature_of_address_indicator: NatureOfAddressIndicator,
+        #[rasn(identifier = "numberingPlanIndicator")]
+        pub numbering_plan_indicator: NumberingPlanIndicator,
+        #[rasn(identifier = "internalNetworkNumberIndicator")]
+        pub internal_network_number_indicator: InternalNetworkNumberIndicator,
+        #[rasn(identifier = "calledPartyAddress")]
+        pub called_party_address: CalledPartyAddress,
+    }
+    impl CalledPartyNumber {
+        pub fn new(
+            nature_of_address_indicator: NatureOfAddressIndicator,
+            numbering_plan_indicator: NumberingPlanIndicator,
+            internal_network_number_indicator: InternalNetworkNumberIndicator,
+            called_party_address: CalledPartyAddress,
+        ) -> Self {
+            Self {
+                nature_of_address_indicator,
+                numbering_plan_indicator,
+                internal_network_number_indicator,
+                called_party_address,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct CalledPartySubaddress {
+        #[rasn(identifier = "codingStandard")]
+        pub coding_standard: CodingStandard,
+        #[rasn(identifier = "calledPartySubaddressField")]
+        pub called_party_subaddress_field: CalledPartySubaddressField,
+    }
+    impl CalledPartySubaddress {
+        pub fn new(
+            coding_standard: CodingStandard,
+            called_party_subaddress_field: CalledPartySubaddressField,
+        ) -> Self {
+            Self {
+                coding_standard,
+                called_party_subaddress_field,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("2..=21"))]
+    pub struct CalledPartySubaddressField(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CauseIndicators(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=16777215"))]
+    pub struct CellRateID(pub u32);
+    #[doc = "\tcoding as called party number info element in Recommendation Q.2931 starting with octet 5"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum CellRateIdentifier {
+        forwardPeakCellRateForCellLossPriority0 = 2,
+        backwardPeakCellRateForCellLossPriority0 = 3,
+        forwardPeakCellRateForCellLossPriority0and1 = 4,
+        backwardPeakCellRateForCellLossPriority0and1 = 5,
+    }
+    #[doc = "\tcoding as OAM traffic descriptor IE in Recommendation Q.2931 starting with octet 5"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct CodingStandard(pub ());
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum InternalNetworkNumberIndicator {
+        routingToInternalNetworkNumberAllowed = 0,
+        routingToInternalNetworkNumberNotAllowed = 1,
+    }
+    #[doc = " (SIZE (7..N))"]
+    #[doc = " coding as Recommendation Q.2610"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct NarrowbandBearerCapability {
+        pub priority: Priority,
+        #[rasn(identifier = "repeatIndicator")]
+        pub repeat_indicator: RepeatIndicator,
+        #[rasn(identifier = "narrowbandBearerCapabilityField")]
+        pub narrowband_bearer_capability_field: SequenceOf<NarrowbandBearerCapabilityField>,
+    }
+    impl NarrowbandBearerCapability {
+        pub fn new(
+            priority: Priority,
+            repeat_indicator: RepeatIndicator,
+            narrowband_bearer_capability_field: SequenceOf<NarrowbandBearerCapabilityField>,
+        ) -> Self {
+            Self {
+                priority,
+                repeat_indicator,
+                narrowband_bearer_capability_field,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("4..=13"))]
+    pub struct NarrowbandBearerCapabilityField(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct NarrowbandHighLayerCompa {
+        pub priority: Priority,
+        #[rasn(identifier = "repeatIndicator")]
+        pub repeat_indicator: RepeatIndicator,
+        #[rasn(identifier = "narrowbandHighLayerCompaField")]
+        pub narrowband_high_layer_compa_field: SequenceOf<NarrowbandHighLayerCompaField>,
+    }
+    impl NarrowbandHighLayerCompa {
+        pub fn new(
+            priority: Priority,
+            repeat_indicator: RepeatIndicator,
+            narrowband_high_layer_compa_field: SequenceOf<NarrowbandHighLayerCompaField>,
+        ) -> Self {
+            Self {
+                priority,
+                repeat_indicator,
+                narrowband_high_layer_compa_field,
+            }
+        }
+    }
+    #[doc = "\tcoding as Narrow-band BC info element in Recommendation Q.2931 including the header"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("4..=7"))]
+    pub struct NarrowbandHighLayerCompaField(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct NarrowbandLowLayerCompa {
+        pub priority: Priority,
+        #[rasn(identifier = "repeatIndicator")]
+        pub repeat_indicator: RepeatIndicator,
+        #[rasn(identifier = "narrowbandLowLayerCompaField")]
+        pub narrowband_low_layer_compa_field: SequenceOf<NarrowbandLowLayerCompaField>,
+    }
+    impl NarrowbandLowLayerCompa {
+        pub fn new(
+            priority: Priority,
+            repeat_indicator: RepeatIndicator,
+            narrowband_low_layer_compa_field: SequenceOf<NarrowbandLowLayerCompaField>,
+        ) -> Self {
+            Self {
+                priority,
+                repeat_indicator,
+                narrowband_low_layer_compa_field,
+            }
+        }
+    }
+    #[doc = "\tcoding as Narrow-band HLC info element in Recommendation Q.2931 including the header"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("4..=20"))]
+    pub struct NarrowbandLowLayerCompaField(pub OctetString);
+    #[doc = "\tcoding as SUB info element in Recommendation Q.2931 starting with octet 5"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum NatureOfAddressIndicator {
+        subscriberNumber = 1,
+        unknown = 2,
+        nationalSignificantNumber = 3,
+        internationalNumber = 4,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum NumberingPlanIndicator {
+        iSDNTelephonyNumberingPlanE164 = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct OAMTrafficDescriptor {
+        #[rasn(identifier = "codingStandard")]
+        pub coding_standard: CodingStandard,
+        #[rasn(identifier = "oAMTrafficDescriptorField")]
+        pub o_amtraffic_descriptor_field: OAMTrafficDescriptorField,
+    }
+    impl OAMTrafficDescriptor {
+        pub fn new(
+            coding_standard: CodingStandard,
+            o_amtraffic_descriptor_field: OAMTrafficDescriptorField,
+        ) -> Self {
+            Self {
+                coding_standard,
+                o_amtraffic_descriptor_field,
+            }
+        }
+    }
+    #[doc = "\tcoding as Narrow-band LLC info element in Recommendation Q.2931 including the header"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct OAMTrafficDescriptorField(pub FixedOctetString<2usize>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum Priority {
+        noPrioritisedOrder = 0,
+        prioritisedListInAscendingOrder = 1,
+        prioritisedListInDecendingOrder = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum RepeatIndicator {
+        informationElementNotRepeated = 0,
+        informationElementRepeated = 1,
+    }
+}

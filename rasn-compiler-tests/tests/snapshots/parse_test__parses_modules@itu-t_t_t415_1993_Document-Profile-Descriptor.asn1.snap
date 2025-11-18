@@ -1,0 +1,1509 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_t_t415_1993_Document-Profile-Descriptor.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod document_profile_descriptor {
+    extern crate alloc;
+    use super::character_profile_attributes::{
+        CharacterCodingAttribute, CharacterContentDefaults, CharacterPresentationFeature,
+    };
+    use super::colour_attributes::{
+        ColourCharacteristics, ColourExpression, ColourSpacesList, ColourTable,
+    };
+    use super::geo_gr_profile_attributes::{
+        GeoGrCodingAttribute, GeoGrContentDefaults, GeoGrPresentationFeature,
+    };
+    use super::identifiers_and_expressions::{
+        ObjectOrClassIdentifier, ProtectedPartIdentifier, ResourceName, StyleIdentifier,
+    };
+    use super::iso_standard_9541_font_attribute_set::FontAttributeSet;
+    use super::layout_descriptors::{
+        Border, Colour, CommentString, ContentBackgroundColour, ContentForegroundColour,
+        DimensionPair, MeasurePair, MediumType, OneOfFourAngles, Transparency,
+    };
+    use super::logical_descriptors::Protection;
+    use super::raster_gr_profile_attributes::{
+        RaGrCodingAttribute, RaGrPresentationFeature, RasterGrContentDefaults,
+    };
+    use super::style_descriptors::{
+        BlockAlignment, ContentArchitectureClass, ContentType, FillOrder,
+    };
+    use super::temporal_relationships::{DocumentPresentationTime, TimeScaling};
+    use super::text_units::TypeOfCoding;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AdditionalDocCharacteristicsUnitScaling {
+        pub a: Integer,
+        pub b: Integer,
+    }
+    impl AdditionalDocCharacteristicsUnitScaling {
+        pub fn new(a: Integer, b: Integer) -> Self {
+            Self { a, b }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Additional-Doc-Characteristics")]
+    pub struct AdditionalDocCharacteristics {
+        #[rasn(tag(context, 3), identifier = "unit-scaling")]
+        pub unit_scaling: Option<AdditionalDocCharacteristicsUnitScaling>,
+        #[rasn(tag(context, 2), identifier = "fonts-list")]
+        pub fonts_list: Option<FontsList>,
+        #[rasn(tag(context, 0), identifier = "colour-characteristics")]
+        pub colour_characteristics: Option<ColourCharacteristics>,
+        #[rasn(tag(context, 1), identifier = "colour-spaces-list")]
+        pub colour_spaces_list: Option<ColourSpacesList>,
+        #[rasn(tag(context, 5), identifier = "assured-reproduction-areas")]
+        pub assured_reproduction_areas: Option<AssuredReproductionAreas>,
+        #[rasn(tag(context, 6), identifier = "time-scaling")]
+        pub time_scaling: Option<TimeScaling>,
+        #[rasn(tag(context, 7), identifier = "document-presentation-time")]
+        pub document_presentation_time: Option<DocumentPresentationTime>,
+    }
+    impl AdditionalDocCharacteristics {
+        pub fn new(
+            unit_scaling: Option<AdditionalDocCharacteristicsUnitScaling>,
+            fonts_list: Option<FontsList>,
+            colour_characteristics: Option<ColourCharacteristics>,
+            colour_spaces_list: Option<ColourSpacesList>,
+            assured_reproduction_areas: Option<AssuredReproductionAreas>,
+            time_scaling: Option<TimeScaling>,
+            document_presentation_time: Option<DocumentPresentationTime>,
+        ) -> Self {
+            Self {
+                unit_scaling,
+                fonts_list,
+                colour_characteristics,
+                colour_spaces_list,
+                assured_reproduction_areas,
+                time_scaling,
+                document_presentation_time,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Additional-Information")]
+    pub struct AdditionalInformation {
+        #[rasn(tag(context, 0), identifier = "descriptive-information")]
+        pub descriptive_information: Option<CharacterData>,
+        #[rasn(tag(context, 1), identifier = "octet-string")]
+        pub octet_string: Option<OctetString>,
+    }
+    impl AdditionalInformation {
+        pub fn new(
+            descriptive_information: Option<CharacterData>,
+            octet_string: Option<OctetString>,
+        ) -> Self {
+            Self {
+                descriptive_information,
+                octet_string,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct AnonymousAssuredReproductionAreasAssuredReproductionArea {
+        #[rasn(tag(context, 0))]
+        pub position: MeasurePair,
+        #[rasn(tag(context, 1))]
+        pub dimensions: MeasurePair,
+    }
+    impl AnonymousAssuredReproductionAreasAssuredReproductionArea {
+        pub fn new(position: MeasurePair, dimensions: MeasurePair) -> Self {
+            Self {
+                position,
+                dimensions,
+            }
+        }
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "SET")]
+    pub struct AnonymousAssuredReproductionAreas {
+        #[rasn(tag(context, 0), identifier = "nominal-page-size")]
+        pub nominal_page_size: MeasurePair,
+        #[rasn(tag(context, 1), identifier = "assured-reproduction-area")]
+        pub assured_reproduction_area: AnonymousAssuredReproductionAreasAssuredReproductionArea,
+    }
+    impl AnonymousAssuredReproductionAreas {
+        pub fn new(
+            nominal_page_size: MeasurePair,
+            assured_reproduction_area: AnonymousAssuredReproductionAreasAssuredReproductionArea,
+        ) -> Self {
+            Self {
+                nominal_page_size,
+                assured_reproduction_area,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Assured-Reproduction-Areas")]
+    pub struct AssuredReproductionAreas(pub SetOf<AnonymousAssuredReproductionAreas>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, tag(application, 3), identifier = "Character-Data")]
+    pub struct CharacterData(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Content-Attributes")]
+    pub struct ContentAttributes {
+        #[rasn(tag(context, 1), identifier = "document-size")]
+        pub document_size: Option<Integer>,
+        #[rasn(tag(context, 2), identifier = "number-of-pages")]
+        pub number_of_pages: Option<Integer>,
+        #[rasn(tag(context, 4))]
+        pub languages: Option<SetOf<CharacterData>>,
+    }
+    impl ContentAttributes {
+        pub fn new(
+            document_size: Option<Integer>,
+            number_of_pages: Option<Integer>,
+            languages: Option<SetOf<CharacterData>>,
+        ) -> Self {
+            Self {
+                document_size,
+                number_of_pages,
+                languages,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, tag(application, 4), identifier = "Date-and-Time")]
+    pub struct DateAndTime(pub PrintableString);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "SET")]
+    pub struct AnonymousAnonymousDatesAndTimesRevisionHistoryRevisers {
+        #[rasn(tag(context, 0))]
+        pub names: Option<SetOf<PersonalName>>,
+        #[rasn(tag(context, 1))]
+        pub position: Option<CharacterData>,
+        #[rasn(tag(context, 2))]
+        pub organization: Option<CharacterData>,
+    }
+    impl AnonymousAnonymousDatesAndTimesRevisionHistoryRevisers {
+        pub fn new(
+            names: Option<SetOf<PersonalName>>,
+            position: Option<CharacterData>,
+            organization: Option<CharacterData>,
+        ) -> Self {
+            Self {
+                names,
+                position,
+                organization,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AnonymousDatesAndTimesRevisionHistoryRevisers(
+        pub SetOf<AnonymousAnonymousDatesAndTimesRevisionHistoryRevisers>,
+    );
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "SET")]
+    pub struct AnonymousDatesAndTimesRevisionHistory {
+        #[rasn(tag(context, 0), identifier = "revision-date-and-time")]
+        pub revision_date_and_time: Option<DateAndTime>,
+        #[rasn(tag(context, 1), identifier = "version-identifier")]
+        pub version_identifier: Option<CharacterData>,
+        #[rasn(tag(context, 2))]
+        pub revisers: Option<AnonymousDatesAndTimesRevisionHistoryRevisers>,
+        #[rasn(tag(context, 3), identifier = "version-reference")]
+        pub version_reference: Option<DocumentReference>,
+        #[rasn(tag(context, 4), identifier = "user-comments")]
+        pub user_comments: Option<CharacterData>,
+    }
+    impl AnonymousDatesAndTimesRevisionHistory {
+        pub fn new(
+            revision_date_and_time: Option<DateAndTime>,
+            version_identifier: Option<CharacterData>,
+            revisers: Option<AnonymousDatesAndTimesRevisionHistoryRevisers>,
+            version_reference: Option<DocumentReference>,
+            user_comments: Option<CharacterData>,
+        ) -> Self {
+            Self {
+                revision_date_and_time,
+                version_identifier,
+                revisers,
+                version_reference,
+                user_comments,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DatesAndTimesRevisionHistory(pub SequenceOf<AnonymousDatesAndTimesRevisionHistory>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Dates-and-Times")]
+    pub struct DatesAndTimes {
+        #[rasn(tag(context, 0), identifier = "document-date-and-time")]
+        pub document_date_and_time: Option<DateAndTime>,
+        #[rasn(tag(context, 1), identifier = "creation-date-and-time")]
+        pub creation_date_and_time: Option<DateAndTime>,
+        #[rasn(tag(context, 2), identifier = "local-filing-date-and-time")]
+        pub local_filing_date_and_time: Option<SequenceOf<DateAndTime>>,
+        #[rasn(tag(context, 3), identifier = "expiry-date-and-time")]
+        pub expiry_date_and_time: Option<DateAndTime>,
+        #[rasn(tag(context, 4), identifier = "start-date-and-time")]
+        pub start_date_and_time: Option<DateAndTime>,
+        #[rasn(tag(context, 5), identifier = "purge-date-and-time")]
+        pub purge_date_and_time: Option<DateAndTime>,
+        #[rasn(tag(context, 6), identifier = "release-date-and-time")]
+        pub release_date_and_time: Option<DateAndTime>,
+        #[rasn(tag(context, 7), identifier = "revision-history")]
+        pub revision_history: Option<DatesAndTimesRevisionHistory>,
+    }
+    impl DatesAndTimes {
+        pub fn new(
+            document_date_and_time: Option<DateAndTime>,
+            creation_date_and_time: Option<DateAndTime>,
+            local_filing_date_and_time: Option<SequenceOf<DateAndTime>>,
+            expiry_date_and_time: Option<DateAndTime>,
+            start_date_and_time: Option<DateAndTime>,
+            purge_date_and_time: Option<DateAndTime>,
+            release_date_and_time: Option<DateAndTime>,
+            revision_history: Option<DatesAndTimesRevisionHistory>,
+        ) -> Self {
+            Self {
+                document_date_and_time,
+                creation_date_and_time,
+                local_filing_date_and_time,
+                expiry_date_and_time,
+                start_date_and_time,
+                purge_date_and_time,
+                release_date_and_time,
+                revision_history,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Doc-Appl-Profile-Defaults")]
+    pub struct DocApplProfileDefaults {
+        #[rasn(tag(context, 0), identifier = "document-architecture-defaults")]
+        pub document_architecture_defaults: Option<DocumentArchitectureDefaults>,
+        #[rasn(tag(context, 1), identifier = "character-content-defaults")]
+        pub character_content_defaults: Option<CharacterContentDefaults>,
+        #[rasn(tag(context, 2), identifier = "raster-gr-content-defaults")]
+        pub raster_gr_content_defaults: Option<RasterGrContentDefaults>,
+        #[rasn(tag(context, 3), identifier = "geo-gr-content-defaults")]
+        pub geo_gr_content_defaults: Option<GeoGrContentDefaults>,
+        #[rasn(tag(context, 7), identifier = "external-content-architecture-defaults")]
+        pub external_content_architecture_defaults: Option<SequenceOf<Any>>,
+    }
+    impl DocApplProfileDefaults {
+        pub fn new(
+            document_architecture_defaults: Option<DocumentArchitectureDefaults>,
+            character_content_defaults: Option<CharacterContentDefaults>,
+            raster_gr_content_defaults: Option<RasterGrContentDefaults>,
+            geo_gr_content_defaults: Option<GeoGrContentDefaults>,
+            external_content_architecture_defaults: Option<SequenceOf<Any>>,
+        ) -> Self {
+            Self {
+                document_architecture_defaults,
+                character_content_defaults,
+                raster_gr_content_defaults,
+                geo_gr_content_defaults,
+                external_content_architecture_defaults,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum DocumentArchitectureDefaultsContentArchitectureClass {
+        #[rasn(tag(context, 0))]
+        a(ContentArchitectureClass),
+        #[rasn(tag(context, 1))]
+        b(ContentType),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Document-Architecture-Defaults")]
+    pub struct DocumentArchitectureDefaults {
+        #[rasn(identifier = "content-architecture-class")]
+        pub content_architecture_class:
+            Option<DocumentArchitectureDefaultsContentArchitectureClass>,
+        #[rasn(tag(context, 2), identifier = "page-dimensions")]
+        pub page_dimensions: Option<MeasurePair>,
+        #[rasn(tag(context, 3))]
+        pub transparency: Option<Transparency>,
+        #[rasn(tag(context, 4))]
+        pub colour: Option<Colour>,
+        #[rasn(tag(context, 11), identifier = "colour-of-layout-object")]
+        pub colour_of_layout_object: Option<ColourExpression>,
+        #[rasn(tag(context, 12), identifier = "object-colour-table")]
+        pub object_colour_table: Option<ColourTable>,
+        #[rasn(tag(context, 13), identifier = "content-background-colour")]
+        pub content_background_colour: Option<ContentBackgroundColour>,
+        #[rasn(tag(context, 14), identifier = "content-foreground-colour")]
+        pub content_foreground_colour: Option<ContentForegroundColour>,
+        #[rasn(tag(context, 15), identifier = "content-colour-table")]
+        pub content_colour_table: Option<ColourTable>,
+        #[rasn(tag(context, 5), identifier = "layout-path")]
+        pub layout_path: Option<OneOfFourAngles>,
+        #[rasn(tag(context, 6), identifier = "medium-type")]
+        pub medium_type: Option<MediumType>,
+        #[rasn(tag(context, 7), identifier = "block-alignment")]
+        pub block_alignment: Option<BlockAlignment>,
+        #[rasn(tag(context, 8))]
+        pub border: Option<Border>,
+        #[rasn(tag(context, 9), identifier = "page-position")]
+        pub page_position: Option<MeasurePair>,
+        #[rasn(tag(context, 10), identifier = "type-of-coding")]
+        pub type_of_coding: Option<TypeOfCoding>,
+    }
+    impl DocumentArchitectureDefaults {
+        pub fn new(
+            content_architecture_class: Option<
+                DocumentArchitectureDefaultsContentArchitectureClass,
+            >,
+            page_dimensions: Option<MeasurePair>,
+            transparency: Option<Transparency>,
+            colour: Option<Colour>,
+            colour_of_layout_object: Option<ColourExpression>,
+            object_colour_table: Option<ColourTable>,
+            content_background_colour: Option<ContentBackgroundColour>,
+            content_foreground_colour: Option<ContentForegroundColour>,
+            content_colour_table: Option<ColourTable>,
+            layout_path: Option<OneOfFourAngles>,
+            medium_type: Option<MediumType>,
+            block_alignment: Option<BlockAlignment>,
+            border: Option<Border>,
+            page_position: Option<MeasurePair>,
+            type_of_coding: Option<TypeOfCoding>,
+        ) -> Self {
+            Self {
+                content_architecture_class,
+                page_dimensions,
+                transparency,
+                colour,
+                colour_of_layout_object,
+                object_colour_table,
+                content_background_colour,
+                content_foreground_colour,
+                content_colour_table,
+                layout_path,
+                medium_type,
+                block_alignment,
+                border,
+                page_position,
+                type_of_coding,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum DocumentCharacteristicsDocumentApplicationProfile {
+        #[rasn(tag(context, 0))]
+        a(Integer),
+        #[rasn(tag(context, 4))]
+        b(ObjectIdentifier),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Document-Characteristics")]
+    pub struct DocumentCharacteristics {
+        #[rasn(identifier = "document-application-profile")]
+        pub document_application_profile: Option<DocumentCharacteristicsDocumentApplicationProfile>,
+        #[rasn(tag(context, 10), identifier = "doc-appl-profile-defaults")]
+        pub doc_appl_profile_defaults: Option<DocApplProfileDefaults>,
+        #[rasn(tag(context, 1), identifier = "document-architecture-class")]
+        pub document_architecture_class: Integer,
+        #[rasn(tag(context, 5), identifier = "content-architecture-classes")]
+        pub content_architecture_classes: SetOf<ObjectIdentifier>,
+        #[rasn(tag(context, 6), identifier = "interchange-format-class")]
+        pub interchange_format_class: Integer,
+        #[rasn(tag(context, 8), identifier = "oda-version")]
+        pub oda_version: ODAVersion,
+        #[rasn(tag(context, 11), identifier = "alternative-feature-sets")]
+        pub alternative_feature_sets: Option<SetOf<SetOf<ObjectIdentifier>>>,
+        #[rasn(tag(context, 2), identifier = "non-basic-doc-characteristics")]
+        pub non_basic_doc_characteristics: Option<NonBasicDocCharacteristics>,
+        #[rasn(tag(context, 3), identifier = "non-basic-struc-characteristics")]
+        pub non_basic_struc_characteristics: Option<NonBasicStrucCharacteristics>,
+        #[rasn(tag(context, 9), identifier = "additional-doc-characteristics")]
+        pub additional_doc_characteristics: Option<AdditionalDocCharacteristics>,
+    }
+    impl DocumentCharacteristics {
+        pub fn new(
+            document_application_profile: Option<DocumentCharacteristicsDocumentApplicationProfile>,
+            doc_appl_profile_defaults: Option<DocApplProfileDefaults>,
+            document_architecture_class: Integer,
+            content_architecture_classes: SetOf<ObjectIdentifier>,
+            interchange_format_class: Integer,
+            oda_version: ODAVersion,
+            alternative_feature_sets: Option<SetOf<SetOf<ObjectIdentifier>>>,
+            non_basic_doc_characteristics: Option<NonBasicDocCharacteristics>,
+            non_basic_struc_characteristics: Option<NonBasicStrucCharacteristics>,
+            additional_doc_characteristics: Option<AdditionalDocCharacteristics>,
+        ) -> Self {
+            Self {
+                document_application_profile,
+                doc_appl_profile_defaults,
+                document_architecture_class,
+                content_architecture_classes,
+                interchange_format_class,
+                oda_version,
+                alternative_feature_sets,
+                non_basic_doc_characteristics,
+                non_basic_struc_characteristics,
+                additional_doc_characteristics,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Document-Description")]
+    pub struct DocumentDescription {
+        #[rasn(tag(context, 0))]
+        pub title: Option<CharacterData>,
+        #[rasn(tag(context, 1))]
+        pub subject: Option<CharacterData>,
+        #[rasn(tag(context, 2), identifier = "document-type")]
+        pub document_type: Option<CharacterData>,
+        #[rasn(tag(context, 3), identifier = "abstract")]
+        pub r_abstract: Option<CharacterData>,
+        #[rasn(tag(context, 4))]
+        pub keywords: Option<SetOf<CharacterData>>,
+        #[rasn(tag(context, 5), identifier = "document-reference")]
+        pub document_reference: Option<DocumentReference>,
+    }
+    impl DocumentDescription {
+        pub fn new(
+            title: Option<CharacterData>,
+            subject: Option<CharacterData>,
+            document_type: Option<CharacterData>,
+            r_abstract: Option<CharacterData>,
+            keywords: Option<SetOf<CharacterData>>,
+            document_reference: Option<DocumentReference>,
+        ) -> Self {
+            Self {
+                title,
+                subject,
+                document_type,
+                r_abstract,
+                keywords,
+                document_reference,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Document-Management-Attributes")]
+    pub struct DocumentManagementAttributes {
+        #[rasn(tag(context, 7), identifier = "document-description")]
+        pub document_description: Option<DocumentDescription>,
+        #[rasn(tag(context, 0), identifier = "dates-and-times")]
+        pub dates_and_times: Option<DatesAndTimes>,
+        #[rasn(tag(context, 1))]
+        pub originators: Option<Originators>,
+        #[rasn(tag(context, 2), identifier = "other-user-information")]
+        pub other_user_information: Option<OtherUserInformation>,
+        #[rasn(tag(context, 3), identifier = "external-references")]
+        pub external_references: Option<ExternalReferences>,
+        #[rasn(tag(context, 4), identifier = "local-file-references")]
+        pub local_file_references: Option<LocalFileReferences>,
+        #[rasn(tag(context, 5), identifier = "content-attributes")]
+        pub content_attributes: Option<ContentAttributes>,
+        #[rasn(tag(context, 6), identifier = "security-information")]
+        pub security_information: Option<SecurityInformation>,
+    }
+    impl DocumentManagementAttributes {
+        pub fn new(
+            document_description: Option<DocumentDescription>,
+            dates_and_times: Option<DatesAndTimes>,
+            originators: Option<Originators>,
+            other_user_information: Option<OtherUserInformation>,
+            external_references: Option<ExternalReferences>,
+            local_file_references: Option<LocalFileReferences>,
+            content_attributes: Option<ContentAttributes>,
+            security_information: Option<SecurityInformation>,
+        ) -> Self {
+            Self {
+                document_description,
+                dates_and_times,
+                originators,
+                other_user_information,
+                external_references,
+                local_file_references,
+                content_attributes,
+                security_information,
+            }
+        }
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "SET")]
+    pub struct AnonymousDocumentProfileDescriptorResources {
+        #[rasn(identifier = "resource-identifier")]
+        pub resource_identifier: ResourceName,
+        #[rasn(identifier = "object-class-identifier")]
+        pub object_class_identifier: ObjectOrClassIdentifier,
+    }
+    impl AnonymousDocumentProfileDescriptorResources {
+        pub fn new(
+            resource_identifier: ResourceName,
+            object_class_identifier: ObjectOrClassIdentifier,
+        ) -> Self {
+            Self {
+                resource_identifier,
+                object_class_identifier,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DocumentProfileDescriptorResources(
+        pub SetOf<AnonymousDocumentProfileDescriptorResources>,
+    );
+    #[doc = "  See ITU-T Rec. T.424 | ISO/IEC 8613-14"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Document-Profile-Descriptor")]
+    pub struct DocumentProfileDescriptor {
+        #[rasn(tag(context, 0), identifier = "generic-layout-structure")]
+        pub generic_layout_structure: Option<NumericString>,
+        #[rasn(tag(context, 1), identifier = "specific-layout-structure")]
+        pub specific_layout_structure: Option<NumericString>,
+        #[rasn(tag(context, 4), identifier = "generic-logical-structure")]
+        pub generic_logical_structure: Option<NumericString>,
+        #[rasn(tag(context, 5), identifier = "specific-logical-structure")]
+        pub specific_logical_structure: Option<NumericString>,
+        #[rasn(tag(context, 6), identifier = "presentation-styles")]
+        pub presentation_styles: Option<NumericString>,
+        #[rasn(tag(context, 7), identifier = "layout-styles")]
+        pub layout_styles: Option<NumericString>,
+        #[rasn(tag(context, 12), identifier = "sealed-profiles")]
+        pub sealed_profiles: Option<NumericString>,
+        #[rasn(tag(context, 13), identifier = "enciphered-profiles")]
+        pub enciphered_profiles: Option<NumericString>,
+        #[rasn(tag(context, 14), identifier = "preenciphered-bodyparts")]
+        pub preenciphered_bodyparts: Option<NumericString>,
+        #[rasn(tag(context, 15), identifier = "postenciphered-bodyparts")]
+        pub postenciphered_bodyparts: Option<NumericString>,
+        #[rasn(tag(context, 9), identifier = "external-document-class")]
+        pub external_document_class: Option<DocumentReference>,
+        #[rasn(tag(context, 10), identifier = "resource-document")]
+        pub resource_document: Option<DocumentReference>,
+        #[rasn(tag(context, 11))]
+        pub resources: Option<DocumentProfileDescriptorResources>,
+        #[rasn(tag(context, 2), identifier = "document-characteristics")]
+        pub document_characteristics: DocumentCharacteristics,
+        #[rasn(tag(context, 3), identifier = "document-management-attributes")]
+        pub document_management_attributes: Option<DocumentManagementAttributes>,
+        #[rasn(tag(context, 16), identifier = "document-security-attributes")]
+        pub document_security_attributes: Option<DocumentSecurityAttributes>,
+        #[rasn(tag(context, 17))]
+        pub links: Option<NumericString>,
+        #[rasn(tag(context, 18), identifier = "link-classes")]
+        pub link_classes: Option<NumericString>,
+        #[rasn(tag(context, 19), identifier = "enciphered-links")]
+        pub enciphered_links: Option<NumericString>,
+        #[rasn(tag(context, 20), identifier = "temporal-relations")]
+        pub temporal_relations: Option<NumericString>,
+    }
+    impl DocumentProfileDescriptor {
+        pub fn new(
+            generic_layout_structure: Option<NumericString>,
+            specific_layout_structure: Option<NumericString>,
+            generic_logical_structure: Option<NumericString>,
+            specific_logical_structure: Option<NumericString>,
+            presentation_styles: Option<NumericString>,
+            layout_styles: Option<NumericString>,
+            sealed_profiles: Option<NumericString>,
+            enciphered_profiles: Option<NumericString>,
+            preenciphered_bodyparts: Option<NumericString>,
+            postenciphered_bodyparts: Option<NumericString>,
+            external_document_class: Option<DocumentReference>,
+            resource_document: Option<DocumentReference>,
+            resources: Option<DocumentProfileDescriptorResources>,
+            document_characteristics: DocumentCharacteristics,
+            document_management_attributes: Option<DocumentManagementAttributes>,
+            document_security_attributes: Option<DocumentSecurityAttributes>,
+            links: Option<NumericString>,
+            link_classes: Option<NumericString>,
+            enciphered_links: Option<NumericString>,
+            temporal_relations: Option<NumericString>,
+        ) -> Self {
+            Self {
+                generic_layout_structure,
+                specific_layout_structure,
+                generic_logical_structure,
+                specific_logical_structure,
+                presentation_styles,
+                layout_styles,
+                sealed_profiles,
+                enciphered_profiles,
+                preenciphered_bodyparts,
+                postenciphered_bodyparts,
+                external_document_class,
+                resource_document,
+                resources,
+                document_characteristics,
+                document_management_attributes,
+                document_security_attributes,
+                links,
+                link_classes,
+                enciphered_links,
+                temporal_relations,
+            }
+        }
+    }
+    #[doc = "  string of characters from the sets designated by the attribute"]
+    #[doc = "  \"profile character sets\", plus space, carriage return and line feed"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "Document-Reference")]
+    pub enum DocumentReference {
+        #[rasn(identifier = "unique-reference")]
+        unique_reference(ObjectIdentifier),
+        #[rasn(identifier = "descriptive-reference")]
+        descriptive_reference(CharacterData),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Document-Security-Attributes")]
+    pub struct DocumentSecurityAttributes {
+        #[rasn(tag(context, 7), identifier = "sealed-info-encoding")]
+        pub sealed_info_encoding: Option<ObjectIdentifier>,
+        #[rasn(tag(context, 0), identifier = "oda-security-label")]
+        pub oda_security_label: Option<OdaSecurityLabel>,
+        #[rasn(tag(context, 1), identifier = "sealed-doc-profiles")]
+        pub sealed_doc_profiles: Option<SealedDocProfiles>,
+        #[rasn(tag(context, 2), identifier = "presealed-doc-bodyparts")]
+        pub presealed_doc_bodyparts: Option<SealedDocBodyparts>,
+        #[rasn(tag(context, 3), identifier = "postsealed-doc-bodyparts")]
+        pub postsealed_doc_bodyparts: Option<SealedDocBodyparts>,
+        #[rasn(tag(context, 4), identifier = "enciphered-doc-profiles")]
+        pub enciphered_doc_profiles: Option<ProtectedDocParts>,
+        #[rasn(tag(context, 5), identifier = "preenciphered-doc-bodyparts")]
+        pub preenciphered_doc_bodyparts: Option<ProtectedDocParts>,
+        #[rasn(tag(context, 6), identifier = "postenciphered-doc-bodyparts")]
+        pub postenciphered_doc_bodyparts: Option<ProtectedDocParts>,
+        #[rasn(tag(context, 8), identifier = "sealed-links")]
+        pub sealed_links: Option<SealedDocBodyparts>,
+    }
+    impl DocumentSecurityAttributes {
+        pub fn new(
+            sealed_info_encoding: Option<ObjectIdentifier>,
+            oda_security_label: Option<OdaSecurityLabel>,
+            sealed_doc_profiles: Option<SealedDocProfiles>,
+            presealed_doc_bodyparts: Option<SealedDocBodyparts>,
+            postsealed_doc_bodyparts: Option<SealedDocBodyparts>,
+            enciphered_doc_profiles: Option<ProtectedDocParts>,
+            preenciphered_doc_bodyparts: Option<ProtectedDocParts>,
+            postenciphered_doc_bodyparts: Option<ProtectedDocParts>,
+            sealed_links: Option<SealedDocBodyparts>,
+        ) -> Self {
+            Self {
+                sealed_info_encoding,
+                oda_security_label,
+                sealed_doc_profiles,
+                presealed_doc_bodyparts,
+                postsealed_doc_bodyparts,
+                enciphered_doc_profiles,
+                preenciphered_doc_bodyparts,
+                postenciphered_doc_bodyparts,
+                sealed_links,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "External-References")]
+    pub struct ExternalReferences {
+        #[rasn(tag(context, 0), identifier = "references-to-other-documents")]
+        pub references_to_other_documents: Option<SetOf<DocumentReference>>,
+        #[rasn(tag(context, 1), identifier = "superseded-documents")]
+        pub superseded_documents: Option<SetOf<DocumentReference>>,
+    }
+    impl ExternalReferences {
+        pub fn new(
+            references_to_other_documents: Option<SetOf<DocumentReference>>,
+            superseded_documents: Option<SetOf<DocumentReference>>,
+        ) -> Self {
+            Self {
+                references_to_other_documents,
+                superseded_documents,
+            }
+        }
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "SET")]
+    pub struct AnonymousFontReferenceReferenceProperties {
+        #[rasn(tag(context, 0), identifier = "precedence-number")]
+        pub precedence_number: Option<Integer>,
+        #[rasn(tag(context, 1))]
+        pub properties: FontAttributeSet,
+        #[rasn(tag(context, 2), identifier = "user-readable-comment")]
+        pub user_readable_comment: Option<CommentString>,
+    }
+    impl AnonymousFontReferenceReferenceProperties {
+        pub fn new(
+            precedence_number: Option<Integer>,
+            properties: FontAttributeSet,
+            user_readable_comment: Option<CommentString>,
+        ) -> Self {
+            Self {
+                precedence_number,
+                properties,
+                user_readable_comment,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct FontReferenceReferenceProperties(
+        pub SetOf<AnonymousFontReferenceReferenceProperties>,
+    );
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Font-Reference")]
+    pub struct FontReference {
+        #[rasn(tag(context, 0), identifier = "user-visible-name")]
+        pub user_visible_name: Option<CommentString>,
+        #[rasn(tag(context, 1), identifier = "user-readable-comment")]
+        pub user_readable_comment: Option<CommentString>,
+        #[rasn(tag(context, 2), identifier = "reference-properties")]
+        pub reference_properties: FontReferenceReferenceProperties,
+    }
+    impl FontReference {
+        pub fn new(
+            user_visible_name: Option<CommentString>,
+            user_readable_comment: Option<CommentString>,
+            reference_properties: FontReferenceReferenceProperties,
+        ) -> Self {
+            Self {
+                user_visible_name,
+                user_readable_comment,
+                reference_properties,
+            }
+        }
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "SET")]
+    pub struct AnonymousFontsList {
+        #[rasn(identifier = "font-identifier")]
+        pub font_identifier: Integer,
+        #[rasn(identifier = "font-reference")]
+        pub font_reference: FontReference,
+    }
+    impl AnonymousFontsList {
+        pub fn new(font_identifier: Integer, font_reference: FontReference) -> Self {
+            Self {
+                font_identifier,
+                font_reference,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Fonts-List")]
+    pub struct FontsList(pub SetOf<AnonymousFontsList>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Key-Information")]
+    pub struct KeyInformation {
+        #[rasn(tag(context, 0), identifier = "method-information")]
+        pub method_information: Option<MethodInformation>,
+        #[rasn(tag(context, 1), identifier = "additional-information")]
+        pub additional_information: Option<AdditionalInformation>,
+    }
+    impl KeyInformation {
+        pub fn new(
+            method_information: Option<MethodInformation>,
+            additional_information: Option<AdditionalInformation>,
+        ) -> Self {
+            Self {
+                method_information,
+                additional_information,
+            }
+        }
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "SET")]
+    pub struct AnonymousLocalFileReferences {
+        #[rasn(tag(context, 0), identifier = "file-name")]
+        pub file_name: Option<CharacterData>,
+        #[rasn(tag(context, 1))]
+        pub location: Option<CharacterData>,
+        #[rasn(tag(context, 2), identifier = "user-comments")]
+        pub user_comments: Option<CharacterData>,
+    }
+    impl AnonymousLocalFileReferences {
+        pub fn new(
+            file_name: Option<CharacterData>,
+            location: Option<CharacterData>,
+            user_comments: Option<CharacterData>,
+        ) -> Self {
+            Self {
+                file_name,
+                location,
+                user_comments,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Local-File-References")]
+    pub struct LocalFileReferences(pub SetOf<AnonymousLocalFileReferences>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Location {
+        #[rasn(tag(context, 0), identifier = "unique-location")]
+        pub unique_location: Option<ObjectIdentifier>,
+        #[rasn(tag(context, 1), identifier = "descriptive-location")]
+        pub descriptive_location: Option<CharacterData>,
+    }
+    impl Location {
+        pub fn new(
+            unique_location: Option<ObjectIdentifier>,
+            descriptive_location: Option<CharacterData>,
+        ) -> Self {
+            Self {
+                unique_location,
+                descriptive_location,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Method-Information")]
+    pub struct MethodInformation {
+        #[rasn(tag(context, 0), identifier = "unique-method-info")]
+        pub unique_method_info: Option<ObjectIdentifier>,
+        #[rasn(tag(context, 1), identifier = "descriptive-method-info")]
+        pub descriptive_method_info: Option<CharacterData>,
+    }
+    impl MethodInformation {
+        pub fn new(
+            unique_method_info: Option<ObjectIdentifier>,
+            descriptive_method_info: Option<CharacterData>,
+        ) -> Self {
+            Self {
+                unique_method_info,
+                descriptive_method_info,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Non-Basic-Doc-Characteristics")]
+    pub struct NonBasicDocCharacteristics {
+        #[rasn(tag(context, 5), identifier = "profile-character-sets")]
+        pub profile_character_sets: Option<OctetString>,
+        #[rasn(tag(context, 1), identifier = "comments-character-sets")]
+        pub comments_character_sets: Option<OctetString>,
+        #[rasn(tag(context, 6), identifier = "alternative-repr-char-sets")]
+        pub alternative_repr_char_sets: Option<OctetString>,
+        #[rasn(tag(context, 2), identifier = "page-dimensions")]
+        pub page_dimensions: Option<SetOf<DimensionPair>>,
+        #[rasn(tag(context, 8), identifier = "medium-types")]
+        pub medium_types: Option<SetOf<MediumType>>,
+        #[rasn(tag(context, 21), identifier = "layout-paths")]
+        pub layout_paths: Option<SetOf<OneOfFourAngles>>,
+        #[rasn(tag(context, 22))]
+        pub transparencies: Option<SetOf<Transparency>>,
+        #[rasn(tag(context, 23))]
+        pub protections: Option<SetOf<Protection>>,
+        #[rasn(tag(context, 24), identifier = "block-alignments")]
+        pub block_alignments: Option<SetOf<BlockAlignment>>,
+        #[rasn(tag(context, 25), identifier = "fill-orders")]
+        pub fill_orders: Option<SetOf<FillOrder>>,
+        #[rasn(tag(context, 26))]
+        pub colours: Option<SetOf<Colour>>,
+        #[rasn(tag(context, 30), identifier = "colours-of-layout-object")]
+        pub colours_of_layout_object: Option<SetOf<ColourExpression>>,
+        #[rasn(tag(context, 31), identifier = "object-colour-tables")]
+        pub object_colour_tables: Option<SetOf<ColourTable>>,
+        #[rasn(tag(context, 32), identifier = "content-background-colours")]
+        pub content_background_colours: Option<SetOf<ContentBackgroundColour>>,
+        #[rasn(tag(context, 33), identifier = "content-foreground-colours")]
+        pub content_foreground_colours: Option<SetOf<ContentForegroundColour>>,
+        #[rasn(tag(context, 34), identifier = "content-colour-tables")]
+        pub content_colour_tables: Option<SetOf<ColourTable>>,
+        #[rasn(tag(context, 27))]
+        pub borders: Option<SetOf<Border>>,
+        #[rasn(tag(context, 28), identifier = "page-positions")]
+        pub page_positions: Option<SetOf<MeasurePair>>,
+        #[rasn(tag(context, 29), identifier = "types-of-coding")]
+        pub types_of_coding: Option<SetOf<TypeOfCoding>>,
+        #[rasn(tag(context, 9), identifier = "character-presentation-features")]
+        pub character_presentation_features: Option<SetOf<CharacterPresentationFeature>>,
+        #[rasn(tag(context, 4), identifier = "ra-gr-presentation-features")]
+        pub ra_gr_presentation_features: Option<SetOf<RaGrPresentationFeature>>,
+        #[rasn(tag(context, 12), identifier = "geo-gr-presentation-features")]
+        pub geo_gr_presentation_features: Option<SetOf<GeoGrPresentationFeature>>,
+        #[rasn(tag(context, 16), identifier = "character-coding-attributes")]
+        pub character_coding_attributes: Option<SetOf<CharacterCodingAttribute>>,
+        #[rasn(tag(context, 3), identifier = "ra-gr-coding-attributes")]
+        pub ra_gr_coding_attributes: Option<SetOf<RaGrCodingAttribute>>,
+        #[rasn(tag(context, 17), identifier = "geo-gr-coding-attributes")]
+        pub geo_gr_coding_attributes: Option<SetOf<GeoGrCodingAttribute>>,
+        #[rasn(tag(context, 10), identifier = "ext-non-basic-pres-features")]
+        pub ext_non_basic_pres_features: Option<SequenceOf<Any>>,
+        #[rasn(tag(context, 11), identifier = "ext-non-basic-coding-attributes")]
+        pub ext_non_basic_coding_attributes: Option<SequenceOf<Any>>,
+    }
+    impl NonBasicDocCharacteristics {
+        pub fn new(
+            profile_character_sets: Option<OctetString>,
+            comments_character_sets: Option<OctetString>,
+            alternative_repr_char_sets: Option<OctetString>,
+            page_dimensions: Option<SetOf<DimensionPair>>,
+            medium_types: Option<SetOf<MediumType>>,
+            layout_paths: Option<SetOf<OneOfFourAngles>>,
+            transparencies: Option<SetOf<Transparency>>,
+            protections: Option<SetOf<Protection>>,
+            block_alignments: Option<SetOf<BlockAlignment>>,
+            fill_orders: Option<SetOf<FillOrder>>,
+            colours: Option<SetOf<Colour>>,
+            colours_of_layout_object: Option<SetOf<ColourExpression>>,
+            object_colour_tables: Option<SetOf<ColourTable>>,
+            content_background_colours: Option<SetOf<ContentBackgroundColour>>,
+            content_foreground_colours: Option<SetOf<ContentForegroundColour>>,
+            content_colour_tables: Option<SetOf<ColourTable>>,
+            borders: Option<SetOf<Border>>,
+            page_positions: Option<SetOf<MeasurePair>>,
+            types_of_coding: Option<SetOf<TypeOfCoding>>,
+            character_presentation_features: Option<SetOf<CharacterPresentationFeature>>,
+            ra_gr_presentation_features: Option<SetOf<RaGrPresentationFeature>>,
+            geo_gr_presentation_features: Option<SetOf<GeoGrPresentationFeature>>,
+            character_coding_attributes: Option<SetOf<CharacterCodingAttribute>>,
+            ra_gr_coding_attributes: Option<SetOf<RaGrCodingAttribute>>,
+            geo_gr_coding_attributes: Option<SetOf<GeoGrCodingAttribute>>,
+            ext_non_basic_pres_features: Option<SequenceOf<Any>>,
+            ext_non_basic_coding_attributes: Option<SequenceOf<Any>>,
+        ) -> Self {
+            Self {
+                profile_character_sets,
+                comments_character_sets,
+                alternative_repr_char_sets,
+                page_dimensions,
+                medium_types,
+                layout_paths,
+                transparencies,
+                protections,
+                block_alignments,
+                fill_orders,
+                colours,
+                colours_of_layout_object,
+                object_colour_tables,
+                content_background_colours,
+                content_foreground_colours,
+                content_colour_tables,
+                borders,
+                page_positions,
+                types_of_coding,
+                character_presentation_features,
+                ra_gr_presentation_features,
+                geo_gr_presentation_features,
+                character_coding_attributes,
+                ra_gr_coding_attributes,
+                geo_gr_coding_attributes,
+                ext_non_basic_pres_features,
+                ext_non_basic_coding_attributes,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Non-Basic-Struc-Characteristics")]
+    pub struct NonBasicStrucCharacteristics {
+        #[rasn(tag(context, 0), identifier = "number-of-objects-per-page")]
+        pub number_of_objects_per_page: Option<Integer>,
+    }
+    impl NonBasicStrucCharacteristics {
+        pub fn new(number_of_objects_per_page: Option<Integer>) -> Self {
+            Self {
+                number_of_objects_per_page,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "ODA-Version")]
+    pub struct ODAVersion {
+        #[rasn(identifier = "standard-or-recommendation")]
+        pub standard_or_recommendation: CharacterData,
+        #[rasn(identifier = "publication-date")]
+        pub publication_date: DateAndTime,
+    }
+    impl ODAVersion {
+        pub fn new(
+            standard_or_recommendation: CharacterData,
+            publication_date: DateAndTime,
+        ) -> Self {
+            Self {
+                standard_or_recommendation,
+                publication_date,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Oda-Security-Label")]
+    pub struct OdaSecurityLabel {
+        #[rasn(tag(context, 0), identifier = "oda-label-text")]
+        pub oda_label_text: Option<CharacterData>,
+        #[rasn(tag(context, 1), identifier = "oda-label-data")]
+        pub oda_label_data: Option<OctetString>,
+    }
+    impl OdaSecurityLabel {
+        pub fn new(
+            oda_label_text: Option<CharacterData>,
+            oda_label_data: Option<OctetString>,
+        ) -> Self {
+            Self {
+                oda_label_text,
+                oda_label_data,
+            }
+        }
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "SET")]
+    pub struct AnonymousOriginatorsPreparers {
+        #[rasn(tag(context, 0), identifier = "personal-name")]
+        pub personal_name: Option<PersonalName>,
+        #[rasn(tag(context, 1))]
+        pub organization: Option<CharacterData>,
+    }
+    impl AnonymousOriginatorsPreparers {
+        pub fn new(
+            personal_name: Option<PersonalName>,
+            organization: Option<CharacterData>,
+        ) -> Self {
+            Self {
+                personal_name,
+                organization,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct OriginatorsPreparers(pub SequenceOf<AnonymousOriginatorsPreparers>);
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "SET")]
+    pub struct AnonymousOriginatorsOwners {
+        #[rasn(tag(context, 0), identifier = "personal-name")]
+        pub personal_name: Option<PersonalName>,
+        #[rasn(tag(context, 1))]
+        pub organization: Option<CharacterData>,
+    }
+    impl AnonymousOriginatorsOwners {
+        pub fn new(
+            personal_name: Option<PersonalName>,
+            organization: Option<CharacterData>,
+        ) -> Self {
+            Self {
+                personal_name,
+                organization,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct OriginatorsOwners(pub SequenceOf<AnonymousOriginatorsOwners>);
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "SET")]
+    pub struct AnonymousOriginatorsAuthors {
+        #[rasn(tag(context, 0), identifier = "personal-name")]
+        pub personal_name: Option<PersonalName>,
+        #[rasn(tag(context, 1))]
+        pub organization: Option<CharacterData>,
+    }
+    impl AnonymousOriginatorsAuthors {
+        pub fn new(
+            personal_name: Option<PersonalName>,
+            organization: Option<CharacterData>,
+        ) -> Self {
+            Self {
+                personal_name,
+                organization,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct OriginatorsAuthors(pub SequenceOf<AnonymousOriginatorsAuthors>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct Originators {
+        #[rasn(tag(context, 0))]
+        pub organizations: Option<SetOf<CharacterData>>,
+        #[rasn(tag(context, 1))]
+        pub preparers: Option<OriginatorsPreparers>,
+        #[rasn(tag(context, 2))]
+        pub owners: Option<OriginatorsOwners>,
+        #[rasn(tag(context, 3))]
+        pub authors: Option<OriginatorsAuthors>,
+    }
+    impl Originators {
+        pub fn new(
+            organizations: Option<SetOf<CharacterData>>,
+            preparers: Option<OriginatorsPreparers>,
+            owners: Option<OriginatorsOwners>,
+            authors: Option<OriginatorsAuthors>,
+        ) -> Self {
+            Self {
+                organizations,
+                preparers,
+                owners,
+                authors,
+            }
+        }
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "SET")]
+    pub struct AnonymousOtherUserInformationCopyright {
+        #[rasn(tag(context, 0), identifier = "copyright-information")]
+        pub copyright_information: Option<SetOf<CharacterData>>,
+        #[rasn(tag(context, 1), identifier = "copyright-dates")]
+        pub copyright_dates: Option<SetOf<DateAndTime>>,
+    }
+    impl AnonymousOtherUserInformationCopyright {
+        pub fn new(
+            copyright_information: Option<SetOf<CharacterData>>,
+            copyright_dates: Option<SetOf<DateAndTime>>,
+        ) -> Self {
+            Self {
+                copyright_information,
+                copyright_dates,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct OtherUserInformationCopyright(pub SetOf<AnonymousOtherUserInformationCopyright>);
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "SET")]
+    pub struct AnonymousOtherUserInformationDistributionList {
+        #[rasn(tag(context, 0), identifier = "personal-name")]
+        pub personal_name: Option<PersonalName>,
+        #[rasn(tag(context, 1))]
+        pub organization: Option<CharacterData>,
+    }
+    impl AnonymousOtherUserInformationDistributionList {
+        pub fn new(
+            personal_name: Option<PersonalName>,
+            organization: Option<CharacterData>,
+        ) -> Self {
+            Self {
+                personal_name,
+                organization,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct OtherUserInformationDistributionList(
+        pub SequenceOf<AnonymousOtherUserInformationDistributionList>,
+    );
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Other-User-Information")]
+    pub struct OtherUserInformation {
+        #[rasn(tag(context, 0))]
+        pub copyright: Option<OtherUserInformationCopyright>,
+        #[rasn(tag(context, 1))]
+        pub status: Option<CharacterData>,
+        #[rasn(tag(context, 2), identifier = "user-specific-codes")]
+        pub user_specific_codes: Option<SetOf<CharacterData>>,
+        #[rasn(tag(context, 3), identifier = "distribution-list")]
+        pub distribution_list: Option<OtherUserInformationDistributionList>,
+        #[rasn(tag(context, 5), identifier = "additional-information")]
+        pub additional_information: Option<Any>,
+    }
+    impl OtherUserInformation {
+        pub fn new(
+            copyright: Option<OtherUserInformationCopyright>,
+            status: Option<CharacterData>,
+            user_specific_codes: Option<SetOf<CharacterData>>,
+            distribution_list: Option<OtherUserInformationDistributionList>,
+            additional_information: Option<Any>,
+        ) -> Self {
+            Self {
+                copyright,
+                status,
+                user_specific_codes,
+                distribution_list,
+                additional_information,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, tag(application, 6), identifier = "Personal-Name")]
+    pub struct PersonalName {
+        #[rasn(tag(context, 0))]
+        pub surname: CharacterData,
+        #[rasn(tag(context, 1))]
+        pub givenname: Option<CharacterData>,
+        #[rasn(tag(context, 2))]
+        pub initials: Option<CharacterData>,
+        #[rasn(tag(context, 3), identifier = "generation-qualifier")]
+        pub generation_qualifier: Option<CharacterData>,
+    }
+    impl PersonalName {
+        pub fn new(
+            surname: CharacterData,
+            givenname: Option<CharacterData>,
+            initials: Option<CharacterData>,
+            generation_qualifier: Option<CharacterData>,
+        ) -> Self {
+            Self {
+                surname,
+                givenname,
+                initials,
+                generation_qualifier,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Priv-Recipients-Info")]
+    pub struct PrivRecipientsInfo {
+        #[rasn(tag(context, 0), identifier = "privileged-recipients")]
+        pub privileged_recipients: Option<SetOf<PersonalName>>,
+        #[rasn(tag(context, 1), identifier = "encipherment-method-info")]
+        pub encipherment_method_info: Option<MethodInformation>,
+        #[rasn(tag(context, 2), identifier = "encipherment-key-info")]
+        pub encipherment_key_info: Option<KeyInformation>,
+    }
+    impl PrivRecipientsInfo {
+        pub fn new(
+            privileged_recipients: Option<SetOf<PersonalName>>,
+            encipherment_method_info: Option<MethodInformation>,
+            encipherment_key_info: Option<KeyInformation>,
+        ) -> Self {
+            Self {
+                privileged_recipients,
+                encipherment_method_info,
+                encipherment_key_info,
+            }
+        }
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousProtectedDocParts {
+        #[rasn(tag(context, 0), identifier = "protected-doc-part-id")]
+        pub protected_doc_part_id: ProtectedPartIdentifier,
+        #[rasn(tag(context, 1), identifier = "priv-recipients-info")]
+        pub priv_recipients_info: SetOf<PrivRecipientsInfo>,
+    }
+    impl AnonymousProtectedDocParts {
+        pub fn new(
+            protected_doc_part_id: ProtectedPartIdentifier,
+            priv_recipients_info: SetOf<PrivRecipientsInfo>,
+        ) -> Self {
+            Self {
+                protected_doc_part_id,
+                priv_recipients_info,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Protected-Doc-Parts")]
+    pub struct ProtectedDocParts(pub SetOf<AnonymousProtectedDocParts>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Seal-Data")]
+    pub struct SealData {
+        #[rasn(tag(context, 0), identifier = "seal-method")]
+        pub seal_method: Option<SealMethod>,
+        #[rasn(tag(context, 1), identifier = "sealed-information")]
+        pub sealed_information: Option<SealedInformation>,
+        #[rasn(tag(context, 2))]
+        pub seal: OctetString,
+    }
+    impl SealData {
+        pub fn new(
+            seal_method: Option<SealMethod>,
+            sealed_information: Option<SealedInformation>,
+            seal: OctetString,
+        ) -> Self {
+            Self {
+                seal_method,
+                sealed_information,
+                seal,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Seal-Method")]
+    pub struct SealMethod {
+        #[rasn(tag(context, 0), identifier = "fingerprint-method")]
+        pub fingerprint_method: Option<MethodInformation>,
+        #[rasn(tag(context, 1), identifier = "fingerprint-key-information")]
+        pub fingerprint_key_information: Option<KeyInformation>,
+        #[rasn(tag(context, 2), identifier = "sealing-method")]
+        pub sealing_method: Option<MethodInformation>,
+        #[rasn(tag(context, 3), identifier = "sealing-key-information")]
+        pub sealing_key_information: Option<KeyInformation>,
+    }
+    impl SealMethod {
+        pub fn new(
+            fingerprint_method: Option<MethodInformation>,
+            fingerprint_key_information: Option<KeyInformation>,
+            sealing_method: Option<MethodInformation>,
+            sealing_key_information: Option<KeyInformation>,
+        ) -> Self {
+            Self {
+                fingerprint_method,
+                fingerprint_key_information,
+                sealing_method,
+                sealing_key_information,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Sealed-Constituents")]
+    pub struct SealedConstituents {
+        #[rasn(tag(context, 0), identifier = "object-class-identifiers")]
+        pub object_class_identifiers: Option<SequenceOf<ObjectOrClassIdentifier>>,
+        #[rasn(tag(context, 1), identifier = "presentation-style-identifiers")]
+        pub presentation_style_identifiers: Option<SequenceOf<StyleIdentifier>>,
+        #[rasn(tag(context, 2), identifier = "layout-style-identifiers")]
+        pub layout_style_identifiers: Option<SequenceOf<StyleIdentifier>>,
+        #[rasn(tag(context, 3), identifier = "object-identifiers")]
+        pub object_identifiers: Option<SequenceOf<ObjectOrClassIdentifier>>,
+    }
+    impl SealedConstituents {
+        pub fn new(
+            object_class_identifiers: Option<SequenceOf<ObjectOrClassIdentifier>>,
+            presentation_style_identifiers: Option<SequenceOf<StyleIdentifier>>,
+            layout_style_identifiers: Option<SequenceOf<StyleIdentifier>>,
+            object_identifiers: Option<SequenceOf<ObjectOrClassIdentifier>>,
+        ) -> Self {
+            Self {
+                object_class_identifiers,
+                presentation_style_identifiers,
+                layout_style_identifiers,
+                object_identifiers,
+            }
+        }
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousSealedDocBodyparts {
+        #[rasn(tag(context, 0), identifier = "seal-id")]
+        pub seal_id: Integer,
+        #[rasn(tag(context, 1), identifier = "sealed-constituents")]
+        pub sealed_constituents: SealedConstituents,
+        #[rasn(tag(context, 2), identifier = "privileged-recipients")]
+        pub privileged_recipients: Option<SetOf<PersonalName>>,
+        #[rasn(tag(context, 3), identifier = "doc-bodypart-seal")]
+        pub doc_bodypart_seal: SealData,
+    }
+    impl AnonymousSealedDocBodyparts {
+        pub fn new(
+            seal_id: Integer,
+            sealed_constituents: SealedConstituents,
+            privileged_recipients: Option<SetOf<PersonalName>>,
+            doc_bodypart_seal: SealData,
+        ) -> Self {
+            Self {
+                seal_id,
+                sealed_constituents,
+                privileged_recipients,
+                doc_bodypart_seal,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Sealed-Doc-Bodyparts")]
+    pub struct SealedDocBodyparts(pub SetOf<AnonymousSealedDocBodyparts>);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousSealedDocProfiles {
+        #[rasn(tag(context, 0), identifier = "sealed-doc-prof-descriptor-id")]
+        pub sealed_doc_prof_descriptor_id: ProtectedPartIdentifier,
+        #[rasn(tag(context, 1), identifier = "privileged-recipients")]
+        pub privileged_recipients: Option<SetOf<PersonalName>>,
+        #[rasn(tag(context, 2), identifier = "doc-prof-seal")]
+        pub doc_prof_seal: SealData,
+    }
+    impl AnonymousSealedDocProfiles {
+        pub fn new(
+            sealed_doc_prof_descriptor_id: ProtectedPartIdentifier,
+            privileged_recipients: Option<SetOf<PersonalName>>,
+            doc_prof_seal: SealData,
+        ) -> Self {
+            Self {
+                sealed_doc_prof_descriptor_id,
+                privileged_recipients,
+                doc_prof_seal,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Sealed-Doc-Profiles")]
+    pub struct SealedDocProfiles(pub SetOf<AnonymousSealedDocProfiles>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Sealed-Information")]
+    pub struct SealedInformation {
+        #[rasn(tag(context, 0))]
+        pub fingerprint: Option<OctetString>,
+        #[rasn(tag(context, 1))]
+        pub time: Option<DateAndTime>,
+        #[rasn(tag(context, 2), identifier = "sealing-orig-id")]
+        pub sealing_orig_id: Option<PersonalName>,
+        #[rasn(tag(context, 3))]
+        pub location: Option<Location>,
+    }
+    impl SealedInformation {
+        pub fn new(
+            fingerprint: Option<OctetString>,
+            time: Option<DateAndTime>,
+            sealing_orig_id: Option<PersonalName>,
+            location: Option<Location>,
+        ) -> Self {
+            Self {
+                fingerprint,
+                time,
+                sealing_orig_id,
+                location,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum SecurityInformationAuthorization {
+        #[rasn(tag(context, 0))]
+        person(PersonalName),
+        #[rasn(tag(context, 4))]
+        organization(CharacterData),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Security-Information")]
+    pub struct SecurityInformation {
+        pub authorization: Option<SecurityInformationAuthorization>,
+        #[rasn(tag(context, 1), identifier = "security-classification")]
+        pub security_classification: Option<CharacterData>,
+        #[rasn(tag(context, 2), identifier = "access-rights")]
+        pub access_rights: Option<SetOf<CharacterData>>,
+    }
+    impl SecurityInformation {
+        pub fn new(
+            authorization: Option<SecurityInformationAuthorization>,
+            security_classification: Option<CharacterData>,
+            access_rights: Option<SetOf<CharacterData>>,
+        ) -> Self {
+            Self {
+                authorization,
+                security_classification,
+                access_rights,
+            }
+        }
+    }
+}

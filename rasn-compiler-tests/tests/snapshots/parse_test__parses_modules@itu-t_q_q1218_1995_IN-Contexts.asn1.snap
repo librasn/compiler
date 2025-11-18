@@ -1,0 +1,42 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q1218_1995_IN-Contexts.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod in_contexts {
+    extern crate alloc;
+    use super::information_framework::*;
+    use super::upper_bounds::UB_INTERNATIONAL_ISDN_NUMBER;
+    use super::useful_definitions::INFORMATION_FRAMEWORK;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct BasicService(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct IsdnAddress(pub NumericString);
+    pub static ID_AVC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&[0u32, 0u32], &***Q, &[1218u32, 8u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AVC_BASIC_SERVICE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AVC, &[30u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AVC_LINE_IDENTITY: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AVC, &[31u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+}

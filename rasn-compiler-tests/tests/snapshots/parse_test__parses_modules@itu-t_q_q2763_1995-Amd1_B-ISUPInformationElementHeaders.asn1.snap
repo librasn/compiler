@@ -1,0 +1,150 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q2763_1995-Amd1_B-ISUPInformationElementHeaders.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod b_isupinformation_element_headers {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum BroadbandNarrowbandMessageIWInd {
+        passOn = 0,
+        discardMessage = 1,
+        releaseCall = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum BroadbandNarrowbandParameterIWInd {
+        passOn = 0,
+        discardMessage = 1,
+        releaseCall = 2,
+        discardParameter = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum DiscardMessageIndicator {
+        doNotDiscardMessage = 0,
+        discardMessage = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum DiscardParameterIndicator {
+        doNotDiscardParameter = 0,
+        discardParameter = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct MessageInstructionIndicators {
+        #[rasn(identifier = "sharedCompatibilityInformation")]
+        pub shared_compatibility_information: SharedCompatibilityInformation,
+        #[rasn(identifier = "passOnNotPossibleMessageInd")]
+        pub pass_on_not_possible_message_ind: PassOnNotPossibleMessageInd,
+        #[rasn(identifier = "broadbandNarrowbandMessageIWInd")]
+        pub broadband_narrowband_message_iwind: BroadbandNarrowbandMessageIWInd,
+    }
+    impl MessageInstructionIndicators {
+        pub fn new(
+            shared_compatibility_information: SharedCompatibilityInformation,
+            pass_on_not_possible_message_ind: PassOnNotPossibleMessageInd,
+            broadband_narrowband_message_iwind: BroadbandNarrowbandMessageIWInd,
+        ) -> Self {
+            Self {
+                shared_compatibility_information,
+                pass_on_not_possible_message_ind,
+                broadband_narrowband_message_iwind,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ParameterInstructionIndicators {
+        #[rasn(identifier = "sharedCompatibilityInformation")]
+        pub shared_compatibility_information: SharedCompatibilityInformation,
+        #[rasn(identifier = "discardParameterIndicator")]
+        pub discard_parameter_indicator: DiscardParameterIndicator,
+        #[rasn(identifier = "passOnNotPossibleParameterInd")]
+        pub pass_on_not_possible_parameter_ind: PassOnNotPossibleParameterInd,
+        #[rasn(identifier = "broadbandNarrowbandParameterIWInd")]
+        pub broadband_narrowband_parameter_iwind: BroadbandNarrowbandParameterIWInd,
+    }
+    impl ParameterInstructionIndicators {
+        pub fn new(
+            shared_compatibility_information: SharedCompatibilityInformation,
+            discard_parameter_indicator: DiscardParameterIndicator,
+            pass_on_not_possible_parameter_ind: PassOnNotPossibleParameterInd,
+            broadband_narrowband_parameter_iwind: BroadbandNarrowbandParameterIWInd,
+        ) -> Self {
+            Self {
+                shared_compatibility_information,
+                discard_parameter_indicator,
+                pass_on_not_possible_parameter_ind,
+                broadband_narrowband_parameter_iwind,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum PassOnNotPossibleMessageInd {
+        releaseCall = 0,
+        discardMessage = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum PassOnNotPossibleParameterInd {
+        releaseCall = 0,
+        discardMessage = 1,
+        discardParameter = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ReleaseCallIndicator {
+        doNotReleaseCall = 0,
+        releaseCall = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum SendNotificationIndicator {
+        doNotSendNotification = 0,
+        sendNotification = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SharedCompatibilityInformation {
+        #[rasn(identifier = "transitAtIntermediateExchangeInd")]
+        pub transit_at_intermediate_exchange_ind: TransitAtIntermediateExchangeInd,
+        #[rasn(identifier = "releaseCallIndicator")]
+        pub release_call_indicator: ReleaseCallIndicator,
+        #[rasn(identifier = "sendNotificationIndicator")]
+        pub send_notification_indicator: SendNotificationIndicator,
+        #[rasn(identifier = "discardMessageIndicator")]
+        pub discard_message_indicator: DiscardMessageIndicator,
+    }
+    impl SharedCompatibilityInformation {
+        pub fn new(
+            transit_at_intermediate_exchange_ind: TransitAtIntermediateExchangeInd,
+            release_call_indicator: ReleaseCallIndicator,
+            send_notification_indicator: SendNotificationIndicator,
+            discard_message_indicator: DiscardMessageIndicator,
+        ) -> Self {
+            Self {
+                transit_at_intermediate_exchange_ind,
+                release_call_indicator,
+                send_notification_indicator,
+                discard_message_indicator,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum TransitAtIntermediateExchangeInd {
+        transitInterpretation = 0,
+        endNodeInterpretation = 1,
+    }
+}

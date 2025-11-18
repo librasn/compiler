@@ -1,0 +1,1298 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x509_2016_PkiPMIProtocolSpecifications.asn1
+---
+Warnings:
+LinkerError in ASN grammar: Failed to resolve supertype Attribute of parameterized implementation.
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod pki_pmiprotocol_specifications {
+    extern crate alloc;
+    use super::attribute_certificate_definitions::AttributeCertificate;
+    use super::authentication_framework::*;
+    use super::certificate_extensions::{CRLReason, SubjectKeyIdentifier};
+    use super::information_framework::*;
+    use super::pki_pmi_wrapper::*;
+    use super::selected_attribute_types::{OBJECT_IDENTIFIER_MATCH, OCTET_STRING_MATCH};
+    use super::useful_definitions::{
+        ATTRIBUTE_CERTIFICATE_DEFINITIONS, AUTHENTICATION_FRAMEWORK, CERTIFICATE_EXTENSIONS,
+        ID_CMSCT, INFORMATION_FRAMEWORK, PKI_PMI_WRAPPER, SELECTED_ATTRIBUTE_TYPES,
+    };
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated, identifier = "AVMP-error")]
+    #[non_exhaustive]
+    pub enum AVMPError {
+        noReason = 0,
+        unknownAvlEntity = 1,
+        unknownContentType = 2,
+        unsupportedAVMPversion = 3,
+        missingContent = 4,
+        missingContentComponent = 5,
+        invalidContentComponent = 6,
+        sequenceError = 7,
+        protocolError = 8,
+        invalidAvlSignature = 9,
+        duplicateAVL = 10,
+        missingAvlComponent = 11,
+        invalidAvlVersion = 12,
+        notAllowedForConstrainedAVLEntity = 13,
+        constrainedRequired = 14,
+        nonConstrainedRequired = 15,
+        unsupportedCriticalEntryExtension = 16,
+        unsupportedCriticalExtension = 17,
+        maxAVLsExceeded = 18,
+        unknownCert = 19,
+        unknownAVL = 20,
+        unsupportedScopeRestriction = 21,
+    }
+    #[doc = " Authorization validation list management"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct AVMPcommonComponents {
+        #[rasn(default = "avmpcommon_components_version_default")]
+        pub version: AVMPversion,
+        #[rasn(identifier = "timeStamp")]
+        pub time_stamp: GeneralizedTime,
+        pub sequence: AVMPsequence,
+    }
+    impl AVMPcommonComponents {
+        pub fn new(
+            version: AVMPversion,
+            time_stamp: GeneralizedTime,
+            sequence: AVMPsequence,
+        ) -> Self {
+            Self {
+                version,
+                time_stamp,
+                sequence,
+            }
+        }
+    }
+    fn avmpcommon_components_version_default() -> AVMPversion {
+        AVMPversion::v1
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("1.."))]
+    pub struct AVMPsequence(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum AVMPversion {
+        v1 = 1,
+        v2 = 2,
+        v3 = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct AddAvlErr {
+        #[rasn(identifier = "notOK")]
+        pub not_ok: AVMPError,
+    }
+    impl AddAvlErr {
+        pub fn new(not_ok: AVMPError) -> Self {
+            Self { not_ok }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct AddAvlOK {
+        pub ok: (),
+    }
+    impl AddAvlOK {
+        pub fn new(ok: ()) -> Self {
+            Self { ok }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct AddAvlReq {
+        pub certlist: CertAVL,
+        #[rasn(default = "add_avl_req_version_default")]
+        pub version: AVMPversion,
+        #[rasn(identifier = "timeStamp")]
+        pub time_stamp: GeneralizedTime,
+        pub sequence: AVMPsequence,
+    }
+    impl AddAvlReq {
+        pub fn new(
+            certlist: CertAVL,
+            version: AVMPversion,
+            time_stamp: GeneralizedTime,
+            sequence: AVMPsequence,
+        ) -> Self {
+            Self {
+                certlist,
+                version,
+                time_stamp,
+                sequence,
+            }
+        }
+    }
+    fn add_avl_req_version_default() -> AVMPversion {
+        AVMPversion::v1
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum AddAvlRspResult {
+        #[rasn(tag(context, 0))]
+        success(AddAvlOK),
+        #[rasn(tag(context, 1))]
+        failure(AddAvlErr),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct AddAvlRsp {
+        pub result: AddAvlRspResult,
+        #[rasn(default = "add_avl_rsp_version_default")]
+        pub version: AVMPversion,
+        #[rasn(identifier = "timeStamp")]
+        pub time_stamp: GeneralizedTime,
+        pub sequence: AVMPsequence,
+    }
+    impl AddAvlRsp {
+        pub fn new(
+            result: AddAvlRspResult,
+            version: AVMPversion,
+            time_stamp: GeneralizedTime,
+            sequence: AVMPsequence,
+        ) -> Self {
+            Self {
+                result,
+                version,
+                time_stamp,
+                sequence,
+            }
+        }
+    }
+    fn add_avl_rsp_version_default() -> AVMPversion {
+        AVMPversion::v1
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated, identifier = "CASP-CertStatusCode")]
+    #[non_exhaustive]
+    pub enum CASPCertStatusCode {
+        noReason = 1,
+        unknownCert = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated, identifier = "CASP-error")]
+    #[non_exhaustive]
+    pub enum CASPError {
+        noReason = 0,
+        unknownContentType = 1,
+        unsupportedWLMPversion = 2,
+        missingContent = 3,
+        missingContentComponent = 4,
+        invalidContentComponent = 5,
+        sequenceError = 6,
+        unknownSubject = 7,
+        unknownCert = 8,
+    }
+    #[doc = " CA subscription"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct CASPcommonComponents {
+        #[rasn(default = "caspcommon_components_version_default")]
+        pub version: CASPversion,
+        pub sequence: CASPsequence,
+    }
+    impl CASPcommonComponents {
+        pub fn new(version: CASPversion, sequence: CASPsequence) -> Self {
+            Self { version, sequence }
+        }
+    }
+    fn caspcommon_components_version_default() -> CASPversion {
+        CASPversion::v1
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("1.."))]
+    pub struct CASPsequence(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum CASPversion {
+        v1 = 1,
+        v2 = 2,
+        v3 = 3,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum CertErrNotOK {
+        #[rasn(tag(context, 0))]
+        wrErr(PkiWaError),
+        #[rasn(tag(context, 1))]
+        avmpErr(AVMPError),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct CertErr {
+        #[rasn(identifier = "notOK")]
+        pub not_ok: CertErrNotOK,
+        pub note: Option<Notifications>,
+    }
+    impl CertErr {
+        pub fn new(not_ok: CertErrNotOK, note: Option<Notifications>) -> Self {
+            Self { not_ok, note }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct CertOK {
+        #[rasn(identifier = "dhCert")]
+        pub dh_cert: Certificate,
+    }
+    impl CertOK {
+        pub fn new(dh_cert: Certificate) -> Self {
+            Self { dh_cert }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum CertReplaceErrCode {
+        #[rasn(tag(context, 0))]
+        signedData(SignedDataError),
+        #[rasn(tag(context, 1))]
+        envelopedData(EnvelopedDataError),
+        #[rasn(tag(context, 2))]
+        casp(CASPError),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct CertReplaceErr {
+        pub code: CertReplaceErrCode,
+    }
+    impl CertReplaceErr {
+        pub fn new(code: CertReplaceErrCode) -> Self {
+            Self { code }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct AnonymousCertReplaceOKOk {
+        pub issuer: Name,
+        #[rasn(identifier = "serialNumber")]
+        pub serial_number: CertificateSerialNumber,
+    }
+    impl AnonymousCertReplaceOKOk {
+        pub fn new(issuer: Name, serial_number: CertificateSerialNumber) -> Self {
+            Self {
+                issuer,
+                serial_number,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct AnonymousCertReplaceOKNotOk {
+        pub status: CASPCertStatusCode,
+    }
+    impl AnonymousCertReplaceOKNotOk {
+        pub fn new(status: CASPCertStatusCode) -> Self {
+            Self { status }
+        }
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "CHOICE")]
+    #[non_exhaustive]
+    pub enum AnonymousCertReplaceOK {
+        #[rasn(tag(context, 0))]
+        ok(AnonymousCertReplaceOKOk),
+        #[rasn(tag(context, 1), identifier = "not-ok")]
+        not_ok(AnonymousCertReplaceOKNotOk),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct CertReplaceOK(pub SequenceOf<AnonymousCertReplaceOK>);
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    #[non_exhaustive]
+    pub struct AnonymousCertReplaceReqCerts {
+        pub old: CertificateSerialNumber,
+        pub new: Certificate,
+    }
+    impl AnonymousCertReplaceReqCerts {
+        pub fn new(old: CertificateSerialNumber, new: Certificate) -> Self {
+            Self { old, new }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct CertReplaceReqCerts(pub SequenceOf<AnonymousCertReplaceReqCerts>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct CertReplaceReq {
+        pub certs: CertReplaceReqCerts,
+        #[rasn(default = "cert_replace_req_version_default")]
+        pub version: CASPversion,
+        pub sequence: CASPsequence,
+    }
+    impl CertReplaceReq {
+        pub fn new(
+            certs: CertReplaceReqCerts,
+            version: CASPversion,
+            sequence: CASPsequence,
+        ) -> Self {
+            Self {
+                certs,
+                version,
+                sequence,
+            }
+        }
+    }
+    fn cert_replace_req_version_default() -> CASPversion {
+        CASPversion::v1
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum CertReplaceRspResult {
+        #[rasn(tag(context, 0))]
+        success(CertReplaceOK),
+        #[rasn(tag(context, 1))]
+        failure(CertReplaceErr),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct CertReplaceRsp {
+        pub result: CertReplaceRspResult,
+        #[rasn(default = "cert_replace_rsp_version_default")]
+        pub version: CASPversion,
+        pub sequence: CASPsequence,
+    }
+    impl CertReplaceRsp {
+        pub fn new(
+            result: CertReplaceRspResult,
+            version: CASPversion,
+            sequence: CASPsequence,
+        ) -> Self {
+            Self {
+                result,
+                version,
+                sequence,
+            }
+        }
+    }
+    fn cert_replace_rsp_version_default() -> CASPversion {
+        CASPversion::v1
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct CertReq {
+        #[rasn(default = "cert_req_version_default")]
+        pub version: AVMPversion,
+        #[rasn(identifier = "timeStamp")]
+        pub time_stamp: GeneralizedTime,
+        pub sequence: AVMPsequence,
+    }
+    impl CertReq {
+        pub fn new(
+            version: AVMPversion,
+            time_stamp: GeneralizedTime,
+            sequence: AVMPsequence,
+        ) -> Self {
+            Self {
+                version,
+                time_stamp,
+                sequence,
+            }
+        }
+    }
+    fn cert_req_version_default() -> AVMPversion {
+        AVMPversion::v1
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum CertRspResult {
+        #[rasn(tag(context, 0))]
+        success(CertOK),
+        #[rasn(tag(context, 1))]
+        failure(CertErr),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct CertRsp {
+        pub result: CertRspResult,
+        #[rasn(default = "cert_rsp_version_default")]
+        pub version: AVMPversion,
+        #[rasn(identifier = "timeStamp")]
+        pub time_stamp: GeneralizedTime,
+        pub sequence: AVMPsequence,
+    }
+    impl CertRsp {
+        pub fn new(
+            result: CertRspResult,
+            version: AVMPversion,
+            time_stamp: GeneralizedTime,
+            sequence: AVMPsequence,
+        ) -> Self {
+            Self {
+                result,
+                version,
+                time_stamp,
+                sequence,
+            }
+        }
+    }
+    fn cert_rsp_version_default() -> AVMPversion {
+        AVMPversion::v1
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum CertStatus {
+        good = 0,
+        revoked = 1,
+        #[rasn(identifier = "on-hold")]
+        on_hold = 2,
+        expired = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct CertSubscribeErr {
+        pub code: CASPError,
+    }
+    impl CertSubscribeErr {
+        pub fn new(code: CASPError) -> Self {
+            Self { code }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct AnonymousCertSubscribeOKOk {
+        pub cert: Certificate,
+        pub status: CertStatus,
+        #[rasn(identifier = "revokeReason")]
+        pub revoke_reason: Option<CRLReason>,
+    }
+    impl AnonymousCertSubscribeOKOk {
+        pub fn new(
+            cert: Certificate,
+            status: CertStatus,
+            revoke_reason: Option<CRLReason>,
+        ) -> Self {
+            Self {
+                cert,
+                status,
+                revoke_reason,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct AnonymousCertSubscribeOKNotOk {
+        pub status: CASPCertStatusCode,
+    }
+    impl AnonymousCertSubscribeOKNotOk {
+        pub fn new(status: CASPCertStatusCode) -> Self {
+            Self { status }
+        }
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "CHOICE")]
+    #[non_exhaustive]
+    pub enum AnonymousCertSubscribeOK {
+        #[rasn(tag(context, 0))]
+        ok(AnonymousCertSubscribeOKOk),
+        #[rasn(tag(context, 1), identifier = "not-ok")]
+        not_ok(AnonymousCertSubscribeOKNotOk),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct CertSubscribeOK(pub SequenceOf<AnonymousCertSubscribeOK>);
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    #[non_exhaustive]
+    pub struct AnonymousCertSubscribeReqCerts {
+        pub subject: Name,
+        #[rasn(identifier = "serialNumber")]
+        pub serial_number: CertificateSerialNumber,
+    }
+    impl AnonymousCertSubscribeReqCerts {
+        pub fn new(subject: Name, serial_number: CertificateSerialNumber) -> Self {
+            Self {
+                subject,
+                serial_number,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct CertSubscribeReqCerts(pub SequenceOf<AnonymousCertSubscribeReqCerts>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct CertSubscribeReq {
+        pub certs: CertSubscribeReqCerts,
+        #[rasn(default = "cert_subscribe_req_version_default")]
+        pub version: CASPversion,
+        pub sequence: CASPsequence,
+    }
+    impl CertSubscribeReq {
+        pub fn new(
+            certs: CertSubscribeReqCerts,
+            version: CASPversion,
+            sequence: CASPsequence,
+        ) -> Self {
+            Self {
+                certs,
+                version,
+                sequence,
+            }
+        }
+    }
+    fn cert_subscribe_req_version_default() -> CASPversion {
+        CASPversion::v1
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum CertSubscribeRspResult {
+        #[rasn(tag(context, 0))]
+        success(CertSubscribeOK),
+        #[rasn(tag(context, 1))]
+        failure(CertSubscribeErr),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct CertSubscribeRsp {
+        pub result: CertSubscribeRspResult,
+        #[rasn(default = "cert_subscribe_rsp_version_default")]
+        pub version: CASPversion,
+        pub sequence: CASPsequence,
+    }
+    impl CertSubscribeRsp {
+        pub fn new(
+            result: CertSubscribeRspResult,
+            version: CASPversion,
+            sequence: CASPsequence,
+        ) -> Self {
+            Self {
+                result,
+                version,
+                sequence,
+            }
+        }
+    }
+    fn cert_subscribe_rsp_version_default() -> CASPversion {
+        CASPversion::v1
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct CertUnsubscribeErr {
+        pub code: CASPError,
+    }
+    impl CertUnsubscribeErr {
+        pub fn new(code: CASPError) -> Self {
+            Self { code }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct AnonymousCertUnsubscribeOKOk {
+        pub subject: Name,
+        #[rasn(identifier = "serialNumber")]
+        pub serial_number: CertificateSerialNumber,
+    }
+    impl AnonymousCertUnsubscribeOKOk {
+        pub fn new(subject: Name, serial_number: CertificateSerialNumber) -> Self {
+            Self {
+                subject,
+                serial_number,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct AnonymousCertUnsubscribeOKNotOk {
+        pub status: CASPCertStatusCode,
+    }
+    impl AnonymousCertUnsubscribeOKNotOk {
+        pub fn new(status: CASPCertStatusCode) -> Self {
+            Self { status }
+        }
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "CHOICE")]
+    #[non_exhaustive]
+    pub enum AnonymousCertUnsubscribeOK {
+        #[rasn(tag(context, 0))]
+        ok(AnonymousCertUnsubscribeOKOk),
+        #[rasn(tag(context, 1), identifier = "not-ok")]
+        not_ok(AnonymousCertUnsubscribeOKNotOk),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct CertUnsubscribeOK(pub SequenceOf<AnonymousCertUnsubscribeOK>);
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    #[non_exhaustive]
+    pub struct AnonymousCertUnsubscribeReqCerts {
+        pub subject: Name,
+        #[rasn(identifier = "serialNumber")]
+        pub serial_number: CertificateSerialNumber,
+    }
+    impl AnonymousCertUnsubscribeReqCerts {
+        pub fn new(subject: Name, serial_number: CertificateSerialNumber) -> Self {
+            Self {
+                subject,
+                serial_number,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct CertUnsubscribeReqCerts(pub SequenceOf<AnonymousCertUnsubscribeReqCerts>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct CertUnsubscribeReq {
+        pub certs: CertUnsubscribeReqCerts,
+        #[rasn(default = "cert_unsubscribe_req_version_default")]
+        pub version: CASPversion,
+        pub sequence: CASPsequence,
+    }
+    impl CertUnsubscribeReq {
+        pub fn new(
+            certs: CertUnsubscribeReqCerts,
+            version: CASPversion,
+            sequence: CASPsequence,
+        ) -> Self {
+            Self {
+                certs,
+                version,
+                sequence,
+            }
+        }
+    }
+    fn cert_unsubscribe_req_version_default() -> CASPversion {
+        CASPversion::v1
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum CertUnsubscribeRspResult {
+        #[rasn(tag(context, 0))]
+        success(CertUnsubscribeOK),
+        #[rasn(tag(context, 1))]
+        failure(CertUnsubscribeErr),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct CertUnsubscribeRsp {
+        pub result: CertUnsubscribeRspResult,
+        #[rasn(default = "cert_unsubscribe_rsp_version_default")]
+        pub version: CASPversion,
+        pub sequence: CASPsequence,
+    }
+    impl CertUnsubscribeRsp {
+        pub fn new(
+            result: CertUnsubscribeRspResult,
+            version: CASPversion,
+            sequence: CASPsequence,
+        ) -> Self {
+            Self {
+                result,
+                version,
+                sequence,
+            }
+        }
+    }
+    fn cert_unsubscribe_rsp_version_default() -> CASPversion {
+        CASPversion::v1
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct CertUpdateErr {
+        pub code: CASPError,
+    }
+    impl CertUpdateErr {
+        pub fn new(code: CASPError) -> Self {
+            Self { code }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct AnonymousCertUpdateOKOk {
+        pub subject: Name,
+        #[rasn(identifier = "serialNumber")]
+        pub serial_number: CertificateSerialNumber,
+    }
+    impl AnonymousCertUpdateOKOk {
+        pub fn new(subject: Name, serial_number: CertificateSerialNumber) -> Self {
+            Self {
+                subject,
+                serial_number,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct AnonymousCertUpdateOKNotOk {
+        pub status: CASPCertStatusCode,
+    }
+    impl AnonymousCertUpdateOKNotOk {
+        pub fn new(status: CASPCertStatusCode) -> Self {
+            Self { status }
+        }
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "CHOICE")]
+    #[non_exhaustive]
+    pub enum AnonymousCertUpdateOK {
+        #[rasn(tag(context, 0))]
+        ok(AnonymousCertUpdateOKOk),
+        #[rasn(tag(context, 1), identifier = "not-ok")]
+        not_ok(AnonymousCertUpdateOKNotOk),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct CertUpdateOK(pub SequenceOf<AnonymousCertUpdateOK>);
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    #[non_exhaustive]
+    pub struct AnonymousCertUpdateReqCerts {
+        pub subject: Name,
+        #[rasn(identifier = "serialNumber")]
+        pub serial_number: CertificateSerialNumber,
+        #[rasn(identifier = "certStatus")]
+        pub cert_status: CertStatus,
+    }
+    impl AnonymousCertUpdateReqCerts {
+        pub fn new(
+            subject: Name,
+            serial_number: CertificateSerialNumber,
+            cert_status: CertStatus,
+        ) -> Self {
+            Self {
+                subject,
+                serial_number,
+                cert_status,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct CertUpdateReqCerts(pub SequenceOf<AnonymousCertUpdateReqCerts>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct CertUpdateReq {
+        pub certs: CertUpdateReqCerts,
+        #[rasn(default = "cert_update_req_version_default")]
+        pub version: CASPversion,
+        pub sequence: CASPsequence,
+    }
+    impl CertUpdateReq {
+        pub fn new(
+            certs: CertUpdateReqCerts,
+            version: CASPversion,
+            sequence: CASPsequence,
+        ) -> Self {
+            Self {
+                certs,
+                version,
+                sequence,
+            }
+        }
+    }
+    fn cert_update_req_version_default() -> CASPversion {
+        CASPversion::v1
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum CertUpdateRspResult {
+        #[rasn(tag(context, 0))]
+        success(CertUpdateOK),
+        #[rasn(tag(context, 1))]
+        failure(CertUpdateErr),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct CertUpdateRsp {
+        pub result: CertUpdateRspResult,
+        #[rasn(default = "cert_update_rsp_version_default")]
+        pub version: CASPversion,
+        pub sequence: CASPsequence,
+    }
+    impl CertUpdateRsp {
+        pub fn new(
+            result: CertUpdateRspResult,
+            version: CASPversion,
+            sequence: CASPsequence,
+        ) -> Self {
+            Self {
+                result,
+                version,
+                sequence,
+            }
+        }
+    }
+    fn cert_update_rsp_version_default() -> CASPversion {
+        CASPversion::v1
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct DelAvlErr {
+        #[rasn(identifier = "notOK")]
+        pub not_ok: AVMPError,
+    }
+    impl DelAvlErr {
+        pub fn new(not_ok: AVMPError) -> Self {
+            Self { not_ok }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct DelAvlOK {
+        pub ok: (),
+    }
+    impl DelAvlOK {
+        pub fn new(ok: ()) -> Self {
+            Self { ok }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct DeleteAvlReq {
+        #[rasn(identifier = "avl-Id")]
+        pub avl_id: Option<AvlSerialNumber>,
+        #[rasn(default = "delete_avl_req_version_default")]
+        pub version: AVMPversion,
+        #[rasn(identifier = "timeStamp")]
+        pub time_stamp: GeneralizedTime,
+        pub sequence: AVMPsequence,
+    }
+    impl DeleteAvlReq {
+        pub fn new(
+            avl_id: Option<AvlSerialNumber>,
+            version: AVMPversion,
+            time_stamp: GeneralizedTime,
+            sequence: AVMPsequence,
+        ) -> Self {
+            Self {
+                avl_id,
+                version,
+                time_stamp,
+                sequence,
+            }
+        }
+    }
+    fn delete_avl_req_version_default() -> AVMPversion {
+        AVMPversion::v1
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum DeleteAvlRspResult {
+        #[rasn(tag(context, 0))]
+        success(DelAvlOK),
+        #[rasn(tag(context, 1))]
+        failure(DelAvlErr),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct DeleteAvlRsp {
+        pub result: DeleteAvlRspResult,
+        #[rasn(default = "delete_avl_rsp_version_default")]
+        pub version: AVMPversion,
+        #[rasn(identifier = "timeStamp")]
+        pub time_stamp: GeneralizedTime,
+        pub sequence: AVMPsequence,
+    }
+    impl DeleteAvlRsp {
+        pub fn new(
+            result: DeleteAvlRspResult,
+            version: AVMPversion,
+            time_stamp: GeneralizedTime,
+            sequence: AVMPsequence,
+        ) -> Self {
+            Self {
+                result,
+                version,
+                time_stamp,
+                sequence,
+            }
+        }
+    }
+    fn delete_avl_rsp_version_default() -> AVMPversion {
+        AVMPversion::v1
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated, identifier = "EnvelopedData-error")]
+    #[non_exhaustive]
+    pub enum EnvelopedDataError {
+        noReason = 0,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct Notifications(pub SequenceOf<Attribute>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct RejectAVL {
+        pub reason: AVMPError,
+        #[rasn(default = "reject_avl_version_default")]
+        pub version: AVMPversion,
+        #[rasn(identifier = "timeStamp")]
+        pub time_stamp: GeneralizedTime,
+        pub sequence: AVMPsequence,
+    }
+    impl RejectAVL {
+        pub fn new(
+            reason: AVMPError,
+            version: AVMPversion,
+            time_stamp: GeneralizedTime,
+            sequence: AVMPsequence,
+        ) -> Self {
+            Self {
+                reason,
+                version,
+                time_stamp,
+                sequence,
+            }
+        }
+    }
+    fn reject_avl_version_default() -> AVMPversion {
+        AVMPversion::v1
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct RejectCAsubscribe {
+        pub reason: CASPError,
+        #[rasn(default = "reject_casubscribe_version_default")]
+        pub version: CASPversion,
+        pub sequence: CASPsequence,
+    }
+    impl RejectCAsubscribe {
+        pub fn new(reason: CASPError, version: CASPversion, sequence: CASPsequence) -> Self {
+            Self {
+                reason,
+                version,
+                sequence,
+            }
+        }
+    }
+    fn reject_casubscribe_version_default() -> CASPversion {
+        CASPversion::v1
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct RepAvlErr {
+        #[rasn(identifier = "notOK")]
+        pub not_ok: AVMPError,
+    }
+    impl RepAvlErr {
+        pub fn new(not_ok: AVMPError) -> Self {
+            Self { not_ok }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct RepAvlOK {
+        pub ok: (),
+    }
+    impl RepAvlOK {
+        pub fn new(ok: ()) -> Self {
+            Self { ok }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct ReplaceAvlReq {
+        pub old: Option<AvlSerialNumber>,
+        pub new: CertAVL,
+        #[rasn(default = "replace_avl_req_version_default")]
+        pub version: AVMPversion,
+        #[rasn(identifier = "timeStamp")]
+        pub time_stamp: GeneralizedTime,
+        pub sequence: AVMPsequence,
+    }
+    impl ReplaceAvlReq {
+        pub fn new(
+            old: Option<AvlSerialNumber>,
+            new: CertAVL,
+            version: AVMPversion,
+            time_stamp: GeneralizedTime,
+            sequence: AVMPsequence,
+        ) -> Self {
+            Self {
+                old,
+                new,
+                version,
+                time_stamp,
+                sequence,
+            }
+        }
+    }
+    fn replace_avl_req_version_default() -> AVMPversion {
+        AVMPversion::v1
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum ReplaceAvlRspResult {
+        #[rasn(tag(context, 0))]
+        success(RepAvlOK),
+        #[rasn(tag(context, 1))]
+        failure(RepAvlErr),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct ReplaceAvlRsp {
+        pub result: ReplaceAvlRspResult,
+        #[rasn(default = "replace_avl_rsp_version_default")]
+        pub version: AVMPversion,
+        #[rasn(identifier = "timeStamp")]
+        pub time_stamp: GeneralizedTime,
+        pub sequence: AVMPsequence,
+    }
+    impl ReplaceAvlRsp {
+        pub fn new(
+            result: ReplaceAvlRspResult,
+            version: AVMPversion,
+            time_stamp: GeneralizedTime,
+            sequence: AVMPsequence,
+        ) -> Self {
+            Self {
+                result,
+                version,
+                time_stamp,
+                sequence,
+            }
+        }
+    }
+    fn replace_avl_rsp_version_default() -> AVMPversion {
+        AVMPversion::v1
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated, identifier = "SignedData-error")]
+    #[non_exhaustive]
+    pub enum SignedDataError {
+        noReason = 0,
+        signedDataContectTypeExpected = 1,
+        wrongSignedDataVersion = 2,
+        missingContent = 3,
+        missingContentComponent = 4,
+        invalidContentComponent = 5,
+        unsupportedHashAlgorithm = 6,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct TBOK {
+        #[rasn(value("0..=100"), tag(context, 0), identifier = "levelOfAssurance")]
+        pub level_of_assurance: u8,
+        #[rasn(value("0..=100"), tag(context, 1), identifier = "confidenceLevel")]
+        pub confidence_level: u8,
+        #[rasn(tag(context, 2), identifier = "validationTime")]
+        pub validation_time: UtcTime,
+        pub info: Option<Utf8String>,
+    }
+    impl TBOK {
+        pub fn new(
+            level_of_assurance: u8,
+            confidence_level: u8,
+            validation_time: UtcTime,
+            info: Option<Utf8String>,
+        ) -> Self {
+            Self {
+                level_of_assurance,
+                confidence_level,
+                validation_time,
+                info,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum TBerrorCode {
+        caCertInvalid = 1,
+        unknownCert = 2,
+        unknownCertStatus = 3,
+        subjectCertRevoked = 4,
+        incorrectCert = 5,
+        contractExpired = 6,
+        pathValidationFailed = 7,
+        timeOut = 8,
+        other = 99,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct TBerror {
+        pub code: TBerrorCode,
+        pub diagnostic: Option<Utf8String>,
+    }
+    impl TBerror {
+        pub fn new(code: TBerrorCode, diagnostic: Option<Utf8String>) -> Self {
+            Self { code, diagnostic }
+        }
+    }
+    #[doc = " Trust broker protocol"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum TBrequest {
+        #[rasn(tag(context, 0))]
+        caCert(PKCertIdentifier),
+        #[rasn(tag(context, 1))]
+        subjectCert(PKCertIdentifier),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum TBresponse {
+        #[rasn(tag(context, 0))]
+        success(TBOK),
+        #[rasn(tag(context, 1))]
+        failure(TBerror),
+    }
+    pub static ID_ADD_AVL_REQ: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CMSCT, &[2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ADD_AVL_RSP: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CMSCT, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CERT_REPLACE_REQ: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CMSCT, &[15u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CERT_REPLACE_RSP: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CMSCT, &[16u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CERT_REQ: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CMSCT, &[0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CERT_RSP: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CMSCT, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CERT_SUBSCRIBE_REQ: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CMSCT, &[11u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CERT_SUBSCRIBE_RSP: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CMSCT, &[12u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CERT_UNSUBSCRIBE_REQ: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CMSCT, &[13u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CERT_UNSUBSCRIBE_RSP: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CMSCT, &[14u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CERT_UPDATE_REQ: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CMSCT, &[17u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CERT_UPDATE_RSP: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CMSCT, &[18u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_DELETE_AVL_REQ: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CMSCT, &[8u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_DELETE_AVL_RSP: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CMSCT, &[9u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ENVELOPED_DATA: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::const_new(&[1u32, 2u32, 840u32, 113549u32, 1u32, 7u32, 3u32]).to_owned()
+    });
+    pub static ID_REJECT_AVL: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CMSCT, &[10u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_REJECT_CASUBSCRIBE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CMSCT, &[19u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_REPLACE_AVL_REQ: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CMSCT, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_REPLACE_AVL_RSP: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CMSCT, &[5u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_SIGNED_DATA: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::const_new(&[1u32, 2u32, 840u32, 113549u32, 1u32, 7u32, 2u32]).to_owned()
+    });
+    pub static ID_UPDATE_AVL_REQ: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CMSCT, &[6u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_UPDATE_AVL_RSP: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CMSCT, &[7u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+}

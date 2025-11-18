@@ -1,0 +1,678 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/ietf_rfc_rfc2025_SpkmGssTokens.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod spkm_gss_tokens {
+    extern crate alloc;
+    use super::authentication_framework::{
+        AlgorithmIdentifier, Certificate, CertificateList, CertificatePair, Validity,
+    };
+    use super::information_framework::Name;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousAuthorizationData {
+        #[rasn(identifier = "ad-type")]
+        pub ad_type: Integer,
+        #[rasn(identifier = "ad-data")]
+        pub ad_data: OctetString,
+    }
+    impl AnonymousAuthorizationData {
+        pub fn new(ad_type: Integer, ad_data: OctetString) -> Self {
+            Self { ad_type, ad_data }
+        }
+    }
+    #[doc = " from [RFC-1510]"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AuthorizationData(pub SequenceOf<AnonymousAuthorizationData>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct CertificationData {
+        #[rasn(tag(context, 0), identifier = "certificationPath")]
+        pub certification_path: Option<CertificationPath>,
+        #[rasn(tag(context, 1), identifier = "certificateRevocationList")]
+        pub certificate_revocation_list: Option<CertificateList>,
+    }
+    impl CertificationData {
+        pub fn new(
+            certification_path: Option<CertificationPath>,
+            certificate_revocation_list: Option<CertificateList>,
+        ) -> Self {
+            Self {
+                certification_path,
+                certificate_revocation_list,
+            }
+        }
+    }
+    #[doc = " at least one of the above shall be present"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct CertificationPath {
+        #[rasn(tag(context, 0), identifier = "userKeyId")]
+        pub user_key_id: Option<OctetString>,
+        #[rasn(tag(context, 1), identifier = "userCertif")]
+        pub user_certif: Option<Certificate>,
+        #[rasn(tag(context, 2), identifier = "verifKeyId")]
+        pub verif_key_id: Option<OctetString>,
+        #[rasn(tag(context, 3), identifier = "userVerifCertif")]
+        pub user_verif_certif: Option<Certificate>,
+        #[rasn(tag(context, 4), identifier = "theCACertificates")]
+        pub the_cacertificates: Option<SequenceOf<CertificatePair>>,
+    }
+    impl CertificationPath {
+        pub fn new(
+            user_key_id: Option<OctetString>,
+            user_certif: Option<Certificate>,
+            verif_key_id: Option<OctetString>,
+            user_verif_certif: Option<Certificate>,
+            the_cacertificates: Option<SequenceOf<CertificatePair>>,
+        ) -> Self {
+            Self {
+                user_key_id,
+                user_certif,
+                verif_key_id,
+                user_verif_certif,
+                the_cacertificates,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ChannelId(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "Conf-Alg")]
+    pub enum ConfAlg {
+        #[rasn(tag(context, 0))]
+        algId(AlgorithmIdentifier),
+        #[rasn(tag(context, 1))]
+        null(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "Conf-Algs")]
+    pub enum ConfAlgs {
+        #[rasn(tag(context, 0))]
+        algs(SequenceOf<AlgorithmIdentifier>),
+        #[rasn(tag(context, 1))]
+        null(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Context-Data")]
+    pub struct ContextData {
+        #[rasn(identifier = "channelId")]
+        pub channel_id: Option<ChannelId>,
+        #[rasn(identifier = "seq-number")]
+        pub seq_number: Option<Integer>,
+        pub options: Options,
+        #[rasn(identifier = "conf-alg")]
+        pub conf_alg: ConfAlgs,
+        #[rasn(identifier = "intg-alg")]
+        pub intg_alg: IntgAlgs,
+        #[rasn(identifier = "owf-alg")]
+        pub owf_alg: OWFAlgs,
+    }
+    impl ContextData {
+        pub fn new(
+            channel_id: Option<ChannelId>,
+            seq_number: Option<Integer>,
+            options: Options,
+            conf_alg: ConfAlgs,
+            intg_alg: IntgAlgs,
+            owf_alg: OWFAlgs,
+        ) -> Self {
+            Self {
+                channel_id,
+                seq_number,
+                options,
+                conf_alg,
+                intg_alg,
+                owf_alg,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Del-Header")]
+    pub struct DelHeader {
+        #[rasn(value("769"), identifier = "tok-id")]
+        pub tok_id: u16,
+        #[rasn(identifier = "context-id")]
+        pub context_id: RandomInteger,
+        #[rasn(tag(context, 0), identifier = "int-alg")]
+        pub int_alg: Option<AlgorithmIdentifier>,
+        #[rasn(tag(context, 1), identifier = "snd-seq")]
+        pub snd_seq: Option<SeqNum>,
+    }
+    impl DelHeader {
+        pub fn new(
+            tok_id: u16,
+            context_id: RandomInteger,
+            int_alg: Option<AlgorithmIdentifier>,
+            snd_seq: Option<SeqNum>,
+        ) -> Self {
+            Self {
+                tok_id,
+                context_id,
+                int_alg,
+                snd_seq,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "ERROR-TOKEN")]
+    pub struct ERRORTOKEN {
+        #[rasn(value("1024"), identifier = "tok-id")]
+        pub tok_id: u16,
+        #[rasn(identifier = "context-id")]
+        pub context_id: RandomInteger,
+    }
+    impl ERRORTOKEN {
+        pub fn new(tok_id: u16, context_id: RandomInteger) -> Self {
+            Self { tok_id, context_id }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(application, 0))]
+    pub struct InitialContextToken {
+        #[rasn(identifier = "thisMech")]
+        pub this_mech: MechType,
+        #[rasn(identifier = "innerContextToken")]
+        pub inner_context_token: SPKMInnerContextToken,
+    }
+    impl InitialContextToken {
+        pub fn new(this_mech: MechType, inner_context_token: SPKMInnerContextToken) -> Self {
+            Self {
+                this_mech,
+                inner_context_token,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Integrity(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Intg-Algs")]
+    pub struct IntgAlgs(pub SequenceOf<AlgorithmIdentifier>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Key-Estb-Algs")]
+    pub struct KeyEstbAlgs(pub SequenceOf<AlgorithmIdentifier>);
+    #[doc = " other types"]
+    #[doc = " from [RFC-1508]"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MechType(pub ObjectIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Mic-Header")]
+    pub struct MicHeader {
+        #[rasn(value("257"), identifier = "tok-id")]
+        pub tok_id: u16,
+        #[rasn(identifier = "context-id")]
+        pub context_id: RandomInteger,
+        #[rasn(tag(context, 0), identifier = "int-alg")]
+        pub int_alg: Option<AlgorithmIdentifier>,
+        #[rasn(tag(context, 1), identifier = "snd-seq")]
+        pub snd_seq: Option<SeqNum>,
+    }
+    impl MicHeader {
+        pub fn new(
+            tok_id: u16,
+            context_id: RandomInteger,
+            int_alg: Option<AlgorithmIdentifier>,
+            snd_seq: Option<SeqNum>,
+        ) -> Self {
+            Self {
+                tok_id,
+                context_id,
+                int_alg,
+                snd_seq,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "OWF-Algs")]
+    pub struct OWFAlgs(pub SequenceOf<AlgorithmIdentifier>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Options(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "REP-IT-TOKEN")]
+    pub struct REPITTOKEN {
+        #[rasn(value("768"), identifier = "tok-id")]
+        pub tok_id: u16,
+        #[rasn(identifier = "context-id")]
+        pub context_id: RandomInteger,
+        #[rasn(identifier = "randSrc")]
+        pub rand_src: RandomInteger,
+        #[rasn(identifier = "randTarg")]
+        pub rand_targ: RandomInteger,
+        #[rasn(identifier = "targ-name")]
+        pub targ_name: Name,
+        #[rasn(identifier = "src-name")]
+        pub src_name: Option<Name>,
+        #[rasn(identifier = "key-estb-rep")]
+        pub key_estb_rep: Option<BitString>,
+    }
+    impl REPITTOKEN {
+        pub fn new(
+            tok_id: u16,
+            context_id: RandomInteger,
+            rand_src: RandomInteger,
+            rand_targ: RandomInteger,
+            targ_name: Name,
+            src_name: Option<Name>,
+            key_estb_rep: Option<BitString>,
+        ) -> Self {
+            Self {
+                tok_id,
+                context_id,
+                rand_src,
+                rand_targ,
+                targ_name,
+                src_name,
+                key_estb_rep,
+            }
+        }
+    }
+    #[doc = " set to TRUE in SPKM-REQ"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "REP-TI-TOKEN")]
+    pub struct REPTITOKEN {
+        #[rasn(identifier = "rep-ti-contents")]
+        pub rep_ti_contents: RepTiContents,
+        #[rasn(identifier = "algId")]
+        pub alg_id: AlgorithmIdentifier,
+        #[rasn(identifier = "rep-ti-integ")]
+        pub rep_ti_integ: Integrity,
+    }
+    impl REPTITOKEN {
+        pub fn new(
+            rep_ti_contents: RepTiContents,
+            alg_id: AlgorithmIdentifier,
+            rep_ti_integ: Integrity,
+        ) -> Self {
+            Self {
+                rep_ti_contents,
+                alg_id,
+                rep_ti_integ,
+            }
+        }
+    }
+    #[doc = " Presence of [2] or [3] implies that [0] or [1] must also be"]
+    #[doc = " present.  Presence of [4] implies that at least one of [0], [1],"]
+    #[doc = " [2], and [3] must also be present."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "REQ-TOKEN")]
+    pub struct REQTOKEN {
+        #[rasn(identifier = "req-contents")]
+        pub req_contents: ReqContents,
+        #[rasn(identifier = "algId")]
+        pub alg_id: AlgorithmIdentifier,
+        #[rasn(identifier = "req-integrity")]
+        pub req_integrity: Integrity,
+    }
+    impl REQTOKEN {
+        pub fn new(
+            req_contents: ReqContents,
+            alg_id: AlgorithmIdentifier,
+            req_integrity: Integrity,
+        ) -> Self {
+            Self {
+                req_contents,
+                alg_id,
+                req_integrity,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Random-Integer")]
+    pub struct RandomInteger(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Rep-ti-contents")]
+    pub struct RepTiContents {
+        #[rasn(value("512"), identifier = "tok-id")]
+        pub tok_id: u16,
+        #[rasn(identifier = "context-id")]
+        pub context_id: RandomInteger,
+        #[rasn(tag(context, 0))]
+        pub pvno: Option<BitString>,
+        pub timestamp: Option<UtcTime>,
+        #[rasn(identifier = "randTarg")]
+        pub rand_targ: RandomInteger,
+        #[rasn(tag(context, 1), identifier = "src-name")]
+        pub src_name: Option<Name>,
+        #[rasn(identifier = "targ-name")]
+        pub targ_name: Name,
+        #[rasn(identifier = "randSrc")]
+        pub rand_src: RandomInteger,
+        #[rasn(identifier = "rep-data")]
+        pub rep_data: ContextData,
+        #[rasn(tag(context, 2))]
+        pub validity: Option<Validity>,
+        #[rasn(identifier = "key-estb-id")]
+        pub key_estb_id: Option<AlgorithmIdentifier>,
+        #[rasn(identifier = "key-estb-str")]
+        pub key_estb_str: Option<BitString>,
+    }
+    impl RepTiContents {
+        pub fn new(
+            tok_id: u16,
+            context_id: RandomInteger,
+            pvno: Option<BitString>,
+            timestamp: Option<UtcTime>,
+            rand_targ: RandomInteger,
+            src_name: Option<Name>,
+            targ_name: Name,
+            rand_src: RandomInteger,
+            rep_data: ContextData,
+            validity: Option<Validity>,
+            key_estb_id: Option<AlgorithmIdentifier>,
+            key_estb_str: Option<BitString>,
+        ) -> Self {
+            Self {
+                tok_id,
+                context_id,
+                pvno,
+                timestamp,
+                rand_targ,
+                src_name,
+                targ_name,
+                rand_src,
+                rep_data,
+                validity,
+                key_estb_id,
+                key_estb_str,
+            }
+        }
+    }
+    #[doc = " If corresponding algId specifies a signing algorithm,"]
+    #[doc = " \"Integrity\" holds the result of applying the signing procedure"]
+    #[doc = " specified in algId to the BER-encoded octet string which results"]
+    #[doc = " from applying the hashing procedure (also specified in algId) to"]
+    #[doc = " the DER-encoded octets of \"token\"."]
+    #[doc = " Alternatively, if corresponding algId specifies a MACing"]
+    #[doc = " algorithm, \"Integrity\" holds the result of applying the MACing"]
+    #[doc = " procedure specified in algId to the DER-encoded octets of"]
+    #[doc = " \"token\""]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Req-contents")]
+    pub struct ReqContents {
+        #[rasn(value("256"), identifier = "tok-id")]
+        pub tok_id: u16,
+        #[rasn(identifier = "context-id")]
+        pub context_id: RandomInteger,
+        pub pvno: BitString,
+        pub timestamp: Option<UtcTime>,
+        #[rasn(identifier = "randSrc")]
+        pub rand_src: RandomInteger,
+        #[rasn(identifier = "targ-name")]
+        pub targ_name: Name,
+        #[rasn(tag(context, 0), identifier = "src-name")]
+        pub src_name: Option<Name>,
+        #[rasn(identifier = "req-data")]
+        pub req_data: ContextData,
+        #[rasn(tag(context, 1))]
+        pub validity: Option<Validity>,
+        #[rasn(identifier = "key-estb-set")]
+        pub key_estb_set: KeyEstbAlgs,
+        #[rasn(identifier = "key-estb-req")]
+        pub key_estb_req: Option<BitString>,
+        #[rasn(identifier = "key-src-bind")]
+        pub key_src_bind: Option<OctetString>,
+    }
+    impl ReqContents {
+        pub fn new(
+            tok_id: u16,
+            context_id: RandomInteger,
+            pvno: BitString,
+            timestamp: Option<UtcTime>,
+            rand_src: RandomInteger,
+            targ_name: Name,
+            src_name: Option<Name>,
+            req_data: ContextData,
+            validity: Option<Validity>,
+            key_estb_set: KeyEstbAlgs,
+            key_estb_req: Option<BitString>,
+            key_src_bind: Option<OctetString>,
+        ) -> Self {
+            Self {
+                tok_id,
+                context_id,
+                pvno,
+                timestamp,
+                rand_src,
+                targ_name,
+                src_name,
+                req_data,
+                validity,
+                key_estb_set,
+                key_estb_req,
+                key_src_bind,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SPKM-DEL")]
+    pub struct SPKMDEL {
+        #[rasn(identifier = "del-header")]
+        pub del_header: DelHeader,
+        #[rasn(identifier = "int-cksum")]
+        pub int_cksum: BitString,
+    }
+    impl SPKMDEL {
+        pub fn new(del_header: DelHeader, int_cksum: BitString) -> Self {
+            Self {
+                del_header,
+                int_cksum,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SPKM-ERROR")]
+    pub struct SPKMERROR {
+        #[rasn(identifier = "errorToken")]
+        pub error_token: ERRORTOKEN,
+        #[rasn(identifier = "algId")]
+        pub alg_id: AlgorithmIdentifier,
+        pub integrity: Integrity,
+    }
+    impl SPKMERROR {
+        pub fn new(
+            error_token: ERRORTOKEN,
+            alg_id: AlgorithmIdentifier,
+            integrity: Integrity,
+        ) -> Self {
+            Self {
+                error_token,
+                alg_id,
+                integrity,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SPKM-MIC")]
+    pub struct SPKMMIC {
+        #[rasn(identifier = "mic-header")]
+        pub mic_header: MicHeader,
+        #[rasn(identifier = "int-cksum")]
+        pub int_cksum: BitString,
+    }
+    impl SPKMMIC {
+        pub fn new(mic_header: MicHeader, int_cksum: BitString) -> Self {
+            Self {
+                mic_header,
+                int_cksum,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SPKM-REP-IT")]
+    pub struct SPKMREPIT {
+        #[rasn(identifier = "responseToken")]
+        pub response_token: REPITTOKEN,
+        #[rasn(identifier = "algId")]
+        pub alg_id: AlgorithmIdentifier,
+        #[rasn(identifier = "rep-it-integ")]
+        pub rep_it_integ: Integrity,
+    }
+    impl SPKMREPIT {
+        pub fn new(
+            response_token: REPITTOKEN,
+            alg_id: AlgorithmIdentifier,
+            rep_it_integ: Integrity,
+        ) -> Self {
+            Self {
+                response_token,
+                alg_id,
+                rep_it_integ,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SPKM-REP-TI")]
+    pub struct SPKMREPTI {
+        #[rasn(identifier = "responseToken")]
+        pub response_token: REPTITOKEN,
+        #[rasn(identifier = "certif-data")]
+        pub certif_data: Option<CertificationData>,
+    }
+    impl SPKMREPTI {
+        pub fn new(response_token: REPTITOKEN, certif_data: Option<CertificationData>) -> Self {
+            Self {
+                response_token,
+                certif_data,
+            }
+        }
+    }
+    #[doc = " types"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SPKM-REQ")]
+    pub struct SPKMREQ {
+        #[rasn(identifier = "requestToken")]
+        pub request_token: REQTOKEN,
+        #[rasn(tag(context, 0), identifier = "certif-data")]
+        pub certif_data: Option<CertificationData>,
+        #[rasn(tag(context, 1), identifier = "auth-data")]
+        pub auth_data: Option<AuthorizationData>,
+    }
+    impl SPKMREQ {
+        pub fn new(
+            request_token: REQTOKEN,
+            certif_data: Option<CertificationData>,
+            auth_data: Option<AuthorizationData>,
+        ) -> Self {
+            Self {
+                request_token,
+                certif_data,
+                auth_data,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SPKM-WRAP")]
+    pub struct SPKMWRAP {
+        #[rasn(identifier = "wrap-header")]
+        pub wrap_header: WrapHeader,
+        #[rasn(identifier = "wrap-body")]
+        pub wrap_body: WrapBody,
+    }
+    impl SPKMWRAP {
+        pub fn new(wrap_header: WrapHeader, wrap_body: WrapBody) -> Self {
+            Self {
+                wrap_header,
+                wrap_body,
+            }
+        }
+    }
+    #[doc = " when thisMech is SPKM-1 or SPKM-2"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum SPKMInnerContextToken {
+        #[rasn(tag(context, 0))]
+        req(SPKMREQ),
+        #[rasn(tag(context, 1), identifier = "rep-ti")]
+        rep_ti(SPKMREPTI),
+        #[rasn(tag(context, 2), identifier = "rep-it")]
+        rep_it(SPKMREPIT),
+        #[rasn(tag(context, 3))]
+        error(SPKMERROR),
+        #[rasn(tag(context, 4))]
+        mic(SPKMMIC),
+        #[rasn(tag(context, 5))]
+        wrap(SPKMWRAP),
+        #[rasn(tag(context, 6))]
+        del(SPKMDEL),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SeqNum {
+        pub num: Integer,
+        #[rasn(identifier = "dir-ind")]
+        pub dir_ind: bool,
+    }
+    impl SeqNum {
+        pub fn new(num: Integer, dir_ind: bool) -> Self {
+            Self { num, dir_ind }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Wrap-Body")]
+    pub struct WrapBody {
+        #[rasn(identifier = "int-cksum")]
+        pub int_cksum: BitString,
+        pub data: BitString,
+    }
+    impl WrapBody {
+        pub fn new(int_cksum: BitString, data: BitString) -> Self {
+            Self { int_cksum, data }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Wrap-Header")]
+    pub struct WrapHeader {
+        #[rasn(value("513"), identifier = "tok-id")]
+        pub tok_id: u16,
+        #[rasn(identifier = "context-id")]
+        pub context_id: RandomInteger,
+        #[rasn(tag(context, 0), identifier = "int-alg")]
+        pub int_alg: Option<AlgorithmIdentifier>,
+        #[rasn(tag(context, 1), identifier = "conf-alg")]
+        pub conf_alg: Option<ConfAlg>,
+        #[rasn(tag(context, 2), identifier = "snd-seq")]
+        pub snd_seq: Option<SeqNum>,
+    }
+    impl WrapHeader {
+        pub fn new(
+            tok_id: u16,
+            context_id: RandomInteger,
+            int_alg: Option<AlgorithmIdentifier>,
+            conf_alg: Option<ConfAlg>,
+            snd_seq: Option<SeqNum>,
+        ) -> Self {
+            Self {
+                tok_id,
+                context_id,
+                int_alg,
+                conf_alg,
+                snd_seq,
+            }
+        }
+    }
+    #[doc = " object identifier assignments"]
+    pub static MD5_DES_CBC: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[1u32, 3u32, 6u32, 1u32, 5u32, 3u32, 1u32]).to_owned());
+    pub static SPKM_1: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::const_new(&[1u32, 3u32, 6u32, 1u32, 5u32, 5u32, 1u32, 1u32]).to_owned()
+    });
+    pub static SPKM_2: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::const_new(&[1u32, 3u32, 6u32, 1u32, 5u32, 5u32, 1u32, 2u32]).to_owned()
+    });
+    pub static SUM64_DES_CBC: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[1u32, 3u32, 6u32, 1u32, 5u32, 3u32, 2u32]).to_owned());
+}

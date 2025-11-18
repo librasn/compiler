@@ -1,0 +1,256 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x742_1995_UsageMeteringFunction.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod usage_metering_function {
+    extern crate alloc;
+    use super::attribute_asn1_module::*;
+    use super::cmip_1::ObjectInstance;
+    use super::metric_module::TimePeriod;
+    use super::usage_metering_data_info::UsageInfo;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AccountableObjectReference(pub ObjectInstance);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AccountableObjectsReferenceList(pub SetOf<ObjectInstance>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ActionArgument {
+        selectedObjects(SetOf<ObjectInstance>),
+        allObjects(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ActionResponse {
+        #[rasn(tag(context, 0))]
+        pub success: Option<SetOf<ObjectInstance>>,
+        #[rasn(tag(context, 1))]
+        pub failed: Option<SetOf<ObjectInstance>>,
+        #[rasn(tag(context, 2))]
+        pub indeterminate: Option<SetOf<ObjectInstance>>,
+    }
+    impl ActionResponse {
+        pub fn new(
+            success: Option<SetOf<ObjectInstance>>,
+            failed: Option<SetOf<ObjectInstance>>,
+            indeterminate: Option<SetOf<ObjectInstance>>,
+        ) -> Self {
+            Self {
+                success,
+                failed,
+                indeterminate,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AuditInfo {
+        pub service: Any,
+        #[rasn(identifier = "auditDetails")]
+        pub audit_details: Any,
+    }
+    impl AuditInfo {
+        pub fn new(service: Any, audit_details: Any) -> Self {
+            Self {
+                service,
+                audit_details,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ControlInfo {
+        #[rasn(identifier = "actionResponse")]
+        pub action_response: ActionResponse,
+        #[rasn(tag(context, 0), identifier = "reportingTriggers")]
+        pub reporting_triggers: Option<ReportingTriggers>,
+        #[rasn(tag(context, 1), identifier = "accountableObjectsReferenceList")]
+        pub accountable_objects_reference_list: Option<AccountableObjectsReferenceList>,
+        #[rasn(tag(context, 2), identifier = "dataObjectsReferenceList")]
+        pub data_objects_reference_list: Option<DataObjectsReferenceList>,
+        #[rasn(tag(context, 3), identifier = "additionalInformation")]
+        pub additional_information: SetOf<ManagementExtension>,
+    }
+    impl ControlInfo {
+        pub fn new(
+            action_response: ActionResponse,
+            reporting_triggers: Option<ReportingTriggers>,
+            accountable_objects_reference_list: Option<AccountableObjectsReferenceList>,
+            data_objects_reference_list: Option<DataObjectsReferenceList>,
+            additional_information: SetOf<ManagementExtension>,
+        ) -> Self {
+            Self {
+                action_response,
+                reporting_triggers,
+                accountable_objects_reference_list,
+                data_objects_reference_list,
+                additional_information,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ControlStatusValue(pub ControlStatus);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum DataErrors {
+        possibleErrors(SetOf<PossibleError>),
+        noProblem(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DataObjectsReferenceList(pub SetOf<ObjectInstance>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum DeniedMeteringAction {
+        canNotStart = 0,
+        canNotSuspend = 1,
+        canNotResume = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum Induced {
+        start = 0,
+        suspend = 1,
+        resume = 2,
+        delete = 3,
+        disabled = 4,
+        enabled = 5,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum NotificationCause {
+        #[rasn(tag(context, 1))]
+        periodic(TimePeriod),
+        #[rasn(tag(context, 2))]
+        induced(Induced),
+        #[rasn(tag(context, 3))]
+        event(ReportingEvent),
+        #[rasn(tag(context, 4))]
+        stimulus(ObjectIdentifier),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PossibleError(pub ObjectIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ProceduralStatusValue(pub ProceduralStatus);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ProviderId {
+        #[rasn(tag(context, 1))]
+        objectReference(ObjectInstance),
+        #[rasn(tag(context, 2))]
+        textualName(GraphicString),
+        #[rasn(tag(context, 3))]
+        serviceSpecific(ServiceSpecificId),
+        #[rasn(tag(context, 4))]
+        unknown(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ReportingEvent {
+        registration = 0,
+        request = 1,
+        accept = 2,
+        complete = 3,
+        corresponding = 4,
+        bulk = 5,
+        interruption = 6,
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "CHOICE")]
+    pub enum AnonymousReportingTriggers {
+        #[rasn(tag(context, 1))]
+        periodic(TimePeriod),
+        #[rasn(tag(context, 2))]
+        induced(Induced),
+        #[rasn(tag(context, 3))]
+        event(ReportingEvent),
+        #[rasn(tag(context, 4))]
+        stimulus(ObjectIdentifier),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ReportingTriggers(pub SetOf<AnonymousReportingTriggers>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ServiceSpecificId {
+        pub service: Any,
+        #[rasn(identifier = "serviceSpecificId")]
+        pub service_specific_id: Any,
+    }
+    impl ServiceSpecificId {
+        pub fn new(service: Any, service_specific_id: Any) -> Self {
+            Self {
+                service,
+                service_specific_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "UMF-AUDIT")]
+    pub struct UMFAUDIT(pub DMITYPEIDENTIFIER);
+    #[doc = " The applicability of each of these values must be specified by a specialization, together"]
+    #[doc = " with the exact semantics of the values used."]
+    #[doc = "\tNOTE - All of events from 8.2.3 have been included in this enumerated type for the"]
+    #[doc = " sake of completeness. It does not imply that specializations need to assign semantics to all"]
+    #[doc = " of them. In particular the values \"corresponding (4)\" and \"bulk (5)\" may not be required in"]
+    #[doc = " certain specializations."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "UMF-SERVICE")]
+    pub struct UMFSERVICE(pub DMITYPEIDENTIFIER);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct UsageDataInfo {
+        #[rasn(tag(context, 0), identifier = "accountableObjectReference")]
+        pub accountable_object_reference: ObjectInstance,
+        #[rasn(tag(context, 1), identifier = "notificationCause")]
+        pub notification_cause: NotificationCause,
+        #[rasn(tag(context, 2), identifier = "usageInfo")]
+        pub usage_info: UsageInfo,
+        #[rasn(tag(context, 3), identifier = "auditInfo")]
+        pub audit_info: Option<AuditInfo>,
+        #[rasn(tag(context, 4), identifier = "dataErrors")]
+        pub data_errors: DataErrors,
+        #[rasn(tag(context, 5), identifier = "providerId")]
+        pub provider_id: Option<ProviderId>,
+        #[rasn(tag(context, 6), identifier = "additionalInformation")]
+        pub additional_information: Option<SetOf<ManagementExtension>>,
+    }
+    impl UsageDataInfo {
+        pub fn new(
+            accountable_object_reference: ObjectInstance,
+            notification_cause: NotificationCause,
+            usage_info: UsageInfo,
+            audit_info: Option<AuditInfo>,
+            data_errors: DataErrors,
+            provider_id: Option<ProviderId>,
+            additional_information: Option<SetOf<ManagementExtension>>,
+        ) -> Self {
+            Self {
+                accountable_object_reference,
+                notification_cause,
+                usage_info,
+                audit_info,
+                data_errors,
+                provider_id,
+                additional_information,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct UsageMeteringControlObjectId(pub SimpleNameType);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct UsageMeteringDataObjectId(pub SimpleNameType);
+}

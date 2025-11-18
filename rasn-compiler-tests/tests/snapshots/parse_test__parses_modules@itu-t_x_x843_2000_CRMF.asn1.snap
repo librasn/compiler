@@ -1,0 +1,422 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x843_2000_CRMF.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod crmf {
+    extern crate alloc;
+    use super::authentication_framework::{
+        AlgorithmIdentifier, Extensions, SubjectPublicKeyInfo, Time, Version,
+    };
+    use super::certificate_extensions::GeneralName;
+    use super::cryptographic_message_syntax::EnvelopedData;
+    use super::information_framework::Name;
+    use super::selected_attribute_types::UniqueIdentifier;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AttributeTypeAndValue {
+        #[rasn(identifier = "type")]
+        pub r_type: Any,
+        pub value: Any,
+    }
+    impl AttributeTypeAndValue {
+        pub fn new(r_type: Any, value: Any) -> Self {
+            Self { r_type, value }
+        }
+    }
+    #[doc = "with syntax:"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Authenticator(pub Utf8String);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct CertId {
+        pub issuer: GeneralName,
+        #[rasn(identifier = "serialNumber")]
+        pub serial_number: Integer,
+    }
+    impl CertId {
+        pub fn new(issuer: GeneralName, serial_number: Integer) -> Self {
+            Self {
+                issuer,
+                serial_number,
+            }
+        }
+    }
+    #[doc = "with syntax"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CertReq(pub CertRequest);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct CertReqMessages(pub SequenceOf<CertReqMsg>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct CertReqMsg {
+        #[rasn(identifier = "certReq")]
+        pub cert_req: CertRequest,
+        pub pop: Option<ProofOfPossession>,
+        #[rasn(size("1.."), identifier = "regInfo")]
+        pub reg_info: Option<SequenceOf<AttributeTypeAndValue>>,
+    }
+    impl CertReqMsg {
+        pub fn new(
+            cert_req: CertRequest,
+            pop: Option<ProofOfPossession>,
+            reg_info: Option<SequenceOf<AttributeTypeAndValue>>,
+        ) -> Self {
+            Self {
+                cert_req,
+                pop,
+                reg_info,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct CertRequest {
+        #[rasn(identifier = "certReqId")]
+        pub cert_req_id: Integer,
+        #[rasn(identifier = "certTemplate")]
+        pub cert_template: CertTemplate,
+        pub controls: Option<Controls>,
+    }
+    impl CertRequest {
+        pub fn new(
+            cert_req_id: Integer,
+            cert_template: CertTemplate,
+            controls: Option<Controls>,
+        ) -> Self {
+            Self {
+                cert_req_id,
+                cert_template,
+                controls,
+            }
+        }
+    }
+    #[doc = " Attributes affecting issuance"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct CertTemplate {
+        #[rasn(tag(context, 0))]
+        pub version: Option<Version>,
+        #[rasn(tag(context, 1), identifier = "serialNumber")]
+        pub serial_number: Option<Integer>,
+        #[rasn(tag(context, 2), identifier = "signingAlg")]
+        pub signing_alg: Option<AlgorithmIdentifier>,
+        #[rasn(tag(explicit(context, 3)))]
+        pub issuer: Option<Name>,
+        #[rasn(tag(context, 4))]
+        pub validity: Option<OptionalValidity>,
+        #[rasn(tag(explicit(context, 5)))]
+        pub subject: Option<Name>,
+        #[rasn(tag(context, 6), identifier = "publicKey")]
+        pub public_key: Option<SubjectPublicKeyInfo>,
+        #[rasn(tag(context, 7), identifier = "issuerUID")]
+        pub issuer_uid: Option<UniqueIdentifier>,
+        #[rasn(tag(context, 8), identifier = "subjectUID")]
+        pub subject_uid: Option<UniqueIdentifier>,
+        #[rasn(tag(context, 9))]
+        pub extensions: Option<Extensions>,
+    }
+    impl CertTemplate {
+        pub fn new(
+            version: Option<Version>,
+            serial_number: Option<Integer>,
+            signing_alg: Option<AlgorithmIdentifier>,
+            issuer: Option<Name>,
+            validity: Option<OptionalValidity>,
+            subject: Option<Name>,
+            public_key: Option<SubjectPublicKeyInfo>,
+            issuer_uid: Option<UniqueIdentifier>,
+            subject_uid: Option<UniqueIdentifier>,
+            extensions: Option<Extensions>,
+        ) -> Self {
+            Self {
+                version,
+                serial_number,
+                signing_alg,
+                issuer,
+                validity,
+                subject,
+                public_key,
+                issuer_uid,
+                subject_uid,
+                extensions,
+            }
+        }
+    }
+    #[doc = "at least one SHALL be present"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct Controls(pub SequenceOf<AttributeTypeAndValue>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum EncryptedKey {
+        encryptedValue(EncryptedValue),
+        #[rasn(tag(context, 0))]
+        envelopedData(EnvelopedData),
+    }
+    #[doc = " The encrypted private key SHALL be placed in the envelopedData"]
+    #[doc = " encryptedContentInfo encryptedContent OCTET STRING."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct EncryptedValue {
+        #[rasn(tag(context, 0), identifier = "intendedAlg")]
+        pub intended_alg: Option<AlgorithmIdentifier>,
+        #[rasn(tag(context, 1), identifier = "symmAlg")]
+        pub symm_alg: Option<AlgorithmIdentifier>,
+        #[rasn(tag(context, 2), identifier = "encSymmKey")]
+        pub enc_symm_key: Option<BitString>,
+        #[rasn(tag(context, 3), identifier = "keyAlg")]
+        pub key_alg: Option<AlgorithmIdentifier>,
+        #[rasn(tag(context, 4), identifier = "valueHint")]
+        pub value_hint: Option<OctetString>,
+        #[rasn(identifier = "encValue")]
+        pub enc_value: BitString,
+    }
+    impl EncryptedValue {
+        pub fn new(
+            intended_alg: Option<AlgorithmIdentifier>,
+            symm_alg: Option<AlgorithmIdentifier>,
+            enc_symm_key: Option<BitString>,
+            key_alg: Option<AlgorithmIdentifier>,
+            value_hint: Option<OctetString>,
+            enc_value: BitString,
+        ) -> Self {
+            Self {
+                intended_alg,
+                symm_alg,
+                enc_symm_key,
+                key_alg,
+                value_hint,
+                enc_value,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct KeyGenParameters(pub OctetString);
+    #[doc = "with syntax:"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct OldCertId(pub CertId);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct OptionalValidity {
+        #[rasn(tag(explicit(context, 0)), identifier = "notBefore")]
+        pub not_before: Option<Time>,
+        #[rasn(tag(explicit(context, 1)), identifier = "notAfter")]
+        pub not_after: Option<Time>,
+    }
+    impl OptionalValidity {
+        pub fn new(not_before: Option<Time>, not_after: Option<Time>) -> Self {
+            Self {
+                not_before,
+                not_after,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct PBMParameter {
+        pub salt: OctetString,
+        pub owf: AlgorithmIdentifier,
+        #[rasn(identifier = "iterationCount")]
+        pub iteration_count: Integer,
+        pub mac: AlgorithmIdentifier,
+    }
+    impl PBMParameter {
+        pub fn new(
+            salt: OctetString,
+            owf: AlgorithmIdentifier,
+            iteration_count: Integer,
+            mac: AlgorithmIdentifier,
+        ) -> Self {
+            Self {
+                salt,
+                owf,
+                iteration_count,
+                mac,
+            }
+        }
+    }
+    #[doc = "with syntax:"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct PKIPublicationInfo {
+        pub action: Integer,
+        #[rasn(size("1.."), identifier = "pubInfos")]
+        pub pub_infos: Option<SequenceOf<SinglePubInfo>>,
+    }
+    impl PKIPublicationInfo {
+        pub fn new(action: Integer, pub_infos: Option<SequenceOf<SinglePubInfo>>) -> Self {
+            Self { action, pub_infos }
+        }
+    }
+    #[doc = " from CertTemplate"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct PKMACValue {
+        #[rasn(identifier = "algId")]
+        pub alg_id: AlgorithmIdentifier,
+        pub value: BitString,
+    }
+    impl PKMACValue {
+        pub fn new(alg_id: AlgorithmIdentifier, value: BitString) -> Self {
+            Self { alg_id, value }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct POPOSigningKey {
+        #[rasn(tag(context, 0), identifier = "poposkInput")]
+        pub poposk_input: Option<POPOSigningKeyInput>,
+        #[rasn(identifier = "algorithmIdentifier")]
+        pub algorithm_identifier: AlgorithmIdentifier,
+        pub signature: BitString,
+    }
+    impl POPOSigningKey {
+        pub fn new(
+            poposk_input: Option<POPOSigningKeyInput>,
+            algorithm_identifier: AlgorithmIdentifier,
+            signature: BitString,
+        ) -> Self {
+            Self {
+                poposk_input,
+                algorithm_identifier,
+                signature,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum POPOSigningKeyInputAuthInfo {
+        #[rasn(tag(explicit(context, 0)))]
+        sender(GeneralName),
+        publicKeyMAC(PKMACValue),
+    }
+    #[doc = " The signature (using \"algorithmIdentifier\") is on the"]
+    #[doc = " DER-encoded value of poposkInput.  NOTE - If the CertReqMsg"]
+    #[doc = " certReq CertTemplate contains the subject and publicKey values,"]
+    #[doc = " then poposkInput SHALL be omitted and the signature SHALL be"]
+    #[doc = " computed on the DER-encoded value of CertReqMsg certReq.  If"]
+    #[doc = " the CertReqMsg certReq CertTemplate does not contain the public"]
+    #[doc = " key and subject values, then poposkInput SHALL be present and"]
+    #[doc = " SHALL be signed.  This strategy ensures that the public key is"]
+    #[doc = " not present in both the poposkInput and CertReqMsg certReq"]
+    #[doc = " CertTemplate fields."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct POPOSigningKeyInput {
+        #[rasn(identifier = "authInfo")]
+        pub auth_info: POPOSigningKeyInputAuthInfo,
+        #[rasn(identifier = "publicKey")]
+        pub public_key: SubjectPublicKeyInfo,
+    }
+    impl POPOSigningKeyInput {
+        pub fn new(
+            auth_info: POPOSigningKeyInputAuthInfo,
+            public_key: SubjectPublicKeyInfo,
+        ) -> Self {
+            Self {
+                auth_info,
+                public_key,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ProofOfPossession {
+        #[rasn(tag(context, 0))]
+        raVerified(()),
+        #[rasn(tag(context, 1))]
+        signature(POPOSigningKey),
+    }
+    #[doc = "with syntax:"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ProtocolEncrKey(pub SubjectPublicKeyInfo);
+    #[doc = "with syntax:"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RegToken(pub Utf8String);
+    #[doc = " pubInfos SHALL not be present if action is \"dontPublish\""]
+    #[doc = " (if action is \"pleasePublish\" and pubInfos is omitted,"]
+    #[doc = " \"dontCare\" is assumed)"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SinglePubInfo {
+        #[rasn(identifier = "pubMethod")]
+        pub pub_method: Integer,
+        #[rasn(identifier = "pubLocation")]
+        pub pub_location: Option<GeneralName>,
+    }
+    impl SinglePubInfo {
+        pub fn new(pub_method: Integer, pub_location: Option<GeneralName>) -> Self {
+            Self {
+                pub_method,
+                pub_location,
+            }
+        }
+    }
+    #[doc = "with syntax"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct UTF8Pairs(pub Utf8String);
+    #[doc = " arc for Internet X.509 PKI protocols and their components"]
+    pub static ID_PKIP: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PKIX, &[5u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " or HMAC as in RFC2104, RFC2202)"]
+    #[doc = " Object identifier assignments"]
+    pub static ID_PKIX: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[1u32, 3u32, 6u32, 1u32, 5u32, 5u32, 7u32]).to_owned());
+    #[doc = " Registration Controls in CRMF"]
+    pub static ID_REG_CTRL: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PKIP, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_REG_CTRL_AUTHENTICATOR: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_REG_CTRL, &[2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_REG_CTRL_OLD_CERT_ID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_REG_CTRL, &[5u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_REG_CTRL_PKI_PUBLICATION_INFO: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_REG_CTRL, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_REG_CTRL_PROTOCOL_ENCR_KEY: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_REG_CTRL, &[6u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_REG_CTRL_REG_TOKEN: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_REG_CTRL, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " Registration Info in CRMF"]
+    pub static ID_REG_INFO: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PKIP, &[2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_REG_INFO_CERT_REQ: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_REG_INFO, &[2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_REG_INFO_UTF8_PAIRS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_REG_INFO, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+}

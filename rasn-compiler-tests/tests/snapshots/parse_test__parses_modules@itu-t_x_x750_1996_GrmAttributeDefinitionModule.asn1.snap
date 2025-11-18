@@ -1,0 +1,263 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x750_1996_GrmAttributeDefinitionModule.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod grm_attribute_definition_module {
+    extern crate alloc;
+    use super::definition_asn1_module::{
+        DefinedType, Identifier, OptionallyRegisteredAs, TemplateLabel, TemplateList,
+    };
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct LabelAndParameters {
+        pub label: TemplateLabel,
+        pub parameters: Option<TemplateList>,
+    }
+    impl LabelAndParameters {
+        pub fn new(label: TemplateLabel, parameters: Option<TemplateList>) -> Self {
+            Self { label, parameters }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MappedRelationshipClass(pub TemplateLabel);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct MappingPair {
+        #[rasn(identifier = "relationshipOperation")]
+        pub relationship_operation: RelationshipOperation,
+        #[rasn(identifier = "mapsTo")]
+        pub maps_to: MapsTo,
+    }
+    impl MappingPair {
+        pub fn new(relationship_operation: RelationshipOperation, maps_to: MapsTo) -> Self {
+            Self {
+                relationship_operation,
+                maps_to,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MapsTo(pub SetOf<MapsToPair>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct MapsToPair {
+        #[rasn(identifier = "systemsMgtOperation")]
+        pub systems_mgt_operation: SystemsMgtOperation,
+        #[rasn(identifier = "roleOrRelationshipObject")]
+        pub role_or_relationship_object: RoleOrRelationshipObject,
+    }
+    impl MapsToPair {
+        pub fn new(
+            systems_mgt_operation: SystemsMgtOperation,
+            role_or_relationship_object: RoleOrRelationshipObject,
+        ) -> Self {
+            Self {
+                systems_mgt_operation,
+                role_or_relationship_object,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct OperationsMapping(pub SetOf<MappingPair>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum OptionalIdentifier {
+        present(Identifier),
+        absent(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct OptionalIdentifierAndRole {
+        #[rasn(identifier = "optionalOperationName")]
+        pub optional_operation_name: OptionalIdentifier,
+        #[rasn(identifier = "optionalRoleName")]
+        pub optional_role_name: Option<Identifier>,
+    }
+    impl OptionalIdentifierAndRole {
+        pub fn new(
+            optional_operation_name: OptionalIdentifier,
+            optional_role_name: Option<Identifier>,
+        ) -> Self {
+            Self {
+                optional_operation_name,
+                optional_role_name,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct OptionalLabelAndParameters {
+        pub label: Option<TemplateLabel>,
+        pub parameters: Option<TemplateList>,
+    }
+    impl OptionalLabelAndParameters {
+        pub fn new(label: Option<TemplateLabel>, parameters: Option<TemplateList>) -> Self {
+            Self { label, parameters }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct QualifiedBy(pub TemplateList);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct RelationshipObject {
+        pub class: TemplateLabel,
+        pub qualifies: Option<TemplateList>,
+    }
+    impl RelationshipObject {
+        pub fn new(class: TemplateLabel, qualifies: Option<TemplateList>) -> Self {
+            Self { class, qualifies }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum RelationshipOperation {
+        #[rasn(tag(explicit(context, 0)))]
+        establish(OptionalIdentifier),
+        #[rasn(tag(explicit(context, 1)))]
+        terminate(OptionalIdentifier),
+        #[rasn(tag(context, 2))]
+        query(OptionalIdentifierAndRole),
+        #[rasn(tag(explicit(context, 3)))]
+        notify(OptionalIdentifier),
+        #[rasn(tag(explicit(context, 4)))]
+        userDefined(OptionalIdentifier),
+        #[rasn(tag(context, 5))]
+        bind(OptionalIdentifierAndRole),
+        #[rasn(tag(context, 6))]
+        unbind(OptionalIdentifierAndRole),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum Representation {
+        #[rasn(tag(context, 0))]
+        nameBindingSuperior(TemplateLabel),
+        #[rasn(tag(context, 1))]
+        nameBindingSubordinate(TemplateLabel),
+        #[rasn(tag(context, 2))]
+        attribute(TemplateLabel),
+        #[rasn(tag(context, 3))]
+        relationshipObjectPointer(TemplateLabel),
+        operation(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct RoleMappingSpecification {
+        pub role: Identifier,
+        #[rasn(identifier = "relatedClasses")]
+        pub related_classes: TemplateList,
+        #[rasn(tag(explicit(context, 0)), identifier = "representedBy")]
+        pub represented_by: Option<Representation>,
+        #[rasn(tag(context, 1))]
+        pub qualifies: Option<TemplateList>,
+    }
+    impl RoleMappingSpecification {
+        pub fn new(
+            role: Identifier,
+            related_classes: TemplateList,
+            represented_by: Option<Representation>,
+            qualifies: Option<TemplateList>,
+        ) -> Self {
+            Self {
+                role,
+                related_classes,
+                represented_by,
+                qualifies,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RoleMappingSpecificationSet(pub SetOf<RoleMappingSpecification>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum RoleOrRelationshipObject {
+        role(Identifier),
+        relationshipObject(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct RoleSpecifier {
+        pub role: Identifier,
+        #[rasn(tag(context, 0), identifier = "compatibleWith")]
+        pub compatible_with: Option<TemplateLabel>,
+        #[rasn(tag(context, 1), identifier = "permittedRoleCardinality")]
+        pub permitted_role_cardinality: Option<DefinedType>,
+        #[rasn(tag(context, 2), identifier = "requiredRoleCardinality")]
+        pub required_role_cardinality: Option<DefinedType>,
+        #[rasn(tag(explicit(context, 3)), identifier = "bindingSupport")]
+        pub binding_support: Option<OptionalIdentifier>,
+        #[rasn(tag(explicit(context, 4)), identifier = "unbindingSupport")]
+        pub unbinding_support: Option<OptionalIdentifier>,
+        #[rasn(tag(context, 5), identifier = "permittedRelationshipCardinality")]
+        pub permitted_relationship_cardinality: Option<DefinedType>,
+        #[rasn(identifier = "optionalRegisteredAs")]
+        pub optional_registered_as: OptionallyRegisteredAs,
+    }
+    impl RoleSpecifier {
+        pub fn new(
+            role: Identifier,
+            compatible_with: Option<TemplateLabel>,
+            permitted_role_cardinality: Option<DefinedType>,
+            required_role_cardinality: Option<DefinedType>,
+            binding_support: Option<OptionalIdentifier>,
+            unbinding_support: Option<OptionalIdentifier>,
+            permitted_relationship_cardinality: Option<DefinedType>,
+            optional_registered_as: OptionallyRegisteredAs,
+        ) -> Self {
+            Self {
+                role,
+                compatible_with,
+                permitted_role_cardinality,
+                required_role_cardinality,
+                binding_support,
+                unbinding_support,
+                permitted_relationship_cardinality,
+                optional_registered_as,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum SupportedChoice {
+        #[rasn(tag(explicit(context, 0)))]
+        establish(OptionalIdentifier),
+        #[rasn(tag(explicit(context, 1)))]
+        terminate(OptionalIdentifier),
+        #[rasn(tag(explicit(context, 2)))]
+        query(OptionalIdentifier),
+        #[rasn(tag(explicit(context, 3)))]
+        notify(OptionalIdentifier),
+        #[rasn(tag(explicit(context, 4)))]
+        userDefined(OptionalIdentifier),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Supports(pub SetOf<SupportedChoice>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum SystemsMgtOperation {
+        #[rasn(tag(context, 0))]
+        get(LabelAndParameters),
+        #[rasn(tag(context, 1))]
+        replace(LabelAndParameters),
+        #[rasn(tag(context, 2))]
+        add(LabelAndParameters),
+        #[rasn(tag(context, 3))]
+        remove(LabelAndParameters),
+        #[rasn(tag(context, 4))]
+        create(OptionalLabelAndParameters),
+        #[rasn(tag(context, 5))]
+        delete(TemplateList),
+        #[rasn(tag(context, 6))]
+        action(LabelAndParameters),
+        #[rasn(tag(context, 7))]
+        notification(LabelAndParameters),
+    }
+}

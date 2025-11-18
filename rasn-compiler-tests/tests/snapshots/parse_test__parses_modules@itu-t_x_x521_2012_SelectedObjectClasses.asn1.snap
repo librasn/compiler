@@ -1,0 +1,264 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x521_2012_SelectedObjectClasses.asn1
+---
+Warnings:
+LinkerError in ASN grammar: Failed to resolve reference in object set.
+LinkerError in ASN grammar: Failed to resolve reference in object set.
+LinkerError in ASN grammar: Failed to resolve reference in object set.
+LinkerError in ASN grammar: Failed to resolve reference in object set.
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod selected_object_classes {
+    extern crate alloc;
+    use super::authentication_framework::{
+        AUTHORITY_REVOCATION_LIST, CERTIFICATE_REVOCATION_LIST, CROSS_CERTIFICATE_PAIR,
+        C_ACERTIFICATE, DELTA_REVOCATION_LIST, SUPPORTED_ALGORITHMS, USER_CERTIFICATE,
+        USER_PASSWORD, USER_PWD,
+    };
+    use super::information_framework::*;
+    use super::selected_attribute_types::{
+        BUSINESS_CATEGORY, COMMON_NAME, CONTENT_URL, COUNTRY_NAME, DESCRIPTION,
+        DESTINATION_INDICATOR, DMD_NAME, EPC, EPC_IN_URN, FACSIMILE_TELEPHONE_NUMBER,
+        INTERNATIONAL_ISDNNUMBER, KNOWLEDGE_INFORMATION, LOCALITY_NAME, MEMBER, OID_C, OID_C1,
+        OID_C2, ORGANIZATIONAL_UNIT_NAME, ORGANIZATION_NAME, OWNER, PHYSICAL_DELIVERY_OFFICE_NAME,
+        POSTAL_ADDRESS, POSTAL_CODE, POST_OFFICE_BOX, PREFERRED_DELIVERY_METHOD,
+        PRESENTATION_ADDRESS, REGISTERED_ADDRESS, ROLE_OCCUPANT, SEARCH_GUIDE, SEE_ALSO,
+        SERIAL_NUMBER, STATE_OR_PROVINCE_NAME, STREET_ADDRESS, SUPPORTED_APPLICATION_CONTEXT,
+        SURNAME, TAG_AFI, TAG_LOCATION, TAG_OID, TELEPHONE_NUMBER, TELEX_NUMBER, TITLE, UII,
+        UII_FORMAT, UII_IN_URN, UNIQUE_MEMBER, URN_C, X121_ADDRESS,
+    };
+    use super::useful_definitions::{
+        AUTHENTICATION_FRAMEWORK, CERTIFICATE_EXTENSIONS, ID, ID_NF, ID_OC, INFORMATION_FRAMEWORK,
+        OBJECT_CLASS, SELECTED_ATTRIBUTE_TYPES,
+    };
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    pub static ID_NF_APPL_ENTITY_NAME_FORM: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_NF, &[11u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_NF_APPL_PROCESS_NAME_FORM: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_NF, &[10u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = "  Name forms"]
+    pub static ID_NF_COUNTRY_NAME_FORM: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_NF, &[0u32]].concat()).unwrap().to_owned());
+    #[doc = " id-nf-cRLDistPtNameForm     OBJECT IDENTIFIER ::= {id-nf 14}"]
+    pub static ID_NF_D_MDNAME_FORM: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_NF, &[15u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_NF_D_SANAME_FORM: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_NF, &[12u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_NF_DEVICE_NAME_FORM: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_NF, &[13u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_NF_G_ONNAME_FORM: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_NF, &[8u32]].concat()).unwrap().to_owned());
+    pub static ID_NF_LOC_NAME_FORM: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_NF, &[1u32]].concat()).unwrap().to_owned());
+    #[doc = " id-nf-subentryNameForm      OBJECT IDENTIFIER ::= {id-nf 16}"]
+    pub static ID_NF_OID_C1_NAME_FORM: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_NF, &[17u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_NF_OID_C2_NAME_FORM: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_NF, &[18u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_NF_OID_CNAME_FORM: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_NF, &[19u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_NF_ORG_NAME_FORM: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_NF, &[3u32]].concat()).unwrap().to_owned());
+    pub static ID_NF_ORG_PERSON_NAME_FORM: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_NF, &[6u32]].concat()).unwrap().to_owned());
+    pub static ID_NF_ORG_ROLE_NAME_FORM: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_NF, &[7u32]].concat()).unwrap().to_owned());
+    pub static ID_NF_ORG_UNIT_NAME_FORM: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_NF, &[4u32]].concat()).unwrap().to_owned());
+    pub static ID_NF_PERSON_NAME_FORM: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_NF, &[5u32]].concat()).unwrap().to_owned());
+    pub static ID_NF_RES_PERSON_NAME_FORM: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_NF, &[9u32]].concat()).unwrap().to_owned());
+    pub static ID_NF_S_OPNAME_FORM: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_NF, &[2u32]].concat()).unwrap().to_owned());
+    pub static ID_NF_URN_CNAME_FORM: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_NF, &[20u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_OC_APPLICATION_ENTITY: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_OC, &[12u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_OC_APPLICATION_PROCESS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_OC, &[11u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " Deprecated, see 6.15"]
+    pub static ID_OC_CERTIFICATION_AUTHORITY: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_OC, &[16u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " Deprecated, see 6.17"]
+    pub static ID_OC_CERTIFICATION_AUTHORITY_V2: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_OC, &[16u32, 2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = "  Object identifier assignments"]
+    #[doc = "  object identifiers assigned in other modules are shown in comments"]
+    #[doc = "  Object classes"]
+    #[doc = "  id-oc-top                  OBJECT IDENTIFIER ::= {id-oc 0} Defined in X.501 | Part 2"]
+    #[doc = "  id-oc-alias                OBJECT IDENTIFIER ::= {id-oc 1} Defined in X.501 | Part 2"]
+    pub static ID_OC_COUNTRY: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_OC, &[2u32]].concat()).unwrap().to_owned());
+    pub static ID_OC_D_SA: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_OC, &[13u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_OC_DEVICE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_OC, &[14u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-oc-cRLDistributionPoint  OBJECT IDENTIFIER ::= {id-oc 19} Defined in X.509 | Part 8"]
+    pub static ID_OC_DMD: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_OC, &[20u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_OC_EPC_TAG_INFO_OBJ: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_OC, &[43u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_OC_EPC_TAG_TYPE_OBJ: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_OC, &[44u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_OC_GROUP_OF_NAMES: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_OC, &[9u32]].concat()).unwrap().to_owned());
+    #[doc = " Deprecated, see 6.18"]
+    pub static ID_OC_GROUP_OF_UNIQUE_NAMES: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_OC, &[17u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_OC_ISO_TAG_INFO: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_OC, &[38u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_OC_ISO_TAG_TYPE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_OC, &[39u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_OC_LOCALITY: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_OC, &[3u32]].concat()).unwrap().to_owned());
+    #[doc = " id-oc-pkiUser               OBJECT IDENTIFIER ::= {id-oc 21} Defined in X.509 | Part 8"]
+    #[doc = " id-oc-pkiCA                 OBJECT IDENTIFIER ::= {id-oc 22} Defined in X.509 | Part 8"]
+    #[doc = " id-oc-deltaCRL              OBJECT IDENTIFIER ::= {id-oc 23} Defined in X.509 | Part 8"]
+    #[doc = " id-oc-pmiUser               OBJECT IDENTIFIER ::= {id-oc 24} Defined in X.509 | Part 8"]
+    #[doc = " id-oc-pmiAA                 OBJECT IDENTIFIER ::= {id-oc 25} Defined in X.509 | Part 8"]
+    #[doc = " id-oc-pmiSOA                OBJECT IDENTIFIER ::= {id-oc 26} Defined in X.509 | Part 8"]
+    #[doc = " id-oc-attCertCRLDistributionPts"]
+    #[doc = "                             OBJECT IDENTIFIER ::= {id-oc 27} Defined in X.509 | Part 8"]
+    #[doc = " id-oc-parent                OBJECT IDENTIFIER ::= {id-oc 28} Defined in X.501 | Part 2"]
+    #[doc = " id-oc-child                 OBJECT IDENTIFIER ::= {id-oc 29} Defined in X.501 | Part 2"]
+    #[doc = " id-oc-cpCps                 OBJECT IDENTIFIER ::= {id-oc 30} Defined in X.509 | Part 8"]
+    #[doc = " id-oc-pkiCertPath           OBJECT IDENTIFIER ::= {id-oc 31} Defined in X.509 | Part 8"]
+    #[doc = " id-oc-privilegePolicy       OBJECT IDENTIFIER ::= {id-oc 32} Defined in X.509 | Part 8"]
+    #[doc = " id-oc-pmiDelegationPath     OBJECT IDENTIFIER ::= {id-oc 33} Defined in X.509 | Part 8"]
+    #[doc = " id-oc-protectedPrivilegePolicy"]
+    #[doc = "                             OBJECT IDENTIFIER ::= {id-oc 34} Defined in X.509 | Part 8"]
+    pub static ID_OC_OID_C1OBJ: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_OC, &[35u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_OC_OID_C2OBJ: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_OC, &[36u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_OC_OID_COBJ: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_OC, &[37u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_OC_ORGANIZATION: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_OC, &[4u32]].concat()).unwrap().to_owned());
+    pub static ID_OC_ORGANIZATIONAL_PERSON: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_OC, &[7u32]].concat()).unwrap().to_owned());
+    pub static ID_OC_ORGANIZATIONAL_ROLE: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_OC, &[8u32]].concat()).unwrap().to_owned());
+    pub static ID_OC_ORGANIZATIONAL_UNIT: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_OC, &[5u32]].concat()).unwrap().to_owned());
+    pub static ID_OC_PERSON: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_OC, &[6u32]].concat()).unwrap().to_owned());
+    pub static ID_OC_RESIDENTIAL_PERSON: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_OC, &[10u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_OC_STRONG_AUTHENTICATION_USER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_OC, &[15u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_OC_URN_COBJ: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_OC, &[42u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-oc-integrityInfo         OBJECT IDENTIFIER ::= {id-oc 40} Defined in X.501 | Part 2"]
+    pub static ID_OC_USER_PWD_CLASS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_OC, &[41u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_OC_USER_SECURITY_INFORMATION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_OC, &[18u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_OID_ARC: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID, &[5u32]].concat()).unwrap().to_owned());
+    pub static ID_OID_ARC_NF: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID, &[6u32]].concat()).unwrap().to_owned());
+    pub static ID_OID_ROOT: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID, &[3u32]].concat()).unwrap().to_owned());
+    pub static ID_OID_ROOT_NF: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID, &[4u32]].concat()).unwrap().to_owned());
+}

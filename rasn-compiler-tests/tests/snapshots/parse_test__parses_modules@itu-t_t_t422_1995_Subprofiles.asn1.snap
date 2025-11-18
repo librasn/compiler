@@ -1,0 +1,296 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_t_t422_1995_Subprofiles.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod subprofiles {
+    extern crate alloc;
+    use super::document_profile_descriptor::{
+        CharacterData, DateAndTime, DocumentReference, LocalFileReferences, Originators,
+        OtherUserInformation, PersonalName, SecurityInformation,
+    };
+    use super::location_expressions::LocationExpression;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "SET")]
+    pub struct AnonymousAnonymousDatesAndTimesRevisionHistoryRevisers {
+        #[rasn(tag(context, 0))]
+        pub names: Option<SetOf<PersonalName>>,
+        #[rasn(tag(context, 1))]
+        pub position: Option<CharacterData>,
+        #[rasn(tag(context, 2))]
+        pub organization: Option<CharacterData>,
+    }
+    impl AnonymousAnonymousDatesAndTimesRevisionHistoryRevisers {
+        pub fn new(
+            names: Option<SetOf<PersonalName>>,
+            position: Option<CharacterData>,
+            organization: Option<CharacterData>,
+        ) -> Self {
+            Self {
+                names,
+                position,
+                organization,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AnonymousDatesAndTimesRevisionHistoryRevisers(
+        pub SetOf<AnonymousAnonymousDatesAndTimesRevisionHistoryRevisers>,
+    );
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "SET")]
+    pub struct AnonymousDatesAndTimesRevisionHistory {
+        #[rasn(tag(context, 0), identifier = "revision-date-and-time")]
+        pub revision_date_and_time: Option<DateAndTime>,
+        #[rasn(tag(context, 1), identifier = "version-identifier")]
+        pub version_identifier: Option<CharacterData>,
+        #[rasn(tag(context, 2))]
+        pub revisers: Option<AnonymousDatesAndTimesRevisionHistoryRevisers>,
+        #[rasn(tag(context, 3), identifier = "version-reference")]
+        pub version_reference: Option<DocumentOrDocumentFragmentReference>,
+        #[rasn(tag(context, 4), identifier = "user-comments")]
+        pub user_comments: Option<CharacterData>,
+    }
+    impl AnonymousDatesAndTimesRevisionHistory {
+        pub fn new(
+            revision_date_and_time: Option<DateAndTime>,
+            version_identifier: Option<CharacterData>,
+            revisers: Option<AnonymousDatesAndTimesRevisionHistoryRevisers>,
+            version_reference: Option<DocumentOrDocumentFragmentReference>,
+            user_comments: Option<CharacterData>,
+        ) -> Self {
+            Self {
+                revision_date_and_time,
+                version_identifier,
+                revisers,
+                version_reference,
+                user_comments,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DatesAndTimesRevisionHistory(pub SequenceOf<AnonymousDatesAndTimesRevisionHistory>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Dates-and-Times")]
+    pub struct DatesAndTimes {
+        #[rasn(tag(context, 0), identifier = "document-fragment-date-and-time")]
+        pub document_fragment_date_and_time: Option<DateAndTime>,
+        #[rasn(tag(context, 1), identifier = "creation-date-and-time")]
+        pub creation_date_and_time: Option<DateAndTime>,
+        #[rasn(tag(context, 2), identifier = "local-filing-date-and-time")]
+        pub local_filing_date_and_time: Option<SequenceOf<DateAndTime>>,
+        #[rasn(tag(context, 3), identifier = "expiry-date-and-time")]
+        pub expiry_date_and_time: Option<DateAndTime>,
+        #[rasn(tag(context, 4), identifier = "start-date-and-time")]
+        pub start_date_and_time: Option<DateAndTime>,
+        #[rasn(tag(context, 5), identifier = "purge-date-and-time")]
+        pub purge_date_and_time: Option<DateAndTime>,
+        #[rasn(tag(context, 6), identifier = "release-date-and-time")]
+        pub release_date_and_time: Option<DateAndTime>,
+        #[rasn(tag(context, 7), identifier = "revision-history")]
+        pub revision_history: Option<DatesAndTimesRevisionHistory>,
+    }
+    impl DatesAndTimes {
+        pub fn new(
+            document_fragment_date_and_time: Option<DateAndTime>,
+            creation_date_and_time: Option<DateAndTime>,
+            local_filing_date_and_time: Option<SequenceOf<DateAndTime>>,
+            expiry_date_and_time: Option<DateAndTime>,
+            start_date_and_time: Option<DateAndTime>,
+            purge_date_and_time: Option<DateAndTime>,
+            release_date_and_time: Option<DateAndTime>,
+            revision_history: Option<DatesAndTimesRevisionHistory>,
+        ) -> Self {
+            Self {
+                document_fragment_date_and_time,
+                creation_date_and_time,
+                local_filing_date_and_time,
+                expiry_date_and_time,
+                start_date_and_time,
+                purge_date_and_time,
+                release_date_and_time,
+                revision_history,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Document-Fragment-Description")]
+    pub struct DocumentFragmentDescription {
+        #[rasn(tag(context, 0))]
+        pub title: Option<CharacterData>,
+        #[rasn(tag(context, 1))]
+        pub subject: Option<CharacterData>,
+        #[rasn(tag(context, 2), identifier = "document-fragment-type")]
+        pub document_fragment_type: Option<CharacterData>,
+        #[rasn(tag(context, 3), identifier = "abstract")]
+        pub r_abstract: Option<CharacterData>,
+        #[rasn(tag(context, 4))]
+        pub keywords: Option<SetOf<CharacterData>>,
+    }
+    impl DocumentFragmentDescription {
+        pub fn new(
+            title: Option<CharacterData>,
+            subject: Option<CharacterData>,
+            document_fragment_type: Option<CharacterData>,
+            r_abstract: Option<CharacterData>,
+            keywords: Option<SetOf<CharacterData>>,
+        ) -> Self {
+            Self {
+                title,
+                subject,
+                document_fragment_type,
+                r_abstract,
+                keywords,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Document-Fragment-Management-Attributes")]
+    pub struct DocumentFragmentManagementAttributes {
+        #[rasn(tag(context, 0), identifier = "document-fragment-description")]
+        pub document_fragment_description: Option<DocumentFragmentDescription>,
+        #[rasn(tag(context, 1), identifier = "dates-and-times")]
+        pub dates_and_times: Option<DatesAndTimes>,
+        #[rasn(tag(context, 2))]
+        pub originators: Option<Originators>,
+        #[rasn(tag(context, 3), identifier = "other-user-information")]
+        pub other_user_information: Option<OtherUserInformation>,
+        #[rasn(tag(context, 4), identifier = "external-references")]
+        pub external_references: Option<ExternalReferences2>,
+        #[rasn(tag(context, 5), identifier = "local-file-references")]
+        pub local_file_references: Option<LocalFileReferences>,
+        #[rasn(tag(context, 6))]
+        pub languages: Option<SetOf<CharacterData>>,
+        #[rasn(tag(context, 7), identifier = "security-information")]
+        pub security_information: Option<SecurityInformation>,
+    }
+    impl DocumentFragmentManagementAttributes {
+        pub fn new(
+            document_fragment_description: Option<DocumentFragmentDescription>,
+            dates_and_times: Option<DatesAndTimes>,
+            originators: Option<Originators>,
+            other_user_information: Option<OtherUserInformation>,
+            external_references: Option<ExternalReferences2>,
+            local_file_references: Option<LocalFileReferences>,
+            languages: Option<SetOf<CharacterData>>,
+            security_information: Option<SecurityInformation>,
+        ) -> Self {
+            Self {
+                document_fragment_description,
+                dates_and_times,
+                originators,
+                other_user_information,
+                external_references,
+                local_file_references,
+                languages,
+                security_information,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "Document-or-Document-Fragment-Reference")]
+    pub enum DocumentOrDocumentFragmentReference {
+        #[rasn(tag(context, 0))]
+        document(DocumentReference),
+        #[rasn(tag(context, 1), identifier = "document-fragment")]
+        document_fragment(SubprofileReference),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "External-References2")]
+    pub struct ExternalReferences2 {
+        #[rasn(
+            tag(context, 0),
+            identifier = "references-to-other-documents-or-document-fragments"
+        )]
+        pub references_to_other_documents_or_document_fragments:
+            Option<SetOf<DocumentOrDocumentFragmentReference>>,
+        #[rasn(
+            tag(context, 1),
+            identifier = "superseded-documents-or-document-fragments"
+        )]
+        pub superseded_documents_or_document_fragments:
+            Option<SetOf<DocumentOrDocumentFragmentReference>>,
+    }
+    impl ExternalReferences2 {
+        pub fn new(
+            references_to_other_documents_or_document_fragments: Option<
+                SetOf<DocumentOrDocumentFragmentReference>,
+            >,
+            superseded_documents_or_document_fragments: Option<
+                SetOf<DocumentOrDocumentFragmentReference>,
+            >,
+        ) -> Self {
+            Self {
+                references_to_other_documents_or_document_fragments,
+                superseded_documents_or_document_fragments,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Subprofile-Descriptor")]
+    pub struct SubprofileDescriptor {
+        #[rasn(tag(context, 0), identifier = "subprofile-identifier")]
+        pub subprofile_identifier: SubprofileIdentifier,
+        #[rasn(tag(context, 1), identifier = "subprofile-reference")]
+        pub subprofile_reference: Option<SubprofileReference>,
+        #[rasn(tag(context, 2), identifier = "subprofile-precedence")]
+        pub subprofile_precedence: Option<Integer>,
+        #[rasn(tag(context, 3), identifier = "document-fragment-reference")]
+        pub document_fragment_reference: LocationExpression,
+        #[rasn(tag(context, 4), identifier = "content-architecture-classes")]
+        pub content_architecture_classes: Option<SetOf<ObjectIdentifier>>,
+        #[rasn(
+            tag(context, 5),
+            identifier = "document-fragment-management-attributes"
+        )]
+        pub document_fragment_management_attributes: Option<DocumentFragmentManagementAttributes>,
+    }
+    impl SubprofileDescriptor {
+        pub fn new(
+            subprofile_identifier: SubprofileIdentifier,
+            subprofile_reference: Option<SubprofileReference>,
+            subprofile_precedence: Option<Integer>,
+            document_fragment_reference: LocationExpression,
+            content_architecture_classes: Option<SetOf<ObjectIdentifier>>,
+            document_fragment_management_attributes: Option<DocumentFragmentManagementAttributes>,
+        ) -> Self {
+            Self {
+                subprofile_identifier,
+                subprofile_reference,
+                subprofile_precedence,
+                document_fragment_reference,
+                content_architecture_classes,
+                document_fragment_management_attributes,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, tag(application, 8), identifier = "Subprofile-Identifier")]
+    pub struct SubprofileIdentifier(pub PrintableString);
+    #[doc = "  only digits and spaces are used in the present version of this Specification;"]
+    #[doc = "  other characters are reserved for extensions"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "Subprofile-Reference")]
+    pub enum SubprofileReference {
+        #[rasn(tag(context, 0), identifier = "unique-reference")]
+        unique_reference(ObjectIdentifier),
+        #[rasn(tag(context, 1), identifier = "descriptive-reference")]
+        descriptive_reference(CharacterData),
+    }
+}

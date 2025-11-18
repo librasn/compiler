@@ -1,0 +1,70 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x722_1992_NotificationModule.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod notification_module {
+    extern crate alloc;
+    use super::attribute_asn1_module::{
+        BackedUpStatus, ManagementExtension, PerceivedSeverity, ProbableCause,
+        ProposedRepairActions, ThresholdInfo, TrendIndication,
+    };
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct ErrorInfo {
+        #[rasn(tag(context, 0), identifier = "probableCause")]
+        pub probable_cause: Option<ProbableCause>,
+        #[rasn(tag(context, 1), identifier = "perceivedSeverity")]
+        pub perceived_severity: Option<PerceivedSeverity>,
+        #[rasn(tag(context, 2), identifier = "trendIndication")]
+        pub trend_indication: Option<TrendIndication>,
+        #[rasn(tag(context, 3), identifier = "backedUpStatus")]
+        pub backed_up_status: Option<BackedUpStatus>,
+        #[rasn(tag(context, 4), identifier = "proposedRepairActions")]
+        pub proposed_repair_actions: Option<ProposedRepairActions>,
+        #[rasn(tag(context, 5), identifier = "thresholdInfo")]
+        pub threshold_info: Option<ThresholdInfo>,
+        #[rasn(tag(context, 6), identifier = "otherInfo")]
+        pub other_info: Option<OtherInfo>,
+    }
+    impl ErrorInfo {
+        pub fn new(
+            probable_cause: Option<ProbableCause>,
+            perceived_severity: Option<PerceivedSeverity>,
+            trend_indication: Option<TrendIndication>,
+            backed_up_status: Option<BackedUpStatus>,
+            proposed_repair_actions: Option<ProposedRepairActions>,
+            threshold_info: Option<ThresholdInfo>,
+            other_info: Option<OtherInfo>,
+        ) -> Self {
+            Self {
+                probable_cause,
+                perceived_severity,
+                trend_indication,
+                backed_up_status,
+                proposed_repair_actions,
+                threshold_info,
+                other_info,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct ErrorResult(pub ());
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct OtherInfo(pub SetOf<ManagementExtension>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ProtocolError(pub SetOf<ManagementExtension>);
+}

@@ -1,0 +1,56 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q1228_1997_IN-CS2-SCF-SRF-ops-args.asn1
+---
+Warnings:
+NotYetInplemented in ASN grammar: Value references of path length > 2 are not yet supported! Found reference bound.&.numOfExtensions
+NotYetInplemented in ASN grammar: Value references of path length > 2 are not yet supported! Found reference bound.&.numOfExtensions
+NotYetInplemented in ASN grammar: Value references of path length > 2 are not yet supported! Found reference bound.&.numOfExtensions
+NotYetInplemented in ASN grammar: Value references of path length > 2 are not yet supported! Found reference bound.&.numOfExtensions
+LinkerError in ASN grammar: Failed to resolve supertype Digits of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype InformationToSend of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve reference of ElsewhereDefined: Media
+LinkerError in ASN grammar: Failed to resolve supertype InformationToSend of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype InformationToSend of parameterized implementation.
+NotYetInplemented in ASN grammar: Value references of path length > 2 are not yet supported! Found reference bound.&.maxRecordedMessageUnits
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod in_cs2_scf_srf_ops_args {
+    extern crate alloc;
+    use super::in_cs2_classes::*;
+    use super::in_cs2_datatypes::{
+        CallSegmentID, CollectedInfo, Digits, ExtensionField, GenericNumber, InformationToRecord,
+        InformationToSend, LegID, MailBoxID, Media, ReceivedStatus, RecordedMessageID,
+    };
+    use super::in_cs2_errortypes::{
+        CANCELLED, IMPROPER_CALLER_RESPONSE, MISSING_PARAMETER, PARAMETER_OUT_OF_RANGE,
+        SYSTEM_FAILURE, TASK_REFUSED, UNAVAILABLE_RESOURCE, UNEXPECTED_COMPONENT_SEQUENCE,
+        UNEXPECTED_DATA_VALUE, UNEXPECTED_PARAMETER,
+    };
+    use super::in_cs2_object_identifiers::{
+        CLASSES, DATATYPES, ERRORTYPES, OPERATIONCODES, ROS_INFORMATION_OBJECTS,
+    };
+    use super::in_cs2_operationcodes::{
+        OPCODE_PLAY_ANNOUNCEMENT, OPCODE_PROMPT_AND_COLLECT_USER_INFORMATION,
+        OPCODE_PROMPT_AND_RECEIVE_MESSAGE, OPCODE_SCRIPT_CLOSE, OPCODE_SCRIPT_EVENT,
+        OPCODE_SCRIPT_INFORMATION, OPCODE_SCRIPT_RUN, OPCODE_SPECIALIZED_RESOURCE_REPORT,
+    };
+    use super::remote_operations_information_objects::*;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " Direction: SRF ® SCF, Timer: Tsrr"]
+    #[doc = " This operation is used as  the response to a PlayAnnouncement operation when the announcement completed"]
+    #[doc = " report indication is set."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct SpecializedResourceReportArg(pub ());
+}

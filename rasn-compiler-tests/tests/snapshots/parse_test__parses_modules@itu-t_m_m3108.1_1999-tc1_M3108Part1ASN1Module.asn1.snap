@@ -1,0 +1,655 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_m_m3108.1_1999-tc1_M3108Part1ASN1Module.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod m3108_part1_asn1_module {
+    extern crate alloc;
+    use super::asn1_defined_types_module::NameType;
+    use super::attribute_asn1_module::{
+        AdditionalInformation, AdditionalText, AdministrativeState, AttributeList,
+        AvailabilityStatus, NotificationIdentifier, SourceIndicator,
+    };
+    use super::cmip_1::ObjectInstance;
+    use super::x790_asn1_module::{LocationAddress, PersonReach, ServiceDescription};
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AddSapsToSagInformation {
+        #[rasn(identifier = "listOfSaps")]
+        pub list_of_saps: Option<ListOfSaps>,
+        #[rasn(identifier = "numberOfServiceAccessPoints")]
+        pub number_of_service_access_points: Option<Integer>,
+    }
+    impl AddSapsToSagInformation {
+        pub fn new(
+            list_of_saps: Option<ListOfSaps>,
+            number_of_service_access_points: Option<Integer>,
+        ) -> Self {
+            Self {
+                list_of_saps,
+                number_of_service_access_points,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum AddSapsToSagResult {
+        listOfSaps(ListOfSaps),
+        addToSagError(AddToSagError),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum AddToSagError {
+        invalidSapId = 0,
+        invalidSagId = 1,
+        sapNotInAppropriateUsageState = 2,
+        resourcesNotAvailable = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AliasName(pub Name);
+    #[doc = " from TC1"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum Bandwidth {
+        #[rasn(tag(context, 0))]
+        bitsPerSecond(Number),
+        #[rasn(tag(context, 1))]
+        kiloBitsPerSecond(Number),
+        #[rasn(tag(context, 2))]
+        megaBitsPerSecond(Number),
+        #[rasn(tag(context, 3))]
+        gigaBitsPerSecond(Number),
+        #[rasn(tag(context, 4))]
+        teraBitsPerSecond(Number),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CircuitId(pub NameType);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CircuitNumber(pub Number);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum Contact {
+        person(PersonReach),
+        contactObject(ObjectInstance),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Cp(pub TopologicalEntity);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum Cpe {
+        name(Name),
+        object(ObjectInstance),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum CreateLCSError {
+        unknownServiceDescription = 0,
+        unknownServiceType = 1,
+        resourcesUnavailable = 2,
+        requestedBandwidthNotAvailable = 3,
+        quantitySpecifiedOutOfRange = 4,
+        contractViolation = 5,
+        invalidValue = 6,
+        requiredParameterNotAvailable = 7,
+        serviceCannotBeCompleted = 8,
+        invalidServiceTerminationDate = 9,
+        invalidSchedule = 10,
+        invalidServiceAvailabilityDate = 11,
+        requestAlreadyClosed = 12,
+        invalidAddress = 13,
+        nonExistentSAP = 14,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum CreateLinkConnectionError {
+        unknownServiceDescription = 0,
+        unknownServiceType = 1,
+        resourcesUnavailable = 2,
+        requestedLinkConnectionBandwidthNotAvailable = 3,
+        contractViolation = 4,
+        invalidValue = 5,
+        requiredParameterNotAvailable = 6,
+        linkConnectionRequestCannotBeCompleted = 7,
+        invalidLinkConnectionTerminationDate = 8,
+        invalidLinkConnectionAvailabilityDate = 9,
+        nonExistentLinkConnectionPoint = 10,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum CreateSadError {
+        invalidServiceType = 0,
+        invalidServiceDescription = 1,
+        duplicateSADIdentifier = 2,
+        contractViolation = 4,
+    }
+    #[doc = " from TC1"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum CreateSagError {
+        invalidLocation = 0,
+        invalidSagId = 1,
+        invalidSadId = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum DeleteLCSError {
+        alreadyDeleted = 0,
+        invalidCircuitNumber = 1,
+        invalidServiceTerminationDate = 2,
+        notBeingInAppropriateServiceAdministrativeState = 3,
+        contractViolation = 4,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum DeleteLinkConnectionError {
+        alreadyDeleted = 0,
+        invalidLinkConnectionIdentifier = 1,
+        invalidLinkConnectionTerminationDate = 2,
+        notBeingInAppropriateLinkConnectionAdministrativeState = 3,
+        contractViolation = 4,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum DeleteSadError {
+        invalidSADId = 0,
+        sADContainsSAGs = 1,
+        resourceInUse = 2,
+    }
+    #[doc = " from TC1"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum DeleteSagError {
+        invalidSagId = 0,
+        invalidSadId = 1,
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousDiversitySeveralGroups {
+        #[rasn(identifier = "numberOfCircuits")]
+        pub number_of_circuits: Integer,
+        #[rasn(identifier = "topologicalElements")]
+        pub topological_elements: SetOf<TopologicalEntity>,
+    }
+    impl AnonymousDiversitySeveralGroups {
+        pub fn new(
+            number_of_circuits: Integer,
+            topological_elements: SetOf<TopologicalEntity>,
+        ) -> Self {
+            Self {
+                number_of_circuits,
+                topological_elements,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DiversitySeveralGroups(pub SetOf<AnonymousDiversitySeveralGroups>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum Diversity {
+        #[rasn(tag(context, 1))]
+        topologicalElements(SetOf<TopologicalEntity>),
+        #[rasn(tag(context, 2))]
+        otherCircuits(SetOf<CircuitId>),
+        #[rasn(tag(context, 3))]
+        severalGroups(DiversitySeveralGroups),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct EquipmentManufacturer(pub Name);
+    #[doc = " from TC1"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct EquipmentType(pub Name);
+    #[doc = " from TC1"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct LcsModifyProgressProblemReport {
+        #[rasn(tag(context, 1), identifier = "sourceIndicator")]
+        pub source_indicator: Option<SourceIndicator>,
+        #[rasn(tag(context, 2), identifier = "lcsModifyProgressProblemReportInfo")]
+        pub lcs_modify_progress_problem_report_info: LcsModifyProgressProblemReportInfo,
+        #[rasn(tag(context, 3), identifier = "notificationIdentifier")]
+        pub notification_identifier: Option<NotificationIdentifier>,
+        #[rasn(tag(context, 4), identifier = "additionalText")]
+        pub additional_text: Option<AdditionalText>,
+        #[rasn(tag(context, 5), identifier = "additionalInformation")]
+        pub additional_information: Option<AdditionalInformation>,
+    }
+    impl LcsModifyProgressProblemReport {
+        pub fn new(
+            source_indicator: Option<SourceIndicator>,
+            lcs_modify_progress_problem_report_info: LcsModifyProgressProblemReportInfo,
+            notification_identifier: Option<NotificationIdentifier>,
+            additional_text: Option<AdditionalText>,
+            additional_information: Option<AdditionalInformation>,
+        ) -> Self {
+            Self {
+                source_indicator,
+                lcs_modify_progress_problem_report_info,
+                notification_identifier,
+                additional_text,
+                additional_information,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum LcsModifyProgressProblemReportInfo {
+        resourcesUnavailable = 0,
+        requestedBandwidthNotAvailable = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct LcsRequestProgressProblemReport {
+        #[rasn(tag(context, 1), identifier = "sourceIndicator")]
+        pub source_indicator: Option<SourceIndicator>,
+        #[rasn(tag(context, 2), identifier = "lcsRequestProgressProblemReportInfo")]
+        pub lcs_request_progress_problem_report_info: LcsRequestProgressProblemReportInfo,
+        #[rasn(tag(context, 3), identifier = "notificationIdentifier")]
+        pub notification_identifier: Option<NotificationIdentifier>,
+        #[rasn(tag(context, 4), identifier = "additionalText")]
+        pub additional_text: Option<AdditionalText>,
+        #[rasn(tag(context, 5), identifier = "additionalInformation")]
+        pub additional_information: Option<AdditionalInformation>,
+    }
+    impl LcsRequestProgressProblemReport {
+        pub fn new(
+            source_indicator: Option<SourceIndicator>,
+            lcs_request_progress_problem_report_info: LcsRequestProgressProblemReportInfo,
+            notification_identifier: Option<NotificationIdentifier>,
+            additional_text: Option<AdditionalText>,
+            additional_information: Option<AdditionalInformation>,
+        ) -> Self {
+            Self {
+                source_indicator,
+                lcs_request_progress_problem_report_info,
+                notification_identifier,
+                additional_text,
+                additional_information,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum LcsRequestProgressProblemReportInfo {
+        resourcesUnavailable = 0,
+        requestedBandwidthNotAvailable = 1,
+        serviceCannotBeCompleted = 2,
+        invalidServiceAvailabilityDate = 3,
+        invalidAddress = 4,
+        nonExistentSap = 5,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct LinkConnectionModifyProgressProblemReport {
+        #[rasn(tag(context, 1), identifier = "sourceIndicator")]
+        pub source_indicator: Option<SourceIndicator>,
+        #[rasn(
+            tag(context, 2),
+            identifier = "linkConnectionModifyProgressProblemReportInfo"
+        )]
+        pub link_connection_modify_progress_problem_report_info:
+            LinkConnectionModifyProgressProblemReportInfo,
+        #[rasn(tag(context, 3), identifier = "notificationIdentifier")]
+        pub notification_identifier: Option<NotificationIdentifier>,
+        #[rasn(tag(context, 4), identifier = "additionalText")]
+        pub additional_text: Option<AdditionalText>,
+        #[rasn(tag(context, 5), identifier = "additionalInformation")]
+        pub additional_information: Option<AdditionalInformation>,
+    }
+    impl LinkConnectionModifyProgressProblemReport {
+        pub fn new(
+            source_indicator: Option<SourceIndicator>,
+            link_connection_modify_progress_problem_report_info : LinkConnectionModifyProgressProblemReportInfo,
+            notification_identifier: Option<NotificationIdentifier>,
+            additional_text: Option<AdditionalText>,
+            additional_information: Option<AdditionalInformation>,
+        ) -> Self {
+            Self {
+                source_indicator,
+                link_connection_modify_progress_problem_report_info,
+                notification_identifier,
+                additional_text,
+                additional_information,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum LinkConnectionModifyProgressProblemReportInfo {
+        resourcesUnavailable = 0,
+        requestedBandwidthNotAvailable = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct LinkConnectionRequestProgressProblemReport {
+        #[rasn(tag(context, 1), identifier = "sourceIndicator")]
+        pub source_indicator: Option<SourceIndicator>,
+        #[rasn(
+            tag(context, 2),
+            identifier = "linkConnectionRequestProgressProblemReportInfo"
+        )]
+        pub link_connection_request_progress_problem_report_info:
+            LinkConnectionRequestProgressProblemReportInfo,
+        #[rasn(tag(context, 3), identifier = "notificationIdentifier")]
+        pub notification_identifier: Option<NotificationIdentifier>,
+        #[rasn(tag(context, 4), identifier = "additionalText")]
+        pub additional_text: Option<AdditionalText>,
+        #[rasn(tag(context, 5), identifier = "additionalInformation")]
+        pub additional_information: Option<AdditionalInformation>,
+    }
+    impl LinkConnectionRequestProgressProblemReport {
+        pub fn new(
+            source_indicator: Option<SourceIndicator>,
+            link_connection_request_progress_problem_report_info : LinkConnectionRequestProgressProblemReportInfo,
+            notification_identifier: Option<NotificationIdentifier>,
+            additional_text: Option<AdditionalText>,
+            additional_information: Option<AdditionalInformation>,
+        ) -> Self {
+            Self {
+                source_indicator,
+                link_connection_request_progress_problem_report_info,
+                notification_identifier,
+                additional_text,
+                additional_information,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum LinkConnectionRequestProgressProblemReportInfo {
+        resourcesUnavailable = 0,
+        requestedLinkConnectionBandwidthNotAvailable = 1,
+        linkConnectionRequestCannotBeCompleted = 2,
+        nonExistentLinkConnectionPoint = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ListOfSags(pub SetOf<SagId>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ListOfSaps(pub SetOf<Sap>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct M3108FunctionalUnits(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ModelType(pub Name);
+    #[doc = " from TC1"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ModifyLCSError(pub UpdateLCSError);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum ModifyLinkConnectionError {
+        requiredBandwidthNotAvailable = 0,
+        resourcesUnavailable = 1,
+        unknownRoute = 2,
+        serviceAdministrativeStateUnlocked = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Name(pub GraphicString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct Null(pub ());
+    #[doc = " from TC1"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0.."))]
+    pub struct Number(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("1.."))]
+    pub struct NumberOfUnspecifiedSaps(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct OriginatingLocation(pub LocationAddress);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct OriginatingLocationCP(pub TopologicalEntity);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct OriginatingLocationSap(pub TopologicalEntity);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum Procedure {
+        name(Name),
+        number(Integer),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct RemoveFromSagError {
+        #[rasn(tag(context, 1), identifier = "sourceIndicator")]
+        pub source_indicator: Option<SourceIndicator>,
+        #[rasn(tag(context, 2), identifier = "removeFromSagErrorInfo")]
+        pub remove_from_sag_error_info: RemoveFromSagErrorInfo,
+        #[rasn(tag(context, 3), identifier = "notificationIdentifier")]
+        pub notification_identifier: Option<NotificationIdentifier>,
+        #[rasn(tag(context, 4), identifier = "additionalText")]
+        pub additional_text: Option<AdditionalText>,
+        #[rasn(tag(context, 5), identifier = "additionalInformation")]
+        pub additional_information: Option<AdditionalInformation>,
+    }
+    impl RemoveFromSagError {
+        pub fn new(
+            source_indicator: Option<SourceIndicator>,
+            remove_from_sag_error_info: RemoveFromSagErrorInfo,
+            notification_identifier: Option<NotificationIdentifier>,
+            additional_text: Option<AdditionalText>,
+            additional_information: Option<AdditionalInformation>,
+        ) -> Self {
+            Self {
+                source_indicator,
+                remove_from_sag_error_info,
+                notification_identifier,
+                additional_text,
+                additional_information,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum RemoveFromSagErrorInfo {
+        invalidSapId = 0,
+        invalidSagId = 1,
+        sapNotInAppropriateUsageState = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0.."))]
+    pub struct RequestNumber(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RequestedInitialServiceAdministrativeState(pub AdministrativeState);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Route(pub SequenceOf<TopologicalEntity>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SadId(pub NameType);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SagId(pub NameType);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SagLocation(pub LocationAddress);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Sap(pub Name);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ServiceDescriptionList(pub SetOf<ServiceDescription>);
+    #[doc = " from TC1"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ServiceRequestState {
+        #[rasn(identifier = "pre-processing")]
+        pre_processing = 0,
+        #[rasn(identifier = "open-active")]
+        open_active = 1,
+        pending = 2,
+        closed = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ServiceTerminationDate {
+        time(Time),
+        continous(()),
+    }
+    #[doc = " without fractions of seconds, with time zone indication."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TerminatingLocation(pub LocationAddress);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TerminatingLocationCP(pub TopologicalEntity);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TerminatingLocationSap(pub TopologicalEntity);
+    #[doc = " continous means that no termination date has been specified, this is the default value"]
+    #[doc = " for ServiceTerminationDate"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Time(pub GeneralizedTime);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum TopologicalEntity {
+        name(Name),
+        object(ObjectInstance),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum UpdateLCSError {
+        invalidCpeType = 0,
+        invalidSAP = 1,
+        resourcesUnavailable = 2,
+        requiredBandwidthNotAvailable = 3,
+        unknownRoute = 4,
+        contractViolation = 5,
+        serviceAdminstrativeStateUnlocked = 6,
+        invalidCircuitNumber = 7,
+        invalidServiceTerminationDate = 8,
+        invalidSchedule = 9,
+        invalidServiceAvailableState = 10,
+        invalidProviderRequestNumber = 11,
+        invalidAliasName = 12,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum UpdateLinkConnectionError {
+        invalidLinkConnectionPoint = 0,
+        resourcesUnavailable = 1,
+        requiredBandwidthNotAvailable = 2,
+        contractViolation = 3,
+        linkConnectionAdminstrativeStateUnlocked = 4,
+        invalidLinkConnectionIdentifier = 5,
+        invalidLinkConnectionTerminationState = 6,
+        invalidLinkConnectionAvailableState = 7,
+        invalidProviderRequestNumber = 8,
+        invalidLinkConnectionAliasName = 9,
+        invalidSchedule = 10,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct UpdateServiceReplyRequestIdentifier {
+        #[rasn(tag(context, 0), identifier = "initialRequest")]
+        pub initial_request: Option<RequestNumber>,
+        #[rasn(tag(context, 1), identifier = "newRequest")]
+        pub new_request: RequestNumber,
+    }
+    impl UpdateServiceReplyRequestIdentifier {
+        pub fn new(initial_request: Option<RequestNumber>, new_request: RequestNumber) -> Self {
+            Self {
+                initial_request,
+                new_request,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct UpdateServiceReply {
+        #[rasn(identifier = "requestIdentifier")]
+        pub request_identifier: Option<UpdateServiceReplyRequestIdentifier>,
+        #[rasn(identifier = "alternateValues")]
+        pub alternate_values: Option<AttributeList>,
+    }
+    impl UpdateServiceReply {
+        pub fn new(
+            request_identifier: Option<UpdateServiceReplyRequestIdentifier>,
+            alternate_values: Option<AttributeList>,
+        ) -> Self {
+            Self {
+                request_identifier,
+                alternate_values,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct UpdateServiceRequest(pub AttributeList);
+    pub static M3108_PART1_ACTION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***M3108_PART1_INFORMATION_MODEL, &[7u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static M3108_PART1_ATTRIBUTE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***M3108_PART1_INFORMATION_MODEL, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static M3108_PART1_INFORMATION_MODEL: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&[0u32, 0u32], &***M, &[3108u32, 1u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static M3108_PART1_NAME_BINDING: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***M3108_PART1_INFORMATION_MODEL, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static M3108_PART1_NOTIFICATION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***M3108_PART1_INFORMATION_MODEL, &[5u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static M3108_PART1_OBJECT_CLASS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***M3108_PART1_INFORMATION_MODEL, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static M3108_PART1_PACKAGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***M3108_PART1_INFORMATION_MODEL, &[2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static M3108_PART1_PARAMETER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***M3108_PART1_INFORMATION_MODEL, &[6u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+}

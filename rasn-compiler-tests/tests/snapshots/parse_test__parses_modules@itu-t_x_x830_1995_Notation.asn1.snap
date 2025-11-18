@@ -1,0 +1,66 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x830_1995_Notation.asn1
+---
+Warnings:
+LinkerError in ASN grammar: Failed to resolve argument AlgorithmIdentifier of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype SyntaxStructure of parameterized implementation.
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod notation {
+    extern crate alloc;
+    use super::authentication_framework::AlgorithmIdentifier;
+    use super::generic_protecting_transfer_syntax::SyntaxStructure;
+    use super::information_framework::Name;
+    use super::object_identifiers::GENERIC_PROTECTING_TRANSFER_SYNTAX;
+    use super::selected_attribute_types::UniqueIdentifier;
+    use super::useful_definitions::{
+        AUTHENTICATION_FRAMEWORK, INFORMATION_FRAMEWORK, SELECTED_ATTRIBUTE_TYPES,
+    };
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct ExternalSAID {
+        #[rasn(identifier = "localSAID")]
+        pub local_said: Integer,
+        #[rasn(identifier = "assignerIdentity")]
+        pub assigner_identity: Option<SecurityIdentity>,
+    }
+    impl ExternalSAID {
+        pub fn new(local_said: Integer, assigner_identity: Option<SecurityIdentity>) -> Self {
+            Self {
+                local_said,
+                assigner_identity,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum Identifier {
+        local(Integer),
+        global(ObjectIdentifier),
+    }
+    #[doc = " *************************************************"]
+    #[doc = " Notation for security identity and SA-identifiers"]
+    #[doc = " *************************************************"]
+    #[doc = " Values of the SecurityIdentity type are used to identify entities"]
+    #[doc = " which assign externally-established security association identifiers,"]
+    #[doc = " and for other security-related purposes requiring globally-unique"]
+    #[doc = " identifiers."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum SecurityIdentity {
+        directoryName(Name),
+        objectIdentifier(ObjectIdentifier),
+    }
+}

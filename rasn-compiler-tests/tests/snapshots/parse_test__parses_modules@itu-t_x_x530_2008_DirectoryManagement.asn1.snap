@@ -1,0 +1,1415 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x530_2008_DirectoryManagement.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod directory_management {
+    extern crate alloc;
+    use super::basic_access_control::ACIItem;
+    use super::directory_abstract_service::{
+        AttributeProblem, Credentials, NameProblem, SecurityProblem, ServiceProblem, UpdateProblem,
+    };
+    use super::directory_shadow_abstract_service::{
+        AgreementID, SchedulingParameters, ShadowProblem, Time, UnitOfReplication, UpdateMode,
+    };
+    use super::distributed_operations::{
+        AccessPoint, MasterAndShadowAccessPoints, OperationProgress, ReferenceType,
+        TraceInformation,
+    };
+    use super::dsaoperational_attribute_types::{
+        ConsumerInformation, DSEType, SupplierAndConsumers, SupplierInformation,
+    };
+    use super::information_framework::*;
+    use super::operational_binding_management::{OpBindingErrorParam, OperationalBindingID};
+    use super::schema_administration::{
+        AttributeTypeDescription, DITContentRuleDescription, DITStructureRuleDescription,
+        MatchingRuleDescription, MatchingRuleUseDescription, NameFormDescription,
+        ObjectClassDescription,
+    };
+    use super::selected_attribute_types::UnboundedDirectoryString;
+    use super::useful_definitions::{
+        BASIC_ACCESS_CONTROL, DIRECTORY_ABSTRACT_SERVICE, DIRECTORY_SHADOW_ABSTRACT_SERVICE,
+        DISTRIBUTED_OPERATIONS, DSA_OPERATIONAL_ATTRIBUTE_TYPES, ENHANCED_SECURITY, ID_MGT,
+        INFORMATION_FRAMEWORK, OP_BINDING_MANAGEMENT, SCHEMA_ADMINISTRATION,
+        SELECTED_ATTRIBUTE_TYPES,
+    };
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Accessors(pub SetOf<Name>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AdministrativeRole(pub Any);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ApplicationContext(pub ObjectIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AssociationEstablishment(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AssociationId(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AuthenReasonSyntax(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DSAScopeOfChainingValue(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DSAScopeOfReferralValue(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct DirectoryInformationServiceElement {
+        #[rasn(identifier = "operationType")]
+        pub operation_type: Option<BitString>,
+        #[rasn(identifier = "attributeType")]
+        pub attribute_type: Option<AttributeType>,
+        #[rasn(tag(context, 0), identifier = "attributeValue")]
+        pub attribute_value: Option<AttributeValue>,
+    }
+    impl DirectoryInformationServiceElement {
+        pub fn new(
+            operation_type: Option<BitString>,
+            attribute_type: Option<AttributeType>,
+            attribute_value: Option<AttributeValue>,
+        ) -> Self {
+            Self {
+                operation_type,
+                attribute_type,
+                attribute_value,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct HOBRole(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MgtBitString(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct MgtBoolean(pub bool);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MgtCommonName(pub UnboundedDirectoryString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MgtGeneralizedTime(pub GeneralizedTime);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MgtInteger(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MgtName(pub Name);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MgtOID(pub ObjectIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MgtOctetString(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MgtPrintableString(pub PrintableString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PeerEntityAuthenticationPolicy(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RemoteDSAList(pub SetOf<AccessPoint>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RequestAuthenticationPolicy(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ResourceSyntax(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ResultAuthenticationPolicy(pub RequestAuthenticationPolicy);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SecondaryShadows(pub SetOf<SupplierAndConsumers>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ShadowingRole(pub Integer);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AnonymousSubSchemaSyntaxSubSchema {
+        #[rasn(tag(context, 1), identifier = "structureRules")]
+        pub structure_rules: Option<SequenceOf<DITStructureRuleDescription>>,
+        #[rasn(tag(context, 2), identifier = "contentRules")]
+        pub content_rules: Option<SequenceOf<DITContentRuleDescription>>,
+        #[rasn(tag(context, 3), identifier = "matchingRules")]
+        pub matching_rules: Option<SequenceOf<MatchingRuleDescription>>,
+        #[rasn(tag(context, 4), identifier = "attributeTypes")]
+        pub attribute_types: Option<SequenceOf<AttributeTypeDescription>>,
+        #[rasn(tag(context, 5), identifier = "objectClasses")]
+        pub object_classes: Option<SequenceOf<ObjectClassDescription>>,
+        #[rasn(tag(context, 6), identifier = "nameForms")]
+        pub name_forms: Option<SequenceOf<NameFormDescription>>,
+        #[rasn(tag(context, 7), identifier = "matchRuleUses")]
+        pub match_rule_uses: Option<SequenceOf<MatchingRuleUseDescription>>,
+    }
+    impl AnonymousSubSchemaSyntaxSubSchema {
+        pub fn new(
+            structure_rules: Option<SequenceOf<DITStructureRuleDescription>>,
+            content_rules: Option<SequenceOf<DITContentRuleDescription>>,
+            matching_rules: Option<SequenceOf<MatchingRuleDescription>>,
+            attribute_types: Option<SequenceOf<AttributeTypeDescription>>,
+            object_classes: Option<SequenceOf<ObjectClassDescription>>,
+            name_forms: Option<SequenceOf<NameFormDescription>>,
+            match_rule_uses: Option<SequenceOf<MatchingRuleUseDescription>>,
+        ) -> Self {
+            Self {
+                structure_rules,
+                content_rules,
+                matching_rules,
+                attribute_types,
+                object_classes,
+                name_forms,
+                match_rule_uses,
+            }
+        }
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousSubSchemaSyntax {
+        #[rasn(tag(context, 1))]
+        pub name: Name,
+        #[rasn(tag(context, 2), identifier = "subSchema")]
+        pub sub_schema: AnonymousSubSchemaSyntaxSubSchema,
+    }
+    impl AnonymousSubSchemaSyntax {
+        pub fn new(name: Name, sub_schema: AnonymousSubSchemaSyntaxSubSchema) -> Self {
+            Self { name, sub_schema }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SubSchemaSyntax(pub SequenceOf<AnonymousSubSchemaSyntax>);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "OBJECT_IDENTIFIER")]
+    pub struct AnonymousSupportedApplicationContexts(pub ObjectIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SupportedApplicationContexts(pub SetOf<AnonymousSupportedApplicationContexts>);
+    #[doc = "  Object Identifier assignments"]
+    pub static ID_MAC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MGT, &[0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAC_UPDATE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAC, &[2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAC_USE_HOME_DSA: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAC, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = "  Actions"]
+    pub static ID_MAC_USE_REMOTE_DSA: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAC, &[0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MGT, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_ABANDON_OPS_PROC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[27u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-mat-dIRQOP\t\t\t\t\t\tOBJECT IDENTIFIER\t::=\t{id-mat 118}"]
+    pub static ID_MAT_ACCESS_CONTROL_SCHEME: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[119u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = "  Attributes"]
+    pub static ID_MAT_ACCESS_POINT: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_ACCESSOR: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[100u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_ACCUM_ASSOCS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[77u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_ACCUM_FAILED_INBOUND_ASSOCS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_MAT, &[80u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_MAT_ACCUM_FAILED_OUTBOUND_ASSOCS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_MAT, &[81u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_MAT_ACCUM_INBOUND_ASSOCS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[78u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_ACCUM_OUTBOUND_ASSOCS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[79u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_ADD_ENTRY_OPS_PROC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[32u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_ADMIN_LIMIT_EXCEEDED: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[21u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_ADMINISTRATIVE_ROLE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[120u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_AFFECTS_MULTIPLE_DSAS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[17u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_AGREEMENT_ID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[88u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_AGREEMENT_VERSION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[89u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_ALIAS_DEREFERENCES: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[9u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_ALIAS_DEREFERENCING_PROBLEM: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_MAT, &[16u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_MAT_ALIAS_PROBLEM: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[15u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_ALIASED_ENTRY_NAME: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[121u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_ALLOWED_INFO_SERVICE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[101u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_APPLICATION_CONTEXT_IN_USE: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_MAT, &[102u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_MAT_ASSOCIATION_ID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[103u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_ATTRIBUTE_TYPES: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[122u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_CALLING_AETITLE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[104u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_CH_ABANDON_OPS_PROC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[38u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_CH_ADD_ENTRY_OPS_PROC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[43u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_CH_COMPARE_OPS_PROC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[37u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_CH_LIST_OPS_PROC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[39u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_CH_MODIFY_DNOPS_PROC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[46u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_CH_MODIFY_ENTRY_OPS_PROC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[45u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_CH_READ_OPS_PROC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[36u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_CH_REMOVE_ENTRY_OPS_PROC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[44u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_CH_SEARCH1_LEVEL_OPS_PROC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[41u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_CH_SEARCH_BASE_OPS_PROC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[40u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_CH_SEARCH_SUBTREE_OPS_PROC: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_MAT, &[42u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_MAT_CHAININGS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[10u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_COLLECTIVE_EXCLUSIONS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[123u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_COMPARE_OPS_PROC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[26u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_CONSUMER_KNOWLEDGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[124u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_COPY_ENTRIES: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_CREATE_TIMESTAMP: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[125u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_CREATORS_NAME: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[126u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_CREDENTIALS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[127u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_CURRENT_ACTIVE_ASSOCS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[74u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_CURRENT_ACTIVE_INBOUND_ASSOCS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_MAT, &[75u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_MAT_CURRENT_ACTIVE_OUTBOUND_ASSOCS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_MAT, &[76u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_MAT_D_APASSOCIATION_TIMEOUT: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[59u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_D_ISPASSOCIATION_ESTABLISHMENT: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_MAT, &[54u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_MAT_D_ISPASSOCIATION_TIMEOUT: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[62u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_D_ITCONTENT_RULES: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[129u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_D_ITSTRUCTURE_RULE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[130u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_D_MDNAME: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[117u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_D_OPASSOCIATION_ESTABLISHMENT: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_MAT, &[53u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_MAT_D_OPASSOCIATION_TIMEOUT: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[61u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_D_SAACTIVE_ASSOCIATIONS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[63u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_D_SASCOPE_OF_CHAINING: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[48u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_D_SASCOPE_OF_REFERRAL: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[47u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_D_SPASSOCIATION_ESTABLISHMENT: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_MAT, &[52u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_MAT_D_SPASSOCIATION_TIMEOUT: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[60u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_D_UATIMEOUT: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[68u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_DIR_COMMON_NAME: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[150u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_DIR_CUST_ADDR: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[116u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_DIR_CUST_NAME: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[114u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_DIR_USER_NAME: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[115u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_DIS_ALLOWED_INFO_SERVICE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[105u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_DIST_NAME: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[128u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_DSE_TYPE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[131u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_ENTRY_ACI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[132u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_FOUND_LOCAL_ENTRIES: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[6u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_GOVERNING_SR: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[133u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_H_OBROLE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[90u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_HOME_DSA: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[66u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_INVALID_REFERENCES: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[11u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_LAST_UPDATE_TIME: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[96u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_LIST_OPS_PROC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[28u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_LOOPS_DETECTED: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_MASTER_ACCESS_POINT: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[93u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_MASTER_ENTRIES: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_MATCHING_RULE_USE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[135u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_MATCHING_RULES: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[134u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_MAX_DAPASSOCIATIONS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[55u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_MAX_DISPASSOCIATIONS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[58u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_MAX_DOPASSOCIATIONS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[57u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_MAX_DSPASSOCIATIONS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[56u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_MAX_ENTRIES_RETURNED: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[106u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_MAX_INBOUND_ASSOCIATIONS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[72u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_MAX_OUTBOUND_ASSOCIATIONS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[73u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_MAX_TIME_FOR_RESULT: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[107u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_MODIFIERS_NAME: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[136u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_MODIFY_DNOPS_PROC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[35u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_MODIFY_DNRENAME_ONLY_OPS_PROC: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_MAT, &[108u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_MAT_MODIFY_ENTRY_OPS_PROC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[34u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_MODIFY_TIMESTAMP: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[137u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_MY_ACCESS_POINT: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[138u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_NAME_ERRORS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[5u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_NAME_FORMS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[143u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_NEXT_UPDATE_TIME: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[98u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_NO_SUCH_OBJECT: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[14u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_NON_SPECIFIC_KNOWLEDGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[139u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_OBJECT_CLASS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[140u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_OBJECT_CLASSES: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[141u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_OUT_OF_SCOPE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[13u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_PAGED_RESULTS_MAX_IDS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[64u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_PAGED_RESULTS_TIMER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[65u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_PEER_ENTITY_AUTHENTICATION_POLICY: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_MAT, &[49u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_MAT_PRESCRIPTIVE_ACI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[142u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_PROHIBIT_CHAINING: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[24u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_READ_OPS_PROC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[25u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_REFERRALS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[7u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_REMOTE_ACCESS_POINT: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[71u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_REMOVE_ENTRY_OPS_PROC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[33u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_REPLY_COUNTER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[85u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_REQUEST_AUTHENTICATION_POLICY: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_MAT, &[50u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_MAT_REQUEST_COUNTER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[84u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_REQUESTS_FAILED_COUNTER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[86u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_RESULT_AUTHENTICATION_POLICY: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_MAT, &[51u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_MAT_REVERSE_CREDENTIALS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[70u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_SEARCH1_LEVEL_OPS_PROC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[30u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_SEARCH_BASE_OPS_PROC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[29u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_SEARCH_SUBTREE_OPS_PROC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[31u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_SECONDARY_SHADOWS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[94u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_SECURITY_ERRORS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_SERVICE_DESC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[109u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_SERVICE_ERRORS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[8u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_SERVICE_ID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[110u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_SHADOWING_ROLE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[95u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_SHADOWING_SCHEDULE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[97u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_SHADOWING_SUBJECT: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[91u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_SIZE_LIMIT: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[112u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_SIZE_LIMIT_EXCEEDED: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[20u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_SPECIFIC_KNOWLEDGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[144u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_STRUCTURAL_OBJECT_CLASS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[145u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_SUB_SCHEMA: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[111u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_SUBENTRY_ACI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[146u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_SUBTREE_SPECIFICATION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[147u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_SUPERIOR_KNOWLEDGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[148u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_SUPPLIER_KNOWLEDGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[149u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_SUPPORTED_APPLICATION_CONTEXTS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_MAT, &[69u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_MAT_TIME_LIMIT: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[113u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_TIME_LIMIT_EXCEEDED: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[19u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_TIME_OF_LAST_ACCESS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[87u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_TIME_OF_LAST_ATTEMPT: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[82u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_TIME_OF_LAST_SUCCESS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[83u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_UNABLE_TO_PROCEED: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[12u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_UNAVAILABLE_CRITICAL_EXTENSION: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_MAT, &[18u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_MAT_UPDATE_MODE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[92u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MAT_USE_DOP: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MAT, &[99u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MNB: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MGT, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MNB_DIR_CUST_DMD: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MNB, &[13u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MNB_DIR_USER_DIR_CUST: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MNB, &[14u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MNB_ULCONN_END_KNOWN_DSA: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MNB, &[9u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MNB_ULCONN_END_KNOWN_DUA: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MNB, &[10u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MNB_ACSE_INVOC_KNOWN_DSA: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MNB, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MNB_ACSE_INVOC_KNOWN_DUA: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MNB, &[5u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MNB_DIS_CUSTOMER_NAME_BINDING: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MNB, &[11u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = "  Name Bindings"]
+    pub static ID_MNB_DSA_NAME_BINDING: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MNB, &[0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MNB_DSE_NAME_BINDING: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MNB, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MNB_H_OB_NAME_BINDING: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MNB, &[7u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MNB_KNOWN_DSA_D_SA_NAME_BINDING: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_MNB, &[2u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_MNB_KNOWN_DSA_D_UA_NAME_BINDING: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_MNB, &[12u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_MNB_KNOWN_DUA_D_SA_NAME_BINDING: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_MNB, &[3u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_MNB_N_HOB_NAME_BINDING: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MNB, &[6u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MNB_SHADOWING_AGREEMENT_NB: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MNB, &[8u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MOC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MGT, &[2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MOC_ULCONN_END: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MOC, &[8u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MOC_D_MD: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MOC, &[12u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MOC_D_UA: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MOC, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MOC_DIR_CUST: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MOC, &[10u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MOC_DIR_USER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MOC, &[11u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MOC_DIS_MANAGED_OBJECT: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MOC, &[9u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = "  Managed Object Classes"]
+    pub static ID_MOC_DSA: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MOC, &[0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MOC_DSE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MOC, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MOC_H_OBMO: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MOC, &[6u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MOC_KNOWN_DSA: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MOC, &[2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MOC_KNOWN_DUA: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MOC, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MOC_N_HOBMO: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MOC, &[5u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MOC_SHADOWING_AGREEMENT: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MOC, &[7u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MP: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MGT, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MP_ULCONN_END_PACKAGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MP, &[26u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MP_ABANDON_PACKAGE: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_MP, &[3u32]].concat()).unwrap().to_owned());
+    pub static ID_MP_ADD_PACKAGE: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_MP, &[6u32]].concat()).unwrap().to_owned());
+    pub static ID_MP_CHAINED_ABANDON_PACKAGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MP, &[12u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MP_CHAINED_ADD_PACKAGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MP, &[15u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MP_CHAINED_COMPARE_PACKAGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MP, &[11u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MP_CHAINED_LIST_PACKAGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MP, &[13u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MP_CHAINED_MODIFY_DNPACKAGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MP, &[18u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MP_CHAINED_MODIFY_PACKAGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MP, &[17u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MP_CHAINED_READ_PACKAGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MP, &[10u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MP_CHAINED_REMOVE_PACKAGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MP, &[16u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MP_CHAINED_SEARCH_PACKAGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MP, &[14u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MP_COMPARE_PACKAGE: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_MP, &[2u32]].concat()).unwrap().to_owned());
+    pub static ID_MP_D_MD: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MP, &[31u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MP_D_UAPACKAGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MP, &[22u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MP_DCS_PACKAGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MP, &[28u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MP_DIR_CUST: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MP, &[29u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MP_DIR_USER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MP, &[30u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MP_DIS_PACKAGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MP, &[27u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MP_DS_PACKAGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MP, &[32u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = "  Packages"]
+    pub static ID_MP_DSA_PACKAGE: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_MP, &[0u32]].concat()).unwrap().to_owned());
+    pub static ID_MP_DSE_PACKAGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MP, &[19u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MP_H_OBPACKAGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MP, &[24u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MP_KNOWN_DSAPACKAGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MP, &[20u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MP_KNOWN_DUAPACKAGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MP, &[21u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MP_LIST_PACKAGE: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_MP, &[4u32]].concat()).unwrap().to_owned());
+    pub static ID_MP_MODIFY_DNPACKAGE: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_MP, &[9u32]].concat()).unwrap().to_owned());
+    pub static ID_MP_MODIFY_PACKAGE: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_MP, &[8u32]].concat()).unwrap().to_owned());
+    pub static ID_MP_N_HOBPACKAGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MP, &[23u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MP_READ_PACKAGE: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_MP, &[1u32]].concat()).unwrap().to_owned());
+    pub static ID_MP_REMOVE_PACKAGE: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_MP, &[7u32]].concat()).unwrap().to_owned());
+    pub static ID_MP_SEARCH_PACKAGE: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_MP, &[5u32]].concat()).unwrap().to_owned());
+    pub static ID_MP_SHADOWING_AGREEMENT_PACKAGE: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_MP, &[25u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_MPA: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MGT, &[5u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MPA_ALIAS_DEREFERENCED: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MPA, &[17u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MPA_ALIASED_RDNS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MPA, &[16u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MPA_ATTRIBUTE_PROBLEM: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MPA, &[6u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MPA_ATTRIBUTE_TYPE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MPA, &[7u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MPA_ATTRIBUTE_VALUE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MPA, &[9u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MPA_AUTHEN_REASON: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MPA, &[11u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MPA_ENTRY_NAME: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MPA, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MPA_EXTENSIONS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MPA, &[15u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MPA_HOB_BIND_ID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MPA, &[24u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MPA_HOB_DOP_PROB: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MPA, &[25u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MPA_MHOB_DOP_PROB: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MPA, &[23u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = "  Parameters"]
+    pub static ID_MPA_NAME_PROBLEM: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MPA, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MPA_NHOB_BIND_ID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MPA, &[22u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MPA_OP_ID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MPA, &[21u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MPA_OP_ID_DN: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MPA, &[27u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MPA_OPERATION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MPA, &[5u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MPA_OPERATION_PROGRESS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MPA, &[19u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MPA_P_DU: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MPA, &[20u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MPA_REFERENCE_TYPE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MPA, &[18u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MPA_RESOURCE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MPA, &[10u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MPA_SERVICE_PROBLEM: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MPA, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MPA_SHADOW_PROBLEM: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MPA, &[8u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MPA_SHADOWING_DOP_PROB: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MPA, &[26u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MPA_TRACE_INFORMATION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MPA, &[2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MPA_UPDATE_PROBLEM: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MPA, &[12u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ZERO: LazyLock<Integer> = LazyLock::new(|| Integer::from(0));
+}

@@ -1,0 +1,663 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x411_1999_MTAAbstractService.asn1
+---
+Warnings:
+Unidentified generating bindings for : Unexpectedly encountered unlinked struct-like ASN1 value!
+Unidentified generating bindings for : Unexpectedly encountered unlinked struct-like ASN1 value!
+LinkerError in ASN grammar: Failed to resolve reference in object set.
+LinkerError in ASN grammar: Failed to resolve supertype ExtensionField of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve reference in object set.
+LinkerError in ASN grammar: Failed to resolve reference in object set.
+LinkerError in ASN grammar: Failed to resolve supertype ExtensionField of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype ExtensionField of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve reference in object set.
+LinkerError in ASN grammar: Failed to resolve supertype ExtensionField of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve reference in object set.
+LinkerError in ASN grammar: Failed to resolve supertype ExtensionField of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve reference in object set.
+LinkerError in ASN grammar: Failed to resolve supertype ExtensionField of parameterized implementation.
+LinkerError in ASN grammar: Failed to link value with 'PerMessageIndicators'
+LinkerError in ASN grammar: Failed to resolve supertype ExtensionField of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve reference of ElsewhereDefined: Priority
+LinkerError in ASN grammar: Failed to resolve reference in object set.
+LinkerError in ASN grammar: Failed to resolve reference of ElsewhereDefined: ABSTRACT-OPERATION
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod mtaabstract_service {
+    extern crate alloc;
+    use super::ipmsinformation_objects::IPMPerRecipientEnvelopeExtensions;
+    use super::mtsabstract_service::*;
+    use super::mtsobject_identifiers::{
+        ID_CP_MTA_CONNECT, ID_CT_MTA_TRANSFER, ID_OT_MTA, ID_PT_TRANSFER,
+    };
+    use super::mtsupper_bounds::{UB_BIT_OPTIONS, UB_INTEGER_OPTIONS, UB_RECIPIENTS, UB_TRANSFERS};
+    use super::remote_operations_information_objects::*;
+    use super::remote_operations_useful_definitions::EMPTY_UNBIND;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " maximum ub-additional-info octets including all encoding"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ActualRecipientName(pub ORAddressAndOptionalDirectoryName);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct AdditionalActions {
+        #[rasn(tag(context, 1), identifier = "deferred-time")]
+        pub deferred_time: Option<DeferredTime>,
+        #[rasn(identifier = "converted-encoded-information-types")]
+        pub converted_encoded_information_types: Option<ConvertedEncodedInformationTypes>,
+        #[rasn(
+            tag(context, 3),
+            default = "additional_actions_other_actions_default",
+            identifier = "other-actions"
+        )]
+        pub other_actions: OtherActions,
+    }
+    impl AdditionalActions {
+        pub fn new(
+            deferred_time: Option<DeferredTime>,
+            converted_encoded_information_types: Option<ConvertedEncodedInformationTypes>,
+            other_actions: OtherActions,
+        ) -> Self {
+            Self {
+                deferred_time,
+                converted_encoded_information_types,
+                other_actions,
+            }
+        }
+    }
+    fn additional_actions_other_actions_default() -> OtherActions {
+        OtherActions([false, false].into_iter().collect())
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AdditionalInformation(pub Any);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ArrivalTime(pub Time);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct BilateralDomainDomainPrivateDomain {
+        #[rasn(tag(context, 0), identifier = "administration-domain-name")]
+        pub administration_domain_name: AdministrationDomainName,
+        #[rasn(tag(context, 1), identifier = "private-domain-identifier")]
+        pub private_domain_identifier: PrivateDomainIdentifier,
+    }
+    impl BilateralDomainDomainPrivateDomain {
+        pub fn new(
+            administration_domain_name: AdministrationDomainName,
+            private_domain_identifier: PrivateDomainIdentifier,
+        ) -> Self {
+            Self {
+                administration_domain_name,
+                private_domain_identifier,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum BilateralDomainDomain {
+        #[rasn(identifier = "administration-domain-name")]
+        administration_domain_name(AdministrationDomainName),
+        #[rasn(identifier = "private-domain")]
+        private_domain(BilateralDomainDomainPrivateDomain),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct BilateralDomain {
+        #[rasn(identifier = "country-name")]
+        pub country_name: CountryName,
+        pub domain: BilateralDomainDomain,
+    }
+    impl BilateralDomain {
+        pub fn new(country_name: CountryName, domain: BilateralDomainDomain) -> Self {
+            Self {
+                country_name,
+                domain,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DeferredTime(pub Time);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct DomainSuppliedInformation {
+        #[rasn(tag(context, 0), identifier = "arrival-time")]
+        pub arrival_time: ArrivalTime,
+        #[rasn(tag(context, 2), identifier = "routing-action")]
+        pub routing_action: RoutingAction,
+        #[rasn(identifier = "attempted-domain")]
+        pub attempted_domain: Option<GlobalDomainIdentifier>,
+    }
+    impl DomainSuppliedInformation {
+        pub fn new(
+            arrival_time: ArrivalTime,
+            routing_action: RoutingAction,
+            attempted_domain: Option<GlobalDomainIdentifier>,
+        ) -> Self {
+            Self {
+                arrival_time,
+                routing_action,
+                attempted_domain,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct InternalAdditionalActions(pub AdditionalActions);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct InternalTraceInformation(pub SequenceOf<InternalTraceInformationElement>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct InternalTraceInformationElement {
+        #[rasn(identifier = "global-domain-identifier")]
+        pub global_domain_identifier: GlobalDomainIdentifier,
+        #[rasn(identifier = "mta-name")]
+        pub mta_name: MTAName,
+        #[rasn(identifier = "mta-supplied-information")]
+        pub mta_supplied_information: MTASuppliedInformation,
+    }
+    impl InternalTraceInformationElement {
+        pub fn new(
+            global_domain_identifier: GlobalDomainIdentifier,
+            mta_name: MTAName,
+            mta_supplied_information: MTASuppliedInformation,
+        ) -> Self {
+            Self {
+                global_domain_identifier,
+                mta_name,
+                mta_supplied_information,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct LastTraceInformation {
+        #[rasn(tag(context, 0), identifier = "arrival-time")]
+        pub arrival_time: ArrivalTime,
+        #[rasn(identifier = "converted-encoded-information-types")]
+        pub converted_encoded_information_types: Option<ConvertedEncodedInformationTypes>,
+        #[rasn(tag(context, 1), identifier = "report-type")]
+        pub report_type: ReportType,
+    }
+    impl LastTraceInformation {
+        pub fn new(
+            arrival_time: ArrivalTime,
+            converted_encoded_information_types: Option<ConvertedEncodedInformationTypes>,
+            report_type: ReportType,
+        ) -> Self {
+            Self {
+                arrival_time,
+                converted_encoded_information_types,
+                report_type,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct MTABindArgumentAuthenticated {
+        #[rasn(tag(context, 0), identifier = "initiator-name")]
+        pub initiator_name: MTAName,
+        #[rasn(value("0.."), tag(context, 1), identifier = "initiator-credentials")]
+        pub initiator_credentials: InitiatorCredentials,
+        #[rasn(tag(context, 2), identifier = "security-context")]
+        pub security_context: Option<SecurityContext>,
+    }
+    impl MTABindArgumentAuthenticated {
+        pub fn new(
+            initiator_name: MTAName,
+            initiator_credentials: InitiatorCredentials,
+            security_context: Option<SecurityContext>,
+        ) -> Self {
+            Self {
+                initiator_name,
+                initiator_credentials,
+                security_context,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum MTABindArgument {
+        unauthenticated(()),
+        #[rasn(tag(context, 1))]
+        authenticated(MTABindArgumentAuthenticated),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct MTABindResultAuthenticated {
+        #[rasn(tag(context, 0), identifier = "responder-name")]
+        pub responder_name: MTAName,
+        #[rasn(value("0.."), tag(context, 1), identifier = "responder-credentials")]
+        pub responder_credentials: ResponderCredentials,
+    }
+    impl MTABindResultAuthenticated {
+        pub fn new(responder_name: MTAName, responder_credentials: ResponderCredentials) -> Self {
+            Self {
+                responder_name,
+                responder_credentials,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum MTABindResult {
+        unauthenticated(()),
+        #[rasn(tag(context, 1))]
+        authenticated(MTABindResultAuthenticated),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum MTASuppliedInformationAttempted {
+        mta(MTAName),
+        domain(GlobalDomainIdentifier),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct MTASuppliedInformation {
+        #[rasn(tag(context, 0), identifier = "arrival-time")]
+        pub arrival_time: ArrivalTime,
+        #[rasn(tag(context, 2), identifier = "routing-action")]
+        pub routing_action: RoutingAction,
+        pub attempted: Option<MTASuppliedInformationAttempted>,
+    }
+    impl MTASuppliedInformation {
+        pub fn new(
+            arrival_time: ArrivalTime,
+            routing_action: RoutingAction,
+            attempted: Option<MTASuppliedInformationAttempted>,
+        ) -> Self {
+            Self {
+                arrival_time,
+                routing_action,
+                attempted,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Message {
+        pub envelope: MessageTransferEnvelope,
+        pub content: Content,
+    }
+    impl Message {
+        pub fn new(envelope: MessageTransferEnvelope, content: Content) -> Self {
+            Self { envelope, content }
+        }
+    }
+    #[doc = "\tEnvelope & Report Content Fields"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MessageIdentifier(pub MTSIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MessageOrProbeIdentifier(pub MTSIdentifier);
+    #[doc = "\tMessage Transfer Envelope"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct MessageTransferEnvelope {
+        #[rasn(size("1.."), tag(context, 2), identifier = "per-recipient-fields")]
+        pub per_recipient_fields: SequenceOf<PerRecipientMessageTransferFields>,
+    }
+    impl MessageTransferEnvelope {
+        pub fn new(per_recipient_fields: SequenceOf<PerRecipientMessageTransferFields>) -> Self {
+            Self {
+                per_recipient_fields,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct OriginallyIntendedRecipientName(pub ORAddressAndOptionalDirectoryName);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("1.."))]
+    pub struct OriginallySpecifiedRecipientNumber(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct OriginatorName(pub ORAddressAndOptionalDirectoryName);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct OriginatorRequestedAlternateRecipient(pub ORAddressAndOptionalDirectoryName);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct OtherActions(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct PerDomainBilateralInformation {
+        #[rasn(identifier = "bilateral-information")]
+        pub bilateral_information: Any,
+    }
+    impl PerDomainBilateralInformation {
+        pub fn new(bilateral_information: Any) -> Self {
+            Self {
+                bilateral_information,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("8.."))]
+    pub struct PerRecipientIndicators(pub BitString);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PerRecipientMessageTransferFieldsExtensions(pub SetOf<ExtensionField>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct PerRecipientMessageTransferFields {
+        #[rasn(identifier = "recipient-name")]
+        pub recipient_name: RecipientName,
+        #[rasn(tag(context, 0), identifier = "originally-specified-recipient-number")]
+        pub originally_specified_recipient_number: OriginallySpecifiedRecipientNumber,
+        #[rasn(tag(context, 1), identifier = "per-recipient-indicators")]
+        pub per_recipient_indicators: PerRecipientIndicators,
+        #[rasn(tag(context, 2), identifier = "explicit-conversion")]
+        pub explicit_conversion: Option<ExplicitConversion>,
+        #[rasn(
+            tag(context, 3),
+            default = "per_recipient_message_transfer_fields_extensions_default"
+        )]
+        pub extensions: PerRecipientMessageTransferFieldsExtensions,
+    }
+    impl PerRecipientMessageTransferFields {
+        pub fn new(
+            recipient_name: RecipientName,
+            originally_specified_recipient_number: OriginallySpecifiedRecipientNumber,
+            per_recipient_indicators: PerRecipientIndicators,
+            explicit_conversion: Option<ExplicitConversion>,
+            extensions: PerRecipientMessageTransferFieldsExtensions,
+        ) -> Self {
+            Self {
+                recipient_name,
+                originally_specified_recipient_number,
+                per_recipient_indicators,
+                explicit_conversion,
+                extensions,
+            }
+        }
+    }
+    fn per_recipient_message_transfer_fields_extensions_default() -> SequenceOf<ExtensionField> {
+        alloc::vec![]
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PerRecipientProbeTransferFieldsExtensions(pub SetOf<ExtensionField>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct PerRecipientProbeTransferFields {
+        #[rasn(identifier = "recipient-name")]
+        pub recipient_name: RecipientName,
+        #[rasn(tag(context, 0), identifier = "originally-specified-recipient-number")]
+        pub originally_specified_recipient_number: OriginallySpecifiedRecipientNumber,
+        #[rasn(tag(context, 1), identifier = "per-recipient-indicators")]
+        pub per_recipient_indicators: PerRecipientIndicators,
+        #[rasn(tag(context, 2), identifier = "explicit-conversion")]
+        pub explicit_conversion: Option<ExplicitConversion>,
+        #[rasn(
+            tag(context, 3),
+            default = "per_recipient_probe_transfer_fields_extensions_default"
+        )]
+        pub extensions: PerRecipientProbeTransferFieldsExtensions,
+    }
+    impl PerRecipientProbeTransferFields {
+        pub fn new(
+            recipient_name: RecipientName,
+            originally_specified_recipient_number: OriginallySpecifiedRecipientNumber,
+            per_recipient_indicators: PerRecipientIndicators,
+            explicit_conversion: Option<ExplicitConversion>,
+            extensions: PerRecipientProbeTransferFieldsExtensions,
+        ) -> Self {
+            Self {
+                recipient_name,
+                originally_specified_recipient_number,
+                per_recipient_indicators,
+                explicit_conversion,
+                extensions,
+            }
+        }
+    }
+    fn per_recipient_probe_transfer_fields_extensions_default() -> SequenceOf<ExtensionField> {
+        alloc::vec![]
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PerRecipientReportTransferFieldsExtensions(pub SetOf<ExtensionField>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct PerRecipientReportTransferFields {
+        #[rasn(tag(context, 0), identifier = "actual-recipient-name")]
+        pub actual_recipient_name: ActualRecipientName,
+        #[rasn(tag(context, 1), identifier = "originally-specified-recipient-number")]
+        pub originally_specified_recipient_number: OriginallySpecifiedRecipientNumber,
+        #[rasn(tag(context, 2), identifier = "per-recipient-indicators")]
+        pub per_recipient_indicators: PerRecipientIndicators,
+        #[rasn(tag(context, 3), identifier = "last-trace-information")]
+        pub last_trace_information: LastTraceInformation,
+        #[rasn(tag(context, 4), identifier = "originally-intended-recipient-name")]
+        pub originally_intended_recipient_name: Option<OriginallyIntendedRecipientName>,
+        #[rasn(tag(context, 5), identifier = "supplementary-information")]
+        pub supplementary_information: Option<SupplementaryInformation>,
+        #[rasn(
+            tag(context, 6),
+            default = "per_recipient_report_transfer_fields_extensions_default"
+        )]
+        pub extensions: PerRecipientReportTransferFieldsExtensions,
+    }
+    impl PerRecipientReportTransferFields {
+        pub fn new(
+            actual_recipient_name: ActualRecipientName,
+            originally_specified_recipient_number: OriginallySpecifiedRecipientNumber,
+            per_recipient_indicators: PerRecipientIndicators,
+            last_trace_information: LastTraceInformation,
+            originally_intended_recipient_name: Option<OriginallyIntendedRecipientName>,
+            supplementary_information: Option<SupplementaryInformation>,
+            extensions: PerRecipientReportTransferFieldsExtensions,
+        ) -> Self {
+            Self {
+                actual_recipient_name,
+                originally_specified_recipient_number,
+                per_recipient_indicators,
+                last_trace_information,
+                originally_intended_recipient_name,
+                supplementary_information,
+                extensions,
+            }
+        }
+    }
+    fn per_recipient_report_transfer_fields_extensions_default() -> SequenceOf<ExtensionField> {
+        alloc::vec![]
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PerReportTransferFieldsExtensions(pub SetOf<ExtensionField>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct PerReportTransferFields {
+        #[rasn(identifier = "subject-identifier")]
+        pub subject_identifier: SubjectIdentifier,
+        #[rasn(identifier = "subject-intermediate-trace-information")]
+        pub subject_intermediate_trace_information: Option<SubjectIntermediateTraceInformation>,
+        #[rasn(identifier = "original-encoded-information-types")]
+        pub original_encoded_information_types: Option<OriginalEncodedInformationTypes>,
+        #[rasn(identifier = "content-type")]
+        pub content_type: Option<ContentType>,
+        #[rasn(identifier = "content-identifier")]
+        pub content_identifier: Option<ContentIdentifier>,
+        #[rasn(tag(context, 1), identifier = "returned-content")]
+        pub returned_content: Option<Content>,
+        #[rasn(tag(context, 2), identifier = "additional-information")]
+        pub additional_information: Option<AdditionalInformation>,
+        #[rasn(
+            tag(context, 3),
+            default = "per_report_transfer_fields_extensions_default"
+        )]
+        pub extensions: PerReportTransferFieldsExtensions,
+    }
+    impl PerReportTransferFields {
+        pub fn new(
+            subject_identifier: SubjectIdentifier,
+            subject_intermediate_trace_information: Option<SubjectIntermediateTraceInformation>,
+            original_encoded_information_types: Option<OriginalEncodedInformationTypes>,
+            content_type: Option<ContentType>,
+            content_identifier: Option<ContentIdentifier>,
+            returned_content: Option<Content>,
+            additional_information: Option<AdditionalInformation>,
+            extensions: PerReportTransferFieldsExtensions,
+        ) -> Self {
+            Self {
+                subject_identifier,
+                subject_intermediate_trace_information,
+                original_encoded_information_types,
+                content_type,
+                content_identifier,
+                returned_content,
+                additional_information,
+                extensions,
+            }
+        }
+    }
+    fn per_report_transfer_fields_extensions_default() -> SequenceOf<ExtensionField> {
+        alloc::vec![]
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Probe(pub ProbeTransferEnvelope);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ProbeIdentifier(pub MTSIdentifier);
+    #[doc = "\tProbe Transfer Envelope"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct ProbeTransferEnvelope {
+        #[rasn(size("1.."), tag(context, 2), identifier = "per-recipient-fields")]
+        pub per_recipient_fields: SequenceOf<PerRecipientProbeTransferFields>,
+    }
+    impl ProbeTransferEnvelope {
+        pub fn new(per_recipient_fields: SequenceOf<PerRecipientProbeTransferFields>) -> Self {
+            Self {
+                per_recipient_fields,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RecipientName(pub ORAddressAndOptionalDirectoryName);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Report {
+        pub envelope: ReportTransferEnvelope,
+        pub content: ReportTransferContent,
+    }
+    impl Report {
+        pub fn new(envelope: ReportTransferEnvelope, content: ReportTransferContent) -> Self {
+            Self { envelope, content }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ReportDestinationName(pub ORAddressAndOptionalDirectoryName);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ReportIdentifier(pub MTSIdentifier);
+    #[doc = "\tReport Transfer Content"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct ReportTransferContent {
+        #[rasn(size("1.."), tag(context, 0), identifier = "per-recipient-fields")]
+        pub per_recipient_fields: SequenceOf<PerRecipientReportTransferFields>,
+    }
+    impl ReportTransferContent {
+        pub fn new(per_recipient_fields: SequenceOf<PerRecipientReportTransferFields>) -> Self {
+            Self {
+                per_recipient_fields,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ReportTransferEnvelopeExtensions(pub SetOf<ExtensionField>);
+    #[doc = "\tReport Transfer Envelope"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct ReportTransferEnvelope {
+        #[rasn(identifier = "report-identifier")]
+        pub report_identifier: ReportIdentifier,
+        #[rasn(identifier = "report-destination-name")]
+        pub report_destination_name: ReportDestinationName,
+        #[rasn(identifier = "trace-information")]
+        pub trace_information: TraceInformation,
+        #[rasn(
+            tag(context, 1),
+            default = "report_transfer_envelope_extensions_default"
+        )]
+        pub extensions: ReportTransferEnvelopeExtensions,
+    }
+    impl ReportTransferEnvelope {
+        pub fn new(
+            report_identifier: ReportIdentifier,
+            report_destination_name: ReportDestinationName,
+            trace_information: TraceInformation,
+            extensions: ReportTransferEnvelopeExtensions,
+        ) -> Self {
+            Self {
+                report_identifier,
+                report_destination_name,
+                trace_information,
+                extensions,
+            }
+        }
+    }
+    fn report_transfer_envelope_extensions_default() -> SequenceOf<ExtensionField> {
+        alloc::vec![]
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum RoutingAction {
+        relayed = 0,
+        rerouted = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SubjectIdentifier(pub MessageOrProbeIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SubjectIntermediateTraceInformation(pub TraceInformation);
+    #[doc = "\tCommon Parameter Types"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."), tag(application, 9))]
+    pub struct TraceInformation(pub SequenceOf<TraceInformationElement>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct TraceInformationElement {
+        #[rasn(identifier = "global-domain-identifier")]
+        pub global_domain_identifier: GlobalDomainIdentifier,
+        #[rasn(identifier = "domain-supplied-information")]
+        pub domain_supplied_information: DomainSuppliedInformation,
+    }
+    impl TraceInformationElement {
+        pub fn new(
+            global_domain_identifier: GlobalDomainIdentifier,
+            domain_supplied_information: DomainSuppliedInformation,
+        ) -> Self {
+            Self {
+                global_domain_identifier,
+                domain_supplied_information,
+            }
+        }
+    }
+    pub static MTA_UNBIND: LazyLock<ABSTRACTOPERATION> =
+        LazyLock::new(|| ABSTRACTOPERATION(EMPTY_UNBIND));
+}

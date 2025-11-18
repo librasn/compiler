@@ -1,0 +1,25 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x501_2016_OperationalBindingManagement.asn1
+---
+Error matching ASN syntax at while parsing:
+     ╭─[line 151, column 2]
+     │
+     │ 
+ 151 │  EstablishOperationalBindingResultData ::= SEQUENCE { ◀▪▪▪▪▪▪▪▪▪▪ FAILED AT THIS LINE
+ 152 │    bindingType   [0]  OPERATIONAL-BINDING.&id({OpBindingSet}),
+ 153 │    bindingID     [1]  OperationalBindingID OPTIONAL,
+ 154 │    accessPoint   [2]  AccessPoint,
+ 155 │    -- symmetric, Role A replies, or Role B replies
+ 156 │    initiator          CHOICE {
+ 157 │      symmetric     [3]  OPERATIONAL-BINDING.&both.&EstablishParam
+ 158 │                           ({OpBindingSet}{@bindingType}),
+ 159 │      roleA-replies [4]  OPERATIONAL-BINDING.&roleA.&EstablishParam
+ 160 │                           ({OpBindingSet}{@bindingType}),
+ 161 │      roleB-replies [5]  OPERATIONAL-BINDING.&roleB.&EstablishParam
+ 162 │                           ({OpBindingSet}{@bindingType})},
+ 163 │    ...,
+ 164 │    ...,
+ 165 │    COMPONENTS OF      CommonResultsSeq }
+     │
+─────╯

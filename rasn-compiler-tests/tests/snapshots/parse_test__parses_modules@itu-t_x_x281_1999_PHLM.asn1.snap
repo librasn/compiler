@@ -1,0 +1,145 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x281_1999_PHLM.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod phlm {
+    extern crate alloc;
+    use super::attribute_asn1_module::GroupObjects;
+    use super::cmip_1::{AttributeId, ObjectInstance, SetInfoStatus};
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct BitErrorThresholdReached(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct BitErrors(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct BitErrorsThreshold {
+        #[rasn(tag(context, 1))]
+        pub mantissa: Integer,
+        #[rasn(tag(context, 2))]
+        pub exponent: Integer,
+    }
+    impl BitErrorsThreshold {
+        pub fn new(mantissa: Integer, exponent: Integer) -> Self {
+            Self { mantissa, exponent }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CRCErrorReceived(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CRCErrorTransmitted(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ConnectionError(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ConnectionEstablished(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum DataCircuitType {
+        #[rasn(identifier = "end-system")]
+        end_system = 0,
+        #[rasn(identifier = "relay-system")]
+        relay_system = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct EndpointIdentifier(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct LossOfSignal(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct LossOfSynchronization(pub OctetString);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "GraphicString")]
+    pub struct AnonymousPhysicalEntityTitle(pub GraphicString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PhysicalEntityTitle(pub SetOf<AnonymousPhysicalEntityTitle>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PhysicalInterfaceStandard(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PhysicalInterfaceType(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PhysicalMediaNames(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PortNumber(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum SynchronizationMode {
+        synchronous = 0,
+        asynchronous = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TransmissionCoding(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum TransmissionMode {
+        simplex = 0,
+        duplex = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct TransmissionRate {
+        #[rasn(tag(context, 1))]
+        pub mantissa: Integer,
+        #[rasn(tag(context, 2))]
+        pub exponent: Integer,
+    }
+    impl TransmissionRate {
+        pub fn new(mantissa: Integer, exponent: Integer) -> Self {
+            Self { mantissa, exponent }
+        }
+    }
+    pub static ACOI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***PHLOI, &[9u32]].concat()).unwrap().to_owned());
+    pub static AGOI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***PHLOI, &[8u32]].concat()).unwrap().to_owned());
+    pub static AOI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***PHLOI, &[7u32]].concat()).unwrap().to_owned());
+    pub static MOI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***PHLOI, &[3u32]].concat()).unwrap().to_owned());
+    pub static NBOI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***PHLOI, &[6u32]].concat()).unwrap().to_owned());
+    pub static NOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***PHLOI, &[10u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static PHLOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***PHYSICAL_LAYER, &[0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = "  Object identifier definitions"]
+    pub static PHYSICAL_LAYER: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 18u32]).to_owned());
+    #[doc = "  Other definitions"]
+    pub static PHYSICAL_SUBSYSTEM_ID_VALUE: LazyLock<GraphicString> =
+        LazyLock::new(|| GraphicString::try_from(String::from("physicalSubsystem")).unwrap());
+    pub static POI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***PHLOI, &[4u32]].concat()).unwrap().to_owned());
+    pub static PROI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***PHLOI, &[5u32]].concat()).unwrap().to_owned());
+    pub static SSEOI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***PHLOI, &[0u32]].concat()).unwrap().to_owned());
+}

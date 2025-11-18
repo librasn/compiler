@@ -1,0 +1,96 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q765.1_1998_COPSS1-Protocol.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod copss1_protocol {
+    extern crate alloc;
+    use super::remote_operations_information_objects::*;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = "TYPE DEFINITIONS FOR DATA"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CalledPartyNumber(pub FixedOctetString<1usize>);
+    #[doc = "The VPNTransport is coded as described in clause 14/Q.765.1."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=30"))]
+    pub struct Cause(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ConnectArg(pub VPNTransport);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct ReleaseArg {
+        pub cause: Cause,
+        #[rasn(tag(context, 0))]
+        pub vpntransport: Option<VPNTransport>,
+    }
+    impl ReleaseArg {
+        pub fn new(cause: Cause, vpntransport: Option<VPNTransport>) -> Self {
+            Self {
+                cause,
+                vpntransport,
+            }
+        }
+    }
+    #[doc = "TYPE DEFINITIONS FOR ERRORS"]
+    #[doc = " TYPE DEFINITIONS FOR ARGUMENT DATA"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct SetUpArg {
+        #[rasn(identifier = "calledPartyNumber")]
+        pub called_party_number: CalledPartyNumber,
+        pub vpntransport: VPNTransport,
+    }
+    impl SetUpArg {
+        pub fn new(called_party_number: CalledPartyNumber, vpntransport: VPNTransport) -> Self {
+            Self {
+                called_party_number,
+                vpntransport,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct SetUpResultArg {
+        #[rasn(tag(context, 0))]
+        pub cause: Option<Cause>,
+        #[rasn(tag(context, 1))]
+        pub vpntransport: Option<VPNTransport>,
+    }
+    impl SetUpResultArg {
+        pub fn new(cause: Option<Cause>, vpntransport: Option<VPNTransport>) -> Self {
+            Self {
+                cause,
+                vpntransport,
+            }
+        }
+    }
+    #[doc = "The CalledPartyNumber is coded as described in Recommendation Q.763 [13]."]
+    #[doc = "The ISUP parameter name and length octets are not included."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=2048"))]
+    pub struct VPNTransport(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct VpnFacilityArg(pub VPNTransport);
+    #[doc = " Network specific"]
+    #[doc = "DEFINITION OF OBJECT IDENTIFIER PATH"]
+    pub static C_OPSS1_OID: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[0u32, 0u32, 17u32, 765u32, 1u32, 2u32, 1u32]).to_owned());
+    #[doc = "The Cause is coded as described in ISO/IEC 11572 [2]/ Q.931 Annex M [21]"]
+    #[doc = "The information element identifier and length octets are not included."]
+    #[doc = "DEFINITION OF RANGE CONSTANTS"]
+    pub static MAX_CAUSE_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(30));
+    pub static MAX_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(2048));
+    pub static MAXCD_PLENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(1));
+}

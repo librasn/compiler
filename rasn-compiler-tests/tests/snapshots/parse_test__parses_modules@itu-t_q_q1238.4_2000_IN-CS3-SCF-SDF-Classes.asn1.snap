@@ -1,0 +1,22 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q1238.4_2000_IN-CS3-SCF-SDF-Classes.asn1
+---
+Error matching ASN syntax at while parsing:
+     ╭─[line 175, column 2]
+     │
+     │ 
+ 172 │  -- The METHOD-USE-RULE definition for a particular object-class also applies to any subclass
+ 173 │  -- which may be subsequently defined.
+ 174 │  -- method-use-rule
+ 175 │  securityUserInfoRule{INTEGER:n} METHOD-USE-RULE ::= { ◀▪▪▪▪▪▪▪▪▪▪ FAILED AT THIS LINE
+ 176 │    OBJECT-CLASS TYPE  id-oc-securityUserInfo
+ 177 │    METHODS
+ 178 │      {verifyCredentials | fillSecurityTokens{n} | conformCredentials}
+ 179 │  }
+ 181 │  -- object class
+ 182 │  -- The following object class could be used to store the necessary information about the user security.
+ 183 │  -- For each UPT user, an entry of the securityUserInfo object class may be created, subordinated to each
+ 184 │  -- entry of class uptUser.
+     │
+─────╯
