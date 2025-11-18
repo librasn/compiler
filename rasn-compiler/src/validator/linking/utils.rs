@@ -209,7 +209,9 @@ pub fn resolve_custom_syntax(
                                 ));
                             }
                         }
-                        _ => continue 'syntax_matching,
+                        SyntaxApplication::Comma | SyntaxApplication::Literal(_) => {
+                            // Skip ahead
+                        }
                     }
                     application_index += 1;
                 } else if *required {

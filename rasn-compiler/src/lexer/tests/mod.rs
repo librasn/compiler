@@ -297,12 +297,8 @@ fn parses_object_set_value() {
                             identifier: "IDENTIFIED".into(),
                             constraints: vec![]
                         }),
-                        SyntaxApplication::LiteralOrTypeReference(DeclarationElsewhere {
-                            parent: None,
-                            module: None,
-                            identifier: "BY".into(),
-                            constraints: vec![]
-                        }),
+                        // SyntaxApplication::Comma,
+                        SyntaxApplication::Literal("BY".into()),
                         SyntaxApplication::ValueReference(ASN1Value::ElsewhereDeclaredValue {
                             identifier: "originatingVehicleContainer".into(),
                             parent: None
@@ -321,12 +317,7 @@ fn parses_object_set_value() {
                             identifier: "IDENTIFIED".into(),
                             constraints: vec![]
                         }),
-                        SyntaxApplication::LiteralOrTypeReference(DeclarationElsewhere {
-                            parent: None,
-                            module: None,
-                            identifier: "BY".into(),
-                            constraints: vec![]
-                        }),
+                        SyntaxApplication::Literal("BY".into()),
                         SyntaxApplication::ValueReference(ASN1Value::ElsewhereDeclaredValue {
                             identifier: "perceivedObjectContainer".into(),
                             parent: None

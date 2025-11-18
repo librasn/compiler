@@ -78,6 +78,9 @@ pub const ALL: &str = "ALL";
 pub const SET: &str = "SET";
 pub const OBJECT_IDENTIFIER: &str = "OBJECT IDENTIFIER";
 pub const COMPONENTS_OF: &str = "COMPONENTS OF";
+pub const ANY: &str = "ANY";
+pub const DEFINED: &str = "DEFINED";
+pub const BY: &str = "BY";
 
 // Tagging tokens
 pub const UNIVERSAL: &str = "UNIVERSAL";
@@ -169,7 +172,7 @@ pub const TIME_OF_DAY: &str = "TIME-OF-DAY";
 pub const TYPE_IDENTIFIER: &str = "TYPE-IDENTIFIER";
 pub const ENCODING_CONTROL: &str = "ENCODING-CONTROL";
 
-pub const ASN1_KEYWORDS: [&str; 64] = [
+pub const ASN1_KEYWORDS: [&str; 67] = [
     ABSTRACT_SYNTAX,
     BIT,
     CHARACTER,
@@ -234,6 +237,9 @@ pub const ASN1_KEYWORDS: [&str; 64] = [
     INSTRUCTIONS,
     TAGS,
     MACRO,
+    ANY,
+    BY,
+    DEFINED,
 ];
 
 macro_rules! grammar_error {
@@ -810,6 +816,7 @@ pub enum ASN1Type {
     Time(Time),
     GeneralizedTime(GeneralizedTime),
     UTCTime(UTCTime),
+    Any,
     ElsewhereDeclaredType(DeclarationElsewhere),
     ChoiceSelectionType(ChoiceSelectionType),
     ObjectIdentifier(ObjectIdentifier),
@@ -880,6 +887,7 @@ impl ASN1Type {
             ASN1Type::Time(_) => Cow::Borrowed(TIME),
             ASN1Type::GeneralizedTime(_) => Cow::Borrowed(GENERALIZED_TIME),
             ASN1Type::UTCTime(_) => Cow::Borrowed(UTC_TIME),
+            ASN1Type::Any => Cow::Borrowed(ANY),
             ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere { identifier, .. }) => {
                 Cow::Borrowed(identifier)
             }
