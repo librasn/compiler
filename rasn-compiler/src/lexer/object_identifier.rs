@@ -4,14 +4,14 @@
 //! identify a so-called _information object_.
 use crate::{
     input::Input,
-    intermediate::{ASN1Type, ObjectIdentifierArc, ObjectIdentifierValue, OBJECT_IDENTIFIER},
+    intermediate::{ASN1Type, ObjectIdentifierArc, ObjectIdentifierValue, IDENTIFIER, OBJECT},
 };
 
 use nom::{
     branch::alt,
     bytes::complete::tag,
     character::complete::u128,
-    combinator::{into, map, opt},
+    combinator::{into, map, opt, recognize},
     multi::many1,
     sequence::{pair, preceded},
     Parser,
@@ -38,7 +38,10 @@ use super::{
 pub fn object_identifier_value(input: Input<'_>) -> ParserResult<'_, ObjectIdentifierValue> {
     into(skip_ws_and_comments(preceded(
         // TODO: store info whether the object id is relative
-        opt(alt((tag(OBJECT_IDENTIFIER), tag(RELATIVE_OID)))),
+        opt(alt((
+            recognize((tag(OBJECT), skip_ws_and_comments(tag(IDENTIFIER)))),
+            tag(RELATIVE_OID),
+        ))),
         in_braces(many1(skip_ws(object_identifier_arc))),
     )))
     .parse(input)
@@ -47,7 +50,10 @@ pub fn object_identifier_value(input: Input<'_>) -> ParserResult<'_, ObjectIdent
 pub fn object_identifier(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
     map(
         into(preceded(
-            skip_ws_and_comments(alt((tag(OBJECT_IDENTIFIER), tag(RELATIVE_OID)))),
+            skip_ws_and_comments(alt((
+                recognize((tag(OBJECT), skip_ws_and_comments(tag(IDENTIFIER)))),
+                tag(RELATIVE_OID),
+            ))),
             opt(skip_ws_and_comments(constraints)),
         )),
         ASN1Type::ObjectIdentifier,
