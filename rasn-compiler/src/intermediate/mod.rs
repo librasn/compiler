@@ -59,8 +59,7 @@ pub const NULL: &str = "NULL";
 pub const BOOLEAN: &str = "BOOLEAN";
 pub const INTEGER: &str = "INTEGER";
 pub const REAL: &str = "REAL";
-pub const BIT_STRING: &str = "BIT STRING";
-pub const OCTET_STRING: &str = "OCTET STRING";
+pub const STRING: &str = "STRING";
 pub const IA5_STRING: &str = "IA5String";
 pub const UTF8_STRING: &str = "UTF8String";
 pub const NUMERIC_STRING: &str = "NumericString";
@@ -78,13 +77,11 @@ pub const UTC_TIME: &str = "UTCTime";
 pub const ENUMERATED: &str = "ENUMERATED";
 pub const CHOICE: &str = "CHOICE";
 pub const SEQUENCE: &str = "SEQUENCE";
-pub const SEQUENCE_OF: &str = "SEQUENCE OF";
-pub const SET_OF: &str = "SET OF";
 pub const OF: &str = "OF";
 pub const ALL: &str = "ALL";
 pub const SET: &str = "SET";
-pub const OBJECT_IDENTIFIER: &str = "OBJECT IDENTIFIER";
-pub const COMPONENTS_OF: &str = "COMPONENTS OF";
+pub const IDENTIFIER: &str = "IDENTIFIER";
+pub const COMPONENTS: &str = "COMPONENTS";
 pub const ANY: &str = "ANY";
 pub const DEFINED: &str = "DEFINED";
 pub const BY: &str = "BY";
@@ -110,29 +107,30 @@ pub const EXPORTS: &str = "EXPORTS";
 pub const FROM: &str = "FROM";
 pub const INSTRUCTIONS: &str = "INSTRUCTIONS";
 pub const TAGS: &str = "TAGS";
-pub const EXTENSIBILITY_IMPLIED: &str = "EXTENSIBILITY IMPLIED";
-pub const WITH_SUCCESSORS: &str = "WITH SUCCESSORS";
-pub const WITH_DESCENDANTS: &str = "WITH DESCENDANTS";
+pub const EXTENSIBILITY: &str = "EXTENSIBILITY";
+pub const IMPLIED: &str = "IMPLIED";
+pub const WITH: &str = "WITH";
+pub const SUCCESSORS: &str = "SUCCESSORS";
+pub const DESCENDANTS: &str = "DESCENDANTS";
 pub const SEMICOLON: char = ';';
 
 // Information Object Class tokens
 pub const AMPERSAND: char = '&';
 pub const CLASS: &str = "CLASS";
 pub const UNIQUE: &str = "UNIQUE";
-pub const WITH_SYNTAX: &str = "WITH SYNTAX";
+pub const SYNTAX: &str = "SYNTAX";
 pub const AT: char = '@';
 pub const DOT: char = '.';
 
 // Subtyping tokens
 pub const SIZE: &str = "SIZE";
-pub const CONSTRAINED_BY: &str = "CONSTRAINED BY";
+pub const CONSTRAINED: &str = "CONSTRAINED";
 pub const PATTERN: &str = "PATTERN";
 pub const DEFAULT: &str = "DEFAULT";
 pub const CONTAINING: &str = "CONTAINING";
-pub const ENCODED_BY: &str = "ENCODED BY";
+pub const ENCODED: &str = "ENCODED";
 pub const OPTIONAL: &str = "OPTIONAL";
-pub const WITH_COMPONENTS: &str = "WITH COMPONENTS";
-pub const WITH_COMPONENT: &str = "WITH COMPONENT";
+pub const COMPONENT: &str = "COMPONENT";
 pub const UNION: &str = "UNION";
 pub const EXCEPT: &str = "EXCEPT";
 pub const INTERSECTION: &str = "INTERSECTION";
@@ -163,9 +161,10 @@ pub const CHARACTER: &str = "CHARACTER";
 pub const DATE: &str = "DATE";
 pub const DATE_TIME: &str = "DATE-TIME";
 pub const DURATION: &str = "DURATION";
-pub const EMBEDDED_PDV: &str = "EMBEDDED PDV";
+pub const EMBEDDED: &str = "EMBEDDED";
+pub const PDV: &str = "PDV";
 pub const EXTERNAL: &str = "EXTERNAL";
-pub const INSTANCE_OF: &str = "INSTANCE OF";
+pub const INSTANCE: &str = "INSTANCE";
 pub const MINUS_INFINITY: &str = "MINUS-INFINITY";
 pub const NOT_A_NUMBER: &str = "NOT-A-NUMBER";
 pub const OBJECT: &str = "OBJECT";
@@ -179,7 +178,7 @@ pub const TIME_OF_DAY: &str = "TIME-OF-DAY";
 pub const TYPE_IDENTIFIER: &str = "TYPE-IDENTIFIER";
 pub const ENCODING_CONTROL: &str = "ENCODING-CONTROL";
 
-pub const ASN1_KEYWORDS: [&str; 67] = [
+pub const ASN1_KEYWORDS: [&str; 76] = [
     ABSTRACT_SYNTAX,
     BIT,
     CHARACTER,
@@ -187,9 +186,10 @@ pub const ASN1_KEYWORDS: [&str; 67] = [
     DATE,
     DATE_TIME,
     DURATION,
-    EMBEDDED_PDV,
+    EMBEDDED,
+    PDV,
     EXTERNAL,
-    INSTANCE_OF,
+    INSTANCE,
     MINUS_INFINITY,
     NOT_A_NUMBER,
     OBJECT,
@@ -202,10 +202,13 @@ pub const ASN1_KEYWORDS: [&str; 67] = [
     TIME_OF_DAY,
     TYPE_IDENTIFIER,
     SIZE,
+    CONSTRAINED,
+    PATTERN,
     DEFAULT,
     OPTIONAL,
-    WITH_COMPONENTS,
-    WITH_COMPONENT,
+    COMPONENTS,
+    COMPONENT,
+    WITH,
     UNION,
     EXCEPT,
     INTERSECTION,
@@ -216,18 +219,19 @@ pub const ASN1_KEYWORDS: [&str; 67] = [
     MAX,
     CLASS,
     UNIQUE,
-    WITH_SYNTAX,
+    SYNTAX,
     NULL,
     BOOLEAN,
     INTEGER,
     REAL,
+    STRING,
     ENUMERATED,
     CHOICE,
     SEQUENCE,
     OF,
     ALL,
     SET,
-    OBJECT_IDENTIFIER,
+    IDENTIFIER,
     UNIVERSAL,
     PRIVATE,
     APPLICATION,
@@ -243,6 +247,10 @@ pub const ASN1_KEYWORDS: [&str; 67] = [
     FROM,
     INSTRUCTIONS,
     TAGS,
+    EXTENSIBILITY,
+    IMPLIED,
+    SUCCESSORS,
+    DESCENDANTS,
     MACRO,
     ANY,
     BY,
@@ -356,18 +364,12 @@ pub struct Import {
     pub with: Option<With>,
 }
 
-impl From<(Vec<&str>, (GlobalModuleReference, Option<&str>))> for Import {
-    fn from(value: (Vec<&str>, (GlobalModuleReference, Option<&str>))) -> Self {
+impl From<(Vec<&str>, (GlobalModuleReference, Option<With>))> for Import {
+    fn from(value: (Vec<&str>, (GlobalModuleReference, Option<With>))) -> Self {
         Self {
             types: value.0.into_iter().map(String::from).collect(),
             global_module_reference: value.1 .0,
-            with: value.1 .1.map(|with| {
-                if with == WITH_SUCCESSORS {
-                    With::Successors
-                } else {
-                    With::Descendants
-                }
-            }),
+            with: value.1 .1,
         }
     }
 }
@@ -839,8 +841,8 @@ impl ASN1Type {
             ASN1Type::Boolean(_) => Cow::Borrowed(BOOLEAN),
             ASN1Type::Integer(_) => Cow::Borrowed(INTEGER),
             ASN1Type::Real(_) => Cow::Borrowed(REAL),
-            ASN1Type::BitString(_) => Cow::Borrowed(BIT_STRING),
-            ASN1Type::OctetString(_) => Cow::Borrowed(OCTET_STRING),
+            ASN1Type::BitString(_) => Cow::Borrowed("BIT STRING"),
+            ASN1Type::OctetString(_) => Cow::Borrowed("OCTET STRING"),
             ASN1Type::CharacterString(CharacterString {
                 ty: CharacterStringType::BMPString,
                 ..
@@ -888,9 +890,9 @@ impl ASN1Type {
             ASN1Type::Enumerated(_) => Cow::Borrowed(ENUMERATED),
             ASN1Type::Choice(_) => Cow::Borrowed(CHOICE),
             ASN1Type::Sequence(_) => Cow::Borrowed(SEQUENCE),
-            ASN1Type::SequenceOf(_) => Cow::Borrowed(SEQUENCE_OF),
+            ASN1Type::SequenceOf(_) => Cow::Borrowed("SEQUENCE OF"),
             ASN1Type::Set(_) => Cow::Borrowed(SET),
-            ASN1Type::SetOf(_) => Cow::Borrowed(SET_OF),
+            ASN1Type::SetOf(_) => Cow::Borrowed("SET OF"),
             ASN1Type::Time(_) => Cow::Borrowed(TIME),
             ASN1Type::GeneralizedTime(_) => Cow::Borrowed(GENERALIZED_TIME),
             ASN1Type::UTCTime(_) => Cow::Borrowed(UTC_TIME),
@@ -899,13 +901,13 @@ impl ASN1Type {
                 Cow::Borrowed(identifier)
             }
             ASN1Type::ChoiceSelectionType(_) => todo!(),
-            ASN1Type::ObjectIdentifier(_) => Cow::Borrowed(OBJECT_IDENTIFIER),
+            ASN1Type::ObjectIdentifier(_) => Cow::Borrowed("OBJECT IDENTIFIER"),
             ASN1Type::ObjectClassField(ifr) => Cow::Owned(format!(
                 "{INTERNAL_IO_FIELD_REF_TYPE_NAME_PREFIX}{}${}",
                 ifr.class,
                 ifr.field_path_as_str()
             )),
-            ASN1Type::EmbeddedPdv => Cow::Borrowed(EMBEDDED_PDV),
+            ASN1Type::EmbeddedPdv => Cow::Borrowed("EMBEDDED PDV"),
             ASN1Type::External => Cow::Borrowed(EXTERNAL),
         }
     }

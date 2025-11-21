@@ -61,7 +61,10 @@ pub fn bit_string_value(input: Input<'_>) -> ParserResult<'_, ASN1Value> {
 pub fn bit_string(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
     map(
         preceded(
-            skip_ws_and_comments(tag(BIT_STRING)),
+            (
+                skip_ws_and_comments(tag(BIT)),
+                skip_ws_and_comments(tag(STRING)),
+            ),
             pair(opt(distinguished_values), opt(constraints)),
         ),
         |m| ASN1Type::BitString(m.into()),

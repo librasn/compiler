@@ -3,9 +3,31 @@ source: rasn-compiler-tests/tests/parse_test.rs
 input_file: rasn-compiler-tests/tests/modules/itu-t_x_x413_1999_MSAbstractService.asn1
 ---
 Error matching ASN syntax at while parsing:
-     ╭─[line 237, column 31]
+     ╭─[line 391, column 2]
      │
      │ 
- 237 │   OF MS-EXTENSION ◀▪▪▪▪▪▪▪▪▪▪ FAILED AT THIS LINE
+ 391 │  FilterItem ::= CHOICE { ◀▪▪▪▪▪▪▪▪▪▪ FAILED AT THIS LINE
+ 392 │    equality           [0]  AttributeValueAssertion,
+ 393 │    substrings
+ 394 │      [1]  SEQUENCE {type     X413ATTRIBUTE.&id({AttributeTable}),
+ 395 │                     strings
+ 396 │                       SEQUENCE OF
+ 397 │                         CHOICE {initial
+ 398 │                                   [0]  X413ATTRIBUTE.&Type
+ 399 │                                          ({AttributeTable}{@substrings.type}),
+ 400 │                                 any
+ 401 │                                   [1]  X413ATTRIBUTE.&Type
+ 402 │                                          ({AttributeTable}{@substrings.type}),
+ 403 │                                 final
+ 404 │                                   [2]  X413ATTRIBUTE.&Type
+ 405 │                                          ({AttributeTable}{@substrings.type})
+ 406 │                         }},
+ 407 │    greater-or-equal   [2]  AttributeValueAssertion,
+ 408 │    less-or-equal      [3]  AttributeValueAssertion,
+ 409 │    present            [4]  X413ATTRIBUTE.&id({AttributeTable}),
+ 410 │    approximate-match  [5]  AttributeValueAssertion,
+ 411 │    -- 1994 extension
+ 412 │    other-match        [6]  MatchingRuleAssertion
+ 413 │  }
      │
 ─────╯
