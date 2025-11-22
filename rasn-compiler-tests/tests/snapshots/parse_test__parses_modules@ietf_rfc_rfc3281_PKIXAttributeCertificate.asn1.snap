@@ -340,19 +340,19 @@ pub mod pkixattribute_certificate {
     pub struct SvceAuthInfo {
         pub service: GeneralName,
         pub ident: GeneralName,
-        #[rasn(identifier = "authInfoOCTET")]
-        pub auth_info_octet: Option<STRING>,
+        #[rasn(identifier = "authInfo")]
+        pub auth_info: Option<OctetString>,
     }
     impl SvceAuthInfo {
         pub fn new(
             service: GeneralName,
             ident: GeneralName,
-            auth_info_octet: Option<STRING>,
+            auth_info: Option<OctetString>,
         ) -> Self {
             Self {
                 service,
                 ident,
-                auth_info_octet,
+                auth_info,
             }
         }
     }
