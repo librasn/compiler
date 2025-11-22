@@ -118,7 +118,7 @@ pub fn instance_of(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
             ),
             pair(
                 skip_ws_and_comments(uppercase_identifier),
-                skip_ws_and_comments(constraints),
+                skip_ws_and_comments(opt(constraints)),
             ),
         ),
         |(id, constraints)| {
@@ -126,7 +126,7 @@ pub fn instance_of(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
                 parent: None,
                 module: None,
                 identifier: id.into(),
-                constraints,
+                constraints: constraints.unwrap_or_default(),
             })
         },
     )
