@@ -2,16 +2,182 @@
 source: rasn-compiler-tests/tests/parse_test.rs
 input_file: rasn-compiler-tests/tests/modules/itu-t_x_x435_1999_EDIMSMessageStoreAttributes.asn1
 ---
-Error matching ASN syntax at while parsing:
-     ╭─[line 156, column 2]
-     │
-     │ 
- 156 │  NonMessageBodyPartSynopsis ::= SEQUENCE { ◀▪▪▪▪▪▪▪▪▪▪ FAILED AT THIS LINE
- 157 │    type        [0]  OBJECT IDENTIFIER,
- 158 │    parameters  [1]  INSTANCE OF TYPE-IDENTIFIER OPTIONAL,
- 159 │    size        [2]  INTEGER,
- 160 │    processed   [3]  BOOLEAN DEFAULT FALSE
- 161 │  }
- 163 │  --	EDI Notification Indicator
-     │
-─────╯
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod edimsmessage_store_attributes {
+    extern crate alloc;
+    use super::edimsinformation_objects::{
+        AcknowledgementRequestField, ActionRequestField, ApplicationReferenceField,
+        AuthorizationInformationField, Body, BodyPartReference, CommunicationsAgreementIdField,
+        CrossReferencingInformationSubField, DateAndTimeOfPreparationField,
+        EDIApplicationSecurityElement, EDIApplicationSecurityExtension, EDIBodyPart,
+        EDIBodyPartType, EDIMessageTypeFieldSubField, EDINInitiatorField, EDINOriginatorField,
+        EDINReceiverField, EDINotificationRequests, EDINotificationSecurity, EDIReceptionSecurity,
+        EDISupplementaryInformation, ExpiryTimeField, FNExtensionsSubField, FNReasonCodeField,
+        FirstRecipientField, ForwardedTo, Heading, HeadingExtensionsSubField, IncompleteCopyField,
+        InterchangeControlReferenceField, InterchangeRecipientField, InterchangeSenderField,
+        MessageData, MessageParameters, NNExtensionsSubField, NNReasonCodeField,
+        NotificationExtensionsSubField, NotificationTimeField, ObsoletedEDIMsSubfield,
+        OriginatorField, PNExtensionsSubField, PositiveNotificationFields,
+        ProcessingPriorityCodeField, RecipientExtensionsSubField, RecipientField,
+        RecipientReferenceField, RecipientsSubField, RelatedMessageReference,
+        ResponsibilityForwarded, ResponsibilityPassingAllowedField, SecurityElementsField,
+        ServiceStringAdviceField, SubjectEDIMField, SyntaxIdentifierField, TestIndicatorField,
+        ThisEDIMField,
+    };
+    use super::edimsobject_identifiers::{
+        ID_BAT_BODY, ID_BAT_EDIM_BODY_PART, ID_BAT_EDI_BODY_PART, ID_BAT_EXTENDED_BODY_PART_TYPES,
+        ID_BAT_INTERCHANGE_LENGTH, ID_BAT_MESSAGE_DATA, ID_BAT_MESSAGE_PARAMETERS,
+        ID_CAT_CORRELATED_DELIVERED_EDINS, ID_CAT_DELIVERED_EDIN_SUMMARY, ID_CAT_EDIM_RECIPIENTS,
+        ID_CAT_FORWARDED_EDIMS, ID_CAT_FORWARDING_EDIMS, ID_CAT_OBSOLETED_EDIMS,
+        ID_CAT_OBSOLETING_EDIMS, ID_CAT_RELATED_EDIMS, ID_CAT_RELATING_EDIMS, ID_CAT_SUBJECT_EDIM,
+        ID_CAT_SUBMITTED_EDINS, ID_CAT_SUBMITTED_EDIN_STATUS, ID_HAT_APPLICATION_REFERENCE,
+        ID_HAT_CROSS_REFERENCING_INFORMATION, ID_HAT_DATE_AND_TIME_OF_PREPARATION,
+        ID_HAT_EDIN_RECEIVER, ID_HAT_EDI_APPLICATION_SECURITY_ELEMENT,
+        ID_HAT_EDI_APPLICATION_SECURITY_EXTENSIONS, ID_HAT_EDI_BODYPART_TYPE,
+        ID_HAT_EDI_MESSAGE_TYPE, ID_HAT_EXPIRY_TIME, ID_HAT_HEADING, ID_HAT_HEADING_EXTENSIONS,
+        ID_HAT_INCOMPLETE_COPY, ID_HAT_INTERCHANGE_SENDER, ID_HAT_OBSOLETED_EDIMS,
+        ID_HAT_ORIGINATOR, ID_HAT_RECIPIENTS, ID_HAT_RELATED_MESSAGES,
+        ID_HAT_RESPONSIBILITY_FORWARDED, ID_HAT_SERVICE_STRING_ADVICE, ID_HAT_SYNTAX_IDENTIFIER,
+        ID_HAT_THIS_EDIM, ID_NAT_EDIN_INITIATOR, ID_NAT_EDIN_ORIGINATOR, ID_NAT_FIRST_RECIPIENT,
+        ID_NAT_FN_EXTENSIONS, ID_NAT_FN_REASON_CODE, ID_NAT_FN_SUPPLEMENTARY_INFO,
+        ID_NAT_FORWARDED_TO, ID_NAT_NN_EXTENSIONS, ID_NAT_NN_REASON_CODE,
+        ID_NAT_NN_SUPPLEMENTARY_INFO, ID_NAT_NOTIFICATION_EXTENSIONS,
+        ID_NAT_NOTIFICATION_SECURITY_ELEMENTS, ID_NAT_NOTIFICATION_TIME, ID_NAT_PN_EXTENSIONS,
+        ID_NAT_PN_SUPPLEMENTARY_INFO, ID_NAT_SUBJECT_EDIM,
+        ID_RAT_ACKNOWLEDGEMENT_REQUEST_FOR_THIS_RECIPIENT,
+        ID_RAT_ACTION_REQUEST_FOR_THIS_RECIPIENT,
+        ID_RAT_AUTHORIZATION_INFORMATION_FOR_THIS_RECIPIENT,
+        ID_RAT_COMMUNICATIONS_AGREEMENT_ID_FOR_THIS_RECIPIENT,
+        ID_RAT_EDI_NOTIFICATION_REQUESTS_FOR_THIS_RECIPIENT,
+        ID_RAT_EDI_NOTIFICATION_SECURITY_FOR_THIS_RECIPIENT,
+        ID_RAT_EDI_RECEPTION_SECURITY_FOR_THIS_RECIPIENT,
+        ID_RAT_INTERCHANGE_CONTROL_REFERENCE_FOR_THIS_RECIPIENT,
+        ID_RAT_INTERCHANGE_RECIPIENT_FOR_THIS_RECIPIENT,
+        ID_RAT_PROCESSING_PRIORITY_CODE_FOR_THIS_RECIPIENT,
+        ID_RAT_RECIPIENT_EXTENSIONS_FOR_THIS_RECIPIENT,
+        ID_RAT_RECIPIENT_REFERENCE_FOR_THIS_RECIPIENT,
+        ID_RAT_RESPONSIBILITY_PASSING_ALLOWED_FOR_THIS_RECIPIENT,
+        ID_RAT_TEST_INDICATOR_FOR_THIS_RECIPIENT, ID_RAT_THIS_RECIPIENT, ID_SAT_EDIMS_ENTRY_TYPE,
+        ID_SAT_EDIM_SYNOPSIS, ID_SAT_EDI_NOTIFICATION_INDICATOR,
+    };
+    use super::information_framework::OBJECT_IDENTIFIER_MATCH;
+    use super::ipmsinformation_objects::*;
+    use super::ipmsmessage_store_attributes::{I_PMIDENTIFIER_MATCH, I_PMLOCATION_MATCH};
+    use super::msabstract_service::{SequenceNumber, X413ATTRIBUTE};
+    use super::msmatching_rules::{
+        M_SSTRING_MATCH, M_SSUBSTRINGS_MATCH, O_RNAME_ELEMENTS_MATCH, O_RNAME_MATCH,
+        O_RNAME_SINGLE_ELEMENT_MATCH, O_RNAME_SUBSTRING_ELEMENTS_MATCH,
+    };
+    use super::mtsabstract_service::ORName;
+    use super::selected_attribute_types::{
+        BIT_STRING_MATCH, BOOLEAN_MATCH, INTEGER_MATCH, INTEGER_ORDERING_MATCH, U_TCTIME_MATCH,
+        U_TCTIME_ORDERING_MATCH,
+    };
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum BodyPartSynopsis {
+        #[rasn(tag(context, 0))]
+        message(MessageBodyPartSynopsis),
+        #[rasn(tag(context, 1), identifier = "non-message")]
+        non_message(NonMessageBodyPartSynopsis),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum CorrelatedDeliveredEDINs {
+        #[rasn(tag(context, 0), identifier = "no-edin-received")]
+        no_edin_received(()),
+        #[rasn(tag(context, 1), identifier = "edins-received")]
+        edins_received(SequenceOf<SequenceNumber>),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum EDIMLocation {
+        stored(SetOf<SequenceNumber>),
+        absent(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum EDIMSEntryType {
+        edim = 0,
+        pn = 1,
+        nn = 2,
+        #[rasn(identifier = "fn")]
+        R_fn = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct EDIMSynopsis(pub SequenceOf<BodyPartSynopsis>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct EDINStatus(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum EDINotificationIndicator {
+        #[rasn(identifier = "no-notification-sent")]
+        no_notification_sent = 0,
+        #[rasn(identifier = "pn-sent")]
+        pn_sent = 1,
+        #[rasn(identifier = "nn-sent")]
+        nn_sent = 2,
+        #[rasn(identifier = "fn-sent")]
+        fn_sent = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct InterchangeLength(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct MessageBodyPartSynopsis {
+        #[rasn(tag(context, 0))]
+        pub number: SequenceNumber,
+        #[rasn(tag(context, 1))]
+        pub synopsis: EDIMSynopsis,
+    }
+    impl MessageBodyPartSynopsis {
+        pub fn new(number: SequenceNumber, synopsis: EDIMSynopsis) -> Self {
+            Self { number, synopsis }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct NonMessageBodyPartSynopsis {
+        #[rasn(tag(context, 0), identifier = "type")]
+        pub r_type: ObjectIdentifier,
+        #[rasn(tag(context, 1))]
+        pub parameters: Option<TYPEIDENTIFIER>,
+        #[rasn(tag(context, 2))]
+        pub size: Integer,
+        #[rasn(
+            tag(context, 3),
+            default = "non_message_body_part_synopsis_processed_default"
+        )]
+        pub processed: bool,
+    }
+    impl NonMessageBodyPartSynopsis {
+        pub fn new(
+            r_type: ObjectIdentifier,
+            parameters: Option<TYPEIDENTIFIER>,
+            size: Integer,
+            processed: bool,
+        ) -> Self {
+            Self {
+                r_type,
+                parameters,
+                size,
+                processed,
+            }
+        }
+    }
+    fn non_message_body_part_synopsis_processed_default() -> bool {
+        false
+    }
+}
