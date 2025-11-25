@@ -60,6 +60,7 @@ pub const UTF8_STRING: &str = "UTF8String";
 pub const NUMERIC_STRING: &str = "NumericString";
 pub const VISIBLE_STRING: &str = "VisibleString";
 pub const TELETEX_STRING: &str = "TeletexString";
+pub const T61_STRING: &str = "T61String";
 pub const VIDEOTEX_STRING: &str = "VideotexString";
 pub const GRAPHIC_STRING: &str = "GraphicString";
 pub const GENERAL_STRING: &str = "GeneralString";
@@ -943,6 +944,10 @@ impl ASN1Type {
                 constraints,
                 ty: CharacterStringType::TeletexString,
             }),
+            (None, T61_STRING) => ASN1Type::CharacterString(CharacterString {
+                constraints,
+                ty: CharacterStringType::TeletexString,
+            }),
             (None, IA5_STRING) => ASN1Type::CharacterString(CharacterString {
                 constraints,
                 ty: CharacterStringType::IA5String,
@@ -1083,6 +1088,7 @@ impl From<&str> for CharacterStringType {
             NUMERIC_STRING => Self::NumericString,
             VISIBLE_STRING => Self::VisibleString,
             TELETEX_STRING => Self::TeletexString,
+            T61_STRING => Self::TeletexString,
             VIDEOTEX_STRING => Self::VideotexString,
             GRAPHIC_STRING => Self::GraphicString,
             GENERAL_STRING => Self::GeneralString,
