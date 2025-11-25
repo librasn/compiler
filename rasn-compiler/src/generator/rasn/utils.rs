@@ -655,11 +655,7 @@ impl Rasn {
             }),
             CharacterStringType::GraphicString => Ok(quote!(GraphicString)),
             CharacterStringType::GeneralString => Ok(quote!(GeneralString)),
-            CharacterStringType::UniversalString => Err(GeneratorError {
-                kind: GeneratorErrorType::NotYetInplemented,
-                details: "UniversalString is currently unsupported!".into(),
-                top_level_declaration: None,
-            }),
+            CharacterStringType::UniversalString => Ok(quote!(UniversalString)),
             CharacterStringType::UTF8String => Ok(quote!(Utf8String)),
             CharacterStringType::BMPString => Ok(quote!(BmpString)),
             CharacterStringType::PrintableString => Ok(quote!(PrintableString)),
