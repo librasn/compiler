@@ -48,10 +48,10 @@ AttributeCertificate ::= SEQUENCE {
  }
 
 AttributeCertificateInfo ::= SEQUENCE {
-    version  AttCertVersion  -- version is v2,
+    version  AttCertVersion,  -- version is v2
     holder   Holder,
     issuer   AttCertIssuer,
-    signatureAlgorithmIdentifier,
+    signature   AlgorithmIdentifier,
     serialNumber   CertificateSerialNumber,
     attrCertValidityPeriod   AttCertValidityPeriod,
     attributes     SEQUENCE OF Attribute,
@@ -91,7 +91,7 @@ AttCertIssuer ::= CHOICE {
  }
 
 V2Form ::= SEQUENCE {
- issuerNameGeneralNames  OPTIONAL,
+ issuerName            GeneralNames  OPTIONAL,
  baseCertificateID     [0] IssuerSerial  OPTIONAL,
  objectDigestInfo[1] ObjectDigestInfo  OPTIONAL
     -- issuerName MUST be present in this profile
@@ -102,7 +102,7 @@ V2Form ::= SEQUENCE {
 IssuerSerial  ::=  SEQUENCE {
  issuer   GeneralNames,
  serial   CertificateSerialNumber,
- issuerUIDUniqueIdentifier OPTIONAL
+ issuerUID UniqueIdentifier OPTIONAL
  }
 
 AttCertValidityPeriod  ::= SEQUENCE {
