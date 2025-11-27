@@ -119,6 +119,7 @@ pub fn character_string(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
                 tag(NUMERIC_STRING),
                 tag(VISIBLE_STRING),
                 tag(TELETEX_STRING),
+                tag(T61_STRING),
                 tag(VIDEOTEX_STRING),
                 tag(GRAPHIC_STRING),
                 tag(GENERAL_STRING),
